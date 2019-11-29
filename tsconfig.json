@@ -2,6 +2,7 @@
   "files": [],
   "include": [],
   "references": [
-    {"path": "./packages/quilt"}
+    {"path": "./packages/quilt"},
+    {"path": "./packages/react-html"}
   ]
 }

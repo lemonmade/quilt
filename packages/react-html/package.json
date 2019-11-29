@@ -1,0 +1,21 @@
+{
+  "name": "@quilted/react-html",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0 <17.0.0",
+    "react-dom": ">=16.8.0 <17.0.0"
+  },
+  "dependencies": {
+    "@types/react": ">=16.8.0",
+    "serialize-javascript": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/react-dom": "^16.9.4",
+    "@types/serialize-javascript": "^1.5.0"
+  }
+}
