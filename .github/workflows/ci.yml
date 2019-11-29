@@ -26,7 +26,6 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Yarn install
-      if: steps.yarn-cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
 
     - name: Type check
@@ -54,7 +53,6 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Yarn install
-      if: steps.yarn-cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
 
     - name: Test
@@ -82,7 +80,6 @@ jobs:
   #         ${{ runner.os }}-yarn-
 
   #   - name: Yarn install
-  #     if: steps.yarn-cache.outputs.cache-hit != 'true'
   #     run: yarn install --frozen-lockfile
 
   #   - name: Lint
