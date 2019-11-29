@@ -1,0 +1,8 @@
+node_modules
+.sewing-kit
+.DS_STORE
+packages/*/build
+packages/*/*.js
+packages/*/*.esnext
+packages/*/*.d.ts
+*.log
