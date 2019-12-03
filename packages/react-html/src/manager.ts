@@ -1,5 +1,5 @@
 import {HTMLProps, HtmlHTMLAttributes} from 'react';
-// import {EffectKind} from '@shopify/react-effect';
+import {ServerRenderEffectKind} from '@quilted/react-server-render';
 
 import {getSerializationsFromDocument} from './utilities';
 
@@ -19,13 +19,13 @@ interface Subscription {
   (state: State): void;
 }
 
-// export const EFFECT_ID = Symbol('html');
+export const SERVER_RENDER_EFFECT_ID = Symbol('html');
 
 export class HtmlManager {
-  // effect: EffectKind = {
-  //   id: EFFECT_ID,
-  //   betweenEachPass: () => this.reset(),
-  // };
+  readonly effectKind: ServerRenderEffectKind = {
+    id: SERVER_RENDER_EFFECT_ID,
+    betweenEachPass: () => this.reset(),
+  };
 
   private serializations = getSerializationsFromDocument();
   private titles: Title[] = [];

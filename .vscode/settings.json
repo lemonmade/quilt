@@ -1,5 +1,1 @@
-{
-  "files.exclude": {
-    "packages/*/*.{js,d.ts,esnext}": true
-  }
-}
+{}

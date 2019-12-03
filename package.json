@@ -24,6 +24,7 @@
     "@sewing-kit/plugin-package-esmodules": "^0.0.10",
     "@sewing-kit/plugin-package-esnext": "^0.0.10",
     "@sewing-kit/plugin-package-typescript": "^0.0.11",
-    "@sewing-kit/plugin-typescript": "^0.0.10"
+    "@sewing-kit/plugin-typescript": "^0.0.10",
+    "lerna": "^3.19.0"
   }
 }
