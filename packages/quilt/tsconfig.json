@@ -6,5 +6,8 @@
     "rootDir": "src"
   },
   "include": ["src/**/*.ts"],
-  "references": []
+  "references": [
+    {"path": "../react-html"},
+    {"path": "../react-server-render"}
+  ]
 }

@@ -5,6 +5,9 @@ import {ServerRenderContext} from './context';
 import {ServerRenderManager} from './manager';
 import {ServerRenderPass} from './types';
 
+export {ServerRenderManager, ServerRenderContext, ServerRenderPass};
+
+export {useServerEffect} from './hook';
 export {ServerEffect} from './ServerEffect';
 
 interface Options {
