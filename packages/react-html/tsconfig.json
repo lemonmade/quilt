@@ -5,8 +5,7 @@
     "baseUrl": "src",
     "rootDir": "src",
     "paths": {
-      "@quilted/react-server-render/server": ["../../react-server-render/src/server"],
-      "@quilted/react-server-render": ["../../react-server-render/src"]
+      "@quilted/react-server-render*": ["../../react-server-render/src*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
