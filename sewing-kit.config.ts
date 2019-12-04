@@ -10,11 +10,13 @@ import packageBase from '@sewing-kit/plugin-package-base';
 import packageCommonJS from '@sewing-kit/plugin-package-commonjs';
 import packageEsnext from '@sewing-kit/plugin-package-esnext';
 import packageTypeScript from '@sewing-kit/plugin-package-typescript';
+import react from '@sewing-kit/plugin-react';
 
 const plugin = composePlugins('Quilt.self', [
   babel,
   eslint,
   jest,
+  react,
   json,
   javascript,
   typescript,
