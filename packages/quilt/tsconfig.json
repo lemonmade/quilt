@@ -3,7 +3,13 @@
   "compilerOptions": {
     "outDir": "build/ts",
     "baseUrl": "src",
-    "rootDir": "src"
+    "rootDir": "src",
+    "paths": {
+      "@quilted/react-server-render": ["../../react-server-render/src"],
+      "@quilted/react-server-render/server": ["../../react-server-render/src/server"],
+      "@quilted/react-html": ["../../react-html/src"],
+      "@quilted/react-html/server": ["../../react-html/src/server"]
+    }
   },
   "include": ["src/**/*.ts"],
   "references": [
