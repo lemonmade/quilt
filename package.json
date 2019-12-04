@@ -7,6 +7,7 @@
     "./packages/*"
   ],
   "scripts": {
+    "postinstall": "lerna bootstrap",
     "test": "sk test",
     "type-check": "sk type-check",
     "build": "sk build"
