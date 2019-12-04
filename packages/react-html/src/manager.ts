@@ -1,6 +1,6 @@
-import {HTMLProps, HtmlHTMLAttributes} from 'react';
+/* eslint import/no-extraneous-dependencies: off */
 
-// eslint-disable-next-line import/no-extraneous-dependencies
+import {HTMLProps, HtmlHTMLAttributes} from 'react';
 import {ServerRenderEffectKind} from '@quilted/react-server-render';
 
 import {getSerializationsFromDocument} from './utilities';
