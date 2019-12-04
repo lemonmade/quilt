@@ -1,0 +1,16 @@
+{
+  "name": "@quilted/react-router",
+  "version": "0.0.1",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0 <17.0.0"
+  },
+  "dependencies": {
+    "@quilted/react-html": "^0.0.1",
+    "@quilted/react-server-render": "^0.0.1"
+  }
+}
