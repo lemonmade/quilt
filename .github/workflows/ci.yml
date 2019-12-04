@@ -38,6 +38,50 @@ jobs:
         key: ${{ runner.os }}-typescript
         restore-keys: |
           ${{ runner.os }}-typescript
+          
+name: CI
+
+on: [push]
+
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      name: Checkout
+
+    - uses: actions/setup-node@v1
+      name: Setup node.js and yarn
+      with:
+        node-version: 13.1.0
+
+    - name: Get yarn cache directory
+      id: yarn-cache-get-dir
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v1
+      id: yarn-cache
+      name: Restore yarn cache
+      with:
+        path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    - name: Yarn install
+      run: yarn install --frozen-lockfile
+
+    - uses: actions/cache@v1
+      id: typescript-cache
+      name: Restore TypeScript cache
+      with:
+        path: .sewing-kit/cache/typescript/
+        key: ${{ runner.os }}-typescript
+        restore-keys: |
+          ${{ runner.os }}-typescript
+
+    - name: Type check
+      run: yarn type-check --skip typescript
 
     - run: node -e "console.log(process.env)"
     - run: node -e "console.log('ts-build', fs.statSync('packages/react-html/build/tsconfig.tsbuildinfo'))"
