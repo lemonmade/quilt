@@ -10,7 +10,7 @@
     "react": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@types/react": ">=16.8.0"
+    "@types/react": ">=16.9.14"
   },
   "devDependencies": {}
 }
