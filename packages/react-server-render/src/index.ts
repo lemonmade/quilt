@@ -1,3 +1,8 @@
 export {ServerEffect} from './ServerEffect';
-export {ServerRenderEffectKind, ServerRenderPass} from './types';
+export {
+  ServerRenderEffectKind,
+  ServerRenderPass,
+  ServerRenderEffectAction,
+  ServerRenderEffectOptions,
+} from './types';
 export {useServerEffect} from './hook';

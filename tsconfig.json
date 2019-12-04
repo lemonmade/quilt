@@ -4,6 +4,7 @@
   "references": [
     {"path": "./packages/quilt"},
     {"path": "./packages/react-html"},
+    {"path": "./packages/react-router"},
     {"path": "./packages/react-server-render"}
   ]
 }

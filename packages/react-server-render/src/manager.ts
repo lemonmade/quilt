@@ -2,6 +2,7 @@ import {
   ServerRenderEffectKind,
   ServerRenderPass,
   ServerRenderEffectAction,
+  ServerRenderEffectOptions,
 } from './types';
 
 interface Options {
@@ -10,15 +11,23 @@ interface Options {
 
 export class ServerRenderManager {
   private pendingEffects: Promise<any>[] = [];
+  private deferredEffects: ServerRenderEffectAction[] = [];
   private effectKinds = new Set<ServerRenderEffectKind>();
   private readonly includeEffects: NonNullable<Options['includeEffects']>;
 
-  get finished() {
-    return this.pendingEffects.length === 0;
-  }
-
   constructor({includeEffects = true}: Options = {}) {
     this.includeEffects = includeEffects;
+  }
+
+  seal() {
+    for (const perform of [...this.deferredEffects].reverse()) {
+      const result = perform();
+      if (isPromise(result)) this.pendingEffects.push(result);
+    }
+
+    this.deferredEffects.length = 0;
+
+    return {finished: this.pendingEffects.length === 0};
   }
 
   reset() {
@@ -29,18 +38,24 @@ export class ServerRenderManager {
   performEffect(
     perform: ServerRenderEffectAction,
     kind?: ServerRenderEffectKind,
+    options?: ServerRenderEffectOptions,
   ) {
     if (kind != null && !this.shouldPerformEffectKind(kind)) {
       return false;
     }
 
-    const effect = perform();
-
     if (kind != null) {
       this.effectKinds.add(kind);
     }
 
-    if (effect != null && 'then' in effect) {
+    if (options?.deferred) {
+      this.deferredEffects.push(perform);
+      return true;
+    }
+
+    const effect = perform();
+
+    if (isPromise(effect)) {
       this.pendingEffects.push(effect);
     }
 
@@ -85,4 +100,8 @@ export class ServerRenderManager {
       (kind != null && includeEffects.includes(kind.id))
     );
   }
+}
+
+function isPromise(value: unknown): value is Promise<unknown> {
+  return value != null && 'then' in (value as any);
 }

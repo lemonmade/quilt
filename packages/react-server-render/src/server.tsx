@@ -42,9 +42,10 @@ export function extract(
   return (async function perform(index = 0): Promise<string> {
     const start = Date.now();
     const result = renderFunction(element);
-    const cancelled = !manager.finished && index + 1 >= maxPasses;
+    const {finished} = manager.seal();
+    const cancelled = !finished && index + 1 >= maxPasses;
 
-    if (manager.finished || cancelled) {
+    if (finished || cancelled) {
       const duration = Date.now() - start;
 
       await manager.afterEachPass({
