@@ -40,7 +40,4 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-typescript
 
-    - run: node -e "console.log(process.env)"
-    - run: node -e "console.log(require('glob').sync('.sewing-kit/cache/typescript/**/*', {absolute: true}))"
-    - run: node -e "console.log('ts-cache', fs.statSync(require('glob').sync('.sewing-kit/cache/typescript/package_react-html/tsconfig.*', {absolute: true}))"
-    - run: node -e "console.log('src', fs.statSync('packages/react-html/src/index.ts'))"
+    - run: node scripts/check.js
