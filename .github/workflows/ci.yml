@@ -39,9 +39,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-typescript
     - name: Type check
-      run: node -e "console.log(process.env)" && yarn sk type-check
-      env:
-        CI: "1"
+      run: yarn type-check
 
   test:
     runs-on: ubuntu-latest
@@ -79,9 +77,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-jest
     - name: Test
-      run: yarn sk test
-      env:
-        CI: "1"
+      run: yarn test
 
   lint:
     runs-on: ubuntu-latest
@@ -119,6 +115,4 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-eslint
     - name: Lint
-      run: yarn sk lint
-      env:
-        CI: "1"
+      run: yarn lint
