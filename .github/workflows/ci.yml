@@ -39,7 +39,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-typescript
     - name: Type check
-      run: yarn type-check
+      run: yarn sk type-check
       env:
         CI: "1"
 
@@ -79,7 +79,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-jest
     - name: Test
-      run: yarn test
+      run: yarn sk test
       env:
         CI: "1"
 
@@ -119,6 +119,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-eslint
     - name: Lint
-      run: yarn lint
+      run: yarn sk lint
       env:
         CI: "1"
