@@ -1,5 +1,3 @@
-/* eslint import/no-extraneous-dependencies: off */
-
 import {HTMLProps, HtmlHTMLAttributes} from 'react';
 import {ServerRenderEffectKind} from '@quilted/react-server-render';
 

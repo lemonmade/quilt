@@ -5,5 +5,13 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@quilted/react-html": "^0.0.1",
+    "@quilted/react-server-render": "^0.0.1"
+  },
+  "peerDependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
 }
