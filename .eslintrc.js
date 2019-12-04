@@ -7,7 +7,10 @@ module.exports = {
   ignorePatterns: [
     'node_modules/',
     'packages/*/build/',
-    'packages/*/*.{d.ts,esnext}',
+    'packages/*/*.d.ts',
+    'packages/*/*.js',
+    '!packages/*/.eslintrc.js',
+    'packages/*/*.esnext',
   ],
   overrides: [
     {
