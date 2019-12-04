@@ -1,4 +1,8 @@
-import {ServerRenderEffectKind, ServerRenderPass, ServerRenderEffectAction} from './types';
+import {
+  ServerRenderEffectKind,
+  ServerRenderPass,
+  ServerRenderEffectAction,
+} from './types';
 
 interface Options {
   includeEffects?: symbol[] | boolean;
@@ -22,7 +26,10 @@ export class ServerRenderManager {
     this.effectKinds = new Set();
   }
 
-  performEffect(perform: ServerRenderEffectAction, kind?: ServerRenderEffectKind) {
+  performEffect(
+    perform: ServerRenderEffectAction,
+    kind?: ServerRenderEffectKind,
+  ) {
     if (kind != null && !this.shouldPerformEffectKind(kind)) {
       return false;
     }
@@ -46,7 +53,7 @@ export class ServerRenderManager {
 
   async betweenEachPass(pass: ServerRenderPass) {
     await Promise.all(
-      [...this.effectKinds].map(kind =>
+      [...this.effectKinds].map((kind) =>
         typeof kind.betweenEachPass === 'function'
           ? kind.betweenEachPass(pass)
           : Promise.resolve(),
@@ -56,14 +63,14 @@ export class ServerRenderManager {
 
   async afterEachPass(pass: ServerRenderPass) {
     const results = await Promise.all(
-      [...this.effectKinds].map(kind =>
+      [...this.effectKinds].map((kind) =>
         typeof kind.afterEachPass === 'function'
           ? kind.afterEachPass(pass)
           : Promise.resolve(),
       ),
     );
 
-    return results.every(result => result !== false);
+    return results.every((result) => result !== false);
   }
 
   private shouldPerformEffectKind(kind: ServerRenderEffectKind) {
@@ -73,6 +80,9 @@ export class ServerRenderManager {
       return false;
     }
 
-    return includeEffects === true || (kind != null && includeEffects.includes(kind.id));
+    return (
+      includeEffects === true ||
+      (kind != null && includeEffects.includes(kind.id))
+    );
   }
 }

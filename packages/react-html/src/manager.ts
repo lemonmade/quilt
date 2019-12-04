@@ -1,4 +1,6 @@
 import {HTMLProps, HtmlHTMLAttributes} from 'react';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {ServerRenderEffectKind} from '@quilted/react-server-render';
 
 import {getSerializationsFromDocument} from './utilities';

@@ -19,14 +19,16 @@ describe('extract()', () => {
     const {promise, resolve, resolved} = createResolvablePromise();
     const spy = jest.fn(() => (resolved() ? promise : undefined));
     const extractSpy = jest.fn();
-    const extractPromise = extract(<ServerEffect perform={spy} />).then(extractSpy);
+    const extractPromise = extract(<ServerEffect perform={spy} />).then(
+      extractSpy,
+    );
 
     expect(extractSpy).not.toHaveBeenCalled();
 
     await resolve();
     // Some versions of Node need one extra tick for all .then()
     // calls on the promise to resolve
-    await new Promise(resolve => process.nextTick(resolve));
+    await new Promise((resolve) => process.nextTick(resolve));
 
     expect(extractSpy).toHaveBeenCalled();
 
@@ -57,7 +59,9 @@ describe('extract()', () => {
       afterEachPass: jest.fn(() => Promise.resolve(false)),
     };
 
-    await extract(<ServerEffect perform={() => Promise.resolve()} kind={kind} />);
+    await extract(
+      <ServerEffect perform={() => Promise.resolve()} kind={kind} />,
+    );
 
     expect(kind.afterEachPass).toHaveBeenCalledTimes(1);
   });
@@ -69,7 +73,9 @@ describe('extract()', () => {
       betweenEachPass: jest.fn(),
     };
 
-    await extract(<ServerEffect perform={() => Promise.resolve()} kind={kind} />);
+    await extract(
+      <ServerEffect perform={() => Promise.resolve()} kind={kind} />,
+    );
 
     expect(kind.betweenEachPass).toHaveBeenCalledTimes(0);
   });
@@ -302,7 +308,7 @@ function createResolvablePromise() {
   let promiseResolve!: () => void;
   let resolved = false;
 
-  const promise = new Promise(resolve => {
+  const promise = new Promise((resolve) => {
     promiseResolve = resolve;
   });
 
