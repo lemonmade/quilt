@@ -41,6 +41,7 @@ jobs:
           ${{ runner.os }}-typescript
 
     - run: node -e "console.log(process.env)"
+    - run: node -e "console.log(require('glob').sync('.sewing-kit/cache/typescript/**/*'))"
     - run: node -e "console.log('ts-cache', fs.statSync('.sewing-kit/cache/typescript/package_react-html/tsconfig.tsbuildinfo'))"
     - run: node -e "console.log('src', fs.statSync('packages/react-html/src/index.ts'))"
           
