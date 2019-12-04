@@ -39,7 +39,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-typescript
     - name: Type check
-      run: yarn sk type-check
+      run: node -e "console.log(process.env)" && yarn sk type-check
       env:
         CI: "1"
 
