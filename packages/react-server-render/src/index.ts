@@ -2,7 +2,7 @@ export {ServerEffect} from './ServerEffect';
 export {
   ServerRenderEffectKind,
   ServerRenderPass,
-  ServerRenderEffectOptions,
   ServerRenderEffectAction,
+  ServerRenderEffectOptions,
 } from './types';
 export {useServerEffect} from './hook';
