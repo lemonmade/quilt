@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useSerialized} from '@quilted/react-html';
 
 import {CurrentUrlContext, RouterContext} from '../../context';
-import {Router as RouterControl, State, EXTRACT, LISTEN} from '../../router';
+import {Router as RouterControl, EXTRACT, LISTEN} from '../../router';
 import {Prefetcher} from '../Prefetcher';
 
 interface Props {
@@ -11,32 +11,26 @@ interface Props {
 }
 
 export function Router({children, url: explicitUrl}: Props) {
-  const [url, setUrl] = React.useState(
-    () => explicitUrl || getUrlFromBrowser(),
+  const [url, setUrl] = useState(() => explicitUrl || getUrlFromBrowser());
+  const routerRef = useRef<RouterControl>(null as any);
+  const routerState = useSerialized('router', () =>
+    routerRef.current[EXTRACT](),
   );
 
-  const [routerState, Serialize] = useSerialized<State>('router');
+  if (routerRef.current == null) {
+    routerRef.current = new RouterControl(url, routerState);
+  }
 
-  // should useRef instead
-  const router = React.useMemo(() => new RouterControl(url, routerState), [
-    routerState,
-    url,
-  ]);
-
-  React.useEffect(() => router[LISTEN]((newUrl) => setUrl(newUrl)), [
-    router,
-    setUrl,
-  ]);
+  useEffect(() => routerRef.current[LISTEN]((newUrl) => setUrl(newUrl)), []);
 
   return (
     <>
-      <RouterContext.Provider value={router}>
+      <RouterContext.Provider value={routerRef.current}>
         <CurrentUrlContext.Provider value={url}>
           <Prefetcher />
           {children}
         </CurrentUrlContext.Provider>
       </RouterContext.Provider>
-      <Serialize data={() => router[EXTRACT]()} />
     </>
   );
 }

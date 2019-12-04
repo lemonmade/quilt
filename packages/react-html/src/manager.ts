@@ -19,10 +19,11 @@ interface Subscription {
   (state: State): void;
 }
 
+export const EFFECT = Symbol('effect');
 export const SERVER_RENDER_EFFECT_ID = Symbol('html');
 
 export class HtmlManager {
-  readonly effectKind: ServerRenderEffectKind = {
+  readonly [EFFECT]: ServerRenderEffectKind = {
     id: SERVER_RENDER_EFFECT_ID,
     betweenEachPass: () => this.reset(),
   };

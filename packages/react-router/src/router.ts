@@ -1,4 +1,4 @@
-import {ServerRenderEffectKind} from '@shopify/react-server-effect';
+import {ServerRenderEffectKind} from '@quilted/react-server-render';
 import {EnhancedURL, Match} from './types';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');

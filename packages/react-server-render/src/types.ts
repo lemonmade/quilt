@@ -13,3 +13,7 @@ export interface ServerRenderEffectKind {
   betweenEachPass?(pass: ServerRenderPass): any;
   afterEachPass?(pass: ServerRenderPass): any;
 }
+
+export interface ServerRenderEffectOptions {
+  readonly deferred?: boolean;
+}
