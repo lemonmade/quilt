@@ -2018,10 +2018,10 @@
     "@sewing-kit/types" "^0.0.6"
     immer "^5.0.0"
 
-"@sewing-kit/plugin-package-typescript@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-typescript/-/plugin-package-typescript-0.0.16.tgz#d93a98854e017c9edc0bbd34d44ea032f78a2d20"
-  integrity sha512-Qq3peGBBMop5QaUesLn/LKrkT8i76HIlxEE3x7VCKy0dERoBhy8ez+M9tgjjWvHUJoPbct+J+qbEBZJ7OFNE4g==
+"@sewing-kit/plugin-package-typescript@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-typescript/-/plugin-package-typescript-0.0.17.tgz#62324352f8fe4d3212bc5c985d6b1dc6c563a585"
+  integrity sha512-VO9lVuCmOtu8Dg2CL/IZz2eYj3vn06WOLYsBQmq+VN6QsHkGE4mb5lqOVKYepGyBCma0RhwExkUr//vsMpE64w==
   dependencies:
     "@sewing-kit/core" "^0.0.13"
     "@sewing-kit/plugin-package-base" "^0.0.15"
@@ -2049,19 +2049,21 @@
     "@sewing-kit/types" "^0.0.6"
     immer "^5.0.0"
 
-"@sewing-kit/plugin-typescript@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-typescript/-/plugin-typescript-0.0.15.tgz#838cdfe019bdd233c7565465e2282da6affe7a51"
-  integrity sha512-4TDYHvj5WK9EzQMrDkgKVwiA5IjzPJAo1EzxkTRGPsxBVhMPEvZWh7v0hVdPilFZi2rRcg1K0Q96uiUfI+VLtA==
+"@sewing-kit/plugin-typescript@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-typescript/-/plugin-typescript-0.0.16.tgz#85f73c91a12a823ae4c2829fd4817c33974d6742"
+  integrity sha512-wtuokfOeTXWa06mNvVypk3MEqMShIkCsD/5kPCj1SdYv357HKwTIX105aJtB51+NfpH7Z0x2BjWcc0m2qYjFOg==
   dependencies:
     "@babel/plugin-proposal-decorators" "^7.7.4"
     "@babel/preset-typescript" "^7.7.4"
+    "@sewing-kit/core" "^0.0.13"
     "@sewing-kit/plugin-babel" "^0.0.14"
     "@sewing-kit/plugin-eslint" "^0.0.12"
     "@sewing-kit/plugin-jest" "^0.0.15"
     "@sewing-kit/plugin-utilities" "^0.0.14"
     "@sewing-kit/plugin-webpack" "^0.0.12"
     "@sewing-kit/ui" "^0.0.11"
+    fs-extra "^8.1.0"
     immer "^5.0.0"
     tapable "^1.1.3"
     typescript "^3.7.2"
@@ -2231,10 +2233,18 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.14":
+"@types/react@*":
   version "16.9.14"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.14.tgz#7f1158ce450b4b5aa83b1c5e1324fa75f348bdd1"
   integrity sha512-Q4tW4RGmR+u/CgzR8VqZcsUWjP4Pz/LcHfs9AzSG+aBnwq8As3Bid3vG1eGGsXg/xuR2k2tqNlI8pzyV8kxe0g==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^2.2.0"
+
+"@types/react@>=16.9.15":
+  version "16.9.15"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.15.tgz#aeabb7a50f96c9e31a16079ada20ede9ed602977"
+  integrity sha512-WsmM1b6xQn1tG3X2Hx4F3bZwc2E82pJXt5OPs2YJgg71IzvUoKOSSSYOvLXYCg1ttipM+UuA4Lj3sfvqjVxyZw==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -8346,10 +8356,10 @@ serialize-javascript@^1.7.0:
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-1.9.1.tgz#cfc200aef77b600c47da9bb8149c943e798c2fdb"
   integrity sha512-0Vb/54WJ6k5v8sSWN09S0ora+Hnr+cX40r9F170nT+mSkaxltoE/7R3OrIdBSUv1OoiobH1QoWQbCnAO+e8J1A==
 
-serialize-javascript@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.0.tgz#9310276819efd0eb128258bb341957f6eb2fc570"
-  integrity sha512-a/mxFfU00QT88umAJQsNWOnUKckhNCqOl028N48e7wFmo2/EHpTo9Wso+iJJCMrQnmFvcjto5RJdAHEvVhcyUQ==
+serialize-javascript@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.1.tgz#952907a04a3e3a75af7f73d92d15e233862048b2"
+  integrity sha512-MPLPRpD4FNqWq9tTIjYG5LesFouDhdyH0EPY3gVK4DRD5+g4aDqdNSzLIwceulo3Yj+PL1bPh6laE5+H6LTcrQ==
 
 set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"

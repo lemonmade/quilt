@@ -28,9 +28,9 @@
     "@sewing-kit/plugin-package-commonjs": "^0.0.15",
     "@sewing-kit/plugin-package-esmodules": "^0.0.15",
     "@sewing-kit/plugin-package-esnext": "^0.0.15",
-    "@sewing-kit/plugin-package-typescript": "^0.0.16",
+    "@sewing-kit/plugin-package-typescript": "^0.0.17",
     "@sewing-kit/plugin-react": "^0.0.10",
-    "@sewing-kit/plugin-typescript": "^0.0.15",
+    "@sewing-kit/plugin-typescript": "^0.0.16",
     "lerna": "^3.19.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
