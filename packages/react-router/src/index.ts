@@ -1,3 +1,3 @@
 export * from './components';
-export {NavigateTo} from './router';
 export {useCurrentUrl, useRouter, useNavigationBlock} from './hooks';
+export type NavigateTo = import('./router').NavigateTo;

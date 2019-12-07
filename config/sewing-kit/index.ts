@@ -5,7 +5,7 @@ import {typeScriptProjectPlugin} from '@sewing-kit/plugin-typescript';
 import {jestProjectPlugin} from '@sewing-kit/plugin-jest';
 import {reactProjectPlugin} from '@sewing-kit/plugin-react';
 import {babelProjectPlugin} from '@sewing-kit/plugin-babel';
-import {packageFlexibleOutputsPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
+import {createPackageFlexibleOutputsPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
 
 export const defaultProjectPlugin = createComposedProjectPlugin(
   'Quilt.DefaultProject',
@@ -15,6 +15,8 @@ export const defaultProjectPlugin = createComposedProjectPlugin(
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     reactProjectPlugin,
-    packageFlexibleOutputsPlugin,
+    createPackageFlexibleOutputsPlugin({
+      esmodules: false,
+    }),
   ],
 );

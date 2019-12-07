@@ -10,6 +10,8 @@ module.exports = {
     'packages/*/*.d.ts',
     'packages/*/*.js',
     '!packages/*/.eslintrc.js',
+    'packages/*/*.mjs',
+    'packages/*/*.node',
     'packages/*/*.esnext',
   ],
   overrides: [
