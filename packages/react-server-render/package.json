@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-server-render",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
