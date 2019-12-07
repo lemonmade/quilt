@@ -14,7 +14,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['sewing-kit.config.ts'],
+      files: ['sewing-kit.config.ts', 'config/sewing-kit/**/*'],
       rules: {
         'import/no-extraneous-dependencies': 'off',
       },
