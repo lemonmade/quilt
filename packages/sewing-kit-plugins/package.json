@@ -15,6 +15,7 @@
     "@sewing-kit/plugin-service-base": "^0.0.19",
     "@sewing-kit/plugin-typescript": "^0.0.23",
     "@sewing-kit/plugin-web-app-base": "^0.0.23",
+    "@sewing-kit/plugin-webpack": "^0.0.17",
     "@sewing-kit/plugins": "^0.0.5"
   }
 }

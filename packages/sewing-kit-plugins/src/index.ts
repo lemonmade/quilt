@@ -3,6 +3,9 @@ import {
   createComposedProjectPlugin,
 } from '@sewing-kit/plugins';
 
+import {webpackProjectBuildPlugin} from '@sewing-kit/plugin-webpack';
+import {webAppWebpackPlugin} from '@sewing-kit/plugin-web-app-base';
+import {serviceWebpackPlugin} from '@sewing-kit/plugin-service-base';
 import {eslintWorkspacePlugin} from '@sewing-kit/plugin-eslint';
 import {
   javascriptWorkspacePlugin,
@@ -31,6 +34,8 @@ export const quiltPackagePlugin = createQuiltPackagePlugin();
 export function createQuiltWebAppPlugin() {
   return createComposedProjectPlugin('Quilt.WebApp', [
     babelProjectPlugin,
+    webpackProjectBuildPlugin,
+    webAppWebpackPlugin,
     jestProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
@@ -43,6 +48,8 @@ export const quiltWebAppPlugin = createQuiltWebAppPlugin();
 export function createQuiltServicePlugin() {
   return createComposedProjectPlugin('Quilt.Service', [
     babelProjectPlugin,
+    webpackProjectBuildPlugin,
+    serviceWebpackPlugin,
     jestProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
