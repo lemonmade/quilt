@@ -1,15 +1,15 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
   "dependencies": {
-    "@quilted/react-html": "^0.0.8",
-    "@quilted/react-router": "^0.0.8",
-    "@quilted/react-server-render": "^0.0.7"
+    "@quilted/react-html": "^0.0.9",
+    "@quilted/react-router": "^0.0.9",
+    "@quilted/react-server-render": "^0.0.8"
   },
   "peerDependencies": {
     "react": "^16.12.0",
