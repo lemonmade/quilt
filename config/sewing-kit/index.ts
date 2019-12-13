@@ -20,3 +20,18 @@ export const defaultProjectPlugin = createComposedProjectPlugin(
     }),
   ],
 );
+
+export const nodeOnlyProjectPlugin = createComposedProjectPlugin(
+  'Quilt.NodeOnlyProject',
+  [
+    babelProjectPlugin,
+    jestProjectPlugin,
+    javascriptProjectPlugin,
+    typeScriptProjectPlugin,
+    reactProjectPlugin,
+    createPackageFlexibleOutputsPlugin({
+      esmodules: false,
+      esnext: false,
+    }),
+  ],
+);

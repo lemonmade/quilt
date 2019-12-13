@@ -1,0 +1,20 @@
+{
+  "name": "@quilted/sewing-kit-plugins",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@sewing-kit/plugin-babel": "^0.0.19",
+    "@sewing-kit/plugin-eslint": "^0.0.15",
+    "@sewing-kit/plugin-javascript": "^0.0.20",
+    "@sewing-kit/plugin-jest": "^0.0.18",
+    "@sewing-kit/plugin-react": "^0.0.15",
+    "@sewing-kit/plugin-service-base": "^0.0.17",
+    "@sewing-kit/plugin-typescript": "^0.0.21",
+    "@sewing-kit/plugin-web-app-base": "^0.0.21",
+    "@sewing-kit/plugins": "^0.0.3"
+  }
+}
