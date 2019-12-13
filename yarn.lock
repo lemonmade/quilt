@@ -1869,10 +1869,10 @@
     "@babel/preset-env" "^7.7.5"
     core-js ">=3.0.0 <4.0.0"
 
-"@sewing-kit/cli@^0.0.22":
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/cli/-/cli-0.0.22.tgz#12ec504a516c4e36254e35f95f7d21b25cddb617"
-  integrity sha512-63DWgUpaRTAch2DUIMhbmBk+XLs6XAMzVckBu+DmM+JZBteVXdXi+BYQPUg3ce+9nzZwHAr1GuUogpdte+lrWg==
+"@sewing-kit/cli@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/cli/-/cli-0.0.23.tgz#21d354eda7483910a5b6e2fadef296076ee483d7"
+  integrity sha512-mcXM4XGivrdWB1i8bZ+RKBJWaleacJ4/goU60Eov9tA/EvgYhnUO921Idm95OXIzSyW+hu09/aOJ/Xt2XmAvTg==
   dependencies:
     "@sewing-kit/config" "^0.0.18"
     "@sewing-kit/core" "^0.0.21"

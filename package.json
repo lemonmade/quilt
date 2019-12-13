@@ -16,7 +16,7 @@
     "release": "lerna publish && git push --tags"
   },
   "devDependencies": {
-    "@sewing-kit/cli": "^0.0.22",
+    "@sewing-kit/cli": "^0.0.23",
     "@sewing-kit/config": "^0.0.18",
     "@sewing-kit/eslint-plugin": "^0.0.5",
     "@sewing-kit/plugin-babel": "^0.0.21",
