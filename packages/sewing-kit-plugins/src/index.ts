@@ -35,11 +35,11 @@ export function createQuiltWebAppPlugin() {
   return createComposedProjectPlugin('Quilt.WebApp', [
     babelProjectPlugin,
     webpackProjectPlugin,
-    webAppWebpackPlugin,
     jestProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     reactProjectPlugin,
+    webAppWebpackPlugin,
   ]);
 }
 
@@ -49,11 +49,11 @@ export function createQuiltServicePlugin() {
   return createComposedProjectPlugin('Quilt.Service', [
     babelProjectPlugin,
     webpackProjectPlugin,
-    serviceWebpackPlugin,
     jestProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     reactProjectPlugin,
+    serviceWebpackPlugin,
   ]);
 }
 
