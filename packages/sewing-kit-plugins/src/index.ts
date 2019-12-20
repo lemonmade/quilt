@@ -3,6 +3,7 @@ import {
   createComposedProjectPlugin,
 } from '@sewing-kit/plugins';
 
+import {packageFlexibleOutputsConsumerPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
 import {webpackProjectPlugin} from '@sewing-kit/plugin-webpack';
 import {webAppWebpackPlugin} from '@sewing-kit/plugin-web-app-base';
 import {serviceWebpackPlugin} from '@sewing-kit/plugin-service-base';
@@ -38,6 +39,7 @@ export function createQuiltWebAppPlugin() {
     jestProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
+    packageFlexibleOutputsConsumerPlugin,
     reactProjectPlugin,
     webAppWebpackPlugin,
   ]);
@@ -52,6 +54,7 @@ export function createQuiltServicePlugin() {
     jestProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
+    packageFlexibleOutputsConsumerPlugin,
     reactProjectPlugin,
     serviceWebpackPlugin,
   ]);

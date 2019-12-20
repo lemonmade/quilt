@@ -2072,10 +2072,10 @@
   optionalDependencies:
     "@sewing-kit/plugin-webpack" "^0.0.22"
 
-"@sewing-kit/plugin-package-flexible-outputs@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-flexible-outputs/-/plugin-package-flexible-outputs-0.0.15.tgz#5059058d9f30ec4c92f3a0801cf9f7e1b4a45fe2"
-  integrity sha512-kKEopmrjA+1lftzWZ04N9l6bYJIXnWa3khaem5C/4hpgQh1uPwYGffxok1GQHOJW2YUdYOIeDQM3y6f0KqQ+9Q==
+"@sewing-kit/plugin-package-flexible-outputs@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-flexible-outputs/-/plugin-package-flexible-outputs-0.0.16.tgz#144265fa666e84cd7293d9144e21f59598d97dbc"
+  integrity sha512-ahsWAHf+mZbaf9RagYjYQIe4aFbbmTPjBnF1GM7xcoY2M6ZoldVOZDblqZZL/2vw+wqx8Ar2q6hZt8iX2vH9ew==
   dependencies:
     "@sewing-kit/plugin-package-binaries" "^0.0.25"
     "@sewing-kit/plugin-package-commonjs" "^0.0.29"
