@@ -6,7 +6,10 @@ import {
 import {packageFlexibleOutputsConsumerPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
 import {webpackProjectPlugin} from '@sewing-kit/plugin-webpack';
 import {webAppWebpackPlugin} from '@sewing-kit/plugin-web-app-base';
-import {serviceWebpackPlugin} from '@sewing-kit/plugin-service-base';
+import {
+  serviceWebpackPlugin,
+  configureDevServer,
+} from '@sewing-kit/plugin-service-base';
 import {eslintWorkspacePlugin} from '@sewing-kit/plugin-eslint';
 import {
   javascriptWorkspacePlugin,
@@ -47,7 +50,13 @@ export function createQuiltWebAppPlugin() {
 
 export const quiltWebAppPlugin = createQuiltWebAppPlugin();
 
-export function createQuiltServicePlugin() {
+export interface QuiltServiceOptions {
+  devServer?: import('@sewing-kit/plugin-service-base').DevServerOptions;
+}
+
+export function createQuiltServicePlugin({
+  devServer,
+}: QuiltServiceOptions = {}) {
   return createComposedProjectPlugin('Quilt.Service', [
     babelProjectPlugin,
     webpackProjectPlugin,
@@ -57,6 +66,7 @@ export function createQuiltServicePlugin() {
     packageFlexibleOutputsConsumerPlugin,
     reactProjectPlugin,
     serviceWebpackPlugin,
+    devServer && configureDevServer(devServer),
   ]);
 }
 
