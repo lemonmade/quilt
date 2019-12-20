@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-router",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -10,7 +10,7 @@
     "react": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@quilted/react-html": "^0.0.9",
-    "@quilted/react-server-render": "^0.0.8"
+    "@quilted/react-html": "^0.0.10",
+    "@quilted/react-server-render": "^0.0.9"
   }
 }
