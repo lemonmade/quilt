@@ -5,6 +5,7 @@ import {typeScriptProjectPlugin} from '@sewing-kit/plugin-typescript';
 import {jestProjectPlugin} from '@sewing-kit/plugin-jest';
 import {reactProjectPlugin} from '@sewing-kit/plugin-react';
 import {babelProjectPlugin} from '@sewing-kit/plugin-babel';
+import {jsonProjectPlugin} from '@sewing-kit/plugin-json';
 import {createPackageFlexibleOutputsPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
 
 export const defaultProjectPlugin = createComposedProjectPlugin(
@@ -12,6 +13,7 @@ export const defaultProjectPlugin = createComposedProjectPlugin(
   [
     babelProjectPlugin,
     jestProjectPlugin,
+    jsonProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     reactProjectPlugin,
@@ -26,6 +28,7 @@ export const nodeOnlyProjectPlugin = createComposedProjectPlugin(
   [
     babelProjectPlugin,
     jestProjectPlugin,
+    jsonProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     reactProjectPlugin,
