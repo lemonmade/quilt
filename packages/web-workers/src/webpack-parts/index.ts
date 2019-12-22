@@ -1,1 +1,0 @@
-export {WebWorkerPlugin} from './plugin';

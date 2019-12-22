@@ -10,5 +10,10 @@ export default createPackage((pkg) => {
     runtime: Runtime.Node,
   });
   pkg.entry({root: './src/babel-plugin', name: 'babel', runtime: Runtime.Node});
+  pkg.entry({
+    root: './src/sewing-kit',
+    name: 'sewing-kit',
+    runtime: Runtime.Node,
+  });
   pkg.plugin(defaultProjectPlugin);
 });

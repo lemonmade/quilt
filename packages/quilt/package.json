@@ -7,9 +7,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@quilted/react-html": "^0.0.10",
-    "@quilted/react-router": "^0.0.10",
-    "@quilted/react-server-render": "^0.0.9"
+    "@quilted/react-html": "*",
+    "@quilted/react-router": "*",
+    "@quilted/react-server-render": "*",
+    "@quilted/web-workers": "*"
   },
   "peerDependencies": {
     "react": "^16.12.0",

@@ -24,6 +24,11 @@ import {reactProjectPlugin} from '@sewing-kit/plugin-react';
 import {babelProjectPlugin} from '@sewing-kit/plugin-babel';
 import {jestWorkspacePlugin, jestProjectPlugin} from '@sewing-kit/plugin-jest';
 
+// Because we expect quilt to be installed, we can safely assume all its dependencies
+// will resolve as well.
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {useWebWorkers} from '@quilted/web-workers/sewing-kit';
+
 export function createQuiltPackagePlugin() {
   return createComposedProjectPlugin('Quilt.Package', [
     babelProjectPlugin,
@@ -47,6 +52,7 @@ export function createQuiltWebAppPlugin() {
     typeScriptProjectPlugin,
     packageFlexibleOutputsConsumerPlugin,
     reactProjectPlugin,
+    useWebWorkers(),
     webAppWebpackPlugin,
   ]);
 }
@@ -71,6 +77,7 @@ export function createQuiltServicePlugin({
     reactProjectPlugin,
     serviceWebpackPlugin,
     devServer && configureDevServer(devServer),
+    useWebWorkers(),
   ]);
 }
 
