@@ -10,6 +10,7 @@ import {
   serviceWebpackPlugin,
   configureDevServer,
 } from '@sewing-kit/plugin-service-base';
+import {jsonProjectPlugin} from '@sewing-kit/plugin-json';
 import {eslintWorkspacePlugin} from '@sewing-kit/plugin-eslint';
 import {
   javascriptWorkspacePlugin,
@@ -27,6 +28,7 @@ export function createQuiltPackagePlugin() {
   return createComposedProjectPlugin('Quilt.Package', [
     babelProjectPlugin,
     jestProjectPlugin,
+    jsonProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     reactProjectPlugin,
@@ -40,6 +42,7 @@ export function createQuiltWebAppPlugin() {
     babelProjectPlugin,
     webpackProjectPlugin,
     jestProjectPlugin,
+    jsonProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     packageFlexibleOutputsConsumerPlugin,
@@ -61,6 +64,7 @@ export function createQuiltServicePlugin({
     babelProjectPlugin,
     webpackProjectPlugin,
     jestProjectPlugin,
+    jsonProjectPlugin,
     javascriptProjectPlugin,
     typeScriptProjectPlugin,
     packageFlexibleOutputsConsumerPlugin,
