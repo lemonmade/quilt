@@ -12,11 +12,11 @@
     "@sewing-kit/plugin-javascript": "^0.0.31",
     "@sewing-kit/plugin-jest": "^0.0.26",
     "@sewing-kit/plugin-json": "^0.0.28",
-    "@sewing-kit/plugin-package-flexible-outputs": "^0.0.20",
+    "@sewing-kit/plugin-package-flexible-outputs": "^0.0.21",
     "@sewing-kit/plugin-react": "^0.0.24",
     "@sewing-kit/plugin-service-base": "^0.0.30",
     "@sewing-kit/plugin-typescript": "^0.0.31",
-    "@sewing-kit/plugin-web-app-base": "^0.0.34",
+    "@sewing-kit/plugin-web-app-base": "^0.0.35",
     "@sewing-kit/plugin-webpack": "^0.0.25",
     "@sewing-kit/plugins": "^0.0.11"
   },

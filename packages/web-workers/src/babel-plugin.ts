@@ -2,6 +2,10 @@ import {resolve} from 'path';
 import {runInNewContext} from 'vm';
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
+  '@quilted/quilt': [
+    {name: 'createWorkerFactory', plain: false},
+    {name: 'createPlainWorkerFactory', plain: true},
+  ],
   '@quilted/web-workers': [
     {name: 'createWorkerFactory', plain: false},
     {name: 'createPlainWorkerFactory', plain: true},
