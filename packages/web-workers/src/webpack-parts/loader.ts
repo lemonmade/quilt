@@ -1,6 +1,4 @@
 import * as path from 'path';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {getOptions} from 'loader-utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
