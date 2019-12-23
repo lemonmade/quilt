@@ -1,9 +1,3 @@
-// For some reason, the no-extraneous-dependency disables below cause an error in
-// CI for being unnecessary (which is wrong; it should be required). Can’t figure
-// out why so just disabling the rule for this file altogether (needs to be done
-// this way as any other form of disabling rules is a violation of this rule, lol).
-/* eslint eslint-comments/no-unused-disable: off */
-
 import {
   createComposedWorkspacePlugin,
   createComposedProjectPlugin,
