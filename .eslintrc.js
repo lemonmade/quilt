@@ -13,6 +13,7 @@ module.exports = {
     'packages/*/*.mjs',
     'packages/*/*.node',
     'packages/*/*.esnext',
+    'packages/**/tests/fixtures/',
   ],
   overrides: [
     {

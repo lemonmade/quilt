@@ -1,28 +1,25 @@
 import {createWorkspace} from '@sewing-kit/config';
 import {createWorkspaceTestPlugin} from '@sewing-kit/plugins';
 
-import {eslintWorkspacePlugin} from '@sewing-kit/plugin-eslint';
-import {javascriptWorkspacePlugin} from '@sewing-kit/plugin-javascript';
-import {typeScriptWorkspacePlugin} from '@sewing-kit/plugin-typescript';
-import {jestWorkspacePlugin} from '@sewing-kit/plugin-jest';
+import {eslint} from '@sewing-kit/plugin-eslint';
+import {jest} from '@sewing-kit/plugin-jest';
+import {workspaceJavaScript} from '@sewing-kit/plugin-javascript';
+import {workspaceTypeScript} from '@sewing-kit/plugin-typescript';
 
 export default createWorkspace((workspace) => {
-  workspace.plugins(
-    eslintWorkspacePlugin,
-    javascriptWorkspacePlugin,
-    typeScriptWorkspacePlugin,
-    jestWorkspacePlugin,
+  workspace.use(
+    eslint(),
+    jest(),
+    workspaceJavaScript(),
+    workspaceTypeScript(),
     createWorkspaceTestPlugin(
       'Quilted.WebWorkerTestIgnore',
       ({hooks, workspace}) => {
-        hooks.configure.tap('Quilted.WebWorkerTestIgnore', (configure) => {
-          configure.jestWatchIgnore?.tap(
-            'Quilted.WebWorkerTestIgnore',
-            (ignore) => [
-              ...ignore,
-              workspace.fs.resolvePath('packages/web-workers/tests/fixtures'),
-            ],
-          );
+        hooks.configure.hook((configure) => {
+          configure.jestWatchIgnore?.hook((ignore) => [
+            ...ignore,
+            workspace.fs.resolvePath('packages/web-workers/tests/fixtures'),
+          ]);
         });
       },
     ),

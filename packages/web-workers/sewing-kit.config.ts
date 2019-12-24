@@ -15,5 +15,5 @@ export default createPackage((pkg) => {
     name: 'sewing-kit',
     runtime: Runtime.Node,
   });
-  pkg.plugin(defaultProjectPlugin);
+  pkg.use(defaultProjectPlugin);
 });

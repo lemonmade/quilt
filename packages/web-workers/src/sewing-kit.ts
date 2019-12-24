@@ -6,17 +6,17 @@ const PLUGIN = 'Quilt.WebWorkers';
 
 export interface Options {}
 
-export function useWebWorkers(_options?: Options) {
+export function webWorkers(_options?: Options) {
   return createComposedProjectPlugin(PLUGIN, async (composer) => {
     await Promise.all([
       (async () => {
         try {
-          const [{addWebpackPlugin}, {WebWorkerPlugin}] = await Promise.all([
+          const [{addWebpackPlugins}, {WebWorkerPlugin}] = await Promise.all([
             import('@sewing-kit/plugin-webpack'),
             import('./webpack-parts'),
           ] as const);
 
-          composer.use(addWebpackPlugin(new WebWorkerPlugin()));
+          composer.use(addWebpackPlugins(new WebWorkerPlugin()));
         } catch {
           // intentional noop
         }

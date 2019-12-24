@@ -1,95 +1,78 @@
 import {
+  Package,
+  Service,
+  WebApp,
   createComposedWorkspacePlugin,
   createComposedProjectPlugin,
 } from '@sewing-kit/plugins';
 
-import {packageFlexibleOutputsConsumerPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
-import {webpackProjectPlugin} from '@sewing-kit/plugin-webpack';
-import {webAppWebpackPlugin} from '@sewing-kit/plugin-web-app-base';
-import {
-  serviceWebpackPlugin,
-  configureDevServer,
-} from '@sewing-kit/plugin-service-base';
-import {jsonProjectPlugin} from '@sewing-kit/plugin-json';
-import {eslintWorkspacePlugin} from '@sewing-kit/plugin-eslint';
-import {
-  javascriptWorkspacePlugin,
-  javascriptProjectPlugin,
-} from '@sewing-kit/plugin-javascript';
-import {
-  typeScriptWorkspacePlugin,
-  typeScriptProjectPlugin,
-} from '@sewing-kit/plugin-typescript';
-import {reactProjectPlugin} from '@sewing-kit/plugin-react';
-import {babelProjectPlugin} from '@sewing-kit/plugin-babel';
-import {jestWorkspacePlugin, jestProjectPlugin} from '@sewing-kit/plugin-jest';
+import {flexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
+import {webpack} from '@sewing-kit/plugin-webpack';
+import {buildWebAppWithWebpack} from '@sewing-kit/plugin-web-app-base';
+import {buildServiceWithWebpack} from '@sewing-kit/plugin-service-base';
+import {json} from '@sewing-kit/plugin-json';
+import {eslint} from '@sewing-kit/plugin-eslint';
+import {javascript, workspaceJavaScript} from '@sewing-kit/plugin-javascript';
+import {typescript, workspaceTypeScript} from '@sewing-kit/plugin-typescript';
+import {react} from '@sewing-kit/plugin-react';
+import {babelConfigurationHooks} from '@sewing-kit/plugin-babel';
+import {jest, jestConfigurationHooks} from '@sewing-kit/plugin-jest';
 
 // Because we expect quilt to be installed, we can safely assume all its dependencies
 // will resolve as well.
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {useWebWorkers} from '@quilted/web-workers/sewing-kit';
+import {webWorkers} from '@quilted/web-workers/sewing-kit';
 
-export function createQuiltPackagePlugin() {
-  return createComposedProjectPlugin('Quilt.Package', [
-    babelProjectPlugin,
-    jestProjectPlugin,
-    jsonProjectPlugin,
-    javascriptProjectPlugin,
-    typeScriptProjectPlugin,
-    reactProjectPlugin,
+export function quiltPackage({react: useReact = true} = {}) {
+  return createComposedProjectPlugin<Package>('Quilt.Package', [
+    babelConfigurationHooks,
+    jestConfigurationHooks,
+    json(),
+    javascript(),
+    typescript(),
+    useReact && react(),
   ]);
 }
 
-export const quiltPackagePlugin = createQuiltPackagePlugin();
-
-export function createQuiltWebAppPlugin() {
-  return createComposedProjectPlugin('Quilt.WebApp', [
-    babelProjectPlugin,
-    webpackProjectPlugin,
-    jestProjectPlugin,
-    jsonProjectPlugin,
-    javascriptProjectPlugin,
-    typeScriptProjectPlugin,
-    packageFlexibleOutputsConsumerPlugin,
-    reactProjectPlugin,
-    useWebWorkers(),
-    webAppWebpackPlugin,
+export function quiltWebApp() {
+  return createComposedProjectPlugin<WebApp>('Quilt.WebApp', [
+    babelConfigurationHooks,
+    jestConfigurationHooks,
+    json(),
+    javascript(),
+    typescript(),
+    webpack(),
+    flexibleOutputs(),
+    react(),
+    webWorkers(),
+    buildWebAppWithWebpack(),
   ]);
 }
-
-export const quiltWebAppPlugin = createQuiltWebAppPlugin();
 
 export interface QuiltServiceOptions {
   devServer?: import('@sewing-kit/plugin-service-base').DevServerOptions;
 }
 
-export function createQuiltServicePlugin({
-  devServer,
-}: QuiltServiceOptions = {}) {
-  return createComposedProjectPlugin('Quilt.Service', [
-    babelProjectPlugin,
-    webpackProjectPlugin,
-    jestProjectPlugin,
-    jsonProjectPlugin,
-    javascriptProjectPlugin,
-    typeScriptProjectPlugin,
-    packageFlexibleOutputsConsumerPlugin,
-    reactProjectPlugin,
-    serviceWebpackPlugin,
-    devServer && configureDevServer(devServer),
-    useWebWorkers(),
+export function quiltService({devServer}: QuiltServiceOptions = {}) {
+  return createComposedProjectPlugin<Service>('Quilt.Service', [
+    babelConfigurationHooks,
+    jestConfigurationHooks,
+    webpack(),
+    json(),
+    javascript(),
+    typescript(),
+    flexibleOutputs(),
+    react(),
+    buildServiceWithWebpack(devServer),
+    webWorkers(),
   ]);
 }
 
-export const quiltServicePlugin = createQuiltServicePlugin();
-
-export function createQuiltWorkspacePlugin() {
+export function quiltWorkspace() {
   return createComposedWorkspacePlugin('Quilt.Workspace', [
-    eslintWorkspacePlugin,
-    javascriptWorkspacePlugin,
-    typeScriptWorkspacePlugin,
-    jestWorkspacePlugin,
+    jest(),
+    eslint(),
+    workspaceJavaScript(),
+    workspaceTypeScript(),
   ]);
 }
-
-export const quiltWorkspacePlugin = createQuiltWorkspacePlugin();

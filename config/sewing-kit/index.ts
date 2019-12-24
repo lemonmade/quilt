@@ -1,23 +1,23 @@
-import {createComposedProjectPlugin} from '@sewing-kit/plugins';
+import {Package, createComposedProjectPlugin} from '@sewing-kit/plugins';
 
-import {javascriptProjectPlugin} from '@sewing-kit/plugin-javascript';
-import {typeScriptProjectPlugin} from '@sewing-kit/plugin-typescript';
-import {jestProjectPlugin} from '@sewing-kit/plugin-jest';
-import {reactProjectPlugin} from '@sewing-kit/plugin-react';
-import {babelProjectPlugin} from '@sewing-kit/plugin-babel';
-import {jsonProjectPlugin} from '@sewing-kit/plugin-json';
-import {createPackageFlexibleOutputsPlugin} from '@sewing-kit/plugin-package-flexible-outputs';
+import {json} from '@sewing-kit/plugin-json';
+import {react} from '@sewing-kit/plugin-react';
+import {javascript} from '@sewing-kit/plugin-javascript';
+import {typescript} from '@sewing-kit/plugin-typescript';
+import {jestConfigurationHooks} from '@sewing-kit/plugin-jest';
+import {babelConfigurationHooks} from '@sewing-kit/plugin-babel';
+import {buildFlexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
 
-export const defaultProjectPlugin = createComposedProjectPlugin(
+export const defaultProjectPlugin = createComposedProjectPlugin<Package>(
   'Quilt.DefaultProject',
   [
-    babelProjectPlugin,
-    jestProjectPlugin,
-    jsonProjectPlugin,
-    javascriptProjectPlugin,
-    typeScriptProjectPlugin,
-    reactProjectPlugin,
-    createPackageFlexibleOutputsPlugin({
+    babelConfigurationHooks,
+    jestConfigurationHooks,
+    json(),
+    javascript(),
+    typescript(),
+    react(),
+    buildFlexibleOutputs({
       esmodules: false,
     }),
   ],
@@ -26,13 +26,13 @@ export const defaultProjectPlugin = createComposedProjectPlugin(
 export const nodeOnlyProjectPlugin = createComposedProjectPlugin(
   'Quilt.NodeOnlyProject',
   [
-    babelProjectPlugin,
-    jestProjectPlugin,
-    jsonProjectPlugin,
-    javascriptProjectPlugin,
-    typeScriptProjectPlugin,
-    reactProjectPlugin,
-    createPackageFlexibleOutputsPlugin({
+    babelConfigurationHooks,
+    jestConfigurationHooks,
+    json(),
+    javascript(),
+    typescript(),
+    react(),
+    buildFlexibleOutputs({
       esmodules: false,
       esnext: false,
     }),
