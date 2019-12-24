@@ -18,11 +18,6 @@ import {react} from '@sewing-kit/plugin-react';
 import {babelConfigurationHooks} from '@sewing-kit/plugin-babel';
 import {jest, jestConfigurationHooks} from '@sewing-kit/plugin-jest';
 
-// Because we expect quilt to be installed, we can safely assume all its dependencies
-// will resolve as well.
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {webWorkers} from '@quilted/web-workers/sewing-kit';
-
 export function quiltPackage({react: useReact = true} = {}) {
   return createComposedProjectPlugin<Package>('Quilt.Package', [
     babelConfigurationHooks,
@@ -35,18 +30,29 @@ export function quiltPackage({react: useReact = true} = {}) {
 }
 
 export function quiltWebApp() {
-  return createComposedProjectPlugin<WebApp>('Quilt.WebApp', [
-    babelConfigurationHooks,
-    jestConfigurationHooks,
-    json(),
-    javascript(),
-    typescript(),
-    webpack(),
-    flexibleOutputs(),
-    react(),
-    webWorkers(),
-    buildWebAppWithWebpack(),
-  ]);
+  return createComposedProjectPlugin<WebApp>(
+    'Quilt.WebApp',
+    async (composer) => {
+      composer.use(
+        babelConfigurationHooks,
+        jestConfigurationHooks,
+        json(),
+        javascript(),
+        typescript(),
+        webpack(),
+        buildWebAppWithWebpack(),
+        flexibleOutputs(),
+        react(),
+      );
+
+      await Promise.all([
+        ignoreMissingImports(async () => {
+          const {webWorkers} = await import('@quilted/web-workers/sewing-kit');
+          composer.use(webWorkers());
+        }),
+      ]);
+    },
+  );
 }
 
 export interface QuiltServiceOptions {
@@ -54,18 +60,29 @@ export interface QuiltServiceOptions {
 }
 
 export function quiltService({devServer}: QuiltServiceOptions = {}) {
-  return createComposedProjectPlugin<Service>('Quilt.Service', [
-    babelConfigurationHooks,
-    jestConfigurationHooks,
-    webpack(),
-    json(),
-    javascript(),
-    typescript(),
-    flexibleOutputs(),
-    react(),
-    buildServiceWithWebpack(devServer),
-    webWorkers(),
-  ]);
+  return createComposedProjectPlugin<Service>(
+    'Quilt.Service',
+    async (composer) => {
+      composer.use(
+        babelConfigurationHooks,
+        jestConfigurationHooks,
+        webpack(),
+        json(),
+        javascript(),
+        typescript(),
+        flexibleOutputs(),
+        react(),
+        buildServiceWithWebpack(devServer),
+      );
+
+      await Promise.all([
+        ignoreMissingImports(async () => {
+          const {webWorkers} = await import('@quilted/web-workers/sewing-kit');
+          composer.use(webWorkers());
+        }),
+      ]);
+    },
+  );
 }
 
 export function quiltWorkspace() {
@@ -75,4 +92,12 @@ export function quiltWorkspace() {
     workspaceJavaScript(),
     workspaceTypeScript(),
   ]);
+}
+
+async function ignoreMissingImports<T>(perform: () => Promise<T>) {
+  try {
+    await perform();
+  } catch {
+    // intentional noop
+  }
 }
