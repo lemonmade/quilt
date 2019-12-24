@@ -1,16 +1,16 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
   "dependencies": {
-    "@quilted/react-html": "^0.0.11",
-    "@quilted/react-router": "^0.0.11",
-    "@quilted/react-server-render": "^0.0.10",
-    "@quilted/web-workers": "^0.0.2"
+    "@quilted/react-html": "^0.0.12",
+    "@quilted/react-router": "^0.0.12",
+    "@quilted/react-server-render": "^0.0.11",
+    "@quilted/web-workers": "^0.0.3"
   },
   "peerDependencies": {
     "react": "^16.12.0",
