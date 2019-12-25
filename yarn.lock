@@ -2049,10 +2049,10 @@
   optionalDependencies:
     "@sewing-kit/plugin-webpack" "^0.0.27"
 
-"@sewing-kit/plugin-package-esnext@^0.0.37":
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-esnext/-/plugin-package-esnext-0.0.37.tgz#adb54ac2449237e92454a75d4f7dc5e9d2b77ac1"
-  integrity sha512-t37NZVrkHk/W9/HBa1eKcopJzOjYEvYogAJQ1tGxXxpDuxc69XZdhLYEyi97nDP8F2PrDLFTy12b1mFH54pnQw==
+"@sewing-kit/plugin-package-esnext@^0.0.38":
+  version "0.0.38"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-esnext/-/plugin-package-esnext-0.0.38.tgz#a4e14fa2489aee7136c0fd4d54a411f583a72471"
+  integrity sha512-+yScfYJ23kjTZVjp/TisV+xpCl+ooYe/s5Rvvu2BrgdWuiroL6CakWPgdshJcC9pipF0Eh/+exo/0CMaLU3MlQ==
   dependencies:
     "@sewing-kit/hooks" "^0.0.14"
     "@sewing-kit/plugin-babel" "^0.0.29"
@@ -2063,15 +2063,15 @@
   optionalDependencies:
     "@sewing-kit/plugin-webpack" "^0.0.27"
 
-"@sewing-kit/plugin-package-flexible-outputs@^0.0.24":
-  version "0.0.24"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-flexible-outputs/-/plugin-package-flexible-outputs-0.0.24.tgz#cbf7aae4a4cad73516ed835dc13d5ed49417a529"
-  integrity sha512-9Cm9cyR0u2pZJ/WkRBeuwchdzuFuD4cX0q5kNihsw7DZpSTxAQWOJ/yI6Scq4eNSSMgtVgs9MzP7ISkKVNjvvg==
+"@sewing-kit/plugin-package-flexible-outputs@^0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-flexible-outputs/-/plugin-package-flexible-outputs-0.0.25.tgz#4d1f52430f80ef559d34e0e779da0df9ba5a0eff"
+  integrity sha512-0ayipKgZKGbMkc8Gq4MdOjHbVbQmGA0xWkjyULf5+PtZj2qn5NacuygZL4OpO39dudEDH5aVkJDQgmopRI6woQ==
   dependencies:
     "@sewing-kit/plugin-package-binaries" "^0.0.27"
     "@sewing-kit/plugin-package-commonjs" "^0.0.36"
     "@sewing-kit/plugin-package-esmodules" "^0.0.37"
-    "@sewing-kit/plugin-package-esnext" "^0.0.37"
+    "@sewing-kit/plugin-package-esnext" "^0.0.38"
     "@sewing-kit/plugin-package-node" "^0.0.35"
     "@sewing-kit/plugin-package-typescript" "^0.0.32"
     "@sewing-kit/plugins" "^0.0.12"

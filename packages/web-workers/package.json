@@ -1,6 +1,7 @@
 {
   "name": "@quilted/web-workers",
   "version": "0.0.4",
+  "description": "",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"

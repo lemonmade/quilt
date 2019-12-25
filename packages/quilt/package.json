@@ -1,6 +1,7 @@
 {
   "name": "@quilted/quilt",
   "version": "0.0.14",
+  "description": "",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
