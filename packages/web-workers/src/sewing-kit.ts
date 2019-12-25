@@ -11,12 +11,12 @@ export function webWorkers(_options?: Options) {
     await Promise.all([
       (async () => {
         try {
-          const [{addWebpackPlugins}, {WebWorkerPlugin}] = await Promise.all([
+          const [{webpackPlugins}, {WebWorkerPlugin}] = await Promise.all([
             import('@sewing-kit/plugin-webpack'),
             import('./webpack-parts'),
           ] as const);
 
-          composer.use(addWebpackPlugins(new WebWorkerPlugin()));
+          composer.use(webpackPlugins(new WebWorkerPlugin()));
         } catch {
           // intentional noop
         }
