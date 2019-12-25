@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -8,10 +8,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@quilted/react-html": "^0.0.12",
-    "@quilted/react-router": "^0.0.12",
-    "@quilted/react-server-render": "^0.0.11",
-    "@quilted/web-workers": "^0.0.4"
+    "@quilted/react-html": "^0.0.13",
+    "@quilted/react-router": "^0.0.13",
+    "@quilted/react-server-render": "^0.0.12",
+    "@quilted/web-workers": "^0.0.5"
   },
   "peerDependencies": {
     "react": "^16.12.0",
