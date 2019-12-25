@@ -29,18 +29,22 @@ export function quiltPackage({react: useReact = true} = {}) {
   ]);
 }
 
-export function quiltWebApp() {
+export interface QuiltWebAppOptions {
+  assetServer?: import('@sewing-kit/plugin-web-app-base').Options['assetServer'];
+}
+
+export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
     async (composer) => {
       composer.use(
         babelConfigurationHooks,
         jestConfigurationHooks,
+        webpack(),
         json(),
         javascript(),
         typescript(),
-        webpack(),
-        buildWebAppWithWebpack(),
+        buildWebAppWithWebpack({assetServer}),
         flexibleOutputs(),
         react(),
       );
