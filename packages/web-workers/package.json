@@ -8,7 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@sewing-kit/plugins": ">0.0.1",
+    "@sewing-kit/plugins": "0.0.13",
     "@types/webpack": "^4.0.0",
     "loader-utils": "^1.0.0",
     "remote-call": "^0.0.1",
@@ -32,8 +32,8 @@
   },
   "optionalDependencies": {
     "@babel/core": "^7.0.0",
-    "@sewing-kit/plugin-babel": "0.0.29",
-    "@sewing-kit/plugin-webpack": "0.0.27",
+    "@sewing-kit/plugin-babel": "0.0.30",
+    "@sewing-kit/plugin-webpack": "0.0.28",
     "webpack": ">=4.40.0 <5.0.0"
   }
 }
