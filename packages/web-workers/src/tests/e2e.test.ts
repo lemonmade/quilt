@@ -7,9 +7,6 @@ import * as path from 'path';
 import {DefinePlugin} from 'webpack';
 import {Page, Worker, JSHandle} from 'puppeteer';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Target, Module} from '@sewing-kit/babel-preset';
-
 import {WebWorkerPlugin} from '../webpack-parts';
 
 import {withContext, Context, runWebpack as runWebpackBase} from './utilities';
@@ -19,7 +16,7 @@ const mainFile = 'src/main.js';
 const workerFile = 'src/worker.js';
 const secondWorkerFile = 'src/worker2.js';
 
-jest.setTimeout(10_000);
+jest.setTimeout(20_000);
 
 describe('web-worker', () => {
   it('creates a worker factory that can produce workers that act like the original module', async () => {
