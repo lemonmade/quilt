@@ -2139,10 +2139,10 @@
     "@sewing-kit/plugins" "^0.0.18"
     immer "^5.0.0"
 
-"@sewing-kit/plugin-service-base@^0.0.38":
-  version "0.0.38"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-service-base/-/plugin-service-base-0.0.38.tgz#531807bb1ab4462fe13c5611022b70fa0a733e45"
-  integrity sha512-VNu8bN4nugd9Av6YyRNPzrpZJghCQIs7Mxz8l/SIA6Aa1MnF1eO35SEZRXaFYA95AgiLisDhTMynQ2tn/7O5Tw==
+"@sewing-kit/plugin-service-base@^0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-service-base/-/plugin-service-base-0.0.39.tgz#53b3901e1af769cc13d319f33945a44e692f766c"
+  integrity sha512-hkHAzqEhv2OIVYTzPwvtENAdAaO3PquTqTT8PisOx0reByvhKU0HDxVgbUguLcLhytXdNyj6oy0D1s7+VI/4Hg==
   dependencies:
     "@sewing-kit/hooks" "^0.0.20"
     "@sewing-kit/plugin-javascript" "^0.0.39"
