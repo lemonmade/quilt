@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -11,7 +11,7 @@
     "@quilted/react-html": "^0.0.13",
     "@quilted/react-router": "^0.0.13",
     "@quilted/react-server-render": "^0.0.12",
-    "@quilted/web-workers": "^0.0.9"
+    "@quilted/web-workers": "^0.0.10"
   },
   "peerDependencies": {
     "react": "^16.12.0",
