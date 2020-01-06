@@ -40,7 +40,7 @@ const addHooks = (hooks: any) => ({
 });
 
 export function webWorkers(_options?: Options) {
-  createProjectPlugin(PLUGIN, ({tasks: {dev, build}, project}) => {
+  return createProjectPlugin(PLUGIN, ({tasks: {dev, build}, project}) => {
     dev.hook(({hooks}) => {
       hooks.configureHooks.hook(addHooks);
       hooks.configure.hook((configure) => {
