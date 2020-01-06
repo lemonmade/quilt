@@ -25,7 +25,7 @@ export function runWebpack(
         resolve: {
           // Need to include .esnext to get the non-polyfill-assuming version of
           // remote-call.
-          extensions: ['.esnext', '.js', '.ts', '.json'],
+          extensions: ['.esnext', '.js', '.ts', '.tsx', '.json'],
           alias: {
             '@quilted/web-workers': srcRoot,
             '@quilted/web-workers/worker': path.join(srcRoot, 'worker'),
