@@ -1,26 +1,25 @@
 import {resolve} from 'path';
 import {runInNewContext} from 'vm';
+import {Runner} from './types';
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
   '@quilted/quilt': [
-    {name: 'createWorkerFactory', plain: false},
-    {name: 'createPlainWorkerFactory', plain: true},
+    {name: 'createWorkerFactory', runner: 'expose'},
+    {name: 'createPlainWorkerFactory', runner: 'none'},
+    {name: 'createWorkerComponent', runner: 'react'},
   ],
   '@quilted/web-workers': [
-    {name: 'createWorkerFactory', plain: false},
-    {name: 'createPlainWorkerFactory', plain: true},
-  ],
-  '@quilted/react-web-workers': [
-    {name: 'createWorkerFactory', plain: false},
-    {name: 'createPlainWorkerFactory', plain: true},
+    {name: 'createWorkerFactory', runner: 'expose'},
+    {name: 'createPlainWorkerFactory', runner: 'none'},
+    {name: 'createWorkerComponent', runner: 'react'},
   ],
 };
 
 const loader = resolve(__dirname, 'webpack-parts/loader');
 
-interface ProcessableImport {
+export interface ProcessableImport {
   name: string;
-  plain: boolean;
+  runner?: Runner;
 }
 
 export interface Options {
@@ -125,7 +124,9 @@ export default function workerBabelPlugin({
       const callExpression: CallExpressionNodePath = referencePath.parentPath as any;
       const dynamicImports = new Set<CallExpressionNodePath>();
 
-      callExpression.traverse({
+      const firstArgument = callExpression.get('arguments')[0];
+
+      firstArgument.traverse({
         Import({parentPath}) {
           if (parentPath.isCallExpression()) {
             dynamicImports.add(parentPath);
@@ -153,14 +154,14 @@ export default function workerBabelPlugin({
       }
 
       if (noop) {
-        callExpression.replaceWith(noopBinding());
+        firstArgument.replaceWith(noopBinding());
         return;
       }
 
       const {leadingComments} = dynamicallyImported.node;
       const options = {
         ...getLoaderOptions(leadingComments || []),
-        plain: importOptions.plain,
+        runner: importOptions.runner,
       };
 
       const importId = callExpression.scope.generateUidIdentifier('worker');
@@ -174,9 +175,7 @@ export default function workerBabelPlugin({
           ),
         );
 
-      callExpression.replaceWith(
-        t.callExpression(callExpression.get('callee').node, [importId]),
-      );
+      firstArgument.replaceWith(importId);
     }
   }
 }
@@ -214,9 +213,7 @@ function normalize(packages: NonNullable<Options['packages']>) {
     (all, pkg) => ({
       ...all,
       [pkg]: packages[pkg].map((anImport) =>
-        typeof anImport === 'string'
-          ? {name: anImport, plain: false}
-          : anImport,
+        typeof anImport === 'string' ? {name: anImport} : anImport,
       ),
     }),
     {},

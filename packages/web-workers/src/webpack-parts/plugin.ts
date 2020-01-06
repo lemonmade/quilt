@@ -6,7 +6,7 @@ type Plugin = import('webpack').Plugin;
 
 interface Options {
   globalObject?: string;
-  plugins?: Plugin[];
+  plugins?: readonly Plugin[];
 }
 
 export class WebWorkerPlugin implements Plugin {

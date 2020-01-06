@@ -8,10 +8,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@sewing-kit/plugins": "0.0.18",
+    "@remote-ui/react": "^0.0.5",
+    "@sewing-kit/plugins": "*",
     "@types/webpack": "^4.41.1",
     "loader-utils": "^1.0.0",
-    "remote-call": "^0.0.1",
+    "remote-call": "^0.0.2",
     "webpack-virtual-modules": "^0.2.1"
   },
   "devDependencies": {
@@ -34,6 +35,7 @@
     "@babel/core": "^7.0.0",
     "@sewing-kit/plugin-babel": "0.0.35",
     "@sewing-kit/plugin-webpack": "0.0.33",
+    "react": "*",
     "webpack": "^4.41.5"
   }
 }

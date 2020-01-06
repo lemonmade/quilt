@@ -13,13 +13,14 @@ import WebWorkerTemplatePlugin from 'webpack/lib/webworker/WebWorkerTemplatePlug
 // @ts-ignore
 import FetchCompileWasmTemplatePlugin from 'webpack/lib/web/FetchCompileWasmTemplatePlugin';
 
+import {Runner} from '../types';
 import {WebWorkerPlugin} from './plugin';
 
 const NAME = 'WebWorker';
 
 export interface Options {
   name?: string;
-  plain?: boolean;
+  runner?: Runner;
 }
 
 export function pitch(
@@ -55,14 +56,14 @@ export function pitch(
   }
 
   const options: Options = getOptions(this) || {};
-  const {name = String(plugin.workerId++), plain = false} = options;
+  const {name = String(plugin.workerId++), runner = Runner.Expose} = options;
 
   const virtualModule = path.join(
     path.dirname(resourcePath),
     `${path.basename(resourcePath, path.extname(resourcePath))}.worker.js`,
   );
 
-  if (!plain) {
+  if (runner === Runner.Expose) {
     plugin.virtualModules.writeModule(
       virtualModule,
       `
@@ -70,6 +71,58 @@ export function pitch(
         import {expose} from '@quilted/web-workers/worker';
 
         expose(api);
+      `,
+    );
+  } else if (runner === Runner.React) {
+    plugin.virtualModules.writeModule(
+      virtualModule,
+      `
+        import {createElement} from 'react';
+        import {createRemoteRoot} from '@remote-ui/core';
+        import {render} from '@remote-ui/react';
+        import {retain} from '@quilted/web-worker';
+        import {expose} from '@quilted/web-workers/worker';
+        import Component from ${JSON.stringify(request)};
+
+        class Runner {
+          constructor(props) {
+            super(props);
+            this.state = props;
+          }
+
+          updateProps(update) {
+            this.setState(update);
+          }
+
+          render() {
+            return createElement(Component, this.state);
+          }
+        }
+
+        function mount(props, dispatch) {
+          let runner;
+
+          retain(props);
+          retain(dispatch);
+
+          const root = createRoot(dispatch, {});
+
+          render(
+            createElement(Runner, {
+              ref: (createdRunner) => {
+                runner = createdRunner;
+              }
+            }),
+            root
+          );
+
+          return (update) => {
+            retain(update);
+            runner.updateProps(update);
+          };
+        }
+
+        expose({mount});
       `,
     );
   }
@@ -96,9 +149,11 @@ export function pitch(
   new FetchCompileWasmTemplatePlugin({
     mangleImports: (compiler.options.optimization! as any).mangleWasmImports,
   }).apply(workerCompiler);
-  new SingleEntryPlugin(context, plain ? request : virtualModule, name).apply(
-    workerCompiler,
-  );
+  new SingleEntryPlugin(
+    context,
+    runner === Runner.None ? request : virtualModule,
+    name,
+  ).apply(workerCompiler);
 
   for (const aPlugin of plugin.options.plugins || []) {
     aPlugin.apply(workerCompiler);
