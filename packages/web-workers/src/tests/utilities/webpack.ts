@@ -49,6 +49,7 @@ export function runWebpack(
                         '@sewing-kit/babel-preset',
                         {target: Target.Node, modules: Module.Preserve},
                       ],
+                      '@babel/preset-react',
                       '@babel/preset-typescript',
                     ],
                   },
