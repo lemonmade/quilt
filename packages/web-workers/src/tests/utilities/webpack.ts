@@ -32,7 +32,7 @@ export function runWebpack(
           },
         },
         resolveLoader: {
-          extensions: ['.js', '.ts', '.json'],
+          extensions: ['.js', '.ts', '.tsx', '.json'],
         },
         module: {
           rules: [
