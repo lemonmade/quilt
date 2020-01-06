@@ -24,7 +24,7 @@ export interface WorkerComponentOptions<
 }
 
 export function createWorkerComponent<
-  Props extends object,
+  Props,
   ComponentConfig extends {[key: string]: ComponentType<any>} = {}
 >(
   getComponent: () => Promise<MaybeDefaultExport<ComponentType<Props>>>,
@@ -40,7 +40,10 @@ export function createWorkerComponent<
   }
 
   const createWorker = createWorkerFactory<{
-    mount(props: Props): (props: Partial<Props>) => void;
+    mount(
+      props: Props,
+      dispatch: import('@remote-ui/core').Dispatch,
+    ): (props: Partial<Props>) => void;
   }>(getComponent as string);
 
   const WorkerComponent = memo((props: Props) => {
@@ -59,7 +62,7 @@ export function createWorkerComponent<
       (contextController as any);
 
     const contextReceiver = useContext(ReceiverContext);
-    const receiverRef = useRef<Receiver | null>(null);
+    const receiverRef = useRef<Receiver>(null as any);
 
     receiverRef.current =
       contextReceiver ?? receiverRef.current ?? new Receiver();
@@ -69,7 +72,11 @@ export function createWorkerComponent<
         sentProps.current = {...props};
 
         (async () => {
-          const update = await worker.mount(props);
+          const update = await worker.mount(
+            props,
+            receiverRef.current.dispatch,
+          );
+          // Might not need this, but definitely need to balance it out if we keep it
           retain(update);
           if (!mountedRef.current) return;
 

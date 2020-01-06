@@ -77,17 +77,17 @@ export function pitch(
     plugin.virtualModules.writeModule(
       virtualModule,
       `
-        import {createElement} from 'react';
+        import {createElement, Component} from 'react';
         import {createRemoteRoot} from '@remote-ui/core';
         import {render} from '@remote-ui/react';
-        import {retain} from '@quilted/web-worker';
+        import {retain} from '@quilted/web-workers';
         import {expose} from '@quilted/web-workers/worker';
-        import Component from ${JSON.stringify(request)};
+        import WorkerComponent from ${JSON.stringify(request)};
 
-        class Runner {
+        class Runner extends Component {
           constructor(props) {
             super(props);
-            this.state = props;
+            this.state = Object.assign({}, props);
           }
 
           updateProps(update) {
@@ -95,7 +95,7 @@ export function pitch(
           }
 
           render() {
-            return createElement(Component, this.state);
+            return createElement(WorkerComponent, this.state);
           }
         }
 
@@ -105,7 +105,7 @@ export function pitch(
           retain(props);
           retain(dispatch);
 
-          const root = createRoot(dispatch, {});
+          const root = createRemoteRoot(dispatch, {});
 
           render(
             createElement(Runner, {
