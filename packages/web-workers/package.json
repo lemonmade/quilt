@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@remote-ui/react": "*",
-    "@sewing-kit/plugins": "*",
+    "@remote-ui/react": "0.0.8",
+    "@sewing-kit/plugins": "0.0.19",
     "@types/webpack": "^4.41.2",
     "loader-utils": "^1.0.0",
     "remote-call": "*",
@@ -32,9 +32,9 @@
     "puppeteer": "^2.0.0"
   },
   "optionalDependencies": {
-    "@babel/core": "^7.0.0",
-    "@sewing-kit/plugin-babel": "*",
-    "@sewing-kit/plugin-webpack": "*",
+    "@babel/core": "^7.8.0",
+    "@sewing-kit/plugin-babel": "0.0.36",
+    "@sewing-kit/plugin-webpack": "0.0.34",
     "react": "*",
     "webpack": "^4.41.5"
   }
