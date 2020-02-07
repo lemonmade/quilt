@@ -6,6 +6,7 @@
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
+  "sideEffects": false,
   "dependencies": {
     "@sewing-kit/plugin-babel": "^0.0.36",
     "@sewing-kit/plugin-css": "^0.0.4",

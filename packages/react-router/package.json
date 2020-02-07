@@ -7,6 +7,7 @@
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
+  "sideEffects": false,
   "peerDependencies": {
     "react": ">=16.8.0 <17.0.0"
   },
