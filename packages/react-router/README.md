@@ -365,7 +365,7 @@ The `createTestRouter` function creates a mock router that matches up the expect
 ```tsx
 import React from 'react';
 import {createMount} from '@shopify/react-testing';
-import {TestRouter, createTestRouter} from '@shopify/react-testing';
+import {TestRouter, createTestRouter} from '@quilted/react-router/testing';
 
 export const mount = createMount({
   render: (element, _, {pathname = '/test'}) => (
