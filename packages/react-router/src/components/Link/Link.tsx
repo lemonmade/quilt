@@ -9,12 +9,12 @@ interface Props
     >,
     'href'
   > {
-  // should be `to` instead of url, resolve it with the router
-  url: string;
+  // should be resolved with the router
+  to: string;
   children?: React.ReactNode;
 }
 
-export function Link({children, url, onClick, ...rest}: Props) {
+export function Link({children, to, onClick, ...rest}: Props) {
   const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -32,11 +32,11 @@ export function Link({children, url, onClick, ...rest}: Props) {
     }
 
     event.preventDefault();
-    router.navigate(url);
+    router.navigate(to);
   };
 
   return (
-    <a href={url} onClick={handleClick} {...rest}>
+    <a href={to} onClick={handleClick} {...rest}>
       {children}
     </a>
   );
