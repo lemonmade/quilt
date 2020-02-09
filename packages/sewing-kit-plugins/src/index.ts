@@ -59,12 +59,12 @@ export function quiltWebApp({
         react(),
       );
 
-      await Promise.all([
-        ignoreMissingImports(async () => {
-          const {webWorkers} = await import('@quilted/web-workers/sewing-kit');
-          composer.use(webWorkers());
-        }),
-      ]);
+      // await Promise.all([
+      //   ignoreMissingImports(async () => {
+      //     const {webWorkers} = await import('@quilted/web-workers/sewing-kit');
+      //     composer.use(webWorkers());
+      //   }),
+      // ]);
     },
   );
 }
@@ -95,12 +95,12 @@ export function quiltService({
         buildServiceWithWebpack(devServer),
       );
 
-      await Promise.all([
-        ignoreMissingImports(async () => {
-          const {webWorkers} = await import('@quilted/web-workers/sewing-kit');
-          composer.use(webWorkers());
-        }),
-      ]);
+      // await Promise.all([
+      //   ignoreMissingImports(async () => {
+      //     const {webWorkers} = await import('@quilted/web-workers/sewing-kit');
+      //     composer.use(webWorkers());
+      //   }),
+      // ]);
     },
   );
 }
@@ -122,10 +122,10 @@ export function quiltWorkspace({
   ]);
 }
 
-async function ignoreMissingImports<T>(perform: () => Promise<T>) {
-  try {
-    await perform();
-  } catch {
-    // intentional noop
-  }
-}
+// async function ignoreMissingImports<T>(perform: () => Promise<T>) {
+//   try {
+//     await perform();
+//   } catch {
+//     // intentional noop
+//   }
+// }

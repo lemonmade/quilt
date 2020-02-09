@@ -9,7 +9,6 @@
   "references": [
     {"path": "../react-html"},
     {"path": "../react-router"},
-    {"path": "../react-server-render"},
-    {"path": "../web-workers"}
+    {"path": "../react-server-render"}
   ]
 }

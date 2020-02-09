@@ -6,7 +6,6 @@
     {"path": "./packages/react-html"},
     {"path": "./packages/react-router"},
     {"path": "./packages/react-server-render"},
-    {"path": "./packages/web-workers"},
     {"path": "./packages/sewing-kit-plugins"}
   ]
 }

@@ -23,15 +23,3 @@ export {
   useRouter,
   useNavigationBlock,
 } from '@quilted/react-router';
-export {
-  createWorkerFactory,
-  createPlainWorkerFactory,
-  createWorkerComponent,
-  createWorkerMessenger,
-  createIframeWorkerMessenger,
-  expose as exposeToWorker,
-  SafeWorkerArgument,
-  retain,
-  release,
-  useWorker,
-} from '@quilted/web-workers';
