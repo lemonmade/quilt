@@ -1,0 +1,52 @@
+import {createElement, Component} from 'react';
+import {render, createRemoteRoot} from '@remote-ui/react';
+import {retain, release} from '@remote-ui/web-workers';
+import {expose} from '@remote-ui/web-workers/worker';
+
+import WorkerComponent from {{WORKER_MODULE}};
+
+class Runner extends Component {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({}, props);
+  }
+
+  updateProps(update, callback) {
+    this.setState(update, callback);
+  }
+
+  render() {
+    return createElement(WorkerComponent, this.state);
+  }
+}
+
+function mount(props, dispatch) {
+  let runner;
+
+  retain(props);
+  retain(dispatch);
+
+  const root = createRemoteRoot(dispatch, {});
+
+  render(
+    createElement(Runner, {
+      ref: (createdRunner) => {
+        runner = createdRunner;
+      }
+    }),
+    root
+  );
+
+  return (update) => {
+    retain(update);
+
+    const updatedValues = Object.keys(update).map((key) => runner.props[key]);
+    runner.updateProps(update, () => {
+      updateValues.forEach((value) => {
+        release(value);
+      });
+    });
+  };
+}
+
+expose({mount});

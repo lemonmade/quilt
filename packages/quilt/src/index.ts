@@ -23,3 +23,9 @@ export {
   useRouter,
   useNavigationBlock,
 } from '@quilted/react-router';
+export {
+  useWorker,
+  createWorkerComponent,
+  createWorkerFactory,
+  createPlainWorkerFactory,
+} from '@quilted/react-web-workers';

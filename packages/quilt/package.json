@@ -11,7 +11,8 @@
   "dependencies": {
     "@quilted/react-html": "^0.0.14",
     "@quilted/react-router": "^0.0.15",
-    "@quilted/react-server-render": "^0.0.13"
+    "@quilted/react-server-render": "^0.0.13",
+    "@quilted/react-web-workers": "^0.0.0"
   },
   "peerDependencies": {
     "react": "^16.12.0",
