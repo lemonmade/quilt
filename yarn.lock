@@ -1926,15 +1926,39 @@
   dependencies:
     "@types/node" ">= 8"
 
+"@remote-ui/core@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-0.0.10.tgz#f492d123eec2131f95aa7797dba94d6b5f6d2471"
+  integrity sha512-bmxjL26fVfp5KK8Kjc4aGUGBTuAqfC8rvP/DKcepR4Ec54RtXQ5UD5lVcgQbv+wfFEPSRSxW9w7bQPlKLAtL5Q==
+  dependencies:
+    "@remote-ui/rpc" "^0.0.2"
+    "@remote-ui/types" "^0.0.4"
+
+"@remote-ui/react@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-0.0.14.tgz#8aaa1b25ac9e6405e47967ad159398fef7983bf6"
+  integrity sha512-AHl0N3yMJVpfQJexMIepYTiMVDAv28Py2mY9yPM7T22vopw7BmzaikTx1ep+02LD02y1L69A3RoihuN9sU+7yQ==
+  dependencies:
+    "@remote-ui/core" "^0.0.10"
+    "@remote-ui/rpc" "^0.0.2"
+    "@remote-ui/web-workers" "^0.0.3"
+    "@types/react" "^16.9.19"
+    react-reconciler "*"
+
 "@remote-ui/rpc@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-0.0.2.tgz#7df1ade817cdbb82abac5f81e34d838f83d74491"
   integrity sha512-zq5qnga1c7/k4FkGQm6fHbfRzLHe+dSNGHEuOPJ0VKrv9buq/Dyrj5Nht2NLGTtHCej+SrlzbQLEqCbPU36TQw==
 
-"@remote-ui/web-workers@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-0.0.2.tgz#e6e66ff012c80dac4048285f2f33ddf7167b772b"
-  integrity sha512-77UzcUspFVnGlVSPdc5fPsYF4/tHMEWbzJsfhYjT3uyGxaj/AJjo5ngApVtNfjvZALg1klBvNIKtwTvExREUZg==
+"@remote-ui/types@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-0.0.4.tgz#3fb40187660e6d538ea0ef716bf932c028b6ad97"
+  integrity sha512-2t3gB00D/vRvd3DRSApf8yHRsGurwDKIimgF9j1cbzQcSKaQ6qRoRrsI+b4EXFlezlQzQxLeHMPb/l/n3u2a4g==
+
+"@remote-ui/web-workers@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-0.0.3.tgz#70161df1f686fbb763818254ddf3375f871a7c9e"
+  integrity sha512-4DjTR4dDrBq94yM5LpmHi9R7/wm+D7emeeXlBY9OBPVsBJwdS+BAtavh126PWndKU3o4MrzYLljDdB9pf8mwcw==
   dependencies:
     "@remote-ui/rpc" "^0.0.2"
     "@sewing-kit/plugins" "0.0.19"
@@ -2580,7 +2604,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.19":
+"@types/react@*", "@types/react@>=16.9.19", "@types/react@^16.9.19":
   version "16.9.19"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.19.tgz#c842aa83ea490007d29938146ff2e4d9e4360c40"
   integrity sha512-LJV97//H+zqKWMms0kvxaKYJDG05U2TtQB3chRLF8MPNs+MQh/H1aGlyDUxjaHvu08EAGerdX2z4LTBc7ns77A==
@@ -9435,6 +9459,16 @@ react-is@^16.8.1, react-is@^16.8.4:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
+
+react-reconciler@*:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.24.0.tgz#5a396b2c2f5efe8554134a5935f49f546723f2dd"
+  integrity sha512-gAGnwWkf+NOTig9oOowqid9O0HjTDC+XVGBCAmJYYJ2A2cN/O4gDdIuuUQjv8A4v6GDwVfJkagpBBLW5OW9HSw==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.18.0"
 
 react@^16.12.0:
   version "16.12.0"
