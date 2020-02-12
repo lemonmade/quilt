@@ -8,9 +8,7 @@ import React, {
   ComponentType,
 } from 'react';
 import {retain, release, createWorkerFactory} from '@remote-ui/web-workers';
-import {RemoteReceiver, RemoteRenderer} from '@remote-ui/react/host';
-
-import {useWorker} from './hooks';
+import {RemoteReceiver, RemoteRenderer, useWorker} from '@remote-ui/react/host';
 
 type MaybeDefaultExport<T> = T | {default: T};
 // type ValueOrPropGetter<T, Props> = T | ((props: Props) => T);
