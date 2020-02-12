@@ -1,7 +1,6 @@
 import {createElement, Component} from 'react';
 import {render, createRemoteRoot} from '@remote-ui/react';
-import {retain, release} from '@remote-ui/web-workers';
-import {expose} from '@remote-ui/web-workers/worker';
+import {expose, retain, release} from '@remote-ui/web-workers/worker';
 
 import WorkerComponent from {{WORKER_MODULE}};
 
