@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-server-render",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -14,5 +14,6 @@
   },
   "dependencies": {
     "@types/react": ">=16.9.19"
-  }
+  },
+  "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -9,13 +9,14 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/react-html": "^0.0.15",
-    "@quilted/react-router": "^0.0.16",
-    "@quilted/react-server-render": "^0.0.14",
-    "@quilted/react-web-workers": "^0.0.1"
+    "@quilted/react-html": "^0.0.16",
+    "@quilted/react-router": "^0.0.17",
+    "@quilted/react-server-render": "^0.0.15",
+    "@quilted/react-web-workers": "^0.0.2"
   },
   "peerDependencies": {
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
-  }
+  },
+  "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
 }

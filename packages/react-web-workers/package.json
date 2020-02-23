@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-web-workers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -16,5 +16,6 @@
     "@remote-ui/react": "^0.0.14",
     "@remote-ui/web-workers": "^0.0.3",
     "@types/react": ">=16.9.19"
-  }
+  },
+  "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
 }
