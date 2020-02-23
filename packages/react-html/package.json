@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@quilted/react-server-render": "^0.0.15",
-    "@types/react": ">=16.9.19",
-    "serialize-javascript": "^2.1.2"
+    "@types/react": ">=16.9.22",
+    "serialize-javascript": "^3.0.0"
   },
   "devDependencies": {
     "@types/react-dom": "^16.9.5",

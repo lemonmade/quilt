@@ -1934,14 +1934,14 @@
     "@remote-ui/rpc" "^0.0.2"
     "@remote-ui/types" "^0.0.4"
 
-"@remote-ui/react@^0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-0.0.14.tgz#8aaa1b25ac9e6405e47967ad159398fef7983bf6"
-  integrity sha512-AHl0N3yMJVpfQJexMIepYTiMVDAv28Py2mY9yPM7T22vopw7BmzaikTx1ep+02LD02y1L69A3RoihuN9sU+7yQ==
+"@remote-ui/react@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-0.0.15.tgz#9d8c47ab247adb48e7af20e0267244e74f8fd055"
+  integrity sha512-ase2bIK3KLifv8P3A8AbXQRBonLR3lapYSJuPymjAQULo0Q5Aybhh5d9Ck8/EdvLbTn36nDDXN15DCFb/Ppk5A==
   dependencies:
     "@remote-ui/core" "^0.0.10"
     "@remote-ui/rpc" "^0.0.2"
-    "@remote-ui/web-workers" "^0.0.3"
+    "@remote-ui/web-workers" "^0.0.4"
     "@types/react" "^16.9.19"
     react-reconciler "*"
 
@@ -1955,10 +1955,10 @@
   resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-0.0.4.tgz#3fb40187660e6d538ea0ef716bf932c028b6ad97"
   integrity sha512-2t3gB00D/vRvd3DRSApf8yHRsGurwDKIimgF9j1cbzQcSKaQ6qRoRrsI+b4EXFlezlQzQxLeHMPb/l/n3u2a4g==
 
-"@remote-ui/web-workers@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-0.0.3.tgz#70161df1f686fbb763818254ddf3375f871a7c9e"
-  integrity sha512-4DjTR4dDrBq94yM5LpmHi9R7/wm+D7emeeXlBY9OBPVsBJwdS+BAtavh126PWndKU3o4MrzYLljDdB9pf8mwcw==
+"@remote-ui/web-workers@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-0.0.4.tgz#e02740ba6c157a7167971d56eff6c7348af40c59"
+  integrity sha512-JkcA+EY9KeaN+l6r2UuT4g2WR+qmgSWUA5vPcNWAa+6YjpX/BZh+xscd5lVSTk7PVe3Xvvx7GVFQVX+ztXsg4A==
   dependencies:
     "@remote-ui/rpc" "^0.0.2"
     "@sewing-kit/plugins" "0.0.19"
@@ -2604,10 +2604,18 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.19", "@types/react@^16.9.19":
+"@types/react@*", "@types/react@^16.9.19":
   version "16.9.19"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.19.tgz#c842aa83ea490007d29938146ff2e4d9e4360c40"
   integrity sha512-LJV97//H+zqKWMms0kvxaKYJDG05U2TtQB3chRLF8MPNs+MQh/H1aGlyDUxjaHvu08EAGerdX2z4LTBc7ns77A==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^2.2.0"
+
+"@types/react@>=16.9.22":
+  version "16.9.22"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.22.tgz#f0288c92d94e93c4b43e3f5633edf788b2c040ae"
+  integrity sha512-7OSt4EGiLvy0h5R7X+r0c7S739TCU/LvWbkNOrm10lUwNHe7XPz5OLhLOSZeCkqO9JSCly1NkYJ7ODTUqVnHJQ==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -10114,6 +10122,11 @@ serialize-javascript@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.2.tgz#ecec53b0e0317bdc95ef76ab7074b7384785fa61"
   integrity sha512-rs9OggEUF0V4jUSecXazOYsLfu7OGK2qIn3c7IPBiffz32XniEp/TX9Xmc9LQfK2nQ2QKHvZ2oygKUGU0lG4jQ==
+
+serialize-javascript@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-3.0.0.tgz#492e489a2d77b7b804ad391a5f5d97870952548e"
+  integrity sha512-skZcHYw2vEX4bw90nAr2iTTsz6x2SrHEnfxgKYmZlvJYBEZrvbKtobJWlQ20zczKb3bsHHXXTYt48zBA7ni9cw==
 
 set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"
