@@ -46,7 +46,7 @@ export function createWorkerComponent<
   const createWorker = createWorkerFactory<{
     mount(
       props: Props,
-      channel: import('@remote-ui/core').RemoteChannel,
+      ...args: Parameters<typeof import('@remote-ui/core').createRemoteRoot>
     ): (props: Partial<Props>) => void;
   }>(workerComponent as string);
 
@@ -58,11 +58,15 @@ export function createWorkerComponent<
       [((props: Partial<Props>) => void) | null, Partial<Props> | null]
     >([null, null]);
 
-    const contextComponents = useContext(HostComponentContext);
+    const contextComponents = useContext(
+      HostComponentContext,
+    ) as ComponentConfig;
     const components = useMemo(
       () => ({...contextComponents, ...explicitComponents}),
       [contextComponents],
     );
+    const componentsRef = useRef(components);
+    componentsRef.current = components;
 
     const contextReceiver = useContext(RemoteReceiverContext);
     const receiverRef = useRef<RemoteReceiver>(null as any);
@@ -75,7 +79,13 @@ export function createWorkerComponent<
         sentProps.current = {...props};
 
         (async () => {
-          const update = await worker.mount(props, receiverRef.current.receive);
+          const update = await worker.mount(
+            props,
+            receiverRef.current.receive,
+            {
+              components: Object.keys(componentsRef.current) as any,
+            },
+          );
           // Might not need this, but definitely need to balance it out if we keep it
           retain(update);
           if (!mountedRef.current) return;

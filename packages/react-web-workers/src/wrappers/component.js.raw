@@ -19,13 +19,13 @@ class Runner extends Component {
   }
 }
 
-function mount(props, dispatch) {
+function mount(props, channel, options) {
   let runner;
 
   retain(props);
-  retain(dispatch);
+  retain(channel);
 
-  const root = createRemoteRoot(dispatch, {});
+  const root = createRemoteRoot(channel, options);
 
   render(
     createElement(Runner, {
