@@ -28,11 +28,11 @@ function mount(props, channel, options) {
   const root = createRemoteRoot(channel, options);
 
   render(
-    createElement(Runner, {
+    createElement(Runner, Object.assign({
       ref: (createdRunner) => {
         runner = createdRunner;
       }
-    }),
+    }, props)),
     root
   );
 
