@@ -34,7 +34,6 @@ export interface NavigateOptions {
 }
 
 export const EFFECT = Symbol('effect');
-export const LISTEN = Symbol('listen');
 export const EXTRACT = Symbol('extract');
 export const REGISTER = Symbol('register');
 export const REGISTERED = Symbol('registered');
@@ -157,8 +156,7 @@ export class Router {
     window.removeEventListener('popstate', this.handlePopstate);
   }
 
-  // should make this a normal method
-  [LISTEN](listener: Listener) {
+  listen(listener: Listener) {
     this.listeners.add(listener);
 
     return () => {

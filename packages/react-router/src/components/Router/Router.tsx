@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useSerialized} from '@quilted/react-html';
 
 import {CurrentUrlContext, RouterContext} from '../../context';
-import {Router as RouterControl, EXTRACT, LISTEN} from '../../router';
+import {Router as RouterControl, EXTRACT} from '../../router';
 import {Prefetcher} from '../Prefetcher';
 
 interface Props {
@@ -21,7 +21,7 @@ export function Router({children, url: explicitUrl}: Props) {
     routerRef.current = new RouterControl(url, routerState);
   }
 
-  useEffect(() => routerRef.current[LISTEN]((newUrl) => setUrl(newUrl)), []);
+  useEffect(() => routerRef.current.listen((newUrl) => setUrl(newUrl)), []);
 
   return (
     <>
