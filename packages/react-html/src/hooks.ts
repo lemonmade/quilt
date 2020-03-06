@@ -40,16 +40,26 @@ function isPromise<T>(
 }
 
 export function useDomEffect(
-  perform: (manager: HtmlManager) => () => void,
+  perform: (
+    manager: HtmlManager,
+  ) => {update(...args: any[]): void; remove(): void},
   inputs: unknown[] = [],
 ) {
   const manager = useContext(HtmlContext);
+  const resultRef = useRef<ReturnType<typeof perform>>();
   const effect = () => {
-    perform(manager);
+    if (resultRef.current) {
+      resultRef.current.update(...inputs);
+    } else {
+      resultRef.current = perform(manager);
+    }
   };
 
   useServerEffect(effect, manager[EFFECT]);
   useEffect(effect, [manager, ...inputs]);
+  useEffect(() => {
+    return resultRef.current?.remove;
+  }, []);
 }
 
 export function useTitle(title: string) {

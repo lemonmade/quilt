@@ -3,10 +3,6 @@ import {ServerRenderEffectKind} from '@quilted/react-server-render';
 
 import {getSerializationsFromDocument} from './utilities';
 
-interface Title {
-  title: string;
-}
-
 export interface State {
   title?: string;
   metas: HTMLProps<HTMLMetaElement>[];
@@ -22,6 +18,10 @@ interface Subscription {
 export const EFFECT = Symbol('effect');
 export const SERVER_RENDER_EFFECT_ID = Symbol('html');
 
+interface Ref<T> {
+  current: T;
+}
+
 export class HtmlManager {
   readonly [EFFECT]: ServerRenderEffectKind = {
     id: SERVER_RENDER_EFFECT_ID,
@@ -29,22 +29,28 @@ export class HtmlManager {
   };
 
   private serializations = getSerializationsFromDocument();
-  private titles: Title[] = [];
-  private metas: HTMLProps<HTMLMetaElement>[] = [];
-  private links: HTMLProps<HTMLLinkElement>[] = [];
-  private htmlAttributes: HtmlHTMLAttributes<HTMLHtmlElement>[] = [];
-  private bodyAttributes: HTMLProps<HTMLBodyElement>[] = [];
+  private titles: Ref<string>[] = [];
+  private metas: Ref<HTMLProps<HTMLMetaElement>>[] = [];
+  private links: Ref<HTMLProps<HTMLLinkElement>>[] = [];
+  private htmlAttributes: Ref<HtmlHTMLAttributes<HTMLHtmlElement>>[] = [];
+  private bodyAttributes: Ref<HTMLProps<HTMLBodyElement>>[] = [];
   private subscriptions = new Set<Subscription>();
 
   get state(): State {
     const lastTitle = this.titles[this.titles.length - 1];
 
     return {
-      title: lastTitle && lastTitle.title,
-      metas: this.metas,
-      links: this.links,
-      bodyAttributes: Object.assign({}, ...this.bodyAttributes),
-      htmlAttributes: Object.assign({}, ...this.htmlAttributes),
+      title: lastTitle?.current,
+      metas: this.metas.map(({current}) => current),
+      links: this.links.map(({current}) => current),
+      bodyAttributes: Object.assign(
+        {},
+        ...this.bodyAttributes.map(({current}) => current),
+      ),
+      htmlAttributes: Object.assign(
+        {},
+        ...this.htmlAttributes.map(({current}) => current),
+      ),
     };
   }
 
@@ -67,7 +73,7 @@ export class HtmlManager {
   }
 
   addTitle(title: string) {
-    return this.addDescriptor({title}, this.titles);
+    return this.addDescriptor(title, this.titles);
   }
 
   addMeta(meta: HTMLProps<HTMLMetaElement>) {
@@ -104,22 +110,31 @@ export class HtmlManager {
     };
   }
 
-  private addDescriptor<T>(item: T, list: T[]) {
-    list.push(item);
+  private addDescriptor<T>(item: T, list: Ref<T>[]) {
+    const ref = {current: item};
+    list.push(ref);
     this.updateSubscriptions();
 
-    return () => {
-      const index = list.indexOf(item);
-      if (index >= 0) {
-        list.splice(index, 1);
+    return {
+      update: (updated: T) => {
+        ref.current = updated;
         this.updateSubscriptions();
-      }
+      },
+      remove: () => {
+        const index = list.indexOf(ref);
+        if (index >= 0) {
+          list.splice(index, 1);
+          this.updateSubscriptions();
+        }
+      },
     };
   }
 
   private updateSubscriptions() {
+    const {state} = this;
+
     for (const subscription of this.subscriptions) {
-      subscription(this.state);
+      subscription(state);
     }
   }
 }
