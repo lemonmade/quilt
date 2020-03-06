@@ -1,7 +1,5 @@
 # `@quilted/react-auto-headings`
 
-[![Build Status](https://travis-ci.org/Shopify/quilt.svg?branch=master)](https://travis-ci.org/Shopify/quilt) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md) [![npm version](https://badge.fury.io/js/%40shopify%2Freact-router.svg)](https://badge.fury.io/js/%40shopify%2Freact-router)
-
 A set of components for automatically incrementing heading levels based on React context. These components help you create an accessible document outline in a complex web application without the headache.
 
 ## Installation
@@ -96,7 +94,7 @@ If you want to use the current heading level for your own purposes, you can acce
 import {useAutoHeadingLevel} from '@quilted/react-auto-headings';
 
 export function CustomHeading({children}) {
-  const level = useHeadingLevel();
+  const level = useAutoHeadingLevel();
   const Element = level ? `h${level}` : 'p';
   return <Element>{children}</Element>;
 }
