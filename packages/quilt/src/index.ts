@@ -1,4 +1,9 @@
 export {
+  AutoHeading,
+  AutoHeadingGroup,
+  useAutoHeadingLevel,
+} from '@quilted/react-auto-headings';
+export {
   Script,
   Style,
   useSerialized,
