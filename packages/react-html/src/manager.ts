@@ -7,7 +7,7 @@ interface Title {
   title: string;
 }
 
-interface State {
+export interface State {
   title?: string;
   metas: HTMLProps<HTMLMetaElement>[];
   links: HTMLProps<HTMLLinkElement>[];

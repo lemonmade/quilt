@@ -1,4 +1,4 @@
-import {useContext, useMemo, useEffect} from 'react';
+import {useContext, useMemo, useEffect, useRef} from 'react';
 import {
   useServerEffect,
   ServerRenderEffectOptions,
@@ -6,6 +6,7 @@ import {
 
 import {HtmlContext} from './context';
 import {HtmlManager, EFFECT} from './manager';
+import {updateOnClient} from './utilities';
 
 type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
   ? U
@@ -106,6 +107,22 @@ export function useBodyAttributes(
   useDomEffect((manager) => manager.addBodyAttributes(bodyAttributes), [
     JSON.stringify(bodyAttributes),
   ]);
+}
+
+export function useHtmlUpdater() {
+  const queuedUpdate = useRef<number | null>(null);
+
+  useClientDomEffect((manager) => {
+    return manager.subscribe((state) => {
+      if (queuedUpdate.current) {
+        cancelAnimationFrame(queuedUpdate.current);
+      }
+
+      queuedUpdate.current = requestAnimationFrame(() => {
+        updateOnClient(state);
+      });
+    });
+  });
 }
 
 export function useClientDomEffect(

@@ -10,4 +10,5 @@ export {
   useMeta,
   useTitle,
   usePreconnect,
+  useHtmlUpdater,
 } from './hooks';

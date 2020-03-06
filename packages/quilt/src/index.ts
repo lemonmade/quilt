@@ -15,6 +15,7 @@ export {
   useMeta,
   useTitle,
   usePreconnect,
+  useHtmlUpdater,
 } from '@quilted/react-html';
 export {ServerEffect, useServerEffect} from '@quilted/react-server-render';
 export {
