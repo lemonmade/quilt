@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/react-auto-headings": "^0.0.2",
+    "@quilted/react-auto-headings": "^0.0.3",
     "@quilted/react-html": "^0.0.19",
     "@quilted/react-router": "^0.0.21",
     "@quilted/react-server-render": "^0.0.16",
