@@ -19,7 +19,7 @@ export function AutoHeadingGroup({children, level: explicitLevel}: Props) {
     );
   }
 
-  const level = explicitLevel ?? (currentLevel ?? 1) + 1;
+  const level = explicitLevel ?? (currentLevel ?? 0) + 1;
 
   return (
     <AutoHeadingContext.Provider value={level as HeadingLevel}>
