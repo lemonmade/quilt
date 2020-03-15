@@ -52,7 +52,7 @@ const packagesDirectory = path.join(rootDirectory, 'packages');
   });
   await write(
     path.join(packageDirectory, 'sewing-kit.config.ts'),
-    `
+    `${`
 import {createPackage} from '@sewing-kit/config';
 import {defaultProjectPlugin} from '../../config/sewing-kit';
 
@@ -60,7 +60,7 @@ export default createPackage((pkg) => {
   pkg.entry({root: './src/index'});
   pkg.use(defaultProjectPlugin);
 });
-`.trim(),
+`.trim()}\n`,
   );
 
   await addProjectReference(path.join(rootDirectory, 'tsconfig.json'), name);
@@ -90,13 +90,15 @@ async function addPackageDependency(file: string, name: string) {
 
 async function addProjectReference(file: string, name: string) {
   const tsconfig = await readJSON(file);
+  const relative = path.relative(
+    path.dirname(file),
+    path.join(packagesDirectory, name),
+  );
+
   tsconfig.references = [
     ...tsconfig.references,
     {
-      path: path.relative(
-        path.dirname(file),
-        path.join(packagesDirectory, name),
-      ),
+      path: relative.startsWith('.') ? relative : `./${relative}`,
     },
   ].sort(({path: pathOne}: {path: string}, {path: pathTwo}) =>
     pathOne.localeCompare(pathTwo),
