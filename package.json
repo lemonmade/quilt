@@ -13,6 +13,7 @@
     "type-check": "sk type-check",
     "build": "sk build",
     "prerelease": "yarn build",
+    "g": "npx -p @babel/core -p @babel/node babel-node --extensions .ts,.tsx,.mjs,.js --presets @babel/preset-typescript,@babel/preset-env ./scripts/generate.ts",
     "release": "lerna publish && git push --tags"
   },
   "devDependencies": {
