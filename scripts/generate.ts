@@ -10,9 +10,9 @@ const packagesDirectory = path.join(rootDirectory, 'packages');
 (async () => {
   const {
     _: [name],
-    '--consumers': consumers = ['quilt'],
+    '--consumer': consumers = ['quilt'],
   } = args({
-    '--consumers': [String],
+    '--consumer': [String],
   });
 
   const packageDirectory = path.join(packagesDirectory, name);
@@ -80,8 +80,10 @@ export default createPackage((pkg) => {
 
 async function addPackageDependency(file: string, name: string) {
   const pkg = await readJSON(file);
-  const dependencies = Object.entries(pkg.dependencies);
-  dependencies.push([`@quilted/${name}`, '^0.0.0']);
+  const dependencies = Object.entries(pkg.dependencies ?? {});
+  if (!(`@quilted/${name}` in pkg.dependencies))
+    dependencies.push([`@quilted/${name}`, '^0.0.0']);
+
   pkg.dependencies = Object.fromEntries(
     dependencies.sort(([one], [two]) => one.localeCompare(two)),
   );
@@ -94,14 +96,18 @@ async function addProjectReference(file: string, name: string) {
     path.dirname(file),
     path.join(packagesDirectory, name),
   );
+  const normalizedRelative = relative.startsWith('.')
+    ? relative
+    : `./${relative}`;
 
-  tsconfig.references = [
-    ...tsconfig.references,
-    {
-      path: relative.startsWith('.') ? relative : `./${relative}`,
-    },
-  ].sort(({path: pathOne}: {path: string}, {path: pathTwo}) =>
-    pathOne.localeCompare(pathTwo),
+  const references = tsconfig.references ? [...tsconfig.references] : [];
+  if (references.every(({path}) => path !== normalizedRelative)) {
+    references.push({path: normalizedRelative});
+  }
+
+  tsconfig.references = references.sort(
+    ({path: pathOne}: {path: string}, {path: pathTwo}) =>
+      pathOne.localeCompare(pathTwo),
   );
   await write(file, tsconfig);
 }
