@@ -81,7 +81,7 @@ export default createPackage((pkg) => {
 async function addPackageDependency(file: string, name: string) {
   const pkg = await readJSON(file);
   const dependencies = Object.entries(pkg.dependencies ?? {});
-  if (!(`@quilted/${name}` in pkg.dependencies))
+  if (pkg.dependencies == null || !(`@quilted/${name}` in pkg.dependencies))
     dependencies.push([`@quilted/${name}`, '^0.0.0']);
 
   pkg.dependencies = Object.fromEntries(
