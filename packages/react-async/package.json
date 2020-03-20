@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-async",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -11,8 +11,8 @@
     "react": ">=16.3.0 <17.0.0"
   },
   "dependencies": {
-    "@quilted/async": "^0.0.0",
-    "@quilted/react-idle": "^0.0.0",
+    "@quilted/async": "^0.0.1",
+    "@quilted/react-idle": "^0.0.1",
     "@quilted/react-server-render": "^0.0.16"
   }
 }

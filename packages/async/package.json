@@ -1,6 +1,6 @@
 {
   "name": "@quilted/async",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -12,8 +12,8 @@
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@sewing-kit/plugins": "*",
-    "@sewing-kit/plugin-babel": "*"
+    "@sewing-kit/plugin-babel": "*",
+    "@sewing-kit/plugins": "*"
   },
   "devDependencies": {
     "@types/babel__core": ">=7.0.0",
