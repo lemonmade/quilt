@@ -2,12 +2,35 @@
   "files": [],
   "include": [],
   "references": [
-    {"path": "./packages/quilt"},
-    {"path": "./packages/react-auto-headings"},
-    {"path": "./packages/react-html"},
-    {"path": "./packages/react-router"},
-    {"path": "./packages/react-server-render"},
-    {"path": "./packages/react-web-workers"},
-    {"path": "./packages/sewing-kit-plugins"}
+    {
+      "path": "./packages/async"
+    },
+    {
+      "path": "./packages/quilt"
+    },
+    {
+      "path": "./packages/react-async"
+    },
+    {
+      "path": "./packages/react-auto-headings"
+    },
+    {
+      "path": "./packages/react-html"
+    },
+    {
+      "path": "./packages/react-idle"
+    },
+    {
+      "path": "./packages/react-router"
+    },
+    {
+      "path": "./packages/react-server-render"
+    },
+    {
+      "path": "./packages/react-web-workers"
+    },
+    {
+      "path": "./packages/sewing-kit-plugins"
+    }
   ]
 }

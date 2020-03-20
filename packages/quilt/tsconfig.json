@@ -7,10 +7,29 @@
   },
   "include": ["src/**/*.ts"],
   "references": [
-    {"path": "../react-auto-headings"},
-    {"path": "../react-html"},
-    {"path": "../react-router"},
-    {"path": "../react-server-render"},
-    {"path": "../react-web-workers"}
+    {
+      "path": "../async"
+    },
+    {
+      "path": "../react-async"
+    },
+    {
+      "path": "../react-auto-headings"
+    },
+    {
+      "path": "../react-html"
+    },
+    {
+      "path": "../react-idle"
+    },
+    {
+      "path": "../react-router"
+    },
+    {
+      "path": "../react-server-render"
+    },
+    {
+      "path": "../react-web-workers"
+    }
   ]
 }

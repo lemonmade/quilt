@@ -1,0 +1,22 @@
+{
+  "name": "@quilted/async",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "optionalDependencies": {
+    "@babel/core": ">=7.0.0",
+    "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
+    "@babel/traverse": ">=7.0.0",
+    "@babel/types": ">=7.0.0",
+    "@sewing-kit/plugins": "*",
+    "@sewing-kit/plugin-babel": "*"
+  },
+  "devDependencies": {
+    "@types/babel__core": ">=7.0.0",
+    "@types/babel__traverse": ">=7.0.0"
+  }
+}

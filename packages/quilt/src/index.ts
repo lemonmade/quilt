@@ -1,3 +1,12 @@
+export {createResolver, Resolver} from '@quilted/async';
+export {
+  useAsync,
+  useAsyncAsset,
+  useKeepFresh,
+  usePrefetch,
+  usePreload,
+  createAsyncComponent,
+} from '@quilted/react-async';
 export {
   AutoHeading,
   AutoHeadingGroup,
@@ -35,3 +44,4 @@ export {
   createWorkerFactory,
   createPlainWorkerFactory,
 } from '@quilted/react-web-workers';
+export {useIdleCallback} from '@quilted/react-idle';

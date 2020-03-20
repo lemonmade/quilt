@@ -9,8 +9,11 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
+    "@quilted/async": "^0.0.0",
+    "@quilted/react-async": "^0.0.0",
     "@quilted/react-auto-headings": "^0.0.3",
     "@quilted/react-html": "^0.0.19",
+    "@quilted/react-idle": "^0.0.0",
     "@quilted/react-router": "^0.0.21",
     "@quilted/react-server-render": "^0.0.16",
     "@quilted/react-web-workers": "^0.0.5"

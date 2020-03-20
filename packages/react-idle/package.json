@@ -1,0 +1,13 @@
+{
+  "name": "@quilted/react-idle",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": ">=16.3.0 <17.0.0"
+  }
+}
