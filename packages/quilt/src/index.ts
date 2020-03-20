@@ -26,6 +26,7 @@ export {
   usePreconnect,
   useHtmlUpdater,
 } from '@quilted/react-html';
+export {useIdleCallback} from '@quilted/react-idle';
 export {ServerEffect, useServerEffect} from '@quilted/react-server-render';
 export {
   Link,
@@ -44,4 +45,3 @@ export {
   createWorkerFactory,
   createPlainWorkerFactory,
 } from '@quilted/react-web-workers';
-export {useIdleCallback} from '@quilted/react-idle';

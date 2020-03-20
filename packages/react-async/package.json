@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@quilted/async": "^0.0.1",
-    "@quilted/react-idle": "^0.0.1",
     "@quilted/react-server-render": "^0.0.16"
   }
 }

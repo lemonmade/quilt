@@ -1,9 +1,8 @@
 import React, {useEffect, useCallback, ReactNode, ComponentType} from 'react';
 import {createResolver, ResolverOptions} from '@quilted/async';
-import {useIdleCallback} from '@quilted/react-idle';
 
 import {useAsync} from './hooks';
-import {AssetTiming, AsyncComponentType, DeferTiming} from './types';
+import {AsyncComponentType} from './types';
 
 interface Options<
   Props extends object,
@@ -11,7 +10,6 @@ interface Options<
   PrefetchOptions extends object = {},
   KeepFreshOptions extends object = {}
 > extends ResolverOptions<ComponentType<Props>> {
-  defer?: DeferTiming | ((props: Props) => boolean);
   displayName?: string;
   renderLoading?(props: Props): ReactNode;
   renderError?(error: Error): ReactNode;
@@ -46,7 +44,6 @@ export function createAsyncComponent<
 >({
   id,
   load,
-  defer,
   displayName,
   renderLoading = noopRender,
   renderError = defaultRenderError,
@@ -66,26 +63,17 @@ export function createAsyncComponent<
   KeepFreshOptions
 > {
   const resolver = createResolver({id, load});
-  const componentName = displayName || displayNameFromId(resolver.id);
-  const deferred = defer != null;
-  const scriptTiming: AssetTiming = deferred ? 'soon' : 'immediate';
-  const stylesTiming: AssetTiming = deferred ? 'soon' : 'immediate';
+  const componentName = displayName ?? displayNameFromId(resolver.id);
 
   function Async(props: Props) {
     const {resolved: Component, load, loading, error} = useAsync(resolver, {
-      scripts: scriptTiming,
-      styles: stylesTiming,
-      immediate: !deferred,
+      scripts: 'immediate',
+      styles: 'immediate',
+      immediate: true,
     });
 
     if (error) {
       return renderError(error);
-    }
-
-    let loadingMarkup: ReactNode | null = null;
-
-    if (loading) {
-      loadingMarkup = <Loader defer={defer} load={load} props={props} />;
     }
 
     let contentMarkup: ReactNode | null = null;
@@ -100,7 +88,7 @@ export function createAsyncComponent<
     return (
       <>
         {contentMarkup}
-        {loadingMarkup}
+        {loading && <Loader load={load} />}
       </>
     );
   }
@@ -148,15 +136,17 @@ export function createAsyncComponent<
 
     return useCallback(() => {
       load();
-
-      if (customKeepFresh) {
-        customKeepFresh();
-      }
+      customKeepFresh?.();
     }, [load, customKeepFresh]);
   }
 
   function Preload(options: PreloadOptions) {
-    useIdleCallback(usePreload(options));
+    const preload = usePreload(options);
+
+    useEffect(() => {
+      preload();
+    }, [preload]);
+
     return null;
   }
 
@@ -175,7 +165,12 @@ export function createAsyncComponent<
   Prefetch.displayName = `Async.Prefetch(${displayName})`;
 
   function KeepFresh(options: KeepFreshOptions) {
-    useIdleCallback(useKeepFresh(options));
+    const keepFresh = useKeepFresh(options);
+
+    useEffect(() => {
+      keepFresh();
+    }, [keepFresh]);
+
     return null;
   }
 
@@ -251,36 +246,10 @@ function defaultRenderError(error: Error) {
   return null;
 }
 
-function Loader<T>({
-  defer,
-  load,
-  props,
-}: {
-  defer?: DeferTiming | ((props: T) => boolean);
-  load(): void;
-  props: T;
-}) {
+function Loader({load}: {load(): void}) {
   useEffect(() => {
-    if (defer == null || defer === 'mount') {
-      load();
-    } else if (typeof defer === 'function' && defer(props)) {
-      load();
-    }
-  }, [defer, load, props]);
+    load();
+  }, [load]);
 
-  if (typeof defer === 'function') {
-    return null;
-  }
-
-  switch (defer) {
-    case 'idle':
-      return <OnIdle perform={load} />;
-    default:
-      return null;
-  }
-}
-
-function OnIdle({perform}: {perform(): void}) {
-  useIdleCallback(perform);
   return null;
 }
