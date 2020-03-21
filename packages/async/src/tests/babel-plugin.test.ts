@@ -205,9 +205,9 @@ describe('asyncBabelPlugin()', () => {
   });
 
   describe('packages', () => {
-    it('processes createResolver from @shopify/async by default', async () => {
+    it('processes createResolver from @quilted/async by default', async () => {
       const code = await normalize(`
-        import {createResolver} from '@shopify/async';
+        import {createResolver} from '@quilted/async';
 
         createResolver({
           load: () => import('./Foo'),
@@ -216,7 +216,7 @@ describe('asyncBabelPlugin()', () => {
 
       expect(await transform(code)).toBe(
         await normalize(`
-          import {createResolver} from '@shopify/async';
+          import {createResolver} from '@quilted/async';
 
           createResolver({
             load: () => import('./Foo'),
@@ -226,9 +226,30 @@ describe('asyncBabelPlugin()', () => {
       );
     });
 
-    it('processes createAsyncComponent from @shopify/react-async by default', async () => {
+    it('processes createResolver from @quilted/react-async by default', async () => {
       const code = await normalize(`
-        import {createAsyncComponent} from '@shopify/react-async';
+        import {createResolver} from '@quilted/react-async';
+
+        createResolver({
+          load: () => import('./Foo'),
+        });
+      `);
+
+      expect(await transform(code)).toBe(
+        await normalize(`
+          import {createResolver} from '@quilted/react-async';
+
+          createResolver({
+            load: () => import('./Foo'),
+            id: () => require.resolveWeak('./Foo'),
+          });
+        `),
+      );
+    });
+
+    it('processes createAsyncComponent from @quilted/react-async by default', async () => {
+      const code = await normalize(`
+        import {createAsyncComponent} from '@quilted/react-async';
 
         createAsyncComponent({
           load: () => import('./Foo'),
@@ -237,7 +258,7 @@ describe('asyncBabelPlugin()', () => {
 
       expect(await transform(code)).toBe(
         await normalize(`
-          import {createAsyncComponent} from '@shopify/react-async';
+          import {createAsyncComponent} from '@quilted/react-async';
 
           createAsyncComponent({
             load: () => import('./Foo'),
@@ -247,20 +268,41 @@ describe('asyncBabelPlugin()', () => {
       );
     });
 
-    it('processes createAsyncQueryComponent from @shopify/react-graphql by default', async () => {
+    it('processes createResolver from @quilted/quilt by default', async () => {
       const code = await normalize(`
-        import {createAsyncQueryComponent} from '@shopify/react-graphql';
+        import {createResolver} from '@quilted/quilt';
 
-        createAsyncQueryComponent({
+        createResolver({
           load: () => import('./Foo'),
         });
       `);
 
       expect(await transform(code)).toBe(
         await normalize(`
-          import {createAsyncQueryComponent} from '@shopify/react-graphql';
+          import {createResolver} from '@quilted/quilt';
 
-          createAsyncQueryComponent({
+          createResolver({
+            load: () => import('./Foo'),
+            id: () => require.resolveWeak('./Foo'),
+          });
+        `),
+      );
+    });
+
+    it('processes createAsyncComponent from @quilted/quilt by default', async () => {
+      const code = await normalize(`
+        import {createAsyncComponent} from '@quilted/quilt';
+
+        createAsyncComponent({
+          load: () => import('./Foo'),
+        });
+      `);
+
+      expect(await transform(code)).toBe(
+        await normalize(`
+          import {createAsyncComponent} from '@quilted/quilt';
+
+          createAsyncComponent({
             load: () => import('./Foo'),
             id: () => require.resolveWeak('./Foo'),
           });
