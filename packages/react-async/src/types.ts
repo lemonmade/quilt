@@ -1,5 +1,4 @@
 import {ComponentType, FunctionComponent} from 'react';
-import {Resolver} from '@quilted/async';
 
 export type DeferTiming = 'mount' | 'idle';
 export type AssetTiming = 'never' | 'eventually' | 'soon' | 'immediate';
@@ -19,12 +18,10 @@ export type IfAllOptionalKeys<Obj, If, Else = never> = NonOptionalKeys<
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 
 export interface AsyncHookTarget<
-  T,
   PreloadOptions extends object,
   PrefetchOptions extends object,
   KeepFreshOptions extends object
 > {
-  readonly resolver: Resolver<T>;
   usePreload(
     ...props: IfAllOptionalKeys<
       PreloadOptions,
@@ -55,36 +52,22 @@ export interface AsyncComponentType<
   PrefetchOptions extends object,
   KeepFreshOptions extends object
 >
-  extends AsyncHookTarget<T, PreloadOptions, PrefetchOptions, KeepFreshOptions>,
+  extends AsyncHookTarget<PreloadOptions, PrefetchOptions, KeepFreshOptions>,
     FunctionComponent<Props> {
+  load(): Promise<T>;
   readonly Preload: ComponentType<PreloadOptions>;
   readonly Prefetch: ComponentType<PrefetchOptions>;
   readonly KeepFresh: ComponentType<KeepFreshOptions>;
 }
 
-export type PreloadOptions<T> = T extends AsyncHookTarget<
-  any,
-  infer U,
-  any,
-  any
->
+export type PreloadOptions<T> = T extends AsyncHookTarget<infer U, any, any>
   ? U
   : never;
 
-export type PrefetchOptions<T> = T extends AsyncHookTarget<
-  any,
-  any,
-  infer U,
-  any
->
+export type PrefetchOptions<T> = T extends AsyncHookTarget<any, infer U, any>
   ? U
   : never;
 
-export type KeepFreshOptions<T> = T extends AsyncHookTarget<
-  any,
-  any,
-  any,
-  infer U
->
+export type KeepFreshOptions<T> = T extends AsyncHookTarget<any, any, infer U>
   ? U
   : never;

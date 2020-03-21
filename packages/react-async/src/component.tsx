@@ -192,8 +192,8 @@ export function createAsyncComponent<
     KeepFreshOptions
   > = Async as any;
 
-  Reflect.defineProperty(FinalComponent, 'resolver', {
-    value: resolver,
+  Reflect.defineProperty(FinalComponent, 'load', {
+    value: () => resolver.resolve(),
     writable: false,
   });
 
