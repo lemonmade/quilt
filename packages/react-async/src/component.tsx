@@ -1,8 +1,9 @@
 import React, {useEffect, useCallback, ReactNode, ComponentType} from 'react';
 import {createResolver, ResolverOptions} from '@quilted/async';
+import {Hydrator} from '@quilted/react-html';
 
 import {useAsync} from './hooks';
-import {AsyncComponentType} from './types';
+import {AsyncComponentType, AssetTiming} from './types';
 
 interface Options<
   Props extends object,
@@ -10,6 +11,8 @@ interface Options<
   PrefetchOptions extends object = {},
   KeepFreshOptions extends object = {}
 > extends ResolverOptions<ComponentType<Props>> {
+  defer?: 'render' | 'interactive';
+  preload?: boolean;
   displayName?: string;
   renderLoading?(props: Props): ReactNode;
   renderError?(error: Error): ReactNode;
@@ -19,21 +22,21 @@ interface Options<
    * component. Because this logic will be used as part of a generated
    * custom hook, it must follow the rules of hooks.
    */
-  usePreload?(props: PreloadOptions): () => void;
+  usePreload?(props: PreloadOptions): () => undefined | (() => void);
 
   /**
    * Custom logic to use for the usePrefetch hook of the new, async
    * component. Because this logic will be used as part of a generated
    * custom hook, it must follow the rules of hooks.
    */
-  usePrefetch?(props: PrefetchOptions): () => void;
+  usePrefetch?(props: PrefetchOptions): () => undefined | (() => void);
 
   /**
    * Custom logic to use for the useKeepFresh hook of the new, async
    * component. Because this logic will be used as part of a generated
    * custom hook, it must follow the rules of hooks.
    */
-  useKeepFresh?(props: KeepFreshOptions): () => void;
+  useKeepFresh?(props: KeepFreshOptions): () => undefined | (() => void);
 }
 
 export function createAsyncComponent<
@@ -44,6 +47,8 @@ export function createAsyncComponent<
 >({
   id,
   load,
+  defer,
+  preload,
   displayName,
   renderLoading = noopRender,
   renderError = defaultRenderError,
@@ -64,30 +69,42 @@ export function createAsyncComponent<
 > {
   const resolver = createResolver({id, load});
   const componentName = displayName ?? displayNameFromId(resolver.id);
+  const unusedAssetTiming: AssetTiming = preload ? 'soon' : 'never';
+  const scriptTiming: AssetTiming =
+    defer == null ? 'immediate' : unusedAssetTiming;
+  const styleTiming: AssetTiming =
+    defer === 'render' ? unusedAssetTiming : 'immediate';
 
   function Async(props: Props) {
     const {resolved: Component, load, loading, error} = useAsync(resolver, {
-      scripts: 'immediate',
-      styles: 'immediate',
-      immediate: true,
+      scripts: scriptTiming,
+      styles: styleTiming,
+      immediate: defer !== 'render',
     });
 
     if (error) {
       return renderError(error);
     }
 
-    let contentMarkup: ReactNode | null = null;
+    let content: ReactNode | null = null;
     const rendered = Component ? <Component {...props} /> : null;
 
     if (loading) {
-      contentMarkup = renderLoading(props);
+      content = renderLoading(props);
     } else {
-      contentMarkup = rendered;
+      content =
+        defer === 'interactive' ? (
+          <Hydrator id={resolver.id} render={rendered != null}>
+            {rendered}
+          </Hydrator>
+        ) : (
+          rendered
+        );
     }
 
     return (
       <>
-        {contentMarkup}
+        {content}
         {loading && <Loader load={load} />}
       </>
     );
@@ -105,7 +122,7 @@ export function createAsyncComponent<
 
     return useCallback(() => {
       load();
-      customPreload?.();
+      return customPreload?.() ?? noop;
     }, [load, customPreload]);
   }
 
@@ -119,10 +136,7 @@ export function createAsyncComponent<
 
     return useCallback(() => {
       load();
-
-      if (customPrefetch) {
-        customPrefetch();
-      }
+      return customPrefetch?.() ?? noop;
     }, [load, customPrefetch]);
   }
 
@@ -136,16 +150,14 @@ export function createAsyncComponent<
 
     return useCallback(() => {
       load();
-      customKeepFresh?.();
+      return customKeepFresh?.() ?? noop;
     }, [load, customKeepFresh]);
   }
 
   function Preload(options: PreloadOptions) {
     const preload = usePreload(options);
 
-    useEffect(() => {
-      preload();
-    }, [preload]);
+    useEffect(() => preload(), [preload]);
 
     return null;
   }
@@ -155,9 +167,7 @@ export function createAsyncComponent<
   function Prefetch(options: PrefetchOptions) {
     const prefetch = usePrefetch(options);
 
-    useEffect(() => {
-      prefetch();
-    }, [prefetch]);
+    useEffect(() => prefetch(), [prefetch]);
 
     return null;
   }
@@ -167,9 +177,7 @@ export function createAsyncComponent<
   function KeepFresh(options: KeepFreshOptions) {
     const keepFresh = useKeepFresh(options);
 
-    useEffect(() => {
-      keepFresh();
-    }, [keepFresh]);
+    useEffect(() => keepFresh(), [keepFresh]);
 
     return null;
   }
@@ -221,6 +229,8 @@ export function createAsyncComponent<
 
   return FinalComponent;
 }
+
+function noop() {}
 
 function noopRender() {
   return null;

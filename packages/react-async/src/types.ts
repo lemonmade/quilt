@@ -1,4 +1,4 @@
-import {ReactElement} from 'react';
+import {ComponentType, FunctionComponent} from 'react';
 import {Resolver} from '@quilted/async';
 
 export type DeferTiming = 'mount' | 'idle';
@@ -31,21 +31,21 @@ export interface AsyncHookTarget<
       [NoInfer<PreloadOptions>?],
       [NoInfer<PreloadOptions>]
     >
-  ): () => void;
+  ): () => () => void;
   usePrefetch(
     ...props: IfAllOptionalKeys<
       PrefetchOptions,
       [NoInfer<PrefetchOptions>?],
       [NoInfer<PrefetchOptions>]
     >
-  ): () => void;
+  ): () => () => void;
   useKeepFresh(
     ...props: IfAllOptionalKeys<
       KeepFreshOptions,
       [NoInfer<KeepFreshOptions>?],
       [NoInfer<KeepFreshOptions>]
     >
-  ): () => void;
+  ): () => () => void;
 }
 
 export interface AsyncComponentType<
@@ -55,16 +55,11 @@ export interface AsyncComponentType<
   PrefetchOptions extends object,
   KeepFreshOptions extends object
 >
-  extends AsyncHookTarget<
-    T,
-    PreloadOptions,
-    PrefetchOptions,
-    KeepFreshOptions
-  > {
-  (props: Props): ReactElement<Props>;
-  Preload(props: PreloadOptions): React.ReactElement<{}> | null;
-  Prefetch(props: PrefetchOptions): React.ReactElement<{}> | null;
-  KeepFresh(props: KeepFreshOptions): React.ReactElement<{}> | null;
+  extends AsyncHookTarget<T, PreloadOptions, PrefetchOptions, KeepFreshOptions>,
+    FunctionComponent<Props> {
+  readonly Preload: ComponentType<PreloadOptions>;
+  readonly Prefetch: ComponentType<PrefetchOptions>;
+  readonly KeepFresh: ComponentType<KeepFreshOptions>;
 }
 
 export type PreloadOptions<T> = T extends AsyncHookTarget<

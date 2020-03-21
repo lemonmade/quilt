@@ -12,6 +12,11 @@
   },
   "dependencies": {
     "@quilted/async": "^0.0.1",
-    "@quilted/react-server-render": "^0.0.16"
+    "@quilted/react-html": "^0.0.19",
+    "@quilted/react-server-render": "^0.0.16",
+    "use-subscription": "^1.4.1"
+  },
+  "devDependencies": {
+    "@types/use-subscription": "^1.0.0"
   }
 }

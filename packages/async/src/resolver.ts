@@ -4,6 +4,7 @@ export interface Resolver<T> {
   readonly id?: string;
   readonly resolved?: T;
   resolve(): Promise<T>;
+  subscribe(listener: (resolved: T) => void): () => void;
 }
 
 export interface ResolverOptions<T> {
@@ -16,6 +17,7 @@ export function createResolver<T>({id, load}: ResolverOptions<T>): Resolver<T> {
   let resolvePromise: Promise<T> | undefined;
   let hasTriedSyncResolve = false;
   const resolvedId = id?.();
+  const listeners = new Set<(value: T) => void>();
 
   return {
     get id() {
@@ -30,16 +32,28 @@ export function createResolver<T>({id, load}: ResolverOptions<T>): Resolver<T> {
       return resolved;
     },
     resolve: async () => {
-      resolvePromise = resolvePromise ?? resolve(load);
-      resolved = await resolvePromise;
+      resolvePromise = resolvePromise ?? resolve();
+      const resolved = await resolvePromise;
       return resolved;
     },
-  };
-}
+    subscribe(listener: (value: T) => void) {
+      listeners.add(listener);
 
-async function resolve<T>(load: () => Promise<Import<T>>): Promise<T> {
-  const resolved = await load();
-  return normalize(resolved);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+  };
+
+  async function resolve(): Promise<T> {
+    resolved = normalize(await load());
+
+    for (const listener of listeners) {
+      listener(resolved!);
+    }
+
+    return resolved!;
+  }
 }
 
 function normalize(module: any) {

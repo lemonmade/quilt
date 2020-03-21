@@ -135,11 +135,15 @@ export function useHtmlUpdater() {
   });
 }
 
+export function useHtmlManager() {
+  return useContext(HtmlContext);
+}
+
 export function useClientDomEffect(
   perform: (manager: HtmlManager) => void,
   inputs: unknown[] = [],
 ) {
-  const manager = useContext(HtmlContext);
+  const manager = useHtmlManager();
 
   useEffect(() => {
     perform(manager);
@@ -151,6 +155,6 @@ export function useServerDomEffect(
   perform: (manager: HtmlManager) => void,
   options?: ServerRenderEffectOptions,
 ) {
-  const manager = useContext(HtmlContext);
+  const manager = useHtmlManager();
   useServerEffect(() => perform(manager), manager[EFFECT], options);
 }

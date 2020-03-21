@@ -21,8 +21,6 @@ import {react} from '@sewing-kit/plugin-react';
 import {babelConfigurationHooks} from '@sewing-kit/plugin-babel';
 import {jest, jestConfigurationHooks} from '@sewing-kit/plugin-jest';
 
-import {asyncQuilt} from '@quilted/async/sewing-kit';
-
 export function quiltPackage({react: useReact = true} = {}) {
   return createComposedProjectPlugin<Package>('Quilt.Package', [
     babelConfigurationHooks,
@@ -57,7 +55,6 @@ export function quiltWebApp({
         css(),
         useSass && sass(typeof useSass === 'boolean' ? {} : useSass),
         buildWebAppWithWebpack({assetServer}),
-        asyncQuilt(),
         flexibleOutputs(),
         react(),
       );
@@ -68,6 +65,10 @@ export function quiltWebApp({
             '@quilted/react-web-workers/sewing-kit'
           );
           composer.use(reactWebWorkers());
+        }),
+        ignoreMissingImports(async () => {
+          const {asyncQuilt} = await import('@quilted/async/sewing-kit');
+          composer.use(asyncQuilt());
         }),
       ]);
     },

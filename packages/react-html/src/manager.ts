@@ -1,7 +1,10 @@
 import {HTMLProps, HtmlHTMLAttributes} from 'react';
 import {ServerRenderEffectKind} from '@quilted/react-server-render';
 
-import {getSerializationsFromDocument} from './utilities';
+import {
+  getHydrationsFromDocument,
+  getSerializationsFromDocument,
+} from './utilities';
 
 export interface State {
   title?: string;
@@ -17,6 +20,8 @@ interface Subscription {
 
 export const EFFECT = Symbol('effect');
 export const SERVER_RENDER_EFFECT_ID = Symbol('html');
+const DEFAULT_HYDRATION_ID = Symbol('defaultId');
+const DEFAULT_HYDRATION_PREFIX = 'hydration';
 
 interface Ref<T> {
   current: T;
@@ -29,6 +34,12 @@ export class HtmlManager {
   };
 
   private serializations = getSerializationsFromDocument();
+  private hydrations = getHydrationsFromDocument();
+  private hydrationIds = new Map<
+    string | typeof DEFAULT_HYDRATION_ID,
+    number
+  >();
+
   private titles: Ref<string>[] = [];
   private metas: Ref<HTMLProps<HTMLMetaElement>>[] = [];
   private links: Ref<HTMLProps<HTMLLinkElement>>[] = [];
@@ -59,9 +70,11 @@ export class HtmlManager {
     this.metas = [];
     this.links = [];
     this.subscriptions.clear();
+    this.hydrationIds.clear();
 
     if (includeSerializations) {
       this.serializations.clear();
+      this.hydrations.clear();
     }
   }
 
@@ -98,6 +111,17 @@ export class HtmlManager {
 
   getSerialization<T>(id: string): T | undefined {
     return this.serializations.get(id) as T | undefined;
+  }
+
+  hydrationId(id?: string) {
+    const finalId = id ?? DEFAULT_HYDRATION_ID;
+    const current = this.hydrationIds.get(finalId) ?? 0;
+    this.hydrationIds.set(finalId, current + 1);
+    return `${id ?? DEFAULT_HYDRATION_PREFIX}${current + 1}`;
+  }
+
+  getHydration(id: string) {
+    return this.hydrations.get(id);
   }
 
   extract() {

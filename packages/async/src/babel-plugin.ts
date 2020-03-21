@@ -156,7 +156,6 @@ function addIdOption(
               [dynamicImports[0].get('arguments')[0].node],
             ),
             false,
-            false,
           ),
         ),
       );
@@ -173,7 +172,6 @@ function addIdOption(
               ),
               [dynamicImports[0].get('arguments')[0].node],
             ),
-            false,
             false,
           ),
         ),

@@ -1,4 +1,4 @@
-export {Script, Style} from './components';
+export {Script, Style, Hydrator} from './components';
 
 export {
   useSerialized,

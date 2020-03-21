@@ -13,6 +13,9 @@
       "path": "../async"
     },
     {
+      "path": "../react-html"
+    },
+    {
       "path": "../react-server-render"
     }
   ]
