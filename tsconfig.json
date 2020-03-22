@@ -27,9 +27,6 @@
       "path": "./packages/react-server-render"
     },
     {
-      "path": "./packages/react-web-workers"
-    },
-    {
       "path": "./packages/sewing-kit-plugins"
     }
   ]

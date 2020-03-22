@@ -1,4 +1,4 @@
-export {createResolver, Resolver} from '@quilted/async';
+export {createResolver} from '@quilted/async';
 export {
   useAsync,
   useAsyncAsset,
@@ -15,6 +15,7 @@ export {
 export {
   Script,
   Style,
+  Hydrator,
   useSerialized,
   useBodyAttributes,
   useHtmlAttributes,
