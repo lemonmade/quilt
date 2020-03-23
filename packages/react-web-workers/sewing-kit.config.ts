@@ -1,6 +1,6 @@
 import {createPackage, Runtime} from '@sewing-kit/config';
 import {createProjectBuildPlugin} from '@sewing-kit/plugins';
-import {defaultProjectPlugin} from '../../config/sewing-kit';
+import {quiltPackage} from '../../config/sewing-kit';
 
 export default createPackage((pkg) => {
   pkg.entry({root: './src/index'});
@@ -9,7 +9,7 @@ export default createPackage((pkg) => {
     root: './src/sewing-kit',
     runtime: Runtime.Node,
   });
-  pkg.use(defaultProjectPlugin);
+  pkg.use(quiltPackage());
   pkg.use(copyWrappersPlugin);
 });
 

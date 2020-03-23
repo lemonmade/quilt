@@ -5,6 +5,8 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "main": "index.js",
+  "module": "index.mjs",
   "license": "MIT",
   "sideEffects": false,
   "peerDependencies": {

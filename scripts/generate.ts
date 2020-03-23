@@ -40,6 +40,8 @@ const packagesDirectory = path.join(rootDirectory, 'packages');
       access: 'public',
       '@quilted:registry': 'https://registry.npmjs.org',
     },
+    main: 'index.js',
+    module: 'index.mjs',
     license: 'MIT',
     sideEffects: false,
     ...(name.includes('react')
