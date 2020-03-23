@@ -1,0 +1,13 @@
+{
+  "name": "@quilted/graphql",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "dependencies": {
+    "@types/graphql": "^14.0.0"
+  }
+}

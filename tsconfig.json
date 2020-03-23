@@ -9,6 +9,9 @@
       "path": "./packages/create-quilt-project"
     },
     {
+      "path": "./packages/graphql"
+    },
+    {
       "path": "./packages/quilt"
     },
     {
@@ -16,6 +19,9 @@
     },
     {
       "path": "./packages/react-auto-headings"
+    },
+    {
+      "path": "./packages/react-graphql"
     },
     {
       "path": "./packages/react-html"

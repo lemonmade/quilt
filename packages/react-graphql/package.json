@@ -1,0 +1,17 @@
+{
+  "name": "@quilted/react-graphql",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/graphql": "^0.0.0",
+    "@quilted/react-async": "^0.0.3"
+  },
+  "peerDependencies": {
+    "react": ">=16.3.0 <17.0.0"
+  }
+}

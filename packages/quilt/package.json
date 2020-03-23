@@ -12,8 +12,10 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/async": "^0.0.5",
+    "@quilted/graphql": "^0.0.0",
     "@quilted/react-async": "^0.0.7",
     "@quilted/react-auto-headings": "^0.0.5",
+    "@quilted/react-graphql": "^0.0.0",
     "@quilted/react-html": "^0.0.23",
     "@quilted/react-idle": "^0.0.3",
     "@quilted/react-router": "^0.0.26",
