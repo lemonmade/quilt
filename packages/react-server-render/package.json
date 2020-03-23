@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-server-render",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "",
   "publishConfig": {
     "access": "public",
