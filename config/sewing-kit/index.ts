@@ -17,7 +17,6 @@ export function quiltPackage({binaryOnly = false} = {}) {
     typescript(),
     react(),
     buildFlexibleOutputs({
-      node: !binaryOnly,
       esnext: !binaryOnly,
       esmodules: !binaryOnly,
     }),

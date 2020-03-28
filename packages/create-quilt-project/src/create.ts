@@ -75,6 +75,7 @@ async function createProject({name}: Options) {
       build/
       coverage/
       .sewing-kit/
+      packages/*/bin/
       packages/*/*.esnext
       packages/*/*.node
       packages/*/*.mjs

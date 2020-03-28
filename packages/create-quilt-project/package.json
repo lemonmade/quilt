@@ -7,7 +7,7 @@
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "bin": {
-    "create-quilt-project": "./index.js"
+    "create-quilt-project": "./bin/create-quilt-project"
   },
   "main": "index.js",
   "license": "MIT",
