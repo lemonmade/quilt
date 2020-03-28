@@ -8,7 +8,7 @@ import {jestConfigurationHooks} from '@sewing-kit/plugin-jest';
 import {babelConfigurationHooks} from '@sewing-kit/plugin-babel';
 import {buildFlexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
 
-export function quiltPackage() {
+export function quiltPackage({binaryOnly = false} = {}) {
   return createComposedProjectPlugin<Package>('Quilt.DefaultProject', [
     babelConfigurationHooks,
     jestConfigurationHooks,
@@ -16,6 +16,10 @@ export function quiltPackage() {
     javascript(),
     typescript(),
     react(),
-    buildFlexibleOutputs(),
+    buildFlexibleOutputs({
+      node: !binaryOnly,
+      esnext: !binaryOnly,
+      esmodules: !binaryOnly,
+    }),
   ]);
 }

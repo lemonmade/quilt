@@ -6,6 +6,9 @@
       "path": "./packages/async"
     },
     {
+      "path": "./packages/create-quilt-project"
+    },
+    {
       "path": "./packages/quilt"
     },
     {
