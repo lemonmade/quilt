@@ -11,23 +11,22 @@
   "sideEffects": false,
   "dependencies": {
     "@sewing-kit/plugin-babel": "^0.0.38",
-    "@sewing-kit/plugin-css": "^0.0.6",
+    "@sewing-kit/plugin-css": "^0.0.8",
     "@sewing-kit/plugin-eslint": "^0.0.33",
-    "@sewing-kit/plugin-javascript": "^0.0.42",
-    "@sewing-kit/plugin-jest": "^0.0.36",
-    "@sewing-kit/plugin-json": "^0.0.40",
-    "@sewing-kit/plugin-package-flexible-outputs": "^0.0.35",
+    "@sewing-kit/plugin-javascript": "^0.0.44",
+    "@sewing-kit/plugin-jest": "^0.0.38",
+    "@sewing-kit/plugin-json": "^0.0.42",
+    "@sewing-kit/plugin-package-flexible-outputs": "^0.0.37",
     "@sewing-kit/plugin-react": "^0.0.35",
     "@sewing-kit/plugin-sass": "^0.0.38",
-    "@sewing-kit/plugin-service-base": "^0.0.43",
+    "@sewing-kit/plugin-service-base": "^0.0.45",
     "@sewing-kit/plugin-stylelint": "^0.0.5",
-    "@sewing-kit/plugin-typescript": "^0.0.44",
-    "@sewing-kit/plugin-web-app-base": "^0.0.47",
+    "@sewing-kit/plugin-typescript": "^0.0.46",
+    "@sewing-kit/plugin-web-app-base": "^0.0.50",
     "@sewing-kit/plugin-webpack": "^0.0.36",
     "@sewing-kit/plugins": "^0.0.21"
   },
-  "peerDependencies": {
+  "optionalDependencies": {
     "@quilted/quilt": "*"
-  },
-  "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
+  }
 }
