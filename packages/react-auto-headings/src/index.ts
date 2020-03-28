@@ -1,3 +1,4 @@
 export {AutoHeadingGroup} from './AutoHeadingGroup';
 export {AutoHeading} from './AutoHeading';
-export {useAutoHeadingLevel, HeadingLevel} from './context';
+export {useAutoHeadingLevel} from './context';
+export type {HeadingLevel} from './context';

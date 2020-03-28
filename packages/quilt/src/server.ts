@@ -9,6 +9,6 @@ export {
   useServerEffect,
   ServerRenderManager,
   ServerRenderContext,
-  ServerRenderPass,
   extract,
 } from '@quilted/react-server-render/server';
+export type {ServerRenderPass} from '@quilted/react-server-render/server';

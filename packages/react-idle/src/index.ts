@@ -1,1 +1,2 @@
-export {useIdleCallback, UnsupportedBehavior} from './hooks';
+export {useIdleCallback} from './hooks';
+export type {UnsupportedBehavior} from './hooks';

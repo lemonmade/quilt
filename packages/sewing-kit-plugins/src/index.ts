@@ -35,7 +35,9 @@ export function quiltPackage({react: useReact = true} = {}) {
 export interface QuiltWebAppOptions {
   readonly sass?: boolean | Parameters<typeof sass>[0];
   readonly stylelint?: Parameters<typeof stylelint>[0];
-  readonly assetServer?: import('@sewing-kit/plugin-web-app-base').Options['assetServer'];
+  readonly assetServer?: NonNullable<
+    Parameters<typeof buildWebAppWithWebpack>[0]
+  >['assetServer'];
 }
 
 export function quiltWebApp({
@@ -77,7 +79,9 @@ export function quiltWebApp({
 
 export interface QuiltServiceOptions {
   readonly sass?: boolean | Parameters<typeof sass>[0];
-  readonly devServer?: import('@sewing-kit/plugin-service-base').DevServerOptions;
+  readonly devServer?: NonNullable<
+    Parameters<typeof buildServiceWithWebpack>[0]
+  >;
 }
 
 export function quiltService({

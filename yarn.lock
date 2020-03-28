@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@babel/cli@^7.8.0", "@babel/cli@^7.8.4":
+"@babel/cli@^7.8.4":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.8.4.tgz#505fb053721a98777b2b175323ea4f090b7d3c1c"
   integrity sha512-XXLgAm6LBbaNxaGhMAznXXaxtCWfuv6PIDJ9Alsy9JYTOh+j2jJz+L/162kkfU1j/pTSxK1xGmlwI4pdIMkoag==
@@ -34,7 +34,7 @@
     invariant "^2.2.4"
     semver "^5.5.0"
 
-"@babel/core@>=7.0.0", "@babel/core@>=7.2.2", "@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.7.5", "@babel/core@^7.8.0":
+"@babel/core@>=7.0.0", "@babel/core@>=7.2.2", "@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.7.5", "@babel/core@^7.8.0", "@babel/core@^7.9.0":
   version "7.9.0"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.9.0.tgz#ac977b538b77e132ff706f3b8a4dbad09c03c56e"
   integrity sha512-kWc7L0fw1xwvI0zi8OKVBuxRVefwGOrKSQMvrQ3dW+bIIavBY3/NpXmpjMy7bQnLgwgzWQZ8TlM57YHpHNHz4w==
@@ -2079,50 +2079,50 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@remote-ui/core@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-0.0.12.tgz#6db4d835e5edaf7fa1c1961fd1cdd0cd8f937928"
-  integrity sha512-s5gv2N7e195nV229owJ2+lDb5cc0EkInM4XQAoet/oMKlSbH/u8caQCjmFJHo/FlOwZCuqpdHnQjcQLUrG7BYQ==
+"@remote-ui/core@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-0.0.13.tgz#81893a7b66a94434deaa26d1e2cd324e719fd71d"
+  integrity sha512-TvPAj2gFJt7UAQHhexSE5oHzfU9TB5RPgMTyjnzIb8MDFFz+RP79AOzG/HpWu0omaAEhGlg/9lV9IoY2JEoH2Q==
   dependencies:
-    "@remote-ui/rpc" "^0.0.2"
+    "@remote-ui/rpc" "^0.0.3"
     "@remote-ui/types" "^0.0.4"
 
-"@remote-ui/react@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-0.0.17.tgz#cb54db267ebf44e00ec1806eed2e977a9ca9ab68"
-  integrity sha512-DPoJJycVqUvxew0/Q8F3Ng7rtB7EY6JfGIgYm7EoE9BZRstsPQK6xJ+NyyCgzHTLmRkfs7lkcEvLvQX0W7uMVA==
+"@remote-ui/react@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-0.0.18.tgz#4d5cb234ecc1b50358a23a77c553d23965b7e41a"
+  integrity sha512-xCv0YTC8KMpZnWh9DbkfASdqMzbmcsxG6whz9/t1l9k2qjGW/IQTfAFUO39R2sHgrzseO3rBpRnmI9C9gTafBA==
   dependencies:
-    "@remote-ui/core" "^0.0.12"
-    "@remote-ui/rpc" "^0.0.2"
-    "@remote-ui/web-workers" "^0.0.4"
-    "@types/react" "^16.9.19"
-    react-reconciler "*"
+    "@remote-ui/core" "^0.0.13"
+    "@remote-ui/rpc" "^0.0.3"
+    "@remote-ui/web-workers" "^0.0.5"
+    "@types/react" "^16.9.27"
+    react-reconciler "0.25.1"
 
-"@remote-ui/rpc@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-0.0.2.tgz#7df1ade817cdbb82abac5f81e34d838f83d74491"
-  integrity sha512-zq5qnga1c7/k4FkGQm6fHbfRzLHe+dSNGHEuOPJ0VKrv9buq/Dyrj5Nht2NLGTtHCej+SrlzbQLEqCbPU36TQw==
+"@remote-ui/rpc@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-0.0.3.tgz#e7a6e6087f5a9edd2e9c3e18c761e558ad94c37e"
+  integrity sha512-IBkXmppsBXG9GMwI3yAjdDiQbvpP21Tc5dryc9B90eCaEdSnIInhdu6V/doIKK/dWsuGbFnqaWh+NXNRo0gJeA==
 
 "@remote-ui/types@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-0.0.4.tgz#3fb40187660e6d538ea0ef716bf932c028b6ad97"
   integrity sha512-2t3gB00D/vRvd3DRSApf8yHRsGurwDKIimgF9j1cbzQcSKaQ6qRoRrsI+b4EXFlezlQzQxLeHMPb/l/n3u2a4g==
 
-"@remote-ui/web-workers@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-0.0.4.tgz#e02740ba6c157a7167971d56eff6c7348af40c59"
-  integrity sha512-JkcA+EY9KeaN+l6r2UuT4g2WR+qmgSWUA5vPcNWAa+6YjpX/BZh+xscd5lVSTk7PVe3Xvvx7GVFQVX+ztXsg4A==
+"@remote-ui/web-workers@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-0.0.5.tgz#b9a66694186976d8aefeff1013e93c1f0315bd9a"
+  integrity sha512-F9t1Xt3BuKG+5W4V5OyZw8gGLZ2UFJv78SkY/HzYZSG3TpYowGsGmTvUv+WCH92WXcwVUHnSssJXSwntXe6FeQ==
   dependencies:
-    "@remote-ui/rpc" "^0.0.2"
-    "@sewing-kit/plugins" "0.0.19"
-    "@types/webpack" "^4.41.2"
+    "@remote-ui/rpc" "^0.0.3"
+    "@sewing-kit/plugins" "0.0.21"
+    "@types/webpack" "^4.41.8"
     loader-utils "^1.0.0"
     webpack-virtual-modules "^0.2.1"
   optionalDependencies:
-    "@babel/core" "^7.8.0"
-    "@sewing-kit/plugin-babel" "0.0.36"
-    "@sewing-kit/plugin-webpack" "0.0.34"
-    webpack "^4.41.5"
+    "@babel/core" "^7.9.0"
+    "@sewing-kit/plugin-babel" "0.0.38"
+    "@sewing-kit/plugin-webpack" "0.0.36"
+    webpack "^4.42.1"
 
 "@sewing-kit/babel-preset@^0.0.11":
   version "0.0.11"
@@ -2173,13 +2173,6 @@
     fs-extra "^9.0.0"
     glob "^7.1.6"
 
-"@sewing-kit/core@^0.0.37":
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/core/-/core-0.0.37.tgz#06d482280485efb0199e5680ee5258aa8ade3e77"
-  integrity sha512-QEiRi1reRy7B8shug9d45zCA5S2iwHlfkuhSUwnvkLo1Vj/xgnLSscX7MqzsR23dsnths/czJx6x9e/M8QyeBA==
-  dependencies:
-    execa "^4.0.0"
-
 "@sewing-kit/core@^0.0.38":
   version "0.0.38"
   resolved "https://registry.yarnpkg.com/@sewing-kit/core/-/core-0.0.38.tgz#7ed57a770051afd418f40ea607a95fe18e040eca"
@@ -2214,29 +2207,12 @@
     graphql ">=14 <15"
     typescript ">=3 <4"
 
-"@sewing-kit/hooks@^0.0.21":
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/hooks/-/hooks-0.0.21.tgz#c60135954d19060570442ffcb401be3626215efb"
-  integrity sha512-uOHXMD9rITSRZLxKtxPXhlmgCSV/Bs5JlxT7vorRMV2JmqM1KWhIgrtNAkNUSMgPUIrrHpllvkvZb4Nxa9aucw==
-  dependencies:
-    "@sewing-kit/core" "^0.0.37"
-
 "@sewing-kit/hooks@^0.0.22":
   version "0.0.22"
   resolved "https://registry.yarnpkg.com/@sewing-kit/hooks/-/hooks-0.0.22.tgz#83d48082501dade7da05d3bbcaced0e062b5c63e"
   integrity sha512-05gI8vZBUUsJk7fG4IgCMdsOqYFPbaasZS2qtjHVKKCSMj7cyuXO/KufjeylYu64n+nEB1t831po543l41Vfdw==
   dependencies:
     "@sewing-kit/core" "^0.0.38"
-
-"@sewing-kit/model@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/model/-/model-0.0.10.tgz#6bc4b007896f9982e847db0578726e134dcccb2e"
-  integrity sha512-q0Z1OQJ9uAR+LDvXPlTwT5Nd2LFxawkwLYU0jMoysXgFalIGgVx6WXePUoPM7XQjsJNnmg0sS5ZeYcNMSW0RqQ==
-  dependencies:
-    "@types/fs-extra" "^8.0.1"
-    "@types/glob" "^7.1.1"
-    fs-extra "^8.1.0"
-    glob "^7.1.6"
 
 "@sewing-kit/model@^0.0.12":
   version "0.0.12"
@@ -2246,19 +2222,6 @@
     "@types/fs-extra" "^8.1.0"
     "@types/glob" "^7.1.1"
     fs-extra "^9.0.0"
-    glob "^7.1.6"
-
-"@sewing-kit/plugin-babel@0.0.36":
-  version "0.0.36"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-babel/-/plugin-babel-0.0.36.tgz#8577eb3d549076b79169a0adfbba9e9c6f58125a"
-  integrity sha512-PK+TgReJUKpU5qpIz+MrXMHQvjqBGHvC3GNez9LMjGr+gBuUInomzkSvl1R+Xj5P1OObUUPJW1RzM1to/4AwiA==
-  dependencies:
-    "@babel/cli" "^7.8.0"
-    "@babel/core" "^7.8.0"
-    "@sewing-kit/hooks" "^0.0.21"
-    "@sewing-kit/plugins" "^0.0.19"
-    "@types/babel__core" "^7.1.3"
-    fs-extra "^8.1.0"
     glob "^7.1.6"
 
 "@sewing-kit/plugin-babel@0.0.38", "@sewing-kit/plugin-babel@^0.0.38":
@@ -2520,16 +2483,7 @@
     "@sewing-kit/plugin-babel" "^0.0.38"
     "@sewing-kit/plugin-webpack" "^0.0.36"
 
-"@sewing-kit/plugin-webpack@0.0.34":
-  version "0.0.34"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-webpack/-/plugin-webpack-0.0.34.tgz#3a0fe2921a417232287d0a062f64a5902d5e4fff"
-  integrity sha512-ltdxl1BINesEphJZfeuFiWmiw5B6aVFEI0r7/HqBo2j8PiBsYbvmZw7ftNs8MJ2DlC7I2pfCDAozWfB5VRod/A==
-  dependencies:
-    "@sewing-kit/plugins" "^0.0.19"
-    "@types/webpack" "^4.41.2"
-    webpack "^4.41.5"
-
-"@sewing-kit/plugin-webpack@^0.0.36":
+"@sewing-kit/plugin-webpack@0.0.36", "@sewing-kit/plugin-webpack@^0.0.36":
   version "0.0.36"
   resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-webpack/-/plugin-webpack-0.0.36.tgz#4d3911d7c969cfce455e6421a232bd34a84ca17d"
   integrity sha512-v0ZPg10lgWG6AUueWQo3aF6dzlpN4HCnr9qngebqpQia+rW8rLYequiAkBxEQOpazhiOcGdjQ1KftyRDKNrOhw==
@@ -2537,17 +2491,6 @@
     "@sewing-kit/plugins" "^0.0.21"
     "@types/webpack" "^4.41.8"
     webpack "^4.42.1"
-
-"@sewing-kit/plugins@0.0.19", "@sewing-kit/plugins@^0.0.19":
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugins/-/plugins-0.0.19.tgz#4c9244ec673d4ac39528268cf0d1d068d1ca08b2"
-  integrity sha512-dBrzdaviU39SOSG3BOgMX2e7T7bRJclMx3L4w6aNY0VjJfRlAwLqTG3ylrix2aHQHJwbvlWw3FGblHvPLUR0BA==
-  dependencies:
-    "@sewing-kit/core" "^0.0.37"
-    "@sewing-kit/hooks" "^0.0.21"
-    "@sewing-kit/model" "^0.0.10"
-    "@sewing-kit/tasks" "^0.0.17"
-    change-case "^4.1.0"
 
 "@sewing-kit/plugins@0.0.21", "@sewing-kit/plugins@^0.0.21":
   version "0.0.21"
@@ -2559,14 +2502,6 @@
     "@sewing-kit/model" "^0.0.12"
     "@sewing-kit/tasks" "^0.0.19"
     change-case "^4.1.0"
-
-"@sewing-kit/tasks@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/tasks/-/tasks-0.0.17.tgz#b1f49e32ea757481b299067944be22d18afac3dc"
-  integrity sha512-60h5QYTGnL5X1d91CkcoTzmKhy0a/YJY5kzrA7FWAnUcGuVIEwHYxZSnDElprp79kpSNz4RL2YFOTPYj5vTUSQ==
-  dependencies:
-    "@sewing-kit/hooks" "^0.0.21"
-    "@sewing-kit/model" "^0.0.10"
 
 "@sewing-kit/tasks@^0.0.19":
   version "0.0.19"
@@ -2595,7 +2530,7 @@
   resolved "https://registry.yarnpkg.com/@types/anymatch/-/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"
   integrity sha512-/+CRPXpBDpo2RK9C68N3b2cOvO0Cf5B9aPijHsoDQTHivnGSObdOF2BRQOYjojWTDy6nQvMjmqRXIxH55VjxxA==
 
-"@types/babel__core@>=7.0.0", "@types/babel__core@^7.1.0", "@types/babel__core@^7.1.3", "@types/babel__core@^7.1.6":
+"@types/babel__core@>=7.0.0", "@types/babel__core@^7.1.0", "@types/babel__core@^7.1.6":
   version "7.1.6"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.6.tgz#16ff42a5ae203c9af1c6e190ed1f30f83207b610"
   integrity sha512-tTnhWszAqvXnhW7m5jQU9PomXSiKXk2sFxpahXvI20SZKu9ylPi8WtIxueZ6ehDWikPT0jeFujMj3X4ZHuf3Tg==
@@ -2690,7 +2625,7 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
-"@types/fs-extra@^8.0.1", "@types/fs-extra@^8.1.0":
+"@types/fs-extra@^8.1.0":
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-8.1.0.tgz#1114834b53c3914806cd03b3304b37b3bd221a4d"
   integrity sha512-UoOfVEzAUpeSPmjm7h1uk5MH6KZma2z2O7a75onTGjnNvAvMVrPzPL/vBbT65iIGHWj6rokwfmYcmxmlSf2uwg==
@@ -2845,7 +2780,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.27", "@types/react@^16.9.19":
+"@types/react@*", "@types/react@>=16.9.27", "@types/react@^16.9.27":
   version "16.9.27"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.27.tgz#7fc5db99e3ec3f21735b44d3560cff684856814a"
   integrity sha512-j+RvQb9w7a2kZFBOgTh+s/elCwtqWUMN6RJNdmz0ntmwpeoMHKnyhUcmYBu7Yw94Rtj9938D+TJSn6WGcq2+OA==
@@ -2903,7 +2838,7 @@
   resolved "https://registry.yarnpkg.com/@types/use-subscription/-/use-subscription-1.0.0.tgz#d146f8d834f70f50d48bd8246a481d096f11db19"
   integrity sha512-0WWZ5GUDKMXUY/1zy4Ur5/zsC0s/B+JjXfHdkvx6JgDNZzZV5eW+KKhDqsTGyqX56uh99gwGwbsKbVwkcVIKQA==
 
-"@types/vfile-message@*", "@types/vfile-message@1.0.1":
+"@types/vfile-message@*":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/vfile-message/-/vfile-message-1.0.1.tgz#e1e9895cc6b36c462d4244e64e6d0b6eaf65355a"
   integrity sha512-mlGER3Aqmq7bqR1tTTIVHq8KSAFFRyGbrxuM8C/H82g6k7r2fS+IMEkIu3D7JHzG10NvPdR8DNx0jr0pwpp4dA==
@@ -2948,7 +2883,7 @@
     "@types/source-list-map" "*"
     source-map "^0.6.1"
 
-"@types/webpack@*", "@types/webpack@^4.41.2", "@types/webpack@^4.41.8":
+"@types/webpack@*", "@types/webpack@^4.41.8":
   version "4.41.8"
   resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.8.tgz#d2244f5f612ee30230a5c8c4ae678bce90d27277"
   integrity sha512-mh4litLHTlDG84TGCFv1pZldndI34vkrW9Mks++Zx4KET7DRMoCXUvLbTISiuF4++fMgNnhV9cc1nCXJQyBYbQ==
@@ -9883,7 +9818,7 @@ react-is@^16.12.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-reconciler@*:
+react-reconciler@0.25.1:
   version "0.25.1"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.25.1.tgz#f9814d59d115e1210762287ce987801529363aaa"
   integrity sha512-R5UwsIvRcSs3w8n9k3tBoTtUHdVhu9u84EG7E5M0Jk9F5i6DA1pQzPfUZd6opYWGy56MJOtV3VADzy6DRwYDjw==
@@ -12058,7 +11993,7 @@ webpack-virtual-modules@^0.2.1:
   dependencies:
     debug "^3.0.0"
 
-"webpack@>=4 <5", webpack@^4.41.5, webpack@^4.42.1:
+"webpack@>=4 <5", webpack@^4.42.1:
   version "4.42.1"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.42.1.tgz#ae707baf091f5ca3ef9c38b884287cfe8f1983ef"
   integrity sha512-SGfYMigqEfdGchGhFFJ9KyRpQKnipvEvjc1TwrXEPCM6H5Wywu10ka8o3KGrMzSMxMQKt8aCHUFh5DaQ9UmyRg==
