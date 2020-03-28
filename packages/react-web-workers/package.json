@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-web-workers",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "publishConfig": {
     "access": "public",
