@@ -35,6 +35,7 @@ async function createProject({name}: Options) {
 
   console.log();
   console.log(`Creating a quilt project in ${chalk.green(root)}`);
+  console.log();
 
   await mkdirp(root);
 
@@ -104,8 +105,11 @@ async function createProject({name}: Options) {
     ` + EOL,
   );
 
+  process.chdir(root);
+
   console.log();
   console.log(`Installing dependencies with ${chalk.cyan('yarn')}`);
+  console.log();
 
   await new Promise((resolve, reject) => {
     const child = spawn('yarnpkg', ['install'], {stdio: 'inherit'});
