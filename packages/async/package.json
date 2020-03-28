@@ -14,8 +14,8 @@
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@sewing-kit/plugin-babel": "0.0.37",
-    "@sewing-kit/plugins": "0.0.20"
+    "@sewing-kit/plugin-babel": "0.0.38",
+    "@sewing-kit/plugins": "0.0.21"
   },
   "devDependencies": {
     "@types/babel__core": ">=7.0.0",
