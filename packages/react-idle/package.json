@@ -7,6 +7,7 @@
   },
   "main": "index.js",
   "module": "index.mjs",
+  "esnext": "index.esnext",
   "license": "MIT",
   "sideEffects": false,
   "peerDependencies": {
