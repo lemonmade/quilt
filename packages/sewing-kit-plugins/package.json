@@ -10,6 +10,7 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
+    "@quilted/graphql-tools": "^0.0.0",
     "@sewing-kit/plugin-babel": "^0.0.38",
     "@sewing-kit/plugin-css": "^0.0.8",
     "@sewing-kit/plugin-eslint": "^0.0.33",

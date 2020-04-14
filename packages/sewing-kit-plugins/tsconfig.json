@@ -5,6 +5,15 @@
     "baseUrl": "src",
     "rootDir": "src"
   },
-  "include": ["src/**/*.ts"],
-  "references": [{"path": "../quilt"}]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../graphql-tools"
+    },
+    {
+      "path": "../quilt"
+    }
+  ]
 }

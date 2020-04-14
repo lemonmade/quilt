@@ -2079,44 +2079,6 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@quilted/async@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@quilted/async/-/async-0.0.2.tgz#cb1d592574221e5e8d8c6b0b1dfbe5f361f09059"
-  integrity sha512-v6d9wHY0uxJxOfCfmiUY5f+Ypf8tAjBUUwT1yrTfWt+iAr4hh29NReZXD/rLzc0bSSrQBOjGKP31P8sz0M3njA==
-  optionalDependencies:
-    "@babel/core" ">=7.0.0"
-    "@babel/plugin-syntax-dynamic-import" ">=7.0.0"
-    "@babel/traverse" ">=7.0.0"
-    "@babel/types" ">=7.0.0"
-    "@sewing-kit/plugin-babel" "*"
-    "@sewing-kit/plugins" "*"
-
-"@quilted/react-async@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@quilted/react-async/-/react-async-0.0.3.tgz#7f3b24d7ba6acb38088d8bd9ca37c64eb385b56a"
-  integrity sha512-j1B3InHnYnWXc44MVizi8ye3JJCF/mC5IcR94qk0zGAq+fLHTqN3l/k7lqID7XXrCvCs++BxelE5/nP+e62Klg==
-  dependencies:
-    "@quilted/async" "^0.0.2"
-    "@quilted/react-html" "^0.0.20"
-    "@quilted/react-server-render" "^0.0.16"
-    use-subscription "^1.4.1"
-
-"@quilted/react-html@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@quilted/react-html/-/react-html-0.0.20.tgz#7a8d87b6dfa0b7f40fa6bd027d91daf053672ab1"
-  integrity sha512-bpdKVhIIaGUb2NutXsKQDX3BsTdWlG6XeCj6IwMK2FIS1Nkyu0nqdaul0z0AeahQj2LGhRYYfMh7NY1QOtw+pQ==
-  dependencies:
-    "@quilted/react-server-render" "^0.0.16"
-    "@types/react" ">=16.9.22"
-    serialize-javascript "^3.0.0"
-
-"@quilted/react-server-render@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@quilted/react-server-render/-/react-server-render-0.0.16.tgz#6634577290d3a2e3cf130e8cd4072c2828823b98"
-  integrity sha512-N1SaRNhCMHp3RvuFCZUHZvbmHKdz5Jx2X53SXQ0PDHTolZP7zl6JPFrA41ACiAtlSMLICk/w0tBje97yjTG5NQ==
-  dependencies:
-    "@types/react" ">=16.9.22"
-
 "@remote-ui/core@^0.0.14":
   version "0.0.14"
   resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-0.0.14.tgz#5ae614e59b02845d15d096d18fe3e1516cb2f263"
@@ -2534,7 +2496,7 @@
     "@types/webpack" "^4.41.8"
     webpack "^4.42.1"
 
-"@sewing-kit/plugins@*", "@sewing-kit/plugins@0.0.21", "@sewing-kit/plugins@^0.0.21":
+"@sewing-kit/plugins@0.0.21", "@sewing-kit/plugins@^0.0.21":
   version "0.0.21"
   resolved "https://registry.yarnpkg.com/@sewing-kit/plugins/-/plugins-0.0.21.tgz#b08ab6bed6b8911e286a88a7ad277a0c9fb0d5e1"
   integrity sha512-IaEhVjYABcMyfqkb+ITcSb4jCkOpJM6XMXCJj/s95n5DxBGvN4PD3MABSDwVMet0btuTKnICyOxTHoFcIh/PYQ==
@@ -2829,7 +2791,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.22", "@types/react@>=16.9.27", "@types/react@^16.9.27":
+"@types/react@*", "@types/react@>=16.9.27", "@types/react@^16.9.27":
   version "16.9.27"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.27.tgz#7fc5db99e3ec3f21735b44d3560cff684856814a"
   integrity sha512-j+RvQb9w7a2kZFBOgTh+s/elCwtqWUMN6RJNdmz0ntmwpeoMHKnyhUcmYBu7Yw94Rtj9938D+TJSn6WGcq2+OA==

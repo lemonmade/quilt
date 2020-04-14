@@ -1,4 +1,4 @@
-type BaseDocumentNode = import('graphql').DocumentNode;
+import type {DocumentNode as BaseDocumentNode} from 'graphql';
 
 export interface GraphQLOperation<Data = {}, Variables = {}> {
   // We need something to actually use the types, otherwise TypeScript
@@ -34,9 +34,9 @@ type TuplePrepend<Tuple extends any[], NewElement> = ((
 
 type Consumer<Value> = (value: Value) => void;
 
-type IntersectionFromUnion<Union> = (Union extends any
-? Consumer<Union>
-: never) extends Consumer<infer ResultIntersection>
+type IntersectionFromUnion<Union> = (
+  Union extends any ? Consumer<Union> : never
+) extends Consumer<infer ResultIntersection>
   ? ResultIntersection
   : never;
 

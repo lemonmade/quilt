@@ -12,6 +12,9 @@
       "path": "./packages/graphql"
     },
     {
+      "path": "./packages/graphql-tools"
+    },
+    {
       "path": "./packages/quilt"
     },
     {
