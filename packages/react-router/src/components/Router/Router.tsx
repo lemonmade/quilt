@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {memo, useState, useEffect, useRef, useMemo} from 'react';
 import {useSerialized} from '@quilted/react-html';
 
 import {CurrentUrlContext, RouterContext} from '../../context';
@@ -7,21 +7,35 @@ import {Prefetcher} from '../Prefetcher';
 
 interface Props {
   url?: URL;
+  prefix?: string | RegExp;
   children?: React.ReactNode;
 }
 
-export function Router({children, url: explicitUrl}: Props) {
-  const [url, setUrl] = useState(() => explicitUrl || getUrlFromBrowser());
-  const routerRef = useRef<RouterControl>(null as any);
+export const Router = memo(function Router({
+  children,
+  url: explicitUrl,
+  prefix,
+}: Props) {
+  const routerRef = useRef<RouterControl>(undefined as any);
+
   const routerState = useSerialized('router', () =>
     routerRef.current[EXTRACT](),
   );
 
-  if (routerRef.current == null) {
-    routerRef.current = new RouterControl(url, routerState);
-  }
+  const router = useMemo(
+    () =>
+      new RouterControl(explicitUrl ?? getUrlFromBrowser(), {
+        prefix,
+        state: routerState,
+      }),
+    [explicitUrl, prefix, routerState],
+  );
 
-  useEffect(() => routerRef.current.listen((newUrl) => setUrl(newUrl)), []);
+  routerRef.current = router;
+
+  const [url, setUrl] = useState(router.currentUrl);
+
+  useEffect(() => router.listen((newUrl) => setUrl(newUrl)), [router]);
 
   return (
     <>
@@ -33,7 +47,7 @@ export function Router({children, url: explicitUrl}: Props) {
       </RouterContext.Provider>
     </>
   );
-}
+});
 
 function getUrlFromBrowser() {
   if (typeof window === 'undefined') {

@@ -1,10 +1,19 @@
 import {ServerRenderEffectKind} from '@quilted/react-server-render';
+
 import {EnhancedURL, Match} from './types';
+import {postfixSlash} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 
 export interface State {
-  switchFallbacks: string[];
+  switchFallbacks?: string[];
+}
+
+type Prefix = string | RegExp;
+
+export interface Options {
+  state?: State;
+  prefix?: Prefix;
 }
 
 type Listener = (url: EnhancedURL) => void;
@@ -53,18 +62,24 @@ export class Router {
   readonly [REGISTERED] = new Set<PrefetchRegistration>();
 
   private readonly switchFallbacks = new Set<string>();
+  private readonly prefix: Prefix | undefined;
   private currentSwitchId = 0;
   private blockers = new Set<Blocker>();
   private listeners = new Set<Listener>();
   private forceNextNavigation = false;
   private keys: string[] = [];
 
-  constructor(url: URL, {switchFallbacks = []}: Partial<State> = {}) {
+  constructor(
+    url: URL,
+    {prefix, state: {switchFallbacks = []} = {}}: Options = {},
+  ) {
     for (const switchToFallback of switchFallbacks) {
       this.switchFallbacks.add(switchToFallback);
     }
 
-    const currentUrl = enhanceUrl(url, {});
+    this.prefix = prefix;
+
+    const currentUrl = enhanceUrl(url, {}, this.prefix);
     this.currentUrl = currentUrl;
 
     if (currentUrl.state.key) {
@@ -117,7 +132,7 @@ export class Router {
       ];
     }
 
-    this.currentUrl = createUrl();
+    this.currentUrl = createUrl(this.prefix);
 
     for (const listener of this.listeners) {
       listener(this.currentUrl);
@@ -201,7 +216,7 @@ export class Router {
   }
 
   private handlePopstate = () => {
-    const newUrl = createUrl();
+    const newUrl = createUrl(this.prefix);
     const {revert, redo} = this.getPopBlockHelpers();
 
     if (!this.forceNextNavigation && this.shouldBlock(newUrl, redo)) {
@@ -255,20 +270,29 @@ export class Router {
   }
 }
 
-function createUrl(): EnhancedURL {
-  return enhanceUrl(new URL(window.location.href), {...window.history.state});
+function createUrl(prefix?: Prefix): EnhancedURL {
+  return enhanceUrl(
+    new URL(window.location.href),
+    {...window.history.state},
+    prefix,
+  );
 }
 
-function enhanceUrl(url: URL, state: object): EnhancedURL {
+function enhanceUrl(url: URL, state: object, prefix?: Prefix): EnhancedURL {
   Object.defineProperty(url, 'state', {
     value: state,
     writable: true,
   });
 
+  Object.defineProperty(url, 'prefix', {
+    value: extractPrefix(url, prefix),
+    writable: false,
+  });
+
   return url as EnhancedURL;
 }
 
-function resolveUrl(to: NavigateTo, from: URL) {
+function resolveUrl(to: NavigateTo, from: EnhancedURL) {
   if (to instanceof URL) {
     if (to.origin !== from.origin) {
       throw new Error(
@@ -285,13 +309,16 @@ function resolveUrl(to: NavigateTo, from: URL) {
     const finalSearch = searchToString(search || from.search);
     const finalHash = hash || from.hash;
 
-    return new URL(`${finalPathname}${finalSearch}${finalHash}`, from.href);
+    return new URL(
+      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
+      from.href,
+    );
   }
 
-  return new URL(to, postfixSlash(from.href));
+  return new URL(prefixPath(to, from.prefix), postfixSlash(from.href));
 }
 
-function resolve(to: NavigateTo, from: URL) {
+function resolve(to: NavigateTo, from: EnhancedURL) {
   if (to instanceof URL) {
     if (to.origin !== from.origin) {
       throw new Error(
@@ -307,16 +334,35 @@ function resolve(to: NavigateTo, from: URL) {
     const finalSearch = searchToString(search || from.search);
     const finalHash = hash || from.hash;
 
-    return `${finalPathname}${finalSearch}${finalHash}`;
+    return prefixPath(
+      `${finalPathname}${finalSearch}${finalHash}`,
+      from.prefix,
+    );
   }
 
   return to.indexOf('/') === 0
-    ? to
-    : urlToPath(new URL(to, postfixSlash(from.href)));
+    ? prefixPath(to, from.prefix)
+    : urlToPath(new URL(prefixPath(to, from.prefix), postfixSlash(from.href)));
 }
 
-function postfixSlash(path: string) {
-  return path.lastIndexOf('/') === path.length - 1 ? path : `${path}/`;
+function prefixPath(pathname: string, prefix?: string) {
+  if (!prefix) return pathname;
+
+  return pathname.indexOf('/') === 0
+    ? `${postfixSlash(prefix)}${pathname.slice(1)}`
+    : pathname;
+}
+
+function extractPrefix(url: URL, prefix?: Prefix) {
+  if (!prefix) return undefined;
+
+  if (typeof prefix === 'string') {
+    return url.pathname.indexOf(prefix) === 0 ? prefix : undefined;
+  }
+
+  const regex = new RegExp(prefix.source);
+  const match = regex.exec(url.pathname);
+  return match != null && match.index === 0 ? match[0] : undefined;
 }
 
 function urlToPath(url: URL) {

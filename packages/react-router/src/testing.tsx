@@ -1,6 +1,6 @@
 import React, {useRef, ReactNode} from 'react';
 
-import {Router, NavigateTo, NavigateOptions, State} from './router';
+import {Router, NavigateTo, NavigateOptions, Options} from './router';
 import {CurrentUrlContext, RouterContext} from './context';
 
 class TestRouterControl extends Router {
@@ -10,9 +10,9 @@ class TestRouterControl extends Router {
 
 export function createTestRouter(
   url: URL = new URL('/', window.location.href),
-  state?: Partial<State>,
+  options?: Options,
 ) {
-  return new TestRouterControl(url, state);
+  return new TestRouterControl(url, options);
 }
 
 interface Props {

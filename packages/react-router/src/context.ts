@@ -1,6 +1,7 @@
 import {createContext} from 'react';
+import {EnhancedURL} from './types';
 
-export const CurrentUrlContext = createContext<URL | null>(null);
+export const CurrentUrlContext = createContext<EnhancedURL | null>(null);
 export const RouterContext = createContext<import('./router').Router | null>(
   null,
 );

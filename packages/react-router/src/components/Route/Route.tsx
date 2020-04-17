@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useContext, useMemo} from 'react';
 
-import {useCurrentUrl, useSwitch, useRouter} from '../../hooks';
+import {useCurrentUrl, useRouter} from '../../hooks';
+import {SwitchContext} from '../../context';
 import {resolveMatch} from '../../utilities';
 import {Matcher} from '../../types';
 import {REGISTER, NavigateTo} from '../../router';
@@ -18,7 +19,7 @@ interface Props {
 export function Route({match, render, redirect, renderPrefetch}: Props) {
   const url = useCurrentUrl();
   const router = useRouter();
-  const switcher = useSwitch();
+  const switcher = useContext(SwitchContext);
 
   useEffect(() => {
     if (renderPrefetch == null) {
@@ -28,7 +29,7 @@ export function Route({match, render, redirect, renderPrefetch}: Props) {
     return router[REGISTER]({match, render: renderPrefetch});
   }, [match, renderPrefetch, router]);
 
-  const matches = resolveMatch(url, match);
+  const matches = useMemo(() => resolveMatch(url, match), [url, match]);
   const normalizedRender = matches
     ? render || renderFromRedirect(redirect)
     : null;

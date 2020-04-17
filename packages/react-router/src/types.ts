@@ -1,4 +1,5 @@
 export type EnhancedURL = URL & {
+  readonly prefix?: string;
   readonly state: {key?: string; [key: string]: unknown};
 };
 
