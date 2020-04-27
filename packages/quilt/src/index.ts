@@ -26,6 +26,7 @@ export {
   useTitle,
   usePreconnect,
   useHtmlUpdater,
+  getSerialized,
 } from '@quilted/react-html';
 export {useIdleCallback} from '@quilted/react-idle';
 export {ServerEffect, useServerEffect} from '@quilted/react-server-render';

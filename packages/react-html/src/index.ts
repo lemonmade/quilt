@@ -12,3 +12,5 @@ export {
   usePreconnect,
   useHtmlUpdater,
 } from './hooks';
+
+export {getSerialized} from './utilities';
