@@ -33,7 +33,7 @@ export function getSerialized<Data>(id: string) {
   const node = document.querySelector(`[${SERIALIZE_ID_ATTRIBUTE}="${id}"]`);
 
   if (node == null) {
-    throw new Error(`No serializations found for id "${id}"`);
+    return undefined;
   }
 
   return getSerializedFromNode<Data>(node);
