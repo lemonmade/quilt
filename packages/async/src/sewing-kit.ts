@@ -1,5 +1,9 @@
-import {createProjectPlugin, WaterfallHook} from '@sewing-kit/plugins';
-import {} from '@sewing-kit/plugin-babel';
+import {
+  addHooks as createAddHooks,
+  WaterfallHook,
+  createProjectPlugin,
+} from '@sewing-kit/plugins';
+import type {} from '@sewing-kit/plugin-javascript';
 
 import {
   Options as BabelOptions,
@@ -26,11 +30,10 @@ declare module '@sewing-kit/hooks' {
   interface BuildProjectConfigurationCustomHooks extends Hooks {}
 }
 
-const addHooks = (hooks: any) => ({
-  ...hooks,
+const addHooks = createAddHooks<Hooks>(() => ({
   quiltAsyncModuleId: new WaterfallHook(),
   quiltAsyncApplyBabelToPackages: new WaterfallHook(),
-});
+}));
 
 export function asyncQuilt(options: Options = {}) {
   return createProjectPlugin(PLUGIN, ({tasks: {dev, build, test}}) => {
@@ -74,7 +77,7 @@ function createBabelConfigUpdater(
   }: Options,
 ) {
   return async (
-    babelConfig: import('@sewing-kit/plugin-babel').BabelConfig,
+    babelConfig: import('@sewing-kit/plugin-javascript').BabelConfig,
   ): Promise<typeof babelConfig> => {
     const [moduleId, packages] = await Promise.all([
       configure.quiltAsyncModuleId!.run(defaultModuleId),

@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@quilted/react-server-render": "^0.0.20",
-    "@types/react": ">=16.9.27",
+    "@types/react": ">=16.9.34",
     "serialize-javascript": "^3.0.0"
   },
   "devDependencies": {
-    "@types/react-dom": "^16.9.5",
+    "@types/react-dom": "^16.9.6",
     "@types/serialize-javascript": "^1.5.0"
   },
   "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"

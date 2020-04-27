@@ -51,9 +51,12 @@ export default function asyncBabelPlugin({
           .filter((specifier) => {
             return (
               specifier.isImportSpecifier() &&
-              processImports.some((name) =>
-                specifier.get('imported').isIdentifier({name}),
-              )
+              processImports.some((name) => {
+                const imported = specifier.get('imported');
+                return Array.isArray(imported)
+                  ? imported.some((anImport) => anImport.isIdentifier({name}))
+                  : imported.isIdentifier({name});
+              })
             );
           });
 
@@ -86,7 +89,7 @@ function addIdOption(
     }
 
     const args = callExpression.get('arguments');
-    if (args.length === 0) {
+    if (!Array.isArray(args) || args.length === 0) {
       return;
     }
 
@@ -100,7 +103,11 @@ function addIdOption(
       [key: string]: NodePath<import('@babel/types').ObjectMember>;
     } = {};
 
-    properties.forEach((property) => {
+    const normalizedProperties = Array.isArray(properties)
+      ? properties
+      : [properties];
+
+    normalizedProperties.forEach((property) => {
       if (!property.isObjectMember() || property.node.computed) {
         return;
       }

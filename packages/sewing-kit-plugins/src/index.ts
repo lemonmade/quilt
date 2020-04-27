@@ -7,55 +7,42 @@ import {
 } from '@sewing-kit/plugins';
 
 import {flexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
-import {webpack} from '@sewing-kit/plugin-webpack';
+import {webpackHooks} from '@sewing-kit/plugin-webpack';
 import {buildWebAppWithWebpack} from '@sewing-kit/plugin-web-app-base';
 import {buildServiceWithWebpack} from '@sewing-kit/plugin-service-base';
-import {json} from '@sewing-kit/plugin-json';
 import {eslint} from '@sewing-kit/plugin-eslint';
-import {javascript, workspaceJavaScript} from '@sewing-kit/plugin-javascript';
+import {javascript} from '@sewing-kit/plugin-javascript';
 import {typescript, workspaceTypeScript} from '@sewing-kit/plugin-typescript';
-import {css, workspaceCSS} from '@sewing-kit/plugin-css';
-import {sass} from '@sewing-kit/plugin-sass';
+import {css} from '@sewing-kit/plugin-css';
 import {stylelint} from '@sewing-kit/plugin-stylelint';
 import {react} from '@sewing-kit/plugin-react';
-import {babelConfigurationHooks} from '@sewing-kit/plugin-babel';
-import {jest, jestConfigurationHooks} from '@sewing-kit/plugin-jest';
+import {jest, jestProjectHooks} from '@sewing-kit/plugin-jest';
 
 export function quiltPackage({react: useReact = true} = {}) {
   return createComposedProjectPlugin<Package>('Quilt.Package', [
-    babelConfigurationHooks,
-    jestConfigurationHooks,
-    json(),
     javascript(),
     typescript(),
+    jestProjectHooks(),
     useReact && react(),
   ]);
 }
 
 export interface QuiltWebAppOptions {
-  readonly sass?: boolean | Parameters<typeof sass>[0];
-  readonly stylelint?: Parameters<typeof stylelint>[0];
   readonly assetServer?: NonNullable<
     Parameters<typeof buildWebAppWithWebpack>[0]
   >['assetServer'];
 }
 
-export function quiltWebApp({
-  assetServer,
-  sass: useSass = false,
-}: QuiltWebAppOptions = {}) {
+export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
     async (composer) => {
       composer.use(
-        babelConfigurationHooks,
-        jestConfigurationHooks,
-        webpack(),
-        json(),
         javascript(),
         typescript(),
         css(),
-        useSass && sass(typeof useSass === 'boolean' ? {} : useSass),
+        webpackHooks(),
+        jestProjectHooks(),
         buildWebAppWithWebpack({assetServer}),
         flexibleOutputs(),
         react(),
@@ -78,28 +65,20 @@ export function quiltWebApp({
 }
 
 export interface QuiltServiceOptions {
-  readonly sass?: boolean | Parameters<typeof sass>[0];
   readonly devServer?: NonNullable<
     Parameters<typeof buildServiceWithWebpack>[0]
   >;
 }
 
-export function quiltService({
-  devServer,
-  sass: useSass,
-}: QuiltServiceOptions = {}) {
+export function quiltService({devServer}: QuiltServiceOptions = {}) {
   return createComposedProjectPlugin<Service>(
     'Quilt.Service',
     async (composer) => {
       composer.use(
-        babelConfigurationHooks,
-        jestConfigurationHooks,
-        webpack(),
-        json(),
         javascript(),
         typescript(),
         css(),
-        useSass && sass(typeof useSass === 'boolean' ? {} : useSass),
+        webpackHooks(),
         flexibleOutputs(),
         react(),
         buildServiceWithWebpack(devServer),
@@ -128,9 +107,7 @@ export function quiltWorkspace({
     jest(),
     eslint(),
     stylelint(stylelintOptions),
-    workspaceJavaScript(),
     workspaceTypeScript(),
-    workspaceCSS(),
   ]);
 }
 

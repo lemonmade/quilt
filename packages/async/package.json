@@ -13,13 +13,13 @@
   "optionalDependencies": {
     "@babel/core": ">=7.0.0",
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
-    "@babel/traverse": ">=7.0.0",
-    "@babel/types": ">=7.0.0",
-    "@sewing-kit/plugin-babel": "0.0.38",
-    "@sewing-kit/plugins": "0.0.21"
+    "@babel/traverse": ">=7.9.5",
+    "@babel/types": ">=7.9.5",
+    "@sewing-kit/plugin-javascript": "^0.0.50",
+    "@sewing-kit/plugins": "^0.0.23"
   },
   "devDependencies": {
-    "@types/babel__core": ">=7.0.0",
-    "@types/babel__traverse": ">=7.0.0"
+    "@types/babel__core": ">=7.1.7",
+    "@types/babel__traverse": ">=7.0.10"
   }
 }
