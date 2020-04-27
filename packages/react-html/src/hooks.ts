@@ -14,13 +14,15 @@ type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
 
 export function useSerialized<T>(
   id: string,
-  serialize: () => T | Promise<T>,
+  serialize?: () => T | Promise<T>,
 ): T | undefined {
   const manager = useContext(HtmlContext);
   const data = useMemo(() => manager.getSerialization<T>(id), [id, manager]);
 
   useServerDomEffect(
     (manager) => {
+      if (serialize == null) return;
+
       const result = serialize();
       const handleResult = manager.setSerialization.bind(manager, id);
       return isPromise(result)

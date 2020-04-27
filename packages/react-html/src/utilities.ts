@@ -1,4 +1,5 @@
-export const SERIALIZE_ATTRIBUTE = 'data-serialized-id';
+export const SERIALIZE_ID_ATTRIBUTE = 'data-serialized-id';
+export const SERIALIZE_VALUE_ATTRIBUTE = 'data-serialized-value';
 export const MANAGED_ATTRIBUTE = 'data-react-html';
 
 export function getSerializationsFromDocument() {
@@ -8,9 +9,9 @@ export function getSerializationsFromDocument() {
     return serializations;
   }
 
-  for (const node of document.querySelectorAll(`[${SERIALIZE_ATTRIBUTE}]`)) {
+  for (const node of document.querySelectorAll(`[${SERIALIZE_ID_ATTRIBUTE}]`)) {
     serializations.set(
-      node.getAttribute(SERIALIZE_ATTRIBUTE)!,
+      node.getAttribute(SERIALIZE_ID_ATTRIBUTE)!,
       getSerializedFromNode(node),
     );
   }
@@ -19,7 +20,7 @@ export function getSerializationsFromDocument() {
 }
 
 function getSerializedFromNode<Data>(node: Element): Data | undefined {
-  const value = node.textContent;
+  const value = node.getAttribute(SERIALIZE_VALUE_ATTRIBUTE);
 
   try {
     return value ? JSON.parse(value) : undefined;
@@ -29,7 +30,7 @@ function getSerializedFromNode<Data>(node: Element): Data | undefined {
 }
 
 export function getSerialized<Data>(id: string) {
-  const node = document.querySelector(`[${SERIALIZE_ATTRIBUTE}="${id}"]`);
+  const node = document.querySelector(`[${SERIALIZE_ID_ATTRIBUTE}="${id}"]`);
 
   if (node == null) {
     throw new Error(`No serializations found for id "${id}"`);
