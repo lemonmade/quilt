@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-html",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -16,7 +16,7 @@
     "react-dom": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@quilted/react-server-render": "^0.0.20",
+    "@quilted/react-server-render": "^0.0.21",
     "@types/react": ">=16.9.34",
     "serialize-javascript": "^3.0.0"
   },
