@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -12,12 +12,12 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/async": "^0.0.7",
-    "@quilted/react-async": "^0.0.11",
+    "@quilted/async": "^0.0.8",
+    "@quilted/react-async": "^0.0.12",
     "@quilted/react-auto-headings": "^0.0.6",
-    "@quilted/react-html": "^0.0.27",
+    "@quilted/react-html": "^0.0.28",
     "@quilted/react-idle": "^0.0.4",
-    "@quilted/react-router": "^0.0.31",
+    "@quilted/react-router": "^0.0.32",
     "@quilted/react-server-render": "^0.0.21",
     "@quilted/react-web-workers": "^0.0.11"
   },
