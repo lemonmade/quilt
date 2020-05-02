@@ -7,9 +7,9 @@ import {
 } from '@sewing-kit/plugins';
 
 import {flexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
-import {webpackHooks} from '@sewing-kit/plugin-webpack';
-import {buildWebAppWithWebpack} from '@sewing-kit/plugin-web-app-base';
-import {buildServiceWithWebpack} from '@sewing-kit/plugin-service-base';
+import {webpackHooks, webpackBuild} from '@sewing-kit/plugin-webpack';
+import {webpackDevWebApp} from '@sewing-kit/plugin-web-app-base';
+import {webpackDevService} from '@sewing-kit/plugin-service-base';
 import {eslint} from '@sewing-kit/plugin-eslint';
 import {javascript} from '@sewing-kit/plugin-javascript';
 import {typescript, workspaceTypeScript} from '@sewing-kit/plugin-typescript';
@@ -29,7 +29,7 @@ export function quiltPackage({react: useReact = true} = {}) {
 
 export interface QuiltWebAppOptions {
   readonly assetServer?: NonNullable<
-    Parameters<typeof buildWebAppWithWebpack>[0]
+    Parameters<typeof webpackDevWebApp>[0]
   >['assetServer'];
 }
 
@@ -43,8 +43,9 @@ export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
         css(),
         webpackHooks(),
         jestProjectHooks(),
-        buildWebAppWithWebpack({assetServer}),
+        webpackDevWebApp({assetServer}),
         flexibleOutputs(),
+        webpackBuild(),
         react(),
       );
 
@@ -65,9 +66,7 @@ export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
 }
 
 export interface QuiltServiceOptions {
-  readonly devServer?: NonNullable<
-    Parameters<typeof buildServiceWithWebpack>[0]
-  >;
+  readonly devServer?: NonNullable<Parameters<typeof webpackDevService>[0]>;
 }
 
 export function quiltService({devServer}: QuiltServiceOptions = {}) {
@@ -81,7 +80,8 @@ export function quiltService({devServer}: QuiltServiceOptions = {}) {
         webpackHooks(),
         flexibleOutputs(),
         react(),
-        buildServiceWithWebpack(devServer),
+        webpackBuild(),
+        webpackDevService(devServer),
       );
 
       await Promise.all([
