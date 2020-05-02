@@ -16,8 +16,8 @@
     "react-dom": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@remote-ui/react": "^0.0.25",
-    "@remote-ui/web-workers": "^0.0.9",
+    "@remote-ui/react": "^0.0.26",
+    "@remote-ui/web-workers": "^0.0.10",
     "@types/react": ">=16.9.34"
   },
   "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
