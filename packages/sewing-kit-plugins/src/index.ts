@@ -97,18 +97,27 @@ export function quiltService({devServer}: QuiltServiceOptions = {}) {
 }
 
 export interface QuiltWorkspaceOptions {
-  readonly stylelint?: Parameters<typeof stylelint>[0];
+  readonly css?: boolean;
+  readonly stylelint?: boolean | Parameters<typeof stylelint>[0];
 }
 
 export function quiltWorkspace({
-  stylelint: stylelintOptions,
+  css = true,
+  stylelint: stylelintOptions = css,
 }: QuiltWorkspaceOptions = {}) {
-  return createComposedWorkspacePlugin('Quilt.Workspace', [
-    jest(),
-    eslint(),
-    stylelint(stylelintOptions),
-    workspaceTypeScript(),
-  ]);
+  const plugins = [jest(), eslint()];
+
+  if (stylelintOptions) {
+    plugins.push(
+      stylelint(
+        typeof stylelintOptions === 'boolean' ? undefined : stylelintOptions,
+      ),
+    );
+  }
+
+  plugins.push(workspaceTypeScript());
+
+  return createComposedWorkspacePlugin('Quilt.Workspace', plugins);
 }
 
 async function ignoreMissingImports<T>(perform: () => Promise<T>) {
