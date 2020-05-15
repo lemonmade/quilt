@@ -5,3 +5,4 @@ export {Redirect} from './Redirect';
 export {Route} from './Route';
 export {Router} from './Router';
 export {Switch} from './Switch';
+export {FocusContext} from './FocusContext';

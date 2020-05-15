@@ -1,6 +1,7 @@
 import React, {memo, useState, useEffect, useRef, useMemo} from 'react';
 import {useSerialized} from '@quilted/react-html';
 
+import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
 import {Router as RouterControl, EXTRACT} from '../../router';
 import {Prefetcher} from '../Prefetcher';
@@ -42,7 +43,7 @@ export const Router = memo(function Router({
       <RouterContext.Provider value={routerRef.current}>
         <CurrentUrlContext.Provider value={url}>
           <Prefetcher />
-          {children}
+          <FocusContext>{children}</FocusContext>
         </CurrentUrlContext.Provider>
       </RouterContext.Provider>
     </>

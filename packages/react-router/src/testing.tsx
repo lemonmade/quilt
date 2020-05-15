@@ -2,6 +2,7 @@ import React, {useRef, ReactNode} from 'react';
 
 import {Router, NavigateTo, NavigateOptions, Options} from './router';
 import {CurrentUrlContext, RouterContext} from './context';
+import {FocusContext} from './components';
 
 class TestRouterControl extends Router {
   navigate(_to: NavigateTo, _options?: NavigateOptions) {}
@@ -26,7 +27,7 @@ export function TestRouter({children, router: initialRouter}: Props) {
   return (
     <RouterContext.Provider value={router.current}>
       <CurrentUrlContext.Provider value={router.current.currentUrl}>
-        {children}
+        <FocusContext>{children}</FocusContext>
       </CurrentUrlContext.Provider>
     </RouterContext.Provider>
   );
