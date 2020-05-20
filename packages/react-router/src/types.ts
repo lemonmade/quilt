@@ -8,3 +8,7 @@ export interface Matcher {
 }
 
 export type Match = string | RegExp | Matcher;
+
+export interface Focusable {
+  focus(): void;
+}

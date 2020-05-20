@@ -7,5 +7,10 @@ export {
   Prefetcher,
   NavigationBlock,
 } from './components';
-export {useCurrentUrl, useRouter, useNavigationBlock} from './hooks';
+export {
+  useCurrentUrl,
+  useRouter,
+  useNavigationBlock,
+  useRouteChangeFocusRef,
+} from './hooks';
 export type {NavigateTo} from './router';
