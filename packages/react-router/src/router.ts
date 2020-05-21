@@ -307,7 +307,7 @@ function resolveUrl(to: NavigateTo, from: EnhancedURL) {
     // should make sure we insert the hash/ question mark
     const finalPathname = pathname ?? from.pathname;
     const finalSearch = searchToString(search ?? from.search);
-    const finalHash = hash ?? from.hash;
+    const finalHash = prefixIfNeeded('#', hash ?? from.hash);
 
     return new URL(
       prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
@@ -332,10 +332,10 @@ function resolve(to: NavigateTo, from: EnhancedURL) {
 
     const finalPathname = pathname ?? from.pathname;
     const finalSearch = searchToString(search ?? from.search);
-    const finalHash = hash ?? from.hash;
+    const finalHash = prefixIfNeeded('#', hash ?? from.hash);
 
     return prefixPath(
-      `${finalPathname}${finalSearch}${prefixIfNeeded('#', finalHash)}`,
+      `${finalPathname}${finalSearch}${finalHash}`,
       from.prefix,
     );
   }
