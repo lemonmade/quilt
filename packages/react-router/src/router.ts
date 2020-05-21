@@ -305,9 +305,9 @@ function resolveUrl(to: NavigateTo, from: EnhancedURL) {
     const {pathname, search, hash} = to;
 
     // should make sure we insert the hash/ question mark
-    const finalPathname = pathname || from.pathname;
-    const finalSearch = searchToString(search || from.search);
-    const finalHash = hash || from.hash;
+    const finalPathname = pathname ?? from.pathname;
+    const finalSearch = searchToString(search ?? from.search);
+    const finalHash = hash ?? from.hash;
 
     return new URL(
       prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
@@ -330,12 +330,12 @@ function resolve(to: NavigateTo, from: EnhancedURL) {
   } else if (typeof to === 'object') {
     const {pathname, search, hash} = to;
 
-    const finalPathname = pathname || from.pathname;
-    const finalSearch = searchToString(search || from.search);
-    const finalHash = hash || from.hash;
+    const finalPathname = pathname ?? from.pathname;
+    const finalSearch = searchToString(search ?? from.search);
+    const finalHash = hash ?? from.hash;
 
     return prefixPath(
-      `${finalPathname}${finalSearch}${finalHash}`,
+      `${finalPathname}${finalSearch}${prefixIfNeeded('#', finalHash)}`,
       from.prefix,
     );
   }
@@ -377,14 +377,21 @@ function searchToString(search?: Search) {
   if (search == null) {
     return '';
   } else if (typeof search === 'string') {
-    return search;
+    return prefixIfNeeded('?', search);
   } else if (search instanceof URLSearchParams) {
-    return search.toString();
+    return prefixIfNeeded('?', search.toString());
   } else {
-    return Object.keys(search).reduce<string>((searchString, key) => {
-      return `${searchString}${key}=${encodeURIComponent(
-        (search as any)[key],
-      )}`;
-    }, '?');
+    return prefixIfNeeded(
+      '?',
+      Object.keys(search).reduce<string>((searchString, key) => {
+        return `${searchString}${key}=${encodeURIComponent(
+          (search as any)[key],
+        )}`;
+      }, ''),
+    );
   }
+}
+
+function prefixIfNeeded(prefix: string, value: string) {
+  return value.length > 0 || value[0] === prefix ? value : `${prefix}${value}`;
 }
