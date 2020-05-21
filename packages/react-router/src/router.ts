@@ -393,5 +393,7 @@ function searchToString(search?: Search) {
 }
 
 function prefixIfNeeded(prefix: string, value: string) {
-  return value.length > 0 || value[0] === prefix ? value : `${prefix}${value}`;
+  return value.length === 0 || value[0] === prefix
+    ? value
+    : `${prefix}${value}`;
 }
