@@ -40,6 +40,7 @@ export {
   useCurrentUrl,
   useRouter,
   useNavigationBlock,
+  useRouteChangeFocusRef,
 } from '@quilted/react-router';
 export {
   useWorker,
