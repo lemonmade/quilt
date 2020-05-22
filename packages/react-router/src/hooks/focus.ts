@@ -1,8 +1,11 @@
-import {useContext} from 'react';
+import {useContext, MutableRefObject} from 'react';
 
+import {Focusable} from '../types';
 import {FocusContext} from '../context';
 
-function useFocusContext() {
+export function useRouteChangeFocusRef<T extends Focusable>(): MutableRefObject<
+  T
+> {
   const context = useContext(FocusContext);
 
   if (context == null) {
@@ -11,9 +14,5 @@ function useFocusContext() {
     );
   }
 
-  return context;
-}
-
-export function useRouteChangeFocusRef() {
-  return useFocusContext();
+  return context as MutableRefObject<T>;
 }
