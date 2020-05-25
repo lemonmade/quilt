@@ -15,6 +15,7 @@ export async function render(
   const asyncAssets = new AsyncAssetManager();
 
   const markup = await extract(app, {
+    // eslint-disable-next-line react/function-component-definition
     decorate(app) {
       return (
         <AsyncAssetContext.Provider value={asyncAssets}>

@@ -16,26 +16,28 @@ export default createPackage((pkg) => {
 const copyWrappersPlugin = createProjectBuildPlugin(
   'QuiltWebWorkers.CopyWrappers',
   ({api, hooks, project}) => {
-    hooks.steps.hook((steps, {variant}) => [
-      ...steps,
-      api.createStep(
-        {id: 'QuiltWebWorkers.CopyWrappers', label: 'Copying wrapper files'},
-        async () => {
-          const {copy} = await import('fs-extra');
-          const variantName = Object.keys(variant)[0];
-          await copy(
-            project.fs.resolvePath('src/wrappers'),
-            project.fs.buildPath(
-              variantName === 'commonjs' ? 'cjs' : variantName,
-              'wrappers',
-            ),
-            {
-              overwrite: true,
-              recursive: true,
-            },
-          );
-        },
-      ),
-    ]);
+    hooks.variant.hook(({variant, hooks}) => {
+      hooks.steps.hook((steps) => [
+        ...steps,
+        api.createStep(
+          {id: 'QuiltWebWorkers.CopyWrappers', label: 'Copying wrapper files'},
+          async () => {
+            const {copy} = await import('fs-extra');
+            const variantName = Object.keys(variant)[0];
+            await copy(
+              project.fs.resolvePath('src/wrappers'),
+              project.fs.buildPath(
+                variantName === 'commonjs' ? 'cjs' : variantName,
+                'wrappers',
+              ),
+              {
+                overwrite: true,
+                recursive: true,
+              },
+            );
+          },
+        ),
+      ]);
+    });
   },
 );
