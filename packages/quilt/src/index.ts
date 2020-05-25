@@ -29,7 +29,7 @@ export {
   getSerialized,
 } from '@quilted/react-html';
 export {useIdleCallback} from '@quilted/react-idle';
-export {ServerEffect, useServerEffect} from '@quilted/react-server-render';
+export {ServerAction, useServerAction} from '@quilted/react-server-render';
 export {
   Link,
   Redirect,

@@ -1,4 +1,4 @@
-import {ServerRenderEffectKind} from '@quilted/react-server-render';
+import {ServerActionKind} from '@quilted/react-server-render';
 
 import {EnhancedURL, Match} from './types';
 import {postfixSlash} from './utilities';
@@ -42,11 +42,11 @@ export interface NavigateOptions {
   state?: {[key: string]: unknown};
 }
 
-export const EFFECT = Symbol('effect');
 export const EXTRACT = Symbol('extract');
 export const REGISTER = Symbol('register');
 export const REGISTERED = Symbol('registered');
 export const CREATE_SWITCH_ID = Symbol('createSwitchId');
+export const SERVER_ACTION_KIND = Symbol('serverActionKind');
 export const MARK_SWITCH_FALLBACK = Symbol('markSwitchAsFallback');
 export const SWITCH_IS_FALLBACK = Symbol('switchIsFallback');
 
@@ -54,7 +54,7 @@ export const SWITCH_IS_FALLBACK = Symbol('switchIsFallback');
 export class Router {
   currentUrl: EnhancedURL;
 
-  readonly [EFFECT]: ServerRenderEffectKind = {
+  readonly [SERVER_ACTION_KIND]: ServerActionKind = {
     id: SERVER_RENDER_EFFECT_ID,
     betweenEachPass: () => this.reset(),
   };

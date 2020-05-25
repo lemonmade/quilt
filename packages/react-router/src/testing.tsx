@@ -10,6 +10,7 @@ class TestRouterControl extends Router {
 }
 
 export function createTestRouter(
+  // eslint-disable-next-line default-param-last
   url: URL = new URL('/', window.location.href),
   options?: Options,
 ) {

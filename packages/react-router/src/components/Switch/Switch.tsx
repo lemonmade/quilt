@@ -5,10 +5,10 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
-import {useServerEffect} from '@quilted/react-server-render';
+import {useServerAction} from '@quilted/react-server-render';
 
 import {
-  EFFECT,
+  SERVER_ACTION_KIND,
   CREATE_SWITCH_ID,
   SWITCH_IS_FALLBACK,
   MARK_SWITCH_FALLBACK,
@@ -52,7 +52,7 @@ export function Switch({id, children, renderFallback}: Props) {
     }
   }, [matched, triedChildren, currentUrl, forceUpdate, renderFallback]);
 
-  useServerEffect(() => {
+  useServerAction(() => {
     if (!matched.current && !usedFallback) {
       router[MARK_SWITCH_FALLBACK](switchId);
 
@@ -61,10 +61,11 @@ export function Switch({id, children, renderFallback}: Props) {
       // render, which may have additional effects to resolve.
       return Promise.resolve();
     }
-  }, router[EFFECT]);
+  }, router[SERVER_ACTION_KIND]);
 
   const fallbackContent =
     triedChildren.current && !matched.current && renderFallback ? (
+      // eslint-disable-next-line react/jsx-no-useless-fragment
       <>{renderFallback()}</>
     ) : null;
 

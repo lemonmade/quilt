@@ -1,9 +1,9 @@
 import {useCallback, useContext, useMemo} from 'react';
 import {Resolver} from '@quilted/async';
-import {useServerEffect} from '@quilted/react-server-render';
+import {useServerAction} from '@quilted/react-server-render';
 import {useSubscription, Subscription} from 'use-subscription';
 
-import {AsyncAssetContext} from '../context';
+import {AsyncAssetContext, SERVER_ACTION_KIND} from '../context';
 import {AssetTiming} from '../types';
 
 interface Options {
@@ -53,12 +53,9 @@ export function useAsyncAsset(
 ) {
   const async = useContext(AsyncAssetContext);
 
-  useServerEffect(
-    () => {
-      if (async && id) {
-        async.markAsUsed(id, {scripts, styles});
-      }
-    },
-    async ? async.effect : undefined,
-  );
+  useServerAction(() => {
+    if (async && id) {
+      async.markAsUsed(id, {scripts, styles});
+    }
+  }, async?.[SERVER_ACTION_KIND]);
 }

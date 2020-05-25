@@ -7,11 +7,11 @@ import {ServerRenderPass} from './types';
 
 export {ServerRenderManager, ServerRenderContext, ServerRenderPass};
 
-export {useServerEffect} from './hook';
-export {ServerEffect} from './ServerEffect';
+export {useServerAction} from './hook';
+export {ServerAction} from './ServerAction';
 
 interface Options {
-  includeEffects?: symbol[] | boolean;
+  includeKinds?: symbol[] | boolean;
   maxPasses?: number;
   decorate?(element: React.ReactElement<any>): React.ReactElement<any>;
   renderFunction?(element: React.ReactElement<{}>): string;
@@ -24,7 +24,7 @@ const DEFAULT_MAX_PASSES = 5;
 export function extract(
   app: React.ReactElement<any>,
   {
-    includeEffects,
+    includeKinds,
     maxPasses = DEFAULT_MAX_PASSES,
     decorate = identity,
     renderFunction = renderToStaticMarkup,
@@ -32,7 +32,7 @@ export function extract(
     afterEachPass,
   }: Options = {},
 ) {
-  const manager = new ServerRenderManager({includeEffects});
+  const manager = new ServerRenderManager({includeKinds});
   const element = (
     <ServerRenderContext.Provider value={manager}>
       {decorate(app)}

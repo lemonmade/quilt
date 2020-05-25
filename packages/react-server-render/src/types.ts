@@ -1,4 +1,4 @@
-export type ServerRenderEffectAction = () => any;
+export type ServerActionPerform = () => any;
 
 export interface ServerRenderPass {
   index: number;
@@ -8,12 +8,12 @@ export interface ServerRenderPass {
   resolveDuration: number;
 }
 
-export interface ServerRenderEffectKind {
+export interface ServerActionKind {
   readonly id: symbol;
   betweenEachPass?(pass: ServerRenderPass): any;
   afterEachPass?(pass: ServerRenderPass): any;
 }
 
-export interface ServerRenderEffectOptions {
+export interface ServerActionOptions {
   readonly deferred?: boolean;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {ServerRenderEffectKind} from '@quilted/react-server-render';
+import {ServerActionKind} from '@quilted/react-server-render';
 
 import {AssetTiming} from './types';
 
@@ -14,7 +14,8 @@ interface AssetOptions {
   scripts: AssetTiming;
 }
 
-export const EFFECT_ID = Symbol('react-async');
+export const SERVER_ACTION_KIND = Symbol('serverActionKind');
+export const SERVER_ACTION_ID = Symbol('react-async');
 
 const ASSET_TIMING_PRIORITY: AssetTiming[] = [
   'immediate',
@@ -28,8 +29,8 @@ const PRIORITY_BY_TIMING = new Map(
 );
 
 export class AsyncAssetManager {
-  readonly effect: ServerRenderEffectKind = {
-    id: EFFECT_ID,
+  readonly [SERVER_ACTION_KIND]: ServerActionKind = {
+    id: SERVER_ACTION_ID,
     betweenEachPass: () => {
       this.assets.clear();
     },

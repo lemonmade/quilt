@@ -39,14 +39,12 @@ export const Router = memo(function Router({
   useEffect(() => router.listen((newUrl) => setUrl(newUrl)), [router]);
 
   return (
-    <>
-      <RouterContext.Provider value={routerRef.current}>
-        <CurrentUrlContext.Provider value={url}>
-          <Prefetcher />
-          <FocusContext>{children}</FocusContext>
-        </CurrentUrlContext.Provider>
-      </RouterContext.Provider>
-    </>
+    <RouterContext.Provider value={routerRef.current}>
+      <CurrentUrlContext.Provider value={url}>
+        <Prefetcher />
+        <FocusContext>{children}</FocusContext>
+      </CurrentUrlContext.Provider>
+    </RouterContext.Provider>
   );
 });
 

@@ -1,5 +1,5 @@
 import {HTMLProps, HtmlHTMLAttributes} from 'react';
-import {ServerRenderEffectKind} from '@quilted/react-server-render';
+import {ServerActionKind} from '@quilted/react-server-render';
 
 import {
   getHydrationsFromDocument,
@@ -18,8 +18,8 @@ interface Subscription {
   (state: State): void;
 }
 
-export const EFFECT = Symbol('effect');
-export const SERVER_RENDER_EFFECT_ID = Symbol('html');
+export const SERVER_ACTION_KIND = Symbol('serverActionKind');
+export const SERVER_ACTION_ID = Symbol('html');
 const DEFAULT_HYDRATION_ID = Symbol('defaultId');
 const DEFAULT_HYDRATION_PREFIX = 'hydration';
 
@@ -28,8 +28,8 @@ interface Ref<T> {
 }
 
 export class HtmlManager {
-  readonly [EFFECT]: ServerRenderEffectKind = {
-    id: SERVER_RENDER_EFFECT_ID,
+  readonly [SERVER_ACTION_KIND]: ServerActionKind = {
+    id: SERVER_ACTION_ID,
     betweenEachPass: () => this.reset(),
   };
 

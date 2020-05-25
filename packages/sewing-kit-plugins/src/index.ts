@@ -2,6 +2,7 @@ import {
   Package,
   Service,
   WebApp,
+  createProjectPlugin,
   createComposedWorkspacePlugin,
   createComposedProjectPlugin,
 } from '@sewing-kit/plugins';
@@ -47,6 +48,7 @@ export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
         flexibleOutputs(),
         webpackBuild(),
         react(),
+        webAppConvenienceAliases(),
       );
 
       await Promise.all([
@@ -61,6 +63,44 @@ export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
           composer.use(asyncQuilt());
         }),
       ]);
+    },
+  );
+}
+
+function webAppConvenienceAliases() {
+  return createProjectPlugin<WebApp>(
+    'Quilt.WebAppConvenienceAliases',
+    ({project, tasks: {dev, build, test}}) => {
+      dev.hook(({hooks}) => {
+        hooks.configure.hook((configure) => {
+          configure.webpackAliases?.hook(addWebpackAliases);
+        });
+      });
+
+      build.hook(({hooks}) => {
+        hooks.configure.hook((configure) => {
+          configure.webpackAliases?.hook(addWebpackAliases);
+        });
+      });
+
+      test.hook(({hooks}) => {
+        hooks.configure.hook((configure) => {
+          configure.jestModuleMapper?.hook((moduleMapper) => ({
+            ...moduleMapper,
+            '^components': project.fs.resolvePath('components'),
+            '^utilities/(.*)': project.fs.resolvePath('utilities/$1'),
+            '^tests/(.*)': project.fs.resolvePath('tests/$1'),
+          }));
+        });
+      });
+
+      function addWebpackAliases(aliases: {[key: string]: string}) {
+        return {
+          ...aliases,
+          components$: project.fs.resolvePath('components'),
+          utilities: project.fs.resolvePath('utilities'),
+        };
+      }
     },
   );
 }

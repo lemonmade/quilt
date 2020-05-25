@@ -1,11 +1,13 @@
+/* eslint react-hooks/exhaustive-deps: off */
+
 import {useContext, useMemo, useEffect, useRef} from 'react';
 import {
-  useServerEffect,
-  ServerRenderEffectOptions,
+  useServerAction,
+  ServerActionOptions,
 } from '@quilted/react-server-render';
 
 import {HtmlContext} from './context';
-import {HtmlManager, EFFECT} from './manager';
+import {HtmlManager, SERVER_ACTION_KIND} from './manager';
 import {updateOnClient} from './utilities';
 
 type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
@@ -19,7 +21,7 @@ export function useSerialized<T>(
   const manager = useContext(HtmlContext);
   const data = useMemo(() => manager.getSerialization<T>(id), [id, manager]);
 
-  useServerDomEffect(
+  useDomServerAction(
     (manager) => {
       if (serialize == null) return;
 
@@ -57,7 +59,7 @@ export function useDomEffect(
     }
   };
 
-  useServerEffect(effect, manager[EFFECT]);
+  useServerAction(effect, manager[SERVER_ACTION_KIND]);
   useEffect(effect, [manager, ...inputs]);
   useEffect(() => {
     return resultRef.current?.remove;
@@ -149,14 +151,13 @@ export function useClientDomEffect(
 
   useEffect(() => {
     perform(manager);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manager, perform, ...inputs]);
 }
 
-export function useServerDomEffect(
+export function useDomServerAction(
   perform: (manager: HtmlManager) => void,
-  options?: ServerRenderEffectOptions,
+  options?: ServerActionOptions,
 ) {
   const manager = useHtmlManager();
-  useServerEffect(() => perform(manager), manager[EFFECT], options);
+  useServerAction(() => perform(manager), manager[SERVER_ACTION_KIND], options);
 }

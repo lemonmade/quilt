@@ -2,11 +2,11 @@ export {
   Html,
   Serialize,
   HtmlManager,
-  SERVER_RENDER_EFFECT_ID as HTML_SERVER_RENDER_EFFECT_ID,
+  SERVER_ACTION_ID as HTML_SERVER_ACTION_ID,
 } from '@quilted/react-html/server';
 export {
-  ServerEffect,
-  useServerEffect,
+  ServerAction,
+  useServerAction,
   ServerRenderManager,
   ServerRenderContext,
   extract,
