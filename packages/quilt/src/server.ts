@@ -1,7 +1,9 @@
 export {
+  stream,
   Html,
   Serialize,
   HtmlManager,
+  HtmlContext,
   SERVER_ACTION_ID as HTML_SERVER_ACTION_ID,
 } from '@quilted/react-html/server';
 export {
@@ -11,4 +13,11 @@ export {
   ServerRenderContext,
   extract,
 } from '@quilted/react-server-render/server';
+export {
+  AsyncAssetContext,
+  AsyncAssetManager,
+  SERVER_ACTION_ID as ASYNC_ASSETS_SERVER_ACTION_ID,
+} from '@quilted/react-async/server';
 export type {ServerRenderPass} from '@quilted/react-server-render/server';
+
+export {render} from './server/render';

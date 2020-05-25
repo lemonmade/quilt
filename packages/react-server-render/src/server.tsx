@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
 import {ServerRenderContext} from './context';
@@ -10,11 +10,11 @@ export {ServerRenderManager, ServerRenderContext, ServerRenderPass};
 export {useServerAction} from './hook';
 export {ServerAction} from './ServerAction';
 
-interface Options {
+export interface Options {
   includeKinds?: symbol[] | boolean;
   maxPasses?: number;
-  decorate?(element: React.ReactElement<any>): React.ReactElement<any>;
-  renderFunction?(element: React.ReactElement<{}>): string;
+  decorate?(element: ReactElement<any>): ReactElement<any>;
+  renderFunction?(element: ReactElement<{}>): string;
   betweenEachPass?(pass: ServerRenderPass): any;
   afterEachPass?(pass: ServerRenderPass): any;
 }
@@ -22,7 +22,7 @@ interface Options {
 const DEFAULT_MAX_PASSES = 5;
 
 export function extract(
-  app: React.ReactElement<any>,
+  app: ReactElement<any>,
   {
     includeKinds,
     maxPasses = DEFAULT_MAX_PASSES,
