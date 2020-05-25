@@ -20,4 +20,4 @@ export {
 } from '@quilted/react-async/server';
 export type {ServerRenderPass} from '@quilted/react-server-render/server';
 
-export {render} from './server/render';
+export {render} from './render';
