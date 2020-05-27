@@ -1,6 +1,6 @@
 {
   "name": "@quilted/async",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
