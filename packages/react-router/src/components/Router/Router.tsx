@@ -51,7 +51,7 @@ export const Router = memo(function Router({
 function getUrlFromBrowser() {
   if (typeof window === 'undefined') {
     throw new Error(
-      'You did not provide a `url` prop to the `Router`. On the server, you must explicitly provide prop, as there is no way to determine it programatically.',
+      'You did not provide a `url` prop to the `Router`. On the server, you must explicitly provide this prop, as there is no way to determine it programatically.',
     );
   }
 

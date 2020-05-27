@@ -27,14 +27,19 @@ interface Ref<T> {
   current: T;
 }
 
+interface Options {
+  hydrations?: Map<string, string>;
+  serializations?: Map<string, unknown>;
+}
+
 export class HtmlManager {
   readonly [SERVER_ACTION_KIND]: ServerActionKind = {
     id: SERVER_ACTION_ID,
     betweenEachPass: () => this.reset(),
   };
 
-  private serializations = getSerializationsFromDocument();
-  private hydrations = getHydrationsFromDocument();
+  private serializations: Map<string, unknown>;
+  private hydrations: Map<string, string>;
   private hydrationIds = new Map<
     string | typeof DEFAULT_HYDRATION_ID,
     number
@@ -63,6 +68,14 @@ export class HtmlManager {
         ...this.htmlAttributes.map(({current}) => current),
       ),
     };
+  }
+
+  constructor({
+    serializations = getSerializationsFromDocument(),
+    hydrations = getHydrationsFromDocument(),
+  }: Options = {}) {
+    this.serializations = serializations;
+    this.hydrations = hydrations;
   }
 
   reset({includeSerializations = false} = {}) {
