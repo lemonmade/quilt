@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-html",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "",
   "publishConfig": {
     "access": "public",
