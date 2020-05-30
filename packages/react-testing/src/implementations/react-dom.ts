@@ -1,7 +1,7 @@
 import {render, unmountComponentAtNode} from 'react-dom';
 import {act} from 'react-dom/test-utils';
 
-import {createEnvironment, Environment} from '../environment';
+import {createEnvironment, Environment, isNode} from '../environment';
 import type {Node, HtmlNodeExtensions} from '../types';
 
 import {Tag} from './shared/react';
@@ -13,6 +13,9 @@ const {findCurrentFiberUsingSlowPath} = require('react-reconciler/reflection');
 interface Context {
   element: HTMLDivElement;
 }
+
+export {isNode};
+export type {Node, HtmlNodeExtensions};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<
   Context,

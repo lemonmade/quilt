@@ -5,11 +5,15 @@ import {
   ReactTestRendererJSON,
 } from 'react-test-renderer';
 
-import {createEnvironment, Environment} from '../environment';
+import {createEnvironment, Environment, isNode} from '../environment';
+import type {Node} from '../types';
 
 interface Context {
   renderer: ReactTestRenderer;
 }
+
+export {isNode};
+export type {Node};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<Context>({
   act,

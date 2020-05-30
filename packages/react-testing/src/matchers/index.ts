@@ -10,12 +10,7 @@ import {
 import {toContainReactText} from './text';
 import {toProvideReactContext} from './context';
 
-type PropsFromNode<T, Extensions extends object = {}> = T extends Node<
-  infer U,
-  Extensions
->
-  ? U
-  : never;
+type PropsFromNode<T> = T extends Node<infer U, object> ? U : never;
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace

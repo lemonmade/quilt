@@ -2,12 +2,15 @@ import {h, VNode, ComponentChild, Component, render} from 'preact';
 import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
 
-import {createEnvironment, Environment} from '../environment';
+import {createEnvironment, isNode, Environment} from '../environment';
 import type {Node, HtmlNodeExtensions} from '../types';
 
 interface Context {
   element: HTMLDivElement;
 }
+
+export {isNode};
+export type {Node, HtmlNodeExtensions};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<
   Context,

@@ -232,46 +232,52 @@ export function createEnvironment<
           ) as any,
 
         trigger: (prop, ...args) =>
-          act(() => {
-            const propValue = props[prop];
+          act(
+            () => {
+              const propValue = props[prop];
 
-            if (propValue == null) {
-              throw new Error(
-                `Attempted to call prop ${prop} but it was not defined.`,
-              );
-            }
-
-            return (propValue as any)(...args);
-          }),
-
-        triggerKeypath: (keypath: string, ...args: unknown[]) =>
-          act(() => {
-            const parts = keypath.split(/[.[\]]/g).filter(Boolean);
-
-            let currentProp: any = props;
-            const currentKeypath: string[] = [];
-
-            for (const part of parts) {
-              if (currentProp == null || typeof currentProp !== 'object') {
+              if (propValue == null) {
                 throw new Error(
-                  `Attempted to access field keypath '${currentKeypath.join(
-                    '.',
-                  )}', but it was not an object.`,
+                  `Attempted to call prop ${prop} but it was not defined.`,
                 );
               }
 
-              currentProp = currentProp[part];
-              currentKeypath.push(part);
-            }
+              return (propValue as any)(...args);
+            },
+            {eager: true},
+          ),
 
-            if (typeof currentProp !== 'function') {
-              throw new Error(
-                `Value at keypath '${keypath}' is not a function.`,
-              );
-            }
+        triggerKeypath: (keypath: string, ...args: unknown[]) =>
+          act(
+            () => {
+              const parts = keypath.split(/[.[\]]/g).filter(Boolean);
 
-            return currentProp(...args);
-          }),
+              let currentProp: any = props;
+              const currentKeypath: string[] = [];
+
+              for (const part of parts) {
+                if (currentProp == null || typeof currentProp !== 'object') {
+                  throw new Error(
+                    `Attempted to access field keypath '${currentKeypath.join(
+                      '.',
+                    )}', but it was not an object.`,
+                  );
+                }
+
+                currentProp = currentProp[part];
+                currentKeypath.push(part);
+              }
+
+              if (typeof currentProp !== 'function') {
+                throw new Error(
+                  `Value at keypath '${keypath}' is not a function.`,
+                );
+              }
+
+              return currentProp(...args);
+            },
+            {eager: true},
+          ),
 
         children,
         descendants,
@@ -336,7 +342,7 @@ export function createEnvironment<
       });
     }
 
-    function act<T>(action: () => T, {update = true} = {}): T {
+    function act<T>(action: () => T, {update = true, eager = false} = {}): T {
       const performUpdate = update ? updateRootNode : noop;
       let result!: T;
 
@@ -352,20 +358,27 @@ export function createEnvironment<
         return result;
       };
 
-      const promise = env.act(() => {
+      const actResult = env.act(() => {
         result = action();
 
         // The return type of non-async `act()`, DebugPromiseLike, contains a `then` method
         // This condition checks the returned value is an actual Promise and returns it
         // to React’s `act()` call, otherwise we just want to return `undefined`
-        if (isPromise(result)) {
-          return (result as unknown) as Promise<void>;
+        if (isPromise(result) && !eager) {
+          return Promise.resolve(result).then(() => {});
         }
       });
 
       if (isPromise(result)) {
-        performUpdate();
-        return Promise.resolve(promise).then(afterResolve) as any;
+        if (eager) {
+          performUpdate();
+
+          return act(() => Promise.resolve(result).then(() => {})).then(
+            afterResolve,
+          ) as any;
+        } else {
+          return Promise.resolve(actResult).then(afterResolve) as any;
+        }
       }
 
       return afterResolve();
