@@ -47,14 +47,10 @@ export interface Root<Props, Context extends object | undefined = undefined> {
 export interface NodeApi<Props, Extensions extends object> {
   readonly props: Props;
   readonly type: string | React.ComponentType<any> | null;
-  // readonly isDOM: boolean;
   readonly instance: any;
   readonly children: Node<unknown, Extensions>[];
   readonly descendants: Node<unknown, Extensions>[];
-  // readonly domNodes: HTMLElement[];
-  // readonly domNode: HTMLElement | null;
 
-  // data(key: string): string | undefined;
   prop<K extends keyof Props>(key: K): Props[K];
 
   // text(): string;
