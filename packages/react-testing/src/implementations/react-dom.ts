@@ -65,10 +65,10 @@ export function createNodeFromFiber(element: any, create: Create): Child {
 
   return create<unknown>({
     props,
+    children,
     type: fiber.type,
     instance: fiber.stateNode,
-    children: children.filter((child) => typeof child !== 'string') as any,
-    get isDOM() {
+    get isDom() {
       return isDom;
     },
     get domNodes() {
@@ -107,7 +107,7 @@ export function createNodeFromFiber(element: any, create: Create): Child {
     return children
       .filter(
         (child): child is Node<unknown, HtmlNodeExtensions> =>
-          typeof child !== 'string' && child.isDOM,
+          typeof child !== 'string' && child.isDom,
       )
       .map((child) => child.instance);
   }

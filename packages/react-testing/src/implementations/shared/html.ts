@@ -1,5 +1,5 @@
 export interface HtmlNodeExtensions {
-  readonly isDOM: boolean;
+  readonly isDom: boolean;
   readonly domNodes: HTMLElement[];
   readonly domNode: HTMLElement | null;
   readonly html: string;

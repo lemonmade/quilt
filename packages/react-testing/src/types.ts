@@ -28,7 +28,9 @@ export type DeepPartial<T> = T extends (infer U)[]
     }
   : T;
 
-export type Predicate = (node: Node<unknown>) => boolean;
+export type Predicate<Extensions extends object> = (
+  node: Node<unknown, Extensions>,
+) => boolean;
 
 type MaybeFunctionReturnType<T> = T extends (...args: any[]) => any
   ? ReturnType<T>
@@ -48,13 +50,12 @@ export interface NodeApi<Props, Extensions extends object> {
   readonly props: Props;
   readonly type: string | React.ComponentType<any> | null;
   readonly instance: any;
-  readonly children: Node<unknown, Extensions>[];
-  readonly descendants: Node<unknown, Extensions>[];
+  readonly children: (Node<unknown, Extensions> | string)[];
+  readonly descendants: (Node<unknown, Extensions> | string)[];
 
   prop<K extends keyof Props>(key: K): Props[K];
 
   // text(): string;
-  // html(): string;
 
   is<Type extends React.ComponentType<any> | string>(
     type: Type,
@@ -68,8 +69,8 @@ export interface NodeApi<Props, Extensions extends object> {
     type: Type,
     props?: Partial<PropsFor<Type>>,
   ): Node<PropsFor<Type>, Extensions>[];
-  findWhere(predicate: Predicate): Node<unknown> | null;
-  findAllWhere(predicate: Predicate): Node<unknown>[];
+  findWhere(predicate: Predicate<Extensions>): Node<unknown> | null;
+  findAllWhere(predicate: Predicate<Extensions>): Node<unknown>[];
 
   trigger<K extends FunctionKeys<Props>>(
     prop: K,

@@ -2,11 +2,13 @@ import React, {ReactElement} from 'react';
 import {Node as BaseNode, Root as BaseRoot} from './types';
 import {TestRenderer} from './TestRenderer';
 
+const IS_NODE = Symbol.for('QuiltTesting.Node');
+
 type NodeCreationOptions<T, Extensions extends object> = {
   props: T;
   instance: any;
   type: BaseNode<T, Extensions>['type'];
-  children: BaseNode<unknown, Extensions>[];
+  children: (BaseNode<unknown, Extensions> | string)[];
 } & Extensions;
 
 export interface Environment<Context, Extensions extends object> {
@@ -177,10 +179,16 @@ export function createEnvironment<
       const descendants = children.flatMap(getDescendants);
 
       function getDescendants(child: typeof children[number]): typeof children {
-        return [child, ...child.children.flatMap(getDescendants)];
+        return [
+          child,
+          ...(typeof child === 'string'
+            ? []
+            : child.children.flatMap(getDescendants)),
+        ];
       }
 
       return {
+        [IS_NODE]: true,
         type,
         props,
         instance,
@@ -189,6 +197,7 @@ export function createEnvironment<
         find: (type, props) =>
           (descendants.find(
             (element) =>
+              isNode(element) &&
               isMatchingType(element.type, type) &&
               (props == null || equalSubset(props, element.props as object)),
           ) as any) ?? null,
@@ -196,15 +205,20 @@ export function createEnvironment<
         findAll: (type, props) =>
           descendants.filter(
             (element) =>
+              isNode(element) &&
               isMatchingType(element.type, type) &&
               (props == null || equalSubset(props, element.props as object)),
           ) as any,
 
         findWhere: (predicate) =>
-          (descendants.find((element) => predicate(element)) as any) ?? null,
+          (descendants.find(
+            (element) => isNode<Extensions>(element) && predicate(element),
+          ) as any) ?? null,
 
         findAllWhere: (predicate) =>
-          descendants.filter((element) => predicate(element)) as any,
+          descendants.filter(
+            (element) => isNode<Extensions>(element) && predicate(element),
+          ) as any,
 
         trigger: (prop, ...args) =>
           rootApi.act(() => {
@@ -450,6 +464,12 @@ function defaultContext() {
 }
 
 function noop() {}
+
+export function isNode<Extensions extends object = {}>(
+  maybeNode: unknown,
+): maybeNode is BaseNode<unknown, Extensions> {
+  return maybeNode != null && (maybeNode as any)[IS_NODE];
+}
 
 function isPromise<T>(promise: unknown): promise is Promise<T> {
   return typeof (promise as any)?.then === 'function';

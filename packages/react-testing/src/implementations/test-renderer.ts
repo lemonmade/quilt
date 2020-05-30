@@ -31,7 +31,7 @@ function createNodeFromTree(
   element: ReactTestRendererJSON,
   create: Create,
 ): ReturnType<Create> {
-  const allChildren =
+  const children =
     element.children?.map((child) =>
       typeof child === 'string' ? child : createNodeFromTree(child, create),
     ) ?? [];
@@ -39,8 +39,8 @@ function createNodeFromTree(
   return create<unknown>({
     props: element.props,
     type: element.type,
+    children,
     instance: (element as any).instance,
-    children: allChildren.filter((child) => typeof child !== 'string') as any,
   });
 }
 
