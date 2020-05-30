@@ -1,6 +1,6 @@
 {
-  "name": "@quilted/react-router",
-  "version": "0.0.38",
+  "name": "@quilted/react-testing",
+  "version": "0.0.0",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -8,17 +8,13 @@
   },
   "main": "index.js",
   "module": "index.mjs",
-  "esnext": "index.esnext",
   "license": "MIT",
   "sideEffects": false,
   "peerDependencies": {
-    "react": ">=16.8.0 <17.0.0"
+    "react": ">=16.8.0 <17.0.0",
+    "react-dom": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@quilted/react-html": "^0.0.31",
-    "@quilted/react-server-render": "^0.0.23"
-  },
-  "devDependencies": {
-    "@quilted/react-testing": "^0.0.0"
+    "react-reconciler": "^0.25.1"
   }
 }

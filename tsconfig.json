@@ -30,6 +30,9 @@
       "path": "./packages/react-server-render"
     },
     {
+      "path": "./packages/react-testing"
+    },
+    {
       "path": "./packages/sewing-kit-plugins"
     }
   ]

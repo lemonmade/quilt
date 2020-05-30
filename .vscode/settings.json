@@ -15,5 +15,8 @@
   },
   "cSpell.words": [
     "middlewares"
+  ],
+  "cSpell.ignoreWords": [
+    "unmount"
   ]
 }
