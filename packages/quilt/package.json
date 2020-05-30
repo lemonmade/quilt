@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.0.62",
+  "version": "0.0.63",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -17,7 +17,7 @@
     "@quilted/react-auto-headings": "^0.0.7",
     "@quilted/react-html": "^0.0.31",
     "@quilted/react-idle": "^0.0.5",
-    "@quilted/react-router": "^0.0.41",
+    "@quilted/react-router": "^0.0.42",
     "@quilted/react-server-render": "^0.0.23",
     "@quilted/react-web-workers": "^0.0.16"
   },
