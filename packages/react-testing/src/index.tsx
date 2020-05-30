@@ -22,6 +22,8 @@ const {mount, createMount, connected, destroyAll} = createEnvironment<Context>({
   act,
   mount(tree) {
     const element = document.createElement('div');
+    document.body.appendChild(element);
+
     const wrapper: Ref<TestWrapper<any>> = {current: null};
 
     render(
@@ -108,10 +110,10 @@ function createNodeFromFiber(element: any, create: Create): Child {
     currentFiber = currentFiber.sibling;
   }
 
-  return create({
+  return create<unknown>({
     props,
     type: fiber.type,
     instance: fiber.stateNode,
     children: allChildren.filter((child) => typeof child !== 'string') as any,
-  }) as any;
+  });
 }
