@@ -3,9 +3,7 @@ import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
 
 import {createEnvironment, Environment} from '../environment';
-import type {Node} from '../types';
-
-import type {HtmlNodeExtensions} from './shared/html';
+import type {Node, HtmlNodeExtensions} from '../types';
 
 interface Context {
   element: HTMLDivElement;
@@ -29,7 +27,7 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
     element.remove();
   },
   update(instance, create) {
-    return createNodeFromComponentChild(instance, create) as any;
+    return createNodeFromComponentChild(getVNode(instance), create) as any;
   },
 });
 
@@ -57,9 +55,9 @@ function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
   const props = {...node.props};
   const instance = getComponent(node) ?? getDOMNode(node);
   const isDom = instance instanceof HTMLElement;
-  const children = toArray(getDescendants(node)).map((child) =>
-    createNodeFromComponentChild(child, create),
-  );
+  const children = toArray(getDescendants(node))
+    .filter(Boolean)
+    .map((child) => createNodeFromComponentChild(child, create));
 
   return create({
     props,
@@ -119,23 +117,8 @@ function isVNode(maybeNode: ComponentChild): maybeNode is VNode<unknown> {
   );
 }
 
-// function childrenToTree(inputChildren: ComponentChild, root: Root<any>) {
-//   const children: NodeTree = [];
-//   const descendants: NodeTree = [];
-
-//   for (const child of array(inputChildren)) {
-//     const wrappers = buildElementWrappers(child, root);
-//     if (wrappers.length > 0) {
-//       children.push(wrappers[0]);
-//       descendants.push(...wrappers);
-//     }
-//   }
-
-//   return {children, descendants};
-// }
-
 /**
- * Preact mangles it's private internals, this module helps us access them safely(ish)
+ * Preact mangles it's private internals, these types help us access them safely(ish)
  * See https://github.com/preactjs/preact/blob/master/mangle.json
  */
 
@@ -168,34 +151,34 @@ interface PortalProps {
 }
 
 /**
- * Return the descendants of the given vnode from it's last render.
+ * Returns the descendants of the given vnode from it's last render.
  */
-export function getDescendants<P>(node: VNode<P>) {
+function getDescendants<P>(node: VNode<P>) {
   if (isPortal(node)) {
     return getPortalContent(node);
   }
 
-  return (node as PreactVNode<P>).__k || [];
+  return (node as PreactVNode<P>).__k ?? [];
 }
 
 /**
- * Return the rendered DOM node associated with a rendered VNode.
+ * Returns the rendered DOM node associated with a rendered VNode.
  */
-export function getDOMNode<P>(node: VNode<P>): PreactVNode<P>['__e'] {
+function getDOMNode<P>(node: VNode<P>): PreactVNode<P>['__e'] {
   return (node as PreactVNode<P>).__e;
 }
 
 /**
- * Return the `Component` instance associated with a rendered VNode.
+ * Returns the `Component` instance associated with a rendered VNode.
  */
-export function getComponent<P>(node: VNode<P>): PreactComponent<P> | null {
+function getComponent<P>(node: VNode<P>): PreactComponent<P> | null {
   return (node as PreactVNode<P>).__c;
 }
 
 /**
- * Return the `VNode` associated with a component.
+ * Returns the `VNode` associated with a component.
  */
-export function getVNode<P>(component: Component<P>) {
+function getVNode<P>(component: Component<P>) {
   return (component as PreactComponent<P>).__v;
 }
 
@@ -205,12 +188,12 @@ const PORTAL_TYPE = createPortal(
   document.createElement('div'),
 ).type;
 
-export function isPortal(node: VNode<any>): node is VNode<PortalProps> {
+function isPortal(node: VNode<any>): node is VNode<PortalProps> {
   return node.type === PORTAL_TYPE;
 }
 
 // Text nodes in peact are very weird, they actually have a null `type` field (despite that not being part of the type for VNode) and their props are just the text content (despite that being typed as an object)
-export function isTextNode(node: unknown): node is TextNode {
+function isTextNode(node: unknown): node is TextNode {
   return (
     node != null &&
     (node as any).type === null &&
@@ -218,20 +201,8 @@ export function isTextNode(node: unknown): node is TextNode {
   );
 }
 
-export function getPortalContainer<P>(node: VNode<P>) {
-  return ((node as any) as PreactVNode<PortalProps>).props.container;
-}
-
-export function getPortalContent<P>(node: VNode<P>) {
+function getPortalContent<P>(node: VNode<P>) {
   return ((node as any) as PreactVNode<PortalProps>).props.vnode;
-}
-
-export function getChildren<P>(node: VNode<P>) {
-  if (isPortal(node)) {
-    return getPortalContent(node);
-  }
-
-  return node.props.children;
 }
 
 function toArray<T>(maybeArray: T | T[] | null | undefined) {

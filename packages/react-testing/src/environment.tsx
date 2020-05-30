@@ -126,7 +126,7 @@ export function createEnvironment<
 
   return {mount, createMount, mounted: allMounted, unmountAll};
 
-  type ResolveRoot = (element: Node<unknown>) => Node<unknown> | null;
+  type ResolveRoot = (node: Node<unknown>) => Node<unknown> | null;
   type Render = (element: ReactElement<unknown>) => ReactElement<unknown>;
 
   interface Options<Context extends object | undefined = undefined> {
@@ -135,9 +135,16 @@ export function createEnvironment<
     resolveRoot?: ResolveRoot;
   }
 
+  const defaultResolveRoot: ResolveRoot = (node) =>
+    typeof node.children[0] === 'string' ? node : (node.children[0] as any);
+
   function createRoot<Props, Context extends object | undefined = undefined>(
     element: ReactElement<Props>,
-    {context: rootContext, render, resolveRoot}: Options<Context> = {},
+    {
+      context: rootContext,
+      render,
+      resolveRoot = defaultResolveRoot,
+    }: Options<Context> = {},
   ): Root<Props, Context> {
     let rootNode: Node<unknown> | null = null;
     let mounted = false;
@@ -187,7 +194,7 @@ export function createEnvironment<
         ];
       }
 
-      return {
+      const api: BaseNode<T, {}> & {[IS_NODE]: true} = {
         [IS_NODE]: true,
         type,
         props,
@@ -266,9 +273,16 @@ export function createEnvironment<
         descendants,
         debug: () => '',
         toString: () => '',
-
-        ...finalExtensions,
       };
+
+      const node: BaseNode<T, Extensions> = {} as any;
+
+      Object.defineProperties(node, {
+        ...Object.getOwnPropertyDescriptors(api),
+        ...Object.getOwnPropertyDescriptors(finalExtensions),
+      });
+
+      return node;
     }
 
     function mount() {
@@ -294,10 +308,7 @@ export function createEnvironment<
           ? null
           : env.update(testRenderer.current, createNode, context);
 
-      rootNode =
-        rootNode != null && resolveRoot != null
-          ? resolveRoot(rootNode)
-          : rootNode;
+      rootNode = rootNode && resolveRoot(rootNode);
 
       allMounted.add(root);
       mounted = true;

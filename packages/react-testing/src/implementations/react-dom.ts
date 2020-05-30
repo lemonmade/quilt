@@ -2,11 +2,10 @@ import {render, unmountComponentAtNode} from 'react-dom';
 import {act} from 'react-dom/test-utils';
 
 import {createEnvironment, Environment} from '../environment';
-import type {Node} from '../types';
+import type {Node, HtmlNodeExtensions} from '../types';
 
 import {Tag} from './shared/react';
 import type {Fiber} from './shared/react';
-import type {HtmlNodeExtensions} from './shared/html';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const {findCurrentFiberUsingSlowPath} = require('react-reconciler/reflection');
