@@ -1,0 +1,28 @@
+{
+  "name": "@quilted/react-testing",
+  "version": "0.0.0",
+  "description": "",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "main": "index.js",
+  "module": "index.mjs",
+  "license": "MIT",
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": ">=16.8.0 <17.0.0",
+    "react-dom": ">=16.8.0 <17.0.0"
+  },
+  "optionalDependencies": {
+    "preact": "^10.0.0"
+  },
+  "dependencies": {
+    "@types/react-test-renderer": "^16.9.2",
+    "react-reconciler": "^0.25.1",
+    "react-test-renderer": "^16.13.1"
+  },
+  "devDependencies": {
+    "preact": "^10.4.4"
+  }
+}
