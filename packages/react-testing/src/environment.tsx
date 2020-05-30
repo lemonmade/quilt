@@ -1,5 +1,6 @@
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {Node as BaseNode, Root as BaseRoot} from './types';
+import {TestRenderer} from './TestRenderer';
 
 type NodeCreationOptions<T, Extensions extends object> = {
   props: T;
@@ -12,12 +13,12 @@ export interface Environment<Context, Extensions extends object> {
   act<T>(action: () => T): T extends Promise<any> ? Promise<void> : void;
   mount(element: ReactElement<any>): Context;
   unmount(context: Context): void;
-  setProps(context: Context, props: any): void;
   update(
-    context: Context,
+    instance: any,
     create: <T>(
       options: NodeCreationOptions<T, Extensions>,
     ) => BaseNode<T, Extensions>,
+    context: Context,
   ): BaseNode<unknown, Extensions> | null;
   destroy?(context: Context): void;
 }
@@ -119,9 +120,9 @@ export function createEnvironment<
     Extensions
   >;
 
-  const connected = new Set<Root<any, any>>();
+  const allMounted = new Set<Root<any, any>>();
 
-  return {mount, createMount, connected, destroyAll};
+  return {mount, createMount, mounted: allMounted, unmountAll};
 
   type ResolveRoot = (element: Node<unknown>) => Node<unknown> | null;
   type Render = (element: ReactElement<unknown>) => ReactElement<unknown>;
@@ -134,18 +135,20 @@ export function createEnvironment<
 
   function createRoot<Props, Context extends object | undefined = undefined>(
     element: ReactElement<Props>,
-    {context: rootContext, resolveRoot}: Options<Context> = {},
+    {context: rootContext, render, resolveRoot}: Options<Context> = {},
   ): Root<Props, Context> {
     let rootNode: Node<unknown> | null = null;
     let mounted = false;
     let acting = false;
     let context!: EnvironmentContext;
+    const testRenderer: {current: TestRenderer<unknown> | null} = {
+      current: null,
+    };
 
     const rootApi: BaseRoot<Props, Context> = {
       act,
       mount,
       unmount,
-      destroy,
       setProps,
       context: rootContext as any,
     };
@@ -259,12 +262,30 @@ export function createEnvironment<
         throw new Error('Attempted to mount a node that was already mounted');
       }
 
-      context = act(() => env.mount(element));
+      context = act(() =>
+        env.mount(
+          <TestRenderer
+            ref={(renderer) => {
+              testRenderer.current = renderer;
+            }}
+            render={render}
+          >
+            {element}
+          </TestRenderer>,
+        ),
+      );
 
-      rootNode = env.update(context, createNode);
-      rootNode = resolveRoot ? resolveRoot(rootNode as any) : rootNode;
+      rootNode =
+        testRenderer.current == null
+          ? null
+          : env.update(testRenderer.current, createNode, context);
 
-      connected.add(root);
+      rootNode =
+        rootNode != null && resolveRoot != null
+          ? resolveRoot(rootNode)
+          : rootNode;
+
+      allMounted.add(root);
       mounted = true;
     }
 
@@ -281,23 +302,15 @@ export function createEnvironment<
         env.unmount(context);
       });
 
+      allMounted.delete(root);
       mounted = false;
-    }
-
-    function destroy() {
-      if (mounted) {
-        unmount();
-      }
-
-      env.destroy?.(context);
-      connected.delete(root);
     }
 
     function setProps(props: Partial<Props>) {
       assertRootNode();
 
       act(() => {
-        env.setProps(context, props);
+        testRenderer.current?.setProps(props);
       });
     }
 
@@ -352,12 +365,10 @@ export function createEnvironment<
     }
   }
 
-  function destroyAll() {
-    for (const wrapper of connected) {
-      wrapper.destroy();
+  function unmountAll() {
+    for (const wrapper of allMounted) {
+      wrapper.unmount();
     }
-
-    connected.clear();
   }
 
   function mount<Props>(element: ReactElement<Props>) {

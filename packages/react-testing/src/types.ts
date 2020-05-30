@@ -38,7 +38,6 @@ export interface Root<Props, Context extends object | undefined = undefined> {
   readonly context: Context;
   mount(): void;
   unmount(): void;
-  destroy(): void;
   setProps(props: Partial<Props>): void;
   act<T>(action: () => T, options?: {update?: boolean}): T;
   // Not until we need it...

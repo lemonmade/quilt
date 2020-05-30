@@ -15,6 +15,8 @@
     "react-dom": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "react-reconciler": "^0.25.1"
+    "@types/react-test-renderer": "^16.9.2",
+    "react-reconciler": "^0.25.1",
+    "react-test-renderer": "^16.13.1"
   }
 }
