@@ -7,6 +7,7 @@ import {
   toContainReactComponent,
   toContainReactComponentTimes,
 } from './components';
+import {toContainReactText} from './text';
 import {toProvideReactContext} from './context';
 
 type PropsFromNode<T, Extensions extends object = {}> = T extends Node<
@@ -35,6 +36,7 @@ declare global {
         context: ReactContext<Type>,
         value?: Type,
       ): void;
+      toContainReactText(text: string): void;
     }
   }
 }
@@ -45,4 +47,5 @@ expect.extend({
   toContainReactComponent,
   toContainReactComponentTimes,
   toProvideReactContext,
+  toContainReactText,
 });

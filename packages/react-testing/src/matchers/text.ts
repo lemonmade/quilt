@@ -9,48 +9,35 @@ import type {Node, HtmlNodeExtensions} from '../types';
 
 import {assertIsNode, printReceivedWithHighlight} from './utilities';
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R, T = {}> {
-      toContainReactHtml(text: string): void;
-    }
-  }
-}
-
-expect.extend({
-  toContainReactHtml,
-});
-
-export function toContainReactHtml<Props>(
+export function toContainReactText<Props>(
   this: jest.MatcherUtils,
   node: Node<Props, HtmlNodeExtensions>,
   text: string,
 ) {
   assertIsNode(node, {
-    expectation: 'toContainReactHtml',
+    expectation: 'toContainReactText',
     isNot: this.isNot,
   });
 
-  const nodeHtml = node.html;
-  const matchIndex = nodeHtml.indexOf(text);
+  const nodeText = node.text;
+  const matchIndex = nodeText.indexOf(text);
   const pass = matchIndex >= 0;
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toContainReactHtml', node.toString())}\n\n` +
+        `${matcherHint('.not.toContainReactText', node.toString())}\n\n` +
         `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
-        `Not to contain HTML:\n  ${printExpected(text)}\n` +
+        `Not to contain text:\n  ${printExpected(text)}\n` +
         `But it did:\n  ${printReceivedWithHighlight(
-          nodeHtml,
+          nodeText,
           matchIndex,
           text.length,
         )}\n`
     : () =>
-        `${matcherHint('.not.toContainReactHtml', node.toString())}\n\n` +
+        `${matcherHint('.not.toContainReactText', node.toString())}\n\n` +
         `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
-        `With HTML content:\n  ${printReceived(nodeHtml)}\n` +
-        `To contain HTML:\n  ${printExpected(text)}\n`;
+        `With text content:\n  ${printReceived(nodeText)}\n` +
+        `To contain string:\n  ${printExpected(text)}\n`;
 
   return {pass, message};
 }

@@ -52,6 +52,7 @@ export interface NodeApi<Props, Extensions extends object> {
   readonly instance: any;
   readonly children: (Node<unknown, Extensions> | string)[];
   readonly descendants: (Node<unknown, Extensions> | string)[];
+  readonly text: string;
 
   prop<K extends keyof Props>(key: K): Props[K];
 
@@ -99,5 +100,6 @@ export interface HtmlNodeExtensions {
   readonly domNodes: HTMLElement[];
   readonly domNode: HTMLElement | null;
   readonly html: string;
+  readonly text: string;
   data(key: string): string | undefined;
 }

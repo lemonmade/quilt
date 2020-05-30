@@ -135,9 +135,6 @@ export function createEnvironment<
     resolveRoot?: ResolveRoot;
   }
 
-  const defaultResolveRoot: ResolveRoot = (node) =>
-    typeof node.children[0] === 'string' ? node : (node.children[0] as any);
-
   function createRoot<Props, Context extends object | undefined = undefined>(
     element: ReactElement<Props>,
     {
@@ -199,6 +196,13 @@ export function createEnvironment<
         type,
         props,
         instance,
+        get text() {
+          return children.reduce<string>(
+            (text, child) =>
+              `${text}${typeof child === 'string' ? child : child.text}`,
+            '',
+          );
+        },
         prop: (key) => props[key],
         is: (checkType) => isMatchingType(type, checkType),
         find: (type, props) =>
@@ -228,7 +232,7 @@ export function createEnvironment<
           ) as any,
 
         trigger: (prop, ...args) =>
-          rootApi.act(() => {
+          act(() => {
             const propValue = props[prop];
 
             if (propValue == null) {
@@ -241,7 +245,7 @@ export function createEnvironment<
           }),
 
         triggerKeypath: (keypath: string, ...args: unknown[]) =>
-          rootApi.act(() => {
+          act(() => {
             const parts = keypath.split(/[.[\]]/g).filter(Boolean);
 
             let currentProp: any = props;
@@ -302,13 +306,6 @@ export function createEnvironment<
           </TestRenderer>,
         ),
       );
-
-      rootNode =
-        testRenderer.current == null
-          ? null
-          : env.update(testRenderer.current, createNode, context);
-
-      rootNode = rootNode && resolveRoot(rootNode);
 
       allMounted.add(root);
       mounted = true;
@@ -374,7 +371,14 @@ export function createEnvironment<
       return afterResolve();
     }
 
-    function updateRootNode() {}
+    function updateRootNode() {
+      rootNode =
+        testRenderer.current == null
+          ? null
+          : env.update(testRenderer.current, createNode, context);
+
+      rootNode = rootNode && resolveRoot(rootNode);
+    }
 
     function withRootNode<T>(perform: (node: Node<unknown>) => T) {
       assertRootNode();
@@ -388,6 +392,12 @@ export function createEnvironment<
         );
       }
     }
+  }
+
+  function defaultResolveRoot(node: Node<unknown>) {
+    return typeof node.children[0] === 'string'
+      ? node
+      : (node.children[0] as any);
   }
 
   function unmountAll() {

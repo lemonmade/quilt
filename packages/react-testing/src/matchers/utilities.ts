@@ -3,6 +3,7 @@ import {
   matcherErrorMessage,
   matcherHint,
   RECEIVED_COLOR as receivedColor,
+  INVERTED_COLOR as invertedColor,
   printWithType,
   printReceived,
   printExpected,
@@ -160,4 +161,16 @@ function getObjectSubset(object: any, subset: any): any {
 
 export function pluralize(word: string, count: number) {
   return count === 1 ? word : `${word}s`;
+}
+
+export function printReceivedWithHighlight(
+  text: string,
+  start: number,
+  length: number,
+) {
+  return receivedColor(
+    `"${text.slice(0, start)}${invertedColor(
+      text.slice(start, start + length),
+    )}${text.slice(start + length)}"`,
+  );
 }

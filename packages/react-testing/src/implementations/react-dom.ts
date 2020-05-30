@@ -95,6 +95,15 @@ export function createNodeFromFiber(element: any, create: Create): Child {
         '',
       );
     },
+    get text() {
+      if (instance instanceof HTMLElement) return instance.textContent ?? '';
+
+      return children.reduce<string>(
+        (text, child) =>
+          `${text}${typeof child === 'string' ? child : child.text}`,
+        '',
+      );
+    },
     data(key) {
       return (props as any)[key.startsWith('data-') ? key : `data-${key}`];
     },
