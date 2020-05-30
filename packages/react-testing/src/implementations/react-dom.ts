@@ -2,6 +2,7 @@ import {render, unmountComponentAtNode} from 'react-dom';
 import {act} from 'react-dom/test-utils';
 
 import {createEnvironment, Environment, isNode} from '../environment';
+import type {CustomMount} from '../environment';
 import type {Node, HtmlNodeExtensions} from '../types';
 
 import {Tag} from './shared/react';
@@ -15,7 +16,7 @@ interface Context {
 }
 
 export {isNode};
-export type {Node, HtmlNodeExtensions};
+export type {Node, HtmlNodeExtensions, CustomMount};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<
   Context,

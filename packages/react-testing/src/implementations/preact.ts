@@ -3,6 +3,7 @@ import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
 
 import {createEnvironment, isNode, Environment} from '../environment';
+import type {CustomMount} from '../environment';
 import type {Node, HtmlNodeExtensions} from '../types';
 
 interface Context {
@@ -10,7 +11,7 @@ interface Context {
 }
 
 export {isNode};
-export type {Node, HtmlNodeExtensions};
+export type {Node, HtmlNodeExtensions, CustomMount};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<
   Context,

@@ -6,6 +6,7 @@ import {
 } from 'react-test-renderer';
 
 import {createEnvironment, Environment, isNode} from '../environment';
+import type {CustomMount} from '../environment';
 import type {Node} from '../types';
 
 interface Context {
@@ -13,7 +14,7 @@ interface Context {
 }
 
 export {isNode};
-export type {Node};
+export type {Node, CustomMount};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<Context>({
   act,

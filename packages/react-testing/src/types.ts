@@ -1,15 +1,18 @@
 import React from 'react';
+import type {
+  ComponentType,
+  ComponentPropsWithoutRef,
+  HTMLAttributes,
+} from 'react';
 
-export type PropsFor<
-  T extends string | React.ComponentType<any>
-> = T extends string
+export type PropsFor<T extends string | ComponentType<any>> = T extends string
   ? T extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[T]
-    : T extends React.ComponentType<any>
-    ? React.ComponentPropsWithoutRef<T>
-    : React.HTMLAttributes<T>
-  : T extends React.ComponentType<any>
-  ? React.ComponentPropsWithoutRef<T>
+    : T extends ComponentType<any>
+    ? ComponentPropsWithoutRef<T>
+    : HTMLAttributes<T>
+  : T extends ComponentType<any>
+  ? ComponentPropsWithoutRef<T>
   : never;
 
 export type FunctionKeys<T> = {
@@ -48,7 +51,7 @@ export interface Root<Props, Context extends object | undefined = undefined> {
 
 export interface NodeApi<Props, Extensions extends object> {
   readonly props: Props;
-  readonly type: string | React.ComponentType<any> | null;
+  readonly type: string | ComponentType<any> | null;
   readonly instance: any;
   readonly children: (Node<unknown, Extensions> | string)[];
   readonly descendants: (Node<unknown, Extensions> | string)[];
@@ -66,12 +69,16 @@ export interface NodeApi<Props, Extensions extends object> {
     type: Type,
     props?: Partial<PropsFor<Type>>,
   ): Node<PropsFor<Type>, Extensions> | null;
-  findAll<Type extends React.ComponentType<any> | string>(
+  findAll<Type extends ComponentType<any> | string>(
     type: Type,
     props?: Partial<PropsFor<Type>>,
   ): Node<PropsFor<Type>, Extensions>[];
-  findWhere(predicate: Predicate<Extensions>): Node<unknown> | null;
-  findAllWhere(predicate: Predicate<Extensions>): Node<unknown>[];
+  findWhere<Props = unknown>(
+    predicate: Predicate<Extensions>,
+  ): Node<Props, Extensions> | null;
+  findAllWhere<Props = unknown>(
+    predicate: Predicate<Extensions>,
+  ): Node<Props, Extensions>[];
 
   trigger<K extends FunctionKeys<Props>>(
     prop: K,
