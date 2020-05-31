@@ -302,8 +302,8 @@ export function createEnvironment<
         throw new Error('Attempted to mount a node that was already mounted');
       }
 
-      context = act(() =>
-        env.mount(
+      act(() => {
+        context = env.mount(
           <TestRenderer
             ref={(renderer) => {
               testRenderer.current = renderer;
@@ -312,8 +312,8 @@ export function createEnvironment<
           >
             {element}
           </TestRenderer>,
-        ),
-      );
+        );
+      });
 
       allMounted.add(root);
       mounted = true;
