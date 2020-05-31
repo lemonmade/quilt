@@ -18,6 +18,7 @@
     "preact": "^10.0.0"
   },
   "dependencies": {
+    "@sewing-kit/plugins": "^0.1.0",
     "@types/react-test-renderer": "^16.9.2",
     "jest-matcher-utils": "^26.0.1",
     "react-reconciler": "^0.25.1",

@@ -2,7 +2,7 @@ import type {ComponentType, Context as ReactContext} from 'react';
 
 import type {Node, PropsFor} from '../types';
 
-import {toHaveReactProps, toHaveReactDataProps} from './props';
+import {toHaveReactProps} from './props';
 import {
   toContainReactComponent,
   toContainReactComponentTimes,
@@ -17,7 +17,6 @@ declare global {
   namespace jest {
     interface Matchers<R, T = {}> {
       toHaveReactProps(props: Partial<PropsFromNode<T>>): void;
-      toHaveReactDataProps(data: {[key: string]: string}): void;
       toContainReactComponent<Type extends string | ComponentType<any>>(
         type: Type,
         props?: Partial<PropsFor<Type>>,
@@ -38,7 +37,6 @@ declare global {
 
 expect.extend({
   toHaveReactProps,
-  toHaveReactDataProps,
   toContainReactComponent,
   toContainReactComponentTimes,
   toProvideReactContext,

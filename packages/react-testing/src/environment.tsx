@@ -1,6 +1,8 @@
 import React, {ReactElement} from 'react';
+
 import {Node as BaseNode, Root as BaseRoot} from './types';
 import {TestRenderer} from './TestRenderer';
+import {nodeName, toReactString} from './print';
 
 const IS_NODE = Symbol.for('QuiltTesting.Node');
 
@@ -161,7 +163,7 @@ export function createEnvironment<
 
     const root: Root<Props, Context> = new Proxy(rootApi, {
       get(target, key, receiver) {
-        if (Reflect.has(target, key)) {
+        if (Reflect.ownKeys(target).includes(key)) {
           return Reflect.get(target, key, receiver);
         }
 
@@ -191,7 +193,7 @@ export function createEnvironment<
         ];
       }
 
-      const api: BaseNode<T, {}> & {[IS_NODE]: true} = {
+      const baseNode: BaseNode<T, {}> & {[IS_NODE]: true} = {
         [IS_NODE]: true,
         type,
         props,
@@ -281,14 +283,14 @@ export function createEnvironment<
 
         children,
         descendants,
-        debug: () => '',
-        toString: () => '',
+        debug: (options) => toReactString(baseNode, options),
+        toString: () => `<${nodeName(baseNode)} />`,
       };
 
       const node: BaseNode<T, Extensions> = {} as any;
 
       Object.defineProperties(node, {
-        ...Object.getOwnPropertyDescriptors(api),
+        ...Object.getOwnPropertyDescriptors(baseNode),
         ...Object.getOwnPropertyDescriptors(finalExtensions),
       });
 

@@ -7,6 +7,7 @@ import {
 
 import type {Node, HtmlNodeExtensions} from '../types';
 
+import {toHaveReactProps} from './props';
 import {assertIsNode, printReceivedWithHighlight} from './utilities';
 
 declare global {
@@ -14,12 +15,14 @@ declare global {
   namespace jest {
     interface Matchers<R, T = {}> {
       toContainReactHtml(text: string): void;
+      toHaveReactDataProps(data: {[key: string]: string}): void;
     }
   }
 }
 
 expect.extend({
   toContainReactHtml,
+  toHaveReactDataProps,
 });
 
 export function toContainReactHtml<Props>(
@@ -53,4 +56,12 @@ export function toContainReactHtml<Props>(
         `To contain HTML:\n  ${printExpected(text)}\n`;
 
   return {pass, message};
+}
+
+export function toHaveReactDataProps(
+  this: jest.MatcherUtils,
+  node: Node<unknown>,
+  data: {[key: string]: string},
+) {
+  return toHaveReactProps.call(this, node, data);
 }
