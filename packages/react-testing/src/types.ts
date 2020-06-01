@@ -3,6 +3,7 @@ import type {
   ComponentType,
   ComponentPropsWithoutRef,
   HTMLAttributes,
+  Context,
 } from 'react';
 
 export type PropsFor<T extends string | ComponentType<any>> = T extends string
@@ -79,6 +80,7 @@ export interface NodeApi<Props, Extensions extends object> {
   findAllWhere<Props = unknown>(
     predicate: Predicate<Extensions>,
   ): Node<Props, Extensions>[];
+  findContext<Type>(context: Context<Type>): Type | undefined;
 
   trigger<K extends FunctionKeys<Props>>(
     prop: K,

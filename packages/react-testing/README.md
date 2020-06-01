@@ -349,6 +349,7 @@ A `Root` object represents a mounted react tree. Most of the properties and meth
 - [#findAll()](#findAll)
 - [#findWhere()](#findWhere)
 - [#findAllWhere()](#findAllWhere)
+- [#findContext()](#findContext)
 - [#trigger()](#trigger)
 - [#triggerKeypath()](#triggerKeypath)
 
@@ -552,6 +553,33 @@ Finds the first descendant component matching the passed function. The function 
 ##### <a name="findAllWhere"></a> `findAllWhere(predicate: (element: Node<unknown>) => boolean): Node<unknown>[]`
 
 Like `findWhere`, but returns all matches as an array.
+
+##### <a name="findContext"></a> `findContext(context: Context<Type>): Type | undefined`
+
+Finds the `value` of the first descendant provider for the pass context. If no matching context is found, `undefined` is returned.
+
+Most tests looking for context are probably better served by using the [`.toProvideReactContext`](#toProvideReactContext) matcher. However, it is sometimes useful to grab the context value directly. In particular, if your context object is "smart" — that is, it has methods, and is not just data — you may want to grab the context object to call its functions.
+
+```tsx
+const AuthContext = createContext<{logout(): void} | null>(null);
+
+const auth = {
+  logout() {
+    /* log out! */
+  },
+};
+
+function MyComponent({children}) {
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+}
+
+const myComponent = mount(<MyComponent />);
+myComponent.findContext(AuthContext)!.logout();
+
+/* expect some outcomes from having called .logout() */
+```
+
+Note that, if your context provider can provide `undefined`, getting `undefined` back from this function doesn't mean that no context providers were found; to determine the presence of any context providers, you can use [`.find(Context.Provider)](#find) instead.
 
 ##### <a name="trigger"></a> `trigger<K extends FunctionKeys<Props>>(prop: K, ...args: Arguments<Props<K>>): ReturnType<Props<K>>`
 

@@ -193,6 +193,14 @@ export function createEnvironment<
         ];
       }
 
+      const find: BaseNode<T, {}>['find'] = (type, props) =>
+        (descendants.find(
+          (element) =>
+            isNode(element) &&
+            isMatchingType(element.type, type) &&
+            (props == null || equalSubset(props, element.props as object)),
+        ) as any) ?? null;
+
       const baseNode: BaseNode<T, {}> & {[IS_NODE]: true} = {
         [IS_NODE]: true,
         type,
@@ -207,14 +215,8 @@ export function createEnvironment<
         },
         prop: (key) => props[key],
         is: (checkType) => isMatchingType(type, checkType),
-        find: (type, props) =>
-          (descendants.find(
-            (element) =>
-              isNode(element) &&
-              isMatchingType(element.type, type) &&
-              (props == null || equalSubset(props, element.props as object)),
-          ) as any) ?? null,
 
+        find,
         findAll: (type, props) =>
           descendants.filter(
             (element) =>
@@ -232,6 +234,8 @@ export function createEnvironment<
           descendants.filter(
             (element) => isNode<Extensions>(element) && predicate(element),
           ) as any,
+
+        findContext: (Context) => find(Context.Provider)?.prop('value'),
 
         trigger: (prop, ...args) =>
           act(
