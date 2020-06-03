@@ -1,4 +1,3 @@
-import React from 'react';
 import type {
   ComponentType,
   ComponentPropsWithoutRef,
@@ -60,13 +59,11 @@ export interface NodeApi<Props, Extensions extends object> {
 
   prop<K extends keyof Props>(key: K): Props[K];
 
-  // text(): string;
-
-  is<Type extends React.ComponentType<any> | string>(
+  is<Type extends ComponentType<any> | string>(
     type: Type,
   ): this is Node<PropsFor<Type>, Extensions>;
 
-  find<Type extends React.ComponentType<any> | string>(
+  find<Type extends ComponentType<any> | string>(
     type: Type,
     props?: Partial<PropsFor<Type>>,
   ): Node<PropsFor<Type>, Extensions> | null;
@@ -99,7 +96,7 @@ export type Node<Props, Extensions extends object = {}> = NodeApi<
   Omit<Extensions, keyof Root<any>>;
 
 export interface DebugOptions {
-  allProps?: boolean;
+  all?: boolean;
   depth?: number;
   verbosity?: number;
 }

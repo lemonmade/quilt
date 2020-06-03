@@ -21,10 +21,10 @@ export function toReactString<Props>(
   const name = nodeName(node);
   const indent = '  '.repeat(level);
   const props = Object.keys(node.props)
-    // we always filter out children no matter what, but unless allProps option
+    // we always filter out children no matter what, but unless all option
     // is present we will also filter out DOM implementation details
     .filter((key) =>
-      options.allProps
+      options.all
         ? key !== 'children'
         : !/^(children|className)$|^(aria|data)-/.test(key),
     )
@@ -35,7 +35,7 @@ export function toReactString<Props>(
 
       const value = (node.props as any)[key];
 
-      if (value === undefined && !options.allProps) {
+      if (value === undefined && !options.all) {
         return list;
       }
 

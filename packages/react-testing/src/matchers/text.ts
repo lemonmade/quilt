@@ -5,13 +5,13 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import type {Node, HtmlNodeExtensions} from '../types';
+import type {Node} from '../types';
 
 import {assertIsNode, printReceivedWithHighlight} from './utilities';
 
-export function toContainReactText<Props>(
+export function toContainReactText<Props, Extensions extends object = {}>(
   this: jest.MatcherUtils,
-  node: Node<Props, HtmlNodeExtensions>,
+  node: Node<Props, Extensions>,
   text: string,
 ) {
   assertIsNode(node, {
