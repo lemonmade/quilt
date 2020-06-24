@@ -23,7 +23,7 @@ interface Props {
 }
 
 export function TestRouter({children, router: initialRouter}: Props) {
-  const router = useRef(initialRouter || createTestRouter());
+  const router = useRef(initialRouter ?? createTestRouter());
 
   return (
     <RouterContext.Provider value={router.current}>

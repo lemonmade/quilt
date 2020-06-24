@@ -1,10 +1,8 @@
 import {HTMLProps, HtmlHTMLAttributes} from 'react';
 import {ServerActionKind} from '@quilted/react-server-render';
 
-import {
-  getHydrationsFromDocument,
-  getSerializationsFromDocument,
-} from './utilities';
+import {getHydrationsFromDocument} from './utilities/hydration';
+import {getSerializationsFromDocument} from './utilities/serialization';
 
 export interface State {
   title?: string;

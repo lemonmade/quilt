@@ -5,10 +5,8 @@ import {
 } from '@sewing-kit/plugins';
 import type {} from '@sewing-kit/plugin-javascript';
 
-import {
-  Options as BabelOptions,
-  DEFAULT_PACKAGES_TO_PROCESS,
-} from './babel-plugin';
+import {DEFAULT_PACKAGES_TO_PROCESS} from './babel-plugin';
+import type {Options as BabelOptions} from './babel-plugin';
 
 const PLUGIN = 'Quilt.Async';
 

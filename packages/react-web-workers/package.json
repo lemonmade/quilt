@@ -6,19 +6,32 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
   "esnext": "index.esnext",
-  "license": "MIT",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "esnext": "./index.esnext"
+    },
+    "./": "./",
+    "./sewing-kit": {
+      "import": "./sewing-kit.mjs",
+      "require": "./sewing-kit.js",
+      "esnext": "./sewing-kit.esnext"
+    }
+  },
   "sideEffects": false,
   "peerDependencies": {
     "react": ">=16.8.0 <17.0.0",
     "react-dom": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@remote-ui/react": "^0.0.37",
-    "@remote-ui/web-workers": "^0.0.17",
+    "@remote-ui/react": "^1.0.0",
+    "@remote-ui/web-workers": "^1.0.0",
     "@types/react": ">=16.9.34"
-  },
-  "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
+  }
 }
