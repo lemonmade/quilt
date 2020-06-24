@@ -6,10 +6,29 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
   "esnext": "index.esnext",
-  "license": "MIT",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "esnext": "./index.esnext"
+    },
+    "./": "./",
+    "./server": {
+      "import": "./server.mjs",
+      "require": "./server.js",
+      "esnext": "./server.esnext"
+    },
+    "./testing": {
+      "import": "./testing.mjs",
+      "require": "./testing.js",
+      "esnext": "./testing.esnext"
+    }
+  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/async": "^0.0.14",

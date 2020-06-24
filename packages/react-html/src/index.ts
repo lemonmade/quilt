@@ -13,4 +13,4 @@ export {
   useHtmlUpdater,
 } from './hooks';
 
-export {getSerialized} from './utilities';
+export {getSerialized} from './utilities/serialization';

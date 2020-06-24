@@ -5,10 +5,19 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
   "esnext": "index.esnext",
-  "license": "MIT",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "esnext": "./index.esnext"
+    },
+    "./": "./"
+  },
   "sideEffects": false,
   "dependencies": {
     "@sewing-kit/plugin-css": "^0.1.0",

@@ -6,9 +6,44 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
-  "license": "MIT",
+  "esnext": "index.esnext",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "esnext": "./index.esnext"
+    },
+    "./": "./",
+    "./dom": {
+      "import": "./dom.mjs",
+      "require": "./dom.js",
+      "esnext": "./dom.esnext"
+    },
+    "./dom-matchers": {
+      "import": "./dom-matchers.mjs",
+      "require": "./dom-matchers.js",
+      "esnext": "./dom-matchers.esnext"
+    },
+    "./matchers": {
+      "import": "./matchers.mjs",
+      "require": "./matchers.js",
+      "esnext": "./matchers.esnext"
+    },
+    "./preact": {
+      "import": "./preact.mjs",
+      "require": "./preact.js",
+      "esnext": "./preact.esnext"
+    },
+    "./sewing-kit": {
+      "import": "./sewing-kit.mjs",
+      "require": "./sewing-kit.js",
+      "esnext": "./sewing-kit.esnext"
+    }
+  },
   "sideEffects": false,
   "peerDependencies": {
     "react": ">=16.8.0 <17.0.0",

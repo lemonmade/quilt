@@ -4,7 +4,7 @@ import serialize from 'serialize-javascript';
 import {
   SERIALIZE_ID_ATTRIBUTE,
   SERIALIZE_VALUE_ATTRIBUTE,
-} from '../../../utilities';
+} from '../../../utilities/serialization';
 
 interface Props<Data> {
   id: string;

@@ -1,7 +1,7 @@
 import React from 'react';
-import {ServerActionKind} from '@quilted/react-server-render';
+import type {ServerActionKind} from '@quilted/react-server-render';
 
-import {AssetTiming} from './types';
+import type {AssetTiming} from './types';
 
 export interface AssetSelector {
   id: string;

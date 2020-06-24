@@ -5,7 +5,7 @@ import {renderToString} from 'react-dom/server';
 import {Script, Style} from '../../../components';
 import {HtmlManager} from '../../../manager';
 import {HtmlContext} from '../../../context';
-import {MANAGED_ATTRIBUTE} from '../../../utilities';
+import {MANAGED_ATTRIBUTE} from '../../../utilities/update';
 import {Serialize} from '../Serialize';
 
 interface Asset {

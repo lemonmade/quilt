@@ -1,4 +1,4 @@
-import {ComponentType, FunctionComponent} from 'react';
+import type {ComponentType, FunctionComponent} from 'react';
 
 export type DeferTiming = 'mount' | 'idle';
 export type AssetTiming = 'never' | 'eventually' | 'soon' | 'immediate';

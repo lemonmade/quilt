@@ -3,7 +3,7 @@ import {createResolver, ResolverOptions} from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
 import {useAsync} from './hooks';
-import {AsyncComponentType, AssetTiming} from './types';
+import type {AsyncComponentType, AssetTiming} from './types';
 
 interface Options<
   Props extends object,
