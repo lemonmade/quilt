@@ -17,13 +17,12 @@ import {typescript, workspaceTypeScript} from '@sewing-kit/plugin-typescript';
 import {css} from '@sewing-kit/plugin-css';
 import {stylelint} from '@sewing-kit/plugin-stylelint';
 import {react} from '@sewing-kit/plugin-react';
-import {jest, jestProjectHooks} from '@sewing-kit/plugin-jest';
+import {jest} from '@sewing-kit/plugin-jest';
 
 export function quiltPackage({react: useReact = true} = {}) {
   return createComposedProjectPlugin<Package>('Quilt.Package', [
     javascript(),
     typescript(),
-    jestProjectHooks(),
     useReact && react(),
   ]);
 }
@@ -43,7 +42,6 @@ export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
         typescript(),
         css(),
         webpackHooks(),
-        jestProjectHooks(),
         webpackDevWebApp({assetServer}),
         flexibleOutputs(),
         webpackBuild(),
