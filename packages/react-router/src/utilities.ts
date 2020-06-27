@@ -8,16 +8,23 @@ export function postfixSlash(path: string) {
 export function resolveMatch(url: Omit<EnhancedURL, 'state'>, match: Match) {
   if (typeof match === 'string') {
     const pathname = remainder(url.pathname, url.prefix);
-    return pathname === match || pathname === `${match}/`;
+    return match === pathname || (pathname !== '/' && match === `${pathname}/`);
   } else if (match instanceof RegExp) {
-    return match.test(remainder(url.pathname, url.prefix));
+    const pathname = remainder(url.pathname, url.prefix);
+    return (
+      match.test(pathname) || (pathname !== '/' && match.test(`${pathname}/`))
+    );
   } else {
     return match(url);
   }
 }
 
+function removePostfixSlash(path: string) {
+  return path[path.length - 1] === '/' ? path.slice(0, -1) : path;
+}
+
 function remainder(pathname: string, prefix?: string) {
   return prefix
-    ? postfixSlash(pathname.replace(prefix, ''))
-    : postfixSlash(pathname);
+    ? removePostfixSlash(pathname.replace(prefix, ''))
+    : removePostfixSlash(pathname);
 }
