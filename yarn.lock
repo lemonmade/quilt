@@ -2145,49 +2145,49 @@
     native-url "^0.2.6"
     schema-utils "^2.6.5"
 
-"@remote-ui/core@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-1.2.3.tgz#a55dc7efd3b5ecbc6e0b3b911079762c5612c077"
-  integrity sha512-+jQ4ymZYxVaa26JGXe/j01VmZMvu7PfAbLEA3+PpfXKb55zCa0RLG0s2CNC+vKs3SoLJ0aSklTp0CIFjIzBWYw==
+"@remote-ui/core@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-1.2.4.tgz#e34fe8fc315e6102a65db5f3d6105ec97e6c773c"
+  integrity sha512-6p0mGnLg24T5As1681bCggIdursGRZeRxv0+0sonFM5BtfJhw5FggTepbyq3DZDCrKigBmd+BQG01Kjxcmh1IQ==
   dependencies:
-    "@remote-ui/rpc" "^1.0.3"
-    "@remote-ui/types" "^1.0.3"
+    "@remote-ui/rpc" "^1.0.4"
+    "@remote-ui/types" "^1.0.4"
 
-"@remote-ui/react@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-1.0.8.tgz#b5866f429586dceb55512a18a6f1221c141181d9"
-  integrity sha512-ESArdSe55HTuvis9VEBjCKgJZcNgtBaH3tDDMIfJWyU89dwLWi8qjTThz6+vjdTCHw1XUG7wnvI3GGwi1ju/ng==
+"@remote-ui/react@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-1.0.9.tgz#06f26010259f339a63f58eb8b18733975f2e430e"
+  integrity sha512-1c3rCRcOW8E8rrQ8zZunW53Vg46UfMhpvW1DRmHkMk+GsDfIaKAKJlMYx3ImWN1m5MdwIL2rygFiPNcbGgq9Pg==
   dependencies:
-    "@remote-ui/core" "^1.2.3"
-    "@remote-ui/rpc" "^1.0.3"
-    "@remote-ui/web-workers" "^1.0.4"
+    "@remote-ui/core" "^1.2.4"
+    "@remote-ui/rpc" "^1.0.4"
+    "@remote-ui/web-workers" "^1.0.5"
     "@types/react" ">=16.8.0 <17.0.0"
     react-reconciler "^0.25.0"
 
-"@remote-ui/rpc@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.0.3.tgz#fb96120e8ba3115c1fd448f197b5805394ed8d7d"
-  integrity sha512-tkJtMc+mAAOzWzQttOCz3X8XLsEHTy4ZIrgOKs2XrBDgqWpWpbEb1enRnUYq6wntzLN4/+IG1Ta+5EdrhXlhfA==
-
-"@remote-ui/types@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-1.0.3.tgz#5ac7d5ff28d55f27bf6178232ca66187c36138fa"
-  integrity sha512-sTK2S3kVeZi5N4LGORfpGYrAsgz76HDPpewIioOj6OjzmwP9s0ctlE8vzYXvc7b6fqyMeJ77jHzf5U5hOYeoeg==
-
-"@remote-ui/web-workers@^1.0.4":
+"@remote-ui/rpc@^1.0.4":
   version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-1.0.4.tgz#68838816ac7bcff09410285ce17b31147192e057"
-  integrity sha512-4Dv8Ja1zmD9LdQNfdA5YT16zF0GzfrwPe9h1WlAVV8uzrj7nXu+dvGxgsyiH1qr643aGmf57IyOOif3RPX9HnQ==
+  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.0.4.tgz#ad0c21f73e0b13d3d5c44d0b617e28cad69788fa"
+  integrity sha512-YttOiVM13ETOsHT+66JzIb+CUApHvviLhDQszrZv7G8wBQWK1E36s1Cn77hGhu8yMF46ohUxdVHdF4CIHW+wag==
+
+"@remote-ui/types@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-1.0.4.tgz#3697205e4048c9fe7fdc1e873ff51a3bbe1b7b92"
+  integrity sha512-iTUzrmiFrbfFNJ4HHI+JIhOSY5+PyLC6pg2RSGFjrxrLebKpLpKZuyahwpA1RfKKKN4mhF7aPVhkDUjkJfkHIA==
+
+"@remote-ui/web-workers@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-1.0.5.tgz#555172c6e4d99000ba2e4917077d61a8a78f5910"
+  integrity sha512-s4duLsnMu/nhbMofaYkIxmZoazzU/ipfIR/J0GK1srd1rmx9DLqQHj0L+5Qt1m2v9KscJZSlDukO5wmbdtVgTQ==
   dependencies:
-    "@remote-ui/rpc" "^1.0.3"
-    "@sewing-kit/plugins" "^0.1.2"
+    "@remote-ui/rpc" "^1.0.4"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/webpack" "^4.41.12"
     loader-utils "^2.0.0"
     webpack-virtual-modules "^0.2.2"
   optionalDependencies:
     "@babel/core" "^7.9.0"
-    "@sewing-kit/plugin-javascript" "^0.1.7"
-    "@sewing-kit/plugin-webpack" "^0.1.3"
+    "@sewing-kit/plugin-javascript" "^0.1.10"
+    "@sewing-kit/plugin-webpack" "^0.1.6"
     webpack "^4.43.0"
 
 "@sewing-kit/cli@^0.1.5":
@@ -2308,7 +2308,7 @@
     "@sewing-kit/plugins" "^0.1.4"
     eslint "^7.0.0"
 
-"@sewing-kit/plugin-javascript@^0.1.10", "@sewing-kit/plugin-javascript@^0.1.7":
+"@sewing-kit/plugin-javascript@^0.1.10":
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-javascript/-/plugin-javascript-0.1.10.tgz#f42c489710d6aacc889fc20108f5e84f7f77fba1"
   integrity sha512-C09QSr3Jubpb5luFwPTw80arvBtjDy12bORq65ZIGahbPPZ+op/iiSt48Cc2GbwgUfuzzpV3NkULoY6CFUOMyQ==
@@ -2492,7 +2492,7 @@
     "@sewing-kit/plugin-webpack" "^0.1.6"
     webpack ">=4 <5"
 
-"@sewing-kit/plugin-webpack@^0.1.3", "@sewing-kit/plugin-webpack@^0.1.6":
+"@sewing-kit/plugin-webpack@^0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-webpack/-/plugin-webpack-0.1.6.tgz#54957318c256cdee38bd00ea4408f1d693aae93d"
   integrity sha512-Fl4vQMtU0ddseG++X6T1cj8mYSsFCTwUm5lTXWy2XCenNcP2QIBeCKY0A14SiEhxjBdQj7J4m+/ljT4Mfa2pHw==
@@ -2509,7 +2509,7 @@
     webpack "^4.42.1"
     webpack-merge "^4.2.2"
 
-"@sewing-kit/plugins@^0.1.2", "@sewing-kit/plugins@^0.1.4":
+"@sewing-kit/plugins@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@sewing-kit/plugins/-/plugins-0.1.4.tgz#faa27c812b83ebdbe0c92c546e85bbeab69b778c"
   integrity sha512-OOkau2JpxlvuN4+AHWh8NiQQNW47yBIqdIn1GBz2ZFGniwPfpioxxbBPKnHN2BRXZIgEVjKhp0SLy5IXOPyMaQ==
@@ -2921,7 +2921,7 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/unist@*", "@types/unist@^2.0.0", "@types/unist@^2.0.2":
+"@types/unist@^2.0.0", "@types/unist@^2.0.2":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
   integrity sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==
@@ -2930,14 +2930,6 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/use-subscription/-/use-subscription-1.0.0.tgz#d146f8d834f70f50d48bd8246a481d096f11db19"
   integrity sha512-0WWZ5GUDKMXUY/1zy4Ur5/zsC0s/B+JjXfHdkvx6JgDNZzZV5eW+KKhDqsTGyqX56uh99gwGwbsKbVwkcVIKQA==
-
-"@types/vfile-message@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/vfile-message/-/vfile-message-1.0.1.tgz#e1e9895cc6b36c462d4244e64e6d0b6eaf65355a"
-  integrity sha512-mlGER3Aqmq7bqR1tTTIVHq8KSAFFRyGbrxuM8C/H82g6k7r2fS+IMEkIu3D7JHzG10NvPdR8DNx0jr0pwpp4dA==
-  dependencies:
-    "@types/node" "*"
-    "@types/unist" "*"
 
 "@types/webpack-dev-middleware@*":
   version "3.7.1"

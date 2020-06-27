@@ -28,12 +28,13 @@ export function quiltPackage({react: useReact = true} = {}) {
 }
 
 export interface QuiltWebAppOptions {
+  readonly preact?: boolean;
   readonly assetServer?: NonNullable<
     Parameters<typeof webpackDevWebApp>[0]
   >['assetServer'];
 }
 
-export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
+export function quiltWebApp({assetServer, preact}: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
     async (composer) => {
@@ -45,7 +46,7 @@ export function quiltWebApp({assetServer}: QuiltWebAppOptions = {}) {
         webpackDevWebApp({assetServer}),
         flexibleOutputs(),
         webpackBuild(),
-        react(),
+        react({preact}),
         webAppConvenienceAliases(),
       );
 
