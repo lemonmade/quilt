@@ -2190,17 +2190,17 @@
     "@sewing-kit/plugin-webpack" "^0.1.3"
     webpack "^4.43.0"
 
-"@sewing-kit/cli@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/cli/-/cli-0.1.3.tgz#cf833ee2fb0dd624344f82b1b7b7dcdeb5b9f0bc"
-  integrity sha512-FraN8vfGVHVM+C37J2sQvMTMKL0D0/pxIawUr8uVSLk4LtaBMN2FkIH/3PovsxowEIHWqwAyiPazVH13oOYA+g==
+"@sewing-kit/cli@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/cli/-/cli-0.1.4.tgz#337272601a93b35f0223d16160837a319106d6e6"
+  integrity sha512-r27o/TQBC75/x30AHCby52E0rRIV7LIn5Ca7DM0ZGAHIRAtcdYD1ga37jbFzyPtQokOKVZC/k/cK3DXokLKhhg==
   dependencies:
-    "@sewing-kit/config" "^0.1.3"
-    "@sewing-kit/core" "^0.1.1"
-    "@sewing-kit/hooks" "^0.1.3"
+    "@sewing-kit/config" "^0.1.4"
+    "@sewing-kit/core" "^0.1.2"
+    "@sewing-kit/hooks" "^0.1.4"
     "@sewing-kit/model" "^0.1.1"
-    "@sewing-kit/plugins" "^0.1.3"
-    "@sewing-kit/tasks" "^0.1.3"
+    "@sewing-kit/plugins" "^0.1.4"
+    "@sewing-kit/tasks" "^0.1.4"
     "@types/signal-exit" "^3.0.0"
     ansi-escapes "^4.3.1"
     arg "^4.1.3"
@@ -2210,26 +2210,26 @@
     signal-exit "^3.0.3"
     supports-hyperlinks "^2.1.0"
 
-"@sewing-kit/config@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/config/-/config-0.1.3.tgz#d546f4eb97fc4d83a701a68bbc7801d4e3bd7650"
-  integrity sha512-9VsIxVy+Ymdnzp7XwlbDvbIxy04lBTgHdurJkIltAx1cpG/X/h49zqvxnvYJJlPWxJ9fzMtE6kRnJwPImOg3FQ==
+"@sewing-kit/config@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/config/-/config-0.1.4.tgz#3a730568e25e7a504398be8983471d8521e4233e"
+  integrity sha512-3Pbk142jviRsgD03IccA7ZldhD3lsSExdDwhw7OBaPAwv2D0hFF/YzjVSnuwCQI8ZyjFAMnlg6hddDMMAPe5gA==
   dependencies:
     "@babel/core" "^7.8.0"
     "@babel/preset-env" "^7.9.5"
     "@babel/preset-typescript" "^7.9.0"
     "@babel/register" "^7.9.0"
-    "@sewing-kit/core" "^0.1.1"
+    "@sewing-kit/core" "^0.1.2"
     "@sewing-kit/model" "^0.1.1"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/glob" "^7.1.1"
     fs-extra "^9.0.0"
     glob "^7.1.6"
 
-"@sewing-kit/core@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/core/-/core-0.1.1.tgz#c6e361a1d31d9c3228134451e57d350b9c801274"
-  integrity sha512-tJgje0PqkQxitHds+CsVNOnYuEMW40b8O0JSWli0Gr2MvnGrZZ9rd7DGcU5D/54mHv0cHr9x9zhLrB2Palgsug==
+"@sewing-kit/core@^0.1.1", "@sewing-kit/core@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/core/-/core-0.1.2.tgz#9caf50c9366fa10c7d5469a219289425c601e17a"
+  integrity sha512-9ng/jVHLf4dEbcXkWMRNqAxp0nw5wY9DU5rKzVtJL7mvDdv6sNaGjyVbI54wOSV7CN1AD+zaZ1OXPq7Bky4yYQ==
   dependencies:
     "@sewing-kit/model" "^0.1.1"
     execa "^4.0.0"
@@ -2261,12 +2261,12 @@
     graphql "^15.0.0"
     typescript ">=3 <4"
 
-"@sewing-kit/hooks@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/hooks/-/hooks-0.1.3.tgz#6b1b1b94af0c430ad4800ba31bcce90c8dd7cecf"
-  integrity sha512-i+H2lTA6evJxf3wGxYo+6rMZdBRMGvfPTjf56jiLNwQAB0CQmAhYss9iIqex6Vn9KmaFQnsnfLuqTNenQCGzvA==
+"@sewing-kit/hooks@^0.1.3", "@sewing-kit/hooks@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/hooks/-/hooks-0.1.4.tgz#83ed93068d0b869ad83ddc42e2b1cf9c13f590f1"
+  integrity sha512-/KYcc9KPQSzj05hy40HSbLUoOooRcXzi3LKxMDIa0mRMxiB0g0HKUrxGWGNwYKg1o9saJ43YmaXFNMYhEoeN/Q==
   dependencies:
-    "@sewing-kit/core" "^0.1.1"
+    "@sewing-kit/core" "^0.1.2"
     "@sewing-kit/model" "^0.1.1"
 
 "@sewing-kit/model@^0.1.1":
@@ -2279,12 +2279,12 @@
     fs-extra "^9.0.0"
     glob "^7.1.6"
 
-"@sewing-kit/plugin-css@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-css/-/plugin-css-0.1.9.tgz#d13aedcb75579c7511b2cc52c10ec497a605d4b6"
-  integrity sha512-dmGUQMgrnprEHMFpRA5wABfxxiDkv4UcQy0orv7aM9THoIQ0sCsmKOPE5PTkzYIcJCGV96lylniXLPdG7qXQ6Q==
+"@sewing-kit/plugin-css@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-css/-/plugin-css-0.1.10.tgz#f17a300a269ffce47196c4c44beee9d906f97410"
+  integrity sha512-kAqLg2lBZ8pB2vvjuXPm8aivHA9uj1CRZkQSCz0aKvWnoa1e+uibHxGQvf8kHRVoVEHir/IC7wbwIVjvTxk7sQ==
   dependencies:
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/mini-css-extract-plugin" "^0.9.1"
     "@types/optimize-css-assets-webpack-plugin" "^5.0.1"
     css-loader "^3.5.2"
@@ -2295,23 +2295,23 @@
     postcss-preset-env "^6.7.0"
     style-loader "^1.1.4"
   optionalDependencies:
-    "@sewing-kit/plugin-jest" "^0.1.9"
-    "@sewing-kit/plugin-webpack" "^0.1.4"
+    "@sewing-kit/plugin-jest" "^0.1.10"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
     webpack ">=4 <5"
 
-"@sewing-kit/plugin-eslint@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-eslint/-/plugin-eslint-0.1.3.tgz#c374b6546d52eafeb3ea4b187a8e7b34f20a6900"
-  integrity sha512-fvMgHiuByV9A5wtpwsbgxFxuJCSkKJuhdkipC7mAM1fnZiBVYkY/EkWDGnGWZyBxIgVEMGD++PrwYOdsJWtH7w==
+"@sewing-kit/plugin-eslint@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-eslint/-/plugin-eslint-0.1.4.tgz#75c946ea4bf757d7c3865453ae96ec718b041d88"
+  integrity sha512-u3zhkLpy9BGn8eTP8VbrW8m0fYmrW7CA+tJHXDfTehU3KPfrN4FsVNbYE4cwBCEvX6ncBzQZm/hj2dy2+qYWJw==
   dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugins" "^0.1.4"
     eslint "^7.0.0"
 
-"@sewing-kit/plugin-javascript@^0.1.7", "@sewing-kit/plugin-javascript@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-javascript/-/plugin-javascript-0.1.8.tgz#34b075b6e334d975efe25051bc4947481d82bea8"
-  integrity sha512-9I1IqNItjOnWwFb9v9OGL1odqrPJz+6daGKEW7Di5MmOIBp0JhZhibRB3SyWrqx2hQthl6qRZvPdWmInaNEWaw==
+"@sewing-kit/plugin-javascript@^0.1.7", "@sewing-kit/plugin-javascript@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-javascript/-/plugin-javascript-0.1.9.tgz#b8358f1808296904229cb9b738d56022c85490b5"
+  integrity sha512-8VPi0V5F9bK0tgCUiDxu4EYnue5mXJwoyfDVZdZuh3QjT+GqQ307J1nklJVMBbhQki7k05EudDXlYhGFDM3b5g==
   dependencies:
     "@babel/cli" "^7.8.4"
     "@babel/core" "^7.8.0"
@@ -2322,23 +2322,23 @@
     "@babel/plugin-syntax-dynamic-import" "^7.8.3"
     "@babel/plugin-transform-runtime" "^7.10.3"
     "@babel/preset-env" "^7.9.5"
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/babel__core" "^7.1.7"
     babel-loader "^8.1.0"
     core-js "^3.6.5"
     node-object-hash "^2.0.0"
   optionalDependencies:
-    "@sewing-kit/plugin-webpack" "^0.1.4"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
     webpack ">=4 <5"
 
-"@sewing-kit/plugin-jest@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-jest/-/plugin-jest-0.1.9.tgz#cc3490ae1ba32a2257389ce832d12224ad849aa0"
-  integrity sha512-vBJGG9DsAE08mU48yKKFRpEvtWp907RjdFbkDHF+EIbmjonbLAq0c/Dbogm/pz7TrRjUCfq1VazugYPq6QsJEg==
+"@sewing-kit/plugin-jest@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-jest/-/plugin-jest-0.1.10.tgz#2820d840ccab75e0b89d634d9bd4229c1407d8ca"
+  integrity sha512-Cda2XxyB3i4xSjfdkyMxtPjKw21ZSwSATmsCW1m2QYmgXUiVNRE9WkiMs5s53J730TyiUVEQabuicmYhIIyXZw==
   dependencies:
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/jest" "^25.2.2"
     babel-jest "^26.0.0"
     jest "^26.0.0"
@@ -2346,158 +2346,158 @@
   optionalDependencies:
     "@babel/core" "^7.0.0"
 
-"@sewing-kit/plugin-package-binaries@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-binaries/-/plugin-package-binaries-0.1.3.tgz#0224c9ea4eea736eb70499629eec94883fc5885c"
-  integrity sha512-gGHw86x86XiX6qicbfiFk29/OeWhjEVhBrKA705UbWZeTysJCMendNllj7YGx97QTHfeLorvjxjNgnU56n9t2g==
+"@sewing-kit/plugin-package-binaries@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-binaries/-/plugin-package-binaries-0.1.4.tgz#2a98237869afc345c949ec796973fd06c0ace242"
+  integrity sha512-sz/aRtRw6TQYcCIqX/FBe6onlBOgfAC4elKhKN3lhRrwJsVfgj6pRCpPAhfG3DgZPq30gYx2q4Nq9TxEG8Cxwg==
   dependencies:
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugins" "^0.1.4"
 
-"@sewing-kit/plugin-package-commonjs@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-commonjs/-/plugin-package-commonjs-0.1.8.tgz#c8a55fd213ce9b5633a6f9def810464676e2274a"
-  integrity sha512-m+nbMiglhB5aVfUcRYOOBjXo5oDA/a/uqekxd8pr2eIgfq7AFl/grLMlvotmrmLb+VrkRjrFv348QqixCS6m6Q==
-  dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
-
-"@sewing-kit/plugin-package-esmodules@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-esmodules/-/plugin-package-esmodules-0.1.8.tgz#9fbea6067b6542ab15ccd1f02d8382775607d3c3"
-  integrity sha512-DxvL5+S9QY3ah41IewMM8mUswWll9rhleCMSdP+LZ/q6pW4kC7scN575VanUsnHXuqnVleT6TTcH5sLQN4PODQ==
-  dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
-  optionalDependencies:
-    "@sewing-kit/plugin-webpack" "^0.1.4"
-
-"@sewing-kit/plugin-package-esnext@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-esnext/-/plugin-package-esnext-0.1.8.tgz#422aed59c4ac2e65d3b2bbd7117131fb5402f44a"
-  integrity sha512-LoGMZqvGIPDOTttflfljYqBgLAUv5sDRjKMdTtEKqYv+0V5RT5aF7jaZZtaxpfWuhW98rhzyVtpeMRBhqPyq8g==
-  dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
-  optionalDependencies:
-    "@sewing-kit/plugin-webpack" "^0.1.4"
-
-"@sewing-kit/plugin-package-flexible-outputs@^0.1.9":
+"@sewing-kit/plugin-package-commonjs@^0.1.9":
   version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-flexible-outputs/-/plugin-package-flexible-outputs-0.1.9.tgz#8ba08801511e87ee8a2da747b197a43aa797b795"
-  integrity sha512-aGG8JrtoW7Lp9/jBF49TsZQxqsQ71mFDQTdMc6S80lTvB/pheOYZe/Ia03i7v615tp6scuogfRiyQe7oLhjdOQ==
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-commonjs/-/plugin-package-commonjs-0.1.9.tgz#7ea37fd579d9d00583508964dbcff4be1e65cc80"
+  integrity sha512-MRE0S6bJgFTHa0d8K5g+42xCWuYF4c/hz8re2FLOkyQXaSJZp3kJdXDMLwybuZuA24bKH0XiSssD2LpKmcREww==
   dependencies:
-    "@sewing-kit/plugin-package-binaries" "^0.1.3"
-    "@sewing-kit/plugin-package-commonjs" "^0.1.8"
-    "@sewing-kit/plugin-package-esmodules" "^0.1.8"
-    "@sewing-kit/plugin-package-esnext" "^0.1.8"
-    "@sewing-kit/plugin-package-node" "^0.1.9"
-    "@sewing-kit/plugin-package-typescript" "^0.1.9"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
 
-"@sewing-kit/plugin-package-node@^0.1.9":
+"@sewing-kit/plugin-package-esmodules@^0.1.9":
   version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-node/-/plugin-package-node-0.1.9.tgz#b42fde4ae3162c95468a763511e19930873428f3"
-  integrity sha512-GuvjcJandoHqCByDKPjTZeG8CMC3j7ihAo0WuFdZqs13Aqk36KvND6RdRIvEfJ5Ohzex/YznaYoGjfLWpSPU4Q==
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-esmodules/-/plugin-package-esmodules-0.1.9.tgz#a86332d16602c23f53bec0bdaf0f36208815e8fb"
+  integrity sha512-1pI24E/PzKb/bfNaFF71MSdfQw54VLqate5t0kOLO1Wdk+a8dLO1pWyAFL9OpY7OixRoJmYKV0l4ALwTfPMjpA==
   dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
   optionalDependencies:
-    "@sewing-kit/plugin-jest" "^0.1.9"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
 
-"@sewing-kit/plugin-package-typescript@^0.1.9":
+"@sewing-kit/plugin-package-esnext@^0.1.9":
   version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-typescript/-/plugin-package-typescript-0.1.9.tgz#ed9f1a20bf694c381c403f850446b8203b6d8248"
-  integrity sha512-BNL3IRldt0eaoEEGSlAwCHJE+Mo664Jo/hBnN9Z+2DWlVy/OXirXzv+oO2AWB1Z6oTiZRs7BcLAEakx4AGuAkA==
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-esnext/-/plugin-package-esnext-0.1.9.tgz#c7048955694e922478c45a36c1b6bdc5608a8f36"
+  integrity sha512-w0YljzgX4RqBg+Zdm0ekazDL3SMhaQWxWUNteddSSgMhKolSoCbJGxdoF3FTGI+hbPRMvXZ4ojYK3L7w6z2lcw==
   dependencies:
-    "@sewing-kit/plugin-typescript" "^0.1.9"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
+  optionalDependencies:
+    "@sewing-kit/plugin-webpack" "^0.1.5"
+
+"@sewing-kit/plugin-package-flexible-outputs@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-flexible-outputs/-/plugin-package-flexible-outputs-0.1.10.tgz#fcc2dedd52c2107031aed0eb18ad7f6d1e5dedd0"
+  integrity sha512-ayVOfetdgJcJxKA0DLt5pNQ9m0RCBf50CPq3I5n3YhAX/QDkM/INQgGjWo85syqZhEeYGnrhqApmWBo3q0HTPQ==
+  dependencies:
+    "@sewing-kit/plugin-package-binaries" "^0.1.4"
+    "@sewing-kit/plugin-package-commonjs" "^0.1.9"
+    "@sewing-kit/plugin-package-esmodules" "^0.1.9"
+    "@sewing-kit/plugin-package-esnext" "^0.1.9"
+    "@sewing-kit/plugin-package-node" "^0.1.10"
+    "@sewing-kit/plugin-package-typescript" "^0.1.10"
+    "@sewing-kit/plugins" "^0.1.4"
+
+"@sewing-kit/plugin-package-node@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-node/-/plugin-package-node-0.1.10.tgz#2241ddf470d5e3cc7c21175c63a627fd07a9c590"
+  integrity sha512-UWduxptBX5SGjG7uLzfr6XOtMduPDiea/+D2FVAH6PsQ6jEMRptUAG2dDd0Ja8NAZ+5R77VpDjCo1BCfdZPRCw==
+  dependencies:
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
+  optionalDependencies:
+    "@sewing-kit/plugin-jest" "^0.1.10"
+
+"@sewing-kit/plugin-package-typescript@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-package-typescript/-/plugin-package-typescript-0.1.10.tgz#64ffb020695651e938459bb7978f60c9cc873263"
+  integrity sha512-VBJmPIVpi/wT8aays1xoN7vxbrfGCqAwlG+D2YSBVVn5LYrPBAwvYyEiMLK2WQRbuanPa749m90uYeeAuzJF6Q==
+  dependencies:
+    "@sewing-kit/plugin-typescript" "^0.1.10"
+    "@sewing-kit/plugins" "^0.1.4"
     fs-extra "^9.0.0"
 
-"@sewing-kit/plugin-react@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-react/-/plugin-react-0.1.9.tgz#52bbcfd8482704ba15ff0fbd74cccb70e9d83fff"
-  integrity sha512-9TzoEY39BOr7dmywWG81WpQ0TA6Rnypg/3aNsAPKKAiUpOmNWCBdC7CYVZysTmIaappywmYmb5d1kFAK0/4nQg==
+"@sewing-kit/plugin-react@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-react/-/plugin-react-0.1.10.tgz#5e811742a7445f9835616e7b3583761e6b85d02d"
+  integrity sha512-oTLy0s9F3bvfEUTrbKp+N6N8VykoOiM4KMj3uYEufi1VvUk22E8VYwd+M/FcNbIt1IkaKX1O+mi4JN60x9IueQ==
   dependencies:
     "@babel/preset-react" "^7.9.4"
     "@pmmmwh/react-refresh-webpack-plugin" "^0.3.1"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugins" "^0.1.4"
     react-refresh "^0.8.2"
   optionalDependencies:
     "@babel/core" "^7.0.0"
-    "@sewing-kit/plugin-jest" "^0.1.9"
-    "@sewing-kit/plugin-webpack" "^0.1.4"
+    "@sewing-kit/plugin-jest" "^0.1.10"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
 
-"@sewing-kit/plugin-service-base@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-service-base/-/plugin-service-base-0.1.8.tgz#b8679dbb5f7a3f1a15ca9828bcadbd5fcc6c74ec"
-  integrity sha512-H8S71iOEuWLpmFom99f/yI2ucZUvsZz5oe87Iy3dW1nTiP1rbYPIs937nRWdORu8fbONF1lOwWyL4bQdskYPZg==
+"@sewing-kit/plugin-service-base@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-service-base/-/plugin-service-base-0.1.9.tgz#1abe428cbcc403c4851e799ca381cd4d414d3c6a"
+  integrity sha512-xZu7MGlvVx1qhYhDTagoxnT14nPMigzEuKesyUHwjj8w9vcNwwJY/Nn9TF7IHlyhYztqzRbZ8ZTXF7pH1QewKQ==
   dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/koa" "^2.11.3"
     "@types/koa-webpack" "^5.0.1"
     execa "^4.0.0"
     koa "^2.11.0"
     koa-webpack "^5.3.0"
   optionalDependencies:
-    "@sewing-kit/plugin-webpack" "^0.1.4"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
     webpack ">=4 <5"
 
-"@sewing-kit/plugin-stylelint@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-stylelint/-/plugin-stylelint-0.1.3.tgz#f7215569393891f384971ac9db5907eca697f503"
-  integrity sha512-OKTG5mHsViq2b0KNUtOfdxWl/Phwc11yRgp32wmVsYwvdVQHnNOtWgR0Xz0GPxIddTFIPrlm1ULq5wfKcIj7zA==
+"@sewing-kit/plugin-stylelint@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-stylelint/-/plugin-stylelint-0.1.4.tgz#e5727e42a74085728f10027e704fc4f46e34ac14"
+  integrity sha512-NtmJhd/Lcx8Toh5hZY28saLi6R7/ExVjUfViB32zYzdR3b0Oam+AL2e2UZXgStoQRf1I+C1EfJR9wvv3xe3Igw==
   dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugins" "^0.1.4"
     stylelint "^13.4.0"
 
-"@sewing-kit/plugin-typescript@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-typescript/-/plugin-typescript-0.1.9.tgz#ae11c913c13c206f47f0cccb293be610f2aac133"
-  integrity sha512-DmNKiASeQ6Xr+Vv7lUDy/LZMv6Z9cTeaM3YXg7iNpUxq1aQ+qBCk7ae+gC7d3MlOlO/JafQ0LJ6PSWqyV4d9JA==
+"@sewing-kit/plugin-typescript@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-typescript/-/plugin-typescript-0.1.10.tgz#4bb11a3a822c65f91b384b2dc6f29452ff39cfd0"
+  integrity sha512-UvSiyAjHjRk+C5JFuTx2P+oTk1XWv1PB4RMRvGRXMk6xaTrisgsPSEy1GsIs9St8URJjxLfvyGop+xA4e1ew7A==
   dependencies:
     "@babel/plugin-proposal-class-properties" "^7.8.3"
     "@babel/plugin-proposal-decorators" "^7.8.3"
     "@babel/preset-typescript" "^7.9.0"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
     fs-extra "^9.0.0"
     typescript "^3.9.0"
   optionalDependencies:
     "@babel/core" "^7.0.0"
-    "@sewing-kit/plugin-eslint" "^0.1.3"
-    "@sewing-kit/plugin-jest" "^0.1.9"
-    "@sewing-kit/plugin-webpack" "^0.1.4"
+    "@sewing-kit/plugin-eslint" "^0.1.4"
+    "@sewing-kit/plugin-jest" "^0.1.10"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
 
-"@sewing-kit/plugin-web-app-base@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-web-app-base/-/plugin-web-app-base-0.1.9.tgz#f4958be9d38711ed06fd6c2932cd2b93d054c3d2"
-  integrity sha512-L9pH/F1ZeBdAND8DfOU3NPHDV8gixBAZtC0GY6tNDgYN8qYJp360xGWcumajh2m/RirFJ3ghghkuhNBYs9N86A==
+"@sewing-kit/plugin-web-app-base@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-web-app-base/-/plugin-web-app-base-0.1.10.tgz#7a285871a2097b71fc08582e3cfb034e538d71b6"
+  integrity sha512-Zd0VeV5NfuHr3ruXYT51oGGD4gV04bNxo9lxscDW6zTtPd/HRYJ/UI5Ldd3IRmHZKp9uyL0LFhXBOO0oUQ/yrw==
   dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
-    "@sewing-kit/plugin-javascript" "^0.1.8"
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
+    "@sewing-kit/plugin-javascript" "^0.1.9"
+    "@sewing-kit/plugins" "^0.1.4"
     "@types/koa" "^2.11.3"
     "@types/koa-webpack" "^5.0.1"
     get-port "^5.1.1"
     koa "^2.11.0"
     koa-webpack "^5.3.0"
   optionalDependencies:
-    "@sewing-kit/plugin-webpack" "^0.1.4"
+    "@sewing-kit/plugin-webpack" "^0.1.5"
     webpack ">=4 <5"
 
-"@sewing-kit/plugin-webpack@^0.1.3", "@sewing-kit/plugin-webpack@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-webpack/-/plugin-webpack-0.1.4.tgz#4a9a65ccece03f9f81da85362cb61929a4ec68e3"
-  integrity sha512-tLk9MUVkDai0KCw4uOVvz3U+HaRjCjgd2ia0WL0koqoZdzBUuixtkrt8DikoJ91yiUGoDGnq3Z4FyrWrEqeK6w==
+"@sewing-kit/plugin-webpack@^0.1.3", "@sewing-kit/plugin-webpack@^0.1.4", "@sewing-kit/plugin-webpack@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugin-webpack/-/plugin-webpack-0.1.5.tgz#cbf5e27752e4c7d5fbf79c84f26b0c76726c6015"
+  integrity sha512-jqSmOBlcD01zcoIO1qesZQdZbmwEOcAnSKLo/di/6mWivYbovnIe6F8nl3uHala0Xy6S5cGZAMWrktEssTOFfw==
   dependencies:
-    "@sewing-kit/plugins" "^0.1.3"
+    "@sewing-kit/plugins" "^0.1.4"
     "@sewing-kit/webpack-plugin-hash-output" "^0.0.2"
     "@types/case-sensitive-paths-webpack-plugin" "^2.1.2"
     "@types/terser-webpack-plugin" "^2.2.0"
@@ -2509,23 +2509,23 @@
     webpack "^4.42.1"
     webpack-merge "^4.2.2"
 
-"@sewing-kit/plugins@^0.1.2", "@sewing-kit/plugins@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/plugins/-/plugins-0.1.3.tgz#eea2787aad97f37537fb8309d5d136f5b47a0a25"
-  integrity sha512-zZp/+8exEtsHsDdG6Qu7ilsHWFO732QJIeBvsOtqi/UTaFpyeLLd7Q/J4z/5jDzn5LEIGrm66l72KdlXR54O/A==
+"@sewing-kit/plugins@^0.1.2", "@sewing-kit/plugins@^0.1.3", "@sewing-kit/plugins@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/plugins/-/plugins-0.1.4.tgz#faa27c812b83ebdbe0c92c546e85bbeab69b778c"
+  integrity sha512-OOkau2JpxlvuN4+AHWh8NiQQNW47yBIqdIn1GBz2ZFGniwPfpioxxbBPKnHN2BRXZIgEVjKhp0SLy5IXOPyMaQ==
   dependencies:
-    "@sewing-kit/core" "^0.1.1"
-    "@sewing-kit/hooks" "^0.1.3"
+    "@sewing-kit/core" "^0.1.2"
+    "@sewing-kit/hooks" "^0.1.4"
     "@sewing-kit/model" "^0.1.1"
-    "@sewing-kit/tasks" "^0.1.3"
+    "@sewing-kit/tasks" "^0.1.4"
     change-case "^4.1.0"
 
-"@sewing-kit/tasks@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@sewing-kit/tasks/-/tasks-0.1.3.tgz#9cdded0e7edd7c4de02d39c55c4970d82e3de6a3"
-  integrity sha512-llSgFYGqZoIdpvVVcBE6+p/WWxw3AOJ5f5UKYgTQYSLtkd9P+STm/DDY2cSzcDScRHW93oprL1pFUxtAuJQ+JQ==
+"@sewing-kit/tasks@^0.1.3", "@sewing-kit/tasks@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@sewing-kit/tasks/-/tasks-0.1.4.tgz#41bf31d42f41012e1ad7d5b7da4c43f3e6c98b66"
+  integrity sha512-yvvEg4uUJ9G1lKLK2ikAbqoLI7syGhObZcV53RcOudwWwDqdKa+mtKZ6Tnl9Hvu1NSDxYAFQANJuCWOg/5FIcw==
   dependencies:
-    "@sewing-kit/hooks" "^0.1.3"
+    "@sewing-kit/hooks" "^0.1.4"
     "@sewing-kit/model" "^0.1.1"
 
 "@sewing-kit/webpack-plugin-hash-output@^0.0.2":
@@ -2921,7 +2921,7 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/unist@*", "@types/unist@^2.0.0", "@types/unist@^2.0.2":
+"@types/unist@^2.0.0", "@types/unist@^2.0.2":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
   integrity sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==
@@ -2930,14 +2930,6 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/use-subscription/-/use-subscription-1.0.0.tgz#d146f8d834f70f50d48bd8246a481d096f11db19"
   integrity sha512-0WWZ5GUDKMXUY/1zy4Ur5/zsC0s/B+JjXfHdkvx6JgDNZzZV5eW+KKhDqsTGyqX56uh99gwGwbsKbVwkcVIKQA==
-
-"@types/vfile-message@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/vfile-message/-/vfile-message-1.0.1.tgz#e1e9895cc6b36c462d4244e64e6d0b6eaf65355a"
-  integrity sha512-mlGER3Aqmq7bqR1tTTIVHq8KSAFFRyGbrxuM8C/H82g6k7r2fS+IMEkIu3D7JHzG10NvPdR8DNx0jr0pwpp4dA==
-  dependencies:
-    "@types/node" "*"
-    "@types/unist" "*"
 
 "@types/webpack-dev-middleware@*":
   version "3.7.1"
