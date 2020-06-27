@@ -46,9 +46,9 @@ export function asyncQuilt(options: Options = {}) {
 
     test.hook(({hooks}) => {
       hooks.configureHooks.hook(addHooks);
-      hooks.configure.hook((configure) => {
-        configure.babelConfig?.hook(
-          createBabelConfigUpdater(configure, {
+      hooks.configure.hook((configuration) => {
+        configuration.babelConfig?.hook(
+          createBabelConfigUpdater(configuration, {
             ...options,
             moduleId: 'requireResolve',
           }),
@@ -58,10 +58,13 @@ export function asyncQuilt(options: Options = {}) {
 
     build.hook(({hooks}) => {
       hooks.configureHooks.hook(addHooks);
-      hooks.configure.hook((configure) => {
-        configure.babelConfig?.hook(
-          createBabelConfigUpdater(configure, options),
-        );
+
+      hooks.target.hook(({hooks}) => {
+        hooks.configure.hook((configuration) => {
+          configuration.babelConfig?.hook(
+            createBabelConfigUpdater(configuration, options),
+          );
+        });
       });
     });
   });
