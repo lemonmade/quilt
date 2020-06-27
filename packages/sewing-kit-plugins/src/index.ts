@@ -76,8 +76,10 @@ function webAppConvenienceAliases() {
       });
 
       build.hook(({hooks}) => {
-        hooks.configure.hook((configure) => {
-          configure.webpackAliases?.hook(addWebpackAliases);
+        hooks.target.hook(({hooks}) => {
+          hooks.configure.hook((configuration) => {
+            configuration.webpackAliases?.hook(addWebpackAliases);
+          });
         });
       });
 
