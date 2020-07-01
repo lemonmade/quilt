@@ -76,10 +76,17 @@ export async function upload({
         } previously uploaded`,
       );
     }
+
+    log(
+      `Starting upload for ${files.filtered.length} ${
+        files.filtered.length === 1 ? 'file' : 'files'
+      }`,
+    );
   });
 
   upload.on('file:upload:error', (file, error) => {
-    log(`Error while uploading ${file.localPath}:`, error);
+    log(`Error while uploading ${file.localPath}`);
+    log(error);
   });
 
   upload.on('file:upload:end', (file) => {
@@ -105,9 +112,9 @@ export async function upload({
       log(`Uploaded asset metadata`);
     } catch (error) {
       log(
-        `Failed to update manifest, but ignoring because it’s non-fatal`,
-        error,
+        `Failed to update manifest, but ignoring because it just means a future CI run will upload a few unnecessary assets`,
       );
+      log(error);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -138,17 +145,17 @@ async function loadManifest(
     ? normalizeManifestFile(manifestFile)
     : 'manifest.json';
 
+  const update: Manifest['update'] = (results) =>
+    s3Upload(s3, {
+      Bucket: finalBucket,
+      Key: finalFile,
+      Body: JSON.stringify(results, null, 2),
+    });
+
   try {
     const {Body: result} = await s3
       .getObject({Bucket: finalBucket, Key: finalFile})
       .promise();
-
-    const update: Manifest['update'] = (results) =>
-      s3Upload(s3, {
-        Bucket: finalBucket,
-        Key: finalFile,
-        Body: JSON.stringify(results, null, 2),
-      });
 
     const seen = new Set(result ? JSON.parse(result.toString()) : []);
 
@@ -158,7 +165,7 @@ async function loadManifest(
     };
   } catch (error) {
     log(`Failed to load manifest ${finalFile} from bucket ${finalBucket}`);
-    return {has: () => false, update: () => Promise.resolve()};
+    return {has: () => false, update};
   }
 }
 

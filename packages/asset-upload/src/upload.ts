@@ -1,3 +1,5 @@
+/* eslint lines-between-class-members: off */
+
 import * as path from 'path';
 import {EventEmitter} from 'events';
 
@@ -50,7 +52,6 @@ class Uploader extends EventEmitter {
     file: FileUploadOptions,
     error: Error,
   ): boolean;
-
   emit(event: 'file:upload:end', result: FileUploadResult): boolean;
   emit(event: 'files:upload:end', results: FileUploadResult[]): boolean;
   emit(event: 'files:found', files: FileList): boolean;
@@ -64,22 +65,18 @@ class Uploader extends EventEmitter {
     event: 'file:upload:start',
     listener: (file: FileUploadOptions) => void,
   ): this;
-
   on(
     event: 'file:upload:error',
     listener: (file: FileUploadOptions, error: Error) => void,
   ): this;
-
   on(
     event: 'file:upload:end',
     listener: (result: FileUploadResult) => void,
   ): this;
-
   on(
     event: 'files:upload:end',
     listener: (results: FileUploadResult[]) => void,
   ): this;
-
   on(event: string, listener: (...args: any) => void) {
     return super.on(event, listener);
   }
