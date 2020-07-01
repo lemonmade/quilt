@@ -157,7 +157,11 @@ async function loadManifest(
     s3Upload(s3, {
       Bucket: finalBucket,
       Key: finalFile,
-      Body: JSON.stringify(results, null, 2),
+      Body: JSON.stringify(
+        results.map(({localPath}) => localPath),
+        null,
+        2,
+      ),
     });
 
   try {
