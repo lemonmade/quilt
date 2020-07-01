@@ -132,10 +132,13 @@ async function upload(emitter: Uploader) {
       'Cache-Control': `public, max-age=${60 * 60 * 24 * 365}, immutable`,
     });
 
-    const contentType = getType(file);
+    const nonBrotliFile = file.replace(/\.br$/, '');
+    const isBrotli = nonBrotliFile !== file;
+
+    const contentType = getType(nonBrotliFile);
 
     if (contentType) headers.set('Content-Type', contentType);
-    if (/\.br$/.test(file)) headers.set('Content-Encoding', 'br');
+    if (isBrotli) headers.set('Content-Encoding', 'br');
 
     const publicPath = prefix ? path.join(prefix, file) : file;
     const localPath = path.join(buildDirectory, file);
