@@ -25,7 +25,7 @@ interface FileList {
   filtered: string[];
 }
 
-interface Options {
+export interface Options {
   buildDirectory: string;
   ignore?:
     | readonly string[]

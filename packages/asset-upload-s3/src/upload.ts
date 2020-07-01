@@ -1,7 +1,10 @@
 import {createReadStream} from 'fs';
 import {S3} from 'aws-sdk';
 import {createUpload, retryablePromise} from '@quilted/asset-upload';
-import type {FileUploadResult} from '@quilted/asset-upload';
+import type {
+  FileUploadResult,
+  Options as BaseOptions,
+} from '@quilted/asset-upload';
 
 interface ManifestOptions {
   file?: string;
@@ -14,6 +17,7 @@ interface Options {
   bucket: string;
   buildDirectory: string;
   manifest?: ManifestOptions | boolean;
+  ignore?: BaseOptions['ignore'];
 }
 
 export async function upload({
@@ -21,6 +25,7 @@ export async function upload({
   prefix,
   region,
   bucket,
+  ignore,
   manifest: manifestOptions,
 }: Options) {
   const s3 = new S3({region});
@@ -30,6 +35,7 @@ export async function upload({
   const upload = createUpload({
     buildDirectory,
     prefix,
+    ignore,
     has: (file) => manifest.has(file),
     async upload({publicPath, localPath, headers}) {
       const metadata: {[key: string]: string} = {};
@@ -101,15 +107,17 @@ export async function upload({
     const uploadResults = await upload.run();
 
     if (uploadResults.length === 0) {
-      log(`No new assets to upload (all files were already uploaded)`);
+      log(`No new files to upload (all files were already uploaded)`);
     } else {
       log(
-        `Successfully uploaded ${uploadResults.length} ${uploadResults.length}`,
+        `Successfully uploaded ${uploadResults.length} ${
+          uploadResults.length === 1 ? 'file' : 'files'
+        }`,
       );
     }
     try {
       await manifest.update(uploadResults);
-      log(`Uploaded asset metadata`);
+      log(`Updated asset manifest`);
     } catch (error) {
       log(
         `Failed to update manifest, but ignoring because it just means a future CI run will upload a few unnecessary assets`,
