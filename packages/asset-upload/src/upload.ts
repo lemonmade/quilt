@@ -130,6 +130,7 @@ async function upload(emitter: Uploader) {
   await eachLimit(files, maxConcurrency, async (file) => {
     const headers = new Headers({
       'Cache-Control': `public, max-age=${60 * 60 * 24 * 365}, immutable`,
+      'Timing-Allow-Origin': '*',
     });
 
     const nonBrotliFile = file.replace(/\.br$/, '');
