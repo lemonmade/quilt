@@ -1,0 +1,26 @@
+{
+  "name": "@quilted/graphql",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "esnext": "index.esnext",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "esnext": "./index.esnext"
+    },
+    "./": "./"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/useful-types": "^0.0.0",
+    "@types/graphql": "^14.0.0"
+  }
+}

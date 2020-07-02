@@ -22,6 +22,7 @@
   "dependencies": {
     "@sewing-kit/plugin-css": "^0.1.17",
     "@sewing-kit/plugin-eslint": "^0.1.4",
+    "@sewing-kit/plugin-graphql": "^0.1.19",
     "@sewing-kit/plugin-javascript": "^0.1.16",
     "@sewing-kit/plugin-jest": "^0.1.17",
     "@sewing-kit/plugin-package-flexible-outputs": "^0.1.17",

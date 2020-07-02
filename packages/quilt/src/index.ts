@@ -2,7 +2,6 @@ export {createResolver} from '@quilted/async';
 export {
   useAsync,
   useAsyncAsset,
-  useKeepFresh,
   usePrefetch,
   usePreload,
   createAsyncComponent,

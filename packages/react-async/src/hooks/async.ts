@@ -1,10 +1,10 @@
 import {useCallback, useContext, useMemo} from 'react';
-import {Resolver} from '@quilted/async';
+import type {Resolver} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
 import {useSubscription, Subscription} from 'use-subscription';
 
 import {AsyncAssetContext, SERVER_ACTION_KIND} from '../context';
-import {AssetTiming} from '../types';
+import type {AssetTiming} from '../types';
 
 interface Options {
   immediate?: boolean;
