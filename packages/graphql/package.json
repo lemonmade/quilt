@@ -1,6 +1,6 @@
 {
   "name": "@quilted/graphql",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -20,7 +20,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/useful-types": "^0.0.0",
+    "@quilted/useful-types": "^0.0.1",
     "@types/graphql": "^14.0.0"
   }
 }
