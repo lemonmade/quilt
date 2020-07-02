@@ -10,6 +10,7 @@ export {
 export {
   useCurrentUrl,
   useRouter,
+  useMatch,
   useNavigationBlock,
   useRouteChangeFocusRef,
 } from './hooks';

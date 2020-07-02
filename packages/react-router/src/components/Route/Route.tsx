@@ -1,15 +1,14 @@
-import React, {useEffect, useContext, useMemo} from 'react';
+import React, {useEffect, useContext} from 'react';
 
-import {useCurrentUrl, useRouter} from '../../hooks';
+import {useCurrentUrl, useRouter, useMatch} from '../../hooks';
 import {SwitchContext} from '../../context';
-import {resolveMatch} from '../../utilities';
-import {Matcher} from '../../types';
+import type {Match} from '../../types';
 import {REGISTER, NavigateTo} from '../../router';
 
 import {Redirect} from '../Redirect';
 
 interface Props {
-  match: Matcher | string | RegExp;
+  match: Match;
   redirect?: NavigateTo | ((url: URL) => NavigateTo);
   render?(url: URL): React.ReactElement;
   // need to add renderPreload
@@ -29,9 +28,9 @@ export function Route({match, render, redirect, renderPrefetch}: Props) {
     return router[REGISTER]({match, render: renderPrefetch});
   }, [match, renderPrefetch, router]);
 
-  const matches = useMemo(() => resolveMatch(url, match), [url, match]);
+  const matches = useMatch(match);
   const normalizedRender = matches
-    ? render || renderFromRedirect(redirect)
+    ? render ?? renderFromRedirect(redirect)
     : null;
 
   if (!matches || normalizedRender == null) {

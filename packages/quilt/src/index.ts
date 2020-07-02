@@ -39,6 +39,7 @@ export {
   NavigationBlock,
   useCurrentUrl,
   useRouter,
+  useMatch as useRouteMatch,
   useNavigationBlock,
   useRouteChangeFocusRef,
 } from '@quilted/react-router';
