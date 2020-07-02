@@ -18,6 +18,8 @@ import {css} from '@sewing-kit/plugin-css';
 import {stylelint} from '@sewing-kit/plugin-stylelint';
 import {react} from '@sewing-kit/plugin-react';
 import {jest} from '@sewing-kit/plugin-jest';
+import {graphql, workspaceGraphQL} from '@sewing-kit/plugin-graphql';
+import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
 export function quiltPackage({react: useReact = true} = {}) {
   return createComposedProjectPlugin<Package>('Quilt.Package', [
@@ -32,9 +34,16 @@ export interface QuiltWebAppOptions {
   readonly assetServer?: NonNullable<
     Parameters<typeof webpackDevWebApp>[0]
   >['assetServer'];
+  readonly graphql?: {
+    readonly export?: ExportStyle;
+  };
 }
 
-export function quiltWebApp({assetServer, preact}: QuiltWebAppOptions = {}) {
+export function quiltWebApp({
+  assetServer,
+  preact,
+  graphql: {export: exportStyle = 'simple'} = {},
+}: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
     async (composer) => {
@@ -47,6 +56,7 @@ export function quiltWebApp({assetServer, preact}: QuiltWebAppOptions = {}) {
         flexibleOutputs(),
         webpackBuild(),
         react({preact}),
+        graphql({export: exportStyle}),
         webAppConvenienceAliases(),
       );
 
@@ -146,19 +156,17 @@ export function quiltWorkspace({
   css = true,
   stylelint: stylelintOptions = css,
 }: QuiltWorkspaceOptions = {}) {
-  const plugins = [jest(), eslint()];
+  return createComposedWorkspacePlugin('Quilt.Workspace', (composer) => {
+    composer.use(jest(), eslint(), workspaceTypeScript(), workspaceGraphQL());
 
-  if (stylelintOptions) {
-    plugins.push(
-      stylelint(
-        typeof stylelintOptions === 'boolean' ? undefined : stylelintOptions,
-      ),
-    );
-  }
-
-  plugins.push(workspaceTypeScript());
-
-  return createComposedWorkspacePlugin('Quilt.Workspace', plugins);
+    if (stylelintOptions) {
+      composer.use(
+        stylelint(
+          typeof stylelintOptions === 'boolean' ? undefined : stylelintOptions,
+        ),
+      );
+    }
+  });
 }
 
 async function ignoreMissingImports<T>(perform: () => Promise<T>) {

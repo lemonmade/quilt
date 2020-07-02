@@ -1,9 +1,4 @@
-import {AsyncComponentType, IfAllOptionalKeys, NoInfer} from '../types';
-
-export type Prefetchable<PrefetchOptions extends object> = Pick<
-  AsyncComponentType<any, any, any, PrefetchOptions, any>,
-  'usePrefetch'
->;
+import type {Prefetchable, IfAllOptionalKeys, NoInfer} from '../types';
 
 export function usePrefetch<PrefetchOptions extends object>(
   ...args: IfAllOptionalKeys<

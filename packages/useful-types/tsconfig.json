@@ -7,5 +7,5 @@
   },
   "include": ["src"],
   "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../useful-types"}]
+  "references": []
 }

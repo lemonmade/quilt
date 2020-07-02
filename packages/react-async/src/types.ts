@@ -17,57 +17,31 @@ export type IfAllOptionalKeys<Obj, If, Else = never> = NonOptionalKeys<
 
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 
-export interface AsyncHookTarget<
-  PreloadOptions extends object,
-  PrefetchOptions extends object,
-  KeepFreshOptions extends object
-> {
+export interface Preloadable<Options extends object> {
   usePreload(
-    ...props: IfAllOptionalKeys<
-      PreloadOptions,
-      [NoInfer<PreloadOptions>?],
-      [NoInfer<PreloadOptions>]
-    >
-  ): () => () => void;
+    ...options: IfAllOptionalKeys<Options, [Options?], [Options]>
+  ): () => undefined | (() => void);
+}
+
+export interface Prefetchable<Options extends object> {
   usePrefetch(
-    ...props: IfAllOptionalKeys<
-      PrefetchOptions,
-      [NoInfer<PrefetchOptions>?],
-      [NoInfer<PrefetchOptions>]
-    >
-  ): () => () => void;
-  useKeepFresh(
-    ...props: IfAllOptionalKeys<
-      KeepFreshOptions,
-      [NoInfer<KeepFreshOptions>?],
-      [NoInfer<KeepFreshOptions>]
-    >
-  ): () => () => void;
+    ...options: IfAllOptionalKeys<Options, [Options?], [Options]>
+  ): () => undefined | (() => void);
 }
 
 export interface AsyncComponentType<
   T,
   Props extends object,
   PreloadOptions extends object,
-  PrefetchOptions extends object,
-  KeepFreshOptions extends object
+  PrefetchOptions extends object
 >
-  extends AsyncHookTarget<PreloadOptions, PrefetchOptions, KeepFreshOptions>,
+  extends Preloadable<PreloadOptions>,
+    Prefetchable<PrefetchOptions>,
     FunctionComponent<Props> {
   load(): Promise<T>;
   readonly Preload: ComponentType<PreloadOptions>;
   readonly Prefetch: ComponentType<PrefetchOptions>;
-  readonly KeepFresh: ComponentType<KeepFreshOptions>;
 }
 
-export type PreloadOptions<T> = T extends AsyncHookTarget<infer U, any, any>
-  ? U
-  : never;
-
-export type PrefetchOptions<T> = T extends AsyncHookTarget<any, infer U, any>
-  ? U
-  : never;
-
-export type KeepFreshOptions<T> = T extends AsyncHookTarget<any, any, infer U>
-  ? U
-  : never;
+export type PreloadOptions<T> = T extends Preloadable<infer U> ? U : never;
+export type PrefetchOptions<T> = T extends Prefetchable<infer U> ? U : never;

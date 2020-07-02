@@ -6,14 +6,17 @@
     {"path": "./packages/asset-upload-s3"},
     {"path": "./packages/async"},
     {"path": "./packages/create-quilt-project"},
+    {"path": "./packages/graphql"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react-async"},
     {"path": "./packages/react-auto-headings"},
     {"path": "./packages/react-html"},
+    {"path": "./packages/react-graphql"},
     {"path": "./packages/react-idle"},
     {"path": "./packages/react-router"},
     {"path": "./packages/react-server-render"},
     {"path": "./packages/react-testing"},
-    {"path": "./packages/sewing-kit-plugins"}
+    {"path": "./packages/sewing-kit-plugins"},
+    {"path": "./packages/useful-types"}
   ]
 }

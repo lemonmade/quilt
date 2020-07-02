@@ -8,8 +8,7 @@ import type {AsyncComponentType, AssetTiming} from './types';
 interface Options<
   Props extends object,
   PreloadOptions extends object = {},
-  PrefetchOptions extends object = {},
-  KeepFreshOptions extends object = {}
+  PrefetchOptions extends object = {}
 > extends ResolverOptions<ComponentType<Props>> {
   defer?: 'render' | 'interactive';
   preload?: boolean;
@@ -30,20 +29,12 @@ interface Options<
    * custom hook, it must follow the rules of hooks.
    */
   usePrefetch?(props: PrefetchOptions): () => undefined | (() => void);
-
-  /**
-   * Custom logic to use for the useKeepFresh hook of the new, async
-   * component. Because this logic will be used as part of a generated
-   * custom hook, it must follow the rules of hooks.
-   */
-  useKeepFresh?(props: KeepFreshOptions): () => undefined | (() => void);
 }
 
 export function createAsyncComponent<
   Props extends object,
   PreloadOptions extends object = {},
-  PrefetchOptions extends object = {},
-  KeepFreshOptions extends object = {}
+  PrefetchOptions extends object = {}
 >({
   id,
   load,
@@ -54,18 +45,11 @@ export function createAsyncComponent<
   renderError = defaultRenderError,
   usePreload: useCustomPreload,
   usePrefetch: useCustomPrefetch,
-  useKeepFresh: useCustomKeepFresh,
-}: Options<
-  Props,
-  PreloadOptions,
-  PrefetchOptions,
-  KeepFreshOptions
->): AsyncComponentType<
+}: Options<Props, PreloadOptions, PrefetchOptions>): AsyncComponentType<
   ComponentType<Props>,
   Props,
   PreloadOptions,
-  PrefetchOptions,
-  KeepFreshOptions
+  PrefetchOptions
 > {
   const resolver = createResolver({id, load});
   const componentName = displayName ?? displayNameFromId(resolver.id);
@@ -140,20 +124,6 @@ export function createAsyncComponent<
     }, [load, customPrefetch]);
   }
 
-  function useKeepFresh(props: KeepFreshOptions) {
-    const {load} = useAsync(resolver, {
-      styles: 'eventually',
-      scripts: 'eventually',
-    });
-
-    const customKeepFresh = useCustomKeepFresh?.(props);
-
-    return useCallback(() => {
-      load();
-      return customKeepFresh?.() ?? noop;
-    }, [load, customKeepFresh]);
-  }
-
   function Preload(options: PreloadOptions) {
     const preload = usePreload(options);
 
@@ -174,22 +144,11 @@ export function createAsyncComponent<
 
   Prefetch.displayName = `Async.Prefetch(${displayName})`;
 
-  function KeepFresh(options: KeepFreshOptions) {
-    const keepFresh = useKeepFresh(options);
-
-    useEffect(() => keepFresh(), [keepFresh]);
-
-    return null;
-  }
-
-  KeepFresh.displayName = `Async.KeepFresh(${displayName})`;
-
   const FinalComponent: AsyncComponentType<
     ComponentType<Props>,
     Props,
     PreloadOptions,
-    PrefetchOptions,
-    KeepFreshOptions
+    PrefetchOptions
   > = Async as any;
 
   Reflect.defineProperty(FinalComponent, 'load', {
@@ -207,11 +166,6 @@ export function createAsyncComponent<
     writable: false,
   });
 
-  Reflect.defineProperty(FinalComponent, 'KeepFresh', {
-    value: KeepFresh,
-    writable: false,
-  });
-
   Reflect.defineProperty(FinalComponent, 'usePreload', {
     value: usePreload,
     writable: false,
@@ -219,11 +173,6 @@ export function createAsyncComponent<
 
   Reflect.defineProperty(FinalComponent, 'usePrefetch', {
     value: usePrefetch,
-    writable: false,
-  });
-
-  Reflect.defineProperty(FinalComponent, 'useKeepFresh', {
-    value: useKeepFresh,
     writable: false,
   });
 

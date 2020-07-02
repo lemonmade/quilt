@@ -6,19 +6,11 @@
     "outDir": "build/ts",
     "paths": {}
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/tests/**/*.ts",
-    "**/tests/**/*.tsx"
-  ],
+  "include": ["src"],
+  "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
   "references": [
-    {
-      "path": "../graphql"
-    },
-    {
-      "path": "../react-async"
-    }
+    {"path": "../graphql"},
+    {"path": "../react-async"},
+    {"path": "../useful-types"}
   ]
 }

@@ -5,9 +5,7 @@
     "baseUrl": "src",
     "rootDir": "src"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*"],
   "references": [
     {
       "path": "../async"

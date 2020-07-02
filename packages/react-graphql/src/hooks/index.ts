@@ -1,3 +1,4 @@
-export {useDeferredQuery} from './deferred';
-export {useMutation} from './mutation';
-export {useQuery} from './query';
+export {useDeferredQuery} from './useDeferredQuery';
+export {useMutation} from './useMutation';
+export {useQuery} from './useQuery';
+export {useGraphQL} from './useGraphQL';
