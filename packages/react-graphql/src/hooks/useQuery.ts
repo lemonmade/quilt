@@ -91,7 +91,7 @@ function initialize<Data>({
 }
 
 function reducer<Data>(state: State<Data>, action: Action): State<Data> {
-  if (action.key === state.key) return state;
+  if (action.key !== state.key) return state;
 
   switch (action.type) {
     case 'reset':
