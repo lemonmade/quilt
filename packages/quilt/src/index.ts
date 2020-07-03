@@ -7,6 +7,19 @@ export {
   createAsyncComponent,
 } from '@quilted/react-async';
 export {
+  GraphQLContext,
+  createGraphQL,
+  createHttpFetch,
+  useGraphQL,
+  useMutation,
+} from '@quilted/react-graphql';
+export type {
+  GraphQLData,
+  GraphQLVariables,
+  GraphQLRequest,
+  GraphQLDocument,
+} from '@quilted/react-graphql';
+export {
   AutoHeading,
   AutoHeadingGroup,
   useAutoHeadingLevel,

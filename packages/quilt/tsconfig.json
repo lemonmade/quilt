@@ -7,35 +7,15 @@
   },
   "include": ["src/**/*"],
   "references": [
-    {
-      "path": "../async"
-    },
-    {
-      "path": "../graphql"
-    },
-    {
-      "path": "../react-async"
-    },
-    {
-      "path": "../react-auto-headings"
-    },
-    {
-      "path": "../react-graphql"
-    },
-    {
-      "path": "../react-html"
-    },
-    {
-      "path": "../react-idle"
-    },
-    {
-      "path": "../react-router"
-    },
-    {
-      "path": "../react-server-render"
-    },
-    {
-      "path": "../react-web-workers"
-    }
+    {"path": "../async"},
+    {"path": "../graphql"},
+    {"path": "../react-async"},
+    {"path": "../react-auto-headings"},
+    {"path": "../react-graphql"},
+    {"path": "../react-html"},
+    {"path": "../react-idle"},
+    {"path": "../react-router"},
+    {"path": "../react-server-render"},
+    {"path": "../react-web-workers"}
   ]
 }
