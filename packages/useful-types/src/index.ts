@@ -1,11 +1,11 @@
-export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
-
 export type IfUnionSize<
   Union,
   Size extends number,
   If = true,
   Else = false
 > = TupleFromUnion<Union> extends {length: Size} ? If : Else;
+
+export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 
 // Union length helpers, mostly from
 // https://github.com/microsoft/TypeScript/issues/13298#issuecomment-544107351
