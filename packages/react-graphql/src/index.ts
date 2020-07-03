@@ -3,6 +3,7 @@ export type {
   GraphQLVariables,
   GraphQLDocument,
 } from '@quilted/graphql';
+export {GraphQLContext} from './context';
 export {useDeferredQuery, useMutation, useQuery, useGraphQL} from './hooks';
 export {createAsyncQuery} from './async';
 export {createGraphQL} from './client';
