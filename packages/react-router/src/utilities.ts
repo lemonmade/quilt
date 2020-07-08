@@ -1,4 +1,4 @@
-import {Match, EnhancedURL} from './types';
+import type {Match, EnhancedURL, Prefix} from './types';
 
 export function postfixSlash(path: string) {
   if (path.length === 0) return '/';
@@ -27,4 +27,20 @@ function remainder(pathname: string, prefix?: string) {
   return prefix
     ? removePostfixSlash(pathname.replace(prefix, ''))
     : removePostfixSlash(pathname);
+}
+
+export function containedByPrefix(url: URL, prefix?: Prefix) {
+  return extractPrefix(url, prefix) != null;
+}
+
+export function extractPrefix(url: URL, prefix?: Prefix) {
+  if (!prefix) return undefined;
+
+  if (typeof prefix === 'string') {
+    return url.pathname.indexOf(prefix) === 0 ? prefix : undefined;
+  }
+
+  const regex = new RegExp(prefix.source);
+  const match = regex.exec(url.pathname);
+  return match != null && match.index === 0 ? match[0] : undefined;
 }

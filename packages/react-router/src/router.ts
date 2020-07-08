@@ -1,15 +1,13 @@
 import {ServerActionKind} from '@quilted/react-server-render';
 
-import {EnhancedURL, Match} from './types';
-import {postfixSlash} from './utilities';
+import type {EnhancedURL, Match, Prefix} from './types';
+import {postfixSlash, extractPrefix} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 
 export interface State {
   switchFallbacks?: string[];
 }
-
-type Prefix = string | RegExp;
 
 export interface Options {
   state?: State;
@@ -54,6 +52,7 @@ export const SWITCH_IS_FALLBACK = Symbol('switchIsFallback');
 export class Router {
   currentUrl: EnhancedURL;
 
+  readonly prefix: Prefix | undefined;
   readonly [SERVER_ACTION_KIND]: ServerActionKind = {
     id: SERVER_RENDER_EFFECT_ID,
     betweenEachPass: () => this.reset(),
@@ -62,7 +61,6 @@ export class Router {
   readonly [REGISTERED] = new Set<PrefetchRegistration>();
 
   private readonly switchFallbacks = new Set<string>();
-  private readonly prefix: Prefix | undefined;
   private currentSwitchId = 0;
   private blockers = new Set<Blocker>();
   private listeners = new Set<Listener>();
@@ -351,18 +349,6 @@ function prefixPath(pathname: string, prefix?: string) {
   return pathname.indexOf('/') === 0
     ? `${postfixSlash(prefix)}${pathname.slice(1)}`
     : pathname;
-}
-
-function extractPrefix(url: URL, prefix?: Prefix) {
-  if (!prefix) return undefined;
-
-  if (typeof prefix === 'string') {
-    return url.pathname.indexOf(prefix) === 0 ? prefix : undefined;
-  }
-
-  const regex = new RegExp(prefix.source);
-  const match = regex.exec(url.pathname);
-  return match != null && match.index === 0 ? match[0] : undefined;
 }
 
 function urlToPath(url: URL) {

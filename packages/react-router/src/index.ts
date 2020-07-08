@@ -14,4 +14,5 @@ export {
   useNavigationBlock,
   useRouteChangeFocusRef,
 } from './hooks';
+export {containedByPrefix} from './utilities';
 export type {NavigateTo} from './router';

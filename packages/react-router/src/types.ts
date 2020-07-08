@@ -9,6 +9,8 @@ export interface Matcher {
 
 export type Match = string | RegExp | Matcher;
 
+export type Prefix = string | RegExp;
+
 export interface Focusable {
   focus(): void;
 }
