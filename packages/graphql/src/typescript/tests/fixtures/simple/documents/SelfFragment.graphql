@@ -1,0 +1,3 @@
+fragment Self on Person {
+  name
+}
