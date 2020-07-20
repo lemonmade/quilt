@@ -18,6 +18,9 @@
     },
     "./": "./"
   },
+  "bin": {
+    "quilt-graphql-typescript": "./bin/quilt-graphql-typescript"
+  },
   "sideEffects": false,
   "devDependencies": {
     "@types/fs-extra": "^9.0.1"

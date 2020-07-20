@@ -43,7 +43,7 @@
     "@quilted/react-web-workers": "^0.1.3"
   },
   "peerDependencies": {
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react": ">=16.8.0 <17.0.0",
+    "react-dom": ">=16.8.0 <17.0.0"
   }
 }
