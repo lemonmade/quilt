@@ -9,9 +9,8 @@ import glob from 'globby';
 import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
 
 import {
-  // printDocument,
+  generateDocumentTypes,
   generateSchemaTypes,
-  // PrintDocumentOptions,
   PrintSchemaOptions,
 } from './print';
 import type {DocumentDetails, ProjectDetails} from './types';
@@ -45,7 +44,6 @@ interface DocumentBuildDetails {
 }
 
 interface SchemaTypeDefinition {
-  // TODO: add an additional type that will export "all" types
   types: 'input';
   outputPath: string;
 }
@@ -63,7 +61,7 @@ export async function createBuilder(cwd?: string) {
     rootDir: cwd,
     extensions: [() => ({name: 'quilt'})],
   });
-  return new Builder(config!);
+  return new Builder(config!, cwd ?? process.cwd());
 }
 
 export class Builder extends EventEmitter {
@@ -77,7 +75,7 @@ export class Builder extends EventEmitter {
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
-  constructor(config: GraphQLConfig) {
+  constructor(config: GraphQLConfig, private readonly cwd: string) {
     super();
     this.config = config;
   }
@@ -362,14 +360,40 @@ export class Builder extends EventEmitter {
     file: string,
     project: GraphQLProjectConfig,
   ): Promise<DocumentBuildDetails> {
-    const details = this.projectDetails.get(project)!.documents.get(file)!;
+    const {cwd} = this;
+    const projectDetails = this.projectDetails.get(project)!;
+    const documentDetails = projectDetails.documents.get(file)!;
     const definitionPath = `${file}.d.ts`;
+
+    await writeFile(
+      definitionPath,
+      generateDocumentTypes(documentDetails, projectDetails, {
+        importPath(type) {
+          const {schemaTypes} = getOptions(project);
+
+          if (schemaTypes == null || schemaTypes.length === 0) {
+            throw new Error(
+              `You must add at least one schemaTypes option when importing custom scalar or enum types in your query (encountered while importing type ${JSON.stringify(
+                type.name,
+              )})`,
+            );
+          }
+
+          const {outputPath} = schemaTypes[0];
+
+          return path.relative(
+            path.dirname(file),
+            path.resolve(cwd, outputPath),
+          );
+        },
+      }),
+    );
 
     const buildDetails: DocumentBuildDetails = {
       project,
       documentPath: file,
       definitionPath,
-      ...details,
+      ...documentDetails,
     };
 
     this.emit('document:build:end', buildDetails);

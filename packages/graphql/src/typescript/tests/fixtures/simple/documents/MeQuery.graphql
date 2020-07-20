@@ -1,7 +1,0 @@
-#import "./SelfFragment.graphql"
-
-query Me {
-  me {
-    ...Self
-  }
-}

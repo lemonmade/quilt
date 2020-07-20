@@ -3,7 +3,7 @@ import type {Reducer} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
 
 import {cacheKey as getCacheKey} from '../utilities';
-import {GraphQLDocument, IfAllVariablesOptional, QueryOptions} from '../types';
+import {GraphQLOperation, IfAllVariablesOptional, QueryOptions} from '../types';
 
 import {useGraphQL} from './useGraphQL';
 
@@ -25,7 +25,7 @@ type Action =
   | {type: 'result'; key: string; data?: any; error?: Error};
 
 export function useQuery<Data, Variables>(
-  query: GraphQLDocument<Data, Variables>,
+  query: GraphQLOperation<Data, Variables>,
   ...optionsPart: IfAllVariablesOptional<
     Variables,
     [QueryHookOptions<Data, NoInfer<Variables>>?],

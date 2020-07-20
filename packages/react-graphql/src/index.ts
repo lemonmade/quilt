@@ -1,7 +1,7 @@
 export type {
   GraphQLData,
   GraphQLVariables,
-  GraphQLDocument,
+  GraphQLOperation,
 } from '@quilted/graphql';
 export {useDeferredQuery, useMutation, useQuery, useGraphQL} from './hooks';
 export {createAsyncQuery} from './async';

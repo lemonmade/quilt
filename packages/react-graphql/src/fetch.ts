@@ -45,9 +45,9 @@ export function createHttpFetch({
       credentials,
       headers,
       body: JSON.stringify({
-        query: operation.document.source,
+        query: operation.operation.source,
         variables: operation.variables,
-        operationName: operation.document.name,
+        operationName: operation.operation.name,
       }),
     });
 

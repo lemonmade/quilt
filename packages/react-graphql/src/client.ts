@@ -2,7 +2,7 @@ import type {NoInfer} from '@quilted/useful-types';
 import type {
   Result,
   GraphQLFetch,
-  GraphQLDocument,
+  GraphQLOperation,
   QueryOptions,
   MutationOptions,
   IfAllVariablesOptional,
@@ -18,7 +18,7 @@ export class GraphQL {
   ) {}
 
   read<Data, Variables>(
-    queryOrKey: GraphQLDocument<Data, Variables> | string,
+    queryOrKey: GraphQLOperation<Data, Variables> | string,
     variables?: Variables,
   ) {
     return this.cache.get(
@@ -29,7 +29,7 @@ export class GraphQL {
   }
 
   mutate<Data, Variables>(
-    mutation: GraphQLDocument<Data, Variables>,
+    mutation: GraphQLOperation<Data, Variables>,
     ...optionsPart: IfAllVariablesOptional<
       Variables,
       [MutationOptions<Data, NoInfer<Variables>>?],
@@ -40,7 +40,7 @@ export class GraphQL {
   }
 
   query<Data, Variables>(
-    query: GraphQLDocument<Data, Variables>,
+    query: GraphQLOperation<Data, Variables>,
     ...optionsPart: IfAllVariablesOptional<
       Variables,
       [QueryOptions<Data, NoInfer<Variables>>?],
@@ -76,12 +76,12 @@ export class GraphQL {
   }
 
   private async run<Data, Variables>(
-    document: GraphQLDocument<Data, Variables>,
+    operation: GraphQLOperation<Data, Variables>,
     variables?: Variables,
   ): Promise<Result<Data>> {
     try {
       const data = ((await this.fetch({
-        document,
+        operation,
         variables: variables ?? {},
       })) as any) as Data;
 
