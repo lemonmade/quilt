@@ -32,7 +32,7 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/async": "^0.1.8",
-    "@quilted/graphql": "^0.1.0",
+    "@quilted/graphql": "^0.1.2",
     "@quilted/react-async": "^0.1.9",
     "@quilted/react-auto-headings": "^0.1.0",
     "@quilted/react-graphql": "^0.1.2",
