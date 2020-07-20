@@ -10,6 +10,7 @@ export {
   GraphQLContext,
   createGraphQL,
   createHttpFetch,
+  useQuery,
   useGraphQL,
   useMutation,
 } from '@quilted/react-graphql';

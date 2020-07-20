@@ -13,6 +13,8 @@ import {
   GraphQLNamedType,
   isCompositeType,
   GraphQLLeafType,
+  TypeNode,
+  NamedTypeNode,
 } from 'graphql';
 import type {
   GraphQLObjectType,
@@ -78,7 +80,16 @@ export function generateDocumentTypes(
   if (operations.length > 0) {
     const [operation] = operations;
 
-    const rootType = project.schema.getQueryType()!;
+    const rootType = (() => {
+      switch (operation.operation) {
+        case 'query':
+          return project.schema.getQueryType()!;
+        case 'mutation':
+          return project.schema.getMutationType()!;
+        case 'subscription':
+          return project.schema.getSubscriptionType()!;
+      }
+    })();
 
     const importMap = new Map<string, Set<GraphQLLeafType>>();
     const importCache = new Set<GraphQLLeafType>();
@@ -135,7 +146,11 @@ export function generateDocumentTypes(
 
     const name = operation.name?.value ?? 'Unnamed';
     const normalizedName = toTypeName(name);
+
     const typeName = `${normalizedName}${toTypeName(operation.operation)}Data`;
+    const variablesTypeName = `${normalizedName}${toTypeName(
+      operation.operation,
+    )}Variables`;
 
     const operationTypeImport = t.importDeclaration(
       [
@@ -155,6 +170,7 @@ export function generateDocumentTypes(
         t.identifier('GraphQLOperation'),
         t.tsTypeParameterInstantiation([
           t.tsTypeReference(t.identifier(typeName)),
+          t.tsTypeReference(t.identifier(variablesTypeName)),
         ]),
       ),
     );
@@ -169,7 +185,7 @@ export function generateDocumentTypes(
       t.identifier('document'),
     );
 
-    const queryExports = exportsForSelection(
+    const operationExports = exportsForSelection(
       typeName,
       getSelectionTypeMatch(
         operation.selectionSet.selections,
@@ -180,6 +196,15 @@ export function generateDocumentTypes(
       context,
     );
 
+    const operationVariablesExport = variablesExportForOperation(
+      variablesTypeName,
+      operation,
+      context,
+    );
+
+    // Need to create the variables and other exports before creating this array of
+    // imports, because the construction of those values builds up the imports
+    // that are needed.
     const schemaImports = [...importMap].map(([source, imported]) =>
       t.importDeclaration(
         [...imported].map((typeImport) =>
@@ -195,13 +220,57 @@ export function generateDocumentTypes(
     fileBody.push(
       operationTypeImport,
       ...schemaImports,
-      ...queryExports,
+      ...operationExports,
+      operationVariablesExport,
       operationVariableDeclaration,
       operationExport,
     );
   }
 
   return generate(t.file(t.program(fileBody), [], [])).code;
+}
+
+function variablesExportForOperation(
+  name: string,
+  {variableDefinitions = []}: OperationDefinitionNode,
+  context: Context,
+) {
+  return t.exportNamedDeclaration(
+    t.tsInterfaceDeclaration(
+      t.identifier(name),
+      null,
+      null,
+      t.tsInterfaceBody(
+        variableDefinitions.map(({variable, type}) => {
+          const unwrappedType = unwrapAstType(type);
+
+          const typescriptType =
+            unwrappedType.type in scalarTypeMap
+              ? scalarTypeMap[unwrappedType.type]
+              : context.import(
+                  context.schema.getType(unwrappedType.type) as GraphQLLeafType,
+                );
+
+          const maybeListTypescriptType = unwrappedType.isList
+            ? t.tsArrayType(
+                unwrappedType.isNonNullableListItem
+                  ? typescriptType
+                  : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
+              )
+            : typescriptType;
+
+          const property = t.tsPropertySignature(
+            t.identifier(variable.name.value),
+            t.tsTypeAnnotation(maybeListTypescriptType),
+          );
+
+          property.optional = !unwrappedType.isNonNullable;
+
+          return property;
+        }),
+      ),
+    ),
+  );
 }
 
 function exportsForSelection(
@@ -529,5 +598,41 @@ function unwrapType(
     isList,
     isNonNullableListItem,
     type: finalType as any,
+  };
+}
+
+function unwrapAstType(
+  type: TypeNode,
+): {
+  type: string;
+  isNonNullable: boolean;
+  isList: boolean;
+  isNonNullableListItem: boolean;
+} {
+  let isNonNullable = false;
+  let isList = false;
+  let isNonNullableListItem = false;
+  let finalType = type;
+
+  if (finalType.kind === 'NonNullType') {
+    isNonNullable = true;
+    finalType = finalType.type;
+  }
+
+  if (finalType.kind === 'ListType') {
+    isList = true;
+    finalType = finalType.type;
+  }
+
+  if (finalType.kind === 'NonNullType') {
+    isNonNullableListItem = true;
+    finalType = finalType.type;
+  }
+
+  return {
+    isNonNullable,
+    isList,
+    isNonNullableListItem,
+    type: (finalType as NamedTypeNode).name.value,
   };
 }
