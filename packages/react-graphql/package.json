@@ -20,7 +20,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/graphql": "^0.1.0",
+    "@quilted/graphql": "^0.1.2",
     "@quilted/react-async": "^0.1.9",
     "@quilted/useful-types": "^0.1.0"
   },
