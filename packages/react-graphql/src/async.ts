@@ -1,11 +1,11 @@
-import {GraphQLDocument} from '@quilted/graphql';
+import {GraphQLOperation} from '@quilted/graphql';
 import {useAsync, createResolver, ResolverOptions} from '@quilted/react-async';
 
 import {AsyncQuery, VariableOptions} from './types';
 import {useDeferredQuery} from './hooks';
 
 export interface Options<Data, Variables>
-  extends ResolverOptions<GraphQLDocument<Data, Variables>> {}
+  extends ResolverOptions<GraphQLOperation<Data, Variables>> {}
 
 export function createAsyncQuery<Data, Variables>({
   id,

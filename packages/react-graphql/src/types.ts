@@ -1,5 +1,5 @@
 import {
-  GraphQLDocument,
+  GraphQLOperationType,
   GraphQLOperation,
   GraphQLData,
   GraphQLVariables,
@@ -7,7 +7,12 @@ import {
 import {Prefetchable, Preloadable, Resolver} from '@quilted/react-async';
 import {IfUnionSize} from '@quilted/useful-types';
 
-export type {GraphQLDocument, GraphQLData, GraphQLVariables};
+export type {
+  GraphQLOperation,
+  GraphQLOperationType,
+  GraphQLData,
+  GraphQLVariables,
+};
 
 type NonNullableKeys<T> = {
   [K in keyof T]-?: null extends T[K] ? never : K;
@@ -43,22 +48,22 @@ export type QueryOptions<_Data, Variables> = {
 
 export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
 
-export interface AsyncDocumentNode<Data, Variables> {
-  readonly resolver: Resolver<GraphQLDocument<Data, Variables>>;
+export interface AsyncGraphQLOperation<Data, Variables> {
+  readonly resolver: Resolver<GraphQLOperation<Data, Variables>>;
 }
 
-export type AnyGraphQLDocument<Data, Variables> =
-  | GraphQLDocument<DataCue, Variables>
-  | AsyncDocumentNode<Data, Variables>;
+export type AnyGraphQLOperation<Data, Variables> =
+  | GraphQLOperation<DataCue, Variables>
+  | AsyncGraphQLOperation<Data, Variables>;
 
 export interface AsyncQuery<Data, Variables>
-  extends AsyncDocumentNode<Data, Variables>,
+  extends AsyncGraphQLOperation<Data, Variables>,
     GraphQLOperation<Data, Variables>,
     Preloadable<VariableOptions<Variables>>,
     Prefetchable<VariableOptions<Variables>> {}
 
 export interface GraphQLRequest<Data, Variables> {
-  document: GraphQLDocument<Data, Variables>;
+  operation: GraphQLOperation<Data, Variables>;
   variables: Variables;
 }
 

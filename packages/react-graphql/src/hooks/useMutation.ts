@@ -1,14 +1,14 @@
 import {useCallback} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
 import type {
-  GraphQLDocument,
+  GraphQLOperation,
   MutationOptions,
   IfAllVariablesOptional,
 } from '../types';
 import {useGraphQL} from './useGraphQL';
 
 export function useMutation<Data, Variables>(
-  mutation: GraphQLDocument<Data, Variables>,
+  mutation: GraphQLOperation<Data, Variables>,
 ) {
   const graphql = useGraphQL();
   return useCallback(

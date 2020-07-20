@@ -3,7 +3,7 @@ import type {NoInfer} from '@quilted/useful-types';
 
 import {cacheKey as getCacheKey} from '../utilities';
 import type {
-  GraphQLDocument,
+  GraphQLOperation,
   IfAllVariablesOptional,
   QueryOptions,
 } from '../types';
@@ -11,7 +11,7 @@ import type {
 import {useGraphQL} from './useGraphQL';
 
 export function useDeferredQuery<Data, Variables>(
-  query: GraphQLDocument<Data, Variables>,
+  query: GraphQLOperation<Data, Variables>,
   ...optionsPart: IfAllVariablesOptional<
     Variables,
     [QueryOptions<Data, NoInfer<Variables>>?],
