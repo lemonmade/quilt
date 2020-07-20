@@ -3,7 +3,7 @@
 import arg from 'arg';
 import {dim, inverse, bold, green, red} from 'colorette';
 
-import {createBuilder} from '.';
+import {createBuilder} from './builder';
 
 const BUILT = inverse(bold(green(' BUILT ')));
 const ERROR = inverse(bold(red(' ERROR ')));
