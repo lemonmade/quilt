@@ -1,6 +1,7 @@
-import {parse, DocumentNode, OperationDefinitionNode} from 'graphql';
+import {DocumentNode} from 'graphql';
+import {normalizeOperation} from './utilities/ast';
 
-import type {GraphQLOperation} from './types';
+import type {GraphQLOperation, GraphQLMock} from './types';
 
 interface GraphQLAnyRequest<Data, Variables> {
   operation: DocumentNode | string | GraphQLOperation<Data, Variables>;
@@ -12,28 +13,14 @@ interface GraphQLRequest<_Data, Variables> {
   variables: Variables;
 }
 
-type GraphQLMockResponse<Data extends object> = Error | Data;
-
-type GraphQLMockFunction<Data extends object, Variables extends object> = (
-  request: GraphQLRequest<Data, Variables>,
-) => GraphQLMockResponse<Data>;
-
-type GraphQLMock<Data extends object, Variables extends object> =
-  | GraphQLMockResponse<Data>
-  | GraphQLMockFunction<Data, Variables>;
-
-interface GraphQLMockMap {
-  [key: string]: GraphQLMock<any, any>;
-}
-
 interface Timing {
   delay: boolean | number;
 }
 
 interface FindOptions {}
 
-export function createGraphQLController(mock?: GraphQLMockMap) {
-  return new GraphQLController(mock);
+export function createGraphQLController(mocks?: GraphQLMock<any, any>[]) {
+  return new GraphQLController(mocks);
 }
 
 export class GraphQLController {
@@ -43,8 +30,9 @@ export class GraphQLController {
   private readonly timings = new Map<string, Timing>();
   private readonly pending = new Map<string, (() => Promise<any>)[]>();
 
-  constructor(mockMap: GraphQLMockMap = {}) {
-    for (const [name, mock] of Object.entries(mockMap)) {
+  constructor(mocks: GraphQLMock<any, any>[] = []) {
+    for (const mock of mocks) {
+      const {name} = normalizeOperation(mock.operation);
       this.mocks.set(name, mock);
     }
   }
@@ -94,7 +82,7 @@ export class GraphQLController {
     variables,
   }: GraphQLAnyRequest<Data, Variables>): Promise<Data | Error> {
     const {name, document} = normalizeOperation(operation);
-    const mock: GraphQLMock<Data, Variables> = this.mocks.get(name);
+    const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.get(name);
 
     if (mock == null) {
       throw new Error(`No mock provided for operation ${JSON.stringify(name)}`);
@@ -113,14 +101,9 @@ export class GraphQLController {
         let response: Data | Error;
 
         try {
-          if (typeof mock === 'function') {
-            response = (mock as GraphQLMockFunction<Data, Variables>)({
-              operation: document,
-              variables: variables ?? ({} as any),
-            });
-          } else {
-            response = mock;
-          }
+          response = mock.result({
+            variables: variables ?? ({} as any),
+          });
         } catch (error) {
           response = error;
         }
@@ -197,42 +180,6 @@ class CompleteRequests {
 
     return this.requests;
   }
-}
-
-function normalizeOperation(
-  operation: string | GraphQLOperation | DocumentNode,
-) {
-  if (typeof operation === 'string') {
-    const document = parse(operation);
-    return {document, name: getFirstOperationNameFromDocument(document)};
-  } else if ('source' in operation) {
-    const document = parse(operation.source);
-    return {
-      document,
-      name: operation.name ?? getFirstOperationNameFromDocument(document),
-    };
-  } else {
-    return {
-      document: operation,
-      name: getFirstOperationNameFromDocument(operation),
-    };
-  }
-}
-
-function getFirstOperationNameFromDocument(document: DocumentNode) {
-  const operation = document.definitions.find(
-    (definition) => definition.kind === 'OperationDefinition',
-  ) as OperationDefinitionNode | undefined;
-
-  if (operation?.name?.value == null) {
-    throw new Error(
-      `No named operation found in document ${
-        document.loc?.source.body ?? JSON.stringify(document, null, 2)
-      }`,
-    );
-  }
-
-  return operation.name.value;
 }
 
 function normalizeDelay(delay: boolean | number) {

@@ -3,7 +3,6 @@ import {
   isEnumType,
   isScalarType,
   isObjectType,
-  parse,
   GraphQLString,
   GraphQLInt,
   GraphQLFloat,
@@ -18,18 +17,21 @@ import type {
   GraphQLOutputType,
   GraphQLNamedType,
   GraphQLObjectType,
-  OperationDefinitionNode,
 } from 'graphql';
 
-// import {IfEmptyObject, IfAllNullableKeys} from '@quilted/useful-types';
-import type {GraphQLDeepPartialData} from './types';
-
 import {
+  normalizeOperation,
   getRootType,
   unwrapType,
   getAllObjectTypes,
   getSelectionTypeMap,
+  getFirstOperationFromDocument,
 } from './utilities/ast';
+import type {
+  GraphQLDeepPartialData,
+  GraphQLMock,
+  GraphQLAnyOperation,
+} from './types';
 
 interface ResolverContext {
   readonly type: GraphQLOutputType;
@@ -50,11 +52,6 @@ interface FillerDetails<Variables> {
 
 interface Options {
   resolvers?: ResolverMap;
-}
-
-interface GraphQLRequest<_Data, Variables> {
-  operation: DocumentNode | string;
-  variables?: Variables;
 }
 
 interface Context {
@@ -79,49 +76,42 @@ export function createFiller(
   const resolvers = {...defaultResolvers, ...customResolvers};
 
   return function fillGraphQL<Data, Variables>(
+    operation: GraphQLAnyOperation<Data, Variables>,
     partialData?:
       | GraphQLDeepPartialData<Data>
       | ((details: FillerDetails<Variables>) => GraphQLDeepPartialData<Data>),
-  ): (request: GraphQLRequest<Data, Variables>) => Data {
-    return ({operation: denormalizedOperation, variables}) => {
-      const seed = `${
-        typeof denormalizedOperation === 'string'
-          ? denormalizedOperation
-          : JSON.stringify(denormalizedOperation)
-      }${JSON.stringify(variables ?? {})}`;
+  ): GraphQLMock<Data, Variables> {
+    const {document} = normalizeOperation(operation);
+    const operationNode = getFirstOperationFromDocument(document);
+
+    if (operationNode == null) {
+      throw new Error(`No operation found in ${JSON.stringify(operation)}`);
+    }
+
+    const result: GraphQLMock<Data, Variables>['result'] = ({variables}) => {
+      const seed = seedForOperation(operation, variables);
       const random = new Chance(seed);
 
-      const document =
-        typeof denormalizedOperation === 'string'
-          ? parse(denormalizedOperation)
-          : denormalizedOperation;
-      const operation: OperationDefinitionNode = document.definitions.find(
-        (definition) => definition.kind === 'OperationDefinition',
-      ) as OperationDefinitionNode;
-
-      if (operation == null) {
-        throw new Error(
-          `No operations found to fill (document: ${
-            typeof denormalizedOperation === 'string'
-              ? denormalizedOperation
-              : document.loc?.source.body
-          })`,
-        );
-      }
-
-      const rootType = getRootType(operation, schema);
+      const rootType = getRootType(operationNode, schema);
       const partial =
         (typeof partialData === 'function'
           ? partialData({variables: variables ?? ({} as any)})
           : partialData) ?? ({} as any);
 
-      return fillObject(partial, rootType, operation.selectionSet.selections, {
-        random,
-        schema,
-        resolvers,
-        document,
-      }) as any;
+      return fillObject(
+        partial,
+        rootType,
+        operationNode.selectionSet.selections,
+        {
+          random,
+          schema,
+          resolvers,
+          document,
+        },
+      ) as any;
     };
+
+    return {result, operation};
   };
 }
 
@@ -278,4 +268,21 @@ function fillValue(
       context,
     );
   }
+}
+
+function seedForOperation<Variables>(
+  operation: GraphQLAnyOperation<any, Variables>,
+  variables?: Variables,
+) {
+  let source: string;
+
+  if (typeof operation === 'string') {
+    source = operation;
+  } else if ('source' in operation) {
+    source = operation.source;
+  } else {
+    source = operation.loc?.source.body ?? JSON.stringify(operation);
+  }
+
+  return `${source}${JSON.stringify(variables ?? {})}`;
 }

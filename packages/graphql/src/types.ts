@@ -1,3 +1,4 @@
+import type {DocumentNode} from 'graphql';
 import type {IfUnionSize} from '@quilted/useful-types';
 
 export interface GraphQLOperationType<Data = unknown, Variables = {}> {
@@ -41,6 +42,16 @@ export type GraphQLResult<Data> =
     }
   | {data?: undefined; error: Error};
 
+export type GraphQLAnyOperation<Data, Variables> =
+  | string
+  | DocumentNode
+  | GraphQLOperation<Data, Variables>;
+
+export interface GraphQLMock<Data, Variables> {
+  operation: GraphQLAnyOperation<Data, Variables>;
+  result(request: {variables: Variables}): Data | Error;
+}
+
 type NonNullableKeys<T> = {
   [K in keyof T]-?: null extends T[K] ? never : K;
 }[keyof T];
@@ -77,13 +88,11 @@ export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
 
 // Partial data
 
-export type GraphQLDeepPartialData<T> = DeepPartial<T>;
-
-export type DeepPartial<T> = {
+export type GraphQLDeepPartialData<T> = {
   [K in keyof T]?: T[K] extends (infer U)[]
-    ? IsUnion<U, DeepPartialUnion<U>, DeepPartial<U>>[]
+    ? IsUnion<U, DeepPartialUnion<U>, GraphQLDeepPartialData<U>>[]
     : T[K] extends object
-    ? IsUnion<T[K], DeepPartialUnion<T[K]>, DeepPartial<T[K]>>
+    ? IsUnion<T[K], DeepPartialUnion<T[K]>, GraphQLDeepPartialData<T[K]>>
     : T[K];
 };
 
@@ -92,7 +101,9 @@ type IsUnion<T, If, Else> = Typenames<T> | '' extends Typenames<T> ? If : Else;
 type DeepPartialUnion<T> = T extends {__typename: string}
   ? T extends {__typename: ''}
     ? never
-    : {__typename: T['__typename']} & DeepPartial<Omit<T, '__typename'>>
+    : {__typename: T['__typename']} & GraphQLDeepPartialData<
+        Omit<T, '__typename'>
+      >
   : never;
 
 type Typenames<T> = T extends {__typename: string} ? T['__typename'] : never;

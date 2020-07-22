@@ -1,5 +1,12 @@
-import {isNonNullType, isListType, isUnionType, GraphQLString} from 'graphql';
+import {
+  parse,
+  isNonNullType,
+  isListType,
+  isUnionType,
+  GraphQLString,
+} from 'graphql';
 import type {
+  DocumentNode,
   SelectionNode,
   FragmentDefinitionNode,
   OperationDefinitionNode,
@@ -9,6 +16,7 @@ import type {
   GraphQLAbstractType,
   GraphQLCompositeType,
 } from 'graphql';
+import type {GraphQLOperation} from '../types';
 
 export function getRootType(
   operation: OperationDefinitionNode,
@@ -172,4 +180,44 @@ export function getSelectionTypeMap(
   }
 
   return typeMap;
+}
+
+export function normalizeOperation(
+  operation: string | GraphQLOperation | DocumentNode,
+) {
+  if (typeof operation === 'string') {
+    const document = parse(operation);
+    return {document, name: getFirstOperationNameFromDocument(document)};
+  } else if ('source' in operation) {
+    const document = parse(operation.source);
+    return {
+      document,
+      name: operation.name ?? getFirstOperationNameFromDocument(document),
+    };
+  } else {
+    return {
+      document: operation,
+      name: getFirstOperationNameFromDocument(operation),
+    };
+  }
+}
+
+export function getFirstOperationFromDocument(document: DocumentNode) {
+  return document.definitions.find(
+    (definition) => definition.kind === 'OperationDefinition',
+  ) as OperationDefinitionNode | undefined;
+}
+
+function getFirstOperationNameFromDocument(document: DocumentNode) {
+  const operation = getFirstOperationFromDocument(document);
+
+  if (operation?.name?.value == null) {
+    throw new Error(
+      `No named operation found in document ${
+        document.loc?.source.body ?? JSON.stringify(document, null, 2)
+      }`,
+    );
+  }
+
+  return operation.name.value;
 }

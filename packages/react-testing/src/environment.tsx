@@ -438,7 +438,7 @@ export function createEnvironment<
   >({
     render,
     context: createContext = defaultContext,
-    afterMount = noop,
+    afterMount,
   }: CustomMountOptions<
     MountOptions,
     Context,
@@ -460,11 +460,15 @@ export function createEnvironment<
 
       root.mount();
 
-      const afterMountResult = root.act(() => afterMount(root, options));
+      if (afterMount) {
+        const afterMountResult = root.act(() => afterMount(root, options));
 
-      return isPromise(afterMountResult)
-        ? afterMountResult.then(() => root)
-        : root;
+        return isPromise(afterMountResult)
+          ? afterMountResult.then(() => root)
+          : root;
+      } else {
+        return root;
+      }
     }
 
     Reflect.defineProperty(mount, 'extend', {
@@ -487,7 +491,8 @@ export function createEnvironment<
             ),
           afterMount: (wrapper, options) => {
             const result = additionalAfterMount(wrapper, options) as any;
-            const finalResult = () => afterMount(wrapper, options);
+            const finalResult = () =>
+              afterMount ? afterMount(wrapper, options) : undefined;
 
             return isPromise(result) ? result.then(finalResult) : finalResult();
           },
