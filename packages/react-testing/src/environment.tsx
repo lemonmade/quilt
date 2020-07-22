@@ -460,7 +460,7 @@ export function createEnvironment<
 
       root.mount();
 
-      const afterMountResult = afterMount(root, options);
+      const afterMountResult = root.act(() => afterMount(root, options));
 
       return isPromise(afterMountResult)
         ? afterMountResult.then(() => root)
