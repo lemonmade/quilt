@@ -1,12 +1,11 @@
 import {useCallback} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
-
-import {cacheKey as getCacheKey} from '../utilities';
 import type {
   GraphQLOperation,
-  IfAllVariablesOptional,
   QueryOptions,
-} from '../types';
+  IfAllVariablesOptional,
+} from '@quilted/graphql';
+import {cacheKey as getCacheKey} from '@quilted/graphql';
 
 import {useGraphQL} from './useGraphQL';
 
@@ -21,10 +20,10 @@ export function useDeferredQuery<Data, Variables>(
   const [options] = optionsPart;
   const cacheKey = getCacheKey(query, options?.variables);
 
-  const graphQL = useGraphQL();
+  const graphql = useGraphQL();
 
   return useCallback(() => {
-    graphQL.query<Data, Variables>(query as any, ...optionsPart);
+    (graphql.query as any)(query, ...optionsPart);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphQL, cacheKey]);
+  }, [graphql, cacheKey]);
 }

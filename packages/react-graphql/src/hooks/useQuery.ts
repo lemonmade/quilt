@@ -1,9 +1,12 @@
 import {useEffect, useMemo, useReducer} from 'react';
 import type {Reducer} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
-
-import {cacheKey as getCacheKey} from '../utilities';
-import {GraphQLOperation, IfAllVariablesOptional, QueryOptions} from '../types';
+import type {
+  QueryOptions,
+  GraphQLOperation,
+  IfAllVariablesOptional,
+} from '@quilted/graphql';
+import {cacheKey as getCacheKey} from '@quilted/graphql';
 
 import {useGraphQL} from './useGraphQL';
 

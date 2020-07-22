@@ -2,15 +2,9 @@ import {relative} from 'path';
 import * as t from '@babel/types';
 import type {Statement, TSType, TSTypeElement} from '@babel/types';
 import {
-  isNonNullType,
-  isListType,
   isObjectType,
   isScalarType,
-  GraphQLOutputType,
-  isUnionType,
-  GraphQLCompositeType,
   GraphQLSchema,
-  GraphQLNamedType,
   isCompositeType,
   GraphQLLeafType,
   TypeNode,
@@ -20,22 +14,23 @@ import type {
   GraphQLObjectType,
   OperationDefinitionNode,
   FragmentDefinitionNode,
-  SelectionNode,
 } from 'graphql';
 import generate from '@babel/generator';
 
 import type {DocumentDetails, ProjectDetails} from '../types';
 
+import type {Field} from '../../utilities/ast';
+import {
+  getRootType,
+  unwrapType,
+  getAllObjectTypes,
+  getSelectionTypeMap,
+} from '../../utilities/ast';
+
 import {scalarTypeMap} from './utilities';
 
 interface Options {
   importPath(type: GraphQLLeafType): string;
-}
-
-interface Field {
-  name: string;
-  type: GraphQLOutputType;
-  selections: SelectionNode[];
 }
 
 interface Context {
@@ -80,17 +75,7 @@ export function generateDocumentTypes(
   if (operations.length > 0) {
     const [operation] = operations;
 
-    const rootType = (() => {
-      switch (operation.operation) {
-        case 'query':
-          return project.schema.getQueryType()!;
-        case 'mutation':
-          return project.schema.getMutationType()!;
-        case 'subscription':
-          return project.schema.getSubscriptionType()!;
-      }
-    })();
-
+    const rootType = getRootType(operation, project.schema);
     const importMap = new Map<string, Set<GraphQLLeafType>>();
     const importCache = new Set<GraphQLLeafType>();
     const fragmentCache = new Map<string, FragmentDefinitionNode>();
@@ -187,7 +172,7 @@ export function generateDocumentTypes(
 
     const operationExports = exportsForSelection(
       typeName,
-      getSelectionTypeMatch(
+      getSelectionTypeMap(
         operation.selectionSet.selections,
         rootType,
         context,
@@ -315,7 +300,7 @@ function exportsForSelection(
       namespaceBody.push(
         ...exportsForSelection(
           nestedTypeName,
-          getSelectionTypeMatch(selections, unwrappedType.type, context).get(
+          getSelectionTypeMap(selections, unwrappedType.type, context).get(
             unwrappedType.type,
           ) ?? new Map(),
           unwrappedType.type,
@@ -327,11 +312,8 @@ function exportsForSelection(
         t.tsQualifiedName(t.identifier(name), t.identifier(nestedTypeName)),
       );
 
-      const allTypes = isUnionType(unwrappedType.type)
-        ? unwrappedType.type.getTypes()
-        : context.schema.getImplementations(unwrappedType.type).objects;
-
-      const typeMap = getSelectionTypeMatch(
+      const allTypes = getAllObjectTypes(unwrappedType.type, context.schema);
+      const typeMap = getSelectionTypeMap(
         selections,
         unwrappedType.type,
         context,
@@ -474,131 +456,8 @@ function toTypeName(name: string) {
   return `${name[0].toLocaleUpperCase()}${name.substring(1)}`;
 }
 
-function getSelectionTypeMatch(
-  selections: readonly SelectionNode[],
-  type: GraphQLCompositeType,
-  context: Context,
-): Map<GraphQLCompositeType, Map<string, Field>> {
-  const typeMap = new Map<GraphQLCompositeType, Map<string, Field>>();
-
-  const typeFields = 'getFields' in type ? type.getFields() : {};
-
-  const handleSelection = (
-    selection: SelectionNode,
-    typeCondition?: GraphQLCompositeType,
-  ) => {
-    switch (selection.kind) {
-      case 'Field': {
-        const typeConditionFields =
-          typeCondition && 'getFields' in typeCondition
-            ? typeCondition.getFields()
-            : undefined;
-
-        const name = selection.name.value;
-        const aliasOrName = selection.alias?.value ?? name;
-
-        const fieldType = typeConditionFields
-          ? typeConditionFields[name].type
-          : typeFields[name].type;
-        const resolvedType = typeCondition ?? type;
-
-        const fieldMap = typeMap.get(resolvedType) ?? new Map();
-        typeMap.set(resolvedType, fieldMap);
-
-        const existingField: Field = fieldMap.get(aliasOrName) ?? {
-          name,
-          type: fieldType,
-          selections: [],
-        };
-
-        if (selection.selectionSet) {
-          existingField.selections.push(...selection.selectionSet.selections);
-        }
-
-        fieldMap.set(aliasOrName, existingField);
-
-        break;
-      }
-      case 'FragmentSpread': {
-        const {
-          typeCondition: typeConditionNode,
-          selectionSet,
-        } = context.resolveFragment(selection.name.value);
-
-        const typeCondition =
-          (context.schema.getType(
-            typeConditionNode.name.value,
-          ) as GraphQLCompositeType) ?? undefined;
-
-        for (const selection of selectionSet.selections) {
-          handleSelection(selection, typeCondition);
-        }
-
-        break;
-      }
-      case 'InlineFragment': {
-        const {typeCondition: typeConditionNode, selectionSet} = selection;
-
-        const typeCondition = typeConditionNode
-          ? (context.schema.getType(
-              typeConditionNode.name.value,
-            ) as GraphQLCompositeType) ?? undefined
-          : undefined;
-
-        for (const selection of selectionSet.selections) {
-          handleSelection(selection, typeCondition);
-        }
-
-        break;
-      }
-    }
-  };
-
-  for (const selection of selections) {
-    handleSelection(selection);
-  }
-
-  return typeMap;
-}
-
 function schemaImportName({name}: GraphQLLeafType) {
   return `Schema${name}`;
-}
-
-function unwrapType(
-  type: GraphQLOutputType,
-): {
-  type: Extract<GraphQLOutputType, GraphQLNamedType>;
-  isNonNullable: boolean;
-  isList: boolean;
-  isNonNullableListItem: boolean;
-} {
-  let isNonNullable = false;
-  let isList = false;
-  let isNonNullableListItem = false;
-  let finalType = type;
-
-  if (isNonNullType(finalType)) {
-    isNonNullable = true;
-    finalType = finalType.ofType;
-  }
-
-  if (isListType(finalType)) {
-    isList = true;
-    finalType = finalType.ofType;
-  }
-
-  if (isNonNullType(finalType)) {
-    isNonNullableListItem = true;
-    finalType = finalType.ofType;
-  }
-
-  return {
-    isNonNullable,
-    isList,
-    isNonNullableListItem,
-    type: finalType as any,
-  };
 }
 
 function unwrapAstType(

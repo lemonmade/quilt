@@ -1,5 +1,4 @@
 import type {GraphQLError} from 'graphql';
-
 import type {GraphQLFetch} from './types';
 
 export class HttpError extends Error {

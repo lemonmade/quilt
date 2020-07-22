@@ -1,4 +1,4 @@
-import type {GraphQLOperation} from '@quilted/graphql';
+import type {GraphQLOperation} from '../types';
 
 export function cacheKey<Data = unknown, Variables = {}>(
   {id}: GraphQLOperation<Data, Variables>,

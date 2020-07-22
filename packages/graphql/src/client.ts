@@ -1,13 +1,13 @@
 import type {NoInfer} from '@quilted/useful-types';
 import type {
-  Result,
+  GraphQLResult,
   GraphQLFetch,
   GraphQLOperation,
   QueryOptions,
   MutationOptions,
   IfAllVariablesOptional,
 } from './types';
-import {cacheKey as getCacheKey} from './utilities';
+import {cacheKey as getCacheKey} from './utilities/cache';
 
 export class GraphQL {
   private readonly inflight = new Map<string, Promise<any>>();
@@ -46,7 +46,7 @@ export class GraphQL {
       [QueryOptions<Data, NoInfer<Variables>>?],
       [QueryOptions<Data, NoInfer<Variables>>]
     >
-  ): Promise<Result<Data>> {
+  ): Promise<GraphQLResult<Data>> {
     const options: QueryOptions<Data, Variables> =
       optionsPart[0] ?? ({} as any);
 
@@ -78,7 +78,7 @@ export class GraphQL {
   private async run<Data, Variables>(
     operation: GraphQLOperation<Data, Variables>,
     variables?: Variables,
-  ): Promise<Result<Data>> {
+  ): Promise<GraphQLResult<Data>> {
     try {
       const data = ((await this.fetch({
         operation,

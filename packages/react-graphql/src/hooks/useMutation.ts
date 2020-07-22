@@ -1,10 +1,11 @@
 import {useCallback} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
 import type {
+  GraphQLResult,
   GraphQLOperation,
   MutationOptions,
   IfAllVariablesOptional,
-} from '../types';
+} from '@quilted/graphql';
 import {useGraphQL} from './useGraphQL';
 
 export function useMutation<Data, Variables>(
@@ -18,7 +19,8 @@ export function useMutation<Data, Variables>(
         [MutationOptions<Data, NoInfer<Variables>>?],
         [MutationOptions<Data, NoInfer<Variables>>]
       >
-    ) => graphql.mutate<Data, Variables>(mutation as any, ...optionsPart),
+    ): Promise<GraphQLResult<Data>> =>
+      graphql.mutate<Data, Variables>(mutation as any, ...optionsPart),
     [graphql, mutation],
   );
 }
