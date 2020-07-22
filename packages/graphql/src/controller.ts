@@ -1,7 +1,7 @@
 import {DocumentNode} from 'graphql';
 import {normalizeOperation} from './utilities/ast';
 
-import type {GraphQLOperation, GraphQLMock} from './types';
+import type {GraphQLOperation, GraphQLMock, GraphQLAnyOperation} from './types';
 
 interface GraphQLAnyRequest<Data, Variables> {
   operation: DocumentNode | string | GraphQLOperation<Data, Variables>;
@@ -19,8 +19,8 @@ interface Timing {
 
 interface FindOptions {}
 
-export function createGraphQLController(mocks?: GraphQLMock<any, any>[]) {
-  return new GraphQLController(mocks);
+export function createGraphQLController(...mocks: GraphQLMock<any, any>[]) {
+  return new GraphQLController({mocks});
 }
 
 export class GraphQLController {
@@ -30,14 +30,11 @@ export class GraphQLController {
   private readonly timings = new Map<string, Timing>();
   private readonly pending = new Map<string, (() => Promise<any>)[]>();
 
-  constructor(mocks: GraphQLMock<any, any>[] = []) {
-    for (const mock of mocks) {
-      const {name} = normalizeOperation(mock.operation);
-      this.mocks.set(name, mock);
-    }
+  constructor({mocks}: {mocks: GraphQLMock<any, any>[]}) {
+    this.mock(...mocks);
   }
 
-  timing(operation: string | GraphQLOperation | DocumentNode, timing: Timing) {
+  timing(operation: GraphQLAnyOperation<any, any>, timing: Timing) {
     const name =
       typeof operation === 'string'
         ? operation
@@ -52,20 +49,10 @@ export class GraphQLController {
     return this;
   }
 
-  mock<Data extends object, Variables extends object>(
-    operation: string | GraphQLOperation<Data, Variables> | DocumentNode,
-    mock: GraphQLMock<Data, Variables>,
-    timing?: Timing,
-  ) {
-    const name =
-      typeof operation === 'string'
-        ? operation
-        : normalizeOperation(operation).name;
-
-    this.mocks.set(name, mock);
-
-    if (timing) {
-      this.timing(name, timing);
+  mock(...mocks: GraphQLMock<any, any>[]) {
+    for (const mock of mocks) {
+      const {name} = normalizeOperation(mock.operation);
+      this.mocks.set(name, mock);
     }
 
     return this;

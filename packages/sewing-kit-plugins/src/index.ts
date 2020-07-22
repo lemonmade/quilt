@@ -21,11 +21,20 @@ import {jest} from '@sewing-kit/plugin-jest';
 import {graphql, workspaceGraphQL} from '@sewing-kit/plugin-graphql';
 import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
-export function quiltPackage({react: useReact = true} = {}) {
+export interface QuiltPackageOptions {
+  readonly react?: boolean | 'preact';
+}
+
+export function quiltPackage({
+  react: useReact = true,
+}: QuiltPackageOptions = {}) {
+  const preact = useReact === 'preact';
+
   return createComposedProjectPlugin<Package>('Quilt.Package', [
     javascript(),
     typescript(),
-    useReact && react(),
+    useReact && react({preact}),
+    preact && quiltPreactAliases(),
   ]);
 }
 
@@ -58,6 +67,7 @@ export function quiltWebApp({
         react({preact}),
         graphql({export: exportStyle}),
         webAppConvenienceAliases(),
+        preact && quiltPreactAliases(),
       );
 
       await Promise.all([
@@ -72,6 +82,22 @@ export function quiltWebApp({
           composer.use(asyncQuilt());
         }),
       ]);
+    },
+  );
+}
+
+function quiltPreactAliases() {
+  return createProjectPlugin<WebApp>(
+    'Quilt.PreactAliases',
+    ({tasks: {test}}) => {
+      test.hook(({hooks}) => {
+        hooks.configure.hook((configure) => {
+          configure.jestModuleMapper?.hook((moduleMapper) => ({
+            ...moduleMapper,
+            '^@quilted/react-testing$': '@quilted/react-testing/preact',
+          }));
+        });
+      });
     },
   );
 }
