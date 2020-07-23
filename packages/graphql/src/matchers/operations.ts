@@ -60,11 +60,11 @@ export function toHavePerformedGraphQLOperation<Variables>(
             name,
           )}\n${
             variables
-              ? `With props matching:\n  ${printExpected(variables)}\n`
+              ? `With variables matching:\n  ${printExpected(variables)}\n`
               : ''
           }`
         }${
-          foundByVariables.length === 0
+          foundByOperation.length === 0
             ? `But no matching operations were found.\n`
             : `But the ${
                 foundByVariables.length === 1
