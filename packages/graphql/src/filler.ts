@@ -33,20 +33,20 @@ import type {
   GraphQLAnyOperation,
 } from './types';
 
-interface ResolverContext {
+export interface ResolverContext {
   readonly type: GraphQLOutputType;
   readonly parent: GraphQLObjectType;
   readonly field: string;
   readonly random: Chance.Chance;
 }
 
-type Resolver = (details: ResolverContext) => any;
+export type Resolver = (details: ResolverContext) => any;
 
 interface ResolverMap {
   [key: string]: Resolver;
 }
 
-interface FillerDetails<Variables> {
+export interface FillerDetails<Variables> {
   readonly variables: Variables;
 }
 

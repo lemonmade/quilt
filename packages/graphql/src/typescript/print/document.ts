@@ -9,6 +9,7 @@ import {
   GraphQLLeafType,
   TypeNode,
   NamedTypeNode,
+  isEnumType,
 } from 'graphql';
 import type {
   GraphQLObjectType,
@@ -298,6 +299,8 @@ function exportsForSelection(
       } else {
         typescriptType = context.import(unwrappedType.type);
       }
+    } else if (isEnumType(unwrappedType.type)) {
+      typescriptType = context.import(unwrappedType.type);
     } else if (isObjectType(unwrappedType.type)) {
       typescriptType = t.tsTypeReference(
         t.tsQualifiedName(t.identifier(name), t.identifier(nestedTypeName)),
