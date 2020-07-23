@@ -237,11 +237,17 @@ function variablesExportForOperation(
                 );
 
           const maybeListTypescriptType = unwrappedType.isList
-            ? t.tsArrayType(
-                unwrappedType.isNonNullableListItem
-                  ? typescriptType
-                  : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
-              )
+            ? (() => {
+                const type = t.tsTypeOperator(
+                  t.tsArrayType(
+                    unwrappedType.isNonNullableListItem
+                      ? typescriptType
+                      : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
+                  ),
+                );
+                type.operator = 'readonly';
+                return type;
+              })()
             : typescriptType;
 
           const property = t.tsPropertySignature(

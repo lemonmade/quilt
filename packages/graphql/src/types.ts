@@ -88,13 +88,31 @@ export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
 
 // Partial data
 
-export type GraphQLDeepPartialData<T> = {
-  [K in keyof T]?: T[K] extends (infer U)[]
-    ? IsUnion<U, DeepPartialUnion<U>, GraphQLDeepPartialData<U>>[]
-    : T[K] extends object
-    ? IsUnion<T[K], DeepPartialUnion<T[K]>, GraphQLDeepPartialData<T[K]>>
-    : T[K];
+type GraphQLDeepPartialData<T> = {
+  [K in keyof T]?: MaybeNullableValue<
+    T[K],
+    NonNullable<T[K]> extends readonly (infer U)[]
+      ? readonly MaybeNullableValue<
+          U,
+          NonNullable<U> extends object
+            ? IsUnion<
+                NonNullable<U>,
+                DeepPartialUnion<NonNullable<U>>,
+                GraphQLDeepPartialData<NonNullable<U>>
+              >
+            : NonNullable<U>
+        >[]
+      : NonNullable<T[K]> extends object
+      ? IsUnion<
+          NonNullable<T[K]>,
+          DeepPartialUnion<NonNullable<T[K]>>,
+          GraphQLDeepPartialData<NonNullable<T[K]>>
+        >
+      : NonNullable<T[K]>
+  >;
 };
+
+type MaybeNullableValue<T, V> = T extends null ? V | null : V;
 
 type IsUnion<T, If, Else> = Typenames<T> | '' extends Typenames<T> ? If : Else;
 
