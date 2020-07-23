@@ -8,7 +8,8 @@ interface GraphQLAnyRequest<Data, Variables> {
   variables?: Variables;
 }
 
-interface GraphQLRequest<_Data, Variables> {
+export interface GraphQLRequest<_Data, Variables> {
+  name: string;
   operation: DocumentNode;
   variables: Variables;
 }
@@ -17,7 +18,9 @@ interface Timing {
   delay: boolean | number;
 }
 
-interface FindOptions {}
+interface FindOptions {
+  operation?: GraphQLAnyOperation<any, any>;
+}
 
 export function createGraphQLController(...mocks: GraphQLMock<any, any>[]) {
   return new GraphQLController({mocks});
@@ -100,6 +103,7 @@ export class GraphQLController {
       });
     }).then((result) => {
       this.completed.push({
+        name,
         operation: document,
         variables,
       });
@@ -141,31 +145,32 @@ class CompleteRequests {
     this.requests.push(...requests);
   }
 
-  all(options?: FindOptions): GraphQLRequest<unknown, unknown>[] {
+  all(options?: FindOptions) {
     return this.filterWhere(options);
   }
 
-  first(options?: FindOptions): GraphQLRequest<unknown, unknown> | undefined {
+  first(options?: FindOptions) {
     return this.nth(0, options);
   }
 
-  last(options?: FindOptions): GraphQLRequest<unknown, unknown> | undefined {
+  last(options?: FindOptions) {
     return this.nth(-1, options);
   }
 
-  nth(index: number, options?: FindOptions) {
+  nth(
+    index: number,
+    options?: FindOptions,
+  ): GraphQLRequest<unknown, unknown> | undefined {
     const found = this.filterWhere(options);
     return index < 0 ? found[found.length + index] : found[index];
   }
 
-  private filterWhere(_options: FindOptions = {}) {
-    // const finalOperationName = operationNameFromFindOptions(options);
+  private filterWhere({operation}: FindOptions = {}) {
+    const name = operation && normalizeOperation(operation).name;
 
-    // return finalOperationName
-    //   ? this.requests.filter(({query: {name}}) => name === finalOperationName)
-    //   : this.requests;
-
-    return this.requests;
+    return name
+      ? this.requests.filter((request) => request.name === name)
+      : this.requests;
   }
 }
 

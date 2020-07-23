@@ -88,7 +88,7 @@ export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
 
 // Partial data
 
-type GraphQLDeepPartialData<T> = {
+export type GraphQLDeepPartialData<T> = {
   [K in keyof T]?: MaybeNullableValue<
     T[K],
     NonNullable<T[K]> extends readonly (infer U)[]

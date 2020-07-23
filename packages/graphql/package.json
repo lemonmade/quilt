@@ -40,6 +40,7 @@
     "globby": "^11.0.1",
     "graphql": "^15.0.0",
     "graphql-config": "^3.0.0",
+    "jest-matcher-utils": "^26.0.1",
     "p-limit": "^3.0.1"
   }
 }
