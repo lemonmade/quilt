@@ -173,14 +173,22 @@ export function createEnvironment<
 
     return root;
 
-    function createNode<T, Extensions extends object>({
-      type,
-      props,
-      instance,
-      children,
-      ...extensions
-    }: NodeCreationOptions<T, Extensions>): BaseNode<T, Extensions> {
-      const finalExtensions = (extensions as any) as Extensions;
+    function createNode<T, Extensions extends object>(
+      createOptions: NodeCreationOptions<T, Extensions>,
+    ): BaseNode<T, Extensions> {
+      const {type, props, instance, children} = createOptions;
+
+      // We can’t just pick the remaining properties off `createOptions` with the
+      // spread operator, because that attempts to invoke any getters in extensions
+      // (including ones like .domNodes that may throw errors)
+      const extensionPropertyDescriptors = Object.getOwnPropertyDescriptors(
+        createOptions,
+      );
+
+      delete extensionPropertyDescriptors.type;
+      delete extensionPropertyDescriptors.props;
+      delete extensionPropertyDescriptors.instance;
+      delete extensionPropertyDescriptors.type;
 
       const descendants = children.flatMap(getDescendants);
 
@@ -295,7 +303,7 @@ export function createEnvironment<
 
       Object.defineProperties(node, {
         ...Object.getOwnPropertyDescriptors(baseNode),
-        ...Object.getOwnPropertyDescriptors(finalExtensions),
+        ...extensionPropertyDescriptors,
       });
 
       return node;

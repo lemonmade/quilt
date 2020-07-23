@@ -23,10 +23,12 @@ import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
 export interface QuiltPackageOptions {
   readonly react?: boolean | 'preact';
+  readonly css?: boolean;
 }
 
 export function quiltPackage({
   react: useReact = true,
+  css: useCss = false,
 }: QuiltPackageOptions = {}) {
   const preact = useReact === 'preact';
 
@@ -35,6 +37,7 @@ export function quiltPackage({
     typescript(),
     useReact && react({preact}),
     preact && quiltPreactAliases(),
+    useCss && css(),
   ]);
 }
 
@@ -87,19 +90,17 @@ export function quiltWebApp({
 }
 
 function quiltPreactAliases() {
-  return createProjectPlugin<WebApp>(
-    'Quilt.PreactAliases',
-    ({tasks: {test}}) => {
-      test.hook(({hooks}) => {
-        hooks.configure.hook((configure) => {
-          configure.jestModuleMapper?.hook((moduleMapper) => ({
-            ...moduleMapper,
-            '^@quilted/react-testing$': '@quilted/react-testing/preact',
-          }));
-        });
+  return createProjectPlugin('Quilt.PreactAliases', ({tasks: {test}}) => {
+    test.hook(({hooks}) => {
+      hooks.configure.hook((configure) => {
+        configure.jestModuleMapper?.hook((moduleMapper) => ({
+          ...moduleMapper,
+          '^@quilted/react-testing$': '@quilted/react-testing/preact',
+          '^@quilted/react-testing/dom$': '@quilted/react-testing/preact',
+        }));
       });
-    },
-  );
+    });
+  });
 }
 
 function webAppConvenienceAliases() {
