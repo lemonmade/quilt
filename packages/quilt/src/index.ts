@@ -18,7 +18,10 @@ export type {
   GraphQLData,
   GraphQLVariables,
   GraphQLRequest,
+  GraphQLRequestContext,
   GraphQLOperation,
+  HttpFetchContext,
+  HttpFetchOptions,
 } from '@quilted/react-graphql';
 export {
   AutoHeading,

@@ -31,8 +31,16 @@ export interface GraphQLRequest<Data, Variables> {
   variables: Variables;
 }
 
-export type GraphQLFetch = (
+export interface GraphQLRequestContext<T = Record<string, unknown>> {
+  has<K extends keyof T>(key: K): boolean;
+  get<K extends keyof T>(key: K): T[K] | undefined;
+  set<K extends keyof T>(key: K, value: T[K]): this;
+  delete<K extends keyof T>(key: K): boolean;
+}
+
+export type GraphQLFetch<T = Record<string, unknown>> = (
   request: GraphQLRequest<unknown, unknown>,
+  context: GraphQLRequestContext<T>,
 ) => Promise<object>;
 
 export type GraphQLResult<Data> =

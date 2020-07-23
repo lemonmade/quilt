@@ -4,6 +4,7 @@ import type {
   GraphQLFetch,
   GraphQLOperation,
   QueryOptions,
+  GraphQLRequestContext,
   MutationOptions,
   IfAllVariablesOptional,
 } from './types';
@@ -80,10 +81,13 @@ export class GraphQL {
     variables?: Variables,
   ): Promise<GraphQLResult<Data>> {
     try {
-      const data = ((await this.fetch({
-        operation,
-        variables: variables ?? {},
-      })) as any) as Data;
+      const data = ((await this.fetch(
+        {
+          operation,
+          variables: variables ?? {},
+        },
+        createContext(),
+      )) as any) as Data;
 
       return {data};
     } catch (error) {
@@ -100,4 +104,15 @@ export function createGraphQL({
   cache?: Map<string, any>;
 }) {
   return new GraphQL(fetch, cache);
+}
+
+function createContext(): GraphQLRequestContext<Record<string, any>> {
+  const map = new Map<string, any>();
+
+  return {
+    has: (key) => map.has(key),
+    get: (key) => map.get(key),
+    delete: (key) => map.delete(key),
+    set: (key, value) => map.set(key, value),
+  };
 }

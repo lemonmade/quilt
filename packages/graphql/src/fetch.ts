@@ -24,15 +24,19 @@ export class ExecutionError extends Error {
 
 export interface HttpFetchOptions extends Pick<RequestInit, 'credentials'> {
   uri: string;
-  headers?: {[key: string]: string};
+  headers?: Record<string, string>;
+}
+
+export interface HttpFetchContext {
+  response?: Response;
 }
 
 export function createHttpFetch({
   uri,
   credentials,
   headers: explicitHeaders,
-}: HttpFetchOptions): GraphQLFetch {
-  return async (operation) => {
+}: HttpFetchOptions): GraphQLFetch<HttpFetchContext> {
+  return async (operation, context) => {
     const headers = new Headers({
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -49,6 +53,8 @@ export function createHttpFetch({
         operationName: operation.operation.name,
       }),
     });
+
+    context.set('response', response);
 
     if (!response.ok) {
       throw new HttpError(response.status, await response.text());
