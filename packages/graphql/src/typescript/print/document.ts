@@ -10,6 +10,7 @@ import {
   TypeNode,
   NamedTypeNode,
   isEnumType,
+  DefinitionNode,
 } from 'graphql';
 import type {
   GraphQLObjectType,
@@ -42,19 +43,16 @@ interface Context {
 }
 
 export function generateDocumentTypes(
-  {path, document, dependencies}: DocumentDetails,
+  documentDetails: DocumentDetails,
   project: ProjectDetails,
   {importPath}: Options,
 ) {
+  const {path, document} = documentDetails;
+
   const operations: OperationDefinitionNode[] = [];
-  const fragments: FragmentDefinitionNode[] = [];
 
   for (const definition of document.definitions) {
     switch (definition.kind) {
-      case 'FragmentDefinition': {
-        fragments.push(definition);
-        break;
-      }
       case 'OperationDefinition': {
         operations.push(definition);
         break;
@@ -100,30 +98,11 @@ export function generateDocumentTypes(
 
         if (cachedFragment) return cachedFragment;
 
-        const inFileFragment = fragments.find(
-          (fragment) => fragment.name.value === name,
-        );
+        const foundFragment = findFragment(name, documentDetails, project);
 
-        if (inFileFragment) {
-          fragmentCache.set(name, inFileFragment);
-          return inFileFragment;
-        }
-
-        for (const dependency of dependencies) {
-          const dependencyFragment:
-            | FragmentDefinitionNode
-            | undefined = project.documents
-            .get(dependency)
-            ?.document?.definitions.find(
-              (definition) =>
-                definition.kind === 'FragmentDefinition' &&
-                definition.name.value === name,
-            ) as any;
-
-          if (dependencyFragment) {
-            fragmentCache.set(name, dependencyFragment);
-            return dependencyFragment;
-          }
+        if (foundFragment) {
+          fragmentCache.set(name, foundFragment);
+          return foundFragment;
         }
 
         throw new Error(`No fragment found with name ${JSON.stringify(name)}`);
@@ -214,6 +193,48 @@ export function generateDocumentTypes(
   }
 
   return generate(t.file(t.program(fileBody), [], [])).code;
+}
+
+function findFragment(
+  name: string,
+  {document, dependencies}: DocumentDetails,
+  project: ProjectDetails,
+): FragmentDefinitionNode | undefined {
+  const inDocumentFragment = findMatchingFragment(name, document.definitions);
+
+  if (inDocumentFragment) return inDocumentFragment;
+
+  for (const dependency of dependencies) {
+    const dependencyDocumentDetails = project.documents.get(dependency);
+
+    if (dependencyDocumentDetails == null) continue;
+
+    const dependencyFragment = findMatchingFragment(
+      name,
+      dependencyDocumentDetails.document.definitions,
+    );
+
+    if (dependencyFragment) return dependencyFragment;
+
+    const nestedDependencyFragment = findFragment(
+      name,
+      dependencyDocumentDetails,
+      project,
+    );
+
+    if (nestedDependencyFragment) return nestedDependencyFragment;
+  }
+}
+
+function findMatchingFragment(
+  name: string,
+  definitions: readonly DefinitionNode[],
+) {
+  return definitions.find(
+    (definition) =>
+      definition.kind === 'FragmentDefinition' &&
+      definition.name.value === name,
+  ) as FragmentDefinitionNode | undefined;
 }
 
 function variablesExportForOperation(

@@ -5,7 +5,7 @@ import {
 } from 'jest-matcher-utils';
 
 import type {GraphQLAnyOperation} from '../types';
-import type {GraphQLController, GraphQLRequest} from '../controller';
+import type {GraphQLController, GraphQLRequest} from '../fixtures';
 import {normalizeOperation} from '../utilities/ast';
 
 import {assertIsGraphQLController, diffVariables} from './utilities';

@@ -1,7 +1,11 @@
 import {DocumentNode} from 'graphql';
-import {normalizeOperation} from './utilities/ast';
 
-import type {GraphQLOperation, GraphQLMock, GraphQLAnyOperation} from './types';
+import {normalizeOperation} from '../utilities/ast';
+import type {
+  GraphQLOperation,
+  GraphQLMock,
+  GraphQLAnyOperation,
+} from '../types';
 
 interface GraphQLAnyRequest<Data, Variables> {
   operation: DocumentNode | string | GraphQLOperation<Data, Variables>;
