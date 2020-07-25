@@ -61,7 +61,8 @@ export async function createBuilder(cwd?: string) {
     rootDir: cwd,
     extensions: [() => ({name: 'quilt'})],
   });
-  return new Builder(config!, cwd ?? process.cwd());
+
+  return new Builder(config!);
 }
 
 export class Builder extends EventEmitter {
@@ -75,7 +76,7 @@ export class Builder extends EventEmitter {
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
-  constructor(config: GraphQLConfig, private readonly cwd: string) {
+  constructor(config: GraphQLConfig) {
     super();
     this.config = config;
   }
@@ -281,18 +282,10 @@ export class Builder extends EventEmitter {
 
     await Promise.all(
       schemaTypes.map(async ({outputPath, types}) => {
-        const isTypeFile = path.extname(outputPath) === '.ts';
-        const finalOutputPath = path.resolve(
-          project.dirpath,
-          isTypeFile
-            ? outputPath
-            : path.join(
-                outputPath,
-                this.projects.length === 1
-                  ? 'index.d.ts'
-                  : `${project.name}.d.ts`,
-              ),
-        );
+        const finalOutputPath = normalizeSchemaTypesPath(outputPath, project, {
+          isDefault: this.projects.length === 1,
+        });
+
         await mkdirp(path.dirname(finalOutputPath));
 
         switch (types) {
@@ -360,7 +353,6 @@ export class Builder extends EventEmitter {
     file: string,
     project: GraphQLProjectConfig,
   ): Promise<DocumentBuildDetails> {
-    const {cwd} = this;
     const projectDetails = this.projectDetails.get(project)!;
     const documentDetails = projectDetails.documents.get(file)!;
     const definitionPath = `${file}.d.ts`;
@@ -368,7 +360,7 @@ export class Builder extends EventEmitter {
     await writeFile(
       definitionPath,
       generateDocumentTypes(documentDetails, projectDetails, {
-        importPath(type) {
+        importPath: (type) => {
           const {schemaTypes} = getOptions(project);
 
           if (schemaTypes == null || schemaTypes.length === 0) {
@@ -381,9 +373,17 @@ export class Builder extends EventEmitter {
 
           const {outputPath} = schemaTypes[0];
 
+          const normalizedOutputPath = normalizeSchemaTypesPath(
+            outputPath,
+            project,
+            {
+              isDefault: this.projects.length === 1,
+            },
+          );
+
           return path.relative(
             path.dirname(file),
-            path.resolve(cwd, outputPath),
+            normalizedOutputPath.replace(/(\.d)?\.ts$/, ''),
           );
         },
       }),
@@ -482,4 +482,21 @@ function normalizeProjectSchemaPaths({schema, name}: GraphQLProjectConfig) {
 function getOptions(project: GraphQLProjectConfig): GraphQLConfigExtensions {
   if (!project.hasExtension('quilt')) return {};
   return project.extension<GraphQLConfigExtensions>('quilt');
+}
+
+function normalizeSchemaTypesPath(
+  outputPath: string,
+  project: GraphQLProjectConfig,
+  {isDefault = false} = {},
+) {
+  const isTypeFile = path.extname(outputPath) === '.ts';
+  return path.resolve(
+    project.dirpath,
+    isTypeFile
+      ? outputPath
+      : path.join(
+          outputPath,
+          isDefault ? 'index.d.ts' : `${project.name}.d.ts`,
+        ),
+  );
 }
