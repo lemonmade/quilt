@@ -301,7 +301,11 @@ function variablesExportForOperation(
 
           const property = t.tsPropertySignature(
             t.identifier(variable.name.value),
-            t.tsTypeAnnotation(maybeListTypescriptType),
+            t.tsTypeAnnotation(
+              unwrappedType.isNonNullable
+                ? maybeListTypescriptType
+                : t.tsUnionType([maybeListTypescriptType, t.tsNullKeyword()]),
+            ),
           );
 
           property.optional = !unwrappedType.isNonNullable;
