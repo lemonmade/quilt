@@ -207,8 +207,8 @@ export function generateDocumentTypes(
     );
   }
 
-  const schemaImports = [...importMap].map(([source, imported]) =>
-    t.importDeclaration(
+  const schemaImports = [...importMap].map(([source, imported]) => {
+    const importDeclaration = t.importDeclaration(
       [...imported].map((typeImport) =>
         t.importSpecifier(
           t.identifier(schemaImportName(typeImport)),
@@ -216,8 +216,12 @@ export function generateDocumentTypes(
         ),
       ),
       t.stringLiteral(source),
-    ),
-  );
+    );
+
+    importDeclaration.importKind = 'type';
+
+    return importDeclaration;
+  });
 
   fileBody.unshift(...schemaImports);
 
