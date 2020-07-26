@@ -1,6 +1,6 @@
 {
   "name": "@quilted/graphql",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
