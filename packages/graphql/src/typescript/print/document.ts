@@ -259,17 +259,11 @@ function variablesExportForOperation(
                 );
 
           const maybeListTypescriptType = unwrappedType.isList
-            ? (() => {
-                const type = t.tsTypeOperator(
-                  t.tsArrayType(
-                    unwrappedType.isNonNullableListItem
-                      ? typescriptType
-                      : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
-                  ),
-                );
-                type.operator = 'readonly';
-                return type;
-              })()
+            ? t.tsArrayType(
+                unwrappedType.isNonNullableListItem
+                  ? typescriptType
+                  : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
+              )
             : typescriptType;
 
           const property = t.tsPropertySignature(
@@ -429,11 +423,17 @@ function exportsForSelection(
     }
 
     const maybeListTypescriptType = unwrappedType.isList
-      ? t.tsArrayType(
-          unwrappedType.isNonNullableListItem
-            ? typescriptType
-            : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
-        )
+      ? (() => {
+          const type = t.tsTypeOperator(
+            t.tsArrayType(
+              unwrappedType.isNonNullableListItem
+                ? typescriptType
+                : t.tsUnionType([typescriptType, t.tsNullKeyword()]),
+            ),
+          );
+          type.operator = 'readonly';
+          return type;
+        })()
       : typescriptType;
 
     const interfaceProperty = t.tsPropertySignature(
@@ -444,6 +444,8 @@ function exportsForSelection(
           : t.tsUnionType([maybeListTypescriptType, t.tsNullKeyword()]),
       ),
     );
+
+    interfaceProperty.readonly = true;
 
     interfaceBody.push(interfaceProperty);
   }
