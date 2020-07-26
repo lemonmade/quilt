@@ -16,4 +16,5 @@ export type {
   QueryOptions,
   VariableOptions,
   IfAllVariablesOptional,
+  PickGraphQLType,
 } from './types';
