@@ -26,6 +26,11 @@ interface FindOptions {
   operation?: GraphQLAnyOperation<any, any>;
 }
 
+interface ResolveAllOptions {
+  operation?: GraphQLAnyOperation<any, any>;
+  untilEmpty?: boolean;
+}
+
 export function createGraphQLController(...mocks: GraphQLMock<any, any>[]) {
   return new GraphQLController({mocks});
 }
@@ -65,10 +70,15 @@ export class GraphQLController {
     return this;
   }
 
-  async resolveAll() {
-    const allPending = [...this.pending.values()].flat();
-    this.pending.clear();
-    await Promise.all(allPending.map((resolver) => resolver()));
+  async resolveAll({operation, untilEmpty = true}: ResolveAllOptions = {}) {
+    let matchingPending = extractPendingOperations(this.pending, operation);
+
+    do {
+      await Promise.all(matchingPending.map((resolver) => resolver()));
+      matchingPending = untilEmpty
+        ? extractPendingOperations(this.pending, operation)
+        : [];
+    } while (matchingPending.length > 0);
   }
 
   async run<Data extends object, Variables extends object>({
@@ -188,4 +198,20 @@ function normalizeDelay(delay: boolean | number) {
     default:
       return delay;
   }
+}
+
+function extractPendingOperations(
+  pending: Map<string, (() => Promise<any>)[]>,
+  operation?: GraphQLAnyOperation<any, any>,
+) {
+  if (operation == null) {
+    const allPending = [...pending.values()].flat();
+    pending.clear();
+    return allPending;
+  }
+
+  const {name} = normalizeOperation(operation);
+  const pendingByName = pending.get(name) ?? [];
+  pending.delete(name);
+  return pendingByName;
 }
