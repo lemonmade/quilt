@@ -2,6 +2,7 @@ export type {
   GraphQLData,
   GraphQLVariables,
   GraphQLOperation,
+  GraphQLOperationType,
   GraphQLRequest,
   GraphQLRequestContext,
   GraphQLDeepPartialData,
@@ -10,6 +11,9 @@ export type {
   MutationOptions,
   HttpFetchContext,
   HttpFetchOptions,
+  VariableOptions,
+  PickGraphQLType,
+  IfAllVariablesOptional,
 } from '@quilted/graphql';
 export {GraphQL, createGraphQL, createHttpFetch} from '@quilted/graphql';
 export {GraphQLContext} from './context';
