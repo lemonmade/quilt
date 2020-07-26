@@ -94,6 +94,11 @@ export type QueryOptions<_Data, Variables> = {
 
 export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
 
+export type PickGraphQLType<T, Type extends string> = Extract<
+  T,
+  {readonly __typename: Type}
+>;
+
 // Partial data
 
 export type GraphQLDeepPartialData<T> = {
