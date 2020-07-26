@@ -319,14 +319,16 @@ function exportsForSelection(
   const namespaceBody: Statement[] = [];
 
   if (type !== context.rootType) {
-    interfaceBody.push(
-      t.tsPropertySignature(
-        t.identifier('__typename'),
-        t.tsTypeAnnotation(
-          t.tsUnionType([t.tsLiteralType(t.stringLiteral(type.name))]),
-        ),
+    const typenameField = t.tsPropertySignature(
+      t.identifier('__typename'),
+      t.tsTypeAnnotation(
+        t.tsUnionType([t.tsLiteralType(t.stringLiteral(type.name))]),
       ),
     );
+
+    typenameField.readonly = true;
+
+    interfaceBody.push(typenameField);
   }
 
   for (const [fieldNameOrAlias, fieldDetails] of fieldMap) {
