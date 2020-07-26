@@ -14,6 +14,7 @@ import {
 } from 'graphql';
 import type {
   GraphQLObjectType,
+  GraphQLInterfaceType,
   OperationDefinitionNode,
   FragmentDefinitionNode,
 } from 'graphql';
@@ -37,7 +38,7 @@ interface Options {
 
 interface Context {
   readonly schema: GraphQLSchema;
-  readonly rootType: GraphQLObjectType;
+  readonly rootType?: GraphQLObjectType;
   import(type: GraphQLLeafType): TSType;
   resolveFragment(name: string): FragmentDefinitionNode;
 }
@@ -50,11 +51,16 @@ export function generateDocumentTypes(
   const {path, document} = documentDetails;
 
   const operations: OperationDefinitionNode[] = [];
+  const fragments: FragmentDefinitionNode[] = [];
 
   for (const definition of document.definitions) {
     switch (definition.kind) {
       case 'OperationDefinition': {
         operations.push(definition);
+        break;
+      }
+      case 'FragmentDefinition': {
+        fragments.push(definition);
         break;
       }
     }
@@ -71,43 +77,44 @@ export function generateDocumentTypes(
 
   const fileBody: Statement[] = [];
 
+  const importMap = new Map<string, Set<GraphQLLeafType>>();
+  const importCache = new Set<GraphQLLeafType>();
+  const fragmentCache = new Map<string, FragmentDefinitionNode>();
+
+  const baseContext: Context = {
+    schema: project.schema,
+    import(type) {
+      if (!importCache.has(type)) {
+        const path = importPath(type);
+        const currentImports = importMap.get(path) ?? new Set();
+        importMap.set(path, currentImports);
+        currentImports.add(type);
+        importCache.add(type);
+      }
+
+      return t.tsTypeReference(t.identifier(schemaImportName(type)));
+    },
+    resolveFragment(name) {
+      const cachedFragment = fragmentCache.get(name);
+
+      if (cachedFragment) return cachedFragment;
+
+      const foundFragment = findFragment(name, documentDetails, project);
+
+      if (foundFragment) {
+        fragmentCache.set(name, foundFragment);
+        return foundFragment;
+      }
+
+      throw new Error(`No fragment found with name ${JSON.stringify(name)}`);
+    },
+  };
+
   if (operations.length > 0) {
     const [operation] = operations;
 
     const rootType = getRootType(operation, project.schema);
-    const importMap = new Map<string, Set<GraphQLLeafType>>();
-    const importCache = new Set<GraphQLLeafType>();
-    const fragmentCache = new Map<string, FragmentDefinitionNode>();
-
-    const context: Context = {
-      schema: project.schema,
-      rootType,
-      import(type) {
-        if (!importCache.has(type)) {
-          const path = importPath(type);
-          const currentImports = importMap.get(path) ?? new Set();
-          importMap.set(path, currentImports);
-          currentImports.add(type);
-          importCache.add(type);
-        }
-
-        return t.tsTypeReference(t.identifier(schemaImportName(type)));
-      },
-      resolveFragment(name) {
-        const cachedFragment = fragmentCache.get(name);
-
-        if (cachedFragment) return cachedFragment;
-
-        const foundFragment = findFragment(name, documentDetails, project);
-
-        if (foundFragment) {
-          fragmentCache.set(name, foundFragment);
-          return foundFragment;
-        }
-
-        throw new Error(`No fragment found with name ${JSON.stringify(name)}`);
-      },
-    };
+    const context = {...baseContext, rootType};
 
     const name = operation.name?.value ?? 'Unnamed';
     const normalizedName = toTypeName(name);
@@ -167,30 +174,52 @@ export function generateDocumentTypes(
       context,
     );
 
-    // Need to create the variables and other exports before creating this array of
-    // imports, because the construction of those values builds up the imports
-    // that are needed.
-    const schemaImports = [...importMap].map(([source, imported]) =>
-      t.importDeclaration(
-        [...imported].map((typeImport) =>
-          t.importSpecifier(
-            t.identifier(schemaImportName(typeImport)),
-            t.identifier(typeImport.name),
-          ),
-        ),
-        t.stringLiteral(source),
-      ),
-    );
-
     fileBody.push(
       operationTypeImport,
-      ...schemaImports,
       ...operationExports,
       operationVariablesExport,
       operationVariableDeclaration,
       operationExport,
     );
+  } else if (fragments.length > 0) {
+    fileBody.push(
+      ...fragments
+        .map((fragment) => {
+          const name = fragment.name.value;
+          const normalizedName = toTypeName(name);
+          const typeName = `${normalizedName}FragmentData`;
+          const onType = baseContext.schema.getType(
+            fragment.typeCondition.name.value,
+          ) as GraphQLObjectType | GraphQLInterfaceType;
+
+          return exportsForSelection(
+            typeName,
+            getSelectionTypeMap(
+              fragment.selectionSet.selections,
+              onType,
+              baseContext,
+            ).get(onType) ?? new Map(),
+            onType,
+            baseContext,
+          );
+        })
+        .flat(),
+    );
   }
+
+  const schemaImports = [...importMap].map(([source, imported]) =>
+    t.importDeclaration(
+      [...imported].map((typeImport) =>
+        t.importSpecifier(
+          t.identifier(schemaImportName(typeImport)),
+          t.identifier(typeImport.name),
+        ),
+      ),
+      t.stringLiteral(source),
+    ),
+  );
+
+  fileBody.unshift(...schemaImports);
 
   return generate(t.file(t.program(fileBody), [], [])).code;
 }
@@ -283,7 +312,7 @@ function variablesExportForOperation(
 function exportsForSelection(
   name: string,
   fieldMap: Map<string, Field>,
-  type: GraphQLObjectType,
+  type: GraphQLObjectType | GraphQLInterfaceType,
   context: Context,
 ) {
   const interfaceBody: TSTypeElement[] = [];
