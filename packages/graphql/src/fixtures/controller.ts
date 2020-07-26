@@ -5,6 +5,7 @@ import type {
   GraphQLOperation,
   GraphQLMock,
   GraphQLAnyOperation,
+  GraphQLFetch,
 } from '../types';
 
 interface GraphQLAnyRequest<Data, Variables> {
@@ -105,9 +106,12 @@ export class GraphQLController {
         let response: Data | Error;
 
         try {
-          response = mock.result({
-            variables: variables ?? ({} as any),
-          });
+          response =
+            typeof mock.result === 'function'
+              ? (mock.result as any)({
+                  variables: variables ?? ({} as any),
+                })
+              : mock.result;
         } catch (error) {
           response = error;
         }
@@ -142,6 +146,15 @@ export class GraphQLController {
       setTimeout(resolver, delay);
     }
   }
+}
+
+export function toFetch(controller: GraphQLController): GraphQLFetch {
+  return ({operation, variables}) => {
+    return controller.run<any, any>({
+      operation,
+      variables: variables as any,
+    });
+  };
 }
 
 class CompleteRequests {

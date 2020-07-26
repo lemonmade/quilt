@@ -57,7 +57,7 @@ export type GraphQLAnyOperation<Data, Variables> =
 
 export interface GraphQLMock<Data, Variables> {
   operation: GraphQLAnyOperation<Data, Variables>;
-  result(request: {variables: Variables}): Data | Error;
+  result: Data | ((request: {variables: Variables}) => Data | Error);
 }
 
 type NonNullableKeys<T> = {
