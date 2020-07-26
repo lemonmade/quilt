@@ -340,6 +340,8 @@ function exportsForSelection(
   }
 
   for (const [fieldNameOrAlias, fieldDetails] of fieldMap) {
+    if (fieldDetails.name === '__typename') continue;
+
     const nestedTypeName = toTypeName(fieldNameOrAlias);
 
     const {type: fieldType, selections} = fieldDetails;
