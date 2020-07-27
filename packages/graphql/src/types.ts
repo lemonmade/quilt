@@ -94,7 +94,7 @@ export type QueryOptions<_Data, Variables> = {
 
 export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
 
-export type PickGraphQLType<T, Type extends string> = Extract<
+export type PickGraphQLType<T, Type extends Typenames<T>> = Extract<
   T,
   {readonly __typename: Type}
 >;
