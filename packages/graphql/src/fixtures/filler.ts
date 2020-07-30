@@ -29,7 +29,7 @@ import {
 } from '../utilities/ast';
 import type {
   GraphQLDeepPartialData,
-  GraphQLMock,
+  GraphQLMockFunction,
   GraphQLAnyOperation,
 } from '../types';
 
@@ -80,7 +80,7 @@ export function createFiller(
     partialData?:
       | GraphQLDeepPartialData<Data>
       | ((details: FillerDetails<Variables>) => GraphQLDeepPartialData<Data>),
-  ): GraphQLMock<Data, Variables> {
+  ): GraphQLMockFunction<Data, Variables> {
     const {document} = normalizeOperation(operation);
     const operationNode = getFirstOperationFromDocument(document);
 
@@ -88,7 +88,9 @@ export function createFiller(
       throw new Error(`No operation found in ${JSON.stringify(operation)}`);
     }
 
-    const result: GraphQLMock<Data, Variables>['result'] = ({variables}) => {
+    const result: GraphQLMockFunction<Data, Variables>['result'] = ({
+      variables,
+    }) => {
       const seed = seedForOperation(operation, variables);
       const random = new Chance(seed);
 

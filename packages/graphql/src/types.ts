@@ -55,10 +55,19 @@ export type GraphQLAnyOperation<Data, Variables> =
   | DocumentNode
   | GraphQLOperation<Data, Variables>;
 
-export interface GraphQLMock<Data, Variables> {
+export interface GraphQLMockFunction<Data, Variables> {
   operation: GraphQLAnyOperation<Data, Variables>;
-  result: Data | ((request: {variables: Variables}) => Data | Error);
+  result: (request: {variables: Variables}) => Data | Error;
 }
+
+export interface GraphQLMockObject<Data, Variables> {
+  operation: GraphQLAnyOperation<Data, Variables>;
+  result: Data | Error;
+}
+
+export type GraphQLMock<Data, Variables> =
+  | GraphQLMockFunction<Data, Variables>
+  | GraphQLMockObject<Data, Variables>;
 
 type NonNullableKeys<T> = {
   [K in keyof T]-?: null extends T[K] ? never : K;

@@ -58,12 +58,16 @@ export function useQuery<Data, Variables>(
   let {key: stateKey, ...returnState} = state;
 
   if (stateKey !== cacheKey) {
-    dispatch({type: 'reset', key: cacheKey, data: initialData});
     returnState = {data: initialData, loading: initialData == null};
   }
 
   useEffect(() => {
-    if (skip) return;
+    if (skip || (initialData != null && initialData === state.data)) return;
+
+    if (initialData) {
+      dispatch({type: 'reset', key: cacheKey, data: initialData});
+      return;
+    }
 
     let valid = true;
 
@@ -94,20 +98,21 @@ function initialize<Data>({
 }
 
 function reducer<Data>(state: State<Data>, action: Action): State<Data> {
-  if (action.key !== state.key) return state;
-
   switch (action.type) {
     case 'reset':
       return initialize(action.data);
     case 'loading':
-      return {...state, loading: true};
-    case 'result':
+      return {...state, loading: true, key: action.key};
+    case 'result': {
+      if (action.key !== state.key) return state;
+
       return {
         key: state.key,
         loading: false,
         data: action.data,
         error: action.error,
       };
+    }
     default:
       throw new Error();
   }
