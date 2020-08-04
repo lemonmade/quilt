@@ -13,6 +13,7 @@ export {
   useMatch,
   useNavigationBlock,
   useRouteChangeFocusRef,
+  useScrollRestoration,
 } from './hooks';
 export {containedByPrefix} from './utilities';
 export type {NavigateTo} from './router';

@@ -6,7 +6,7 @@ export function postfixSlash(path: string) {
 }
 
 export function resolveMatch(
-  url: Omit<EnhancedURL, 'state' | 'normalizedPath'>,
+  url: Omit<EnhancedURL, 'state' | 'key' | 'normalizedPath'>,
   match: Match,
 ) {
   if (typeof match === 'string') {

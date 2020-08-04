@@ -25,7 +25,7 @@ export const Router = memo(function Router({
 
   const router = useMemo(
     () =>
-      new RouterControl(explicitUrl ?? getUrlFromBrowser(), {
+      new RouterControl(explicitUrl, {
         prefix,
         state: routerState,
       }),
@@ -47,13 +47,3 @@ export const Router = memo(function Router({
     </RouterContext.Provider>
   );
 });
-
-function getUrlFromBrowser() {
-  if (typeof window === 'undefined') {
-    throw new Error(
-      'You did not provide a `url` prop to the `Router`. On the server, you must explicitly provide this prop, as there is no way to determine it programatically.',
-    );
-  }
-
-  return new URL(window.location.href);
-}

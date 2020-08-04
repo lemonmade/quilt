@@ -23,4 +23,7 @@ module.exports = {
       },
     },
   ],
+  rules: {
+    'lines-around-comment': 'off',
+  },
 };
