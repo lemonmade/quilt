@@ -87,7 +87,7 @@ export function useScrollRestoration({
 
     if (!include(currentUrl)) return noop;
 
-    const scrollMap = cache[currentUrl.key];
+    let scrollMap = cache[currentUrl.key];
 
     if (scrollMap) {
       const scrollTo = scrollMap[id];
@@ -99,7 +99,8 @@ export function useScrollRestoration({
         scrollTargetTo(scrollTo);
       }
     } else {
-      cache[currentUrl.key] = {[id]: 0};
+      scrollMap = {[id]: 0};
+      cache[currentUrl.key] = scrollMap;
       scrollTargetTo(0);
     }
 
@@ -144,7 +145,7 @@ export function useScrollRestoration({
   }, [currentUrl.normalizedPath]);
 
   useEffect(() => {
-    if (!manual) return;
+    if (manual) return;
 
     return restore();
     // Same basic premise as above — even if `manual` changes while on a route,
