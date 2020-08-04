@@ -1,11 +1,11 @@
 export type EnhancedURL = URL & {
   readonly prefix?: string;
-
   /**
    * The pathname of the app discarding the prefix part
    */
   readonly normalizedPath: string;
-  readonly state: {key?: string; [key: string]: unknown};
+  readonly key: string;
+  readonly state: {[key: string]: unknown};
 };
 
 export interface Matcher {

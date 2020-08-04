@@ -48,6 +48,8 @@ export const SERVER_ACTION_KIND = Symbol('serverActionKind');
 export const MARK_SWITCH_FALLBACK = Symbol('markSwitchAsFallback');
 export const SWITCH_IS_FALLBACK = Symbol('switchIsFallback');
 
+const KEY_STATE_FIELD_NAME = '_routerKey';
+
 // should move NoMatch stuff to its own controller
 export class Router {
   currentUrl: EnhancedURL;
@@ -65,10 +67,11 @@ export class Router {
   private blockers = new Set<Blocker>();
   private listeners = new Set<Listener>();
   private forceNextNavigation = false;
+  private initialKey: string;
   private keys: string[] = [];
 
   constructor(
-    url: URL,
+    url?: URL,
     {prefix, state: {switchFallbacks = []} = {}}: Options = {},
   ) {
     for (const switchToFallback of switchFallbacks) {
@@ -77,12 +80,13 @@ export class Router {
 
     this.prefix = prefix;
 
-    const currentUrl = enhanceUrl(url, {}, this.prefix);
-    this.currentUrl = currentUrl;
+    const currentUrl = url
+      ? enhanceUrl(url, {}, createKey(), this.prefix)
+      : createUrl(prefix);
 
-    if (currentUrl.state.key) {
-      this.keys.push(currentUrl.state.key);
-    }
+    this.currentUrl = currentUrl;
+    this.initialKey = currentUrl.key;
+    this.keys.push(currentUrl.key);
 
     this.addPopstateListener();
   }
@@ -91,9 +95,13 @@ export class Router {
     to: NavigateTo,
     {state = {}, replace = false}: NavigateOptions = {},
   ) {
-    const key = createKey();
-    const finalState = {...state, key};
-    const resolvedUrl = enhanceUrl(resolveUrl(to, this.currentUrl), finalState);
+    const resolvedUrl = enhanceUrl(
+      resolveUrl(to, this.currentUrl),
+      state,
+      createKey(),
+      this.prefix,
+    );
+    const finalState = {...state, [KEY_STATE_FIELD_NAME]: resolvedUrl.key};
 
     const redo = () => {
       this.forceNextNavigation = true;
@@ -119,18 +127,20 @@ export class Router {
       return;
     }
 
-    const entryIndex = this.keys.lastIndexOf(this.currentUrl.state.key || '');
+    const entryIndex = this.keys.lastIndexOf(this.currentUrl.key);
 
     if (replace) {
-      this.keys.splice(entryIndex < 0 ? 0 : entryIndex, 1, key);
+      this.keys.splice(entryIndex < 0 ? 0 : entryIndex, 1, resolvedUrl.key);
     } else {
       this.keys = [
         ...this.keys.slice(0, entryIndex < 0 ? 0 : entryIndex + 1),
-        key,
+        resolvedUrl.key,
       ];
     }
 
-    this.currentUrl = createUrl(this.prefix);
+    // In case we replaced the first path
+    this.initialKey = this.keys[0];
+    this.currentUrl = createUrl(this.prefix, resolvedUrl.key);
 
     for (const listener of this.listeners) {
       listener(this.currentUrl);
@@ -214,7 +224,7 @@ export class Router {
   }
 
   private handlePopstate = () => {
-    const newUrl = createUrl(this.prefix);
+    const newUrl = createUrl(this.prefix, this.initialKey);
     const {revert, redo} = this.getPopBlockHelpers();
 
     if (!this.forceNextNavigation && this.shouldBlock(newUrl, redo)) {
@@ -242,12 +252,12 @@ export class Router {
     const normalize = (keyIndex: number) => (keyIndex < 0 ? 0 : keyIndex);
 
     const currentIndex = normalize(
-      this.keys.lastIndexOf(window.history.state && window.history.state.key),
+      this.keys.lastIndexOf(
+        window.history.state?.[KEY_STATE_FIELD_NAME] ?? this.initialKey,
+      ),
     );
 
-    const previousIndex = normalize(
-      this.keys.lastIndexOf(this.currentUrl.state.key || ''),
-    );
+    const previousIndex = normalize(this.keys.lastIndexOf(this.currentUrl.key));
 
     const delta = previousIndex - currentIndex;
 
@@ -268,18 +278,25 @@ export class Router {
   }
 }
 
-function createUrl(prefix?: Prefix): EnhancedURL {
+function createUrl(prefix?: Prefix, defaultKey?: string): EnhancedURL {
+  const {[KEY_STATE_FIELD_NAME]: key, ...state} = window.history.state ?? {};
   return enhanceUrl(
     new URL(window.location.href),
-    {...window.history.state},
+    state,
+    key ?? defaultKey ?? createKey(),
     prefix,
   );
 }
 
-function enhanceUrl(url: URL, state: object, prefix?: Prefix): EnhancedURL {
+function enhanceUrl(
+  url: URL,
+  state: object,
+  key: string,
+  prefix?: Prefix,
+): EnhancedURL {
   Object.defineProperty(url, 'state', {
     value: state,
-    writable: true,
+    writable: false,
   });
 
   const extractedPrefix = extractPrefix(url, prefix);
@@ -291,6 +308,11 @@ function enhanceUrl(url: URL, state: object, prefix?: Prefix): EnhancedURL {
   const normalizedPath = url.pathname.replace(extractedPrefix ?? '', '');
   Object.defineProperty(url, 'normalizedPath', {
     value: normalizedPath,
+    writable: false,
+  });
+
+  Object.defineProperty(url, 'key', {
+    value: key,
     writable: false,
   });
 

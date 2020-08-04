@@ -64,6 +64,7 @@ export {
   useRouter,
   useMatch as useRouteMatch,
   useNavigationBlock,
+  useScrollRestoration,
   useRouteChangeFocusRef,
 } from '@quilted/react-router';
 export {
