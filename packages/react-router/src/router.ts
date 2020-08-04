@@ -282,8 +282,15 @@ function enhanceUrl(url: URL, state: object, prefix?: Prefix): EnhancedURL {
     writable: true,
   });
 
+  const extractedPrefix = extractPrefix(url, prefix);
   Object.defineProperty(url, 'prefix', {
-    value: extractPrefix(url, prefix),
+    value: extractedPrefix,
+    writable: false,
+  });
+
+  const normalizedPath = url.pathname.replace(extractedPrefix ?? '', '');
+  Object.defineProperty(url, 'normalizedPath', {
+    value: normalizedPath,
     writable: false,
   });
 

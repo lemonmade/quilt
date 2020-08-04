@@ -5,7 +5,10 @@ export function postfixSlash(path: string) {
   return path.lastIndexOf('/') === path.length - 1 ? path : `${path}/`;
 }
 
-export function resolveMatch(url: Omit<EnhancedURL, 'state'>, match: Match) {
+export function resolveMatch(
+  url: Omit<EnhancedURL, 'state' | 'normalizedPath'>,
+  match: Match,
+) {
   if (typeof match === 'string') {
     const pathname = remainder(url.pathname, url.prefix);
     return match === pathname || (pathname !== '/' && match === `${pathname}/`);
