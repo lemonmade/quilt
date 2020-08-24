@@ -1,20 +1,32 @@
-import React, {useRef, ReactNode} from 'react';
+import React, {useMemo, ReactNode} from 'react';
 
-import {Router, NavigateTo, NavigateOptions, Options} from './router';
+import type {Router, Options} from './router';
 import {CurrentUrlContext, RouterContext} from './context';
+import {enhanceUrl, createKey} from './utilities';
 import {FocusContext} from './components';
 
-class TestRouterControl extends Router {
-  navigate(_to: NavigateTo, _options?: NavigateOptions) {}
-  go(_count: number) {}
-}
-
 export function createTestRouter(
-  // eslint-disable-next-line default-param-last
-  url: URL = new URL('/', window.location.href),
-  options?: Options,
-) {
-  return new TestRouterControl(url, options);
+  url: URL | string = '/',
+  {prefix, state = {}}: Options = {},
+): Router {
+  return {
+    currentUrl: enhanceUrl(
+      typeof url === 'string' ? new URL(url, window.location.href) : url,
+      state,
+      createKey(),
+      prefix,
+    ),
+    go() {},
+    back() {},
+    forward() {},
+    block() {
+      return () => {};
+    },
+    listen() {
+      return () => {};
+    },
+    navigate() {},
+  };
 }
 
 interface Props {
@@ -23,11 +35,13 @@ interface Props {
 }
 
 export function TestRouter({children, router: initialRouter}: Props) {
-  const router = useRef(initialRouter ?? createTestRouter());
+  const router = useMemo(() => initialRouter ?? createTestRouter(), [
+    initialRouter,
+  ]);
 
   return (
-    <RouterContext.Provider value={router.current}>
-      <CurrentUrlContext.Provider value={router.current.currentUrl}>
+    <RouterContext.Provider value={router}>
+      <CurrentUrlContext.Provider value={router.currentUrl}>
         <FocusContext>{children}</FocusContext>
       </CurrentUrlContext.Provider>
     </RouterContext.Provider>

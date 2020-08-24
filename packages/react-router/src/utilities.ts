@@ -1,35 +1,142 @@
-import type {Match, EnhancedURL, Prefix} from './types';
+import type {Match, Prefix, EnhancedURL} from './types';
+import type {Router} from './router';
+
+export function enhanceUrl(
+  url: URL,
+  state: object,
+  key: string,
+  prefix?: Prefix,
+): EnhancedURL {
+  Object.defineProperty(url, 'state', {
+    value: state,
+    writable: false,
+  });
+
+  const extractedPrefix = extractPrefix(url, prefix);
+  Object.defineProperty(url, 'prefix', {
+    value: extractedPrefix,
+    writable: false,
+  });
+
+  const normalizedPath = url.pathname.replace(extractedPrefix ?? '', '');
+  Object.defineProperty(url, 'normalizedPath', {
+    value: normalizedPath,
+    writable: false,
+  });
+
+  Object.defineProperty(url, 'key', {
+    value: key,
+    writable: false,
+  });
+
+  return url as EnhancedURL;
+}
+
+export function createKey() {
+  return `${String(Date.now())}${Math.random()}`;
+}
 
 export function postfixSlash(path: string) {
   if (path.length === 0) return '/';
-  return path.lastIndexOf('/') === path.length - 1 ? path : `${path}/`;
-}
-
-export function resolveMatch(
-  url: Omit<EnhancedURL, 'state' | 'key' | 'normalizedPath'>,
-  match: Match,
-) {
-  if (typeof match === 'string') {
-    const pathname = remainder(url.pathname, url.prefix);
-    return match === pathname || (pathname !== '/' && match === `${pathname}/`);
-  } else if (match instanceof RegExp) {
-    const pathname = remainder(url.pathname, url.prefix);
-    return (
-      match.test(pathname) || (pathname !== '/' && match.test(`${pathname}/`))
-    );
-  } else {
-    return match(url);
-  }
+  return path[path.length - 1] === '/' ? path : `${path}/`;
 }
 
 function removePostfixSlash(path: string) {
+  if (path.length === 1) return path;
   return path[path.length - 1] === '/' ? path.slice(0, -1) : path;
 }
 
-function remainder(pathname: string, prefix?: string) {
-  return prefix
-    ? removePostfixSlash(pathname.replace(prefix, ''))
-    : removePostfixSlash(pathname);
+function normalizeAsAbsolutePath(path: string) {
+  return path[0] === '/'
+    ? removePostfixSlash(path)
+    : `/${removePostfixSlash(path)}`;
+}
+
+interface MatchDetails {
+  matched: string;
+  consumed?: string;
+}
+
+export function getMatchDetails(
+  url: URL,
+  router: Router,
+  consumed?: string,
+  match?: Match,
+): MatchDetails | undefined {
+  const pathDetails = splitUrl(url, router.prefix, consumed);
+
+  if (match == null) {
+    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
+    return {matched};
+  } else if (typeof match === 'function') {
+    if (!match(url)) return undefined;
+    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
+    return {matched};
+  } else if (typeof match === 'string') {
+    const normalizedMatch = removePostfixSlash(match);
+    const isAbsolute = normalizedMatch[0] === '/';
+
+    if (isAbsolute) {
+      if (!pathDetails.remainderAbsolute.startsWith(normalizedMatch)) {
+        return undefined;
+      }
+
+      return {
+        matched: normalizedMatch,
+        consumed: normalizedMatch,
+      };
+    } else {
+      if (!pathDetails.remainderRelative.startsWith(normalizedMatch)) {
+        return undefined;
+      }
+
+      return {
+        matched: normalizedMatch,
+        consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
+          normalizedMatch,
+        )}`,
+      };
+    }
+  } else if (match instanceof RegExp) {
+    const matchAsRelative = pathDetails.remainderRelative.match(match);
+
+    if (matchAsRelative != null && matchAsRelative.index! === 0) {
+      return {
+        matched: removePostfixSlash(matchAsRelative[0]),
+        consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
+          matchAsRelative[0],
+        )}`,
+      };
+    }
+
+    const matchAsAbsolute = pathDetails.remainderAbsolute.match(match);
+
+    if (matchAsAbsolute == null || matchAsAbsolute.index! !== 0) {
+      return undefined;
+    }
+
+    const normalizedMatch = removePostfixSlash(matchAsAbsolute[0]);
+
+    return {
+      matched: normalizedMatch,
+      consumed: normalizedMatch,
+    };
+  }
+}
+
+function splitUrl(url: URL, prefix?: Prefix, consumed = '') {
+  const resolvedPrefix = extractPrefix(url, prefix) ?? '';
+  const remainderRelative = removePostfixSlash(
+    url.pathname.replace(postfixSlash(`${resolvedPrefix}${consumed}`), ''),
+  );
+
+  return {
+    isRoot: consumed.length === 0,
+    prefix: resolvedPrefix,
+    previouslyConsumed: consumed,
+    remainderRelative,
+    remainderAbsolute: `${postfixSlash(consumed)}${remainderRelative}`,
+  };
 }
 
 export function containedByPrefix(url: URL, prefix?: Prefix) {
@@ -40,10 +147,14 @@ export function extractPrefix(url: URL, prefix?: Prefix) {
   if (!prefix) return undefined;
 
   if (typeof prefix === 'string') {
-    return url.pathname.indexOf(prefix) === 0 ? prefix : undefined;
+    return url.pathname.indexOf(prefix) === 0
+      ? removePostfixSlash(prefix)
+      : undefined;
   }
 
   const regex = new RegExp(prefix.source);
   const match = regex.exec(url.pathname);
-  return match != null && match.index === 0 ? match[0] : undefined;
+  return match != null && match.index === 0
+    ? removePostfixSlash(match[0])
+    : undefined;
 }

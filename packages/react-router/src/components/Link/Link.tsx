@@ -18,9 +18,7 @@ export function Link({children, to, onClick, ...rest}: Props) {
   const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (onClick != null) {
-      onClick(event);
-    }
+    onClick?.(event);
 
     if (
       event.defaultPrevented ||
