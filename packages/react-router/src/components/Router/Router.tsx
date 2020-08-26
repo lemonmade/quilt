@@ -1,6 +1,7 @@
 import React, {memo, useState, useEffect, useRef, useMemo} from 'react';
 import {useSerialized} from '@quilted/react-html';
 
+import {EnhancedURL} from 'types';
 import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
 import {Router as RouterControl, EXTRACT} from '../../router';
@@ -17,10 +18,12 @@ export const Router = memo(function Router({
   url: explicitUrl,
   prefix,
 }: Props) {
-  const routerRef = useRef<RouterControl>(undefined as any);
+  const internalsRef = useRef<{router: RouterControl; currentUrl: EnhancedURL}>(
+    undefined as any,
+  );
 
   const routerState = useSerialized('router', () =>
-    routerRef.current[EXTRACT](),
+    internalsRef.current.router[EXTRACT](),
   );
 
   const router = useMemo(
@@ -32,14 +35,22 @@ export const Router = memo(function Router({
     [explicitUrl, prefix, routerState],
   );
 
-  routerRef.current = router;
+  internalsRef.current = {router, currentUrl: router.currentUrl};
 
   const [url, setUrl] = useState(router.currentUrl);
 
-  useEffect(() => router.listen((newUrl) => setUrl(newUrl)), [router]);
+  useEffect(() => {
+    // currentUrl changed before the effect had the chance to run, so we need
+    // to set state now for that URL change to be reflected in the app.
+    if (router.currentUrl !== internalsRef.current.currentUrl) {
+      setUrl(router.currentUrl);
+    }
+
+    return router.listen((newUrl) => setUrl(newUrl));
+  }, [router]);
 
   return (
-    <RouterContext.Provider value={routerRef.current}>
+    <RouterContext.Provider value={router}>
       <CurrentUrlContext.Provider value={url}>
         <Prefetcher />
         <FocusContext>{children}</FocusContext>
