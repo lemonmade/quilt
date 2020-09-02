@@ -1,18 +1,11 @@
-import {useEffect} from 'react';
-
-import {useRouter} from '../../hooks';
-import {NavigateTo} from '../../router';
+import {useRedirect} from '../../hooks';
+import type {NavigateTo} from '../../types';
 
 interface Props {
   to: NavigateTo;
 }
 
 export function Redirect({to}: Props) {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.navigate(to, {replace: true});
-  }, [router, to]);
-
+  useRedirect(to);
   return null;
 }

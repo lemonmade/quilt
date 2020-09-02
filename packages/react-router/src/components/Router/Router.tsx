@@ -1,48 +1,37 @@
 import React, {memo, useState, useEffect, useRef, useMemo} from 'react';
-import {useSerialized} from '@quilted/react-html';
+import type {ReactNode} from 'react';
 
-import {EnhancedURL} from 'types';
 import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
-import {Router as RouterControl, EXTRACT} from '../../router';
-import {Prefetcher} from '../Prefetcher';
+import type {Prefix} from '../../types';
+import {createRouter} from '../../router';
+import type {Router as RouterControl} from '../../router';
 
 interface Props {
   url?: URL;
-  prefix?: string | RegExp;
-  children?: React.ReactNode;
+  prefix?: Prefix;
+  router?: RouterControl;
+  children?: ReactNode;
 }
 
 export const Router = memo(function Router({
   children,
   url: explicitUrl,
+  router: explicitRouter,
   prefix,
 }: Props) {
-  const internalsRef = useRef<{router: RouterControl; currentUrl: EnhancedURL}>(
-    undefined as any,
-  );
-
-  const routerState = useSerialized('router', () =>
-    internalsRef.current.router[EXTRACT](),
-  );
-
   const router = useMemo(
-    () =>
-      new RouterControl(explicitUrl, {
-        prefix,
-        state: routerState,
-      }),
-    [explicitUrl, prefix, routerState],
+    () => explicitRouter ?? createRouter(explicitUrl, {prefix}),
+    [explicitRouter, explicitUrl, prefix],
   );
-
-  internalsRef.current = {router, currentUrl: router.currentUrl};
-
   const [url, setUrl] = useState(router.currentUrl);
+  const currentUrlRef = useRef(url);
+  currentUrlRef.current = url;
 
   useEffect(() => {
     // currentUrl changed before the effect had the chance to run, so we need
     // to set state now for that URL change to be reflected in the app.
-    if (router.currentUrl !== internalsRef.current.currentUrl) {
+    if (currentUrlRef.current !== router.currentUrl) {
       setUrl(router.currentUrl);
     }
 
@@ -52,7 +41,6 @@ export const Router = memo(function Router({
   return (
     <RouterContext.Provider value={router}>
       <CurrentUrlContext.Provider value={url}>
-        <Prefetcher />
         <FocusContext>{children}</FocusContext>
       </CurrentUrlContext.Provider>
     </RouterContext.Provider>

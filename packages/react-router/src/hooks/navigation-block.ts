@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {Blocker} from '../router';
+import type {Blocker} from '../types';
 import {useRouter} from './router';
 
 export function useNavigationBlock(blocker?: Blocker) {

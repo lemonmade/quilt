@@ -1,8 +1,17 @@
-import React, {useState, useRef, useCallback} from 'react';
+import React, {
+  memo,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
+import type {PropsWithChildren} from 'react';
 
 import {useRouter} from '../hooks';
-import {Router, REGISTERED} from '../router';
-import {resolveMatch} from '../utilities';
+import {PrefetcherContext} from '../context';
+import {createPrefetcher} from '../prefetcher';
+import type {PrefetchMatch} from '../prefetcher';
 
 import {EventListener} from './EventListener';
 
@@ -12,12 +21,22 @@ interface NavigatorWithConnection {
 
 export const INTENTION_DELAY_MS = 150;
 
-export function Prefetcher() {
+export const Prefetcher = memo(function Prefetcher({
+  children,
+}: PropsWithChildren<{}>) {
   const router = useRouter();
+  const prefetcher = useMemo(() => createPrefetcher(router), [router]);
+
   const [url, setUrl] = useState<null | URL>(null);
+  const [prefetchMatches, setPrefetchMatches] = useState<PrefetchMatch[]>([]);
   const timeout = useRef<number | null>(null);
   const timeoutUrl = useRef<URL | null>(null);
   const {current: prefetchAggressively} = useRef(shouldPrefetchAggressively());
+
+  useEffect(() => {
+    if (url == null) return;
+    return prefetcher.listenForMatch(url, setPrefetchMatches);
+  }, [prefetcher, url]);
 
   const clearTimeout = () => {
     if (timeout.current != null) {
@@ -51,9 +70,10 @@ export function Prefetcher() {
       timeout.current = window.setTimeout(() => {
         clearTimeout();
         setUrl(url);
+        setPrefetchMatches(prefetcher.getMatches(url));
       }, INTENTION_DELAY_MS);
     },
-    [setUrl],
+    [prefetcher],
   );
 
   const handleMouseLeave = useCallback(
@@ -80,9 +100,10 @@ export function Prefetcher() {
 
       if (urlsEqual(closestUrl, url) && !urlsEqual(relatedUrl, url)) {
         setUrl(null);
+        setPrefetchMatches([]);
       }
     },
-    [url, setUrl],
+    [url],
   );
 
   const handleMouseDown = useCallback(
@@ -97,16 +118,16 @@ export function Prefetcher() {
 
       if (url != null) {
         setUrl(url);
+        setPrefetchMatches(prefetcher.getMatches(url));
       }
     },
-    [setUrl],
+    [prefetcher],
   );
 
   const preloadMarkup = url ? (
     <div style={{visibility: 'hidden'}}>
-      {findMatches(router[REGISTERED], url).map(({render, match}, index) => {
-        // eslint-disable-next-line react/no-array-index-key
-        return <div key={`${match}${index}`}>{render(url)}</div>;
+      {prefetchMatches.map(({id, render}) => {
+        return <div key={id}>{render()}</div>;
       })}
     </div>
   ) : null;
@@ -122,12 +143,15 @@ export function Prefetcher() {
 
   return (
     <>
+      <PrefetcherContext.Provider value={prefetcher}>
+        {children}
+      </PrefetcherContext.Provider>
       <EventListener passive event="mousedown" handler={handleMouseDown} />
       {expensiveListeners}
       {preloadMarkup}
     </>
   );
-}
+});
 
 function shouldPrefetchAggressively() {
   return (
@@ -142,10 +166,6 @@ function urlsEqual(first?: URL | null, second?: URL | null) {
     (first == null && first === second) ||
     (first != null && second != null && first.href === second.href)
   );
-}
-
-function findMatches(records: Router[typeof REGISTERED], url: URL) {
-  return [...records].filter(({match}) => resolveMatch(url, match));
 }
 
 function closestUrlFromNode(element: EventTarget) {

@@ -1,12 +1,10 @@
-import {ServerActionKind} from '@quilted/react-server-render';
-
-import type {EnhancedURL, Match, Prefix} from './types';
-import {postfixSlash, extractPrefix} from './utilities';
+import type {EnhancedURL, Prefix, NavigateTo, Blocker, Search} from './types';
+import {postfixSlash, enhanceUrl, createKey} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 
 export interface State {
-  switchFallbacks?: string[];
+  [key: string]: unknown;
 }
 
 export interface Options {
@@ -16,265 +14,166 @@ export interface Options {
 
 type Listener = (url: EnhancedURL) => void;
 
-interface PrefetchRegistration {
-  match: Match;
-  render(url: URL): React.ReactNode;
-}
-
-type Search = string | object | URLSearchParams;
-
-// should accept a function that resolves to one of these
-export type NavigateTo =
-  | string
-  | URL
-  | {
-      pathname?: string;
-      hash?: string;
-      search?: Search;
-    };
-
-export type Blocker = (to: EnhancedURL, redo: () => void) => boolean;
-
 export interface NavigateOptions {
   replace?: boolean;
-  state?: {[key: string]: unknown};
+  state?: State;
 }
 
-export const EXTRACT = Symbol('extract');
-export const REGISTER = Symbol('register');
-export const REGISTERED = Symbol('registered');
-export const CREATE_SWITCH_ID = Symbol('createSwitchId');
-export const SERVER_ACTION_KIND = Symbol('serverActionKind');
-export const MARK_SWITCH_FALLBACK = Symbol('markSwitchAsFallback');
-export const SWITCH_IS_FALLBACK = Symbol('switchIsFallback');
+const KEY_STATE_FIELD_NAME = '_key';
 
-const KEY_STATE_FIELD_NAME = '_routerKey';
+export interface Router {
+  readonly currentUrl: EnhancedURL;
+  readonly prefix?: Prefix;
+  navigate(to: NavigateTo, options?: NavigateOptions): void;
+  listen(listener: Listener): () => void;
+  block(blocker?: Blocker): () => void;
+  go(count: number): void;
+  back(count?: number): void;
+  forward(count?: number): void;
+}
 
-// should move NoMatch stuff to its own controller
-export class Router {
-  currentUrl: EnhancedURL;
+export function createRouter(
+  initialUrl?: URL,
+  {prefix, state: initialState}: Options = {},
+): Router {
+  let currentUrl = initialUrl
+    ? enhanceUrl(initialUrl, initialState ?? {}, createKey(), prefix)
+    : createUrl(prefix);
 
-  readonly prefix: Prefix | undefined;
-  readonly [SERVER_ACTION_KIND]: ServerActionKind = {
-    id: SERVER_RENDER_EFFECT_ID,
-    betweenEachPass: () => this.reset(),
-  };
+  let forceNextNavigation = false;
 
-  readonly [REGISTERED] = new Set<PrefetchRegistration>();
+  const initialNavigationKey = currentUrl.key;
+  const navigationKeys = [initialNavigationKey];
 
-  private readonly switchFallbacks = new Set<string>();
-  private currentSwitchId = 0;
-  private blockers = new Set<Blocker>();
-  private listeners = new Set<Listener>();
-  private forceNextNavigation = false;
-  private initialKey: string;
-  private keys: string[] = [];
+  const listeners = new Set<Listener>();
+  const blockers = new Set<Blocker>();
 
-  constructor(
-    url?: URL,
-    {prefix, state: {switchFallbacks = []} = {}}: Options = {},
-  ) {
-    for (const switchToFallback of switchFallbacks) {
-      this.switchFallbacks.add(switchToFallback);
-    }
-
-    this.prefix = prefix;
-
-    const currentUrl = url
-      ? enhanceUrl(url, {}, createKey(), this.prefix)
-      : createUrl(prefix);
-
-    this.currentUrl = currentUrl;
-    this.initialKey = currentUrl.key;
-    this.keys.push(currentUrl.key);
-
-    this.addPopstateListener();
+  if (typeof window !== 'undefined') {
+    window.addEventListener('popstate', handlePopstate);
   }
 
-  navigate(
+  return {
+    get currentUrl() {
+      return currentUrl;
+    },
+    get prefix() {
+      return prefix;
+    },
+    navigate,
+    listen(listener: Listener) {
+      listeners.add(listener);
+
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    block(blocker = () => true) {
+      blockers.add(blocker);
+
+      return () => {
+        blockers.delete(blocker);
+      };
+    },
+    go,
+    back: (count = -1) => go(count),
+    forward: (count = 1) => go(count),
+  };
+
+  function navigate(
     to: NavigateTo,
     {state = {}, replace = false}: NavigateOptions = {},
   ) {
+    const resolvedKey = createKey();
     const resolvedUrl = enhanceUrl(
-      resolveUrl(to, this.currentUrl),
+      resolveUrl(to, currentUrl),
       state,
-      createKey(),
-      this.prefix,
+      resolvedKey,
+      prefix,
     );
-    const finalState = {...state, [KEY_STATE_FIELD_NAME]: resolvedUrl.key};
+
+    const finalState = {...state, [KEY_STATE_FIELD_NAME]: resolvedKey};
 
     const redo = () => {
-      this.forceNextNavigation = true;
-      this.navigate(resolvedUrl, {state, replace});
+      forceNextNavigation = true;
+      navigate(resolvedUrl, {state, replace});
     };
 
-    if (!this.forceNextNavigation && this.shouldBlock(resolvedUrl, redo)) {
+    if (!forceNextNavigation && shouldBlock(resolvedUrl, redo)) {
       return;
     }
 
-    const resolvedTo = urlToPath(resolvedUrl);
+    forceNextNavigation = false;
 
-    this.reset();
+    const resolvedPath = urlToPath(resolvedUrl);
 
     try {
       history[replace ? 'replaceState' : 'pushState'](
         finalState,
         '',
-        resolvedTo,
+        resolvedPath,
       );
     } catch (error) {
-      window.location[replace ? 'replace' : 'assign'](resolvedTo);
+      window.location[replace ? 'replace' : 'assign'](resolvedPath);
       return;
     }
 
-    const entryIndex = this.keys.lastIndexOf(this.currentUrl.key);
+    const entryIndex = navigationKeys.lastIndexOf(currentUrl.key);
 
     if (replace) {
-      this.keys.splice(entryIndex < 0 ? 0 : entryIndex, 1, resolvedUrl.key);
+      navigationKeys.splice(entryIndex, 1, resolvedKey);
     } else {
-      this.keys = [
-        ...this.keys.slice(0, entryIndex < 0 ? 0 : entryIndex + 1),
-        resolvedUrl.key,
-      ];
+      navigationKeys.splice(
+        entryIndex + 1,
+        navigationKeys.length - entryIndex - 1,
+        resolvedKey,
+      );
     }
 
-    // In case we replaced the first path
-    this.initialKey = this.keys[0];
-    this.currentUrl = createUrl(this.prefix, resolvedUrl.key);
+    currentUrl = createUrl(prefix, resolvedKey);
 
-    for (const listener of this.listeners) {
-      listener(this.currentUrl);
+    for (const listener of listeners) {
+      listener(currentUrl);
     }
   }
 
-  go(count: number) {
-    window.history.go(count);
-  }
+  function handlePopstate() {
+    const fallbackNavigationKey = navigationKeys[0];
+    const newUrl = createUrl(prefix, fallbackNavigationKey);
 
-  back(count = -1) {
-    this.go(count > 0 ? -count : count);
-  }
-
-  forward(count = 1) {
-    this.go(count);
-  }
-
-  block(blocker: Blocker = () => true) {
-    this.blockers.add(blocker);
-
-    return () => {
-      this.blockers.delete(blocker);
-    };
-  }
-
-  resolve(to: NavigateTo, from = this.currentUrl) {
-    return resolve(to, from);
-  }
-
-  resolveUrl(to: NavigateTo, from = this.currentUrl) {
-    return resolveUrl(to, from);
-  }
-
-  remove() {
-    window.removeEventListener('popstate', this.handlePopstate);
-  }
-
-  listen(listener: Listener) {
-    this.listeners.add(listener);
-
-    return () => {
-      this.listeners.delete(listener);
-    };
-  }
-
-  [SWITCH_IS_FALLBACK](id: string) {
-    return this.switchFallbacks.has(id);
-  }
-
-  [MARK_SWITCH_FALLBACK](id: string) {
-    this.switchFallbacks.add(id);
-  }
-
-  [CREATE_SWITCH_ID]() {
-    return String(this.currentSwitchId++);
-  }
-
-  [REGISTER](registration: PrefetchRegistration) {
-    this[REGISTERED].add(registration);
-
-    return () => {
-      this[REGISTERED].delete(registration);
-    };
-  }
-
-  [EXTRACT](): State {
-    return {
-      switchFallbacks: [...this.switchFallbacks],
-    };
-  }
-
-  private reset() {
-    this.forceNextNavigation = false;
-    this.switchFallbacks.clear();
-  }
-
-  // should reverse the meaning of block => true
-  private shouldBlock(to: EnhancedURL, redo: () => void) {
-    return [...this.blockers].some((blocker) => !blocker(to, redo));
-  }
-
-  private handlePopstate = () => {
-    const newUrl = createUrl(this.prefix, this.initialKey);
-    const {revert, redo} = this.getPopBlockHelpers();
-
-    if (!this.forceNextNavigation && this.shouldBlock(newUrl, redo)) {
-      revert();
-      return;
-    }
-
-    this.reset();
-    this.currentUrl = newUrl;
-
-    for (const listener of this.listeners) {
-      listener(this.currentUrl);
-    }
-  };
-
-  private addPopstateListener() {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    window.addEventListener('popstate', this.handlePopstate);
-  }
-
-  private getPopBlockHelpers() {
-    const normalize = (keyIndex: number) => (keyIndex < 0 ? 0 : keyIndex);
-
-    const currentIndex = normalize(
-      this.keys.lastIndexOf(
-        window.history.state?.[KEY_STATE_FIELD_NAME] ?? this.initialKey,
-      ),
+    const currentNavigationIndex = navigationKeys.lastIndexOf(
+      window.history.state?.[KEY_STATE_FIELD_NAME] ?? fallbackNavigationKey,
     );
 
-    const previousIndex = normalize(this.keys.lastIndexOf(this.currentUrl.key));
+    const previousNavigationIndex = navigationKeys.lastIndexOf(currentUrl.key);
+    const delta = previousNavigationIndex - currentNavigationIndex;
 
-    const delta = previousIndex - currentIndex;
-
-    return {
-      revert: () => {
-        if (delta) {
-          this.forceNextNavigation = true;
-          this.go(delta);
-        }
-      },
-      redo: () => {
-        if (delta) {
-          this.forceNextNavigation = true;
-          this.go(-delta);
-        }
-      },
+    const redo = () => {
+      if (delta) {
+        forceNextNavigation = true;
+        go(delta);
+      }
     };
+
+    if (!forceNextNavigation && shouldBlock(newUrl, redo)) {
+      forceNextNavigation = true;
+      go(-delta);
+      return;
+    }
+
+    forceNextNavigation = false;
+    currentUrl = newUrl;
+
+    for (const listener of listeners) {
+      listener(currentUrl);
+    }
+  }
+
+  function shouldBlock(to: EnhancedURL, redo: () => void) {
+    return [...blockers].some((blocker) => blocker(to, redo));
+  }
+
+  function go(count: number) {
+    window.history.go(count);
   }
 }
 
@@ -288,38 +187,7 @@ function createUrl(prefix?: Prefix, defaultKey?: string): EnhancedURL {
   );
 }
 
-function enhanceUrl(
-  url: URL,
-  state: object,
-  key: string,
-  prefix?: Prefix,
-): EnhancedURL {
-  Object.defineProperty(url, 'state', {
-    value: state,
-    writable: false,
-  });
-
-  const extractedPrefix = extractPrefix(url, prefix);
-  Object.defineProperty(url, 'prefix', {
-    value: extractedPrefix,
-    writable: false,
-  });
-
-  const normalizedPath = url.pathname.replace(extractedPrefix ?? '', '');
-  Object.defineProperty(url, 'normalizedPath', {
-    value: normalizedPath,
-    writable: false,
-  });
-
-  Object.defineProperty(url, 'key', {
-    value: key,
-    writable: false,
-  });
-
-  return url as EnhancedURL;
-}
-
-function resolveUrl(to: NavigateTo, from: EnhancedURL) {
+function resolveUrl(to: NavigateTo, from: EnhancedURL): URL {
   if (to instanceof URL) {
     if (to.origin !== from.origin) {
       throw new Error(
@@ -340,36 +208,11 @@ function resolveUrl(to: NavigateTo, from: EnhancedURL) {
       prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
       from.href,
     );
+  } else if (typeof to === 'function') {
+    return resolveUrl(to(from), from);
   }
 
   return new URL(prefixPath(to, from.prefix), postfixSlash(from.href));
-}
-
-function resolve(to: NavigateTo, from: EnhancedURL) {
-  if (to instanceof URL) {
-    if (to.origin !== from.origin) {
-      throw new Error(
-        `You can’t perform a client side navigation to ${to.href} from ${from.href}`,
-      );
-    }
-
-    return urlToPath(to);
-  } else if (typeof to === 'object') {
-    const {pathname, search, hash} = to;
-
-    const finalPathname = pathname ?? from.pathname;
-    const finalSearch = searchToString(search ?? from.search);
-    const finalHash = prefixIfNeeded('#', hash ?? from.hash);
-
-    return prefixPath(
-      `${finalPathname}${finalSearch}${finalHash}`,
-      from.prefix,
-    );
-  }
-
-  return to.indexOf('/') === 0
-    ? prefixPath(to, from.prefix)
-    : urlToPath(new URL(prefixPath(to, from.prefix), postfixSlash(from.href)));
 }
 
 function prefixPath(pathname: string, prefix?: string) {
@@ -382,10 +225,6 @@ function prefixPath(pathname: string, prefix?: string) {
 
 function urlToPath(url: URL) {
   return `${url.pathname}${url.search}${url.hash}`;
-}
-
-function createKey() {
-  return `${String(Date.now())}${Math.random()}`;
 }
 
 function searchToString(search?: Search) {
