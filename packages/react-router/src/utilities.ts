@@ -1,4 +1,4 @@
-import type {Match, Prefix, EnhancedURL} from './types';
+import type {Match, Prefix, EnhancedURL, NavigateTo, Search} from './types';
 import type {Router} from './router';
 
 export function enhanceUrl(
@@ -30,6 +30,67 @@ export function enhanceUrl(
   });
 
   return url as EnhancedURL;
+}
+
+export function resolveUrl(to: NavigateTo, from: EnhancedURL): URL {
+  if (to instanceof URL) {
+    if (to.origin !== from.origin) {
+      throw new Error(
+        `You can’t perform a client side navigation to ${to.href} from ${from.href}`,
+      );
+    }
+
+    return to;
+  } else if (typeof to === 'object') {
+    const {pathname, search, hash} = to;
+
+    // should make sure we insert the hash/ question mark
+    const finalPathname = pathname ?? from.pathname;
+    const finalSearch = searchToString(search ?? from.search);
+    const finalHash = prefixIfNeeded('#', hash ?? from.hash);
+
+    return new URL(
+      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
+      from.href,
+    );
+  } else if (typeof to === 'function') {
+    return resolveUrl(to(from), from);
+  }
+
+  return new URL(prefixPath(to, from.prefix), postfixSlash(from.href));
+}
+
+function prefixPath(pathname: string, prefix?: string) {
+  if (!prefix) return pathname;
+
+  return pathname.indexOf('/') === 0
+    ? `${postfixSlash(prefix)}${pathname.slice(1)}`
+    : pathname;
+}
+
+function searchToString(search?: Search) {
+  if (search == null) {
+    return '';
+  } else if (typeof search === 'string') {
+    return prefixIfNeeded('?', search);
+  } else if (search instanceof URLSearchParams) {
+    return prefixIfNeeded('?', search.toString());
+  } else {
+    return prefixIfNeeded(
+      '?',
+      Object.keys(search).reduce<string>((searchString, key) => {
+        return `${searchString}${key}=${encodeURIComponent(
+          (search as any)[key],
+        )}`;
+      }, ''),
+    );
+  }
+}
+
+function prefixIfNeeded(prefix: string, value: string) {
+  return value.length === 0 || value[0] === prefix
+    ? value
+    : `${prefix}${value}`;
 }
 
 export function createKey() {

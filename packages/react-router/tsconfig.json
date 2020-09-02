@@ -7,5 +7,9 @@
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../react-server-render"}, {"path": "../react-html"}]
+  "references": [
+    {"path": "../react-server-render"},
+    {"path": "../react-html"},
+    {"path": "../react-testing"}
+  ]
 }

@@ -2,20 +2,22 @@ import React, {useMemo, ReactNode} from 'react';
 
 import type {Router, Options} from './router';
 import {CurrentUrlContext, RouterContext} from './context';
-import {enhanceUrl, createKey} from './utilities';
+import {enhanceUrl, createKey, resolveUrl} from './utilities';
 import {FocusContext} from './components';
 
 export function createTestRouter(
   url: URL | string = '/',
   {prefix, state = {}}: Options = {},
 ): Router {
+  const currentUrl = enhanceUrl(
+    typeof url === 'string' ? new URL(url, window.location.href) : url,
+    state,
+    createKey(),
+    prefix,
+  );
+
   return {
-    currentUrl: enhanceUrl(
-      typeof url === 'string' ? new URL(url, window.location.href) : url,
-      state,
-      createKey(),
-      prefix,
-    ),
+    currentUrl,
     go() {},
     back() {},
     forward() {},
@@ -26,6 +28,7 @@ export function createTestRouter(
       return () => {};
     },
     navigate() {},
+    resolve: (to) => resolveUrl(to, currentUrl),
   };
 }
 

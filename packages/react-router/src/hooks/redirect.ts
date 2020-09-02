@@ -1,14 +1,12 @@
 import {useEffect} from 'react';
 import type {NavigateTo} from '../types';
 
-import {useRouter} from './router';
-import {useCurrentUrl} from './url';
+import {useNavigate} from './navigate';
 
 export function useRedirect(to: NavigateTo) {
-  const router = useRouter();
-  const currentUrl = useCurrentUrl();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    router.navigate(to, {replace: true});
-  }, [router, to, currentUrl]);
+    navigate(to, {replace: true});
+  }, [navigate, to]);
 }

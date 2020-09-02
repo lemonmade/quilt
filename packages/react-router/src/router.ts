@@ -1,5 +1,5 @@
-import type {EnhancedURL, Prefix, NavigateTo, Blocker, Search} from './types';
-import {postfixSlash, enhanceUrl, createKey} from './utilities';
+import type {EnhancedURL, Prefix, NavigateTo, Blocker} from './types';
+import {enhanceUrl, createKey, resolveUrl} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 
@@ -30,6 +30,7 @@ export interface Router {
   go(count: number): void;
   back(count?: number): void;
   forward(count?: number): void;
+  resolve(to: NavigateTo): URL;
 }
 
 export function createRouter(
@@ -77,6 +78,7 @@ export function createRouter(
     go,
     back: (count = -1) => go(count),
     forward: (count = 1) => go(count),
+    resolve: (to) => resolveUrl(to, currentUrl),
   };
 
   function navigate(
@@ -187,67 +189,6 @@ function createUrl(prefix?: Prefix, defaultKey?: string): EnhancedURL {
   );
 }
 
-function resolveUrl(to: NavigateTo, from: EnhancedURL): URL {
-  if (to instanceof URL) {
-    if (to.origin !== from.origin) {
-      throw new Error(
-        `You can’t perform a client side navigation to ${to.href} from ${from.href}`,
-      );
-    }
-
-    return to;
-  } else if (typeof to === 'object') {
-    const {pathname, search, hash} = to;
-
-    // should make sure we insert the hash/ question mark
-    const finalPathname = pathname ?? from.pathname;
-    const finalSearch = searchToString(search ?? from.search);
-    const finalHash = prefixIfNeeded('#', hash ?? from.hash);
-
-    return new URL(
-      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
-      from.href,
-    );
-  } else if (typeof to === 'function') {
-    return resolveUrl(to(from), from);
-  }
-
-  return new URL(prefixPath(to, from.prefix), postfixSlash(from.href));
-}
-
-function prefixPath(pathname: string, prefix?: string) {
-  if (!prefix) return pathname;
-
-  return pathname.indexOf('/') === 0
-    ? `${postfixSlash(prefix)}${pathname.slice(1)}`
-    : pathname;
-}
-
 function urlToPath(url: URL) {
   return `${url.pathname}${url.search}${url.hash}`;
-}
-
-function searchToString(search?: Search) {
-  if (search == null) {
-    return '';
-  } else if (typeof search === 'string') {
-    return prefixIfNeeded('?', search);
-  } else if (search instanceof URLSearchParams) {
-    return prefixIfNeeded('?', search.toString());
-  } else {
-    return prefixIfNeeded(
-      '?',
-      Object.keys(search).reduce<string>((searchString, key) => {
-        return `${searchString}${key}=${encodeURIComponent(
-          (search as any)[key],
-        )}`;
-      }, ''),
-    );
-  }
-}
-
-function prefixIfNeeded(prefix: string, value: string) {
-  return value.length === 0 || value[0] === prefix
-    ? value
-    : `${prefix}${value}`;
 }

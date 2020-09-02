@@ -1,28 +1,35 @@
 import React from 'react';
 import {createMount} from '@quilted/react-testing';
 
-import {RouterContext} from '../../context';
+import {createTestRouter, TestRouter} from '../../testing';
 import {Redirect} from './Redirect';
 
 describe('<Redirect />', () => {
   it('works', () => {
-    const spy = jest.fn();
     const to = '/my/path';
+    const redirect = mountWithNavigateSpy(<Redirect to={to} />);
 
-    mountWithNavigateSpy(<Redirect to={to} />, {navigate: spy});
-
-    expect(spy).toHaveBeenCalledWith(to, {replace: true});
+    expect(redirect.context.router.navigate).toHaveBeenCalledWith(to, {
+      replace: true,
+    });
   });
 });
 
-const mountWithNavigateSpy = createMount<{navigate: jest.Mock}>({
+type MockedRouter = Omit<ReturnType<typeof createTestRouter>, 'navigate'> & {
+  navigate: jest.Mock;
+};
+
+const mountWithNavigateSpy = createMount<{}, {router: MockedRouter}>({
+  context() {
+    const router = createTestRouter(
+      new URL('https://router.magic'),
+    ) as MockedRouter;
+    jest.spyOn(router, 'navigate');
+    return {router};
+  },
   // The auto-fix for this causes syntax errors...
   // eslint-disable-next-line react/function-component-definition
-  render(element, _, {navigate}) {
-    return (
-      <RouterContext.Provider value={{navigate} as any}>
-        {element}
-      </RouterContext.Provider>
-    );
+  render(element, {router}) {
+    return <TestRouter router={router}>{element}</TestRouter>;
   },
 });
