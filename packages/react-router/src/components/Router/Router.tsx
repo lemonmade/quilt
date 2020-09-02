@@ -1,7 +1,6 @@
 import React, {memo, useState, useEffect, useRef, useMemo} from 'react';
 import type {ReactNode} from 'react';
 
-import {EnhancedURL} from 'types';
 import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
 import type {Prefix} from '../../types';
