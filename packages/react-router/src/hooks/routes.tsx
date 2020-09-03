@@ -3,7 +3,7 @@
 import React, {memo, useContext, useEffect, useRef} from 'react';
 import type {ReactNode} from 'react';
 
-import type {Match, EnhancedURL, NavigateTo} from '../types';
+import type {EnhancedURL, NavigateTo, RouteDefinition} from '../types';
 import {PrefetcherContext, ConsumedPathContext} from '../context';
 import {getMatchDetails} from '../utilities';
 // import {REGISTER} from '../router';
@@ -14,20 +14,6 @@ import {useRedirect} from './redirect';
 import {useCurrentUrl} from './url';
 import {useRouter} from './router';
 import {useConsumedPath} from './consumed';
-
-export interface RouteRenderDetails {
-  url: EnhancedURL;
-  matchedPath: string;
-  children?: ReactNode;
-}
-
-export interface RouteDefinition {
-  match?: Match;
-  children?: RouteDefinition[];
-  redirect?: NavigateTo;
-  render?(details: RouteRenderDetails): ReactNode;
-  renderPrefetch?(): ReactNode;
-}
 
 export function useRoutes(routes: RouteDefinition[]) {
   const router = useRouter();
@@ -135,7 +121,7 @@ const RoutesInternal = memo(function RoutesInternal({
   if (render) {
     routeContents = render({
       url: currentUrl,
-      matchedPath,
+      matched: matchedPath,
       children: children && (
         <RoutesInternal
           routes={children}
