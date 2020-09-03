@@ -18,7 +18,10 @@ export function enhanceUrl(
     writable: false,
   });
 
-  const normalizedPath = url.pathname.replace(extractedPrefix ?? '', '');
+  const normalizedPath = normalizeAsAbsolutePath(
+    url.pathname.replace(extractedPrefix ?? '', ''),
+  );
+
   Object.defineProperty(url, 'normalizedPath', {
     value: normalizedPath,
     writable: false,
