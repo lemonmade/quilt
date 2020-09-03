@@ -7,7 +7,7 @@ import '@quilted/react-testing/matchers';
 import React, {PropsWithChildren} from 'react';
 import {createMount} from '@quilted/react-testing';
 
-import {useRoutes, RouteDefinition} from '../routes';
+import {useRoutes} from '../routes';
 import {createTestRouter, TestRouter} from '../../testing';
 
 jest.mock('../redirect', () => ({
@@ -491,7 +491,7 @@ describe('useRoutes()', () => {
 
       expect(render).toHaveBeenCalledWith(
         expect.objectContaining({
-          matchedPath: '123',
+          matched: '123',
         }),
       );
     });
