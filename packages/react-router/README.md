@@ -310,21 +310,97 @@ function App() {
 
 ### `<Link />`
 
-The `Link` component renders a native anchor tag pointing at a page in your application. When this anchor is activated, a client-side navigation will be performed instead of a full-page navigation. However, should JavaScript fail to load, or if JavaScript is still being downloaded, it will still let the user navigate the application. This component also knows when the user is intending to open a link in a new tab or window, and will allow that navigation to behave normally.
+The `Link` component renders a native anchor tag pointing at a route in your application. When this anchor is activated, a client-side navigation will be performed instead of a full-page navigation. However, should JavaScript fail to load, or if JavaScript is still being downloaded, the fact that this is a native anchor tag means that the user will still be able to navigate the application. This component also knows when the user is intending to open a link in a new tab or window, and will allow that navigation to behave normally.
 
-The `Link` component accepts all props you could pass to an anchor element, except for `href`. In place of `href`, this component accepts a `to` prop, which can be any type allowed by [`router.navigate`](#router-navigate).
+The `Link` component accepts all props you could pass to an anchor element, except for `href`. In place of `href`, this component accepts a `to` prop, which can be any type allowed by [`useNavigate`](#useNavigate).
 
 ```tsx
 import {Link} from '@quilted/react-router';
 
 export function MyComponent() {
-  return <Link to={{pathname: '/products/new'}}>Create product</Link>;
+  return <Link to="/products/new">Create product</Link>;
+}
+```
+
+### `useNavigate()`
+
+When possible, you should use a `Link` component to render navigation elements, as this will allow navigation to work even if your application’s JavaScript fails. In cases where you need to update the current URL programmatically (like navigating only after an asynchronous network call has completed), you can instead use `useNavigate`. This React hook returns a function that you can call later, and when called it will update both the current URL in the `Router`’s state (causing all `useRoutes` definitions to re-evaluate route matches) and updates the URL in the browser.
+
+The value you pass to the `navigate` function can be any of the following types:
+
+- A string, which represents the pathname (and, optionally, hash/ search) you want to navigate to. This string can either be an absolute pathname (starts with a `/`, in which case it will be appended to the router prefix, if any, to form the final path), or a relative pathname (starts with anything other than a `/`, in which case it is appended to the _current URL’s pathname_).
+- A `URL` object.
+- An object with optional `pathname`, `hash`, and `search` fields. If `pathname` is omitted from this object, it will reuse the current URL’s `pathname`.
+- A function that accepts the current URL, and returns one of the other arguments above.
+
+This function also accepts an (optional) second argument with any of the following keys:
+
+- `state`, an object that will be used as location state, and will be accessible through `useCurrentUrl().state` on the next page.
+- `replace`, a boolean indicating that this navigation should replace the existing entry in the navigation stack (by default, `navigate` will push a new entry onto the stack).
+
+```tsx
+import {useNavigate} from '@quilted/react-router';
+
+function MyComponent() {
+  const navigate = useNavigate();
+
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        await performSomeNetworkRequests();
+
+        // Relative navigation, adds `/new` to the path
+        navigate('new');
+
+        // Absolute navigation, goes the /next/page directly
+        navigate('/next/page');
+
+        // Replaces instead of pushes to the navigation stack
+        navigate('page?from=other-page#with-hash', {replace: true});
+
+        // This search object will be URI-encoded
+        navigate({pathname: '/', search: {goto: 'new-page'}});
+
+        // This state will be available as `useCurrentUrl().state` on the next page
+        navigate('new', {state: {initialValue: '123'}});
+
+        // This will compote a new URL from the current one
+        navigate((currentUrl) => {
+          const newUrl = new URL(currentUrl.href);
+          newUrl.searchParams.append('extra', 'param');
+          return newUrl;
+        });
+      }}
+    >
+      Save
+    </button>
+  );
+}
+```
+
+### `useRedirect()` and `<Redirect />`
+
+The `useRedirect()` hook gives you a shortcut for navigating to a new route, replacing the current entry in the history stack. It will, in the future, also integrate with `@quilted/react-network` to register a real HTTP redirect when run in a server environment.
+
+This hook accepts a single argument, a `to` value that can be any of the types you can pass to the navigate function returned by `useNavigate`. This library also provides a component version of this hook, `<Redirect />`, where the `to` value is provided via the `to` prop. The component version can be useful since redirects are often conditional on some other application state, and hooks can’t be called conditionally.
+
+```tsx
+import {useRedirect, Redirect} from '@quilted/react-router';
+
+export function MyRedirect() {
+  useRedirect('/new/route');
+  return null;
+
+  // OR:
+
+  return <Redirect to="/new/route" />;
 }
 ```
 
 ### `useCurrentUrl()`
 
-Components in your application will often want to know the current URL. This can be particularly useful in cases like analytics, where you want to trigger an event every time the URL changes. The `useCurrentUrl()` hook gives components access to the current `EnhancedURL` (a `URL` representing the current location with an additional `state` field for the current location state). This hook will re-render your component whenever the current URL changes.
+Components in your application will often want to know the current URL. This can be particularly useful in cases like analytics, where you want to trigger an event every time the URL changes. The `useCurrentUrl()` hook gives components access to the current [`EnhancedURL`](#enhancedurl). This hook will re-render your component whenever the current URL changes.
 
 ```tsx
 import {useEffect} from 'react';
@@ -335,121 +411,18 @@ function useNavigationTracking() {
 
   useEffect(() => {
     trackButNotInACreepyWayPlease(currentUrl.href);
-  }, [currentUrl]);
-}
-```
-
-You may be tempted to use this hook in components nested under a `Route` to get details about the URL, such as the path or querystring. While this use case is completely valid, it can make the application feel overly coupled to the URL in ways that are hard to understand. An alternative approach extracts those details just once, in the `Route`’s `render` prop, passes it in to the "top level" component, which can then distribute those details to its children through props or context:
-
-```tsx
-import {Route} from '@quilted/react-router';
-
-function MyComponent({create = false, prefillTitle = ''}) {
-  // Use the props, just like you do for any other prop!
-}
-
-function MyComponentRoute() {
-  return (
-    <Route
-      match={/^\/resource(\/new)?/}
-      render={({pathname, searchParams}) => (
-        <MyComponent
-          create={pathname.contains('/new')}
-          prefillTitle={searchParams.get('prefillTitle')}
-        />
-      )}
-    />
-  );
+  }, [currentUrl.href]);
 }
 ```
 
 #### `EnhancedURL`
 
-This library is driven by a the `URL` object. In order to support features like location state, however, most of this library operates on `EnhancedURL` objects. These objects are identical to a `URL` object except for the following additions:
+This library is driven by the `URL` object. In order to support features like location state, however, most of this library actually operates on an augmented version of a `URL`, which is represented by the `EnhancedURL` type. These objects are identical to a `URL` object, except that they are considered fully immutable (mutating properties does not change the current URL), and they contain the following additional properties:
 
-- All members should be considered immutable
-- An additional `state` field is provided, which is the location state of the location the object represents
-
-### `useRouter()`
-
-Not all navigation happens by users clicking on links. Applications often need to programmatically navigate in response to things like resources being created or updated. `@quilted/react-router` provides the `useRouter` hook for this purpose. The hook provides the singleton router instance.
-
-```tsx
-import React from 'react';
-import {useRouter} from '@quilted/react-router';
-
-function MyComponent() {
-  const router = useRouter();
-  return (
-    <CreateProduct onComplete={(id) => router.navigate(`/products/${id}`)} />
-  );
-}
-```
-
-The router instance has the following methods:
-
-#### `router.navigate()`
-
-`router.navigate()` is the main method of the router. It allows you to add or replace an entry in the navigation stack. The first argument is a description of the location to push to, and can be one of the following:
-
-- A string, which should be a relative or absolute pathname, search, and hash,
-- A `URL` object (**note:** must be on the same origin as the current URL),
-- An object with optional `pathname`, `hash`, and `search` fields, or
-- A function that accepts the current URL, and returns one of the other arguments above
-
-The second argument is an optional object any of the following keys:
-
-- `state`, an object that will be used as location state, and available on `router.currentUrl.state` (or `useCurrentUrl().state`)
-- `replace`, a boolean indicating that this navigation should replace the existing entry in the navigation stack (by default, `navigate` will push a new entry onto the stack)
-
-```tsx
-// Relative navigation, adds `/new` to the path
-router.navigate('new');
-
-// Absolute navigation, goes the /next/page directly
-router.navigate('/next/page');
-
-// Replaces instead of pushes to the navigation stack
-router.navigate('/next/page?replace=1', {replace: true});
-
-// This search object will be URI-encoded
-router.navigate({pathname: '/', search: {goto: 'new-page'}});
-
-// This will compote a new URL from the current one
-router.navigate((currentUrl) => {
-  const newUrl = new URL(currentUrl.href);
-  newUrl.searchParams.append('extra', 'param');
-  return newUrl;
-});
-```
-
-#### `router.go()`
-
-Allows you to go forwards or backwards through the navigation stack. Accepts an integer for the number of entries to move; negative numbers move backwards.
-
-```tsx
-// Back one page
-router.go(-1);
-
-// Forward three pages
-router.go(3);
-```
-
-#### `router.forward()`
-
-An alias for `router.go(1)`.
-
-#### `router.back()`
-
-An alias for `router.go(-1)`.
-
-#### `router.block()`
-
-Blocks the router from performing additional navigations. In general, avoid this method, and use the `useNavigationBlock` hook or `NavigationBlock` component instead.
-
-#### `router.listen()`
-
-Subscribes to changes in the current URL. In general, avoid this method, and use the `useCurrentUrl` hook (and changes to the value it provides) instead.
+- `state`, an object that is inferred from the location state for this route (you can provide location state by passing the [`state` option to `useNavigate`](#usenavigate)).
+- `prefix`, an optional string that represents the part of the URL’s `pathname` that was covered by the `Router`’s `prefix`.
+- `normalizedPath`, a string that represents the part of the URL’s `pathname` that was **not** covered by the `Router`’s `prefix`.
+- `key`, a string that serves as a unique identifier for the current URL’s position in the navigation stack (so, if a user navigates using the browser back button, this key will be the same as when they were originally on that route).
 
 ### `useNavigationBlock()` and `<NavigationBlock />`
 
@@ -490,59 +463,55 @@ function Blocker() {
 }
 ```
 
-### `<Redirect />`
+### `useScrollRestoration()`
 
-The `Redirect` component is essentially a component wrapper around running `router.navigate(to, {replace: true})`. It accepts a `to` prop, which can be anything you can pass to `router.navigate`. This component also works with [`@shopify/react-network`](https://github.com/Shopify/quilt/tree/master/packages/react-network) to perform a network redirect when rendered on the server.
+TODO
 
-### `<NoMatch />`
+### `useRouteChangeFocusRef`
 
-The `NoMatch` component keeps track of whether any nested routes have been matched and, if no matches are found, renders the result of calling `renderFallback`. Note that the `Route` components do not need to be direct children; they can be nested or composed however you like.
+TODO
+
+### `useRouter()`
+
+The `router` object, provided by `useRouter`, offers an imperative API for navigating, listening for URL changes, and more. This object is constructed by the `Router` component, and is the basis for all other behaviors of this library.
+
+The router instance has the following methods:
+
+#### `router.navigate()`
+
+This method is identical to the function returned by [`useNavigate()`](#usenavigate).
+
+#### `router.go()`
+
+Allows you to go forwards or backwards through the navigation stack. Accepts an integer for the number of entries to move; negative numbers move backwards.
 
 ```tsx
-import React from 'react';
-import {Route, NoMatch, Router} from '@quilted/react-router';
+// Back one page
+router.go(-1);
 
-function NotFound() {
-  return <div>Could not find the page you were looking for.</div>;
-}
-
-function ProductRoutes() {
-  return (
-    <>
-      <Route path="/products" render={() => <Products />} />
-      <Route path="/products/new" render={() => <CreateProduct />} />
-    </>
-  );
-}
-
-function OrderRoutes() {
-  return (
-    <>
-      <Route path="/orders" render={() => <Orders />} />
-      <Route path={/\/orders\/\d+/} render={() => <OrderDetails />} />
-    </>
-  );
-}
-
-function App() {
-  return (
-    <Router>
-      <NoMatch renderFallback={() => <NotFound />}>
-        <ProductRoutes />
-        <OrderRoutes />
-      </NoMatch>
-    </Router>
-  );
-}
+// Forward three pages
+router.go(3);
 ```
 
-The `renderFallback` callback is called with the current `EnhancedURL` object.
+#### `router.forward()`
 
-This process involves some complex trickery to work on the client and server. If you render a `Router` component, it will automatically use [`@shopify/react-html`](https://github.com/Shopify/quilt/tree/master/packages/react-html) to serialize the result of matching or not on the server so that the client can hydrate properly.
+An alias for `router.go(1)`.
 
-### `<Prefetcher />`
+#### `router.back()`
 
-The `Prefetcher` component powers the `renderPrefetch` feature discussed in the [`Route` documentation](#route). It watches for user intention to navigate, and renders the relevant "prefetches". You do not need to render this component manually when using the `Router` component, as it already renders a `Prefetcher`.
+An alias for `router.go(-1)`.
+
+#### `router.block()`
+
+Blocks the router from performing additional navigations. In general, avoid this method, and use the `useNavigationBlock` hook or `NavigationBlock` component instead.
+
+#### `router.listen()`
+
+Subscribes to changes in the current URL. In general, avoid this method, and use the `useCurrentUrl` hook (and changes to the value it provides) instead.
+
+#### `router.resolve(to)`
+
+Resolves the `to` argument into a `URL`. The `to` can be anything that you would pass to [`useNavigate()`](#usenavigate).
 
 ### Testing
 

@@ -47,10 +47,9 @@ export function resolveUrl(to: NavigateTo, from: EnhancedURL): URL {
   } else if (typeof to === 'object') {
     const {pathname, search, hash} = to;
 
-    // should make sure we insert the hash/ question mark
     const finalPathname = pathname ?? from.pathname;
-    const finalSearch = searchToString(search ?? from.search);
-    const finalHash = prefixIfNeeded('#', hash ?? from.hash);
+    const finalSearch = searchToString(search);
+    const finalHash = prefixIfNeeded('#', hash);
 
     return new URL(
       prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
@@ -90,7 +89,7 @@ function searchToString(search?: Search) {
   }
 }
 
-function prefixIfNeeded(prefix: string, value: string) {
+function prefixIfNeeded(prefix: string, value = '') {
   return value.length === 0 || value[0] === prefix
     ? value
     : `${prefix}${value}`;

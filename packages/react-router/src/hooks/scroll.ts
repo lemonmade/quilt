@@ -119,6 +119,7 @@ export function useScrollRestoration({
     function scrollTargetTo(to: number) {
       scrollRef.current = window.requestAnimationFrame(() => {
         target.scrollTop = to;
+        scrollRef.current = undefined;
       });
     }
 

@@ -1,5 +1,6 @@
 import React, {DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
 import {useRouter} from '../../hooks';
+import type {NavigateTo} from '../../types';
 
 interface Props
   extends Omit<
@@ -10,7 +11,7 @@ interface Props
     'href'
   > {
   // should be resolved with the router
-  to: string;
+  to: NavigateTo;
   children?: React.ReactNode;
 }
 
@@ -34,7 +35,7 @@ export function Link({children, to, onClick, ...rest}: Props) {
   };
 
   return (
-    <a href={to} onClick={handleClick} {...rest}>
+    <a href={router.resolve(to).href} onClick={handleClick} {...rest}>
       {children}
     </a>
   );
