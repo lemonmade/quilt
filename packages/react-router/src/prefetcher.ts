@@ -2,9 +2,15 @@ import type {Match, RouteDefinition} from './types';
 import type {Router} from './router';
 import {getMatchDetails} from './utilities';
 
-export interface PrefetchMatch {
+interface PrefetchRegistration {
   id: string;
   matches: Match[];
+  render: NonNullable<RouteDefinition['renderPrefetch']>;
+}
+
+export interface PrefetchMatch {
+  id: string;
+  matched: string;
   render: NonNullable<RouteDefinition['renderPrefetch']>;
 }
 
@@ -23,11 +29,11 @@ export interface Prefetcher {
 export function createPrefetcher(router: Router): Prefetcher {
   let currentId = 0;
   const listeners = new Set<() => void>();
-  const registered = new Set<PrefetchMatch>();
+  const registered = new Set<PrefetchRegistration>();
 
   return {
     registerRoutes(routes, consumed) {
-      const registrationsByKey = new Map<string, PrefetchMatch>();
+      const registrationsByKey = new Map<string, PrefetchRegistration>();
 
       update(routes, consumed);
 
@@ -57,7 +63,7 @@ export function createPrefetcher(router: Router): Prefetcher {
             if (currentRegistration == null) {
               needsUpdate = true;
 
-              const registration: PrefetchMatch = {
+              const registration: PrefetchRegistration = {
                 id: createId(),
                 matches,
                 render: renderPrefetch,
@@ -110,9 +116,21 @@ export function createPrefetcher(router: Router): Prefetcher {
   };
 
   function getMatches(url: URL) {
-    return [...registered].filter((registration) => {
-      return urlMatches(url, router, registration.matches);
-    });
+    const matches: PrefetchMatch[] = [];
+
+    for (const registration of registered) {
+      const urlMatch = getUrlMatch(url, router, registration.matches);
+
+      if (typeof urlMatch === 'string') {
+        matches.push({
+          id: registration.id,
+          matched: urlMatch,
+          render: registration.render,
+        });
+      }
+    }
+
+    return matches;
   }
 
   function triggerUpdate() {
@@ -138,10 +156,11 @@ function stringifyMatch(match?: Match) {
   }
 }
 
-function urlMatches(url: URL, router: Router, matchers: Match[]) {
-  if (matchers.length === 0) return true;
+function getUrlMatch(url: URL, router: Router, matchers: Match[]) {
+  if (matchers.length === 0) return '';
 
   let currentlyConsumed: string | undefined;
+  let lastMatch = '';
 
   for (const matcher of matchers) {
     const matchDetails = getMatchDetails(
@@ -155,8 +174,9 @@ function urlMatches(url: URL, router: Router, matchers: Match[]) {
       return false;
     } else {
       currentlyConsumed = matchDetails.consumed ?? currentlyConsumed;
+      lastMatch = matchDetails.matched;
     }
   }
 
-  return true;
+  return lastMatch;
 }

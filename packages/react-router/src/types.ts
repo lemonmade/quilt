@@ -41,8 +41,13 @@ export type Blocker = (to: EnhancedURL, redo: () => void) => boolean;
 
 export interface RouteRenderDetails {
   url: EnhancedURL;
-  matchedPath: string;
+  matched: string;
   children?: ReactNode;
+}
+
+export interface RouteRenderPrefetchDetails {
+  url: URL;
+  matched: string;
 }
 
 export interface RouteDefinition {
@@ -50,5 +55,5 @@ export interface RouteDefinition {
   children?: RouteDefinition[];
   redirect?: NavigateTo;
   render?(details: RouteRenderDetails): ReactNode;
-  renderPrefetch?(): ReactNode;
+  renderPrefetch?(details: RouteRenderPrefetchDetails): ReactNode;
 }

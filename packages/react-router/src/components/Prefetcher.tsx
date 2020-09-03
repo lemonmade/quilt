@@ -126,8 +126,8 @@ export const Prefetcher = memo(function Prefetcher({
 
   const preloadMarkup = url ? (
     <div style={{visibility: 'hidden'}}>
-      {prefetchMatches.map(({id, render}) => {
-        return <div key={id}>{render()}</div>;
+      {prefetchMatches.map(({id, matched, render}) => {
+        return <div key={id}>{render({url, matched})}</div>;
       })}
     </div>
   ) : null;
