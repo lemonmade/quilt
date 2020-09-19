@@ -18,5 +18,9 @@ export default createPackage((pkg) => {
     name: 'dom-matchers',
     root: './src/matchers/dom',
   });
+  pkg.entry({
+    name: 'environment',
+    root: './src/environment',
+  });
   pkg.use(quiltPackage());
 });

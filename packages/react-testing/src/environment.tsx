@@ -1,6 +1,6 @@
 import React, {ReactElement} from 'react';
 
-import {Node as BaseNode, Root as BaseRoot} from './types';
+import type {Node as BaseNode, Root as BaseRoot} from './types';
 import {TestRenderer} from './TestRenderer';
 import {nodeName, toReactString} from './print';
 
