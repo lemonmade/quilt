@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - publish-test
 
 jobs:
   build:
@@ -34,6 +35,11 @@ jobs:
       - name: Yarn install
         run: yarn install --frozen-lockfile
 
+      - name: Authenticate with NPM
+        run: echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - uses: actions/cache@v1
         id: typescript-cache
         name: Restore TypeScript cache
@@ -48,5 +54,3 @@ jobs:
 
       - name: Deploy
         run: yarn deploy
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
