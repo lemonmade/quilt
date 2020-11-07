@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 12.14.0
           registry-url: https://registry.npmjs.org/
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
@@ -40,6 +42,8 @@ jobs:
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - run: npm whoami
 
       - uses: actions/cache@v1
         id: typescript-cache
