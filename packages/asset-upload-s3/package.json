@@ -1,6 +1,6 @@
 {
   "name": "@quilted/asset-upload-s3",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -20,7 +20,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/asset-upload": "^0.1.4",
+    "@quilted/asset-upload": "^0.1.5",
     "aws-sdk": "^2.787.0"
   }
 }
