@@ -56,6 +56,6 @@ jobs:
         run: yarn build
 
       - name: Deploy
-        run: yarn publish
+        run: yarn deploy
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
