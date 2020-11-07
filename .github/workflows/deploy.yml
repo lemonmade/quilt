@@ -18,16 +18,6 @@ jobs:
         with:
           node-version: 12.14.0
 
-      - name: Authenticate with Registry
-        run: |
-          yarn logout
-          echo "@apollo-elements:registry=http://registry.npmjs.org/" > .npmrc
-          echo "registry=http://registry.npmjs.org/" >> .npmrc
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm whoami
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -58,3 +48,5 @@ jobs:
 
       - name: Deploy
         run: yarn deploy
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
