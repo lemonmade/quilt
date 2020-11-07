@@ -27,7 +27,7 @@
     "@sewing-kit/plugin-package-flexible-outputs": "^0.1.21",
     "@sewing-kit/plugin-react": "^0.1.22",
     "@sewing-kit/plugin-typescript": "^0.1.21",
-    "@types/execa": "^2.0.0",
+    "@types/execa": "^0.9.0",
     "lerna": "3.22.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
