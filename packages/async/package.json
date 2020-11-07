@@ -20,15 +20,15 @@
   },
   "sideEffects": false,
   "optionalDependencies": {
-    "@babel/core": ">=7.0.0",
+    "@babel/core": ">=7.12.3",
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
-    "@babel/traverse": ">=7.0.0",
-    "@babel/types": ">=7.0.0",
-    "@sewing-kit/plugin-javascript": "^0.1.16",
-    "@sewing-kit/plugins": "^0.1.4"
+    "@babel/traverse": ">=7.12.5",
+    "@babel/types": ">=7.12.6",
+    "@sewing-kit/plugin-javascript": "^0.2.0",
+    "@sewing-kit/plugins": "^0.1.6"
   },
   "devDependencies": {
-    "@types/babel__core": ">=7.1.7",
-    "@types/babel__traverse": ">=7.0.11"
+    "@types/babel__core": ">=7.1.12",
+    "@types/babel__traverse": ">=7.0.15"
   }
 }

@@ -25,7 +25,7 @@
     "react-dom": ">=16.8.0 <17.0.0"
   },
   "dependencies": {
-    "@types/react": ">=16.9.34"
+    "@types/react": ">=16.9.56"
   },
   "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
 }

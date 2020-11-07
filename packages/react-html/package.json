@@ -37,13 +37,13 @@
   "dependencies": {
     "@quilted/react-server-render": "^0.1.0",
     "@types/multistream": "^2.1.1",
-    "@types/react": ">=16.9.34",
-    "multistream": "^4.0.0",
-    "serialize-javascript": "^3.0.0"
+    "@types/react": ">=16.9.56",
+    "multistream": "^4.0.1",
+    "serialize-javascript": "^5.0.1"
   },
   "devDependencies": {
-    "@types/react-dom": "^16.9.7",
-    "@types/serialize-javascript": "^1.5.0"
+    "@types/react-dom": "^16.9.9",
+    "@types/serialize-javascript": "^4.0.0"
   },
   "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
 }

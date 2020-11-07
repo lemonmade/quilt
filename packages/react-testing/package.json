@@ -50,14 +50,14 @@
     "react-dom": ">=16.8.0 <17.0.0"
   },
   "optionalDependencies": {
-    "preact": "^10.0.0"
+    "preact": "^10.5.5"
   },
   "dependencies": {
-    "@sewing-kit/plugins": "^0.1.4",
-    "@types/react-test-renderer": "^16.9.2",
-    "jest-matcher-utils": "^26.0.1",
-    "react-reconciler": "^0.25.1",
-    "react-test-renderer": "^16.13.1"
+    "@sewing-kit/plugins": "^0.1.6",
+    "@types/react-test-renderer": "^16.9.3",
+    "jest-matcher-utils": "^26.6.2",
+    "react-reconciler": "^0.26.1",
+    "react-test-renderer": "^17.0.1"
   },
   "devDependencies": {
     "preact": "^10.4.4"

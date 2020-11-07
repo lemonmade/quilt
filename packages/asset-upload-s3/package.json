@@ -21,6 +21,6 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/asset-upload": "^0.1.4",
-    "aws-sdk": "^2.708.0"
+    "aws-sdk": "^2.787.0"
   }
 }
