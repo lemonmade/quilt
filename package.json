@@ -14,7 +14,6 @@
     "build": "sk build",
     "prerelease": "yarn build",
     "g": "npx -p @babel/core -p @babel/node babel-node --extensions .ts,.tsx,.mjs,.js --presets @babel/preset-typescript,@babel/preset-env ./scripts/generate.ts",
-    "release": "lerna publish && git push --tags",
     "version-bump": "lerna version",
     "deploy": "lerna publish from-package --yes"
   },
@@ -28,13 +27,13 @@
     "@sewing-kit/plugin-package-flexible-outputs": "^0.1.21",
     "@sewing-kit/plugin-react": "^0.1.22",
     "@sewing-kit/plugin-typescript": "^0.1.21",
+    "@types/execa": "^2.0.0",
     "lerna": "3.22.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
   "dependencies": {},
   "resolutions": {
-    "@types/vfile-message": "1.0.1",
-    "execa": "^4.0.0"
+    "@types/vfile-message": "1.0.1"
   }
 }
