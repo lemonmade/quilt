@@ -15,7 +15,7 @@
     "prerelease": "yarn build",
     "g": "npx -p @babel/core -p @babel/node babel-node --extensions .ts,.tsx,.mjs,.js --presets @babel/preset-typescript,@babel/preset-env ./scripts/generate.ts",
     "version-bump": "lerna version",
-    "deploy": "lerna publish from-package --yes"
+    "deploy": "lerna publish from-package --yes --no-verify-access"
   },
   "devDependencies": {
     "@sewing-kit/cli": "^0.2.0",

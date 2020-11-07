@@ -43,8 +43,6 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - run: npm whoami
-
       - uses: actions/cache@v1
         id: typescript-cache
         name: Restore TypeScript cache
@@ -58,6 +56,6 @@ jobs:
         run: yarn build
 
       - name: Deploy
-        run: node_modules/.bin/lerna publish from-package --yes
+        run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
