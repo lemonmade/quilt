@@ -18,6 +18,7 @@ export function createTestRouter(
 
   return {
     currentUrl,
+    prefix,
     go() {},
     back() {},
     forward() {},

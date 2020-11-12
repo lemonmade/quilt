@@ -80,13 +80,6 @@ const RoutesInternal = memo(function RoutesInternal({
   currentUrl,
   consumedPath: previouslyConsumedPath,
 }: Props) {
-  // useEffect(() => {
-  //   const teardown = routes.filter(
-  //     (route): route is Required<Pick<RouteDefinition, 'renderPrefetch'>> =>
-  //       route.renderPrefetch != null,
-  //   ).map((route) => router[REGISTER]({match: route.}));
-  // }, [routes, currentUrl]);
-
   let matchDetails:
     | (ReturnType<typeof getMatchDetails> & {route: RouteDefinition})
     | undefined;

@@ -17,11 +17,11 @@ jest.mock('../redirect', () => ({
 const {useRedirect} = jest.requireMock<{useRedirect: jest.Mock}>('../redirect');
 
 const mount = createMount<
-  {path?: string},
+  {path?: string; prefix?: string | RegExp},
   {router: ReturnType<typeof createTestRouter>}
 >({
-  context({path}) {
-    return {router: createTestRouter(path)};
+  context({path, prefix}) {
+    return {router: createTestRouter(path, {prefix})};
   },
   // eslint-disable-next-line react/function-component-definition
   render(element, {router}) {
@@ -46,6 +46,24 @@ describe('useRoutes()', () => {
 
   describe('match', () => {
     describe('string', () => {
+      it('matches the root path', () => {
+        function Routes() {
+          return useRoutes([{match: '/', render: () => <RouteComponent />}]);
+        }
+
+        expect(mount(<Routes />, {path: ''})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/a'})).not.toContainReactComponent(
+          RouteComponent,
+        );
+      });
+
       it('matches a route based on an absolute path', () => {
         function Routes() {
           return useRoutes([{match: '/a', render: () => <RouteComponent />}]);
@@ -185,9 +203,67 @@ describe('useRoutes()', () => {
           RouteComponent,
         );
       });
+
+      it('matches with a prefix', () => {
+        const prefix = '/my-prefix';
+
+        function Routes() {
+          return useRoutes([{match: '/', render: () => <RouteComponent />}]);
+        }
+
+        expect(
+          mount(<Routes />, {path: prefix, prefix}),
+        ).toContainReactComponent(RouteComponent);
+
+        expect(
+          mount(<Routes />, {path: `${prefix}/`, prefix}),
+        ).toContainReactComponent(RouteComponent);
+
+        expect(
+          mount(<Routes />, {path: `${prefix}/a`, prefix}),
+        ).not.toContainReactComponent(RouteComponent);
+      });
     });
 
     describe('regex', () => {
+      it('matches the root path', () => {
+        function Routes() {
+          return useRoutes([{match: /^\/$/, render: () => <RouteComponent />}]);
+        }
+
+        expect(mount(<Routes />, {path: ''})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/a'})).not.toContainReactComponent(
+          RouteComponent,
+        );
+      });
+
+      it('matches the root path in a complex regex', () => {
+        function Routes() {
+          return useRoutes([
+            {match: /\/some-route|^\/$/, render: () => <RouteComponent />},
+          ]);
+        }
+
+        expect(mount(<Routes />, {path: ''})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/a'})).not.toContainReactComponent(
+          RouteComponent,
+        );
+      });
+
       it('matches a route based on an regex that matches an absolute path', () => {
         function Routes() {
           return useRoutes([{match: /\/a/, render: () => <RouteComponent />}]);
@@ -319,6 +395,27 @@ describe('useRoutes()', () => {
         expect(mount(<Routes />, {path: '/a/'})).toContainReactComponent(
           RouteComponent,
         );
+      });
+
+      it('matches with a prefix', () => {
+        const prefix = /\/[^/]*/;
+        const prefixMatch = '/my-prefix';
+
+        function Routes() {
+          return useRoutes([{match: /^\/$/, render: () => <RouteComponent />}]);
+        }
+
+        expect(
+          mount(<Routes />, {path: prefixMatch, prefix}),
+        ).toContainReactComponent(RouteComponent);
+
+        expect(
+          mount(<Routes />, {path: `${prefixMatch}/`, prefix}),
+        ).toContainReactComponent(RouteComponent);
+
+        expect(
+          mount(<Routes />, {path: `${prefixMatch}/a`, prefix}),
+        ).not.toContainReactComponent(RouteComponent);
       });
     });
 

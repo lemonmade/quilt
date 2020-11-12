@@ -109,6 +109,10 @@ function removePostfixSlash(path: string) {
   return path[path.length - 1] === '/' ? path.slice(0, -1) : path;
 }
 
+function removePrefixSlash(path: string) {
+  return path[0] === '/' ? path.slice(1) : path;
+}
+
 function normalizeAsAbsolutePath(path: string) {
   return path[0] === '/'
     ? removePostfixSlash(path)
@@ -137,9 +141,15 @@ export function getMatchDetails(
     return {matched};
   } else if (typeof match === 'string') {
     const normalizedMatch = removePostfixSlash(match);
-    const isAbsolute = normalizedMatch[0] === '/';
 
-    if (isAbsolute) {
+    if (normalizedMatch === '/') {
+      return pathDetails.remainderAbsolute === '/'
+        ? {
+            matched: normalizedMatch,
+            consumed: normalizedMatch,
+          }
+        : undefined;
+    } else if (normalizedMatch[0] === '/') {
       if (!pathDetails.remainderAbsolute.startsWith(normalizedMatch)) {
         return undefined;
       }
@@ -189,8 +199,11 @@ export function getMatchDetails(
 
 function splitUrl(url: URL, prefix?: Prefix, consumed = '') {
   const resolvedPrefix = extractPrefix(url, prefix) ?? '';
-  const remainderRelative = removePostfixSlash(
-    url.pathname.replace(postfixSlash(`${resolvedPrefix}${consumed}`), ''),
+  const fullConsumedPath = consumed
+    ? `${resolvedPrefix}${consumed}`
+    : resolvedPrefix;
+  const remainderRelative = removePrefixSlash(
+    removePostfixSlash(url.pathname.replace(fullConsumedPath, '')),
   );
 
   return {
