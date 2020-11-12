@@ -26,8 +26,8 @@
     "@types/fs-extra": "^9.0.3"
   },
   "dependencies": {
-    "@babel/generator": "^7.12.5",
-    "@babel/types": "^7.12.6",
+    "@babel/generator": ">=7.0.0",
+    "@babel/types": ">=7.0.0",
     "@graphql-tools/merge": "^6.2.5",
     "@quilted/useful-types": "^0.1.0",
     "@sewing-kit/graphql": "^0.1.2",
