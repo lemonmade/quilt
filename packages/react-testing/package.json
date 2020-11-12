@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-testing",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "",
   "publishConfig": {
     "access": "public",
