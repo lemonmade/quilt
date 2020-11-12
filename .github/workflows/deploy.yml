@@ -17,6 +17,9 @@ jobs:
         name: Setup node.js and yarn
         with:
           node-version: 12.14.0
+          registry-url: https://registry.npmjs.org/
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
