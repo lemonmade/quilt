@@ -1,4 +1,5 @@
 export {useRoutes} from './routes';
+export {useInitialUrl} from './initial-url';
 export {useCurrentUrl} from './url';
 export {useRouter} from './router';
 export {useNavigationBlock} from './navigation-block';

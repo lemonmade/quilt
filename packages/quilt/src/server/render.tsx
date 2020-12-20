@@ -1,15 +1,22 @@
-import React, {ReactElement} from 'react';
+import React from 'react';
+import type {ReactElement} from 'react';
 
-import {HtmlManager, HtmlContext} from '@quilted/react-html/server';
 import {
-  AsyncAssetContext,
-  AsyncAssetManager,
-} from '@quilted/react-async/server';
-import {extract, Options} from '@quilted/react-server-render/server';
+  extract,
+  Options as ExtractOptions,
+} from '@quilted/react-server-render/server';
+import {HtmlManager} from '@quilted/react-html/server';
+import {AsyncAssetManager} from '@quilted/react-async/server';
+
+import {ServerContext} from './ServerContext';
+
+interface Options extends ExtractOptions {
+  url?: string | URL;
+}
 
 export async function render(
   app: ReactElement<any>,
-  {decorate, ...rest}: Options = {},
+  {decorate, url, ...rest}: Options = {},
 ) {
   const html = new HtmlManager();
   const asyncAssets = new AsyncAssetManager();
@@ -18,11 +25,9 @@ export async function render(
     // eslint-disable-next-line react/function-component-definition
     decorate(app) {
       return (
-        <AsyncAssetContext.Provider value={asyncAssets}>
-          <HtmlContext.Provider value={html}>
-            {decorate?.(app) ?? app}
-          </HtmlContext.Provider>
-        </AsyncAssetContext.Provider>
+        <ServerContext asyncAssets={asyncAssets} html={html} url={url}>
+          {decorate?.(app) ?? app}
+        </ServerContext>
       );
     },
     ...rest,

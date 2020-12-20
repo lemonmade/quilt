@@ -30,27 +30,13 @@ export type {
   MutationOptions,
   IfAllVariablesOptional,
 } from '@quilted/react-graphql';
+// eslint-disable-next-line no-warning-comments
+// TODO: too specific
 export {
   AutoHeading,
   AutoHeadingGroup,
   useAutoHeadingLevel,
 } from '@quilted/react-auto-headings';
-export {
-  Script,
-  Style,
-  Hydrator,
-  useSerialized,
-  useBodyAttributes,
-  useHtmlAttributes,
-  useFavicon,
-  useLink,
-  useLocale,
-  useMeta,
-  useTitle,
-  usePreconnect,
-  useHtmlUpdater,
-  getSerialized,
-} from '@quilted/react-html';
 export {useIdleCallback} from '@quilted/react-idle';
 export {ServerAction, useServerAction} from '@quilted/react-server-render';
 export {
@@ -75,3 +61,5 @@ export {
   createWorkerFactory,
   createPlainWorkerFactory,
 } from '@quilted/react-web-workers';
+
+export {App} from './App';

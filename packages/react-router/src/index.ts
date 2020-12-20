@@ -5,8 +5,10 @@ export {
   Prefetcher,
   NavigationBlock,
 } from './components';
+export {InitialUrlContext} from './context';
 export {
   useRoutes,
+  useInitialUrl,
   useCurrentUrl,
   useRouter,
   useMatch,

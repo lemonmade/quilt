@@ -176,14 +176,16 @@ export function quiltService({devServer}: QuiltServiceOptions = {}) {
 
 export interface QuiltWorkspaceOptions {
   readonly css?: boolean;
+  readonly graphql?: boolean;
   readonly stylelint?: boolean | Parameters<typeof stylelint>[0];
 }
 
 export function quiltWorkspace({
   css = true,
   stylelint: stylelintOptions = css,
+  graphql = true,
 }: QuiltWorkspaceOptions = {}) {
-  return createComposedWorkspacePlugin('Quilt.Workspace', (composer) => {
+  return createComposedWorkspacePlugin('Quilt.Workspace', async (composer) => {
     composer.use(jest(), eslint(), workspaceTypeScript(), workspaceGraphQL());
 
     if (stylelintOptions) {
@@ -192,6 +194,13 @@ export function quiltWorkspace({
           typeof stylelintOptions === 'boolean' ? undefined : stylelintOptions,
         ),
       );
+    }
+
+    if (graphql) {
+      await ignoreMissingImports(async () => {
+        const {graphql} = await import('@quilted/graphql/sewing-kit');
+        composer.use(graphql());
+      });
     }
   });
 }
