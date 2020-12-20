@@ -20,11 +20,17 @@ async function run() {
   const builder = await createBuilder(cwd);
 
   builder.on('schema:build:end', ({schemaTypes}) => {
-    console.log(`${BUILT} ${dim('schema types → ')}${schemaTypes[0].outputPath}`);
+    console.log(
+      `${BUILT} ${dim('schema types → ')}${schemaTypes[0].outputPath}`,
+    );
   });
 
   builder.on('document:build:end', ({documentPath}) => {
-    console.log(`${BUILT} ${documentPath.replace(path.join(process.cwd(), '/'), '')}${dim('.d.ts')}`);
+    console.log(
+      `${BUILT} ${documentPath.replace(path.join(process.cwd(), '/'), '')}${dim(
+        '.d.ts',
+      )}`,
+    );
   });
 
   builder.on('error', (error) => {
