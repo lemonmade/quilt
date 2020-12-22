@@ -42,6 +42,16 @@ const packagesDirectory = path.join(rootDirectory, 'packages');
     },
     main: 'index.js',
     module: 'index.mjs',
+    esnext: 'index.esnext',
+    types: 'index.d.ts',
+    exports: {
+      '.': {
+        import: './index.mjs',
+        require: './index.js',
+        esnext: './index.esnext',
+      },
+      './': './',
+    },
     license: 'MIT',
     sideEffects: false,
     ...(name.includes('react')

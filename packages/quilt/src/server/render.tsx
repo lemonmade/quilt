@@ -1,10 +1,7 @@
 import React from 'react';
 import type {ReactElement} from 'react';
 
-import {
-  extract,
-  ServerRenderManager,
-} from '@quilted/react-server-render/server';
+import {extract} from '@quilted/react-server-render/server';
 import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
 import {HtmlManager} from '@quilted/react-html/server';
 import {HttpManager} from '@quilted/react-http/server';
@@ -26,7 +23,6 @@ export async function render(
   const html = new HtmlManager();
   const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
-  const serverRender = new ServerRenderManager();
 
   const markup = await extract(app, {
     // eslint-disable-next-line react/function-component-definition
@@ -36,7 +32,6 @@ export async function render(
           asyncAssets={asyncAssets}
           http={http}
           html={html}
-          serverRender={serverRender}
           url={url}
         >
           {decorate?.(app) ?? app}

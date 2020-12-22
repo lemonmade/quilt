@@ -17,7 +17,12 @@
       "require": "./index.js",
       "esnext": "./index.esnext"
     },
-    "./": "./"
+    "./": "./",
+    "./server": {
+      "import": "./server.mjs",
+      "require": "./server.js",
+      "esnext": "./server.esnext"
+    }
   },
   "sideEffects": false,
   "peerDependencies": {

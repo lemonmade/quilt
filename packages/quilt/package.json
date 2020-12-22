@@ -23,6 +23,16 @@
       "require": "./server.js",
       "esnext": "./server.esnext"
     },
+    "./html": {
+      "import": "./html.mjs",
+      "require": "./html.js",
+      "esnext": "./html.esnext"
+    },
+    "./http": {
+      "import": "./http.mjs",
+      "require": "./http.js",
+      "esnext": "./http.esnext"
+    },
     "./testing": {
       "import": "./testing.mjs",
       "require": "./testing.js",
