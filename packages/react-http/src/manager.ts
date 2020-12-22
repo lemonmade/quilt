@@ -96,10 +96,8 @@ export class HttpManager {
     }
 
     return {
-      status:
-        this.statusCodes.length > 0
-          ? this.statusCodes.reduce((large, code) => Math.max(large, code), 0)
-          : undefined,
+      statusCode:
+        this.statusCodes.length > 0 ? Math.max(...this.statusCodes) : undefined,
       headers,
       redirectUrl: this.redirectUrl,
     };
