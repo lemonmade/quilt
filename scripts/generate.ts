@@ -56,12 +56,12 @@ const packagesDirectory = path.join(rootDirectory, 'packages');
     path.join(packageDirectory, 'sewing-kit.config.ts'),
     `${`
 import {createPackage} from '@sewing-kit/config';
-import {defaultProjectPlugin} from '../../config/sewing-kit';
+import {quiltPackage} from '../../config/sewing-kit';
 
 export default createPackage((pkg) => {
   pkg.entry({root: './src/index'});
-  pkg.use(defaultProjectPlugin);
-});
+  pkg.use(quiltPackage());
+});    
 `.trim()}\n`,
   );
 

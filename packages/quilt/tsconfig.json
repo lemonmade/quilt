@@ -5,18 +5,48 @@
     "baseUrl": "src",
     "rootDir": "src"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    {"path": "../async"},
-    {"path": "../graphql"},
-    {"path": "../react-async"},
-    {"path": "../react-auto-headings"},
-    {"path": "../react-graphql"},
-    {"path": "../react-html"},
-    {"path": "../react-idle"},
-    {"path": "../react-router"},
-    {"path": "../react-server-render"},
-    {"path": "../react-testing"},
-    {"path": "../react-web-workers"}
+    {
+      "path": "../async"
+    },
+    {
+      "path": "../graphql"
+    },
+    {
+      "path": "../polyfills"
+    },
+    {
+      "path": "../react-async"
+    },
+    {
+      "path": "../react-auto-headings"
+    },
+    {
+      "path": "../react-graphql"
+    },
+    {
+      "path": "../react-html"
+    },
+    {
+      "path": "../react-idle"
+    },
+    {
+      "path": "../react-http"
+    },
+    {
+      "path": "../react-router"
+    },
+    {
+      "path": "../react-server-render"
+    },
+    {
+      "path": "../react-testing"
+    },
+    {
+      "path": "../react-web-workers"
+    }
   ]
 }

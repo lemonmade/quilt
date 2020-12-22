@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-warning-comments
+// TODO: rename to just be @quilted/react-workers, can be isomorphic
+
 export {
   expose,
   release,

@@ -6,26 +6,36 @@ import {
   Options as ExtractOptions,
 } from '@quilted/react-server-render/server';
 import {HtmlManager} from '@quilted/react-html/server';
+import {HttpManager} from '@quilted/react-http/server';
 import {AsyncAssetManager} from '@quilted/react-async/server';
 
 import {ServerContext} from './ServerContext';
 
 interface Options extends ExtractOptions {
   url?: string | URL;
+  headers?: NonNullable<
+    ConstructorParameters<typeof HttpManager>[0]
+  >['headers'];
 }
 
 export async function render(
   app: ReactElement<any>,
-  {decorate, url, ...rest}: Options = {},
+  {decorate, url, headers, ...rest}: Options = {},
 ) {
   const html = new HtmlManager();
   const asyncAssets = new AsyncAssetManager();
+  const http = new HttpManager({headers});
 
   const markup = await extract(app, {
     // eslint-disable-next-line react/function-component-definition
     decorate(app) {
       return (
-        <ServerContext asyncAssets={asyncAssets} html={html} url={url}>
+        <ServerContext
+          asyncAssets={asyncAssets}
+          http={http}
+          html={html}
+          url={url}
+        >
           {decorate?.(app) ?? app}
         </ServerContext>
       );
@@ -33,5 +43,5 @@ export async function render(
     ...rest,
   });
 
-  return {markup, html, asyncAssets};
+  return {markup, http, html, asyncAssets};
 }
