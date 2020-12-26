@@ -3,6 +3,7 @@ import {
   WebApp,
   WaterfallHook,
   addHooks,
+  Runtime,
 } from '@sewing-kit/plugins';
 import type {BuildWebAppTargetOptions} from '@sewing-kit/hooks';
 import {updateSewingKitBabelPreset} from '@sewing-kit/plugin-javascript';
@@ -15,7 +16,7 @@ interface CustomHooks {
 }
 
 interface CustomOptions {
-  readonly quiltBrowserGroup?: string;
+  readonly browsers?: string;
 }
 
 declare module '@sewing-kit/hooks' {
@@ -33,8 +34,8 @@ const LATEST_EVERGREEN = [
   'last 1 opera versions',
   'last 1 operamobile versions',
   'last 1 edge versions',
-  'safari >= 11',
-  'ios >= 11',
+  'safari >= 13',
+  'ios >= 13',
 ];
 
 const DEFAULT_BROWSER_GROUPS = {
@@ -67,15 +68,15 @@ export function webAppMultiBuilds({
     }
   }
 
-  return createProjectPlugin<WebApp>(PLUGIN, ({project, tasks}) => {
+  return createProjectPlugin<WebApp>(PLUGIN, ({project, workspace, tasks}) => {
     tasks.build.hook(({hooks}) => {
       hooks.targets.hook((targets) =>
         targets.map((target) =>
-          target.default
+          target.default && !target.runtime.includes(Runtime.Node)
             ? target.multiply((currentTarget) =>
-                Object.keys(browserGroups).map((browsers) => ({
+                ['default', ...browserGroups].map((browsers) => ({
                   ...currentTarget,
-                  quiltBrowserGroup: browsers as BuildWebAppTargetOptions['quiltBrowserGroup'],
+                  browsers: browsers as BuildWebAppTargetOptions['browsers'],
                 })),
               )
             : target,
@@ -90,22 +91,62 @@ export function webAppMultiBuilds({
 
       hooks.target.hook(({target, hooks}) => {
         hooks.configure.hook((configuration) => {
-          const {quiltBrowserGroup} = target.options;
+          const {browsers} = target.options;
 
-          if (quiltBrowserGroup == null) return;
+          configuration.webpackOutputDirectory?.hook(() => {
+            const topLevelPath = target.options.quiltAutoServer
+              ? 'server'
+              : 'assets';
+
+            return workspace.fs.buildPath(
+              workspace.webApps.length > 1 ? `apps/${project.name}` : 'app',
+              topLevelPath,
+            );
+          });
+
+          configuration.webpackOutputFilename?.hook((filename) => {
+            const variantPart = Object.keys(target.options)
+              .sort()
+              .map((key) => {
+                const value = (target.options as any)[key];
+
+                switch (key as keyof typeof target.options) {
+                  case 'quiltAutoServer':
+                    return undefined;
+                  case 'browsers':
+                    return value;
+                  default: {
+                    if (typeof value === 'boolean') {
+                      return value ? key : `no-${key}`;
+                    }
+
+                    return value;
+                  }
+                }
+              })
+              .filter(Boolean)
+              .join('.');
+
+            return filename.replace(
+              /\.js$/,
+              `${variantPart ? `.${variantPart}` : ''}.js`,
+            );
+          });
+
+          if (browsers == null) return;
 
           configuration.quiltBrowserslist?.hook(async () => {
-            if (browserGroupMap.has(quiltBrowserGroup)) {
-              return browserGroupMap.get(quiltBrowserGroup);
+            if (browserGroupMap.has(browsers)) {
+              return browserGroupMap.get(browsers);
             }
 
             const {default: browserslist} = await import('browserslist');
             const browserslistResult = browserslist(undefined, {
               path: project.root,
-              env: quiltBrowserGroup,
+              env: browsers,
             });
 
-            browserGroupMap.set(quiltBrowserGroup, browserslistResult);
+            browserGroupMap.set(browsers, browserslistResult);
 
             return browserslistResult;
           });
