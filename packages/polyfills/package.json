@@ -1,6 +1,6 @@
 {
   "name": "@quilted/polyfills",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -23,8 +23,8 @@
     "@types/caniuse-api": "^3.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.0.0",
-    "regenerator-runtime": "^0.13.0",
     "node-fetch": "^2.0.0",
+    "regenerator-runtime": "^0.13.0",
     "whatwg-fetch": "^3.5.0"
   }
 }
