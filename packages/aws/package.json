@@ -1,6 +1,6 @@
 {
-  "name": "@quilted/polyfills",
-  "version": "0.0.2",
+  "name": "@quilted/aws",
+  "version": "0.0.0",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -20,11 +20,8 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@types/caniuse-api": "^3.0.0",
-    "caniuse-api": "^3.0.0",
-    "core-js": "^3.0.0",
-    "regenerator-runtime": "^0.13.0",
-    "node-fetch": "^2.0.0",
-    "whatwg-fetch": "^3.5.0"
+    "@quilted/asset-upload-s3": "^0.1.5",
+    "@quilted/sewing-kit-plugins": "^0.1.30",
+    "@sewing-kit/plugins": "^0.1.6"
   }
 }

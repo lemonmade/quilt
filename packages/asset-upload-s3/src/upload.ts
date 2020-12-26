@@ -20,7 +20,7 @@ interface Options {
   ignore?: BaseOptions['ignore'];
 }
 
-export async function upload({
+export async function uploadToS3({
   buildDirectory,
   prefix,
   region,

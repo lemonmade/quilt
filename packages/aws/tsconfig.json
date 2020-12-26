@@ -1,0 +1,24 @@
+{
+  "extends": "../../config/typescript/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "rootDir": "src",
+    "outDir": "build/ts",
+    "paths": {}
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/tests/**/*.ts",
+    "**/tests/**/*.tsx"
+  ],
+  "references": [
+    {
+      "path": "../asset-upload-s3"
+    },
+    {
+      "path": "../sewing-kit-plugins"
+    }
+  ]
+}

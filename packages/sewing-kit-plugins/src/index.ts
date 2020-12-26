@@ -2,9 +2,9 @@ import {
   Package,
   Service,
   WebApp,
-  createProjectPlugin,
   createComposedWorkspacePlugin,
   createComposedProjectPlugin,
+  Task,
 } from '@sewing-kit/plugins';
 
 import {flexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
@@ -21,6 +21,23 @@ import {jest} from '@sewing-kit/plugin-jest';
 import {graphql, workspaceGraphQL} from '@sewing-kit/plugin-graphql';
 import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
+import {cdn} from './cdn';
+import {polyfills} from './polyfills';
+import {preactAliases} from './preact-aliases';
+import {webAppAutoServer} from './web-app-auto-server';
+import {webAppBrowserEntry} from './web-app-browser-entry';
+import {webAppMagicModules} from './web-app-magic-modules';
+import {webAppMultiBuilds} from './web-app-multi-build';
+import {webAppConvenienceAliases} from './web-app-convenience-aliases';
+
+// eslint-disable-next-line prettier/prettier
+export type {} from './web-app-auto-server';
+
+export {
+  MAGIC_MODULE_APP_COMPONENT,
+  MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
+} from './constants';
+
 export interface QuiltPackageOptions {
   readonly react?: boolean | 'preact';
   readonly css?: boolean;
@@ -36,25 +53,33 @@ export function quiltPackage({
     javascript(),
     typescript(),
     useReact && react({preact}),
-    preact && quiltPreactAliases(),
+    preact && preactAliases(),
     useCss && css(),
   ]);
 }
 
 export interface QuiltWebAppOptions {
   readonly preact?: boolean;
+  readonly autoServer?: boolean;
+  readonly cdn?: string;
   readonly assetServer?: NonNullable<
     Parameters<typeof webpackDevWebApp>[0]
   >['assetServer'];
   readonly graphql?: {
     readonly export?: ExportStyle;
   };
+  readonly browserGroups?: NonNullable<
+    Parameters<typeof webAppMultiBuilds>[0]
+  >['browserGroups'];
 }
 
 export function quiltWebApp({
   assetServer,
   preact,
+  autoServer = false,
+  cdn: cdnUrl,
   graphql: {export: exportStyle = 'simple'} = {},
+  browserGroups,
 }: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
@@ -64,13 +89,19 @@ export function quiltWebApp({
         typescript(),
         css(),
         webpackHooks(),
+        webAppMultiBuilds({babel: true, postcss: true, browserGroups}),
         webpackDevWebApp({assetServer}),
         flexibleOutputs(),
         webpackBuild(),
+        polyfills(),
         react({preact}),
         graphql({export: exportStyle}),
         webAppConvenienceAliases(),
-        preact && quiltPreactAliases(),
+        webAppMagicModules(),
+        webAppBrowserEntry({hydrate: ({task}) => task !== Task.Dev}),
+        preact && preactAliases(),
+        autoServer && webAppAutoServer(),
+        cdnUrl ? cdn({url: cdnUrl}) : false,
       );
 
       await Promise.all([
@@ -89,65 +120,15 @@ export function quiltWebApp({
   );
 }
 
-function quiltPreactAliases() {
-  return createProjectPlugin('Quilt.PreactAliases', ({tasks: {test}}) => {
-    test.hook(({hooks}) => {
-      hooks.configure.hook((configure) => {
-        configure.jestModuleMapper?.hook((moduleMapper) => ({
-          ...moduleMapper,
-          '^@quilted/react-testing$': '@quilted/react-testing/preact',
-          '^@quilted/react-testing/dom$': '@quilted/react-testing/preact',
-        }));
-      });
-    });
-  });
-}
-
-function webAppConvenienceAliases() {
-  return createProjectPlugin<WebApp>(
-    'Quilt.WebAppConvenienceAliases',
-    ({project, tasks: {dev, build, test}}) => {
-      dev.hook(({hooks}) => {
-        hooks.configure.hook((configure) => {
-          configure.webpackAliases?.hook(addWebpackAliases);
-        });
-      });
-
-      build.hook(({hooks}) => {
-        hooks.target.hook(({hooks}) => {
-          hooks.configure.hook((configuration) => {
-            configuration.webpackAliases?.hook(addWebpackAliases);
-          });
-        });
-      });
-
-      test.hook(({hooks}) => {
-        hooks.configure.hook((configure) => {
-          configure.jestModuleMapper?.hook((moduleMapper) => ({
-            ...moduleMapper,
-            '^components': project.fs.resolvePath('components'),
-            '^utilities/(.*)': project.fs.resolvePath('utilities/$1'),
-            '^tests/(.*)': project.fs.resolvePath('tests/$1'),
-          }));
-        });
-      });
-
-      function addWebpackAliases(aliases: {[key: string]: string}) {
-        return {
-          ...aliases,
-          components$: project.fs.resolvePath('components'),
-          utilities: project.fs.resolvePath('utilities'),
-        };
-      }
-    },
-  );
-}
-
 export interface QuiltServiceOptions {
+  readonly cdn?: string;
   readonly devServer?: NonNullable<Parameters<typeof webpackDevService>[0]>;
 }
 
-export function quiltService({devServer}: QuiltServiceOptions = {}) {
+export function quiltService({
+  devServer,
+  cdn: cdnUrl,
+}: QuiltServiceOptions = {}) {
   return createComposedProjectPlugin<Service>(
     'Quilt.Service',
     async (composer) => {
@@ -160,6 +141,8 @@ export function quiltService({devServer}: QuiltServiceOptions = {}) {
         react(),
         webpackBuild(),
         webpackDevService(devServer),
+        polyfills(),
+        cdnUrl ? cdn({url: cdnUrl}) : false,
       );
 
       await Promise.all([

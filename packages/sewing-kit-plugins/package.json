@@ -19,7 +19,11 @@
     "./": "./"
   },
   "sideEffects": false,
+  "devDependencies": {
+    "@types/webpack-virtual-modules": "^0.1.0"
+  },
   "dependencies": {
+    "@quilted/polyfills": "^0.0.2",
     "@sewing-kit/plugin-css": "^0.1.21",
     "@sewing-kit/plugin-eslint": "^0.1.6",
     "@sewing-kit/plugin-graphql": "^0.1.24",
@@ -32,6 +36,8 @@
     "@sewing-kit/plugin-typescript": "^0.1.21",
     "@sewing-kit/plugin-web-app-base": "^0.1.19",
     "@sewing-kit/plugin-webpack": "^0.1.9",
-    "@sewing-kit/plugins": "^0.1.6"
+    "@sewing-kit/plugins": "^0.1.6",
+    "browserslist": "^4.16.0",
+    "webpack-virtual-modules": "^0.4.0"
   }
 }

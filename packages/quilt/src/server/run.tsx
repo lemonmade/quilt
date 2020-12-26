@@ -16,7 +16,7 @@ interface Options extends ExtractOptions {
   >['headers'];
 }
 
-export async function render(
+export async function runApp(
   app: ReactElement<any>,
   {decorate, url, headers, ...rest}: Options = {},
 ) {

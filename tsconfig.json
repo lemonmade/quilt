@@ -12,6 +12,9 @@
       "path": "./packages/async"
     },
     {
+      "path": "./packages/aws"
+    },
+    {
       "path": "./packages/create-quilt-project"
     },
     {
@@ -39,10 +42,10 @@
       "path": "./packages/react-html"
     },
     {
-      "path": "./packages/react-idle"
+      "path": "./packages/react-http"
     },
     {
-      "path": "./packages/react-http"
+      "path": "./packages/react-idle"
     },
     {
       "path": "./packages/react-router"

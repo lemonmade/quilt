@@ -1,1 +1,1 @@
-export {upload} from './upload';
+export {uploadToS3} from './upload';

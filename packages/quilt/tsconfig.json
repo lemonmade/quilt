@@ -31,10 +31,10 @@
       "path": "../react-html"
     },
     {
-      "path": "../react-idle"
+      "path": "../react-http"
     },
     {
-      "path": "../react-http"
+      "path": "../react-idle"
     },
     {
       "path": "../react-router"

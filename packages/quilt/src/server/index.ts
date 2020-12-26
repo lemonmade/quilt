@@ -1,5 +1,6 @@
 export {
   stream,
+  render,
   Html,
   Serialize,
   HtmlManager,
@@ -20,5 +21,5 @@ export {
 } from '@quilted/react-async/server';
 export type {ServerRenderPass} from '@quilted/react-server-render/server';
 
-export {render} from './render';
+export {runApp} from './run';
 export {ServerContext} from './ServerContext';

@@ -1,0 +1,1 @@
+export {mappedPolyfillsForEnv} from './aliases';
