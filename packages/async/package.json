@@ -16,7 +16,12 @@
       "require": "./index.js",
       "esnext": "./index.esnext"
     },
-    "./": "./"
+    "./": "./",
+    "./assets": {
+      "import": "./assets.mjs",
+      "require": "./assets.js",
+      "esnext": "./assets.esnext"
+    }
   },
   "sideEffects": false,
   "optionalDependencies": {
