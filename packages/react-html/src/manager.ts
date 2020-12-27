@@ -117,7 +117,11 @@ export class HtmlManager {
   }
 
   setSerialization(id: string, data: unknown) {
-    this.serializations.set(id, data);
+    if (data === undefined) {
+      this.serializations.delete(id);
+    } else {
+      this.serializations.set(id, data);
+    }
   }
 
   getSerialization<T>(id: string): T | undefined {

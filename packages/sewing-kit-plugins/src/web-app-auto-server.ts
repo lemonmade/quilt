@@ -176,8 +176,6 @@ export function webAppAutoServer() {
                   
                     const {headers, statusCode = 200} = http.state;
                   
-                    console.log(event);
-                  
                     const [styles, scripts] = await Promise.all([
                       assets.styles(),
                       assets.scripts(),

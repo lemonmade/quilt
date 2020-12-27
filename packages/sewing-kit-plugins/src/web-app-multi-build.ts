@@ -104,34 +104,41 @@ export function webAppMultiBuilds({
             );
           });
 
-          configuration.webpackOutputFilename?.hook((filename) => {
-            const variantPart = Object.keys(target.options)
-              .sort()
-              .map((key) => {
-                const value = (target.options as any)[key];
+          const variantPart = Object.keys(target.options)
+            .sort()
+            .map((key) => {
+              const value = (target.options as any)[key];
 
-                switch (key as keyof typeof target.options) {
-                  case 'quiltAutoServer':
-                    return undefined;
-                  case 'browsers':
-                    return value;
-                  default: {
-                    if (typeof value === 'boolean') {
-                      return value ? key : `no-${key}`;
-                    }
-
-                    return value;
+              switch (key as keyof typeof target.options) {
+                case 'quiltAutoServer':
+                  return undefined;
+                case 'browsers':
+                  return value;
+                default: {
+                  if (typeof value === 'boolean') {
+                    return value ? key : `no-${key}`;
                   }
-                }
-              })
-              .filter(Boolean)
-              .join('.');
 
+                  return value;
+                }
+              }
+            })
+            .filter(Boolean)
+            .join('.');
+
+          const addVariantPartToExtension = (filename: string) => {
             return filename.replace(
-              /\.js$/,
-              `${variantPart ? `.${variantPart}` : ''}.js`,
+              /\.\w+$/,
+              (extension) =>
+                `${variantPart ? `.${variantPart}` : ''}${extension}`,
             );
-          });
+          };
+
+          configuration.webpackOutputFilename?.hook(addVariantPartToExtension);
+          configuration.webpackOutputChunkFilename?.hook(
+            addVariantPartToExtension,
+          );
+          configuration.cssWebpackFileName?.hook(addVariantPartToExtension);
 
           if (browsers == null) return;
 
