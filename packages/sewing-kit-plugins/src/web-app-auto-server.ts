@@ -1,4 +1,3 @@
-import {extname} from 'path';
 import {
   createProjectPlugin,
   WebApp,
@@ -8,12 +7,13 @@ import {
   WaterfallHook,
   addHooks,
 } from '@sewing-kit/plugins';
-import type {compilation} from 'webpack';
+import type {Manifest} from '@quilted/async/server';
 
 import {
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
 } from './constants';
+import type {PolyfillFeature} from './types';
 
 interface TargetOptions {
   readonly quiltAutoServer?: true;
@@ -31,10 +31,20 @@ declare module '@sewing-kit/hooks' {
   interface DevWebAppConfigurationCustomHooks extends CustomHooks {}
 }
 
-export function webAppAutoServer() {
+interface Options {
+  readonly port?: number;
+  readonly host?: string;
+  readonly features?: PolyfillFeature[];
+}
+
+export function webAppAutoServer({
+  host: defaultHost,
+  port: defaultPort,
+  features,
+}: Options = {}) {
   return createProjectPlugin<WebApp>(
     'Quilt.WebAppAutoServer',
-    ({project, tasks, api}) => {
+    ({project, tasks, api, workspace}) => {
       const addCustomHooks = addHooks<CustomHooks>(() => ({
         quiltAutoServerContent: new WaterfallHook(),
         quiltAutoServerPort: new WaterfallHook(),
@@ -43,6 +53,11 @@ export function webAppAutoServer() {
 
       tasks.dev.hook(({hooks}) => {
         hooks.configureHooks.hook(addCustomHooks);
+
+        hooks.configure.hook(({quiltAutoServerHost, quiltAutoServerPort}) => {
+          if (defaultHost) quiltAutoServerHost!.hook(() => defaultHost);
+          if (defaultPort) quiltAutoServerPort!.hook(() => defaultPort);
+        });
 
         hooks.steps.hook((steps, configuration) => [
           ...steps,
@@ -116,10 +131,18 @@ export function webAppAutoServer() {
           }),
         ]);
 
-        hooks.target.hook(({target, hooks, context}) => {
+        hooks.target.hook(({target, hooks}) => {
           if (!target.options.quiltAutoServer) return;
 
           hooks.configure.hook((configuration) => {
+            if (defaultHost) {
+              configuration.quiltAutoServerHost!.hook(() => defaultHost);
+            }
+
+            if (defaultPort) {
+              configuration.quiltAutoServerPort!.hook(() => defaultPort);
+            }
+
             const entry = api.tmpPath(`quilt/${project.name}-auto-server.js`);
             const assetsPath = api.tmpPath(
               `quilt/${project.name}-auto-server-assets.js`,
@@ -127,7 +150,16 @@ export function webAppAutoServer() {
 
             configuration.webpackOutputFilename?.hook(() => 'index.js');
 
-            configuration.webpackEntries?.hook(() => [entry]);
+            configuration.webpackEntries?.hook(() =>
+              features
+                ? [
+                    ...features.map(
+                      (feature) => `@quilted/polyfills/${feature}`,
+                    ),
+                    entry,
+                  ]
+                : [entry],
+            );
 
             configuration.webpackAliases?.hook((aliases) => ({
               ...aliases,
@@ -139,8 +171,17 @@ export function webAppAutoServer() {
                 'webpack-virtual-modules'
               );
 
-              const [stats] = [...context.project.webpackStats!.values()];
-              const entrypoints = entrypointFromCompilation(stats.compilation);
+              const manifestFiles = await project.fs.glob(
+                workspace.fs.buildPath(
+                  workspace.webApps.length > 1 ? `apps/${project.name}` : 'app',
+                  '**/*.manifest.json',
+                ),
+              );
+              const manifests: Manifest<any>[] = await Promise.all(
+                manifestFiles.map(async (file) =>
+                  JSON.parse(await workspace.fs.read(file)),
+                ),
+              );
 
               let serverEntrySource = await configuration.quiltAutoServerContent!.run(
                 undefined,
@@ -175,10 +216,16 @@ export function webAppAutoServer() {
                     });
                   
                     const {headers, statusCode = 200} = http.state;
+                    const usedAssets = asyncAssets.used({timing: 'immediate'});
+
+                    const assetOptions = {userAgent: request.getHeader('User-Agent')};
                   
-                    const [styles, scripts] = await Promise.all([
-                      assets.styles(),
-                      assets.scripts(),
+                    const [styles, scripts, preload] = await Promise.all([
+                      assets.styles({async: usedAssets, options: assetOptions}),
+                      assets.scripts({async: usedAssets, options: assetOptions}),
+                      assets.asyncAssets(asyncAssets.used({timing: 'soon'}), {
+                        options: assetOptions,
+                      }),
                     ]);
   
                     response.writeHead(
@@ -191,7 +238,7 @@ export function webAppAutoServer() {
   
                     response.write(
                       render(
-                        <Html manager={html} styles={styles} scripts={scripts} preloadAssets={[]}>
+                        <Html manager={html} styles={styles} scripts={scripts} preloadAssets={preload}>
                           {markup}
                         </Html>,
                       ),
@@ -206,15 +253,27 @@ export function webAppAutoServer() {
                 ...plugins,
                 new WebpackVirtualModules({
                   [assetsPath]: `
-                    const entrypoints = ${JSON.stringify(entrypoints)};
-                    const assets = {
-                      styles() {
-                        return Promise.resolve(entrypoints.main.css);
-                      },
-                      scripts() {
-                        return Promise.resolve(entrypoints.main.js);
-                      },
-                    };
+                    import {createAssetLoader} from '@quilted/async/assets';
+
+                    const manifests = ${JSON.stringify(manifests)};
+
+                    // TODO: this will not scale too well once we introduce locales, too!
+                    const assets = createAssetLoader({
+                      getManifest: (options) => Promise.resolve(
+                        manifests.find((manifest) => {
+                          return manifest.match.every((aMatch) => {
+                            switch (aMatch.type) {
+                              case 'regex': {
+                                return new RegExp(aMatch.source).test(options[aMatch.key]);
+                              }
+                              default: {
+                                throw new Error('Can’t handle match: ', aMatch);
+                              }
+                            }
+                          });
+                        }) || manifests[0]
+                      ),
+                    });
   
                     export default assets;
                   `,
@@ -227,114 +286,4 @@ export function webAppAutoServer() {
       });
     },
   );
-}
-
-function entrypointFromCompilation(compilation: compilation.Compilation) {
-  return [...compilation.entrypoints.keys()].reduce<{
-    [key: string]: Entrypoint;
-  }>(
-    (entries, name) => ({
-      ...entries,
-      [name]: getChunkDependencies(compilation, name),
-    }),
-    {},
-  );
-}
-
-interface Chunk {
-  path: string;
-  integrity?: string;
-}
-
-interface Entrypoint {
-  js: Chunk[];
-  css: Chunk[];
-}
-
-interface AsyncManifestEntry {
-  path: string;
-  integrity?: string;
-}
-
-interface AsyncManifest {
-  [key: string]: AsyncManifestEntry[];
-}
-
-interface AssetVariant {
-  [key: string]: any;
-}
-
-export interface AssetManifest {
-  id: string;
-  variant: AssetVariant;
-  version: string;
-  entrypoints: {[key: string]: Entrypoint};
-  asyncAssets: AsyncManifest;
-}
-
-// Supported algorithms listed in the spec: https://w3c.github.io/webappsec-subresource-integrity/#hash-functions
-export const SRI_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
-
-function calculateBase64IntegrityFromFilename(
-  path: string,
-  hashFunction: string,
-  hashDigest: string,
-): string | false {
-  if (!isHashAlgorithmSupportedByBrowsers(hashFunction)) {
-    return false;
-  }
-  if (hashDigest && hashDigest !== 'hex') {
-    return false;
-  }
-
-  const chunkInfo =
-    // Anything ending in a hyphen + hex string (e.g., `foo-00000000.js`).
-    path.match(/.+?-(?:([a-f0-9]+))?\.[^.]+$/) ||
-    // Unnamed dynamic imports like `00000000.js`.
-    path.match(/^([a-f0-9]+)\.[^.]+$/);
-
-  if (!chunkInfo || !chunkInfo[1]) {
-    return false;
-  }
-
-  const hexHash = chunkInfo[1];
-  const base64Hash = Buffer.from(hexHash, 'hex').toString('base64');
-  return `${hashFunction}-${base64Hash}`;
-}
-
-function isHashAlgorithmSupportedByBrowsers(hashFunction: string) {
-  return SRI_HASH_ALGORITHMS.includes(hashFunction);
-}
-
-function getChunkDependencies(
-  {entrypoints, outputOptions}: compilation.Compilation,
-  entryName: string,
-): Entrypoint {
-  const {publicPath = '', hashFunction, hashDigest} = outputOptions;
-  const dependencyChunks: string[] = entrypoints.get(entryName).chunks;
-  const allChunkFiles = dependencyChunks.reduce(
-    (allFiles: string[], depChunk: any) => [...allFiles, ...depChunk.files],
-    [],
-  );
-
-  const dependencies: Entrypoint = {css: [], js: []};
-  allChunkFiles.forEach((path) => {
-    const extension = extname(path).replace('.', '') as keyof Entrypoint;
-    if (!(extension in dependencies)) {
-      return;
-    }
-
-    const integrity = calculateBase64IntegrityFromFilename(
-      path,
-      hashFunction,
-      hashDigest,
-    );
-
-    dependencies[extension].push({
-      path: `${publicPath}${path}`,
-      ...(integrity ? {integrity} : {}),
-    });
-  });
-
-  return dependencies;
 }

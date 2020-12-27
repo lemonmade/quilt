@@ -29,6 +29,7 @@ import {webAppBrowserEntry} from './web-app-browser-entry';
 import {webAppMagicModules} from './web-app-magic-modules';
 import {webAppMultiBuilds} from './web-app-multi-build';
 import {webAppConvenienceAliases} from './web-app-convenience-aliases';
+import type {PolyfillFeature} from './types';
 
 // eslint-disable-next-line prettier/prettier
 export type {} from './web-app-auto-server';
@@ -60,7 +61,9 @@ export function quiltPackage({
 
 export interface QuiltWebAppOptions {
   readonly preact?: boolean;
-  readonly autoServer?: boolean;
+  readonly autoServer?:
+    | boolean
+    | NonNullable<Parameters<typeof webAppAutoServer>[0]>;
   readonly cdn?: string;
   readonly assetServer?: NonNullable<
     Parameters<typeof webpackDevWebApp>[0]
@@ -71,6 +74,7 @@ export interface QuiltWebAppOptions {
   readonly browserGroups?: NonNullable<
     Parameters<typeof webAppMultiBuilds>[0]
   >['browserGroups'];
+  readonly features?: PolyfillFeature[];
 }
 
 export function quiltWebApp({
@@ -80,6 +84,7 @@ export function quiltWebApp({
   cdn: cdnUrl,
   graphql: {export: exportStyle = 'simple'} = {},
   browserGroups,
+  features,
 }: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
@@ -93,14 +98,19 @@ export function quiltWebApp({
         webpackDevWebApp({assetServer}),
         flexibleOutputs(),
         webpackBuild(),
-        polyfills(),
+        polyfills({features}),
         react({preact}),
         graphql({export: exportStyle}),
         webAppConvenienceAliases(),
         webAppMagicModules(),
         webAppBrowserEntry({hydrate: ({task}) => task !== Task.Dev}),
         preact && preactAliases(),
-        autoServer && webAppAutoServer(),
+        autoServer &&
+          webAppAutoServer(
+            typeof autoServer === 'object'
+              ? {...autoServer, features}
+              : {features},
+          ),
         cdnUrl ? cdn({url: cdnUrl}) : false,
       );
 

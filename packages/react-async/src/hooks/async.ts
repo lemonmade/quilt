@@ -3,7 +3,7 @@ import type {Resolver} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
 import {useSubscription, Subscription} from 'use-subscription';
 
-import {AsyncAssetContext, SERVER_ACTION_KIND} from '../context';
+import {AsyncAssetContext} from '../context';
 import type {AssetTiming} from '../types';
 
 interface Options {
@@ -57,5 +57,5 @@ export function useAsyncAsset(
     if (async && id) {
       async.markAsUsed(id, {scripts, styles});
     }
-  }, async?.[SERVER_ACTION_KIND]);
+  }, async?.serverAction);
 }

@@ -97,7 +97,12 @@ export function Html({
   });
 
   const preloadAssetsMarkup = preloadAssets?.map((asset) => (
-    <link key={asset.path} rel="prefetch" href={asset.path} />
+    <link
+      key={asset.path}
+      rel="prefetch"
+      href={asset.path}
+      as={asset.path.endsWith('.css') ? 'style' : 'script'}
+    />
   ));
 
   const htmlAttributes = extracted?.htmlAttributes ?? {};

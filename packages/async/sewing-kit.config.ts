@@ -9,5 +9,9 @@ export default createPackage((pkg) => {
     root: './src/sewing-kit',
     runtime: Runtime.Node,
   });
+  pkg.entry({
+    name: 'assets',
+    root: './src/assets',
+  });
   pkg.use(quiltPackage());
 });

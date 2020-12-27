@@ -38,6 +38,8 @@
     "@sewing-kit/plugin-webpack": "^0.1.9",
     "@sewing-kit/plugins": "^0.1.6",
     "browserslist": "^4.16.0",
+    "browserslist-useragent-regexp": "^2.0.0",
+    "fs-extra": "^9.0.0",
     "webpack-virtual-modules": "^0.4.0"
   }
 }

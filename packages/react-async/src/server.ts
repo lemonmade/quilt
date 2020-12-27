@@ -1,6 +1,3 @@
-export {
-  AsyncAssetContext,
-  AsyncAssetManager,
-  SERVER_ACTION_ID,
-} from './context';
-export type {AssetSelector} from './context';
+export {AsyncAssetContext} from './context';
+export {AsyncAssetManager, SERVER_ACTION_ID} from './assets';
+export type {AssetSelector} from './assets';

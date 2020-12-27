@@ -11,6 +11,8 @@ import {updatePostcssEnvPreset} from '@sewing-kit/plugin-css';
 
 import {} from '@sewing-kit/plugin-webpack';
 
+import {idFromTargetOptions} from './shared';
+
 interface CustomHooks {
   readonly quiltBrowserslist: WaterfallHook<string | string[] | undefined>;
 }
@@ -104,43 +106,51 @@ export function webAppMultiBuilds({
             );
           });
 
-          const variantPart = Object.keys(target.options)
-            .sort()
-            .map((key) => {
-              const value = (target.options as any)[key];
+          const id = idFromTargetOptions(target.options);
 
-              switch (key as keyof typeof target.options) {
-                case 'quiltAutoServer':
-                  return undefined;
-                case 'browsers':
-                  return value;
-                default: {
-                  if (typeof value === 'boolean') {
-                    return value ? key : `no-${key}`;
-                  }
-
-                  return value;
-                }
-              }
-            })
-            .filter(Boolean)
-            .join('.');
-
-          const addVariantPartToExtension = (filename: string) => {
+          const addTargetIdToExtension = (filename: string) => {
             return filename.replace(
               /\.\w+$/,
-              (extension) =>
-                `${variantPart ? `.${variantPart}` : ''}${extension}`,
+              (extension) => `${id ? `.${id}` : ''}${extension}`,
             );
           };
 
-          configuration.webpackOutputFilename?.hook(addVariantPartToExtension);
+          configuration.webpackOutputFilename?.hook(addTargetIdToExtension);
           configuration.webpackOutputChunkFilename?.hook(
-            addVariantPartToExtension,
+            addTargetIdToExtension,
           );
-          configuration.cssWebpackFileName?.hook(addVariantPartToExtension);
+          configuration.cssWebpackFileName?.hook(addTargetIdToExtension);
 
           if (browsers == null) return;
+
+          configuration.webpackPlugins?.hook(async (plugins) => {
+            const [
+              {ManifestPlugin},
+              {getUserAgentRegExp},
+              browserslist,
+            ] = await Promise.all([
+              import('./webpack/ManifestPlugin'),
+              import('browserslist-useragent-regexp'),
+              configuration.quiltBrowserslist!.run([]),
+            ]);
+
+            return [
+              ...plugins,
+              new ManifestPlugin({
+                id: idFromTargetOptions(target.options),
+                match: [
+                  {
+                    type: 'regex',
+                    key: 'userAgent',
+                    source: getUserAgentRegExp({
+                      browsers: browserslist,
+                      allowHigherVersions: true,
+                    }).source,
+                  },
+                ],
+              }),
+            ];
+          });
 
           configuration.quiltBrowserslist?.hook(async () => {
             if (browserGroupMap.has(browsers)) {

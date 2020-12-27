@@ -31,13 +31,20 @@ export function aws() {
                 });
               
                 const {headers, statusCode = 200} = http.state;
+
+                const usedAssets = asyncAssets.used({timing: 'immediate'});
+
+                const assetOptions = {userAgent: event.headers['user-agent']};
+              
+                const [styles, scripts, preload] = await Promise.all([
+                  assets.styles({async: usedAssets, options: assetOptions}),
+                  assets.scripts({async: usedAssets, options: assetOptions}),
+                  assets.asyncAssets(asyncAssets.used({timing: 'soon'}), {
+                    options: assetOptions,
+                  }),
+                ]);
               
                 console.log(event);
-              
-                const [styles, scripts] = await Promise.all([
-                  assets.styles(),
-                  assets.scripts(),
-                ]);
               
                 return {
                   statusCode,

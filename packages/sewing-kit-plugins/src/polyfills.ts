@@ -7,13 +7,24 @@ import type {} from '@sewing-kit/plugin-jest';
 
 import type {} from './web-app-multi-build';
 
-export function polyfills() {
+import type {PolyfillFeature} from './types';
+
+export function polyfills({features}: {features?: PolyfillFeature[]} = {}) {
   return createProjectPlugin<WebApp | Service>(
     'Quilt.Polyfills',
     ({tasks, project}) => {
       tasks.build.hook(({hooks}) => {
         hooks.target.hook(({target, hooks}) => {
           hooks.configure.hook((configuration) => {
+            if (features) {
+              configuration.webpackEntries?.hook((entries) => [
+                ...features.map(
+                  (feature) => `@quilted/polyfills/${feature}`,
+                  ...entries,
+                ),
+              ]);
+            }
+
             configuration.webpackAliases?.hook(async (aliases) => {
               let environment: string | string[] | undefined;
 
@@ -37,6 +48,15 @@ export function polyfills() {
 
       tasks.dev.hook(({hooks}) => {
         hooks.configure.hook((configuration: BuildWebAppConfigurationHooks) => {
+          if (features) {
+            configuration.webpackEntries?.hook((entries) => [
+              ...features.map(
+                (feature) => `@quilted/polyfills/${feature}`,
+                ...entries,
+              ),
+            ]);
+          }
+
           configuration.webpackAliases?.hook(async (aliases) => {
             let environment: string | string[] | undefined;
 
