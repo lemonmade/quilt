@@ -259,8 +259,8 @@ export function webAppAutoServer({
 
                     // TODO: this will not scale too well once we introduce locales, too!
                     const assets = createAssetLoader({
-                      getManifest: (options) => Promise.resolve(
-                        manifests.find((manifest) => {
+                      getManifest: (options) => {
+                        const manifest = manifests.find((manifest) => {
                           return manifest.match.every((aMatch) => {
                             switch (aMatch.type) {
                               case 'regex': {
@@ -271,8 +271,14 @@ export function webAppAutoServer({
                               }
                             }
                           });
-                        }) || manifests[0]
-                      ),
+                        }) || manifests.find((manifest) => manifest.default);
+
+                        if (manifest == null) {
+                          throw new Error('No manifest found for options: ', options);
+                        }
+
+                        return Promise.resolve(manifest);
+                      },
                     });
   
                     export default assets;

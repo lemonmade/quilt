@@ -7,16 +7,11 @@ import type {Manifest, ManifestEntry} from '@quilted/async/assets';
 interface Options {
   id: string;
   match: Manifest['match'];
+  default: boolean;
 }
 
 export class ManifestPlugin implements Plugin {
-  private readonly id: string;
-  private readonly match: Manifest['match'];
-
-  constructor({id, match}: Options) {
-    this.id = id;
-    this.match = match;
-  }
+  constructor(private readonly options: Options) {}
 
   apply(compiler: Compiler) {
     compiler.hooks.afterEmit.tapAsync(
@@ -25,13 +20,13 @@ export class ManifestPlugin implements Plugin {
         try {
           const file = join(
             compilation.outputOptions.path ?? '',
-            `manifest.${this.id}.json`,
+            `${this.options.id}.manifest.json`,
           );
           await mkdirp(dirname(file));
           await writeFile(
             file,
             JSON.stringify(
-              manifestFromCompilation(this.id, this.match, compilation),
+              manifestFromCompilation(compilation, this.options),
               null,
               2,
             ),
@@ -47,13 +42,11 @@ export class ManifestPlugin implements Plugin {
 }
 
 function manifestFromCompilation(
-  id: string,
-  match: Manifest['match'],
   compilation: compilation.Compilation,
+  manifest: Pick<Manifest, 'id' | 'match' | 'default'>,
 ): Manifest {
   return {
-    id,
-    match,
+    ...manifest,
     entries: entriesFromCompilation(compilation),
     async: getAsyncAssetManifest(compilation),
   };

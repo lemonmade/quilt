@@ -138,6 +138,7 @@ export function webAppMultiBuilds({
               ...plugins,
               new ManifestPlugin({
                 id: idFromTargetOptions(target.options),
+                default: target.options.browsers === 'default',
                 match: [
                   {
                     type: 'regex',

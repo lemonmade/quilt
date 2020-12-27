@@ -18,6 +18,7 @@ export type Match = MatchRegExp;
 
 export interface Manifest {
   readonly id: string;
+  readonly default: boolean;
   readonly match: Match[];
   readonly entries: {[key: string]: ManifestEntry};
   readonly async: {[key: string]: ManifestEntry};
