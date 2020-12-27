@@ -7,7 +7,7 @@ import {
   WaterfallHook,
   addHooks,
 } from '@sewing-kit/plugins';
-import type {Manifest} from '@quilted/async/server';
+import type {Manifest} from '@quilted/async/assets';
 
 import {
   MAGIC_MODULE_APP_COMPONENT,
@@ -177,7 +177,7 @@ export function webAppAutoServer({
                   '**/*.manifest.json',
                 ),
               );
-              const manifests: Manifest<any>[] = await Promise.all(
+              const manifests: Manifest[] = await Promise.all(
                 manifestFiles.map(async (file) =>
                   JSON.parse(await workspace.fs.read(file)),
                 ),
