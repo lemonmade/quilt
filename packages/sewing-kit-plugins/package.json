@@ -1,6 +1,6 @@
 {
   "name": "@quilted/sewing-kit-plugins",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
