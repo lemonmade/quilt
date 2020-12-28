@@ -68,8 +68,8 @@ export function createAssetLoader<Options>({
     const resolvedEntry = entry ? manifest.entries[entry] : undefined;
 
     if (resolvedEntry) {
-      if (scripts) assets.push(...resolvedEntry.scripts);
       if (styles) assets.push(...resolvedEntry.styles);
+      if (scripts) assets.push(...resolvedEntry.scripts);
     }
 
     if (asyncAssets) {
@@ -82,12 +82,15 @@ export function createAssetLoader<Options>({
         const resolvedAsyncEntry = manifest.async[id];
 
         if (resolvedAsyncEntry) {
-          if (scripts && asyncScripts) {
-            assets.push(...resolvedAsyncEntry.scripts);
-          }
+          const asyncAssets = [
+            ...(styles && asyncStyles ? resolvedAsyncEntry.styles : []),
+            ...(scripts && asyncScripts ? resolvedAsyncEntry.scripts : []),
+          ];
 
-          if (styles && asyncStyles) {
-            assets.push(...resolvedAsyncEntry.styles);
+          if (assets.length > 0) {
+            assets.splice(assets.length - 1, 0, ...asyncAssets);
+          } else {
+            assets.push(...asyncAssets);
           }
         }
       }

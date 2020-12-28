@@ -49,7 +49,7 @@ export function aws() {
                 return {
                   statusCode,
                   body: render(
-                    <Html manager={html} styles={styles} scripts={scripts} preloadAssets={[]}>
+                    <Html manager={html} styles={styles} scripts={scripts} preloadAssets={preload}>
                       {markup}
                     </Html>,
                   ),
