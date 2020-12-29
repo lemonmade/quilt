@@ -255,7 +255,7 @@ export function webAppAutoServer({
                   [assetsPath]: `
                     import {createAssetLoader} from '@quilted/async/assets';
 
-                    const manifests = ${JSON.stringify(manifests)};
+                    const manifests = ${JSON.stringify(manifests.reverse())};
 
                     // TODO: this will not scale too well once we introduce locales, too!
                     const assets = createAssetLoader({
