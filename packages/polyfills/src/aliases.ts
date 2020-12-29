@@ -12,8 +12,10 @@ const POLYFILLS: {[polyfill: string]: PolyfillDescriptor} = {
 
 export function mappedPolyfillsForEnv({
   target,
+  polyfill = 'entry',
 }: {
   target: 'node' | string[];
+  polyfill?: 'entry' | 'usage' | 'inline';
 }): {[key: string]: string} {
   const prefix = `@quilted/polyfills`;
   const noop = `${prefix}/noop`;
@@ -34,7 +36,8 @@ export function mappedPolyfillsForEnv({
       return mappedPolyfills;
     },
     {
-      '@quilted/polyfills/base$': `${prefix}/base`,
+      '@quilted/polyfills/base$':
+        polyfill === 'usage' ? noop : `${prefix}/base`,
     },
   );
 }

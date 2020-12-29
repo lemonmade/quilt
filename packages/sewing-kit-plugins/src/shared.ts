@@ -25,3 +25,9 @@ export function idFromTargetOptions(options: BuildWebAppTargetOptions) {
       .join('.') || 'default'
   );
 }
+
+export function excludeNonPolyfillEntries(
+  entries: string[] | readonly string[],
+) {
+  return entries.filter((entry) => entry.includes('@quilted/polyfills'));
+}

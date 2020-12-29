@@ -9,11 +9,11 @@ import {
 } from '@sewing-kit/plugins';
 import type {Manifest} from '@quilted/async/assets';
 
+import {excludeNonPolyfillEntries} from './shared';
 import {
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
 } from './constants';
-import type {PolyfillFeature} from './types';
 
 interface TargetOptions {
   readonly quiltAutoServer?: true;
@@ -34,13 +34,11 @@ declare module '@sewing-kit/hooks' {
 interface Options {
   readonly port?: number;
   readonly host?: string;
-  readonly features?: PolyfillFeature[];
 }
 
 export function webAppAutoServer({
   host: defaultHost,
   port: defaultPort,
-  features,
 }: Options = {}) {
   return createProjectPlugin<WebApp>(
     'Quilt.WebAppAutoServer',
@@ -150,16 +148,10 @@ export function webAppAutoServer({
 
             configuration.webpackOutputFilename?.hook(() => 'index.js');
 
-            configuration.webpackEntries?.hook(() =>
-              features
-                ? [
-                    ...features.map(
-                      (feature) => `@quilted/polyfills/${feature}`,
-                    ),
-                    entry,
-                  ]
-                : [entry],
-            );
+            configuration.webpackEntries?.hook((entries) => [
+              ...excludeNonPolyfillEntries(entries),
+              entry,
+            ]);
 
             configuration.webpackAliases?.hook((aliases) => ({
               ...aliases,

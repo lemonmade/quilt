@@ -172,12 +172,12 @@ export function webAppMultiBuilds({
           if (babel) {
             configuration.babelConfig?.hook(
               updateSewingKitBabelPreset(
-                async () => {
+                async (options) => {
                   const target = await configuration.quiltBrowserslist!.run(
                     undefined,
                   );
 
-                  return {target};
+                  return {...options, target};
                 },
                 {addIfMissing: false},
               ),
@@ -187,11 +187,11 @@ export function webAppMultiBuilds({
           if (postcss) {
             configuration.postcssPlugins?.hook(
               updatePostcssEnvPreset(
-                async () => {
+                async (options) => {
                   const browsers = await configuration.quiltBrowserslist!.run(
                     undefined,
                   );
-                  return {browsers};
+                  return {...options, browsers};
                 },
                 {addIfMissing: false},
               ),

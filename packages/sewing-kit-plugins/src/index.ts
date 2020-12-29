@@ -96,8 +96,8 @@ export function quiltWebApp({
         webpackHooks(),
         webAppMultiBuilds({babel: true, postcss: true, browserGroups}),
         webpackDevWebApp({assetServer}),
-        flexibleOutputs(),
         webpackBuild(),
+        flexibleOutputs(),
         polyfills({features}),
         react({preact}),
         graphql({export: exportStyle}),
@@ -106,11 +106,7 @@ export function quiltWebApp({
         webAppBrowserEntry({hydrate: ({task}) => task !== Task.Dev}),
         preact && preactAliases(),
         autoServer &&
-          webAppAutoServer(
-            typeof autoServer === 'object'
-              ? {...autoServer, features}
-              : {features},
-          ),
+          webAppAutoServer(typeof autoServer === 'object' ? autoServer : {}),
         cdnUrl ? cdn({url: cdnUrl}) : false,
       );
 

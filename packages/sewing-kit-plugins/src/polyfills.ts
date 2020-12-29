@@ -38,6 +38,7 @@ export function polyfills({features}: {features?: PolyfillFeature[]} = {}) {
 
               const mappedPolyfills = mappedPolyfillsForEnv({
                 target: environment as any,
+                polyfill: 'usage',
               });
 
               return {...aliases, ...mappedPolyfills};
@@ -70,6 +71,7 @@ export function polyfills({features}: {features?: PolyfillFeature[]} = {}) {
 
             const mappedPolyfills = mappedPolyfillsForEnv({
               target: environment as any,
+              polyfill: 'usage',
             });
 
             return {...aliases, ...mappedPolyfills};
@@ -80,7 +82,10 @@ export function polyfills({features}: {features?: PolyfillFeature[]} = {}) {
       tasks.test.hook(({hooks}) => {
         hooks.configure.hook(({jestModuleMapper}) => {
           jestModuleMapper?.hook((moduleMap) => {
-            return {...moduleMap, ...mappedPolyfillsForEnv({target: 'node'})};
+            return {
+              ...moduleMap,
+              ...mappedPolyfillsForEnv({target: 'node', polyfill: 'usage'}),
+            };
           });
         });
       });
