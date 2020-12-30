@@ -22,6 +22,7 @@ import {graphql, workspaceGraphQL} from '@sewing-kit/plugin-graphql';
 import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
 import {cdn} from './cdn';
+import {brotli} from './brotli';
 import {polyfills} from './polyfills';
 import {preactAliases} from './preact-aliases';
 import {webAppAutoServer} from './web-app-auto-server';
@@ -98,6 +99,7 @@ export function quiltWebApp({
         webpackDevWebApp({assetServer}),
         webpackBuild(),
         flexibleOutputs(),
+        brotli(),
         polyfills({features}),
         react({preact}),
         graphql({export: exportStyle}),
