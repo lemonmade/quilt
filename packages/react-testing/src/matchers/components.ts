@@ -17,11 +17,10 @@ import {
 } from './utilities';
 
 export function toContainReactComponent<
-  Type extends string | ComponentType<any>,
-  Extensions extends object = {}
+  Type extends string | ComponentType<any>
 >(
   this: jest.MatcherUtils,
-  node: Node<unknown, Extensions>,
+  node: Node<any, any>,
   type: Type,
   props?: Partial<PropsFor<Type>>,
 ) {

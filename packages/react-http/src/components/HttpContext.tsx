@@ -1,4 +1,4 @@
-import React, {useContext, useMemo} from 'react';
+import {useContext, useMemo} from 'react';
 import type {PropsWithChildren} from 'react';
 import {useSerialized} from '@quilted/react-html';
 
@@ -7,7 +7,10 @@ import type {ReadonlyHeaders} from '../types';
 
 const SERIALIZED_ID = '_quilt.http';
 
-export function HttpContext({children}: PropsWithChildren<{}>) {
+export function HttpContext({
+  children,
+}: // eslint-disable-next-line @typescript-eslint/ban-types
+PropsWithChildren<{}>) {
   const http = useContext(HttpInternalContext);
 
   const serializedHeaders = useSerialized(SERIALIZED_ID, () => {
@@ -25,6 +28,8 @@ export function HttpContext({children}: PropsWithChildren<{}>) {
 
   const headers = useMemo<ReadonlyHeaders>(() => {
     return http?.headers ?? {get: (header) => serializedHeaders?.[header]};
+    // Rule is broken, asking for types to be included
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [http?.headers, serializedHeaders]);
 
   return (

@@ -1,6 +1,6 @@
 import type {Preloadable, IfAllOptionalKeys, NoInfer} from '../types';
 
-export function usePreload<PreloadOptions extends object>(
+export function usePreload<PreloadOptions extends Record<string, any>>(
   ...args: IfAllOptionalKeys<
     PreloadOptions,
     [Preloadable<PreloadOptions>, NoInfer<PreloadOptions>?],

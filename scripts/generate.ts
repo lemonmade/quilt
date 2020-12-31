@@ -124,7 +124,7 @@ async function addProjectReference(file: string, name: string) {
   await write(file, tsconfig);
 }
 
-async function write(file: string, contents: string | object) {
+async function write(file: string, contents: string | Record<string, any>) {
   await mkdirp(path.dirname(file));
 
   if (typeof contents === 'string') {

@@ -1,4 +1,5 @@
-import React, {useMemo, useContext, ReactNode} from 'react';
+import {useMemo, useContext} from 'react';
+import type {ReactNode} from 'react';
 
 import {HtmlContext} from '../../context';
 import {HYDRATION_ATTRIBUTE} from '../../utilities/hydration';

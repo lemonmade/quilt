@@ -25,7 +25,7 @@
   },
   "sideEffects": false,
   "peerDependencies": {
-    "react": ">=16.3.0 <17.0.0"
+    "react": ">=17.0.0 <18.0.0"
   },
   "dependencies": {
     "@quilted/async": "^0.1.14",

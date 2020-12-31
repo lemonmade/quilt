@@ -3,7 +3,7 @@ import type {Router} from './router';
 
 export function enhanceUrl(
   url: URL,
-  state: object,
+  state: Record<string, any>,
   key: string,
   prefix?: Prefix,
 ): EnhancedURL {

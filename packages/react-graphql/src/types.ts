@@ -1,11 +1,11 @@
-import {
+import type {
   GraphQLOperationType,
   GraphQLOperation,
   GraphQLData,
   GraphQLVariables,
 } from '@quilted/graphql';
-import {Prefetchable, Preloadable, Resolver} from '@quilted/react-async';
-import {IfUnionSize} from '@quilted/useful-types';
+import type {Prefetchable, Preloadable, Resolver} from '@quilted/react-async';
+import type {IfUnionSize} from '@quilted/useful-types';
 
 export type {
   GraphQLOperation,
@@ -69,7 +69,7 @@ export interface GraphQLRequest<Data, Variables> {
 
 export type GraphQLFetch = (
   request: GraphQLRequest<unknown, unknown>,
-) => Promise<object>;
+) => Promise<Record<string, any>>;
 
 export type Result<Data> =
   | {

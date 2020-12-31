@@ -1,4 +1,3 @@
-import React from 'react';
 import serialize from 'serialize-javascript';
 
 import {

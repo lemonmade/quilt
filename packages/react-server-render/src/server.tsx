@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import type {ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
 import {ServerRenderContext} from './context';
@@ -14,7 +14,7 @@ export interface Options {
   includeKinds?: symbol[] | boolean;
   maxPasses?: number;
   decorate?(element: ReactElement<any>): ReactElement<any>;
-  renderFunction?(element: ReactElement<{}>): string;
+  renderFunction?(element: ReactElement<Record<string, never>>): string;
   betweenEachPass?(pass: ServerRenderPass): any;
   afterEachPass?(pass: ServerRenderPass): any;
 }

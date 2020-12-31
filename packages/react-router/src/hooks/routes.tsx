@@ -1,6 +1,6 @@
 /* eslint react/jsx-no-useless-fragment: off */
 
-import React, {memo, useContext, useEffect, useRef} from 'react';
+import {memo, useContext, useEffect, useRef} from 'react';
 import type {ReactNode} from 'react';
 
 import type {EnhancedURL, NavigateTo, RouteDefinition} from '../types';

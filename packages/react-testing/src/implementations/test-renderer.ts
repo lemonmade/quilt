@@ -30,7 +30,7 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<Context>({
   },
 });
 
-type Create = Parameters<Environment<any, {}>['update']>[1];
+type Create = Parameters<Environment<any>['update']>[1];
 
 function createNodeFromTestInstance(
   testInstance: ReactTestInstance,

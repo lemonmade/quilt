@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import {HeadingLevel, AutoHeadingContext, useAutoHeadingLevel} from './context';
 
 interface Props {

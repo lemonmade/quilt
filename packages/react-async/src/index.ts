@@ -1,4 +1,5 @@
-export {createResolver, Resolver, ResolverOptions} from '@quilted/async';
+export {createResolver} from '@quilted/async';
+export type {Resolver, ResolverOptions} from '@quilted/async';
 
 export type {
   AssetTiming,

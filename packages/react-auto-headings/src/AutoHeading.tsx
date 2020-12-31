@@ -1,4 +1,4 @@
-import React, {HTMLProps} from 'react';
+import type {HTMLProps} from 'react';
 import {useAutoHeadingLevel} from './context';
 
 export function AutoHeading({

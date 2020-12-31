@@ -1,4 +1,5 @@
-import React, {ReactNode, useMemo} from 'react';
+import {useMemo} from 'react';
+import type {ReactNode} from 'react';
 import {HtmlContext} from '../context';
 import {HtmlManager} from '../manager';
 

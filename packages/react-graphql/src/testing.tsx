@@ -1,4 +1,5 @@
-import React, {useMemo, PropsWithChildren} from 'react';
+import {useMemo} from 'react';
+import type {PropsWithChildren} from 'react';
 
 import {createGraphQL} from '@quilted/graphql';
 import type {GraphQLFetch} from '@quilted/graphql';

@@ -24,6 +24,7 @@ import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 import {cdn} from './cdn';
 import {brotli} from './brotli';
 import {polyfills} from './polyfills';
+import {reactJsxRuntime} from './react-jsx';
 import {preactAliases} from './preact-aliases';
 import {webAppAutoServer} from './web-app-auto-server';
 import {webAppBrowserEntry} from './web-app-browser-entry';
@@ -55,6 +56,7 @@ export function quiltPackage({
     javascript(),
     typescript(),
     useReact && react({preact}),
+    useReact && reactJsxRuntime({preact}),
     preact && preactAliases(),
     useCss && css(),
   ]);
@@ -102,6 +104,7 @@ export function quiltWebApp({
         brotli(),
         polyfills({features}),
         react({preact}),
+        reactJsxRuntime({preact}),
         graphql({export: exportStyle}),
         webAppConvenienceAliases(),
         webAppMagicModules(),
@@ -130,13 +133,17 @@ export function quiltWebApp({
 
 export interface QuiltServiceOptions {
   readonly cdn?: string;
+  readonly react?: boolean | 'preact';
   readonly devServer?: NonNullable<Parameters<typeof webpackDevService>[0]>;
 }
 
 export function quiltService({
   devServer,
+  react: useReact = false,
   cdn: cdnUrl,
 }: QuiltServiceOptions = {}) {
+  const preact = useReact === 'preact';
+
   return createComposedProjectPlugin<Service>(
     'Quilt.Service',
     async (composer) => {
@@ -146,7 +153,8 @@ export function quiltService({
         css(),
         webpackHooks(),
         flexibleOutputs(),
-        react(),
+        useReact && react(),
+        useReact && reactJsxRuntime({preact}),
         webpackBuild(),
         webpackDevService(devServer),
         polyfills(),

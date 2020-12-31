@@ -1,5 +1,5 @@
-import {HTMLProps, HtmlHTMLAttributes} from 'react';
-import {ServerActionKind} from '@quilted/react-server-render';
+import type {HTMLProps, HtmlHTMLAttributes} from 'react';
+import type {ServerActionKind} from '@quilted/react-server-render';
 
 import {getHydrationsFromDocument} from './utilities/hydration';
 import {getSerializationsFromDocument} from './utilities/serialization';

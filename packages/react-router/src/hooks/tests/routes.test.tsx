@@ -4,7 +4,7 @@
 
 import '@quilted/react-testing/matchers';
 
-import React, {PropsWithChildren} from 'react';
+import type {PropsWithChildren} from 'react';
 import {createMount} from '@quilted/react-testing';
 
 import {useRoutes} from '../routes';
@@ -29,11 +29,13 @@ const mount = createMount<
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function RouteComponent({children}: PropsWithChildren<{}>) {
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return children ? <>{children}</> : null;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function NestedRouteComponent({children}: PropsWithChildren<{}>) {
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return children ? <>{children}</> : null;

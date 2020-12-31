@@ -27,8 +27,8 @@ export function assertIsGraphQLController(
 }
 
 export function diffVariables(
-  actual: object,
-  expected: object,
+  actual: Record<string, any>,
+  expected: Record<string, any>,
   {expand = false},
 ) {
   return diff(expected, getObjectSubset(actual, expected), {

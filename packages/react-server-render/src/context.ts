@@ -1,7 +1,7 @@
-import React from 'react';
+import {createContext} from 'react';
 
-import {ServerRenderManager} from './manager';
+import type {ServerRenderManager} from './manager';
 
-export const ServerRenderContext = React.createContext<ServerRenderManager | null>(
+export const ServerRenderContext = createContext<ServerRenderManager | null>(
   null,
 );

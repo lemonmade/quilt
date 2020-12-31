@@ -25,13 +25,13 @@ export type DeepPartial<T> = T extends (infer U)[]
   ? DeepPartial<U>[]
   : T extends readonly (infer U)[]
   ? readonly DeepPartial<U>[]
-  : T extends object
+  : T extends Record<string, any>
   ? {
       [K in keyof T]?: DeepPartial<T[K]>;
     }
   : T;
 
-export type Predicate<Extensions extends object> = (
+export type Predicate<Extensions extends Record<string, any>> = (
   node: Node<unknown, Extensions>,
 ) => boolean;
 
@@ -39,7 +39,10 @@ type MaybeFunctionReturnType<T> = T extends (...args: any[]) => any
   ? ReturnType<T>
   : unknown;
 
-export interface Root<Props, Context extends object | undefined = undefined> {
+export interface Root<
+  Props,
+  Context extends Record<string, any> | undefined = undefined
+> {
   readonly context: Context;
   mount(): void;
   unmount(): void;
@@ -49,7 +52,7 @@ export interface Root<Props, Context extends object | undefined = undefined> {
   // forceUpdate(): void;
 }
 
-export interface NodeApi<Props, Extensions extends object> {
+export interface NodeApi<Props, Extensions extends Record<string, any>> {
   readonly props: Props;
   readonly type: string | ComponentType<any> | null;
   readonly instance: any;
@@ -89,7 +92,8 @@ export interface NodeApi<Props, Extensions extends object> {
   toString(): string;
 }
 
-export type Node<Props, Extensions extends object = {}> = NodeApi<
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type Node<Props, Extensions extends Record<string, any> = {}> = NodeApi<
   Props,
   Extensions
 > &

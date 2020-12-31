@@ -10,11 +10,12 @@ import {
 import {toContainReactText} from './text';
 import {toProvideReactContext} from './context';
 
-type PropsFromNode<T> = NonNullable<T> extends Node<infer U, {}> ? U : never;
+type PropsFromNode<T> = NonNullable<T> extends Node<infer U, any> ? U : never;
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     interface Matchers<R, T = {}> {
       toHaveReactProps(props: Partial<PropsFromNode<T>>): void;
       toContainReactComponent<Type extends string | ComponentType<any>>(

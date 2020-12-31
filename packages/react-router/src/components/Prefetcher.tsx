@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-  useEffect,
-} from 'react';
+import {memo, useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {useRouter} from '../hooks';
@@ -23,7 +16,8 @@ export const INTENTION_DELAY_MS = 150;
 
 export const Prefetcher = memo(function Prefetcher({
   children,
-}: PropsWithChildren<{}>) {
+}: // eslint-disable-next-line @typescript-eslint/ban-types
+PropsWithChildren<{}>) {
   const router = useRouter();
   const prefetcher = useMemo(() => createPrefetcher(router), [router]);
 

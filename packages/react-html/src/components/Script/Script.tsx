@@ -1,4 +1,4 @@
-import React, {ScriptHTMLAttributes} from 'react';
+import type {ScriptHTMLAttributes} from 'react';
 
 export interface Props extends ScriptHTMLAttributes<HTMLScriptElement> {
   src: string;

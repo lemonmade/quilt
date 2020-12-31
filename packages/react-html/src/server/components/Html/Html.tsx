@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import {renderToString} from 'react-dom/server';
 // import {HydrationContext, HydrationManager} from '@shopify/react-hydrate';
 
@@ -55,10 +55,14 @@ export function Html({
   ) : null;
 
   const metaMarkup = extracted?.metas.map((metaProps, index) => (
+    // Fine for server rendering
+    // eslint-disable-next-line react/no-array-index-key
     <meta key={index} {...managedProps} {...metaProps} />
   ));
 
   const linkMarkup = extracted?.links.map((linkProps, index) => (
+    // Fine for server rendering
+    // eslint-disable-next-line react/no-array-index-key
     <link key={index} {...managedProps} {...linkProps} />
   ));
 

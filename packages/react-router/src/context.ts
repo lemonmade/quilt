@@ -1,4 +1,5 @@
-import {createContext, MutableRefObject} from 'react';
+import {createContext} from 'react';
+import type {MutableRefObject} from 'react';
 import type {EnhancedURL, Focusable} from './types';
 import type {Router} from './router';
 import type {Prefetcher} from './prefetcher';

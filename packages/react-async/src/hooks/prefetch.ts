@@ -1,6 +1,6 @@
 import type {Prefetchable, IfAllOptionalKeys, NoInfer} from '../types';
 
-export function usePrefetch<PrefetchOptions extends object>(
+export function usePrefetch<PrefetchOptions extends Record<string, any>>(
   ...args: IfAllOptionalKeys<
     PrefetchOptions,
     [Prefetchable<PrefetchOptions>, NoInfer<PrefetchOptions>?],

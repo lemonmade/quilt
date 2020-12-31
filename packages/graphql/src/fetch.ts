@@ -61,7 +61,7 @@ export function createHttpFetch({
     }
 
     const {data, errors} = (await response.json()) as {
-      data?: object;
+      data?: Record<string, any>;
       errors?: GraphQLError[];
     };
 

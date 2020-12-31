@@ -82,7 +82,10 @@ export class GraphQLController {
     } while (matchingPending.length > 0);
   }
 
-  async run<Data extends object, Variables extends object>({
+  async run<
+    Data extends Record<string, any>,
+    Variables extends Record<string, any>
+  >({
     operation,
     variables,
   }: GraphQLAnyRequest<Data, Variables>): Promise<Data | Error> {

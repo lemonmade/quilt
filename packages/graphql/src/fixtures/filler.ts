@@ -81,7 +81,7 @@ export function createFiller(
       | GraphQLDeepPartialData<Data>
       | ((details: FillerDetails<Variables>) => GraphQLDeepPartialData<Data>),
   ): GraphQLMockFunction<Data, Variables> {
-    const {document} = normalizeOperation(operation);
+    const {document} = normalizeOperation(operation as any);
     const operationNode = getFirstOperationFromDocument(document);
 
     if (operationNode == null) {

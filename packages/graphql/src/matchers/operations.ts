@@ -38,7 +38,7 @@ export function toHavePerformedGraphQLOperation<Variables>(
         );
 
   const pass = foundByVariables.length > 0;
-  const {name} = normalizeOperation(operation);
+  const {name} = normalizeOperation(operation as any);
 
   const message = pass
     ? () =>
@@ -82,7 +82,7 @@ export function toHavePerformedGraphQLOperation<Variables>(
 
 function diffs(
   requests: GraphQLRequest<unknown, unknown>[],
-  variables: object,
+  variables: Record<string, any>,
   expand?: boolean,
 ) {
   return requests.reduce<string>(
@@ -101,7 +101,7 @@ function diffs(
 
 function normalizedDiff(
   request: GraphQLRequest<unknown, unknown>,
-  variables: object,
+  variables: Record<string, any>,
   {expand = false, showLegend = false},
 ) {
   const result =

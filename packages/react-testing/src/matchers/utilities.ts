@@ -74,9 +74,9 @@ export function assertIsType(
   }
 }
 
-export function diffs<Extensions extends object = {}>(
-  element: Node<any, Extensions>[],
-  props: object,
+export function diffs(
+  element: Node<any, any>[],
+  props: Record<string, any>,
   expand?: boolean,
 ) {
   return element.reduce<string>((diffs, element, index) => {
@@ -89,9 +89,9 @@ export function diffs<Extensions extends object = {}>(
   }, '');
 }
 
-function normalizedDiff<Extensions extends object = {}>(
-  element: Node<any, Extensions>,
-  props: object,
+function normalizedDiff(
+  element: Node<any, any>,
+  props: Record<string, any>,
   {expand = false, showLegend = false},
 ) {
   const result =
@@ -118,9 +118,9 @@ export function printType(type: string | React.ComponentType<any>) {
   return `<${displayName} />`;
 }
 
-export function diffPropsForNode<Extensions extends object = {}>(
-  node: Node<any, Extensions>,
-  props: object,
+export function diffPropsForNode(
+  node: Node<any, any>,
+  props: Record<string, any>,
   {expand = false},
 ) {
   return diff(props, getObjectSubset(node.props, props), {

@@ -17,13 +17,13 @@ export type IfAllOptionalKeys<Obj, If, Else = never> = NonOptionalKeys<
 
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 
-export interface Preloadable<Options extends object> {
+export interface Preloadable<Options extends Record<string, any>> {
   usePreload(
     ...options: IfAllOptionalKeys<Options, [Options?], [Options]>
   ): () => undefined | (() => void);
 }
 
-export interface Prefetchable<Options extends object> {
+export interface Prefetchable<Options extends Record<string, any>> {
   usePrefetch(
     ...options: IfAllOptionalKeys<Options, [Options?], [Options]>
   ): () => undefined | (() => void);
@@ -31,9 +31,9 @@ export interface Prefetchable<Options extends object> {
 
 export interface AsyncComponentType<
   T,
-  Props extends object,
-  PreloadOptions extends object,
-  PrefetchOptions extends object
+  Props extends Record<string, any>,
+  PreloadOptions extends Record<string, any>,
+  PrefetchOptions extends Record<string, any>
 >
   extends Preloadable<PreloadOptions>,
     Prefetchable<PrefetchOptions>,

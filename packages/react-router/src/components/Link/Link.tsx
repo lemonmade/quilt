@@ -1,4 +1,4 @@
-import React, {DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
+import type {DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
 import {useRouter} from '../../hooks';
 import type {NavigateTo} from '../../types';
 

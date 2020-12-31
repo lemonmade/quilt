@@ -19,7 +19,10 @@ type MockedRouter = Omit<ReturnType<typeof createTestRouter>, 'navigate'> & {
   navigate: jest.Mock;
 };
 
-const mountWithNavigateSpy = createMount<{}, {router: MockedRouter}>({
+const mountWithNavigateSpy = createMount<
+  Record<string, never>,
+  {router: MockedRouter}
+>({
   context() {
     const router = createTestRouter(
       new URL('https://router.magic'),

@@ -9,9 +9,9 @@ import type {Node} from '../types';
 
 import {assertIsNode, diffPropsForNode} from './utilities';
 
-export function toHaveReactProps<Props, Extensions extends object = {}>(
+export function toHaveReactProps<Props>(
   this: jest.MatcherUtils,
-  node: Node<Props, Extensions>,
+  node: Node<Props, any>,
   props: Partial<Props>,
 ) {
   assertIsNode(node, {

@@ -1,4 +1,6 @@
-import React, {useRef, useEffect, ReactNode} from 'react';
+import {useRef, useEffect} from 'react';
+import type {ReactNode} from 'react';
+
 import {FocusContext as Context} from '../../context';
 import {useCurrentUrl} from '../../hooks';
 import {Focusable} from '../../types';

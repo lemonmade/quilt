@@ -1,15 +1,20 @@
 import type {DocumentNode} from 'graphql';
 import type {IfUnionSize} from '@quilted/useful-types';
 
-export interface GraphQLOperationType<Data = unknown, Variables = {}> {
+export interface GraphQLOperationType<
+  Data = unknown,
+  Variables = Record<string, unknown>
+> {
   // We need something to actually use the types, otherwise TypeScript
   // "discards" them for inference on extending interfaces.
   readonly __typeData?: Data;
   readonly __typeVariables?: Variables;
 }
 
-export interface GraphQLOperation<Data = unknown, Variables = {}>
-  extends GraphQLOperationType<Data, Variables> {
+export interface GraphQLOperation<
+  Data = unknown,
+  Variables = Record<string, unknown>
+> extends GraphQLOperationType<Data, Variables> {
   id: string;
   name?: string;
   source: string;
@@ -41,7 +46,7 @@ export interface GraphQLRequestContext<T = Record<string, unknown>> {
 export type GraphQLFetch<T = Record<string, unknown>> = (
   request: GraphQLRequest<unknown, unknown>,
   context: GraphQLRequestContext<T>,
-) => Promise<object>;
+) => Promise<Record<string, any>>;
 
 export type GraphQLResult<Data> =
   | {
@@ -116,7 +121,7 @@ export type GraphQLDeepPartialData<T> = {
     NonNullable<T[K]> extends readonly (infer U)[]
       ? readonly MaybeNullableValue<
           U,
-          NonNullable<U> extends object
+          NonNullable<U> extends Record<string, any>
             ? IsUnion<
                 NonNullable<U>,
                 DeepPartialUnion<NonNullable<U>>,
@@ -124,7 +129,7 @@ export type GraphQLDeepPartialData<T> = {
               >
             : NonNullable<U>
         >[]
-      : NonNullable<T[K]> extends object
+      : NonNullable<T[K]> extends Record<string, any>
       ? IsUnion<
           NonNullable<T[K]>,
           DeepPartialUnion<NonNullable<T[K]>>,

@@ -1,4 +1,5 @@
-import React, {useMemo, ReactNode} from 'react';
+import {useMemo} from 'react';
+import type {ReactNode} from 'react';
 
 import type {Router, Options} from './router';
 import {CurrentUrlContext, RouterContext} from './context';

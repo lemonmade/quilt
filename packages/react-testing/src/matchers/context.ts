@@ -10,9 +10,9 @@ import {Node} from '../types';
 
 import {assertIsNode, diffs, printType} from './utilities';
 
-export function toProvideReactContext<Type, Extensions extends object = {}>(
+export function toProvideReactContext<Type>(
   this: jest.MatcherUtils,
-  node: Node<unknown, Extensions>,
+  node: Node<any, any>,
   Context: Context<Type>,
   value?: Type,
 ) {

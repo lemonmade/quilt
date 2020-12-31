@@ -1,7 +1,7 @@
 import {useCallback, useContext, useMemo} from 'react';
 import type {Resolver} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
-import {useSubscription, Subscription} from 'use-subscription';
+import {useSubscription} from 'use-subscription';
 
 import {AsyncAssetContext} from '../context';
 import type {AssetTiming} from '../types';
@@ -19,8 +19,8 @@ export function useAsync<T>(
   const {id} = resolver;
   const load = useCallback(() => resolver.resolve(), [resolver]);
 
-  const value = useSubscription(
-    useMemo((): Subscription<T | undefined> => {
+  const value = useSubscription<T | undefined>(
+    useMemo(() => {
       return {
         getCurrentValue() {
           return typeof window !== 'undefined' || immediate

@@ -2,7 +2,6 @@
  * @jest-environment node
  */
 
-import React from 'react';
 import {renderToString, renderToStaticMarkup} from 'react-dom/server';
 
 import {ServerAction} from '../ServerAction';
@@ -308,7 +307,7 @@ function createResolvablePromise() {
   let promiseResolve!: () => void;
   let resolved = false;
 
-  const promise = new Promise((resolve) => {
+  const promise = new Promise<void>((resolve) => {
     promiseResolve = resolve;
   });
 

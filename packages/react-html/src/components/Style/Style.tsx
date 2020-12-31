@@ -1,4 +1,4 @@
-import React, {LinkHTMLAttributes} from 'react';
+import type {LinkHTMLAttributes} from 'react';
 
 export interface Props extends LinkHTMLAttributes<HTMLLinkElement> {
   href: string;

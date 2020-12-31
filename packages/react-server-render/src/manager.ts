@@ -1,4 +1,4 @@
-import {
+import type {
   ServerActionKind,
   ServerRenderPass,
   ServerActionPerform,

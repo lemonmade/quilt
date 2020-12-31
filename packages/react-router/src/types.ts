@@ -22,7 +22,7 @@ export interface Focusable {
   focus(): void;
 }
 
-export type Search = string | object | URLSearchParams;
+export type Search = string | Record<string, string> | URLSearchParams;
 
 export type NavigateToLiteral =
   | string

@@ -1,26 +1,31 @@
-import React, {
+import {
   memo,
   useRef,
   useMemo,
   useContext,
   useEffect,
   createContext,
-  ComponentType,
 } from 'react';
+import type {ComponentType} from 'react';
 import {retain, release, createWorkerFactory} from '@remote-ui/web-workers';
-import {RemoteReceiver, RemoteRenderer, useWorker} from '@remote-ui/react/host';
+import {
+  RemoteReceiver,
+  RemoteRenderer,
+  useWorker,
+  createController,
+} from '@remote-ui/react/host';
 
 type MaybeDefaultExport<T> = T | {default: T};
 // type ValueOrPropGetter<T, Props> = T | ((props: Props) => T);
 
+type ComponentRecord = Record<string, ComponentType<any>>;
+
 export const RemoteReceiverContext = createContext<RemoteReceiver | null>(null);
-export const HostComponentContext = createContext<{
-  [key: string]: ComponentType<any>;
-}>({});
+export const HostComponentContext = createContext<ComponentRecord>({});
 
 export interface WorkerComponentOptions<
   _Props,
-  ComponentConfig extends {[key: string]: ComponentType<any>} = {}
+  ComponentConfig extends ComponentRecord = Record<string, never>
 > {
   readonly displayName?: string;
   readonly receiver?: RemoteReceiver;
@@ -29,7 +34,7 @@ export interface WorkerComponentOptions<
 
 export function createWorkerComponent<
   Props,
-  ComponentConfig extends {[key: string]: ComponentType<any>} = {}
+  ComponentConfig extends ComponentRecord = Record<string, never>
 >(
   workerComponent: () => Promise<MaybeDefaultExport<ComponentType<Props>>>,
   {
@@ -67,6 +72,10 @@ export function createWorkerComponent<
     );
     const componentsRef = useRef(components);
     componentsRef.current = components;
+
+    const controller = useMemo(() => createController(components), [
+      components,
+    ]);
 
     const contextReceiver = useContext(RemoteReceiverContext);
     const receiverRef = useRef<RemoteReceiver>(null as any);
@@ -139,7 +148,7 @@ export function createWorkerComponent<
     }
 
     return (
-      <RemoteRenderer receiver={receiverRef.current} components={components} />
+      <RemoteRenderer receiver={receiverRef.current} controller={controller} />
     );
   });
 

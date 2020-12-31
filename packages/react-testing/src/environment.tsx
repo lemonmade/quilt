@@ -1,4 +1,6 @@
-import React, {ReactElement} from 'react';
+/* eslint-disable @typescript-eslint/ban-types */
+
+import type {ReactElement} from 'react';
 
 import type {Node as BaseNode, Root as BaseRoot} from './types';
 import {TestRenderer} from './TestRenderer';
@@ -6,14 +8,16 @@ import {nodeName, toReactString} from './print';
 
 const IS_NODE = Symbol.for('QuiltTesting.Node');
 
-type NodeCreationOptions<T, Extensions extends object> = {
+type PlainObject = Record<string, any>;
+
+type NodeCreationOptions<T, Extensions extends PlainObject> = {
   props: T;
   instance: any;
   type: BaseNode<T, Extensions>['type'];
   children: (BaseNode<unknown, Extensions> | string)[];
 } & Extensions;
 
-export interface Environment<Context, Extensions extends object> {
+export interface Environment<Context, Extensions extends PlainObject = {}> {
   act<T>(action: () => T): T extends Promise<any> ? Promise<void> : void;
   mount(element: ReactElement<any>): Context;
   unmount(context: Context): void;
@@ -29,14 +33,14 @@ export interface Environment<Context, Extensions extends object> {
 
 type FullRoot<
   Props,
-  Context extends object | undefined,
-  Extensions extends object
+  Context extends PlainObject | undefined,
+  Extensions extends PlainObject
 > = BaseNode<Props, Extensions> & BaseRoot<Props, Context>;
 
 type AfterMountOption<
-  MountOptions extends object,
-  Context extends object,
-  Extensions extends object,
+  MountOptions extends PlainObject,
+  Context extends PlainObject,
+  Extensions extends PlainObject,
   Async extends boolean
 > = Async extends true
   ? {
@@ -53,17 +57,17 @@ type AfterMountOption<
     };
 
 export interface ContextOption<
-  MountOptions extends object,
-  Context extends object
+  MountOptions extends PlainObject,
+  Context extends PlainObject
 > {
   context?(options: MountOptions): Context;
 }
 
 type CustomMountOptions<
-  MountOptions extends object = {},
-  CreateContext extends object = {},
-  Context extends object = CreateContext,
-  Extensions extends object = {},
+  MountOptions extends PlainObject = {},
+  CreateContext extends PlainObject = {},
+  Context extends PlainObject = CreateContext,
+  Extensions extends PlainObject = {},
   Async extends boolean = false
 > = {
   render(
@@ -75,9 +79,9 @@ type CustomMountOptions<
   AfterMountOption<MountOptions, Context, Extensions, Async>;
 
 export interface CustomMount<
-  MountOptions extends object,
-  Context extends object,
-  Extensions extends object,
+  MountOptions extends PlainObject,
+  Context extends PlainObject,
+  Extensions extends PlainObject,
   Async extends boolean
 > {
   <Props>(
@@ -85,8 +89,8 @@ export interface CustomMount<
     options?: MountOptions,
   ): CustomMountResult<Props, Context, Extensions, Async>;
   extend<
-    AdditionalMountOptions extends object = {},
-    AdditionalContext extends object = {},
+    AdditionalMountOptions extends PlainObject = {},
+    AdditionalContext extends PlainObject = {},
     AdditionalAsync extends boolean = false
   >(
     options: CustomMountOptions<
@@ -106,8 +110,8 @@ export interface CustomMount<
 
 type CustomMountResult<
   Props,
-  Context extends object,
-  Extensions extends object,
+  Context extends PlainObject,
+  Extensions extends PlainObject,
   Async extends boolean
 > = Async extends true
   ? Promise<FullRoot<Props, Context, Extensions>>
@@ -115,14 +119,13 @@ type CustomMountResult<
 
 export function createEnvironment<
   EnvironmentContext = undefined,
-  Extensions extends object = {}
+  Extensions extends PlainObject = {}
 >(env: Environment<EnvironmentContext, Extensions>) {
   type Node<Props> = BaseNode<Props, Extensions>;
-  type Root<Props, Context extends object | undefined = undefined> = FullRoot<
+  type Root<
     Props,
-    Context,
-    Extensions
-  >;
+    Context extends PlainObject | undefined = undefined
+  > = FullRoot<Props, Context, Extensions>;
 
   const allMounted = new Set<Root<any, any>>();
 
@@ -131,13 +134,16 @@ export function createEnvironment<
   type ResolveRoot = (node: Node<unknown>) => Node<unknown> | null;
   type Render = (element: ReactElement<unknown>) => ReactElement<unknown>;
 
-  interface Options<Context extends object | undefined = undefined> {
+  interface Options<Context extends PlainObject | undefined = undefined> {
     context?: Context;
     render?: Render;
     resolveRoot?: ResolveRoot;
   }
 
-  function createRoot<Props, Context extends object | undefined = undefined>(
+  function createRoot<
+    Props,
+    Context extends PlainObject | undefined = undefined
+  >(
     element: ReactElement<Props>,
     {
       context: rootContext,
@@ -173,7 +179,7 @@ export function createEnvironment<
 
     return root;
 
-    function createNode<T, Extensions extends object>(
+    function createNode<T, Extensions extends PlainObject>(
       createOptions: NodeCreationOptions<T, Extensions>,
     ): BaseNode<T, Extensions> {
       const {type, props, instance, children} = createOptions;
@@ -181,9 +187,9 @@ export function createEnvironment<
       // We can’t just pick the remaining properties off `createOptions` with the
       // spread operator, because that attempts to invoke any getters in extensions
       // (including ones like .domNodes that may throw errors)
-      const extensionPropertyDescriptors = Object.getOwnPropertyDescriptors(
-        createOptions,
-      );
+      const extensionPropertyDescriptors: {
+        [key: string]: any;
+      } = Object.getOwnPropertyDescriptors(createOptions);
 
       delete extensionPropertyDescriptors.type;
       delete extensionPropertyDescriptors.props;
@@ -201,15 +207,15 @@ export function createEnvironment<
         ];
       }
 
-      const find: BaseNode<T, {}>['find'] = (type, props) =>
+      const find: BaseNode<T>['find'] = (type, props) =>
         (descendants.find(
           (element) =>
             isNode(element) &&
             isMatchingType(element.type, type) &&
-            (props == null || equalSubset(props, element.props as object)),
+            (props == null || equalSubset(props, element.props as PlainObject)),
         ) as any) ?? null;
 
-      const baseNode: BaseNode<T, {}> & {[IS_NODE]: true} = {
+      const baseNode: BaseNode<T> & {[IS_NODE]: true} = {
         [IS_NODE]: true,
         type,
         props,
@@ -230,7 +236,8 @@ export function createEnvironment<
             (element) =>
               isNode(element) &&
               isMatchingType(element.type, type) &&
-              (props == null || equalSubset(props, element.props as object)),
+              (props == null ||
+                equalSubset(props, element.props as PlainObject)),
           ) as any,
 
         findWhere: (predicate) =>
@@ -256,7 +263,7 @@ export function createEnvironment<
                 );
               }
 
-              return (propValue as any)(...args);
+              return (propValue as any)(...(args as any[]));
             },
             {eager: true},
           ),
@@ -274,7 +281,7 @@ export function createEnvironment<
                   throw new Error(
                     `Attempted to access field keypath '${currentKeypath.join(
                       '.',
-                    )}', but it was not an object.`,
+                    )}', but it was not an PlainObject.`,
                   );
                 }
 
@@ -440,8 +447,8 @@ export function createEnvironment<
   }
 
   function createMount<
-    MountOptions extends object = {},
-    Context extends object = {},
+    MountOptions extends PlainObject = {},
+    Context extends PlainObject = {},
     Async extends boolean = false
   >({
     render,
@@ -518,7 +525,7 @@ function defaultContext() {
 
 function noop() {}
 
-export function isNode<Extensions extends object = {}>(
+export function isNode<Extensions extends PlainObject = {}>(
   maybeNode: unknown,
 ): maybeNode is BaseNode<unknown, Extensions> {
   return maybeNode != null && (maybeNode as any)[IS_NODE];
@@ -540,7 +547,7 @@ function isMatchingType(type: unknown, test: unknown): boolean {
   return (test as any).type != null && isMatchingType(type, (test as any).type);
 }
 
-function equalSubset(subset: object, full: object) {
+function equalSubset(subset: PlainObject, full: PlainObject) {
   return Object.keys(subset).every(
     (key) => key in full && (full as any)[key] === (subset as any)[key],
   );

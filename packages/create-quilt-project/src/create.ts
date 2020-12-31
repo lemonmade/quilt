@@ -52,9 +52,6 @@ async function createProject({name}: Options) {
         dev: 'sk dev',
         start: 'sk dev',
         build: 'sk build',
-        generate: 'sk generate',
-        // eslint-disable-next-line id-length
-        g: 'sk generate',
       },
       workspaces: {
         packages: ['app', 'packages/*'],
@@ -111,7 +108,7 @@ async function createProject({name}: Options) {
   console.log(`Installing dependencies with ${chalk.cyan('yarn')}`);
   console.log();
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const child = spawn('yarnpkg', ['install'], {stdio: 'inherit'});
     child.on('close', (code) => {
       if (code !== 0) {

@@ -9,9 +9,9 @@ import type {Node} from '../types';
 
 import {assertIsNode, printReceivedWithHighlight} from './utilities';
 
-export function toContainReactText<Props, Extensions extends object = {}>(
+export function toContainReactText<Props>(
   this: jest.MatcherUtils,
-  node: Node<Props, Extensions>,
+  node: Node<Props, any>,
   text: string,
 ) {
   assertIsNode(node, {

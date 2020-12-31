@@ -190,7 +190,7 @@ export class Builder extends EventEmitter {
     await Promise.all(
       [...this.watchers].map(
         (watcher) =>
-          new Promise((resolve) => watcher.on('ready', () => resolve())),
+          new Promise<void>((resolve) => watcher.on('ready', () => resolve())),
       ),
     );
   }

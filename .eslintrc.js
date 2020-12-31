@@ -25,5 +25,15 @@ module.exports = {
   ],
   rules: {
     'lines-around-comment': 'off',
+    // We use the jsx-runtime version of React
+    'react/react-in-jsx-scope': 'off',
+    // TypeScript does this better
+    'import/named': 'off',
+    // Needed a resolution to fix some TS 4.0 linting, these rules no longer exist
+    '@typescript-eslint/ban-ts-ignore': 'off',
+    '@typescript-eslint/camelcase': 'off',
+    '@typescript-eslint/class-name-casing': 'off',
+    // Buggy rules
+    'babel/no-unused-expressions': 'off',
   },
 };

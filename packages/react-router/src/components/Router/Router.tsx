@@ -1,4 +1,4 @@
-import React, {memo, useState, useEffect, useRef, useMemo} from 'react';
+import {memo, useState, useEffect, useRef, useMemo} from 'react';
 import type {ReactNode} from 'react';
 
 import {FocusContext} from '../FocusContext';

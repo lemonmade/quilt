@@ -1,7 +1,7 @@
 /* eslint react-hooks/exhaustive-deps: off */
 
 import {useEffect, useContext} from 'react';
-import {HtmlManager} from '../manager';
+import type {HtmlManager} from '../manager';
 import {HtmlContext} from '../context';
 
 export function useDomClientEffect(
