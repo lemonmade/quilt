@@ -1,5 +1,5 @@
 import { Component, toChildArray } from 'preact';
-import { suspended } from './suspense.js';
+import { suspended } from './suspense';
 
 // Indexes to linked list nodes (nodes are stored as arrays to save bytes).
 const SUSPENDED_COUNT = 0;
@@ -57,7 +57,7 @@ const resolve = (list, child, node) => {
 // - do not set `Suspense.prototype.constructor` to `Suspense`
 SuspenseList.prototype = new Component();
 
-SuspenseList.prototype._suspended = function(child) {
+SuspenseList.prototype._suspended = function (child) {
 	const list = this;
 	const delegated = suspended(list._vnode);
 
@@ -83,7 +83,7 @@ SuspenseList.prototype._suspended = function(child) {
 	};
 };
 
-SuspenseList.prototype.render = function(props) {
+SuspenseList.prototype.render = function (props) {
 	this._next = null;
 	this._map = new Map();
 
@@ -96,7 +96,7 @@ SuspenseList.prototype.render = function(props) {
 	}
 	// Build the linked list. Iterate through the children in reverse order
 	// so that `_next` points to the first linked list node to be resolved.
-	for (let i = children.length; i--; ) {
+	for (let i = children.length; i--;) {
 		// Create a new linked list node as an array of form:
 		// 	[suspended_count, resolved_count, next_node]
 		// where suspended_count and resolved_count are numeric counters for
@@ -113,7 +113,7 @@ SuspenseList.prototype.render = function(props) {
 	return props.children;
 };
 
-SuspenseList.prototype.componentDidUpdate = SuspenseList.prototype.componentDidMount = function() {
+SuspenseList.prototype.componentDidUpdate = SuspenseList.prototype.componentDidMount = function () {
 	// Iterate through all children after mounting for two reasons:
 	// 1. As each node[SUSPENDED_COUNT] starts from 1, this iteration increases
 	//    each node[RELEASED_COUNT] by 1, therefore balancing the counters.

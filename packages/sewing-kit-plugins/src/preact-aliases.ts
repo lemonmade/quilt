@@ -6,25 +6,32 @@ export function preactAliases() {
   return createProjectPlugin(
     'Quilt.PreactAliases',
     ({tasks: {test, build, dev}}) => {
+      const updateWebpackAliases = (aliases: Record<string, string>) => {
+        const newAliases = {
+          ...aliases,
+          react$: '@quilted/preact-mini-compat',
+          'react-dom$': '@quilted/preact-mini-compat',
+          'react/jsx-runtime$': 'preact/jsx-runtime',
+          'preact/jsx-dev-runtime$': 'preact/jsx-runtime',
+        };
+
+        delete (newAliases as any).react;
+        delete (newAliases as any)['react-dom'];
+
+        return newAliases;
+      };
+
       build.hook(({hooks}) => {
         hooks.target.hook(({hooks}) => {
           hooks.configure.hook(({webpackAliases}) => {
-            webpackAliases?.hook((aliases) => ({
-              ...aliases,
-              react: '@quilted/preact-mini-compat',
-              'react/jsx-runtime': 'preact/jsx-runtime',
-            }));
+            webpackAliases?.hook(updateWebpackAliases);
           });
         });
       });
 
       dev.hook(({hooks}) => {
         hooks.configure.hook(({webpackAliases}) => {
-          webpackAliases?.hook((aliases) => ({
-            ...aliases,
-            react: '@quilted/preact-mini-compat',
-            'react/jsx-runtime': 'preact/jsx-runtime',
-          }));
+          webpackAliases?.hook(updateWebpackAliases);
         });
       });
 
