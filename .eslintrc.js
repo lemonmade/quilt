@@ -14,6 +14,7 @@ module.exports = {
     'packages/*/*.node',
     'packages/*/*.esnext',
     'packages/**/tests/fixtures/',
+    'packages/preact-mini-compat/',
   ],
   overrides: [
     {
