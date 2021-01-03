@@ -18,7 +18,6 @@ export function aws() {
                 MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
               )};
 
-              import React from 'react';
               import {render, runApp, Html} from '@quilted/quilt/server';
 
               process.on('uncaughtException', (...args) => {

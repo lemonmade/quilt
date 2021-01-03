@@ -39,7 +39,6 @@ $ yarn add @quilted/react-testing
 This library supports testing React components in a number of different environments. The base `@quilted/react-testing` entry provides the [testing API](#api) built on top of [react-test-renderer](https://reactjs.org/docs/test-renderer.html). This version of the library can work with any React renderer, as the components are testable with just Node.
 
 ```tsx
-import React from 'react';
 import {mount} from '@quilted/react-testing';
 
 function PayNowButton({onPay}) {
@@ -62,7 +61,6 @@ The utilities show above work great for most React components. However, projects
 This version of the library mounts the components into the DOM. This means that you can test components that have DOM side effects. It also means that you must ensure the DOM globals are available, typically by using a test runner’s integration with libraries like [jsdom](https://github.com/jsdom/jsdom)).
 
 ```tsx
-import React from 'react';
 import {mount} from '@quilted/react-testing/dom';
 
 function PayNowButton({onPay}) {
@@ -115,7 +113,6 @@ A test using `@quilted/react-testing` tends to have the following structure:
 The following example shows these steps in practice. This example uses [jest](https://jestjs.io/) as a test runner.
 
 ```tsx
-import React from 'react';
 import {mount} from '@quilted/react-testing';
 import ClickCounter from './ClickCounter';
 
@@ -145,7 +142,6 @@ afterEach(() => {
 This will allow you to use matchers such as [`toContainReactText`](#toContainReactText) or [`toContainReactComponent`](#toContainReactComponent) on your tree.
 
 ```tsx
-import React from 'react';
 import {mount} from '@quilted/react-testing';
 import ClickCounter from './ClickCounter';
 import LinkComponent from './LinkComponent';
@@ -223,7 +219,6 @@ In our example mount, we want people to be able to pass a custom GraphQL instanc
 The custom mount for this situation would be built as demonstrated below.
 
 ```tsx
-import React from 'react';
 import {ApolloProvider} from 'react-apollo';
 import {createGraphQLFactory, GraphQL} from '@shopify/graphql-testing';
 import {createMount} from '@quilted/react-testing';

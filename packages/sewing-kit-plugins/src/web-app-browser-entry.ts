@@ -64,7 +64,6 @@ export function webAppBrowserEntry({
             );
 
             const source = await quiltBrowserEntryContent!.run(`
-              import React from 'react';
               import {${reactFunction}} from 'react-dom';
               import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
 

@@ -193,7 +193,6 @@ export function webAppAutoServer({
   
                   import {createServer} from 'http';
   
-                  import React from 'react';
                   import {render, runApp, Html} from '@quilted/quilt/server';
   
                   process.on('uncaughtException', (...args) => {

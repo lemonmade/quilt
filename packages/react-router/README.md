@@ -523,7 +523,6 @@ The `TestRouter` component mounts the necessary context providers to support the
 
 ```tsx
 // Example showing usage with react-testing
-import React from 'react';
 import {createMount} from '@shopify/react-testing';
 import {TestRouter} from '@shopify/react-testing';
 
@@ -540,7 +539,6 @@ export const mount = createMount({
 The `createTestRouter` function creates a mock router that matches up the expected shape of a normal router, but that does not actually navigate when `navigate`, `go`, `back`, or `forward` are called. This function accepts an optional `url` argument, which should be a `URL` object representing the location you wish to simulate in your test. If it is not provided, a URL will be constructed that represents the value of `window.location.href`.
 
 ```tsx
-import React from 'react';
 import {createMount} from '@shopify/react-testing';
 import {TestRouter, createTestRouter} from '@quilted/react-router/testing';
 

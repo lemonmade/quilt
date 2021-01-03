@@ -1,4 +1,3 @@
-import React from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {Router, useInitialUrl} from '@quilted/react-router';

@@ -1,4 +1,3 @@
-import React from 'react';
 import type {Context as ReactContext, ReactNode, ReactElement} from 'react';
 
 export function maybeWrapContext<T>(

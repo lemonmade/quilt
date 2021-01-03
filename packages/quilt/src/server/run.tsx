@@ -1,4 +1,3 @@
-import React from 'react';
 import type {ReactElement} from 'react';
 
 import {extract} from '@quilted/react-server-render/server';

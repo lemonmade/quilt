@@ -1,4 +1,3 @@
-import React from 'react';
 import {createMount} from '@quilted/react-testing';
 
 import {createTestRouter, TestRouter} from '../../testing';
