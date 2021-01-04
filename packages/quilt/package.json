@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -45,9 +45,9 @@
     "@quilted/graphql": "^0.2.0",
     "@quilted/polyfills": "^0.0.5",
     "@quilted/preact-mini-compat": "^0.1.1",
-    "@quilted/react-async": "^0.2.1",
+    "@quilted/react-async": "^0.2.2",
     "@quilted/react-auto-headings": "^0.2.0",
-    "@quilted/react-graphql": "^0.2.1",
+    "@quilted/react-graphql": "^0.2.2",
     "@quilted/react-html": "^0.2.0",
     "@quilted/react-http": "^0.1.0",
     "@quilted/react-idle": "^0.2.0",
