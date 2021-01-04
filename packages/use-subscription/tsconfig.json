@@ -12,19 +12,5 @@
   "exclude": [
     "**/tests/**/*.ts",
     "**/tests/**/*.tsx"
-  ],
-  "references": [
-    {
-      "path": "../async"
-    },
-    {
-      "path": "../react-html"
-    },
-    {
-      "path": "../react-server-render"
-    },
-    {
-      "path": "../use-subscription"
-    }
   ]
 }

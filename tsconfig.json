@@ -60,6 +60,9 @@
       "path": "./packages/sewing-kit-plugins"
     },
     {
+      "path": "./packages/use-subscription"
+    },
+    {
       "path": "./packages/useful-types"
     }
   ]
