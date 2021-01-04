@@ -1,7 +1,7 @@
 import {useCallback, useContext, useMemo} from 'react';
 import type {Resolver} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
-import {useSubscription} from 'use-subscription';
+import {useSubscription} from '@quilted/use-subscription';
 
 import {AsyncAssetContext} from '../context';
 import type {AssetTiming} from '../types';
