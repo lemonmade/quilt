@@ -11,6 +11,7 @@ export function preactAliases() {
           ...aliases,
           react$: '@quilted/preact-mini-compat',
           'react-dom$': '@quilted/preact-mini-compat',
+          'react-dom/server$': 'preact/compat/server',
           'react/jsx-runtime$': 'preact/jsx-runtime',
           'preact/jsx-dev-runtime$': 'preact/jsx-runtime',
         };
