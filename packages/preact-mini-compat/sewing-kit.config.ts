@@ -1,7 +1,25 @@
 import {createPackage} from '@sewing-kit/config';
-import {quiltPackage} from '../../config/sewing-kit';
+import {quiltPackage, terser} from '../../config/sewing-kit';
 
 export default createPackage((pkg) => {
   pkg.entry({root: './src/index'});
-  pkg.use(quiltPackage());
+  pkg.use(
+    quiltPackage(),
+    terser({
+      nameCache: 'config/terser/name-cache.json',
+      mangle: {
+        properties: {
+          regex: '^_[^_]',
+          reserved: [
+            '__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+            '__REACT_DEVTOOLS_GLOBAL_HOOK__',
+            '__PREACT_DEVTOOLS__',
+            '_renderers',
+            '__source',
+            '__self',
+          ],
+        },
+      },
+    }),
+  );
 });
