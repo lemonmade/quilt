@@ -5,6 +5,7 @@ export default createPackage((pkg) => {
   pkg.entry({root: './src/index'});
   pkg.use(
     quiltPackage(),
+    // @see https://github.com/preactjs/preact/blob/master/mangle.json
     terser({
       nameCache: 'config/terser/name-cache.json',
       mangle: {
