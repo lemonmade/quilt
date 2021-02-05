@@ -134,11 +134,13 @@ export function quiltWebApp({
 export interface QuiltServiceOptions {
   readonly cdn?: string;
   readonly react?: boolean | 'preact';
-  readonly devServer?: NonNullable<Parameters<typeof webpackDevService>[0]>;
+  readonly devServer?:
+    | boolean
+    | NonNullable<Parameters<typeof webpackDevService>[0]>;
 }
 
 export function quiltService({
-  devServer,
+  devServer = true,
   react: useReact = false,
   cdn: cdnUrl,
 }: QuiltServiceOptions = {}) {
@@ -156,7 +158,10 @@ export function quiltService({
         useReact && react(),
         useReact && reactJsxRuntime({preact}),
         webpackBuild(),
-        webpackDevService(devServer),
+        devServer &&
+          webpackDevService(
+            typeof devServer === 'boolean' ? undefined : devServer,
+          ),
         polyfills(),
         cdnUrl ? cdn({url: cdnUrl}) : false,
       );
