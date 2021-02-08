@@ -20,6 +20,11 @@
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
   },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "license": "MIT",
   "sideEffects": false
 }

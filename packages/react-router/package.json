@@ -28,11 +28,13 @@
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
   },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@quilted/react-html": "^0.2.0",
     "@quilted/react-server-render": "^0.2.0"
-  },
-  "devDependencies": {
-    "@quilted/react-testing": "^0.2.3"
   }
 }

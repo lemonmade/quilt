@@ -29,8 +29,15 @@
     "react": ">=17.0.0 <18.0.0",
     "react-dom": ">=17.0.0 <18.0.0"
   },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@types/react": "^17.0.0"
-  },
-  "gitHead": "51fa3b40569d696bf4e41228d14f457226c3b159"
+  }
 }
