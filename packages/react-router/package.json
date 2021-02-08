@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-router",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -34,7 +34,7 @@
     }
   },
   "dependencies": {
-    "@quilted/react-html": "^0.2.0",
-    "@quilted/react-server-render": "^0.2.0"
+    "@quilted/react-html": "^0.2.1",
+    "@quilted/react-server-render": "^0.2.1"
   }
 }
