@@ -215,7 +215,7 @@ function isTextNode(node: unknown): node is TextNode {
 }
 
 function getPortalContent<P>(node: VNode<P>) {
-  return ((node as any) as PreactVNode<PortalProps>).props.vnode;
+  return ((node.props as any) as PreactComponent<any>).__v;
 }
 
 function toArray<T>(maybeArray: T | T[] | null | undefined) {

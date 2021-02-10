@@ -3,12 +3,12 @@ import {createResolver, ResolverOptions} from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
 import {useAsync} from './hooks';
-import type {AsyncComponentType, AssetTiming} from './types';
+import type {AsyncComponentType, AssetTiming, NoOptions} from './types';
 
 interface Options<
   Props extends Record<string, any>,
-  PreloadOptions extends Record<string, any> = Record<string, never>,
-  PrefetchOptions extends Record<string, any> = Record<string, never>
+  PreloadOptions extends Record<string, any> = NoOptions,
+  PrefetchOptions extends Record<string, any> = NoOptions
 > extends ResolverOptions<ComponentType<Props>> {
   defer?: 'render' | 'interactive';
   preload?: boolean;
@@ -33,8 +33,8 @@ interface Options<
 
 export function createAsyncComponent<
   Props extends Record<string, any>,
-  PreloadOptions extends Record<string, any> = Record<string, never>,
-  PrefetchOptions extends Record<string, any> = Record<string, never>
+  PreloadOptions extends Record<string, any> = NoOptions,
+  PrefetchOptions extends Record<string, any> = NoOptions
 >({
   id,
   load,
