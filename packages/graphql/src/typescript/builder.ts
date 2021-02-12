@@ -440,10 +440,9 @@ export class Builder extends EventEmitter {
             },
           );
 
-          return path.relative(
-            path.dirname(file),
-            normalizedOutputPath.replace(/(\.d)?\.ts$/, ''),
-          );
+          return path
+            .relative(path.dirname(file), normalizedOutputPath)
+            .replace(/(\.d)?\.ts$/, '');
         },
       }),
     );
