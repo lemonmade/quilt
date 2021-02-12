@@ -287,12 +287,21 @@ export class Builder extends EventEmitter {
       };
     }
 
+    const normalizedSchemaTypes = schemaTypes.map((type) =>
+      type.types === 'input'
+        ? type
+        : {
+            ...type,
+            outputPath: type.outputPath ?? getDefaultSchemaOutputPath(project),
+          },
+    );
+
     let schemaInputTypes: string | undefined;
     let schemaOutputTypes: string | undefined;
 
     await Promise.all(
-      schemaTypes.map(async (schemaType) => {
-        switch (schemaType.types) {
+      normalizedSchemaTypes.map(async ({types, outputPath}) => {
+        switch (types) {
           case 'input': {
             schemaInputTypes =
               schemaInputTypes ??
@@ -303,7 +312,7 @@ export class Builder extends EventEmitter {
               });
 
             const finalOutputPath = normalizeSchemaTypesPath(
-              schemaType.outputPath,
+              outputPath,
               project,
               {
                 isDefault: this.projects.length === 1,
@@ -324,7 +333,7 @@ export class Builder extends EventEmitter {
               });
 
             const finalOutputPath = normalizeSchemaTypesPath(
-              schemaType.outputPath ?? getDefaultSchemaOutputPath(project),
+              outputPath,
               project,
               {
                 isDefault: this.projects.length === 1,
@@ -342,7 +351,7 @@ export class Builder extends EventEmitter {
     const details: SchemaBuildDetails = {
       project,
       schema,
-      schemaTypes,
+      schemaTypes: normalizedSchemaTypes,
     };
 
     this.emit('schema:build:end', details);
@@ -405,12 +414,17 @@ export class Builder extends EventEmitter {
         importPath: (type) => {
           const {schemaTypes} = getOptions(project);
 
-          const inputTypes = schemaTypes?.find(
-            (schemaType): schemaType is SchemaTypeDefinitionInput =>
-              schemaType.types === 'input',
-          );
+          const inputTypes =
+            schemaTypes?.find(
+              (schemaType): schemaType is SchemaTypeDefinitionInput =>
+                schemaType.types === 'input',
+            ) ?? schemaTypes?.[0];
 
-          if (inputTypes == null) {
+          const outputPath =
+            inputTypes &&
+            (inputTypes.outputPath ?? getDefaultSchemaOutputPath(project));
+
+          if (outputPath == null) {
             throw new Error(
               `You must add at least one schemaTypes option with types: 'input' when importing custom scalar or enum types in your query (encountered while importing type ${JSON.stringify(
                 type.name,
@@ -419,7 +433,7 @@ export class Builder extends EventEmitter {
           }
 
           const normalizedOutputPath = normalizeSchemaTypesPath(
-            inputTypes.outputPath,
+            outputPath,
             project,
             {
               isDefault: this.projects.length === 1,
@@ -547,7 +561,7 @@ function normalizeSchemaTypesPath(
 }
 
 function getDefaultSchemaOutputPath({schema, name}: GraphQLProjectConfig) {
-  if (typeof schema === 'string') return schema;
+  if (typeof schema === 'string') return `${schema}.d.ts`;
 
   throw new Error(
     `Could not get a default path for the the \`${name}\` GraphQL project. You’ll need to add an explicit outputPath in your GraphQL config file.`,

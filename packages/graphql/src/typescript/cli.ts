@@ -20,9 +20,13 @@ async function run() {
   const builder = await createBuilder(cwd);
 
   builder.on('schema:build:end', ({schemaTypes}) => {
-    console.log(
-      `${BUILT} ${dim('schema types → ')}${schemaTypes[0].outputPath}`,
-    );
+    for (const schemaType of schemaTypes) {
+      console.log(
+        `${BUILT} ${dim(
+          `schema (${schemaType.types}) types → `,
+        )}${schemaType.outputPath!}`,
+      );
+    }
   });
 
   builder.on('document:build:end', ({documentPath}) => {

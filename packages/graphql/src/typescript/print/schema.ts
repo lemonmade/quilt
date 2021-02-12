@@ -240,7 +240,7 @@ function tsTypeForUnion(type: GraphQLUnionType) {
     t.tsUnionType(
       type
         .getTypes()
-        .map((value) => t.tsLiteralType(t.stringLiteral(value.name))),
+        .map((value) => t.tsTypeReference(t.identifier(value.name))),
     ),
   );
 }
