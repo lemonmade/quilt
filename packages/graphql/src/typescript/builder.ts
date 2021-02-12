@@ -43,10 +43,19 @@ interface DocumentBuildDetails {
   dependencies: Set<string>;
 }
 
-interface SchemaTypeDefinition {
+interface SchemaTypeDefinitionInput {
   types: 'input';
   outputPath: string;
 }
+
+interface SchemaTypeDefinitionOutput {
+  types: 'output';
+  outputPath?: string;
+}
+
+type SchemaTypeDefinition =
+  | SchemaTypeDefinitionInput
+  | SchemaTypeDefinitionOutput;
 
 export interface GraphQLConfigExtensions {
   addTypename?: boolean;
@@ -268,7 +277,7 @@ export class Builder extends EventEmitter {
       });
     }
 
-    const {schemaTypes = []} = getOptions(project);
+    const {schemaTypes = [], customScalars} = getOptions(project);
 
     if (schemaTypes.length === 0) {
       return {
@@ -278,19 +287,52 @@ export class Builder extends EventEmitter {
       };
     }
 
-    const generatedTypes = generateSchemaTypes(schema);
+    let schemaInputTypes: string | undefined;
+    let schemaOutputTypes: string | undefined;
 
     await Promise.all(
-      schemaTypes.map(async ({outputPath, types}) => {
-        const finalOutputPath = normalizeSchemaTypesPath(outputPath, project, {
-          isDefault: this.projects.length === 1,
-        });
-
-        await mkdirp(path.dirname(finalOutputPath));
-
-        switch (types) {
+      schemaTypes.map(async (schemaType) => {
+        switch (schemaType.types) {
           case 'input': {
-            await writeFile(finalOutputPath, generatedTypes);
+            schemaInputTypes =
+              schemaInputTypes ??
+              generateSchemaTypes(schema, {
+                customScalars,
+                input: true,
+                output: false,
+              });
+
+            const finalOutputPath = normalizeSchemaTypesPath(
+              schemaType.outputPath,
+              project,
+              {
+                isDefault: this.projects.length === 1,
+              },
+            );
+
+            await mkdirp(path.dirname(finalOutputPath));
+            await writeFile(finalOutputPath, schemaInputTypes);
+            break;
+          }
+          case 'output': {
+            schemaOutputTypes =
+              schemaOutputTypes ??
+              generateSchemaTypes(schema, {
+                customScalars,
+                input: false,
+                output: true,
+              });
+
+            const finalOutputPath = normalizeSchemaTypesPath(
+              schemaType.outputPath ?? getDefaultSchemaOutputPath(project),
+              project,
+              {
+                isDefault: this.projects.length === 1,
+              },
+            );
+
+            await mkdirp(path.dirname(finalOutputPath));
+            await writeFile(finalOutputPath, schemaOutputTypes);
             break;
           }
         }
@@ -363,18 +405,21 @@ export class Builder extends EventEmitter {
         importPath: (type) => {
           const {schemaTypes} = getOptions(project);
 
-          if (schemaTypes == null || schemaTypes.length === 0) {
+          const inputTypes = schemaTypes?.find(
+            (schemaType): schemaType is SchemaTypeDefinitionInput =>
+              schemaType.types === 'input',
+          );
+
+          if (inputTypes == null) {
             throw new Error(
-              `You must add at least one schemaTypes option when importing custom scalar or enum types in your query (encountered while importing type ${JSON.stringify(
+              `You must add at least one schemaTypes option with types: 'input' when importing custom scalar or enum types in your query (encountered while importing type ${JSON.stringify(
                 type.name,
               )})`,
             );
           }
 
-          const {outputPath} = schemaTypes[0];
-
           const normalizedOutputPath = normalizeSchemaTypesPath(
-            outputPath,
+            inputTypes.outputPath,
             project,
             {
               isDefault: this.projects.length === 1,
@@ -463,7 +508,7 @@ export class Builder extends EventEmitter {
 
 function toArray<T>(value?: T | T[]): T[] {
   if (value == null) return [];
-  if (Array.isArray(value)) return [];
+  if (Array.isArray(value)) return value;
   return [value];
 }
 
@@ -498,5 +543,13 @@ function normalizeSchemaTypesPath(
           outputPath,
           isDefault ? 'index.d.ts' : `${project.name}.d.ts`,
         ),
+  );
+}
+
+function getDefaultSchemaOutputPath({schema, name}: GraphQLProjectConfig) {
+  if (typeof schema === 'string') return schema;
+
+  throw new Error(
+    `Could not get a default path for the the \`${name}\` GraphQL project. You’ll need to add an explicit outputPath in your GraphQL config file.`,
   );
 }
