@@ -9,11 +9,12 @@ import {
 import type {ComponentType} from 'react';
 import {retain, release, createWorkerFactory} from '@remote-ui/web-workers';
 import {
-  RemoteReceiver,
   RemoteRenderer,
   useWorker,
   createController,
+  createRemoteReceiver,
 } from '@remote-ui/react/host';
+import type {RemoteReceiver} from '@remote-ui/react/host';
 
 type MaybeDefaultExport<T> = T | {default: T};
 // type ValueOrPropGetter<T, Props> = T | ((props: Props) => T);
@@ -81,7 +82,7 @@ export function createWorkerComponent<
     const receiverRef = useRef<RemoteReceiver>(null as any);
 
     receiverRef.current =
-      contextReceiver ?? receiverRef.current ?? new RemoteReceiver();
+      contextReceiver ?? receiverRef.current ?? createRemoteReceiver();
 
     useEffect(() => {
       if (sentProps.current == null) {
