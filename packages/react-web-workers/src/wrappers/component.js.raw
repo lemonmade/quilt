@@ -1,6 +1,7 @@
 import {createElement, Component} from 'react';
 import {render, createRemoteRoot} from '@remote-ui/react';
-import {expose, retain, release} from '@remote-ui/web-workers/worker';
+import {retain, release} from '@remote-ui/web-workers';
+import {endpoint} from '@remote-ui/web-workers/worker';
 
 import WorkerComponent from {{WORKER_MODULE}};
 
@@ -48,4 +49,4 @@ function mount(props, channel, options) {
   };
 }
 
-expose({mount});
+endpoint.expose({mount});
