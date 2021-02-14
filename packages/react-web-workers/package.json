@@ -34,8 +34,8 @@
     }
   },
   "dependencies": {
-    "@remote-ui/react": ">=3.0.0 <4.0.0",
-    "@remote-ui/web-workers": ">=1.0.0 <2.0.0",
+    "@remote-ui/react": "^4.0.0",
+    "@remote-ui/web-workers": "^1.4.0",
     "@types/react": "^17.0.0"
   }
 }
