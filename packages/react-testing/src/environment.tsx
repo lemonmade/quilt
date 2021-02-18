@@ -1,23 +1,34 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import type {ReactElement} from 'react';
 
-import type {Node as BaseNode, Root as BaseRoot} from './types';
+import type {
+  Node as BaseNode,
+  Root as BaseRoot,
+  PlainObject,
+  EmptyObject,
+} from './types';
 import {TestRenderer} from './TestRenderer';
 import {nodeName, toReactString} from './print';
 
 const IS_NODE = Symbol.for('QuiltTesting.Node');
 
-type PlainObject = Record<string, any>;
-
-type NodeCreationOptions<T, Extensions extends PlainObject> = {
+interface BaseNodeCreationOptions<T, Extensions extends PlainObject> {
   props: T;
   instance: any;
   type: BaseNode<T, Extensions>['type'];
   children: (BaseNode<unknown, Extensions> | string)[];
-} & Extensions;
+}
 
-export interface Environment<Context, Extensions extends PlainObject = {}> {
+type NodeCreationOptions<
+  T,
+  Extensions extends PlainObject = EmptyObject
+> = EmptyObject extends Extensions
+  ? BaseNodeCreationOptions<T, Extensions>
+  : BaseNodeCreationOptions<T, Extensions> & Extensions;
+
+export interface Environment<
+  Context,
+  Extensions extends PlainObject = EmptyObject
+> {
   act<T>(action: () => T): T extends Promise<any> ? Promise<void> : void;
   mount(element: ReactElement<any>): Context;
   unmount(context: Context): void;
@@ -33,76 +44,106 @@ export interface Environment<Context, Extensions extends PlainObject = {}> {
 
 type FullRoot<
   Props,
-  Context extends PlainObject | undefined,
-  Extensions extends PlainObject
-> = BaseNode<Props, Extensions> & BaseRoot<Props, Context>;
+  Context extends PlainObject = EmptyObject,
+  Actions extends PlainObject = EmptyObject,
+  Extensions extends PlainObject = EmptyObject
+> = BaseNode<Props, Extensions> & BaseRoot<Props, Context, Actions>;
 
 type AfterMountOption<
   MountOptions extends PlainObject,
   Context extends PlainObject,
+  Actions extends PlainObject,
   Extensions extends PlainObject,
   Async extends boolean
 > = Async extends true
   ? {
       afterMount(
-        wrapper: FullRoot<unknown, Context, Extensions>,
+        wrapper: FullRoot<unknown, Context, Actions, Extensions>,
         options: MountOptions,
       ): PromiseLike<void>;
     }
   : {
       afterMount?(
-        wrapper: FullRoot<unknown, Context, Extensions>,
+        wrapper: FullRoot<unknown, Context, Actions, Extensions>,
         options: MountOptions,
       ): void;
     };
 
-export interface ContextOption<
-  MountOptions extends PlainObject,
-  Context extends PlainObject
-> {
-  context?(options: MountOptions): Context;
-}
+export type ContextOption<
+  MountOptions extends PlainObject = EmptyObject,
+  Context extends PlainObject = EmptyObject
+> = Context extends EmptyObject
+  ? {context?: never}
+  : {
+      context(options: MountOptions): Context;
+    };
 
-type CustomMountOptions<
-  MountOptions extends PlainObject = {},
-  CreateContext extends PlainObject = {},
-  Context extends PlainObject = CreateContext,
-  Extensions extends PlainObject = {},
-  Async extends boolean = false
-> = {
-  render(
+export type ActionsOption<
+  MountOptions extends PlainObject = EmptyObject,
+  Context extends PlainObject = EmptyObject,
+  Actions extends PlainObject = EmptyObject,
+  Extensions extends PlainObject = EmptyObject
+> = Actions extends EmptyObject
+  ? {actions?: never}
+  : {
+      actions(
+        root: Omit<FullRoot<unknown, Context, Actions, Extensions>, 'actions'>,
+        options: MountOptions,
+      ): Actions;
+    };
+
+export interface RenderOption<
+  MountOptions extends PlainObject = EmptyObject,
+  Context extends PlainObject = EmptyObject
+> {
+  render?(
     element: ReactElement<any>,
     context: Context,
     options: MountOptions,
   ): ReactElement<any>;
-} & ContextOption<MountOptions, CreateContext> &
-  AfterMountOption<MountOptions, Context, Extensions, Async>;
+}
+
+type CustomMountOptions<
+  MountOptions extends PlainObject = EmptyObject,
+  CreateContext extends PlainObject = EmptyObject,
+  Context extends PlainObject = CreateContext,
+  Actions extends PlainObject = EmptyObject,
+  Extensions extends PlainObject = EmptyObject,
+  Async extends boolean = false
+> = RenderOption<MountOptions, Context> &
+  ContextOption<MountOptions, CreateContext> &
+  ActionsOption<MountOptions, Context, Actions, Extensions> &
+  AfterMountOption<MountOptions, Context, Actions, Extensions, Async>;
 
 export interface CustomMount<
   MountOptions extends PlainObject,
   Context extends PlainObject,
+  Actions extends PlainObject,
   Extensions extends PlainObject,
   Async extends boolean
 > {
   <Props>(
     element: ReactElement<any>,
     options?: MountOptions,
-  ): CustomMountResult<Props, Context, Extensions, Async>;
+  ): CustomMountResult<Props, Context, Actions, Extensions, Async>;
   extend<
-    AdditionalMountOptions extends PlainObject = {},
-    AdditionalContext extends PlainObject = {},
+    AdditionalMountOptions extends PlainObject = EmptyObject,
+    AdditionalContext extends PlainObject = EmptyObject,
+    AdditionalActions extends PlainObject = EmptyObject,
     AdditionalAsync extends boolean = false
   >(
     options: CustomMountOptions<
       MountOptions & AdditionalMountOptions,
       AdditionalContext,
       Context & AdditionalContext,
+      Actions & AdditionalActions,
       Extensions,
       AdditionalAsync
     >,
   ): CustomMount<
     MountOptions & AdditionalMountOptions,
     Context & AdditionalContext,
+    Actions & AdditionalActions,
     Extensions,
     AdditionalAsync extends true ? AdditionalAsync : Async
   >;
@@ -111,46 +152,54 @@ export interface CustomMount<
 type CustomMountResult<
   Props,
   Context extends PlainObject,
+  Actions extends PlainObject,
   Extensions extends PlainObject,
   Async extends boolean
 > = Async extends true
-  ? Promise<FullRoot<Props, Context, Extensions>>
-  : FullRoot<Props, Context, Extensions>;
+  ? Promise<FullRoot<Props, Context, Actions, Extensions>>
+  : FullRoot<Props, Context, Actions, Extensions>;
 
 export function createEnvironment<
   EnvironmentContext = undefined,
-  Extensions extends PlainObject = {}
+  Extensions extends PlainObject = EmptyObject
 >(env: Environment<EnvironmentContext, Extensions>) {
   type Node<Props> = BaseNode<Props, Extensions>;
   type Root<
     Props,
-    Context extends PlainObject | undefined = undefined
-  > = FullRoot<Props, Context, Extensions>;
+    Context extends PlainObject = EmptyObject,
+    Actions extends PlainObject = EmptyObject
+  > = FullRoot<Props, Context, Actions, Extensions>;
 
-  const allMounted = new Set<Root<any, any>>();
+  const allMounted = new Set<Root<any, any, any>>();
 
   return {mount, createMount, mounted: allMounted, unmountAll};
 
   type ResolveRoot = (node: Node<unknown>) => Node<unknown> | null;
   type Render = (element: ReactElement<unknown>) => ReactElement<unknown>;
 
-  interface Options<Context extends PlainObject | undefined = undefined> {
+  interface Options<
+    Context extends PlainObject = EmptyObject,
+    Actions extends PlainObject = EmptyObject
+  > {
     context?: Context;
+    actions?: Actions;
     render?: Render;
     resolveRoot?: ResolveRoot;
   }
 
   function createRoot<
     Props,
-    Context extends PlainObject | undefined = undefined
+    Context extends PlainObject = EmptyObject,
+    Actions extends PlainObject = EmptyObject
   >(
     element: ReactElement<Props>,
     {
       context: rootContext,
+      actions: rootActions,
       render,
       resolveRoot = defaultResolveRoot,
-    }: Options<Context> = {},
-  ): Root<Props, Context> {
+    }: Options<Context, Actions> = {},
+  ): Root<Props, Context, Actions> {
     let rootNode: Node<unknown> | null = null;
     let mounted = false;
     let acting = false;
@@ -159,15 +208,16 @@ export function createEnvironment<
       current: null,
     };
 
-    const rootApi: BaseRoot<Props, Context> = {
+    const rootApi: BaseRoot<Props, Context, Actions> = {
       act,
       mount,
       unmount,
       setProps,
-      context: rootContext as any,
+      context: rootContext ?? ({} as any),
+      actions: rootActions ?? ({} as any),
     };
 
-    const root: Root<Props, Context> = new Proxy(rootApi, {
+    const root: Root<Props, Context, Actions> = new Proxy(rootApi, {
       get(target, key, receiver) {
         if (Reflect.ownKeys(target).includes(key)) {
           return Reflect.get(target, key, receiver);
@@ -447,31 +497,49 @@ export function createEnvironment<
   }
 
   function createMount<
-    MountOptions extends PlainObject = {},
-    Context extends PlainObject = {},
+    MountOptions extends PlainObject = EmptyObject,
+    Context extends PlainObject = EmptyObject,
+    Actions extends PlainObject = EmptyObject,
     Async extends boolean = false
-  >({
-    render,
-    context: createContext = defaultContext,
-    afterMount,
-  }: CustomMountOptions<
-    MountOptions,
-    Context,
-    Context,
-    Extensions,
-    Async
-  >): CustomMount<MountOptions, Context, Extensions, Async> {
+  >(
+    createMountOptions: CustomMountOptions<
+      MountOptions,
+      Context,
+      Context,
+      Actions,
+      Extensions,
+      Async
+    >,
+  ): CustomMount<MountOptions, Context, Actions, Extensions, Async> {
+    const {
+      render = defaultRender,
+      context: createContext = defaultContext,
+      actions: createActions = defaultActions,
+      afterMount,
+    } = createMountOptions as CustomMountOptions<
+      PlainObject,
+      PlainObject,
+      PlainObject,
+      PlainObject,
+      PlainObject,
+      true
+    >;
+
     function mount<Props>(
       element: ReactElement<Props>,
       options: MountOptions = {} as any,
     ) {
-      const context = createContext(options);
+      const context: any = createContext?.(options);
+      const actions: any = {};
 
-      const root = createRoot(element, {
+      const root = createRoot<unknown, Context, Actions>(element, {
         context,
+        actions,
         render: (element) => render(element, context, options),
         resolveRoot: (root) => root.find(element.type),
       });
+
+      Object.assign(actions, createActions(root as any, options));
 
       root.mount();
 
@@ -490,13 +558,18 @@ export function createEnvironment<
       writable: false,
       value: ({
         context: createAdditionalContext = defaultContext,
-        render: additionalRender,
+        actions: createAdditionalActions = defaultActions,
+        render: additionalRender = defaultRender,
         afterMount: additionalAfterMount = noop,
-      }: CustomMountOptions<any, any, any, any>) => {
-        return createMount<any, any, any>({
+      }: CustomMountOptions<any, any, any, any, any, any>) => {
+        return createMount<any, any, any, any>({
           context: (options) => ({
             ...createContext(options),
             ...createAdditionalContext(options),
+          }),
+          actions: (root, options) => ({
+            ...createActions(root, options),
+            ...createAdditionalActions(root, options),
           }),
           render: (element, context, options) =>
             render(
@@ -519,13 +592,21 @@ export function createEnvironment<
   }
 }
 
+function defaultRender(element: ReactElement<any>) {
+  return element;
+}
+
 function defaultContext() {
+  return {} as any;
+}
+
+function defaultActions() {
   return {} as any;
 }
 
 function noop() {}
 
-export function isNode<Extensions extends PlainObject = {}>(
+export function isNode<Extensions extends PlainObject = EmptyObject>(
   maybeNode: unknown,
 ): maybeNode is BaseNode<unknown, Extensions> {
   return maybeNode != null && (maybeNode as any)[IS_NODE];

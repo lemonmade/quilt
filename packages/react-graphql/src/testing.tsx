@@ -3,15 +3,13 @@ import type {PropsWithChildren} from 'react';
 
 import {createGraphQL} from '@quilted/graphql';
 import type {GraphQLFetch} from '@quilted/graphql';
-import {
-  createGraphQLController,
-  GraphQLController,
-  createFiller,
-} from '@quilted/graphql/fixtures';
+import {createGraphQLController, createFiller} from '@quilted/graphql/fixtures';
+import type {GraphQLController} from '@quilted/graphql/fixtures';
 
 import {GraphQLContext} from './context';
 
 export {createGraphQLController as createTestGraphQL, createFiller};
+export type {GraphQLController};
 
 export function TestGraphQL({
   children,

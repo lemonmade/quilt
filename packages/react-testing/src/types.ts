@@ -5,6 +5,9 @@ import type {
   Context,
 } from 'react';
 
+export type PlainObject = Record<string, any>;
+export type EmptyObject = Record<string, never>;
+
 export type PropsFor<T extends string | ComponentType<any>> = T extends string
   ? T extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[T]
@@ -25,13 +28,13 @@ export type DeepPartial<T> = T extends (infer U)[]
   ? DeepPartial<U>[]
   : T extends readonly (infer U)[]
   ? readonly DeepPartial<U>[]
-  : T extends Record<string, any>
+  : T extends PlainObject
   ? {
       [K in keyof T]?: DeepPartial<T[K]>;
     }
   : T;
 
-export type Predicate<Extensions extends Record<string, any>> = (
+export type Predicate<Extensions extends PlainObject> = (
   node: Node<unknown, Extensions>,
 ) => boolean;
 
@@ -41,9 +44,11 @@ type MaybeFunctionReturnType<T> = T extends (...args: any[]) => any
 
 export interface Root<
   Props,
-  Context extends Record<string, any> | undefined = undefined
+  Context extends PlainObject = EmptyObject,
+  Actions extends PlainObject = EmptyObject
 > {
   readonly context: Context;
+  readonly actions: Actions;
   mount(): void;
   unmount(): void;
   setProps(props: Partial<Props>): void;
@@ -52,7 +57,7 @@ export interface Root<
   // forceUpdate(): void;
 }
 
-export interface NodeApi<Props, Extensions extends Record<string, any>> {
+export interface NodeApi<Props, Extensions extends PlainObject = EmptyObject> {
   readonly props: Props;
   readonly type: string | ComponentType<any> | null;
   readonly instance: any;
@@ -92,12 +97,12 @@ export interface NodeApi<Props, Extensions extends Record<string, any>> {
   toString(): string;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type Node<Props, Extensions extends Record<string, any> = {}> = NodeApi<
+export type Node<
   Props,
-  Extensions
-> &
-  Omit<Extensions, keyof Root<any>>;
+  Extensions extends PlainObject = EmptyObject
+> = EmptyObject extends Extensions
+  ? NodeApi<Props, Extensions>
+  : NodeApi<Props, Extensions> & Omit<Extensions, keyof Root<any>>;
 
 export interface DebugOptions {
   all?: boolean;
