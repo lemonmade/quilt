@@ -305,7 +305,6 @@ export class Builder extends EventEmitter {
               schemaInputTypes ??
               generateSchemaTypes(schema, {
                 customScalars,
-                input: true,
                 output: false,
               });
 
@@ -326,7 +325,6 @@ export class Builder extends EventEmitter {
               schemaOutputTypes ??
               generateSchemaTypes(schema, {
                 customScalars,
-                input: false,
                 output: true,
               });
 

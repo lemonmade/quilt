@@ -2,13 +2,10 @@ import * as t from '@babel/types';
 import generate from '@babel/generator';
 import {
   isEnumType,
-  isInputType,
-  isOutputType,
   isScalarType,
   isUnionType,
   isNonNullType,
   isListType,
-  GraphQLUnionType,
   isInputObjectType,
 } from 'graphql';
 import type {
@@ -16,9 +13,11 @@ import type {
   GraphQLEnumType,
   GraphQLScalarType,
   GraphQLInputObjectType,
-  GraphQLInputType,
   GraphQLObjectType,
   GraphQLInterfaceType,
+  GraphQLUnionType,
+  GraphQLType,
+  GraphQLField,
 } from 'graphql';
 
 import {scalarTypeMap} from './utilities';
@@ -29,84 +28,19 @@ export interface ScalarDefinition {
 }
 
 export interface Options {
-  input?: boolean;
   output?: boolean;
   customScalars?: {[key: string]: ScalarDefinition};
 }
 
-export function generateSchemaInputTypes(
-  schema: GraphQLSchema,
-  options: Options = {},
-) {
-  const importMap = new Map<string, Set<string>>();
-  const fileBody: t.Statement[] = [];
-
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!isInputType(type) || type.name.startsWith('__')) {
-      continue;
-    }
-
-    if (
-      isScalarType(type) &&
-      Object.prototype.hasOwnProperty.call(scalarTypeMap, type.name)
-    ) {
-      continue;
-    }
-
-    if (isEnumType(type)) {
-      fileBody.push(t.exportNamedDeclaration(tsTypeForEnum(type)));
-    } else if (isScalarType(type)) {
-      const {customScalars = {}} = options;
-      const customScalarDefinition = customScalars[type.name];
-
-      if (customScalarDefinition?.package) {
-        const imported =
-          importMap.get(customScalarDefinition.package) ?? new Set();
-
-        imported.add(customScalarDefinition.name);
-        importMap.set(customScalarDefinition.package, imported);
-      }
-
-      const scalarType = tsScalarForType(type, customScalarDefinition);
-      fileBody.push(t.exportNamedDeclaration(scalarType));
-    } else {
-      fileBody.push(t.exportNamedDeclaration(tsInterfaceForType(type)));
-    }
-  }
-
-  const file = t.file(
-    t.program([
-      ...Array.from(importMap.entries()).map(([pkg, imported]) => {
-        return t.importDeclaration(
-          [...imported].map((importName) =>
-            t.importSpecifier(
-              t.identifier(importName),
-              t.identifier(importName),
-            ),
-          ),
-          t.stringLiteral(pkg),
-        );
-      }),
-      ...fileBody,
-    ]),
-  );
-
-  return generate(file).code;
-}
-
 export function generateSchemaTypes(
   schema: GraphQLSchema,
-  {customScalars = {}, input = true, output = true}: Options = {},
+  {customScalars = {}, output = true}: Options = {},
 ) {
-  if (!input && !output) {
-    throw new Error('You must set either input or output to `true`');
-  }
-
   const importMap = new Map<string, Set<string>>();
   const fileBody: t.Statement[] = [];
 
   for (const type of Object.values(schema.getTypeMap())) {
-    if (!isOutputType(type) || type.name.startsWith('__')) {
+    if (type.name.startsWith('__')) {
       continue;
     }
 
@@ -137,11 +71,11 @@ export function generateSchemaTypes(
         fileBody.push(t.exportNamedDeclaration(tsTypeForUnion(type)));
       }
     } else if (isInputObjectType(type)) {
-      if (input) {
-        fileBody.push(t.exportNamedDeclaration(tsInterfaceForType(type)));
-      }
+      fileBody.push(
+        t.exportNamedDeclaration(tsInterfaceForInputObjectType(type)),
+      );
     } else if (output) {
-      fileBody.push(t.exportNamedDeclaration(tsInterfaceForType(type)));
+      fileBody.push(t.exportNamedDeclaration(tsInterfaceForObjectType(type)));
     }
   }
 
@@ -165,13 +99,15 @@ export function generateSchemaTypes(
   return generate(file).code;
 }
 
-function tsTypeForInputType(type: GraphQLInputType): t.TSType {
+function tsTypeReferenceForGraphQLType(type: GraphQLType): t.TSType {
   const unwrappedType = isNonNullType(type) ? type.ofType : type;
 
   let tsType: t.TSType;
 
   if (isListType(unwrappedType)) {
-    const tsTypeOfContainedType = tsTypeForInputType(unwrappedType.ofType);
+    const tsTypeOfContainedType = tsTypeReferenceForGraphQLType(
+      unwrappedType.ofType,
+    );
     tsType = t.tsArrayType(
       t.isTSUnionType(tsTypeOfContainedType)
         ? t.tsParenthesizedType(tsTypeOfContainedType)
@@ -190,13 +126,11 @@ function tsTypeForInputType(type: GraphQLInputType): t.TSType {
     : t.tsUnionType([tsType, t.tsNullKeyword()]);
 }
 
-function tsInterfaceForType(
-  type: GraphQLInputObjectType | GraphQLObjectType | GraphQLInterfaceType,
-) {
+function tsInterfaceForInputObjectType(type: GraphQLInputObjectType) {
   const fields = Object.entries(type.getFields()).map(([name, field]) => {
     const property = t.tsPropertySignature(
       t.identifier(name),
-      t.tsTypeAnnotation(tsTypeForInputType(field.type)),
+      t.tsTypeAnnotation(tsTypeReferenceForGraphQLType(field.type)),
     );
     property.optional = !isNonNullType(field.type);
     return property;
@@ -208,6 +142,43 @@ function tsInterfaceForType(
     null,
     t.tsInterfaceBody(fields),
   );
+}
+
+function tsInterfaceForObjectType(
+  type: GraphQLObjectType | GraphQLInterfaceType,
+) {
+  const fields = Object.entries(type.getFields()).map(([name, field]) => {
+    return t.tsMethodSignature(
+      t.identifier(name),
+      null,
+      [variableIdentifierForField(field)],
+      t.tsTypeAnnotation(tsTypeReferenceForGraphQLType(field.type)),
+    );
+  });
+
+  return t.tsInterfaceDeclaration(
+    t.identifier(type.name),
+    null,
+    null,
+    t.tsInterfaceBody(fields),
+  );
+}
+
+function variableIdentifierForField(field: GraphQLField<any, any>) {
+  const identifier = t.identifier('variables');
+  identifier.typeAnnotation = t.tsTypeAnnotation(
+    t.tsTypeLiteral(
+      field.args.map(({name, type}) => {
+        const property = t.tsPropertySignature(
+          t.identifier(name),
+          t.tsTypeAnnotation(tsTypeReferenceForGraphQLType(type)),
+        );
+        property.optional = !isNonNullType(type);
+        return property;
+      }),
+    ),
+  );
+  return identifier;
 }
 
 function tsScalarForType(
