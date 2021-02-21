@@ -13,7 +13,13 @@ import {
   generateSchemaTypes,
   PrintSchemaOptions,
 } from './print';
-import type {DocumentDetails, ProjectDetails} from './types';
+import type {
+  DocumentDetails,
+  ProjectDetails,
+  DocumentOutputKind,
+  SchemaOutputKind,
+  SchemaOutputKindInputTypes,
+} from './types';
 
 export interface RunOptions {
   watch?: boolean;
@@ -32,34 +38,20 @@ interface ProjectBuildEndDetails {
 interface SchemaBuildDetails {
   project: GraphQLProjectConfig;
   schema: GraphQLSchema;
-  schemaTypes: SchemaTypeDefinition[];
+  outputKinds: SchemaOutputKind[];
 }
 
 interface DocumentBuildDetails {
   project: GraphQLProjectConfig;
   document: DocumentNode;
   documentPath: string;
-  definitionPath: string;
   dependencies: Set<string>;
+  outputKinds: DocumentOutputKind[];
 }
-
-interface SchemaTypeDefinitionInput {
-  types: 'input';
-  outputPath: string;
-}
-
-interface SchemaTypeDefinitionOutput {
-  types: 'output';
-  outputPath?: string;
-}
-
-type SchemaTypeDefinition =
-  | SchemaTypeDefinitionInput
-  | SchemaTypeDefinitionOutput;
 
 export interface GraphQLConfigExtensions {
-  addTypename?: boolean;
-  schemaTypes?: SchemaTypeDefinition[];
+  schema?: SchemaOutputKind[];
+  documents?: DocumentOutputKind[];
   customScalars?: PrintSchemaOptions['customScalars'];
 }
 
@@ -82,6 +74,11 @@ export class Builder extends EventEmitter {
   private get projects() {
     return Object.values(this.config.projects);
   }
+
+  private readonly documentOutputKindMatchCache = new WeakMap<
+    DocumentOutputKind,
+    Promise<string[]> | string[]
+  >();
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
@@ -277,22 +274,23 @@ export class Builder extends EventEmitter {
       });
     }
 
-    const {schemaTypes = [], customScalars} = getOptions(project);
+    const {schema: schemaOutputKinds = [], customScalars} = getOptions(project);
 
-    if (schemaTypes.length === 0) {
+    if (schemaOutputKinds.length === 0) {
       return {
         project,
         schema,
-        schemaTypes,
+        outputKinds: schemaOutputKinds,
       };
     }
 
-    const normalizedSchemaTypes = schemaTypes.map((type) =>
-      type.types === 'input'
-        ? type
+    const normalizedSchemaOutputKinds = schemaOutputKinds.map((outputKind) =>
+      outputKind.kind === 'inputTypes'
+        ? outputKind
         : {
-            ...type,
-            outputPath: type.outputPath ?? getDefaultSchemaOutputPath(project),
+            ...outputKind,
+            outputPath:
+              outputKind.outputPath ?? getDefaultSchemaOutputPath(project),
           },
     );
 
@@ -300,9 +298,9 @@ export class Builder extends EventEmitter {
     let schemaOutputTypes: string | undefined;
 
     await Promise.all(
-      normalizedSchemaTypes.map(async ({types, outputPath}) => {
-        switch (types) {
-          case 'input': {
+      normalizedSchemaOutputKinds.map(async ({kind, outputPath}) => {
+        switch (kind) {
+          case 'inputTypes': {
             schemaInputTypes =
               schemaInputTypes ??
               generateSchemaTypes(schema, {
@@ -323,7 +321,7 @@ export class Builder extends EventEmitter {
             await writeFile(finalOutputPath, schemaInputTypes);
             break;
           }
-          case 'output': {
+          case 'outputTypes': {
             schemaOutputTypes =
               schemaOutputTypes ??
               generateSchemaTypes(schema, {
@@ -351,7 +349,7 @@ export class Builder extends EventEmitter {
     const details: SchemaBuildDetails = {
       project,
       schema,
-      schemaTypes: normalizedSchemaTypes,
+      outputKinds: normalizedSchemaOutputKinds,
     };
 
     this.emit('schema:build:end', details);
@@ -406,19 +404,43 @@ export class Builder extends EventEmitter {
   ): Promise<DocumentBuildDetails> {
     const projectDetails = this.projectDetails.get(project)!;
     const documentDetails = projectDetails.documents.get(file)!;
-    const definitionPath = `${file}.d.ts`;
+
+    const normalizedDocumentOutputKinds: DocumentOutputKind[] = [
+      ...(getOptions(project).documents ?? []),
+      {kind: 'types'},
+    ];
+
+    let resolvedOutputKind!: DocumentOutputKind;
+
+    for (const documentOutputKind of normalizedDocumentOutputKinds) {
+      if (
+        await this.documentOutputKindMatchesDocument(
+          documentOutputKind,
+          file,
+          project,
+        )
+      ) {
+        resolvedOutputKind = documentOutputKind;
+        break;
+      }
+    }
+
+    const isType = resolvedOutputKind.kind === 'types';
+
+    const outputPath = `${file}${isType ? '.d.ts' : '.ts'}`;
 
     await writeFile(
-      definitionPath,
+      outputPath,
       generateDocumentTypes(documentDetails, projectDetails, {
+        kind: resolvedOutputKind,
         importPath: (type) => {
-          const {schemaTypes} = getOptions(project);
+          const {schema: schemaOutputKinds} = getOptions(project);
 
           const inputTypes =
-            schemaTypes?.find(
-              (schemaType): schemaType is SchemaTypeDefinitionInput =>
-                schemaType.types === 'input',
-            ) ?? schemaTypes?.[0];
+            schemaOutputKinds?.find(
+              (schemaType): schemaType is SchemaOutputKindInputTypes =>
+                schemaType.kind === 'inputTypes',
+            ) ?? schemaOutputKinds?.[0];
 
           const outputPath =
             inputTypes &&
@@ -450,13 +472,44 @@ export class Builder extends EventEmitter {
     const buildDetails: DocumentBuildDetails = {
       project,
       documentPath: file,
-      definitionPath,
+      outputKinds: [resolvedOutputKind],
       ...documentDetails,
     };
 
     this.emit('document:build:end', buildDetails);
 
     return buildDetails;
+  }
+
+  private async documentOutputKindMatchesDocument(
+    outputKind: DocumentOutputKind,
+    documentPath: string,
+    project: GraphQLProjectConfig,
+  ) {
+    if (outputKind.match == null) {
+      return true;
+    }
+
+    let matchingDocuments = this.documentOutputKindMatchCache.get(outputKind);
+
+    if (matchingDocuments) {
+      if (!Array.isArray(matchingDocuments)) {
+        matchingDocuments = await matchingDocuments;
+      }
+    } else {
+      const globPromise = glob(outputKind.match, {
+        cwd: project.dirpath,
+        absolute: true,
+        ignore: ['**/node_modules'],
+      });
+
+      this.documentOutputKindMatchCache.set(outputKind, globPromise);
+
+      matchingDocuments = await globPromise;
+      this.documentOutputKindMatchCache.set(outputKind, matchingDocuments);
+    }
+
+    return matchingDocuments.includes(documentPath);
   }
 
   private async updateDocumentInProject(
@@ -538,8 +591,7 @@ function normalizeProjectSchemaPaths({schema, name}: GraphQLProjectConfig) {
 }
 
 function getOptions(project: GraphQLProjectConfig): GraphQLConfigExtensions {
-  if (!project.hasExtension('quilt')) return {};
-  return project.extension<GraphQLConfigExtensions>('quilt');
+  return project.extensions.quilt ?? {};
 }
 
 function normalizeSchemaTypesPath(

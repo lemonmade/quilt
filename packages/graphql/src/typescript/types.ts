@@ -16,3 +16,23 @@ export interface ProjectDetails {
   documents: Map<string, DocumentDetails>;
   schema: GraphQLSchema;
 }
+
+export interface SchemaOutputKindInputTypes {
+  kind: 'inputTypes';
+  outputPath: string;
+}
+
+export interface SchemaOutputKindOutputTypes {
+  kind: 'outputTypes';
+  outputPath?: string;
+}
+
+export type SchemaOutputKind =
+  | SchemaOutputKindInputTypes
+  | SchemaOutputKindOutputTypes;
+
+export interface DocumentOutputKind {
+  kind: 'value' | 'types';
+  match?: string[];
+  addTypename?: boolean;
+}

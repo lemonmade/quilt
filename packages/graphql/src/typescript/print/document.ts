@@ -4,15 +4,16 @@ import type {Statement, TSType, TSTypeElement} from '@babel/types';
 import {
   isObjectType,
   isScalarType,
-  GraphQLSchema,
   isCompositeType,
-  GraphQLLeafType,
   TypeNode,
-  NamedTypeNode,
   isEnumType,
-  DefinitionNode,
 } from 'graphql';
 import type {
+  DocumentNode,
+  GraphQLSchema,
+  GraphQLLeafType,
+  NamedTypeNode,
+  DefinitionNode,
   GraphQLObjectType,
   GraphQLInterfaceType,
   OperationDefinitionNode,
@@ -20,8 +21,13 @@ import type {
 } from 'graphql';
 import generate from '@babel/generator';
 
-import type {DocumentDetails, ProjectDetails} from '../types';
+import type {
+  DocumentDetails,
+  ProjectDetails,
+  DocumentOutputKind,
+} from '../types';
 
+import {addTypename, minify, toSimpleDocument} from '../../utilities/document';
 import type {Field} from '../../utilities/ast';
 import {
   getRootType,
@@ -33,10 +39,12 @@ import {
 import {scalarTypeMap} from './utilities';
 
 interface Options {
+  kind: DocumentOutputKind;
   importPath(type: GraphQLLeafType): string;
 }
 
 interface Context {
+  readonly kind: DocumentOutputKind;
   readonly schema: GraphQLSchema;
   readonly rootType?: GraphQLObjectType;
   import(type: GraphQLLeafType): TSType;
@@ -46,7 +54,7 @@ interface Context {
 export function generateDocumentTypes(
   documentDetails: DocumentDetails,
   project: ProjectDetails,
-  {importPath}: Options,
+  {kind, importPath}: Options,
 ) {
   const {path, document} = documentDetails;
 
@@ -82,6 +90,7 @@ export function generateDocumentTypes(
   const fragmentCache = new Map<string, FragmentDefinitionNode>();
 
   const baseContext: Context = {
+    kind,
     schema: project.schema,
     import(type) {
       if (!importCache.has(type)) {
@@ -147,11 +156,17 @@ export function generateDocumentTypes(
       ),
     );
 
+    const isType = kind.kind === 'types';
+
+    const operationVariableInit = isType
+      ? undefined
+      : createDocumentExportValue(document, kind);
+
     const operationVariableDeclaration = t.variableDeclaration('const', [
-      t.variableDeclarator(operationExportIdentifier),
+      t.variableDeclarator(operationExportIdentifier, operationVariableInit),
     ]);
 
-    operationVariableDeclaration.declare = true;
+    operationVariableDeclaration.declare = isType;
 
     const operationExport = t.exportDefaultDeclaration(
       t.identifier('document'),
@@ -167,6 +182,13 @@ export function generateDocumentTypes(
       rootType,
       context,
     );
+
+    // Mark all top-level namespace exports as `declare` so Babel
+    // doesn’t complain about them.
+    for (const {declaration} of operationExports) {
+      if (declaration?.type !== 'TSModuleDeclaration') continue;
+      declaration.declare = true;
+    }
 
     const operationVariablesExport = variablesExportForOperation(
       variablesTypeName,
@@ -326,7 +348,9 @@ function exportsForSelection(
   const interfaceBody: TSTypeElement[] = [];
   const namespaceBody: Statement[] = [];
 
-  if (type !== context.rootType) {
+  const {addTypename = true} = context.kind;
+
+  if (type !== context.rootType && addTypename) {
     const typenameField = t.tsPropertySignature(
       t.identifier('__typename'),
       t.tsTypeAnnotation(
@@ -422,19 +446,25 @@ function exportsForSelection(
             t.identifier(toUnionOrInterfaceTypeName(nestedTypeName)),
             null,
             null,
-            t.tsInterfaceBody([
-              t.tsPropertySignature(
-                t.identifier('__typename'),
-                t.tsTypeAnnotation(
-                  t.tsUnionType([
-                    ...unmatchedTypes.map((unmatchedType) =>
-                      t.tsLiteralType(t.stringLiteral(unmatchedType.name)),
+            t.tsInterfaceBody(
+              addTypename
+                ? [
+                    t.tsPropertySignature(
+                      t.identifier('__typename'),
+                      t.tsTypeAnnotation(
+                        t.tsUnionType([
+                          ...unmatchedTypes.map((unmatchedType) =>
+                            t.tsLiteralType(
+                              t.stringLiteral(unmatchedType.name),
+                            ),
+                          ),
+                          t.tsLiteralType(t.stringLiteral('')),
+                        ]),
+                      ),
                     ),
-                    t.tsLiteralType(t.stringLiteral('')),
-                  ]),
-                ),
-              ),
-            ]),
+                  ]
+                : [],
+            ),
           ),
         ),
       );
@@ -503,14 +533,12 @@ function exportsForSelection(
   ];
 
   if (namespaceBody.length > 0) {
-    exported.push(
-      t.exportNamedDeclaration(
-        t.tsModuleDeclaration(
-          t.identifier(name),
-          t.tsModuleBlock(namespaceBody),
-        ),
-      ),
+    const tsModule = t.tsModuleDeclaration(
+      t.identifier(name),
+      t.tsModuleBlock(namespaceBody),
     );
+
+    exported.push(t.exportNamedDeclaration(tsModule));
   }
 
   return exported;
@@ -567,4 +595,27 @@ function unwrapAstType(
     isNonNullableListItem,
     type: (finalType as NamedTypeNode).name.value,
   };
+}
+
+function createDocumentExportValue(
+  document: DocumentNode,
+  outputKind: DocumentOutputKind,
+) {
+  const {addTypename: shouldAddTypename = true} = outputKind;
+
+  const minifiedDocument = minify(
+    shouldAddTypename ? addTypename(document, {clone: true}) : document,
+    {clone: !shouldAddTypename},
+  );
+
+  const {id, name, source} = toSimpleDocument(minifiedDocument);
+
+  return t.objectExpression([
+    t.objectProperty(t.identifier('id'), t.stringLiteral(id)),
+    t.objectProperty(
+      t.identifier('name'),
+      name ? t.stringLiteral(name) : t.identifier('undefined'),
+    ),
+    t.objectProperty(t.identifier('source'), t.stringLiteral(source)),
+  ]);
 }
