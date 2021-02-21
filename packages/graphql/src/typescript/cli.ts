@@ -6,6 +6,7 @@ import arg from 'arg';
 import {dim, inverse, bold, green, red} from 'colorette';
 
 import {createBuilder} from './builder';
+import {SchemaOutputKind} from './types';
 
 const BUILT = inverse(bold(green(' BUILT ')));
 const ERROR = inverse(bold(red(' ERROR ')));
@@ -23,9 +24,7 @@ async function run() {
     for (const outputKind of outputKinds) {
       console.log(
         `${BUILT} ${dim(
-          `schema (${
-            outputKind.kind === 'inputTypes' ? 'input' : 'output'
-          }) types → `,
+          `${schemaBuildMessage(outputKind)} → `,
         )}${outputKind.outputPath!}`,
       );
     }
@@ -59,5 +58,16 @@ async function run() {
     await builder.watch();
   } else {
     await builder.run();
+  }
+}
+
+function schemaBuildMessage({kind}: SchemaOutputKind) {
+  switch (kind) {
+    case 'inputTypes':
+      return 'schema (input) types';
+    case 'outputTypes':
+      return 'schema (output) types';
+    case 'definitions':
+      return 'schema definitions';
   }
 }

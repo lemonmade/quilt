@@ -290,22 +290,28 @@ export class Builder extends EventEmitter {
         : {
             ...outputKind,
             outputPath:
-              outputKind.outputPath ?? getDefaultSchemaOutputPath(project),
+              outputKind.outputPath ??
+              getDefaultSchemaOutputPath(project, {
+                typesOnly: outputKind.kind === 'outputTypes',
+              }),
           },
     );
 
     let schemaInputTypes: string | undefined;
     let schemaOutputTypes: string | undefined;
+    let schemaDefinitionTypes: string | undefined;
 
     await Promise.all(
-      normalizedSchemaOutputKinds.map(async ({kind, outputPath}) => {
+      normalizedSchemaOutputKinds.map(async (outputKind) => {
+        const {kind, outputPath} = outputKind;
+
         switch (kind) {
           case 'inputTypes': {
             schemaInputTypes =
               schemaInputTypes ??
               generateSchemaTypes(schema, {
                 customScalars,
-                output: false,
+                kind: outputKind,
               });
 
             const finalOutputPath = normalizeSchemaTypesPath(
@@ -325,7 +331,7 @@ export class Builder extends EventEmitter {
               schemaOutputTypes ??
               generateSchemaTypes(schema, {
                 customScalars,
-                output: true,
+                kind: outputKind,
               });
 
             const finalOutputPath = normalizeSchemaTypesPath(
@@ -338,6 +344,26 @@ export class Builder extends EventEmitter {
 
             await mkdirp(path.dirname(finalOutputPath));
             await writeFile(finalOutputPath, schemaOutputTypes);
+            break;
+          }
+          case 'definitions': {
+            schemaDefinitionTypes =
+              schemaDefinitionTypes ??
+              generateSchemaTypes(schema, {
+                customScalars,
+                kind: outputKind,
+              });
+
+            const finalOutputPath = normalizeSchemaTypesPath(
+              outputPath,
+              project,
+              {
+                isDefault: this.projects.length === 1,
+              },
+            );
+
+            await mkdirp(path.dirname(finalOutputPath));
+            await writeFile(finalOutputPath, schemaDefinitionTypes);
             break;
           }
         }
@@ -609,8 +635,13 @@ function normalizeSchemaTypesPath(
   );
 }
 
-function getDefaultSchemaOutputPath({schema, name}: GraphQLProjectConfig) {
-  if (typeof schema === 'string') return `${schema}.d.ts`;
+function getDefaultSchemaOutputPath(
+  {schema, name}: GraphQLProjectConfig,
+  {typesOnly = true} = {},
+) {
+  if (typeof schema === 'string') {
+    return `${schema}${typesOnly ? '.d.ts' : '.ts'}`;
+  }
 
   throw new Error(
     `Could not get a default path for the the \`${name}\` GraphQL project. You’ll need to add an explicit outputPath in your GraphQL config file.`,

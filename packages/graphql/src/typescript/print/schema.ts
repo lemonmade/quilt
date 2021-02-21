@@ -7,6 +7,7 @@ import {
   isNonNullType,
   isListType,
   isInputObjectType,
+  printSchema,
 } from 'graphql';
 import type {
   GraphQLSchema,
@@ -20,6 +21,8 @@ import type {
   GraphQLField,
 } from 'graphql';
 
+import type {SchemaOutputKind} from '../types';
+
 import {scalarTypeMap} from './utilities';
 
 export interface ScalarDefinition {
@@ -28,16 +31,18 @@ export interface ScalarDefinition {
 }
 
 export interface Options {
-  output?: boolean;
+  kind: SchemaOutputKind;
   customScalars?: {[key: string]: ScalarDefinition};
 }
 
 export function generateSchemaTypes(
   schema: GraphQLSchema,
-  {customScalars = {}, output = true}: Options = {},
+  {customScalars = {}, kind}: Options,
 ) {
   const importMap = new Map<string, Set<string>>();
   const fileBody: t.Statement[] = [];
+
+  const printOutputTypes = kind.kind !== 'inputTypes';
 
   for (const type of Object.values(schema.getTypeMap())) {
     if (type.name.startsWith('__')) {
@@ -67,16 +72,31 @@ export function generateSchemaTypes(
       const scalarType = tsScalarForType(type, customScalarDefinition);
       fileBody.push(t.exportNamedDeclaration(scalarType));
     } else if (isUnionType(type)) {
-      if (output) {
+      if (printOutputTypes) {
         fileBody.push(t.exportNamedDeclaration(tsTypeForUnion(type)));
       }
     } else if (isInputObjectType(type)) {
       fileBody.push(
         t.exportNamedDeclaration(tsInterfaceForInputObjectType(type)),
       );
-    } else if (output) {
+    } else if (printOutputTypes) {
       fileBody.push(t.exportNamedDeclaration(tsInterfaceForObjectType(type)));
     }
+  }
+
+  if (kind.kind === 'definitions') {
+    fileBody.push(
+      t.variableDeclaration('const', [
+        t.variableDeclarator(
+          t.identifier('schema'),
+          t.templateLiteral(
+            [t.templateElement({raw: `\n${printSchema(schema)}\n`})],
+            [],
+          ),
+        ),
+      ]),
+      t.exportDefaultDeclaration(t.identifier('schema')),
+    );
   }
 
   const file = t.file(

@@ -27,9 +27,15 @@ export interface SchemaOutputKindOutputTypes {
   outputPath?: string;
 }
 
+export interface SchemaOutputKindDefinitions {
+  kind: 'definitions';
+  outputPath?: string;
+}
+
 export type SchemaOutputKind =
   | SchemaOutputKindInputTypes
-  | SchemaOutputKindOutputTypes;
+  | SchemaOutputKindOutputTypes
+  | SchemaOutputKindDefinitions;
 
 export interface DocumentOutputKind {
   kind: 'value' | 'types';
