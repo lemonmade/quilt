@@ -19,20 +19,24 @@ async function run() {
 
   const builder = await createBuilder(cwd);
 
-  builder.on('schema:build:end', ({schemaTypes}) => {
-    for (const schemaType of schemaTypes) {
+  builder.on('schema:build:end', ({outputKinds}) => {
+    for (const outputKind of outputKinds) {
       console.log(
         `${BUILT} ${dim(
-          `schema (${schemaType.types}) types → `,
-        )}${schemaType.outputPath!}`,
+          `schema (${
+            outputKind.kind === 'inputTypes' ? 'input' : 'output'
+          }) types → `,
+        )}${outputKind.outputPath!}`,
       );
     }
   });
 
-  builder.on('document:build:end', ({documentPath}) => {
+  builder.on('document:build:end', ({documentPath, outputKinds}) => {
+    const isType = outputKinds.some(({kind}) => kind === 'types');
+
     console.log(
       `${BUILT} ${documentPath.replace(path.join(process.cwd(), '/'), '')}${dim(
-        '.d.ts',
+        isType ? '.d.ts' : '.ts',
       )}`,
     );
   });
