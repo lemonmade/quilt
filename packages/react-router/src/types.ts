@@ -57,3 +57,5 @@ export interface RouteDefinition {
   render?(details: RouteRenderDetails): ReactNode;
   renderPrefetch?(details: RouteRenderPrefetchDetails): ReactNode;
 }
+
+export type RelativeTo = 'root' | 'prefix';
