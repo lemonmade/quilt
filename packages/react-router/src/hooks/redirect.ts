@@ -6,7 +6,7 @@ import {useNavigate} from './navigate';
 
 export function useRedirect(
   to: NavigateTo,
-  {relativeTo}: NavigateOptions = {},
+  {relativeTo}: Pick<NavigateOptions, 'relativeTo'> = {},
 ) {
   const navigate = useNavigate();
 
