@@ -1,4 +1,11 @@
-import type {Match, Prefix, EnhancedURL, NavigateTo, Search} from './types';
+import type {
+  Match,
+  Prefix,
+  EnhancedURL,
+  NavigateTo,
+  Search,
+  RelativeTo,
+} from './types';
 import type {Router} from './router';
 
 export function enhanceUrl(
@@ -35,7 +42,13 @@ export function enhanceUrl(
   return url as EnhancedURL;
 }
 
-export function resolveUrl(to: NavigateTo, from: EnhancedURL): URL {
+export function resolveUrl(
+  to: NavigateTo,
+  from: EnhancedURL,
+  relativeTo?: RelativeTo,
+): URL {
+  const prefix = relativeTo === 'root' ? '/' : from.prefix;
+
   if (to instanceof URL) {
     if (to.origin !== from.origin) {
       throw new Error(
@@ -52,14 +65,14 @@ export function resolveUrl(to: NavigateTo, from: EnhancedURL): URL {
     const finalHash = prefixIfNeeded('#', hash);
 
     return new URL(
-      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, from.prefix),
+      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, prefix),
       from.href,
     );
   } else if (typeof to === 'function') {
-    return resolveUrl(to(from), from);
+    return resolveUrl(to(from), from, relativeTo);
   }
 
-  return new URL(prefixPath(to, from.prefix), postfixSlash(from.href));
+  return new URL(prefixPath(to, prefix), postfixSlash(from.href));
 }
 
 function prefixPath(pathname: string, prefix?: string) {

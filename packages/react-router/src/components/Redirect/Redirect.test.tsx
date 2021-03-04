@@ -12,6 +12,18 @@ describe('<Redirect />', () => {
       replace: true,
     });
   });
+
+  it('works with relativeTo', () => {
+    const to = '/my/path';
+    const redirect = mountWithNavigateSpy(
+      <Redirect to={to} relativeTo="root" />,
+    );
+
+    expect(redirect.context.router.navigate).toHaveBeenCalledWith(to, {
+      replace: true,
+      relativeTo: 'root',
+    });
+  });
 });
 
 type MockedRouter = Omit<ReturnType<typeof createTestRouter>, 'navigate'> & {

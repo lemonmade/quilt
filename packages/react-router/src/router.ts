@@ -1,4 +1,10 @@
-import type {EnhancedURL, Prefix, NavigateTo, Blocker} from './types';
+import type {
+  EnhancedURL,
+  Prefix,
+  NavigateTo,
+  Blocker,
+  RelativeTo,
+} from './types';
 import {enhanceUrl, createKey, resolveUrl} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
@@ -16,6 +22,7 @@ type Listener = (url: EnhancedURL) => void;
 
 export interface NavigateOptions {
   replace?: boolean;
+  relativeTo?: RelativeTo;
   state?: State;
 }
 
@@ -83,11 +90,11 @@ export function createRouter(
 
   function navigate(
     to: NavigateTo,
-    {state = {}, replace = false}: NavigateOptions = {},
+    {state = {}, replace = false, relativeTo}: NavigateOptions = {},
   ) {
     const resolvedKey = createKey();
     const resolvedUrl = enhanceUrl(
-      resolveUrl(to, currentUrl),
+      resolveUrl(to, currentUrl, relativeTo),
       state,
       resolvedKey,
       prefix,
@@ -97,7 +104,7 @@ export function createRouter(
 
     const redo = () => {
       forceNextNavigation = true;
-      navigate(resolvedUrl, {state, replace});
+      navigate(resolvedUrl, {state, replace, relativeTo});
     };
 
     if (!forceNextNavigation && shouldBlock(resolvedUrl, redo)) {
