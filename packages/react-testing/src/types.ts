@@ -104,6 +104,13 @@ export type Node<
   ? NodeApi<Props, Extensions>
   : NodeApi<Props, Extensions> & Omit<Extensions, keyof Root<any>>;
 
+export type RootNode<
+  Props,
+  Context extends PlainObject = EmptyObject,
+  Actions extends PlainObject = EmptyObject,
+  Extensions extends PlainObject = EmptyObject
+> = Node<Props, Extensions> & Root<Props, Context, Actions>;
+
 export interface DebugOptions {
   all?: boolean;
   depth?: number;

@@ -3,6 +3,7 @@ import type {ReactElement} from 'react';
 import type {
   Node as BaseNode,
   Root as BaseRoot,
+  RootNode,
   PlainObject,
   EmptyObject,
 } from './types';
@@ -42,13 +43,6 @@ export interface Environment<
   destroy?(context: Context): void;
 }
 
-type FullRoot<
-  Props,
-  Context extends PlainObject = EmptyObject,
-  Actions extends PlainObject = EmptyObject,
-  Extensions extends PlainObject = EmptyObject
-> = BaseNode<Props, Extensions> & BaseRoot<Props, Context, Actions>;
-
 type AfterMountOption<
   MountOptions extends PlainObject,
   Context extends PlainObject,
@@ -58,13 +52,13 @@ type AfterMountOption<
 > = Async extends true
   ? {
       afterMount(
-        wrapper: FullRoot<unknown, Context, Actions, Extensions>,
+        wrapper: RootNode<unknown, Context, Actions, Extensions>,
         options: MountOptions,
       ): PromiseLike<void>;
     }
   : {
       afterMount?(
-        wrapper: FullRoot<unknown, Context, Actions, Extensions>,
+        wrapper: RootNode<unknown, Context, Actions, Extensions>,
         options: MountOptions,
       ): void;
     };
@@ -87,7 +81,7 @@ export type ActionsOption<
   ? {actions?: never}
   : {
       actions(
-        root: Omit<FullRoot<unknown, Context, Actions, Extensions>, 'actions'>,
+        root: Omit<RootNode<unknown, Context, Actions, Extensions>, 'actions'>,
         options: MountOptions,
       ): Actions;
     };
@@ -156,8 +150,8 @@ type CustomMountResult<
   Extensions extends PlainObject,
   Async extends boolean
 > = Async extends true
-  ? Promise<FullRoot<Props, Context, Actions, Extensions>>
-  : FullRoot<Props, Context, Actions, Extensions>;
+  ? Promise<RootNode<Props, Context, Actions, Extensions>>
+  : RootNode<Props, Context, Actions, Extensions>;
 
 export function createEnvironment<
   EnvironmentContext = undefined,
@@ -168,7 +162,7 @@ export function createEnvironment<
     Props,
     Context extends PlainObject = EmptyObject,
     Actions extends PlainObject = EmptyObject
-  > = FullRoot<Props, Context, Actions, Extensions>;
+  > = RootNode<Props, Context, Actions, Extensions>;
 
   const allMounted = new Set<Root<any, any, any>>();
 
