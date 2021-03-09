@@ -101,12 +101,13 @@ type CustomMountOptions<
   MountOptions extends PlainObject = EmptyObject,
   CreateContext extends PlainObject = EmptyObject,
   Context extends PlainObject = CreateContext,
+  CreateActions extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
   Async extends boolean = false
 > = RenderOption<MountOptions, Context> &
   ContextOption<MountOptions, CreateContext> &
-  ActionsOption<MountOptions, Context, Actions, Extensions> &
+  ActionsOption<MountOptions, Context, CreateActions, Extensions> &
   AfterMountOption<MountOptions, Context, Actions, Extensions, Async>;
 
 export interface CustomMount<
@@ -130,6 +131,7 @@ export interface CustomMount<
       MountOptions & AdditionalMountOptions,
       AdditionalContext,
       Context & AdditionalContext,
+      AdditionalActions,
       Actions & AdditionalActions,
       Extensions,
       AdditionalAsync
@@ -501,6 +503,7 @@ export function createEnvironment<
       Context,
       Context,
       Actions,
+      Actions,
       Extensions,
       Async
     >,
@@ -511,6 +514,7 @@ export function createEnvironment<
       actions: createActions = defaultActions,
       afterMount,
     } = createMountOptions as CustomMountOptions<
+      PlainObject,
       PlainObject,
       PlainObject,
       PlainObject,
