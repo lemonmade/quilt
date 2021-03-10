@@ -7,6 +7,9 @@ import type {
 
 export type PlainObject = Record<string, any>;
 export type EmptyObject = Record<string, never>;
+export type IfEmptyObject<T, If, Else> = T extends EmptyObject ? If : Else;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type EraseIfEmpty<T> = T extends EmptyObject ? {} : T;
 
 export type PropsFor<T extends string | ComponentType<any>> = T extends string
   ? T extends keyof JSX.IntrinsicElements

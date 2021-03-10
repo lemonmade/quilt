@@ -297,6 +297,8 @@ It is possible to extend a custom mount function with additional logic. This can
 - The `render()` option provided to `mount.extend()` is called **first**. The result of calling this function is then passed to the original `render()`.
 - The `afterMount()` option provided to `mount.extend()` is called **first**. If it returns a promise, the resulting post-mount process will wait for it to resolve, and will then return the result of calling the original `afterMount()`. If either the original options or the extended options return a promise from `afterMount`, the resulting mount function will be asynchronous.
 
+Additionally, a new option is available for `extend()`: you can provide an `options` callback that receives as an argument the merged set of options, and must return a partial subset of those options to use as overrides. This can be used to extend a mount function and provide default values for some options that do not otherwise have defaults, or to customize base options on the basis of your newly-added options.
+
 ```tsx
 import {createMount} from '@quilted/react-testing';
 

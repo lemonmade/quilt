@@ -6,6 +6,8 @@ import type {
   RootNode,
   PlainObject,
   EmptyObject,
+  EraseIfEmpty,
+  IfEmptyObject,
 } from './types';
 import {TestRenderer} from './TestRenderer';
 import {nodeName, toReactString} from './print';
@@ -97,6 +99,17 @@ export interface RenderOption<
   ): ReactElement<any>;
 }
 
+export type MountOptionsOverrideOption<
+  CreateMountOptions extends PlainObject = EmptyObject,
+  MountOptions extends PlainObject = EmptyObject
+> = MountOptions extends EmptyObject
+  ? {options?: never}
+  : {
+      options?(
+        current: MountOptions & EraseIfEmpty<CreateMountOptions>,
+      ): Partial<MountOptions>;
+    };
+
 type CustomMountOptions<
   MountOptions extends PlainObject = EmptyObject,
   CreateContext extends PlainObject = EmptyObject,
@@ -109,6 +122,30 @@ type CustomMountOptions<
   ContextOption<MountOptions, CreateContext> &
   ActionsOption<MountOptions, Context, CreateActions, Extensions> &
   AfterMountOption<MountOptions, Context, Actions, Extensions, Async>;
+
+type CustomMountExtendOptions<
+  CreateMountOptions extends PlainObject = EmptyObject,
+  MountOptions extends PlainObject = EmptyObject,
+  CreateContext extends PlainObject = EmptyObject,
+  Context extends PlainObject = CreateContext,
+  CreateActions extends PlainObject = EmptyObject,
+  Actions extends PlainObject = EmptyObject,
+  Extensions extends PlainObject = EmptyObject,
+  Async extends boolean = false
+> = CustomMountOptions<
+  IfEmptyObject<
+    MountOptions,
+    CreateMountOptions,
+    MountOptions & EraseIfEmpty<CreateMountOptions>
+  >,
+  CreateContext,
+  Context,
+  CreateActions,
+  Actions,
+  Extensions,
+  Async
+> &
+  MountOptionsOverrideOption<CreateMountOptions, MountOptions>;
 
 export interface CustomMount<
   MountOptions extends PlainObject,
@@ -127,19 +164,44 @@ export interface CustomMount<
     AdditionalActions extends PlainObject = EmptyObject,
     AdditionalAsync extends boolean = false
   >(
-    options: CustomMountOptions<
-      MountOptions & AdditionalMountOptions,
+    options: CustomMountExtendOptions<
+      AdditionalMountOptions,
+      IfEmptyObject<
+        MountOptions,
+        AdditionalMountOptions,
+        MountOptions & EraseIfEmpty<AdditionalMountOptions>
+      >,
       AdditionalContext,
-      Context & AdditionalContext,
+      IfEmptyObject<
+        Context,
+        AdditionalContext,
+        Context & EraseIfEmpty<AdditionalContext>
+      >,
       AdditionalActions,
-      Actions & AdditionalActions,
+      IfEmptyObject<
+        Actions,
+        AdditionalActions,
+        Actions & EraseIfEmpty<AdditionalActions>
+      >,
       Extensions,
       AdditionalAsync
     >,
   ): CustomMount<
-    MountOptions & AdditionalMountOptions,
-    Context & AdditionalContext,
-    Actions & AdditionalActions,
+    IfEmptyObject<
+      MountOptions,
+      AdditionalMountOptions,
+      MountOptions & EraseIfEmpty<AdditionalMountOptions>
+    >,
+    IfEmptyObject<
+      Context,
+      AdditionalContext,
+      Context & EraseIfEmpty<AdditionalContext>
+    >,
+    IfEmptyObject<
+      Actions,
+      AdditionalActions,
+      Actions & EraseIfEmpty<AdditionalActions>
+    >,
     Extensions,
     AdditionalAsync extends true ? AdditionalAsync : Async
   >;
@@ -555,12 +617,13 @@ export function createEnvironment<
     Reflect.defineProperty(mount, 'extend', {
       writable: false,
       value: ({
+        options: customizeOptions,
         context: createAdditionalContext = defaultContext,
         actions: createAdditionalActions = defaultActions,
         render: additionalRender = defaultRender,
         afterMount: additionalAfterMount = noop,
-      }: CustomMountOptions<any, any, any, any, any, any>) => {
-        return createMount<any, any, any, any>({
+      }: CustomMountExtendOptions<any, any, any, any, any, any, any>) => {
+        const extendedMount = createMount<any, any, any, any>({
           context: (options) => ({
             ...createContext(options),
             ...createAdditionalContext(options),
@@ -583,6 +646,11 @@ export function createEnvironment<
             return isPromise(result) ? result.then(finalResult) : finalResult();
           },
         });
+
+        return customizeOptions
+          ? (element: any, options = {}) =>
+              extendedMount(element, {...options, ...customizeOptions(options)})
+          : extendedMount;
       },
     });
 
