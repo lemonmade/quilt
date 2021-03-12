@@ -6,14 +6,29 @@ export function useHtmlUpdater() {
   const queuedUpdate = useRef<number | null>(null);
 
   useDomClientEffect((manager) => {
-    return manager.subscribe((state) => {
+    queuedUpdate.current = requestAnimationFrame(() => {
+      updateOnClient(manager.state);
+    });
+
+    const clearUpdate = () => {
       if (queuedUpdate.current) {
         cancelAnimationFrame(queuedUpdate.current);
+        queuedUpdate.current = null;
       }
+    };
+
+    const stopSubscription = manager.subscribe((state) => {
+      clearUpdate();
 
       queuedUpdate.current = requestAnimationFrame(() => {
+        queuedUpdate.current = null;
         updateOnClient(state);
       });
     });
+
+    return () => {
+      clearUpdate();
+      stopSubscription();
+    };
   });
 }
