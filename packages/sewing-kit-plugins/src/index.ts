@@ -137,12 +137,14 @@ export interface QuiltServiceOptions {
   readonly devServer?:
     | boolean
     | NonNullable<Parameters<typeof webpackDevService>[0]>;
+  readonly features?: PolyfillFeature[];
 }
 
 export function quiltService({
   devServer = true,
   react: useReact = false,
   cdn: cdnUrl,
+  features,
 }: QuiltServiceOptions = {}) {
   const preact = useReact === 'preact';
 
@@ -162,7 +164,7 @@ export function quiltService({
           webpackDevService(
             typeof devServer === 'boolean' ? undefined : devServer,
           ),
-        polyfills(),
+        polyfills({features}),
         cdnUrl ? cdn({url: cdnUrl}) : false,
       );
 
