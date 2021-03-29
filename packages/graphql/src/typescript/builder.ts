@@ -486,9 +486,11 @@ export class Builder extends EventEmitter {
             },
           );
 
-          return path
-            .relative(path.dirname(file), normalizedOutputPath)
-            .replace(/(\.d)?\.ts$/, '');
+          return normalizeRelativePath(
+            path
+              .relative(path.dirname(file), normalizedOutputPath)
+              .replace(/(\.d)?\.ts$/, ''),
+          );
         },
       }),
     );
@@ -646,4 +648,11 @@ function getDefaultSchemaOutputPath(
   throw new Error(
     `Could not get a default path for the the \`${name}\` GraphQL project. You’ll need to add an explicit outputPath in your GraphQL config file.`,
   );
+}
+
+function normalizeRelativePath(relativePath: string) {
+  return relativePath.startsWith(`.${path.sep}`) ||
+    relativePath.startsWith(`..${path.sep}`)
+    ? relativePath
+    : `.${path.sep}${relativePath}`;
 }

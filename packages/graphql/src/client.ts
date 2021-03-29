@@ -15,13 +15,17 @@ export class GraphQL {
 
   constructor(
     private readonly fetch: GraphQLFetch,
-    private readonly cache = new Map<string, any>(),
+    private readonly cache: Map<string, any> | false = new Map<string, any>(),
   ) {}
 
   read<Data, Variables>(
     queryOrKey: GraphQLOperation<Data, Variables> | string,
     variables?: Variables,
   ) {
+    if (!this.cache) {
+      return;
+    }
+
     return this.cache.get(
       typeof queryOrKey === 'string'
         ? queryOrKey
@@ -55,7 +59,7 @@ export class GraphQL {
 
     const cacheKey = getCacheKey(query, variables);
 
-    if (options.cache && this.cache.has(cacheKey))
+    if (options.cache && this.cache && this.cache.has(cacheKey))
       return Promise.resolve({data: this.cache.get(cacheKey)!});
 
     if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey)!;
@@ -64,7 +68,8 @@ export class GraphQL {
       try {
         const result = await this.run(query, variables);
 
-        if (cache && !result.error) this.cache.set(cacheKey, result.data);
+        if (cache && this.cache && !result.error)
+          this.cache.set(cacheKey, result.data);
 
         return result;
       } finally {
@@ -101,7 +106,7 @@ export function createGraphQL({
   cache,
 }: {
   fetch: GraphQLFetch;
-  cache?: Map<string, any>;
+  cache?: Map<string, any> | false;
 }) {
   return new GraphQL(fetch, cache);
 }
