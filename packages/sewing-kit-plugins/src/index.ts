@@ -137,6 +137,9 @@ export interface QuiltServiceOptions {
   readonly devServer?:
     | boolean
     | NonNullable<Parameters<typeof webpackDevService>[0]>;
+  readonly graphql?: {
+    readonly export?: ExportStyle;
+  };
   readonly features?: PolyfillFeature[];
 }
 
@@ -144,6 +147,7 @@ export function quiltService({
   devServer = true,
   react: useReact = false,
   cdn: cdnUrl,
+  graphql: {export: exportStyle = 'simple'} = {},
   features,
 }: QuiltServiceOptions = {}) {
   const preact = useReact === 'preact';
@@ -160,6 +164,7 @@ export function quiltService({
         useReact && react(),
         useReact && reactJsxRuntime({preact}),
         webpackBuild(),
+        graphql({export: exportStyle}),
         devServer &&
           webpackDevService(
             typeof devServer === 'boolean' ? undefined : devServer,
