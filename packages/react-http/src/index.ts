@@ -15,4 +15,4 @@ export {
   useResponseRedirect,
   useResponseStatus,
 } from './hooks';
-export {HttpContext} from './components';
+export {HttpContext, NotFound, ResponseHeader} from './components';

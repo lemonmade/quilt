@@ -12,4 +12,6 @@ export {
   useResponseRedirect,
   useResponseStatus,
   HttpContext,
+  NotFound,
+  ResponseHeader,
 } from '@quilted/react-http';

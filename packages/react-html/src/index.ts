@@ -1,4 +1,4 @@
-export {Script, Style, Hydrator} from './components';
+export {Script, Style, Hydrator, Meta, Title, Viewport} from './components';
 
 export {
   useSerialized,
@@ -11,6 +11,7 @@ export {
   useTitle,
   usePreconnect,
   useHtmlUpdater,
+  useViewport,
 } from './hooks';
 
 // eslint-disable-next-line no-warning-comments

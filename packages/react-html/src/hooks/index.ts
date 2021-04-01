@@ -11,3 +11,4 @@ export {useMeta} from './meta';
 export {usePreconnect} from './preconnect';
 export {useSerialized} from './serialized';
 export {useTitle} from './title';
+export {useViewport} from './viewport';
