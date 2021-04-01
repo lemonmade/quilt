@@ -159,7 +159,7 @@ export function getMatchDetails(
       return pathDetails.remainderAbsolute === '/'
         ? {
             matched: normalizedMatch,
-            consumed: normalizedMatch,
+            consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
           }
         : undefined;
     } else if (normalizedMatch[0] === '/') {
@@ -169,7 +169,7 @@ export function getMatchDetails(
 
       return {
         matched: normalizedMatch,
-        consumed: normalizedMatch,
+        consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
       };
     } else {
       if (!pathDetails.remainderRelative.startsWith(normalizedMatch)) {
@@ -224,7 +224,7 @@ function splitUrl(url: URL, prefix?: Prefix, consumed = '') {
     prefix: resolvedPrefix,
     previouslyConsumed: consumed,
     remainderRelative,
-    remainderAbsolute: `${postfixSlash(consumed)}${remainderRelative}`,
+    remainderAbsolute: `/${remainderRelative}`,
   };
 }
 

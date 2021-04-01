@@ -85,7 +85,7 @@ describe('useRoutes()', () => {
           return useRoutes([
             {
               match: 'a',
-              children: [{match: '/a/b', render: () => <RouteComponent />}],
+              children: [{match: '/b', render: () => <RouteComponent />}],
             },
           ]);
         }
@@ -110,7 +110,7 @@ describe('useRoutes()', () => {
               match: '/a',
               children: [
                 {
-                  match: '/a/b',
+                  match: '/b',
                   render: ({children}) => (
                     <RouteComponent>{children}</RouteComponent>
                   ),
@@ -148,6 +148,21 @@ describe('useRoutes()', () => {
         expect(mount(<Routes />, {path: '/b'})).not.toContainReactComponent(
           RouteComponent,
         );
+
+        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+          RouteComponent,
+        );
+      });
+
+      it('matches the root path on a nested route', () => {
+        function Routes() {
+          return useRoutes([
+            {
+              match: 'a',
+              children: [{match: '/', render: () => <RouteComponent />}],
+            },
+          ]);
+        }
 
         expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
@@ -285,7 +300,7 @@ describe('useRoutes()', () => {
           return useRoutes([
             {
               match: /a/,
-              children: [{match: /\/\w\/b/, render: () => <RouteComponent />}],
+              children: [{match: /\/b/, render: () => <RouteComponent />}],
             },
           ]);
         }
@@ -311,7 +326,7 @@ describe('useRoutes()', () => {
               render: ({children}) => (
                 <RouteComponent>{children}</RouteComponent>
               ),
-              children: [{match: 'c', render: () => <NestedRouteComponent />}],
+              children: [{match: /c/, render: () => <NestedRouteComponent />}],
             },
           ]);
         }
