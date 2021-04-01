@@ -64,6 +64,7 @@ export function quiltPackage({
 
 export interface QuiltWebAppOptions {
   readonly preact?: boolean;
+  readonly brotli?: boolean;
   readonly autoServer?:
     | boolean
     | NonNullable<Parameters<typeof webAppAutoServer>[0]>;
@@ -83,6 +84,7 @@ export interface QuiltWebAppOptions {
 export function quiltWebApp({
   assetServer,
   preact,
+  brotli: buildBrotli = false,
   autoServer = false,
   cdn: cdnUrl,
   graphql: {export: exportStyle = 'simple'} = {},
@@ -101,7 +103,7 @@ export function quiltWebApp({
         webpackDevWebApp({assetServer}),
         webpackBuild(),
         flexibleOutputs(),
-        brotli(),
+        buildBrotli && brotli(),
         polyfills({features}),
         react({preact}),
         reactJsxRuntime({preact}),
