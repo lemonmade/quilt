@@ -22,13 +22,16 @@ export interface Focusable {
   focus(): void;
 }
 
-export type Search = string | Record<string, string> | URLSearchParams;
+export type Search =
+  | string
+  | Record<string, string | undefined>
+  | URLSearchParams;
 
 export type NavigateToLiteral =
   | string
   | URL
   | {
-      pathname?: string;
+      path?: string;
       hash?: string;
       search?: Search;
     };

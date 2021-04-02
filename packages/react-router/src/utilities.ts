@@ -58,9 +58,9 @@ export function resolveUrl(
 
     return to;
   } else if (typeof to === 'object') {
-    const {pathname, search, hash} = to;
+    const {path, search, hash} = to;
 
-    const finalPathname = pathname ?? from.pathname;
+    const finalPathname = path ?? from.pathname;
     const finalSearch = searchToString(search);
     const finalHash = prefixIfNeeded('#', hash);
 
@@ -94,9 +94,10 @@ function searchToString(search?: Search) {
     return prefixIfNeeded(
       '?',
       Object.keys(search).reduce<string>((searchString, key) => {
-        return `${searchString}${key}=${encodeURIComponent(
-          (search as any)[key],
-        )}`;
+        const value = (search as any)[key];
+        return value
+          ? `${searchString}${key}=${encodeURIComponent(value)}`
+          : searchString;
       }, ''),
     );
   }
