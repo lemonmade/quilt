@@ -16,7 +16,7 @@ export interface State {
 export interface Options {
   state?: State;
   prefix?: Prefix;
-  isExternal?(url: URL): boolean;
+  isExternal?(url: URL, currentUrl: URL): boolean;
 }
 
 type Listener = (url: EnhancedURL) => void;
@@ -50,7 +50,8 @@ export function createRouter(
     : createUrl(prefix);
 
   const isExternal =
-    explicitIsExternal ?? ((url) => url.origin !== currentUrl.origin);
+    explicitIsExternal ??
+    ((url, currentUrl) => url.origin !== currentUrl.origin);
 
   let forceNextNavigation = false;
 
@@ -91,7 +92,7 @@ export function createRouter(
     forward: (count = 1) => go(count),
     resolve: (to) => {
       const url = resolveUrl(to, currentUrl);
-      return {url, external: isExternal(url)};
+      return {url, external: isExternal(url, currentUrl)};
     },
   };
 
