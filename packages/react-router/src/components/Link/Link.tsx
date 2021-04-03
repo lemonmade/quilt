@@ -10,18 +10,26 @@ interface Props
     >,
     'href'
   > {
-  // should be resolved with the router
   to: NavigateTo;
-  children?: React.ReactNode;
+  external?: boolean;
 }
 
-export function Link({children, to, onClick, ...rest}: Props) {
+export function Link({
+  children,
+  to,
+  onClick,
+  external: explicitlyExternal = false,
+  ...rest
+}: Props) {
   const router = useRouter();
+  const {url, external} = router.resolve(to);
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event);
 
     if (
+      explicitlyExternal ||
+      external ||
       event.defaultPrevented ||
       event.shiftKey ||
       event.ctrlKey ||
@@ -35,7 +43,7 @@ export function Link({children, to, onClick, ...rest}: Props) {
   };
 
   return (
-    <a href={router.resolve(to).href} onClick={handleClick} {...rest}>
+    <a href={url.href} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

@@ -16,6 +16,7 @@ export interface State {
 export interface Options {
   state?: State;
   prefix?: Prefix;
+  isExternal?(url: URL): boolean;
 }
 
 type Listener = (url: EnhancedURL) => void;
@@ -37,16 +38,19 @@ export interface Router {
   go(count: number): void;
   back(count?: number): void;
   forward(count?: number): void;
-  resolve(to: NavigateTo): URL;
+  resolve(to: NavigateTo): {readonly url: URL; readonly external: boolean};
 }
 
 export function createRouter(
   initialUrl?: URL,
-  {prefix, state: initialState}: Options = {},
+  {prefix, state: initialState, isExternal: explicitIsExternal}: Options = {},
 ): Router {
   let currentUrl = initialUrl
     ? enhanceUrl(initialUrl, initialState ?? {}, createKey(), prefix)
     : createUrl(prefix);
+
+  const isExternal =
+    explicitIsExternal ?? ((url) => url.origin !== currentUrl.origin);
 
   let forceNextNavigation = false;
 
@@ -85,7 +89,10 @@ export function createRouter(
     go,
     back: (count = -1) => go(count),
     forward: (count = 1) => go(count),
-    resolve: (to) => resolveUrl(to, currentUrl),
+    resolve: (to) => {
+      const url = resolveUrl(to, currentUrl);
+      return {url, external: isExternal(url)};
+    },
   };
 
   function navigate(

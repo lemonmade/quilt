@@ -8,7 +8,7 @@ import {FocusContext} from './components';
 
 export function createTestRouter(
   url: URL | string = '/',
-  {prefix, state = {}}: Options = {},
+  {prefix, state = {}, isExternal: explicitIsExternal}: Options = {},
 ): Router {
   const currentUrl = enhanceUrl(
     typeof url === 'string' ? new URL(url, window.location.href) : url,
@@ -16,6 +16,9 @@ export function createTestRouter(
     createKey(),
     prefix,
   );
+
+  const isExternal =
+    explicitIsExternal ?? ((url) => url.origin === currentUrl.origin);
 
   return {
     currentUrl,
@@ -30,7 +33,10 @@ export function createTestRouter(
       return () => {};
     },
     navigate() {},
-    resolve: (to) => resolveUrl(to, currentUrl),
+    resolve: (to) => {
+      const url = resolveUrl(to, currentUrl);
+      return {url, external: isExternal(url)};
+    },
   };
 }
 
