@@ -35,7 +35,7 @@ export function createTestRouter(
     navigate() {},
     resolve: (to) => {
       const url = resolveUrl(to, currentUrl);
-      return {url, external: isExternal(url)};
+      return {url, external: isExternal(url, currentUrl)};
     },
   };
 }
