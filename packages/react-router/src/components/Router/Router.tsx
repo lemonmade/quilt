@@ -3,13 +3,14 @@ import type {ReactNode} from 'react';
 
 import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
-import type {Prefix} from '../../types';
 import {createRouter} from '../../router';
-import type {Router as RouterControl} from '../../router';
+import type {
+  Router as RouterControl,
+  Options as RouterOptions,
+} from '../../router';
 
-interface Props {
+interface Props extends RouterOptions {
   url?: URL;
-  prefix?: Prefix;
   router?: RouterControl;
   children?: ReactNode;
 }
@@ -19,10 +20,13 @@ export const Router = memo(function Router({
   url: explicitUrl,
   router: explicitRouter,
   prefix,
+  state,
+  isExternal,
 }: Props) {
   const router = useMemo(
-    () => explicitRouter ?? createRouter(explicitUrl, {prefix}),
-    [explicitRouter, explicitUrl, prefix],
+    () =>
+      explicitRouter ?? createRouter(explicitUrl, {prefix, state, isExternal}),
+    [explicitRouter, explicitUrl, prefix, state, isExternal],
   );
   const [url, setUrl] = useState(router.currentUrl);
   const currentUrlRef = useRef(url);

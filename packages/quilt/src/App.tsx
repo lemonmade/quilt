@@ -1,4 +1,4 @@
-import type {PropsWithChildren} from 'react';
+import type {PropsWithChildren, ComponentProps} from 'react';
 
 import {Router, useInitialUrl} from '@quilted/react-router';
 import {GraphQLContext} from '@quilted/react-graphql';
@@ -8,11 +8,22 @@ import {useHtmlUpdater} from '@quilted/react-html';
 
 import {maybeWrapContext} from './utilities/react';
 
+type RouterProps = ComponentProps<typeof Router>;
+
 interface Props {
   graphql?: GraphQL;
+  routerState?: RouterProps['state'];
+  routerPrefix?: RouterProps['prefix'];
+  urlIsExternal?: RouterProps['isExternal'];
 }
 
-export function App({children, graphql}: PropsWithChildren<Props>) {
+export function App({
+  children,
+  graphql,
+  routerState,
+  routerPrefix,
+  urlIsExternal,
+}: PropsWithChildren<Props>) {
   useHtmlUpdater();
 
   const initialUrl = useInitialUrl();
@@ -22,7 +33,14 @@ export function App({children, graphql}: PropsWithChildren<Props>) {
       {maybeWrapContext(
         GraphQLContext,
         graphql,
-        <Router url={initialUrl}>{children}</Router>,
+        <Router
+          url={initialUrl}
+          state={routerState}
+          prefix={routerPrefix}
+          isExternal={urlIsExternal}
+        >
+          {children}
+        </Router>,
       )}
     </HttpContext>
   );
