@@ -10,6 +10,7 @@
   "references": [
     {"path": "../react-server-render"},
     {"path": "../react-html"},
+    {"path": "../react-http"},
     {"path": "../react-testing"}
   ]
 }

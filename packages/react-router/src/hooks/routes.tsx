@@ -1,12 +1,12 @@
 /* eslint react/jsx-no-useless-fragment: off */
 
 import {memo, useContext, useEffect, useRef} from 'react';
-import type {ReactNode} from 'react';
+import type {ReactNode, ReactElement} from 'react';
+import {NotFound} from '@quilted/react-http';
 
 import type {EnhancedURL, NavigateTo, RouteDefinition} from '../types';
 import {PrefetcherContext, ConsumedPathContext} from '../context';
 import {getMatchDetails} from '../utilities';
-// import {REGISTER} from '../router';
 import type {Router} from '../router';
 import type {Prefetcher} from '../prefetcher';
 
@@ -15,7 +15,14 @@ import {useCurrentUrl} from './url';
 import {useRouter} from './router';
 import {useConsumedPath} from './consumed';
 
-export function useRoutes(routes: RouteDefinition[]) {
+export interface Options {
+  notFound?: boolean | (() => ReactElement);
+}
+
+export function useRoutes(
+  routes: RouteDefinition[],
+  {notFound = true}: Options = {},
+) {
   const router = useRouter();
   const currentUrl = useCurrentUrl();
   const consumedPath = useConsumedPath();
@@ -28,6 +35,7 @@ export function useRoutes(routes: RouteDefinition[]) {
       router={router}
       currentUrl={currentUrl}
       consumedPath={consumedPath}
+      notFound={notFound}
     />
   );
 }
@@ -71,6 +79,7 @@ interface Props {
   routes: RouteDefinition[];
   router: Router;
   currentUrl: EnhancedURL;
+  notFound: NonNullable<Options['notFound']>;
   consumedPath?: string;
 }
 
@@ -78,6 +87,7 @@ const RoutesInternal = memo(function RoutesInternal({
   routes,
   router,
   currentUrl,
+  notFound,
   consumedPath: previouslyConsumedPath,
 }: Props) {
   let matchDetails:
@@ -98,7 +108,15 @@ const RoutesInternal = memo(function RoutesInternal({
     }
   }
 
-  if (matchDetails == null) return null;
+  if (matchDetails == null) {
+    if (typeof notFound === 'function') {
+      return notFound();
+    } else if (notFound) {
+      return <NotFound />;
+    } else {
+      return null;
+    }
+  }
 
   const {
     route: matchedRoute,
@@ -121,6 +139,7 @@ const RoutesInternal = memo(function RoutesInternal({
           router={router}
           currentUrl={currentUrl}
           consumedPath={nestedConsumedPath}
+          notFound={notFound}
         />
       ),
     });
@@ -131,6 +150,7 @@ const RoutesInternal = memo(function RoutesInternal({
         router={router}
         currentUrl={currentUrl}
         consumedPath={nestedConsumedPath}
+        notFound={notFound}
       />
     );
   } else if (redirect) {

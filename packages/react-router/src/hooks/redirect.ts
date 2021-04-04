@@ -1,16 +1,27 @@
 import {useEffect} from 'react';
-import {NavigateOptions} from 'router';
-import type {NavigateTo} from '../types';
+import {useHttpAction} from '@quilted/react-http';
+import type {StatusCode} from '@quilted/react-http';
 
-import {useNavigate} from './navigate';
+import type {NavigateTo} from '../types';
+import type {NavigateOptions} from '../router';
+
+import {useRouter} from './router';
+
+export interface Options extends Pick<NavigateOptions, 'relativeTo'> {
+  statusCode?: StatusCode;
+}
 
 export function useRedirect(
   to: NavigateTo,
-  {relativeTo}: Pick<NavigateOptions, 'relativeTo'> = {},
+  {relativeTo, statusCode}: Options = {},
 ) {
-  const navigate = useNavigate();
+  const router = useRouter();
+
+  useHttpAction((http) => {
+    http.redirectTo(router.resolve(to, {relativeTo}).url.href, statusCode);
+  });
 
   useEffect(() => {
-    navigate(to, {replace: true, relativeTo});
-  }, [navigate, relativeTo, to]);
+    router.navigate(to, {replace: true, relativeTo});
+  }, [router, relativeTo, to]);
 }

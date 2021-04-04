@@ -14,5 +14,6 @@ export {
   useResponseHeader,
   useResponseRedirect,
   useResponseStatus,
+  useHttpAction,
 } from './hooks';
 export {HttpContext, NotFound, ResponseHeader} from './components';

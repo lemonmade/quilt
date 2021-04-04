@@ -38,7 +38,10 @@ export interface Router {
   go(count: number): void;
   back(count?: number): void;
   forward(count?: number): void;
-  resolve(to: NavigateTo): {readonly url: URL; readonly external: boolean};
+  resolve(
+    to: NavigateTo,
+    options?: {relativeTo?: RelativeTo},
+  ): {readonly url: URL; readonly external: boolean};
 }
 
 export function createRouter(
@@ -90,8 +93,8 @@ export function createRouter(
     go,
     back: (count = -1) => go(count),
     forward: (count = 1) => go(count),
-    resolve: (to) => {
-      const url = resolveUrl(to, currentUrl);
+    resolve: (to, {relativeTo} = {}) => {
+      const url = resolveUrl(to, currentUrl, relativeTo);
       return {url, external: isExternal(url, currentUrl)};
     },
   };
