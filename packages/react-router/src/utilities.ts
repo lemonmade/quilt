@@ -66,13 +66,17 @@ export function resolveUrl(
 
     return new URL(
       prefixPath(`${finalPathname}${finalSearch}${finalHash}`, prefix),
-      from.href,
+      urlToPostfixedOriginAndPath(from),
     );
   } else if (typeof to === 'function') {
     return resolveUrl(to(from), from, relativeTo);
   }
 
-  return new URL(prefixPath(to, prefix), postfixSlash(from.href));
+  return new URL(prefixPath(to, prefix), urlToPostfixedOriginAndPath(from));
+}
+
+function urlToPostfixedOriginAndPath(url: URL) {
+  return postfixSlash(`${url.origin}${url.pathname}`);
 }
 
 function prefixPath(pathname: string, prefix?: string) {
