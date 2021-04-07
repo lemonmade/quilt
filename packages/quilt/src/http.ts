@@ -6,6 +6,7 @@ export {
   HttpMethod,
   ResponseType,
   StatusCode,
+  useCacheControl,
   useRequestHeader,
   useResponseCspDirective,
   useResponseHeader,
