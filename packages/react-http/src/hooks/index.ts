@@ -1,3 +1,4 @@
+export {useCacheControl} from './cache-control';
 export {useResponseCspDirective} from './csp';
 export {useResponseRedirect} from './redirect';
 export {useRequestHeader} from './request-header';

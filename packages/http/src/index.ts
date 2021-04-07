@@ -1,4 +1,3 @@
-export {CacheControl} from './cache';
 export {CspDirective, CspSandboxAllow, CspSpecialSource} from './csp';
 export {HttpMethod} from './method';
 export {ResponseType} from './response-type';

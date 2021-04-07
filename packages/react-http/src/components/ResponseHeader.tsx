@@ -1,11 +1,11 @@
 import {useResponseHeader} from '../hooks';
 
 interface Props {
-  header: string;
+  name: string;
   value: string;
 }
 
-export function ResponseHeader({header, value}: Props) {
-  useResponseHeader(header, value);
+export function ResponseHeader({name, value}: Props) {
+  useResponseHeader(name, value);
   return null;
 }

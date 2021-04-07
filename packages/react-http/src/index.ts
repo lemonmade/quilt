@@ -1,5 +1,4 @@
 export {
-  CacheControl,
   CspDirective,
   CspSandboxAllow,
   CspSpecialSource,
@@ -9,6 +8,7 @@ export {
 } from '@quilted/http';
 
 export {
+  useCacheControl,
   useRequestHeader,
   useResponseCspDirective,
   useResponseHeader,
@@ -16,4 +16,9 @@ export {
   useResponseStatus,
   useHttpAction,
 } from './hooks';
-export {HttpContext, NotFound, ResponseHeader} from './components';
+export {
+  CacheControl,
+  HttpContext,
+  NotFound,
+  ResponseHeader,
+} from './components';
