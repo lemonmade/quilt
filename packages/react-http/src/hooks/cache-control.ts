@@ -55,9 +55,9 @@ export function useCacheControl(value: string | CacheControlOptions) {
         } else if (typeof revalidate === 'object') {
           appendToHeader(`stale-while-revalidate=${revalidate.allowStale}`);
         }
-
-        if (immutable) appendToHeader('immutable');
       }
+
+      if (immutable) appendToHeader('immutable');
     }
 
     http.setHeader('Cache-Control', normalizedValue);
