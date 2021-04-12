@@ -6,11 +6,7 @@
     "outDir": "build/ts",
     "paths": {}
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/tests/**/*.ts",
-    "**/tests/**/*.tsx"
-  ]
+  "include": ["src"],
+  "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
+  "references": [{"path": "../routing"}]
 }
