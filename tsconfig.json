@@ -36,6 +36,9 @@
       "path": "./packages/react-auto-headings"
     },
     {
+      "path": "./packages/react-email"
+    },
+    {
       "path": "./packages/react-graphql"
     },
     {
