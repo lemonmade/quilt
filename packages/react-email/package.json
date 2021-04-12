@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-email",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "React-friendly APIs for rendering emails and their metadata",
   "publishConfig": {
     "access": "public",
