@@ -1,5 +1,6 @@
+import type {Match} from '@quilted/routing';
+
 import {getMatchDetails} from '../utilities';
-import type {Match} from '../types';
 
 import {useRouter} from './router';
 import {useCurrentUrl} from './url';

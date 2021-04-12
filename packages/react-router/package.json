@@ -36,6 +36,7 @@
   "dependencies": {
     "@quilted/react-html": "^0.2.4",
     "@quilted/react-http": "^0.1.6",
-    "@quilted/react-server-render": "^0.2.1"
+    "@quilted/react-server-render": "^0.2.1",
+    "@quilted/routing": "^0.0.0"
   }
 }

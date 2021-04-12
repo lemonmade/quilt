@@ -8,15 +8,5 @@
   },
   "include": ["src"],
   "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [
-    {
-      "path": "../asset-upload-s3"
-    },
-    {
-      "path": "../http-handlers"
-    },
-    {
-      "path": "../sewing-kit-plugins"
-    }
-  ]
+  "references": [{"path": "../routing"}]
 }

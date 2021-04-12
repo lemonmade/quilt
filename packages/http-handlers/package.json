@@ -1,10 +1,11 @@
 {
-  "name": "@quilted/aws",
-  "version": "0.2.9",
+  "name": "@quilted/http-handlers",
+  "version": "0.0.0",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
   "esnext": "index.esnext",
@@ -17,14 +18,10 @@
     },
     "./": "./"
   },
-  "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/asset-upload-s3": "^0.1.8",
-    "@quilted/http-handlers": "^0.0.0",
-    "@quilted/sewing-kit-plugins": "^0.2.9",
-    "@sewing-kit/plugins": "^0.1.6",
-    "@types/aws-lambda": "^8.0.0",
+    "@quilted/http": "^0.1.0",
+    "@quilted/routing": "^0.0.0",
     "cookie": "^0.4.0"
   },
   "devDependencies": {

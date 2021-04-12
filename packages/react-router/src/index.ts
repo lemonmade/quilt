@@ -1,3 +1,5 @@
+export type {NavigateTo, EnhancedURL} from '@quilted/routing';
+
 export {
   Link,
   Router,
@@ -20,4 +22,4 @@ export {
 } from './hooks';
 export {containedByPrefix} from './utilities';
 export type {Router as RouterType} from './router';
-export type {NavigateTo, RouteDefinition, RouteRenderDetails} from './types';
+export type {RouteDefinition, RouteRenderDetails} from './types';

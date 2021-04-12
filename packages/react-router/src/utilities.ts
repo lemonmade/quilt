@@ -1,11 +1,7 @@
-import type {
-  Match,
-  Prefix,
-  EnhancedURL,
-  NavigateTo,
-  Search,
-  RelativeTo,
-} from './types';
+import {enhanceUrl as baseEnhancedURL} from '@quilted/routing';
+import type {Match, Prefix} from '@quilted/routing';
+
+import type {EnhancedURL} from './types';
 import type {Router} from './router';
 
 export function enhanceUrl(
@@ -19,98 +15,12 @@ export function enhanceUrl(
     writable: false,
   });
 
-  const extractedPrefix = extractPrefix(url, prefix);
-  Object.defineProperty(url, 'prefix', {
-    value: extractedPrefix,
-    writable: false,
-  });
-
-  const normalizedPath = normalizeAsAbsolutePath(
-    url.pathname.replace(extractedPrefix ?? '', ''),
-  );
-
-  Object.defineProperty(url, 'normalizedPath', {
-    value: normalizedPath,
-    writable: false,
-  });
-
   Object.defineProperty(url, 'key', {
     value: key,
     writable: false,
   });
 
-  return url as EnhancedURL;
-}
-
-export function resolveUrl(
-  to: NavigateTo,
-  from: EnhancedURL,
-  relativeTo?: RelativeTo,
-): URL {
-  const prefix = relativeTo === 'root' ? '/' : from.prefix;
-
-  if (to instanceof URL) {
-    if (to.origin !== from.origin) {
-      throw new Error(
-        `You can’t perform a client side navigation to ${to.href} from ${from.href}`,
-      );
-    }
-
-    return to;
-  } else if (typeof to === 'object') {
-    const {path, search, hash} = to;
-
-    const finalPathname = path ?? from.pathname;
-    const finalSearch = searchToString(search);
-    const finalHash = prefixIfNeeded('#', hash);
-
-    return new URL(
-      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, prefix),
-      urlToPostfixedOriginAndPath(from),
-    );
-  } else if (typeof to === 'function') {
-    return resolveUrl(to(from), from, relativeTo);
-  }
-
-  return new URL(prefixPath(to, prefix), urlToPostfixedOriginAndPath(from));
-}
-
-function urlToPostfixedOriginAndPath(url: URL) {
-  return postfixSlash(`${url.origin}${url.pathname}`);
-}
-
-function prefixPath(pathname: string, prefix?: string) {
-  if (!prefix) return pathname;
-
-  return pathname.indexOf('/') === 0
-    ? `${postfixSlash(prefix)}${pathname.slice(1)}`
-    : pathname;
-}
-
-function searchToString(search?: Search) {
-  if (search == null) {
-    return '';
-  } else if (typeof search === 'string') {
-    return prefixIfNeeded('?', search);
-  } else if (search instanceof URLSearchParams) {
-    return prefixIfNeeded('?', search.toString());
-  } else {
-    return prefixIfNeeded(
-      '?',
-      Object.keys(search).reduce<string>((searchString, key) => {
-        const value = (search as any)[key];
-        return value
-          ? `${searchString}${key}=${encodeURIComponent(value)}`
-          : searchString;
-      }, ''),
-    );
-  }
-}
-
-function prefixIfNeeded(prefix: string, value = '') {
-  return value.length === 0 || value[0] === prefix
-    ? value
-    : `${prefix}${value}`;
+  return baseEnhancedURL(url, prefix) as EnhancedURL;
 }
 
 export function createKey() {
