@@ -1,6 +1,6 @@
 {
   "name": "@quilted/aws",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -21,7 +21,7 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/asset-upload-s3": "^0.1.8",
-    "@quilted/http-handlers": "^0.0.0",
+    "@quilted/http-handlers": "^0.1.0",
     "@quilted/sewing-kit-plugins": "^0.2.9",
     "@sewing-kit/plugins": "^0.1.6",
     "@types/aws-lambda": "^8.0.0",
