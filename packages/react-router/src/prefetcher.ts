@@ -1,4 +1,6 @@
-import type {Match, RouteDefinition} from './types';
+import type {Match} from '@quilted/routing';
+
+import type {RouteDefinition} from './types';
 import type {Router} from './router';
 import {getMatchDetails} from './utilities';
 

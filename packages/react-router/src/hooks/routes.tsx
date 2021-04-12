@@ -3,8 +3,9 @@
 import {memo, useContext, useEffect, useRef} from 'react';
 import type {ReactNode, ReactElement} from 'react';
 import {NotFound} from '@quilted/react-http';
+import type {NavigateTo} from '@quilted/routing';
 
-import type {EnhancedURL, NavigateTo, RouteDefinition} from '../types';
+import type {EnhancedURL, RouteDefinition} from '../types';
 import {PrefetcherContext, ConsumedPathContext} from '../context';
 import {getMatchDetails} from '../utilities';
 import type {Router} from '../router';

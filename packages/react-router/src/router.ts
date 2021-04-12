@@ -1,11 +1,8 @@
-import type {
-  EnhancedURL,
-  Prefix,
-  NavigateTo,
-  Blocker,
-  RelativeTo,
-} from './types';
-import {enhanceUrl, createKey, resolveUrl} from './utilities';
+import {resolveUrl} from '@quilted/routing';
+import type {Prefix, NavigateTo, RelativeTo} from '@quilted/routing';
+
+import type {EnhancedURL, Blocker} from './types';
+import {enhanceUrl, createKey} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 

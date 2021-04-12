@@ -1,6 +1,7 @@
 import type {DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
+import type {NavigateTo} from '@quilted/routing';
+
 import {useRouter} from '../../hooks';
-import type {NavigateTo} from '../../types';
 
 interface Props
   extends Omit<

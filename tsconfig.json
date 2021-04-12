@@ -24,6 +24,9 @@
       "path": "./packages/http"
     },
     {
+      "path": "./packages/http-handlers"
+    },
+    {
       "path": "./packages/polyfills"
     },
     {
@@ -58,6 +61,12 @@
     },
     {
       "path": "./packages/react-testing"
+    },
+    {
+      "path": "./packages/react-web-workers"
+    },
+    {
+      "path": "./packages/routing"
     },
     {
       "path": "./packages/sewing-kit-plugins"

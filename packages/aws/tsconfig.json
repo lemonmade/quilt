@@ -6,16 +6,14 @@
     "outDir": "build/ts",
     "paths": {}
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/tests/**/*.ts",
-    "**/tests/**/*.tsx"
-  ],
+  "include": ["src"],
+  "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
   "references": [
     {
       "path": "../asset-upload-s3"
+    },
+    {
+      "path": "../http-handlers"
     },
     {
       "path": "../sewing-kit-plugins"

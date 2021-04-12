@@ -1,8 +1,8 @@
 import {useEffect} from 'react';
 import {useHttpAction} from '@quilted/react-http';
 import type {StatusCode} from '@quilted/react-http';
+import type {NavigateTo} from '@quilted/routing';
 
-import type {NavigateTo} from '../types';
 import type {NavigateOptions} from '../router';
 
 import {useRouter} from './router';
