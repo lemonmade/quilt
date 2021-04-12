@@ -20,6 +20,7 @@ export {
   SERVER_ACTION_ID as ASYNC_ASSETS_SERVER_ACTION_ID,
 } from '@quilted/react-async/server';
 export type {ServerRenderPass} from '@quilted/react-server-render/server';
+export {renderEmail} from '@quilted/react-email/server';
 
 export {runApp} from './run';
 export {ServerContext} from './ServerContext';

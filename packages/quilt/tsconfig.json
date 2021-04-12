@@ -5,9 +5,7 @@
     "baseUrl": "src",
     "rootDir": "src"
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "references": [
     {
       "path": "../async"
@@ -23,6 +21,9 @@
     },
     {
       "path": "../react-auto-headings"
+    },
+    {
+      "path": "../react-email"
     },
     {
       "path": "../react-graphql"
