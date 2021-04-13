@@ -10,7 +10,6 @@ import {
 import type {Manifest} from '@quilted/async/assets';
 
 import type {} from './http-handler';
-import {excludeNonPolyfillEntries} from './shared';
 import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_HTTP_HANDLER,
@@ -142,20 +141,12 @@ export function webAppAutoServer({
               configuration.quiltAutoServerPort!.hook(() => defaultPort);
             }
 
-            const entryPath = api.tmpPath(`quilt/${project.name}-entry.js`);
             const httpHandlerPath = api.tmpPath(
               `quilt/${project.name}-http-handler.js`,
             );
             const assetManifestPath = api.tmpPath(
               `quilt/${project.name}-asset-manifest.js`,
             );
-
-            configuration.webpackOutputFilename?.hook(() => 'index.js');
-
-            configuration.webpackEntries?.hook((entries) => [
-              ...excludeNonPolyfillEntries(entries),
-              entryPath,
-            ]);
 
             configuration.webpackAliases?.hook((aliases) => ({
               ...aliases,
@@ -188,15 +179,9 @@ export function webAppAutoServer({
                 ),
               );
 
-              const entrySource =
+              const httpHandlerSource =
                 (await configuration.quiltAutoServerContent!.run(undefined)) ??
-                (await configuration.quiltHttpHandlerContent?.run(undefined));
-
-              if (!entrySource) {
-                throw new Error(
-                  `Could not create auto-server entry for project ${project.name}`,
-                );
-              }
+                `export {default} from '@quilted/magic-app-http-handler';`;
 
               return [
                 ...plugins,
@@ -232,8 +217,7 @@ export function webAppAutoServer({
   
                     export default assets;
                   `,
-                  [httpHandlerPath]: `export {default} from '@quilted/magic-app-http-handler';`,
-                  [entryPath]: entrySource,
+                  [httpHandlerPath]: httpHandlerSource,
                 }),
               ];
             });

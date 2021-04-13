@@ -35,8 +35,10 @@ import {webAppMultiBuilds} from './web-app-multi-build';
 import {webAppConvenienceAliases} from './web-app-convenience-aliases';
 import type {PolyfillFeature} from './types';
 
-// eslint-disable-next-line prettier/prettier
+/* eslint-disable prettier/prettier */
+export type {} from './http-handler';
 export type {} from './web-app-auto-server';
+/* eslint-enable prettier/prettier */
 
 export {
   MAGIC_MODULE_APP_COMPONENT,

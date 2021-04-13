@@ -5,6 +5,7 @@ import {
   Service,
 } from '@sewing-kit/plugins';
 import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/sewing-kit-plugins';
+import type {} from '@sewing-kit/plugin-webpack';
 
 export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
   return createProjectPlugin<WebApp | Service>(
