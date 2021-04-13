@@ -23,9 +23,11 @@ import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
 import {cdn} from './cdn';
 import {brotli} from './brotli';
+import {httpHandler} from './http-handler';
 import {polyfills} from './polyfills';
 import {reactJsxRuntime} from './react-jsx';
 import {preactAliases} from './preact-aliases';
+import {serviceAutoServer} from './service-auto-server';
 import {webAppAutoServer} from './web-app-auto-server';
 import {webAppBrowserEntry} from './web-app-browser-entry';
 import {webAppMagicModules} from './web-app-magic-modules';
@@ -38,7 +40,8 @@ export type {} from './web-app-auto-server';
 
 export {
   MAGIC_MODULE_APP_COMPONENT,
-  MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
+  MAGIC_MODULE_HTTP_HANDLER,
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
 } from './constants';
 
 export interface QuiltPackageOptions {
@@ -112,6 +115,7 @@ export function quiltWebApp({
         webAppMagicModules(),
         webAppBrowserEntry({hydrate: ({task}) => task !== Task.Dev}),
         preact && preactAliases(),
+        autoServer && httpHandler(),
         autoServer &&
           webAppAutoServer(typeof autoServer === 'object' ? autoServer : {}),
         cdnUrl ? cdn({url: cdnUrl}) : false,
@@ -143,6 +147,9 @@ export interface QuiltServiceOptions {
     readonly export?: ExportStyle;
   };
   readonly features?: PolyfillFeature[];
+  readonly auto?:
+    | boolean
+    | NonNullable<Parameters<typeof serviceAutoServer>[0]>;
 }
 
 export function quiltService({
@@ -151,6 +158,7 @@ export function quiltService({
   cdn: cdnUrl,
   graphql: {export: exportStyle = 'simple'} = {},
   features,
+  auto: autoServer = true,
 }: QuiltServiceOptions = {}) {
   const preact = useReact === 'preact';
 
@@ -173,6 +181,11 @@ export function quiltService({
           ),
         polyfills({features}),
         cdnUrl ? cdn({url: cdnUrl}) : false,
+        autoServer && httpHandler(),
+        autoServer &&
+          serviceAutoServer(
+            typeof autoServer === 'object' ? autoServer : undefined,
+          ),
       );
 
       await Promise.all([
