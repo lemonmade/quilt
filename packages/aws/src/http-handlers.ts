@@ -1,10 +1,11 @@
-import {notFound} from '@quilted/http-handlers';
-import type {HttpHandler} from '@quilted/http-handlers';
 import * as Cookies from 'cookie';
 import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
+import {notFound} from '@quilted/http-handlers';
+import type {HttpHandler} from '@quilted/http-handlers';
+
 export function createLambdaApiGatewayProxy(
-  app: HttpHandler,
+  handler: HttpHandler,
 ): APIGatewayProxyHandlerV2 {
   return async (event) => {
     // eslint-disable-next-line no-console
@@ -15,7 +16,7 @@ export function createLambdaApiGatewayProxy(
     const cookies = Cookies.parse(event.cookies?.join(', ') ?? '');
 
     const response =
-      (await app.run({
+      (await handler.run({
         headers,
         method: event.requestContext.http.method,
         body: event.body,

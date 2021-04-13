@@ -22,5 +22,5 @@ export {
 export type {ServerRenderPass} from '@quilted/react-server-render/server';
 export {renderEmail} from '@quilted/react-email/server';
 
-export {runApp} from './run';
+export {renderApp} from './render';
 export {ServerContext} from './ServerContext';

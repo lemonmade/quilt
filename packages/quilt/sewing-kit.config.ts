@@ -9,5 +9,10 @@ export default createPackage((pkg) => {
   pkg.entry({root: './src/server', name: 'server', runtime: Runtime.Node});
   pkg.entry({root: './src/testing', name: 'testing', runtime: Runtime.Node});
   pkg.entry({root: './src/matchers', name: 'matchers', runtime: Runtime.Node});
+  pkg.entry({
+    root: './src/magic/app-http-handler',
+    name: 'magic-app-http-handler',
+    runtime: Runtime.Node,
+  });
   pkg.use(quiltPackage());
 });

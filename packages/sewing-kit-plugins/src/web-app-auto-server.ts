@@ -9,10 +9,10 @@ import {
 } from '@sewing-kit/plugins';
 import type {Manifest} from '@quilted/async/assets';
 
-import {excludeNonPolyfillEntries} from './shared';
+import type {} from './http-handler';
 import {
-  MAGIC_MODULE_APP_COMPONENT,
-  MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_HTTP_HANDLER,
 } from './constants';
 
 interface TargetOptions {
@@ -141,22 +141,26 @@ export function webAppAutoServer({
               configuration.quiltAutoServerPort!.hook(() => defaultPort);
             }
 
-            const entry = api.tmpPath(`quilt/${project.name}-auto-server.js`);
-            const assetsPath = api.tmpPath(
-              `quilt/${project.name}-auto-server-assets.js`,
+            const httpHandlerPath = api.tmpPath(
+              `quilt/${project.name}-http-handler.js`,
             );
-
-            configuration.webpackOutputFilename?.hook(() => 'index.js');
-
-            configuration.webpackEntries?.hook((entries) => [
-              ...excludeNonPolyfillEntries(entries),
-              entry,
-            ]);
+            const assetManifestPath = api.tmpPath(
+              `quilt/${project.name}-asset-manifest.js`,
+            );
 
             configuration.webpackAliases?.hook((aliases) => ({
               ...aliases,
-              [MAGIC_MODULE_APP_AUTO_SERVER_ASSETS]: assetsPath,
+              [MAGIC_MODULE_APP_ASSET_MANIFEST]: assetManifestPath,
+              [MAGIC_MODULE_HTTP_HANDLER]: httpHandlerPath,
             }));
+
+            configuration.quiltHttpHandlerHost?.hook(async () =>
+              configuration.quiltAutoServerHost!.run('localhost'),
+            );
+
+            configuration.quiltHttpHandlerPort?.hook(async () =>
+              configuration.quiltAutoServerPort!.run(3003),
+            );
 
             configuration.webpackPlugins?.hook(async (plugins) => {
               const {default: WebpackVirtualModules} = await import(
@@ -175,75 +179,14 @@ export function webAppAutoServer({
                 ),
               );
 
-              let serverEntrySource = await configuration.quiltAutoServerContent!.run(
-                undefined,
-              );
-
-              if (!serverEntrySource) {
-                const [port, host] = await Promise.all([
-                  configuration.quiltAutoServerPort!.run(3003),
-                  configuration.quiltAutoServerHost!.run('localhost'),
-                ]);
-
-                serverEntrySource = `
-                  import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-                  import assets from ${JSON.stringify(
-                    MAGIC_MODULE_APP_AUTO_SERVER_ASSETS,
-                  )};
-  
-                  import {createServer} from 'http';
-  
-                  import {render, runApp, Html} from '@quilted/quilt/server';
-  
-                  process.on('uncaughtException', (...args) => {
-                    console.error(...args);
-                  });
-  
-                  console.log('Creating server: http://${host}:${port}');
-                  
-                  createServer(async (request, response) => {
-                    const {html, http, markup, asyncAssets} = await runApp(<App />, {
-                      url: new URL(request.path, 'http://' + request.host),
-                    });
-                  
-                    const {headers, statusCode = 200} = http.state;
-                    const usedAssets = asyncAssets.used({timing: 'immediate'});
-
-                    const assetOptions = {userAgent: request.getHeader('User-Agent')};
-                  
-                    const [styles, scripts, preload] = await Promise.all([
-                      assets.styles({async: usedAssets, options: assetOptions}),
-                      assets.scripts({async: usedAssets, options: assetOptions}),
-                      assets.asyncAssets(asyncAssets.used({timing: 'soon'}), {
-                        options: assetOptions,
-                      }),
-                    ]);
-  
-                    response.writeHead(
-                      statusCode,
-                      [...headers].reduce((allHeaders, [key, value]) => {
-                        allHeaders[key] = value;
-                        return allHeaders;
-                      }, {}),
-                    );
-  
-                    response.write(
-                      render(
-                        <Html manager={html} styles={styles} scripts={scripts} preloadAssets={preload}>
-                          {markup}
-                        </Html>,
-                      ),
-                    );
-  
-                    response.end();
-                  }).listen(${port}, ${JSON.stringify(host)});
-                `;
-              }
+              const httpHandlerSource =
+                (await configuration.quiltAutoServerContent!.run(undefined)) ??
+                `export {default} from '@quilted/magic-app-http-handler';`;
 
               return [
                 ...plugins,
                 new WebpackVirtualModules({
-                  [assetsPath]: `
+                  [assetManifestPath]: `
                     import {createAssetLoader} from '@quilted/async/assets';
 
                     const manifests = ${JSON.stringify(manifests.reverse())};
@@ -274,7 +217,7 @@ export function webAppAutoServer({
   
                     export default assets;
                   `,
-                  [entry]: serverEntrySource,
+                  [httpHandlerPath]: httpHandlerSource,
                 }),
               ];
             });
