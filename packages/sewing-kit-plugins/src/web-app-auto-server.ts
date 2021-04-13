@@ -181,7 +181,7 @@ export function webAppAutoServer({
 
               const httpHandlerSource =
                 (await configuration.quiltAutoServerContent!.run(undefined)) ??
-                `export {default} from '@quilted/magic-app-http-handler';`;
+                `export {default} from '@quilted/quilt/magic-app-http-handler';`;
 
               return [
                 ...plugins,

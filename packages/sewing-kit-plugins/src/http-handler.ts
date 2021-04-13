@@ -6,6 +6,8 @@ import {
   addHooks,
   WaterfallHook,
   Service,
+  Runtime,
+  TargetRuntime,
 } from '@sewing-kit/plugins';
 import type {
   BuildWebAppConfigurationHooks,
@@ -128,6 +130,7 @@ export function httpHandler<ProjectType extends WebApp | Service>({
         hooks.configureHooks.hook(addSourceHooks);
 
         hooks.target.hook(({target, hooks}) => {
+          if (!target.runtime.includes(Runtime.Node)) return;
           if (!include({target: target as any, task: Task.Build})) return;
 
           hooks.configure.hook(addConfiguration());
@@ -139,6 +142,7 @@ export function httpHandler<ProjectType extends WebApp | Service>({
       tasks.dev.hook(({hooks}) => {
         hooks.configureHooks.hook(addSourceHooks);
 
+        if (!TargetRuntime.fromProject(project).includes(Runtime.Node)) return;
         if (!include({task: Task.Dev})) return;
 
         hooks.configure.hook(addConfiguration());
