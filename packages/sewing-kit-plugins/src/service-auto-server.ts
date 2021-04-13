@@ -68,7 +68,7 @@ export function serviceAutoServer({
                 ...plugins,
                 new WebpackVirtualModules({
                   [httpHandlerPath]: `export {default} from ${JSON.stringify(
-                    project.entry ?? 'index',
+                    project.fs.resolvePath(project.entry ?? 'index'),
                   )};`,
                   [entryPath]: entrySource,
                 }),
