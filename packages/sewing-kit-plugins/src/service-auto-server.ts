@@ -1,7 +1,6 @@
 import {createProjectPlugin, Service} from '@sewing-kit/plugins';
 
 import type {} from './http-handler';
-import {excludeNonPolyfillEntries} from './shared';
 import {MAGIC_MODULE_HTTP_HANDLER} from './constants';
 
 interface Options {
@@ -34,15 +33,9 @@ export function serviceAutoServer({
               configuration.quiltHttpHandlerPort!.hook(() => defaultPort);
             }
 
-            const entryPath = api.tmpPath(`quilt/${project.name}-entry.js`);
             const httpHandlerPath = api.tmpPath(
               `quilt/${project.name}-http-handler.js`,
             );
-
-            configuration.webpackEntries?.hook((entries) => [
-              ...excludeNonPolyfillEntries(entries),
-              entryPath,
-            ]);
 
             configuration.webpackAliases?.hook((aliases) => ({
               ...aliases,
@@ -54,23 +47,12 @@ export function serviceAutoServer({
                 'webpack-virtual-modules'
               );
 
-              const entrySource = await configuration.quiltHttpHandlerContent?.run(
-                undefined,
-              );
-
-              if (!entrySource) {
-                throw new Error(
-                  `Could not create auto-server entry for project ${project.name}`,
-                );
-              }
-
               return [
                 ...plugins,
                 new WebpackVirtualModules({
                   [httpHandlerPath]: `export {default} from ${JSON.stringify(
                     project.fs.resolvePath(project.entry ?? 'index'),
                   )};`,
-                  [entryPath]: entrySource,
                 }),
               ];
             });
