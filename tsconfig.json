@@ -36,9 +36,6 @@
       "path": "./packages/react-async"
     },
     {
-      "path": "./packages/react-auto-headings"
-    },
-    {
       "path": "./packages/react-email"
     },
     {

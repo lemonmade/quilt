@@ -47,7 +47,6 @@
     "@quilted/polyfills": "^0.0.5",
     "@quilted/preact-mini-compat": "^0.1.3",
     "@quilted/react-async": "^0.2.7",
-    "@quilted/react-auto-headings": "^0.2.1",
     "@quilted/react-email": "^0.1.0",
     "@quilted/react-graphql": "^0.3.6",
     "@quilted/react-html": "^0.2.4",
