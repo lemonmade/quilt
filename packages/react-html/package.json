@@ -50,7 +50,7 @@
     "serialize-javascript": "^5.0.1"
   },
   "devDependencies": {
-    "@types/react-dom": "^16.9.9",
-    "@types/serialize-javascript": "^4.0.0"
+    "@types/react-dom": "^17.0.3",
+    "@types/serialize-javascript": "^5.0.0"
   }
 }

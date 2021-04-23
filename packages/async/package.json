@@ -29,7 +29,7 @@
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@sewing-kit/plugin-javascript": "^0.2.0",
+    "@sewing-kit/plugin-javascript": "^0.3.4",
     "@sewing-kit/plugins": "^0.1.6"
   },
   "devDependencies": {
