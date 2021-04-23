@@ -153,8 +153,8 @@ async function loadManifest(
     ? normalizeManifestFile(manifestFile)
     : 'manifest.json';
 
-  const update: Manifest['update'] = (results) =>
-    s3Upload(s3, {
+  const update: Manifest['update'] = async (results) => {
+    await s3Upload(s3, {
       Bucket: finalBucket,
       Key: finalFile,
       Body: JSON.stringify(
@@ -163,6 +163,7 @@ async function loadManifest(
         2,
       ),
     });
+  };
 
   try {
     const {Body: result} = await s3

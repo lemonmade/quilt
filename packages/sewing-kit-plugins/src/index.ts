@@ -74,9 +74,9 @@ export interface QuiltWebAppOptions {
     | boolean
     | NonNullable<Parameters<typeof webAppAutoServer>[0]>;
   readonly cdn?: string;
-  readonly assetServer?: NonNullable<
-    Parameters<typeof webpackDevWebApp>[0]
-  >['assetServer'];
+  readonly assetServer?:
+    | boolean
+    | NonNullable<Parameters<typeof webpackDevWebApp>[0]>['assetServer'];
   readonly graphql?: {
     readonly export?: ExportStyle;
   };
@@ -105,7 +105,10 @@ export function quiltWebApp({
         css(),
         webpackHooks(),
         webAppMultiBuilds({babel: true, postcss: true, browserGroups}),
-        webpackDevWebApp({assetServer}),
+        assetServer &&
+          webpackDevWebApp(
+            typeof assetServer === 'object' ? {assetServer} : {},
+          ),
         webpackBuild(),
         flexibleOutputs(),
         buildBrotli && brotli(),
