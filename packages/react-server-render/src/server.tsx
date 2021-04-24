@@ -5,7 +5,8 @@ import {ServerRenderContext} from './context';
 import {ServerRenderManager} from './manager';
 import {ServerRenderPass} from './types';
 
-export {ServerRenderManager, ServerRenderContext, ServerRenderPass};
+export {ServerRenderManager, ServerRenderContext};
+export type {ServerRenderPass};
 
 export {useServerAction} from './hook';
 export {ServerAction} from './ServerAction';
