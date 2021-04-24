@@ -13,30 +13,45 @@
   "types": "index.d.ts",
   "exports": {
     ".": {
+      "esnext": "./index.esnext",
       "import": "./index.mjs",
-      "require": "./index.js",
-      "esnext": "./index.esnext"
+      "require": "./index.js"
     },
     "./": "./",
     "./server": {
+      "esnext": "./server.esnext",
       "import": "./server.mjs",
-      "require": "./server.js",
-      "esnext": "./server.esnext"
+      "require": "./server.js"
     },
     "./html": {
+      "esnext": "./html.esnext",
       "import": "./html.mjs",
-      "require": "./html.js",
-      "esnext": "./html.esnext"
+      "require": "./html.js"
+    },
+    "./email": {
+      "esnext": "./email.esnext",
+      "import": "./email.mjs",
+      "require": "./email.js"
     },
     "./http": {
+      "esnext": "./http.esnext",
       "import": "./http.mjs",
-      "require": "./http.js",
-      "esnext": "./http.esnext"
+      "require": "./http.js"
     },
     "./testing": {
+      "esnext": "./testing.esnext",
       "import": "./testing.mjs",
-      "require": "./testing.js",
-      "esnext": "./testing.esnext"
+      "require": "./testing.js"
+    },
+    "./matchers": {
+      "esnext": "./matchers.esnext",
+      "import": "./matchers.mjs",
+      "require": "./matchers.js"
+    },
+    "./magic-app-http-handler": {
+      "esnext": "./magic-app-http-handler.esnext",
+      "import": "./magic-app-http-handler.mjs",
+      "require": "./magic-app-http-handler.js"
     }
   },
   "sideEffects": false,

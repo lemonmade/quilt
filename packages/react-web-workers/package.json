@@ -13,15 +13,15 @@
   "types": "index.d.ts",
   "exports": {
     ".": {
+      "esnext": "./index.esnext",
       "import": "./index.mjs",
-      "require": "./index.js",
-      "esnext": "./index.esnext"
+      "require": "./index.js"
     },
     "./": "./",
     "./sewing-kit": {
+      "esnext": "./sewing-kit.esnext",
       "import": "./sewing-kit.mjs",
-      "require": "./sewing-kit.js",
-      "esnext": "./sewing-kit.esnext"
+      "require": "./sewing-kit.js"
     }
   },
   "sideEffects": false,
