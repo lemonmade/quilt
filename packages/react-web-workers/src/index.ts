@@ -18,4 +18,5 @@ export type {
   SafeWorkerArgument,
 } from '@remote-ui/web-workers';
 export {useWorker} from '@remote-ui/react/host';
-export {createWorkerComponent, WorkerComponentOptions} from './create';
+export {createWorkerComponent} from './create';
+export type {WorkerComponentOptions} from './create';

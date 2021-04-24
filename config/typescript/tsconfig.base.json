@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "sourceMap": false,
     "noEmitOnError": false,
+    "isolatedModules": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -27,9 +28,6 @@
       "esnext",
       "esnext.asynciterable"
     ],
-    "typeRoots": [
-      "../../node_modules/@types",
-      "./typings"
-    ]
+    "typeRoots": ["../../node_modules/@types", "./typings"]
   }
 }
