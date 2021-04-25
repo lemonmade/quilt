@@ -12,51 +12,62 @@ export function createHttpRequestListener(
   handler: HttpHandler,
 ): RequestListener {
   return async (request, response) => {
-    const body = await new Promise<string>((resolve, reject) => {
-      let data = '';
+    try {
+      const body = await new Promise<string>((resolve, reject) => {
+        let data = '';
 
-      request.on('data', (chunk) => {
-        data += String(chunk);
+        request.on('data', (chunk) => {
+          data += String(chunk);
+        });
+
+        request.on('end', () => {
+          resolve(data);
+        });
+
+        request.on('close', () => {
+          reject();
+        });
       });
 
-      request.on('end', () => {
-        resolve(data);
-      });
-
-      request.on('close', () => {
-        reject();
-      });
-    });
-
-    const result =
-      (await handler.run({
-        body,
-        method: request.method!,
-        url: new URL(request.url!, `http://${request.headers.host}`),
-        headers: new Headers(
-          Object.entries(request.headers).map<[string, string]>(
-            ([header, value]) => [
-              header,
-              Array.isArray(value) ? value.join(',') : value ?? '',
-            ],
+      const result =
+        (await handler.run({
+          body,
+          method: request.method!,
+          url: new URL(
+            request.url!,
+            `${request.headers['x-forwarded-proto'] ?? 'http'}://${
+              request.headers['x-forwarded-host'] ?? request.headers.host
+            }`,
           ),
+          headers: new Headers(
+            Object.entries(request.headers).map<[string, string]>(
+              ([header, value]) => [
+                header,
+                Array.isArray(value) ? value.join(',') : value ?? '',
+              ],
+            ),
+          ),
+        })) ?? notFound();
+
+      const {status, headers} = result;
+      const text = await result.text();
+
+      response.writeHead(
+        status,
+        [...headers].reduce<Record<string, string>>(
+          (allHeaders, [key, value]) => {
+            allHeaders[key] = value;
+            return allHeaders;
+          },
+          {},
         ),
-      })) ?? notFound();
+      );
 
-    const {status, headers} = result;
-
-    response.writeHead(
-      status,
-      [...headers].reduce<Record<string, string>>(
-        (allHeaders, [key, value]) => {
-          allHeaders[key] = value;
-          return allHeaders;
-        },
-        {},
-      ),
-    );
-
-    response.write(await result.text());
-    response.end();
+      response.write(text);
+      response.end();
+    } catch {
+      response.writeHead(500);
+      response.end();
+    }
   };
 }
