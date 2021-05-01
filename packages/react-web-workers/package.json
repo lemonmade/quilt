@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@remote-ui/react": "^4.0.0",
-    "@remote-ui/web-workers": "^1.4.0",
+    "@remote-ui/web-workers": "^1.4.1",
     "@types/react": "^17.0.0"
   }
 }
