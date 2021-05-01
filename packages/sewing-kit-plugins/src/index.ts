@@ -144,6 +144,7 @@ export function quiltWebApp({
 
 export interface QuiltServiceOptions {
   readonly cdn?: string;
+  readonly build?: boolean;
   readonly react?: boolean | 'preact';
   readonly devServer?:
     | boolean
@@ -159,6 +160,7 @@ export interface QuiltServiceOptions {
 
 export function quiltService({
   devServer = true,
+  build = true,
   react: useReact = false,
   cdn: cdnUrl,
   graphql: {export: exportStyle = 'simple'} = {},
@@ -178,7 +180,7 @@ export function quiltService({
         flexibleOutputs(),
         useReact && react(),
         useReact && reactJsxRuntime({preact}),
-        webpackBuild(),
+        build && webpackBuild(),
         graphql({export: exportStyle}),
         devServer &&
           webpackDevService(
