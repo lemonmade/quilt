@@ -49,17 +49,20 @@ export function createHttpRequestListener(
           ),
         })) ?? notFound();
 
-      const {status, headers} = result;
+      const {status, headers, cookies} = result;
       const text = await result.text();
+
+      const setCookies = [...cookies];
 
       response.writeHead(
         status,
-        [...headers].reduce<Record<string, string>>(
+        [...headers].reduce<Record<string, string | string[]>>(
           (allHeaders, [key, value]) => {
+            if (key.toLowerCase() === 'set-cookie') return allHeaders;
             allHeaders[key] = value;
             return allHeaders;
           },
-          {},
+          setCookies.length > 0 ? {'set-cookie': setCookies} : {},
         ),
       );
 
