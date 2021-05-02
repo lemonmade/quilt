@@ -7,9 +7,11 @@ import type {HttpHandler} from '@quilted/http-handlers';
 export function createLambdaApiGatewayProxy(
   handler: HttpHandler,
 ): APIGatewayProxyHandlerV2 {
-  return async (event) => {
+  return async (event, context) => {
     // eslint-disable-next-line no-console
     console.log(event);
+
+    context.callbackWaitsForEmptyEventLoop = false;
 
     const headers = new Headers(event.headers as Record<string, string>);
 

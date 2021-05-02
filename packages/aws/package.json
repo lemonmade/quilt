@@ -20,7 +20,6 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/asset-upload-s3": "^0.1.10",
     "@quilted/http-handlers": "^0.1.4",
     "@quilted/sewing-kit-plugins": "^0.2.17",
     "@sewing-kit/plugins": "^0.1.6",
