@@ -46,6 +46,7 @@
   "sideEffects": true,
   "dependencies": {
     "@types/caniuse-api": "^3.0.0",
+    "@types/node-fetch": "^2.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.0.0",
     "node-fetch": "^2.0.0",
