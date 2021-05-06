@@ -15,6 +15,7 @@ A library for testing React components with a focus on type safety and clear com
   - [API](#api)
     - [`mount()`](#mount)
     - [`createMount()`](#createMount)
+    - [`mount.hook()`](#mountHook)
     - [`destroyAll()`](#destroyAll)
     - [`Root`](#root)
     - [`Node`](#element)
@@ -181,7 +182,7 @@ expect(button).toContainReactHtml('<button>Hello!</button>');
 
 Mounts a component to the DOM and returns a [`Root`](#root) instance. Note that for this to work, you must have a simulated browser environment, such as the `jsdom` environment that Jest uses.
 
-#### <a name="createMount"></a> `createMount<MountOptions, Context, Async>(options: CreateMountOptions<MountOptions, Context, Async>): MountFunction`
+#### <a name="createMount"></a> `createMount<MountOptions, Context, Actions, Async>(options: CreateMountOptions<MountOptions, Context, Actions, Async>): MountFunction`
 
 The [`mount`](#mount) function is powerful on its own, but applications will often want a more powerful version tailored to their application. A common example is app-wide context, where a set of context providers are generally assumed to be present for every component under test. It can also be useful for providing custom GraphQL infrastructure that enables easy testing of different API responses, such as the [`createGraphQL` factory from `@shopify/graphql-testing`](../graphql-testing).
 
@@ -335,6 +336,38 @@ const mounted = extendedMount(<MyComponent />, {
 // It also has a context field that merged the two `context()`
 // results: typeof mounted.context === {pathname: string; graphQLResult: object}
 ```
+
+#### <a name="mountHook"></a> `mount.hook<HookResult>(useHook: HookResult, options?: MountOptions): HookRunner<HookResult, Context, Actions>`
+
+Whenever possible, you should use test on component boundaries using [`mount()`](#mount) and the [`Root`](#root) and [`Node`](#node) objects it creates. Sometimes, you might have a particularly complex bit of logic that you encapsulate in a custom hook. Every `mount()`, including [custom mount functions](#customMount), provide a `hook()` method to run your hook in a simulated component, and to access the current return result of your hook. Below, you can see how we can use this helper to inspect our custom hook’s initial result:
+
+```ts
+import {useState} from 'react';
+import {mount} from '@quilted/react-testing';
+
+function useIncrementingNumber(initial: number) {
+  const [currentNumber, setCurrentNumber] = useState(initial);
+  const incrementNumber = () => setCurrentNumber((current) => current + 1);
+  return [currentNumber, incrementNumber];
+}
+
+const incrementingNumber = mount.hook(() => useIncrementingNumber(5));
+incrementingNumber.value[0]; // Our initial number, `5` in this case
+```
+
+The returned “hook runner” can do more than just give you access to the hook’s result. You can also simulate actions that use the hook’s result using the `act()` method. After calling `act()`, the `value` property will be updated with the most recent result.
+
+```ts
+const incrementingNumber = mount.hook(() => useIncrementingNumber(5));
+
+incrementingNumber.act(([currentNumber, incrementNumber]) => {
+  incrementNumber();
+});
+
+incrementingNumber.value[1]; // It’s `6` now!
+```
+
+If the “base” `mount` you used was created using `createMount()`, the second argument to its `hook()` method can be any options you could pass as the second argument to `mount()` itself. The resulting `hook` runner will also have the same [`context`](#context) and [`actions`](#actions) properties as a mounted component would have. If the base `mount` is asynchronous, `hook()` is asynchronous as well.
 
 #### <a name="destroyAll"></a> `destroyAll()`
 

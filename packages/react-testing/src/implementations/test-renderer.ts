@@ -5,8 +5,8 @@ import {
   ReactTestInstance,
 } from 'react-test-renderer';
 
-import {createEnvironment, Environment, isNode} from '../environment';
-import type {CustomMount} from '../environment';
+import {createEnvironment, isNode} from '../environment';
+import type {CustomMount, EnvironmentOptions} from '../environment';
 import type {Node, Root, RootNode} from '../types';
 
 interface Context {
@@ -30,7 +30,7 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<Context>({
   },
 });
 
-type Create = Parameters<Environment<any>['update']>[1];
+type Create = Parameters<EnvironmentOptions<any>['update']>[1];
 
 function createNodeFromTestInstance(
   testInstance: ReactTestInstance,

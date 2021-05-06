@@ -3,8 +3,8 @@ import type {VNode, ComponentChild, Component} from 'preact';
 import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
 
-import {createEnvironment, isNode, Environment} from '../environment';
-import type {CustomMount} from '../environment';
+import {createEnvironment, isNode} from '../environment';
+import type {CustomMount, EnvironmentOptions} from '../environment';
 import type {Node, Root, RootNode, HtmlNodeExtensions} from '../types';
 
 interface Context {
@@ -38,7 +38,9 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
 
 export {mount, createMount, mounted, unmountAll};
 
-type Create = Parameters<Environment<any, HtmlNodeExtensions>['update']>[1];
+type Create = Parameters<
+  EnvironmentOptions<any, HtmlNodeExtensions>['update']
+>[1];
 type Child = ReturnType<Create> | string;
 
 function createNodeFromComponentChild(

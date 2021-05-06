@@ -1,4 +1,4 @@
-import type {Environment} from '../../environment';
+import type {EnvironmentOptions} from '../../environment';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const {findCurrentFiberUsingSlowPath} = require('react-reconciler/reflection');
@@ -46,7 +46,7 @@ export interface ReactInstance {
   _reactInternalFiber: Fiber;
 }
 
-type Create = Parameters<Environment<any>['update']>[1];
+type Create = Parameters<EnvironmentOptions<any>['update']>[1];
 type Child = ReturnType<Create> | string;
 
 export function createNodeFromFiber(element: any, create: Create): Child {
