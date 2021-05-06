@@ -1,6 +1,6 @@
 {
   "name": "@quilted/sewing-kit-plugins",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -23,7 +23,7 @@
     "@types/webpack-virtual-modules": "^0.1.0"
   },
   "dependencies": {
-    "@quilted/polyfills": "^0.0.6",
+    "@quilted/polyfills": "^0.0.7",
     "@sewing-kit/plugin-css": "^0.1.27",
     "@sewing-kit/plugin-eslint": "^0.1.11",
     "@sewing-kit/plugin-graphql": "^0.1.30",
