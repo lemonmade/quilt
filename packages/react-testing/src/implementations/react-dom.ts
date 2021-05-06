@@ -1,8 +1,8 @@
 import {render, unmountComponentAtNode} from 'react-dom';
 import {act} from 'react-dom/test-utils';
 
-import {createEnvironment, Environment, isNode} from '../environment';
-import type {CustomMount} from '../environment';
+import {createEnvironment, isNode} from '../environment';
+import type {CustomMount, EnvironmentOptions} from '../environment';
 import type {Node, Root, RootNode, HtmlNodeExtensions} from '../types';
 
 import {Tag} from './shared/react';
@@ -42,7 +42,9 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
 
 export {mount, createMount, mounted, unmountAll};
 
-type Create = Parameters<Environment<any, HtmlNodeExtensions>['update']>[1];
+type Create = Parameters<
+  EnvironmentOptions<any, HtmlNodeExtensions>['update']
+>[1];
 type Child = ReturnType<Create> | string;
 
 export function createNodeFromFiber(element: any, create: Create): Child {

@@ -1,3 +1,4 @@
+import {createRef} from 'react';
 import type {ReactElement} from 'react';
 
 import type {
@@ -9,7 +10,13 @@ import type {
   EraseIfEmpty,
   IfEmptyObject,
 } from './types';
+
 import {TestRenderer} from './TestRenderer';
+import type {ImperativeApi as TestRendererImperativeApi} from './TestRenderer';
+
+import {HookRunner} from './HookRunner';
+import type {ImperativeApi as HookRunnerImperativeApi} from './HookRunner';
+
 import {nodeName, toReactString} from './print';
 
 const IS_NODE = Symbol.for('QuiltTesting.Node');
@@ -28,7 +35,7 @@ type NodeCreationOptions<
   ? BaseNodeCreationOptions<T, Extensions>
   : BaseNodeCreationOptions<T, Extensions> & Extensions;
 
-export interface Environment<
+export interface EnvironmentOptions<
   Context,
   Extensions extends PlainObject = EmptyObject
 > {
@@ -205,6 +212,27 @@ export interface CustomMount<
     Extensions,
     AdditionalAsync extends true ? AdditionalAsync : Async
   >;
+  hook<T>(
+    useHook: () => T,
+    options?: MountOptions,
+  ): Async extends true
+    ? Promise<HookRunner<T, Context, Actions>>
+    : HookRunner<T, Context, Actions>;
+}
+
+export interface HookRunner<
+  HookReturn,
+  Context extends PlainObject,
+  Actions extends PlainObject
+> {
+  readonly current: HookReturn;
+  // Alias for `current`, reads better in some tests
+  readonly value: HookReturn;
+  readonly context: Context;
+  readonly actions: Actions;
+  mount(): void;
+  unmount(): void;
+  act<T>(action: (value: HookReturn) => T): T;
 }
 
 type CustomMountResult<
@@ -217,10 +245,40 @@ type CustomMountResult<
   ? Promise<RootNode<Props, Context, Actions, Extensions>>
   : RootNode<Props, Context, Actions, Extensions>;
 
+interface Environment<Extensions extends PlainObject = EmptyObject> {
+  readonly mounted: Set<RootNode<any, any, any, Extensions>>;
+  readonly mount: CustomMount<
+    EmptyObject,
+    EmptyObject,
+    EmptyObject,
+    Extensions,
+    false
+  >;
+  createMount<
+    MountOptions extends PlainObject = EmptyObject,
+    Context extends PlainObject = EmptyObject,
+    Actions extends PlainObject = EmptyObject,
+    Async extends boolean = false
+  >(
+    options: CustomMountOptions<
+      MountOptions,
+      Context,
+      Context,
+      Actions,
+      Actions,
+      Extensions,
+      Async
+    >,
+  ): CustomMount<MountOptions, Context, Actions, Extensions, Async>;
+  unmountAll(): void;
+}
+
 export function createEnvironment<
   EnvironmentContext = undefined,
   Extensions extends PlainObject = EmptyObject
->(env: Environment<EnvironmentContext, Extensions>) {
+>(
+  env: EnvironmentOptions<EnvironmentContext, Extensions>,
+): Environment<Extensions> {
   type Node<Props> = BaseNode<Props, Extensions>;
   type Root<
     Props,
@@ -229,6 +287,7 @@ export function createEnvironment<
   > = RootNode<Props, Context, Actions, Extensions>;
 
   const allMounted = new Set<Root<any, any, any>>();
+  const mount = createMount({});
 
   return {mount, createMount, mounted: allMounted, unmountAll};
 
@@ -262,9 +321,7 @@ export function createEnvironment<
     let mounted = false;
     let acting = false;
     let context!: EnvironmentContext;
-    const testRenderer: {current: TestRenderer<unknown> | null} = {
-      current: null,
-    };
+    const testRendererRef = createRef<TestRendererImperativeApi<Props>>();
 
     const rootApi: BaseRoot<Props, Context, Actions> = {
       act,
@@ -431,12 +488,7 @@ export function createEnvironment<
 
       act(() => {
         context = env.mount(
-          <TestRenderer
-            ref={(renderer) => {
-              testRenderer.current = renderer;
-            }}
-            render={render}
-          >
+          <TestRenderer ref={testRendererRef} render={render}>
             {element}
           </TestRenderer>,
         );
@@ -467,7 +519,7 @@ export function createEnvironment<
       assertRootNode();
 
       act(() => {
-        testRenderer.current?.setProps(props);
+        testRendererRef.current?.setProps(props);
       });
     }
 
@@ -515,9 +567,9 @@ export function createEnvironment<
 
     function updateRootNode() {
       rootNode =
-        testRenderer.current == null
+        testRendererRef.current == null
           ? null
-          : env.update(testRenderer.current, createNode, context);
+          : env.update(testRendererRef.current, createNode, context);
 
       rootNode = rootNode && resolveRoot(rootNode);
     }
@@ -546,12 +598,6 @@ export function createEnvironment<
     for (const wrapper of allMounted) {
       wrapper.unmount();
     }
-  }
-
-  function mount<Props>(element: ReactElement<Props>) {
-    const root = createRoot(element);
-    root.mount();
-    return root;
   }
 
   function createMount<
@@ -613,6 +659,62 @@ export function createEnvironment<
         return root;
       }
     }
+
+    function testHook<T>(useHook: () => T, options?: MountOptions) {
+      const hookRunnerRef = createRef<HookRunnerImperativeApi<T>>();
+
+      const rootOrPromise = mount(
+        <HookRunner useHook={useHook} ref={hookRunnerRef} />,
+        options,
+      );
+
+      const withRoot = (
+        root: Extract<typeof rootOrPromise, Root<any, any, any>>,
+      ): HookRunner<T, Context, Actions> => {
+        const getCurrentValue = () => {
+          if (hookRunnerRef.current == null) {
+            throw new Error(
+              'Attempted to access the hook value while the hook runner was not mounted',
+            );
+          }
+
+          return hookRunnerRef.current.current;
+        };
+
+        return {
+          get current() {
+            return getCurrentValue();
+          },
+          get value() {
+            return getCurrentValue();
+          },
+          get context() {
+            return root.context;
+          },
+          get actions() {
+            return root.actions;
+          },
+          act(action) {
+            return root.act(() => action(getCurrentValue()));
+          },
+          mount() {
+            root.mount();
+          },
+          unmount() {
+            root.unmount();
+          },
+        };
+      };
+
+      return 'then' in rootOrPromise
+        ? rootOrPromise.then((root) => withRoot(root))
+        : withRoot(rootOrPromise);
+    }
+
+    Reflect.defineProperty(mount, 'hook', {
+      writable: false,
+      value: testHook,
+    });
 
     Reflect.defineProperty(mount, 'extend', {
       writable: false,
