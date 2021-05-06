@@ -12,7 +12,6 @@ import type {
 } from './types';
 
 import {TestRenderer} from './TestRenderer';
-import type {ImperativeApi as TestRendererImperativeApi} from './TestRenderer';
 
 import {HookRunner} from './HookRunner';
 import type {ImperativeApi as HookRunnerImperativeApi} from './HookRunner';
@@ -321,7 +320,7 @@ export function createEnvironment<
     let mounted = false;
     let acting = false;
     let context!: EnvironmentContext;
-    const testRendererRef = createRef<TestRendererImperativeApi<Props>>();
+    const testRendererRef = createRef<TestRenderer<Props>>();
 
     const rootApi: BaseRoot<Props, Context, Actions> = {
       act,

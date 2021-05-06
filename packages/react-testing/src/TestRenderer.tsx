@@ -1,31 +1,32 @@
-import {cloneElement, forwardRef, useState, useImperativeHandle} from 'react';
-import type {ReactNode, Ref, ReactElement} from 'react';
+import {Component, cloneElement} from 'react';
+import type {ReactElement, ReactNode} from 'react';
 
-interface Props<ComponentProps = unknown> {
+interface State<ComponentProps> {
+  props?: Partial<ComponentProps>;
+}
+
+interface Props<ComponentProps> {
   children?: ReactNode;
   render?(element: ReactElement<ComponentProps>): ReactElement<ComponentProps>;
 }
 
-export interface ImperativeApi<ComponentProps = unknown> {
-  setProps(props: Partial<ComponentProps>): void;
-}
+const defaultRender: NonNullable<Props<any>['render']> = (element) => element;
 
-const defaultRender: NonNullable<Props['render']> = (element) => element;
+export class TestRenderer<ComponentProps> extends Component<
+  Props<ComponentProps>,
+  State<ComponentProps>
+> {
+  state: State<ComponentProps> = {};
 
-export const TestRenderer = forwardRef<ImperativeApi, Props>(
-  ({children, render = defaultRender}: Props, ref) => {
-    const [props, setProps] = useState<unknown>();
+  setProps(props: Partial<ComponentProps>) {
+    this.setState({props});
+  }
 
-    useImperativeHandle(ref, () => ({
-      setProps(newProps) {
-        setProps(newProps);
-      },
-    }));
-
+  render() {
+    const {props} = this.state;
+    const {children, render = defaultRender} = this.props;
     return render(
-      props ? (cloneElement(children as any, props as any) as any) : children!,
+      props ? (cloneElement(children as any, props) as any) : children!,
     );
-  },
-) as <ComponentProps>(
-  props: Props<ComponentProps> & {ref?: Ref<ImperativeApi<ComponentProps>>},
-) => ReactElement | null;
+  }
+}
