@@ -1,6 +1,6 @@
 {
   "name": "@quilted/workers-rollup",
-  "version": "0.2.7",
+  "version": "0.0.0",
   "description": "",
   "publishConfig": {
     "access": "public",
