@@ -8,5 +8,5 @@
   },
   "include": ["src"],
   "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../routing"}]
+  "references": [{"path": "../http"}, {"path": "../routing"}]
 }
