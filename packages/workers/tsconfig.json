@@ -1,12 +1,12 @@
 {
   "extends": "../../config/typescript/tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "build/ts",
     "baseUrl": "src",
     "rootDir": "src",
-    "outDir": "build/ts",
-    "paths": {}
+    "lib": ["ESNext", "DOM", "WebWorker"]
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../http"}, {"path": "../routing"}]
+  "references": []
 }
