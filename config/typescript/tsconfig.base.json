@@ -18,6 +18,7 @@
     "sourceMap": false,
     "noEmitOnError": false,
     "isolatedModules": true,
+    "skipLibCheck": true,
     "lib": [
       "dom",
       "dom.iterable",
