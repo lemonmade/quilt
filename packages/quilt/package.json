@@ -1,6 +1,6 @@
 {
   "name": "@quilted/quilt",
-  "version": "0.4.30",
+  "version": "0.4.31",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -58,7 +58,7 @@
   "dependencies": {
     "@quilted/async": "^0.2.2",
     "@quilted/graphql": "^0.3.4",
-    "@quilted/http-handlers": "^0.1.4",
+    "@quilted/http-handlers": "^0.1.5",
     "@quilted/polyfills": "^0.0.7",
     "@quilted/preact-mini-compat": "^0.1.4",
     "@quilted/react-async": "^0.2.9",
