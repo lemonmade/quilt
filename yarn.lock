@@ -2412,7 +2412,7 @@
     "@types/react" ">=17.0.0 <18.0.0"
     react-reconciler ">=0.26.0 <1.0.0"
 
-"@remote-ui/rpc@^1.0.17":
+"@remote-ui/rpc@^1.0.0", "@remote-ui/rpc@^1.0.17":
   version "1.0.17"
   resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.0.17.tgz#5bc7230680d5a41820eb1fe12d8e4f3c16577c0d"
   integrity sha512-xeWySnRH8qXzD76lSl50eoncPnQLHe/3VUalYjNImgImeUXgIRYjYq9HQU5c0z6edq7WaegEhdWCTAGHiuDbrQ==
@@ -11830,6 +11830,13 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
+
+"rollup@>=2.0.0 <3.0.0":
+  version "2.48.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.48.0.tgz#fceb01ed771f991f29f7bd2ff7838146e55acb74"
+  integrity sha512-wl9ZSSSsi5579oscSDYSzGn092tCS076YB+TQrzsGuSfYyJeep8eEWj0eaRjuC5McuMNmcnR8icBqiE/FWNB1A==
+  optionalDependencies:
+    fsevents "~2.3.1"
 
 rsvp@^4.8.4:
   version "4.8.5"

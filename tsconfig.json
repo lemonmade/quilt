@@ -67,6 +67,12 @@
     },
     {
       "path": "./packages/useful-types"
+    },
+    {
+      "path": "./packages/workers"
+    },
+    {
+      "path": "./packages/workers-rollup"
     }
   ]
 }

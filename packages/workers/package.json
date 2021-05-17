@@ -1,0 +1,41 @@
+{
+  "name": "@quilted/workers",
+  "version": "0.0.0",
+  "description": "",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "esnext": "index.esnext",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "esnext": "./index.esnext",
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "./": "./",
+    "./worker": {
+      "esnext": "./worker.esnext",
+      "import": "./worker.mjs",
+      "require": "./worker.js"
+    },
+    "./worker-wrapper-basic": {
+      "esnext": "./worker-wrapper-basic.esnext",
+      "import": "./worker-wrapper-basic.mjs",
+      "require": "./worker-wrapper-basic.js"
+    },
+    "./worker-wrapper-callable": {
+      "esnext": "./worker-wrapper-callable.esnext",
+      "import": "./worker-wrapper-callable.mjs",
+      "require": "./worker-wrapper-callable.js"
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@remote-ui/rpc": "^1.0.0"
+  }
+}
