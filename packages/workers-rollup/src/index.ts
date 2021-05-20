@@ -1,44 +1,86 @@
 /* eslint-disable react/function-component-definition */
 
+import {posix} from 'path';
 import {URLSearchParams} from 'url';
 
-import {rollup} from 'rollup';
+import {OutputOptions, rollup} from 'rollup';
 import type {Plugin, InputOptions, OutputChunk} from 'rollup';
 
 import type {WorkerWrapper} from './types';
 import {PREFIX, MAGIC_MODULE_WORKER} from './constants';
-import {wrapperToSearchParams} from './utilities';
+import {wrapperToSearchString} from './utilities';
 
 const ENTRY_PREFIX = 'quilt-worker-entry:';
 
-export interface WorkerContentContext {
-  module: string;
+export interface WorkerContext {
+  readonly workerModule: string;
 }
 
+export interface PublicPathContext extends WorkerContext {
+  readonly filename: string;
+  readonly chunk: OutputChunk;
+  readonly outputOptions: OutputOptions;
+}
+
+export type ValueOrGetter<T> = T | ((current: T, context: WorkerContext) => T);
+
 export interface Options {
-  includePlugin?(plugin: Plugin): boolean;
+  /**
+   * By default, this plugin uses `rollup().generate()` and attaches the
+   * resulting in-memory chunk to your main rollup build. When rolling rollup
+   * normally, this will output your asset to the file system when the main
+   * rollup build calls `write()`. Some tools that wrap rollup, like Vite, do
+   * don’t really call `write()`, so I can’t figure out how to make this approach
+   * work with them. In those instances, you can instead pass `write: true` here,
+   * which will then run `rollup().write()` on the worker bundle to actually output
+   * it to the filesystem (you can customize the output with the `outputOptions`
+   * option). You can then use the `publicPath()` option to control the URL that is
+   * generated for each worker module such that the tool is able to route that request
+   * to the written file. For example, in Vite, you can use the special `/@fs` prefix
+   * for a URL:
+   *
+   * ```ts
+   * import * as path from 'path';
+   *
+   * workers({
+   *   write: true,
+   *   publicPath({filename, outputOptions}) {
+   *     return `/@fs${path.join(outputOptions.dir, filename)}`;
+   *   },
+   * })
+   * ```
+   */
+  write?: ValueOrGetter<boolean>;
+  plugins?: ValueOrGetter<Plugin[]>;
+  inputOptions?: ValueOrGetter<InputOptions>;
+  outputOptions?: ValueOrGetter<OutputOptions>;
+  publicPath?: string | ((context: PublicPathContext) => string);
   contentForWorker?(
     wrapper: WorkerWrapper,
-    context: WorkerContentContext,
+    context: WorkerContext,
   ): string | Promise<string>;
 }
 
 export function workers({
+  write = false,
+  publicPath,
   contentForWorker = defaultContentForWorker,
-  includePlugin = defaultIncludePlugin,
+  plugins = defaultPlugins,
+  inputOptions = {},
+  outputOptions = {},
 }: Options = {}): Plugin {
-  let inputOptions: InputOptions;
+  let parentInputOptions: InputOptions;
+  let parentOutputOptions: OutputOptions;
   const workerMap = new Map<string, OutputChunk>();
 
   return {
     name: '@quilted/workers',
-    options(options) {
-      inputOptions = {
-        ...options,
-        plugins: options.plugins?.filter(includePlugin),
-      };
-
-      return null;
+    buildStart(options) {
+      parentInputOptions = options;
+    },
+    outputOptions(options) {
+      parentOutputOptions = options;
+      return options;
     },
     async resolveId(source, importer) {
       if (!source.startsWith(PREFIX)) return null;
@@ -50,54 +92,74 @@ export function workers({
 
       if (resolvedWorker == null) return null;
 
-      return `${PREFIX}${resolvedWorker}${wrapperToSearchParams(
-        wrapper,
-      ).toString()}`;
+      return `${PREFIX}${resolvedWorker.id}${wrapperToSearchString(wrapper)}`;
     },
     async load(id) {
       if (!id.startsWith(PREFIX)) return null;
 
-      const {workerId, wrapper} = getWorkerRequest(id);
-      // return contentForWorker(wrapper, {module: workerId});
+      const {workerId, wrapper} = getWorkerRequest(id.replace(PREFIX, ''));
 
-      const bundle = await rollup({
-        ...inputOptions,
-        plugins: [
-          {
-            name: '@quilted/workers/magic-modules',
-            resolveId(source) {
-              if (source.startsWith(ENTRY_PREFIX)) return source;
+      const workerContext: WorkerContext = {workerModule: workerId};
 
-              if (source === MAGIC_MODULE_WORKER) {
-                return {id: workerId, moduleSideEffects: 'no-treeshake'};
-              }
+      const workerPlugins: Plugin[] = [
+        {
+          name: '@quilted/workers/magic-modules',
+          resolveId(source) {
+            if (source.startsWith(ENTRY_PREFIX)) return source;
 
-              return null;
-            },
-            load(id) {
-              if (!id.startsWith(ENTRY_PREFIX)) return null;
+            if (source === MAGIC_MODULE_WORKER) {
+              return {id: workerId, moduleSideEffects: 'no-treeshake'};
+            }
 
-              const {workerId, wrapper} = getWorkerRequest(
-                id.replace(ENTRY_PREFIX, ''),
-              );
-
-              return contentForWorker(wrapper, {module: workerId});
-            },
+            return null;
           },
-          ...(inputOptions.plugins ?? []),
-        ],
-        input: `${ENTRY_PREFIX}${workerId}${wrapperToSearchParams(
-          wrapper,
-        ).toString()}`,
-      });
+          load(id) {
+            if (!id.startsWith(ENTRY_PREFIX)) return null;
 
-      const result = await bundle.generate({
+            const {wrapper} = getWorkerRequest(id.replace(ENTRY_PREFIX, ''));
+
+            return contentForWorker(wrapper, workerContext);
+          },
+        },
+        ...(typeof plugins === 'function'
+          ? plugins(parentInputOptions.plugins ?? [], workerContext)
+          : plugins),
+      ];
+
+      const workerInput = `${ENTRY_PREFIX}${workerId}${wrapperToSearchString(
+        wrapper,
+      )}`;
+
+      const baseInputOptions: InputOptions = {
+        ...parentInputOptions,
+        input: workerInput,
+        plugins: workerPlugins,
+      };
+
+      const workerInputOptions =
+        typeof inputOptions === 'function'
+          ? inputOptions(baseInputOptions, workerContext)
+          : baseInputOptions;
+
+      const baseOutputOptions: OutputOptions = {
+        ...parentOutputOptions,
         format: 'iife',
         inlineDynamicImports: true,
-      });
+      };
+
+      const workerOutputOptions =
+        typeof outputOptions === 'function'
+          ? outputOptions(baseOutputOptions, workerContext)
+          : baseOutputOptions;
+
+      const bundle = await rollup(workerInputOptions);
+
+      const result = await (write
+        ? bundle.write(workerOutputOptions)
+        : bundle.generate(workerOutputOptions));
 
       const firstChunk = result.output.find(
-        (output): output is OutputChunk => output.type === 'asset',
+        (output): output is OutputChunk => output.type === 'chunk',
       );
 
       if (firstChunk == null) {
@@ -110,8 +172,27 @@ export function workers({
       for (const module of Object.keys(firstChunk.modules)) {
         this.addWatchFile(module);
       }
+
+      const filename = firstChunk.fileName;
+      let resolvedPublicPath = filename;
+
+      if (typeof publicPath === 'string') {
+        resolvedPublicPath = posix.join(publicPath, filename);
+      } else if (typeof publicPath === 'function') {
+        resolvedPublicPath = publicPath({
+          ...workerContext,
+          filename,
+          chunk: firstChunk,
+          outputOptions: workerOutputOptions,
+        });
+      }
+
+      return `export default ${JSON.stringify(resolvedPublicPath)};`;
     },
     generateBundle(_, bundle) {
+      // We already wrote the chunks, no need to do it again I think?
+      if (write) return;
+
       for (const [workerId, chunk] of workerMap) {
         if (workerId in bundle) continue;
         bundle[workerId] = chunk;
@@ -164,6 +245,6 @@ function defaultContentForWorker(wrapper: WorkerWrapper) {
   return content;
 }
 
-function defaultIncludePlugin(plugin: Plugin) {
-  return plugin.name !== 'serve';
+function defaultPlugins(mainBuildPlugins: Plugin[]) {
+  return mainBuildPlugins.filter((plugin) => plugin.name !== 'serve');
 }

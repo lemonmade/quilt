@@ -1,6 +1,6 @@
 import type {WorkerWrapper} from './types';
 import {PREFIX, QUILT_WORKER_EXPORTS} from './constants';
-import {wrapperToSearchParams} from './utilities';
+import {wrapperToSearchString} from './utilities';
 
 export interface ProcessableImport {
   name: string;
@@ -157,9 +157,7 @@ export default function workerBabelPlugin({
           t.importDeclaration(
             [t.importDefaultSpecifier(importId)],
             t.stringLiteral(
-              `${PREFIX}${imported}${wrapperToSearchParams(
-                wrapper,
-              ).toString()}`,
+              `${PREFIX}${imported}${wrapperToSearchString(wrapper)}`,
             ),
           ),
         );

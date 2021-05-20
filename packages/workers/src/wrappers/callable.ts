@@ -1,7 +1,10 @@
 // @ts-ignore
 import * as Module from '@quilted/magic-module/worker';
 
-import {createEndpointFromWorker} from '../worker';
+import {endpoint} from '../worker';
 
-const endpoint = createEndpointFromWorker();
-endpoint.expose(Module);
+if (endpoint == null) {
+  throw new Error(`This file can only be imported in a worker context.`);
+}
+
+endpoint!.expose(Module);
