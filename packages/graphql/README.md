@@ -33,7 +33,7 @@ A “mock” is an object that contains an `operation` key, detailing the GraphQ
 ```ts
 import {createGraphQLController} from '@quilted/graphql/fixtures';
 
-// Here, we’re assuming you’ll use @sewing-kit/graphql/webpack to import the GraphQL
+// Here, we’re assuming you’ll use the plugin in @quilted/graphql/rollup to import the GraphQL
 // document, but you can also provide the operation as a string, or as a GraphQL
 // DocumentNode.
 import myQuery from './MyQuery.graphql';

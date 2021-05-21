@@ -8,11 +8,16 @@ export interface Resolver<T> {
 }
 
 export interface ResolverOptions<T> {
-  id?(): string;
   load(): Promise<Import<T>>;
+  id?(): string;
+  get?(): any;
 }
 
-export function createResolver<T>({id, load}: ResolverOptions<T>): Resolver<T> {
+export function createResolver<T>({
+  id,
+  get,
+  load,
+}: ResolverOptions<T>): Resolver<T> {
   let resolved: T | undefined;
   let resolvePromise: Promise<T> | undefined;
   let hasTriedSyncResolve = false;
@@ -26,7 +31,9 @@ export function createResolver<T>({id, load}: ResolverOptions<T>): Resolver<T> {
     get resolved() {
       if (resolved == null && !hasTriedSyncResolve) {
         hasTriedSyncResolve = true;
-        resolved = resolvedId ? trySynchronousResolve(resolvedId) : undefined;
+        resolved = resolvedId
+          ? trySynchronousResolve(resolvedId, get)
+          : undefined;
       }
 
       return resolved;
@@ -66,57 +73,9 @@ function normalize(module: any) {
   return value == null ? null : value;
 }
 
-declare const __webpack_require__: (id: string) => any;
-declare const __webpack_modules__: {[key: string]: any};
-
-// Webpack does not like seeing an explicit require(someVariable) in code
-// because that is a dynamic require that it can’t resolve. This code
-// obfuscates `require()` for the purpose of fooling Webpack, which is fine
-// because we only want to use the `require()` in cases where Webpack
-// is not the module bundler.
-//
-// If we ever reference `require` directly, Webpack complains. So, we first
-// check global["require"], which works in Node. However, this doesn’t work
-// in Jest when the test is set to simulate a browser, as global in that case
-// in a Window object. There, we can only rely on module.require, which is
-// actually supposed to be something different but in Jest is the same as
-// the global require function.
-const requireKey = 'require';
-const nodeRequire =
-  (typeof global === 'object' &&
-    typeof (global as any)[requireKey] === 'function' &&
-    (global as any)[requireKey]) ||
-  (typeof module === 'object' &&
-    typeof module[requireKey] === 'function' &&
-    module[requireKey]) ||
-  undefined;
-
-// If we have an ID, we try to first use Webpack’s internal stuff
-// to resolve the module. If those don’t exist, we know we aren’t
-// inside of a Webpack bundle, so we try to use Node’s native resolution
-// (which will work in environments like Jest’s test runner).
-function tryRequire(id: string) {
-  if (
-    typeof __webpack_require__ === 'function' &&
-    typeof __webpack_modules__ === 'object' &&
-    __webpack_modules__[id]
-  ) {
-    try {
-      return normalize(__webpack_require__(id));
-    } catch {
-      // Just ignore failures
-    }
-  } else if (typeof nodeRequire === 'function') {
-    try {
-      return normalize(nodeRequire(id));
-    } catch {
-      // Just ignore failures
-    }
-  }
-
-  return undefined;
-}
-
-function trySynchronousResolve<T>(id: string): T | undefined {
-  return tryRequire(id) ?? undefined;
+function trySynchronousResolve<T>(
+  id: string,
+  get?: (id: string) => any,
+): T | undefined {
+  return normalize(get?.(id));
 }

@@ -1,12 +1,17 @@
+import {stripIndent} from 'common-tags';
 import {WebApp, Target, createProjectPlugin, Task} from '@sewing-kit/plugins';
 import type {
   BuildWebAppConfigurationHooks,
   DevWebAppConfigurationHooks,
   BuildWebAppTargetOptions,
 } from '@sewing-kit/hooks';
-import type {} from '@sewing-kit/plugin-webpack';
+import type {} from '@sewing-kit/plugin-rollup';
+import type {Manifest} from '@quilted/async/assets';
 
-import {MAGIC_MODULE_APP_COMPONENT} from './constants';
+import {
+  MAGIC_MODULE_APP_COMPONENT,
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
+} from './constants';
 
 interface IncludeDetails {
   readonly task: Task;
@@ -20,55 +25,7 @@ interface Options {
 export function webAppMagicModules({include = () => true}: Options = {}) {
   return createProjectPlugin<WebApp>(
     'Quilt.WebAppMagicModules',
-    ({api, project, tasks}) => {
-      const appEntry = project.fs.resolvePath(project.entry ?? 'index');
-      const appComponentModulePath = api.tmpPath(
-        `quilt/${project.name}-app-component.js`,
-      );
-
-      function addMagicModules({
-        webpackAliases,
-        webpackPlugins,
-      }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) {
-        webpackAliases?.hook((aliases) => ({
-          ...aliases,
-          [MAGIC_MODULE_APP_COMPONENT]: appComponentModulePath,
-        }));
-
-        webpackPlugins?.hook(async (plugins) => {
-          const {default: WebpackVirtualModules} = await import(
-            'webpack-virtual-modules'
-          );
-
-          return [
-            ...plugins,
-            new WebpackVirtualModules({
-              [appComponentModulePath]: `
-                import * as AppModule from ${JSON.stringify(appEntry)};
-
-                const App = getAppComponent();
-                export default App;
-
-                function getAppComponent() {
-                  if (typeof AppModule.default === 'function') return AppModule.default;
-                  if (typeof AppModule.App === 'function') return AppModule.App;
-                
-                  const firstFunction = Object.keys(AppModule)
-                    .map((key) => AppModule[key])
-                    .find((exported) => typeof exported === 'function');
-                
-                  if (firstFunction) return firstFunction;
-                
-                  throw new Error('No App component found in module: ' + ${JSON.stringify(
-                    appEntry,
-                  )});
-                }
-              `,
-            }),
-          ];
-        });
-      }
-
+    ({project, workspace, tasks}) => {
       tasks.build.hook(({hooks}) => {
         hooks.target.hook(({target, hooks}) => {
           if (!include({target, task: Task.Dev})) return;
@@ -82,6 +39,82 @@ export function webAppMagicModules({include = () => true}: Options = {}) {
 
         hooks.configure.hook(addMagicModules);
       });
+
+      function addMagicModules({
+        rollupPlugins,
+      }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) {
+        rollupPlugins?.hook((plugins) => [
+          {
+            name: '@quilted/web-app/magic-modules',
+            // eslint-disable-next-line react/function-component-definition
+            resolveId(id) {
+              switch (id) {
+                case MAGIC_MODULE_APP_ASSET_MANIFEST:
+                  return id;
+                case MAGIC_MODULE_APP_COMPONENT:
+                  return project.fs.resolvePath(project.entry ?? 'index');
+                default:
+                  return null;
+              }
+            },
+            async load(id) {
+              switch (id) {
+                case MAGIC_MODULE_APP_ASSET_MANIFEST: {
+                  const manifestFiles = await project.fs.glob(
+                    workspace.fs.buildPath(
+                      workspace.webApps.length > 1
+                        ? `apps/${project.name}`
+                        : 'app',
+                      '**/*.manifest.json',
+                    ),
+                  );
+
+                  const manifests: Manifest[] = await Promise.all(
+                    manifestFiles.map(async (file) =>
+                      JSON.parse(await workspace.fs.read(file)),
+                    ),
+                  );
+
+                  return stripIndent`
+                    import {createAssetLoader} from '@quilted/async/assets';
+
+                    const manifests = ${JSON.stringify(manifests.reverse())};
+
+                    // TODO: this will not scale too well once we introduce locales, too!
+                    const assets = createAssetLoader({
+                      getManifest: (options) => {
+                        const manifest = manifests.find((manifest) => {
+                          return manifest.match.every((aMatch) => {
+                            switch (aMatch.type) {
+                              case 'regex': {
+                                return new RegExp(aMatch.source).test(options[aMatch.key]);
+                              }
+                              default: {
+                                throw new Error('Can’t handle match: ', aMatch);
+                              }
+                            }
+                          });
+                        }) || manifests.find((manifest) => manifest.default);
+
+                        if (manifest == null) {
+                          throw new Error('No manifest found for options: ', options);
+                        }
+
+                        return Promise.resolve(manifest);
+                      },
+                    });
+  
+                    export default assets;
+                  `;
+                }
+                default:
+                  return null;
+              }
+            },
+          },
+          ...plugins,
+        ]);
+      }
     },
   );
 }

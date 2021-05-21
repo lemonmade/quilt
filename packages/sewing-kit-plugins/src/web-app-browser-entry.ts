@@ -1,3 +1,4 @@
+import {stripIndent} from 'common-tags';
 import {
   WebApp,
   Target,
@@ -13,7 +14,6 @@ import type {
 } from '@sewing-kit/hooks';
 
 import type {} from './web-app-auto-server';
-import {excludeNonPolyfillEntries} from './shared';
 import {MAGIC_MODULE_APP_COMPONENT} from './constants';
 
 interface CustomHooks {
@@ -35,48 +35,56 @@ interface BrowserEntryOptions {
   include?(details: IncludeDetails): boolean;
 }
 
+const MAGIC_ENTRY_MODULE = '__quilt__/magic-entry-web-app';
+
 export function webAppBrowserEntry({
   hydrate = true,
   include = () => true,
 }: BrowserEntryOptions = {}) {
   return createProjectPlugin<WebApp>(
     'Quilt.WebAppBrowserEntry',
-    ({project, api, tasks}) => {
+    ({project, tasks}) => {
       function addConfiguration(task: Task, target?: IncludeDetails['target']) {
         return ({
-          webpackEntries,
-          webpackPlugins,
+          rollupInput,
+          rollupPlugins,
           quiltBrowserEntryContent,
         }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) => {
-          const entry = api.tmpPath(`quilt/${project.name}-client.js`);
+          rollupInput?.hook(() => [MAGIC_ENTRY_MODULE]);
+
           const shouldHydrate =
             typeof hydrate === 'boolean' ? hydrate : hydrate({target, task});
           const reactFunction = shouldHydrate ? 'hydrate' : 'render';
 
-          webpackEntries?.hook((entries) => [
-            ...excludeNonPolyfillEntries(entries),
-            entry,
+          rollupInput?.hook(() => [MAGIC_ENTRY_MODULE]);
+          rollupPlugins?.hook((plugins) => [
+            ...plugins,
+            {
+              name: '@quilted/web-app/magic-entry',
+              resolveId(id) {
+                if (id !== MAGIC_ENTRY_MODULE) return null;
+                return id;
+              },
+              async load(source) {
+                if (source !== MAGIC_ENTRY_MODULE) return null;
+
+                const content = await quiltBrowserEntryContent!.run(stripIndent`
+                  import {${reactFunction}} from 'react-dom';
+                  import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+    
+                  ${reactFunction}(<App />, document.getElementById('app'));
+                `);
+
+                if (content == null) {
+                  throw new Error(
+                    `No http handler content found for project ${project.name}`,
+                  );
+                }
+
+                return content;
+              },
+            },
           ]);
-
-          webpackPlugins?.hook(async (plugins) => {
-            const {default: WebpackVirtualModules} = await import(
-              'webpack-virtual-modules'
-            );
-
-            const source = await quiltBrowserEntryContent!.run(`
-              import {${reactFunction}} from 'react-dom';
-              import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-
-              ${reactFunction}(<App />, document.getElementById('app'));
-            `);
-
-            return [
-              ...plugins,
-              new WebpackVirtualModules({
-                [entry]: source,
-              }),
-            ];
-          });
         };
       }
 

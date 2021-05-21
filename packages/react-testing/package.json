@@ -62,7 +62,7 @@
     }
   },
   "dependencies": {
-    "@sewing-kit/plugins": "^0.1.6",
+    "@sewing-kit/plugins": "^0.2.0",
     "@types/react-test-renderer": "^17.0.0",
     "jest-matcher-utils": "^26.6.2",
     "react-reconciler": "^0.26.0",
