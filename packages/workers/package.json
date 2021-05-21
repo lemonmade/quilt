@@ -34,7 +34,10 @@
       "require": "./worker-wrapper-callable.js"
     }
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./worker-wrapper-basic.*",
+    "./worker-wrapper-callable.*"
+  ],
   "dependencies": {
     "@remote-ui/rpc": "^1.0.0"
   }

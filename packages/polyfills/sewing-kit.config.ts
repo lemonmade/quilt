@@ -5,6 +5,8 @@ const POLYFILLS = ['fetch'];
 
 export default createPackage((pkg) => {
   pkg.entry({root: './src/index'});
+  pkg.entry({root: './rollup-parts', name: 'rollup'});
+
   pkg.entry({root: './src/base', name: 'base'});
   pkg.entry({root: './src/noop', name: 'noop'});
 

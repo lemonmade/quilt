@@ -2,12 +2,12 @@ import {EventEmitter} from 'events';
 import * as path from 'path';
 
 import {DocumentNode, parse, Source, GraphQLSchema} from 'graphql';
-import {extractImports} from '@sewing-kit/graphql';
 import {mkdirp, readFile, writeFile} from 'fs-extra';
 import {FSWatcher, watch} from 'chokidar';
 import glob from 'globby';
 import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
 
+import {extractImports} from '../transform';
 import {
   generateDocumentTypes,
   generateSchemaTypes,

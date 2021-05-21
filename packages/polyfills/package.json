@@ -49,8 +49,17 @@
     "@types/node-fetch": "^2.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.0.0",
+    "magic-string": "^0.25.0",
     "node-fetch": "^2.0.0",
     "regenerator-runtime": "^0.13.0",
     "whatwg-fetch": "^3.5.0"
+  },
+  "peerDependencies": {
+    "rollup": "^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "rollup": {
+      "optional": true
+    }
   }
 }

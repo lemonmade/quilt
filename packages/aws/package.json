@@ -22,7 +22,7 @@
   "dependencies": {
     "@quilted/http-handlers": "^0.1.5",
     "@quilted/sewing-kit-plugins": "^0.2.18",
-    "@sewing-kit/plugins": "^0.1.6",
+    "@sewing-kit/plugins": "^0.2.0",
     "@types/aws-lambda": "^8.0.0",
     "cookie": "^0.4.0"
   },

@@ -9,25 +9,18 @@ import {
 import {react} from '@sewing-kit/plugin-react';
 import {javascript, updateBabelPreset} from '@sewing-kit/plugin-javascript';
 import {typescript} from '@sewing-kit/plugin-typescript';
-import {buildFlexibleOutputs} from '@sewing-kit/plugin-package-flexible-outputs';
+import {packageBuild} from '@sewing-kit/plugin-package-build';
 import type {} from '@sewing-kit/plugin-jest';
-import type {} from '@sewing-kit/plugin-package-node';
-import type {} from '@sewing-kit/plugin-package-esnext';
-import type {} from '@sewing-kit/plugin-package-esmodules';
-import type {} from '@sewing-kit/plugin-package-commonjs';
 
 import type {MangleOptions} from 'terser';
 
-export function quiltPackage({binaryOnly = false} = {}) {
+export function quiltPackage() {
   return createComposedProjectPlugin<Package>('Quilt.DefaultProject', [
     javascript(),
     typescript(),
     react(),
     reactJsxRuntime(),
-    buildFlexibleOutputs({
-      esnext: !binaryOnly,
-      esmodules: !binaryOnly,
-    }),
+    packageBuild({browserTargets: 'default', nodeTargets: 'default'}),
     createProjectTestPlugin('Quilt.IgnoreDTSFiles', ({hooks}) => {
       hooks.configure.hook((configuration) => {
         configuration.jestWatchIgnore.hook((ignore) => [
