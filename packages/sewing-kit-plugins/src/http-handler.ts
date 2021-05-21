@@ -1,3 +1,4 @@
+import {stripIndent} from 'common-tags';
 import {
   WebApp,
   Target,
@@ -21,12 +22,13 @@ import type {} from '@sewing-kit/plugin-rollup';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from './constants';
 
-const MAGIC_ENTRY_MODULE = 'quilt-http-handler';
+const MAGIC_ENTRY_MODULE = '__quilt__/magic-entry-http-handler';
 
 interface CustomHooks {
   readonly quiltHttpHandlerPort: WaterfallHook<number | undefined>;
   readonly quiltHttpHandlerHost: WaterfallHook<string | undefined>;
   readonly quiltHttpHandlerContent: WaterfallHook<string | undefined>;
+  readonly quiltHttpHandlerRuntimeContent: WaterfallHook<string | undefined>;
 }
 
 declare module '@sewing-kit/hooks' {
@@ -56,23 +58,23 @@ export function httpHandler<ProjectType extends WebApp | Service>({
   return createProjectPlugin<ProjectType>(
     'Quilt.HttpHandler',
     ({tasks, project}) => {
-      function addDefaultConfiguration() {
-        return ({
-          rollupInput,
-          rollupPlugins,
-          quiltHttpHandlerHost,
-          quiltHttpHandlerPort,
-          quiltHttpHandlerContent,
-        }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) => {
-          quiltHttpHandlerContent!.hook(async (content) => {
-            if (content) return content;
+      function addDefaultConfiguration({
+        rollupInput,
+        rollupPlugins,
+        quiltHttpHandlerHost,
+        quiltHttpHandlerPort,
+        quiltHttpHandlerContent,
+        quiltHttpHandlerRuntimeContent,
+      }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) {
+        quiltHttpHandlerRuntimeContent!.hook(async (content) => {
+          if (content) return content;
 
-            const [port, host] = await Promise.all([
-              quiltHttpHandlerPort!.run(explicitPort),
-              quiltHttpHandlerHost!.run(undefined),
-            ]);
+          const [port, host] = await Promise.all([
+            quiltHttpHandlerPort!.run(explicitPort),
+            quiltHttpHandlerHost!.run(undefined),
+          ]);
 
-            return `
+          return stripIndent`
               import httpHandler from ${JSON.stringify(
                 MAGIC_MODULE_HTTP_HANDLER,
               )};
@@ -92,10 +94,14 @@ export function httpHandler<ProjectType extends WebApp | Service>({
                 console.log('listening on http://${host}:${port}');
               });
             `;
-          });
+        });
 
-          rollupInput?.hook(() => [MAGIC_ENTRY_MODULE]);
-          rollupPlugins?.hook((plugins) => [
+        rollupInput?.hook(() => [MAGIC_ENTRY_MODULE]);
+        rollupPlugins?.hook(async (plugins) => {
+          const content = await quiltHttpHandlerContent!.run(undefined);
+
+          return [
+            ...plugins,
             {
               name: '@quilted/http-handler/magic-entry',
               resolveId(id) {
@@ -105,7 +111,9 @@ export function httpHandler<ProjectType extends WebApp | Service>({
               async load(source) {
                 if (source !== MAGIC_ENTRY_MODULE) return null;
 
-                const content = await quiltHttpHandlerContent!.run(undefined);
+                const content = await quiltHttpHandlerRuntimeContent!.run(
+                  undefined,
+                );
 
                 if (content == null) {
                   throw new Error(
@@ -118,27 +126,32 @@ export function httpHandler<ProjectType extends WebApp | Service>({
             },
             {
               name: '@quilted/http-handler/magic-module',
-              resolveId(id) {
+              async resolveId(id) {
                 if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                if (project.entry == null) {
-                  throw new Error(
-                    `${project.name} must have an entry in order to automatically create your HTTP handler.`,
-                  );
-                }
+                // If we were given content, we will use that as the content
+                // for the entry. Otherwise, just point to the project’s entry,
+                // which is assumed to be a module that exports a `createHttpHandler()`
+                // object as the default export.
+                return content
+                  ? id
+                  : project.fs.resolvePath(project.entry ?? 'index');
+              },
+              load(id) {
+                if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                return project.fs.resolvePath(project.entry);
+                return content!;
               },
             },
-            ...plugins,
-          ]);
-        };
+          ];
+        });
       }
 
       const addSourceHooks = addHooks<CustomHooks>(() => ({
         quiltHttpHandlerHost: new WaterfallHook(),
         quiltHttpHandlerPort: new WaterfallHook(),
         quiltHttpHandlerContent: new WaterfallHook(),
+        quiltHttpHandlerRuntimeContent: new WaterfallHook(),
       }));
 
       tasks.build.hook(({hooks}) => {
@@ -148,7 +161,7 @@ export function httpHandler<ProjectType extends WebApp | Service>({
           if (!target.runtime.includes(Runtime.Node)) return;
           if (!include({target: target as any, task: Task.Build})) return;
 
-          hooks.configure.hook(addDefaultConfiguration());
+          hooks.configure.hook(addDefaultConfiguration);
         });
       });
 
@@ -160,7 +173,7 @@ export function httpHandler<ProjectType extends WebApp | Service>({
         if (!TargetRuntime.fromProject(project).includes(Runtime.Node)) return;
         if (!include({task: Task.Dev})) return;
 
-        hooks.configure.hook(addDefaultConfiguration());
+        hooks.configure.hook(addDefaultConfiguration);
       });
     },
   );
@@ -198,6 +211,9 @@ export function httpHandlerDevelopment<ProjectType extends WebApp | Service>({
 
             // eslint-disable-next-line prefer-const
             server = step.exec('node', [file], {stdio: 'inherit'});
+
+            // eslint-disable-next-line no-console
+            console.log(server);
           },
         ),
       ]);

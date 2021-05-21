@@ -8,7 +8,6 @@ import type {
 } from '@sewing-kit/hooks';
 import type {PolyfillFeature} from '@quilted/polyfills';
 import {updateSewingKitBabelPreset} from '@sewing-kit/plugin-javascript';
-import type {} from '@sewing-kit/plugin-webpack';
 import type {} from '@sewing-kit/plugin-jest';
 
 import type {} from './web-app-multi-build';

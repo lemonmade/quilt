@@ -1,3 +1,4 @@
+import {stripIndent} from 'common-tags';
 import {
   createProjectPlugin,
   Runtime,
@@ -5,7 +6,7 @@ import {
   Service,
 } from '@sewing-kit/plugins';
 import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/sewing-kit-plugins';
-import type {} from '@sewing-kit/plugin-webpack';
+import type {} from '@sewing-kit/plugin-rollup';
 
 export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
   return createProjectPlugin<WebApp | Service>(
@@ -16,23 +17,13 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
           if (!target.runtime.includes(Runtime.Node)) return;
 
           hooks.configure.hook((configure) => {
-            configure.webpackExternals?.hook((externals) => [
-              ...externals,
+            configure.rollupExternal?.hook((externals) => [
+              ...(Array.isArray(externals) ? externals : [externals as any]),
               'aws-sdk',
             ]);
 
-            configure.webpackOutputFilename?.hook(() => 'index.js');
-
-            configure.webpackConfig?.hook((config) => ({
-              ...config,
-              output: {
-                ...config.output,
-                libraryTarget: 'commonjs2',
-              },
-            }));
-
-            configure.quiltHttpHandlerContent?.hook(
-              () => `
+            configure.quiltHttpHandlerRuntimeContent?.hook(
+              () => stripIndent`
                 import HttpHandler from ${JSON.stringify(
                   MAGIC_MODULE_HTTP_HANDLER,
                 )};

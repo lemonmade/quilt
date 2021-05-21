@@ -24,9 +24,11 @@
     "@quilted/sewing-kit-plugins": "^0.2.18",
     "@sewing-kit/plugins": "^0.2.0",
     "@types/aws-lambda": "^8.0.0",
+    "common-tags": "^1.8.0",
     "cookie": "^0.4.0"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.8.0",
     "@types/cookie": "^0.4.0"
   }
 }

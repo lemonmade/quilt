@@ -1,6 +1,6 @@
 export interface Options {
-  moduleId?: 'requireResolve' | 'webpackResolveWeak';
   packages?: {[key: string]: string[]};
+  moduleSystem?: 'commonjs' | 'webpack' | 'systemjs';
 }
 
 interface State {
@@ -79,7 +79,7 @@ export default function asyncBabelPlugin({
 function addIdOption(
   binding: import('@babel/traverse').Binding,
   t: typeof import('@babel/types'),
-  {moduleId = 'webpackResolveWeak'}: Options = {},
+  {moduleSystem = 'webpack'}: Options = {},
 ) {
   binding.referencePaths.forEach((refPath) => {
     const callExpression = refPath.parentPath;
@@ -149,8 +149,55 @@ function addIdOption(
       return;
     }
 
-    if (moduleId === 'webpackResolveWeak') {
+    if (moduleSystem === 'commonjs') {
       loadProperty.insertAfter(
+        t.objectProperty(
+          t.identifier('id'),
+          t.arrowFunctionExpression(
+            [],
+            dynamicImports[0].get('arguments')[0].node as any,
+            false,
+          ),
+        ),
+      );
+
+      loadProperty.insertAfter(
+        t.objectProperty(
+          t.identifier('get'),
+          t.arrowFunctionExpression(
+            [t.identifier('id')],
+            t.callExpression(t.identifier('require'), [t.identifier('id')]),
+            false,
+          ),
+        ),
+      );
+    } else if (moduleSystem === 'systemjs') {
+      loadProperty.insertAfter(
+        t.objectProperty(
+          t.identifier('id'),
+          t.arrowFunctionExpression(
+            [],
+            dynamicImports[0].get('arguments')[0].node as any,
+            false,
+          ),
+        ),
+      );
+
+      loadProperty.insertAfter(
+        t.objectProperty(
+          t.identifier('get'),
+          t.arrowFunctionExpression(
+            [t.identifier('id')],
+            t.callExpression(
+              t.memberExpression(t.identifier('System'), t.identifier('get')),
+              [t.identifier('id')],
+            ),
+            false,
+          ),
+        ),
+      );
+    } else if (moduleSystem === 'webpack') {
+      propertiesMap.load.insertAfter(
         t.objectProperty(
           t.identifier('id'),
           t.arrowFunctionExpression(
@@ -166,19 +213,15 @@ function addIdOption(
           ),
         ),
       );
-    } else if (moduleId === 'requireResolve') {
-      propertiesMap.load.insertAfter(
+
+      loadProperty.insertAfter(
         t.objectProperty(
-          t.identifier('id'),
+          t.identifier('get'),
           t.arrowFunctionExpression(
-            [],
-            t.callExpression(
-              t.memberExpression(
-                t.identifier('require'),
-                t.identifier('resolve'),
-              ),
-              [dynamicImports[0].get('arguments')[0].node],
-            ),
+            [t.identifier('id')],
+            t.callExpression(t.identifier('__webpack_require__'), [
+              t.identifier('id'),
+            ]),
             false,
           ),
         ),

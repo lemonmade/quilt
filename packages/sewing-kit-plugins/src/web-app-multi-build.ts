@@ -9,7 +9,7 @@ import type {BuildWebAppTargetOptions} from '@sewing-kit/hooks';
 import {updateSewingKitBabelPreset} from '@sewing-kit/plugin-javascript';
 import {updatePostcssEnvPreset} from '@sewing-kit/plugin-css';
 
-import {} from '@sewing-kit/plugin-webpack';
+import {} from '@sewing-kit/plugin-rollup';
 
 import {idFromTargetOptions} from './shared';
 
@@ -92,66 +92,62 @@ export function webAppMultiBuilds({
       );
 
       hooks.target.hook(({target, hooks}) => {
+        const id = idFromTargetOptions(target.options);
+
         hooks.configure.hook((configuration) => {
           const {browsers} = target.options;
 
-          configuration.webpackOutputDirectory?.hook(() => {
+          configuration.rollupOutputs?.hook((outputs) => {
             const topLevelPath = target.options.quiltAutoServer
               ? 'server'
               : 'assets';
 
-            return workspace.fs.buildPath(
-              workspace.webApps.length > 1 ? `apps/${project.name}` : 'app',
-              topLevelPath,
-            );
+            return [
+              ...outputs,
+              {
+                format: 'system',
+                entryFileNames: `[name].${id}.[hash].js`,
+                assetFileNames: `[name].${id}.[hash].[ext]`,
+                chunkFileNames: `[name].${id}.[hash].js`,
+                dir: workspace.fs.buildPath(
+                  workspace.webApps.length > 1 ? `apps/${project.name}` : 'app',
+                  topLevelPath,
+                ),
+              },
+            ];
           });
-
-          const id = idFromTargetOptions(target.options);
-
-          const addTargetIdToExtension = (filename: string) => {
-            return filename.replace(
-              /\.\w+$/,
-              (extension) => `${id ? `.${id}` : ''}${extension}`,
-            );
-          };
-
-          configuration.webpackOutputFilename?.hook(addTargetIdToExtension);
-          configuration.webpackOutputChunkFilename?.hook(
-            addTargetIdToExtension,
-          );
-          configuration.cssWebpackFileName?.hook(addTargetIdToExtension);
 
           if (browsers == null) return;
 
-          configuration.webpackPlugins?.hook(async (plugins) => {
-            const [
-              {ManifestPlugin},
-              {getUserAgentRegExp},
-              browserslist,
-            ] = await Promise.all([
-              import('./webpack/ManifestPlugin'),
-              import('browserslist-useragent-regexp'),
-              configuration.quiltBrowserslist!.run([]),
-            ]);
+          // configuration.webpackPlugins?.hook(async (plugins) => {
+          //   const [
+          //     {ManifestPlugin},
+          //     {getUserAgentRegExp},
+          //     browserslist,
+          //   ] = await Promise.all([
+          //     import('./webpack/ManifestPlugin'),
+          //     import('browserslist-useragent-regexp'),
+          //     configuration.quiltBrowserslist!.run([]),
+          //   ]);
 
-            return [
-              ...plugins,
-              new ManifestPlugin({
-                id: idFromTargetOptions(target.options),
-                default: target.options.browsers === 'default',
-                match: [
-                  {
-                    type: 'regex',
-                    key: 'userAgent',
-                    source: getUserAgentRegExp({
-                      browsers: browserslist,
-                      allowHigherVersions: true,
-                    }).source,
-                  },
-                ],
-              }),
-            ];
-          });
+          //   return [
+          //     ...plugins,
+          //     new ManifestPlugin({
+          //       id: idFromTargetOptions(target.options),
+          //       default: target.options.browsers === 'default',
+          //       match: [
+          //         {
+          //           type: 'regex',
+          //           key: 'userAgent',
+          //           source: getUserAgentRegExp({
+          //             browsers: browserslist,
+          //             allowHigherVersions: true,
+          //           }).source,
+          //         },
+          //       ],
+          //     }),
+          //   ];
+          // });
 
           configuration.quiltBrowserslist?.hook(async () => {
             if (browserGroupMap.has(browsers)) {
@@ -191,6 +187,7 @@ export function webAppMultiBuilds({
                   const browsers = await configuration.quiltBrowserslist!.run(
                     undefined,
                   );
+
                   return {...options, browsers};
                 },
                 {addIfMissing: false},

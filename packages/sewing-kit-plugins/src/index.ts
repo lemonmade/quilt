@@ -7,24 +7,21 @@ import {
   Task,
 } from '@sewing-kit/plugins';
 
-import {webpackBuild} from '@sewing-kit/plugin-webpack';
-import {webpackDevWebApp} from '@sewing-kit/plugin-web-app-base';
 import {eslint} from '@sewing-kit/plugin-eslint';
 import {javascript} from '@sewing-kit/plugin-javascript';
 import {typescript, workspaceTypeScript} from '@sewing-kit/plugin-typescript';
 import {css} from '@sewing-kit/plugin-css';
 import {stylelint} from '@sewing-kit/plugin-stylelint';
-// import {react} from '@sewing-kit/plugin-react';
 import {jest} from '@sewing-kit/plugin-jest';
 import {rollupHooks, rollupBuild} from '@sewing-kit/plugin-rollup';
-import {graphql as sewingKitGraphQL} from '@sewing-kit/plugin-graphql';
-import type {ExportStyle} from '@sewing-kit/plugin-graphql';
 
-import {cdn} from './cdn';
 import {httpHandler, httpHandlerDevelopment} from './http-handler';
 import {polyfills} from './polyfills';
 import {react} from './react-mini';
-import {rollupBaseConfiguration} from './rollup-base';
+import {
+  rollupBaseConfiguration,
+  rollupBaseWorkerConfiguration,
+} from './rollup-base';
 import {webAppAutoServer} from './web-app-auto-server';
 import {webAppBrowserEntry} from './web-app-browser-entry';
 import {webAppMagicModules} from './web-app-magic-modules';
@@ -64,12 +61,6 @@ export interface QuiltWebAppOptions {
     | boolean
     | NonNullable<Parameters<typeof webAppAutoServer>[0]>;
   readonly cdn?: string;
-  readonly assetServer?:
-    | boolean
-    | NonNullable<Parameters<typeof webpackDevWebApp>[0]>['assetServer'];
-  readonly graphql?: {
-    readonly export?: ExportStyle;
-  };
   readonly browserGroups?: NonNullable<
     Parameters<typeof webAppMultiBuilds>[0]
   >['browserGroups'];
@@ -78,13 +69,11 @@ export interface QuiltWebAppOptions {
 }
 
 export function quiltWebApp({
-  assetServer,
   react: reactOptions,
   autoServer = false,
   cdn: cdnUrl,
-  graphql: {export: exportStyle = 'simple'} = {},
   browserGroups,
-  polyfill = true,
+  polyfill = autoServer ? {features: ['base', 'fetch']} : true,
 }: QuiltWebAppOptions = {}) {
   return createComposedProjectPlugin<WebApp>(
     'Quilt.WebApp',
@@ -94,39 +83,50 @@ export function quiltWebApp({
         javascript(),
         typescript(),
         css(),
-        rollupBaseConfiguration(),
-        webAppMultiBuilds({babel: true, postcss: true, browserGroups}),
-        assetServer &&
-          webpackDevWebApp(
-            typeof assetServer === 'object' ? {assetServer} : {},
-          ),
-        webpackBuild(),
-        // flexibleOutputs(),
+        react(reactOptions),
         polyfill &&
           polyfills(typeof polyfill === 'boolean' ? undefined : polyfill),
-        react(reactOptions),
-        sewingKitGraphQL({export: exportStyle}),
-        webAppConvenienceAliases(),
+        rollupBaseConfiguration(),
+        rollupBuild(),
         webAppMagicModules(),
+        webAppConvenienceAliases(),
         webAppBrowserEntry({hydrate: ({task}) => task !== Task.Dev}),
+        webAppMultiBuilds({babel: true, postcss: true, browserGroups}),
         autoServer && httpHandler(),
         autoServer &&
-          webAppAutoServer(typeof autoServer === 'object' ? autoServer : {}),
-        cdnUrl ? cdn({url: cdnUrl}) : false,
+          webAppAutoServer(
+            typeof autoServer === 'boolean' ? undefined : autoServer,
+          ),
+        // cdnUrl ? cdn({url: cdnUrl}) : false,
       );
 
-      await Promise.all([
+      const optionalPlugins = await Promise.all([
         ignoreMissingImports(async () => {
-          const {reactWebWorkers} = await import(
-            '@quilted/react-web-workers/sewing-kit'
-          );
-          composer.use(reactWebWorkers());
+          const {graphql} = await import('@quilted/graphql/sewing-kit');
+
+          return graphql();
+        }),
+        ignoreMissingImports(async () => {
+          const {workers} = await import('@quilted/workers-rollup/sewing-kit');
+
+          return createComposedProjectPlugin('Quilt.Workers', [
+            workers({
+              publicPath: cdnUrl,
+            }),
+            rollupBaseWorkerConfiguration(),
+          ]);
         }),
         ignoreMissingImports(async () => {
           const {asyncQuilt} = await import('@quilted/async/sewing-kit');
-          composer.use(asyncQuilt());
+
+          return asyncQuilt({
+            moduleSystem: ({task}) =>
+              task === Task.Build ? 'systemjs' : undefined,
+          });
         }),
       ]);
+
+      composer.use(...optionalPlugins);
     },
   );
 }

@@ -1,4 +1,5 @@
 import {
+  Task,
   addHooks as createAddHooks,
   WaterfallHook,
   createProjectPlugin,
@@ -10,15 +11,21 @@ import type {Options as BabelOptions} from './babel-plugin';
 
 const PLUGIN = 'Quilt.Async';
 
+interface ConfigurationContext {
+  readonly task: Task;
+}
+
+type ValueOrContextThunk<T> = T | ((context: ConfigurationContext) => T);
+
 export interface Options {
-  moduleId?: BabelOptions['moduleId'];
-  applyBabelToPackages?: BabelOptions['packages'];
+  readonly moduleSystem?: ValueOrContextThunk<BabelOptions['moduleSystem']>;
+  readonly applyBabelToPackages?: ValueOrContextThunk<BabelOptions['packages']>;
 }
 
 interface Hooks {
-  readonly quiltAsyncModuleId: WaterfallHook<NonNullable<Options['moduleId']>>;
+  readonly quiltAsyncModuleSystem: WaterfallHook<Options['moduleSystem']>;
   readonly quiltAsyncApplyBabelToPackages: WaterfallHook<
-    NonNullable<BabelOptions['packages']>
+    BabelOptions['packages']
   >;
 }
 
@@ -29,7 +36,7 @@ declare module '@sewing-kit/hooks' {
 }
 
 const addHooks = createAddHooks<Hooks>(() => ({
-  quiltAsyncModuleId: new WaterfallHook(),
+  quiltAsyncModuleSystem: new WaterfallHook(),
   quiltAsyncApplyBabelToPackages: new WaterfallHook(),
 }));
 
@@ -39,7 +46,7 @@ export function asyncQuilt(options: Options = {}) {
       hooks.configureHooks.hook(addHooks);
       hooks.configure.hook((configure) => {
         configure.babelConfig?.hook(
-          createBabelConfigUpdater(configure, options),
+          createBabelConfigUpdater(configure, {task: Task.Dev}, options),
         );
       });
     });
@@ -48,10 +55,14 @@ export function asyncQuilt(options: Options = {}) {
       hooks.configureHooks.hook(addHooks);
       hooks.configure.hook((configuration) => {
         configuration.babelConfig?.hook(
-          createBabelConfigUpdater(configuration, {
-            ...options,
-            moduleId: 'requireResolve',
-          }),
+          createBabelConfigUpdater(
+            configuration,
+            {task: Task.Test},
+            {
+              ...options,
+              moduleSystem: 'commonjs',
+            },
+          ),
         );
       });
     });
@@ -62,7 +73,11 @@ export function asyncQuilt(options: Options = {}) {
       hooks.target.hook(({hooks}) => {
         hooks.configure.hook((configuration) => {
           configuration.babelConfig?.hook(
-            createBabelConfigUpdater(configuration, options),
+            createBabelConfigUpdater(
+              configuration,
+              {task: Task.Build},
+              options,
+            ),
           );
         });
       });
@@ -72,30 +87,31 @@ export function asyncQuilt(options: Options = {}) {
 
 function createBabelConfigUpdater(
   configure: Partial<Hooks>,
-  {
-    moduleId: defaultModuleId = 'webpackResolveWeak',
-    applyBabelToPackages = {},
-  }: Options,
+  context: ConfigurationContext,
+  {moduleSystem: defaultModuleSystem, applyBabelToPackages = {}}: Options,
 ) {
   return async (
     babelConfig: import('@sewing-kit/plugin-javascript').BabelConfig,
   ): Promise<typeof babelConfig> => {
-    const [moduleId, packages] = await Promise.all([
-      configure.quiltAsyncModuleId!.run(defaultModuleId),
+    const [moduleSystem, packages] = await Promise.all([
+      configure.quiltAsyncModuleSystem!.run(
+        typeof defaultModuleSystem === 'function'
+          ? defaultModuleSystem(context)
+          : defaultModuleSystem,
+      ),
       configure.quiltAsyncApplyBabelToPackages!.run({
         ...DEFAULT_PACKAGES_TO_PROCESS,
-        ...applyBabelToPackages,
+        ...(typeof applyBabelToPackages === 'function'
+          ? applyBabelToPackages(context) ?? {}
+          : applyBabelToPackages),
       }),
-    ] as const);
+    ]);
 
     return {
       ...babelConfig,
       plugins: [
-        ...(babelConfig.plugins ?? []),
-        [
-          require.resolve('./babel-plugin'),
-          {moduleId, packages} as BabelOptions,
-        ],
+        ...((babelConfig.plugins as any) ?? []),
+        ['@quilted/async/babel', {moduleSystem, packages} as BabelOptions],
       ],
     };
   };

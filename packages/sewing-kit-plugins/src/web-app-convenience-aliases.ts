@@ -1,4 +1,9 @@
-import {WebApp, createProjectPlugin} from '@sewing-kit/plugins';
+import type {Plugin} from 'rollup';
+
+import {createProjectPlugin} from '@sewing-kit/plugins';
+import type {WebApp} from '@sewing-kit/plugins';
+import type {} from '@sewing-kit/plugin-rollup';
+import type {} from '@sewing-kit/plugin-jest';
 
 export function webAppConvenienceAliases() {
   return createProjectPlugin<WebApp>(
@@ -6,14 +11,14 @@ export function webAppConvenienceAliases() {
     ({project, tasks: {dev, build, test}}) => {
       dev.hook(({hooks}) => {
         hooks.configure.hook((configure) => {
-          configure.webpackAliases?.hook(addWebpackAliases);
+          configure.rollupPlugins?.hook(addRollupPlugin);
         });
       });
 
       build.hook(({hooks}) => {
         hooks.target.hook(({hooks}) => {
           hooks.configure.hook((configuration) => {
-            configuration.webpackAliases?.hook(addWebpackAliases);
+            configuration.rollupPlugins?.hook(addRollupPlugin);
           });
         });
       });
@@ -29,12 +34,18 @@ export function webAppConvenienceAliases() {
         });
       });
 
-      function addWebpackAliases(aliases: {[key: string]: string}) {
-        return {
-          ...aliases,
-          components$: project.fs.resolvePath('components'),
-          utilities: project.fs.resolvePath('utilities'),
-        };
+      async function addRollupPlugin(plugins: Plugin[]) {
+        const {default: alias} = await import('@rollup/plugin-alias');
+
+        return [
+          alias({
+            entries: {
+              utilities: project.fs.resolvePath('utilities'),
+              components: project.fs.resolvePath('components'),
+            },
+          }),
+          ...plugins,
+        ];
       }
     },
   );

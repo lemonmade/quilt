@@ -7,73 +7,122 @@ import type {
   DevServiceConfigurationHooks,
 } from '@sewing-kit/hooks';
 import type {} from '@sewing-kit/plugin-rollup';
+import type {} from '@quilted/workers-rollup/sewing-kit';
 
 export function rollupBaseConfiguration<
   ProjectType extends WebApp | Service
 >() {
-  return createProjectPlugin<ProjectType>('Quilt.HttpHandler', ({tasks}) => {
-    function addDefaultConfiguration() {
-      return ({
-        rollupPlugins,
-        babelConfig,
-      }:
-        | BuildWebAppConfigurationHooks
-        | DevWebAppConfigurationHooks
-        | BuildServiceConfigurationHooks
-        | DevServiceConfigurationHooks) => {
-        rollupPlugins?.hook(async (plugins) => {
-          const [
-            {default: commonjs},
-            {default: nodeResolve},
-            {default: esbuild},
-            babel,
-          ] = await Promise.all([
-            import('@rollup/plugin-commonjs'),
-            import('@rollup/plugin-node-resolve'),
-            import('rollup-plugin-esbuild'),
-            babelConfig!.run({presets: [], plugins: []}),
-          ]);
-
-          return [
-            ...plugins,
-            nodeResolve({
-              exportConditions: ['esnext', 'import', 'require', 'default'],
-              extensions: ['.tsx', '.ts', '.esnext', '.mjs', '.js', '.json'],
-              preferBuiltins: true,
-            }),
-            commonjs(),
-            esbuildWithBabel({babel, minify: false}),
-            esbuild({
-              include: /\.json$/,
-              minify: false,
-            }),
-            esbuild({
-              include: /\.esnext$/,
-              // Allows node_modules
-              exclude: [],
-              minify: false,
-              target: 'node12',
-              loaders: {
-                '.esnext': 'js',
-              },
-            }),
-          ];
+  return createProjectPlugin<ProjectType>(
+    'Quilt.RollupBaseConfiguration',
+    ({tasks}) => {
+      function addDefaultConfiguration(
+        configuration:
+          | BuildWebAppConfigurationHooks
+          | DevWebAppConfigurationHooks
+          | BuildServiceConfigurationHooks
+          | DevServiceConfigurationHooks,
+      ) {
+        configuration.rollupPlugins?.hook(async (plugins) => {
+          const defaultPlugins = await defaultRollupPlugins(configuration);
+          return [...plugins, ...defaultPlugins];
         });
-      };
-    }
+      }
 
-    tasks.build.hook(({hooks}) => {
-      hooks.target.hook(({hooks}) => {
-        hooks.configure.hook(addDefaultConfiguration());
+      tasks.build.hook(({hooks}) => {
+        hooks.target.hook(({hooks}) => {
+          hooks.configure.hook(addDefaultConfiguration);
+        });
       });
-    });
 
-    // eslint-disable-next-line no-warning-comments
-    // TODO: dev needs targets too!
-    tasks.dev.hook(({hooks}) => {
-      hooks.configure.hook(addDefaultConfiguration());
-    });
-  });
+      // eslint-disable-next-line no-warning-comments
+      // TODO: dev needs targets too!
+      tasks.dev.hook(({hooks}) => {
+        hooks.configure.hook(addDefaultConfiguration);
+      });
+    },
+  );
+}
+
+export function rollupBaseWorkerConfiguration() {
+  return createProjectPlugin<WebApp>(
+    'Quilt.RollupBaseConfiguration.Workers',
+    ({tasks, project, workspace}) => {
+      function addDefaultConfiguration(
+        configuration:
+          | BuildWebAppConfigurationHooks
+          | DevWebAppConfigurationHooks,
+      ) {
+        configuration.quiltWorkerRollupPlugins?.hook(async (plugins) => {
+          const defaultPlugins = await defaultRollupPlugins(configuration);
+          return [...plugins, ...defaultPlugins];
+        });
+
+        configuration.quiltWorkerRollupOutputOptions?.hook((outputOptions) => ({
+          ...outputOptions,
+          dir: workspace.fs.buildPath(
+            workspace.webApps.length > 1 ? `apps/${project.name}` : 'app',
+            'assets',
+          ),
+        }));
+      }
+
+      tasks.build.hook(({hooks}) => {
+        hooks.target.hook(({hooks}) => {
+          hooks.configure.hook(addDefaultConfiguration);
+        });
+      });
+
+      // eslint-disable-next-line no-warning-comments
+      // TODO: dev needs targets too!
+      tasks.dev.hook(({hooks}) => {
+        hooks.configure.hook(addDefaultConfiguration);
+      });
+    },
+  );
+}
+
+async function defaultRollupPlugins({
+  babelConfig,
+}:
+  | BuildWebAppConfigurationHooks
+  | DevWebAppConfigurationHooks
+  | BuildServiceConfigurationHooks
+  | DevServiceConfigurationHooks) {
+  const [
+    {default: commonjs},
+    {default: nodeResolve},
+    {default: esbuild},
+    babel,
+  ] = await Promise.all([
+    import('@rollup/plugin-commonjs'),
+    import('@rollup/plugin-node-resolve'),
+    import('rollup-plugin-esbuild'),
+    babelConfig!.run({presets: [], plugins: []}),
+  ]);
+
+  return [
+    nodeResolve({
+      exportConditions: ['esnext', 'import', 'require', 'default'],
+      extensions: ['.tsx', '.ts', '.esnext', '.mjs', '.js', '.json'],
+      preferBuiltins: true,
+    }),
+    commonjs(),
+    esbuildWithBabel({babel, minify: false}),
+    esbuild({
+      include: /\.json$/,
+      minify: false,
+    }),
+    esbuild({
+      include: /\.esnext$/,
+      // Allows node_modules
+      exclude: [],
+      minify: false,
+      target: 'node12',
+      loaders: {
+        '.esnext': 'js',
+      },
+    }),
+  ];
 }
 
 const ESBUILD_MATCH = /\.(ts|js)x?$/;

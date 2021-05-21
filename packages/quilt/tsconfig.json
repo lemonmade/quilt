@@ -45,6 +45,12 @@
     },
     {
       "path": "../react-web-workers"
+    },
+    {
+      "path": "../workers"
+    },
+    {
+      "path": "../workers-rollup"
     }
   ]
 }
