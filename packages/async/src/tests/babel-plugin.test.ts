@@ -118,90 +118,126 @@ describe('asyncBabelPlugin()', () => {
     expect(await transform(code, defaultOptions)).toBe(code);
   });
 
-  it('adds an id prop that returns the require.resolveWeak of the first dynamic import in load', async () => {
-    const code = await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
+  describe('moduleSystem', () => {
+    describe('commonjs', () => {
+      it('generates the synchronous import fields', async () => {
+        const code = await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load: () => import('./Foo'),
+          });
+        `);
 
-      ${defaultImport}({
-        load: () => import('./Foo'),
+        expect(await transform(code, defaultOptions)).toBe(
+          await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load: () => import('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
+          });
+        `),
+        );
       });
-    `);
 
-    expect(await transform(code, defaultOptions)).toBe(
-      await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
+      it('generates the synchronous import fields when load is a method', async () => {
+        const code = await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load() { return import('./Foo'); },
+          });
+        `);
 
-      ${defaultImport}({
-        load: () => import('./Foo'),
-        id: () => require.resolveWeak('./Foo'),
+        expect(await transform(code, defaultOptions)).toBe(
+          await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load() { return import('./Foo'); },
+            get: () => require('./Foo'),
+            id: () => './Foo',
+          });
+        `),
+        );
       });
-    `),
-    );
-  });
 
-  it('adds an id prop when load is a method', async () => {
-    const code = await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
+      it('generates the synchronous import fields when load is a function declaration', async () => {
+        const code = await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load: function load() { return import('./Foo'); },
+          });
+        `);
 
-      ${defaultImport}({
-        load() { return import('./Foo'); },
+        expect(await transform(code, defaultOptions)).toBe(
+          await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load: function load() { return import('./Foo'); },
+            get: () => require('./Foo'),
+            id: () => './Foo',
+          });
+        `),
+        );
       });
-    `);
+    });
 
-    expect(await transform(code, defaultOptions)).toBe(
-      await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
+    describe('systemjs', () => {
+      it('generates the synchronous import fields', async () => {
+        const code = await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load: () => import('./Foo'),
+          });
+        `);
 
-      ${defaultImport}({
-        load() { return import('./Foo'); },
-        id: () => require.resolveWeak('./Foo'),
+        expect(
+          await transform(code, {...defaultOptions, moduleSystem: 'systemjs'}),
+        ).toBe(
+          await normalize(`
+            import {${defaultImport}} from '${defaultPackage}';
+      
+            ${defaultImport}({
+              load: () => import('./Foo'),
+              get: () => System.get('./Foo'),
+              id: () => './Foo',
+            });
+          `),
+        );
       });
-    `),
-    );
-  });
+    });
 
-  it('adds an id prop when load is a function declaration', async () => {
-    const code = await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
+    describe('webpack', () => {
+      it('generates the synchronous import fields', async () => {
+        const code = await normalize(`
+          import {${defaultImport}} from '${defaultPackage}';
+    
+          ${defaultImport}({
+            load: () => import('./Foo'),
+          });
+        `);
 
-      ${defaultImport}({
-        load: function load() { return import('./Foo'); },
+        expect(
+          await transform(code, {...defaultOptions, moduleSystem: 'webpack'}),
+        ).toBe(
+          await normalize(`
+            import {${defaultImport}} from '${defaultPackage}';
+      
+            ${defaultImport}({
+              load: () => import('./Foo'),
+              get: () => __webpack_require__('./Foo'),
+              id: () => require.resolveWeak('./Foo'),
+            });
+          `),
+        );
       });
-    `);
-
-    expect(await transform(code, defaultOptions)).toBe(
-      await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
-
-      ${defaultImport}({
-        load: function load() { return import('./Foo'); },
-        id: () => require.resolveWeak('./Foo'),
-      });
-    `),
-    );
-  });
-
-  it('adds an id prop that returns the require.resolve of the first dynamic import when set to moduleId: requireResolve', async () => {
-    const code = await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
-
-      ${defaultImport}({
-        load: () => import('./Foo'),
-      });
-    `);
-
-    expect(
-      await transform(code, {...defaultOptions, moduleId: 'requireResolve'}),
-    ).toBe(
-      await normalize(`
-      import {${defaultImport}} from '${defaultPackage}';
-
-      ${defaultImport}({
-        load: () => import('./Foo'),
-        id: () => require.resolve('./Foo'),
-      });
-    `),
-    );
+    });
   });
 
   describe('packages', () => {
@@ -220,7 +256,8 @@ describe('asyncBabelPlugin()', () => {
 
           createResolver({
             load: () => import('./Foo'),
-            id: () => require.resolveWeak('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
           });
         `),
       );
@@ -241,7 +278,8 @@ describe('asyncBabelPlugin()', () => {
 
           createResolver({
             load: () => import('./Foo'),
-            id: () => require.resolveWeak('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
           });
         `),
       );
@@ -262,7 +300,8 @@ describe('asyncBabelPlugin()', () => {
 
           createAsyncComponent({
             load: () => import('./Foo'),
-            id: () => require.resolveWeak('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
           });
         `),
       );
@@ -283,7 +322,8 @@ describe('asyncBabelPlugin()', () => {
 
           createResolver({
             load: () => import('./Foo'),
-            id: () => require.resolveWeak('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
           });
         `),
       );
@@ -304,7 +344,8 @@ describe('asyncBabelPlugin()', () => {
 
           createAsyncComponent({
             load: () => import('./Foo'),
-            id: () => require.resolveWeak('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
           });
         `),
       );
@@ -333,7 +374,8 @@ describe('asyncBabelPlugin()', () => {
 
           createAsync({
             load: () => import('./Foo'),
-            id: () => require.resolveWeak('./Foo'),
+            get: () => require('./Foo'),
+            id: () => './Foo',
           });
 
           createAsyncButNoProcess({

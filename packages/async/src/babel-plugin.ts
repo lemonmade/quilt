@@ -79,7 +79,7 @@ export default function asyncBabelPlugin({
 function addIdOption(
   binding: import('@babel/traverse').Binding,
   t: typeof import('@babel/types'),
-  {moduleSystem = 'webpack'}: Options = {},
+  {moduleSystem = 'commonjs'}: Options = {},
 ) {
   binding.referencePaths.forEach((refPath) => {
     const callExpression = refPath.parentPath;
@@ -165,8 +165,10 @@ function addIdOption(
         t.objectProperty(
           t.identifier('get'),
           t.arrowFunctionExpression(
-            [t.identifier('id')],
-            t.callExpression(t.identifier('require'), [t.identifier('id')]),
+            [],
+            t.callExpression(t.identifier('require'), [
+              dynamicImports[0].get('arguments')[0].node,
+            ]),
             false,
           ),
         ),
@@ -187,10 +189,10 @@ function addIdOption(
         t.objectProperty(
           t.identifier('get'),
           t.arrowFunctionExpression(
-            [t.identifier('id')],
+            [],
             t.callExpression(
               t.memberExpression(t.identifier('System'), t.identifier('get')),
-              [t.identifier('id')],
+              [dynamicImports[0].get('arguments')[0].node],
             ),
             false,
           ),
@@ -218,9 +220,9 @@ function addIdOption(
         t.objectProperty(
           t.identifier('get'),
           t.arrowFunctionExpression(
-            [t.identifier('id')],
+            [],
             t.callExpression(t.identifier('__webpack_require__'), [
-              t.identifier('id'),
+              dynamicImports[0].get('arguments')[0].node,
             ]),
             false,
           ),

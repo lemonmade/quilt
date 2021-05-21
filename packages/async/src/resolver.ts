@@ -10,7 +10,7 @@ export interface Resolver<T> {
 export interface ResolverOptions<T> {
   load(): Promise<Import<T>>;
   id?(): string;
-  get?(id: string): any;
+  get?(): any;
 }
 
 export function createResolver<T>({
