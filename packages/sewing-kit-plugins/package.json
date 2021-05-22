@@ -1,6 +1,6 @@
 {
   "name": "@quilted/sewing-kit-plugins",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -23,7 +23,7 @@
     "@types/common-tags": "^1.8.0"
   },
   "dependencies": {
-    "@quilted/polyfills": "^0.1.2",
+    "@quilted/polyfills": "^0.1.3",
     "@rollup/plugin-alias": "^3.0.0",
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-json": "^4.1.0",
