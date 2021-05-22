@@ -1,6 +1,6 @@
 {
   "name": "@quilted/graphql",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -29,7 +29,7 @@
     "@babel/generator": ">=7.0.0",
     "@babel/types": ">=7.0.0",
     "@graphql-tools/merge": "^6.2.5",
-    "@quilted/useful-types": "^0.1.1",
+    "@quilted/useful-types": "^0.1.2",
     "@types/chance": "^1.1.0",
     "@types/graphql": "^14.0.0",
     "arg": "^4.1.3",
@@ -43,9 +43,9 @@
     "p-limit": "^3.0.2"
   },
   "peerDependencies": {
-    "@sewing-kit/plugins": "^0.2.0",
     "@sewing-kit/plugin-jest": "^0.2.0",
     "@sewing-kit/plugin-rollup": "^0.2.0",
+    "@sewing-kit/plugins": "^0.2.0",
     "jest-matcher-utils": "^26.6.2"
   },
   "peerDependenciesMeta": {
