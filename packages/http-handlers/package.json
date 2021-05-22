@@ -1,6 +1,6 @@
 {
   "name": "@quilted/http-handlers",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -20,8 +20,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http": "^0.1.3",
-    "@quilted/routing": "^0.1.3",
+    "@quilted/http": "^0.1.4",
+    "@quilted/routing": "^0.1.4",
     "cookie": "^0.4.0"
   },
   "devDependencies": {

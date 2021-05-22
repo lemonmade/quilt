@@ -1,6 +1,6 @@
 {
   "name": "@quilted/preact-mini-compat",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"

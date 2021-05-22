@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-http",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -33,8 +33,8 @@
     }
   },
   "dependencies": {
-    "@quilted/http": "^0.1.3",
-    "@quilted/react-html": "^0.2.7",
-    "@quilted/react-server-render": "^0.2.3"
+    "@quilted/http": "^0.1.4",
+    "@quilted/react-html": "^0.2.8",
+    "@quilted/react-server-render": "^0.2.4"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-graphql",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -20,9 +20,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/graphql": "^0.3.6",
-    "@quilted/react-async": "^0.2.11",
-    "@quilted/useful-types": "^0.1.3"
+    "@quilted/graphql": "^0.3.7",
+    "@quilted/react-async": "^0.2.12",
+    "@quilted/useful-types": "^0.1.4"
   },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
