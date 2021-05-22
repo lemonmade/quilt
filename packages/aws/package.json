@@ -1,6 +1,6 @@
 {
   "name": "@quilted/aws",
-  "version": "0.2.25",
+  "version": "0.2.26",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -20,8 +20,8 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http-handlers": "^0.1.6",
-    "@quilted/sewing-kit-plugins": "^0.2.19",
+    "@quilted/http-handlers": "^0.1.7",
+    "@quilted/sewing-kit-plugins": "^0.2.20",
     "@sewing-kit/plugins": "^0.2.0",
     "@types/aws-lambda": "^8.0.0",
     "common-tags": "^1.8.0",

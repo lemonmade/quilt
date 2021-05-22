@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-idle",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
