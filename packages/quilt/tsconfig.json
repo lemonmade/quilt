@@ -44,13 +44,10 @@
       "path": "../react-testing"
     },
     {
-      "path": "../react-web-workers"
+      "path": "../react-workers"
     },
     {
       "path": "../workers"
-    },
-    {
-      "path": "../workers-rollup"
     }
   ]
 }

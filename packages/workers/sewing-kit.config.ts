@@ -18,5 +18,16 @@ export default createPackage((pkg) => {
     root: './src/wrappers/basic',
     runtime: Runtime.WebWorker,
   });
+  pkg.entry({
+    name: 'rollup',
+    root: './src/rollup-parts',
+    runtime: Runtime.Node,
+  });
+  pkg.entry({name: 'babel', root: './src/babel', runtime: Runtime.Node});
+  pkg.entry({
+    name: 'sewing-kit',
+    root: './src/sewing-kit',
+    runtime: Runtime.Node,
+  });
   pkg.use(quiltPackage());
 });

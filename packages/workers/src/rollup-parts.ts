@@ -7,10 +7,11 @@ import {rollup} from 'rollup';
 import type {Plugin, InputOptions, OutputOptions, OutputChunk} from 'rollup';
 
 import type {WorkerWrapper} from './types';
-import {PREFIX, MAGIC_MODULE_WORKER} from './constants';
+import {PREFIX} from './constants';
 import {wrapperToSearchString} from './utilities';
 
 const ENTRY_PREFIX = 'quilt-worker-entry:';
+const MAGIC_MODULE_WORKER = '__quilt__/magic-module/worker';
 
 export interface WorkerContext {
   readonly workerModule: string;

@@ -107,7 +107,7 @@ export function quiltWebApp({
           return graphql();
         }),
         ignoreMissingImports(async () => {
-          const {workers} = await import('@quilted/workers-rollup/sewing-kit');
+          const {workers} = await import('@quilted/workers/sewing-kit');
 
           return createComposedProjectPlugin('Quilt.Workers', [
             workers({

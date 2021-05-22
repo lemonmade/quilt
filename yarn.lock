@@ -49,7 +49,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.14.0.tgz#a901128bce2ad02565df95e6ecbf195cf9465919"
   integrity sha512-vu9V3uMM/1o5Hl5OekMUowo3FqXLJSw+s+66nt0fSWVWTtmosdzn45JHOB3cPtZoe6CTBDzvSw0RdOY85Q37+Q==
 
-"@babel/core@>=7.0.0", "@babel/core@>=7.0.0 <8.0.0", "@babel/core@>=7.9.0", "@babel/core@^7.1.0", "@babel/core@^7.7.5":
+"@babel/core@>=7.9.0", "@babel/core@^7.1.0", "@babel/core@^7.7.5":
   version "7.14.2"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.14.2.tgz#54e45334ffc0172048e5c93ded36461d3ad4c417"
   integrity sha512-OgC1mON+l4U4B4wiohJlQNUU3H73mpTyYY3j/c8U9dr9UagGGSm+WFpzjy/YLdoyjiG++c1kIDgxCo/mLwQJeQ==
@@ -538,7 +538,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.12.13"
 
-"@babel/plugin-syntax-dynamic-import@>=7.0.0", "@babel/plugin-syntax-dynamic-import@^7.8.3":
+"@babel/plugin-syntax-dynamic-import@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-dynamic-import/-/plugin-syntax-dynamic-import-7.8.3.tgz#62bf98b2da3cd21d626154fc96ee5b3cb68eacb3"
   integrity sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==
@@ -1084,7 +1084,7 @@
     "@babel/parser" "^7.12.13"
     "@babel/types" "^7.12.13"
 
-"@babel/traverse@>=7.0.0", "@babel/traverse@^7.1.0", "@babel/traverse@^7.13.0", "@babel/traverse@^7.13.15", "@babel/traverse@^7.14.0", "@babel/traverse@^7.14.2", "@babel/traverse@^7.7.0":
+"@babel/traverse@^7.1.0", "@babel/traverse@^7.13.0", "@babel/traverse@^7.13.15", "@babel/traverse@^7.14.0", "@babel/traverse@^7.14.2", "@babel/traverse@^7.7.0":
   version "7.14.2"
   resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.14.2.tgz#9201a8d912723a831c2679c7ebbf2fe1416d765b"
   integrity sha512-TsdRgvBFHMyHOOzcP9S6QU0QQtjxlRpEYOy3mcCO5RgmC305ki42aSAmfZEMSSYBla2oZ9BMqYlncBaKmD/7iA==
@@ -2401,49 +2401,10 @@
     native-url "^0.2.6"
     schema-utils "^2.6.5"
 
-"@remote-ui/async-subscription@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@remote-ui/async-subscription/-/async-subscription-2.0.0.tgz#ee1a32191ba3004cbba71fa53b9946a40277ac5d"
-  integrity sha512-ugOoUHyTyQHMK/ZlXWLExgXx4A8gTywrER9GFlnkf8R4kfFhLa8ICKEv9DEuxvq/LJAOI06/You0Kl8PpUZ7yQ==
-  dependencies:
-    "@remote-ui/rpc" "^1.0.17"
-
-"@remote-ui/core@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@remote-ui/core/-/core-2.0.1.tgz#eb429f01a27d1548c0080a9e7ae3fd5d879eeae6"
-  integrity sha512-Rhb40j070KEBBVKK4/wr4G4QcDCt/+IqQ1eLFeW9V3Mgo1bnGERQgGCGVSDI3K7Vs0svKpOGTifA3wGA/MR13A==
-  dependencies:
-    "@remote-ui/rpc" "^1.0.17"
-    "@remote-ui/types" "^1.0.7"
-
-"@remote-ui/react@^4.0.0":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@remote-ui/react/-/react-4.0.2.tgz#d9ff9c859dcbb8a809a0cf42138f28ede785059a"
-  integrity sha512-R08Sei92KdY69nSueQ0uC64DLP2dhNtxizIyxW+5MwL2Arc9R/bDuiStbUa174AXbChiXRhjBI7TDjmkcy90ow==
-  dependencies:
-    "@remote-ui/async-subscription" "^2.0.0"
-    "@remote-ui/core" "^2.0.1"
-    "@remote-ui/rpc" "^1.0.17"
-    "@remote-ui/web-workers" "^1.4.1"
-    "@types/react" ">=17.0.0 <18.0.0"
-    react-reconciler ">=0.26.0 <1.0.0"
-
-"@remote-ui/rpc@^1.0.0", "@remote-ui/rpc@^1.0.17":
+"@remote-ui/rpc@^1.0.0":
   version "1.0.17"
   resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.0.17.tgz#5bc7230680d5a41820eb1fe12d8e4f3c16577c0d"
   integrity sha512-xeWySnRH8qXzD76lSl50eoncPnQLHe/3VUalYjNImgImeUXgIRYjYq9HQU5c0z6edq7WaegEhdWCTAGHiuDbrQ==
-
-"@remote-ui/types@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-1.0.7.tgz#c4ac74e230ab5c33ee39a327332a11f84cc3dc8e"
-  integrity sha512-Zn+Q2asasiHGN0Gzpyaol48tl24yfWVtWt1fOu4XvgS/iUg97Vj+1VkSrEcRb+burelLAkFXtn4jPcCkW7jikQ==
-
-"@remote-ui/web-workers@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@remote-ui/web-workers/-/web-workers-1.4.1.tgz#b1f95f21a4b0211f2b4725e26c9a8c48dee12598"
-  integrity sha512-TYfGiQsDH7er0dle1abjwDoLdrdn6AI/SwYUCr00nhs3NEoEkmphNwup/GRKRoBuRBkfLJ/16Dcw0S5E/DqJtg==
-  dependencies:
-    "@remote-ui/rpc" "^1.0.17"
 
 "@rollup/plugin-alias@^3.0.0":
   version "3.1.2"
@@ -2473,6 +2434,13 @@
     magic-string "^0.25.7"
     resolve "^1.17.0"
 
+"@rollup/plugin-json@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-json/-/plugin-json-4.1.0.tgz#54e09867ae6963c593844d8bd7a9c718294496f3"
+  integrity sha512-yfLbTdNS6amI/2OpmbiBoW12vngr5NW2jCJVZSBEz+H5KfUJZ2M7sDjk0U6GOOdCWFVScShte29o9NezJ53TPw==
+  dependencies:
+    "@rollup/pluginutils" "^3.0.8"
+
 "@rollup/plugin-node-resolve@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-13.0.0.tgz#352f07e430ff377809ec8ec8a6fd636547162dc4"
@@ -2485,7 +2453,7 @@
     is-module "^1.0.0"
     resolve "^1.19.0"
 
-"@rollup/pluginutils@^3.1.0":
+"@rollup/pluginutils@^3.0.8", "@rollup/pluginutils@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-3.1.0.tgz#706b4524ee6dc8b103b3c995533e5ad680c02b9b"
   integrity sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==
@@ -2976,7 +2944,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=17.0.0 <18.0.0", "@types/react@^17.0.0":
+"@types/react@*", "@types/react@^17.0.0":
   version "17.0.4"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.4.tgz#a67c6f7a460d2660e950d9ccc1c2f18525c28220"
   integrity sha512-onz2BqScSFMoTRdJUZUDD/7xrusM8hBA2Fktk2qgaTYPCgPvWnDEgkrOs8hhPUf2jfcIXkJ5yK6VfYormJS3Jw==
@@ -10146,7 +10114,7 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-"react-reconciler@>=0.26.0 <1.0.0", react-reconciler@^0.26.0:
+react-reconciler@^0.26.0:
   version "0.26.2"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.26.2.tgz#bbad0e2d1309423f76cf3c3309ac6c96e05e9d91"
   integrity sha512-nK6kgY28HwrMNwDnMui3dvm3rCFjZrcGiuwLc5COUipBK5hWHLOxMJhSnSomirqWwjPBJKV1QcbkI0VJr7Gl1Q==
@@ -10639,7 +10607,7 @@ rollup-plugin-node-externals@^2.2.0:
   dependencies:
     find-up "^4.1.0"
 
-"rollup@>=2.0.0 <3.0.0", rollup@^2.48.0:
+rollup@^2.48.0:
   version "2.48.0"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.48.0.tgz#fceb01ed771f991f29f7bd2ff7838146e55acb74"
   integrity sha512-wl9ZSSSsi5579oscSDYSzGn092tCS076YB+TQrzsGuSfYyJeep8eEWj0eaRjuC5McuMNmcnR8icBqiE/FWNB1A==

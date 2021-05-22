@@ -1,6 +1,6 @@
 {
-  "name": "@quilted/react-web-workers",
-  "version": "0.2.7",
+  "name": "@quilted/react-workers",
+  "version": "0.0.0",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -18,13 +18,16 @@
       "require": "./index.js"
     },
     "./": "./",
-    "./sewing-kit": {
-      "esnext": "./sewing-kit.esnext",
-      "import": "./sewing-kit.mjs",
-      "require": "./sewing-kit.js"
+    "./worker": {
+      "esnext": "./worker.esnext",
+      "import": "./worker.mjs",
+      "require": "./worker.js"
     }
   },
   "sideEffects": false,
+  "dependencies": {
+    "@quilted/workers": "^0.1.1"
+  },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
   },
@@ -32,10 +35,5 @@
     "react": {
       "optional": true
     }
-  },
-  "dependencies": {
-    "@remote-ui/react": "^4.0.0",
-    "@remote-ui/web-workers": "^1.4.1",
-    "@types/react": "^17.0.0"
   }
 }

@@ -54,7 +54,7 @@
       "path": "./packages/react-testing"
     },
     {
-      "path": "./packages/react-web-workers"
+      "path": "./packages/react-workers"
     },
     {
       "path": "./packages/routing"
@@ -70,9 +70,6 @@
     },
     {
       "path": "./packages/workers"
-    },
-    {
-      "path": "./packages/workers-rollup"
     }
   ]
 }

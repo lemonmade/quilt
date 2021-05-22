@@ -51,9 +51,12 @@ export {
 export type {NavigateTo} from '@quilted/react-router';
 export {
   useWorker,
-  createWorkerComponent,
-  createWorkerFactory,
-  createPlainWorkerFactory,
-} from '@quilted/react-web-workers';
+  createWorker,
+  createCallableWorker,
+} from '@quilted/react-workers';
+export type {
+  BasicWorkerCreator,
+  CallableWorkerCreator,
+} from '@quilted/react-workers';
 
 export {App} from './App';

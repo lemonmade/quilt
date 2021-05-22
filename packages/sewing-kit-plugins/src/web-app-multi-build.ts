@@ -9,7 +9,7 @@ import type {BuildWebAppTargetOptions} from '@sewing-kit/hooks';
 import {updateSewingKitBabelPreset} from '@sewing-kit/plugin-javascript';
 import {updatePostcssEnvPreset} from '@sewing-kit/plugin-css';
 
-import {} from '@sewing-kit/plugin-rollup';
+import type {} from '@sewing-kit/plugin-rollup';
 
 import {idFromTargetOptions} from './shared';
 

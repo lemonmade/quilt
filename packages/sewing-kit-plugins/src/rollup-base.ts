@@ -7,7 +7,7 @@ import type {
   DevServiceConfigurationHooks,
 } from '@sewing-kit/hooks';
 import type {} from '@sewing-kit/plugin-rollup';
-import type {} from '@quilted/workers-rollup/sewing-kit';
+import type {} from '@quilted/workers/sewing-kit';
 
 export function rollupBaseConfiguration<
   ProjectType extends WebApp | Service
@@ -90,11 +90,13 @@ async function defaultRollupPlugins({
   | DevServiceConfigurationHooks) {
   const [
     {default: commonjs},
+    {default: json},
     {default: nodeResolve},
     {default: esbuild},
     babel,
   ] = await Promise.all([
     import('@rollup/plugin-commonjs'),
+    import('@rollup/plugin-json'),
     import('@rollup/plugin-node-resolve'),
     import('rollup-plugin-esbuild'),
     babelConfig!.run({presets: [], plugins: []}),
@@ -107,11 +109,8 @@ async function defaultRollupPlugins({
       preferBuiltins: true,
     }),
     commonjs(),
+    json(),
     esbuildWithBabel({babel, minify: false}),
-    esbuild({
-      include: /\.json$/,
-      minify: false,
-    }),
     esbuild({
       include: /\.esnext$/,
       // Allows node_modules

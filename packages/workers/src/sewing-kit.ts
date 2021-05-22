@@ -21,7 +21,7 @@ import type {
   Options as RollupOptions,
   WorkerContext,
   PublicPathContext,
-} from './rollup-plugin';
+} from './rollup-parts';
 import type {Options as BabelOptions} from './babel';
 import type {WorkerWrapper} from './types';
 
@@ -167,7 +167,7 @@ export function workers({
             const [noop, write, {workers}] = await Promise.all([
               quiltWorkerNoop!.run(defaultNoop),
               quiltWorkerWrite!.run(defaultNoop),
-              import('./rollup-plugin'),
+              import('./rollup-parts'),
             ]);
 
             if (noop) return plugins;
@@ -191,7 +191,7 @@ export function workers({
 
           babelConfig?.hook(
             updateBabelPlugin(
-              '@quilted/workers-rollup/babel',
+              '@quilted/workers/babel',
               async (): Promise<Record<string, any>> => {
                 const [noop, packages] = await Promise.all([
                   quiltWorkerNoop!.run(defaultNoop),

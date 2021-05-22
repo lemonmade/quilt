@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "build/ts",
     "baseUrl": "src",
-    "rootDir": "src"
+    "rootDir": "src",
+    "lib": ["ESNext", "DOM", "WebWorker"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],

@@ -70,7 +70,7 @@
     "@quilted/react-router": "^0.2.18",
     "@quilted/react-server-render": "^0.2.2",
     "@quilted/react-testing": "^0.3.7",
-    "@quilted/react-web-workers": "^0.2.7"
+    "@quilted/react-workers": "^0.0.0"
   },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0",
