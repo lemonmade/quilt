@@ -40,7 +40,7 @@ export function polyfill({
         `${features
           .map(
             (feature) =>
-              `import ${JSON.stringify(`@quilted/polyfill/${feature}`)};`,
+              `import ${JSON.stringify(`@quilted/polyfills/${feature}`)};`,
           )
           .join('\n')}\n`,
       );

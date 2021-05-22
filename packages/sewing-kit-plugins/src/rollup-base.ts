@@ -1,4 +1,5 @@
 import type {Plugin} from 'rollup';
+import {createFilter} from '@rollup/pluginutils';
 import {WebApp, createProjectPlugin, Service} from '@sewing-kit/plugins';
 import type {
   BuildWebAppConfigurationHooks,
@@ -137,9 +138,13 @@ function esbuildWithBabel({
 }: import('esbuild').TransformOptions & {
   babel: import('@babel/core').TransformOptions;
 }): Plugin {
+  const filter = createFilter(/\.(ts|tsx|js|jsx)$/, /node_modules/);
+
   return {
     name: '@watching/esbuild-with-jsx-runtime',
     async transform(code, id) {
+      if (!filter(id)) return null;
+
       const loader = esbuildLoader(id);
 
       if (loader == null) return null;
@@ -175,7 +180,7 @@ function esbuildWithBabel({
             loader === 'ts'
               ? [
                   ...(babel.plugins ?? []),
-                  [['@babel/plugin-syntax-typescript', {isTSX: true}]],
+                  ['@babel/plugin-syntax-typescript', {isTSX: true}],
                 ]
               : babel.plugins,
         })) ?? {};

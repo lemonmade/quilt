@@ -35,7 +35,7 @@ interface BrowserEntryOptions {
   include?(details: IncludeDetails): boolean;
 }
 
-const MAGIC_ENTRY_MODULE = '__quilt__/magic-entry-web-app';
+const MAGIC_ENTRY_MODULE = '__quilt__/magic-entry-web-app.tsx';
 
 export function webAppBrowserEntry({
   hydrate = true,

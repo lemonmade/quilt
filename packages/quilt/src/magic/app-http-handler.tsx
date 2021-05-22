@@ -1,7 +1,9 @@
+/* eslint-disable import/extensions */
+
 // @ts-ignore
-import App from '__quilt__/App';
+import App from '__quilt__/App.tsx';
 // @ts-ignore
-import AssetManifest from '__quilt__/AssetManifest';
+import AssetManifest from '__quilt__/AssetManifest.tsx';
 
 import {createHttpHandler, html} from '@quilted/http-handlers';
 

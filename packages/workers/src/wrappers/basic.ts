@@ -1,2 +1,4 @@
+/* eslint-disable import/extensions */
+
 // @ts-ignore
-import '@quilted/magic-module/worker';
+import '@quilted/magic-module/worker.tsx';

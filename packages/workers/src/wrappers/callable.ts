@@ -1,5 +1,7 @@
+/* eslint-disable import/extensions */
+
 // @ts-ignore
-import * as Module from '@quilted/magic-module/worker';
+import * as Module from '@quilted/magic-module/worker.tsx';
 
 import {endpoint} from '../worker';
 
