@@ -10,7 +10,7 @@ import {react} from '@sewing-kit/plugin-react';
 import {javascript, updateBabelPreset} from '@sewing-kit/plugin-javascript';
 import {typescript} from '@sewing-kit/plugin-typescript';
 import {packageBuild} from '@sewing-kit/plugin-package-build';
-import {rollupPlugins} from '@sewing-kit/plugin-rollup';
+import type {} from '@sewing-kit/plugin-rollup';
 import type {} from '@sewing-kit/plugin-jest';
 
 import type {MangleOptions} from 'terser';
@@ -21,11 +21,14 @@ export function quiltPackage() {
     typescript(),
     react(),
     reactJsxRuntime(),
-    packageBuild({browserTargets: 'defaults', nodeTargets: 'defaults'}),
+    packageBuild({
+      browserTargets: 'last 2 versions',
+      nodeTargets: 'node 12',
+    }),
     createProjectBuildPlugin('Quilt.ExternalSelf', ({hooks}) => {
       hooks.target.hook(({hooks}) => {
         hooks.configure.hook(({rollupExternal, rollupPlugins}) => {
-          const EXTERNAL_REGEX = /(node_modules|^@quilted|^__quilt__|^react$|^preact$|^core-js|^regenerator-runtime)/;
+          const EXTERNAL_REGEX = /(node_modules|^@quilted|^react$|^preact$|^core-js|^regenerator-runtime)/;
 
           rollupExternal?.hook((external) =>
             Array.isArray(external)
