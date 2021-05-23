@@ -15,7 +15,12 @@
       "import": "./index.mjs",
       "require": "./index.js"
     },
-    "./": "./"
+    "./": "./",
+    "./http-handlers": {
+      "esnext": "./http-handlers.esnext",
+      "import": "./http-handlers.mjs",
+      "require": "./http-handlers.js"
+    }
   },
   "license": "MIT",
   "sideEffects": false,
