@@ -17,6 +17,8 @@ import type {
 import type {} from '@sewing-kit/plugin-rollup';
 import type {} from '@quilted/workers/sewing-kit';
 
+import {getEntry} from './shared';
+
 export function rollupBaseConfiguration<
   ProjectType extends WebApp | Service
 >() {
@@ -142,6 +144,12 @@ export function rollupServiceRollupOutputs() {
       function addDefaultConfiguration(
         configuration: BuildServiceConfigurationHooks,
       ) {
+        configuration.rollupInput?.hook(async (inputs) => {
+          if (inputs.length) return inputs;
+
+          return [await getEntry(project)];
+        });
+
         configuration.rollupInputOptions?.hook((inputOptions) => ({
           ...inputOptions,
           preserveEntrySignatures: false,
@@ -223,8 +231,8 @@ function extractNodeModuleName(moduleId: string) {
   }
 
   const [nodeModuleName, nextPathPart] = moduleParts.slice(
-    nodeModuleIndex,
-    nodeModuleIndex + 2,
+    nodeModuleIndex + 1,
+    nodeModuleIndex + 3,
   );
 
   return nodeModuleName.startsWith('@')

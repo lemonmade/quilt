@@ -16,7 +16,12 @@
       "import": "./index.mjs",
       "require": "./index.js"
     },
-    "./": "./"
+    "./": "./",
+    "./node": {
+      "esnext": "./node.esnext",
+      "import": "./node.mjs",
+      "require": "./node.js"
+    }
   },
   "sideEffects": false,
   "dependencies": {
