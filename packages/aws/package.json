@@ -1,6 +1,6 @@
 {
   "name": "@quilted/aws",
-  "version": "0.2.32",
+  "version": "0.2.33",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
