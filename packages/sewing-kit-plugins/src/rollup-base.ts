@@ -133,6 +133,38 @@ export function rollupBaseWorkerConfiguration() {
     },
   );
 }
+export function rollupServiceRollupOutputs() {
+  return createProjectPlugin<Service>(
+    'Quilt.RollupServiceOutputs',
+    ({tasks, project, workspace}) => {
+      function addDefaultConfiguration(
+        configuration: BuildServiceConfigurationHooks,
+      ) {
+        configuration.rollupOutputs?.hook((outputs) => {
+          if (outputs.length > 0) return outputs;
+
+          return [
+            {
+              format: 'commonjs',
+              entryFileNames: 'index.js',
+              dir: workspace.fs.buildPath(
+                workspace.services.length > 1
+                  ? `services/${project.name}`
+                  : 'service',
+              ),
+            },
+          ];
+        });
+      }
+
+      tasks.build.hook(({hooks}) => {
+        hooks.target.hook(({hooks}) => {
+          hooks.configure.hook(addDefaultConfiguration);
+        });
+      });
+    },
+  );
+}
 
 async function defaultRollupPlugins({
   babelConfig,

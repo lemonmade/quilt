@@ -100,7 +100,7 @@ export function webAppAutoServer({
                   dir: workspace.fs.buildPath(
                     workspace.webApps.length > 1
                       ? `apps/${project.name}`
-                      : 'apps',
+                      : 'app',
                     'server',
                   ),
                 },

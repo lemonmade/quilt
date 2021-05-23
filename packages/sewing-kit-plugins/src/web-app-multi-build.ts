@@ -98,9 +98,7 @@ export function webAppMultiBuilds({
           const {browsers} = target.options;
 
           configuration.rollupOutputs?.hook((outputs) => {
-            const topLevelPath = target.options.quiltAutoServer
-              ? 'server'
-              : 'assets';
+            if (target.options.quiltAutoServer) return outputs;
 
             return [
               ...outputs,
@@ -111,7 +109,7 @@ export function webAppMultiBuilds({
                 chunkFileNames: `[name].${id}.[hash].js`,
                 dir: workspace.fs.buildPath(
                   workspace.webApps.length > 1 ? `apps/${project.name}` : 'app',
-                  topLevelPath,
+                  'assets',
                 ),
               },
             ];

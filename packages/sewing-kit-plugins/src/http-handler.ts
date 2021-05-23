@@ -75,25 +75,25 @@ export function httpHandler<ProjectType extends WebApp | Service>({
           ]);
 
           return stripIndent`
-              import httpHandler from ${JSON.stringify(
-                MAGIC_MODULE_HTTP_HANDLER,
-              )};
-    
-              import {createHttpServer} from '@quilted/http-handlers/node';
-    
-              const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
-              const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
-    
-              process.on('uncaughtException', (...args) => {
-                console.error(...args);
-              });
-    
-              console.log('Creating server: http://${host}:${port}');
-              
-              createHttpServer(httpHandler).listen(port, host, () => {
-                console.log('listening on http://${host}:${port}');
-              });
-            `;
+            import httpHandler from ${JSON.stringify(
+              MAGIC_MODULE_HTTP_HANDLER,
+            )};
+  
+            import {createHttpServer} from '@quilted/http-handlers/node';
+  
+            const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
+            const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
+  
+            process.on('uncaughtException', (...args) => {
+              console.error(...args);
+            });
+  
+            console.log('Creating server: http://${host}:${port}');
+            
+            createHttpServer(httpHandler).listen(port, host, () => {
+              console.log('listening on http://${host}:${port}');
+            });
+          `;
         });
 
         rollupInput?.hook(() => [MAGIC_ENTRY_MODULE]);

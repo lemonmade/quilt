@@ -22,6 +22,7 @@ import {react} from './react-mini';
 import {
   newRollupBuild,
   rollupBaseConfiguration,
+  rollupServiceRollupOutputs,
   rollupBaseWorkerConfiguration,
 } from './rollup-base';
 import {webAppAutoServer} from './web-app-auto-server';
@@ -166,6 +167,7 @@ export function quiltService({
         // TODO: need to add rollup configuration for CSS in a service...
         css(),
         newCss(),
+        rollupServiceRollupOutputs(),
         rollupBaseConfiguration(),
         useReact && react(typeof useReact === 'boolean' ? undefined : useReact),
         polyfill &&
