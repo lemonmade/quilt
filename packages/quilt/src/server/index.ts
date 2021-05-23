@@ -1,5 +1,4 @@
 export {
-  stream,
   render,
   Html,
   Serialize,
