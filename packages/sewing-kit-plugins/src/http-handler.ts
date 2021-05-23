@@ -20,6 +20,7 @@ import type {
 } from '@sewing-kit/hooks';
 import type {} from '@sewing-kit/plugin-rollup';
 
+import {getEntry} from './shared';
 import {MAGIC_MODULE_HTTP_HANDLER} from './constants';
 
 const MAGIC_ENTRY_MODULE = '__quilt__/HttpHandlerEntry.tsx';
@@ -106,7 +107,7 @@ export function httpHandler<ProjectType extends WebApp | Service>({
               name: '@quilted/http-handler/magic-entry',
               resolveId(id) {
                 if (id !== MAGIC_ENTRY_MODULE) return null;
-                return id;
+                return {id, moduleSideEffects: 'no-treeshake'};
               },
               async load(source) {
                 if (source !== MAGIC_ENTRY_MODULE) return null;
@@ -133,9 +134,12 @@ export function httpHandler<ProjectType extends WebApp | Service>({
                 // for the entry. Otherwise, just point to the project’s entry,
                 // which is assumed to be a module that exports a `createHttpHandler()`
                 // object as the default export.
-                return content
-                  ? id
-                  : project.fs.resolvePath(project.entry ?? 'index');
+                if (content) return {id, moduleSideEffects: 'no-treeshake'};
+
+                return {
+                  id: await getEntry(project),
+                  moduleSideEffects: 'no-treeshake',
+                };
               },
               load(id) {
                 if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;

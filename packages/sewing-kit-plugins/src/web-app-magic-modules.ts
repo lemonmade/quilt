@@ -8,6 +8,7 @@ import type {
 import type {} from '@sewing-kit/plugin-rollup';
 import type {Manifest} from '@quilted/async/assets';
 
+import {getEntry} from './shared';
 import {
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_APP_ASSET_MANIFEST,
@@ -46,13 +47,16 @@ export function webAppMagicModules({include = () => true}: Options = {}) {
         rollupPlugins?.hook((plugins) => [
           {
             name: '@quilted/web-app/magic-modules',
-            // eslint-disable-next-line react/function-component-definition
-            resolveId(id) {
+            async resolveId(id) {
               switch (id) {
                 case MAGIC_MODULE_APP_ASSET_MANIFEST:
                   return id;
-                case MAGIC_MODULE_APP_COMPONENT:
-                  return project.fs.resolvePath(project.entry ?? 'index');
+                case MAGIC_MODULE_APP_COMPONENT: {
+                  return {
+                    id: await getEntry(project),
+                    moduleSideEffects: 'no-treeshake',
+                  };
+                }
                 default:
                   return null;
               }

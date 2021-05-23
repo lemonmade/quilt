@@ -1,4 +1,6 @@
-import type {Plugin} from 'rollup';
+import * as path from 'path';
+
+import type {Plugin, PreRenderedChunk} from 'rollup';
 import {createFilter} from '@rollup/pluginutils';
 import {
   WebApp,
@@ -140,6 +142,11 @@ export function rollupServiceRollupOutputs() {
       function addDefaultConfiguration(
         configuration: BuildServiceConfigurationHooks,
       ) {
+        configuration.rollupInputOptions?.hook((inputOptions) => ({
+          ...inputOptions,
+          preserveEntrySignatures: false,
+        }));
+
         configuration.rollupOutputs?.hook((outputs) => {
           if (outputs.length > 0) return outputs;
 
@@ -147,6 +154,7 @@ export function rollupServiceRollupOutputs() {
             {
               format: 'commonjs',
               entryFileNames: 'index.js',
+              chunkFileNames: chunkFilename,
               dir: workspace.fs.buildPath(
                 workspace.services.length > 1
                   ? `services/${project.name}`
@@ -164,6 +172,64 @@ export function rollupServiceRollupOutputs() {
       });
     },
   );
+}
+
+const REPLACEMENT_PATH_SEPARATOR = '_';
+const MAXIMUM_CHUNK_FILENAME_LENGTH = 50;
+
+function chunkFilename(chunk: PreRenderedChunk) {
+  if (chunk.facadeModuleId) {
+    return `${extractNodeModuleName(chunk.facadeModuleId)}.[hash].js`;
+  }
+
+  const filenameModules: string[] = [];
+  let filenameLength = 0;
+
+  for (const moduleId of Object.keys(chunk.modules)) {
+    const reservedForComma = filenameModules.length === 0 ? 0 : 1;
+    const filenamePart = extractNodeModuleName(moduleId);
+    const reducedFilenamePart = filenamePart.substring(
+      0,
+      MAXIMUM_CHUNK_FILENAME_LENGTH - filenameLength - reservedForComma,
+    );
+
+    if (reducedFilenamePart.length / filenamePart.length < 0.6) {
+      break;
+    }
+
+    if (filenameModules.includes(reducedFilenamePart)) {
+      continue;
+    }
+
+    filenameModules.push(reducedFilenamePart);
+
+    filenameLength += reducedFilenamePart.length;
+    filenameLength += reservedForComma;
+
+    if (filenameLength >= MAXIMUM_CHUNK_FILENAME_LENGTH) {
+      break;
+    }
+  }
+
+  return `${filenameModules.join(',')}.[hash].js`;
+}
+
+function extractNodeModuleName(moduleId: string) {
+  const moduleParts = moduleId.split(path.sep);
+  const nodeModuleIndex = moduleParts.lastIndexOf('node_modules');
+
+  if (nodeModuleIndex < 0) {
+    return moduleParts.slice(0, 3).join(REPLACEMENT_PATH_SEPARATOR);
+  }
+
+  const [nodeModuleName, nextPathPart] = moduleParts.slice(
+    nodeModuleIndex,
+    nodeModuleIndex + 2,
+  );
+
+  return nodeModuleName.startsWith('@')
+    ? `${nodeModuleName}${REPLACEMENT_PATH_SEPARATOR}${nextPathPart}`
+    : nodeModuleName;
 }
 
 async function defaultRollupPlugins({
