@@ -11,7 +11,7 @@ import {PREFIX} from './constants';
 import {wrapperToSearchString} from './utilities';
 
 const ENTRY_PREFIX = 'quilt-worker-entry:';
-const MAGIC_MODULE_WORKER = '__quilt__/magic-module/worker.tsx';
+const MAGIC_MODULE_WORKER = '__quilt__/Worker.tsx';
 
 export interface WorkerContext {
   readonly workerModule: string;

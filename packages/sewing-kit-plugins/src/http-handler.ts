@@ -22,7 +22,7 @@ import type {} from '@sewing-kit/plugin-rollup';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from './constants';
 
-const MAGIC_ENTRY_MODULE = '__quilt__/magic-entry-http-handler.tsx';
+const MAGIC_ENTRY_MODULE = '__quilt__/HttpHandlerEntry.tsx';
 
 interface CustomHooks {
   readonly quiltHttpHandlerPort: WaterfallHook<number | undefined>;

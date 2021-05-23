@@ -13,12 +13,14 @@ import {typescript, workspaceTypeScript} from '@sewing-kit/plugin-typescript';
 import {css} from '@sewing-kit/plugin-css';
 import {stylelint} from '@sewing-kit/plugin-stylelint';
 import {jest} from '@sewing-kit/plugin-jest';
-import {rollupHooks, rollupBuild} from '@sewing-kit/plugin-rollup';
+import {rollupHooks} from '@sewing-kit/plugin-rollup';
 
 import {httpHandler, httpHandlerDevelopment} from './http-handler';
+import {css as newCss} from './css';
 import {polyfills} from './polyfills';
 import {react} from './react-mini';
 import {
+  newRollupBuild,
   rollupBaseConfiguration,
   rollupBaseWorkerConfiguration,
 } from './rollup-base';
@@ -82,12 +84,12 @@ export function quiltWebApp({
         rollupHooks(),
         javascript(),
         typescript(),
-        css(),
+        newCss(),
         react(reactOptions),
         polyfill &&
           polyfills(typeof polyfill === 'boolean' ? undefined : polyfill),
         rollupBaseConfiguration(),
-        rollupBuild(),
+        newRollupBuild(),
         webAppMagicModules(),
         webAppConvenienceAliases(),
         webAppBrowserEntry({hydrate: ({task}) => task !== Task.Dev}),
@@ -161,7 +163,7 @@ export function quiltService({
         typescript(),
         // eslint-disable-next-line no-warning-comments
         // TODO: need to add rollup configuration for CSS in a service...
-        css(),
+        newCss(),
         rollupBaseConfiguration(),
         useReact && react(typeof useReact === 'boolean' ? undefined : useReact),
         polyfill &&
@@ -171,7 +173,7 @@ export function quiltService({
           httpHandler(
             typeof useHttpHandler === 'boolean' ? undefined : useHttpHandler,
           ),
-        build && rollupBuild(),
+        build && newRollupBuild(),
         develop &&
           httpHandlerDevelopment(
             typeof develop === 'boolean' ? undefined : develop,

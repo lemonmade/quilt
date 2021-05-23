@@ -35,7 +35,7 @@ interface BrowserEntryOptions {
   include?(details: IncludeDetails): boolean;
 }
 
-const MAGIC_ENTRY_MODULE = '__quilt__/magic-entry-web-app.tsx';
+const MAGIC_ENTRY_MODULE = '__quilt__/AppEntry.tsx';
 
 export function webAppBrowserEntry({
   hydrate = true,
@@ -48,9 +48,15 @@ export function webAppBrowserEntry({
         return ({
           rollupInput,
           rollupPlugins,
+          rollupInputOptions,
           quiltBrowserEntryContent,
         }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) => {
           rollupInput?.hook(() => [MAGIC_ENTRY_MODULE]);
+
+          rollupInputOptions?.hook((options) => ({
+            ...options,
+            preserveEntrySignatures: false,
+          }));
 
           const shouldHydrate =
             typeof hydrate === 'boolean' ? hydrate : hydrate({target, task});

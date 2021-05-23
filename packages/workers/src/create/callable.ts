@@ -5,7 +5,8 @@ import {
   CreateEndpointOptions,
 } from '@remote-ui/rpc';
 import {createWorkerMessenger} from '../messenger';
-import {createScriptUrl, FileOrModuleResolver} from './utilities';
+import {createScriptUrl} from './utilities';
+import type {FileOrModuleResolver} from './utilities';
 
 export interface CreateCallableWorkerOptions<T>
   extends CreateEndpointOptions<T> {

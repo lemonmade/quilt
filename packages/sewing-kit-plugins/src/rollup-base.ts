@@ -1,6 +1,11 @@
 import type {Plugin} from 'rollup';
 import {createFilter} from '@rollup/pluginutils';
-import {WebApp, createProjectPlugin, Service} from '@sewing-kit/plugins';
+import {
+  WebApp,
+  createProjectPlugin,
+  createProjectBuildPlugin,
+  Service,
+} from '@sewing-kit/plugins';
 import type {
   BuildWebAppConfigurationHooks,
   DevWebAppConfigurationHooks,
@@ -39,6 +44,53 @@ export function rollupBaseConfiguration<
       // TODO: dev needs targets too!
       tasks.dev.hook(({hooks}) => {
         hooks.configure.hook(addDefaultConfiguration);
+      });
+    },
+  );
+}
+
+export function newRollupBuild() {
+  return createProjectBuildPlugin(
+    'Quilt.Rollup.Build',
+    ({api, hooks, project}) => {
+      hooks.target.hook(({target, hooks}) => {
+        hooks.steps.hook((steps, configuration) => [
+          ...steps,
+          api.createStep(
+            {
+              id: 'Rollup.Build',
+              label: `bundling ${project.name} with rollup (target: ${target.options})`,
+            },
+            async () => {
+              const [{rollup}, input, plugins, external] = await Promise.all([
+                import('rollup'),
+                configuration.rollupInput!.run([]),
+                configuration.rollupPlugins!.run([]),
+                configuration.rollupExternal!.run([]),
+              ]);
+
+              const [inputOptions, outputs] = await Promise.all([
+                configuration.rollupInputOptions!.run({
+                  input,
+                  plugins,
+                  external,
+                }),
+                configuration.rollupOutputs!.run([]),
+              ]);
+
+              if (
+                (inputOptions.input ?? []).length === 0 ||
+                outputs.length === 0
+              ) {
+                return;
+              }
+
+              const bundle = await rollup(inputOptions);
+              await Promise.all(outputs.map((output) => bundle.write(output)));
+              await bundle.close();
+            },
+          ),
+        ]);
       });
     },
   );
@@ -141,7 +193,7 @@ function esbuildWithBabel({
   const filter = createFilter(/\.(ts|tsx|js|jsx)$/, /node_modules/);
 
   return {
-    name: '@watching/esbuild-with-jsx-runtime',
+    name: '@quilted/esbuild-with-babel',
     async transform(code, id) {
       if (!filter(id)) return null;
 
