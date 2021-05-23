@@ -193,30 +193,73 @@ export function httpHandlerDevelopment<ProjectType extends WebApp | Service>({
         },
       );
 
-      hooks.steps.hook((steps: readonly Step[]) => [
-        ...steps,
-        api.createStep(
-          {
-            id: 'Quilt.HttpHandler.Development',
-            label: `Running local development server for ${project.name}`,
-          },
-          (step) => {
-            const file = api.tmpPath(
-              'quilt-http-handler-dev',
-              project.name,
-              'built.js',
-            );
+      hooks.steps.hook(
+        (
+          steps: readonly Step[],
+          configuration: DevWebAppConfigurationHooks,
+        ) => [
+          ...steps,
+          api.createStep(
+            {
+              id: 'Quilt.HttpHandler.Development',
+              label: `Running local development server for ${project.name}`,
+            },
+            async (step) => {
+              const file = api.tmpPath(
+                'quilt-http-handler-dev',
+                project.name,
+                'built.js',
+              );
 
-            let server: ReturnType<typeof step['exec']> | undefined;
+              const [{watch}, input, plugins, external] = await Promise.all([
+                import('rollup'),
+                configuration.rollupInput!.run([]),
+                configuration.rollupPlugins!.run([]),
+                configuration.rollupExternal!.run([]),
+              ]);
 
-            // eslint-disable-next-line prefer-const
-            server = step.exec('node', [file], {stdio: 'inherit'});
+              const [inputOptions] = await Promise.all([
+                configuration.rollupInputOptions!.run({
+                  input,
+                  plugins,
+                  external,
+                }),
+              ]);
 
-            // eslint-disable-next-line no-console
-            console.log(server);
-          },
-        ),
-      ]);
+              if ((inputOptions.input ?? []).length === 0) {
+                return;
+              }
+
+              let server: ReturnType<typeof step['exec']> | undefined;
+
+              const watcher = watch({
+                ...inputOptions,
+                output: {format: 'commonjs', file},
+              });
+
+              watcher.on('event', (event) => {
+                switch (event.code) {
+                  case 'BUNDLE_START': {
+                    try {
+                      server?.kill();
+                    } catch {
+                      // intentional noop
+                    }
+
+                    server = step.exec('node', [file], {stdio: 'inherit'});
+                    break;
+                  }
+                  case 'ERROR': {
+                    // eslint-disable-next-line no-console
+                    console.error(event.error);
+                    break;
+                  }
+                }
+              });
+            },
+          ),
+        ],
+      );
     },
   );
 }
