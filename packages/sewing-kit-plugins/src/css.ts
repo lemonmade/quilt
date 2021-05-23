@@ -44,10 +44,10 @@ export function css({include = () => true}: CssOptions = {}) {
       }: BuildWebAppConfigurationHooks | DevWebAppConfigurationHooks) => {
         rollupPlugins?.hook(async (plugins) => {
           const [
-            {default: postcss},
+            {default: styles},
             configuredPostcssPlugins,
           ] = await Promise.all([
-            import('rollup-plugin-postcss'),
+            import('rollup-plugin-styles'),
             postcssPlugins!.run({}),
           ]);
 
@@ -67,9 +67,9 @@ export function css({include = () => true}: CssOptions = {}) {
 
           return [
             ...plugins,
-            postcss({
+            styles({
               config: false,
-              extract: true,
+              mode: 'emit',
               plugins: resolvedPostcssPlugins,
             }),
           ];

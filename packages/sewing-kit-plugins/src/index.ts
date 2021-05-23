@@ -84,6 +84,7 @@ export function quiltWebApp({
         rollupHooks(),
         javascript(),
         typescript(),
+        css(),
         newCss(),
         react(reactOptions),
         polyfill &&
@@ -163,6 +164,7 @@ export function quiltService({
         typescript(),
         // eslint-disable-next-line no-warning-comments
         // TODO: need to add rollup configuration for CSS in a service...
+        css(),
         newCss(),
         rollupBaseConfiguration(),
         useReact && react(typeof useReact === 'boolean' ? undefined : useReact),
