@@ -22,22 +22,9 @@
       "esnext": "./worker.esnext",
       "import": "./worker.mjs",
       "require": "./worker.js"
-    },
-    "./worker-wrapper-basic": {
-      "esnext": "./worker-wrapper-basic.esnext",
-      "import": "./worker-wrapper-basic.mjs",
-      "require": "./worker-wrapper-basic.js"
-    },
-    "./worker-wrapper-callable": {
-      "esnext": "./worker-wrapper-callable.esnext",
-      "import": "./worker-wrapper-callable.mjs",
-      "require": "./worker-wrapper-callable.js"
     }
   },
-  "sideEffects": [
-    "./worker-wrapper-basic.*",
-    "./worker-wrapper-callable.*"
-  ],
+  "sideEffects": false,
   "dependencies": {
     "@remote-ui/rpc": "^1.0.0"
   },
@@ -45,6 +32,7 @@
     "@babel/core": ">=7.0.0 <8.0.0",
     "@sewing-kit/plugin-javascript": "^0.4.0",
     "@sewing-kit/plugins": "^0.2.0",
+    "common-tags": "^1.8.0",
     "rollup": ">=2.0.0 <3.0.0"
   },
   "peerDependenciesMeta": {

@@ -1,7 +1,6 @@
 import * as path from 'path';
 
-import type {Plugin, PreRenderedChunk} from 'rollup';
-import {createFilter} from '@rollup/pluginutils';
+import type {PreRenderedChunk} from 'rollup';
 import {
   WebApp,
   createProjectPlugin,
@@ -109,9 +108,9 @@ export function rollupBaseWorkerConfiguration() {
           | BuildWebAppConfigurationHooks
           | DevWebAppConfigurationHooks,
       ) {
-        configuration.quiltWorkerRollupPlugins?.hook(async (plugins) => {
+        configuration.quiltWorkerRollupPlugins?.hook(async () => {
           const defaultPlugins = await defaultRollupPlugins(configuration);
-          return [...plugins, ...defaultPlugins];
+          return defaultPlugins;
         });
 
         configuration.quiltWorkerRollupOutputOptions?.hook((outputOptions) => ({
@@ -137,6 +136,7 @@ export function rollupBaseWorkerConfiguration() {
     },
   );
 }
+
 export function rollupServiceRollupOutputs() {
   return createProjectPlugin<Service>(
     'Quilt.RollupServiceOutputs',
@@ -152,7 +152,7 @@ export function rollupServiceRollupOutputs() {
 
         configuration.rollupInputOptions?.hook((inputOptions) => ({
           ...inputOptions,
-          preserveEntrySignatures: false,
+          preserveEntrySignatures: 'exports-only',
         }));
 
         configuration.rollupOutputs?.hook((outputs) => {
@@ -163,6 +163,12 @@ export function rollupServiceRollupOutputs() {
               format: 'commonjs',
               entryFileNames: 'index.js',
               chunkFileNames: chunkFilename,
+              // Always preserve the name of the export on the resulting
+              // commonjs module, including for `default`
+              exports: 'named',
+              // Prevents __esModule from being added, not really
+              // needed for runtime code
+              esModule: false,
               dir: workspace.fs.buildPath(
                 workspace.services.length > 1
                   ? `services/${project.name}`
@@ -227,7 +233,9 @@ function extractNodeModuleName(moduleId: string) {
   const nodeModuleIndex = moduleParts.lastIndexOf('node_modules');
 
   if (nodeModuleIndex < 0) {
-    return moduleParts.slice(0, 3).join(REPLACEMENT_PATH_SEPARATOR);
+    return cleanupPathPart(
+      moduleParts.slice(0, 3).join(REPLACEMENT_PATH_SEPARATOR),
+    );
   }
 
   const [nodeModuleName, nextPathPart] = moduleParts.slice(
@@ -235,9 +243,16 @@ function extractNodeModuleName(moduleId: string) {
     nodeModuleIndex + 3,
   );
 
-  return nodeModuleName.startsWith('@')
-    ? `${nodeModuleName}${REPLACEMENT_PATH_SEPARATOR}${nextPathPart}`
-    : nodeModuleName;
+  return cleanupPathPart(
+    nodeModuleName.startsWith('@')
+      ? `${nodeModuleName}${REPLACEMENT_PATH_SEPARATOR}${nextPathPart}`
+      : nodeModuleName,
+  );
+}
+
+function cleanupPathPart(part: string) {
+  // eslint-disable-next-line no-control-regex
+  return part.replace(/[\x00-\x1f\x80-\x9f]/g, '');
 }
 
 async function defaultRollupPlugins({
@@ -251,13 +266,13 @@ async function defaultRollupPlugins({
     {default: commonjs},
     {default: json},
     {default: nodeResolve},
-    {default: esbuild},
-    babel,
+    {default: babel},
+    babelOptions,
   ] = await Promise.all([
     import('@rollup/plugin-commonjs'),
     import('@rollup/plugin-json'),
     import('@rollup/plugin-node-resolve'),
-    import('rollup-plugin-esbuild'),
+    import('@rollup/plugin-babel'),
     babelConfig!.run({presets: [], plugins: []}),
   ]);
 
@@ -269,95 +284,27 @@ async function defaultRollupPlugins({
     }),
     commonjs(),
     json(),
-    esbuildWithBabel({babel, minify: false}),
-    esbuild({
+    babel({
+      ...babelOptions,
+      include: /\.(ts|tsx|js|jsx|mjs)$/,
+      // Allows node_modules
+      exclude: [/node_modules/],
+      babelrc: false,
+      configFile: false,
+      extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx'],
+      sourceType: 'module',
+      babelHelpers: 'bundled',
+    }),
+    babel({
+      ...babelOptions,
       include: /\.esnext$/,
       // Allows node_modules
       exclude: [],
-      minify: false,
-      target: 'node12',
-      loaders: {
-        '.esnext': 'js',
-      },
+      babelrc: false,
+      configFile: false,
+      extensions: ['.esnext'],
+      sourceType: 'module',
+      babelHelpers: 'bundled',
     }),
   ];
-}
-
-const ESBUILD_MATCH = /\.(ts|js)x?$/;
-const REMOVE_BABEL_PRESETS = ['@babel/preset-env', '@babel/preset-typescript'];
-
-function esbuildLoader(id: string) {
-  return id.match(ESBUILD_MATCH)?.[1] as 'js' | 'ts' | undefined;
-}
-
-function esbuildWithBabel({
-  babel,
-  ...options
-}: import('esbuild').TransformOptions & {
-  babel: import('@babel/core').TransformOptions;
-}): Plugin {
-  const filter = createFilter(/\.(ts|tsx|js|jsx)$/, /node_modules/);
-
-  return {
-    name: '@quilted/esbuild-with-babel',
-    async transform(code, id) {
-      if (!filter(id)) return null;
-
-      const loader = esbuildLoader(id);
-
-      if (loader == null) return null;
-
-      const [
-        {transformAsync: transformWithBabel},
-        {transform: transformWithESBuild},
-      ] = await Promise.all([import('@babel/core'), import('esbuild')]);
-
-      const {code: intermediateCode} =
-        (await transformWithBabel(code, {
-          ...babel,
-          filename: id,
-          sourceType: 'module',
-          configFile: false,
-          babelrc: false,
-          presets: babel.presets?.filter((preset) => {
-            let resolvedPreset: string;
-
-            if (typeof preset === 'string') {
-              resolvedPreset = preset;
-            } else if (Array.isArray(preset) && typeof preset[0] === 'string') {
-              resolvedPreset = preset[0];
-            } else {
-              return true;
-            }
-
-            return !REMOVE_BABEL_PRESETS.some((removePreset) =>
-              resolvedPreset.includes(removePreset),
-            );
-          }),
-          plugins:
-            loader === 'ts'
-              ? [
-                  ...(babel.plugins ?? []),
-                  ['@babel/plugin-syntax-typescript', {isTSX: true}],
-                ]
-              : babel.plugins,
-        })) ?? {};
-
-      if (intermediateCode == null) {
-        return {code: intermediateCode ?? undefined};
-      }
-
-      const {code: finalCode, map} = await transformWithESBuild(
-        intermediateCode,
-        {
-          ...options,
-          target: 'es2017',
-          loader,
-          minify: false,
-        },
-      );
-
-      return {code: finalCode || undefined, map: map || null};
-    },
-  };
 }

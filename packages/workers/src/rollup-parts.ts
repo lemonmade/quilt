@@ -5,6 +5,7 @@ import {URLSearchParams} from 'url';
 
 import {rollup} from 'rollup';
 import type {Plugin, InputOptions, OutputOptions, OutputChunk} from 'rollup';
+import {stripIndent} from 'common-tags';
 
 import type {WorkerWrapper} from './types';
 import {PREFIX} from './constants';
@@ -112,10 +113,12 @@ export function workers({
         {
           name: '@quilted/workers/magic-modules',
           resolveId(source) {
-            if (source.startsWith(ENTRY_PREFIX)) return source;
+            if (source.startsWith(ENTRY_PREFIX)) {
+              return {id: source};
+            }
 
             if (source === MAGIC_MODULE_WORKER) {
-              return {id: workerId, moduleSideEffects: 'no-treeshake'};
+              return {id: workerId};
             }
 
             return null;
@@ -151,7 +154,10 @@ export function workers({
       const baseOutputOptions: OutputOptions = {
         ...parentOutputOptions,
         format: 'iife',
-        inlineDynamicImports: true,
+        // This should be enabled, as async imports will cause the build to fail,
+        // but enabling it leads to this error:
+        // https://github.com/rollup/rollup/issues/4098
+        // inlineDynamicImports: true,
       };
 
       const workerOutputOptions =
@@ -226,23 +232,23 @@ function getWorkerRequest(
   };
 }
 
-const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
-  [
-    '@quilted/workers',
-    new Map([
-      ['createWorker', `import '@quilted/workers/worker-wrapper-basic';`],
-      [
-        'createCallableWorker',
-        `import '@quilted/workers/worker-wrapper-callable';`,
-      ],
-    ]),
-  ],
+const BASIC_CONTENT = `import ${JSON.stringify(MAGIC_MODULE_WORKER)};`;
+const CALLABLE_CONTENT = stripIndent`
+  import * as Worker from ${JSON.stringify(MAGIC_MODULE_WORKER)};
+  import {endpoint} from '@quilted/workers/worker';
+  endpoint.expose(Worker);
+`;
+
+const workerFunctionContent = new Map([
+  ['createWorker', BASIC_CONTENT],
+  ['createCallableWorker', CALLABLE_CONTENT],
 ]);
 
-KNOWN_WRAPPER_MODULES.set(
-  '@quilted/quilt',
-  KNOWN_WRAPPER_MODULES.get('@quilted/workers')!,
-);
+const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
+  ['@quilted/workers', workerFunctionContent],
+  ['@quilted/react-workers', workerFunctionContent],
+  ['@quilted/quilt', workerFunctionContent],
+]);
 
 function defaultContentForWorker(wrapper: WorkerWrapper) {
   const content = KNOWN_WRAPPER_MODULES.get(wrapper.module)?.get(

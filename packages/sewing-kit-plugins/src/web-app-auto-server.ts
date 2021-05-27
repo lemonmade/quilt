@@ -64,6 +64,7 @@ export function webAppAutoServer({
           hooks.configure.hook(
             ({
               rollupOutputs,
+              rollupInputOptions,
               quiltAutoServerHost,
               quiltAutoServerPort,
               quiltAutoServerContent,
@@ -93,10 +94,17 @@ export function webAppAutoServer({
                   `export {default} from '@quilted/quilt/magic-app-http-handler';`,
               );
 
+              rollupInputOptions?.hook((options) => ({
+                ...options,
+                preserveEntrySignatures: 'exports-only',
+              }));
+
               rollupOutputs?.hook(() => [
                 {
                   format: 'commonjs',
                   entryFileNames: 'index.js',
+                  exports: 'named',
+                  esModule: false,
                   dir: workspace.fs.buildPath(
                     workspace.webApps.length > 1
                       ? `apps/${project.name}`

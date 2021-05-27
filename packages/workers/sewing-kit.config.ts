@@ -9,16 +9,6 @@ export default createPackage((pkg) => {
     runtime: Runtime.WebWorker,
   });
   pkg.entry({
-    name: 'worker-wrapper-callable',
-    root: './src/wrappers/callable',
-    runtime: Runtime.WebWorker,
-  });
-  pkg.entry({
-    name: 'worker-wrapper-basic',
-    root: './src/wrappers/basic',
-    runtime: Runtime.WebWorker,
-  });
-  pkg.entry({
     name: 'rollup',
     root: './src/rollup-parts',
     runtime: Runtime.Node,
