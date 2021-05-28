@@ -41,7 +41,7 @@ export function graphql() {
 }
 
 export function workspaceGraphQL() {
-  return createWorkspacePlugin(PLUGIN, ({tasks, api}) => {
+  return createWorkspacePlugin(PLUGIN, ({tasks, api, workspace}) => {
     function createTypeScriptDefinitionsStep({watch = false} = {}) {
       return api.createStep({id: STEP, label: STEP_LABEL}, async (runner) => {
         await runner.exec(EXECUTABLE, watch ? ['--watch'] : []);
@@ -49,8 +49,18 @@ export function workspaceGraphQL() {
     }
 
     tasks.typeCheck.hook(({hooks}) => {
-      hooks.pre.hook((steps) => [...steps, createTypeScriptDefinitionsStep()]);
+      hooks.pre.hook(async (steps) => {
+        if (!(await hasGraphQLConfig())) {
+          return steps;
+        }
+
+        return [...steps, createTypeScriptDefinitionsStep()];
+      });
     });
+
+    function hasGraphQLConfig() {
+      return workspace.fs.hasFile('graphql.config.js');
+    }
 
     // These don't work — sewing-kit hangs on the pre steps
 
