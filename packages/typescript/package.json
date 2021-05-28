@@ -1,0 +1,17 @@
+{
+  "name": "@quilted/typescript",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "esnext": "index.esnext",
+  "types": "index.d.ts",
+  "exports": {
+    "./": "./"
+  },
+  "sideEffects": false
+}

@@ -1,4 +1,3 @@
-import {relative, dirname} from 'path';
 import {
   Package,
   createComposedProjectPlugin,
@@ -6,7 +5,6 @@ import {
   createProjectBuildPlugin,
   createProjectPlugin,
 } from '@sewing-kit/plugins';
-import type {ProjectPluginContext} from '@sewing-kit/plugins';
 
 import {react} from '@sewing-kit/plugin-react';
 import {javascript, updateBabelPreset} from '@sewing-kit/plugin-javascript';
@@ -17,7 +15,26 @@ import type {} from '@sewing-kit/plugin-jest';
 
 import type {MangleOptions} from 'terser';
 
-export function quiltPackage() {
+interface Options {
+  /**
+   * Whether to build versions of the output that support native ES modules.
+   */
+  esmodules?: boolean;
+  /**
+   * Whether the CommonJS version of the output should use named properties on
+   * `module.exports` for all exported values, including `default` (`'named'`, the
+   * default value), or to treat the default export as `module.exports`
+   * (`'default'`).
+   *
+   * @see https://rollupjs.org/guide/en/#outputexports
+   */
+  exports?: 'default' | 'named';
+}
+
+export function quiltPackage({
+  esmodules = true,
+  exports = 'named',
+}: Options = {}) {
   return createComposedProjectPlugin<Package>('Quilt.DefaultProject', [
     javascript(),
     typescript(),
@@ -26,25 +43,31 @@ export function quiltPackage() {
     packageBuild({
       browserTargets: 'last 2 versions',
       nodeTargets: 'node 12',
-      binaries: false,
+      esmodules,
+      esnext: esmodules,
     }),
-    buildFixedBinaries(),
-    createProjectBuildPlugin('Quilt.ExternalSelf', ({hooks}) => {
+    createProjectBuildPlugin('Quilt.RollupFixes', ({hooks}) => {
       hooks.target.hook(({hooks}) => {
-        hooks.configure.hook(({rollupExternal, rollupPlugins}) => {
-          const EXTERNAL_REGEX = /(node_modules|^@quilted|^react$|^preact$|^core-js|^regenerator-runtime)/;
+        hooks.configure.hook(
+          ({rollupExternal, rollupPlugins, rollupOutputs}) => {
+            const EXTERNAL_REGEX = /(node_modules|^@quilted|^react$|^preact$|^core-js|^regenerator-runtime)/;
 
-          rollupExternal?.hook((external) =>
-            Array.isArray(external)
-              ? [...external, EXTERNAL_REGEX]
-              : [external as any, EXTERNAL_REGEX],
-          );
+            rollupExternal?.hook((external) =>
+              Array.isArray(external)
+                ? [...external, EXTERNAL_REGEX]
+                : [external as any, EXTERNAL_REGEX],
+            );
 
-          rollupPlugins?.hook(async (plugins) => {
-            const {default: json} = await import('@rollup/plugin-json');
-            return [...plugins, json()];
-          });
-        });
+            rollupPlugins?.hook(async (plugins) => {
+              const {default: json} = await import('@rollup/plugin-json');
+              return [...plugins, json()];
+            });
+
+            rollupOutputs?.hook((outputs) =>
+              outputs.map((output) => ({...output, exports})),
+            );
+          },
+        );
       });
     }),
     createProjectTestPlugin('Quilt.IgnoreDTSFiles', ({hooks}) => {
@@ -56,73 +79,6 @@ export function quiltPackage() {
       });
     }),
   ]);
-}
-
-// Fixes an issue in the skn version that points at ../build/node
-function buildFixedBinaries() {
-  return createProjectBuildPlugin<Package>(
-    'Quilt.BuildBinaries',
-    ({hooks, project, api}) => {
-      hooks.steps.hook((steps) =>
-        project.binaries.length > 0
-          ? [...steps, createWriteBinariesStep({project, api})]
-          : steps,
-      );
-    },
-  );
-}
-
-function createWriteBinariesStep({
-  project,
-  api,
-}: Pick<ProjectPluginContext<Package>, 'project' | 'api'>) {
-  const binaryCount = project.binaries.length;
-  const sourceRoot = project.fs.resolvePath('src');
-
-  return api.createStep(
-    {
-      id: 'PackageBinaries.WriteBinaries',
-      label:
-        binaryCount === 1 ? 'write binary' : `write ${binaryCount} binaries`,
-    },
-    async (step) => {
-      await Promise.all(
-        project.binaries.map(async ({name, root, aliases = []}) => {
-          const relativeFromSourceRoot = relative(
-            sourceRoot,
-            project.fs.resolvePath(root),
-          );
-
-          const destinationInOutput = project.fs.buildPath(
-            'cjs',
-            relativeFromSourceRoot,
-          );
-
-          for (const binaryName of [name, ...aliases]) {
-            const binaryFile = project.fs.resolvePath('bin', binaryName);
-            const relativeFromBinary = normalizedRelative(
-              dirname(binaryFile),
-              destinationInOutput,
-            );
-
-            await project.fs.write(
-              binaryFile,
-              `#!/usr/bin/env node\nrequire(${JSON.stringify(
-                relativeFromBinary,
-              )})`,
-            );
-
-            await step.exec('chmod', ['+x', binaryFile]);
-          }
-        }),
-      );
-    },
-  );
-}
-
-function normalizedRelative(from: string, to: string) {
-  const rel = relative(from, to);
-  return rel.startsWith('.') ? rel : `./${rel}`;
 }
 
 export function terser({

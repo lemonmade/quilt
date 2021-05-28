@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["**/*"],
+  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"]
+}
