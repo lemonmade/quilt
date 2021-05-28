@@ -1,6 +1,6 @@
 {
   "name": "@quilted/workers",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "",
   "publishConfig": {
     "access": "public",

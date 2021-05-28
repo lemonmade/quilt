@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-workers",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -26,7 +26,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/workers": "^0.1.8"
+    "@quilted/workers": "^0.1.9"
   },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
