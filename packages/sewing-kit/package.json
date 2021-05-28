@@ -33,6 +33,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/pluginutils": "^4.1.0",
+    "@sewing-kit/cli": "^0.4.0",
     "@sewing-kit/plugin-css": "^0.2.0",
     "@sewing-kit/plugin-eslint": "^0.2.0",
     "@sewing-kit/plugin-javascript": "^0.4.0",
