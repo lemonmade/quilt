@@ -57,7 +57,7 @@ async function createProject({name}: Options) {
         packages: ['app', 'packages/*'],
       },
       devDependencies: {
-        '@quilted/sewing-kit-plugins': '*',
+        '@quilted/sewing-kit': '*',
         '@sewing-kit/cli': '*',
       },
     }) + EOL,

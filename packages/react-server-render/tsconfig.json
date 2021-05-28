@@ -1,11 +1,10 @@
 {
-  "extends": "../../config/typescript/tsconfig.base.json",
+  "extends": "../typescript/pkg.json",
   "compilerOptions": {
-    "outDir": "build/ts",
-    "baseUrl": "src",
-    "rootDir": "src"
+    "rootDir": "src",
+    "outDir": "build/typescript"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["**/tests/**/*.ts", "**/tests/**/*.tsx"],
+  "include": ["src"],
+  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
   "references": []
 }

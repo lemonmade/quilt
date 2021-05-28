@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": ["./definitions/images.d.ts", "./definitions/styles.d.ts"]
+}

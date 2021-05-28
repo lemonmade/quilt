@@ -1,6 +1,14 @@
 {
-  "files": [],
-  "include": [],
+  "extends": "./packages/typescript/workspace.json",
+  "compilerOptions": {
+    "outDir": "build/typescript/workspace"
+  },
+  "include": [
+    "config/**/*.ts",
+    "**/sewing-kit.config.ts",
+    "**/tests/**/*.ts",
+    "**/tests/**/*.tsx"
+  ],
   "references": [
     {"path": "./packages/async"},
     {"path": "./packages/aws"},
@@ -26,7 +34,6 @@
     {"path": "./packages/typescript"},
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-types"},
-    {"path": "./packages/workers"},
-    {"path": "./tsconfig.workspace.json"}
+    {"path": "./packages/workers"}
   ]
 }

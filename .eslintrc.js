@@ -20,7 +20,7 @@ module.exports = {
     {
       files: [
         'sewing-kit.config.ts',
-        'config/sewing-kit/**/*',
+        'config/sewing-kit.ts',
         '**/*.test.{ts,tsx}',
       ],
       rules: {

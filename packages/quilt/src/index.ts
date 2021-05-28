@@ -48,7 +48,7 @@ export {
   useScrollRestoration,
   useRouteChangeFocusRef,
 } from '@quilted/react-router';
-export type {NavigateTo} from '@quilted/react-router';
+export type {NavigateTo, RouteDefinition} from '@quilted/react-router';
 export {
   useWorker,
   createWorker,

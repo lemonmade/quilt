@@ -7,8 +7,8 @@
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
   "references": [
-    {"path": "../http"},
-    {"path": "../react-html"},
-    {"path": "../react-server-render"}
+    {"path": "../quilt"},
+    {"path": "../prettier"},
+    {"path": "../typescript"}
   ]
 }

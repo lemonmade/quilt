@@ -1,14 +1,10 @@
 {
-  "extends": "../typescript/pkg.json",
+  "extends": "./pkg.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "build/typescript"
   },
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [
-    {"path": "../http"},
-    {"path": "../react-html"},
-    {"path": "../react-server-render"}
-  ]
+  "references": []
 }
