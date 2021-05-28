@@ -4,7 +4,6 @@
     "outDir": "build/typescript/workspace"
   },
   "include": [
-    "node_modules/@sewing-kit/*/*.d.ts",
     "config/**/*.ts",
     "**/sewing-kit.config.ts",
     "**/tests/**/*.ts",
