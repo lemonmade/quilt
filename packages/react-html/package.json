@@ -1,6 +1,6 @@
 {
   "name": "@quilted/react-html",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "",
   "publishConfig": {
     "access": "public",
@@ -43,7 +43,7 @@
     }
   },
   "dependencies": {
-    "@quilted/react-server-render": "^0.2.4",
+    "@quilted/react-server-render": "^0.2.5",
     "@types/multistream": "^2.1.1",
     "@types/react": "^17.0.0",
     "multistream": "^4.0.1",
