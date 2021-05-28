@@ -72,7 +72,7 @@ export function quiltPackage({
     }),
     createProjectTestPlugin('Quilt.IgnoreDTSFiles', ({hooks}) => {
       hooks.configure.hook((configuration) => {
-        configuration.jestWatchIgnore.hook((ignore) => [
+        configuration.jestWatchIgnore?.hook((ignore) => [
           ...ignore,
           '.*\\.d\\.ts$',
         ]);
@@ -149,7 +149,7 @@ export function terser({
                     nameCache,
                   });
 
-                  await project.fs.write(file, result.code);
+                  await project.fs.write(file, result.code!);
                 }),
               ),
             );
@@ -172,20 +172,20 @@ function reactJsxRuntime() {
     tasks.build.hook(({hooks}) => {
       hooks.target.hook(({hooks}) => {
         hooks.configure.hook(({babelConfig}) => {
-          babelConfig.hook(updateReactBabelPreset);
+          babelConfig?.hook(updateReactBabelPreset);
         });
       });
     });
 
     tasks.dev.hook(({hooks}) => {
       hooks.configure.hook(({babelConfig}) => {
-        babelConfig.hook(updateReactBabelPreset);
+        babelConfig?.hook(updateReactBabelPreset);
       });
     });
 
     tasks.test.hook(({hooks}) => {
       hooks.configure.hook(({babelConfig}) => {
-        babelConfig.hook(updateReactBabelPreset);
+        babelConfig?.hook(updateReactBabelPreset);
       });
     });
   });

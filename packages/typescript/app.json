@@ -1,6 +1,4 @@
 {
   "extends": "./tsconfig.base.json",
-  "files": ["./definitions/images.d.ts", "./definitions/styles.d.ts"],
-  "include": ["**/*"],
-  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"]
+  "files": ["./definitions/images.d.ts", "./definitions/styles.d.ts"]
 }

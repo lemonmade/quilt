@@ -1,27 +1,14 @@
 {
-  "extends": "../../config/typescript/tsconfig.base.json",
+  "extends": "../typescript/pkg.json",
   "compilerOptions": {
-    "baseUrl": "src",
     "rootDir": "src",
-    "outDir": "build/ts",
-    "paths": {}
+    "outDir": "build/typescript"
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/tests/**/*.ts",
-    "**/tests/**/*.tsx"
-  ],
+  "include": ["src"],
+  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
   "references": [
-    {
-      "path": "../http"
-    },
-    {
-      "path": "../react-html"
-    },
-    {
-      "path": "../react-server-render"
-    }
+    {"path": "../http"},
+    {"path": "../react-html"},
+    {"path": "../react-server-render"}
   ]
 }

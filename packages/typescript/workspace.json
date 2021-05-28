@@ -1,6 +1,3 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "build/typescript/project"
-  }
+  "extends": "./tsconfig.base.json"
 }
