@@ -13,7 +13,7 @@
       "path": "../http-handlers"
     },
     {
-      "path": "../sewing-kit-plugins"
+      "path": "../sewing-kit"
     }
   ]
 }

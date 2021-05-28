@@ -5,7 +5,7 @@ import {
   WebApp,
   Service,
 } from '@sewing-kit/plugins';
-import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/sewing-kit-plugins';
+import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/sewing-kit';
 import type {} from '@sewing-kit/plugin-rollup';
 
 export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
