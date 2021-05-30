@@ -230,7 +230,19 @@ export interface BuildWorkspaceOptions {}
 /**
  * Hooks provided by sewing-kit for building any code project.
  */
-export interface BuildProjectConfigurationCoreHooks {}
+export interface BuildProjectConfigurationCoreHooks {
+  /**
+   * The root directory in which to output build artifacts for this
+   * project.
+   */
+  readonly outputDirectory: WaterfallHook<string>;
+
+  /**
+   * Extensions to use for any bare module specifiers included in your
+   * codebase.
+   */
+  readonly extensions: WaterfallHook<string[]>;
+}
 
 /**
  * Configuration hooks for building any code project.
@@ -545,7 +557,13 @@ export interface DevelopWorkspaceOptions {}
 /**
  * Hooks provided by sewing-kit for developing any code project.
  */
-export interface DevelopProjectConfigurationCoreHooks {}
+export interface DevelopProjectConfigurationCoreHooks {
+  /**
+   * Extensions to use for any bare module specifiers included in your
+   * codebase.
+   */
+  readonly extensions: WaterfallHook<string[]>;
+}
 
 /**
  * Configuration hooks for developing any code project.

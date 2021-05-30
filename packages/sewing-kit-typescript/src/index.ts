@@ -10,25 +10,25 @@ export function typescriptProject() {
   return createProjectPlugin({
     name: 'SewingKit.TypeScript',
     build({configure}) {
-      configure(({babelPresets, rollupNodeExtensions}) => {
-        // Add TypeScript compilation to Babel
-        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
-
-        // Let the rollup build see our source TypeScript files.
-        rollupNodeExtensions?.((extensions) =>
+      configure(({extensions, babelPresets}) => {
+        // Let us import from TypeScript files without extensions
+        extensions((extensions) =>
           Array.from(new Set(['.tsx', '.ts', ...extensions])),
         );
+
+        // Add TypeScript compilation to Babel
+        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
       });
     },
     develop({configure}) {
-      configure(({babelPresets, rollupNodeExtensions}) => {
-        // Add TypeScript compilation to Babel
-        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
-
-        // Let the rollup build see our source TypeScript files.
-        rollupNodeExtensions?.((extensions) =>
+      configure(({extensions, babelPresets}) => {
+        // Let us import from TypeScript files without extensions
+        extensions((extensions) =>
           Array.from(new Set(['.tsx', '.ts', ...extensions])),
         );
+
+        // Add TypeScript compilation to Babel
+        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
       });
     },
   });

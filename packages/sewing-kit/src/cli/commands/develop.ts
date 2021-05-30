@@ -1,5 +1,5 @@
 import {Task} from '../../types';
-import type {DevelopTaskOptions} from '../../hooks';
+import {createWaterfallHook, DevelopTaskOptions} from '../../hooks';
 
 import {createCommand, stepsForProject} from '../common';
 import type {TaskContext} from '../common';
@@ -26,6 +26,9 @@ export async function runDev(
         steps: await stepsForProject(project, {
           ...context,
           options,
+          coreHooks: () => ({
+            extensions: createWaterfallHook(),
+          }),
           task: Task.Develop,
         }),
       };

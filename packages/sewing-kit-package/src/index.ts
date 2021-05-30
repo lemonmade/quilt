@@ -1,3 +1,4 @@
+import {join} from 'path';
 import {
   MissingPluginError,
   Package,
@@ -40,11 +41,14 @@ export function packageBuild({commonjs = false}: Options = {}) {
       configure(
         (
           {
+            extensions,
+            outputDirectory,
             rollupInput,
             rollupPlugins,
             rollupOutputs,
             babelPresets,
             babelPlugins,
+            babelExtensions,
           },
           {options: {packageBuildModule}},
         ) => {
@@ -64,6 +68,10 @@ export function packageBuild({commonjs = false}: Options = {}) {
             );
           }
 
+          outputDirectory?.((directory) =>
+            join(directory, packageBuildModule === 'commonjs' ? 'cjs' : 'esm'),
+          );
+
           rollupInput?.(() => {
             return Promise.all(
               project.entries.map((entry) =>
@@ -76,20 +84,22 @@ export function packageBuild({commonjs = false}: Options = {}) {
           rollupPlugins?.(async (plugins) => {
             const [
               {babel},
+              baseExtensions,
               babelPresetsOption,
               babelPluginsOption,
             ] = await Promise.all([
               import('@rollup/plugin-babel'),
+              extensions.run(['.mjs', '.js']),
               babelPresets!.run([['@babel/preset-env']]),
               babelPlugins!.run([]),
             ]);
 
+            const finalExtensions = await babelExtensions!.run(baseExtensions);
+
             return [
               ...plugins,
               babel({
-                // TODO: add a hook for this, make it computed from a core
-                // extensions hook default
-                extensions: ['.ts', '.tsx', '.mjs', '.js'],
+                extensions: finalExtensions,
                 envName: 'production',
                 exclude: 'node_modules/**',
                 babelHelpers: 'bundled',
@@ -102,14 +112,16 @@ export function packageBuild({commonjs = false}: Options = {}) {
           });
 
           // Creates outputs for the current build type
-          rollupOutputs?.((outputs) => {
+          rollupOutputs?.(async (outputs) => {
+            const dir = await outputDirectory.run(project.fs.buildPath());
+
             switch (packageBuildModule) {
               case 'commonjs': {
                 return [
                   ...outputs,
                   {
                     format: 'commonjs',
-                    dir: project.fs.buildPath('cjs'),
+                    dir,
                     preserveModules: true,
                     exports:
                       typeof commonjs === 'object'
@@ -124,7 +136,7 @@ export function packageBuild({commonjs = false}: Options = {}) {
                   ...outputs,
                   {
                     format: 'esm',
-                    dir: project.fs.buildPath('esm'),
+                    dir,
                     preserveModules: true,
                     entryFileNames: '[name][assetExtname].mjs',
                   },

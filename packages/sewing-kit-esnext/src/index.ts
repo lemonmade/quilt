@@ -1,3 +1,5 @@
+import {join} from 'path';
+
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {Package} from '@quilted/sewing-kit';
 
@@ -55,10 +57,12 @@ export function esnextBuild() {
 
       configure(
         (
-          {rollupInput, rollupPlugins, rollupOutputs},
+          {outputDirectory, rollupInput, rollupPlugins, rollupOutputs},
           {options: {esnext = false}},
         ) => {
           if (!esnext) return;
+
+          outputDirectory((output) => join(output, 'esnext'));
 
           rollupInput?.(() => {
             return Promise.all(
@@ -76,11 +80,11 @@ export function esnextBuild() {
           });
 
           // Creates the esnext outputs
-          rollupOutputs?.((outputs) => [
+          rollupOutputs?.(async (outputs) => [
             ...outputs,
             {
               format: 'esm',
-              dir: project.fs.buildPath('esnext'),
+              dir: await outputDirectory.run(project.fs.buildPath()),
               preserveModules: true,
               entryFileNames: '[name][assetExtname].esnext',
             },

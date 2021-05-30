@@ -25,6 +25,8 @@ import type {
   BuildProjectTask,
   BuildTaskOptions,
   DevelopTaskOptions,
+  BuildProjectConfigurationCoreHooks,
+  DevelopProjectConfigurationCoreHooks,
 } from '../hooks';
 
 import type {ProjectStep} from '../steps';
@@ -136,6 +138,11 @@ interface ProjectOptionsTaskMap {
   [Task.Develop]: DevelopTaskOptions;
 }
 
+interface ProjectCoreHooksTaskMap {
+  [Task.Build]: BuildProjectConfigurationCoreHooks;
+  [Task.Develop]: DevelopProjectConfigurationCoreHooks;
+}
+
 export async function stepsForProject<
   ProjectType extends Project = Project,
   TaskType extends Task = Task
@@ -145,8 +152,13 @@ export async function stepsForProject<
     task,
     plugins,
     options,
+    coreHooks,
     workspace,
-  }: {task: TaskType; options: ProjectOptionsTaskMap[TaskType]} & TaskContext,
+  }: {
+    task: TaskType;
+    options: ProjectOptionsTaskMap[TaskType];
+    coreHooks: () => ProjectCoreHooksTaskMap[TaskType];
+  } & TaskContext,
 ) {
   const projectPlugins = plugins.for(project);
 
@@ -207,7 +219,10 @@ export async function stepsForProject<
 
     const configurationPromise = (async () => {
       const hooks = await hooksHook.run({});
-      await configureHook.run(hooks, {project, options, target, workspace});
+      await configureHook.run(
+        {...hooks, ...coreHooks()},
+        {project, options, target, workspace},
+      );
       return hooks;
     })();
 

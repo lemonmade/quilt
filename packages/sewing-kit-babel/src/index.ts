@@ -3,7 +3,7 @@ import type {PluginItem} from '@babel/core';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
-interface BabelHooks {
+export interface BabelHooks {
   /**
    * Babel plugins to use for this project.
    */
@@ -13,6 +13,11 @@ interface BabelHooks {
    * Babel presets to use for this project.
    */
   babelPresets: WaterfallHook<PluginItem[]>;
+
+  /**
+   * Babel presets to use for this project.
+   */
+  babelExtensions: WaterfallHook<string[]>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -30,12 +35,14 @@ export function babelHooks() {
       hooks<BabelHooks>(({waterfall}) => ({
         babelPlugins: waterfall(),
         babelPresets: waterfall(),
+        babelExtensions: waterfall(),
       }));
     },
     develop({hooks}) {
       hooks<BabelHooks>(({waterfall}) => ({
         babelPlugins: waterfall(),
         babelPresets: waterfall(),
+        babelExtensions: waterfall(),
       }));
     },
   });

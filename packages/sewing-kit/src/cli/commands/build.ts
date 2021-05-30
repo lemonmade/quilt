@@ -1,6 +1,6 @@
 import {Environment, Task} from '../../types';
 
-import type {BuildTaskOptions} from '../../hooks';
+import {BuildTaskOptions, createWaterfallHook} from '../../hooks';
 
 import {createCommand, stepsForProject} from '../common';
 import type {TaskContext} from '../common';
@@ -42,6 +42,10 @@ export async function runBuild(
         steps: await stepsForProject(project, {
           ...context,
           options,
+          coreHooks: () => ({
+            extensions: createWaterfallHook(),
+            outputDirectory: createWaterfallHook(),
+          }),
           task: Task.Build,
         }),
       };

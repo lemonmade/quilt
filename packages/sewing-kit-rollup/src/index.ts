@@ -155,6 +155,7 @@ export function rollupNode<ProjectType extends Project = Project>({
   function addNodeConfiguration(
     project: ProjectType,
     {
+      extensions,
       rollupPlugins,
       rollupNodeExtensions,
       rollupNodeExportConditions,
@@ -170,14 +171,14 @@ export function rollupNode<ProjectType extends Project = Project>({
         {default: json},
         {default: nodeResolve},
         {default: nodeExternals},
-        extensions,
+        baseExtensions,
         exportConditions,
       ] = await Promise.all([
         import('@rollup/plugin-commonjs'),
         import('@rollup/plugin-json'),
         import('@rollup/plugin-node-resolve'),
         import('rollup-plugin-node-externals'),
-        rollupNodeExtensions!.run(['.mjs', '.js', '.json', '.node']),
+        extensions.run(['.mjs', '.js', '.json', '.node']),
         rollupNodeExportConditions!.run([
           'default',
           'module',
@@ -186,10 +187,12 @@ export function rollupNode<ProjectType extends Project = Project>({
         ]),
       ]);
 
+      const finalExtensions = await rollupNodeExtensions!.run(baseExtensions);
+
       const [resolveOptions, commonjsOptions] = await Promise.all([
         rollupNodeResolveOptions!.run({
           exportConditions,
-          extensions,
+          extensions: finalExtensions,
         }),
         rollupCommonJSOptions!.run({}),
       ]);
