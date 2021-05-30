@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Yarn install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - uses: actions/cache@v1
         id: typescript-cache
