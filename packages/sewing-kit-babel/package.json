@@ -1,0 +1,36 @@
+{
+  "name": "@quilted/sewing-kit-babel",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:internal": "./src/index.ts",
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@babel/core": "^7.14.0"
+  },
+  "peerDependencies": {
+    "@quilted/sewing-kit": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@quilted/sewing-kit": {
+      "optional": true
+    }
+  }
+}

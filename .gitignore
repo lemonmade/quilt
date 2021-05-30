@@ -10,3 +10,12 @@ packages/*/*.d.ts
 packages/*/*.js
 !packages/*/.eslintrc.js
 *.log
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

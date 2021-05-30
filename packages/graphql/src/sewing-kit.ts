@@ -1,83 +1,58 @@
-import {createWorkspacePlugin, createProjectPlugin} from '@sewing-kit/plugins';
-import type {} from '@sewing-kit/plugin-jest';
-import type {} from '@sewing-kit/plugin-rollup';
+import {createWorkspacePlugin, createProjectPlugin} from '@quilted/sewing-kit';
+import type {} from '@quilted/sewing-kit-rollup';
 
-const PLUGIN = 'Quilt.GraphQL';
-const STEP = `${PLUGIN}.TypeScriptDefs`;
-const STEP_LABEL = 'build graphql typescript definitions';
-const EXECUTABLE = 'node_modules/.bin/quilt-graphql-typescript';
+const NAME = 'Quilt.GraphQL';
 
 export function graphql() {
-  return createProjectPlugin(PLUGIN, ({tasks: {build, dev, test}}) => {
-    build.hook(({hooks}) => {
-      hooks.target.hook(({hooks}) => {
-        hooks.configure.hook(({rollupPlugins}) => {
-          rollupPlugins?.hook(async (plugins) => {
-            const {graphql} = await import('./rollup-parts');
-            return [...plugins, graphql()];
-          });
-        });
-      });
-    });
-
-    dev.hook(({hooks}) => {
-      hooks.configure.hook(({rollupPlugins}) => {
-        rollupPlugins?.hook(async (plugins) => {
+  return createProjectPlugin({
+    name: NAME,
+    build({configure}) {
+      configure(({rollupPlugins}) => {
+        rollupPlugins?.(async (plugins) => {
           const {graphql} = await import('./rollup-parts');
           return [...plugins, graphql()];
         });
       });
-    });
-
-    test.hook(({hooks}) => {
-      hooks.configure.hook((hooks) => {
-        hooks.jestTransforms?.hook((transforms) => ({
-          ...transforms,
-          [`\\.graphql$`]: '@quilted/graphql/jest',
-        }));
+    },
+    develop({configure}) {
+      configure(({rollupPlugins}) => {
+        rollupPlugins?.(async (plugins) => {
+          const {graphql} = await import('./rollup-parts');
+          return [...plugins, graphql()];
+        });
       });
-    });
+    },
   });
 }
 
+const WORKSPACE_NAME = `${NAME}.TypeScriptDefinitions`;
+
 export function workspaceGraphQL() {
-  return createWorkspacePlugin(PLUGIN, ({tasks, api, workspace}) => {
-    function createTypeScriptDefinitionsStep({watch = false} = {}) {
-      return api.createStep({id: STEP, label: STEP_LABEL}, async (runner) => {
-        await runner.exec(EXECUTABLE, watch ? ['--watch'] : []);
-      });
-    }
-
-    tasks.typeCheck.hook(({hooks}) => {
-      hooks.pre.hook(async (steps) => {
-        if (!(await hasGraphQLConfig())) {
-          return steps;
-        }
-
-        return [...steps, createTypeScriptDefinitionsStep()];
-      });
-    });
-
-    function hasGraphQLConfig() {
-      return workspace.fs.hasFile('graphql.config.js');
-    }
-
-    // These don't work — sewing-kit hangs on the pre steps
-
-    // tasks.test.hook(({hooks, options}) => {
-    //   if (options.watch) {
-    //     hooks.pre.hook((steps) => [
-    //       ...steps,
-    //       createTypeScriptDefinitionsStep({watch: true}),
-    //     ]);
-    //   }
-    // });
-
-    // tasks.dev.hook(({hooks}) => {
-    //   hooks.pre.hook((steps) => [
-    //     ...steps,
-    //     createTypeScriptDefinitionsStep({watch: true}),
-    //   ]);
-    // });
+  return createWorkspacePlugin({
+    name: WORKSPACE_NAME,
+    build({run}) {
+      run((step) =>
+        step({
+          name: WORKSPACE_NAME,
+          label: 'Build GraphQL TypeScript definitions',
+          stage: 'pre',
+          async run(runner) {
+            await runner.exec('node_modules/.bin/quilt-graphql-typescript');
+          },
+        }),
+      );
+    },
+    develop({run}) {
+      run((step) =>
+        step({
+          name: WORKSPACE_NAME,
+          label: 'Build GraphQL TypeScript definitions',
+          stage: 'pre',
+          async run(runner) {
+            await runner.exec('node_modules/.bin/quilt-graphql-typescript');
+          },
+        }),
+      );
+    },
   });
 }

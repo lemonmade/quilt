@@ -1,0 +1,40 @@
+{
+  "name": "@quilted/sewing-kit-rollup",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:internal": "./src/index.ts",
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-json": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "rollup": "^2.50.0",
+    "rollup-plugin-node-externals": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@quilted/sewing-kit": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@quilted/sewing-kit": {
+      "optional": true
+    }
+  }
+}

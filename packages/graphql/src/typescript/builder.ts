@@ -1,8 +1,8 @@
 import {EventEmitter} from 'events';
 import * as path from 'path';
+import {mkdir, readFile, writeFile} from 'fs/promises';
 
 import {DocumentNode, parse, Source, GraphQLSchema} from 'graphql';
-import {mkdirp, readFile, writeFile} from 'fs-extra';
 import {FSWatcher, watch} from 'chokidar';
 import glob from 'globby';
 import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
@@ -322,7 +322,7 @@ export class Builder extends EventEmitter {
               },
             );
 
-            await mkdirp(path.dirname(finalOutputPath));
+            await mkdir(path.dirname(finalOutputPath), {recursive: true});
             await writeFile(finalOutputPath, schemaInputTypes);
             break;
           }
@@ -342,7 +342,7 @@ export class Builder extends EventEmitter {
               },
             );
 
-            await mkdirp(path.dirname(finalOutputPath));
+            await mkdir(path.dirname(finalOutputPath), {recursive: true});
             await writeFile(finalOutputPath, schemaOutputTypes);
             break;
           }
@@ -362,7 +362,7 @@ export class Builder extends EventEmitter {
               },
             );
 
-            await mkdirp(path.dirname(finalOutputPath));
+            await mkdir(path.dirname(finalOutputPath), {recursive: true});
             await writeFile(finalOutputPath, schemaDefinitionTypes);
             break;
           }

@@ -1,33 +1,42 @@
 {
   "name": "@quilted/aws",
+  "type": "module",
   "version": "0.2.38",
+  "license": "MIT",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./http-handlers": {
-      "esnext": "./http-handlers.esnext",
-      "import": "./http-handlers.mjs",
-      "require": "./http-handlers.js"
+      "sewing-kit:esnext": "./build/esnext/http-handlers.esnext",
+      "import": "./build/esm/http-handlers.mjs"
+    },
+    "./sewing-kit": {
+      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "import": "./build/esm/sewing-kit.mjs"
     }
   },
-  "license": "MIT",
+  "typesVersions": {
+    ">=1": {
+      "http-handlers": [
+        "./build/typescript/http-handlers.d.ts"
+      ],
+      "sewing-kit": [
+        "./build/typescript/sewing-kit.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/http-handlers": "^0.1.11",
-    "@quilted/sewing-kit": "^0.1.1",
-    "@sewing-kit/plugins": "^0.2.0",
     "@types/aws-lambda": "^8.0.0",
     "common-tags": "^1.8.0",
     "cookie": "^0.4.0"
@@ -35,5 +44,17 @@
   "devDependencies": {
     "@types/common-tags": "^1.8.0",
     "@types/cookie": "^0.4.0"
+  },
+  "peerDependencies": {
+    "@quilted/craft": "^0.0.0",
+    "@quilted/sewing-kit": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@quilted/craft": {
+      "optional": true
+    },
+    "@quilted/sewing-kit": {
+      "optional": true
+    }
   }
 }

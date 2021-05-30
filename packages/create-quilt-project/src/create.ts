@@ -3,10 +3,11 @@
 import * as path from 'path';
 import {EOL} from 'os';
 import {spawn} from 'child_process';
+import {mkdir, writeFile} from 'fs/promises';
+
 import args from 'arg';
 import chalk from 'chalk';
 import dedent from 'ts-dedent';
-import {mkdirp, writeFile} from 'fs-extra';
 
 interface Options {
   name: string;
@@ -37,7 +38,7 @@ async function createProject({name}: Options) {
   console.log(`Creating a quilt project in ${chalk.green(root)}`);
   console.log();
 
-  await mkdirp(root);
+  await mkdir(root, {recursive: true});
 
   await writeFile(
     path.join(root, 'package.json'),

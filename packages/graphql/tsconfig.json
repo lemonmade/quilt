@@ -6,5 +6,9 @@
   },
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../useful-types"}]
+  "references": [
+    {"path": "../sewing-kit"},
+    {"path": "../sewing-kit-rollup"},
+    {"path": "../useful-types"}
+  ]
 }

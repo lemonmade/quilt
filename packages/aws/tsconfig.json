@@ -6,5 +6,9 @@
   },
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../http-handlers"}, {"path": "../sewing-kit"}]
+  "references": [
+    {"path": "../craft"},
+    {"path": "../http-handlers"},
+    {"path": "../sewing-kit"}
+  ]
 }

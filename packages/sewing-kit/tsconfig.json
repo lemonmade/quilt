@@ -6,9 +6,5 @@
   },
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [
-    {"path": "../quilt"},
-    {"path": "../prettier"},
-    {"path": "../typescript"}
-  ]
+  "references": []
 }

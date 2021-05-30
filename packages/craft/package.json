@@ -1,0 +1,33 @@
+{
+  "name": "@quilted/craft",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:internal": "./src/index.ts",
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/sewing-kit": "^0.1.1",
+    "@quilted/sewing-kit-babel": "^0.0.0",
+    "@quilted/sewing-kit-esnext": "^0.0.0",
+    "@quilted/sewing-kit-package": "^0.0.0",
+    "@quilted/sewing-kit-rollup": "^0.0.0",
+    "@quilted/sewing-kit-typescript": "^0.0.0"
+  }
+}

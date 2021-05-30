@@ -1,5 +1,6 @@
 {
   "name": "quilt",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
   "repository": "https://github.com/lemonmade/quilt.git",
@@ -7,7 +8,6 @@
     "./packages/*"
   ],
   "scripts": {
-    "postinstall": "lerna bootstrap",
     "test": "skn test",
     "lint": "skn lint",
     "type-check": "skn type-check",
@@ -15,9 +15,11 @@
     "prerelease": "yarn build",
     "g": "npx -p @babel/core -p @babel/node babel-node --extensions .ts,.tsx,.mjs,.js --presets @babel/preset-typescript,@babel/preset-env ./scripts/generate.ts",
     "version-bump": "lerna version",
-    "deploy": "lerna publish from-package --yes --no-verify-access"
+    "deploy": "lerna publish from-package --yes --no-verify-access",
+    "sewing-kit": "node scripts/sewing-kit.js"
   },
   "devDependencies": {
+    "@quilted/craft": "^0.0.0",
     "@sewing-kit/cli": "^0.4.0",
     "@sewing-kit/config": "^0.2.0",
     "@sewing-kit/eslint-plugin": "^0.1.0-alpha.1",
@@ -33,7 +35,6 @@
     "react-dom": "^17.0.1",
     "terser": "^5.5.1"
   },
-  "dependencies": {},
   "resolutions": {
     "@types/vfile-message": "1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.0.0",

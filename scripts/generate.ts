@@ -1,8 +1,8 @@
 /* eslint import/no-extraneous-dependencies: off */
 
 import * as path from 'path';
+import {writeFile, readFile, mkdir} from 'fs/promises';
 import args from 'arg';
-import {writeFile, readJSON, writeJSON, mkdirp, remove} from 'fs-extra';
 
 const rootDirectory = path.resolve(__dirname, '..');
 const packagesDirectory = path.join(rootDirectory, 'packages');
@@ -125,11 +125,15 @@ async function addProjectReference(file: string, name: string) {
 }
 
 async function write(file: string, contents: string | Record<string, any>) {
-  await mkdirp(path.dirname(file));
+  await mkdir(path.dirname(file), {recursive: true});
 
   if (typeof contents === 'string') {
     await writeFile(file, contents);
   } else {
-    await writeJSON(file, contents, {spaces: 2});
+    await writeFile(file, JSON.stringify(contents, null, 2));
   }
+}
+
+async function readJSON(file: string) {
+  return JSON.parse(await readFile(file, {encoding: 'utf8'}));
 }

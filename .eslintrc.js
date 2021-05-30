@@ -20,6 +20,7 @@ module.exports = {
     {
       files: [
         'sewing-kit.config.ts',
+        'sewing-kit.next.config.ts',
         'config/sewing-kit.ts',
         '**/*.test.{ts,tsx}',
       ],

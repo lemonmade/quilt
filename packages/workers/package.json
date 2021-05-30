@@ -26,13 +26,13 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@remote-ui/rpc": "^1.0.0"
+    "@remote-ui/rpc": "^1.0.0",
+    "common-tags": "^1.8.0"
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0 <8.0.0",
     "@sewing-kit/plugin-javascript": "^0.4.0",
     "@sewing-kit/plugins": "^0.2.0",
-    "common-tags": "^1.8.0",
     "rollup": ">=2.0.0 <3.0.0"
   },
   "peerDependenciesMeta": {

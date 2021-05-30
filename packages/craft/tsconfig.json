@@ -1,0 +1,17 @@
+{
+  "extends": "../typescript/pkg.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build/typescript"
+  },
+  "include": ["src"],
+  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
+  "references": [
+    {"path": "../sewing-kit"},
+    {"path": "../sewing-kit-babel"},
+    {"path": "../sewing-kit-esnext"},
+    {"path": "../sewing-kit-package"},
+    {"path": "../sewing-kit-rollup"},
+    {"path": "../sewing-kit-typescript"}
+  ]
+}

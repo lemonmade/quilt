@@ -22,9 +22,6 @@
     "quilt-graphql-typescript": "./bin/quilt-graphql-typescript"
   },
   "sideEffects": false,
-  "devDependencies": {
-    "@types/fs-extra": "^9.0.3"
-  },
   "dependencies": {
     "@babel/generator": ">=7.0.0",
     "@babel/types": ">=7.0.0",
@@ -35,26 +32,21 @@
     "chance": "^1.1.7",
     "chokidar": "^3.4.3",
     "colorette": "^1.2.1",
-    "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
     "graphql": "^15.4.0",
     "graphql-config": "^3.2.0",
     "p-limit": "^3.0.2"
   },
   "peerDependencies": {
-    "@sewing-kit/plugin-jest": "^0.2.0",
-    "@sewing-kit/plugin-rollup": "^0.2.0",
-    "@sewing-kit/plugins": "^0.2.0",
+    "@quilted/sewing-kit": "^0.1.0",
+    "@quilted/sewing-kit-rollup": "^0.0.0",
     "jest-matcher-utils": "^26.6.2"
   },
   "peerDependenciesMeta": {
-    "@sewing-kit/plugins": {
+    "@quilted/sewing-kit": {
       "optional": true
     },
-    "@sewing-kit/plugin-jest": {
-      "optional": true
-    },
-    "@sewing-kit/plugin-rollup": {
+    "@quilted/sewing-kit-rollup": {
       "optional": true
     },
     "jest-matcher-utils": {
