@@ -262,8 +262,7 @@ export function rollupNode<ProjectType extends Project = Project>({
 
 /**
  * Takes the configuration hooks for a development or build task,
- * and generates a rollup build based on the configuration in the
- * hooks added by `rollupHooks()`.
+ * and generates a rollup build based on that configuration.
  *
  * @example
  * step({

@@ -24,9 +24,9 @@ jobs:
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
         run: yarn install --immutable
@@ -64,9 +64,9 @@ jobs:
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
         run: yarn install --immutable
@@ -104,9 +104,9 @@ jobs:
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
         run: yarn install --immutable
