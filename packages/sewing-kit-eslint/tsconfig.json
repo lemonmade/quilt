@@ -6,10 +6,5 @@
   },
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [
-    {"path": "../sewing-kit"},
-    {"path": "../sewing-kit-babel"},
-    {"path": "../sewing-kit-eslint"},
-    {"path": "../sewing-kit-rollup"}
-  ]
+  "references": [{"path": "../sewing-kit"}]
 }

@@ -2,9 +2,7 @@ import type {Project} from './model';
 import type {Loggable} from './types';
 
 // TODO
-export interface BaseStepRunner {
-  exec(command: string, options?: any): Promise<void>;
-}
+export interface BaseStepRunner {}
 
 export interface ProjectStepRunner<_ProjectType extends Project>
   extends BaseStepRunner {}

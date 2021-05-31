@@ -4,6 +4,8 @@ import type {
   BuildWorkspaceTask,
   DevelopProjectTask,
   DevelopWorkspaceTask,
+  LintProjectTask,
+  LintWorkspaceTask,
 } from './hooks';
 import type {ValueOrPromise, ValueOrFalsy} from './types';
 import type {FileSystem} from './utilities/fs';
@@ -55,6 +57,11 @@ export interface ProjectPluginHooks<ProjectType extends Project = Project> {
    * Customize the `develop` task for an individual project.
    */
   develop?(hooks: DevelopProjectTask<ProjectType>): void | Promise<void>;
+
+  /**
+   * Customize the `lint` task for an individual project.
+   */
+  lint?(hooks: LintProjectTask<ProjectType>): void | Promise<void>;
 }
 
 // TODO
@@ -100,6 +107,11 @@ export interface WorkspacePluginHooks {
    * Customize the `develop` task for the overall workspace.
    */
   develop?(hooks: DevelopWorkspaceTask): ValueOrPromise<void>;
+
+  /**
+   * Customize the `lint` task for the overall workspace.
+   */
+  lint?(hooks: LintWorkspaceTask): ValueOrPromise<void>;
 }
 
 // TODO

@@ -25,6 +25,7 @@
     {"path": "./packages/routing"},
     {"path": "./packages/sewing-kit"},
     {"path": "./packages/sewing-kit-babel"},
+    {"path": "./packages/sewing-kit-eslint"},
     {"path": "./packages/sewing-kit-esnext"},
     {"path": "./packages/sewing-kit-package"},
     {"path": "./packages/sewing-kit-rollup"},

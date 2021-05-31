@@ -1,23 +1,30 @@
+import {Task} from '../types';
+
 run();
 
 async function run() {
   const [, , ...args] = process.argv;
-  const [command, ...argv] = args;
+  const [task, ...argv] = args;
 
-  switch (command) {
-    case 'build': {
-      const {build} = await import('./commands/build');
+  switch (task.toLowerCase()) {
+    case Task.Build: {
+      const {build} = await import('./tasks/build');
       await build(argv);
       break;
     }
-    case 'develop': {
-      const {develop} = await import('./commands/develop');
+    case Task.Develop: {
+      const {develop} = await import('./tasks/develop');
       await develop(argv);
+      break;
+    }
+    case Task.Lint: {
+      const {lint} = await import('./tasks/lint');
+      await lint(argv);
       break;
     }
     default: {
       // eslint-disable-next-line no-console
-      console.log(`Command not found: ${command} (${argv.join(' ')})`);
+      console.log(`Task not found: ${task} (${argv.join(' ')})`);
       process.exitCode = 1;
     }
   }

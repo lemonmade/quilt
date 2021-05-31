@@ -19,6 +19,7 @@ export enum ProjectKind {
 }
 
 export enum Task {
+  Lint = 'lint',
   Build = 'build',
   Develop = 'develop',
 }

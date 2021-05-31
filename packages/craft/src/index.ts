@@ -18,8 +18,12 @@ import type {
 import {babelHooks} from '@quilted/sewing-kit-babel';
 import {packageBuild} from '@quilted/sewing-kit-package';
 import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
+import {eslint} from '@quilted/sewing-kit-eslint';
 import {esnextBuild} from '@quilted/sewing-kit-esnext';
-import {typescriptProject} from '@quilted/sewing-kit-typescript';
+import {
+  typescriptProject,
+  typescriptWorkspace,
+} from '@quilted/sewing-kit-typescript';
 
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
@@ -66,6 +70,19 @@ export function quiltPackage() {
         packageBuild(),
         esnextBuild(),
       );
+    },
+  });
+}
+
+/**
+ * Creates a sewing-kit plugin that configures your workspace to run
+ * ESLint and TypeScript.
+ */
+export function quiltWorkspace() {
+  return createWorkspacePlugin({
+    name: 'Quilt.Workspace',
+    compose({use}) {
+      use(eslint(), typescriptWorkspace());
     },
   });
 }

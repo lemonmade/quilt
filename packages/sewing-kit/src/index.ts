@@ -74,6 +74,27 @@ export type {
   DevelopWorkspaceConfigurationContext,
   DevelopWorkspaceConfigurationCoreHooks,
   DevelopWorkspaceConfigurationHooks,
+  // Lint
+  LintTaskOptions,
+  LintProjectTask,
+  LintWorkspaceTask,
+  LintProjectOptions,
+  LintAppOptions,
+  LintServiceOptions,
+  LintPackageOptions,
+  LintOptionsForProject,
+  LintProjectConfigurationContext,
+  LintProjectConfigurationCoreHooks,
+  LintProjectConfigurationHooks,
+  LintAppConfigurationHooks,
+  LintServiceConfigurationHooks,
+  LintPackageConfigurationHooks,
+  LintConfigurationHooksForProject,
+  ResolvedLintProjectConfigurationHooks,
+  LintWorkspaceOptions,
+  LintWorkspaceConfigurationContext,
+  LintWorkspaceConfigurationCoreHooks,
+  LintWorkspaceConfigurationHooks,
 } from './hooks';
 
 export type {

@@ -6,7 +6,7 @@ import type {Result, Spec} from 'arg';
 import {TargetRuntime} from '../model';
 import type {Project} from '../model';
 
-import {Task} from '../types';
+import {Runtime, Task} from '../types';
 
 import {isDiagnosticError} from '../errors';
 
@@ -16,20 +16,29 @@ import type {LoadedWorkspace} from '../configuration/load';
 import {
   createWaterfallHook,
   createSequenceHook,
-  BuildProjectOptions,
-  ResolvedBuildProjectConfigurationHooks,
+  WorkspaceStepAdder,
 } from '../hooks';
 import type {
   HookAdder,
   ProjectStepAdder,
-  BuildProjectTask,
   BuildTaskOptions,
   DevelopTaskOptions,
+  LintTaskOptions,
+  BuildProjectTask,
+  BuildWorkspaceTask,
+  BuildProjectOptions,
+  BuildWorkspaceOptions,
   BuildProjectConfigurationCoreHooks,
+  ResolvedBuildProjectConfigurationHooks,
   DevelopProjectConfigurationCoreHooks,
+  LintProjectConfigurationCoreHooks,
+  BuildWorkspaceConfigurationCoreHooks,
+  ResolvedBuildWorkspaceConfigurationHooks,
+  DevelopWorkspaceConfigurationCoreHooks,
+  LintWorkspaceConfigurationCoreHooks,
 } from '../hooks';
 
-import type {ProjectStep} from '../steps';
+import type {ProjectStep, WorkspaceStep} from '../steps';
 
 import {Ui} from './ui';
 
@@ -133,14 +142,16 @@ export function logError(error: any, {error: log}: Ui) {
   }
 }
 
-interface ProjectOptionsTaskMap {
+interface OptionsTaskMap {
   [Task.Build]: BuildTaskOptions;
   [Task.Develop]: DevelopTaskOptions;
+  [Task.Lint]: LintTaskOptions;
 }
 
 interface ProjectCoreHooksTaskMap {
   [Task.Build]: BuildProjectConfigurationCoreHooks;
   [Task.Develop]: DevelopProjectConfigurationCoreHooks;
+  [Task.Lint]: LintProjectConfigurationCoreHooks;
 }
 
 export async function stepsForProject<
@@ -156,7 +167,7 @@ export async function stepsForProject<
     workspace,
   }: {
     task: TaskType;
-    options: ProjectOptionsTaskMap[TaskType];
+    options: OptionsTaskMap[TaskType];
     coreHooks: () => ProjectCoreHooksTaskMap[TaskType];
   } & TaskContext,
 ) {
@@ -222,6 +233,91 @@ export async function stepsForProject<
       await configureHook.run(
         {...hooks, ...coreHooks()},
         {project, options, target, workspace},
+      );
+      return hooks;
+    })();
+
+    configurationMap.set(id, configurationPromise);
+    return configurationPromise;
+  }
+}
+
+interface WorkspaceCoreHooksTaskMap {
+  [Task.Build]: BuildWorkspaceConfigurationCoreHooks;
+  [Task.Develop]: DevelopWorkspaceConfigurationCoreHooks;
+  [Task.Lint]: LintWorkspaceConfigurationCoreHooks;
+}
+
+export async function stepsForWorkspace<TaskType extends Task = Task>({
+  task,
+  plugins,
+  options,
+  coreHooks,
+  workspace,
+}: {
+  task: TaskType;
+  options: OptionsTaskMap[TaskType];
+  coreHooks: () => WorkspaceCoreHooksTaskMap[TaskType];
+} & TaskContext) {
+  const workspacePlugins = plugins.for(workspace);
+
+  const configurationMap = new Map<
+    string,
+    Promise<ResolvedBuildWorkspaceConfigurationHooks>
+  >();
+
+  const hooksHook = createWaterfallHook<any>();
+  const configureHook: BuildWorkspaceTask['configure'] = createSequenceHook();
+  const stepsHook = createWaterfallHook<WorkspaceStep[]>();
+
+  for (const plugin of workspacePlugins) {
+    await plugin[task as 'build']?.({
+      options: options as any,
+      workspace,
+      hooks(adder: Parameters<HookAdder<any>>[0]) {
+        hooksHook((allHooks) => {
+          Object.assign(
+            allHooks,
+            adder({
+              waterfall: createWaterfallHook,
+              sequence: createSequenceHook,
+            }),
+          );
+          return allHooks;
+        });
+      },
+      configure: configureHook as any,
+      run(adder: Parameters<WorkspaceStepAdder<any, any>>[0]) {
+        stepsHook(async (steps) => {
+          const newStepOrSteps = await adder((step) => step, {
+            configuration: loadConfigurationForProject,
+          });
+
+          if (!newStepOrSteps) return steps;
+
+          return Array.isArray(newStepOrSteps)
+            ? [...steps, ...newStepOrSteps]
+            : [...steps, newStepOrSteps];
+        });
+      },
+    });
+  }
+
+  return stepsHook.run([]);
+
+  function loadConfigurationForProject(
+    options: BuildWorkspaceOptions = {} as any,
+    {target = new TargetRuntime([Runtime.Node])}: {target?: TargetRuntime} = {},
+  ) {
+    const id = stringifyOptions(options);
+
+    if (configurationMap.has(id)) return configurationMap.get(id)!;
+
+    const configurationPromise = (async () => {
+      const hooks = await hooksHook.run({});
+      await configureHook.run(
+        {...hooks, ...coreHooks()},
+        {options, target, workspace},
       );
       return hooks;
     })();

@@ -6,6 +6,7 @@ module.exports = {
   ],
   ignorePatterns: [
     'node_modules/',
+    'build/',
     'packages/*/build/',
     'packages/*/*.d.ts',
     'packages/*/*.js',

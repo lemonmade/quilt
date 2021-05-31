@@ -3398,6 +3398,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@quilted/sewing-kit-eslint@workspace:packages/sewing-kit-eslint":
+  version: 0.0.0-use.local
+  resolution: "@quilted/sewing-kit-eslint@workspace:packages/sewing-kit-eslint"
+  dependencies:
+    "@babel/core": ^7.14.0
+  peerDependencies:
+    "@quilted/sewing-kit": ^0.1.0
+  peerDependenciesMeta:
+    "@quilted/sewing-kit":
+      optional: true
+  languageName: unknown
+  linkType: soft
+
 "@quilted/sewing-kit-esnext@^0.0.0, @quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext"

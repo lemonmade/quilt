@@ -57,11 +57,7 @@ export async function runBuild(
 
     for (const step of steps) {
       ui.log(`Running step: ${step.label} (${step.name})`);
-      await step.run({
-        exec() {
-          return Promise.resolve();
-        },
-      });
+      await step.run({});
     }
   }
 }
