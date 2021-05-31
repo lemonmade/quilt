@@ -237,6 +237,8 @@ export function rollupNode<ProjectType extends Project = Project>({
           dependencies: bundleDependencies = true,
           devDependencies: bundleDevDependencies = true,
           peerDependencies: bundlePeerDependencies = true,
+          include: alwaysBundleDependencies,
+          exclude: neverBundleDependencies,
         } = shouldBundle;
 
         nodeExternalsPlugin = nodeExternals({
@@ -245,6 +247,8 @@ export function rollupNode<ProjectType extends Project = Project>({
           devDeps: !bundleDevDependencies,
           peerDeps: !bundlePeerDependencies,
           optDeps: !bundlePeerDependencies,
+          include: neverBundleDependencies,
+          exclude: alwaysBundleDependencies,
           packagePath: project.packageJson?.path,
         });
       }
