@@ -60,13 +60,14 @@ export const MAGIC_MODULE_HTTP_HANDLER = '__quilt__/HttpHandler.tsx';
 export function quiltPackage() {
   return createProjectPlugin<Package>({
     name: 'Quilt.Package',
-    compose({use}) {
-      // Basic tool configuration
+    create({use}) {
       use(
+        // Basic tool configuration
         rollupHooks(),
         rollupNode(),
         babelHooks(),
         typescriptProject(),
+        // Builds
         packageBuild(),
         esnextBuild(),
       );
@@ -81,7 +82,7 @@ export function quiltPackage() {
 export function quiltWorkspace() {
   return createWorkspacePlugin({
     name: 'Quilt.Workspace',
-    compose({use}) {
+    create({use}) {
       use(eslint(), typescriptWorkspace());
     },
   });

@@ -7,6 +7,7 @@ export {
 
 export {createProjectPlugin, createWorkspacePlugin} from './plugins';
 export type {
+  PluginCreateHelper,
   ProjectPlugin,
   ProjectPluginHooks,
   WorkspacePlugin,

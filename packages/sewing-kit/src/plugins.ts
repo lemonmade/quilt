@@ -32,7 +32,7 @@ export interface BasePlugin {
 // === === === ===
 
 // TODO
-export interface PluginComposer<
+export interface PluginCreateHelper<
   Plugin extends ProjectPlugin<any> | WorkspacePlugin
 > {
   readonly fs: FileSystem;
@@ -41,11 +41,18 @@ export interface PluginComposer<
 
 export interface ProjectPluginHooks<ProjectType extends Project = Project> {
   /**
-   * Include additional plugins in any workspace that includes
-   * this one.
+   * Perform additional logic when creating this plugin, before any
+   * task is actually run. This function is called with a `helper`
+   * object that contains some initial context about the project.
+   * This helper also has a `use` method, which allows you to automatically
+   * include other sewing-kit plugins in any project where this plugin
+   * is included. There’s nothing wrong with having a plugin that only
+   * implements this method to compose other plugins — a lot of the
+   * value of sewing-kit is allowing plugins to collaborate together to
+   * perform a larger, highly-configurable task.
    */
-  compose?(
-    composer: PluginComposer<ProjectPlugin<ProjectType>>,
+  create?(
+    helper: PluginCreateHelper<ProjectPlugin<ProjectType>>,
   ): ValueOrPromise<void>;
 
   /**
@@ -93,10 +100,17 @@ export function createProjectPlugin<ProjectType extends Project = Project>(
 
 export interface WorkspacePluginHooks {
   /**
-   * Include additional plugins in any workspace that includes
-   * this one.
+   * Perform additional logic when creating this plugin, before any
+   * task is actually run. This function is called with a `helper`
+   * object that contains some initial context about the workspace.
+   * This helper also has a `use` method, which allows you to automatically
+   * include other sewing-kit plugins in any workspace where this plugin
+   * is included. There’s nothing wrong with having a plugin that only
+   * implements this method to compose other plugins — a lot of the
+   * value of sewing-kit is allowing plugins to collaborate together to
+   * perform a larger, highly-configurable task.
    */
-  compose?(composer: PluginComposer<WorkspacePlugin>): ValueOrPromise<void>;
+  create?(helper: PluginCreateHelper<WorkspacePlugin>): ValueOrPromise<void>;
 
   /**
    * Customize the `build` task for the overall workspace.

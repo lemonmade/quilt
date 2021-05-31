@@ -1,4 +1,4 @@
-import {PLUGIN_MARKER, PluginTarget, PluginComposer} from '../plugins';
+import {PLUGIN_MARKER, PluginTarget, PluginCreateHelper} from '../plugins';
 import type {WorkspacePlugin, ProjectPlugin} from '../plugins';
 
 import {FileSystem} from '../utilities/fs';
@@ -122,24 +122,24 @@ async function expandPlugins<
   Plugin extends ProjectPlugin<any> | WorkspacePlugin
 >(
   plugins: Iterable<Plugin>,
-  composer: Omit<PluginComposer<Plugin>, 'use'>,
+  helper: Omit<PluginCreateHelper<Plugin>, 'use'>,
 ): Promise<Plugin[]> {
   const expanded = await Promise.all(
     [...plugins].map(async (plugin) => {
-      if (plugin.compose == null) return plugin;
+      if (plugin.create == null) return plugin;
 
       const usedPlugins: Plugin[] = [];
 
-      plugin.compose(({
-        ...composer,
+      plugin.create(({
+        ...helper,
         use(...newPlugins: Plugin[]) {
           for (const newPlugin of newPlugins) {
             if (newPlugin) usedPlugins.push(newPlugin);
           }
         },
-      } as PluginComposer<Plugin>) as any);
+      } as PluginCreateHelper<Plugin>) as any);
 
-      return expandPlugins(usedPlugins, composer);
+      return expandPlugins(usedPlugins, helper);
     }),
   );
 
