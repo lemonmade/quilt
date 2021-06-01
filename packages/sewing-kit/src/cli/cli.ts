@@ -22,6 +22,11 @@ async function run() {
       await lint(argv);
       break;
     }
+    case Task.Test: {
+      const {test} = await import('./tasks/test');
+      await test(argv);
+      break;
+    }
     case Task.TypeCheck: {
       const {typeCheck} = await import('./tasks/type-check');
       await typeCheck(argv);

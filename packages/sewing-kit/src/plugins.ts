@@ -6,6 +6,8 @@ import type {
   DevelopWorkspaceTask,
   LintProjectTask,
   LintWorkspaceTask,
+  TestProjectTask,
+  TestWorkspaceTask,
   TypeCheckProjectTask,
   TypeCheckWorkspaceTask,
 } from './hooks';
@@ -73,6 +75,11 @@ export interface ProjectPluginHooks<ProjectType extends Project = Project> {
   lint?(hooks: LintProjectTask<ProjectType>): void | Promise<void>;
 
   /**
+   * Customize the `test` task for an individual project.
+   */
+  test?(hooks: TestProjectTask<ProjectType>): void | Promise<void>;
+
+  /**
    * Customize the `type-check` task for an individual project.
    */
   typeCheck?(hooks: TypeCheckProjectTask<ProjectType>): void | Promise<void>;
@@ -133,6 +140,11 @@ export interface WorkspacePluginHooks {
    * Customize the `lint` task for the overall workspace.
    */
   lint?(hooks: LintWorkspaceTask): ValueOrPromise<void>;
+
+  /**
+   * Customize the `test` task for the overall workspace.
+   */
+  test?(hooks: TestWorkspaceTask): ValueOrPromise<void>;
 
   /**
    * Customize the `type-check` task for the overall workspace.

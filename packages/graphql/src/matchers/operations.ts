@@ -1,3 +1,4 @@
+import type {MatcherState} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -11,7 +12,7 @@ import {normalizeOperation} from '../utilities/ast';
 import {assertIsGraphQLController, diffVariables} from './utilities';
 
 export function toHavePerformedGraphQLOperation<Variables>(
-  this: jest.MatcherUtils,
+  this: MatcherState,
   graphql: GraphQLController,
   operation: GraphQLAnyOperation<any, Variables>,
   variables?: Variables,

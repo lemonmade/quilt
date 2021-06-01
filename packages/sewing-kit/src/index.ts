@@ -54,6 +54,7 @@ export type {
   BuildWorkspaceConfigurationContext,
   BuildWorkspaceConfigurationCoreHooks,
   BuildWorkspaceConfigurationHooks,
+  BuildWorkspaceStepAdderContext,
   // Develop
   DevelopTaskOptions,
   DevelopProjectTask,
@@ -75,6 +76,7 @@ export type {
   DevelopWorkspaceConfigurationContext,
   DevelopWorkspaceConfigurationCoreHooks,
   DevelopWorkspaceConfigurationHooks,
+  DevelopWorkspaceStepAdderContext,
   // Lint
   LintTaskOptions,
   LintProjectTask,
@@ -96,6 +98,29 @@ export type {
   LintWorkspaceConfigurationContext,
   LintWorkspaceConfigurationCoreHooks,
   LintWorkspaceConfigurationHooks,
+  LintWorkspaceStepAdderContext,
+  // Test
+  TestTaskOptions,
+  TestProjectTask,
+  TestWorkspaceTask,
+  TestProjectOptions,
+  TestAppOptions,
+  TestServiceOptions,
+  TestPackageOptions,
+  TestOptionsForProject,
+  TestProjectConfigurationContext,
+  TestProjectConfigurationCoreHooks,
+  TestProjectConfigurationHooks,
+  TestAppConfigurationHooks,
+  TestServiceConfigurationHooks,
+  TestPackageConfigurationHooks,
+  TestConfigurationHooksForProject,
+  ResolvedTestProjectConfigurationHooks,
+  TestWorkspaceOptions,
+  TestWorkspaceConfigurationContext,
+  TestWorkspaceConfigurationCoreHooks,
+  TestWorkspaceConfigurationHooks,
+  TestWorkspaceStepAdderContext,
   // TypeCheck
   TypeCheckTaskOptions,
   TypeCheckProjectTask,
@@ -117,6 +142,7 @@ export type {
   TypeCheckWorkspaceConfigurationContext,
   TypeCheckWorkspaceConfigurationCoreHooks,
   TypeCheckWorkspaceConfigurationHooks,
+  TypeCheckWorkspaceStepAdderContext,
 } from './hooks';
 
 export type {

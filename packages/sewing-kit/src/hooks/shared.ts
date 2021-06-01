@@ -5,17 +5,14 @@ import type {ValueOrPromise} from '../types';
 export const NONE = Symbol.for('SewingKit.None');
 export type None = typeof NONE;
 
-export type SequenceHookArguments<
-  Arg1 = None,
-  Arg2 = None,
-  Arg3 = None
-> = Arg1 extends None
-  ? []
-  : Arg2 extends None
-  ? [Arg1]
-  : Arg3 extends None
-  ? [Arg1, Arg2]
-  : [Arg1, Arg2, Arg3];
+export type SequenceHookArguments<Arg1 = None, Arg2 = None, Arg3 = None> =
+  Arg1 extends None
+    ? []
+    : Arg2 extends None
+    ? [Arg1]
+    : Arg3 extends None
+    ? [Arg1, Arg2]
+    : [Arg1, Arg2, Arg3];
 
 /**
  * A `SequenceHook` accepts at least one argument. It is called with
@@ -31,7 +28,7 @@ export type WaterfallHookArguments<
   Value,
   Arg1 = None,
   Arg2 = None,
-  Arg3 = None
+  Arg3 = None,
 > = Arg1 extends None
   ? [Value]
   : Arg2 extends None
@@ -71,7 +68,7 @@ export function createSequenceHook<Args extends any[] = []>() {
 
 export function createWaterfallHook<
   Value = unknown,
-  Args extends any[] = []
+  Args extends any[] = [],
 >() {
   const hooks: ((value: Value, ...args: Args) => Value | Promise<Value>)[] = [];
 
@@ -129,7 +126,7 @@ export interface HookAdder<AllowedHooks> {
 // TODO
 export interface ProjectStepAdderContext<
   ProjectConfigurationHooks,
-  ProjectOptions
+  ProjectOptions,
 > {
   configuration(options?: ProjectOptions): Promise<ProjectConfigurationHooks>;
 }
@@ -137,7 +134,7 @@ export interface ProjectStepAdderContext<
 export interface ProjectStepAdder<
   ProjectType extends Project,
   ProjectConfigurationHooks,
-  ProjectOptions
+  ProjectOptions,
 > {
   (
     adder: (
@@ -159,7 +156,7 @@ export interface ProjectStepAdder<
 // TODO
 export interface WorkspaceStepAdderContext<
   WorkspaceConfigurationHooks,
-  WorkspaceOptions
+  WorkspaceOptions,
 > {
   configuration(
     options?: WorkspaceOptions,
@@ -167,16 +164,12 @@ export interface WorkspaceStepAdderContext<
 }
 
 export interface WorkspaceStepAdder<
-  WorkspaceConfigurationHooks,
-  WorkspaceOptions
+  Context extends WorkspaceStepAdderContext<any, any>,
 > {
   (
     adder: (
       step: (step: WorkspaceStep) => WorkspaceStep,
-      context: WorkspaceStepAdderContext<
-        WorkspaceConfigurationHooks,
-        WorkspaceOptions
-      >,
+      context: Context,
     ) => ValueOrPromise<
       WorkspaceStep | WorkspaceStep[] | null | undefined | false
     >,

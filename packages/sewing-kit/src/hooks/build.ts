@@ -1,4 +1,4 @@
-import type {Environment} from '../types';
+import type {Environment, ValueOrPromise} from '../types';
 import type {Project, App, Service, Workspace, TargetRuntime} from '../model';
 
 import type {
@@ -8,6 +8,7 @@ import type {
   SequenceHook,
   WaterfallHook,
   WorkspaceStepAdder,
+  WorkspaceStepAdderContext,
 } from './shared';
 
 /**
@@ -34,13 +35,12 @@ export interface BuildPackageOptions extends BuildProjectOptions {}
 /**
  * Selects the build options that match the provided project type.
  */
-export type BuildOptionsForProject<
-  ProjectType extends Project
-> = ProjectType extends App
-  ? BuildAppOptions
-  : ProjectType extends Service
-  ? BuildServiceOptions
-  : BuildPackageOptions;
+export type BuildOptionsForProject<ProjectType extends Project> =
+  ProjectType extends App
+    ? BuildAppOptions
+    : ProjectType extends Service
+    ? BuildServiceOptions
+    : BuildPackageOptions;
 
 /**
  * Options that are available to configuration hooks for building
@@ -92,13 +92,12 @@ export interface BuildPackageConfigurationHooks
  * Selects the build configuration hooks that match the provided
  * project type.
  */
-export type BuildConfigurationHooksForProject<
-  ProjectType extends Project
-> = ProjectType extends App
-  ? BuildAppConfigurationHooks
-  : ProjectType extends Service
-  ? BuildServiceConfigurationHooks
-  : BuildPackageConfigurationHooks;
+export type BuildConfigurationHooksForProject<ProjectType extends Project> =
+  ProjectType extends App
+    ? BuildAppConfigurationHooks
+    : ProjectType extends Service
+    ? BuildServiceConfigurationHooks
+    : BuildPackageConfigurationHooks;
 
 /**
  * The full set of resolved build hooks for a single project of the
@@ -109,7 +108,7 @@ export type BuildConfigurationHooksForProject<
  * project.
  */
 export type ResolvedBuildProjectConfigurationHooks<
-  ProjectType extends Project = Project
+  ProjectType extends Project = Project,
 > = ResolvedHooks<BuildConfigurationHooksForProject<ProjectType>> &
   BuildProjectConfigurationCoreHooks;
 
@@ -130,10 +129,9 @@ export interface BuildWorkspaceConfigurationHooks {}
  * added by hooks are marked as optional in this type because the plugin
  * that added the type may not have been used in this project.
  */
-export type ResolvedBuildWorkspaceConfigurationHooks = ResolvedHooks<
-  BuildWorkspaceConfigurationHooks
-> &
-  BuildWorkspaceConfigurationCoreHooks;
+export type ResolvedBuildWorkspaceConfigurationHooks =
+  ResolvedHooks<BuildWorkspaceConfigurationHooks> &
+    BuildWorkspaceConfigurationCoreHooks;
 
 /**
  * Additional context provided to the configuration hooks for
@@ -279,6 +277,28 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
 }
 
 /**
+ * The full context available to workspace steps for the `build`
+ * task, including the ability to access the build configuration
+ * for individual projects.
+ */
+export interface BuildWorkspaceStepAdderContext
+  extends WorkspaceStepAdderContext<
+    ResolvedBuildWorkspaceConfigurationHooks,
+    BuildWorkspaceOptions
+  > {
+  /**
+   * Fetches the build configuration for the provided project. Like
+   * the `configuration()` function available to project-level steps,
+   * you can optionally pass build options for the provided project,
+   * and the configuration hooks will be generated separately for
+   * every unique set of options.
+   */
+  projectConfiguration<ProjectType extends Project = Project>(
+    options?: BuildOptionsForProject<ProjectType>,
+  ): Promise<ResolvedBuildProjectConfigurationHooks<ProjectType>>;
+}
+
+/**
  * The hooks and additional metadata for running the build command on
  * the overall workspace.
  */
@@ -326,8 +346,15 @@ export interface BuildWorkspaceTask {
    * for one of these values, if you need to perform async checks to determine
    * what steps need to be added.
    */
-  readonly run: WorkspaceStepAdder<
-    ResolvedBuildWorkspaceConfigurationHooks,
-    BuildWorkspaceOptions
-  >;
+  readonly run: WorkspaceStepAdder<BuildWorkspaceStepAdderContext>;
+
+  /**
+   * Gives you access to each project in this workspace. You should pass this
+   * function a function that will be called with the same arguments as the `build`
+   * hook of a project plugin. You can use this hook to add configuration or
+   * steps to multiple projects in the workspace.
+   */
+  project<ProjectType extends Project = Project>(
+    handler: (task: BuildProjectTask<ProjectType>) => ValueOrPromise<void>,
+  ): void;
 }

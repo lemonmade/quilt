@@ -20,6 +20,7 @@ export enum ProjectKind {
 
 export enum Task {
   Lint = 'lint',
+  Test = 'test',
   Build = 'build',
   Develop = 'develop',
   TypeCheck = 'type-check',

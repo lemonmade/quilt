@@ -1,4 +1,5 @@
 import type {Project, App, Service, Workspace, TargetRuntime} from '../model';
+import type {ValueOrPromise} from '../types';
 
 import type {
   HookAdder,
@@ -7,6 +8,7 @@ import type {
   SequenceHook,
   WaterfallHook,
   WorkspaceStepAdder,
+  WorkspaceStepAdderContext,
 } from './shared';
 
 /**
@@ -33,13 +35,12 @@ export interface DevelopPackageOptions extends DevelopProjectOptions {}
 /**
  * Selects the development options that match the provided project type.
  */
-export type DevelopOptionsForProject<
-  ProjectType extends Project
-> = ProjectType extends App
-  ? DevelopAppOptions
-  : ProjectType extends Service
-  ? DevelopServiceOptions
-  : DevelopPackageOptions;
+export type DevelopOptionsForProject<ProjectType extends Project> =
+  ProjectType extends App
+    ? DevelopAppOptions
+    : ProjectType extends Service
+    ? DevelopServiceOptions
+    : DevelopPackageOptions;
 
 /**
  * Options that are available to configuration hooks for developing
@@ -85,13 +86,12 @@ export interface DevelopPackageConfigurationHooks
  * Selects the development configuration hooks that match the provided
  * project type.
  */
-export type DevelopConfigurationHooksForProject<
-  ProjectType extends Project
-> = ProjectType extends App
-  ? DevelopAppConfigurationHooks
-  : ProjectType extends Service
-  ? DevelopServiceConfigurationHooks
-  : DevelopPackageConfigurationHooks;
+export type DevelopConfigurationHooksForProject<ProjectType extends Project> =
+  ProjectType extends App
+    ? DevelopAppConfigurationHooks
+    : ProjectType extends Service
+    ? DevelopServiceConfigurationHooks
+    : DevelopPackageConfigurationHooks;
 
 /**
  * The full set of resolved development hooks for a single project of the
@@ -102,7 +102,7 @@ export type DevelopConfigurationHooksForProject<
  * project.
  */
 export type ResolvedDevelopProjectConfigurationHooks<
-  ProjectType extends Project = Project
+  ProjectType extends Project = Project,
 > = ResolvedHooks<DevelopConfigurationHooksForProject<ProjectType>> &
   DevelopProjectConfigurationCoreHooks;
 
@@ -123,17 +123,16 @@ export interface DevelopWorkspaceConfigurationHooks {}
  * added by hooks are marked as optional in this type because the plugin
  * that added the type may not have been used in this project.
  */
-export type ResolvedDevelopWorkspaceConfigurationHooks = ResolvedHooks<
-  DevelopWorkspaceConfigurationHooks
-> &
-  DevelopWorkspaceConfigurationCoreHooks;
+export type ResolvedDevelopWorkspaceConfigurationHooks =
+  ResolvedHooks<DevelopWorkspaceConfigurationHooks> &
+    DevelopWorkspaceConfigurationCoreHooks;
 
 /**
  * Additional context provided to the configuration hooks for
  * developing an individual project.
  */
 export interface DevelopProjectConfigurationContext<
-  ProjectType extends Project
+  ProjectType extends Project,
 > {
   /**
    * The project being developed.
@@ -265,6 +264,28 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
 }
 
 /**
+ * The full context available to workspace steps for the `develop`
+ * task, including the ability to access the develop configuration
+ * for individual projects.
+ */
+export interface DevelopWorkspaceStepAdderContext
+  extends WorkspaceStepAdderContext<
+    ResolvedDevelopWorkspaceConfigurationHooks,
+    DevelopWorkspaceOptions
+  > {
+  /**
+   * Fetches the development configuration for the provided project. Like
+   * the `configuration()` function available to project-level steps,
+   * you can optionally pass development options for the provided project,
+   * and the configuration hooks will be generated separately for
+   * every unique set of options.
+   */
+  projectConfiguration<ProjectType extends Project = Project>(
+    options?: DevelopOptionsForProject<ProjectType>,
+  ): Promise<ResolvedDevelopProjectConfigurationHooks<ProjectType>>;
+}
+
+/**
  * The hooks and additional metadata for running the develop command on
  * the overall workspace.
  */
@@ -312,8 +333,15 @@ export interface DevelopWorkspaceTask {
    * for one of these values, if you need to perform async checks to determine
    * what steps need to be added.
    */
-  readonly run: WorkspaceStepAdder<
-    ResolvedDevelopWorkspaceConfigurationHooks,
-    DevelopWorkspaceOptions
-  >;
+  readonly run: WorkspaceStepAdder<DevelopWorkspaceStepAdderContext>;
+
+  /**
+   * Gives you access to each project in this workspace. You should pass this
+   * function a function that will be called with the same arguments as the `develop`
+   * hook of a project plugin. You can use this hook to add configuration or
+   * steps to multiple projects in the workspace.
+   */
+  project<ProjectType extends Project = Project>(
+    handler: (task: DevelopProjectTask<ProjectType>) => ValueOrPromise<void>,
+  ): void;
 }

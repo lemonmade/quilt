@@ -37,12 +37,19 @@
     "graphql-config": "^3.3.0",
     "p-limit": "^3.0.2"
   },
+  "devDependencies": {
+    "@jest/globals": "^27.0.0"
+  },
   "peerDependencies": {
+    "@jest/globals": "^27.0.0",
     "@quilted/sewing-kit": "^0.1.0",
     "@quilted/sewing-kit-rollup": "^0.0.0",
-    "jest-matcher-utils": "^26.6.2"
+    "jest-matcher-utils": "^27.0.0"
   },
   "peerDependenciesMeta": {
+    "@jest/globals": {
+      "optional": true
+    },
     "@quilted/sewing-kit": {
       "optional": true
     },

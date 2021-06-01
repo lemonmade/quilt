@@ -1,4 +1,5 @@
 import type {Project, App, Service, Workspace} from '../model';
+import type {ValueOrPromise} from '../types';
 
 import type {
   HookAdder,
@@ -6,6 +7,7 @@ import type {
   ResolvedHooks,
   SequenceHook,
   WorkspaceStepAdder,
+  WorkspaceStepAdderContext,
 } from './shared';
 
 /**
@@ -32,13 +34,12 @@ export interface LintPackageOptions extends LintProjectOptions {}
 /**
  * Selects the linting options that match the provided project type.
  */
-export type LintOptionsForProject<
-  ProjectType extends Project
-> = ProjectType extends App
-  ? LintAppOptions
-  : ProjectType extends Service
-  ? LintServiceOptions
-  : LintPackageOptions;
+export type LintOptionsForProject<ProjectType extends Project> =
+  ProjectType extends App
+    ? LintAppOptions
+    : ProjectType extends Service
+    ? LintServiceOptions
+    : LintPackageOptions;
 
 /**
  * Options that are available to configuration hooks for linting
@@ -78,13 +79,12 @@ export interface LintPackageConfigurationHooks
  * Selects the linting configuration hooks that match the provided
  * project type.
  */
-export type LintConfigurationHooksForProject<
-  ProjectType extends Project
-> = ProjectType extends App
-  ? LintAppConfigurationHooks
-  : ProjectType extends Service
-  ? LintServiceConfigurationHooks
-  : LintPackageConfigurationHooks;
+export type LintConfigurationHooksForProject<ProjectType extends Project> =
+  ProjectType extends App
+    ? LintAppConfigurationHooks
+    : ProjectType extends Service
+    ? LintServiceConfigurationHooks
+    : LintPackageConfigurationHooks;
 
 /**
  * The full set of resolved linting hooks for a single project of the
@@ -95,7 +95,7 @@ export type LintConfigurationHooksForProject<
  * project.
  */
 export type ResolvedLintProjectConfigurationHooks<
-  ProjectType extends Project = Project
+  ProjectType extends Project = Project,
 > = ResolvedHooks<LintConfigurationHooksForProject<ProjectType>> &
   LintProjectConfigurationCoreHooks;
 
@@ -116,10 +116,9 @@ export interface LintWorkspaceConfigurationHooks {}
  * added by hooks are marked as optional in this type because the plugin
  * that added the type may not have been used in this project.
  */
-export type ResolvedLintWorkspaceConfigurationHooks = ResolvedHooks<
-  LintWorkspaceConfigurationHooks
-> &
-  LintWorkspaceConfigurationCoreHooks;
+export type ResolvedLintWorkspaceConfigurationHooks =
+  ResolvedHooks<LintWorkspaceConfigurationHooks> &
+    LintWorkspaceConfigurationCoreHooks;
 
 /**
  * Additional context provided to the configuration hooks for
@@ -161,7 +160,7 @@ export interface LintWorkspaceConfigurationContext {
    * The options for generating this lint configuration. Configuration
    * hooks can run multiple times with different sets of options, but each
    * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `BuildWorkspaceOptions` object.
+   * additional options by augmenting the `LintWorkspaceOptions` object.
    */
   readonly options: Readonly<LintWorkspaceOptions>;
 }
@@ -234,6 +233,28 @@ export interface LintProjectTask<ProjectType extends Project = Project> {
 }
 
 /**
+ * The full context available to workspace steps for the `lint`
+ * task, including the ability to access the lint configuration
+ * for individual projects.
+ */
+export interface LintWorkspaceStepAdderContext
+  extends WorkspaceStepAdderContext<
+    ResolvedLintWorkspaceConfigurationHooks,
+    LintWorkspaceOptions
+  > {
+  /**
+   * Fetches the lint configuration for the provided project. Like
+   * the `configuration()` function available to project-level steps,
+   * you can optionally pass lint options for the provided project,
+   * and the configuration hooks will be generated separately for
+   * every unique set of options.
+   */
+  projectConfiguration<ProjectType extends Project = Project>(
+    options?: LintOptionsForProject<ProjectType>,
+  ): Promise<ResolvedLintProjectConfigurationHooks<ProjectType>>;
+}
+
+/**
  * The hooks and additional metadata for running the lint command on
  * the overall workspace.
  */
@@ -278,8 +299,15 @@ export interface LintWorkspaceTask {
    * for one of these values, if you need to perform async checks to determine
    * what steps need to be added.
    */
-  readonly run: WorkspaceStepAdder<
-    ResolvedLintWorkspaceConfigurationHooks,
-    LintWorkspaceOptions
-  >;
+  readonly run: WorkspaceStepAdder<LintWorkspaceStepAdderContext>;
+
+  /**
+   * Gives you access to each project in this workspace. You should pass this
+   * function a function that will be called with the same arguments as the `lint`
+   * hook of a project plugin. You can use this hook to add configuration or
+   * steps to multiple projects in the workspace.
+   */
+  project<ProjectType extends Project = Project>(
+    handler: (task: LintProjectTask<ProjectType>) => ValueOrPromise<void>,
+  ): void;
 }
