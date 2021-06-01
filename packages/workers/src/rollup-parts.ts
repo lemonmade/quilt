@@ -154,10 +154,7 @@ export function workers({
       const baseOutputOptions: OutputOptions = {
         ...parentOutputOptions,
         format: 'iife',
-        // This should be enabled, as async imports will cause the build to fail,
-        // but enabling it leads to this error:
-        // https://github.com/rollup/rollup/issues/4098
-        // inlineDynamicImports: true,
+        inlineDynamicImports: true,
       };
 
       const workerOutputOptions =

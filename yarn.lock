@@ -3531,7 +3531,7 @@ __metadata:
     "@babel/core": ">=7.0.0 <8.0.0"
     "@sewing-kit/plugin-javascript": ^0.4.0
     "@sewing-kit/plugins": ^0.2.0
-    rollup: ">=2.0.0 <3.0.0"
+    rollup: ">=2.50.3 <3.0.0"
   peerDependenciesMeta:
     "@babel/core":
       optional: true
