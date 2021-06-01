@@ -24,35 +24,26 @@ export function eslint() {
         step({
           name: 'SewingKit.ESLint',
           label: 'Running ESLint on your workspace',
-          async run() {
-            const [
-              {promisify},
-              {execFile},
-              {eslintExtensions},
-            ] = await Promise.all([
-              import('util'),
-              import('child_process'),
-              configuration(),
-            ]);
-
-            const exec = promisify(execFile);
-
+          async run(step) {
+            const {eslintExtensions} = await configuration();
             const extensions = await eslintExtensions!.run(['.mjs', '.js']);
 
             try {
-              const result = await exec(
-                'node_modules/.bin/eslint',
+              const result = await step.exec(
+                'eslint',
                 ['.', ...extensions.map((ext) => ['--ext', ext]).flat()],
-                {env: {FORCE_COLOR: '1', ...process.env}},
+                {
+                  fromNodeModules: true,
+                  env: {FORCE_COLOR: '1', ...process.env},
+                },
               );
 
-              // TODO how to log this properly and signal that we have failed?
-
-              // eslint-disable-next-line no-console
-              console.log(result.stdout);
+              const output = result.stdout.trim();
+              if (output.length) step.log(output);
             } catch (error) {
-              // eslint-disable-next-line no-console
-              console.log(error.stdout);
+              step.log('ESLint found lint errors:', {level: 'errors'});
+              step.log(error.stdout.trim(), {level: 'errors'});
+              step.fail();
             }
           },
         }),

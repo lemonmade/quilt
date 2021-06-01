@@ -36,15 +36,12 @@ export function workspaceGraphQL() {
           name: WORKSPACE_NAME,
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
-          async run() {
-            const [{execFile}, {promisify}] = await Promise.all([
-              import('child_process'),
-              import('util'),
-            ]);
+          async run(step) {
+            const result = await step.exec('quilt-graphql-typescript', [], {
+              fromNodeModules: true,
+            });
 
-            const exec = promisify(execFile);
-
-            await exec('node_modules/.bin/quilt-graphql-typescript');
+            if (result.stdout.trim()) step.log(result.stdout.trim());
           },
         }),
       );
@@ -55,15 +52,12 @@ export function workspaceGraphQL() {
           name: WORKSPACE_NAME,
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
-          async run() {
-            const [{execFile}, {promisify}] = await Promise.all([
-              import('child_process'),
-              import('util'),
-            ]);
+          async run(step) {
+            const result = await step.exec('quilt-graphql-typescript', [], {
+              fromNodeModules: true,
+            });
 
-            const exec = promisify(execFile);
-
-            await exec('node_modules/.bin/quilt-graphql-typescript');
+            if (result.stdout.trim()) step.log(result.stdout.trim());
           },
         }),
       );

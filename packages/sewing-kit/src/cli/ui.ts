@@ -1,25 +1,32 @@
 import * as format from 'colorette';
 
-import {LogLevel} from '../types';
-import type {Log, LogOptions, Loggable, LogUiComponents} from '../types';
+import type {
+  LogLevel,
+  Log,
+  LogOptions,
+  Loggable,
+  LogUiComponents,
+} from '../types';
 
 import {DiagnosticError} from '../errors';
 
-export {LogLevel};
+export type {LogLevel};
 export type {Log, LogOptions, Loggable, LogUiComponents};
 
 interface Options {
   stdin: NodeJS.ReadStream;
   stdout: NodeJS.WriteStream;
   stderr: NodeJS.WriteStream;
-  level?: 'errors' | 'warnings' | 'info' | 'debug';
+  level?: LogLevel;
   isInteractive: boolean;
 }
+
+const ORDERED_LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warnings', 'errors'];
 
 export class Ui {
   readonly stdout: FormattedStream;
   readonly stderr: FormattedStream;
-  readonly level: LogLevel;
+  readonly level: number;
   readonly isInteractive: boolean;
 
   constructor({
@@ -30,11 +37,11 @@ export class Ui {
   }: Partial<Options> = {}) {
     this.stdout = new FormattedStream(stdout);
     this.stderr = new FormattedStream(stderr);
-    this.level = normalizeLogLevel(level);
+    this.level = ORDERED_LOG_LEVELS.indexOf(normalizeLogLevel(level));
     this.isInteractive = isInteractive;
   }
 
-  log: Log = (value, {level = LogLevel.Info} = {}) => {
+  log: Log = (value, {level = 'info'} = {}) => {
     if (!this.canLogLevel(level)) {
       return;
     }
@@ -43,7 +50,7 @@ export class Ui {
     this.stdout.write('\n');
   };
 
-  error: Log = (value, {level = LogLevel.Info} = {}) => {
+  error: Log = (value, {level = 'errors'} = {}) => {
     if (!this.canLogLevel(level)) {
       return;
     }
@@ -53,7 +60,7 @@ export class Ui {
   };
 
   canLogLevel = (level: LogLevel) => {
-    return this.level >= level;
+    return this.level <= ORDERED_LOG_LEVELS.indexOf(level);
   };
 }
 
@@ -117,16 +124,13 @@ class FormattedStream {
   }
 }
 
-function normalizeLogLevel(level: string) {
+function normalizeLogLevel(level: string): LogLevel {
   switch (level) {
     case 'errors':
-      return LogLevel.Errors;
     case 'warnings':
-      return LogLevel.Warnings;
     case 'info':
-      return LogLevel.Info;
     case 'debug':
-      return LogLevel.Debug;
+      return level;
     default:
       throw new DiagnosticError({
         title: `Unrecognized log-level: ${level}`,

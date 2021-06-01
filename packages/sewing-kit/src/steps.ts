@@ -1,8 +1,33 @@
+import type {ExecFileOptions, PromiseWithChild} from 'child_process';
+
 import type {Project} from './model';
-import type {Loggable} from './types';
+import type {Log, Loggable} from './types';
+
+export interface StepRunnerExecOptions extends ExecFileOptions {
+  /**
+   * You can use this option to indicate that the command being run was
+   * installed as part of a node module. When this option is `true`,
+   * sewing-kit will prepend the path to the workspace’s node module
+   * binary directory (typically, `<root>/node_modules/.bin`).
+   */
+  fromNodeModules?: boolean;
+}
+
+export type StepRunnerExecResult = PromiseWithChild<{
+  stdout: string;
+  stderr: string;
+}>;
 
 // TODO
-export interface BaseStepRunner {}
+export interface BaseStepRunner {
+  readonly log: Log;
+  fail(): void;
+  exec(
+    command: string,
+    args?: string[] | null,
+    options?: StepRunnerExecOptions,
+  ): StepRunnerExecResult;
+}
 
 export interface ProjectStepRunner<_ProjectType extends Project>
   extends BaseStepRunner {}

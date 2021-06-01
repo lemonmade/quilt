@@ -1,3 +1,6 @@
+import {promisify} from 'util';
+import {join} from 'path';
+import {execFile} from 'child_process';
 import {Readable, Writable} from 'stream';
 
 import arg from 'arg';
@@ -8,7 +11,7 @@ import type {Project} from '../model';
 
 import {Runtime, Task} from '../types';
 
-import {isDiagnosticError} from '../errors';
+import {DiagnosticError, isDiagnosticError} from '../errors';
 
 import {loadWorkspace} from '../configuration/load';
 import type {LoadedWorkspace} from '../configuration/load';
@@ -38,7 +41,7 @@ import type {
   LintWorkspaceConfigurationCoreHooks,
 } from '../hooks';
 
-import type {ProjectStep, WorkspaceStep} from '../steps';
+import type {BaseStepRunner, ProjectStep, WorkspaceStep} from '../steps';
 
 import {Ui} from './ui';
 
@@ -326,6 +329,66 @@ export async function stepsForWorkspace<TaskType extends Task = Task>({
     return configurationPromise;
   }
 }
+
+export function createStepRunner({ui}: {ui: Ui}): BaseStepRunner {
+  return {
+    exec,
+    log(...args) {
+      ui.log(...args);
+    },
+    fail() {
+      // TODO something that actually blows up the execution...
+      process.exitCode = 1;
+    },
+  };
+}
+
+export class StepExecError extends DiagnosticError {
+  get stderr() {
+    return this.error.stderr;
+  }
+
+  get stdout() {
+    return this.error.stdout;
+  }
+
+  constructor(command: string, private readonly error: any) {
+    super({
+      title: `Command \`${command}\` failed`,
+      content: error.stderr?.trim() || error.stdout?.trim(),
+    });
+  }
+}
+
+const promiseExec = promisify(execFile);
+
+const exec: BaseStepRunner['exec'] = (
+  command,
+  args,
+  {fromNodeModules, ...options} = {},
+) => {
+  const execPromise = promiseExec(command, args, options);
+
+  const wrappedPromise = new Promise(
+    // eslint-disable-next-line no-async-promise-executor
+    async (resolve, reject) => {
+      try {
+        const result = await execPromise;
+        resolve(result);
+      } catch (error) {
+        reject(
+          new StepExecError(
+            fromNodeModules ? join('node_modules/.bin', command) : command,
+            error,
+          ),
+        );
+      }
+    },
+  ) as any;
+
+  wrappedPromise.child = execPromise.child;
+  return wrappedPromise;
+};
 
 function stringifyOptions(variant: {[key: string]: any} = {}) {
   return Object.entries(variant)

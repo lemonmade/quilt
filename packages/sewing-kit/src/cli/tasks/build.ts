@@ -2,7 +2,7 @@ import {Environment, Task} from '../../types';
 
 import {BuildTaskOptions, createWaterfallHook} from '../../hooks';
 
-import {createCommand, stepsForProject} from '../common';
+import {createCommand, stepsForProject, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
 
 export const build = createCommand(
@@ -57,7 +57,7 @@ export async function runBuild(
 
     for (const step of steps) {
       ui.log(`Running step: ${step.label} (${step.name})`);
-      await step.run({});
+      await step.run(createStepRunner({ui}));
     }
   }
 }

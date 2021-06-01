@@ -2,7 +2,7 @@ import {Task} from '../../types';
 
 import {LintTaskOptions} from '../../hooks';
 
-import {createCommand, stepsForWorkspace} from '../common';
+import {createCommand, stepsForWorkspace, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
 
 export const lint = createCommand({}, async (_, context) => {
@@ -23,6 +23,6 @@ export async function runLint(context: TaskContext, options: LintTaskOptions) {
 
   for (const step of steps) {
     ui.log(`Running step: ${step.label} (${step.name})`);
-    await step.run({});
+    await step.run(createStepRunner({ui}));
   }
 }

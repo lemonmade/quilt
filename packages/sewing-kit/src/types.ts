@@ -38,12 +38,7 @@ export interface LogUiComponents {
 
 export type Loggable = string | ((ui: LogUiComponents) => string);
 
-export enum LogLevel {
-  Errors,
-  Warnings,
-  Info,
-  Debug,
-}
+export type LogLevel = 'errors' | 'warnings' | 'info' | 'debug';
 
 export interface LogOptions {
   level?: LogLevel;

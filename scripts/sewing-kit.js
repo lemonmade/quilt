@@ -44,7 +44,11 @@ await bundle.write({
   inlineDynamicImports: true,
 });
 
-execSync(['node', outFile, ...process.argv.slice(2)].join(' '), {
-  stdio: 'inherit',
-  env: {...process.env},
-});
+try {
+  execSync(['node', outFile, ...process.argv.slice(2)].join(' '), {
+    stdio: 'inherit',
+    env: {...process.env},
+  });
+} catch (error) {
+  process.exitCode = 1;
+}
