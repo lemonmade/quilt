@@ -1,8 +1,21 @@
-import {createProjectPlugin, createWorkspacePlugin} from '@quilted/sewing-kit';
+import {
+  createProjectPlugin,
+  createWorkspacePlugin,
+  DiagnosticError,
+} from '@quilted/sewing-kit';
+import type {WaterfallHook} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-rollup';
 import type {} from '@quilted/sewing-kit-eslint';
+
+export interface TypeScriptHooks {
+  typescriptHeap: WaterfallHook<number | undefined>;
+}
+
+declare module '@quilted/sewing-kit' {
+  interface TypeCheckWorkspaceConfigurationHooks extends TypeScriptHooks {}
+}
 
 /**
  * Adds configuration for TypeScript to a variety of other build tools.
@@ -50,15 +63,38 @@ export function typescriptWorkspace() {
         );
       });
     },
-    // TODO
-    // typeCheck({run}) {
-    //   run((step) =>
-    //     step({
-    //       name: 'SewingKit.TypeScript',
-    //       label: 'Running TypeScript type checking',
-    //       async run() {},
-    //     }),
-    //   );
-    // },
+    typeCheck({hooks, run, workspace}) {
+      hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
+
+      run((step, {configuration}) =>
+        step({
+          name: 'SewingKit.TypeScript',
+          label: 'Run TypeScript on your workspace',
+          async run(step) {
+            const {typescriptHeap} = await configuration();
+            const heap = await typescriptHeap!.run(undefined);
+            const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
+
+            try {
+              await step.exec(
+                'node',
+                [
+                  ...heapArguments,
+                  workspace.fs.resolvePath('node_modules/.bin/tsc'),
+                  '--build',
+                  '--pretty',
+                ],
+                {env: {FORCE_COLOR: '1', ...process.env}},
+              );
+            } catch (error) {
+              throw new DiagnosticError({
+                title: 'TypeScript found type errors',
+                content: error.stderr || error.stdout,
+              });
+            }
+          },
+        }),
+      );
+    },
   });
 }

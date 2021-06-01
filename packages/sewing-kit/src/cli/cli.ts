@@ -22,6 +22,11 @@ async function run() {
       await lint(argv);
       break;
     }
+    case Task.TypeCheck: {
+      const {typeCheck} = await import('./tasks/type-check');
+      await typeCheck(argv);
+      break;
+    }
     default: {
       // eslint-disable-next-line no-console
       console.log(`Task not found: ${task} (${argv.join(' ')})`);

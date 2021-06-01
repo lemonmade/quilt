@@ -1,4 +1,4 @@
-import {createWorkspacePlugin} from '@quilted/sewing-kit';
+import {createWorkspacePlugin, DiagnosticError} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
 export interface ESLintHooks {
@@ -41,9 +41,10 @@ export function eslint() {
               const output = result.stdout.trim();
               if (output.length) step.log(output);
             } catch (error) {
-              step.log('ESLint found lint errors:', {level: 'errors'});
-              step.log(error.stdout.trim(), {level: 'errors'});
-              step.fail();
+              throw new DiagnosticError({
+                title: 'ESLint found some problems',
+                content: error.stderr || error.stdout,
+              });
             }
           },
         }),

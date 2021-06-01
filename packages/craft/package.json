@@ -29,5 +29,13 @@
     "@quilted/sewing-kit-package": "^0.0.0",
     "@quilted/sewing-kit-rollup": "^0.0.0",
     "@quilted/sewing-kit-typescript": "^0.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^4.3.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": false
+    }
   }
 }

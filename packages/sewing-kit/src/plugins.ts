@@ -6,6 +6,8 @@ import type {
   DevelopWorkspaceTask,
   LintProjectTask,
   LintWorkspaceTask,
+  TypeCheckProjectTask,
+  TypeCheckWorkspaceTask,
 } from './hooks';
 import type {ValueOrPromise, ValueOrFalsy} from './types';
 import type {FileSystem} from './utilities/fs';
@@ -69,6 +71,11 @@ export interface ProjectPluginHooks<ProjectType extends Project = Project> {
    * Customize the `lint` task for an individual project.
    */
   lint?(hooks: LintProjectTask<ProjectType>): void | Promise<void>;
+
+  /**
+   * Customize the `type-check` task for an individual project.
+   */
+  typeCheck?(hooks: TypeCheckProjectTask<ProjectType>): void | Promise<void>;
 }
 
 // TODO
@@ -126,6 +133,11 @@ export interface WorkspacePluginHooks {
    * Customize the `lint` task for the overall workspace.
    */
   lint?(hooks: LintWorkspaceTask): ValueOrPromise<void>;
+
+  /**
+   * Customize the `type-check` task for the overall workspace.
+   */
+  typeCheck?(hooks: TypeCheckWorkspaceTask): ValueOrPromise<void>;
 }
 
 // TODO

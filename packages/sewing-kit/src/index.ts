@@ -96,6 +96,27 @@ export type {
   LintWorkspaceConfigurationContext,
   LintWorkspaceConfigurationCoreHooks,
   LintWorkspaceConfigurationHooks,
+  // TypeCheck
+  TypeCheckTaskOptions,
+  TypeCheckProjectTask,
+  TypeCheckWorkspaceTask,
+  TypeCheckProjectOptions,
+  TypeCheckAppOptions,
+  TypeCheckServiceOptions,
+  TypeCheckPackageOptions,
+  TypeCheckOptionsForProject,
+  TypeCheckProjectConfigurationContext,
+  TypeCheckProjectConfigurationCoreHooks,
+  TypeCheckProjectConfigurationHooks,
+  TypeCheckAppConfigurationHooks,
+  TypeCheckServiceConfigurationHooks,
+  TypeCheckPackageConfigurationHooks,
+  TypeCheckConfigurationHooksForProject,
+  ResolvedTypeCheckProjectConfigurationHooks,
+  TypeCheckWorkspaceOptions,
+  TypeCheckWorkspaceConfigurationContext,
+  TypeCheckWorkspaceConfigurationCoreHooks,
+  TypeCheckWorkspaceConfigurationHooks,
 } from './hooks';
 
 export type {

@@ -16,17 +16,15 @@ import {DiagnosticError, isDiagnosticError} from '../errors';
 import {loadWorkspace} from '../configuration/load';
 import type {LoadedWorkspace} from '../configuration/load';
 
-import {
-  createWaterfallHook,
-  createSequenceHook,
-  WorkspaceStepAdder,
-} from '../hooks';
+import {createWaterfallHook, createSequenceHook} from '../hooks';
 import type {
   HookAdder,
   ProjectStepAdder,
+  WorkspaceStepAdder,
   BuildTaskOptions,
   DevelopTaskOptions,
   LintTaskOptions,
+  TypeCheckTaskOptions,
   BuildProjectTask,
   BuildWorkspaceTask,
   BuildProjectOptions,
@@ -35,10 +33,12 @@ import type {
   ResolvedBuildProjectConfigurationHooks,
   DevelopProjectConfigurationCoreHooks,
   LintProjectConfigurationCoreHooks,
+  TypeCheckProjectConfigurationCoreHooks,
   BuildWorkspaceConfigurationCoreHooks,
   ResolvedBuildWorkspaceConfigurationHooks,
   DevelopWorkspaceConfigurationCoreHooks,
   LintWorkspaceConfigurationCoreHooks,
+  TypeCheckWorkspaceConfigurationCoreHooks,
 } from '../hooks';
 
 import type {BaseStepRunner, ProjectStep, WorkspaceStep} from '../steps';
@@ -149,12 +149,14 @@ interface OptionsTaskMap {
   [Task.Build]: BuildTaskOptions;
   [Task.Develop]: DevelopTaskOptions;
   [Task.Lint]: LintTaskOptions;
+  [Task.TypeCheck]: TypeCheckTaskOptions;
 }
 
 interface ProjectCoreHooksTaskMap {
   [Task.Build]: BuildProjectConfigurationCoreHooks;
   [Task.Develop]: DevelopProjectConfigurationCoreHooks;
   [Task.Lint]: LintProjectConfigurationCoreHooks;
+  [Task.TypeCheck]: TypeCheckProjectConfigurationCoreHooks;
 }
 
 export async function stepsForProject<
@@ -249,6 +251,7 @@ interface WorkspaceCoreHooksTaskMap {
   [Task.Build]: BuildWorkspaceConfigurationCoreHooks;
   [Task.Develop]: DevelopWorkspaceConfigurationCoreHooks;
   [Task.Lint]: LintWorkspaceConfigurationCoreHooks;
+  [Task.TypeCheck]: TypeCheckWorkspaceConfigurationCoreHooks;
 }
 
 export async function stepsForWorkspace<TaskType extends Task = Task>({
@@ -274,7 +277,13 @@ export async function stepsForWorkspace<TaskType extends Task = Task>({
   const stepsHook = createWaterfallHook<WorkspaceStep[]>();
 
   for (const plugin of workspacePlugins) {
-    await plugin[task as 'build']?.({
+    // Task is in dash case, but the method is in camelcase. This is a
+    // quick-and-dirty replace to map between them.
+    const pluginMethod = task.replace(/-(\w)/g, (_, letter) =>
+      letter.toUpperCase(),
+    ) as 'build';
+
+    await plugin[pluginMethod]?.({
       options: options as any,
       workspace,
       hooks(adder: Parameters<HookAdder<any>>[0]) {

@@ -22,6 +22,7 @@ export enum Task {
   Lint = 'lint',
   Build = 'build',
   Develop = 'develop',
+  TypeCheck = 'type-check',
 }
 
 export type ValueOrPromise<T> = T | Promise<T>;
