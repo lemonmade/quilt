@@ -11,6 +11,7 @@
     {"path": "../sewing-kit-babel"},
     {"path": "../sewing-kit-eslint"},
     {"path": "../sewing-kit-esnext"},
+    {"path": "../sewing-kit-jest"},
     {"path": "../sewing-kit-package"},
     {"path": "../sewing-kit-rollup"},
     {"path": "../sewing-kit-typescript"}

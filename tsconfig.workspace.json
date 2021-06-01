@@ -35,6 +35,7 @@
     {"path": "./packages/sewing-kit-babel"},
     {"path": "./packages/sewing-kit-eslint"},
     {"path": "./packages/sewing-kit-esnext"},
+    {"path": "./packages/sewing-kit-jest"},
     {"path": "./packages/sewing-kit-package"},
     {"path": "./packages/sewing-kit-rollup"},
     {"path": "./packages/sewing-kit-typescript"},
