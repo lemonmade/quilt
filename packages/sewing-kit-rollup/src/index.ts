@@ -323,5 +323,6 @@ export async function buildWithRollup<ProjectType extends Project = Project>({
   }
 
   const bundle = await rollup(inputOptions);
+  // console.log(bundle);
   await Promise.all(outputs.map((output) => bundle.write(output)));
 }

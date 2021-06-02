@@ -18,6 +18,7 @@ import type {
 import {babelHooks} from '@quilted/sewing-kit-babel';
 import {packageBuild} from '@quilted/sewing-kit-package';
 import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
+import type {RollupNodeOptions} from '@quilted/sewing-kit-rollup';
 import {eslint} from '@quilted/sewing-kit-eslint';
 import {esnextBuild} from '@quilted/sewing-kit-esnext';
 import {
@@ -52,19 +53,24 @@ export const MAGIC_MODULE_APP_COMPONENT = '__quilt__/App.tsx';
 export const MAGIC_MODULE_APP_ASSET_MANIFEST = '__quilt__/AssetManifest.tsx';
 export const MAGIC_MODULE_HTTP_HANDLER = '__quilt__/HttpHandler.tsx';
 
+// TODO
+export interface PackageOptions {
+  bundleNode?: RollupNodeOptions['bundle'];
+}
+
 /**
  * Creates a sewing-kit plugin that intelligently configures this package.
  * This includes full support for TypeScript, and both standard and `esnext`
  * builds, if the package is public.
  */
-export function quiltPackage() {
+export function quiltPackage({bundleNode}: PackageOptions = {}) {
   return createProjectPlugin<Package>({
     name: 'Quilt.Package',
     create({use}) {
       use(
         // Basic tool configuration
         rollupHooks(),
-        rollupNode(),
+        rollupNode({bundle: bundleNode}),
         babelHooks(),
         typescriptProject(),
         // Builds

@@ -161,7 +161,7 @@ interface ProjectCoreHooksTaskMap {
 
 export async function stepsForProject<
   ProjectType extends Project = Project,
-  TaskType extends Task = Task
+  TaskType extends Task = Task,
 >(
   project: ProjectType,
   {
@@ -234,12 +234,10 @@ export async function stepsForProject<
     if (configurationMap.has(id)) return configurationMap.get(id)!;
 
     const configurationPromise = (async () => {
-      const hooks = await hooksHook.run({});
-      await configureHook.run(
-        {...hooks, ...coreHooks()},
-        {project, options, target, workspace},
-      );
-      return hooks;
+      const customHooks = await hooksHook.run({});
+      const allHooks = {...customHooks, ...coreHooks()};
+      await configureHook.run(allHooks, {project, options, target, workspace});
+      return allHooks;
     })();
 
     configurationMap.set(id, configurationPromise);
@@ -326,12 +324,10 @@ export async function stepsForWorkspace<TaskType extends Task = Task>({
     if (configurationMap.has(id)) return configurationMap.get(id)!;
 
     const configurationPromise = (async () => {
-      const hooks = await hooksHook.run({});
-      await configureHook.run(
-        {...hooks, ...coreHooks()},
-        {options, target, workspace},
-      );
-      return hooks;
+      const customHooks = await hooksHook.run({});
+      const allHooks = {...customHooks, ...coreHooks()};
+      await configureHook.run(allHooks, {options, target, workspace});
+      return allHooks;
     })();
 
     configurationMap.set(id, configurationPromise);

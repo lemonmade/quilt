@@ -1,9 +1,6 @@
-import {join} from 'path';
-import {
-  MissingPluginError,
-  Package,
-  createProjectPlugin,
-} from '@quilted/sewing-kit';
+import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
+import {MissingPluginError, createProjectPlugin} from '@quilted/sewing-kit';
+import type {Package, PackageBinary} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-rollup';
@@ -23,6 +20,9 @@ declare module '@quilted/sewing-kit' {
 interface Options {
   commonjs?: boolean | {exports?: 'named' | 'default'};
 }
+
+const ESM_EXTENSION = '.mjs';
+const COMMONJS_EXTENSION = '.cjs';
 
 /**
  * Creates build steps that generate package outputs that are appropriate
@@ -72,13 +72,7 @@ export function packageBuild({commonjs = false}: Options = {}) {
             join(directory, packageBuildModule === 'commonjs' ? 'cjs' : 'esm'),
           );
 
-          rollupInput?.(() => {
-            return Promise.all(
-              project.entries.map((entry) =>
-                project.fs.resolvePath(entry.source),
-              ),
-            );
-          });
+          rollupInput?.(() => getEntryFiles(project));
 
           // Add the Babel plugin to process source code
           rollupPlugins?.(async (plugins) => {
@@ -105,6 +99,10 @@ export function packageBuild({commonjs = false}: Options = {}) {
                 babelHelpers: 'bundled',
                 configFile: false,
                 babelrc: false,
+                // TODO
+                // Babel types need updating
+                // @ts-expect-error
+                targets: 'node 14',
                 presets: babelPresetsOption,
                 plugins: babelPluginsOption,
               }),
@@ -123,11 +121,12 @@ export function packageBuild({commonjs = false}: Options = {}) {
                     format: 'commonjs',
                     dir,
                     preserveModules: true,
+                    preserveModulesRoot: sourceRoot(project),
                     exports:
                       typeof commonjs === 'object'
                         ? commonjs.exports ?? 'named'
                         : 'named',
-                    entryFileNames: '[name][assetExtname].js',
+                    entryFileNames: `[name][assetExtname]${COMMONJS_EXTENSION}`,
                   },
                 ];
               }
@@ -138,7 +137,8 @@ export function packageBuild({commonjs = false}: Options = {}) {
                     format: 'esm',
                     dir,
                     preserveModules: true,
-                    entryFileNames: '[name][assetExtname].mjs',
+                    preserveModulesRoot: sourceRoot(project),
+                    entryFileNames: `[name][assetExtname]${ESM_EXTENSION}`,
                   },
                 ];
               }
@@ -184,8 +184,116 @@ export function packageBuild({commonjs = false}: Options = {}) {
           );
         }
 
+        if (project.binaries.length > 0) {
+          steps.push(
+            step({
+              name: 'SewingKit.PackageBuild.Binaries',
+              label: `Building binaries for ${project.name}`,
+              async run(step) {
+                const {outputDirectory} = await configuration({
+                  packageBuildModule: 'esmodules',
+                });
+
+                const resolvedOutputDirectory = await outputDirectory.run(
+                  project.fs.buildPath(),
+                );
+
+                await Promise.all(
+                  project.binaries.map((binary) => writeBinary(binary)),
+                );
+
+                async function writeBinary({
+                  name,
+                  source,
+                  aliases,
+                }: PackageBinary) {
+                  const relativeFromSourceRoot = relative(
+                    sourceRoot(project),
+                    project.fs.resolvePath(source),
+                  );
+
+                  const destinationInOutput = project.fs.resolvePath(
+                    resolvedOutputDirectory,
+                    relativeFromSourceRoot,
+                  );
+
+                  for (const binaryName of [name, ...aliases]) {
+                    const binaryFile = project.fs.resolvePath(
+                      'bin',
+                      // Node needs a .mjs extension to parse the file as ESM
+                      `${binaryName}.mjs`,
+                    );
+
+                    const originalExtension = extname(source);
+
+                    const relativeFromBinary = normalizedRelative(
+                      dirname(binaryFile),
+                      `${
+                        originalExtension
+                          ? destinationInOutput.replace(/\.\w+$/, '')
+                          : destinationInOutput
+                      }${ESM_EXTENSION}`,
+                    );
+
+                    await project.fs.write(
+                      binaryFile,
+                      [
+                        `#!/usr/bin/env node`,
+                        `import ${JSON.stringify(relativeFromBinary)};`,
+                      ].join('\n'),
+                    );
+
+                    await step.exec('chmod', ['+x', binaryFile]);
+                  }
+                }
+              },
+            }),
+          );
+        }
+
         return steps;
       });
     },
   });
+}
+
+function getEntryFiles({fs, entries, binaries}: Package) {
+  return [
+    ...entries.map((entry) => fs.resolvePath(entry.source)),
+    ...binaries.map((binary) => fs.resolvePath(binary.source)),
+  ];
+}
+
+function sourceRoot(pkg: Package) {
+  const entries = getEntryFiles(pkg);
+
+  if (entries.length === 0) {
+    throw new Error(`No entries for package: ${pkg.name}`);
+  }
+
+  if (entries.length === 1) {
+    return dirname(entries[0]);
+  }
+
+  const [firstEntry, ...otherEntries] = entries;
+  let sharedRoot = pkg.fs.root + pathSeparator;
+
+  console.log(sharedRoot);
+
+  for (const segment of firstEntry
+    .replace(sharedRoot, '')
+    .split(pathSeparator)) {
+    const maybeSharedRoot = join(sharedRoot, segment + pathSeparator);
+
+    if (otherEntries.some((entry) => !entry.startsWith(maybeSharedRoot))) break;
+
+    sharedRoot = maybeSharedRoot;
+  }
+
+  return sharedRoot;
+}
+
+function normalizedRelative(from: string, to: string) {
+  const rel = relative(from, to);
+  return rel.startsWith('.') ? rel : `./${rel}`;
 }

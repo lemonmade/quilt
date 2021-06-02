@@ -43,8 +43,8 @@ export async function runBuild(
           ...context,
           options,
           coreHooks: () => ({
-            extensions: createWaterfallHook(),
-            outputDirectory: createWaterfallHook(),
+            extensions: createWaterfallHook<string[]>(),
+            outputDirectory: createWaterfallHook<string>(),
           }),
           task: Task.Build,
         }),

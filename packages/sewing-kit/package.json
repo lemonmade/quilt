@@ -7,6 +7,10 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "bin": {
+    "sk": "./bin/sk.mjs",
+    "sewing-kit": "./bin/sewing-kit.mjs"
+  },
   "exports": {
     ".": {
       "quilt:internal": "./src/index.ts",
@@ -23,8 +27,15 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "arg": "^5.0.0",
+    "colorette": "^1.2.0",
     "common-tags": "^1.8.0",
     "esbuild": "^0.12.0",
-    "globby": "^11.0.0"
+    "globby": "^11.0.0",
+    "rollup": "^2.50.0",
+    "rollup-plugin-esbuild": "^4.2.0"
   }
 }

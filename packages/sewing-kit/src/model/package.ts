@@ -24,18 +24,18 @@ export class PackageEntry {
 
 export interface PackageBinaryOptions {
   readonly name: string;
-  readonly root: string;
+  readonly source: string;
   readonly aliases?: readonly string[];
 }
 
 export class PackageBinary {
   readonly name: string;
-  readonly root: string;
+  readonly source: string;
   readonly aliases: readonly string[];
 
-  constructor({name, root, aliases = []}: PackageBinaryOptions) {
+  constructor({name, source, aliases = []}: PackageBinaryOptions) {
     this.name = name;
-    this.root = root;
+    this.source = source;
     this.aliases = aliases;
   }
 }
