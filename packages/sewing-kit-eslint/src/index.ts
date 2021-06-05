@@ -1,4 +1,4 @@
-import {createWorkspacePlugin, DiagnosticError} from '@quilted/sewing-kit';
+import {createWorkspacePlugin} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
 export interface ESLintHooks {
@@ -28,24 +28,17 @@ export function eslint() {
             const {eslintExtensions} = await configuration();
             const extensions = await eslintExtensions!.run(['.mjs', '.js']);
 
-            try {
-              const result = await step.exec(
-                'eslint',
-                ['.', ...extensions.map((ext) => ['--ext', ext]).flat()],
-                {
-                  fromNodeModules: true,
-                  env: {FORCE_COLOR: '1', ...process.env},
-                },
-              );
+            const result = await step.exec(
+              'eslint',
+              ['.', ...extensions.map((ext) => ['--ext', ext]).flat()],
+              {
+                fromNodeModules: true,
+                env: {FORCE_COLOR: '1', ...process.env},
+              },
+            );
 
-              const output = result.stdout.trim();
-              if (output.length) step.log(output);
-            } catch (error) {
-              throw new DiagnosticError({
-                title: 'ESLint found some problems',
-                content: error.stderr || error.stdout,
-              });
-            }
+            const output = result.stdout.trim();
+            if (output.length) step.log(output);
           },
         }),
       );

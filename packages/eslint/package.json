@@ -1,5 +1,5 @@
 {
-  "name": "@quilted/sewing-kit-jest",
+  "name": "@quilted/eslint",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
@@ -7,33 +7,24 @@
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "bin": {
+    "sewing-kit": "./bin/sewing-kit.mjs",
+    "sk": "./bin/sk.mjs"
+  },
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
     }
+  },
+  "dependencies": {
+    "eslint": ">=7.0.0 <8.0.0"
   },
   "typesVersions": {
     ">=1": {
       "*": [
         "./build/typescript/index.d.ts"
       ]
-    }
-  },
-  "sideEffects": false,
-  "dependencies": {
-    "@types/jest": "^26.0.0",
-    "jest": "^27.0.0",
-    "jest-config": "^27.0.0",
-    "jest-watch-typeahead": "^0.6.0"
-  },
-  "peerDependencies": {
-    "@quilted/sewing-kit": "^0.1.0"
-  },
-  "peerDependenciesMeta": {
-    "@quilted/sewing-kit": {
-      "optional": true
     }
   }
 }

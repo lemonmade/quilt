@@ -5,7 +5,7 @@
     "outDir": "build/typescript"
   },
   "include": ["src"],
-  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
+  "exclude": ["sewing-kit.config.ts", "**/"*.test.tsx", "**/"*.test.ts"],
   "references": [
     {"path": "../react-server-render"},
     {"path": "../react-html"},

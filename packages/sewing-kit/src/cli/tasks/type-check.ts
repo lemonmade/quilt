@@ -2,7 +2,7 @@ import {Task} from '../../types';
 
 import {TypeCheckTaskOptions} from '../../hooks';
 
-import {createCommand, stepsForWorkspace, createStepRunner} from '../common';
+import {createCommand, loadStepsForTask, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
 
 export const typeCheck = createCommand({}, async (_, context) => {
@@ -15,11 +15,11 @@ export async function runTypeCheck(
 ) {
   const {ui} = context;
 
-  const steps = await stepsForWorkspace({
+  const {workspace: steps} = await loadStepsForTask(Task.TypeCheck, {
     ...context,
     options,
-    coreHooks: () => ({}),
-    task: Task.TypeCheck,
+    coreHooksForProject: () => ({}),
+    coreHooksForWorkspace: () => ({}),
   });
 
   ui.log(`Running ${steps.length} steps for the workspace`);

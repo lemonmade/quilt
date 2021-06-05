@@ -51,7 +51,7 @@ declare module '@quilted/sewing-kit' {
  */
 export function esnextBuild() {
   return createProjectPlugin<Package>({
-    name: 'SewingKit.Babel',
+    name: 'SewingKit.ESNextBuild',
     build({project, configure, run}) {
       if (project.packageJson?.private) return;
 
@@ -94,7 +94,7 @@ export function esnextBuild() {
 
       run((step, {configuration}) =>
         step({
-          name: 'SewingKit.PackageBuild.ESNext',
+          name: 'SewingKit.ESNextBuild',
           label: `Build esnext output for ${project.name}`,
           async run() {
             const [configure, {buildWithRollup}] = await Promise.all([
@@ -116,7 +116,7 @@ export function esnextBuild() {
  */
 export function esnext() {
   return createProjectPlugin<Package>({
-    name: 'SewingKit.Babel',
+    name: 'SewingKit.ESNextConsumer',
     build({configure}) {
       configure(
         ({
@@ -132,15 +132,12 @@ export function esnext() {
 
           // Add the Babel plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {
-            const [
-              {babel},
-              babelPresetsOption,
-              babelPluginsOption,
-            ] = await Promise.all([
-              import('@rollup/plugin-babel'),
-              babelPresets!.run([['@babel/preset-env']]),
-              babelPlugins!.run([]),
-            ]);
+            const [{babel}, babelPresetsOption, babelPluginsOption] =
+              await Promise.all([
+                import('@rollup/plugin-babel'),
+                babelPresets!.run([['@babel/preset-env']]),
+                babelPlugins!.run([]),
+              ]);
 
             return [
               ...plugins,

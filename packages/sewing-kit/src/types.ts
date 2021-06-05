@@ -48,7 +48,6 @@ export interface LogOptions {
 
 export type Log = (loggable: Loggable, options?: LogOptions) => void;
 
-// When passing this around to plugins we need to maintain type integrity
 export interface FileSystem {
   read(file: string): Promise<string>;
   write(file: string, contents: string): Promise<void>;
@@ -58,6 +57,13 @@ export interface FileSystem {
   hasFile(file: string): Promise<boolean>;
   hasDirectory(dir: string): Promise<boolean>;
   glob(pattern: string, options: Omit<GlobbyOptions, 'cwd'>): Promise<string[]>;
-  buildPath(...paths: string[]): string;
   resolvePath(...paths: string[]): string;
+}
+
+export interface UserFileSystem extends FileSystem {
+  buildPath(...paths: string[]): string;
+}
+
+export interface InternalFileSystem extends FileSystem {
+  tempPath(...paths: string[]): string;
 }

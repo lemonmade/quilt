@@ -21,6 +21,7 @@ import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
 import type {RollupNodeOptions} from '@quilted/sewing-kit-rollup';
 import {eslint} from '@quilted/sewing-kit-eslint';
 import {esnextBuild} from '@quilted/sewing-kit-esnext';
+import {jest} from '@quilted/sewing-kit-jest';
 import {
   typescriptProject,
   typescriptWorkspace,
@@ -89,7 +90,7 @@ export function quiltWorkspace() {
   return createWorkspacePlugin({
     name: 'Quilt.Workspace',
     create({use}) {
-      use(eslint(), typescriptWorkspace());
+      use(eslint(), typescriptWorkspace(), jest());
     },
   });
 }

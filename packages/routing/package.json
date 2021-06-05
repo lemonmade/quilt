@@ -1,22 +1,28 @@
 {
   "name": "@quilted/routing",
+  "type": "module",
   "version": "0.1.6",
+  "license": "MIT",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
+  "bin": {
+    "sewing-kit": "./bin/sewing-kit.mjs",
+    "sk": "./bin/sk.mjs"
+  },
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
-    },
-    "./": "./"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
   },
   "sideEffects": false
 }

@@ -1,4 +1,4 @@
-import {resolve, relative, dirname} from 'path';
+import {join, resolve, relative, dirname} from 'path';
 
 import {
   appendFile,
@@ -10,9 +10,13 @@ import {
 } from 'fs/promises';
 import glob, {GlobbyOptions} from 'globby';
 
-import type {FileSystem as FSType} from '../types';
+import type {
+  FileSystem as FSType,
+  UserFileSystem as UserFSType,
+  InternalFileSystem as InternalFSType,
+} from '../types';
 
-export class FileSystem implements FSType {
+class BaseFileSystem implements FSType {
   constructor(public readonly root: string) {}
 
   async read(file: string) {
@@ -57,15 +61,30 @@ export class FileSystem implements FSType {
     return glob.sync(pattern, {...options, cwd: this.root, absolute: true});
   }
 
-  buildPath(...paths: string[]) {
-    return this.resolvePath('build', ...paths);
-  }
-
   resolvePath(...paths: string[]) {
     return resolve(this.root, ...paths);
   }
 
   relativePath(path: string) {
     return relative(this.root, path);
+  }
+}
+
+export class FileSystem extends BaseFileSystem implements UserFSType {
+  buildPath(...paths: string[]) {
+    return this.resolvePath('build', ...paths);
+  }
+}
+
+export class InternalFileSystem
+  extends BaseFileSystem
+  implements InternalFSType
+{
+  constructor(root: string) {
+    super(join(root, '.sewing-kit'));
+  }
+
+  tempPath(...paths: string[]) {
+    return this.resolvePath('temp', ...paths);
   }
 }

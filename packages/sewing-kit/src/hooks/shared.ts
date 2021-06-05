@@ -1,6 +1,6 @@
 import type {Project} from '../model';
 import type {ProjectStep, WorkspaceStep} from '../steps';
-import type {ValueOrPromise} from '../types';
+import type {ValueOrPromise, InternalFileSystem} from '../types';
 
 export const NONE = Symbol.for('SewingKit.None');
 export type None = typeof NONE;
@@ -123,6 +123,18 @@ export interface HookAdder<AllowedHooks> {
   <T = Partial<AllowedHooks>>(adder: (hooks: HookAdderHelper) => T): void;
 }
 
+export interface ConfigurationCollector<
+  ConfigurationHooks,
+  ConfigurationContext,
+> {
+  (
+    collector: (
+      configuration: ConfigurationHooks,
+      context: ConfigurationContext,
+    ) => ValueOrPromise<void>,
+  ): void;
+}
+
 // TODO
 export interface ProjectStepAdderContext<
   ProjectConfigurationHooks,
@@ -174,4 +186,8 @@ export interface WorkspaceStepAdder<
       WorkspaceStep | WorkspaceStep[] | null | undefined | false
     >,
   ): void;
+}
+
+export interface SewingKitInternalContext {
+  readonly fs: InternalFileSystem;
 }

@@ -1,7 +1,7 @@
 import {Task} from '../../types';
 import {createWaterfallHook, DevelopTaskOptions} from '../../hooks';
 
-import {createCommand, stepsForProject} from '../common';
+import {createCommand, loadStepsForTask} from '../common';
 import type {TaskContext} from '../common';
 
 export const develop = createCommand(
@@ -19,21 +19,14 @@ export async function runDev(
   context: TaskContext,
   options: DevelopTaskOptions,
 ) {
-  const projectSteps = await Promise.all(
-    context.workspace.projects.map(async (project) => {
-      return {
-        project,
-        steps: await stepsForProject(project, {
-          ...context,
-          options,
-          coreHooks: () => ({
-            extensions: createWaterfallHook(),
-          }),
-          task: Task.Develop,
-        }),
-      };
+  const {project: projectSteps} = await loadStepsForTask(Task.Develop, {
+    ...context,
+    options,
+    coreHooksForProject: () => ({
+      extensions: createWaterfallHook<string[]>(),
     }),
-  );
+    coreHooksForWorkspace: () => ({}),
+  });
 
   console.log(projectSteps);
 }

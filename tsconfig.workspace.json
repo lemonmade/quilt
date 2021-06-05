@@ -6,8 +6,8 @@
   "include": [
     "config/**/*.ts",
     "**/sewing-kit.config.ts",
-    "**/tests/**/*.ts",
-    "**/tests/**/*.tsx"
+    "*.test.ts",
+    "*.test.tsx"
   ],
   "references": [
     {"path": "./packages/async"},

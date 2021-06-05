@@ -2,7 +2,7 @@ import {Task} from '../../types';
 
 import {LintTaskOptions} from '../../hooks';
 
-import {createCommand, stepsForWorkspace, createStepRunner} from '../common';
+import {createCommand, loadStepsForTask, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
 
 export const lint = createCommand({}, async (_, context) => {
@@ -12,11 +12,11 @@ export const lint = createCommand({}, async (_, context) => {
 export async function runLint(context: TaskContext, options: LintTaskOptions) {
   const {ui} = context;
 
-  const steps = await stepsForWorkspace({
+  const {workspace: steps} = await loadStepsForTask(Task.Lint, {
     ...context,
     options,
-    coreHooks: () => ({}),
-    task: Task.Lint,
+    coreHooksForProject: () => ({}),
+    coreHooksForWorkspace: () => ({}),
   });
 
   ui.log(`Running ${steps.length} steps for the workspace`);

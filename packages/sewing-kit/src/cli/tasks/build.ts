@@ -2,7 +2,7 @@ import {Environment, Task} from '../../types';
 
 import {BuildTaskOptions, createWaterfallHook} from '../../hooks';
 
-import {createCommand, stepsForProject, createStepRunner} from '../common';
+import {createCommand, loadStepsForTask, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
 
 export const build = createCommand(
@@ -33,24 +33,17 @@ export async function runBuild(
   context: TaskContext,
   options: BuildTaskOptions,
 ) {
-  const {ui, workspace} = context;
+  const {ui} = context;
 
-  const projectSteps = await Promise.all(
-    workspace.projects.map(async (project) => {
-      return {
-        project,
-        steps: await stepsForProject(project, {
-          ...context,
-          options,
-          coreHooks: () => ({
-            extensions: createWaterfallHook<string[]>(),
-            outputDirectory: createWaterfallHook<string>(),
-          }),
-          task: Task.Build,
-        }),
-      };
+  const {project: projectSteps} = await loadStepsForTask(Task.Build, {
+    ...context,
+    options,
+    coreHooksForProject: () => ({
+      extensions: createWaterfallHook<string[]>(),
+      outputDirectory: createWaterfallHook<string>(),
     }),
-  );
+    coreHooksForWorkspace: () => ({}),
+  });
 
   for (const {project, steps} of projectSteps) {
     ui.log(`Running ${steps.length} steps for project ${project.id}`);

@@ -368,7 +368,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
             projectConfiguration: loadConfigurationForProject,
           });
 
-          const newMaybeFalsySteps = sArray.isArray(newStepOrSteps)
+          const newMaybeFalsySteps = Array.isArray(newStepOrSteps)
             ? newStepOrSteps
             : [...steps, newStepOrSteps];
 

@@ -33,6 +33,7 @@ export type {
   SequenceHook,
   ResolvedHooks,
   ResolvedOptions,
+  SewingKitInternalContext,
   // Build
   BuildTaskOptions,
   BuildProjectTask,

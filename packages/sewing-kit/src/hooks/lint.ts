@@ -5,9 +5,10 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
-  SequenceHook,
+  ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
+  SewingKitInternalContext,
 } from './shared';
 
 /**
@@ -191,6 +192,13 @@ export interface LintProjectTask<ProjectType extends Project = Project> {
   readonly options: LintTaskOptions;
 
   /**
+   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * directory. This object is particularly useful in plugins, as it offers a clean
+   * way of writing temporary files.
+   */
+  readonly internal: SewingKitInternalContext;
+
+  /**
    * Allows you to create additional hooks that can collect custom
    * configuration. Make sure you augment the `LintProjectConfigurationHooks`
    * (or the project-specific variant you want to add hooks for) in
@@ -207,11 +215,9 @@ export interface LintProjectTask<ProjectType extends Project = Project> {
    * project-specific variants) and using the `hooks` function
    * to include your hooks for other plugins to reference.
    */
-  readonly configure: SequenceHook<
-    [
-      ResolvedLintProjectConfigurationHooks<ProjectType>,
-      LintProjectConfigurationContext<ProjectType>,
-    ]
+  readonly configure: ConfigurationCollector<
+    ResolvedLintProjectConfigurationHooks<ProjectType>,
+    LintProjectConfigurationContext<ProjectType>
   >;
 
   /**
@@ -250,6 +256,7 @@ export interface LintWorkspaceStepAdderContext
    * every unique set of options.
    */
   projectConfiguration<ProjectType extends Project = Project>(
+    project: ProjectType,
     options?: LintOptionsForProject<ProjectType>,
   ): Promise<ResolvedLintProjectConfigurationHooks<ProjectType>>;
 }
@@ -270,6 +277,13 @@ export interface LintWorkspaceTask {
   readonly options: LintTaskOptions;
 
   /**
+   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * directory. This object is particularly useful in plugins, as it offers a clean
+   * way of writing temporary files.
+   */
+  readonly internal: SewingKitInternalContext;
+
+  /**
    * Allows you to create additional hooks that can collect custom
    * configuration. Make sure you augment the `LintWorkspaceConfigurationHooks`
    * in `@quilted/sewing-kit` to allow these hooks to be visible to
@@ -284,8 +298,9 @@ export interface LintWorkspaceTask {
    * augmenting the `LintWorkspaceConfigurationHooks` and using the
    * `hooks` function to include your hooks for other plugins to reference.
    */
-  readonly configure: SequenceHook<
-    [ResolvedLintWorkspaceConfigurationHooks, LintWorkspaceConfigurationContext]
+  readonly configure: ConfigurationCollector<
+    ResolvedLintWorkspaceConfigurationHooks,
+    LintWorkspaceConfigurationContext
   >;
 
   /**

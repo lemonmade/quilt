@@ -2,7 +2,7 @@ import {Task} from '../../types';
 
 import {TestTaskOptions} from '../../hooks';
 
-import {createCommand, stepsForWorkspace, createStepRunner} from '../common';
+import {createCommand, loadStepsForTask, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
 
 export const test = createCommand({}, async (_, context) => {
@@ -12,12 +12,14 @@ export const test = createCommand({}, async (_, context) => {
 export async function runTest(context: TaskContext, options: TestTaskOptions) {
   const {ui} = context;
 
-  const steps = await stepsForWorkspace({
+  const allSteps = await loadStepsForTask(Task.Test, {
     ...context,
     options,
-    coreHooks: () => ({}),
-    task: Task.Test,
+    coreHooksForProject: () => ({}),
+    coreHooksForWorkspace: () => ({}),
   });
+
+  const steps = allSteps.workspace;
 
   ui.log(`Running ${steps.length} steps for the workspace`);
 

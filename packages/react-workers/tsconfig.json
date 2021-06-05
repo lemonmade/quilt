@@ -6,6 +6,6 @@
     "lib": ["ESNext", "DOM", "WebWorker"]
   },
   "include": ["src"],
-  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
+  "exclude": ["sewing-kit.config.ts", "*.test.ts", "*.test.tsx"],
   "references": [{"path": "../workers"}]
 }

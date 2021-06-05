@@ -23,6 +23,7 @@ export interface BabelHooks {
 declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends BabelHooks {}
   interface DevelopProjectConfigurationHooks extends BabelHooks {}
+  interface TestProjectConfigurationHooks extends BabelHooks {}
 }
 
 /**
@@ -39,6 +40,13 @@ export function babelHooks() {
       }));
     },
     develop({hooks}) {
+      hooks<BabelHooks>(({waterfall}) => ({
+        babelPlugins: waterfall(),
+        babelPresets: waterfall(),
+        babelExtensions: waterfall(),
+      }));
+    },
+    test({hooks}) {
       hooks<BabelHooks>(({waterfall}) => ({
         babelPlugins: waterfall(),
         babelPresets: waterfall(),

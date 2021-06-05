@@ -5,9 +5,10 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
-  SequenceHook,
+  ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
+  SewingKitInternalContext,
 } from './shared';
 
 /**
@@ -191,6 +192,13 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
   readonly options: TestTaskOptions;
 
   /**
+   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * directory. This object is particularly useful in plugins, as it offers a clean
+   * way of writing temporary files.
+   */
+  readonly internal: SewingKitInternalContext;
+
+  /**
    * Allows you to create additional hooks that can collect custom
    * configuration. Make sure you augment the `TestProjectConfigurationHooks`
    * (or the project-specific variant you want to add hooks for) in
@@ -207,11 +215,9 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
    * project-specific variants) and using the `hooks` function
    * to include your hooks for other plugins to reference.
    */
-  readonly configure: SequenceHook<
-    [
-      ResolvedTestProjectConfigurationHooks<ProjectType>,
-      TestProjectConfigurationContext<ProjectType>,
-    ]
+  readonly configure: ConfigurationCollector<
+    ResolvedTestProjectConfigurationHooks<ProjectType>,
+    TestProjectConfigurationContext<ProjectType>
   >;
 
   /**
@@ -250,6 +256,7 @@ export interface TestWorkspaceStepAdderContext
    * every unique set of options.
    */
   projectConfiguration<ProjectType extends Project = Project>(
+    project: ProjectType,
     options?: TestOptionsForProject<ProjectType>,
   ): Promise<ResolvedTestProjectConfigurationHooks<ProjectType>>;
 }
@@ -270,6 +277,13 @@ export interface TestWorkspaceTask {
   readonly options: TestTaskOptions;
 
   /**
+   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * directory. This object is particularly useful in plugins, as it offers a clean
+   * way of writing temporary files.
+   */
+  readonly internal: SewingKitInternalContext;
+
+  /**
    * Allows you to create additional hooks that can collect custom
    * configuration. Make sure you augment the `TestWorkspaceConfigurationHooks`
    * in `@quilted/sewing-kit` to allow these hooks to be visible to
@@ -284,8 +298,9 @@ export interface TestWorkspaceTask {
    * augmenting the `TestWorkspaceConfigurationHooks` and using the
    * `hooks` function to include your hooks for other plugins to reference.
    */
-  readonly configure: SequenceHook<
-    [ResolvedTestWorkspaceConfigurationHooks, TestWorkspaceConfigurationContext]
+  readonly configure: ConfigurationCollector<
+    ResolvedTestWorkspaceConfigurationHooks,
+    TestWorkspaceConfigurationContext
   >;
 
   /**

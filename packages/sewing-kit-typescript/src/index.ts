@@ -6,8 +6,9 @@ import {
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-babel';
-import type {} from '@quilted/sewing-kit-rollup';
 import type {} from '@quilted/sewing-kit-eslint';
+import type {} from '@quilted/sewing-kit-jest';
+import type {} from '@quilted/sewing-kit-rollup';
 
 export interface TypeScriptHooks {
   typescriptHeap: WaterfallHook<number | undefined>;
@@ -45,6 +46,37 @@ export function typescriptProject() {
         babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
       });
     },
+    test({configure}) {
+      configure(
+        ({jestExtensions, jestTransforms, babelPresets, babelPlugins}) => {
+          babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+
+          // Add TypeScript extensions for project-level tests
+          jestExtensions?.((extensions) =>
+            Array.from(new Set([...extensions, '.ts', '.tsx'])),
+          );
+
+          jestTransforms?.(async (transforms) => {
+            const [presets, plugins] = await Promise.all([
+              babelPresets?.run(['@babel/preset-env']),
+              babelPlugins?.run([]),
+            ]);
+
+            transforms['\\.tsx?$'] = [
+              'babel-jest',
+              {
+                presets,
+                plugins,
+                configFile: false,
+                babelrc: false,
+                targets: 'current node',
+              },
+            ];
+            return transforms;
+          });
+        },
+      );
+    },
   });
 }
 
@@ -58,7 +90,16 @@ export function typescriptWorkspace() {
     name: 'SewingKit.TypeScript',
     lint({configure}) {
       configure(({eslintExtensions}) => {
+        // Add TypeScript linting to ESLint
         eslintExtensions?.((extensions) =>
+          Array.from(new Set([...extensions, '.ts', '.tsx'])),
+        );
+      });
+    },
+    test({configure}) {
+      configure(({jestExtensions}) => {
+        // Add TypeScript extensions for workspace-level tests
+        jestExtensions?.((extensions) =>
           Array.from(new Set([...extensions, '.ts', '.tsx'])),
         );
       });
