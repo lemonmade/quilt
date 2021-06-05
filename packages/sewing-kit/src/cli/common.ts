@@ -16,37 +16,46 @@ import {DiagnosticError, isDiagnosticError} from '../errors';
 import {loadWorkspace} from '../configuration/load';
 import type {LoadedWorkspace} from '../configuration/load';
 
-import {createWaterfallHook, createSequenceHook} from '../hooks';
+import {
+  createWaterfallHook,
+  createSequenceHook,
+  BuildProjectConfigurationContext,
+  BuildWorkspaceConfigurationContext,
+} from '../hooks';
 import type {
   HookAdder,
   ProjectStepAdder,
-  WorkspaceStepAdder,
   BuildTaskOptions,
   DevelopTaskOptions,
   LintTaskOptions,
+  TestTaskOptions,
   TypeCheckTaskOptions,
   BuildProjectTask,
-  BuildWorkspaceTask,
   BuildProjectOptions,
   BuildWorkspaceOptions,
   BuildProjectConfigurationCoreHooks,
   ResolvedBuildProjectConfigurationHooks,
   DevelopProjectConfigurationCoreHooks,
   LintProjectConfigurationCoreHooks,
+  TestProjectConfigurationCoreHooks,
   TypeCheckProjectConfigurationCoreHooks,
   BuildWorkspaceConfigurationCoreHooks,
   ResolvedBuildWorkspaceConfigurationHooks,
   DevelopWorkspaceConfigurationCoreHooks,
   LintWorkspaceConfigurationCoreHooks,
+  TestWorkspaceConfigurationCoreHooks,
   TypeCheckWorkspaceConfigurationCoreHooks,
+  SewingKitInternalContext,
 } from '../hooks';
 
 import type {BaseStepRunner, ProjectStep, WorkspaceStep} from '../steps';
 
 import {Ui} from './ui';
+import {InternalFileSystem} from '../utilities/fs';
 
 export interface TaskContext extends LoadedWorkspace {
   readonly ui: Ui;
+  readonly internal: SewingKitInternalContext;
 }
 
 export function createCommand<Flags extends Spec>(
@@ -92,7 +101,12 @@ export function createCommand<Flags extends Spec>(
 
     try {
       const {workspace, plugins} = await loadWorkspace(root as string);
-      await run(flags as any, {workspace, ui, plugins});
+      await run(flags as any, {
+        workspace,
+        ui,
+        plugins,
+        internal: {fs: new InternalFileSystem(workspace.root)},
+      });
     } catch (error) {
       logError(error, ui);
       // eslint-disable-next-line require-atomic-updates
@@ -149,6 +163,7 @@ interface OptionsTaskMap {
   [Task.Build]: BuildTaskOptions;
   [Task.Develop]: DevelopTaskOptions;
   [Task.Lint]: LintTaskOptions;
+  [Task.Test]: TestTaskOptions;
   [Task.TypeCheck]: TypeCheckTaskOptions;
 }
 
@@ -156,6 +171,7 @@ interface ProjectCoreHooksTaskMap {
   [Task.Build]: BuildProjectConfigurationCoreHooks;
   [Task.Develop]: DevelopProjectConfigurationCoreHooks;
   [Task.Lint]: LintProjectConfigurationCoreHooks;
+  [Task.Test]: TestProjectConfigurationCoreHooks;
   [Task.TypeCheck]: TypeCheckProjectConfigurationCoreHooks;
 }
 
@@ -170,6 +186,7 @@ export async function stepsForProject<
     options,
     coreHooks,
     workspace,
+    internal,
   }: {
     task: TaskType;
     options: OptionsTaskMap[TaskType];
@@ -184,7 +201,13 @@ export async function stepsForProject<
   >();
 
   const hooksHook = createWaterfallHook<any>();
-  const configureHook: BuildProjectTask['configure'] = createSequenceHook();
+  const configureHook =
+    createSequenceHook<
+      [
+        ResolvedBuildProjectConfigurationHooks<any>,
+        BuildProjectConfigurationContext<any>,
+      ]
+    >();
   const stepsHook = createWaterfallHook<ProjectStep<ProjectType>[]>();
 
   for (const plugin of projectPlugins) {
@@ -192,6 +215,7 @@ export async function stepsForProject<
       options: options as any,
       project: project as any,
       workspace,
+      internal,
       hooks(adder: Parameters<HookAdder<any>>[0]) {
         hooksHook((allHooks) => {
           Object.assign(
@@ -250,42 +274,79 @@ interface WorkspaceCoreHooksTaskMap {
   [Task.Develop]: DevelopWorkspaceConfigurationCoreHooks;
   [Task.Lint]: LintWorkspaceConfigurationCoreHooks;
   [Task.TypeCheck]: TypeCheckWorkspaceConfigurationCoreHooks;
+  [Task.Test]: TestWorkspaceConfigurationCoreHooks;
 }
 
-export async function stepsForWorkspace<TaskType extends Task = Task>({
-  task,
-  plugins,
-  options,
-  coreHooks,
-  workspace,
-}: {
-  task: TaskType;
+interface LoadStepOptions<TaskType extends Task> extends TaskContext {
   options: OptionsTaskMap[TaskType];
-  coreHooks: () => WorkspaceCoreHooksTaskMap[TaskType];
-} & TaskContext) {
-  const workspacePlugins = plugins.for(workspace);
+  coreHooksForProject<ProjectType extends Project = Project>(
+    project: ProjectType,
+  ): ProjectCoreHooksTaskMap[TaskType];
+  coreHooksForWorkspace(): WorkspaceCoreHooksTaskMap[TaskType];
+}
 
-  const configurationMap = new Map<
+export async function loadStepsForTask<TaskType extends Task = Task>(
+  task: TaskType,
+  {
+    plugins,
+    options,
+    workspace,
+    internal,
+    coreHooksForProject,
+    coreHooksForWorkspace,
+  }: LoadStepOptions<TaskType>,
+) {
+  const configurationHooksForProject = new Map<
+    Project,
+    ((hooks: ResolvedBuildProjectConfigurationHooks<any>) => void)[]
+  >();
+  const configurersForProject = new Map<
+    Project,
+    ((
+      hooks: ResolvedBuildProjectConfigurationHooks<any>,
+      context: BuildProjectConfigurationContext<any>,
+    ) => Promise<void>)[]
+  >();
+  const stepAddersForProject = new Map<
+    Project,
+    ((steps: ProjectStep<any>[]) => Promise<void>)[]
+  >();
+  const taskForProject = new Map<Project, BuildProjectTask<any>>();
+  const resolvedConfigurationForProject = new Map<
+    Project,
+    Map<string, Promise<ResolvedBuildProjectConfigurationHooks<any>>>
+  >();
+
+  const configurationHooksForWorkspace: ((
+    hooks: ResolvedBuildWorkspaceConfigurationHooks,
+  ) => void)[] = [];
+  const configurersForWorkspace: ((
+    hooks: ResolvedBuildWorkspaceConfigurationHooks,
+    context: BuildWorkspaceConfigurationContext,
+  ) => Promise<void>)[] = [];
+  const stepAddersForWorkspace: ((steps: WorkspaceStep[]) => Promise<void>)[] =
+    [];
+  const resolvedConfigurationForWorkspace = new Map<
     string,
     Promise<ResolvedBuildWorkspaceConfigurationHooks>
   >();
+  const projectTaskHandlersForWorkspace: ((
+    task: BuildProjectTask<any>,
+  ) => void)[] = [];
 
-  const hooksHook = createWaterfallHook<any>();
-  const configureHook: BuildWorkspaceTask['configure'] = createSequenceHook();
-  const stepsHook = createWaterfallHook<WorkspaceStep[]>();
+  // Task is in dash case, but the method is in camelcase. This is a
+  // quick-and-dirty replace to map between them.
+  const pluginMethod = task.replace(/-(\w)/g, (_, letter) =>
+    letter.toUpperCase(),
+  ) as 'build';
 
-  for (const plugin of workspacePlugins) {
-    // Task is in dash case, but the method is in camelcase. This is a
-    // quick-and-dirty replace to map between them.
-    const pluginMethod = task.replace(/-(\w)/g, (_, letter) =>
-      letter.toUpperCase(),
-    ) as 'build';
-
+  for (const plugin of plugins.for(workspace)) {
     await plugin[pluginMethod]?.({
-      options: options as any,
+      options: options as BuildTaskOptions,
       workspace,
-      hooks(adder: Parameters<HookAdder<any>>[0]) {
-        hooksHook((allHooks) => {
+      internal,
+      hooks(adder) {
+        configurationHooksForWorkspace.push((allHooks) => {
           Object.assign(
             allHooks,
             adder({
@@ -293,44 +354,217 @@ export async function stepsForWorkspace<TaskType extends Task = Task>({
               sequence: createSequenceHook,
             }),
           );
-          return allHooks;
         });
       },
-      configure: configureHook as any,
-      run(adder: Parameters<WorkspaceStepAdder<any, any>>[0]) {
-        stepsHook(async (steps) => {
+      configure(configurer) {
+        configurersForWorkspace.push(async (...args) => {
+          await configurer(...args);
+        });
+      },
+      run(adder) {
+        stepAddersForWorkspace.push(async (steps) => {
           const newStepOrSteps = await adder((step) => step, {
-            configuration: loadConfigurationForProject,
+            configuration: loadConfigurationForWorkspace,
+            projectConfiguration: loadConfigurationForProject,
           });
 
-          if (!newStepOrSteps) return steps;
-
-          return Array.isArray(newStepOrSteps)
-            ? [...steps, ...newStepOrSteps]
+          const newMaybeFalsySteps = sArray.isArray(newStepOrSteps)
+            ? newStepOrSteps
             : [...steps, newStepOrSteps];
+
+          steps.push(
+            ...newMaybeFalsySteps.filter((value): value is WorkspaceStep =>
+              Boolean(value),
+            ),
+          );
         });
+      },
+      project(handler) {
+        projectTaskHandlersForWorkspace.push(handler);
       },
     });
   }
 
-  return stepsHook.run([]);
+  for (const projectTaskHandler of projectTaskHandlersForWorkspace) {
+    for (const project of workspace.projects) {
+      projectTaskHandler(getTaskForProject(project));
+    }
+  }
 
-  function loadConfigurationForProject(
+  for (const project of workspace.projects) {
+    const projectPlugins = plugins.for(project);
+
+    for (const plugin of projectPlugins) {
+      plugin[pluginMethod]?.(getTaskForProject(project));
+    }
+  }
+
+  const workspaceSteps: WorkspaceStep[] = [];
+
+  for (const stepAdder of stepAddersForWorkspace) {
+    await stepAdder(workspaceSteps);
+  }
+
+  const projectSteps = await Promise.all(
+    workspace.projects.map(async (project) => {
+      const stepAdders = stepAddersForProject.get(project) ?? [];
+      const steps: ProjectStep<any>[] = [];
+
+      for (const stepAdder of stepAdders) {
+        await stepAdder(steps);
+      }
+
+      return {project, steps} as {
+        project: Project;
+        steps: ProjectStep<Project>[];
+      };
+    }),
+  );
+
+  return {workspace: workspaceSteps, project: projectSteps};
+
+  function getTaskForProject(project: Project) {
+    const existingTask = taskForProject.get(project);
+
+    if (existingTask) return existingTask;
+
+    let configurationHooks = configurationHooksForProject.get(project)!;
+
+    if (configurationHooks == null) {
+      configurationHooks = [];
+      configurationHooksForProject.set(project, configurationHooks);
+    }
+
+    let configurers = configurersForProject.get(project)!;
+
+    if (configurers == null) {
+      configurers = [];
+      configurersForProject.set(project, configurers);
+    }
+
+    let stepAdders = stepAddersForProject.get(project)!;
+
+    if (stepAdders == null) {
+      stepAdders = [];
+      stepAddersForProject.set(project, stepAdders);
+    }
+
+    const task: BuildProjectTask = {
+      project,
+      workspace,
+      internal,
+      options: options as BuildTaskOptions,
+      hooks(adder) {
+        configurationHooks.push((allHooks) => {
+          Object.assign(
+            allHooks,
+            adder({
+              waterfall: createWaterfallHook,
+              sequence: createSequenceHook,
+            }),
+          );
+        });
+      },
+      configure(configurer) {
+        configurers.push(async (...args) => {
+          await configurer(...args);
+        });
+      },
+      run(adder) {
+        stepAdders.push(async (steps) => {
+          const newStepOrSteps = await adder((step) => step, {
+            configuration: loadConfigurationForProject,
+          });
+
+          const newMaybeFalsySteps = Array.isArray(newStepOrSteps)
+            ? newStepOrSteps
+            : [...steps, newStepOrSteps];
+
+          steps.push(
+            ...newMaybeFalsySteps.filter((value): value is ProjectStep<any> =>
+              Boolean(value),
+            ),
+          );
+        });
+      },
+    };
+
+    taskForProject.set(project, task);
+
+    return task;
+  }
+
+  function loadConfigurationForProject<ProjectType extends Project = Project>(
+    project: ProjectType,
+    options: BuildWorkspaceOptions = {} as any,
+    {
+      target = TargetRuntime.fromProject(project),
+    }: {target?: TargetRuntime} = {},
+  ) {
+    const id = stringifyOptions(options);
+
+    let configurationMap = resolvedConfigurationForProject.get(project);
+
+    if (configurationMap == null) {
+      configurationMap = new Map();
+      resolvedConfigurationForProject.set(project, configurationMap);
+    }
+
+    if (configurationMap.has(id)) return configurationMap.get(id)!;
+
+    const configurationPromise = (async () => {
+      const hooks: ResolvedBuildProjectConfigurationHooks<any> =
+        coreHooksForProject(
+          project,
+        ) as ResolvedBuildProjectConfigurationHooks<any>;
+
+      const configurationHooks = configurationHooksForProject.get(project);
+      const configurers = configurersForProject.get(project);
+
+      if (configurationHooks) {
+        for (const configurationHook of configurationHooks) {
+          configurationHook(hooks);
+        }
+      }
+
+      if (configurers) {
+        for (const configurer of configurers) {
+          await configurer(hooks, {project, workspace, options, target});
+        }
+      }
+
+      return hooks;
+    })();
+
+    configurationMap.set(id, configurationPromise);
+    return configurationPromise;
+  }
+
+  function loadConfigurationForWorkspace(
     options: BuildWorkspaceOptions = {} as any,
     {target = new TargetRuntime([Runtime.Node])}: {target?: TargetRuntime} = {},
   ) {
     const id = stringifyOptions(options);
 
-    if (configurationMap.has(id)) return configurationMap.get(id)!;
+    if (resolvedConfigurationForWorkspace.has(id))
+      return resolvedConfigurationForWorkspace.get(id)!;
 
     const configurationPromise = (async () => {
-      const customHooks = await hooksHook.run({});
-      const allHooks = {...customHooks, ...coreHooks()};
-      await configureHook.run(allHooks, {options, target, workspace});
-      return allHooks;
+      const hooks: ResolvedBuildWorkspaceConfigurationHooks =
+        coreHooksForWorkspace() as ResolvedBuildWorkspaceConfigurationHooks;
+
+      for (const configurationHook of configurationHooksForWorkspace) {
+        configurationHook(hooks);
+      }
+
+      for (const configurer of configurersForWorkspace) {
+        await configurer(hooks, {workspace, options, target});
+      }
+
+      return hooks;
     })();
 
-    configurationMap.set(id, configurationPromise);
+    resolvedConfigurationForWorkspace.set(id, configurationPromise);
     return configurationPromise;
   }
 }
