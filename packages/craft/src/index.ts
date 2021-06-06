@@ -65,7 +65,7 @@ export function quiltService({
   develop = true,
   react: useReact = false,
   httpHandler: useHttpHandler = true,
-}: ServiceOptions) {
+}: ServiceOptions = {}) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service',
     create({use}) {

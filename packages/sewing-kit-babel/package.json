@@ -49,8 +49,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "../eslint/node",
-      "../eslint/package"
+      "@quilted/eslint-config/node",
+      "@quilted/eslint-config/package"
     ]
   }
 }

@@ -50,8 +50,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "../eslint/react",
-      "../eslint/package"
+      "@quilted/eslint-config/react",
+      "@quilted/eslint-config/package"
     ]
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@quilted/eslint",
+  "name": "@quilted/eslint-config",
   "type": "commonjs",
   "version": "0.1.1",
   "license": "MIT",
@@ -32,7 +32,7 @@
       "require": "./node.js"
     },
     "./workspace": {
-      "require": "./node.js"
+      "require": "./workspace.js"
     }
   },
   "dependencies": {

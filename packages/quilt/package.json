@@ -48,25 +48,25 @@
   },
   "typesVersions": {
     ">=1": {
-      "./server": [
+      "server": [
         "./build/typescript/server/index.d.ts"
       ],
-      "./html": [
+      "html": [
         "./build/typescript/html.d.ts"
       ],
-      "./email": [
+      "email": [
         "./build/typescript/email.d.ts"
       ],
-      "./http": [
+      "http": [
         "./build/typescript/http.d.ts"
       ],
-      "./testing": [
+      "testing": [
         "./build/typescript/testing.d.ts"
       ],
-      "./matchers": [
+      "matchers": [
         "./build/typescript/matchers.d.ts"
       ],
-      "./magic-app-http-handler": [
+      "magic-app-http-handler": [
         "./build/typescript/magic/app-http-handler.d.ts"
       ],
       "*": [
@@ -110,8 +110,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "../eslint/react",
-      "../eslint/package"
+      "@quilted/eslint-config/react",
+      "@quilted/eslint-config/package"
     ]
   }
 }

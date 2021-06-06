@@ -35,7 +35,7 @@ export function serviceBuild() {
                   : 'service',
               ),
             ),
-            entryFileNames: '[name][assetExtname].esnext',
+            entryFileNames: 'index.mjs',
           },
         ]);
       });

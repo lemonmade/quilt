@@ -2959,7 +2959,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@quilted/craft@workspace:packages/craft"
   dependencies:
-    "@quilted/eslint": ^0.1.1
+    "@quilted/eslint-config": ^0.1.1
+    "@quilted/prettier": ^0.2.1
     "@quilted/sewing-kit": ^0.2.1
     "@quilted/sewing-kit-babel": ^0.1.1
     "@quilted/sewing-kit-eslint": ^0.1.1
@@ -2980,9 +2981,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/eslint@^0.1.1, @quilted/eslint@workspace:packages/eslint":
+"@quilted/eslint-config@^0.1.1, @quilted/eslint-config@workspace:packages/eslint-config":
   version: 0.0.0-use.local
-  resolution: "@quilted/eslint@workspace:packages/eslint"
+  resolution: "@quilted/eslint-config@workspace:packages/eslint-config"
   dependencies:
     "@typescript-eslint/eslint-plugin": ^4.26.0
     "@typescript-eslint/parser": ^4.26.0
@@ -3081,7 +3082,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/prettier@workspace:packages/prettier":
+"@quilted/prettier@^0.2.1, @quilted/prettier@workspace:packages/prettier":
   version: 0.0.0-use.local
   resolution: "@quilted/prettier@workspace:packages/prettier"
   languageName: unknown

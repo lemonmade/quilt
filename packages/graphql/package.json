@@ -118,7 +118,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "../eslint/package"
+      "@quilted/eslint-config/package"
     ]
   }
 }
