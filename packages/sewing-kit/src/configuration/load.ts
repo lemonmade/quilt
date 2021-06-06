@@ -133,7 +133,7 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
 }
 
 async function loadConfig<
-  T extends {name: string; root: string} = {name: string; root: string}
+  T extends {name: string; root: string} = {name: string; root: string},
 >(file: string) {
   if (
     !(await access(file)
@@ -253,7 +253,8 @@ async function normalizeConfigurationFile(file: string) {
           exclude: [],
         }),
       ],
-      // Disable warnings
+      // Silencing warnings, as long as it runs it’s fine!
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       onwarn() {},
     });
 

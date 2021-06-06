@@ -74,10 +74,13 @@ export function createAssetLoader<Options>({
 
     if (asyncAssets) {
       for (const asyncAsset of asyncAssets) {
-        const {id, styles: asyncStyles, scripts: asyncScripts} =
-          typeof asyncAsset === 'string'
-            ? {id: asyncAsset, styles: true, scripts: true}
-            : asyncAsset;
+        const {
+          id,
+          styles: asyncStyles,
+          scripts: asyncScripts,
+        } = typeof asyncAsset === 'string'
+          ? {id: asyncAsset, styles: true, scripts: true}
+          : asyncAsset;
 
         const resolvedAsyncEntry = manifest.async[id];
 

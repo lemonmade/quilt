@@ -53,7 +53,7 @@ const SESSION_STORAGE_KEY = '__quiltRouterScroll';
 
 const memoryCache: ScrollCache = {};
 
-const useEffect = typeof window === 'undefined' ? () => {} : useLayoutEffect;
+const useEffect = typeof window === 'undefined' ? noop : useLayoutEffect;
 
 export function useScrollRestoration({
   id = DEFAULT_ID,
@@ -161,4 +161,5 @@ function defaultInclude() {
   return true;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

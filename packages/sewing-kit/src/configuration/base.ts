@@ -119,7 +119,7 @@ export class BaseBuilder<PluginType, Options> {
 }
 
 async function expandPlugins<
-  Plugin extends ProjectPlugin<any> | WorkspacePlugin
+  Plugin extends ProjectPlugin<any> | WorkspacePlugin,
 >(
   plugins: Iterable<Plugin>,
   helper: Omit<PluginCreateHelper<Plugin>, 'use'>,
@@ -130,14 +130,14 @@ async function expandPlugins<
 
       const usedPlugins: Plugin[] = [];
 
-      plugin.create(({
+      plugin.create({
         ...helper,
         use(...newPlugins: Plugin[]) {
           for (const newPlugin of newPlugins) {
             if (newPlugin) usedPlugins.push(newPlugin);
           }
         },
-      } as PluginCreateHelper<Plugin>) as any);
+      } as PluginCreateHelper<Plugin> as any);
 
       return expandPlugins(usedPlugins, helper);
     }),

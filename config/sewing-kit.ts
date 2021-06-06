@@ -55,7 +55,8 @@ export function quiltPackage({
       hooks.target.hook(({hooks}) => {
         hooks.configure.hook(
           ({rollupExternal, rollupPlugins, rollupOutputs}) => {
-            const EXTERNAL_REGEX = /(node_modules|^@quilted|^react$|^preact$|^core-js|^regenerator-runtime)/;
+            const EXTERNAL_REGEX =
+              /(node_modules|^@quilted|^react$|^preact$|^core-js|^regenerator-runtime)/;
 
             rollupExternal?.hook((external) =>
               Array.isArray(external)
@@ -232,7 +233,6 @@ export function terser({
   );
 }
 
-// eslint-disable-next-line no-warning-comments
 // TODO: should be in the React plugin
 function reactJsxRuntime() {
   return createProjectPlugin('Quilt.ReactJsxRuntime', ({tasks}) => {

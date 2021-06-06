@@ -39,5 +39,11 @@
   },
   "dependencies": {
     "@types/react": "^17.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

@@ -8,7 +8,7 @@ import type {AsyncComponentType, AssetTiming, NoOptions} from './types';
 interface Options<
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
-  PrefetchOptions extends Record<string, any> = NoOptions
+  PrefetchOptions extends Record<string, any> = NoOptions,
 > extends ResolverOptions<ComponentType<Props>> {
   defer?: 'render' | 'interactive';
   preload?: boolean;
@@ -34,7 +34,7 @@ interface Options<
 export function createAsyncComponent<
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
-  PrefetchOptions extends Record<string, any> = NoOptions
+  PrefetchOptions extends Record<string, any> = NoOptions,
 >({
   id,
   load,
@@ -60,7 +60,12 @@ export function createAsyncComponent<
     defer === 'render' ? unusedAssetTiming : 'immediate';
 
   function Async(props: Props) {
-    const {resolved: Component, load, loading, error} = useAsync(resolver, {
+    const {
+      resolved: Component,
+      load,
+      loading,
+      error,
+    } = useAsync(resolver, {
       scripts: scriptTiming,
       styles: styleTiming,
       immediate: defer !== 'render',
@@ -179,6 +184,7 @@ export function createAsyncComponent<
   return FinalComponent;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}
 
 function noopRender() {

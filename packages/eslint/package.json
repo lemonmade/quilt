@@ -1,30 +1,53 @@
 {
   "name": "@quilted/eslint",
-  "type": "module",
+  "type": "commonjs",
   "version": "0.0.0",
   "license": "MIT",
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "bin": {
-    "sewing-kit": "./bin/sewing-kit.mjs",
-    "sk": "./bin/sk.mjs"
-  },
+  "main": "./index.js",
   "exports": {
     ".": {
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "require": "./index.js"
+    },
+    "./app": {
+      "require": "./app.js"
+    },
+    "./package": {
+      "require": "./package.js"
+    },
+    "./service": {
+      "require": "./service.js"
+    },
+    "./react": {
+      "require": "./react.js"
+    },
+    "./node": {
+      "require": "./node.js"
+    },
+    "./workspace": {
+      "require": "./node.js"
     }
   },
   "dependencies": {
-    "eslint": ">=7.0.0 <8.0.0"
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jest": "^24.3.0",
+    "eslint-plugin-jsx-a11y": "^6.4.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.0.0"
   },
-  "typesVersions": {
-    ">=1": {
-      "*": [
-        "./build/typescript/index.d.ts"
-      ]
-    }
+  "eslintConfig": {
+    "extends": [
+      "./node",
+      "./package"
+    ]
   }
 }

@@ -169,7 +169,12 @@ export interface LintWorkspaceConfigurationContext {
 /**
  * The top-level options that can be passed when running the lint task.
  */
-export interface LintTaskOptions {}
+export interface LintTaskOptions {
+  /**
+   * Whether lint errors should be fixed, where possible.
+   */
+  readonly fix: boolean;
+}
 
 /**
  * The hooks and additional metadata for running the lint command on

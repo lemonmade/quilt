@@ -38,5 +38,11 @@
     "@quilted/react-http": "^0.1.14",
     "@quilted/react-server-render": "^0.2.6",
     "@quilted/routing": "^0.1.6"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

@@ -54,9 +54,9 @@ export function createPrefetcher(router: Router): Prefetcher {
           const matches = match ? [...parentMatches, match] : parentMatches;
 
           if (renderPrefetch != null) {
-            const registrationKey = `Registration:${
-              newConsumed ?? ''
-            }:${matches.map((match) => stringifyMatch(match)).join(',')}`;
+            const registrationKey = `Registration:${newConsumed ?? ''}:${matches
+              .map((match) => stringifyMatch(match))
+              .join(',')}`;
 
             removeRegistrations.delete(registrationKey);
 

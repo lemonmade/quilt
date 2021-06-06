@@ -24,7 +24,6 @@ export async function renderApp(
   const http = new HttpManager({headers});
 
   const markup = await extract(app, {
-    // eslint-disable-next-line react/function-component-definition
     decorate(app) {
       return (
         <ServerContext

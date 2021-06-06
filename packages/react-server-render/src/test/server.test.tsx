@@ -130,40 +130,6 @@ describe('extract()', () => {
       );
       expect(spy).toHaveBeenCalledTimes(1);
     });
-
-    // it('is called with details about the pass', async () => {
-    //   const spy = jest.fn();
-    //   const renderDuration = 10;
-    //   const resolveDuration = 100;
-    //   const {resolve, resolved} = createResolvablePromise();
-
-    //   await extract(
-    //     <ServerAction
-    //       perform={() => {
-    //         return resolved()
-    //           ? undefined
-    //           : resolve().then(() => {
-    //               clock.tick(resolveDuration);
-    //             });
-    //       }}
-    //     />,
-    //     {
-    //       betweenEachPass: spy,
-    //       renderFunction: (element: React.ReactElement<any>) => {
-    //         clock.tick(renderDuration);
-    //         return renderToString(element);
-    //       },
-    //     },
-    //   );
-
-    //   expect(spy).toHaveBeenCalledWith({
-    //     index: 0,
-    //     finished: false,
-    //     cancelled: false,
-    //     renderDuration,
-    //     resolveDuration,
-    //   });
-    // });
   });
 
   describe('afterEachPass', () => {
@@ -186,48 +152,6 @@ describe('extract()', () => {
       );
       expect(spy).toHaveBeenCalledTimes(2);
     });
-
-    // it('is called with details about the pass', async () => {
-    //   const spy = jest.fn();
-    //   const renderDuration = 10;
-    //   const resolveDuration = 100;
-    //   const {resolve, resolved} = createResolvablePromise();
-
-    //   await extract(
-    //     <ServerAction
-    //       perform={() => {
-    //         return resolved()
-    //           ? undefined
-    //           : resolve().then(() => {
-    //               clock.tick(resolveDuration);
-    //             });
-    //       }}
-    //     />,
-    //     {
-    //       afterEachPass: spy,
-    //       renderFunction: (element: React.ReactElement<any>) => {
-    //         clock.tick(renderDuration);
-    //         return renderToString(element);
-    //       },
-    //     },
-    //   );
-
-    //   expect(spy).toHaveBeenCalledWith({
-    //     index: 0,
-    //     finished: false,
-    //     cancelled: false,
-    //     renderDuration,
-    //     resolveDuration,
-    //   });
-
-    //   expect(spy).toHaveBeenLastCalledWith({
-    //     index: 1,
-    //     finished: true,
-    //     cancelled: false,
-    //     renderDuration,
-    //     resolveDuration: 0,
-    //   });
-    // });
 
     it('bails out if it returns false', async () => {
       const spy = jest.fn(() => Promise.resolve(false));
@@ -322,4 +246,5 @@ function createResolvablePromise() {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

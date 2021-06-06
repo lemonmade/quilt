@@ -32,5 +32,11 @@
     "@quilted/sewing-kit": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
   }
 }

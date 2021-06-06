@@ -14,5 +14,11 @@
     "arg": "^4.1.3",
     "chalk": "^4.0.0",
     "ts-dedent": "^2.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
   }
 }

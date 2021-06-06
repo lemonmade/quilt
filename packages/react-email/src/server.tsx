@@ -12,7 +12,7 @@ import {
 import {EmailContext} from './context';
 import {EmailManager} from './manager';
 
-export interface Options extends ExtractOptions {}
+export type Options = ExtractOptions;
 
 export async function renderEmail(
   app: ReactElement<any>,
@@ -22,7 +22,6 @@ export async function renderEmail(
   const email = new EmailManager();
 
   const markup = await extract(app, {
-    // eslint-disable-next-line react/function-component-definition
     decorate(app) {
       return (
         <EmailContext.Provider value={email}>

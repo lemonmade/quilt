@@ -28,8 +28,6 @@ PropsWithChildren<{}>) {
 
   const headers = useMemo<ReadonlyHeaders>(() => {
     return http?.headers ?? {get: (header) => serializedHeaders?.[header]};
-    // Rule is broken, asking for types to be included
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [http?.headers, serializedHeaders]);
 
   return (

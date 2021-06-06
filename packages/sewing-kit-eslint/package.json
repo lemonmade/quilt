@@ -22,9 +22,6 @@
     }
   },
   "sideEffects": false,
-  "dependencies": {
-    "@babel/core": "^7.14.0"
-  },
   "peerDependencies": {
     "@quilted/sewing-kit": "^0.1.0"
   },
@@ -32,5 +29,11 @@
     "@quilted/sewing-kit": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
   }
 }

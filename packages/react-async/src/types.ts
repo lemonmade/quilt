@@ -7,9 +7,11 @@ export type NonOptionalKeys<T> = {
   [K in keyof T]-?: undefined extends T[K] ? never : K;
 }[keyof T];
 
-export type IfAllOptionalKeys<Obj, If, Else = never> = NonOptionalKeys<
-  Obj
-> extends {
+export type IfAllOptionalKeys<
+  Obj,
+  If,
+  Else = never,
+> = NonOptionalKeys<Obj> extends {
   length: 0;
 }
   ? If
@@ -35,9 +37,8 @@ export interface AsyncComponentType<
   T,
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
-  PrefetchOptions extends Record<string, any> = NoOptions
->
-  extends Preloadable<PreloadOptions>,
+  PrefetchOptions extends Record<string, any> = NoOptions,
+> extends Preloadable<PreloadOptions>,
     Prefetchable<PrefetchOptions>,
     FunctionComponent<Props> {
   load(): Promise<T>;

@@ -20,5 +20,10 @@
       "import": "./index.mjs"
     }
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
+  }
 }

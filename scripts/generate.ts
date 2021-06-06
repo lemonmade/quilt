@@ -1,5 +1,3 @@
-/* eslint import/no-extraneous-dependencies: off */
-
 import * as path from 'path';
 import {writeFile, readFile, mkdir} from 'fs/promises';
 import args from 'arg';

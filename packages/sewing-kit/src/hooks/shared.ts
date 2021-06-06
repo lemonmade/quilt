@@ -5,14 +5,17 @@ import type {ValueOrPromise, InternalFileSystem} from '../types';
 export const NONE = Symbol.for('SewingKit.None');
 export type None = typeof NONE;
 
-export type SequenceHookArguments<Arg1 = None, Arg2 = None, Arg3 = None> =
-  Arg1 extends None
-    ? []
-    : Arg2 extends None
-    ? [Arg1]
-    : Arg3 extends None
-    ? [Arg1, Arg2]
-    : [Arg1, Arg2, Arg3];
+export type SequenceHookArguments<
+  Arg1 = None,
+  Arg2 = None,
+  Arg3 = None,
+> = Arg1 extends None
+  ? []
+  : Arg2 extends None
+  ? [Arg1]
+  : Arg3 extends None
+  ? [Arg1, Arg2]
+  : [Arg1, Arg2, Arg3];
 
 /**
  * A `SequenceHook` accepts at least one argument. It is called with

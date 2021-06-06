@@ -46,8 +46,6 @@ export function useQuery<Data, Variables>(
   const initialData = useMemo(
     () =>
       cache && !skip ? graphql.read<Data, Variables>(cacheKey) : undefined,
-    // Rule is broken, asking for types to be included
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [cache, skip, cacheKey, graphql],
   );
 

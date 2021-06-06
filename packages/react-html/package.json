@@ -52,5 +52,11 @@
   "devDependencies": {
     "@types/react-dom": "^17.0.3",
     "@types/serialize-javascript": "^5.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

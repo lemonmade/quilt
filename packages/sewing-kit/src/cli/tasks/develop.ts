@@ -28,5 +28,6 @@ export async function runDev(
     coreHooksForWorkspace: () => ({}),
   });
 
+  // eslint-disable-next-line no-console
   console.log(projectSteps);
 }

@@ -37,5 +37,11 @@
     "@quilted/react-html": "^0.2.11",
     "@quilted/react-server-render": "^0.2.6",
     "@quilted/use-subscription": "^0.1.7"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

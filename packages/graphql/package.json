@@ -59,5 +59,10 @@
     "jest-matcher-utils": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
   }
 }

@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-empty-interface: off */
+
 import {
   Runtime,
   createProjectPlugin,
@@ -17,9 +19,11 @@ import type {
 
 import {babelHooks} from '@quilted/sewing-kit-babel';
 import {packageBuild} from '@quilted/sewing-kit-package';
+import type {Options as PackageBuildOptions} from '@quilted/sewing-kit-package';
 import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
 import type {RollupNodeOptions} from '@quilted/sewing-kit-rollup';
 import {eslint} from '@quilted/sewing-kit-eslint';
+import {prettier} from '@quilted/sewing-kit-prettier';
 import {esnextBuild} from '@quilted/sewing-kit-esnext';
 import {jest} from '@quilted/sewing-kit-jest';
 import {
@@ -56,6 +60,8 @@ export const MAGIC_MODULE_HTTP_HANDLER = '__quilt__/HttpHandler.tsx';
 
 // TODO
 export interface PackageOptions {
+  build?: boolean;
+  commonjs?: PackageBuildOptions['commonjs'];
   bundleNode?: RollupNodeOptions['bundle'];
 }
 
@@ -64,7 +70,11 @@ export interface PackageOptions {
  * This includes full support for TypeScript, and both standard and `esnext`
  * builds, if the package is public.
  */
-export function quiltPackage({bundleNode}: PackageOptions = {}) {
+export function quiltPackage({
+  build = true,
+  commonjs,
+  bundleNode,
+}: PackageOptions = {}) {
   return createProjectPlugin<Package>({
     name: 'Quilt.Package',
     create({use}) {
@@ -75,8 +85,8 @@ export function quiltPackage({bundleNode}: PackageOptions = {}) {
         babelHooks(),
         typescriptProject(),
         // Builds
-        packageBuild(),
-        esnextBuild(),
+        build && packageBuild({commonjs}),
+        build && esnextBuild(),
       );
     },
   });
@@ -90,7 +100,7 @@ export function quiltWorkspace() {
   return createWorkspacePlugin({
     name: 'Quilt.Workspace',
     create({use}) {
-      use(eslint(), typescriptWorkspace(), jest());
+      use(eslint(), prettier(), typescriptWorkspace(), jest());
     },
   });
 }

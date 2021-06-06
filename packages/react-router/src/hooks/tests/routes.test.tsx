@@ -23,7 +23,6 @@ const mount = createMount<
   context({path, prefix}) {
     return {router: createTestRouter(path, {prefix})};
   },
-  // eslint-disable-next-line react/function-component-definition
   render(element, {router}) {
     return <TestRouter router={router}>{element}</TestRouter>;
   },
@@ -31,13 +30,11 @@ const mount = createMount<
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function RouteComponent({children}: PropsWithChildren<{}>) {
-  // eslint-disable-next-line react/jsx-no-useless-fragment
   return children ? <>{children}</> : null;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function NestedRouteComponent({children}: PropsWithChildren<{}>) {
-  // eslint-disable-next-line react/jsx-no-useless-fragment
   return children ? <>{children}</> : null;
 }
 

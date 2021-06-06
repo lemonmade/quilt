@@ -31,5 +31,10 @@
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
   }
 }

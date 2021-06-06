@@ -23,15 +23,12 @@ import {
   BuildWorkspaceConfigurationContext,
 } from '../hooks';
 import type {
-  HookAdder,
-  ProjectStepAdder,
   BuildTaskOptions,
   DevelopTaskOptions,
   LintTaskOptions,
   TestTaskOptions,
   TypeCheckTaskOptions,
   BuildProjectTask,
-  BuildProjectOptions,
   BuildWorkspaceOptions,
   BuildProjectConfigurationCoreHooks,
   ResolvedBuildProjectConfigurationHooks,
@@ -109,7 +106,6 @@ export function createCommand<Flags extends Spec>(
       });
     } catch (error) {
       logError(error, ui);
-      // eslint-disable-next-line require-atomic-updates
       process.exitCode = 1;
     }
   };
@@ -173,100 +169,6 @@ interface ProjectCoreHooksTaskMap {
   [Task.Lint]: LintProjectConfigurationCoreHooks;
   [Task.Test]: TestProjectConfigurationCoreHooks;
   [Task.TypeCheck]: TypeCheckProjectConfigurationCoreHooks;
-}
-
-export async function stepsForProject<
-  ProjectType extends Project = Project,
-  TaskType extends Task = Task,
->(
-  project: ProjectType,
-  {
-    task,
-    plugins,
-    options,
-    coreHooks,
-    workspace,
-    internal,
-  }: {
-    task: TaskType;
-    options: OptionsTaskMap[TaskType];
-    coreHooks: () => ProjectCoreHooksTaskMap[TaskType];
-  } & TaskContext,
-) {
-  const projectPlugins = plugins.for(project);
-
-  const configurationMap = new Map<
-    string,
-    Promise<ResolvedBuildProjectConfigurationHooks<ProjectType>>
-  >();
-
-  const hooksHook = createWaterfallHook<any>();
-  const configureHook =
-    createSequenceHook<
-      [
-        ResolvedBuildProjectConfigurationHooks<any>,
-        BuildProjectConfigurationContext<any>,
-      ]
-    >();
-  const stepsHook = createWaterfallHook<ProjectStep<ProjectType>[]>();
-
-  for (const plugin of projectPlugins) {
-    await plugin[task as 'build']?.({
-      options: options as any,
-      project: project as any,
-      workspace,
-      internal,
-      hooks(adder: Parameters<HookAdder<any>>[0]) {
-        hooksHook((allHooks) => {
-          Object.assign(
-            allHooks,
-            adder({
-              waterfall: createWaterfallHook,
-              sequence: createSequenceHook,
-            }),
-          );
-          return allHooks;
-        });
-      },
-      configure: configureHook as any,
-      run(adder: Parameters<ProjectStepAdder<any, any, any>>[0]) {
-        stepsHook(async (steps) => {
-          const newStepOrSteps = await adder((step) => step, {
-            configuration: loadConfigurationForProject,
-          });
-
-          if (!newStepOrSteps) return steps;
-
-          return Array.isArray(newStepOrSteps)
-            ? [...steps, ...newStepOrSteps]
-            : [...steps, newStepOrSteps];
-        });
-      },
-    });
-  }
-
-  return stepsHook.run([]);
-
-  function loadConfigurationForProject(
-    options: BuildProjectOptions = {} as any,
-    {
-      target = TargetRuntime.fromProject(project),
-    }: {target?: TargetRuntime} = {},
-  ) {
-    const id = stringifyOptions(options);
-
-    if (configurationMap.has(id)) return configurationMap.get(id)!;
-
-    const configurationPromise = (async () => {
-      const customHooks = await hooksHook.run({});
-      const allHooks = {...customHooks, ...coreHooks()};
-      await configureHook.run(allHooks, {project, options, target, workspace});
-      return allHooks;
-    })();
-
-    configurationMap.set(id, configurationPromise);
-    return configurationPromise;
-  }
 }
 
 interface WorkspaceCoreHooksTaskMap {
@@ -370,7 +272,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
 
           const newMaybeFalsySteps = Array.isArray(newStepOrSteps)
             ? newStepOrSteps
-            : [...steps, newStepOrSteps];
+            : [newStepOrSteps];
 
           steps.push(
             ...newMaybeFalsySteps.filter((value): value is WorkspaceStep =>
@@ -473,12 +375,14 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
       run(adder) {
         stepAdders.push(async (steps) => {
           const newStepOrSteps = await adder((step) => step, {
-            configuration: loadConfigurationForProject,
+            configuration(options) {
+              return loadConfigurationForProject(project, options);
+            },
           });
 
           const newMaybeFalsySteps = Array.isArray(newStepOrSteps)
             ? newStepOrSteps
-            : [...steps, newStepOrSteps];
+            : [newStepOrSteps];
 
           steps.push(
             ...newMaybeFalsySteps.filter((value): value is ProjectStep<any> =>

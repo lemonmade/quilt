@@ -408,24 +408,22 @@ function exportsForSelection(
         context,
       );
 
-      const {
-        matched: matchedTypes,
-        unmatched: unmatchedTypes,
-      } = allTypes.reduce<{
-        matched: GraphQLObjectType[];
-        unmatched: GraphQLObjectType[];
-      }>(
-        (all, type) => {
-          if (typeMap.has(type)) {
-            all.matched.push(type);
-          } else {
-            all.unmatched.push(type);
-          }
+      const {matched: matchedTypes, unmatched: unmatchedTypes} =
+        allTypes.reduce<{
+          matched: GraphQLObjectType[];
+          unmatched: GraphQLObjectType[];
+        }>(
+          (all, type) => {
+            if (typeMap.has(type)) {
+              all.matched.push(type);
+            } else {
+              all.unmatched.push(type);
+            }
 
-          return all;
-        },
-        {matched: [], unmatched: []},
-      );
+            return all;
+          },
+          {matched: [], unmatched: []},
+        );
 
       for (const matchedType of matchedTypes) {
         const fieldMap = typeMap.get(matchedType)!;
@@ -561,9 +559,7 @@ function schemaImportName({name}: GraphQLLeafType) {
   return `Schema${name}`;
 }
 
-function unwrapAstType(
-  type: TypeNode,
-): {
+function unwrapAstType(type: TypeNode): {
   type: string;
   isNonNullable: boolean;
   isList: boolean;

@@ -48,5 +48,11 @@
     "typescript": {
       "optional": false
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
   }
 }

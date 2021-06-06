@@ -10,7 +10,8 @@ type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
 export function useBodyAttributes(
   bodyAttributes: FirstArgument<HtmlManager['addBodyAttributes']>,
 ) {
-  useDomEffect((manager) => manager.addBodyAttributes(bodyAttributes), [
-    JSON.stringify(bodyAttributes),
-  ]);
+  useDomEffect(
+    (manager) => manager.addBodyAttributes(bodyAttributes),
+    [JSON.stringify(bodyAttributes)],
+  );
 }

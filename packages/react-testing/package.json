@@ -17,7 +17,6 @@
       "import": "./index.mjs",
       "require": "./index.js"
     },
-    "./": "./",
     "./dom": {
       "esnext": "./dom.esnext",
       "import": "./dom.mjs",
@@ -75,5 +74,11 @@
     "react-dom": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

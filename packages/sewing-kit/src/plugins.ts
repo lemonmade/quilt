@@ -37,7 +37,7 @@ export interface BasePlugin {
 
 // TODO
 export interface PluginCreateHelper<
-  Plugin extends ProjectPlugin<any> | WorkspacePlugin
+  Plugin extends ProjectPlugin<any> | WorkspacePlugin,
 > {
   readonly fs: FileSystem;
   use(...plugins: ValueOrFalsy<Plugin>[]): void;

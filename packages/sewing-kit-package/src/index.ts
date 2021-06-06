@@ -17,7 +17,7 @@ declare module '@quilted/sewing-kit' {
   }
 }
 
-interface Options {
+export interface Options {
   commonjs?: boolean | {exports?: 'named' | 'default'};
 }
 
@@ -99,9 +99,7 @@ export function packageBuild({commonjs = false}: Options = {}) {
                 babelHelpers: 'bundled',
                 configFile: false,
                 babelrc: false,
-                // TODO
-                // Babel types need updating
-                // @ts-expect-error
+                // @ts-expect-error Babel types have not been updated yet
                 targets: 'node 14',
                 presets: babelPresetsOption,
                 plugins: babelPluginsOption,
@@ -277,8 +275,6 @@ function sourceRoot(pkg: Package) {
 
   const [firstEntry, ...otherEntries] = entries;
   let sharedRoot = pkg.fs.root + pathSeparator;
-
-  console.log(sharedRoot);
 
   for (const segment of firstEntry
     .replace(sharedRoot, '')

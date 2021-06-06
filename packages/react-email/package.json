@@ -36,5 +36,11 @@
     "react": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

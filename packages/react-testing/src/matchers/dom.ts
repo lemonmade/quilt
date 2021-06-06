@@ -14,8 +14,13 @@ import {toHaveReactProps} from './props';
 import {assertIsNode, printReceivedWithHighlight} from './utilities';
 
 declare global {
+  // As far as I know, this is needed for the module augmentation  to work.
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
-    interface Matchers<R> {
+    // As far as I know, this is also needed for the module augmentation
+    // to work.
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    interface Matchers<R, T = {}> {
       toContainReactHtml(text: string): void;
       toHaveReactDataProps(data: {[key: string]: string}): void;
     }

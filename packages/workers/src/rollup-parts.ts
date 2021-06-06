@@ -1,5 +1,3 @@
-/* eslint-disable react/function-component-definition */
-
 import {posix} from 'path';
 import {URLSearchParams} from 'url';
 
@@ -215,9 +213,10 @@ export function workers({
   };
 }
 
-function getWorkerRequest(
-  id: string,
-): {workerId: string; wrapper: WorkerWrapper} {
+function getWorkerRequest(id: string): {
+  workerId: string;
+  wrapper: WorkerWrapper;
+} {
   const [workerId, searchString] = id.split('?');
   const searchParams = new URLSearchParams(searchString);
   const wrapperModule = searchParams.get('module')!;

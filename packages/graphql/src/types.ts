@@ -3,7 +3,7 @@ import type {IfUnionSize} from '@quilted/useful-types';
 
 export interface GraphQLOperationType<
   Data = unknown,
-  Variables = Record<string, unknown>
+  Variables = Record<string, unknown>,
 > {
   // We need something to actually use the types, otherwise TypeScript
   // "discards" them for inference on extending interfaces.
@@ -13,7 +13,7 @@ export interface GraphQLOperationType<
 
 export interface GraphQLOperation<
   Data = unknown,
-  Variables = Record<string, unknown>
+  Variables = Record<string, unknown>,
 > extends GraphQLOperationType<Data, Variables> {
   id: string;
   name?: string;

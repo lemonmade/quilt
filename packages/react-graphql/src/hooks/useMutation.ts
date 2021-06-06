@@ -21,8 +21,6 @@ export function useMutation<Data, Variables>(
       >
     ): Promise<GraphQLResult<Data>> =>
       graphql.mutate<Data, Variables>(mutation as any, ...optionsPart),
-    // Rule is broken, asking for types to be included
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [graphql, mutation],
   );
 }

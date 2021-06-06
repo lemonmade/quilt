@@ -10,7 +10,8 @@ type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
 export function useHtmlAttributes(
   htmlAttributes: FirstArgument<HtmlManager['addHtmlAttributes']>,
 ) {
-  useDomEffect((manager) => manager.addHtmlAttributes(htmlAttributes), [
-    JSON.stringify(htmlAttributes),
-  ]);
+  useDomEffect(
+    (manager) => manager.addHtmlAttributes(htmlAttributes),
+    [JSON.stringify(htmlAttributes)],
+  );
 }

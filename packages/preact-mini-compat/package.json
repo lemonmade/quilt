@@ -18,5 +18,10 @@
     "./": "./"
   },
   "license": "MIT",
-  "sideEffects": false
+  "sideEffects": false,
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
+  }
 }

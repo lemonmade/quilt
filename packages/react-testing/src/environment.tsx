@@ -29,14 +29,14 @@ interface BaseNodeCreationOptions<T, Extensions extends PlainObject> {
 
 type NodeCreationOptions<
   T,
-  Extensions extends PlainObject = EmptyObject
+  Extensions extends PlainObject = EmptyObject,
 > = EmptyObject extends Extensions
   ? BaseNodeCreationOptions<T, Extensions>
   : BaseNodeCreationOptions<T, Extensions> & Extensions;
 
 export interface EnvironmentOptions<
   Context,
-  Extensions extends PlainObject = EmptyObject
+  Extensions extends PlainObject = EmptyObject,
 > {
   act<T>(action: () => T): T extends Promise<any> ? Promise<void> : void;
   mount(element: ReactElement<any>): Context;
@@ -56,7 +56,7 @@ type AfterMountOption<
   Context extends PlainObject,
   Actions extends PlainObject,
   Extensions extends PlainObject,
-  Async extends boolean
+  Async extends boolean,
 > = Async extends true
   ? {
       afterMount(
@@ -73,7 +73,7 @@ type AfterMountOption<
 
 export type ContextOption<
   MountOptions extends PlainObject = EmptyObject,
-  Context extends PlainObject = EmptyObject
+  Context extends PlainObject = EmptyObject,
 > = Context extends EmptyObject
   ? {context?: never}
   : {
@@ -84,7 +84,7 @@ export type ActionsOption<
   MountOptions extends PlainObject = EmptyObject,
   Context extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
-  Extensions extends PlainObject = EmptyObject
+  Extensions extends PlainObject = EmptyObject,
 > = Actions extends EmptyObject
   ? {actions?: never}
   : {
@@ -96,7 +96,7 @@ export type ActionsOption<
 
 export interface RenderOption<
   MountOptions extends PlainObject = EmptyObject,
-  Context extends PlainObject = EmptyObject
+  Context extends PlainObject = EmptyObject,
 > {
   render?(
     element: ReactElement<any>,
@@ -107,7 +107,7 @@ export interface RenderOption<
 
 export type MountOptionsOverrideOption<
   CreateMountOptions extends PlainObject = EmptyObject,
-  MountOptions extends PlainObject = EmptyObject
+  MountOptions extends PlainObject = EmptyObject,
 > = MountOptions extends EmptyObject
   ? {options?: never}
   : {
@@ -123,7 +123,7 @@ type CustomMountOptions<
   CreateActions extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
-  Async extends boolean = false
+  Async extends boolean = false,
 > = RenderOption<MountOptions, Context> &
   ContextOption<MountOptions, CreateContext> &
   ActionsOption<MountOptions, Context, CreateActions, Extensions> &
@@ -137,7 +137,7 @@ type CustomMountExtendOptions<
   CreateActions extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
-  Async extends boolean = false
+  Async extends boolean = false,
 > = CustomMountOptions<
   IfEmptyObject<
     MountOptions,
@@ -158,7 +158,7 @@ export interface CustomMount<
   Context extends PlainObject,
   Actions extends PlainObject,
   Extensions extends PlainObject,
-  Async extends boolean
+  Async extends boolean,
 > {
   <Props>(
     element: ReactElement<any>,
@@ -168,7 +168,7 @@ export interface CustomMount<
     AdditionalMountOptions extends PlainObject = EmptyObject,
     AdditionalContext extends PlainObject = EmptyObject,
     AdditionalActions extends PlainObject = EmptyObject,
-    AdditionalAsync extends boolean = false
+    AdditionalAsync extends boolean = false,
   >(
     options: CustomMountExtendOptions<
       AdditionalMountOptions,
@@ -222,7 +222,7 @@ export interface CustomMount<
 export interface HookRunner<
   HookReturn,
   Context extends PlainObject,
-  Actions extends PlainObject
+  Actions extends PlainObject,
 > {
   readonly current: HookReturn;
   // Alias for `current`, reads better in some tests
@@ -239,7 +239,7 @@ type CustomMountResult<
   Context extends PlainObject,
   Actions extends PlainObject,
   Extensions extends PlainObject,
-  Async extends boolean
+  Async extends boolean,
 > = Async extends true
   ? Promise<RootNode<Props, Context, Actions, Extensions>>
   : RootNode<Props, Context, Actions, Extensions>;
@@ -257,7 +257,7 @@ interface Environment<Extensions extends PlainObject = EmptyObject> {
     MountOptions extends PlainObject = EmptyObject,
     Context extends PlainObject = EmptyObject,
     Actions extends PlainObject = EmptyObject,
-    Async extends boolean = false
+    Async extends boolean = false,
   >(
     options: CustomMountOptions<
       MountOptions,
@@ -274,7 +274,7 @@ interface Environment<Extensions extends PlainObject = EmptyObject> {
 
 export function createEnvironment<
   EnvironmentContext = undefined,
-  Extensions extends PlainObject = EmptyObject
+  Extensions extends PlainObject = EmptyObject,
 >(
   env: EnvironmentOptions<EnvironmentContext, Extensions>,
 ): Environment<Extensions> {
@@ -282,7 +282,7 @@ export function createEnvironment<
   type Root<
     Props,
     Context extends PlainObject = EmptyObject,
-    Actions extends PlainObject = EmptyObject
+    Actions extends PlainObject = EmptyObject,
   > = RootNode<Props, Context, Actions, Extensions>;
 
   const allMounted = new Set<Root<any, any, any>>();
@@ -295,7 +295,7 @@ export function createEnvironment<
 
   interface Options<
     Context extends PlainObject = EmptyObject,
-    Actions extends PlainObject = EmptyObject
+    Actions extends PlainObject = EmptyObject,
   > {
     context?: Context;
     actions?: Actions;
@@ -306,7 +306,7 @@ export function createEnvironment<
   function createRoot<
     Props,
     Context extends PlainObject = EmptyObject,
-    Actions extends PlainObject = EmptyObject
+    Actions extends PlainObject = EmptyObject,
   >(
     element: ReactElement<Props>,
     {
@@ -545,7 +545,7 @@ export function createEnvironment<
         // This condition checks the returned value is an actual Promise and returns it
         // to React’s `act()` call, otherwise we just want to return `undefined`
         if (isPromise(result) && !eager) {
-          return Promise.resolve(result).then(() => {});
+          return Promise.resolve(result).then(noop);
         }
       });
 
@@ -553,7 +553,7 @@ export function createEnvironment<
         if (eager) {
           performUpdate();
 
-          return act(() => Promise.resolve(result).then(() => {})).then(
+          return act(() => Promise.resolve(result).then(noop)).then(
             afterResolve,
           ) as any;
         } else {
@@ -603,7 +603,7 @@ export function createEnvironment<
     MountOptions extends PlainObject = EmptyObject,
     Context extends PlainObject = EmptyObject,
     Actions extends PlainObject = EmptyObject,
-    Async extends boolean = false
+    Async extends boolean = false,
   >(
     createMountOptions: CustomMountOptions<
       MountOptions,
@@ -771,6 +771,7 @@ function defaultActions() {
   return {} as any;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}
 
 export function isNode<Extensions extends PlainObject = EmptyObject>(

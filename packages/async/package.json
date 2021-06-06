@@ -55,5 +55,10 @@
   "devDependencies": {
     "@types/babel__core": ">=7.0.0",
     "@types/babel__traverse": ">=7.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
   }
 }

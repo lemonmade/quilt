@@ -54,7 +54,7 @@ export function response(
     writable: false,
   });
 
-  return (response as any) as Response;
+  return response as any as Response;
 }
 
 export function notFound(

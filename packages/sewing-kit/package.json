@@ -37,5 +37,11 @@
     "globby": "^11.0.0",
     "rollup": "^2.50.0",
     "rollup-plugin-esbuild": "^4.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
   }
 }

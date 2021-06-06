@@ -48,5 +48,10 @@
     "rollup": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
   }
 }

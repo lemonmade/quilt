@@ -9,6 +9,8 @@ packages/*/*.mjs
 packages/*/*.d.ts
 packages/*/*.js
 !packages/*/.eslintrc.js
+!packages/eslint/*.js
+!packages/prettier/*.js
 *.log
 
 # Yarn

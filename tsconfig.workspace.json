@@ -5,6 +5,7 @@
   },
   "include": [
     "config/**/*.ts",
+    "scripts/**/*.ts",
     "**/sewing-kit.config.ts",
     "*.test.ts",
     "*.test.tsx"
@@ -18,7 +19,6 @@
     {"path": "./packages/http"},
     {"path": "./packages/http-handlers"},
     {"path": "./packages/polyfills"},
-    {"path": "./packages/prettier"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react-async"},
     {"path": "./packages/react-email"},
@@ -37,6 +37,7 @@
     {"path": "./packages/sewing-kit-esnext"},
     {"path": "./packages/sewing-kit-jest"},
     {"path": "./packages/sewing-kit-package"},
+    {"path": "./packages/sewing-kit-prettier"},
     {"path": "./packages/sewing-kit-rollup"},
     {"path": "./packages/sewing-kit-typescript"},
     {"path": "./packages/typescript"},
