@@ -9,28 +9,26 @@ import {
   createService,
   createWorkspace,
 } from '@quilted/sewing-kit';
-import type {
-  App,
-  Service,
-  Package,
-  Project,
-  WaterfallHook,
-} from '@quilted/sewing-kit';
+import type {App, Service, Package, Project} from '@quilted/sewing-kit';
 
-import {babelHooks} from '@quilted/sewing-kit-babel';
+import {babelHooks, babelRollup} from '@quilted/sewing-kit-babel';
 import {packageBuild} from '@quilted/sewing-kit-package';
 import type {Options as PackageBuildOptions} from '@quilted/sewing-kit-package';
 import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
 import type {RollupNodeOptions} from '@quilted/sewing-kit-rollup';
 import {eslint} from '@quilted/sewing-kit-eslint';
 import {prettier} from '@quilted/sewing-kit-prettier';
-import {esnextBuild} from '@quilted/sewing-kit-esnext';
+import {esnextBuild, esnext} from '@quilted/sewing-kit-esnext';
 import {react} from '@quilted/sewing-kit-react';
+import {targets} from '@quilted/sewing-kit-targets';
 import {jest} from '@quilted/sewing-kit-jest';
 import {
   typescriptProject,
   typescriptWorkspace,
 } from '@quilted/sewing-kit-typescript';
+
+import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
+import type {Options as HttpHandlerOptions} from './plugins/http-handler';
 
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
@@ -46,18 +44,53 @@ export {
 };
 export type {App, Service, Package, Project};
 
-export interface HttpHandlerHooks {
-  quiltHttpHandlerRuntimeContent: WaterfallHook<string>;
+export * from './constants';
+
+export interface AppOptions {}
+
+export interface ServiceOptions {
+  /**
+   * Whether this service requires React syntax transformations. Defaults
+   * to `false`.
+   */
+  react?: boolean;
+
+  develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
+  httpHandler?: boolean | Pick<HttpHandlerOptions, 'port'>;
 }
 
-declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends HttpHandlerHooks {}
-  interface BuildServiceConfigurationHooks extends HttpHandlerHooks {}
+export function quiltService({
+  react: useReact = false,
+  develop = true,
+  httpHandler: useHttpHandler = true,
+}: ServiceOptions) {
+  return createProjectPlugin<Service>({
+    name: 'Quilt.Service',
+    create({use}) {
+      use(
+        // Basic tool configuration
+        rollupHooks(),
+        rollupNode(),
+        babelHooks(),
+        babelRollup(),
+        targets(),
+        typescriptProject(),
+        esnext(),
+        useReact && react(),
+        // Quilt http handler setup
+        useHttpHandler &&
+          httpHandler(
+            typeof useHttpHandler === 'boolean' ? undefined : useHttpHandler,
+          ),
+        develop &&
+          useHttpHandler &&
+          httpHandlerDevelopment(
+            typeof develop === 'boolean' ? undefined : develop,
+          ),
+      );
+    },
+  });
 }
-
-export const MAGIC_MODULE_APP_COMPONENT = '__quilt__/App.tsx';
-export const MAGIC_MODULE_APP_ASSET_MANIFEST = '__quilt__/AssetManifest.tsx';
-export const MAGIC_MODULE_HTTP_HANDLER = '__quilt__/HttpHandler.tsx';
 
 // TODO
 export interface PackageOptions {
@@ -86,6 +119,8 @@ export function quiltPackage({
         rollupHooks(),
         rollupNode({bundle: bundleNode}),
         babelHooks(),
+        babelRollup(),
+        targets(),
         typescriptProject(),
         useReact && react(),
         // Builds
@@ -98,7 +133,7 @@ export function quiltPackage({
 
 /**
  * Creates a sewing-kit plugin that configures your workspace to run
- * ESLint and TypeScript.
+ * ESLint, TypeScript, and Jest.
  */
 export function quiltWorkspace() {
   return createWorkspacePlugin({

@@ -1,12 +1,12 @@
 {
-  "name": "@quilted/sewing-kit-babel",
+  "name": "@quilted/sewing-kit-targets",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
-    "directory": "packages/sewing-kit-babel"
+    "directory": "packages/sewing-kit-targets"
   },
   "publishConfig": {
     "access": "public",
@@ -28,22 +28,24 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@babel/core": "^7.14.0",
-    "@rollup/plugin-babel": "^5.0.0"
+    "@babel/preset-env": "^7.14.0",
+    "@types/semver": "^7.0.0",
+    "browserslist": "^4.0.0",
+    "semver": "^7.0.0"
   },
   "peerDependencies": {
+    "@babel/core": "^7.0.0",
     "@quilted/sewing-kit": "^0.1.0",
-    "@quilted/sewing-kit-rollup": "^0.0.0",
-    "rollup": "^2.0.0"
+    "@quilted/sewing-kit-babel": "^0.0.0"
   },
   "peerDependenciesMeta": {
+    "@babel/core": {
+      "optional": true
+    },
     "@quilted/sewing-kit": {
       "optional": true
     },
-    "@quilted/sewing-kit-rollup": {
-      "optional": true
-    },
-    "rollup": {
+    "@quilted/sewing-kit-babel": {
       "optional": true
     }
   },

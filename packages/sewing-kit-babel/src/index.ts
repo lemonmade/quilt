@@ -3,6 +3,8 @@ import type {PluginItem} from '@babel/core';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
+import type {} from '@quilted/sewing-kit-rollup';
+
 export interface BabelHooks {
   /**
    * Babel plugins to use for this project.
@@ -18,6 +20,12 @@ export interface BabelHooks {
    * Babel presets to use for this project.
    */
   babelExtensions: WaterfallHook<string[]>;
+
+  /**
+   * A browserslist-compatible set of environment targets
+   * to use for in Babel plugins.
+   */
+  babelTargets: WaterfallHook<string[]>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -37,6 +45,7 @@ export function babelHooks() {
         babelPlugins: waterfall(),
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
+        babelTargets: waterfall(),
       }));
     },
     develop({hooks}) {
@@ -44,6 +53,7 @@ export function babelHooks() {
         babelPlugins: waterfall(),
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
+        babelTargets: waterfall(),
       }));
     },
     test({hooks}) {
@@ -51,7 +61,60 @@ export function babelHooks() {
         babelPlugins: waterfall(),
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
+        babelTargets: waterfall(),
       }));
+    },
+  });
+}
+
+export function babelRollup() {
+  return createProjectPlugin({
+    name: 'SewingKit.Babel.Rollup',
+    build({configure}) {
+      configure(
+        ({
+          extensions,
+          babelPresets,
+          babelPlugins,
+          babelTargets,
+          babelExtensions,
+          rollupPlugins,
+        }) => {
+          rollupPlugins?.(async (plugins) => {
+            const [
+              {babel},
+              targets,
+              baseExtensions,
+              babelPresetsOption,
+              babelPluginsOption,
+            ] = await Promise.all([
+              import('@rollup/plugin-babel'),
+              babelTargets!.run([]),
+              extensions.run(['.mjs', '.cjs', '.js']),
+              babelPresets!.run([]),
+              babelPlugins!.run([]),
+            ]);
+
+            const finalExtensions = await babelExtensions!.run(baseExtensions);
+
+            return [
+              ...plugins,
+              babel({
+                envName: 'production',
+                extensions: finalExtensions,
+                exclude: 'node_modules/**',
+                babelHelpers: 'bundled',
+                configFile: false,
+                babelrc: false,
+                // @ts-expect-error Babel types have not been updated yet
+                targets,
+                presets: babelPresetsOption,
+                plugins: babelPluginsOption,
+              }),
+            ];
+          });
+        },
+      );
     },
   });
 }

@@ -135,7 +135,7 @@ export interface ConfigurationCollector<
       configuration: ConfigurationHooks,
       context: ConfigurationContext,
     ) => ValueOrPromise<void>,
-  ): void;
+  ): ValueOrPromise<void>;
 }
 
 // TODO
@@ -143,7 +143,9 @@ export interface ProjectStepAdderContext<
   ProjectConfigurationHooks,
   ProjectOptions,
 > {
-  configuration(options?: ProjectOptions): Promise<ProjectConfigurationHooks>;
+  configuration(
+    options?: ResolvedOptions<ProjectOptions>,
+  ): Promise<ProjectConfigurationHooks>;
 }
 
 export interface ProjectStepAdder<

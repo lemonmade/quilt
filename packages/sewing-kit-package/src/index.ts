@@ -2,7 +2,6 @@ import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 import {MissingPluginError, createProjectPlugin} from '@quilted/sewing-kit';
 import type {Package, PackageBinary} from '@quilted/sewing-kit';
 
-import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-rollup';
 
 export type PackageModuleType = 'commonjs' | 'esmodules';
@@ -40,16 +39,7 @@ export function packageBuild({commonjs = false}: Options = {}) {
 
       configure(
         (
-          {
-            extensions,
-            outputDirectory,
-            rollupInput,
-            rollupPlugins,
-            rollupOutputs,
-            babelPresets,
-            babelPlugins,
-            babelExtensions,
-          },
+          {outputDirectory, rollupInput, rollupOutputs},
           {options: {packageBuildModule}},
         ) => {
           if (packageBuildModule == null) return;
@@ -61,51 +51,11 @@ export function packageBuild({commonjs = false}: Options = {}) {
             );
           }
 
-          if (babelPresets == null) {
-            throw new MissingPluginError(
-              'babelHooks',
-              '@quilted/sewing-kit-babel',
-            );
-          }
-
           outputDirectory?.((directory) =>
             join(directory, packageBuildModule === 'commonjs' ? 'cjs' : 'esm'),
           );
 
           rollupInput?.(() => getEntryFiles(project));
-
-          // Add the Babel plugin to process source code
-          rollupPlugins?.(async (plugins) => {
-            const [
-              {babel},
-              baseExtensions,
-              babelPresetsOption,
-              babelPluginsOption,
-            ] = await Promise.all([
-              import('@rollup/plugin-babel'),
-              extensions.run(['.mjs', '.cjs', '.js']),
-              babelPresets!.run([['@babel/preset-env']]),
-              babelPlugins!.run([]),
-            ]);
-
-            const finalExtensions = await babelExtensions!.run(baseExtensions);
-
-            return [
-              ...plugins,
-              babel({
-                extensions: finalExtensions,
-                envName: 'production',
-                exclude: 'node_modules/**',
-                babelHelpers: 'bundled',
-                configFile: false,
-                babelrc: false,
-                // @ts-expect-error Babel types have not been updated yet
-                targets: 'node 14',
-                presets: babelPresetsOption,
-                plugins: babelPluginsOption,
-              }),
-            ];
-          });
 
           // Creates outputs for the current build type
           rollupOutputs?.(async (outputs) => {

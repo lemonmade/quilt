@@ -54,7 +54,7 @@ export function typescriptProject() {
 
           jestTransforms?.(async (transforms) => {
             const [presets, plugins] = await Promise.all([
-              babelPresets?.run(['@babel/preset-env']),
+              babelPresets?.run([]),
               babelPlugins?.run([]),
             ]);
 

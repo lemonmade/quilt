@@ -31,7 +31,7 @@ export class PackageJson {
   }
 
   readonly path: string;
-  private readonly raw: PackageJsonInternal;
+  readonly raw: PackageJsonInternal;
 
   constructor(root: string) {
     this.path = join(root, 'package.json');
