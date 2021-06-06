@@ -31,15 +31,6 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
 
-      - uses: actions/cache@v1
-        id: typescript-cache
-        name: Restore TypeScript cache
-        with:
-          path: .sewing-kit/cache/typescript/
-          key: ${{ runner.os }}-typescript-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-typescript-v1-
-
       - name: Type check
         run: yarn type-check
 
@@ -75,10 +66,10 @@ jobs:
         id: jest-cache
         name: Restore jest cache
         with:
-          path: .sewing-kit/cache/jest/
-          key: ${{ runner.os }}-jest-${{ github.sha }}
+          path: .sewing-kit/temp/jest/cache
+          key: ${{ runner.os }}-jest-v1-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-jest-
+            ${{ runner.os }}-jest-v1-
 
       - name: Test
         run: yarn test
@@ -115,10 +106,10 @@ jobs:
         id: eslint-cache
         name: Restore ESLint cache
         with:
-          path: .sewing-kit/cache/eslint
-          key: ${{ runner.os }}-eslint-${{ github.sha }}
+          path: .sewing-kit/temp/eslint/cache
+          key: ${{ runner.os }}-eslint-v1-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-eslint-
+            ${{ runner.os }}-eslint-v1-
 
       - name: Lint
         run: yarn lint

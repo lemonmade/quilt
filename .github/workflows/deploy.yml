@@ -30,21 +30,12 @@ jobs:
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
         run: yarn install --immutable
-
-      - uses: actions/cache@v1
-        id: typescript-cache
-        name: Restore TypeScript cache
-        with:
-          path: .sewing-kit/cache/typescript/
-          key: ${{ runner.os }}-typescript-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-typescript-
 
       - name: Build
         run: yarn build
