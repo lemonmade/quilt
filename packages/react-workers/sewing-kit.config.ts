@@ -7,5 +7,5 @@ export default createPackage((pkg) => {
     source: './src/worker',
     runtime: Runtime.Browser,
   });
-  pkg.use(quiltPackage());
+  pkg.use(quiltPackage({react: true}));
 });

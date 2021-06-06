@@ -83,7 +83,7 @@ export function packageBuild({commonjs = false}: Options = {}) {
               babelPluginsOption,
             ] = await Promise.all([
               import('@rollup/plugin-babel'),
-              extensions.run(['.mjs', '.js']),
+              extensions.run(['.mjs', '.cjs', '.js']),
               babelPresets!.run([['@babel/preset-env']]),
               babelPlugins!.run([]),
             ]);

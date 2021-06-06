@@ -87,7 +87,7 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
     switch (kind) {
       case ConfigurationKind.Package: {
         const pkg = new Package({
-          entries: [{root: './src/index', runtime: (options as any).runtime}],
+          entries: [],
           ...options,
         } as any);
         packages.add(pkg);

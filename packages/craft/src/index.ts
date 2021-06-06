@@ -25,6 +25,7 @@ import type {RollupNodeOptions} from '@quilted/sewing-kit-rollup';
 import {eslint} from '@quilted/sewing-kit-eslint';
 import {prettier} from '@quilted/sewing-kit-prettier';
 import {esnextBuild} from '@quilted/sewing-kit-esnext';
+import {react} from '@quilted/sewing-kit-react';
 import {jest} from '@quilted/sewing-kit-jest';
 import {
   typescriptProject,
@@ -61,6 +62,7 @@ export const MAGIC_MODULE_HTTP_HANDLER = '__quilt__/HttpHandler.tsx';
 // TODO
 export interface PackageOptions {
   build?: boolean;
+  react?: boolean;
   commonjs?: PackageBuildOptions['commonjs'];
   bundleNode?: RollupNodeOptions['bundle'];
 }
@@ -72,6 +74,7 @@ export interface PackageOptions {
  */
 export function quiltPackage({
   build = true,
+  react: useReact = false,
   commonjs,
   bundleNode,
 }: PackageOptions = {}) {
@@ -84,6 +87,7 @@ export function quiltPackage({
         rollupNode({bundle: bundleNode}),
         babelHooks(),
         typescriptProject(),
+        useReact && react(),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),

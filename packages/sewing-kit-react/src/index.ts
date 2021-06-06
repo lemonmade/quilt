@@ -79,12 +79,17 @@ export function react({
 
         presets.push([
           '@babel/preset-react',
-          {
-            runtime,
-            importSource: runtime === 'classic' ? undefined : importSource,
-            development,
-            useBuiltIns: true,
-          },
+          runtime === 'automatic'
+            ? {
+                runtime,
+                importSource,
+                development,
+              }
+            : {
+                runtime,
+                development,
+                useBuiltIns: true,
+              },
         ]);
 
         return presets;

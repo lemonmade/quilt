@@ -27,6 +27,11 @@ export interface RollupHooks {
   rollupPlugins: WaterfallHook<Plugin[]>;
 
   /**
+   * Additional modules to treat as external for this build.
+   */
+  rollupExternals: WaterfallHook<(string | RegExp)[]>;
+
+  /**
    * Adjustments to make to the entire rollup input option
    * for this project, excluding the `outputs` (which can be
    * configured with the `rollupOutputs` hook instead).
@@ -85,6 +90,7 @@ export function rollupHooks() {
       hooks<RollupHooks>(({waterfall}) => ({
         rollupInput: waterfall(),
         rollupPlugins: waterfall(),
+        rollupExternals: waterfall(),
         rollupInputOptions: waterfall(),
         rollupOutputs: waterfall(),
       }));
@@ -93,6 +99,7 @@ export function rollupHooks() {
       hooks<RollupHooks>(({waterfall}) => ({
         rollupInput: waterfall(),
         rollupPlugins: waterfall(),
+        rollupExternals: waterfall(),
         rollupInputOptions: waterfall(),
         rollupOutputs: waterfall(),
       }));
@@ -285,27 +292,31 @@ export function rollupNode<ProjectType extends Project = Project>({
 export async function buildWithRollup<ProjectType extends Project = Project>({
   rollupInput,
   rollupPlugins,
+  rollupExternals,
   rollupInputOptions,
   rollupOutputs,
 }: ResolvedBuildProjectConfigurationHooks<ProjectType>) {
   if (
     rollupInput == null ||
     rollupPlugins == null ||
+    rollupExternals == null ||
     rollupInputOptions == null ||
     rollupOutputs == null
   ) {
     throw new MissingPluginError('rollupHooks', '@quilted/sewing-kit-rollup');
   }
 
-  const [{rollup}, inputs, plugins, outputs] = await Promise.all([
+  const [{rollup}, inputs, plugins, externals, outputs] = await Promise.all([
     import('rollup'),
-    rollupInput!.run([]),
-    rollupPlugins!.run([]),
-    rollupOutputs!.run([]),
+    rollupInput.run([]),
+    rollupPlugins.run([]),
+    rollupExternals.run([]),
+    rollupOutputs.run([]),
   ]);
 
   const inputOptions = await rollupInputOptions!.run({
     input: inputs,
+    external: externals,
     plugins,
     onwarn(warning, defaultHandler) {
       // Ignore warnings about empty bundles by default.

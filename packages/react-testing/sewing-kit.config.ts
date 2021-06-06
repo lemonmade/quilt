@@ -21,5 +21,5 @@ export default createPackage((pkg) => {
     name: 'environment',
     source: './src/environment',
   });
-  pkg.use(quiltPackage());
+  pkg.use(quiltPackage({react: true}));
 });

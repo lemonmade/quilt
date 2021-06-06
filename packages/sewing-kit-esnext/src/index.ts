@@ -57,7 +57,16 @@ export function esnextBuild() {
 
       configure(
         (
-          {outputDirectory, rollupInput, rollupPlugins, rollupOutputs},
+          {
+            extensions,
+            outputDirectory,
+            rollupInput,
+            rollupPlugins,
+            rollupOutputs,
+            babelPresets,
+            babelPlugins,
+            babelExtensions,
+          },
           {options: {esnext = false}},
         ) => {
           if (!esnext) return;
@@ -74,9 +83,33 @@ export function esnextBuild() {
 
           // Add the Babel plugin to process source code
           rollupPlugins?.(async (plugins) => {
-            const {default: esbuild} = await import('rollup-plugin-esbuild');
+            const [
+              {babel},
+              baseExtensions,
+              babelPresetsOption,
+              babelPluginsOption,
+            ] = await Promise.all([
+              import('@rollup/plugin-babel'),
+              extensions.run(['.mjs', '.cjs', '.js']),
+              babelPresets!.run([]),
+              babelPlugins!.run([]),
+            ]);
 
-            return [...plugins, esbuild({target: 'esnext'})];
+            const finalExtensions = await babelExtensions!.run(baseExtensions);
+
+            return [
+              ...plugins,
+              babel({
+                envName: 'production',
+                extensions: finalExtensions,
+                exclude: 'node_modules/**',
+                babelHelpers: 'bundled',
+                configFile: false,
+                babelrc: false,
+                presets: babelPresetsOption,
+                plugins: babelPluginsOption,
+              }),
+            ];
           });
 
           // Creates the esnext outputs
