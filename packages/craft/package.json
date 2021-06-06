@@ -28,6 +28,7 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@quilted/eslint": "^0.0.0",
     "@quilted/sewing-kit": "^0.1.1",
     "@quilted/sewing-kit-babel": "^0.0.0",
     "@quilted/sewing-kit-eslint": "^0.0.0",
@@ -38,7 +39,8 @@
     "@quilted/sewing-kit-react": "^0.0.0",
     "@quilted/sewing-kit-rollup": "^0.0.0",
     "@quilted/sewing-kit-targets": "^0.0.0",
-    "@quilted/sewing-kit-typescript": "^0.0.0"
+    "@quilted/sewing-kit-typescript": "^0.0.0",
+    "@quilted/typescript": "^0.1.1"
   },
   "peerDependencies": {
     "typescript": ">=4.0.0 <5.0.0"

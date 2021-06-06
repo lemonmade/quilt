@@ -27,6 +27,7 @@ import {
   typescriptWorkspace,
 } from '@quilted/sewing-kit-typescript';
 
+import {serviceBuild} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
 
@@ -54,14 +55,15 @@ export interface ServiceOptions {
    * to `false`.
    */
   react?: boolean;
-
+  build?: boolean;
   develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
   httpHandler?: boolean | Pick<HttpHandlerOptions, 'port'>;
 }
 
 export function quiltService({
-  react: useReact = false,
+  build = true,
   develop = true,
+  react: useReact = false,
   httpHandler: useHttpHandler = true,
 }: ServiceOptions) {
   return createProjectPlugin<Service>({
@@ -77,7 +79,8 @@ export function quiltService({
         typescriptProject(),
         esnext(),
         useReact && react(),
-        // Quilt http handler setup
+        // Build and http handler setup
+        build && serviceBuild(),
         useHttpHandler &&
           httpHandler(
             typeof useHttpHandler === 'boolean' ? undefined : useHttpHandler,
