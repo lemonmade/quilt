@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,19 +28,19 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/eslint": "^0.0.0",
-    "@quilted/sewing-kit": "^0.1.1",
-    "@quilted/sewing-kit-babel": "^0.0.0",
-    "@quilted/sewing-kit-eslint": "^0.0.0",
-    "@quilted/sewing-kit-esnext": "^0.0.0",
-    "@quilted/sewing-kit-jest": "^0.0.0",
-    "@quilted/sewing-kit-package": "^0.0.0",
-    "@quilted/sewing-kit-prettier": "^0.0.0",
-    "@quilted/sewing-kit-react": "^0.0.0",
-    "@quilted/sewing-kit-rollup": "^0.0.0",
-    "@quilted/sewing-kit-targets": "^0.0.0",
-    "@quilted/sewing-kit-typescript": "^0.0.0",
-    "@quilted/typescript": "^0.1.1"
+    "@quilted/eslint": "^0.1.0",
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-babel": "^0.1.0",
+    "@quilted/sewing-kit-eslint": "^0.1.0",
+    "@quilted/sewing-kit-esnext": "^0.1.0",
+    "@quilted/sewing-kit-jest": "^0.1.0",
+    "@quilted/sewing-kit-package": "^0.1.0",
+    "@quilted/sewing-kit-prettier": "^0.1.0",
+    "@quilted/sewing-kit-react": "^0.1.0",
+    "@quilted/sewing-kit-rollup": "^0.1.0",
+    "@quilted/sewing-kit-targets": "^0.1.0",
+    "@quilted/sewing-kit-typescript": "^0.1.0",
+    "@quilted/typescript": "^0.2.0"
   },
   "peerDependencies": {
     "typescript": ">=4.0.0 <5.0.0"
