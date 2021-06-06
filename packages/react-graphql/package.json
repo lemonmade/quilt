@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-graphql",
   "type": "module",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -34,9 +34,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/graphql": "^0.4.1",
-    "@quilted/react-async": "^0.3.1",
-    "@quilted/useful-types": "^0.2.1"
+    "@quilted/graphql": "^0.4.2",
+    "@quilted/react-async": "^0.3.2",
+    "@quilted/useful-types": "^0.2.2"
   },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
