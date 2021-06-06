@@ -34,7 +34,7 @@
     "jest-watch-typeahead": "^0.6.0"
   },
   "peerDependencies": {
-    "@quilted/sewing-kit": "^0.1.0"
+    "@quilted/sewing-kit": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "@quilted/sewing-kit": {

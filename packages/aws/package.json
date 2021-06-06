@@ -52,7 +52,7 @@
   },
   "peerDependencies": {
     "@quilted/craft": "^0.0.0",
-    "@quilted/sewing-kit": "^0.1.0"
+    "@quilted/sewing-kit": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "@quilted/craft": {

@@ -34,9 +34,9 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
-    "@quilted/sewing-kit": "^0.1.0",
-    "@quilted/sewing-kit-babel": "^0.0.0",
-    "@quilted/sewing-kit-rollup": "^0.0.0"
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-babel": "^0.1.0",
+    "@quilted/sewing-kit-rollup": "^0.1.0"
   },
   "peerDependenciesMeta": {
     "@babel/core": {

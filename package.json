@@ -20,7 +20,7 @@
     "deploy": "lerna publish from-package --yes --no-verify-access"
   },
   "devDependencies": {
-    "@quilted/craft": "^0.0.0",
+    "@quilted/craft": "^0.1.0",
     "lerna": "3.22.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

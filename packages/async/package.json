@@ -52,7 +52,7 @@
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@quilted/sewing-kit": "^0.0.0",
+    "@quilted/sewing-kit": "^0.2.0",
     "@quilted/sewing-kit-babel": "^0.0.0"
   },
   "peerDependenciesMeta": {
