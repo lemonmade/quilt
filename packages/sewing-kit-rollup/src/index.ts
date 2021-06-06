@@ -14,6 +14,16 @@ import type {
   ResolvedDevelopProjectConfigurationHooks,
 } from '@quilted/sewing-kit';
 
+// TODO
+export interface RollupNodeBundle {
+  readonly builtins?: boolean;
+  readonly dependencies?: boolean;
+  readonly devDependencies?: boolean;
+  readonly peerDependencies?: boolean;
+  readonly exclude?: (string | RegExp)[];
+  readonly include?: (string | RegExp)[];
+}
+
 export interface RollupHooks {
   /**
    * Input files for that rollup will use as the entry
@@ -64,6 +74,18 @@ export interface RollupNodeHooks {
   rollupNodeResolveOptions: WaterfallHook<RollupNodeResolveOptions>;
 
   /**
+   * Controls how dependencies from node_modules will be bundled into
+   * your rollup build. This can either be `true`, indicating that all
+   * dependencies (except node builtins, like `fs`) will be bundled;
+   * `false`, indicating that all node dependencies should be treated as
+   * external in the resulting build; or a `RollupNodeBundle` object
+   * that gives fine-grained control over how node dependencies are
+   * bundled. The default is `true` for packages, and `false` for all
+   * other projects.
+   */
+  rollupNodeBundle: WaterfallHook<boolean | RollupNodeBundle>;
+
+  /**
    * The options that will be passed to the rollup commonjs plugin,
    * if it is included.
    */
@@ -108,16 +130,6 @@ export function rollupHooks() {
 }
 
 // TODO
-export interface RollupNodeBundle {
-  readonly builtins?: boolean;
-  readonly dependencies?: boolean;
-  readonly devDependencies?: boolean;
-  readonly peerDependencies?: boolean;
-  readonly exclude?: (string | RegExp)[];
-  readonly include?: (string | RegExp)[];
-}
-
-// TODO
 export interface RollupNodeOptions {
   readonly bundle?: boolean | RollupNodeBundle;
 }
@@ -138,6 +150,7 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
+        rollupNodeBundle: waterfall(),
         rollupCommonJSOptions: waterfall(),
       }));
 
@@ -150,6 +163,7 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
+        rollupNodeBundle: waterfall(),
         rollupCommonJSOptions: waterfall(),
       }));
 
@@ -164,6 +178,7 @@ export function rollupNode<ProjectType extends Project = Project>({
     {
       extensions,
       rollupPlugins,
+      rollupNodeBundle,
       rollupNodeExtensions,
       rollupNodeExportConditions,
       rollupNodeResolveOptions,
@@ -206,8 +221,10 @@ export function rollupNode<ProjectType extends Project = Project>({
 
       let nodeExternalsPlugin: import('rollup').Plugin;
 
-      const shouldBundle =
-        explicitShouldBundle ?? project.kind !== ProjectKind.Package;
+      const defaultShouldBundle = project.kind !== ProjectKind.Package;
+      const shouldBundle = await rollupNodeBundle!.run(
+        explicitShouldBundle ?? defaultShouldBundle,
+      );
 
       if (shouldBundle === true) {
         // If the consumer wants to bundle node dependencies, we use our
@@ -241,9 +258,9 @@ export function rollupNode<ProjectType extends Project = Project>({
         // options to the same value as using `bundle: true`
         const {
           builtins: bundleBuiltins = false,
-          dependencies: bundleDependencies = true,
-          devDependencies: bundleDevDependencies = true,
-          peerDependencies: bundlePeerDependencies = true,
+          dependencies: bundleDependencies = defaultShouldBundle,
+          devDependencies: bundleDevDependencies = defaultShouldBundle,
+          peerDependencies: bundlePeerDependencies = defaultShouldBundle,
           include: alwaysBundleDependencies,
           exclude: neverBundleDependencies,
         } = shouldBundle;

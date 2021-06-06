@@ -57,16 +57,7 @@ export function esnextBuild() {
 
       configure(
         (
-          {
-            extensions,
-            outputDirectory,
-            rollupInput,
-            rollupPlugins,
-            rollupOutputs,
-            babelPresets,
-            babelPlugins,
-            babelExtensions,
-          },
+          {outputDirectory, rollupInput, rollupOutputs},
           {options: {esnext = false}},
         ) => {
           if (!esnext) return;
@@ -79,37 +70,6 @@ export function esnextBuild() {
                 project.fs.resolvePath(entry.source),
               ),
             );
-          });
-
-          // Add the Babel plugin to process source code
-          rollupPlugins?.(async (plugins) => {
-            const [
-              {babel},
-              baseExtensions,
-              babelPresetsOption,
-              babelPluginsOption,
-            ] = await Promise.all([
-              import('@rollup/plugin-babel'),
-              extensions.run(['.mjs', '.cjs', '.js']),
-              babelPresets!.run([]),
-              babelPlugins!.run([]),
-            ]);
-
-            const finalExtensions = await babelExtensions!.run(baseExtensions);
-
-            return [
-              ...plugins,
-              babel({
-                envName: 'production',
-                extensions: finalExtensions,
-                exclude: 'node_modules/**',
-                babelHelpers: 'bundled',
-                configFile: false,
-                babelrc: false,
-                presets: babelPresetsOption,
-                plugins: babelPluginsOption,
-              }),
-            ];
           });
 
           // Creates the esnext outputs
@@ -135,6 +95,15 @@ export function esnextBuild() {
               import('@quilted/sewing-kit-rollup'),
             ]);
 
+            // We want to keep the output code as close as possible to source
+            // code, so we remove presets that will transpile language features.
+            configure.babelPresets?.((presets) => {
+              return presets.filter((preset) => {
+                const presetName = Array.isArray(preset) ? preset[0] : preset;
+                return presetName !== '@babel/preset-env';
+              });
+            });
+
             await buildWithRollup(configure);
           },
         }),
@@ -148,11 +117,12 @@ export function esnextBuild() {
  * for Node.js dependencies.
  */
 export function esnext() {
-  return createProjectPlugin<Package>({
+  return createProjectPlugin({
     name: 'SewingKit.ESNextConsumer',
     build({configure}) {
       configure(
         ({
+          babelTargets,
           babelPresets,
           babelPlugins,
           rollupPlugins,
@@ -165,10 +135,11 @@ export function esnext() {
 
           // Add the Babel plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {
-            const [{babel}, babelPresetsOption, babelPluginsOption] =
+            const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
               await Promise.all([
                 import('@rollup/plugin-babel'),
-                babelPresets!.run([['@babel/preset-env']]),
+                babelTargets!.run([]),
+                babelPresets!.run([]),
                 babelPlugins!.run([]),
               ]);
 
@@ -177,10 +148,13 @@ export function esnext() {
               babel({
                 envName: 'production',
                 include: '**/*.esnext',
+                // Forces this to run on node_modules
                 exclude: [],
                 babelHelpers: 'bundled',
                 configFile: false,
                 babelrc: false,
+                // @ts-expect-error Babel types have not been updated yet
+                targets,
                 presets: babelPresetsOption,
                 plugins: babelPluginsOption,
               }),

@@ -37,6 +37,7 @@
     "@quilted/sewing-kit-prettier": "^0.0.0",
     "@quilted/sewing-kit-react": "^0.0.0",
     "@quilted/sewing-kit-rollup": "^0.0.0",
+    "@quilted/sewing-kit-targets": "^0.0.0",
     "@quilted/sewing-kit-typescript": "^0.0.0"
   },
   "peerDependencies": {

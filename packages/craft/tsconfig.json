@@ -15,6 +15,7 @@
     {"path": "../sewing-kit-package"},
     {"path": "../sewing-kit-rollup"},
     {"path": "../sewing-kit-react"},
+    {"path": "../sewing-kit-targets"},
     {"path": "../sewing-kit-typescript"}
   ]
 }
