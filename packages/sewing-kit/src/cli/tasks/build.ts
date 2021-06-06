@@ -35,15 +35,25 @@ export async function runBuild(
 ) {
   const {ui} = context;
 
-  const {project: projectSteps} = await loadStepsForTask(Task.Build, {
-    ...context,
-    options,
-    coreHooksForProject: () => ({
-      extensions: createWaterfallHook<string[]>(),
-      outputDirectory: createWaterfallHook<string>(),
-    }),
-    coreHooksForWorkspace: () => ({}),
-  });
+  const {workspace: workspaceSteps, project: projectSteps} =
+    await loadStepsForTask(Task.Build, {
+      ...context,
+      options,
+      coreHooksForProject: () => ({
+        extensions: createWaterfallHook<string[]>(),
+        outputDirectory: createWaterfallHook<string>(),
+      }),
+      coreHooksForWorkspace: () => ({}),
+    });
+
+  if (workspaceSteps.length > 0) {
+    ui.log(`Running ${workspaceSteps.length} steps for workspace`);
+
+    for (const step of workspaceSteps) {
+      ui.log(`Running step: ${step.label} (${step.name})`);
+      await step.run(createStepRunner({ui}));
+    }
+  }
 
   for (const {project, steps} of projectSteps) {
     ui.log(`Running ${steps.length} steps for project ${project.id}`);

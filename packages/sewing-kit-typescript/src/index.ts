@@ -12,6 +12,7 @@ export interface TypeScriptHooks {
 
 declare module '@quilted/sewing-kit' {
   interface TypeCheckWorkspaceConfigurationHooks extends TypeScriptHooks {}
+  interface BuildWorkspaceConfigurationHooks extends TypeScriptHooks {}
 }
 
 /**
@@ -84,6 +85,40 @@ export function typescriptProject() {
 export function typescriptWorkspace() {
   return createWorkspacePlugin({
     name: 'SewingKit.TypeScript',
+    build({workspace, hooks, run}) {
+      hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
+
+      // We only need to run a TypeScript build if there are public packages
+      if (
+        workspace.packages.every((pkg) => pkg.packageJson?.private ?? false)
+      ) {
+        return;
+      }
+
+      run((step, {configuration}) =>
+        step({
+          name: 'SewingKit.TypeScript',
+          label:
+            'Building type definitions for public packages in the workspace',
+          async run(step) {
+            const {typescriptHeap} = await configuration();
+            const heap = await typescriptHeap!.run(undefined);
+            const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
+
+            await step.exec(
+              'node',
+              [
+                ...heapArguments,
+                workspace.fs.resolvePath('node_modules/.bin/tsc'),
+                '--build',
+                '--pretty',
+              ],
+              {env: {FORCE_COLOR: '1', ...process.env}},
+            );
+          },
+        }),
+      );
+    },
     lint({configure}) {
       configure(({eslintExtensions}) => {
         // Add TypeScript linting to ESLint
