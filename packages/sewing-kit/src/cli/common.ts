@@ -500,6 +500,7 @@ export class StepExecError extends DiagnosticError {
       title: `Command \`${command}\` failed`,
       content: error.stderr?.trim() || error.stdout?.trim(),
     });
+    console.log(error);
   }
 }
 

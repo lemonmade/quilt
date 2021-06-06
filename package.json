@@ -13,7 +13,6 @@
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
     "prerelease": "yarn build",
-    "g": "npx -p @babel/core -p @babel/node babel-node --extensions .ts,.tsx,.mjs,.js --presets @babel/preset-typescript,@babel/preset-env ./scripts/generate.ts",
     "version-bump": "lerna version",
     "deploy": "lerna publish from-package --yes --no-verify-access"
   },
