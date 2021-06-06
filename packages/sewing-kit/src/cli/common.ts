@@ -498,9 +498,10 @@ export class StepExecError extends DiagnosticError {
   constructor(command: string, private readonly error: any) {
     super({
       title: `Command \`${command}\` failed`,
-      content: error.stderr?.trim() || error.stdout?.trim(),
+      content: [error.stderr?.trim(), error.stdout?.trim()]
+        .filter(Boolean)
+        .join('\n'),
     });
-    console.log(error);
   }
 }
 

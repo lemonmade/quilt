@@ -1,8 +1,4 @@
-import {
-  createProjectPlugin,
-  createWorkspacePlugin,
-  DiagnosticError,
-} from '@quilted/sewing-kit';
+import {createProjectPlugin, createWorkspacePlugin} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-babel';
@@ -116,23 +112,16 @@ export function typescriptWorkspace() {
             const heap = await typescriptHeap!.run(undefined);
             const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
 
-            try {
-              await step.exec(
-                'node',
-                [
-                  ...heapArguments,
-                  workspace.fs.resolvePath('node_modules/.bin/tsc'),
-                  '--build',
-                  '--pretty',
-                ],
-                {env: {FORCE_COLOR: '1', ...process.env}},
-              );
-            } catch (error) {
-              throw new DiagnosticError({
-                title: 'TypeScript found type errors',
-                content: error.stderr || error.stdout,
-              });
-            }
+            await step.exec(
+              'node',
+              [
+                ...heapArguments,
+                workspace.fs.resolvePath('node_modules/.bin/tsc'),
+                '--build',
+                '--pretty',
+              ],
+              {env: {FORCE_COLOR: '1', ...process.env}},
+            );
           },
         }),
       );
