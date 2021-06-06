@@ -31,7 +31,7 @@ const DEFAULT_EXTENSIONS = ['.mjs', '.cjs', '.js'];
 export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
   return createWorkspacePlugin({
     name: 'SewingKit.ESLint',
-    lint({hooks, configure, run, options}) {
+    lint({hooks, configure, run, options, internal}) {
       hooks<ESLintHooks>(({waterfall}) => ({
         eslintExtensions: waterfall(),
       }));
@@ -62,7 +62,13 @@ export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
               'eslint',
               [
                 '.',
-                '--max-warnings=0',
+                '--max-warnings',
+                '0',
+                '--cache',
+                '--cache-location',
+                // ESLint requires the trailing slash, don’t remove it
+                // @see https://eslint.org/docs/user-guide/command-line-interface#-cache-location
+                `${internal.fs.tempPath('eslint/cache')}/`,
                 ...(options.fix ? ['--fix'] : []),
                 ...extensions.map((ext) => ['--ext', ext]).flat(),
               ],

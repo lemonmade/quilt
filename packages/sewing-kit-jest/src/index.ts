@@ -202,6 +202,7 @@ export function jest() {
                 setupFilesAfterEnv: setupTestsFiles,
                 watchPathIgnorePatterns: watchIgnore,
                 transform,
+                cacheDirectory: internal.fs.tempPath('jest/cache/workspace'),
               });
 
               return config;
@@ -287,6 +288,10 @@ export function jest() {
                     setupFilesAfterEnv: setupTestsFiles,
                     watchPathIgnorePatterns: watchIgnore,
                     transform,
+                    cacheDirectory: internal.fs.tempPath(
+                      'jest/cache',
+                      project.name,
+                    ),
                   });
 
                   return projectConfig;
@@ -328,7 +333,6 @@ export function jest() {
               // updateSnapshot: updateSnapshots,
               // runInBand: debug,
               // forceExit: debug,
-              // cacheDirectory: api.cachePath('jest'),
             });
 
             await jest.run(toArgs(flags));
