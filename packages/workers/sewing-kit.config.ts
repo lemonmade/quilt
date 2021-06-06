@@ -1,22 +1,21 @@
-import {createPackage, Runtime} from '@sewing-kit/config';
-import {quiltPackage} from '../../config/sewing-kit';
+import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry({root: './src/index'});
+  pkg.entry({source: './src/index'});
   pkg.entry({
     name: 'worker',
-    root: './src/worker',
-    runtime: Runtime.WebWorker,
+    source: './src/worker',
+    runtime: Runtime.Browser,
   });
   pkg.entry({
     name: 'rollup',
-    root: './src/rollup-parts',
+    source: './src/rollup-parts',
     runtime: Runtime.Node,
   });
-  pkg.entry({name: 'babel', root: './src/babel', runtime: Runtime.Node});
+  pkg.entry({name: 'babel', source: './src/babel', runtime: Runtime.Node});
   pkg.entry({
     name: 'sewing-kit',
-    root: './src/sewing-kit',
+    source: './src/sewing-kit',
     runtime: Runtime.Node,
   });
   pkg.use(quiltPackage());

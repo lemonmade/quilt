@@ -21,6 +21,7 @@ export {
   PackageEntry,
   Service,
   Workspace,
+  TargetRuntime,
 } from './model';
 export type {Project} from './model';
 

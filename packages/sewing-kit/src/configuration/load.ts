@@ -41,7 +41,7 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
     readonly (WorkspacePlugin | ProjectPlugin<any>)[]
   >();
 
-  const configFiles = await glob('**/sewing-kit.next.config.*', {
+  const configFiles = await glob('**/sewing-kit.config.*', {
     cwd: root,
     ignore: ['**/node_modules/**', '**/build/**'],
     absolute: true,

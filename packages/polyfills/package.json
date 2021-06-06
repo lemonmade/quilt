@@ -1,45 +1,47 @@
 {
   "name": "@quilted/polyfills",
+  "type": "module",
   "version": "0.1.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/facebook/react.git",
+    "directory": "packages/polyfills"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./base": {
-      "esnext": "./base.esnext",
-      "import": "./base.mjs",
-      "require": "./base.js"
+      "sewing-kit:esnext": "./build/esnext/base.esnext",
+      "import": "./build/esm/base.mjs"
     },
     "./fetch": {
-      "esnext": "./fetch.esnext",
-      "import": "./fetch.mjs",
-      "require": "./fetch.js"
+      "sewing-kit:esnext": "./build/esnext/fetch.esnext",
+      "import": "./build/esm/fetch.mjs"
     },
     "./fetch.browser": {
-      "esnext": "./fetch.browser.esnext",
-      "import": "./fetch.browser.mjs",
-      "require": "./fetch.browser.js"
+      "sewing-kit:esnext": "./build/esnext/fetch.browser.esnext",
+      "import": "./build/esm/fetch.browser.mjs"
     },
     "./fetch.node": {
-      "esnext": "./fetch.node.esnext",
-      "import": "./fetch.node.mjs",
-      "require": "./fetch.node.js"
+      "sewing-kit:esnext": "./build/esnext/fetch.node.esnext",
+      "import": "./build/esm/fetch.node.mjs"
     },
     "./noop": {
-      "esnext": "./noop.esnext",
-      "import": "./noop.mjs",
-      "require": "./noop.js"
+      "sewing-kit:esnext": "./build/esnext/noop.esnext",
+      "import": "./build/esm/noop.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/*.d.ts"
+      ]
     }
   },
   "license": "MIT",

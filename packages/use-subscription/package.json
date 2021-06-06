@@ -1,21 +1,29 @@
 {
   "name": "@quilted/use-subscription",
+  "type": "module",
   "version": "0.1.7",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/use-subscription"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
-    },
-    "./": "./"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
   },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
@@ -25,7 +33,6 @@
       "optional": true
     }
   },
-  "license": "MIT",
   "sideEffects": false,
   "eslintConfig": {
     "extends": [

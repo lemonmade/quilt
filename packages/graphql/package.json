@@ -1,25 +1,81 @@
 {
   "name": "@quilted/graphql",
+  "type": "module",
   "version": "0.3.10",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/graphql"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./"
+    "./transform": {
+      "sewing-kit:esnext": "./build/esnext/transform.esnext",
+      "import": "./build/esm/transform.mjs"
+    },
+    "./typescript": {
+      "sewing-kit:esnext": "./build/esnext/typescript/index.esnext",
+      "import": "./build/esm/typescript/index.mjs"
+    },
+    "./fixtures": {
+      "sewing-kit:esnext": "./build/esnext/fixtures/index.esnext",
+      "import": "./build/esm/fixtures/index.mjs"
+    },
+    "./matchers": {
+      "sewing-kit:esnext": "./build/esnext/matchers/index.esnext",
+      "import": "./build/esm/matchers/index.mjs"
+    },
+    "./rollup": {
+      "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
+      "import": "./build/esm/rollup-parts.mjs"
+    },
+    "./jest": {
+      "sewing-kit:esnext": "./build/esnext/jest-parts.esnext",
+      "import": "./build/esm/jest-parts.mjs"
+    },
+    "./sewing-kit": {
+      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "import": "./build/esm/sewing-kit.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "transform": [
+        "./build/typescript/transform.d.ts"
+      ],
+      "fixtures": [
+        "./build/typescript/fixtures/index.d.ts"
+      ],
+      "typescript": [
+        "./build/typescript/typescript/index.d.ts"
+      ],
+      "matchers": [
+        "./build/typescript/matchers/index.d.ts"
+      ],
+      "rollup": [
+        "./build/typescript/rollup-parts.d.ts"
+      ],
+      "jest": [
+        "./build/typescript/jest-parts.d.ts"
+      ],
+      "sewing-kit": [
+        "./build/typescript/sewing-kit.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
   },
   "bin": {
-    "quilt-graphql-typescript": "./bin/quilt-graphql-typescript"
+    "quilt-graphql-typescript": "./bin/quilt-graphql-typescript.mjs"
   },
   "sideEffects": false,
   "dependencies": {

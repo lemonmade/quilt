@@ -3,6 +3,11 @@
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/craft"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
@@ -30,6 +35,7 @@
     "@quilted/sewing-kit-jest": "^0.0.0",
     "@quilted/sewing-kit-package": "^0.0.0",
     "@quilted/sewing-kit-prettier": "^0.0.0",
+    "@quilted/sewing-kit-react": "^0.0.0",
     "@quilted/sewing-kit-rollup": "^0.0.0",
     "@quilted/sewing-kit-typescript": "^0.0.0"
   },

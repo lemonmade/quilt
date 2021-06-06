@@ -1,16 +1,19 @@
-import {createPackage, Runtime} from '@sewing-kit/config';
-import {quiltPackage} from '../../config/sewing-kit';
+import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry({root: './src/index'});
-  pkg.entry({root: './src/http', name: 'http'});
-  pkg.entry({root: './src/html', name: 'html'});
-  pkg.entry({root: './src/email', name: 'email'});
-  pkg.entry({root: './src/server', name: 'server', runtime: Runtime.Node});
-  pkg.entry({root: './src/testing', name: 'testing', runtime: Runtime.Node});
-  pkg.entry({root: './src/matchers', name: 'matchers', runtime: Runtime.Node});
+  pkg.entry({source: './src/index'});
+  pkg.entry({source: './src/http', name: 'http'});
+  pkg.entry({source: './src/html', name: 'html'});
+  pkg.entry({source: './src/email', name: 'email'});
+  pkg.entry({source: './src/server', name: 'server', runtime: Runtime.Node});
+  pkg.entry({source: './src/testing', name: 'testing', runtime: Runtime.Node});
   pkg.entry({
-    root: './src/magic/app-http-handler',
+    source: './src/matchers',
+    name: 'matchers',
+    runtime: Runtime.Node,
+  });
+  pkg.entry({
+    source: './src/magic/app-http-handler',
     name: 'magic-app-http-handler',
     runtime: Runtime.Node,
   });

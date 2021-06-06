@@ -1,27 +1,35 @@
 {
   "name": "@quilted/react-server-render",
+  "type": "module",
   "version": "0.2.6",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-server-render"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./server": {
-      "esnext": "./server.esnext",
-      "import": "./server.mjs",
-      "require": "./server.js"
+      "sewing-kit:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "server": [
+        "./build/typescript/server.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,

@@ -29,6 +29,7 @@
     {"path": "./packages/sewing-kit-jest"},
     {"path": "./packages/sewing-kit-package"},
     {"path": "./packages/sewing-kit-prettier"},
+    {"path": "./packages/sewing-kit-react"},
     {"path": "./packages/sewing-kit-rollup"},
     {"path": "./packages/sewing-kit-typescript"},
     {"path": "./packages/typescript"},

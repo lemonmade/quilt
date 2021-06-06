@@ -47,19 +47,18 @@ async function createProject({name}: Options) {
       version: '0.0.0',
       private: true,
       scripts: {
-        lint: 'sk lint',
-        test: 'sk test',
-        'type-check': 'sk type-check',
-        dev: 'sk dev',
-        start: 'sk dev',
-        build: 'sk build',
+        lint: 'sewing-kit lint',
+        test: 'sewing-kit test',
+        'type-check': 'sewing-kit type-check',
+        develop: 'sewing-kit develop',
+        start: 'sewing-kit develop',
+        build: 'sewing-kit build',
       },
       workspaces: {
         packages: ['app', 'packages/*'],
       },
       devDependencies: {
-        '@quilted/sewing-kit': '*',
-        '@sewing-kit/cli': '*',
+        '@quilted/craft': '*',
       },
     }) + EOL,
   );
@@ -74,13 +73,6 @@ async function createProject({name}: Options) {
       build/
       coverage/
       .sewing-kit/
-      packages/*/bin/
-      packages/*/*.esnext
-      packages/*/*.node
-      packages/*/*.mjs
-      packages/*/*.d.ts
-      packages/*/*.js
-      !packages/*/.eslintrc.js
 
       # logs
       yarn-debug.log*
@@ -94,8 +86,7 @@ async function createProject({name}: Options) {
   await writeFile(
     path.join(root, 'sewing-kit.config.ts'),
     dedent`
-      import {createWorkspace} from '@sewing-kit/config';
-      import {quiltWorkspace} from '@quilted/sewing-kit-plugins';
+      import {createWorkspace, quiltWorkspace} from '@quilted/craft';
       
       export default createWorkspace((workspace) => {
         workspace.use(quiltWorkspace());

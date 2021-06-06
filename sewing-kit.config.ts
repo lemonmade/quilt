@@ -1,9 +1,23 @@
-import {createWorkspace} from '@sewing-kit/config';
-
-import {eslint} from '@sewing-kit/plugin-eslint';
-import {jest} from '@sewing-kit/plugin-jest';
-import {workspaceTypeScript} from '@sewing-kit/plugin-typescript';
+import {
+  createWorkspace,
+  quiltWorkspace,
+  createWorkspacePlugin,
+} from '@quilted/craft';
+import type {} from '@quilted/sewing-kit-jest';
 
 export default createWorkspace((workspace) => {
-  workspace.use(eslint(), jest(), workspaceTypeScript());
+  workspace.use(
+    quiltWorkspace(),
+    createWorkspacePlugin({
+      name: 'Quilt.IgnorePackages',
+      test({configure, workspace}) {
+        configure(({jestIgnore}) => {
+          jestIgnore?.((patterns) => [
+            ...patterns,
+            workspace.fs.resolvePath('packages'),
+          ]);
+        });
+      },
+    }),
+  );
 });

@@ -1,57 +1,77 @@
 {
   "name": "@quilted/quilt",
+  "type": "module",
   "version": "0.4.42",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/quilt"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/mjs/index.mjs"
     },
-    "./": "./",
     "./server": {
-      "esnext": "./server.esnext",
-      "import": "./server.mjs",
-      "require": "./server.js"
+      "sewing-kit:esnext": "./build/esnext/server/index.esnext",
+      "import": "./build/mjs/server/index.mjs"
     },
     "./html": {
-      "esnext": "./html.esnext",
-      "import": "./html.mjs",
-      "require": "./html.js"
+      "sewing-kit:esnext": "./build/esnext/html.esnext",
+      "import": "./build/mjs/html.mjs"
     },
     "./email": {
-      "esnext": "./email.esnext",
-      "import": "./email.mjs",
-      "require": "./email.js"
+      "sewing-kit:esnext": "./build/esnext/email.esnext",
+      "import": "./build/mjs/email.mjs"
     },
     "./http": {
-      "esnext": "./http.esnext",
-      "import": "./http.mjs",
-      "require": "./http.js"
+      "sewing-kit:esnext": "./build/esnext/http.esnext",
+      "import": "./build/mjs/http.mjs"
     },
     "./testing": {
-      "esnext": "./testing.esnext",
-      "import": "./testing.mjs",
-      "require": "./testing.js"
+      "sewing-kit:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/mjs/testing.mjs"
     },
     "./matchers": {
-      "esnext": "./matchers.esnext",
-      "import": "./matchers.mjs",
-      "require": "./matchers.js"
+      "sewing-kit:esnext": "./build/esnext/matchers.esnext",
+      "import": "./build/mjs/matchers.mjs"
     },
     "./magic-app-http-handler": {
-      "esnext": "./magic-app-http-handler.esnext",
-      "import": "./magic-app-http-handler.mjs",
-      "require": "./magic-app-http-handler.js"
+      "sewing-kit:esnext": "./build/esnext/magic/app-http-build.esnext",
+      "import": "./build/mjs/magic/app-http-handler.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "./server": [
+        "./build/typescript/server/index.d.ts"
+      ],
+      "./html": [
+        "./build/typescript/html.d.ts"
+      ],
+      "./email": [
+        "./build/typescript/email.d.ts"
+      ],
+      "./http": [
+        "./build/typescript/http.d.ts"
+      ],
+      "./testing": [
+        "./build/typescript/testing.d.ts"
+      ],
+      "./matchers": [
+        "./build/typescript/matchers.d.ts"
+      ],
+      "./magic-app-http-handler": [
+        "./build/typescript/magic/app-http-handler.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,
