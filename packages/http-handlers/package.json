@@ -1,26 +1,35 @@
 {
   "name": "@quilted/http-handlers",
+  "type": "module",
   "version": "0.1.11",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/http-handlers"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./node": {
-      "esnext": "./node.esnext",
-      "import": "./node.mjs",
-      "require": "./node.js"
+      "sewing-kit:esnext": "./build/esnext/node.esnext",
+      "import": "./build/esm/node.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "node": [
+        "./build/typescript/node.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,
@@ -31,5 +40,10 @@
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
   }
 }

@@ -1,0 +1,50 @@
+{
+  "name": "@quilted/sewing-kit-jest",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/sewing-kit-jest"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:internal": "./src/index.ts",
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@types/jest": "^26.0.0",
+    "jest": "^27.0.0",
+    "jest-config": "^27.0.0",
+    "jest-watch-typeahead": "^0.6.0"
+  },
+  "peerDependencies": {
+    "@quilted/sewing-kit": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@quilted/sewing-kit": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
+  }
+}

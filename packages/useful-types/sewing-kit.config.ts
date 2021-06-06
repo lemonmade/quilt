@@ -1,8 +1,6 @@
-import {createPackage, Runtime} from '@sewing-kit/config';
-import {quiltPackage} from '../../config/sewing-kit';
+import {createPackage, quiltPackage} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.runtimes(Runtime.Node, Runtime.Browser);
-  pkg.entry({root: './src/index'});
+  pkg.entry({source: './src/index'});
   pkg.use(quiltPackage());
 });

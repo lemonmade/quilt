@@ -1,5 +1,3 @@
-/* eslint-disable react/function-component-definition */
-
 import {posix} from 'path';
 import {URLSearchParams} from 'url';
 
@@ -15,7 +13,8 @@ const ENTRY_PREFIX = 'quilt-worker-entry:';
 const MAGIC_MODULE_WORKER = '__quilt__/Worker.tsx';
 
 export interface WorkerContext {
-  readonly workerModule: string;
+  readonly module: string;
+  readonly wrapper: WorkerWrapper;
 }
 
 export interface PublicPathContext extends WorkerContext {
@@ -24,9 +23,14 @@ export interface PublicPathContext extends WorkerContext {
   readonly outputOptions: OutputOptions;
 }
 
-export type ValueOrGetter<T> =
+export type ValueOrGetter<T, Context extends WorkerContext = WorkerContext> =
   | T
-  | ((current: T, context: WorkerContext) => T | Promise<T>);
+  | ((context: Context) => T | Promise<T>);
+
+export type ValueOrUpdateGetter<
+  T,
+  Context extends WorkerContext = WorkerContext,
+> = T | ((current: T, context: Context) => T | Promise<T>);
 
 export interface Options {
   /**
@@ -55,18 +59,11 @@ export interface Options {
    * ```
    */
   write?: ValueOrGetter<boolean>;
-  plugins?: ValueOrGetter<Plugin[]>;
-  inputOptions?: ValueOrGetter<InputOptions>;
-  outputOptions?: ValueOrGetter<OutputOptions>;
-  publicPath?:
-    | string
-    | ((
-        context: PublicPathContext,
-      ) => string | undefined | Promise<string | undefined>);
-  contentForWorker?(
-    wrapper: WorkerWrapper,
-    context: WorkerContext,
-  ): string | undefined | Promise<string | undefined>;
+  plugins?: ValueOrUpdateGetter<Plugin[]>;
+  inputOptions?: ValueOrUpdateGetter<InputOptions>;
+  outputOptions?: ValueOrUpdateGetter<OutputOptions>;
+  contentForWorker?: ValueOrGetter<string | undefined>;
+  publicPath?: ValueOrGetter<string | undefined, PublicPathContext>;
 }
 
 export function workers({
@@ -107,7 +104,7 @@ export function workers({
 
       const {workerId, wrapper} = getWorkerRequest(id.replace(PREFIX, ''));
 
-      const workerContext: WorkerContext = {workerModule: workerId};
+      const workerContext: WorkerContext = {module: workerId, wrapper};
 
       const workerPlugins: Plugin[] = [
         {
@@ -126,9 +123,17 @@ export function workers({
           async load(id) {
             if (!id.startsWith(ENTRY_PREFIX)) return null;
 
-            const {wrapper} = getWorkerRequest(id.replace(ENTRY_PREFIX, ''));
-            const content = await contentForWorker(wrapper, workerContext);
-            return content ?? defaultContentForWorker(wrapper);
+            const {wrapper, workerId} = getWorkerRequest(
+              id.replace(ENTRY_PREFIX, ''),
+            );
+
+            const context: WorkerContext = {module: workerId, wrapper};
+
+            const content =
+              typeof contentForWorker === 'function'
+                ? await contentForWorker(context)
+                : contentForWorker;
+            return content ?? defaultContentForWorker(context);
           },
         },
         ...(typeof plugins === 'function'
@@ -154,10 +159,7 @@ export function workers({
       const baseOutputOptions: OutputOptions = {
         ...parentOutputOptions,
         format: 'iife',
-        // This should be enabled, as async imports will cause the build to fail,
-        // but enabling it leads to this error:
-        // https://github.com/rollup/rollup/issues/4098
-        // inlineDynamicImports: true,
+        inlineDynamicImports: true,
       };
 
       const workerOutputOptions =
@@ -165,9 +167,12 @@ export function workers({
           ? await outputOptions(baseOutputOptions, workerContext)
           : baseOutputOptions;
 
+      const shouldWrite =
+        typeof write === 'function' ? await write(workerContext) : write;
+
       const bundle = await rollup(workerInputOptions);
 
-      const result = await (write
+      const result = await (shouldWrite
         ? bundle.write(workerOutputOptions)
         : bundle.generate(workerOutputOptions));
 
@@ -218,9 +223,10 @@ export function workers({
   };
 }
 
-function getWorkerRequest(
-  id: string,
-): {workerId: string; wrapper: WorkerWrapper} {
+function getWorkerRequest(id: string): {
+  workerId: string;
+  wrapper: WorkerWrapper;
+} {
   const [workerId, searchString] = id.split('?');
   const searchParams = new URLSearchParams(searchString);
   const wrapperModule = searchParams.get('module')!;
@@ -250,7 +256,7 @@ const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
   ['@quilted/quilt', workerFunctionContent],
 ]);
 
-function defaultContentForWorker(wrapper: WorkerWrapper) {
+function defaultContentForWorker({wrapper}: WorkerContext) {
   const content = KNOWN_WRAPPER_MODULES.get(wrapper.module)?.get(
     wrapper.function,
   );

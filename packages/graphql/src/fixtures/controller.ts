@@ -84,7 +84,7 @@ export class GraphQLController {
 
   async run<
     Data extends Record<string, any>,
-    Variables extends Record<string, any>
+    Variables extends Record<string, any>,
   >({
     operation,
     variables,

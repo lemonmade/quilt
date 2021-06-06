@@ -13,32 +13,32 @@ jobs:
       - uses: actions/setup-node@v1
         name: Setup node.js and yarn
         with:
-          node-version: 15.4.0
+          node-version: 16.2.0
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
       - uses: actions/cache@v1
         id: yarn-cache
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - uses: actions/cache@v1
         id: typescript-cache
         name: Restore TypeScript cache
         with:
           path: .sewing-kit/cache/typescript/
-          key: ${{ runner.os }}-typescript-${{ github.sha }}
+          key: ${{ runner.os }}-typescript-v1-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-typescript-
+            ${{ runner.os }}-typescript-v1-
 
       - name: Type check
         run: yarn type-check
@@ -53,23 +53,23 @@ jobs:
       - uses: actions/setup-node@v1
         name: Setup node.js and yarn
         with:
-          node-version: 15.4.0
+          node-version: 16.2.0
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
       - uses: actions/cache@v1
         id: yarn-cache
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - uses: actions/cache@v1
         id: jest-cache
@@ -93,23 +93,23 @@ jobs:
       - uses: actions/setup-node@v1
         name: Setup node.js and yarn
         with:
-          node-version: 15.4.0
+          node-version: 16.2.0
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
       - uses: actions/cache@v1
         id: yarn-cache
         name: Restore yarn cache
         with:
           path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-v1-
 
       - name: Yarn install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - uses: actions/cache@v1
         id: eslint-cache

@@ -1,32 +1,42 @@
 {
   "name": "@quilted/react-html",
+  "type": "module",
   "version": "0.2.11",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-html"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
-    },
-    "./": "./",
-    "./server": {
-      "esnext": "./server.esnext",
-      "import": "./server.mjs",
-      "require": "./server.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
     "./testing": {
-      "esnext": "./testing.esnext",
-      "import": "./testing.mjs",
-      "require": "./testing.js"
+      "sewing-kit:esnext": "./build/esnext/testing/index.esnext",
+      "import": "./build/esm/testing/index.mjs"
+    },
+    "./server": {
+      "sewing-kit:esnext": "./build/esnext/server/index.esnext",
+      "import": "./build/esm/server/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "server": [
+        "./build/typescript/server/index.d.ts"
+      ],
+      "testing": [
+        "./build/typescript/testing/index.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,
@@ -52,5 +62,11 @@
   "devDependencies": {
     "@types/react-dom": "^17.0.3",
     "@types/serialize-javascript": "^5.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

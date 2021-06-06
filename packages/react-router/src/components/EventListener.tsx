@@ -2,7 +2,7 @@ import {useEffect} from 'react';
 
 interface Props<
   Event extends keyof HTMLElementEventMap,
-  Target extends EventTarget = Window
+  Target extends EventTarget = Window,
 > {
   event: Event;
   passive?: boolean;
@@ -13,7 +13,7 @@ interface Props<
 
 export function EventListener<
   Event extends keyof HTMLElementEventMap,
-  Target extends EventTarget = Window
+  Target extends EventTarget = Window,
 >({event, handler, ...options}: Props<Event, Target>) {
   useEventListener(event, handler, options);
   return null;
@@ -28,7 +28,7 @@ interface Options<Target extends EventTarget = HTMLElement> {
 
 export function useEventListener<
   EventType extends keyof HTMLElementEventMap,
-  Target extends EventTarget = HTMLElement
+  Target extends EventTarget = HTMLElement,
 >(
   event: EventType,
   listener: (this: Target, event: HTMLElementEventMap[EventType]) => any,
@@ -121,4 +121,5 @@ export function supportsEventListenerOnceOption() {
   return supportsOnce;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

@@ -6,5 +6,5 @@ import {REACT_ELEMENT_TYPE} from './render';
  * @returns {boolean}
  */
 export function isValidElement(element) {
-	return !!element && element.$$typeof === REACT_ELEMENT_TYPE;
+  return !!element && element.$$typeof === REACT_ELEMENT_TYPE;
 }

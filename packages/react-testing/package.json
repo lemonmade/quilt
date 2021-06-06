@@ -1,56 +1,101 @@
 {
   "name": "@quilted/react-testing",
+  "type": "module",
   "version": "0.3.12",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-testing"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./dom": {
-      "esnext": "./dom.esnext",
-      "import": "./dom.mjs",
-      "require": "./dom.js"
+      "sewing-kit:esnext": "./build/esnext/implementations/react-dom.esnext",
+      "import": "./build/esm/implementations/react-dom.mjs"
     },
     "./dom-matchers": {
-      "esnext": "./dom-matchers.esnext",
-      "import": "./dom-matchers.mjs",
-      "require": "./dom-matchers.js"
+      "sewing-kit:esnext": "./build/esnext/matchers/dom.esnext",
+      "import": "./build/esm/matchers/dom.mjs"
     },
     "./matchers": {
-      "esnext": "./matchers.esnext",
-      "import": "./matchers.mjs",
-      "require": "./matchers.js"
+      "sewing-kit:esnext": "./build/esnext/matchers/index.esnext",
+      "import": "./build/esm/matchers/index.mjs"
     },
     "./preact": {
-      "esnext": "./preact.esnext",
-      "import": "./preact.mjs",
-      "require": "./preact.js"
+      "sewing-kit:esnext": "./build/esnext/implementations/preact.esnext",
+      "import": "./build/esm/implementations/preact.mjs"
+    },
+    "./environment": {
+      "sewing-kit:esnext": "./build/esnext/implementations/environment.esnext",
+      "import": "./build/esm/implementations/environment.mjs"
     },
     "./sewing-kit": {
-      "esnext": "./sewing-kit.esnext",
-      "import": "./sewing-kit.mjs",
-      "require": "./sewing-kit.js"
+      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "import": "./build/esm/sewing-kit.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "dom": [
+        "./build/typescript/implementations/react-dom.d.ts"
+      ],
+      "dom-matchers": [
+        "./build/typescript/matchers/dom.d.ts"
+      ],
+      "matchers": [
+        "./build/typescript/matchers/index.d.ts"
+      ],
+      "preact": [
+        "./build/typescript/implementations/preact.d.ts"
+      ],
+      "sewing-kit": [
+        "./build/typescript/sewing-kit.d.ts"
+      ],
+      "environment": [
+        "./build/typescript/environment.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,
+  "dependencies": {
+    "@types/react-test-renderer": "^17.0.0",
+    "jest-matcher-utils": "^27.0.0",
+    "react-reconciler": "^0.26.0",
+    "react-test-renderer": "^17.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^27.0.0",
+    "preact": "^10.5.0"
+  },
   "peerDependencies": {
+    "@jest/globals": "^27.0.0",
+    "@quilted/sewing-kit": "^0.1.1",
+    "@quilted/sewing-kit-jest": "^0.0.0",
     "preact": "^10.5.0",
     "react": ">=17.0.0 <18.0.0",
     "react-dom": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
+    "@jest/globals": {
+      "optional": true
+    },
+    "@quilted/sewing-kit": {
+      "optional": true
+    },
+    "@quilted/sewing-kit-jest": {
+      "optional": true
+    },
     "preact": {
       "optional": true
     },
@@ -61,14 +106,10 @@
       "optional": true
     }
   },
-  "dependencies": {
-    "@sewing-kit/plugins": "^0.2.0",
-    "@types/react-test-renderer": "^17.0.0",
-    "jest-matcher-utils": "^26.6.2",
-    "react-reconciler": "^0.26.0",
-    "react-test-renderer": "^17.0.0"
-  },
-  "devDependencies": {
-    "preact": "^10.5.0"
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

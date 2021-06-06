@@ -86,13 +86,13 @@ export class GraphQL {
     variables?: Variables,
   ): Promise<GraphQLResult<Data>> {
     try {
-      const data = ((await this.fetch(
+      const data = (await this.fetch(
         {
           operation,
           variables: variables ?? {},
         },
         createContext(),
-      )) as any) as Data;
+      )) as any as Data;
 
       return {data};
     } catch (error) {

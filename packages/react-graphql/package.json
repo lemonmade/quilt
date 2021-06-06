@@ -1,22 +1,36 @@
 {
   "name": "@quilted/react-graphql",
+  "type": "module",
   "version": "0.3.15",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-graphql"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./"
+    "./testing": {
+      "sewing-kit:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "testing": [
+        "./build/typescript/testing.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
   },
   "sideEffects": false,
   "dependencies": {
@@ -31,5 +45,11 @@
     "react": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

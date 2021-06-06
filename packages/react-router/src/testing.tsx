@@ -24,6 +24,7 @@ export function createTestRouter(
   return {
     currentUrl,
     prefix,
+    /* eslint-disable @typescript-eslint/no-empty-function */
     go() {},
     back() {},
     forward() {},
@@ -34,6 +35,7 @@ export function createTestRouter(
       return () => {};
     },
     navigate() {},
+    /* eslint-enable @typescript-eslint/no-empty-function */
     resolve: (to) => {
       const url = resolveUrl(to, currentUrl);
       return {url, external: isExternal(url, currentUrl)};
@@ -47,9 +49,10 @@ interface Props {
 }
 
 export function TestRouter({children, router: initialRouter}: Props) {
-  const router = useMemo(() => initialRouter ?? createTestRouter(), [
-    initialRouter,
-  ]);
+  const router = useMemo(
+    () => initialRouter ?? createTestRouter(),
+    [initialRouter],
+  );
 
   return (
     <RouterContext.Provider value={router}>

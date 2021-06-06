@@ -1,0 +1,55 @@
+{
+  "name": "@quilted/sewing-kit-react",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/sewing-kit-typescript"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:internal": "./src/index.ts",
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@babel/preset-react": "^7.0.0"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0",
+    "@quilted/sewing-kit": "^0.1.0",
+    "@quilted/sewing-kit-babel": "^0.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/core": {
+      "optional": true
+    },
+    "@quilted/sewing-kit": {
+      "optional": true
+    },
+    "@quilted/sewing-kit-babel": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/node",
+      "../eslint/package"
+    ]
+  }
+}

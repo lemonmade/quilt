@@ -1,26 +1,49 @@
 {
   "name": "@quilted/async",
+  "type": "module",
   "version": "0.2.7",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/async"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
-  "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./assets": {
-      "esnext": "./assets.esnext",
-      "import": "./assets.mjs",
-      "require": "./assets.js"
+      "sewing-kit:esnext": "./build/esnext/assets.esnext",
+      "import": "./build/esm/assets.mjs"
+    },
+    "./babel": {
+      "sewing-kit:esnext": "./build/esnext/babel-plugin.esnext",
+      "import": "./build/esm/babel-plugin.mjs"
+    },
+    "./sewing-kit": {
+      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "import": "./build/esm/sewing-kit.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "assets": [
+        "./build/typescript/assets.d.ts"
+      ],
+      "sewing-kit": [
+        "./build/typescript/sewing-kit.d.ts"
+      ],
+      "babel": [
+        "./build/typescript/babel-plugin.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,
@@ -29,8 +52,8 @@
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@sewing-kit/plugin-javascript": "^0.4.0",
-    "@sewing-kit/plugins": "^0.2.0"
+    "@quilted/sewing-kit": "^0.0.0",
+    "@quilted/sewing-kit-babel": "^0.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
@@ -45,15 +68,20 @@
     "@babel/types": {
       "optional": true
     },
-    "@sewing-kit/plugin-javascript": {
+    "@quilted/sewing-kit": {
       "optional": true
     },
-    "@sewing-kit/plugins": {
+    "@quilted/sewing-kit-babel": {
       "optional": true
     }
   },
   "devDependencies": {
     "@types/babel__core": ">=7.0.0",
     "@types/babel__traverse": ">=7.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
   }
 }

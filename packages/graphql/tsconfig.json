@@ -5,6 +5,10 @@
     "outDir": "build/typescript"
   },
   "include": ["src"],
-  "exclude": ["sewing-kit.config.ts", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
-  "references": [{"path": "../useful-types"}]
+  "exclude": ["sewing-kit.config.ts", "*.test.ts", "*.test.tsx"],
+  "references": [
+    {"path": "../sewing-kit"},
+    {"path": "../sewing-kit-rollup"},
+    {"path": "../useful-types"}
+  ]
 }

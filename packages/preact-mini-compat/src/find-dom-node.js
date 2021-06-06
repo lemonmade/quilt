@@ -4,9 +4,9 @@
  * @returns {import('./internal').PreactElement | null}
  */
 export function findDOMNode(component) {
-	return (
-		(component &&
-			(component.base || (component.nodeType === 1 && component))) ||
-		null
-	);
+  return (
+    (component &&
+      (component.base || (component.nodeType === 1 && component))) ||
+    null
+  );
 }

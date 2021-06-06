@@ -1,24 +1,23 @@
-import {createPackage, Runtime} from '@sewing-kit/config';
-import {quiltPackage} from '../../config/sewing-kit';
+import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
 const POLYFILLS = ['fetch'];
 
 export default createPackage((pkg) => {
-  pkg.entry({root: './src/index'});
-  pkg.entry({root: './src/rollup-parts', name: 'rollup'});
+  pkg.entry({source: './src/index'});
+  pkg.entry({source: './src/rollup-parts', name: 'rollup'});
 
-  pkg.entry({root: './src/base', name: 'base'});
-  pkg.entry({root: './src/noop', name: 'noop'});
+  pkg.entry({source: './src/base', name: 'base'});
+  pkg.entry({source: './src/noop', name: 'noop'});
 
   for (const polyfill of POLYFILLS) {
-    pkg.entry({root: `./src/${polyfill}`, name: polyfill});
+    pkg.entry({source: `./src/${polyfill}`, name: polyfill});
     pkg.entry({
-      root: `./src/${polyfill}.browser`,
+      source: `./src/${polyfill}.browser`,
       name: `${polyfill}.browser`,
       runtime: Runtime.Browser,
     });
     pkg.entry({
-      root: `./src/${polyfill}.node`,
+      source: `./src/${polyfill}.node`,
       name: `${polyfill}.node`,
       runtime: Runtime.Node,
     });

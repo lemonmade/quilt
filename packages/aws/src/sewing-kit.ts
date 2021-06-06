@@ -1,41 +1,35 @@
 import {stripIndent} from 'common-tags';
-import {
-  createProjectPlugin,
-  Runtime,
-  WebApp,
-  Service,
-} from '@sewing-kit/plugins';
-import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/sewing-kit';
-import type {} from '@sewing-kit/plugin-rollup';
+
+import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
+import type {App, Service} from '@quilted/sewing-kit';
+
+import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
 
 export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
-  return createProjectPlugin<WebApp | Service>(
-    'Quilt.Aws.Lambda',
-    ({tasks: {build}}) => {
-      build.hook(({hooks}) => {
-        hooks.target.hook(({target, hooks}) => {
-          if (!target.runtime.includes(Runtime.Node)) return;
+  return createProjectPlugin<App | Service>({
+    name: 'Quilt.AWS.Lambda',
+    build({configure}) {
+      configure(({quiltHttpHandlerRuntimeContent}, {target}) => {
+        if (!target.includes(Runtime.Node)) return;
 
-          hooks.configure.hook((configure) => {
-            configure.rollupExternal?.hook((externals) => [
-              ...(Array.isArray(externals) ? externals : [externals as any]),
-              'aws-sdk',
-            ]);
+        quiltHttpHandlerRuntimeContent?.(
+          () => stripIndent`
+            import HttpHandler from ${JSON.stringify(
+              MAGIC_MODULE_HTTP_HANDLER,
+            )};
 
-            configure.quiltHttpHandlerRuntimeContent?.hook(
-              () => stripIndent`
-                import HttpHandler from ${JSON.stringify(
-                  MAGIC_MODULE_HTTP_HANDLER,
-                )};
+            import {createLambdaApiGatewayProxy} from '@quilted/aws/http-handlers';
 
-                import {createLambdaApiGatewayProxy} from '@quilted/aws/http-handlers';
+            export const ${handlerName} = createLambdaApiGatewayProxy(HttpHandler);
+          `,
+        );
 
-                export const ${handlerName} = createLambdaApiGatewayProxy(HttpHandler);
-              `,
-            );
-          });
-        });
+        // TODO
+        // configure.rollupExternal?.hook((externals) => [
+        //   ...(Array.isArray(externals) ? externals : [externals as any]),
+        //   'aws-sdk',
+        // ]);
       });
     },
-  );
+  });
 }

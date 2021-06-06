@@ -1,2 +1,1 @@
 # `@quilted/preact-mini-compat`
-

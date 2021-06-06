@@ -2,7 +2,7 @@ export type IfUnionSize<
   Union,
   Size extends number,
   If = true,
-  Else = false
+  Else = false,
 > = TupleFromUnion<Union> extends {length: Size} ? If : Else;
 
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;

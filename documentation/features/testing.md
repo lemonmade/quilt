@@ -6,12 +6,6 @@ Quilt provides a `test` command ([`quilt test`](../reference/commands/test)) tha
 
 ## Command: `quilt test`
 
-
-
 ## Library: `@quilted/quilt/testing`
 
-
-
 ## Library: `@quilted/quilt/matchers`
-
-

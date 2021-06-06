@@ -33,9 +33,9 @@ export function useIdleCallback(
 
   useEffect(() => {
     if ('requestIdleCallback' in window) {
-      handle.current = ((window as any) as RequestIdleCallbackApi).requestIdleCallback(
-        () => callback(),
-      );
+      handle.current = (
+        window as any as RequestIdleCallbackApi
+      ).requestIdleCallback(() => callback());
     } else if (unsupportedBehavior === 'animationFrame') {
       handle.current = window.requestAnimationFrame(() => {
         callback();
@@ -53,7 +53,7 @@ export function useIdleCallback(
       }
 
       if ('cancelIdleCallback' in window) {
-        ((window as any) as RequestIdleCallbackApi).cancelIdleCallback(
+        (window as any as RequestIdleCallbackApi).cancelIdleCallback(
           currentHandle,
         );
       } else if (unsupportedBehavior === 'animationFrame') {

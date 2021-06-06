@@ -41,8 +41,6 @@ const mountWithNavigateSpy = createMount<
     jest.spyOn(router, 'navigate');
     return {router};
   },
-  // The auto-fix for this causes syntax errors...
-  // eslint-disable-next-line react/function-component-definition
   render(element, {router}) {
     return <TestRouter router={router}>{element}</TestRouter>;
   },

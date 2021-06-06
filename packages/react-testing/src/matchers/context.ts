@@ -1,4 +1,5 @@
 import {Context} from 'react';
+import type {MatcherState} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -11,7 +12,7 @@ import {Node} from '../types';
 import {assertIsNode, diffs, printType} from './utilities';
 
 export function toProvideReactContext<Type>(
-  this: jest.MatcherUtils,
+  this: MatcherState,
   node: Node<any, any>,
   Context: Context<Type>,
   value?: Type,

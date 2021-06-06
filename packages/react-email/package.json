@@ -1,27 +1,36 @@
 {
   "name": "@quilted/react-email",
+  "type": "module",
   "version": "0.1.7",
   "description": "React-friendly APIs for rendering emails and their metadata",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-email"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "esnext": "./index.esnext",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
     },
-    "./": "./",
     "./server": {
-      "esnext": "./server.esnext",
-      "import": "./server.mjs",
-      "require": "./server.js"
+      "sewing-kit:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "server": [
+        "./build/typescript/server.d.ts"
+      ],
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
     }
   },
   "sideEffects": false,
@@ -36,5 +45,11 @@
     "react": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../eslint/react",
+      "../eslint/package"
+    ]
   }
 }

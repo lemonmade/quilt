@@ -1,17 +1,24 @@
 {
   "name": "@quilted/typescript",
   "version": "0.1.1",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/typescript"
+  },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
-  "esnext": "index.esnext",
-  "types": "index.d.ts",
   "exports": {
     "./": "./"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "eslintConfig": {
+    "extends": [
+      "../eslint/package"
+    ]
+  }
 }

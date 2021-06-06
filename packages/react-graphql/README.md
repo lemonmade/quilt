@@ -1,2 +1,1 @@
 # `@quilted/react-graphql`
-

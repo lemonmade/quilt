@@ -78,7 +78,7 @@ export function toSimpleDocument<Data = unknown, Variables = unknown>(
   return {
     id: document.id,
     name: operationNameForDocument(document),
-    source: document.loc?.source?.body!,
+    source: document.loc!.source.body,
   };
 }
 

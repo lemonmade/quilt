@@ -1,3 +1,4 @@
+import type {MatcherState} from 'expect';
 import {
   matcherHint,
   printReceived,
@@ -10,7 +11,7 @@ import type {Node} from '../types';
 import {assertIsNode, printReceivedWithHighlight} from './utilities';
 
 export function toContainReactText<Props>(
-  this: jest.MatcherUtils,
+  this: MatcherState,
   node: Node<Props, any>,
   text: string,
 ) {

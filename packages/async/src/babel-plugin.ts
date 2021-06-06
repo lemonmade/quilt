@@ -131,9 +131,8 @@ function addIdOption(
       ? loadProperty.get('value')
       : loadProperty.get('body');
 
-    const dynamicImports: NodePath<
-      import('@babel/types').CallExpression
-    >[] = [];
+    const dynamicImports: NodePath<import('@babel/types').CallExpression>[] =
+      [];
 
     if (!Array.isArray(loaderMethod)) {
       loaderMethod.traverse({

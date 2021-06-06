@@ -41,9 +41,7 @@ export function getAllObjectTypes(
     : schema.getImplementations(type).objects;
 }
 
-export function unwrapType(
-  type: GraphQLOutputType,
-): {
+export function unwrapType(type: GraphQLOutputType): {
   type: Extract<GraphQLOutputType, GraphQLNamedType>;
   isNonNullable: boolean;
   isList: boolean;
@@ -141,10 +139,8 @@ export function getSelectionTypeMap(
         break;
       }
       case 'FragmentSpread': {
-        const {
-          typeCondition: typeConditionNode,
-          selectionSet,
-        } = context.resolveFragment(selection.name.value);
+        const {typeCondition: typeConditionNode, selectionSet} =
+          context.resolveFragment(selection.name.value);
 
         const typeCondition =
           (context.schema.getType(

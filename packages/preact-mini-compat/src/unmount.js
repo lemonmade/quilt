@@ -6,9 +6,9 @@ import {render as preactRender} from 'preact';
  * @returns {boolean}
  */
 export function unmountComponentAtNode(container) {
-	if (container._children) {
-		preactRender(null, container);
-		return true;
-	}
-	return false;
+  if (container._children) {
+    preactRender(null, container);
+    return true;
+  }
+  return false;
 }

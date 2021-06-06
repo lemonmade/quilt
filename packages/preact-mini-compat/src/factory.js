@@ -5,5 +5,5 @@ import {createElement} from 'preact';
  * @param {import('./internal').VNode["type"]} type The node name or Component constructor
  */
 export function createFactory(type) {
-	return createElement.bind(null, type);
+  return createElement.bind(null, type);
 }
