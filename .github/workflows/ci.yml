@@ -13,11 +13,11 @@ jobs:
       - uses: actions/setup-node@v1
         name: Setup node.js and yarn
         with:
-          node-version: 15.4.0
+          node-version: 16.2.0
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
       - uses: actions/cache@v1
         id: yarn-cache
@@ -53,11 +53,11 @@ jobs:
       - uses: actions/setup-node@v1
         name: Setup node.js and yarn
         with:
-          node-version: 15.4.0
+          node-version: 16.2.0
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
       - uses: actions/cache@v1
         id: yarn-cache
@@ -93,11 +93,11 @@ jobs:
       - uses: actions/setup-node@v1
         name: Setup node.js and yarn
         with:
-          node-version: 15.4.0
+          node-version: 16.2.0
 
       - name: Get yarn cache directory
         id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
       - uses: actions/cache@v1
         id: yarn-cache
