@@ -511,7 +511,11 @@ const exec: BaseStepRunner['exec'] = (
   args,
   {fromNodeModules, ...options} = {},
 ) => {
-  const execPromise = promiseExec(command, args, options);
+  const normalizedCommand = fromNodeModules
+    ? join('node_modules/.bin', command)
+    : command;
+
+  const execPromise = promiseExec(normalizedCommand, args, options);
 
   const wrappedPromise = new Promise(
     // eslint-disable-next-line no-async-promise-executor
@@ -520,12 +524,7 @@ const exec: BaseStepRunner['exec'] = (
         const result = await execPromise;
         resolve(result);
       } catch (error) {
-        reject(
-          new StepExecError(
-            fromNodeModules ? join('node_modules/.bin', command) : command,
-            error,
-          ),
-        );
+        reject(new StepExecError(normalizedCommand, error));
       }
     },
   ) as any;
