@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-html",
   "type": "module",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -53,7 +53,7 @@
     }
   },
   "dependencies": {
-    "@quilted/react-server-render": "^0.3.0",
+    "@quilted/react-server-render": "^0.3.1",
     "@types/multistream": "^2.1.1",
     "@types/react": "^17.0.0",
     "multistream": "^4.0.1",
