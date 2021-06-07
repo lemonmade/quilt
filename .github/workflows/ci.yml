@@ -19,7 +19,7 @@ jobs:
         id: yarn-cache-get-dir
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         id: yarn-cache
         name: Restore yarn cache
         with:
@@ -30,6 +30,15 @@ jobs:
 
       - name: Yarn install
         run: yarn install --immutable
+
+      - uses: actions/cache@v2
+        id: eslint-cache
+        name: Restore TypeScript cache
+        with:
+          path: '**/build/typescript/'
+          key: ${{ runner.os }}-typescript-v1-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-typescript-v1-
 
       - name: Type check
         run: yarn type-check
@@ -50,7 +59,7 @@ jobs:
         id: yarn-cache-get-dir
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         id: yarn-cache
         name: Restore yarn cache
         with:
@@ -62,7 +71,7 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         id: jest-cache
         name: Restore jest cache
         with:
@@ -90,7 +99,7 @@ jobs:
         id: yarn-cache-get-dir
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         id: yarn-cache
         name: Restore yarn cache
         with:
@@ -102,7 +111,7 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         id: eslint-cache
         name: Restore ESLint cache
         with:
