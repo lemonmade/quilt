@@ -8,8 +8,8 @@
   "exclude": ["sewing-kit.config.ts", "*.test.ts", "*.test.tsx"],
   "references": [
     {"path": "../sewing-kit"},
-    {"path": "../sewing-jest"},
-    {"path": "../sewing-rollup"},
-    {"path": "../sewing-targets"}
+    {"path": "../sewing-kit-jest"},
+    {"path": "../sewing-kit-rollup"},
+    {"path": "../sewing-kit-targets"}
   ]
 }
