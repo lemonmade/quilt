@@ -2938,12 +2938,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@quilted/aws@workspace:packages/aws"
   dependencies:
-    "@quilted/http-handlers": ^0.2.2
+    "@quilted/http-handlers": ^0.2.3
     "@types/aws-lambda": ^8.0.0
     "@types/common-tags": ^1.8.0
     "@types/cookie": ^0.4.0
     common-tags: ^1.8.0
     cookie: ^0.4.0
+    node-fetch: ^2.6.0
   peerDependencies:
     "@quilted/craft": ^0.0.0
     "@quilted/sewing-kit": ^0.2.0
@@ -2961,7 +2962,7 @@ __metadata:
   dependencies:
     "@quilted/eslint-config": ^0.1.2
     "@quilted/prettier": ^0.2.2
-    "@quilted/sewing-kit": ^0.2.2
+    "@quilted/sewing-kit": ^0.2.3
     "@quilted/sewing-kit-babel": ^0.1.2
     "@quilted/sewing-kit-eslint": ^0.1.2
     "@quilted/sewing-kit-esnext": ^0.1.2
@@ -2975,8 +2976,11 @@ __metadata:
     "@quilted/typescript": ^0.2.2
     common-tags: ^1.8.0
   peerDependencies:
+    "@quilted/polyfills": ^0.2.2
     typescript: ">=4.0.0 <5.0.0"
   peerDependenciesMeta:
+    "@quilted/polyfills":
+      optional: false
     typescript:
       optional: false
   languageName: unknown
@@ -3037,7 +3041,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/http-handlers@^0.2.2, @quilted/http-handlers@workspace:packages/http-handlers":
+"@quilted/http-handlers@^0.2.3, @quilted/http-handlers@workspace:packages/http-handlers":
   version: 0.0.0-use.local
   resolution: "@quilted/http-handlers@workspace:packages/http-handlers"
   dependencies:
@@ -3054,7 +3058,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/polyfills@^0.2.2, @quilted/polyfills@workspace:packages/polyfills":
+"@quilted/polyfills@^0.2.3, @quilted/polyfills@workspace:packages/polyfills":
   version: 0.0.0-use.local
   resolution: "@quilted/polyfills@workspace:packages/polyfills"
   dependencies:
@@ -3067,8 +3071,17 @@ __metadata:
     regenerator-runtime: ^0.13.0
     whatwg-fetch: ^3.5.0
   peerDependencies:
+    "@quilted/sewing-kit-jest": ^0.1.2
+    "@quilted/sewing-kit-rollup": ^0.1.2
+    "@quilted/sewing-kit-targets": ^0.1.2
     rollup: ^2.0.0
   peerDependenciesMeta:
+    "@quilted/sewing-kit-jest":
+      optional: true
+    "@quilted/sewing-kit-rollup":
+      optional: true
+    "@quilted/sewing-kit-targets":
+      optional: true
     rollup:
       optional: true
   languageName: unknown
@@ -3095,8 +3108,8 @@ __metadata:
   dependencies:
     "@quilted/async": ^0.3.2
     "@quilted/graphql": ^0.4.2
-    "@quilted/http-handlers": ^0.2.2
-    "@quilted/polyfills": ^0.2.2
+    "@quilted/http-handlers": ^0.2.3
+    "@quilted/polyfills": ^0.2.3
     "@quilted/preact-mini-compat": ^0.2.2
     "@quilted/react-async": ^0.3.2
     "@quilted/react-email": ^0.2.2
@@ -3486,7 +3499,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit@^0.2.2, @quilted/sewing-kit@workspace:packages/sewing-kit":
+"@quilted/sewing-kit@^0.2.3, @quilted/sewing-kit@workspace:packages/sewing-kit":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit@workspace:packages/sewing-kit"
   dependencies:
@@ -10125,7 +10138,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.1, node-fetch@npm:^2.6.1":
+"node-fetch@npm:2.6.1, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
   checksum: cbb171635e538162b977eac5dfe7a1e07a9a02e991924377a6435502291e2f823d306b95aabc455caebf4a118ccf836868462bc70ccc3095af02bb9da61fda37
