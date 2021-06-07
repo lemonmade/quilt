@@ -50,7 +50,7 @@
   },
   "peerDependenciesMeta": {
     "@quilted/polyfills": {
-      "optional": false
+      "optional": true
     },
     "typescript": {
       "optional": false
