@@ -3071,11 +3071,14 @@ __metadata:
     regenerator-runtime: ^0.13.0
     whatwg-fetch: ^3.5.0
   peerDependencies:
+    "@quilted/sewing-kit": ^0.2.2
     "@quilted/sewing-kit-jest": ^0.1.2
     "@quilted/sewing-kit-rollup": ^0.1.2
     "@quilted/sewing-kit-targets": ^0.1.2
     rollup: ^2.0.0
   peerDependenciesMeta:
+    "@quilted/sewing-kit":
+      optional: true
     "@quilted/sewing-kit-jest":
       optional: true
     "@quilted/sewing-kit-rollup":
