@@ -35,7 +35,9 @@ jobs:
         id: eslint-cache
         name: Restore TypeScript cache
         with:
-          path: '**/build/typescript/'
+          path: |
+            **/build/typescript/
+            **/*.tsbuildinfo
           key: ${{ runner.os }}-typescript-v1-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-typescript-v1-
