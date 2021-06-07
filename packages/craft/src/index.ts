@@ -29,6 +29,8 @@ import {
 
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
+import {appBuild} from './plugins/app-build';
+import {browserEntry} from './plugins/browser-entry';
 import {serviceBuild} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
@@ -49,7 +51,48 @@ export type {App, Service, Package, Project};
 
 export * from './constants';
 
-export interface AppOptions {}
+export interface AppOptions {
+  polyfill?: boolean | PolyfillOptions;
+  autoServer?: boolean;
+}
+
+export function quiltApp({
+  polyfill: shouldPolyfill = true,
+  autoServer = true,
+}: AppOptions = {}) {
+  return createProjectPlugin<App>({
+    name: 'Quilt.App',
+    async create({use}) {
+      use(
+        // Basic tool configuration
+        rollupHooks(),
+        rollupNode(),
+        babelHooks(),
+        babelRollup(),
+        targets(),
+        typescriptProject(),
+        esnext(),
+        react(),
+        // Build and auto-server setup
+        browserEntry(),
+        appBuild(),
+        autoServer && httpHandler(),
+      );
+
+      if (shouldPolyfill) {
+        await ignoreMissingImports(async () => {
+          const {polyfills} = await import('@quilted/polyfills/sewing-kit');
+
+          use(
+            polyfills(
+              typeof shouldPolyfill === 'object' ? shouldPolyfill : undefined,
+            ),
+          );
+        });
+      }
+    },
+  });
+}
 
 export interface ServiceOptions {
   /**
