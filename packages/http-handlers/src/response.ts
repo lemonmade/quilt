@@ -11,7 +11,7 @@ import type {
 } from './types';
 
 export function response(
-  body?: BodyInit | null,
+  body?: string | null,
   {
     status = 200,
     cookies: existingCookies,
@@ -19,23 +19,22 @@ export function response(
   }: ResponseOptions = {},
 ): Response {
   const headers = normalizeHeaders(explicitHeaders);
-  const response = new Response(body, {status, headers});
 
   const serializedCookies = new Map<string, string>(
     existingCookies?.entries() ?? [],
   );
 
   function updateSetCookieHeader() {
-    response.headers.delete('Set-Cookie');
+    headers.delete('Set-Cookie');
 
     for (const cookie of serializedCookies.values()) {
-      response.headers.append('Set-Cookie', cookie);
+      headers.append('Set-Cookie', cookie);
     }
   }
 
   updateSetCookieHeader();
 
-  const responseCookies: ResponseCookies = {
+  const cookies: ResponseCookies = {
     set(cookie, value, options) {
       const setCookie = Cookies.serialize(cookie, value, options);
       serializedCookies.set(cookie, setCookie);
@@ -43,18 +42,13 @@ export function response(
       updateSetCookieHeader();
     },
     delete(cookie, options) {
-      responseCookies.set(cookie, '', {expires: new Date(0), ...options});
+      cookies.set(cookie, '', {expires: new Date(0), ...options});
     },
     entries: () => serializedCookies.entries(),
     [Symbol.iterator]: () => serializedCookies.values(),
   };
 
-  Reflect.defineProperty(response, 'cookies', {
-    value: responseCookies,
-    writable: false,
-  });
-
-  return response as any as Response;
+  return {status, headers: headers as any, cookies, body: body ?? undefined};
 }
 
 export function notFound(
@@ -88,10 +82,11 @@ export function redirect(
     'Location',
     resolveTo(to, {request, relativeTo}),
   );
+
   return redirectResponse;
 }
 
-export function html(body: any, options?: ResponseOptions) {
+export function html(body: string, options?: ResponseOptions) {
   const htmlResponse = response(body, options);
   htmlResponse.headers.set('Content-Type', 'text/html');
   return htmlResponse;

@@ -226,21 +226,29 @@ async function normalizeConfigurationFile(file: string) {
 
     const jsFile = file.replace(/\.tsx?/, '.js');
 
+    const exportConditions = [
+      'sewing-kit:esnext',
+      'module',
+      'import',
+      'node',
+      'require',
+      'default',
+    ];
+
+    // When building from source, we use a special export condition for
+    // some packages that resolves to source code. This allows us to
+    // use those packages for the build, without having to build them first.
+    if (process.env.SEWING_KIT_FROM_SOURCE) {
+      exportConditions.unshift('quilt:internal');
+    }
+
     const bundle = await rollup({
       input: file,
       external: [/node_modules/],
       plugins: [
         nodeResolve({
           extensions: ['.ts', '.tsx', '.mjs', '.js', '.json'],
-          exportConditions: [
-            'quilt:internal',
-            'sewing-kit:esnext',
-            'module',
-            'import',
-            'node',
-            'require',
-            'default',
-          ],
+          exportConditions,
         }),
         commonjs(),
         json(),

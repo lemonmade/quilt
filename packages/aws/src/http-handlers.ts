@@ -1,4 +1,5 @@
 import * as Cookies from 'cookie';
+import {Headers} from 'node-fetch';
 import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
 import {notFound} from '@quilted/http-handlers';
@@ -19,7 +20,9 @@ export function createLambdaApiGatewayProxy(
 
     const response =
       (await handler.run({
-        headers,
+        // The forEach() signature is slightly different in the polyfill,
+        // but not in a way that matters.
+        headers: headers as any,
         method: event.requestContext.http.method,
         body: event.body,
         url: new URL(
@@ -37,7 +40,7 @@ export function createLambdaApiGatewayProxy(
 
     return {
       statusCode: response.status,
-      body: await response.text(),
+      body: response.body,
       cookies: [...response.cookies],
       headers: [...response.headers].reduce<Record<string, string>>(
         (allHeaders, [header, value]) => {

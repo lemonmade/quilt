@@ -16,6 +16,15 @@
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
     },
+    "./rollup": {
+      "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
+      "import": "./build/esm/rollup-parts.mjs"
+    },
+    "./sewing-kit": {
+      "quilt:internal": "./src/sewing-kit.ts",
+      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "import": "./build/esm/sewing-kit.mjs"
+    },
     "./base": {
       "sewing-kit:esnext": "./build/esnext/base.esnext",
       "import": "./build/esm/base.mjs"
@@ -39,6 +48,9 @@
   },
   "typesVersions": {
     ">=1": {
+      "rollup": [
+        "./build/typescript/rollup-parts.d.ts"
+      ],
       "*": [
         "./build/typescript/*.d.ts"
       ]
@@ -57,9 +69,21 @@
     "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
+    "@quilted/sewing-kit-jest": "^0.1.2",
+    "@quilted/sewing-kit-rollup": "^0.1.2",
+    "@quilted/sewing-kit-targets": "^0.1.2",
     "rollup": "^2.0.0"
   },
   "peerDependenciesMeta": {
+    "@quilted/sewing-kit-jest": {
+      "optional": true
+    },
+    "@quilted/sewing-kit-rollup": {
+      "optional": true
+    },
+    "@quilted/sewing-kit-targets": {
+      "optional": true
+    },
     "rollup": {
       "optional": true
     }

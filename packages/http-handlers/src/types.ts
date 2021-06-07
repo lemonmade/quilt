@@ -42,10 +42,10 @@ export interface ResponseCookies {
 }
 
 export interface Response {
+  readonly body?: string;
   readonly status: number;
   readonly headers: Headers;
   readonly cookies: ResponseCookies;
-  text(): Promise<string>;
 }
 
 export interface ResponseOptions {

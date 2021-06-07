@@ -1,4 +1,5 @@
 import * as Cookies from 'cookie';
+import {Headers} from 'node-fetch';
 
 import {HttpMethod} from '@quilted/http';
 import {enhanceUrl} from '@quilted/routing';
@@ -16,7 +17,7 @@ export interface HttpHandlerOptions {
 }
 
 interface RequestHandlerRegistration {
-  readonly method?: 'GET' | 'POST' | 'OPTIONS';
+  readonly method?: HttpMethod.Get | HttpMethod.Post | HttpMethod.Options;
   readonly handler: RequestHandler;
   readonly match: Match;
 }
@@ -74,7 +75,7 @@ function createRequest(
     url,
     method = 'GET',
     body,
-    headers = new Headers(),
+    headers = new Headers() as any,
     cookies = cookiesFromHeaders(headers),
   }: RequestOptions,
   prefix?: Prefix,
@@ -88,7 +89,7 @@ function createRequest(
   };
 }
 
-function cookiesFromHeaders(headers: Headers): Request['cookies'] {
+function cookiesFromHeaders(headers: Pick<Headers, 'get'>): Request['cookies'] {
   const cookies = Cookies.parse(headers.get('Cookie') ?? '');
 
   return {

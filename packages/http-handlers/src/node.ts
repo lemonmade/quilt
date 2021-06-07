@@ -1,5 +1,6 @@
 import {createServer} from 'http';
 import type {RequestListener} from 'http';
+import {Headers} from 'node-fetch';
 
 import {notFound} from './response';
 import type {HttpHandler} from './types';
@@ -46,11 +47,10 @@ export function createHttpRequestListener(
                 Array.isArray(value) ? value.join(',') : value ?? '',
               ],
             ),
-          ),
+          ) as any,
         })) ?? notFound();
 
-      const {status, headers, cookies} = result;
-      const text = await result.text();
+      const {status, headers, cookies, body: resultBody} = result;
 
       const setCookies = [...cookies];
 
@@ -66,7 +66,7 @@ export function createHttpRequestListener(
         ),
       );
 
-      response.write(text);
+      response.write(resultBody);
       response.end();
     } catch {
       response.writeHead(500);

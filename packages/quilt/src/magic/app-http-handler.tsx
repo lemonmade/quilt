@@ -45,7 +45,7 @@ handler.get(async (request) => {
       </Html>,
     ),
     {
-      headers: new Headers([...headers]),
+      headers: Object.fromEntries([...headers]),
       status: statusCode,
     },
   );

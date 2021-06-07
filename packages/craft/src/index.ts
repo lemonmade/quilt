@@ -27,6 +27,8 @@ import {
   typescriptWorkspace,
 } from '@quilted/sewing-kit-typescript';
 
+import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
+
 import {serviceBuild} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
@@ -56,6 +58,7 @@ export interface ServiceOptions {
    */
   react?: boolean;
   build?: boolean;
+  polyfill?: boolean | PolyfillOptions;
   develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
   httpHandler?: boolean | Pick<HttpHandlerOptions, 'port'>;
 }
@@ -64,11 +67,12 @@ export function quiltService({
   build = true,
   develop = true,
   react: useReact = false,
+  polyfill: shouldPolyfill = true,
   httpHandler: useHttpHandler = true,
 }: ServiceOptions = {}) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service',
-    create({use}) {
+    async create({use}) {
       use(
         // Basic tool configuration
         rollupHooks(),
@@ -91,6 +95,18 @@ export function quiltService({
             typeof develop === 'boolean' ? undefined : develop,
           ),
       );
+
+      if (shouldPolyfill) {
+        await ignoreMissingImports(async () => {
+          const {polyfills} = await import('@quilted/polyfills/sewing-kit');
+
+          use(
+            polyfills(
+              typeof shouldPolyfill === 'object' ? shouldPolyfill : undefined,
+            ),
+          );
+        });
+      }
     },
   });
 }
@@ -145,4 +161,13 @@ export function quiltWorkspace() {
       use(eslint(), prettier(), typescriptWorkspace(), jest());
     },
   });
+}
+
+async function ignoreMissingImports(run: () => Promise<void>) {
+  try {
+    await run();
+  } catch (error) {
+    if (error?.code === 'ERR_MODULE_NOT_FOUND') return;
+    throw error;
+  }
 }

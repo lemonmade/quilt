@@ -1,3 +1,4 @@
+import {Headers} from 'node-fetch';
 import {resolveUrl as baseResolveUrl} from '@quilted/routing';
 import type {NavigateTo, RelativeTo} from '@quilted/routing';
 
@@ -31,5 +32,5 @@ export function resolveTo(
 export function normalizeHeaders(explicitHeaders?: Headers | HeadersInit) {
   return explicitHeaders instanceof Headers
     ? explicitHeaders
-    : new Headers(explicitHeaders);
+    : new Headers(explicitHeaders as any);
 }

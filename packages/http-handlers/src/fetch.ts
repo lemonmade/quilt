@@ -23,7 +23,7 @@ export async function fetchJson<T = unknown>(
   const response = await fetch(resolveTo(url), {
     method: 'POST',
     body: JSON.stringify(body),
-    headers,
+    headers: headers as any,
     ...options,
   });
 

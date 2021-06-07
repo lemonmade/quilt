@@ -4,7 +4,16 @@ const POLYFILLS = ['fetch'];
 
 export default createPackage((pkg) => {
   pkg.entry({source: './src/index'});
-  pkg.entry({source: './src/rollup-parts', name: 'rollup'});
+  pkg.entry({
+    source: './src/rollup-parts',
+    name: 'rollup',
+    runtime: Runtime.Node,
+  });
+  pkg.entry({
+    source: './src/sewing-kit',
+    name: 'sewing-kit',
+    runtime: Runtime.Node,
+  });
 
   pkg.entry({source: './src/base', name: 'base'});
   pkg.entry({source: './src/noop', name: 'noop'});

@@ -45,9 +45,13 @@
     "common-tags": "^1.8.0"
   },
   "peerDependencies": {
+    "@quilted/polyfills": "^0.2.2",
     "typescript": ">=4.0.0 <5.0.0"
   },
   "peerDependenciesMeta": {
+    "@quilted/polyfills": {
+      "optional": false
+    },
     "typescript": {
       "optional": false
     }
