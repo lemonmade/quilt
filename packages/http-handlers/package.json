@@ -36,7 +36,8 @@
   "dependencies": {
     "@quilted/http": "^0.2.2",
     "@quilted/routing": "^0.2.2",
-    "cookie": "^0.4.0"
+    "cookie": "^0.4.0",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0"

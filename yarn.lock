@@ -3049,6 +3049,7 @@ __metadata:
     "@quilted/routing": ^0.2.2
     "@types/cookie": ^0.4.0
     cookie: ^0.4.0
+    node-fetch: ^2.6.0
   languageName: unknown
   linkType: soft
 
