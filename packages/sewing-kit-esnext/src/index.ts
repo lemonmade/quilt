@@ -1,4 +1,4 @@
-import {join} from 'path';
+import {join, dirname, sep as pathSeparator} from 'path';
 
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {Package} from '@quilted/sewing-kit';
@@ -79,6 +79,7 @@ export function esnextBuild() {
               format: 'esm',
               dir: await outputDirectory.run(project.fs.buildPath()),
               preserveModules: true,
+              preserveModulesRoot: sourceRoot(project),
               entryFileNames: '[name][assetExtname].esnext',
             },
           ]);
@@ -164,4 +165,38 @@ export function esnext() {
       );
     },
   });
+}
+
+function getEntryFiles({fs, entries, binaries}: Package) {
+  return [
+    ...entries.map((entry) => fs.resolvePath(entry.source)),
+    ...binaries.map((binary) => fs.resolvePath(binary.source)),
+  ];
+}
+
+function sourceRoot(pkg: Package) {
+  const entries = getEntryFiles(pkg);
+
+  if (entries.length === 0) {
+    throw new Error(`No entries for package: ${pkg.name}`);
+  }
+
+  if (entries.length === 1) {
+    return dirname(entries[0]);
+  }
+
+  const [firstEntry, ...otherEntries] = entries;
+  let sharedRoot = pkg.fs.root + pathSeparator;
+
+  for (const segment of firstEntry
+    .replace(sharedRoot, '')
+    .split(pathSeparator)) {
+    const maybeSharedRoot = join(sharedRoot, segment + pathSeparator);
+
+    if (otherEntries.some((entry) => !entry.startsWith(maybeSharedRoot))) break;
+
+    sharedRoot = maybeSharedRoot;
+  }
+
+  return sharedRoot;
 }
