@@ -29,6 +29,7 @@ import {
 
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
+import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import {browserEntry} from './plugins/browser-entry';
 import {serviceBuild} from './plugins/service-build';
@@ -73,6 +74,7 @@ export function quiltApp({
         typescriptProject(),
         esnext(),
         react(),
+        preact(),
         // Build and auto-server setup
         browserEntry(),
         appBuild(),
@@ -126,6 +128,7 @@ export function quiltService({
         typescriptProject(),
         esnext(),
         useReact && react(),
+        useReact && preact(),
         // Build and http handler setup
         build && serviceBuild(),
         useHttpHandler &&

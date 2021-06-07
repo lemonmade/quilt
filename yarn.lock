@@ -2974,7 +2974,9 @@ __metadata:
     "@quilted/sewing-kit-targets": ^0.1.2
     "@quilted/sewing-kit-typescript": ^0.1.2
     "@quilted/typescript": ^0.2.2
+    "@rollup/plugin-alias": ^3.1.0
     common-tags: ^1.8.0
+    rollup: ^2.0.0
   peerDependencies:
     "@quilted/polyfills": ^0.2.2
     typescript: ">=4.0.0 <5.0.0"
@@ -3576,6 +3578,17 @@ __metadata:
   version: 1.0.17
   resolution: "@remote-ui/rpc@npm:1.0.17"
   checksum: ea2c34c823bd889bbcc802f5064377a3c57f70750a4e496d771d847994a3f83cb68580bc30e1b01c45eb1c64f4bde395295510680bf5dd41973151349114801c
+  languageName: node
+  linkType: hard
+
+"@rollup/plugin-alias@npm:^3.1.0":
+  version: 3.1.2
+  resolution: "@rollup/plugin-alias@npm:3.1.2"
+  dependencies:
+    slash: ^3.0.0
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0
+  checksum: cb0e59b25308d10c5bde8cc1f6e200d74fc98d4739800b4bd4b91d6b8ff07514a068d3a63a0c8fb125e7bc5602566c69687c291330580ca85425269413d7639c
   languageName: node
   linkType: hard
 
@@ -11893,6 +11906,20 @@ resolve@^2.0.0-next.3:
   peerDependencies:
     builtin-modules: ^3.1.0
   checksum: ecd332d57425d07f0718b41e51f659c88bd5225a0af2bd1a36a1ff97eed814ced5e1eb64874a88e400c13fd0f403aa946bc04cefcb571af75424085fb5a96994
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^2.0.0":
+  version: 2.51.0
+  resolution: "rollup@npm:2.51.0"
+  dependencies:
+    fsevents: ~2.3.1
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: ccdf74c8af028916997a077b18124f2a558ecd37c48de254b479721c10c08656853fa55fb69897eea7fbc8e3d5a3367aa32d27bf3584ac78b70cd265965b9023
   languageName: node
   linkType: hard
 

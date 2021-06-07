@@ -42,7 +42,9 @@
     "@quilted/sewing-kit-targets": "^0.1.2",
     "@quilted/sewing-kit-typescript": "^0.1.2",
     "@quilted/typescript": "^0.2.2",
-    "common-tags": "^1.8.0"
+    "@rollup/plugin-alias": "^3.1.0",
+    "common-tags": "^1.8.0",
+    "rollup": "^2.0.0"
   },
   "peerDependencies": {
     "@quilted/polyfills": "^0.2.2",

@@ -5,6 +5,8 @@ import type {App, WaterfallHook} from '@quilted/sewing-kit';
 
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
 
+import {getEntry} from './shared';
+
 const MAGIC_ENTRY_MODULE = '__quilt__/AppBrowserEntry.tsx';
 
 export interface BrowserEntryHooks {
@@ -19,7 +21,7 @@ declare module '@quilted/sewing-kit' {
 export function browserEntry() {
   return createProjectPlugin<App>({
     name: 'Quilt.App.BrowserEntry',
-    build({hooks, configure}) {
+    build({project, hooks, configure}) {
       hooks<BrowserEntryHooks>(({waterfall}) => ({
         quiltBrowserEntryContent: waterfall(),
         quiltBrowserEntryShouldHydrate: waterfall(),
@@ -47,10 +49,20 @@ export function browserEntry() {
 
           rollupPlugins?.(async (plugins) => {
             plugins.push({
-              name: '@quilted/web-app/magic-entry',
-              resolveId(id) {
-                if (id !== MAGIC_ENTRY_MODULE) return null;
-                return id;
+              name: '@quilted/web-app/browser-entry',
+              async resolveId(id) {
+                switch (id) {
+                  case MAGIC_MODULE_APP_COMPONENT: {
+                    return {
+                      id: await getEntry(project),
+                      moduleSideEffects: 'no-treeshake',
+                    };
+                  }
+                  case MAGIC_ENTRY_MODULE:
+                    return id;
+                  default:
+                    return null;
+                }
               },
               async load(source) {
                 if (source !== MAGIC_ENTRY_MODULE) return null;
@@ -65,7 +77,7 @@ export function browserEntry() {
 
                 const reactFunction = shouldHydrate ? 'hydrate' : 'render';
 
-                stripIndent`
+                return stripIndent`
                   import {${reactFunction}} from 'react-dom';
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
     
