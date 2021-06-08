@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-router",
   "type": "module",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -42,8 +42,8 @@
     }
   },
   "dependencies": {
-    "@quilted/react-html": "^0.3.4",
-    "@quilted/react-http": "^0.2.5",
+    "@quilted/react-html": "^0.3.5",
+    "@quilted/react-http": "^0.2.6",
     "@quilted/react-server-render": "^0.3.2",
     "@quilted/routing": "^0.2.2"
   },
