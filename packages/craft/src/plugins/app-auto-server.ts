@@ -1,5 +1,8 @@
+import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App, WaterfallHook} from '@quilted/sewing-kit';
+
+import {MAGIC_MODULE_APP_ASSET_MANIFEST} from '../constants';
 
 export interface AutoServerOptions {
   /**
@@ -33,6 +36,7 @@ export function appAutoServer() {
         (
           {
             outputDirectory,
+            rollupPlugins,
             rollupOutputs,
             quiltAutoServerHost,
             quiltAutoServerPort,
@@ -58,6 +62,31 @@ export function appAutoServer() {
               (await quiltAutoServerContent!.run(undefined)) ??
               `export {default} from '@quilted/quilt/magic-app-http-handler';`,
           );
+
+          rollupPlugins?.(async (plugins) => {
+            plugins.push({
+              name: '@quilted/magic-module/asset-manifest',
+              async resolveId(id) {
+                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
+                return null;
+              },
+              async load(source) {
+                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+
+                return stripIndent`
+                  const AsyncAssets = {
+                    styles: () => Promise.resolve([]),
+                    scripts: () => Promise.resolve([]),
+                    asyncAssets: () => Promise.resolve([]),
+                  };
+
+                  export default AsyncAssets;
+                `;
+              },
+            });
+
+            return plugins;
+          });
 
           rollupOutputs?.(async (outputs) => [
             ...outputs,

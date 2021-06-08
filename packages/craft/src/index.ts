@@ -32,6 +32,7 @@ import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import {browserEntry} from './plugins/browser-entry';
+import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
 import {serviceBuild} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
@@ -77,6 +78,7 @@ export function quiltApp({
         react(),
         preact(),
         // Build and auto-server setup
+        magicModuleApp(),
         browserEntry(),
         appBuild(),
         autoServer && httpHandler(),
