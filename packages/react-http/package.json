@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-http",
   "type": "module",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@quilted/http": "^0.2.2",
-    "@quilted/react-html": "^0.3.2",
+    "@quilted/react-html": "^0.3.3",
     "@quilted/react-server-render": "^0.3.2"
   },
   "eslintConfig": {
