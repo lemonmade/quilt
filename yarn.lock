@@ -2962,16 +2962,16 @@ __metadata:
   dependencies:
     "@quilted/eslint-config": ^0.1.2
     "@quilted/prettier": ^0.2.2
-    "@quilted/sewing-kit": ^0.2.3
+    "@quilted/sewing-kit": ^0.2.4
     "@quilted/sewing-kit-babel": ^0.1.2
     "@quilted/sewing-kit-eslint": ^0.1.2
-    "@quilted/sewing-kit-esnext": ^0.1.3
+    "@quilted/sewing-kit-esnext": ^0.1.4
     "@quilted/sewing-kit-jest": ^0.1.2
-    "@quilted/sewing-kit-package": ^0.1.2
+    "@quilted/sewing-kit-package": ^0.1.3
     "@quilted/sewing-kit-prettier": ^0.1.2
     "@quilted/sewing-kit-react": ^0.1.2
     "@quilted/sewing-kit-rollup": ^0.1.2
-    "@quilted/sewing-kit-targets": ^0.1.2
+    "@quilted/sewing-kit-targets": ^0.1.3
     "@quilted/sewing-kit-typescript": ^0.1.2
     "@quilted/typescript": ^0.2.2
     "@rollup/plugin-alias": ^3.1.0
@@ -3061,7 +3061,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/polyfills@^0.2.4, @quilted/polyfills@workspace:packages/polyfills":
+"@quilted/polyfills@^0.2.5, @quilted/polyfills@workspace:packages/polyfills":
   version: 0.0.0-use.local
   resolution: "@quilted/polyfills@workspace:packages/polyfills"
   dependencies:
@@ -3120,7 +3120,7 @@ __metadata:
     "@quilted/async": ^0.3.2
     "@quilted/graphql": ^0.4.2
     "@quilted/http-handlers": ^0.2.4
-    "@quilted/polyfills": ^0.2.4
+    "@quilted/polyfills": ^0.2.5
     "@quilted/preact-mini-compat": ^0.2.3
     "@quilted/react-async": ^0.3.6
     "@quilted/react-email": ^0.2.6
@@ -3131,7 +3131,7 @@ __metadata:
     "@quilted/react-router": ^0.3.7
     "@quilted/react-server-render": ^0.3.2
     "@quilted/react-testing": ^0.4.2
-    "@quilted/react-workers": ^0.2.2
+    "@quilted/react-workers": ^0.2.3
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
     preact: ^10.0.0
@@ -3305,11 +3305,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/react-workers@^0.2.2, @quilted/react-workers@workspace:packages/react-workers":
+"@quilted/react-workers@^0.2.3, @quilted/react-workers@workspace:packages/react-workers":
   version: 0.0.0-use.local
   resolution: "@quilted/react-workers@workspace:packages/react-workers"
   dependencies:
-    "@quilted/workers": ^0.2.2
+    "@quilted/workers": ^0.2.3
   peerDependencies:
     react: ">=17.0.0 <18.0.0"
   peerDependenciesMeta:
@@ -3358,7 +3358,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-esnext@^0.1.3, @quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext":
+"@quilted/sewing-kit-esnext@^0.1.4, @quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext"
   dependencies:
@@ -3398,7 +3398,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-package@^0.1.2, @quilted/sewing-kit-package@workspace:packages/sewing-kit-package":
+"@quilted/sewing-kit-package@^0.1.3, @quilted/sewing-kit-package@workspace:packages/sewing-kit-package":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-package@workspace:packages/sewing-kit-package"
   dependencies:
@@ -3463,7 +3463,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-targets@^0.1.2, @quilted/sewing-kit-targets@workspace:packages/sewing-kit-targets":
+"@quilted/sewing-kit-targets@^0.1.3, @quilted/sewing-kit-targets@workspace:packages/sewing-kit-targets":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-targets@workspace:packages/sewing-kit-targets"
   dependencies:
@@ -3510,7 +3510,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit@^0.2.3, @quilted/sewing-kit@workspace:packages/sewing-kit":
+"@quilted/sewing-kit@^0.2.4, @quilted/sewing-kit@workspace:packages/sewing-kit":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit@workspace:packages/sewing-kit"
   dependencies:
@@ -3553,7 +3553,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/workers@^0.2.2, @quilted/workers@workspace:packages/workers":
+"@quilted/workers@^0.2.3, @quilted/workers@workspace:packages/workers":
   version: 0.0.0-use.local
   resolution: "@quilted/workers@workspace:packages/workers"
   dependencies:
