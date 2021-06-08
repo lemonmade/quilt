@@ -32,6 +32,7 @@ import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import {browserEntry} from './plugins/browser-entry';
+import {appAutoServer} from './plugins/app-auto-server';
 import {serviceBuild} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
@@ -79,6 +80,7 @@ export function quiltApp({
         browserEntry(),
         appBuild(),
         autoServer && httpHandler(),
+        autoServer && appAutoServer(),
       );
 
       if (shouldPolyfill) {
@@ -130,7 +132,7 @@ export function quiltService({
         useReact && react(),
         useReact && preact(),
         // Build and http handler setup
-        build && serviceBuild(),
+        build && serviceBuild({httpHandler: Boolean(useHttpHandler)}),
         useHttpHandler &&
           httpHandler(
             typeof useHttpHandler === 'boolean' ? undefined : useHttpHandler,

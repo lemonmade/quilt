@@ -13,7 +13,7 @@ declare module '@quilted/sewing-kit' {
     /**
      * Indicates that the `esnext` build is being generated.
      */
-    esnext: true;
+    esnext: boolean;
   }
 }
 
@@ -56,10 +56,7 @@ export function esnextBuild() {
       if (project.packageJson?.private) return;
 
       configure(
-        (
-          {outputDirectory, rollupInput, rollupOutputs},
-          {options: {esnext = false}},
-        ) => {
+        ({outputDirectory, rollupInput, rollupOutputs}, {esnext = false}) => {
           if (!esnext) return;
 
           outputDirectory((output) => join(output, 'esnext'));

@@ -1,6 +1,6 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
+import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App, Service} from '@quilted/sewing-kit';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
@@ -9,9 +9,7 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
   return createProjectPlugin<App | Service>({
     name: 'Quilt.AWS.Lambda',
     build({configure}) {
-      configure(({quiltHttpHandlerRuntimeContent}, {target}) => {
-        if (!target.includes(Runtime.Node)) return;
-
+      configure(({quiltHttpHandlerRuntimeContent}) => {
         quiltHttpHandlerRuntimeContent?.(
           () => stripIndent`
             import HttpHandler from ${JSON.stringify(

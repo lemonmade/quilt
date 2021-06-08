@@ -40,7 +40,7 @@ export function packageBuild({commonjs = false}: Options = {}) {
       configure(
         (
           {outputDirectory, rollupInput, rollupOutputs},
-          {options: {packageBuildModule}},
+          {packageBuildModule},
         ) => {
           if (packageBuildModule == null) return;
 

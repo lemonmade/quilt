@@ -1,6 +1,6 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
+import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
 import type {App, WaterfallHook} from '@quilted/sewing-kit';
 
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
@@ -14,8 +14,13 @@ export interface BrowserEntryHooks {
   quiltBrowserEntryContent: WaterfallHook<string | undefined>;
 }
 
+export interface BrowserEntryOptions {
+  quiltBrowserEntry: boolean;
+}
+
 declare module '@quilted/sewing-kit' {
   interface BuildAppConfigurationHooks extends BrowserEntryHooks {}
+  interface BuildAppOptions extends BrowserEntryOptions {}
 }
 
 export function browserEntry() {
@@ -30,15 +35,18 @@ export function browserEntry() {
       configure(
         (
           {
+            runtime,
             rollupInput,
             rollupInputOptions,
             rollupPlugins,
             quiltBrowserEntryContent,
             quiltBrowserEntryShouldHydrate,
           },
-          {target},
+          {quiltBrowserEntry = false},
         ) => {
-          if (!target.includes(Runtime.Browser)) return;
+          if (!quiltBrowserEntry) return;
+
+          runtime(() => new TargetRuntime([Runtime.Browser]));
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 

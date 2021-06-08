@@ -19,14 +19,17 @@ export function polyfills({features}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Polyfills',
     build({configure}) {
-      configure(({targets, rollupPlugins}, {target}) => {
+      configure(({runtime, targets, rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
-          const {polyfill} = await import('./rollup-parts');
+          const [{polyfill}, resolvedRuntime] = await Promise.all([
+            import('./rollup-parts'),
+            runtime.run(),
+          ]);
 
           plugins.push(
             polyfill({
               features,
-              target: target.includes(Runtime.Browser)
+              target: resolvedRuntime.includes(Runtime.Browser)
                 ? await targets?.run([])
                 : 'node',
             }),
@@ -37,14 +40,17 @@ export function polyfills({features}: Options = {}) {
       });
     },
     develop({configure}) {
-      configure(({targets, rollupPlugins}, {target}) => {
+      configure(({runtime, targets, rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
-          const {polyfill} = await import('./rollup-parts');
+          const [{polyfill}, resolvedRuntime] = await Promise.all([
+            import('./rollup-parts'),
+            runtime.run(),
+          ]);
 
           plugins.push(
             polyfill({
               features,
-              target: target.includes(Runtime.Browser)
+              target: resolvedRuntime.includes(Runtime.Browser)
                 ? await targets?.run([])
                 : 'node',
             }),

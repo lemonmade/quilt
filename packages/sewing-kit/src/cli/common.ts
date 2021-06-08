@@ -6,23 +6,19 @@ import {Readable, Writable} from 'stream';
 import arg from 'arg';
 import type {Result, Spec} from 'arg';
 
-import {TargetRuntime} from '../model';
 import type {Project} from '../model';
 
-import {Runtime, Task} from '../types';
+import {Task} from '../types';
 
 import {DiagnosticError, isDiagnosticError} from '../errors';
 
 import {loadWorkspace} from '../configuration/load';
 import type {LoadedWorkspace} from '../configuration/load';
 
-import {
-  createWaterfallHook,
-  createSequenceHook,
-  BuildProjectConfigurationContext,
-  BuildWorkspaceConfigurationContext,
-} from '../hooks';
+import {createWaterfallHook, createSequenceHook} from '../hooks';
 import type {
+  ResolvedOptions,
+  BuildOptionsForProject,
   BuildTaskOptions,
   DevelopTaskOptions,
   LintTaskOptions,
@@ -206,7 +202,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
     Project,
     ((
       hooks: ResolvedBuildProjectConfigurationHooks<any>,
-      context: BuildProjectConfigurationContext<any>,
+      options: ResolvedOptions<BuildOptionsForProject<any>>,
     ) => Promise<void>)[]
   >();
   const stepAddersForProject = new Map<
@@ -224,7 +220,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
   ) => void)[] = [];
   const configurersForWorkspace: ((
     hooks: ResolvedBuildWorkspaceConfigurationHooks,
-    context: BuildWorkspaceConfigurationContext,
+    options: ResolvedOptions<BuildWorkspaceOptions>,
   ) => Promise<void>)[] = [];
   const stepAddersForWorkspace: ((steps: WorkspaceStep[]) => Promise<void>)[] =
     [];
@@ -401,9 +397,6 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
   function loadConfigurationForProject<ProjectType extends Project = Project>(
     project: ProjectType,
     options: BuildWorkspaceOptions = {} as any,
-    {
-      target = TargetRuntime.fromProject(project),
-    }: {target?: TargetRuntime} = {},
   ) {
     const id = stringifyOptions(options);
 
@@ -433,7 +426,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
 
       if (configurers) {
         for (const configurer of configurers) {
-          await configurer(hooks, {project, workspace, options, target});
+          await configurer(hooks, options);
         }
       }
 
@@ -446,7 +439,6 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
 
   function loadConfigurationForWorkspace(
     options: BuildWorkspaceOptions = {} as any,
-    {target = new TargetRuntime([Runtime.Node])}: {target?: TargetRuntime} = {},
   ) {
     const id = stringifyOptions(options);
 
@@ -462,7 +454,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
       }
 
       for (const configurer of configurersForWorkspace) {
-        await configurer(hooks, {workspace, options, target});
+        await configurer(hooks, options);
       }
 
       return hooks;

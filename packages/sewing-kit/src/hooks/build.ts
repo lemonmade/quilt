@@ -5,7 +5,9 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
+  ResolvedOptions,
   WaterfallHook,
+  WaterfallHookWithDefault,
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
@@ -64,6 +66,11 @@ export interface BuildProjectConfigurationCoreHooks {
    * codebase.
    */
   readonly extensions: WaterfallHook<string[]>;
+
+  /**
+   * The runtimes that this build will execute in
+   */
+  readonly runtime: WaterfallHookWithDefault<TargetRuntime>;
 }
 
 /**
@@ -135,67 +142,6 @@ export type ResolvedBuildWorkspaceConfigurationHooks =
     BuildWorkspaceConfigurationCoreHooks;
 
 /**
- * Additional context provided to the configuration hooks for
- * building an individual project.
- */
-export interface BuildProjectConfigurationContext<ProjectType extends Project> {
-  /**
-   * The project being built.
-   */
-  readonly project: ProjectType;
-
-  /**
-   * The workspace this project is part of.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The runtime that this project will execute in. By default, the runtime
-   * is chosen based on the product type (apps target the browser, services
-   * target node, and packages target all environments). You should read
-   * the runtime from this field instead of inferring it from the project
-   * yourself, as it is possible for consumers to generate configuration for
-   * a “variant” of the project targeting a non-standard environment (e.g.,
-   * an app being built for a node SSR runtime).
-   */
-  readonly target: TargetRuntime;
-
-  /**
-   * The options for generating this build configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `BuildProjectOptions` object
-   * in `@quilted/sewing-kit` (or the project-specific versions of that
-   * type).
-   */
-  readonly options: Readonly<BuildOptionsForProject<ProjectType>>;
-}
-
-/**
- * Additional context provided to the configuration hooks for
- * developing an individual project.
- */
-export interface BuildWorkspaceConfigurationContext {
-  /**
-   * The workspace being built.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The runtime that tasks will execute in. Defaults to Node.
-   */
-  readonly target: TargetRuntime;
-
-  /**
-   * The options for generating this build configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `BuildWorkspaceOptions` object.
-   */
-  readonly options: Readonly<BuildWorkspaceOptions>;
-}
-
-/**
  * The top-level options that can be passed when running the develop task.
  */
 export interface BuildTaskOptions {
@@ -261,7 +207,7 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
    */
   readonly configure: ConfigurationCollector<
     ResolvedBuildProjectConfigurationHooks<ProjectType>,
-    BuildProjectConfigurationContext<ProjectType>
+    ResolvedOptions<BuildOptionsForProject<ProjectType>>
   >;
 
   /**
@@ -344,7 +290,7 @@ export interface BuildWorkspaceTask {
    */
   readonly configure: ConfigurationCollector<
     ResolvedBuildWorkspaceConfigurationHooks,
-    BuildWorkspaceConfigurationContext
+    ResolvedOptions<BuildWorkspaceOptions>
   >;
 
   /**

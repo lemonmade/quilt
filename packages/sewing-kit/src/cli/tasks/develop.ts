@@ -1,5 +1,6 @@
 import {Task} from '../../types';
 import {createWaterfallHook, DevelopTaskOptions} from '../../hooks';
+import {TargetRuntime} from '../../model';
 
 import {createCommand, loadStepsForTask} from '../common';
 import type {TaskContext} from '../common';
@@ -22,8 +23,11 @@ export async function runDev(
   const {project: projectSteps} = await loadStepsForTask(Task.Develop, {
     ...context,
     options,
-    coreHooksForProject: () => ({
+    coreHooksForProject: (project) => ({
       extensions: createWaterfallHook<string[]>(),
+      runtime: createWaterfallHook({
+        default: TargetRuntime.fromProject(project),
+      }),
     }),
     coreHooksForWorkspace: () => ({}),
   });

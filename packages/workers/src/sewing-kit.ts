@@ -57,9 +57,12 @@ export function workers() {
         quiltWorkerWrite: waterfall(),
       }));
 
-      configure((configuration, {target}) => {
+      configure((configuration) => {
         addConfiguration(configuration, {
-          noop: !target.includes(Runtime.Browser),
+          noop: async () => {
+            const resolvedRuntime = await configuration.runtime.run();
+            return !resolvedRuntime.includes(Runtime.Browser);
+          },
         });
       });
     },
@@ -75,9 +78,12 @@ export function workers() {
         quiltWorkerWrite: waterfall(),
       }));
 
-      configure((configuration, {target}) => {
+      configure((configuration) => {
         addConfiguration(configuration, {
-          noop: !target.includes(Runtime.Browser),
+          noop: async () => {
+            const resolvedRuntime = await configuration.runtime.run();
+            return !resolvedRuntime.includes(Runtime.Browser);
+          },
         });
       });
     },
@@ -94,7 +100,7 @@ export function workers() {
       }));
 
       configure((configuration) => {
-        addConfiguration(configuration, {noop: true});
+        addConfiguration(configuration, {noop: () => true});
       });
     },
   });
@@ -112,9 +118,11 @@ export function workers() {
       quiltWorkerRollupOutputOptions,
       quiltWorkerRollupPublicPath,
     }: ResolvedHooks<WorkerHooks & RollupHooks & BabelHooks>,
-    {noop: defaultNoop}: {noop: boolean},
+    {noop: shouldNoop}: {noop(): boolean | Promise<boolean>},
   ) {
     rollupPlugins?.(async (plugins) => {
+      const defaultNoop = await shouldNoop();
+
       const [noop, write, {workers}] = await Promise.all([
         quiltWorkerNoop!.run(defaultNoop),
         quiltWorkerWrite!.run(defaultNoop),
@@ -141,6 +149,8 @@ export function workers() {
     });
 
     babelPlugins?.(async (plugins) => {
+      const defaultNoop = await shouldNoop();
+
       const [noop, packages] = await Promise.all([
         quiltWorkerNoop!.run(defaultNoop),
         quiltWorkerPackages!.run(undefined),

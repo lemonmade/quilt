@@ -5,6 +5,7 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
+  ResolvedOptions,
   ConfigurationCollector,
   SewingKitInternalContext,
   WorkspaceStepAdder,
@@ -122,53 +123,6 @@ export type ResolvedTypeCheckWorkspaceConfigurationHooks =
     TypeCheckWorkspaceConfigurationCoreHooks;
 
 /**
- * Additional context provided to the configuration hooks for
- * type checking an individual project.
- */
-export interface TypeCheckProjectConfigurationContext<
-  ProjectType extends Project,
-> {
-  /**
-   * The project being type checked.
-   */
-  readonly project: ProjectType;
-
-  /**
-   * The workspace this project is part of.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The options for generating this type checking configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `TypeCheckProjectOptions` object
-   * in `@quilted/sewing-kit` (or the project-specific versions of that
-   * type).
-   */
-  readonly options: Readonly<TypeCheckOptionsForProject<ProjectType>>;
-}
-
-/**
- * Additional context provided to the configuration hooks for
- * type checking the overall workspace.
- */
-export interface TypeCheckWorkspaceConfigurationContext {
-  /**
-   * The workspace being type checked.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The options for generating this type check configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `TypeCheckWorkspaceOptions` object.
-   */
-  readonly options: Readonly<TypeCheckWorkspaceOptions>;
-}
-
-/**
  * The top-level options that can be passed when running the type-check task.
  */
 export interface TypeCheckTaskOptions {}
@@ -219,7 +173,7 @@ export interface TypeCheckProjectTask<ProjectType extends Project = Project> {
    */
   readonly configure: ConfigurationCollector<
     ResolvedTypeCheckProjectConfigurationHooks<ProjectType>,
-    TypeCheckProjectConfigurationContext<ProjectType>
+    ResolvedOptions<TypeCheckOptionsForProject<ProjectType>>
   >;
 
   /**
@@ -302,7 +256,7 @@ export interface TypeCheckWorkspaceTask {
    */
   readonly configure: ConfigurationCollector<
     ResolvedTypeCheckWorkspaceConfigurationHooks,
-    TypeCheckWorkspaceConfigurationContext
+    ResolvedOptions<TypeCheckWorkspaceOptions>
   >;
 
   /**

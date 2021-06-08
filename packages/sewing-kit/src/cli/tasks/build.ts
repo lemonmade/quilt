@@ -4,6 +4,7 @@ import {BuildTaskOptions, createWaterfallHook} from '../../hooks';
 
 import {createCommand, loadStepsForTask, createStepRunner} from '../common';
 import type {TaskContext} from '../common';
+import {TargetRuntime} from '../../model';
 
 export const build = createCommand(
   {
@@ -39,9 +40,12 @@ export async function runBuild(
     await loadStepsForTask(Task.Build, {
       ...context,
       options,
-      coreHooksForProject: () => ({
+      coreHooksForProject: (project) => ({
         extensions: createWaterfallHook<string[]>(),
         outputDirectory: createWaterfallHook<string>(),
+        runtime: createWaterfallHook({
+          default: TargetRuntime.fromProject(project),
+        }),
       }),
       coreHooksForWorkspace: () => ({}),
     });

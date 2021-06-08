@@ -5,6 +5,7 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
+  ResolvedOptions,
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
@@ -122,51 +123,6 @@ export type ResolvedLintWorkspaceConfigurationHooks =
     LintWorkspaceConfigurationCoreHooks;
 
 /**
- * Additional context provided to the configuration hooks for
- * linting an individual project.
- */
-export interface LintProjectConfigurationContext<ProjectType extends Project> {
-  /**
-   * The project being linted.
-   */
-  readonly project: ProjectType;
-
-  /**
-   * The workspace this project is part of.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The options for generating this linting configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `LintProjectOptions` object
-   * in `@quilted/sewing-kit` (or the project-specific versions of that
-   * type).
-   */
-  readonly options: Readonly<LintOptionsForProject<ProjectType>>;
-}
-
-/**
- * Additional context provided to the configuration hooks for
- * linting the overall workspace.
- */
-export interface LintWorkspaceConfigurationContext {
-  /**
-   * The workspace being linted.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The options for generating this lint configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `LintWorkspaceOptions` object.
-   */
-  readonly options: Readonly<LintWorkspaceOptions>;
-}
-
-/**
  * The top-level options that can be passed when running the lint task.
  */
 export interface LintTaskOptions {
@@ -222,7 +178,7 @@ export interface LintProjectTask<ProjectType extends Project = Project> {
    */
   readonly configure: ConfigurationCollector<
     ResolvedLintProjectConfigurationHooks<ProjectType>,
-    LintProjectConfigurationContext<ProjectType>
+    ResolvedOptions<LintOptionsForProject<ProjectType>>
   >;
 
   /**
@@ -305,7 +261,7 @@ export interface LintWorkspaceTask {
    */
   readonly configure: ConfigurationCollector<
     ResolvedLintWorkspaceConfigurationHooks,
-    LintWorkspaceConfigurationContext
+    ResolvedOptions<LintWorkspaceOptions>
   >;
 
   /**

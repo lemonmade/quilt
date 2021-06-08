@@ -1,5 +1,5 @@
 import {stripIndent} from 'common-tags';
-import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
+import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
 import type {App, Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-rollup';
 
@@ -15,11 +15,20 @@ export interface HttpHandlerHooks {
   quiltHttpHandlerRuntimeContent: WaterfallHook<string | undefined>;
 }
 
+export interface HttpHandlerOptions {
+  quiltHttpHandler: boolean;
+}
+
 declare module '@quilted/sewing-kit' {
   interface BuildAppConfigurationHooks extends HttpHandlerHooks {}
   interface DevelopAppConfigurationHooks extends HttpHandlerHooks {}
   interface BuildServiceConfigurationHooks extends HttpHandlerHooks {}
   interface DevelopServiceConfigurationHooks extends HttpHandlerHooks {}
+
+  interface BuildAppOptions extends HttpHandlerOptions {}
+  interface DevelopAppOptions extends HttpHandlerOptions {}
+  interface BuildServiceOptions extends HttpHandlerOptions {}
+  interface DevelopServiceOptions extends HttpHandlerOptions {}
 }
 
 export interface Options {
@@ -40,6 +49,7 @@ export function httpHandler({port: explicitPort}: Options = {}) {
       configure(
         (
           {
+            runtime,
             rollupInput,
             rollupPlugins,
             quiltHttpHandlerHost,
@@ -47,9 +57,11 @@ export function httpHandler({port: explicitPort}: Options = {}) {
             quiltHttpHandlerContent,
             quiltHttpHandlerRuntimeContent,
           },
-          {target},
+          {quiltHttpHandler = false},
         ) => {
-          if (!target.includes(Runtime.Node)) return;
+          if (!quiltHttpHandler) return;
+
+          runtime(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
@@ -141,6 +153,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
       configure(
         (
           {
+            runtime,
             rollupInput,
             rollupPlugins,
             quiltHttpHandlerHost,
@@ -148,9 +161,11 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
             quiltHttpHandlerContent,
             quiltHttpHandlerRuntimeContent,
           },
-          {target},
+          {quiltHttpHandler},
         ) => {
-          if (!target.includes(Runtime.Node)) return;
+          if (!quiltHttpHandler) return;
+
+          runtime?.(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
@@ -249,7 +264,10 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
             const [
               {watch},
               {rollupInput, rollupExternals, rollupPlugins, rollupInputOptions},
-            ] = await Promise.all([import('rollup'), configuration()]);
+            ] = await Promise.all([
+              import('rollup'),
+              configuration({quiltHttpHandler: true}),
+            ]);
 
             const [input, plugins, external] = await Promise.all([
               rollupInput!.run([]),

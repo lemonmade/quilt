@@ -53,6 +53,14 @@ export interface WaterfallHook<Value = unknown, Args extends any[] = []> {
   run(value: Value, ...args: Args): Promise<Value>;
 }
 
+export interface WaterfallHookWithDefault<
+  Value = unknown,
+  Args extends any[] = [],
+> {
+  (hook: (value: Value, ...args: Args) => Value | Promise<Value>): void;
+  run(...args: Args): Promise<Value>;
+}
+
 export function createSequenceHook<Args extends any[] = []>() {
   const hooks: ((...args: Args) => void | Promise<void>)[] = [];
 
@@ -72,15 +80,30 @@ export function createSequenceHook<Args extends any[] = []>() {
 export function createWaterfallHook<
   Value = unknown,
   Args extends any[] = [],
->() {
+>(): WaterfallHook<Value, Args>;
+export function createWaterfallHook<
+  Value = unknown,
+  Args extends any[] = [],
+>(options: {default: Value}): WaterfallHookWithDefault<Value, Args>;
+export function createWaterfallHook<
+  Value = unknown,
+  Args extends any[] = [],
+>(options?: {default: Value}) {
   const hooks: ((value: Value, ...args: Args) => Value | Promise<Value>)[] = [];
 
   const waterfallHook: WaterfallHook<Value, Args> = (hook) => {
     hooks.push(hook);
   };
 
-  waterfallHook.run = async (initial, ...args) => {
-    let result: Value = initial;
+  waterfallHook.run = async (initialOrArg, ...args) => {
+    let result: Value;
+
+    if (options) {
+      result = options.default;
+      args.unshift(initialOrArg);
+    } else {
+      result = initialOrArg;
+    }
 
     for (const hook of hooks) {
       result = await (hook as any)(result, ...args);
@@ -128,12 +151,12 @@ export interface HookAdder<AllowedHooks> {
 
 export interface ConfigurationCollector<
   ConfigurationHooks,
-  ConfigurationContext,
+  ConfigurationOptions,
 > {
   (
     collector: (
       configuration: ConfigurationHooks,
-      context: ConfigurationContext,
+      options: ConfigurationOptions,
     ) => ValueOrPromise<void>,
   ): ValueOrPromise<void>;
 }

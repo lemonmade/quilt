@@ -58,56 +58,62 @@ export function targets() {
       }));
 
       configure(
-        async ({targets, targetName, babelTargets, babelPresets}, {target}) => {
-          const useNodeTarget = target.includes(Runtime.Node);
-          const useBrowserTarget = target.includes(Runtime.Browser);
+        ({runtime, targets, targetName, babelTargets, babelPresets}) => {
+          targets!(async (targets) => {
+            if (targets.length > 0) return targets;
 
-          const defaultTargets: string[] = [];
+            const resolvedRuntime = await runtime!.run();
 
-          if (useNodeTarget) {
-            const engines: {node?: string} | undefined =
-              (project.packageJson?.raw.engines as any) ??
-              (workspace.packageJson?.raw.engines as any);
+            const useNodeTarget = resolvedRuntime.includes(Runtime.Node);
+            const useBrowserTarget = resolvedRuntime.includes(Runtime.Browser);
 
-            const nodeSemver = engines?.node;
+            if (useNodeTarget) {
+              const engines: {node?: string} | undefined =
+                (project.packageJson?.raw.engines as any) ??
+                (workspace.packageJson?.raw.engines as any);
 
-            // If no node engine is specified, we will use the current version of
-            // node, which we assume you are setting as your minimum supported
-            // target.
-            if (nodeSemver == null) {
-              defaultTargets.push('current node');
-            } else {
-              const {default: semver} = await import('semver');
+              const nodeSemver = engines?.node;
 
-              const parsed = semver.minVersion(nodeSemver);
+              // If no node engine is specified, we will use the current version of
+              // node, which we assume you are setting as your minimum supported
+              // target.
+              if (nodeSemver == null) {
+                targets.push('current node');
+              } else {
+                const {default: semver} = await import('semver');
 
-              if (parsed == null) {
-                throw new DiagnosticError({
-                  title: `Could not parse engines.node in order to determine the node target for project ${
-                    project.name
-                  }: ${JSON.stringify(nodeSemver)}`,
-                });
+                const parsed = semver.minVersion(nodeSemver);
+
+                if (parsed == null) {
+                  throw new DiagnosticError({
+                    title: `Could not parse engines.node in order to determine the node target for project ${
+                      project.name
+                    }: ${JSON.stringify(nodeSemver)}`,
+                  });
+                }
+
+                targets.push(`node ${parsed.major}.${parsed.minor}`);
               }
-
-              defaultTargets.push(`node ${parsed.major}.${parsed.minor}`);
             }
-          }
 
-          if (useBrowserTarget) {
-            const [{default: browserslist}, env] = await Promise.all([
-              import('browserslist'),
-              targetName!.run(undefined),
-            ]);
+            if (useBrowserTarget) {
+              const [{default: browserslist}, env] = await Promise.all([
+                import('browserslist'),
+                targetName!.run(undefined),
+              ]);
 
-            defaultTargets.push(
-              ...browserslist(undefined, {
-                env,
-                path: project.fs.root,
-              }),
-            );
-          }
+              targets.push(
+                ...browserslist(undefined, {
+                  env,
+                  path: project.fs.root,
+                }),
+              );
+            }
 
-          babelTargets?.(() => targets!.run(defaultTargets));
+            return targets;
+          });
+
+          babelTargets?.(() => targets!.run([]));
           babelPresets?.((presets) => ['@babel/preset-env', ...presets]);
         },
       );
@@ -118,10 +124,27 @@ export function targets() {
         targetName: waterfall(),
       }));
 
-      configure(({targets, babelTargets, babelPresets}) => {
-        const defaultTargets = ['current node'];
+      configure(({runtime, targets, babelTargets, babelPresets}) => {
+        targets!(async (targets) => {
+          if (targets.length > 0) return targets;
 
-        babelTargets?.(() => targets!.run(defaultTargets));
+          const resolvedRuntime = await runtime!.run();
+
+          const useNodeTarget = resolvedRuntime.includes(Runtime.Node);
+          const useBrowserTarget = resolvedRuntime.includes(Runtime.Browser);
+
+          if (useNodeTarget) {
+            targets.push('current node');
+          }
+
+          if (useBrowserTarget) {
+            targets.push('last 1 major version');
+          }
+
+          return targets;
+        });
+
+        babelTargets?.(() => targets!.run([]));
         babelPresets?.((presets) => ['@babel/preset-env', ...presets]);
       });
     },

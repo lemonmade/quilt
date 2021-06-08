@@ -5,8 +5,10 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
+  ResolvedOptions,
   ConfigurationCollector,
   WaterfallHook,
+  WaterfallHookWithDefault,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
   SewingKitInternalContext,
@@ -58,6 +60,11 @@ export interface DevelopProjectConfigurationCoreHooks {
    * codebase.
    */
   readonly extensions: WaterfallHook<string[]>;
+
+  /**
+   * The runtimes that this build will execute in
+   */
+  readonly runtime: WaterfallHookWithDefault<TargetRuntime>;
 }
 
 /**
@@ -129,69 +136,6 @@ export type ResolvedDevelopWorkspaceConfigurationHooks =
     DevelopWorkspaceConfigurationCoreHooks;
 
 /**
- * Additional context provided to the configuration hooks for
- * developing an individual project.
- */
-export interface DevelopProjectConfigurationContext<
-  ProjectType extends Project,
-> {
-  /**
-   * The project being developed.
-   */
-  readonly project: ProjectType;
-
-  /**
-   * The workspace this project is part of.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The runtime that this project will execute in. By default, the runtime
-   * is chosen based on the product type (apps target the browser, services
-   * target node, and packages target all environments). You should read
-   * the runtime from this field instead of inferring it from the project
-   * yourself, as it is possible for consumers to generate configuration for
-   * a “variant” of the project targeting a non-standard environment (e.g.,
-   * an app being built for a node SSR runtime).
-   */
-  readonly target: TargetRuntime;
-
-  /**
-   * The options for generating this development configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `DevelopProjectOptions` object
-   * in `@quilted/sewing-kit` (or the project-specific versions of that
-   * type).
-   */
-  readonly options: Readonly<DevelopOptionsForProject<ProjectType>>;
-}
-
-/**
- * Additional context provided to the configuration hooks for
- * developing the overall workspace.
- */
-export interface DevelopWorkspaceConfigurationContext {
-  /**
-   * The workspace being developed.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The runtime that tasks will execute in. Defaults to Node.
-   */
-  readonly target: TargetRuntime;
-
-  /**
-   * The options for generating this develop configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `BuildWorkspaceOptions` object.
-   */
-  readonly options: Readonly<DevelopWorkspaceOptions>;
-}
-
-/**
  * The top-level options that can be passed when running the develop task.
  */
 export interface DevelopTaskOptions {
@@ -248,7 +192,7 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
    */
   readonly configure: ConfigurationCollector<
     ResolvedDevelopProjectConfigurationHooks<ProjectType>,
-    DevelopProjectConfigurationContext<ProjectType>
+    ResolvedOptions<DevelopOptionsForProject<ProjectType>>
   >;
 
   /**
@@ -331,7 +275,7 @@ export interface DevelopWorkspaceTask {
    */
   readonly configure: ConfigurationCollector<
     ResolvedDevelopWorkspaceConfigurationHooks,
-    DevelopWorkspaceConfigurationContext
+    ResolvedOptions<DevelopWorkspaceOptions>
   >;
 
   /**

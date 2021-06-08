@@ -5,6 +5,7 @@ import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
+  ResolvedOptions,
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
@@ -122,51 +123,6 @@ export type ResolvedTestWorkspaceConfigurationHooks =
     TestWorkspaceConfigurationCoreHooks;
 
 /**
- * Additional context provided to the configuration hooks for
- * testing an individual project.
- */
-export interface TestProjectConfigurationContext<ProjectType extends Project> {
-  /**
-   * The project being tested.
-   */
-  readonly project: ProjectType;
-
-  /**
-   * The workspace this project is part of.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The options for generating this testing configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `TestProjectOptions` object
-   * in `@quilted/sewing-kit` (or the project-specific versions of that
-   * type).
-   */
-  readonly options: Readonly<TestOptionsForProject<ProjectType>>;
-}
-
-/**
- * Additional context provided to the configuration hooks for
- * testing the overall workspace.
- */
-export interface TestWorkspaceConfigurationContext {
-  /**
-   * The workspace being tested.
-   */
-  readonly workspace: Workspace;
-
-  /**
-   * The options for generating this test configuration. Configuration
-   * hooks can run multiple times with different sets of options, but each
-   * unique set of options will only ever be configured once. You can add
-   * additional options by augmenting the `TestWorkspaceOptions` object.
-   */
-  readonly options: Readonly<TestWorkspaceOptions>;
-}
-
-/**
  * The top-level options that can be passed when running the test task.
  */
 export interface TestTaskOptions {}
@@ -217,7 +173,7 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
    */
   readonly configure: ConfigurationCollector<
     ResolvedTestProjectConfigurationHooks<ProjectType>,
-    TestProjectConfigurationContext<ProjectType>
+    ResolvedOptions<TestOptionsForProject<ProjectType>>
   >;
 
   /**
@@ -300,7 +256,7 @@ export interface TestWorkspaceTask {
    */
   readonly configure: ConfigurationCollector<
     ResolvedTestWorkspaceConfigurationHooks,
-    TestWorkspaceConfigurationContext
+    ResolvedOptions<TestWorkspaceOptions>
   >;
 
   /**
