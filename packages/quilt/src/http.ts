@@ -15,4 +15,5 @@ export {
   HttpContext,
   NotFound,
   ResponseHeader,
+  Status,
 } from '@quilted/react-http';
