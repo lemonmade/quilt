@@ -5,6 +5,7 @@ export {
   Meta,
   Title,
   Viewport,
+  Favicon,
   useSerialized,
   useBodyAttributes,
   useHtmlAttributes,

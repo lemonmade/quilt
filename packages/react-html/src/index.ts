@@ -1,4 +1,12 @@
-export {Script, Style, Hydrator, Meta, Title, Viewport} from './components';
+export {
+  Script,
+  Style,
+  Hydrator,
+  Meta,
+  Title,
+  Viewport,
+  Favicon,
+} from './components';
 
 export {
   useSerialized,

@@ -4,3 +4,4 @@ export {Style} from './Style';
 export {Script} from './Script';
 export {Title} from './Title';
 export {Viewport} from './Viewport';
+export {Favicon} from './Favicon';
