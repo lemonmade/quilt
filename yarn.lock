@@ -3126,9 +3126,9 @@ __metadata:
     "@quilted/react-email": ^0.2.2
     "@quilted/react-graphql": ^0.4.2
     "@quilted/react-html": ^0.3.2
-    "@quilted/react-http": ^0.2.2
+    "@quilted/react-http": ^0.2.3
     "@quilted/react-idle": ^0.3.2
-    "@quilted/react-router": ^0.3.2
+    "@quilted/react-router": ^0.3.3
     "@quilted/react-server-render": ^0.3.2
     "@quilted/react-testing": ^0.4.2
     "@quilted/react-workers": ^0.2.2
@@ -3214,7 +3214,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/react-http@^0.2.2, @quilted/react-http@workspace:packages/react-http":
+"@quilted/react-http@^0.2.3, @quilted/react-http@workspace:packages/react-http":
   version: 0.0.0-use.local
   resolution: "@quilted/react-http@workspace:packages/react-http"
   dependencies:
@@ -3240,12 +3240,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/react-router@^0.3.2, @quilted/react-router@workspace:packages/react-router":
+"@quilted/react-router@^0.3.3, @quilted/react-router@workspace:packages/react-router":
   version: 0.0.0-use.local
   resolution: "@quilted/react-router@workspace:packages/react-router"
   dependencies:
     "@quilted/react-html": ^0.3.2
-    "@quilted/react-http": ^0.2.2
+    "@quilted/react-http": ^0.2.3
     "@quilted/react-server-render": ^0.3.2
     "@quilted/routing": ^0.2.2
   peerDependencies:
