@@ -2,13 +2,9 @@ import {useDomEffect} from './dom-effect';
 
 interface Options {
   coverNotch?: boolean;
-  allowUserScaling?: boolean;
 }
 
-export function useViewport({
-  coverNotch = true,
-  allowUserScaling = true,
-}: Options) {
+export function useViewport({coverNotch = true}: Options) {
   useDomEffect(
     (manager) => {
       const parts = [
@@ -16,13 +12,12 @@ export function useViewport({
       ];
 
       if (coverNotch) parts.push('viewport-fit=cover');
-      if (!allowUserScaling) parts.push('user-scalable=no');
 
       return manager.addMeta({
         name: 'viewport',
         content: parts.join(', '),
       });
     },
-    [coverNotch, allowUserScaling],
+    [coverNotch],
   );
 }
