@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import type {ReactElement, ReactNode} from 'react';
 import {renderToString} from 'react-dom/server';
 // import {HydrationContext, HydrationManager} from '@shopify/react-hydrate';
 
@@ -16,7 +16,7 @@ interface Asset {
 interface Props {
   manager?: HtmlManager;
   // hydrationManager?: HydrationManager;
-  children: React.ReactElement<any> | string;
+  children: ReactElement | string;
   locale?: string;
   styles?: Asset[];
   scripts?: Asset[];
@@ -148,7 +148,7 @@ export function Html({
 }
 
 function render(
-  app: React.ReactElement<any>,
+  app: ReactElement<any>,
   {
     htmlManager,
   }: {

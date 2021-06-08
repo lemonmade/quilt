@@ -178,7 +178,7 @@ expect(button).toContainReactHtml('<button>Hello!</button>');
 
 ### API
 
-#### <a name="mount"></a> `mount(element: React.reactNode<any>)`
+#### <a name="mount"></a> `mount(element: ReactElement<any>)`
 
 Mounts a component to the DOM and returns a [`Root`](#root) instance. Note that for this to work, you must have a simulated browser environment, such as the `jsdom` environment that Jest uses.
 
@@ -631,6 +631,8 @@ Simulates a function prop being called on your component. This is usually the ke
 When you pass a key that is a prop on your component with a function type, this function will ensure that you pass arguments that are deeply partial versions of the types the prop expects. This allows you to, for example, pass an event object with only a few properties set to a `button`’s `onClick` prop. `trigger` returns whatever the result was of calling the prop.
 
 ```tsx
+import {useState} from 'react';
+
 function MyComponent({onClick}: {onClick(id: string): void}) {
   return (
     <button type="button" onClick={() => onClick(String(Math.random()))}>
@@ -640,7 +642,7 @@ function MyComponent({onClick}: {onClick(id: string): void}) {
 }
 
 function Wrapper() {
-  const [id, setId] = React.useState<string>('');
+  const [id, setId] = useState('');
 
   return (
     <>
@@ -745,7 +747,7 @@ expect(myComponent.find('div')).toHaveReactDataProps({
 });
 ```
 
-#### <a name="toContainReactComponent"></a> `.toContainReactComponent(type: string | React.ComponentType, props?: object)`
+#### <a name="toContainReactComponent"></a> `.toContainReactComponent(type: string | ComponentType, props?: object)`
 
 Asserts that at least one component matching `type` is in the descendants of the passed node. If the second argument is passed, this expectation will further filter the matches by components whose props are equal to the passed object (again, asymmetric matchers are fully supported).
 
@@ -758,7 +760,7 @@ expect(myComponent).toContainReactComponent('div', {
 });
 ```
 
-#### <a name="toContainReactComponentTimes"></a> `.toContainReactComponentTimes(type: string | React.ComponentType, times: number, props?: object)`
+#### <a name="toContainReactComponentTimes"></a> `.toContainReactComponentTimes(type: string | ComponentType, times: number, props?: object)`
 
 Asserts that a component matching `type` is in the descendants of the passed node a number of times. If the third argument is passed, this expectation will further filter the matches by components whose props are equal to the passed object (again, asymmetric matchers are fully supported). To assert that one component is or is not the descendant of the passed node use `.toContainReactComponent` or `.not.toContainReactComponent`.
 
@@ -775,7 +777,18 @@ expect(myComponent).toContainReactComponentTimes('div', 5, {
 Asserts that at least one `context.Provider` is in the descendants of the passed node. If the second argument is passed, this expectation will further filter the matches by providers whose value is equal to the passed object (again, asymmetric matchers are fully supported).
 
 ```tsx
-const MyContext = React.createContext({hello: 'world'});
+import {createContext} from 'react';
+
+const MyContext = createContext({hello: 'world'});
+
+function MyComponent({children}) {
+  return (
+    <MyContext.Provider value={{hello: 'Winston!'}}>
+      {children}
+    </MyContext.Provider>
+  );
+}
+
 const myComponent = mount(<MyComponent />);
 
 expect(myComponent).toProvideReactContext(MyContext, {

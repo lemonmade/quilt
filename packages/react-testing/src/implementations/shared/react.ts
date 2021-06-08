@@ -1,3 +1,4 @@
+import type {ComponentType, LegacyRef} from 'react';
 import type {EnvironmentOptions} from '../../environment';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -29,14 +30,14 @@ export enum Tag {
 export interface Fiber {
   tag: Tag;
   key: null | string;
-  elementType: React.ComponentType | string | null;
-  type: React.ComponentType | string | null;
+  elementType: ComponentType | string | null;
+  type: ComponentType | string | null;
   stateNode: any;
   return: Fiber | null;
   child: Fiber | null;
   sibling: Fiber | null;
   index: number;
-  ref: React.LegacyRef<unknown>;
+  ref: LegacyRef<unknown>;
   pendingProps: unknown;
   memoizedProps: unknown;
   memoizedState: unknown;

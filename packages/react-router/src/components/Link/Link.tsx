@@ -1,4 +1,4 @@
-import type {DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
+import type {MouseEvent, DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
 import type {NavigateTo} from '@quilted/routing';
 
 import {useRouter} from '../../hooks';
@@ -25,7 +25,7 @@ export function Link({
   const router = useRouter();
   const {url, external} = router.resolve(to);
 
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event);
 
     if (

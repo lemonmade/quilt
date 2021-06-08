@@ -440,11 +440,11 @@ Once the component using the `useNavigationBlock` hook is unmounted, the block w
 The `NavigationBlock` component behaves the same way, except that the function to determine the block is passed as the `onNavigation` prop.
 
 ```tsx
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {useNavigationBlock} from '@quilted/react-router';
 
 function Blocker() {
-  const redo = React.useRef<(() => void) | null>(null);
+  const redo = useRef<(() => void) | null>(null);
 
   useNavigationBlock((url, redoNavigation) => {
     redo.current = redoNavigation;

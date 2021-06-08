@@ -1,3 +1,4 @@
+import type {ComponentType} from 'react';
 import {
   diff,
   matcherErrorMessage,
@@ -102,7 +103,7 @@ function normalizedDiff(
   return showLegend ? result : result.split('\n\n')[1];
 }
 
-export function printType(type: string | React.ComponentType<any>) {
+export function printType(type: string | ComponentType<any>) {
   if (typeof type === 'object' && '_context' in type) {
     const context = (type as any)._context;
     const componentName = type === context.Provider ? 'Provider' : 'Consumer';
