@@ -23,4 +23,6 @@ export function Favicon({empty, emoji, type, source}: Props) {
   }
 
   useFavicon(resolvedSource, {type});
+
+  return null;
 }
