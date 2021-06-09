@@ -8,6 +8,7 @@
     "node": ">=14.0.0"
   },
   "workspaces": [
+    "./examples/*",
     "./packages/*"
   ],
   "scripts": {
