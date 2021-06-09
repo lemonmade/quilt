@@ -46,14 +46,34 @@ import type {BaseStepRunner, ProjectStep, WorkspaceStep} from '../steps';
 import {Ui} from './ui';
 import {InternalFileSystem} from '../utilities/fs';
 
+export enum IncludedReason {
+  Normal,
+  Only,
+}
+
+export enum ExcludedReason {
+  Only,
+  Skipped,
+}
+
+export type InclusionResult =
+  | {included: true; reason: IncludedReason}
+  | {included: false; reason: ExcludedReason};
+
+export interface TaskFilter {
+  includeProject(project: Project): InclusionResult;
+  includeStep(project: ProjectStep<any> | WorkspaceStep): InclusionResult;
+}
+
 export interface TaskContext extends LoadedWorkspace {
   readonly ui: Ui;
+  readonly filter: TaskFilter;
   readonly internal: SewingKitInternalContext;
 }
 
 export function createCommand<Flags extends Spec>(
   flagSpec: Flags,
-  run: (flags: Result<Flags>, context: TaskContext) => Promise<void>,
+  run: (flags: Omit<Result<Flags>, '_'>, context: TaskContext) => Promise<void>,
 ) {
   return async (
     argv: string[],
@@ -71,6 +91,10 @@ export function createCommand<Flags extends Spec>(
       '--root': root = process.cwd(),
       '--log-level': logLevel,
       '--interactive': isInteractive,
+      '--skip-project': skipProjects,
+      '--only-project': onlyProjects,
+      '--skip-step': skipSteps,
+      '--only-step': onlySteps,
       ...flags
     } = arg(
       {
@@ -78,10 +102,10 @@ export function createCommand<Flags extends Spec>(
         '--root': String,
         '--log-level': String,
         '--interactive': Boolean,
-        '--skip': [String],
-        '--focus': [String],
+        '--skip-project': [String],
+        '--only-project': [String],
         '--skip-step': [String],
-        '--focus-step': [String],
+        '--only-step': [String],
       },
       {argv},
     );
@@ -98,12 +122,93 @@ export function createCommand<Flags extends Spec>(
         workspace,
         ui,
         plugins,
+        filter: createFilter({
+          onlySteps,
+          skipSteps,
+          onlyProjects,
+          skipProjects,
+        }),
         internal: {fs: new InternalFileSystem(workspace.root)},
       });
     } catch (error) {
       logError(error, ui);
       process.exitCode = 1;
     }
+  };
+}
+
+function createFilter({
+  onlySteps: rawOnlySteps = [],
+  skipSteps: rawSkipSteps = [],
+  onlyProjects: rawOnlyProjects = [],
+  skipProjects: rawSkipProjects = [],
+}: {
+  onlySteps?: string[];
+  skipSteps?: string[];
+  onlyProjects?: string[];
+  skipProjects?: string[];
+}): TaskFilter {
+  const normalize = (values: string[]) => {
+    const mapped = values.flatMap((value) => {
+      return value
+        .split(',')
+        .map((subValue) => subValue.trim().replace(/[-_]/g, '').toLowerCase());
+    });
+
+    return new Set(mapped);
+  };
+
+  const onlySteps = normalize(rawOnlySteps);
+  const skipSteps = normalize(rawSkipSteps);
+  const onlyProjects = normalize(rawOnlyProjects);
+  const skipProjects = normalize(rawSkipProjects);
+
+  return {
+    includeProject(project) {
+      const search = project.name.replace(/[-_]/g, '').toLowerCase();
+      const kindSearch = `${project.kind.toLowerCase()}.${search}`;
+      const kindNamespaceSearch = `${project.kind.toLowerCase()}.*`;
+
+      if (onlyProjects.size > 0) {
+        return onlyProjects.has(search) ||
+          onlyProjects.has(kindSearch) ||
+          onlyProjects.has(kindNamespaceSearch)
+          ? {included: true, reason: IncludedReason.Only}
+          : {included: false, reason: ExcludedReason.Only};
+      }
+
+      return skipProjects.has(search) ||
+        skipProjects.has(kindSearch) ||
+        skipProjects.has(kindNamespaceSearch)
+        ? {included: false, reason: ExcludedReason.Skipped}
+        : {included: true, reason: IncludedReason.Normal};
+    },
+    includeStep(step) {
+      const nameSearch = step.name.replace(/[-_]/g, '').toLowerCase();
+      const namespaceParts = nameSearch.split('.');
+      const searches: string[] = [nameSearch];
+
+      if (namespaceParts.length > 1) {
+        let currentNamespace = namespaceParts[0];
+        searches.push(`${currentNamespace}.*`);
+
+        for (const searchPart of namespaceParts.slice(1)) {
+          currentNamespace = `${currentNamespace}.${searchPart}`;
+          searches.push(`${currentNamespace}.*`);
+        }
+      }
+
+      if (onlySteps.size > 0) {
+        return searches.some((search) => onlySteps.has(search))
+          ? {included: true, reason: IncludedReason.Only}
+          : {included: false, reason: ExcludedReason.Only};
+      }
+
+      return skipSteps.size > 0 &&
+        searches.some((search) => skipSteps.has(search))
+        ? {included: false, reason: ExcludedReason.Skipped}
+        : {included: true, reason: IncludedReason.Normal};
+    },
   };
 }
 
