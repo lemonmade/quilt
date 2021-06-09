@@ -1,5 +1,5 @@
 import {unlinkSync} from 'fs';
-import {dirname, basename} from 'path';
+import {basename, dirname} from 'path';
 import {access} from 'fs/promises';
 
 import glob from 'globby';
@@ -14,12 +14,8 @@ import {
   ConfigurationKind,
 } from './base';
 
-const DIRECTORIES_NOT_TO_USE_FOR_NAME = new Set(['src', 'source', 'lib']);
-
 interface LoadedConfigurationFile<Options>
-  extends Omit<ConfigurationBuilderResult<Options>, 'name' | 'root'> {
-  readonly name: string;
-  readonly root: string;
+  extends ConfigurationBuilderResult<Options> {
   readonly file: string;
 }
 
@@ -179,7 +175,8 @@ async function loadConfigFile<Options>(
     });
   }
 
-  const result = await normalized();
+  const root = dirname(file);
+  const result = await normalized(root);
 
   if (!looksLikeValidConfigurationObject(result)) {
     throw new DiagnosticError({
@@ -189,17 +186,8 @@ async function loadConfigFile<Options>(
     });
   }
 
-  const configDir = dirname(file);
-  const configDirName = basename(configDir);
-
   return {
     ...result,
-    root: result.root ?? configDir,
-    name:
-      result.name ??
-      (DIRECTORIES_NOT_TO_USE_FOR_NAME.has(configDirName)
-        ? basename(dirname(configDir))
-        : configDirName),
     file,
   };
 }

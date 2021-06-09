@@ -1,9 +1,12 @@
+import {basename, dirname} from 'path';
+
 import {PLUGIN_MARKER, PluginTarget, PluginCreateHelper} from '../plugins';
 import type {WorkspacePlugin, ProjectPlugin} from '../plugins';
 
 import {FileSystem} from '../utilities/fs';
 
 import {DiagnosticError} from '../errors';
+import {PackageJson} from '../utilities/dependencies';
 
 type WritableValue<T> = T extends readonly (infer U)[] ? U[] : T;
 
@@ -20,10 +23,12 @@ export enum ConfigurationKind {
 
 export const BUILDER_RESULT_MARKER = Symbol.for('SewingKit.BuilderResult');
 
+const DIRECTORIES_NOT_TO_USE_FOR_NAME = new Set(['src', 'source', 'lib']);
+
 export interface ConfigurationBuilderResult<Options = unknown> {
   readonly kind: ConfigurationKind;
   readonly root: string;
-  readonly name?: string;
+  readonly name: string;
   readonly options: Partial<Writable<Options>>;
   readonly workspacePlugins: readonly WorkspacePlugin[];
   readonly projectPlugins: readonly ProjectPlugin[];
@@ -32,6 +37,7 @@ export interface ConfigurationBuilderResult<Options = unknown> {
 
 export class BaseBuilder<PluginType, Options> {
   readonly fs: FileSystem;
+  readonly packageJson?: PackageJson;
 
   protected readonly options: Partial<Writable<Options>> = {};
   private readonly workspacePlugins = new Set<WorkspacePlugin>();
@@ -39,12 +45,21 @@ export class BaseBuilder<PluginType, Options> {
 
   private readonly kind: ConfigurationKind;
   private readonly root: string;
-  private named?: string;
+  private named: string;
 
   constructor(root: string, kind: ConfigurationKind) {
     this.root = root;
     this.kind = kind;
     this.fs = new FileSystem(root);
+    this.packageJson = PackageJson.load(this.root);
+
+    const rootDirectoryName = dirname(root);
+
+    this.named =
+      nameFromPackageJson(this.packageJson) ??
+      (DIRECTORIES_NOT_TO_USE_FOR_NAME.has(rootDirectoryName)
+        ? basename(dirname(root))
+        : rootDirectoryName);
   }
 
   /**
@@ -144,4 +159,14 @@ async function expandPlugins<
   );
 
   return expanded.flat() as Plugin[];
+}
+
+function nameFromPackageJson(packageJson?: PackageJson) {
+  const name = packageJson?.name;
+
+  if (!name) return undefined;
+
+  // Take the base part of a scoped package name, or the whole
+  // package name if not scoped.
+  return name.startsWith('@') ? name.split('/')[1] : name;
 }
