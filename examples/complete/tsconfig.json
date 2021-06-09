@@ -4,5 +4,5 @@
     "outDir": "build/typescript"
   },
   "include": ["**/*"],
-  "exclude": ["build", "sewing-kit.todo.config.ts", "*.test.ts", "*.test.tsx"]
+  "exclude": ["build", "sewing-kit.config.ts", "*.test.ts", "*.test.tsx"]
 }
