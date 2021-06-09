@@ -102,12 +102,23 @@ export function targets() {
                 targetName!.run(undefined),
               ]);
 
-              targets.push(
-                ...browserslist(undefined, {
-                  env,
-                  path: project.fs.root,
-                }),
+              const browserslistConfig = browserslist.findConfig(
+                project.fs.root,
               );
+
+              const matchingConfiguration = env
+                ? browserslistConfig?.[env]
+                : undefined;
+
+              if (env != null && matchingConfiguration == null) {
+                throw new DiagnosticError({
+                  title: `Could not find browserslist configuration for environment ${JSON.stringify(
+                    targetName,
+                  )} in project ${JSON.stringify(project.name)}`,
+                });
+              }
+
+              targets.push(...(matchingConfiguration ?? ['defaults']));
             }
 
             return targets;
@@ -157,7 +168,11 @@ export function targets() {
       configure(({targets, babelPresets, babelTargets}) => {
         const defaultTargets = ['current node'];
 
-        babelTargets?.(() => targets!.run(defaultTargets));
+        targets!((existingTargets) =>
+          existingTargets.length > 0 ? existingTargets : defaultTargets,
+        );
+
+        babelTargets?.(() => targets!.run([]));
         babelPresets?.((presets) => ['@babel/preset-env', ...presets]);
       });
     },

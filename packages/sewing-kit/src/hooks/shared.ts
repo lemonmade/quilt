@@ -84,11 +84,13 @@ export function createWaterfallHook<
 export function createWaterfallHook<
   Value = unknown,
   Args extends any[] = [],
->(options: {default: Value}): WaterfallHookWithDefault<Value, Args>;
+>(options: {
+  default: Value | (() => ValueOrPromise<Value>);
+}): WaterfallHookWithDefault<Value, Args>;
 export function createWaterfallHook<
   Value = unknown,
   Args extends any[] = [],
->(options?: {default: Value}) {
+>(options?: {default: Value | (() => ValueOrPromise<Value>)}) {
   const hooks: ((value: Value, ...args: Args) => Value | Promise<Value>)[] = [];
 
   const waterfallHook: WaterfallHook<Value, Args> = (hook) => {
@@ -99,7 +101,10 @@ export function createWaterfallHook<
     let result: Value;
 
     if (options) {
-      result = options.default;
+      result =
+        typeof options.default === 'function'
+          ? await (options.default as () => Promise<Value>)()
+          : options.default;
       args.unshift(initialOrArg);
     } else {
       result = initialOrArg;
@@ -142,6 +147,9 @@ export type ResolvedOptions<T> = {
 export interface HookAdderHelper {
   sequence<Args extends any[] = []>(): SequenceHook<Args>;
   waterfall<Value, Args extends any[] = []>(): WaterfallHook<Value, Args>;
+  waterfall<Value, Args extends any[] = []>(options: {
+    default: Value | (() => ValueOrPromise<Value>);
+  }): WaterfallHookWithDefault<Value, Args>;
 }
 
 // TODO
