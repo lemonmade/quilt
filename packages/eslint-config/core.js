@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     'no-console': 'warn',
     'eslint-comments/no-unused-disable': 'error',
+    'object-shorthand': ['error', 'always', {avoidQuotes: true}],
   },
   ignorePatterns: [
     'node_modules/',

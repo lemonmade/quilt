@@ -17,7 +17,9 @@ import {
 const DIRECTORIES_NOT_TO_USE_FOR_NAME = new Set(['src', 'source', 'lib']);
 
 interface LoadedConfigurationFile<Options>
-  extends ConfigurationBuilderResult<Options> {
+  extends Omit<ConfigurationBuilderResult<Options>, 'name' | 'root'> {
+  readonly name: string;
+  readonly root: string;
   readonly file: string;
 }
 
@@ -49,10 +51,9 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
 
   const loadedConfigs = (
     await Promise.all(configFiles.map((config) => loadConfig(config)))
-  ).filter((config) => Boolean(config)) as LoadedConfigurationFile<{
-    name: string;
-    root: string;
-  }>[];
+  ).filter((config) => Boolean(config)) as LoadedConfigurationFile<
+    Record<string, any>
+  >[];
 
   const workspaceConfigs = loadedConfigs.filter(
     (config) =>
@@ -83,10 +84,12 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
     });
   }
 
-  for (const {kind, options, projectPlugins} of loadedConfigs) {
+  for (const {kind, name, root, options, projectPlugins} of loadedConfigs) {
     switch (kind) {
       case ConfigurationKind.Package: {
         const pkg = new Package({
+          name,
+          root,
           entries: [],
           ...options,
         } as any);
@@ -95,13 +98,18 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
         break;
       }
       case ConfigurationKind.App: {
-        const app = new App({entry: './index', ...options} as any);
+        const app = new App({name, root, entry: './index', ...options} as any);
         apps.add(app);
         pluginMap.set(app, projectPlugins);
         break;
       }
       case ConfigurationKind.Service: {
-        const service = new Service({entry: './index', ...options} as any);
+        const service = new Service({
+          name,
+          root,
+          entry: './index',
+          ...options,
+        } as any);
         services.add(service);
         pluginMap.set(service, projectPlugins);
         break;
@@ -110,8 +118,8 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
   }
 
   const workspace = new Workspace({
-    root: root as string,
-    name: basename(root as string),
+    root,
+    name: basename(root),
     ...(workspaceConfig?.options ?? {}),
     apps: [...apps],
     packages: [...packages],
@@ -183,18 +191,16 @@ async function loadConfigFile<Options>(
 
   const configDir = dirname(file);
   const configDirName = basename(configDir);
-  const name = DIRECTORIES_NOT_TO_USE_FOR_NAME.has(configDirName)
-    ? basename(dirname(configDir))
-    : configDirName;
-
-  const {workspacePlugins, projectPlugins} = result;
 
   return {
     ...result,
+    root: result.root ?? configDir,
+    name:
+      result.name ??
+      (DIRECTORIES_NOT_TO_USE_FOR_NAME.has(configDirName)
+        ? basename(dirname(configDir))
+        : configDirName),
     file,
-    workspacePlugins,
-    projectPlugins,
-    options: {root: configDir, name, ...(result.options as any)},
   };
 }
 
