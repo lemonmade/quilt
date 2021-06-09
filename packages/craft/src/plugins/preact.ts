@@ -8,7 +8,7 @@ export function preact() {
         rollupPlugins?.(async (plugins) => {
           const {default: alias} = await import('@rollup/plugin-alias');
 
-          plugins.push(
+          plugins.unshift(
             alias({
               entries: {
                 'react/jsx-runtime': 'preact/jsx-runtime',

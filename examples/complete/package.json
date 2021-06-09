@@ -1,0 +1,33 @@
+{
+  "name": "example-complete",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@quilted/quilt": "^0.5.14"
+  },
+  "browserslist": {
+    "default": [
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 opera versions",
+      "last 2 edge versions",
+      "safari >= 11",
+      "ios >= 11"
+    ],
+    "evergreen": [
+      "last 1 chrome versions",
+      "last 1 firefox versions",
+      "last 1 opera versions",
+      "last 1 edge versions",
+      "safari >= 13",
+      "ios >= 13"
+    ],
+    "latest-chrome": [
+      "last 1 chrome versions"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "@quilted/eslint-config/app"
+  }
+}
