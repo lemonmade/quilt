@@ -269,6 +269,7 @@ async function normalizeConfigurationFile(file: string) {
     await bundle.write({
       file: jsFile,
       format: 'esm',
+      inlineDynamicImports: true,
     });
 
     try {
