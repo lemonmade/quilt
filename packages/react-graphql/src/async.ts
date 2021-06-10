@@ -1,21 +1,24 @@
-import type {GraphQLOperation, VariableOptions} from '@quilted/graphql';
-import {useAsync, createResolver, ResolverOptions} from '@quilted/react-async';
+import type {GraphQLOperation} from '@quilted/graphql';
+import {
+  useAsync,
+  createAsyncLoader,
+  AsyncLoaderOptions,
+} from '@quilted/react-async';
 
 import type {AsyncQuery} from './types';
-import {useDeferredQuery} from './hooks';
+import {AsyncLoaderLoad} from '@quilted/async/src';
 
-export interface Options<Data, Variables>
-  extends ResolverOptions<GraphQLOperation<Data, Variables>> {}
+export interface Options extends AsyncLoaderOptions {}
 
-export function createAsyncQuery<Data, Variables>({
-  id,
-  load,
-}: Options<Data, Variables>): AsyncQuery<Data, Variables> {
+export function createAsyncQuery<Data, Variables>(
+  load: AsyncLoaderLoad<GraphQLOperation<Data, Variables>>,
+  {id}: Options,
+): AsyncQuery<Data, Variables> {
   const query: AsyncQuery<Data, Variables> = {} as any;
-  const resolver = createResolver({id, load});
+  const asyncLoader = createAsyncLoader(load, {id});
 
-  Reflect.defineProperty(query, 'resolver', {
-    value: resolver,
+  Reflect.defineProperty(query, 'loader', {
+    value: asyncLoader,
     writable: false,
   });
 
@@ -24,19 +27,9 @@ export function createAsyncQuery<Data, Variables>({
     writable: false,
   });
 
-  Reflect.defineProperty(query, 'usePrefetch', {
-    value: usePrefetch,
-    writable: false,
-  });
-
   return query;
 
   function usePreload() {
-    return useAsync(resolver, {styles: 'eventually', scripts: 'eventually'})
-      .load;
-  }
-
-  function usePrefetch(options: VariableOptions<Variables>) {
-    return (useDeferredQuery as any)(query, options);
+    return useAsync(asyncLoader, {scripts: 'preload'}).load;
   }
 }

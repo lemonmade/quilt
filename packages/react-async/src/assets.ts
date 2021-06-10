@@ -1,6 +1,6 @@
 import type {ServerActionKind} from '@quilted/react-server-render';
 
-import type {AssetTiming} from './types';
+import type {AssetLoadTiming} from './types';
 
 export interface AssetSelector {
   id: string;
@@ -9,18 +9,13 @@ export interface AssetSelector {
 }
 
 interface AssetOptions {
-  styles: AssetTiming;
-  scripts: AssetTiming;
+  styles: AssetLoadTiming;
+  scripts: AssetLoadTiming;
 }
 
 export const SERVER_ACTION_ID = Symbol('react-async');
 
-const ASSET_TIMING_PRIORITY: AssetTiming[] = [
-  'immediate',
-  'soon',
-  'eventually',
-  'never',
-];
+const ASSET_TIMING_PRIORITY: AssetLoadTiming[] = ['never', 'preload', 'load'];
 
 const PRIORITY_BY_TIMING = new Map(
   ASSET_TIMING_PRIORITY.map((value, index) => [value, index]),
@@ -36,7 +31,7 @@ export class AsyncAssetManager {
 
   private assets = new Map<string, AssetOptions>();
 
-  used({timing = 'immediate'}: {timing?: AssetTiming | AssetTiming[]} = {}) {
+  used({timing = 'load'}: {timing?: AssetLoadTiming | AssetLoadTiming[]} = {}) {
     const timingArray = Array.isArray(timing) ? timing : [timing];
 
     const assets: AssetSelector[] = [];
@@ -56,8 +51,8 @@ export class AsyncAssetManager {
   markAsUsed(
     id: string,
     timing:
-      | AssetTiming
-      | {scripts?: AssetTiming; styles?: AssetTiming} = 'immediate',
+      | AssetLoadTiming
+      | {scripts?: AssetLoadTiming; styles?: AssetLoadTiming} = 'load',
   ) {
     const current = this.assets.get(id);
     const scripts = typeof timing === 'object' ? timing.scripts : timing;
@@ -65,25 +60,25 @@ export class AsyncAssetManager {
 
     if (current == null) {
       this.assets.set(id, {
-        scripts: scripts ?? 'immediate',
-        styles: styles ?? 'immediate',
+        scripts: scripts ?? 'load',
+        styles: styles ?? 'load',
       });
     } else {
       this.assets.set(id, {
         scripts:
           scripts == null
             ? current.scripts
-            : highestPriorityAssetTiming(scripts, current.scripts),
+            : highestPriorityAssetLoadTiming(scripts, current.scripts),
         styles:
           styles == null
             ? current.styles
-            : highestPriorityAssetTiming(styles, current.styles),
+            : highestPriorityAssetLoadTiming(styles, current.styles),
       });
     }
   }
 }
 
-function highestPriorityAssetTiming(...timings: AssetTiming[]) {
+function highestPriorityAssetLoadTiming(...timings: AssetLoadTiming[]) {
   return ASSET_TIMING_PRIORITY[
     Math.max(...timings.map((timing) => PRIORITY_BY_TIMING.get(timing)!))
   ];

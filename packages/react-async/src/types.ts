@@ -1,7 +1,9 @@
+import {AsyncLoader} from '@quilted/async/src';
 import type {ComponentType, FunctionComponent} from 'react';
 
-export type DeferTiming = 'mount' | 'idle';
-export type AssetTiming = 'never' | 'eventually' | 'soon' | 'immediate';
+export type RenderTiming = 'server' | 'client';
+export type HydrationTiming = 'immediate' | 'defer';
+export type AssetLoadTiming = 'never' | 'preload' | 'load';
 
 export type NonOptionalKeys<T> = {
   [K in keyof T]-?: undefined extends T[K] ? never : K;
@@ -27,24 +29,15 @@ export interface Preloadable<Options extends Record<string, any> = NoOptions> {
     : (options: Options) => () => undefined | (() => void);
 }
 
-export interface Prefetchable<Options extends Record<string, any> = NoOptions> {
-  readonly usePrefetch: Options extends NoOptions
-    ? () => () => undefined | (() => void)
-    : (options: Options) => () => undefined | (() => void);
-}
-
 export interface AsyncComponentType<
   T,
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
-  PrefetchOptions extends Record<string, any> = NoOptions,
 > extends Preloadable<PreloadOptions>,
-    Prefetchable<PrefetchOptions>,
     FunctionComponent<Props> {
   load(): Promise<T>;
+  readonly loader: AsyncLoader<T>;
   readonly Preload: ComponentType<PreloadOptions>;
-  readonly Prefetch: ComponentType<PrefetchOptions>;
 }
 
 export type PreloadOptions<T> = T extends Preloadable<infer U> ? U : never;
-export type PrefetchOptions<T> = T extends Prefetchable<infer U> ? U : never;

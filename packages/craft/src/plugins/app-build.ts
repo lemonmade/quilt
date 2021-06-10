@@ -29,7 +29,7 @@ export function appBuild() {
         rollupOutputs?.(async (outputs) => [
           ...outputs,
           {
-            format: 'system',
+            format: 'esm',
             entryFileNames: `[name].[hash].js`,
             assetFileNames: `[name].[hash].[ext]`,
             chunkFileNames: `[name].[hash].js`,

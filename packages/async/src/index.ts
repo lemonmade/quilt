@@ -1,3 +1,5 @@
-export type {Import} from './types';
-export {createResolver} from './resolver';
-export type {Resolver, ResolverOptions} from './resolver';
+export {installGlobalCache} from './global';
+export type {AsyncGlobalCache} from './global';
+
+export {createAsyncLoader} from './loader';
+export type {AsyncLoader, AsyncLoaderLoad, AsyncLoaderOptions} from './loader';

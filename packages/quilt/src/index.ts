@@ -1,8 +1,8 @@
-export {createResolver} from '@quilted/async';
+export {createAsyncLoader} from '@quilted/async';
+export type {AsyncLoader} from '@quilted/async';
 export {
   useAsync,
   useAsyncAsset,
-  usePrefetch,
   usePreload,
   createAsyncComponent,
 } from '@quilted/react-async';

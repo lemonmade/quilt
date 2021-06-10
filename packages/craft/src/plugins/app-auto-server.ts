@@ -38,6 +38,7 @@ export function appAutoServer() {
             outputDirectory,
             rollupPlugins,
             rollupOutputs,
+            rollupInputOptions,
             quiltAutoServerHost,
             quiltAutoServerPort,
             quiltAutoServerContent,
@@ -62,6 +63,11 @@ export function appAutoServer() {
               (await quiltAutoServerContent!.run(undefined)) ??
               `export {default} from '@quilted/quilt/magic-app-http-handler';`,
           );
+
+          rollupInputOptions?.((options) => {
+            options.preserveEntrySignatures = false;
+            return options;
+          });
 
           rollupPlugins?.(async (plugins) => {
             plugins.push({

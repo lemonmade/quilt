@@ -1,26 +1,26 @@
-import type {Import} from './types';
-
-export interface Resolver<T> {
+export interface AsyncLoader<T> {
   readonly id?: string;
-  readonly resolved?: T;
-  resolve(): Promise<T>;
-  subscribe(listener: (resolved: T) => void): () => void;
+  readonly loaded?: T;
+  load(): Promise<T>;
+  subscribe(listener: (loaded: T) => void): () => void;
 }
 
-export interface ResolverOptions<T> {
-  load(): Promise<Import<T>>;
+export interface AsyncLoaderLoad<T> {
+  (): Promise<{default: T}>;
+}
+
+export interface AsyncLoaderOptions {
   id?(): string;
-  get?(): any;
 }
 
-export function createResolver<T>({
-  id,
-  get,
-  load,
-}: ResolverOptions<T>): Resolver<T> {
+export function createAsyncLoader<T>(
+  load: AsyncLoaderLoad<T>,
+  {id}: AsyncLoaderOptions = {},
+): AsyncLoader<T> {
   let resolved: T | undefined;
   let resolvePromise: Promise<T> | undefined;
   let hasTriedSyncResolve = false;
+
   const resolvedId = id?.();
   const listeners = new Set<(value: T) => void>();
 
@@ -28,17 +28,18 @@ export function createResolver<T>({
     get id() {
       return resolvedId;
     },
-    get resolved() {
-      if (resolved == null && !hasTriedSyncResolve) {
+    get loaded() {
+      if (resolved == null && resolvedId && !hasTriedSyncResolve) {
         hasTriedSyncResolve = true;
-        resolved = resolvedId
-          ? trySynchronousResolve(resolvedId, get)
-          : undefined;
+        resolved =
+          typeof Quilt === 'object'
+            ? normalize(Quilt.async.get<T>(resolvedId))
+            : undefined;
       }
 
       return resolved;
     },
-    resolve: async () => {
+    load: async () => {
       resolvePromise = resolvePromise ?? resolve();
       const resolved = await resolvePromise;
       return resolved;
@@ -65,17 +66,10 @@ export function createResolver<T>({
 
 function normalize(module: any) {
   if (module == null) {
-    return null;
+    return undefined;
   }
 
   const value =
     typeof module === 'object' && 'default' in module ? module.default : module;
-  return value == null ? null : value;
-}
-
-function trySynchronousResolve<T>(
-  id: string,
-  get?: (id: string) => any,
-): T | undefined {
-  return normalize(get?.(id));
+  return value == null ? undefined : value;
 }

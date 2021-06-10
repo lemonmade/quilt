@@ -145,7 +145,7 @@ async function expandPlugins<
 
       const usedPlugins: Plugin[] = [];
 
-      plugin.create({
+      await plugin.create({
         ...helper,
         use(...newPlugins: Plugin[]) {
           for (const newPlugin of newPlugins) {

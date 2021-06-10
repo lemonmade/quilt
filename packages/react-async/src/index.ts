@@ -1,12 +1,12 @@
-export {createResolver} from '@quilted/async';
-export type {Resolver, ResolverOptions} from '@quilted/async';
+export {createAsyncLoader} from '@quilted/async';
+export type {AsyncLoader, AsyncLoaderOptions} from '@quilted/async';
 
 export type {
-  AssetTiming,
-  DeferTiming,
+  AssetLoadTiming,
+  HydrationTiming,
+  RenderTiming,
   AsyncComponentType,
   Preloadable,
-  Prefetchable,
 } from './types';
 export {createAsyncComponent} from './component';
-export {useAsync, useAsyncAsset, usePreload, usePrefetch} from './hooks';
+export {useAsync, useAsyncAsset, usePreload} from './hooks';

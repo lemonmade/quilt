@@ -4,12 +4,12 @@ import {useServerAction} from '@quilted/react-server-render';
 import {useSubscription} from '@quilted/use-subscription';
 
 import {AsyncAssetContext} from '../context';
-import type {AssetTiming} from '../types';
+import type {AssetLoadTiming} from '../types';
 
 interface Options {
   immediate?: boolean;
-  styles?: AssetTiming;
-  scripts?: AssetTiming;
+  styles?: AssetLoadTiming;
+  scripts?: AssetLoadTiming;
 }
 
 export function useAsync<T>(
@@ -49,7 +49,7 @@ export function useAsync<T>(
 
 export function useAsyncAsset(
   id?: string,
-  {scripts, styles}: {styles?: AssetTiming; scripts?: AssetTiming} = {},
+  {scripts, styles}: {styles?: AssetLoadTiming; scripts?: AssetLoadTiming} = {},
 ) {
   const async = useContext(AsyncAssetContext);
 

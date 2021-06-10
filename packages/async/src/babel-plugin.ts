@@ -1,37 +1,36 @@
+import {dirname, basename, extname, resolve} from 'path';
+import {createHash} from 'crypto';
+
+import type * as Babel from '@babel/types';
+import type {NodePath, Binding} from '@babel/traverse';
+
+import {PREFIX} from './constants';
+
 export interface Options {
   packages?: {[key: string]: string[]};
-  moduleSystem?: 'commonjs' | 'webpack' | 'systemjs';
 }
 
 interface State {
+  filename: string;
   processPackages?: Map<string, string[]>;
   opts?: Options;
 }
 
-type NodePath<T> = import('@babel/traverse').NodePath<T>;
-
 export const DEFAULT_PACKAGES_TO_PROCESS = {
-  '@quilted/async': ['createResolver'],
-  '@quilted/quilt': ['createResolver', 'createAsyncComponent'],
-  '@quilted/react-async': ['createResolver', 'createAsyncComponent'],
+  '@quilted/async': ['createAsyncLoader'],
+  '@quilted/quilt': ['createAsyncLoader', 'createAsyncComponent'],
+  '@quilted/react-async': ['createAsyncLoader', 'createAsyncComponent'],
 };
 
-export default function asyncBabelPlugin({
-  types: t,
-}: {
-  types: typeof import('@babel/types');
-}) {
+export default function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
   return {
     visitor: {
-      Program(_path: NodePath<import('@babel/types').Program>, state: State) {
+      Program(_path: NodePath<Babel.Program>, state: State) {
         state.processPackages = new Map(
           Object.entries(state.opts?.packages ?? DEFAULT_PACKAGES_TO_PROCESS),
         );
       },
-      ImportDeclaration(
-        path: NodePath<import('@babel/types').ImportDeclaration>,
-        state: State,
-      ) {
+      ImportDeclaration(path: NodePath<Babel.ImportDeclaration>, state: State) {
         const {processPackages} = state;
 
         if (!(processPackages instanceof Map)) {
@@ -68,7 +67,7 @@ export default function asyncBabelPlugin({
           const bindingName = importSpecifier.node.local.name;
           const binding = path.scope.getBinding(bindingName);
           if (binding != null) {
-            addIdOption(binding, t, state.opts);
+            addIdOption(binding, t, state.filename);
           }
         }
       },
@@ -76,11 +75,7 @@ export default function asyncBabelPlugin({
   };
 }
 
-function addIdOption(
-  binding: import('@babel/traverse').Binding,
-  t: typeof import('@babel/types'),
-  {moduleSystem = 'commonjs'}: Options = {},
-) {
+function addIdOption(binding: Binding, t: typeof Babel, file: string) {
   binding.referencePaths.forEach((refPath) => {
     const callExpression = refPath.parentPath;
 
@@ -93,140 +88,111 @@ function addIdOption(
       return;
     }
 
-    const options = args[0];
-    if (!options.isObjectExpression()) {
+    const [load, options] = args;
+    if (!load.isFunctionExpression() && !load.isArrowFunctionExpression()) {
       return;
     }
 
-    const properties = options.get('properties');
-    const propertiesMap: {
-      [key: string]: NodePath<import('@babel/types').ObjectMember>;
-    } = {};
+    const dynamicImports = new Set<[string, NodePath<any>]>();
 
-    const normalizedProperties = Array.isArray(properties)
-      ? properties
-      : [properties];
+    load.traverse({
+      Import({parentPath}) {
+        if (!parentPath.isCallExpression()) return;
 
-    normalizedProperties.forEach((property) => {
-      if (!property.isObjectMember() || property.node.computed) {
-        return;
-      }
+        const [firstArgument] = parentPath.get('arguments');
 
-      const key = property.get('key') as NodePath<any>;
+        if (firstArgument == null) return;
 
-      if (!key.isIdentifier()) {
-        return;
-      }
+        if (firstArgument.isStringLiteral()) {
+          dynamicImports.add([firstArgument.node.value, firstArgument]);
+        } else if (firstArgument.isTemplateLiteral()) {
+          if (firstArgument.node.expressions.length > 0) {
+            throw new Error(
+              `You can only call ${
+                binding.identifier.name
+              }() with a static string, but found a complex template literal: ${JSON.stringify(
+                firstArgument.node,
+              )}`,
+            );
+          }
 
-      propertiesMap[key.node.name] = property;
+          dynamicImports.add([
+            firstArgument.node.quasis[0].value.raw,
+            firstArgument,
+          ]);
+        }
+      },
     });
 
-    const {id, load: loadProperty} = propertiesMap;
-
-    if (id != null || loadProperty == null) {
+    if (dynamicImports.size === 0) {
       return;
     }
 
-    const loaderMethod = loadProperty.isObjectProperty()
-      ? loadProperty.get('value')
-      : loadProperty.get('body');
-
-    const dynamicImports: NodePath<import('@babel/types').CallExpression>[] =
-      [];
-
-    if (!Array.isArray(loaderMethod)) {
-      loaderMethod.traverse({
-        Import({parentPath}) {
-          if (parentPath.isCallExpression()) {
-            dynamicImports.push(parentPath);
-          }
-        },
-      });
-    }
-
-    if (!dynamicImports.length) {
-      return;
-    }
-
-    if (moduleSystem === 'commonjs') {
-      loadProperty.insertAfter(
-        t.objectProperty(
-          t.identifier('id'),
-          t.arrowFunctionExpression(
-            [],
-            dynamicImports[0].get('arguments')[0].node as any,
-            false,
-          ),
-        ),
-      );
-
-      loadProperty.insertAfter(
-        t.objectProperty(
-          t.identifier('get'),
-          t.arrowFunctionExpression(
-            [],
-            t.callExpression(t.identifier('require'), [
-              dynamicImports[0].get('arguments')[0].node,
-            ]),
-            false,
-          ),
-        ),
-      );
-    } else if (moduleSystem === 'systemjs') {
-      loadProperty.insertAfter(
-        t.objectProperty(
-          t.identifier('id'),
-          t.arrowFunctionExpression(
-            [],
-            dynamicImports[0].get('arguments')[0].node as any,
-            false,
-          ),
-        ),
-      );
-
-      loadProperty.insertAfter(
-        t.objectProperty(
-          t.identifier('get'),
-          t.arrowFunctionExpression(
-            [],
-            t.callExpression(
-              t.memberExpression(t.identifier('System'), t.identifier('get')),
-              [dynamicImports[0].get('arguments')[0].node],
-            ),
-            false,
-          ),
-        ),
-      );
-    } else if (moduleSystem === 'webpack') {
-      propertiesMap.load.insertAfter(
-        t.objectProperty(
-          t.identifier('id'),
-          t.arrowFunctionExpression(
-            [],
-            t.callExpression(
-              t.memberExpression(
-                t.identifier('require'),
-                t.identifier('resolveWeak'),
-              ),
-              [dynamicImports[0].get('arguments')[0].node],
-            ),
-            false,
-          ),
-        ),
-      );
-
-      loadProperty.insertAfter(
-        t.objectProperty(
-          t.identifier('get'),
-          t.arrowFunctionExpression(
-            [],
-            t.callExpression(t.identifier('__webpack_require__'), [
-              dynamicImports[0].get('arguments')[0].node,
-            ]),
-            false,
-          ),
-        ),
+    if (dynamicImports.size > 1) {
+      throw new Error(
+        `More than one dynamic import found for async function ${
+          binding.identifier.name
+        }(): ${[...dynamicImports]
+          .map((imported) => JSON.stringify(imported))
+          .join(', ')}`,
       );
     }
+
+    const [importSource, sourceNodePath] = [...dynamicImports][0];
+
+    const resolved = resolve(dirname(file), importSource);
+    const moduleName = basename(resolved, extname(resolved));
+
+    const hash = createHash('sha256')
+      .update(resolved)
+      .digest('hex')
+      .substring(0, 8);
+
+    const id = `${moduleName}_${hash}`;
+
+    sourceNodePath.replaceWith(
+      t.stringLiteral(`${PREFIX}${importSource}?id=${id}`),
+    );
+
+    const idProperty = t.objectProperty(
+      t.identifier('id'),
+      t.arrowFunctionExpression([], t.stringLiteral(id)),
+    );
+
+    if (options == null) {
+      callExpression.replaceWith(
+        t.callExpression(callExpression.get('callee').node, [
+          load.node,
+          t.objectExpression([idProperty]),
+        ]),
+      );
+    } else if (options.isObjectExpression()) {
+      options.replaceWith(
+        t.objectExpression([
+          ...options.node.properties.filter((property) => {
+            property.type !== 'ObjectProperty' ||
+              property.computed ||
+              property.key.type !== 'Identifier' ||
+              property.key.name !== 'id';
+          }),
+          idProperty,
+        ]),
+      );
+    } else {
+      options.replaceWith(
+        t.objectExpression([t.spreadElement(options.node as any), idProperty]),
+      );
+    }
+
+    // loadProperty.insertAfter(
+    //   t.objectProperty(
+    //     t.identifier('id'),
+    //     t.arrowFunctionExpression(
+    //       [],
+    //       dynamicImports[0].get('arguments')[0].node as any,
+    //       false,
+    //     ),
+    //   ),
+    // );
   });
 }

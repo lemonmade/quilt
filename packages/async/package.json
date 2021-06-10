@@ -14,18 +14,28 @@
   },
   "exports": {
     ".": {
+      "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
     },
     "./assets": {
+      "quilt:internal": "./src/assets.ts",
       "sewing-kit:esnext": "./build/esnext/assets.esnext",
       "import": "./build/esm/assets.mjs"
     },
     "./babel": {
+      "quilt:internal": "./src/babel-plugin.ts",
       "sewing-kit:esnext": "./build/esnext/babel-plugin.esnext",
-      "import": "./build/esm/babel-plugin.mjs"
+      "import": "./build/esm/babel-plugin.mjs",
+      "require": "./build/cjs/babel-plugin.cjs"
+    },
+    "./rollup": {
+      "quilt:internal": "./src/rollup-parts.ts",
+      "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
+      "import": "./build/esm/rollup-parts.mjs"
     },
     "./sewing-kit": {
+      "quilt:internal": "./src/sewing-kit.ts",
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs"
     }
@@ -41,19 +51,26 @@
       "babel": [
         "./build/typescript/babel-plugin.d.ts"
       ],
+      "rollup": [
+        "./build/typescript/rollup-parts.d.ts"
+      ],
       "*": [
         "./build/typescript/index.d.ts"
       ]
     }
   },
   "sideEffects": false,
+  "dependencies": {
+    "common-tags": "^1.8.0"
+  },
   "peerDependencies": {
     "@babel/core": ">=7.0.0",
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@quilted/sewing-kit": "^0.2.0",
-    "@quilted/sewing-kit-babel": "^0.0.0"
+    "@quilted/sewing-kit": "^0.2.4",
+    "@quilted/sewing-kit-babel": "^0.1.2",
+    "@quilted/sewing-kit-rollup": "^0.1.2"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
@@ -72,6 +89,9 @@
       "optional": true
     },
     "@quilted/sewing-kit-babel": {
+      "optional": true
+    },
+    "@quilted/sewing-kit-rollup": {
       "optional": true
     }
   },

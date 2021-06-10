@@ -1,3 +1,4 @@
+import {URLSearchParams} from 'url';
 import type {WorkerWrapper} from './types';
 
 export function wrapperToSearchParams(wrapper: WorkerWrapper) {

@@ -8,6 +8,11 @@ export default createPackage((pkg) => {
     runtime: Runtime.Node,
   });
   pkg.entry({
+    name: 'rollup',
+    source: './src/rollup-parts',
+    runtime: Runtime.Node,
+  });
+  pkg.entry({
     name: 'sewing-kit',
     source: './src/sewing-kit',
     runtime: Runtime.Node,
@@ -16,5 +21,11 @@ export default createPackage((pkg) => {
     name: 'assets',
     source: './src/assets',
   });
-  pkg.use(quiltPackage());
+
+  pkg.use(
+    quiltPackage({
+      // We need commonjs for the Babel plugin
+      commonjs: true,
+    }),
+  );
 });

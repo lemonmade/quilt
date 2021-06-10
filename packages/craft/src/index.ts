@@ -85,6 +85,11 @@ export function quiltApp({
         autoServer && appAutoServer(),
       );
 
+      await ignoreMissingImports(async () => {
+        const {asyncQuilt} = await import('@quilted/async/sewing-kit');
+        use(asyncQuilt());
+      });
+
       if (shouldPolyfill) {
         await ignoreMissingImports(async () => {
           const {polyfills} = await import('@quilted/polyfills/sewing-kit');

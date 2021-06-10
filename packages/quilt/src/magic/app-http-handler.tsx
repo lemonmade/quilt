@@ -22,13 +22,13 @@ handler.get(async (request) => {
 
   const {headers, statusCode = 200} = http.state;
 
-  const usedAssets = asyncAssets.used({timing: 'immediate'});
+  const usedAssets = asyncAssets.used({timing: 'load'});
   const assetOptions = {userAgent: request.headers.get('User-Agent')};
 
   const [styles, scripts, preload] = await Promise.all([
     AssetManifest.styles({async: usedAssets, options: assetOptions}),
     AssetManifest.scripts({async: usedAssets, options: assetOptions}),
-    AssetManifest.asyncAssets(asyncAssets.used({timing: 'soon'}), {
+    AssetManifest.asyncAssets(asyncAssets.used({timing: 'preload'}), {
       options: assetOptions,
     }),
   ]);

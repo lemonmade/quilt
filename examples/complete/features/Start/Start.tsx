@@ -1,3 +1,3 @@
-export function Start() {
+export default function Start() {
   return <>{'Hello world!'}</>;
 }

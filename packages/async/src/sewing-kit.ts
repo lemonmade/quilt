@@ -1,19 +1,23 @@
-import {Task, createProjectPlugin} from '@quilted/sewing-kit';
-import type {WaterfallHook, ResolvedHooks} from '@quilted/sewing-kit';
+import {createProjectPlugin} from '@quilted/sewing-kit';
+import type {
+  WaterfallHookWithDefault,
+  ResolvedHooks,
+} from '@quilted/sewing-kit';
 
 import {DEFAULT_PACKAGES_TO_PROCESS} from './babel-plugin';
 import type {Options as BabelOptions} from './babel-plugin';
 
 import type {BabelHooks} from '@quilted/sewing-kit-babel';
+import type {RollupHooks} from '@quilted/sewing-kit-rollup';
 
 export interface Options {
-  readonly moduleSystem?: BabelOptions['moduleSystem'];
   readonly applyBabelToPackages?: BabelOptions['packages'];
 }
 
 export interface AsyncHooks {
-  quiltAsyncModuleSystem: WaterfallHook<Options['moduleSystem']>;
-  quiltAsyncApplyBabelToPackages: WaterfallHook<BabelOptions['packages']>;
+  quiltAsyncApplyBabelToPackages: WaterfallHookWithDefault<
+    NonNullable<BabelOptions['packages']>
+  >;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -23,7 +27,6 @@ declare module '@quilted/sewing-kit' {
 }
 
 export function asyncQuilt({
-  moduleSystem: defaultModuleSystem,
   applyBabelToPackages:
     defaultApplyBabelToPackages = DEFAULT_PACKAGES_TO_PROCESS,
 }: Options = {}) {
@@ -31,48 +34,59 @@ export function asyncQuilt({
     name: 'Quilt.Async',
     develop({hooks, configure}) {
       hooks<AsyncHooks>(({waterfall}) => ({
-        quiltAsyncModuleSystem: waterfall(),
-        quiltAsyncApplyBabelToPackages: waterfall(),
+        quiltAsyncApplyBabelToPackages: waterfall<
+          NonNullable<BabelOptions['packages']>
+        >({
+          default: defaultApplyBabelToPackages,
+        }),
       }));
 
-      configure(addConfiguration({task: Task.Develop}));
+      configure(addConfiguration());
     },
     build({hooks, configure}) {
       hooks<AsyncHooks>(({waterfall}) => ({
-        quiltAsyncModuleSystem: waterfall(),
-        quiltAsyncApplyBabelToPackages: waterfall(),
+        quiltAsyncApplyBabelToPackages: waterfall<
+          NonNullable<BabelOptions['packages']>
+        >({
+          default: defaultApplyBabelToPackages,
+        }),
       }));
 
-      configure(addConfiguration({task: Task.Build}));
+      configure(addConfiguration());
     },
     test({hooks, configure}) {
       hooks<AsyncHooks>(({waterfall}) => ({
-        quiltAsyncModuleSystem: waterfall(),
-        quiltAsyncApplyBabelToPackages: waterfall(),
+        quiltAsyncApplyBabelToPackages: waterfall<
+          NonNullable<BabelOptions['packages']>
+        >({
+          default: defaultApplyBabelToPackages,
+        }),
       }));
 
-      configure(addConfiguration({task: Task.Test}));
+      configure(addConfiguration());
     },
   });
 
-  function addConfiguration({task}: {task: Task}) {
+  function addConfiguration() {
     return ({
       babelPlugins,
-      quiltAsyncModuleSystem,
+      rollupPlugins,
       quiltAsyncApplyBabelToPackages,
-    }: ResolvedHooks<BabelHooks & AsyncHooks>) => {
+    }: ResolvedHooks<BabelHooks & RollupHooks & AsyncHooks>) => {
       babelPlugins?.(async (plugins) => {
-        const [moduleSystem, packages] = await Promise.all([
-          quiltAsyncModuleSystem!.run(
-            defaultModuleSystem ?? task === Task.Test ? 'commonjs' : 'systemjs',
-          ),
-          quiltAsyncApplyBabelToPackages!.run(defaultApplyBabelToPackages),
+        const [packages] = await Promise.all([
+          quiltAsyncApplyBabelToPackages!.run(),
         ]);
 
-        plugins.push([
-          '@quilted/async/babel',
-          {moduleSystem, packages} as BabelOptions,
-        ]);
+        plugins.push(['@quilted/async/babel', {packages} as BabelOptions]);
+
+        return plugins;
+      });
+
+      rollupPlugins?.(async (plugins) => {
+        const {asyncQuilt} = await import('./rollup-parts');
+
+        plugins.push(asyncQuilt());
 
         return plugins;
       });
