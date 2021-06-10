@@ -1,5 +1,5 @@
 import {useCallback, useContext, useMemo} from 'react';
-import type {Resolver} from '@quilted/async';
+import type {AsyncLoader} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
 import {useSubscription} from '@quilted/use-subscription';
 
@@ -13,25 +13,25 @@ interface Options {
 }
 
 export function useAsync<T>(
-  resolver: Resolver<T>,
+  asyncLoader: AsyncLoader<T>,
   {scripts, styles, immediate = true}: Options = {},
 ) {
-  const {id} = resolver;
-  const load = useCallback(() => resolver.resolve(), [resolver]);
+  const {id} = asyncLoader;
+  const load = useCallback(() => asyncLoader.load(), [asyncLoader]);
 
   const value = useSubscription<T | undefined>(
     useMemo(() => {
       return {
         getCurrentValue() {
           return typeof window !== 'undefined' || immediate
-            ? resolver.resolved
+            ? asyncLoader.loaded
             : undefined;
         },
         subscribe(callback) {
-          return resolver.subscribe(callback);
+          return asyncLoader.subscribe(callback);
         },
       };
-    }, [immediate, resolver]),
+    }, [immediate, asyncLoader]),
   );
 
   useAsyncAsset(id, {scripts, styles});

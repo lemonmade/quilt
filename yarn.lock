@@ -2902,13 +2902,15 @@ __metadata:
   dependencies:
     "@types/babel__core": ">=7.0.0"
     "@types/babel__traverse": ">=7.0.0"
+    common-tags: ^1.8.0
   peerDependencies:
     "@babel/core": ">=7.0.0"
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0"
     "@babel/traverse": ">=7.0.0"
     "@babel/types": ">=7.0.0"
-    "@quilted/sewing-kit": ^0.2.0
-    "@quilted/sewing-kit-babel": ^0.0.0
+    "@quilted/sewing-kit": ^0.2.4
+    "@quilted/sewing-kit-babel": ^0.1.2
+    "@quilted/sewing-kit-rollup": ^0.1.2
   peerDependenciesMeta:
     "@babel/core":
       optional: true
@@ -2921,6 +2923,8 @@ __metadata:
     "@quilted/sewing-kit":
       optional: true
     "@quilted/sewing-kit-babel":
+      optional: true
+    "@quilted/sewing-kit-rollup":
       optional: true
   languageName: unknown
   linkType: soft
