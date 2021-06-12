@@ -1,5 +1,6 @@
 import {FileSystem} from '../utilities/fs';
 import {PackageJson} from '../utilities/dependencies';
+import type {ProjectKind} from '../types';
 
 export interface Options {
   readonly name: string;
@@ -12,7 +13,20 @@ export interface DependencyOptions {
   prod?: boolean;
 }
 
-export class Base {
+export interface BaseProject {
+  readonly id: string;
+  readonly name: string;
+  readonly root: string;
+  readonly kind: ProjectKind;
+  readonly fs: FileSystem;
+  readonly packageJson?: PackageJson;
+
+  dependency(name: string): {version: string} | undefined;
+  hasDependency(name: string): boolean;
+  dependencies(options?: DependencyOptions): string[];
+}
+
+export class Base implements Omit<BaseProject, 'id' | 'kind'> {
   readonly name: string;
   readonly root: string;
   readonly fs: FileSystem;
@@ -56,10 +70,10 @@ export class Base {
     }
   }
 
-  async hasDependency(
+  hasDependency(
     name: string,
     _options?: DependencyOptions & {version?: string},
-  ): Promise<boolean> {
+  ): boolean {
     const {packageJson} = this;
 
     return packageJson != null && packageJson.dependency(name) != null;

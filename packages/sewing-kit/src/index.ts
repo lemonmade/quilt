@@ -12,6 +12,7 @@ export type {
   ProjectPluginHooks,
   WorkspacePlugin,
   WorkspacePluginHooks,
+  AnyPlugin,
 } from './plugins';
 
 export {
@@ -23,7 +24,7 @@ export {
   Workspace,
   TargetRuntime,
 } from './model';
-export type {Project} from './model';
+export type {Project, BaseProject} from './model';
 
 export {Environment, Runtime, ProjectKind, Task} from './types';
 
@@ -36,6 +37,8 @@ export type {
   ResolvedHooks,
   ResolvedOptions,
   SewingKitInternalContext,
+  ConfigurableProjectStep,
+  ConfigurableWorkspaceStep,
   // Build
   BuildTaskOptions,
   BuildProjectTask,
@@ -139,10 +142,11 @@ export type {
 } from './hooks';
 
 export type {
+  StepStage,
+  StepNeed,
   ProjectStep,
-  ProjectStepStage,
   ProjectStepRunner,
   WorkspaceStep,
-  WorkspaceStepStage,
   WorkspaceStepRunner,
+  AnyStep,
 } from './steps';

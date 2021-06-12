@@ -12,6 +12,7 @@ export interface WorkspaceOptions extends BaseOptions {
 }
 
 export class Workspace extends Base {
+  readonly kind = 'workspace';
   readonly apps: readonly App[];
   readonly packages: readonly Package[];
   readonly services: readonly Service[];

@@ -8,6 +8,7 @@ import type {Result, Spec} from 'arg';
 
 import type {Project} from '../model';
 
+import type {AnyStep, StepNeed} from '../steps';
 import {Task} from '../types';
 
 import {DiagnosticError, isDiagnosticError} from '../errors';
@@ -42,6 +43,7 @@ import type {
 } from '../hooks';
 
 import type {BaseStepRunner, ProjectStep, WorkspaceStep} from '../steps';
+import type {AnyPlugin, WorkspacePlugin} from '../plugins';
 
 import {Ui} from './ui';
 import {InternalFileSystem} from '../utilities/fs';
@@ -62,7 +64,7 @@ export type InclusionResult =
 
 export interface TaskFilter {
   includeProject(project: Project): InclusionResult;
-  includeStep(project: ProjectStep<any> | WorkspaceStep): InclusionResult;
+  includeStep(step: AnyStep): InclusionResult;
 }
 
 export interface TaskContext extends LoadedWorkspace {
@@ -295,7 +297,7 @@ interface WorkspaceCoreHooksTaskMap {
   [Task.Test]: TestWorkspaceConfigurationCoreHooks;
 }
 
-interface LoadStepOptions<TaskType extends Task> extends TaskContext {
+interface RunStepOptions<TaskType extends Task> extends TaskContext {
   options: OptionsTaskMap[TaskType];
   coreHooksForProject<ProjectType extends Project = Project>(
     project: ProjectType,
@@ -303,7 +305,154 @@ interface LoadStepOptions<TaskType extends Task> extends TaskContext {
   coreHooksForWorkspace(): WorkspaceCoreHooksTaskMap[TaskType];
 }
 
-export async function loadStepsForTask<TaskType extends Task = Task>(
+interface StepList {
+  pre: AnyStep[];
+  default: AnyStep[];
+  post: AnyStep[];
+}
+
+export async function runStepsForTask<TaskType extends Task>(
+  task: TaskType,
+  options: RunStepOptions<TaskType>,
+) {
+  const stepList = await loadStepsForTask(task, options);
+
+  await runStepsInStage(stepList.pre, options);
+  await runStepsInStage(stepList.default, options);
+  await runStepsInStage(stepList.post, options);
+}
+
+interface StepNeedWithStep extends StepNeed {
+  step: AnyStep;
+}
+
+async function runStepsInStage(
+  steps: AnyStep[],
+  {ui, filter}: RunStepOptions<any>,
+) {
+  const stepMetadata = new Map<
+    AnyStep,
+    {
+      skipped: boolean;
+      completed: boolean;
+      inclusion: InclusionResult;
+      needs: StepNeedWithStep[];
+    }
+  >();
+  const workspaceSteps = new Set(
+    steps.filter(
+      (step): step is WorkspaceStep => step.target.kind === 'workspace',
+    ),
+  );
+
+  const queuedSteps = [...steps];
+
+  for (const step of steps) {
+    const inclusion = filter.includeStep(step);
+
+    if (!inclusion.included) {
+      stepMetadata.set(step, {
+        skipped: true,
+        completed: false,
+        inclusion,
+        needs: [],
+      });
+      continue;
+    }
+
+    const needs: StepNeedWithStep[] = [];
+
+    if (step.needs) {
+      const isWorkspaceStep = workspaceSteps.has(step as any);
+      // Workspace steps can only depend on other workspace steps, project
+      // steps can depend on either project or workspace steps
+      const checkSteps = isWorkspaceStep ? workspaceSteps : steps;
+
+      for (const checkStep of checkSteps) {
+        // Can’t depend on yourself
+        if (checkStep === step) continue;
+
+        const needResult = step.needs(checkStep as any);
+        const stepNeed: typeof needs[number] =
+          typeof needResult === 'boolean'
+            ? {step: checkStep, need: needResult}
+            : {...needResult, step: checkStep};
+
+        if (stepNeed.need) needs.push(stepNeed);
+      }
+    }
+
+    stepMetadata.set(step, {
+      skipped: false,
+      completed: false,
+      inclusion,
+      needs,
+    });
+  }
+
+  await runNextStep();
+
+  async function runNextStep() {
+    for (const [index, step] of queuedSteps.entries()) {
+      const metadata = stepMetadata.get(step)!;
+      const {skipped, inclusion, needs} = metadata;
+
+      if (skipped) {
+        ui.log(
+          `Skipping step: ${step.label} (${step.name}, reason: ${
+            inclusion.reason === ExcludedReason.Skipped
+              ? 'skipped'
+              : 'other step marked as only'
+          })`,
+        );
+
+        queuedSteps.splice(index, 1);
+        await runNextStep();
+        return;
+      }
+
+      if (
+        needs.every(({step, need, allowSkip = false}) => {
+          if (!need) return true;
+
+          const metadata = stepMetadata.get(step)!;
+
+          if (metadata.skipped) return allowSkip;
+
+          return metadata.completed;
+        })
+      ) {
+        await runStep(step);
+
+        metadata.completed = true;
+        queuedSteps.splice(index, 1);
+        await runNextStep();
+        return;
+      }
+    }
+
+    if (queuedSteps.length !== 0) {
+      throw new Error(
+        `Could not complete steps: ${JSON.stringify(queuedSteps)}`,
+      );
+    }
+  }
+
+  async function runStep(step: AnyStep) {
+    ui.log(`Running step: ${step.label} (${step.name})`);
+    await step.run(createStepRunner({ui}));
+  }
+}
+
+interface BuildProjectTaskInternal<ProjectType extends Project = Project>
+  extends Omit<BuildProjectTask<ProjectType>, 'run'> {
+  run: (
+    plugin: AnyPlugin,
+    ...args: Parameters<BuildProjectTask<ProjectType>['run']>
+  ) => ReturnType<BuildProjectTask<ProjectType>['run']>;
+}
+
+async function loadStepsForTask<TaskType extends Task = Task>(
   task: TaskType,
   {
     plugins,
@@ -312,8 +461,8 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
     internal,
     coreHooksForProject,
     coreHooksForWorkspace,
-  }: LoadStepOptions<TaskType>,
-) {
+  }: RunStepOptions<TaskType>,
+): Promise<StepList> {
   const configurationHooksForProject = new Map<
     Project,
     ((hooks: ResolvedBuildProjectConfigurationHooks<any>) => void)[]
@@ -329,7 +478,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
     Project,
     ((steps: ProjectStep<any>[]) => Promise<void>)[]
   >();
-  const taskForProject = new Map<Project, BuildProjectTask<any>>();
+  const taskForProject = new Map<Project, BuildProjectTaskInternal<any>>();
   const resolvedConfigurationForProject = new Map<
     Project,
     Map<string, Promise<ResolvedBuildProjectConfigurationHooks<any>>>
@@ -348,9 +497,10 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
     string,
     Promise<ResolvedBuildWorkspaceConfigurationHooks>
   >();
-  const projectTaskHandlersForWorkspace: ((
-    task: BuildProjectTask<any>,
-  ) => void)[] = [];
+  const projectTaskHandlersForWorkspace: {
+    plugin: WorkspacePlugin;
+    handler(task: BuildProjectTask<any>): void;
+  }[] = [];
 
   // Task is in dash case, but the method is in camelcase. This is a
   // quick-and-dirty replace to map between them.
@@ -381,10 +531,18 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
       },
       run(adder) {
         stepAddersForWorkspace.push(async (steps) => {
-          const newStepOrSteps = await adder((step) => step, {
-            configuration: loadConfigurationForWorkspace,
-            projectConfiguration: loadConfigurationForProject,
-          });
+          const newStepOrSteps = await adder(
+            (step) => ({
+              stage: 'default',
+              ...step,
+              target: workspace,
+              source: plugin,
+            }),
+            {
+              configuration: loadConfigurationForWorkspace,
+              projectConfiguration: loadConfigurationForProject,
+            },
+          );
 
           const newMaybeFalsySteps = Array.isArray(newStepOrSteps)
             ? newStepOrSteps
@@ -398,14 +556,14 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
         });
       },
       project(handler) {
-        projectTaskHandlersForWorkspace.push(handler);
+        projectTaskHandlersForWorkspace.push({plugin, handler});
       },
     });
   }
 
-  for (const projectTaskHandler of projectTaskHandlersForWorkspace) {
+  for (const {plugin, handler} of projectTaskHandlersForWorkspace) {
     for (const project of workspace.projects) {
-      projectTaskHandler(getTaskForProject(project));
+      handler(getTaskForProjectAndPlugin(project, plugin));
     }
   }
 
@@ -413,7 +571,9 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
     const projectPlugins = plugins.for(project);
 
     for (const plugin of projectPlugins) {
-      plugin[pluginMethod]?.(getTaskForProject(project));
+      plugin[pluginMethod]?.(
+        getTaskForProjectAndPlugin<any>(project, plugin as any),
+      );
     }
   }
 
@@ -423,7 +583,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
     await stepAdder(workspaceSteps);
   }
 
-  const projectSteps = await Promise.all(
+  const projectStepsByProject = await Promise.all(
     workspace.projects.map(async (project) => {
       const stepAdders = stepAddersForProject.get(project) ?? [];
       const steps: ProjectStep<any>[] = [];
@@ -432,16 +592,41 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
         await stepAdder(steps);
       }
 
-      return {project, steps} as {
-        project: Project;
-        steps: ProjectStep<Project>[];
-      };
+      return steps;
     }),
   );
 
-  return {workspace: workspaceSteps, project: projectSteps};
+  const stepList: StepList = {pre: [], default: [], post: []};
 
-  function getTaskForProject(project: Project) {
+  for (const workspaceStep of workspaceSteps) {
+    stepList[workspaceStep.stage].push(workspaceStep);
+  }
+
+  for (const projectSteps of projectStepsByProject) {
+    for (const projectStep of projectSteps) {
+      stepList[projectStep.stage].push(projectStep);
+    }
+  }
+
+  return stepList;
+
+  function getTaskForProjectAndPlugin<ProjectType extends Project = Project>(
+    project: ProjectType,
+    plugin: AnyPlugin,
+  ): BuildProjectTask<ProjectType> {
+    const internalTask = getInternalTaskForProject(project);
+
+    return {
+      ...internalTask,
+      run(...args) {
+        return (internalTask.run as any)(plugin, ...args);
+      },
+    };
+  }
+
+  function getInternalTaskForProject<ProjectType extends Project = Project>(
+    project: ProjectType,
+  ) {
     const existingTask = taskForProject.get(project);
 
     if (existingTask) return existingTask;
@@ -467,7 +652,7 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
       stepAddersForProject.set(project, stepAdders);
     }
 
-    const task: BuildProjectTask = {
+    const task: BuildProjectTaskInternal<ProjectType> = {
       project,
       workspace,
       internal,
@@ -488,13 +673,21 @@ export async function loadStepsForTask<TaskType extends Task = Task>(
           await configurer(...args);
         });
       },
-      run(adder) {
+      run(plugin, adder) {
         stepAdders.push(async (steps) => {
-          const newStepOrSteps = await adder((step) => step, {
-            configuration(options) {
-              return loadConfigurationForProject(project, options);
+          const newStepOrSteps = await adder(
+            (step) => ({
+              stage: 'default',
+              ...step,
+              target: project,
+              source: plugin as any,
+            }),
+            {
+              configuration(options) {
+                return loadConfigurationForProject(project, options);
+              },
             },
-          });
+          );
 
           const newMaybeFalsySteps = Array.isArray(newStepOrSteps)
             ? newStepOrSteps

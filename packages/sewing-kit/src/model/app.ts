@@ -1,13 +1,13 @@
 import {ProjectKind} from '../types';
 
 import {Base, toId} from './base';
-import type {Options as BaseOptions} from './base';
+import type {Options as BaseOptions, BaseProject} from './base';
 
 export interface AppOptions extends BaseOptions {
   readonly entry?: string;
 }
 
-export class App extends Base {
+export class App extends Base implements BaseProject {
   readonly kind = ProjectKind.App;
   readonly entry?: string;
 

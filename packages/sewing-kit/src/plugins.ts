@@ -56,7 +56,7 @@ export interface ProjectPluginHooks<ProjectType extends Project = Project> {
    * perform a larger, highly-configurable task.
    */
   create?(
-    helper: PluginCreateHelper<ProjectPlugin<ProjectType>>,
+    helper: PluginCreateHelper<ProjectPlugin<ProjectType | Project>>,
   ): ValueOrPromise<void>;
 
   /**
@@ -169,3 +169,5 @@ export function createWorkspacePlugin(
     [PLUGIN_MARKER]: true,
   };
 }
+
+export type AnyPlugin = ProjectPlugin<Project> | WorkspacePlugin;

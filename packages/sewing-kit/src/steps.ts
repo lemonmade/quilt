@@ -1,6 +1,7 @@
 import type {ExecFileOptions, PromiseWithChild} from 'child_process';
 
-import type {Project} from './model';
+import type {Project, Workspace} from './model';
+import type {WorkspacePlugin, AnyPlugin} from './plugins';
 import type {Log, Loggable} from './types';
 
 export interface StepRunnerExecOptions extends ExecFileOptions {
@@ -32,27 +33,33 @@ export interface BaseStepRunner {
 export interface ProjectStepRunner<_ProjectType extends Project>
   extends BaseStepRunner {}
 
-export type ProjectStepStage = 'pre' | 'default' | 'post';
+export type StepStage = 'pre' | 'default' | 'post';
+
+export interface StepNeed {
+  readonly need: boolean;
+  readonly allowSkip?: boolean;
+}
 
 export interface ProjectStep<ProjectType extends Project> {
   readonly name: string;
   readonly label: Loggable;
-  readonly stage?: ProjectStepStage;
+  readonly target: ProjectType;
+  readonly stage: StepStage;
+  readonly source: AnyPlugin;
   run(runner: ProjectStepRunner<ProjectType>): void | Promise<void>;
+  needs?(otherStep: AnyStep): boolean | StepNeed;
 }
 
 export interface WorkspaceStepRunner extends BaseStepRunner {}
 
-export type WorkspaceStepStage =
-  | 'pre'
-  | 'before-projects'
-  | 'default'
-  | 'after-projects'
-  | 'post';
-
 export interface WorkspaceStep {
   readonly name: string;
   readonly label: Loggable;
-  readonly stage?: WorkspaceStepStage;
+  readonly target: Workspace;
+  readonly stage: StepStage;
+  readonly source: WorkspacePlugin;
   run(runner: WorkspaceStepRunner): void | Promise<void>;
+  needs?(otherStep: WorkspaceStep): boolean | StepNeed;
 }
+
+export type AnyStep = WorkspaceStep | ProjectStep<Project>;

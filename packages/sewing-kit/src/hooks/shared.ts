@@ -179,6 +179,11 @@ export interface ProjectStepAdderContext<
   ): Promise<ProjectConfigurationHooks>;
 }
 
+export interface ConfigurableProjectStep<ProjectType extends Project>
+  extends Omit<ProjectStep<ProjectType>, 'target' | 'source' | 'stage'> {
+  readonly stage?: ProjectStep<ProjectType>['stage'];
+}
+
 export interface ProjectStepAdder<
   ProjectType extends Project,
   ProjectConfigurationHooks,
@@ -186,7 +191,9 @@ export interface ProjectStepAdder<
 > {
   (
     adder: (
-      step: (step: ProjectStep<ProjectType>) => ProjectStep<ProjectType>,
+      step: (
+        step: ConfigurableProjectStep<ProjectType>,
+      ) => ProjectStep<ProjectType>,
       context: ProjectStepAdderContext<
         ProjectConfigurationHooks,
         ProjectOptions
@@ -211,12 +218,17 @@ export interface WorkspaceStepAdderContext<
   ): Promise<WorkspaceConfigurationHooks>;
 }
 
+export interface ConfigurableWorkspaceStep
+  extends Omit<WorkspaceStep, 'target' | 'source' | 'stage'> {
+  readonly stage?: WorkspaceStep['stage'];
+}
+
 export interface WorkspaceStepAdder<
   Context extends WorkspaceStepAdderContext<any, any>,
 > {
   (
     adder: (
-      step: (step: WorkspaceStep) => WorkspaceStep,
+      step: (step: ConfigurableWorkspaceStep) => WorkspaceStep,
       context: Context,
     ) => ValueOrPromise<
       WorkspaceStep | WorkspaceStep[] | null | undefined | false

@@ -1,7 +1,7 @@
 import {Runtime, ProjectKind} from '../types';
 
 import {Base, toId} from './base';
-import type {Options as BaseOptions} from './base';
+import type {Options as BaseOptions, BaseProject} from './base';
 
 export interface PackageEntryOptions {
   readonly name?: string;
@@ -46,7 +46,7 @@ export interface PackageOptions extends BaseOptions {
   readonly binaries?: readonly PackageBinaryOptions[];
 }
 
-export class Package extends Base {
+export class Package extends Base implements BaseProject {
   readonly kind = ProjectKind.Package;
   readonly runtimes: Runtime[] | undefined;
   readonly entries: readonly PackageEntry[];

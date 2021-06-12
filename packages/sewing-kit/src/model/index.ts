@@ -2,6 +2,8 @@ import type {App} from './app';
 import type {Package} from './package';
 import type {Service} from './service';
 
+export type {BaseProject} from './base';
+
 export {Package, PackageBinary, PackageEntry} from './package';
 export type {
   PackageBinaryOptions,
