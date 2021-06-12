@@ -179,9 +179,9 @@ export interface ProjectStepAdderContext<
   ): Promise<ProjectConfigurationHooks>;
 }
 
-export interface ConfigurableProjectStep<ProjectType extends Project>
-  extends Omit<ProjectStep<ProjectType>, 'target' | 'source' | 'stage'> {
-  readonly stage?: ProjectStep<ProjectType>['stage'];
+export interface ConfigurableProjectStep
+  extends Omit<ProjectStep<any>, 'target' | 'source' | 'stage'> {
+  readonly stage?: ProjectStep<any>['stage'];
 }
 
 export interface ProjectStepAdder<
@@ -191,9 +191,7 @@ export interface ProjectStepAdder<
 > {
   (
     adder: (
-      step: (
-        step: ConfigurableProjectStep<ProjectType>,
-      ) => ProjectStep<ProjectType>,
+      step: (step: ConfigurableProjectStep) => ProjectStep<ProjectType>,
       context: ProjectStepAdderContext<
         ProjectConfigurationHooks,
         ProjectOptions

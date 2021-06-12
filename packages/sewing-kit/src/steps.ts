@@ -43,7 +43,11 @@ export interface StepNeed {
 export interface ProjectStep<ProjectType extends Project> {
   readonly name: string;
   readonly label: Loggable;
-  readonly target: ProjectType;
+  // I want to make this `ProjectType`, but when I do that, it blows up the
+  // feature where you can pass `ProjectPlugin<Project>` in place of a plugin
+  // for the specific project type. I don’t know why, and it’s not a huge
+  // loss in type safety, but would definitely love to find a better way!
+  readonly target: Project;
   readonly stage: StepStage;
   readonly source: AnyPlugin;
   run(runner: ProjectStepRunner<ProjectType>): void | Promise<void>;
