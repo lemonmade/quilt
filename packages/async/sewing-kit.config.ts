@@ -18,8 +18,9 @@ export default createPackage((pkg) => {
     runtime: Runtime.Node,
   });
   pkg.entry({
-    name: 'assets',
-    source: './src/assets',
+    name: 'server',
+    source: './src/server',
+    runtime: Runtime.Node,
   });
 
   pkg.use(

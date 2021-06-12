@@ -57,8 +57,8 @@ class BaseFileSystem implements FSType {
     return matches.length > 0;
   }
 
-  async glob(pattern: string, options: Omit<GlobbyOptions, 'cwd'> = {}) {
-    return glob.sync(pattern, {...options, cwd: this.root, absolute: true});
+  async glob(pattern: string, options: GlobbyOptions = {}) {
+    return glob.sync(pattern, {cwd: this.root, absolute: true, ...options});
   }
 
   resolvePath(...paths: string[]) {

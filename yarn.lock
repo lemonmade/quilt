@@ -2903,6 +2903,8 @@ __metadata:
     "@types/babel__core": ">=7.0.0"
     "@types/babel__traverse": ">=7.0.0"
     common-tags: ^1.8.0
+    es-module-lexer: ^0.4.0
+    magic-string: ^0.25.0
   peerDependencies:
     "@babel/core": ">=7.0.0"
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0"
@@ -2974,8 +2976,6 @@ __metadata:
     "@types/clean-css": ^4.0.0
     clean-css: ^5.0.0
     common-tags: ^1.8.0
-    es-module-lexer: ^0.4.0
-    magic-string: ^0.25.0
     postcss: ^8.0.0
     postcss-modules: ^4.0.0
     rollup: ^2.0.0

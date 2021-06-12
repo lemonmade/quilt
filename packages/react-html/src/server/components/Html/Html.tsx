@@ -9,7 +9,7 @@ import {MANAGED_ATTRIBUTE} from '../../../utilities/update';
 import {Serialize} from '../Serialize';
 
 interface Asset {
-  path: string;
+  source: string;
   integrity?: string;
 }
 
@@ -69,8 +69,8 @@ export function Html({
   const stylesMarkup = styles?.map((style) => {
     return (
       <Style
-        key={style.path}
-        href={style.path}
+        key={style.source}
+        href={style.source}
         integrity={style.integrity}
         crossOrigin="anonymous"
       />
@@ -80,9 +80,10 @@ export function Html({
   const blockingScriptsMarkup = blockingScripts?.map((script) => {
     return (
       <Script
-        key={script.path}
-        src={script.path}
+        key={script.source}
+        src={script.source}
         integrity={script.integrity}
+        type="module"
         crossOrigin="anonymous"
       />
     );
@@ -91,9 +92,10 @@ export function Html({
   const deferredScriptsMarkup = scripts?.map((script) => {
     return (
       <Script
-        key={script.path}
-        src={script.path}
+        key={script.source}
+        src={script.source}
         integrity={script.integrity}
+        type="module"
         crossOrigin="anonymous"
         defer
       />
@@ -102,10 +104,10 @@ export function Html({
 
   const preloadAssetsMarkup = preloadAssets?.map((asset) => (
     <link
-      key={asset.path}
+      key={asset.source}
       rel="prefetch"
-      href={asset.path}
-      as={asset.path.endsWith('.css') ? 'style' : 'script'}
+      href={asset.source}
+      as={asset.source.endsWith('.css') ? 'style' : 'script'}
     />
   ));
 
@@ -125,8 +127,6 @@ export function Html({
       <head>
         {titleMarkup}
         <meta charSet="utf-8" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="referrer" content="never" />
         {metaMarkup}
         {linkMarkup}
 

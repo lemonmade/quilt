@@ -18,10 +18,10 @@
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
     },
-    "./assets": {
-      "quilt:internal": "./src/assets.ts",
-      "sewing-kit:esnext": "./build/esnext/assets.esnext",
-      "import": "./build/esm/assets.mjs"
+    "./server": {
+      "quilt:internal": "./src/server.ts",
+      "sewing-kit:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs"
     },
     "./babel": {
       "quilt:internal": "./src/babel-plugin.ts",
@@ -42,8 +42,8 @@
   },
   "typesVersions": {
     ">=1": {
-      "assets": [
-        "./build/typescript/assets.d.ts"
+      "server": [
+        "./build/typescript/server.d.ts"
       ],
       "sewing-kit": [
         "./build/typescript/sewing-kit.d.ts"
@@ -61,7 +61,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "common-tags": "^1.8.0"
+    "common-tags": "^1.8.0",
+    "es-module-lexer": "^0.4.0",
+    "magic-string": "^0.25.0"
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0",

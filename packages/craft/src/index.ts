@@ -30,7 +30,6 @@ import {
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
 import {preact} from './plugins/preact';
-import {appAssets} from './plugins/app-assets';
 import {appCss} from './plugins/app-css';
 import {appBuild} from './plugins/app-build';
 import {browserEntry} from './plugins/browser-entry';
@@ -86,14 +85,18 @@ export function quiltApp({
         browserEntry(),
         appBuild(),
         appCss(),
-        appAssets({assetBaseUrl: baseUrl}),
         autoServer && httpHandler(),
         autoServer && appAutoServer(),
       );
 
       await ignoreMissingImports(async () => {
         const {asyncQuilt} = await import('@quilted/async/sewing-kit');
-        use(asyncQuilt());
+        use(
+          asyncQuilt({
+            preload: true,
+            assetBaseUrl: baseUrl,
+          }),
+        );
       });
 
       if (shouldPolyfill) {

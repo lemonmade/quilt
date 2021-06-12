@@ -1,5 +1,5 @@
 export interface Asset {
-  readonly path: string;
+  readonly source: string;
   readonly integrity?: string;
 }
 
@@ -18,9 +18,10 @@ export type Match = MatchRegExp;
 
 export interface Manifest {
   readonly id: string;
+  readonly format: 'esm' | 'systemjs';
   readonly default: boolean;
   readonly match: Match[];
-  readonly entries: {[key: string]: ManifestEntry};
+  readonly entry: ManifestEntry;
   readonly async: {[key: string]: ManifestEntry};
 }
 
@@ -31,7 +32,6 @@ export interface AsyncAssetSelector {
 }
 
 export interface AssetSelector<Options> {
-  readonly entry?: string;
   readonly async?: Iterable<string | AsyncAssetSelector>;
   readonly options?: Options;
 }
@@ -52,6 +52,11 @@ export interface CreateOptions<Options> {
 export function createAssetLoader<Options>({
   getManifest,
 }: CreateOptions<Options>): AssetLoader<Options> {
+  // Ordering of asset:
+  // - vendors (anything other than the first file) for the entry
+  // - the actual entry CSS
+  // - async assets, reversed so vendors come first
+  // - the actual entry JS
   async function getAssets({
     options,
     entry,
@@ -59,18 +64,25 @@ export function createAssetLoader<Options>({
     scripts,
     styles,
   }: AssetSelector<Options> & {
+    entry: boolean;
     scripts: boolean;
     styles: boolean;
   }) {
     const manifest = await getManifest(options ?? ({} as any));
 
-    const assets: Asset[] = [];
-    const resolvedEntry = entry ? manifest.entries[entry] : undefined;
+    const resolvedEntry = entry ? manifest.entry : undefined;
 
-    if (resolvedEntry) {
-      if (styles) assets.push(...resolvedEntry.styles);
-      if (scripts) assets.push(...resolvedEntry.scripts);
-    }
+    // We mark all the entry assets as seen so they are not included
+    // by async chunks
+    const seen = new Set<string>(
+      resolvedEntry
+        ? [
+            ...resolvedEntry.styles.map(({source}) => source),
+            ...resolvedEntry.scripts.map(({source}) => source),
+          ]
+        : [],
+    );
+    const assets: Asset[] = [];
 
     if (asyncAssets) {
       for (const asyncAsset of asyncAssets) {
@@ -84,17 +96,41 @@ export function createAssetLoader<Options>({
 
         const resolvedAsyncEntry = manifest.async[id];
 
-        if (resolvedAsyncEntry) {
-          const asyncAssets = [
-            ...(styles && asyncStyles ? resolvedAsyncEntry.styles : []),
-            ...(scripts && asyncScripts ? resolvedAsyncEntry.scripts : []),
-          ];
+        if (resolvedAsyncEntry == null) continue;
 
-          if (assets.length > 0) {
-            assets.splice(assets.length - 1, 0, ...asyncAssets);
-          } else {
-            assets.push(...asyncAssets);
+        if (styles && asyncStyles) {
+          for (const asset of resolvedAsyncEntry.styles.reverse()) {
+            if (seen.has(asset.source)) continue;
+            seen.add(asset.source);
+            assets.push(asset);
           }
+        }
+
+        if (scripts && asyncScripts) {
+          for (const asset of resolvedAsyncEntry.scripts.reverse()) {
+            if (seen.has(asset.source)) continue;
+            seen.add(asset.source);
+            assets.push(asset);
+          }
+        }
+      }
+    }
+
+    if (resolvedEntry) {
+      if (scripts) {
+        const [entry, ...vendors] = resolvedEntry.scripts;
+
+        for (const vendor of vendors.reverse()) {
+          assets.unshift(vendor);
+        }
+
+        assets.push(entry);
+      }
+
+      if (styles) {
+        for (const asset of resolvedEntry.styles.reverse()) {
+          if (seen.has(asset.source)) continue;
+          assets.unshift(asset);
         }
       }
     }
@@ -104,10 +140,16 @@ export function createAssetLoader<Options>({
 
   return {
     scripts: (options = {}) =>
-      getAssets({entry: 'main', ...options, styles: false, scripts: true}),
-    styles: ({options} = {}) =>
-      getAssets({entry: 'main', ...options, styles: true, scripts: false}),
+      getAssets({...options, entry: true, styles: false, scripts: true}),
+    styles: (options = {}) =>
+      getAssets({...options, entry: true, styles: true, scripts: false}),
     asyncAssets: (asyncAssets, options = {}) =>
-      getAssets({...options, async: asyncAssets, scripts: true, styles: true}),
+      getAssets({
+        ...options,
+        entry: false,
+        async: asyncAssets,
+        scripts: true,
+        styles: true,
+      }),
   };
 }

@@ -81,7 +81,10 @@
       ]
     }
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./build/esnext/global.esnext",
+    "./build/mjs/global.mjs"
+  ],
   "dependencies": {
     "@quilted/async": "^0.3.2",
     "@quilted/graphql": "^0.4.2",

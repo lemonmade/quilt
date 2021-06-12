@@ -3,6 +3,7 @@ import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App} from '@quilted/sewing-kit';
 
 import {getEntry} from './shared';
+import {} from './browser-entry';
 
 declare module '@quilted/sewing-kit' {
   interface BuildAppOptions {
@@ -13,41 +14,55 @@ declare module '@quilted/sewing-kit' {
   }
 }
 
+export const STEP_NAME = 'Quilt.App.Build';
+
 export function appBuild() {
   return createProjectPlugin<App>({
-    name: 'Quilt.App.Build',
+    name: STEP_NAME,
     build({project, workspace, configure, run}) {
-      configure(({outputDirectory, rollupInput, rollupOutputs}, options) => {
-        if (!options.quilt) return;
+      configure(
+        (
+          {outputDirectory, rollupInput, rollupOutputs, quiltAsyncManifest},
+          options,
+        ) => {
+          if (!options.quilt) return;
 
-        rollupInput?.(async (inputs) => {
-          if (inputs.length > 0) return inputs;
-
-          const entry = await getEntry(project);
-          return [entry];
-        });
-
-        rollupOutputs?.(async (outputs) => [
-          ...outputs,
-          {
-            format: 'esm',
-            entryFileNames: `app.[hash].js`,
-            assetFileNames: `[name].[hash].[ext]`,
-            chunkFileNames: `[name].[hash].js`,
-            manualChunks: createManualChunksSorter(),
-            dir: await outputDirectory.run(
-              workspace.fs.buildPath(
-                workspace.apps.length > 1 ? `apps/${project.name}` : 'app',
-                'assets',
-              ),
+          quiltAsyncManifest?.(() =>
+            workspace.fs.buildPath(
+              workspace.apps.length > 1 ? `apps/${project.name}` : 'app',
+              'manifests/manifest.json',
             ),
-          },
-        ]);
-      });
+          );
+
+          rollupInput?.(async (inputs) => {
+            if (inputs.length > 0) return inputs;
+
+            const entry = await getEntry(project);
+            return [entry];
+          });
+
+          rollupOutputs?.(async (outputs) => [
+            ...outputs,
+            {
+              format: 'esm',
+              entryFileNames: `app.[hash].js`,
+              assetFileNames: `[name].[hash].[ext]`,
+              chunkFileNames: `[name].[hash].js`,
+              manualChunks: createManualChunksSorter(),
+              dir: await outputDirectory.run(
+                workspace.fs.buildPath(
+                  workspace.apps.length > 1 ? `apps/${project.name}` : 'app',
+                  'assets',
+                ),
+              ),
+            },
+          ]);
+        },
+      );
 
       run((step, {configuration}) =>
         step({
-          name: 'Quilt.App.Build',
+          name: STEP_NAME,
           label: `Build app ${project.name}`,
           async run() {
             const [configure, {buildWithRollup}] = await Promise.all([
