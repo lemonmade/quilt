@@ -29,6 +29,10 @@
       "sewing-kit:esnext": "./build/esnext/email.esnext",
       "import": "./build/mjs/email.mjs"
     },
+    "./global": {
+      "sewing-kit:esnext": "./build/esnext/global.esnext",
+      "import": "./build/mjs/global.mjs"
+    },
     "./http": {
       "sewing-kit:esnext": "./build/esnext/http.esnext",
       "import": "./build/mjs/http.mjs"
@@ -56,6 +60,9 @@
       ],
       "email": [
         "./build/typescript/email.d.ts"
+      ],
+      "global": [
+        "./build/typescript/global.d.ts"
       ],
       "http": [
         "./build/typescript/http.d.ts"

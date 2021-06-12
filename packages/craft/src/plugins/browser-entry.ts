@@ -6,6 +6,7 @@ import type {App, WaterfallHook} from '@quilted/sewing-kit';
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
 
 const MAGIC_ENTRY_MODULE = '__quilt__/AppBrowserEntry.tsx';
+const MAGIC_MODULE_GLOBAL = '__quilt__/BrowserGlobal.tsx';
 
 export interface BrowserEntryHooks {
   quiltBrowserEntryShouldHydrate: WaterfallHook<boolean>;
@@ -57,10 +58,23 @@ export function browserEntry() {
             plugins.push({
               name: '@quilted/app/magic-entry',
               async resolveId(id) {
-                if (id === MAGIC_ENTRY_MODULE) return id;
+                if (id === MAGIC_ENTRY_MODULE || id === MAGIC_MODULE_GLOBAL) {
+                  return id;
+                }
+
                 return null;
               },
               async load(source) {
+                if (source === MAGIC_MODULE_GLOBAL) {
+                  return {
+                    code: stripIndent`
+                      import {installGlobal} from '@quilted/quilt/global';
+                      installGlobal();
+                    `,
+                    moduleSideEffects: 'no-treeshake',
+                  };
+                }
+
                 if (source !== MAGIC_ENTRY_MODULE) return null;
 
                 const content = await quiltBrowserEntryContent!.run(undefined);
@@ -74,6 +88,7 @@ export function browserEntry() {
                 const reactFunction = shouldHydrate ? 'hydrate' : 'render';
 
                 return stripIndent`
+                  import ${JSON.stringify(MAGIC_MODULE_GLOBAL)};
                   import {${reactFunction}} from 'react-dom';
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
     

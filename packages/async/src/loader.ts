@@ -33,7 +33,7 @@ export function createAsyncLoader<T>(
         hasTriedSyncResolve = true;
         resolved =
           typeof Quilt === 'object'
-            ? normalize(Quilt.async.get<T>(resolvedId))
+            ? normalize(Quilt.AsyncAssets.get<{default: T}>(resolvedId))
             : undefined;
       }
 

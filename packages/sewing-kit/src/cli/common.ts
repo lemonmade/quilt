@@ -165,21 +165,36 @@ function createFilter({
 
   return {
     includeProject(project) {
-      const search = project.name.replace(/[-_]/g, '').toLowerCase();
-      const kindSearch = `${project.kind.toLowerCase()}.${search}`;
-      const kindNamespaceSearch = `${project.kind.toLowerCase()}.*`;
+      const projectKind = project.kind.toLowerCase();
+      const nameSearch = project.name.replace(/[-_]/g, '').toLowerCase();
+      const namespaceParts = nameSearch.split('.');
+      const kindSearch = `${projectKind}:${nameSearch}`;
+      const kindNamespaceSearch = `${projectKind}:*`;
+      const searches: string[] = [kindNamespaceSearch, kindSearch, nameSearch];
+
+      if (namespaceParts.length > 1) {
+        let currentNamespace = namespaceParts[0];
+        searches.push(
+          `${projectKind}:${currentNamespace}.*`,
+          `${currentNamespace}.*`,
+        );
+
+        for (const searchPart of namespaceParts.slice(1)) {
+          currentNamespace = `${currentNamespace}.${searchPart}`;
+          searches.push(
+            `${projectKind}:${currentNamespace}.*`,
+            `${currentNamespace}.*`,
+          );
+        }
+      }
 
       if (onlyProjects.size > 0) {
-        return onlyProjects.has(search) ||
-          onlyProjects.has(kindSearch) ||
-          onlyProjects.has(kindNamespaceSearch)
+        return searches.some((search) => onlyProjects.has(search))
           ? {included: true, reason: IncludedReason.Only}
           : {included: false, reason: ExcludedReason.Only};
       }
 
-      return skipProjects.has(search) ||
-        skipProjects.has(kindSearch) ||
-        skipProjects.has(kindNamespaceSearch)
+      return searches.some((search) => skipProjects.has(search))
         ? {included: false, reason: ExcludedReason.Skipped}
         : {included: true, reason: IncludedReason.Normal};
     },

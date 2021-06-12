@@ -29,10 +29,17 @@ export function asyncQuilt(): Plugin {
 
       const {asyncId, moduleId} = getAsyncRequest(id.replace(ENTRY_PREFIX, ''));
 
-      return stripIndent`
-        import * as AsyncModule from ${JSON.stringify(moduleId)};
-        globalThis.Quilt?.async.set(${JSON.stringify(asyncId)}, AsyncModule);
-      `;
+      return {
+        code: stripIndent`
+          import * as AsyncModule from ${JSON.stringify(moduleId)};
+          export {default} from ${JSON.stringify(moduleId)};
+          export * from ${JSON.stringify(moduleId)};
+          Quilt.AsyncAssets.set(${JSON.stringify(asyncId)}, AsyncModule);
+        `,
+        meta: {
+          quilt: {asyncId},
+        },
+      };
     },
   };
 }

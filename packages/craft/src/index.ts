@@ -30,6 +30,8 @@ import {
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
 import {preact} from './plugins/preact';
+import {appAssets} from './plugins/app-assets';
+import {appCss} from './plugins/app-css';
 import {appBuild} from './plugins/app-build';
 import {browserEntry} from './plugins/browser-entry';
 import {magicModuleApp} from './plugins/magic-module-app';
@@ -57,11 +59,13 @@ export * from './constants';
 export interface AppOptions {
   polyfill?: boolean | PolyfillOptions;
   autoServer?: boolean;
+  assets?: {baseUrl?: string};
 }
 
 export function quiltApp({
   polyfill: shouldPolyfill = true,
   autoServer = true,
+  assets: {baseUrl = '/assets/'} = {},
 }: AppOptions = {}) {
   return createProjectPlugin<App>({
     name: 'Quilt.App',
@@ -81,6 +85,8 @@ export function quiltApp({
         magicModuleApp(),
         browserEntry(),
         appBuild(),
+        appCss(),
+        appAssets({assetBaseUrl: baseUrl}),
         autoServer && httpHandler(),
         autoServer && appAutoServer(),
       );
