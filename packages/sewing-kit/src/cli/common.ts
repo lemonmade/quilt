@@ -49,6 +49,7 @@ import {Ui} from './ui';
 import {InternalFileSystem} from '../utilities/fs';
 
 export enum IncludedReason {
+  Workspace,
   Normal,
   Only,
 }
@@ -355,6 +356,21 @@ async function runStepsInStage(
         skipped: true,
         completed: false,
         inclusion,
+        needs: [],
+      });
+      continue;
+    }
+
+    const projectInclusion: InclusionResult =
+      step.target.kind === 'workspace'
+        ? {included: true, reason: IncludedReason.Workspace}
+        : filter.includeProject(step.target);
+
+    if (!projectInclusion.included) {
+      stepMetadata.set(step, {
+        skipped: true,
+        completed: false,
+        inclusion: projectInclusion,
         needs: [],
       });
       continue;
