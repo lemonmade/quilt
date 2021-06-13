@@ -7,11 +7,15 @@ export interface FaviconOptions {
 export function useFavicon(source: string, {type}: FaviconOptions = {}) {
   useDomEffect(
     (manager) =>
-      manager.addLink({
-        rel: 'icon',
-        type,
-        href: source,
-      }),
+      manager.addLink(
+        type
+          ? {
+              rel: 'icon',
+              type,
+              href: source,
+            }
+          : {rel: 'icon', href: source},
+      ),
     [source],
   );
 }
