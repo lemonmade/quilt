@@ -114,14 +114,6 @@ export function Html({
   const htmlAttributes = extracted?.htmlAttributes ?? {};
   const bodyAttributes = extracted?.bodyAttributes ?? {};
 
-  if (process.env.NODE_ENV === 'development') {
-    if (bodyAttributes.style == null) {
-      bodyAttributes.style = {visibility: 'hidden'};
-    } else {
-      bodyAttributes.style.visibility = 'hidden';
-    }
-  }
-
   return (
     <html lang={locale} {...htmlAttributes}>
       <head>
