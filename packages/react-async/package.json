@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-async",
   "type": "module",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -44,8 +44,8 @@
     }
   },
   "dependencies": {
-    "@quilted/async": "^0.3.2",
-    "@quilted/react-html": "^0.3.8",
+    "@quilted/async": "^0.3.3",
+    "@quilted/react-html": "^0.3.9",
     "@quilted/react-server-render": "^0.3.2",
     "@quilted/use-subscription": "^0.2.2"
   },
