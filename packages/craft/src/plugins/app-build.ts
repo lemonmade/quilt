@@ -1,9 +1,12 @@
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
 import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App} from '@quilted/sewing-kit';
+import type {App, WaterfallHookWithDefault} from '@quilted/sewing-kit';
 
 import {getEntry} from './shared';
-import {} from './browser-entry';
+
+export interface AppBuildHooks {
+  quiltAssetBaseUrl: WaterfallHookWithDefault<string>;
+}
 
 declare module '@quilted/sewing-kit' {
   interface BuildAppOptions {
@@ -12,20 +15,37 @@ declare module '@quilted/sewing-kit' {
      */
     quilt: boolean;
   }
+
+  interface BuildAppConfigurationHooks extends AppBuildHooks {}
 }
 
 export const STEP_NAME = 'Quilt.App.Build';
 
-export function appBuild() {
+export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    build({project, workspace, configure, run}) {
+    build({project, workspace, hooks, configure, run}) {
+      hooks<AppBuildHooks>(({waterfall}) => ({
+        quiltAssetBaseUrl: waterfall({
+          default: assetBaseUrl,
+        }),
+      }));
+
       configure(
         (
-          {outputDirectory, rollupInput, rollupOutputs, quiltAsyncManifest},
+          {
+            outputDirectory,
+            rollupInput,
+            rollupOutputs,
+            quiltAsyncManifest,
+            quiltAssetBaseUrl,
+            quiltAsyncAssetBaseUrl,
+          },
           options,
         ) => {
           if (!options.quilt) return;
+
+          quiltAsyncAssetBaseUrl?.(() => quiltAssetBaseUrl!.run());
 
           quiltAsyncManifest?.(() =>
             workspace.fs.buildPath(

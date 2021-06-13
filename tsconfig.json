@@ -4,6 +4,7 @@
   "references": [
     {"path": "./packages/async"},
     {"path": "./packages/aws"},
+    {"path": "./packages/cloudflare"},
     {"path": "./packages/craft"},
     {"path": "./packages/create-quilt-project"},
     {"path": "./packages/graphql"},

@@ -68,7 +68,17 @@ export function appAutoServer() {
           quiltHttpHandlerContent?.(
             async () =>
               (await quiltAutoServerContent!.run(undefined)) ??
-              `export {default} from '@quilted/quilt/magic-app-http-handler';`,
+              stripIndent`
+                import App from ${JSON.stringify(
+                  MAGIC_MODULE_APP_ASSET_MANIFEST,
+                )};
+                import assets from ${JSON.stringify(
+                  MAGIC_MODULE_APP_ASSET_MANIFEST,
+                )};
+                import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
+
+                export default createServerRenderingHttpHandler(App, {assets});
+              `,
           );
 
           rollupInputOptions?.((options) => {

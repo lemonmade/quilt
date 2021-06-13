@@ -1,12 +1,12 @@
 {
-  "name": "@quilted/aws",
+  "name": "@quilted/cloudflare",
   "type": "module",
-  "version": "0.3.5",
+  "version": "0.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
-    "directory": "packages/aws"
+    "directory": "packages/cloudflare"
   },
   "publishConfig": {
     "access": "public",
@@ -22,6 +22,7 @@
       "import": "./build/esm/http-handlers.mjs"
     },
     "./sewing-kit": {
+      "quilt:internal": "./src/sewing-kit.ts",
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs"
     }
@@ -41,25 +42,26 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http-handlers": "^0.2.4",
-    "@types/aws-lambda": "^8.0.0",
-    "common-tags": "^1.8.0",
-    "cookie": "^0.4.0",
-    "node-fetch": "^2.6.0"
-  },
-  "devDependencies": {
-    "@types/common-tags": "^1.8.0",
-    "@types/cookie": "^0.4.0"
+    "@cloudflare/kv-asset-handler": "^0.1.2",
+    "@quilted/http-handlers": "^0.2.4"
   },
   "peerDependencies": {
     "@quilted/craft": "^0.1.9",
-    "@quilted/sewing-kit": "^0.2.4"
+    "@quilted/quilt": "^0.5.14",
+    "@quilted/sewing-kit": "^0.2.4",
+    "react": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
     "@quilted/craft": {
       "optional": true
     },
+    "@quilted/quilt": {
+      "optional": true
+    },
     "@quilted/sewing-kit": {
+      "optional": true
+    },
+    "react": {
       "optional": true
     }
   },

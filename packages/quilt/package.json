@@ -44,10 +44,6 @@
     "./matchers": {
       "sewing-kit:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/mjs/matchers.mjs"
-    },
-    "./magic-app-http-handler": {
-      "sewing-kit:esnext": "./build/esnext/magic/app-http-handler.esnext",
-      "import": "./build/mjs/magic/app-http-handler.mjs"
     }
   },
   "typesVersions": {
@@ -72,9 +68,6 @@
       ],
       "matchers": [
         "./build/typescript/matchers.d.ts"
-      ],
-      "magic-app-http-handler": [
-        "./build/typescript/magic/app-http-handler.d.ts"
       ],
       "*": [
         "./build/typescript/index.d.ts"

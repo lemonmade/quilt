@@ -36,6 +36,7 @@ import {browserEntry} from './plugins/browser-entry';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
 import {serviceBuild} from './plugins/service-build';
+
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
 
@@ -83,7 +84,7 @@ export function quiltApp({
         // Build and auto-server setup
         magicModuleApp(),
         browserEntry(),
-        appBuild(),
+        appBuild({assetBaseUrl: baseUrl}),
         appCss(),
         autoServer && httpHandler(),
         autoServer && appAutoServer(),
@@ -91,12 +92,7 @@ export function quiltApp({
 
       await ignoreMissingImports(async () => {
         const {asyncQuilt} = await import('@quilted/async/sewing-kit');
-        use(
-          asyncQuilt({
-            preload: true,
-            assetBaseUrl: baseUrl,
-          }),
-        );
+        use(asyncQuilt({preload: true}));
       });
 
       if (shouldPolyfill) {

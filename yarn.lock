@@ -1375,6 +1375,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/kv-asset-handler@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@cloudflare/kv-asset-handler@npm:0.1.2"
+  dependencies:
+    mime: ^2.5.2
+  checksum: 1a1bb7af15368a80b5c46700e86d157e0b05c01710174686336b54d27469ce0c49b9ba13bd0222d0f98d8b116aef306729bf521ad496240622161ecbcb73ebda
+  languageName: node
+  linkType: hard
+
 "@endemolshinegroup/cosmiconfig-typescript-loader@npm:3.0.2":
   version: 3.0.2
   resolution: "@endemolshinegroup/cosmiconfig-typescript-loader@npm:3.0.2"
@@ -2943,12 +2952,35 @@ __metadata:
     cookie: ^0.4.0
     node-fetch: ^2.6.0
   peerDependencies:
-    "@quilted/craft": ^0.0.0
-    "@quilted/sewing-kit": ^0.2.0
+    "@quilted/craft": ^0.1.9
+    "@quilted/sewing-kit": ^0.2.4
   peerDependenciesMeta:
     "@quilted/craft":
       optional: true
     "@quilted/sewing-kit":
+      optional: true
+  languageName: unknown
+  linkType: soft
+
+"@quilted/cloudflare@workspace:packages/cloudflare":
+  version: 0.0.0-use.local
+  resolution: "@quilted/cloudflare@workspace:packages/cloudflare"
+  dependencies:
+    "@cloudflare/kv-asset-handler": ^0.1.2
+    "@quilted/http-handlers": ^0.2.4
+  peerDependencies:
+    "@quilted/craft": ^0.1.9
+    "@quilted/quilt": ^0.5.14
+    "@quilted/sewing-kit": ^0.2.4
+    react: ">=17.0.0 <18.0.0"
+  peerDependenciesMeta:
+    "@quilted/craft":
+      optional: true
+    "@quilted/quilt":
+      optional: true
+    "@quilted/sewing-kit":
+      optional: true
+    react:
       optional: true
   languageName: unknown
   linkType: soft
@@ -9866,6 +9898,15 @@ __metadata:
   dependencies:
     mime-db: 1.47.0
   checksum: c7ca8a9980bdae0b760820aded39ea9541a8236f4abc105df645ea5b09a9c4a5299e28667c0c9596ab8e4ca84b219fd8b94b5c68e32b59891ca1f57a7e848c02
+  languageName: node
+  linkType: hard
+
+"mime@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "mime@npm:2.5.2"
+  bin:
+    mime: cli.js
+  checksum: 3e5377f0a1891350247699c5fff0469752a35d5c0baeb7cbee86907c143215ee8621d17c17401f10ffe020a0b327aa503b98cb7340039fce69bc465aed414fb7
   languageName: node
   linkType: hard
 

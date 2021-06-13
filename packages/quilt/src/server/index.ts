@@ -13,6 +13,7 @@ export {
   ServerRenderContext,
   extract,
 } from '@quilted/react-server-render/server';
+export type {Asset, AssetLoader, AssetSelector} from '@quilted/async/server';
 export {
   AsyncAssetContext,
   AsyncAssetManager,
@@ -23,3 +24,4 @@ export {renderEmail} from '@quilted/react-email/server';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
+export {createServerRenderingHttpHandler} from './http-handler';
