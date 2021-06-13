@@ -58,7 +58,9 @@ export function cloudflareWorkers() {
                 MAGIC_MODULE_HTTP_HANDLER,
               )};
 
-              addEventListener('fetch', handleEvent);
+              addEventListener('fetch', async (event) => {
+                event.respondWith(await handleEvent(event));
+              });
             `,
           );
         },
