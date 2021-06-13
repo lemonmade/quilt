@@ -40,6 +40,13 @@ import {serviceBuild} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
 
+// Without these exports, TypeScript doesn’t see all the module augmentations
+// added by these modules when you try to reference them from another package.
+export type {} from './plugins/app-build';
+export type {} from './plugins/app-auto-server';
+export type {} from './plugins/browser-entry';
+export type {} from './plugins/http-handler';
+
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
 // (significantly more complex) `@quilted/sewing-kit` package.
