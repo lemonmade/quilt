@@ -42,14 +42,17 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.1.2",
-    "@quilted/http-handlers": "^0.2.4"
+    "@quilted/http-handlers": "^0.2.4",
+    "mime": "^2.5.0"
   },
   "peerDependencies": {
     "@quilted/craft": "^0.1.9",
     "@quilted/quilt": "^0.5.14",
     "@quilted/sewing-kit": "^0.2.4",
     "react": ">=17.0.0 <18.0.0"
+  },
+  "devDependencies": {
+    "@types/mime": "^2.0.0"
   },
   "peerDependenciesMeta": {
     "@quilted/craft": {

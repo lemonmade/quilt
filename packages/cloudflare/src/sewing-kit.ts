@@ -1,3 +1,4 @@
+import {extname} from 'path';
 import {stripIndent} from 'common-tags';
 
 import {createProjectPlugin} from '@quilted/sewing-kit';
@@ -9,7 +10,13 @@ import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
 } from '@quilted/craft';
 
-export function cloudflareWorkers() {
+export type Format = 'service-worker' | 'modules';
+
+export interface Options {
+  format?: Format;
+}
+
+export function cloudflareWorkers({format = 'modules'}: Options = {}) {
   return createProjectPlugin<App>({
     name: 'Quilt.Cloudflare.Workers',
     build({configure}) {
@@ -17,6 +24,7 @@ export function cloudflareWorkers() {
         (
           {
             rollupOutputs,
+            rollupInputOptions,
             quiltAssetBaseUrl,
             quiltAutoServerContent,
             quiltHttpHandlerRuntimeContent,
@@ -25,8 +33,30 @@ export function cloudflareWorkers() {
         ) => {
           if (!quiltAutoServer) return;
 
+          rollupInputOptions?.((options) => {
+            // The default entry does not preserve exports, but cloudflare
+            // uses the default export as the handler.
+            options.preserveEntrySignatures = 'exports-only';
+            return options;
+          });
+
           rollupOutputs?.((outputs) => {
             for (const output of outputs) {
+              if (format === 'modules') {
+                // Cloudflare workers assume .js/.cjs are commonjs by default,
+                // if we are using modules we default file names to .mjs so they
+                // are automatically interpreted as modules.
+                output.entryFileNames = ensureMjsExtension(
+                  output.entryFileNames,
+                );
+                output.chunkFileNames = ensureMjsExtension(
+                  output.chunkFileNames,
+                );
+                output.assetFileNames = ensureMjsExtension(
+                  output.assetFileNames,
+                );
+              }
+
               output.inlineDynamicImports = true;
             }
 
@@ -52,19 +82,41 @@ export function cloudflareWorkers() {
             `,
           );
 
-          quiltHttpHandlerRuntimeContent?.(
-            () => stripIndent`
+          quiltHttpHandlerRuntimeContent?.(() => {
+            if (format === 'service-worker') {
+              return stripIndent`
+                import handleEvent from ${JSON.stringify(
+                  MAGIC_MODULE_HTTP_HANDLER,
+                )};
+  
+                addEventListener('fetch', async (event) => {
+                  const response = await handleEvent(event.request);
+                  event.respondWith(response);
+                });
+              `;
+            }
+
+            return stripIndent`
               import handleEvent from ${JSON.stringify(
                 MAGIC_MODULE_HTTP_HANDLER,
               )};
-
-              addEventListener('fetch', async (event) => {
-                event.respondWith(await handleEvent(event));
-              });
-            `,
-          );
+              
+              export default {
+                async fetch(...args) {
+                  const response = await handleEvent(...args);
+                  return response;
+                }
+              }
+            `;
+          });
         },
       );
     },
   });
+}
+
+function ensureMjsExtension<T>(file?: T) {
+  if (typeof file !== 'string') return file;
+  const extension = extname(file);
+  return `${file.slice(0, file.length - extension.length)}.mjs`;
 }

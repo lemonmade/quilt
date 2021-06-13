@@ -1375,15 +1375,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/kv-asset-handler@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@cloudflare/kv-asset-handler@npm:0.1.2"
-  dependencies:
-    mime: ^2.5.2
-  checksum: 1a1bb7af15368a80b5c46700e86d157e0b05c01710174686336b54d27469ce0c49b9ba13bd0222d0f98d8b116aef306729bf521ad496240622161ecbcb73ebda
-  languageName: node
-  linkType: hard
-
 "@endemolshinegroup/cosmiconfig-typescript-loader@npm:3.0.2":
   version: 3.0.2
   resolution: "@endemolshinegroup/cosmiconfig-typescript-loader@npm:3.0.2"
@@ -2966,8 +2957,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@quilted/cloudflare@workspace:packages/cloudflare"
   dependencies:
-    "@cloudflare/kv-asset-handler": ^0.1.2
     "@quilted/http-handlers": ^0.2.4
+    "@types/mime": ^2.0.0
+    mime: ^2.5.0
   peerDependencies:
     "@quilted/craft": ^0.1.9
     "@quilted/quilt": ^0.5.14
@@ -3904,6 +3896,13 @@ __metadata:
   version: 7.0.7
   resolution: "@types/json-schema@npm:7.0.7"
   checksum: b9d2c509fa4e0b82f58e73f5e6ab76c60ff1884ba41bb82f37fb1cece226d4a3e5a62fedf78a43da0005373a6713d9abe61c1e592906402c41c08ad6ab26d52b
+  languageName: node
+  linkType: hard
+
+"@types/mime@npm:^2.0.0":
+  version: 2.0.3
+  resolution: "@types/mime@npm:2.0.3"
+  checksum: 6df548a912494f8579d548cd883be0425f30eaa2922283335c405e270600f49045a06d766460c0f0edabb41dff570c614d174d3c52215de3bddd11f190ec9ae9
   languageName: node
   linkType: hard
 
@@ -9881,7 +9880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime@npm:^2.5.2":
+"mime@npm:^2.5.0":
   version: 2.5.2
   resolution: "mime@npm:2.5.2"
   bin:
