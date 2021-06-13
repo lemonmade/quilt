@@ -1,10 +1,10 @@
 import * as Cookies from 'cookie';
-import {Headers} from 'node-fetch';
 
 import {HttpMethod} from '@quilted/http';
 import {enhanceUrl} from '@quilted/routing';
 import type {Match, Prefix} from '@quilted/routing';
 
+import {createHeaders} from './headers';
 import type {
   HttpHandler,
   Request,
@@ -75,7 +75,7 @@ function createRequest(
     url,
     method = 'GET',
     body,
-    headers = new Headers() as any,
+    headers = createHeaders(),
     cookies = cookiesFromHeaders(headers),
   }: RequestOptions,
   prefix?: Prefix,

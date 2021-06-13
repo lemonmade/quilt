@@ -1,4 +1,5 @@
 import type {Match, EnhancedURL} from '@quilted/routing';
+import type {Headers} from './headers';
 
 export interface RequestCookies {
   has(cookie: string): boolean;

@@ -1,8 +1,7 @@
 import * as Cookies from 'cookie';
-import {Headers} from 'node-fetch';
 import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
-import {notFound} from '@quilted/http-handlers';
+import {notFound, createHeaders} from '@quilted/http-handlers';
 import type {HttpHandler} from '@quilted/http-handlers';
 
 export function createLambdaApiGatewayProxy(
@@ -14,7 +13,7 @@ export function createLambdaApiGatewayProxy(
 
     context.callbackWaitsForEmptyEventLoop = false;
 
-    const headers = new Headers(event.headers as Record<string, string>);
+    const headers = createHeaders(event.headers as Record<string, string>);
 
     const cookies = Cookies.parse(event.cookies?.join('; ') ?? '');
 

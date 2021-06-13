@@ -5,6 +5,9 @@ export {response, noContent, notFound, redirect, json, html} from './response';
 
 export {fetchJson} from './fetch';
 
+export {createHeaders} from './headers';
+export type {Headers} from './headers';
+
 export type {
   HttpHandler,
   CookieDefinition,

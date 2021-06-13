@@ -1,7 +1,7 @@
 import {createServer} from 'http';
 import type {RequestListener} from 'http';
-import {Headers} from 'node-fetch';
 
+import {createHeaders} from './headers';
 import {notFound} from './response';
 import type {HttpHandler} from './types';
 
@@ -40,7 +40,7 @@ export function createHttpRequestListener(
               request.headers['x-forwarded-host'] ?? request.headers.host
             }`,
           ),
-          headers: new Headers(
+          headers: createHeaders(
             Object.entries(request.headers).map<[string, string]>(
               ([header, value]) => [
                 header,

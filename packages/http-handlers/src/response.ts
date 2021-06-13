@@ -2,7 +2,8 @@ import * as Cookies from 'cookie';
 import {RelativeTo} from '@quilted/routing';
 import type {NavigateTo} from '@quilted/routing';
 
-import {resolveTo, normalizeHeaders} from './utilities';
+import {createHeaders} from './headers';
+import {resolveTo} from './utilities';
 import type {
   Response,
   Request,
@@ -18,7 +19,7 @@ export function response(
     headers: explicitHeaders,
   }: ResponseOptions = {},
 ): Response {
-  const headers = normalizeHeaders(explicitHeaders);
+  const headers = createHeaders(explicitHeaders);
 
   const serializedCookies = new Map<string, string>(
     existingCookies?.entries() ?? [],

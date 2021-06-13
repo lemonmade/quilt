@@ -2,7 +2,10 @@ import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App, WaterfallHook} from '@quilted/sewing-kit';
 
-import {MAGIC_MODULE_APP_ASSET_MANIFEST} from '../constants';
+import {
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_APP_COMPONENT,
+} from '../constants';
 
 import {STEP_NAME} from './app-build';
 
@@ -69,9 +72,7 @@ export function appAutoServer() {
             async () =>
               (await quiltAutoServerContent!.run(undefined)) ??
               stripIndent`
-                import App from ${JSON.stringify(
-                  MAGIC_MODULE_APP_ASSET_MANIFEST,
-                )};
+                import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                 import assets from ${JSON.stringify(
                   MAGIC_MODULE_APP_ASSET_MANIFEST,
                 )};

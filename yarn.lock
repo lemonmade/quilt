@@ -2941,7 +2941,6 @@ __metadata:
     "@types/cookie": ^0.4.0
     common-tags: ^1.8.0
     cookie: ^0.4.0
-    node-fetch: ^2.6.0
   peerDependencies:
     "@quilted/craft": ^0.1.9
     "@quilted/sewing-kit": ^0.2.4
@@ -3080,7 +3079,6 @@ __metadata:
     "@quilted/routing": ^0.2.2
     "@types/cookie": ^0.4.0
     cookie: ^0.4.0
-    node-fetch: ^2.6.0
   languageName: unknown
   linkType: soft
 
@@ -10228,7 +10226,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.1, node-fetch@npm:^2.0.0, node-fetch@npm:^2.3.0, node-fetch@npm:^2.5.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
+"node-fetch@npm:2.6.1, node-fetch@npm:^2.0.0, node-fetch@npm:^2.3.0, node-fetch@npm:^2.5.0, node-fetch@npm:^2.6.1":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
   checksum: cbb171635e538162b977eac5dfe7a1e07a9a02e991924377a6435502291e2f823d306b95aabc455caebf4a118ccf836868462bc70ccc3095af02bb9da61fda37

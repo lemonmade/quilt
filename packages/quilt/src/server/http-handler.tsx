@@ -58,4 +58,6 @@ export function createServerRenderingHttpHandler(
       },
     );
   });
+
+  return handler;
 }

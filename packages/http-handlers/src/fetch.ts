@@ -1,6 +1,7 @@
 import type {NavigateTo} from '@quilted/routing';
 
-import {normalizeHeaders, resolveTo} from './utilities';
+import {createHeaders} from './headers';
+import {resolveTo} from './utilities';
 
 export async function fetchJson<T = unknown>(
   url: NavigateTo,
@@ -10,7 +11,7 @@ export async function fetchJson<T = unknown>(
     ...options
   }: Omit<RequestInit, 'body' | 'method'> = {},
 ): Promise<T> {
-  const headers = normalizeHeaders(explicitHeaders);
+  const headers = createHeaders(explicitHeaders);
 
   if (!headers.has('Accept')) {
     headers.set('Accept', 'application/json');
