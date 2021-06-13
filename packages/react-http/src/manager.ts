@@ -25,7 +25,9 @@ export class HttpManager {
   private statusCodes: StatusCode[] = [];
   private redirectUrl?: string;
   private readonly csp = new Map<CspDirective, string[] | boolean>();
-  private readonly responseHeaders = new Map<string, string>();
+  private readonly responseHeaders = new Map<string, string>([
+    ['content-type', 'text/html'],
+  ]);
 
   constructor({headers}: Options = {}) {
     this.headers = normalizeHeaders(headers);
