@@ -1,5 +1,3 @@
-import serialize from 'serialize-javascript';
-
 import {
   SERIALIZE_ID_ATTRIBUTE,
   SERIALIZE_VALUE_ATTRIBUTE,
@@ -13,7 +11,7 @@ interface Props<Data> {
 export function Serialize<Data>({id, data}: Props<Data>) {
   const attributes = {
     [SERIALIZE_ID_ATTRIBUTE]: id,
-    [SERIALIZE_VALUE_ATTRIBUTE]: serialize(data),
+    [SERIALIZE_VALUE_ATTRIBUTE]: JSON.stringify(data),
   };
 
   return <div {...attributes} />;

@@ -3234,12 +3234,8 @@ __metadata:
   resolution: "@quilted/react-html@workspace:packages/react-html"
   dependencies:
     "@quilted/react-server-render": ^0.3.2
-    "@types/multistream": ^2.1.1
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.3
-    "@types/serialize-javascript": ^5.0.0
-    multistream: ^4.0.1
-    serialize-javascript: ^5.0.1
   peerDependencies:
     react: ">=17.0.0 <18.0.0"
     react-dom: ">=17.0.0 <18.0.0"
@@ -3925,15 +3921,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/multistream@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@types/multistream@npm:2.1.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: 580dd91c29a9b574033c65776f44069b6f0cfd4aef9d72862ee1d0beffb485a6928223072e800248fdf5dbb8445ca72e4fe666db4011771bfbff05572c634eb4
-  languageName: node
-  linkType: hard
-
 "@types/node-fetch@npm:^2.0.0":
   version: 2.5.10
   resolution: "@types/node-fetch@npm:2.5.10"
@@ -4028,13 +4015,6 @@ __metadata:
   version: 7.3.6
   resolution: "@types/semver@npm:7.3.6"
   checksum: 36776caed9a5d80cc7e0dd32fc08ac762918273bef849c369a300895646f9126e9857c9235e130493cf1fb2ee77e44cd1b599eded4fcbd11803962936771506a
-  languageName: node
-  linkType: hard
-
-"@types/serialize-javascript@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@types/serialize-javascript@npm:5.0.0"
-  checksum: a1820b2aa6f63fe234d2226106fd5cde2169b0b73eecff74b908cedcc976d2d932744661a6811957284ede6efe24030e023ecda44c41423b6b84e5a3f3e87b91
   languageName: node
   linkType: hard
 
@@ -10161,16 +10141,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multistream@npm:^4.0.1":
-  version: 4.1.0
-  resolution: "multistream@npm:4.1.0"
-  dependencies:
-    once: ^1.4.0
-    readable-stream: ^3.6.0
-  checksum: 1a8001084bc56989b99ada4f4e7dc74117bd676a456720c773673bf02360d1f051b2b0572c1720165a90cb03fdf525d704f1f736c9289d565afd89e41d278d4d
-  languageName: node
-  linkType: hard
-
 "mute-stream@npm:0.0.7, mute-stream@npm:~0.0.4":
   version: 0.0.7
   resolution: "mute-stream@npm:0.0.7"
@@ -11476,15 +11446,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"randombytes@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "randombytes@npm:2.1.0"
-  dependencies:
-    safe-buffer: ^5.1.0
-  checksum: ede2693af09732ceab1c273dd70db787f34a7b8d95bab13f1aca763483c0113452a78e53d61ff18d393dcea586d388e01f198a5132a4a85cebba31ec54164b75
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:^17.0.1":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
@@ -11686,7 +11647,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:2 || 3, readable-stream@npm:^3.0.2, readable-stream@npm:^3.6.0":
+"readable-stream@npm:2 || 3, readable-stream@npm:^3.0.2":
   version: 3.6.0
   resolution: "readable-stream@npm:3.6.0"
   dependencies:
@@ -12137,7 +12098,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"safe-buffer@npm:^5.0.1, safe-buffer@npm:^5.1.0, safe-buffer@npm:^5.1.1, safe-buffer@npm:^5.1.2, safe-buffer@npm:^5.2.0":
+"safe-buffer@npm:^5.0.1, safe-buffer@npm:^5.1.1, safe-buffer@npm:^5.1.2, safe-buffer@npm:^5.2.0":
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
   checksum: 0bb57f0d8f9d1fa4fe35ad8a2db1f83a027d48f2822d59ede88fd5cd4ddad83c0b497213feb7a70fbf90597a70c5217f735b0eb1850df40ce9b4ae81dd22b3f9
@@ -12221,15 +12182,6 @@ resolve@^2.0.0-next.3:
   bin:
     semver: bin/semver.js
   checksum: c53624ddf4b9779bcbf55a1eb8b37074cc44bfeca416f3cc263429408202a8a3c59b00eef8c647d697303bc39b95c022a5c61959221d3814bfb1270ff7c14986
-  languageName: node
-  linkType: hard
-
-"serialize-javascript@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "serialize-javascript@npm:5.0.1"
-  dependencies:
-    randombytes: ^2.1.0
-  checksum: 97eef70a33c75e690b0c6aa2ffe622ecdfc888d3f181a5cf129e5778228dcd100febabc0f41ff793199ee79acd14cbbad0c69f1348a3893580fe424c4718889b
   languageName: node
   linkType: hard
 
