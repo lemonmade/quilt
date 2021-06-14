@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-workers",
   "type": "module",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/workers": "^0.2.4"
+    "@quilted/workers": "^0.2.5"
   },
   "peerDependencies": {
     "react": ">=17.0.0 <18.0.0"
