@@ -36,7 +36,7 @@ export interface LintPackageOptions extends LintProjectOptions {}
 /**
  * Selects the linting options that match the provided project type.
  */
-export type LintOptionsForProject<ProjectType extends Project> =
+export type LintOptionsForProject<ProjectType extends Project = Project> =
   ProjectType extends App
     ? LintAppOptions
     : ProjectType extends Service
@@ -81,12 +81,13 @@ export interface LintPackageConfigurationHooks
  * Selects the linting configuration hooks that match the provided
  * project type.
  */
-export type LintConfigurationHooksForProject<ProjectType extends Project> =
-  ProjectType extends App
-    ? LintAppConfigurationHooks
-    : ProjectType extends Service
-    ? LintServiceConfigurationHooks
-    : LintPackageConfigurationHooks;
+export type LintConfigurationHooksForProject<
+  ProjectType extends Project = Project,
+> = ProjectType extends App
+  ? LintAppConfigurationHooks
+  : ProjectType extends Service
+  ? LintServiceConfigurationHooks
+  : LintPackageConfigurationHooks;
 
 /**
  * The full set of resolved linting hooks for a single project of the

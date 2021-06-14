@@ -40,7 +40,7 @@ export interface StepNeed {
   readonly allowSkip?: boolean;
 }
 
-export interface ProjectStep<ProjectType extends Project> {
+export interface ProjectStep<ProjectType extends Project = Project> {
   readonly name: string;
   readonly label: Loggable;
   // I want to make this `ProjectType`, but when I do that, it blows up the

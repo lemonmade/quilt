@@ -36,7 +36,7 @@ export interface TypeCheckPackageOptions extends TypeCheckProjectOptions {}
 /**
  * Selects the type checking options that match the provided project type.
  */
-export type TypeCheckOptionsForProject<ProjectType extends Project> =
+export type TypeCheckOptionsForProject<ProjectType extends Project = Project> =
   ProjectType extends App
     ? TypeCheckAppOptions
     : ProjectType extends Service
@@ -81,12 +81,13 @@ export interface TypeCheckPackageConfigurationHooks
  * Selects the type checking configuration hooks that match the provided
  * project type.
  */
-export type TypeCheckConfigurationHooksForProject<ProjectType extends Project> =
-  ProjectType extends App
-    ? TypeCheckAppConfigurationHooks
-    : ProjectType extends Service
-    ? TypeCheckServiceConfigurationHooks
-    : TypeCheckPackageConfigurationHooks;
+export type TypeCheckConfigurationHooksForProject<
+  ProjectType extends Project = Project,
+> = ProjectType extends App
+  ? TypeCheckAppConfigurationHooks
+  : ProjectType extends Service
+  ? TypeCheckServiceConfigurationHooks
+  : TypeCheckPackageConfigurationHooks;
 
 /**
  * The full set of resolved type checking hooks for a single project of the

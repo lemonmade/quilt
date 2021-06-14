@@ -36,7 +36,7 @@ export interface TestPackageOptions extends TestProjectOptions {}
 /**
  * Selects the testing options that match the provided project type.
  */
-export type TestOptionsForProject<ProjectType extends Project> =
+export type TestOptionsForProject<ProjectType extends Project = Project> =
   ProjectType extends App
     ? TestAppOptions
     : ProjectType extends Service
@@ -81,12 +81,13 @@ export interface TestPackageConfigurationHooks
  * Selects the testing configuration hooks that match the provided
  * project type.
  */
-export type TestConfigurationHooksForProject<ProjectType extends Project> =
-  ProjectType extends App
-    ? TestAppConfigurationHooks
-    : ProjectType extends Service
-    ? TestServiceConfigurationHooks
-    : TestPackageConfigurationHooks;
+export type TestConfigurationHooksForProject<
+  ProjectType extends Project = Project,
+> = ProjectType extends App
+  ? TestAppConfigurationHooks
+  : ProjectType extends Service
+  ? TestServiceConfigurationHooks
+  : TestPackageConfigurationHooks;
 
 /**
  * The full set of resolved testing hooks for a single project of the

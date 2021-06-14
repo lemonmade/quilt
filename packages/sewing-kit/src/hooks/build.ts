@@ -38,7 +38,7 @@ export interface BuildPackageOptions extends BuildProjectOptions {}
 /**
  * Selects the build options that match the provided project type.
  */
-export type BuildOptionsForProject<ProjectType extends Project> =
+export type BuildOptionsForProject<ProjectType extends Project = Project> =
   ProjectType extends App
     ? BuildAppOptions
     : ProjectType extends Service
@@ -100,12 +100,13 @@ export interface BuildPackageConfigurationHooks
  * Selects the build configuration hooks that match the provided
  * project type.
  */
-export type BuildConfigurationHooksForProject<ProjectType extends Project> =
-  ProjectType extends App
-    ? BuildAppConfigurationHooks
-    : ProjectType extends Service
-    ? BuildServiceConfigurationHooks
-    : BuildPackageConfigurationHooks;
+export type BuildConfigurationHooksForProject<
+  ProjectType extends Project = Project,
+> = ProjectType extends App
+  ? BuildAppConfigurationHooks
+  : ProjectType extends Service
+  ? BuildServiceConfigurationHooks
+  : BuildPackageConfigurationHooks;
 
 /**
  * The full set of resolved build hooks for a single project of the

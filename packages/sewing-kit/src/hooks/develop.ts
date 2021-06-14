@@ -38,7 +38,7 @@ export interface DevelopPackageOptions extends DevelopProjectOptions {}
 /**
  * Selects the development options that match the provided project type.
  */
-export type DevelopOptionsForProject<ProjectType extends Project> =
+export type DevelopOptionsForProject<ProjectType extends Project = Project> =
   ProjectType extends App
     ? DevelopAppOptions
     : ProjectType extends Service
@@ -94,12 +94,13 @@ export interface DevelopPackageConfigurationHooks
  * Selects the development configuration hooks that match the provided
  * project type.
  */
-export type DevelopConfigurationHooksForProject<ProjectType extends Project> =
-  ProjectType extends App
-    ? DevelopAppConfigurationHooks
-    : ProjectType extends Service
-    ? DevelopServiceConfigurationHooks
-    : DevelopPackageConfigurationHooks;
+export type DevelopConfigurationHooksForProject<
+  ProjectType extends Project = Project,
+> = ProjectType extends App
+  ? DevelopAppConfigurationHooks
+  : ProjectType extends Service
+  ? DevelopServiceConfigurationHooks
+  : DevelopPackageConfigurationHooks;
 
 /**
  * The full set of resolved development hooks for a single project of the
