@@ -13,10 +13,7 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
-  "cSpell.words": [
-    "Vite",
-    "middlewares"
-  ],
+  "cSpell.words": ["Vite", "middlewares"],
   "cSpell.ignoreWords": ["preloadable", "unmount"],
   "search.exclude": {
     ".yarn": true,
