@@ -55,7 +55,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@remote-ui/rpc": "^1.0.0",
+    "@remote-ui/rpc": "^1.2.0",
     "common-tags": "^1.8.0"
   },
   "peerDependencies": {

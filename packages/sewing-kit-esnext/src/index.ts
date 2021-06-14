@@ -1,10 +1,16 @@
 import {join, dirname, sep as pathSeparator} from 'path';
 
 import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {Package} from '@quilted/sewing-kit';
+import type {
+  Project,
+  Package,
+  ResolvedHooks,
+  DevelopConfigurationHooksForProject,
+} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-rollup';
+import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
 export const EXPORT_CONDITION = 'sewing-kit:esnext';
 
@@ -117,6 +123,52 @@ export function esnextBuild() {
 export function esnext() {
   return createProjectPlugin({
     name: 'SewingKit.ESNextConsumer',
+    develop({configure}) {
+      configure(
+        ({
+          babelTargets,
+          babelPresets,
+          babelPlugins,
+          vitePlugins,
+          viteResolveExportConditions,
+        }: ResolvedHooks<
+          DevelopConfigurationHooksForProject<Project> & ViteHooks
+        >) => {
+          // Prefer the esnext export condition
+          viteResolveExportConditions?.((exportConditions) =>
+            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+          );
+
+          // Add the Babel plugin to process .esnext files like source code
+          vitePlugins?.(async (plugins) => {
+            const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
+              await Promise.all([
+                import('@rollup/plugin-babel'),
+                babelTargets!.run([]),
+                babelPresets!.run([]),
+                babelPlugins!.run([]),
+              ]);
+
+            return [
+              ...plugins,
+              babel({
+                envName: 'production',
+                include: '**/*.esnext',
+                // Forces this to run on node_modules
+                exclude: [],
+                babelHelpers: 'bundled',
+                configFile: false,
+                babelrc: false,
+                // @ts-expect-error Babel types have not been updated yet
+                targets,
+                presets: babelPresetsOption,
+                plugins: babelPluginsOption,
+              }),
+            ];
+          });
+        },
+      );
+    },
     build({configure}) {
       configure(
         ({

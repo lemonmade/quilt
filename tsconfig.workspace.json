@@ -42,6 +42,7 @@
     {"path": "./packages/sewing-kit-react"},
     {"path": "./packages/sewing-kit-rollup"},
     {"path": "./packages/sewing-kit-typescript"},
+    {"path": "./packages/sewing-kit-vite"},
     {"path": "./packages/typescript"},
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-types"},

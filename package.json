@@ -16,6 +16,7 @@
     "lint": "node ./scripts/sewing-kit-from-source lint",
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
+    "develop": "node ./scripts/sewing-kit-from-source develop",
     "prerelease": "yarn build",
     "version-bump": "lerna version --no-push && yarn install && git commit -am 'fix yarn after lerna version-bump' && git push --follow-tags",
     "deploy": "lerna publish from-package --yes --no-verify-access"

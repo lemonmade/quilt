@@ -22,6 +22,7 @@ import {esnextBuild, esnext} from '@quilted/sewing-kit-esnext';
 import {react} from '@quilted/sewing-kit-react';
 import {targets} from '@quilted/sewing-kit-targets';
 import {jest} from '@quilted/sewing-kit-jest';
+import {vite} from '@quilted/sewing-kit-vite';
 import {
   typescriptProject,
   typescriptWorkspace,
@@ -32,6 +33,7 @@ import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 import {preact} from './plugins/preact';
 import {appCss} from './plugins/app-css';
 import {appBuild} from './plugins/app-build';
+import {appDevelop} from './plugins/app-develop';
 import {browserEntry} from './plugins/browser-entry';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
@@ -66,12 +68,14 @@ export * from './constants';
 export interface AppOptions {
   polyfill?: boolean | PolyfillOptions;
   autoServer?: boolean;
+  develop?: boolean;
   assets?: {baseUrl?: string};
 }
 
 export function quiltApp({
   polyfill: shouldPolyfill = true,
   autoServer = true,
+  develop = true,
   assets: {baseUrl = '/assets/'} = {},
 }: AppOptions = {}) {
   return createProjectPlugin<App>({
@@ -95,6 +99,9 @@ export function quiltApp({
         appCss(),
         autoServer && httpHandler(),
         autoServer && appAutoServer(),
+        // Development
+        develop && vite(),
+        develop && appDevelop(),
       );
 
       await ignoreMissingImports(async () => {
