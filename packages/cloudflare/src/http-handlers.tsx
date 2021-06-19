@@ -41,7 +41,7 @@ export function createRequestHandler(
     context: WorkerRequestContext,
   ) => {
     if (cache) {
-      const response = cache.match(request);
+      const response = await cache.match(request);
       if (response) return response;
     }
 
