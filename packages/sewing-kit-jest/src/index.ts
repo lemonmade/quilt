@@ -39,6 +39,7 @@ export interface JestFlags {
   coverage?: boolean;
   updateSnapshot?: boolean;
   cacheDirectory?: string;
+  passWithNoTests?: boolean;
   [key: string]: unknown;
 }
 
@@ -333,6 +334,7 @@ export function jest() {
               // updateSnapshot: updateSnapshots,
               // runInBand: debug,
               // forceExit: debug,
+              passWithNoTests: true,
             });
 
             await jest.run(toArgs(flags));
