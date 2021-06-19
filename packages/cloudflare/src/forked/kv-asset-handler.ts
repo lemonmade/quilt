@@ -241,7 +241,12 @@ export async function getAssetFromKV(
     }
   }
   if (shouldSetBrowserCache) {
-    response.headers.set('Cache-Control', `max-age=${cacheControl.browserTTL}`);
+    // Another difference from the mainline library: setting `immutable` on the cache
+    // control for the assets.
+    response.headers.set(
+      'Cache-Control',
+      `public, max-age=${cacheControl.browserTTL}, immutable`,
+    );
   } else {
     response.headers.delete('Cache-Control');
   }
