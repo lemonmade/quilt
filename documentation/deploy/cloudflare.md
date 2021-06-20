@@ -2,14 +2,22 @@
 
 Quilt and [Sewing Kit](./TODO) make it easy to deploy your apps and backend services as [Cloudflare Workers](https://workers.cloudflare.com). The small, modern JavaScript bundles Quilt creates are a great fit for Cloudflare’s quick startup times and global distribution.
 
-## Getting started
+This guide assumes you have already [created an app or service with Quilt and Sewing Kit](./TODO). If you do not already have a Quilt project and would prefer to initialize your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
 
-> **Note:** this guide assumes you have already [created an app or service with Quilt and Sewing Kit](./TODO).
+<!-- prettier-ignore-start -->
+
+| Template | `wrangler generate` | Deploy button |
+|----------|-------------------|---------------| 
+| Cloudflare Worker-rendered web application and asset hosting | `wrangler generate quilt-app https://github.com/quilt-framework/quilt-template-cloudflare-workers` | [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/quilt-framework/quilt-template-cloudflare-workers) |
+
+<!-- prettier-ignore-end -->
+
+## Getting started
 
 To configure your builds to target Cloudflare, you’ll first need to install the `@quilted/cloudflare` package, which contains all the necessary build configuration:
 
 ```zsh
-yarn install @quilted/cloudflare --dev
+yarn add @quilted/cloudflare --dev
 ```
 
 If you are working on a monorepo and have many projects with their own `package.json`s, you can install `@quilted/cloudflare` as a `devDependency` for the entire workspace, or you can install it as a `devDependency` for each individual project — the choice is yours.
@@ -31,6 +39,18 @@ import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
 export default createApp((app) => {
   app.use(quiltApp());
   app.use(cloudflareWorkers());
+});
+```
+
+By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules), which current requires a paid Cloudflare plan. If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare Sewing Kit plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
+
+```ts
+import {createApp, quiltApp} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+
+export default createApp((app) => {
+  app.use(quiltApp());
+  app.use(cloudflareWorkers({format: 'service-worker'}));
 });
 ```
 
@@ -228,6 +248,18 @@ import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
 export default createService((service) => {
   service.use(quiltService());
   service.use(cloudflareWorkers());
+});
+```
+
+By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules), which current requires a paid Cloudflare plan. If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare Sewing Kit plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
+
+```ts
+import {createService, quiltService} from '@quilted/sewing-kit';
+import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+
+export default createService((service) => {
+  service.use(quiltService());
+  service.use(cloudflareWorkers({format: 'service-worker'}));
 });
 ```
 
