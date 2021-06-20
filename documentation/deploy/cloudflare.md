@@ -111,11 +111,11 @@ command = "yarn install && yarn build"
 
 [build.upload]
 format = "modules"
-dir = "./build/app/server"
+dir = "./build/server"
 main = "./index.mjs"
 
 [site]
-bucket = "./build/app/assets"
+bucket = "./build/assets"
 entry-point = "."
 ```
 
@@ -139,23 +139,21 @@ This configuration tells Wrangler to install your dependencies and run your NPM 
 ```toml
 [build.upload]
 format = "modules"
-dir = "./build/app/server"
+dir = "./build/server"
 main = "./index.mjs"
 ```
 
-This section of your configuration tells Wrangler to use the modules format for your worker. It also tells Wrangler where to look for your server-side assets. Quilt outputs these assets into `build/app/server` by default, with `index.mjs` as the entry into the worker. If your workspace contains multiple apps, you should instead set the `dir` option to `./build/apps/<YOUR-APP-NAME>/server`, as Quilt will add the additional layer of nesting to keep your different apps’ assets separate.
+This section of your configuration tells Wrangler to use the modules format for your worker. It also tells Wrangler where to look for your server-side assets. Quilt outputs these assets into `build/server` (relative to the app’s `sewing-kit.config.ts`) by default, with `index.mjs` as the entry into the worker.
 
 ```toml
 [site]
-bucket = "./build/app/assets"
+bucket = "./build/assets"
 entry-point = "."
 ```
 
 This final section configures [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites), which is an additional part of your worker that manages your static assets. This part of the configuration tells Wrangler where the static assets Quilt produces will be on disk.
 
 If you are passing `serveAssets: false` in the [Cloudflare Sewing Kit plugin](#step-1-add-the-cloudflare-sewing-kit-plugin), you can omit this section entirely.
-
-If you have multiple Quilt apps in your workspace, you will need to update the `bucket` property to be `"./build/apps/<YOUR-APP-NAME>/assets"`, as Quilt will nest your app’s assets one level deeper in that case.
 
 #### Option 2: Deploying your app in the service worker format
 
@@ -171,7 +169,7 @@ format = "service-worker"
 # As noted above, if you are passing serveAssets: false in your Sewing Kit
 # configuration, you do not need to include this configuration.
 [site]
-bucket = "./build/app/assets"
+bucket = "./build/assets"
 entry-point = "."
 ```
 
@@ -189,11 +187,9 @@ Wrangler looks at your project’s `package.json` `main` field to know what file
 
 ```json
 {
-  "main": "./build/app/server/index.js"
+  "main": "./build/server/index.js"
 }
 ```
-
-If you have multiple functions in your workspace, you’ll need to change this path to `./build/apps/<YOUR-SERVICE-NAME>/server/index.js`.
 
 ### Step 3: Deploy your app to Cloudflare
 
@@ -285,7 +281,7 @@ command = "yarn install && yarn build"
 
 [build.upload]
 format = "modules"
-dir = "./build/service"
+dir = "./build"
 main = "./index.mjs"
 ```
 
@@ -298,8 +294,6 @@ This new configuration tells Wrangler to use the `modules` format, and teaches i
   }
 }
 ```
-
-If you have multiple Quilt services in the repo, you will need to update the `dir` option to be `"./build/services/<MY_SERVICE_NAME>"`, as Quilt will build your project into a nested directory in this case.
 
 #### Option 2: Deploying your worker in the service worker format
 
@@ -327,11 +321,9 @@ Wrangler looks at your project’s `package.json` `main` field to know what file
 
 ```json
 {
-  "main": "./build/service/index.js"
+  "main": "./build/index.js"
 }
 ```
-
-If you have multiple functions in your workspace, you’ll need to change this path to `./build/services/<YOUR-SERVICE-NAME>/index.js`.
 
 ### Step 4: Deploy your worker to Cloudflare
 
