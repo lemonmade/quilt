@@ -60,7 +60,7 @@ export function createRequestHandler(
       headers: new Headers([...headers]),
     });
 
-    if (cache) {
+    if (cache && response.headers.has('Cache-Control')) {
       context.waitUntil(cache.put(request, response.clone()));
     }
 
