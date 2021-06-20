@@ -30,7 +30,7 @@ declare module '@quilted/sewing-kit' {
 export function appAutoServer() {
   return createProjectPlugin<App>({
     name: 'Quilt.App.AutoServer',
-    build({project, workspace, hooks, configure, run}) {
+    build({project, hooks, configure, run}) {
       hooks<AutoServerHooks>(({waterfall}) => ({
         quiltAutoServerHost: waterfall(),
         quiltAutoServerPort: waterfall(),
@@ -97,24 +97,14 @@ export function appAutoServer() {
               async load(source) {
                 if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
 
-                const manifestFiles = await workspace.fs.glob(
-                  'manifest*.json',
-                  {
-                    cwd: workspace.fs.buildPath(
-                      workspace.apps.length > 1
-                        ? `apps/${project.name}`
-                        : 'app',
-                      'manifests',
-                    ),
-                    onlyFiles: true,
-                  },
-                );
+                const manifestFiles = await project.fs.glob('manifest*.json', {
+                  cwd: project.fs.buildPath('manifests'),
+                  onlyFiles: true,
+                });
 
                 const manifests = await Promise.all(
                   manifestFiles.map(async (manifestFile) => {
-                    const manifestString = await workspace.fs.read(
-                      manifestFile,
-                    );
+                    const manifestString = await project.fs.read(manifestFile);
 
                     return JSON.parse(manifestString);
                   }),
