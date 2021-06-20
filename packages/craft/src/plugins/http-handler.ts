@@ -1,3 +1,6 @@
+import {spawn} from 'child_process';
+import type {ChildProcess} from 'child_process';
+
 import {stripIndent} from 'common-tags';
 import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
 import type {App, Service, WaterfallHook} from '@quilted/sewing-kit';
@@ -254,7 +257,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
         step({
           name: 'Quilt.HttpHandler.Development',
           label: `Running local development server for ${project.name}`,
-          async run(step) {
+          async run() {
             const file = internal.fs.tempPath(
               'quilt-http-handler-dev',
               project.name,
@@ -287,7 +290,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
               return;
             }
 
-            let server: ReturnType<typeof step['exec']> | undefined;
+            let server: ChildProcess | undefined;
 
             const watcher = watch({
               ...inputOptions,
@@ -298,12 +301,14 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
               switch (event.code) {
                 case 'BUNDLE_START': {
                   try {
-                    server?.child.kill();
+                    server?.kill();
                   } catch {
                     // intentional noop
                   }
 
-                  server = step.exec('node', [file]);
+                  server = spawn('node', [file], {
+                    stdio: 'inherit',
+                  });
                   break;
                 }
                 case 'ERROR': {
