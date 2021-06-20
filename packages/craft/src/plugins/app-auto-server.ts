@@ -144,12 +144,7 @@ export function appAutoServer() {
             {
               format: 'esm',
               entryFileNames: 'index.js',
-              dir: await outputDirectory.run(
-                workspace.fs.buildPath(
-                  workspace.apps.length > 1 ? `apps/${project.name}` : 'app',
-                  'server',
-                ),
-              ),
+              dir: await outputDirectory.run(project.fs.buildPath('server')),
             },
           ]);
         },

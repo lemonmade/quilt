@@ -15,7 +15,7 @@ declare module '@quilted/sewing-kit' {
 export function serviceBuild({httpHandler = true} = {}) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service.Build',
-    build({project, workspace, configure, run}) {
+    build({project, configure, run}) {
       configure(
         ({outputDirectory, rollupInput, rollupOutputs}, {quilt = false}) => {
           if (!quilt) return;
@@ -29,13 +29,7 @@ export function serviceBuild({httpHandler = true} = {}) {
             ...outputs,
             {
               format: 'esm',
-              dir: await outputDirectory.run(
-                workspace.fs.buildPath(
-                  workspace.services.length > 1
-                    ? `services/${project.name}`
-                    : 'service',
-                ),
-              ),
+              dir: await outputDirectory.run(project.fs.buildPath()),
               entryFileNames: 'index.mjs',
             },
           ]);

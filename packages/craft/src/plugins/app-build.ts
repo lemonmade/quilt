@@ -24,7 +24,7 @@ export const STEP_NAME = 'Quilt.App.Build';
 export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    build({project, workspace, hooks, configure, run}) {
+    build({project, hooks, configure, run}) {
       hooks<AppBuildHooks>(({waterfall}) => ({
         quiltAssetBaseUrl: waterfall({
           default: assetBaseUrl,
@@ -48,10 +48,7 @@ export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
           quiltAsyncAssetBaseUrl?.(() => quiltAssetBaseUrl!.run());
 
           quiltAsyncManifest?.(() =>
-            workspace.fs.buildPath(
-              workspace.apps.length > 1 ? `apps/${project.name}` : 'app',
-              'manifests/manifest.json',
-            ),
+            project.fs.buildPath('manifests/manifest.json'),
           );
 
           rollupInput?.(async (inputs) => {
@@ -69,12 +66,7 @@ export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
               assetFileNames: `[name].[hash].[ext]`,
               chunkFileNames: `[name].[hash].js`,
               manualChunks: createManualChunksSorter(),
-              dir: await outputDirectory.run(
-                workspace.fs.buildPath(
-                  workspace.apps.length > 1 ? `apps/${project.name}` : 'app',
-                  'assets',
-                ),
-              ),
+              dir: await outputDirectory.run(project.fs.buildPath('assets')),
             },
           ]);
         },
