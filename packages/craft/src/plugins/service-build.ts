@@ -2,7 +2,6 @@ import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {Service} from '@quilted/sewing-kit';
 
 import {getEntry} from './shared';
-
 declare module '@quilted/sewing-kit' {
   interface BuildServiceOptions {
     /**
@@ -12,18 +11,36 @@ declare module '@quilted/sewing-kit' {
   }
 }
 
-export function serviceBuild({httpHandler = true} = {}) {
+export interface Options {
+  minify: boolean;
+  httpHandler: boolean;
+}
+
+export function serviceBuild({minify, httpHandler}: Options) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service.Build',
     build({project, configure, run}) {
       configure(
-        ({outputDirectory, rollupInput, rollupOutputs}, {quilt = false}) => {
+        (
+          {outputDirectory, rollupInput, rollupPlugins, rollupOutputs},
+          {quilt = false},
+        ) => {
           if (!quilt) return;
 
           rollupInput?.(async () => {
             const entry = await getEntry(project);
             return [entry];
           });
+
+          if (minify) {
+            rollupPlugins?.(async (plugins) => {
+              const {terser} = await import('rollup-plugin-terser');
+
+              plugins.push(terser());
+
+              return plugins;
+            });
+          }
 
           rollupOutputs?.(async (outputs) => [
             ...outputs,

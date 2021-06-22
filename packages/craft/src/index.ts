@@ -31,13 +31,14 @@ import {
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
 import {preact} from './plugins/preact';
-import {appCss} from './plugins/app-css';
 import {appBuild} from './plugins/app-build';
+import type {AssetOptions as AppBuildAssetOptions} from './plugins/app-build';
 import {appDevelop} from './plugins/app-develop';
 import {browserEntry} from './plugins/browser-entry';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
 import {serviceBuild} from './plugins/service-build';
+import type {Options as ServiceBuildOptions} from './plugins/service-build';
 
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
@@ -69,15 +70,19 @@ export interface AppOptions {
   polyfill?: boolean | PolyfillOptions;
   autoServer?: boolean;
   develop?: boolean;
-  assets?: {baseUrl?: string};
+  build?: boolean;
+  assets?: Partial<AppBuildAssetOptions>;
 }
 
 export function quiltApp({
   polyfill: shouldPolyfill = true,
   autoServer = true,
   develop = true,
-  assets: {baseUrl = '/assets/'} = {},
+  build = true,
+  assets = {},
 }: AppOptions = {}) {
+  const {minify = true, baseUrl = '/assets/'} = assets;
+
   return createProjectPlugin<App>({
     name: 'Quilt.App',
     async create({use}) {
@@ -95,10 +100,9 @@ export function quiltApp({
         // Build and auto-server setup
         magicModuleApp(),
         browserEntry(),
-        appBuild({assetBaseUrl: baseUrl}),
-        appCss(),
-        autoServer && httpHandler(),
-        autoServer && appAutoServer(),
+        build && appBuild({assets: {minify, baseUrl}}),
+        build && autoServer && httpHandler(),
+        build && autoServer && appAutoServer(),
         // Development
         develop && vite(),
         develop && appDevelop(),
@@ -130,7 +134,7 @@ export interface ServiceOptions {
    * to `false`.
    */
   react?: boolean;
-  build?: boolean;
+  build?: boolean | Partial<Omit<ServiceBuildOptions, 'httpHandler'>>;
   polyfill?: boolean | PolyfillOptions;
   develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
   httpHandler?: boolean | Pick<HttpHandlerOptions, 'port'>;
@@ -143,6 +147,12 @@ export function quiltService({
   polyfill: shouldPolyfill = true,
   httpHandler: useHttpHandler = true,
 }: ServiceOptions = {}) {
+  const buildOptions: ServiceBuildOptions = {
+    httpHandler: Boolean(useHttpHandler),
+    minify: false,
+    ...(typeof build === 'boolean' ? {} : build),
+  };
+
   return createProjectPlugin<Service>({
     name: 'Quilt.Service',
     async create({use}) {
@@ -158,7 +168,7 @@ export function quiltService({
         useReact && react(),
         useReact && preact(),
         // Build and http handler setup
-        build && serviceBuild({httpHandler: Boolean(useHttpHandler)}),
+        build && serviceBuild(buildOptions),
         useHttpHandler &&
           httpHandler(
             typeof useHttpHandler === 'boolean' ? undefined : useHttpHandler,

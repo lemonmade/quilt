@@ -5,16 +5,9 @@ import {TargetRuntime} from '../../model';
 import {createCommand, runStepsForTask} from '../common';
 import type {TaskContext} from '../common';
 
-export const develop = createCommand(
-  {
-    '--source-maps': Boolean,
-  },
-  async ({'--source-maps': sourceMaps = false}, context) => {
-    await runDev(context, {
-      sourceMaps,
-    });
-  },
-);
+export const develop = createCommand({}, async (_, context) => {
+  await runDev(context, {});
+});
 
 export async function runDev(
   context: TaskContext,

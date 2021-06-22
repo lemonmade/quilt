@@ -4,6 +4,15 @@ import type {App, WaterfallHookWithDefault} from '@quilted/sewing-kit';
 
 import {getEntry} from './shared';
 
+export interface AssetOptions {
+  minify: boolean;
+  baseUrl: string;
+}
+
+export interface Options {
+  assets: AssetOptions;
+}
+
 export interface AppBuildHooks {
   quiltAssetBaseUrl: WaterfallHookWithDefault<string>;
 }
@@ -21,13 +30,13 @@ declare module '@quilted/sewing-kit' {
 
 export const STEP_NAME = 'Quilt.App.Build';
 
-export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
+export function appBuild({assets}: Options) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
     build({project, hooks, configure, run}) {
       hooks<AppBuildHooks>(({waterfall}) => ({
         quiltAssetBaseUrl: waterfall({
-          default: assetBaseUrl,
+          default: assets.baseUrl,
         }),
       }));
 
@@ -37,6 +46,7 @@ export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
             outputDirectory,
             rollupInput,
             rollupOutputs,
+            rollupPlugins,
             quiltAsyncManifest,
             quiltAssetBaseUrl,
             quiltAsyncAssetBaseUrl,
@@ -56,6 +66,24 @@ export function appBuild({assetBaseUrl}: {assetBaseUrl: string}) {
 
             const entry = await getEntry(project);
             return [entry];
+          });
+
+          rollupPlugins?.(async (plugins) => {
+            const {cssRollupPlugin} = await import('./rollup/css');
+
+            plugins.push(
+              cssRollupPlugin({
+                minify: true,
+                extract: Boolean(options.quiltBrowserEntry),
+              }),
+            );
+
+            if (assets.minify) {
+              const {terser} = await import('rollup-plugin-terser');
+              plugins.push(terser({safari10: true}));
+            }
+
+            return plugins;
           });
 
           rollupOutputs?.(async (outputs) => [

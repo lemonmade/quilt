@@ -5,35 +5,18 @@ import type {
   SourceMap,
 } from 'postcss';
 
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App} from '@quilted/sewing-kit';
-import type {} from '@quilted/sewing-kit-rollup';
-
 export interface Options {
   minify?: boolean;
-}
-
-export function appCss(options?: Options) {
-  return createProjectPlugin<App>({
-    name: 'Quilt.AppCSS',
-    build({configure}) {
-      configure(({rollupPlugins}, {quiltBrowserEntry = false}) => {
-        rollupPlugins?.((plugins) => [
-          ...plugins,
-          cssRollupPlugin({...options, extract: quiltBrowserEntry}),
-        ]);
-      });
-    },
-  });
+  extract?: boolean;
 }
 
 const CSS_REGEX = /\.css$/;
 const CSS_MODULE_REGEX = /\.module\.css$/;
 
-function cssRollupPlugin({
+export function cssRollupPlugin({
   minify = true,
   extract = true,
-}: Options & {extract?: boolean} = {}): Plugin {
+}: Options = {}): Plugin {
   const styles = new Map<string, string>();
 
   return {
