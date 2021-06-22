@@ -3271,7 +3271,7 @@ __metadata:
     "@prefresh/vite": ^2.2.0
     "@quilted/eslint-config": ^0.1.3
     "@quilted/prettier": ^0.2.2
-    "@quilted/sewing-kit": ^0.2.6
+    "@quilted/sewing-kit": ^0.2.7
     "@quilted/sewing-kit-babel": ^0.1.2
     "@quilted/sewing-kit-eslint": ^0.1.2
     "@quilted/sewing-kit-esnext": ^0.1.7
@@ -3853,7 +3853,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit@^0.2.6, @quilted/sewing-kit@workspace:packages/sewing-kit":
+"@quilted/sewing-kit@^0.2.7, @quilted/sewing-kit@workspace:packages/sewing-kit":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit@workspace:packages/sewing-kit"
   dependencies:
