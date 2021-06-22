@@ -139,13 +139,7 @@ export type ResolvedDevelopWorkspaceConfigurationHooks =
 /**
  * The top-level options that can be passed when running the develop task.
  */
-export interface DevelopTaskOptions {
-  /**
-   * Controls whether sourcemaps are generated in tools that support them.
-   * Defaults to `false`.
-   */
-  readonly sourceMaps: boolean;
-}
+export interface DevelopTaskOptions {}
 
 /**
  * The hooks and additional metadata for running the develop command on

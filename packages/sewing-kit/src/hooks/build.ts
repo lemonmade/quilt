@@ -150,16 +150,12 @@ export interface BuildTaskOptions {
    * The environment the code will be executed in. Defaults to `Environment.Production`.
    */
   readonly env: Environment;
+
   /**
    * Controls whether tools that are capable of caching build outputs will
    * do so. Defaults to `true`.
    */
   readonly cache: boolean;
-  /**
-   * Controls whether sourcemaps are generated in tools that support them.
-   * Defaults to `true`.
-   */
-  readonly sourceMaps: boolean;
 }
 
 /**

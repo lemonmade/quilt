@@ -10,21 +10,12 @@ export const build = createCommand(
   {
     '--env': String,
     '--no-cache': Boolean,
-    '--source-maps': Boolean,
   },
-  async (
-    {
-      '--env': rawEnv,
-      '--source-maps': sourceMaps = true,
-      '--no-cache': noCache = false,
-    },
-    context,
-  ) => {
+  async ({'--env': rawEnv, '--no-cache': noCache = false}, context) => {
     const env = normalizeEnvironment(rawEnv);
 
     await runBuild(context, {
       env,
-      sourceMaps,
       cache: !noCache,
     });
   },

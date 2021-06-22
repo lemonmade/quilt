@@ -88,6 +88,10 @@ export function appAutoServer() {
           });
 
           rollupPlugins?.(async (plugins) => {
+            const {cssRollupPlugin} = await import('./rollup/css');
+
+            plugins.push(cssRollupPlugin({extract: false}));
+
             plugins.push({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
