@@ -6,7 +6,5 @@ export type {
   CreateOptions,
   Manifest,
   ManifestEntry,
-  Match,
-  MatchRegExp,
 } from './assets';
 export {createAssetLoader} from './assets';

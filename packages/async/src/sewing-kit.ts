@@ -6,12 +6,13 @@ import type {
 
 import {DEFAULT_PACKAGES_TO_PROCESS} from './babel-plugin';
 import type {Options as BabelOptions} from './babel-plugin';
-import type {Options as RollupOptions} from './rollup-parts';
+import type {Options as RollupOptions, ManifestOptions} from './rollup-parts';
 
 import type {BabelHooks} from '@quilted/sewing-kit-babel';
 import type {RollupHooks} from '@quilted/sewing-kit-rollup';
 
-export interface Options extends RollupOptions {
+export interface Options extends Omit<RollupOptions, 'manifest'> {
+  readonly manifest?: boolean | string;
   readonly applyBabelToPackages?: BabelOptions['packages'];
 }
 
@@ -25,8 +26,10 @@ export interface AsyncHooks {
   quiltAsyncAssetBaseUrl: WaterfallHookWithDefault<
     NonNullable<RollupOptions['assetBaseUrl']>
   >;
-  quiltAsyncManifest: WaterfallHookWithDefault<
-    NonNullable<RollupOptions['manifest']>
+  quiltAsyncManifest: WaterfallHookWithDefault<boolean>;
+  quiltAsyncManifestPath: WaterfallHookWithDefault<ManifestOptions['path']>;
+  quiltAsyncManifestMetadata: WaterfallHookWithDefault<
+    NonNullable<ManifestOptions['metadata']>
   >;
 }
 
@@ -45,12 +48,12 @@ export function asyncQuilt({
 }: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Async',
-    develop({workspace, hooks, configure}) {
+    develop({project, hooks, configure}) {
       hooks<AsyncHooks>(({waterfall}) => ({
         quiltAsyncApplyBabelToPackages: waterfall<
           NonNullable<BabelOptions['packages']>
         >({
-          default: defaultApplyBabelToPackages,
+          default: () => ({...defaultApplyBabelToPackages}),
         }),
         quiltAsyncPreload: waterfall<NonNullable<RollupOptions['preload']>>({
           default: preload,
@@ -58,14 +61,25 @@ export function asyncQuilt({
         quiltAsyncAssetBaseUrl: waterfall<
           NonNullable<RollupOptions['assetBaseUrl']>
         >({default: assetBaseUrl}),
-        quiltAsyncManifest: waterfall<NonNullable<RollupOptions['manifest']>>({
-          default: manifest ?? workspace.fs.buildPath('async-manifest.json'),
+        quiltAsyncManifest: waterfall<boolean>({
+          default: true,
+        }),
+        quiltAsyncManifestPath: waterfall<ManifestOptions['path']>({
+          default:
+            typeof manifest === 'string'
+              ? manifest
+              : project.fs.buildPath('async-manifest.json'),
+        }),
+        quiltAsyncManifestMetadata: waterfall<
+          NonNullable<ManifestOptions['metadata']>
+        >({
+          default: () => ({}),
         }),
       }));
 
       configure(addConfiguration());
     },
-    build({workspace, hooks, configure}) {
+    build({project, hooks, configure}) {
       hooks<AsyncHooks>(({waterfall}) => ({
         quiltAsyncApplyBabelToPackages: waterfall<
           NonNullable<BabelOptions['packages']>
@@ -78,14 +92,25 @@ export function asyncQuilt({
         quiltAsyncAssetBaseUrl: waterfall<
           NonNullable<RollupOptions['assetBaseUrl']>
         >({default: assetBaseUrl}),
-        quiltAsyncManifest: waterfall<NonNullable<RollupOptions['manifest']>>({
-          default: manifest ?? workspace.fs.buildPath('async-manifest.json'),
+        quiltAsyncManifest: waterfall<boolean>({
+          default: true,
+        }),
+        quiltAsyncManifestPath: waterfall<ManifestOptions['path']>({
+          default:
+            typeof manifest === 'string'
+              ? manifest
+              : project.fs.buildPath('async-manifest.json'),
+        }),
+        quiltAsyncManifestMetadata: waterfall<
+          NonNullable<ManifestOptions['metadata']>
+        >({
+          default: () => ({}),
         }),
       }));
 
       configure(addConfiguration());
     },
-    test({workspace, hooks, configure}) {
+    test({project, hooks, configure}) {
       hooks<AsyncHooks>(({waterfall}) => ({
         quiltAsyncApplyBabelToPackages: waterfall<
           NonNullable<BabelOptions['packages']>
@@ -98,8 +123,19 @@ export function asyncQuilt({
         quiltAsyncAssetBaseUrl: waterfall<
           NonNullable<RollupOptions['assetBaseUrl']>
         >({default: assetBaseUrl}),
-        quiltAsyncManifest: waterfall<NonNullable<RollupOptions['manifest']>>({
-          default: manifest ?? workspace.fs.buildPath('async-manifest.json'),
+        quiltAsyncManifest: waterfall<boolean>({
+          default: true,
+        }),
+        quiltAsyncManifestPath: waterfall<ManifestOptions['path']>({
+          default:
+            typeof manifest === 'string'
+              ? manifest
+              : project.fs.buildPath('async-manifest.json'),
+        }),
+        quiltAsyncManifestMetadata: waterfall<
+          NonNullable<ManifestOptions['metadata']>
+        >({
+          default: () => ({}),
         }),
       }));
 
@@ -114,6 +150,8 @@ export function asyncQuilt({
       quiltAsyncPreload,
       quiltAsyncAssetBaseUrl,
       quiltAsyncManifest,
+      quiltAsyncManifestPath,
+      quiltAsyncManifestMetadata,
       quiltAsyncApplyBabelToPackages,
     }: ResolvedHooks<BabelHooks & RollupHooks & AsyncHooks>) => {
       babelPlugins?.(async (plugins) => {
@@ -127,15 +165,32 @@ export function asyncQuilt({
       });
 
       rollupPlugins?.(async (plugins) => {
-        const [{asyncQuilt}, preload, assetBaseUrl, manifest] =
-          await Promise.all([
-            import('./rollup-parts'),
-            quiltAsyncPreload!.run(),
-            quiltAsyncAssetBaseUrl!.run(),
-            quiltAsyncManifest!.run(),
-          ]);
+        const [
+          {asyncQuilt},
+          preload,
+          assetBaseUrl,
+          includeManifest,
+          manifestPath,
+          manifestMetadata,
+        ] = await Promise.all([
+          import('./rollup-parts'),
+          quiltAsyncPreload!.run(),
+          quiltAsyncAssetBaseUrl!.run(),
+          quiltAsyncManifest!.run(),
+          quiltAsyncManifestPath!.run(),
+          quiltAsyncManifestMetadata!.run(),
+        ]);
 
-        plugins.push(asyncQuilt({preload, manifest, assetBaseUrl}));
+        plugins.push(
+          asyncQuilt({
+            preload,
+            manifest: includeManifest && {
+              path: manifestPath,
+              metadata: manifestMetadata,
+            },
+            assetBaseUrl,
+          }),
+        );
 
         return plugins;
       });

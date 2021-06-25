@@ -8,19 +8,11 @@ export interface ManifestEntry {
   readonly styles: Asset[];
 }
 
-export interface MatchRegExp {
-  readonly type: 'regex';
-  readonly key: string;
-  readonly source: string;
-}
-
-export type Match = MatchRegExp;
-
 export interface Manifest {
   readonly id: string;
   readonly format: 'esm' | 'systemjs';
   readonly default: boolean;
-  readonly match: Match[];
+  readonly metadata: Record<string, any>;
   readonly entry: ManifestEntry;
   readonly async: {[key: string]: ManifestEntry};
 }
@@ -118,20 +110,20 @@ export function createAssetLoader<Options>({
 
     if (resolvedEntry) {
       if (scripts) {
-        const [entry, ...vendors] = resolvedEntry.scripts;
+        const scripts = [...resolvedEntry.scripts];
+        // The last item on the list is the actual entry. It needs to go after
+        // any async imports, but the vendors, which are typically shared with
+        // dynamic imports, need to go before them.
+        const entry = scripts.pop();
 
-        for (const vendor of vendors.reverse()) {
-          assets.unshift(vendor);
-        }
-
-        assets.push(entry);
+        assets.unshift(...scripts);
+        assets.push(entry!);
       }
 
       if (styles) {
-        for (const asset of resolvedEntry.styles.reverse()) {
-          if (seen.has(asset.source)) continue;
-          assets.unshift(asset);
-        }
+        assets.unshift(
+          ...resolvedEntry.styles.filter((asset) => !seen.has(asset.source)),
+        );
       }
     }
 

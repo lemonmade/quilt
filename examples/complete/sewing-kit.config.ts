@@ -5,19 +5,19 @@ export default createApp((app) => {
   app.use(
     createProjectPlugin({
       name: 'Quilt.App.Clean',
-      build({project, workspace, run}) {
+      build({project, run}) {
         run((step) =>
           step({
             stage: 'pre',
             name: 'Quilt.App.Clean',
             label: `Cleaning build directory for ${project.name}`,
             async run(step) {
-              await step.exec('rm', ['-rf', workspace.fs.buildPath('app')]);
+              await step.exec('rm', ['-rf', project.fs.buildPath()]);
             },
           }),
         );
       },
     }),
-    quiltApp(),
+    quiltApp({assets: {minify: false}}),
   );
 });
