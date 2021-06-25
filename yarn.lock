@@ -3306,6 +3306,7 @@ __metadata:
     "@rollup/plugin-alias": ^3.1.0
     "@rollup/plugin-replace": ^2.4.0
     "@types/clean-css": ^4.0.0
+    browserslist: ^4.0.0
     browserslist-useragent-regexp: ^3.0.0
     clean-css: ^5.0.0
     common-tags: ^1.8.0
