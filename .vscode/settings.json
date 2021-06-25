@@ -14,11 +14,7 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "cSpell.words": ["Vite", "middlewares"],
-  "cSpell.ignoreWords": [
-    "browserslist",
-    "preloadable",
-    "unmount"
-  ],
+  "cSpell.ignoreWords": ["browserslist", "preloadable", "unmount"],
   "search.exclude": {
     ".yarn": true,
     "**/node_modules": true,
