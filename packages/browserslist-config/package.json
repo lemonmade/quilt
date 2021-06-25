@@ -38,8 +38,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node",
-      "./package"
+      "@quilted/eslint-config/node",
+      "@quilted/eslint-config/package"
     ]
   }
 }
