@@ -121,9 +121,7 @@ export function createAssetLoader<Options>({
       }
 
       if (styles) {
-        assets.unshift(
-          ...resolvedEntry.styles.filter((asset) => !seen.has(asset.source)),
-        );
+        assets.unshift(...resolvedEntry.styles);
       }
     }
 
