@@ -8,6 +8,7 @@ import type {
   OutputChunk,
   OutputBundle,
   NormalizedOutputOptions,
+  ModuleFormat,
 } from 'rollup';
 import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
@@ -260,19 +261,14 @@ async function writeManifestForBundle(
   const entryChunk = entries[0];
 
   const manifest: Partial<Manifest> = {
-    format: format === 'es' ? 'esm' : 'systemjs',
     metadata: manifestOptions.metadata ?? {},
-    entry: createAsset(assetBaseUrl, [
-      ...entryChunk.imports,
-      entryChunk.fileName,
-    ]),
+    entry: createAsset(
+      assetBaseUrl,
+      [...entryChunk.imports, entryChunk.fileName],
+      {format},
+    ),
     async: {},
   };
-
-  const entryAssets = new Set([
-    ...manifest.entry!.styles.map(({source}) => source),
-    ...manifest.entry!.scripts.map(({source}) => source),
-  ]);
 
   for (const output of outputs) {
     if (output.type !== 'chunk' || output.facadeModuleId == null) continue;
@@ -282,17 +278,22 @@ async function writeManifestForBundle(
     const asyncId = this.getModuleInfo(output.facadeModuleId)?.meta.quilt
       ?.asyncId;
 
-    manifest.async![asyncId] = createAsset(assetBaseUrl, [
-      ...output.imports.filter((imported) => !entryAssets.has(imported)),
-      output.fileName,
-    ]);
+    manifest.async![asyncId] = createAsset(
+      assetBaseUrl,
+      [...output.imports, output.fileName],
+      {format},
+    );
   }
 
   await mkdir(dirname(manifestOptions.path), {recursive: true});
   await writeFile(manifestOptions.path, JSON.stringify(manifest, null, 2));
 }
 
-function createAsset(baseUrl: string, files: string[]): ManifestEntry {
+function createAsset(
+  baseUrl: string,
+  files: string[],
+  {format}: {format: ModuleFormat},
+): ManifestEntry {
   const styles: Asset[] = [];
   const scripts: Asset[] = [];
 
@@ -300,7 +301,10 @@ function createAsset(baseUrl: string, files: string[]): ManifestEntry {
     if (file.endsWith('.css')) {
       styles.push({source: `${baseUrl}${file}`});
     } else {
-      scripts.push({source: `${baseUrl}${file}`});
+      scripts.push({
+        source: `${baseUrl}${file}`,
+        type: format === 'es' || format === 'esm' ? 'module' : undefined,
+      });
     }
   }
 

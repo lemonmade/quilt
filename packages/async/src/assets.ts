@@ -1,5 +1,6 @@
 export interface Asset {
   readonly source: string;
+  readonly type?: string;
   readonly integrity?: string;
 }
 
@@ -10,7 +11,6 @@ export interface ManifestEntry {
 
 export interface Manifest {
   readonly id: string;
-  readonly format: 'esm' | 'systemjs';
   readonly default: boolean;
   readonly metadata: Record<string, any>;
   readonly entry: ManifestEntry;

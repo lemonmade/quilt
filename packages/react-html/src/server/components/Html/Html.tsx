@@ -10,6 +10,7 @@ import {Serialize} from '../Serialize';
 
 interface Asset {
   source: string;
+  type?: string;
   integrity?: string;
 }
 
@@ -83,7 +84,7 @@ export function Html({
         key={script.source}
         src={script.source}
         integrity={script.integrity}
-        type="module"
+        type={script.type}
         crossOrigin="anonymous"
       />
     );

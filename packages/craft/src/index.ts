@@ -34,7 +34,6 @@ import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import type {AssetOptions as AppBuildAssetOptions} from './plugins/app-build';
 import {appDevelop} from './plugins/app-develop';
-import {browserEntry} from './plugins/browser-entry';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
 import {serviceBuild} from './plugins/service-build';
@@ -99,7 +98,6 @@ export function quiltApp({
         preact(),
         // Build and auto-server setup
         magicModuleApp(),
-        browserEntry(),
         build && appBuild({assets: {minify, baseUrl}}),
         build && autoServer && httpHandler(),
         build && autoServer && appAutoServer(),

@@ -106,12 +106,20 @@ export function appAutoServer() {
                   onlyFiles: true,
                 });
 
-                const manifests = await Promise.all(
-                  manifestFiles.map(async (manifestFile) => {
-                    const manifestString = await project.fs.read(manifestFile);
+                const manifests = (
+                  await Promise.all(
+                    manifestFiles.map(async (manifestFile) => {
+                      const manifestString = await project.fs.read(
+                        manifestFile,
+                      );
 
-                    return JSON.parse(manifestString);
-                  }),
+                      return JSON.parse(manifestString);
+                    }),
+                  )
+                ).sort(
+                  (manifestA, manifestB) =>
+                    (manifestA.metadata.priority ?? 0) -
+                    (manifestB.metadata.priority ?? 0),
                 );
 
                 return stripIndent`
@@ -121,8 +129,29 @@ export function appAutoServer() {
                     JSON.stringify(manifests),
                   )});
 
+                  for (const manifest of manifests) {
+                    manifest.metadata.browsers =
+                      manifest.metadata.browsers
+                        ? new RegExp(manifest.metadata.browsers)
+                        : undefined;
+                  }
+
+                  // The default manifest is the last one, since it has the widest browser support.
+                  const defaultManifest = manifests[manifests.length - 1];
+
                   const assetLoader = createAssetLoader({
-                    getManifest: () => Promise.resolve(manifests[0]),
+                    async getManifest({userAgent}) {
+                      // If there is no user agent, use the default manifest.
+                      if (typeof userAgent !== 'string') return defaultManifest;
+
+                      for (const manifest of manifests) {
+                        if (manifest.metadata.browsers instanceof RegExp && manifest.metadata.browsers.test(userAgent)) {
+                          return manifest;
+                        }
+                      }
+
+                      return defaultManifest;
+                    },
                   });
 
                   export default assetLoader;
