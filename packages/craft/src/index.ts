@@ -116,9 +116,10 @@ export function quiltApp({
           const {polyfills} = await import('@quilted/polyfills/sewing-kit');
 
           use(
-            polyfills(
-              typeof shouldPolyfill === 'object' ? shouldPolyfill : undefined,
-            ),
+            polyfills({
+              features: ['fetch'],
+              ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
+            }),
           );
         });
       }

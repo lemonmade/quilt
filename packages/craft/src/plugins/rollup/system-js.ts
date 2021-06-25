@@ -20,7 +20,12 @@ export function systemJs({minify = false} = {}): Plugin {
       const fileHandle = this.emitFile({
         type: 'asset',
         name: 'loader.js',
-        source: await readFile(systemjs, {encoding: 'utf8'}),
+        source: (await readFile(systemjs, {encoding: 'utf8'})).replace(
+          // Remove the source map comment, if it is present, because we don’t upload the
+          // sourcemap for this file.
+          /\n?[/][/]# sourceMappingURL=s.*\.map\n?$/,
+          '',
+        ),
       });
 
       chunk.imports.unshift(this.getFileName(fileHandle));

@@ -12,6 +12,8 @@ export interface Options {
   sourceMap?: boolean;
 }
 
+export const POLYFILLS_MAGIC_MODULE = '__quilt__/polyfills.ts';
+
 export function polyfill({
   target,
   features,
@@ -24,7 +26,11 @@ export function polyfill({
   return {
     name: '@quilted/polyfills',
     resolveId(source) {
-      return polyfills.get(source) ?? null;
+      const polyfill = polyfills.get(source);
+
+      return polyfill
+        ? {id: polyfill, moduleSideEffects: 'no-treeshake'}
+        : null;
     },
     transform(code, id) {
       if (features == null || features.length === 0) return null;

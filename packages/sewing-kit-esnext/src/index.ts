@@ -198,11 +198,13 @@ export function esnext() {
               babel({
                 envName: 'production',
                 include: '**/*.esnext',
+                extensions: ['.esnext'],
                 // Forces this to run on node_modules
                 exclude: [],
                 babelHelpers: 'bundled',
                 configFile: false,
                 babelrc: false,
+                skipPreflightCheck: true,
                 // @ts-expect-error Babel types have not been updated yet
                 targets,
                 presets: babelPresetsOption,

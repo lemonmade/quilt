@@ -125,7 +125,22 @@ export function targets() {
           });
 
           babelTargets?.(() => targets!.run([]));
-          babelPresets?.((presets) => ['@babel/preset-env', ...presets]);
+          babelPresets?.((presets) => [
+            [
+              '@babel/preset-env',
+              {
+                corejs: '3.15',
+                useBuiltIns: 'usage',
+                bugfixes: true,
+                shippedProposals: true,
+                // I thought I wanted this on, but if you do this, Babel
+                // stops respecting the top-level `targets` option and tries
+                // to use the targets passed to the preset directly instead.
+                // ignoreBrowserslistConfig: true,
+              },
+            ],
+            ...presets,
+          ]);
         },
       );
     },
@@ -156,7 +171,18 @@ export function targets() {
         });
 
         babelTargets?.(() => targets!.run([]));
-        babelPresets?.((presets) => ['@babel/preset-env', ...presets]);
+        babelPresets?.((presets) => [
+          [
+            '@babel/preset-env',
+            {
+              corejs: '3.15',
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+            },
+          ],
+          ...presets,
+        ]);
       });
     },
     test({hooks, configure}) {
@@ -173,7 +199,18 @@ export function targets() {
         );
 
         babelTargets?.(() => targets!.run([]));
-        babelPresets?.((presets) => ['@babel/preset-env', ...presets]);
+        babelPresets?.((presets) => [
+          [
+            '@babel/preset-env',
+            {
+              corejs: '3.15',
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+            },
+          ],
+          ...presets,
+        ]);
       });
     },
   });

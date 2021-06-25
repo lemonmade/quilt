@@ -16,7 +16,7 @@ const POLYFILLS: {
 export function polyfillAliasesForTarget(
   target: 'node' | string[],
   {
-    polyfill = 'entry',
+    polyfill = 'usage',
   }: {
     polyfill?: 'entry' | 'usage' | 'inline';
   } = {},
