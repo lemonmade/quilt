@@ -1,0 +1,45 @@
+{
+  "name": "@quilted/browserslist-config",
+  "type": "commonjs",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/eslint"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    "./defaults": {
+      "require": "./defaults.js"
+    },
+    "./evergreen": {
+      "require": "./evergreen.js"
+    },
+    "./modules": {
+      "require": "./modules.js"
+    }
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jest": "^24.3.0",
+    "eslint-plugin-jsx-a11y": "^6.4.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/node",
+      "@quilted/eslint-config/package"
+    ]
+  }
+}

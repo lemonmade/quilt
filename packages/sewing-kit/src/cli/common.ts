@@ -859,7 +859,7 @@ function stringifyOptions(variant: {[key: string]: any} = {}) {
   return Object.entries(variant)
     .sort(([key1], [key2]) => key1.localeCompare(key2))
     .map(([key, value]) => {
-      return value === true ? key : `${key}: ${value}`;
+      return value === true ? key : `${key}: ${JSON.stringify(value)}`;
     })
     .join(',');
 }

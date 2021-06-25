@@ -3240,6 +3240,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@quilted/browserslist-config@^0.0.0, @quilted/browserslist-config@workspace:packages/browserslist-config":
+  version: 0.0.0-use.local
+  resolution: "@quilted/browserslist-config@workspace:packages/browserslist-config"
+  dependencies:
+    "@typescript-eslint/eslint-plugin": ^4.26.0
+    "@typescript-eslint/parser": ^4.26.0
+    eslint: ^7.27.0
+    eslint-config-prettier: ^8.3.0
+    eslint-plugin-eslint-comments: ^3.2.0
+    eslint-plugin-jest: ^24.3.0
+    eslint-plugin-jsx-a11y: ^6.4.0
+    eslint-plugin-prettier: ^3.4.0
+    eslint-plugin-react: ^7.24.0
+    eslint-plugin-react-hooks: ^4.2.0
+    prettier: ^2.0.0
+  languageName: unknown
+  linkType: soft
+
 "@quilted/cloudflare@workspace:packages/cloudflare":
   version: 0.0.0-use.local
   resolution: "@quilted/cloudflare@workspace:packages/cloudflare"
@@ -3269,6 +3287,7 @@ __metadata:
   resolution: "@quilted/craft@workspace:packages/craft"
   dependencies:
     "@prefresh/vite": ^2.2.0
+    "@quilted/browserslist-config": ^0.0.0
     "@quilted/eslint-config": ^0.1.3
     "@quilted/prettier": ^0.2.2
     "@quilted/sewing-kit": ^0.2.7
@@ -3287,12 +3306,14 @@ __metadata:
     "@rollup/plugin-alias": ^3.1.0
     "@rollup/plugin-replace": ^2.4.0
     "@types/clean-css": ^4.0.0
+    browserslist-useragent-regexp: ^3.0.0
     clean-css: ^5.0.0
     common-tags: ^1.8.0
     postcss: ^8.0.0
     postcss-modules: ^4.0.0
     rollup: ^2.0.0
     rollup-plugin-terser: ^7.0.0
+    systemjs: ^6.10.0
     vite: ^2.0.0
   peerDependencies:
     "@quilted/async": ^0.3.2
@@ -4255,6 +4276,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^14.14.22":
+  version: 14.17.4
+  resolution: "@types/node@npm:14.17.4"
+  checksum: 947ada8b39710c8fedf60f342b4ac1a08de8ebfbd4f09471b4e0006c2b0c7b832513e4dc2cdd455af5236910e2e725899bd9ce0aaecd097b2867d3e2ab62d8c6
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
@@ -4787,6 +4815,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"argue-cli@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "argue-cli@npm:1.2.1"
+  checksum: 86edd2e47514bba3fed8b237105f7608b415c75c53f453a98b540c84fdffd79399eb0917be94f7605768c5ceed5207ecb90e0274f6ffe4b57fc54a8d6b4778c4
+  languageName: node
+  linkType: hard
+
 "aria-query@npm:^4.2.2":
   version: 4.2.2
   resolution: "aria-query@npm:4.2.2"
@@ -5249,7 +5284,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.16.5, browserslist@npm:^4.16.6":
+"browserslist-useragent-regexp@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "browserslist-useragent-regexp@npm:3.0.0"
+  dependencies:
+    "@types/node": ^14.14.22
+    argue-cli: ^1.2.0
+    browserslist: ^4.16.3
+    chalk: ^4.0.0
+    easy-table: ^1.1.1
+    useragent: ^2.3.0
+  bin:
+    browserslist-useragent-regexp: lib/cli.js
+  checksum: 140ebb300e2457c58eaff326073f98eb86410ba13ffd39d0b8cea26975fd189b2cdb96a1c644aa0e330a62eeebcc58e09d49de3d08ac7f0b722c39f8c1ee7581
+  languageName: node
+  linkType: hard
+
+"browserslist@npm:^4.0.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.5, browserslist@npm:^4.16.6":
   version: 4.16.6
   resolution: "browserslist@npm:4.16.6"
   dependencies:
@@ -6539,6 +6590,19 @@ __metadata:
     readable-stream: ^2.0.0
     stream-shift: ^1.0.0
   checksum: 9581cdb8f6304fdaacb8bbe2b8b393a8da3ece3086dd24070601b70f08ca417305b4f3a94699b984c4981dceb6eebb4c132abfe0445baacfd04f2b66a0524cda
+  languageName: node
+  linkType: hard
+
+"easy-table@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "easy-table@npm:1.1.1"
+  dependencies:
+    ansi-regex: ^3.0.0
+    wcwidth: ">=1.0.1"
+  dependenciesMeta:
+    wcwidth:
+      optional: true
+  checksum: d60a18224d633d2bd17137da3efd36afb4a076bbbd581a80b0e29d7b73e227bb669759574d879e6339e84511c64f006bb1f1130b4585378d9da0e8c64cce4a6b
   languageName: node
   linkType: hard
 
@@ -9932,6 +9996,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:4.1.x":
+  version: 4.1.5
+  resolution: "lru-cache@npm:4.1.5"
+  dependencies:
+    pseudomap: ^1.0.2
+    yallist: ^2.1.2
+  checksum: 6a098d23629357451d4324e1e4fefccdd6df316df29e25571c6148220ced923258381ebeafdf919f90e28c780b650427390582618c1d5fe097873e656d062511
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^5.1.1":
   version: 5.1.1
   resolution: "lru-cache@npm:5.1.1"
@@ -11702,6 +11776,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pseudomap@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "pseudomap@npm:1.0.2"
+  checksum: 1ad1802645e830d99f9c1db97efc6902d2316b660454633229f636dd59e751d00498dd325d3b18d49f2be990a2c9d28f8bfe6f9b544a8220a5faa2bfb4694bb7
+  languageName: node
+  linkType: hard
+
 "psl@npm:^1.1.28, psl@npm:^1.1.33":
   version: 1.8.0
   resolution: "psl@npm:1.8.0"
@@ -12541,6 +12622,15 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"semver@npm:5.5.x":
+  version: 5.5.1
+  resolution: "semver@npm:5.5.1"
+  bin:
+    semver: ./bin/semver
+  checksum: a23c07ab2747c6e0fa5a606fc82b735d96d906f9640b33eaa0f90dac4d9e772ef3a507d2606d85f74821ec703dfd8e7d3ac4547364150c2d8d960ccdc43d804c
+  languageName: node
+  linkType: hard
+
 "semver@npm:7.0.0":
   version: 7.0.0
   resolution: "semver@npm:7.0.0"
@@ -13305,6 +13395,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"systemjs@npm:^6.10.0":
+  version: 6.10.1
+  resolution: "systemjs@npm:6.10.1"
+  checksum: c25cbea0cc31d9928b20ebd6e314611604bff3f6716bd34516d99c7d4f517f4ca6dcfe13f914159d76c7d9281de0063ae5f87b45e887e3d6c250640239248977
+  languageName: node
+  linkType: hard
+
 "table@npm:^6.0.9":
   version: 6.7.1
   resolution: "table@npm:6.7.1"
@@ -13469,7 +13566,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"tmp@npm:^0.0.33":
+"tmp@npm:0.0.x, tmp@npm:^0.0.33":
   version: 0.0.33
   resolution: "tmp@npm:0.0.33"
   dependencies:
@@ -13955,6 +14052,16 @@ typescript@^4.1.0:
   languageName: node
   linkType: hard
 
+"useragent@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "useragent@npm:2.3.0"
+  dependencies:
+    lru-cache: 4.1.x
+    tmp: 0.0.x
+  checksum: 3d4843ff0638331d8f9e14f33def1a6f68ce029482dd98971d17e3ce7bd446f1283281dde3a824b943b57238677e23d9a0a8dbc1b64544c9b6e07070967cec96
+  languageName: node
+  linkType: hard
+
 "util-deprecate@npm:^1.0.1, util-deprecate@npm:^1.0.2, util-deprecate@npm:~1.0.1":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -14087,7 +14194,7 @@ typescript@^4.1.0:
   languageName: node
   linkType: hard
 
-"wcwidth@npm:^1.0.0":
+"wcwidth@npm:>=1.0.1, wcwidth@npm:^1.0.0":
   version: 1.0.1
   resolution: "wcwidth@npm:1.0.1"
   dependencies:
@@ -14400,6 +14507,13 @@ typescript@^4.1.0:
   languageName: node
   linkType: hard
 
+"yallist@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "yallist@npm:2.1.2"
+  checksum: f83e3d18eeba68a0276be2ab09260be3f2a300307e84b1565c620ef71f03f106c3df9bec4c3a91e5fa621a038f8826c19b3786804d3795dd4f999e5b6be66ea3
+  languageName: node
+  linkType: hard
+
 "yallist@npm:^3.0.0, yallist@npm:^3.0.2, yallist@npm:^3.0.3":
   version: 3.1.1
   resolution: "yallist@npm:3.1.1"
@@ -14418,6 +14532,13 @@ typescript@^4.1.0:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: 8d72062ea3dbfd8fae3d6ddd5b741c2aeb5835a31b0719bf14fac71dd84adde0829763d6fbac46387309da00af1440194c796da5efc349b0baf9de39d82ae69e
+  languageName: node
+  linkType: hard
+
+"yamlparser@npm:0.0.x":
+  version: 0.0.2
+  resolution: "yamlparser@npm:0.0.2"
+  checksum: a78930d28579f2f03537223e34ebd6a0d503d7aef14fc0c188116bba1b08e3ba7d006887913364757c79d28f80bf9c91bb2c897db6baf872dd9ae6e72b223cf6
   languageName: node
   linkType: hard
 

@@ -11,16 +11,20 @@ import type {
 } from 'rollup';
 import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
-import {parse as parseImports} from 'es-module-lexer';
 
 import {PREFIX} from './constants';
 import type {Manifest, ManifestEntry, Asset} from './assets';
 
 const ENTRY_PREFIX = 'quilt-async-entry:';
 
+export interface ManifestOptions {
+  path: string;
+  metadata?: Record<string, any>;
+}
+
 export interface Options {
   preload?: boolean;
-  manifest?: string | false;
+  manifest?: string | ManifestOptions | false;
   assetBaseUrl?: string;
 }
 
@@ -29,6 +33,13 @@ export function asyncQuilt({
   manifest = false,
   assetBaseUrl = '/assets/',
 }: Options = {}): Plugin {
+  const manifestOptions: ManifestOptions | false =
+    typeof manifest === 'boolean'
+      ? manifest
+      : typeof manifest === 'string'
+      ? {path: manifest}
+      : manifest;
+
   return {
     name: '@quilted/async',
     async resolveDynamicImport(source, importer) {
@@ -76,11 +87,25 @@ export function asyncQuilt({
       : undefined,
     async generateBundle(options, bundle) {
       if (preload) {
-        preloadAsyncAssetsInBundle(bundle);
+        switch (options.format) {
+          case 'es': {
+            await preloadAsyncAssetsInESMBundle(bundle);
+            break;
+          }
+          case 'system': {
+            await preloadAsyncAssetsInSystemJSBundle(bundle);
+            break;
+          }
+          default: {
+            throw new Error(
+              `Can’t add async preloads to a bundle with format ${options.format}`,
+            );
+          }
+        }
       }
 
-      if (manifest) {
-        await writeManifestForBundle.call(this, manifest, bundle, {
+      if (manifestOptions) {
+        await writeManifestForBundle.call(this, bundle, manifestOptions, {
           ...options,
           assetBaseUrl,
         });
@@ -89,7 +114,9 @@ export function asyncQuilt({
   };
 }
 
-function preloadAsyncAssetsInBundle(bundle: OutputBundle) {
+async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
+  const {parse: parseImports} = await import('es-module-lexer');
+
   for (const chunk of Object.values(bundle)) {
     if (chunk.type !== 'chunk') continue;
     if (chunk.dynamicImports.length === 0) continue;
@@ -98,7 +125,7 @@ function preloadAsyncAssetsInBundle(bundle: OutputBundle) {
 
     const newCode = new MagicString(code);
 
-    const imports = parseImports(code)[0];
+    const imports = (await parseImports(code))[0];
 
     for (const imported of imports) {
       const {s: start, e: end, d: dynamicStart} = imported;
@@ -107,43 +134,22 @@ function preloadAsyncAssetsInBundle(bundle: OutputBundle) {
       if (dynamicStart < 0) continue;
 
       // Get rid of the quotes
-      const url = code.slice(start + 1, end - 1);
+      const importSource = code.slice(start + 1, end - 1);
 
-      const originalFilename = chunk.fileName;
-      const additionalDependencies = new Set<string>();
-      const analyzed = new Set<string>();
+      const dependencies = getDependenciesForImport(
+        importSource,
+        chunk,
+        bundle,
+      );
 
-      const normalizedFile = posix.join(posix.dirname(originalFilename), url);
-
-      const addDependencies = (filename: string) => {
-        if (filename === originalFilename) return;
-        if (analyzed.has(filename)) return;
-
-        analyzed.add(filename);
-        const chunk = bundle[filename];
-
-        if (chunk == null) return;
-
-        additionalDependencies.add(chunk.fileName);
-
-        if (chunk.type !== 'chunk') return;
-
-        for (const imported of chunk.imports) {
-          addDependencies(imported);
-        }
-      };
-
-      addDependencies(normalizedFile);
-
-      if (additionalDependencies.size === 1) continue;
+      // The only dependency is the file itself, no need to preload
+      if (dependencies.size === 1) continue;
 
       const originalImport = code.slice(dynamicStart, end + 1);
       newCode.overwrite(
         dynamicStart,
         end + 1,
-        `Quilt.AsyncAssets.preload(${Array.from(additionalDependencies)
-          .map((dependency) => JSON.stringify(dependency))
-          .join(',')}).then(function(){return ${originalImport}})`,
+        preloadContentForDependencies(dependencies, originalImport),
       );
     }
 
@@ -151,10 +157,91 @@ function preloadAsyncAssetsInBundle(bundle: OutputBundle) {
   }
 }
 
+async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
+  for (const chunk of Object.values(bundle)) {
+    if (chunk.type !== 'chunk') continue;
+    if (chunk.dynamicImports.length === 0) continue;
+
+    const {code} = chunk;
+
+    const newCode = new MagicString(code);
+
+    const systemDynamicImportRegex = /\bmodule\.import\(([^)]*)\)/g;
+
+    let match: RegExpExecArray | null;
+
+    while ((match = systemDynamicImportRegex.exec(code))) {
+      const [originalImport, imported] = match;
+
+      // Get rid of surrounding space and quotes
+      const importSource = imported.trim().slice(1, imported.length - 1);
+
+      const dependencies = getDependenciesForImport(
+        importSource,
+        chunk,
+        bundle,
+      );
+
+      if (dependencies.size === 1) continue;
+
+      newCode.overwrite(
+        match.index,
+        match.index + originalImport.length,
+        preloadContentForDependencies(dependencies, originalImport),
+      );
+    }
+
+    chunk.code = newCode.toString();
+  }
+}
+
+function preloadContentForDependencies(
+  dependencies: Iterable<string>,
+  originalExpression: string,
+) {
+  return `Quilt.AsyncAssets.preload(${Array.from(dependencies)
+    .map((dependency) => JSON.stringify(dependency))
+    .join(',')}).then(function(){return ${originalExpression}})`;
+}
+
+function getDependenciesForImport(
+  imported: string,
+  chunk: OutputChunk,
+  bundle: OutputBundle,
+) {
+  const originalFilename = chunk.fileName;
+  const dependencies = new Set<string>();
+  const analyzed = new Set<string>();
+
+  const normalizedFile = posix.join(posix.dirname(originalFilename), imported);
+
+  const addDependencies = (filename: string) => {
+    if (filename === originalFilename) return;
+    if (analyzed.has(filename)) return;
+
+    analyzed.add(filename);
+    const chunk = bundle[filename];
+
+    if (chunk == null) return;
+
+    dependencies.add(chunk.fileName);
+
+    if (chunk.type !== 'chunk') return;
+
+    for (const imported of chunk.imports) {
+      addDependencies(imported);
+    }
+  };
+
+  addDependencies(normalizedFile);
+
+  return dependencies;
+}
+
 async function writeManifestForBundle(
   this: PluginContext,
-  manifestFile: string,
   bundle: OutputBundle,
+  manifestOptions: ManifestOptions,
   {format, assetBaseUrl}: NormalizedOutputOptions & {assetBaseUrl: string},
 ) {
   const outputs = Object.values(bundle);
@@ -174,10 +261,10 @@ async function writeManifestForBundle(
 
   const manifest: Partial<Manifest> = {
     format: format === 'es' ? 'esm' : 'systemjs',
-    match: [],
+    metadata: manifestOptions.metadata ?? {},
     entry: createAsset(assetBaseUrl, [
-      entryChunk.fileName,
       ...entryChunk.imports,
+      entryChunk.fileName,
     ]),
     async: {},
   };
@@ -196,13 +283,13 @@ async function writeManifestForBundle(
       ?.asyncId;
 
     manifest.async![asyncId] = createAsset(assetBaseUrl, [
-      output.fileName,
       ...output.imports.filter((imported) => !entryAssets.has(imported)),
+      output.fileName,
     ]);
   }
 
-  await mkdir(dirname(manifestFile), {recursive: true});
-  await writeFile(manifestFile, JSON.stringify(manifest, null, 2));
+  await mkdir(dirname(manifestOptions.path), {recursive: true});
+  await writeFile(manifestOptions.path, JSON.stringify(manifest, null, 2));
 }
 
 function createAsset(baseUrl: string, files: string[]): ManifestEntry {
