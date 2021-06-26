@@ -37,6 +37,7 @@ import {appDevelop} from './plugins/app-develop';
 import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
+import {appWorkers} from './plugins/app-workers';
 import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
 
@@ -111,6 +112,11 @@ export function quiltApp({
       await ignoreMissingImports(async () => {
         const {graphql} = await import('@quilted/graphql/sewing-kit');
         use(graphql());
+      });
+
+      await ignoreMissingImports(async () => {
+        const {workers} = await import('@quilted/workers/sewing-kit');
+        use(workers(), appWorkers({baseUrl}));
       });
 
       await ignoreMissingImports(async () => {

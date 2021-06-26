@@ -10,6 +10,7 @@ import {
 import type {
   Project,
   WaterfallHook,
+  WaterfallHookWithDefault,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
 } from '@quilted/sewing-kit';
@@ -83,7 +84,7 @@ export interface RollupNodeHooks {
    * bundled. The default is `true` for packages, and `false` for all
    * other projects.
    */
-  rollupNodeBundle: WaterfallHook<boolean | RollupNodeBundle>;
+  rollupNodeBundle: WaterfallHookWithDefault<boolean | RollupNodeBundle>;
 
   /**
    * The options that will be passed to the rollup commonjs plugin,
@@ -150,142 +151,149 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
-        rollupNodeBundle: waterfall(),
+        rollupNodeBundle: waterfall({
+          default: explicitShouldBundle ?? project.kind !== ProjectKind.Package,
+        }),
         rollupCommonJSOptions: waterfall(),
       }));
 
-      configure((configuration) =>
-        addNodeConfiguration(project, configuration),
-      );
+      configure((configuration) => addConfiguration(project, configuration));
     },
     develop({project, hooks, configure}) {
       hooks<RollupNodeHooks>(({waterfall}) => ({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
-        rollupNodeBundle: waterfall(),
+        rollupNodeBundle: waterfall({
+          default: explicitShouldBundle ?? project.kind !== ProjectKind.Package,
+        }),
         rollupCommonJSOptions: waterfall(),
       }));
 
-      configure((configuration) =>
-        addNodeConfiguration(project, configuration),
-      );
+      configure((configuration) => addConfiguration(project, configuration));
     },
   });
+}
 
-  function addNodeConfiguration(
-    project: ProjectType,
-    {
-      extensions,
-      rollupPlugins,
-      rollupNodeBundle,
-      rollupNodeExtensions,
-      rollupNodeExportConditions,
-      rollupNodeResolveOptions,
-      rollupCommonJSOptions,
-    }:
-      | ResolvedBuildProjectConfigurationHooks<ProjectType>
-      | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
-  ) {
-    rollupPlugins?.(async (plugins) => {
-      const [
-        {default: commonjs},
-        {default: json},
-        {default: nodeResolve},
-        {default: nodeExternals},
-        baseExtensions,
-        exportConditions,
-      ] = await Promise.all([
-        import('@rollup/plugin-commonjs'),
-        import('@rollup/plugin-json'),
-        import('@rollup/plugin-node-resolve'),
-        import('rollup-plugin-node-externals'),
-        extensions.run(['.mjs', '.js', '.json', '.node']),
-        rollupNodeExportConditions!.run([
-          'default',
-          'module',
-          'import',
-          'require',
-        ]),
-      ]);
+function addConfiguration<ProjectType extends Project>(
+  project: ProjectType,
+  configuration:
+    | ResolvedBuildProjectConfigurationHooks<ProjectType>
+    | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+) {
+  configuration.rollupPlugins?.(async (plugins) => {
+    const nodePlugins = await getRollupNodePlugins(project, configuration);
+    plugins.unshift(...nodePlugins);
+    return plugins;
+  });
+}
 
-      const finalExtensions = await rollupNodeExtensions!.run(baseExtensions);
+/**
+ * Runs the node-related rollup hooks added by this library, and
+ * returns a set of plugins that configure rollup to work well with
+ * Node.
+ */
+export async function getRollupNodePlugins<ProjectType extends Project>(
+  project: ProjectType,
+  {
+    extensions,
+    rollupNodeBundle,
+    rollupNodeExtensions,
+    rollupNodeExportConditions,
+    rollupNodeResolveOptions,
+    rollupCommonJSOptions,
+  }:
+    | ResolvedBuildProjectConfigurationHooks<ProjectType>
+    | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+) {
+  const [
+    {default: commonjs},
+    {default: json},
+    {default: nodeResolve},
+    {default: nodeExternals},
+    baseExtensions,
+    exportConditions,
+  ] = await Promise.all([
+    import('@rollup/plugin-commonjs'),
+    import('@rollup/plugin-json'),
+    import('@rollup/plugin-node-resolve'),
+    import('rollup-plugin-node-externals'),
+    extensions.run(['.mjs', '.js', '.json', '.node']),
+    rollupNodeExportConditions!.run(['default', 'module', 'import', 'require']),
+  ]);
 
-      const [resolveOptions, commonjsOptions] = await Promise.all([
-        rollupNodeResolveOptions!.run({
-          exportConditions,
-          extensions: finalExtensions,
-        }),
-        rollupCommonJSOptions!.run({}),
-      ]);
+  const finalExtensions = await rollupNodeExtensions!.run(baseExtensions);
 
-      let nodeExternalsPlugin: import('rollup').Plugin;
+  const [resolveOptions, commonjsOptions] = await Promise.all([
+    rollupNodeResolveOptions!.run({
+      exportConditions,
+      extensions: finalExtensions,
+    }),
+    rollupCommonJSOptions!.run({}),
+  ]);
 
-      const defaultShouldBundle = project.kind !== ProjectKind.Package;
-      const shouldBundle = await rollupNodeBundle!.run(
-        explicitShouldBundle ?? defaultShouldBundle,
-      );
+  let nodeExternalsPlugin: import('rollup').Plugin;
 
-      if (shouldBundle === true) {
-        // If the consumer wants to bundle node dependencies, we use our
-        // default bundling config, which inlines all node dependencies
-        // other than node builtins.
-        nodeExternalsPlugin = nodeExternals({
-          builtins: true,
-          deps: false,
-          devDeps: false,
-          peerDeps: false,
-          optDeps: false,
-          packagePath: project.packageJson?.path,
-        });
-      } else if (shouldBundle === false) {
-        // If the consumer does not want to bundle node dependencies,
-        // we mark all dependencies as external.
-        // If the consumer does not want to bundle node dependencies,
-        // we mark all dependencies as external.
-        nodeExternalsPlugin = nodeExternals({
-          builtins: true,
-          deps: true,
-          devDeps: true,
-          peerDeps: true,
-          optDeps: true,
-          packagePath: project.packageJson?.path,
-        });
-      } else {
-        // Use the customized bundling configuration. Because this option
-        // is framed as what you bundle, rather than what you externalize,
-        // we need to invert all their options, and default any unspecified
-        // options to the same value as using `bundle: true`
-        const {
-          builtins: bundleBuiltins = false,
-          dependencies: bundleDependencies = defaultShouldBundle,
-          devDependencies: bundleDevDependencies = defaultShouldBundle,
-          peerDependencies: bundlePeerDependencies = defaultShouldBundle,
-          include: alwaysBundleDependencies,
-          exclude: neverBundleDependencies,
-        } = shouldBundle;
+  const defaultShouldBundle = project.kind !== ProjectKind.Package;
+  const shouldBundle = await rollupNodeBundle!.run();
 
-        nodeExternalsPlugin = nodeExternals({
-          builtins: !bundleBuiltins,
-          deps: !bundleDependencies,
-          devDeps: !bundleDevDependencies,
-          peerDeps: !bundlePeerDependencies,
-          optDeps: !bundlePeerDependencies,
-          include: neverBundleDependencies,
-          exclude: alwaysBundleDependencies,
-          packagePath: project.packageJson?.path,
-        });
-      }
+  if (shouldBundle === true) {
+    // If the consumer wants to bundle node dependencies, we use our
+    // default bundling config, which inlines all node dependencies
+    // other than node builtins.
+    nodeExternalsPlugin = nodeExternals({
+      builtins: true,
+      deps: false,
+      devDeps: false,
+      peerDeps: false,
+      optDeps: false,
+      packagePath: project.packageJson?.path,
+    });
+  } else if (shouldBundle === false) {
+    // If the consumer does not want to bundle node dependencies,
+    // we mark all dependencies as external.
+    // If the consumer does not want to bundle node dependencies,
+    // we mark all dependencies as external.
+    nodeExternalsPlugin = nodeExternals({
+      builtins: true,
+      deps: true,
+      devDeps: true,
+      peerDeps: true,
+      optDeps: true,
+      packagePath: project.packageJson?.path,
+    });
+  } else {
+    // Use the customized bundling configuration. Because this option
+    // is framed as what you bundle, rather than what you externalize,
+    // we need to invert all their options, and default any unspecified
+    // options to the same value as using `bundle: true`
+    const {
+      builtins: bundleBuiltins = false,
+      dependencies: bundleDependencies = defaultShouldBundle,
+      devDependencies: bundleDevDependencies = defaultShouldBundle,
+      peerDependencies: bundlePeerDependencies = defaultShouldBundle,
+      include: alwaysBundleDependencies,
+      exclude: neverBundleDependencies,
+    } = shouldBundle;
 
-      return [
-        nodeExternalsPlugin,
-        nodeResolve(resolveOptions),
-        commonjs(commonjsOptions),
-        json(),
-        ...plugins,
-      ];
+    nodeExternalsPlugin = nodeExternals({
+      builtins: !bundleBuiltins,
+      deps: !bundleDependencies,
+      devDeps: !bundleDevDependencies,
+      peerDeps: !bundlePeerDependencies,
+      optDeps: !bundlePeerDependencies,
+      include: neverBundleDependencies,
+      exclude: alwaysBundleDependencies,
+      packagePath: project.packageJson?.path,
     });
   }
+
+  return [
+    nodeExternalsPlugin,
+    nodeResolve(resolveOptions),
+    commonjs(commonjsOptions),
+    json(),
+  ];
 }
 
 /**
