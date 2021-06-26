@@ -1,7 +1,7 @@
 {
   "name": "@quilted/use-subscription",
   "type": "module",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "repository": {
     "type": "git",
