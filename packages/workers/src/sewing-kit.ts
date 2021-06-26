@@ -3,6 +3,7 @@ import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
 import type {App, WaterfallHook, ResolvedHooks} from '@quilted/sewing-kit';
 import type {BabelHooks} from '@quilted/sewing-kit-babel';
 import type {RollupHooks} from '@quilted/sewing-kit-rollup';
+import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
 import type {
   Options as RollupOptions,
@@ -108,6 +109,7 @@ export function workers() {
   function addConfiguration(
     {
       rollupPlugins,
+      vitePlugins,
       babelPlugins,
       quiltWorkerNoop,
       quiltWorkerWrite,
@@ -117,7 +119,7 @@ export function workers() {
       quiltWorkerRollupInputOptions,
       quiltWorkerRollupOutputOptions,
       quiltWorkerRollupPublicPath,
-    }: ResolvedHooks<WorkerHooks & RollupHooks & BabelHooks>,
+    }: ResolvedHooks<WorkerHooks & RollupHooks & BabelHooks & ViteHooks>,
     {noop: shouldNoop}: {noop(): boolean | Promise<boolean>},
   ) {
     rollupPlugins?.(async (plugins) => {
@@ -145,7 +147,39 @@ export function workers() {
           quiltWorkerRollupPublicPath!.run(undefined, context),
       };
 
-      return [...plugins, workers(options)];
+      plugins.push(workers(options));
+
+      return plugins;
+    });
+
+    vitePlugins?.(async (plugins) => {
+      const defaultNoop = await shouldNoop();
+
+      const [noop, write, {workers}] = await Promise.all([
+        quiltWorkerNoop!.run(defaultNoop),
+        quiltWorkerWrite!.run(true),
+        import('./rollup-parts'),
+      ]);
+
+      if (noop) return plugins;
+
+      const options: RollupOptions = {
+        write,
+        contentForWorker: (context) =>
+          quiltWorkerContent!.run(undefined, context),
+        plugins: (plugins, context) =>
+          quiltWorkerRollupPlugins!.run(plugins, context),
+        inputOptions: (inputOptions, context) =>
+          quiltWorkerRollupInputOptions!.run(inputOptions, context),
+        outputOptions: (outputOptions, context) =>
+          quiltWorkerRollupOutputOptions!.run(outputOptions, context),
+        publicPath: (context) =>
+          quiltWorkerRollupPublicPath!.run(undefined, context),
+      };
+
+      plugins.push(workers(options));
+
+      return plugins;
     });
 
     babelPlugins?.(async (plugins) => {
