@@ -3223,7 +3223,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@quilted/aws@workspace:packages/aws"
   dependencies:
-    "@quilted/http-handlers": ^0.2.6
+    "@quilted/http-handlers": ^0.2.7
     "@types/aws-lambda": ^8.0.0
     "@types/common-tags": ^1.8.0
     "@types/cookie": ^0.4.0
@@ -3262,7 +3262,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@quilted/cloudflare@workspace:packages/cloudflare"
   dependencies:
-    "@quilted/http-handlers": ^0.2.6
+    "@quilted/http-handlers": ^0.2.7
     "@types/mime": ^2.0.0
     mime: ^2.5.0
   peerDependencies:
@@ -3293,12 +3293,12 @@ __metadata:
     "@quilted/sewing-kit": ^0.2.8
     "@quilted/sewing-kit-babel": ^0.1.4
     "@quilted/sewing-kit-eslint": ^0.1.2
-    "@quilted/sewing-kit-esnext": ^0.1.11
+    "@quilted/sewing-kit-esnext": ^0.1.12
     "@quilted/sewing-kit-jest": ^0.1.3
-    "@quilted/sewing-kit-package": ^0.1.4
+    "@quilted/sewing-kit-package": ^0.1.5
     "@quilted/sewing-kit-prettier": ^0.1.2
     "@quilted/sewing-kit-react": ^0.1.2
-    "@quilted/sewing-kit-rollup": ^0.1.3
+    "@quilted/sewing-kit-rollup": ^0.1.4
     "@quilted/sewing-kit-targets": ^0.1.5
     "@quilted/sewing-kit-typescript": ^0.1.2
     "@quilted/sewing-kit-vite": ^0.1.0
@@ -3400,7 +3400,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/http-handlers@^0.2.6, @quilted/http-handlers@workspace:packages/http-handlers":
+"@quilted/http-handlers@^0.2.7, @quilted/http-handlers@workspace:packages/http-handlers":
   version: 0.0.0-use.local
   resolution: "@quilted/http-handlers@workspace:packages/http-handlers"
   dependencies:
@@ -3417,7 +3417,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/polyfills@^0.2.6, @quilted/polyfills@workspace:packages/polyfills":
+"@quilted/polyfills@^0.2.7, @quilted/polyfills@workspace:packages/polyfills":
   version: 0.0.0-use.local
   resolution: "@quilted/polyfills@workspace:packages/polyfills"
   dependencies:
@@ -3469,14 +3469,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/quilt@^0.5.24, @quilted/quilt@workspace:packages/quilt":
+"@quilted/quilt@^0.5.25, @quilted/quilt@workspace:packages/quilt":
   version: 0.0.0-use.local
   resolution: "@quilted/quilt@workspace:packages/quilt"
   dependencies:
     "@quilted/async": ^0.3.5
     "@quilted/graphql": ^0.4.5
-    "@quilted/http-handlers": ^0.2.6
-    "@quilted/polyfills": ^0.2.6
+    "@quilted/http-handlers": ^0.2.7
+    "@quilted/polyfills": ^0.2.7
     "@quilted/preact-mini-compat": ^0.2.3
     "@quilted/react-async": ^0.3.11
     "@quilted/react-email": ^0.2.10
@@ -3710,11 +3710,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-esnext@^0.1.11, @quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext":
+"@quilted/sewing-kit-esnext@^0.1.12, @quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-esnext@workspace:packages/sewing-kit-esnext"
   dependencies:
-    "@quilted/sewing-kit-rollup": ^0.1.3
+    "@quilted/sewing-kit-rollup": ^0.1.4
     "@rollup/plugin-babel": ^5.3.0
     esbuild: ^0.12.0
     rollup: ^2.0.0
@@ -3755,11 +3755,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-package@^0.1.4, @quilted/sewing-kit-package@workspace:packages/sewing-kit-package":
+"@quilted/sewing-kit-package@^0.1.5, @quilted/sewing-kit-package@workspace:packages/sewing-kit-package":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-package@workspace:packages/sewing-kit-package"
   dependencies:
-    "@quilted/sewing-kit-rollup": ^0.1.3
+    "@quilted/sewing-kit-rollup": ^0.1.4
     rollup: ^2.0.0
   peerDependencies:
     "@quilted/sewing-kit": ^0.2.0
@@ -3802,7 +3802,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-rollup@^0.1.3, @quilted/sewing-kit-rollup@workspace:packages/sewing-kit-rollup":
+"@quilted/sewing-kit-rollup@^0.1.4, @quilted/sewing-kit-rollup@workspace:packages/sewing-kit-rollup":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-rollup@workspace:packages/sewing-kit-rollup"
   dependencies:
@@ -7163,7 +7163,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-complete@workspace:examples/complete"
   dependencies:
-    "@quilted/quilt": ^0.5.24
+    "@quilted/quilt": ^0.5.25
   languageName: unknown
   linkType: soft
 
