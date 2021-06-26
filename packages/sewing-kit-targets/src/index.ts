@@ -107,9 +107,8 @@ export function targets() {
                 project.fs.root,
               );
 
-              const matchingConfiguration = env
-                ? browserslistConfig?.[env]
-                : undefined;
+              const matchingConfiguration =
+                browserslistConfig?.[env ?? 'defaults'];
 
               if (env != null && matchingConfiguration == null) {
                 throw new DiagnosticError({

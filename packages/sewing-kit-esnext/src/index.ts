@@ -197,12 +197,17 @@ export function esnext() {
 
           // Add the Babel plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {
+            const shouldUseRuntime =
+              project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
+
             const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
               await Promise.all([
                 import('@rollup/plugin-babel'),
                 babelTargets!.run([]),
                 babelPresets!.run([]),
-                babelPlugins!.run([]),
+                babelPlugins!.run(
+                  shouldUseRuntime ? ['@babel/plugin-transform-runtime'] : [],
+                ),
               ]);
 
             return [
@@ -213,8 +218,7 @@ export function esnext() {
                 extensions: [EXTENSION],
                 // Forces this to run on node_modules
                 exclude: [],
-                babelHelpers:
-                  project.kind === ProjectKind.Package ? 'runtime' : 'bundled',
+                babelHelpers: shouldUseRuntime ? 'runtime' : 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

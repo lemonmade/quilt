@@ -81,6 +81,9 @@ export function babelRollup() {
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
+            const shouldUseRuntime =
+              project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
+
             const [
               {babel},
               targets,
@@ -92,7 +95,9 @@ export function babelRollup() {
               babelTargets!.run([]),
               extensions.run(['.mjs', '.cjs', '.js']),
               babelPresets!.run([]),
-              babelPlugins!.run([]),
+              babelPlugins!.run(
+                shouldUseRuntime ? ['@babel/plugin-transform-runtime'] : [],
+              ),
             ]);
 
             const finalExtensions = await babelExtensions!.run(baseExtensions);
@@ -103,8 +108,7 @@ export function babelRollup() {
                 envName: 'production',
                 extensions: finalExtensions,
                 exclude: 'node_modules/**',
-                babelHelpers:
-                  project.kind === ProjectKind.Package ? 'runtime' : 'bundled',
+                babelHelpers: shouldUseRuntime ? 'runtime' : 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,
@@ -129,6 +133,9 @@ export function babelRollup() {
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
+            const shouldUseRuntime =
+              project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
+
             const [
               {babel},
               targets,
@@ -140,7 +147,9 @@ export function babelRollup() {
               babelTargets!.run([]),
               extensions.run(['.mjs', '.cjs', '.js']),
               babelPresets!.run([]),
-              babelPlugins!.run([]),
+              babelPlugins!.run(
+                shouldUseRuntime ? ['@babel/plugin-transform-runtime'] : [],
+              ),
             ]);
 
             const finalExtensions = await babelExtensions!.run(baseExtensions);
@@ -151,8 +160,7 @@ export function babelRollup() {
                 envName: 'production',
                 extensions: finalExtensions,
                 exclude: 'node_modules/**',
-                babelHelpers:
-                  project.kind === ProjectKind.Package ? 'runtime' : 'bundled',
+                babelHelpers: shouldUseRuntime ? 'runtime' : 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

@@ -29,6 +29,7 @@
   "sideEffects": false,
   "dependencies": {
     "@babel/core": "^7.14.0",
+    "@babel/plugin-transform-runtime": ">=7.0.0 <8.0.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@rollup/plugin-babel": "^5.0.0"
   },
