@@ -9,11 +9,17 @@ import {getEntry} from './shared';
 
 export const STEP_NAME = 'Quilt.App.Develop';
 
-export function appDevelop() {
+export interface Options {
+  port?: number;
+}
+
+export function appDevelop({port}: Options = {}) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
     develop({project, configure}) {
-      configure(({vitePlugins}) => {
+      configure(({vitePort, vitePlugins}) => {
+        if (port) vitePort?.(() => port);
+
         vitePlugins?.((plugins) => {
           plugins.push({
             name: '@quilted/magic/browser',

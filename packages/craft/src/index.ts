@@ -34,6 +34,7 @@ import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import type {AssetOptions as AppBuildAssetOptions} from './plugins/app-build';
 import {appDevelop} from './plugins/app-develop';
+import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {appAutoServer} from './plugins/app-auto-server';
 import {serviceBuild} from './plugins/service-build';
@@ -68,7 +69,7 @@ export * from './constants';
 export interface AppOptions {
   polyfill?: boolean | PolyfillOptions;
   autoServer?: boolean;
-  develop?: boolean;
+  develop?: boolean | AppDevelopOptions;
   build?: boolean;
   assets?: Partial<AppBuildAssetOptions>;
 }
@@ -103,7 +104,8 @@ export function quiltApp({
         build && autoServer && appAutoServer(),
         // Development
         develop && vite(),
-        develop && appDevelop(),
+        develop &&
+          appDevelop(typeof develop === 'boolean' ? undefined : develop),
       );
 
       await ignoreMissingImports(async () => {
