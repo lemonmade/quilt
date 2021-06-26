@@ -111,6 +111,9 @@
     "@quilted/sewing-kit": {
       "optional": true
     },
+    "@quilted/sewing-kit-jest": {
+      "optional": true
+    },
     "@quilted/sewing-kit-rollup": {
       "optional": true
     },
