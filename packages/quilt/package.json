@@ -1,7 +1,7 @@
 {
   "name": "@quilted/quilt",
   "type": "module",
-  "version": "0.5.24",
+  "version": "0.5.25",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -81,8 +81,8 @@
   "dependencies": {
     "@quilted/async": "^0.3.5",
     "@quilted/graphql": "^0.4.5",
-    "@quilted/http-handlers": "^0.2.6",
-    "@quilted/polyfills": "^0.2.6",
+    "@quilted/http-handlers": "^0.2.7",
+    "@quilted/polyfills": "^0.2.7",
     "@quilted/preact-mini-compat": "^0.2.3",
     "@quilted/react-async": "^0.3.11",
     "@quilted/react-email": "^0.2.10",
