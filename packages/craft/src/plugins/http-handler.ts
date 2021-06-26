@@ -314,7 +314,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
 
             watcher.on('event', (event) => {
               switch (event.code) {
-                case 'BUNDLE_START': {
+                case 'BUNDLE_END': {
                   try {
                     server?.kill();
                   } catch {
