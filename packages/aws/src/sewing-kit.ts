@@ -9,14 +9,25 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
   return createProjectPlugin<App | Service>({
     name: 'Quilt.AWS.Lambda',
     build({configure}) {
-      configure(({rollupExternals, quiltHttpHandlerRuntimeContent}) => {
-        rollupExternals?.((externals) => {
-          externals.push('aws-sdk');
-          return externals;
-        });
+      configure(
+        ({rollupExternals, rollupOutputs, quiltHttpHandlerRuntimeContent}) => {
+          rollupExternals?.((externals) => {
+            externals.push('aws-sdk');
+            return externals;
+          });
 
-        quiltHttpHandlerRuntimeContent?.(
-          () => stripIndent`
+          // AWS still only supports commonjs
+          rollupOutputs?.((outputs) => {
+            for (const output of outputs) {
+              output.format = 'commonjs';
+              output.exports = 'named';
+            }
+
+            return outputs;
+          });
+
+          quiltHttpHandlerRuntimeContent?.(
+            () => stripIndent`
             import HttpHandler from ${JSON.stringify(
               MAGIC_MODULE_HTTP_HANDLER,
             )};
@@ -25,8 +36,9 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
 
             export const ${handlerName} = createLambdaApiGatewayProxy(HttpHandler);
           `,
-        );
-      });
+          );
+        },
+      );
     },
   });
 }

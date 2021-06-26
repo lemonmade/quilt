@@ -159,7 +159,7 @@ const schema = createSchema(`
 const fillGraphQL = createFiller(schema);
 ```
 
-The result of calling `createFiller` is itself a function. This function accepts a GraphQL operation (either as a string, a `DocumentNode`, or the shape produced by `@sewing-kit/graphql`) and returns an object that can be passed directly to `createGraphQLController()`:
+The result of calling `createFiller` is itself a function. This function accepts a GraphQL operation (either as a string, a `DocumentNode`, or the shape produced by `@quilted/graphql`) and returns an object that can be passed directly to `createGraphQLController()`:
 
 ```ts
 import {

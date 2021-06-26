@@ -61,7 +61,7 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
     // needs a better error, showing files/ what workspace plugins exist
     throw new DiagnosticError({
       title: `Multiple workspace configurations found`,
-      content: `Found ${workspaceConfigs.length} workspace configurations. Only one sewing-kit config can declare workspace plugins and/ or use the createWorkspace() utility from @sewing-kit/config`,
+      content: `Found ${workspaceConfigs.length} workspace configurations. Only one sewing-kit config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/sewing-kit`,
     });
   }
 
@@ -76,7 +76,7 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
     throw new DiagnosticError({
       title: `Invalid workspace plugins in project configuration`,
       content: `You declared workspace plugins in a project, but this is only supported for workspace with a single project.`,
-      suggestion: `Move the workspace plugins to a root sewing-kit config file, and include them using the createWorkspace() function from @sewing-kit/config`,
+      suggestion: `Move the workspace plugins to a root sewing-kit config file, and include them using the createWorkspace() function from @quilted/sewing-kit`,
     });
   }
 
@@ -164,14 +164,14 @@ async function loadConfigFile<Options>(
       title: 'Invalid configuration file',
       content: `The configuration file ${file} did not export any configuration`,
       suggestion: file.endsWith('.ts')
-        ? `Ensure that you are exporting the result of calling a function from @sewing-kit/config as the default export, then run your command again.`
-        : `Ensure that you are setting the result of calling a function from @sewing-kit/config to module.exports, then run your command again.`,
+        ? `Ensure that you are exporting the result of calling a function from @quilted/sewing-kit as the default export, then run your command again.`
+        : `Ensure that you are setting the result of calling a function from @quilted/sewing-kit to module.exports, then run your command again.`,
     });
   } else if (typeof normalized !== 'function') {
     throw new DiagnosticError({
       title: 'Invalid configuration file',
       content: `The configuration file ${file} did not export a function`,
-      suggestion: `Ensure that you are exporting the result of calling a function from @sewing-kit/config, then run your command again.`,
+      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/sewing-kit, then run your command again.`,
     });
   }
 
@@ -182,7 +182,7 @@ async function loadConfigFile<Options>(
     throw new DiagnosticError({
       title: 'Invalid configuration file',
       content: `The configuration file ${file} did not export a function that creates a configuration object`,
-      suggestion: `Ensure that you are exporting the result of calling a function from @sewing-kit/config, then run your command again.`,
+      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/sewing-kit, then run your command again.`,
     });
   }
 
