@@ -51,10 +51,14 @@
     "@types/cookie": "^0.4.0"
   },
   "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/craft": "^0.1.9",
     "@quilted/sewing-kit": "^0.2.4"
   },
   "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
     "@quilted/craft": {
       "optional": true
     },

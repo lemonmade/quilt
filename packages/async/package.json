@@ -68,6 +68,7 @@
   "peerDependencies": {
     "@babel/core": ">=7.0.0",
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
     "@quilted/sewing-kit": "^0.2.4",
@@ -79,6 +80,9 @@
       "optional": true
     },
     "@babel/plugin-syntax-dynamic-import": {
+      "optional": true
+    },
+    "@babel/runtime": {
       "optional": true
     },
     "@babel/traverse": {

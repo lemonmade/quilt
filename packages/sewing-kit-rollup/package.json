@@ -36,9 +36,13 @@
     "rollup-plugin-node-externals": "^2.0.0"
   },
   "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/sewing-kit": "^0.2.0"
   },
   "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
     "@quilted/sewing-kit": {
       "optional": true
     }

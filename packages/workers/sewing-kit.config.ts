@@ -18,5 +18,7 @@ export default createPackage((pkg) => {
     source: './src/sewing-kit',
     runtime: Runtime.Node,
   });
-  pkg.use(quiltPackage());
+
+  // We need commonjs for the babel plugin
+  pkg.use(quiltPackage({commonjs: true}));
 });

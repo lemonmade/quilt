@@ -26,6 +26,14 @@
     }
   },
   "sideEffects": false,
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    }
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/package"

@@ -28,7 +28,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@babel/preset-react": "^7.0.0"
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": ">=7.0.0 <8.0.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
@@ -37,6 +38,9 @@
   },
   "peerDependenciesMeta": {
     "@babel/core": {
+      "optional": true
+    },
+    "@babel/runtime": {
       "optional": true
     },
     "@quilted/sewing-kit": {

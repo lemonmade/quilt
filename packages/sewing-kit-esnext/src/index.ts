@@ -1,6 +1,6 @@
 import {join, dirname, sep as pathSeparator} from 'path';
 
-import {createProjectPlugin} from '@quilted/sewing-kit';
+import {createProjectPlugin, ProjectKind} from '@quilted/sewing-kit';
 import type {
   Project,
   Package,
@@ -13,6 +13,7 @@ import type {} from '@quilted/sewing-kit-rollup';
 import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
 export const EXPORT_CONDITION = 'sewing-kit:esnext';
+const EXTENSION = '.esnext';
 
 declare module '@quilted/sewing-kit' {
   interface BuildProjectOptions {
@@ -83,7 +84,9 @@ export function esnextBuild() {
               dir: await outputDirectory.run(project.fs.buildPath()),
               preserveModules: true,
               preserveModulesRoot: sourceRoot(project),
-              entryFileNames: '[name][assetExtname].esnext',
+              entryFileNames: `[name][assetExtname]${EXTENSION}`,
+              assetFileNames: `[name].[ext]`,
+              chunkFileNames: `[name]${EXTENSION}`,
             },
           ]);
         },
@@ -154,7 +157,7 @@ export function esnext() {
                 // Forces this to run on node_modules
                 exclude: [],
                 loaders: {
-                  '.esnext': 'jsx',
+                  [EXTENSION]: 'js',
                 },
               }),
             ];
@@ -170,7 +173,7 @@ export function esnext() {
                 // Forces this to run on node_modules
                 exclude: [],
                 loaders: {
-                  '.esnext': 'jsx',
+                  [EXTENSION]: 'jsx',
                 },
               }),
             ];
@@ -178,7 +181,7 @@ export function esnext() {
         },
       );
     },
-    build({configure}) {
+    build({project, configure}) {
       configure(
         ({
           babelTargets,
@@ -207,10 +210,11 @@ export function esnext() {
               babel({
                 envName: 'production',
                 include: '**/*.esnext',
-                extensions: ['.esnext'],
+                extensions: [EXTENSION],
                 // Forces this to run on node_modules
                 exclude: [],
-                babelHelpers: 'bundled',
+                babelHelpers:
+                  project.kind === ProjectKind.Package ? 'runtime' : 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

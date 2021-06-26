@@ -23,7 +23,8 @@
     },
     "./babel": {
       "sewing-kit:esnext": "./build/esnext/babel.esnext",
-      "import": "./build/esm/babel.mjs"
+      "import": "./build/esm/babel.mjs",
+      "require": "./build/cjs/babel.cjs"
     },
     "./rollup": {
       "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
@@ -61,6 +62,7 @@
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0 <8.0.0",
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/sewing-kit": "^0.2.0",
     "@quilted/sewing-kit-babel": "^0.1.0",
     "@quilted/sewing-kit-rollup": "^0.1.0",
@@ -69,6 +71,9 @@
   },
   "peerDependenciesMeta": {
     "@babel/core": {
+      "optional": true
+    },
+    "@babel/runtime": {
       "optional": true
     },
     "@quilted/sewing-kit": {

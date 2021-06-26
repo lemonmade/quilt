@@ -69,6 +69,7 @@
     "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/sewing-kit": "^0.2.2",
     "@quilted/sewing-kit-jest": "^0.1.2",
     "@quilted/sewing-kit-rollup": "^0.1.2",
@@ -76,6 +77,9 @@
     "rollup": "^2.0.0"
   },
   "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
     "@quilted/sewing-kit": {
       "optional": true
     },

@@ -31,9 +31,13 @@
     "terser": "^5.5.1"
   },
   "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "preact": "^10.0.0"
   },
   "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
     "preact": {
       "optional": true
     }

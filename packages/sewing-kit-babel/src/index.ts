@@ -1,6 +1,6 @@
 import type {PluginItem} from '@babel/core';
 
-import {createProjectPlugin} from '@quilted/sewing-kit';
+import {createProjectPlugin, ProjectKind} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-rollup';
@@ -70,7 +70,7 @@ export function babelHooks() {
 export function babelRollup() {
   return createProjectPlugin({
     name: 'SewingKit.Babel.Rollup',
-    build({configure}) {
+    build({project, configure}) {
       configure(
         ({
           extensions,
@@ -103,7 +103,8 @@ export function babelRollup() {
                 envName: 'production',
                 extensions: finalExtensions,
                 exclude: 'node_modules/**',
-                babelHelpers: 'bundled',
+                babelHelpers:
+                  project.kind === ProjectKind.Package ? 'runtime' : 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,
@@ -117,7 +118,7 @@ export function babelRollup() {
         },
       );
     },
-    develop({configure}) {
+    develop({project, configure}) {
       configure(
         ({
           extensions,
@@ -150,7 +151,8 @@ export function babelRollup() {
                 envName: 'production',
                 extensions: finalExtensions,
                 exclude: 'node_modules/**',
-                babelHelpers: 'bundled',
+                babelHelpers:
+                  project.kind === ProjectKind.Package ? 'runtime' : 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

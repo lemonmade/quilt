@@ -75,6 +75,8 @@ export function packageBuild({commonjs = false}: Options = {}) {
                         ? commonjs.exports ?? 'named'
                         : 'named',
                     entryFileNames: `[name][assetExtname]${COMMONJS_EXTENSION}`,
+                    assetFileNames: `[name].[ext]`,
+                    chunkFileNames: `[name]${COMMONJS_EXTENSION}`,
                   },
                 ];
               }
@@ -87,6 +89,8 @@ export function packageBuild({commonjs = false}: Options = {}) {
                     preserveModules: true,
                     preserveModulesRoot: sourceRoot(project),
                     entryFileNames: `[name][assetExtname]${ESM_EXTENSION}`,
+                    assetFileNames: `[name].[ext]`,
+                    chunkFileNames: `[name]${ESM_EXTENSION}`,
                   },
                 ];
               }

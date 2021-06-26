@@ -46,6 +46,7 @@
     "mime": "^2.5.0"
   },
   "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/craft": "^0.1.9",
     "@quilted/quilt": "^0.5.14",
     "@quilted/sewing-kit": "^0.2.4",
@@ -55,6 +56,9 @@
     "@types/mime": "^2.0.0"
   },
   "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
     "@quilted/craft": {
       "optional": true
     },

@@ -79,6 +79,7 @@
     "preact": "^10.5.0"
   },
   "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@jest/globals": "^27.0.0",
     "@quilted/sewing-kit": "^0.2.0",
     "@quilted/sewing-kit-jest": "^0.0.0",
@@ -87,6 +88,9 @@
     "react-dom": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
     "@jest/globals": {
       "optional": true
     },

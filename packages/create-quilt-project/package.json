@@ -18,6 +18,14 @@
     "chalk": "^4.0.0",
     "ts-dedent": "^2.0.0"
   },
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    }
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/node",

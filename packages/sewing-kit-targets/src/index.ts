@@ -2,6 +2,7 @@ import {
   Runtime,
   DiagnosticError,
   createProjectPlugin,
+  ProjectKind,
 } from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
@@ -125,22 +126,34 @@ export function targets() {
           });
 
           babelTargets?.(() => targets!.run([]));
-          babelPresets?.((presets) => [
-            [
-              '@babel/preset-env',
-              {
-                corejs: '3.15',
-                useBuiltIns: 'usage',
-                bugfixes: true,
-                shippedProposals: true,
-                // I thought I wanted this on, but if you do this, Babel
-                // stops respecting the top-level `targets` option and tries
-                // to use the targets passed to the preset directly instead.
-                // ignoreBrowserslistConfig: true,
-              },
-            ],
-            ...presets,
-          ]);
+          babelPresets?.((presets) => {
+            const isPackage = project.kind === ProjectKind.Package;
+
+            const options = isPackage
+              ? {
+                  useBuiltIns: false,
+                  bugfixes: true,
+                  shippedProposals: true,
+                  // I thought I wanted this on, but if you do this, Babel
+                  // stops respecting the top-level `targets` option and tries
+                  // to use the targets passed to the preset directly instead.
+                  // ignoreBrowserslistConfig: true,
+                }
+              : {
+                  corejs: '3.15',
+                  useBuiltIns: 'usage',
+                  bugfixes: true,
+                  shippedProposals: true,
+                  // I thought I wanted this on, but if you do this, Babel
+                  // stops respecting the top-level `targets` option and tries
+                  // to use the targets passed to the preset directly instead.
+                  // ignoreBrowserslistConfig: true,
+                };
+
+            presets.unshift(['@babel/preset-env', options]);
+
+            return presets;
+          });
         },
       );
     },
