@@ -12,8 +12,6 @@ export interface Options {
   sourceMap?: boolean;
 }
 
-export const POLYFILLS_MAGIC_MODULE = '__quilt__/polyfills.ts';
-
 export function polyfill({
   target,
   features,
@@ -44,10 +42,19 @@ export function polyfill({
 
       magicString.prepend(
         `${features
-          .map(
-            (feature) =>
-              `import ${JSON.stringify(`@quilted/polyfills/${feature}`)};`,
-          )
+          .map((feature) => {
+            const mappedPolyfill = polyfills.get(
+              `@quilted/polyfills/${feature}`,
+            );
+
+            if (!mappedPolyfill) {
+              throw new Error(
+                `No polyfill available for feature ${JSON.stringify(feature)}`,
+              );
+            }
+
+            return `import ${JSON.stringify(mappedPolyfill)};`;
+          })
           .join('\n')}\n`,
       );
 
