@@ -1,6 +1,11 @@
 import {createWorkspacePlugin, createProjectPlugin} from '@quilted/sewing-kit';
+import type {
+  ResolvedHooks,
+  DevelopAppConfigurationHooks,
+} from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
+import type {} from '@quilted/sewing-kit-vite';
 
 const NAME = 'Quilt.GraphQL';
 
@@ -16,12 +21,22 @@ export function graphql() {
       });
     },
     develop({configure}) {
-      configure(({rollupPlugins}) => {
-        rollupPlugins?.(async (plugins) => {
-          const {graphql} = await import('./rollup-parts');
-          return [...plugins, graphql()];
-        });
-      });
+      configure(
+        ({
+          rollupPlugins,
+          vitePlugins,
+        }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
+          rollupPlugins?.(async (plugins) => {
+            const {graphql} = await import('./rollup-parts');
+            return [...plugins, graphql()];
+          });
+
+          vitePlugins?.(async (plugins) => {
+            const {graphql} = await import('./rollup-parts');
+            return [...plugins, graphql()];
+          });
+        },
+      );
     },
     test({configure}) {
       configure(({jestModuleMapper}) => {

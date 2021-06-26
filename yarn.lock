@@ -3317,12 +3317,15 @@ __metadata:
     systemjs: ^6.10.0
     vite: ^2.0.0
   peerDependencies:
-    "@quilted/async": ^0.3.2
-    "@quilted/polyfills": ^0.2.2
+    "@quilted/async": ^0.3.0
+    "@quilted/graphql": ^0.4.0
+    "@quilted/polyfills": ^0.2.0
     preact: ^10.0.0
     typescript: ">=4.0.0 <5.0.0"
   peerDependenciesMeta:
     "@quilted/async":
+      optional: true
+    "@quilted/graphql":
       optional: true
     "@quilted/polyfills":
       optional: true
@@ -3374,6 +3377,7 @@ __metadata:
     "@quilted/sewing-kit": ^0.2.0
     "@quilted/sewing-kit-jest": ^0.1.0
     "@quilted/sewing-kit-rollup": ^0.1.0
+    "@quilted/sewing-kit-vite": ^0.1.0
     jest-matcher-utils: ^27.0.0
   peerDependenciesMeta:
     "@jest/globals":
@@ -3383,6 +3387,8 @@ __metadata:
     "@quilted/sewing-kit-jest":
       optional: true
     "@quilted/sewing-kit-rollup":
+      optional: true
+    "@quilted/sewing-kit-vite":
       optional: true
     jest-matcher-utils:
       optional: true
