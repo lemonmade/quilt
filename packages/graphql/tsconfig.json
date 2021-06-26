@@ -10,6 +10,7 @@
     {"path": "../sewing-kit"},
     {"path": "../sewing-kit-jest"},
     {"path": "../sewing-kit-rollup"},
+    {"path": "../sewing-kit-vite"},
     {"path": "../useful-types"}
   ]
 }
