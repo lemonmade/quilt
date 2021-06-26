@@ -126,43 +126,52 @@ export function esnext() {
     develop({configure}) {
       configure(
         ({
-          babelTargets,
-          babelPresets,
-          babelPlugins,
           vitePlugins,
           viteResolveExportConditions,
+          rollupPlugins,
+          rollupNodeExportConditions,
         }: ResolvedHooks<
           DevelopConfigurationHooksForProject<Project> & ViteHooks
         >) => {
+          // Prefer the esnext export condition
+          rollupNodeExportConditions?.((exportConditions) =>
+            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+          );
+
           // Prefer the esnext export condition
           viteResolveExportConditions?.((exportConditions) =>
             Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
           );
 
-          // Add the Babel plugin to process .esnext files like source code
-          vitePlugins?.(async (plugins) => {
-            const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
-              await Promise.all([
-                import('@rollup/plugin-babel'),
-                babelTargets!.run([]),
-                babelPresets!.run([]),
-                babelPlugins!.run([]),
-              ]);
+          // Add the ESBuild plugin to process .esnext files like source code
+          rollupPlugins?.(async (plugins) => {
+            const {default: esbuild} = await import('rollup-plugin-esbuild');
 
             return [
               ...plugins,
-              babel({
-                envName: 'production',
+              esbuild({
                 include: '**/*.esnext',
                 // Forces this to run on node_modules
                 exclude: [],
-                babelHelpers: 'bundled',
-                configFile: false,
-                babelrc: false,
-                // @ts-expect-error Babel types have not been updated yet
-                targets,
-                presets: babelPresetsOption,
-                plugins: babelPluginsOption,
+                loaders: {
+                  '.esnext': 'js',
+                },
+              }),
+            ];
+          });
+
+          vitePlugins?.(async (plugins) => {
+            const {default: esbuild} = await import('rollup-plugin-esbuild');
+
+            return [
+              ...plugins,
+              esbuild({
+                include: '**/*.esnext',
+                // Forces this to run on node_modules
+                exclude: [],
+                loaders: {
+                  '.esnext': 'js',
+                },
               }),
             ];
           });
