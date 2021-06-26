@@ -127,7 +127,6 @@ export function esnext() {
       configure(
         ({
           vitePlugins,
-          viteConfig,
           viteResolveExportConditions,
           rollupPlugins,
           rollupNodeExportConditions,
