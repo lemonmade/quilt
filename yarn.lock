@@ -3466,7 +3466,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/quilt@^0.5.23, @quilted/quilt@workspace:packages/quilt":
+"@quilted/quilt@^0.5.24, @quilted/quilt@workspace:packages/quilt":
   version: 0.0.0-use.local
   resolution: "@quilted/quilt@workspace:packages/quilt"
   dependencies:
@@ -3484,7 +3484,7 @@ __metadata:
     "@quilted/react-router": ^0.3.12
     "@quilted/react-server-render": ^0.3.2
     "@quilted/react-testing": ^0.4.3
-    "@quilted/react-workers": ^0.2.5
+    "@quilted/react-workers": ^0.2.6
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
     preact: ^10.0.0
@@ -3654,11 +3654,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/react-workers@^0.2.5, @quilted/react-workers@workspace:packages/react-workers":
+"@quilted/react-workers@^0.2.6, @quilted/react-workers@workspace:packages/react-workers":
   version: 0.0.0-use.local
   resolution: "@quilted/react-workers@workspace:packages/react-workers"
   dependencies:
-    "@quilted/workers": ^0.2.5
+    "@quilted/workers": ^0.2.6
   peerDependencies:
     react: ">=17.0.0 <18.0.0"
   peerDependenciesMeta:
@@ -3930,7 +3930,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/workers@^0.2.5, @quilted/workers@workspace:packages/workers":
+"@quilted/workers@^0.2.6, @quilted/workers@workspace:packages/workers":
   version: 0.0.0-use.local
   resolution: "@quilted/workers@workspace:packages/workers"
   dependencies:
@@ -3939,8 +3939,9 @@ __metadata:
   peerDependencies:
     "@babel/core": ">=7.0.0 <8.0.0"
     "@quilted/sewing-kit": ^0.2.0
-    "@quilted/sewing-kit-babel": ^0.0.0
-    "@quilted/sewing-kit-rollup": ^0.0.0
+    "@quilted/sewing-kit-babel": ^0.1.0
+    "@quilted/sewing-kit-rollup": ^0.1.0
+    "@quilted/sewing-kit-vite": ^0.1.0
     rollup: ">=2.50.3 <3.0.0"
   peerDependenciesMeta:
     "@babel/core":
@@ -3950,6 +3951,8 @@ __metadata:
     "@quilted/sewing-kit-babel":
       optional: true
     "@quilted/sewing-kit-rollup":
+      optional: true
+    "@quilted/sewing-kit-vite":
       optional: true
     rollup:
       optional: true
@@ -7157,7 +7160,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-complete@workspace:examples/complete"
   dependencies:
-    "@quilted/quilt": ^0.5.23
+    "@quilted/quilt": ^0.5.24
   languageName: unknown
   linkType: soft
 
