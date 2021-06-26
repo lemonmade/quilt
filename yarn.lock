@@ -3164,7 +3164,7 @@ __metadata:
     "@quilted/browserslist-config": ^0.1.1
     "@quilted/eslint-config": ^0.1.4
     "@quilted/prettier": ^0.2.3
-    "@quilted/sewing-kit": ^0.2.10
+    "@quilted/sewing-kit": ^0.2.11
     "@quilted/sewing-kit-babel": ^0.1.6
     "@quilted/sewing-kit-eslint": ^0.1.4
     "@quilted/sewing-kit-esnext": ^0.1.14
@@ -3237,7 +3237,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/graphql@^0.4.7, @quilted/graphql@workspace:packages/graphql":
+"@quilted/graphql@^0.4.8, @quilted/graphql@workspace:packages/graphql":
   version: 0.0.0-use.local
   resolution: "@quilted/graphql@workspace:packages/graphql"
   dependencies:
@@ -3368,18 +3368,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/quilt@^0.5.28, @quilted/quilt@workspace:packages/quilt":
+"@quilted/quilt@^0.5.29, @quilted/quilt@workspace:packages/quilt":
   version: 0.0.0-use.local
   resolution: "@quilted/quilt@workspace:packages/quilt"
   dependencies:
     "@quilted/async": ^0.3.8
-    "@quilted/graphql": ^0.4.7
+    "@quilted/graphql": ^0.4.8
     "@quilted/http-handlers": ^0.2.9
     "@quilted/polyfills": ^0.2.9
     "@quilted/preact-mini-compat": ^0.2.5
     "@quilted/react-async": ^0.3.14
     "@quilted/react-email": ^0.2.12
-    "@quilted/react-graphql": ^0.4.17
+    "@quilted/react-graphql": ^0.4.18
     "@quilted/react-html": ^0.3.12
     "@quilted/react-http": ^0.2.13
     "@quilted/react-idle": ^0.3.4
@@ -3441,11 +3441,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/react-graphql@^0.4.17, @quilted/react-graphql@workspace:packages/react-graphql":
+"@quilted/react-graphql@^0.4.18, @quilted/react-graphql@workspace:packages/react-graphql":
   version: 0.0.0-use.local
   resolution: "@quilted/react-graphql@workspace:packages/react-graphql"
   dependencies:
-    "@quilted/graphql": ^0.4.7
+    "@quilted/graphql": ^0.4.8
     "@quilted/react-async": ^0.3.14
     "@quilted/useful-types": ^0.2.3
   peerDependencies:
@@ -3858,7 +3858,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit@^0.2.10, @quilted/sewing-kit@workspace:packages/sewing-kit":
+"@quilted/sewing-kit@^0.2.11, @quilted/sewing-kit@workspace:packages/sewing-kit":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit@workspace:packages/sewing-kit"
   dependencies:
@@ -7188,7 +7188,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-complete@workspace:examples/complete"
   dependencies:
-    "@quilted/quilt": ^0.5.28
+    "@quilted/quilt": ^0.5.29
   languageName: unknown
   linkType: soft
 
