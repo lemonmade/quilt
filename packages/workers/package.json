@@ -30,6 +30,7 @@
       "import": "./build/esm/rollup-parts.mjs"
     },
     "./sewing-kit": {
+      "quilt:internal": "./src/sewing-kit.ts",
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs"
     }
