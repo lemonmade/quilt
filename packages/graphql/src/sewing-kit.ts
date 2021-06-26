@@ -1,4 +1,5 @@
 import {createWorkspacePlugin, createProjectPlugin} from '@quilted/sewing-kit';
+import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
 
 const NAME = 'Quilt.GraphQL';
@@ -19,6 +20,14 @@ export function graphql() {
         rollupPlugins?.(async (plugins) => {
           const {graphql} = await import('./rollup-parts');
           return [...plugins, graphql()];
+        });
+      });
+    },
+    test({configure}) {
+      configure(({jestModuleMapper}) => {
+        jestModuleMapper?.(async (moduleMapper) => {
+          moduleMapper['\\.graphql$'] = '@quilted/graphql/jest';
+          return moduleMapper;
         });
       });
     },
@@ -47,6 +56,22 @@ export function workspaceGraphQL() {
       );
     },
     develop({run}) {
+      run((step) =>
+        step({
+          name: WORKSPACE_NAME,
+          label: 'Build GraphQL TypeScript definitions',
+          stage: 'pre',
+          async run(step) {
+            const result = await step.exec('quilt-graphql-typescript', [], {
+              fromNodeModules: true,
+            });
+
+            if (result.stdout.trim()) step.log(result.stdout.trim());
+          },
+        }),
+      );
+    },
+    typeCheck({run}) {
       run((step) =>
         step({
           name: WORKSPACE_NAME,

@@ -61,18 +61,20 @@ export async function createBuilder(cwd?: string) {
   const config = await loadConfig({
     rootDir: cwd,
     extensions: [() => ({name: 'quilt'})],
+    throwOnEmpty: false,
+    throwOnMissing: false,
   });
 
-  return new Builder(config!);
+  return new Builder(config);
 }
 
 export class Builder extends EventEmitter {
   private watching = false;
-  private readonly config: GraphQLConfig;
+  private readonly config: GraphQLConfig | undefined;
   private readonly projectDetails: ProjectDetailsMap = new Map();
 
   private get projects() {
-    return Object.values(this.config.projects);
+    return this.config ? Object.values(this.config.projects) : [];
   }
 
   private readonly documentOutputKindMatchCache = new WeakMap<
@@ -82,7 +84,7 @@ export class Builder extends EventEmitter {
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
-  constructor(config: GraphQLConfig) {
+  constructor(config?: GraphQLConfig) {
     super();
     this.config = config;
   }

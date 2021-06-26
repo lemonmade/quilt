@@ -107,6 +107,11 @@ export function quiltApp({
       );
 
       await ignoreMissingImports(async () => {
+        const {graphql} = await import('@quilted/graphql/sewing-kit');
+        use(graphql());
+      });
+
+      await ignoreMissingImports(async () => {
         const {asyncQuilt} = await import('@quilted/async/sewing-kit');
         use(asyncQuilt({preload: true}));
       });
@@ -133,6 +138,7 @@ export interface ServiceOptions {
    * to `false`.
    */
   react?: boolean;
+  graphql?: boolean;
   build?: boolean | Partial<Omit<ServiceBuildOptions, 'httpHandler'>>;
   polyfill?: boolean | PolyfillOptions;
   develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
@@ -142,6 +148,7 @@ export interface ServiceOptions {
 export function quiltService({
   build = true,
   develop = true,
+  graphql = true,
   react: useReact = false,
   polyfill: shouldPolyfill = true,
   httpHandler: useHttpHandler = true,
@@ -179,6 +186,13 @@ export function quiltService({
           ),
       );
 
+      if (graphql) {
+        await ignoreMissingImports(async () => {
+          const {graphql} = await import('@quilted/graphql/sewing-kit');
+          use(graphql());
+        });
+      }
+
       if (shouldPolyfill) {
         await ignoreMissingImports(async () => {
           const {polyfills} = await import('@quilted/polyfills/sewing-kit');
@@ -198,6 +212,7 @@ export function quiltService({
 export interface PackageOptions {
   build?: boolean;
   react?: boolean;
+  graphql?: boolean;
   commonjs?: PackageBuildOptions['commonjs'];
   bundleNode?: RollupNodeOptions['bundle'];
 }
@@ -210,12 +225,13 @@ export interface PackageOptions {
 export function quiltPackage({
   build = true,
   react: useReact = false,
+  graphql = false,
   commonjs,
   bundleNode,
 }: PackageOptions = {}) {
   return createProjectPlugin<Package>({
     name: 'Quilt.Package',
-    create({use}) {
+    async create({use}) {
       use(
         // Basic tool configuration
         rollupHooks(),
@@ -229,19 +245,40 @@ export function quiltPackage({
         build && packageBuild({commonjs}),
         build && esnextBuild(),
       );
+
+      if (graphql) {
+        await ignoreMissingImports(async () => {
+          const {graphql} = await import('@quilted/graphql/sewing-kit');
+          use(graphql());
+        });
+      }
     },
   });
+}
+
+export interface WorkspaceOptions {
+  graphql?: boolean;
 }
 
 /**
  * Creates a sewing-kit plugin that configures your workspace to run
  * ESLint, TypeScript, and Jest.
  */
-export function quiltWorkspace() {
+export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
   return createWorkspacePlugin({
     name: 'Quilt.Workspace',
-    create({use}) {
+    async create({use}) {
       use(eslint(), prettier(), typescriptWorkspace(), jest());
+
+      if (graphql) {
+        await ignoreMissingImports(async () => {
+          const {workspaceGraphQL} = await import(
+            '@quilted/graphql/sewing-kit'
+          );
+
+          use(workspaceGraphQL());
+        });
+      }
     },
   });
 }
