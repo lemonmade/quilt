@@ -97,11 +97,6 @@ export function asyncQuilt({
             await preloadAsyncAssetsInSystemJSBundle(bundle);
             break;
           }
-          default: {
-            throw new Error(
-              `Can’t add async preloads to a bundle with format ${options.format}`,
-            );
-          }
         }
       }
 
@@ -252,12 +247,13 @@ async function writeManifestForBundle(
       output.type === 'chunk' && output.isEntry,
   );
 
-  if (entries.length !== 1) {
-    throw new Error(
-      `Can only generate an asset manifest for a single-entry build, but found ${entries.length} entries instead.`,
-    );
+  if (entries.length === 0) {
+    throw new Error(`Could not find any entries in your rollup bundle...`);
   }
 
+  // We assume the first entry is the "main" one. There can be
+  // more than one because each worker script is also listed as an
+  // entry (though, from a separate build).
   const entryChunk = entries[0];
 
   const manifest: Partial<Manifest> = {

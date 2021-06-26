@@ -44,6 +44,8 @@ import type {Options as ServiceBuildOptions} from './plugins/service-build';
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
 
+import {tsconfigAliases} from './plugins/tsconfig-aliases';
+
 // Without these exports, TypeScript doesn’t see all the module augmentations
 // added by these modules when you try to reference them from another package.
 export type {} from './plugins/app-build';
@@ -95,6 +97,7 @@ export function quiltApp({
         babelRollup(),
         targets(),
         typescriptProject(),
+        tsconfigAliases(),
         esnext(),
         react(),
         preact(),
@@ -178,6 +181,7 @@ export function quiltService({
         babelRollup(),
         targets(),
         typescriptProject(),
+        tsconfigAliases(),
         esnext(),
         useReact && react(),
         useReact && preact(),

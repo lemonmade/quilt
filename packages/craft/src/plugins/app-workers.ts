@@ -30,6 +30,9 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
           () => `/@fs${project.fs.buildPath('vite/workers/')}`,
         );
 
+        // Vite does not call the `option` hook properly, so we don’t get
+        // all the plugins from the parent build available in the child.
+        // This adds all the main plugins back.
         quiltWorkerRollupPlugins?.(async (plugins) => {
           const [{default: esbuild}, {getRollupNodePlugins}] =
             await Promise.all([
@@ -60,83 +63,25 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
       });
     },
     build({project, configure}) {
-      configure((configuration) => {
-        const {
-          extensions,
-          babelPresets,
-          babelPlugins,
-          babelTargets,
-          babelExtensions,
-          quiltWorkerRollupPlugins,
-          quiltWorkerRollupPublicPath,
-          quiltWorkerRollupOutputOptions,
-        } = configuration;
+      configure((configuration, options) => {
+        const {quiltWorkerRollupPublicPath, quiltWorkerRollupOutputOptions} =
+          configuration;
 
-        quiltWorkerRollupOutputOptions?.((options) => {
-          options.dir = project.fs.buildPath('assets');
-          return options;
+        quiltWorkerRollupOutputOptions?.((outputOptions) => {
+          const browserTargets = options.quiltBrowserTargets;
+          const targetFilenamePart = browserTargets
+            ? `.${browserTargets.name}`
+            : '';
+
+          outputOptions.dir = project.fs.buildPath('assets');
+          outputOptions.entryFileNames = `[name]${targetFilenamePart}.[hash].js`;
+          outputOptions.assetFileNames = `[name]${targetFilenamePart}.[hash].[ext]`;
+          outputOptions.chunkFileNames = `[name]${targetFilenamePart}.[hash].js`;
+
+          return outputOptions;
         });
 
         quiltWorkerRollupPublicPath?.(() => baseUrl);
-
-        quiltWorkerRollupPlugins?.(async (plugins) => {
-          const [
-            {babel},
-            {getRollupNodePlugins},
-            targets,
-            baseExtensions,
-            babelPresetsOption,
-            babelPluginsOption,
-          ] = await Promise.all([
-            import('@rollup/plugin-babel'),
-            import('@quilted/sewing-kit-rollup'),
-            babelTargets!.run([]),
-            extensions.run(['.mjs', '.cjs', '.js']),
-            babelPresets!.run([]),
-            babelPlugins!.run([]),
-          ]);
-
-          const finalExtensions = await babelExtensions!.run(baseExtensions);
-
-          const nodePlugins = await getRollupNodePlugins(
-            project,
-            configuration,
-          );
-
-          plugins.unshift(...nodePlugins);
-
-          plugins.push(
-            babel({
-              envName: 'production',
-              extensions: finalExtensions,
-              exclude: 'node_modules/**',
-              babelHelpers: 'bundled',
-              configFile: false,
-              babelrc: false,
-              skipPreflightCheck: true,
-              // @ts-expect-error Babel types have not been updated yet
-              targets,
-              presets: babelPresetsOption,
-              plugins: babelPluginsOption,
-            }),
-            babel({
-              envName: 'production',
-              extensions: ['.esnext'],
-              include: /\.esnext$/,
-              exclude: [],
-              babelHelpers: 'bundled',
-              configFile: false,
-              babelrc: false,
-              skipPreflightCheck: true,
-              // @ts-expect-error Babel types have not been updated yet
-              targets,
-              presets: babelPresetsOption,
-              plugins: babelPluginsOption,
-            }),
-          );
-
-          return plugins;
-        });
       });
     },
   });

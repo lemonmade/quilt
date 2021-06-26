@@ -75,17 +75,12 @@ export function workers({
   outputOptions = {},
 }: Options = {}): Plugin {
   let parentInputOptions: InputOptions;
-  let parentOutputOptions: OutputOptions;
   const workerMap = new Map<string, OutputChunk>();
 
   return {
     name: '@quilted/workers',
-    buildStart(options) {
-      parentInputOptions = options;
-    },
-    outputOptions(options) {
-      parentOutputOptions = options;
-      return options;
+    buildStart(inputOptions) {
+      parentInputOptions = inputOptions;
     },
     async resolveId(source, importer) {
       if (!source.startsWith(PREFIX)) return null;
@@ -157,7 +152,6 @@ export function workers({
           : baseInputOptions;
 
       const baseOutputOptions: OutputOptions = {
-        ...parentOutputOptions,
         format: 'iife',
         inlineDynamicImports: true,
       };
@@ -165,7 +159,7 @@ export function workers({
       const workerOutputOptions =
         typeof outputOptions === 'function'
           ? await outputOptions(baseOutputOptions, workerContext)
-          : baseOutputOptions;
+          : {...baseOutputOptions, ...outputOptions};
 
       const shouldWrite =
         typeof write === 'function' ? await write(workerContext) : write;
@@ -205,7 +199,7 @@ export function workers({
         });
 
         if (returnedPublicPath) {
-          resolvedPublicPath = returnedPublicPath;
+          resolvedPublicPath = posix.join(returnedPublicPath, filename);
         }
       }
 
@@ -215,9 +209,9 @@ export function workers({
       // We already wrote the chunks, no need to do it again I think?
       if (write) return;
 
-      for (const [workerId, chunk] of workerMap) {
-        if (workerId in bundle) continue;
-        bundle[workerId] = chunk;
+      for (const chunk of workerMap.values()) {
+        if (chunk.fileName in bundle) continue;
+        bundle[chunk.fileName] = chunk;
       }
     },
   };

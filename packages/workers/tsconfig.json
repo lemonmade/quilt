@@ -10,6 +10,7 @@
   "references": [
     {"path": "../sewing-kit"},
     {"path": "../sewing-kit-babel"},
-    {"path": "../sewing-kit-rollup"}
+    {"path": "../sewing-kit-rollup"},
+    {"path": "../sewing-kit-vite"}
   ]
 }
