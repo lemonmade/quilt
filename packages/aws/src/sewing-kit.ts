@@ -9,7 +9,12 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
   return createProjectPlugin<App | Service>({
     name: 'Quilt.AWS.Lambda',
     build({configure}) {
-      configure(({quiltHttpHandlerRuntimeContent}) => {
+      configure(({rollupExternals, quiltHttpHandlerRuntimeContent}) => {
+        rollupExternals?.((externals) => {
+          externals.push('aws-sdk');
+          return externals;
+        });
+
         quiltHttpHandlerRuntimeContent?.(
           () => stripIndent`
             import HttpHandler from ${JSON.stringify(
@@ -21,12 +26,6 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             export const ${handlerName} = createLambdaApiGatewayProxy(HttpHandler);
           `,
         );
-
-        // TODO
-        // configure.rollupExternal?.hook((externals) => [
-        //   ...(Array.isArray(externals) ? externals : [externals as any]),
-        //   'aws-sdk',
-        // ]);
       });
     },
   });
