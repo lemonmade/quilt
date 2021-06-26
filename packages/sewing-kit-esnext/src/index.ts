@@ -127,6 +127,7 @@ export function esnext() {
       configure(
         ({
           vitePlugins,
+          viteConfig,
           viteResolveExportConditions,
           rollupPlugins,
           rollupNodeExportConditions,
@@ -150,11 +151,11 @@ export function esnext() {
             return [
               ...plugins,
               esbuild({
-                include: '**/*.esnext',
+                include: /\.esnext$/,
                 // Forces this to run on node_modules
                 exclude: [],
                 loaders: {
-                  '.esnext': 'js',
+                  '.esnext': 'jsx',
                 },
               }),
             ];
@@ -166,11 +167,11 @@ export function esnext() {
             return [
               ...plugins,
               esbuild({
-                include: '**/*.esnext',
+                include: /\.esnext$/,
                 // Forces this to run on node_modules
                 exclude: [],
                 loaders: {
-                  '.esnext': 'js',
+                  '.esnext': 'jsx',
                 },
               }),
             ];

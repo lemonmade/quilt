@@ -161,6 +161,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
             rollupInput,
             rollupInputOptions,
             rollupPlugins,
+            rollupNodeBundle,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -178,6 +179,9 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
             options.preserveEntrySignatures = false;
             return options;
           });
+
+          // We will let node_modules be imported normally
+          rollupNodeBundle?.(() => false);
 
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
