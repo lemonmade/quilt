@@ -1,10 +1,10 @@
 {
   "name": "example-complete",
   "type": "module",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "private": true,
   "dependencies": {
-    "@quilted/quilt": "^0.5.25"
+    "@quilted/quilt": "^0.5.26"
   },
   "browserslist": {
     "defaults": [

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-async",
   "type": "module",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -48,10 +48,10 @@
     }
   },
   "dependencies": {
-    "@quilted/async": "^0.3.5",
-    "@quilted/react-html": "^0.3.10",
-    "@quilted/react-server-render": "^0.3.2",
-    "@quilted/use-subscription": "^0.2.2"
+    "@quilted/async": "^0.3.6",
+    "@quilted/react-html": "^0.3.11",
+    "@quilted/react-server-render": "^0.3.3",
+    "@quilted/use-subscription": "^0.2.3"
   },
   "eslintConfig": {
     "extends": [
