@@ -66,7 +66,7 @@ export function createHttpRequestListener(
         ),
       );
 
-      response.write(resultBody);
+      if (resultBody != null) response.write(resultBody);
       response.end();
     } catch {
       response.writeHead(500);
