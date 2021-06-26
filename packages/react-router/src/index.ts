@@ -1,12 +1,6 @@
 export type {NavigateTo, EnhancedURL} from '@quilted/routing';
 
-export {
-  Link,
-  Router,
-  Redirect,
-  Prefetcher,
-  NavigationBlock,
-} from './components';
+export {Link, Router, Redirect, Preloader, NavigationBlock} from './components';
 export {InitialUrlContext} from './context';
 export {
   useRoutes,

@@ -2,9 +2,9 @@ import {memo, useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {useRouter} from '../hooks';
-import {PrefetcherContext} from '../context';
-import {createPrefetcher} from '../prefetcher';
-import type {PrefetchMatch} from '../prefetcher';
+import {PreloaderContext} from '../context';
+import {createPreloader} from '../preloader';
+import type {PreloadMatch} from '../preloader';
 
 import {EventListener} from './EventListener';
 
@@ -14,23 +14,23 @@ interface NavigatorWithConnection {
 
 export const INTENTION_DELAY_MS = 150;
 
-export const Prefetcher = memo(function Prefetcher({
+export const Preloader = memo(function Preloader({
   children,
 }: // eslint-disable-next-line @typescript-eslint/ban-types
 PropsWithChildren<{}>) {
   const router = useRouter();
-  const prefetcher = useMemo(() => createPrefetcher(router), [router]);
+  const preloader = useMemo(() => createPreloader(router), [router]);
 
   const [url, setUrl] = useState<null | URL>(null);
-  const [prefetchMatches, setPrefetchMatches] = useState<PrefetchMatch[]>([]);
+  const [preloadMatches, setPreloadMatches] = useState<PreloadMatch[]>([]);
   const timeout = useRef<number | null>(null);
   const timeoutUrl = useRef<URL | null>(null);
-  const {current: prefetchAggressively} = useRef(shouldPrefetchAggressively());
+  const {current: preloadAggressively} = useRef(shouldPreloadAggressively());
 
   useEffect(() => {
     if (url == null) return;
-    return prefetcher.listenForMatch(url, setPrefetchMatches);
-  }, [prefetcher, url]);
+    return preloader.listenForMatch(url, setPreloadMatches);
+  }, [preloader, url]);
 
   const clearTimeout = () => {
     if (timeout.current != null) {
@@ -64,10 +64,10 @@ PropsWithChildren<{}>) {
       timeout.current = window.setTimeout(() => {
         clearTimeout();
         setUrl(url);
-        setPrefetchMatches(prefetcher.getMatches(url));
+        setPreloadMatches(preloader.getMatches(url));
       }, INTENTION_DELAY_MS);
     },
-    [prefetcher],
+    [preloader],
   );
 
   const handleMouseLeave = useCallback(
@@ -94,7 +94,7 @@ PropsWithChildren<{}>) {
 
       if (urlsEqual(closestUrl, url) && !urlsEqual(relatedUrl, url)) {
         setUrl(null);
-        setPrefetchMatches([]);
+        setPreloadMatches([]);
       }
     },
     [url],
@@ -112,21 +112,21 @@ PropsWithChildren<{}>) {
 
       if (url != null) {
         setUrl(url);
-        setPrefetchMatches(prefetcher.getMatches(url));
+        setPreloadMatches(preloader.getMatches(url));
       }
     },
-    [prefetcher],
+    [preloader],
   );
 
   const preloadMarkup = url ? (
     <div style={{visibility: 'hidden'}}>
-      {prefetchMatches.map(({id, matched, render}) => {
+      {preloadMatches.map(({id, matched, render}) => {
         return <div key={id}>{render({url, matched})}</div>;
       })}
     </div>
   ) : null;
 
-  const expensiveListeners = prefetchAggressively ? (
+  const expensiveListeners = preloadAggressively ? (
     <>
       <EventListener passive event="mouseover" handler={handleMouseOver} />
       <EventListener passive event="focusin" handler={handleMouseOver} />
@@ -137,9 +137,9 @@ PropsWithChildren<{}>) {
 
   return (
     <>
-      <PrefetcherContext.Provider value={prefetcher}>
+      <PreloaderContext.Provider value={preloader}>
         {children}
-      </PrefetcherContext.Provider>
+      </PreloaderContext.Provider>
       <EventListener passive event="mousedown" handler={handleMouseDown} />
       {expensiveListeners}
       {preloadMarkup}
@@ -147,7 +147,7 @@ PropsWithChildren<{}>) {
   );
 });
 
-function shouldPrefetchAggressively() {
+function shouldPreloadAggressively() {
   return (
     typeof navigator === 'undefined' ||
     !('connection' in navigator) ||

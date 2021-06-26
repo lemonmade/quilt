@@ -4,38 +4,38 @@ import type {RouteDefinition} from './types';
 import type {Router} from './router';
 import {getMatchDetails} from './utilities';
 
-interface PrefetchRegistration {
+interface PreloadRegistration {
   id: string;
   matches: Match[];
-  render: NonNullable<RouteDefinition['renderPrefetch']>;
+  render: NonNullable<RouteDefinition['renderPreload']>;
 }
 
-export interface PrefetchMatch {
+export interface PreloadMatch {
   id: string;
   matched: string;
-  render: NonNullable<RouteDefinition['renderPrefetch']>;
+  render: NonNullable<RouteDefinition['renderPreload']>;
 }
 
-export interface Prefetcher {
+export interface Preloader {
   registerRoutes(
     routes: RouteDefinition[],
     consumed?: string,
   ): (routes: RouteDefinition[], consumed?: string) => void;
   listenForMatch(
     url: URL,
-    onMatch: (matches: PrefetchMatch[]) => void,
+    onMatch: (matches: PreloadMatch[]) => void,
   ): () => void;
-  getMatches(url: URL): PrefetchMatch[];
+  getMatches(url: URL): PreloadMatch[];
 }
 
-export function createPrefetcher(router: Router): Prefetcher {
+export function createPreloader(router: Router): Preloader {
   let currentId = 0;
   const listeners = new Set<() => void>();
-  const registered = new Set<PrefetchRegistration>();
+  const registered = new Set<PreloadRegistration>();
 
   return {
     registerRoutes(routes, consumed) {
-      const registrationsByKey = new Map<string, PrefetchRegistration>();
+      const registrationsByKey = new Map<string, PreloadRegistration>();
 
       update(routes, consumed);
 
@@ -49,11 +49,11 @@ export function createPrefetcher(router: Router): Prefetcher {
           route: RouteDefinition,
           parentMatches: Match[] = [],
         ) {
-          const {children, match, renderPrefetch} = route;
+          const {children, match, renderPreload} = route;
 
           const matches = match ? [...parentMatches, match] : parentMatches;
 
-          if (renderPrefetch != null) {
+          if (renderPreload != null) {
             const registrationKey = `Registration:${newConsumed ?? ''}:${matches
               .map((match) => stringifyMatch(match))
               .join(',')}`;
@@ -65,17 +65,17 @@ export function createPrefetcher(router: Router): Prefetcher {
             if (currentRegistration == null) {
               needsUpdate = true;
 
-              const registration: PrefetchRegistration = {
+              const registration: PreloadRegistration = {
                 id: createId(),
                 matches,
-                render: renderPrefetch,
+                render: renderPreload,
               };
 
               registered.add(registration);
               registrationsByKey.set(registrationKey, registration);
-            } else if (currentRegistration.render !== renderPrefetch) {
+            } else if (currentRegistration.render !== renderPreload) {
               needsUpdate = true;
-              currentRegistration.render = renderPrefetch;
+              currentRegistration.render = renderPreload;
             }
           }
 
@@ -118,7 +118,7 @@ export function createPrefetcher(router: Router): Prefetcher {
   };
 
   function getMatches(url: URL) {
-    const matches: PrefetchMatch[] = [];
+    const matches: PreloadMatch[] = [];
 
     for (const registration of registered) {
       const urlMatch = getUrlMatch(url, router, registration.matches);
@@ -142,7 +142,7 @@ export function createPrefetcher(router: Router): Prefetcher {
   }
 
   function createId() {
-    return `Prefetch${currentId++}`;
+    return `Preload${currentId++}`;
   }
 }
 

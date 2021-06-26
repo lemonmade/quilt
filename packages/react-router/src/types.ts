@@ -22,7 +22,7 @@ export interface RouteRenderDetails {
   children?: ReactNode;
 }
 
-export interface RouteRenderPrefetchDetails {
+export interface RouteRenderPreloadDetails {
   url: URL;
   matched: string;
 }
@@ -32,5 +32,5 @@ export interface RouteDefinition {
   children?: RouteDefinition[];
   redirect?: NavigateTo;
   render?(details: RouteRenderDetails): ReactNode;
-  renderPrefetch?(details: RouteRenderPrefetchDetails): ReactNode;
+  renderPreload?(details: RouteRenderPreloadDetails): ReactNode;
 }

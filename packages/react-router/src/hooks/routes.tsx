@@ -6,10 +6,10 @@ import {NotFound} from '@quilted/react-http';
 import type {NavigateTo} from '@quilted/routing';
 
 import type {EnhancedURL, RouteDefinition} from '../types';
-import {PrefetcherContext, ConsumedPathContext} from '../context';
+import {PreloaderContext, ConsumedPathContext} from '../context';
 import {getMatchDetails} from '../utilities';
 import type {Router} from '../router';
-import type {Prefetcher} from '../prefetcher';
+import type {Preloader} from '../preloader';
 
 import {useRedirect} from './redirect';
 import {useCurrentUrl} from './url';
@@ -28,7 +28,7 @@ export function useRoutes(
   const currentUrl = useCurrentUrl();
   const consumedPath = useConsumedPath();
 
-  useRoutePrefetchRegistration(routes, consumedPath);
+  useRoutePreloadRegistration(routes, consumedPath);
 
   return (
     <RoutesInternal
@@ -41,39 +41,39 @@ export function useRoutes(
   );
 }
 
-function useRoutePrefetchRegistration(
+function useRoutePreloadRegistration(
   routes: RouteDefinition[],
   consumedPath?: string,
 ) {
-  const prefetcher = useContext(PrefetcherContext) ?? undefined;
+  const preloader = useContext(PreloaderContext) ?? undefined;
 
   const internals = useRef<{
-    prefetcher?: Prefetcher;
-    onChange?: ReturnType<Prefetcher['registerRoutes']>;
-  }>({prefetcher});
+    preloader?: Preloader;
+    onChange?: ReturnType<Preloader['registerRoutes']>;
+  }>({preloader});
 
   useEffect(() => {
-    if (prefetcher !== internals.current.prefetcher) {
+    if (preloader !== internals.current.preloader) {
       internals.current.onChange?.([]);
-      internals.current.prefetcher = prefetcher;
+      internals.current.preloader = preloader;
       delete internals.current.onChange;
     }
 
-    if (prefetcher == null) return;
+    if (preloader == null) return;
 
     let onChange = internals.current.onChange;
 
     if (onChange) {
       onChange(routes, consumedPath);
     } else {
-      onChange = prefetcher.registerRoutes(routes, consumedPath);
+      onChange = preloader.registerRoutes(routes, consumedPath);
       internals.current.onChange = onChange;
     }
 
     return () => {
       onChange?.([]);
     };
-  }, [prefetcher, routes, consumedPath]);
+  }, [preloader, routes, consumedPath]);
 }
 
 interface Props {

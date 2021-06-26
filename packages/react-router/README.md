@@ -1,6 +1,6 @@
 # `@quilted/react-router`
 
-A universal router for React with first-class support for the [WHATWG `URL`](https://developer.mozilla.org/en-US/docs/Web/API/URL) and prefetching.
+A universal router for React with first-class support for the [WHATWG `URL`](https://developer.mozilla.org/en-US/docs/Web/API/URL) and preloading.
 
 ## Installation
 
@@ -71,21 +71,21 @@ The `Router` component accepts the following props:
   }
   ```
 
-### `<Prefetcher />`
+### `<Preloader />`
 
-An important feature of this library is being able to register components to render when the user looks like they are about to navigate to a particular route. You register these “prefetch” operations alongside your [route definitions](#useRoutes), but the `Prefetcher` component is the one that is responsible for actually tracking the route the user intends to navigate to, and rendering the appropriate “prefetches”.
+An important feature of this library is being able to register components to render when the user looks like they are about to navigate to a particular route. You register these preload operations alongside your [route definitions](#useRoutes), but the `Preloader` component is the one that is responsible for actually tracking the route the user intends to navigate to, and rendering the appropriate “preloads”.
 
-The `Prefetcher` works by listening for mouse and touch events on elements with an `href` attribute (or `data-href`, for rare cases where you can’t use actual links for some navigation elements), figuring out which routes would match that URL, and rendering a component that can start prefetching assets or data for the route, using the [`renderPrefetch` option of `useRoutes`](#useRoutes).
+The `Preloader` works by listening for mouse and touch events on elements with an `href` attribute (or `data-href`, for rare cases where you can’t use actual links for some navigation elements), figuring out which routes would match that URL, and rendering a component that can start prefetching assets or data for the route, using the [`renderPreload` option of `useRoutes`](#useRoutes).
 
-This capability is not provided by the `Router` because it requires a fair chunk of code to work, and not every application needs these capabilities. If you do want route-based prefetching to work, you’ll need to render the `Prefetcher` component as a child of the `Router`:
+This capability is not provided by the `Router` because it requires a fair chunk of code to work, and not every application needs these capabilities. If you do want route-based preloading to work, you’ll need to render the `Preloader` component as a child of the `Router`:
 
 ```tsx
-import {Router, Prefetcher} from '@quilted/react-router';
+import {Router, Preloader} from '@quilted/react-router';
 
 function App() {
   return (
     <Router>
-      <Prefetcher>{/* rest of app goes here... */}</Prefetcher>
+      <Preloader>{/* rest of app goes here... */}</Preloader>
     </Router>
   );
 }
@@ -253,34 +253,32 @@ function App() {
 }
 ```
 
-#### `renderPrefetch`
+#### `renderPreload`
 
-This field lets you register a component to render when the user looks like they are about to navigate to this route. The intention is that this component will kick off any data fetching required for that route in such a way that the route will be able to reuse that data on mount, reducing the cost of deferring assets and data per route. In order for this route-based prefetching to work, you must render the [`Prefetcher` component in your application](#Prefetcher).
+This field lets you register a component to render when the user looks like they are about to navigate to this route. The intention is that this component will kick off any data fetching required for that route in such a way that the route will be able to reuse that data on mount, reducing the cost of deferring assets and data per route. In order for this route-based preloading to work, you must render the [`Preloader` component in your application](#Preloader).
 
-The following example shows a component created by [`@quilted/react-async`](../react-async) that is rendered for `/products`, and prefetched when the user is about to navigate to that route:
+The following example shows a component created by [`@quilted/react-async`](../react-async) that is rendered for `/products`, and preloaded when the user is about to navigate to that route:
 
 ```tsx
 import {useRoutes} from '@quilted/react-router';
 import {createAsyncComponent} from '@quilted/react-async';
 
-const Products = createAsyncComponent({
-  load: () => import('./Products'),
-});
+const Products = createAsyncComponent(() => import('./Products'));
 
 // Remember, you need to render this under **both** a <Router /> and
-// <Prefetcher /> to get routing and route-based prefetching.
+// <Preloader /> to get routing and route-based preloading.
 function App() {
   return useRoutes([
     {
       match: 'products',
       render: () => <Products />,
-      renderPrefetch: () => <Products.Prefetch />,
+      renderPreload: () => <Products.Preload />,
     },
   ]);
 }
 ```
 
-The `renderPrefetch` function is called with a `url` option, which will be a `URL` object representing the URL the user is about to navigate to, and a `matched` option, which provides the part of the URL that matched for only this route (this is identical to the `matched` option provided to [`render()`](#render)).
+The `renderPreload` function is called with a `url` option, which will be a `URL` object representing the URL the user is about to navigate to, and a `matched` option, which provides the part of the URL that matched for only this route (this is identical to the `matched` option provided to [`render()`](#render)).
 
 ```tsx
 import {useRoutes} from '@quilted/react-router';
@@ -298,9 +296,7 @@ function App() {
         {
           match: /\d+/,
           render: ({matched}) => <ProductDetails id={matched} />,
-          renderPrefetch: ({matched}) => (
-            <ProductDetails.Prefetch id={matched} />
-          ),
+          renderPreload: ({matched}) => <ProductDetails.Preload id={matched} />,
         },
       ],
     },
