@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {spawn} from 'child_process';
 import type {ChildProcess} from 'child_process';
 
@@ -158,6 +159,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
           {
             runtime,
             rollupInput,
+            rollupInputOptions,
             rollupPlugins,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
@@ -171,6 +173,11 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
           runtime?.(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
+
+          rollupInputOptions?.((options) => {
+            options.preserveEntrySignatures = false;
+            return options;
+          });
 
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
@@ -294,7 +301,11 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
 
             const watcher = watch({
               ...inputOptions,
-              output: {format: 'esm', file},
+              output: {
+                format: 'esm',
+                dir: path.dirname(file),
+                entryFileNames: path.basename(file),
+              },
             });
 
             watcher.on('event', (event) => {
