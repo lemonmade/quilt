@@ -17,10 +17,16 @@
       "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
+    },
+    "./resolver.cjs": {
+      "require": "./resolver.cjs"
     }
   },
   "typesVersions": {
     ">=1": {
+      "resolver": [
+        "./build/typescript/resolver.d.ts"
+      ],
       "*": [
         "./build/typescript/index.d.ts"
       ]
@@ -29,6 +35,7 @@
   "sideEffects": false,
   "dependencies": {
     "@types/jest": "^26.0.0",
+    "enhanced-resolve": "^5.8.0",
     "jest": "^27.0.0",
     "jest-config": "^27.0.5",
     "jest-watch-typeahead": "^0.6.0"
