@@ -59,6 +59,11 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             for (const output of outputs) {
               output.format = 'commonjs';
               output.exports = 'named';
+              output.esModule = false;
+
+              output.entryFileNames = ensureJsExtension(output.entryFileNames);
+              output.chunkFileNames = ensureJsExtension(output.chunkFileNames);
+              output.assetFileNames = ensureJsExtension(output.assetFileNames);
             }
 
             return outputs;
@@ -67,4 +72,9 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
       );
     },
   });
+}
+
+function ensureJsExtension<T>(file?: T) {
+  if (typeof file !== 'string') return file;
+  return file.replace(/\.[mc]js$/, '.js');
 }
