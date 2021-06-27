@@ -9,10 +9,11 @@ import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
 const ALIASES = {
   'react/jsx-runtime': 'preact/jsx-runtime',
+  // Preact does not have a jsx-dev-runtime
+  'react/jsx-dev-runtime': 'preact/jsx-runtime',
   react: '@quilted/preact-mini-compat',
   'react-dom/server': 'preact/compat/server',
   'react-dom': '@quilted/preact-mini-compat',
-  'preact/jsx-dev-runtime': 'preact/jsx-runtime',
 };
 
 export function preact() {
