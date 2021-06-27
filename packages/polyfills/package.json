@@ -1,7 +1,7 @@
 {
   "name": "@quilted/polyfills",
   "type": "module",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "repository": {
     "type": "git",
     "url": "https://github.com/facebook/react.git",

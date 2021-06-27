@@ -1,7 +1,7 @@
 {
   "name": "@quilted/cloudflare",
   "type": "module",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -45,7 +45,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http-handlers": "^0.2.9",
+    "@quilted/http-handlers": "^0.2.10",
     "mime": "^2.5.0"
   },
   "peerDependencies": {

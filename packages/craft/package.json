@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.34",
+  "version": "0.1.35",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -38,8 +38,8 @@
     "@quilted/sewing-kit-babel": "^0.1.6",
     "@quilted/sewing-kit-eslint": "^0.1.4",
     "@quilted/sewing-kit-esnext": "^0.1.14",
-    "@quilted/sewing-kit-jest": "^0.1.5",
-    "@quilted/sewing-kit-package": "^0.1.7",
+    "@quilted/sewing-kit-jest": "^0.1.6",
+    "@quilted/sewing-kit-package": "^0.1.8",
     "@quilted/sewing-kit-prettier": "^0.1.4",
     "@quilted/sewing-kit-react": "^0.1.4",
     "@quilted/sewing-kit-rollup": "^0.1.6",
