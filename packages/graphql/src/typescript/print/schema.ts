@@ -1,5 +1,4 @@
 import * as t from '@babel/types';
-import generate from '@babel/generator';
 import {
   isEnumType,
   isScalarType,
@@ -23,6 +22,7 @@ import type {
 
 import type {SchemaOutputKind} from '../types';
 
+import generate from './generate';
 import {scalarTypeMap} from './utilities';
 
 export interface ScalarDefinition {

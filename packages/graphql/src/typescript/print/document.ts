@@ -19,7 +19,6 @@ import type {
   OperationDefinitionNode,
   FragmentDefinitionNode,
 } from 'graphql';
-import generate from '@babel/generator';
 
 import type {
   DocumentDetails,
@@ -36,6 +35,7 @@ import {
   getSelectionTypeMap,
 } from '../../utilities/ast';
 
+import generate from './generate';
 import {scalarTypeMap} from './utilities';
 
 interface Options {
