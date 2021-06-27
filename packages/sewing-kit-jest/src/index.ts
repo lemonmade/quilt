@@ -55,6 +55,8 @@ declare module '@quilted/sewing-kit' {
   interface TestWorkspaceConfigurationHooks extends JestWorkspaceHooks {}
 }
 
+const RESOLVER_MODULE = '@quilted/sewing-kit-jest/resolver.cjs';
+
 /**
  * Adds a collection of hooks to the workspace and all its projects
  * for running Jest, and configures Jest to run for this workspace.
@@ -203,6 +205,7 @@ export function jest() {
                 setupFilesAfterEnv: setupTestsFiles,
                 watchPathIgnorePatterns: watchIgnore,
                 transform,
+                resolver: RESOLVER_MODULE,
                 cacheDirectory: internal.fs.tempPath('jest/cache/workspace'),
               });
 
@@ -289,6 +292,7 @@ export function jest() {
                     setupFilesAfterEnv: setupTestsFiles,
                     watchPathIgnorePatterns: watchIgnore,
                     transform,
+                    resolver: RESOLVER_MODULE,
                     cacheDirectory: internal.fs.tempPath(
                       'jest/cache',
                       project.name,
