@@ -17,6 +17,8 @@ export function Favicon({empty, emoji, type, source}: Props) {
     resolvedSource = 'data:image';
   } else if (emoji) {
     // Hat tip: https://twitter.com/LeaVerou/status/1241619866475474946
+    // This doesn’t work perfectly because of the way React escapes the attribute,
+    // but most browsers handle it fine.
     resolvedSource = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>${emoji}</text></svg>`;
   } else {
     resolvedSource = source!;
