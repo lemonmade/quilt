@@ -13,6 +13,11 @@ import type {} from '@quilted/sewing-kit-rollup';
 import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
 export const EXPORT_CONDITION = 'sewing-kit:esnext';
+// Some older packages published with sewing-kit use this condition name,
+// so we support it too (even though it's a bit dangerous, given how generic
+// the name is).
+export const LEGACY_EXPORT_CONDITION = 'esnext';
+
 const EXTENSION = '.esnext';
 
 declare module '@quilted/sewing-kit' {
@@ -138,12 +143,24 @@ export function esnext() {
         >) => {
           // Prefer the esnext export condition
           rollupNodeExportConditions?.((exportConditions) =>
-            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+            Array.from(
+              new Set([
+                EXPORT_CONDITION,
+                LEGACY_EXPORT_CONDITION,
+                ...exportConditions,
+              ]),
+            ),
           );
 
           // Prefer the esnext export condition
           viteResolveExportConditions?.((exportConditions) =>
-            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+            Array.from(
+              new Set([
+                EXPORT_CONDITION,
+                LEGACY_EXPORT_CONDITION,
+                ...exportConditions,
+              ]),
+            ),
           );
 
           // Add the ESBuild plugin to process .esnext files like source code
@@ -192,7 +209,13 @@ export function esnext() {
         }) => {
           // Prefer the esnext export condition
           rollupNodeExportConditions?.((exportConditions) =>
-            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+            Array.from(
+              new Set([
+                EXPORT_CONDITION,
+                LEGACY_EXPORT_CONDITION,
+                ...exportConditions,
+              ]),
+            ),
           );
 
           // Add the Babel plugin to process .esnext files like source code
