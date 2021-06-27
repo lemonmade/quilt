@@ -15,31 +15,38 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./dom": {
       "sewing-kit:esnext": "./build/esnext/implementations/react-dom.esnext",
-      "import": "./build/esm/implementations/react-dom.mjs"
+      "import": "./build/esm/implementations/react-dom.mjs",
+      "require": "./build/cjs/implementations/react-dom.cjs"
     },
     "./dom-matchers": {
       "sewing-kit:esnext": "./build/esnext/matchers/dom.esnext",
-      "import": "./build/esm/matchers/dom.mjs"
+      "import": "./build/esm/matchers/dom.mjs",
+      "require": "./build/cjs/matchers/dom.cjs"
     },
     "./matchers": {
       "sewing-kit:esnext": "./build/esnext/matchers/index.esnext",
-      "import": "./build/esm/matchers/index.mjs"
+      "import": "./build/esm/matchers/index.mjs",
+      "require": "./build/cjs/matchers/index.cjs"
     },
     "./preact": {
       "sewing-kit:esnext": "./build/esnext/implementations/preact.esnext",
-      "import": "./build/esm/implementations/preact.mjs"
+      "import": "./build/esm/implementations/preact.mjs",
+      "require": "./build/cjs/implementations/preact.cjs"
     },
     "./environment": {
       "sewing-kit:esnext": "./build/esnext/implementations/environment.esnext",
-      "import": "./build/esm/implementations/environment.mjs"
+      "import": "./build/esm/implementations/environment.mjs",
+      "require": "./build/cjs/implementations/environment.cjs"
     },
     "./sewing-kit": {
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs"
+      "import": "./build/esm/sewing-kit.mjs",
+      "require": "./build/cjs/sewing-kit.cjs"
     }
   },
   "typesVersions": {

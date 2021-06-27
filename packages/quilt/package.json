@@ -15,35 +15,43 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./server": {
       "sewing-kit:esnext": "./build/esnext/server/index.esnext",
-      "import": "./build/esm/server/index.mjs"
+      "import": "./build/esm/server/index.mjs",
+      "require": "./build/cjs/server/index.cjs"
     },
     "./html": {
       "sewing-kit:esnext": "./build/esnext/html.esnext",
-      "import": "./build/esm/html.mjs"
+      "import": "./build/esm/html.mjs",
+      "require": "./build/cjs/html.cjs"
     },
     "./email": {
       "sewing-kit:esnext": "./build/esnext/email.esnext",
-      "import": "./build/esm/email.mjs"
+      "import": "./build/esm/email.mjs",
+      "require": "./build/cjs/email.cjs"
     },
     "./global": {
       "sewing-kit:esnext": "./build/esnext/global.esnext",
-      "import": "./build/esm/global.mjs"
+      "import": "./build/esm/global.mjs",
+      "require": "./build/cjs/global.cjs"
     },
     "./http": {
       "sewing-kit:esnext": "./build/esnext/http.esnext",
-      "import": "./build/esm/http.mjs"
+      "import": "./build/esm/http.mjs",
+      "require": "./build/cjs/http.cjs"
     },
     "./testing": {
       "sewing-kit:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs"
+      "import": "./build/esm/testing.mjs",
+      "require": "./build/cjs/testing.cjs"
     },
     "./matchers": {
       "sewing-kit:esnext": "./build/esnext/matchers.esnext",
-      "import": "./build/esm/matchers.mjs"
+      "import": "./build/esm/matchers.mjs",
+      "require": "./build/cjs/matchers.cjs"
     }
   },
   "typesVersions": {

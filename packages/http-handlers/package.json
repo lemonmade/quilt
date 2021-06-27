@@ -15,11 +15,13 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./node": {
       "sewing-kit:esnext": "./build/esnext/node.esnext",
-      "import": "./build/esm/node.mjs"
+      "import": "./build/esm/node.mjs",
+      "require": "./build/cjs/node.cjs"
     }
   },
   "typesVersions": {

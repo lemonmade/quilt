@@ -17,6 +17,22 @@ declare module '@quilted/sewing-kit' {
 }
 
 export interface Options {
+  /**
+   * Whether to build a CommonJS version of this library. This build
+   * will be placed in `./build/cjs`; you’ll need to add a `require`
+   * export condition to your `package.json` that points at these files
+   * for each entry.
+   *
+   * Instead of a boolean, you can also pass an object with an `exports`
+   * field. Passing this value turns on the CommonJS build, and allows you
+   * to customize the way in which ES exports from your source files
+   * are turned into CommonJS.
+   *
+   * The default for this options is currently `true`, but it **will**
+   * be changed to `false` before release. It’s only `true` right now
+   * because Jest’s support for ES modules is not totally ready for
+   * prime-time.
+   */
   commonjs?: boolean | {exports?: 'named' | 'default'};
 }
 
@@ -31,7 +47,7 @@ const COMMONJS_EXTENSION = '.cjs';
  * `commonjs: true` to build a second version of your library that natively
  * supports `commonjs`.
  */
-export function packageBuild({commonjs = false}: Options = {}) {
+export function packageBuild({commonjs = true}: Options = {}) {
   return createProjectPlugin<Package>({
     name: 'SewingKit.PackageBuild',
     build({project, configure, run}) {

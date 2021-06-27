@@ -16,12 +16,14 @@
     ".": {
       "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./server": {
       "quilt:internal": "./src/server.ts",
       "sewing-kit:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs"
+      "import": "./build/esm/server.mjs",
+      "require": "./build/cjs/server.cjs"
     },
     "./babel": {
       "quilt:internal": "./src/babel-plugin.ts",
@@ -32,12 +34,14 @@
     "./rollup": {
       "quilt:internal": "./src/rollup-parts.ts",
       "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs"
+      "import": "./build/esm/rollup-parts.mjs",
+      "require": "./build/esm/cjs-parts.cjs"
     },
     "./sewing-kit": {
       "quilt:internal": "./src/sewing-kit.ts",
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs"
+      "import": "./build/esm/sewing-kit.mjs",
+      "require": "./build/esm/cjs-kit.cjs"
     }
   },
   "typesVersions": {

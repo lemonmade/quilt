@@ -16,7 +16,8 @@
     ".": {
       "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     }
   },
   "typesVersions": {

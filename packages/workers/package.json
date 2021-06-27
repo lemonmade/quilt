@@ -15,11 +15,13 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./worker": {
       "sewing-kit:esnext": "./build/esnext/worker.esnext",
-      "import": "./build/esm/worker.mjs"
+      "import": "./build/esm/worker.mjs",
+      "require": "./build/cjs/worker.cjs"
     },
     "./babel": {
       "sewing-kit:esnext": "./build/esnext/babel.esnext",
@@ -28,12 +30,14 @@
     },
     "./rollup": {
       "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs"
+      "import": "./build/esm/rollup-parts.mjs",
+      "require": "./build/cjs/rollup-parts.cjs"
     },
     "./sewing-kit": {
       "quilt:internal": "./src/sewing-kit.ts",
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs"
+      "import": "./build/esm/sewing-kit.mjs",
+      "require": "./build/cjs/sewing-kit.cjs"
     }
   },
   "typesVersions": {

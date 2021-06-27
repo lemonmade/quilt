@@ -15,15 +15,18 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./testing": {
       "sewing-kit:esnext": "./build/esnext/testing/index.esnext",
-      "import": "./build/esm/testing/index.mjs"
+      "import": "./build/esm/testing/index.mjs",
+      "require": "./build/cjs/testing/index.cjs"
     },
     "./server": {
       "sewing-kit:esnext": "./build/esnext/server/index.esnext",
-      "import": "./build/esm/server/index.mjs"
+      "import": "./build/esm/server/index.mjs",
+      "require": "./build/cjs/server/index.cjs"
     }
   },
   "typesVersions": {

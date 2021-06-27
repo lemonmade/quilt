@@ -15,36 +15,44 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./transform": {
       "sewing-kit:esnext": "./build/esnext/transform.esnext",
-      "import": "./build/esm/transform.mjs"
+      "import": "./build/esm/transform.mjs",
+      "require": "./build/cjs/transform.cjs"
     },
     "./typescript": {
       "sewing-kit:esnext": "./build/esnext/typescript/index.esnext",
-      "import": "./build/esm/typescript/index.mjs"
+      "import": "./build/esm/typescript/index.mjs",
+      "require": "./build/cjs/typescript/index.cjs"
     },
     "./fixtures": {
       "sewing-kit:esnext": "./build/esnext/fixtures/index.esnext",
-      "import": "./build/esm/fixtures/index.mjs"
+      "import": "./build/esm/fixtures/index.mjs",
+      "require": "./build/cjs/fixtures/index.cjs"
     },
     "./matchers": {
       "sewing-kit:esnext": "./build/esnext/matchers/index.esnext",
-      "import": "./build/esm/matchers/index.mjs"
+      "import": "./build/esm/matchers/index.mjs",
+      "require": "./build/cjs/matchers/index.cjs"
     },
     "./rollup": {
       "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs"
+      "import": "./build/esm/rollup-parts.mjs",
+      "require": "./build/cjs/rollup-parts.cjs"
     },
     "./jest": {
       "sewing-kit:esnext": "./build/esnext/jest-parts.esnext",
-      "import": "./build/esm/jest-parts.mjs"
+      "import": "./build/esm/jest-parts.mjs",
+      "require": "./build/cjs/jest-parts.cjs"
     },
     "./sewing-kit": {
       "quilt:internal": "./src/sewing-kit.ts",
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs"
+      "import": "./build/esm/sewing-kit.mjs",
+      "require": "./build/cjs/sewing-kit.cjs"
     }
   },
   "typesVersions": {
