@@ -15,35 +15,35 @@
   "exports": {
     ".": {
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/mjs/index.mjs"
+      "import": "./build/esm/index.mjs"
     },
     "./server": {
       "sewing-kit:esnext": "./build/esnext/server/index.esnext",
-      "import": "./build/mjs/server/index.mjs"
+      "import": "./build/esm/server/index.mjs"
     },
     "./html": {
       "sewing-kit:esnext": "./build/esnext/html.esnext",
-      "import": "./build/mjs/html.mjs"
+      "import": "./build/esm/html.mjs"
     },
     "./email": {
       "sewing-kit:esnext": "./build/esnext/email.esnext",
-      "import": "./build/mjs/email.mjs"
+      "import": "./build/esm/email.mjs"
     },
     "./global": {
       "sewing-kit:esnext": "./build/esnext/global.esnext",
-      "import": "./build/mjs/global.mjs"
+      "import": "./build/esm/global.mjs"
     },
     "./http": {
       "sewing-kit:esnext": "./build/esnext/http.esnext",
-      "import": "./build/mjs/http.mjs"
+      "import": "./build/esm/http.mjs"
     },
     "./testing": {
       "sewing-kit:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/mjs/testing.mjs"
+      "import": "./build/esm/testing.mjs"
     },
     "./matchers": {
       "sewing-kit:esnext": "./build/esnext/matchers.esnext",
-      "import": "./build/mjs/matchers.mjs"
+      "import": "./build/esm/matchers.mjs"
     }
   },
   "typesVersions": {
@@ -76,7 +76,7 @@
   },
   "sideEffects": [
     "./build/esnext/global.esnext",
-    "./build/mjs/global.mjs"
+    "./build/esm/global.mjs"
   ],
   "dependencies": {
     "@quilted/async": "^0.3.8",
