@@ -3168,7 +3168,7 @@ __metadata:
     "@quilted/sewing-kit-babel": ^0.1.6
     "@quilted/sewing-kit-eslint": ^0.1.4
     "@quilted/sewing-kit-esnext": ^0.1.14
-    "@quilted/sewing-kit-jest": ^0.1.6
+    "@quilted/sewing-kit-jest": ^0.1.7
     "@quilted/sewing-kit-package": ^0.1.8
     "@quilted/sewing-kit-prettier": ^0.1.4
     "@quilted/sewing-kit-react": ^0.1.4
@@ -3686,7 +3686,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/sewing-kit-jest@^0.1.6, @quilted/sewing-kit-jest@workspace:packages/sewing-kit-jest":
+"@quilted/sewing-kit-jest@^0.1.7, @quilted/sewing-kit-jest@workspace:packages/sewing-kit-jest":
   version: 0.0.0-use.local
   resolution: "@quilted/sewing-kit-jest@workspace:packages/sewing-kit-jest"
   dependencies:
