@@ -22,7 +22,7 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
         quiltWorkerWrite?.(() => true);
 
         quiltWorkerRollupOutputOptions?.((options) => {
-          options.dir = project.fs.resolvePath('vite/workers');
+          options.dir = project.fs.buildPath('vite/workers');
           return options;
         });
 
