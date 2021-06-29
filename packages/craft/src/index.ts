@@ -32,7 +32,10 @@ import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
 import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
-import type {AssetOptions as AppBuildAssetOptions} from './plugins/app-build';
+import type {
+  AssetOptions as AppBuildAssetOptions,
+  AppBrowserOptions,
+} from './plugins/app-build';
 import {appDevelop} from './plugins/app-develop';
 import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
@@ -74,7 +77,16 @@ export interface AppOptions {
   autoServer?: boolean;
   develop?: boolean | AppDevelopOptions;
   build?: boolean;
+
+  /**
+   * Customizes the assets created for your application.
+   */
   assets?: Partial<AppBuildAssetOptions>;
+
+  /**
+   * Customizes the browser entrypoint of your application.
+   */
+  browser?: AppBrowserOptions;
 }
 
 export function quiltApp({
@@ -83,6 +95,7 @@ export function quiltApp({
   develop = true,
   build = true,
   assets = {},
+  browser = {},
 }: AppOptions = {}) {
   const {minify = true, baseUrl = '/assets/'} = assets;
 
@@ -103,7 +116,12 @@ export function quiltApp({
         preact(),
         // Build and auto-server setup
         magicModuleApp(),
-        build && appBuild({assets: {minify, baseUrl}}),
+        build &&
+          appBuild({
+            browser,
+            server: Boolean(autoServer),
+            assets: {minify, baseUrl},
+          }),
         build && autoServer && httpHandler(),
         build && autoServer && appAutoServer(),
         // Development

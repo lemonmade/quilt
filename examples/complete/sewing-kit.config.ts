@@ -18,6 +18,8 @@ export default createApp((app) => {
         );
       },
     }),
-    quiltApp({assets: {minify: false}}),
+    quiltApp({
+      assets: {minify: false},
+    }),
   );
 });
