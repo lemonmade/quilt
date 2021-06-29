@@ -60,6 +60,7 @@
     "rollup": "^2.0.0",
     "rollup-plugin-esbuild": "^4.5.0",
     "rollup-plugin-terser": "^7.0.0",
+    "rollup-plugin-visualizer": "^5.5.0",
     "systemjs": "^6.10.0",
     "vite": "^2.0.0"
   },

@@ -221,10 +221,12 @@ export function appBuild({server, assets, browser}: Options) {
           });
 
           rollupPlugins?.(async (plugins) => {
-            const [{cssRollupPlugin}, {systemJs}] = await Promise.all([
-              import('./rollup/css'),
-              import('./rollup/system-js'),
-            ]);
+            const [{visualizer}, {cssRollupPlugin}, {systemJs}] =
+              await Promise.all([
+                import('rollup-plugin-visualizer'),
+                import('./rollup/css'),
+                import('./rollup/system-js'),
+              ]);
 
             plugins.push(
               systemJs({minify: assets.minify}),
@@ -331,6 +333,18 @@ export function appBuild({server, assets, browser}: Options) {
               const {terser} = await import('rollup-plugin-terser');
               plugins.push(terser({safari10: true, compress: true}));
             }
+
+            plugins.push(
+              visualizer({
+                template: 'treemap',
+                open: false,
+                brotliSize: true,
+                filename: project.fs.buildPath(
+                  'reports',
+                  `bundle-visualizer${targetFilenamePart}.html`,
+                ),
+              }),
+            );
 
             return plugins;
           });
