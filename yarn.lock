@@ -3369,7 +3369,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/quilt@^0.5.32, @quilted/quilt@workspace:packages/quilt":
+"@quilted/quilt@^0.5.33, @quilted/quilt@workspace:packages/quilt":
   version: 0.0.0-use.local
   resolution: "@quilted/quilt@workspace:packages/quilt"
   dependencies:
@@ -7200,7 +7200,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-complete@workspace:examples/complete"
   dependencies:
-    "@quilted/quilt": ^0.5.32
+    "@quilted/quilt": ^0.5.33
   languageName: unknown
   linkType: soft
 
