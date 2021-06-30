@@ -7,7 +7,8 @@ import type {
   Service,
   ResolvedHooks,
   ResolvedOptions,
-  BuildOptionsForProject,
+  BuildAppOptions,
+  BuildServiceOptions,
   BuildConfigurationHooksForProject,
 } from '@quilted/sewing-kit';
 
@@ -74,13 +75,14 @@ export function cloudflareWorkers({
             BuildConfigurationHooksForProject<App> &
               BuildConfigurationHooksForProject<Service>
           >,
-          {
-            quiltHttpHandler = false,
-          }: ResolvedOptions<
-            BuildOptionsForProject<App> & BuildOptionsForProject<Service>
-          >,
+          options: ResolvedOptions<BuildAppOptions & BuildServiceOptions>,
         ) => {
-          if (!quiltHttpHandler) return;
+          if (
+            !(options as ResolvedOptions<BuildAppOptions>).quiltAppServer &&
+            !(options as ResolvedOptions<BuildServiceOptions>).quiltService
+          ) {
+            return;
+          }
 
           if (format === 'modules') {
             rollupInputOptions?.((options) => {
@@ -113,6 +115,8 @@ export function cloudflareWorkers({
 
             return outputs;
           });
+
+          if (!options.quiltHttpHandler) return;
 
           const shouldServeAssets =
             serveAssets ?? project.kind === ProjectKind.App;

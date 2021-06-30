@@ -38,7 +38,7 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
           );
 
           if (
-            !(options as ResolvedOptions<BuildAppOptions>).quiltAutoServer &&
+            !(options as ResolvedOptions<BuildAppOptions>).quiltAppServer &&
             !(options as ResolvedOptions<BuildServiceOptions>).quiltService
           ) {
             return;
