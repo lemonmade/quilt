@@ -2,15 +2,21 @@
 
 Quilt and [Sewing Kit](./TODO) make it easy to deploy your apps and backend services as [Cloudflare Workers](https://workers.cloudflare.com). The small, modern JavaScript bundles Quilt creates are a great fit for Cloudflare’s quick startup times and global distribution.
 
-This guide assumes you have already [created an app or service with Quilt and Sewing Kit](./TODO). If you do not already have a Quilt project and would prefer to initialize your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
+This guide assumes you have already [created an app or service with Quilt and Sewing Kit](./TODO). If you don’t already have a Quilt project and would prefer to create your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
 
-<!-- prettier-ignore-start -->
+- **Basic app** ([template repo](https://github.com/quilt-framework/quilt-template-cloudflare-workers), [live site](https://quilt-template-cloudflare-workers.lemons.workers.dev/)): a web application with server side rendering (using [Cloudflare Workers](https://developers.cloudflare.com/workers/)) and asset hosting (using [Worker Sites](https://developers.cloudflare.com/workers/platform/sites)).
 
-| Template | `wrangler generate` | Deploy button |
-|----------|-------------------|---------------| 
-| Cloudflare Worker-rendered web application and asset hosting | `wrangler generate quilt-app https://github.com/quilt-framework/quilt-template-cloudflare-workers` | [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/quilt-framework/quilt-template-cloudflare-workers) |
+  You can deploy this template to Cloudflare with a single command using [Wrangler](https://github.com/cloudflare/wrangler):
 
-<!-- prettier-ignore-end -->
+  ```zsh
+  wrangler generate my-app https://github.com/quilt-framework/quilt-template-cloudflare-workers
+  ```
+
+  Or, mash your finger/ mouse on this handy button:
+
+  [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/quilt-framework/quilt-template-cloudflare-workers)
+
+- **Basic monorepo** ([template repo](https://github.com/quilt-framework/quilt-template-cloudflare-workers-monorepo)): a monorepo that includes a server-side rendering application and a backend service, both deployed as [Cloudflare Workers](https://developers.cloudflare.com/workers/).
 
 ## Getting started
 
