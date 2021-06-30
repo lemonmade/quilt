@@ -78,11 +78,11 @@ ErrorLogging.start();
 
 Quilt provides fine-grained control over the browser entry through a collection of [Sewing Kit hooks](./TODO). The following hooks are available:
 
-- `quiltBrowserEntryShouldHydrate`: customizes whether the browser entry should use hydration or rendering to initialize your app. If you provided `browser.entryModule`, this hook is not run, as the `browser.entryModule` is used for rendering logic instead.
-- `quiltBrowserEntryAppCssSelector`: customizes the CSS selector that finds the DOM node your app is rendered into. If you provided `browser.entryModule`, this hook is not run, as the `browser.entryModule` is used for rendering logic instead.
-- `quiltBrowserEntryContent`: customizes the full content of the browser entry, after both the `browser` option and the default logic provided by Quilt have been resolved.
+- `quiltAppBrowserEntryShouldHydrate`: customizes whether the browser entry should use hydration or rendering to initialize your app. If you provided `browser.entryModule`, this hook is not run, as the `browser.entryModule` is used for rendering logic instead.
+- `quiltAppBrowserEntryCssSelector`: customizes the CSS selector that finds the DOM node your app is rendered into. If you provided `browser.entryModule`, this hook is not run, as the `browser.entryModule` is used for rendering logic instead.
+- `quiltAppBrowserEntryContent`: customizes the full content of the browser entry, after both the `browser` option and the default logic provided by Quilt have been resolved.
 
-The example below shows how you can write a custom Sewing Kit plugin that uses the `quiltBrowserEntryAppCssSelector` hook to change just the CSS selector used to target the application:
+The example below shows how you can write a custom Sewing Kit plugin that uses the `quiltAppBrowserEntryCssSelector` hook to change just the CSS selector used to target the application:
 
 ```ts
 // sewing-kit.config.ts
@@ -96,8 +96,8 @@ export default createApp((app) => {
     createProjectPlugin({
       name: 'MyApp.CustomizeSelector',
       build({configure}) {
-        configure(({quiltBrowserEntryAppCssSelector}) => {
-          quiltBrowserEntryAppCssSelector?.(() => '#root');
+        configure(({quiltAppBrowserEntryCssSelector}) => {
+          quiltAppBrowserEntryCssSelector?.(() => '#root');
         });
       },
     }),
@@ -105,7 +105,7 @@ export default createApp((app) => {
 });
 ```
 
-When Quilt is building the browser version of your app, it sets the `quiltBrowser` option to an object that describes the browser build being produced. You can use the presence of this option to perform tooling customizations that only apply to the browser build:
+When Quilt is building the browser version of your app, it sets the `quiltAppBrowser` option to an object that describes the browser build being produced. You can use the presence of this option to perform tooling customizations that only apply to the browser build:
 
 ```ts
 // sewing-kit.config.ts
@@ -119,8 +119,8 @@ export default createApp((app) => {
     createProjectPlugin({
       name: 'MyApp.CustomizeBuild',
       build({configure}) {
-        configure(({rollupPlugins}, {quiltBrowser}) => {
-          if (!quiltBrowser) return;
+        configure(({rollupPlugins}, {quiltAppBrowser}) => {
+          if (!quiltAppBrowser) return;
 
           rollupPlugins?.(addMyBrowserOnlyRollupPlugins);
         });

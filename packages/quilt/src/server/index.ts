@@ -24,4 +24,7 @@ export {renderEmail} from '@quilted/react-email/server';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
-export {createServerRenderingHttpHandler} from './http-handler';
+export {
+  createServerRenderingRequestHandler,
+  createServerRenderingHttpHandler,
+} from './http-handler';

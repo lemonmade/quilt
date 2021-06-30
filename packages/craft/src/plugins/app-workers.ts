@@ -68,7 +68,7 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
           configuration;
 
         quiltWorkerRollupOutputOptions?.((outputOptions) => {
-          const browserTargets = options.quiltBrowser;
+          const browserTargets = options.quiltAppBrowser;
           const targetFilenamePart = browserTargets
             ? `.${browserTargets.name}`
             : '';

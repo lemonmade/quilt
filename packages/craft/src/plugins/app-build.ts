@@ -76,7 +76,7 @@ export interface AppBuildHooks {
    * whether the default entry should use hydration or rendering. Defaults to
    * hydrating if a server is built for this application, and false otherwise.
    */
-  quiltBrowserEntryShouldHydrate: WaterfallHook<boolean>;
+  quiltAppBrowserEntryShouldHydrate: WaterfallHook<boolean>;
 
   /**
    * If the default Quilt entry is used (that is, the developer did not provide
@@ -86,7 +86,7 @@ export interface AppBuildHooks {
    * node. Defaults to `#app` (an element with `id="app"`), which is used by
    * the auto-generated Quilt server.
    */
-  quiltBrowserEntryAppCssSelector: WaterfallHook<string>;
+  quiltAppBrowserEntryCssSelector: WaterfallHook<string>;
 
   /**
    * This hook lets you completely customize the browser entry content for the
@@ -95,7 +95,7 @@ export interface AppBuildHooks {
    * app boots, or the `browser.entryContent` option if you want to customize the
    * actual rendering code of the browser entry.
    */
-  quiltBrowserEntryContent: WaterfallHook<string>;
+  quiltAppBrowserEntryContent: WaterfallHook<string>;
 }
 
 const BROWSERSLIST_MODULES_QUERY =
@@ -137,7 +137,7 @@ declare module '@quilted/sewing-kit' {
     /**
      * Details about the browser build being created by Quilt.
      */
-    quiltBrowser: BrowserTarget;
+    quiltAppBrowser: BrowserTarget;
   }
 
   interface BuildAppConfigurationHooks extends AppBuildHooks {}
@@ -154,9 +154,9 @@ export function appBuild({server, assets, browser}: Options) {
         quiltAssetBaseUrl: waterfall({
           default: assets.baseUrl,
         }),
-        quiltBrowserEntryContent: waterfall(),
-        quiltBrowserEntryShouldHydrate: waterfall(),
-        quiltBrowserEntryAppCssSelector: waterfall(),
+        quiltAppBrowserEntryContent: waterfall(),
+        quiltAppBrowserEntryShouldHydrate: waterfall(),
+        quiltAppBrowserEntryCssSelector: waterfall(),
       }));
 
       configure(
@@ -173,11 +173,11 @@ export function appBuild({server, assets, browser}: Options) {
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
             quiltAsyncAssetBaseUrl,
-            quiltBrowserEntryContent,
-            quiltBrowserEntryShouldHydrate,
-            quiltBrowserEntryAppCssSelector,
+            quiltAppBrowserEntryContent,
+            quiltAppBrowserEntryShouldHydrate,
+            quiltAppBrowserEntryCssSelector,
           },
-          {quiltBrowser: browserTargets},
+          {quiltAppBrowser: browserTargets},
         ) => {
           if (!browserTargets) return;
 
@@ -292,8 +292,8 @@ export function appBuild({server, assets, browser}: Options) {
                   `;
                 } else {
                   const [shouldHydrate, appCssSelector] = await Promise.all([
-                    quiltBrowserEntryShouldHydrate!.run(server),
-                    quiltBrowserEntryAppCssSelector!.run('#app'),
+                    quiltAppBrowserEntryShouldHydrate!.run(server),
+                    quiltAppBrowserEntryCssSelector!.run('#app'),
                   ]);
 
                   const reactFunction = shouldHydrate ? 'hydrate' : 'render';
@@ -318,7 +318,7 @@ export function appBuild({server, assets, browser}: Options) {
                   `;
                 }
 
-                const content = await quiltBrowserEntryContent!.run(
+                const content = await quiltAppBrowserEntryContent!.run(
                   initialContent,
                 );
 
@@ -405,7 +405,7 @@ export function appBuild({server, assets, browser}: Options) {
               async run() {
                 const [configure, {buildWithRollup}] = await Promise.all([
                   configuration({
-                    quiltBrowser: {
+                    quiltAppBrowser: {
                       name: normalizedName,
                       targets,
                       priority: targetsBySize.indexOf(targets),

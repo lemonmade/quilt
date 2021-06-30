@@ -39,7 +39,10 @@ import type {
 import {appDevelop} from './plugins/app-develop';
 import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
-import {appAutoServer} from './plugins/app-auto-server';
+
+import {appServer} from './plugins/app-server';
+import type {AppServerOptions} from './plugins/app-server';
+
 import {appWorkers} from './plugins/app-workers';
 import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
@@ -74,7 +77,6 @@ export * from './constants';
 
 export interface AppOptions {
   polyfill?: boolean | PolyfillOptions;
-  autoServer?: boolean;
   develop?: boolean | AppDevelopOptions;
   build?: boolean;
 
@@ -87,17 +89,29 @@ export interface AppOptions {
    * Customizes the browser entrypoint of your application.
    */
   browser?: AppBrowserOptions;
+
+  /**
+   * Customizes the server created for your application. By default,
+   * Quilt will create an Node server (using ES modules), but you can
+   * use any Sewing Kit plugin that can adapt an HTTP handler to a runtime
+   * environment. If you want to disable the creation of the server
+   * altogether, you can pass `server: false`.
+   */
+  server?: boolean | AppServerOptions;
 }
 
 export function quiltApp({
   polyfill: shouldPolyfill = true,
-  autoServer = true,
   develop = true,
   build = true,
   assets = {},
   browser = {},
+  server = true,
 }: AppOptions = {}) {
   const {minify = true, baseUrl = '/assets/'} = assets;
+
+  const useHttpHandler =
+    typeof server === 'boolean' ? server : server.httpHandler ?? true;
 
   return createProjectPlugin<App>({
     name: 'Quilt.App',
@@ -119,11 +133,13 @@ export function quiltApp({
         build &&
           appBuild({
             browser,
-            server: Boolean(autoServer),
+            server: Boolean(server),
             assets: {minify, baseUrl},
           }),
-        build && autoServer && httpHandler(),
-        build && autoServer && appAutoServer(),
+        build && useHttpHandler && httpHandler(),
+        build &&
+          server &&
+          appServer(typeof server === 'boolean' ? undefined : server),
         // Development
         develop && vite(),
         develop &&

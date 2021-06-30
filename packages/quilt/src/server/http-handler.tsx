@@ -4,7 +4,7 @@ import type {AssetLoader} from '@quilted/async/server';
 import {render, Html} from '@quilted/react-html/server';
 
 import {createHttpHandler, html} from '@quilted/http-handlers';
-import type {HttpHandler} from '@quilted/http-handlers';
+import type {HttpHandler, RequestHandler} from '@quilted/http-handlers';
 
 import {renderApp} from './render';
 
@@ -13,11 +13,11 @@ export interface Options {
   handler?: HttpHandler;
 }
 
-export function createServerRenderingHttpHandler(
-  App: ComponentType<Record<string, never>>,
-  {assets, handler = createHttpHandler()}: Options,
-) {
-  handler.get(async (request) => {
+export function createServerRenderingRequestHandler(
+  App: ComponentType<any>,
+  {assets}: Pick<Options, 'assets'>,
+): RequestHandler {
+  return async (request) => {
     const {
       html: htmlManager,
       http,
@@ -57,7 +57,13 @@ export function createServerRenderingHttpHandler(
         status: statusCode,
       },
     );
-  });
+  };
+}
 
+export function createServerRenderingHttpHandler(
+  App: ComponentType<any>,
+  {assets, handler = createHttpHandler()}: Options,
+) {
+  handler.get(createServerRenderingRequestHandler(App, {assets}));
   return handler;
 }
