@@ -68,7 +68,10 @@ export function esnextBuild() {
       if (project.packageJson?.private) return;
 
       configure(
-        ({outputDirectory, rollupInput, rollupOutputs}, {esnext = false}) => {
+        (
+          {outputDirectory, rollupInput, rollupPlugins, rollupOutputs},
+          {esnext = false},
+        ) => {
           if (!esnext) return;
 
           outputDirectory((output) => join(output, 'esnext'));
@@ -79,6 +82,16 @@ export function esnextBuild() {
                 project.fs.resolvePath(entry.source),
               ),
             );
+          });
+
+          rollupPlugins?.(async (plugins) => {
+            const {fixCommonJsPreserveModules} = await import(
+              '@quilted/rollup-plugin-fix-commonjs-preserve-modules'
+            );
+
+            plugins.push(fixCommonJsPreserveModules({extension: EXTENSION}));
+
+            return plugins;
           });
 
           // Creates the esnext outputs

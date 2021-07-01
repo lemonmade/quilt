@@ -55,7 +55,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
 
       configure(
         (
-          {outputDirectory, rollupInput, rollupOutputs},
+          {outputDirectory, rollupInput, rollupOutputs, rollupPlugins},
           {packageBuildModule},
         ) => {
           if (packageBuildModule == null) return;
@@ -72,6 +72,21 @@ export function packageBuild({commonjs = true}: Options = {}) {
           );
 
           rollupInput?.(() => getEntryFiles(project));
+
+          rollupPlugins?.(async (plugins) => {
+            const extension =
+              packageBuildModule === 'commonjs'
+                ? COMMONJS_EXTENSION
+                : ESM_EXTENSION;
+
+            const {fixCommonJsPreserveModules} = await import(
+              '@quilted/rollup-plugin-fix-commonjs-preserve-modules'
+            );
+
+            plugins.push(fixCommonJsPreserveModules({extension}));
+
+            return plugins;
+          });
 
           // Creates outputs for the current build type
           rollupOutputs?.(async (outputs) => {

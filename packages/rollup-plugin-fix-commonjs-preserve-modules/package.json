@@ -1,22 +1,23 @@
 {
-  "name": "@quilted/sewing-kit-package",
+  "name": "@quilted/rollup-plugin-fix-commonjs-preserve-modules",
   "type": "module",
-  "version": "0.1.8",
-  "license": "MIT",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
-    "directory": "packages/sewing-kit-package"
+    "directory": "packages/rollup-plugin-fix-commonjs-preserve-modules"
   },
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org"
   },
+  "license": "MIT",
   "exports": {
     ".": {
       "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     }
   },
   "typesVersions": {
@@ -26,27 +27,17 @@
       ]
     }
   },
-  "sideEffects": false,
-  "dependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/rollup-plugin-fix-commonjs-preserve-modules": "^0.0.0",
-    "@quilted/sewing-kit-rollup": "^0.1.6",
+  "peerDependencies": {
     "rollup": "^2.0.0"
   },
-  "peerDependencies": {
-    "@quilted/sewing-kit": "^0.2.0"
-  },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
-    "@quilted/sewing-kit": {
-      "optional": true
+    "rollup": {
+      "optional": false
     }
   },
+  "sideEffects": false,
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/node",
       "@quilted/eslint-config/package"
     ]
   }
