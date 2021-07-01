@@ -1,3 +1,5 @@
+import {rm} from 'fs/promises';
+
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
@@ -94,6 +96,11 @@ export function serviceBuild({minify, httpHandler}: Options) {
               }),
               import('@quilted/sewing-kit-rollup'),
             ]);
+
+            await rm(project.fs.buildPath('runtime'), {
+              recursive: true,
+              force: true,
+            });
 
             await buildWithRollup(configure);
           },

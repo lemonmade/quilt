@@ -1,3 +1,5 @@
+import {rm} from 'fs/promises';
+
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
 import {stripIndent} from 'common-tags';
@@ -412,6 +414,25 @@ export function appBuild({server, assets, browser}: Options) {
                     },
                   }),
                   import('@quilted/sewing-kit-rollup'),
+                ]);
+
+                await Promise.all([
+                  rm(project.fs.buildPath('assets'), {
+                    recursive: true,
+                    force: true,
+                  }),
+                  rm(project.fs.buildPath('server'), {
+                    recursive: true,
+                    force: true,
+                  }),
+                  rm(project.fs.buildPath('manifests'), {
+                    recursive: true,
+                    force: true,
+                  }),
+                  rm(project.fs.buildPath('reports'), {
+                    recursive: true,
+                    force: true,
+                  }),
                 ]);
 
                 await buildWithRollup(configure);
