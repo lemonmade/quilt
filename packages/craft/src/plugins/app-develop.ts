@@ -53,13 +53,9 @@ export function appDevelop({port}: Options = {}) {
                 continue;
               }
 
-              // Only include the React preset if it uses the runtime transform, which
-              // esbuild does not support
-              if (
-                babelConfigItemIs(requestedPreset, '@babel/preset-react') &&
-                (typeof (requestedPreset as [any, any])[1] !== 'object' ||
-                  (requestedPreset as [any, any])[1].runtime !== 'automatic')
-              ) {
+              // ESBuild handles the React transform, though it does not currently
+              // support the runtime transform.
+              if (babelConfigItemIs(requestedPreset, '@babel/preset-react')) {
                 continue;
               }
 
