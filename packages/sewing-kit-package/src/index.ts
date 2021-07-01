@@ -3,6 +3,7 @@ import {MissingPluginError, createProjectPlugin} from '@quilted/sewing-kit';
 import type {Package, PackageBinary} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-rollup';
+import {OutputOptions} from 'rollup';
 
 export type PackageModuleType = 'commonjs' | 'esmodules';
 
@@ -92,20 +93,33 @@ export function packageBuild({commonjs = true}: Options = {}) {
           rollupOutputs?.(async (outputs) => {
             const dir = await outputDirectory.run(project.fs.buildPath());
 
+            // When we are building a binary-only package, we default
+            // to bundling the entire project into as few files as possible.
+            // When the project is imported normally, we preserve the original
+            // source structure.
+            const preserveModules = project.entries.length > 0;
+            const preserveOptions: Partial<OutputOptions> = preserveModules
+              ? {
+                  preserveModules: true,
+                  preserveModulesRoot: sourceRoot(project),
+                }
+              : {};
+
             switch (packageBuildModule) {
               case 'commonjs': {
                 return [
                   ...outputs,
                   {
+                    ...preserveOptions,
                     format: 'commonjs',
                     dir,
-                    preserveModules: true,
-                    preserveModulesRoot: sourceRoot(project),
                     exports:
                       typeof commonjs === 'object'
                         ? commonjs.exports ?? 'named'
                         : 'named',
-                    entryFileNames: `[name][assetExtname]${COMMONJS_EXTENSION}`,
+                    entryFileNames: preserveModules
+                      ? `[name][assetExtname]${COMMONJS_EXTENSION}`
+                      : `[name]${COMMONJS_EXTENSION}`,
                     assetFileNames: `[name].[ext]`,
                     chunkFileNames: `[name]${COMMONJS_EXTENSION}`,
                   },
@@ -115,11 +129,12 @@ export function packageBuild({commonjs = true}: Options = {}) {
                 return [
                   ...outputs,
                   {
+                    ...preserveOptions,
                     format: 'esm',
                     dir,
-                    preserveModules: true,
-                    preserveModulesRoot: sourceRoot(project),
-                    entryFileNames: `[name][assetExtname]${ESM_EXTENSION}`,
+                    entryFileNames: preserveModules
+                      ? `[name][assetExtname]${ESM_EXTENSION}`
+                      : `[name]${ESM_EXTENSION}`,
                     assetFileNames: `[name].[ext]`,
                     chunkFileNames: `[name]${ESM_EXTENSION}`,
                   },
