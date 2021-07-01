@@ -1,0 +1,8 @@
+{
+  "extends": "@quilted/typescript/workspace.json",
+  "compilerOptions": {
+    "outDir": "build/typescript/workspace"
+  },
+  "include": ["**/sewing-kit.config.ts"],
+  "references": [{"path": "./tsconfig.app.json"}]
+}

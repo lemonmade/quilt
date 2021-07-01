@@ -4,7 +4,7 @@ export function Head() {
   return (
     <>
       <Title>App</Title>
-      <Favicon emoji="🤖" />
+      <Favicon emoji="🧶" />
       <Viewport />
     </>
   );

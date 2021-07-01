@@ -7,7 +7,6 @@ import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
 import type {App, Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-rollup';
 
-import {getEntry} from './shared';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
 
 const MAGIC_ENTRY_MODULE = '__quilt__/HttpHandlerEntry.tsx';
@@ -120,17 +119,17 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                   // for the entry. Otherwise, just point to the project’s entry,
                   // which is assumed to be a module that exports a `createHttpHandler()`
                   // object as the default export.
-                  if (content) return {id, moduleSideEffects: 'no-treeshake'};
-
-                  return {
-                    id: await getEntry(project),
-                    moduleSideEffects: 'no-treeshake',
-                  };
+                  return {id, moduleSideEffects: 'no-treeshake'};
                 },
                 load(id) {
                   if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                  return content!;
+                  return (
+                    content ??
+                    `export {default} from ${JSON.stringify(
+                      project.fs.resolvePath(project.entry ?? ''),
+                    )}`
+                  );
                 },
               },
             );
@@ -244,17 +243,17 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
                   // for the entry. Otherwise, just point to the project’s entry,
                   // which is assumed to be a module that exports a `createHttpHandler()`
                   // object as the default export.
-                  if (content) return {id, moduleSideEffects: 'no-treeshake'};
-
-                  return {
-                    id: await getEntry(project),
-                    moduleSideEffects: 'no-treeshake',
-                  };
+                  return {id, moduleSideEffects: 'no-treeshake'};
                 },
                 load(id) {
                   if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                  return content!;
+                  return (
+                    content ??
+                    `export {default} from ${JSON.stringify(
+                      project.fs.resolvePath(project.entry ?? ''),
+                    )}`
+                  );
                 },
               },
             );

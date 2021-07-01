@@ -6,8 +6,6 @@ import type {App} from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-vite';
 
-import {getEntry} from './shared';
-
 export const STEP_NAME = 'Quilt.App.Develop';
 
 export interface Options {
@@ -114,14 +112,14 @@ export function appDevelop({port}: Options = {}) {
               },
               async load(id) {
                 if (id === '/@quilted/magic/browser.tsx') {
-                  const appEntry = await getEntry(project);
-
                   return stripIndent`
-                  import {render} from 'react-dom';
-                  import App from ${JSON.stringify(appEntry)};
+                    import {render} from 'react-dom';
+                    import App from ${JSON.stringify(
+                      project.fs.resolvePath(project.entry ?? ''),
+                    )};
 
-                  render(<App />, document.getElementById('app'));
-                `;
+                    render(<App />, document.getElementById('app'));
+                  `;
                 }
               },
             });

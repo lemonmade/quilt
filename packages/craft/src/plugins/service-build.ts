@@ -4,8 +4,6 @@ import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
 
-import {getEntry} from './shared';
-
 export interface ServiceBuildHooks {
   /**
    * The module format that will be used for the application server. By
@@ -31,6 +29,8 @@ export interface Options {
   httpHandler: boolean;
 }
 
+const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService';
+
 export function serviceBuild({minify, httpHandler}: Options) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service.Build',
@@ -53,19 +53,31 @@ export function serviceBuild({minify, httpHandler}: Options) {
           if (!quiltService) return;
 
           rollupInput?.(async () => {
-            const entry = await getEntry(project);
-            return [entry];
+            return [MAGIC_ENTRY_MODULE];
           });
 
-          if (minify) {
-            rollupPlugins?.(async (plugins) => {
+          rollupPlugins?.(async (plugins) => {
+            plugins.unshift({
+              name: '@quilted/magic-module-service',
+              resolveId(id, importer) {
+                if (id !== MAGIC_ENTRY_MODULE) return null;
+
+                return this.resolve(
+                  project.fs.resolvePath(project.entry ?? ''),
+                  importer,
+                  {skipSelf: true},
+                );
+              },
+            });
+
+            if (minify) {
               const {terser} = await import('rollup-plugin-terser');
 
               plugins.push(terser());
+            }
 
-              return plugins;
-            });
-          }
+            return plugins;
+          });
 
           rollupOutputs?.(async (outputs) => {
             const [format, directory] = await Promise.all([

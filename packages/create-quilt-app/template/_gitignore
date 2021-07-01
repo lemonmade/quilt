@@ -1,0 +1,15 @@
+build/
+node_modules/
+.sewing-kit/
+.DS_STORE
+packages/*/bin/
+*.log
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

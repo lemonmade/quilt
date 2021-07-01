@@ -6,7 +6,7 @@
     {"path": "./packages/aws"},
     {"path": "./packages/cloudflare"},
     {"path": "./packages/craft"},
-    {"path": "./packages/create-quilt-project"},
+    {"path": "./packages/create-quilt-app"},
     {"path": "./packages/graphql"},
     {"path": "./packages/http"},
     {"path": "./packages/http-handlers"},
@@ -39,6 +39,7 @@
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-types"},
     {"path": "./packages/workers"},
+    {"path": "./examples/basic-app"},
     {"path": "./tsconfig.workspace.json"}
   ]
 }

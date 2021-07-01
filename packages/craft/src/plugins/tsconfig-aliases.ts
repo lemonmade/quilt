@@ -14,38 +14,9 @@ export function tsconfigAliases() {
     build({configure, project}) {
       configure(({rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
-          const [{default: alias}, tsconfig] = await Promise.all([
-            import('@rollup/plugin-alias'),
-            (async () => {
-              try {
-                const tsconfig = await project.fs.read('tsconfig.json');
-                return JSON.parse(tsconfig) as {
-                  compilerOptions?: {paths?: Record<string, string[]>};
-                };
-              } catch {
-                // intentional noop
-              }
-            })(),
-          ]);
+          const plugin = await getAliasPlugin(project);
 
-          const tsconfigPaths = tsconfig?.compilerOptions?.paths;
-
-          if (tsconfigPaths == null) return plugins;
-
-          plugins.unshift(
-            alias({
-              entries: Object.entries(tsconfigPaths).map(([name, aliases]) => {
-                return {
-                  find: name.includes('*')
-                    ? new RegExp(`^${name.replace(/\*/, '(.*)')}$`)
-                    : name,
-                  replacement: project.fs
-                    .resolvePath(aliases[0])
-                    .replace('*', '$1'),
-                };
-              }),
-            }),
-          );
+          if (plugin) plugins.unshift(plugin);
 
           return plugins;
         });
@@ -60,7 +31,7 @@ export function tsconfigAliases() {
           rollupPlugins?.(async (plugins) => {
             const plugin = await getAliasPlugin(project);
 
-            if (plugin) plugins.push(plugin);
+            if (plugin) plugins.unshift(plugin);
 
             return plugins;
           });
@@ -68,7 +39,7 @@ export function tsconfigAliases() {
           vitePlugins?.(async (plugins) => {
             const plugin = await getAliasPlugin(project);
 
-            if (plugin) plugins.push(plugin);
+            if (plugin) plugins.unshift(plugin);
 
             return plugins;
           });
@@ -83,7 +54,14 @@ async function getAliasPlugin(project: Project) {
     import('@rollup/plugin-alias'),
     (async () => {
       try {
-        const tsconfig = await project.fs.read('tsconfig.json');
+        const hasProjectTSConfig = await project.fs.hasFile(
+          `tsconfig.${project.kind}.json`,
+        );
+
+        const tsconfig = hasProjectTSConfig
+          ? await project.fs.read(`tsconfig.${project.kind}.json`)
+          : await project.fs.read('tsconfig.json');
+
         return JSON.parse(tsconfig) as {
           compilerOptions?: {paths?: Record<string, string[]>};
         };

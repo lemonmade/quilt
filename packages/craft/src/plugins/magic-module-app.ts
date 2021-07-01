@@ -3,8 +3,6 @@ import type {App} from '@quilted/sewing-kit';
 
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
 
-import {getEntry} from './shared';
-
 export function magicModuleApp() {
   return createProjectPlugin<App>({
     name: 'Quilt.MagicModule.App',
@@ -15,13 +13,17 @@ export function magicModuleApp() {
             name: '@quilted/magic-module/app',
             async resolveId(id) {
               if (id === MAGIC_MODULE_APP_COMPONENT) {
-                return {
-                  id: await getEntry(project),
-                  moduleSideEffects: 'no-treeshake',
-                };
+                return id;
               }
 
               return null;
+            },
+            load(source) {
+              if (source === MAGIC_MODULE_APP_COMPONENT) {
+                return `export {default} from ${JSON.stringify(
+                  project.fs.resolvePath(project.entry ?? ''),
+                )}`;
+              }
             },
           });
 

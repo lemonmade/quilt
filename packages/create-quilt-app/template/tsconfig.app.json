@@ -1,0 +1,10 @@
+{
+  "extends": "@quilted/typescript/app.json",
+  "compilerOptions": {
+    "outDir": "build/typescript/app",
+    "paths": {
+      "components": ["./app/components"]
+    }
+  },
+  "include": ["app/**/*"]
+}
