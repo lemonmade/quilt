@@ -1,4 +1,5 @@
 import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
+import type {WaterfallHookWithDefault} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
@@ -7,6 +8,19 @@ import type {} from '@quilted/sewing-kit-targets';
 import type {PolyfillFeature} from './types';
 
 export type {PolyfillFeature};
+
+export interface PolyfillHooks {
+  /**
+   * The additional polyfills to include for this project.
+   */
+  quiltPolyfillFeatures: WaterfallHookWithDefault<PolyfillFeature[]>;
+}
+
+declare module '@quilted/sewing-kit' {
+  interface BuildProjectConfigurationHooks extends PolyfillHooks {}
+  interface DevelopProjectConfigurationHooks extends PolyfillHooks {}
+  interface TestProjectConfigurationHooks extends PolyfillHooks {}
+}
 
 export interface Options {
   /**
@@ -18,17 +32,25 @@ export interface Options {
 export function polyfills({features}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Polyfills',
-    build({configure}) {
-      configure(({runtime, targets, rollupPlugins}) => {
+    build({configure, hooks}) {
+      hooks<PolyfillHooks>(({waterfall}) => ({
+        quiltPolyfillFeatures: waterfall({
+          default: () => features ?? [],
+        }),
+      }));
+
+      configure(({runtime, targets, rollupPlugins, quiltPolyfillFeatures}) => {
         rollupPlugins?.(async (plugins) => {
-          const [{polyfill}, resolvedRuntime] = await Promise.all([
-            import('./rollup-parts'),
-            runtime.run(),
-          ]);
+          const [{polyfill}, resolvedFeatures, resolvedRuntime] =
+            await Promise.all([
+              import('./rollup-parts'),
+              quiltPolyfillFeatures!.run(),
+              runtime.run(),
+            ]);
 
           plugins.push(
             polyfill({
-              features,
+              features: resolvedFeatures,
               target: resolvedRuntime.includes(Runtime.Browser)
                 ? await targets?.run([])
                 : 'node',
@@ -39,17 +61,25 @@ export function polyfills({features}: Options = {}) {
         });
       });
     },
-    develop({configure}) {
-      configure(({runtime, targets, rollupPlugins}) => {
+    develop({configure, hooks}) {
+      hooks<PolyfillHooks>(({waterfall}) => ({
+        quiltPolyfillFeatures: waterfall({
+          default: () => features ?? [],
+        }),
+      }));
+
+      configure(({runtime, targets, rollupPlugins, quiltPolyfillFeatures}) => {
         rollupPlugins?.(async (plugins) => {
-          const [{polyfill}, resolvedRuntime] = await Promise.all([
-            import('./rollup-parts'),
-            runtime.run(),
-          ]);
+          const [{polyfill}, resolvedFeatures, resolvedRuntime] =
+            await Promise.all([
+              import('./rollup-parts'),
+              quiltPolyfillFeatures!.run(),
+              runtime.run(),
+            ]);
 
           plugins.push(
             polyfill({
-              features,
+              features: resolvedFeatures,
               target: resolvedRuntime.includes(Runtime.Browser)
                 ? await targets?.run([])
                 : 'node',
@@ -60,12 +90,23 @@ export function polyfills({features}: Options = {}) {
         });
       });
     },
-    test({configure}) {
-      configure(({jestModuleMapper}) => {
+    test({configure, hooks}) {
+      hooks<PolyfillHooks>(({waterfall}) => ({
+        quiltPolyfillFeatures: waterfall({
+          default: () => features ?? [],
+        }),
+      }));
+
+      configure(({jestModuleMapper, quiltPolyfillFeatures}) => {
         jestModuleMapper?.(async (moduleMappings) => {
-          const {polyfillAliasesForTarget} = await import('./aliases');
+          const [{polyfillAliasesForTarget}, resolvedFeatures] =
+            await Promise.all([
+              import('./aliases'),
+              quiltPolyfillFeatures!.run(),
+            ]);
 
           const mappedPolyfills = polyfillAliasesForTarget('node', {
+            features: resolvedFeatures,
             polyfill: 'usage',
           });
 

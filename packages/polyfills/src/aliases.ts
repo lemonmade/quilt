@@ -16,31 +16,37 @@ const POLYFILLS: {
 export function polyfillAliasesForTarget(
   target: 'node' | string[],
   {
+    features = ['base', ...(Object.keys(POLYFILLS) as PolyfillFeature[])],
     polyfill = 'usage',
   }: {
+    features?: PolyfillFeature[];
     polyfill?: 'entry' | 'usage' | 'inline';
   } = {},
-): {[key: string]: string} {
+): Record<string, string> {
   const prefix = `@quilted/polyfills`;
   const noop = `${prefix}/noop`;
 
-  return Object.entries(POLYFILLS).reduce<{[key: string]: string}>(
-    (mappedPolyfills, [polyfill, {featureTest}]) => {
-      const mapFrom = `@quilted/polyfills/${polyfill}`;
+  const mappedPolyfills: Record<string, string> = {};
 
-      if (target === 'node') {
-        mappedPolyfills[mapFrom] = `${prefix}/${polyfill}.${target}`;
-      } else {
-        mappedPolyfills[mapFrom] =
-          featureTest == null || !isSupported(featureTest, target)
-            ? `${prefix}/${polyfill}.browser`
-            : noop;
-      }
+  for (const feature of features) {
+    if (feature === 'base') {
+      mappedPolyfills['@quilted/polyfills/base'] =
+        polyfill === 'usage' ? noop : `${prefix}/base`;
+      continue;
+    }
 
-      return mappedPolyfills;
-    },
-    {
-      '@quilted/polyfills/base': polyfill === 'usage' ? noop : `${prefix}/base`,
-    },
-  );
+    const {featureTest} = POLYFILLS[feature];
+    const mapFrom = `@quilted/polyfills/${feature}`;
+
+    if (target === 'node') {
+      mappedPolyfills[mapFrom] = `${prefix}/${feature}.${target}`;
+    } else {
+      mappedPolyfills[mapFrom] =
+        featureTest == null || !isSupported(featureTest, target)
+          ? `${prefix}/${feature}.browser`
+          : noop;
+    }
+  }
+
+  return mappedPolyfills;
 }

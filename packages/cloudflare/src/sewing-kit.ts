@@ -71,6 +71,7 @@ export function cloudflareWorkers({
             rollupInputOptions,
             quiltAssetBaseUrl,
             quiltHttpHandlerRuntimeContent,
+            quiltPolyfillFeatures,
           }: ResolvedHooks<
             BuildConfigurationHooksForProject<App> &
               BuildConfigurationHooksForProject<Service>
@@ -83,6 +84,11 @@ export function cloudflareWorkers({
           ) {
             return;
           }
+
+          quiltPolyfillFeatures?.((features) => {
+            // Workers support fetch natively.
+            return features.filter((feature) => feature !== 'fetch');
+          });
 
           if (format === 'modules') {
             rollupInputOptions?.((options) => {
