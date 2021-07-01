@@ -1,6 +1,7 @@
 import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App, WaterfallHook} from '@quilted/sewing-kit';
+import type {ModuleFormat} from 'rollup';
 
 import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
@@ -47,6 +48,13 @@ export interface AppServerHooks {
   quiltAppServerEntryContent: WaterfallHook<string>;
 
   /**
+   * The module format that will be used for the application server. By
+   * default, this is set to `module`, which generates native ES module
+   * outputs.
+   */
+  quiltAppServerOutputFormat: WaterfallHook<ModuleFormat>;
+
+  /**
    * The port to run the automatic server on, if you use the default
    * Node server build (that is, you do not add any plugins that adapt
    * the server to a different environment, and you do not specify a
@@ -83,6 +91,7 @@ export function appServer(options?: AppServerOptions) {
       hooks<AppServerHooks>(({waterfall}) => ({
         quiltAppServerHost: waterfall(),
         quiltAppServerPort: waterfall(),
+        quiltAppServerOutputFormat: waterfall(),
         quiltAppServerEntryContent: waterfall(),
       }));
 
@@ -97,6 +106,7 @@ export function appServer(options?: AppServerOptions) {
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerEntryContent,
+            quiltAppServerOutputFormat,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -223,14 +233,20 @@ export function appServer(options?: AppServerOptions) {
             return plugins;
           });
 
-          rollupOutputs?.(async (outputs) => [
-            ...outputs,
-            {
-              format: 'esm',
+          rollupOutputs?.(async (outputs) => {
+            const [format, directory] = await Promise.all([
+              quiltAppServerOutputFormat!.run('module'),
+              outputDirectory.run(project.fs.buildPath('server')),
+            ]);
+
+            outputs.push({
+              format,
               entryFileNames: 'index.js',
-              dir: await outputDirectory.run(project.fs.buildPath('server')),
-            },
-          ]);
+              dir: directory,
+            });
+
+            return outputs;
+          });
 
           if (httpHandler) {
             quiltHttpHandlerHost?.(async () =>

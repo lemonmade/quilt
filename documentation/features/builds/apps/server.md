@@ -142,6 +142,7 @@ Quilt exposes a collection of [Sewing Kit hooks](./TODO) for deeply customizing 
 
 - `quiltAppServerPort`, which lets you customize the port that the default Node server will listen on.
 - `quiltAppServerHost`, which lets you customize the host that the default Node server will listen on.
+- `quiltAppServerOutputFormat`, which lets you control the module format that the server output will use (defaults to `module`, which produces native ES modules).
 - `quiltAppServerEntryContent`, which lets you customize the magic entry point that Quilt creates to build your server.
 
 Quilt also uses all of the [http-handler Sewing Kit hooks](../services.md#deeper-customizations-with-sewing-kit) when your app server uses the http-handlers library.

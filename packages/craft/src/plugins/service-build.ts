@@ -1,7 +1,18 @@
 import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {Service} from '@quilted/sewing-kit';
+import type {Service, WaterfallHook} from '@quilted/sewing-kit';
+import type {ModuleFormat} from 'rollup';
 
 import {getEntry} from './shared';
+
+export interface ServiceBuildHooks {
+  /**
+   * The module format that will be used for the application server. By
+   * default, this is set to `module`, which generates native ES module
+   * outputs.
+   */
+  quiltServiceOutputFormat: WaterfallHook<ModuleFormat>;
+}
+
 declare module '@quilted/sewing-kit' {
   interface BuildServiceOptions {
     /**
@@ -9,6 +20,8 @@ declare module '@quilted/sewing-kit' {
      */
     quiltService: boolean;
   }
+
+  interface BuildServiceConfigurationHooks extends ServiceBuildHooks {}
 }
 
 export interface Options {
@@ -19,10 +32,20 @@ export interface Options {
 export function serviceBuild({minify, httpHandler}: Options) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service.Build',
-    build({project, configure, run}) {
+    build({project, hooks, configure, run}) {
+      hooks<ServiceBuildHooks>(({waterfall}) => ({
+        quiltServiceOutputFormat: waterfall(),
+      }));
+
       configure(
         (
-          {outputDirectory, rollupInput, rollupPlugins, rollupOutputs},
+          {
+            outputDirectory,
+            rollupInput,
+            rollupPlugins,
+            rollupOutputs,
+            quiltServiceOutputFormat,
+          },
           {quiltService = false},
         ) => {
           if (!quiltService) return;
@@ -42,14 +65,20 @@ export function serviceBuild({minify, httpHandler}: Options) {
             });
           }
 
-          rollupOutputs?.(async (outputs) => [
-            ...outputs,
-            {
-              format: 'esm',
-              dir: await outputDirectory.run(project.fs.buildPath()),
-              entryFileNames: 'index.mjs',
-            },
-          ]);
+          rollupOutputs?.(async (outputs) => {
+            const [format, directory] = await Promise.all([
+              quiltServiceOutputFormat!.run('module'),
+              outputDirectory.run(project.fs.buildPath('runtime')),
+            ]);
+
+            outputs.push({
+              format,
+              entryFileNames: 'index.js',
+              dir: directory,
+            });
+
+            return outputs;
+          });
         },
       );
 

@@ -9,7 +9,8 @@ import type {
   ResolvedOptions,
   BuildAppOptions,
   BuildServiceOptions,
-  BuildConfigurationHooksForProject,
+  BuildAppConfigurationHooks,
+  BuildServiceConfigurationHooks,
 } from '@quilted/sewing-kit';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
@@ -70,11 +71,12 @@ export function cloudflareWorkers({
             rollupOutputs,
             rollupInputOptions,
             quiltAssetBaseUrl,
+            quiltServiceOutputFormat,
+            quiltAppServerOutputFormat,
             quiltHttpHandlerRuntimeContent,
             quiltPolyfillFeatures,
           }: ResolvedHooks<
-            BuildConfigurationHooksForProject<App> &
-              BuildConfigurationHooksForProject<Service>
+            BuildAppConfigurationHooks & BuildServiceConfigurationHooks
           >,
           options: ResolvedOptions<BuildAppOptions & BuildServiceOptions>,
         ) => {
@@ -84,6 +86,14 @@ export function cloudflareWorkers({
           ) {
             return;
           }
+
+          quiltServiceOutputFormat?.(() =>
+            format === 'modules' ? 'module' : 'iife',
+          );
+
+          quiltAppServerOutputFormat?.(() =>
+            format === 'modules' ? 'module' : 'iife',
+          );
 
           quiltPolyfillFeatures?.((features) => {
             // Workers support fetch natively.
@@ -121,8 +131,6 @@ export function cloudflareWorkers({
 
             return outputs;
           });
-
-          if (!options.quiltHttpHandler) return;
 
           const shouldServeAssets =
             serveAssets ?? project.kind === ProjectKind.App;

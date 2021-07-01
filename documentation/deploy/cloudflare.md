@@ -287,7 +287,7 @@ command = "yarn install && yarn build"
 
 [build.upload]
 format = "modules"
-dir = "./build"
+dir = "./build/runtime"
 main = "./index.mjs"
 ```
 
@@ -327,7 +327,7 @@ Wrangler looks at your project’s `package.json` `main` field to know what file
 
 ```json
 {
-  "main": "./build/index.js"
+  "main": "./build/runtime/index.js"
 }
 ```
 

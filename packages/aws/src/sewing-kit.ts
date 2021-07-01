@@ -4,6 +4,9 @@ import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {
   App,
   Service,
+  ResolvedHooks,
+  BuildAppConfigurationHooks,
+  BuildServiceConfigurationHooks,
   ResolvedOptions,
   BuildAppOptions,
   BuildServiceOptions,
@@ -22,7 +25,11 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             rollupInputOptions,
             rollupOutputs,
             quiltHttpHandlerRuntimeContent,
-          },
+            quiltServiceOutputFormat,
+            quiltAppServerOutputFormat,
+          }: ResolvedHooks<
+            BuildAppConfigurationHooks & BuildServiceConfigurationHooks
+          >,
           options,
         ) => {
           quiltHttpHandlerRuntimeContent?.(
@@ -44,6 +51,10 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             return;
           }
 
+          quiltServiceOutputFormat?.(() => 'commonjs');
+
+          quiltAppServerOutputFormat?.(() => 'commonjs');
+
           rollupExternals?.((externals) => {
             externals.push('aws-sdk');
             return externals;
@@ -60,10 +71,6 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
               output.format = 'commonjs';
               output.exports = 'named';
               output.esModule = false;
-
-              output.entryFileNames = ensureJsExtension(output.entryFileNames);
-              output.chunkFileNames = ensureJsExtension(output.chunkFileNames);
-              output.assetFileNames = ensureJsExtension(output.assetFileNames);
             }
 
             return outputs;
@@ -72,9 +79,4 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
       );
     },
   });
-}
-
-function ensureJsExtension<T>(file?: T) {
-  if (typeof file !== 'string') return file;
-  return file.replace(/\.[mc]js$/, '.js');
 }
