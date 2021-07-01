@@ -395,6 +395,34 @@ export function appBuild({server, assets, browser}: Options) {
           },
         );
 
+        steps.push(
+          step({
+            stage: 'pre',
+            name: `${STEP_NAME}.Clean`,
+            label: `Cleaning build directory for ${project.name}`,
+            async run() {
+              await Promise.all([
+                rm(project.fs.buildPath('assets'), {
+                  recursive: true,
+                  force: true,
+                }),
+                rm(project.fs.buildPath('server'), {
+                  recursive: true,
+                  force: true,
+                }),
+                rm(project.fs.buildPath('manifests'), {
+                  recursive: true,
+                  force: true,
+                }),
+                rm(project.fs.buildPath('reports'), {
+                  recursive: true,
+                  force: true,
+                }),
+              ]);
+            },
+          }),
+        );
+
         for (const [name, targets] of Object.entries(browserslistConfig)) {
           if (targets == null || targets.length === 0) continue;
 
@@ -414,25 +442,6 @@ export function appBuild({server, assets, browser}: Options) {
                     },
                   }),
                   import('@quilted/sewing-kit-rollup'),
-                ]);
-
-                await Promise.all([
-                  rm(project.fs.buildPath('assets'), {
-                    recursive: true,
-                    force: true,
-                  }),
-                  rm(project.fs.buildPath('server'), {
-                    recursive: true,
-                    force: true,
-                  }),
-                  rm(project.fs.buildPath('manifests'), {
-                    recursive: true,
-                    force: true,
-                  }),
-                  rm(project.fs.buildPath('reports'), {
-                    recursive: true,
-                    force: true,
-                  }),
                 ]);
 
                 await buildWithRollup(configure);

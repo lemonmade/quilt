@@ -33,10 +33,10 @@ async function run() {
   let targetDirectory = argv._[0];
   const defaultProjectName = targetDirectory || 'quilt-app';
 
-  let result: Answers<'name' | 'packageName' | 'overwrite'>;
+  let result: Answers<'name' | 'overwrite'>;
 
   try {
-    result = await prompts<'name' | 'packageName' | 'overwrite'>(
+    result = await prompts<'name' | 'overwrite'>(
       [
         {
           type: targetDirectory ? null : 'text',
@@ -63,15 +63,6 @@ async function run() {
             }
           },
         },
-        {
-          type: () =>
-            isValidPackageName(targetDirectory) ? (null as any) : 'text',
-          name: 'packageName',
-          message: 'Package name:',
-          initial: (() => toValidPackageName(targetDirectory)) as any,
-          validate: (dir) =>
-            isValidPackageName(dir) || 'Invalid package.json name',
-        },
       ],
       {
         onCancel: () => {
@@ -83,8 +74,9 @@ async function run() {
     return;
   }
 
-  const {overwrite, packageName} = result;
+  const {overwrite} = result;
   const root = path.join(cwd, targetDirectory);
+  const packageName = toValidPackageName(targetDirectory);
 
   if (overwrite) {
     emptyDirectory(root);
@@ -150,12 +142,6 @@ async function run() {
   }
   console.log(`  yarn develop`);
   console.log();
-}
-
-function isValidPackageName(projectName: string) {
-  return /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(
-    projectName,
-  );
 }
 
 function toValidPackageName(projectName: string) {
