@@ -104,7 +104,7 @@ export default function workerBabelPlugin({
     const {noop = false} = options;
 
     const callingReferences = binding.referencePaths.filter((referencePath) =>
-      referencePath.parentPath.isCallExpression(),
+      referencePath.parentPath!.isCallExpression(),
     );
 
     type CallExpressionNodePath = import('@babel/traverse').NodePath<

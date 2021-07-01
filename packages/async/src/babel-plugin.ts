@@ -77,7 +77,7 @@ export default function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
 
 function addIdOption(binding: Binding, t: typeof Babel, file: string) {
   binding.referencePaths.forEach((refPath) => {
-    const callExpression = refPath.parentPath;
+    const callExpression = refPath.parentPath!;
 
     if (!callExpression.isCallExpression()) {
       return;

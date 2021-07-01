@@ -132,7 +132,14 @@ export function workers({
           },
         },
         ...(typeof plugins === 'function'
-          ? await plugins(parentInputOptions.plugins ?? [], workerContext)
+          ? await plugins(
+              [
+                ...(parentInputOptions.plugins?.filter(
+                  (plugin): plugin is Plugin => Boolean(plugin),
+                ) ?? []),
+              ],
+              workerContext,
+            )
           : plugins),
       ];
 
