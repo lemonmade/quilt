@@ -3311,7 +3311,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/polyfills@^0.2.10, @quilted/polyfills@workspace:packages/polyfills":
+"@quilted/polyfills@^0.2.11, @quilted/polyfills@workspace:packages/polyfills":
   version: 0.0.0-use.local
   resolution: "@quilted/polyfills@workspace:packages/polyfills"
   dependencies:
@@ -3369,14 +3369,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/quilt@^0.5.33, @quilted/quilt@workspace:packages/quilt":
+"@quilted/quilt@^0.5.34, @quilted/quilt@workspace:packages/quilt":
   version: 0.0.0-use.local
   resolution: "@quilted/quilt@workspace:packages/quilt"
   dependencies:
     "@quilted/async": ^0.3.9
     "@quilted/graphql": ^0.4.10
     "@quilted/http-handlers": ^0.2.10
-    "@quilted/polyfills": ^0.2.10
+    "@quilted/polyfills": ^0.2.11
     "@quilted/preact-mini-compat": ^0.2.6
     "@quilted/react-async": ^0.3.16
     "@quilted/react-email": ^0.2.14
@@ -7200,7 +7200,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-complete@workspace:examples/complete"
   dependencies:
-    "@quilted/quilt": ^0.5.33
+    "@quilted/quilt": ^0.5.34
   languageName: unknown
   linkType: soft
 
