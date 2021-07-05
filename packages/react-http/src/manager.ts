@@ -9,6 +9,12 @@ interface Options {
   // cookies?: Cookie | string;
 }
 
+export interface HttpState {
+  readonly statusCode: number;
+  readonly headers: Map<string, string>;
+  readonly redirectUrl?: string;
+}
+
 export class HttpManager {
   readonly actionKind: ServerActionKind = {
     id: SERVER_ACTION_ID,
@@ -71,7 +77,7 @@ export class HttpManager {
     this.csp.set(directive, newValue);
   }
 
-  get state() {
+  get state(): HttpState {
     const csp =
       this.csp.size === 0
         ? undefined
@@ -98,8 +104,7 @@ export class HttpManager {
     }
 
     return {
-      statusCode:
-        this.statusCodes.length > 0 ? Math.max(...this.statusCodes) : undefined,
+      statusCode: Math.max(200, ...this.statusCodes),
       headers,
       redirectUrl: this.redirectUrl,
     };

@@ -10,11 +10,13 @@ import {PreloaderContext, ConsumedPathContext} from '../context';
 import {getMatchDetails} from '../utilities';
 import type {Router} from '../router';
 import type {Preloader} from '../preloader';
+import type {StaticRenderer} from '../static';
 
 import {useRedirect} from './redirect';
 import {useCurrentUrl} from './url';
 import {useRouter} from './router';
 import {useConsumedPath} from './consumed';
+import {useStaticRenderer} from './static';
 
 export interface Options {
   notFound?: boolean | (() => ReactElement);
@@ -22,13 +24,19 @@ export interface Options {
 
 export function useRoutes(
   routes: RouteDefinition[],
-  {notFound = true}: Options = {},
+  {notFound = routes[routes.length - 1].match != null}: Options = {},
 ) {
   const router = useRouter();
   const currentUrl = useCurrentUrl();
   const consumedPath = useConsumedPath();
 
   useRoutePreloadRegistration(routes, consumedPath);
+
+  const staticRender = useStaticRenderer(routes, {
+    fallback: Boolean(notFound),
+    prefix: currentUrl.prefix,
+    consumedPath,
+  });
 
   return (
     <RoutesInternal
@@ -37,6 +45,7 @@ export function useRoutes(
       currentUrl={currentUrl}
       consumedPath={consumedPath}
       notFound={notFound}
+      staticRender={staticRender}
     />
   );
 }
@@ -82,6 +91,7 @@ interface Props {
   currentUrl: EnhancedURL;
   notFound: NonNullable<Options['notFound']>;
   consumedPath?: string;
+  staticRender?: StaticRenderer;
 }
 
 const RoutesInternal = memo(function RoutesInternal({
@@ -90,6 +100,7 @@ const RoutesInternal = memo(function RoutesInternal({
   currentUrl,
   notFound,
   consumedPath: previouslyConsumedPath,
+  staticRender,
 }: Props) {
   let matchDetails:
     | (ReturnType<typeof getMatchDetails> & {route: RouteDefinition})
@@ -101,6 +112,7 @@ const RoutesInternal = memo(function RoutesInternal({
       router,
       previouslyConsumedPath,
       route.match,
+      staticRender?.forceFallback(previouslyConsumedPath ?? '/'),
     );
 
     if (matchDetailsForRoute != null) {

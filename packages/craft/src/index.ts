@@ -43,6 +43,9 @@ import {magicModuleApp} from './plugins/magic-module-app';
 import {appServer} from './plugins/app-server';
 import type {AppServerOptions} from './plugins/app-server';
 
+import {appStatic} from './plugins/app-static';
+import type {AppStaticOptions} from './plugins/app-static';
+
 import {appWorkers} from './plugins/app-workers';
 import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
@@ -91,6 +94,19 @@ export interface AppOptions {
   browser?: AppBrowserOptions;
 
   /**
+   * Allows you to enable and customize a static build of this application.
+   * By default, Quilt creates a server rendering output instead of static
+   * assets; we believe server-side rendering is generally a better pattern,
+   * as you can get a lot of the same benefits of static outputs by putting
+   * a CDN in front of your server rendering application. However, many hosting
+   * platforms have great support for static outputs, so Quilt supports this
+   * pattern if explicitly requested. Note that, if you enable static rendering,
+   * the auto-generated server is disabled by default, so you’ll need to
+   * explicitly enable both if you want them.
+   */
+  static?: boolean | AppStaticOptions;
+
+  /**
    * Customizes the server created for your application. By default,
    * Quilt will create an Node server (using ES modules), but you can
    * use any Sewing Kit plugin that can adapt an HTTP handler to a runtime
@@ -106,7 +122,8 @@ export function quiltApp({
   build = true,
   assets = {},
   browser = {},
-  server = true,
+  static: renderStatic = false,
+  server = !renderStatic,
 }: AppOptions = {}) {
   const {minify = true, baseUrl = '/assets/'} = assets;
 
@@ -136,7 +153,12 @@ export function quiltApp({
             server: Boolean(server),
             assets: {minify, baseUrl},
           }),
-        build && useHttpHandler && httpHandler(),
+        build &&
+          renderStatic &&
+          appStatic(
+            typeof renderStatic === 'boolean' ? undefined : renderStatic,
+          ),
+        build && server && useHttpHandler && httpHandler(),
         build &&
           server &&
           appServer(typeof server === 'boolean' ? undefined : server),

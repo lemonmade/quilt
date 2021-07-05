@@ -18,6 +18,11 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
+    "./static": {
+      "sewing-kit:esnext": "./build/esnext/static.esnext",
+      "import": "./build/esm/static.mjs",
+      "require": "./build/cjs/static.cjs"
+    },
     "./testing": {
       "sewing-kit:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",
@@ -26,6 +31,9 @@
   },
   "typesVersions": {
     ">=1": {
+      "static": [
+        "./build/typescript/static.d.ts"
+      ],
       "testing": [
         "./build/typescript/testing.d.ts"
       ],

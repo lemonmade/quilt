@@ -1,7 +1,6 @@
 export interface Asset {
   readonly source: string;
-  readonly type?: string;
-  readonly integrity?: string;
+  readonly attributes: Record<string, string | boolean | number>;
 }
 
 export interface ManifestEntry {
@@ -109,7 +108,7 @@ export function createAssetLoader<Options>({
     }
 
     if (resolvedEntry) {
-      if (scripts) {
+      if (scripts && resolvedEntry.scripts.length > 0) {
         const scripts = [...resolvedEntry.scripts];
         // The last item on the list is the actual entry. It needs to go after
         // any async imports, but the vendors, which are typically shared with
@@ -120,7 +119,7 @@ export function createAssetLoader<Options>({
         assets.push(entry!);
       }
 
-      if (styles) {
+      if (styles && resolvedEntry.styles.length > 0) {
         assets.unshift(...resolvedEntry.styles);
       }
     }

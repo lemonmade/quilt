@@ -57,12 +57,15 @@ export function getMatchDetails(
   router: Router,
   consumed?: string,
   match?: Match,
+  forceFallback = false,
 ): MatchDetails | undefined {
   const pathDetails = splitUrl(url, router.prefix, consumed);
 
   if (match == null) {
     const matched = removePostfixSlash(pathDetails.remainderAbsolute);
     return {matched};
+  } else if (forceFallback) {
+    return undefined;
   } else if (typeof match === 'function') {
     if (!match(url)) return undefined;
     const matched = removePostfixSlash(pathDetails.remainderAbsolute);
