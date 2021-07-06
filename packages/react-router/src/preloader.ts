@@ -1,4 +1,5 @@
-import type {Match} from '@quilted/routing';
+import {enhanceUrl} from '@quilted/routing';
+import type {Match, EnhancedURL} from '@quilted/routing';
 
 import type {RouteDefinition} from './types';
 import type {Router} from './router';
@@ -119,9 +120,10 @@ export function createPreloader(router: Router): Preloader {
 
   function getMatches(url: URL) {
     const matches: PreloadMatch[] = [];
+    const enhancedUrl = enhanceUrl(url, router.prefix);
 
     for (const registration of registered) {
-      const urlMatch = getUrlMatch(url, router, registration.matches);
+      const urlMatch = getUrlMatch(enhancedUrl, router, registration.matches);
 
       if (typeof urlMatch === 'string') {
         matches.push({
@@ -158,7 +160,7 @@ function stringifyMatch(match?: Match) {
   }
 }
 
-function getUrlMatch(url: URL, router: Router, matchers: Match[]) {
+function getUrlMatch(url: EnhancedURL, router: Router, matchers: Match[]) {
   if (matchers.length === 0) return '';
 
   let currentlyConsumed: string | undefined;

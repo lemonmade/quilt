@@ -16,6 +16,22 @@ const routes: RouteDefinition[] = [
     ],
   },
   {
+    match: /\w+/,
+    renderStatic: () => ['abc', 'xyz'],
+    children: [
+      {
+        match: /\d+/,
+        renderStatic: () => ['123', '456', '890'],
+        children: [
+          {match: 'foo', render: () => <Start />},
+          {match: 'bar', render: () => <Start />},
+        ],
+      },
+      {match: 'foo', render: () => <Start />},
+      {match: 'bar', render: () => <Start />},
+    ],
+  },
+  {
     children: [
       {match: 'and-another', render: () => <Start />},
       {render: () => <NotFound />},

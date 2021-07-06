@@ -19,48 +19,56 @@ export interface RenderDetails {
   readonly http: HttpState;
 }
 
-interface RouteDetails {
+interface RenderableRoute {
   route: string;
   fallback: boolean;
 }
 
 export interface Options {
   routes: string[];
-  assets: AssetLoader<unknown>;
+  assets: AssetLoader<{modules: boolean}>;
+  traverse?: boolean;
+  baseUrl?: string;
+  prettify?: boolean;
   onRender(details: RenderDetails): void | Promise<void>;
 }
 
 const BASE_URL = 'http://localhost:3000';
-const FALLBACK_PATH_SEGMENT = '__QUILT_FALLBACK_ROUTE__';
 
 export async function renderStatic(
   App: ComponentType<any>,
-  {assets, routes: startingRoutes, onRender}: Options,
+  {
+    assets,
+    routes: startingRoutes,
+    onRender,
+    traverse = true,
+    baseUrl = BASE_URL,
+    prettify = true,
+  }: Options,
 ) {
-  const routeIdsToHandle = startingRoutes.map((route) =>
-    removePostfixSlash(new URL(route, BASE_URL).pathname),
-  );
-  const seenRoutes = [...routeIdsToHandle];
-  const handledRoutes = new Set<string>();
-  const routeDetails = new Map<string, RouteDetails>(
-    routeIdsToHandle.map((route) => [route, {route, fallback: false}]),
-  );
+  const routesToHandle = startingRoutes.map<RenderableRoute>((route) => ({
+    route: removePostfixSlash(new URL(route, baseUrl).pathname),
+    fallback: false,
+  }));
+  const seenRoutes = [...routesToHandle];
+  const seenRouteIds = new Set<string>(seenRoutes.map(({route}) => route));
 
-  let routeId: string | undefined;
+  let renderableRoute: RenderableRoute | undefined;
 
-  while ((routeId = routeIdsToHandle.shift())) {
-    const {fallback, route} = routeDetails.get(routeId)!;
+  while ((renderableRoute = routesToHandle.shift())) {
+    const {route, fallback} = renderableRoute;
 
-    const url = new URL(route, BASE_URL);
-    handledRoutes.add(route);
+    const url = new URL(route, baseUrl);
 
     const {html, http, routes} = await renderUrl(url, {fallback});
 
-    for (const {routes: routeDefinitions, consumedPath, prefix} of routes) {
-      const basePathname = joinPath(prefix, consumedPath);
+    if (traverse) {
+      for (const {routes: routeDefinitions, consumedPath, prefix} of routes) {
+        const basePathname = joinPath(prefix, consumedPath);
 
-      for (const routeDefinition of routeDefinitions) {
-        recordRouteDefinition(routeDefinition, basePathname);
+        for (const routeDefinition of routeDefinitions) {
+          await recordRouteDefinition(routeDefinition, basePathname);
+        }
       }
     }
 
@@ -69,46 +77,75 @@ export async function renderStatic(
       content: html,
       http,
       fallback,
-      hasChildren: seenRoutes.some((otherRoute) =>
-        otherRoute.startsWith(`${route}/`),
-      ),
+      hasChildren:
+        !fallback &&
+        seenRoutes.some((otherRoute) =>
+          otherRoute.route.startsWith(`${route}/`),
+        ),
     });
   }
 
-  function recordRouteDefinition(
-    {match, children}: RouteDefinition,
+  async function recordRouteDefinition(
+    {match, children, renderStatic}: RouteDefinition,
     basePathname: string,
   ) {
-    if (typeof match === 'function' || match instanceof RegExp) return;
+    if (renderStatic === false) return;
 
-    let route: string;
     let routeId: string;
+    let ownRoute: string | undefined;
     const hasChildren = children && children.length > 0;
     const fallback = match == null;
+    const routes: string[] = [];
 
     if (typeof match === 'string') {
-      route = joinPath(basePathname, match);
-      routeId = route;
+      ownRoute = joinPath(basePathname, match);
+      routes.push(ownRoute);
+      routeId = ownRoute;
+    } else if (typeof match === 'function') {
+      routeId = joinPath(
+        basePathname,
+        `__QUILT_FUNCTION_ROUTE_${match.toString()}__`,
+      );
+    } else if (match instanceof RegExp) {
+      routeId = joinPath(basePathname, `__QUILT_REGEX_ROUTE_${match.source}__`);
     } else {
-      route = basePathname;
-      routeId = joinPath(route, FALLBACK_PATH_SEGMENT);
+      ownRoute = basePathname;
+      routeId = joinPath(basePathname, '__QUILT_FALLBACK_ROUTE__');
     }
 
-    console.log({route, routeId, fallback, hasChildren});
+    if (seenRouteIds.has(routeId)) return;
 
-    if (routeDetails.has(routeId)) return;
+    if (ownRoute !== basePathname) {
+      seenRouteIds.add(routeId);
+    }
+
+    if (routes.length === 0 && typeof renderStatic === 'function') {
+      const additionalPathParts = await renderStatic();
+
+      for (const route of additionalPathParts.map((part) =>
+        joinPath(basePathname, part),
+      )) {
+        routes.push(route);
+      }
+    }
 
     if (hasChildren) {
-      for (const child of children!) {
-        recordRouteDefinition(child, route);
+      for (const route of routes) {
+        for (const child of children!) {
+          await recordRouteDefinition(child, route);
+        }
       }
 
       return;
     }
 
-    seenRoutes.push(route);
-    routeIdsToHandle.push(routeId);
-    routeDetails.set(routeId, {fallback, route});
+    if (ownRoute == null) return;
+
+    const renderableRoute = {route: ownRoute, fallback};
+
+    seenRouteIds.add(routeId);
+    seenRoutes.push(renderableRoute);
+    routesToHandle.push(renderableRoute);
   }
 
   async function renderUrl(url: URL, {fallback = false} = {}) {
@@ -165,18 +202,18 @@ export async function renderStatic(
       ...nomoduleScripts.map((script) => ({...script, nomodule: true})),
     ];
 
-    const html = await formatHtml(
-      render(
-        <Html
-          manager={htmlManager}
-          styles={styles}
-          scripts={scripts}
-          preloadAssets={preload}
-        >
-          {markup}
-        </Html>,
-      ),
+    const minifiedHtml = render(
+      <Html
+        manager={htmlManager}
+        styles={styles}
+        scripts={scripts}
+        preloadAssets={preload}
+      >
+        {markup}
+      </Html>,
     );
+
+    const html = prettify ? minifiedHtml : await prettifyHtml(minifiedHtml);
 
     return {
       html,
@@ -186,7 +223,7 @@ export async function renderStatic(
   }
 }
 
-async function formatHtml(html: string) {
+async function prettifyHtml(html: string) {
   try {
     const {default: prettier} = await import('prettier');
     return prettier.format(html, {parser: 'html'});
