@@ -1,5 +1,9 @@
 import {enhanceUrl as baseEnhancedURL} from '@quilted/routing';
-import type {Match, Prefix} from '@quilted/routing';
+import type {
+  Match,
+  Prefix,
+  EnhancedURL as BaseEnhancedURL,
+} from '@quilted/routing';
 
 import type {EnhancedURL} from './types';
 import type {Router} from './router';
@@ -53,16 +57,19 @@ interface MatchDetails {
 }
 
 export function getMatchDetails(
-  url: URL,
+  url: BaseEnhancedURL,
   router: Router,
   consumed?: string,
   match?: Match,
+  forceFallback = false,
 ): MatchDetails | undefined {
   const pathDetails = splitUrl(url, router.prefix, consumed);
 
   if (match == null) {
     const matched = removePostfixSlash(pathDetails.remainderAbsolute);
     return {matched};
+  } else if (forceFallback) {
+    return undefined;
   } else if (typeof match === 'function') {
     if (!match(url)) return undefined;
     const matched = removePostfixSlash(pathDetails.remainderAbsolute);

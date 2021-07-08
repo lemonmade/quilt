@@ -10,14 +10,14 @@ import {Serialize} from '../Serialize';
 
 interface Asset {
   source: string;
-  type?: string;
-  integrity?: string;
+  attributes: Record<string, string | boolean | number>;
 }
 
 interface Props {
   manager?: HtmlManager;
   // hydrationManager?: HydrationManager;
   children: ReactElement | string;
+  noModule?: boolean;
   locale?: string;
   styles?: Asset[];
   scripts?: Asset[];
@@ -30,6 +30,7 @@ interface Props {
 export function Html({
   manager,
   children,
+  noModule = true,
   locale,
   styles,
   scripts,
@@ -72,20 +73,30 @@ export function Html({
       <Style
         key={style.source}
         href={style.source}
-        integrity={style.integrity}
-        crossOrigin="anonymous"
+        crossOrigin=""
+        {...style.attributes}
       />
     );
   });
+
+  const needsNoModule =
+    noModule &&
+    (blockingScripts?.some((script) => script.attributes.type === 'module') ||
+      scripts?.some((script) => script.attributes.type === 'module') ||
+      false);
 
   const blockingScriptsMarkup = blockingScripts?.map((script) => {
     return (
       <Script
         key={script.source}
         src={script.source}
-        integrity={script.integrity}
-        type={script.type}
-        crossOrigin="anonymous"
+        crossOrigin=""
+        noModule={
+          !needsNoModule || script.attributes.type === 'module'
+            ? undefined
+            : true
+        }
+        {...script.attributes}
       />
     );
   });
@@ -95,10 +106,14 @@ export function Html({
       <Script
         key={script.source}
         src={script.source}
-        integrity={script.integrity}
-        type="module"
-        crossOrigin="anonymous"
+        crossOrigin=""
         defer
+        noModule={
+          !needsNoModule || script.attributes.type === 'module'
+            ? undefined
+            : true
+        }
+        {...script.attributes}
       />
     );
   });
@@ -106,8 +121,9 @@ export function Html({
   const preloadAssetsMarkup = preloadAssets?.map((asset) => (
     <link
       key={asset.source}
-      rel="prefetch"
+      rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
       href={asset.source}
+      crossOrigin=""
       as={asset.source.endsWith('.css') ? 'style' : 'script'}
     />
   ));

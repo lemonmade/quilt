@@ -1,5 +1,12 @@
+import {useCurrentUrl} from '@quilted/quilt';
+
 import styles from './Start.module.css';
 
 export default function Start() {
-  return <div className={styles.Start}>Hello world!!!</div>;
+  const currentUrl = useCurrentUrl();
+  return (
+    <div className={styles.Start}>
+      Hello world!!! Route: {currentUrl.pathname}
+    </div>
+  );
 }

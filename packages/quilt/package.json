@@ -14,41 +14,55 @@
   "license": "MIT",
   "exports": {
     ".": {
+      "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
+      "quilt:internal": "./src/server/index.ts",
       "sewing-kit:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",
       "require": "./build/cjs/server/index.cjs"
     },
+    "./static": {
+      "quilt:internal": "./src/static/index.tsx",
+      "sewing-kit:esnext": "./build/esnext/static/index.esnext",
+      "import": "./build/esm/static/index.mjs",
+      "require": "./build/cjs/static/index.cjs"
+    },
     "./html": {
+      "quilt:internal": "./src/html.ts",
       "sewing-kit:esnext": "./build/esnext/html.esnext",
       "import": "./build/esm/html.mjs",
       "require": "./build/cjs/html.cjs"
     },
     "./email": {
+      "quilt:internal": "./src/email.ts",
       "sewing-kit:esnext": "./build/esnext/email.esnext",
       "import": "./build/esm/email.mjs",
       "require": "./build/cjs/email.cjs"
     },
     "./global": {
+      "quilt:internal": "./src/global.ts",
       "sewing-kit:esnext": "./build/esnext/global.esnext",
       "import": "./build/esm/global.mjs",
       "require": "./build/cjs/global.cjs"
     },
     "./http": {
+      "quilt:internal": "./src/http.ts",
       "sewing-kit:esnext": "./build/esnext/http.esnext",
       "import": "./build/esm/http.mjs",
       "require": "./build/cjs/http.cjs"
     },
     "./testing": {
+      "quilt:internal": "./src/testing.ts",
       "sewing-kit:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"
     },
     "./matchers": {
+      "quilt:internal": "./src/matchers.ts",
       "sewing-kit:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
@@ -58,6 +72,9 @@
     ">=1": {
       "server": [
         "./build/typescript/server/index.d.ts"
+      ],
+      "static": [
+        "./build/typescript/static/index.d.ts"
       ],
       "html": [
         "./build/typescript/html.d.ts"
@@ -107,13 +124,20 @@
     "preact": "^10.0.0",
     "preact-render-to-string": "^5.0.0"
   },
+  "devDependencies": {
+    "@types/prettier": "^2.0.0"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
+    "prettier": "^2.0.0",
     "react": ">=17.0.0 <18.0.0",
     "react-dom": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
+      "optional": true
+    },
+    "prettier": {
       "optional": true
     },
     "react": {

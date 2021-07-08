@@ -33,4 +33,5 @@ export interface RouteDefinition {
   redirect?: NavigateTo;
   render?(details: RouteRenderDetails): ReactNode;
   renderPreload?(details: RouteRenderPreloadDetails): ReactNode;
+  renderStatic?: boolean | (() => string[] | Promise<string[]>);
 }

@@ -60,17 +60,15 @@ export function asyncQuilt({
 
       const {asyncId, moduleId} = getAsyncRequest(id.replace(ENTRY_PREFIX, ''));
 
-      let code = stripIndent`
+      const code = stripIndent`
         import * as AsyncModule from ${JSON.stringify(moduleId)};
         export {default} from ${JSON.stringify(moduleId)};
         export * from ${JSON.stringify(moduleId)};
-      `;
 
-      if (preload) {
-        code += `\nQuilt.AsyncAssets.set(${JSON.stringify(
-          asyncId,
-        )}, AsyncModule);`;
-      }
+        if (typeof Quilt !== 'undefined' && Quilt.AsyncAssets != null) {
+          Quilt.AsyncAssets.set(${JSON.stringify(asyncId)}, AsyncModule);
+        }
+      `;
 
       return {
         code,
@@ -295,11 +293,11 @@ function createAsset(
 
   for (const file of files) {
     if (file.endsWith('.css')) {
-      styles.push({source: `${baseUrl}${file}`});
+      styles.push({source: `${baseUrl}${file}`, attributes: {}});
     } else {
       scripts.push({
         source: `${baseUrl}${file}`,
-        type: format === 'es' || format === 'esm' ? 'module' : undefined,
+        attributes: format === 'es' || format === 'esm' ? {type: 'module'} : {},
       });
     }
   }

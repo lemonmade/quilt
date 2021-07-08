@@ -190,9 +190,10 @@ export function appBuild({server, assets, browser}: Options) {
           targets?.(() => browserTargets.targets);
 
           quiltAsyncManifestMetadata?.(async (metadata) => {
-            const {getUserAgentRegExp} = await import(
-              'browserslist-useragent-regexp'
-            );
+            const [{getUserAgentRegExp}, modules] = await Promise.all([
+              import('browserslist-useragent-regexp'),
+              targetsSupportModules(browserTargets.targets),
+            ]);
 
             Object.assign(metadata, {
               priority: browserTargets.priority,
@@ -202,6 +203,7 @@ export function appBuild({server, assets, browser}: Options) {
                 ignorePatch: true,
                 allowHigherVersions: true,
               }).source,
+              modules,
             } as QuiltMetadata);
 
             return metadata;
