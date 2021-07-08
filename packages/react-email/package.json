@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-email",
   "type": "module",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "React-friendly APIs for rendering emails and their metadata",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/react-html": "^0.3.14",
+    "@quilted/react-html": "^0.3.15",
     "@quilted/react-server-render": "^0.3.5"
   },
   "peerDependencies": {
