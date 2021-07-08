@@ -9,6 +9,7 @@
   "references": [
     {"path": "../async"},
     {"path": "../graphql"},
+    {"path": "../http-handlers"},
     {"path": "../polyfills"},
     {"path": "../react-async"},
     {"path": "../react-email"},
