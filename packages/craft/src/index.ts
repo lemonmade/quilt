@@ -151,6 +151,7 @@ export function quiltApp({
           appBuild({
             browser,
             server: Boolean(server),
+            static: Boolean(renderStatic),
             assets: {minify, baseUrl},
           }),
         build &&
