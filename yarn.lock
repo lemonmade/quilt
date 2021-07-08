@@ -3102,7 +3102,7 @@ __metadata:
     rollup-plugin-esbuild: ^4.5.0
     rollup-plugin-terser: ^7.0.0
     rollup-plugin-visualizer: ^5.5.0
-    systemjs: ^6.10.0
+    systemjs: ^6.10.2
     vite: ^2.0.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
@@ -13533,10 +13533,10 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"systemjs@npm:^6.10.0":
-  version: 6.10.1
-  resolution: "systemjs@npm:6.10.1"
-  checksum: c25cbea0cc31d9928b20ebd6e314611604bff3f6716bd34516d99c7d4f517f4ca6dcfe13f914159d76c7d9281de0063ae5f87b45e887e3d6c250640239248977
+"systemjs@npm:^6.10.2":
+  version: 6.10.2
+  resolution: "systemjs@npm:6.10.2"
+  checksum: b61c736d5016789dee30df52d63eacd89a14643cda522232480bab3dabb9ebf39ee380e8d40346d6b243a0848dd2fe9c6a57c71ac6bf3a26e952e86684539316
   languageName: node
   linkType: hard
 

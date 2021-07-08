@@ -60,6 +60,7 @@ export interface AppBrowserOptions {
 
 export interface Options {
   server: boolean;
+  static: boolean;
   assets: AssetOptions;
   browser: AppBrowserOptions;
 }
@@ -109,6 +110,11 @@ const DEFAULT_BROWSERSLIST_CONFIG: BrowserslistConfig = {
   evergreen: ['extends @quilted/browserslist-config/evergreen'],
 };
 
+const DEFAULT_STATIC_BROWSERSLIST_CONFIG: BrowserslistConfig = {
+  defaults: ['extends @quilted/browserslist-config/defaults'],
+  modules: [BROWSERSLIST_MODULES_QUERY],
+};
+
 const MAGIC_MODULE_CUSTOM_INITIALIZE = '__quilt__/BrowserCustomInitialize';
 const MAGIC_MODULE_CUSTOM_ENTRY = '__quilt__/BrowserCustomEntry';
 
@@ -148,7 +154,7 @@ declare module '@quilted/sewing-kit' {
 const MAGIC_ENTRY_MODULE = '__quilt__/AppEntry.tsx';
 export const STEP_NAME = 'Quilt.App.Build';
 
-export function appBuild({server, assets, browser}: Options) {
+export function appBuild({server, static: isStatic, assets, browser}: Options) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
     build({project, hooks, configure, run}) {
@@ -381,7 +387,10 @@ export function appBuild({server, assets, browser}: Options) {
         const {default: browserslist} = await import('browserslist');
 
         const foundConfig =
-          browserslist.findConfig(project.root) ?? DEFAULT_BROWSERSLIST_CONFIG;
+          browserslist.findConfig(project.root) ??
+          (isStatic && !server
+            ? DEFAULT_STATIC_BROWSERSLIST_CONFIG
+            : DEFAULT_BROWSERSLIST_CONFIG);
 
         const browserslistConfig: Record<string, string[]> = {};
 

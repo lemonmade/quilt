@@ -213,7 +213,7 @@ export async function renderStatic(
       </Html>,
     );
 
-    const html = prettify ? minifiedHtml : await prettifyHtml(minifiedHtml);
+    const html = prettify ? await prettifyHtml(minifiedHtml) : minifiedHtml;
 
     return {
       html,

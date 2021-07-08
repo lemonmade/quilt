@@ -156,7 +156,11 @@ declare module '@quilted/sewing-kit' {
 const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry';
 const PRELOAD_ALL_GLOBAL = '__QUILT_ASYNC_PRELOAD_ALL__';
 
-export function appStatic(_options?: AppStaticOptions) {
+export function appStatic({
+  routes = ['/'],
+  crawl = true,
+  prettify = true,
+}: AppStaticOptions = {}) {
   return createProjectPlugin<App>({
     name: 'Quilt.App.Static',
     build({project, internal, hooks, configure, run}) {
@@ -168,13 +172,17 @@ export function appStatic(_options?: AppStaticOptions) {
 
       hooks<AppStaticHooks>(({waterfall}) => ({
         quiltStaticBuildRoutes: waterfall<string[]>({
-          default: () => ['/'],
+          default: async () => {
+            const resolved =
+              typeof routes === 'function' ? await routes() : routes;
+            return Array.from(resolved);
+          },
         }),
-        quiltStaticBuildCrawl: waterfall<boolean>({
-          default: true,
+        quiltStaticBuildCrawl: waterfall({
+          default: crawl,
         }),
-        quiltStaticBuildPrettify: waterfall<boolean>({
-          default: true,
+        quiltStaticBuildPrettify: waterfall({
+          default: prettify,
         }),
         quiltStaticBuildWriteRoute: waterfall(),
       }));
@@ -188,7 +196,6 @@ export function appStatic(_options?: AppStaticOptions) {
             rollupPlugins,
             rollupExternals,
             rollupOutputs,
-            rollupNodeBundle,
             rollupInputOptions,
             quiltAsyncPreload,
             quiltAsyncManifest,
@@ -202,9 +209,8 @@ export function appStatic(_options?: AppStaticOptions) {
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
-          // Don’t bundle, we’ll let native Node resolution work its magic
-          rollupNodeBundle?.(() => false);
-
+          // Let prettier use native Node resolution, we include it as
+          // a dependency.
           rollupExternals?.((externals) => {
             externals.push('prettier');
             return externals;
