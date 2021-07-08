@@ -27,7 +27,7 @@ interface RenderableRoute {
 export interface Options {
   routes: string[];
   assets: AssetLoader<{modules: boolean}>;
-  traverse?: boolean;
+  crawl?: boolean;
   baseUrl?: string;
   prettify?: boolean;
   onRender(details: RenderDetails): void | Promise<void>;
@@ -41,7 +41,7 @@ export async function renderStatic(
     assets,
     routes: startingRoutes,
     onRender,
-    traverse = true,
+    crawl = true,
     baseUrl = BASE_URL,
     prettify = true,
   }: Options,
@@ -62,7 +62,7 @@ export async function renderStatic(
 
     const {html, http, routes} = await renderUrl(url, {fallback});
 
-    if (traverse) {
+    if (crawl) {
       for (const {routes: routeDefinitions, consumedPath, prefix} of routes) {
         const basePathname = joinPath(prefix, consumedPath);
 

@@ -301,7 +301,7 @@ export default createApp((app) => {
 });
 ```
 
-Because it is called with details about the HTTP-related details for the render, this is also a great place to add support for those features in the static build being produced. For example, the following Sewing Kit plugin reads any headers (other than `content-type`, which is always set to `text/html` and generally handled by hosting platforms automatically), stores them, and uses the results to build a `_headers` file that contains any custom headers:
+Because it is called with the HTTP-related details for the render, this is also a great place to add support for those headers and redirects in the static build being produced. For example, the following Sewing Kit plugin reads any headers (other than `content-type`, which is always set to `text/html` and generally handled by hosting platforms automatically), stores them, and uses the results to build a `_headers` file that contains any custom headers:
 
 ```ts
 import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
@@ -344,17 +344,15 @@ export default createApp((app) => {
                 // Writing a file in the format Netlify expects:
                 // https://docs.netlify.com/routing/headers/#syntax-for-the-headers-file
                 await project.fs.write(
-                  project.fs.buildPath(
-                    '_headers',
-                    [...headersByFile]
-                      .map(
-                        ([file, headers]) =>
-                          `/${file}\n${[...headers]
-                            .map(([header, value]) => `  ${header}: ${value}`)
-                            .join('\n')}`,
-                      )
-                      .join('\n'),
-                  ),
+                  project.fs.buildPath('_headers'),
+                  [...headersByFile]
+                    .map(
+                      ([file, headers]) =>
+                        `/${file}\n${[...headers]
+                          .map(([header, value]) => `  ${header}: ${value}`)
+                          .join('\n')}`,
+                    )
+                    .join('\n'),
                 );
               },
             }),
