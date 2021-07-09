@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-esnext",
   "type": "module",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/rollup-plugin-fix-commonjs-preserve-modules": "^0.1.0",
+    "@quilted/rollup-plugin-fix-commonjs-preserve-modules": "^0.1.1",
     "@quilted/sewing-kit-rollup": "^0.1.6",
     "@rollup/plugin-babel": "^5.3.0",
     "esbuild": "^0.12.0",
