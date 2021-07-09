@@ -69,6 +69,11 @@ export interface StaticWriteRouteContext {
   route: string;
 
   /**
+   * Whether there are any routes that are nested below this one.
+   */
+  hasChildren: boolean;
+
+  /**
    * Whether the route being rendered was a “forced fallback”. When Quilt
    * discovers a route without a `match` field, it will render the parent
    * route with the `fallback` option set to `true`, and will forcibly render
@@ -164,7 +169,7 @@ export function appStatic({
   return createProjectPlugin<App>({
     name: 'Quilt.App.Static',
     build({project, internal, hooks, configure, run}) {
-      const outputDirectory = internal.fs.tempPath(
+      const nodeScriptOutputDirectory = internal.fs.tempPath(
         'quilt-static',
         project.name,
       );
@@ -352,8 +357,8 @@ export function appStatic({
 
                 for (const output of outputs) {
                   if (output.type !== 'chunk') continue;
-                  output.code = output.code.replaceAll(
-                    PRELOAD_ALL_GLOBAL,
+                  output.code = output.code.replace(
+                    new RegExp(PRELOAD_ALL_GLOBAL, 'g'),
                     preloadAllPromise,
                   );
                 }
@@ -367,7 +372,7 @@ export function appStatic({
             outputs.push({
               format: 'esm',
               entryFileNames: outputFilename,
-              dir: outputDirectory,
+              dir: nodeScriptOutputDirectory,
             });
 
             return outputs;
@@ -386,7 +391,7 @@ export function appStatic({
             };
           },
           async run() {
-            await rm(outputDirectory, {
+            await rm(nodeScriptOutputDirectory, {
               force: true,
               recursive: true,
             });
@@ -401,20 +406,22 @@ export function appStatic({
             await buildWithRollup(configure);
 
             const {
+              outputDirectory,
               quiltStaticBuildRoutes,
               quiltStaticBuildCrawl,
               quiltStaticBuildPrettify,
               quiltStaticBuildWriteRoute,
             } = configure;
 
-            const [routes, crawl, prettify] = await Promise.all([
+            const [routes, crawl, prettify, outputRoot] = await Promise.all([
               quiltStaticBuildRoutes!.run(),
               quiltStaticBuildCrawl!.run(),
               quiltStaticBuildPrettify!.run(),
+              outputDirectory.run(project.fs.buildPath()),
             ]);
 
             const {default: renderStatic} = await (import(
-              path.join(outputDirectory, outputFilename)
+              path.join(outputRoot, 'public', outputFilename)
             ) as Promise<{
               default: (
                 options: Omit<StaticRenderOptions, 'assets'>,
@@ -439,7 +446,7 @@ export function appStatic({
 
                 const finalFilename = await quiltStaticBuildWriteRoute!.run(
                   defaultValue,
-                  {route, fallback, http},
+                  {route, fallback, hasChildren, http},
                 );
 
                 if (!finalFilename) return;

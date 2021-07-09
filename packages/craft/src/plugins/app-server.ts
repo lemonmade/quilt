@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App, WaterfallHook} from '@quilted/sewing-kit';
@@ -234,15 +236,15 @@ export function appServer(options?: AppServerOptions) {
           });
 
           rollupOutputs?.(async (outputs) => {
-            const [format, directory] = await Promise.all([
+            const [format, outputRoot] = await Promise.all([
               quiltAppServerOutputFormat!.run('module'),
-              outputDirectory.run(project.fs.buildPath('server')),
+              outputDirectory.run(project.fs.buildPath()),
             ]);
 
             outputs.push({
               format,
               entryFileNames: 'index.js',
-              dir: directory,
+              dir: path.join(outputRoot, 'server'),
             });
 
             return outputs;

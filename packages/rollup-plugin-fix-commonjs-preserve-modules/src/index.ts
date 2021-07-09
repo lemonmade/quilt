@@ -28,7 +28,7 @@ export function fixCommonJsPreserveModules({extension}: Options): Plugin {
           bundle[newFileName] = chunk;
         }
 
-        chunk.code = chunk.code.replaceAll(/_commonjs-exports\b/g, ext);
+        chunk.code = chunk.code.replace(/_commonjs-exports\b/g, ext);
         chunk.imports = chunk.imports.filter((imported) =>
           imported.replace(COMMONJS_PROXY_BAD_FILENAME_POSTFIX, ext),
         );

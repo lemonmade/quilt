@@ -20,15 +20,7 @@ export default createApp((app) => {
 });
 ```
 
-> **Note:** the static builds will be placed in the `./build` directory,
-> relative to your application’s root. This can get a little messy
-> if you are using Quilt’s default TypeScript setup, which outputs
-> the TypeScript build to `./build/typescript`. If you upload the
-> contents of the `./build` directory after building your static
-> site, make sure to ignore the `./build/typescript` directory, or
-> change the `outDir` in your app’s `tsconfig.json` to build to a
-> different directory (we recommend `./typescript`, which should also
-> be added to your `.gitignore`).
+When you turn on static builds, your built assets will be nested a little deeper — under `./build/public/assets`, instead of the usual `./build/assets`. This allows us to render all the HTML documents for your static application into `./build/public`, without having any other build artifacts getting in the way. For most deployment platforms, you’ll only need to tell them your build command (typically, `yarn build`) and point them at `./build/public` as your output directory,
 
 All of Quilt’s features are designed to work great with static rendering. You can use the [HTML components and hooks](../../../html.md) to customize the `<head>` and other details of the HTML document, the [HTTP utilities](../../../http.md) to establish [404 pages and set other headers](#deeper-customizations-with-sewing-kit), and much more. Under the hood, Quilt’s static rendering uses the same approach that powers Quilt’s server-side rendering, so all of the [server-related utilities](../../../server-rendering.md) also just work when rendering your app statically.
 
@@ -104,7 +96,7 @@ In the example above, three routes are declared:
 
 Quilt’s static rendering mode automatically detects these routes without any custom configuration on your part. It does this by compiling your application component (the one you export as the default export from your main `App.tsx` file) into a small Node script, and then rendering the root route of your application (`/`). In this first render, two things happen:
 
-1. We get the static HTML output for the root route, which is output to `./build/index.html`.
+1. We get the static HTML output for the root route, which is output to `./build/public/index.html`.
 1. We detect all the other routes of your application, which are added to a queue to render next.
 
 Quilt continues to perform this “crawling” of your application until all routes have been detected and rendered, including routes that are declared across [async component boundaries](../../../async.md).

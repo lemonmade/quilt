@@ -5,6 +5,7 @@ export default createApp((app) => {
   app.use(
     quiltApp({
       static: true,
+      server: true,
     }),
   );
 });

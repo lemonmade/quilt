@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {rm} from 'fs/promises';
 
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
@@ -360,8 +361,8 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
           });
 
           rollupOutputs?.(async (outputs) => {
-            const [dir, isESM] = await Promise.all([
-              outputDirectory.run(project.fs.buildPath('assets')),
+            const [outputRoot, isESM] = await Promise.all([
+              outputDirectory.run(project.fs.buildPath()),
               browserTargets
                 ? targetsSupportModules(browserTargets.targets)
                 : Promise.resolve(true),
@@ -369,7 +370,7 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
 
             outputs.push({
               format: isESM ? 'esm' : 'systemjs',
-              dir,
+              dir: path.join(outputRoot, isStatic ? 'public/assets' : 'assets'),
               entryFileNames: `app${targetFilenamePart}.[hash].js`,
               assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
               chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
@@ -414,6 +415,10 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
             async run() {
               await Promise.all([
                 rm(project.fs.buildPath('assets'), {
+                  recursive: true,
+                  force: true,
+                }),
+                rm(project.fs.buildPath('public'), {
                   recursive: true,
                   force: true,
                 }),

@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {rm} from 'fs/promises';
 
 import {createProjectPlugin} from '@quilted/sewing-kit';
@@ -80,15 +81,15 @@ export function serviceBuild({minify, httpHandler}: Options) {
           });
 
           rollupOutputs?.(async (outputs) => {
-            const [format, directory] = await Promise.all([
+            const [format, outputRoot] = await Promise.all([
               quiltServiceOutputFormat!.run('module'),
-              outputDirectory.run(project.fs.buildPath('runtime')),
+              outputDirectory.run(project.fs.buildPath()),
             ]);
 
             outputs.push({
               format,
               entryFileNames: 'index.js',
-              dir: directory,
+              dir: path.join(outputRoot, 'runtime'),
             });
 
             return outputs;
