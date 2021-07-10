@@ -421,7 +421,7 @@ export function appStatic({
             ]);
 
             const {default: renderStatic} = await (import(
-              path.join(outputRoot, 'public', outputFilename)
+              path.join(nodeScriptOutputDirectory, outputFilename)
             ) as Promise<{
               default: (
                 options: Omit<StaticRenderOptions, 'assets'>,
@@ -452,7 +452,7 @@ export function appStatic({
                 if (!finalFilename) return;
 
                 await project.fs.write(
-                  project.fs.buildPath(finalFilename),
+                  path.join(outputRoot, 'public', finalFilename),
                   content,
                 );
               },
