@@ -237,6 +237,29 @@ describe('useRoutes()', () => {
           mount(<Routes />, {path: `${prefix}/a`, prefix}),
         ).not.toContainReactComponent(RouteComponent);
       });
+
+      it('does not match partial path segments', () => {
+        function OtherComponent() {
+          return null;
+        }
+
+        function Routes() {
+          return useRoutes([
+            {match: 'must', render: () => <OtherComponent />},
+            {
+              match: 'must-match',
+              children: [
+                {match: 'full', render: () => <OtherComponent />},
+                {match: 'full-path', render: () => <RouteComponent />},
+              ],
+            },
+          ]);
+        }
+
+        expect(
+          mount(<Routes />, {path: 'must-match/full-path'}),
+        ).toContainReactComponent(RouteComponent);
+      });
     });
 
     describe('regex', () => {
@@ -430,6 +453,29 @@ describe('useRoutes()', () => {
         expect(
           mount(<Routes />, {path: `${prefixMatch}/a`, prefix}),
         ).not.toContainReactComponent(RouteComponent);
+      });
+
+      it('does not match partial path segments', () => {
+        function OtherComponent() {
+          return null;
+        }
+
+        function Routes() {
+          return useRoutes([
+            {match: /must/, render: () => <OtherComponent />},
+            {
+              match: /must-match/,
+              children: [
+                {match: /^[/]full/, render: () => <OtherComponent />},
+                {match: /^[/]full-path/, render: () => <RouteComponent />},
+              ],
+            },
+          ]);
+        }
+
+        expect(
+          mount(<Routes />, {path: 'must-match/full-path'}),
+        ).toContainReactComponent(RouteComponent);
       });
     });
 

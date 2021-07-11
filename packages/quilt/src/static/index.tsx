@@ -63,11 +63,38 @@ export async function renderStatic(
     const {html, http, routes} = await renderUrl(url, {fallback});
 
     if (crawl) {
-      for (const {routes: routeDefinitions, consumedPath, prefix} of routes) {
+      for (const {
+        routes: routeDefinitions,
+        fallback = false,
+        consumedPath,
+        prefix,
+      } of routes) {
         const basePathname = joinPath(prefix, consumedPath);
+        const baseId =
+          basePathname === '/'
+            ? basePathname
+            : `__QUILT_BASE_${basePathname}__`;
 
         for (const routeDefinition of routeDefinitions) {
-          await recordRouteDefinition(routeDefinition, basePathname);
+          await recordRouteDefinition(routeDefinition, {
+            baseId,
+            basePathname,
+            addFallbacks: fallback,
+          });
+        }
+
+        if (
+          fallback &&
+          routeDefinitions[routeDefinitions.length - 1]?.match != null
+        ) {
+          await recordRouteDefinition(
+            {},
+            {
+              baseId,
+              basePathname,
+              addFallbacks: fallback,
+            },
+          );
         }
       }
     }
@@ -87,65 +114,93 @@ export async function renderStatic(
 
   async function recordRouteDefinition(
     {match, children, renderStatic}: RouteDefinition,
-    basePathname: string,
+    {
+      basePathname,
+      baseId,
+      addFallbacks,
+    }: {basePathname: string; baseId: string; addFallbacks: boolean},
   ) {
     if (renderStatic === false) return;
 
     let routeId: string;
-    let ownRoute: string | undefined;
     const hasChildren = children && children.length > 0;
-    const fallback = match == null;
-    const routes: string[] = [];
+    const hasManualMatches =
+      typeof renderStatic === 'function' && typeof match !== 'string';
+
+    const matchedRoutes: {id: string; route: string; fallback: boolean}[] = [];
 
     if (typeof match === 'string') {
-      ownRoute = joinPath(basePathname, match);
-      routes.push(ownRoute);
-      routeId = ownRoute;
+      routeId = joinPath(baseId, match);
+      matchedRoutes.push({
+        id: routeId,
+        route: joinPath(basePathname, match),
+        fallback: false,
+      });
     } else if (typeof match === 'function') {
       routeId = joinPath(
-        basePathname,
+        baseId,
         `__QUILT_FUNCTION_ROUTE_${match.toString()}__`,
       );
     } else if (match instanceof RegExp) {
-      routeId = joinPath(basePathname, `__QUILT_REGEX_ROUTE_${match.source}__`);
+      routeId = joinPath(`__QUILT_REGEX_ROUTE_${match.source}__`);
     } else {
-      ownRoute = basePathname;
-      routeId = joinPath(basePathname, '__QUILT_FALLBACK_ROUTE__');
-    }
+      routeId = joinPath(baseId, '__QUILT_FALLBACK_ROUTE__');
 
-    if (seenRouteIds.has(routeId)) return;
-
-    if (ownRoute !== basePathname) {
-      seenRouteIds.add(routeId);
-    }
-
-    if (routes.length === 0 && typeof renderStatic === 'function') {
-      const additionalPathParts = await renderStatic();
-
-      for (const route of additionalPathParts.map((part) =>
-        joinPath(basePathname, part),
-      )) {
-        routes.push(route);
+      if (!hasManualMatches) {
+        matchedRoutes.push({id: routeId, route: basePathname, fallback: true});
       }
     }
 
+    if (seenRouteIds.has(routeId)) return;
+    seenRouteIds.add(routeId);
+
+    if (typeof renderStatic === 'function' && typeof match !== 'string') {
+      const matchedRouteParts = await renderStatic();
+
+      for (const routePart of matchedRouteParts) {
+        const id = joinPath(baseId, `__QUILT_MATCH_${routePart}__`);
+        seenRouteIds.add(id);
+
+        matchedRoutes.push({
+          id,
+          route: joinPath(basePathname, routePart),
+          fallback: false,
+        });
+      }
+    }
+
+    // console.log({routeId, match, addFallbacks, children, routes, ownRoute});
+
     if (hasChildren) {
-      for (const route of routes) {
+      for (const {id, route} of matchedRoutes) {
         for (const child of children!) {
-          await recordRouteDefinition(child, route);
+          await recordRouteDefinition(child, {
+            addFallbacks,
+            basePathname: route,
+            baseId: id,
+          });
+        }
+
+        if (addFallbacks && children![children!.length - 1]?.match != null) {
+          await recordRouteDefinition(
+            {},
+            {
+              addFallbacks,
+              basePathname: route,
+              baseId: id,
+            },
+          );
         }
       }
 
       return;
     }
 
-    if (ownRoute == null) return;
-
-    const renderableRoute = {route: ownRoute, fallback};
-
-    seenRouteIds.add(routeId);
-    seenRoutes.push(renderableRoute);
-    routesToHandle.push(renderableRoute);
+    for (const {route, fallback} of matchedRoutes) {
+      const renderableRoute = {route, fallback};
+      seenRoutes.push(renderableRoute);
+      routesToHandle.push(renderableRoute);
+    }
   }
 
   async function renderUrl(url: URL, {fallback = false} = {}) {

@@ -1,5 +1,4 @@
 import {useRoutes} from '@quilted/quilt';
-import {NotFound} from '@quilted/quilt/http';
 import type {RouteDefinition} from '@quilted/quilt';
 
 import {Start} from '../../features/Start';
@@ -12,11 +11,10 @@ const routes: RouteDefinition[] = [
     children: [
       {match: 'foo', render: () => <Start />},
       {match: 'bar', render: () => <Start />},
-      {render: () => <NotFound />},
     ],
   },
   {
-    match: /\w+/,
+    match: /\w{3}/,
     renderStatic: () => ['abc', 'xyz'],
     children: [
       {
@@ -32,10 +30,7 @@ const routes: RouteDefinition[] = [
     ],
   },
   {
-    children: [
-      {match: 'and-another', render: () => <Start />},
-      {render: () => <NotFound />},
-    ],
+    children: [{match: 'and-another', render: () => <Start />}],
   },
 ];
 

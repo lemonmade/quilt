@@ -5,18 +5,22 @@ import {HtmlContext} from '@quilted/react-html/server';
 import type {HtmlManager} from '@quilted/react-html/server';
 import {AsyncAssetContext} from '@quilted/react-async/server';
 import type {AsyncAssetManager} from '@quilted/react-async/server';
+import {HttpContext} from '@quilted/react-http/server';
+import type {HttpManager} from '@quilted/react-http/server';
 
 import {maybeWrapContext} from '../utilities/react';
 
 interface Props {
   url?: string | URL;
   html?: HtmlManager;
+  http?: HttpManager;
   asyncAssets?: AsyncAssetManager;
 }
 
 export function StaticContext({
   url,
   html,
+  http,
   asyncAssets,
   children,
 }: PropsWithChildren<Props>) {
@@ -26,9 +30,13 @@ export function StaticContext({
     AsyncAssetContext,
     asyncAssets,
     maybeWrapContext(
-      HtmlContext,
-      html,
-      maybeWrapContext(InitialUrlContext, normalizedUrl, children),
+      HttpContext,
+      http,
+      maybeWrapContext(
+        HtmlContext,
+        html,
+        maybeWrapContext(InitialUrlContext, normalizedUrl, children),
+      ),
     ),
   );
 }

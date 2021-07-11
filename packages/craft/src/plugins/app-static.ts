@@ -435,7 +435,7 @@ export function appStatic({
               async onRender({route, hasChildren, content, fallback, http}) {
                 let defaultValue: string | false = false;
 
-                if (!fallback || http.statusCode === 404) {
+                if (!fallback || (route === '/' && http.statusCode === 404)) {
                   const normalizedRoute = route.replace(/^[/]/, '');
                   const filename = fallback ? '404.html' : 'index.html';
                   defaultValue =

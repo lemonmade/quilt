@@ -226,7 +226,7 @@ With the updated example above, Quilt will detect that it needs to build `/produ
 
 Quilt’s router supports “fallback” routes, which are matched when no other sibling matches, and by default uses fallbacks that set a 404 status code. While useful, these fallbacks are hard to express in a static build, where files on disk are meant to map directly to “real” routes in your application.
 
-Quilt defaults to a pattern for these routes that works in several hosting providers: it only renders fallbacks if they have an explicit `404` status code (which you can do with the `NotFound` component or the `useStatusCode` hook, both from `@quilted/quilt/http`), and renders them as `404.html` files in the nested directory that maps to where they appeared in your route configuration.
+Quilt defaults to a pattern for these routes that works in several hosting providers: it only renders a fallback for the root route (`/`), and only if it has an explicit `404` status code (which you can do with the `NotFound` component or the `useStatusCode` hook, both from `@quilted/quilt/http`). With this specific combination, Quilt will write the resulting render to `./build/public/404.html`. Fallbacks for all other routes, and fallbacks without an explicit 404 status code, will not be rendered.
 
 The behavior of what routes get rendered, and with what filenames, can be customized more deeply with a [Sewing Kit plugin](./TODO), which we will discuss next. Sewing Kit also gives you (or the Sewing Kit plugins you use) the ability to handle other details about your application that are represented differently in different static hosting platforms, like headers and redirects.
 
@@ -262,7 +262,7 @@ Quilt exposes a collection of [Sewing Kit hooks](./TODO) for deeply customizing 
 
 The `quiltStaticBuildWriteRoute` hook is particularly useful. It is called with the current result from calling previous hooks, and some additional context on the rendered route, including what the application route was, whether this is a “fallback” route, and the HTTP details recorded while rendering the route. It is expected to return a string with the filename to use, or `false` to not write the file at all.
 
-You can use this hook to change the default fallback writing behavior of Quilt; for example, the following custom plugin disables rendering all fallback routes unless they are for the root route _and_ have an explicit 404 status code. This might be necessary for a hosting provider that does not support nested `404.html` files:
+You can use this hook to change the default fallback writing behavior of Quilt. For example, the following custom plugin renders _all_ fallback routes with 404 status codes, nesting them as `404.html` files in their relative position in the router:
 
 ```ts
 import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
@@ -282,8 +282,10 @@ export default createApp((app) => {
           quiltStaticBuildWriteRoute?.(
             (writeRoute, {route, fallback, http}) => {
               if (!fallback) return writeRoute;
-              if (route !== '/' || http.statusCode !== 404) return false;
-              return '404.html';
+              if (http.statusCode !== 404) return false;
+
+              // The first character of the route is the `/`
+              return `${route.slice(1)}/404.html`;
             },
           );
         });

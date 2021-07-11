@@ -24,7 +24,7 @@ export interface Options {
 
 export function useRoutes(
   routes: RouteDefinition[],
-  {notFound = routes[routes.length - 1].match != null}: Options = {},
+  {notFound = true}: Options = {},
 ) {
   const router = useRouter();
   const currentUrl = useCurrentUrl();

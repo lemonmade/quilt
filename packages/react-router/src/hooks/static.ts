@@ -19,8 +19,9 @@ export function useStaticRenderer(
   useServerAction(() => {
     staticRender?.record({
       prefix,
+      fallback,
       consumedPath,
-      routes: fallback ? [...routes, {render: () => null}] : routes,
+      routes,
     });
   }, staticRender?.kind);
 

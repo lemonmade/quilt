@@ -6,6 +6,7 @@ export {StaticRendererContext} from './context';
 export interface RouteRecord {
   routes: RouteDefinition[];
   prefix?: string;
+  fallback?: boolean;
   consumedPath?: string;
 }
 

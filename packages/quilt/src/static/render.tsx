@@ -26,7 +26,12 @@ export async function renderApp(
   const markup = await extract(app, {
     decorate(app) {
       return (
-        <StaticContext asyncAssets={asyncAssets} html={html} url={url}>
+        <StaticContext
+          asyncAssets={asyncAssets}
+          html={html}
+          http={http}
+          url={url}
+        >
           {decorate?.(app) ?? app}
         </StaticContext>
       );

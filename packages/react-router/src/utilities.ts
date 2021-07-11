@@ -85,7 +85,7 @@ export function getMatchDetails(
           }
         : undefined;
     } else if (normalizedMatch[0] === '/') {
-      if (!pathDetails.remainderAbsolute.startsWith(normalizedMatch)) {
+      if (!startsWithPath(pathDetails.remainderAbsolute, normalizedMatch)) {
         return undefined;
       }
 
@@ -94,7 +94,7 @@ export function getMatchDetails(
         consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
       };
     } else {
-      if (!pathDetails.remainderRelative.startsWith(normalizedMatch)) {
+      if (!startsWithPath(pathDetails.remainderRelative, normalizedMatch)) {
         return undefined;
       }
 
@@ -108,7 +108,11 @@ export function getMatchDetails(
   } else if (match instanceof RegExp) {
     const matchAsRelative = pathDetails.remainderRelative.match(match);
 
-    if (matchAsRelative != null && matchAsRelative.index! === 0) {
+    if (
+      matchAsRelative != null &&
+      matchAsRelative.index! === 0 &&
+      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0])
+    ) {
       return {
         matched: removePostfixSlash(matchAsRelative[0]),
         consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
@@ -119,7 +123,11 @@ export function getMatchDetails(
 
     const matchAsAbsolute = pathDetails.remainderAbsolute.match(match);
 
-    if (matchAsAbsolute == null || matchAsAbsolute.index! !== 0) {
+    if (
+      matchAsAbsolute == null ||
+      matchAsAbsolute.index! !== 0 ||
+      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0])
+    ) {
       return undefined;
     }
 
@@ -130,6 +138,14 @@ export function getMatchDetails(
       consumed: normalizedMatch,
     };
   }
+}
+
+function startsWithPath(fullPath: string, pathSegment: string) {
+  return (
+    fullPath.startsWith(pathSegment) &&
+    (fullPath.length === pathSegment.length ||
+      fullPath[pathSegment.length] === '/')
+  );
 }
 
 function splitUrl(url: URL, prefix?: Prefix, consumed = '') {
