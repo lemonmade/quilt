@@ -1,6 +1,6 @@
 # Static builds
 
-Quilt can create a static build of your application where, in addition to your [browser assets](./browser.md), Quilt will pre-generate HTML files for every route it finds in your application. This capability is optional and is disabled by default, as we feel Quilt’s [server-side rendering feature](./server.md) is a better fit for most applications. However, many deployment platforms (like [Cloudflare](../../../deploy/cloudflare.md) and [Netlify](../../../deploy/netlify.md)) have excellent support for static sites, so enabling static builds is as simple as setting `static: true` in your app’s `sewing-kit.config.ts` file:
+Quilt can create a static build of your application where, in addition to your [browser assets](./browser.md), Quilt will pre-generate HTML files for every route it finds in your application. This capability is optional and is disabled by default, as we feel Quilt’s [server-side rendering feature](./server.md) is a better fit for most applications. However, many deployment platforms have excellent support for static sites, so enabling static builds is as simple as setting `static: true` in your app’s `sewing-kit.config.ts` file:
 
 ```ts
 // Your app’s sewing-kit config, usually sewing-kit.config.ts or app/sewing-kit.config.ts
