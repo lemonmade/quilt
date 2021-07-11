@@ -10,15 +10,14 @@ When you [generate a project with Quilt](./getting-started.md), you automaticall
 
 Building a whole layer on top of other tools is time-consuming and, for some developers, a big detractor to using Quilt. So, why did we build it, and what are we trying to accomplish by having it?
 
-Quilt is trying to walk a fine line. On one hand, we need deep tooling integrations to support powerful features like [async components](./features/async.md), [easy-to-use workers](./features/workers.md), and a high-performance approach to [internationalization](./features/i18n.md), and we want to make this capabilities easy to use for developers of any skill level. On the other hand, we want to respect that projects, especially if they appreciate the composable, low-level nature of a lot of Quilt APIs, often have highly custom needs, and we [never want to block you from doing what you need to do](./priorities.md).
+Quilt is trying to walk a fine line. On one hand, we need deep tooling integrations to support powerful features like [async components](./features/async.md), [easy-to-use workers](./features/workers.md), and a high-performance approach to [internationalization](./features/i18n.md), and we want to make these capabilities easy to use for developers of any skill level. On the other hand, we want to respect that projects, especially if they appreciate the composable, low-level nature of a lot of Quilt APIs, often have highly custom needs, and we [never want to block you from doing what you need to do](./priorities.md).
 
 Sewing Kit is our best effort at solving for both of these priorities. It gives Quilt a framework for encapsulating configuration for dozens of tools into just a few lines of simple JavaScript, while giving you hooks to overwrite or customize every piece of configuration, and add new capabilities that are entirely driven by your own unique needs.
 
-In addition to this critical design goal, Sewing Kit was also designed to address a few other needs:
+In addition to this critical design goal, Sewing Kit was also designed to:
 
-- Having the ability to encapsulate the configuration for a single language across all the tools and development tasks that use it (e.g., configuring TypeScript or GraphQL across development, build, type-check, and linting commands).
-- Having a way for teams to compose and share common configuration amongst themselves.
-- Allowing all configuration to be written in TypeScript, and to have all configuration fields support being determined asynchronously.
+- Have a way for teams to compose and share common configuration amongst themselves.
+- Allow all configuration to be written in TypeScript with [great type-safety](./priorities.md#type-safety), and to have all configuration fields support being determined asynchronously.
 
 ## Tasks
 
