@@ -24,7 +24,7 @@ When you turn on static builds, your built assets will be nested a little deeper
 
 All of Quilt’s features are designed to work great with static rendering. You can use the [HTML components and hooks](../../../html.md) to customize the `<head>` and other details of the HTML document, the [HTTP utilities](../../../http.md) to establish [404 pages and set other headers](#deeper-customizations-with-sewing-kit), and much more. Under the hood, Quilt’s static rendering uses the same approach that powers Quilt’s server-side rendering, so all of the [server-related utilities](../../../server-rendering.md) also just work when rendering your app statically.
 
-When setting `static: true`, Quilt’s [automatic server-rendering](./server.md) defaults to being disabled. If you want to have both the static build and the server-rendering builds at the same time, you’ll need to explicitly enable both.
+When setting `static: true`, Quilt’s [automatic server-rendering](./server.md) becomes disabled by default. If you want to have both the static build and the server-rendering builds at the same time, you’ll need to explicitly enable both.
 
 ```ts
 // sewing-kit.config.ts
