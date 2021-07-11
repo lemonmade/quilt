@@ -60,9 +60,16 @@ The rest of the configuration for Cloudflare Pages happens on the Cloudflare das
 
 Quilt projects generally use the following values for the **Build settings** section of the Cloudflare Pages configuration:
 
-**Framework preset:** None
-**Build command:** yarn build
-**Build output directory:** build/public
+<dl>
+  <dt>Framework preset:</dt>
+  <dl>None</dl>
+
+  <dt>Build command:</dt>
+  <dl>yarn build</dl>
+
+  <dt>Build output directory:</dt>
+  <dl>build/public</dl>
+</dl>
 
 When you’re ready, save your project. And that’s pretty much it! Cloudflare will pull down the code on your main branch, build your application, and upload the static site and assets to its CDN. In the Cloudflare dashboard, you’ll be able to see the automatically-created URL for the project, and a variety of actions you can take on the project (including the ability to assign a custom domain).
 
