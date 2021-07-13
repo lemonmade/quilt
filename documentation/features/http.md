@@ -156,7 +156,7 @@ export function CheckForBrotli() {
 }
 ```
 
-Be careful when using these hooks, as they always return `undefined` when run on the client. If you want to make sure both the client and server have access to the value, you will need to use Quilt’s utilities for [serializing data during server-side rendering](./server-rendering.md#serializing-data-for-the-client).
+Typically, request headers are only available on the server-side. When you read them using the `useRequestHeader` hooks, though, they are serialized into the HTML document so that they are also available on the client. **Make sure that you are comfortable exposing this header to the client before using the `useRequestHeader` hook.**
 
 ## Setting cookies and other response headers
 
@@ -177,18 +177,23 @@ export function StoreCurrentUser({user}: {user: string}) {
 Similarly, if you want to set other response headers, you can use the `ResponseHeader` component or `useResponseHeader` hook:
 
 ```tsx
-import {useResponseCookie, ResponseCookie} from '@quilted/quilt/http';
+import {useResponseHeader, ResponseHeader} from '@quilted/quilt/http';
 
-export function StoreCurrentUser({user}: {user: string}) {
-  useResponseCookie('user', user, {path: '/profile'});
+export function Http() {
+  // FLoC off, Google.
+  // @see https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+
+  useResponseHeader('Permissions-Policy', 'interest-cohort=()');
 
   // or...
 
-  return <ResponseCookie name="user" value={user} path="/profile" />;
+  return (
+    <ResponseHeader name="Permissions-Policy" value="interest-cohort=()" />
+  );
 }
 ```
 
-When using Quilt’s builds, these components and hooks are entirely removed from the client-side bundle, because they do nothing on the client.
+When using Quilt’s builds, these components and hooks are entirely removed from the client-side bundle, because they do nothing there.
 
 If you want to set cookies imperatively on the client-side, you can use the `useCookies` hook to get a reference to the cookie store in the browser, and use its `set` method to update the cookie on the client.
 
