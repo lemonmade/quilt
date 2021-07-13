@@ -5,7 +5,7 @@ export interface Props {
   code: StatusCode;
 }
 
-export function Status({code}: Props) {
+export function ResponseStatus({code}: Props) {
   useResponseStatus(code);
   return null;
 }

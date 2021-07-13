@@ -21,5 +21,5 @@ export {
   HttpContext,
   NotFound,
   ResponseHeader,
-  Status,
+  ResponseStatus,
 } from './components';
