@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, createContext} from 'react';
 import {mount} from '../implementations/test-renderer';
 
 describe('mount()', () => {
@@ -19,6 +19,34 @@ describe('mount()', () => {
       hookRunner.act(([, setState]) => setState(initialState + 1));
 
       expect(hookRunner).toHaveProperty('current.0', initialState + 1);
+    });
+
+    it('child component is find-able', () => {
+      function InnerComponent() {
+        return null;
+      }
+      function RootComponent() {
+        return <InnerComponent />;
+      }
+      const wrapper = mount(<RootComponent />);
+      expect(wrapper.find(InnerComponent)).not.toBeNull();
+    });
+
+    it.only('child comntext component is find-able', () => {
+      const ContextComponent = createContext('defaultValue');
+      function InnerComponent() {
+        return null;
+      }
+
+      function TestComponent() {
+        return (
+          <ContextComponent.Provider value="defaultValue">
+            <InnerComponent />
+          </ContextComponent.Provider>
+        );
+      }
+      const wrapper = mount(<TestComponent />);
+      expect(wrapper.find(ContextComponent.Provider)).not.toBeNull();
     });
   });
 });
