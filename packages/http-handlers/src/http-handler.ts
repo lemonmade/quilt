@@ -1,10 +1,10 @@
 import * as Cookies from 'cookie';
 
-import {HttpMethod} from '@quilted/http';
+import {createHeaders, HttpMethod} from '@quilted/http';
+
 import {enhanceUrl} from '@quilted/routing';
 import type {Match, Prefix} from '@quilted/routing';
 
-import {createHeaders} from './headers';
 import type {
   HttpHandler,
   Request,
@@ -95,5 +95,11 @@ function cookiesFromHeaders(headers: Pick<Headers, 'get'>): Request['cookies'] {
   return {
     get: (key) => cookies[key],
     has: (key) => cookies[key] != null,
+    *entries() {
+      yield* Object.entries(cookies);
+    },
+    *[Symbol.iterator]() {
+      yield* Object.keys(cookies);
+    },
   };
 }

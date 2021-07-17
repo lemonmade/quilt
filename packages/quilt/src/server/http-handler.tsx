@@ -3,7 +3,7 @@ import type {ComponentType} from 'react';
 import type {AssetLoader} from '@quilted/async/server';
 import {render, Html} from '@quilted/react-html/server';
 
-import {createHttpHandler, html} from '@quilted/http-handlers';
+import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
 import type {HttpHandler, RequestHandler} from '@quilted/http-handlers';
 
 import {renderApp} from './render';
@@ -28,7 +28,20 @@ export function createServerRenderingRequestHandler(
       headers: request.headers,
     });
 
-    const {headers, statusCode = 200} = http.state;
+    const {headers, cookies, statusCode = 200, redirectUrl} = http.state;
+
+    if (redirectUrl) {
+      const response = redirect(redirectUrl, {
+        status: statusCode as 301,
+        headers,
+      });
+
+      for (const [name, {value, ...options}] of cookies.records()) {
+        response.cookies.set(name, value, options);
+      }
+
+      return response;
+    }
 
     const usedAssets = asyncAssets.used({timing: 'load'});
     const assetOptions = {userAgent: request.headers.get('User-Agent')};
@@ -41,7 +54,7 @@ export function createServerRenderingRequestHandler(
       }),
     ]);
 
-    return html(
+    const response = html(
       render(
         <Html
           manager={htmlManager}
@@ -57,6 +70,12 @@ export function createServerRenderingRequestHandler(
         status: statusCode,
       },
     );
+
+    for (const [name, {value, ...options}] of cookies.records()) {
+      response.cookies.set(name, value, options);
+    }
+
+    return response;
   };
 }
 

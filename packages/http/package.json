@@ -1,5 +1,6 @@
 {
   "name": "@quilted/http",
+  "description": "Provides a collection of HTTP-related types and utilities.",
   "type": "module",
   "version": "0.2.5",
   "license": "MIT",
@@ -27,6 +28,12 @@
     }
   },
   "sideEffects": false,
+  "dependencies": {
+    "cookie": "^0.4.0"
+  },
+  "devDependencies": {
+    "@types/cookie": "^0.4.0"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0"
   },

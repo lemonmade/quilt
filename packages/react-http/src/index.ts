@@ -1,16 +1,19 @@
 export {
-  CspDirective,
-  CspSandboxAllow,
-  CspSpecialSource,
   HttpMethod,
   ResponseType,
   StatusCode,
+  ContentSecurityPolicyDirective,
+  ContentSecurityPolicySandboxAllow,
+  ContentSecurityPolicySpecialSource,
 } from '@quilted/http';
 
 export {
+  useCookie,
+  useCookies,
   useCacheControl,
+  useContentSecurityPolicy,
   useRequestHeader,
-  useResponseCspDirective,
+  useResponseCookie,
   useResponseHeader,
   useResponseRedirect,
   useResponseStatus,
@@ -18,8 +21,10 @@ export {
 } from './hooks';
 export {
   CacheControl,
+  ContentSecurityPolicy,
   HttpContext,
   NotFound,
+  ResponseCookie,
   ResponseHeader,
   ResponseStatus,
 } from './components';

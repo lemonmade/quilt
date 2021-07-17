@@ -1,17 +1,34 @@
-import type {StatusCode, CspDirective} from '@quilted/http';
+import * as CookieHeader from 'cookie';
+
+import {
+  createCookies,
+  createHeaders,
+  ExtendedWritableCookies,
+} from '@quilted/http';
+import type {
+  StatusCode,
+  ReadonlyCookies,
+  ReadonlyHeaders,
+  CookieOptions,
+} from '@quilted/http';
 import type {ServerActionKind} from '@quilted/react-server-render';
 
-import type {ReadonlyHeaders} from './types';
 import {SERVER_ACTION_ID} from './constants';
 
 interface Options {
-  headers?: Record<string, string> | Map<string, string> | Headers;
-  // cookies?: Cookie | string;
+  headers?: ReadonlyHeaders;
+  cookies?: ReadonlyCookies;
+}
+
+export interface ResponseCookieDefinition extends CookieOptions {
+  name: string;
+  value?: string;
 }
 
 export interface HttpState {
   readonly statusCode: number;
-  readonly headers: Map<string, string>;
+  readonly headers: Headers;
+  readonly cookies: ExtendedWritableCookies;
   readonly redirectUrl?: string;
 }
 
@@ -27,31 +44,30 @@ export class HttpManager {
   };
 
   readonly headers: ReadonlyHeaders;
+  readonly cookies: ReadonlyCookies;
   readonly persistedHeaders = new Set<string>();
+  readonly responseHeaders = createHeaders();
+  readonly responseCookies = createCookies();
+
   private statusCodes: StatusCode[] = [];
   private redirectUrl?: string;
-  private readonly csp = new Map<CspDirective, string[] | boolean>();
-  private readonly responseHeaders = new Map<string, string>([
-    ['content-type', 'text/html'],
-  ]);
 
-  constructor({headers}: Options = {}) {
-    this.headers = normalizeHeaders(headers);
+  constructor({headers, cookies}: Options = {}) {
+    this.headers = headers ?? createHeaders();
+    this.cookies = cookies ?? cookiesFromCookieHeader(headers?.get('Cookie'));
   }
 
   reset() {
     this.statusCodes = [];
-    this.csp.clear();
-    this.responseHeaders.clear();
+
+    (this as any).responseHeaders = createHeaders();
+    (this as any).responseCookies = createCookies();
+
     this.redirectUrl = undefined;
   }
 
   persistHeader(header: string) {
     this.persistedHeaders.add(header.toLowerCase());
-  }
-
-  setHeader(header: string, value: string) {
-    this.responseHeaders.set(header.toLowerCase(), value);
   }
 
   redirectTo(url: string, statusCode: StatusCode = 302) {
@@ -63,76 +79,29 @@ export class HttpManager {
     this.statusCodes.push(statusCode);
   }
 
-  addCspDirective(directive: CspDirective, value: string | string[] | boolean) {
-    const normalizedValue = typeof value === 'string' ? [value] : value;
-    const currentValue = this.csp.get(directive) || [];
-    const normalizedCurrentValue = Array.isArray(currentValue)
-      ? currentValue
-      : [String(currentValue)];
-
-    const newValue = Array.isArray(normalizedValue)
-      ? [...normalizedCurrentValue, ...normalizedValue]
-      : normalizedValue;
-
-    this.csp.set(directive, newValue);
-  }
-
   get state(): HttpState {
-    const csp =
-      this.csp.size === 0
-        ? undefined
-        : [...this.csp]
-            .map(([key, value]) => {
-              let printedValue: string;
-
-              if (typeof value === 'boolean') {
-                printedValue = '';
-              } else if (typeof value === 'string') {
-                printedValue = value;
-              } else {
-                printedValue = value.join(' ');
-              }
-
-              return `${key}${printedValue ? ' ' : ''}${printedValue}`;
-            })
-            .join('; ');
-
-    const headers = new Map(this.responseHeaders);
-
-    if (csp) {
-      headers.set('content-security-policy', csp);
-    }
-
     return {
       statusCode: Math.max(200, ...this.statusCodes),
-      headers,
+      headers: this.responseHeaders,
+      cookies: this.responseCookies,
       redirectUrl: this.redirectUrl,
     };
   }
 }
 
-function normalizeHeaders(headers: Options['headers']): Map<string, string> {
-  if (!headers) {
-    return new Map();
-  }
+function cookiesFromCookieHeader(
+  header?: string | null,
+): NonNullable<Options['cookies']> {
+  const cookies = CookieHeader.parse(header ?? '');
 
-  if (typeof Headers !== 'undefined' && headers instanceof Headers) {
-    return new Map(
-      [...headers.entries()].map(([header, value]) => [
-        header.toLowerCase(),
-        value,
-      ]),
-    );
-  }
-
-  if (headers instanceof Map) {
-    return new Map(headers);
-  }
-
-  return new Map(
-    Object.entries(headers).map(([header, value]) => [
-      header.toLowerCase(),
-      value,
-    ]),
-  );
+  return {
+    get: (key) => cookies[key],
+    has: (key) => cookies[key] != null,
+    *entries() {
+      yield* Object.entries(cookies);
+    },
+    *[Symbol.iterator]() {
+      yield* Object.keys(cookies);
+    },
+  };
 }

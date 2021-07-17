@@ -37,7 +37,7 @@ export interface AssetLoader<Options> {
 }
 
 export interface CreateOptions<Options> {
-  getManifest(options: Options): Promise<Manifest>;
+  getManifest(options: Options): Promise<Manifest | undefined>;
 }
 
 export function createAssetLoader<Options>({
@@ -61,7 +61,7 @@ export function createAssetLoader<Options>({
   }) {
     const manifest = await getManifest(options ?? ({} as any));
 
-    const resolvedEntry = entry ? manifest.entry : undefined;
+    const resolvedEntry = entry ? manifest?.entry : undefined;
 
     // We mark all the entry assets as seen so they are not included
     // by async chunks
@@ -75,7 +75,7 @@ export function createAssetLoader<Options>({
     );
     const assets: Asset[] = [];
 
-    if (asyncAssets) {
+    if (asyncAssets && manifest != null) {
       for (const asyncAsset of asyncAssets) {
         const {
           id,
