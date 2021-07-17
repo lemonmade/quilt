@@ -3213,6 +3213,9 @@ __metadata:
 "@quilted/http@^0.2.5, @quilted/http@workspace:packages/http":
   version: 0.0.0-use.local
   resolution: "@quilted/http@workspace:packages/http"
+  dependencies:
+    "@types/cookie": ^0.4.0
+    cookie: ^0.4.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
   peerDependenciesMeta:
