@@ -142,7 +142,7 @@ On the server, these cookies are parsed from the `Cookie` request header. On the
 If you want to read other request headers, you can use the `useRequestHeader` hook:
 
 ```tsx
-import {useRequestHeader} from '@quilted/quilt';
+import {useRequestHeader} from '@quilted/quilt/http';
 
 export function CheckForBrotli() {
   // Don’t worry, headers are normalized, so any capitalization works!
@@ -160,7 +160,7 @@ Typically, request headers are only available on the server-side. When you read 
 
 ## Setting cookies and other response headers
 
-You can set an HTTP cookie by using the `useResponseCookie` hook or `ResponseCookie` component. Both accept the cookie name, value, and [other cookie options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). If you do not specify any options, Quilt defaults to setting secure, HTTP-only cookies.
+You can set an HTTP cookie by using the `useResponseCookie` hook or `ResponseCookie` component. Both accept the cookie name, value, and [other cookie options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies).
 
 ```tsx
 import {useResponseCookie, ResponseCookie} from '@quilted/quilt/http';
@@ -193,7 +193,38 @@ export function Http() {
 }
 ```
 
-When using Quilt’s builds, these components and hooks are entirely removed from the client-side bundle, because they do nothing there.
+This library also provides dedicated components and hooks for two common HTTP headers: the [`Cache-Control`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) and [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) headers.
+
+```tsx
+import {
+  useCacheControl,
+  useContentSecurityPolicy,
+  CacheControl,
+  ContentSecurityPolicy,
+} from '@quilted/quilt/http';
+
+export function Http() {
+  useCacheControl({maxAge: 60, revalidate: true});
+  useContentSecurityPolicy({
+    defaultSources: ["'self'"],
+    upgradeInsecureRequests: true,
+  });
+
+  // or...
+
+  return (
+    <>
+      <CacheControl maxAge={60} revalidate />
+      <ContentSecurityPolicy
+        defaultSources={["'self'"]}
+        upgradeInsecureRequests
+      />
+    </>
+  );
+}
+```
+
+When using Quilt’s builds, all header-related components and hooks are entirely removed from the client-side bundle, because they do nothing there.
 
 If you want to set cookies imperatively on the client-side, you can use the `useCookies` hook to get a reference to the cookie store in the browser, and use its `set` method to update the cookie on the client.
 

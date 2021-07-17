@@ -6,7 +6,28 @@ type InternalHeaders = Headers;
 
 export type {InternalHeaders as Headers};
 
+/**
+ * A `Headers` object that can’t be mutated, typically because it
+ * represents the headers in a request.
+ */
+export interface ReadonlyHeaders
+  extends Omit<Headers, 'set' | 'append' | 'delete'> {
+  /**
+   * Iterates over all the headers and their values.
+   */
+  [Symbol.iterator](): IterableIterator<[string, string]>;
+}
+
+/**
+ * Creates a `Headers`-compatible object in an environment where the
+ * `Headers` global is not present. If the `Headers` global is present,
+ * the native version is used instead.
+ */
 export function createHeaders(headers?: HeadersInit) {
+  if (typeof Headers !== 'undefined') {
+    return new Headers(headers);
+  }
+
   return new HeadersPolyfill(headers);
 }
 

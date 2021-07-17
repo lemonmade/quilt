@@ -5,7 +5,7 @@ import {HtmlContext} from '@quilted/react-html/server';
 import type {HtmlManager} from '@quilted/react-html/server';
 import {AsyncAssetContext} from '@quilted/react-async/server';
 import type {AsyncAssetManager} from '@quilted/react-async/server';
-import {HttpContext} from '@quilted/react-http/server';
+import {HttpServerContext} from '@quilted/react-http/server';
 import type {HttpManager} from '@quilted/react-http/server';
 
 import {maybeWrapContext} from '../utilities/react';
@@ -30,7 +30,7 @@ export function ServerContext({
     AsyncAssetContext,
     asyncAssets,
     maybeWrapContext(
-      HttpContext,
+      HttpServerContext,
       http,
       maybeWrapContext(
         HtmlContext,

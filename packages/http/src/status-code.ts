@@ -1,3 +1,8 @@
+/**
+ * HTTP response status codes.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+ */
 export enum StatusCode {
   Continue = 100,
   SwitchingProtocols = 101,

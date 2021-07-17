@@ -34,6 +34,12 @@ export function createLambdaApiGatewayProxy(
         cookies: {
           get: (key) => cookies[key],
           has: (key) => cookies[key] != null,
+          *entries() {
+            yield* Object.entries(cookies);
+          },
+          *[Symbol.iterator]() {
+            yield* Object.values(cookies);
+          },
         },
       })) ?? notFound();
 

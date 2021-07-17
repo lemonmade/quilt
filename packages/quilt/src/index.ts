@@ -59,5 +59,6 @@ export type {
   BasicWorkerCreator,
   CallableWorkerCreator,
 } from '@quilted/react-workers';
+export {useCookie, useCookies} from '@quilted/react-http';
 
 export {App} from './App';

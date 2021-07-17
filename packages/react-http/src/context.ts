@@ -1,6 +1,10 @@
 import {createContext} from 'react';
-import type {HttpManager} from './manager';
-import type {ReadonlyHeaders} from './types';
+import type {Cookies, ReadonlyHeaders} from '@quilted/http';
 
-export const HttpContext = createContext<HttpManager | null>(null);
-export const HeadersContext = createContext<ReadonlyHeaders | null>(null);
+import type {HttpManager} from './manager';
+
+export const HttpServerContext = createContext<HttpManager | null>(null);
+export const HttpAppContext = createContext<{
+  readonly cookies: Cookies;
+  readonly headers: ReadonlyHeaders;
+} | null>(null);

@@ -3402,6 +3402,8 @@ __metadata:
     "@quilted/http": ^0.2.5
     "@quilted/react-html": ^0.3.15
     "@quilted/react-server-render": ^0.3.5
+    "@types/js-cookie": ^2.2.0
+    js-cookie: ^2.2.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
     react: ">=17.0.0 <18.0.0"
@@ -4171,6 +4173,13 @@ __metadata:
     jest-diff: ^26.0.0
     pretty-format: ^26.0.0
   checksum: a015676b78bdc51be6f6315acef10d9106ea8064e3e49143bca3c75b834b61285b45c5f5ccfd049a80107f1e2869a9183cdb5be85816c073ea8dd05852fafdc6
+  languageName: node
+  linkType: hard
+
+"@types/js-cookie@npm:^2.2.0":
+  version: 2.2.7
+  resolution: "@types/js-cookie@npm:2.2.7"
+  checksum: 8a45b2a60f535853db1c86ab71e200b190c97a62d7fb63fca3a71b3785c1a67fc360ada1c9061273cacf878ccc8b69b6db1754efb76237f18200dcbddaee608a
   languageName: node
   linkType: hard
 
@@ -9477,6 +9486,13 @@ __metadata:
   version: 3.0.1
   resolution: "joycon@npm:3.0.1"
   checksum: db64c93cf05d6f99ea832708ac9ec10e8bbb92d767e3cc38f8c5111b513dbce4b1419b0fe42620e664998639b455dd943e8dd493d8753c5034837501f8e823c4
+  languageName: node
+  linkType: hard
+
+"js-cookie@npm:^2.2.0":
+  version: 2.2.1
+  resolution: "js-cookie@npm:2.2.1"
+  checksum: c110f78427cb7715f67c69df0b3430f7cf9dafb5ddb13014df171d4fb61ccda0b1caf9767412cde63cab4bad697a5d4ce83b0c2e7ec650ec9929ed70750d20ae
   languageName: node
   linkType: hard
 

@@ -95,5 +95,11 @@ function cookiesFromHeaders(headers: Pick<Headers, 'get'>): Request['cookies'] {
   return {
     get: (key) => cookies[key],
     has: (key) => cookies[key] != null,
+    *entries() {
+      yield* Object.entries(cookies);
+    },
+    *[Symbol.iterator]() {
+      yield* Object.keys(cookies);
+    },
   };
 }

@@ -1,15 +1,9 @@
-import * as Cookies from 'cookie';
 import {RelativeTo} from '@quilted/routing';
 import type {NavigateTo} from '@quilted/routing';
+import {createHeaders, createCookies} from '@quilted/http';
 
-import {createHeaders} from './headers';
 import {resolveTo} from './utilities';
-import type {
-  Response,
-  Request,
-  ResponseCookies,
-  ResponseOptions,
-} from './types';
+import type {Response, Request, ResponseOptions} from './types';
 
 export function response(
   body?: string | null,
@@ -20,36 +14,9 @@ export function response(
   }: ResponseOptions = {},
 ): Response {
   const headers = createHeaders(explicitHeaders);
+  const cookies = createCookies(existingCookies?.records());
 
-  const serializedCookies = new Map<string, string>(
-    existingCookies?.entries() ?? [],
-  );
-
-  function updateSetCookieHeader() {
-    headers.delete('Set-Cookie');
-
-    for (const cookie of serializedCookies.values()) {
-      headers.append('Set-Cookie', cookie);
-    }
-  }
-
-  updateSetCookieHeader();
-
-  const cookies: ResponseCookies = {
-    set(cookie, value, options) {
-      const setCookie = Cookies.serialize(cookie, value, options);
-      serializedCookies.set(cookie, setCookie);
-
-      updateSetCookieHeader();
-    },
-    delete(cookie, options) {
-      cookies.set(cookie, '', {expires: new Date(0), ...options});
-    },
-    entries: () => serializedCookies.entries(),
-    [Symbol.iterator]: () => serializedCookies.values(),
-  };
-
-  return {status, headers: headers as any, cookies, body: body ?? undefined};
+  return {status, headers, cookies, body: body ?? undefined};
 }
 
 export function notFound(

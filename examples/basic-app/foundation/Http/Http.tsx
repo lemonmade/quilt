@@ -1,9 +1,20 @@
-import {CacheControl, ResponseHeader} from '@quilted/quilt/http';
+import {
+  CacheControl,
+  ResponseHeader,
+  ResponseCookie,
+  ContentSecurityPolicy,
+} from '@quilted/quilt/http';
 
 export function Http() {
   return (
     <>
       <CacheControl cache={false} />
+      <ContentSecurityPolicy
+        defaultSources={["'self'"]}
+        frameAncestors={false}
+        upgradeInsecureRequests
+      />
+      <ResponseCookie name="user" value="Chris" />
 
       {/**
        * Disables Google’s Federated Learning of Cohorts (“FLoC”)

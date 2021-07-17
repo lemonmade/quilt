@@ -1,7 +1,8 @@
 import {createServer} from 'http';
 import type {RequestListener} from 'http';
 
-import {createHeaders} from './headers';
+import {createHeaders} from '@quilted/http';
+
 import {notFound} from './response';
 import type {HttpHandler} from './types';
 
@@ -58,7 +59,6 @@ export function createHttpRequestListener(
         status,
         [...headers].reduce<Record<string, string | string[]>>(
           (allHeaders, [key, value]) => {
-            if (key.toLowerCase() === 'set-cookie') return allHeaders;
             allHeaders[key] = value;
             return allHeaders;
           },

@@ -1,25 +1,26 @@
 import type {Match, EnhancedURL} from '@quilted/routing';
-import type {Headers} from './headers';
-
-export interface RequestCookies {
-  has(cookie: string): boolean;
-  get(cookie: string): string | undefined;
-}
+import type {
+  Headers,
+  Cookies,
+  ReadonlyCookies,
+  ReadonlyHeaders,
+  ExtendedWritableCookies,
+} from '@quilted/http';
 
 export interface RequestOptions {
   readonly url: URL | string;
   readonly body?: string | null;
   readonly method?: string;
-  readonly cookies?: RequestCookies;
-  readonly headers?: Headers;
+  readonly cookies?: ReadonlyCookies;
+  readonly headers?: ReadonlyHeaders;
 }
 
 export interface Request {
   readonly url: EnhancedURL;
   readonly body?: string | null;
   readonly method: string;
-  readonly cookies: RequestCookies;
-  readonly headers: Headers;
+  readonly cookies: ReadonlyCookies;
+  readonly headers: ReadonlyHeaders;
 }
 
 export interface CookieDefinition {
@@ -32,27 +33,17 @@ export interface CookieDefinition {
   httpOnly?: boolean;
 }
 
-export interface ResponseCookies {
-  set(cookie: string, value: string, definition?: CookieDefinition): void;
-  delete(
-    cookie: string,
-    definition?: Pick<CookieDefinition, 'path' | 'domain'>,
-  ): void;
-  entries(): IterableIterator<readonly [string, string]>;
-  [Symbol.iterator](): IterableIterator<string>;
-}
-
 export interface Response {
   readonly body?: string;
   readonly status: number;
   readonly headers: Headers;
-  readonly cookies: ResponseCookies;
+  readonly cookies: ExtendedWritableCookies;
 }
 
 export interface ResponseOptions {
   status?: number;
   headers?: HeadersInit;
-  cookies?: ResponseCookies;
+  cookies?: ExtendedWritableCookies;
 }
 
 export type ValueOrPromise<T> = T | Promise<T>;
