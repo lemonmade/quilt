@@ -398,7 +398,7 @@ export function useContentSecurityPolicy(
       addSourcesDirective('child-src', childSources);
       addSourcesDirective('font-src', fontSources);
       addSourcesDirective('form-action', formActions);
-      addSourcesDirective('frame-ancestor', frameAncestors);
+      addSourcesDirective('frame-ancestors', frameAncestors);
       addSourcesDirective('frame-src', frameSources);
       addSourcesDirective('image-src', imageSources);
       addSourcesDirective('manifest-src', manifestSources);

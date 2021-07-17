@@ -67,6 +67,48 @@ Note that, for this feature to work, you must also be using [`@quilted/react-htm
 
 ### Writing HTTP-related values
 
+You can set the status code on the response using the `useResponseStatus` hook, or the `ResponseStatus` component:
+
+```tsx
+import {useResponseStatus, ResponseStatus} from '@quilted/react-http';
+// also available from '@quilted/quilt/http'
+
+export function NotFoundUi() {
+  useResponseStatus(404);
+
+  // or...
+
+  return <ResponseStatus code={404} />;
+}
+```
+
+Because setting a `404` status code is fairly common, there is a dedicated `NotFound` component that is equivalent to the example above:
+
+```tsx
+import {NotFound} from '@quilted/react-http';
+// also available from '@quilted/quilt/http'
+
+export function NotFoundUi() {
+  return <NotFound />;
+}
+```
+
+If you want to perform an HTTP redirect, you can use the `Redirect` component:
+
+```tsx
+import {Redirect} from '@quilted/react-http';
+
+function MyComponent({shouldRedirect = false} = {}) {
+  if (shouldRedirect) {
+    return <Redirect to="/" />;
+  }
+
+  return <Ui />;
+}
+```
+
+When you perform a redirect, Quilt will bail out of its server rendering process, set a `302` status code, and set the `Location` header to the URL resolved from the `to` prop. If you want to perform a redirect on both the server and client, you should use the `Redirect` component from [`@quilted/react-router`](../react-router) instead.
+
 You can set an HTTP cookie by using the `useResponseCookie` hook or `ResponseCookie` component. Both accept the cookie name, value, and [other cookie options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies).
 
 ```tsx
