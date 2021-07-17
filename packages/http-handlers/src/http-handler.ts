@@ -1,10 +1,10 @@
 import * as Cookies from 'cookie';
 
-import {HttpMethod} from '@quilted/http';
+import {createHeaders, HttpMethod} from '@quilted/http';
+
 import {enhanceUrl} from '@quilted/routing';
 import type {Match, Prefix} from '@quilted/routing';
 
-import {createHeaders} from './headers';
 import type {
   HttpHandler,
   Request,

@@ -1,7 +1,6 @@
 import type {Match, EnhancedURL} from '@quilted/routing';
 import type {
   Headers,
-  Cookies,
   ReadonlyCookies,
   ReadonlyHeaders,
   ExtendedWritableCookies,

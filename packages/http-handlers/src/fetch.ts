@@ -1,6 +1,6 @@
 import type {NavigateTo} from '@quilted/routing';
+import {createHeaders} from '@quilted/http';
 
-import {createHeaders} from './headers';
 import {resolveTo} from './utilities';
 
 export async function fetchJson<T = unknown>(
