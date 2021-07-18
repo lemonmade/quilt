@@ -400,7 +400,7 @@ export function useContentSecurityPolicy(
       addSourcesDirective('form-action', formActions);
       addSourcesDirective('frame-ancestors', frameAncestors);
       addSourcesDirective('frame-src', frameSources);
-      addSourcesDirective('image-src', imageSources);
+      addSourcesDirective('img-src', imageSources);
       addSourcesDirective('manifest-src', manifestSources);
       addSourcesDirective('media-src', mediaSources);
       addSourcesDirective('object-src', objectSources);
