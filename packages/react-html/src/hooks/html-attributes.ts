@@ -7,6 +7,9 @@ type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
   ? U
   : never;
 
+/**
+ * Sets the provided attributes on the `<html>` element.
+ */
 export function useHtmlAttributes(
   htmlAttributes: FirstArgument<HtmlManager['addHtmlAttributes']>,
 ) {

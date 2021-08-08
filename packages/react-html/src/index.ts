@@ -1,27 +1,33 @@
+export type {Serializable} from './types';
+
 export {
-  Script,
-  Style,
+  Alternate,
+  BodyAttributes,
+  Favicon,
+  HtmlAttributes,
   Hydrator,
+  Link,
   Meta,
+  SearchRobots,
+  ThemeColor,
   Title,
   Viewport,
-  Favicon,
 } from './components';
 
 export {
-  useSerialized,
+  useAlternateUrl,
   useBodyAttributes,
-  useHtmlAttributes,
   useFavicon,
+  useHtmlAttributes,
+  useHtmlUpdater,
   useLink,
   useLocale,
   useMeta,
+  useSearchRobots,
+  useSerialized,
+  useThemeColor,
   useTitle,
-  usePreconnect,
-  useHtmlUpdater,
   useViewport,
 } from './hooks';
-
-// TODO: export component versions of most of those hooks
 
 export {getSerialized} from './utilities/serialization';

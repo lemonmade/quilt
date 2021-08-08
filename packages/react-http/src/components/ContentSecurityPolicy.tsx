@@ -14,6 +14,8 @@ type Props =
 
 /**
  * A component that sets the `Content-Security-Policy` header for this request.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
  */
 export function ContentSecurityPolicy(options: Props) {
   useContentSecurityPolicy('value' in options ? options.value : options);

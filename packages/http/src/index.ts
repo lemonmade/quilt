@@ -17,3 +17,7 @@ export {
   ContentSecurityPolicySandboxAllow,
   ContentSecurityPolicySpecialSource,
 } from './content-security-policy';
+export {
+  PermissionsPolicyDirective,
+  PermissionsPolicySpecialSource,
+} from './permissions-policy';

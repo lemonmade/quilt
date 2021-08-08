@@ -1,5 +1,6 @@
 {
   "name": "@quilted/react-html",
+  "description": "Provides components and hooks for interacting with the HTML document.",
   "type": "module",
   "version": "0.3.15",
   "repository": {

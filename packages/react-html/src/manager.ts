@@ -139,6 +139,10 @@ export class HtmlManager {
     return this.hydrations.get(id);
   }
 
+  hydrated() {
+    this.serializations.clear();
+  }
+
   extract() {
     return {
       ...this.state,

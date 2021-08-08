@@ -1,3 +1,4 @@
+export {useAlternateUrl} from './alternate-url';
 export {useBodyAttributes} from './body-attributes';
 export {useDomEffect} from './dom-effect';
 export {useDomClientEffect} from './dom-effect-client';
@@ -8,7 +9,8 @@ export {useHtmlUpdater} from './html-updater';
 export {useLink} from './link';
 export {useLocale} from './locale';
 export {useMeta} from './meta';
-export {usePreconnect} from './preconnect';
+export {useSearchRobots} from './search-robots';
 export {useSerialized} from './serialized';
+export {useThemeColor} from './theme-color';
 export {useTitle} from './title';
 export {useViewport} from './viewport';

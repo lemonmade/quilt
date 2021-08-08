@@ -9,7 +9,7 @@ This library provides a collection of HTTP-related types and utilities.
 Install this library as a dependency by running the following command:
 
 ```zsh
-yarn install @quilted/http
+yarn add @quilted/http
 ```
 
 ## Using the library
@@ -22,6 +22,7 @@ This library provides the following helper types, which each represent some aspe
 - `Headers` and `ReadonlyHeaders`, which are aliases to the native `Headers` type.
 - `Cookies`, `ReadonlyCookies`, and `CookieOptions`, a set of interfaces that provide an isomorphic pattern for getting and setting [cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
 - `ContentSecurityPolicyDirective`, `ContentSecurityPolicySandboxAllow`, and `ContentSecurityPolicySpecialSource`, enums that provide friendly names for creating a [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+- `PermissionsPolicyDirective` and `PermissionsPolicySpecialSource`, enums that provide friendly names for creating a [permissions policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy)
 
 This library also provides the following helper functions that allow you to represent HTTP-related constructs:
 

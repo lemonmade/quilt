@@ -193,32 +193,47 @@ export function Http() {
 }
 ```
 
-This library also provides dedicated components and hooks for two common HTTP headers: the [`Cache-Control`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) and [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) headers.
+This library also provides dedicated components and hooks for a few common HTTP headers:
+
+- [`Cache-Control`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) with `useCacheControl` or `<CacheControl />`
+- [`Strict-Transport-Security`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) with `useStrictTransportSecurity` or `<StrictTransportSecurity />`
+- [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) with `useContentSecurityPolicy` or `<ContentSecurityPolicy />`
+- [`Permissions-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy) with `usePermissionsPolicy` or `<PermissionsPolicy />`
 
 ```tsx
 import {
   useCacheControl,
   useContentSecurityPolicy,
+  usePermissionsPolicy,
+  useStrictTransportSecurity,
   CacheControl,
   ContentSecurityPolicy,
+  PermissionsPolicy,
+  StrictTransportSecurity,
 } from '@quilted/quilt/http';
 
 export function Http() {
   useCacheControl({maxAge: 60, revalidate: true});
+  useStrictTransportSecurity();
   useContentSecurityPolicy({
     defaultSources: ["'self'"],
+    frameAncestors: false,
     upgradeInsecureRequests: true,
   });
+  usePermissionsPolicy({interestCohort: false, geolocation: false});
 
   // or...
 
   return (
     <>
       <CacheControl maxAge={60} revalidate />
+      <StrictTransportSecurity />
       <ContentSecurityPolicy
         defaultSources={["'self'"]}
+        frameAncestors={false}
         upgradeInsecureRequests
       />
+      <PermissionsPolicy interestCohort={false} geolocation={false} />
     </>
   );
 }

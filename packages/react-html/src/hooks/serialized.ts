@@ -2,20 +2,35 @@
 
 import {useContext, useMemo} from 'react';
 import {HtmlContext} from '../context';
+import type {Serializable} from '../types';
 import {useDomServerAction} from './dom-effect-server';
 
-export function useSerialized<T>(
+export function useSerialized<T extends Serializable>(
   id: string,
-  serialize?: () => T | Promise<T>,
-): T | undefined {
+  serialize: T,
+): T;
+export function useSerialized<T extends Serializable>(
+  id: string,
+  serialize: () => T | Promise<T>,
+): T | undefined;
+export function useSerialized<T extends Serializable>(
+  id: string,
+  serialize?: T | (() => T | Promise<T>),
+) {
   const manager = useContext(HtmlContext);
-  const data = useMemo(() => manager.getSerialization<T>(id), [id, manager]);
+  const data = useMemo(
+    () =>
+      typeof serialize === 'function'
+        ? manager.getSerialization<T>(id)
+        : serialize,
+    [id, manager, serialize],
+  );
 
   useDomServerAction(
     (manager) => {
       if (serialize == null) return;
 
-      const result = serialize();
+      const result = typeof serialize === 'function' ? serialize() : serialize;
       const handleResult = manager.setSerialization.bind(manager, id);
       return isPromise(result)
         ? result.then(handleResult)
