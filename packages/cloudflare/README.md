@@ -9,7 +9,7 @@ If you’re using Quilt’s [automatic app server](./TODO) or [HTTP handler](./T
 Install this library as a development dependency by running the following command:
 
 ```zsh
-yarn install @quilted/cloudflare --dev
+yarn add @quilted/cloudflare --dev
 ```
 
 ## Using the library

@@ -1,7 +1,7 @@
 export const MANAGED_ATTRIBUTE = 'data-react-html';
 
 export function updateOnClient(state: import('../manager').State) {
-  const {title, metas, links} = state;
+  const {title, metas, links, bodyAttributes, htmlAttributes} = state;
   let titleElement = document.querySelector('title');
 
   if (title == null) {
@@ -75,4 +75,12 @@ export function updateOnClient(state: import('../manager').State) {
   }
 
   document.head.appendChild(fragment);
+
+  for (const [attribute, value] of Object.entries(htmlAttributes)) {
+    document.documentElement.setAttribute(attribute, value);
+  }
+
+  for (const [attribute, value] of Object.entries(bodyAttributes)) {
+    document.body.setAttribute(attribute, value);
+  }
 }

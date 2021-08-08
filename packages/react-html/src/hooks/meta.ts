@@ -3,6 +3,18 @@
 import type {HTMLProps} from 'react';
 import {useDomEffect} from './dom-effect';
 
-export function useMeta(meta: HTMLProps<HTMLMetaElement>) {
-  useDomEffect((manager) => manager.addMeta(meta), [JSON.stringify(meta)]);
+/**
+ * Adds a `<meta>` tag to the `<head>` of the document with the
+ * provided attributes. If you want to conditionally disable or
+ * remove the tag, you can instead pass `false` to this hook.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+ */
+export function useMeta(meta: false | HTMLProps<HTMLMetaElement>) {
+  useDomEffect(
+    (manager) => {
+      if (meta) return manager.addMeta(meta);
+    },
+    [meta && JSON.stringify(meta)],
+  );
 }

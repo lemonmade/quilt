@@ -377,7 +377,7 @@ function MyComponent() {
 
 ### `useRedirect()` and `<Redirect />`
 
-The `useRedirect()` hook gives you a shortcut for navigating to a new route, replacing the current entry in the history stack. It will, in the future, also integrate with `@quilted/react-network` to register a real HTTP redirect when run in a server environment.
+The `useRedirect()` hook gives you a shortcut for navigating to a new route, replacing the current entry in the history stack. It also integrates with [`@quilted/react-http`](../react-http) to perform a real HTTP redirect during server-side rendering.
 
 This hook accepts a single argument, a `to` value that can be any of the types you can pass to the navigate function returned by `useNavigate`. This library also provides a component version of this hook, `<Redirect />`, where the `to` value is provided via the `to` prop. The component version can be useful since redirects are often conditional on some other application state, and hooks can’t be called conditionally.
 

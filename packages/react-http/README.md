@@ -1,6 +1,6 @@
 # `@quilted/react-http`
 
-Provides components and hooks for interacting with HTTP primitives. For a full overview of Quilt’s support for dealing with HTTP, you can read the [HTTP guide](../../documentation/features/http.md).
+This library provides components and hooks for interacting with HTTP primitives. For a full overview of Quilt’s support for dealing with HTTP, you can read the [HTTP guide](../../documentation/features/http.md).
 
 ## Getting the library
 
@@ -9,16 +9,16 @@ Provides components and hooks for interacting with HTTP primitives. For a full o
 Install this library as a dependency by running the following command:
 
 ```zsh
-yarn install @quilted/react-http
+yarn add @quilted/react-http
 ```
 
 ## Using the library
 
 ### Configuring server-side rendering
 
-This library lets you interact with HTTP from within a React app, so for it to do anything useful, you need to configure server-side rendering first.
+This library can work entirely on the client-side, but if you are interested in updating the HTML document from your app, you usually also want server-side rendering.
 
-> **Note:** if you are using Quilt’s [automatic server-side rendering feature](../../documentation/features/server-rendering.md), this work is already done for you. You can skip on to the next sections, where you’ll learn how to read and write HTTP values from your React app.
+> **Note:** if you are using Quilt’s [automatic server-side rendering feature](../../documentation/features/server-rendering.md), this work is already done for you. You can skip on to the next sections, where you’ll learn how to update the HTML document from your application.
 
 TODO
 
@@ -144,33 +144,48 @@ export function Http() {
 }
 ```
 
-This library also provides dedicated components and hooks for two common HTTP headers: the [`Cache-Control`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) and [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) headers.
+This library also provides dedicated components and hooks for a few common HTTP headers:
+
+- [`Cache-Control`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) with `useCacheControl` or `<CacheControl />`
+- [`Strict-Transport-Security`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) with `useStrictTransportSecurity` or `<StrictTransportSecurity />`
+- [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) with `useContentSecurityPolicy` or `<ContentSecurityPolicy />`
+- [`Permissions-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy) with `usePermissionsPolicy` or `<PermissionsPolicy />`
 
 ```tsx
 import {
   useCacheControl,
   useContentSecurityPolicy,
+  usePermissionsPolicy,
+  useStrictTransportSecurity,
   CacheControl,
   ContentSecurityPolicy,
+  PermissionsPolicy,
+  StrictTransportSecurity,
 } from '@quilted/react-http';
 // also available from '@quilted/quilt/http'
 
 export function Http() {
   useCacheControl({maxAge: 60, revalidate: true});
+  useStrictTransportSecurity();
   useContentSecurityPolicy({
     defaultSources: ["'self'"],
+    frameAncestors: false,
     upgradeInsecureRequests: true,
   });
+  usePermissionsPolicy({interestCohort: false, geolocation: false});
 
   // or...
 
   return (
     <>
       <CacheControl maxAge={60} revalidate />
+      <StrictTransportSecurity />
       <ContentSecurityPolicy
         defaultSources={["'self'"]}
+        frameAncestors={false}
         upgradeInsecureRequests
       />
+      <PermissionsPolicy interestCohort={false} geolocation={false} />
     </>
   );
 }

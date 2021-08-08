@@ -325,6 +325,14 @@ export interface ContentSecurityPolicyOptions {
   requireTrustedTypesFor?: 'script'[];
 }
 
+/**
+ * Sets the `Content-Security-Policy` header for this request. If a string
+ * is passed, it is used directly as the value for the header; otherwise, the
+ * first argument is interpreted as an options object that details the
+ * various content security policy directives.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+ */
 export function useContentSecurityPolicy(
   value: string | ContentSecurityPolicyOptions,
 ) {

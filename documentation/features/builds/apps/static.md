@@ -20,7 +20,7 @@ export default createApp((app) => {
 });
 ```
 
-When you turn on static builds, your built assets will be nested a little deeper — under `./build/public/assets`, instead of the usual `./build/assets`. This allows us to render all the HTML documents for your static application into `./build/public`, without having any other build artifacts getting in the way. For most deployment platforms, you’ll only need to tell them your build command (typically, `yarn build`) and point them at `./build/public` as your output directory,
+When you turn on static builds, your built assets will be nested a little deeper — under `./build/public/assets`, instead of the usual `./build/assets`. This allows us to render all the HTML documents for your static application into `./build/public`, without having any other build artifacts getting in the way. For most deployment platforms, you’ll only need to tell them your build command (typically, `yarn build`) and point them at `./build/public` as your output directory.
 
 All of Quilt’s features are designed to work great with static rendering. You can use the [HTML components and hooks](../../../html.md) to customize the `<head>` and other details of the HTML document, the [HTTP utilities](../../../http.md) to establish [404 pages and set other headers](#deeper-customizations-with-sewing-kit), and much more. Under the hood, Quilt’s static rendering uses the same approach that powers Quilt’s server-side rendering, so all of the [server-related utilities](../../../server-rendering.md) also just work when rendering your app statically.
 
@@ -192,7 +192,7 @@ function Product({id}: {id: string}) {
 }
 ```
 
-In addition to the explicit `/` route, and the implicitly-created `/*` and `/products/*` fallback routes (TODO), it would be great if Quilt could statically render all the individual product routes. However, because the route is dynamic, Quilt needs some information from you to teach it what routes should be built. You can do this by adding a `renderStatic` function to the dynamic route, which should return an array of strings (or a promise for an array of strings) that will match this dynamic pattern:
+In addition to the explicit `/` route, and the implicitly-created `/*` and `/products/*` fallback routes, it would be great if Quilt could statically render all the individual product routes. However, because the route is dynamic, Quilt needs some information from you to teach it what routes should be built. You can do this by adding a `renderStatic` function to the dynamic route, which should return an array of strings (or a promise for an array of strings) that will match this dynamic pattern:
 
 ```tsx
 // app/foundation/Routes/Routes.tsx

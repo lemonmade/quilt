@@ -1,9 +1,16 @@
 import {useDomEffect} from './dom-effect';
 
 export interface FaviconOptions {
+  /**
+   * The image MIME type, which will be used as the `type` attribute on the
+   * underlying `<link>` tag.
+   */
   type?: string;
 }
 
+/**
+ * Adds a favicon to your website, using a `<link rel="icon">` tag.
+ */
 export function useFavicon(source: string, {type}: FaviconOptions = {}) {
   useDomEffect(
     (manager) =>

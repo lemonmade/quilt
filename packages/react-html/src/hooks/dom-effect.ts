@@ -8,10 +8,12 @@ import {SERVER_ACTION_KIND} from '../manager';
 import type {HtmlManager} from '../manager';
 
 export function useDomEffect(
-  perform: (manager: HtmlManager) => {
-    update(...args: any[]): void;
-    remove(): void;
-  },
+  perform: (manager: HtmlManager) =>
+    | {
+        update(...args: any[]): void;
+        remove(): void;
+      }
+    | undefined,
   inputs: unknown[] = [],
 ) {
   const manager = useContext(HtmlContext);
@@ -20,7 +22,7 @@ export function useDomEffect(
     if (resultRef.current) {
       resultRef.current.update(...inputs);
     } else {
-      resultRef.current = perform(manager);
+      resultRef.current = perform(manager)!;
     }
   };
 

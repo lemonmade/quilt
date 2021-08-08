@@ -2,18 +2,45 @@ import {useFavicon} from '../hooks';
 
 export type Props =
   | {
+      /**
+       * A URI for the favicon. This will be used directly for the underling `<link>` tag.
+       */
       source: string;
+      /**
+       * The image MIME type, which will be used as the `type` attribute on the
+       * underlying `<link>` tag.
+       */
       type?: string;
-      empty?: never;
+      blank?: never;
       emoji?: never;
     }
-  | {emoji: string; empty?: never; source?: never; type?: never}
-  | {empty: true; emoji?: never; source?: never; type?: never};
+  | {
+      /**
+       * A single emoji that will be used as the favicon.
+       */
+      emoji: string;
+      blank?: never;
+      source?: never;
+      type?: never;
+    }
+  | {
+      /**
+       * Sets the favicon to be completely blank, which prevents the browser from
+       * requesting a `/favicon.ico` file from your server.
+       */
+      blank: true;
+      emoji?: never;
+      source?: never;
+      type?: never;
+    };
 
-export function Favicon({empty, emoji, type, source}: Props) {
+/**
+ * Adds a favicon to your website, using a `<link rel="icon">` tag.
+ */
+export function Favicon({blank, emoji, type, source}: Props) {
   let resolvedSource: string;
 
-  if (empty) {
+  if (blank) {
     resolvedSource = 'data:image';
   } else if (emoji) {
     // Hat tip: https://twitter.com/LeaVerou/status/1241619866475474946

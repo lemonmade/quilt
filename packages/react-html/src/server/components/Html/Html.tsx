@@ -2,7 +2,6 @@ import type {ReactElement, ReactNode} from 'react';
 import {renderToString} from 'react-dom/server';
 // import {HydrationContext, HydrationManager} from '@shopify/react-hydrate';
 
-import {Script, Style} from '../../../components';
 import {HtmlManager} from '../../../manager';
 import {HtmlContext} from '../../../context';
 import {MANAGED_ATTRIBUTE} from '../../../utilities/update';
@@ -15,7 +14,6 @@ interface Asset {
 
 interface Props {
   manager?: HtmlManager;
-  // hydrationManager?: HydrationManager;
   children: ReactElement | string;
   noModule?: boolean;
   locale?: string;
@@ -70,7 +68,9 @@ export function Html({
 
   const stylesMarkup = styles?.map((style) => {
     return (
-      <Style
+      <link
+        rel="stylesheet"
+        type="text/css"
         key={style.source}
         href={style.source}
         crossOrigin=""
@@ -87,10 +87,11 @@ export function Html({
 
   const blockingScriptsMarkup = blockingScripts?.map((script) => {
     return (
-      <Script
+      <script
         key={script.source}
         src={script.source}
         crossOrigin=""
+        type="text/javascript"
         noModule={
           !needsNoModule || script.attributes.type === 'module'
             ? undefined
@@ -103,11 +104,12 @@ export function Html({
 
   const deferredScriptsMarkup = scripts?.map((script) => {
     return (
-      <Script
+      <script
         key={script.source}
         src={script.source}
         crossOrigin=""
         defer
+        type="text/javascript"
         noModule={
           !needsNoModule || script.attributes.type === 'module'
             ? undefined
@@ -140,17 +142,21 @@ export function Html({
         {linkMarkup}
 
         {stylesMarkup}
+
         {headMarkup}
+
         {blockingScriptsMarkup}
         {deferredScriptsMarkup}
+
         {preloadAssetsMarkup}
+
+        {serializationMarkup}
       </head>
 
       <body {...bodyAttributes}>
         <div id="app" dangerouslySetInnerHTML={{__html: markup}} />
 
         {bodyMarkup}
-        {serializationMarkup}
       </body>
     </html>
   );
