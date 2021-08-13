@@ -46,15 +46,22 @@ export function extract(
     const {finished} = manager.seal();
     const cancelled = !finished && index + 1 >= maxPasses;
 
-    if (finished || cancelled) {
-      const duration = Date.now() - start;
+    const resolveStart = Date.now();
+    const renderDuration = resolveStart - start;
 
+    if (!cancelled) {
+      await manager.resolveAllEffects();
+    }
+
+    const resolveDuration = Date.now() - resolveStart;
+
+    if (finished || cancelled) {
       await manager.afterEachPass({
         index,
         finished: true,
         cancelled,
-        renderDuration: duration,
-        resolveDuration: 0,
+        renderDuration,
+        resolveDuration,
       });
 
       if (afterEachPass) {
@@ -62,19 +69,13 @@ export function extract(
           index,
           finished: true,
           cancelled,
-          renderDuration: duration,
-          resolveDuration: 0,
+          renderDuration,
+          resolveDuration,
         });
       }
 
       return result;
     } else {
-      const resolveStart = Date.now();
-      const renderDuration = resolveStart - start;
-
-      await manager.resolveAllEffects();
-
-      const resolveDuration = Date.now() - resolveStart;
       let performNextPass = true;
 
       performNextPass =
