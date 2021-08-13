@@ -46,7 +46,12 @@ export function createRouter(
   {prefix, state: initialState, isExternal: explicitIsExternal}: Options = {},
 ): Router {
   let currentUrl = initialUrl
-    ? enhanceUrl(initialUrl, initialState ?? {}, createKey(), prefix)
+    ? enhanceUrl(
+        new URL(initialUrl.href),
+        initialState ?? {},
+        createKey(),
+        prefix,
+      )
     : createUrl(prefix);
 
   const isExternal =
