@@ -13,14 +13,14 @@ import type {Manifest} from '@quilted/async/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 import type {HttpState} from '@quilted/react-http/server';
 
-import type {OutputChunk} from 'rollup';
-
 import {
+  PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
 
 import {STEP_NAME} from './app-build';
+import {preloadAllGlobal} from './rollup/preload-all';
 
 export interface AppStaticOptions {
   /**
@@ -159,7 +159,6 @@ declare module '@quilted/sewing-kit' {
 }
 
 const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry';
-const PRELOAD_ALL_GLOBAL = '__QUILT_ASYNC_PRELOAD_ALL__';
 
 export function appStatic({
   routes = ['/'],
@@ -339,31 +338,9 @@ export function appStatic({
                   }
                 `;
               },
-              generateBundle(_, bundle) {
-                const outputs = Object.values(bundle);
-                const dynamicImports = outputs.filter(
-                  (chunk): chunk is OutputChunk =>
-                    chunk.type === 'chunk' && chunk.isDynamicEntry,
-                );
-
-                const preloadAllPromise = `Promise.all([${dynamicImports
-                  .map(
-                    (imported) =>
-                      // Not doing this trips up esbuild’s parser for the "from source"
-                      // build, lol
-                      `${'im'}${'port'}('./${imported.fileName}')`,
-                  )
-                  .join(', ')}])`;
-
-                for (const output of outputs) {
-                  if (output.type !== 'chunk') continue;
-                  output.code = output.code.replace(
-                    new RegExp(PRELOAD_ALL_GLOBAL, 'g'),
-                    preloadAllPromise,
-                  );
-                }
-              },
             });
+
+            plugins.push(preloadAllGlobal());
 
             return plugins;
           });

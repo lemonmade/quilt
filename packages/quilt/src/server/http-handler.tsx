@@ -4,11 +4,15 @@ import type {AssetLoader} from '@quilted/async/server';
 import {render, Html} from '@quilted/react-html/server';
 
 import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
-import type {HttpHandler, RequestHandler} from '@quilted/http-handlers';
+import type {
+  HttpHandler,
+  RequestHandler,
+  HttpHandlerOptions,
+} from '@quilted/http-handlers';
 
 import {renderApp} from './render';
 
-export interface Options {
+export interface Options extends Pick<HttpHandlerOptions, 'before'> {
   assets: AssetLoader<unknown>;
   handler?: HttpHandler;
 }
@@ -81,7 +85,7 @@ export function createServerRenderingRequestHandler(
 
 export function createServerRenderingHttpHandler(
   App: ComponentType<any>,
-  {assets, handler = createHttpHandler()}: Options,
+  {assets, before, handler = createHttpHandler({before})}: Options,
 ) {
   handler.get(createServerRenderingRequestHandler(App, {assets}));
   return handler;

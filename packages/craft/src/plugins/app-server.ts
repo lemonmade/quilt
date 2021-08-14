@@ -6,11 +6,14 @@ import type {App, WaterfallHook} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
 
 import {
+  PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
 
 import {STEP_NAME} from './app-build';
+
+import {preloadAllGlobal} from './rollup/preload-all';
 
 export interface AppServerOptions {
   /**
@@ -121,18 +124,28 @@ export function appServer(options?: AppServerOptions) {
 
           const content = entry
             ? httpHandler
-              ? `export {default} from ${JSON.stringify(
-                  project.fs.resolvePath(entry),
-                )};`
-              : `import ${JSON.stringify(project.fs.resolvePath(entry))};`
+              ? stripIndent`
+                  export {default} from ${JSON.stringify(
+                    project.fs.resolvePath(entry),
+                  )};
+                `
+              : stripIndent`
+                  import ${JSON.stringify(project.fs.resolvePath(entry))};
+                `
             : stripIndent`
+                import '@quilted/quilt/global';
                 import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                 import assets from ${JSON.stringify(
                   MAGIC_MODULE_APP_ASSET_MANIFEST,
                 )};
                 import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
 
-                export default createServerRenderingHttpHandler(App, {assets});
+                export default createServerRenderingHttpHandler(App, {
+                  assets,
+                  async before() {
+                    await ${PRELOAD_ALL_GLOBAL};
+                  },
+                });
               `;
 
           quiltAsyncPreload?.(() => false);
@@ -231,6 +244,8 @@ export function appServer(options?: AppServerOptions) {
                 },
               });
             }
+
+            plugins.push(preloadAllGlobal());
 
             return plugins;
           });

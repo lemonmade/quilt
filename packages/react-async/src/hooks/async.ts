@@ -16,6 +16,8 @@ export function useAsync<T>(
   asyncLoader: AsyncLoader<T>,
   {scripts, styles, immediate = true}: Options = {},
 ) {
+  const async = useContext(AsyncAssetContext);
+
   const {id} = asyncLoader;
   const load = useCallback(() => asyncLoader.load(), [asyncLoader]);
 
@@ -33,6 +35,11 @@ export function useAsync<T>(
       };
     }, [immediate, asyncLoader]),
   );
+
+  useServerAction(() => {
+    if (!immediate || asyncLoader.loaded != null) return;
+    return asyncLoader.load();
+  }, async?.serverAction);
 
   useAsyncAsset(id, {scripts, styles});
 

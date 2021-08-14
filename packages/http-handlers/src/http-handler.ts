@@ -14,6 +14,7 @@ import type {
 
 export interface HttpHandlerOptions {
   readonly prefix?: Prefix;
+  before?(request: Request): void | Promise<void>;
 }
 
 interface RequestHandlerRegistration {
@@ -24,6 +25,7 @@ interface RequestHandlerRegistration {
 
 export function createHttpHandler({
   prefix,
+  before,
 }: HttpHandlerOptions = {}): HttpHandler {
   const registrations: RequestHandlerRegistration[] = [];
 
@@ -47,6 +49,8 @@ export function createHttpHandler({
     async run(requestOptions) {
       const request = createRequest(requestOptions, prefix);
       const {normalizedPath} = request.url;
+
+      await before?.(request);
 
       for (const {method, handler, match} of registrations) {
         if (method != null && method !== request.method) continue;
