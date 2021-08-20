@@ -82,12 +82,14 @@ export interface NodeApi<Props, Extensions extends PlainObject = EmptyObject> {
     type: Type,
     props?: Partial<PropsFor<Type>>,
   ): Node<PropsFor<Type>, Extensions>[];
-  findWhere<Props = unknown>(
+  findWhere<Type extends ComponentType<any> | string = ComponentType<unknown>>(
     predicate: Predicate<Extensions>,
-  ): Node<Props, Extensions> | null;
-  findAllWhere<Props = unknown>(
+  ): Node<PropsFor<Type>, Extensions> | null;
+  findAllWhere<
+    Type extends ComponentType<any> | string = ComponentType<unknown>,
+  >(
     predicate: Predicate<Extensions>,
-  ): Node<Props, Extensions>[];
+  ): Node<PropsFor<Type>, Extensions>[];
   findContext<Type>(context: Context<Type>): Type | undefined;
 
   trigger<K extends FunctionKeys<Props>>(
