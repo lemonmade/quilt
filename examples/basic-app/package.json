@@ -1,7 +1,7 @@
 {
   "name": "example-basic-app",
   "type": "module",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "eslintConfig": {
     "extends": "@quilted/eslint-config/app"
