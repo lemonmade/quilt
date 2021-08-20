@@ -63,7 +63,6 @@ export function Http() {
         // that should be allowed to use this feature (e.g., `['self']` to allow
         // only the main page’s origin).
         camera={false}
-        battery={false}
         microphone={false}
         geolocation={false}
       />

@@ -36,14 +36,6 @@ export interface PermissionsPolicyOptions {
   autoplay?: false | (PermissionsPolicySpecialSource | string)[];
 
   /**
-   * Controls whether the use of the Battery Status API is allowed.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy/battery
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API
-   */
-  battery?: false | (PermissionsPolicySpecialSource | string)[];
-
-  /**
    * Controls whether the current document is allowed to use video input devices.
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy/camera
@@ -240,7 +232,6 @@ export function usePermissionsPolicy(value: string | PermissionsPolicyOptions) {
         accelerometer,
         ambientLightSensor,
         autoplay,
-        battery,
         camera,
         displayCapture,
         documentDomain,
@@ -289,7 +280,6 @@ export function usePermissionsPolicy(value: string | PermissionsPolicyOptions) {
       addDirective('accelerometer', accelerometer);
       addDirective('ambient-light-sensor', ambientLightSensor);
       addDirective('autoplay', autoplay);
-      addDirective('battery', battery);
       addDirective('camera', camera);
       addDirective('display-capture', displayCapture);
       addDirective('document-domain', documentDomain);

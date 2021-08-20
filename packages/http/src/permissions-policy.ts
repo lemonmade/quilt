@@ -33,14 +33,6 @@ export enum PermissionsPolicyDirective {
   Autoplay = 'autoplay',
 
   /**
-   * Controls whether the use of the Battery Status API is allowed.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy/battery
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API
-   */
-  Battery = 'battery',
-
-  /**
    * Controls whether the current document is allowed to use video input devices.
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy/camera
