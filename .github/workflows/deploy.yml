@@ -11,35 +11,12 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v1
-        name: Checkout
+      - uses: quilt-framework/action-prepare@v1
 
-      - uses: actions/setup-node@v1
-        name: Setup node.js and yarn
+      - uses: quilt-framework/action-build@v2
         with:
-          node-version: 16.2.0
-          registry-url: https://registry.npmjs.org/
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Get yarn cache directory
-        id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        name: Restore yarn cache
-        with:
-          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
-
-      - name: Yarn install
-        run: yarn install --immutable
-
-      - name: Build
-        run: yarn build --skip-project "app.\*"
+          command: yarn build
+          arguments: --skip-project app:*
 
       - name: Deploy
         run: yarn deploy
