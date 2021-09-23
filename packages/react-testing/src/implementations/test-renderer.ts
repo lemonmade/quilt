@@ -5,16 +5,12 @@ import {
   ReactTestInstance,
 } from 'react-test-renderer';
 
-import {createEnvironment, isNode} from '../environment';
-import type {CustomMount, EnvironmentOptions} from '../environment';
-import type {Node, Root, RootNode} from '../types';
+import {createEnvironment} from '../environment';
+import type {EnvironmentOptions} from '../environment';
 
 interface Context {
   renderer: ReactTestRenderer;
 }
-
-export {isNode};
-export type {Node, Root, RootNode, CustomMount};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<Context>({
   act,

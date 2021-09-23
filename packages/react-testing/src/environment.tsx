@@ -7,8 +7,7 @@ import type {
   RootNode,
   PlainObject,
   EmptyObject,
-  EraseIfEmpty,
-  IfEmptyObject,
+  MergeObjects,
 } from './types';
 
 import {TestRenderer} from './TestRenderer';
@@ -73,25 +72,31 @@ type AfterMountOption<
 
 export type ContextOption<
   MountOptions extends PlainObject = EmptyObject,
-  Context extends PlainObject = EmptyObject,
-> = Context extends EmptyObject
+  ExistingContext extends PlainObject = EmptyObject,
+  AdditionalContext extends PlainObject = EmptyObject,
+> = AdditionalContext extends EmptyObject
   ? {context?: never}
   : {
-      context(options: MountOptions): Context;
+      context(
+        options: MountOptions,
+        existingContext: ExistingContext,
+      ): AdditionalContext;
     };
 
 export type ActionsOption<
   MountOptions extends PlainObject = EmptyObject,
   Context extends PlainObject = EmptyObject,
-  Actions extends PlainObject = EmptyObject,
+  ExistingActions extends PlainObject = EmptyObject,
+  AdditionalActions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
-> = Actions extends EmptyObject
+> = AdditionalActions extends EmptyObject
   ? {actions?: never}
   : {
       actions(
-        root: Omit<RootNode<unknown, Context, Actions, Extensions>, 'actions'>,
+        root: Omit<RootNode<unknown, Context, any, Extensions>, 'actions'>,
         options: MountOptions,
-      ): Actions;
+        existingActions: ExistingActions,
+      ): AdditionalActions;
     };
 
 export interface RenderOption<
@@ -106,52 +111,63 @@ export interface RenderOption<
 }
 
 export type MountOptionsOverrideOption<
-  CreateMountOptions extends PlainObject = EmptyObject,
-  MountOptions extends PlainObject = EmptyObject,
-> = MountOptions extends EmptyObject
+  ExistingMountOptions extends PlainObject = EmptyObject,
+  AdditionalMountOptions extends PlainObject = EmptyObject,
+> = AdditionalMountOptions extends EmptyObject
   ? {options?: never}
   : {
       options?(
-        current: MountOptions & EraseIfEmpty<CreateMountOptions>,
-      ): Partial<MountOptions>;
+        current: MergeObjects<ExistingMountOptions, AdditionalMountOptions>,
+      ): Partial<AdditionalMountOptions>;
     };
 
 type CustomMountOptions<
   MountOptions extends PlainObject = EmptyObject,
-  CreateContext extends PlainObject = EmptyObject,
-  Context extends PlainObject = CreateContext,
-  CreateActions extends PlainObject = EmptyObject,
-  Actions extends PlainObject = EmptyObject,
+  ExistingContext extends PlainObject = EmptyObject,
+  AdditionalContext extends PlainObject = EmptyObject,
+  ExistingActions extends PlainObject = EmptyObject,
+  AdditionalActions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
   Async extends boolean = false,
-> = RenderOption<MountOptions, Context> &
-  ContextOption<MountOptions, CreateContext> &
-  ActionsOption<MountOptions, Context, CreateActions, Extensions> &
-  AfterMountOption<MountOptions, Context, Actions, Extensions, Async>;
+> = RenderOption<
+  MountOptions,
+  MergeObjects<ExistingContext, AdditionalContext>
+> &
+  ContextOption<MountOptions, ExistingContext, AdditionalContext> &
+  ActionsOption<
+    MountOptions,
+    MergeObjects<ExistingContext, AdditionalContext>,
+    ExistingActions,
+    AdditionalActions,
+    Extensions
+  > &
+  AfterMountOption<
+    MountOptions,
+    MergeObjects<ExistingContext, AdditionalContext>,
+    MergeObjects<ExistingActions, AdditionalActions>,
+    Extensions,
+    Async
+  >;
 
 type CustomMountExtendOptions<
-  CreateMountOptions extends PlainObject = EmptyObject,
-  MountOptions extends PlainObject = EmptyObject,
-  CreateContext extends PlainObject = EmptyObject,
-  Context extends PlainObject = CreateContext,
-  CreateActions extends PlainObject = EmptyObject,
-  Actions extends PlainObject = EmptyObject,
+  ExistingMountOptions extends PlainObject = EmptyObject,
+  AdditionalMountOptions extends PlainObject = EmptyObject,
+  ExistingContext extends PlainObject = EmptyObject,
+  AdditionalContext extends PlainObject = EmptyObject,
+  ExistingActions extends PlainObject = EmptyObject,
+  AdditionalActions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
   Async extends boolean = false,
 > = CustomMountOptions<
-  IfEmptyObject<
-    MountOptions,
-    CreateMountOptions,
-    MountOptions & EraseIfEmpty<CreateMountOptions>
-  >,
-  CreateContext,
-  Context,
-  CreateActions,
-  Actions,
+  MergeObjects<ExistingMountOptions, AdditionalMountOptions>,
+  ExistingContext,
+  AdditionalContext,
+  ExistingActions,
+  AdditionalActions,
   Extensions,
   Async
 > &
-  MountOptionsOverrideOption<CreateMountOptions, MountOptions>;
+  MountOptionsOverrideOption<ExistingMountOptions, AdditionalMountOptions>;
 
 export interface CustomMount<
   MountOptions extends PlainObject,
@@ -171,43 +187,19 @@ export interface CustomMount<
     AdditionalAsync extends boolean = false,
   >(
     options: CustomMountExtendOptions<
-      AdditionalMountOptions,
-      IfEmptyObject<
-        MountOptions,
-        AdditionalMountOptions,
-        MountOptions & EraseIfEmpty<AdditionalMountOptions>
-      >,
-      AdditionalContext,
-      IfEmptyObject<
-        Context,
-        AdditionalContext,
-        Context & EraseIfEmpty<AdditionalContext>
-      >,
-      AdditionalActions,
-      IfEmptyObject<
-        Actions,
-        AdditionalActions,
-        Actions & EraseIfEmpty<AdditionalActions>
-      >,
-      Extensions,
-      AdditionalAsync
-    >,
-  ): CustomMount<
-    IfEmptyObject<
       MountOptions,
       AdditionalMountOptions,
-      MountOptions & EraseIfEmpty<AdditionalMountOptions>
-    >,
-    IfEmptyObject<
       Context,
       AdditionalContext,
-      Context & EraseIfEmpty<AdditionalContext>
-    >,
-    IfEmptyObject<
       Actions,
       AdditionalActions,
-      Actions & EraseIfEmpty<AdditionalActions>
+      Extensions,
+      AdditionalAsync extends true ? AdditionalAsync : Async
     >,
+  ): CustomMount<
+    MergeObjects<MountOptions, AdditionalMountOptions>,
+    MergeObjects<Context, AdditionalContext>,
+    MergeObjects<Actions, AdditionalActions>,
     Extensions,
     AdditionalAsync extends true ? AdditionalAsync : Async
   >;
@@ -634,7 +626,7 @@ export function createEnvironment<
       element: ReactElement<Props>,
       options: MountOptions = {} as any,
     ) {
-      const context: any = createContext?.(options);
+      const context: any = createContext(options, {});
       const actions: any = {};
 
       const root = createRoot<unknown, Context, Actions>(element, {
@@ -644,7 +636,7 @@ export function createEnvironment<
         resolveRoot: (root) => root.find(element.type),
       });
 
-      Object.assign(actions, createActions(root as any, options));
+      Object.assign(actions, createActions(root as any, options, {}));
 
       root.mount();
 
@@ -725,14 +717,33 @@ export function createEnvironment<
         afterMount: additionalAfterMount = noop,
       }: CustomMountExtendOptions<any, any, any, any, any, any, any>) => {
         const extendedMount = createMount<any, any, any, any>({
-          context: (options) => ({
-            ...createContext(options),
-            ...createAdditionalContext(options),
-          }),
-          actions: (root, options) => ({
-            ...createActions(root, options),
-            ...createAdditionalActions(root, options),
-          }),
+          context(options, initialContext) {
+            const baseContext = {
+              ...initialContext,
+              ...createContext(options, initialContext),
+            };
+
+            const additionalContext = createAdditionalContext(
+              options,
+              baseContext,
+            );
+
+            return {...baseContext, ...additionalContext};
+          },
+          actions(root, options, initialActions) {
+            const baseActions = {
+              ...initialActions,
+              ...createActions(root, options, initialActions),
+            };
+
+            const additionalActions = createAdditionalActions(
+              root,
+              options,
+              baseActions,
+            );
+
+            return {...baseActions, ...additionalActions};
+          },
           render: (element, context, options) =>
             render(
               additionalRender(element, context, options),
