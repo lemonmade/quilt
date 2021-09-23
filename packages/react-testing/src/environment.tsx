@@ -194,7 +194,7 @@ export interface CustomMount<
       Actions,
       AdditionalActions,
       Extensions,
-      AdditionalAsync extends true ? AdditionalAsync : Async
+      AdditionalAsync
     >,
   ): CustomMount<
     MergeObjects<MountOptions, AdditionalMountOptions>,
