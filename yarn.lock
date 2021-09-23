@@ -3299,7 +3299,7 @@ __metadata:
     "@quilted/react-idle": ^0.3.5
     "@quilted/react-router": ^0.3.24
     "@quilted/react-server-render": ^0.3.6
-    "@quilted/react-testing": ^0.4.8
+    "@quilted/react-testing": ^0.4.9
     "@quilted/react-workers": ^0.2.11
     "@types/prettier": ^2.0.0
     "@types/react": ^17.0.0
@@ -3470,7 +3470,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@quilted/react-testing@^0.4.8, @quilted/react-testing@workspace:packages/react-testing":
+"@quilted/react-testing@^0.4.9, @quilted/react-testing@workspace:packages/react-testing":
   version: 0.0.0-use.local
   resolution: "@quilted/react-testing@workspace:packages/react-testing"
   dependencies:
