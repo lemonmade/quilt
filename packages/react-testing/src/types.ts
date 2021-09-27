@@ -49,7 +49,7 @@ type MaybeFunctionReturnType<T> = T extends (...args: any[]) => any
   ? ReturnType<T>
   : unknown;
 
-export interface Root<
+export interface RootApi<
   Props,
   Context extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
@@ -113,12 +113,12 @@ export type Node<
   ? NodeApi<Props, Extensions>
   : NodeApi<Props, Extensions> & Omit<Extensions, keyof Root<any>>;
 
-export type RootNode<
+export type Root<
   Props,
   Context extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
-> = Node<Props, Extensions> & Root<Props, Context, Actions>;
+> = Node<Props, Extensions> & RootApi<Props, Context, Actions>;
 
 export interface DebugOptions {
   all?: boolean;

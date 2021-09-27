@@ -3,8 +3,8 @@ import type {ReactElement} from 'react';
 
 import type {
   Node as BaseNode,
-  Root as BaseRoot,
-  RootNode,
+  Root as RootNode,
+  RootApi,
   PlainObject,
   EmptyObject,
   MergeObjects,
@@ -314,7 +314,7 @@ export function createEnvironment<
     let context!: EnvironmentContext;
     const testRendererRef = createRef<TestRenderer<Props>>();
 
-    const rootApi: BaseRoot<Props, Context, Actions> = {
+    const rootApi: RootApi<Props, Context, Actions> = {
       act,
       mount,
       unmount,

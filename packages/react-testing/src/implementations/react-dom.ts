@@ -3,7 +3,7 @@ import {act} from 'react-dom/test-utils';
 
 import {createEnvironment, isNode} from '../environment';
 import type {CustomMount, EnvironmentOptions} from '../environment';
-import type {Node, Root, RootNode, HtmlNodeExtensions} from '../types';
+import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
 
 import {Tag} from './shared/react';
 import type {Fiber} from './shared/react';
@@ -16,7 +16,7 @@ interface Context {
 }
 
 export {isNode};
-export type {Node, Root, RootNode, HtmlNodeExtensions, CustomMount};
+export type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions, CustomMount};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<
   Context,

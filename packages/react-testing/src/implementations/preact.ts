@@ -5,14 +5,14 @@ import {act} from 'preact/test-utils';
 
 import {createEnvironment, isNode} from '../environment';
 import type {CustomMount, EnvironmentOptions} from '../environment';
-import type {Node, Root, RootNode, HtmlNodeExtensions} from '../types';
+import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
 
 interface Context {
   element: HTMLDivElement;
 }
 
 export {isNode};
-export type {Node, Root, RootNode, HtmlNodeExtensions, CustomMount};
+export type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions, CustomMount};
 
 const {mount, createMount, mounted, unmountAll} = createEnvironment<
   Context,
