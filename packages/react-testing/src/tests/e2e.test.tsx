@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 
-import {useState} from 'react';
+import {Component, useState} from 'react';
 import {mount} from '..';
 
 describe('e2e', () => {
@@ -54,5 +54,34 @@ describe('e2e', () => {
     expect(() =>
       throwingComponent.find('button')!.trigger('onClick'),
     ).toThrowError(error);
+  });
+
+  it('does not throw an error when an intermediate error boundary intercepts the error', () => {
+    const error = new Error('oh no!');
+
+    class ErrorBoundary extends Component {
+      state: {error?: Error} = {};
+
+      static getDerivedStateFromError(error: any) {
+        return {error};
+      }
+
+      render() {
+        return this.state.error ? null : <>{this.props.children}</>;
+      }
+    }
+
+    function ThrowingComponent() {
+      throw error;
+      return null;
+    }
+
+    expect(() =>
+      mount(
+        <ErrorBoundary>
+          <ThrowingComponent />
+        </ErrorBoundary>,
+      ),
+    ).not.toThrowError();
   });
 });
