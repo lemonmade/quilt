@@ -525,8 +525,8 @@ export function createEnvironment<
       acting = true;
 
       const afterResolve = () => {
-        performUpdate();
         acting = false;
+        performUpdate();
         return result;
       };
 
@@ -557,12 +557,19 @@ export function createEnvironment<
     }
 
     function updateRootNode() {
-      rootNode =
-        testRendererRef.current == null
-          ? null
-          : env.update(testRendererRef.current, createNode, context);
+      const testRenderer = testRendererRef.current;
 
+      if (testRenderer == null) {
+        rootNode = null;
+        return;
+      }
+
+      rootNode = env.update(testRenderer, createNode, context);
       rootNode = rootNode && resolveRoot(rootNode);
+
+      const error = testRenderer.getError();
+
+      if (error) throw error;
     }
 
     function withRootNode<T>(perform: (node: Node<unknown>) => T) {
