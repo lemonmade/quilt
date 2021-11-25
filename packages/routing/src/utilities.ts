@@ -33,13 +33,7 @@ export function resolveUrl(
   const prefix = relativeTo === 'root' ? '/' : from.prefix;
 
   if (to instanceof URL) {
-    if (to.origin !== from.origin) {
-      throw new Error(
-        `You can’t perform a client side navigation to ${to.href} from ${from.href}`,
-      );
-    }
-
-    return to;
+    return new URL(to.href);
   } else if (typeof to === 'object') {
     const {path, search, hash} = to;
 
