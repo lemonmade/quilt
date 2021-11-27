@@ -9,6 +9,7 @@ import {
   PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
+  MAGIC_MODULE_HTTP_HANDLER,
 } from '../constants';
 
 import {STEP_NAME} from './app-build';
@@ -115,6 +116,7 @@ export function appServer(options?: AppServerOptions) {
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
+            quiltHttpHandlerRuntimeContent,
             quiltAsyncPreload,
             quiltAsyncManifest,
           },
@@ -277,6 +279,43 @@ export function appServer(options?: AppServerOptions) {
             quiltHttpHandlerContent?.(
               async () => await quiltAppServerEntryContent!.run(content),
             );
+
+            // TODO make asset serving stuff be properly variable-ized
+            quiltHttpHandlerRuntimeContent?.(async (content) => {
+              if (content) return content;
+
+              const [port, host] = await Promise.all([
+                quiltHttpHandlerPort!.run(undefined),
+                quiltHttpHandlerHost!.run(undefined),
+              ]);
+
+              return stripIndent`
+                import {createServer} from 'http';
+
+                import httpHandler from ${JSON.stringify(
+                  MAGIC_MODULE_HTTP_HANDLER,
+                )};
+      
+                import {createHttpRequestListener, serveStatic} from '@quilted/http-handlers/node';
+
+                const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
+                const host = ${
+                  host ? JSON.stringify(host) : 'process.env.HOST'
+                };
+
+                const serve = serveStatic('/Users/lemon/dev/personal/quilt/tests/e2e/output/test1/build');
+                const listener = createHttpRequestListener(httpHandler);
+              
+                createServer(async (request, response) => {
+                  if (request.url.startsWith('/assets/')) {
+                    serve(request, response, () => {});
+                    return;
+                  }
+
+                  await listener(request, response);
+                }).listen(port, host);
+              `;
+            });
           } else {
             rollupInput?.(() => [MAGIC_CUSTOM_SERVER_ENTRY_MODULE]);
           }

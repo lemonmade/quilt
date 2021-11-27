@@ -1,5 +1,6 @@
 import {createServer} from 'http';
 import type {RequestListener} from 'http';
+import serve from 'serve-static';
 
 import {createHeaders} from '@quilted/http';
 
@@ -68,9 +69,22 @@ export function createHttpRequestListener(
 
       if (resultBody != null) response.write(resultBody);
       response.end();
-    } catch {
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
       response.writeHead(500);
       response.end();
     }
   };
+}
+
+export function serveStatic(root: string) {
+  return serve(root, {
+    index: false,
+    dotfiles: 'ignore',
+    fallthrough: false,
+    setHeaders(response) {
+      response.setHeader('Cache-Control', 'no-store');
+    },
+  });
 }

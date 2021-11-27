@@ -1,6 +1,10 @@
 import type {PluginItem} from '@babel/core';
 
-import {createProjectPlugin, ProjectKind} from '@quilted/sewing-kit';
+import {
+  ProjectKind,
+  createProjectPlugin,
+  createWorkspacePlugin,
+} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-rollup';
@@ -32,6 +36,10 @@ declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends BabelHooks {}
   interface DevelopProjectConfigurationHooks extends BabelHooks {}
   interface TestProjectConfigurationHooks extends BabelHooks {}
+
+  interface BuildWorkspaceConfigurationHooks extends BabelHooks {}
+  interface DevelopWorkspaceConfigurationHooks extends BabelHooks {}
+  interface TestWorkspaceConfigurationHooks extends BabelHooks {}
 }
 
 /**
@@ -40,6 +48,40 @@ declare module '@quilted/sewing-kit' {
 export function babelHooks() {
   return createProjectPlugin({
     name: 'SewingKit.Babel',
+    build({hooks}) {
+      hooks<BabelHooks>(({waterfall}) => ({
+        babelPlugins: waterfall(),
+        babelPresets: waterfall(),
+        babelExtensions: waterfall(),
+        babelTargets: waterfall(),
+      }));
+    },
+    develop({hooks}) {
+      hooks<BabelHooks>(({waterfall}) => ({
+        babelPlugins: waterfall(),
+        babelPresets: waterfall(),
+        babelExtensions: waterfall(),
+        babelTargets: waterfall(),
+      }));
+    },
+    test({hooks}) {
+      hooks<BabelHooks>(({waterfall}) => ({
+        babelPlugins: waterfall(),
+        babelPresets: waterfall(),
+        babelExtensions: waterfall(),
+        babelTargets: waterfall(),
+      }));
+    },
+  });
+}
+
+/**
+ * Adds basic Babel hooks that other plugins can attach configuration to
+ * for configuring Babel at the workspace level.
+ */
+export function babelWorkspaceHooks() {
+  return createWorkspacePlugin({
+    name: 'SewingKit.Babel.Workspace',
     build({hooks}) {
       hooks<BabelHooks>(({waterfall}) => ({
         babelPlugins: waterfall(),

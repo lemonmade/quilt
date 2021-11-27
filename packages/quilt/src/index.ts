@@ -33,6 +33,16 @@ export type {
 export {useIdleCallback} from '@quilted/react-idle';
 export {ServerAction, useServerAction} from '@quilted/react-server-render';
 export {
+  PerformanceContext,
+  usePerformance,
+  usePerformanceNavigation,
+} from '@quilted/react-performance';
+export type {
+  Performance,
+  PerformanceNavigation,
+  PerformanceInflightNavigation,
+} from '@quilted/react-performance';
+export {
   Link,
   Redirect,
   Router,
