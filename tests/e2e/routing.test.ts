@@ -4,23 +4,20 @@ import {
   stripIndent,
   withWorkspace,
 } from './utilities';
-import type {Workspace, Page} from './utilities';
+import type {Page} from './utilities';
 
 jest.setTimeout(10_000);
 
 describe('routing', () => {
   describe('scroll restoration', () => {
     it('scrolls to the top when navigating to a new page, and back to its original position when navigating back', async () => {
-      await withWorkspace(async (workspace) => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
         const {fs} = workspace;
-
-        await writeBasicApp(workspace);
 
         const scrollBy = 100;
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useEffect} from 'react';
             import {
               Link,
               useRoutes,
@@ -64,7 +61,7 @@ describe('routing', () => {
                   {children}
                   <div style={{height: '200vh'}} />
                 </>
-              )
+              );
             }
           `,
         });
@@ -136,48 +133,4 @@ async function scrollTo(page: Page, scrollTo: number) {
       }, 10);
     });
   }, scrollTo);
-}
-
-async function writeBasicApp({fs}: Workspace) {
-  await fs.write({
-    'package.json': JSON.stringify(
-      {
-        name: 'e2e-fixture-basic-app',
-        type: 'module',
-        browserslist: ['extends @quilted/browserslist-config/modules'],
-      },
-      null,
-      2,
-    ),
-    'sewing-kit.config.ts': stripIndent`
-      import {createApp, quiltApp} from '@quilted/craft';
-
-      export default createApp((app) => {
-        app.entry('./App');
-        app.use(quiltApp());
-      });
-    `,
-    'App.tsx': stripIndent`
-      import {App as QuiltApp} from '@quilted/quilt';
-      import {createPerformance} from '@quilted/performance';
-
-      import {Routes} from './foundation/Routes';
-
-      const performance = createPerformance();
-
-      if (typeof window !== 'undefined') {
-        window.Quilt = window.Quilt ?? {};
-        window.Quilt.E2E = window.Quilt.E2E ?? {};
-        window.Quilt.E2E.Performance = performance;
-      }
-      
-      export default function App() {
-        return (
-          <QuiltApp performance={performance}>
-            <Routes />
-          </QuiltApp>
-        );
-      }
-    `,
-  });
 }

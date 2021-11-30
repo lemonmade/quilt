@@ -23,7 +23,10 @@
   },
   "devDependencies": {
     "@quilted/craft": "^0.1.0",
+    "@types/fs-extra": "^9.0.13",
+    "fs-extra": "^10.0.0",
     "lerna": "3.22.1",
+    "nanoid": "^3.1.30",
     "playwright": "^1.15.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

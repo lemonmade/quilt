@@ -1,10 +1,11 @@
-import {tmpdir} from 'os';
 import {promisify} from 'util';
 import {exec} from 'child_process';
 import type {ExecOptions, PromiseWithChild} from 'child_process';
 import {writeFile, readFile, mkdir, rm} from 'fs/promises';
 import * as path from 'path';
 
+import {copy} from 'fs-extra';
+import {customAlphabet} from 'nanoid';
 import getPort from 'get-port';
 import {chromium} from 'playwright';
 import type {Page, Browser as PlaywrightBrowser} from 'playwright';
@@ -49,18 +50,56 @@ export interface Workspace {
 
 const execAsync = promisify(exec);
 const monorepoRoot = path.resolve(__dirname, '../..');
+const fixtureRoot = path.resolve(__dirname, 'fixtures');
 const sewingKitFromSourceScript = path.join(
   monorepoRoot,
   'scripts/sewing-kit-from-source.js',
 );
 
-export async function withWorkspace<T>(
-  action: (workspace: Workspace) => T | Promise<T>,
-): Promise<T> {
-  // const root = tmpdir();
-  const root = path.join(__dirname, 'output/test1');
+const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
-  const teardown = async () => {};
+let browserPromise: Promise<PlaywrightBrowser> | undefined;
+
+afterAll(async () => {
+  if (browserPromise == null) return;
+  await (await browserPromise).close();
+  browserPromise = undefined;
+});
+
+export type Fixture = 'basic-app';
+
+export interface WorkspaceOptions {
+  debug?: boolean;
+  name?: string;
+  fixture?: Fixture;
+}
+export type WorkspaceAction<T> = (workspace: Workspace) => T | Promise<T>;
+
+export async function withWorkspace<T>(action: WorkspaceAction<T>): Promise<T>;
+export async function withWorkspace<T>(
+  options: WorkspaceOptions,
+  action: WorkspaceAction<T>,
+): Promise<T>;
+export async function withWorkspace<T>(
+  optionsOrAction: WorkspaceOptions | WorkspaceAction<T>,
+  definitelyAction?: WorkspaceAction<T>,
+): Promise<T> {
+  let action: WorkspaceAction<T>;
+  let options: WorkspaceOptions;
+
+  if (typeof optionsOrAction === 'function') {
+    action = optionsOrAction;
+    options = {};
+  } else {
+    options = optionsOrAction ?? {};
+    action = definitelyAction!;
+  }
+
+  const {debug = false, name = `test-${nanoid()}`, fixture} = options;
+
+  const root = path.join(__dirname, `output/${name}`);
+
+  const teardownActions: (() => void | Promise<void>)[] = [];
 
   const resolve = (...parts: string[]) => path.resolve(root, ...parts);
 
@@ -69,6 +108,14 @@ export async function withWorkspace<T>(
       ...options,
       cwd: root,
       env: {...process.env, ...options?.env},
+    });
+
+    if (debug) {
+      result.child.stdout!.pipe(process.stdout);
+    }
+
+    teardownActions.push(() => {
+      if (!result.child.killed) result.child.kill();
     });
 
     return result;
@@ -116,13 +163,18 @@ export async function withWorkspace<T>(
     },
     browser: {
       async open(url, options = {}) {
-        // TODO store a reference for cleanup
-        const browser = await chromium.launch();
+        browserPromise ??= chromium.launch();
+        const browser = await browserPromise;
+
         const page = await browser.newPage({
           viewport: {height: 800, width: 600},
           ...options,
         });
+
+        teardownActions.push(() => page.close());
+
         await page.goto(typeof url === 'string' ? url : url.href);
+
         return page;
       },
     },
@@ -138,11 +190,26 @@ export async function withWorkspace<T>(
 
   try {
     await rm(root, {force: true, recursive: true});
+
+    if (fixture) {
+      await copy(path.join(fixtureRoot, fixture), root);
+
+      const packageJson = JSON.parse(await workspace.fs.read('package.json'));
+      packageJson.name = path.basename(root);
+      await workspace.fs.write(
+        'package.json',
+        JSON.stringify(packageJson, null, 2),
+      );
+    }
+
     const result = await action(workspace);
     return result;
-  } catch (error) {
-    await teardown();
-    throw error;
+  } finally {
+    await Promise.all(teardownActions.map((action) => action()));
+
+    if (!debug) {
+      await rm(root, {force: true, recursive: true});
+    }
   }
 }
 
@@ -151,10 +218,17 @@ export async function buildAppAndRunServer({command, fs}: Workspace) {
 
   const port = await getPort();
 
-  // TODO make sure to add this to workspace teardown
-  const server = command.node(fs.resolve('build/server/index.js'), {
-    env: {PORT: String(port)},
-  });
+  const server = (async () => {
+    try {
+      await command.node(fs.resolve('build/server/index.js'), {
+        env: {PORT: String(port)},
+      });
+    } catch (error) {
+      // Ignore errors from killing the server at the end of tests
+      if (error?.signal === 'SIGTERM') return;
+      throw error;
+    }
+  })();
 
   return {
     url: new URL(`http://localhost:${port}`),
@@ -187,7 +261,7 @@ export async function buildAppAndOpenPage(
   page.on('console', async (message) => {
     for (const arg of message.args()) {
       // eslint-disable-next-line no-console
-      console[message.type()](await arg.jsonValue());
+      console[message.type() as 'log'](await arg.jsonValue());
     }
   });
 
@@ -201,7 +275,7 @@ export async function buildAppAndOpenPage(
   page.on('requestfailed', (request) => {
     // eslint-disable-next-line no-console
     console.log(
-      `failed request: ${request.url()} (${request.failure().errorText})`,
+      `failed request: ${request.url()} (${request.failure()?.errorText})`,
     );
   });
 
@@ -221,7 +295,7 @@ export async function buildAppAndOpenPage(
 export async function waitForPerformanceNavigation(
   page: Page,
   {
-    to,
+    to = '',
     action,
     checkCompleteNavigations = false,
   }: {

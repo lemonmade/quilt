@@ -49,7 +49,6 @@ import {Ui} from './ui';
 import {InternalFileSystem} from '../utilities/fs';
 
 export enum IncludedReason {
-  Workspace,
   Normal,
   Only,
 }
@@ -64,6 +63,7 @@ export type InclusionResult =
   | {included: false; reason: ExcludedReason};
 
 export interface TaskFilter {
+  includeWorkspace(): InclusionResult;
   includeProject(project: Project): InclusionResult;
   includeStep(step: AnyStep): InclusionResult;
 }
@@ -76,7 +76,7 @@ export interface TaskContext extends LoadedWorkspace {
 
 export function createCommand<Flags extends Spec>(
   flagSpec: Flags,
-  run: (flags: Omit<Result<Flags>, '_'>, context: TaskContext) => Promise<void>,
+  run: (flags: Result<Flags>, context: TaskContext) => Promise<void>,
 ) {
   return async (
     argv: string[],
@@ -96,6 +96,8 @@ export function createCommand<Flags extends Spec>(
       '--interactive': isInteractive,
       '--skip-project': skipProjects,
       '--only-project': onlyProjects,
+      '--skip-workspace': skipWorkspace = false,
+      '--only-workspace': onlyWorkspace = false,
       '--skip-step': skipSteps,
       '--only-step': onlySteps,
       ...flags
@@ -107,6 +109,8 @@ export function createCommand<Flags extends Spec>(
         '--interactive': Boolean,
         '--skip-project': [String],
         '--only-project': [String],
+        '--skip-workspace': Boolean,
+        '--only-workspace': Boolean,
         '--skip-step': [String],
         '--only-step': [String],
       },
@@ -130,6 +134,8 @@ export function createCommand<Flags extends Spec>(
           skipSteps,
           onlyProjects,
           skipProjects,
+          onlyWorkspace: onlyWorkspace as boolean,
+          skipWorkspace: skipWorkspace as boolean,
         }),
         internal: {fs: new InternalFileSystem(workspace.root)},
       });
@@ -145,11 +151,15 @@ function createFilter({
   skipSteps: rawSkipSteps = [],
   onlyProjects: rawOnlyProjects = [],
   skipProjects: rawSkipProjects = [],
+  onlyWorkspace = false,
+  skipWorkspace = false,
 }: {
   onlySteps?: string[];
   skipSteps?: string[];
   onlyProjects?: string[];
   skipProjects?: string[];
+  onlyWorkspace?: boolean;
+  skipWorkspace?: boolean;
 }): TaskFilter {
   const normalize = (values: string[]) => {
     const mapped = values.flatMap((value) => {
@@ -168,6 +178,10 @@ function createFilter({
 
   return {
     includeProject(project) {
+      if (onlyWorkspace) {
+        return {included: false, reason: ExcludedReason.Only};
+      }
+
       const projectKind = project.kind.toLowerCase();
       const nameSearch = project.name.replace(/[-_]/g, '').toLowerCase();
       const namespaceParts = nameSearch.split('.');
@@ -201,7 +215,20 @@ function createFilter({
         ? {included: false, reason: ExcludedReason.Skipped}
         : {included: true, reason: IncludedReason.Normal};
     },
+    includeWorkspace() {
+      if (onlyWorkspace) {
+        return {included: true, reason: IncludedReason.Only};
+      } else if (skipWorkspace) {
+        return {included: false, reason: ExcludedReason.Skipped};
+      } else {
+        return {included: true, reason: IncludedReason.Normal};
+      }
+    },
     includeStep(step) {
+      if (onlyWorkspace && step.target.kind !== 'workspace') {
+        return {included: false, reason: ExcludedReason.Only};
+      }
+
       const nameSearch = step.name.replace(/[-_]/g, '').toLowerCase();
       const namespaceParts = nameSearch.split('.');
       const searches: string[] = [nameSearch];
@@ -254,7 +281,7 @@ export function logError(error: any, {error: log}: Ui) {
         `🧵 The following unexpected error occurred. We want to provide more useful suggestions when errors occur, so please open an issue on ${ui.Link(
           'sewing-kit repo',
           {
-            to: 'https://github.com/Shopify/sewing-kit',
+            to: 'https://github.com/lemonmade/quilt',
           },
         )} so that we can improve this message.`,
     );
@@ -363,7 +390,7 @@ async function runStepsInStage(
 
     const projectInclusion: InclusionResult =
       step.target.kind === 'workspace'
-        ? {included: true, reason: IncludedReason.Workspace}
+        ? filter.includeWorkspace()
         : filter.includeProject(step.target);
 
     if (!projectInclusion.included) {

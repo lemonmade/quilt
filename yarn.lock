@@ -3201,9 +3201,9 @@ __metadata:
     "@quilted/http": ^0.2.8
     "@quilted/routing": ^0.2.6
     "@types/cookie": ^0.4.0
-    "@types/serve-static": ^1.13.0
+    "@types/send": ^0.17.0
     cookie: ^0.4.0
-    serve-static: ^1.14.0
+    send: ^0.17.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
   peerDependenciesMeta:
@@ -4161,6 +4161,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/fs-extra@npm:^9.0.13":
+  version: 9.0.13
+  resolution: "@types/fs-extra@npm:9.0.13"
+  dependencies:
+    "@types/node": "*"
+  checksum: ca4dc68663870775b20abe26a1cc3228c5790113b2c984395ea9cd448443abb4433420821030813bd7cdf1718144afafaa9efa6cd8419dcc4a49c9117a577ad1
+  languageName: node
+  linkType: hard
+
 "@types/glob@npm:^7.1.1":
   version: 7.1.3
   resolution: "@types/glob@npm:7.1.3"
@@ -4368,13 +4377,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/serve-static@npm:^1.13.0":
-  version: 1.13.10
-  resolution: "@types/serve-static@npm:1.13.10"
+"@types/send@npm:^0.17.0":
+  version: 0.17.1
+  resolution: "@types/send@npm:0.17.1"
   dependencies:
     "@types/mime": ^1
     "@types/node": "*"
-  checksum: 3ee9adfd05f8b2af942e26afe9ff3993e723e1af70718aa8c2b1c0f72fe5f45be69ac20aa7ee5859d1c18f2397d5fcf4eafcb30890d88e6836a98aa7a3adb6c3
+  checksum: f5aae6b88f7bd7f0ef5c839bcccd9cfaed95b1b07bf7da838b6bda696802c99b77f625ca68767f8622e257975d962f6928b49144cd9fe788fb627be909bbae45
   languageName: node
   linkType: hard
 
@@ -10843,6 +10852,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^3.1.30":
+  version: 3.1.30
+  resolution: "nanoid@npm:3.1.30"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 440f685e9890bd96433cf6c01535165b1e9677ba4a5c4179e1a61612f0b4c428cc628425fe232038b93304d15b191892d7ced9503fa558d1296e4e95fe80a627
+  languageName: node
+  linkType: hard
+
 "nanomatch@npm:^1.2.9":
   version: 1.2.13
   resolution: "nanomatch@npm:1.2.13"
@@ -11619,13 +11637,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parseurl@npm:~1.3.3":
-  version: 1.3.3
-  resolution: "parseurl@npm:1.3.3"
-  checksum: 52c9e86cb58e38b28f1a50a6354d16648974ab7a2b91b209f97102840471de8adf524427774af6d5bc482fb7c0a6af6ba08ab37de9a1a7ae389ebe074015914b
-  languageName: node
-  linkType: hard
-
 "pascal-case@npm:^3.1.2":
   version: 3.1.2
   resolution: "pascal-case@npm:3.1.2"
@@ -12256,7 +12267,10 @@ __metadata:
   resolution: "quilt@workspace:."
   dependencies:
     "@quilted/craft": ^0.1.0
+    "@types/fs-extra": ^9.0.13
+    fs-extra: ^10.0.0
     lerna: 3.22.1
+    nanoid: ^3.1.30
     playwright: ^1.15.0
     react: ^17.0.1
     react-dom: ^17.0.1
@@ -13054,7 +13068,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"send@npm:0.17.1":
+"send@npm:^0.17.0":
   version: 0.17.1
   resolution: "send@npm:0.17.1"
   dependencies:
@@ -13081,18 +13095,6 @@ resolve@^2.0.0-next.3:
   dependencies:
     randombytes: ^2.1.0
   checksum: f17305aaabab9ae443505d1bf477c13b09adb7031c397d18400bec16f43f788febdd3311ca6043fdebd1d446cfa70a5804ef7268da54351dec51080f56d52fa9
-  languageName: node
-  linkType: hard
-
-"serve-static@npm:^1.14.0":
-  version: 1.14.1
-  resolution: "serve-static@npm:1.14.1"
-  dependencies:
-    encodeurl: ~1.0.2
-    escape-html: ~1.0.3
-    parseurl: ~1.3.3
-    send: 0.17.1
-  checksum: 97e8c94ec02950d019000ca12a8e0b4fdeaaabb7ae965c1c05557b55b48114716ae92688972a8d9f06a5e2d5957c305253a859ec223bb39a1e0732366d0e2768
   languageName: node
   linkType: hard
 

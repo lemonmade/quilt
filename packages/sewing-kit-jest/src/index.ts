@@ -64,7 +64,7 @@ const RESOLVER_MODULE = '@quilted/sewing-kit-jest/resolver.cjs';
 export function jest() {
   return createWorkspacePlugin({
     name: 'SewingKit.Jest',
-    test({workspace, hooks, run, project, internal}) {
+    test({workspace, hooks, run, project, internal, options}) {
       hooks<JestWorkspaceHooks>(({waterfall}) => ({
         jestConfig: waterfall(),
         jestFlags: waterfall(),
@@ -122,6 +122,8 @@ export function jest() {
             const isCi = [process.env.CI, process.env.GITHUB_ACTIONS].some(
               (envVar) => Boolean(envVar) && truthyEnvValues.has(envVar!),
             );
+
+            const {watch, filePatterns} = options;
 
             // TODO
             // const {
@@ -315,6 +317,7 @@ export function jest() {
             const config = await jestConfig!.run({
               rootDir: workspace.root,
               projects: [workspaceProject, ...projects],
+              watch,
               watchPlugins,
             });
 
@@ -330,9 +333,9 @@ export function jest() {
               config: configPath,
               all: true,
               // coverage,
-              // watch: watch && testPattern == null,
-              // watchAll: watch && testPattern != null,
-              onlyChanged: !isCi /* && testPattern == null, */,
+              watch: watch && filePatterns.length === 0,
+              watchAll: watch && filePatterns.length > 0,
+              onlyChanged: !isCi && filePatterns.length === 0,
               // testNamePattern,
               // testPathPattern: testPattern,
               // updateSnapshot: updateSnapshots,
@@ -341,7 +344,7 @@ export function jest() {
               passWithNoTests: true,
             });
 
-            await jest.run(toArgs(flags));
+            await jest.run([...filePatterns, ...toArgs(flags)]);
           },
         }),
       );
