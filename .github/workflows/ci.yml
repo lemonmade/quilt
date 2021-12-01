@@ -2,12 +2,11 @@ name: CI
 
 on: [push]
 
-defaults:
-  runs-on: ubuntu-latest
-  timeout-minutes: 5
-
 jobs:
   type-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - uses: actions/checkout@v1
         name: Checkout
@@ -48,6 +47,9 @@ jobs:
         run: yarn type-check
 
   test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - uses: actions/checkout@v1
         name: Checkout
@@ -86,6 +88,9 @@ jobs:
         run: yarn test:unit
 
   e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - uses: actions/checkout@v1
         name: Checkout
@@ -141,6 +146,9 @@ jobs:
         run: yarn test:e2e
 
   lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - uses: actions/checkout@v1
         name: Checkout
@@ -179,6 +187,9 @@ jobs:
         run: yarn lint
 
   build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - uses: actions/checkout@v1
         name: Checkout
