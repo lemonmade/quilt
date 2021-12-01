@@ -113,6 +113,9 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
 
+      - name: Install Playwright dependencies
+        run: npx playwright install-deps chromium
+
       - uses: actions/cache@v2
         id: typescript-cache
         name: Restore TypeScript cache
