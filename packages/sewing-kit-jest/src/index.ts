@@ -41,6 +41,7 @@ export interface JestFlags {
   updateSnapshot?: boolean;
   cacheDirectory?: string;
   passWithNoTests?: boolean;
+  detectOpenHandles?: boolean;
   [key: string]: unknown;
 }
 
@@ -361,6 +362,7 @@ export function jest() {
               // runInBand: debug,
               // forceExit: debug,
               passWithNoTests: true,
+              detectOpenHandles: true,
             });
 
             await jest.run([...includePatterns, ...toArgs(flags)]);
