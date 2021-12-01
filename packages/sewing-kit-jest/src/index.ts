@@ -32,6 +32,7 @@ export interface JestFlags {
   watchAll?: boolean;
   testNamePattern?: string;
   testPathPattern?: string;
+  testPathIgnorePatterns?: string;
   runInBand?: boolean;
   forceExit?: boolean;
   maxWorkers?: number;
@@ -123,7 +124,7 @@ export function jest() {
               (envVar) => Boolean(envVar) && truthyEnvValues.has(envVar!),
             );
 
-            const {watch, filePatterns} = options;
+            const {watch, includePatterns, excludePatterns} = options;
 
             // TODO
             // const {
@@ -153,6 +154,10 @@ export function jest() {
               }
             }
 
+            const ignorePatternsFromOptions = excludePatterns.map(
+              (pattern) => `/${pattern.replace(/(^"|"$)/, '')}/`,
+            );
+
             const workspaceProject = await (async () => {
               const [
                 environment,
@@ -168,6 +173,7 @@ export function jest() {
                 jestEnvironment!.run('node'),
                 jestIgnore!.run([
                   ...defaults.testPathIgnorePatterns,
+                  ...ignorePatternsFromOptions,
                   ...workspace.projects.map((project) =>
                     project.root.replace(workspace.root, '<rootDir>'),
                   ),
@@ -257,6 +263,7 @@ export function jest() {
                     jestEnvironment!.run('node'),
                     jestIgnore!.run([
                       ...defaults.testPathIgnorePatterns,
+                      ...ignorePatternsFromOptions,
                       project.fs.buildPath().replace(project.root, '<rootDir>'),
                     ]),
                     jestWatchIgnore!.run([
@@ -319,6 +326,15 @@ export function jest() {
               projects: [workspaceProject, ...projects],
               watch,
               watchPlugins,
+              testPathIgnorePatterns:
+                excludePatterns.length > 0
+                  ? [
+                      '/node_modules/',
+                      ...excludePatterns.map(
+                        (pattern) => `/${pattern.replace(/(^"|"$)/, '')}/`,
+                      ),
+                    ]
+                  : undefined,
             });
 
             const configPath = internal.fs.tempPath('jest/config.mjs');
@@ -328,14 +344,17 @@ export function jest() {
               `export default ${JSON.stringify(config, null, 2)};`,
             );
 
+            const isFocused =
+              includePatterns.length > 0 || excludePatterns.length > 0;
+
             const flags = await jestFlags!.run({
               ci: isCi ? isCi : undefined,
               config: configPath,
               all: true,
               // coverage,
-              watch: watch && filePatterns.length === 0,
-              watchAll: watch && filePatterns.length > 0,
-              onlyChanged: !isCi && filePatterns.length === 0,
+              watch: watch && !isFocused,
+              watchAll: watch && isFocused,
+              onlyChanged: !isCi && !isFocused,
               // testNamePattern,
               // testPathPattern: testPattern,
               // updateSnapshot: updateSnapshots,
@@ -344,7 +363,7 @@ export function jest() {
               passWithNoTests: true,
             });
 
-            await jest.run([...filePatterns, ...toArgs(flags)]);
+            await jest.run([...includePatterns, ...toArgs(flags)]);
           },
         }),
       );

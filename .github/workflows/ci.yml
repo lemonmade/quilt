@@ -78,12 +78,66 @@ jobs:
         name: Restore jest cache
         with:
           path: .sewing-kit/temp/jest/cache
-          key: ${{ runner.os }}-jest-v1-${{ github.sha }}
+          key: ${{ runner.os }}-jest-unit-v1-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-jest-v1-
+            ${{ runner.os }}-jest-unit-v1-
 
       - name: Test
-        run: yarn test
+        run: yarn test:unit
+
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+        name: Checkout
+
+      - uses: actions/setup-node@v1
+        name: Setup node.js and yarn
+        with:
+          node-version: 16.2.0
+
+      - name: Get yarn cache directory
+        id: yarn-cache-get-dir
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache
+        name: Restore yarn cache
+        with:
+          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+
+      - name: Yarn install
+        run: yarn install --immutable
+
+      - uses: actions/cache@v2
+        id: typescript-cache
+        name: Restore TypeScript cache
+        with:
+          path: |
+            **/build/typescript/
+            **/*.tsbuildinfo
+          key: ${{ runner.os }}-build-typescript-v1-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-typescript-v1-
+
+      - name: Build packages
+        run: yarn build --only-project "Package.*"
+
+      - uses: actions/cache@v2
+        id: jest-cache
+        name: Restore jest cache
+        with:
+          path: .sewing-kit/temp/jest/cache
+          key: ${{ runner.os }}-jest-e2e-v1-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-jest-e2e-v1-
+
+      - name: End-to-end tests
+        run: yarn test:e2e
 
   lint:
     runs-on: ubuntu-latest

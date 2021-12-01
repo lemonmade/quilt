@@ -6,9 +6,25 @@ import {createCommand, runStepsForTask} from '../common';
 import type {TaskContext} from '../common';
 
 export const test = createCommand(
-  {'--watch': Boolean},
-  async ({_: filePatterns, '--watch': watch = !process.env.CI}, context) => {
-    await runTest(context, {watch, filePatterns});
+  {
+    '--watch': Boolean,
+    '--include-pattern': [String],
+    '--exclude-pattern': [String],
+  },
+  async (
+    {
+      _: includePatterns,
+      '--include-pattern': includePatternsAsFlag = [],
+      '--exclude-pattern': excludePatterns = [],
+      '--watch': watch = !process.env.CI,
+    },
+    context,
+  ) => {
+    await runTest(context, {
+      watch,
+      includePatterns: [...includePatterns, ...includePatternsAsFlag],
+      excludePatterns,
+    });
   },
 );
 

@@ -13,6 +13,8 @@
   ],
   "scripts": {
     "test": "node ./scripts/sewing-kit-from-source test",
+    "test:unit": "node ./scripts/sewing-kit-from-source test --exclude-pattern tests/e2e",
+    "test:e2e": "node ./scripts/sewing-kit-from-source test tests/e2e/",
     "lint": "node ./scripts/sewing-kit-from-source lint",
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",

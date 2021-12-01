@@ -128,10 +128,16 @@ export type ResolvedTestWorkspaceConfigurationHooks =
  */
 export interface TestTaskOptions {
   /**
-   * Test patterns to focus on for this test run. When this array is empty,
-   * all tests should be run.
+   * Test file patterns to focus on for this test run. When this array is empty,
+   * all tests should be run (unless there are `excludePatterns`).
    */
-  readonly filePatterns: readonly string[];
+  readonly includePatterns: readonly string[];
+
+  /**
+   * Test file patterns to ignore for this test run. When this array is empty,
+   * all tests should be run (unless there are `includePatterns`).
+   */
+  readonly excludePatterns: readonly string[];
 
   /**
    * Whether to re-run tests when related files are updated.
