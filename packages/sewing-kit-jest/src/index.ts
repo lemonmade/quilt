@@ -363,9 +363,13 @@ export function jest() {
               // forceExit: debug,
               passWithNoTests: true,
               detectOpenHandles: true,
+              verbose: true,
             });
 
             await jest.run([...includePatterns, ...toArgs(flags)]);
+
+            // eslint-disable-next-line no-console
+            console.log('JEST IS FINISHED');
           },
         }),
       );
