@@ -125,7 +125,7 @@ jobs:
             ${{ runner.os }}-build-typescript-v1-
 
       - name: Build packages
-        run: yarn build --only-project "Package.*"
+        run: yarn build --only-project "package:*"
 
       - uses: actions/cache@v2
         id: jest-cache
