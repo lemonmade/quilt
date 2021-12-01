@@ -6,7 +6,7 @@ import {
 } from './utilities';
 import type {Page} from './utilities';
 
-jest.setTimeout(10_000);
+jest.setTimeout(20_000);
 
 describe('routing', () => {
   describe('scroll restoration', () => {
