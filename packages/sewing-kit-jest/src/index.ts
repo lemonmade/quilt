@@ -364,6 +364,8 @@ export function jest() {
               passWithNoTests: true,
               detectOpenHandles: true,
               verbose: true,
+              forceExit: true,
+              runInBand: true,
             });
 
             await jest.run([...includePatterns, ...toArgs(flags)]);
