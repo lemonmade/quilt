@@ -32,6 +32,7 @@ export interface JestFlags {
   watchAll?: boolean;
   testNamePattern?: string;
   testPathPattern?: string;
+  testPathIgnorePatterns?: string;
   runInBand?: boolean;
   forceExit?: boolean;
   maxWorkers?: number;
@@ -40,6 +41,7 @@ export interface JestFlags {
   updateSnapshot?: boolean;
   cacheDirectory?: string;
   passWithNoTests?: boolean;
+  detectOpenHandles?: boolean;
   [key: string]: unknown;
 }
 
@@ -64,7 +66,7 @@ const RESOLVER_MODULE = '@quilted/sewing-kit-jest/resolver.cjs';
 export function jest() {
   return createWorkspacePlugin({
     name: 'SewingKit.Jest',
-    test({workspace, hooks, run, project, internal}) {
+    test({workspace, hooks, run, project, internal, options}) {
       hooks<JestWorkspaceHooks>(({waterfall}) => ({
         jestConfig: waterfall(),
         jestFlags: waterfall(),
@@ -123,15 +125,7 @@ export function jest() {
               (envVar) => Boolean(envVar) && truthyEnvValues.has(envVar!),
             );
 
-            // TODO
-            // const {
-            //   coverage = false,
-            //   debug = false,
-            //   watch = !isCi,
-            //   testPattern,
-            //   testNamePattern,
-            //   updateSnapshots,
-            // } = options;
+            const {watch, debug, includePatterns, excludePatterns} = options;
 
             // We create an alias map of the repo’s internal packages. This prevents
             // issues where Jest might try to use the built output for a package (as
@@ -151,6 +145,10 @@ export function jest() {
               }
             }
 
+            const ignorePatternsFromOptions = excludePatterns.map(
+              (pattern) => `/${pattern.replace(/(^"|"$)/, '')}/`,
+            );
+
             const workspaceProject = await (async () => {
               const [
                 environment,
@@ -166,6 +164,7 @@ export function jest() {
                 jestEnvironment!.run('node'),
                 jestIgnore!.run([
                   ...defaults.testPathIgnorePatterns,
+                  ...ignorePatternsFromOptions,
                   ...workspace.projects.map((project) =>
                     project.root.replace(workspace.root, '<rootDir>'),
                   ),
@@ -255,6 +254,7 @@ export function jest() {
                     jestEnvironment!.run('node'),
                     jestIgnore!.run([
                       ...defaults.testPathIgnorePatterns,
+                      ...ignorePatternsFromOptions,
                       project.fs.buildPath().replace(project.root, '<rootDir>'),
                     ]),
                     jestWatchIgnore!.run([
@@ -315,7 +315,17 @@ export function jest() {
             const config = await jestConfig!.run({
               rootDir: workspace.root,
               projects: [workspaceProject, ...projects],
+              watch,
               watchPlugins,
+              testPathIgnorePatterns:
+                excludePatterns.length > 0
+                  ? [
+                      '/node_modules/',
+                      ...excludePatterns.map(
+                        (pattern) => `/${pattern.replace(/(^"|"$)/, '')}/`,
+                      ),
+                    ]
+                  : undefined,
             });
 
             const configPath = internal.fs.tempPath('jest/config.mjs');
@@ -325,23 +335,24 @@ export function jest() {
               `export default ${JSON.stringify(config, null, 2)};`,
             );
 
+            const isFocused =
+              includePatterns.length > 0 || excludePatterns.length > 0;
+
             const flags = await jestFlags!.run({
               ci: isCi ? isCi : undefined,
               config: configPath,
               all: true,
               // coverage,
-              // watch: watch && testPattern == null,
-              // watchAll: watch && testPattern != null,
-              onlyChanged: !isCi /* && testPattern == null, */,
-              // testNamePattern,
-              // testPathPattern: testPattern,
-              // updateSnapshot: updateSnapshots,
-              // runInBand: debug,
-              // forceExit: debug,
+              watch: watch && !isFocused,
+              watchAll: watch && isFocused,
+              onlyChanged: !isCi && !isFocused,
               passWithNoTests: true,
+              forceExit: isCi || debug,
+              runInBand: debug,
+              detectOpenHandles: debug,
             });
 
-            await jest.run(toArgs(flags));
+            await jest.run([...includePatterns, ...toArgs(flags)]);
           },
         }),
       );

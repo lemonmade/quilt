@@ -13,6 +13,8 @@
   ],
   "scripts": {
     "test": "node ./scripts/sewing-kit-from-source test",
+    "test:unit": "node ./scripts/sewing-kit-from-source test --exclude-pattern tests/e2e",
+    "test:e2e": "node ./scripts/sewing-kit-from-source test tests/e2e/",
     "lint": "node ./scripts/sewing-kit-from-source lint",
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
@@ -23,7 +25,11 @@
   },
   "devDependencies": {
     "@quilted/craft": "^0.1.0",
+    "@types/fs-extra": "^9.0.13",
+    "fs-extra": "^10.0.0",
     "lerna": "3.22.1",
+    "nanoid": "^3.1.30",
+    "playwright": "^1.15.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "typescript": "4.2.x"

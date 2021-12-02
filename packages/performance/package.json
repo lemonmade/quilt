@@ -1,0 +1,48 @@
+{
+  "name": "@quilted/performance",
+  "type": "module",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-performance"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "quilt:internal": "./src/index.ts",
+      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "typesVersions": {
+    ">=1": {
+      "*": [
+        "./build/typescript/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "react": ">=17.0.0 <18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package"
+    ]
+  }
+}

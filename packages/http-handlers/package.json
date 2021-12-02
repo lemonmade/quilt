@@ -14,11 +14,13 @@
   },
   "exports": {
     ".": {
+      "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./node": {
+      "quilt:internal": "./src/node.ts",
       "sewing-kit:esnext": "./build/esnext/node.esnext",
       "import": "./build/esm/node.mjs",
       "require": "./build/cjs/node.cjs"
@@ -38,10 +40,12 @@
   "dependencies": {
     "@quilted/http": "^0.2.8",
     "@quilted/routing": "^0.2.6",
-    "cookie": "^0.4.0"
+    "cookie": "^0.4.0",
+    "send": "^0.17.0"
   },
   "devDependencies": {
-    "@types/cookie": "^0.4.0"
+    "@types/cookie": "^0.4.0",
+    "@types/send": "^0.17.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0"

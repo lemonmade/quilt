@@ -14,11 +14,13 @@
   },
   "exports": {
     ".": {
+      "quilt:internal": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./http-handlers": {
+      "quilt:internal": "./src/http-handlers.tsx",
       "sewing-kit:esnext": "./build/esnext/http-handlers.esnext",
       "import": "./build/esm/http-handlers.mjs",
       "require": "./build/cjs/http-handlers.cjs"

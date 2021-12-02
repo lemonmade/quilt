@@ -3,6 +3,7 @@ import {
   DiagnosticError,
   createProjectPlugin,
   ProjectKind,
+  createWorkspacePlugin,
 } from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
@@ -222,6 +223,81 @@ export function targets() {
             },
           ],
           ...presets,
+        ]);
+      });
+    },
+  });
+}
+
+/**
+ * Customizes Babel for tools operating on the whole workspace.
+ */
+export function workspaceTargets() {
+  return createWorkspacePlugin({
+    name: 'SewingKit.Targets.Workspace',
+    build({configure}) {
+      configure(({babelPresets, babelTargets}) => {
+        const defaultTargets = ['current node'];
+
+        babelTargets?.((existingTargets) =>
+          existingTargets.length > 0 ? existingTargets : defaultTargets,
+        );
+
+        babelPresets?.((presets) => [
+          ...presets,
+          [
+            '@babel/preset-env',
+            {
+              corejs: '3.15',
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+            },
+          ],
+        ]);
+      });
+    },
+    develop({configure}) {
+      configure(({babelPresets, babelTargets}) => {
+        const defaultTargets = ['current node'];
+
+        babelTargets?.((existingTargets) =>
+          existingTargets.length > 0 ? existingTargets : defaultTargets,
+        );
+
+        babelPresets?.((presets) => [
+          ...presets,
+          [
+            '@babel/preset-env',
+            {
+              corejs: '3.15',
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+            },
+          ],
+        ]);
+      });
+    },
+    test({configure}) {
+      configure(({babelPresets, babelTargets}) => {
+        const defaultTargets = ['current node'];
+
+        babelTargets?.((existingTargets) =>
+          existingTargets.length > 0 ? existingTargets : defaultTargets,
+        );
+
+        babelPresets?.((presets) => [
+          ...presets,
+          [
+            '@babel/preset-env',
+            {
+              corejs: '3.15',
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+            },
+          ],
         ]);
       });
     },

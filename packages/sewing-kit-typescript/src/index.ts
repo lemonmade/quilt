@@ -54,9 +54,13 @@ export function typescriptProject() {
           );
 
           jestTransforms?.(async (transforms) => {
+            if (babelPresets == null || babelPlugins == null) {
+              return transforms;
+            }
+
             const [presets, plugins] = await Promise.all([
-              babelPresets?.run([]),
-              babelPlugins?.run([]),
+              babelPresets.run([]),
+              babelPlugins.run([]),
             ]);
 
             transforms['\\.tsx?$'] = [
@@ -85,8 +89,12 @@ export function typescriptProject() {
 export function typescriptWorkspace() {
   return createWorkspacePlugin({
     name: 'SewingKit.TypeScript',
-    build({workspace, hooks, run}) {
+    build({workspace, hooks, configure, run}) {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
+
+      configure(({babelPresets}) => {
+        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+      });
 
       // We only need to run a TypeScript build if there are public packages
       if (
@@ -119,6 +127,11 @@ export function typescriptWorkspace() {
         }),
       );
     },
+    develop({configure}) {
+      configure(({babelPresets}) => {
+        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+      });
+    },
     lint({configure}) {
       configure(({eslintExtensions}) => {
         // Add TypeScript linting to ESLint
@@ -128,12 +141,50 @@ export function typescriptWorkspace() {
       });
     },
     test({configure}) {
-      configure(({jestExtensions}) => {
-        // Add TypeScript extensions for workspace-level tests
-        jestExtensions?.((extensions) =>
-          Array.from(new Set([...extensions, '.ts', '.tsx'])),
-        );
-      });
+      configure(
+        ({
+          jestExtensions,
+          jestTransforms,
+          babelPresets,
+          babelPlugins,
+          babelTargets,
+        }) => {
+          babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+
+          // Add TypeScript extensions for workspace-level tests
+          jestExtensions?.((extensions) =>
+            Array.from(new Set([...extensions, '.ts', '.tsx'])),
+          );
+
+          jestTransforms?.(async (transforms) => {
+            if (
+              babelPresets == null ||
+              babelPlugins == null ||
+              babelTargets == null
+            ) {
+              return transforms;
+            }
+
+            const [presets, plugins, targets] = await Promise.all([
+              babelPresets.run([]),
+              babelPlugins.run([]),
+              babelTargets.run(['current node']),
+            ]);
+
+            transforms['\\.tsx?$'] = [
+              'babel-jest',
+              {
+                presets,
+                plugins,
+                configFile: false,
+                babelrc: false,
+                targets,
+              },
+            ];
+            return transforms;
+          });
+        },
+      );
     },
     typeCheck({hooks, run, workspace}) {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));

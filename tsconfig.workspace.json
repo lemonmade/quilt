@@ -8,7 +8,8 @@
     "scripts/**/*.ts",
     "**/sewing-kit.config.ts",
     "*.test.ts",
-    "*.test.tsx"
+    "*.test.tsx",
+    "tests/e2e/**/*"
   ],
   "references": [
     {"path": "./packages/async"},
@@ -19,6 +20,7 @@
     {"path": "./packages/graphql"},
     {"path": "./packages/http"},
     {"path": "./packages/http-handlers"},
+    {"path": "./packages/performance"},
     {"path": "./packages/polyfills"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react-async"},
@@ -27,6 +29,7 @@
     {"path": "./packages/react-html"},
     {"path": "./packages/react-http"},
     {"path": "./packages/react-idle"},
+    {"path": "./packages/react-performance"},
     {"path": "./packages/react-router"},
     {"path": "./packages/react-server-render"},
     {"path": "./packages/react-testing"},

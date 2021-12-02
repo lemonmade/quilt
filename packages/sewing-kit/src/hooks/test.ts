@@ -126,7 +126,31 @@ export type ResolvedTestWorkspaceConfigurationHooks =
 /**
  * The top-level options that can be passed when running the test task.
  */
-export interface TestTaskOptions {}
+export interface TestTaskOptions {
+  /**
+   * Test file patterns to focus on for this test run. When this array is empty,
+   * all tests should be run (unless there are `excludePatterns`).
+   */
+  readonly includePatterns: readonly string[];
+
+  /**
+   * Test file patterns to ignore for this test run. When this array is empty,
+   * all tests should be run (unless there are `includePatterns`).
+   */
+  readonly excludePatterns: readonly string[];
+
+  /**
+   * Whether to re-run tests when related files are updated.
+   */
+  readonly watch: boolean;
+
+  /**
+   * Whether to enable debug modes for test tools that support it. This may include
+   * more verbose logging, different error behaviors, enabling interactive debugger
+   * hooks, and other configuration changes.
+   */
+  readonly debug: boolean;
+}
 
 /**
  * The hooks and additional metadata for running the test command on

@@ -11,7 +11,11 @@ import {
 } from '@quilted/sewing-kit';
 import type {App, Service, Package, Project} from '@quilted/sewing-kit';
 
-import {babelHooks, babelRollup} from '@quilted/sewing-kit-babel';
+import {
+  babelHooks,
+  babelWorkspaceHooks,
+  babelRollup,
+} from '@quilted/sewing-kit-babel';
 import {packageBuild} from '@quilted/sewing-kit-package';
 import type {Options as PackageBuildOptions} from '@quilted/sewing-kit-package';
 import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
@@ -20,7 +24,7 @@ import {eslint} from '@quilted/sewing-kit-eslint';
 import {prettier} from '@quilted/sewing-kit-prettier';
 import {esnextBuild, esnext} from '@quilted/sewing-kit-esnext';
 import {react} from '@quilted/sewing-kit-react';
-import {targets} from '@quilted/sewing-kit-targets';
+import {targets, workspaceTargets} from '@quilted/sewing-kit-targets';
 import {jest} from '@quilted/sewing-kit-jest';
 import {vite} from '@quilted/sewing-kit-vite';
 import {
@@ -337,7 +341,14 @@ export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
   return createWorkspacePlugin({
     name: 'Quilt.Workspace',
     async create({use}) {
-      use(eslint(), prettier(), typescriptWorkspace(), jest());
+      use(
+        eslint(),
+        prettier(),
+        babelWorkspaceHooks(),
+        workspaceTargets(),
+        typescriptWorkspace(),
+        jest(),
+      );
 
       if (graphql) {
         await ignoreMissingImports(async () => {

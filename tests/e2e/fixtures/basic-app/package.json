@@ -1,0 +1,7 @@
+{
+  "name": "e2e-fixture-basic-app",
+  "type": "module",
+  "browserslist": [
+    "extends @quilted/browserslist-config/modules"
+  ]
+}

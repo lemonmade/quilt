@@ -2,13 +2,18 @@ import * as path from 'path';
 
 import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App, WaterfallHook} from '@quilted/sewing-kit';
+import type {
+  App,
+  WaterfallHook,
+  WaterfallHookWithDefault,
+} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
 
 import {
   PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
+  MAGIC_MODULE_HTTP_HANDLER,
 } from '../constants';
 
 import {STEP_NAME} from './app-build';
@@ -33,8 +38,21 @@ export interface AppServerOptions {
    * its default export. When set to `false`, the app server will be built
    * as a basic server-side JavaScript project, without the special
    * `http-handlers` adaptor.
+   *
+   * @default true
    */
   httpHandler?: boolean;
+
+  /**
+   * Whether the automatic server will serve assets for the browser build.
+   * If this is `true`, you must ensure that your assets are stored in an
+   * `assets` directory that is a sibling to the `server` directory that
+   * will contain your server files. This is done automatically for you
+   * with the default configuration applied by Quilt.
+   *
+   * @default true
+   */
+  serveAssets?: boolean;
 }
 
 export interface AppServerBuildOptions {
@@ -77,6 +95,15 @@ export interface AppServerHooks {
    * to the `quiltHttpHandlerHost`, which may customize it further.
    */
   quiltAppServerHost: WaterfallHook<string | undefined>;
+
+  /**
+   * Whether the automatic server will serve assets for the browser build.
+   * If this is `true`, you must ensure that your assets are stored in an
+   * `assets` directory that is a sibling to the `server` directory that
+   * will contain your server files. This is done automatically for you
+   * with the default configuration applied by Quilt.
+   */
+  quiltAppServerServeAssets: WaterfallHookWithDefault<boolean>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -89,6 +116,7 @@ const MAGIC_CUSTOM_SERVER_ENTRY_MODULE = '__quilt__/CustomAppServer';
 export function appServer(options?: AppServerOptions) {
   const entry = options?.entry;
   const httpHandler = options?.httpHandler ?? true;
+  const serveAssets = options?.serveAssets ?? true;
 
   return createProjectPlugin<App>({
     name: 'Quilt.App.Server',
@@ -98,6 +126,7 @@ export function appServer(options?: AppServerOptions) {
         quiltAppServerPort: waterfall(),
         quiltAppServerOutputFormat: waterfall(),
         quiltAppServerEntryContent: waterfall(),
+        quiltAppServerServeAssets: waterfall({default: serveAssets}),
       }));
 
       configure(
@@ -112,11 +141,14 @@ export function appServer(options?: AppServerOptions) {
             quiltAppServerPort,
             quiltAppServerEntryContent,
             quiltAppServerOutputFormat,
+            quiltAppServerServeAssets,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
+            quiltHttpHandlerRuntimeContent,
             quiltAsyncPreload,
             quiltAsyncManifest,
+            quiltAssetBaseUrl,
           },
           {quiltAppServer = false},
         ) => {
@@ -277,6 +309,70 @@ export function appServer(options?: AppServerOptions) {
             quiltHttpHandlerContent?.(
               async () => await quiltAppServerEntryContent!.run(content),
             );
+
+            // TODO make asset serving stuff be properly variable-ized
+            quiltHttpHandlerRuntimeContent?.(async (content) => {
+              if (content) return content;
+
+              const [port, host, serveAssets, format, assetBaseUrl] =
+                await Promise.all([
+                  quiltHttpHandlerPort!.run(undefined),
+                  quiltHttpHandlerHost!.run(undefined),
+                  quiltAppServerServeAssets!.run(),
+                  quiltAppServerOutputFormat!.run('module'),
+                  quiltAssetBaseUrl!.run(),
+                ]);
+
+              return stripIndent`
+                ${serveAssets ? `import * as path from 'path';` : ''}
+                ${
+                  serveAssets && format === 'module'
+                    ? `import {fileURLToPath} from 'url';`
+                    : ''
+                }
+                import {createServer} from 'http';
+
+                import httpHandler from ${JSON.stringify(
+                  MAGIC_MODULE_HTTP_HANDLER,
+                )};
+      
+                import {createHttpRequestListener${
+                  serveAssets ? ', serveStatic' : ''
+                }} from '@quilted/http-handlers/node';
+
+                const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
+                const host = ${
+                  host ? JSON.stringify(host) : 'process.env.HOST'
+                };
+
+                ${
+                  serveAssets
+                    ? `const dirname = ${
+                        format === 'module'
+                          ? 'path.dirname(fileURLToPath(import.meta.url))'
+                          : '__dirname'
+                      };\nconst serve = serveStatic(path.resolve(dirname, '../assets'), {
+                        baseUrl: ${JSON.stringify(assetBaseUrl)},
+                      });`
+                    : ''
+                }
+                const listener = createHttpRequestListener(httpHandler);
+                console.log(path.resolve(dirname, '../assets'));
+              
+                createServer(async (request, response) => {
+                  console.log(request.url);
+                  ${
+                    serveAssets
+                      ? `if (request.url.startsWith(${JSON.stringify(
+                          assetBaseUrl,
+                        )})) return serve(request, response);`
+                      : ''
+                  }
+
+                  await listener(request, response);
+                }).listen(port, host);
+              `;
+            });
           } else {
             rollupInput?.(() => [MAGIC_CUSTOM_SERVER_ENTRY_MODULE]);
           }
