@@ -16,7 +16,7 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: yarn build
-          arguments: --skip-project app:*
+          arguments: --only-project package:*
 
       - name: Deploy
         run: yarn deploy

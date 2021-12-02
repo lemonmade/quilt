@@ -36,6 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: quilt-framework/action-prepare@v1
+      - uses: quilt-framework/action-build@v2
+        with:
+          command: yarn build
+          arguments: --only-project package:*
       - uses: quilt-framework/action-test@v2
         with:
           command: yarn test
