@@ -143,6 +143,13 @@ export interface TestTaskOptions {
    * Whether to re-run tests when related files are updated.
    */
   readonly watch: boolean;
+
+  /**
+   * Whether to enable debug modes for test tools that support it. This may include
+   * more verbose logging, different error behaviors, enabling interactive debugger
+   * hooks, and other configuration changes.
+   */
+  readonly debug: boolean;
 }
 
 /**

@@ -125,17 +125,7 @@ export function jest() {
               (envVar) => Boolean(envVar) && truthyEnvValues.has(envVar!),
             );
 
-            const {watch, includePatterns, excludePatterns} = options;
-
-            // TODO
-            // const {
-            //   coverage = false,
-            //   debug = false,
-            //   watch = !isCi,
-            //   testPattern,
-            //   testNamePattern,
-            //   updateSnapshots,
-            // } = options;
+            const {watch, debug, includePatterns, excludePatterns} = options;
 
             // We create an alias map of the repo’s internal packages. This prevents
             // issues where Jest might try to use the built output for a package (as
@@ -356,22 +346,13 @@ export function jest() {
               watch: watch && !isFocused,
               watchAll: watch && isFocused,
               onlyChanged: !isCi && !isFocused,
-              // testNamePattern,
-              // testPathPattern: testPattern,
-              // updateSnapshot: updateSnapshots,
-              // runInBand: debug,
-              // forceExit: debug,
               passWithNoTests: true,
-              detectOpenHandles: true,
-              verbose: true,
-              forceExit: true,
-              runInBand: true,
+              forceExit: isCi || debug,
+              runInBand: debug,
+              detectOpenHandles: debug,
             });
 
             await jest.run([...includePatterns, ...toArgs(flags)]);
-
-            // eslint-disable-next-line no-console
-            console.log('JEST IS FINISHED');
           },
         }),
       );

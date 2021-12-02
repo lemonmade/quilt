@@ -8,6 +8,7 @@ import type {TaskContext} from '../common';
 export const test = createCommand(
   {
     '--watch': Boolean,
+    '--debug': Boolean,
     '--include-pattern': [String],
     '--exclude-pattern': [String],
   },
@@ -17,11 +18,13 @@ export const test = createCommand(
       '--include-pattern': includePatternsAsFlag = [],
       '--exclude-pattern': excludePatterns = [],
       '--watch': watch = !process.env.CI,
+      '--debug': debug = false,
     },
     context,
   ) => {
     await runTest(context, {
       watch,
+      debug,
       includePatterns: [...includePatterns, ...includePatternsAsFlag],
       excludePatterns,
     });
