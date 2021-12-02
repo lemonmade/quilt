@@ -2,7 +2,7 @@
   "name": "@quilted/react-html",
   "description": "Provides components and hooks for interacting with the HTML document.",
   "type": "module",
-  "version": "0.3.17",
+  "version": "0.3.18",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -64,7 +64,7 @@
     }
   },
   "dependencies": {
-    "@quilted/react-server-render": "^0.3.6",
+    "@quilted/react-server-render": "^0.3.7",
     "@types/react": "^17.0.0"
   },
   "devDependencies": {
