@@ -3,228 +3,53 @@ name: CI
 on: [push]
 
 jobs:
-  type-check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v1
-        name: Checkout
-
-      - uses: actions/setup-node@v1
-        name: Setup node.js and yarn
-        with:
-          node-version: 16.2.0
-
-      - name: Get yarn cache directory
-        id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        name: Restore yarn cache
-        with:
-          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
-
-      - name: Yarn install
-        run: yarn install --immutable
-
-      - uses: actions/cache@v2
-        id: typescript-cache
-        name: Restore TypeScript cache
-        with:
-          path: |
-            **/build/typescript/
-            **/*.tsbuildinfo
-          key: ${{ runner.os }}-typescript-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-typescript-v1-
-
-      - name: Type check
-        run: yarn type-check
-
-  test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v1
-        name: Checkout
-
-      - uses: actions/setup-node@v1
-        name: Setup node.js and yarn
-        with:
-          node-version: 16.2.0
-
-      - name: Get yarn cache directory
-        id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        name: Restore yarn cache
-        with:
-          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
-
-      - name: Yarn install
-        run: yarn install --immutable
-
-      - uses: actions/cache@v2
-        id: jest-cache
-        name: Restore jest cache
-        with:
-          path: .sewing-kit/temp/jest/cache
-          key: ${{ runner.os }}-jest-unit-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-jest-unit-v1-
-
-      - name: Test
-        run: yarn test:unit
-
-  e2e:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v1
-        name: Checkout
-
-      - uses: actions/setup-node@v1
-        name: Setup node.js and yarn
-        with:
-          node-version: 16.2.0
-
-      - name: Get yarn cache directory
-        id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        name: Restore yarn cache
-        with:
-          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
-
-      - name: Yarn install
-        run: yarn install --immutable
-
-      - name: Install Playwright dependencies
-        run: npx playwright install-deps chromium
-
-      - uses: actions/cache@v2
-        id: typescript-cache
-        name: Restore TypeScript cache
-        with:
-          path: |
-            **/build/typescript/
-            **/*.tsbuildinfo
-          key: ${{ runner.os }}-build-typescript-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-typescript-v1-
-
-      - name: Build packages
-        run: yarn build --only-project "package:*"
-
-      - uses: actions/cache@v2
-        id: jest-cache
-        name: Restore jest cache
-        with:
-          path: .sewing-kit/temp/jest/cache
-          key: ${{ runner.os }}-jest-e2e-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-jest-e2e-v1-
-
-      - name: End-to-end tests
-        run: yarn test:e2e
-
   lint:
+    name: Lint 💅
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-
     steps:
-      - uses: actions/checkout@v1
-        name: Checkout
-
-      - uses: actions/setup-node@v1
-        name: Setup node.js and yarn
+      - uses: quilt-framework/action-prepare@v1
+      - uses: quilt-framework/action-lint@v2
         with:
-          node-version: 16.2.0
+          command: yarn lint
 
-      - name: Get yarn cache directory
-        id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        name: Restore yarn cache
+  type-check:
+    name: Type check 🧮
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quilt-framework/action-prepare@v1
+      - uses: quilt-framework/action-type-check@v2
         with:
-          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
+          command: yarn type-check
 
-      - name: Yarn install
-        run: yarn install --immutable
-
-      - uses: actions/cache@v2
-        id: eslint-cache
-        name: Restore ESLint cache
+  unit-tests:
+    name: Unit tests 🧪
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quilt-framework/action-prepare@v1
+      - uses: quilt-framework/action-test@v2
         with:
-          path: .sewing-kit/temp/eslint/cache
-          key: ${{ runner.os }}-eslint-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-eslint-v1-
+          command: yarn test
+          arguments: --exclude-pattern tests/e2e
 
-      - name: Lint
-        run: yarn lint
+  e2e-tests:
+    name: End-to-end tests 🔬
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quilt-framework/action-prepare@v1
+      - uses: quilt-framework/action-build@v2
+        with:
+          command: yarn build
+          arguments: --only-project package:*
+      - uses: quilt-framework/action-test@v2
+        with:
+          command: yarn test
+          arguments: tests/e2e/
 
   build:
+    name: Build 🏗
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-
     steps:
-      - uses: actions/checkout@v1
-        name: Checkout
-
-      - uses: actions/setup-node@v1
-        name: Setup node.js and yarn
+      - uses: quilt-framework/action-prepare@v1
+      - uses: quilt-framework/action-build@v2
         with:
-          node-version: 16.2.0
-
-      - name: Get yarn cache directory
-        id: yarn-cache-get-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        name: Restore yarn cache
-        with:
-          path: ${{ steps.yarn-cache-get-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
-
-      - name: Yarn install
-        run: yarn install --immutable
-
-      - uses: actions/cache@v2
-        id: typescript-cache
-        name: Restore TypeScript cache
-        with:
-          path: |
-            **/build/typescript/
-            **/*.tsbuildinfo
-          key: ${{ runner.os }}-build-typescript-v1-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-typescript-v1-
-
-      - name: Build everything, including examples
-        run: yarn build
+          command: yarn build
