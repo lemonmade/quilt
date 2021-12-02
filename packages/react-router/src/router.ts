@@ -1,14 +1,10 @@
 import {resolveUrl} from '@quilted/routing';
 import type {Prefix, NavigateTo, RelativeTo} from '@quilted/routing';
 
-import type {EnhancedURL, Blocker} from './types';
+import type {EnhancedURL, NavigationBlocker, State} from './types';
 import {enhanceUrl, createKey} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
-
-export interface State {
-  [key: string]: unknown;
-}
 
 export interface Options {
   state?: State;
@@ -29,9 +25,16 @@ const KEY_STATE_FIELD_NAME = '_key';
 export interface Router {
   readonly currentUrl: EnhancedURL;
   readonly prefix?: Prefix;
+
+  /**
+   * Navigates the browser to the location represented by the `to` argument.
+   * This function will first resolve any navigation blocks that have been
+   * registered and, if no one is blocking this navigation, pushes a new entry
+   * onto the history stack.
+   */
   navigate(to: NavigateTo, options?: NavigateOptions): void;
   listen(listener: Listener): () => void;
-  block(blocker?: Blocker): () => void;
+  block(blocker?: NavigationBlocker): () => void;
   go(count: number): void;
   back(count?: number): void;
   forward(count?: number): void;
@@ -64,7 +67,7 @@ export function createRouter(
   const navigationKeys = [initialNavigationKey];
 
   const listeners = new Set<Listener>();
-  const blockers = new Set<Blocker>();
+  const blockers = new Set<NavigationBlocker>();
 
   if (typeof window !== 'undefined') {
     window.addEventListener('popstate', handlePopstate);
@@ -103,7 +106,7 @@ export function createRouter(
 
   function navigate(
     to: NavigateTo,
-    {state = {}, replace = false, relativeTo}: NavigateOptions = {},
+    {state = {}, replace: explicitReplace, relativeTo}: NavigateOptions = {},
   ) {
     const resolvedKey = createKey();
     const resolvedUrl = enhanceUrl(
@@ -113,14 +116,20 @@ export function createRouter(
       prefix,
     );
 
+    const replace = explicitReplace ?? resolvedUrl.href === currentUrl.href;
     const finalState = {...state, [KEY_STATE_FIELD_NAME]: resolvedKey};
 
-    const redo = () => {
+    let hasAllowedBlockedNavigation = false;
+
+    const allow = () => {
+      if (hasAllowedBlockedNavigation) return;
+
+      hasAllowedBlockedNavigation = true;
       forceNextNavigation = true;
       navigate(resolvedUrl, {state, replace, relativeTo});
     };
 
-    if (!forceNextNavigation && shouldBlock(resolvedUrl, redo)) {
+    if (!forceNextNavigation && shouldBlock(resolvedUrl, allow)) {
       return;
     }
 
@@ -169,14 +178,20 @@ export function createRouter(
     const previousNavigationIndex = navigationKeys.lastIndexOf(currentUrl.key);
     const delta = previousNavigationIndex - currentNavigationIndex;
 
-    const redo = () => {
+    let hasAllowedBlockedNavigation = false;
+
+    const allow = () => {
+      if (hasAllowedBlockedNavigation) return;
+
+      hasAllowedBlockedNavigation = true;
+
       if (delta) {
         forceNextNavigation = true;
         go(delta);
       }
     };
 
-    if (!forceNextNavigation && shouldBlock(newUrl, redo)) {
+    if (!forceNextNavigation && shouldBlock(newUrl, allow)) {
       forceNextNavigation = true;
       go(-delta);
       return;
@@ -190,8 +205,9 @@ export function createRouter(
     }
   }
 
-  function shouldBlock(to: EnhancedURL, redo: () => void) {
-    return [...blockers].some((blocker) => blocker(to, redo));
+  function shouldBlock(targetUrl: EnhancedURL, allow: () => void) {
+    const details = {targetUrl, allow};
+    return [...blockers].some((blocker) => blocker(details));
   }
 
   function go(count: number) {

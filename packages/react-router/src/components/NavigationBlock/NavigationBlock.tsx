@@ -1,8 +1,8 @@
 import {useNavigationBlock} from '../../hooks';
-import type {Blocker} from '../../types';
+import type {NavigationBlocker} from '../../types';
 
 interface Props {
-  onNavigation?: Blocker;
+  onNavigation?: NavigationBlocker;
 }
 
 export function NavigationBlock({onNavigation}: Props) {

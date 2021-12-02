@@ -1,165 +1,57 @@
-import {useLayoutEffect, useCallback, useMemo, useRef} from 'react';
+import {useContext} from 'react';
 import type {MutableRefObject} from 'react';
 
-import type {EnhancedURL} from '../types';
+import {ROOT_SCROLL_RESTORATION_ID} from '../constants';
+import {ScrollRestorationRegistrarContext} from '../context';
 
-import {useCurrentUrl} from './url';
+import {useIsomorphicEffect} from './effect';
 
-interface Options {
-  /**
-   * Use an id when you want to restore multiple, independent scroll areas
-   * across routes.
-   */
-  id?: string;
-  /**
-   * Whether you will manually restore the scroll based on some condition
-   * using the `restore()` function returned by this hook. This should only
-   * be used when you know that you will not be able to render enough content
-   * to make page meaningfully the same as it was when the last scroll measurement
-   * was taken (for example, because you need to load data before the scrollable
-   * region can be restored).
-   */
-  manual?: boolean;
-  /**
-   * How the scroll position should be persisted. By default, scroll positions will
-   * be persisted to sessionStorage. There is currently no manual clearing of this
-   * cache, so if you are in a position where this can cause problems, you can instead
-   * use `memory`, which only persists the scroll positions in-memory. Note that, as
-   * a result, scroll position will not be restored for pages in history after a browser
-   * reload (which does not match the "standard" browser behavior).
-   */
-  persist?: 'memory' | 'sessionStorage';
-  /**
-   * Controls whether a scroll should be restored for a given URL. You can use this
-   * utility to opt some routes out of automatic scroll restoration, including potentially
-   * using this hook in those excluded routes for custom scroll restoration behavior
-   * on only that route. Note that this function is only called when the pathname of the
-   * URL changes.
-   */
-  include?(url: EnhancedURL): boolean;
+interface ScrollRestorationHandler {
+  (): boolean;
 }
 
-export interface ScrollRestorationResult {
-  ref: MutableRefObject<HTMLElement | null>;
-  restore(): () => void;
-}
+export type ScrollRestorationResult = MutableRefObject<HTMLElement | null>;
 
-interface ScrollCache {
-  [key: string]: {[key: string]: number};
-}
+export function useRouteChangeScrollRestoration(
+  handler?: ScrollRestorationHandler,
+): ScrollRestorationResult;
+export function useRouteChangeScrollRestoration(
+  id: string,
+  handler?: ScrollRestorationHandler,
+): ScrollRestorationResult;
+export function useRouteChangeScrollRestoration(
+  idOrHandler?: string | ScrollRestorationHandler,
+  maybeHandler?: ScrollRestorationHandler,
+): ScrollRestorationResult {
+  let id: string;
+  let handler: ScrollRestorationHandler | undefined;
 
-const DEFAULT_ID = '__default';
-const SESSION_STORAGE_KEY = '__quiltRouterScroll';
+  if (typeof idOrHandler === 'string') {
+    id = idOrHandler;
+    handler = maybeHandler;
+  } else {
+    id = ROOT_SCROLL_RESTORATION_ID;
+    handler = idOrHandler;
+  }
 
-const memoryCache: ScrollCache = {};
+  const registrar = useContext(ScrollRestorationRegistrarContext);
 
-const useEffect = typeof window === 'undefined' ? noop : useLayoutEffect;
+  if (registrar == null) {
+    throw new Error(
+      `Can’t perform scroll restoration because you are not rendered in a <Routing> component.`,
+    );
+  }
 
-export function useScrollRestoration({
-  id = DEFAULT_ID,
-  manual = false,
-  include = defaultInclude,
-  persist = 'sessionStorage',
-}: Options = {}): ScrollRestorationResult {
-  const currentUrl = useCurrentUrl();
-  const scrollableRef = useRef<HTMLElement | null>(null);
-  const persistRef = useRef<number>();
-  const scrollRef = useRef<number>();
+  const registration = registrar.get(id);
+  registration.handler = handler;
 
-  const cache = useMemo<ScrollCache>(
-    () =>
-      persist === 'memory'
-        ? memoryCache
-        : (() => {
-            try {
-              return JSON.parse(
-                sessionStorage.getItem(SESSION_STORAGE_KEY) ?? '{}',
-              );
-            } catch {
-              return {};
-            }
-          })(),
-    [persist],
-  );
-
-  const restore = useCallback(() => {
-    const target = scrollableRef.current ?? document.documentElement;
-
-    if (!include(currentUrl)) return noop;
-
-    let scrollMap = cache[currentUrl.key];
-
-    if (scrollMap) {
-      const scrollTo = scrollMap[id];
-
-      if (scrollTo == null) {
-        scrollMap[id] = 0;
-        scrollTargetTo(0);
-      } else {
-        scrollTargetTo(scrollTo);
-      }
-    } else {
-      scrollMap = {[id]: 0};
-      cache[currentUrl.key] = scrollMap;
-      scrollTargetTo(0);
-    }
-
-    performPersist();
-
+  useIsomorphicEffect(() => {
     return () => {
-      scrollMap[id] = target.scrollTop;
-      performPersist();
-
-      if (scrollRef.current != null) {
-        window.cancelAnimationFrame(scrollRef.current);
-        scrollRef.current = undefined;
+      if (registration.handler !== handler) {
+        registration.handler = undefined;
       }
     };
+  }, [id]);
 
-    function scrollTargetTo(to: number) {
-      scrollRef.current = window.requestAnimationFrame(() => {
-        target.scrollTop = to;
-        scrollRef.current = undefined;
-      });
-    }
-
-    function performPersist() {
-      if (persist === 'sessionStorage') {
-        if (persistRef.current != null) {
-          (window as any).cancelIdleCallback(persistRef.current);
-        }
-
-        persistRef.current = (window as any).requestIdleCallback(() => {
-          try {
-            sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(cache));
-          } catch {
-            // intentional noop
-          }
-        });
-      }
-    }
-
-    // We don’t want to scroll randomly as a result of changing props, we want
-    // to entirely restrict this effect to only when the app’s route has actually
-    // changed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUrl.normalizedPath]);
-
-  useEffect(() => {
-    if (manual) return;
-
-    return restore();
-    // Same basic premise as above — even if `manual` changes while on a route,
-    // we want to leave them at their current scroll position.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restore]);
-
-  return {ref: scrollableRef, restore};
+  return registration.ref;
 }
-
-function defaultInclude() {
-  return true;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}

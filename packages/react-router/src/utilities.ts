@@ -5,7 +5,7 @@ import type {
   EnhancedURL as BaseEnhancedURL,
 } from '@quilted/routing';
 
-import type {EnhancedURL} from './types';
+import type {EnhancedURL, MatchDetails} from './types';
 import type {Router} from './router';
 
 export function enhanceUrl(
@@ -51,16 +51,12 @@ function normalizeAsAbsolutePath(path: string) {
     : `/${removePostfixSlash(path)}`;
 }
 
-interface MatchDetails {
-  matched: string;
-  consumed?: string;
-}
-
 export function getMatchDetails(
   url: BaseEnhancedURL,
   router: Router,
   consumed?: string,
   match?: Match,
+  exact = true,
   forceFallback = false,
 ): MatchDetails | undefined {
   const pathDetails = splitUrl(url, router.prefix, consumed);
@@ -77,24 +73,24 @@ export function getMatchDetails(
   } else if (typeof match === 'string') {
     const normalizedMatch = removePostfixSlash(match);
 
-    if (normalizedMatch === '/') {
-      return pathDetails.remainderAbsolute === '/'
-        ? {
-            matched: normalizedMatch,
-            consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
-          }
-        : undefined;
-    } else if (normalizedMatch[0] === '/') {
-      if (!startsWithPath(pathDetails.remainderAbsolute, normalizedMatch)) {
+    if (normalizedMatch[0] === '/') {
+      if (
+        !startsWithPath(pathDetails.remainderAbsolute, normalizedMatch, exact)
+      ) {
         return undefined;
       }
 
       return {
         matched: normalizedMatch,
-        consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
+        consumed:
+          normalizedMatch === '/'
+            ? pathDetails.previouslyConsumed
+            : `${pathDetails.previouslyConsumed}${normalizedMatch}`,
       };
     } else {
-      if (!startsWithPath(pathDetails.remainderRelative, normalizedMatch)) {
+      if (
+        !startsWithPath(pathDetails.remainderRelative, normalizedMatch, exact)
+      ) {
         return undefined;
       }
 
@@ -111,7 +107,7 @@ export function getMatchDetails(
     if (
       matchAsRelative != null &&
       matchAsRelative.index! === 0 &&
-      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0])
+      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0], exact)
     ) {
       return {
         matched: removePostfixSlash(matchAsRelative[0]),
@@ -126,7 +122,7 @@ export function getMatchDetails(
     if (
       matchAsAbsolute == null ||
       matchAsAbsolute.index! !== 0 ||
-      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0])
+      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0], exact)
     ) {
       return undefined;
     }
@@ -140,7 +136,9 @@ export function getMatchDetails(
   }
 }
 
-function startsWithPath(fullPath: string, pathSegment: string) {
+function startsWithPath(fullPath: string, pathSegment: string, exact: boolean) {
+  if (exact) return fullPath === pathSegment;
+
   return (
     fullPath.startsWith(pathSegment) &&
     (fullPath.length === pathSegment.length ||

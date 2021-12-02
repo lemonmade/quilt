@@ -20,10 +20,11 @@ export async function renderApp(
   {decorate, url, headers, ...rest}: Options = {},
 ) {
   const html = new HtmlManager();
-  const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
+  const asyncAssets = new AsyncAssetManager();
 
   const markup = await extract(app, {
+    ...rest,
     decorate(app) {
       return (
         <ServerContext
@@ -36,7 +37,6 @@ export async function renderApp(
         </ServerContext>
       );
     },
-    ...rest,
   });
 
   return {markup, http, html, asyncAssets};

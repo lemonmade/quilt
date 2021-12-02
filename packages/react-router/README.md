@@ -59,7 +59,7 @@ The `Router` component accepts the following props:
 
   function App() {
     return (
-      <Router prefix={/\/product\/\d+}>
+      <Router prefix={/\/product\/\d+/}>
         {/*
           assuming the initial URL path is /products/123, this link will resolve to
           /product/123/inventory
@@ -105,7 +105,6 @@ function App() {
     {match: 'home', render: () => <Home />},
     {match: 'products', render: () => <Products />},
     {match: /collection\/\d+/, render: () => <Collection />},
-    {render: () => <NotFound />},
   ]);
 }
 ```

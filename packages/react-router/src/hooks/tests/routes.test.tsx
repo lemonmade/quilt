@@ -8,7 +8,7 @@ import type {PropsWithChildren} from 'react';
 import {createMount} from '@quilted/react-testing';
 
 import {useRoutes} from '../routes';
-import {createTestRouter, TestRouter} from '../../testing';
+import {createTestRouter, Routing} from '../../testing';
 
 jest.mock('../redirect', () => ({
   useRedirect: jest.fn(),
@@ -24,7 +24,7 @@ const mount = createMount<
     return {router: createTestRouter(path, {prefix})};
   },
   render(element, {router}) {
-    return <TestRouter router={router}>{element}</TestRouter>;
+    return <Routing router={router}>{element}</Routing>;
   },
 });
 
@@ -200,7 +200,9 @@ describe('useRoutes()', () => {
         }
 
         function Routes() {
-          return useRoutes([{match: 'a', render: () => <NestedRoutes />}]);
+          return useRoutes([
+            {match: 'a', exact: false, render: () => <NestedRoutes />},
+          ]);
         }
 
         expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
@@ -259,6 +261,28 @@ describe('useRoutes()', () => {
         expect(
           mount(<Routes />, {path: 'must-match/full-path'}),
         ).toContainReactComponent(RouteComponent);
+      });
+
+      it('does not match inexact paths without children by default', () => {
+        function Routes() {
+          return useRoutes([{match: 'a', render: () => <RouteComponent />}]);
+        }
+
+        expect(mount(<Routes />, {path: 'a/b'})).not.toContainReactComponent(
+          RouteComponent,
+        );
+      });
+
+      it('matches inexact paths when `exact` is explicitly `false`', () => {
+        function Routes() {
+          return useRoutes([
+            {match: 'a', exact: false, render: () => <RouteComponent />},
+          ]);
+        }
+
+        expect(mount(<Routes />, {path: 'a/b'})).toContainReactComponent(
+          RouteComponent,
+        );
       });
     });
 
@@ -416,7 +440,9 @@ describe('useRoutes()', () => {
         }
 
         function Routes() {
-          return useRoutes([{match: /\w/, render: () => <NestedRoutes />}]);
+          return useRoutes([
+            {match: /\w/, exact: false, render: () => <NestedRoutes />},
+          ]);
         }
 
         expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
@@ -476,6 +502,28 @@ describe('useRoutes()', () => {
         expect(
           mount(<Routes />, {path: 'must-match/full-path'}),
         ).toContainReactComponent(RouteComponent);
+      });
+
+      it('does not match inexact paths without children by default', () => {
+        function Routes() {
+          return useRoutes([{match: /\w/, render: () => <RouteComponent />}]);
+        }
+
+        expect(mount(<Routes />, {path: 'a/b'})).not.toContainReactComponent(
+          RouteComponent,
+        );
+      });
+
+      it('matches inexact paths when `exact` is explicitly `false`', () => {
+        function Routes() {
+          return useRoutes([
+            {match: /\w/, exact: false, render: () => <RouteComponent />},
+          ]);
+        }
+
+        expect(mount(<Routes />, {path: 'a/b'})).toContainReactComponent(
+          RouteComponent,
+        );
       });
     });
 
