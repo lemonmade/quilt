@@ -21,13 +21,10 @@ describe('routing', () => {
             import {
               Link,
               useRoutes,
-              useScrollRestoration,
               usePerformanceNavigation,
             } from '@quilted/quilt';
 
             export function Routes() {
-              useScrollRestoration();
-
               return useRoutes([
                 {match: 'one', render: () => <PageOne />},
                 {match: 'two', render: () => <PageTwo />},
@@ -82,10 +79,6 @@ describe('routing', () => {
           },
         });
 
-        // We scroll in an animation frame, so we need to pause until that has happened
-        // in order to measure scroll position
-        await runAnimationFrame(page);
-
         expect(await getScrollTop(page)).toBe(0);
 
         await waitForPerformanceNavigation(page, {
@@ -94,10 +87,6 @@ describe('routing', () => {
             await page.goBack();
           },
         });
-
-        // We scroll in an animation frame, so we need to pause until that has happened
-        // in order to measure scroll position
-        await runAnimationFrame(page);
 
         expect(await getScrollTop(page)).toBe(scrollBy);
       });
@@ -108,14 +97,6 @@ describe('routing', () => {
 async function getScrollTop(page: Page) {
   const scroll = await page.evaluate(() => document.documentElement.scrollTop);
   return scroll;
-}
-
-async function runAnimationFrame(page: Page) {
-  await page.evaluate(async () => {
-    await new Promise<void>((resolve) => {
-      window.requestAnimationFrame(() => resolve());
-    });
-  });
 }
 
 async function scrollTo(page: Page, scrollTo: number) {

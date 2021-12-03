@@ -166,9 +166,10 @@ function ScrollRestorationContext({
       const restore = () => {
         if (previousUrlRef.current?.key !== targetUrl.key) return;
 
-        const scroll = restorer.get(ROOT_SCROLL_RESTORATION_ID, currentUrl);
+        const scroll =
+          restorer.get(ROOT_SCROLL_RESTORATION_ID, currentUrl) ?? 0;
 
-        if (scroll != null) target.scrollTop = scroll;
+        target.scrollTop = scroll;
       };
 
       const handler = registration.handler ?? defaultScrollRestorationHandler;
