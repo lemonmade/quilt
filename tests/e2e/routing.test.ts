@@ -32,7 +32,7 @@ describe('routing', () => {
             }
 
             function PageOne() {
-              usePerformanceNavigation({stage: 'complete'});
+              usePerformanceNavigation();
 
               return (
                 <ScrollSpacer>
@@ -42,7 +42,7 @@ describe('routing', () => {
             }
 
             function PageTwo() {
-              usePerformanceNavigation({stage: 'complete'});
+              usePerformanceNavigation();
 
               return (
                 <ScrollSpacer>
