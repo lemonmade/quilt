@@ -30,7 +30,9 @@ export interface NavigationBlockDetails {
   allow(): void;
 }
 
-export type NavigationBlocker = (details: NavigationBlockDetails) => boolean;
+export type NavigationBlocker = (
+  details: NavigationBlockDetails,
+) => boolean | Promise<void>;
 
 export interface RouteRenderDetails {
   url: EnhancedURL;

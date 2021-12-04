@@ -1855,14 +1855,14 @@ function Routes() {
 }
 
 function Start() {
-  useNavigationBlock(({targetUrl}) => {
+  useNavigationBlock(async ({targetUrl}) => {
     // When we are going to the /big route, we will preload
-    if (targetUrl.pathname !== '/big') return false;
+    if (targetUrl.pathname !== '/big') return;
 
     // Components created with `createAsyncComponent()` have a `load()` method
     // that will load the assets for this component, and return a promise that
     // resolves once the component is ready to be rendered.
-    return BigRoute.load();
+    await BigRoute.load();
   });
 
   return <Link to="/big">Go to the route with a big bundle size</Link>;

@@ -176,7 +176,7 @@ export function createRouter(
     );
 
     const previousNavigationIndex = navigationKeys.lastIndexOf(currentUrl.key);
-    const delta = previousNavigationIndex - currentNavigationIndex;
+    const delta = currentNavigationIndex - previousNavigationIndex;
 
     let hasAllowedBlockedNavigation = false;
 
@@ -206,8 +206,29 @@ export function createRouter(
   }
 
   function shouldBlock(targetUrl: EnhancedURL, allow: () => void) {
+    if (blockers.size === 0) return false;
+
     const details = {targetUrl, allow};
-    return [...blockers].some((blocker) => blocker(details));
+
+    let shouldBlock = false;
+    const promiseResults: Promise<void>[] = [];
+
+    for (const blocker of blockers) {
+      const blockResult = blocker(details) ?? false;
+
+      if (typeof blockResult === 'object' && 'then' in blockResult) {
+        shouldBlock = true;
+        promiseResults.push(blockResult);
+      } else if (blockResult) {
+        shouldBlock = true;
+      }
+    }
+
+    if (promiseResults.length > 0) {
+      Promise.race(promiseResults).then(() => allow());
+    }
+
+    return shouldBlock;
   }
 
   function go(count: number) {
