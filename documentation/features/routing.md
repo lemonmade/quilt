@@ -1802,7 +1802,10 @@ function Edit() {
 
     // We store the `allow` function in state so we can render our modal
     // to confirm navigation
-    setConfirmNavigation(allow);
+    // We need to use the function form of `useState`’s setter,
+    // because `allow` is a function and React will try to execute
+    // it if we pass it directly.
+    setConfirmNavigation(() => allow);
 
     return true;
   });

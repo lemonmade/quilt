@@ -295,6 +295,93 @@ describe('routing', () => {
         expect(new URL(page.url()).pathname).toBe('/one');
       });
     });
+
+    it('handles navigation blocks that prevent going back more than one page in the stack', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'foundation/Routes.tsx': stripIndent`
+            import {
+              Link,
+              useRoutes,
+              useNavigationBlock,
+              usePerformanceNavigation,
+            } from '@quilted/quilt';
+            import {waiter} from 'e2e/globals';
+
+            export function Routes() {
+              return useRoutes([
+                {match: 'one', render: () => <PageOne />},
+                {match: 'two', render: () => <PageTwo />},
+                {match: 'three', render: () => <PageThree />},
+              ]);
+            }
+
+            function PageOne() {
+              usePerformanceNavigation();
+
+              return (
+                <Link to="/two">To page two</Link>
+              );
+            }
+
+            function PageTwo() {
+              usePerformanceNavigation();
+
+              return (
+                <Link to="/three">To page three</Link>
+              );
+            }
+
+            function PageThree() {
+              usePerformanceNavigation();
+
+              useNavigationBlock(async () => {
+                await waiter.wait('blocking');
+              });
+
+              return (
+                <Link to="/one">To page one</Link>
+              );
+            }
+          `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/one',
+        });
+
+        await waitForPerformanceNavigation(page, {
+          to: '/two',
+          async action() {
+            await page.click('a');
+          },
+        });
+
+        await waitForPerformanceNavigation(page, {
+          to: '/three',
+          async action() {
+            await page.click('a');
+          },
+        });
+
+        await goBack(page, {pages: 2});
+
+        expect(new URL(page.url()).pathname).toBe('/three');
+
+        await waitForPerformanceNavigation(page, {
+          to: '/one',
+          async action() {
+            await page.evaluate(() => {
+              window.Quilt!.E2E!.Waiter!.done('blocking');
+            });
+          },
+        });
+
+        expect(new URL(page.url()).pathname).toBe('/one');
+      });
+    });
   });
 });
 
@@ -320,8 +407,14 @@ async function scrollTo(page: Page, scrollTo: number) {
   }, scrollTo);
 }
 
-async function goBack(page: Page) {
-  await page.goBack();
+async function goBack(page: Page, {pages = 1} = {}) {
+  await page.evaluate(
+    ({pages}) => {
+      window.history.go(-pages);
+    },
+    {pages},
+  );
+
   // Some router logic happens in a popstate callback, and adding this extra bit of wait
   // time was the only way I found to make sure that logic has a chance to execute.
   // eslint-disable-next-line @typescript-eslint/no-empty-function
