@@ -59,7 +59,7 @@ export function createRouter(
         new URL(initialUrl.href),
         initialState ?? {},
         createKey(),
-        undefined,
+        0,
         prefix,
       )
     : createUrl(prefix);
@@ -116,12 +116,7 @@ export function createRouter(
     const baseTargetUrl = resolveUrl(to, currentUrl, relativeTo);
     const replace = explicitReplace ?? baseTargetUrl.href === currentUrl.href;
 
-    const resolvedIndex =
-      currentUrl.index == null
-        ? 0
-        : replace
-        ? currentUrl.index
-        : currentUrl.index + 1;
+    const resolvedIndex = replace ? currentUrl.index : currentUrl.index + 1;
 
     const resolvedUrl = enhanceUrl(
       baseTargetUrl,
@@ -175,15 +170,7 @@ export function createRouter(
 
   function handlePopstate() {
     const newUrl = createUrl(prefix);
-
-    const currentIndex = currentUrl.index;
-    const newIndex = newUrl.index;
-
-    // This should be impossible, but since there are no indexes on the server,
-    // we need to check anyways.
-    if (currentIndex == null || newIndex == null) return;
-
-    const delta = newIndex - currentIndex;
+    const delta = newUrl.index - currentUrl.index;
 
     let hasAllowedBlockedNavigation = false;
 

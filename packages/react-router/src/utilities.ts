@@ -12,7 +12,7 @@ export function enhanceUrl(
   url: URL,
   state: Record<string, any>,
   key: string,
-  index?: number,
+  index: number,
   prefix?: Prefix,
 ): EnhancedURL {
   Object.defineProperty(url, 'state', {

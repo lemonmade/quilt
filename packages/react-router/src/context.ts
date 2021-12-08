@@ -13,11 +13,7 @@ import type {StaticRenderer} from './static';
 export const CurrentUrlContext = createContext<EnhancedURL | null>(null);
 export const RouterContext = createContext<Router | null>(null);
 export const ConsumedPathContext = createContext<string | null>(null);
-export const InitialUrlContext = createContext<URL | undefined>(
-  typeof location === 'undefined' || typeof URL === 'undefined'
-    ? undefined
-    : new URL(location.href),
-);
+export const InitialUrlContext = createContext<URL | undefined>(undefined);
 export const StaticRendererContext = createContext<StaticRenderer | null>(null);
 export const PreloaderContext = createContext<Preloader | null>(null);
 export const PreloadRegistrarContext = createContext<PreloadRegistrar | null>(

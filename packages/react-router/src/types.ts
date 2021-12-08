@@ -13,7 +13,7 @@ export interface State {
 
 export type EnhancedURL = BaseEnhancedURL & {
   readonly key: string;
-  readonly index?: number;
+  readonly index: number;
   readonly state: State;
 };
 
