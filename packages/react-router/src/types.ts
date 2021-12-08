@@ -13,6 +13,7 @@ export interface State {
 
 export type EnhancedURL = BaseEnhancedURL & {
   readonly key: string;
+  readonly index?: number;
   readonly state: State;
 };
 
@@ -26,7 +27,8 @@ export interface Focusable {
 }
 
 export interface NavigationBlockDetails {
-  targetUrl: EnhancedURL;
+  readonly reason: 'user-agent' | 'navigation';
+  readonly targetUrl: EnhancedURL;
   allow(): void;
 }
 

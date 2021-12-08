@@ -1,7 +1,12 @@
 import {resolveUrl} from '@quilted/routing';
 import type {Prefix, NavigateTo, RelativeTo} from '@quilted/routing';
 
-import type {EnhancedURL, NavigationBlocker, State} from './types';
+import type {
+  State,
+  EnhancedURL,
+  NavigationBlocker,
+  NavigationBlockDetails,
+} from './types';
 import {enhanceUrl, createKey} from './utilities';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
@@ -20,7 +25,8 @@ export interface NavigateOptions {
   state?: State;
 }
 
-const KEY_STATE_FIELD_NAME = '_key';
+const BROWSER_STATE_FIELD_NAME_KEY = '_key';
+const BROWSER_STATE_FIELD_NAME_INDEX = '_index';
 
 export interface Router {
   readonly currentUrl: EnhancedURL;
@@ -53,6 +59,7 @@ export function createRouter(
         new URL(initialUrl.href),
         initialState ?? {},
         createKey(),
+        undefined,
         prefix,
       )
     : createUrl(prefix);
@@ -62,9 +69,6 @@ export function createRouter(
     ((url, currentUrl) => url.origin !== currentUrl.origin);
 
   let forceNextNavigation = false;
-
-  const initialNavigationKey = currentUrl.key;
-  const navigationKeys = [initialNavigationKey];
 
   const listeners = new Set<Listener>();
   const blockers = new Set<NavigationBlocker>();
@@ -109,15 +113,29 @@ export function createRouter(
     {state = {}, replace: explicitReplace, relativeTo}: NavigateOptions = {},
   ) {
     const resolvedKey = createKey();
+    const baseTargetUrl = resolveUrl(to, currentUrl, relativeTo);
+    const replace = explicitReplace ?? baseTargetUrl.href === currentUrl.href;
+
+    const resolvedIndex =
+      currentUrl.index == null
+        ? 0
+        : replace
+        ? currentUrl.index
+        : currentUrl.index + 1;
+
     const resolvedUrl = enhanceUrl(
-      resolveUrl(to, currentUrl, relativeTo),
+      baseTargetUrl,
       state,
       resolvedKey,
+      resolvedIndex,
       prefix,
     );
 
-    const replace = explicitReplace ?? resolvedUrl.href === currentUrl.href;
-    const finalState = {...state, [KEY_STATE_FIELD_NAME]: resolvedKey};
+    const finalState = {
+      ...state,
+      [BROWSER_STATE_FIELD_NAME_KEY]: resolvedKey,
+      [BROWSER_STATE_FIELD_NAME_INDEX]: resolvedIndex,
+    };
 
     let hasAllowedBlockedNavigation = false;
 
@@ -129,7 +147,7 @@ export function createRouter(
       navigate(resolvedUrl, {state, replace, relativeTo});
     };
 
-    if (!forceNextNavigation && shouldBlock(resolvedUrl, allow)) {
+    if (!forceNextNavigation && shouldBlock(resolvedUrl, allow, 'navigation')) {
       return;
     }
 
@@ -148,19 +166,7 @@ export function createRouter(
       return;
     }
 
-    const entryIndex = navigationKeys.lastIndexOf(currentUrl.key);
-
-    if (replace) {
-      navigationKeys.splice(entryIndex, 1, resolvedKey);
-    } else {
-      navigationKeys.splice(
-        entryIndex + 1,
-        navigationKeys.length - entryIndex - 1,
-        resolvedKey,
-      );
-    }
-
-    currentUrl = createUrl(prefix, resolvedKey);
+    currentUrl = resolvedUrl;
 
     for (const listener of listeners) {
       listener(currentUrl);
@@ -168,15 +174,16 @@ export function createRouter(
   }
 
   function handlePopstate() {
-    const fallbackNavigationKey = navigationKeys[0];
-    const newUrl = createUrl(prefix, fallbackNavigationKey);
+    const newUrl = createUrl(prefix);
 
-    const currentNavigationIndex = navigationKeys.lastIndexOf(
-      window.history.state?.[KEY_STATE_FIELD_NAME] ?? fallbackNavigationKey,
-    );
+    const currentIndex = currentUrl.index;
+    const newIndex = newUrl.index;
 
-    const previousNavigationIndex = navigationKeys.lastIndexOf(currentUrl.key);
-    const delta = currentNavigationIndex - previousNavigationIndex;
+    // This should be impossible, but since there are no indexes on the server,
+    // we need to check anyways.
+    if (currentIndex == null || newIndex == null) return;
+
+    const delta = newIndex - currentIndex;
 
     let hasAllowedBlockedNavigation = false;
 
@@ -191,7 +198,7 @@ export function createRouter(
       }
     };
 
-    if (!forceNextNavigation && shouldBlock(newUrl, allow)) {
+    if (!forceNextNavigation && shouldBlock(newUrl, allow, 'user-agent')) {
       forceNextNavigation = true;
       go(-delta);
       return;
@@ -205,10 +212,14 @@ export function createRouter(
     }
   }
 
-  function shouldBlock(targetUrl: EnhancedURL, allow: () => void) {
+  function shouldBlock(
+    targetUrl: EnhancedURL,
+    allow: () => void,
+    reason: NavigationBlockDetails['reason'],
+  ) {
     if (blockers.size === 0) return false;
 
-    const details = {targetUrl, allow};
+    const details = {reason, targetUrl, allow};
 
     let shouldBlock = false;
     const promiseResults: Promise<void>[] = [];
@@ -236,14 +247,14 @@ export function createRouter(
   }
 }
 
-function createUrl(prefix?: Prefix, defaultKey?: string): EnhancedURL {
-  const {[KEY_STATE_FIELD_NAME]: key, ...state} = window.history.state ?? {};
-  return enhanceUrl(
-    new URL(window.location.href),
-    state,
-    key ?? defaultKey ?? createKey(),
-    prefix,
-  );
+function createUrl(prefix?: Prefix): EnhancedURL {
+  const {
+    [BROWSER_STATE_FIELD_NAME_KEY]: key = createKey(),
+    [BROWSER_STATE_FIELD_NAME_INDEX]: index = 0,
+    ...state
+  } = window.history.state ?? {};
+
+  return enhanceUrl(new URL(window.location.href), state, key, index, prefix);
 }
 
 function urlToPath(url: URL) {

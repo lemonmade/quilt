@@ -12,6 +12,7 @@ export function enhanceUrl(
   url: URL,
   state: Record<string, any>,
   key: string,
+  index?: number,
   prefix?: Prefix,
 ): EnhancedURL {
   Object.defineProperty(url, 'state', {
@@ -21,6 +22,11 @@ export function enhanceUrl(
 
   Object.defineProperty(url, 'key', {
     value: key,
+    writable: false,
+  });
+
+  Object.defineProperty(url, 'index', {
+    value: index,
     writable: false,
   });
 
