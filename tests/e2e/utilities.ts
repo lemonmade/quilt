@@ -252,11 +252,17 @@ export async function buildAppAndOpenPage(
 
   const page = await workspace.browser.open(targetUrl, {...options});
 
+  let consoleQueue = Promise.resolve();
+
   page.on('console', async (message) => {
-    for (const arg of message.args()) {
-      // eslint-disable-next-line no-console
-      console[message.type() as 'log'](await arg.jsonValue());
-    }
+    consoleQueue = consoleQueue.then(async () => {
+      for (const arg of message.args()) {
+        // eslint-disable-next-line no-console
+        console[message.type() as 'log'](await arg.jsonValue());
+      }
+    });
+
+    await consoleQueue;
   });
 
   page.on('pageerror', (error) => {
@@ -357,6 +363,15 @@ export async function waitForPerformanceNavigation(
   }
 
   await navigationFinished;
+}
+
+export async function reloadAndWaitForPerformanceNavigation(page: Page) {
+  const url = page.url();
+  await page.reload();
+  await waitForPerformanceNavigation(page, {
+    to: url,
+    checkCompleteNavigations: true,
+  });
 }
 
 async function waitForUrl(url: string, {timeout = 2_000, interval = 100} = {}) {
