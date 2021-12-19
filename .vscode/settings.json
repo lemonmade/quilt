@@ -19,7 +19,7 @@
     ".yarn": true,
     "**/node_modules": true,
     "**/bower_components": true,
-    "**/*.code-search": true
+    "**/*.code-search": false
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
