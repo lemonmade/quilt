@@ -51,6 +51,8 @@ export interface Workspace {
   readonly browser: Browser;
 }
 
+const PAGE_MESSAGE_QUEUE_SYMBOL = Symbol('messageQueue');
+
 const execAsync = promisify(exec);
 const monorepoRoot = path.resolve(__dirname, '../..');
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
@@ -254,12 +256,20 @@ export async function buildAppAndOpenPage(
 
   let consoleQueue = Promise.resolve();
 
+  Reflect.defineProperty(page, PAGE_MESSAGE_QUEUE_SYMBOL, {
+    get() {
+      return consoleQueue;
+    },
+  });
+
   page.on('console', async (message) => {
     consoleQueue = consoleQueue.then(async () => {
-      for (const arg of message.args()) {
-        // eslint-disable-next-line no-console
-        console[message.type() as 'log'](await arg.jsonValue());
-      }
+      const resolvedArgs = await Promise.all(
+        message.args().map((arg) => arg.jsonValue()),
+      );
+
+      // eslint-disable-next-line no-console
+      console[message.type() as 'log'](...resolvedArgs);
     });
 
     await consoleQueue;
@@ -290,6 +300,10 @@ export async function buildAppAndOpenPage(
   });
 
   return {page, url: targetUrl, server};
+}
+
+export async function waitForMessageQueue(page: Page) {
+  await Reflect.get(page, PAGE_MESSAGE_QUEUE_SYMBOL);
 }
 
 export async function waitForPerformanceNavigation(
@@ -363,6 +377,8 @@ export async function waitForPerformanceNavigation(
   }
 
   await navigationFinished;
+
+  await waitForMessageQueue(page);
 }
 
 export async function reloadAndWaitForPerformanceNavigation(page: Page) {

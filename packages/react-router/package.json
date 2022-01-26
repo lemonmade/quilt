@@ -62,7 +62,8 @@
     "@quilted/react-html": "^0.3.18",
     "@quilted/react-http": "^0.3.6",
     "@quilted/react-server-render": "^0.3.7",
-    "@quilted/routing": "^0.2.7"
+    "@quilted/routing": "^0.2.7",
+    "@quilted/useful-react-types": "^0.0.0"
   },
   "eslintConfig": {
     "extends": [

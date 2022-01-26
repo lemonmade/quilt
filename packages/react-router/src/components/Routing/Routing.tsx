@@ -1,13 +1,6 @@
-import {
-  memo,
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  PropsWithChildren,
-  createRef,
-} from 'react';
+import {memo, useState, useEffect, useRef, useMemo, createRef} from 'react';
 import type {ReactNode} from 'react';
+import type {PropsWithChildren} from '@quilted/useful-react-types';
 
 import {useIsomorphicEffect} from '../../hooks/effect';
 import {
@@ -28,6 +21,7 @@ import {
 } from '../../types';
 import {createSessionStorageScrollRestoration} from '../../scroll-restoration';
 import {ROOT_SCROLL_RESTORATION_ID} from '../../constants';
+import {useCurrentUrl} from '../../hooks';
 
 interface Props extends RouterOptions {
   url?: URL;
@@ -45,11 +39,12 @@ export const Routing = memo(function Routing({
   isExternal,
   scrollRestoration: explicitScrollRestoration,
 }: Props) {
-  const router = useMemo(
-    () =>
-      explicitRouter ?? createRouter(explicitUrl, {prefix, state, isExternal}),
-    [explicitRouter, explicitUrl, prefix, state, isExternal],
-  );
+  const router = useMemo(() => {
+    return (
+      explicitRouter ?? createRouter(explicitUrl, {prefix, state, isExternal})
+    );
+  }, [explicitRouter, explicitUrl, prefix, state, isExternal]);
+
   const [url, setUrl] = useState(router.currentUrl);
   const currentUrlRef = useRef(url);
   currentUrlRef.current = url;
@@ -72,12 +67,9 @@ export const Routing = memo(function Routing({
   return (
     <RouterContext.Provider value={router}>
       <CurrentUrlContext.Provider value={url}>
-        <FocusContext currentUrl={url}>
+        <FocusContext>
           {scrollRestoration ? (
-            <ScrollRestorationContext
-              currentUrl={url}
-              restorer={scrollRestoration}
-            >
+            <ScrollRestorationContext restorer={scrollRestoration}>
               {children}
             </ScrollRestorationContext>
           ) : (
@@ -89,11 +81,10 @@ export const Routing = memo(function Routing({
   );
 });
 
-function FocusContext({
-  children,
-  currentUrl,
-}: PropsWithChildren<{currentUrl: URL}>) {
+function FocusContext({children}: PropsWithChildren) {
   const focusRef = useRef<Focusable>();
+  const currentUrl = useCurrentUrl();
+
   const focus = () => {
     const target = focusRef.current ?? document.body;
     target.focus();
@@ -118,12 +109,11 @@ function FocusContext({
 
 function ScrollRestorationContext({
   restorer,
-  currentUrl,
   children,
 }: PropsWithChildren<{
-  currentUrl: EnhancedURL;
   restorer: RouteChangeScrollRestorationCache;
 }>) {
+  const currentUrl = useCurrentUrl();
   const previousUrlRef = useRef<undefined | EnhancedURL>();
   const registrar = useMemo<RouteChangeScrollRestorationRegistrar>(() => {
     const registrations = new Map<
@@ -150,14 +140,21 @@ function ScrollRestorationContext({
       },
     };
   }, []);
+  const countRef = useRef(0);
 
   useIsomorphicEffect(() => {
+    const count = countRef.current;
+    console.log(`SCROLL RESTORE START ${count}`);
+    countRef.current += 1;
+
     const targetUrl = currentUrl;
     const previousUrl = previousUrlRef.current;
     previousUrlRef.current = targetUrl;
 
     for (const [id, registration] of registrar) {
       const target = getTarget(id, registration);
+
+      if (target == null) console.log(`Unable to restore ${id}`);
 
       // This usually means an old registration that has since been
       // unmounted
@@ -166,8 +163,15 @@ function ScrollRestorationContext({
       const restore = () => {
         if (previousUrlRef.current?.key !== targetUrl.key) return;
 
-        const scroll =
-          restorer.get(ROOT_SCROLL_RESTORATION_ID, currentUrl) ?? 0;
+        const scroll = restorer.get(id, targetUrl) ?? 0;
+        console.log({
+          RESTORE: true,
+          id,
+          currentUrl: targetUrl.href,
+          currentKey: targetUrl.key,
+          scroll,
+          target: target?.innerHTML,
+        });
 
         target.scrollTop = scroll;
       };
@@ -179,12 +183,21 @@ function ScrollRestorationContext({
     }
 
     return () => {
+      console.log(`SCROLL RESTORE TEARDOWN ${count}`);
       for (const [id, registration] of registrar) {
         const target = getTarget(id, registration);
 
         if (target == null) continue;
 
-        restorer.set(id, currentUrl, target.scrollTop);
+        console.log({
+          SAVE: true,
+          id,
+          currentUrl: targetUrl.href,
+          currentKey: targetUrl.key,
+          scroll: target.scrollTop,
+        });
+
+        restorer.set(id, targetUrl, target.scrollTop);
       }
     };
   }, [currentUrl.key]);

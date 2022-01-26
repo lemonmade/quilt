@@ -1,10 +1,11 @@
-import {useContext} from 'react';
+import {useContext, useEffect} from 'react';
 import type {MutableRefObject} from 'react';
 
 import {ROOT_SCROLL_RESTORATION_ID} from '../constants';
 import {ScrollRestorationRegistrarContext} from '../context';
 
 import {useIsomorphicEffect} from './effect';
+import {useCurrentUrl} from './url';
 
 interface ScrollRestorationHandler {
   (): boolean;
@@ -23,6 +24,8 @@ export function useRouteChangeScrollRestoration(
   idOrHandler?: string | ScrollRestorationHandler,
   maybeHandler?: ScrollRestorationHandler,
 ): ScrollRestorationResult {
+  const currentUrl = useCurrentUrl();
+
   let id: string;
   let handler: ScrollRestorationHandler | undefined;
 
@@ -47,10 +50,24 @@ export function useRouteChangeScrollRestoration(
 
   useIsomorphicEffect(() => {
     return () => {
+      console.log(
+        `useIsomorphicEffect Unmounting ${id} (key: ${currentUrl.key})`,
+      );
+    };
+  }, [id, currentUrl.key]);
+
+  useEffect(() => {
+    return () => {
+      console.log(`Unsetting ${id}`);
+      if (id !== ROOT_SCROLL_RESTORATION_ID) {
+        registration.ref.current = null;
+      }
+
       if (registration.handler !== handler) {
         registration.handler = undefined;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return registration.ref;
