@@ -1,7 +1,7 @@
 {
   "name": "@quilted/aws",
   "type": "module",
-  "version": "0.3.23",
+  "version": "0.3.24",
   "license": "MIT",
   "repository": {
     "type": "git",
