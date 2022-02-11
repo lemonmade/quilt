@@ -44,12 +44,3 @@ jobs:
         with:
           command: yarn test
           arguments: tests/e2e/
-
-  build:
-    name: Build 🏗
-    runs-on: ubuntu-latest
-    steps:
-      - uses: quilt-framework/action-prepare@v1
-      - uses: quilt-framework/action-build@v2
-        with:
-          command: yarn build
