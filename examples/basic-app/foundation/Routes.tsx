@@ -1,36 +1,53 @@
-import {useRoutes} from '@quilted/quilt';
-
-import {Start} from '../features/Start';
+import {
+  Link,
+  useRoutes,
+  usePerformanceNavigation,
+  useRouteChangeScrollRestoration,
+} from '@quilted/quilt';
+import type {PropsWithChildren} from '@quilted/quilt';
 
 export function Routes() {
   return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'another', render: () => <Start />},
-    {
-      match: 'yet-another',
-      children: [
-        {match: 'foo', render: () => <Start />},
-        {match: 'bar', render: () => <Start />},
-      ],
-    },
-    {
-      match: /\w{3}/,
-      renderStatic: () => ['abc', 'xyz'],
-      children: [
-        {
-          match: /\d+/,
-          renderStatic: () => ['123', '456', '890'],
-          children: [
-            {match: 'foo', render: () => <Start />},
-            {match: 'bar', render: () => <Start />},
-          ],
-        },
-        {match: 'foo', render: () => <Start />},
-        {match: 'bar', render: () => <Start />},
-      ],
-    },
-    {
-      children: [{match: 'and-another', render: () => <Start />}],
-    },
+    {match: 'one', render: () => <PageOne />},
+    {match: 'two', render: () => <PageTwo />},
   ]);
+}
+
+function PageOne() {
+  usePerformanceNavigation();
+  const ref = useRouteChangeScrollRestoration('ScrollView');
+
+  console.log('MOUNTING AGAIN');
+
+  return (
+    <>
+      <Link to="/two">To page two</Link>
+      <div
+        id="ScrollView"
+        ref={(result) => {
+          console.log({settingRef: true, ref: result?.outerHTML});
+          ref.current = result;
+        }}
+        style={{height: '100px', overflow: 'scroll', border: '1px solid black'}}
+      >
+        <ScrollSpacer>Scrollable</ScrollSpacer>
+      </div>
+    </>
+  );
+}
+
+function PageTwo() {
+  usePerformanceNavigation();
+
+  return null;
+}
+
+function ScrollSpacer({children}: PropsWithChildren) {
+  return (
+    <>
+      <div style={{height: '100px'}} />
+      {children}
+      <div style={{height: '200vh'}} />
+    </>
+  );
 }

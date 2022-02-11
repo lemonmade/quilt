@@ -1,11 +1,11 @@
-import {useMemo} from 'react';
-import type {ReactNode} from 'react';
 import {resolveUrl} from '@quilted/routing';
 
+import {Routing} from './components';
 import type {Router, Options} from './router';
-import {CurrentUrlContext, RouterContext} from './context';
 import {enhanceUrl, createKey} from './utilities';
-import {FocusContext} from './components';
+
+export {Routing};
+export type {Router};
 
 export function createTestRouter(
   url: URL | string = '/',
@@ -41,24 +41,4 @@ export function createTestRouter(
       return {url, external: isExternal(url, currentUrl)};
     },
   };
-}
-
-interface Props {
-  router?: Router;
-  children: ReactNode;
-}
-
-export function TestRouter({children, router: initialRouter}: Props) {
-  const router = useMemo(
-    () => initialRouter ?? createTestRouter(),
-    [initialRouter],
-  );
-
-  return (
-    <RouterContext.Provider value={router}>
-      <CurrentUrlContext.Provider value={router.currentUrl}>
-        <FocusContext>{children}</FocusContext>
-      </CurrentUrlContext.Provider>
-    </RouterContext.Provider>
-  );
 }

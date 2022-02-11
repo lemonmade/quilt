@@ -4,6 +4,7 @@ import type {ExecOptions, PromiseWithChild} from 'child_process';
 import {writeFile, readFile, mkdir, rm} from 'fs/promises';
 import * as path from 'path';
 
+import fetch from 'node-fetch';
 import {copy} from 'fs-extra';
 import {customAlphabet} from 'nanoid';
 import getPort from 'get-port';
@@ -11,6 +12,8 @@ import {chromium} from 'playwright';
 import type {Page, Browser as PlaywrightBrowser} from 'playwright';
 
 export {stripIndent} from 'common-tags';
+
+import type {} from './common/globals';
 
 export interface FileSystem {
   readonly root: string;
@@ -47,6 +50,8 @@ export interface Workspace {
   readonly command: Command;
   readonly browser: Browser;
 }
+
+const PAGE_MESSAGE_QUEUE_SYMBOL = Symbol('messageQueue');
 
 const execAsync = promisify(exec);
 const monorepoRoot = path.resolve(__dirname, '../..');
@@ -115,7 +120,8 @@ export async function withWorkspace<T>(
     }
 
     teardownActions.push(() => {
-      if (!result.child.killed) result.child.kill();
+      if (result.child.killed) return;
+      result.child.kill();
     });
 
     return result;
@@ -218,32 +224,22 @@ export async function buildAppAndRunServer({command, fs}: Workspace) {
 
   const port = await getPort();
 
-  const server = (async () => {
-    try {
-      await command.node(fs.resolve('build/server/index.js'), {
-        env: {PORT: String(port)},
-      });
-    } catch (error) {
-      // Ignore errors from killing the server at the end of tests
-      if (error?.signal === 'SIGTERM') return;
-      throw error;
-    }
-  })();
+  const server = command.node(fs.resolve('build/server/index.js'), {
+    env: {PORT: String(port)},
+  });
+
+  // Ignore errors from killing the server at the end of tests
+  server.catch((error) => {
+    if (error?.signal === 'SIGTERM') return;
+    throw error;
+  });
+
+  await waitForUrl(`http://localhost:${port}`);
 
   return {
     url: new URL(`http://localhost:${port}`),
     server,
   };
-}
-
-declare global {
-  interface Window {
-    readonly Quilt?: {
-      readonly E2E?: {
-        Performance?: import('@quilted/performance').Performance;
-      };
-    };
-  }
 }
 
 export async function buildAppAndOpenPage(
@@ -258,11 +254,25 @@ export async function buildAppAndOpenPage(
 
   const page = await workspace.browser.open(targetUrl, {...options});
 
+  let consoleQueue = Promise.resolve();
+
+  Reflect.defineProperty(page, PAGE_MESSAGE_QUEUE_SYMBOL, {
+    get() {
+      return consoleQueue;
+    },
+  });
+
   page.on('console', async (message) => {
-    for (const arg of message.args()) {
+    consoleQueue = consoleQueue.then(async () => {
+      const resolvedArgs = await Promise.all(
+        message.args().map((arg) => arg.jsonValue()),
+      );
+
       // eslint-disable-next-line no-console
-      console[message.type() as 'log'](await arg.jsonValue());
-    }
+      console[message.type() as 'log'](...resolvedArgs);
+    });
+
+    await consoleQueue;
   });
 
   page.on('pageerror', (error) => {
@@ -292,14 +302,20 @@ export async function buildAppAndOpenPage(
   return {page, url: targetUrl, server};
 }
 
+export async function waitForMessageQueue(page: Page) {
+  await Reflect.get(page, PAGE_MESSAGE_QUEUE_SYMBOL);
+}
+
 export async function waitForPerformanceNavigation(
   page: Page,
   {
     to = '',
     action,
+    timeout = 1_000,
     checkCompleteNavigations = false,
   }: {
     to?: URL | string;
+    timeout?: number;
     checkCompleteNavigations?: boolean;
     action?(page: Page): Promise<void>;
   },
@@ -311,7 +327,7 @@ export async function waitForPerformanceNavigation(
   }
 
   const navigationFinished = page.evaluate(
-    async ({href, checkCompleteNavigations}) => {
+    async ({href, timeout, checkCompleteNavigations}) => {
       const performance = window.Quilt?.E2E?.Performance;
 
       if (performance == null) return;
@@ -325,16 +341,35 @@ export async function waitForPerformanceNavigation(
         return;
       }
 
-      await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve, reject) => {
+        let finished = false;
+
+        const timeoutHandle = setTimeout(() => {
+          if (finished) return;
+          finished = true;
+          stopListening();
+          reject(
+            new Error(
+              `Failed to navigate to ${
+                new URL(href).pathname
+              } within the ${timeout.toLocaleString()}ms timeout`,
+            ),
+          );
+        }, timeout);
+
         const stopListening = performance.on('navigation', (navigation) => {
+          if (finished) return;
+
           if (navigation.target.href === href) {
+            finished = true;
+            clearTimeout(timeoutHandle);
             stopListening();
             resolve();
           }
         });
       });
     },
-    {href: url.href, checkCompleteNavigations},
+    {href: url.href, timeout, checkCompleteNavigations},
   );
 
   if (!checkCompleteNavigations && action != null) {
@@ -342,4 +377,40 @@ export async function waitForPerformanceNavigation(
   }
 
   await navigationFinished;
+
+  await waitForMessageQueue(page);
+}
+
+export async function reloadAndWaitForPerformanceNavigation(page: Page) {
+  const url = page.url();
+  await page.reload();
+  await waitForPerformanceNavigation(page, {
+    to: url,
+    checkCompleteNavigations: true,
+  });
+}
+
+async function waitForUrl(url: string, {timeout = 2_000, interval = 100} = {}) {
+  const start = Date.now();
+  let connected = false;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      await fetch(url);
+      connected = true;
+      break;
+    } catch (error) {
+      if (Date.now() - start >= timeout) break;
+      await sleep(interval);
+    }
+  }
+
+  return connected;
+}
+
+function sleep(duration: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), duration);
+  });
 }

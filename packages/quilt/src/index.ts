@@ -45,21 +45,29 @@ export type {
 export {
   Link,
   Redirect,
-  Router,
-  Preloader,
+  Routing,
+  RoutePreloading,
   NavigationBlock,
+  PreloadRoute,
   useCurrentUrl,
   useInitialUrl,
+  usePreloadRoute,
   useRouter,
   useRoutes,
-  useMatch,
+  useRouteMatch,
+  useRouteMatchDetails,
   useNavigate,
   useRedirect,
   useNavigationBlock,
-  useScrollRestoration,
-  useRouteChangeFocusRef,
+  useRouteChangeFocus,
+  useRouteChangeScrollRestoration,
 } from '@quilted/react-router';
-export type {NavigateTo, RouteDefinition} from '@quilted/react-router';
+export type {
+  Router,
+  NavigateTo,
+  RouteDefinition,
+  Match as RouteMatch,
+} from '@quilted/react-router';
 export {
   useWorker,
   createWorker,
@@ -70,5 +78,6 @@ export type {
   CallableWorkerCreator,
 } from '@quilted/react-workers';
 export {useCookie, useCookies} from '@quilted/react-http';
+export type {PropsWithChildren} from '@quilted/useful-react-types';
 
 export {App} from './App';

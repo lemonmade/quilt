@@ -11,6 +11,7 @@
     {"path": "../react-html"},
     {"path": "../react-http"},
     {"path": "../react-testing"},
-    {"path": "../routing"}
+    {"path": "../routing"},
+    {"path": "../useful-react-types"}
   ]
 }

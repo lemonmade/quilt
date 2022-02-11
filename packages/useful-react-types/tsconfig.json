@@ -1,0 +1,10 @@
+{
+  "extends": "../typescript/pkg.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build/typescript"
+  },
+  "include": ["src"],
+  "exclude": ["sewing-kit.config.ts", "*.test.ts", "*.test.tsx"],
+  "references": []
+}

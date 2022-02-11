@@ -30,7 +30,7 @@ function MyComponent({shouldRedirect = false} = {}) {
 }
 ```
 
-When you perform a redirect, Quilt will bail out of its server rendering process, set a `302` status code, and set the `Location` header to the URL resolved from the `to` prop. When a `Redirect` is rendered on the client, it will perform a navigation with the router, replacing the current page in the history stack.
+When you perform a redirect on the server, Quilt will bail out of its server rendering process, set a `302` status code, and set the `Location` header to the URL resolved from the `to` prop. When a `Redirect` is rendered on the client, it will perform a navigation with the router, replacing the current page in the history stack.
 
 The `to` prop on `Redirect` works the same way as the [`Link` component](./routing.md). It can be an absolute path, which will be relative to the root of your app; a relative path (without a leading `/`), which will be relative to the current URL; a `URL` object; an object with optional `path`, `search`, and `hash` keys; or a function that takes the current URL, and returns any of the above.
 

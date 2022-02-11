@@ -44,7 +44,7 @@ export default createApp((app) => {
 
 ## Route detection
 
-As noted in the [routing guide](../../../routing.md), Quilt does not use file-system based routing. Instead, your routes are declared in components, using the [`useRoutes` hook](./TODO).
+As noted in the [routing guide](../../../routing.md), Quilt does not use file-system based routing. Instead, your routes are declared in components, using the [`useRoutes()` hook](./TODO).
 
 ```tsx
 // app/foundation/Routes/Routes.tsx
@@ -162,7 +162,7 @@ export default createApp((app) => {
 
 ### Dynamic routes
 
-With Quilt’s router, you can declare “dynamic routes”, where many different route patterns are able to match. For example, this route component declares a `products` route, and nested beneath it, a route with a regular expression match (`/\d+/`), which will match the “next” path part (after `products`) that contains only numbers. This example passes the matched part of the path (only the digits after `/products/`) so that it can be customized for just that particular product:
+With Quilt’s router, you can declare [“dynamic” routes](./TODO), where many different route patterns are able to match. For example, this route component declares a `products` route, and nested beneath it, a route with a regular expression match (`/\d+/`), which will match the “next” path part (after `products`) that contains only numbers. This example passes the matched part of the path (only the digits after `/products/`) so that it can be customized for just that particular product:
 
 ```tsx
 // app/foundation/Routes/Routes.tsx

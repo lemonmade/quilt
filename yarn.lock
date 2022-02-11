@@ -3318,6 +3318,7 @@ __metadata:
     "@quilted/react-server-render": ^0.3.7
     "@quilted/react-testing": ^0.5.1
     "@quilted/react-workers": ^0.2.12
+    "@quilted/useful-react-types": ^0.0.0
     "@types/prettier": ^2.0.0
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
@@ -3476,6 +3477,7 @@ __metadata:
     "@quilted/react-http": ^0.3.6
     "@quilted/react-server-render": ^0.3.7
     "@quilted/routing": ^0.2.7
+    "@quilted/useful-react-types": ^0.0.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
     react: ">=17.0.0 <18.0.0"
@@ -3870,6 +3872,14 @@ __metadata:
       optional: true
     react:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@quilted/useful-react-types@^0.0.0, @quilted/useful-react-types@workspace:packages/useful-react-types":
+  version: 0.0.0-use.local
+  resolution: "@quilted/useful-react-types@workspace:packages/useful-react-types"
+  dependencies:
+    "@types/react": ^17.0.0
   languageName: unknown
   linkType: soft
 

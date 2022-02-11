@@ -1,15 +1,19 @@
 /* eslint react/jsx-no-useless-fragment: off */
 
-import {memo, useContext, useEffect, useRef} from 'react';
+import {memo, useContext, useEffect, useRef, useMemo} from 'react';
 import type {ReactNode, ReactElement} from 'react';
 import {NotFound} from '@quilted/react-http';
 import type {NavigateTo} from '@quilted/routing';
 
-import type {EnhancedURL, RouteDefinition} from '../types';
-import {PreloaderContext, ConsumedPathContext} from '../context';
+import type {
+  EnhancedURL,
+  RouteDefinition,
+  MatchDetails,
+  PreloadRegistrar,
+} from '../types';
+import {ConsumedPathContext, PreloadRegistrarContext} from '../context';
 import {getMatchDetails} from '../utilities';
 import type {Router} from '../router';
-import type {Preloader} from '../preloader';
 import type {StaticRenderer} from '../static';
 
 import {useRedirect} from './redirect';
@@ -19,16 +23,44 @@ import {useConsumedPath} from './consumed';
 import {useStaticRenderer} from './static';
 
 export interface Options {
-  notFound?: boolean | (() => ReactElement);
+  notFound?: boolean | ((details: {url: EnhancedURL}) => ReactElement);
 }
+
+const DEFAULT_DEPENDENCIES: readonly any[] = [];
 
 export function useRoutes(
   routes: RouteDefinition[],
-  {notFound = true}: Options = {},
-) {
+  dependencies?: readonly any[],
+): ReactElement<unknown>;
+export function useRoutes(
+  routes: RouteDefinition[],
+  options: Options,
+  dependencies?: readonly any[],
+): ReactElement<unknown>;
+export function useRoutes(
+  routes: RouteDefinition[],
+  optionsOrDependencies?: Options | readonly any[],
+  forSureDependencies?: readonly any[],
+): ReactElement<unknown> {
   const router = useRouter();
   const currentUrl = useCurrentUrl();
   const consumedPath = useConsumedPath();
+
+  let dependencies = DEFAULT_DEPENDENCIES;
+  let notFound: NonNullable<Options['notFound']> = true;
+
+  if (Array.isArray(optionsOrDependencies)) {
+    dependencies = optionsOrDependencies;
+  } else {
+    notFound = (optionsOrDependencies as Options | undefined)?.notFound ?? true;
+
+    if (forSureDependencies) {
+      dependencies = forSureDependencies;
+    }
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedRoutes = useMemo(() => routes, dependencies);
 
   useRoutePreloadRegistration(routes, consumedPath);
 
@@ -40,7 +72,7 @@ export function useRoutes(
 
   return (
     <RoutesInternal
-      routes={routes}
+      routes={memoizedRoutes}
       router={router}
       currentUrl={currentUrl}
       consumedPath={consumedPath}
@@ -54,11 +86,11 @@ function useRoutePreloadRegistration(
   routes: RouteDefinition[],
   consumedPath?: string,
 ) {
-  const preloader = useContext(PreloaderContext) ?? undefined;
+  const preloader = useContext(PreloadRegistrarContext) ?? undefined;
 
   const internals = useRef<{
-    preloader?: Preloader;
-    onChange?: ReturnType<Preloader['registerRoutes']>;
+    preloader?: PreloadRegistrar;
+    onChange?: ReturnType<PreloadRegistrar['register']>;
   }>({preloader});
 
   useEffect(() => {
@@ -75,7 +107,7 @@ function useRoutePreloadRegistration(
     if (onChange) {
       onChange(routes, consumedPath);
     } else {
-      onChange = preloader.registerRoutes(routes, consumedPath);
+      onChange = preloader.register(routes, consumedPath);
       internals.current.onChange = onChange;
     }
 
@@ -103,7 +135,9 @@ const RoutesInternal = memo(function RoutesInternal({
   staticRender,
 }: Props) {
   let matchDetails:
-    | (ReturnType<typeof getMatchDetails> & {route: RouteDefinition})
+    | (MatchDetails & {
+        route: RouteDefinition;
+      })
     | undefined;
 
   for (const route of routes) {
@@ -112,6 +146,7 @@ const RoutesInternal = memo(function RoutesInternal({
       router,
       previouslyConsumedPath,
       route.match,
+      route.exact ?? route.children == null,
       staticRender?.forceFallback(previouslyConsumedPath ?? '/'),
     );
 
@@ -123,7 +158,7 @@ const RoutesInternal = memo(function RoutesInternal({
 
   if (matchDetails == null) {
     if (typeof notFound === 'function') {
-      return notFound();
+      return notFound({url: currentUrl});
     } else if (notFound) {
       return <NotFound />;
     } else {
@@ -146,6 +181,7 @@ const RoutesInternal = memo(function RoutesInternal({
     routeContents = render({
       url: currentUrl,
       matched: matchedPath,
+      consumed: nestedConsumedPath,
       children: children && (
         <RoutesInternal
           routes={children}

@@ -1,6 +1,6 @@
 import type {PropsWithChildren, ComponentProps} from 'react';
 
-import {Router, useInitialUrl} from '@quilted/react-router';
+import {Routing, useInitialUrl, RoutePreloading} from '@quilted/react-router';
 import {HttpContext} from '@quilted/react-http';
 import {GraphQLContext} from '@quilted/react-graphql';
 import type {GraphQL} from '@quilted/react-graphql';
@@ -10,14 +10,14 @@ import type {Performance} from '@quilted/react-performance';
 
 import {maybeWrapContext} from './utilities/react';
 
-type RouterProps = ComponentProps<typeof Router>;
+type RoutingProps = ComponentProps<typeof Routing>;
 
 interface Props {
   graphql?: GraphQL;
   performance?: Performance;
-  routerState?: RouterProps['state'];
-  routerPrefix?: RouterProps['prefix'];
-  urlIsExternal?: RouterProps['isExternal'];
+  routerState?: RoutingProps['state'];
+  routerPrefix?: RoutingProps['prefix'];
+  urlIsExternal?: RoutingProps['isExternal'];
 }
 
 export function App({
@@ -37,16 +37,18 @@ export function App({
       {maybeWrapContext(
         GraphQLContext,
         graphql,
-        <Router
+        <Routing
           url={initialUrl}
           state={routerState}
           prefix={routerPrefix}
           isExternal={urlIsExternal}
         >
-          <PerformanceContext performance={performance}>
-            {children}
-          </PerformanceContext>
-        </Router>,
+          <RoutePreloading>
+            <PerformanceContext performance={performance}>
+              {children}
+            </PerformanceContext>
+          </RoutePreloading>
+        </Routing>,
       )}
     </HttpContext>
   );
