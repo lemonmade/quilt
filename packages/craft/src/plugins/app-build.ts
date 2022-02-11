@@ -175,7 +175,6 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
             targets,
             outputDirectory,
             rollupInput,
-            rollupInputOptions,
             rollupOutputs,
             rollupPlugins,
             quiltAsyncManifestPath,
@@ -225,11 +224,6 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
           );
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
-
-          rollupInputOptions?.((options) => {
-            options.preserveEntrySignatures = false;
-            return options;
-          });
 
           rollupPlugins?.(async (plugins) => {
             const [{visualizer}, {cssRollupPlugin}, {systemJs}] =
@@ -460,7 +454,7 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
                   import('@quilted/sewing-kit-rollup'),
                 ]);
 
-                await buildWithRollup(configure);
+                await buildWithRollup(project, configure);
               },
             }),
           );

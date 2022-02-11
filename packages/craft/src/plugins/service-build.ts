@@ -115,7 +115,7 @@ export function serviceBuild({minify, httpHandler}: Options) {
               force: true,
             });
 
-            await buildWithRollup(configure);
+            await buildWithRollup(project, configure);
           },
         }),
       );

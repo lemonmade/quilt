@@ -129,7 +129,7 @@ export function esnextBuild() {
               });
             });
 
-            await buildWithRollup(configure);
+            await buildWithRollup(project, configure);
           },
         }),
       );
