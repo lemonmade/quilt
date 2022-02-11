@@ -158,7 +158,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
                 import('@quilted/sewing-kit-rollup'),
               ]);
 
-              await buildWithRollup(configure);
+              await buildWithRollup(project, configure);
             },
           }),
         ];
@@ -176,7 +176,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
                   import('@quilted/sewing-kit-rollup'),
                 ]);
 
-                await buildWithRollup(configure);
+                await buildWithRollup(project, configure);
               },
             }),
           );

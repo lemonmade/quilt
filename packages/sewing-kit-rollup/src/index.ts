@@ -3,9 +3,11 @@ import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
 import {
+  App,
   createProjectPlugin,
   MissingPluginError,
   ProjectKind,
+  Runtime,
 } from '@quilted/sewing-kit';
 import type {
   Project,
@@ -196,6 +198,7 @@ function addConfiguration<ProjectType extends Project>(
 export async function getRollupNodePlugins<ProjectType extends Project>(
   project: ProjectType,
   {
+    runtime,
     extensions,
     rollupNodeBundle,
     rollupNodeExtensions,
@@ -206,6 +209,8 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     | ResolvedBuildProjectConfigurationHooks<ProjectType>
     | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
 ) {
+  const targetRuntime = await runtime.run();
+
   const [
     {default: commonjs},
     {default: json},
@@ -218,8 +223,12 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     import('@rollup/plugin-json'),
     import('@rollup/plugin-node-resolve'),
     import('rollup-plugin-node-externals'),
-    extensions.run(['.mjs', '.js', '.json', '.node']),
-    rollupNodeExportConditions!.run(['default', 'module', 'import', 'require']),
+    extensions.run(['.mjs', '.cjs', '.js', '.json', '.node']),
+    rollupNodeExportConditions!.run(
+      targetRuntime.includes(Runtime.Node)
+        ? ['node', 'module', 'import', 'require', 'default']
+        : ['module', 'import', 'require', 'default'],
+    ),
   ]);
 
   const finalExtensions = await rollupNodeExtensions!.run(baseExtensions);
@@ -310,17 +319,21 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
  *       import('@quilted/sewing-kit-rollup'),
  *     ]);
  *
- *     await buildWithRollup(configure);
+ *     await buildWithRollup(project, configure);
  *   },
  * })
  */
-export async function buildWithRollup<ProjectType extends Project = Project>({
-  rollupInput,
-  rollupPlugins,
-  rollupExternals,
-  rollupInputOptions,
-  rollupOutputs,
-}: ResolvedBuildProjectConfigurationHooks<ProjectType>) {
+export async function buildWithRollup<ProjectType extends Project = Project>(
+  project: ProjectType,
+  {
+    runtime,
+    rollupInput,
+    rollupPlugins,
+    rollupExternals,
+    rollupInputOptions,
+    rollupOutputs,
+  }: ResolvedBuildProjectConfigurationHooks<ProjectType>,
+) {
   if (
     rollupInput == null ||
     rollupPlugins == null ||
@@ -331,18 +344,29 @@ export async function buildWithRollup<ProjectType extends Project = Project>({
     throw new MissingPluginError('rollupHooks', '@quilted/sewing-kit-rollup');
   }
 
-  const [{rollup}, inputs, plugins, externals, outputs] = await Promise.all([
-    import('rollup'),
-    rollupInput.run([]),
-    rollupPlugins.run([]),
-    rollupExternals.run([]),
-    rollupOutputs.run([]),
-  ]);
+  const [{rollup}, targetRuntime, inputs, plugins, externals, outputs] =
+    await Promise.all([
+      import('rollup'),
+      runtime.run(),
+      rollupInput.run([]),
+      rollupPlugins.run([]),
+      rollupExternals.run([]),
+      rollupOutputs.run([]),
+    ]);
 
   const inputOptions = await rollupInputOptions!.run({
     input: inputs,
     external: externals,
     plugins,
+    // When we are only building a web app, we don’t care about preserving
+    // any details about the entry module. When we are building for any other
+    // environment, we want to do our best to preserve that
+    preserveEntrySignatures:
+      project instanceof App &&
+      targetRuntime.includes(Runtime.Browser) &&
+      targetRuntime.runtimes.size === 1
+        ? false
+        : 'exports-only',
     onwarn(warning, defaultHandler) {
       // Ignore warnings about empty bundles by default.
       if (warning.code === 'EMPTY_BUNDLE') return;

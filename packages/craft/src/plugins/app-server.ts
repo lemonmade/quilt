@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import {stripIndent} from 'common-tags';
-import {createProjectPlugin} from '@quilted/sewing-kit';
+import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
 import type {
   App,
   WaterfallHook,
@@ -132,11 +132,11 @@ export function appServer(options?: AppServerOptions) {
       configure(
         (
           {
+            runtime,
             outputDirectory,
             rollupInput,
             rollupPlugins,
             rollupOutputs,
-            rollupInputOptions,
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerEntryContent,
@@ -153,6 +153,8 @@ export function appServer(options?: AppServerOptions) {
           {quiltAppServer = false},
         ) => {
           if (!quiltAppServer) return;
+
+          runtime(() => new TargetRuntime([Runtime.Node]));
 
           const content = entry
             ? httpHandler
@@ -182,11 +184,6 @@ export function appServer(options?: AppServerOptions) {
 
           quiltAsyncPreload?.(() => false);
           quiltAsyncManifest?.(() => false);
-
-          rollupInputOptions?.((options) => {
-            options.preserveEntrySignatures = false;
-            return options;
-          });
 
           rollupPlugins?.(async (plugins) => {
             const {cssRollupPlugin} = await import('./rollup/css');
@@ -398,7 +395,7 @@ export function appServer(options?: AppServerOptions) {
               import('@quilted/sewing-kit-rollup'),
             ]);
 
-            await buildWithRollup(configure);
+            await buildWithRollup(project, configure);
           },
         }),
       );

@@ -22,7 +22,6 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
         (
           {
             rollupExternals,
-            rollupInputOptions,
             rollupOutputs,
             quiltHttpHandlerRuntimeContent,
             quiltServiceOutputFormat,
@@ -58,11 +57,6 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
           rollupExternals?.((externals) => {
             externals.push('aws-sdk');
             return externals;
-          });
-
-          rollupInputOptions?.((options) => {
-            options.preserveEntrySignatures = 'exports-only';
-            return options;
           });
 
           // AWS still only supports commonjs

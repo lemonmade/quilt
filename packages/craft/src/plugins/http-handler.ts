@@ -158,7 +158,6 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
           {
             runtime,
             rollupInput,
-            rollupInputOptions,
             rollupPlugins,
             rollupNodeBundle,
             quiltHttpHandlerHost,
@@ -173,11 +172,6 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
           runtime?.(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
-
-          rollupInputOptions?.((options) => {
-            options.preserveEntrySignatures = false;
-            return options;
-          });
 
           // We will let node_modules be imported normally
           rollupNodeBundle?.(() => false);

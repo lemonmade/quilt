@@ -16,6 +16,10 @@ export class TargetRuntime {
 
     const runtimes = new Set(project.runtimes ?? []);
 
+    if (project.binaries.length > 0) {
+      runtimes.add(Runtime.Node);
+    }
+
     for (const entry of project.entries) {
       if (entry.runtimes) {
         for (const entryRuntime of entry.runtimes) {

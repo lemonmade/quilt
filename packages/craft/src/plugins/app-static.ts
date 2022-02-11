@@ -200,7 +200,6 @@ export function appStatic({
             rollupPlugins,
             rollupExternals,
             rollupOutputs,
-            rollupInputOptions,
             quiltAsyncPreload,
             quiltAsyncManifest,
           },
@@ -222,11 +221,6 @@ export function appStatic({
 
           quiltAsyncPreload?.(() => false);
           quiltAsyncManifest?.(() => false);
-
-          rollupInputOptions?.((options) => {
-            options.preserveEntrySignatures = 'exports-only';
-            return options;
-          });
 
           rollupPlugins?.(async (plugins) => {
             const {cssRollupPlugin} = await import('./rollup/css');
@@ -380,7 +374,7 @@ export function appStatic({
               import('@quilted/sewing-kit-rollup'),
             ]);
 
-            await buildWithRollup(configure);
+            await buildWithRollup(project, configure);
 
             const {
               outputDirectory,

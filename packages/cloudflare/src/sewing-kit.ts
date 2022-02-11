@@ -69,7 +69,6 @@ export function cloudflareWorkers({
         (
           {
             rollupOutputs,
-            rollupInputOptions,
             quiltAssetBaseUrl,
             quiltServiceOutputFormat,
             quiltAppServerOutputFormat,
@@ -99,15 +98,6 @@ export function cloudflareWorkers({
             // Workers support fetch natively.
             return features.filter((feature) => feature !== 'fetch');
           });
-
-          if (format === 'modules') {
-            rollupInputOptions?.((options) => {
-              // The default entry does not preserve exports, but cloudflare
-              // uses the default export as the handler.
-              options.preserveEntrySignatures = 'exports-only';
-              return options;
-            });
-          }
 
           rollupOutputs?.((outputs) => {
             for (const output of outputs) {
