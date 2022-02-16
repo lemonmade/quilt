@@ -1,7 +1,6 @@
 import ServerCookies from 'cookie';
 import SetCookieParser from 'set-cookie-parser';
-
-import type {CookieOptions} from '@quilted/http-handlers';
+import type {CookieOptions} from '@quilted/http';
 
 import type {Request, Response} from './types';
 

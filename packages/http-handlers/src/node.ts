@@ -54,9 +54,7 @@ export function createHttpRequestListener(
           ) as any,
         })) ?? notFound();
 
-      const {status, headers, cookies, body: resultBody} = result;
-
-      const setCookies = [...cookies];
+      const {status, headers, body: resultBody} = result;
 
       response.writeHead(
         status,
@@ -65,7 +63,7 @@ export function createHttpRequestListener(
             allHeaders[key] = value;
             return allHeaders;
           },
-          setCookies.length > 0 ? {'set-cookie': setCookies} : {},
+          {},
         ),
       );
 
