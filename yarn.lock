@@ -3003,9 +3003,7 @@ __metadata:
     "@quilted/http-handlers": ^0.2.16
     "@types/aws-lambda": ^8.0.0
     "@types/common-tags": ^1.8.0
-    "@types/cookie": ^0.4.0
     common-tags: ^1.8.0
-    cookie: ^0.4.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
     "@quilted/craft": ^0.1.9
@@ -3202,8 +3200,10 @@ __metadata:
     "@quilted/routing": ^0.2.7
     "@types/cookie": ^0.4.0
     "@types/send": ^0.17.0
+    "@types/set-cookie-parser": ^2.4.0
     cookie: ^0.4.0
     send: ^0.17.0
+    set-cookie-parser: ^2.4.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
   peerDependenciesMeta:
@@ -3423,7 +3423,7 @@ __metadata:
     "@quilted/react-html": ^0.3.18
     "@quilted/react-server-render": ^0.3.7
     "@types/js-cookie": ^2.2.0
-    js-cookie: ^2.2.0
+    js-cookie: ^3.0.0
   peerDependencies:
     "@babel/runtime": ">=7.0.0 <8.0.0"
     react: ">=17.0.0 <18.0.0"
@@ -4384,6 +4384,15 @@ __metadata:
     "@types/mime": ^1
     "@types/node": "*"
   checksum: f5aae6b88f7bd7f0ef5c839bcccd9cfaed95b1b07bf7da838b6bda696802c99b77f625ca68767f8622e257975d962f6928b49144cd9fe788fb627be909bbae45
+  languageName: node
+  linkType: hard
+
+"@types/set-cookie-parser@npm:^2.4.0":
+  version: 2.4.2
+  resolution: "@types/set-cookie-parser@npm:2.4.2"
+  dependencies:
+    "@types/node": "*"
+  checksum: 7a7e1cad493c6aa4b808f4264289f6e5f8f53f70c11c58ae03d387792b5a6aab5fc5294239ab0800a1c9bf6f2b2b0f5cd8f37c1ee27ea43a2063414957dc4710
   languageName: node
   linkType: hard
 
@@ -9674,10 +9683,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-cookie@npm:^2.2.0":
-  version: 2.2.1
-  resolution: "js-cookie@npm:2.2.1"
-  checksum: c110f78427cb7715f67c69df0b3430f7cf9dafb5ddb13014df171d4fb61ccda0b1caf9767412cde63cab4bad697a5d4ce83b0c2e7ec650ec9929ed70750d20ae
+"js-cookie@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "js-cookie@npm:3.0.1"
+  checksum: 868f96266123525f3e7829c329ec2ed46b31024820958988e6185317cf4ab79d3d666ce2386a5178ed79814323b9364e5f134bfc7e81c2f63befb8bc61f6882b
   languageName: node
   linkType: hard
 
@@ -13102,6 +13111,13 @@ resolve@^2.0.0-next.3:
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
   checksum: 0ac2403b0c2d39bf452f6d5d17dfd3cb952b9113098e1231cc0614c436e2f465637e39d27cf3b93556f5c59795e9790fd7e98da784c5f9919edeba4295ffeb29
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.4.0":
+  version: 2.4.8
+  resolution: "set-cookie-parser@npm:2.4.8"
+  checksum: 8460a56cf7ad505adbd00e26a6c8df2cc4575c83fe095a9223ac94ff5b1664ce35947ed013c0f45952335084210eb163f87732c812058ef9344582268d1cd799
   languageName: node
   linkType: hard
 

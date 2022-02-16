@@ -41,11 +41,13 @@
     "@quilted/http": "^0.2.9",
     "@quilted/routing": "^0.2.7",
     "cookie": "^0.4.0",
-    "send": "^0.17.0"
+    "send": "^0.17.0",
+    "set-cookie-parser": "^2.4.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
-    "@types/send": "^0.17.0"
+    "@types/send": "^0.17.0",
+    "@types/set-cookie-parser": "^2.4.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0"

@@ -1,23 +1,14 @@
-import * as CookieHeader from 'cookie';
+import ServerCookies from 'cookie';
 
-import {
-  createCookies,
-  createHeaders,
-  ExtendedWritableCookies,
-} from '@quilted/http';
-import type {
-  StatusCode,
-  ReadonlyCookies,
-  ReadonlyHeaders,
-  CookieOptions,
-} from '@quilted/http';
+import {createHeaders} from '@quilted/http';
+import type {StatusCode, CookieOptions, ReadonlyHeaders} from '@quilted/http';
 import type {ServerActionKind} from '@quilted/react-server-render';
 
 import {SERVER_ACTION_ID} from './constants';
+import type {Cookies} from './types';
 
 interface Options {
   headers?: ReadonlyHeaders;
-  cookies?: ReadonlyCookies;
 }
 
 export interface ResponseCookieDefinition extends CookieOptions {
@@ -28,7 +19,6 @@ export interface ResponseCookieDefinition extends CookieOptions {
 export interface HttpState {
   readonly statusCode: number;
   readonly headers: Headers;
-  readonly cookies: ExtendedWritableCookies;
   readonly redirectUrl?: string;
 }
 
@@ -44,24 +34,26 @@ export class HttpManager {
   };
 
   readonly headers: ReadonlyHeaders;
-  readonly cookies: ReadonlyCookies;
+  readonly cookies: Cookies;
   readonly persistedHeaders = new Set<string>();
   readonly responseHeaders = createHeaders();
-  readonly responseCookies = createCookies();
 
   private statusCodes: StatusCode[] = [];
   private redirectUrl?: string;
 
-  constructor({headers, cookies}: Options = {}) {
+  constructor({headers}: Options = {}) {
     this.headers = headers ?? createHeaders();
-    this.cookies = cookies ?? cookiesFromCookieHeader(headers?.get('Cookie'));
+    this.cookies = cookiesFromHeaders(this.headers, this.responseHeaders);
   }
 
   reset() {
     this.statusCodes = [];
 
-    (this as any).responseHeaders = createHeaders();
-    (this as any).responseCookies = createCookies();
+    this.responseHeaders.forEach((header) => {
+      this.responseHeaders.delete(header);
+    });
+
+    this.persistedHeaders.clear();
 
     this.redirectUrl = undefined;
   }
@@ -83,25 +75,38 @@ export class HttpManager {
     return {
       statusCode: Math.max(200, ...this.statusCodes),
       headers: this.responseHeaders,
-      cookies: this.responseCookies,
       redirectUrl: this.redirectUrl,
     };
   }
 }
 
-function cookiesFromCookieHeader(
-  header?: string | null,
-): NonNullable<Options['cookies']> {
-  const cookies = CookieHeader.parse(header ?? '');
+function cookiesFromHeaders(
+  requestHeaders: ReadonlyHeaders,
+  responseHeaders: Headers,
+): Cookies {
+  const internalCookies = ServerCookies.parse(
+    requestHeaders?.get('Cookie') ?? '',
+  );
 
-  return {
-    get: (key) => cookies[key],
-    has: (key) => cookies[key] != null,
+  const cookies: Cookies = {
+    get: (key) => internalCookies[key],
+    has: (key) => internalCookies[key] != null,
+    set(cookie, value, options) {
+      responseHeaders.append(
+        'Set-Cookie',
+        ServerCookies.serialize(cookie, value, options),
+      );
+    },
+    delete(cookie, options) {
+      cookies.set(cookie, '', {expires: new Date(0), ...options});
+    },
     *entries() {
-      yield* Object.entries(cookies);
+      yield* Object.entries(internalCookies);
     },
     *[Symbol.iterator]() {
-      yield* Object.keys(cookies);
+      yield* Object.values(internalCookies);
     },
   };
+
+  return cookies;
 }
