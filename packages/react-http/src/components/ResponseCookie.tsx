@@ -63,9 +63,9 @@ export function ResponseCookie({
 }: Props) {
   useHttpAction((http) => {
     if (shouldDelete) {
-      http.responseCookies.delete(name, options);
+      http.cookies.delete(name, options);
     } else {
-      http.responseCookies.set(name, value!, options);
+      http.cookies.set(name, value!, options);
     }
   });
 

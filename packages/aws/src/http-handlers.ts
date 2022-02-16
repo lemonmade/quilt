@@ -18,6 +18,10 @@ export function createLambdaApiGatewayProxy(
 
     const headers = createHeaders(event.headers as Record<string, string>);
 
+    if (event.cookies != null && event.cookies.length > 0) {
+      headers.set('Cookie', event.cookies.join('; '));
+    }
+
     const response =
       (await handler.run({
         headers,
