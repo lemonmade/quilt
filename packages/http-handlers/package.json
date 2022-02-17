@@ -1,7 +1,7 @@
 {
   "name": "@quilted/http-handlers",
   "type": "module",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http": "^0.2.9",
+    "@quilted/http": "^0.2.10",
     "@quilted/routing": "^0.2.7",
     "cookie": "^0.4.0",
     "send": "^0.17.0"
