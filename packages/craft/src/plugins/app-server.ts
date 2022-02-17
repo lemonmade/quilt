@@ -354,10 +354,8 @@ export function appServer(options?: AppServerOptions) {
                     : ''
                 }
                 const listener = createHttpRequestListener(httpHandler);
-                console.log(path.resolve(dirname, '../assets'));
               
                 createServer(async (request, response) => {
-                  console.log(request.url);
                   ${
                     serveAssets
                       ? `if (request.url.startsWith(${JSON.stringify(

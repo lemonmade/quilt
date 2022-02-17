@@ -98,10 +98,11 @@ export function serveStatic(root: string, {baseUrl = '/'}: StaticOptions = {}) {
       return;
     }
 
-    const {pathname} = new URL(request.url!, 'https://assets.com');
+    const resolvedUrl = new URL(request.url!, 'https://assets.com');
+    const {pathname} = resolvedUrl;
     const replacePathname = baseUrl.startsWith('/')
       ? baseUrl
-      : new URL(baseUrl).pathname;
+      : new URL(baseUrl, resolvedUrl).pathname;
 
     const normalizedPathname = pathname.replace(replacePathname, '');
 

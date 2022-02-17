@@ -479,12 +479,16 @@ async function targetsSupportModules(targets: string[]) {
 }
 
 const FRAMEWORK_CHUNK_NAME = 'framework';
+const POLYFILLS_CHUNK_NAME = 'polyfills';
 const VENDOR_CHUNK_NAME = 'vendor';
+const UTILITIES_CHUNK_NAME = 'utilities';
 const FRAMEWORK_TEST_STRINGS = [
   '/node_modules/preact/',
   '/node_modules/react/',
   '/node_modules/@quilted/',
 ];
+const POLYFILL_TEST_STRINGS = ['/node_modules/core-js/'];
+const COMMONJS_HELPER_MODULE = '\x00commonjsHelpers.js';
 
 // When building from source, quilt packages are not in node_modules,
 // so we instead add their repo paths to the list of framework test strings.
@@ -495,6 +499,7 @@ if (process.env.SEWING_KIT_FROM_SOURCE) {
 interface ImportMetadata {
   fromEntry: boolean;
   fromFramework: boolean;
+  fromPolyfills: boolean;
 }
 
 // Inspired by Vite: https://github.com/vitejs/vite/blob/c69f83615292953d40f07b1178d1ed1d72abe695/packages/vite/src/node/build.ts#L567
@@ -502,6 +507,8 @@ function createManualChunksSorter(): GetManualChunk {
   const cache = new Map<string, ImportMetadata>();
 
   return (id, {getModuleInfo}) => {
+    if (id === COMMONJS_HELPER_MODULE) return UTILITIES_CHUNK_NAME;
+
     if (
       !id.includes('node_modules') &&
       !FRAMEWORK_TEST_STRINGS.some((test) => id.includes(test))
@@ -524,6 +531,10 @@ function createManualChunksSorter(): GetManualChunk {
       return FRAMEWORK_CHUNK_NAME;
     }
 
+    if (importMetadata.fromPolyfills) {
+      return POLYFILLS_CHUNK_NAME;
+    }
+
     return VENDOR_CHUNK_NAME;
   };
 }
@@ -538,7 +549,11 @@ function getImportMetadata(
 
   if (importStack.includes(id)) {
     // circular dependencies
-    const result = {fromEntry: false, fromFramework: false};
+    const result: ImportMetadata = {
+      fromEntry: false,
+      fromFramework: false,
+      fromPolyfills: false,
+    };
     cache.set(id, result);
     return result;
   }
@@ -546,13 +561,21 @@ function getImportMetadata(
   const module = getModuleInfo(id);
 
   if (!module) {
-    const result = {fromEntry: false, fromFramework: false};
+    const result: ImportMetadata = {
+      fromEntry: false,
+      fromFramework: false,
+      fromPolyfills: false,
+    };
     cache.set(id, result);
     return result;
   }
 
   if (module.isEntry) {
-    const result = {fromEntry: true, fromFramework: false};
+    const result: ImportMetadata = {
+      fromEntry: true,
+      fromFramework: false,
+      fromPolyfills: false,
+    };
     cache.set(id, result);
     return result;
   }
@@ -562,11 +585,10 @@ function getImportMetadata(
     getImportMetadata(importer, getModuleInfo, cache, newImportStack),
   );
 
-  const result = {
+  const result: ImportMetadata = {
     fromEntry: importersMetadata.some(({fromEntry}) => fromEntry),
-    fromFramework:
-      FRAMEWORK_TEST_STRINGS.some((test) => id.includes(test)) ||
-      importersMetadata.some((importer) => importer.fromFramework),
+    fromFramework: FRAMEWORK_TEST_STRINGS.some((test) => id.includes(test)),
+    fromPolyfills: POLYFILL_TEST_STRINGS.some((test) => id.includes(test)),
   };
 
   cache.set(id, result);

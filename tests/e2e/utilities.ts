@@ -8,6 +8,7 @@ import {copy} from 'fs-extra';
 import {customAlphabet} from 'nanoid';
 import getPort from 'get-port';
 import {chromium} from 'playwright';
+import fetch from 'node-fetch';
 import type {Page, Browser as PlaywrightBrowser} from 'playwright';
 
 export {stripIndent} from 'common-tags';
@@ -111,7 +112,8 @@ export async function withWorkspace<T>(
     });
 
     if (debug) {
-      result.child.stdout!.pipe(process.stdout);
+      result.child.stdout?.pipe(process.stdout);
+      result.child.stderr?.pipe(process.stderr);
     }
 
     teardownActions.push(() => {
@@ -217,6 +219,7 @@ export async function buildAppAndRunServer({command, fs}: Workspace) {
   await command.sewingKit.build();
 
   const port = await getPort();
+  const url = new URL(`http://localhost:${port}`);
 
   const server = (async () => {
     try {
@@ -230,10 +233,34 @@ export async function buildAppAndRunServer({command, fs}: Workspace) {
     }
   })();
 
+  const startedAt = Date.now();
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      await fetch(url);
+      break;
+    } catch {
+      // intentional noop
+    }
+
+    if (Date.now() - startedAt > 500) {
+      throw new Error(`Server at ${url.href} did not start up in time`);
+    }
+
+    await sleep(25);
+  }
+
   return {
-    url: new URL(`http://localhost:${port}`),
+    url,
     server,
   };
+}
+
+function sleep(time: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, time);
+  });
 }
 
 declare global {
