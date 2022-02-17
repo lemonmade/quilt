@@ -1,5 +1,3 @@
-import * as Cookies from 'cookie';
-
 import {createHeaders, HttpMethod} from '@quilted/http';
 
 import {enhanceUrl} from '@quilted/routing';
@@ -75,35 +73,13 @@ function normalizeRouteArguments(...args: any[]): [Match, RequestHandler] {
 }
 
 function createRequest(
-  {
-    url,
-    method = 'GET',
-    body,
-    headers = createHeaders(),
-    cookies = cookiesFromHeaders(headers),
-  }: RequestOptions,
+  {url, method = 'GET', body, headers = createHeaders()}: RequestOptions,
   prefix?: Prefix,
 ): Request {
   return {
     url: enhanceUrl(new URL(typeof url === 'string' ? url : url.href), prefix),
     body,
     method,
-    cookies,
     headers,
-  };
-}
-
-function cookiesFromHeaders(headers: Pick<Headers, 'get'>): Request['cookies'] {
-  const cookies = Cookies.parse(headers.get('Cookie') ?? '');
-
-  return {
-    get: (key) => cookies[key],
-    has: (key) => cookies[key] != null,
-    *entries() {
-      yield* Object.entries(cookies);
-    },
-    *[Symbol.iterator]() {
-      yield* Object.keys(cookies);
-    },
   };
 }

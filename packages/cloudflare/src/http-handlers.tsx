@@ -47,7 +47,7 @@ export function createRequestHandler(
 
     const requestBody = await request.text();
 
-    const {body, status, headers, cookies} =
+    const {body, status, headers} =
       (await handler.run({
         headers: request.headers,
         method: request.method,
@@ -55,15 +55,9 @@ export function createRequestHandler(
         url: new URL(request.url),
       })) ?? notFound();
 
-    const responseHeaders = new Headers([...headers]);
-
-    for (const cookie of cookies) {
-      responseHeaders.append('Set-Cookie', cookie);
-    }
-
     const response = new Response(body, {
       status,
-      headers: responseHeaders,
+      headers,
     });
 
     if (cache && response.headers.has('Cache-Control')) {

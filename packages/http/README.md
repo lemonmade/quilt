@@ -27,7 +27,6 @@ This library provides the following helper types, which each represent some aspe
 This library also provides the following helper functions that allow you to represent HTTP-related constructs:
 
 - `createHeaders()` creates a `Headers`-compatible object, even in environments where the `Headers` global does not exist.
-- `createCookies()` creates a `Cookies` object that operates on an in-memory map of cookies. This can be used to collect cookie operations on the server, before sending the result in the `Set-Cookie` header.
 
 ### Using this library as types
 

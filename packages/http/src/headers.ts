@@ -23,20 +23,27 @@ export interface ReadonlyHeaders
  * `Headers` global is not present. If the `Headers` global is present,
  * the native version is used instead.
  */
-export function createHeaders(headers?: HeadersInit) {
-  if (typeof Headers !== 'undefined') {
-    return new Headers(headers);
-  }
-
+export function createHeaders(headers?: HeadersInit): Headers {
   return new HeadersPolyfill(headers);
 }
 
+const MULTI_HEADER_SEPARATOR = ', ';
+
 export class HeadersPolyfill implements Headers {
-  private readonly normalized = new Map<string, string>();
+  private readonly normalized = new Map<string, string[]>();
 
   constructor(headers?: HeadersInit) {
     if (headers) {
-      if (Symbol.iterator in headers) {
+      if (headers instanceof HeadersPolyfill) {
+        const rawHeaders = headers.raw();
+        const headerNames = Object.keys(rawHeaders);
+
+        for (const headerName of headerNames) {
+          for (const value of rawHeaders[headerName]) {
+            this.append(headerName, value);
+          }
+        }
+      } else if (Symbol.iterator in headers) {
         for (const [header, value] of headers as Headers | [string, string][]) {
           this.append(header, value);
         }
@@ -50,18 +57,20 @@ export class HeadersPolyfill implements Headers {
 
   append(header: string, value: string) {
     const normalizedHeader = normalizeHeader(header);
-
     const oldValue = this.normalized.get(normalizedHeader);
+
     this.normalized.set(
       normalizedHeader,
-      oldValue
-        ? `${oldValue}, ${normalizeValue(value)}`
-        : normalizeValue(value),
+      oldValue ? [...oldValue, normalizeValue(value)] : [normalizeValue(value)],
     );
   }
 
   get(header: string) {
-    return this.normalized.get(normalizeHeader(header)) ?? null;
+    return (
+      this.normalized
+        .get(normalizeHeader(header))
+        ?.join(MULTI_HEADER_SEPARATOR) ?? null
+    );
   }
 
   has(header: string) {
@@ -69,7 +78,7 @@ export class HeadersPolyfill implements Headers {
   }
 
   set(header: string, value: string) {
-    this.normalized.set(normalizeHeader(header), normalizeValue(value));
+    this.normalized.set(normalizeHeader(header), [normalizeValue(value)]);
   }
 
   delete(header: string) {
@@ -80,12 +89,16 @@ export class HeadersPolyfill implements Headers {
     return this.normalized.keys();
   }
 
-  values() {
-    return this.normalized.values();
+  *values() {
+    for (const values of this.normalized.values()) {
+      yield values.join(MULTI_HEADER_SEPARATOR);
+    }
   }
 
-  entries() {
-    return this.normalized.entries();
+  *entries(): IterableIterator<[string, string]> {
+    for (const [cookie, values] of this.normalized.entries()) {
+      yield [cookie, values.join(MULTI_HEADER_SEPARATOR)];
+    }
   }
 
   [Symbol.iterator]() {
@@ -102,8 +115,17 @@ export class HeadersPolyfill implements Headers {
     thisArg?: T,
   ) {
     for (const [header, value] of this.normalized) {
-      callback.call(thisArg as any, header, value, this);
+      callback.call(
+        thisArg as any,
+        header,
+        value.join(MULTI_HEADER_SEPARATOR),
+        this,
+      );
     }
+  }
+
+  raw() {
+    return Object.fromEntries(this.normalized.entries());
   }
 }
 

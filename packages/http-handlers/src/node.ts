@@ -8,6 +8,7 @@ import {createHeaders} from '@quilted/http';
 
 import {notFound} from './response';
 import type {HttpHandler} from './types';
+import {getResponseSetCookieHeaders} from './cookies';
 
 export function createHttpServer(handler: HttpHandler) {
   return createServer(createHttpRequestListener(handler));
@@ -54,18 +55,19 @@ export function createHttpRequestListener(
           ) as any,
         })) ?? notFound();
 
-      const {status, headers, cookies, body: resultBody} = result;
-
-      const setCookies = [...cookies];
+      const {status, headers, body: resultBody} = result;
+      const setCookieHeaders = getResponseSetCookieHeaders(result);
 
       response.writeHead(
         status,
         [...headers].reduce<Record<string, string | string[]>>(
           (allHeaders, [key, value]) => {
+            if (key.toLowerCase() === 'set-cookie') return allHeaders;
+
             allHeaders[key] = value;
             return allHeaders;
           },
-          setCookies.length > 0 ? {'set-cookie': setCookies} : {},
+          setCookieHeaders ? {'Set-Cookie': setCookieHeaders} : {},
         ),
       );
 
@@ -96,10 +98,11 @@ export function serveStatic(root: string, {baseUrl = '/'}: StaticOptions = {}) {
       return;
     }
 
-    const {pathname} = new URL(request.url!, 'https://assets.com');
+    const resolvedUrl = new URL(request.url!, 'https://assets.com');
+    const {pathname} = resolvedUrl;
     const replacePathname = baseUrl.startsWith('/')
       ? baseUrl
-      : new URL(baseUrl).pathname;
+      : new URL(baseUrl, resolvedUrl).pathname;
 
     const normalizedPathname = pathname.replace(replacePathname, '');
 

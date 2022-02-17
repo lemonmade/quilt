@@ -1,33 +1,24 @@
 import {RelativeTo} from '@quilted/routing';
 import type {NavigateTo} from '@quilted/routing';
-import {createHeaders, createCookies} from '@quilted/http';
+import {createHeaders} from '@quilted/http';
 
 import {resolveTo} from './utilities';
 import type {Response, Request, ResponseOptions} from './types';
 
 export function response(
   body?: string | null,
-  {
-    status = 200,
-    cookies: existingCookies,
-    headers: explicitHeaders,
-  }: ResponseOptions = {},
+  {status = 200, headers: explicitHeaders}: ResponseOptions = {},
 ): Response {
   const headers = createHeaders(explicitHeaders);
-  const cookies = createCookies(existingCookies?.records());
 
-  return {status, headers, cookies, body: body ?? undefined};
+  return {status, headers, body: body ?? undefined};
 }
 
-export function notFound(
-  options: Pick<ResponseOptions, 'headers' | 'cookies'> = {},
-) {
+export function notFound(options: Pick<ResponseOptions, 'headers'> = {}) {
   return response(null, {status: 404, ...options});
 }
 
-export function noContent(
-  options: Pick<ResponseOptions, 'headers' | 'cookies'> = {},
-) {
+export function noContent(options: Pick<ResponseOptions, 'headers'> = {}) {
   return response(null, {status: 204, ...options});
 }
 

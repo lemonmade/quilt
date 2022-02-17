@@ -49,12 +49,10 @@
   "dependencies": {
     "@quilted/http-handlers": "^0.2.16",
     "@types/aws-lambda": "^8.0.0",
-    "common-tags": "^1.8.0",
-    "cookie": "^0.4.0"
+    "common-tags": "^1.8.0"
   },
   "devDependencies": {
-    "@types/common-tags": "^1.8.0",
-    "@types/cookie": "^0.4.0"
+    "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

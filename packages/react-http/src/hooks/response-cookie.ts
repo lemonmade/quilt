@@ -17,7 +17,7 @@ export function useResponseCookie(
   value: string,
   options?: CookieOptions,
 ) {
-  useHttpAction((http) => http.responseCookies.set(cookie, value, options));
+  useHttpAction((http) => http.cookies.set(cookie, value, options));
 }
 
 /**
@@ -29,5 +29,5 @@ export function useDeleteResponseCookie(
   cookie: string,
   options?: Pick<CookieOptions, 'path' | 'domain'>,
 ) {
-  useHttpAction((http) => http.responseCookies.delete(cookie, options));
+  useHttpAction((http) => http.cookies.delete(cookie, options));
 }

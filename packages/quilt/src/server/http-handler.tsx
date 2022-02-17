@@ -32,19 +32,13 @@ export function createServerRenderingRequestHandler(
       headers: request.headers,
     });
 
-    const {headers, cookies, statusCode = 200, redirectUrl} = http.state;
+    const {headers, statusCode = 200, redirectUrl} = http.state;
 
     if (redirectUrl) {
-      const response = redirect(redirectUrl, {
+      return redirect(redirectUrl, {
         status: statusCode as 301,
         headers,
       });
-
-      for (const [name, {value, ...options}] of cookies.records()) {
-        response.cookies.set(name, value, options);
-      }
-
-      return response;
     }
 
     const usedAssets = asyncAssets.used({timing: 'load'});
@@ -58,7 +52,7 @@ export function createServerRenderingRequestHandler(
       }),
     ]);
 
-    const response = html(
+    return html(
       render(
         <Html
           manager={htmlManager}
@@ -70,16 +64,10 @@ export function createServerRenderingRequestHandler(
         </Html>,
       ),
       {
-        headers: Object.fromEntries([...headers]),
+        headers,
         status: statusCode,
       },
     );
-
-    for (const [name, {value, ...options}] of cookies.records()) {
-      response.cookies.set(name, value, options);
-    }
-
-    return response;
   };
 }
 
