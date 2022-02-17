@@ -1,5 +1,4 @@
 import ServerCookies from 'cookie';
-import SetCookieParser from 'set-cookie-parser';
 import type {CookieOptions} from '@quilted/http';
 
 import type {Request, Response} from './types';
@@ -31,14 +30,27 @@ export function deleteResponseCookie(
   setResponseCookie(response, cookie, '', {expires: new Date(0), ...options});
 }
 
-export function parseResponseCookies(response: Response) {
-  const cookies = SetCookieParser.parse(
-    response.headers.get('Set-Cookie') ?? '',
-  );
+interface HeadersWithRaw extends Headers {
+  raw(): Record<string, string[]>;
+}
 
-  return new Map(
-    cookies.map(({name, value, ...options}) => {
-      return [name, ServerCookies.serialize(name, value, options as any)];
-    }),
-  );
+// @see https://github.com/whatwg/fetch/issues/973
+// @see https://github.com/sveltejs/kit/issues/3460
+export function getResponseSetCookieHeaders({
+  headers,
+}: Response): string[] | undefined {
+  if (typeof (headers as HeadersWithRaw).raw === 'function') {
+    try {
+      const rawHeaders = (headers as HeadersWithRaw).raw();
+
+      if (typeof rawHeaders === 'object' && rawHeaders != null) {
+        return rawHeaders['set-cookie'];
+      }
+    } catch {
+      // intentional noop
+    }
+  }
+
+  const setCookie = headers.get('Set-Cookie');
+  return setCookie ? [setCookie] : undefined;
 }

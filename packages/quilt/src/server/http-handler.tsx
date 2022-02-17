@@ -64,7 +64,7 @@ export function createServerRenderingRequestHandler(
         </Html>,
       ),
       {
-        headers: Object.fromEntries([...headers]),
+        headers,
         status: statusCode,
       },
     );

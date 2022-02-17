@@ -3,7 +3,7 @@ import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 import {
   notFound,
   createHeaders,
-  parseResponseCookies,
+  getResponseSetCookieHeaders,
 } from '@quilted/http-handlers';
 import type {HttpHandler} from '@quilted/http-handlers';
 
@@ -36,10 +36,12 @@ export function createLambdaApiGatewayProxy(
         ),
       })) ?? notFound();
 
+    const setCookieHeaders = getResponseSetCookieHeaders(response);
+
     return {
       statusCode: response.status,
       body: response.body,
-      cookies: [...parseResponseCookies(response).values()],
+      cookies: setCookieHeaders,
       headers: [...response.headers].reduce<Record<string, string>>(
         (allHeaders, [header, value]) => {
           if (header.toLowerCase() === 'set-cookie') return allHeaders;

@@ -8,6 +8,7 @@ import {createHeaders} from '@quilted/http';
 
 import {notFound} from './response';
 import type {HttpHandler} from './types';
+import {getResponseSetCookieHeaders} from './cookies';
 
 export function createHttpServer(handler: HttpHandler) {
   return createServer(createHttpRequestListener(handler));
@@ -55,15 +56,18 @@ export function createHttpRequestListener(
         })) ?? notFound();
 
       const {status, headers, body: resultBody} = result;
+      const setCookieHeaders = getResponseSetCookieHeaders(result);
 
       response.writeHead(
         status,
         [...headers].reduce<Record<string, string | string[]>>(
           (allHeaders, [key, value]) => {
+            if (key.toLowerCase() === 'set-cookie') return allHeaders;
+
             allHeaders[key] = value;
             return allHeaders;
           },
-          {},
+          setCookieHeaders ? {'Set-Cookie': setCookieHeaders} : {},
         ),
       );
 

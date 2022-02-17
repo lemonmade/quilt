@@ -12,7 +12,7 @@ export {
   getRequestCookie,
   setResponseCookie,
   deleteResponseCookie,
-  parseResponseCookies,
+  getResponseSetCookieHeaders,
 } from './cookies';
 
 export type {
