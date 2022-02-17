@@ -1,10 +1,6 @@
 import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
-import {
-  notFound,
-  createHeaders,
-  getResponseSetCookieHeaders,
-} from '@quilted/http-handlers';
+import {notFound, createHeaders} from '@quilted/http-handlers';
 import type {HttpHandler} from '@quilted/http-handlers';
 
 export function createLambdaApiGatewayProxy(
@@ -36,12 +32,10 @@ export function createLambdaApiGatewayProxy(
         ),
       })) ?? notFound();
 
-    const setCookieHeaders = getResponseSetCookieHeaders(response);
-
     return {
       statusCode: response.status,
       body: response.body,
-      cookies: setCookieHeaders,
+      cookies: response.cookies.getAll(),
       headers: [...response.headers].reduce<Record<string, string>>(
         (allHeaders, [header, value]) => {
           if (header.toLowerCase() === 'set-cookie') return allHeaders;

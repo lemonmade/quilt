@@ -1,5 +1,10 @@
 import type {Match, EnhancedURL} from '@quilted/routing';
-import type {Headers, ReadonlyHeaders} from '@quilted/http';
+import type {
+  Headers,
+  ReadonlyCookies,
+  ReadonlyHeaders,
+  WritableCookies,
+} from '@quilted/http';
 
 export interface RequestOptions {
   readonly url: URL | string;
@@ -13,6 +18,7 @@ export interface Request {
   readonly body?: string | null;
   readonly method: string;
   readonly headers: ReadonlyHeaders;
+  readonly cookies: ReadonlyCookies;
 }
 
 export interface CookieDefinition {
@@ -25,10 +31,15 @@ export interface CookieDefinition {
   httpOnly?: boolean;
 }
 
+export interface EnhancedWritableCookies extends WritableCookies {
+  getAll(): string[] | undefined;
+}
+
 export interface Response {
   readonly body?: string;
   readonly status: number;
   readonly headers: Headers;
+  readonly cookies: EnhancedWritableCookies;
 }
 
 export interface ResponseOptions {

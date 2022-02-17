@@ -8,6 +8,7 @@ export {
   PermissionsPolicyDirective,
   PermissionsPolicySpecialSource,
 } from '@quilted/http';
+export type {Cookies, CookieOptions} from '@quilted/http';
 
 export {
   useCookie,

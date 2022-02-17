@@ -1,3 +1,5 @@
+import ServerCookies from 'cookie';
+
 import {createHeaders, HttpMethod} from '@quilted/http';
 
 import {enhanceUrl} from '@quilted/routing';
@@ -81,5 +83,23 @@ function createRequest(
     body,
     method,
     headers,
+    cookies: requestCookiesFromHeaders(headers),
+  };
+}
+
+function requestCookiesFromHeaders(
+  headers: Request['headers'],
+): Request['cookies'] {
+  const internalCookies = ServerCookies.parse(headers.get('Cookie') ?? '');
+
+  return {
+    get: (key) => internalCookies[key],
+    has: (key) => internalCookies[key] != null,
+    *entries() {
+      yield* Object.entries(internalCookies);
+    },
+    *[Symbol.iterator]() {
+      yield* Object.values(internalCookies);
+    },
   };
 }

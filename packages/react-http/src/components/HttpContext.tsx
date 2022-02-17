@@ -3,9 +3,9 @@ import {ContextType, useContext, useMemo} from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {useSerialized} from '@quilted/react-html';
+import type {Cookies} from '@quilted/http';
 
 import {HttpAppContext, HttpServerContext} from '../context';
-import type {Cookies} from '../types';
 
 const SERIALIZED_ID = '_quilt.http';
 

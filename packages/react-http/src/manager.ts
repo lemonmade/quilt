@@ -1,11 +1,15 @@
 import ServerCookies from 'cookie';
 
 import {createHeaders} from '@quilted/http';
-import type {StatusCode, CookieOptions, ReadonlyHeaders} from '@quilted/http';
+import type {
+  StatusCode,
+  Cookies,
+  CookieOptions,
+  ReadonlyHeaders,
+} from '@quilted/http';
 import type {ServerActionKind} from '@quilted/react-server-render';
 
 import {SERVER_ACTION_ID} from './constants';
-import type {Cookies} from './types';
 
 interface Options {
   headers?: ReadonlyHeaders;

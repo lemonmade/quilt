@@ -1,4 +1,9 @@
-export type {CookieOptions} from './cookies';
+export type {
+  Cookies,
+  CookieOptions,
+  ReadonlyCookies,
+  WritableCookies,
+} from './cookies';
 export {createHeaders} from './headers';
 export type {Headers, ReadonlyHeaders} from './headers';
 export {HttpMethod} from './method';
