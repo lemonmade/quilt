@@ -63,7 +63,7 @@ describe('http', () => {
     });
 
     it('can set response cookies from the node server', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'basic-app', debug: true}, async (workspace) => {
         const {fs} = workspace;
 
         await fs.write({
