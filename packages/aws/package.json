@@ -1,7 +1,7 @@
 {
   "name": "@quilted/aws",
   "type": "module",
-  "version": "0.3.27",
+  "version": "0.3.28",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http-handlers": "^0.2.19",
+    "@quilted/http-handlers": "^0.2.20",
     "@types/aws-lambda": "^8.0.0",
     "common-tags": "^1.8.0"
   },
