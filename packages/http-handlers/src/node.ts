@@ -34,13 +34,18 @@ export function createHttpRequestListener(
         });
       });
 
+      const forwardedProtocolHeader = request.headers['x-forwarded-proto'];
+      const forwardedProtocol = Array.isArray(forwardedProtocolHeader)
+        ? forwardedProtocolHeader[0]
+        : forwardedProtocolHeader?.split(/\s*,\s*/)[0];
+
       const result =
         (await handler.run({
           body,
           method: request.method!,
           url: new URL(
             request.url!,
-            `${request.headers['x-forwarded-proto'] ?? 'http'}://${
+            `${forwardedProtocol ?? 'http'}://${
               request.headers['x-forwarded-host'] ?? request.headers.host
             }`,
           ),
