@@ -180,23 +180,38 @@ function tsInterfaceForObjectType(
     t.identifier(type.name),
     null,
     null,
-    t.tsInterfaceBody(fields),
+    t.tsInterfaceBody([
+      t.tsPropertySignature(
+        t.identifier('__typename'),
+        t.tsTypeAnnotation(t.tsLiteralType(t.stringLiteral(type.name))),
+      ),
+      ...fields,
+    ]),
   );
 }
 
 function variableIdentifierForField(field: GraphQLField<any, any>) {
   const identifier = t.identifier('variables');
   identifier.typeAnnotation = t.tsTypeAnnotation(
-    t.tsTypeLiteral(
-      field.args.map(({name, type}) => {
-        const property = t.tsPropertySignature(
-          t.identifier(name),
-          t.tsTypeAnnotation(tsTypeReferenceForGraphQLType(type)),
-        );
-        property.optional = !isNonNullType(type);
-        return property;
-      }),
-    ),
+    field.args.length === 0
+      ? t.tSTypeReference(
+          t.identifier('Record'),
+          t.tsTypeParameterInstantiation([
+            t.tsStringKeyword(),
+            t.tsNeverKeyword(),
+          ]),
+        )
+      : t.tsTypeLiteral(
+          field.args.map(({name, type}) => {
+            const property = t.tsPropertySignature(
+              t.identifier(name),
+              t.tsTypeAnnotation(tsTypeReferenceForGraphQLType(type)),
+            );
+            property.optional = !isNonNullType(type);
+            property.readonly = true;
+            return property;
+          }),
+        ),
   );
   return identifier;
 }
