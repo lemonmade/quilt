@@ -19,6 +19,7 @@ import type {
   GraphQLUnionType,
   GraphQLType,
   GraphQLField,
+  GraphQLNamedType,
 } from 'graphql';
 
 import type {SchemaOutputKind} from '../types';
@@ -46,14 +47,7 @@ export function generateSchemaTypes(
   const printOutputTypes = kind.kind !== 'inputTypes';
 
   for (const type of Object.values(schema.getTypeMap())) {
-    if (type.name.startsWith('__')) {
-      continue;
-    }
-
-    if (
-      isScalarType(type) &&
-      Object.prototype.hasOwnProperty.call(scalarTypeMap, type.name)
-    ) {
+    if (excludeTypeFromGeneration(type)) {
       continue;
     }
 
@@ -127,9 +121,17 @@ export function generateSchemaTypes(
   return generate(file).code;
 }
 
+function excludeTypeFromGeneration(type: GraphQLNamedType) {
+  return (
+    type.name.startsWith('__') ||
+    (isScalarType(type) &&
+      Object.prototype.hasOwnProperty.call(scalarTypeMap, type.name))
+  );
+}
+
 function tsTypeForSchema(schema: GraphQLSchema) {
   const fields = Object.values(schema.getTypeMap())
-    .filter((type) => !type.name.startsWith('__'))
+    .filter((type) => !excludeTypeFromGeneration(type))
     .map((type) => {
       return t.tsPropertySignature(
         t.identifier(type.name),
