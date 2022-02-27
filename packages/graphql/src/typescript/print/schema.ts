@@ -7,6 +7,7 @@ import {
   isListType,
   isInputObjectType,
   printSchema,
+  isInterfaceType,
 } from 'graphql';
 import type {
   GraphQLSchema,
@@ -79,6 +80,12 @@ export function generateSchemaTypes(
       fileBody.push(
         t.exportNamedDeclaration(tsInterfaceForInputObjectType(type)),
       );
+    } else if (isInterfaceType(type)) {
+      if (printOutputTypes) {
+        fileBody.push(
+          t.exportNamedDeclaration(tsInterfaceForInterfaceType(type, schema)),
+        );
+      }
     } else if (printOutputTypes) {
       fileBody.push(t.exportNamedDeclaration(tsInterfaceForObjectType(type)));
     }
@@ -86,6 +93,7 @@ export function generateSchemaTypes(
 
   if (kind.kind === 'definitions') {
     fileBody.push(
+      t.exportNamedDeclaration(tsTypeForSchema(schema)),
       t.variableDeclaration('const', [
         t.variableDeclarator(
           t.identifier('schema'),
@@ -117,6 +125,24 @@ export function generateSchemaTypes(
   );
 
   return generate(file).code;
+}
+
+function tsTypeForSchema(schema: GraphQLSchema) {
+  const fields = Object.values(schema.getTypeMap())
+    .filter((type) => !type.name.startsWith('__'))
+    .map((type) => {
+      return t.tsPropertySignature(
+        t.identifier(type.name),
+        t.tsTypeAnnotation(t.tsTypeReference(t.identifier(type.name))),
+      );
+    });
+
+  return t.tsInterfaceDeclaration(
+    t.identifier('Schema'),
+    null,
+    null,
+    t.tsInterfaceBody(fields),
+  );
 }
 
 function tsTypeReferenceForGraphQLType(type: GraphQLType): t.TSType {
@@ -164,9 +190,40 @@ function tsInterfaceForInputObjectType(type: GraphQLInputObjectType) {
   );
 }
 
-function tsInterfaceForObjectType(
-  type: GraphQLObjectType | GraphQLInterfaceType,
+function tsInterfaceForInterfaceType(
+  type: GraphQLInterfaceType,
+  schema: GraphQLSchema,
 ) {
+  const fields = Object.entries(type.getFields()).map(([name, field]) => {
+    return t.tsMethodSignature(
+      t.identifier(name),
+      null,
+      [variableIdentifierForField(field)],
+      t.tsTypeAnnotation(tsTypeReferenceForGraphQLType(field.type)),
+    );
+  });
+
+  return t.tsInterfaceDeclaration(
+    t.identifier(type.name),
+    null,
+    null,
+    t.tsInterfaceBody([
+      t.tsPropertySignature(
+        t.identifier('__possibleTypes'),
+        t.tsTypeAnnotation(
+          t.tsUnionType(
+            schema
+              .getPossibleTypes(type)
+              .map((value) => t.tsTypeReference(t.identifier(value.name))),
+          ),
+        ),
+      ),
+      ...fields,
+    ]),
+  );
+}
+
+function tsInterfaceForObjectType(type: GraphQLObjectType) {
   const fields = Object.entries(type.getFields()).map(([name, field]) => {
     return t.tsMethodSignature(
       t.identifier(name),
