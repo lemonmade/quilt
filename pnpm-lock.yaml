@@ -7,6 +7,7 @@ importers:
       '@changesets/changelog-github': ^0.4.3
       '@changesets/cli': ^2.21.0
       '@quilted/craft': ^0.1.0
+      '@quilted/sewing-kit': ^0.2.0
       '@rollup/plugin-commonjs': ^21.0.0
       '@rollup/plugin-node-resolve': ^13.0.0
       '@types/fs-extra': ^9.0.13
@@ -23,6 +24,7 @@ importers:
       '@changesets/changelog-github': 0.4.3
       '@changesets/cli': 2.21.0
       '@quilted/craft': link:packages/craft
+      '@quilted/sewing-kit': link:packages/sewing-kit
       '@rollup/plugin-commonjs': 21.0.2_rollup@2.52.6
       '@rollup/plugin-node-resolve': 13.0.0_rollup@2.52.6
       '@types/fs-extra': 9.0.13
