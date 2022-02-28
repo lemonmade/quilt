@@ -19,9 +19,9 @@
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
     "develop": "node ./scripts/sewing-kit-from-source develop",
-    "prerelease": "yarn build",
-    "version-bump": "lerna version --no-push && yarn install && git commit -am 'fix yarn after lerna version-bump' && git push --follow-tags",
-    "deploy": "lerna publish from-package --yes --no-verify-access"
+    "prerelease": "pnpm build",
+    "version-bump": "changelog version",
+    "deploy": "pnpm publish -r"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.3",
@@ -29,7 +29,6 @@
     "@quilted/craft": "^0.1.0",
     "@types/fs-extra": "^9.0.13",
     "fs-extra": "^10.0.0",
-    "lerna": "3.22.1",
     "nanoid": "^3.1.30",
     "playwright": "^1.15.0",
     "react": "^17.0.1",
@@ -46,5 +45,5 @@
   "browserslist": [
     "extends @quilted/browserslist-config/defaults"
   ],
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "pnpm@6.32.2"
 }

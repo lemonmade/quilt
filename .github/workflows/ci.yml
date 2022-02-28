@@ -7,40 +7,44 @@ jobs:
     name: Lint 💅
     runs-on: ubuntu-latest
     steps:
-      - uses: quilt-framework/action-prepare@v1
+      - uses: actions/checkout@v1
+      - uses: ./.github/workflows/actions/prepare.yml
       - uses: quilt-framework/action-lint@v2
         with:
-          command: yarn lint
+          command: pnpm lint
 
   type-check:
     name: Type check 🧮
     runs-on: ubuntu-latest
     steps:
-      - uses: quilt-framework/action-prepare@v1
+      - uses: actions/checkout@v1
+      - uses: ./.github/workflows/actions/prepare.yml
       - uses: quilt-framework/action-type-check@v2
         with:
-          command: yarn type-check
+          command: pnpm type-check
 
   unit-tests:
     name: Unit tests 🧪
     runs-on: ubuntu-latest
     steps:
-      - uses: quilt-framework/action-prepare@v1
+      - uses: actions/checkout@v1
+      - uses: ./.github/workflows/actions/prepare.yml
       - uses: quilt-framework/action-test@v2
         with:
-          command: yarn test
+          command: pnpm test
           arguments: --exclude-pattern tests/e2e
 
   e2e-tests:
     name: End-to-end tests 🔬
     runs-on: ubuntu-latest
     steps:
-      - uses: quilt-framework/action-prepare@v1
+      - uses: actions/checkout@v1
+      - uses: ./.github/workflows/actions/prepare.yml
       - uses: quilt-framework/action-build@v2
         with:
-          command: yarn build
+          command: pnpm build
           arguments: --only-project package:*
       - uses: quilt-framework/action-test@v2
         with:
-          command: yarn test
+          command: pnpm test
           arguments: tests/e2e/

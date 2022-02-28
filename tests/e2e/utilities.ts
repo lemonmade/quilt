@@ -36,7 +36,6 @@ export interface Command {
   readonly sewingKit: SewingKitCli;
   run(command: string, options?: ExecOptions): RunResult;
   node(script: string, options?: ExecOptions): RunResult;
-  yarn(command: string, options?: ExecOptions): RunResult;
 }
 
 export interface SewingKitCli {
@@ -186,7 +185,6 @@ export async function withWorkspace<T>(
       },
       run: (...args) => runCommand(...args),
       node: (...args) => runNode(...args),
-      yarn: (command, options) => runCommand(`yarn ${command}`, options),
     },
   };
 
