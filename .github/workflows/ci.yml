@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/workflows/actions/prepare.yml
+      - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-lint@v2
         with:
           command: pnpm lint
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/workflows/actions/prepare.yml
+      - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-type-check@v2
         with:
           command: pnpm type-check
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/workflows/actions/prepare.yml
+      - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/workflows/actions/prepare.yml
+      - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build

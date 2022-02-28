@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/workflows/actions/prepare.yml
+      - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
