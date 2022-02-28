@@ -24,6 +24,8 @@
     "deploy": "lerna publish from-package --yes --no-verify-access"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.4.3",
+    "@changesets/cli": "^2.21.0",
     "@quilted/craft": "^0.1.0",
     "@types/fs-extra": "^9.0.13",
     "fs-extra": "^10.0.0",
