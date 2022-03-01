@@ -1,5 +1,5 @@
 import {unlinkSync} from 'fs';
-import {basename, dirname} from 'path';
+import {basename, dirname, resolve} from 'path';
 import {access} from 'fs/promises';
 
 import glob from 'globby';
@@ -242,13 +242,8 @@ async function normalizeConfigurationFile(file: string) {
 
     const bundle = await rollup({
       input: file,
+      external: [/node_modules/],
       plugins: [
-        nodeExternals({
-          builtins: true,
-          deps: true,
-          devDeps: true,
-          exclude: fromSource ? [/@quilted/] : undefined,
-        }),
         nodeResolve({
           extensions: ['.ts', '.tsx', '.mjs', '.js', '.json'],
           exportConditions,
