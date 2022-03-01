@@ -29,6 +29,8 @@
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@quilted/craft": "^0.1.0",
+    "@quilted/eslint-config": "^0.1.0",
+    "@quilted/prettier": "^0.2.0",
     "@quilted/sewing-kit": "^0.2.0",
     "@types/fs-extra": "^9.0.13",
     "fs-extra": "^10.0.0",
