@@ -210,12 +210,14 @@ async function normalizeConfigurationFile(file: string) {
       {default: commonjs},
       {default: nodeResolve},
       {default: esbuild},
+      {default: nodeExternals},
     ] = await Promise.all([
       import('rollup'),
       import('@rollup/plugin-json'),
       import('@rollup/plugin-commonjs'),
       import('@rollup/plugin-node-resolve'),
       import('rollup-plugin-esbuild'),
+      import('rollup-plugin-node-externals'),
     ]);
 
     const jsFile = file.replace(/\.tsx?/, '.js');
@@ -229,10 +231,12 @@ async function normalizeConfigurationFile(file: string) {
       'default',
     ];
 
+    const fromSource = Boolean(process.env.SEWING_KIT_FROM_SOURCE);
+
     // When building from source, we use a special export condition for
     // some packages that resolves to source code. This allows us to
     // use those packages for the build, without having to build them first.
-    if (process.env.SEWING_KIT_FROM_SOURCE) {
+    if (fromSource) {
       exportConditions.unshift('quilt:internal');
     }
 
@@ -240,6 +244,11 @@ async function normalizeConfigurationFile(file: string) {
       input: file,
       external: [/node_modules/],
       plugins: [
+        nodeExternals({
+          builtins: true,
+          deps: !fromSource,
+          devDeps: !fromSource,
+        }),
         nodeResolve({
           extensions: ['.ts', '.tsx', '.mjs', '.js', '.json'],
           exportConditions,
