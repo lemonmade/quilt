@@ -260,11 +260,13 @@ async function normalizeConfigurationFile(file: string) {
       onwarn() {},
     });
 
-    await bundle.write({
+    const result = await bundle.write({
       file: jsFile,
       format: 'esm',
       inlineDynamicImports: true,
     });
+
+    console.log(result.output[0]);
 
     try {
       const {default: defaultExport} = await import(jsFile);
