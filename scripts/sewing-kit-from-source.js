@@ -13,7 +13,6 @@ const outFile = resolve(root, '.sewing-kit/internal/cli.js');
 
 const bundle = await rollup({
   input: resolve(root, 'packages/sewing-kit/src/cli/cli.ts'),
-  external: [/node_modules/],
   plugins: [
     nodeExternals(),
     nodeResolve({
