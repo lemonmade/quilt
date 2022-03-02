@@ -15,10 +15,11 @@
   },
   "devDependencies": {
     "@quilted/craft": "^0.1.0",
+    "@quilted/eslint-config": "^0.1.0",
     "@quilted/sewing-kit": "^0.2.0",
     "typescript": "^4.3.0"
   },
-  "prettier": "@quilted/prettier",
+  "prettier": "@quilted/craft/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/workspace",
     "overrides": [

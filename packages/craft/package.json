@@ -18,6 +18,9 @@
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
+    },
+    "./prettier": {
+      "require": "./prettier/index.cjs"
     }
   },
   "typesVersions": {

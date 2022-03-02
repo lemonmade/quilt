@@ -26,7 +26,6 @@
     "@quilted/craft": "^0.1.0",
     "@quilted/sewing-kit-jest": "^0.1.0",
     "@quilted/eslint-config": "^0.1.0",
-    "@quilted/prettier": "^0.2.0",
     "@quilted/sewing-kit": "^0.2.0",
     "esbuild": "^0.14.0",
     "react": "^17.0.1",
@@ -34,7 +33,7 @@
     "source-map-support": "^0.5.0",
     "typescript": "4.2.x"
   },
-  "prettier": "@quilted/prettier",
+  "prettier": "@quilted/craft/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/workspace",
     "ignorePatterns": [

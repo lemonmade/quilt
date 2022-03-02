@@ -9,7 +9,6 @@ importers:
       '@quilted/browserslist-config': ^0.1.0
       '@quilted/craft': ^0.1.0
       '@quilted/eslint-config': ^0.1.0
-      '@quilted/prettier': ^0.2.0
       '@quilted/sewing-kit': ^0.2.0
       '@quilted/sewing-kit-jest': ^0.1.0
       esbuild: ^0.14.0
@@ -23,7 +22,6 @@ importers:
       '@quilted/browserslist-config': link:packages/browserslist-config
       '@quilted/craft': link:packages/craft
       '@quilted/eslint-config': link:packages/eslint-config
-      '@quilted/prettier': link:packages/prettier
       '@quilted/sewing-kit': link:packages/sewing-kit
       '@quilted/sewing-kit-jest': link:packages/sewing-kit-jest
       esbuild: 0.14.23
@@ -34,12 +32,16 @@ importers:
 
   examples/basic-app:
     specifiers:
+      '@quilted/browserslist-config': ^0.1.0
       '@quilted/craft': ^0.1.0
+      '@quilted/eslint-config': ^0.1.0
       '@quilted/quilt': ^0.5.0
     dependencies:
       '@quilted/quilt': link:../../packages/quilt
     devDependencies:
+      '@quilted/browserslist-config': link:../../packages/browserslist-config
       '@quilted/craft': link:../../packages/craft
+      '@quilted/eslint-config': link:../../packages/eslint-config
 
   packages/async:
     specifiers:
