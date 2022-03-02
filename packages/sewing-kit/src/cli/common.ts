@@ -1,6 +1,6 @@
 import {promisify} from 'util';
 import {join} from 'path';
-import {execFile} from 'child_process';
+import {exec as childExec} from 'child_process';
 import {Readable, Writable} from 'stream';
 
 import arg from 'arg';
@@ -853,7 +853,7 @@ export class StepExecError extends DiagnosticError {
   }
 }
 
-const promiseExec = promisify(execFile);
+const promiseExec = promisify(childExec);
 
 const exec: BaseStepRunner['exec'] = (
   command,
@@ -864,7 +864,10 @@ const exec: BaseStepRunner['exec'] = (
     ? join('node_modules/.bin', command)
     : command;
 
-  const execPromise = promiseExec(normalizedCommand, args, options);
+  const execPromise = promiseExec(
+    [normalizedCommand, ...(args ?? [])].join(' '),
+    options,
+  );
 
   const wrappedPromise = new Promise(
     // eslint-disable-next-line no-async-promise-executor

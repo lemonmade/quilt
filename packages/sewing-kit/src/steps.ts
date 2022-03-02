@@ -1,10 +1,10 @@
-import type {ExecFileOptions, PromiseWithChild} from 'child_process';
+import type {ExecOptions, PromiseWithChild} from 'child_process';
 
 import type {Project, Workspace} from './model';
 import type {WorkspacePlugin, AnyPlugin} from './plugins';
 import type {Log, Loggable} from './types';
 
-export interface StepRunnerExecOptions extends ExecFileOptions {
+export interface StepRunnerExecOptions extends ExecOptions {
   /**
    * You can use this option to indicate that the command being run was
    * installed as part of a node module. When this option is `true`,

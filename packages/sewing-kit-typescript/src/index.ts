@@ -111,17 +111,19 @@ export function typescriptWorkspace() {
           async run(step) {
             const {typescriptHeap} = await configuration();
             const heap = await typescriptHeap!.run(undefined);
-            const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
+            const heapOption = heap
+              ? `--max-old-space-size=${heap}`
+              : undefined;
 
             await step.exec(
-              'node',
-              [
-                ...heapArguments,
-                workspace.fs.resolvePath('node_modules/.bin/tsc'),
-                '--build',
-                '--pretty',
-              ],
-              {env: {FORCE_COLOR: '1', ...process.env}},
+              workspace.fs.resolvePath('node_modules/.bin/tsc'),
+              ['--build', '--pretty'],
+              {
+                env: {
+                  FORCE_COLOR: '1',
+                  NODE_OPTIONS: heapOption,
+                },
+              },
             );
           },
         }),
@@ -196,17 +198,20 @@ export function typescriptWorkspace() {
           async run(step) {
             const {typescriptHeap} = await configuration();
             const heap = await typescriptHeap!.run(undefined);
-            const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
+            const heapOption = heap
+              ? `--max-old-space-size=${heap}`
+              : undefined;
 
             await step.exec(
-              'node',
-              [
-                ...heapArguments,
-                workspace.fs.resolvePath('node_modules/.bin/tsc'),
-                '--build',
-                '--pretty',
-              ],
-              {env: {FORCE_COLOR: '1', ...process.env}},
+              workspace.fs.resolvePath('node_modules/.bin/tsc'),
+              ['--build', '--pretty'],
+              {
+                env: {
+                  ...process.env,
+                  FORCE_COLOR: '1',
+                  NODE_OPTIONS: heapOption,
+                },
+              },
             );
           },
         }),
