@@ -6,7 +6,7 @@ import {
 } from '@quilted/react-async';
 
 import type {AsyncQuery} from './types';
-import {AsyncLoaderLoad} from '@quilted/async/src';
+import type {AsyncLoaderLoad} from '@quilted/async';
 
 export interface Options extends AsyncLoaderOptions {}
 

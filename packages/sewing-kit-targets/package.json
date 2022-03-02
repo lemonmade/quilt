@@ -34,6 +34,9 @@
     "core-js": "^3.15.0",
     "semver": "^7.0.0"
   },
+  "devDependencies": {
+    "@quilted/sewing-kit-babel": "^0.1.0"
+  },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
     "@quilted/sewing-kit": "^0.2.0",

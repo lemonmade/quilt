@@ -10,8 +10,8 @@ import type {
 } from '@quilted/sewing-kit';
 
 import type {Manifest} from '@quilted/async/server';
+import type {HttpState} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
-import type {HttpState} from '@quilted/react-http/server';
 
 import {
   PRELOAD_ALL_GLOBAL,

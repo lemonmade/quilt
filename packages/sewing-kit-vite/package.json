@@ -30,10 +30,13 @@
   "dependencies": {
     "vite": "^2.3.0"
   },
+  "devDependencies": {
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-rollup": "^0.1.0"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/sewing-kit": "^0.2.0",
-    "@quilted/sewing-kit-babel": "^0.1.0",
     "@quilted/sewing-kit-rollup": "^0.1.0",
     "rollup": "^2.0.0"
   },

@@ -27,9 +27,14 @@
     }
   },
   "sideEffects": false,
+  "devDependencies": {
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-prettier": "^0.1.0"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.0"
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-prettier": "^0.1.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

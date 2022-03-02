@@ -10,11 +10,11 @@
   },
   "publishConfig": {
     "access": "public",
-    "@quilted:registry": "https://registry.npmjs.org"
-  },
-  "bin": {
-    "sewing-kit": "./bin/sewing-kit.mjs",
-    "sk": "./bin/sk.mjs"
+    "@quilted:registry": "https://registry.npmjs.org",
+    "bin": {
+      "sewing-kit": "./bin/sewing-kit.mjs",
+      "sk": "./bin/sk.mjs"
+    }
   },
   "exports": {
     ".": {
