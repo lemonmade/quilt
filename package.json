@@ -51,5 +51,12 @@
   "browserslist": [
     "extends @quilted/browserslist-config/defaults"
   ],
-  "packageManager": "pnpm@6.32.2"
+  "packageManager": "pnpm@6.32.2",
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/core"
+      ]
+    }
+  }
 }
