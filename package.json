@@ -26,28 +26,26 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.3",
     "@changesets/cli": "^2.21.0",
-    "@rollup/plugin-commonjs": "^21.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@quilted/browserslist-config": "^0.1.0",
     "@quilted/craft": "^0.1.0",
     "@quilted/eslint-config": "^0.1.0",
     "@quilted/prettier": "^0.2.0",
     "@quilted/sewing-kit": "^0.2.0",
     "@types/fs-extra": "^9.0.13",
+    "esbuild": "^0.14.0",
     "fs-extra": "^10.0.0",
     "nanoid": "^3.1.30",
     "playwright": "^1.15.0",
-    "rollup": "^2.0.0",
-    "rollup-plugin-esbuild": "^4.8.0",
-    "rollup-plugin-node-externals": "^4.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "source-map-support": "^0.5.0",
     "typescript": "4.2.x"
   },
   "prettier": "@quilted/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/workspace",
     "ignorePatterns": [
-      "sewing-kit-from-source.js"
+      "tests/e2e/output"
     ]
   },
   "browserslist": [

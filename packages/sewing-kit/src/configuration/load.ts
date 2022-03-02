@@ -1,5 +1,5 @@
 import {unlinkSync} from 'fs';
-import {basename, dirname, resolve} from 'path';
+import {basename, dirname} from 'path';
 import {access} from 'fs/promises';
 
 import glob from 'globby';
@@ -210,35 +210,15 @@ async function normalizeConfigurationFile(file: string) {
       {default: commonjs},
       {default: nodeResolve},
       {default: esbuild},
-      {default: nodeExternals},
     ] = await Promise.all([
       import('rollup'),
       import('@rollup/plugin-json'),
       import('@rollup/plugin-commonjs'),
       import('@rollup/plugin-node-resolve'),
       import('rollup-plugin-esbuild'),
-      import('rollup-plugin-node-externals'),
     ]);
 
     const jsFile = file.replace(/\.tsx?/, '.js');
-
-    const exportConditions = [
-      'sewing-kit:esnext',
-      'module',
-      'import',
-      'node',
-      'require',
-      'default',
-    ];
-
-    const fromSource = Boolean(process.env.SEWING_KIT_FROM_SOURCE);
-
-    // When building from source, we use a special export condition for
-    // some packages that resolves to source code. This allows us to
-    // use those packages for the build, without having to build them first.
-    if (fromSource) {
-      exportConditions.unshift('quilt:internal');
-    }
 
     const bundle = await rollup({
       input: file,
@@ -246,7 +226,14 @@ async function normalizeConfigurationFile(file: string) {
       plugins: [
         nodeResolve({
           extensions: ['.ts', '.tsx', '.mjs', '.js', '.json'],
-          exportConditions,
+          exportConditions: [
+            'sewing-kit:esnext',
+            'module',
+            'import',
+            'node',
+            'require',
+            'default',
+          ],
         }),
         commonjs(),
         json(),
