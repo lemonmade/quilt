@@ -11,6 +11,7 @@
     "*.test.tsx",
     "tests/e2e/**/*"
   ],
+  "exclude": ["tests/e2e/output/**/*"],
   "references": [
     {"path": "./packages/async"},
     {"path": "./packages/aws"},
