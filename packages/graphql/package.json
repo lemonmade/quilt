@@ -111,10 +111,13 @@
   },
   "devDependencies": {
     "@jest/globals": "^27.0.0",
+    "@jest/transform": "^27.0.0",
     "@quilted/sewing-kit": "^0.2.0",
     "@quilted/sewing-kit-jest": "^0.1.0",
     "@quilted/sewing-kit-rollup": "^0.1.0",
-    "@quilted/sewing-kit-vite": "^0.1.0"
+    "@quilted/sewing-kit-vite": "^0.1.0",
+    "expect": "^27.0.0",
+    "jest-matcher-utils": "^27.0.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
