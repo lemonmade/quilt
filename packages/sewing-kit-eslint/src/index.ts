@@ -73,7 +73,7 @@ export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
                 ...extensions.map((ext) => ['--ext', ext]).flat(),
               ],
               {
-                fromNodeModules: true,
+                fromNodeModules: import.meta.url,
                 env: {FORCE_COLOR: '1', ...process.env},
               },
             );

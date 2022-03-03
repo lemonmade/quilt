@@ -154,7 +154,6 @@ export function babelRollup() {
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,
-                // @ts-expect-error Babel types have not been updated yet
                 targets,
                 presets: babelPresetsOption,
                 plugins: babelPluginsOption,

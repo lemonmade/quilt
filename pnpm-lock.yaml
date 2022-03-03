@@ -618,11 +618,14 @@ importers:
 
   packages/sewing-kit-prettier:
     specifiers:
+      '@quilted/sewing-kit': ^0.2.0
       '@types/prettier': ^2.0.0
       prettier: ^2.3.0
     dependencies:
       '@types/prettier': 2.3.1
       prettier: 2.3.2
+    devDependencies:
+      '@quilted/sewing-kit': link:../sewing-kit
 
   packages/sewing-kit-react:
     specifiers:

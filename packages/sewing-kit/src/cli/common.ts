@@ -1,6 +1,7 @@
 import {promisify} from 'util';
-import {join} from 'path';
-import {exec as childExec} from 'child_process';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
+import {exec as childExec, execSync} from 'child_process';
 import {Readable, Writable} from 'stream';
 
 import arg from 'arg';
@@ -861,7 +862,14 @@ const exec: BaseStepRunner['exec'] = (
   {fromNodeModules, ...options} = {},
 ) => {
   const normalizedCommand = fromNodeModules
-    ? join('node_modules/.bin', command)
+    ? join(
+        binDirectoryForModule(
+          fromNodeModules === true
+            ? process.cwd()
+            : dirname(fileURLToPath(fromNodeModules)),
+        ),
+        command,
+      )
     : command;
 
   const execPromise = promiseExec(
@@ -892,4 +900,9 @@ function stringifyOptions(variant: {[key: string]: any} = {}) {
       return value === true ? key : `${key}: ${JSON.stringify(value)}`;
     })
     .join(',');
+}
+
+function binDirectoryForModule(cwd: string) {
+  const result = execSync('npm bin', {cwd});
+  return result.toString().trim();
 }

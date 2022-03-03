@@ -31,6 +31,9 @@
     "@types/prettier": "^2.0.0",
     "prettier": "^2.3.0"
   },
+  "devDependencies": {
+    "@quilted/sewing-kit": "^0.2.0"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/sewing-kit": "^0.2.0"

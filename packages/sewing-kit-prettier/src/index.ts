@@ -81,7 +81,7 @@ export function prettier({
                 '--no-error-on-unmatched-pattern',
               ],
               {
-                fromNodeModules: true,
+                fromNodeModules: import.meta.url,
               },
             );
 

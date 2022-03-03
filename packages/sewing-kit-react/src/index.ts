@@ -1,3 +1,5 @@
+import {createRequire} from 'module';
+
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {WaterfallHook, ResolvedHooks} from '@quilted/sewing-kit';
 
@@ -29,6 +31,8 @@ declare module '@quilted/sewing-kit' {
   interface DevelopProjectConfigurationHooks extends ReactHooks {}
   interface TestProjectConfigurationHooks extends ReactHooks {}
 }
+
+const require = createRequire(import.meta.url);
 
 /**
  * Adds configuration for React to a variety of other build tools.
@@ -78,7 +82,7 @@ export function react({
         ]);
 
         presets.push([
-          '@babel/preset-react',
+          require.resolve('@babel/preset-react'),
           runtime === 'automatic'
             ? {
                 runtime,

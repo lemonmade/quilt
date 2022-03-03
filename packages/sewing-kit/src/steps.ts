@@ -7,11 +7,12 @@ import type {Log, Loggable} from './types';
 export interface StepRunnerExecOptions extends ExecOptions {
   /**
    * You can use this option to indicate that the command being run was
-   * installed as part of a node module. When this option is `true`,
-   * sewing-kit will prepend the path to the workspace’s node module
-   * binary directory (typically, `<root>/node_modules/.bin`).
+   * installed as a binary for a node module. You should pass this option
+   * the `import.meta.url` so that we can select the correct binary location
+   * for this module. When set to `true`, this script will assume you want
+   * to get the current working directory's binary directory.
    */
-  fromNodeModules?: boolean;
+  fromNodeModules?: string | boolean;
 }
 
 export type StepRunnerExecResult = PromiseWithChild<{
