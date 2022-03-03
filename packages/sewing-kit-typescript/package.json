@@ -28,7 +28,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@babel/preset-typescript": "^7.13.0"
+    "@babel/preset-typescript": "^7.13.0",
+    "babel-jest": "^27.0.0"
   },
   "devDependencies": {
     "@quilted/sewing-kit": "^0.2.0",
