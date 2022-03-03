@@ -125,7 +125,10 @@ export function esnextBuild() {
             configure.babelPresets?.((presets) => {
               return presets.filter((preset) => {
                 const presetName = Array.isArray(preset) ? preset[0] : preset;
-                return presetName !== '@babel/preset-env';
+                return (
+                  typeof presetName !== 'string' ||
+                  !presetName.includes('@babel/preset-env')
+                );
               });
             });
 
