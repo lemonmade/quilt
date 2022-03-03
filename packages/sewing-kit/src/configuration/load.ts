@@ -271,9 +271,6 @@ async function normalizeConfigurationFile(file: string) {
     try {
       const {default: defaultExport} = await import(jsFile);
       return defaultExport;
-    } catch (error) {
-      console.log(output[0].code);
-      throw error;
     } finally {
       unlinkSync(jsFile);
     }

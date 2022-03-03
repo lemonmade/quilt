@@ -32,7 +32,7 @@ jobs:
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test
-          arguments: --exclude-pattern tests/e2e
+          arguments: -- --exclude-pattern tests/e2e
 
   e2e-tests:
     name: End-to-end tests 🔬
