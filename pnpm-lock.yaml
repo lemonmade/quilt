@@ -361,7 +361,7 @@ importers:
       '@types/prettier': ^2.0.0
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
-      preact: ^10.0.0
+      preact: ^10.5.0
       preact-render-to-string: ^5.0.0
     dependencies:
       '@quilted/async': link:../async
@@ -459,12 +459,15 @@ importers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
       '@quilted/react-server-render': ^0.3.7
+      '@quilted/react-testing': ^0.5.1
       '@quilted/routing': ^0.2.7
     dependencies:
       '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
       '@quilted/react-server-render': link:../react-server-render
       '@quilted/routing': link:../routing
+    devDependencies:
+      '@quilted/react-testing': link:../react-testing
 
   packages/react-server-render:
     specifiers:

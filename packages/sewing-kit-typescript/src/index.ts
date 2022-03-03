@@ -77,7 +77,7 @@ export function typescriptProject() {
             ]);
 
             transforms['\\.tsx?$'] = [
-              'babel-jest',
+              require.resolve('babel-jest'),
               {
                 presets,
                 plugins,
