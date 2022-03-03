@@ -240,7 +240,7 @@ async function normalizeConfigurationFile(file: string) {
 
     const bundle = await rollup({
       input: file,
-      external: [/node_modules/],
+      external: fromSource ? [/node_modules/, /@quilt/] : [/node_modules/],
       plugins: [
         nodeResolve({
           extensions: ['.ts', '.tsx', '.mjs', '.js', '.json'],
