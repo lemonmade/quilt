@@ -11,7 +11,7 @@ try {
       'node',
       '--no-warnings',
       '--loader',
-      './scripts/esbuild-module-loader.js',
+      resolve(root, './scripts/esbuild-module-loader.js'),
       '--conditions',
       'quilt:internal',
       cli,
