@@ -1,3 +1,5 @@
+import {createRequire} from 'module';
+
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {
   WaterfallHookWithDefault,
@@ -38,6 +40,8 @@ declare module '@quilted/sewing-kit' {
   interface DevelopProjectConfigurationHooks extends AsyncHooks {}
   interface BuildProjectConfigurationHooks extends AsyncHooks {}
 }
+
+const require = createRequire(import.meta.url);
 
 export function asyncQuilt({
   applyBabelToPackages:
@@ -159,7 +163,10 @@ export function asyncQuilt({
           quiltAsyncApplyBabelToPackages!.run(),
         ]);
 
-        plugins.push(['@quilted/async/babel', {packages} as BabelOptions]);
+        plugins.push([
+          require.resolve('@quilted/async/babel'),
+          {packages} as BabelOptions,
+        ]);
 
         return plugins;
       });

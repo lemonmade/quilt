@@ -88,9 +88,11 @@ importers:
     specifiers:
       '@quilted/http-handlers': ^0.2.20
       '@types/mime': ^2.0.0
+      common-tags: ^1.8.0
       mime: ^2.5.0
     dependencies:
       '@quilted/http-handlers': link:../http-handlers
+      common-tags: 1.8.0
       mime: 2.5.2
     devDependencies:
       '@types/mime': 2.0.3
@@ -128,12 +130,14 @@ importers:
       browserslist-useragent-regexp: ^3.0.0
       clean-css: ^5.0.0
       common-tags: ^1.8.0
+      core-js: ^3.0.0
       esbuild: ^0.12.0
+      pkg-dir: ^6.0.0
       postcss: ^8.0.0
       postcss-modules: ^4.0.0
+      prettier: ^2.0.0
       rollup: ^2.0.0
-      rollup-plugin-esbuild: ^4.5.0
-      rollup-plugin-terser: ^7.0.0
+      rollup-plugin-esbuild: ^4.8.0
       rollup-plugin-visualizer: ^5.5.0
       systemjs: ^6.10.2
       vite: ^2.0.0
@@ -142,6 +146,7 @@ importers:
       '@prefresh/vite': 2.2.2_rollup@2.52.6+vite@2.3.8
       '@quilted/browserslist-config': link:../browserslist-config
       '@quilted/eslint-config': link:../eslint-config
+      '@quilted/polyfills': link:../polyfills
       '@quilted/prettier': link:../prettier
       '@quilted/sewing-kit': link:../sewing-kit
       '@quilted/sewing-kit-babel': link:../sewing-kit-babel
@@ -163,19 +168,20 @@ importers:
       browserslist-useragent-regexp: 3.0.0
       clean-css: 5.1.3
       common-tags: 1.8.0
+      core-js: 3.21.1
       esbuild: 0.12.13
+      pkg-dir: 6.0.1
       postcss: 8.3.5
       postcss-modules: 4.1.3_postcss@8.3.5
+      prettier: 2.3.2
       rollup: 2.52.6
-      rollup-plugin-esbuild: 4.5.0_esbuild@0.12.13+rollup@2.52.6
-      rollup-plugin-terser: 7.0.2_rollup@2.52.6
+      rollup-plugin-esbuild: 4.8.2_esbuild@0.12.13+rollup@2.52.6
       rollup-plugin-visualizer: 5.5.1_rollup@2.52.6
       systemjs: 6.10.2
       vite: 2.3.8
     devDependencies:
       '@quilted/async': link:../async
       '@quilted/graphql': link:../graphql
-      '@quilted/polyfills': link:../polyfills
       '@quilted/quilt': link:../quilt
       '@quilted/workers': link:../workers
       '@types/clean-css': 4.2.4
@@ -272,13 +278,7 @@ importers:
       jest-matcher-utils: 27.0.6
 
   packages/http:
-    specifiers:
-      '@types/cookie': ^0.4.0
-      cookie: ^0.4.0
-    dependencies:
-      cookie: 0.4.1
-    devDependencies:
-      '@types/cookie': 0.4.0
+    specifiers: {}
 
   packages/http-handlers:
     specifiers:
@@ -435,14 +435,18 @@ importers:
       '@quilted/http': ^0.2.11
       '@quilted/react-html': ^0.3.18
       '@quilted/react-server-render': ^0.3.7
+      '@types/cookie': ^0.4.0
       '@types/js-cookie': ^2.2.0
+      cookie: ^0.4.0
       js-cookie: ^3.0.0
     dependencies:
       '@quilted/http': link:../http
       '@quilted/react-html': link:../react-html
       '@quilted/react-server-render': link:../react-server-render
+      cookie: 0.4.1
       js-cookie: 3.0.1
     devDependencies:
+      '@types/cookie': 0.4.0
       '@types/js-cookie': 2.2.7
 
   packages/react-idle:
@@ -571,14 +575,14 @@ importers:
       '@rollup/plugin-babel': ^5.3.0
       esbuild: ^0.12.0
       rollup: ^2.0.0
-      rollup-plugin-esbuild: ^4.5.0
+      rollup-plugin-esbuild: ^4.8.0
     dependencies:
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': link:../rollup-plugin-fix-commonjs-preserve-modules
       '@quilted/sewing-kit-rollup': link:../sewing-kit-rollup
       '@rollup/plugin-babel': 5.3.0_rollup@2.52.6
       esbuild: 0.12.13
       rollup: 2.52.6
-      rollup-plugin-esbuild: 4.5.0_esbuild@0.12.13+rollup@2.52.6
+      rollup-plugin-esbuild: 4.8.2_esbuild@0.12.13+rollup@2.52.6
     devDependencies:
       '@quilted/sewing-kit': link:../sewing-kit
       '@quilted/sewing-kit-babel': link:../sewing-kit-babel
@@ -4197,6 +4201,7 @@ packages:
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+    dev: true
 
   /commander/8.3.0:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
@@ -5216,6 +5221,14 @@ packages:
       locate-path: 6.0.0
       path-exists: 4.0.0
     dev: true
+
+  /find-up/6.3.0:
+    resolution: {integrity: sha512-v2ZsoEuVHYy8ZIlYqwPe/39Cy+cFDzp4dXPaxNvkEuouymu+2Jbz0PxpKarJHYJTmv2HWT3O382qY8l4jMWthw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      locate-path: 7.1.0
+      path-exists: 5.0.0
+    dev: false
 
   /find-yarn-workspace-root2/1.2.16:
     resolution: {integrity: sha512-hr6hb1w8ePMpPVUK39S4RlwJzi+xPLuVuG8XlwXU3KD5Yn3qgBWVfy3AzNlDhWvE1EORCE65/Qm26rFQt3VLVA==}
@@ -6283,15 +6296,6 @@ packages:
       string-length: 4.0.2
     dev: false
 
-  /jest-worker/26.6.2:
-    resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
-    engines: {node: '>= 10.13.0'}
-    dependencies:
-      '@types/node': 15.12.5
-      merge-stream: 2.0.0
-      supports-color: 7.2.0
-    dev: false
-
   /jest-worker/27.0.6:
     resolution: {integrity: sha512-qupxcj/dRuA3xHPMUd40gr2EaAurFbkwzOh7wfPaeE9id7hyjURRQoqNfHifHK3XjJU6YJJUQKILGUnwGPEOCA==}
     engines: {node: '>= 10.13.0'}
@@ -6526,6 +6530,13 @@ packages:
     dependencies:
       p-locate: 5.0.0
     dev: true
+
+  /locate-path/7.1.0:
+    resolution: {integrity: sha512-HNx5uOnYeK4SxEoid5qnhRfprlJeGMzFRKPLCf/15N3/B4AiofNwC/yq7VBKdVk9dx7m+PiYCJOGg55JYTAqoQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      p-locate: 6.0.0
+    dev: false
 
   /lodash.camelcase/4.3.0:
     resolution: {integrity: sha1-soqmKIorn8ZRA1x3EfZathkDMaY=}
@@ -6933,6 +6944,13 @@ packages:
     dependencies:
       yocto-queue: 0.1.0
 
+  /p-limit/4.0.0:
+    resolution: {integrity: sha512-5b0R4txpzjPWVw/cXXUResoD4hb6U/x9BH08L7nw+GN1sezDzPdxeRvpc9c433fZhBan/wusjbCsqwqm4EIBIQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      yocto-queue: 1.0.0
+    dev: false
+
   /p-locate/4.1.0:
     resolution: {integrity: sha512-R79ZZ/0wAxKGu3oYMlz8jy/kbhsNrS7SKZ7PxEHBgJ5+F2mtFW2fK2cOtBh1cHYkQsbzFV7I+EoRKe6Yt0oK7A==}
     engines: {node: '>=8'}
@@ -6945,6 +6963,13 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /p-locate/6.0.0:
+    resolution: {integrity: sha512-wPrq66Llhl7/4AGC6I+cqxT07LhXvWL08LNXz1fENOw0Ap4sRZZ/gZpTTJ5jpurzzzfS2W/Ge9BY3LgLjCShcw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      p-limit: 4.0.0
+    dev: false
 
   /p-map/2.1.0:
     resolution: {integrity: sha512-y3b8Kpd8OAN444hxfBbFfj1FY/RjtTd8tzYwhUqNYXx0fXx2iX4maP4Qr6qhIKbQXI02wTLAda4fYUbDagTUFw==}
@@ -6985,6 +7010,11 @@ packages:
   /path-exists/4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
     engines: {node: '>=8'}
+
+  /path-exists/5.0.0:
+    resolution: {integrity: sha512-RjhtfwJOxzcFmNOi6ltcbcu4Iu+FL3zEj83dk4kAS+fVpTxXLO1b38RvJgT/0QwvV/L3aY9TAnyv0EOqW4GoMQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: false
 
   /path-is-absolute/1.0.1:
     resolution: {integrity: sha1-F0uSaHNVNP+8es5r9TpanhtcX18=}
@@ -7033,6 +7063,13 @@ packages:
     dependencies:
       find-up: 5.0.0
     dev: true
+
+  /pkg-dir/6.0.1:
+    resolution: {integrity: sha512-C9R+PTCKGA32HG0n5I4JMYkdLL58ZpayVuncQHQrGeKa8o26A4o2x0u6BKekHG+Au0jv5ZW7Xfq1Cj6lm9Ag4w==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      find-up: 6.3.0
+    dev: false
 
   /playwright-core/1.19.2:
     resolution: {integrity: sha512-OsL3sJZIo1UxKNWSP7zW7sk3FyUGG06YRHxHeBw51eIOxTCQRx5t+hXd0cvXashN2CHnd3hIZTs2aKa/im4hZQ==}
@@ -7289,12 +7326,6 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /randombytes/2.1.0:
-    resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
-    dependencies:
-      safe-buffer: 5.2.1
-    dev: false
-
   /range-parser/1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
@@ -7521,20 +7552,6 @@ packages:
     dependencies:
       glob: 7.1.7
 
-  /rollup-plugin-esbuild/4.5.0_esbuild@0.12.13+rollup@2.52.6:
-    resolution: {integrity: sha512-ieUd3AoYWsN6Tfp0LBNnC+QpdhKjDEaH4NK3ghuEXOH56/7TAtD+hMbD9vSWZgsGSbaqCkrn4j6PaUj1vOSt1g==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      esbuild: '>=0.10.1'
-      rollup: ^1.20.0 || ^2.0.0
-    dependencies:
-      '@rollup/pluginutils': 4.1.0_rollup@2.52.6
-      esbuild: 0.12.13
-      joycon: 3.0.1
-      jsonc-parser: 3.0.0
-      rollup: 2.52.6
-    dev: false
-
   /rollup-plugin-esbuild/4.8.2_esbuild@0.12.13+rollup@2.52.6:
     resolution: {integrity: sha512-wsaYNOjzTb6dN1qCIZsMZ7Q0LWiPJklYs2TDI8vJA2LUbvtPUY+17TC8C0vSat3jPMInfR9XWKdA7ttuwkjsGQ==}
     engines: {node: '>=12'}
@@ -7561,18 +7578,6 @@ packages:
     dependencies:
       builtin-modules: 3.2.0
       find-up: 4.1.0
-    dev: false
-
-  /rollup-plugin-terser/7.0.2_rollup@2.52.6:
-    resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
-    peerDependencies:
-      rollup: ^2.0.0
-    dependencies:
-      '@babel/code-frame': 7.14.5
-      jest-worker: 26.6.2
-      rollup: 2.52.6
-      serialize-javascript: 4.0.0
-      terser: 5.7.1
     dev: false
 
   /rollup-plugin-visualizer/5.5.1_rollup@2.52.6:
@@ -7603,10 +7608,6 @@ packages:
 
   /safe-buffer/5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
-
-  /safe-buffer/5.2.1:
-    resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
-    dev: false
 
   /safer-buffer/2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
@@ -7663,12 +7664,6 @@ packages:
       on-finished: 2.3.0
       range-parser: 1.2.1
       statuses: 1.5.0
-    dev: false
-
-  /serialize-javascript/4.0.0:
-    resolution: {integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==}
-    dependencies:
-      randombytes: 2.1.0
     dev: false
 
   /set-blocking/2.0.0:
@@ -8034,6 +8029,7 @@ packages:
       commander: 2.20.3
       source-map: 0.7.3
       source-map-support: 0.5.19
+    dev: true
 
   /test-exclude/6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
@@ -8575,3 +8571,8 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  /yocto-queue/1.0.0:
+    resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
+    engines: {node: '>=12.20'}
+    dev: false

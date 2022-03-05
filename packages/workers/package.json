@@ -26,8 +26,6 @@
       "require": "./build/cjs/worker.cjs"
     },
     "./babel": {
-      "quilt:internal": "./src/babel.ts",
-      "sewing-kit:esnext": "./build/esnext/babel.esnext",
       "import": "./build/esm/babel.mjs",
       "require": "./build/cjs/babel.cjs"
     },

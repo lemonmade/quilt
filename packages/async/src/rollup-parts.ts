@@ -46,7 +46,11 @@ export function asyncQuilt({
     async resolveDynamicImport(source, importer) {
       if (typeof source !== 'string') return null;
 
-      const {asyncId, moduleId} = getAsyncRequest(source.replace(PREFIX, ''));
+      const asyncRequest = getAsyncRequest(source.replace(PREFIX, ''));
+
+      if (asyncRequest == null) return null;
+
+      const {asyncId, moduleId} = asyncRequest;
       const resolvedWorker = await this.resolve(moduleId, importer, {
         skipSelf: true,
       });
@@ -58,7 +62,11 @@ export function asyncQuilt({
     load(id: string) {
       if (!id.startsWith(ENTRY_PREFIX)) return;
 
-      const {asyncId, moduleId} = getAsyncRequest(id.replace(ENTRY_PREFIX, ''));
+      const asyncRequest = getAsyncRequest(id.replace(ENTRY_PREFIX, ''));
+
+      if (asyncRequest == null) return;
+
+      const {asyncId, moduleId} = asyncRequest;
 
       const code = stripIndent`
         import * as AsyncModule from ${JSON.stringify(moduleId)};
@@ -305,16 +313,23 @@ function createAsset(
   return {scripts, styles};
 }
 
-function getAsyncRequest(id: string): {
-  asyncId: string;
-  moduleId: string;
-} {
+function getAsyncRequest(id: string):
+  | {
+      asyncId: string;
+      moduleId: string;
+    }
+  | undefined {
   const [moduleId, searchString] = id.split('?');
-  const searchParams = new URLSearchParams(searchString);
-  const asyncId = searchParams.get('id')!;
 
-  return {
-    asyncId,
-    moduleId,
-  };
+  if (!searchString) return undefined;
+
+  const searchParams = new URLSearchParams(searchString);
+  const asyncId = searchParams.get('id');
+
+  return asyncId
+    ? {
+        asyncId,
+        moduleId,
+      }
+    : undefined;
 }

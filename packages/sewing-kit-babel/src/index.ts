@@ -1,3 +1,5 @@
+import {createRequire} from 'module';
+
 import type {PluginItem} from '@babel/core';
 
 import {
@@ -41,6 +43,8 @@ declare module '@quilted/sewing-kit' {
   interface DevelopWorkspaceConfigurationHooks extends BabelHooks {}
   interface TestWorkspaceConfigurationHooks extends BabelHooks {}
 }
+
+const require = createRequire(import.meta.url);
 
 /**
  * Adds basic Babel hooks that other plugins can attach configuration to.
@@ -123,7 +127,7 @@ export function babelRollup() {
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const shouldUseRuntime =
+            const helpers =
               project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
 
             const [
@@ -138,7 +142,9 @@ export function babelRollup() {
               extensions.run(['.mjs', '.cjs', '.js']),
               babelPresets!.run([]),
               babelPlugins!.run(
-                shouldUseRuntime ? ['@babel/plugin-transform-runtime'] : [],
+                helpers === 'runtime'
+                  ? [require.resolve('@babel/plugin-transform-runtime')]
+                  : [],
               ),
             ]);
 
@@ -150,7 +156,7 @@ export function babelRollup() {
                 envName: 'production',
                 extensions: finalExtensions,
                 exclude: 'node_modules/**',
-                babelHelpers: shouldUseRuntime ? 'runtime' : 'bundled',
+                babelHelpers: helpers,
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,
@@ -175,7 +181,7 @@ export function babelRollup() {
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const shouldUseRuntime =
+            const helpers =
               project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
 
             const [
@@ -190,7 +196,9 @@ export function babelRollup() {
               extensions.run(['.mjs', '.cjs', '.js']),
               babelPresets!.run([]),
               babelPlugins!.run(
-                shouldUseRuntime ? ['@babel/plugin-transform-runtime'] : [],
+                helpers === 'runtime'
+                  ? [require.resolve('@babel/plugin-transform-runtime')]
+                  : [],
               ),
             ]);
 
@@ -202,7 +210,7 @@ export function babelRollup() {
                 envName: 'production',
                 extensions: finalExtensions,
                 exclude: 'node_modules/**',
-                babelHelpers: shouldUseRuntime ? 'runtime' : 'bundled',
+                babelHelpers: helpers,
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

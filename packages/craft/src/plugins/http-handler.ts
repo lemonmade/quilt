@@ -76,10 +76,18 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                 name: '@quilted/http-handler/magic-entry',
                 resolveId(id) {
                   if (id !== MAGIC_ENTRY_MODULE) return null;
-                  return {id, moduleSideEffects: 'no-treeshake'};
+
+                  // We resolve to a path within the project’s directory
+                  // so that it can use the app’s node_modules.
+                  return {
+                    id: project.fs.resolvePath(id),
+                    moduleSideEffects: 'no-treeshake',
+                  };
                 },
                 async load(source) {
-                  if (source !== MAGIC_ENTRY_MODULE) return null;
+                  if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                    return null;
+                  }
 
                   const content = await quiltHttpHandlerRuntimeContent!.run(
                     undefined,
