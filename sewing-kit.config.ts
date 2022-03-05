@@ -12,22 +12,11 @@ export default createWorkspace((workspace) => {
     createWorkspacePlugin({
       name: 'Quilt.IgnoreE2EOutput',
       test({configure}) {
-        configure(({jestWatchIgnore, jestConfig}) => {
+        configure(({jestWatchIgnore}) => {
           jestWatchIgnore?.((ignore) => [
             ...ignore,
             path.resolve('tests/e2e/output'),
           ]);
-
-          jestConfig?.((config) => {
-            return {
-              ...config,
-              transformIgnorePatterns: [
-                ...(config.transformIgnorePatterns ?? []),
-                // get-port is ESM, we will just transpile it like source code
-                'node_modules/(?!get-port)',
-              ],
-            };
-          });
         });
       },
     }),
