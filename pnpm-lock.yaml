@@ -9,6 +9,7 @@ importers:
       '@quilted/browserslist-config': ^0.1.0
       '@quilted/craft': ^0.1.0
       '@quilted/eslint-config': ^0.1.0
+      '@quilted/prettier': ^0.2.0
       '@quilted/sewing-kit': ^0.2.0
       '@quilted/sewing-kit-jest': ^0.1.0
       '@quilted/typescript': ^0.2.0
@@ -24,6 +25,7 @@ importers:
       '@quilted/browserslist-config': link:packages/browserslist-config
       '@quilted/craft': link:packages/craft
       '@quilted/eslint-config': link:packages/eslint-config
+      '@quilted/prettier': link:packages/prettier
       '@quilted/sewing-kit': link:packages/sewing-kit
       '@quilted/sewing-kit-jest': link:packages/sewing-kit-jest
       '@quilted/typescript': link:packages/typescript
