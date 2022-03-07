@@ -84,6 +84,18 @@
       "sewing-kit:esnext": "./build/esnext/react/index.esnext",
       "import": "./build/esm/react/index.mjs",
       "require": "./build/cjs/react/index.cjs"
+    },
+    "./http-handlers/node": {
+      "quilt:internal": "./src/http-handlers/node.ts",
+      "sewing-kit:esnext": "./build/esnext/http-handlers/node.esnext",
+      "import": "./build/esm/http-handlers/node.mjs",
+      "require": "./build/cjs/http-handlers/node.cjs"
+    },
+    "./http-handlers": {
+      "quilt:internal": "./src/http-handlers/index.ts",
+      "sewing-kit:esnext": "./build/esnext/http-handlers/index.esnext",
+      "import": "./build/esm/http-handlers/index.mjs",
+      "require": "./build/cjs/http-handlers/index.cjs"
     }
   },
   "typesVersions": {
@@ -120,6 +132,12 @@
       ],
       "react": [
         "./build/typescript/react/index.d.ts"
+      ],
+      "http-handlers/node": [
+        "./build/typescript/http-handlers/node.d.ts"
+      ],
+      "http-handlers": [
+        "./build/typescript/http-handlers/index.d.ts"
       ],
       "*": [
         "./build/typescript/index.d.ts"

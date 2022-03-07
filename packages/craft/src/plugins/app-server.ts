@@ -346,7 +346,7 @@ export function appServer(options?: AppServerOptions) {
       
                 import {createHttpRequestListener${
                   serveAssets ? ', serveStatic' : ''
-                }} from '@quilted/http-handlers/node';
+                }} from '@quilted/quilt/http-handlers/node';
 
                 const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
                 const host = ${

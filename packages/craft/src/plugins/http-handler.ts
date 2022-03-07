@@ -105,7 +105,7 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                       MAGIC_MODULE_HTTP_HANDLER,
                     )};
           
-                    import {createHttpServer} from '@quilted/http-handlers/node';
+                    import {createHttpServer} from '@quilted/quilt/http-handlers/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
@@ -213,7 +213,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
                       MAGIC_MODULE_HTTP_HANDLER,
                     )};
           
-                    import {createHttpServer} from '@quilted/http-handlers/node';
+                    import {createHttpServer} from '@quilted/quilt/http-handlers/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
