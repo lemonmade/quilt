@@ -1,5 +1,17 @@
 # @quilted/craft
 
+## 0.1.54
+
+### Patch Changes
+
+- [`0382ee0`](https://github.com/lemonmade/quilt/commit/0382ee00ece65fffa308f91c99b66868a1c0dcdb) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix issue with duplicate Babel plugins
+
+* [`73245f4`](https://github.com/lemonmade/quilt/commit/73245f4df730c32057e4f2d4e0849a3c93a1dddb) Thanks [@lemonmade](https://github.com/lemonmade)! - Normalize "magic" file names to use extensions
+
+- [`beb1b67`](https://github.com/lemonmade/quilt/commit/beb1b675e18e7a981ea29e4a945fcbf0f5e3532d) Thanks [@lemonmade](https://github.com/lemonmade)! - Package Quilt globals in framework bundle
+
+* [`aeabd24`](https://github.com/lemonmade/quilt/commit/aeabd24c0b34d6e20d042af05800acd6d0622f62) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix types for `createAsyncComponent()` in strict dependency installations
+
 ## 0.1.53
 
 ### Patch Changes

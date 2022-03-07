@@ -1,5 +1,11 @@
 # create-quilt-app
 
+## 0.1.9
+
+### Patch Changes
+
+- [`4f7c71f`](https://github.com/lemonmade/quilt/commit/4f7c71f251b375143eb4f999f0a1298c0df9f6e4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `Http` component for example apps when running on http:
+
 ## 0.1.8
 
 ### Patch Changes

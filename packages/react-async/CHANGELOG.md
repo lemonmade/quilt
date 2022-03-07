@@ -1,5 +1,11 @@
 # @quilted/react-async
 
+## 0.3.24
+
+### Patch Changes
+
+- [`aeabd24`](https://github.com/lemonmade/quilt/commit/aeabd24c0b34d6e20d042af05800acd6d0622f62) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix types for `createAsyncComponent()` in strict dependency installations
+
 ## 0.3.23
 
 ### Patch Changes
