@@ -1,6 +1,6 @@
 {
   "name": "e2e-tests",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "devDependencies": {
     "@quilted/quilt": "^0.5.0",

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-targets",
   "type": "module",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -39,8 +39,8 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
-    "@quilted/sewing-kit": "^0.2.0",
-    "@quilted/sewing-kit-babel": "^0.1.0"
+    "@quilted/sewing-kit": "^0.2.14",
+    "@quilted/sewing-kit-babel": "^0.1.8"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
