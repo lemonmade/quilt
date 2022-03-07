@@ -1,0 +1,51 @@
+---
+'example-basic-app': minor
+'@quilted/async': minor
+'@quilted/aws': minor
+'@quilted/browserslist-config': minor
+'@quilted/cloudflare': minor
+'@quilted/craft': minor
+'create-quilt-app': minor
+'@quilted/eslint-config': minor
+'@quilted/graphql': minor
+'@quilted/http': minor
+'@quilted/http-handlers': minor
+'@quilted/performance': minor
+'@quilted/polyfills': minor
+'@quilted/preact-mini-compat': minor
+'@quilted/prettier': minor
+'@quilted/quilt': minor
+'@quilted/react-async': minor
+'@quilted/react-email': minor
+'@quilted/react-graphql': minor
+'@quilted/react-html': minor
+'@quilted/react-http': minor
+'@quilted/react-idle': minor
+'@quilted/react-performance': minor
+'@quilted/react-router': minor
+'@quilted/react-server-render': minor
+'@quilted/react-testing': minor
+'@quilted/react-workers': minor
+'@quilted/rollup-plugin-fix-commonjs-preserve-modules': minor
+'@quilted/routing': minor
+'@quilted/sewing-kit': minor
+'@quilted/sewing-kit-babel': minor
+'@quilted/sewing-kit-eslint': minor
+'@quilted/sewing-kit-esnext': minor
+'@quilted/sewing-kit-jest': minor
+'@quilted/sewing-kit-package': minor
+'@quilted/sewing-kit-prettier': minor
+'@quilted/sewing-kit-react': minor
+'@quilted/sewing-kit-rollup': minor
+'@quilted/sewing-kit-targets': minor
+'@quilted/sewing-kit-typescript': minor
+'@quilted/sewing-kit-vite': minor
+'@quilted/typescript': minor
+'@quilted/use-subscription': minor
+'@quilted/useful-types': minor
+'@quilted/workers': minor
+'e2e-tests': minor
+'e2e-fixture-basic-app': minor
+---
+
+Fixed dependencies to support stricter pnpm-based project
