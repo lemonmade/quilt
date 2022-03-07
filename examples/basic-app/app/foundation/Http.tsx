@@ -1,17 +1,17 @@
+import {useCurrentUrl} from '@quilted/quilt';
 import {
   CacheControl,
   ResponseHeader,
-  ResponseCookie,
   ContentSecurityPolicy,
   PermissionsPolicy,
   StrictTransportSecurity,
 } from '@quilted/quilt/http';
 
 export function Http() {
+  const isHttps = useCurrentUrl().protocol === 'https:';
+
   return (
     <>
-      <ResponseCookie name="user" value="Chris" />
-
       {/**
        * Disables the cache for this page, which is generally the best option
        * when dealing with authenticated content. If your site doesn’t have
@@ -40,8 +40,9 @@ export function Http() {
         imageSources={["'self'", 'data:']}
         // Don’t allow this page to be rendered as a frame from a different origin.
         frameAncestors={false}
-        // Ensure that all requests made by this page are made over https.
-        upgradeInsecureRequests
+        // Ensure that all requests made by this page are made over https, unless
+        // it is being served over http (typically, during local development)
+        upgradeInsecureRequests={isHttps}
       />
 
       {/**
@@ -73,7 +74,7 @@ export function Http() {
        *
        * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
        */}
-      <StrictTransportSecurity />
+      {isHttps && <StrictTransportSecurity />}
 
       {/**
        * Controls how much information about the current page is included in
