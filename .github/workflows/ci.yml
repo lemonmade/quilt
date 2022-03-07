@@ -7,7 +7,7 @@ jobs:
     name: Lint 💅
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-lint@v2
         with:
@@ -17,7 +17,7 @@ jobs:
     name: Type check 🧮
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-type-check@v2
         with:
@@ -27,7 +27,7 @@ jobs:
     name: Unit tests 🧪
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: ./.github/workflows/actions/prepare
       # We need to build a few packages that provide Babel plugins
       # included in test configurations
@@ -44,7 +44,7 @@ jobs:
     name: End-to-end tests 🔬
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-build@v2
         with:
