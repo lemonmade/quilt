@@ -1,3 +1,5 @@
+import {createRequire} from 'module';
+
 import {createProjectPlugin, createWorkspacePlugin} from '@quilted/sewing-kit';
 import type {WaterfallHook} from '@quilted/sewing-kit';
 
@@ -15,6 +17,8 @@ declare module '@quilted/sewing-kit' {
   interface BuildWorkspaceConfigurationHooks extends TypeScriptHooks {}
 }
 
+const require = createRequire(import.meta.url);
+
 /**
  * Adds configuration for TypeScript to a variety of other build tools.
  */
@@ -29,7 +33,10 @@ export function typescriptProject() {
         );
 
         // Add TypeScript compilation to Babel
-        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+        babelPresets?.((presets) => [
+          ...presets,
+          require.resolve('@babel/preset-typescript'),
+        ]);
       });
     },
     develop({configure}) {
@@ -40,13 +47,19 @@ export function typescriptProject() {
         );
 
         // Add TypeScript compilation to Babel
-        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+        babelPresets?.((presets) => [
+          ...presets,
+          require.resolve('@babel/preset-typescript'),
+        ]);
       });
     },
     test({configure}) {
       configure(
         ({jestExtensions, jestTransforms, babelPresets, babelPlugins}) => {
-          babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+          babelPresets?.((presets) => [
+            ...presets,
+            require.resolve('@babel/preset-typescript'),
+          ]);
 
           // Add TypeScript extensions for project-level tests
           jestExtensions?.((extensions) =>
@@ -64,7 +77,7 @@ export function typescriptProject() {
             ]);
 
             transforms['\\.tsx?$'] = [
-              'babel-jest',
+              require.resolve('babel-jest'),
               {
                 presets,
                 plugins,
@@ -93,7 +106,10 @@ export function typescriptWorkspace() {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
 
       configure(({babelPresets}) => {
-        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+        babelPresets?.((presets) => [
+          ...presets,
+          require.resolve('@babel/preset-typescript'),
+        ]);
       });
 
       // We only need to run a TypeScript build if there are public packages
@@ -111,25 +127,30 @@ export function typescriptWorkspace() {
           async run(step) {
             const {typescriptHeap} = await configuration();
             const heap = await typescriptHeap!.run(undefined);
-            const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
+            const heapOption = heap
+              ? `--max-old-space-size=${heap}`
+              : undefined;
 
-            await step.exec(
-              'node',
-              [
-                ...heapArguments,
-                workspace.fs.resolvePath('node_modules/.bin/tsc'),
-                '--build',
-                '--pretty',
-              ],
-              {env: {FORCE_COLOR: '1', ...process.env}},
-            );
+            await step.exec('tsc', ['--build', '--pretty'], {
+              env: {
+                ...process.env,
+                FORCE_COLOR: '1',
+                NODE_OPTIONS: heapOption,
+              },
+              // The user is supposed to have typescript installed in the
+              // workspace.
+              fromNodeModules: true,
+            });
           },
         }),
       );
     },
     develop({configure}) {
       configure(({babelPresets}) => {
-        babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+        babelPresets?.((presets) => [
+          ...presets,
+          require.resolve('@babel/preset-typescript'),
+        ]);
       });
     },
     lint({configure}) {
@@ -149,7 +170,10 @@ export function typescriptWorkspace() {
           babelPlugins,
           babelTargets,
         }) => {
-          babelPresets?.((presets) => [...presets, '@babel/preset-typescript']);
+          babelPresets?.((presets) => [
+            ...presets,
+            require.resolve('@babel/preset-typescript'),
+          ]);
 
           // Add TypeScript extensions for workspace-level tests
           jestExtensions?.((extensions) =>
@@ -172,7 +196,7 @@ export function typescriptWorkspace() {
             ]);
 
             transforms['\\.tsx?$'] = [
-              'babel-jest',
+              require.resolve('babel-jest'),
               {
                 presets,
                 plugins,
@@ -186,7 +210,7 @@ export function typescriptWorkspace() {
         },
       );
     },
-    typeCheck({hooks, run, workspace}) {
+    typeCheck({hooks, run}) {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
 
       run((step, {configuration}) =>
@@ -196,18 +220,20 @@ export function typescriptWorkspace() {
           async run(step) {
             const {typescriptHeap} = await configuration();
             const heap = await typescriptHeap!.run(undefined);
-            const heapArguments = heap ? [`--max-old-space-size=${heap}`] : [];
+            const heapOption = heap
+              ? `--max-old-space-size=${heap}`
+              : undefined;
 
-            await step.exec(
-              'node',
-              [
-                ...heapArguments,
-                workspace.fs.resolvePath('node_modules/.bin/tsc'),
-                '--build',
-                '--pretty',
-              ],
-              {env: {FORCE_COLOR: '1', ...process.env}},
-            );
+            await step.exec('tsc', ['--build', '--pretty'], {
+              env: {
+                ...process.env,
+                FORCE_COLOR: '1',
+                NODE_OPTIONS: heapOption,
+              },
+              // The user is supposed to have typescript installed in the
+              // workspace.
+              fromNodeModules: true,
+            });
           },
         }),
       );

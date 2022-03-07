@@ -11,6 +11,8 @@ import {chromium} from 'playwright';
 import fetch from 'node-fetch';
 import type {Page, Browser as PlaywrightBrowser} from 'playwright';
 
+import type {Performance} from '@quilted/quilt';
+
 export {stripIndent} from 'common-tags';
 
 export interface FileSystem {
@@ -36,7 +38,6 @@ export interface Command {
   readonly sewingKit: SewingKitCli;
   run(command: string, options?: ExecOptions): RunResult;
   node(script: string, options?: ExecOptions): RunResult;
-  yarn(command: string, options?: ExecOptions): RunResult;
 }
 
 export interface SewingKitCli {
@@ -186,7 +187,6 @@ export async function withWorkspace<T>(
       },
       run: (...args) => runCommand(...args),
       node: (...args) => runNode(...args),
-      yarn: (command, options) => runCommand(`yarn ${command}`, options),
     },
   };
 
@@ -267,7 +267,7 @@ declare global {
   interface Window {
     readonly Quilt?: {
       readonly E2E?: {
-        Performance?: import('@quilted/performance').Performance;
+        Performance?: Performance;
       };
     };
   }

@@ -62,7 +62,7 @@ export function workspaceGraphQL() {
           stage: 'pre',
           async run(step) {
             const result = await step.exec('quilt-graphql-typescript', [], {
-              fromNodeModules: true,
+              fromNodeModules: import.meta.url,
             });
 
             if (result.stdout.trim()) step.log(result.stdout.trim());
@@ -78,7 +78,7 @@ export function workspaceGraphQL() {
           stage: 'pre',
           async run(step) {
             const result = await step.exec('quilt-graphql-typescript', [], {
-              fromNodeModules: true,
+              fromNodeModules: import.meta.url,
             });
 
             if (result.stdout.trim()) step.log(result.stdout.trim());
@@ -94,7 +94,7 @@ export function workspaceGraphQL() {
           stage: 'pre',
           async run(step) {
             const result = await step.exec('quilt-graphql-typescript', [], {
-              fromNodeModules: true,
+              fromNodeModules: import.meta.url,
             });
 
             if (result.stdout.trim()) step.log(result.stdout.trim());

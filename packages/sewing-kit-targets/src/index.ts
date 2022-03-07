@@ -1,3 +1,5 @@
+import {createRequire} from 'module';
+
 import {
   Runtime,
   DiagnosticError,
@@ -45,6 +47,8 @@ declare module '@quilted/sewing-kit' {
   interface DevelopProjectConfigurationHooks extends TargetHooks {}
   interface TestProjectConfigurationHooks extends TargetHooks {}
 }
+
+const require = createRequire(import.meta.url);
 
 /**
  * Customizes Babel, PostCSS, and other build tools to target the
@@ -150,7 +154,7 @@ export function targets() {
                   // ignoreBrowserslistConfig: true,
                 };
 
-            presets.unshift(['@babel/preset-env', options]);
+            presets.unshift([require.resolve('@babel/preset-env'), options]);
 
             return presets;
           });
@@ -186,7 +190,7 @@ export function targets() {
         babelTargets?.(() => targets!.run([]));
         babelPresets?.((presets) => [
           [
-            '@babel/preset-env',
+            require.resolve('@babel/preset-env'),
             {
               corejs: '3.15',
               useBuiltIns: 'usage',
@@ -214,7 +218,7 @@ export function targets() {
         babelTargets?.(() => targets!.run([]));
         babelPresets?.((presets) => [
           [
-            '@babel/preset-env',
+            require.resolve('@babel/preset-env'),
             {
               corejs: '3.15',
               useBuiltIns: 'usage',
@@ -246,7 +250,7 @@ export function workspaceTargets() {
         babelPresets?.((presets) => [
           ...presets,
           [
-            '@babel/preset-env',
+            require.resolve('@babel/preset-env'),
             {
               corejs: '3.15',
               useBuiltIns: 'usage',
@@ -268,7 +272,7 @@ export function workspaceTargets() {
         babelPresets?.((presets) => [
           ...presets,
           [
-            '@babel/preset-env',
+            require.resolve('@babel/preset-env'),
             {
               corejs: '3.15',
               useBuiltIns: 'usage',
@@ -290,7 +294,7 @@ export function workspaceTargets() {
         babelPresets?.((presets) => [
           ...presets,
           [
-            '@babel/preset-env',
+            require.resolve('@babel/preset-env'),
             {
               corejs: '3.15',
               useBuiltIns: 'usage',

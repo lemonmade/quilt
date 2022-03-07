@@ -3,5 +3,11 @@
   "type": "module",
   "browserslist": [
     "extends @quilted/browserslist-config/evergreen"
-  ]
+  ],
+  "dependencies": {
+    "@quilted/quilt": "^0.5.0"
+  },
+  "devDependencies": {
+    "@quilted/craft": "^0.1.0"
+  }
 }

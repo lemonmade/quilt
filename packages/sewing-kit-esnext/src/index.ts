@@ -1,3 +1,4 @@
+import {createRequire} from 'module';
 import {join, dirname, sep as pathSeparator} from 'path';
 
 import {createProjectPlugin, ProjectKind} from '@quilted/sewing-kit';
@@ -28,6 +29,8 @@ declare module '@quilted/sewing-kit' {
     esnext: boolean;
   }
 }
+
+const require = createRequire(import.meta.url);
 
 /**
  * Creates a special `esnext` build that is a minimally-processed version
@@ -125,7 +128,10 @@ export function esnextBuild() {
             configure.babelPresets?.((presets) => {
               return presets.filter((preset) => {
                 const presetName = Array.isArray(preset) ? preset[0] : preset;
-                return presetName !== '@babel/preset-env';
+                return (
+                  typeof presetName !== 'string' ||
+                  !presetName.includes('@babel/preset-env')
+                );
               });
             });
 
@@ -233,7 +239,7 @@ export function esnext() {
 
           // Add the Babel plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {
-            const shouldUseRuntime =
+            const helpers =
               project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
 
             const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
@@ -242,7 +248,9 @@ export function esnext() {
                 babelTargets!.run([]),
                 babelPresets!.run([]),
                 babelPlugins!.run(
-                  shouldUseRuntime ? ['@babel/plugin-transform-runtime'] : [],
+                  helpers === 'runtime'
+                    ? [require.resolve('@babel/plugin-transform-runtime')]
+                    : [],
                 ),
               ]);
 
@@ -254,7 +262,7 @@ export function esnext() {
                 extensions: [EXTENSION],
                 // Forces this to run on node_modules
                 exclude: [],
-                babelHelpers: shouldUseRuntime ? 'runtime' : 'bundled',
+                babelHelpers: helpers,
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

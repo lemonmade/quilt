@@ -34,7 +34,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "preact": "^10.0.0"
+    "preact": "^10.5.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

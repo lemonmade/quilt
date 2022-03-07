@@ -8,7 +8,8 @@ import {
   unlink,
   writeFile,
 } from 'fs/promises';
-import glob, {GlobbyOptions} from 'globby';
+import glob from 'globby';
+import type {GlobbyOptions} from 'globby';
 
 import type {
   FileSystem as FSType,

@@ -46,6 +46,15 @@
     }
   },
   "sideEffects": false,
+  "dependencies": {
+    "@quilted/react-html": "^0.3.18",
+    "@quilted/react-http": "^0.3.8",
+    "@quilted/react-server-render": "^0.3.7",
+    "@quilted/routing": "^0.2.7"
+  },
+  "devDependencies": {
+    "@quilted/react-testing": "^0.5.1"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "react": ">=17.0.0 <18.0.0"
@@ -57,12 +66,6 @@
     "react": {
       "optional": true
     }
-  },
-  "dependencies": {
-    "@quilted/react-html": "^0.3.18",
-    "@quilted/react-http": "^0.3.8",
-    "@quilted/react-server-render": "^0.3.7",
-    "@quilted/routing": "^0.2.7"
   },
   "eslintConfig": {
     "extends": [

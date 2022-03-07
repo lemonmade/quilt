@@ -26,8 +26,6 @@
       "require": "./build/cjs/worker.cjs"
     },
     "./babel": {
-      "quilt:internal": "./src/babel.ts",
-      "sewing-kit:esnext": "./build/esnext/babel.esnext",
       "import": "./build/esm/babel.mjs",
       "require": "./build/cjs/babel.cjs"
     },
@@ -67,6 +65,12 @@
   "dependencies": {
     "@remote-ui/rpc": "^1.2.0",
     "common-tags": "^1.8.0"
+  },
+  "devDependencies": {
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-babel": "^0.1.0",
+    "@quilted/sewing-kit-rollup": "^0.1.0",
+    "@quilted/sewing-kit-vite": "^0.1.0"
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0 <8.0.0",

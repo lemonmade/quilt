@@ -26,8 +26,6 @@
       "require": "./build/cjs/server.cjs"
     },
     "./babel": {
-      "quilt:internal": "./src/babel-plugin.ts",
-      "sewing-kit:esnext": "./build/esnext/babel-plugin.esnext",
       "import": "./build/esm/babel-plugin.mjs",
       "require": "./build/cjs/babel-plugin.cjs"
     },
@@ -69,6 +67,13 @@
     "es-module-lexer": "^0.4.0",
     "magic-string": "^0.25.0"
   },
+  "devDependencies": {
+    "@quilted/sewing-kit": "^0.2.4",
+    "@quilted/sewing-kit-babel": "^0.1.2",
+    "@quilted/sewing-kit-rollup": "^0.1.2",
+    "@types/babel__core": ">=7.0.0",
+    "@types/babel__traverse": ">=7.0.0"
+  },
   "peerDependencies": {
     "@babel/core": ">=7.0.0",
     "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
@@ -104,10 +109,6 @@
     "@quilted/sewing-kit-rollup": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "@types/babel__core": ">=7.0.0",
-    "@types/babel__traverse": ">=7.0.0"
   },
   "eslintConfig": {
     "extends": [

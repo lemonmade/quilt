@@ -7,10 +7,6 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "workspaces": [
-    "./examples/*",
-    "./packages/*"
-  ],
   "scripts": {
     "test": "node ./scripts/sewing-kit-from-source test",
     "test:unit": "node ./scripts/sewing-kit-from-source test --exclude-pattern tests/e2e",
@@ -19,30 +15,42 @@
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
     "develop": "node ./scripts/sewing-kit-from-source develop",
-    "prerelease": "yarn build",
-    "version-bump": "lerna version --no-push && yarn install && git commit -am 'fix yarn after lerna version-bump' && git push --follow-tags",
-    "deploy": "lerna publish from-package --yes --no-verify-access"
+    "prerelease": "pnpm build",
+    "version-bump": "changelog version",
+    "deploy": "pnpm publish -r"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.4.3",
+    "@changesets/cli": "^2.21.0",
+    "@quilted/browserslist-config": "^0.1.0",
     "@quilted/craft": "^0.1.0",
-    "@types/fs-extra": "^9.0.13",
-    "fs-extra": "^10.0.0",
-    "lerna": "3.22.1",
-    "nanoid": "^3.1.30",
-    "playwright": "^1.15.0",
+    "@quilted/sewing-kit-jest": "^0.1.0",
+    "@quilted/eslint-config": "^0.1.0",
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/typescript": "^0.2.0",
+    "esbuild": "^0.14.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "rollup": "^2.0.0",
+    "source-map-support": "^0.5.0",
     "typescript": "4.2.x"
   },
-  "prettier": "@quilted/prettier",
+  "prettier": "@quilted/craft/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/workspace",
     "ignorePatterns": [
-      "sewing-kit-from-source.js"
+      "tests/e2e/output"
     ]
   },
   "browserslist": [
     "extends @quilted/browserslist-config/defaults"
   ],
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "pnpm@6.32.2",
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/core"
+      ]
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {createRequire} from 'module';
 import {rm} from 'fs/promises';
 
 import {stripIndent} from 'common-tags';
@@ -10,8 +11,8 @@ import type {
 } from '@quilted/sewing-kit';
 
 import type {Manifest} from '@quilted/async/server';
+import type {HttpState} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
-import type {HttpState} from '@quilted/react-http/server';
 
 import {
   PRELOAD_ALL_GLOBAL,
@@ -160,6 +161,8 @@ declare module '@quilted/sewing-kit' {
 
 const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry';
 
+const require = createRequire(import.meta.url);
+
 export function appStatic({
   routes = ['/'],
   crawl = true,
@@ -173,6 +176,7 @@ export function appStatic({
         project.name,
       );
       const outputFilename = 'index.js';
+      const outputFile = path.join(nodeScriptOutputDirectory, outputFilename);
 
       hooks<AppStaticHooks>(({waterfall}) => ({
         quiltStaticBuildRoutes: waterfall<string[]>({
@@ -215,7 +219,7 @@ export function appStatic({
           // Let prettier use native Node resolution, we include it as
           // a dependency.
           rollupExternals?.((externals) => {
-            externals.push('prettier');
+            // externals.push('prettier');
             return externals;
           });
 
@@ -224,17 +228,53 @@ export function appStatic({
 
           rollupPlugins?.(async (plugins) => {
             const {cssRollupPlugin} = await import('./rollup/css');
+            const resolvedPrettier = require.resolve('prettier');
+
+            // Our static generation script depends on prettier. If we just
+            // mark it as external, it needs to be able to be resolved from
+            // the developer’s root node_modules. Since `prettier` is a dependency
+            // of quilt, most developers will not install it directly, and
+            // in that case stricter package managers (like pnpm) will not
+            // make it accessible from the root directory.
+            //
+            // To solve this problem, we mark `prettier` as external, and
+            // resolve to our own internal dependency version, which is
+            // guaranteed to be present.
+            plugins.unshift({
+              name: '@quilted/rewrite-prettier',
+              resolveId(id) {
+                if (id === 'prettier') {
+                  return {
+                    id: path.relative(
+                      path.dirname(outputFile),
+                      resolvedPrettier,
+                    ),
+                    external: true,
+                  };
+                }
+
+                return null;
+              },
+            });
 
             plugins.push(cssRollupPlugin({extract: false}));
 
             plugins.push({
               name: '@quilted/magic-module/static-asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
+                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) {
+                  return project.fs.resolvePath(id);
+                }
+
                 return null;
               },
               async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+                if (
+                  source !==
+                  project.fs.resolvePath(MAGIC_MODULE_APP_ASSET_MANIFEST)
+                ) {
+                  return null;
+                }
 
                 const manifestFiles = await project.fs.glob('manifest*.json', {
                   cwd: project.fs.buildPath('manifests'),
@@ -310,13 +350,21 @@ export function appStatic({
               name: '@quilted/magic-app-static-entry',
               resolveId(id) {
                 if (id === MAGIC_ENTRY_MODULE) {
-                  return {id, moduleSideEffects: 'no-treeshake'};
+                  // We resolve to a path within the project’s directory
+                  // so that it can use the app’s node_modules.
+                  return {
+                    id: project.fs.resolvePath(id),
+                    moduleSideEffects: 'no-treeshake',
+                  };
                 }
 
                 return null;
               },
               load(source) {
-                if (source !== MAGIC_ENTRY_MODULE) return null;
+                if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                  return null;
+                }
+
                 return stripIndent`
                   import '@quilted/quilt/global';
 
@@ -392,7 +440,7 @@ export function appStatic({
             ]);
 
             const {default: renderStatic} = await (import(
-              path.join(nodeScriptOutputDirectory, outputFilename)
+              outputFile
             ) as Promise<{
               default: (
                 options: Omit<StaticRenderOptions, 'assets'>,

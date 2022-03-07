@@ -1,3 +1,5 @@
+import {createRequire} from 'module';
+
 import type {InputOptions, OutputOptions, Plugin} from 'rollup';
 import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
 import type {App, WaterfallHook, ResolvedHooks} from '@quilted/sewing-kit';
@@ -42,6 +44,8 @@ declare module '@quilted/sewing-kit' {
   interface DevelopAppConfigurationHooks extends WorkerHooks {}
   interface TestAppConfigurationHooks extends WorkerHooks {}
 }
+
+const require = createRequire(import.meta.url);
 
 export function workers() {
   return createProjectPlugin<App>({
@@ -192,7 +196,7 @@ export function workers() {
 
       const options: BabelOptions = {noop, packages};
 
-      plugins.push(['@quilted/workers/babel', options]);
+      plugins.push([require.resolve('@quilted/workers/babel'), options]);
 
       return plugins;
     });

@@ -3,6 +3,15 @@
   "type": "module",
   "version": "0.0.9",
   "private": true,
+  "dependencies": {
+    "@quilted/quilt": "^0.5.0"
+  },
+  "devDependencies": {
+    "@quilted/craft": "^0.1.0",
+    "@quilted/eslint-config": "^0.1.0",
+    "@quilted/typescript": "^0.2.0"
+  },
+  "prettier": "@quilted/craft/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/app"
   },

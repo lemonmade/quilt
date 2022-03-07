@@ -58,6 +58,7 @@ import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
 
 import {tsconfigAliases} from './plugins/tsconfig-aliases';
+import {exposeQuiltDependencies} from './plugins/expose-quilt-dependencies';
 
 // Without these exports, TypeScript doesn’t see all the module augmentations
 // added by these modules when you try to reference them from another package.
@@ -149,6 +150,7 @@ export function quiltApp({
         esnext(),
         react(),
         preact(),
+        exposeQuiltDependencies(),
         // Build and auto-server setup
         magicModuleApp(),
         build &&
@@ -246,6 +248,7 @@ export function quiltService({
         esnext(),
         useReact && react(),
         useReact && preact(),
+        exposeQuiltDependencies(),
         // Build and http handler setup
         build && serviceBuild(buildOptions),
         useHttpHandler &&

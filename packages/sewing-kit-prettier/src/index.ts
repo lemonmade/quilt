@@ -75,9 +75,13 @@ export function prettier({
 
             const result = await step.exec(
               'prettier',
-              [glob, options.fix ? '--write' : '--check'],
+              [
+                glob,
+                options.fix ? '--write' : '--check',
+                '--no-error-on-unmatched-pattern',
+              ],
               {
-                fromNodeModules: true,
+                fromNodeModules: import.meta.url,
               },
             );
 

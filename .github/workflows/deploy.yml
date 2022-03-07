@@ -9,16 +9,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
-      - uses: quilt-framework/action-prepare@v1
-
+      - uses: actions/checkout@v1
+      - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-build@v2
         with:
-          command: yarn build
-          arguments: --only-project package:*
-
+          command: pnpm build
+          arguments: -- --only-project package:*
       - name: Deploy
-        run: yarn deploy
+        run: pnpm deploy
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

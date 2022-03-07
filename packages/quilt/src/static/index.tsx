@@ -282,7 +282,7 @@ async function prettifyHtml(html: string) {
   try {
     const {default: prettier} = await import('prettier');
     return prettier.format(html, {parser: 'html'});
-  } catch {
+  } catch (error) {
     return html;
   }
 }

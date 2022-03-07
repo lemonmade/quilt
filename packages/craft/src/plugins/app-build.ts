@@ -249,13 +249,21 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
                   id === MAGIC_MODULE_CUSTOM_ENTRY ||
                   id === MAGIC_MODULE_CUSTOM_INITIALIZE
                 ) {
-                  return {id, moduleSideEffects: 'no-treeshake'};
+                  // We resolve to a path within the project’s directory
+                  // so that it can use the app’s node_modules.
+                  return {
+                    id: project.fs.resolvePath(id),
+                    moduleSideEffects: 'no-treeshake',
+                  };
                 }
 
                 return null;
               },
               async load(source) {
-                if (source === MAGIC_MODULE_CUSTOM_INITIALIZE) {
+                if (
+                  source ===
+                  project.fs.resolvePath(MAGIC_MODULE_CUSTOM_INITIALIZE)
+                ) {
                   if (browser.initializeModule == null) {
                     throw new Error(
                       'Can’t load initialize module because browser.initializeModule was not provided',
@@ -267,7 +275,9 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
                   )}`;
                 }
 
-                if (source === MAGIC_MODULE_CUSTOM_ENTRY) {
+                if (
+                  source === project.fs.resolvePath(MAGIC_MODULE_CUSTOM_ENTRY)
+                ) {
                   if (browser.entryModule == null) {
                     throw new Error(
                       'Can’t load entry module because browser.entryModule was not provided',
@@ -279,7 +289,9 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
                   )}`;
                 }
 
-                if (source !== MAGIC_ENTRY_MODULE) return null;
+                if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                  return null;
+                }
 
                 let initialContent: string;
 
@@ -335,8 +347,8 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
             });
 
             if (assets.minify) {
-              const {terser} = await import('rollup-plugin-terser');
-              plugins.push(terser({safari10: true, compress: true}));
+              const {minify} = await import('rollup-plugin-esbuild');
+              plugins.push(minify());
             }
 
             plugins.push(

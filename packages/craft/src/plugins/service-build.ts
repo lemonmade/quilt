@@ -72,9 +72,8 @@ export function serviceBuild({minify, httpHandler}: Options) {
             });
 
             if (minify) {
-              const {terser} = await import('rollup-plugin-terser');
-
-              plugins.push(terser());
+              const {minify} = await import('rollup-plugin-esbuild');
+              plugins.push(minify());
             }
 
             return plugins;

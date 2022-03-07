@@ -18,6 +18,9 @@
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
+    },
+    "./prettier": {
+      "require": "./prettier/index.cjs"
     }
   },
   "typesVersions": {
@@ -33,6 +36,7 @@
     "@prefresh/vite": "^2.2.0",
     "@quilted/browserslist-config": "^0.1.1",
     "@quilted/eslint-config": "^0.1.4",
+    "@quilted/polyfills": "^0.2.0",
     "@quilted/prettier": "^0.2.3",
     "@quilted/sewing-kit": "^0.2.13",
     "@quilted/sewing-kit-babel": "^0.1.7",
@@ -54,26 +58,32 @@
     "browserslist-useragent-regexp": "^3.0.0",
     "clean-css": "^5.0.0",
     "common-tags": "^1.8.0",
+    "core-js": "^3.0.0",
     "esbuild": "^0.12.0",
+    "pkg-dir": "^6.0.0",
     "postcss": "^8.0.0",
     "postcss-modules": "^4.0.0",
+    "prettier": "^2.0.0",
     "rollup": "^2.0.0",
-    "rollup-plugin-esbuild": "^4.5.0",
-    "rollup-plugin-terser": "^7.0.0",
+    "rollup-plugin-esbuild": "^4.8.0",
     "rollup-plugin-visualizer": "^5.5.0",
     "systemjs": "^6.10.2",
     "vite": "^2.0.0"
   },
   "devDependencies": {
+    "@quilted/async": "^0.3.0",
+    "@quilted/graphql": "^0.4.0",
+    "@quilted/quilt": "^0.5.0",
+    "@quilted/workers": "^0.2.0",
     "@types/clean-css": "^4.0.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/async": "^0.3.0",
     "@quilted/graphql": "^0.4.0",
-    "@quilted/polyfills": "^0.2.0",
+    "@quilted/quilt": "^0.5.0",
     "@quilted/workers": "^0.2.0",
-    "preact": "^10.0.0",
+    "preact": "^10.5.0",
     "typescript": ">=4.0.0 <5.0.0"
   },
   "peerDependenciesMeta": {

@@ -2,4 +2,5 @@ build/
 node_modules/
 .sewing-kit/
 packages/*/bin/
-.yarn/
+tests/e2e/output/
+pnpm-lock.yaml

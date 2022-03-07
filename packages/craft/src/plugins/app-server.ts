@@ -262,13 +262,24 @@ export function appServer(options?: AppServerOptions) {
                 name: '@quilted/magic-app-server-custom-entry',
                 resolveId(id) {
                   if (id === MAGIC_CUSTOM_SERVER_ENTRY_MODULE) {
-                    return {id, moduleSideEffects: 'no-treeshake'};
+                    // We resolve to a path within the project’s directory
+                    // so that it can use the app’s node_modules.
+                    return {
+                      id: project.fs.resolvePath(id),
+                      moduleSideEffects: 'no-treeshake',
+                    };
                   }
 
                   return null;
                 },
                 load(source) {
-                  if (source !== MAGIC_CUSTOM_SERVER_ENTRY_MODULE) return null;
+                  if (
+                    source !==
+                    project.fs.resolvePath(MAGIC_CUSTOM_SERVER_ENTRY_MODULE)
+                  ) {
+                    return null;
+                  }
+
                   return content;
                 },
               });

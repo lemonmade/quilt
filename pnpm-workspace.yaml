@@ -1,0 +1,5 @@
+packages:
+  - 'packages/*'
+  - 'examples/*'
+  - 'tests/e2e'
+  - 'tests/e2e/fixtures/*'

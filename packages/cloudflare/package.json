@@ -48,6 +48,7 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/http-handlers": "^0.2.20",
+    "common-tags": "^1.8.0",
     "mime": "^2.5.0"
   },
   "peerDependencies": {
