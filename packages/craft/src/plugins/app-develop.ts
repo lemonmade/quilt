@@ -173,6 +173,6 @@ function babelConfigItemIs(
     (typeof configItem === 'string' && configItem.includes(compare)) ||
     (Array.isArray(configItem) &&
       typeof configItem[0] === 'string' &&
-      !configItem[0].includes(compare))
+      configItem[0].includes(compare))
   );
 }
