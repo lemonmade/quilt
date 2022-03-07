@@ -7,13 +7,18 @@ import type {
 import type {} from '@quilted/sewing-kit-rollup';
 import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
+// We embed a version of Preact with `@quilted/quilt` so that consumers
+// don’t need to install it manually. We also have some hand-rolled optimizations
+// that improve the tree shakability of preact. We want to use these libraries
+// in place of any references to `react` and `rect-dom`.
 const ALIASES = {
-  'react/jsx-runtime': 'preact/jsx-runtime',
-  // Preact does not have a jsx-dev-runtime
-  'react/jsx-dev-runtime': 'preact/jsx-runtime',
-  react: '@quilted/preact-mini-compat',
-  'react-dom/server': 'preact/compat/server',
-  'react-dom': '@quilted/preact-mini-compat',
+  // Preact does not have a jsx-dev-runtime, so we don’t differentiate
+  // in our re-exporting of it either.
+  'react/jsx-runtime': '@quilted/quilt/react/jsx-runtime',
+  'react/jsx-dev-runtime': '@quilted/quilt/react/jsx-runtime',
+  react: '@quilted/quilt/react',
+  'react-dom/server': '@quilted/quilt/react/server',
+  'react-dom': '@quilted/quilt/react',
 };
 
 export function preact() {

@@ -66,6 +66,24 @@
       "sewing-kit:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
+    },
+    "./react/jsx-runtime": {
+      "quilt:internal": "./src/react/jsx-runtime.ts",
+      "sewing-kit:esnext": "./build/esnext/react/jsx-runtime.esnext",
+      "import": "./build/esm/react/jsx-runtime.mjs",
+      "require": "./build/cjs/react/jsx-runtime.cjs"
+    },
+    "./react/server": {
+      "quilt:internal": "./src/react/server.ts",
+      "sewing-kit:esnext": "./build/esnext/react/server.esnext",
+      "import": "./build/esm/react/server.mjs",
+      "require": "./build/cjs/react/server.cjs"
+    },
+    "./react": {
+      "quilt:internal": "./src/react/index.ts",
+      "sewing-kit:esnext": "./build/esnext/react/index.esnext",
+      "import": "./build/esm/react/index.mjs",
+      "require": "./build/cjs/react/index.cjs"
     }
   },
   "typesVersions": {
@@ -93,6 +111,15 @@
       ],
       "matchers": [
         "./build/typescript/matchers.d.ts"
+      ],
+      "react/jsx-runtime": [
+        "./build/typescript/react/jsx-runtime.d.ts"
+      ],
+      "react/server": [
+        "./build/typescript/react/server.d.ts"
+      ],
+      "react": [
+        "./build/typescript/react/index.d.ts"
       ],
       "*": [
         "./build/typescript/index.d.ts"
