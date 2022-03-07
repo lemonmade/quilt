@@ -1,5 +1,21 @@
 # @quilted/craft
 
+## 0.1.55
+
+### Patch Changes
+
+- [`a9d3eb2`](https://github.com/lemonmade/quilt/commit/a9d3eb268447b50bb4504584d568fd16df158265) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset manifest creation and types in strict package environments
+
+* [`1cd1f3b`](https://github.com/lemonmade/quilt/commit/1cd1f3b886081f40e7dfe1c2695516faf8e3b536) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix http-handlers imports in strict package environments
+
+- [`d1b0622`](https://github.com/lemonmade/quilt/commit/d1b0622144a2af199c60aaa5d206d82ebc0214bf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix React aliasing in strict package environments
+
+* [`6ad3628`](https://github.com/lemonmade/quilt/commit/6ad362860eb65392ec5c5fa80c62e002e7f99f74) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix @quilted/polyfills in strict package environments
+
+* Updated dependencies [[`a9d3eb2`](https://github.com/lemonmade/quilt/commit/a9d3eb268447b50bb4504584d568fd16df158265), [`73c25d2`](https://github.com/lemonmade/quilt/commit/73c25d295614141230c3607e92c8da5342e013d7), [`1cd1f3b`](https://github.com/lemonmade/quilt/commit/1cd1f3b886081f40e7dfe1c2695516faf8e3b536), [`d1b0622`](https://github.com/lemonmade/quilt/commit/d1b0622144a2af199c60aaa5d206d82ebc0214bf), [`6ad3628`](https://github.com/lemonmade/quilt/commit/6ad362860eb65392ec5c5fa80c62e002e7f99f74), [`fbff206`](https://github.com/lemonmade/quilt/commit/fbff206228e2bf4a1a1e07beb63d04f5553b6cf1)]:
+  - @quilted/async@0.3.14
+  - @quilted/quilt@0.5.59
+
 ## 0.1.54
 
 ### Patch Changes

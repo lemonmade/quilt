@@ -1,7 +1,7 @@
 {
   "name": "@quilted/async",
   "type": "module",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -82,7 +82,7 @@
     "@babel/types": ">=7.0.0",
     "@quilted/sewing-kit": "^0.2.14",
     "@quilted/sewing-kit-babel": "^0.1.8",
-    "@quilted/sewing-kit-rollup": "^0.1.8"
+    "@quilted/sewing-kit-rollup": "^0.1.9"
   },
   "peerDependenciesMeta": {
     "@babel/core": {

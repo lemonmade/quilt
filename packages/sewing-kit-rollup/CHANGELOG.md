@@ -1,5 +1,11 @@
 # @quilted/sewing-kit-rollup
 
+## 0.1.9
+
+### Patch Changes
+
+- [`6ad3628`](https://github.com/lemonmade/quilt/commit/6ad362860eb65392ec5c5fa80c62e002e7f99f74) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix @quilted/polyfills in strict package environments
+
 ## 0.1.8
 
 ### Patch Changes
