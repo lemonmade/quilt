@@ -1,6 +1,17 @@
 {
-  "files": [],
-  "include": [],
+  "extends": "@quilted/typescript/workspace.json",
+  "compilerOptions": {
+    "outDir": "build/typescript/workspace"
+  },
+  "include": [
+    "config/**/*.ts",
+    "scripts/**/*.ts",
+    "**/sewing-kit.config.ts",
+    "*.test.ts",
+    "*.test.tsx",
+    "tests/e2e/**/*"
+  ],
+  "exclude": ["tests/e2e/output/**/*"],
   "references": [
     {"path": "./packages/async"},
     {"path": "./packages/aws"},
@@ -41,7 +52,6 @@
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-types"},
     {"path": "./packages/workers"},
-    {"path": "./examples/basic-app"},
-    {"path": "./tsconfig.workspace.json"}
+    {"path": "./examples/basic-app"}
   ]
 }

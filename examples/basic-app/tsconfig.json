@@ -1,15 +1,8 @@
 {
-  "extends": "@quilted/typescript/app.json",
+  "extends": "@quilted/typescript/workspace.json",
   "compilerOptions": {
-    "outDir": "build/typescript",
-    "paths": {
-      "components": ["./components"]
-    }
+    "outDir": "build/typescript"
   },
-  "include": ["**/*"],
-  "exclude": ["build", "sewing-kit.config.ts", "*.test.ts", "*.test.tsx"],
-  "references": [
-    {"path": "../../packages/quilt"},
-    {"path": "../../packages/craft"}
-  ]
+  "include": ["**/sewing-kit.config.ts"],
+  "references": [{"path": "./app"}]
 }

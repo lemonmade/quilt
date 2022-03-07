@@ -2,7 +2,6 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import {execFileSync} from 'child_process';
 import {EOL} from 'os';
 import {fileURLToPath} from 'url';
 
@@ -104,7 +103,6 @@ async function run() {
 
   const files = fs.readdirSync(templateRoot);
   for (const file of files) {
-    if (file === '_yarnrc.yml') continue;
     if (file === 'package.json') {
       const packageJson = JSON.parse(
         fs.readFileSync(path.join(templateRoot, file), {encoding: 'utf8'}),
@@ -119,28 +117,12 @@ async function run() {
     write(file);
   }
 
-  console.log(`\nInstalling dependencies...\n`);
-
-  execFileSync('yarn', ['set', 'version', 'berry'], {
-    cwd: root,
-  });
-
-  write(
-    '.yarnrc.yml',
-    fs.readFileSync(path.join(templateRoot, '_yarnrc.yml'), {encoding: 'utf8'}),
-  );
-
-  try {
-    execFileSync('yarn', ['install'], {cwd: root});
-  } catch (error) {
-    console.log(error.stdout.toString());
-  }
-
   console.log(`\nDone! Here’s what you’ll need to do next:\n`);
   if (root !== cwd) {
     console.log(`  cd ${path.relative(cwd, root)}`);
   }
-  console.log(`  yarn develop`);
+  console.log(`  pnpm install # install dependencies`);
+  console.log(`  pnpm develop # run development server`);
   console.log();
 }
 
