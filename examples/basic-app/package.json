@@ -1,7 +1,7 @@
 {
   "name": "example-basic-app",
   "type": "module",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": true,
   "dependencies": {
     "@quilted/quilt": "^0.5.0"

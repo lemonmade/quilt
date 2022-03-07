@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-performance",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -36,7 +36,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/react-router": "^0.3.25",
+    "@quilted/react-router": "^0.3.29",
     "react": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
