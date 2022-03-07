@@ -8,8 +8,8 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
+  changesets:
+    name: Changesets 🦋
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
