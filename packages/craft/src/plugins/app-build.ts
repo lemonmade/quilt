@@ -528,11 +528,6 @@ function createManualChunksSorter(): GetManualChunk {
       return;
     }
 
-    // The @quilted/quilt/global is the only bit of side effect-ful code in Quilt.
-    // That module needs to stay with app code so that it is executed in the
-    // right order.
-    if (/[/]quilt[/].*global\.\w+$/.test(id)) return;
-
     if (id.endsWith('.css')) return;
 
     const importMetadata = getImportMetadata(id, getModuleInfo, cache);
