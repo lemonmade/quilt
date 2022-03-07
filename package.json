@@ -15,8 +15,7 @@
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
     "develop": "node ./scripts/sewing-kit-from-source develop",
-    "prerelease": "pnpm build",
-    "version-bump": "changelog version",
+    "version-bump": "changeset version",
     "deploy": "pnpm publish -r"
   },
   "devDependencies": {
