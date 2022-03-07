@@ -1,9 +1,9 @@
 import type {ProjectPlugin} from '../plugins';
 import type {Service, ServiceOptions} from '../model';
 
-import {BaseBuilder, ConfigurationKind} from './base';
+import {ConfigurationBuilder, ConfigurationKind} from './base';
 
-class ServiceBuilder extends BaseBuilder<
+class ServiceBuilder extends ConfigurationBuilder<
   ProjectPlugin<Service>,
   ServiceOptions
 > {

@@ -4,6 +4,11 @@ export {
   createService,
   createWorkspace,
 } from './configuration';
+export type {
+  ConfigurationBuilder,
+  ConfigurationKind,
+  ConfigurationBuilderResult,
+} from './configuration';
 
 export {createProjectPlugin, createWorkspacePlugin} from './plugins';
 export type {
@@ -24,7 +29,15 @@ export {
   Workspace,
   TargetRuntime,
 } from './model';
-export type {Project, BaseProject} from './model';
+export type {
+  Project,
+  BaseProject,
+  AppOptions,
+  PackageOptions,
+  PackageEntryOptions,
+  PackageBinaryOptions,
+  ServiceOptions,
+} from './model';
 
 export {Environment, Runtime, ProjectKind, Task} from './types';
 

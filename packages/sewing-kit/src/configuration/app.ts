@@ -1,9 +1,12 @@
 import type {ProjectPlugin} from '../plugins';
 import type {App, AppOptions} from '../model';
 
-import {BaseBuilder, ConfigurationKind} from './base';
+import {ConfigurationBuilder, ConfigurationKind} from './base';
 
-class AppOptionBuilder extends BaseBuilder<ProjectPlugin<App>, AppOptions> {
+class AppOptionBuilder extends ConfigurationBuilder<
+  ProjectPlugin<App>,
+  AppOptions
+> {
   constructor(root: string) {
     super(root, ConfigurationKind.App);
   }

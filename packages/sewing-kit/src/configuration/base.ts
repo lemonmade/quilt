@@ -35,7 +35,7 @@ export interface ConfigurationBuilderResult<Options = unknown> {
   readonly [BUILDER_RESULT_MARKER]: true;
 }
 
-export class BaseBuilder<PluginType, Options> {
+export class ConfigurationBuilder<PluginType, Options> {
   readonly fs: FileSystem;
   readonly packageJson?: PackageJson;
 

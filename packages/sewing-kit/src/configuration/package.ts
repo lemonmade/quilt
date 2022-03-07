@@ -7,9 +7,9 @@ import type {
   PackageBinaryOptions,
 } from '../model';
 
-import {BaseBuilder, ConfigurationKind} from './base';
+import {ConfigurationBuilder, ConfigurationKind} from './base';
 
-class PackageBuilder extends BaseBuilder<
+class PackageBuilder extends ConfigurationBuilder<
   ProjectPlugin<Package>,
   PackageOptions
 > {

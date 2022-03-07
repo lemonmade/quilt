@@ -1,9 +1,12 @@
 import type {WorkspacePlugin} from '../plugins';
 import type {WorkspaceOptions} from '../model';
 
-import {BaseBuilder, ConfigurationKind} from './base';
+import {ConfigurationBuilder, ConfigurationKind} from './base';
 
-class WorkspaceBuilder extends BaseBuilder<WorkspacePlugin, WorkspaceOptions> {
+class WorkspaceBuilder extends ConfigurationBuilder<
+  WorkspacePlugin,
+  WorkspaceOptions
+> {
   constructor(root: string) {
     super(root, ConfigurationKind.Workspace);
   }
