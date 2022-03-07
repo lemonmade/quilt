@@ -6,6 +6,14 @@ export {
   usePreload,
   createAsyncComponent,
 } from '@quilted/react-async';
+export type {
+  NoOptions,
+  AssetLoadTiming,
+  HydrationTiming,
+  RenderTiming,
+  AsyncComponentType,
+  Preloadable,
+} from '@quilted/react-async';
 export {
   GraphQLContext,
   createGraphQL,
