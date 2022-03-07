@@ -13,7 +13,10 @@
   },
   "license": "MIT",
   "exports": {
-    "./*.json": "./*.json"
+    "./app.json": "./app.json",
+    "./pkg.json": "./pkg.json",
+    "./service.json": "./service.json",
+    "./workspace.json": "./workspace.json"
   },
   "sideEffects": false,
   "eslintConfig": {
