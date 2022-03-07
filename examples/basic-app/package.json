@@ -7,11 +7,13 @@
     "@quilted/quilt": "^0.5.0"
   },
   "devDependencies": {
+    "@quilted/browserslist-config": "^0.1.0",
     "@quilted/craft": "^0.1.0",
     "@quilted/eslint-config": "^0.1.0",
+    "@quilted/prettier": "^0.2.0",
     "@quilted/typescript": "^0.2.0"
   },
-  "prettier": "@quilted/craft/prettier",
+  "prettier": "@quilted/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/app"
   },
