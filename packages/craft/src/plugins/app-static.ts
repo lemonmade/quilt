@@ -10,8 +10,7 @@ import type {
   WaterfallHookWithDefault,
 } from '@quilted/sewing-kit';
 
-import type {Manifest} from '@quilted/async/server';
-import type {HttpState} from '@quilted/quilt/server';
+import type {HttpState, AssetManifest} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
 import {
@@ -288,7 +287,7 @@ export function appStatic({
                         manifestFile,
                       );
 
-                      return JSON.parse(manifestString) as Manifest;
+                      return JSON.parse(manifestString) as AssetManifest;
                     }),
                   )
                 )
@@ -308,13 +307,13 @@ export function appStatic({
                     ? undefined
                     : defaultManifest;
 
-                const manifestToCode = (manifest?: Manifest) =>
+                const manifestToCode = (manifest?: AssetManifest) =>
                   manifest == null
                     ? 'undefined'
                     : `JSON.parse(${JSON.stringify(JSON.stringify(manifest))})`;
 
                 return stripIndent`
-                  import {createAssetLoader} from '@quilted/async/server';
+                  import {createAssetLoader} from '@quilted/quilt/server';
 
                   const noModuleManifest = ${manifestToCode(noModuleManifest)};
                   const moduleManifest = ${manifestToCode(moduleManifest)};

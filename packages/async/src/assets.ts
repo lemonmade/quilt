@@ -3,17 +3,17 @@ export interface Asset {
   readonly attributes: Record<string, string | boolean | number>;
 }
 
-export interface ManifestEntry {
+export interface AssetManifestEntry {
   readonly scripts: Asset[];
   readonly styles: Asset[];
 }
 
-export interface Manifest {
+export interface AssetManifest {
   readonly id: string;
   readonly default: boolean;
   readonly metadata: Record<string, any>;
-  readonly entry: ManifestEntry;
-  readonly async: {[key: string]: ManifestEntry};
+  readonly entry: AssetManifestEntry;
+  readonly async: {[key: string]: AssetManifestEntry};
 }
 
 export interface AsyncAssetSelector {
@@ -36,13 +36,13 @@ export interface AssetLoader<Options> {
   ): Promise<Asset[]>;
 }
 
-export interface CreateOptions<Options> {
-  getManifest(options: Options): Promise<Manifest | undefined>;
+export interface CreateAssetLoaderOptions<Options> {
+  getManifest(options: Options): Promise<AssetManifest | undefined>;
 }
 
 export function createAssetLoader<Options>({
   getManifest,
-}: CreateOptions<Options>): AssetLoader<Options> {
+}: CreateAssetLoaderOptions<Options>): AssetLoader<Options> {
   // Ordering of asset:
   // - vendors (anything other than the first file) for the entry
   // - the actual entry CSS

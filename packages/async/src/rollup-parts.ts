@@ -14,7 +14,7 @@ import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
 
 import {PREFIX} from './constants';
-import type {Manifest, ManifestEntry, Asset} from './assets';
+import type {AssetManifest, AssetManifestEntry, Asset} from './assets';
 
 const ENTRY_PREFIX = 'quilt-async-entry:';
 
@@ -262,7 +262,7 @@ async function writeManifestForBundle(
   // entry (though, from a separate build).
   const entryChunk = entries[0];
 
-  const manifest: Partial<Manifest> = {
+  const manifest: Partial<AssetManifest> = {
     metadata: manifestOptions.metadata ?? {},
     entry: createAsset(
       assetBaseUrl,
@@ -295,7 +295,7 @@ function createAsset(
   baseUrl: string,
   files: string[],
   {format}: {format: ModuleFormat},
-): ManifestEntry {
+): AssetManifestEntry {
   const styles: Asset[] = [];
   const scripts: Asset[] = [];
 

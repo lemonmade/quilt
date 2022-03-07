@@ -57,7 +57,7 @@ You can write any code for your server that you like. Quilt provides some utilit
 // access to a `@quilted/async` `AssetLoader` object that knows how to resolve
 // the right assets during server rendering, including the ability to select
 // the files with the right browser targets.
-import assets from '__quilt__/AssetManifest';
+import assets from '__quilt__/AssetManifest.ts';
 
 import {createHttpHandler, response} from '@quilted/http-handlers';
 import {createServerRenderingRequestHandler} from '@quilted/quilt/server';

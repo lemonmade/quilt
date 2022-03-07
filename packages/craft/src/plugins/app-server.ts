@@ -221,7 +221,7 @@ export function appServer(options?: AppServerOptions) {
                 );
 
                 return stripIndent`
-                  import {createAssetLoader} from '@quilted/async/server';
+                  import {createAssetLoader} from '@quilted/quilt/server';
 
                   const manifests = JSON.parse(${JSON.stringify(
                     JSON.stringify(manifests),
