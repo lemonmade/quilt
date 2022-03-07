@@ -1,4 +1,4 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
+import {createProjectPlugin, Workspace} from '@quilted/sewing-kit';
 import type {
   Project,
   ResolvedHooks,
@@ -11,10 +11,10 @@ import type {} from '@quilted/sewing-kit-vite';
 export function tsconfigAliases() {
   return createProjectPlugin({
     name: 'Quilt.TSConfigAliases',
-    build({configure, project}) {
+    build({configure, project, workspace}) {
       configure(({rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
-          const plugin = await getAliasPlugin(project);
+          const plugin = await getAliasPlugin(project, workspace);
 
           if (plugin) plugins.unshift(plugin);
 
@@ -22,14 +22,14 @@ export function tsconfigAliases() {
         });
       });
     },
-    develop({configure, project}) {
+    develop({configure, project, workspace}) {
       configure(
         ({
           rollupPlugins,
           vitePlugins,
         }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
           rollupPlugins?.(async (plugins) => {
-            const plugin = await getAliasPlugin(project);
+            const plugin = await getAliasPlugin(project, workspace);
 
             if (plugin) plugins.unshift(plugin);
 
@@ -37,7 +37,7 @@ export function tsconfigAliases() {
           });
 
           vitePlugins?.(async (plugins) => {
-            const plugin = await getAliasPlugin(project);
+            const plugin = await getAliasPlugin(project, workspace);
 
             if (plugin) plugins.unshift(plugin);
 
@@ -49,22 +49,38 @@ export function tsconfigAliases() {
   });
 }
 
-async function getAliasPlugin(project: Project) {
+interface TSConfig {
+  compilerOptions?: {paths?: Record<string, string[]>};
+  references?: [{path: string}];
+}
+
+async function getAliasPlugin(project: Project, workspace: Workspace) {
   const [{default: alias}, tsconfig] = await Promise.all([
     import('@rollup/plugin-alias'),
     (async () => {
       try {
-        const hasProjectTSConfig = await project.fs.hasFile(
-          `tsconfig.${project.kind}.json`,
+        const tsconfig = await project.fs.read('tsconfig.json');
+        const projectIsWorkspace = project.fs.root === workspace.fs.root;
+
+        const rootTSConfig = JSON.parse(tsconfig) as TSConfig;
+
+        if (!projectIsWorkspace) return rootTSConfig;
+
+        const references = rootTSConfig.references;
+
+        if (references == null || references.length !== 1) {
+          return rootTSConfig;
+        }
+
+        const firstReferencePath = references[0].path;
+
+        const nestedTSConfig = await project.fs.read(
+          firstReferencePath.endsWith('.json')
+            ? project.fs.resolvePath(firstReferencePath)
+            : project.fs.resolvePath(firstReferencePath, 'tsconfig.json'),
         );
 
-        const tsconfig = hasProjectTSConfig
-          ? await project.fs.read(`tsconfig.${project.kind}.json`)
-          : await project.fs.read('tsconfig.json');
-
-        return JSON.parse(tsconfig) as {
-          compilerOptions?: {paths?: Record<string, string[]>};
-        };
+        return JSON.parse(nestedTSConfig) as TSConfig;
       } catch {
         // intentional noop
       }
