@@ -27,9 +27,15 @@ export interface Options {
    * The features you’d like to polyfill.
    */
   features?: PolyfillFeature[];
+
+  /**
+   * The base package name used for resolving polyfill imports. Defaults
+   * to `@quilted/polyfills`.
+   */
+  package?: string;
 }
 
-export function polyfills({features}: Options = {}) {
+export function polyfills({features, package: packageName}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Polyfills',
     build({configure, hooks}) {
@@ -50,6 +56,7 @@ export function polyfills({features}: Options = {}) {
 
           plugins.push(
             polyfill({
+              package: packageName,
               features: resolvedFeatures,
               target: resolvedRuntime.includes(Runtime.Browser)
                 ? await targets?.run([])
@@ -79,6 +86,7 @@ export function polyfills({features}: Options = {}) {
 
           plugins.push(
             polyfill({
+              package: packageName,
               features: resolvedFeatures,
               target: resolvedRuntime.includes(Runtime.Browser)
                 ? await targets?.run([])
@@ -106,6 +114,7 @@ export function polyfills({features}: Options = {}) {
             ]);
 
           const mappedPolyfills = polyfillAliasesForTarget('node', {
+            package: packageName,
             features: resolvedFeatures,
             polyfill: 'usage',
           });
@@ -113,7 +122,8 @@ export function polyfills({features}: Options = {}) {
           for (const [polyfill, mappedPolyfill] of Object.entries(
             mappedPolyfills,
           )) {
-            moduleMappings[`${polyfill}$`] = mappedPolyfill;
+            if (!mappedPolyfill) continue;
+            moduleMappings[`${packageName}/${polyfill}$`] = mappedPolyfill;
           }
 
           return moduleMappings;

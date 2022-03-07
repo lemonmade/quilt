@@ -227,6 +227,8 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     rollupNodeExportConditions!.run(
       targetRuntime.includes(Runtime.Node)
         ? ['node', 'module', 'import', 'require', 'default']
+        : targetRuntime.includes(Runtime.Browser)
+        ? ['browser', 'module', 'import', 'require', 'default']
         : ['module', 'import', 'require', 'default'],
     ),
   ]);

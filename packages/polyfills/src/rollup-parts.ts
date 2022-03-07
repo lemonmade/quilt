@@ -10,15 +10,19 @@ export interface Options {
   target?: Parameters<typeof polyfillAliasesForTarget>[0];
   features?: PolyfillFeature[];
   sourceMap?: boolean;
+  package?: string;
 }
 
 export function polyfill({
   target,
   features,
   sourceMap = true,
+  package: packageName,
 }: Options): Plugin {
   const polyfills = new Map(
-    target ? Object.entries(polyfillAliasesForTarget(target)) : undefined,
+    target
+      ? Object.entries(polyfillAliasesForTarget(target, {package: packageName}))
+      : undefined,
   );
 
   return {
@@ -43,9 +47,7 @@ export function polyfill({
       magicString.prepend(
         `${features
           .map((feature) => {
-            const mappedPolyfill = polyfills.get(
-              `@quilted/polyfills/${feature}`,
-            );
+            const mappedPolyfill = polyfills.get(feature);
 
             if (!mappedPolyfill) {
               throw new Error(

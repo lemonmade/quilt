@@ -37,22 +37,22 @@
       "require": "./build/cjs/base.cjs"
     },
     "./fetch": {
-      "quilt:internal": "./src/fetch.ts",
-      "sewing-kit:esnext": "./build/esnext/fetch.esnext",
-      "import": "./build/esm/fetch.mjs",
-      "require": "./build/cjs/fetch.cjs"
-    },
-    "./fetch.browser": {
-      "quilt:internal": "./src/fetch.browser.ts",
-      "sewing-kit:esnext": "./build/esnext/fetch.browser.esnext",
-      "import": "./build/esm/fetch.browser.mjs",
-      "require": "./build/cjs/fetch.browser.cjs"
-    },
-    "./fetch.node": {
-      "quilt:internal": "./src/fetch.node.ts",
-      "sewing-kit:esnext": "./build/esnext/fetch.node.esnext",
-      "import": "./build/esm/fetch.node.mjs",
-      "require": "./build/cjs/fetch.node.cjs"
+      "browser": {
+        "quilt:internal": "./src/fetch.browser.ts",
+        "sewing-kit:esnext": "./build/esnext/fetch.browser.esnext",
+        "import": "./build/esm/fetch.browser.mjs",
+        "require": "./build/cjs/fetch.browser.cjs"
+      },
+      "node": {
+        "quilt:internal": "./src/fetch.node.ts",
+        "sewing-kit:esnext": "./build/esnext/fetch.node.esnext",
+        "import": "./build/esm/fetch.node.mjs",
+        "require": "./build/cjs/fetch.node.cjs"
+      },
+      "quilt:internal": "./src/noop.ts",
+      "sewing-kit:esnext": "./build/esnext/noop.esnext",
+      "import": "./build/esm/noop.mjs",
+      "require": "./build/cjs/noop.cjs"
     },
     "./noop": {
       "quilt:internal": "./src/noop.ts",
@@ -63,6 +63,18 @@
   },
   "typesVersions": {
     ">=1": {
+      "base": [
+        "./build/typescript/noop.d.ts"
+      ],
+      "fetch": [
+        "./build/typescript/noop.d.ts"
+      ],
+      "noop": [
+        "./build/typescript/noop.d.ts"
+      ],
+      "sewing-kit": [
+        "./build/typescript/sewing-kit.d.ts"
+      ],
       "rollup": [
         "./build/typescript/rollup-parts.d.ts"
       ],

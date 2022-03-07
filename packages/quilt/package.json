@@ -96,6 +96,24 @@
       "sewing-kit:esnext": "./build/esnext/http-handlers/index.esnext",
       "import": "./build/esm/http-handlers/index.mjs",
       "require": "./build/cjs/http-handlers/index.cjs"
+    },
+    "./polyfills/base": {
+      "quilt:internal": "./src/polyfills/base.ts",
+      "sewing-kit:esnext": "./build/esnext/polyfills/base.esnext",
+      "import": "./build/esm/polyfills/base.mjs",
+      "require": "./build/cjs/polyfills/base.cjs"
+    },
+    "./polyfills/fetch": {
+      "quilt:internal": "./src/polyfills/fetch.ts",
+      "sewing-kit:esnext": "./build/esnext/polyfills/fetch.esnext",
+      "import": "./build/esm/polyfills/fetch.mjs",
+      "require": "./build/cjs/polyfills/fetch.cjs"
+    },
+    "./polyfills/noop": {
+      "quilt:internal": "./src/polyfills/noop.ts",
+      "sewing-kit:esnext": "./build/esnext/polyfills/noop.esnext",
+      "import": "./build/esm/polyfills/noop.mjs",
+      "require": "./build/cjs/polyfills/noop.cjs"
     }
   },
   "typesVersions": {
@@ -138,6 +156,15 @@
       ],
       "http-handlers": [
         "./build/typescript/http-handlers/index.d.ts"
+      ],
+      "polyfills/base": [
+        "./build/typescript/polyfills/base.d.ts"
+      ],
+      "polyfills/fetch": [
+        "./build/typescript/polyfills/fetch.d.ts"
+      ],
+      "polyfills/noop": [
+        "./build/typescript/polyfills/noop.d.ts"
       ],
       "*": [
         "./build/typescript/index.d.ts"

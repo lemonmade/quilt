@@ -18,34 +18,32 @@ export function polyfillAliasesForTarget(
   {
     features = ['base', ...(Object.keys(POLYFILLS) as PolyfillFeature[])],
     polyfill = 'usage',
+    package: packageName = '@quilted/polyfills',
   }: {
     features?: PolyfillFeature[];
     polyfill?: 'entry' | 'usage' | 'inline';
+    package?: string;
   } = {},
-): Record<string, string> {
-  const prefix = `@quilted/polyfills`;
-  const noop = `${prefix}/noop`;
+): Partial<Record<PolyfillFeature, string>> {
+  const noop = `${packageName}/noop`;
 
-  const mappedPolyfills: Record<string, string> = {};
+  const mappedPolyfills: Partial<Record<PolyfillFeature, string>> = {};
 
   for (const feature of features) {
     if (feature === 'base') {
-      mappedPolyfills['@quilted/polyfills/base'] =
-        polyfill === 'usage' ? noop : `${prefix}/base`;
+      mappedPolyfills[feature] =
+        polyfill === 'usage' ? noop : `${packageName}/base`;
       continue;
     }
 
     const {featureTest} = POLYFILLS[feature];
-    const mapFrom = `@quilted/polyfills/${feature}`;
 
-    if (target === 'node') {
-      mappedPolyfills[mapFrom] = `${prefix}/${feature}.${target}`;
-    } else {
-      mappedPolyfills[mapFrom] =
-        featureTest == null || !isSupported(featureTest, target)
-          ? `${prefix}/${feature}.browser`
-          : noop;
-    }
+    mappedPolyfills[feature] =
+      target == 'node' ||
+      featureTest == null ||
+      !isSupported(featureTest, target)
+        ? `${packageName}/${feature}`
+        : noop;
   }
 
   return mappedPolyfills;

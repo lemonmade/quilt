@@ -196,6 +196,7 @@ export function quiltApp({
 
           use(
             polyfills({
+              package: '@quilted/quilt/polyfills',
               features: ['fetch'],
               ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
             }),
@@ -274,9 +275,10 @@ export function quiltService({
           const {polyfills} = await import('@quilted/polyfills/sewing-kit');
 
           use(
-            polyfills(
-              typeof shouldPolyfill === 'object' ? shouldPolyfill : undefined,
-            ),
+            polyfills({
+              package: '@quilted/quilt/polyfills',
+              ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
+            }),
           );
         });
       }
