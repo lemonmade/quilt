@@ -62,7 +62,7 @@ export function vite() {
         step({
           name: 'SewingKit.Vite',
           label: `Running vite for ${project.name}`,
-          async run() {
+          async run(runner) {
             const [
               {createServer},
               {
@@ -125,6 +125,17 @@ export function vite() {
 
             const server = await createServer(config);
             await server.listen();
+
+            const serverAddress = server.httpServer?.address();
+
+            if (typeof serverAddress === 'object' && serverAddress != null) {
+              runner.log(
+                (ui) =>
+                  `Started ${ui.Link('vite development server', {
+                    to: `http://localhost:${serverAddress.port}`,
+                  })}`,
+              );
+            }
           },
         }),
       );
