@@ -10,7 +10,10 @@
   },
   "publishConfig": {
     "access": "public",
-    "@quilted:registry": "https://registry.npmjs.org"
+    "@quilted:registry": "https://registry.npmjs.org",
+    "bin": {
+      "quilt-graphql-typescript": "./bin/quilt-graphql-typescript.mjs"
+    }
   },
   "exports": {
     ".": {
@@ -89,9 +92,6 @@
         "./build/typescript/index.d.ts"
       ]
     }
-  },
-  "bin": {
-    "quilt-graphql-typescript": "./bin/quilt-graphql-typescript.mjs"
   },
   "sideEffects": false,
   "dependencies": {
