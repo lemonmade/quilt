@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.54",
+  "version": "0.1.55",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -76,9 +76,9 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/async": "^0.3.13",
+    "@quilted/async": "^0.3.14",
     "@quilted/graphql": "^0.4.15",
-    "@quilted/quilt": "^0.5.58",
+    "@quilted/quilt": "^0.5.59",
     "@quilted/workers": "^0.2.13",
     "preact": "^10.5.0",
     "typescript": ">=4.0.0 <5.0.0"
