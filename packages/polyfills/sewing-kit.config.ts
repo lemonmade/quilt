@@ -1,7 +1,5 @@
 import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
-const POLYFILLS = ['fetch'];
-
 export default createPackage((pkg) => {
   pkg.entry({source: './src/index'});
   pkg.entry({
@@ -17,20 +15,16 @@ export default createPackage((pkg) => {
 
   pkg.entry({source: './src/base', name: 'base'});
   pkg.entry({source: './src/noop', name: 'noop'});
-
-  for (const polyfill of POLYFILLS) {
-    pkg.entry({source: `./src/${polyfill}`, name: polyfill});
-    pkg.entry({
-      source: `./src/${polyfill}.browser`,
-      name: `${polyfill}.browser`,
-      runtime: Runtime.Browser,
-    });
-    pkg.entry({
-      source: `./src/${polyfill}.node`,
-      name: `${polyfill}.node`,
-      runtime: Runtime.Node,
-    });
-  }
+  pkg.entry({
+    source: './src/fetch.browser',
+    name: 'fetch.browser',
+    runtime: Runtime.Browser,
+  });
+  pkg.entry({
+    source: './src/fetch.node',
+    name: 'fetch.node',
+    runtime: Runtime.Node,
+  });
 
   pkg.use(quiltPackage());
 });
