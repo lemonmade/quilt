@@ -10,7 +10,6 @@ import type {
 import type {ModuleFormat} from 'rollup';
 
 import {
-  PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_HTTP_HANDLER,
@@ -167,7 +166,6 @@ export function appServer(options?: AppServerOptions) {
                   import ${JSON.stringify(project.fs.resolvePath(entry))};
                 `
             : stripIndent`
-                import '@quilted/quilt/global';
                 import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                 import assets from ${JSON.stringify(
                   MAGIC_MODULE_APP_ASSET_LOADER,
@@ -176,9 +174,6 @@ export function appServer(options?: AppServerOptions) {
 
                 export default createServerRenderingHttpHandler(App, {
                   assets,
-                  async before() {
-                    await ${PRELOAD_ALL_GLOBAL};
-                  },
                 });
               `;
 
@@ -190,7 +185,7 @@ export function appServer(options?: AppServerOptions) {
 
             plugins.push(cssRollupPlugin({extract: false}));
 
-            plugins.push({
+            plugins.unshift({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
                 if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;

@@ -6,13 +6,20 @@ import type {App} from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-vite';
 
+import {} from './app-server';
+import type {AppServerOptions} from './app-server';
+import type {AppBrowserOptions} from './app-build';
+
 export const STEP_NAME = 'Quilt.App.Develop';
+const MAGIC_MODULE_BROWSER_ENTRY = '/@quilted/magic/browser.tsx';
 
 export interface Options {
   port?: number;
+  server?: Pick<AppServerOptions, 'entry' | 'httpHandler'>;
+  browser?: Pick<AppBrowserOptions, 'entryModule' | 'initializeModule'>;
 }
 
-export function appDevelop({port}: Options = {}) {
+export function appDevelop({port, browser}: Options = {}) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
     develop({project, configure}) {
@@ -23,12 +30,34 @@ export function appDevelop({port}: Options = {}) {
           babelExtensions,
           vitePort,
           vitePlugins,
+          quiltAppBrowserEntryContent,
+          quiltAppBrowserEntryCssSelector,
+          quiltAppBrowserEntryShouldHydrate,
         }) => {
           if (port) vitePort?.(() => port);
 
           vitePlugins?.(async (plugins) => {
-            const [requestedBabelPlugins, requestedBabelPresets] =
-              await Promise.all([babelPlugins!.run([]), babelPresets!.run([])]);
+            const [
+              {magicBrowserEntry},
+              requestedBabelPlugins,
+              requestedBabelPresets,
+            ] = await Promise.all([
+              import('./rollup/magic-browser-entry'),
+              babelPlugins!.run([]),
+              babelPresets!.run([]),
+            ]);
+
+            plugins.unshift(
+              magicBrowserEntry({
+                ...browser,
+                project,
+                module: MAGIC_MODULE_BROWSER_ENTRY,
+                cssSelector: () => quiltAppBrowserEntryCssSelector!.run(),
+                shouldHydrate: () => quiltAppBrowserEntryShouldHydrate!.run(),
+                customizeContent: (content) =>
+                  quiltAppBrowserEntryContent!.run(content),
+              }),
+            );
 
             const normalizedBabelPlugins = requestedBabelPlugins.filter(
               (plugin) => !babelConfigItemIs(plugin, '@quilted/async/babel'),
@@ -98,33 +127,12 @@ export function appDevelop({port}: Options = {}) {
             }
 
             plugins.push({
-              name: '@quilted/magic/browser',
-              resolveId(id) {
-                if (id === '/@quilted/magic/browser.tsx') {
-                  return id;
-                }
-
-                return null;
-              },
-              async load(id) {
-                if (id === '/@quilted/magic/browser.tsx') {
-                  return stripIndent`
-                    import {render} from 'react-dom';
-                    import App from ${JSON.stringify(
-                      project.fs.resolvePath(project.entry ?? ''),
-                    )};
-
-                    render(<App />, document.getElementById('app'));
-                  `;
-                }
-              },
-            });
-
-            plugins.push({
               name: '@quilted/server',
               configureServer(server) {
                 server.middlewares.use(async (request, response, next) => {
                   try {
+                    // server.ssrLoadModule
+
                     const accept = request.headers.accept ?? '';
                     if (!accept.includes('text/html')) return next();
 
@@ -141,7 +149,9 @@ export function appDevelop({port}: Options = {}) {
                       <html>
                         <body>
                           <div id="app"></div>
-                          <script defer src="/@quilted/magic/browser.tsx" type="module"></script>
+                          <script defer src=${JSON.stringify(
+                            MAGIC_MODULE_BROWSER_ENTRY,
+                          )} type="module"></script>
                         </body>
                       </html>
                     `,

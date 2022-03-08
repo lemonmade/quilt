@@ -71,36 +71,58 @@ export function httpHandler({port: explicitPort}: Options = {}) {
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
 
-            plugins.push(
-              {
-                name: '@quilted/http-handler/magic-entry',
-                resolveId(id) {
-                  if (id !== MAGIC_ENTRY_MODULE) return null;
+            plugins.unshift({
+              name: '@quilted/http-handler/magic-module',
+              async resolveId(id) {
+                if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                  // We resolve to a path within the project’s directory
-                  // so that it can use the app’s node_modules.
-                  return {
-                    id: project.fs.resolvePath(id),
-                    moduleSideEffects: 'no-treeshake',
-                  };
-                },
-                async load(source) {
-                  if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
-                    return null;
-                  }
+                return id;
+              },
+              load(id) {
+                if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                  const content = await quiltHttpHandlerRuntimeContent!.run(
-                    undefined,
-                  );
+                // If we were given content, we will use that as the content
+                // for the entry. Otherwise, just point to the project’s entry,
+                // which is assumed to be a module that exports a `createHttpHandler()`
+                // object as the default export.
+                return (
+                  content ??
+                  `export {default} from ${JSON.stringify(
+                    project.fs.resolvePath(project.entry ?? 'index'),
+                  )}`
+                );
+              },
+            });
 
-                  if (content) return content;
+            plugins.push({
+              name: '@quilted/http-handler/magic-entry',
+              resolveId(id) {
+                if (id !== MAGIC_ENTRY_MODULE) return null;
 
-                  const [port, host] = await Promise.all([
-                    quiltHttpHandlerPort!.run(explicitPort),
-                    quiltHttpHandlerHost!.run(undefined),
-                  ]);
+                // We resolve to a path within the project’s directory
+                // so that it can use the app’s node_modules.
+                return {
+                  id: project.fs.resolvePath(id),
+                  moduleSideEffects: 'no-treeshake',
+                };
+              },
+              async load(source) {
+                if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                  return null;
+                }
 
-                  return stripIndent`
+                const content = await quiltHttpHandlerRuntimeContent!.run(
+                  undefined,
+                );
+
+                if (content) return content;
+
+                const [port, host] = await Promise.all([
+                  quiltHttpHandlerPort!.run(explicitPort),
+                  quiltHttpHandlerHost!.run(undefined),
+                ]);
+
+                return stripIndent`
                     import httpHandler from ${JSON.stringify(
                       MAGIC_MODULE_HTTP_HANDLER,
                     )};
@@ -116,31 +138,8 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                   
                     createHttpServer(httpHandler).listen(port, host);
                   `;
-                },
               },
-              {
-                name: '@quilted/http-handler/magic-module',
-                async resolveId(id) {
-                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
-
-                  // If we were given content, we will use that as the content
-                  // for the entry. Otherwise, just point to the project’s entry,
-                  // which is assumed to be a module that exports a `createHttpHandler()`
-                  // object as the default export.
-                  return {id, moduleSideEffects: 'no-treeshake'};
-                },
-                load(id) {
-                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
-
-                  return (
-                    content ??
-                    `export {default} from ${JSON.stringify(
-                      project.fs.resolvePath(project.entry ?? ''),
-                    )}`
-                  );
-                },
-              },
-            );
+            });
 
             return plugins;
           });

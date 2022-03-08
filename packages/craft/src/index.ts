@@ -43,6 +43,7 @@ import type {
 import {appDevelop} from './plugins/app-develop';
 import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
+import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
 
 import {appServer} from './plugins/app-server';
 import type {AppServerOptions} from './plugins/app-server';
@@ -151,6 +152,7 @@ export function quiltApp({
         preact(),
         // Build and auto-server setup
         magicModuleApp(),
+        magicModuleBrowserEntry({hydrate: Boolean(server)}),
         build &&
           appBuild({
             browser,
