@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.56
+
+### Patch Changes
+
+- [`1cb90c3`](https://github.com/lemonmade/quilt/commit/1cb90c382fb7e7e7b4b4e9c66d92c1c689e16ee9) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove unnecessary module directories build augmentation
+
 ## 0.1.55
 
 ### Patch Changes

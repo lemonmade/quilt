@@ -1,5 +1,13 @@
 # @quilted/sewing-kit
 
+## 0.2.15
+
+### Patch Changes
+
+- [`240906c`](https://github.com/lemonmade/quilt/commit/240906ccba6265474c0e50df89f25c5e1844fc60) Thanks [@lemonmade](https://github.com/lemonmade)! - Add --projects flag to sewing-kit commands
+
+* [`805ba7f`](https://github.com/lemonmade/quilt/commit/805ba7f65a3b66d15d51030a85351ea9a438818f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing `@quilted/sewing-kit` type exports for strict package environments
+
 ## 0.2.14
 
 ### Patch Changes
