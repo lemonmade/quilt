@@ -29,6 +29,7 @@
   "license": "MIT",
   "sideEffects": false,
   "devDependencies": {
+    "preact": "^10.5.0",
     "p-limit": "^3.1.0",
     "terser": "^5.5.1"
   },
@@ -41,7 +42,7 @@
       "optional": true
     },
     "preact": {
-      "optional": true
+      "optional": false
     }
   },
   "eslintConfig": {
