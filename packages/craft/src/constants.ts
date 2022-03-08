@@ -1,4 +1,5 @@
-export const MAGIC_MODULE_APP_COMPONENT = '__quilt__/App.tsx';
-export const MAGIC_MODULE_APP_ASSET_MANIFEST = '__quilt__/AssetManifest.ts';
-export const MAGIC_MODULE_HTTP_HANDLER = '__quilt__/HttpHandler.ts';
+export const MAGIC_MODULE_APP_COMPONENT = '@quilted/quilt/magic/app';
+export const MAGIC_MODULE_APP_ASSET_LOADER =
+  '@quilted/quilt/magic/asset-loader';
+export const MAGIC_MODULE_HTTP_HANDLER = '@quilted/quilt/magic/http-handler';
 export const PRELOAD_ALL_GLOBAL = '__QUILT_ASYNC_PRELOAD_ALL__';

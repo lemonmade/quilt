@@ -29,6 +29,7 @@ export {
 export type {ServerRenderPass} from '@quilted/react-server-render/server';
 export {renderEmail} from '@quilted/react-email/server';
 export type {HttpState} from '@quilted/react-http/server';
+export {createHttpHandler} from '@quilted/http-handlers';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';

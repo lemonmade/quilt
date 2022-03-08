@@ -11,7 +11,7 @@ import type {ModuleFormat} from 'rollup';
 
 import {
   PRELOAD_ALL_GLOBAL,
-  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_HTTP_HANDLER,
 } from '../constants';
@@ -170,7 +170,7 @@ export function appServer(options?: AppServerOptions) {
                 import '@quilted/quilt/global';
                 import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                 import assets from ${JSON.stringify(
-                  MAGIC_MODULE_APP_ASSET_MANIFEST,
+                  MAGIC_MODULE_APP_ASSET_LOADER,
                 )};
                 import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
 
@@ -193,11 +193,11 @@ export function appServer(options?: AppServerOptions) {
             plugins.push({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
+                if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
                 return null;
               },
               async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+                if (source !== MAGIC_MODULE_APP_ASSET_LOADER) return null;
 
                 const manifestFiles = await project.fs.glob('manifest*.json', {
                   cwd: project.fs.buildPath('manifests'),

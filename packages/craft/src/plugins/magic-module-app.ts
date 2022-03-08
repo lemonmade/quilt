@@ -12,18 +12,12 @@ export function magicModuleApp() {
           plugins.push({
             name: '@quilted/magic-module/app',
             async resolveId(id) {
-              if (id === MAGIC_MODULE_APP_COMPONENT) {
-                // We resolve to a path within the project’s directory
-                // so that it can use the app’s node_modules.
-                return project.fs.resolvePath(id);
-              }
+              if (id === MAGIC_MODULE_APP_COMPONENT) return id;
 
               return null;
             },
             load(source) {
-              if (
-                source === project.fs.resolvePath(MAGIC_MODULE_APP_COMPONENT)
-              ) {
+              if (source === MAGIC_MODULE_APP_COMPONENT) {
                 return `export {default} from ${JSON.stringify(
                   project.fs.resolvePath(project.entry ?? ''),
                 )}`;

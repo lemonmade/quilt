@@ -15,7 +15,7 @@ import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
 import {
   PRELOAD_ALL_GLOBAL,
-  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
 
@@ -261,7 +261,7 @@ export function appStatic({
             plugins.push({
               name: '@quilted/magic-module/static-asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) {
+                if (id === MAGIC_MODULE_APP_ASSET_LOADER) {
                   return project.fs.resolvePath(id);
                 }
 
@@ -270,7 +270,7 @@ export function appStatic({
               async load(source) {
                 if (
                   source !==
-                  project.fs.resolvePath(MAGIC_MODULE_APP_ASSET_MANIFEST)
+                  project.fs.resolvePath(MAGIC_MODULE_APP_ASSET_LOADER)
                 ) {
                   return null;
                 }
@@ -369,7 +369,7 @@ export function appStatic({
 
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                   import assets from ${JSON.stringify(
-                    MAGIC_MODULE_APP_ASSET_MANIFEST,
+                    MAGIC_MODULE_APP_ASSET_LOADER,
                   )};
                   import {renderStatic} from '@quilted/quilt/static';
 

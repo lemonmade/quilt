@@ -166,6 +166,15 @@
       "polyfills/noop": [
         "./build/typescript/polyfills/noop.d.ts"
       ],
+      "magic/app": [
+        "./build/typescript/magic/app.d.ts"
+      ],
+      "magic/asset-loader": [
+        "./build/typescript/magic/asset-loader.d.ts"
+      ],
+      "magic/http-handler": [
+        "./build/typescript/magic/http-handler.d.ts"
+      ],
       "*": [
         "./build/typescript/index.d.ts"
       ]
