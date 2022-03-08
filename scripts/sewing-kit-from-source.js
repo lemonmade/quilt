@@ -16,6 +16,12 @@ try {
       'quilt:internal',
       cli,
       ...process.argv.slice(2),
+      '--projects',
+      '"./sewing-kit.config.ts"',
+      '--projects',
+      '"./packages/**/sewing-kit.config.ts"',
+      '--projects',
+      '"!./packages/create-quilt-app/template/sewing-kit.config.ts"',
     ].join(' '),
     {
       stdio: 'inherit',

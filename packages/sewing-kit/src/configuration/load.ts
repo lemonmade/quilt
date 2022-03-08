@@ -30,7 +30,12 @@ export interface LoadedWorkspace {
   };
 }
 
-export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
+export async function loadWorkspace(
+  root: string,
+  {
+    projectPatterns = '**/sewing-kit.config.*',
+  }: {projectPatterns?: string | string[]} = {},
+): Promise<LoadedWorkspace> {
   const packages = new Set<Package>();
   const apps = new Set<App>();
   const services = new Set<Service>();
@@ -39,7 +44,7 @@ export async function loadWorkspace(root: string): Promise<LoadedWorkspace> {
     readonly (WorkspacePlugin | ProjectPlugin<any>)[]
   >();
 
-  const configFiles = await glob('**/sewing-kit.config.*', {
+  const configFiles = await glob(projectPatterns, {
     cwd: root,
     ignore: ['**/node_modules/**', '**/build/**'],
     absolute: true,

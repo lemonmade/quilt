@@ -1,6 +1,6 @@
-import {createApp, quiltApp} from '@quilted/craft';
+import {createApp, quiltApp, quiltWorkspace} from '@quilted/craft';
 
 export default createApp((app) => {
   app.entry('./app');
-  app.use(quiltApp());
+  app.use(quiltWorkspace(), quiltApp());
 });

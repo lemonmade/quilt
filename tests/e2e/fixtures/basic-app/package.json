@@ -9,6 +9,5 @@
   },
   "devDependencies": {
     "@quilted/craft": "^0.1.0"
-  },
-  "version": null
+  }
 }

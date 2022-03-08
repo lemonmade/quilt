@@ -37,8 +37,7 @@ jobs:
           arguments: -- --only-project async --only-project workers
       - uses: quilt-framework/action-test@v2
         with:
-          command: pnpm test
-          arguments: -- --exclude-pattern tests/e2e
+          command: pnpm test:unit
 
   e2e-tests:
     name: End-to-end tests 🔬
@@ -52,5 +51,4 @@ jobs:
           arguments: --only-project package:*
       - uses: quilt-framework/action-test@v2
         with:
-          command: pnpm test
-          arguments: tests/e2e/
+          command: pnpm test:e2e
