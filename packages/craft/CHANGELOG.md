@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.57
+
+### Patch Changes
+
+- [`091e067`](https://github.com/lemonmade/quilt/commit/091e067ff3240fcb140687d47afce73926ff70ac) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve safety of magic entrypoints
+
+- Updated dependencies [[`091e067`](https://github.com/lemonmade/quilt/commit/091e067ff3240fcb140687d47afce73926ff70ac)]:
+  - @quilted/quilt@0.5.60
+
 ## 0.1.56
 
 ### Patch Changes
