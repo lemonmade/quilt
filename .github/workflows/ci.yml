@@ -6,6 +6,7 @@ jobs:
   lint:
     name: Lint 💅
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
@@ -16,6 +17,7 @@ jobs:
   type-check:
     name: Type check 🧮
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
@@ -26,6 +28,7 @@ jobs:
   unit-tests:
     name: Unit tests 🧪
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
@@ -42,13 +45,14 @@ jobs:
   e2e-tests:
     name: End-to-end tests 🔬
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: --only-project package:*
+          arguments: -- --only-project package:*
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:e2e

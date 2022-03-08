@@ -2,8 +2,7 @@ name: Changesets
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -11,6 +10,7 @@ jobs:
   changesets:
     name: Changesets 🦋
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
         with:
@@ -19,5 +19,9 @@ jobs:
 
       - uses: ./.github/workflows/actions/prepare
       - uses: changesets/action@v1
+        with:
+          title: '[ci] Publish packages 🚀'
+          commit: '[ci] Publish packages'
+          publish: pnpm changeset tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
