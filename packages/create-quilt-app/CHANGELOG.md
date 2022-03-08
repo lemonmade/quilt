@@ -1,5 +1,11 @@
 # create-quilt-app
 
+## 0.1.10
+
+### Patch Changes
+
+- [`240906c`](https://github.com/lemonmade/quilt/commit/240906ccba6265474c0e50df89f25c5e1844fc60) Thanks [@lemonmade](https://github.com/lemonmade)! - Add --projects flag to sewing-kit commands
+
 ## 0.1.9
 
 ### Patch Changes
