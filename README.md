@@ -8,4 +8,4 @@ Quilt works best with applications that use [TypeScript](./documentation/technol
 
 [Sewing Kit](./documentation/sewing-kit) is a sister project to Quilt. It provides a layer for you to deeply customize the configuration of how Quilt handles the `dev`, `test`, `lint`, `type-check`, and `build` commands for your application.
 
-Ready to learn more? Check out the [getting started guide](./documentation/getting-started).
+Ready to learn more? Check out the [getting started guide](./documentation/getting-started.md).
