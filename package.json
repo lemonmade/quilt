@@ -25,6 +25,7 @@
     "@quilted/craft": "^0.1.0",
     "@quilted/eslint-config": "^0.1.0",
     "@quilted/prettier": "^0.2.0",
+    "@quilted/quilt": "^0.5.0",
     "@quilted/sewing-kit-jest": "^0.1.0",
     "@quilted/sewing-kit": "^0.2.0",
     "@quilted/typescript": "^0.2.0",
