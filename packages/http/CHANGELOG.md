@@ -1,5 +1,11 @@
 # @quilted/http
 
+## 0.2.13
+
+### Patch Changes
+
+- [`b81aafb`](https://github.com/lemonmade/quilt/commit/b81aafb38a1d69154c32940d0283acd708f43d77) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed default redirection to use 308 status code
+
 ## 0.2.12
 
 ### Patch Changes
