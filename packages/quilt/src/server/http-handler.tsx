@@ -22,6 +22,10 @@ export function createServerRenderingRequestHandler(
   {assets}: Pick<Options, 'assets'>,
 ): RequestHandler {
   return async (request) => {
+    const accepts = request.headers.get('Accept');
+
+    if (accepts != null && !accepts.includes('text/html')) return;
+
     const {
       html: htmlManager,
       http,
