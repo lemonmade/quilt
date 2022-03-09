@@ -252,7 +252,7 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
                   return (
                     content ??
                     `export {default} from ${JSON.stringify(
-                      project.fs.resolvePath(project.entry ?? ''),
+                      project.fs.resolvePath(project.entry ?? 'index'),
                     )}`
                   );
                 },

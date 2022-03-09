@@ -315,7 +315,7 @@ export function appStatic({
                   const moduleManifest = ${manifestToCode(moduleManifest)};
 
                   const assetLoader = createAssetLoader({
-                    async getManifest({modules}) {
+                    getManifest({modules}) {
                       if (modules) {
                         if (moduleManifest) return moduleManifest;
 

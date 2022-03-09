@@ -3,6 +3,13 @@ import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App} from '@quilted/sewing-kit';
 
+import {response as createResponse} from '@quilted/quilt/http-handlers';
+import type {HttpHandler} from '@quilted/quilt/http-handlers';
+import {
+  transformRequest,
+  applyResponse,
+} from '@quilted/quilt/http-handlers/node';
+
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-vite';
 
@@ -10,8 +17,14 @@ import {} from './app-server';
 import type {AppServerOptions} from './app-server';
 import type {AppBrowserOptions} from './app-build';
 
+import {
+  MAGIC_MODULE_APP_COMPONENT,
+  MAGIC_MODULE_APP_ASSET_LOADER,
+} from '../constants';
+
 export const STEP_NAME = 'Quilt.App.Develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '/@quilted/magic/browser.tsx';
+const MAGIC_MODULE_SERVER_ENTRY = '/@quilted/magic/server.tsx';
 
 export interface Options {
   port?: number;
@@ -19,7 +32,10 @@ export interface Options {
   browser?: Pick<AppBrowserOptions, 'entryModule' | 'initializeModule'>;
 }
 
-export function appDevelop({port, browser}: Options = {}) {
+export function appDevelop({port, browser, server}: Options = {}) {
+  const serverEntry = server?.entry;
+  const httpHandler = server?.httpHandler ?? true;
+
   return createProjectPlugin<App>({
     name: STEP_NAME,
     develop({project, configure}) {
@@ -29,12 +45,30 @@ export function appDevelop({port, browser}: Options = {}) {
           babelPresets,
           babelExtensions,
           vitePort,
+          viteHost,
           vitePlugins,
+          viteSsrNoExternals,
+          quiltAppServerHost,
+          quiltAppServerPort,
+          quiltAppServerEntryContent,
           quiltAppBrowserEntryContent,
           quiltAppBrowserEntryCssSelector,
           quiltAppBrowserEntryShouldHydrate,
         }) => {
-          if (port) vitePort?.(() => port);
+          vitePort?.((existingPort) =>
+            quiltAppServerPort!.run(port ?? existingPort),
+          );
+
+          viteHost?.((host) => quiltAppServerHost!.run(host));
+
+          viteSsrNoExternals?.((noExternals) => [
+            ...noExternals,
+            // We keep all of these external so we can apply our rollup aliases
+            // and improved transformations.
+            'react',
+            'react-dom',
+            /@quilted/,
+          ]);
 
           vitePlugins?.(async (plugins) => {
             const [
@@ -47,8 +81,8 @@ export function appDevelop({port, browser}: Options = {}) {
               babelPresets!.run([]),
             ]);
 
-            plugins.unshift(
-              magicBrowserEntry({
+            plugins.unshift({
+              ...magicBrowserEntry({
                 ...browser,
                 project,
                 module: MAGIC_MODULE_BROWSER_ENTRY,
@@ -57,12 +91,136 @@ export function appDevelop({port, browser}: Options = {}) {
                 customizeContent: (content) =>
                   quiltAppBrowserEntryContent!.run(content),
               }),
-            );
+              enforce: 'pre',
+            });
 
-            const normalizedBabelPlugins = requestedBabelPlugins.filter(
-              (plugin) => !babelConfigItemIs(plugin, '@quilted/async/babel'),
-            );
+            plugins.unshift({
+              name: '@quilted/magic-module/app-manifest',
+              enforce: 'pre',
+              async resolveId(id) {
+                if (id === MAGIC_MODULE_SERVER_ENTRY) return id;
+                return null;
+              },
+              async load(source) {
+                if (source !== MAGIC_MODULE_SERVER_ENTRY) return null;
 
+                const baseContent =
+                  httpHandler && serverEntry
+                    ? stripIndent`
+                      export {default} from ${JSON.stringify(
+                        project.fs.resolvePath(serverEntry),
+                      )};
+                    `
+                    : stripIndent`
+                      import App from ${JSON.stringify(
+                        MAGIC_MODULE_APP_COMPONENT,
+                      )};
+                      import assets from ${JSON.stringify(
+                        MAGIC_MODULE_APP_ASSET_LOADER,
+                      )};
+                      import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
+      
+                      export default createServerRenderingHttpHandler(App, {
+                        assets,
+                      });
+                    `;
+
+                return quiltAppServerEntryContent!.run(baseContent);
+              },
+            });
+
+            plugins.unshift({
+              name: '@quilted/magic-module/asset-loader',
+              enforce: 'pre',
+              async resolveId(id) {
+                if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
+                return null;
+              },
+              async load(source) {
+                if (source !== MAGIC_MODULE_APP_ASSET_LOADER) return null;
+
+                return stripIndent`
+                  import {createAssetLoader} from '@quilted/quilt/server';
+
+                  const assetLoader = createAssetLoader({
+                    getManifest() {
+                      return {
+                        metadata: {
+                          priority: 0,
+                          modules: true,
+                        },
+                        entry: {
+                          scripts: [
+                            {
+                              source: ${JSON.stringify(
+                                MAGIC_MODULE_BROWSER_ENTRY,
+                              )},
+                              attributes: {
+                                type: 'module',
+                              },
+                            },
+                          ],
+                          styles: [],
+                        },
+                      };
+                    }
+                  });
+
+                  export default assetLoader;
+                `;
+              },
+            });
+
+            plugins.push({
+              name: '@quilted/server',
+              configureServer(server) {
+                server.middlewares.use(
+                  async (serverRequest, serverResponse, next) => {
+                    try {
+                      const [{default: httpHandler}, transformedRequest] =
+                        await Promise.all([
+                          server.ssrLoadModule(
+                            MAGIC_MODULE_SERVER_ENTRY,
+                          ) as Promise<{default: HttpHandler}>,
+                          transformRequest(serverRequest),
+                        ]);
+
+                      const response = await httpHandler.run(
+                        transformedRequest,
+                      );
+
+                      if (response == null) return next();
+
+                      const contentType = response.headers.get('Content-Type');
+
+                      if (
+                        contentType != null &&
+                        contentType.includes('text/html')
+                      ) {
+                        const transformedHtml = await server.transformIndexHtml(
+                          transformedRequest.url.toString(),
+                          response.body ?? '',
+                        );
+
+                        applyResponse(
+                          createResponse(transformedHtml, response),
+                          serverResponse,
+                        );
+
+                        return;
+                      }
+
+                      applyResponse(response, serverResponse);
+                    } catch (error) {
+                      server.ssrFixStacktrace(error);
+                      next(error);
+                    }
+                  },
+                );
+              },
+            });
+
+            const normalizedBabelPlugins = requestedBabelPlugins;
             const normalizedBabelPresets: typeof requestedBabelPresets = [];
 
             for (const requestedPreset of requestedBabelPresets) {
@@ -125,47 +283,6 @@ export function appDevelop({port, browser}: Options = {}) {
                 },
               });
             }
-
-            plugins.push({
-              name: '@quilted/server',
-              configureServer(server) {
-                server.middlewares.use(async (request, response, next) => {
-                  try {
-                    // server.ssrLoadModule
-
-                    const accept = request.headers.accept ?? '';
-                    if (!accept.includes('text/html')) return next();
-
-                    const url = new URL(
-                      `${request.headers['x-forwarded-proto'] ?? 'http'}://${
-                        request.headers['x-forwarded-host'] ??
-                        request.headers.host
-                      }${request.originalUrl}`,
-                    );
-
-                    const template = await server.transformIndexHtml(
-                      url.href,
-                      stripIndent`
-                      <html>
-                        <body>
-                          <div id="app"></div>
-                          <script defer src=${JSON.stringify(
-                            MAGIC_MODULE_BROWSER_ENTRY,
-                          )} type="module"></script>
-                        </body>
-                      </html>
-                    `,
-                    );
-
-                    response.setHeader('Content-Type', 'text/html');
-                    response.end(template);
-                  } catch (error) {
-                    server.ssrFixStacktrace(error);
-                    next(error);
-                  }
-                });
-              },
-            });
 
             return plugins;
           });

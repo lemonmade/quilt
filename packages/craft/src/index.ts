@@ -44,6 +44,7 @@ import {appDevelop} from './plugins/app-develop';
 import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
+import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry';
 
 import {appServer} from './plugins/app-server';
 import type {AppServerOptions} from './plugins/app-server';
@@ -85,7 +86,7 @@ export * from './constants';
 
 export interface AppOptions {
   polyfill?: boolean | PolyfillOptions;
-  develop?: boolean | AppDevelopOptions;
+  develop?: boolean | Pick<AppDevelopOptions, 'port'>;
   build?: boolean;
 
   /**
@@ -150,9 +151,11 @@ export function quiltApp({
         esnext(),
         react(),
         preact(),
-        // Build and auto-server setup
+        // Magic modules
         magicModuleApp(),
         magicModuleBrowserEntry({hydrate: Boolean(server)}),
+        magicModuleAppServerEntry(),
+        // Build and auto-server setup
         build &&
           appBuild({
             browser,
@@ -172,7 +175,11 @@ export function quiltApp({
         // Development
         develop && vite(),
         develop &&
-          appDevelop(typeof develop === 'boolean' ? undefined : develop),
+          appDevelop({
+            browser,
+            server: typeof server === 'object' ? server : undefined,
+            ...(typeof develop === 'boolean' ? undefined : develop),
+          }),
       );
 
       await ignoreMissingImports(async () => {
