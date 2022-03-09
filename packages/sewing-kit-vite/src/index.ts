@@ -12,6 +12,11 @@ export interface ViteHooks {
   vitePort: WaterfallHook<number | undefined>;
 
   /**
+   * The host to run vite’s development server on.
+   */
+  viteHost: WaterfallHook<string | undefined>;
+
+  /**
    * Module aliases to use for the vite `resolve` configuration.
    */
   viteResolveAliases: WaterfallHook<Record<string, string>>;
@@ -30,6 +35,12 @@ export interface ViteHooks {
    * Plugins to include in vite’s configuration.
    */
   vitePlugins: WaterfallHook<PluginOption[]>;
+
+  /**
+   * The list of IDs (or regular expressions) marking modules that
+   * should not be treated for the server development build.
+   */
+  viteSsrNoExternals: WaterfallHook<(string | RegExp)[]>;
 
   /**
    * Customizations on the full vite configuration. The resulting
@@ -53,8 +64,10 @@ export function vite() {
         viteConfig: waterfall(),
         vitePlugins: waterfall(),
         vitePort: waterfall(),
+        viteHost: waterfall(),
         viteResolveAliases: waterfall(),
         viteResolveExportConditions: waterfall(),
+        viteSsrNoExternals: waterfall(),
         viteResolveExtensions: waterfall(),
       }));
 
@@ -70,8 +83,10 @@ export function vite() {
                 viteConfig,
                 vitePlugins,
                 vitePort,
+                viteHost,
                 viteResolveAliases,
                 viteResolveExportConditions,
+                viteSsrNoExternals,
                 viteResolveExtensions,
               },
             ] = await Promise.all([import('vite'), configuration()]);
@@ -88,12 +103,15 @@ export function vite() {
             const [
               plugins,
               port,
+              host,
               aliases,
               exportConditions,
               resolveExtensions,
+              noExternals,
             ] = await Promise.all([
               vitePlugins!.run([]),
               vitePort!.run(undefined),
+              viteHost!.run(undefined),
               viteResolveAliases!.run({}),
               // @see https://vitejs.dev/config/#resolve-conditions
               viteResolveExportConditions!.run([
@@ -105,13 +123,17 @@ export function vite() {
               ]),
               // @see https://vitejs.dev/config/#resolve-extensions
               viteResolveExtensions!.run(baseExtensions),
+              viteSsrNoExternals!.run([]),
             ]);
 
             const config = await viteConfig!.run({
               configFile: false,
               clearScreen: false,
               cacheDir: internal.fs.tempPath('vite/cache'),
-              server: {port},
+              server: {port, host},
+              // @ts-expect-error The types do not have this field, but it
+              // is supported.
+              ssr: {noExternals},
               resolve: {
                 extensions: resolveExtensions,
                 alias: aliases,
