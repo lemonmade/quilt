@@ -40,7 +40,6 @@
   "dependencies": {
     "@quilted/http": "^0.2.11",
     "@quilted/routing": "^0.2.7",
-    "cookie": "^0.4.0",
     "send": "^0.17.0"
   },
   "devDependencies": {

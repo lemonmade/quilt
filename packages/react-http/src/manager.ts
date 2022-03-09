@@ -1,6 +1,4 @@
-import ServerCookies from 'cookie';
-
-import {createHeaders} from '@quilted/http';
+import {createHeaders, CookieString} from '@quilted/http';
 import type {
   StatusCode,
   Cookies,
@@ -88,7 +86,7 @@ function cookiesFromHeaders(
   requestHeaders: ReadonlyHeaders,
   responseHeaders: Headers,
 ): Cookies {
-  const internalCookies = ServerCookies.parse(
+  const internalCookies = CookieString.parse(
     requestHeaders?.get('Cookie') ?? '',
   );
 
@@ -98,7 +96,7 @@ function cookiesFromHeaders(
     set(cookie, value, options) {
       responseHeaders.append(
         'Set-Cookie',
-        ServerCookies.serialize(cookie, value, options),
+        CookieString.serialize(cookie, value, options),
       );
     },
     delete(cookie, options) {

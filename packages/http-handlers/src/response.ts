@@ -1,8 +1,6 @@
-import ServerCookies from 'cookie';
-
 import {RelativeTo} from '@quilted/routing';
 import type {NavigateTo} from '@quilted/routing';
-import {createHeaders} from '@quilted/http';
+import {createHeaders, CookieString} from '@quilted/http';
 
 import {resolveTo} from './utilities';
 import type {Response, Request, ResponseOptions} from './types';
@@ -77,7 +75,7 @@ function responseCookiesFromHeaders(
     set(cookie, value, options) {
       headers.append(
         'Set-Cookie',
-        ServerCookies.serialize(cookie, value, options),
+        CookieString.serialize(cookie, value, options),
       );
     },
     delete(cookie, options) {
