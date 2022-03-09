@@ -34,6 +34,9 @@ export function Http() {
       <ContentSecurityPolicy
         // By default, only allow sources from the page’s origin.
         defaultSources={["'self'"]}
+        // Includes `'unsafe-inline'` because CSS is often necessary in development,
+        // and can be difficult to avoid in production.
+        styleSources={["'self'", "'unsafe-inline'"]}
         // Includes `data:` so that an inline image can be used for the favicon.
         // If you do not use the `emoji` or `blank` favicons in your app, and you
         // do not load any other images as data URIs, you can remove this directive.

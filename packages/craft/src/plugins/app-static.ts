@@ -14,7 +14,6 @@ import type {HttpState, AssetManifest} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
 import {
-  PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
@@ -258,20 +257,17 @@ export function appStatic({
 
             plugins.push(cssRollupPlugin({extract: false}));
 
-            plugins.push({
+            plugins.unshift({
               name: '@quilted/magic-module/static-asset-manifest',
               async resolveId(id) {
                 if (id === MAGIC_MODULE_APP_ASSET_LOADER) {
-                  return project.fs.resolvePath(id);
+                  return id;
                 }
 
                 return null;
               },
               async load(source) {
-                if (
-                  source !==
-                  project.fs.resolvePath(MAGIC_MODULE_APP_ASSET_LOADER)
-                ) {
+                if (source !== MAGIC_MODULE_APP_ASSET_LOADER) {
                   return null;
                 }
 
@@ -319,7 +315,7 @@ export function appStatic({
                   const moduleManifest = ${manifestToCode(moduleManifest)};
 
                   const assetLoader = createAssetLoader({
-                    async getManifest({modules}) {
+                    getManifest({modules}) {
                       if (modules) {
                         if (moduleManifest) return moduleManifest;
 
@@ -365,8 +361,6 @@ export function appStatic({
                 }
 
                 return stripIndent`
-                  import '@quilted/quilt/global';
-
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                   import assets from ${JSON.stringify(
                     MAGIC_MODULE_APP_ASSET_LOADER,
@@ -374,7 +368,6 @@ export function appStatic({
                   import {renderStatic} from '@quilted/quilt/static';
 
                   export default async function render(options) {
-                    await ${PRELOAD_ALL_GLOBAL};
                     await renderStatic(App, {assets, ...options});
                   }
                 `;

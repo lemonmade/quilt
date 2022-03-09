@@ -1,3 +1,4 @@
+export {CookieString} from './cookies';
 export type {
   Cookies,
   CookieOptions,

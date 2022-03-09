@@ -3,18 +3,13 @@ import {rm} from 'fs/promises';
 
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
-import {stripIndent} from 'common-tags';
 
 import {createProjectPlugin, TargetRuntime, Runtime} from '@quilted/sewing-kit';
-import type {
-  App,
-  WaterfallHook,
-  WaterfallHookWithDefault,
-} from '@quilted/sewing-kit';
+import type {App, WaterfallHookWithDefault} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/async/sewing-kit';
 
-import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
+import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
 
 export interface AssetOptions {
   /**
@@ -35,29 +30,10 @@ export interface AssetOptions {
   baseUrl: string;
 }
 
-export interface AppBrowserOptions {
-  /**
-   * The path to a module in your project that will be run before anything
-   * else in your browser entrypoint, including the code that initializes
-   * the tiny Quilt runtime. This path can be absolute, or relative from
-   * the root directory of the application.
-   *
-   * @example './browser/bootstrap'
-   */
-  initializeModule?: string;
-
-  /**
-   * The path to a module in your project that will be run after the
-   * `initializeModule` (if provided), and after the Quilt runtime is
-   * installed. If you provide this option, it replaces the default content
-   * that Quilt uses. The default content either renders or hydrates your
-   * application with React, so if you provide this option, you **must**
-   * do this rendering yourself.
-   *
-   * @example './browser/entry'
-   */
-  entryModule?: string;
-}
+export type AppBrowserOptions = Pick<
+  MagicBrowserEntryOptions,
+  'entryModule' | 'initializeModule'
+>;
 
 export interface Options {
   server: boolean;
@@ -73,33 +49,6 @@ export interface AppBuildHooks {
    * additions to Quilt in order to correctly load assets.
    */
   quiltAssetBaseUrl: WaterfallHookWithDefault<string>;
-
-  /**
-   * If the default Quilt entry is used (that is, the developer did not provide
-   * a `browser.entryModule` for the application), this hook is used to determine
-   * whether the default entry should use hydration or rendering. Defaults to
-   * hydrating if a server is built for this application, and false otherwise.
-   */
-  quiltAppBrowserEntryShouldHydrate: WaterfallHook<boolean>;
-
-  /**
-   * If the default Quilt entry is used (that is, the developer did not provide
-   * a `browser.entryModule` for the application), this hook is used the CSS
-   * selector that your application should be rendered into. Quilt will pass
-   * this value to `document.querySelector` and render into the resulting
-   * node. Defaults to `#app` (an element with `id="app"`), which is used by
-   * the auto-generated Quilt server.
-   */
-  quiltAppBrowserEntryCssSelector: WaterfallHook<string>;
-
-  /**
-   * This hook lets you completely customize the browser entry content for the
-   * application. In general, you should instead use the `browser.initializeModule`
-   * option instead if you want to provide content that runs immediately when your
-   * app boots, or the `browser.entryContent` option if you want to customize the
-   * actual rendering code of the browser entry.
-   */
-  quiltAppBrowserEntryContent: WaterfallHook<string>;
 }
 
 const BROWSERSLIST_MODULES_QUERY =
@@ -115,9 +64,6 @@ const DEFAULT_STATIC_BROWSERSLIST_CONFIG: BrowserslistConfig = {
   defaults: ['extends @quilted/browserslist-config/defaults'],
   modules: [BROWSERSLIST_MODULES_QUERY],
 };
-
-const MAGIC_MODULE_CUSTOM_INITIALIZE = '__quilt__/BrowserCustomInitialize';
-const MAGIC_MODULE_CUSTOM_ENTRY = '__quilt__/BrowserCustomEntry';
 
 export interface BrowserTarget {
   name: string;
@@ -163,9 +109,6 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
         quiltAssetBaseUrl: waterfall({
           default: assets.baseUrl,
         }),
-        quiltAppBrowserEntryContent: waterfall(),
-        quiltAppBrowserEntryShouldHydrate: waterfall(),
-        quiltAppBrowserEntryCssSelector: waterfall(),
       }));
 
       configure(
@@ -226,12 +169,29 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
           rollupPlugins?.(async (plugins) => {
-            const [{visualizer}, {cssRollupPlugin}, {systemJs}] =
-              await Promise.all([
-                import('rollup-plugin-visualizer'),
-                import('./rollup/css'),
-                import('./rollup/system-js'),
-              ]);
+            const [
+              {visualizer},
+              {magicBrowserEntry},
+              {cssRollupPlugin},
+              {systemJs},
+            ] = await Promise.all([
+              import('rollup-plugin-visualizer'),
+              import('./rollup/magic-browser-entry'),
+              import('./rollup/css'),
+              import('./rollup/system-js'),
+            ]);
+
+            plugins.unshift(
+              magicBrowserEntry({
+                ...browser,
+                project,
+                module: MAGIC_ENTRY_MODULE,
+                cssSelector: () => quiltAppBrowserEntryCssSelector!.run(),
+                shouldHydrate: () => quiltAppBrowserEntryShouldHydrate!.run(),
+                customizeContent: (content) =>
+                  quiltAppBrowserEntryContent!.run(content),
+              }),
+            );
 
             plugins.push(
               systemJs({minify: assets.minify}),
@@ -240,111 +200,6 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
                 extract: true,
               }),
             );
-
-            plugins.push({
-              name: '@quilted/app/magic-entry',
-              async resolveId(id) {
-                if (
-                  id === MAGIC_ENTRY_MODULE ||
-                  id === MAGIC_MODULE_CUSTOM_ENTRY ||
-                  id === MAGIC_MODULE_CUSTOM_INITIALIZE
-                ) {
-                  // We resolve to a path within the project’s directory
-                  // so that it can use the app’s node_modules.
-                  return {
-                    id: project.fs.resolvePath(id),
-                    moduleSideEffects: 'no-treeshake',
-                  };
-                }
-
-                return null;
-              },
-              async load(source) {
-                if (
-                  source ===
-                  project.fs.resolvePath(MAGIC_MODULE_CUSTOM_INITIALIZE)
-                ) {
-                  if (browser.initializeModule == null) {
-                    throw new Error(
-                      'Can’t load initialize module because browser.initializeModule was not provided',
-                    );
-                  }
-
-                  return `import ${JSON.stringify(
-                    project.fs.resolvePath(browser.initializeModule),
-                  )}`;
-                }
-
-                if (
-                  source === project.fs.resolvePath(MAGIC_MODULE_CUSTOM_ENTRY)
-                ) {
-                  if (browser.entryModule == null) {
-                    throw new Error(
-                      'Can’t load entry module because browser.entryModule was not provided',
-                    );
-                  }
-
-                  return `import ${JSON.stringify(
-                    project.fs.resolvePath(browser.entryModule),
-                  )}`;
-                }
-
-                if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
-                  return null;
-                }
-
-                let initialContent: string;
-
-                if (browser.entryModule) {
-                  initialContent = stripIndent`
-                    ${
-                      browser.initializeModule
-                        ? `import ${JSON.stringify(
-                            MAGIC_MODULE_CUSTOM_INITIALIZE,
-                          )}`
-                        : ''
-                    }
-                    import '@quilted/quilt/global';
-                    import ${JSON.stringify(MAGIC_MODULE_CUSTOM_ENTRY)}
-                  `;
-                } else {
-                  const [shouldHydrate, appCssSelector] = await Promise.all([
-                    quiltAppBrowserEntryShouldHydrate!.run(server),
-                    quiltAppBrowserEntryCssSelector!.run('#app'),
-                  ]);
-
-                  const reactFunction = shouldHydrate ? 'hydrate' : 'render';
-
-                  initialContent = stripIndent`
-                    ${
-                      browser.initializeModule
-                        ? `import ${JSON.stringify(
-                            MAGIC_MODULE_CUSTOM_INITIALIZE,
-                          )}`
-                        : ''
-                    }
-                    import '@quilted/quilt/global';
-                    import {${reactFunction}} from 'react-dom';
-                    import App from ${JSON.stringify(
-                      MAGIC_MODULE_APP_COMPONENT,
-                    )};
-      
-                    ${reactFunction}(<App />, document.querySelector(${JSON.stringify(
-                    appCssSelector,
-                  )}));
-                  `;
-                }
-
-                const content = await quiltAppBrowserEntryContent!.run(
-                  initialContent,
-                );
-
-                return {
-                  code: content,
-                  moduleSideEffects: 'no-treeshake',
-                };
-              },
-            });
 
             if (assets.minify) {
               const {minify} = await import('rollup-plugin-esbuild');

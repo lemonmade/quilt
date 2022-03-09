@@ -10,7 +10,6 @@ import type {
 import type {ModuleFormat} from 'rollup';
 
 import {
-  PRELOAD_ALL_GLOBAL,
   MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_HTTP_HANDLER,
@@ -64,37 +63,11 @@ export interface AppServerBuildOptions {
 
 export interface AppServerHooks {
   /**
-   * The content to use for the automatic application server. This
-   * hook runs with the explicit content from the `server.entry` option,
-   * or the default app server if that option is not set.
-   */
-  quiltAppServerEntryContent: WaterfallHook<string>;
-
-  /**
    * The module format that will be used for the application server. By
    * default, this is set to `module`, which generates native ES module
    * outputs.
    */
   quiltAppServerOutputFormat: WaterfallHook<ModuleFormat>;
-
-  /**
-   * The port to run the automatic server on, if you use the default
-   * Node server build (that is, you do not add any plugins that adapt
-   * the server to a different environment, and you do not specify a
-   * custom server with the `server.entry` option). This result is passed
-   * to the `quiltHttpHandlerPort`, which may customize it further, before
-   * falling back to the `PORT` environment if no explicit value is set.
-   */
-  quiltAppServerPort: WaterfallHook<number | undefined>;
-
-  /**
-   * The host to run the automatic server on, if you use the default
-   * Node server build (that is, you do not add any plugins that adapt
-   * the server to a different environment, and you do not specify a
-   * custom server with the `server.entry` option). This result is passed
-   * to the `quiltHttpHandlerHost`, which may customize it further.
-   */
-  quiltAppServerHost: WaterfallHook<string | undefined>;
 
   /**
    * Whether the automatic server will serve assets for the browser build.
@@ -122,10 +95,7 @@ export function appServer(options?: AppServerOptions) {
     name: 'Quilt.App.Server',
     build({project, hooks, configure, run}) {
       hooks<AppServerHooks>(({waterfall}) => ({
-        quiltAppServerHost: waterfall(),
-        quiltAppServerPort: waterfall(),
         quiltAppServerOutputFormat: waterfall(),
-        quiltAppServerEntryContent: waterfall(),
         quiltAppServerServeAssets: waterfall({default: serveAssets}),
       }));
 
@@ -167,7 +137,6 @@ export function appServer(options?: AppServerOptions) {
                   import ${JSON.stringify(project.fs.resolvePath(entry))};
                 `
             : stripIndent`
-                import '@quilted/quilt/global';
                 import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                 import assets from ${JSON.stringify(
                   MAGIC_MODULE_APP_ASSET_LOADER,
@@ -176,9 +145,6 @@ export function appServer(options?: AppServerOptions) {
 
                 export default createServerRenderingHttpHandler(App, {
                   assets,
-                  async before() {
-                    await ${PRELOAD_ALL_GLOBAL};
-                  },
                 });
               `;
 
@@ -190,7 +156,7 @@ export function appServer(options?: AppServerOptions) {
 
             plugins.push(cssRollupPlugin({extract: false}));
 
-            plugins.push({
+            plugins.unshift({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
                 if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
@@ -238,7 +204,7 @@ export function appServer(options?: AppServerOptions) {
                   const defaultManifest = manifests[manifests.length - 1];
 
                   const assetLoader = createAssetLoader({
-                    async getManifest({userAgent}) {
+                    getManifest({userAgent}) {
                       // If there is no user agent, use the default manifest.
                       if (typeof userAgent !== 'string') return defaultManifest;
 
@@ -318,7 +284,6 @@ export function appServer(options?: AppServerOptions) {
               async () => await quiltAppServerEntryContent!.run(content),
             );
 
-            // TODO make asset serving stuff be properly variable-ized
             quiltHttpHandlerRuntimeContent?.(async (content) => {
               if (content) return content;
 

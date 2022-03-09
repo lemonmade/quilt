@@ -28,7 +28,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "vite": "^2.3.0"
+    "vite": "^2.8.0"
   },
   "devDependencies": {
     "@quilted/sewing-kit": "^0.2.0",

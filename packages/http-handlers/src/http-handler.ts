@@ -1,6 +1,4 @@
-import ServerCookies from 'cookie';
-
-import {createHeaders, HttpMethod} from '@quilted/http';
+import {createHeaders, HttpMethod, CookieString} from '@quilted/http';
 
 import {enhanceUrl} from '@quilted/routing';
 import type {Match, Prefix} from '@quilted/routing';
@@ -60,7 +58,9 @@ export function createHttpHandler({
           if (!match(request.url)) continue;
         } else if (!match.test(normalizedPath)) continue;
 
-        return (await handler(request)) ?? undefined;
+        const result = await handler(request);
+
+        if (result) return result;
       }
     },
   };
@@ -90,7 +90,7 @@ function createRequest(
 function requestCookiesFromHeaders(
   headers: Request['headers'],
 ): Request['cookies'] {
-  const internalCookies = ServerCookies.parse(headers.get('Cookie') ?? '');
+  const internalCookies = CookieString.parse(headers.get('Cookie') ?? '');
 
   return {
     get: (key) => internalCookies[key],
