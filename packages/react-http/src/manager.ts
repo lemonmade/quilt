@@ -66,7 +66,8 @@ export class HttpManager {
     this.persistedHeaders.add(header.toLowerCase());
   }
 
-  redirectTo(url: string, statusCode: StatusCode = 302) {
+  // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections
+  redirectTo(url: string, statusCode: StatusCode = 308) {
     this.addStatusCode(statusCode);
     this.redirectUrl = url;
   }

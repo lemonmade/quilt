@@ -29,15 +29,16 @@ export function noContent(options: Pick<ResponseOptions, 'headers'> = {}) {
   return response(null, {status: 204, ...options});
 }
 
+// @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections
 export function redirect(
   to: NavigateTo,
   {
-    status = 302,
+    status = 308,
     request,
     relativeTo,
     ...options
   }: Omit<ResponseOptions, 'status'> & {
-    status?: 301 | 302 | 303 | 304;
+    status?: 300 | 301 | 302 | 303 | 304 | 305 | 305 | 307 | 308;
     request?: Request;
     relativeTo?: RelativeTo;
   } = {},
