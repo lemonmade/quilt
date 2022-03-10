@@ -17,7 +17,10 @@ jobs:
           color: '#1EE084'
           text: New release from [Quilt](https://github.com/lemonmade/quilt)!
           description: >
-            *${{ github.event.release.tag_name }}*
+            **${{ github.event.release.tag_name }}**
+
+            Published by [${{ github.event.release.author.login }}](${{ github.event.release.author.html_url }})
 
             ${{ github.event.release.html_url }}
+          footer: ${{ github.event.release.published_at }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
