@@ -20,23 +20,22 @@ describe('http', () => {
 
           await fs.write({
             'foundation/Routes.tsx': stripIndent`
-            import {useRoutes, useCookie, useCookies} from '@quilted/quilt';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
-              const cookies = useCookies();
-              const user = useCookie(${JSON.stringify(cookieName)});
+              import {useRoutes, useCookie} from '@quilted/quilt';
+              
+              export function Routes() {
+                return useRoutes([{match: '/', render: () => <Start />}]);
+              }
+              
+              function Start() {
+                const user = useCookie(${JSON.stringify(cookieName)});
 
-              return (
-                <>
-                  <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
-                </>
-              );
-            }
-          `,
+                return (
+                  <>
+                    <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
+                  </>
+                );
+              }
+            `,
           });
 
           const {page} = await buildAppAndOpenPage(workspace, {
