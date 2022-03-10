@@ -34,8 +34,8 @@ export class HeadersPolyfill implements Headers {
 
   constructor(headers?: HeadersInit) {
     if (headers) {
-      if (headers instanceof HeadersPolyfill) {
-        const rawHeaders = headers.raw();
+      if (typeof (headers as HeadersPolyfill).raw === 'function') {
+        const rawHeaders = (headers as HeadersPolyfill).raw();
         const headerNames = Object.keys(rawHeaders);
 
         for (const headerName of headerNames) {

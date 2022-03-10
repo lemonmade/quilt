@@ -143,10 +143,6 @@ export const CookieString = {
     }
 
     if (options.expires) {
-      if (typeof options.expires.toUTCString !== 'function') {
-        throw new TypeError('option expires is invalid');
-      }
-
       cookie += '; Expires=' + options.expires.toUTCString();
     }
 
