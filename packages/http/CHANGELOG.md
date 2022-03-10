@@ -1,5 +1,11 @@
 # @quilted/http
 
+## 0.2.15
+
+### Patch Changes
+
+- [`076ee1c`](https://github.com/lemonmade/quilt/commit/076ee1cefe8b84d189640b3c85b2bc57aabd47a8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix cookie construction from a previous response
+
 ## 0.2.14
 
 ### Patch Changes
