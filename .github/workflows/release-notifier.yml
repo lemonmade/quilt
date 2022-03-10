@@ -10,10 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # @see https://github.com/rjstone/discord-webhook-notify
       - uses: rjstone/discord-webhook-notify@v1
         with:
           severity: info
           color: '#1EE084'
           text: New release from [Quilt](https://github.com/lemonmade/quilt)!
-          description: '**${{ github.release.tag_name }}**\n\n${{ github.release.html_url }}'
+          description: >
+            *${{ github.event.release.tag_name }}*
+
+            ${{ github.event.release.html_url }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
