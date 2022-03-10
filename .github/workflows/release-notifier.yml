@@ -1,0 +1,13 @@
+name: Release Notifier
+
+on: [release]
+
+jobs:
+  post-to-discord:
+    name: Post to Discord 📡
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: rjstone/discord-webhook-notify@v1
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
