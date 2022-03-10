@@ -1,5 +1,15 @@
 # @quilted/http-handlers
 
+## 0.2.23
+
+### Patch Changes
+
+- [#168](https://github.com/lemonmade/quilt/pull/168) [`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db) Thanks [@lemonmade](https://github.com/lemonmade)! - Add own utilities for handling cookie strings
+
+* [#168](https://github.com/lemonmade/quilt/pull/168) [`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db) Thanks [@lemonmade](https://github.com/lemonmade)! - Add additional node utility functions to http-handlers package
+
+- [#168](https://github.com/lemonmade/quilt/pull/168) [`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed fallback behavior for http-handlers to continue through additional listeners
+
 ## 0.2.22
 
 ### Patch Changes

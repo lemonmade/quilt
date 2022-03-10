@@ -1,5 +1,11 @@
 # @quilted/sewing-kit-vite
 
+## 0.1.5
+
+### Patch Changes
+
+- [#168](https://github.com/lemonmade/quilt/pull/168) [`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db) Thanks [@lemonmade](https://github.com/lemonmade)! - Add additional Vite sewing-kit hooks
+
 ## 0.1.4
 
 ### Patch Changes
