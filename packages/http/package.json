@@ -2,7 +2,7 @@
   "name": "@quilted/http",
   "description": "Provides a collection of HTTP-related types and utilities.",
   "type": "module",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "license": "MIT",
   "repository": {
     "type": "git",

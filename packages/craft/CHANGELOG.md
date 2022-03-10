@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.58
+
+### Patch Changes
+
+- [#168](https://github.com/lemonmade/quilt/pull/168) [`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db) Thanks [@lemonmade](https://github.com/lemonmade)! - Use app auto server in development
+
+- Updated dependencies [[`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db), [`ce60ec7`](https://github.com/lemonmade/quilt/commit/ce60ec7d864eb3b7c20a1f6cfe8839652bd8e3db)]:
+  - @quilted/quilt@0.5.61
+
 ## 0.1.57
 
 ### Patch Changes
