@@ -133,7 +133,7 @@ export function vite() {
               server: {port, host},
               // @ts-expect-error The types do not have this field, but it
               // is supported.
-              ssr: {noExternals},
+              ssr: {noExternal: noExternals},
               resolve: {
                 extensions: resolveExtensions,
                 alias: aliases,
