@@ -131,7 +131,7 @@ importers:
       '@quilted/sewing-kit-rollup': 0.1.9
       '@quilted/sewing-kit-targets': 0.1.9
       '@quilted/sewing-kit-typescript': 0.1.6
-      '@quilted/sewing-kit-vite': 0.1.5
+      '@quilted/sewing-kit-vite': 0.1.6
       '@quilted/typescript': 0.2.5
       '@quilted/workers': ^0.2.0
       '@rollup/plugin-alias': ^3.1.0
