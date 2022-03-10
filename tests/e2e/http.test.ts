@@ -10,14 +10,16 @@ jest.setTimeout(20_000);
 describe('http', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
-        const {fs} = workspace;
+      await withWorkspace(
+        {fixture: 'basic-app', debug: true},
+        async (workspace) => {
+          const {fs} = workspace;
 
-        const cookieName = 'user';
-        const cookieValue = 'Chris';
+          const cookieName = 'user';
+          const cookieValue = 'Chris';
 
-        await fs.write({
-          'foundation/Routes.tsx': stripIndent`
+          await fs.write({
+            'foundation/Routes.tsx': stripIndent`
             import {useRoutes, useCookie, useCookies} from '@quilted/quilt';
             
             export function Routes() {
@@ -35,24 +37,27 @@ describe('http', () => {
               );
             }
           `,
-        });
+          });
 
-        const {page} = await buildAppAndOpenPage(workspace, {
-          path: '/',
-          javaScriptEnabled: false,
-          async customizeContext(context, {url}) {
-            await context.addCookies([
-              {
-                name: 'user',
-                value: cookieValue,
-                url: new URL('/', url).href,
-              },
-            ]);
-          },
-        });
+          const {page} = await buildAppAndOpenPage(workspace, {
+            path: '/',
+            javaScriptEnabled: false,
+            async customizeContext(context, {url}) {
+              await context.addCookies([
+                {
+                  name: 'user',
+                  value: cookieValue,
+                  url: new URL('/', url).href,
+                },
+              ]);
+            },
+          });
 
-        expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
-      });
+          expect(await page.textContent('body')).toMatch(
+            `Hello, ${cookieValue}`,
+          );
+        },
+      );
     });
 
     it('can set client-side cookies', async () => {
