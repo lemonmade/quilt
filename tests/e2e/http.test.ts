@@ -13,7 +13,8 @@ describe('http', () => {
       await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
         const {fs} = workspace;
 
-        const userCookieValue = 'Chris';
+        const cookieName = 'user';
+        const cookieValue = 'Chris';
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
@@ -25,16 +26,11 @@ describe('http', () => {
             
             function Start() {
               const cookies = useCookies();
-              const user = useCookie('user');
+              const user = useCookie(${JSON.stringify(cookieName)});
 
               return (
                 <>
                   <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
-                  <button onClick={() => cookies.set('user', ${JSON.stringify(
-                    userCookieValue,
-                  )})}>
-                    Set user cookie
-                  </button>
                 </>
               );
             }
@@ -48,16 +44,66 @@ describe('http', () => {
             await context.addCookies([
               {
                 name: 'user',
-                value: userCookieValue,
+                value: cookieValue,
                 url: new URL('/', url).href,
               },
             ]);
           },
         });
 
-        expect(await page.textContent('body')).toMatch(
-          `Hello, ${userCookieValue}`,
+        expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
+      });
+    });
+
+    it('can set client-side cookies', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        const cookieName = 'user';
+        const cookieValue = 'Chris';
+
+        await fs.write({
+          'foundation/Routes.tsx': stripIndent`
+            import {useRoutes, useCookie, useCookies} from '@quilted/quilt';
+            
+            export function Routes() {
+              return useRoutes([{match: '/', render: () => <Start />}]);
+            }
+            
+            function Start() {
+              const cookies = useCookies();
+              const user = useCookie(${JSON.stringify(cookieName)});
+
+              return (
+                <>
+                  <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
+                  <button onClick={() => cookies.set(${JSON.stringify(
+                    cookieName,
+                  )}, ${JSON.stringify(cookieValue)})}>
+                    Set user cookie
+                  </button>
+                </>
+              );
+            }
+          `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/',
+        });
+
+        expect(await page.textContent('body')).not.toMatch(
+          `Hello, ${cookieValue}`,
         );
+
+        await page.click('button');
+        await page.reload();
+        await waitForPerformanceNavigation(page, {
+          to: '/',
+          checkCompleteNavigations: true,
+        });
+
+        expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
       });
     });
 
@@ -107,59 +153,6 @@ describe('http', () => {
             value: 'two',
           }),
         ]);
-      });
-    });
-
-    it('can set client-side cookies', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
-        const {fs} = workspace;
-
-        const userCookieValue = 'Chris';
-
-        await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes, useCookie, useCookies} from '@quilted/quilt';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
-              const cookies = useCookies();
-              const user = useCookie('user');
-
-              return (
-                <>
-                  <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
-                  <button onClick={() => cookies.set('user', ${JSON.stringify(
-                    userCookieValue,
-                  )})}>
-                    Set user cookie
-                  </button>
-                </>
-              );
-            }
-          `,
-        });
-
-        const {page} = await buildAppAndOpenPage(workspace, {
-          path: '/',
-        });
-
-        expect(await page.textContent('body')).not.toMatch(
-          `Hello, ${userCookieValue}`,
-        );
-
-        await page.click('button');
-        await page.reload();
-        await waitForPerformanceNavigation(page, {
-          to: '/',
-          checkCompleteNavigations: true,
-        });
-
-        expect(await page.textContent('body')).toMatch(
-          `Hello, ${userCookieValue}`,
-        );
       });
     });
   });
