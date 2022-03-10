@@ -33,6 +33,7 @@ export interface Browser {
     options?: Parameters<PlaywrightBrowser['newPage']>[0] & {
       customizeContext?(
         context: PlaywrightBrowserContext,
+        options: {url: URL},
       ): void | Promise<void>;
     },
   ): Promise<Page>;
@@ -173,14 +174,16 @@ export async function withWorkspace<T>(
       },
     },
     browser: {
-      async open(url, {customizeContext, ...options} = {}) {
+      async open(urlOrString, {customizeContext, ...options} = {}) {
+        const url =
+          typeof urlOrString === 'string' ? new URL(urlOrString) : urlOrString;
+
         browserPromise ??= chromium.launch();
         const browser = await browserPromise;
-
         const context = await browser.newContext();
 
         if (customizeContext) {
-          await customizeContext(context);
+          await customizeContext(context, {url});
         }
 
         const page = await browser.newPage({
@@ -193,7 +196,7 @@ export async function withWorkspace<T>(
           await context.close();
         });
 
-        await page.goto(typeof url === 'string' ? url : url.href);
+        await page.goto(url.href);
 
         return page;
       },

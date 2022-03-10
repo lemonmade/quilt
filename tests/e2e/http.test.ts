@@ -44,20 +44,15 @@ describe('http', () => {
         const {page} = await buildAppAndOpenPage(workspace, {
           path: '/',
           javaScriptEnabled: false,
-          async customizeContext(context) {
-            await context.addCookies([{name: 'user', value: userCookieValue}]);
+          async customizeContext(context, {url}) {
+            await context.addCookies([
+              {
+                name: 'user',
+                value: userCookieValue,
+                url: new URL('/', url).href,
+              },
+            ]);
           },
-        });
-
-        expect(await page.textContent('body')).not.toMatch(
-          `Hello, ${userCookieValue}`,
-        );
-
-        await page.click('button');
-        await page.reload();
-        await waitForPerformanceNavigation(page, {
-          to: '/',
-          checkCompleteNavigations: true,
         });
 
         expect(await page.textContent('body')).toMatch(
