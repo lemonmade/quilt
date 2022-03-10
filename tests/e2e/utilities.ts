@@ -9,7 +9,11 @@ import {customAlphabet} from 'nanoid';
 import getPort from 'get-port';
 import {chromium} from 'playwright';
 import fetch from 'node-fetch';
-import type {Page, Browser as PlaywrightBrowser} from 'playwright';
+import type {
+  Page,
+  Browser as PlaywrightBrowser,
+  BrowserContext as PlaywrightBrowserContext,
+} from 'playwright';
 
 import type {Performance} from '@quilted/quilt';
 
@@ -26,7 +30,11 @@ export interface FileSystem {
 export interface Browser {
   open(
     url: URL | string,
-    options?: Parameters<PlaywrightBrowser['newPage']>[0],
+    options?: Parameters<PlaywrightBrowser['newPage']>[0] & {
+      customizeContext?(
+        context: PlaywrightBrowserContext,
+      ): void | Promise<void>;
+    },
   ): Promise<Page>;
 }
 
@@ -165,16 +173,25 @@ export async function withWorkspace<T>(
       },
     },
     browser: {
-      async open(url, options = {}) {
+      async open(url, {customizeContext, ...options} = {}) {
         browserPromise ??= chromium.launch();
         const browser = await browserPromise;
+
+        const context = await browser.newContext();
+
+        if (customizeContext) {
+          await customizeContext(context);
+        }
 
         const page = await browser.newPage({
           viewport: {height: 800, width: 600},
           ...options,
         });
 
-        teardownActions.push(() => page.close());
+        teardownActions.push(async () => {
+          await page.close();
+          await context.close();
+        });
 
         await page.goto(typeof url === 'string' ? url : url.href);
 
@@ -277,13 +294,17 @@ export async function buildAppAndOpenPage(
   workspace: Workspace,
   {
     path = '/',
+    javaScriptEnabled = true,
     ...options
   }: NonNullable<Parameters<Browser['open']>[1]> & {path?: string} = {},
 ) {
   const {url, server} = await buildAppAndRunServer(workspace);
   const targetUrl = new URL(path, url);
 
-  const page = await workspace.browser.open(targetUrl, {...options});
+  const page = await workspace.browser.open(targetUrl, {
+    ...options,
+    javaScriptEnabled,
+  });
 
   page.on('console', async (message) => {
     for (const arg of message.args()) {
