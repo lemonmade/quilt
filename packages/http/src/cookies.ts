@@ -101,6 +101,8 @@ export const CookieString = {
       }
     }
 
+    console.log({cookies});
+
     return cookies;
   },
   serialize(name: string, rawValue: string, options: CookieOptions = {}) {
