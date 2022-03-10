@@ -53,6 +53,8 @@ describe('http', () => {
             },
           });
 
+          console.log({pageCookies: await page.context().cookies()});
+
           expect(await page.textContent('body')).toMatch(
             `Hello, ${cookieValue}`,
           );
