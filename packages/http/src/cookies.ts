@@ -101,7 +101,7 @@ export const CookieString = {
       }
     }
 
-    console.log({cookies});
+    console.log({str, cookies});
 
     return cookies;
   },
