@@ -1,5 +1,11 @@
 # @quilted/sewing-kit-vite
 
+## 0.1.6
+
+### Patch Changes
+
+- [`23332d0`](https://github.com/lemonmade/quilt/commit/23332d0faf42f58b5a942ded3f524e2857aa09c8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix noExternal hook in sewing-kit-vite
+
 ## 0.1.5
 
 ### Patch Changes
