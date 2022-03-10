@@ -180,16 +180,16 @@ export async function withWorkspace<T>(
 
         browserPromise ??= chromium.launch();
         const browser = await browserPromise;
-        const context = await browser.newContext();
+        const context = await browser.newContext({
+          viewport: {height: 800, width: 600},
+          ...options,
+        });
 
         if (customizeContext) {
           await customizeContext(context, {url});
         }
 
-        const page = await browser.newPage({
-          viewport: {height: 800, width: 600},
-          ...options,
-        });
+        const page = await context.newPage();
 
         teardownActions.push(async () => {
           await page.close();
