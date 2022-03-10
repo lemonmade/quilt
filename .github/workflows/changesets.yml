@@ -24,4 +24,4 @@ jobs:
           commit: '[ci] Publish packages'
           publish: pnpm changeset tag
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
