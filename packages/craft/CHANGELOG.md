@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.59
+
+### Patch Changes
+
+- [`7c361b9`](https://github.com/lemonmade/quilt/commit/7c361b9d9d5f32b4227f0e3e739aa2b5a4e37d2b) Thanks [@lemonmade](https://github.com/lemonmade)! - Testing new release flow!
+
 ## 0.1.58
 
 ### Patch Changes
