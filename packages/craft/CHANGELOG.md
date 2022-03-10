@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.61
+
+### Patch Changes
+
+- [`e068c35`](https://github.com/lemonmade/quilt/commit/e068c356d844ef4fb9da2a4dc3889a776dfbfa68) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix pinning versions in @quilted/craft
+
 ## 0.1.60
 
 ### Patch Changes
