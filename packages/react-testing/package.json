@@ -50,8 +50,9 @@
       "require": "./build/cjs/sewing-kit.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "dom": [
         "./build/typescript/implementations/react-dom.d.ts"
       ],
@@ -69,9 +70,6 @@
       ],
       "environment": [
         "./build/typescript/environment.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

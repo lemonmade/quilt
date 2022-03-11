@@ -32,16 +32,14 @@
       "require": "./build/cjs/sewing-kit.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "http-handlers": [
         "./build/typescript/http-handlers.d.ts"
       ],
       "sewing-kit": [
         "./build/typescript/sewing-kit.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

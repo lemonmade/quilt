@@ -19,13 +19,7 @@
       "import": "./build/esm/index.mjs"
     }
   },
-  "typesVersions": {
-    ">=1": {
-      "*": [
-        "./build/typescript/index.d.ts"
-      ]
-    }
-  },
+  "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
     "@types/prettier": "^2.0.0",

@@ -71,8 +71,9 @@
       "require": "./build/cjs/configuration.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "transform": [
         "./build/typescript/transform.d.ts"
       ],
@@ -96,9 +97,6 @@
       ],
       "configuration": [
         "./build/typescript/configuration.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

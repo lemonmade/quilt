@@ -26,13 +26,11 @@
       "require": "./build/cjs/server.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "server": [
         "./build/typescript/server.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

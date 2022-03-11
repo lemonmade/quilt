@@ -22,13 +22,11 @@
       "require": "./resolver.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "resolver": [
         "./build/typescript/resolver.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

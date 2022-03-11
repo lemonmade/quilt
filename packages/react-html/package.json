@@ -33,16 +33,14 @@
       "require": "./build/cjs/server/index.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "server": [
         "./build/typescript/server/index.d.ts"
       ],
       "testing": [
         "./build/typescript/testing/index.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

@@ -19,13 +19,7 @@
       "require": "./build/cjs/index.cjs"
     }
   },
-  "typesVersions": {
-    ">=1": {
-      "*": [
-        "./build/typescript/index.d.ts"
-      ]
-    }
-  },
+  "types": "./build/typescript/index.d.ts",
   "license": "MIT",
   "sideEffects": false,
   "devDependencies": {

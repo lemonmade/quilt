@@ -26,13 +26,11 @@
       "require": "./build/cjs/graphql.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "graphql": [
         "./build/typescript/graphql.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

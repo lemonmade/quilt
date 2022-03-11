@@ -116,8 +116,9 @@
       "require": "./build/cjs/polyfills/noop.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "server": [
         "./build/typescript/server/index.d.ts"
       ],
@@ -174,9 +175,6 @@
       ],
       "magic/http-handler": [
         "./build/typescript/magic/http-handler.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },
