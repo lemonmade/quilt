@@ -15,7 +15,7 @@
     "type-check": "node ./scripts/sewing-kit-from-source type-check",
     "build": "node ./scripts/sewing-kit-from-source build",
     "develop": "node ./scripts/sewing-kit-from-source develop",
-    "version-bump": "changeset version && pnpm install",
+    "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r"
   },
   "devDependencies": {
