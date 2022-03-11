@@ -1,7 +1,7 @@
 {
   "name": "@quilted/polyfills",
   "type": "module",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "repository": {
     "type": "git",
     "url": "https://github.com/facebook/react.git",
@@ -101,10 +101,10 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.14",
-    "@quilted/sewing-kit-jest": "^0.1.9",
-    "@quilted/sewing-kit-rollup": "^0.1.9",
-    "@quilted/sewing-kit-targets": "^0.1.9",
+    "@quilted/sewing-kit": "^0.2.18",
+    "@quilted/sewing-kit-jest": "^0.1.11",
+    "@quilted/sewing-kit-rollup": "^0.1.10",
+    "@quilted/sewing-kit-targets": "^0.1.10",
     "rollup": "^2.0.0"
   },
   "peerDependenciesMeta": {

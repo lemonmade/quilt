@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-eslint",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.14",
-    "@quilted/sewing-kit-prettier": "^0.1.5"
+    "@quilted/sewing-kit": "^0.2.18",
+    "@quilted/sewing-kit-prettier": "^0.1.6"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

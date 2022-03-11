@@ -1,5 +1,30 @@
 # @quilted/craft
 
+## 0.1.67
+
+### Patch Changes
+
+- [#185](https://github.com/lemonmade/quilt/pull/185) [`3b9a758`](https://github.com/lemonmade/quilt/commit/3b9a758c5703aa63b93a736e33f88a3bfa393fb8) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve package entry declarations
+
+- Updated dependencies [[`3b9a758`](https://github.com/lemonmade/quilt/commit/3b9a758c5703aa63b93a736e33f88a3bfa393fb8)]:
+  - @quilted/async@0.3.15
+  - @quilted/graphql@0.4.18
+  - @quilted/polyfills@0.2.15
+  - @quilted/quilt@0.5.63
+  - @quilted/sewing-kit@0.2.18
+  - @quilted/sewing-kit-babel@0.1.9
+  - @quilted/sewing-kit-eslint@0.1.6
+  - @quilted/sewing-kit-esnext@0.1.20
+  - @quilted/sewing-kit-jest@0.1.11
+  - @quilted/sewing-kit-package@0.1.13
+  - @quilted/sewing-kit-prettier@0.1.6
+  - @quilted/sewing-kit-react@0.1.6
+  - @quilted/sewing-kit-rollup@0.1.10
+  - @quilted/sewing-kit-targets@0.1.10
+  - @quilted/sewing-kit-typescript@0.1.7
+  - @quilted/sewing-kit-vite@0.1.7
+  - @quilted/workers@0.2.14
+
 ## 0.1.66
 
 ### Patch Changes
