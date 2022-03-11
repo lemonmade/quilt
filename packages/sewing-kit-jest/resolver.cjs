@@ -19,7 +19,7 @@ const enhancedResolve = require('enhanced-resolve');
 
 const resolve = enhancedResolve.create.sync({
   conditionNames: [
-    // 'sewing-kit:esnext',
+    // 'quilt:esnext',
     // 'esnext',
     // 'import',
     'require',

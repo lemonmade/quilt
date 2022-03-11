@@ -1,7 +1,4 @@
-declare global {
-  const Quilt: {readonly AsyncAssets: AsyncAssetsGlobal} | undefined;
-  const __QUILT_ASSETS_BASE_URL__: string | undefined;
-}
+declare const __QUILT_ASSETS_BASE_URL__: string | undefined;
 
 export interface AsyncAssetsOptions {
   baseUrl?: string;

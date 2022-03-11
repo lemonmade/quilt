@@ -14,25 +14,23 @@
   },
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./graphql": {
-      "quilt:internal": "./src/graphql.ts",
-      "sewing-kit:esnext": "./build/esnext/graphql.esnext",
+      "quilt:from-source": "./src/graphql.ts",
+      "quilt:esnext": "./build/esnext/graphql.esnext",
       "import": "./build/esm/graphql.mjs",
       "require": "./build/cjs/graphql.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "graphql": [
         "./build/typescript/graphql.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

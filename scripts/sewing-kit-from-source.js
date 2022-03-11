@@ -13,7 +13,7 @@ try {
       '--loader',
       resolve(root, './scripts/esbuild-module-loader.js'),
       '--conditions',
-      'quilt:internal',
+      'quilt:from-source',
       cli,
       ...process.argv.slice(2),
       '--projects',

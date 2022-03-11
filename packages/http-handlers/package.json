@@ -14,25 +14,23 @@
   },
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./node": {
-      "quilt:internal": "./src/node.ts",
-      "sewing-kit:esnext": "./build/esnext/node.esnext",
+      "quilt:from-source": "./src/node.ts",
+      "quilt:esnext": "./build/esnext/node.esnext",
       "import": "./build/esm/node.mjs",
       "require": "./build/cjs/node.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "node": [
         "./build/typescript/node.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

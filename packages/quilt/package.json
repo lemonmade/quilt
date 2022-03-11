@@ -14,110 +14,111 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
-      "quilt:internal": "./src/server/index.ts",
-      "sewing-kit:esnext": "./build/esnext/server/index.esnext",
+      "quilt:from-source": "./src/server/index.ts",
+      "quilt:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",
       "require": "./build/cjs/server/index.cjs"
     },
     "./static": {
-      "quilt:internal": "./src/static/index.tsx",
-      "sewing-kit:esnext": "./build/esnext/static/index.esnext",
+      "quilt:from-source": "./src/static/index.tsx",
+      "quilt:esnext": "./build/esnext/static/index.esnext",
       "import": "./build/esm/static/index.mjs",
       "require": "./build/cjs/static/index.cjs"
     },
     "./html": {
-      "quilt:internal": "./src/html.ts",
-      "sewing-kit:esnext": "./build/esnext/html.esnext",
+      "quilt:from-source": "./src/html.ts",
+      "quilt:esnext": "./build/esnext/html.esnext",
       "import": "./build/esm/html.mjs",
       "require": "./build/cjs/html.cjs"
     },
     "./email": {
-      "quilt:internal": "./src/email.ts",
-      "sewing-kit:esnext": "./build/esnext/email.esnext",
+      "quilt:from-source": "./src/email.ts",
+      "quilt:esnext": "./build/esnext/email.esnext",
       "import": "./build/esm/email.mjs",
       "require": "./build/cjs/email.cjs"
     },
     "./global": {
-      "quilt:internal": "./src/global.ts",
-      "sewing-kit:esnext": "./build/esnext/global.esnext",
+      "quilt:from-source": "./src/global.ts",
+      "quilt:esnext": "./build/esnext/global.esnext",
       "import": "./build/esm/global.mjs",
       "require": "./build/cjs/global.cjs"
     },
     "./http": {
-      "quilt:internal": "./src/http.ts",
-      "sewing-kit:esnext": "./build/esnext/http.esnext",
+      "quilt:from-source": "./src/http.ts",
+      "quilt:esnext": "./build/esnext/http.esnext",
       "import": "./build/esm/http.mjs",
       "require": "./build/cjs/http.cjs"
     },
     "./testing": {
-      "quilt:internal": "./src/testing.ts",
-      "sewing-kit:esnext": "./build/esnext/testing.esnext",
+      "quilt:from-source": "./src/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"
     },
     "./matchers": {
-      "quilt:internal": "./src/matchers.ts",
-      "sewing-kit:esnext": "./build/esnext/matchers.esnext",
+      "quilt:from-source": "./src/matchers.ts",
+      "quilt:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
     },
     "./react/jsx-runtime": {
-      "quilt:internal": "./src/react/jsx-runtime.ts",
-      "sewing-kit:esnext": "./build/esnext/react/jsx-runtime.esnext",
+      "quilt:from-source": "./src/react/jsx-runtime.ts",
+      "quilt:esnext": "./build/esnext/react/jsx-runtime.esnext",
       "import": "./build/esm/react/jsx-runtime.mjs",
       "require": "./build/cjs/react/jsx-runtime.cjs"
     },
     "./react/server": {
-      "quilt:internal": "./src/react/server.ts",
-      "sewing-kit:esnext": "./build/esnext/react/server.esnext",
+      "quilt:from-source": "./src/react/server.ts",
+      "quilt:esnext": "./build/esnext/react/server.esnext",
       "import": "./build/esm/react/server.mjs",
       "require": "./build/cjs/react/server.cjs"
     },
     "./react": {
-      "quilt:internal": "./src/react/index.ts",
-      "sewing-kit:esnext": "./build/esnext/react/index.esnext",
+      "quilt:from-source": "./src/react/index.ts",
+      "quilt:esnext": "./build/esnext/react/index.esnext",
       "import": "./build/esm/react/index.mjs",
       "require": "./build/cjs/react/index.cjs"
     },
     "./http-handlers/node": {
-      "quilt:internal": "./src/http-handlers/node.ts",
-      "sewing-kit:esnext": "./build/esnext/http-handlers/node.esnext",
+      "quilt:from-source": "./src/http-handlers/node.ts",
+      "quilt:esnext": "./build/esnext/http-handlers/node.esnext",
       "import": "./build/esm/http-handlers/node.mjs",
       "require": "./build/cjs/http-handlers/node.cjs"
     },
     "./http-handlers": {
-      "quilt:internal": "./src/http-handlers/index.ts",
-      "sewing-kit:esnext": "./build/esnext/http-handlers/index.esnext",
+      "quilt:from-source": "./src/http-handlers/index.ts",
+      "quilt:esnext": "./build/esnext/http-handlers/index.esnext",
       "import": "./build/esm/http-handlers/index.mjs",
       "require": "./build/cjs/http-handlers/index.cjs"
     },
     "./polyfills/base": {
-      "quilt:internal": "./src/polyfills/base.ts",
-      "sewing-kit:esnext": "./build/esnext/polyfills/base.esnext",
+      "quilt:from-source": "./src/polyfills/base.ts",
+      "quilt:esnext": "./build/esnext/polyfills/base.esnext",
       "import": "./build/esm/polyfills/base.mjs",
       "require": "./build/cjs/polyfills/base.cjs"
     },
     "./polyfills/fetch": {
-      "quilt:internal": "./src/polyfills/fetch.ts",
-      "sewing-kit:esnext": "./build/esnext/polyfills/fetch.esnext",
+      "quilt:from-source": "./src/polyfills/fetch.ts",
+      "quilt:esnext": "./build/esnext/polyfills/fetch.esnext",
       "import": "./build/esm/polyfills/fetch.mjs",
       "require": "./build/cjs/polyfills/fetch.cjs"
     },
     "./polyfills/noop": {
-      "quilt:internal": "./src/polyfills/noop.ts",
-      "sewing-kit:esnext": "./build/esnext/polyfills/noop.esnext",
+      "quilt:from-source": "./src/polyfills/noop.ts",
+      "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
       "import": "./build/esm/polyfills/noop.mjs",
       "require": "./build/cjs/polyfills/noop.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "server": [
         "./build/typescript/server/index.d.ts"
       ],
@@ -174,9 +175,6 @@
       ],
       "magic/http-handler": [
         "./build/typescript/magic/http-handler.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

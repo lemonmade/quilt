@@ -24,6 +24,7 @@ jobs:
       - uses: quilt-framework/action-type-check@v2
         with:
           command: pnpm type-check
+          cache-key: v2
 
   unit-tests:
     name: Unit tests 🧪

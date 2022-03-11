@@ -14,34 +14,32 @@
   },
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./http-handlers": {
-      "quilt:internal": "./src/http-handlers.ts",
-      "sewing-kit:esnext": "./build/esnext/http-handlers.esnext",
+      "quilt:from-source": "./src/http-handlers.ts",
+      "quilt:esnext": "./build/esnext/http-handlers.esnext",
       "import": "./build/esm/http-handlers.mjs",
       "require": "./build/cjs/http-handlers.cjs"
     },
     "./sewing-kit": {
-      "quilt:internal": "./src/sewing-kit.ts",
-      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "quilt:from-source": "./src/sewing-kit.ts",
+      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs",
       "require": "./build/cjs/sewing-kit.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "http-handlers": [
         "./build/typescript/http-handlers.d.ts"
       ],
       "sewing-kit": [
         "./build/typescript/sewing-kit.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },

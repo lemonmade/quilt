@@ -15,19 +15,13 @@
   },
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     }
   },
-  "typesVersions": {
-    ">=1": {
-      "*": [
-        "./build/typescript/index.d.ts"
-      ]
-    }
-  },
+  "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0"

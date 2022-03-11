@@ -15,34 +15,32 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./testing": {
-      "quilt:internal": "./src/testing/index.ts",
-      "sewing-kit:esnext": "./build/esnext/testing/index.esnext",
+      "quilt:from-source": "./src/testing/index.ts",
+      "quilt:esnext": "./build/esnext/testing/index.esnext",
       "import": "./build/esm/testing/index.mjs",
       "require": "./build/cjs/testing/index.cjs"
     },
     "./server": {
-      "quilt:internal": "./src/server/index.ts",
-      "sewing-kit:esnext": "./build/esnext/server/index.esnext",
+      "quilt:from-source": "./src/server/index.ts",
+      "quilt:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",
       "require": "./build/cjs/server/index.cjs"
     }
   },
+  "types": "./build/typescript/index.d.ts",
   "typesVersions": {
-    ">=1": {
+    "*": {
       "server": [
         "./build/typescript/server/index.d.ts"
       ],
       "testing": [
         "./build/typescript/testing/index.d.ts"
-      ],
-      "*": [
-        "./build/typescript/index.d.ts"
       ]
     }
   },
