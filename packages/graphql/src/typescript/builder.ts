@@ -7,19 +7,15 @@ import {FSWatcher, watch} from 'chokidar';
 import glob from 'globby';
 import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
 
-import {extractImports} from '../transform';
-import {
-  generateDocumentTypes,
-  generateSchemaTypes,
-  PrintSchemaOptions,
-} from './print';
 import type {
-  DocumentDetails,
-  ProjectDetails,
   DocumentOutputKind,
   SchemaOutputKind,
   SchemaOutputKindInputTypes,
-} from './types';
+  ConfigurationExtensions,
+} from '../configuration';
+import {extractImports} from '../transform';
+import {generateDocumentTypes, generateSchemaTypes} from './print';
+import type {DocumentDetails, ProjectDetails} from './types';
 
 export interface RunOptions {
   watch?: boolean;
@@ -47,12 +43,6 @@ interface DocumentBuildDetails {
   documentPath: string;
   dependencies: Set<string>;
   outputKinds: DocumentOutputKind[];
-}
-
-export interface GraphQLConfigExtensions {
-  schema?: SchemaOutputKind[];
-  documents?: DocumentOutputKind[];
-  customScalars?: PrintSchemaOptions['customScalars'];
 }
 
 type ProjectDetailsMap = Map<GraphQLProjectConfig, ProjectDetails>;
@@ -286,18 +276,14 @@ export class Builder extends EventEmitter {
       };
     }
 
-    const normalizedSchemaOutputKinds = schemaOutputKinds.map((outputKind) =>
-      outputKind.kind === 'inputTypes'
-        ? outputKind
-        : {
-            ...outputKind,
-            outputPath:
-              outputKind.outputPath ??
-              getDefaultSchemaOutputPath(project, {
-                typesOnly: outputKind.kind === 'outputTypes',
-              }),
-          },
-    );
+    const normalizedSchemaOutputKinds = schemaOutputKinds.map((outputKind) => ({
+      ...outputKind,
+      outputPath:
+        outputKind.outputPath ??
+        getDefaultSchemaOutputPath(project, {
+          typesOnly: outputKind.kind !== 'definitions',
+        }),
+    }));
 
     let schemaInputTypes: string | undefined;
     let schemaOutputTypes: string | undefined;
@@ -618,8 +604,19 @@ function normalizeProjectSchemaPaths({schema, name}: GraphQLProjectConfig) {
   );
 }
 
-function getOptions(project: GraphQLProjectConfig): GraphQLConfigExtensions {
-  return project.extensions.quilt ?? {};
+function getOptions(project: GraphQLProjectConfig): ConfigurationExtensions {
+  const quiltExtensions = project.extensions.quilt ?? {};
+
+  return {
+    ...quiltExtensions,
+    schema:
+      quiltExtensions.schema != null &&
+      quiltExtensions.schema.some(
+        (outputKind) => outputKind.kind === 'inputTypes',
+      )
+        ? quiltExtensions.schema
+        : [...(quiltExtensions.schema ?? []), {kind: 'inputTypes'}],
+  };
 }
 
 function normalizeSchemaTypesPath(
@@ -643,8 +640,13 @@ function getDefaultSchemaOutputPath(
   {schema, name}: GraphQLProjectConfig,
   {typesOnly = true} = {},
 ) {
+  const createPath = (schemaPath: string) =>
+    `${schemaPath}${typesOnly ? '.d.ts' : '.ts'}`;
+
   if (typeof schema === 'string') {
-    return `${schema}${typesOnly ? '.d.ts' : '.ts'}`;
+    return createPath(schema);
+  } else if (Array.isArray(schema) && typeof schema[0] === 'string') {
+    return createPath(schema[0]);
   }
 
   throw new Error(

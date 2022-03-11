@@ -22,24 +22,14 @@ import type {
   GraphQLNamedType,
 } from 'graphql';
 
-import type {SchemaOutputKind} from '../types';
+import type {PrintSchemaOptions, ScalarDefinition} from '../../configuration';
 
 import generate from './generate';
 import {scalarTypeMap} from './utilities';
 
-export interface ScalarDefinition {
-  name: string;
-  package?: string;
-}
-
-export interface Options {
-  kind: SchemaOutputKind;
-  customScalars?: {[key: string]: ScalarDefinition};
-}
-
 export function generateSchemaTypes(
   schema: GraphQLSchema,
-  {customScalars = {}, kind}: Options,
+  {customScalars = {}, kind}: PrintSchemaOptions,
 ) {
   const importMap = new Map<string, Set<string>>();
   const fileBody: t.Statement[] = [];

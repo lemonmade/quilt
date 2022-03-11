@@ -5,8 +5,9 @@ import * as path from 'path';
 import arg from 'arg';
 import {dim, inverse, bold, green, red} from 'colorette';
 
+import type {SchemaOutputKind} from '../configuration';
+
 import {createBuilder} from './builder';
-import {SchemaOutputKind} from './types';
 
 const BUILT = inverse(bold(green(' BUILT ')));
 const ERROR = inverse(bold(red(' ERROR ')));
