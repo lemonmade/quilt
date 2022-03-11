@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.64
+
+### Patch Changes
+
+- [#181](https://github.com/lemonmade/quilt/pull/181) [`c82cafa`](https://github.com/lemonmade/quilt/commit/c82cafa796feaba7221baed984f7e720b5601a62) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve GraphQL configuration types
+
+- Updated dependencies [[`c82cafa`](https://github.com/lemonmade/quilt/commit/c82cafa796feaba7221baed984f7e720b5601a62), [`c82cafa`](https://github.com/lemonmade/quilt/commit/c82cafa796feaba7221baed984f7e720b5601a62), [`ba2d282`](https://github.com/lemonmade/quilt/commit/ba2d28245528fc9825e36cfed85798b721f33152)]:
+  - @quilted/graphql@0.4.16
+  - @quilted/quilt@0.5.62
+
 ## 0.1.63
 
 ### Patch Changes

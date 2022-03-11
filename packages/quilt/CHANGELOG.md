@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.62
+
+### Patch Changes
+
+- [#179](https://github.com/lemonmade/quilt/pull/179) [`ba2d282`](https://github.com/lemonmade/quilt/commit/ba2d28245528fc9825e36cfed85798b721f33152) Thanks [@lemonmade](https://github.com/lemonmade)! - Add useful-react-types package
+
 ## 0.5.61
 
 ### Patch Changes
