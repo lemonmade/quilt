@@ -322,7 +322,7 @@ export function jest() {
                   ? [
                       '/node_modules/',
                       ...excludePatterns.map(
-                        (pattern) => `/${pattern.replace(/(^"|"$)/, '')}/`,
+                        (pattern) => `/${pattern.replace(/(^"|"$)/g, '')}/`,
                       ),
                     ]
                   : undefined,

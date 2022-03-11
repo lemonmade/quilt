@@ -34,7 +34,7 @@ import {
 
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
-import {internalExportCondition} from './plugins/internal-export-condition';
+import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
 import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import type {
@@ -152,7 +152,7 @@ export function quiltApp({
         esnext(),
         react(),
         preact(),
-        internalExportCondition(),
+        aliasWorkspacePackages(),
         // Magic modules
         magicModuleApp(),
         magicModuleBrowserEntry({hydrate: Boolean(server)}),
@@ -258,7 +258,7 @@ export function quiltService({
         esnext(),
         useReact && react(),
         useReact && preact(),
-        internalExportCondition(),
+        aliasWorkspacePackages(),
         // Build and http handler setup
         build && serviceBuild(buildOptions),
         useHttpHandler &&
@@ -328,7 +328,6 @@ export function quiltPackage({
         targets(),
         typescriptProject(),
         useReact && react(),
-        internalExportCondition(),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),
