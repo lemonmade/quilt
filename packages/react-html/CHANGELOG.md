@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.21
+
+### Patch Changes
+
+- [`de03adb`](https://github.com/lemonmade/quilt/commit/de03adb1c102f88a0815b461932b66963072b85f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix serializing primitive types with useSerialized()
+
 ## 0.3.20
 
 ### Patch Changes
