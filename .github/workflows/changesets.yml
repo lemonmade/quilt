@@ -18,10 +18,12 @@ jobs:
           fetch-depth: 0
 
       - uses: ./.github/workflows/actions/prepare
+      # @see https://github.com/changesets/action
       - uses: changesets/action@v1
         with:
           title: '[ci] Publish packages 🚀'
           commit: '[ci] Publish packages'
+          version: pnpm changeset version && pnpm install
           publish: pnpm changeset tag
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
