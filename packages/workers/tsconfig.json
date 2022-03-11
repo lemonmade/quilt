@@ -1,5 +1,5 @@
 {
-  "extends": "../typescript/pkg.json",
+  "extends": "@quilted/typescript/pkg.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "build/typescript",
