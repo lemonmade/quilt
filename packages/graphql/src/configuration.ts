@@ -25,7 +25,7 @@ export interface ScalarDefinition {
 
 export interface SchemaOutputKindInputTypes {
   kind: 'inputTypes';
-  outputPath: string;
+  outputPath?: string;
 }
 
 export interface SchemaOutputKindOutputTypes {

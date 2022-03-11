@@ -276,18 +276,14 @@ export class Builder extends EventEmitter {
       };
     }
 
-    const normalizedSchemaOutputKinds = schemaOutputKinds.map((outputKind) =>
-      outputKind.kind === 'inputTypes'
-        ? outputKind
-        : {
-            ...outputKind,
-            outputPath:
-              outputKind.outputPath ??
-              getDefaultSchemaOutputPath(project, {
-                typesOnly: outputKind.kind === 'outputTypes',
-              }),
-          },
-    );
+    const normalizedSchemaOutputKinds = schemaOutputKinds.map((outputKind) => ({
+      ...outputKind,
+      outputPath:
+        outputKind.outputPath ??
+        getDefaultSchemaOutputPath(project, {
+          typesOnly: outputKind.kind !== 'definitions',
+        }),
+    }));
 
     let schemaInputTypes: string | undefined;
     let schemaOutputTypes: string | undefined;
@@ -609,7 +605,18 @@ function normalizeProjectSchemaPaths({schema, name}: GraphQLProjectConfig) {
 }
 
 function getOptions(project: GraphQLProjectConfig): ConfigurationExtensions {
-  return project.extensions.quilt ?? {};
+  const quiltExtensions = project.extensions.quilt ?? {};
+
+  return {
+    ...quiltExtensions,
+    schema:
+      quiltExtensions.schema != null &&
+      quiltExtensions.schema.some(
+        (outputKind) => outputKind.kind === 'inputTypes',
+      )
+        ? quiltExtensions.schema
+        : [...(quiltExtensions.schema ?? []), {kind: 'inputTypes'}],
+  };
 }
 
 function normalizeSchemaTypesPath(
@@ -633,8 +640,13 @@ function getDefaultSchemaOutputPath(
   {schema, name}: GraphQLProjectConfig,
   {typesOnly = true} = {},
 ) {
+  const createPath = (schemaPath: string) =>
+    `${schemaPath}${typesOnly ? '.d.ts' : '.ts'}`;
+
   if (typeof schema === 'string') {
-    return `${schema}${typesOnly ? '.d.ts' : '.ts'}`;
+    return createPath(schema);
+  } else if (Array.isArray(schema) && typeof schema[0] === 'string') {
+    return createPath(schema[0]);
   }
 
   throw new Error(
