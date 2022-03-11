@@ -1,5 +1,11 @@
 # @quilted/http
 
+## 0.2.16
+
+### Patch Changes
+
+- [#176](https://github.com/lemonmade/quilt/pull/176) [`235c403`](https://github.com/lemonmade/quilt/commit/235c4032511c48a3ed87370b0a7a5cce20c7f362) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed an issue with reading cookies during SSR
+
 ## 0.2.15
 
 ### Patch Changes
