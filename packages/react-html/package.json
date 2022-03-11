@@ -15,19 +15,19 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
+      "quilt:from-source": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./testing": {
-      "quilt:internal": "./src/testing/index.ts",
+      "quilt:from-source": "./src/testing/index.ts",
       "sewing-kit:esnext": "./build/esnext/testing/index.esnext",
       "import": "./build/esm/testing/index.mjs",
       "require": "./build/cjs/testing/index.cjs"
     },
     "./server": {
-      "quilt:internal": "./src/server/index.ts",
+      "quilt:from-source": "./src/server/index.ts",
       "sewing-kit:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",
       "require": "./build/cjs/server/index.cjs"

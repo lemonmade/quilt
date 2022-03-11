@@ -14,13 +14,13 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
+      "quilt:from-source": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
-      "quilt:internal": "./src/server.ts",
+      "quilt:from-source": "./src/server.ts",
       "sewing-kit:esnext": "./build/esnext/server.esnext",
       "import": "./build/esm/server.mjs",
       "require": "./build/cjs/server.cjs"

@@ -14,13 +14,13 @@
   },
   "exports": {
     ".": {
-      "quilt:internal": "./src/index.ts",
+      "quilt:from-source": "./src/index.ts",
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./graphql": {
-      "quilt:internal": "./src/graphql.ts",
+      "quilt:from-source": "./src/graphql.ts",
       "sewing-kit:esnext": "./build/esnext/graphql.esnext",
       "import": "./build/esm/graphql.mjs",
       "require": "./build/cjs/graphql.cjs"
