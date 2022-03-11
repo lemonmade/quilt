@@ -18,10 +18,19 @@
       "sewing-kit:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
+    },
+    "./graphql": {
+      "quilt:internal": "./src/graphql.ts",
+      "sewing-kit:esnext": "./build/esnext/graphql.esnext",
+      "import": "./build/esm/graphql.mjs",
+      "require": "./build/cjs/graphql.cjs"
     }
   },
   "typesVersions": {
     ">=1": {
+      "graphql": [
+        "./build/typescript/graphql.d.ts"
+      ],
       "*": [
         "./build/typescript/index.d.ts"
       ]
@@ -57,6 +66,7 @@
     "common-tags": "^1.8.0",
     "core-js": "^3.0.0",
     "esbuild": "^0.12.0",
+    "graphql-config": "^4.1.0",
     "pkg-dir": "^6.0.0",
     "postcss": "^8.0.0",
     "postcss-modules": "^4.0.0",
