@@ -1,5 +1,17 @@
 # @quilted/craft
 
+## 0.1.65
+
+### Patch Changes
+
+- [`6b1acfd`](https://github.com/lemonmade/quilt/commit/6b1acfd562f6e268c004ab31cfdeaa065696ca88) Thanks [@lemonmade](https://github.com/lemonmade)! - Always use internal condition when it's available
+
+* [`fc1e551`](https://github.com/lemonmade/quilt/commit/fc1e551b6996626d9da8a7466244bcd95fe89a85) Thanks [@lemonmade](https://github.com/lemonmade)! - Use @quilted/quilt in GraphQL types through Craft
+
+* Updated dependencies [[`6b1acfd`](https://github.com/lemonmade/quilt/commit/6b1acfd562f6e268c004ab31cfdeaa065696ca88), [`fc1e551`](https://github.com/lemonmade/quilt/commit/fc1e551b6996626d9da8a7466244bcd95fe89a85)]:
+  - @quilted/sewing-kit@0.2.16
+  - @quilted/graphql@0.4.17
+
 ## 0.1.64
 
 ### Patch Changes
