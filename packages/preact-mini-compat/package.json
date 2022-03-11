@@ -14,7 +14,7 @@
   "exports": {
     ".": {
       "quilt:from-source": "./src/index.js",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     }

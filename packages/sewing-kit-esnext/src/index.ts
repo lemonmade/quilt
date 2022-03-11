@@ -13,7 +13,7 @@ import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-rollup';
 import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
-export const EXPORT_CONDITION = 'sewing-kit:esnext';
+export const EXPORT_CONDITION = 'quilt:esnext';
 // Some older packages published with sewing-kit use this condition name,
 // so we support it too (even though it's a bit dangerous, given how generic
 // the name is).
@@ -38,14 +38,14 @@ const require = createRequire(import.meta.url);
  * ideal for consumers, as it can be processed to transpile only what is
  * needed for the consumer’s target. This will be output in an `esnext`
  * subdirectory of your default build directory. To have consumers prefer
- * this build, make sure that your package.json lists the `sewing-kit:esnext`
+ * this build, make sure that your package.json lists the `quilt:esnext`
  * export condition first for all your export declarations:
  *
  * ```json
  * {
  *   "exports": {
  *     ".": {
- *       "sewing-kit:esnext": "./build/esnext/index.esnext",
+ *       "quilt:esnext": "./build/esnext/index.esnext",
  *       "import": "./build/esm/index.mjs"
  *     }
  *   }

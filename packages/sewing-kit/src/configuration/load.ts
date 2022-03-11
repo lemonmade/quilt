@@ -226,7 +226,7 @@ async function normalizeConfigurationFile(file: string) {
     const jsFile = file.replace(/\.tsx?/, '.js');
 
     const exportConditions = [
-      'sewing-kit:esnext',
+      'quilt:esnext',
       'module',
       'import',
       'node',

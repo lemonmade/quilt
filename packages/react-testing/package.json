@@ -15,37 +15,37 @@
   "exports": {
     ".": {
       "quilt:from-source": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./dom": {
       "quilt:from-source": "./src/implementations/react-dom.ts",
-      "sewing-kit:esnext": "./build/esnext/implementations/react-dom.esnext",
+      "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
       "import": "./build/esm/implementations/react-dom.mjs",
       "require": "./build/cjs/implementations/react-dom.cjs"
     },
     "./dom-matchers": {
       "quilt:from-source": "./src/matchers/dom.ts",
-      "sewing-kit:esnext": "./build/esnext/matchers/dom.esnext",
+      "quilt:esnext": "./build/esnext/matchers/dom.esnext",
       "import": "./build/esm/matchers/dom.mjs",
       "require": "./build/cjs/matchers/dom.cjs"
     },
     "./matchers": {
       "quilt:from-source": "./src/matchers/index.ts",
-      "sewing-kit:esnext": "./build/esnext/matchers/index.esnext",
+      "quilt:esnext": "./build/esnext/matchers/index.esnext",
       "import": "./build/esm/matchers/index.mjs",
       "require": "./build/cjs/matchers/index.cjs"
     },
     "./preact": {
       "quilt:from-source": "./src/implementations/preact.ts",
-      "sewing-kit:esnext": "./build/esnext/implementations/preact.esnext",
+      "quilt:esnext": "./build/esnext/implementations/preact.esnext",
       "import": "./build/esm/implementations/preact.mjs",
       "require": "./build/cjs/implementations/preact.cjs"
     },
     "./sewing-kit": {
       "quilt:from-source": "./src/sewing-kit.ts",
-      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs",
       "require": "./build/cjs/sewing-kit.cjs"
     }

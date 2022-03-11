@@ -14,49 +14,49 @@
   "exports": {
     ".": {
       "quilt:from-source": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./rollup": {
       "quilt:from-source": "./src/rollup-parts.ts",
-      "sewing-kit:esnext": "./build/esnext/rollup-parts.esnext",
+      "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
       "require": "./build/cjs/rollup-parts.cjs"
     },
     "./sewing-kit": {
       "quilt:from-source": "./src/sewing-kit.ts",
-      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs",
       "require": "./build/cjs/sewing-kit.cjs"
     },
     "./base": {
       "quilt:from-source": "./src/base.ts",
-      "sewing-kit:esnext": "./build/esnext/base.esnext",
+      "quilt:esnext": "./build/esnext/base.esnext",
       "import": "./build/esm/base.mjs",
       "require": "./build/cjs/base.cjs"
     },
     "./fetch": {
       "browser": {
         "quilt:from-source": "./src/fetch.browser.ts",
-        "sewing-kit:esnext": "./build/esnext/fetch.browser.esnext",
+        "quilt:esnext": "./build/esnext/fetch.browser.esnext",
         "import": "./build/esm/fetch.browser.mjs",
         "require": "./build/cjs/fetch.browser.cjs"
       },
       "node": {
         "quilt:from-source": "./src/fetch.node.ts",
-        "sewing-kit:esnext": "./build/esnext/fetch.node.esnext",
+        "quilt:esnext": "./build/esnext/fetch.node.esnext",
         "import": "./build/esm/fetch.node.mjs",
         "require": "./build/cjs/fetch.node.cjs"
       },
       "quilt:from-source": "./src/noop.ts",
-      "sewing-kit:esnext": "./build/esnext/noop.esnext",
+      "quilt:esnext": "./build/esnext/noop.esnext",
       "import": "./build/esm/noop.mjs",
       "require": "./build/cjs/noop.cjs"
     },
     "./noop": {
       "quilt:from-source": "./src/noop.ts",
-      "sewing-kit:esnext": "./build/esnext/noop.esnext",
+      "quilt:esnext": "./build/esnext/noop.esnext",
       "import": "./build/esm/noop.mjs",
       "require": "./build/cjs/noop.cjs"
     }

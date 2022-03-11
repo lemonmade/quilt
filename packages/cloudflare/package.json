@@ -15,19 +15,19 @@
   "exports": {
     ".": {
       "quilt:from-source": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./http-handlers": {
       "quilt:from-source": "./src/http-handlers.tsx",
-      "sewing-kit:esnext": "./build/esnext/http-handlers.esnext",
+      "quilt:esnext": "./build/esnext/http-handlers.esnext",
       "import": "./build/esm/http-handlers.mjs",
       "require": "./build/cjs/http-handlers.cjs"
     },
     "./sewing-kit": {
       "quilt:from-source": "./src/sewing-kit.ts",
-      "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
+      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs",
       "require": "./build/cjs/sewing-kit.cjs"
     }

@@ -15,13 +15,13 @@
   "exports": {
     ".": {
       "quilt:from-source": "./src/index.ts",
-      "sewing-kit:esnext": "./build/esnext/index.esnext",
+      "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
       "quilt:from-source": "./src/server.tsx",
-      "sewing-kit:esnext": "./build/esnext/server.esnext",
+      "quilt:esnext": "./build/esnext/server.esnext",
       "import": "./build/esm/server.mjs",
       "require": "./build/cjs/server.cjs"
     }
