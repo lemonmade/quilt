@@ -372,6 +372,7 @@ importers:
       '@quilted/react-server-render': ^0.3.7
       '@quilted/react-testing': ^0.5.1
       '@quilted/react-workers': ^0.2.12
+      '@quilted/useful-react-types': ^0.1.0
       '@types/prettier': ^2.0.0
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
@@ -394,6 +395,7 @@ importers:
       '@quilted/react-server-render': link:../react-server-render
       '@quilted/react-testing': link:../react-testing
       '@quilted/react-workers': link:../react-workers
+      '@quilted/useful-react-types': link:../useful-react-types
       '@types/react': 17.0.13
       '@types/react-dom': 17.0.8
       preact: 10.5.14
@@ -717,6 +719,9 @@ importers:
     specifiers: {}
 
   packages/use-subscription:
+    specifiers: {}
+
+  packages/useful-react-types:
     specifiers: {}
 
   packages/useful-types:

@@ -50,6 +50,7 @@
     {"path": "./packages/sewing-kit-vite"},
     {"path": "./packages/typescript"},
     {"path": "./packages/use-subscription"},
+    {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
     {"path": "./packages/workers"},
     {"path": "./examples/basic-app"}
