@@ -23,7 +23,7 @@ jobs:
         with:
           title: '[ci] Publish packages 🚀'
           commit: '[ci] Publish packages'
-          version: pnpm changeset version && pnpm install
+          version: pnpm version-bump
           publish: pnpm changeset tag
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
