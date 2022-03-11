@@ -7,19 +7,15 @@ import {FSWatcher, watch} from 'chokidar';
 import glob from 'globby';
 import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
 
-import {extractImports} from '../transform';
-import {
-  generateDocumentTypes,
-  generateSchemaTypes,
-  PrintSchemaOptions,
-} from './print';
 import type {
-  DocumentDetails,
-  ProjectDetails,
   DocumentOutputKind,
   SchemaOutputKind,
   SchemaOutputKindInputTypes,
-} from './types';
+  ConfigurationExtensions,
+} from '../configuration';
+import {extractImports} from '../transform';
+import {generateDocumentTypes, generateSchemaTypes} from './print';
+import type {DocumentDetails, ProjectDetails} from './types';
 
 export interface RunOptions {
   watch?: boolean;
@@ -47,12 +43,6 @@ interface DocumentBuildDetails {
   documentPath: string;
   dependencies: Set<string>;
   outputKinds: DocumentOutputKind[];
-}
-
-export interface GraphQLConfigExtensions {
-  schema?: SchemaOutputKind[];
-  documents?: DocumentOutputKind[];
-  customScalars?: PrintSchemaOptions['customScalars'];
 }
 
 type ProjectDetailsMap = Map<GraphQLProjectConfig, ProjectDetails>;
@@ -618,7 +608,7 @@ function normalizeProjectSchemaPaths({schema, name}: GraphQLProjectConfig) {
   );
 }
 
-function getOptions(project: GraphQLProjectConfig): GraphQLConfigExtensions {
+function getOptions(project: GraphQLProjectConfig): ConfigurationExtensions {
   return project.extensions.quilt ?? {};
 }
 

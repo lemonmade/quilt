@@ -20,11 +20,8 @@ import type {
   FragmentDefinitionNode,
 } from 'graphql';
 
-import type {
-  DocumentDetails,
-  ProjectDetails,
-  DocumentOutputKind,
-} from '../types';
+import type {DocumentDetails, ProjectDetails} from '../types';
+import type {DocumentOutputKind} from '../../configuration';
 
 import {addTypename, minify, toSimpleDocument} from '../../utilities/document';
 import type {Field} from '../../utilities/ast';

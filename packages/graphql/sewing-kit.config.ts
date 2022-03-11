@@ -21,6 +21,11 @@ export default createPackage((pkg) => {
     source: './src/matchers/index',
     runtime: Runtime.Node,
   });
+  pkg.entry({
+    name: 'configuration',
+    source: './src/configuration',
+    runtime: Runtime.Node,
+  });
   pkg.binary({
     name: 'quilt-graphql-typescript',
     source: './src/typescript/cli',

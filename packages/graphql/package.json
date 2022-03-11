@@ -63,6 +63,12 @@
       "sewing-kit:esnext": "./build/esnext/sewing-kit.esnext",
       "import": "./build/esm/sewing-kit.mjs",
       "require": "./build/cjs/sewing-kit.cjs"
+    },
+    "./configuration": {
+      "quilt:internal": "./src/configuration.ts",
+      "sewing-kit:esnext": "./build/esnext/configuration.esnext",
+      "import": "./build/esm/configuration.mjs",
+      "require": "./build/cjs/configuration.cjs"
     }
   },
   "typesVersions": {
@@ -87,6 +93,9 @@
       ],
       "sewing-kit": [
         "./build/typescript/sewing-kit.d.ts"
+      ],
+      "configuration": [
+        "./build/typescript/configuration.d.ts"
       ],
       "*": [
         "./build/typescript/index.d.ts"
