@@ -1,5 +1,14 @@
 # @quilted/sewing-kit-jest
 
+## 0.1.10
+
+### Patch Changes
+
+- [#183](https://github.com/lemonmade/quilt/pull/183) [`b1ecbd9`](https://github.com/lemonmade/quilt/commit/b1ecbd9f499262f4509af0705b1a77f0df131c2c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix normalizing test exclude patterns for Jest
+
+- Updated dependencies [[`b1ecbd9`](https://github.com/lemonmade/quilt/commit/b1ecbd9f499262f4509af0705b1a77f0df131c2c)]:
+  - @quilted/sewing-kit@0.2.17
+
 ## 0.1.9
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.17
+
+### Patch Changes
+
+- [#183](https://github.com/lemonmade/quilt/pull/183) [`b1ecbd9`](https://github.com/lemonmade/quilt/commit/b1ecbd9f499262f4509af0705b1a77f0df131c2c) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove quilt:internal support and use aliases instead
+
 ## 0.2.16
 
 ### Patch Changes
