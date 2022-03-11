@@ -10,10 +10,61 @@ jest.setTimeout(20_000);
 describe('http', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
+      await withWorkspace(
+        {fixture: 'basic-app', debug: true},
+        async (workspace) => {
+          const {fs} = workspace;
+
+          const cookieName = 'user';
+          const cookieValue = 'Chris';
+
+          await fs.write({
+            'foundation/Routes.tsx': stripIndent`
+              import {useRoutes, useCookie} from '@quilted/quilt';
+              
+              export function Routes() {
+                return useRoutes([{match: '/', render: () => <Start />}]);
+              }
+              
+              function Start() {
+                const user = useCookie(${JSON.stringify(cookieName)});
+
+                return (
+                  <>
+                    <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
+                  </>
+                );
+              }
+            `,
+          });
+
+          const {page} = await buildAppAndOpenPage(workspace, {
+            path: '/',
+            javaScriptEnabled: false,
+            async customizeContext(context, {url}) {
+              await context.addCookies([
+                {
+                  name: 'user',
+                  value: cookieValue,
+                  url: new URL('/', url).href,
+                },
+              ]);
+            },
+          });
+
+          expect(await page.textContent('body')).toMatch(
+            `Hello, ${cookieValue}`,
+          );
+        },
+      );
+    });
+
+    it('can set client-side cookies', async () => {
       await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
         const {fs} = workspace;
 
-        const userCookieValue = 'Chris';
+        const cookieName = 'user';
+        const cookieValue = 'Chris';
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
@@ -25,14 +76,14 @@ describe('http', () => {
             
             function Start() {
               const cookies = useCookies();
-              const user = useCookie('user');
+              const user = useCookie(${JSON.stringify(cookieName)});
 
               return (
                 <>
                   <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
-                  <button onClick={() => cookies.set('user', ${JSON.stringify(
-                    userCookieValue,
-                  )})}>
+                  <button onClick={() => cookies.set(${JSON.stringify(
+                    cookieName,
+                  )}, ${JSON.stringify(cookieValue)})}>
                     Set user cookie
                   </button>
                 </>
@@ -46,7 +97,7 @@ describe('http', () => {
         });
 
         expect(await page.textContent('body')).not.toMatch(
-          `Hello, ${userCookieValue}`,
+          `Hello, ${cookieValue}`,
         );
 
         await page.click('button');
@@ -56,9 +107,7 @@ describe('http', () => {
           checkCompleteNavigations: true,
         });
 
-        expect(await page.textContent('body')).toMatch(
-          `Hello, ${userCookieValue}`,
-        );
+        expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
       });
     });
 

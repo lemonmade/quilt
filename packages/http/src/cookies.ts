@@ -89,7 +89,7 @@ export const CookieString = {
       const key = pair.substring(0, index).trim();
 
       // only assign once
-      if (cookies[key] != null) {
+      if (cookies[key] == null) {
         let value = pair.substring(index + 1, pair.length).trim();
 
         // quoted values
