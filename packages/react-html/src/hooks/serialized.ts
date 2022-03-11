@@ -45,5 +45,9 @@ export function useSerialized<T extends Serializable>(
 function isPromise<T>(
   maybePromise: T | Promise<T>,
 ): maybePromise is Promise<T> {
-  return maybePromise != null && 'then' in (maybePromise as any);
+  return (
+    maybePromise != null &&
+    typeof maybePromise === 'function' &&
+    'then' in (maybePromise as any)
+  );
 }
