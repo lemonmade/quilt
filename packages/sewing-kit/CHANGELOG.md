@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.16
+
+### Patch Changes
+
+- [`6b1acfd`](https://github.com/lemonmade/quilt/commit/6b1acfd562f6e268c004ab31cfdeaa065696ca88) Thanks [@lemonmade](https://github.com/lemonmade)! - Always use internal condition when it's available
+
 ## 0.2.15
 
 ### Patch Changes

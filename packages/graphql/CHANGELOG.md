@@ -1,5 +1,14 @@
 # @quilted/graphql
 
+## 0.4.17
+
+### Patch Changes
+
+- [`fc1e551`](https://github.com/lemonmade/quilt/commit/fc1e551b6996626d9da8a7466244bcd95fe89a85) Thanks [@lemonmade](https://github.com/lemonmade)! - Use @quilted/quilt in GraphQL types through Craft
+
+- Updated dependencies [[`6b1acfd`](https://github.com/lemonmade/quilt/commit/6b1acfd562f6e268c004ab31cfdeaa065696ca88)]:
+  - @quilted/sewing-kit@0.2.16
+
 ## 0.4.16
 
 ### Patch Changes
