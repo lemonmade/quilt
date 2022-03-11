@@ -51,7 +51,7 @@ export function graphql() {
 
 const WORKSPACE_NAME = `${NAME}.TypeScriptDefinitions`;
 
-export function workspaceGraphQL() {
+export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
   return createWorkspacePlugin({
     name: WORKSPACE_NAME,
     build({run}) {
@@ -61,9 +61,13 @@ export function workspaceGraphQL() {
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
-            const result = await step.exec('quilt-graphql-typescript', [], {
-              fromNodeModules: import.meta.url,
-            });
+            const result = await step.exec(
+              'quilt-graphql-typescript',
+              pkg ? ['--package', pkg] : [],
+              {
+                fromNodeModules: import.meta.url,
+              },
+            );
 
             if (result.stdout.trim()) step.log(result.stdout.trim());
           },
@@ -77,9 +81,13 @@ export function workspaceGraphQL() {
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
-            const result = await step.exec('quilt-graphql-typescript', [], {
-              fromNodeModules: import.meta.url,
-            });
+            const result = await step.exec(
+              'quilt-graphql-typescript',
+              pkg ? ['--package', pkg] : [],
+              {
+                fromNodeModules: import.meta.url,
+              },
+            );
 
             if (result.stdout.trim()) step.log(result.stdout.trim());
           },
@@ -93,9 +101,13 @@ export function workspaceGraphQL() {
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
-            const result = await step.exec('quilt-graphql-typescript', [], {
-              fromNodeModules: import.meta.url,
-            });
+            const result = await step.exec(
+              'quilt-graphql-typescript',
+              pkg ? ['--package', pkg] : [],
+              {
+                fromNodeModules: import.meta.url,
+              },
+            );
 
             if (result.stdout.trim()) step.log(result.stdout.trim());
           },

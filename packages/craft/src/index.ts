@@ -371,7 +371,7 @@ export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
             '@quilted/graphql/sewing-kit'
           );
 
-          use(workspaceGraphQL());
+          use(workspaceGraphQL({package: '@quilted/quilt'}));
         });
       }
     },

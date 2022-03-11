@@ -47,7 +47,7 @@ interface DocumentBuildDetails {
 
 type ProjectDetailsMap = Map<GraphQLProjectConfig, ProjectDetails>;
 
-export async function createBuilder(cwd?: string) {
+export async function createBuilder(cwd?: string, options?: Partial<Options>) {
   const config = await loadConfig({
     rootDir: cwd,
     extensions: [() => ({name: 'quilt'})],
@@ -55,10 +55,16 @@ export async function createBuilder(cwd?: string) {
     throwOnMissing: false,
   });
 
-  return new Builder(config);
+  return new Builder(config, options);
+}
+
+export interface Options {
+  package: string;
 }
 
 export class Builder extends EventEmitter {
+  readonly options: Options;
+
   private watching = false;
   private readonly config: GraphQLConfig | undefined;
   private readonly projectDetails: ProjectDetailsMap = new Map();
@@ -74,9 +80,10 @@ export class Builder extends EventEmitter {
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
-  constructor(config?: GraphQLConfig) {
+  constructor(config?: GraphQLConfig, options?: Partial<Options>) {
     super();
     this.config = config;
+    this.options = {package: '@quilted/graphql', ...options};
   }
 
   once(event: 'error', handler: (error: Error) => void): this;
@@ -445,6 +452,7 @@ export class Builder extends EventEmitter {
       outputPath,
       generateDocumentTypes(documentDetails, projectDetails, {
         kind: resolvedOutputKind,
+        package: this.options.package,
         importPath: (type) => {
           const {schema: schemaOutputKinds} = getOptions(project);
 

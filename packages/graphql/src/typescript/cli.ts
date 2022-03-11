@@ -15,11 +15,19 @@ const ERROR = inverse(bold(red(' ERROR ')));
 run();
 
 async function run() {
-  const argv = arg({'--cwd': String, '--watch': Boolean});
+  const argv = arg({
+    '--cwd': String,
+    '--watch': Boolean,
+    '--package': String,
+  });
 
-  const {'--watch': watch = false, '--cwd': cwd} = argv;
+  const {
+    '--watch': watch = false,
+    '--cwd': cwd,
+    '--package': graphQLPackage,
+  } = argv;
 
-  const builder = await createBuilder(cwd);
+  const builder = await createBuilder(cwd, {package: graphQLPackage});
 
   builder.on('schema:build:end', ({outputKinds}) => {
     for (const outputKind of outputKinds) {

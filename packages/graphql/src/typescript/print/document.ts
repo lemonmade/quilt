@@ -37,6 +37,7 @@ import {scalarTypeMap} from './utilities';
 
 interface Options {
   kind: DocumentOutputKind;
+  package: string;
   importPath(type: GraphQLLeafType): string;
 }
 
@@ -51,7 +52,7 @@ interface Context {
 export function generateDocumentTypes(
   documentDetails: DocumentDetails,
   project: ProjectDetails,
-  {kind, importPath}: Options,
+  {kind, importPath, package: pkg}: Options,
 ) {
   const {path, document} = documentDetails;
 
@@ -137,7 +138,7 @@ export function generateDocumentTypes(
           t.identifier('GraphQLOperation'),
         ),
       ],
-      t.stringLiteral('@quilted/graphql'),
+      t.stringLiteral(pkg),
     );
 
     operationTypeImport.importKind = 'type';
