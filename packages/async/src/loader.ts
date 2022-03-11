@@ -1,3 +1,7 @@
+import type {AsyncAssetsGlobal} from './global';
+
+declare const Quilt: {readonly AsyncAssets: AsyncAssetsGlobal} | undefined;
+
 export interface AsyncLoader<T> {
   readonly id?: string;
   readonly loaded?: T;
