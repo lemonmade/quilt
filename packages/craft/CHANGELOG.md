@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.63
+
+### Patch Changes
+
+- [`a72df6b`](https://github.com/lemonmade/quilt/commit/a72df6b655af4c58e6d9905ba6a37b39fcc69c9b) Thanks [@lemonmade](https://github.com/lemonmade)! - Re-export GraphQL configuration type
+
 ## 0.1.62
 
 ### Patch Changes
