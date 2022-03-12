@@ -6,6 +6,7 @@ export default createPackage((pkg) => {
   pkg.entry({source: './src/html', name: 'html'});
   pkg.entry({source: './src/email', name: 'email'});
   pkg.entry({source: './src/global', name: 'global'});
+  pkg.entry({source: './src/env', name: 'env'});
   pkg.entry({source: './src/react', name: 'react'});
   pkg.entry({
     source: './src/react/server',

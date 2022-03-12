@@ -54,7 +54,12 @@ export function appDevelop({port, browser, server}: Options = {}) {
           quiltAppBrowserEntryContent,
           quiltAppBrowserEntryCssSelector,
           quiltAppBrowserEntryShouldHydrate,
+          quiltRuntimeEnvironmentVariables,
         }) => {
+          quiltRuntimeEnvironmentVariables?.(
+            (runtime) => runtime ?? 'process.env',
+          );
+
           vitePort?.((existingPort) =>
             quiltAppServerPort!.run(port ?? existingPort),
           );

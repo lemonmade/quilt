@@ -46,6 +46,7 @@ import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
 import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry';
+import type {EnvironmentOptions} from './plugins/magic-module-env';
 
 import {appServer} from './plugins/app-server';
 import type {AppServerOptions} from './plugins/app-server';
@@ -121,9 +122,17 @@ export interface AppOptions {
    * altogether, you can pass `server: false`.
    */
   server?: boolean | AppServerOptions;
+
+  /**
+   * Customizes the behavior of environment variables for your application. You
+   * can further customize the environment variables provided during server-side
+   * rendering by passing `server.env`.
+   */
+  env?: EnvironmentOptions;
 }
 
 export function quiltApp({
+  env,
   polyfill: shouldPolyfill = true,
   develop = true,
   build = true,
@@ -160,6 +169,7 @@ export function quiltApp({
         // Build and auto-server setup
         build &&
           appBuild({
+            env,
             browser,
             server: Boolean(server),
             static: Boolean(renderStatic),
@@ -227,9 +237,11 @@ export interface ServiceOptions {
   polyfill?: boolean | PolyfillOptions;
   develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
   httpHandler?: boolean | Pick<HttpHandlerOptions, 'port'>;
+  env?: EnvironmentOptions;
 }
 
 export function quiltService({
+  env,
   build = true,
   develop = true,
   graphql = true,
@@ -238,6 +250,7 @@ export function quiltService({
   httpHandler: useHttpHandler = true,
 }: ServiceOptions = {}) {
   const buildOptions: ServiceBuildOptions = {
+    env,
     httpHandler: Boolean(useHttpHandler),
     minify: false,
     ...(typeof build === 'boolean' ? {} : build),
