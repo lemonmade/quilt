@@ -312,7 +312,7 @@ export async function buildAppAndOpenPage(
     build?: BuildAndRunOptions;
   } = {},
 ) {
-  const {url, server} = await buildAppAndRunServer(workspace);
+  const {url, server} = await buildAppAndRunServer(workspace, build);
   const targetUrl = new URL(path, url);
 
   const page = await workspace.browser.open(targetUrl, {
