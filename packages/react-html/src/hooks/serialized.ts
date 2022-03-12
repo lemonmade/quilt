@@ -26,6 +26,8 @@ export function useSerialized<T extends Serializable>(
     [id, manager, serialize],
   );
 
+  console.log({id, data});
+
   useDomServerAction(
     (manager) => {
       if (serialize == null) return;
