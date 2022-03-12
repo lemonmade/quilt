@@ -1,5 +1,11 @@
 # @quilted/react-server-render
 
+## 0.3.10
+
+### Patch Changes
+
+- [#190](https://github.com/lemonmade/quilt/pull/190) [`9bf454a`](https://github.com/lemonmade/quilt/commit/9bf454aaefc7ac6b85060fc5493b6b3ee4e2b526) Thanks [@lemonmade](https://github.com/lemonmade)! - Add easy environment variables
+
 ## 0.3.9
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @quilted/cloudflare
 
+## 0.1.23
+
+### Patch Changes
+
+- [#190](https://github.com/lemonmade/quilt/pull/190) [`9bf454a`](https://github.com/lemonmade/quilt/commit/9bf454aaefc7ac6b85060fc5493b6b3ee4e2b526) Thanks [@lemonmade](https://github.com/lemonmade)! - Add easy environment variables
+
+- Updated dependencies [[`9bf454a`](https://github.com/lemonmade/quilt/commit/9bf454aaefc7ac6b85060fc5493b6b3ee4e2b526)]:
+  - @quilted/craft@0.1.68
+  - @quilted/quilt@0.5.64
+
 ## 0.1.22
 
 ### Patch Changes
