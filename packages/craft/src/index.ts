@@ -46,6 +46,7 @@ import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
 import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry';
+import {magicModuleEnv} from './plugins/magic-module-env';
 import type {EnvironmentOptions} from './plugins/magic-module-env';
 
 import {appServer} from './plugins/app-server';
@@ -166,6 +167,7 @@ export function quiltApp({
         magicModuleApp(),
         magicModuleBrowserEntry({hydrate: Boolean(server)}),
         magicModuleAppServerEntry(),
+        magicModuleEnv(),
         // Build and auto-server setup
         build &&
           appBuild({
@@ -272,6 +274,7 @@ export function quiltService({
         useReact && react(),
         useReact && preact(),
         aliasWorkspacePackages(),
+        magicModuleEnv(),
         // Build and http handler setup
         build && serviceBuild(buildOptions),
         useHttpHandler &&
