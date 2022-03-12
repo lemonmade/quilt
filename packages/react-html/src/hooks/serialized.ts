@@ -20,7 +20,7 @@ export function useSerialized<T extends Serializable>(
   const manager = useContext(HtmlContext);
   const data = useMemo(
     () =>
-      typeof serialize === 'function'
+      typeof serialize === 'function' || serialize == null
         ? manager.getSerialization<T>(id)
         : serialize,
     [id, manager, serialize],
