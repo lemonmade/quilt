@@ -2,6 +2,8 @@ import {createProjectPlugin, ResolvedHooks} from '@quilted/sewing-kit';
 import type {
   App,
   Service,
+  Project,
+  Workspace,
   WaterfallHook,
   DevelopAppConfigurationHooks,
 } from '@quilted/sewing-kit';
@@ -48,7 +50,7 @@ export const NAME = 'Quilt.MagicModule.Env';
 export function magicModuleEnv() {
   return createProjectPlugin<App | Service>({
     name: NAME,
-    build({hooks, configure}) {
+    build({project, workspace, hooks, configure}) {
       hooks<Hooks>(({waterfall}) => ({
         quiltInlineEnvironmentVariables: waterfall(),
         quiltRuntimeEnvironmentVariables: waterfall(),
@@ -63,16 +65,17 @@ export function magicModuleEnv() {
           quiltEnvModuleContent,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const [runtime, inline] = await Promise.all([
+            const [env, runtime, inline] = await Promise.all([
+              loadEnv(project, workspace, {mode: 'production'}),
               quiltRuntimeEnvironmentVariables!.run(undefined),
               quiltInlineEnvironmentVariables!.run([]),
             ]);
 
             return [
               magicModuleEnvPlugin({
+                env,
                 inline,
                 runtime,
-                env: {},
                 customize: (content) => quiltEnvModuleContent!.run(content),
               }),
               ...plugins,
@@ -81,7 +84,7 @@ export function magicModuleEnv() {
         },
       );
     },
-    develop({hooks, configure}) {
+    develop({project, workspace, hooks, configure}) {
       hooks<Hooks>(({waterfall}) => ({
         quiltInlineEnvironmentVariables: waterfall(),
         quiltRuntimeEnvironmentVariables: waterfall(),
@@ -97,16 +100,17 @@ export function magicModuleEnv() {
           quiltEnvModuleContent,
         }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
           rollupPlugins?.(async (plugins) => {
-            const [runtime, inline] = await Promise.all([
+            const [env, runtime, inline] = await Promise.all([
+              loadEnv(project, workspace, {mode: 'development'}),
               quiltRuntimeEnvironmentVariables!.run(undefined),
               quiltInlineEnvironmentVariables!.run([]),
             ]);
 
             return [
               magicModuleEnvPlugin({
+                env,
                 inline,
                 runtime,
-                env: {},
                 customize: (content) => quiltEnvModuleContent!.run(content),
               }),
               ...plugins,
@@ -114,7 +118,8 @@ export function magicModuleEnv() {
           });
 
           vitePlugins?.(async (plugins) => {
-            const [runtime, inline] = await Promise.all([
+            const [env, runtime, inline] = await Promise.all([
+              loadEnv(project, workspace, {mode: 'development'}),
               quiltRuntimeEnvironmentVariables!.run(undefined),
               quiltInlineEnvironmentVariables!.run([]),
             ]);
@@ -122,9 +127,9 @@ export function magicModuleEnv() {
             return [
               {
                 ...magicModuleEnvPlugin({
+                  env,
                   inline,
                   runtime,
-                  env: {},
                   customize: (content) => quiltEnvModuleContent!.run(content),
                 }),
                 enforce: 'pre',
@@ -139,14 +144,14 @@ export function magicModuleEnv() {
 }
 
 function magicModuleEnvPlugin({
+  env,
   inline,
   runtime = '{}',
-  env,
   customize,
 }: {
+  env: Record<string, string | undefined>;
   inline: string[];
   runtime?: string;
-  env: Record<string, string>;
   customize(content: string): Promise<string>;
 }): Plugin {
   const inlineEnv: Record<string, string> = {};
@@ -187,4 +192,44 @@ function magicModuleEnvPlugin({
       return content;
     },
   };
+}
+
+// Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/src/node/config.ts#L1050-L1113
+async function loadEnv(
+  project: Project,
+  workspace: Workspace,
+  {mode}: {mode: 'production' | 'development'},
+): Promise<Record<string, string | undefined>> {
+  const env: Record<string, string | undefined> = {...process.env};
+
+  const envFiles = [
+    // default file
+    `.env`,
+    // local file
+    `.env.local`,
+    // mode file
+    `.env.${mode}`,
+    // mode local file
+    `.env.${mode}.local`,
+  ];
+
+  const {parse} = await import('dotenv');
+
+  const loadEnvFile = async (file: string) => {
+    if (await workspace.fs.hasFile(file)) {
+      return parse(await workspace.fs.read(file));
+    }
+  };
+
+  const envFileResults = await Promise.all([
+    ...envFiles.map((file) => loadEnvFile(workspace.fs.resolvePath(file))),
+    ...envFiles.map((file) => loadEnvFile(project.fs.resolvePath(file))),
+  ]);
+
+  for (const envFileResult of envFileResults) {
+    if (envFileResult == null) continue;
+    Object.assign(env, envFileResult);
+  }
+
+  return env;
 }

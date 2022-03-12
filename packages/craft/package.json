@@ -63,6 +63,7 @@
     "clean-css": "^5.0.0",
     "common-tags": "^1.8.0",
     "core-js": "^3.0.0",
+    "dotenv": "^16.0.0",
     "esbuild": "^0.12.0",
     "graphql-config": "^4.1.0",
     "pkg-dir": "^6.0.0",
