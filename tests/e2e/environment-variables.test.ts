@@ -4,7 +4,7 @@ jest.setTimeout(20_000);
 
 describe('app builds', () => {
   describe('environment variables', () => {
-    it('inlines environment variables specified in the configuration file', async () => {
+    it.only('inlines environment variables specified in the configuration file', async () => {
       await withWorkspace(
         {fixture: 'basic-app', debug: true},
         async (workspace) => {
@@ -48,6 +48,56 @@ describe('app builds', () => {
           });
 
           expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
+        },
+      );
+    });
+
+    it('loads .env files for production builds', async () => {
+      await withWorkspace(
+        {fixture: 'basic-app', debug: true},
+        async (workspace) => {
+          const {fs} = workspace;
+
+          await fs.write({
+            '.env':
+              'FROM_ENV=1 FROM_ENV_LOCAL=1 FROM_ENV_MODE=1 FROM_ENV_MODE_LOCAL=1',
+            '.env.local':
+              'FROM_ENV_LOCAL=2 FROM_ENV_MODE=2 FROM_ENV_MODE_LOCAL=2',
+            '.env.production': 'FROM_ENV_MODE=3 FROM_ENV_MODE_LOCAL=3',
+            '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
+            'sewing-kit.config.ts': stripIndent`
+              import {createApp, quiltApp} from '@quilted/craft';
+              import {addInternalExportCondition} from '../../common/sewing-kit';
+              
+              export default createApp((app) => {
+                app.entry('./App');
+                app.use(quiltApp({
+                  env: {
+                    inline: ['FROM_ENV', 'FROM_ENV_LOCAL', 'FROM_ENV_MODE', 'FROM_ENV_MODE_LOCAL'],
+                  },
+                }));
+                app.use(addInternalExportCondition());
+              });
+            `,
+            'foundation/Routes.tsx': stripIndent`
+              import Env from '@quilted/quilt/env';
+              import {useRoutes, useCookie} from '@quilted/quilt';
+              
+              export function Routes() {
+                return useRoutes([{match: '/', render: () => <Start />}]);
+              }
+              
+              function Start() {
+                return <div>{Env.FROM_ENV}{Env.FROM_ENV_LOCAL}{Env.FROM_ENV_MODE}{Env.FROM_ENV_MODE_LOCAL}</div>;
+              }
+            `,
+          });
+
+          const {page} = await buildAppAndOpenPage(workspace, {
+            path: '/',
+          });
+
+          expect(await page.textContent('body')).toMatch(`1234`);
         },
       );
     });

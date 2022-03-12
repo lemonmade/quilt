@@ -71,6 +71,8 @@ export function magicModuleEnv() {
               quiltInlineEnvironmentVariables!.run([]),
             ]);
 
+            console.log({env});
+
             return [
               magicModuleEnvPlugin({
                 env,
@@ -230,6 +232,8 @@ async function loadEnv(
     if (envFileResult == null) continue;
     Object.assign(env, envFileResult);
   }
+
+  console.log({envFileResults});
 
   return env;
 }
