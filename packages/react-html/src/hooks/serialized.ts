@@ -18,7 +18,6 @@ export function useSerialized<T extends Serializable>(
   serialize?: T | (() => T | Promise<T>),
 ) {
   const manager = useContext(HtmlContext);
-  console.log({serialized: true, id, manager});
 
   const data = useMemo(
     () =>
@@ -27,8 +26,6 @@ export function useSerialized<T extends Serializable>(
         : serialize,
     [id, manager, serialize],
   );
-
-  console.log({id, data});
 
   useDomServerAction(
     (manager) => {

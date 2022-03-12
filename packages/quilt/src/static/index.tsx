@@ -169,8 +169,6 @@ export async function renderStatic(
       }
     }
 
-    // console.log({routeId, match, addFallbacks, children, routes, ownRoute});
-
     if (hasChildren) {
       for (const {id, route} of matchedRoutes) {
         for (const child of children!) {

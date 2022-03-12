@@ -11,6 +11,5 @@ export function useDomServerAction(
   options?: ServerActionOptions,
 ) {
   const manager = useContext(HtmlContext);
-  console.log({html: true, manager, options});
   useServerAction(() => perform(manager), manager[SERVER_ACTION_KIND], options);
 }

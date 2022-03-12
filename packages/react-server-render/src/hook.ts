@@ -13,6 +13,5 @@ export function useServerAction(
   options?: ServerActionOptions,
 ) {
   const manager = useContext(ServerRenderContext);
-  console.log({manager, kind, options});
   manager?.perform(perform, kind, options);
 }

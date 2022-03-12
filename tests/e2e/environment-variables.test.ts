@@ -96,7 +96,7 @@ describe('app builds', () => {
       });
     });
 
-    it.only('inlines environment variables into the app server', async () => {
+    it('inlines environment variables into the app server', async () => {
       await withWorkspace(
         {fixture: 'basic-app', debug: true},
         async (workspace) => {
@@ -129,7 +129,6 @@ describe('app builds', () => {
               }
               
               function Start() {
-                console.log({wtf: useSerialized.toString()});
                 const builder = useSerialized('Builder', Env.BUILDER);
                 return <div>Hello, {builder}!</div>;
               }
@@ -139,10 +138,6 @@ describe('app builds', () => {
           const {page} = await buildAppAndOpenPage(workspace, {
             path: '/',
           });
-
-          console.log(
-            await page.evaluate(() => document.documentElement.outerHTML),
-          );
 
           expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
         },

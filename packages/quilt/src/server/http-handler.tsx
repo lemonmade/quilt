@@ -56,8 +56,6 @@ export function createServerRenderingRequestHandler(
       }),
     ]);
 
-    console.log(htmlManager.extract());
-
     return html(
       render(
         <Html
