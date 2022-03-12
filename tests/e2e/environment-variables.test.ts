@@ -129,6 +129,7 @@ describe('app builds', () => {
               }
               
               function Start() {
+                console.log({wtf: useSerialized.toString()});
                 const builder = useSerialized('Builder', Env.BUILDER);
                 return <div>Hello, {builder}!</div>;
               }
