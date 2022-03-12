@@ -120,9 +120,9 @@ export function extract(
             resolveDuration,
           });
         }
-      }
 
-      manager.reset();
+        manager.reset();
+      }
 
       return performNextPass ? perform(index + 1) : result;
     }
