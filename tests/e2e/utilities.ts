@@ -50,7 +50,7 @@ export interface Command {
 }
 
 export interface SewingKitCli {
-  build(): RunResult;
+  build(options?: ExecOptions): RunResult;
 }
 
 export interface Workspace {
@@ -235,8 +235,15 @@ export async function withWorkspace<T>(
   }
 }
 
-export async function buildAppAndRunServer({command, fs}: Workspace) {
-  await command.sewingKit.build();
+interface BuildAndRunOptions {
+  env?: Record<string, string>;
+}
+
+export async function buildAppAndRunServer(
+  {command, fs}: Workspace,
+  {env}: BuildAndRunOptions = {},
+) {
+  await command.sewingKit.build({env});
 
   const port = await getPort();
   const url = new URL(`http://localhost:${port}`);
@@ -296,12 +303,16 @@ declare global {
 export async function buildAppAndOpenPage(
   workspace: Workspace,
   {
+    build,
     path = '/',
     javaScriptEnabled = true,
     ...options
-  }: NonNullable<Parameters<Browser['open']>[1]> & {path?: string} = {},
+  }: NonNullable<Parameters<Browser['open']>[1]> & {
+    path?: string;
+    build?: BuildAndRunOptions;
+  } = {},
 ) {
-  const {url, server} = await buildAppAndRunServer(workspace);
+  const {url, server} = await buildAppAndRunServer(workspace, build);
   const targetUrl = new URL(path, url);
 
   const page = await workspace.browser.open(targetUrl, {

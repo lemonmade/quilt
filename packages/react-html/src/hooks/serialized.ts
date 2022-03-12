@@ -18,9 +18,10 @@ export function useSerialized<T extends Serializable>(
   serialize?: T | (() => T | Promise<T>),
 ) {
   const manager = useContext(HtmlContext);
+
   const data = useMemo(
     () =>
-      typeof serialize === 'function'
+      typeof serialize === 'function' || serialize == null
         ? manager.getSerialization<T>(id)
         : serialize,
     [id, manager, serialize],
@@ -47,7 +48,7 @@ function isPromise<T>(
 ): maybePromise is Promise<T> {
   return (
     maybePromise != null &&
-    typeof maybePromise === 'function' &&
+    typeof maybePromise === 'object' &&
     'then' in (maybePromise as any)
   );
 }

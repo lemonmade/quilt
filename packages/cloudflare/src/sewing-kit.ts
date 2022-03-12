@@ -74,6 +74,7 @@ export function cloudflareWorkers({
             quiltAppServerOutputFormat,
             quiltHttpHandlerRuntimeContent,
             quiltPolyfillFeatures,
+            quiltRuntimeEnvironmentVariables,
           }: ResolvedHooks<
             BuildAppConfigurationHooks & BuildServiceConfigurationHooks
           >,
@@ -84,6 +85,17 @@ export function cloudflareWorkers({
             !(options as ResolvedOptions<BuildServiceOptions>).quiltService
           ) {
             return;
+          }
+
+          // Runtime variables are provided to the HTTP handler for module workers,
+          // and are just properties on the global scope for non-module workers.
+          if (format === 'modules') {
+            quiltRuntimeEnvironmentVariables?.(() => undefined);
+          } else {
+            quiltRuntimeEnvironmentVariables?.(
+              () =>
+                `new Proxy({}, {get: (_, property) => Reflect.get(globalThis, property)})`,
+            );
           }
 
           quiltServiceOutputFormat?.(() =>

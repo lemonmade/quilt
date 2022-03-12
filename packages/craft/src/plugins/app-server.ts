@@ -16,6 +16,7 @@ import {
 } from '../constants';
 
 import {STEP_NAME} from './app-build';
+import type {EnvironmentOptions} from './magic-module-env';
 
 import {preloadAllGlobal} from './rollup/preload-all';
 
@@ -52,6 +53,11 @@ export interface AppServerOptions {
    * @default true
    */
   serveAssets?: boolean;
+
+  /**
+   * Controls how the app server exposes environment variables.
+   */
+  env?: EnvironmentOptions;
 }
 
 export interface AppServerBuildOptions {
@@ -90,6 +96,7 @@ export function appServer(options?: AppServerOptions) {
   const entry = options?.entry;
   const httpHandler = options?.httpHandler ?? true;
   const serveAssets = options?.serveAssets ?? true;
+  const inlineEnv = options?.env?.inline;
 
   return createProjectPlugin<App>({
     name: 'Quilt.App.Server',
@@ -119,10 +126,22 @@ export function appServer(options?: AppServerOptions) {
             quiltAsyncPreload,
             quiltAsyncManifest,
             quiltAssetBaseUrl,
+            quiltInlineEnvironmentVariables,
+            quiltRuntimeEnvironmentVariables,
           },
           {quiltAppServer = false},
         ) => {
           if (!quiltAppServer) return;
+
+          if (inlineEnv != null && inlineEnv.length > 0) {
+            quiltInlineEnvironmentVariables?.((variables) =>
+              Array.from(new Set([...variables, ...inlineEnv])),
+            );
+          }
+
+          quiltRuntimeEnvironmentVariables?.(
+            (runtime) => runtime ?? 'process.env',
+          );
 
           runtime(() => new TargetRuntime([Runtime.Node]));
 

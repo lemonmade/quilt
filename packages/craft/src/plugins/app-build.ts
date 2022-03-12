@@ -9,6 +9,7 @@ import type {App, WaterfallHookWithDefault} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/async/sewing-kit';
 
+import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
 
 export interface AssetOptions {
@@ -40,6 +41,7 @@ export interface Options {
   static: boolean;
   assets: AssetOptions;
   browser: AppBrowserOptions;
+  env?: EnvironmentOptions;
 }
 
 export interface AppBuildHooks {
@@ -101,7 +103,13 @@ declare module '@quilted/sewing-kit' {
 const MAGIC_ENTRY_MODULE = '__quilt__/AppEntry.tsx';
 export const STEP_NAME = 'Quilt.App.Build';
 
-export function appBuild({server, static: isStatic, assets, browser}: Options) {
+export function appBuild({
+  server,
+  static: isStatic,
+  assets,
+  browser,
+  env,
+}: Options) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
     build({project, hooks, configure, run}) {
@@ -127,9 +135,18 @@ export function appBuild({server, static: isStatic, assets, browser}: Options) {
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
             quiltAppBrowserEntryCssSelector,
+            quiltInlineEnvironmentVariables,
           },
           {quiltAppBrowser: browserTargets},
         ) => {
+          const inlineEnv = env?.inline;
+
+          if (inlineEnv != null && inlineEnv.length > 0) {
+            quiltInlineEnvironmentVariables?.((variables) =>
+              Array.from(new Set([...variables, ...inlineEnv])),
+            );
+          }
+
           if (!browserTargets) return;
 
           runtime(() => new TargetRuntime([Runtime.Browser]));

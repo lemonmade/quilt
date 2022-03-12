@@ -42,7 +42,7 @@ export function Html({
       ? children
       : render(children, {htmlManager: manager});
 
-  const extracted = manager && manager.extract();
+  const extracted = manager?.extract();
 
   const serializationMarkup = extracted?.serializations.map(({id, data}) => (
     <Serialize key={id} id={id} data={data} />

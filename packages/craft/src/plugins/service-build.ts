@@ -5,6 +5,8 @@ import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
 
+import type {EnvironmentOptions} from './magic-module-env';
+
 export interface ServiceBuildHooks {
   /**
    * The module format that will be used for the application server. By
@@ -26,13 +28,14 @@ declare module '@quilted/sewing-kit' {
 }
 
 export interface Options {
+  env?: EnvironmentOptions;
   minify: boolean;
   httpHandler: boolean;
 }
 
 const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService';
 
-export function serviceBuild({minify, httpHandler}: Options) {
+export function serviceBuild({minify, httpHandler, env}: Options) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service.Build',
     build({project, hooks, configure, run}) {
@@ -48,10 +51,24 @@ export function serviceBuild({minify, httpHandler}: Options) {
             rollupPlugins,
             rollupOutputs,
             quiltServiceOutputFormat,
+            quiltInlineEnvironmentVariables,
+            quiltRuntimeEnvironmentVariables,
           },
           {quiltService = false},
         ) => {
           if (!quiltService) return;
+
+          const inlineEnv = env?.inline;
+
+          if (inlineEnv != null && inlineEnv.length > 0) {
+            quiltInlineEnvironmentVariables?.((variables) =>
+              Array.from(new Set([...variables, ...inlineEnv])),
+            );
+          }
+
+          quiltRuntimeEnvironmentVariables?.(
+            (runtime) => runtime ?? 'process.env',
+          );
 
           rollupInput?.(async () => {
             return [MAGIC_ENTRY_MODULE];
