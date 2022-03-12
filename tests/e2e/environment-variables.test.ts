@@ -96,13 +96,15 @@ describe('app builds', () => {
       });
     });
 
-    it('inlines environment variables into the app server', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
-        const {fs} = workspace;
-        const builder = 'Chris';
+    it.only('inlines environment variables into the app server', async () => {
+      await withWorkspace(
+        {fixture: 'basic-app', debug: true},
+        async (workspace) => {
+          const {fs} = workspace;
+          const builder = 'Chris';
 
-        await fs.write({
-          'sewing-kit.config.ts': stripIndent`
+          await fs.write({
+            'sewing-kit.config.ts': stripIndent`
             import {createApp, quiltApp} from '@quilted/craft';
             import {addInternalExportCondition} from '../../common/sewing-kit';
             
@@ -116,7 +118,7 @@ describe('app builds', () => {
               app.use(addInternalExportCondition());
             });
           `,
-          'foundation/Routes.tsx': stripIndent`
+            'foundation/Routes.tsx': stripIndent`
             import Env from '@quilted/quilt/env';
             import {useRoutes} from '@quilted/quilt';
             import {useSerialized} from '@quilted/quilt/html';
@@ -126,23 +128,24 @@ describe('app builds', () => {
             }
             
             function Start() {
-              const builder = useSerialized('Builder', () => Env.BUILDER);
+              const builder = useSerialized('Builder', Env.BUILDER);
               return <div>Hello, {builder}!</div>;
             }
           `,
-        });
+          });
 
-        const {page} = await buildAppAndOpenPage(workspace, {
-          path: '/',
-          build: {
-            env: {
-              BUILDER: JSON.stringify(builder),
+          const {page} = await buildAppAndOpenPage(workspace, {
+            path: '/',
+            build: {
+              env: {
+                BUILDER: JSON.stringify(builder),
+              },
             },
-          },
-        });
+          });
 
-        expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
-      });
+          expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
+        },
+      );
     });
   });
 });

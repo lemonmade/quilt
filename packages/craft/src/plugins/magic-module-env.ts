@@ -162,6 +162,12 @@ function magicModuleEnvPlugin({
     inlineEnv[inlineVariable] = value;
   }
 
+  console.log({
+    inline,
+    runtime,
+    env,
+  });
+
   const defaultContent = stripIndent`
     const runtime = (${runtime});
     const inline = ${JSON.stringify(inlineEnv)};
