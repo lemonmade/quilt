@@ -389,7 +389,7 @@ importers:
       '@quilted/react-async': link:../react-async
       '@quilted/react-email': link:../react-email
       '@quilted/react-graphql': link:../react-graphql
-      '@quilted/react-html': 0.3.21_react-dom@17.0.2+react@17.0.2
+      '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
       '@quilted/react-idle': link:../react-idle
       '@quilted/react-performance': link:../react-performance
@@ -413,7 +413,7 @@ importers:
       '@quilted/use-subscription': ^0.2.6
     dependencies:
       '@quilted/async': link:../async
-      '@quilted/react-html': 0.3.21_react-dom@17.0.2+react@17.0.2
+      '@quilted/react-html': link:../react-html
       '@quilted/react-server-render': link:../react-server-render
       '@quilted/use-subscription': link:../use-subscription
 
@@ -422,7 +422,7 @@ importers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-server-render': ^0.3.7
     dependencies:
-      '@quilted/react-html': 0.3.21_react-dom@17.0.2+react@17.0.2
+      '@quilted/react-html': link:../react-html
       '@quilted/react-server-render': link:../react-server-render
 
   packages/react-graphql:
@@ -458,7 +458,7 @@ importers:
       js-cookie: ^3.0.0
     dependencies:
       '@quilted/http': link:../http
-      '@quilted/react-html': 0.3.21_react-dom@17.0.2+react@17.0.2
+      '@quilted/react-html': link:../react-html
       '@quilted/react-server-render': link:../react-server-render
       js-cookie: 3.0.1
     devDependencies:
@@ -485,7 +485,7 @@ importers:
       '@quilted/react-testing': ^0.5.1
       '@quilted/routing': ^0.2.7
     dependencies:
-      '@quilted/react-html': 0.3.21_react-dom@17.0.2+react@17.0.2
+      '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
       '@quilted/react-server-render': link:../react-server-render
       '@quilted/routing': link:../routing
@@ -3201,45 +3201,6 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: false
-
-  /@quilted/react-html/0.3.21_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-ADxQbyOyo/nooyI64x5vV+mc4BgT+zeaop7jQimw/M2hbzDQGNzzHGgNS+yJX0xqw2/LGmA5uZ1rqhQnOPNu5A==}
-    peerDependencies:
-      '@babel/runtime': '>=7.0.0 <8.0.0'
-      react: '>=17.0.0 <18.0.0'
-      react-dom: '>=17.0.0 <18.0.0'
-    peerDependenciesMeta:
-      '@babel/runtime':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@quilted/react-server-render': 0.3.9_react-dom@17.0.2+react@17.0.2
-      '@types/react': 17.0.13
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    dev: false
-
-  /@quilted/react-server-render/0.3.9_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-j6A7kveDOvSj/BforD5gA46RjYpUKff9GJcdkjiKjD/a2Gg/R6LGD5AEcan2dJQcpC1QbJ1m0kMYJN+/jaK11g==}
-    peerDependencies:
-      '@babel/runtime': '>=7.0.0 <8.0.0'
-      react: '>=17.0.0 <18.0.0'
-      react-dom: '>=17.0.0 <18.0.0'
-    peerDependenciesMeta:
-      '@babel/runtime':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@types/react': 17.0.13
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /@remote-ui/rpc/1.2.2:
