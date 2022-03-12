@@ -20,6 +20,7 @@ export class ServerRenderManager {
   }
 
   seal() {
+    console.log(this);
     for (const perform of [...this.deferredActions].reverse()) {
       const result = perform();
       if (isPromise(result)) this.pendingActions.push(result);
