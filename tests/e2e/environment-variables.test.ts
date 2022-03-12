@@ -60,10 +60,10 @@ describe('app builds', () => {
 
           await fs.write({
             '.env':
-              'FROM_ENV=1 FROM_ENV_LOCAL=1 FROM_ENV_MODE=1 FROM_ENV_MODE_LOCAL=1',
+              'FROM_ENV=1\nFROM_ENV_LOCAL=1\nFROM_ENV_MODE=1\nFROM_ENV_MODE_LOCAL=1',
             '.env.local':
-              'FROM_ENV_LOCAL=2 FROM_ENV_MODE=2 FROM_ENV_MODE_LOCAL=2',
-            '.env.production': 'FROM_ENV_MODE=3 FROM_ENV_MODE_LOCAL=3',
+              'FROM_ENV_LOCAL=2\nFROM_ENV_MODE=2\nFROM_ENV_MODE_LOCAL=2',
+            '.env.production': 'FROM_ENV_MODE=3\nFROM_ENV_MODE_LOCAL=3',
             '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
             'sewing-kit.config.ts': stripIndent`
               import {createApp, quiltApp} from '@quilted/craft';
