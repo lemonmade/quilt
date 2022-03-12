@@ -104,6 +104,7 @@ describe('app builds', () => {
           const builder = 'Chris';
 
           await fs.write({
+            '.env': `BUILDER=${builder}`,
             'sewing-kit.config.ts': stripIndent`
               import {createApp, quiltApp} from '@quilted/craft';
               import {addInternalExportCondition} from '../../common/sewing-kit';
@@ -136,11 +137,6 @@ describe('app builds', () => {
 
           const {page} = await buildAppAndOpenPage(workspace, {
             path: '/',
-            build: {
-              env: {
-                BUILDER: JSON.stringify(builder),
-              },
-            },
           });
 
           console.log(

@@ -47,7 +47,7 @@ function isPromise<T>(
 ): maybePromise is Promise<T> {
   return (
     maybePromise != null &&
-    typeof maybePromise === 'function' &&
+    typeof maybePromise === 'object' &&
     'then' in (maybePromise as any)
   );
 }

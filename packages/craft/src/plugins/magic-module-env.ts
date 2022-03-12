@@ -163,9 +163,9 @@ function magicModuleEnvPlugin({
   }
 
   console.log({
-    inline,
     runtime,
-    env,
+    inline,
+    inlineEnv,
   });
 
   const defaultContent = stripIndent`
