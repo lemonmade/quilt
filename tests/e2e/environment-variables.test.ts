@@ -4,7 +4,7 @@ jest.setTimeout(20_000);
 
 describe('app builds', () => {
   describe('environment variables', () => {
-    it.only('inlines environment variables specified in the configuration file', async () => {
+    it('inlines environment variables specified in the configuration file', async () => {
       await withWorkspace(
         {fixture: 'basic-app', debug: true},
         async (workspace) => {

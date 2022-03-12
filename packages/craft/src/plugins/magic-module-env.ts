@@ -71,8 +71,6 @@ export function magicModuleEnv() {
               quiltInlineEnvironmentVariables!.run([]),
             ]);
 
-            console.log({env});
-
             return [
               magicModuleEnvPlugin({
                 env,
@@ -167,12 +165,18 @@ function magicModuleEnvPlugin({
   const defaultContent = stripIndent`
     const runtime = (${runtime});
     const inline = ${JSON.stringify(inlineEnv)};
+    
+    const IS_
 
     const Env = new Proxy(
       {},
       {
         get(_, property) {
-          return inline[property] ?? runtime[property];
+          const value = inline[property] ?? runtime[property];
+          
+          return typeof value === 'string' && value[0] === '"' && value[value.length - 1] === '"'
+            ? JSON.parse(value)
+            : value;
         },
       },
     );
@@ -232,8 +236,6 @@ async function loadEnv(
     if (envFileResult == null) continue;
     Object.assign(env, envFileResult);
   }
-
-  console.log({envFileResults});
 
   return env;
 }
