@@ -165,8 +165,6 @@ function magicModuleEnvPlugin({
   const defaultContent = stripIndent`
     const runtime = (${runtime});
     const inline = ${JSON.stringify(inlineEnv)};
-    
-    const IS_
 
     const Env = new Proxy(
       {},
