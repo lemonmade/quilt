@@ -105,33 +105,33 @@ describe('app builds', () => {
 
           await fs.write({
             'sewing-kit.config.ts': stripIndent`
-            import {createApp, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/sewing-kit';
-            
-            export default createApp((app) => {
-              app.entry('./App');
-              app.use(quiltApp({
-                server: {
-                  env: {inline: ['BUILDER']},
-                },
-              }));
-              app.use(addInternalExportCondition());
-            });
-          `,
+              import {createApp, quiltApp} from '@quilted/craft';
+              import {addInternalExportCondition} from '../../common/sewing-kit';
+              
+              export default createApp((app) => {
+                app.entry('./App');
+                app.use(quiltApp({
+                  server: {
+                    env: {inline: ['BUILDER']},
+                  },
+                }));
+                app.use(addInternalExportCondition());
+              });
+            `,
             'foundation/Routes.tsx': stripIndent`
-            import Env from '@quilted/quilt/env';
-            import {useRoutes} from '@quilted/quilt';
-            import {useSerialized} from '@quilted/quilt/html';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
-              const builder = useSerialized('Builder', Env.BUILDER);
-              return <div>Hello, {builder}!</div>;
-            }
-          `,
+              import Env from '@quilted/quilt/env';
+              import {useRoutes} from '@quilted/quilt';
+              import {useSerialized} from '@quilted/quilt/html';
+              
+              export function Routes() {
+                return useRoutes([{match: '/', render: () => <Start />}]);
+              }
+              
+              function Start() {
+                const builder = useSerialized('Builder', Env.BUILDER);
+                return <div>Hello, {builder}!</div>;
+              }
+            `,
           });
 
           const {page} = await buildAppAndOpenPage(workspace, {
@@ -142,6 +142,10 @@ describe('app builds', () => {
               },
             },
           });
+
+          console.log(
+            await page.evaluate(() => document.documentElement.outerHTML),
+          );
 
           expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
         },
