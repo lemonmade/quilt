@@ -9,6 +9,8 @@ import type {} from '@quilted/sewing-kit-rollup';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
 
+import type {EnvironmentOptions} from './magic-module-env';
+
 const MAGIC_ENTRY_MODULE = '__quilt__/HttpHandlerEntry.tsx';
 
 export interface HttpHandlerHooks {
@@ -35,6 +37,7 @@ declare module '@quilted/sewing-kit' {
 }
 
 export interface Options {
+  env?: EnvironmentOptions;
   port?: number;
 }
 
@@ -149,7 +152,10 @@ export function httpHandler({port: explicitPort}: Options = {}) {
   });
 }
 
-export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
+export function httpHandlerDevelopment({
+  port: explicitPort,
+  env,
+}: Options = {}) {
   return createProjectPlugin<App | Service>({
     name: 'Quilt.HttpHandler.Development',
     develop({project, internal, hooks, configure, run}) {
@@ -171,10 +177,24 @@ export function httpHandlerDevelopment({port: explicitPort}: Options = {}) {
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
             quiltHttpHandlerRuntimeContent,
+            quiltInlineEnvironmentVariables,
+            quiltRuntimeEnvironmentVariables,
           },
           {quiltHttpHandler},
         ) => {
           if (!quiltHttpHandler) return;
+
+          const inlineEnv = env?.inline;
+
+          if (inlineEnv != null && inlineEnv.length > 0) {
+            quiltInlineEnvironmentVariables?.((variables) =>
+              Array.from(new Set([...variables, ...inlineEnv])),
+            );
+          }
+
+          quiltRuntimeEnvironmentVariables?.(
+            (runtime) => runtime ?? 'process.env',
+          );
 
           runtime?.(() => new TargetRuntime([Runtime.Node]));
 

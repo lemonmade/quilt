@@ -13,13 +13,15 @@ import {
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-vite';
 
-import {} from './app-server';
 import type {AppServerOptions} from './app-server';
 import type {AppBrowserOptions} from './app-build';
+import {loadEnv, createEnvModuleContent} from './magic-module-env';
+import type {EnvironmentOptions} from './magic-module-env';
 
 import {
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_APP_ASSET_LOADER,
+  MAGIC_MODULE_ENV,
 } from '../constants';
 
 export const STEP_NAME = 'Quilt.App.Develop';
@@ -27,18 +29,20 @@ const MAGIC_MODULE_BROWSER_ENTRY = '/@quilted/magic/browser.tsx';
 const MAGIC_MODULE_SERVER_ENTRY = '/@quilted/magic/server.tsx';
 
 export interface Options {
+  env?: EnvironmentOptions;
   port?: number;
-  server?: Pick<AppServerOptions, 'entry' | 'httpHandler'>;
+  server?: Pick<AppServerOptions, 'entry' | 'httpHandler' | 'env'>;
   browser?: Pick<AppBrowserOptions, 'entryModule' | 'initializeModule'>;
 }
 
-export function appDevelop({port, browser, server}: Options = {}) {
+export function appDevelop({env, port, browser, server}: Options = {}) {
   const serverEntry = server?.entry;
   const httpHandler = server?.httpHandler ?? true;
+  const serverInlineEnv = server?.env?.inline;
 
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    develop({project, configure}) {
+    develop({project, workspace, configure}) {
       configure(
         ({
           babelPlugins,
@@ -54,11 +58,17 @@ export function appDevelop({port, browser, server}: Options = {}) {
           quiltAppBrowserEntryContent,
           quiltAppBrowserEntryCssSelector,
           quiltAppBrowserEntryShouldHydrate,
+          quiltInlineEnvironmentVariables,
           quiltRuntimeEnvironmentVariables,
+          quiltEnvModuleContent,
         }) => {
-          quiltRuntimeEnvironmentVariables?.(
-            (runtime) => runtime ?? 'process.env',
-          );
+          const inlineEnv = env?.inline;
+
+          if (inlineEnv != null && inlineEnv.length > 0) {
+            quiltInlineEnvironmentVariables?.((variables) =>
+              Array.from(new Set([...variables, ...inlineEnv])),
+            );
+          }
 
           vitePort?.((existingPort) =>
             quiltAppServerPort!.run(port ?? existingPort),
@@ -85,6 +95,41 @@ export function appDevelop({port, browser, server}: Options = {}) {
               babelPlugins!.run([]),
               babelPresets!.run([]),
             ]);
+
+            // This is just like the build plugins in ./magic-module-env, but is able to do
+            // a runtime customization to include the server env variables, but only when
+            // the SSR build is being produced.
+            plugins.unshift({
+              name: '@quilted/magic-module-env',
+              enforce: 'pre',
+              resolveId(id) {
+                if (id === MAGIC_MODULE_ENV) return id;
+                return null;
+              },
+              async load(id, {ssr = false} = {}) {
+                if (id !== MAGIC_MODULE_ENV) return null;
+
+                const [env, runtime, inline] = await Promise.all([
+                  loadEnv(project, workspace, {mode: 'development'}),
+                  quiltRuntimeEnvironmentVariables!.run(
+                    ssr ? 'process.env' : undefined,
+                  ),
+                  quiltInlineEnvironmentVariables!.run(
+                    ssr && serverInlineEnv ? serverInlineEnv : [],
+                  ),
+                ]);
+
+                const content = await quiltEnvModuleContent!.run(
+                  createEnvModuleContent({
+                    env,
+                    inline,
+                    runtime,
+                  }),
+                );
+
+                return content;
+              },
+            });
 
             plugins.unshift({
               ...magicBrowserEntry({

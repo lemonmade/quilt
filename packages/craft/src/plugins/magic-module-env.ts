@@ -72,7 +72,7 @@ export function magicModuleEnv() {
             ]);
 
             return [
-              magicModuleEnvPlugin({
+              rollupPlugin({
                 env,
                 inline,
                 runtime,
@@ -94,7 +94,6 @@ export function magicModuleEnv() {
       configure(
         ({
           rollupPlugins,
-          vitePlugins,
           quiltInlineEnvironmentVariables,
           quiltRuntimeEnvironmentVariables,
           quiltEnvModuleContent,
@@ -107,33 +106,12 @@ export function magicModuleEnv() {
             ]);
 
             return [
-              magicModuleEnvPlugin({
+              rollupPlugin({
                 env,
                 inline,
                 runtime,
                 customize: (content) => quiltEnvModuleContent!.run(content),
               }),
-              ...plugins,
-            ];
-          });
-
-          vitePlugins?.(async (plugins) => {
-            const [env, runtime, inline] = await Promise.all([
-              loadEnv(project, workspace, {mode: 'development'}),
-              quiltRuntimeEnvironmentVariables!.run(undefined),
-              quiltInlineEnvironmentVariables!.run([]),
-            ]);
-
-            return [
-              {
-                ...magicModuleEnvPlugin({
-                  env,
-                  inline,
-                  runtime,
-                  customize: (content) => quiltEnvModuleContent!.run(content),
-                }),
-                enforce: 'pre',
-              },
               ...plugins,
             ];
           });
@@ -143,17 +121,42 @@ export function magicModuleEnv() {
   });
 }
 
-function magicModuleEnvPlugin({
-  env,
-  inline,
-  runtime = '{}',
-  customize,
-}: {
+interface PluginOptions {
   env: Record<string, string | undefined>;
   inline: string[];
   runtime?: string;
   customize(content: string): Promise<string>;
-}): Plugin {
+}
+
+function rollupPlugin({
+  env,
+  inline,
+  runtime = '{}',
+  customize,
+}: PluginOptions): Plugin {
+  return {
+    name: '@quilted/magic-module-env',
+    resolveId(id) {
+      if (id === MAGIC_MODULE_ENV) return id;
+      return null;
+    },
+    async load(id) {
+      if (id !== MAGIC_MODULE_ENV) return null;
+
+      const content = await customize(
+        createEnvModuleContent({env, inline, runtime}),
+      );
+
+      return content;
+    },
+  };
+}
+
+export function createEnvModuleContent({
+  env,
+  inline,
+  runtime,
+}: Pick<PluginOptions, 'env' | 'inline' | 'runtime'>) {
   const inlineEnv: Record<string, string> = {};
 
   for (const inlineVariable of inline.sort()) {
@@ -162,7 +165,7 @@ function magicModuleEnvPlugin({
     inlineEnv[inlineVariable] = value;
   }
 
-  const defaultContent = stripIndent`
+  return stripIndent`
     const runtime = (${runtime});
     const inline = ${JSON.stringify(inlineEnv)};
 
@@ -181,25 +184,10 @@ function magicModuleEnvPlugin({
 
     export default Env;
   `;
-
-  return {
-    name: '@quilted/magic-module-env',
-    resolveId(id) {
-      if (id === MAGIC_MODULE_ENV) return id;
-      return null;
-    },
-    async load(id) {
-      if (id !== MAGIC_MODULE_ENV) return null;
-
-      const content = await customize(defaultContent);
-
-      return content;
-    },
-  };
 }
 
 // Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/src/node/config.ts#L1050-L1113
-async function loadEnv(
+export async function loadEnv(
   project: Project,
   workspace: Workspace,
   {mode}: {mode: 'production' | 'development'},

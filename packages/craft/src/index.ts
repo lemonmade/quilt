@@ -190,6 +190,7 @@ export function quiltApp({
         develop && vite(),
         develop &&
           appDevelop({
+            env,
             browser,
             server: typeof server === 'object' ? server : undefined,
             ...(typeof develop === 'boolean' ? undefined : develop),
@@ -283,9 +284,10 @@ export function quiltService({
           ),
         develop &&
           useHttpHandler &&
-          httpHandlerDevelopment(
-            typeof develop === 'boolean' ? undefined : develop,
-          ),
+          httpHandlerDevelopment({
+            env,
+            ...(typeof develop === 'boolean' ? undefined : develop),
+          }),
       );
 
       if (graphql) {
