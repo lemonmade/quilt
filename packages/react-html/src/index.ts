@@ -9,6 +9,7 @@ export {
   Link,
   Meta,
   SearchRobots,
+  Serialize,
   ThemeColor,
   Title,
   Viewport,

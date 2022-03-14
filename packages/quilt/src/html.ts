@@ -6,6 +6,7 @@ export {
   Link,
   Meta,
   SearchRobots,
+  Serialize,
   ThemeColor,
   Title,
   Viewport,
@@ -25,3 +26,4 @@ export {
   useHtmlUpdater,
   getSerialized,
 } from '@quilted/react-html';
+export type {Serializable} from '@quilted/react-html';

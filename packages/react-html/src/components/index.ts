@@ -7,5 +7,6 @@ export {Meta} from './Meta';
 export {ThemeColor} from './ThemeColor';
 export {Title} from './Title';
 export {SearchRobots} from './SearchRobots';
+export {Serialize} from './Serialize';
 export {Viewport} from './Viewport';
 export {Favicon} from './Favicon';
