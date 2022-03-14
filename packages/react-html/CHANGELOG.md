@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.23
+
+### Patch Changes
+
+- [`c58ca94`](https://github.com/lemonmade/quilt/commit/c58ca9468f24c1cc193d67f56692e07e71e918ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `Serialize` component
+
 ## 0.3.22
 
 ### Patch Changes
