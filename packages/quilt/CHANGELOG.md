@@ -1,5 +1,13 @@
 # @quilted/quilt
 
+## 0.5.65
+
+### Patch Changes
+
+- [`c58ca94`](https://github.com/lemonmade/quilt/commit/c58ca9468f24c1cc193d67f56692e07e71e918ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `Serialize` component
+
+* [`f75a035`](https://github.com/lemonmade/quilt/commit/f75a035e5a6ec857497f28da9f0f0ba2d5d6112a) Thanks [@lemonmade](https://github.com/lemonmade)! - Add props customization to Quilt server handler
+
 ## 0.5.64
 
 ### Patch Changes
