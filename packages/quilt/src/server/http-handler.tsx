@@ -1,10 +1,11 @@
 import type {ComponentType} from 'react';
 
 import type {AssetLoader} from '@quilted/async/server';
-import {render, Html} from '@quilted/react-html/server';
+import {render as renderToString, Html} from '@quilted/react-html/server';
 
 import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
 import type {
+  Request,
   HttpHandler,
   RequestHandler,
   HttpHandlerOptions,
@@ -12,14 +13,19 @@ import type {
 
 import {renderApp} from './render';
 
-export interface Options extends Pick<HttpHandlerOptions, 'before'> {
+export interface Options<Props = Record<string, never>>
+  extends Pick<HttpHandlerOptions, 'before'> {
   assets: AssetLoader<unknown>;
   handler?: HttpHandler;
+  renderProps?(options: {request: Request}): Props;
 }
 
-export function createServerRenderingRequestHandler(
-  App: ComponentType<any>,
-  {assets}: Pick<Options, 'assets'>,
+export function createServerRenderingRequestHandler<Props>(
+  App: ComponentType<Props>,
+  {
+    assets,
+    renderProps = () => ({} as any),
+  }: Pick<Options<Props>, 'assets' | 'renderProps'>,
 ): RequestHandler {
   return async (request) => {
     const accepts = request.headers.get('Accept');
@@ -31,7 +37,7 @@ export function createServerRenderingRequestHandler(
       http,
       markup,
       asyncAssets,
-    } = await renderApp(<App />, {
+    } = await renderApp(<App {...renderProps?.({request})} />, {
       url: request.url,
       headers: request.headers,
     });
@@ -57,7 +63,7 @@ export function createServerRenderingRequestHandler(
     ]);
 
     return html(
-      render(
+      renderToString(
         <Html
           manager={htmlManager}
           styles={styles}
@@ -75,10 +81,15 @@ export function createServerRenderingRequestHandler(
   };
 }
 
-export function createServerRenderingHttpHandler(
-  App: ComponentType<any>,
-  {assets, before, handler = createHttpHandler({before})}: Options,
+export function createServerRenderingHttpHandler<Props>(
+  App: ComponentType<Props>,
+  {
+    assets,
+    before,
+    renderProps,
+    handler = createHttpHandler({before}),
+  }: Options<Props>,
 ) {
-  handler.get(createServerRenderingRequestHandler(App, {assets}));
+  handler.get(createServerRenderingRequestHandler(App, {assets, renderProps}));
   return handler;
 }
