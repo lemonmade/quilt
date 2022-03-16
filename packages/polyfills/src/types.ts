@@ -1,1 +1,1 @@
-export type PolyfillFeature = 'base' | 'fetch';
+export type PolyfillFeature = 'base' | 'fetch' | 'crypto';

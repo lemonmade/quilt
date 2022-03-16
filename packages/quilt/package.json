@@ -103,6 +103,12 @@
       "import": "./build/esm/polyfills/base.mjs",
       "require": "./build/cjs/polyfills/base.cjs"
     },
+    "./polyfills/crypto": {
+      "quilt:from-source": "./src/polyfills/crypto.ts",
+      "quilt:esnext": "./build/esnext/polyfills/crypto.esnext",
+      "import": "./build/esm/polyfills/crypto.mjs",
+      "require": "./build/cjs/polyfills/crypto.cjs"
+    },
     "./polyfills/fetch": {
       "quilt:from-source": "./src/polyfills/fetch.ts",
       "quilt:esnext": "./build/esnext/polyfills/fetch.esnext",
@@ -166,6 +172,9 @@
       ],
       "polyfills/fetch": [
         "./build/typescript/polyfills/fetch.d.ts"
+      ],
+      "polyfills/crypto": [
+        "./build/typescript/polyfills/crypto.d.ts"
       ],
       "polyfills/noop": [
         "./build/typescript/polyfills/noop.d.ts"

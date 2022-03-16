@@ -11,6 +11,9 @@ const POLYFILLS: {
   fetch: {
     featureTest: 'fetch',
   },
+  crypto: {
+    featureTest: 'cryptography',
+  },
 };
 
 export function polyfillAliasesForTarget(
@@ -39,7 +42,7 @@ export function polyfillAliasesForTarget(
     const {featureTest} = POLYFILLS[feature];
 
     mappedPolyfills[feature] =
-      target == 'node' ||
+      target === 'node' ||
       featureTest == null ||
       !isSupported(featureTest, target)
         ? `${packageName}/${feature}`

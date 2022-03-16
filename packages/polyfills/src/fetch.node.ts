@@ -18,6 +18,13 @@ function wrappedFetch(this: any, url: RequestInfo, options?: RequestInit) {
   return nodeFetch.call(this, finalURL, options);
 }
 
+if (!Reflect.has(globalThis, 'fetch')) {
+  Reflect.defineProperty(globalThis, 'fetch', {value: wrappedFetch});
+  Reflect.defineProperty(globalThis, 'Response', {value: Response});
+  Reflect.defineProperty(globalThis, 'Headers', {value: Headers});
+  Reflect.defineProperty(globalThis, 'Request', {value: Request});
+}
+
 if (!(global as any).fetch) {
   (global as any).fetch = wrappedFetch;
   (global as any).Response = Response;
