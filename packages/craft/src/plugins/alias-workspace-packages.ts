@@ -58,7 +58,7 @@ function getAliases(workspace: Workspace) {
   for (const pkg of workspace.packages) {
     const sortedEntries = [...pkg.entries].sort(
       (entryOne, entryTwo) =>
-        (entryOne.name ?? '').length - (entryTwo.name ?? '').length,
+        (entryTwo.name ?? '').length - (entryOne.name ?? '').length,
     );
 
     for (const entry of sortedEntries) {
