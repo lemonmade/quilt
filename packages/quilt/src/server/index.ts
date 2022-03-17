@@ -36,4 +36,5 @@ export {ServerContext} from './ServerContext';
 export {
   createServerRenderingRequestHandler,
   createServerRenderingHttpHandler,
+  renderToResponse,
 } from './http-handler';
