@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.4
+
+### Patch Changes
+
+- [`4d3d0fa`](https://github.com/lemonmade/quilt/commit/4d3d0fadd1dc4eedd88198506d4f05f446180430) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some type errors
+
 ## 0.5.3
 
 ### Patch Changes
