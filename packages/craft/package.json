@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.69",
+  "version": "0.1.70",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "@prefresh/vite": "^2.2.0",
     "@quilted/browserslist-config": "0.1.2",
     "@quilted/eslint-config": "0.1.5",
-    "@quilted/polyfills": "0.2.15",
+    "@quilted/polyfills": "0.2.16",
     "@quilted/prettier": "0.2.4",
     "@quilted/sewing-kit": "0.2.18",
     "@quilted/sewing-kit-babel": "0.1.9",
@@ -86,8 +86,8 @@
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/async": "^0.3.15",
-    "@quilted/graphql": "^0.4.18",
-    "@quilted/quilt": "^0.5.64",
+    "@quilted/graphql": "^0.4.19",
+    "@quilted/quilt": "^0.5.66",
     "@quilted/workers": "^0.2.14",
     "preact": "^10.5.0",
     "typescript": ">=4.0.0 <5.0.0"

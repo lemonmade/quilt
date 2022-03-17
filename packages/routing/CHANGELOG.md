@@ -1,5 +1,13 @@
 # @quilted/routing
 
+## 0.2.10
+
+### Patch Changes
+
+- [`33c1a59`](https://github.com/lemonmade/quilt/commit/33c1a59c89fd9aeae81cb6072b4100d706268985) Thanks [@lemonmade](https://github.com/lemonmade)! - Add ability to nest http handlers
+
+* [`4d3d0fa`](https://github.com/lemonmade/quilt/commit/4d3d0fadd1dc4eedd88198506d4f05f446180430) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some type errors
+
 ## 0.2.9
 
 ### Patch Changes

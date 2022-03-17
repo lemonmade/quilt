@@ -1,5 +1,22 @@
 # @quilted/craft
 
+## 0.1.70
+
+### Patch Changes
+
+- [`fb10e01`](https://github.com/lemonmade/quilt/commit/fb10e0181c26b6faedaea6f7fc5d88d7ccccc3d1) Thanks [@lemonmade](https://github.com/lemonmade)! - Add web crypto polyfill
+
+* [`4d3d0fa`](https://github.com/lemonmade/quilt/commit/4d3d0fadd1dc4eedd88198506d4f05f446180430) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some type errors
+
+- [`39fea43`](https://github.com/lemonmade/quilt/commit/39fea43970695c1cf01a680150d2ef672dc4bfb7) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove leftover PRELOAD_ALL global
+
+* [`b8ad988`](https://github.com/lemonmade/quilt/commit/b8ad988692bb3e570169d683ca0143d75ad2a29b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix order of in-repo package aliases
+
+* Updated dependencies [[`fb10e01`](https://github.com/lemonmade/quilt/commit/fb10e0181c26b6faedaea6f7fc5d88d7ccccc3d1), [`33c1a59`](https://github.com/lemonmade/quilt/commit/33c1a59c89fd9aeae81cb6072b4100d706268985), [`4d3d0fa`](https://github.com/lemonmade/quilt/commit/4d3d0fadd1dc4eedd88198506d4f05f446180430)]:
+  - @quilted/polyfills@0.2.16
+  - @quilted/quilt@0.5.66
+  - @quilted/graphql@0.4.19
+
 ## 0.1.69
 
 ### Patch Changes
