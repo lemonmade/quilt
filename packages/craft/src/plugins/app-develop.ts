@@ -262,7 +262,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
                       applyResponse(response, serverResponse);
                     } catch (error) {
-                      server.ssrFixStacktrace(error);
+                      server.ssrFixStacktrace(error as Error);
                       next(error);
                     }
                   },

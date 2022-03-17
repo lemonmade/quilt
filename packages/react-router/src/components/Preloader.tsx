@@ -151,7 +151,7 @@ function shouldPreloadAggressively() {
   return (
     typeof navigator === 'undefined' ||
     !('connection' in navigator) ||
-    !(navigator as NavigatorWithConnection).connection.saveData
+    !(navigator as any as NavigatorWithConnection).connection.saveData
   );
 }
 

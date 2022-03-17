@@ -48,6 +48,9 @@ export type Predicate<Extensions extends PlainObject> = (
 type MaybeFunctionReturnType<T> = T extends (...args: any[]) => any
   ? ReturnType<T>
   : unknown;
+type MaybeFunctionParameters<T> = T extends (...args: any[]) => any
+  ? Parameters<T>
+  : [];
 
 export interface RootApi<
   Props,
@@ -98,7 +101,7 @@ export interface NodeApi<Props, Extensions extends PlainObject = EmptyObject> {
 
   trigger<K extends FunctionKeys<Props>>(
     prop: K,
-    ...args: DeepPartial<Parameters<Props[K]>>
+    ...args: DeepPartial<MaybeFunctionParameters<Props[K]>>
   ): MaybeFunctionReturnType<NonNullable<Props[K]>>;
   triggerKeypath<T = unknown>(keypath: string, ...args: unknown[]): T;
 

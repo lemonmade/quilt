@@ -96,7 +96,7 @@ export class GraphQL {
 
       return {data};
     } catch (error) {
-      return {error};
+      return {error: error as Error};
     }
   }
 }

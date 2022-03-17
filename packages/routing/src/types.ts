@@ -35,6 +35,6 @@ export type NavigateToLiteral =
       search?: Search;
     };
 
-export type NavigateTo =
+export type NavigateTo<URLType extends URL = URL> =
   | NavigateToLiteral
-  | ((currentUrl: EnhancedURL) => NavigateToLiteral);
+  | ((currentUrl: URLType) => NavigateToLiteral);

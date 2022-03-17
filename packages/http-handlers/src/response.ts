@@ -1,9 +1,8 @@
 import {RelativeTo} from '@quilted/routing';
-import type {NavigateTo} from '@quilted/routing';
 import {createHeaders, CookieString} from '@quilted/http';
 
 import {resolveTo} from './utilities';
-import type {Response, Request, ResponseOptions} from './types';
+import type {Response, Request, ResponseOptions, NavigateTo} from './types';
 
 export function response(
   body?: string | null,

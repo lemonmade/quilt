@@ -14,5 +14,6 @@ export type {
   Prefix,
   RelativeTo,
   NavigateTo,
+  NavigateToLiteral,
   Search,
 } from './types';

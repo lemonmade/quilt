@@ -1,10 +1,12 @@
-import type {Match} from '@quilted/routing';
+import type {Match, NavigateToLiteral} from '@quilted/routing';
 import type {
   Headers,
   ReadonlyCookies,
   ReadonlyHeaders,
   WritableCookies,
 } from '@quilted/http';
+
+export type NavigateTo = NavigateToLiteral | ((url: URL) => URL);
 
 export interface RequestOptions {
   readonly url: URL | string;

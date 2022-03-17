@@ -116,7 +116,7 @@ export class GraphQLController {
                 })
               : mock.result;
         } catch (error) {
-          response = error;
+          response = error as Error;
         }
 
         resolve(response);

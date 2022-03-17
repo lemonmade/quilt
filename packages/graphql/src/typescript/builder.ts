@@ -155,7 +155,7 @@ export class Builder extends EventEmitter {
       try {
         await this.updateDocumentInProject(filePath, project);
       } catch (error) {
-        this.emit('error', error);
+        this.emit('error', error as Error);
       }
     };
 
@@ -206,7 +206,7 @@ export class Builder extends EventEmitter {
         this.projects.map((project) => this.buildProjectTypes(project)),
       );
     } catch (error) {
-      this.emit('error', error);
+      this.emit('error', error as Error);
       throw error;
     }
   }
@@ -232,7 +232,7 @@ export class Builder extends EventEmitter {
         project,
       } as ProjectBuildEndDetails);
     } catch (error) {
-      this.emit('error', error);
+      this.emit('error', error as Error);
       throw error;
     }
   }
@@ -246,7 +246,7 @@ export class Builder extends EventEmitter {
         ),
       );
     } catch (error) {
-      this.emit('error', error);
+      this.emit('error', error as Error);
       throw error;
     }
   }

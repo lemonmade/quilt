@@ -1,10 +1,10 @@
-import type {NavigateTo} from '@quilted/routing';
 import {createHeaders} from '@quilted/http';
 
+import type {NavigateTo} from './types';
 import {resolveTo} from './utilities';
 
 export async function fetchJson<T = unknown>(
-  url: NavigateTo,
+  url: Exclude<NavigateTo, (...args: any[]) => any>,
   body: any,
   {
     headers: explicitHeaders,

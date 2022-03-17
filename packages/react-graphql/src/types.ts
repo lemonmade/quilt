@@ -53,7 +53,7 @@ export interface AsyncGraphQLOperation<Data, Variables> {
 }
 
 export type AnyGraphQLOperation<Data, Variables> =
-  | GraphQLOperation<DataCue, Variables>
+  | GraphQLOperation<Data, Variables>
   | AsyncGraphQLOperation<Data, Variables>;
 
 export interface AsyncQuery<Data, Variables>
