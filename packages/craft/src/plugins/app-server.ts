@@ -18,8 +18,6 @@ import {
 import {STEP_NAME} from './app-build';
 import type {EnvironmentOptions} from './magic-module-env';
 
-import {preloadAllGlobal} from './rollup/preload-all';
-
 export interface AppServerOptions {
   /**
    * The relative path to the module you want to use as the
@@ -269,8 +267,6 @@ export function appServer(options?: AppServerOptions) {
                 },
               });
             }
-
-            plugins.push(preloadAllGlobal());
 
             return plugins;
           });

@@ -19,7 +19,6 @@ import {
 } from '../constants';
 
 import {STEP_NAME} from './app-build';
-import {preloadAllGlobal} from './rollup/preload-all';
 
 export interface AppStaticOptions {
   /**
@@ -373,8 +372,6 @@ export function appStatic({
                 `;
               },
             });
-
-            plugins.push(preloadAllGlobal());
 
             return plugins;
           });
