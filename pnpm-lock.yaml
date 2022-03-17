@@ -117,7 +117,7 @@ importers:
       '@quilted/browserslist-config': 0.1.2
       '@quilted/eslint-config': 0.1.5
       '@quilted/graphql': ^0.4.0
-      '@quilted/polyfills': 0.2.15
+      '@quilted/polyfills': 0.2.16
       '@quilted/prettier': 0.2.4
       '@quilted/quilt': ^0.5.0
       '@quilted/sewing-kit': 0.2.18

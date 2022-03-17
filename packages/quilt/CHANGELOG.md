@@ -1,5 +1,13 @@
 # @quilted/quilt
 
+## 0.5.66
+
+### Patch Changes
+
+- [`fb10e01`](https://github.com/lemonmade/quilt/commit/fb10e0181c26b6faedaea6f7fc5d88d7ccccc3d1) Thanks [@lemonmade](https://github.com/lemonmade)! - Add web crypto polyfill
+
+* [`33c1a59`](https://github.com/lemonmade/quilt/commit/33c1a59c89fd9aeae81cb6072b4100d706268985) Thanks [@lemonmade](https://github.com/lemonmade)! - Add ability to nest http handlers
+
 ## 0.5.65
 
 ### Patch Changes
