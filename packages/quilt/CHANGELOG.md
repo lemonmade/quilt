@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.67
+
+### Patch Changes
+
+- [`ec90a3f`](https://github.com/lemonmade/quilt/commit/ec90a3f0de7366a42fd1e13b903154f5bc8c0a54) Thanks [@lemonmade](https://github.com/lemonmade)! - Add simpler way of rendering React to a http-handlers response
+
 ## 0.5.66
 
 ### Patch Changes
