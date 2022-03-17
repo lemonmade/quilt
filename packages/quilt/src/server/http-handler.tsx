@@ -8,13 +8,11 @@ import type {
   Request,
   HttpHandler,
   RequestHandler,
-  HttpHandlerOptions,
 } from '@quilted/http-handlers';
 
 import {renderApp} from './render';
 
-export interface Options<Props = Record<string, never>>
-  extends Pick<HttpHandlerOptions, 'before'> {
+export interface Options<Props = Record<string, never>> {
   assets: AssetLoader<unknown>;
   handler?: HttpHandler;
   renderProps?(options: {request: Request}): Props;
@@ -83,12 +81,7 @@ export function createServerRenderingRequestHandler<Props>(
 
 export function createServerRenderingHttpHandler<Props>(
   App: ComponentType<Props>,
-  {
-    assets,
-    before,
-    renderProps,
-    handler = createHttpHandler({before}),
-  }: Options<Props>,
+  {assets, renderProps, handler = createHttpHandler()}: Options<Props>,
 ) {
   handler.get(createServerRenderingRequestHandler(App, {assets, renderProps}));
   return handler;

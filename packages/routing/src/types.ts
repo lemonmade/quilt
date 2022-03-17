@@ -12,6 +12,11 @@ export interface Matcher {
 
 export type Match = string | RegExp | Matcher;
 
+export interface MatchDetails {
+  matched: string;
+  consumed?: string;
+}
+
 export type Prefix = string | RegExp;
 
 export type RelativeTo = 'root' | 'prefix';

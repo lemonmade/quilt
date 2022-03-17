@@ -1,4 +1,4 @@
-import type {Match, EnhancedURL} from '@quilted/routing';
+import type {Match} from '@quilted/routing';
 import type {
   Headers,
   ReadonlyCookies,
@@ -14,7 +14,7 @@ export interface RequestOptions {
 }
 
 export interface Request {
-  readonly url: EnhancedURL;
+  readonly url: URL;
   readonly body?: string | null;
   readonly method: string;
   readonly headers: ReadonlyHeaders;
@@ -53,14 +53,16 @@ export interface RequestHandler {
   (request: Request): ValueOrPromise<Response | undefined | null>;
 }
 
+export type RequestRegistration = RequestHandler | HttpHandler;
+
 export interface HttpHandler {
-  any(handler: RequestHandler): void;
-  any(match: Match, handler: RequestHandler): void;
-  get(handler: RequestHandler): void;
-  get(match: Match, handler: RequestHandler): void;
-  post(handler: RequestHandler): void;
-  post(match: Match, handler: RequestHandler): void;
-  options(handler: RequestHandler): void;
-  options(match: Match, handler: RequestHandler): void;
+  any(handler: RequestRegistration): this;
+  any(match: Match, handler: RequestRegistration): this;
+  get(handler: RequestRegistration): this;
+  get(match: Match, handler: RequestRegistration): this;
+  post(handler: RequestRegistration): this;
+  post(match: Match, handler: RequestRegistration): this;
+  options(handler: RequestRegistration): this;
+  options(match: Match, handler: RequestRegistration): this;
   run(request: RequestOptions): Promise<Response | undefined>;
 }

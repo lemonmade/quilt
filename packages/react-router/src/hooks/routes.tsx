@@ -3,11 +3,11 @@
 import {memo, useContext, useEffect, useRef} from 'react';
 import type {ReactNode, ReactElement} from 'react';
 import {NotFound} from '@quilted/react-http';
+import {getMatchDetails} from '@quilted/routing';
 import type {NavigateTo} from '@quilted/routing';
 
 import type {EnhancedURL, RouteDefinition} from '../types';
 import {PreloaderContext, ConsumedPathContext} from '../context';
-import {getMatchDetails} from '../utilities';
 import type {Router} from '../router';
 import type {Preloader} from '../preloader';
 import type {StaticRenderer} from '../static';
@@ -109,9 +109,10 @@ const RoutesInternal = memo(function RoutesInternal({
   for (const route of routes) {
     const matchDetailsForRoute = getMatchDetails(
       currentUrl,
-      router,
-      previouslyConsumedPath,
       route.match,
+      router.prefix,
+      previouslyConsumedPath,
+      false,
       staticRender?.forceFallback(previouslyConsumedPath ?? '/'),
     );
 

@@ -1,6 +1,5 @@
+import {getMatchDetails} from '@quilted/routing';
 import type {Match} from '@quilted/routing';
-
-import {getMatchDetails} from '../utilities';
 
 import {useRouter} from './router';
 import {useCurrentUrl} from './url';
@@ -11,5 +10,8 @@ export function useMatch(match: Match) {
   const currentUrl = useCurrentUrl();
   const consumedPath = useConsumedPath();
 
-  return getMatchDetails(currentUrl, router, consumedPath, match) != null;
+  return (
+    getMatchDetails(currentUrl, match, router.prefix, consumedPath, false) !=
+    null
+  );
 }

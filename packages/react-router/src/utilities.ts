@@ -1,12 +1,7 @@
 import {enhanceUrl as baseEnhancedURL} from '@quilted/routing';
-import type {
-  Match,
-  Prefix,
-  EnhancedURL as BaseEnhancedURL,
-} from '@quilted/routing';
+import type {Prefix} from '@quilted/routing';
 
 import type {EnhancedURL} from './types';
-import type {Router} from './router';
 
 export function enhanceUrl(
   url: URL,
@@ -39,131 +34,6 @@ export function postfixSlash(path: string) {
 function removePostfixSlash(path: string) {
   if (path.length === 1) return path;
   return path[path.length - 1] === '/' ? path.slice(0, -1) : path;
-}
-
-function removePrefixSlash(path: string) {
-  return path[0] === '/' ? path.slice(1) : path;
-}
-
-function normalizeAsAbsolutePath(path: string) {
-  return path[0] === '/'
-    ? removePostfixSlash(path)
-    : `/${removePostfixSlash(path)}`;
-}
-
-interface MatchDetails {
-  matched: string;
-  consumed?: string;
-}
-
-export function getMatchDetails(
-  url: BaseEnhancedURL,
-  router: Router,
-  consumed?: string,
-  match?: Match,
-  forceFallback = false,
-): MatchDetails | undefined {
-  const pathDetails = splitUrl(url, router.prefix, consumed);
-
-  if (match == null) {
-    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
-    return {matched};
-  } else if (forceFallback) {
-    return undefined;
-  } else if (typeof match === 'function') {
-    if (!match(url)) return undefined;
-    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
-    return {matched};
-  } else if (typeof match === 'string') {
-    const normalizedMatch = removePostfixSlash(match);
-
-    if (normalizedMatch === '/') {
-      return pathDetails.remainderAbsolute === '/'
-        ? {
-            matched: normalizedMatch,
-            consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
-          }
-        : undefined;
-    } else if (normalizedMatch[0] === '/') {
-      if (!startsWithPath(pathDetails.remainderAbsolute, normalizedMatch)) {
-        return undefined;
-      }
-
-      return {
-        matched: normalizedMatch,
-        consumed: `${pathDetails.previouslyConsumed}${normalizedMatch}`,
-      };
-    } else {
-      if (!startsWithPath(pathDetails.remainderRelative, normalizedMatch)) {
-        return undefined;
-      }
-
-      return {
-        matched: normalizedMatch,
-        consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
-          normalizedMatch,
-        )}`,
-      };
-    }
-  } else if (match instanceof RegExp) {
-    const matchAsRelative = pathDetails.remainderRelative.match(match);
-
-    if (
-      matchAsRelative != null &&
-      matchAsRelative.index! === 0 &&
-      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0])
-    ) {
-      return {
-        matched: removePostfixSlash(matchAsRelative[0]),
-        consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
-          matchAsRelative[0],
-        )}`,
-      };
-    }
-
-    const matchAsAbsolute = pathDetails.remainderAbsolute.match(match);
-
-    if (
-      matchAsAbsolute == null ||
-      matchAsAbsolute.index! !== 0 ||
-      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0])
-    ) {
-      return undefined;
-    }
-
-    const normalizedMatch = removePostfixSlash(matchAsAbsolute[0]);
-
-    return {
-      matched: normalizedMatch,
-      consumed: normalizedMatch,
-    };
-  }
-}
-
-function startsWithPath(fullPath: string, pathSegment: string) {
-  return (
-    fullPath.startsWith(pathSegment) &&
-    (fullPath.length === pathSegment.length ||
-      fullPath[pathSegment.length] === '/')
-  );
-}
-
-function splitUrl(url: URL, prefix?: Prefix, consumed = '') {
-  const resolvedPrefix = extractPrefix(url, prefix) ?? '';
-  const fullConsumedPath = consumed
-    ? `${resolvedPrefix}${consumed}`
-    : resolvedPrefix;
-  const remainderRelative = removePrefixSlash(
-    removePostfixSlash(url.pathname.replace(fullConsumedPath, '')),
-  );
-
-  return {
-    isRoot: consumed.length === 0,
-    prefix: resolvedPrefix,
-    previouslyConsumed: consumed,
-    remainderRelative,
-    remainderAbsolute: `/${remainderRelative}`,
-  };
 }
 
 export function containedByPrefix(url: URL, prefix?: Prefix) {

@@ -1,9 +1,9 @@
 import {enhanceUrl} from '@quilted/routing';
+import {getMatchDetails} from '@quilted/routing';
 import type {Match, EnhancedURL} from '@quilted/routing';
 
 import type {RouteDefinition} from './types';
 import type {Router} from './router';
-import {getMatchDetails} from './utilities';
 
 interface PreloadRegistration {
   id: string;
@@ -169,9 +169,10 @@ function getUrlMatch(url: EnhancedURL, router: Router, matchers: Match[]) {
   for (const matcher of matchers) {
     const matchDetails = getMatchDetails(
       url,
-      router,
-      currentlyConsumed,
       matcher,
+      router.prefix,
+      currentlyConsumed,
+      false,
     );
 
     if (matchDetails == null) {
