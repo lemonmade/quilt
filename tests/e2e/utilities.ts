@@ -255,7 +255,7 @@ export async function buildAppAndRunServer(
       });
     } catch (error) {
       // Ignore errors from killing the server at the end of tests
-      if (error?.signal === 'SIGTERM') return;
+      if ((error as {signal?: string})?.signal === 'SIGTERM') return;
       throw error;
     }
   })();
