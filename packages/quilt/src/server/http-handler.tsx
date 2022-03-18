@@ -2,6 +2,7 @@ import type {ComponentType, ReactElement} from 'react';
 
 import type {AssetLoader} from '@quilted/async/server';
 import {render as renderToString, Html} from '@quilted/react-html/server';
+import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
 
 import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
 import type {
@@ -12,37 +13,37 @@ import type {
 
 import {renderApp} from './render';
 
-export interface Options<Props = Record<string, never>> {
+export interface Options<Props = Record<string, never>> extends ExtractOptions {
   assets?: AssetLoader<unknown>;
   handler?: HttpHandler;
   renderProps?(options: {request: Request}): Props;
 }
 
+export function createServerRenderingHttpHandler<Props>(
+  App: ComponentType<Props>,
+  {handler = createHttpHandler(), ...options}: Options<Props>,
+) {
+  handler.get(createServerRenderingRequestHandler(App, options));
+  return handler;
+}
+
 export function createServerRenderingRequestHandler<Props>(
   App: ComponentType<Props>,
-  {assets, renderProps}: Pick<Options<Props>, 'assets' | 'renderProps'> = {},
+  {renderProps, ...options}: Omit<Options<Props>, 'handler'> = {},
 ): RequestHandler {
   return (request) => {
     return renderToResponse(
       <App {...(renderProps?.({request}) as any)} />,
       request,
-      {assets},
+      options,
     );
   };
 }
 
-export function createServerRenderingHttpHandler<Props>(
-  App: ComponentType<Props>,
-  {assets, renderProps, handler = createHttpHandler()}: Options<Props>,
-) {
-  handler.get(createServerRenderingRequestHandler(App, {assets, renderProps}));
-  return handler;
-}
-
-export async function renderToResponse(
-  element: ReactElement<any>,
+export async function renderToResponse<Props>(
+  element: ReactElement<Props>,
   request: Request,
-  {assets}: {assets?: AssetLoader<unknown>; request?: Request} = {},
+  {assets, ...options}: Omit<Options<Props>, 'handler' | 'renderProps'> = {},
 ) {
   const accepts = request.headers.get('Accept');
 
@@ -54,6 +55,7 @@ export async function renderToResponse(
     markup,
     asyncAssets,
   } = await renderApp(element, {
+    ...options,
     url: request.url,
     headers: request.headers,
   });
