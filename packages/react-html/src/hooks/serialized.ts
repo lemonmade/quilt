@@ -11,6 +11,10 @@ export function useSerialized<T extends Serializable>(
 ): T;
 export function useSerialized<T extends Serializable>(
   id: string,
+  serialize?: T,
+): T | undefined;
+export function useSerialized<T extends Serializable>(
+  id: string,
   serialize: () => T | Promise<T>,
 ): T | undefined;
 export function useSerialized<T extends Serializable>(
