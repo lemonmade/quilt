@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.24
+
+### Patch Changes
+
+- [`8729c01`](https://github.com/lemonmade/quilt/commit/8729c01f7ef3e3c69844b521d5e5d3d915412551) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow fetch-only use of `useSerialized()` hook
+
 ## 0.3.23
 
 ### Patch Changes

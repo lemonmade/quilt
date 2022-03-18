@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.26
+
+### Patch Changes
+
+- [`07cbe74`](https://github.com/lemonmade/quilt/commit/07cbe7406d2667ae7c0303836038a3f760f8ab68) Thanks [@lemonmade](https://github.com/lemonmade)! - Add inexact matches to http-handlers package
+
 ## 0.2.25
 
 ### Patch Changes
