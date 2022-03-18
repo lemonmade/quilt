@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.68
+
+### Patch Changes
+
+- [`c4c6792`](https://github.com/lemonmade/quilt/commit/c4c6792ef355cc3bc8c8ada65ec7b1db8a836fef) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve server rendering helpers
+
 ## 0.5.67
 
 ### Patch Changes
