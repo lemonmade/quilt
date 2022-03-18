@@ -7,8 +7,8 @@ import type {
   HttpHandler,
   Request,
   RequestOptions,
-  RequestHandler,
   RequestRegistration,
+  RequestRegistrationOptions,
 } from './types';
 
 export interface HttpHandlerOptions {
@@ -22,6 +22,7 @@ interface RequestHandlerRegistration {
     | HttpMethod.Options
     | typeof REQUEST_METHOD_ANY;
   readonly handler: RequestRegistration;
+  readonly exact: boolean;
   readonly match?: Match;
 }
 
@@ -35,23 +36,19 @@ export function createHttpHandler({
 
   const httpHandler: HttpHandler = {
     any(...args: any[]) {
-      const [match, handler] = normalizeRouteArguments(...args);
-      registrations.push({method: REQUEST_METHOD_ANY, match, handler});
+      registrations.push(normalizeRouteArguments(REQUEST_METHOD_ANY, ...args));
       return httpHandler;
     },
     get(...args: any[]) {
-      const [match, handler] = normalizeRouteArguments(...args);
-      registrations.push({method: HttpMethod.Get, match, handler});
+      registrations.push(normalizeRouteArguments(HttpMethod.Get, ...args));
       return httpHandler;
     },
     post(...args: any[]) {
-      const [match, handler] = normalizeRouteArguments(...args);
-      registrations.push({method: HttpMethod.Post, match, handler});
+      registrations.push(normalizeRouteArguments(HttpMethod.Post, ...args));
       return httpHandler;
     },
     options(...args: any[]) {
-      const [match, handler] = normalizeRouteArguments(...args);
-      registrations.push({method: HttpMethod.Options, match, handler});
+      registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
       return httpHandler;
     },
     async run(requestOptions) {
@@ -81,9 +78,7 @@ export function createHttpHandler({
     // Not contained in the prefix
     if (prefix != null && matchedPrefix == null) return undefined;
 
-    for (const {method, handler, match} of registrations) {
-      const isBasicHandler = typeof handler === 'function';
-
+    for (const {method, handler, match, exact} of registrations) {
       if (method !== REQUEST_METHOD_ANY && method !== request.method) {
         continue;
       }
@@ -93,7 +88,7 @@ export function createHttpHandler({
         match,
         undefined,
         matchedPrefix ?? previouslyConsumed,
-        isBasicHandler,
+        exact,
       );
 
       if (matchDetails == null) {
@@ -114,13 +109,46 @@ export function createHttpHandler({
 }
 
 function normalizeRouteArguments(
+  method: RequestHandlerRegistration['method'],
   ...args: any[]
-): [Match | undefined, RequestHandler] {
-  if (args[1]) {
-    return args as [Match, RequestHandler];
-  } else {
-    return [undefined, (args as [RequestHandler])[0]];
+): RequestHandlerRegistration {
+  // There is no `match`...
+  if (isHttpHandler(args[0]) || typeof args[0] === 'function') {
+    return {
+      method,
+      handler: args[0],
+      exact:
+        isHttpHandler(args[0]) ||
+        ((args[1] as RequestRegistrationOptions | undefined)?.exact ?? true),
+    };
   }
+
+  // There is a `match`, `HttpHandler`, and maybe `options` (no options
+  // respected for now)...
+  if (isHttpHandler(args[1])) {
+    return {
+      method,
+      match: args[0],
+      handler: args[1],
+      exact: false,
+    };
+  }
+
+  // There is a `match`, `RequestHandler`, and maybe `options`...
+  return {
+    method,
+    match: args[0],
+    handler: args[1],
+    exact: (args[2] as RequestRegistrationOptions | undefined)?.exact ?? true,
+  };
+}
+
+function isHttpHandler(value?: unknown): value is HttpHandler {
+  return (
+    value != null &&
+    typeof value === 'object' &&
+    Reflect.has(value, HTTP_HANDLER_RUN_INTERNAL)
+  );
 }
 
 function createRequest({

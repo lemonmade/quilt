@@ -38,6 +38,16 @@ describe('createHttpHandler()', () => {
     expect(await handler.run({url: url('/hello')})).toBeUndefined();
   });
 
+  it('can register a handler for a non-exact match', async () => {
+    const response = noContent();
+    const handler = createHttpHandler();
+    handler.get('/hello', () => response, {exact: false});
+
+    expect(await handler.run({url: url('/')})).toBeUndefined();
+    expect(await handler.run({url: url('/hello')})).toBe(response);
+    expect(await handler.run({url: url('/hello/world')})).toBe(response);
+  });
+
   it('excludes a prefix before attempting to match', async () => {
     const response = noContent();
     const handler = createHttpHandler({prefix: '/hello'});

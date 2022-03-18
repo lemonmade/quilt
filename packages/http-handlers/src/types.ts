@@ -57,14 +57,40 @@ export interface RequestHandler {
 
 export type RequestRegistration = RequestHandler | HttpHandler;
 
+export interface RequestRegistrationOptions {
+  exact?: boolean;
+}
+
 export interface HttpHandler {
-  any(handler: RequestRegistration): this;
-  any(match: Match, handler: RequestRegistration): this;
-  get(handler: RequestRegistration): this;
-  get(match: Match, handler: RequestRegistration): this;
-  post(handler: RequestRegistration): this;
-  post(match: Match, handler: RequestRegistration): this;
-  options(handler: RequestRegistration): this;
-  options(match: Match, handler: RequestRegistration): this;
+  any(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
+  any(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  get(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
+  get(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  post(
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  post(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  options(
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  options(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
   run(request: RequestOptions): Promise<Response | undefined>;
 }
