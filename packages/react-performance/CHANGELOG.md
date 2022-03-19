@@ -1,5 +1,14 @@
 # @quilted/react-performance
 
+## 0.1.3
+
+### Patch Changes
+
+- [`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve base TypeScript preset
+
+- Updated dependencies [[`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3)]:
+  - @quilted/react-router@0.3.32
+
 ## 0.1.2
 
 ### Patch Changes

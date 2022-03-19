@@ -1,7 +1,7 @@
 {
   "name": "@quilted/graphql",
   "type": "module",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -129,10 +129,10 @@
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@jest/globals": "^27.0.0",
-    "@quilted/sewing-kit": "^0.2.18",
-    "@quilted/sewing-kit-jest": "^0.1.11",
-    "@quilted/sewing-kit-rollup": "^0.1.10",
-    "@quilted/sewing-kit-vite": "^0.1.7",
+    "@quilted/sewing-kit": "^0.2.19",
+    "@quilted/sewing-kit-jest": "^0.1.12",
+    "@quilted/sewing-kit-rollup": "^0.1.11",
+    "@quilted/sewing-kit-vite": "^0.1.8",
     "jest-matcher-utils": "^27.0.0"
   },
   "peerDependenciesMeta": {

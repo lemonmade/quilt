@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-vite",
   "type": "module",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.18",
-    "@quilted/sewing-kit-rollup": "^0.1.10",
+    "@quilted/sewing-kit": "^0.2.19",
+    "@quilted/sewing-kit-rollup": "^0.1.11",
     "rollup": "^2.0.0"
   },
   "peerDependenciesMeta": {
