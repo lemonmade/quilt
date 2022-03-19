@@ -79,6 +79,12 @@
       "import": "./build/esm/react/server.mjs",
       "require": "./build/cjs/react/server.cjs"
     },
+    "./react/test-utils": {
+      "quilt:from-source": "./src/react/test-utils.ts",
+      "quilt:esnext": "./build/esnext/react/test-utils.esnext",
+      "import": "./build/esm/react/test-utils.mjs",
+      "require": "./build/cjs/react/test-utils.cjs"
+    },
     "./react": {
       "quilt:from-source": "./src/react/index.ts",
       "quilt:esnext": "./build/esnext/react/index.esnext",
@@ -158,6 +164,9 @@
       "react/server": [
         "./build/typescript/react/server.d.ts"
       ],
+      "react/test-utils": [
+        "./build/typescript/react/test-utils.d.ts"
+      ],
       "react": [
         "./build/typescript/react/index.d.ts"
       ],
@@ -200,7 +209,7 @@
     "@quilted/graphql": "^0.4.14",
     "@quilted/http-handlers": "^0.2.20",
     "@quilted/polyfills": "^0.2.12",
-    "@quilted/preact-mini-compat": "^0.2.7",
+    "@quilted/react": "^0.1.0",
     "@quilted/react-async": "^0.3.22",
     "@quilted/react-email": "^0.2.18",
     "@quilted/react-graphql": "^0.4.30",
@@ -215,7 +224,7 @@
     "@quilted/useful-react-types": "^0.1.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "preact": "^10.5.0",
+    "preact": "^10.6.0",
     "preact-render-to-string": "^5.0.0"
   },
   "devDependencies": {

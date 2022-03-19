@@ -361,7 +361,6 @@ export function quiltPackage({
       use(
         // Basic tool configuration
         rollupHooks(),
-        rollupNode({bundle: bundleNode}),
         babelHooks(),
         babelRollup(),
         targets(),
@@ -369,6 +368,7 @@ export function quiltPackage({
         typescriptProject(),
         useReact && react(),
         useReact && preact(),
+        rollupNode({bundle: bundleNode}),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),

@@ -17,6 +17,7 @@ const ALIASES = {
   // in our re-exporting of it either.
   'react/jsx-runtime': '@quilted/quilt/react/jsx-runtime',
   'react/jsx-dev-runtime': '@quilted/quilt/react/jsx-runtime',
+  'react/test-utils': '@quilted/quilt/react/test-utils',
   react: '@quilted/quilt/react',
   'react-dom/server': '@quilted/quilt/react/server',
   'react-dom': '@quilted/quilt/react',
@@ -47,7 +48,23 @@ export function preact() {
       );
     },
     build({configure}) {
-      configure(({rollupPlugins}) => {
+      configure(({rollupPlugins, rollupNodeBundle}) => {
+        rollupNodeBundle?.((shouldBundle) => {
+          if (shouldBundle === true) return shouldBundle;
+          if (shouldBundle === false) {
+            return {
+              exclude: ['react', 'react-dom'],
+            };
+          }
+
+          return {
+            ...shouldBundle,
+            exclude: Array.from(
+              new Set([...(shouldBundle.exclude ?? []), 'react', 'react-dom']),
+            ),
+          };
+        });
+
         rollupPlugins?.(async (plugins) => {
           const {default: alias} = await import('@rollup/plugin-alias');
 

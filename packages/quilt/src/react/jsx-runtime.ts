@@ -1,1 +1,1 @@
-export * from 'preact/jsx-runtime';
+export * from '@quilted/react/jsx-runtime';

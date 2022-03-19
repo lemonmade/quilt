@@ -373,7 +373,7 @@ importers:
       '@quilted/graphql': ^0.4.14
       '@quilted/http-handlers': ^0.2.20
       '@quilted/polyfills': ^0.2.12
-      '@quilted/preact-mini-compat': ^0.2.7
+      '@quilted/react': ^0.1.0
       '@quilted/react-async': ^0.3.22
       '@quilted/react-email': ^0.2.18
       '@quilted/react-graphql': ^0.4.30
@@ -389,7 +389,7 @@ importers:
       '@types/prettier': ^2.0.0
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
-      preact: ^10.5.0
+      preact: ^10.6.0
       preact-render-to-string: ^5.0.0
     dependencies:
       '@babel/runtime': 7.17.2
@@ -397,7 +397,7 @@ importers:
       '@quilted/graphql': link:../graphql
       '@quilted/http-handlers': link:../http-handlers
       '@quilted/polyfills': link:../polyfills
-      '@quilted/preact-mini-compat': link:../preact-mini-compat
+      '@quilted/react': link:../react
       '@quilted/react-async': link:../react-async
       '@quilted/react-email': link:../react-email
       '@quilted/react-graphql': link:../react-graphql
@@ -412,10 +412,20 @@ importers:
       '@quilted/useful-react-types': link:../useful-react-types
       '@types/react': 17.0.13
       '@types/react-dom': 17.0.8
-      preact: 10.5.14
-      preact-render-to-string: 5.1.19_preact@10.5.14
+      preact: 10.6.6
+      preact-render-to-string: 5.1.19_preact@10.6.6
     devDependencies:
       '@types/prettier': 2.3.1
+
+  packages/react:
+    specifiers:
+      '@quilted/preact-mini-compat': 0.2.9
+      preact: ^10.6.0
+      preact-render-to-string: ^5.0.0
+    dependencies:
+      '@quilted/preact-mini-compat': 0.2.9_b80d568a4881a1e311da64279ef0072f
+      preact: 10.6.6
+      preact-render-to-string: 5.1.19_preact@10.6.6
 
   packages/react-async:
     specifiers:
@@ -3240,6 +3250,19 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
+    dev: false
+
+  /@quilted/preact-mini-compat/0.2.9_b80d568a4881a1e311da64279ef0072f:
+    resolution: {integrity: sha512-HWE7af7T6pDB/b4AhE/pFhW+GM/wq0HJccTmWpeh1AJD6HVDP/bUe0usB9osRLymjKx+fyl5Flmj0MuEAWp7Yw==}
+    peerDependencies:
+      '@babel/runtime': '>=7.0.0 <8.0.0'
+      preact: ^10.5.0
+    peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.17.2
+      preact: 10.6.6
     dev: false
 
   /@remote-ui/rpc/1.2.2:
@@ -7565,17 +7588,22 @@ packages:
       source-map-js: 1.0.2
     dev: false
 
-  /preact-render-to-string/5.1.19_preact@10.5.14:
+  /preact-render-to-string/5.1.19_preact@10.6.6:
     resolution: {integrity: sha512-bj8sn/oytIKO6RtOGSS/1+5CrQyRSC99eLUnEVbqUa6MzJX5dYh7wu9bmT0d6lm/Vea21k9KhCQwvr2sYN3rrQ==}
     peerDependencies:
       preact: '>=10'
     dependencies:
-      preact: 10.5.14
+      preact: 10.6.6
       pretty-format: 3.8.0
     dev: false
 
   /preact/10.5.14:
     resolution: {integrity: sha512-KojoltCrshZ099ksUZ2OQKfbH66uquFoxHSbnwKbTJHeQNvx42EmC7wQVWNuDt6vC5s3nudRHFtKbpY4ijKlaQ==}
+    dev: true
+
+  /preact/10.6.6:
+    resolution: {integrity: sha512-dgxpTFV2vs4vizwKohYKkk7g7rmp1wOOcfd4Tz3IB3Wi+ivZzsn/SpeKJhRENSE+n8sUfsAl4S3HiCVT923ABw==}
+    dev: false
 
   /preferred-pm/3.0.3:
     resolution: {integrity: sha512-+wZgbxNES/KlJs9q40F/1sfOd/j7f1O9JaHcW5Dsn3aUUOZg3L2bjpVUcKV2jvtElYfoTuQiNeMfQJ4kwUAhCQ==}

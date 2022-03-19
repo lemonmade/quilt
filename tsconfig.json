@@ -24,6 +24,7 @@
     {"path": "./packages/performance"},
     {"path": "./packages/polyfills"},
     {"path": "./packages/quilt"},
+    {"path": "./packages/async"},
     {"path": "./packages/react-async"},
     {"path": "./packages/react-email"},
     {"path": "./packages/react-graphql"},
