@@ -21,6 +21,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
       - name: Deploy
-        run: pnpm deploy -- --tag next
+        run: pnpm deploy -- --tag next --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
