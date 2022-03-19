@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches: [prerelease]
+
+jobs:
+  deploy:
+    name: Deploy 🚀
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/prepare
+      - uses: quilt-framework/action-build@v2
+        with:
+          command: pnpm build
+          arguments: -- --only-project package:*
+      - name: Version
+        run: pnpm version-bump:prerelease
+      - name: Deploy
+        run: pnpm deploy -- --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

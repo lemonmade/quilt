@@ -1,5 +1,11 @@
 # create-quilt-app
 
+## 0.1.13-next.0
+
+### Patch Changes
+
+- Testing prerelease versioning
+
 ## 0.1.12
 
 ### Patch Changes
