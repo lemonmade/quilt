@@ -21,6 +21,7 @@
     "deploy": "pnpm publish -r"
   },
   "devDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@changesets/changelog-github": "^0.4.3",
     "@changesets/cli": "^2.21.1",
     "@quilted/browserslist-config": "^0.1.0",

@@ -11,6 +11,7 @@
     {"path": "../graphql"},
     {"path": "../polyfills"},
     {"path": "../quilt"},
+    {"path": "../react-testing"},
     {"path": "../sewing-kit"},
     {"path": "../sewing-kit-babel"},
     {"path": "../sewing-kit-eslint"},

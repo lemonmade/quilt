@@ -1,4 +1,9 @@
-import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
+import {
+  Runtime,
+  createPackage,
+  quiltPackage,
+  createProjectPlugin,
+} from '@quilted/craft';
 
 export default createPackage((pkg) => {
   pkg.entry({source: './src/index'});
@@ -21,5 +26,24 @@ export default createPackage((pkg) => {
     name: 'environment',
     source: './src/environment',
   });
-  pkg.use(quiltPackage({react: true}));
+  pkg.use(
+    quiltPackage({react: true}),
+    createProjectPlugin({
+      name: 'Quilt.ReactTesting.UndoReactAliases',
+      test({configure}) {
+        configure(({jestModuleMapper}) => {
+          jestModuleMapper?.((moduleMapper) => {
+            const newModuleMapper = {...moduleMapper};
+
+            for (const [from, to] of Object.entries(moduleMapper)) {
+              if (!to.startsWith('@quilted/quilt/react')) continue;
+              delete newModuleMapper[from];
+            }
+
+            return newModuleMapper;
+          });
+        });
+      },
+    }),
+  );
 });

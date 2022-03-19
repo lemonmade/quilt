@@ -34,6 +34,7 @@ import {
 
 import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
 
+import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
 import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
 import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
@@ -157,6 +158,7 @@ export function quiltApp({
         babelHooks(),
         babelRollup(),
         targets(),
+        javascriptProject(),
         typescriptProject(),
         tsconfigAliases(),
         esnext(),
@@ -210,6 +212,14 @@ export function quiltApp({
       await ignoreMissingImports(async () => {
         const {asyncQuilt} = await import('@quilted/async/sewing-kit');
         use(asyncQuilt({preload: true}));
+      });
+
+      await ignoreMissingImports(async () => {
+        const {reactTesting} = await import(
+          '@quilted/react-testing/sewing-kit'
+        );
+
+        use(reactTesting({environment: 'preact'}));
       });
 
       if (shouldPolyfill) {
@@ -269,6 +279,7 @@ export function quiltService({
         babelHooks(),
         babelRollup(),
         targets(),
+        javascriptProject(),
         typescriptProject(),
         tsconfigAliases(),
         esnext(),
@@ -294,6 +305,16 @@ export function quiltService({
         await ignoreMissingImports(async () => {
           const {graphql} = await import('@quilted/graphql/sewing-kit');
           use(graphql());
+        });
+      }
+
+      if (useReact) {
+        await ignoreMissingImports(async () => {
+          const {reactTesting} = await import(
+            '@quilted/react-testing/sewing-kit'
+          );
+
+          use(reactTesting({environment: 'preact'}));
         });
       }
 
@@ -344,8 +365,10 @@ export function quiltPackage({
         babelHooks(),
         babelRollup(),
         targets(),
+        javascriptProject(),
         typescriptProject(),
         useReact && react(),
+        useReact && preact(),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),
@@ -355,6 +378,16 @@ export function quiltPackage({
         await ignoreMissingImports(async () => {
           const {graphql} = await import('@quilted/graphql/sewing-kit');
           use(graphql());
+        });
+      }
+
+      if (useReact) {
+        await ignoreMissingImports(async () => {
+          const {reactTesting} = await import(
+            '@quilted/react-testing/sewing-kit'
+          );
+
+          use(reactTesting({environment: 'preact'}));
         });
       }
     },
@@ -378,6 +411,7 @@ export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
         prettier(),
         babelWorkspaceHooks(),
         workspaceTargets(),
+        javascriptWorkspace(),
         typescriptWorkspace(),
         jest(),
       );

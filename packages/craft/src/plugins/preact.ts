@@ -4,13 +4,14 @@ import type {
   DevelopConfigurationHooksForProject,
 } from '@quilted/sewing-kit';
 
+import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
 import type {ViteHooks} from '@quilted/sewing-kit-vite';
 
 // We embed a version of Preact with `@quilted/quilt` so that consumers
 // don’t need to install it manually. We also have some hand-rolled optimizations
 // that improve the tree shakability of preact. We want to use these libraries
-// in place of any references to `react` and `rect-dom`.
+// in place of any references to `react` and `react-dom`.
 const ALIASES = {
   // Preact does not have a jsx-dev-runtime, so we don’t differentiate
   // in our re-exporting of it either.
@@ -53,6 +54,19 @@ export function preact() {
           plugins.unshift(alias({entries: ALIASES}));
 
           return plugins;
+        });
+      });
+    },
+    test({configure}) {
+      configure(({jestModuleMapper}) => {
+        jestModuleMapper?.((moduleMapper) => {
+          const newModuleMapper = {...moduleMapper};
+
+          for (const [from, to] of Object.entries(ALIASES)) {
+            newModuleMapper[`^${from}$`] = to;
+          }
+
+          return newModuleMapper;
         });
       });
     },
