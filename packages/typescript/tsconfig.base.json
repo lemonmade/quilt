@@ -19,6 +19,7 @@
     "skipLibCheck": true,
     "sourceMap": false,
     "noEmitOnError": false,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "lib": ["DOM", "ESNext"]
   }
 }
