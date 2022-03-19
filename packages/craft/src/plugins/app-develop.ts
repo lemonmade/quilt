@@ -3,12 +3,12 @@ import {stripIndent} from 'common-tags';
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {App} from '@quilted/sewing-kit';
 
-import {response as createResponse} from '@quilted/quilt/http-handlers';
-import type {HttpHandler} from '@quilted/quilt/http-handlers';
-import {
-  transformRequest,
-  applyResponse,
-} from '@quilted/quilt/http-handlers/node';
+// import {response as createResponse} from '@quilted/quilt/http-handlers';
+// import type {HttpHandler} from '@quilted/quilt/http-handlers';
+// import {
+//   transformRequest,
+//   applyResponse,
+// } from '@quilted/quilt/http-handlers/node';
 
 import {getViteServer} from '@quilted/sewing-kit-vite';
 import type {} from '@quilted/sewing-kit-babel';
@@ -52,6 +52,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           viteHost,
           vitePlugins,
           viteSsrNoExternals,
+          viteMiddlewareMode,
           quiltAppServerHost,
           quiltAppServerPort,
           quiltAppServerEntryContent,
@@ -84,6 +85,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             'react-dom',
             /@quilted/,
           ]);
+
+          viteMiddlewareMode?.(() => 'ssr');
 
           vitePlugins?.(async (plugins) => {
             const [
@@ -218,55 +221,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
                   export default assetLoader;
                 `;
-              },
-            });
-
-            plugins.push({
-              name: '@quilted/server',
-              configureServer(server) {
-                server.middlewares.use(
-                  async (serverRequest, serverResponse, next) => {
-                    try {
-                      const [{default: httpHandler}, transformedRequest] =
-                        await Promise.all([
-                          server.ssrLoadModule(
-                            MAGIC_MODULE_SERVER_ENTRY,
-                          ) as Promise<{default: HttpHandler}>,
-                          transformRequest(serverRequest),
-                        ]);
-
-                      const response = await httpHandler.run(
-                        transformedRequest,
-                      );
-
-                      if (response == null) return next();
-
-                      const contentType = response.headers.get('Content-Type');
-
-                      if (
-                        contentType != null &&
-                        contentType.includes('text/html')
-                      ) {
-                        const transformedHtml = await server.transformIndexHtml(
-                          transformedRequest.url.toString(),
-                          response.body ?? '',
-                        );
-
-                        applyResponse(
-                          createResponse(transformedHtml, response),
-                          serverResponse,
-                        );
-
-                        return;
-                      }
-
-                      applyResponse(response, serverResponse);
-                    } catch (error) {
-                      server.ssrFixStacktrace(error as Error);
-                      next(error);
-                    }
-                  },
-                );
               },
             });
 

@@ -1,4 +1,4 @@
-import type {InlineConfig, PluginOption} from 'vite';
+import type {InlineConfig, ServerOptions, PluginOption} from 'vite';
 
 import {createProjectPlugin} from '@quilted/sewing-kit';
 import type {
@@ -20,6 +20,11 @@ export interface ViteHooks {
    * The host to run vite’s development server on.
    */
   viteHost: WaterfallHook<string | undefined>;
+
+  /**
+   * The middleware mode to use for Vite’s development server.
+   */
+  viteMiddlewareMode: WaterfallHook<ServerOptions['middlewareMode']>;
 
   /**
    * Module aliases to use for the vite `resolve` configuration.
@@ -70,6 +75,7 @@ export function vite({run: shouldRun = true} = {}) {
         vitePlugins: waterfall(),
         vitePort: waterfall(),
         viteHost: waterfall(),
+        viteMiddlewareMode: waterfall(),
         viteResolveAliases: waterfall(),
         viteResolveExportConditions: waterfall(),
         viteSsrNoExternals: waterfall(),
@@ -129,6 +135,7 @@ export async function getViteConfiguration(
     vitePlugins,
     vitePort,
     viteHost,
+    viteMiddlewareMode,
     viteResolveAliases,
     viteResolveExportConditions,
     viteSsrNoExternals,
@@ -148,6 +155,7 @@ export async function getViteConfiguration(
     plugins,
     port,
     host,
+    middlewareMode,
     aliases,
     exportConditions,
     resolveExtensions,
@@ -156,6 +164,7 @@ export async function getViteConfiguration(
     vitePlugins!.run([]),
     vitePort!.run(undefined),
     viteHost!.run(undefined),
+    viteMiddlewareMode!.run(undefined),
     viteResolveAliases!.run({}),
     // @see https://vitejs.dev/config/#resolve-conditions
     viteResolveExportConditions!.run([
@@ -174,7 +183,7 @@ export async function getViteConfiguration(
     configFile: false,
     clearScreen: false,
     cacheDir: internal.fs.tempPath('vite/cache'),
-    server: {port, host},
+    server: {port, host, middlewareMode},
     // @ts-expect-error The types do not have this field, but it
     // is supported.
     ssr: {noExternal: noExternals},
