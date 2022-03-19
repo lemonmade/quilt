@@ -10,8 +10,8 @@ import {
   applyResponse,
 } from '@quilted/quilt/http-handlers/node';
 
+import {getViteServer} from '@quilted/sewing-kit-vite';
 import type {} from '@quilted/sewing-kit-babel';
-import type {} from '@quilted/sewing-kit-vite';
 
 import type {AppServerOptions} from './app-server';
 import type {AppBrowserOptions} from './app-build';
@@ -42,7 +42,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    develop({project, workspace, configure}) {
+    develop({project, internal, workspace, configure, run}) {
       configure(
         ({
           babelPlugins,
@@ -337,6 +337,61 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             return plugins;
           });
         },
+      );
+
+      run((step, {configuration}) =>
+        step({
+          name: 'Quilt.DevelopApp',
+          label: `Running development server for ${project.name}`,
+          async run(runner) {
+            const configurationHooks = await configuration();
+
+            const [{default: createServer}, viteServer, port] =
+              await Promise.all([
+                import('connect'),
+                getViteServer({internal}, configurationHooks),
+                configurationHooks.quiltAppServerPort!.run(3000),
+              ]);
+
+            const server = createServer();
+
+            server.use(viteServer.middlewares);
+            server.use(async (request, response) => {
+              if (request.headers.accept?.includes('text/html') ?? false) {
+                response.statusCode = 200;
+                response.setHeader('Content-Type', 'text/html');
+                response.end(
+                  await viteServer.transformIndexHtml(
+                    request.url!,
+                    stripIndent`
+                      <html>
+                        <body>
+                          <script type="module" src=${JSON.stringify(
+                            MAGIC_MODULE_BROWSER_ENTRY,
+                          )}>
+                          </script>
+                        </body>
+                      </html>
+                    `,
+                  ),
+                );
+
+                return;
+              }
+
+              response.statusCode = 404;
+              response.end();
+            });
+            server.listen(port);
+
+            runner.log(
+              (ui) =>
+                `Started ${ui.Link('app development server', {
+                  to: `http://localhost:${port}`,
+                })}`,
+            );
+          },
+        }),
       );
     },
   });

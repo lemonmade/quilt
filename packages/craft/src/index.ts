@@ -187,7 +187,7 @@ export function quiltApp({
           server &&
           appServer(typeof server === 'boolean' ? undefined : server),
         // Development
-        develop && vite(),
+        develop && vite({run: false}),
         develop &&
           appDevelop({
             env,

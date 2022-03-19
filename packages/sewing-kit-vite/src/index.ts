@@ -1,7 +1,12 @@
 import type {InlineConfig, PluginOption} from 'vite';
 
-import {App, createProjectPlugin} from '@quilted/sewing-kit';
-import type {WaterfallHook} from '@quilted/sewing-kit';
+import {createProjectPlugin} from '@quilted/sewing-kit';
+import type {
+  App,
+  WaterfallHook,
+  SewingKitInternalContext,
+  ResolvedDevelopProjectConfigurationHooks,
+} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-rollup';
 
@@ -56,7 +61,7 @@ declare module '@quilted/sewing-kit' {
 /**
  * Runs vite during development for this application.
  */
-export function vite() {
+export function vite({run: shouldRun = true} = {}) {
   return createProjectPlugin<App>({
     name: 'SewingKit.Vite',
     develop({project, internal, hooks, run}) {
@@ -71,81 +76,18 @@ export function vite() {
         viteResolveExtensions: waterfall(),
       }));
 
+      if (!shouldRun) return;
+
       run((step, {configuration}) =>
         step({
           name: 'SewingKit.Vite',
           label: `Running vite for ${project.name}`,
           async run(runner) {
-            const [
-              {createServer},
-              {
-                extensions,
-                viteConfig,
-                vitePlugins,
-                vitePort,
-                viteHost,
-                viteResolveAliases,
-                viteResolveExportConditions,
-                viteSsrNoExternals,
-                viteResolveExtensions,
-              },
-            ] = await Promise.all([import('vite'), configuration()]);
+            const server = await getViteServer(
+              {internal},
+              await configuration(),
+            );
 
-            const baseExtensions = await extensions.run([
-              '.mjs',
-              '.js',
-              '.ts',
-              '.jsx',
-              '.tsx',
-              '.json',
-            ]);
-
-            const [
-              plugins,
-              port,
-              host,
-              aliases,
-              exportConditions,
-              resolveExtensions,
-              noExternals,
-            ] = await Promise.all([
-              vitePlugins!.run([]),
-              vitePort!.run(undefined),
-              viteHost!.run(undefined),
-              viteResolveAliases!.run({}),
-              // @see https://vitejs.dev/config/#resolve-conditions
-              viteResolveExportConditions!.run([
-                'import',
-                'module',
-                'browser',
-                'default',
-                'development',
-              ]),
-              // @see https://vitejs.dev/config/#resolve-extensions
-              viteResolveExtensions!.run(baseExtensions),
-              viteSsrNoExternals!.run([]),
-            ]);
-
-            const config = await viteConfig!.run({
-              configFile: false,
-              clearScreen: false,
-              cacheDir: internal.fs.tempPath('vite/cache'),
-              server: {port, host},
-              // @ts-expect-error The types do not have this field, but it
-              // is supported.
-              ssr: {noExternal: noExternals},
-              resolve: {
-                extensions: resolveExtensions,
-                alias: aliases,
-                conditions: exportConditions,
-              },
-              plugins,
-              esbuild: {
-                jsxInject: `import React from 'react'`,
-              },
-            });
-
-            const server = await createServer(config);
             await server.listen();
 
             const serverAddress = server.httpServer?.address();
@@ -163,4 +105,89 @@ export function vite() {
       );
     },
   });
+}
+
+export async function getViteServer(
+  {internal}: {internal: SewingKitInternalContext},
+  configurationHooks: ResolvedDevelopProjectConfigurationHooks<App>,
+) {
+  const [{createServer}, configuration] = await Promise.all([
+    import('vite'),
+    getViteConfiguration({internal}, configurationHooks),
+  ]);
+
+  const server = await createServer(configuration);
+
+  return server;
+}
+
+export async function getViteConfiguration(
+  {internal}: {internal: SewingKitInternalContext},
+  {
+    extensions,
+    viteConfig,
+    vitePlugins,
+    vitePort,
+    viteHost,
+    viteResolveAliases,
+    viteResolveExportConditions,
+    viteSsrNoExternals,
+    viteResolveExtensions,
+  }: ResolvedDevelopProjectConfigurationHooks<App>,
+) {
+  const baseExtensions = await extensions.run([
+    '.mjs',
+    '.js',
+    '.ts',
+    '.jsx',
+    '.tsx',
+    '.json',
+  ]);
+
+  const [
+    plugins,
+    port,
+    host,
+    aliases,
+    exportConditions,
+    resolveExtensions,
+    noExternals,
+  ] = await Promise.all([
+    vitePlugins!.run([]),
+    vitePort!.run(undefined),
+    viteHost!.run(undefined),
+    viteResolveAliases!.run({}),
+    // @see https://vitejs.dev/config/#resolve-conditions
+    viteResolveExportConditions!.run([
+      'import',
+      'module',
+      'browser',
+      'default',
+      'development',
+    ]),
+    // @see https://vitejs.dev/config/#resolve-extensions
+    viteResolveExtensions!.run(baseExtensions),
+    viteSsrNoExternals!.run([]),
+  ]);
+
+  const config = await viteConfig!.run({
+    configFile: false,
+    clearScreen: false,
+    cacheDir: internal.fs.tempPath('vite/cache'),
+    server: {port, host},
+    // @ts-expect-error The types do not have this field, but it
+    // is supported.
+    ssr: {noExternal: noExternals},
+    resolve: {
+      extensions: resolveExtensions,
+      alias: aliases,
+      conditions: exportConditions,
+    },
+    plugins,
+    esbuild: {
+      jsxInject: `import React from 'react'`,
+    },
+  });
+
+  return config;
 }
