@@ -5,6 +5,9 @@ on:
     branches: [main]
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   deploy:
     name: Deploy 🚀
     runs-on: ubuntu-latest
