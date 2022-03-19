@@ -1,5 +1,15 @@
 # create-quilt-app
 
+## 0.1.13
+
+### Patch Changes
+
+- [#201](https://github.com/lemonmade/quilt/pull/201) [`9d0ae9d`](https://github.com/lemonmade/quilt/commit/9d0ae9d48cf111ec746c4a5c36d7e5f336865c02) Thanks [@lemonmade](https://github.com/lemonmade)! - Test prereleases
+
+* [`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve base TypeScript preset
+
+- [#199](https://github.com/lemonmade/quilt/pull/199) [`09a340e`](https://github.com/lemonmade/quilt/commit/09a340ed27fac52cecd87dea7e3ced2be85f2fd4) Thanks [@lemonmade](https://github.com/lemonmade)! - Testing prerelease versioning
+
 ## 0.1.13-next.0
 
 ### Patch Changes

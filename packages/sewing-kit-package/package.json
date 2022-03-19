@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-package",
   "type": "module",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "rollup": "^2.0.0"
   },
   "peerDependencies": {
-    "@quilted/sewing-kit": "^0.2.18"
+    "@quilted/sewing-kit": "^0.2.19"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

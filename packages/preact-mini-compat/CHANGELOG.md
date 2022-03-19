@@ -1,5 +1,11 @@
 # @quilted/preact-mini-compat
 
+## 0.2.10
+
+### Patch Changes
+
+- [`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve base TypeScript preset
+
 ## 0.2.9
 
 ### Patch Changes

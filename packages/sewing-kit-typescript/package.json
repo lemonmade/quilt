@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-typescript",
   "type": "module",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -35,11 +35,11 @@
   "peerDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.18",
-    "@quilted/sewing-kit-babel": "^0.1.9",
-    "@quilted/sewing-kit-eslint": "^0.1.6",
-    "@quilted/sewing-kit-jest": "^0.1.11",
-    "@quilted/sewing-kit-rollup": "^0.1.10",
+    "@quilted/sewing-kit": "^0.2.19",
+    "@quilted/sewing-kit-babel": "^0.1.10",
+    "@quilted/sewing-kit-eslint": "^0.1.7",
+    "@quilted/sewing-kit-jest": "^0.1.12",
+    "@quilted/sewing-kit-rollup": "^0.1.11",
     "typescript": ">=4.0.0 <5.0.0"
   },
   "peerDependenciesMeta": {

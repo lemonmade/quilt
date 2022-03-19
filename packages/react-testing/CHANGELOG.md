@@ -1,5 +1,15 @@
 # @quilted/react-testing
 
+## 0.5.5
+
+### Patch Changes
+
+- [`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve base TypeScript preset
+
+- Updated dependencies [[`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3)]:
+  - @quilted/sewing-kit@0.2.19
+  - @quilted/sewing-kit-jest@0.1.12
+
 ## 0.5.4
 
 ### Patch Changes

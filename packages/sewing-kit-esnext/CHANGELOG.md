@@ -1,5 +1,16 @@
 # @quilted/sewing-kit-esnext
 
+## 0.1.21
+
+### Patch Changes
+
+- [`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve base TypeScript preset
+
+- Updated dependencies [[`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3)]:
+  - @quilted/sewing-kit@0.2.19
+  - @quilted/sewing-kit-babel@0.1.10
+  - @quilted/sewing-kit-vite@0.1.8
+
 ## 0.1.20
 
 ### Patch Changes

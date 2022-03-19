@@ -1,5 +1,15 @@
 # @quilted/aws
 
+## 0.3.31
+
+### Patch Changes
+
+- [`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve base TypeScript preset
+
+- Updated dependencies [[`937a890`](https://github.com/lemonmade/quilt/commit/937a89009924a7b1d9e2a102028efd97928396e3)]:
+  - @quilted/craft@0.1.71
+  - @quilted/sewing-kit@0.2.19
+
 ## 0.3.30
 
 ### Patch Changes

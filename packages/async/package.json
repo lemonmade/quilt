@@ -1,7 +1,7 @@
 {
   "name": "@quilted/async",
   "type": "module",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -78,9 +78,9 @@
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@babel/traverse": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@quilted/sewing-kit": "^0.2.18",
-    "@quilted/sewing-kit-babel": "^0.1.9",
-    "@quilted/sewing-kit-rollup": "^0.1.10"
+    "@quilted/sewing-kit": "^0.2.19",
+    "@quilted/sewing-kit-babel": "^0.1.10",
+    "@quilted/sewing-kit-rollup": "^0.1.11"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
