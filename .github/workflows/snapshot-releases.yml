@@ -1,0 +1,28 @@
+name: Snapshot Releases
+
+on:
+  pull_request:
+
+jobs:
+  deploy:
+    name: Snapshot Releases 📸🦋
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/prepare
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v5.1
+      - uses: quilt-framework/action-build@v2
+        with:
+          command: pnpm build
+          arguments: -- --only-project package:*
+      - name: Version
+        run: pnpm version-bump:snapshot -- ${{ steps.branch-name.outputs.current_branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
+      - name: Deploy
+        run: pnpm deploy -- --tag ${{ steps.branch-name.outputs.current_branch }} --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
