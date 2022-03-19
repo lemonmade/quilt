@@ -18,8 +18,9 @@ jobs:
           arguments: -- --only-project package:*
       - name: Version
         run: pnpm version-bump:prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
       - name: Deploy
         run: pnpm deploy -- --tag next
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
