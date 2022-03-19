@@ -1,4 +1,4 @@
-name: Deploy
+name: Prerelease
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy 🚀
+    name: Prerelease 🚀
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
