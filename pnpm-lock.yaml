@@ -419,11 +419,11 @@ importers:
 
   packages/react:
     specifiers:
-      '@quilted/preact-mini-compat': 0.2.9
+      '@quilted/preact-mini-compat': 0.2.10
       preact: ^10.6.0
       preact-render-to-string: ^5.0.0
     dependencies:
-      '@quilted/preact-mini-compat': 0.2.9_b80d568a4881a1e311da64279ef0072f
+      '@quilted/preact-mini-compat': link:../preact-mini-compat
       preact: 10.6.6
       preact-render-to-string: 5.1.19_preact@10.6.6
 
@@ -3250,19 +3250,6 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: false
-
-  /@quilted/preact-mini-compat/0.2.9_b80d568a4881a1e311da64279ef0072f:
-    resolution: {integrity: sha512-HWE7af7T6pDB/b4AhE/pFhW+GM/wq0HJccTmWpeh1AJD6HVDP/bUe0usB9osRLymjKx+fyl5Flmj0MuEAWp7Yw==}
-    peerDependencies:
-      '@babel/runtime': '>=7.0.0 <8.0.0'
-      preact: ^10.5.0
-    peerDependenciesMeta:
-      '@babel/runtime':
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.17.2
-      preact: 10.6.6
     dev: false
 
   /@remote-ui/rpc/1.2.2:

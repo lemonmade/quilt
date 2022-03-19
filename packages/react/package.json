@@ -54,7 +54,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/preact-mini-compat": "0.2.9",
+    "@quilted/preact-mini-compat": "0.2.10",
     "preact": "^10.6.0",
     "preact-render-to-string": "^5.0.0"
   },
