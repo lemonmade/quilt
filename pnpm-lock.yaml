@@ -356,11 +356,11 @@ importers:
   packages/preact-mini-compat:
     specifiers:
       p-limit: ^3.1.0
-      preact: ^10.5.0
+      preact: ^10.6.0
       terser: ^5.5.1
     devDependencies:
       p-limit: 3.1.0
-      preact: 10.5.14
+      preact: 10.6.6
       terser: 5.7.1
 
   packages/prettier:
@@ -526,7 +526,7 @@ importers:
       '@types/react-test-renderer': ^17.0.0
       expect: ^27.0.0
       jest-matcher-utils: ^27.0.0
-      preact: ^10.5.0
+      preact: ^10.6.0
       react-reconciler: ^0.26.0
       react-test-renderer: ^17.0.0
     dependencies:
@@ -537,7 +537,7 @@ importers:
     devDependencies:
       '@jest/globals': 27.0.6
       expect: 27.0.6
-      preact: 10.5.14
+      preact: 10.6.6
 
   packages/react-workers:
     specifiers:
@@ -7597,13 +7597,8 @@ packages:
       pretty-format: 3.8.0
     dev: false
 
-  /preact/10.5.14:
-    resolution: {integrity: sha512-KojoltCrshZ099ksUZ2OQKfbH66uquFoxHSbnwKbTJHeQNvx42EmC7wQVWNuDt6vC5s3nudRHFtKbpY4ijKlaQ==}
-    dev: true
-
   /preact/10.6.6:
     resolution: {integrity: sha512-dgxpTFV2vs4vizwKohYKkk7g7rmp1wOOcfd4Tz3IB3Wi+ivZzsn/SpeKJhRENSE+n8sUfsAl4S3HiCVT923ABw==}
-    dev: false
 
   /preferred-pm/3.0.3:
     resolution: {integrity: sha512-+wZgbxNES/KlJs9q40F/1sfOd/j7f1O9JaHcW5Dsn3aUUOZg3L2bjpVUcKV2jvtElYfoTuQiNeMfQJ4kwUAhCQ==}

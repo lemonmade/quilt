@@ -93,7 +93,7 @@
     "@quilted/react-testing": "^0.5.5",
     "@quilted/quilt": "^0.5.69",
     "@quilted/workers": "^0.2.15",
-    "preact": "^10.5.0",
+    "preact": "^10.6.0",
     "typescript": ">=4.0.0 <5.0.0"
   },
   "peerDependenciesMeta": {

@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
-import '@quilted/react-testing/matchers';
+import '@quilted/quilt/matchers';
 
 import type {PropsWithChildren} from 'react';
-import {createMount} from '@quilted/react-testing';
+import {createMount} from '@quilted/quilt/testing';
 
 import {useRoutes} from '../routes';
 import {createTestRouter, TestRouter} from '../../testing';

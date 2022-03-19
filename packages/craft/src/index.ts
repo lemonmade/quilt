@@ -433,6 +433,7 @@ async function ignoreMissingImports(run: () => Promise<void>) {
   try {
     await run();
   } catch (error) {
+    console.log(error);
     if ((error as {code?: string})?.code === 'ERR_MODULE_NOT_FOUND') return;
     throw error;
   }

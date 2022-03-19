@@ -1,4 +1,4 @@
-import {createMount} from '@quilted/react-testing';
+import {createMount} from '@quilted/quilt/testing';
 
 import {createTestRouter, TestRouter} from '../../testing';
 import {Redirect} from './Redirect';
