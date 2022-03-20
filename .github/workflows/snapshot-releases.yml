@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - '**'
-      - '!changeset-release/**'
+      - '!changeset-release/main'
 
 jobs:
   deploy:
