@@ -44,27 +44,6 @@
       "require": "./build/cjs/test-utils.cjs"
     }
   },
-  "types": "./build/typescript/types.d.ts",
-  "typesVersions": {
-    "*": {
-      "./build/typescript/types.d.ts": [
-        "./build/typescript/types-react.d.ts",
-        "./build/typescript/types-react-dom.d.ts"
-      ],
-      "jsx-runtime": [
-        "./build/typescript/jsx-runtime.d.ts"
-      ],
-      "jsx-dev-runtime": [
-        "./build/typescript/jsx-runtime.d.ts"
-      ],
-      "server": [
-        "./build/typescript/types-react-dom-server.d.ts"
-      ],
-      "test-utils": [
-        "./build/typescript/test-utils.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/preact-mini-compat": "0.2.11",
