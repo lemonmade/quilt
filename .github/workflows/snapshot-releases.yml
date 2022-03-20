@@ -2,7 +2,9 @@ name: Snapshot Releases
 
 on:
   pull_request:
-    branches-ignore: ['changeset-release/*']
+    branches:
+      - '**'
+      - '!changeset-release/**'
 
 jobs:
   deploy:
