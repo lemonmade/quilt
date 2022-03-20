@@ -50,11 +50,21 @@ export async function loadWorkspace(
     absolute: true,
   });
 
-  const loadedConfigs = (
-    await Promise.all(configFiles.map((config) => loadConfig(config)))
-  ).filter((config) => Boolean(config)) as LoadedConfigurationFile<
-    Record<string, any>
-  >[];
+  // Rollup creates a `process` event listener for each build, and
+  // we do one per configuration file in this case. We’ll temporarily
+  // remove the limit and reset it later.
+
+  let loadedConfigs: LoadedConfigurationFile<Record<string, any>>[];
+  const maxListeners = process.getMaxListeners();
+
+  try {
+    process.setMaxListeners(Infinity);
+    loadedConfigs = (
+      await Promise.all(configFiles.map((config) => loadConfig(config)))
+    ).filter((config) => Boolean(config)) as typeof loadedConfigs;
+  } finally {
+    process.setMaxListeners(maxListeners);
+  }
 
   const workspaceConfigs = loadedConfigs.filter(
     (config) =>
