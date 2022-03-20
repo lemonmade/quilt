@@ -47,6 +47,10 @@
   "types": "./build/typescript/types.d.ts",
   "typesVersions": {
     "*": {
+      "build/typescript/types.d.ts": [
+        "./build/typescript/types-react.d.ts",
+        "./build/typescript/types-react-dom.d.ts"
+      ],
       "jsx-runtime": [
         "./build/typescript/jsx-runtime.d.ts"
       ],
@@ -54,7 +58,7 @@
         "./build/typescript/jsx-runtime.d.ts"
       ],
       "server": [
-        "./build/typescript/server.d.ts"
+        "./build/typescript/types-react-dom-server.d.ts"
       ],
       "test-utils": [
         "./build/typescript/test-utils.d.ts"
