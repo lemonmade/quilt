@@ -35,9 +35,10 @@ export default createPackage((pkg) => {
           jestModuleMapper?.((moduleMapper) => {
             const newModuleMapper = {...moduleMapper};
 
-            for (const [from, to] of Object.entries(moduleMapper)) {
-              if (!to.startsWith('@quilted/quilt/react')) continue;
-              delete newModuleMapper[from];
+            for (const from of Object.keys(moduleMapper)) {
+              if (/^\^react(-dom)?([/].*)?\$$/.test(from)) {
+                delete newModuleMapper[from];
+              }
             }
 
             return newModuleMapper;

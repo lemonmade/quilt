@@ -80,7 +80,7 @@ export function preact() {
           const newModuleMapper = {...moduleMapper};
 
           for (const [from, to] of Object.entries(ALIASES)) {
-            newModuleMapper[`^${from}$`] = to;
+            newModuleMapper[`^${from}$`] = moduleMapper[`^${to}$`] ?? to;
           }
 
           return newModuleMapper;
