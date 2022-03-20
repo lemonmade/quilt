@@ -11,7 +11,7 @@ jobs:
     name: Changeset Reminder
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: ${{ !github.event.pull_request.draft }}
+    if: ${{ !github.event.pull_request.draft && !startsWith(github.head_ref, 'changeset-release/') }}
     steps:
       - uses: actions/checkout@v3
       - uses: mskelton/changelog-reminder-action@v2
