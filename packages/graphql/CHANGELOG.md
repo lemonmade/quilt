@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.22
+
+### Patch Changes
+
+- [`71213d5`](https://github.com/lemonmade/quilt/commit/71213d53f9aa19f537d08bd66e7120d8437416a2) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve GraphQL type generation for sewing-kit
+
 ## 0.4.21
 
 ### Patch Changes
