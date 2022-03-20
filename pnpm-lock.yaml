@@ -72,10 +72,12 @@ importers:
       '@quilted/sewing-kit-rollup': ^0.1.2
       '@types/babel__core': '>=7.0.0'
       '@types/babel__traverse': '>=7.0.0'
+      '@types/web': ^0.0.59
       common-tags: ^1.8.0
       es-module-lexer: ^0.4.0
       magic-string: ^0.25.0
     dependencies:
+      '@types/web': 0.0.59
       common-tags: 1.8.0
       es-module-lexer: 0.4.1
       magic-string: 0.25.7
@@ -3623,6 +3625,10 @@ packages:
 
   /@types/web/0.0.55:
     resolution: {integrity: sha512-YMH9aZrSJIMRMioCUwrgauI3iS/w2wRFN45Xxm0FE9Tt3hqaqkvOzjDFGsNjyKZzz7GJC0ilb+0tv59ytSUbrQ==}
+    dev: false
+
+  /@types/web/0.0.59:
+    resolution: {integrity: sha512-eh97GJ7nfRpPTrPMjXlFsSWsSHpCMO/Y3Zr/RPoX5BwzNogI4C+IH3l+Xrgf4dVATT3L0//O3GSjyoTa5ixMYw==}
     dev: false
 
   /@types/websocket/1.0.2:

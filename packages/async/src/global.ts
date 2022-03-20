@@ -1,3 +1,5 @@
+/// <reference types="web" />
+
 declare const __QUILT_ASSETS_BASE_URL__: string | undefined;
 
 export interface AsyncAssetsOptions {
