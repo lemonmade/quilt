@@ -1,1 +1,3 @@
-export = typeof import('react');
+import React from 'react';
+
+export = React;
