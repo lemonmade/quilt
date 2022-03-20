@@ -1,5 +1,14 @@
 # @quilted/react-performance
 
+## 0.1.5
+
+### Patch Changes
+
+- [`0735184`](https://github.com/lemonmade/quilt/commit/073518430d0fcabab7a2db9c76f8a69dac1fdea5) Thanks [@lemonmade](https://github.com/lemonmade)! - Publish new latest versions
+
+- Updated dependencies [[`0735184`](https://github.com/lemonmade/quilt/commit/073518430d0fcabab7a2db9c76f8a69dac1fdea5)]:
+  - @quilted/react-router@0.3.34
+
 ## 0.1.4
 
 ### Patch Changes

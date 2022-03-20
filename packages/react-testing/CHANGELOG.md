@@ -1,5 +1,15 @@
 # @quilted/react-testing
 
+## 0.5.7
+
+### Patch Changes
+
+- [`0735184`](https://github.com/lemonmade/quilt/commit/073518430d0fcabab7a2db9c76f8a69dac1fdea5) Thanks [@lemonmade](https://github.com/lemonmade)! - Publish new latest versions
+
+- Updated dependencies [[`0735184`](https://github.com/lemonmade/quilt/commit/073518430d0fcabab7a2db9c76f8a69dac1fdea5)]:
+  - @quilted/sewing-kit@0.2.22
+  - @quilted/sewing-kit-jest@0.1.14
+
 ## 0.5.6
 
 ### Patch Changes
