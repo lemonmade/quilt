@@ -1,5 +1,11 @@
 # @quilted/react-graphql
 
+## 0.4.37
+
+### Patch Changes
+
+- [`65db3731`](https://github.com/lemonmade/quilt/commit/65db37312192507643bafa672a29d8e63cce823f) Thanks [@lemonmade](https://github.com/lemonmade)! - Force another version bump
+
 ## 0.4.36
 
 ### Patch Changes

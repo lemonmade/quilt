@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-react",
   "type": "module",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,8 +31,8 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
-    "@quilted/sewing-kit": "^0.2.22",
-    "@quilted/sewing-kit-babel": "^0.1.12"
+    "@quilted/sewing-kit": "^0.2.23",
+    "@quilted/sewing-kit-babel": "^0.1.13"
   },
   "peerDependenciesMeta": {
     "@babel/core": {

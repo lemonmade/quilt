@@ -1,5 +1,17 @@
 # @quilted/polyfills
 
+## 0.2.20
+
+### Patch Changes
+
+- [`65db3731`](https://github.com/lemonmade/quilt/commit/65db37312192507643bafa672a29d8e63cce823f) Thanks [@lemonmade](https://github.com/lemonmade)! - Force another version bump
+
+- Updated dependencies [[`65db3731`](https://github.com/lemonmade/quilt/commit/65db37312192507643bafa672a29d8e63cce823f)]:
+  - @quilted/sewing-kit@0.2.23
+  - @quilted/sewing-kit-jest@0.1.15
+  - @quilted/sewing-kit-rollup@0.1.14
+  - @quilted/sewing-kit-targets@0.1.14
+
 ## 0.2.19
 
 ### Patch Changes
