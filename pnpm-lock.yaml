@@ -124,7 +124,7 @@ importers:
       '@quilted/prettier': 0.2.5
       '@quilted/quilt': ^0.5.0
       '@quilted/react-testing': ^0.5.0
-      '@quilted/sewing-kit': 0.2.20
+      '@quilted/sewing-kit': 0.2.21
       '@quilted/sewing-kit-babel': 0.1.11
       '@quilted/sewing-kit-eslint': 0.1.8
       '@quilted/sewing-kit-esnext': 0.1.22
