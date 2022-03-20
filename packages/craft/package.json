@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.76",
+  "version": "0.1.77",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -87,7 +87,7 @@
     "@types/clean-css": "^4.0.0"
   },
   "peerDependencies": {
-    "@quilted/async": "0.3.19",
+    "@quilted/async": "0.3.20",
     "@quilted/graphql": "0.4.24",
     "@quilted/react-testing": "0.5.8",
     "@quilted/quilt": "0.5.73",
