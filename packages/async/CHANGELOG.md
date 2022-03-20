@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.20
+
+### Patch Changes
+
+- [`4474c4c3`](https://github.com/lemonmade/quilt/commit/4474c4c3a298c9782f4632e54218dc04acd22cca) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix DOM reference in async library
+
 ## 0.3.19
 
 ### Patch Changes
