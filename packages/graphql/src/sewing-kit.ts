@@ -2,10 +2,13 @@ import {createWorkspacePlugin, createProjectPlugin} from '@quilted/sewing-kit';
 import type {
   ResolvedHooks,
   DevelopAppConfigurationHooks,
+  WorkspaceStepRunner,
 } from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
 import type {} from '@quilted/sewing-kit-vite';
+
+import type {createBuilder} from './typescript';
 
 const NAME = 'Quilt.GraphQL';
 
@@ -61,15 +64,7 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
-            const result = await step.exec(
-              'quilt-graphql-typescript',
-              pkg ? ['--package', pkg] : [],
-              {
-                fromNodeModules: import.meta.url,
-              },
-            );
-
-            if (result.stdout.trim()) step.log(result.stdout.trim());
+            await runGraphQLTypes(step, {package: pkg});
           },
         }),
       );
@@ -81,15 +76,7 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
-            const result = await step.exec(
-              'quilt-graphql-typescript',
-              pkg ? ['--package', pkg] : [],
-              {
-                fromNodeModules: import.meta.url,
-              },
-            );
-
-            if (result.stdout.trim()) step.log(result.stdout.trim());
+            await runGraphQLTypes(step, {package: pkg, watch: true});
           },
         }),
       );
@@ -101,18 +88,39 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
-            const result = await step.exec(
-              'quilt-graphql-typescript',
-              pkg ? ['--package', pkg] : [],
-              {
-                fromNodeModules: import.meta.url,
-              },
-            );
-
-            if (result.stdout.trim()) step.log(result.stdout.trim());
+            await runGraphQLTypes(step, {package: pkg});
           },
         }),
       );
     },
   });
+}
+
+async function runGraphQLTypes(
+  step: WorkspaceStepRunner,
+  {
+    watch = false,
+    ...options
+  }: NonNullable<Parameters<typeof createBuilder>[1]> & {watch?: boolean},
+) {
+  const {createBuilder} = await import('./typescript');
+  const builder = await createBuilder(undefined, options);
+
+  builder.on('error', (error) => {
+    step.log((ui) =>
+      ui.Text(error.message ?? 'An unexpected error occurred', {
+        role: 'critical',
+      }),
+    );
+
+    if (error.stack) {
+      step.log(error.stack);
+    }
+  });
+
+  if (watch) {
+    await builder.watch();
+  } else {
+    await builder.run();
+  }
 }
