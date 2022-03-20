@@ -1,5 +1,17 @@
 # @quilted/graphql
 
+## 0.4.24
+
+### Patch Changes
+
+- [`65db3731`](https://github.com/lemonmade/quilt/commit/65db37312192507643bafa672a29d8e63cce823f) Thanks [@lemonmade](https://github.com/lemonmade)! - Force another version bump
+
+- Updated dependencies [[`65db3731`](https://github.com/lemonmade/quilt/commit/65db37312192507643bafa672a29d8e63cce823f)]:
+  - @quilted/sewing-kit@0.2.23
+  - @quilted/sewing-kit-jest@0.1.15
+  - @quilted/sewing-kit-rollup@0.1.14
+  - @quilted/sewing-kit-vite@0.1.11
+
 ## 0.4.23
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-esnext",
   "type": "module",
-  "version": "0.1.23",
+  "version": "0.1.24",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -38,10 +38,10 @@
   "peerDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.22",
-    "@quilted/sewing-kit-babel": "^0.1.12",
-    "@quilted/sewing-kit-rollup": "^0.1.13",
-    "@quilted/sewing-kit-vite": "^0.1.10"
+    "@quilted/sewing-kit": "^0.2.23",
+    "@quilted/sewing-kit-babel": "^0.1.13",
+    "@quilted/sewing-kit-rollup": "^0.1.14",
+    "@quilted/sewing-kit-vite": "^0.1.11"
   },
   "peerDependenciesMeta": {
     "@babel/core": {

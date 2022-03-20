@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.30
+
+### Patch Changes
+
+- [`65db3731`](https://github.com/lemonmade/quilt/commit/65db37312192507643bafa672a29d8e63cce823f) Thanks [@lemonmade](https://github.com/lemonmade)! - Force another version bump
+
 ## 0.2.29
 
 ### Patch Changes

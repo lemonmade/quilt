@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -46,7 +46,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/preact-mini-compat": "0.2.12",
+    "@quilted/preact-mini-compat": "0.2.13",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "preact": "^10.6.0",
