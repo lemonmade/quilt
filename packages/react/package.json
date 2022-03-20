@@ -47,7 +47,7 @@
   "types": "./build/typescript/types.d.ts",
   "typesVersions": {
     "*": {
-      "build/typescript/types.d.ts": [
+      "./build/typescript/types.d.ts": [
         "./build/typescript/types-react.d.ts",
         "./build/typescript/types-react-dom.d.ts"
       ],
