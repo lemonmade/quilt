@@ -1,7 +1,7 @@
 {
   "name": "@quilted/workers",
   "type": "module",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -73,10 +73,10 @@
   "peerDependencies": {
     "@babel/core": ">=7.0.0 <8.0.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.19",
-    "@quilted/sewing-kit-babel": "^0.1.10",
-    "@quilted/sewing-kit-rollup": "^0.1.11",
-    "@quilted/sewing-kit-vite": "^0.1.8",
+    "@quilted/sewing-kit": "^0.2.20",
+    "@quilted/sewing-kit-babel": "^0.1.11",
+    "@quilted/sewing-kit-rollup": "^0.1.12",
+    "@quilted/sewing-kit-vite": "^0.1.9",
     "rollup": ">=2.50.3 <3.0.0"
   },
   "peerDependenciesMeta": {
