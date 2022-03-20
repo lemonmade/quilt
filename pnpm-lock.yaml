@@ -387,10 +387,6 @@ importers:
       '@quilted/react-workers': ^0.2.12
       '@quilted/useful-react-types': ^0.1.0
       '@types/prettier': ^2.0.0
-      '@types/react': ^17.0.0
-      '@types/react-dom': ^17.0.0
-      preact: ^10.6.0
-      preact-render-to-string: ^5.0.0
     dependencies:
       '@babel/runtime': 7.17.2
       '@quilted/async': link:../async
@@ -410,10 +406,6 @@ importers:
       '@quilted/react-testing': link:../react-testing
       '@quilted/react-workers': link:../react-workers
       '@quilted/useful-react-types': link:../useful-react-types
-      '@types/react': 17.0.13
-      '@types/react-dom': 17.0.8
-      preact: 10.6.6
-      preact-render-to-string: 5.1.19_preact@10.6.6
     devDependencies:
       '@types/prettier': 2.3.1
 

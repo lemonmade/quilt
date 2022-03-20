@@ -2,6 +2,7 @@
   "extends": "@quilted/typescript/pkg.json",
   "compilerOptions": {
     "rootDir": "src",
+    "module": "CommonJS",
     "outDir": "build/typescript"
   },
   "include": ["src"],

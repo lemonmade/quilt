@@ -1,1 +1,1 @@
-export {default} from 'react';
+export = typeof import('react');
