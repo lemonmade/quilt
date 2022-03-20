@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.71
+
+### Patch Changes
+
+- [#206](https://github.com/lemonmade/quilt/pull/206) [`d3c6346`](https://github.com/lemonmade/quilt/commit/d3c6346dc61a77fd6d45f13abe29222742b895fc) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove unnecessary react alias dependencies
+
 ## 0.5.70
 
 ### Patch Changes
