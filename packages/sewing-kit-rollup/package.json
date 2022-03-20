@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-rollup",
   "type": "module",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.19"
+    "@quilted/sewing-kit": "^0.2.20"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
