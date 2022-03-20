@@ -2,13 +2,11 @@ name: Snapshot Releases
 
 on:
   pull_request:
-    branches:
-      - '**'
-      - '!changeset-release/main'
 
 jobs:
   deploy:
     name: Snapshot Releases 📸🦋
+    if: ${{ !startsWith(github.head_ref, 'changeset-release/') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
