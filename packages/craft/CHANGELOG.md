@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.74
+
+### Patch Changes
+
+- [`0d77da6`](https://github.com/lemonmade/quilt/commit/0d77da67dc2ff288e059ed6331e7fd458efcf4c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some craft peer dependencies
+
 ## 0.1.73
 
 ### Patch Changes
