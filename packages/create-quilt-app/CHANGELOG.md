@@ -1,5 +1,11 @@
 # create-quilt-app
 
+## 0.1.15
+
+### Patch Changes
+
+- [#206](https://github.com/lemonmade/quilt/pull/206) [`d3c6346`](https://github.com/lemonmade/quilt/commit/d3c6346dc61a77fd6d45f13abe29222742b895fc) Thanks [@lemonmade](https://github.com/lemonmade)! - Update templates to include React dependencies
+
 ## 0.1.14
 
 ### Patch Changes
