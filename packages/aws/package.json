@@ -1,7 +1,7 @@
 {
   "name": "@quilted/aws",
   "type": "module",
-  "version": "0.3.33",
+  "version": "0.3.34",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -54,8 +54,8 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/craft": "^0.1.75",
-    "@quilted/sewing-kit": "^0.2.22"
+    "@quilted/craft": "^0.1.76",
+    "@quilted/sewing-kit": "^0.2.23"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

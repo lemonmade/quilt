@@ -1,7 +1,7 @@
 {
   "name": "@quilted/sewing-kit-jest",
   "type": "module",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/sewing-kit": "^0.2.22"
+    "@quilted/sewing-kit": "^0.2.23"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

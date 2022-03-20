@@ -121,26 +121,26 @@ importers:
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@prefresh/vite': ^2.2.0
       '@quilted/async': ^0.3.0
-      '@quilted/browserslist-config': 0.1.4
-      '@quilted/eslint-config': 0.1.7
+      '@quilted/browserslist-config': 0.1.5
+      '@quilted/eslint-config': 0.1.8
       '@quilted/graphql': ^0.4.0
-      '@quilted/polyfills': 0.2.19
-      '@quilted/prettier': 0.2.6
+      '@quilted/polyfills': 0.2.20
+      '@quilted/prettier': 0.2.7
       '@quilted/quilt': ^0.5.0
       '@quilted/react-testing': ^0.5.0
-      '@quilted/sewing-kit': 0.2.22
-      '@quilted/sewing-kit-babel': 0.1.12
-      '@quilted/sewing-kit-eslint': 0.1.9
-      '@quilted/sewing-kit-esnext': 0.1.23
-      '@quilted/sewing-kit-jest': 0.1.14
-      '@quilted/sewing-kit-package': 0.1.16
-      '@quilted/sewing-kit-prettier': 0.1.9
-      '@quilted/sewing-kit-react': 0.1.9
-      '@quilted/sewing-kit-rollup': 0.1.13
-      '@quilted/sewing-kit-targets': 0.1.13
-      '@quilted/sewing-kit-typescript': 0.1.10
-      '@quilted/sewing-kit-vite': 0.1.10
-      '@quilted/typescript': 0.2.8
+      '@quilted/sewing-kit': 0.2.23
+      '@quilted/sewing-kit-babel': 0.1.13
+      '@quilted/sewing-kit-eslint': 0.1.10
+      '@quilted/sewing-kit-esnext': 0.1.24
+      '@quilted/sewing-kit-jest': 0.1.15
+      '@quilted/sewing-kit-package': 0.1.17
+      '@quilted/sewing-kit-prettier': 0.1.10
+      '@quilted/sewing-kit-react': 0.1.10
+      '@quilted/sewing-kit-rollup': 0.1.14
+      '@quilted/sewing-kit-targets': 0.1.14
+      '@quilted/sewing-kit-typescript': 0.1.11
+      '@quilted/sewing-kit-vite': 0.1.11
+      '@quilted/typescript': 0.2.9
       '@quilted/workers': ^0.2.0
       '@rollup/plugin-alias': ^3.1.0
       '@rollup/plugin-babel': ^5.3.0
@@ -415,7 +415,7 @@ importers:
 
   packages/react:
     specifiers:
-      '@quilted/preact-mini-compat': 0.2.12
+      '@quilted/preact-mini-compat': 0.2.13
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
       preact: ^10.6.0
