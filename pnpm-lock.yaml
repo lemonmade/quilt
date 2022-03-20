@@ -16,8 +16,8 @@ importers:
       '@quilted/sewing-kit-jest': ^0.1.0
       '@quilted/typescript': ^0.2.0
       esbuild: ^0.14.0
-      react: ^17.0.1
-      react-dom: ^17.0.1
+      react: workspace:@quilted/react@^0.1.0
+      react-dom: workspace:@quilted/react@^0.1.0
       rollup: ^2.0.0
       source-map-support: ^0.5.0
       typescript: ^4.6.0
@@ -34,8 +34,8 @@ importers:
       '@quilted/sewing-kit-jest': link:packages/sewing-kit-jest
       '@quilted/typescript': link:packages/typescript
       esbuild: 0.14.23
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
+      react: link:packages/react
+      react-dom: link:packages/react
       rollup: 2.70.0
       source-map-support: 0.5.19
       typescript: 4.6.2
@@ -49,9 +49,13 @@ importers:
       '@quilted/quilt': ^0.5.0
       '@quilted/sewing-kit': ^0.2.0
       '@quilted/typescript': ^0.2.0
+      react: npm:@quilted/react@^0.1.0
+      react-dom: npm:@quilted/react@^0.1.0
       typescript: ^4.6.0
     dependencies:
       '@quilted/quilt': link:../../packages/quilt
+      react: link:../../packages/react
+      react-dom: link:../../packages/react
     devDependencies:
       '@quilted/browserslist-config': link:../../packages/browserslist-config
       '@quilted/craft': link:../../packages/craft
@@ -387,10 +391,6 @@ importers:
       '@quilted/react-workers': ^0.2.12
       '@quilted/useful-react-types': ^0.1.0
       '@types/prettier': ^2.0.0
-      '@types/react': ^17.0.0
-      '@types/react-dom': ^17.0.0
-      preact: ^10.6.0
-      preact-render-to-string: ^5.0.0
     dependencies:
       '@babel/runtime': 7.17.2
       '@quilted/async': link:../async
@@ -410,20 +410,20 @@ importers:
       '@quilted/react-testing': link:../react-testing
       '@quilted/react-workers': link:../react-workers
       '@quilted/useful-react-types': link:../useful-react-types
-      '@types/react': 17.0.13
-      '@types/react-dom': 17.0.8
-      preact: 10.6.6
-      preact-render-to-string: 5.1.19_preact@10.6.6
     devDependencies:
       '@types/prettier': 2.3.1
 
   packages/react:
     specifiers:
       '@quilted/preact-mini-compat': 0.2.11
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
       preact: ^10.6.0
       preact-render-to-string: ^5.0.0
     dependencies:
       '@quilted/preact-mini-compat': link:../preact-mini-compat
+      '@types/react': 17.0.13
+      '@types/react-dom': 17.0.8
       preact: 10.6.6
       preact-render-to-string: 5.1.19_preact@10.6.6
 
@@ -527,6 +527,8 @@ importers:
       expect: ^27.0.0
       jest-matcher-utils: ^27.0.0
       preact: ^10.6.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
       react-reconciler: ^0.26.0
       react-test-renderer: ^17.0.0
     dependencies:
@@ -538,6 +540,8 @@ importers:
       '@jest/globals': 27.0.6
       expect: 27.0.6
       preact: 10.6.6
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
 
   packages/react-workers:
     specifiers:

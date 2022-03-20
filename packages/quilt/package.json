@@ -221,11 +221,7 @@
     "@quilted/react-server-render": "^0.3.7",
     "@quilted/react-testing": "^0.5.1",
     "@quilted/react-workers": "^0.2.12",
-    "@quilted/useful-react-types": "^0.1.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "preact": "^10.6.0",
-    "preact-render-to-string": "^5.0.0"
+    "@quilted/useful-react-types": "^0.1.0"
   },
   "devDependencies": {
     "@types/prettier": "^2.0.0"

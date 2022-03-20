@@ -25,6 +25,12 @@
       "import": "./build/esm/jsx-runtime.mjs",
       "require": "./build/cjs/jsx-runtime.cjs"
     },
+    "./jsx-dev-runtime": {
+      "quilt:from-source": "./src/jsx-runtime.ts",
+      "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
+      "import": "./build/esm/jsx-runtime.mjs",
+      "require": "./build/cjs/jsx-runtime.cjs"
+    },
     "./server": {
       "quilt:from-source": "./src/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
@@ -38,23 +44,11 @@
       "require": "./build/cjs/test-utils.cjs"
     }
   },
-  "types": "./build/typescript/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "jsx-runtime": [
-        "./build/typescript/jsx-runtime.d.ts"
-      ],
-      "server": [
-        "./build/typescript/server.d.ts"
-      ],
-      "test-utils": [
-        "./build/typescript/test-utils.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/preact-mini-compat": "0.2.11",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "preact": "^10.6.0",
     "preact-render-to-string": "^5.0.0"
   },
