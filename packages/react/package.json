@@ -1,0 +1,67 @@
+{
+  "name": "@quilted/react",
+  "type": "module",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    },
+    "./jsx-runtime": {
+      "quilt:from-source": "./src/jsx-runtime.ts",
+      "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
+      "import": "./build/esm/jsx-runtime.mjs",
+      "require": "./build/cjs/jsx-runtime.cjs"
+    },
+    "./server": {
+      "quilt:from-source": "./src/server.ts",
+      "quilt:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs",
+      "require": "./build/cjs/server.cjs"
+    },
+    "./test-utils": {
+      "quilt:from-source": "./src/test-utils.ts",
+      "quilt:esnext": "./build/esnext/test-utils.esnext",
+      "import": "./build/esm/test-utils.mjs",
+      "require": "./build/cjs/test-utils.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "jsx-runtime": [
+        "./build/typescript/jsx-runtime.d.ts"
+      ],
+      "server": [
+        "./build/typescript/server.d.ts"
+      ],
+      "test-utils": [
+        "./build/typescript/test-utils.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/preact-mini-compat": "0.2.10",
+    "preact": "^10.6.0",
+    "preact-render-to-string": "^5.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/react",
+      "@quilted/eslint-config/package"
+    ]
+  }
+}

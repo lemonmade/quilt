@@ -45,28 +45,33 @@ export function reactTesting({environment = 'react'}: Options = {}) {
           }
         });
 
-        jestModuleMapper?.((moduleMappers) => {
+        jestModuleMapper?.((moduleMapper) => {
+          const newModuleMapper = {...moduleMapper};
+
           switch (environment) {
             // If they explicitly select react-dom, we will map the main
             // `@quilted/react-testing` import to the DOM version, so all tests
             // have access to the DOM helpers
             case 'react-dom': {
-              moduleMappers['^@quilted/react-testing$'] =
+              newModuleMapper['^@quilted/react-testing$'] =
+                moduleMapper['^@quilted/react-testing/dom$'] ??
                 '@quilted/react-testing/dom';
               break;
             }
             case 'preact': {
               // If they explicitly select preact, we will alias all imports of
               // the library to the Preact version.
-              moduleMappers['^@quilted/react-testing$'] =
+              newModuleMapper['^@quilted/react-testing$'] =
+                moduleMapper['^@quilted/react-testing/preact$'] ??
                 '@quilted/react-testing/preact';
-              moduleMappers['^@quilted/react-testing/dom$'] =
+              newModuleMapper['^@quilted/react-testing/dom$'] =
+                moduleMapper['^@quilted/react-testing/preact$'] ??
                 '@quilted/react-testing/preact';
               break;
             }
           }
 
-          return moduleMappers;
+          return newModuleMapper;
         });
       });
     },

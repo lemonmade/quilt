@@ -14,6 +14,7 @@ export default createPackage((pkg) => {
     runtime: Runtime.Node,
   });
   pkg.entry({source: './src/react/jsx-runtime', name: 'react/jsx-runtime'});
+  pkg.entry({source: './src/react/test-utils', name: 'react/test-utils'});
   pkg.entry({source: './src/http-handlers', name: 'http-handlers'});
   pkg.entry({
     source: './src/http-handlers/node',

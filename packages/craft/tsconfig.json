@@ -5,12 +5,13 @@
     "outDir": "build/typescript"
   },
   "include": ["src"],
-  "exclude": ["sewing-kit.config.ts", "*.test.ts", "*.test.tsx"],
+  "exclude": ["sewing-kit.config.ts", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../async"},
     {"path": "../graphql"},
     {"path": "../polyfills"},
     {"path": "../quilt"},
+    {"path": "../react-testing"},
     {"path": "../sewing-kit"},
     {"path": "../sewing-kit-babel"},
     {"path": "../sewing-kit-eslint"},
