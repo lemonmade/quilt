@@ -523,17 +523,21 @@ importers:
       expect: ^27.0.0
       jest-matcher-utils: ^27.0.0
       preact: ^10.6.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
       react-reconciler: ^0.26.0
       react-test-renderer: ^17.0.0
     dependencies:
       '@types/react-test-renderer': 17.0.1
       jest-matcher-utils: 27.0.6
-      react-reconciler: 0.26.2
-      react-test-renderer: 17.0.2
+      react-reconciler: 0.26.2_react@17.0.2
+      react-test-renderer: 17.0.2_react@17.0.2
     devDependencies:
       '@jest/globals': 27.0.6
       expect: 27.0.6
       preact: 10.6.6
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
 
   packages/react-workers:
     specifiers:
@@ -6924,7 +6928,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: false
 
   /lower-case/2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
@@ -7178,7 +7181,6 @@ packages:
   /object-assign/4.1.1:
     resolution: {integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /object-inspect/1.10.3:
     resolution: {integrity: sha512-e5mCJlSH7poANfC8z8S9s9S2IN5/4Zb3aZ33f5s8YqoazCFzNLloLU8r5VCG+G7WoqLvAAZoVMcy3tp/3X0Plw==}
@@ -7721,6 +7723,17 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
+  /react-dom/17.0.2_react@17.0.2:
+    resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
+    peerDependencies:
+      react: 17.0.2
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react: 17.0.2
+      scheduler: 0.20.2
+    dev: true
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: false
@@ -7728,7 +7741,7 @@ packages:
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
-  /react-reconciler/0.26.2:
+  /react-reconciler/0.26.2_react@17.0.2:
     resolution: {integrity: sha512-nK6kgY28HwrMNwDnMui3dvm3rCFjZrcGiuwLc5COUipBK5hWHLOxMJhSnSomirqWwjPBJKV1QcbkI0VJr7Gl1Q==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
@@ -7736,28 +7749,39 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
+      react: 17.0.2
       scheduler: 0.20.2
     dev: false
 
-  /react-shallow-renderer/16.14.1:
+  /react-shallow-renderer/16.14.1_react@17.0.2:
     resolution: {integrity: sha512-rkIMcQi01/+kxiTE9D3fdS959U1g7gs+/rborw++42m1O9FAQiNI/UNRZExVUoAOprn4umcXf+pFRou8i4zuBg==}
     peerDependencies:
       react: ^16.0.0 || ^17.0.0
     dependencies:
       object-assign: 4.1.1
+      react: 17.0.2
       react-is: 17.0.2
     dev: false
 
-  /react-test-renderer/17.0.2:
+  /react-test-renderer/17.0.2_react@17.0.2:
     resolution: {integrity: sha512-yaQ9cB89c17PUb0x6UfWRs7kQCorVdHlutU1boVPEsB8IDZH6n9tHxMacc3y0JoXOJUsZb/t/Mb8FUWMKaM7iQ==}
     peerDependencies:
       react: 17.0.2
     dependencies:
       object-assign: 4.1.1
+      react: 17.0.2
       react-is: 17.0.2
-      react-shallow-renderer: 16.14.1
+      react-shallow-renderer: 16.14.1_react@17.0.2
       scheduler: 0.20.2
     dev: false
+
+  /react/17.0.2:
+    resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+    dev: true
 
   /read-pkg-up/7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
@@ -8001,7 +8025,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-    dev: false
 
   /semver/5.7.1:
     resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
