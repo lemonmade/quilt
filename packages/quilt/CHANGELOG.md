@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.72
+
+### Patch Changes
+
+- [`0735184`](https://github.com/lemonmade/quilt/commit/073518430d0fcabab7a2db9c76f8a69dac1fdea5) Thanks [@lemonmade](https://github.com/lemonmade)! - Publish new latest versions
+
 ## 0.5.71
 
 ### Patch Changes
