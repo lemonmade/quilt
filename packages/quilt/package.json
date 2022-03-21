@@ -103,6 +103,18 @@
       "import": "./build/esm/http-handlers/index.mjs",
       "require": "./build/cjs/http-handlers/index.cjs"
     },
+    "./workers/worker": {
+      "quilt:from-source": "./src/workers/worker.ts",
+      "quilt:esnext": "./build/esnext/workers/worker.esnext",
+      "import": "./build/esm/workers/worker.mjs",
+      "require": "./build/cjs/workers/worker.cjs"
+    },
+    "./workers": {
+      "quilt:from-source": "./src/workers/index.ts",
+      "quilt:esnext": "./build/esnext/workers/index.esnext",
+      "import": "./build/esm/workers/index.mjs",
+      "require": "./build/cjs/workers/index.cjs"
+    },
     "./polyfills/base": {
       "quilt:from-source": "./src/polyfills/base.ts",
       "quilt:esnext": "./build/esnext/polyfills/base.esnext",
@@ -169,6 +181,12 @@
       ],
       "react": [
         "./build/typescript/react/index.d.ts"
+      ],
+      "workers": [
+        "./build/typescript/workers/index.d.ts"
+      ],
+      "workers/worker": [
+        "./build/typescript/workers/worker.d.ts"
       ],
       "http-handlers/node": [
         "./build/typescript/http-handlers/node.d.ts"

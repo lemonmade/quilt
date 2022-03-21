@@ -239,22 +239,23 @@ function getWorkerRequest(id: string): {
   };
 }
 
-const BASIC_CONTENT = `import ${JSON.stringify(MAGIC_MODULE_WORKER)};`;
-const CALLABLE_CONTENT = stripIndent`
-  import * as Worker from ${JSON.stringify(MAGIC_MODULE_WORKER)};
-  import {endpoint} from '@quilted/workers/worker';
-  endpoint.expose(Worker);
-`;
-
-const workerFunctionContent = new Map([
-  ['createWorker', BASIC_CONTENT],
-  ['createCallableWorker', CALLABLE_CONTENT],
-]);
+const workerFunctionContent = (pkg: string) =>
+  new Map([
+    ['createWorker', `import ${JSON.stringify(MAGIC_MODULE_WORKER)};`],
+    [
+      'createCallableWorker',
+      stripIndent`
+        import * as Worker from ${JSON.stringify(MAGIC_MODULE_WORKER)};
+        import {endpoint} from '${pkg}/worker';
+        endpoint.expose(Worker);
+      `,
+    ],
+  ]);
 
 const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
-  ['@quilted/workers', workerFunctionContent],
-  ['@quilted/react-workers', workerFunctionContent],
-  ['@quilted/quilt', workerFunctionContent],
+  ['@quilted/workers', workerFunctionContent('@quilted/workers')],
+  ['@quilted/react-workers', workerFunctionContent('@quilted/react-workers')],
+  ['@quilted/quilt', workerFunctionContent('@quilted/quilt/workers')],
 ]);
 
 function defaultContentForWorker({wrapper}: WorkerContext) {
