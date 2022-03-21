@@ -1,5 +1,5 @@
-import {notFound} from '@quilted/http-handlers';
-import type {HttpHandler} from '@quilted/http-handlers';
+import {notFound} from '@quilted/quilt/http-handlers';
+import type {HttpHandler} from '@quilted/quilt/http-handlers';
 
 import {getAssetFromKV} from './forked/kv-asset-handler';
 import type {

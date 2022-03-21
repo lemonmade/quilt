@@ -1,7 +1,7 @@
 import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
-import {notFound, createHeaders} from '@quilted/http-handlers';
-import type {HttpHandler} from '@quilted/http-handlers';
+import {notFound, createHeaders} from '@quilted/quilt/http-handlers';
+import type {HttpHandler} from '@quilted/quilt/http-handlers';
 
 export function createLambdaApiGatewayProxy(
   handler: HttpHandler,

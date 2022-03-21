@@ -50,6 +50,7 @@ export function serviceBuild({minify, httpHandler, env}: Options) {
             rollupInput,
             rollupPlugins,
             rollupOutputs,
+            rollupExternals,
             quiltServiceOutputFormat,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
@@ -69,6 +70,13 @@ export function serviceBuild({minify, httpHandler, env}: Options) {
           quiltRuntimeEnvironmentVariables?.(
             (runtime) => runtime ?? 'process.env',
           );
+
+          // Force quilt to always be externalized, in case it is
+          // not listed as a direct dependency of the project.
+          rollupExternals?.((externals) => [
+            ...externals,
+            /@quilted[/]quilt(?!\/(magic|env))/,
+          ]);
 
           rollupInput?.(async () => {
             return [MAGIC_ENTRY_MODULE];

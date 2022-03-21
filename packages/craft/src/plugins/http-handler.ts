@@ -158,7 +158,7 @@ export function httpHandlerDevelopment({
 }: Options = {}) {
   return createProjectPlugin<App | Service>({
     name: 'Quilt.HttpHandler.Development',
-    develop({project, internal, hooks, configure, run}) {
+    develop({project, hooks, configure, run}) {
       hooks<HttpHandlerHooks>(({waterfall}) => ({
         quiltHttpHandlerPort: waterfall(),
         quiltHttpHandlerHost: waterfall(),
@@ -173,6 +173,7 @@ export function httpHandlerDevelopment({
             rollupInput,
             rollupPlugins,
             rollupNodeBundle,
+            rollupExternals,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -203,10 +204,17 @@ export function httpHandlerDevelopment({
           // We will let node_modules be imported normally
           rollupNodeBundle?.(() => false);
 
+          // Force quilt to always be externalized, in case it is
+          // not listed as a direct dependency of the project.
+          rollupExternals?.((externals) => [
+            ...externals,
+            /@quilted[/]quilt(?!\/(magic|env))/,
+          ]);
+
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
 
-            plugins.push(
+            return [
               {
                 name: '@quilted/http-handler/magic-entry',
                 resolveId(id) {
@@ -245,7 +253,7 @@ export function httpHandlerDevelopment({
 
                     process.on('uncaughtException', (...args) => {
                       console.error(...args);
-                    });        
+                    });
 
                     createHttpServer(httpHandler).listen(port, host, () => {
                       console.log(\`${
@@ -277,9 +285,8 @@ export function httpHandlerDevelopment({
                   );
                 },
               },
-            );
-
-            return plugins;
+              ...plugins,
+            ];
           });
         },
       );
@@ -289,10 +296,8 @@ export function httpHandlerDevelopment({
           name: 'Quilt.HttpHandler.Development',
           label: `Running local development server for ${project.name}`,
           async run() {
-            const file = internal.fs.tempPath(
-              'quilt-http-handler-dev',
-              project.name,
-              'built.js',
+            const file = project.fs.buildPath(
+              'develop/quilt-http-handler/built.js',
             );
 
             const [

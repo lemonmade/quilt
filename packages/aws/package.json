@@ -45,7 +45,6 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/http-handlers": "^0.2.20",
     "@types/aws-lambda": "^8.0.0",
     "common-tags": "^1.8.0"
   },
@@ -54,14 +53,18 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/craft": "^0.1.76",
-    "@quilted/sewing-kit": "^0.2.23"
+    "@quilted/quilt": "^0.5.0",
+    "@quilted/craft": "^0.1.0",
+    "@quilted/sewing-kit": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
       "optional": true
     },
     "@quilted/craft": {
+      "optional": true
+    },
+    "@quilted/quilt": {
       "optional": true
     },
     "@quilted/sewing-kit": {
