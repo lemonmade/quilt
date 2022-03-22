@@ -6,6 +6,7 @@ import type {Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
+import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
 
 export interface ServiceBuildHooks {
   /**
@@ -30,12 +31,28 @@ declare module '@quilted/sewing-kit' {
 export interface Options {
   env?: EnvironmentOptions;
   minify: boolean;
+
+  /**
+   * Determines how dependencies will be bundled into your application.
+   * By default, Quilt will bundle all dependencies (other than node
+   * built-in modules) into the build outputs, which optimizes for
+   * performance. You can change this behavior by passing `false`,
+   * which will force all dependencies to be resolved at runtime, or
+   * by passing an object with granular controls on what dependencies
+   * are bundled.
+   */
+  bundle?: boolean | RollupNodeBundle;
   httpHandler: boolean;
 }
 
 const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService';
 
-export function serviceBuild({minify, httpHandler, env}: Options) {
+export function serviceBuild({
+  minify,
+  bundle = true,
+  httpHandler,
+  env,
+}: Options) {
   return createProjectPlugin<Service>({
     name: 'Quilt.Service.Build',
     build({project, hooks, configure, run}) {
@@ -50,7 +67,7 @@ export function serviceBuild({minify, httpHandler, env}: Options) {
             rollupInput,
             rollupPlugins,
             rollupOutputs,
-            rollupExternals,
+            rollupNodeBundle,
             quiltServiceOutputFormat,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
@@ -71,12 +88,20 @@ export function serviceBuild({minify, httpHandler, env}: Options) {
             (runtime) => runtime ?? 'process.env',
           );
 
-          // Force quilt to always be externalized, in case it is
-          // not listed as a direct dependency of the project.
-          rollupExternals?.((externals) => [
-            ...externals,
-            /@quilted[/]quilt(?!\/(magic|env))/,
-          ]);
+          rollupNodeBundle?.((existingBundle) => {
+            const shouldBundle = Boolean(bundle);
+            const {include = [], exclude = []} =
+              typeof existingBundle === 'object' ? existingBundle : {};
+
+            return {
+              builtins: false,
+              dependencies: shouldBundle,
+              devDependencies: shouldBundle,
+              peerDependencies: shouldBundle,
+              include: [...include, /@quilted[/]quilt[/](magic|env|polyfills)/],
+              exclude,
+            };
+          });
 
           rollupInput?.(async () => {
             return [MAGIC_ENTRY_MODULE];

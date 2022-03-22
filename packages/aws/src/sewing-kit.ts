@@ -22,6 +22,7 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
         (
           {
             rollupExternals,
+            rollupNodeBundle,
             rollupOutputs,
             quiltHttpHandlerRuntimeContent,
             quiltServiceOutputFormat,
@@ -54,9 +55,33 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
 
           quiltAppServerOutputFormat?.(() => 'commonjs');
 
-          rollupExternals?.((externals) => {
-            externals.push('aws-sdk');
-            return externals;
+          rollupExternals?.((externals) => [...externals, 'aws-sdk']);
+
+          rollupNodeBundle?.((bundle) => {
+            switch (bundle) {
+              case true: {
+                return {
+                  builtins: false,
+                  dependencies: true,
+                  devDependencies: true,
+                  peerDependencies: true,
+                  exclude: ['aws-sdk'],
+                };
+              }
+              case false: {
+                return bundle;
+              }
+              default: {
+                return {
+                  builtins: false,
+                  dependencies: true,
+                  devDependencies: true,
+                  peerDependencies: true,
+                  ...bundle,
+                  exclude: [...(bundle.exclude ?? []), 'aws-sdk'],
+                };
+              }
+            }
           });
 
           // AWS still only supports commonjs

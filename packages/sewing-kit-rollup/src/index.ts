@@ -245,7 +245,7 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
 
   let nodeExternalsPlugin: import('rollup').Plugin;
 
-  const defaultShouldBundle = project.kind !== ProjectKind.Package;
+  const defaultShouldBundle = project.kind === ProjectKind.App;
   const shouldBundle = await rollupNodeBundle!.run();
 
   if (shouldBundle === true) {

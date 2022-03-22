@@ -74,58 +74,36 @@ export function httpHandler({port: explicitPort}: Options = {}) {
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
 
-            plugins.unshift({
-              name: '@quilted/http-handler/magic-module',
-              async resolveId(id) {
-                if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
+            return [
+              {
+                name: '@quilted/http-handler/magic-entry',
+                resolveId(id) {
+                  if (id !== MAGIC_ENTRY_MODULE) return null;
 
-                return id;
-              },
-              load(id) {
-                if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
+                  // We resolve to a path within the project’s directory
+                  // so that it can use the app’s node_modules.
+                  return {
+                    id: project.fs.resolvePath(id),
+                    moduleSideEffects: 'no-treeshake',
+                  };
+                },
+                async load(source) {
+                  if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                    return null;
+                  }
 
-                // If we were given content, we will use that as the content
-                // for the entry. Otherwise, just point to the project’s entry,
-                // which is assumed to be a module that exports a `createHttpHandler()`
-                // object as the default export.
-                return (
-                  content ??
-                  `export {default} from ${JSON.stringify(
-                    project.fs.resolvePath(project.entry ?? 'index'),
-                  )}`
-                );
-              },
-            });
+                  const content = await quiltHttpHandlerRuntimeContent!.run(
+                    undefined,
+                  );
 
-            plugins.push({
-              name: '@quilted/http-handler/magic-entry',
-              resolveId(id) {
-                if (id !== MAGIC_ENTRY_MODULE) return null;
+                  if (content) return content;
 
-                // We resolve to a path within the project’s directory
-                // so that it can use the app’s node_modules.
-                return {
-                  id: project.fs.resolvePath(id),
-                  moduleSideEffects: 'no-treeshake',
-                };
-              },
-              async load(source) {
-                if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
-                  return null;
-                }
+                  const [port, host] = await Promise.all([
+                    quiltHttpHandlerPort!.run(explicitPort),
+                    quiltHttpHandlerHost!.run(undefined),
+                  ]);
 
-                const content = await quiltHttpHandlerRuntimeContent!.run(
-                  undefined,
-                );
-
-                if (content) return content;
-
-                const [port, host] = await Promise.all([
-                  quiltHttpHandlerPort!.run(explicitPort),
-                  quiltHttpHandlerHost!.run(undefined),
-                ]);
-
-                return stripIndent`
+                  return stripIndent`
                     import httpHandler from ${JSON.stringify(
                       MAGIC_MODULE_HTTP_HANDLER,
                     )};
@@ -141,10 +119,32 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                   
                     createHttpServer(httpHandler).listen(port, host);
                   `;
+                },
               },
-            });
+              {
+                name: '@quilted/http-handler/magic-module',
+                async resolveId(id) {
+                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-            return plugins;
+                  return id;
+                },
+                load(id) {
+                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
+
+                  // If we were given content, we will use that as the content
+                  // for the entry. Otherwise, just point to the project’s entry,
+                  // which is assumed to be a module that exports a `createHttpHandler()`
+                  // object as the default export.
+                  return (
+                    content ??
+                    `export {default} from ${JSON.stringify(
+                      project.fs.resolvePath(project.entry ?? 'index'),
+                    )}`
+                  );
+                },
+              },
+              ...plugins,
+            ];
           });
         },
       );
@@ -173,7 +173,6 @@ export function httpHandlerDevelopment({
             rollupInput,
             rollupPlugins,
             rollupNodeBundle,
-            rollupExternals,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -201,15 +200,22 @@ export function httpHandlerDevelopment({
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
-          // We will let node_modules be imported normally
-          rollupNodeBundle?.(() => false);
+          // We want to force some of our “magic” modules to be internalized
+          // no matter what, and otherwise allow all other node dependencies
+          // to be unbundled.
+          rollupNodeBundle?.((bundle) => {
+            const {include = [], exclude = []} =
+              typeof bundle === 'object' ? bundle : {};
 
-          // Force quilt to always be externalized, in case it is
-          // not listed as a direct dependency of the project.
-          rollupExternals?.((externals) => [
-            ...externals,
-            /@quilted[/]quilt(?!\/(magic|env))/,
-          ]);
+            return {
+              builtins: false,
+              dependencies: false,
+              devDependencies: false,
+              peerDependencies: false,
+              include: [...include, /@quilted[/]quilt[/](magic|env|polyfills)/],
+              exclude,
+            };
+          });
 
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
