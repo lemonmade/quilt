@@ -17,6 +17,7 @@ import {
 
 import {STEP_NAME} from './app-build';
 import type {EnvironmentOptions} from './magic-module-env';
+import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
 
 export interface AppServerOptions {
   /**
@@ -56,6 +57,17 @@ export interface AppServerOptions {
    * Controls how the app server exposes environment variables.
    */
   env?: EnvironmentOptions;
+
+  /**
+   * Determines how dependencies will be bundled into your app server.
+   * By default, Quilt will bundle all dependencies (other than node
+   * built-in modules) into the build outputs, which optimizes for
+   * performance. You can change this behavior by passing `false`,
+   * which will force all dependencies to be resolved at runtime, or
+   * by passing an object with granular controls on what dependencies
+   * are bundled.
+   */
+  bundle?: boolean | RollupNodeBundle;
 }
 
 export interface AppServerBuildOptions {
@@ -95,6 +107,7 @@ export function appServer(options?: AppServerOptions) {
   const httpHandler = options?.httpHandler ?? true;
   const serveAssets = options?.serveAssets ?? true;
   const inlineEnv = options?.env?.inline;
+  const bundle = options?.bundle ?? true;
 
   return createProjectPlugin<App>({
     name: 'Quilt.App.Server',
@@ -112,6 +125,7 @@ export function appServer(options?: AppServerOptions) {
             rollupInput,
             rollupPlugins,
             rollupOutputs,
+            rollupNodeBundle,
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerEntryContent,
@@ -167,6 +181,21 @@ export function appServer(options?: AppServerOptions) {
 
           quiltAsyncPreload?.(() => false);
           quiltAsyncManifest?.(() => false);
+
+          rollupNodeBundle?.((existingBundle) => {
+            const shouldBundle = Boolean(bundle);
+            const {include = [], exclude = []} =
+              typeof existingBundle === 'object' ? existingBundle : {};
+
+            return {
+              builtins: false,
+              dependencies: shouldBundle,
+              devDependencies: shouldBundle,
+              peerDependencies: shouldBundle,
+              include: [...include, /@quilted[/]quilt[/](magic|env|polyfills)/],
+              exclude,
+            };
+          });
 
           rollupPlugins?.(async (plugins) => {
             const {cssRollupPlugin} = await import('./rollup/css');
