@@ -1,5 +1,23 @@
 # @quilted/craft
 
+## 0.1.78
+
+### Patch Changes
+
+- [`7bb3292c`](https://github.com/lemonmade/quilt/commit/7bb3292c1e0fa75cb43a965d8da93e8b407f7ee5) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove unnecessary react bundling configuration
+
+* [`06f0aa87`](https://github.com/lemonmade/quilt/commit/06f0aa872f3cd9320b8f84528fa5cc0fa98eb685) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve default externals configuration for services
+
+- [`7890dccd`](https://github.com/lemonmade/quilt/commit/7890dccd6d0952f6a41d217a3b30d71d35f5b648) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix polyfill resolutions
+
+* [`f77bde37`](https://github.com/lemonmade/quilt/commit/f77bde37658273c205980b74cdd53805c56e2d9d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix dependency externalization for services
+
+* Updated dependencies [[`06f0aa87`](https://github.com/lemonmade/quilt/commit/06f0aa872f3cd9320b8f84528fa5cc0fa98eb685), [`433f94f5`](https://github.com/lemonmade/quilt/commit/433f94f56a86a687b5f70a2887a83a3aae25e025), [`7890dccd`](https://github.com/lemonmade/quilt/commit/7890dccd6d0952f6a41d217a3b30d71d35f5b648), [`5bdbcf9c`](https://github.com/lemonmade/quilt/commit/5bdbcf9c298d653dafca4996a5c28ff48829ed4e)]:
+  - @quilted/sewing-kit-rollup@0.1.15
+  - @quilted/quilt@0.5.74
+  - @quilted/polyfills@0.2.21
+  - @quilted/workers@0.2.19
+
 ## 0.1.77
 
 ### Patch Changes
