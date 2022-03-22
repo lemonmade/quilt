@@ -48,23 +48,7 @@ export function preact() {
       );
     },
     build({configure}) {
-      configure(({rollupPlugins, rollupNodeBundle}) => {
-        rollupNodeBundle?.((shouldBundle) => {
-          if (shouldBundle === true) return shouldBundle;
-          if (shouldBundle === false) {
-            return {
-              exclude: ['react', 'react-dom'],
-            };
-          }
-
-          return {
-            ...shouldBundle,
-            exclude: Array.from(
-              new Set([...(shouldBundle.exclude ?? []), 'react', 'react-dom']),
-            ),
-          };
-        });
-
+      configure(({rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
           const {default: alias} = await import('@rollup/plugin-alias');
 
