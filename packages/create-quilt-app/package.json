@@ -19,7 +19,7 @@
     "arg": "^5.0.0",
     "colorette": "^1.2.2",
     "fs-extra": "^10.0.0",
-    "pkg-dir": "^5.0.0",
+    "pkg-dir": "^6.0.0",
     "prompts": "^2.0.0"
   },
   "eslintConfig": {

@@ -9,7 +9,7 @@ import prompts from 'prompts';
 import type {Answers} from 'prompts';
 import arg from 'arg';
 import color from 'colorette';
-import pkgDir from 'pkg-dir';
+import {packageDirectory} from 'pkg-dir';
 
 const argv = arg({});
 const cwd = process.cwd();
@@ -85,9 +85,9 @@ async function run() {
 
   console.log(`\nCreating Quilt app in ${color.magenta(root)}...`);
 
-  const packageRoot = await pkgDir(
-    path.dirname(fileURLToPath(import.meta.url)),
-  );
+  const packageRoot = await packageDirectory({
+    cwd: path.dirname(fileURLToPath(import.meta.url)),
+  });
 
   const templateRoot = path.join(packageRoot!, 'template');
 
