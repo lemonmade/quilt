@@ -219,7 +219,9 @@
   },
   "sideEffects": [
     "./build/esnext/global.esnext",
-    "./build/esm/global.mjs"
+    "./build/esm/global.mjs",
+    "./build/esnext/polyfills/*.esnext",
+    "./build/esm/polyfills/*.mjs"
   ],
   "dependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

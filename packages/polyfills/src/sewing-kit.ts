@@ -1,5 +1,10 @@
+import {createRequire} from 'module';
 import {createProjectPlugin, Runtime} from '@quilted/sewing-kit';
-import type {WaterfallHookWithDefault} from '@quilted/sewing-kit';
+import type {
+  WaterfallHookWithDefault,
+  ResolvedBuildProjectConfigurationHooks,
+  ResolvedDevelopProjectConfigurationHooks,
+} from '@quilted/sewing-kit';
 
 import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
@@ -35,6 +40,10 @@ export interface Options {
   package?: string;
 }
 
+const ALIAS_DEPENDENCIES = ['core-js', 'regenerator-runtime'];
+
+const require = createRequire(import.meta.url);
+
 export function polyfills({features, package: packageName}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Polyfills',
@@ -45,27 +54,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         }),
       }));
 
-      configure(({runtime, targets, rollupPlugins, quiltPolyfillFeatures}) => {
-        rollupPlugins?.(async (plugins) => {
-          const [{polyfill}, resolvedFeatures, resolvedRuntime] =
-            await Promise.all([
-              import('./rollup-parts'),
-              quiltPolyfillFeatures!.run(),
-              runtime.run(),
-            ]);
-
-          return [
-            polyfill({
-              package: packageName,
-              features: resolvedFeatures,
-              target: resolvedRuntime.includes(Runtime.Browser)
-                ? await targets?.run([])
-                : 'node',
-            }),
-            ...plugins,
-          ];
-        });
-      });
+      configure(addRollupConfiguration);
     },
     develop({configure, hooks}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
@@ -74,27 +63,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         }),
       }));
 
-      configure(({runtime, targets, rollupPlugins, quiltPolyfillFeatures}) => {
-        rollupPlugins?.(async (plugins) => {
-          const [{polyfill}, resolvedFeatures, resolvedRuntime] =
-            await Promise.all([
-              import('./rollup-parts'),
-              quiltPolyfillFeatures!.run(),
-              runtime.run(),
-            ]);
-
-          return [
-            polyfill({
-              package: packageName,
-              features: resolvedFeatures,
-              target: resolvedRuntime.includes(Runtime.Browser)
-                ? await targets?.run([])
-                : 'node',
-            }),
-            ...plugins,
-          ];
-        });
-      });
+      configure(addRollupConfiguration);
     },
     test({configure, hooks}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
@@ -129,4 +98,53 @@ export function polyfills({features, package: packageName}: Options = {}) {
       });
     },
   });
+
+  function addRollupConfiguration({
+    runtime,
+    targets,
+    rollupPlugins,
+    quiltPolyfillFeatures,
+  }:
+    | ResolvedBuildProjectConfigurationHooks
+    | ResolvedDevelopProjectConfigurationHooks) {
+    rollupPlugins?.(async (plugins) => {
+      const [
+        {packageDirectory},
+        {default: alias},
+        {polyfill},
+        resolvedFeatures,
+        resolvedRuntime,
+      ] = await Promise.all([
+        import('pkg-dir'),
+        import('@rollup/plugin-alias'),
+        import('./rollup-parts'),
+        quiltPolyfillFeatures!.run(),
+        runtime.run(),
+      ]);
+
+      const aliases = await Promise.all(
+        ALIAS_DEPENDENCIES.map(async (dependency) => {
+          const dependencyRoot = await packageDirectory({
+            cwd: require.resolve(dependency),
+          });
+
+          return [dependency, dependencyRoot] as const;
+        }),
+      );
+
+      return [
+        alias({
+          entries: Object.fromEntries(aliases),
+        }),
+        polyfill({
+          package: packageName,
+          features: resolvedFeatures,
+          target: resolvedRuntime.includes(Runtime.Browser)
+            ? await targets?.run([])
+            : 'node',
+        }),
+        ...plugins,
+      ];
+    });
+  }
 }

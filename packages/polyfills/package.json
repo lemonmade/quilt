@@ -94,20 +94,22 @@
   "sideEffects": true,
   "dependencies": {
     "@peculiar/webcrypto": "^1.3.0",
+    "@rollup/plugin-alias": "^3.1.0",
     "@types/caniuse-api": "^3.0.0",
-    "@types/node-fetch": "^2.0.0",
+    "@types/node-fetch": "^2.6.0",
     "caniuse-api": "^3.0.0",
-    "core-js": "^3.0.0",
-    "magic-string": "^0.25.0",
-    "node-fetch": "^2.0.0",
+    "core-js": "^3.21.0",
+    "magic-string": "^0.26.0",
+    "node-fetch": "^3.2.0",
+    "pkg-dir": "^6.0.0",
     "regenerator-runtime": "^0.13.0",
-    "whatwg-fetch": "^3.5.0"
+    "whatwg-fetch": "^3.6.0"
   },
   "devDependencies": {
-    "@quilted/sewing-kit": "^0.2.2",
-    "@quilted/sewing-kit-jest": "^0.1.2",
-    "@quilted/sewing-kit-rollup": "^0.1.2",
-    "@quilted/sewing-kit-targets": "^0.1.2"
+    "@quilted/sewing-kit": "^0.2.0",
+    "@quilted/sewing-kit-jest": "^0.1.0",
+    "@quilted/sewing-kit-rollup": "^0.1.0",
+    "@quilted/sewing-kit-targets": "^0.1.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
