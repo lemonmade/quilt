@@ -25,11 +25,4 @@ if (!Reflect.has(globalThis, 'fetch')) {
   Reflect.defineProperty(globalThis, 'Request', {value: Request});
 }
 
-if (!(global as any).fetch) {
-  (global as any).fetch = wrappedFetch;
-  (global as any).Response = Response;
-  (global as any).Headers = Headers;
-  (global as any).Request = Request;
-}
-
 export {};

@@ -54,7 +54,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
               runtime.run(),
             ]);
 
-          plugins.push(
+          return [
             polyfill({
               package: packageName,
               features: resolvedFeatures,
@@ -62,9 +62,8 @@ export function polyfills({features, package: packageName}: Options = {}) {
                 ? await targets?.run([])
                 : 'node',
             }),
-          );
-
-          return plugins;
+            ...plugins,
+          ];
         });
       });
     },
@@ -84,7 +83,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
               runtime.run(),
             ]);
 
-          plugins.push(
+          return [
             polyfill({
               package: packageName,
               features: resolvedFeatures,
@@ -92,9 +91,8 @@ export function polyfills({features, package: packageName}: Options = {}) {
                 ? await targets?.run([])
                 : 'node',
             }),
-          );
-
-          return plugins;
+            ...plugins,
+          ];
         });
       });
     },

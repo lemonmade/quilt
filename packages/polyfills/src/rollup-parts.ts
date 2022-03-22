@@ -13,6 +13,8 @@ export interface Options {
   package?: string;
 }
 
+const POLYFILL_REGEX = /@quilted[/](quilt[/])?polyfills/;
+
 export function polyfill({
   target,
   features,
@@ -28,10 +30,8 @@ export function polyfill({
   return {
     name: '@quilted/polyfills',
     resolveId(source) {
-      const polyfill = polyfills.get(source);
-
-      return polyfill
-        ? {id: polyfill, moduleSideEffects: 'no-treeshake'}
+      return POLYFILL_REGEX.test(source)
+        ? {id: source, moduleSideEffects: 'no-treeshake'}
         : null;
     },
     transform(code, id) {
