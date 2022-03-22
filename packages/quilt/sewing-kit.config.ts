@@ -29,6 +29,7 @@ export default createPackage((pkg) => {
   });
   pkg.entry({source: './src/polyfills/base', name: 'polyfills/base'});
   pkg.entry({source: './src/polyfills/fetch', name: 'polyfills/fetch'});
+  pkg.entry({source: './src/polyfills/crypto', name: 'polyfills/crypto'});
   pkg.entry({source: './src/polyfills/noop', name: 'polyfills/noop'});
   pkg.entry({source: './src/server', name: 'server', runtime: Runtime.Node});
   pkg.entry({source: './src/static', name: 'static', runtime: Runtime.Node});
