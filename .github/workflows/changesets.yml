@@ -21,8 +21,8 @@ jobs:
       # @see https://github.com/changesets/action
       - uses: changesets/action@v1
         with:
-          title: '[ci] Publish packages 🚀'
-          commit: '[ci] Publish packages'
+          title: 'Publish packages 🚀'
+          commit: 'Publish packages'
           version: pnpm version-bump
           publish: pnpm changeset tag
         env:
