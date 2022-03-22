@@ -1,5 +1,11 @@
 # @quilted/sewing-kit-rollup
 
+## 0.1.16
+
+### Patch Changes
+
+- [`a65c4aa4`](https://github.com/lemonmade/quilt/commit/a65c4aa438a4b3988e1e16bf9c8c58a0b9aaaa23) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix node: module resolution
+
 ## 0.1.15
 
 ### Patch Changes
