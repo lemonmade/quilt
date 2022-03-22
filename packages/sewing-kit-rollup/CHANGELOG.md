@@ -1,5 +1,11 @@
 # @quilted/sewing-kit-rollup
 
+## 0.1.15
+
+### Patch Changes
+
+- [`06f0aa87`](https://github.com/lemonmade/quilt/commit/06f0aa872f3cd9320b8f84528fa5cc0fa98eb685) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve default externals configuration for services
+
 ## 0.1.14
 
 ### Patch Changes

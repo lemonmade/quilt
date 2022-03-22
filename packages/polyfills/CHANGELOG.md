@@ -1,5 +1,14 @@
 # @quilted/polyfills
 
+## 0.2.21
+
+### Patch Changes
+
+- [`7890dccd`](https://github.com/lemonmade/quilt/commit/7890dccd6d0952f6a41d217a3b30d71d35f5b648) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix polyfill resolutions
+
+- Updated dependencies [[`06f0aa87`](https://github.com/lemonmade/quilt/commit/06f0aa872f3cd9320b8f84528fa5cc0fa98eb685)]:
+  - @quilted/sewing-kit-rollup@0.1.15
+
 ## 0.2.20
 
 ### Patch Changes

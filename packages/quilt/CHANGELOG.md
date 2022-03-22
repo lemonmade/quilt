@@ -1,5 +1,13 @@
 # @quilted/quilt
 
+## 0.5.74
+
+### Patch Changes
+
+- [`433f94f5`](https://github.com/lemonmade/quilt/commit/433f94f56a86a687b5f70a2887a83a3aae25e025) Thanks [@lemonmade](https://github.com/lemonmade)! - Add missing quilted/quilt/crypto entry
+
+* [`5bdbcf9c`](https://github.com/lemonmade/quilt/commit/5bdbcf9c298d653dafca4996a5c28ff48829ed4e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix package resolution for workers package
+
 ## 0.5.73
 
 ### Patch Changes

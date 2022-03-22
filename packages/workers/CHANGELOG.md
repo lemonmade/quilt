@@ -1,5 +1,14 @@
 # @quilted/workers
 
+## 0.2.19
+
+### Patch Changes
+
+- [`5bdbcf9c`](https://github.com/lemonmade/quilt/commit/5bdbcf9c298d653dafca4996a5c28ff48829ed4e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix package resolution for workers package
+
+- Updated dependencies [[`06f0aa87`](https://github.com/lemonmade/quilt/commit/06f0aa872f3cd9320b8f84528fa5cc0fa98eb685)]:
+  - @quilted/sewing-kit-rollup@0.1.15
+
 ## 0.2.18
 
 ### Patch Changes

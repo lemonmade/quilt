@@ -1,5 +1,11 @@
 # @quilted/react-workers
 
+## 0.2.19
+
+### Patch Changes
+
+- [`5bdbcf9c`](https://github.com/lemonmade/quilt/commit/5bdbcf9c298d653dafca4996a5c28ff48829ed4e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix package resolution for workers package
+
 ## 0.2.18
 
 ### Patch Changes

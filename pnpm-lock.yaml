@@ -122,7 +122,7 @@ importers:
       '@quilted/browserslist-config': 0.1.5
       '@quilted/eslint-config': 0.1.8
       '@quilted/graphql': ^0.4.0
-      '@quilted/polyfills': 0.2.20
+      '@quilted/polyfills': 0.2.21
       '@quilted/prettier': 0.2.7
       '@quilted/quilt': ^0.5.0
       '@quilted/react-testing': ^0.5.0
@@ -134,7 +134,7 @@ importers:
       '@quilted/sewing-kit-package': 0.1.17
       '@quilted/sewing-kit-prettier': 0.1.10
       '@quilted/sewing-kit-react': 0.1.10
-      '@quilted/sewing-kit-rollup': 0.1.14
+      '@quilted/sewing-kit-rollup': 0.1.15
       '@quilted/sewing-kit-targets': 0.1.14
       '@quilted/sewing-kit-typescript': 0.1.11
       '@quilted/sewing-kit-vite': 0.1.11
