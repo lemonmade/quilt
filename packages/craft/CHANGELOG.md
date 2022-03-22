@@ -1,5 +1,16 @@
 # @quilted/craft
 
+## 0.1.80
+
+### Patch Changes
+
+- [`96aa020c`](https://github.com/lemonmade/quilt/commit/96aa020c6a497c973107f34a9d26ac8e4d2eb3df) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix app server dependency bundling
+
+* [`a65c4aa4`](https://github.com/lemonmade/quilt/commit/a65c4aa438a4b3988e1e16bf9c8c58a0b9aaaa23) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix node: module resolution
+
+* Updated dependencies [[`a65c4aa4`](https://github.com/lemonmade/quilt/commit/a65c4aa438a4b3988e1e16bf9c8c58a0b9aaaa23)]:
+  - @quilted/sewing-kit-rollup@0.1.16
+
 ## 0.1.79
 
 ### Patch Changes
