@@ -1,5 +1,11 @@
 # @quilted/polyfills
 
+## 0.2.22
+
+### Patch Changes
+
+- [#214](https://github.com/lemonmade/quilt/pull/214) [`70dc3a9a`](https://github.com/lemonmade/quilt/commit/70dc3a9a52cec86224017874520e0ec941b8b85f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix polyfill package resolution
+
 ## 0.2.21
 
 ### Patch Changes
