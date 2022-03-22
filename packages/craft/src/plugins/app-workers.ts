@@ -8,7 +8,7 @@ export const STEP_NAME = 'Quilt.AppWorkers';
 export function appWorkers({baseUrl}: {baseUrl: string}) {
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    develop({project, configure}) {
+    develop({project, workspace, configure}) {
       configure((configuration) => {
         const {
           quiltWorkerRollupPlugins,
@@ -42,6 +42,7 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
 
           const nodePlugins = await getRollupNodePlugins(
             project,
+            workspace,
             configuration,
           );
 

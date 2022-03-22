@@ -11,6 +11,7 @@ import {
 } from '@quilted/sewing-kit';
 import type {
   Project,
+  Workspace,
   WaterfallHook,
   WaterfallHookWithDefault,
   ResolvedBuildProjectConfigurationHooks,
@@ -148,7 +149,7 @@ export function rollupNode<ProjectType extends Project = Project>({
 }: RollupNodeOptions = {}) {
   return createProjectPlugin<ProjectType>({
     name: 'SewingKit.Rollup.Node',
-    build({project, hooks, configure}) {
+    build({project, workspace, hooks, configure}) {
       hooks<RollupNodeHooks>(({waterfall}) => ({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
@@ -159,9 +160,11 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupCommonJSOptions: waterfall(),
       }));
 
-      configure((configuration) => addConfiguration(project, configuration));
+      configure((configuration) =>
+        addConfiguration(project, workspace, configuration),
+      );
     },
-    develop({project, hooks, configure}) {
+    develop({project, workspace, hooks, configure}) {
       hooks<RollupNodeHooks>(({waterfall}) => ({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
@@ -172,19 +175,26 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupCommonJSOptions: waterfall(),
       }));
 
-      configure((configuration) => addConfiguration(project, configuration));
+      configure((configuration) =>
+        addConfiguration(project, workspace, configuration),
+      );
     },
   });
 }
 
 function addConfiguration<ProjectType extends Project>(
   project: ProjectType,
+  workspace: Workspace,
   configuration:
     | ResolvedBuildProjectConfigurationHooks<ProjectType>
     | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
 ) {
   configuration.rollupPlugins?.(async (plugins) => {
-    const nodePlugins = await getRollupNodePlugins(project, configuration);
+    const nodePlugins = await getRollupNodePlugins(
+      project,
+      workspace,
+      configuration,
+    );
     plugins.unshift(...nodePlugins);
     return plugins;
   });
@@ -197,6 +207,7 @@ function addConfiguration<ProjectType extends Project>(
  */
 export async function getRollupNodePlugins<ProjectType extends Project>(
   project: ProjectType,
+  workspace: Workspace,
   {
     runtime,
     extensions,
@@ -254,6 +265,7 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     // other than node builtins.
     nodeExternalsPlugin = nodeExternals({
       builtins: true,
+      prefixedBuiltins: true,
       deps: false,
       devDeps: false,
       peerDeps: false,
@@ -267,6 +279,7 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     // we mark all dependencies as external.
     nodeExternalsPlugin = nodeExternals({
       builtins: true,
+      prefixedBuiltins: true,
       deps: true,
       devDeps: true,
       peerDeps: true,
@@ -289,13 +302,17 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
 
     nodeExternalsPlugin = nodeExternals({
       builtins: !bundleBuiltins,
+      prefixedBuiltins: !bundleBuiltins,
       deps: !bundleDependencies,
       devDeps: !bundleDevDependencies,
       peerDeps: !bundlePeerDependencies,
       optDeps: !bundlePeerDependencies,
       include: neverBundleDependencies,
       exclude: alwaysBundleDependencies,
-      packagePath: project.packageJson?.path,
+      packagePath: [
+        project.packageJson?.path,
+        workspace.packageJson?.path,
+      ].filter((item): item is string => Boolean(item)),
     });
   }
 

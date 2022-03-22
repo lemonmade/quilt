@@ -27,7 +27,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "builtin-modules": "^3.0.0",
     "rollup": "^2.0.0",
-    "rollup-plugin-node-externals": "^2.0.0"
+    "rollup-plugin-node-externals": "^4.0.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

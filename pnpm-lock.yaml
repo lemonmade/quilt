@@ -689,14 +689,14 @@ importers:
       '@rollup/plugin-node-resolve': ^13.0.0
       builtin-modules: ^3.0.0
       rollup: ^2.0.0
-      rollup-plugin-node-externals: ^2.0.0
+      rollup-plugin-node-externals: ^4.0.0
     dependencies:
       '@rollup/plugin-commonjs': 19.0.0_rollup@2.70.0
       '@rollup/plugin-json': 4.1.0_rollup@2.70.0
       '@rollup/plugin-node-resolve': 13.0.0_rollup@2.70.0
       builtin-modules: 3.2.0
       rollup: 2.70.0
-      rollup-plugin-node-externals: 2.2.0_builtin-modules@3.2.0
+      rollup-plugin-node-externals: 4.0.0_rollup@2.70.0
 
   packages/sewing-kit-targets:
     specifiers:
@@ -5516,7 +5516,6 @@ packages:
     dependencies:
       locate-path: 6.0.0
       path-exists: 4.0.0
-    dev: true
 
   /find-up/6.3.0:
     resolution: {integrity: sha512-v2ZsoEuVHYy8ZIlYqwPe/39Cy+cFDzp4dXPaxNvkEuouymu+2Jbz0PxpKarJHYJTmv2HWT3O382qY8l4jMWthw==}
@@ -6903,7 +6902,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
-    dev: true
 
   /locate-path/7.1.0:
     resolution: {integrity: sha512-HNx5uOnYeK4SxEoid5qnhRfprlJeGMzFRKPLCf/15N3/B4AiofNwC/yq7VBKdVk9dx7m+PiYCJOGg55JYTAqoQ==}
@@ -7373,7 +7371,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-limit: 3.1.0
-    dev: true
 
   /p-locate/6.0.0:
     resolution: {integrity: sha512-wPrq66Llhl7/4AGC6I+cqxT07LhXvWL08LNXz1fENOw0Ap4sRZZ/gZpTTJ5jpurzzzfS2W/Ge9BY3LgLjCShcw==}
@@ -8004,14 +8001,14 @@ packages:
       - supports-color
     dev: false
 
-  /rollup-plugin-node-externals/2.2.0_builtin-modules@3.2.0:
-    resolution: {integrity: sha512-WM7TtQ76GdsLceEGmZzQzn1afj8JgOQT5VLs1Y9RMqowM/8eK2mBj/Lv7hoE833U75QsUZIRirYUtFatu51RJA==}
-    engines: {node: '>=8.0.0'}
+  /rollup-plugin-node-externals/4.0.0_rollup@2.70.0:
+    resolution: {integrity: sha512-7L0lqN+AEJqS13x240F5zyArHn2tNpHC7Ju8vtS893DkutIU89k5v3A7jhnOqLvOXAzjm9Ha7UZdwHOPyqiPDQ==}
+    engines: {node: '>=14.0.0', rollup: '>=2.60.0'}
     peerDependencies:
-      builtin-modules: ^3.1.0
+      rollup: ^2.60.0
     dependencies:
-      builtin-modules: 3.2.0
-      find-up: 4.1.0
+      find-up: 5.0.0
+      rollup: 2.70.0
     dev: false
 
   /rollup-plugin-visualizer/5.5.1_rollup@2.70.0:
