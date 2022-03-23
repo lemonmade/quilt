@@ -421,7 +421,7 @@ importers:
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
       preact: ^10.6.0
-      preact-render-to-string: ^5.0.0
+      preact-render-to-string: ^5.1.0
     dependencies:
       '@quilted/preact-mini-compat': link:../preact-mini-compat
       '@types/react': 17.0.13
