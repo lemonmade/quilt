@@ -1,3 +1,5 @@
-// @ts-expect-error No types for this package, but it is typically only used
-// as an alias anyways
-export * from 'preact/compat/server';
+// Originally, I wanted to just re-export `preact/compat/server`,
+// but it lists export conditions in the wrong order.
+// @see https://github.com/preactjs/preact/issues/3488
+export * from 'preact-render-to-string';
+export {default} from 'preact-render-to-string';
