@@ -1,5 +1,12 @@
 # @quilted/craft
 
+## 0.1.81
+
+### Patch Changes
+
+- Updated dependencies [[`75012268`](https://github.com/lemonmade/quilt/commit/750122688fd3c42a230239b65635fb42fc523342)]:
+  - @quilted/sewing-kit-rollup@0.1.17
+
 ## 0.1.80
 
 ### Patch Changes

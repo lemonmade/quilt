@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.80",
+  "version": "0.1.81",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -51,7 +51,7 @@
     "@quilted/sewing-kit-package": "0.1.17",
     "@quilted/sewing-kit-prettier": "0.1.10",
     "@quilted/sewing-kit-react": "0.1.10",
-    "@quilted/sewing-kit-rollup": "0.1.16",
+    "@quilted/sewing-kit-rollup": "0.1.17",
     "@quilted/sewing-kit-targets": "0.1.14",
     "@quilted/sewing-kit-typescript": "0.1.11",
     "@quilted/sewing-kit-vite": "0.1.11",
