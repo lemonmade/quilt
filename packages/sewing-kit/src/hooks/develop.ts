@@ -52,7 +52,7 @@ export type DevelopOptionsForProject<ProjectType extends Project = Project> =
 export interface DevelopWorkspaceOptions {}
 
 /**
- * Hooks provided by sewing-kit for developing any code project.
+ * Hooks for developing any code project.
  */
 export interface DevelopProjectConfigurationCoreHooks {
   /**
@@ -116,7 +116,7 @@ export type ResolvedDevelopProjectConfigurationHooks<
   DevelopProjectConfigurationCoreHooks;
 
 /**
- * Hooks provided by sewing-kit for developing the entire workspace.
+ * Hooks for developing the entire workspace.
  */
 export interface DevelopWorkspaceConfigurationCoreHooks {}
 
@@ -162,7 +162,7 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
   readonly options: DevelopTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */
@@ -247,7 +247,7 @@ export interface DevelopWorkspaceTask {
   readonly options: DevelopTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */

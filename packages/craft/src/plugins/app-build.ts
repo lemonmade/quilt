@@ -4,10 +4,10 @@ import {rm} from 'fs/promises';
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
 
-import {createProjectPlugin, TargetRuntime, Runtime} from '@quilted/sewing-kit';
-import type {App, WaterfallHookWithDefault} from '@quilted/sewing-kit';
+import type {} from '../features/async';
 
-import type {} from '@quilted/async/sewing-kit';
+import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
+import type {App, WaterfallHookWithDefault} from '../kit';
 
 import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
@@ -335,7 +335,7 @@ export function appBuild({
                       priority: targetsBySize.indexOf(targets),
                     },
                   }),
-                  import('@quilted/sewing-kit-rollup'),
+                  import('../tools/rollup'),
                 ]);
 
                 await buildWithRollup(project, configure);

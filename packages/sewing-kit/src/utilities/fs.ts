@@ -8,8 +8,8 @@ import {
   unlink,
   writeFile,
 } from 'fs/promises';
-import glob from 'globby';
-import type {GlobbyOptions} from 'globby';
+import {globbySync} from 'globby';
+import type {Options as GlobbyOptions} from 'globby';
 
 import type {
   FileSystem as FSType,
@@ -59,7 +59,7 @@ class BaseFileSystem implements FSType {
   }
 
   async glob(pattern: string, options: GlobbyOptions = {}) {
-    return glob.sync(pattern, {cwd: this.root, absolute: true, ...options});
+    return globbySync(pattern, {cwd: this.root, absolute: true, ...options});
   }
 
   resolvePath(...paths: string[]) {
@@ -81,8 +81,8 @@ export class InternalFileSystem
   extends BaseFileSystem
   implements InternalFSType
 {
-  constructor(root: string) {
-    super(join(root, '.sewing-kit'));
+  constructor(root: string, {name = '.sewing-kit'} = {}) {
+    super(join(root, name));
   }
 
   tempPath(...paths: string[]) {

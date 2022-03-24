@@ -50,7 +50,7 @@ export type LintOptionsForProject<ProjectType extends Project = Project> =
 export interface LintWorkspaceOptions {}
 
 /**
- * Hooks provided by sewing-kit for linting any code project.
+ * Hooks for linting any code project.
  */
 export interface LintProjectConfigurationCoreHooks {}
 
@@ -103,7 +103,7 @@ export type ResolvedLintProjectConfigurationHooks<
   LintProjectConfigurationCoreHooks;
 
 /**
- * Hooks provided by sewing-kit for linting the entire workspace.
+ * Hooks for linting the entire workspace.
  */
 export interface LintWorkspaceConfigurationCoreHooks {}
 
@@ -154,7 +154,7 @@ export interface LintProjectTask<ProjectType extends Project = Project> {
   readonly options: LintTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */
@@ -239,7 +239,7 @@ export interface LintWorkspaceTask {
   readonly options: LintTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */

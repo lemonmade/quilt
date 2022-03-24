@@ -52,7 +52,7 @@ export type BuildOptionsForProject<ProjectType extends Project = Project> =
 export interface BuildWorkspaceOptions {}
 
 /**
- * Hooks provided by sewing-kit for building any code project.
+ * Hooks for building any code project.
  */
 export interface BuildProjectConfigurationCoreHooks {
   /**
@@ -122,7 +122,7 @@ export type ResolvedBuildProjectConfigurationHooks<
   BuildProjectConfigurationCoreHooks;
 
 /**
- * Hooks provided by sewing-kit for building the entire workspace.
+ * Hooks for building the entire workspace.
  */
 export interface BuildWorkspaceConfigurationCoreHooks {}
 
@@ -179,7 +179,7 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
   readonly options: BuildTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */
@@ -264,7 +264,7 @@ export interface BuildWorkspaceTask {
   readonly options: BuildTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */

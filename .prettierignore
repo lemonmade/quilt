@@ -1,6 +1,6 @@
 build/
 node_modules/
-.sewing-kit/
+.quilt/
 packages/*/bin/
 tests/e2e/output/
 pnpm-lock.yaml

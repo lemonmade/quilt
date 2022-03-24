@@ -8,13 +8,13 @@ interface DiagnosticErrorOptions {
 
 const ID = Symbol.for('SewingKit.DiagnosticError');
 
-// We could use instanceof to detect this, but this convenience protects
-// against potentially nested versions of @quilted/sewing-kit
-export function isDiagnosticError(value: unknown) {
-  return Boolean((value as any)?.[ID]);
-}
-
 export class DiagnosticError extends Error {
+  // We could use instanceof to detect this, but this convenience protects
+  // against potentially nested versions of @quilted/sewing-kit
+  static test(value: unknown): value is DiagnosticError {
+    return Boolean((value as any)?.[ID]);
+  }
+
   readonly [ID] = true;
   readonly suggestion: DiagnosticErrorOptions['suggestion'];
   readonly title: DiagnosticErrorOptions['title'];

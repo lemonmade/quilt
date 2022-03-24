@@ -10,9 +10,9 @@ describe('app builds', () => {
         const builder = 'Chris';
 
         await fs.write({
-          'sewing-kit.config.ts': stripIndent`
+          'quilt.project.ts': stripIndent`
               import {createApp, quiltApp} from '@quilted/craft';
-              import {addInternalExportCondition} from '../../common/sewing-kit';
+              import {addInternalExportCondition} from '../../common/craft';
               
               export default createApp((app) => {
                 app.entry('./App');
@@ -60,9 +60,9 @@ describe('app builds', () => {
             'FROM_ENV_LOCAL=2\nFROM_ENV_MODE=2\nFROM_ENV_MODE_LOCAL=2',
           '.env.production': 'FROM_ENV_MODE=3\nFROM_ENV_MODE_LOCAL=3',
           '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
-          'sewing-kit.config.ts': stripIndent`
+          'quilt.project.ts': stripIndent`
             import {createApp, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/sewing-kit';
+            import {addInternalExportCondition} from '../../common/craft';
             
             export default createApp((app) => {
               app.entry('./App');
@@ -105,9 +105,9 @@ describe('app builds', () => {
 
           await fs.write({
             '.env': `BUILDER=${builder}`,
-            'sewing-kit.config.ts': stripIndent`
+            'quilt.project.ts': stripIndent`
               import {createApp, quiltApp} from '@quilted/craft';
-              import {addInternalExportCondition} from '../../common/sewing-kit';
+              import {addInternalExportCondition} from '../../common/craft';
               
               export default createApp((app) => {
                 app.entry('./App');
