@@ -2,7 +2,7 @@
 
 Sewing Kit is a tooling orchestrator for Quilt. It takes care of running the many [tools](./thank-you.md#open-source) Quilt is built on top of, like [Rollup](https://rollupjs.org/guide/en/), [TypeScript](https://www.typescriptlang.org), and [ESLint](https://eslint.org), and gives you the ability to add commands and configuration of your own.
 
-When you [generate a project with Quilt](./getting-started.md), you automatically have Sewing Kit installed, and all of your development tasks are mapped to commands on a `sewing-kit` executable. You can follow the instructions for the [`@quilted/craft`](../packages/craft) package (which provides the `sewing-kit` command) to add Sewing Kit to an existing project.
+When you [generate a project with Quilt](./getting-started.md), you automatically have Sewing Kit installed, and all of your development tasks are mapped to commands on a `quilt` executable. You can follow the instructions for the [`@quilted/craft`](../packages/craft) package (which provides the `quilt` command) to add Sewing Kit to an existing project.
 
 > **Note:** If you’re only using individual packages within Quilt or you don’t like this abstraction over your tools, you don’t need to use it, but much of the value in using Quilt as a framework (including [build](./features/builds) and [development](./features/developing) flows) is configured through Sewing Kit.
 
