@@ -110,18 +110,18 @@ importers:
       '@babel/preset-typescript': ^7.16.0
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@prefresh/vite': ^2.2.0
-      '@quilted/async': 0.3.20
-      '@quilted/browserslist-config': 0.1.5
-      '@quilted/eslint-config': 0.1.8
-      '@quilted/graphql': 0.4.24
-      '@quilted/polyfills': 0.2.22
-      '@quilted/prettier': 0.2.7
+      '@quilted/async': 0.3.21
+      '@quilted/browserslist-config': 0.1.6
+      '@quilted/eslint-config': 0.1.9
+      '@quilted/graphql': 0.4.25
+      '@quilted/polyfills': 0.2.23
+      '@quilted/prettier': 0.2.8
       '@quilted/quilt': ^0.5.0
-      '@quilted/react-testing': 0.5.8
-      '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.7
-      '@quilted/sewing-kit': 0.2.23
-      '@quilted/typescript': 0.2.9
-      '@quilted/workers': 0.2.19
+      '@quilted/react-testing': 0.5.9
+      '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.8
+      '@quilted/sewing-kit': 0.2.24
+      '@quilted/typescript': 0.2.10
+      '@quilted/workers': 0.2.20
       '@rollup/plugin-alias': ^3.1.0
       '@rollup/plugin-babel': ^5.3.0
       '@rollup/plugin-commonjs': ^21.0.0
@@ -408,7 +408,7 @@ importers:
 
   packages/react:
     specifiers:
-      '@quilted/preact-mini-compat': 0.2.13
+      '@quilted/preact-mini-compat': 0.2.14
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
       preact: ^10.6.0

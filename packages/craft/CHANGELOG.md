@@ -1,5 +1,25 @@
 # @quilted/craft
 
+## 0.1.82
+
+### Patch Changes
+
+- [`78fe1682`](https://github.com/lemonmade/quilt/commit/78fe1682e3f258ffca719c7eaaeeac05031dfa80) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify craft and sewing-kit
+
+- Updated dependencies [[`78fe1682`](https://github.com/lemonmade/quilt/commit/78fe1682e3f258ffca719c7eaaeeac05031dfa80)]:
+  - @quilted/async@0.3.21
+  - @quilted/browserslist-config@0.1.6
+  - @quilted/eslint-config@0.1.9
+  - @quilted/graphql@0.4.25
+  - @quilted/polyfills@0.2.23
+  - @quilted/prettier@0.2.8
+  - @quilted/quilt@0.5.76
+  - @quilted/react-testing@0.5.9
+  - @quilted/rollup-plugin-fix-commonjs-preserve-modules@0.1.8
+  - @quilted/sewing-kit@0.2.24
+  - @quilted/typescript@0.2.10
+  - @quilted/workers@0.2.20
+
 ## 0.1.81
 
 ### Patch Changes

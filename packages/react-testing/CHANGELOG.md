@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.9
+
+### Patch Changes
+
+- [`78fe1682`](https://github.com/lemonmade/quilt/commit/78fe1682e3f258ffca719c7eaaeeac05031dfa80) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify craft and sewing-kit
+
 ## 0.5.8
 
 ### Patch Changes
