@@ -1,5 +1,15 @@
 # @quilted/aws
 
+## 0.3.36
+
+### Patch Changes
+
+- [`78fe1682`](https://github.com/lemonmade/quilt/commit/78fe1682e3f258ffca719c7eaaeeac05031dfa80) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify craft and sewing-kit
+
+- Updated dependencies [[`78fe1682`](https://github.com/lemonmade/quilt/commit/78fe1682e3f258ffca719c7eaaeeac05031dfa80)]:
+  - @quilted/craft@0.1.82
+  - @quilted/quilt@0.5.76
+
 ## 0.3.35
 
 ### Patch Changes
