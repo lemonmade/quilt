@@ -1,5 +1,4 @@
-import type {ProjectPlugin} from '../plugins';
-import type {Service, ServiceOptions} from '../model';
+import type {ProjectPlugin, Service, ServiceOptions} from '../kit';
 
 import {ConfigurationBuilder, ConfigurationKind} from './base';
 

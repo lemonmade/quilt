@@ -171,3 +171,7 @@ export function createWorkspacePlugin(
 }
 
 export type AnyPlugin = ProjectPlugin<Project> | WorkspacePlugin;
+
+export function isPlugin(value: unknown): value is AnyPlugin {
+  return Boolean((value as any)?.[PLUGIN_MARKER]);
+}

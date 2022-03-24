@@ -1,12 +1,9 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {
-  ResolvedHooks,
-  DevelopConfigurationHooksForProject,
-} from '@quilted/sewing-kit';
-
 import type {} from '@quilted/sewing-kit-jest';
 import type {} from '@quilted/sewing-kit-rollup';
 import type {ViteHooks} from '@quilted/sewing-kit-vite';
+
+import {createProjectPlugin} from '../kit';
+import type {ResolvedHooks, DevelopConfigurationHooksForProject} from '../kit';
 
 // We embed a version of Preact with `@quilted/quilt` so that consumers
 // don’t need to install it manually. We also have some hand-rolled optimizations

@@ -1,9 +1,9 @@
 import {createRequire} from 'module';
 
-import {createProjectPlugin, createWorkspacePlugin} from '@quilted/sewing-kit';
-
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-jest';
+
+import {createProjectPlugin, createWorkspacePlugin} from '../kit';
 
 const require = createRequire(import.meta.url);
 

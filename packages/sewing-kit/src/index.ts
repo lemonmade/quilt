@@ -1,16 +1,9 @@
 export {
-  createApp,
-  createPackage,
-  createService,
-  createWorkspace,
-} from './configuration';
-export type {
-  ConfigurationBuilder,
-  ConfigurationKind,
-  ConfigurationBuilderResult,
-} from './configuration';
-
-export {createProjectPlugin, createWorkspacePlugin} from './plugins';
+  isPlugin,
+  PluginTarget,
+  createProjectPlugin,
+  createWorkspacePlugin,
+} from './plugins';
 export type {
   PluginCreateHelper,
   ProjectPlugin,
@@ -37,12 +30,21 @@ export type {
   PackageEntryOptions,
   PackageBinaryOptions,
   ServiceOptions,
+  WorkspaceOptions,
 } from './model';
 
 export {Environment, Runtime, ProjectKind, Task} from './types';
+export type {
+  Log,
+  Loggable,
+  LogLevel,
+  LogOptions,
+  LogUiComponents,
+} from './types';
 
 export {DiagnosticError, MissingPluginError} from './errors';
 
+export {createSequenceHook, createWaterfallHook} from './hooks';
 export type {
   WaterfallHook,
   WaterfallHookWithDefault,
@@ -72,6 +74,7 @@ export type {
   BuildWorkspaceConfigurationCoreHooks,
   BuildWorkspaceConfigurationHooks,
   BuildWorkspaceStepAdderContext,
+  ResolvedBuildWorkspaceConfigurationHooks,
   // Develop
   DevelopTaskOptions,
   DevelopProjectTask,
@@ -92,6 +95,7 @@ export type {
   DevelopWorkspaceConfigurationCoreHooks,
   DevelopWorkspaceConfigurationHooks,
   DevelopWorkspaceStepAdderContext,
+  ResolvedDevelopWorkspaceConfigurationHooks,
   // Lint
   LintTaskOptions,
   LintProjectTask,
@@ -112,6 +116,7 @@ export type {
   LintWorkspaceConfigurationCoreHooks,
   LintWorkspaceConfigurationHooks,
   LintWorkspaceStepAdderContext,
+  ResolvedLintWorkspaceConfigurationHooks,
   // Test
   TestTaskOptions,
   TestProjectTask,
@@ -132,6 +137,7 @@ export type {
   TestWorkspaceConfigurationCoreHooks,
   TestWorkspaceConfigurationHooks,
   TestWorkspaceStepAdderContext,
+  ResolvedTestWorkspaceConfigurationHooks,
   // TypeCheck
   TypeCheckTaskOptions,
   TypeCheckProjectTask,
@@ -152,6 +158,7 @@ export type {
   TypeCheckWorkspaceConfigurationCoreHooks,
   TypeCheckWorkspaceConfigurationHooks,
   TypeCheckWorkspaceStepAdderContext,
+  ResolvedTypeCheckWorkspaceConfigurationHooks,
 } from './hooks';
 
 export type {
@@ -162,4 +169,8 @@ export type {
   WorkspaceStep,
   WorkspaceStepRunner,
   AnyStep,
+  BaseStepRunner,
 } from './steps';
+
+export {FileSystem, InternalFileSystem} from './utilities/fs';
+export {PackageJson} from './utilities/dependencies';

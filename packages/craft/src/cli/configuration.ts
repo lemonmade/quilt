@@ -2,17 +2,19 @@ import {unlinkSync} from 'fs';
 import {basename, dirname} from 'path';
 import {access} from 'fs/promises';
 
-import glob from 'globby';
-
-import type {ProjectPlugin, WorkspacePlugin} from '../plugins';
-import {Package, App, Service, Workspace, Project} from '../model';
-import {DiagnosticError} from '../errors';
+import {globby} from 'globby';
 
 import {
-  ConfigurationBuilderResult,
-  BUILDER_RESULT_MARKER,
-  ConfigurationKind,
-} from './base';
+  DiagnosticError,
+  Package,
+  App,
+  Service,
+  Workspace,
+  Project,
+} from '../kit';
+import type {ProjectPlugin, WorkspacePlugin} from '../kit';
+import {ConfigurationKind, ConfigurationBuilder} from '../configuration';
+import type {ConfigurationBuilderResult} from '../configuration';
 
 interface LoadedConfigurationFile<Options>
   extends ConfigurationBuilderResult<Options> {
@@ -33,7 +35,7 @@ export interface LoadedWorkspace {
 export async function loadWorkspace(
   root: string,
   {
-    projectPatterns = '**/sewing-kit.config.*',
+    projectPatterns = '**/quilt.config.*',
   }: {projectPatterns?: string | string[]} = {},
 ): Promise<LoadedWorkspace> {
   const packages = new Set<Package>();
@@ -44,7 +46,7 @@ export async function loadWorkspace(
     readonly (WorkspacePlugin | ProjectPlugin<any>)[]
   >();
 
-  const configFiles = await glob(projectPatterns, {
+  const configFiles = await globby(projectPatterns, {
     cwd: root,
     ignore: ['**/node_modules/**', '**/build/**'],
     absolute: true,
@@ -76,7 +78,7 @@ export async function loadWorkspace(
     // needs a better error, showing files/ what workspace plugins exist
     throw new DiagnosticError({
       title: `Multiple workspace configurations found`,
-      content: `Found ${workspaceConfigs.length} workspace configurations. Only one sewing-kit config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/sewing-kit`,
+      content: `Found ${workspaceConfigs.length} workspace configurations. Only one sewing-kit config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/craft`,
     });
   }
 
@@ -91,7 +93,7 @@ export async function loadWorkspace(
     throw new DiagnosticError({
       title: `Invalid workspace plugins in project configuration`,
       content: `You declared workspace plugins in a project, but this is only supported for workspace with a single project.`,
-      suggestion: `Move the workspace plugins to a root sewing-kit config file, and include them using the createWorkspace() function from @quilted/sewing-kit`,
+      suggestion: `Move the workspace plugins to a root sewing-kit config file, and include them using the createWorkspace() function from @quilted/craft`,
     });
   }
 
@@ -179,25 +181,25 @@ async function loadConfigFile<Options>(
       title: 'Invalid configuration file',
       content: `The configuration file ${file} did not export any configuration`,
       suggestion: file.endsWith('.ts')
-        ? `Ensure that you are exporting the result of calling a function from @quilted/sewing-kit as the default export, then run your command again.`
-        : `Ensure that you are setting the result of calling a function from @quilted/sewing-kit to module.exports, then run your command again.`,
+        ? `Ensure that you are exporting the result of calling a function from @quilted/craft as the default export, then run your command again.`
+        : `Ensure that you are setting the result of calling a function from @quilted/craft to module.exports, then run your command again.`,
     });
   } else if (typeof normalized !== 'function') {
     throw new DiagnosticError({
       title: 'Invalid configuration file',
       content: `The configuration file ${file} did not export a function`,
-      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/sewing-kit, then run your command again.`,
+      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/craft, then run your command again.`,
     });
   }
 
   const root = dirname(file);
   const result = await normalized(root);
 
-  if (!looksLikeValidConfigurationObject(result)) {
+  if (!ConfigurationBuilder.isResult(result)) {
     throw new DiagnosticError({
       title: 'Invalid configuration file',
       content: `The configuration file ${file} did not export a function that creates a configuration object`,
-      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/sewing-kit, then run your command again.`,
+      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/craft, then run your command again.`,
     });
   }
 
@@ -205,14 +207,6 @@ async function loadConfigFile<Options>(
     ...result,
     file,
   };
-}
-
-function looksLikeValidConfigurationObject(
-  value: unknown,
-): value is ConfigurationBuilderResult {
-  return (
-    typeof value === 'object' && value != null && BUILDER_RESULT_MARKER in value
-  );
 }
 
 async function normalizeConfigurationFile(file: string) {

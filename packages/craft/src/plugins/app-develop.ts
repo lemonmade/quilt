@@ -1,8 +1,5 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App} from '@quilted/sewing-kit';
-
 import {response as createResponse} from '@quilted/quilt/http-handlers';
 import type {HttpHandler} from '@quilted/quilt/http-handlers';
 import {
@@ -12,6 +9,9 @@ import {
 
 import type {} from '@quilted/sewing-kit-babel';
 import type {} from '@quilted/sewing-kit-vite';
+
+import {createProjectPlugin} from '../kit';
+import type {App} from '../kit';
 
 import type {AppServerOptions} from './app-server';
 import type {AppBrowserOptions} from './app-build';

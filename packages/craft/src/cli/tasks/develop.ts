@@ -1,6 +1,6 @@
-import {Task} from '../../types';
-import {createWaterfallHook, DevelopTaskOptions} from '../../hooks';
-import {TargetRuntime} from '../../model';
+import {Task, TargetRuntime, createWaterfallHook} from '../../kit';
+
+import type {DevelopTaskOptions} from '../../kit';
 
 import {createCommand, runStepsForTask} from '../common';
 import type {TaskContext} from '../common';

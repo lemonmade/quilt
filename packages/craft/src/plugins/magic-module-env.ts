@@ -1,4 +1,10 @@
-import {createProjectPlugin, ResolvedHooks} from '@quilted/sewing-kit';
+import type {Plugin} from 'rollup';
+import {stripIndent} from 'common-tags';
+
+import type {} from '@quilted/sewing-kit-rollup';
+import type {} from '@quilted/sewing-kit-vite';
+
+import {createProjectPlugin, ResolvedHooks} from '../kit';
 import type {
   App,
   Service,
@@ -6,12 +12,7 @@ import type {
   Workspace,
   WaterfallHook,
   DevelopAppConfigurationHooks,
-} from '@quilted/sewing-kit';
-import type {Plugin} from 'rollup';
-import {stripIndent} from 'common-tags';
-
-import type {} from '@quilted/sewing-kit-rollup';
-import type {} from '@quilted/sewing-kit-vite';
+} from '../kit';
 
 import {MAGIC_MODULE_ENV} from '../constants';
 

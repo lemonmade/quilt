@@ -1,11 +1,11 @@
-import type {ProjectPlugin} from '../plugins';
-import type {Runtime} from '../types';
 import type {
+  ProjectPlugin,
+  Runtime,
   Package,
   PackageOptions,
   PackageEntryOptions,
   PackageBinaryOptions,
-} from '../model';
+} from '../kit';
 
 import {ConfigurationBuilder, ConfigurationKind} from './base';
 

@@ -1,12 +1,12 @@
-import {createProjectPlugin, Workspace} from '@quilted/sewing-kit';
+import type {} from '@quilted/sewing-kit-rollup';
+import type {} from '@quilted/sewing-kit-vite';
+
+import {createProjectPlugin, Workspace} from '../kit';
 import type {
   Project,
   ResolvedHooks,
   DevelopAppConfigurationHooks,
-} from '@quilted/sewing-kit';
-
-import type {} from '@quilted/sewing-kit-rollup';
-import type {} from '@quilted/sewing-kit-vite';
+} from '../kit';
 
 export function tsconfigAliases() {
   return createProjectPlugin({

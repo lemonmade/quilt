@@ -1,15 +1,13 @@
 /* eslint @typescript-eslint/no-empty-interface: off */
 
+import {Runtime, createProjectPlugin, createWorkspacePlugin} from './kit';
+import type {App, Service, Package, Project} from './kit';
 import {
-  Runtime,
-  createProjectPlugin,
-  createWorkspacePlugin,
   createApp,
   createPackage,
   createService,
   createWorkspace,
-} from '@quilted/sewing-kit';
-import type {App, Service, Package, Project} from '@quilted/sewing-kit';
+} from './configuration';
 
 import {
   babelHooks,

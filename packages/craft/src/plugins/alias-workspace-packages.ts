@@ -1,9 +1,9 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
+import {createProjectPlugin} from '../kit';
 import type {
   Workspace,
   ResolvedHooks,
   DevelopAppConfigurationHooks,
-} from '@quilted/sewing-kit';
+} from '../kit';
 
 import type {} from '@quilted/sewing-kit-rollup';
 import type {} from '@quilted/sewing-kit-vite';

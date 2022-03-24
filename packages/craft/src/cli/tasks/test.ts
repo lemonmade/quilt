@@ -1,6 +1,6 @@
-import {Task} from '../../types';
+import {Task} from '../../kit';
 
-import {TestTaskOptions} from '../../hooks';
+import type {TestTaskOptions} from '../../kit';
 
 import {createCommand, runStepsForTask} from '../common';
 import type {TaskContext} from '../common';

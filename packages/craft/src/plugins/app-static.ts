@@ -3,16 +3,12 @@ import {createRequire} from 'module';
 import {rm} from 'fs/promises';
 
 import {stripIndent} from 'common-tags';
-import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
-import type {
-  App,
-  WaterfallHook,
-  WaterfallHookWithDefault,
-} from '@quilted/sewing-kit';
 
 import type {HttpState, AssetManifest} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
+import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
+import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
 import {
   MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,

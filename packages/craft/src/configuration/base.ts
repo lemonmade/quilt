@@ -1,12 +1,13 @@
 import {basename, dirname} from 'path';
 
-import {PLUGIN_MARKER, PluginTarget, PluginCreateHelper} from '../plugins';
-import type {WorkspacePlugin, ProjectPlugin} from '../plugins';
-
-import {FileSystem} from '../utilities/fs';
-
-import {DiagnosticError} from '../errors';
-import {PackageJson} from '../utilities/dependencies';
+import {
+  FileSystem,
+  DiagnosticError,
+  PackageJson,
+  isPlugin,
+  PluginTarget,
+} from '../kit';
+import type {WorkspacePlugin, ProjectPlugin, PluginCreateHelper} from '../kit';
 
 type WritableValue<T> = T extends readonly (infer U)[] ? U[] : T;
 
@@ -36,6 +37,14 @@ export interface ConfigurationBuilderResult<Options = unknown> {
 }
 
 export class ConfigurationBuilder<PluginType, Options> {
+  static isResult(value: unknown): value is ConfigurationBuilderResult {
+    return (
+      typeof value === 'object' &&
+      value != null &&
+      BUILDER_RESULT_MARKER in value
+    );
+  }
+
   readonly fs: FileSystem;
   readonly packageJson?: PackageJson;
 
@@ -97,7 +106,7 @@ export class ConfigurationBuilder<PluginType, Options> {
 
       if (!plugin) continue;
 
-      if (!plugin[PLUGIN_MARKER]) {
+      if (!isPlugin(plugin)) {
         throw new DiagnosticError({
           title: 'Invalid configuration file',
           content: 'The configuration contains invalid plugins',

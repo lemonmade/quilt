@@ -3,10 +3,10 @@ import {spawn} from 'child_process';
 import type {ChildProcess} from 'child_process';
 
 import {stripIndent} from 'common-tags';
-import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
-import type {App, Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {} from '@quilted/sewing-kit-rollup';
 
+import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
+import type {App, Service, WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
 
 import type {EnvironmentOptions} from './magic-module-env';

@@ -7,18 +7,15 @@ import {Readable, Writable} from 'stream';
 import arg from 'arg';
 import type {Result, Spec} from 'arg';
 
-import type {Project} from '../model';
-
-import type {AnyStep, StepNeed} from '../steps';
-import {Task} from '../types';
-
-import {DiagnosticError, isDiagnosticError} from '../errors';
-
-import {loadWorkspace} from '../configuration/load';
-import type {LoadedWorkspace} from '../configuration/load';
-
-import {createWaterfallHook, createSequenceHook} from '../hooks';
 import type {
+  AnyStep,
+  StepNeed,
+  Project,
+  AnyPlugin,
+  WorkspacePlugin,
+  BaseStepRunner,
+  ProjectStep,
+  WorkspaceStep,
   ResolvedOptions,
   BuildOptionsForProject,
   BuildTaskOptions,
@@ -41,13 +38,19 @@ import type {
   TestWorkspaceConfigurationCoreHooks,
   TypeCheckWorkspaceConfigurationCoreHooks,
   SewingKitInternalContext,
-} from '../hooks';
+} from '../kit';
+import {
+  Task,
+  DiagnosticError,
+  InternalFileSystem,
+  createWaterfallHook,
+  createSequenceHook,
+} from '../kit';
 
-import type {BaseStepRunner, ProjectStep, WorkspaceStep} from '../steps';
-import type {AnyPlugin, WorkspacePlugin} from '../plugins';
+import {loadWorkspace} from './configuration';
+import type {LoadedWorkspace} from './configuration';
 
 import {Ui} from './ui';
-import {InternalFileSystem} from '../utilities/fs';
 
 export enum IncludedReason {
   Normal,
@@ -263,7 +266,7 @@ function createFilter({
 }
 
 export function logError(error: any, {error: log}: Ui) {
-  if (isDiagnosticError(error)) {
+  if (DiagnosticError.test(error)) {
     log((ui) =>
       ui.Text(error.title ?? 'An unexpected error occurred', {
         role: 'critical',
@@ -284,7 +287,7 @@ export function logError(error: any, {error: log}: Ui) {
     log(
       (ui) =>
         `🧵 The following unexpected error occurred. We want to provide more useful suggestions when errors occur, so please open an issue on ${ui.Link(
-          'sewing-kit repo',
+          'quilt repo',
           {
             to: 'https://github.com/lemonmade/quilt',
           },
@@ -588,7 +591,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
             }),
             {
               configuration: loadConfigurationForWorkspace,
-              projectConfiguration: loadConfigurationForProject,
+              projectConfiguration: loadConfigurationForProject as any,
             },
           );
 
@@ -666,10 +669,10 @@ async function loadStepsForTask<TaskType extends Task = Task>(
 
     return {
       ...internalTask,
-      run(...args) {
-        return (internalTask.run as any)(plugin, ...args);
+      run(adder: any) {
+        return internalTask.run(plugin, adder);
       },
-    };
+    } as any;
   }
 
   function getInternalTaskForProject<ProjectType extends Project = Project>(
@@ -717,7 +720,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
         });
       },
       configure(configurer) {
-        configurers.push(async (...args) => {
+        configurers.push(async (...args: [any, any]) => {
           await configurer(...args);
         });
       },
@@ -732,7 +735,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
             }),
             {
               configuration(options) {
-                return loadConfigurationForProject(project, options);
+                return loadConfigurationForProject(project, options) as any;
               },
             },
           );

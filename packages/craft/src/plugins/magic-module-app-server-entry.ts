@@ -1,5 +1,5 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App, WaterfallHook} from '@quilted/sewing-kit';
+import {createProjectPlugin} from '../kit';
+import type {App, WaterfallHook} from '../kit';
 
 export interface Hooks {
   /**

@@ -1,6 +1,7 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App} from '@quilted/sewing-kit';
 import type {Plugin} from 'rollup';
+
+import {createProjectPlugin} from '../kit';
+import type {App} from '../kit';
 
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
 

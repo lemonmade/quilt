@@ -1,12 +1,14 @@
 import * as path from 'path';
 import {rm} from 'fs/promises';
 
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {Service, WaterfallHook} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
 
-import type {EnvironmentOptions} from './magic-module-env';
 import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
+
+import {createProjectPlugin} from '../kit';
+import type {Service, WaterfallHook} from '../kit';
+
+import type {EnvironmentOptions} from './magic-module-env';
 
 export interface ServiceBuildHooks {
   /**

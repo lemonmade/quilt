@@ -1,23 +1,20 @@
 import * as path from 'path';
 
 import {stripIndent} from 'common-tags';
-import {createProjectPlugin, Runtime, TargetRuntime} from '@quilted/sewing-kit';
-import type {
-  App,
-  WaterfallHook,
-  WaterfallHookWithDefault,
-} from '@quilted/sewing-kit';
 import type {ModuleFormat} from 'rollup';
+
+import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
 
 import {
   MAGIC_MODULE_APP_ASSET_LOADER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_HTTP_HANDLER,
 } from '../constants';
+import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
+import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 import {STEP_NAME} from './app-build';
 import type {EnvironmentOptions} from './magic-module-env';
-import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
 
 export interface AppServerOptions {
   /**

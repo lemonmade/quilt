@@ -3,7 +3,7 @@ import {fileURLToPath} from 'url';
 import {execSync} from 'child_process';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const cli = resolve(root, 'packages/sewing-kit/src/cli/cli.ts');
+const cli = resolve(root, 'packages/craft/src/cli/cli.ts');
 
 try {
   execSync(

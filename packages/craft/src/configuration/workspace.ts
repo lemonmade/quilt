@@ -1,5 +1,4 @@
-import type {WorkspacePlugin} from '../plugins';
-import type {WorkspaceOptions} from '../model';
+import type {WorkspacePlugin, WorkspaceOptions} from '../kit';
 
 import {ConfigurationBuilder, ConfigurationKind} from './base';
 

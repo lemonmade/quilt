@@ -1,7 +1,7 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {App} from '@quilted/sewing-kit';
-
 import type {} from '@quilted/workers/sewing-kit';
+
+import {createProjectPlugin} from '../kit';
+import type {App} from '../kit';
 
 export const STEP_NAME = 'Quilt.AppWorkers';
 
