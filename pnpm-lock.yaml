@@ -156,6 +156,7 @@ importers:
       rollup-plugin-esbuild: ^4.8.0
       rollup-plugin-node-externals: ^4.0.0
       rollup-plugin-visualizer: ^5.6.0
+      semver: ^7.0.0
       systemjs: ^6.10.2
       vite: ^2.0.0
     dependencies:
@@ -210,6 +211,7 @@ importers:
       rollup-plugin-esbuild: 4.8.2_esbuild@0.14.23+rollup@2.70.0
       rollup-plugin-node-externals: 4.0.0_rollup@2.70.0
       rollup-plugin-visualizer: 5.6.0_rollup@2.70.0
+      semver: 7.3.5
       systemjs: 6.10.2
       vite: 2.8.6
     devDependencies:

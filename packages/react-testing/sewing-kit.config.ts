@@ -1,19 +1,9 @@
-import {
-  Runtime,
-  createPackage,
-  quiltPackage,
-  createProjectPlugin,
-} from '@quilted/craft';
+import {createPackage, quiltPackage, createProjectPlugin} from '@quilted/craft';
 
 export default createPackage((pkg) => {
   pkg.entry({source: './src/index'});
   pkg.entry({name: 'dom', source: './src/implementations/react-dom'});
   pkg.entry({name: 'preact', source: './src/implementations/preact'});
-  pkg.entry({
-    name: 'sewing-kit',
-    source: './src/sewing-kit',
-    runtime: Runtime.Node,
-  });
   pkg.entry({
     name: 'matchers',
     source: './src/matchers/index',
