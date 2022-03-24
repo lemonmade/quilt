@@ -81,8 +81,8 @@ export class InternalFileSystem
   extends BaseFileSystem
   implements InternalFSType
 {
-  constructor(root: string) {
-    super(join(root, '.sewing-kit'));
+  constructor(root: string, {name = '.sewing-kit'} = {}) {
+    super(join(root, name));
   }
 
   tempPath(...paths: string[]) {

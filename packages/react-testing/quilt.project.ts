@@ -1,4 +1,5 @@
 import {createPackage, quiltPackage, createProjectPlugin} from '@quilted/craft';
+import type {} from '@quilted/craft/jest';
 
 export default createPackage((pkg) => {
   pkg.entry({source: './src/index'});

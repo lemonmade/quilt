@@ -145,7 +145,9 @@ export function createCommand<Flags extends Spec>(
           onlyWorkspace: onlyWorkspace as boolean,
           skipWorkspace: skipWorkspace as boolean,
         }),
-        internal: {fs: new InternalFileSystem(workspace.root)},
+        internal: {
+          fs: new InternalFileSystem(workspace.root, {name: '.quilt'}),
+        },
       });
     } catch (error) {
       logError(error, ui);

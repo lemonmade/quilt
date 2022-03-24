@@ -6,7 +6,8 @@
   "include": [
     "config/**/*.ts",
     "scripts/**/*.ts",
-    "**/sewing-kit.config.ts",
+    "quilt.workspace.ts",
+    "**/quit.project.ts",
     "*.test.ts",
     "*.test.tsx",
     "tests/e2e/**/*"

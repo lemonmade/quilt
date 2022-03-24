@@ -71,9 +71,6 @@
     "@babel/core": {
       "optional": true
     },
-    "@babel/plugin-syntax-dynamic-import": {
-      "optional": true
-    },
     "@babel/runtime": {
       "optional": true
     },
@@ -81,15 +78,6 @@
       "optional": true
     },
     "@babel/types": {
-      "optional": true
-    },
-    "@quilted/sewing-kit": {
-      "optional": true
-    },
-    "@quilted/sewing-kit-babel": {
-      "optional": true
-    },
-    "@quilted/sewing-kit-rollup": {
       "optional": true
     }
   },

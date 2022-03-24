@@ -35,7 +35,7 @@ export interface LoadedWorkspace {
 export async function loadWorkspace(
   root: string,
   {
-    projectPatterns = '**/quilt.config.*',
+    projectPatterns = '**/quilt.{project,workspace}.{js,ts}',
   }: {projectPatterns?: string | string[]} = {},
 ): Promise<LoadedWorkspace> {
   const packages = new Set<Package>();
