@@ -1,6 +1,5 @@
 import {createRequire} from 'module';
 
-import {DEFAULT_PACKAGES_TO_PROCESS} from '@quilted/async/babel';
 import type {Options as BabelOptions} from '@quilted/async/babel';
 import type {
   Options as RollupOptions,
@@ -38,6 +37,12 @@ export interface AsyncHooks {
 declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends AsyncHooks {}
 }
+
+const DEFAULT_PACKAGES_TO_PROCESS = {
+  '@quilted/async': ['createAsyncLoader'],
+  '@quilted/quilt': ['createAsyncLoader', 'createAsyncComponent'],
+  '@quilted/react-async': ['createAsyncLoader', 'createAsyncComponent'],
+};
 
 const require = createRequire(import.meta.url);
 
