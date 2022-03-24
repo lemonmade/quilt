@@ -4,7 +4,7 @@ import {
   quiltWorkspace,
   createWorkspacePlugin,
 } from '@quilted/craft';
-import type {} from '@quilted/sewing-kit-jest';
+import type {} from '@quilted/craft/jest';
 
 export default createWorkspace((workspace) => {
   workspace.use(

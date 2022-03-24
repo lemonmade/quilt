@@ -92,8 +92,8 @@ export class ConfigurationBuilder<PluginType, Options> {
    * the this pattern:
    *
    * ```ts
-   * import {createApp} from '@quilted/sewing-kit';
-   * import {myPlugin} from './sewing-kit-plugins';
+   * import {createApp} from '@quilted/craft';
+   * import {myPlugin} from './craft-plugins';
    *
    * export default createApp((app) => {
    *   app.use(shouldUsePlugin && myPlugin());
@@ -110,7 +110,7 @@ export class ConfigurationBuilder<PluginType, Options> {
         throw new DiagnosticError({
           title: 'Invalid configuration file',
           content: 'The configuration contains invalid plugins',
-          suggestion: `Make sure that all plugins included in the configuration file were generated using the utilities from @quilted/sewing-kit. If this is the case, you may have duplicate versions of some @quilted dependencies. Resolve any duplicate versions and try your command again.`,
+          suggestion: `Make sure that all plugins included in the configuration file were generated using the utilities from @quilted/craft. If this is the case, you may have duplicate versions of some @quilted dependencies. Resolve any duplicate versions and try your command again.`,
         });
       }
 

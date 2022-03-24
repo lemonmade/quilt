@@ -292,9 +292,8 @@ export interface PackageOptions {
 }
 
 /**
- * Creates a sewing-kit plugin that intelligently configures this package.
- * This includes full support for TypeScript, and both standard and `esnext`
- * builds, if the package is public.
+ * Configures this package, including full support for TypeScript,
+ * and both standard and `esnext` builds, if the package is public.
  */
 export function quiltPackage({
   build = true,
@@ -332,8 +331,7 @@ export interface WorkspaceOptions {
 }
 
 /**
- * Creates a sewing-kit plugin that configures your workspace to run
- * ESLint, TypeScript, and Jest.
+ * Configures your workspace to run ESLint, TypeScript, and Jest.
  */
 export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
   return createWorkspacePlugin({

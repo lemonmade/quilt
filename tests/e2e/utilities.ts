@@ -64,7 +64,7 @@ const monorepoRoot = path.resolve(__dirname, '../..');
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
 const sewingKitFromSourceScript = path.join(
   monorepoRoot,
-  'scripts/sewing-kit-from-source.js',
+  'scripts/quilt-from-source.js',
 );
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);

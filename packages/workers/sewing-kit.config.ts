@@ -13,11 +13,6 @@ export default createPackage((pkg) => {
     runtime: Runtime.Node,
   });
   pkg.entry({name: 'babel', source: './src/babel', runtime: Runtime.Node});
-  pkg.entry({
-    name: 'sewing-kit',
-    source: './src/sewing-kit',
-    runtime: Runtime.Node,
-  });
 
   // We need commonjs for the babel plugin
   pkg.use(quiltPackage({commonjs: true}));
