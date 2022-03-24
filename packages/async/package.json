@@ -26,7 +26,6 @@
       "require": "./build/cjs/server.cjs"
     },
     "./babel": {
-      "quilt:from-source": "./src/babel-plugin.ts",
       "import": "./build/esm/babel-plugin.mjs",
       "require": "./build/cjs/babel-plugin.cjs"
     },
