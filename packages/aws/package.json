@@ -25,11 +25,11 @@
       "import": "./build/esm/http-handlers.mjs",
       "require": "./build/cjs/http-handlers.cjs"
     },
-    "./sewing-kit": {
-      "quilt:from-source": "./src/sewing-kit.ts",
-      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs",
-      "require": "./build/cjs/sewing-kit.cjs"
+    "./craft": {
+      "quilt:from-source": "./src/craft.ts",
+      "quilt:esnext": "./build/esnext/craft.esnext",
+      "import": "./build/esm/craft.mjs",
+      "require": "./build/cjs/craft.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -38,8 +38,8 @@
       "http-handlers": [
         "./build/typescript/http-handlers.d.ts"
       ],
-      "sewing-kit": [
-        "./build/typescript/sewing-kit.d.ts"
+      "craft": [
+        "./build/typescript/craft.d.ts"
       ]
     }
   },
@@ -53,9 +53,8 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/quilt": "^0.5.74",
-    "@quilted/craft": "^0.1.78",
-    "@quilted/sewing-kit": "^0.2.0"
+    "@quilted/quilt": "^0.5.0",
+    "@quilted/craft": "^0.1.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
@@ -65,9 +64,6 @@
       "optional": true
     },
     "@quilted/quilt": {
-      "optional": true
-    },
-    "@quilted/sewing-kit": {
       "optional": true
     }
   },

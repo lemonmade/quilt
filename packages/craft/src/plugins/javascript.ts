@@ -1,7 +1,7 @@
 import {createRequire} from 'module';
 
-import type {} from '@quilted/sewing-kit-babel';
-import type {} from '@quilted/sewing-kit-jest';
+import type {} from '../tools/babel';
+import type {} from '../tools/jest';
 
 import {createProjectPlugin, createWorkspacePlugin} from '../kit';
 

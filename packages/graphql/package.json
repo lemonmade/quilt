@@ -58,12 +58,6 @@
       "import": "./build/esm/jest-parts.mjs",
       "require": "./build/cjs/jest-parts.cjs"
     },
-    "./sewing-kit": {
-      "quilt:from-source": "./src/sewing-kit.ts",
-      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs",
-      "require": "./build/cjs/sewing-kit.cjs"
-    },
     "./configuration": {
       "quilt:from-source": "./src/configuration.ts",
       "quilt:esnext": "./build/esnext/configuration.esnext",
@@ -92,9 +86,6 @@
       "jest": [
         "./build/typescript/jest-parts.d.ts"
       ],
-      "sewing-kit": [
-        "./build/typescript/sewing-kit.d.ts"
-      ],
       "configuration": [
         "./build/typescript/configuration.d.ts"
       ]
@@ -119,20 +110,12 @@
   "devDependencies": {
     "@jest/globals": "^27.0.0",
     "@jest/transform": "^27.0.0",
-    "@quilted/sewing-kit": "^0.2.0",
-    "@quilted/sewing-kit-jest": "^0.1.0",
-    "@quilted/sewing-kit-rollup": "^0.1.0",
-    "@quilted/sewing-kit-vite": "^0.1.0",
     "expect": "^27.0.0",
     "jest-matcher-utils": "^27.0.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@jest/globals": "^27.0.0",
-    "@quilted/sewing-kit": "^0.2.23",
-    "@quilted/sewing-kit-jest": "^0.1.15",
-    "@quilted/sewing-kit-rollup": "^0.1.14",
-    "@quilted/sewing-kit-vite": "^0.1.11",
     "jest-matcher-utils": "^27.0.0"
   },
   "peerDependenciesMeta": {
@@ -140,18 +123,6 @@
       "optional": true
     },
     "@jest/globals": {
-      "optional": true
-    },
-    "@quilted/sewing-kit": {
-      "optional": true
-    },
-    "@quilted/sewing-kit-jest": {
-      "optional": true
-    },
-    "@quilted/sewing-kit-rollup": {
-      "optional": true
-    },
-    "@quilted/sewing-kit-vite": {
       "optional": true
     },
     "jest-matcher-utils": {

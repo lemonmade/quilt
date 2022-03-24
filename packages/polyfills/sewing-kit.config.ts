@@ -7,11 +7,6 @@ export default createPackage((pkg) => {
     name: 'rollup',
     runtime: Runtime.Node,
   });
-  pkg.entry({
-    source: './src/sewing-kit',
-    name: 'sewing-kit',
-    runtime: Runtime.Node,
-  });
 
   pkg.entry({source: './src/base', name: 'base'});
   pkg.entry({source: './src/noop', name: 'noop'});

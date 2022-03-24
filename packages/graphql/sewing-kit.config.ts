@@ -6,11 +6,6 @@ export default createPackage((pkg) => {
   pkg.entry({name: 'fixtures', source: './src/fixtures/index'});
   pkg.entry({name: 'typescript', source: './src/typescript'});
   pkg.entry({
-    name: 'sewing-kit',
-    source: './src/sewing-kit',
-    runtime: Runtime.Node,
-  });
-  pkg.entry({
     name: 'rollup',
     source: './src/rollup-parts',
     runtime: Runtime.Node,

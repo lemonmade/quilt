@@ -404,7 +404,7 @@ export function appStatic({
               configuration({
                 quiltAppStatic: true,
               }),
-              import('@quilted/sewing-kit-rollup'),
+              import('../tools/rollup'),
             ]);
 
             await buildWithRollup(project, configure);

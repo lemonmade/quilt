@@ -4,7 +4,7 @@ import {rm} from 'fs/promises';
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
 
-import type {} from '@quilted/async/sewing-kit';
+import type {} from '../features/async';
 
 import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
 import type {App, WaterfallHookWithDefault} from '../kit';
@@ -335,7 +335,7 @@ export function appBuild({
                       priority: targetsBySize.indexOf(targets),
                     },
                   }),
-                  import('@quilted/sewing-kit-rollup'),
+                  import('../tools/rollup'),
                 ]);
 
                 await buildWithRollup(project, configure);

@@ -1,8 +1,8 @@
 import type {Plugin} from 'rollup';
 import {stripIndent} from 'common-tags';
 
-import type {} from '@quilted/sewing-kit-rollup';
-import type {} from '@quilted/sewing-kit-vite';
+import type {} from '../tools/rollup';
+import type {} from '../tools/vite';
 
 import {createProjectPlugin, ResolvedHooks} from '../kit';
 import type {

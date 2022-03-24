@@ -5,8 +5,8 @@ import type {
   DevelopAppConfigurationHooks,
 } from '../kit';
 
-import type {} from '@quilted/sewing-kit-rollup';
-import type {} from '@quilted/sewing-kit-vite';
+import type {} from '../tools/rollup';
+import type {} from '../tools/vite';
 
 export function aliasWorkspacePackages() {
   return createProjectPlugin({

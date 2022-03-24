@@ -6,10 +6,5 @@
   },
   "include": ["src"],
   "exclude": ["sewing-kit.config.ts", "**/*.test.ts", "**/*.test.tsx"],
-  "references": [
-    {"path": "../craft"},
-    {"path": "../quilt"},
-    {"path": "../http-handlers"},
-    {"path": "../sewing-kit"}
-  ]
+  "references": [{"path": "../craft"}, {"path": "../quilt"}]
 }

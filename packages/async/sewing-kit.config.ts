@@ -13,11 +13,6 @@ export default createPackage((pkg) => {
     runtime: Runtime.Node,
   });
   pkg.entry({
-    name: 'sewing-kit',
-    source: './src/sewing-kit',
-    runtime: Runtime.Node,
-  });
-  pkg.entry({
     name: 'server',
     source: './src/server',
     runtime: Runtime.Node,

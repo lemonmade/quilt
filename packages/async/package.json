@@ -34,12 +34,6 @@
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
       "require": "./build/esm/cjs-parts.cjs"
-    },
-    "./sewing-kit": {
-      "quilt:from-source": "./src/sewing-kit.ts",
-      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs",
-      "require": "./build/esm/cjs-kit.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -47,9 +41,6 @@
     "*": {
       "server": [
         "./build/typescript/server.d.ts"
-      ],
-      "sewing-kit": [
-        "./build/typescript/sewing-kit.d.ts"
       ],
       "babel": [
         "./build/typescript/babel-plugin.d.ts"
@@ -67,21 +58,14 @@
     "magic-string": "^0.25.0"
   },
   "devDependencies": {
-    "@quilted/sewing-kit": "^0.2.4",
-    "@quilted/sewing-kit-babel": "^0.1.2",
-    "@quilted/sewing-kit-rollup": "^0.1.2",
     "@types/babel__core": ">=7.0.0",
     "@types/babel__traverse": ">=7.0.0"
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0",
-    "@babel/plugin-syntax-dynamic-import": ">=7.0.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@babel/traverse": ">=7.0.0",
-    "@babel/types": ">=7.0.0",
-    "@quilted/sewing-kit": "^0.2.23",
-    "@quilted/sewing-kit-babel": "^0.1.13",
-    "@quilted/sewing-kit-rollup": "^0.1.14"
+    "@babel/types": ">=7.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/core": {

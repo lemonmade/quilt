@@ -3,10 +3,10 @@ import {rm} from 'fs/promises';
 
 import type {ModuleFormat} from 'rollup';
 
-import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
-
 import {createProjectPlugin} from '../kit';
 import type {Service, WaterfallHook} from '../kit';
+
+import type {RollupNodeBundle} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
@@ -158,7 +158,7 @@ export function serviceBuild({
                 quiltService: true,
                 quiltHttpHandler: httpHandler,
               }),
-              import('@quilted/sewing-kit-rollup'),
+              import('../tools/rollup'),
             ]);
 
             await rm(project.fs.buildPath('runtime'), {

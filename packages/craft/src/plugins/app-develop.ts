@@ -7,8 +7,8 @@ import {
   applyResponse,
 } from '@quilted/quilt/http-handlers/node';
 
-import type {} from '@quilted/sewing-kit-babel';
-import type {} from '@quilted/sewing-kit-vite';
+import type {} from '../tools/babel';
+import type {} from '../tools/vite';
 
 import {createProjectPlugin} from '../kit';
 import type {App} from '../kit';

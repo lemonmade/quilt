@@ -3,7 +3,7 @@ import * as path from 'path';
 import {stripIndent} from 'common-tags';
 import type {ModuleFormat} from 'rollup';
 
-import type {RollupNodeBundle} from '@quilted/sewing-kit-rollup';
+import type {RollupNodeBundle} from '../tools/rollup';
 
 import {
   MAGIC_MODULE_APP_ASSET_LOADER,
@@ -407,7 +407,7 @@ export function appServer(options?: AppServerOptions) {
                 quiltAppServer: true,
                 quiltHttpHandler: httpHandler,
               }),
-              import('@quilted/sewing-kit-rollup'),
+              import('../tools/rollup'),
             ]);
 
             await buildWithRollup(project, configure);

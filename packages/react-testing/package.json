@@ -42,12 +42,6 @@
       "quilt:esnext": "./build/esnext/implementations/preact.esnext",
       "import": "./build/esm/implementations/preact.mjs",
       "require": "./build/cjs/implementations/preact.cjs"
-    },
-    "./sewing-kit": {
-      "quilt:from-source": "./src/sewing-kit.ts",
-      "quilt:esnext": "./build/esnext/sewing-kit.esnext",
-      "import": "./build/esm/sewing-kit.mjs",
-      "require": "./build/cjs/sewing-kit.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -64,9 +58,6 @@
       ],
       "preact": [
         "./build/typescript/implementations/preact.d.ts"
-      ],
-      "sewing-kit": [
-        "./build/typescript/sewing-kit.d.ts"
       ],
       "environment": [
         "./build/typescript/environment.d.ts"
@@ -90,8 +81,6 @@
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@jest/globals": "^27.0.0",
-    "@quilted/sewing-kit": "^0.2.23",
-    "@quilted/sewing-kit-jest": "^0.1.15",
     "preact": "^10.6.0",
     "react": ">=17.0.0 <18.0.0",
     "react-dom": ">=17.0.0 <18.0.0"
@@ -101,12 +90,6 @@
       "optional": true
     },
     "@jest/globals": {
-      "optional": true
-    },
-    "@quilted/sewing-kit": {
-      "optional": true
-    },
-    "@quilted/sewing-kit-jest": {
       "optional": true
     },
     "preact": {
