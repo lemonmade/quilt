@@ -14,8 +14,8 @@ import type {} from '../tools/rollup';
 import type {ViteHooks} from '../tools/vite';
 
 export const EXPORT_CONDITION = 'quilt:esnext';
-// Some older packages published with sewing-kit use this condition name,
-// so we support it too (even though it's a bit dangerous, given how generic
+// Some older packages published with use this condition name, so we
+// support it too (even though it's a bit dangerous, given how generic
 // the name is).
 export const LEGACY_EXPORT_CONDITION = 'esnext';
 
@@ -50,18 +50,6 @@ const require = createRequire(import.meta.url);
  *     }
  *   }
  * }
- * ```
- *
- * Finally, the consumer should also include the `esnext()` plugin from
- * this package in their sewing-kit configuration file:
- *
- * ```ts
- * import {createApp} from '@quilted/sewing-kit';
- * import {esnext} from '@quilted/sewing-kit-esnext';
- *
- * export default createApp((app) => {
- *   app.use(esnext());
- * });
  * ```
  */
 export function esnextBuild() {

@@ -70,7 +70,7 @@ export type {} from './plugins/http-handler';
 
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
-// (significantly more complex) `@quilted/sewing-kit` package.
+// (significantly more complex) `@quilted/craft/kit` entry.
 export {
   Runtime,
   createProjectPlugin,

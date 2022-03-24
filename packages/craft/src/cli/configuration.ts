@@ -78,7 +78,7 @@ export async function loadWorkspace(
     // needs a better error, showing files/ what workspace plugins exist
     throw new DiagnosticError({
       title: `Multiple workspace configurations found`,
-      content: `Found ${workspaceConfigs.length} workspace configurations. Only one sewing-kit config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/craft`,
+      content: `Found ${workspaceConfigs.length} workspace configurations. Only one quilt config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/craft`,
     });
   }
 
@@ -93,7 +93,7 @@ export async function loadWorkspace(
     throw new DiagnosticError({
       title: `Invalid workspace plugins in project configuration`,
       content: `You declared workspace plugins in a project, but this is only supported for workspace with a single project.`,
-      suggestion: `Move the workspace plugins to a root sewing-kit config file, and include them using the createWorkspace() function from @quilted/craft`,
+      suggestion: `Move the workspace plugins to a root quilt configuration file, and include them using the createWorkspace() function from @quilted/craft`,
     });
   }
 

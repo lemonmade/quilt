@@ -2,7 +2,7 @@ import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 
 import type {OutputOptions} from 'rollup';
 
-import {MissingPluginError, createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {Package, PackageBinary} from '../kit';
 
 import type {} from '../tools/rollup';
@@ -62,13 +62,6 @@ export function packageBuild({commonjs = true}: Options = {}) {
           {packageBuildModule},
         ) => {
           if (packageBuildModule == null) return;
-
-          if (rollupInput == null) {
-            throw new MissingPluginError(
-              'rollupHooks',
-              '@quilted/sewing-kit-rollup',
-            );
-          }
 
           outputDirectory?.((directory) =>
             join(directory, packageBuildModule === 'commonjs' ? 'cjs' : 'esm'),

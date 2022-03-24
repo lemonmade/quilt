@@ -2,13 +2,7 @@ import type {Plugin, InputOptions, OutputOptions} from 'rollup';
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
-import {
-  App,
-  createProjectPlugin,
-  MissingPluginError,
-  ProjectKind,
-  Runtime,
-} from '../kit';
+import {App, createProjectPlugin, ProjectKind, Runtime} from '../kit';
 import type {
   Project,
   Workspace,
@@ -335,7 +329,7 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
  *   async run() {
  *     const [configure, {buildWithRollup}] = await Promise.all([
  *       configuration(),
- *       import('@quilted/sewing-kit-rollup'),
+ *       import('@quilted/craft/rollup'),
  *     ]);
  *
  *     await buildWithRollup(project, configure);
@@ -353,24 +347,14 @@ export async function buildWithRollup<ProjectType extends Project = Project>(
     rollupOutputs,
   }: ResolvedBuildProjectConfigurationHooks<ProjectType>,
 ) {
-  if (
-    rollupInput == null ||
-    rollupPlugins == null ||
-    rollupExternals == null ||
-    rollupInputOptions == null ||
-    rollupOutputs == null
-  ) {
-    throw new MissingPluginError('rollupHooks', '@quilted/sewing-kit-rollup');
-  }
-
   const [{rollup}, targetRuntime, inputs, plugins, externals, outputs] =
     await Promise.all([
       import('rollup'),
       runtime.run(),
-      rollupInput.run([]),
-      rollupPlugins.run([]),
-      rollupExternals.run([]),
-      rollupOutputs.run([]),
+      rollupInput!.run([]),
+      rollupPlugins!.run([]),
+      rollupExternals!.run([]),
+      rollupOutputs!.run([]),
     ]);
 
   const inputOptions = await rollupInputOptions!.run({

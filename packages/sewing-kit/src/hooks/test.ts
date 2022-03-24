@@ -50,7 +50,7 @@ export type TestOptionsForProject<ProjectType extends Project = Project> =
 export interface TestWorkspaceOptions {}
 
 /**
- * Hooks provided by sewing-kit for testing any code project.
+ * Hooks for testing any code project.
  */
 export interface TestProjectConfigurationCoreHooks {}
 
@@ -103,7 +103,7 @@ export type ResolvedTestProjectConfigurationHooks<
   TestProjectConfigurationCoreHooks;
 
 /**
- * Hooks provided by sewing-kit for testing the entire workspace.
+ * Hooks for testing the entire workspace.
  */
 export interface TestWorkspaceConfigurationCoreHooks {}
 
@@ -173,7 +173,7 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
   readonly options: TestTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */
@@ -258,7 +258,7 @@ export interface TestWorkspaceTask {
   readonly options: TestTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */

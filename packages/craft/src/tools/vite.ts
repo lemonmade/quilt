@@ -1,7 +1,7 @@
 import type {InlineConfig, PluginOption} from 'vite';
 
-import {App, createProjectPlugin} from '@quilted/sewing-kit';
-import type {WaterfallHook} from '@quilted/sewing-kit';
+import {App, createProjectPlugin} from '../kit';
+import type {WaterfallHook} from '../kit';
 
 import type {} from './rollup';
 
