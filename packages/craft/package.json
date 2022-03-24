@@ -149,6 +149,7 @@
   "dependencies": {
     "@babel/core": "^7.14.0",
     "@babel/plugin-transform-runtime": ">=7.0.0 <8.0.0",
+    "@babel/preset-env": "^7.16.0",
     "@babel/preset-react": "^7.16.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@prefresh/vite": "^2.2.0",
