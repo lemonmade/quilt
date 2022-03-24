@@ -3,6 +3,6 @@
   "compilerOptions": {
     "outDir": "build/typescript"
   },
-  "include": ["**/sewing-kit.config.ts"],
+  "include": ["**/quilt.project.ts"],
   "references": [{"path": "./app"}]
 }

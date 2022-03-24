@@ -50,7 +50,7 @@ export type TypeCheckOptionsForProject<ProjectType extends Project = Project> =
 export interface TypeCheckWorkspaceOptions {}
 
 /**
- * Hooks provided by sewing-kit for type checking any code project.
+ * Hooks for type checking any code project.
  */
 export interface TypeCheckProjectConfigurationCoreHooks {}
 
@@ -103,7 +103,7 @@ export type ResolvedTypeCheckProjectConfigurationHooks<
   TypeCheckProjectConfigurationCoreHooks;
 
 /**
- * Hooks provided by sewing-kit for type checking the entire workspace.
+ * Hooks for type checking the entire workspace.
  */
 export interface TypeCheckWorkspaceConfigurationCoreHooks {}
 
@@ -149,7 +149,7 @@ export interface TypeCheckProjectTask<ProjectType extends Project = Project> {
   readonly options: TypeCheckTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */
@@ -234,7 +234,7 @@ export interface TypeCheckWorkspaceTask {
   readonly options: TypeCheckTaskOptions;
 
   /**
-   * Access to sewing-kit internals, like the ability to write to sewing-kit’s private
+   * Access to internals details, like the ability to write to a private, project-local
    * directory. This object is particularly useful in plugins, as it offers a clean
    * way of writing temporary files.
    */

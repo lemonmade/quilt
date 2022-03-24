@@ -1,38 +1,34 @@
 /* eslint @typescript-eslint/no-empty-interface: off */
 
+import {Runtime, createProjectPlugin, createWorkspacePlugin} from './kit';
+import type {App, Service, Package, Project} from './kit';
 import {
-  Runtime,
-  createProjectPlugin,
-  createWorkspacePlugin,
   createApp,
   createPackage,
   createService,
   createWorkspace,
-} from '@quilted/sewing-kit';
-import type {App, Service, Package, Project} from '@quilted/sewing-kit';
+} from './configuration';
 
-import {
-  babelHooks,
-  babelWorkspaceHooks,
-  babelRollup,
-} from '@quilted/sewing-kit-babel';
-import {packageBuild} from '@quilted/sewing-kit-package';
-import type {Options as PackageBuildOptions} from '@quilted/sewing-kit-package';
-import {rollupHooks, rollupNode} from '@quilted/sewing-kit-rollup';
-import type {RollupNodeOptions} from '@quilted/sewing-kit-rollup';
-import {eslint} from '@quilted/sewing-kit-eslint';
-import {prettier} from '@quilted/sewing-kit-prettier';
-import {esnextBuild, esnext} from '@quilted/sewing-kit-esnext';
-import {react} from '@quilted/sewing-kit-react';
-import {targets, workspaceTargets} from '@quilted/sewing-kit-targets';
-import {jest} from '@quilted/sewing-kit-jest';
-import {vite} from '@quilted/sewing-kit-vite';
-import {
-  typescriptProject,
-  typescriptWorkspace,
-} from '@quilted/sewing-kit-typescript';
+import {packageBuild} from './features/packages';
+import type {Options as PackageBuildOptions} from './features/packages';
+import {esnextBuild, esnext} from './features/esnext';
+import {react} from './features/react';
+import {targets, workspaceTargets} from './features/targets';
+import {graphql, workspaceGraphQL} from './features/graphql';
+import {asyncQuilt} from './features/async';
+import {polyfills} from './features/polyfills';
+import type {Options as PolyfillOptions} from './features/polyfills';
+import {workers} from './features/workers';
+import {reactTesting} from './features/testing';
 
-import type {Options as PolyfillOptions} from '@quilted/polyfills/sewing-kit';
+import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
+import {rollupHooks, rollupNode} from './tools/rollup';
+import type {RollupNodeOptions} from './tools/rollup';
+import {eslint} from './tools/eslint';
+import {prettier} from './tools/prettier';
+import {jest} from './tools/jest';
+import {vite} from './tools/vite';
+import {typescriptProject, typescriptWorkspace} from './tools/typescript';
 
 import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
 import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
@@ -74,7 +70,7 @@ export type {} from './plugins/http-handler';
 
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
-// (significantly more complex) `@quilted/sewing-kit` package.
+// (significantly more complex) `@quilted/craft/kit` entry.
 export {
   Runtime,
   createProjectPlugin,
@@ -197,44 +193,19 @@ export function quiltApp({
             server: typeof server === 'object' ? server : undefined,
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
+
+        graphql(),
+        workers(),
+        appWorkers({baseUrl}),
+        asyncQuilt({preload: true}),
+        reactTesting({environment: 'preact'}),
+        shouldPolyfill &&
+          polyfills({
+            package: '@quilted/quilt/polyfills',
+            features: ['fetch'],
+            ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
+          }),
       );
-
-      await ignoreMissingImports(async () => {
-        const {graphql} = await import('@quilted/graphql/sewing-kit');
-        use(graphql());
-      });
-
-      await ignoreMissingImports(async () => {
-        const {workers} = await import('@quilted/workers/sewing-kit');
-        use(workers(), appWorkers({baseUrl}));
-      });
-
-      await ignoreMissingImports(async () => {
-        const {asyncQuilt} = await import('@quilted/async/sewing-kit');
-        use(asyncQuilt({preload: true}));
-      });
-
-      await ignoreMissingImports(async () => {
-        const {reactTesting} = await import(
-          '@quilted/react-testing/sewing-kit'
-        );
-
-        use(reactTesting({environment: 'preact'}));
-      });
-
-      if (shouldPolyfill) {
-        await ignoreMissingImports(async () => {
-          const {polyfills} = await import('@quilted/polyfills/sewing-kit');
-
-          use(
-            polyfills({
-              package: '@quilted/quilt/polyfills',
-              features: ['fetch'],
-              ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
-            }),
-          );
-        });
-      }
     },
   });
 }
@@ -257,7 +228,7 @@ export function quiltService({
   env,
   build = true,
   develop = true,
-  graphql = true,
+  graphql: useGraphQL = true,
   react: useReact = false,
   polyfill: shouldPolyfill = true,
   httpHandler: useHttpHandler = true,
@@ -299,37 +270,14 @@ export function quiltService({
             env,
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
+        useGraphQL && graphql(),
+        useReact && reactTesting({environment: 'preact'}),
+        shouldPolyfill &&
+          polyfills({
+            package: '@quilted/quilt/polyfills',
+            ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
+          }),
       );
-
-      if (graphql) {
-        await ignoreMissingImports(async () => {
-          const {graphql} = await import('@quilted/graphql/sewing-kit');
-          use(graphql());
-        });
-      }
-
-      if (useReact) {
-        await ignoreMissingImports(async () => {
-          const {reactTesting} = await import(
-            '@quilted/react-testing/sewing-kit'
-          );
-
-          use(reactTesting({environment: 'preact'}));
-        });
-      }
-
-      if (shouldPolyfill) {
-        await ignoreMissingImports(async () => {
-          const {polyfills} = await import('@quilted/polyfills/sewing-kit');
-
-          use(
-            polyfills({
-              package: '@quilted/quilt/polyfills',
-              ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
-            }),
-          );
-        });
-      }
     },
   });
 }
@@ -344,14 +292,13 @@ export interface PackageOptions {
 }
 
 /**
- * Creates a sewing-kit plugin that intelligently configures this package.
- * This includes full support for TypeScript, and both standard and `esnext`
- * builds, if the package is public.
+ * Configures this package, including full support for TypeScript,
+ * and both standard and `esnext` builds, if the package is public.
  */
 export function quiltPackage({
   build = true,
   react: useReact = false,
-  graphql = false,
+  graphql: useGraphQL = false,
   commonjs,
   bundleNode,
 }: PackageOptions = {}) {
@@ -368,28 +315,13 @@ export function quiltPackage({
         typescriptProject(),
         useReact && react(),
         useReact && preact(),
+        useReact && reactTesting({environment: 'preact'}),
+        useGraphQL && graphql(),
         rollupNode({bundle: bundleNode}),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),
       );
-
-      if (graphql) {
-        await ignoreMissingImports(async () => {
-          const {graphql} = await import('@quilted/graphql/sewing-kit');
-          use(graphql());
-        });
-      }
-
-      if (useReact) {
-        await ignoreMissingImports(async () => {
-          const {reactTesting} = await import(
-            '@quilted/react-testing/sewing-kit'
-          );
-
-          use(reactTesting({environment: 'preact'}));
-        });
-      }
     },
   });
 }
@@ -399,8 +331,7 @@ export interface WorkspaceOptions {
 }
 
 /**
- * Creates a sewing-kit plugin that configures your workspace to run
- * ESLint, TypeScript, and Jest.
+ * Configures your workspace to run ESLint, TypeScript, and Jest.
  */
 export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
   return createWorkspacePlugin({
@@ -414,26 +345,8 @@ export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
         javascriptWorkspace(),
         typescriptWorkspace(),
         jest(),
+        graphql && workspaceGraphQL({package: '@quilted/quilt'}),
       );
-
-      if (graphql) {
-        await ignoreMissingImports(async () => {
-          const {workspaceGraphQL} = await import(
-            '@quilted/graphql/sewing-kit'
-          );
-
-          use(workspaceGraphQL({package: '@quilted/quilt'}));
-        });
-      }
     },
   });
-}
-
-async function ignoreMissingImports(run: () => Promise<void>) {
-  try {
-    await run();
-  } catch (error) {
-    if ((error as {code?: string})?.code === 'ERR_MODULE_NOT_FOUND') return;
-    throw error;
-  }
 }

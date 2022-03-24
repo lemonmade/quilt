@@ -1,4 +1,4 @@
-import type {GlobbyOptions} from 'globby';
+import type {Options as GlobbyOptions} from 'globby';
 
 export enum Environment {
   Development = 'development',

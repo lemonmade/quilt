@@ -1,7 +1,7 @@
-import type {App} from '@quilted/sewing-kit';
 import type {Plugin} from 'rollup';
 import {stripIndent} from 'common-tags';
 
+import type {App} from '../../kit';
 import {MAGIC_MODULE_APP_COMPONENT} from '../../constants';
 
 export interface Options {

@@ -1,9 +1,5 @@
-import {createProjectPlugin} from '@quilted/sewing-kit';
-import type {
-  App,
-  WaterfallHook,
-  WaterfallHookWithDefault,
-} from '@quilted/sewing-kit';
+import {createProjectPlugin} from '../kit';
+import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 export interface Options {
   hydrate: boolean;

@@ -49,11 +49,11 @@ export interface ProjectPluginHooks<ProjectType extends Project = Project> {
    * task is actually run. This function is called with a `helper`
    * object that contains some initial context about the project.
    * This helper also has a `use` method, which allows you to automatically
-   * include other sewing-kit plugins in any project where this plugin
+   * include other plugins in any project where this plugin
    * is included. There’s nothing wrong with having a plugin that only
    * implements this method to compose other plugins — a lot of the
-   * value of sewing-kit is allowing plugins to collaborate together to
-   * perform a larger, highly-configurable task.
+   * value of the plugin system is allowing plugins to collaborate
+   * together to perform a larger, highly-configurable task.
    */
   create?(
     helper: PluginCreateHelper<ProjectPlugin<ProjectType>>,
@@ -118,11 +118,11 @@ export interface WorkspacePluginHooks {
    * task is actually run. This function is called with a `helper`
    * object that contains some initial context about the workspace.
    * This helper also has a `use` method, which allows you to automatically
-   * include other sewing-kit plugins in any workspace where this plugin
+   * include other plugins in any workspace where this plugin
    * is included. There’s nothing wrong with having a plugin that only
    * implements this method to compose other plugins — a lot of the
-   * value of sewing-kit is allowing plugins to collaborate together to
-   * perform a larger, highly-configurable task.
+   * value of the plugin system is allowing plugins to collaborate
+   * together to perform a larger, highly-configurable task.
    */
   create?(helper: PluginCreateHelper<WorkspacePlugin>): ValueOrPromise<void>;
 
@@ -171,3 +171,7 @@ export function createWorkspacePlugin(
 }
 
 export type AnyPlugin = ProjectPlugin<Project> | WorkspacePlugin;
+
+export function isPlugin(value: unknown): value is AnyPlugin {
+  return Boolean((value as any)?.[PLUGIN_MARKER]);
+}

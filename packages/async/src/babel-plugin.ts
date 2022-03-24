@@ -16,10 +16,8 @@ interface State {
   opts?: Options;
 }
 
-export const DEFAULT_PACKAGES_TO_PROCESS = {
+const DEFAULT_PACKAGES_TO_PROCESS = {
   '@quilted/async': ['createAsyncLoader'],
-  '@quilted/quilt': ['createAsyncLoader', 'createAsyncComponent'],
-  '@quilted/react-async': ['createAsyncLoader', 'createAsyncComponent'],
 };
 
 export default function asyncBabelPlugin({types: t}: {types: typeof Babel}) {

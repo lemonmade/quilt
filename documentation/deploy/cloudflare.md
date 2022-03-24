@@ -214,7 +214,7 @@ This configuration tells Wrangler to install your dependencies and run your NPM 
 ```json
 {
   "scripts": {
-    "build": "sewing-kit build"
+    "build": "quilt build"
   }
 }
 ```
@@ -261,7 +261,7 @@ This new configuration tells Wrangler to use the `service-worker` format, and te
 ```json
 {
   "scripts": {
-    "build": "sewing-kit build"
+    "build": "quilt build"
   }
 }
 ```
@@ -373,7 +373,7 @@ This new configuration tells Wrangler to use the `modules` format, and teaches i
 ```json
 {
   "scripts": {
-    "build": "sewing-kit build"
+    "build": "quilt build"
   }
 }
 ```
@@ -395,7 +395,7 @@ This new configuration tells Wrangler to use the `modules` format, and teaches i
 ```json
 {
   "scripts": {
-    "build": "sewing-kit build"
+    "build": "quilt build"
   }
 }
 ```
