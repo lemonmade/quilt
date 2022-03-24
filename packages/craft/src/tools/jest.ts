@@ -56,7 +56,7 @@ declare module '@quilted/sewing-kit' {
   interface TestWorkspaceConfigurationHooks extends JestWorkspaceHooks {}
 }
 
-const RESOLVER_MODULE = '@quilted/craft/jest/resolver';
+const RESOLVER_MODULE = '@quilted/craft/jest/resolver.cjs';
 
 /**
  * Adds a collection of hooks to the workspace and all its projects

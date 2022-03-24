@@ -43,7 +43,7 @@
       "import": "./build/esm/features/graphql.mjs",
       "require": "./build/cjs/features/graphql.cjs"
     },
-    "./jest/resolver": {
+    "./jest/resolver.cjs": {
       "require": "./jest/resolver.cjs"
     },
     "./jest": {
