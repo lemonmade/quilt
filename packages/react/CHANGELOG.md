@@ -1,5 +1,11 @@
 # @quilted/react
 
+## 0.1.5
+
+### Patch Changes
+
+- [`e86e1256`](https://github.com/lemonmade/quilt/commit/e86e1256486cf94170b3d80cd51dc41b3cff90c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix issue with resolving @quilted/react/server dependencies
+
 ## 0.1.4
 
 ### Patch Changes

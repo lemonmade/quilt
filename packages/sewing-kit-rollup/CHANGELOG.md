@@ -1,5 +1,11 @@
 # @quilted/sewing-kit-rollup
 
+## 0.1.17
+
+### Patch Changes
+
+- [`75012268`](https://github.com/lemonmade/quilt/commit/750122688fd3c42a230239b65635fb42fc523342) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix detection of new node built-ins during build
+
 ## 0.1.16
 
 ### Patch Changes
