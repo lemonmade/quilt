@@ -6,6 +6,6 @@ Quilt provides a collection of libraries for handling common needs in web develo
 
 Quilt works best with applications that use [TypeScript](./documentation/technology/typescript), [GraphQL](./documentation/technology/graphql), and [React (or a React-compatible variant)](./documentation/technology/react). You can still use Quilt without using TypeScript, GraphQL, or React, but we focus on optimizing the holistic experience of using these three technologies together.
 
-[Sewing Kit](./documentation/sewing-kit) is a sister project to Quilt. It provides a layer for you to deeply customize the configuration of how Quilt handles the `dev`, `test`, `lint`, `type-check`, and `build` commands for your application.
+[Craft](./documentation/craft) is a sister project to Quilt. It provides configuration of all Quilt’s recommended development tools, and allows you to deeply customize the configuration of how Quilt handles the `develop`, `test`, `lint`, `type-check`, and `build` tasks for your projects.
 
 Ready to learn more? Check out the [getting started guide](./documentation/getting-started.md).

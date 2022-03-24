@@ -1,10 +1,10 @@
-# Sewing Kit
+# Craft
 
-Sewing Kit is a tooling orchestrator for Quilt. It takes care of running the many [tools](./thank-you.md#open-source) Quilt is built on top of, like [Rollup](https://rollupjs.org/guide/en/), [TypeScript](https://www.typescriptlang.org), and [ESLint](https://eslint.org), and gives you the ability to add commands and configuration of your own.
+Craft is a tooling orchestrator for Quilt. It takes care of running the many [tools](./thank-you.md#open-source) Quilt is built on top of, like [Rollup](https://rollupjs.org/guide/en/), [TypeScript](https://www.typescriptlang.org), and [ESLint](https://eslint.org), and gives you the ability to add commands and configuration of your own.
 
-When you [generate a project with Quilt](./getting-started.md), you automatically have Sewing Kit installed, and all of your development tasks are mapped to commands on a `quilt` executable. You can follow the instructions for the [`@quilted/craft`](../packages/craft) package (which provides the `quilt` command) to add Sewing Kit to an existing project.
+When you [generate a project with Quilt](./getting-started.md), you automatically have craft installed, and all of your development tasks are mapped to commands on a `quilt` executable provided by the [`@quilted/craft` package](../packages/craft). You can follow the instructions for the that package to add Craft to an existing project.
 
-> **Note:** If you’re only using individual packages within Quilt or you don’t like this abstraction over your tools, you don’t need to use it, but much of the value in using Quilt as a framework (including [build](./features/builds) and [development](./features/developing) flows) is configured through Sewing Kit.
+> **Note:** If you’re only using individual packages within Quilt or you don’t like this abstraction over your tools, you don’t need to use it! However, much of the value in using Quilt as a framework (including [build](./features/builds) and [development](./features/developing) flows) is configured through `craft`.
 
 ## Design goals
 
@@ -12,33 +12,33 @@ Building a whole layer on top of other tools is time-consuming and, for some dev
 
 Quilt is trying to walk a fine line. On one hand, we need deep tooling integrations to support powerful features like [async components](./features/async.md), [easy-to-use workers](./features/workers.md), and a high-performance approach to [internationalization](./features/i18n.md), and we want to make these capabilities easy to use for developers of any skill level. On the other hand, we want to respect that projects, especially if they appreciate the composable, low-level nature of a lot of Quilt APIs, often have highly custom needs, and we [never want to block you from doing what you need to do](./priorities.md).
 
-Sewing Kit is our best effort at solving for both of these priorities. It gives Quilt a framework for encapsulating configuration for dozens of tools into just a few lines of simple JavaScript, while giving you hooks to overwrite or customize every piece of configuration, and add new capabilities that are entirely driven by your own unique needs.
+Craft is our best effort at solving for both of these priorities. It gives Quilt a framework for encapsulating configuration for dozens of tools into just a few lines of simple JavaScript, while giving you hooks to overwrite or customize every piece of configuration, and add new capabilities that are entirely driven by your own unique needs.
 
-In addition to this critical design goal, Sewing Kit was also designed to:
+In addition to this critical design goal, Craft was also designed to:
 
 - Have a way for teams to compose and share common configuration amongst themselves.
 - Allow all configuration to be written in TypeScript with [great type-safety](./priorities.md#type-safety), and to have all configuration fields support being determined asynchronously.
 
 ## Tasks
 
-Sewing Kit defines the “tasks” that you can run in development so that tools can be run at the right times. Currently, there are five tasks available:
+Craft defines the “tasks” that you can run in development so that tools can be run at the right times. Currently, there are five tasks available:
 
-- **Build** (`sewing-kit build`), which [builds production outputs](./features/builds) for all your projects.
-- **Develop** (`sewing-kit develop`), which runs commands that let you [work on your projects locally](./developing).
-- **Test** (`sewing-kit test`), which [runs tests](./features/testing.md) for your projects.
-- **Type check** (`sewing-kit type-check`), which verifies the [static types](./features/type-checking.md) in your projects.
-- **Lint** (`sewing-kit lint`), which runs [linters](./features/linting.md) on the code in your projects.
+- **Build** (`quilt build`), which [builds production outputs](./features/builds) for all your projects.
+- **Develop** (`quilt develop`), which runs commands that let you [work on your projects locally](./developing).
+- **Test** (`quilt test`), which [runs tests](./features/testing.md) for your projects.
+- **Type check** (`quilt type-check`), which verifies the [static types](./features/type-checking.md) in your projects.
+- **Lint** (`quilt lint`), which runs [linters](./features/linting.md) on the code in your projects.
 
-There are many more tasks that are run in a normal development process, but Sewing Kit currently only helps with this subset. More might be added in the future, though!
+There are many more tasks that are run in a normal development process, but Craft currently only helps with this subset. More might be added in the future, though!
 
 ## Configuration files
 
-As a developer using Quilt, you will probably notice Sewing Kit mostly by the presence of `sewing-kit.config.ts` files in your repo. As noted in the [documentation on workspaces and projects](./projects.md), these configuration files let Quilt and Sewing Kit understand the structure of your repo, including the apps, backend services, and packages that may require customized handling for one of the steps documented above.
+As a developer using Quilt, you will probably notice Craft mostly by the presence of `quilt.project.ts` and `quilt.workspace.ts` files in your repo. As noted in the [documentation on workspaces and projects](./projects.md), these configuration files let Craft understand the structure of your repo, including the apps, backend services, and packages that may require customized handling for one of the steps documented above.
 
-These files will be executed using [native ES modules in Node](./esmodules.md). They **must** export a default export, which should be an object created by one of the `createWorkspace`, `createApp`, `createService`, or `createPackage` functions from `@quilted/craft` (or from `@quilted/sewing-kit`):
+These files will be executed using [native ES modules in Node](./esmodules.md). They **must** export a default export, which should be an object created by one of the `createWorkspace`, `createApp`, `createService`, or `createPackage` functions from `@quilted/craft`:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp} from '@quilted/craft';
 
@@ -50,7 +50,7 @@ export default createApp((app) => {
 These files allow you to describe additional details about your project. In apps and services, you can use this file to declare the entry file for that project:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp} from '@quilted/craft';
 
@@ -63,7 +63,7 @@ export default createApp((app) => {
 In packages, you can declare multiple entries and executables that your package provides, as well as declare the runtimes your package executes in:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createPackage, Runtime} from '@quilted/craft';
 
@@ -79,13 +79,16 @@ export default createPackage((pkg) => {
 });
 ```
 
-Most importantly, your Sewing Kit configuration files declare the [Sewing Kit plugins](#plugins) used by that project. Plugins control what tools are run, and with what configuration. You can add additional plugins to any project or workspace with the `use()` method:
+Most importantly, your Craft configuration files declare the [Craft plugins](#plugins) used by that project. Plugins control what tools are run, and with what configuration. You can add additional plugins to any project or workspace with the `use()` method:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp} from '@quilted/craft';
-import {someSewingKitPlugin, anotherSewingKitPlugin} from './config/sewing-kit';
+import {
+  someSewingKitPlugin,
+  anotherSewingKitPlugin,
+} from './configuration/craft';
 
 export default createApp((app) => {
   app.use(someSewingKitPlugin(), anotherSewingKitPlugin());
@@ -94,14 +97,14 @@ export default createApp((app) => {
 
 ## Plugins
 
-Without plugins, Sewing Kit doesn’t really do anything. The core of Sewing Kit just provides the [task structure](#tasks) and a set of utility functions and types, basically acting as the skeleton for plugins to add to. Plugins add all the [hooks](#hooks) that can collect configuration from other plugins, and add the definition of the [steps](#steps) that will be run for a given task.
+The core of Craft provides the [task structure](#tasks) and a set of utility functions and types, basically acting as the skeleton for plugins to add to. Plugins add all the [hooks](#hooks) that can collect configuration from other plugins, and add the definition of the [steps](#steps) that will be run for a given task. `@quilted/craft` provides plugins for all of Quilt’s features and recommended tools, but you can write additional plugins, too!
 
 Plugins can apply either to the full workspace (command for tools that handle linting or type-checking, as these are generally done from the root of the repo), or can apply to individual projects inside the workspace (typical for tools that handle building and developing).
 
-Workspace plugins are created using the `createWorkspacePlugin()` function from `@quilted/craft` (or from `@quilted/sewing-kit`):
+Workspace plugins are created using the `createWorkspacePlugin()` function from `@quilted/craft`:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.workspace.ts
 
 import {createWorkspace, createWorkspacePlugin} from '@quilted/craft';
 
@@ -117,7 +120,7 @@ export default createWorkspace((workspace) => {
 The rest of this guide will focus on project plugins, as they are more common (you generally need to configure details about individual projects more than about the overall workspace). You create a project plugin using the `createProjectPlugin()` function:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp, createProjectPlugin} from '@quilted/craft';
 
@@ -144,7 +147,7 @@ export function myPackagePlugin() {
   });
 }
 
-// In a consuming sewing-kit.config.ts file...
+// In a consuming quilt.project.ts file...
 
 // All good!
 export default createPackage((pkg) => {
@@ -157,7 +160,7 @@ export default createApp((app) => {
 });
 ```
 
-So far, the plugins we’ve shown haven’t actually done anything. In addition to the `name` field, which is required, your plugin can define any one of the following functions, which correspond to the [development tasks](#tasks) in Sewing Kit:
+So far, the plugins we’ve shown haven’t actually done anything. In addition to the `name` field, which is required, your plugin can define any one of the following functions, which correspond to the [development tasks](#tasks) in Craft:
 
 ```ts
 import {createProjectPlugin} from '@quilted/craft';
@@ -180,9 +183,9 @@ You only need to define the method for the tasks you would like to augment. Each
 
 A big part of modern development tools (for better or for worse) is configuration. Sometimes, plugins can infer all the configuration they need from the project or workspace, but most times, it helps to have a way for other plugins (including those authored directly by the author of the app/ service/ package) to customize the configuration manually.
 
-Sewing Kit provides a handy `WaterfallHook` object that allows developers to run potentially-async customizations to a value, which Quilt will make available to you when you [add configuration to other plugins](#configuring-hooks) or add a [step to run](#add-steps-to-run). A waterfall hook keeps track of its current value as it passes that value to each consumer who has “hooked into” it, allowing consumers to augment or replace that configuration.
+Craft provides a handy `WaterfallHook` object that allows developers to run potentially-async customizations to a value, which Quilt will make available to you when you [add configuration to other plugins](#configuring-hooks) or add a [step to run](#add-steps-to-run). A waterfall hook keeps track of its current value as it passes that value to each consumer who has “hooked into” it, allowing consumers to augment or replace that configuration.
 
-There are two parts to adding a hook in Sewing Kit:
+There are two parts to adding a hook in Craft:
 
 - Using the `hooks` function for a task to initialize your hooks
 - Augmenting the TypeScript types so that your hook is visible to other plugins
@@ -200,6 +203,8 @@ export interface LocaleHooks {
 
 // This is a "module augmentation", which teaches other libraries that
 // this hook exists, even though it doesn’t exist in the core library.
+// @quilted/sewing-kit is the module that provides all the basic types
+// that Craft relies on for generating configuration and steps.
 declare module '@quilted/sewing-kit' {
   // This looks a little strange; it is an augmentation of an existing
   // TypeScript interface in the `@quilted/sewing-kit` package. There are
@@ -234,16 +239,16 @@ If you have a default value for your hook, you can pass an object with a `defaul
 
 Adding hooks is fine, but let’s use our plugin to do something a bit more meaningful. Your plugin can call the `configure` function for a given task to get access to all the hooks added by plugins to this project, and to “hook into” them to add your own configuration.
 
-We’ll imagine that we have a custom Babel plugin related to our locale, and that we want to include that plugin for any build of this app that uses Babel. We’ll do that by using our own hook, and the `babelPlugins` hook provided by [`@quilted/sewing-kit-babel`](../packages/sewing-kit-babel):
+We’ll imagine that we have a custom Babel plugin related to our locale, and that we want to include that plugin for any build of this app that uses Babel. We’ll do that by using our own hook, and the `babelPlugins` hook provided by [`@quilted/craft/babel`](../packages/craft/src/tools/babel.ts):
 
 ```ts
 import {createProjectPlugin} from '@quilted/craft';
 import type {App, WaterfallHook} from '@quilted/craft';
 
-// For TypeScript to “see” the additional hooks added by Sewing Kit
+// For TypeScript to “see” the additional hooks added by Craft
 // plugins, we often need to bring in a reference to that module’s types
 // explicitly.
-import type {} from '@quilted/sewing-kit-babel';
+import type {} from '@quilted/craft/babel';
 
 // Same as before...
 export interface LocaleHooks {
@@ -325,7 +330,7 @@ export function buildLocale() {
 
 ### Adding steps to run
 
-So far, we’ve added hooks, and we’ve added configuration to existing hooks. These hooks are typically consumed by a “step”, which is the way Sewing Kit describes an action that needs to be performed for a given task. Custom steps can be added with the `run()` function, which can return one step, an array of steps, or a promise for steps to run. This function is passed a `step()` function, which lets you construct steps, and a `configuration()` method that gives you access to the configuration for the project.
+So far, we’ve added hooks, and we’ve added configuration to existing hooks. These hooks are typically consumed by a “step”, which is the way Craft describes an action that needs to be performed for a given task. Custom steps can be added with the `run()` function, which can return one step, an array of steps, or a promise for steps to run. This function is passed a `step()` function, which lets you construct steps, and a `configuration()` method that gives you access to the configuration for the project.
 
 In the example below, we are adding a single step that logs the result of our `locale` hook.
 
@@ -368,10 +373,13 @@ Steps can also define the following properties:
 
 ### Composing other plugins
 
-You may want to wrap a collection of Sewing Kit plugins up as a single plugin. This can be useful for developers that want to have a common set of plugins included in multiple projects. You can compose additional plugins by implementing the `create()` method for your plugin. This plugin is called with a `use()` function that you can use to include other plugins in any project that includes your plugin:
+You may want to wrap a collection of Craft plugins up as a single plugin. This can be useful for developers that want to have a common set of plugins included in multiple projects. You can compose additional plugins by implementing the `create()` method for your plugin. This plugin is called with a `use()` function that you can use to include other plugins in any project that includes your plugin:
 
 ```ts
-import {someSewingKitPlugin, anotherSewingKitPlugin} from './config/sewing-kit';
+import {
+  someSewingKitPlugin,
+  anotherSewingKitPlugin,
+} from './configuration/craft';
 
 export function composedPlugin() {
   return createProjectPlugin({
@@ -383,16 +391,16 @@ export function composedPlugin() {
 }
 ```
 
-The `create` function can be asynchronous. This is particularly useful importing Sewing Kit plugins using dynamic imports. `@quilted/craft` uses this capability to include plugins only if the package that provides them can be imported:
+The `create` function can be asynchronous. This is particularly useful importing Craft plugins using dynamic imports. You can use this capability to include plugins only if the package that provides them can be imported:
 
 ```ts
 export function workersIfAvailable() {
   return createProjectPlugin({
-    name: 'WorkersIfAvailable',
+    name: 'CustomPluginIfAvailable',
     async create({use}) {
       try {
-        const {workers} = await import('@quilted/workers/sewing-kit');
-        use(workers());
+        const {myCustomPlugin} = await import('@my-projects/craft-plugins');
+        use(myCustomPlugin());
       } catch {
         // Module not found, noop
       }
