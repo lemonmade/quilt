@@ -55,9 +55,6 @@
     "@remote-ui/rpc": "^1.2.0",
     "common-tags": "^1.8.0"
   },
-  "devDependencies": {
-    "@quilted/craft": "^0.1.0"
-  },
   "peerDependencies": {
     "@babel/core": ">=7.0.0 <8.0.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
