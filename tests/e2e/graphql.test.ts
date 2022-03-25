@@ -5,7 +5,7 @@ jest.setTimeout(20_000);
 describe('graphql', () => {
   describe('type generation', () => {
     it('generates types from a project’s GraphQL config file', async () => {
-      await withWorkspace(async (workspace) => {
+      await withWorkspace({debug: true}, async (workspace) => {
         await workspace.fs.write({
           'graphql.config.toml': stripIndent`
             schema = "schema.graphql"
