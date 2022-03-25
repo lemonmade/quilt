@@ -1,5 +1,19 @@
 # @quilted/craft
 
+## 0.1.84
+
+### Patch Changes
+
+- [`1f8ffd53`](https://github.com/lemonmade/quilt/commit/1f8ffd53ba84f893dd44ab0879d825b4f783910c) Thanks [@lemonmade](https://github.com/lemonmade)! - Reduce peer dependency warnings
+
+* [#223](https://github.com/lemonmade/quilt/pull/223) [`7041e6be`](https://github.com/lemonmade/quilt/commit/7041e6be1b602efd6348ff6b377f07cf57e43f3c) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplified GraphQL file loading
+
+- [`e3d57269`](https://github.com/lemonmade/quilt/commit/e3d57269978f88af2b72639c5ad054669b57a169) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up package bundle declaration
+
+- Updated dependencies [[`1f8ffd53`](https://github.com/lemonmade/quilt/commit/1f8ffd53ba84f893dd44ab0879d825b4f783910c), [`7041e6be`](https://github.com/lemonmade/quilt/commit/7041e6be1b602efd6348ff6b377f07cf57e43f3c)]:
+  - @quilted/graphql@0.4.26
+  - @quilted/react-testing@0.5.10
+
 ## 0.1.83
 
 ### Patch Changes

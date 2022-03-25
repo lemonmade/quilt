@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.4.26
+
+### Patch Changes
+
+- [`1f8ffd53`](https://github.com/lemonmade/quilt/commit/1f8ffd53ba84f893dd44ab0879d825b4f783910c) Thanks [@lemonmade](https://github.com/lemonmade)! - Reduce peer dependency warnings
+
+* [#223](https://github.com/lemonmade/quilt/pull/223) [`7041e6be`](https://github.com/lemonmade/quilt/commit/7041e6be1b602efd6348ff6b377f07cf57e43f3c) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplified GraphQL file loading
+
 ## 0.4.25
 
 ### Patch Changes

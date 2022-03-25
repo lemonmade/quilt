@@ -1,5 +1,11 @@
 # create-quilt-app
 
+## 0.1.20
+
+### Patch Changes
+
+- [`e3d57269`](https://github.com/lemonmade/quilt/commit/e3d57269978f88af2b72639c5ad054669b57a169) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up package bundle declaration
+
 ## 0.1.19
 
 ### Patch Changes
