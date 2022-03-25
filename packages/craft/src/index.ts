@@ -284,11 +284,10 @@ export function quiltService({
 
 // TODO
 export interface PackageOptions {
-  build?: boolean;
+  build?: boolean | {bundle?: RollupNodeOptions['bundle']};
   react?: boolean;
   graphql?: boolean;
   commonjs?: PackageBuildOptions['commonjs'];
-  bundleNode?: RollupNodeOptions['bundle'];
 }
 
 /**
@@ -300,7 +299,6 @@ export function quiltPackage({
   react: useReact = false,
   graphql: useGraphQL = false,
   commonjs,
-  bundleNode,
 }: PackageOptions = {}) {
   return createProjectPlugin<Package>({
     name: 'Quilt.Package',
@@ -317,7 +315,9 @@ export function quiltPackage({
         useReact && preact(),
         useReact && reactTesting({environment: 'preact'}),
         useGraphQL && graphql(),
-        rollupNode({bundle: bundleNode}),
+        rollupNode({
+          bundle: typeof build === 'boolean' ? undefined : build.bundle,
+        }),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),
