@@ -81,7 +81,7 @@ export async function loadConfiguration(
   if (isSingleProjectConfig(config)) {
     projects.default = normalizeConfiguration('default', config);
   } else if (isMultipleProjectConfig(config)) {
-    for (const [name, projectConfig] of Object.entries(config)) {
+    for (const [name, projectConfig] of Object.entries(config.projects)) {
       projects[name] = normalizeConfiguration(name, projectConfig);
     }
   }
