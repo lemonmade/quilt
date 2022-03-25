@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.83
+
+### Patch Changes
+
+- [`d5d25fa0`](https://github.com/lemonmade/quilt/commit/d5d25fa001e477f032a85087649793c8c6d5025b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing binary for Craft
+
 ## 0.1.82
 
 ### Patch Changes
