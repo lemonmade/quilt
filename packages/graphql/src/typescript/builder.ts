@@ -5,15 +5,20 @@ import {mkdir, readFile, writeFile} from 'fs/promises';
 import {DocumentNode, parse, Source, GraphQLSchema} from 'graphql';
 import {FSWatcher, watch} from 'chokidar';
 import {globby} from 'globby';
-import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
+import isGlob from 'is-glob';
 
+import {extractImports} from '../transform';
+import {loadConfiguration} from '../project';
+import type {
+  GraphQLConfiguration,
+  GraphQLProjectConfiguration,
+} from '../project';
 import type {
   DocumentOutputKind,
   SchemaOutputKind,
   SchemaOutputKindInputTypes,
-  ConfigurationExtensions,
+  QuiltExtensions,
 } from '../configuration';
-import {extractImports} from '../transform';
 import {generateDocumentTypes, generateSchemaTypes} from './print';
 import type {DocumentDetails, ProjectDetails} from './types';
 
@@ -22,40 +27,34 @@ export interface RunOptions {
 }
 
 interface ProjectBuildStartDetails {
-  project: GraphQLProjectConfig;
+  project: GraphQLProjectConfiguration;
 }
 
 interface ProjectBuildEndDetails {
-  project: GraphQLProjectConfig;
+  project: GraphQLProjectConfiguration;
   schema: SchemaBuildDetails;
   documents: DocumentBuildDetails[];
 }
 
 interface SchemaBuildDetails {
-  project: GraphQLProjectConfig;
+  project: GraphQLProjectConfiguration;
   schema: GraphQLSchema;
   outputKinds: SchemaOutputKind[];
 }
 
 interface DocumentBuildDetails {
-  project: GraphQLProjectConfig;
+  project: GraphQLProjectConfiguration;
   document: DocumentNode;
   documentPath: string;
   dependencies: Set<string>;
   outputKinds: DocumentOutputKind[];
 }
 
-type ProjectDetailsMap = Map<GraphQLProjectConfig, ProjectDetails>;
+type ProjectDetailsMap = Map<GraphQLProjectConfiguration, ProjectDetails>;
 
 export async function createBuilder(cwd?: string, options?: Partial<Options>) {
-  const config = await loadConfig({
-    rootDir: cwd,
-    extensions: [() => ({name: 'quilt'})],
-    throwOnEmpty: false,
-    throwOnMissing: false,
-  });
-
-  return new Builder(config, options);
+  const configuration = await loadConfiguration(cwd);
+  return new Builder(configuration, options);
 }
 
 export interface Options {
@@ -66,7 +65,7 @@ export class Builder extends EventEmitter {
   readonly options: Options;
 
   private watching = false;
-  private readonly config: GraphQLConfig | undefined;
+  private readonly config: GraphQLConfiguration | undefined;
   private readonly projectDetails: ProjectDetailsMap = new Map();
 
   private get projects() {
@@ -80,7 +79,7 @@ export class Builder extends EventEmitter {
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
-  constructor(config?: GraphQLConfig, options?: Partial<Options>) {
+  constructor(config?: GraphQLConfiguration, options?: Partial<Options>) {
     super();
     this.config = config;
     this.options = {package: '@quilted/graphql', ...options};
@@ -150,7 +149,7 @@ export class Builder extends EventEmitter {
 
     const updateDocument = async (
       filePath: string,
-      project: GraphQLProjectConfig,
+      project: GraphQLProjectConfiguration,
     ) => {
       try {
         await this.updateDocumentInProject(filePath, project);
@@ -164,22 +163,20 @@ export class Builder extends EventEmitter {
     if (!this.watching) return;
 
     for (const project of this.projects) {
-      const documents = toArray(project.documents).filter(
-        (document): document is string => typeof document === 'string',
-      );
+      const documents = project.documentPatterns;
 
       if (documents.length === 0) continue;
 
-      const schemasWatcher = watch(normalizeProjectSchemaPaths(project), {
-        cwd: project.dirpath,
+      const schemasWatcher = watch(project.schemaPatterns, {
+        cwd: project.root,
         ignoreInitial: true,
       }).on('update', () => this.updateProjectTypes(project));
 
       this.watchers.add(schemasWatcher);
 
       const documentsWatcher = watch(documents, {
-        cwd: project.dirpath,
-        ignored: toArray(project.exclude),
+        cwd: project.root,
+        ignored: project.excludePatterns,
         ignoreInitial: true,
       })
         .on('add', (filePath: string) => updateDocument(filePath, project))
@@ -221,7 +218,7 @@ export class Builder extends EventEmitter {
     this.watchers.clear();
   }
 
-  private async buildProjectTypes(project: GraphQLProjectConfig) {
+  private async buildProjectTypes(project: GraphQLProjectConfiguration) {
     try {
       this.emit('project:build:start', {project});
       const schema = await this.buildSchemaTypes(project);
@@ -237,7 +234,7 @@ export class Builder extends EventEmitter {
     }
   }
 
-  private async updateProjectTypes(project: GraphQLProjectConfig) {
+  private async updateProjectTypes(project: GraphQLProjectConfiguration) {
     try {
       await this.buildSchemaTypes(project);
       await Promise.all(
@@ -252,7 +249,7 @@ export class Builder extends EventEmitter {
   }
 
   private async buildSchemaTypes(
-    project: GraphQLProjectConfig,
+    project: GraphQLProjectConfiguration,
   ): Promise<SchemaBuildDetails> {
     // GraphQL config (through @graphql-tools) handles loading and merging
     // multiple schema files. For now, this is fine, since we don’t support
@@ -375,18 +372,18 @@ export class Builder extends EventEmitter {
     return details;
   }
 
-  private async buildDocumentTypes(project: GraphQLProjectConfig) {
+  private async buildDocumentTypes(project: GraphQLProjectConfiguration) {
     const documentMap = this.projectDetails.get(project)!.documents;
 
     const documents = await globby(
-      toArray(project.documents).filter(
+      project.documentPatterns.filter(
         (document): document is string => typeof document === 'string',
       ),
       {
         absolute: true,
-        cwd: project.dirpath,
+        cwd: project.root,
         onlyFiles: true,
-        ignore: toArray(project.exclude),
+        ignore: project.excludePatterns,
       },
     );
 
@@ -419,7 +416,7 @@ export class Builder extends EventEmitter {
 
   private async buildDocumentType(
     file: string,
-    project: GraphQLProjectConfig,
+    project: GraphQLProjectConfiguration,
   ): Promise<DocumentBuildDetails> {
     const projectDetails = this.projectDetails.get(project)!;
     const documentDetails = projectDetails.documents.get(file)!;
@@ -506,7 +503,7 @@ export class Builder extends EventEmitter {
   private async documentOutputKindMatchesDocument(
     outputKind: DocumentOutputKind,
     documentPath: string,
-    project: GraphQLProjectConfig,
+    project: GraphQLProjectConfiguration,
   ) {
     if (outputKind.match == null) {
       return true;
@@ -520,7 +517,7 @@ export class Builder extends EventEmitter {
       }
     } else {
       const globPromise = globby(outputKind.match, {
-        cwd: project.dirpath,
+        cwd: project.root,
         absolute: true,
         ignore: ['**/node_modules'],
       });
@@ -536,7 +533,7 @@ export class Builder extends EventEmitter {
 
   private async updateDocumentInProject(
     filePath: string,
-    project: GraphQLProjectConfig,
+    project: GraphQLProjectConfiguration,
   ) {
     const contents = (await readFile(filePath, 'utf8')).trim();
     if (contents.length === 0) return;
@@ -594,25 +591,7 @@ export class Builder extends EventEmitter {
   }
 }
 
-function toArray<T>(value?: T | T[]): T[] {
-  if (value == null) return [];
-  if (Array.isArray(value)) return value;
-  return [value];
-}
-
-function normalizeProjectSchemaPaths({schema, name}: GraphQLProjectConfig) {
-  if (typeof schema === 'string') return [schema];
-  if (Array.isArray(schema) && schema.every((file) => typeof file === 'string'))
-    return schema as string[];
-
-  throw new Error(
-    `Can’t watch schema for GraphQL project ${JSON.stringify(
-      name,
-    )}: ${JSON.stringify(schema, null, 2)}`,
-  );
-}
-
-function getOptions(project: GraphQLProjectConfig): ConfigurationExtensions {
+function getOptions(project: GraphQLProjectConfiguration): QuiltExtensions {
   const quiltExtensions = project.extensions.quilt ?? {};
 
   return {
@@ -629,12 +608,12 @@ function getOptions(project: GraphQLProjectConfig): ConfigurationExtensions {
 
 function normalizeSchemaTypesPath(
   outputPath: string,
-  project: GraphQLProjectConfig,
+  project: GraphQLProjectConfiguration,
   {isDefault = false} = {},
 ) {
   const isTypeFile = path.extname(outputPath) === '.ts';
   return path.resolve(
-    project.dirpath,
+    project.root,
     isTypeFile
       ? outputPath
       : path.join(
@@ -645,16 +624,15 @@ function normalizeSchemaTypesPath(
 }
 
 function getDefaultSchemaOutputPath(
-  {schema, name}: GraphQLProjectConfig,
+  {name, schemaPatterns}: GraphQLProjectConfiguration,
   {typesOnly = true} = {},
 ) {
-  const createPath = (schemaPath: string) =>
-    `${schemaPath}${typesOnly ? '.d.ts' : '.ts'}`;
+  const firstProbablyFileSchemaPattern = schemaPatterns.find(
+    (pattern) => !isGlob(pattern),
+  );
 
-  if (typeof schema === 'string') {
-    return createPath(schema);
-  } else if (Array.isArray(schema) && typeof schema[0] === 'string') {
-    return createPath(schema[0]);
+  if (firstProbablyFileSchemaPattern) {
+    return `${firstProbablyFileSchemaPattern}${typesOnly ? '.d.ts' : '.ts'}`;
   }
 
   throw new Error(
