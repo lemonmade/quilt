@@ -1,5 +1,7 @@
 import {unlinkSync} from 'fs';
 import {loadSchema} from '@graphql-tools/load';
+import {JsonFileLoader} from '@graphql-tools/json-file-loader';
+import {GraphQLFileLoader} from '@graphql-tools/graphql-file-loader';
 import {cosmiconfig as createCosmiconfig} from 'cosmiconfig';
 import {loadToml} from 'cosmiconfig-toml-loader';
 
@@ -51,6 +53,9 @@ export async function loadConfiguration(
 
   const {config} = result;
 
+  const graphqlFileLoader = new GraphQLFileLoader();
+  const jsonFileLoader = new JsonFileLoader();
+
   const normalizeConfiguration = (
     name: string,
     {schema, documents, exclude, extensions = {}}: GraphQLProject,
@@ -64,7 +69,7 @@ export async function loadConfiguration(
       excludePatterns: toArray(exclude),
       getSchema() {
         return loadSchema(schema, {
-          loaders: [],
+          loaders: [jsonFileLoader, graphqlFileLoader],
           cwd: root,
         });
       },
