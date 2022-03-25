@@ -51,6 +51,7 @@ export interface Command {
 
 export interface SewingKitCli {
   build(options?: ExecOptions): RunResult;
+  typeCheck(options?: ExecOptions): RunResult;
 }
 
 export interface Workspace {
@@ -204,6 +205,7 @@ export async function withWorkspace<T>(
     command: {
       sewingKit: {
         build: (...args) => runSewingKitFromSource('build', ...args),
+        typeCheck: (...args) => runSewingKitFromSource('type-check', ...args),
       },
       run: (...args) => runCommand(...args),
       node: (...args) => runNode(...args),

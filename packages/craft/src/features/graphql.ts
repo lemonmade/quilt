@@ -1,7 +1,7 @@
 import type {createBuilder} from '@quilted/graphql/typescript';
 import type {
   Configuration,
-  ConfigurationExtensions,
+  Extensions as ConfigurationExtensions,
 } from '@quilted/graphql/configuration';
 
 import {createWorkspacePlugin, createProjectPlugin} from '../kit';

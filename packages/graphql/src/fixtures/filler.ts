@@ -239,7 +239,7 @@ function fillValue(
       context.random.string()
     );
   } else if (isEnumType(type)) {
-    return value ?? context.random.pickone(type.getValues()).value;
+    return value ?? context.random.pickone([...type.getValues()]).value;
   } else if (isObjectType(type)) {
     return fillObject(
       value ?? context.resolvers[type.name]?.(resolverContext) ?? {},
