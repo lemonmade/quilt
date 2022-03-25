@@ -4,6 +4,7 @@ import {
   isListType,
   isUnionType,
   GraphQLString,
+  OperationTypeNode,
 } from 'graphql';
 import type {
   DocumentNode,
@@ -23,11 +24,11 @@ export function getRootType(
   schema: GraphQLSchema,
 ) {
   switch (operation.operation) {
-    case 'query':
+    case OperationTypeNode.QUERY:
       return schema.getQueryType()!;
-    case 'mutation':
+    case OperationTypeNode.MUTATION:
       return schema.getMutationType()!;
-    case 'subscription':
+    case OperationTypeNode.SUBSCRIPTION:
       return schema.getSubscriptionType()!;
   }
 }

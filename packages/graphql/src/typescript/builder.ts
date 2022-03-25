@@ -4,7 +4,7 @@ import {mkdir, readFile, writeFile} from 'fs/promises';
 
 import {DocumentNode, parse, Source, GraphQLSchema} from 'graphql';
 import {FSWatcher, watch} from 'chokidar';
-import glob from 'globby';
+import {globby} from 'globby';
 import {loadConfig, GraphQLProjectConfig, GraphQLConfig} from 'graphql-config';
 
 import type {
@@ -378,7 +378,7 @@ export class Builder extends EventEmitter {
   private async buildDocumentTypes(project: GraphQLProjectConfig) {
     const documentMap = this.projectDetails.get(project)!.documents;
 
-    const documents = await glob(
+    const documents = await globby(
       toArray(project.documents).filter(
         (document): document is string => typeof document === 'string',
       ),
@@ -519,7 +519,7 @@ export class Builder extends EventEmitter {
         matchingDocuments = await matchingDocuments;
       }
     } else {
-      const globPromise = glob(outputKind.match, {
+      const globPromise = globby(outputKind.match, {
         cwd: project.dirpath,
         absolute: true,
         ignore: ['**/node_modules'],
