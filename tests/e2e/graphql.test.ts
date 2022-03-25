@@ -47,10 +47,11 @@ describe('graphql', () => {
           `,
         });
 
-        const result = await workspace.command.sewingKit.typeCheck();
+        const typeCheck = workspace.command.sewingKit.typeCheck();
+        const result = await typeCheck;
 
-        console.log(result);
-        expect(result).toBeTruthy();
+        expect(typeCheck.child.exitCode).toBe(0);
+        expect(result.stdout).toMatch(/Quilt\.GraphQL\.TypeScriptDefinitions/);
       });
     });
   });
