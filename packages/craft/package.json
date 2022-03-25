@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.83",
+  "version": "0.1.84",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -160,10 +160,10 @@
     "@quilted/async": "0.3.21",
     "@quilted/browserslist-config": "0.1.6",
     "@quilted/eslint-config": "0.1.9",
-    "@quilted/graphql": "0.4.25",
+    "@quilted/graphql": "0.4.26",
     "@quilted/polyfills": "0.2.23",
     "@quilted/prettier": "0.2.8",
-    "@quilted/react-testing": "0.5.9",
+    "@quilted/react-testing": "0.5.10",
     "@quilted/rollup-plugin-fix-commonjs-preserve-modules": "0.1.8",
     "@quilted/sewing-kit": "0.2.24",
     "@quilted/typescript": "0.2.10",

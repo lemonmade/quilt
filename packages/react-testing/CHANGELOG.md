@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.10
+
+### Patch Changes
+
+- [#223](https://github.com/lemonmade/quilt/pull/223) [`7041e6be`](https://github.com/lemonmade/quilt/commit/7041e6be1b602efd6348ff6b377f07cf57e43f3c) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplified GraphQL file loading
+
 ## 0.5.9
 
 ### Patch Changes
