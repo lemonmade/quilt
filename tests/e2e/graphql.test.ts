@@ -7,7 +7,7 @@ describe('graphql', () => {
     it('generates types from a project’s GraphQL config file', async () => {
       await withWorkspace(async (workspace) => {
         await workspace.fs.write({
-          'graphql.config.mjs': stripIndent`
+          'graphql.config.ts': stripIndent`
             export default {
               schema: 'schema.graphql',
               documents: 'features/**/*.graphql',
