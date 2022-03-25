@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.27
+
+### Patch Changes
+
+- [`52b01c2e`](https://github.com/lemonmade/quilt/commit/52b01c2e2fca99df929ae095d1be2748609c604b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix type generation in multi-GraphQL project repos
+
 ## 0.4.26
 
 ### Patch Changes
