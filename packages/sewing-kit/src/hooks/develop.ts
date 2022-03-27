@@ -139,7 +139,14 @@ export type ResolvedDevelopWorkspaceConfigurationHooks =
 /**
  * The top-level options that can be passed when running the develop task.
  */
-export interface DevelopTaskOptions {}
+export interface DevelopTaskOptions {
+  /**
+   * Whether to enable debug modes for tools that support it. This may include
+   * more verbose logging, different error behaviors, enabling interactive debugger
+   * hooks, and other configuration changes.
+   */
+  readonly debug: boolean;
+}
 
 /**
  * The hooks and additional metadata for running the develop command on

@@ -5,9 +5,12 @@ import type {DevelopTaskOptions} from '../../kit';
 import {createCommand, runStepsForTask} from '../common';
 import type {TaskContext} from '../common';
 
-export const develop = createCommand({}, async (_, context) => {
-  await runDev(context, {});
-});
+export const develop = createCommand(
+  {'--debug': Boolean},
+  async ({'--debug': debug = false}, context) => {
+    await runDev(context, {debug});
+  },
+);
 
 export async function runDev(
   context: TaskContext,
