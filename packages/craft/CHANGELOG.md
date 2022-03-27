@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.86
+
+### Patch Changes
+
+- [`281928a0`](https://github.com/lemonmade/quilt/commit/281928a01f1442b8dc2dc4de04ef2933d6bccf24) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix output rollup entry signatures for services in development
+
+- Updated dependencies [[`28168cd4`](https://github.com/lemonmade/quilt/commit/28168cd475c8ed1f325494128c86eaa44f676cbe)]:
+  - @quilted/graphql@0.4.28
+
 ## 0.1.85
 
 ### Patch Changes
