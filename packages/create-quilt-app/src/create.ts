@@ -48,7 +48,7 @@ async function run() {
         },
         {
           type: () =>
-            !fs.existsSync(targetDirectory) || isEmpty(targetDirectory)
+            !fs.existsSync(targetDirectory!) || isEmpty(targetDirectory!)
               ? (null as any)
               : 'confirm',
           name: 'overwrite',
@@ -74,8 +74,8 @@ async function run() {
   }
 
   const {overwrite} = result;
-  const root = path.join(cwd, targetDirectory);
-  const packageName = toValidPackageName(targetDirectory);
+  const root = path.join(cwd, targetDirectory!);
+  const packageName = toValidPackageName(targetDirectory!);
 
   if (overwrite) {
     emptyDirectory(root);

@@ -87,7 +87,7 @@ function addIdOption(binding: Binding, t: typeof Babel, file: string) {
     }
 
     const [load, options] = args;
-    if (!load.isFunctionExpression() && !load.isArrowFunctionExpression()) {
+    if (!load!.isFunctionExpression() && !load!.isArrowFunctionExpression()) {
       return;
     }
 
@@ -115,7 +115,7 @@ function addIdOption(binding: Binding, t: typeof Babel, file: string) {
           }
 
           dynamicImports.add([
-            firstArgument.node.quasis[0].value.raw,
+            firstArgument.node.quasis[0]!.value.raw,
             firstArgument,
           ]);
         }
@@ -136,7 +136,7 @@ function addIdOption(binding: Binding, t: typeof Babel, file: string) {
       );
     }
 
-    const [importSource, sourceNodePath] = [...dynamicImports][0];
+    const [importSource, sourceNodePath] = [...dynamicImports][0]!;
 
     const resolved = resolve(dirname(file), importSource);
     const moduleName = basename(resolved, extname(resolved));

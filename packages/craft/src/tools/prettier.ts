@@ -67,8 +67,8 @@ export function prettier({
             if (extensions.length === 0) return;
 
             const glob =
-              extensions.length === 0
-                ? `./**/*.${stripLeadingDot(extensions[0])}`
+              extensions.length === 1
+                ? `./**/*.${stripLeadingDot(extensions[0]!)}`
                 : `./**/*.{${extensions
                     .map((extension) => stripLeadingDot(extension))
                     .join(',')}}`;

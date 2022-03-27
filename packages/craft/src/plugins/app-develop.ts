@@ -51,6 +51,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           vitePort,
           viteHost,
           vitePlugins,
+          viteConfig,
           viteSsrNoExternals,
           quiltAppServerHost,
           quiltAppServerPort,
@@ -80,10 +81,25 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             ...noExternals,
             // We keep all of these external so we can apply our rollup aliases
             // and improved transformations.
-            'react',
-            'react-dom',
-            /@quilted/,
+            '@quilted/quilt',
           ]);
+
+          viteConfig?.((config) => {
+            return {
+              ...config,
+              optimizeDeps: {
+                ...config.optimizeDeps,
+                exclude: ['react-query'],
+                esbuildOptions: {
+                  ...(config.optimizeDeps?.esbuildOptions ?? {}),
+                  loader: {
+                    ...(config.optimizeDeps?.esbuildOptions?.loader ?? {}),
+                    '.esnext': 'js',
+                  },
+                },
+              },
+            };
+          });
 
           vitePlugins?.(async (plugins) => {
             const [

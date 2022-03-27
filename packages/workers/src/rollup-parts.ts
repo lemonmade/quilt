@@ -234,7 +234,7 @@ function getWorkerRequest(id: string): {
   const wrapperFunction = searchParams.get('function')!;
 
   return {
-    workerId,
+    workerId: workerId!,
     wrapper: {module: wrapperModule, function: wrapperFunction},
   };
 }

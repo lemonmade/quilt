@@ -81,5 +81,5 @@ export class AsyncAssetManager {
 function highestPriorityAssetLoadTiming(...timings: AssetLoadTiming[]) {
   return ASSET_TIMING_PRIORITY[
     Math.max(...timings.map((timing) => PRIORITY_BY_TIMING.get(timing)!))
-  ];
+  ]!;
 }

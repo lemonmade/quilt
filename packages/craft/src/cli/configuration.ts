@@ -85,7 +85,7 @@ export async function loadWorkspace(
   const [workspaceConfig] = workspaceConfigs;
 
   if (
-    workspaceConfig?.workspacePlugins.length > 0 &&
+    workspaceConfig != null &&
     workspaceConfig.kind !== ConfigurationKind.Workspace &&
     loadedConfigs.length > 1
   ) {
