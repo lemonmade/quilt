@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.28
+
+### Patch Changes
+
+- [`28168cd4`](https://github.com/lemonmade/quilt/commit/28168cd475c8ed1f325494128c86eaa44f676cbe) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL types not being regenerated on file changes
+
 ## 0.4.27
 
 ### Patch Changes
