@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.26
+
+### Patch Changes
+
+- [#228](https://github.com/lemonmade/quilt/pull/228) [`c7afc048`](https://github.com/lemonmade/quilt/commit/c7afc0486d37bc54da704c46cda1166690dda152) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade to stricter typescript options
+
 ## 0.2.25
 
 ### Patch Changes
