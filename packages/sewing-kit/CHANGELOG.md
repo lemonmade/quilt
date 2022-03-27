@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.25
+
+### Patch Changes
+
+- [`4dc392e4`](https://github.com/lemonmade/quilt/commit/4dc392e49256eb2f58f6947d19a4fec074a10fb8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add debug flag to develop command
+
 ## 0.2.24
 
 ### Patch Changes
