@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.87
+
+### Patch Changes
+
+- [`4dc392e4`](https://github.com/lemonmade/quilt/commit/4dc392e49256eb2f58f6947d19a4fec074a10fb8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add debug flag to develop command
+
+- Updated dependencies [[`4dc392e4`](https://github.com/lemonmade/quilt/commit/4dc392e49256eb2f58f6947d19a4fec074a10fb8)]:
+  - @quilted/sewing-kit@0.2.25
+
 ## 0.1.86
 
 ### Patch Changes
