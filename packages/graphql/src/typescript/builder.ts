@@ -171,7 +171,10 @@ export class Builder extends EventEmitter {
       const schemasWatcher = watch(project.schemaPatterns, {
         cwd: project.root,
         ignoreInitial: true,
-      }).on('update', () => this.updateProjectTypes(project));
+      })
+        .on('add', () => this.updateProjectTypes(project))
+        .on('unlink', () => this.updateProjectTypes(project))
+        .on('change', () => this.updateProjectTypes(project));
 
       this.watchers.add(schemasWatcher);
 
