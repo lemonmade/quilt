@@ -52,6 +52,6 @@ export function extractPrefix(url: URL, prefix?: Prefix) {
   const regex = new RegExp(prefix.source);
   const match = regex.exec(url.pathname);
   return match != null && match.index === 0
-    ? removePostfixSlash(match[0])
+    ? removePostfixSlash(match[0]!)
     : undefined;
 }

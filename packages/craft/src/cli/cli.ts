@@ -6,6 +6,15 @@ async function run() {
   const [, , ...args] = process.argv;
   const [task, ...argv] = args;
 
+  if (!task) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `You must run quilt with one of the following commands: build, develop, lint, test, or type-check.`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   switch (task.toLowerCase()) {
     case Task.Build: {
       const {build} = await import('./tasks/build');

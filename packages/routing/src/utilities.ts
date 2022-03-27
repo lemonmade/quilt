@@ -110,12 +110,12 @@ export function getMatchDetails(
     if (
       matchAsRelative != null &&
       matchAsRelative.index! === 0 &&
-      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0], exact)
+      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0]!, exact)
     ) {
       return {
-        matched: removePostfixSlash(matchAsRelative[0]),
+        matched: removePostfixSlash(matchAsRelative[0]!),
         consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
-          matchAsRelative[0],
+          matchAsRelative[0]!,
         )}`,
       };
     }
@@ -125,12 +125,12 @@ export function getMatchDetails(
     if (
       matchAsAbsolute == null ||
       matchAsAbsolute.index! !== 0 ||
-      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0], exact)
+      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0]!, exact)
     ) {
       return undefined;
     }
 
-    const normalizedMatch = removePostfixSlash(matchAsAbsolute[0]);
+    const normalizedMatch = removePostfixSlash(matchAsAbsolute[0]!);
 
     return {
       matched: normalizedMatch,
@@ -209,7 +209,7 @@ export function extractPrefix(url: URL, prefix?: Prefix) {
   const regex = new RegExp(prefix.source);
   const match = regex.exec(url.pathname);
   return match != null && match.index === 0
-    ? removePostfixSlash(match[0])
+    ? removePostfixSlash(match[0]!)
     : undefined;
 }
 

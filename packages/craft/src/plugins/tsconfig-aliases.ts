@@ -97,7 +97,7 @@ async function getAliasPlugin(project: Project, workspace: Workspace) {
         find: name.includes('*')
           ? new RegExp(`^${name.replace(/\*/, '(.*)')}$`)
           : name,
-        replacement: project.fs.resolvePath(aliases[0]).replace('*', '$1'),
+        replacement: project.fs.resolvePath(aliases[0]!).replace('*', '$1'),
       };
     }),
   });

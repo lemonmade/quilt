@@ -116,8 +116,8 @@ export function getSelectionTypeMap(
           fieldType = GraphQLString;
         } else {
           fieldType = typeConditionFields
-            ? typeConditionFields[name].type
-            : typeFields[name].type;
+            ? typeConditionFields[name]!.type
+            : typeFields[name]!.type;
         }
 
         const resolvedType = typeCondition ?? type;

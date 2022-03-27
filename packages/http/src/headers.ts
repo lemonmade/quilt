@@ -36,11 +36,10 @@ export class HeadersPolyfill implements Headers {
     if (headers) {
       if (typeof (headers as HeadersPolyfill).raw === 'function') {
         const rawHeaders = (headers as HeadersPolyfill).raw();
-        const headerNames = Object.keys(rawHeaders);
 
-        for (const headerName of headerNames) {
-          for (const value of rawHeaders[headerName]) {
-            this.append(headerName, value);
+        for (const [name, values] of Object.entries(rawHeaders)) {
+          for (const value of values) {
+            this.append(name, value);
           }
         }
       } else if (Symbol.iterator in headers) {

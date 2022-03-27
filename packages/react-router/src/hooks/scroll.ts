@@ -107,7 +107,7 @@ export function useScrollRestoration({
     performPersist();
 
     return () => {
-      scrollMap[id] = target.scrollTop;
+      scrollMap![id] = target.scrollTop;
       performPersist();
 
       if (scrollRef.current != null) {

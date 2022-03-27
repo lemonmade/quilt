@@ -18,6 +18,14 @@
     "./service.json": "./service.json",
     "./workspace.json": "./workspace.json"
   },
+  "peerDependencies": {
+    "typescript": "^4.6.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": false
+    }
+  },
   "sideEffects": false,
   "eslintConfig": {
     "extends": [

@@ -282,13 +282,13 @@ function sourceRoot(pkg: Package) {
   }
 
   if (entries.length === 1) {
-    return dirname(entries[0]);
+    return dirname(entries[0]!);
   }
 
   const [firstEntry, ...otherEntries] = entries;
   let sharedRoot = pkg.fs.root + pathSeparator;
 
-  for (const segment of firstEntry
+  for (const segment of firstEntry!
     .replace(sharedRoot, '')
     .split(pathSeparator)) {
     const maybeSharedRoot = join(sharedRoot, segment + pathSeparator);

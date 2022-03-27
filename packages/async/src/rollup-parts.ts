@@ -176,7 +176,7 @@ async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
       const [originalImport, imported] = match;
 
       // Get rid of surrounding space and quotes
-      const importSource = imported.trim().slice(1, imported.length - 1);
+      const importSource = imported!.trim().slice(1, imported!.length - 1);
 
       const dependencies = getDependenciesForImport(
         importSource,
@@ -188,8 +188,8 @@ async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
 
       newCode.overwrite(
         match.index,
-        match.index + originalImport.length,
-        preloadContentForDependencies(dependencies, originalImport),
+        match.index + originalImport!.length,
+        preloadContentForDependencies(dependencies, originalImport!),
       );
     }
 
@@ -260,7 +260,7 @@ async function writeManifestForBundle(
   // We assume the first entry is the "main" one. There can be
   // more than one because each worker script is also listed as an
   // entry (though, from a separate build).
-  const entryChunk = entries[0];
+  const entryChunk = entries[0]!;
 
   const manifest: Partial<AssetManifest> = {
     metadata: manifestOptions.metadata ?? {},
@@ -329,7 +329,7 @@ function getAsyncRequest(id: string):
   return asyncId
     ? {
         asyncId,
-        moduleId,
+        moduleId: moduleId!,
       }
     : undefined;
 }

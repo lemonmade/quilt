@@ -118,6 +118,8 @@ export default function workerBabelPlugin({
 
       const firstArgument = callExpression.get('arguments')[0];
 
+      if (firstArgument == null) continue;
+
       firstArgument.traverse({
         Import({parentPath}) {
           if (parentPath.isCallExpression()) {
@@ -127,7 +129,7 @@ export default function workerBabelPlugin({
       });
 
       if (dynamicImports.size === 0) {
-        return;
+        continue;
       }
 
       if (dynamicImports.size > 1) {
@@ -136,7 +138,10 @@ export default function workerBabelPlugin({
         );
       }
 
-      const dynamicallyImported = [...dynamicImports][0].get('arguments')[0];
+      const dynamicallyImported = [...dynamicImports][0]!.get('arguments')[0];
+
+      if (dynamicallyImported == null) continue;
+
       const {value: imported, confident} = dynamicallyImported.evaluate();
 
       if (typeof imported !== 'string' || !confident) {
@@ -153,7 +158,7 @@ export default function workerBabelPlugin({
       const importId = callExpression.scope.generateUidIdentifier('worker');
 
       program
-        .get('body')[0]
+        .get('body')[0]!
         .insertBefore(
           t.importDeclaration(
             [t.importDefaultSpecifier(importId)],

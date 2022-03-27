@@ -117,9 +117,9 @@ export function generateDocumentTypes(
     },
   };
 
-  if (operations.length > 0) {
-    const [operation] = operations;
+  const [operation] = operations;
 
+  if (operation != null) {
     const rootType = getRootType(operation, project.schema);
     const context = {...baseContext, rootType};
 
@@ -306,7 +306,7 @@ function variablesExportForOperation(
 
           const typescriptType =
             unwrappedType.type in scalarTypeMap
-              ? scalarTypeMap[unwrappedType.type]
+              ? scalarTypeMap[unwrappedType.type]!
               : context.import(
                   context.schema.getType(unwrappedType.type) as GraphQLLeafType,
                 );
@@ -373,7 +373,7 @@ function exportsForSelection(
 
     if (isScalarType(unwrappedType.type)) {
       if (unwrappedType.type.name in scalarTypeMap) {
-        typescriptType = scalarTypeMap[unwrappedType.type.name];
+        typescriptType = scalarTypeMap[unwrappedType.type.name]!;
       } else {
         typescriptType = context.import(unwrappedType.type);
       }
@@ -550,7 +550,7 @@ function toUnionOrInterfaceTypeName(
 }
 
 function toTypeName(name: string) {
-  return `${name[0].toLocaleUpperCase()}${name.substring(1)}`;
+  return `${name[0]!.toLocaleUpperCase()}${name.substring(1)}`;
 }
 
 function schemaImportName({name}: GraphQLLeafType) {

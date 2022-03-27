@@ -107,7 +107,9 @@ async function loadTypeScript(file: string): Promise<any> {
 
   if (buildResult.errors.length > 0) {
     throw new Error(
-      `Could not build GraphQL configuration file ${file}: ${buildResult.errors[0].detail}`,
+      `Could not build GraphQL configuration file ${file}: ${
+        buildResult.errors[0]!.detail
+      }`,
     );
   }
 
