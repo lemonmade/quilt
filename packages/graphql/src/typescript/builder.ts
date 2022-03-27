@@ -153,6 +153,7 @@ export class Builder extends EventEmitter {
     ) => {
       try {
         await this.updateDocumentInProject(filePath, project);
+        await this.buildDocumentType(filePath, project);
       } catch (error) {
         this.emit('error', error as Error);
       }
@@ -375,17 +376,12 @@ export class Builder extends EventEmitter {
   private async buildDocumentTypes(project: GraphQLProjectConfiguration) {
     const documentMap = this.projectDetails.get(project)!.documents;
 
-    const documents = await globby(
-      project.documentPatterns.filter(
-        (document): document is string => typeof document === 'string',
-      ),
-      {
-        absolute: true,
-        cwd: project.root,
-        onlyFiles: true,
-        ignore: project.excludePatterns,
-      },
-    );
+    const documents = await globby(project.documentPatterns, {
+      absolute: true,
+      cwd: project.root,
+      onlyFiles: true,
+      ignore: project.excludePatterns,
+    });
 
     await Promise.all(
       documents.map(async (filePath) => {
