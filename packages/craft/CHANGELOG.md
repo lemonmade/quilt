@@ -1,5 +1,18 @@
 # @quilted/craft
 
+## 0.1.88
+
+### Patch Changes
+
+- [#228](https://github.com/lemonmade/quilt/pull/228) [`c7afc048`](https://github.com/lemonmade/quilt/commit/c7afc0486d37bc54da704c46cda1166690dda152) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade to stricter typescript options
+
+- Updated dependencies [[`c7afc048`](https://github.com/lemonmade/quilt/commit/c7afc0486d37bc54da704c46cda1166690dda152)]:
+  - @quilted/async@0.3.22
+  - @quilted/graphql@0.4.29
+  - @quilted/sewing-kit@0.2.26
+  - @quilted/typescript@0.2.11
+  - @quilted/workers@0.2.21
+
 ## 0.1.87
 
 ### Patch Changes
