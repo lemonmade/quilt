@@ -326,6 +326,7 @@ export function httpHandlerDevelopment({
                 input,
                 plugins,
                 external,
+                preserveEntrySignatures: false,
               }),
             ]);
 
