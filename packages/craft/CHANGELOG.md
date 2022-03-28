@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.89
+
+### Patch Changes
+
+- [`9ff374ba`](https://github.com/lemonmade/quilt/commit/9ff374ba7025e41b7e1a2ba2af5db096cce08600) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more vite hooks
+
 ## 0.1.88
 
 ### Patch Changes
