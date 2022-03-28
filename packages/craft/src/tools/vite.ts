@@ -1,4 +1,5 @@
 import type {InlineConfig, PluginOption} from 'vite';
+import type {InputOptions} from 'rollup';
 
 import {App, createProjectPlugin} from '../kit';
 import type {WaterfallHook} from '../kit';
@@ -37,6 +38,22 @@ export interface ViteHooks {
   vitePlugins: WaterfallHook<PluginOption[]>;
 
   /**
+   * Dependencies to pre-bundle when starting the development server.
+   */
+  viteOptimizeDepsInclude: WaterfallHook<string[]>;
+
+  /**
+   * Dependencies to exclude from pre-bundle when starting the development server.
+   */
+  viteOptimizeDepsExclude: WaterfallHook<string[]>;
+
+  /**
+   * Options to provide to Vite’s `build.rollupOptions` option, to customize
+   * the underlying Rollup build.
+   */
+  viteRollupOptions: WaterfallHook<InputOptions>;
+
+  /**
    * The list of IDs (or regular expressions) marking modules that
    * should not be treated for the server development build.
    */
@@ -62,13 +79,16 @@ export function vite() {
     develop({project, internal, hooks, run}) {
       hooks<ViteHooks>(({waterfall}) => ({
         viteConfig: waterfall(),
+        viteHost: waterfall(),
+        viteOptimizeDepsExclude: waterfall(),
+        viteOptimizeDepsInclude: waterfall(),
         vitePlugins: waterfall(),
         vitePort: waterfall(),
-        viteHost: waterfall(),
         viteResolveAliases: waterfall(),
         viteResolveExportConditions: waterfall(),
-        viteSsrNoExternals: waterfall(),
         viteResolveExtensions: waterfall(),
+        viteRollupOptions: waterfall(),
+        viteSsrNoExternals: waterfall(),
       }));
 
       run((step, {configuration}) =>
@@ -81,13 +101,16 @@ export function vite() {
               {
                 extensions,
                 viteConfig,
+                viteHost,
+                viteOptimizeDepsExclude,
+                viteOptimizeDepsInclude,
                 vitePlugins,
                 vitePort,
-                viteHost,
                 viteResolveAliases,
                 viteResolveExportConditions,
-                viteSsrNoExternals,
                 viteResolveExtensions,
+                viteRollupOptions,
+                viteSsrNoExternals,
               },
             ] = await Promise.all([import('vite'), configuration()]);
 
@@ -104,14 +127,19 @@ export function vite() {
               plugins,
               port,
               host,
+              optimizeDepsExclude,
+              optimizeDepsInclude,
               aliases,
               exportConditions,
               resolveExtensions,
+              rollupOptions,
               noExternals,
             ] = await Promise.all([
               vitePlugins!.run([]),
               vitePort!.run(undefined),
               viteHost!.run(undefined),
+              viteOptimizeDepsExclude!.run([]),
+              viteOptimizeDepsInclude!.run([]),
               viteResolveAliases!.run({}),
               // @see https://vitejs.dev/config/#resolve-conditions
               viteResolveExportConditions!.run([
@@ -123,6 +151,7 @@ export function vite() {
               ]),
               // @see https://vitejs.dev/config/#resolve-extensions
               viteResolveExtensions!.run(baseExtensions),
+              viteRollupOptions!.run({}),
               viteSsrNoExternals!.run([]),
             ]);
 
@@ -130,14 +159,21 @@ export function vite() {
               configFile: false,
               clearScreen: false,
               cacheDir: internal.fs.tempPath('vite/cache'),
+              build: {
+                rollupOptions,
+              },
               server: {port, host},
               // @ts-expect-error The types do not have this field, but it
               // is supported.
               ssr: {noExternal: noExternals},
               resolve: {
-                extensions: resolveExtensions,
                 alias: aliases,
+                extensions: resolveExtensions,
                 conditions: exportConditions,
+              },
+              optimizeDeps: {
+                include: optimizeDepsInclude,
+                exclude: optimizeDepsExclude,
               },
               plugins,
               esbuild: {

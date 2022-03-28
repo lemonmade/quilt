@@ -27,6 +27,7 @@ import {
 export const STEP_NAME = 'Quilt.App.Develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '/@quilted/magic/browser.tsx';
 const MAGIC_MODULE_SERVER_ENTRY = '/@quilted/magic/server.tsx';
+const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
 
 export interface Options {
   env?: EnvironmentOptions;
@@ -51,7 +52,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           vitePort,
           viteHost,
           vitePlugins,
-          viteConfig,
+          viteRollupOptions,
           viteSsrNoExternals,
           quiltAppServerHost,
           quiltAppServerPort,
@@ -71,6 +72,49 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             );
           }
 
+          viteRollupOptions?.(async (options) => {
+            if (options.input) return options;
+
+            const entryFiles = await Promise.all([
+              resolveToActualFiles(project.entry ?? 'index'),
+              browser?.entryModule
+                ? resolveToActualFiles(browser.entryModule)
+                : Promise.resolve([]),
+              browser?.initializeModule
+                ? resolveToActualFiles(browser.initializeModule)
+                : Promise.resolve([]),
+            ]);
+
+            return {
+              ...options,
+              input: entryFiles.flat(),
+            };
+
+            async function resolveToActualFiles(specifier: string) {
+              if (
+                ENTRY_EXTENSIONS.some((extension) =>
+                  specifier.endsWith(`.${extension}`),
+                )
+              ) {
+                return [project.fs.resolvePath(specifier)];
+              }
+
+              const matchedAsFiles = await project.fs.glob(
+                `${specifier}.{${ENTRY_EXTENSIONS.join(',')}}`,
+              );
+
+              if (matchedAsFiles.length > 0) {
+                return matchedAsFiles;
+              }
+
+              const matchedAsDirectory = await project.fs.glob(
+                `${specifier}/index.{${ENTRY_EXTENSIONS.join(',')}}`,
+              );
+
+              return matchedAsDirectory;
+            }
+          });
+
           vitePort?.((existingPort) =>
             quiltAppServerPort!.run(port ?? existingPort),
           );
@@ -83,23 +127,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             // and improved transformations.
             '@quilted/quilt',
           ]);
-
-          viteConfig?.((config) => {
-            return {
-              ...config,
-              optimizeDeps: {
-                ...config.optimizeDeps,
-                exclude: ['react-query'],
-                esbuildOptions: {
-                  ...(config.optimizeDeps?.esbuildOptions ?? {}),
-                  loader: {
-                    ...(config.optimizeDeps?.esbuildOptions?.loader ?? {}),
-                    '.esnext': 'js',
-                  },
-                },
-              },
-            };
-          });
 
           vitePlugins?.(async (plugins) => {
             const [
