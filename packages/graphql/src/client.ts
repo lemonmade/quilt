@@ -34,7 +34,7 @@ export class GraphQL {
   }
 
   mutate<Data, Variables>(
-    mutation: GraphQLOperation<Data, Variables>,
+    mutation: GraphQLOperation<Data, Variables> | string,
     ...optionsPart: IfAllVariablesOptional<
       Variables,
       [MutationOptions<Data, NoInfer<Variables>>?],
@@ -45,7 +45,7 @@ export class GraphQL {
   }
 
   query<Data, Variables>(
-    query: GraphQLOperation<Data, Variables>,
+    query: GraphQLOperation<Data, Variables> | string,
     ...optionsPart: IfAllVariablesOptional<
       Variables,
       [QueryOptions<Data, NoInfer<Variables>>?],
@@ -82,13 +82,16 @@ export class GraphQL {
   }
 
   private async run<Data, Variables>(
-    operation: GraphQLOperation<Data, Variables>,
+    operation: GraphQLOperation<Data, Variables> | string,
     variables?: Variables,
   ): Promise<GraphQLResult<Data>> {
     try {
       const data = (await this.fetch(
         {
-          operation,
+          operation:
+            typeof operation === 'string'
+              ? {id: operation, source: operation}
+              : operation,
           variables: variables ?? {},
         },
         createContext(),

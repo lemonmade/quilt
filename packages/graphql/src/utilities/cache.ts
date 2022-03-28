@@ -1,10 +1,17 @@
 import type {GraphQLOperation} from '../types';
 
 export function cacheKey<Data, Variables>(
-  {id}: GraphQLOperation<Data, Variables>,
+  operation: GraphQLOperation<Data, Variables> | string,
   variables?: Variables,
 ) {
-  return `${id}${JSON.stringify(variables ? sortVariables(variables) : {})}`;
+  const stringifiedOperation =
+    typeof operation === 'string'
+      ? operation.replace(/[\n\s]+/g, ' ')
+      : operation.id;
+
+  return `${stringifiedOperation}${JSON.stringify(
+    variables ? sortVariables(variables) : {},
+  )}`;
 }
 
 function sortVariables<T>(variables: T) {
