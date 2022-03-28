@@ -45,6 +45,7 @@
     {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
     {"path": "./packages/workers"},
+    {"path": "./integrations/react-query"},
     {"path": "./examples/basic-app"}
   ]
 }

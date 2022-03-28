@@ -1,0 +1,54 @@
+{
+  "name": "@quilted/react-query",
+  "type": "module",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-query"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:from-source": "./src/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "devDependencies": {
+    "react-query": "^3.34.0"
+  },
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "@quilted/quilt": "^0.5.0",
+    "react": ">=17.0.0 <18.0.0",
+    "react-query": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
+    "@quilted/quilt": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-query": {
+      "optional": false
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package",
+      "@quilted/eslint-config/react"
+    ]
+  }
+}
