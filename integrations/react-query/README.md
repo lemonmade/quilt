@@ -7,14 +7,14 @@ Integrates [React Query](https://react-query.tanstack.com/) with Quilt by automa
 Install both `@quilted/react-query` and `react-query` as dependencies of your project:
 
 ```bash
-$ pnpm add @quilted/react-router react-query --save
+$ pnpm add @quilted/react-query react-query --save
 ```
 
 > **Note:** This library needs [`@quilted/quilt`](../../packages/quilt) installed in your local repository. If you have just [created a new Quilt app](../../documentation/getting-started.md), you already have this installed.
 
 ## Usage
 
-[React Query’s getting started instructions](https://react-query.tanstack.com/overview) instruct you to create a `QueryClient` object, and pass it to a `QueryClientProvider` component. To integrate React Query with Quilt, you will instead pass your `QueryClient` object to this library’s `ReactQueryContext` component:
+[React Query’s getting started instructions](https://react-query.tanstack.com/overview) instruct you to create a `QueryClient` object, and pass it to a `QueryClientProvider` component. To integrate React Query with Quilt, you will pass your `QueryClient` object to this library’s `ReactQueryContext` component instead:
 
 ```tsx
 import {useMemo} from 'react';
@@ -32,9 +32,9 @@ export default function App() {
 }
 ```
 
-The `ReactQueryContext` takes care of ensuring that all queries made by your application are run during server-side rendering. It also takes care of serializing the results into your HTML payload, and [“hydrating” the query client](https://react-query.tanstack.com/guides/ssr#using-hydration) with that data when your application starts in the user’s browser.
+The `ReactQueryContext` takes care of ensuring that all queries made by your application are run during server-side rendering. It serializes the results into your HTML payload, and [“hydrating” the query client](https://react-query.tanstack.com/guides/ssr#using-hydration) so that data is available when your application starts in the user’s browser. It also renders the `QueryClientProvider` for you, so you don’t need to do it yourself.
 
-That’s all you need to do! Elsewhere in your application, you can now use React Query’s [`useQuery` hook](https://react-query.tanstack.com/guides/queries) to load data in your components. The example below shows how you might use Quilt’s GraphQL utilities to perform type-safe GraphQL queries using React Query:
+That’s all the setup you need! Elsewhere in your application, you can now use React Query’s [`useQuery` hook](https://react-query.tanstack.com/guides/queries) to load data in your components. The example below shows how you might use Quilt’s GraphQL utilities to perform type-safe GraphQL queries using React Query:
 
 ```tsx
 import {useMemo} from 'react';
