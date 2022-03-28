@@ -44,11 +44,13 @@ import {useQuery} from 'react-query';
 import startQuery from './Start.graphql';
 
 export function Start() {
-  const {query} = useMemo(() =>
-    createGraphQL({
-      cache: false,
-      fetch: createHttpFetch({uri: 'https://my-graphql-api.com'}),
-    }),
+  const {query} = useMemo(
+    () =>
+      createGraphQL({
+        cache: false,
+        fetch: createHttpFetch({uri: 'https://my-graphql-api.com'}),
+      }),
+    [],
   );
 
   const result = useQuery('start-query', () => query(startQuery));
