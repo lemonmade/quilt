@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.30
+
+### Patch Changes
+
+- [`f6d7ae01`](https://github.com/lemonmade/quilt/commit/f6d7ae011e259a30a145cf80205143031c8223dd) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow passing raw GraphQL query/ mutation strings
+
 ## 0.4.29
 
 ### Patch Changes
