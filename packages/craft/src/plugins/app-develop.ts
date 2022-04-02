@@ -53,6 +53,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           viteHost,
           vitePlugins,
           viteRollupOptions,
+          viteSsrExternals,
           viteSsrNoExternals,
           viteOptimizeDepsExclude,
           viteOptimizeDepsInclude,
@@ -136,6 +137,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             '@quilted/quilt/react',
             '@quilted/quilt/react/jsx-runtime',
           ]);
+
+          viteSsrExternals?.((externals) => [...externals, '@babel/runtime']);
 
           viteSsrNoExternals?.((noExternals) => [
             ...noExternals,

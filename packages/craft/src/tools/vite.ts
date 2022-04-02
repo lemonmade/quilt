@@ -63,7 +63,7 @@ export interface ViteHooks {
    * The list of IDs (or regular expressions) marking modules that
    * should always treated as external for the server development build.
    */
-  viteSsrExternals: WaterfallHook<(string | RegExp)[]>;
+  viteSsrExternals: WaterfallHook<string[]>;
 
   /**
    * Customizations on the full vite configuration. The resulting
@@ -175,7 +175,7 @@ export function vite() {
               server: {port, host},
               // @ts-expect-error The types do not have this field, but it
               // is supported.
-              ssr: {externals, noExternal: noExternals},
+              ssr: {external: externals, noExternal: noExternals},
               resolve: {
                 alias: aliases,
                 extensions: resolveExtensions,
