@@ -28,7 +28,6 @@ export function preact() {
         ({
           vitePlugins,
           viteResolveAliases,
-          viteOptimizeDepsExclude,
         }: ResolvedHooks<ViteHooks & DevelopConfigurationHooksForProject>) => {
           viteResolveAliases?.((aliases) => {
             Object.assign(aliases, ALIASES);
@@ -42,13 +41,6 @@ export function preact() {
 
             return plugins;
           });
-
-          // Prevents our aliased React from getting inlined into CommonJS dependencies.
-          viteOptimizeDepsExclude?.((exclude) => [
-            ...exclude,
-            'react',
-            'react-dom',
-          ]);
         },
       );
     },

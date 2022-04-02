@@ -61,6 +61,12 @@
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"
     },
+    "./env": {
+      "quilt:from-source": "./src/env.ts",
+      "quilt:esnext": "./build/esnext/env.esnext",
+      "import": "./build/esm/env.mjs",
+      "require": "./build/cjs/env.cjs"
+    },
     "./matchers": {
       "quilt:from-source": "./src/matchers.ts",
       "quilt:esnext": "./build/esnext/matchers.esnext",

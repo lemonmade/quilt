@@ -54,6 +54,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           vitePlugins,
           viteRollupOptions,
           viteSsrNoExternals,
+          viteOptimizeDepsExclude,
+          viteOptimizeDepsInclude,
           quiltAppServerHost,
           quiltAppServerPort,
           quiltAppServerEntryContent,
@@ -121,11 +123,25 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
           viteHost?.((host) => quiltAppServerHost!.run(host));
 
+          viteOptimizeDepsExclude?.((excluded) => [
+            ...excluded,
+            '@quilted/quilt/env',
+            '@quilted/quilt/global',
+          ]);
+
+          viteOptimizeDepsInclude?.((included) => [
+            ...included,
+            'react',
+            '@quilted/quilt',
+            '@quilted/quilt/react',
+            '@quilted/quilt/react/jsx-runtime',
+          ]);
+
           viteSsrNoExternals?.((noExternals) => [
             ...noExternals,
             // We keep all of these external so we can apply our rollup aliases
             // and improved transformations.
-            '@quilted/quilt',
+            /@quilted[/]quilt/,
           ]);
 
           vitePlugins?.(async (plugins) => {
@@ -330,12 +346,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                   '@babel/plugin-syntax-typescript',
                   {isTSX: true},
                 ]);
-                continue;
-              }
-
-              // ESBuild handles the React transform, though it does not currently
-              // support the runtime transform.
-              if (babelConfigItemIs(requestedPreset, '@babel/preset-react')) {
                 continue;
               }
 

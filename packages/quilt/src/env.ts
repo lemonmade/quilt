@@ -1,5 +1,5 @@
 export interface EnvironmentVariables {}
 
-declare const Env: EnvironmentVariables;
+const Env: EnvironmentVariables = {} as any;
 
 export default Env;

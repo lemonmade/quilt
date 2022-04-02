@@ -142,7 +142,7 @@ export function esnext() {
       configure(
         ({
           vitePlugins,
-          viteResolveExportConditions,
+          // viteResolveExportConditions,
           rollupPlugins,
           rollupNodeExportConditions,
         }: ResolvedHooks<
@@ -159,16 +159,18 @@ export function esnext() {
             ),
           );
 
-          // Prefer the esnext export condition
-          viteResolveExportConditions?.((exportConditions) =>
-            Array.from(
-              new Set([
-                EXPORT_CONDITION,
-                LEGACY_EXPORT_CONDITION,
-                ...exportConditions,
-              ]),
-            ),
-          );
+          // Vite has an issue where it passes an invalid `loader` to esbuild
+          // when the entrypoint to a project is a .esnext file. I should open
+          // an issue for this...
+          // viteResolveExportConditions?.((exportConditions) =>
+          //   Array.from(
+          //     new Set([
+          //       EXPORT_CONDITION,
+          //       LEGACY_EXPORT_CONDITION,
+          //       ...exportConditions,
+          //     ]),
+          //   ),
+          // );
 
           // Add the ESBuild plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {

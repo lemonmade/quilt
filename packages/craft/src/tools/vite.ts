@@ -55,9 +55,15 @@ export interface ViteHooks {
 
   /**
    * The list of IDs (or regular expressions) marking modules that
-   * should not be treated for the server development build.
+   * should not be treated as external for the server development build.
    */
   viteSsrNoExternals: WaterfallHook<(string | RegExp)[]>;
+
+  /**
+   * The list of IDs (or regular expressions) marking modules that
+   * should always treated as external for the server development build.
+   */
+  viteSsrExternals: WaterfallHook<(string | RegExp)[]>;
 
   /**
    * Customizations on the full vite configuration. The resulting
@@ -89,6 +95,7 @@ export function vite() {
         viteResolveExtensions: waterfall(),
         viteRollupOptions: waterfall(),
         viteSsrNoExternals: waterfall(),
+        viteSsrExternals: waterfall(),
       }));
 
       run((step, {configuration}) =>
@@ -111,6 +118,7 @@ export function vite() {
                 viteResolveExtensions,
                 viteRollupOptions,
                 viteSsrNoExternals,
+                viteSsrExternals,
               },
             ] = await Promise.all([import('vite'), configuration()]);
 
@@ -134,6 +142,7 @@ export function vite() {
               resolveExtensions,
               rollupOptions,
               noExternals,
+              externals,
             ] = await Promise.all([
               vitePlugins!.run([]),
               vitePort!.run(undefined),
@@ -153,6 +162,7 @@ export function vite() {
               viteResolveExtensions!.run(baseExtensions),
               viteRollupOptions!.run({}),
               viteSsrNoExternals!.run([]),
+              viteSsrExternals!.run([]),
             ]);
 
             const config = await viteConfig!.run({
@@ -165,7 +175,7 @@ export function vite() {
               server: {port, host},
               // @ts-expect-error The types do not have this field, but it
               // is supported.
-              ssr: {noExternal: noExternals},
+              ssr: {externals, noExternal: noExternals},
               resolve: {
                 alias: aliases,
                 extensions: resolveExtensions,
@@ -176,9 +186,6 @@ export function vite() {
                 exclude: optimizeDepsExclude,
               },
               plugins,
-              esbuild: {
-                jsxInject: `import React from 'react'`,
-              },
             });
 
             const server = await createServer(config);
