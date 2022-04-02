@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.77
+
+### Patch Changes
+
+- [`563e0097`](https://github.com/lemonmade/quilt/commit/563e009757ba94e8021bb927e00462483b84d1e0) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix React development server
+
 ## 0.5.76
 
 ### Patch Changes
