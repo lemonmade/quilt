@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.92
+
+### Patch Changes
+
+- [`90622a0b`](https://github.com/lemonmade/quilt/commit/90622a0b1c65ec2a3d5b45d907e284733c3215c5) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix vite SSR externals hook
+
 ## 0.1.91
 
 ### Patch Changes
