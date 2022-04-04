@@ -1,0 +1,40 @@
+{
+  "name": "template-package",
+  "description": "",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<USER>/<REPOSITORY>"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "dependencies": {},
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package"
+    ]
+  }
+}
