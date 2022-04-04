@@ -122,7 +122,7 @@ async function createWorkspace(explicitName?: string) {
   if (overwrite) {
     emptyDirectory(root);
   } else if (!fs.existsSync(root)) {
-    fs.mkdirSync(root);
+    fs.mkdirSync(root, {recursive: true});
   }
 
   console.log(
@@ -150,7 +150,7 @@ async function createWorkspace(explicitName?: string) {
   }
   console.log(`  pnpm install # install dependencies`);
   console.log(
-    `  git init && git -am "Initial commit" # start your git history`,
+    `  git init && git add --all && git commit --message "Initial commit" # start your git history`,
   );
   console.log(
     `  pnpm create @quilted app # create an app in your workspace, or`,
@@ -243,7 +243,7 @@ async function createPackage(explicitName?: string) {
   if (overwrite) {
     emptyDirectory(root);
   } else if (!fs.existsSync(root)) {
-    fs.mkdirSync(root);
+    fs.mkdirSync(root, {recursive: true});
   }
 
   console.log(
@@ -298,7 +298,7 @@ async function createApp() {
 
     emptyDirectory(root);
   } else if (!fs.existsSync(root)) {
-    fs.mkdirSync(root);
+    fs.mkdirSync(root, {recursive: true});
   }
 
   console.log(`\nCreating app in ${color.cyan(path.relative(cwd, root))}...`);
