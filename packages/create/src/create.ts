@@ -63,6 +63,7 @@ async function run() {
 async function createWorkspace(explicitName?: string) {
   if (fs.existsSync('quilt.workspace.ts')) {
     console.log(`\nYou’re already in a Quilt workspace!`);
+    console.log();
     console.log(`Run one of the following to add projects to your workspace:`);
     console.log(`  pnpm create @quilted app # create a new app`);
     console.log(`  pnpm create @quilted package # create a new package`);
@@ -143,10 +144,14 @@ async function createWorkspace(explicitName?: string) {
   }
 
   console.log(`\nDone! Here’s what you’ll need to do next:\n`);
+  console.log();
   if (root !== cwd) {
     console.log(`  cd ${path.relative(cwd, root)}`);
   }
   console.log(`  pnpm install # install dependencies`);
+  console.log(
+    `  git init && git -am "Initial commit" # start your git history`,
+  );
   console.log(
     `  pnpm create @quilted app # create an app in your workspace, or`,
   );
