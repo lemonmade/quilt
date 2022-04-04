@@ -1,5 +1,6 @@
 {
   "name": "template-package",
+  "description": "",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
@@ -11,8 +12,7 @@
     "url": "https://github.com/<USER>/<REPOSITORY>"
   },
   "publishConfig": {
-    "access": "public",
-    "@quilted:registry": "https://registry.npmjs.org"
+    "access": "public"
   },
   "exports": {
     ".": {

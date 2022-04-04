@@ -8,7 +8,7 @@ import {fileURLToPath} from 'url';
 import prompts from 'prompts';
 import type {Answers} from 'prompts';
 import arg from 'arg';
-import color from 'colorette';
+import * as color from 'colorette';
 import {packageDirectory} from 'pkg-dir';
 
 const RENAME_FILES = new Map(
@@ -37,6 +37,8 @@ async function run() {
     } else {
       await createWorkspace();
     }
+
+    return;
   }
 
   switch (create) {
@@ -122,7 +124,9 @@ async function createWorkspace(explicitName?: string) {
     fs.mkdirSync(root);
   }
 
-  console.log(`\nCreating Quilt workspace in ${color.magenta(root)}...`);
+  console.log(
+    `\nCreating Quilt workspace in ${color.cyan(path.relative(cwd, root))}...`,
+  );
 
   const templateRoot = await templateDirectory('workspace');
   const template = createTemplateFileSystem(templateRoot, root);
@@ -155,7 +159,7 @@ async function createWorkspace(explicitName?: string) {
 async function createProject() {
   const result = await prompts<'type'>([
     {
-      type: 'list',
+      type: 'select',
       name: 'type',
       message: 'What kind of project would you like to create?',
       choices: [
@@ -178,8 +182,11 @@ async function createProject() {
 }
 
 async function createPackage(explicitName?: string) {
+  let name!: string;
+  let scope: string | undefined;
+  let targetDirectory!: string;
+
   let result: Answers<'name' | 'overwrite'>;
-  let targetDirectory: string;
 
   try {
     result = await prompts<'name' | 'overwrite'>(
@@ -190,9 +197,11 @@ async function createPackage(explicitName?: string) {
           message: 'What would you like to name this package?',
           initial: toValidPackageName(explicitName ?? ''),
           onState: (state) => {
+            name = toValidPackageName(state.value);
+            scope = name.match(/^@[^/]+/)?.[0] ?? undefined;
             targetDirectory = path.join(
               'packages',
-              toValidPackageName(state.value),
+              scope ? name.replace(`${scope}/`, '') : name,
             );
           },
         },
@@ -222,7 +231,7 @@ async function createPackage(explicitName?: string) {
     throw cancelled;
   }
 
-  const {name, overwrite} = result;
+  const {overwrite} = result;
 
   const root = path.join(cwd, targetDirectory!);
 
@@ -233,9 +242,9 @@ async function createPackage(explicitName?: string) {
   }
 
   console.log(
-    `\nCreating ${color.magenta(
-      toValidPackageName(name),
-    )} package in ${color.magenta(root)}...`,
+    `\nCreating ${color.cyan(name)} package in ${color.cyan(
+      path.relative(cwd, root),
+    )}...`,
   );
 
   const templateRoot = await templateDirectory('package');
@@ -244,7 +253,13 @@ async function createPackage(explicitName?: string) {
   for (const file of template.files()) {
     if (file === 'package.json') {
       const packageJson = JSON.parse(template.read(file));
-      packageJson.name = toValidPackageName(name);
+      packageJson.name = name;
+
+      if (scope) {
+        packageJson.publishConfig[`${scope}:registry`] =
+          'https://registry.npmjs.org';
+      }
+
       template.write(file, JSON.stringify(packageJson, null, 2) + EOL);
       continue;
     }
@@ -252,14 +267,17 @@ async function createPackage(explicitName?: string) {
     template.copy(file);
   }
 
-  console.log(`\nDone! Your new package has been created.\n`);
+  console.log(`\nDone! Your new package has been created.`);
   console.log(`Get started by adding source code in the \`source\` directory.`);
+  console.log(
+    `Make sure to edit the \`description\` and \`repository\` sections of your \`package.json\` before publishing.`,
+  );
   console.log(`Have fun!`);
   console.log();
 }
 
 async function createApp() {
-  const root = path.join('cwd', 'app');
+  const root = path.join(cwd, 'app');
 
   if (fs.existsSync(root)) {
     const {overwrite} = await prompts<'overwrite'>([
@@ -278,7 +296,7 @@ async function createApp() {
     fs.mkdirSync(root);
   }
 
-  console.log(`\nCreating app in ${color.magenta(root)}...`);
+  console.log(`\nCreating app in ${color.cyan(path.relative(cwd, root))}...`);
 
   const templateRoot = await templateDirectory('app');
   const template = createTemplateFileSystem(templateRoot, root);
@@ -294,7 +312,7 @@ async function createApp() {
     template.copy(file);
   }
 
-  console.log(`\nDone! Your new app has been created.\n`);
+  console.log(`\nDone! Your new app has been created.`);
   console.log(`Get started by:`);
   console.log(`  * running \`pnpm develop\` to start the development server`);
   console.log(`  * editing code in the \`app\` directory`);
@@ -337,7 +355,7 @@ function toValidPackageName(projectName: string) {
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/^[._]/, '')
-    .replace(/[^a-z0-9-~@]+/g, '-');
+    .replace(/[^a-z0-9-~@/]+/g, '-');
 }
 
 function copy(source: string, destination: string) {
