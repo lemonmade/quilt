@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Quilt build outputs
+.quilt/
+build/
+
+# Special operating system files
+.DS_STORE
+
+# Temporary files
+*.log
+

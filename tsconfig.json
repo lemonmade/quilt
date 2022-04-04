@@ -18,6 +18,7 @@
     {"path": "./packages/aws"},
     {"path": "./packages/cloudflare"},
     {"path": "./packages/craft"},
+    {"path": "./packages/create"},
     {"path": "./packages/create-quilt-app"},
     {"path": "./packages/graphql"},
     {"path": "./packages/http"},

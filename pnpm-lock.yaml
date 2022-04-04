@@ -226,6 +226,24 @@ importers:
       '@quilted/quilt': link:../quilt
       '@types/clean-css': 4.2.4
 
+  packages/create:
+    specifiers:
+      '@types/fs-extra': ^9.0.11
+      '@types/prompts': ^2.0.13
+      arg: ^5.0.0
+      colorette: ^1.2.2
+      fs-extra: ^10.0.0
+      pkg-dir: ^6.0.0
+      prompts: ^2.0.0
+    devDependencies:
+      '@types/fs-extra': 9.0.13
+      '@types/prompts': 2.4.0
+      arg: 5.0.0
+      colorette: 1.2.2
+      fs-extra: 10.0.0
+      pkg-dir: 6.0.1
+      prompts: 2.4.1
+
   packages/create-quilt-app:
     specifiers:
       '@types/fs-extra': ^9.0.11
