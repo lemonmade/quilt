@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.3
+
+### Patch Changes
+
+- [`c49aa7dc`](https://github.com/lemonmade/quilt/commit/c49aa7dc3cf8e3f4b82a529cd74967a2155d7746) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix workspace pnpm template files
+
 ## 0.1.2
 
 ### Patch Changes
