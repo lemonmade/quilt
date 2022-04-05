@@ -18,6 +18,8 @@ try {
       '--projects',
       '\\"./packages/**/quilt.project.ts\\"',
       '--projects',
+      '\\"./integrations/**/quilt.project.ts\\"',
+      '--projects',
       '\\"!./packages/create-quilt-app/template/quilt.project.ts\\"',
     ].join(' '),
     {
