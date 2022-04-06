@@ -2,6 +2,8 @@ import {useContext} from 'react';
 
 import {GraphQLContext} from '../context';
 
+export const useGraphQLInternal = () => useContext(GraphQLContext);
+
 export function useGraphQL() {
   const client = useContext(GraphQLContext);
 

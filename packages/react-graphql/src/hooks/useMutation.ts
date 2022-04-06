@@ -1,17 +1,29 @@
 import {useCallback} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
 import type {
+  GraphQL,
   GraphQLResult,
   GraphQLOperation,
   MutationOptions,
   IfAllVariablesOptional,
 } from '@quilted/graphql';
-import {useGraphQL} from './useGraphQL';
+import {useGraphQLInternal} from './useGraphQL';
+
+export interface MutationHookOptions {
+  graphql?: GraphQL;
+}
 
 export function useMutation<Data, Variables>(
   mutation: GraphQLOperation<Data, Variables>,
+  {graphql: explicitGraphQL}: MutationHookOptions = {},
 ) {
-  const graphql = useGraphQL();
+  const graphqlFromContext = useGraphQLInternal();
+  const graphql = explicitGraphQL ?? graphqlFromContext;
+
+  if (graphql == null) {
+    throw new Error('No GraphQL context found');
+  }
+
   return useCallback(
     (
       ...optionsPart: IfAllVariablesOptional<

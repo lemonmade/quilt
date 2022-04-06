@@ -10,29 +10,11 @@ import type {
 } from './types';
 import {cacheKey as getCacheKey} from './utilities/cache';
 
-export class GraphQL {
-  private readonly inflight = new Map<string, Promise<any>>();
-
-  constructor(
-    private readonly fetch: GraphQLFetch,
-    private readonly cache: Map<string, any> | false = new Map<string, any>(),
-  ) {}
-
+export interface GraphQL {
   read<Data, Variables>(
     queryOrKey: GraphQLOperation<Data, Variables> | string,
     variables?: Variables,
-  ) {
-    if (!this.cache) {
-      return;
-    }
-
-    return this.cache.get(
-      typeof queryOrKey === 'string'
-        ? queryOrKey
-        : getCacheKey(queryOrKey, variables),
-    ) as Data | undefined;
-  }
-
+  ): Data | undefined;
   mutate<Data, Variables>(
     mutation: GraphQLOperation<Data, Variables> | string,
     ...optionsPart: IfAllVariablesOptional<
@@ -40,10 +22,7 @@ export class GraphQL {
       [MutationOptions<Data, NoInfer<Variables>>?],
       [MutationOptions<Data, NoInfer<Variables>>]
     >
-  ) {
-    return this.run(mutation, optionsPart[0]?.variables);
-  }
-
+  ): Promise<GraphQLResult<Data>>;
   query<Data, Variables>(
     query: GraphQLOperation<Data, Variables> | string,
     ...optionsPart: IfAllVariablesOptional<
@@ -51,42 +30,73 @@ export class GraphQL {
       [QueryOptions<Data, NoInfer<Variables>>?],
       [QueryOptions<Data, NoInfer<Variables>>]
     >
-  ): Promise<GraphQLResult<Data>> {
-    const options: QueryOptions<Data, Variables> =
-      optionsPart[0] ?? ({} as any);
+  ): Promise<GraphQLResult<Data>>;
+}
 
-    const {cache = true, variables} = options;
+export function createGraphQL({
+  fetch,
+  cache = false,
+}: {
+  fetch: GraphQLFetch;
+  cache?: Map<string, any> | false;
+}): GraphQL {
+  const inflight = new Map<string, Promise<any>>();
 
-    const cacheKey = getCacheKey(query, variables);
-
-    if (options.cache && this.cache && this.cache.has(cacheKey))
-      return Promise.resolve({data: this.cache.get(cacheKey)!});
-
-    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey)!;
-
-    const promise = (async () => {
-      try {
-        const result = await this.run(query, variables);
-
-        if (cache && this.cache && !result.error)
-          this.cache.set(cacheKey, result.data);
-
-        return result;
-      } finally {
-        this.inflight.delete(cacheKey);
+  return {
+    read(queryOrKey, variables) {
+      if (!cache) {
+        return;
       }
-    })();
 
-    this.inflight.set(cacheKey, promise);
-    return promise;
-  }
+      return cache.get(
+        typeof queryOrKey === 'string'
+          ? queryOrKey
+          : getCacheKey(queryOrKey, variables),
+      ) as any;
+    },
+    query(query, ...optionsPart) {
+      const options = optionsPart[0] ?? ({} as any);
 
-  private async run<Data, Variables>(
+      const {cache: shouldCache = true, variables} = options as QueryOptions<
+        any,
+        any
+      >;
+
+      const cacheKey = getCacheKey(query, variables);
+
+      if (shouldCache && cache && cache.has(cacheKey))
+        return Promise.resolve({data: cache.get(cacheKey)!});
+
+      if (inflight.has(cacheKey)) return inflight.get(cacheKey)!;
+
+      const promise = (async () => {
+        try {
+          const result = await run(query, variables);
+
+          if (shouldCache && cache && !result.error) {
+            cache.set(cacheKey, result.data);
+          }
+
+          return result;
+        } finally {
+          inflight.delete(cacheKey);
+        }
+      })();
+
+      inflight.set(cacheKey, promise);
+      return promise;
+    },
+    mutate(mutation, ...optionsPart) {
+      return run(mutation, optionsPart[0]?.variables);
+    },
+  };
+
+  async function run<Data, Variables>(
     operation: GraphQLOperation<Data, Variables> | string,
     variables?: Variables,
   ): Promise<GraphQLResult<Data>> {
     try {
-      const data = (await this.fetch(
+      const data = (await fetch(
         {
           operation:
             typeof operation === 'string'
@@ -102,16 +112,6 @@ export class GraphQL {
       return {error: error as Error};
     }
   }
-}
-
-export function createGraphQL({
-  fetch,
-  cache,
-}: {
-  fetch: GraphQLFetch;
-  cache?: Map<string, any> | false;
-}) {
-  return new GraphQL(fetch, cache);
 }
 
 function createContext(): GraphQLRequestContext<Record<string, any>> {

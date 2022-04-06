@@ -23,6 +23,7 @@ export {
   useMutation,
 } from '@quilted/react-graphql';
 export type {
+  GraphQL,
   GraphQLData,
   GraphQLVariables,
   GraphQLRequest,

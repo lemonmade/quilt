@@ -2,18 +2,19 @@ import {useEffect, useMemo, useReducer} from 'react';
 import type {Reducer} from 'react';
 import type {NoInfer} from '@quilted/useful-types';
 import type {
+  GraphQL,
   QueryOptions,
   GraphQLOperation,
   IfAllVariablesOptional,
 } from '@quilted/graphql';
 import {cacheKey as getCacheKey} from '@quilted/graphql';
 
-import {useGraphQL} from './useGraphQL';
+import {useGraphQLInternal} from './useGraphQL';
 
-type QueryHookOptions<Data, Variables> = {skip?: boolean} & QueryOptions<
-  Data,
-  Variables
->;
+type QueryHookOptions<Data, Variables> = {
+  skip?: boolean;
+  graphql?: GraphQL;
+} & QueryOptions<Data, Variables>;
 
 interface State<Data> {
   key: string;
@@ -39,10 +40,18 @@ export function useQuery<Data, Variables>(
     cache = true,
     skip = false,
     variables,
+    graphql: explicitGraphQL,
   }: QueryHookOptions<Data, Variables> = optionsPart[0] ?? ({} as any);
 
-  const graphql = useGraphQL();
   const cacheKey = getCacheKey(query, variables);
+
+  const graphqlFromContext = useGraphQLInternal();
+  const graphql = explicitGraphQL ?? graphqlFromContext;
+
+  if (graphql == null) {
+    throw new Error('No GraphQL context found');
+  }
+
   const initialData = useMemo(
     () =>
       cache && !skip ? graphql.read<Data, Variables>(cacheKey) : undefined,

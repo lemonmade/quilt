@@ -1,4 +1,5 @@
 export type {
+  GraphQL,
   GraphQLData,
   GraphQLVariables,
   GraphQLOperation,
@@ -15,7 +16,7 @@ export type {
   PickGraphQLType,
   IfAllVariablesOptional,
 } from '@quilted/graphql';
-export {GraphQL, createGraphQL, createHttpFetch} from '@quilted/graphql';
+export {createGraphQL, createHttpFetch} from '@quilted/graphql';
 export {GraphQLContext} from './context';
 export {useDeferredQuery, useMutation, useQuery, useGraphQL} from './hooks';
 export {createAsyncQuery} from './async';
