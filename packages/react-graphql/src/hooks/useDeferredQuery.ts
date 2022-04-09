@@ -1,20 +1,16 @@
 import {useCallback} from 'react';
-import type {NoInfer} from '@quilted/useful-types';
-import type {
-  GraphQLOperation,
-  QueryOptions,
-  IfAllVariablesOptional,
-} from '@quilted/graphql';
+import type {NoInfer, IfAllFieldsNullable} from '@quilted/useful-types';
+import type {GraphQLOperation, GraphQLQueryOptions} from '@quilted/graphql';
 import {cacheKey as getCacheKey} from '@quilted/graphql';
 
 import {useGraphQL} from './useGraphQL';
 
 export function useDeferredQuery<Data, Variables>(
   query: GraphQLOperation<Data, Variables>,
-  ...optionsPart: IfAllVariablesOptional<
+  ...optionsPart: IfAllFieldsNullable<
     Variables,
-    [QueryOptions<Data, NoInfer<Variables>>?],
-    [QueryOptions<Data, NoInfer<Variables>>]
+    [GraphQLQueryOptions<Data, NoInfer<Variables>>?],
+    [GraphQLQueryOptions<Data, NoInfer<Variables>>]
   >
 ) {
   const [options] = optionsPart;
