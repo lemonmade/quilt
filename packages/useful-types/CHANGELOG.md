@@ -1,5 +1,11 @@
 # @quilted/useful-types
 
+## 0.2.13
+
+### Patch Changes
+
+- [#241](https://github.com/lemonmade/quilt/pull/241) [`04555fea`](https://github.com/lemonmade/quilt/commit/04555fea5652c30b27f146e10003e32fa16d66e8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add react-query GraphQL hooks
+
 ## 0.2.12
 
 ### Patch Changes

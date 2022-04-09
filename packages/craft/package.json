@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.92",
+  "version": "0.1.93",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -160,7 +160,7 @@
     "@quilted/async": "0.3.22",
     "@quilted/browserslist-config": "0.1.6",
     "@quilted/eslint-config": "0.1.9",
-    "@quilted/graphql": "0.4.30",
+    "@quilted/graphql": "0.4.31",
     "@quilted/polyfills": "0.2.23",
     "@quilted/prettier": "0.2.8",
     "@quilted/react-testing": "0.5.10",
@@ -211,7 +211,7 @@
     "@types/clean-css": "^4.0.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.77",
+    "@quilted/quilt": "^0.5.78",
     "preact": "^10.6.0",
     "react": "^17.0.0",
     "typescript": ">=4.0.0 <5.0.0"
