@@ -1,12 +1,11 @@
-import type {NoInfer} from '@quilted/useful-types';
+import type {NoInfer, IfAllFieldsNullable} from '@quilted/useful-types';
 import type {
   GraphQLResult,
   GraphQLFetch,
   GraphQLOperation,
-  QueryOptions,
+  GraphQLQueryOptions,
   GraphQLRequestContext,
-  MutationOptions,
-  IfAllVariablesOptional,
+  GraphQLMutationOptions,
 } from './types';
 import {cacheKey as getCacheKey} from './utilities/cache';
 
@@ -17,18 +16,18 @@ export interface GraphQL {
   ): Data | undefined;
   mutate<Data, Variables>(
     mutation: GraphQLOperation<Data, Variables> | string,
-    ...optionsPart: IfAllVariablesOptional<
+    ...optionsPart: IfAllFieldsNullable<
       Variables,
-      [MutationOptions<Data, NoInfer<Variables>>?],
-      [MutationOptions<Data, NoInfer<Variables>>]
+      [GraphQLMutationOptions<Data, NoInfer<Variables>>?],
+      [GraphQLMutationOptions<Data, NoInfer<Variables>>]
     >
   ): Promise<GraphQLResult<Data>>;
   query<Data, Variables>(
     query: GraphQLOperation<Data, Variables> | string,
-    ...optionsPart: IfAllVariablesOptional<
+    ...optionsPart: IfAllFieldsNullable<
       Variables,
-      [QueryOptions<Data, NoInfer<Variables>>?],
-      [QueryOptions<Data, NoInfer<Variables>>]
+      [GraphQLQueryOptions<Data, NoInfer<Variables>>?],
+      [GraphQLQueryOptions<Data, NoInfer<Variables>>]
     >
   ): Promise<GraphQLResult<Data>>;
 }
@@ -57,10 +56,8 @@ export function createGraphQL({
     query(query, ...optionsPart) {
       const options = optionsPart[0] ?? ({} as any);
 
-      const {cache: shouldCache = true, variables} = options as QueryOptions<
-        any,
-        any
-      >;
+      const {cache: shouldCache = true, variables} =
+        options as GraphQLQueryOptions<any, any>;
 
       const cacheKey = getCacheKey(query, variables);
 

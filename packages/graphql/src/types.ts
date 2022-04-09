@@ -1,5 +1,5 @@
 import type {DocumentNode} from 'graphql';
-import type {IfUnionSize} from '@quilted/useful-types';
+import type {IfEmptyObject, IfAllFieldsNullable} from '@quilted/useful-types';
 
 export interface GraphQLOperationType<
   Data = unknown,
@@ -74,39 +74,22 @@ export type GraphQLMock<Data, Variables> =
   | GraphQLMockFunction<Data, Variables>
   | GraphQLMockObject<Data, Variables>;
 
-type NonNullableKeys<T> = {
-  [K in keyof T]-?: null extends T[K] ? never : K;
-}[keyof T];
-
-export type IfAllVariablesOptional<Obj, If, Else = never> = IfUnionSize<
-  NonNullableKeys<Obj>,
-  0,
-  If,
-  Else
->;
-
-export type IfEmptyObject<Obj, If, Else = never> = IfUnionSize<
-  keyof Obj,
-  0,
-  If,
-  Else
->;
-
-export type VariableOptions<Variables> = IfEmptyObject<
+export type GraphQLVariableOptions<Variables> = IfEmptyObject<
   Variables,
   {variables?: never},
-  IfAllVariablesOptional<
+  IfAllFieldsNullable<
     Variables,
     {variables?: Variables},
     {variables: Variables}
   >
 >;
 
-export type QueryOptions<_Data, Variables> = {
+export type GraphQLQueryOptions<_Data, Variables> = {
   cache?: boolean;
-} & VariableOptions<Variables>;
+} & GraphQLVariableOptions<Variables>;
 
-export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
+export type GraphQLMutationOptions<_Data, Variables> =
+  GraphQLVariableOptions<Variables>;
 
 export type PickGraphQLType<T, Type extends Typenames<T>> = Extract<
   T,
@@ -139,11 +122,13 @@ export type GraphQLDeepPartialData<T> = {
   >;
 };
 
-type MaybeNullableValue<T, V> = T extends null ? V | null : V;
+export type MaybeNullableValue<T, V> = T extends null ? V | null : V;
 
-type IsUnion<T, If, Else> = Typenames<T> | '' extends Typenames<T> ? If : Else;
+export type IsUnion<T, If, Else> = Typenames<T> | '' extends Typenames<T>
+  ? If
+  : Else;
 
-type DeepPartialUnion<T> = T extends {__typename: string}
+export type DeepPartialUnion<T> = T extends {__typename: string}
   ? T extends {__typename: ''}
     ? never
     : {__typename: T['__typename']} & GraphQLDeepPartialData<
@@ -151,4 +136,6 @@ type DeepPartialUnion<T> = T extends {__typename: string}
       >
   : never;
 
-type Typenames<T> = T extends {__typename: string} ? T['__typename'] : never;
+export type Typenames<T> = T extends {__typename: string}
+  ? T['__typename']
+  : never;

@@ -34,10 +34,9 @@ export type {
   HttpFetchContext,
   HttpFetchOptions,
   PickGraphQLType,
-  VariableOptions,
-  QueryOptions,
-  MutationOptions,
-  IfAllVariablesOptional,
+  GraphQLVariableOptions,
+  GraphQLQueryOptions,
+  GraphQLMutationOptions,
 } from '@quilted/react-graphql';
 export {useIdleCallback} from '@quilted/react-idle';
 export {ServerAction, useServerAction} from '@quilted/react-server-render';
