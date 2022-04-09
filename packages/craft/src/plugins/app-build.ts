@@ -366,10 +366,12 @@ const FRAMEWORK_CHUNK_NAME = 'framework';
 const POLYFILLS_CHUNK_NAME = 'polyfills';
 const VENDOR_CHUNK_NAME = 'vendor';
 const UTILITIES_CHUNK_NAME = 'utilities';
-const FRAMEWORK_TEST_STRINGS = [
+const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
   '/node_modules/preact/',
   '/node_modules/react/',
-  '/node_modules/@quilted/',
+  '/node_modules/js-cookie/',
+  '/node_modules/@quilted/quilt/',
+  /node_modules[/]@quilted[/](?!react-query)/,
 ];
 const POLYFILL_TEST_STRINGS = ['/node_modules/core-js/'];
 const COMMONJS_HELPER_MODULE = '\x00commonjsHelpers.js';
@@ -395,7 +397,9 @@ function createManualChunksSorter(): GetManualChunk {
 
     if (
       !id.includes('node_modules') &&
-      !FRAMEWORK_TEST_STRINGS.some((test) => id.includes(test))
+      !FRAMEWORK_TEST_STRINGS.some((test) =>
+        typeof test === 'string' ? id.includes(test) : test.test(id),
+      )
     ) {
       return;
     }
@@ -466,7 +470,9 @@ function getImportMetadata(
 
   const result: ImportMetadata = {
     fromEntry: importersMetadata.some(({fromEntry}) => fromEntry),
-    fromFramework: FRAMEWORK_TEST_STRINGS.some((test) => id.includes(test)),
+    fromFramework: FRAMEWORK_TEST_STRINGS.some((test) =>
+      typeof test === 'string' ? id.includes(test) : test.test(id),
+    ),
     fromPolyfills: POLYFILL_TEST_STRINGS.some((test) => id.includes(test)),
   };
 
