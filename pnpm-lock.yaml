@@ -61,7 +61,10 @@ importers:
 
   integrations/react-query:
     specifiers:
+      '@quilted/useful-types': ^0.2.12
       react-query: ^3.34.0
+    dependencies:
+      '@quilted/useful-types': link:../../packages/useful-types
     devDependencies:
       react-query: 3.34.19
 

@@ -22,6 +22,9 @@
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
+  "dependencies": {
+    "@quilted/useful-types": "^0.2.12"
+  },
   "devDependencies": {
     "react-query": "^3.34.0"
   },

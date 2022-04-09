@@ -1,20 +1,19 @@
 import {useEffect, useMemo, useReducer} from 'react';
 import type {Reducer} from 'react';
-import type {NoInfer} from '@quilted/useful-types';
+import type {NoInfer, IfAllFieldsNullable} from '@quilted/useful-types';
 import type {
   GraphQL,
-  QueryOptions,
+  GraphQLQueryOptions,
   GraphQLOperation,
-  IfAllVariablesOptional,
 } from '@quilted/graphql';
 import {cacheKey as getCacheKey} from '@quilted/graphql';
 
-import {useGraphQLInternal} from './useGraphQL';
+import {useGraphQL} from './useGraphQL';
 
-type QueryHookOptions<Data, Variables> = {
+export type GraphQLQueryHookOptions<Data, Variables> = {
   skip?: boolean;
   graphql?: GraphQL;
-} & QueryOptions<Data, Variables>;
+} & GraphQLQueryOptions<Data, Variables>;
 
 interface State<Data> {
   key: string;
@@ -29,11 +28,11 @@ type Action =
   | {type: 'result'; key: string; data?: any; error?: Error};
 
 export function useQuery<Data, Variables>(
-  query: GraphQLOperation<Data, Variables>,
-  ...optionsPart: IfAllVariablesOptional<
+  query: GraphQLOperation<Data, Variables> | string,
+  ...optionsPart: IfAllFieldsNullable<
     Variables,
-    [QueryHookOptions<Data, NoInfer<Variables>>?],
-    [QueryHookOptions<Data, NoInfer<Variables>>]
+    [GraphQLQueryHookOptions<Data, NoInfer<Variables>>?],
+    [GraphQLQueryHookOptions<Data, NoInfer<Variables>>]
   >
 ) {
   const {
@@ -41,11 +40,11 @@ export function useQuery<Data, Variables>(
     skip = false,
     variables,
     graphql: explicitGraphQL,
-  }: QueryHookOptions<Data, Variables> = optionsPart[0] ?? ({} as any);
+  }: GraphQLQueryHookOptions<Data, Variables> = optionsPart[0] ?? ({} as any);
 
   const cacheKey = getCacheKey(query, variables);
 
-  const graphqlFromContext = useGraphQLInternal();
+  const graphqlFromContext = useGraphQL({required: false});
   const graphql = explicitGraphQL ?? graphqlFromContext;
 
   if (graphql == null) {

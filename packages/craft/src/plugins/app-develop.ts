@@ -1,4 +1,5 @@
 import {stripIndent} from 'common-tags';
+import type {Plugin} from 'vite';
 
 import {response as createResponse} from '@quilted/quilt/http-handlers';
 import type {HttpHandler} from '@quilted/quilt/http-handlers';
@@ -283,54 +284,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               },
             });
 
-            plugins.push({
-              name: '@quilted/server',
-              configureServer(server) {
-                server.middlewares.use(
-                  async (serverRequest, serverResponse, next) => {
-                    try {
-                      const [{default: httpHandler}, transformedRequest] =
-                        await Promise.all([
-                          server.ssrLoadModule(
-                            MAGIC_MODULE_SERVER_ENTRY,
-                          ) as Promise<{default: HttpHandler}>,
-                          transformRequest(serverRequest),
-                        ]);
-
-                      const response = await httpHandler.run(
-                        transformedRequest,
-                      );
-
-                      if (response == null) return next();
-
-                      const contentType = response.headers.get('Content-Type');
-
-                      if (
-                        contentType != null &&
-                        contentType.includes('text/html')
-                      ) {
-                        const transformedHtml = await server.transformIndexHtml(
-                          transformedRequest.url.toString(),
-                          response.body ?? '',
-                        );
-
-                        applyResponse(
-                          createResponse(transformedHtml, response),
-                          serverResponse,
-                        );
-
-                        return;
-                      }
-
-                      applyResponse(response, serverResponse);
-                    } catch (error) {
-                      server.ssrFixStacktrace(error as Error);
-                      next(error);
-                    }
-                  },
-                );
-              },
-            });
+            plugins.push(serverRenderPlugin());
 
             const normalizedBabelPlugins = requestedBabelPlugins;
             const normalizedBabelPresets: typeof requestedBabelPresets = [];
@@ -396,6 +350,50 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
       );
     },
   });
+}
+
+function serverRenderPlugin(): Plugin {
+  return {
+    name: '@quilted/server',
+    configureServer(server) {
+      server.middlewares.use(async (serverRequest, serverResponse, next) => {
+        try {
+          const [{default: httpHandler}, transformedRequest] =
+            await Promise.all([
+              server.ssrLoadModule(MAGIC_MODULE_SERVER_ENTRY) as Promise<{
+                default: HttpHandler;
+              }>,
+              transformRequest(serverRequest),
+            ]);
+
+          const response = await httpHandler.run(transformedRequest);
+
+          if (response == null) return next();
+
+          const contentType = response.headers.get('Content-Type');
+
+          if (contentType != null && contentType.includes('text/html')) {
+            const transformedHtml = await server.transformIndexHtml(
+              transformedRequest.url.toString(),
+              response.body ?? '',
+            );
+
+            applyResponse(
+              createResponse(transformedHtml, response),
+              serverResponse,
+            );
+
+            return;
+          }
+
+          applyResponse(response, serverResponse);
+        } catch (error) {
+          server.ssrFixStacktrace(error as Error);
+          next(error);
+        }
+      });
+    },
+  };
 }
 
 function babelConfigItemIs(

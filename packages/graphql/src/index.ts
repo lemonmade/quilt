@@ -13,9 +13,8 @@ export type {
   GraphQLRequest,
   GraphQLResult,
   GraphQLRequestContext,
-  MutationOptions,
-  QueryOptions,
-  VariableOptions,
-  IfAllVariablesOptional,
+  GraphQLMutationOptions,
+  GraphQLQueryOptions,
+  GraphQLVariableOptions,
   PickGraphQLType,
 } from './types';

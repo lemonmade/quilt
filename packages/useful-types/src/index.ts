@@ -7,6 +7,24 @@ export type IfUnionSize<
 
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 
+type NonNullableKeys<T> = {
+  [K in keyof T]-?: T[K] extends NonNullable<T[K]> ? K : never;
+}[keyof T];
+
+export type IfAllFieldsNullable<Obj, If, Else = never> = IfUnionSize<
+  NonNullableKeys<Obj>,
+  0,
+  If,
+  Else
+>;
+
+export type IfEmptyObject<Obj, If, Else = never> = IfUnionSize<
+  keyof Obj,
+  0,
+  If,
+  Else
+>;
+
 // Union length helpers, mostly from
 // https://github.com/microsoft/TypeScript/issues/13298#issuecomment-544107351
 
