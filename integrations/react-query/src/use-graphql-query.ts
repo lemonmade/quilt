@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import type {QueryOptions} from 'react-query';
+import type {UseQueryOptions} from 'react-query';
 import {useGraphQL} from '@quilted/quilt';
 import type {
   GraphQL,
@@ -9,7 +9,7 @@ import type {
 import type {IfAllFieldsNullable} from '@quilted/useful-types';
 
 export type GraphQLQueryOptions<Data, Variables> = Omit<
-  QueryOptions<Data>,
+  UseQueryOptions<Data>,
   'queryFn'
 > &
   GraphQLVariableOptions<Variables> & {

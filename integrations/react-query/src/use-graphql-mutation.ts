@@ -1,10 +1,10 @@
 import {useMutation} from 'react-query';
-import type {MutationOptions} from 'react-query';
+import type {UseMutationOptions} from 'react-query';
 import {useGraphQL} from '@quilted/quilt';
 import type {GraphQL, GraphQLOperation} from '@quilted/quilt';
 
 export type GraphQLMutationOptions<Data, Variables> = Omit<
-  MutationOptions<Data, unknown, Variables>,
+  UseMutationOptions<Data, unknown, Variables>,
   'mutationFn'
 > & {
   graphql?: GraphQL;
