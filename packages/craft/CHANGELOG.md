@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.93
+
+### Patch Changes
+
+- [#241](https://github.com/lemonmade/quilt/pull/241) [`04555fea`](https://github.com/lemonmade/quilt/commit/04555fea5652c30b27f146e10003e32fa16d66e8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add react-query GraphQL hooks
+
+- Updated dependencies [[`eb9f7d42`](https://github.com/lemonmade/quilt/commit/eb9f7d4271010a8edfd683d825e9d49cb8969c8e), [`04555fea`](https://github.com/lemonmade/quilt/commit/04555fea5652c30b27f146e10003e32fa16d66e8)]:
+  - @quilted/graphql@0.4.31
+  - @quilted/quilt@0.5.78
+
 ## 0.1.92
 
 ### Patch Changes
