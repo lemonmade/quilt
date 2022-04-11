@@ -59,6 +59,28 @@ importers:
       '@quilted/typescript': link:../../packages/typescript
       typescript: 4.6.2
 
+  integrations/aws:
+    specifiers:
+      '@types/aws-lambda': ^8.0.0
+      '@types/common-tags': ^1.8.0
+      common-tags: ^1.8.0
+    dependencies:
+      '@types/aws-lambda': 8.10.77
+      common-tags: 1.8.0
+    devDependencies:
+      '@types/common-tags': 1.8.0
+
+  integrations/cloudflare:
+    specifiers:
+      '@types/mime': ^2.0.0
+      common-tags: ^1.8.0
+      mime: ^2.5.0
+    dependencies:
+      common-tags: 1.8.0
+      mime: 2.5.2
+    devDependencies:
+      '@types/mime': 2.0.3
+
   integrations/react-query:
     specifiers:
       '@quilted/useful-types': ^0.2.12
@@ -85,30 +107,8 @@ importers:
       '@types/babel__core': 7.1.14
       '@types/babel__traverse': 7.14.0
 
-  packages/aws:
-    specifiers:
-      '@types/aws-lambda': ^8.0.0
-      '@types/common-tags': ^1.8.0
-      common-tags: ^1.8.0
-    dependencies:
-      '@types/aws-lambda': 8.10.77
-      common-tags: 1.8.0
-    devDependencies:
-      '@types/common-tags': 1.8.0
-
   packages/browserslist-config:
     specifiers: {}
-
-  packages/cloudflare:
-    specifiers:
-      '@types/mime': ^2.0.0
-      common-tags: ^1.8.0
-      mime: ^2.5.0
-    dependencies:
-      common-tags: 1.8.0
-      mime: 2.5.2
-    devDependencies:
-      '@types/mime': 2.0.3
 
   packages/craft:
     specifiers:
