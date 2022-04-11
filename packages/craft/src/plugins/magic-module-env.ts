@@ -1,6 +1,3 @@
-import type {Plugin} from 'rollup';
-import {stripIndent} from 'common-tags';
-
 import type {} from '../tools/rollup';
 import type {} from '../tools/vite';
 
@@ -8,13 +5,9 @@ import {createProjectPlugin, ResolvedHooks} from '../kit';
 import type {
   App,
   Service,
-  Project,
-  Workspace,
   WaterfallHook,
   DevelopAppConfigurationHooks,
 } from '../kit';
-
-import {MAGIC_MODULE_ENV} from '../constants';
 
 export interface EnvironmentOptions {
   inline?: string[];
@@ -66,17 +59,15 @@ export function magicModuleEnv() {
           quiltEnvModuleContent,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const [env, runtime, inline] = await Promise.all([
-              loadEnv(project, workspace, {mode: 'production'}),
-              quiltRuntimeEnvironmentVariables!.run(undefined),
-              quiltInlineEnvironmentVariables!.run([]),
-            ]);
+            const {magicModuleEnv} = await import('./rollup/magic-module-env');
 
             return [
-              rollupPlugin({
-                env,
-                inline,
-                runtime,
+              magicModuleEnv({
+                mode: 'production',
+                project,
+                workspace,
+                inline: () => quiltInlineEnvironmentVariables!.run([]),
+                runtime: () => quiltRuntimeEnvironmentVariables!.run(undefined),
                 customize: (content) => quiltEnvModuleContent!.run(content),
               }),
               ...plugins,
@@ -100,17 +91,15 @@ export function magicModuleEnv() {
           quiltEnvModuleContent,
         }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
           rollupPlugins?.(async (plugins) => {
-            const [env, runtime, inline] = await Promise.all([
-              loadEnv(project, workspace, {mode: 'development'}),
-              quiltRuntimeEnvironmentVariables!.run(undefined),
-              quiltInlineEnvironmentVariables!.run([]),
-            ]);
+            const {magicModuleEnv} = await import('./rollup/magic-module-env');
 
             return [
-              rollupPlugin({
-                env,
-                inline,
-                runtime,
+              magicModuleEnv({
+                mode: 'development',
+                project,
+                workspace,
+                inline: () => quiltInlineEnvironmentVariables!.run([]),
+                runtime: () => quiltRuntimeEnvironmentVariables!.run(undefined),
                 customize: (content) => quiltEnvModuleContent!.run(content),
               }),
               ...plugins,
@@ -120,109 +109,4 @@ export function magicModuleEnv() {
       );
     },
   });
-}
-
-interface PluginOptions {
-  env: Record<string, string | undefined>;
-  inline: string[];
-  runtime?: string;
-  customize(content: string): Promise<string>;
-}
-
-function rollupPlugin({
-  env,
-  inline,
-  runtime = '{}',
-  customize,
-}: PluginOptions): Plugin {
-  return {
-    name: '@quilted/magic-module-env',
-    resolveId(id) {
-      if (id === MAGIC_MODULE_ENV) return id;
-      return null;
-    },
-    async load(id) {
-      if (id !== MAGIC_MODULE_ENV) return null;
-
-      const content = await customize(
-        createEnvModuleContent({env, inline, runtime}),
-      );
-
-      return content;
-    },
-  };
-}
-
-export function createEnvModuleContent({
-  env,
-  inline,
-  runtime,
-}: Pick<PluginOptions, 'env' | 'inline' | 'runtime'>) {
-  const inlineEnv: Record<string, string> = {};
-
-  for (const inlineVariable of inline.sort()) {
-    const value = env[inlineVariable];
-    if (value == null) continue;
-    inlineEnv[inlineVariable] = value;
-  }
-
-  return stripIndent`
-    const runtime = (${runtime});
-    const inline = ${JSON.stringify(inlineEnv)};
-
-    const Env = new Proxy(
-      {},
-      {
-        get(_, property) {
-          const value = inline[property] ?? runtime[property];
-          
-          return typeof value === 'string' && value[0] === '"' && value[value.length - 1] === '"'
-            ? JSON.parse(value)
-            : value;
-        },
-      },
-    );
-
-    export default Env;
-  `;
-}
-
-// Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/src/node/config.ts#L1050-L1113
-export async function loadEnv(
-  project: Project,
-  workspace: Workspace,
-  {mode}: {mode: 'production' | 'development'},
-): Promise<Record<string, string | undefined>> {
-  const env: Record<string, string | undefined> = {...process.env};
-
-  const envFiles = [
-    // default file
-    `.env`,
-    // local file
-    `.env.local`,
-    // mode file
-    `.env.${mode}`,
-    // mode local file
-    `.env.${mode}.local`,
-  ];
-
-  const {parse} = await import('dotenv');
-
-  const loadEnvFile = async (file: string) => {
-    if (await workspace.fs.hasFile(file)) {
-      return parse(await workspace.fs.read(file));
-    }
-  };
-
-  const envFileResults = await Promise.all([
-    ...envFiles.map((file) => loadEnvFile(workspace.fs.resolvePath(file))),
-    ...envFiles.map((file) => loadEnvFile(project.fs.resolvePath(file))),
-  ]);
-
-  for (const envFileResult of envFileResults) {
-    if (envFileResult == null) continue;
-    Object.assign(env, envFileResult);
-  }
-
-  return env;
 }

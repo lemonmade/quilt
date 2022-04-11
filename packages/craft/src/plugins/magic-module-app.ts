@@ -16,7 +16,11 @@ export function magicModuleApp() {
       });
     },
     develop({project, configure}) {
-      configure(({vitePlugins}) => {
+      configure(({rollupPlugins, vitePlugins}) => {
+        rollupPlugins?.((plugins) => {
+          return [rollupPlugin(project), ...plugins];
+        });
+
         vitePlugins?.((plugins) => {
           return [{...rollupPlugin(project), enforce: 'pre'}, ...plugins];
         });

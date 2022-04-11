@@ -46,8 +46,10 @@ import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry
 import {magicModuleEnv} from './plugins/magic-module-env';
 import type {EnvironmentOptions} from './plugins/magic-module-env';
 
-import {appServer} from './plugins/app-server';
-import type {AppServerOptions} from './plugins/app-server';
+import {appServer} from './plugins/app-server-base';
+import type {AppServerOptions} from './plugins/app-server-base';
+import {appServerBuild} from './plugins/app-server-build';
+import type {} from './plugins/app-server-build';
 
 import {appStatic} from './plugins/app-static';
 import type {AppStaticOptions} from './plugins/app-static';
@@ -55,6 +57,7 @@ import type {AppStaticOptions} from './plugins/app-static';
 import {appWorkers} from './plugins/app-workers';
 import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
+import {serviceDevelopment} from './plugins/service-develop';
 
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
@@ -167,6 +170,9 @@ export function quiltApp({
         magicModuleAppServerEntry(),
         magicModuleEnv(),
         // Build and auto-server setup
+        server && appServer(typeof server === 'boolean' ? undefined : server),
+        server && useHttpHandler && httpHandler(),
+        server && useHttpHandler && httpHandlerDevelopment(),
         build &&
           appBuild({
             env,
@@ -180,12 +186,11 @@ export function quiltApp({
           appStatic(
             typeof renderStatic === 'boolean' ? undefined : renderStatic,
           ),
-        build && server && useHttpHandler && httpHandler(),
         build &&
           server &&
-          appServer(typeof server === 'boolean' ? undefined : server),
+          appServerBuild(typeof server === 'boolean' ? undefined : server),
         // Development
-        develop && vite(),
+        develop && vite({run: false}),
         develop &&
           appDevelop({
             env,
@@ -270,6 +275,7 @@ export function quiltService({
             env,
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
+        develop && useHttpHandler && serviceDevelopment(),
         useGraphQL && graphql(),
         useReact && reactTesting({environment: 'preact'}),
         shouldPolyfill &&

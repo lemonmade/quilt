@@ -1,7 +1,13 @@
-import {stripIndent} from 'common-tags';
-import type {Plugin} from 'vite';
+import * as path from 'path';
+import type {IncomingMessage, ServerResponse} from 'http';
 
-import {response as createResponse} from '@quilted/quilt/http-handlers';
+import {stripIndent} from 'common-tags';
+import type {ViteDevServer} from 'vite';
+
+import {
+  notFound,
+  response as createResponse,
+} from '@quilted/quilt/http-handlers';
 import type {HttpHandler} from '@quilted/quilt/http-handlers';
 import {
   transformRequest,
@@ -9,20 +15,19 @@ import {
 } from '@quilted/quilt/http-handlers/node';
 
 import type {} from '../tools/babel';
-import type {} from '../tools/vite';
+import {createViteConfig} from '../tools/vite';
 
 import {createProjectPlugin} from '../kit';
-import type {App} from '../kit';
+import type {App, ResolvedDevelopProjectConfigurationHooks} from '../kit';
 
-import type {AppServerOptions} from './app-server';
+import type {AppServerOptions} from './app-server-base';
 import type {AppBrowserOptions} from './app-build';
-import {loadEnv, createEnvModuleContent} from './magic-module-env';
 import type {EnvironmentOptions} from './magic-module-env';
 
 import {
+  MAGIC_MODULE_HTTP_HANDLER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_APP_ASSET_LOADER,
-  MAGIC_MODULE_ENV,
 } from '../constants';
 
 export const STEP_NAME = 'Quilt.App.Develop';
@@ -44,37 +49,149 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    develop({project, workspace, configure}) {
+    develop({project, internal, workspace, configure, run}) {
       configure(
-        ({
-          babelPlugins,
-          babelPresets,
-          babelExtensions,
-          vitePort,
-          viteHost,
-          vitePlugins,
-          viteRollupOptions,
-          viteSsrExternals,
-          viteSsrNoExternals,
-          viteOptimizeDepsExclude,
-          viteOptimizeDepsInclude,
-          quiltAppServerHost,
-          quiltAppServerPort,
-          quiltAppServerEntryContent,
-          quiltAppBrowserEntryContent,
-          quiltAppBrowserEntryCssSelector,
-          quiltAppBrowserEntryShouldHydrate,
-          quiltInlineEnvironmentVariables,
-          quiltRuntimeEnvironmentVariables,
-          quiltEnvModuleContent,
-        }) => {
+        (
+          {
+            babelPlugins,
+            babelPresets,
+            babelExtensions,
+            vitePort,
+            viteHost,
+            vitePlugins,
+            viteRollupOptions,
+            viteServerOptions,
+            viteOptimizeDepsExclude,
+            rollupPlugins,
+            quiltAppServerHost,
+            quiltAppServerPort,
+            quiltAppServerEntryContent,
+            quiltAppBrowserEntryContent,
+            quiltAppBrowserEntryCssSelector,
+            quiltAppBrowserEntryShouldHydrate,
+            quiltInlineEnvironmentVariables,
+            quiltRuntimeEnvironmentVariables,
+            quiltEnvModuleContent,
+            quiltHttpHandlerRuntimeContent,
+          },
+          {quiltHttpHandler = false},
+        ) => {
           const inlineEnv = env?.inline;
 
-          if (inlineEnv != null && inlineEnv.length > 0) {
+          if (
+            quiltHttpHandler &&
+            serverInlineEnv != null &&
+            serverInlineEnv.length > 0
+          ) {
+            quiltInlineEnvironmentVariables?.((variables) =>
+              Array.from(
+                new Set([
+                  ...variables,
+                  ...(inlineEnv ?? []),
+                  ...serverInlineEnv,
+                ]),
+              ),
+            );
+          } else if (inlineEnv != null && inlineEnv.length > 0) {
             quiltInlineEnvironmentVariables?.((variables) =>
               Array.from(new Set([...variables, ...inlineEnv])),
             );
           }
+
+          viteServerOptions?.((options) => {
+            const newOptions = {...options};
+
+            newOptions.middlewareMode = 'ssr';
+
+            return newOptions;
+          });
+
+          rollupPlugins?.((plugins) => {
+            return [
+              {
+                name: '@quilted/magic-module/app-manifest',
+                async resolveId(id) {
+                  if (id === MAGIC_MODULE_SERVER_ENTRY) return id;
+                  return null;
+                },
+                async load(source) {
+                  if (source !== MAGIC_MODULE_SERVER_ENTRY) return null;
+
+                  const baseContent =
+                    httpHandler && serverEntry
+                      ? stripIndent`
+                      export {default} from ${JSON.stringify(
+                        project.fs.resolvePath(serverEntry),
+                      )};
+                    `
+                      : stripIndent`
+                      import App from ${JSON.stringify(
+                        MAGIC_MODULE_APP_COMPONENT,
+                      )};
+                      import assets from ${JSON.stringify(
+                        MAGIC_MODULE_APP_ASSET_LOADER,
+                      )};
+                      import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
+      
+                      export default createServerRenderingHttpHandler(App, {
+                        assets,
+                      });
+                    `;
+
+                  return quiltAppServerEntryContent!.run(baseContent);
+                },
+              },
+              {
+                name: '@quilted/magic-module/asset-loader',
+                async resolveId(id) {
+                  if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
+                  return null;
+                },
+                async load(source) {
+                  if (source !== MAGIC_MODULE_APP_ASSET_LOADER) return null;
+
+                  return stripIndent`
+                  import {createAssetLoader} from '@quilted/quilt/server';
+
+                  const assetLoader = createAssetLoader({
+                    getManifest() {
+                      return {
+                        metadata: {
+                          priority: 0,
+                          modules: true,
+                        },
+                        entry: {
+                          scripts: [
+                            {
+                              source: ${JSON.stringify(
+                                MAGIC_MODULE_BROWSER_ENTRY,
+                              )},
+                              attributes: {
+                                type: 'module',
+                              },
+                            },
+                          ],
+                          styles: [],
+                        },
+                      };
+                    }
+                  });
+
+                  export default assetLoader;
+                `;
+                },
+              },
+              ...plugins,
+            ];
+          });
+
+          quiltHttpHandlerRuntimeContent?.(async () => {
+            return stripIndent`
+              export {default} from ${JSON.stringify(
+                MAGIC_MODULE_HTTP_HANDLER,
+              )};
+            `;
+          });
 
           viteRollupOptions?.(async (options) => {
             if (options.input) return options;
@@ -127,71 +244,37 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
           viteOptimizeDepsExclude?.((excluded) => [
             ...excluded,
-            '@quilted/quilt/env',
-            '@quilted/quilt/global',
-          ]);
-
-          viteOptimizeDepsInclude?.((included) => [
-            ...included,
             'react',
-            '@quilted/quilt',
+            'preact',
             '@quilted/quilt/react',
             '@quilted/quilt/react/jsx-runtime',
-          ]);
-
-          viteSsrExternals?.((externals) => [...externals, '@babel/runtime']);
-
-          viteSsrNoExternals?.((noExternals) => [
-            ...noExternals,
-            // We keep all of these external so we can apply our rollup aliases
-            // and improved transformations.
-            /@quilted[/]quilt/,
+            '@quilted/quilt/env',
+            '@quilted/quilt/global',
           ]);
 
           vitePlugins?.(async (plugins) => {
             const [
               {magicBrowserEntry},
+              {magicModuleEnv},
               requestedBabelPlugins,
               requestedBabelPresets,
             ] = await Promise.all([
               import('./rollup/magic-browser-entry'),
+              import('./rollup/magic-module-env'),
               babelPlugins!.run([]),
               babelPresets!.run([]),
             ]);
 
-            // This is just like the build plugins in ./magic-module-env, but is able to do
-            // a runtime customization to include the server env variables, but only when
-            // the SSR build is being produced.
             plugins.unshift({
-              name: '@quilted/magic-module-env',
               enforce: 'pre',
-              resolveId(id) {
-                if (id === MAGIC_MODULE_ENV) return id;
-                return null;
-              },
-              async load(id, {ssr = false} = {}) {
-                if (id !== MAGIC_MODULE_ENV) return null;
-
-                const [env, runtime, inline] = await Promise.all([
-                  loadEnv(project, workspace, {mode: 'development'}),
-                  quiltRuntimeEnvironmentVariables!.run(
-                    ssr ? 'process.env' : undefined,
-                  ),
-                  quiltInlineEnvironmentVariables!.run(
-                    ssr && serverInlineEnv ? serverInlineEnv : [],
-                  ),
-                ]);
-
-                const content = await quiltEnvModuleContent!.run(
-                  createEnvModuleContent({
-                    env,
-                    inline,
-                    runtime,
-                  }),
-                );
-
-                return content;
-              },
+              ...magicModuleEnv({
+                mode: 'development',
+                project,
+                workspace,
+                inline: () => quiltInlineEnvironmentVariables!.run([]),
+                runtime: () => quiltRuntimeEnvironmentVariables!.run(undefined),
+                customize: (content) => quiltEnvModuleContent!.run(content),
+              }),
             });
 
             plugins.unshift({
@@ -206,85 +289,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               }),
               enforce: 'pre',
             });
-
-            plugins.unshift({
-              name: '@quilted/magic-module/app-manifest',
-              enforce: 'pre',
-              async resolveId(id) {
-                if (id === MAGIC_MODULE_SERVER_ENTRY) return id;
-                return null;
-              },
-              async load(source) {
-                if (source !== MAGIC_MODULE_SERVER_ENTRY) return null;
-
-                const baseContent =
-                  httpHandler && serverEntry
-                    ? stripIndent`
-                      export {default} from ${JSON.stringify(
-                        project.fs.resolvePath(serverEntry),
-                      )};
-                    `
-                    : stripIndent`
-                      import App from ${JSON.stringify(
-                        MAGIC_MODULE_APP_COMPONENT,
-                      )};
-                      import assets from ${JSON.stringify(
-                        MAGIC_MODULE_APP_ASSET_LOADER,
-                      )};
-                      import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
-      
-                      export default createServerRenderingHttpHandler(App, {
-                        assets,
-                      });
-                    `;
-
-                return quiltAppServerEntryContent!.run(baseContent);
-              },
-            });
-
-            plugins.unshift({
-              name: '@quilted/magic-module/asset-loader',
-              enforce: 'pre',
-              async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
-                return null;
-              },
-              async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_LOADER) return null;
-
-                return stripIndent`
-                  import {createAssetLoader} from '@quilted/quilt/server';
-
-                  const assetLoader = createAssetLoader({
-                    getManifest() {
-                      return {
-                        metadata: {
-                          priority: 0,
-                          modules: true,
-                        },
-                        entry: {
-                          scripts: [
-                            {
-                              source: ${JSON.stringify(
-                                MAGIC_MODULE_BROWSER_ENTRY,
-                              )},
-                              attributes: {
-                                type: 'module',
-                              },
-                            },
-                          ],
-                          styles: [],
-                        },
-                      };
-                    }
-                  });
-
-                  export default assetLoader;
-                `;
-              },
-            });
-
-            plugins.push(serverRenderPlugin());
 
             const normalizedBabelPlugins = requestedBabelPlugins;
             const normalizedBabelPresets: typeof requestedBabelPresets = [];
@@ -348,50 +352,166 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           });
         },
       );
+
+      run((step, {configuration}) =>
+        step({
+          name: 'App.Develop',
+          label: `Running app ${project.name} in development mode`,
+          async run(runner) {
+            const [
+              {createServer},
+              {default: express},
+              configurationHooks,
+              serverConfigurationHooks,
+            ] = await Promise.all([
+              import('vite'),
+              import('express'),
+              configuration(),
+              configuration({quiltAppServer: true, quiltHttpHandler: true}),
+            ]);
+
+            const {quiltAppServerPort, quiltAppServerHost} = configurationHooks;
+
+            const [resolvedPort = 3000, resolvedHost] = await Promise.all([
+              quiltAppServerPort!.run(port),
+              quiltAppServerHost!.run(undefined),
+            ]);
+
+            const viteServer = await createServer(
+              await createViteConfig(configurationHooks, {internal}),
+            );
+
+            const appServer = await createAppServer(serverConfigurationHooks, {
+              project,
+              vite: viteServer,
+              onMessage(message) {
+                runner.log(message);
+              },
+            });
+
+            const app = express();
+
+            app.use(viteServer.middlewares);
+
+            app.use((request, response) => {
+              appServer.handle(request, response);
+            });
+
+            if (resolvedHost) {
+              app.listen(resolvedPort, resolvedHost, () => {
+                // eslint-disable-next-line no-console
+                console.log(`Listening on ${resolvedHost}:${resolvedPort}`);
+              });
+            } else {
+              app.listen(resolvedPort, () => {
+                // eslint-disable-next-line no-console
+                console.log(`Listening on localhost:${resolvedPort}`);
+              });
+            }
+          },
+        }),
+      );
     },
   });
 }
 
-function serverRenderPlugin(): Plugin {
+async function createAppServer(
+  {
+    rollupInput,
+    rollupExternals,
+    rollupPlugins,
+    rollupInputOptions,
+  }: ResolvedDevelopProjectConfigurationHooks<App>,
+  {
+    project,
+    vite,
+    onMessage,
+  }: {project: App; vite: ViteDevServer; onMessage(message: string): void},
+) {
+  const [{watch}] = await Promise.all([import('rollup')]);
+
+  let resolveHandler!: (handler: HttpHandler) => void;
+  let httpHandlerPromise!: Promise<HttpHandler>;
+
+  const file = project.fs.buildPath('develop/quilt-app-server/built.js');
+
+  const [input, plugins, external] = await Promise.all([
+    rollupInput!.run([]),
+    rollupPlugins!.run([]),
+    rollupExternals!.run([]),
+  ]);
+
+  const [inputOptions] = await Promise.all([
+    rollupInputOptions!.run({
+      input,
+      plugins,
+      external,
+      preserveEntrySignatures: false,
+    }),
+  ]);
+
+  const watcher = watch({
+    ...inputOptions,
+    output: {
+      format: 'esm',
+      dir: path.dirname(file),
+      entryFileNames: path.basename(file),
+      exports: 'auto',
+    },
+  });
+
+  watcher.on('event', (event) => {
+    switch (event.code) {
+      case 'BUNDLE_START': {
+        httpHandlerPromise = new Promise<HttpHandler>((resolve) => {
+          resolveHandler = resolve;
+        });
+        break;
+      }
+      case 'BUNDLE_END': {
+        import(`${file}?update=${Date.now()}`)
+          .then(({default: handler}) => {
+            onMessage(`Restarted app server (built in ${event.duration}ms)`);
+            resolveHandler(handler);
+          })
+          // eslint-disable-next-line no-console
+          .catch(console.error.bind(console));
+        break;
+      }
+      case 'ERROR': {
+        // eslint-disable-next-line no-console
+        console.error(event.error);
+        break;
+      }
+    }
+  });
+
   return {
-    name: '@quilted/server',
-    configureServer(server) {
-      server.middlewares.use(async (serverRequest, serverResponse, next) => {
-        try {
-          const [{default: httpHandler}, transformedRequest] =
-            await Promise.all([
-              server.ssrLoadModule(MAGIC_MODULE_SERVER_ENTRY) as Promise<{
-                default: HttpHandler;
-              }>,
-              transformRequest(serverRequest),
-            ]);
+    async handle(request: IncomingMessage, serverResponse: ServerResponse) {
+      const [handler, transformedRequest] = await Promise.all([
+        httpHandlerPromise,
+        transformRequest(request),
+      ]);
 
-          const response = await httpHandler.run(transformedRequest);
+      const response = (await handler.run(transformedRequest)) ?? notFound();
 
-          if (response == null) return next();
+      const contentType = response.headers.get('Content-Type');
 
-          const contentType = response.headers.get('Content-Type');
+      if (contentType != null && contentType.includes('text/html')) {
+        const transformedHtml = await vite.transformIndexHtml(
+          transformedRequest.url.toString(),
+          response.body ?? '',
+        );
 
-          if (contentType != null && contentType.includes('text/html')) {
-            const transformedHtml = await server.transformIndexHtml(
-              transformedRequest.url.toString(),
-              response.body ?? '',
-            );
+        applyResponse(
+          createResponse(transformedHtml, response),
+          serverResponse,
+        );
 
-            applyResponse(
-              createResponse(transformedHtml, response),
-              serverResponse,
-            );
+        return;
+      }
 
-            return;
-          }
-
-          applyResponse(response, serverResponse);
-        } catch (error) {
-          server.ssrFixStacktrace(error as Error);
-          next(error);
-        }
-      });
+      applyResponse(response, serverResponse);
     },
   };
 }

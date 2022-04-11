@@ -188,6 +188,7 @@
     "enhanced-resolve": "^5.9.0",
     "esbuild": "^0.14.0",
     "eslint": "^7.27.0",
+    "express": "^4.17.0",
     "globby": "^13.0.0",
     "jest": "^27.5.0",
     "jest-config": "^27.5.0",
@@ -208,7 +209,8 @@
   },
   "devDependencies": {
     "@quilted/quilt": "^0.5.0",
-    "@types/clean-css": "^4.0.0"
+    "@types/clean-css": "^4.0.0",
+    "@types/express": "^4.17.0"
   },
   "peerDependencies": {
     "@quilted/quilt": "^0.5.78",
