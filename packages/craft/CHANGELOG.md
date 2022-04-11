@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.97
+
+### Patch Changes
+
+- [`dd65553f`](https://github.com/lemonmade/quilt/commit/dd65553fdda06254e95f6e0aa9b26dbca951676f) Thanks [@lemonmade](https://github.com/lemonmade)! - Add Rollup node bundle utilities
+
+- Updated dependencies [[`ea331646`](https://github.com/lemonmade/quilt/commit/ea3316461bc42fe799e402a5635dd118e4a7e4a0)]:
+  - @quilted/graphql@0.4.32
+  - @quilted/quilt@0.5.79
+
 ## 0.1.96
 
 ### Patch Changes

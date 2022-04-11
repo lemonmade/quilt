@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.32
+
+### Patch Changes
+
+- [`ea331646`](https://github.com/lemonmade/quilt/commit/ea3316461bc42fe799e402a5635dd118e4a7e4a0) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve GraphQL fetch naming and type exports
+
 ## 0.4.31
 
 ### Patch Changes
