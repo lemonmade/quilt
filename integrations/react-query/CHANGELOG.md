@@ -1,5 +1,11 @@
 # @quilted/react-query
 
+## 0.1.3
+
+### Patch Changes
+
+- [`85508931`](https://github.com/lemonmade/quilt/commit/8550893132d4bd5a8f759eeedec3067b740cccdb) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix options type for react-query GraphQL hooks
+
 ## 0.1.2
 
 ### Patch Changes

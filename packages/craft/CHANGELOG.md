@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.95
+
+### Patch Changes
+
+- [#244](https://github.com/lemonmade/quilt/pull/244) [`5dc03e7c`](https://github.com/lemonmade/quilt/commit/5dc03e7c80bb77fc5460f8c81cf8ca65f0c15db1) Thanks [@lemonmade](https://github.com/lemonmade)! - New app development server
+
 ## 0.1.94
 
 ### Patch Changes
