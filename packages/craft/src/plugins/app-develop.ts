@@ -245,7 +245,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           viteOptimizeDepsExclude?.((excluded) => [
             ...excluded,
             'react',
-            'preact',
             '@quilted/quilt/react',
             '@quilted/quilt/react/jsx-runtime',
             '@quilted/quilt/env',
@@ -446,7 +445,7 @@ async function createAppServer(
       input,
       plugins,
       external,
-      preserveEntrySignatures: false,
+      preserveEntrySignatures: 'exports-only',
     }),
   ]);
 
