@@ -38,7 +38,7 @@ That’s all the setup you need! Elsewhere in your application, you can now use 
 
 ```tsx
 import {useMemo} from 'react';
-import {createGraphQL, createHttpFetch} from '@quilted/quilt';
+import {createGraphQL, createGraphQLHttpFetch} from '@quilted/quilt';
 import {useQuery} from 'react-query';
 
 import startQuery from './Start.graphql';
@@ -48,7 +48,7 @@ export function Start() {
     () =>
       createGraphQL({
         cache: false,
-        fetch: createHttpFetch({uri: 'https://my-graphql-api.com'}),
+        fetch: createGraphQLHttpFetch({uri: 'https://my-graphql-api.com'}),
       }),
     [],
   );

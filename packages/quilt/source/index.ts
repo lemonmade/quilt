@@ -17,13 +17,14 @@ export type {
 export {
   GraphQLContext,
   createGraphQL,
-  createHttpFetch,
+  createGraphQLHttpFetch,
   useQuery,
   useGraphQL,
   useMutation,
 } from '@quilted/react-graphql';
 export type {
   GraphQL,
+  GraphQLFetch,
   GraphQLData,
   GraphQLVariables,
   GraphQLRequest,
@@ -31,8 +32,8 @@ export type {
   GraphQLOperation,
   GraphQLOperationType,
   GraphQLDeepPartialData,
-  HttpFetchContext,
-  HttpFetchOptions,
+  GraphQLHttpFetchContext,
+  GraphQLHttpFetchOptions,
   PickGraphQLType,
   GraphQLVariableOptions,
   GraphQLQueryOptions,

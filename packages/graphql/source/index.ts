@@ -1,7 +1,7 @@
 export {createGraphQL} from './client';
 export type {GraphQL} from './client';
-export {createHttpFetch} from './fetch';
-export type {HttpFetchContext, HttpFetchOptions} from './fetch';
+export {createGraphQLHttpFetch} from './fetch';
+export type {GraphQLHttpFetchContext, GraphQLHttpFetchOptions} from './fetch';
 export {cacheKey} from './utilities/cache';
 export type {
   GraphQLOperation,

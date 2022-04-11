@@ -1,7 +1,7 @@
 import type {GraphQLError} from 'graphql';
 import type {GraphQLFetch} from './types';
 
-export class HttpError extends Error {
+export class GraphQLHttpError extends Error {
   constructor(
     public readonly status: number,
     public readonly response: string,
@@ -10,7 +10,7 @@ export class HttpError extends Error {
   }
 }
 
-export class ExecutionError extends Error {
+export class GraphQLExecutionError extends Error {
   constructor(public readonly errors: GraphQLError[]) {
     super(
       `GraphQL execution failed with errors: ${JSON.stringify(
@@ -22,20 +22,21 @@ export class ExecutionError extends Error {
   }
 }
 
-export interface HttpFetchOptions extends Pick<RequestInit, 'credentials'> {
+export interface GraphQLHttpFetchOptions
+  extends Pick<RequestInit, 'credentials'> {
   uri: string;
   headers?: Record<string, string>;
 }
 
-export interface HttpFetchContext {
+export interface GraphQLHttpFetchContext {
   response?: Response;
 }
 
-export function createHttpFetch({
+export function createGraphQLHttpFetch({
   uri,
   credentials,
   headers: explicitHeaders,
-}: HttpFetchOptions): GraphQLFetch<HttpFetchContext> {
+}: GraphQLHttpFetchOptions): GraphQLFetch<GraphQLHttpFetchContext> {
   return async (operation, context) => {
     const headers = new Headers({
       'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ export function createHttpFetch({
     context.set('response', response);
 
     if (!response.ok) {
-      throw new HttpError(response.status, await response.text());
+      throw new GraphQLHttpError(response.status, await response.text());
     }
 
     const {data, errors} = (await response.json()) as {
@@ -66,11 +67,11 @@ export function createHttpFetch({
     };
 
     if (errors != null && errors.length > 0) {
-      throw new ExecutionError(errors);
+      throw new GraphQLExecutionError(errors);
     }
 
     if (data == null) {
-      throw new ExecutionError([
+      throw new GraphQLExecutionError([
         {
           name: 'NoDataError',
           message: 'No data returned by GraphQL',
