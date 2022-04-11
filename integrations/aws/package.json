@@ -14,19 +14,19 @@
   },
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./http-handlers": {
-      "quilt:from-source": "./src/http-handlers.ts",
+      "quilt:from-source": "./source/http-handlers.ts",
       "quilt:esnext": "./build/esnext/http-handlers.esnext",
       "import": "./build/esm/http-handlers.mjs",
       "require": "./build/cjs/http-handlers.cjs"
     },
     "./craft": {
-      "quilt:from-source": "./src/craft.ts",
+      "quilt:from-source": "./source/craft.ts",
       "quilt:esnext": "./build/esnext/craft.esnext",
       "import": "./build/esm/craft.mjs",
       "require": "./build/cjs/craft.cjs"

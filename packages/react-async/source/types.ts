@@ -1,4 +1,4 @@
-import {AsyncLoader} from '@quilted/async/src';
+import type {AsyncLoader} from '@quilted/async';
 import type {ComponentType, FunctionComponent} from 'react';
 
 export type RenderTiming = 'server' | 'client';

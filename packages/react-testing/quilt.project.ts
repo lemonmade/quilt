@@ -2,20 +2,20 @@ import {createPackage, quiltPackage, createProjectPlugin} from '@quilted/craft';
 import type {} from '@quilted/craft/jest';
 
 export default createPackage((pkg) => {
-  pkg.entry({source: './src/index'});
-  pkg.entry({name: 'dom', source: './src/implementations/react-dom'});
-  pkg.entry({name: 'preact', source: './src/implementations/preact'});
+  pkg.entry({source: './source/index'});
+  pkg.entry({name: 'dom', source: './source/implementations/react-dom'});
+  pkg.entry({name: 'preact', source: './source/implementations/preact'});
   pkg.entry({
     name: 'matchers',
-    source: './src/matchers/index',
+    source: './source/matchers/index',
   });
   pkg.entry({
     name: 'dom-matchers',
-    source: './src/matchers/dom',
+    source: './source/matchers/dom',
   });
   pkg.entry({
     name: 'environment',
-    source: './src/environment',
+    source: './source/environment',
   });
   pkg.use(
     quiltPackage({react: true}),

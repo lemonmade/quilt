@@ -34,7 +34,7 @@ export function polyfill({
       if (!isEntry) return null;
 
       // This thing helps with generating source maps...
-      // @see https://github.com/rollup/plugins/blob/master/packages/inject/src/index.js#L203
+      // @see https://github.com/rollup/plugins/blob/master/packages/inject/source/index.js#L203
       const magicString = new MagicString(code);
 
       magicString.prepend(

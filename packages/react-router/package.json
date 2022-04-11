@@ -14,19 +14,19 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./static": {
-      "quilt:from-source": "./src/static.ts",
+      "quilt:from-source": "./source/static.ts",
       "quilt:esnext": "./build/esnext/static.esnext",
       "import": "./build/esm/static.mjs",
       "require": "./build/cjs/static.cjs"
     },
     "./testing": {
-      "quilt:from-source": "./src/testing.tsx",
+      "quilt:from-source": "./source/testing.tsx",
       "quilt:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"

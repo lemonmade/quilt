@@ -1,7 +1,7 @@
 import {createElement, render} from 'preact';
 
 /**
- * @param {import('../../src/index').RenderableProps<{ context: any }>} props
+ * @param {import('../../source/index').RenderableProps<{ context: any }>} props
  */
 function ContextProvider(props) {
   this.getChildContext = () => props.context;

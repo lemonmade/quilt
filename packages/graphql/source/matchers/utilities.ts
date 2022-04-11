@@ -36,7 +36,7 @@ export function diffVariables(
   });
 }
 
-// Original from https://github.com/facebook/jest/blob/master/packages/expect/src/utils.ts#L107
+// Original from https://github.com/facebook/jest/blob/master/packages/expect/source/utils.ts#L107
 function getObjectSubset(object: any, subset: any): any {
   if (Array.isArray(object)) {
     if (Array.isArray(subset) && subset.length === object.length) {

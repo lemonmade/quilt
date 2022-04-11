@@ -1,22 +1,22 @@
 import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry({source: './src/index'});
+  pkg.entry({source: './source/index'});
   pkg.entry({
-    source: './src/rollup-parts',
+    source: './source/rollup-parts',
     name: 'rollup',
     runtime: Runtime.Node,
   });
 
-  pkg.entry({source: './src/base', name: 'base'});
-  pkg.entry({source: './src/noop', name: 'noop'});
+  pkg.entry({source: './source/base', name: 'base'});
+  pkg.entry({source: './source/noop', name: 'noop'});
   pkg.entry({
-    source: './src/fetch.browser',
+    source: './source/fetch.browser',
     name: 'fetch.browser',
     runtime: Runtime.Browser,
   });
   pkg.entry({
-    source: './src/fetch.node',
+    source: './source/fetch.node',
     name: 'fetch.node',
     runtime: Runtime.Node,
   });

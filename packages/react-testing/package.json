@@ -14,31 +14,31 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./dom": {
-      "quilt:from-source": "./src/implementations/react-dom.ts",
+      "quilt:from-source": "./source/implementations/react-dom.ts",
       "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
       "import": "./build/esm/implementations/react-dom.mjs",
       "require": "./build/cjs/implementations/react-dom.cjs"
     },
     "./dom-matchers": {
-      "quilt:from-source": "./src/matchers/dom.ts",
+      "quilt:from-source": "./source/matchers/dom.ts",
       "quilt:esnext": "./build/esnext/matchers/dom.esnext",
       "import": "./build/esm/matchers/dom.mjs",
       "require": "./build/cjs/matchers/dom.cjs"
     },
     "./matchers": {
-      "quilt:from-source": "./src/matchers/index.ts",
+      "quilt:from-source": "./source/matchers/index.ts",
       "quilt:esnext": "./build/esnext/matchers/index.esnext",
       "import": "./build/esm/matchers/index.mjs",
       "require": "./build/cjs/matchers/index.cjs"
     },
     "./preact": {
-      "quilt:from-source": "./src/implementations/preact.ts",
+      "quilt:from-source": "./source/implementations/preact.ts",
       "quilt:esnext": "./build/esnext/implementations/preact.esnext",
       "import": "./build/esm/implementations/preact.mjs",
       "require": "./build/cjs/implementations/preact.cjs"

@@ -14,7 +14,7 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"

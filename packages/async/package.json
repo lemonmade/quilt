@@ -14,13 +14,13 @@
   },
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
-      "quilt:from-source": "./src/server.ts",
+      "quilt:from-source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
       "import": "./build/esm/server.mjs",
       "require": "./build/cjs/server.cjs"
@@ -30,7 +30,7 @@
       "require": "./build/cjs/babel-plugin.cjs"
     },
     "./rollup": {
-      "quilt:from-source": "./src/rollup-parts.ts",
+      "quilt:from-source": "./source/rollup-parts.ts",
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
       "require": "./build/esm/cjs-parts.cjs"

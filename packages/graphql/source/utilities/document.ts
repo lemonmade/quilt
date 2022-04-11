@@ -1,4 +1,4 @@
-// Adapted from https://github.com/Shopify/graphql-tools-web/blob/main/packages/graphql-mini-transforms/src/document.ts
+// Adapted from https://github.com/Shopify/graphql-tools-web/blob/main/packages/graphql-mini-transforms/source/document.ts
 
 import {createHash} from 'crypto';
 import {print, parse} from 'graphql';

@@ -72,10 +72,10 @@ export default createPackage((pkg) => {
   pkg.runtime(Runtime.Node);
 
   // This is the “root” import, what you get from `import 'my-package'`
-  pkg.entry({source: './src/index'});
+  pkg.entry({source: './source/index'});
 
   // This is what you’d get from `import 'my-package/testing'`
-  pkg.entry({source: './src/testing', name: 'testing'});
+  pkg.entry({source: './source/testing', name: 'testing'});
 });
 ```
 
@@ -239,7 +239,7 @@ If you have a default value for your hook, you can pass an object with a `defaul
 
 Adding hooks is fine, but let’s use our plugin to do something a bit more meaningful. Your plugin can call the `configure` function for a given task to get access to all the hooks added by plugins to this project, and to “hook into” them to add your own configuration.
 
-We’ll imagine that we have a custom Babel plugin related to our locale, and that we want to include that plugin for any build of this app that uses Babel. We’ll do that by using our own hook, and the `babelPlugins` hook provided by [`@quilted/craft/babel`](../packages/craft/src/tools/babel.ts):
+We’ll imagine that we have a custom Babel plugin related to our locale, and that we want to include that plugin for any build of this app that uses Babel. We’ll do that by using our own hook, and the `babelPlugins` hook provided by [`@quilted/craft/babel`](../packages/craft/source/tools/babel.ts):
 
 ```ts
 import {createProjectPlugin} from '@quilted/craft';

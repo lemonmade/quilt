@@ -14,133 +14,133 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
-      "quilt:from-source": "./src/server/index.ts",
+      "quilt:from-source": "./source/server/index.ts",
       "quilt:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",
       "require": "./build/cjs/server/index.cjs"
     },
     "./static": {
-      "quilt:from-source": "./src/static/index.tsx",
+      "quilt:from-source": "./source/static/index.tsx",
       "quilt:esnext": "./build/esnext/static/index.esnext",
       "import": "./build/esm/static/index.mjs",
       "require": "./build/cjs/static/index.cjs"
     },
     "./html": {
-      "quilt:from-source": "./src/html.ts",
+      "quilt:from-source": "./source/html.ts",
       "quilt:esnext": "./build/esnext/html.esnext",
       "import": "./build/esm/html.mjs",
       "require": "./build/cjs/html.cjs"
     },
     "./email": {
-      "quilt:from-source": "./src/email.ts",
+      "quilt:from-source": "./source/email.ts",
       "quilt:esnext": "./build/esnext/email.esnext",
       "import": "./build/esm/email.mjs",
       "require": "./build/cjs/email.cjs"
     },
     "./global": {
-      "quilt:from-source": "./src/global.ts",
+      "quilt:from-source": "./source/global.ts",
       "quilt:esnext": "./build/esnext/global.esnext",
       "import": "./build/esm/global.mjs",
       "require": "./build/cjs/global.cjs"
     },
     "./http": {
-      "quilt:from-source": "./src/http.ts",
+      "quilt:from-source": "./source/http.ts",
       "quilt:esnext": "./build/esnext/http.esnext",
       "import": "./build/esm/http.mjs",
       "require": "./build/cjs/http.cjs"
     },
     "./testing": {
-      "quilt:from-source": "./src/testing.ts",
+      "quilt:from-source": "./source/testing.ts",
       "quilt:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"
     },
     "./env": {
-      "quilt:from-source": "./src/env.ts",
+      "quilt:from-source": "./source/env.ts",
       "quilt:esnext": "./build/esnext/env.esnext",
       "import": "./build/esm/env.mjs",
       "require": "./build/cjs/env.cjs"
     },
     "./matchers": {
-      "quilt:from-source": "./src/matchers.ts",
+      "quilt:from-source": "./source/matchers.ts",
       "quilt:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
     },
     "./react/jsx-runtime": {
-      "quilt:from-source": "./src/react/jsx-runtime.ts",
+      "quilt:from-source": "./source/react/jsx-runtime.ts",
       "quilt:esnext": "./build/esnext/react/jsx-runtime.esnext",
       "import": "./build/esm/react/jsx-runtime.mjs",
       "require": "./build/cjs/react/jsx-runtime.cjs"
     },
     "./react/server": {
-      "quilt:from-source": "./src/react/server.ts",
+      "quilt:from-source": "./source/react/server.ts",
       "quilt:esnext": "./build/esnext/react/server.esnext",
       "import": "./build/esm/react/server.mjs",
       "require": "./build/cjs/react/server.cjs"
     },
     "./react/test-utils": {
-      "quilt:from-source": "./src/react/test-utils.ts",
+      "quilt:from-source": "./source/react/test-utils.ts",
       "quilt:esnext": "./build/esnext/react/test-utils.esnext",
       "import": "./build/esm/react/test-utils.mjs",
       "require": "./build/cjs/react/test-utils.cjs"
     },
     "./react": {
-      "quilt:from-source": "./src/react/index.ts",
+      "quilt:from-source": "./source/react/index.ts",
       "quilt:esnext": "./build/esnext/react/index.esnext",
       "import": "./build/esm/react/index.mjs",
       "require": "./build/cjs/react/index.cjs"
     },
     "./http-handlers/node": {
-      "quilt:from-source": "./src/http-handlers/node.ts",
+      "quilt:from-source": "./source/http-handlers/node.ts",
       "quilt:esnext": "./build/esnext/http-handlers/node.esnext",
       "import": "./build/esm/http-handlers/node.mjs",
       "require": "./build/cjs/http-handlers/node.cjs"
     },
     "./http-handlers": {
-      "quilt:from-source": "./src/http-handlers/index.ts",
+      "quilt:from-source": "./source/http-handlers/index.ts",
       "quilt:esnext": "./build/esnext/http-handlers/index.esnext",
       "import": "./build/esm/http-handlers/index.mjs",
       "require": "./build/cjs/http-handlers/index.cjs"
     },
     "./workers/worker": {
-      "quilt:from-source": "./src/workers/worker.ts",
+      "quilt:from-source": "./source/workers/worker.ts",
       "quilt:esnext": "./build/esnext/workers/worker.esnext",
       "import": "./build/esm/workers/worker.mjs",
       "require": "./build/cjs/workers/worker.cjs"
     },
     "./workers": {
-      "quilt:from-source": "./src/workers/index.ts",
+      "quilt:from-source": "./source/workers/index.ts",
       "quilt:esnext": "./build/esnext/workers/index.esnext",
       "import": "./build/esm/workers/index.mjs",
       "require": "./build/cjs/workers/index.cjs"
     },
     "./polyfills/base": {
-      "quilt:from-source": "./src/polyfills/base.ts",
+      "quilt:from-source": "./source/polyfills/base.ts",
       "quilt:esnext": "./build/esnext/polyfills/base.esnext",
       "import": "./build/esm/polyfills/base.mjs",
       "require": "./build/cjs/polyfills/base.cjs"
     },
     "./polyfills/crypto": {
-      "quilt:from-source": "./src/polyfills/crypto.ts",
+      "quilt:from-source": "./source/polyfills/crypto.ts",
       "quilt:esnext": "./build/esnext/polyfills/crypto.esnext",
       "import": "./build/esm/polyfills/crypto.mjs",
       "require": "./build/cjs/polyfills/crypto.cjs"
     },
     "./polyfills/fetch": {
-      "quilt:from-source": "./src/polyfills/fetch.ts",
+      "quilt:from-source": "./source/polyfills/fetch.ts",
       "quilt:esnext": "./build/esnext/polyfills/fetch.esnext",
       "import": "./build/esm/polyfills/fetch.mjs",
       "require": "./build/cjs/polyfills/fetch.cjs"
     },
     "./polyfills/noop": {
-      "quilt:from-source": "./src/polyfills/noop.ts",
+      "quilt:from-source": "./source/polyfills/noop.ts",
       "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
       "import": "./build/esm/polyfills/noop.mjs",
       "require": "./build/cjs/polyfills/noop.cjs"

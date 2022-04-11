@@ -17,31 +17,31 @@
   },
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./babel": {
-      "quilt:from-source": "./src/tools/babel.ts",
+      "quilt:from-source": "./source/tools/babel.ts",
       "quilt:esnext": "./build/esnext/tools/babel.esnext",
       "import": "./build/esm/tools/babel.mjs",
       "require": "./build/cjs/tools/babel.cjs"
     },
     "./eslint": {
-      "quilt:from-source": "./src/tools/eslint.ts",
+      "quilt:from-source": "./source/tools/eslint.ts",
       "quilt:esnext": "./build/esnext/tools/eslint.esnext",
       "import": "./build/esm/tools/eslint.mjs",
       "require": "./build/cjs/tools/eslint.cjs"
     },
     "./esnext": {
-      "quilt:from-source": "./src/features/esnext.ts",
+      "quilt:from-source": "./source/features/esnext.ts",
       "quilt:esnext": "./build/esnext/features/esnext.esnext",
       "import": "./build/esm/features/esnext.mjs",
       "require": "./build/cjs/features/esnext.cjs"
     },
     "./graphql": {
-      "quilt:from-source": "./src/features/graphql.ts",
+      "quilt:from-source": "./source/features/graphql.ts",
       "quilt:esnext": "./build/esnext/features/graphql.esnext",
       "import": "./build/esm/features/graphql.mjs",
       "require": "./build/cjs/features/graphql.cjs"
@@ -50,55 +50,55 @@
       "require": "./jest/resolver.cjs"
     },
     "./jest": {
-      "quilt:from-source": "./src/tools/jest.ts",
+      "quilt:from-source": "./source/tools/jest.ts",
       "quilt:esnext": "./build/esnext/tools/jest.esnext",
       "import": "./build/esm/tools/jest.mjs",
       "require": "./build/cjs/tools/jest.cjs"
     },
     "./kit": {
-      "quilt:from-source": "./src/kit.ts",
+      "quilt:from-source": "./source/kit.ts",
       "quilt:esnext": "./build/esnext/kit.esnext",
       "import": "./build/esm/kit.mjs",
       "require": "./build/cjs/kit.cjs"
     },
     "./packages": {
-      "quilt:from-source": "./src/features/packages.ts",
+      "quilt:from-source": "./source/features/packages.ts",
       "quilt:esnext": "./build/esnext/features/packages.esnext",
       "import": "./build/esm/features/packages.mjs",
       "require": "./build/cjs/features/packages.cjs"
     },
     "./prettier": {
-      "quilt:from-source": "./src/tools/prettier.ts",
+      "quilt:from-source": "./source/tools/prettier.ts",
       "quilt:esnext": "./build/esnext/tools/prettier.esnext",
       "import": "./build/esm/tools/prettier.mjs",
       "require": "./build/cjs/tools/prettier.cjs"
     },
     "./react": {
-      "quilt:from-source": "./src/features/react.ts",
+      "quilt:from-source": "./source/features/react.ts",
       "quilt:esnext": "./build/esnext/features/react.esnext",
       "import": "./build/esm/features/react.mjs",
       "require": "./build/cjs/features/react.cjs"
     },
     "./rollup": {
-      "quilt:from-source": "./src/tools/rollup.ts",
+      "quilt:from-source": "./source/tools/rollup.ts",
       "quilt:esnext": "./build/esnext/tools/rollup.esnext",
       "import": "./build/esm/tools/rollup.mjs",
       "require": "./build/cjs/tools/rollup.cjs"
     },
     "./targets": {
-      "quilt:from-source": "./src/features/targets.ts",
+      "quilt:from-source": "./source/features/targets.ts",
       "quilt:esnext": "./build/esnext/features/targets.esnext",
       "import": "./build/esm/features/targets.mjs",
       "require": "./build/cjs/features/targets.cjs"
     },
     "./typescript": {
-      "quilt:from-source": "./src/tools/typescript.ts",
+      "quilt:from-source": "./source/tools/typescript.ts",
       "quilt:esnext": "./build/esnext/tools/typescript.esnext",
       "import": "./build/esm/tools/typescript.mjs",
       "require": "./build/cjs/tools/typescript.cjs"
     },
     "./vite": {
-      "quilt:from-source": "./src/tools/vite.ts",
+      "quilt:from-source": "./source/tools/vite.ts",
       "quilt:esnext": "./build/esnext/tools/vite.esnext",
       "import": "./build/esm/tools/vite.mjs",
       "require": "./build/cjs/tools/vite.cjs"

@@ -388,7 +388,7 @@ interface ImportMetadata {
   fromPolyfills: boolean;
 }
 
-// Inspired by Vite: https://github.com/vitejs/vite/blob/c69f83615292953d40f07b1178d1ed1d72abe695/packages/vite/src/node/build.ts#L567
+// Inspired by Vite: https://github.com/vitejs/vite/blob/c69f83615292953d40f07b1178d1ed1d72abe695/packages/vite/source/node/build.ts#L567
 function createManualChunksSorter(): GetManualChunk {
   const cache = new Map<string, ImportMetadata>();
 

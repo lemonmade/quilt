@@ -67,7 +67,7 @@ export default createService((service) => {
 import {createPackage, quiltPackage} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry('./src/index');
+  pkg.entry('./source/index');
   pkg.use(quiltPackage());
 });
 
@@ -76,7 +76,7 @@ export default createPackage((pkg) => {
 import {createPackage, quiltPackage} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry('./src/index');
+  pkg.entry('./source/index');
   pkg.use(quiltPackage());
 });
 ```

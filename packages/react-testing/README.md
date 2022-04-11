@@ -412,7 +412,7 @@ Allows you to change a subset of the props specified when the component was orig
 
 ##### <a name="act"></a> `act<T>(action: () => T): T`
 
-Performs an action in the context of a react [`act() block`](https://github.com/reactjs/react/blob/master/test-utils/src/index.js#L27), then updates the internal representation of the react tree. You **must** use this whenever performing an action that will cause the react tree to set state and re-render, such as simulating event listeners being called. Failing to do so will print a warning, and the react tree will not be updated for subsequent calls to methods such as `find()`.
+Performs an action in the context of a react [`act() block`](https://github.com/reactjs/react/blob/master/test-utils/source/index.js#L27), then updates the internal representation of the react tree. You **must** use this whenever performing an action that will cause the react tree to set state and re-render, such as simulating event listeners being called. Failing to do so will print a warning, and the react tree will not be updated for subsequent calls to methods such as `find()`.
 
 ```tsx
 function MyComponent() {

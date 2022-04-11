@@ -1,29 +1,33 @@
 import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry({source: './src/index'});
-  pkg.entry({name: 'transform', source: './src/transform'});
-  pkg.entry({name: 'fixtures', source: './src/fixtures/index'});
-  pkg.entry({name: 'typescript', source: './src/typescript'});
+  pkg.entry({source: './source/index'});
+  pkg.entry({name: 'transform', source: './source/transform'});
+  pkg.entry({name: 'fixtures', source: './source/fixtures/index'});
+  pkg.entry({name: 'typescript', source: './source/typescript'});
   pkg.entry({
     name: 'rollup',
-    source: './src/rollup-parts',
+    source: './source/rollup-parts',
     runtime: Runtime.Node,
   });
-  pkg.entry({name: 'jest', source: './src/jest-parts', runtime: Runtime.Node});
+  pkg.entry({
+    name: 'jest',
+    source: './source/jest-parts',
+    runtime: Runtime.Node,
+  });
   pkg.entry({
     name: 'matchers',
-    source: './src/matchers/index',
+    source: './source/matchers/index',
     runtime: Runtime.Node,
   });
   pkg.entry({
     name: 'configuration',
-    source: './src/configuration',
+    source: './source/configuration',
     runtime: Runtime.Node,
   });
   pkg.binary({
     name: 'quilt-graphql-typescript',
-    source: './src/typescript/cli',
+    source: './source/typescript/cli',
   });
   pkg.use(quiltPackage());
 });

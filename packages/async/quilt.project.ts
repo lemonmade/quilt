@@ -1,20 +1,20 @@
 import {quiltPackage, createPackage, Runtime} from '@quilted/craft';
 
 export default createPackage((pkg) => {
-  pkg.entry({source: './src/index'});
+  pkg.entry({source: './source/index'});
   pkg.entry({
     name: 'babel',
-    source: './src/babel-plugin',
+    source: './source/babel-plugin',
     runtime: Runtime.Node,
   });
   pkg.entry({
     name: 'rollup',
-    source: './src/rollup-parts',
+    source: './source/rollup-parts',
     runtime: Runtime.Node,
   });
   pkg.entry({
     name: 'server',
-    source: './src/server',
+    source: './source/server',
     runtime: Runtime.Node,
   });
 

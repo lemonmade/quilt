@@ -13,49 +13,49 @@
   },
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./rollup": {
-      "quilt:from-source": "./src/rollup-parts.ts",
+      "quilt:from-source": "./source/rollup-parts.ts",
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
       "require": "./build/cjs/rollup-parts.cjs"
     },
     "./base": {
-      "quilt:from-source": "./src/base.ts",
+      "quilt:from-source": "./source/base.ts",
       "quilt:esnext": "./build/esnext/base.esnext",
       "import": "./build/esm/base.mjs",
       "require": "./build/cjs/base.cjs"
     },
     "./fetch": {
       "browser": {
-        "quilt:from-source": "./src/fetch.browser.ts",
+        "quilt:from-source": "./source/fetch.browser.ts",
         "quilt:esnext": "./build/esnext/fetch.browser.esnext",
         "import": "./build/esm/fetch.browser.mjs",
         "require": "./build/cjs/fetch.browser.cjs"
       },
       "node": {
-        "quilt:from-source": "./src/fetch.node.ts",
+        "quilt:from-source": "./source/fetch.node.ts",
         "quilt:esnext": "./build/esnext/fetch.node.esnext",
         "import": "./build/esm/fetch.node.mjs",
         "require": "./build/cjs/fetch.node.cjs"
       },
-      "quilt:from-source": "./src/noop.ts",
+      "quilt:from-source": "./source/noop.ts",
       "quilt:esnext": "./build/esnext/noop.esnext",
       "import": "./build/esm/noop.mjs",
       "require": "./build/cjs/noop.cjs"
     },
     "./crypto": {
-      "quilt:from-source": "./src/crypto.ts",
+      "quilt:from-source": "./source/crypto.ts",
       "quilt:esnext": "./build/esnext/crypto.esnext",
       "import": "./build/esm/crypto.mjs",
       "require": "./build/cjs/crypto.cjs"
     },
     "./noop": {
-      "quilt:from-source": "./src/noop.ts",
+      "quilt:from-source": "./source/noop.ts",
       "quilt:esnext": "./build/esnext/noop.esnext",
       "import": "./build/esm/noop.mjs",
       "require": "./build/cjs/noop.cjs"

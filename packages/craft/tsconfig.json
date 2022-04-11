@@ -1,10 +1,10 @@
 {
   "extends": "@quilted/typescript/pkg.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": "source",
     "outDir": "build/typescript"
   },
-  "include": ["src"],
+  "include": ["source"],
   "exclude": ["quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../async"},

@@ -3,23 +3,23 @@ import {quiltPackage, createPackage, Runtime} from '@quilted/craft';
 export default createPackage((pkg) => {
   pkg.runtime(Runtime.Node);
 
-  pkg.entry({source: './src/index'});
-  pkg.entry({name: 'kit', source: './src/kit'});
+  pkg.entry({source: './source/index'});
+  pkg.entry({name: 'kit', source: './source/kit'});
 
-  pkg.entry({name: 'esnext', source: './src/features/esnext'});
-  pkg.entry({name: 'graphql', source: './src/features/graphql'});
-  pkg.entry({name: 'packages', source: './src/features/packages'});
-  pkg.entry({name: 'react', source: './src/features/react'});
+  pkg.entry({name: 'esnext', source: './source/features/esnext'});
+  pkg.entry({name: 'graphql', source: './source/features/graphql'});
+  pkg.entry({name: 'packages', source: './source/features/packages'});
+  pkg.entry({name: 'react', source: './source/features/react'});
 
-  pkg.entry({name: 'babel', source: './src/tools/babel'});
-  pkg.entry({name: 'eslint', source: './src/tools/eslint'});
-  pkg.entry({name: 'jest', source: './src/tools/jest'});
-  pkg.entry({name: 'prettier', source: './src/tools/prettier'});
-  pkg.entry({name: 'rollup', source: './src/tools/rollup'});
-  pkg.entry({name: 'typescript', source: './src/tools/typescript'});
-  pkg.entry({name: 'vite', source: './src/tools/vite'});
+  pkg.entry({name: 'babel', source: './source/tools/babel'});
+  pkg.entry({name: 'eslint', source: './source/tools/eslint'});
+  pkg.entry({name: 'jest', source: './source/tools/jest'});
+  pkg.entry({name: 'prettier', source: './source/tools/prettier'});
+  pkg.entry({name: 'rollup', source: './source/tools/rollup'});
+  pkg.entry({name: 'typescript', source: './source/tools/typescript'});
+  pkg.entry({name: 'vite', source: './source/tools/vite'});
 
-  pkg.binary({name: 'quilt', source: './src/cli/cli'});
+  pkg.binary({name: 'quilt', source: './source/cli/cli'});
 
   pkg.use(quiltPackage());
 });

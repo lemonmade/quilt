@@ -72,7 +72,7 @@ async function createEnvModuleContent({
   `;
 }
 
-// Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/src/node/config.ts#L1050-L1113
+// Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/source/node/config.ts#L1050-L1113
 export async function loadEnv(
   project: Project,
   workspace: Workspace,

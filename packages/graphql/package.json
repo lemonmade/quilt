@@ -17,49 +17,49 @@
   },
   "exports": {
     ".": {
-      "quilt:from-source": "./src/index.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./transform": {
-      "quilt:from-source": "./src/transform.ts",
+      "quilt:from-source": "./source/transform.ts",
       "quilt:esnext": "./build/esnext/transform.esnext",
       "import": "./build/esm/transform.mjs",
       "require": "./build/cjs/transform.cjs"
     },
     "./typescript": {
-      "quilt:from-source": "./src/typescript/index.ts",
+      "quilt:from-source": "./source/typescript/index.ts",
       "quilt:esnext": "./build/esnext/typescript/index.esnext",
       "import": "./build/esm/typescript/index.mjs",
       "require": "./build/cjs/typescript/index.cjs"
     },
     "./fixtures": {
-      "quilt:from-source": "./src/fixtures/index.ts",
+      "quilt:from-source": "./source/fixtures/index.ts",
       "quilt:esnext": "./build/esnext/fixtures/index.esnext",
       "import": "./build/esm/fixtures/index.mjs",
       "require": "./build/cjs/fixtures/index.cjs"
     },
     "./matchers": {
-      "quilt:from-source": "./src/matchers/index.ts",
+      "quilt:from-source": "./source/matchers/index.ts",
       "quilt:esnext": "./build/esnext/matchers/index.esnext",
       "import": "./build/esm/matchers/index.mjs",
       "require": "./build/cjs/matchers/index.cjs"
     },
     "./rollup": {
-      "quilt:from-source": "./src/rollup-parts.ts",
+      "quilt:from-source": "./source/rollup-parts.ts",
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
       "require": "./build/cjs/rollup-parts.cjs"
     },
     "./jest": {
-      "quilt:from-source": "./src/jest-parts.ts",
+      "quilt:from-source": "./source/jest-parts.ts",
       "quilt:esnext": "./build/esnext/jest-parts.esnext",
       "import": "./build/esm/jest-parts.mjs",
       "require": "./build/cjs/jest-parts.cjs"
     },
     "./configuration": {
-      "quilt:from-source": "./src/configuration.ts",
+      "quilt:from-source": "./source/configuration.ts",
       "quilt:esnext": "./build/esnext/configuration.esnext",
       "import": "./build/esm/configuration.mjs",
       "require": "./build/cjs/configuration.cjs"
