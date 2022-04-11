@@ -1,8 +1,16 @@
-import type {InlineConfig, PluginOption} from 'vite';
+import type {
+  InlineConfig,
+  PluginOption,
+  ServerOptions as ViteServerOptions,
+} from 'vite';
 import type {InputOptions} from 'rollup';
 
 import {App, createProjectPlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import type {
+  WaterfallHook,
+  SewingKitInternalContext,
+  ResolvedDevelopProjectConfigurationHooks,
+} from '../kit';
 
 import type {} from './rollup';
 
@@ -66,6 +74,12 @@ export interface ViteHooks {
   viteSsrExternals: WaterfallHook<string[]>;
 
   /**
+   * Customize vite’s server configuration configuration. The resulting
+   * configuration is typically passed to as vite’s `options.server`.
+   */
+  viteServerOptions: WaterfallHook<ViteServerOptions>;
+
+  /**
    * Customizations on the full vite configuration. The resulting
    * configuration is typically passed to vite’s `createServer`.
    */
@@ -79,7 +93,7 @@ declare module '@quilted/sewing-kit' {
 /**
  * Runs vite during development for this application.
  */
-export function vite() {
+export function vite({run: shouldRun = true} = {}) {
   return createProjectPlugin<App>({
     name: 'SewingKit.Vite',
     develop({project, internal, hooks, run}) {
@@ -96,96 +110,23 @@ export function vite() {
         viteRollupOptions: waterfall(),
         viteSsrNoExternals: waterfall(),
         viteSsrExternals: waterfall(),
+        viteServerOptions: waterfall(),
       }));
+
+      if (!shouldRun) return;
 
       run((step, {configuration}) =>
         step({
           name: 'SewingKit.Vite',
           label: `Running vite for ${project.name}`,
           async run(runner) {
-            const [
-              {createServer},
-              {
-                extensions,
-                viteConfig,
-                viteHost,
-                viteOptimizeDepsExclude,
-                viteOptimizeDepsInclude,
-                vitePlugins,
-                vitePort,
-                viteResolveAliases,
-                viteResolveExportConditions,
-                viteResolveExtensions,
-                viteRollupOptions,
-                viteSsrNoExternals,
-                viteSsrExternals,
-              },
-            ] = await Promise.all([import('vite'), configuration()]);
-
-            const baseExtensions = await extensions.run([
-              '.mjs',
-              '.js',
-              '.ts',
-              '.jsx',
-              '.tsx',
-              '.json',
+            const [{createServer}, configurationHooks] = await Promise.all([
+              import('vite'),
+              configuration(),
             ]);
 
-            const [
-              plugins,
-              port,
-              host,
-              optimizeDepsExclude,
-              optimizeDepsInclude,
-              aliases,
-              exportConditions,
-              resolveExtensions,
-              rollupOptions,
-              noExternals,
-              externals,
-            ] = await Promise.all([
-              vitePlugins!.run([]),
-              vitePort!.run(undefined),
-              viteHost!.run(undefined),
-              viteOptimizeDepsExclude!.run([]),
-              viteOptimizeDepsInclude!.run([]),
-              viteResolveAliases!.run({}),
-              // @see https://vitejs.dev/config/#resolve-conditions
-              viteResolveExportConditions!.run([
-                'import',
-                'module',
-                'browser',
-                'default',
-                'development',
-              ]),
-              // @see https://vitejs.dev/config/#resolve-extensions
-              viteResolveExtensions!.run(baseExtensions),
-              viteRollupOptions!.run({}),
-              viteSsrNoExternals!.run([]),
-              viteSsrExternals!.run([]),
-            ]);
-
-            const config = await viteConfig!.run({
-              configFile: false,
-              clearScreen: false,
-              cacheDir: internal.fs.tempPath('vite/cache'),
-              build: {
-                rollupOptions,
-              },
-              server: {port, host},
-              // @ts-expect-error The types do not have this field, but it
-              // is supported.
-              ssr: {external: externals, noExternal: noExternals},
-              resolve: {
-                alias: aliases,
-                extensions: resolveExtensions,
-                conditions: exportConditions,
-              },
-              optimizeDeps: {
-                include: optimizeDepsInclude,
-                exclude: optimizeDepsExclude,
-              },
-              plugins,
+            const config = await createViteConfig(configurationHooks, {
+              internal,
             });
 
             const server = await createServer(config);
@@ -206,4 +147,94 @@ export function vite() {
       );
     },
   });
+}
+
+export async function createViteConfig(
+  {
+    extensions,
+    viteConfig,
+    viteHost,
+    viteOptimizeDepsExclude,
+    viteOptimizeDepsInclude,
+    vitePlugins,
+    vitePort,
+    viteResolveAliases,
+    viteResolveExportConditions,
+    viteResolveExtensions,
+    viteRollupOptions,
+    viteSsrNoExternals,
+    viteSsrExternals,
+    viteServerOptions,
+  }: ResolvedDevelopProjectConfigurationHooks<App>,
+  {internal}: {internal: SewingKitInternalContext},
+) {
+  const baseExtensions = await extensions.run([
+    '.mjs',
+    '.js',
+    '.ts',
+    '.jsx',
+    '.tsx',
+    '.json',
+  ]);
+
+  const [
+    plugins,
+    port,
+    host,
+    optimizeDepsExclude,
+    optimizeDepsInclude,
+    aliases,
+    exportConditions,
+    resolveExtensions,
+    rollupOptions,
+    noExternals,
+    externals,
+  ] = await Promise.all([
+    vitePlugins!.run([]),
+    vitePort!.run(undefined),
+    viteHost!.run(undefined),
+    viteOptimizeDepsExclude!.run([]),
+    viteOptimizeDepsInclude!.run([]),
+    viteResolveAliases!.run({}),
+    // @see https://vitejs.dev/config/#resolve-conditions
+    viteResolveExportConditions!.run([
+      'import',
+      'module',
+      'browser',
+      'default',
+      'development',
+    ]),
+    // @see https://vitejs.dev/config/#resolve-extensions
+    viteResolveExtensions!.run(baseExtensions),
+    viteRollupOptions!.run({}),
+    viteSsrNoExternals!.run([]),
+    viteSsrExternals!.run([]),
+  ]);
+
+  const serverOptions = await viteServerOptions!.run({port, host});
+
+  const config = await viteConfig!.run({
+    configFile: false,
+    clearScreen: false,
+    cacheDir: internal.fs.tempPath('vite/cache'),
+    build: {
+      rollupOptions,
+    },
+    server: serverOptions,
+    // @ts-expect-error The types do not have this field, but it
+    // is supported.
+    ssr: {external: externals, noExternal: noExternals},
+    resolve: {
+      alias: aliases,
+      extensions: resolveExtensions,
+      conditions: exportConditions,
+    },
+    optimizeDeps: {
+      include: optimizeDepsInclude,
+      exclude: optimizeDepsExclude,
+    },
+    plugins,
+  });
+
+  return config;
 }
