@@ -67,6 +67,7 @@ import {tsconfigAliases} from './plugins/tsconfig-aliases';
 // Without these exports, TypeScript doesn’t see all the module augmentations
 // added by these modules when you try to reference them from another package.
 export type {} from './plugins/app-build';
+export type {} from './plugins/app-server-build';
 export type {} from './plugins/app-auto-server';
 export type {} from './plugins/browser-entry';
 export type {} from './plugins/http-handler';
