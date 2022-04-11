@@ -1,5 +1,6 @@
 import {stripIndent} from 'common-tags';
 
+import {addNodeBundleInclusion} from '../tools/rollup';
 import type {RollupNodeBundle} from '../tools/rollup';
 
 import {
@@ -149,19 +150,11 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
     quiltAsyncPreload?.(() => false);
     quiltAsyncManifest?.(() => false);
 
-    rollupNodeBundle?.((existingBundle) => {
-      const shouldBundle = Boolean(bundle);
-      const {include = [], exclude = []} =
-        typeof existingBundle === 'object' ? existingBundle : {};
-
-      return {
-        builtins: false,
-        dependencies: shouldBundle,
-        devDependencies: shouldBundle,
-        peerDependencies: shouldBundle,
-        include: [...include, /@quilted[/]quilt[/](magic|env|polyfills)/],
-        exclude,
-      };
+    rollupNodeBundle?.(() => {
+      return addNodeBundleInclusion(
+        /@quilted[/]quilt[/](magic|env|polyfills)/,
+        bundle,
+      );
     });
 
     rollupPlugins?.(async (plugins) => {

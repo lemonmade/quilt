@@ -6,7 +6,7 @@ import type {ModuleFormat} from 'rollup';
 import {createProjectPlugin} from '../kit';
 import type {Service, WaterfallHook} from '../kit';
 
-import type {RollupNodeBundle} from '../tools/rollup';
+import {addNodeBundleInclusion, RollupNodeBundle} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
@@ -90,19 +90,11 @@ export function serviceBuild({
             (runtime) => runtime ?? 'process.env',
           );
 
-          rollupNodeBundle?.((existingBundle) => {
-            const shouldBundle = Boolean(bundle);
-            const {include = [], exclude = []} =
-              typeof existingBundle === 'object' ? existingBundle : {};
-
-            return {
-              builtins: false,
-              dependencies: shouldBundle,
-              devDependencies: shouldBundle,
-              peerDependencies: shouldBundle,
-              include: [...include, /@quilted[/]quilt[/](magic|env|polyfills)/],
-              exclude,
-            };
+          rollupNodeBundle?.(() => {
+            return addNodeBundleInclusion(
+              /@quilted[/]quilt[/](magic|env|polyfills)/,
+              bundle,
+            );
           });
 
           rollupInput?.(async () => {

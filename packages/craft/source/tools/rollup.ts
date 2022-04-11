@@ -388,3 +388,47 @@ export async function buildWithRollup<ProjectType extends Project = Project>(
   const bundle = await rollup(inputOptions);
   await Promise.all(outputs.map((output) => bundle.write(output)));
 }
+
+export function addNodeBundleInclusion(
+  inclusion: string | RegExp | (string | RegExp)[],
+  existingBundle: boolean | RollupNodeBundle,
+) {
+  const normalized = normalizeNodeBundle(existingBundle);
+
+  return {
+    ...normalized,
+    include: [
+      ...(normalized.include ?? []),
+      ...(Array.isArray(inclusion) ? inclusion : [inclusion]),
+    ],
+  };
+}
+
+export function addNodeBundleExclusion(
+  exclusion: string | RegExp | (string | RegExp)[],
+  existingBundle: boolean | RollupNodeBundle,
+): RollupNodeBundle {
+  const normalized = normalizeNodeBundle(existingBundle);
+
+  return {
+    ...normalized,
+    exclude: [
+      ...(normalized.exclude ?? []),
+      ...(Array.isArray(exclusion) ? exclusion : [exclusion]),
+    ],
+  };
+}
+
+export function normalizeNodeBundle(
+  existingBundle: boolean | RollupNodeBundle,
+): RollupNodeBundle {
+  const shouldBundle = Boolean(existingBundle);
+
+  return {
+    builtins: false,
+    dependencies: shouldBundle,
+    devDependencies: shouldBundle,
+    peerDependencies: shouldBundle,
+    ...(typeof existingBundle === 'boolean' ? {} : existingBundle),
+  };
+}

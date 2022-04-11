@@ -3,8 +3,7 @@ import {stripIndent} from 'common-tags';
 import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
 import type {App, Service, WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
-
-import type {} from '../tools/rollup';
+import {addNodeBundleInclusion} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
@@ -201,17 +200,10 @@ export function httpHandlerDevelopment({
           // no matter what, and otherwise allow all other node dependencies
           // to be unbundled.
           rollupNodeBundle?.((bundle) => {
-            const {include = [], exclude = []} =
-              typeof bundle === 'object' ? bundle : {};
-
-            return {
-              builtins: false,
-              dependencies: false,
-              devDependencies: false,
-              peerDependencies: false,
-              include: [...include, /@quilted[/]quilt[/](magic|env|polyfills)/],
-              exclude,
-            };
+            return addNodeBundleInclusion(
+              /@quilted[/]quilt[/](magic|env|polyfills)/,
+              bundle,
+            );
           });
 
           rollupPlugins?.(async (plugins) => {
