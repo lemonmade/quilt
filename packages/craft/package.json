@@ -67,6 +67,12 @@
       "import": "./build/esm/features/packages.mjs",
       "require": "./build/cjs/features/packages.cjs"
     },
+    "./postcss": {
+      "quilt:from-source": "./source/tools/postcss.ts",
+      "quilt:esnext": "./build/esnext/tools/postcss.esnext",
+      "import": "./build/esm/tools/postcss.mjs",
+      "require": "./build/cjs/tools/postcss.cjs"
+    },
     "./prettier": {
       "quilt:from-source": "./source/tools/prettier.ts",
       "quilt:esnext": "./build/esnext/tools/prettier.esnext",
@@ -134,6 +140,9 @@
       "jest": [
         "./build/typescript/tools/jest.d.ts"
       ],
+      "postcss": [
+        "./build/typescript/tools/postcss.d.ts"
+      ],
       "prettier": [
         "./build/typescript/tools/prettier.d.ts"
       ],
@@ -175,6 +184,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^2.4.0",
     "@types/jest": "^27.4.0",
+    "@types/postcss-preset-env": "^6.7.0",
     "@types/prettier": "^2.4.0",
     "arg": "^5.0.0",
     "babel-jest": "^27.0.0",
@@ -195,7 +205,9 @@
     "jest-watch-typeahead": "^1.0.0",
     "pkg-dir": "^6.0.0",
     "postcss": "^8.0.0",
+    "postcss-load-config": "^3.1.0",
     "postcss-modules": "^4.0.0",
+    "postcss-preset-env": "^7.4.0",
     "preact": "^10.6.0",
     "prettier": "^2.6.0",
     "regenerator-runtime": "^0.13.0",

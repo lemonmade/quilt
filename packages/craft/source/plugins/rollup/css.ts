@@ -1,13 +1,16 @@
 import type {Plugin} from 'rollup';
 import type {
-  Plugin as PostCSSPlugin,
+  AcceptedPlugin as PostCSSPlugin,
   Result as PostCSSResult,
+  ProcessOptions as PostCSSProcessOptions,
   SourceMap,
 } from 'postcss';
 
 export interface Options {
   minify?: boolean;
   extract?: boolean;
+  postcssPlugins: () => Promise<PostCSSPlugin[]>;
+  postcssProcessOptions: () => Promise<PostCSSProcessOptions>;
 }
 
 const CSS_REGEX = /\.css$/;
@@ -16,7 +19,8 @@ const CSS_MODULE_REGEX = /\.module\.css$/;
 export function cssRollupPlugin({
   minify = true,
   extract = true,
-}: Options = {}): Plugin {
+  ...transformOptions
+}: Options): Plugin {
   const styles = new Map<string, string>();
 
   return {
@@ -24,7 +28,7 @@ export function cssRollupPlugin({
     async transform(code, id) {
       if (!CSS_REGEX.test(id)) return;
 
-      const transformed = await transformCss(code, id);
+      const transformed = await transformCss(code, id, transformOptions);
 
       styles.set(id, transformed.code);
 
@@ -83,6 +87,7 @@ export function cssRollupPlugin({
 async function transformCss(
   code: string,
   id: string,
+  options: Pick<Options, 'postcssPlugins' | 'postcssProcessOptions'>,
 ): Promise<{
   code: string;
   ast?: PostCSSResult;
@@ -91,14 +96,21 @@ async function transformCss(
 }> {
   const isCssModule = CSS_MODULE_REGEX.test(id);
 
-  const [{default: postcss}, {default: postcssModules}] = await Promise.all([
+  const [
+    {default: postcss},
+    {default: postcssModules},
+    postcssPlugins,
+    postcssProcessOptions,
+  ] = await Promise.all([
     import('postcss'),
     import('postcss-modules'),
+    options.postcssPlugins(),
+    options.postcssProcessOptions(),
   ]);
 
   let modules: Record<string, string> | undefined;
 
-  const plugins: PostCSSPlugin[] = [];
+  const plugins = [...postcssPlugins];
 
   if (isCssModule) {
     plugins.push(
@@ -115,6 +127,7 @@ async function transformCss(
   }
 
   const postcssResult = await postcss(plugins).process(code, {
+    ...postcssProcessOptions,
     to: id,
     from: id,
   });
