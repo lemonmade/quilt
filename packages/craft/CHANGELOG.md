@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.98
+
+### Patch Changes
+
+- [#248](https://github.com/lemonmade/quilt/pull/248) [`2ea03b04`](https://github.com/lemonmade/quilt/commit/2ea03b04672fe5581870f6a3d53a736e52ace33e) Thanks [@lemonmade](https://github.com/lemonmade)! - Add better PostCSS support
+
 ## 0.1.97
 
 ### Patch Changes
