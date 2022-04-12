@@ -4,6 +4,7 @@ import {rm} from 'fs/promises';
 import type {GetModuleInfo, GetManualChunk} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
 
+import type {} from '../tools/postcss';
 import type {} from '../features/async';
 
 import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
@@ -125,6 +126,8 @@ export function appBuild({
             runtime,
             targets,
             outputDirectory,
+            postcssPlugins,
+            postcssProcessOptions,
             rollupInput,
             rollupOutputs,
             rollupPlugins,
@@ -215,6 +218,8 @@ export function appBuild({
               cssRollupPlugin({
                 minify: assets.minify,
                 extract: true,
+                postcssPlugins: () => postcssPlugins!.run(),
+                postcssProcessOptions: () => postcssProcessOptions!.run(),
               }),
             );
 

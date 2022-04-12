@@ -25,6 +25,7 @@ import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
 import {rollupHooks, rollupNode} from './tools/rollup';
 import type {RollupNodeOptions} from './tools/rollup';
 import {eslint} from './tools/eslint';
+import {postcss} from './tools/postcss';
 import {prettier} from './tools/prettier';
 import {jest} from './tools/jest';
 import {vite} from './tools/vite';
@@ -157,6 +158,7 @@ export function quiltApp({
         rollupNode(),
         babelHooks(),
         babelRollup(),
+        postcss(),
         targets(),
         javascriptProject(),
         typescriptProject(),

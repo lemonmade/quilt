@@ -14,6 +14,7 @@ export default createPackage((pkg) => {
   pkg.entry({name: 'babel', source: './source/tools/babel'});
   pkg.entry({name: 'eslint', source: './source/tools/eslint'});
   pkg.entry({name: 'jest', source: './source/tools/jest'});
+  pkg.entry({name: 'postcss', source: './source/tools/postcss'});
   pkg.entry({name: 'prettier', source: './source/tools/prettier'});
   pkg.entry({name: 'rollup', source: './source/tools/rollup'});
   pkg.entry({name: 'typescript', source: './source/tools/typescript'});

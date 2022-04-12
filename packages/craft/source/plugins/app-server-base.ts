@@ -103,6 +103,8 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
   return (
     {
       runtime,
+      postcssPlugins,
+      postcssProcessOptions,
       rollupInput,
       rollupPlugins,
       rollupNodeBundle,
@@ -160,7 +162,13 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
     rollupPlugins?.(async (plugins) => {
       const {cssRollupPlugin} = await import('./rollup/css');
 
-      plugins.push(cssRollupPlugin({extract: false}));
+      plugins.push(
+        cssRollupPlugin({
+          extract: false,
+          postcssPlugins: () => postcssPlugins!.run(),
+          postcssProcessOptions: () => postcssProcessOptions!.run(),
+        }),
+      );
 
       return plugins;
     });

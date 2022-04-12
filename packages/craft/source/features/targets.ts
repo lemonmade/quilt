@@ -7,9 +7,15 @@ import {
   ProjectKind,
   createWorkspacePlugin,
 } from '../kit';
-import type {WaterfallHook} from '../kit';
+import type {
+  App,
+  WaterfallHook,
+  ResolvedBuildProjectConfigurationHooks,
+  ResolvedDevelopProjectConfigurationHooks,
+} from '../kit';
 
 import type {} from '../tools/babel';
+import type {} from '../tools/postcss';
 
 export interface TargetHooks {
   /**
@@ -64,7 +70,14 @@ export function targets() {
       }));
 
       configure(
-        ({runtime, targets, targetName, babelTargets, babelPresets}) => {
+        ({
+          runtime,
+          targets,
+          targetName,
+          babelTargets,
+          babelPresets,
+          postcssPlugins,
+        }: ResolvedBuildProjectConfigurationHooks<App>) => {
           targets!(async (targets) => {
             if (targets.length > 0) return targets;
 
@@ -158,6 +171,21 @@ export function targets() {
 
             return presets;
           });
+
+          postcssPlugins?.(async (plugins) => {
+            const [{default: postcssPresetEnv}, resolvedTargets] =
+              await Promise.all([
+                import('postcss-preset-env'),
+                targets!.run([]),
+              ]);
+
+            return [
+              postcssPresetEnv({
+                browsers: resolvedTargets,
+              }) as any,
+              ...plugins,
+            ];
+          });
         },
       );
     },
@@ -167,40 +195,63 @@ export function targets() {
         targetName: waterfall(),
       }));
 
-      configure(({runtime, targets, babelTargets, babelPresets}) => {
-        targets!(async (targets) => {
-          if (targets.length > 0) return targets;
+      configure(
+        ({
+          runtime,
+          targets,
+          babelTargets,
+          babelPresets,
+          postcssPlugins,
+        }: ResolvedDevelopProjectConfigurationHooks<App>) => {
+          targets!(async (targets) => {
+            if (targets.length > 0) return targets;
 
-          const resolvedRuntime = await runtime!.run();
+            const resolvedRuntime = await runtime!.run();
 
-          const useNodeTarget = resolvedRuntime.includes(Runtime.Node);
-          const useBrowserTarget = resolvedRuntime.includes(Runtime.Browser);
+            const useNodeTarget = resolvedRuntime.includes(Runtime.Node);
+            const useBrowserTarget = resolvedRuntime.includes(Runtime.Browser);
 
-          if (useNodeTarget) {
-            targets.push('current node');
-          }
+            if (useNodeTarget) {
+              targets.push('current node');
+            }
 
-          if (useBrowserTarget) {
-            targets.push('last 1 major version');
-          }
+            if (useBrowserTarget) {
+              targets.push('last 1 major version');
+            }
 
-          return targets;
-        });
+            return targets;
+          });
 
-        babelTargets?.(() => targets!.run([]));
-        babelPresets?.((presets) => [
-          [
-            require.resolve('@babel/preset-env'),
-            {
-              corejs: '3.15',
-              useBuiltIns: 'usage',
-              bugfixes: true,
-              shippedProposals: true,
-            },
-          ],
-          ...presets,
-        ]);
-      });
+          babelTargets?.(() => targets!.run([]));
+          babelPresets?.((presets) => [
+            [
+              require.resolve('@babel/preset-env'),
+              {
+                corejs: '3.15',
+                useBuiltIns: 'usage',
+                bugfixes: true,
+                shippedProposals: true,
+              },
+            ],
+            ...presets,
+          ]);
+
+          postcssPlugins?.(async (plugins) => {
+            const [{default: postcssPresetEnv}, resolvedTargets] =
+              await Promise.all([
+                import('postcss-preset-env'),
+                targets!.run([]),
+              ]);
+
+            return [
+              postcssPresetEnv({
+                browsers: resolvedTargets,
+              }) as any,
+              ...plugins,
+            ];
+          });
+        },
+      );
     },
     test({hooks, configure}) {
       hooks<TargetHooks>(({waterfall}) => ({
