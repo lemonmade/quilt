@@ -15,7 +15,7 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
    ```js
    // tailwind.config.cjs
    // @see https://tailwindcss.com/docs/configuration
-   
+
    module.exports = {
      // Update this pattern to match where Tailwind-using files are in your repo!
      content: ['./app/**/*.tsx'],
@@ -30,7 +30,7 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
 
    ```jsonc
    // package.json
-   
+
    {
      "postcss": {
        "plugins": {
@@ -44,7 +44,7 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
 
    ```css
    /* App.css */
-   
+
    @tailwind base;
    @tailwind components;
    @tailwind utilities;
