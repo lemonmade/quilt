@@ -193,6 +193,8 @@ export function appStatic({
           {
             runtime,
             targets,
+            postcssPlugins,
+            postcssProcessOptions,
             rollupInput,
             rollupPlugins,
             rollupExternals,
@@ -250,7 +252,13 @@ export function appStatic({
               },
             });
 
-            plugins.push(cssRollupPlugin({extract: false}));
+            plugins.push(
+              cssRollupPlugin({
+                extract: false,
+                postcssPlugins: () => postcssPlugins!.run(),
+                postcssProcessOptions: () => postcssProcessOptions!.run(),
+              }),
+            );
 
             plugins.unshift({
               name: '@quilted/magic-module/static-asset-manifest',
