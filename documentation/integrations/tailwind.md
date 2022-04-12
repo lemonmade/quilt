@@ -10,11 +10,12 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
    pnpm add -W --save-dev tailwindcss
    ```
 
-2. Add a Tailwind configuration file to your project. Tailwind currently only allows you to write configuration in CommonJS format. Because Quilt requires you to [use native ESModules for your local development environment](TODO), you must write your configuration in a `tailwind.config.**c**js` file:
+2. Add a Tailwind configuration file to your project. Tailwind currently only allows you to write configuration in CommonJS format. Because Quilt requires you to [use native ESModules for your local development environment](TODO), you must write your configuration in a `tailwind.config.cjs` file (note the `.cjs` extension):
 
    ```js
    // tailwind.config.cjs
    // @see https://tailwindcss.com/docs/configuration
+   
    module.exports = {
      // Update this pattern to match where Tailwind-using files are in your repo!
      content: ['./app/**/*.tsx'],
@@ -29,6 +30,7 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
 
    ```jsonc
    // package.json
+   
    {
      "postcss": {
        "plugins": {
@@ -42,6 +44,7 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
 
    ```css
    /* App.css */
+   
    @tailwind base;
    @tailwind components;
    @tailwind utilities;
