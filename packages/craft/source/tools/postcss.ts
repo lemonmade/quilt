@@ -71,9 +71,9 @@ export function postcss() {
       return configurationCache.get(project)!;
     }
 
-    const {default: loadPostCSSConfig} = await import('postcss-load-config');
-
-    const promise = loadPostCSSConfig({}, project.fs.root);
+    const promise = import('postcss-load-config').then(
+      ({default: loadPostCSSConfig}) => loadPostCSSConfig({}, project.fs.root),
+    );
 
     configurationCache.set(project, promise);
 
