@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.99
+
+### Patch Changes
+
+- [`1942f847`](https://github.com/lemonmade/quilt/commit/1942f8476bdf5f94032f836ae887d34c46200cfb) Thanks [@lemonmade](https://github.com/lemonmade)! - Ignore CSS processing for server builds
+
 ## 0.1.98
 
 ### Patch Changes
