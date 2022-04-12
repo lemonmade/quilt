@@ -27,7 +27,7 @@ When [building an application](TODO), Quilt automatically sets up [PostCSS](http
 
 3. Configure PostCSS to load the Tailwind plugin. You can do this in any of the locations where [PostCSS searches for your configuration](https://www.npmjs.com/package/postcss-load-config). We recommend using the `postcss` key in your root `package.json` to avoid adding an extra configuration file to your project.
 
-   ```json
+   ```jsonc
    // package.json
    {
      "postcss": {
