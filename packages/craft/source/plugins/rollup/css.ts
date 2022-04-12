@@ -28,7 +28,10 @@ export function cssRollupPlugin({
     async transform(code, id) {
       if (!CSS_REGEX.test(id)) return;
 
-      const transformed = await transformCss(code, id, transformOptions);
+      const transformed = await transformCss(code, id, {
+        extract,
+        ...transformOptions,
+      });
 
       styles.set(id, transformed.code);
 
@@ -87,7 +90,9 @@ export function cssRollupPlugin({
 async function transformCss(
   code: string,
   id: string,
-  options: Pick<Options, 'postcssPlugins' | 'postcssProcessOptions'>,
+  options: Pick<Options, 'postcssPlugins' | 'postcssProcessOptions'> & {
+    extract: boolean;
+  },
 ): Promise<{
   code: string;
   ast?: PostCSSResult;
@@ -104,7 +109,7 @@ async function transformCss(
   ] = await Promise.all([
     import('postcss'),
     import('postcss-modules'),
-    options.postcssPlugins(),
+    options.extract ? options.postcssPlugins() : Promise.resolve([]),
     options.postcssProcessOptions(),
   ]);
 
