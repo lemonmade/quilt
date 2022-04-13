@@ -163,8 +163,8 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
-        rollupNodeBundle: waterfall({
-          default: explicitShouldBundle ?? project.kind !== ProjectKind.Package,
+        rollupNodeBundle: waterfall<RollupNodeBundle | boolean>({
+          default: false,
         }),
         rollupCommonJSOptions: waterfall(),
       }));
