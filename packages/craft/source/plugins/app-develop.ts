@@ -245,6 +245,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           viteOptimizeDepsExclude?.((excluded) => [
             ...excluded,
             'react',
+            'react-dom',
             '@quilted/quilt/react',
             '@quilted/quilt/react/jsx-runtime',
             '@quilted/quilt/env',
@@ -390,7 +391,15 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
             const app = express();
 
-            app.use(viteServer.middlewares);
+            app.use((request, response, next) => {
+              // This prevents issues when an HTML route in the application matches
+              // the name of a directory in the project.
+              if (request.headers.accept?.includes('text/html') ?? false) {
+                return next();
+              }
+
+              return viteServer.middlewares(request, response, next);
+            });
 
             app.use((request, response) => {
               appServer.handle(request, response);
