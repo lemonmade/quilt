@@ -126,7 +126,7 @@ importers:
       '@quilted/polyfills': 0.2.23
       '@quilted/prettier': 0.2.8
       '@quilted/quilt': ^0.5.0
-      '@quilted/react-testing': 0.5.10
+      '@quilted/react-testing': 0.5.11
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.8
       '@quilted/sewing-kit': 0.2.26
       '@quilted/typescript': 0.2.11
@@ -459,7 +459,7 @@ importers:
 
   packages/react:
     specifiers:
-      '@quilted/preact-mini-compat': 0.2.14
+      '@quilted/preact-mini-compat': 0.2.15
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
       preact: ^10.7.0
