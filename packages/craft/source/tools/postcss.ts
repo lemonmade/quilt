@@ -34,17 +34,22 @@ declare module '@quilted/sewing-kit' {
  * Adds hooks that allow you to customize PostCSS.
  */
 export function postcss() {
-  const configurationCache = new Map<App, Promise<PostCSSConfigResult>>();
+  const configurationCache = new Map<
+    App,
+    Promise<PostCSSConfigResult | undefined>
+  >();
 
   return createProjectPlugin<App>({
     name: 'SewingKit.Babel',
     build({hooks, project}) {
       hooks<PostCSSHooks>(({waterfall}) => ({
         postcssPlugins: waterfall({
-          default: async () => (await loadPostCSSConfig(project)).plugins,
+          default: async () =>
+            (await loadPostCSSConfig(project))?.plugins ?? [],
         }),
         postcssProcessOptions: waterfall({
-          default: async () => (await loadPostCSSConfig(project)).options,
+          default: async () =>
+            (await loadPostCSSConfig(project))?.options ?? {},
         }),
         postcssPresetEnvOptions: waterfall(),
       }));
@@ -52,10 +57,12 @@ export function postcss() {
     develop({hooks, project}) {
       hooks<PostCSSHooks>(({waterfall}) => ({
         postcssPlugins: waterfall({
-          default: async () => (await loadPostCSSConfig(project)).plugins,
+          default: async () =>
+            (await loadPostCSSConfig(project))?.plugins ?? [],
         }),
         postcssProcessOptions: waterfall({
-          default: async () => (await loadPostCSSConfig(project)).options,
+          default: async () =>
+            (await loadPostCSSConfig(project))?.options ?? {},
         }),
         postcssPresetEnvOptions: waterfall(),
       }));
@@ -65,15 +72,23 @@ export function postcss() {
   async function loadPostCSSConfig(
     project: App,
   ): Promise<
-    Omit<PostCSSConfigResult, 'plugins'> & {plugins: PostCSSPlugin[]}
+    | (Omit<PostCSSConfigResult, 'plugins'> & {plugins: PostCSSPlugin[]})
+    | undefined
   > {
     if (configurationCache.has(project)) {
       return configurationCache.get(project)!;
     }
 
-    const promise = import('postcss-load-config').then(
-      ({default: loadPostCSSConfig}) => loadPostCSSConfig({}, project.fs.root),
-    );
+    const promise = (async () => {
+      const {default: loadPostCSSConfig} = await import('postcss-load-config');
+
+      try {
+        const config = await loadPostCSSConfig({}, project.fs.root);
+        return config;
+      } catch {
+        // intentional noop
+      }
+    })();
 
     configurationCache.set(project, promise);
 
