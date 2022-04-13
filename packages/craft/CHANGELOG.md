@@ -1,5 +1,20 @@
 # @quilted/craft
 
+## 0.1.100
+
+### Patch Changes
+
+- [#251](https://github.com/lemonmade/quilt/pull/251) [`391f3261`](https://github.com/lemonmade/quilt/commit/391f3261179cc4f41a7aeeccdc25761bdabdb179) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
+* [`97134c59`](https://github.com/lemonmade/quilt/commit/97134c59fcf7ac43160ee5f1cb71662c12a99a01) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix PostCSS when no config is found
+
+- [`d166f4a7`](https://github.com/lemonmade/quilt/commit/d166f4a795d505938f6436affaae7e26f8bbd582) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix servers bundling during development
+
+* [`eb860efa`](https://github.com/lemonmade/quilt/commit/eb860efa0d889118649a6a12cecf73f7e22faf08) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some app dev server issues
+
+* Updated dependencies [[`391f3261`](https://github.com/lemonmade/quilt/commit/391f3261179cc4f41a7aeeccdc25761bdabdb179)]:
+  - @quilted/react-testing@0.5.11
+
 ## 0.1.99
 
 ### Patch Changes

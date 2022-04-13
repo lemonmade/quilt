@@ -1,5 +1,11 @@
 # @quilted/preact-mini-compat
 
+## 0.2.15
+
+### Patch Changes
+
+- [#251](https://github.com/lemonmade/quilt/pull/251) [`391f3261`](https://github.com/lemonmade/quilt/commit/391f3261179cc4f41a7aeeccdc25761bdabdb179) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
 ## 0.2.14
 
 ### Patch Changes
