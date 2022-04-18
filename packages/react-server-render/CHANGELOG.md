@@ -1,5 +1,11 @@
 # @quilted/react-server-render
 
+## 0.3.16
+
+### Patch Changes
+
+- [`4087f361`](https://github.com/lemonmade/quilt/commit/4087f361cd1a1bb8aa0d3334beb737569178bdb2) Thanks [@lemonmade](https://github.com/lemonmade)! - Re-export more react-server-render types
+
 ## 0.3.15
 
 ### Patch Changes
