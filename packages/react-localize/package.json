@@ -1,0 +1,57 @@
+{
+  "name": "@quilted/react-localize",
+  "description": "Utilities for localizing React applications",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<USER>/<REPOSITORY>"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/localize": "^0.0.0",
+    "@quilted/react-html": "^0.3.29",
+    "@quilted/useful-react-types": "^0.1.6"
+  },
+  "devDependencies": {
+    "@quilted/react-http": "^0.3.17"
+  },
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "@quilted/react-http": "^0.3.17",
+    "react": ">=17.0.0 <18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
+    "@quilted/react-http": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package",
+      "@quilted/eslint-config/react"
+    ]
+  }
+}

@@ -18,6 +18,7 @@
     {"path": "../react-html"},
     {"path": "../react-http"},
     {"path": "../react-idle"},
+    {"path": "../react-localize"},
     {"path": "../react-performance"},
     {"path": "../react-router"},
     {"path": "../react-server-render"},
