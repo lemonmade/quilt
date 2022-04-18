@@ -256,6 +256,31 @@ async function createPackage(explicitName?: string) {
   const template = createTemplateFileSystem(templateRoot, root);
 
   for (const file of template.files()) {
+    switch (file) {
+      case 'package.json': {
+        const packageJson = JSON.parse(template.read(file));
+        packageJson.name = name;
+
+        if (scope) {
+          packageJson.publishConfig[`${scope}:registry`] =
+            'https://registry.npmjs.org';
+        }
+
+        template.write(file, JSON.stringify(packageJson, null, 2) + EOL);
+        break;
+      }
+      case 'README.md': {
+        template.write(
+          file,
+          template.read(file).replace('# Package', `# ${name}`),
+        );
+        break;
+      }
+      default: {
+        template.copy(file);
+      }
+    }
+
     if (file === 'package.json') {
       const packageJson = JSON.parse(template.read(file));
       packageJson.name = name;
