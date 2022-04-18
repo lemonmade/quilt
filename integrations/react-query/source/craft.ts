@@ -1,6 +1,6 @@
 import {createProjectPlugin} from '@quilted/craft/kit';
 import type {App, Service} from '@quilted/craft/kit';
-import {addNodeBundleInclusion} from '@quilted/craft/rollup';
+import {addRollupNodeBundleInclusion} from '@quilted/craft/rollup';
 
 /**
  * Configures this project to performantly load react-query in all environments.
@@ -12,7 +12,7 @@ export function reactQuery() {
       configure(({rollupNodeBundle}) => {
         // We need react-query to be internalized because it is a commonjs dependency
         rollupNodeBundle?.((bundle) =>
-          addNodeBundleInclusion(/react-query/, bundle),
+          addRollupNodeBundleInclusion(/react-query/, bundle),
         );
       });
     },
@@ -20,7 +20,7 @@ export function reactQuery() {
       configure(({rollupNodeBundle}) => {
         // We need react-query to be internalized because it is a commonjs dependency
         rollupNodeBundle?.((bundle) =>
-          addNodeBundleInclusion(/react-query/, bundle),
+          addRollupNodeBundleInclusion(/react-query/, bundle),
         );
       });
     },

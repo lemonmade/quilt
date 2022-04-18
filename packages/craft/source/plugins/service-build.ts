@@ -6,7 +6,7 @@ import type {ModuleFormat} from 'rollup';
 import {createProjectPlugin} from '../kit';
 import type {Service, WaterfallHook} from '../kit';
 
-import {addNodeBundleInclusion, RollupNodeBundle} from '../tools/rollup';
+import {addRollupNodeBundleInclusion, RollupNodeBundle} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
@@ -91,7 +91,7 @@ export function serviceBuild({
           );
 
           rollupNodeBundle?.(() => {
-            return addNodeBundleInclusion(
+            return addRollupNodeBundleInclusion(
               /@quilted[/]quilt[/](magic|env|polyfills)/,
               bundle,
             );

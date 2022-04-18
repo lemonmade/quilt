@@ -1,6 +1,6 @@
 import {stripIndent} from 'common-tags';
 
-import {addNodeBundleInclusion} from '../tools/rollup';
+import {addRollupNodeBundleInclusion} from '../tools/rollup';
 import type {RollupNodeBundle} from '../tools/rollup';
 
 import {
@@ -153,7 +153,7 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
     quiltAsyncManifest?.(() => false);
 
     rollupNodeBundle?.(() => {
-      return addNodeBundleInclusion(
+      return addRollupNodeBundleInclusion(
         /@quilted[/]quilt[/](magic|env|polyfills)/,
         bundle,
       );

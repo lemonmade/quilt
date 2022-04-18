@@ -8,8 +8,8 @@ import type {
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
 
+import {addRollupOnWarn} from '../tools/rollup';
 import type {} from '../tools/jest';
-import type {} from '../tools/rollup';
 import type {} from './targets';
 
 export type {PolyfillFeature};
@@ -54,7 +54,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         }),
       }));
 
-      configure(addRollupConfiguration);
+      configure(addConfiguration);
     },
     develop({configure, hooks}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
@@ -63,7 +63,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         }),
       }));
 
-      configure(addRollupConfiguration);
+      configure(addConfiguration);
     },
     test({configure, hooks}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
@@ -99,14 +99,31 @@ export function polyfills({features, package: packageName}: Options = {}) {
     },
   });
 
-  function addRollupConfiguration({
+  function addConfiguration({
     runtime,
     targets,
     rollupPlugins,
+    rollupInputOptions,
     quiltPolyfillFeatures,
   }:
     | ResolvedBuildProjectConfigurationHooks
     | ResolvedDevelopProjectConfigurationHooks) {
+    // Disable circular import warnings for core-js, because they are not actually
+    // issues.
+    // @see https://github.com/rollup/rollup/issues/2271
+    rollupInputOptions?.((options) =>
+      addRollupOnWarn(options, (warning, defaultWarn) => {
+        if (
+          warning.code === 'CIRCULAR_DEPENDENCY' &&
+          (warning.importer?.includes('node_modules/core-js') ?? false)
+        ) {
+          return;
+        }
+
+        defaultWarn(warning);
+      }),
+    );
+
     rollupPlugins?.(async (plugins) => {
       const [
         {packageDirectory},

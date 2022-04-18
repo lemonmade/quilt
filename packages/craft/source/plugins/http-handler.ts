@@ -3,7 +3,7 @@ import {stripIndent} from 'common-tags';
 import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
 import type {App, Service, WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
-import {addNodeBundleInclusion} from '../tools/rollup';
+import {addRollupNodeBundleInclusion, addRollupOnWarn} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
@@ -53,6 +53,7 @@ export function httpHandler({port: explicitPort}: Options = {}) {
           {
             runtime,
             rollupInput,
+            rollupInputOptions,
             rollupPlugins,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
@@ -66,6 +67,21 @@ export function httpHandler({port: explicitPort}: Options = {}) {
           runtime(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
+
+          // Some of our Node dependencies have an older `depd` as a dependency, which
+          // uses `eval()`. It’s not actually an issue, in practice.
+          rollupInputOptions?.((options) =>
+            addRollupOnWarn(options, (warning, defaultWarn) => {
+              if (
+                warning.code === 'EVAL' &&
+                (warning.id?.includes('node_modules/depd') ?? false)
+              ) {
+                return;
+              }
+
+              defaultWarn(warning);
+            }),
+          );
 
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);
@@ -169,6 +185,7 @@ export function httpHandlerDevelopment({
             rollupInput,
             rollupPlugins,
             rollupNodeBundle,
+            rollupInputOptions,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -196,11 +213,26 @@ export function httpHandlerDevelopment({
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
+          // Some of our Node dependencies have an older `depd` as a dependency, which
+          // uses `eval()`. It’s not actually an issue, in practice.
+          rollupInputOptions?.((options) =>
+            addRollupOnWarn(options, (warning, defaultWarn) => {
+              if (
+                warning.code === 'EVAL' &&
+                (warning.id?.includes('node_modules/depd') ?? false)
+              ) {
+                return;
+              }
+
+              defaultWarn(warning);
+            }),
+          );
+
           // We want to force some of our “magic” modules to be internalized
           // no matter what, and otherwise allow all other node dependencies
           // to be unbundled.
           rollupNodeBundle?.((bundle) => {
-            return addNodeBundleInclusion(
+            return addRollupNodeBundleInclusion(
               /@quilted[/]quilt[/](magic|env|polyfills)/,
               bundle,
             );

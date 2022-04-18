@@ -389,11 +389,11 @@ export async function buildWithRollup<ProjectType extends Project = Project>(
   await Promise.all(outputs.map((output) => bundle.write(output)));
 }
 
-export function addNodeBundleInclusion(
+export function addRollupNodeBundleInclusion(
   inclusion: string | RegExp | (string | RegExp)[],
   existingBundle: boolean | RollupNodeBundle,
 ) {
-  const normalized = normalizeNodeBundle(existingBundle);
+  const normalized = normalizeRollupNodeBundle(existingBundle);
 
   return {
     ...normalized,
@@ -404,11 +404,11 @@ export function addNodeBundleInclusion(
   };
 }
 
-export function addNodeBundleExclusion(
+export function addRollupNodeBundleExclusion(
   exclusion: string | RegExp | (string | RegExp)[],
   existingBundle: boolean | RollupNodeBundle,
 ): RollupNodeBundle {
-  const normalized = normalizeNodeBundle(existingBundle);
+  const normalized = normalizeRollupNodeBundle(existingBundle);
 
   return {
     ...normalized,
@@ -419,7 +419,7 @@ export function addNodeBundleExclusion(
   };
 }
 
-export function normalizeNodeBundle(
+export function normalizeRollupNodeBundle(
   existingBundle: boolean | RollupNodeBundle,
 ): RollupNodeBundle {
   const shouldBundle = Boolean(existingBundle);
@@ -430,5 +430,25 @@ export function normalizeNodeBundle(
     devDependencies: shouldBundle,
     peerDependencies: shouldBundle,
     ...(typeof existingBundle === 'boolean' ? {} : existingBundle),
+  };
+}
+
+export function addRollupOnWarn(
+  options: InputOptions,
+  warn: NonNullable<InputOptions['onwarn']>,
+): InputOptions {
+  const {onwarn: originalOnWarn} = options;
+
+  return {
+    ...options,
+    onwarn(warning, defaultWarn) {
+      warn(warning, (warning) => {
+        if (originalOnWarn) {
+          originalOnWarn(warning, defaultWarn);
+        } else {
+          defaultWarn(warning);
+        }
+      });
+    },
   };
 }
