@@ -1,5 +1,11 @@
 # @quilted/react-query
 
+## 0.1.5
+
+### Patch Changes
+
+- [`49e7919d`](https://github.com/lemonmade/quilt/commit/49e7919dce72edf9cb1483cfdfe8880c4b49d1fd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix react-query craft integration
+
 ## 0.1.4
 
 ### Patch Changes
