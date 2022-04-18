@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.101
+
+### Patch Changes
+
+- [`a2bf98d2`](https://github.com/lemonmade/quilt/commit/a2bf98d2ac1e4b57f7540bb7d964c79080c5ccfe) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some bundling warnings
+
 ## 0.1.100
 
 ### Patch Changes
