@@ -41,6 +41,12 @@ export type {
 } from '@quilted/react-graphql';
 export {useIdleCallback} from '@quilted/react-idle';
 export {ServerAction, useServerAction} from '@quilted/react-server-render';
+export type {
+  ServerActionKind,
+  ServerActionOptions,
+  ServerActionPerform,
+  ServerRenderPass,
+} from '@quilted/react-server-render';
 export {
   PerformanceContext,
   usePerformance,

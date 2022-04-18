@@ -3,10 +3,20 @@ import {renderToStaticMarkup} from 'react-dom/server';
 
 import {ServerRenderContext} from './context';
 import {ServerRenderManager} from './manager';
-import {ServerRenderPass} from './types';
+import type {
+  ServerRenderPass,
+  ServerActionKind,
+  ServerActionOptions,
+  ServerActionPerform,
+} from './types';
 
 export {ServerRenderManager, ServerRenderContext};
-export type {ServerRenderPass};
+export type {
+  ServerRenderPass,
+  ServerActionKind,
+  ServerActionOptions,
+  ServerActionPerform,
+};
 
 export {useServerAction} from './hook';
 export {ServerAction} from './ServerAction';

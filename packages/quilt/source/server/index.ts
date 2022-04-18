@@ -26,7 +26,12 @@ export {
   AsyncAssetManager,
   SERVER_ACTION_ID as ASYNC_ASSETS_SERVER_ACTION_ID,
 } from '@quilted/react-async/server';
-export type {ServerRenderPass} from '@quilted/react-server-render/server';
+export type {
+  ServerActionKind,
+  ServerActionOptions,
+  ServerActionPerform,
+  ServerRenderPass,
+} from '@quilted/react-server-render/server';
 export {renderEmail} from '@quilted/react-email/server';
 export type {HttpState} from '@quilted/react-http/server';
 export {createHttpHandler} from '@quilted/http-handlers';
