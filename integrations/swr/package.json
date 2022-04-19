@@ -1,0 +1,55 @@
+{
+  "name": "@quilted/swr",
+  "description": "",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<USER>/<REPOSITORY>"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/useful-types": "^0.2.13"
+  },
+  "devDependencies": {
+    "swr": "^1.3.0"
+  },
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "@quilted/quilt": "^0.5.79",
+    "swr": "^1.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
+    "@quilted/quilt": {
+      "optional": true
+    },
+    "swr": {
+      "optional": false
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package",
+      "@quilted/eslint-config/react"
+    ]
+  }
+}

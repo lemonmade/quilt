@@ -47,6 +47,7 @@
     {"path": "./integrations/aws"},
     {"path": "./integrations/cloudflare"},
     {"path": "./integrations/react-query"},
+    {"path": "./integrations/swr"},
     {"path": "./examples/basic-app"}
   ]
 }
