@@ -24,6 +24,7 @@ export {
 } from '@quilted/react-graphql';
 export type {
   GraphQL,
+  GraphQLResult,
   GraphQLFetch,
   GraphQLData,
   GraphQLVariables,

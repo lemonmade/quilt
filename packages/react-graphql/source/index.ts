@@ -1,6 +1,7 @@
 export type {
   GraphQL,
   GraphQLData,
+  GraphQLResult,
   GraphQLVariables,
   GraphQLOperation,
   GraphQLOperationType,
