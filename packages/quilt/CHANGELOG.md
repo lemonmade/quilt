@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.81
+
+### Patch Changes
+
+- [`e65f1b91`](https://github.com/lemonmade/quilt/commit/e65f1b91b378058f6a39028417066582e76faf2a) Thanks [@lemonmade](https://github.com/lemonmade)! - Re-export GraphQLResult type
+
 ## 0.5.80
 
 ### Patch Changes
