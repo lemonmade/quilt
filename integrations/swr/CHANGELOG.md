@@ -1,5 +1,11 @@
 # @quilted/swr
 
+## 0.1.1
+
+### Patch Changes
+
+- [`1fb8bbe3`](https://github.com/lemonmade/quilt/commit/1fb8bbe34b9325dfd44a4afc01995977af140850) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix React peer dependency in SWR package
+
 ## 0.1.0
 
 ### Minor Changes
