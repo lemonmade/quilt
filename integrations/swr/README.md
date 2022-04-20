@@ -2,6 +2,8 @@
 
 Integrates [swr](https://swr.vercel.app) with Quilt by automatically running your queries during server-side rendering.
 
+> Quilt provides integrations for two popular React querying libraries: `swr` (this library) and [`react-query`](../react-query). Which should you use? We recommend using `swr` until you find limitations that are solved by `react-query`. The reason is simple: `swr` is [~4Kb compressed](https://bundlephobia.com/package/swr), while `react-query` is [~13Kb compressed](https://bundlephobia.com/package/react-query@3.35.0). `react-query` provides a [detailed comparison of these libraries](https://react-query.tanstack.com/comparison) if you are interested in learning about more advanced features `react-query` supports with those extra bytes.
+
 ## Installation
 
 Install both `@quilted/swr` and `swr` as dependencies of your project:
