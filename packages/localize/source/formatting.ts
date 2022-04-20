@@ -1,5 +1,4 @@
-export interface LocalizedNumberFormatOptions
-  extends Intl.DateTimeFormatOptions {
+export interface LocalizedNumberFormatOptions extends Intl.NumberFormatOptions {
   locale?: string;
 }
 
@@ -32,7 +31,9 @@ export interface LocalizedFormatting {
   ): string;
   formatCurrency(
     amount: number,
-    options?: LocalizedNumberFormatOptions,
+    options: Omit<LocalizedNumberFormatOptions, 'currency' | 'style'> & {
+      currency: string;
+    },
   ): string;
   formatDate(date: Date, options?: LocalizedDateTimeFormatOptions): string;
 }
@@ -61,7 +62,9 @@ export function createLocalizedFormatting(locale: string): LocalizedFormatting {
       return numberFormatter.get(options).format(number);
     },
     formatCurrency(amount, options) {
-      return numberFormatter.get(options).format(amount);
+      return numberFormatter
+        .get({...options, style: 'currency'})
+        .format(amount);
     },
     formatDate(date, options) {
       return dateTimeFormatter.get(options).format(date);
