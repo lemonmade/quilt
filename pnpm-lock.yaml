@@ -440,7 +440,7 @@ importers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
       '@quilted/react-idle': ^0.3.6
-      '@quilted/react-localize': ^0.0.0
+      '@quilted/react-localize': ^0.1.0
       '@quilted/react-performance': ^0.1.0
       '@quilted/react-router': ^0.3.28
       '@quilted/react-server-render': ^0.3.7
@@ -550,7 +550,7 @@ importers:
 
   packages/react-localize:
     specifiers:
-      '@quilted/localize': ^0.0.0
+      '@quilted/localize': ^0.1.0
       '@quilted/react-html': ^0.3.29
       '@quilted/react-http': ^0.3.17
       '@quilted/useful-react-types': ^0.1.6
