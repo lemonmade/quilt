@@ -2,7 +2,7 @@
   "name": "@quilted/react-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -25,7 +25,7 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/localize": "^0.0.0",
+    "@quilted/localize": "^0.1.0",
     "@quilted/react-html": "^0.3.29",
     "@quilted/useful-react-types": "^0.1.6"
   },

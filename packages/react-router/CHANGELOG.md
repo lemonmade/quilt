@@ -1,5 +1,11 @@
 # @quilted/react-router
 
+## 0.3.38
+
+### Patch Changes
+
+- [`10f5865c`](https://github.com/lemonmade/quilt/commit/10f5865cf1d3fafc6448015ded5182b75a70eb1f) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more details about consumed paths to route render method
+
 ## 0.3.37
 
 ### Patch Changes
