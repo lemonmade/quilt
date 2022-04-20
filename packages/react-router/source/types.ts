@@ -19,6 +19,8 @@ export type Blocker = (to: EnhancedURL, redo: () => void) => boolean;
 export interface RouteRenderDetails {
   url: EnhancedURL;
   matched: string;
+  consumed?: string;
+  previouslyConsumed?: string;
   children?: ReactNode;
 }
 

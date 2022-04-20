@@ -147,6 +147,8 @@ const RoutesInternal = memo(function RoutesInternal({
     routeContents = render({
       url: currentUrl,
       matched: matchedPath,
+      consumed: nestedConsumedPath,
+      previouslyConsumed: previouslyConsumedPath,
       children: children && (
         <RoutesInternal
           routes={children}
