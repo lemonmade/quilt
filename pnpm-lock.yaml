@@ -381,6 +381,9 @@ importers:
       '@types/cookie': 0.4.0
       '@types/send': 0.17.1
 
+  packages/localize:
+    specifiers: {}
+
   packages/performance:
     specifiers: {}
 
@@ -437,6 +440,7 @@ importers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
       '@quilted/react-idle': ^0.3.6
+      '@quilted/react-localize': ^0.0.0
       '@quilted/react-performance': ^0.1.0
       '@quilted/react-router': ^0.3.28
       '@quilted/react-server-render': ^0.3.7
@@ -457,6 +461,7 @@ importers:
       '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
       '@quilted/react-idle': link:../react-idle
+      '@quilted/react-localize': link:../react-localize
       '@quilted/react-performance': link:../react-performance
       '@quilted/react-router': link:../react-router
       '@quilted/react-server-render': link:../react-server-render
@@ -542,6 +547,19 @@ importers:
 
   packages/react-idle:
     specifiers: {}
+
+  packages/react-localize:
+    specifiers:
+      '@quilted/localize': ^0.0.0
+      '@quilted/react-html': ^0.3.29
+      '@quilted/react-http': ^0.3.17
+      '@quilted/useful-react-types': ^0.1.6
+    dependencies:
+      '@quilted/localize': link:../localize
+      '@quilted/react-html': link:../react-html
+      '@quilted/useful-react-types': link:../useful-react-types
+    devDependencies:
+      '@quilted/react-http': link:../react-http
 
   packages/react-performance:
     specifiers:
