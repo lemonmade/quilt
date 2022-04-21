@@ -9,6 +9,7 @@
   "references": [
     {"path": "../graphql"},
     {"path": "../react-async"},
+    {"path": "../react-utilities"},
     {"path": "../useful-types"}
   ]
 }

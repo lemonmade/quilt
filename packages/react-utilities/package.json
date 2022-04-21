@@ -1,0 +1,47 @@
+{
+  "name": "@quilted/react-utilities",
+  "description": "",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt",
+    "directory": "packages/react-utilities"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "dependencies": {},
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "react": ">=17.0.0 <18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package",
+      "@quilted/eslint-config/react"
+    ]
+  }
+}

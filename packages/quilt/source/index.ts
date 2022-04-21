@@ -99,5 +99,7 @@ export type {
 } from '@quilted/react-workers';
 export {useCookie, useCookies} from '@quilted/react-http';
 export type {PropsWithChildren} from '@quilted/useful-react-types';
+export {createUseContextHook} from '@quilted/react-utilities';
+export type {UseContextHook} from '@quilted/react-utilities';
 
 export {App} from './App';

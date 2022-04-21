@@ -37,6 +37,7 @@
     {"path": "./packages/react-router"},
     {"path": "./packages/react-server-render"},
     {"path": "./packages/react-testing"},
+    {"path": "./packages/react-utilities"},
     {"path": "./packages/react-workers"},
     {"path": "./packages/rollup-plugin-fix-commonjs-preserve-modules"},
     {"path": "./packages/routing"},

@@ -445,6 +445,7 @@ importers:
       '@quilted/react-router': ^0.3.28
       '@quilted/react-server-render': ^0.3.7
       '@quilted/react-testing': ^0.5.1
+      '@quilted/react-utilities': ^0.0.0
       '@quilted/react-workers': ^0.2.12
       '@quilted/useful-react-types': ^0.1.0
       '@types/prettier': ^2.0.0
@@ -466,6 +467,7 @@ importers:
       '@quilted/react-router': link:../react-router
       '@quilted/react-server-render': link:../react-server-render
       '@quilted/react-testing': link:../react-testing
+      '@quilted/react-utilities': link:../react-utilities
       '@quilted/react-workers': link:../react-workers
       '@quilted/useful-react-types': link:../useful-react-types
     devDependencies:
@@ -510,11 +512,13 @@ importers:
       '@quilted/async': ^0.3.12
       '@quilted/graphql': ^0.4.14
       '@quilted/react-async': ^0.3.22
+      '@quilted/react-utilities': ^0.0.0
       '@quilted/useful-types': ^0.2.5
     dependencies:
       '@quilted/async': link:../async
       '@quilted/graphql': link:../graphql
       '@quilted/react-async': link:../react-async
+      '@quilted/react-utilities': link:../react-utilities
       '@quilted/useful-types': link:../useful-types
 
   packages/react-html:
@@ -613,6 +617,9 @@ importers:
       preact: 10.7.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+
+  packages/react-utilities:
+    specifiers: {}
 
   packages/react-workers:
     specifiers:
