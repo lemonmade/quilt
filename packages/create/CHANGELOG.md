@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.6
+
+### Patch Changes
+
+- [#265](https://github.com/lemonmade/quilt/pull/265) [`6b523901`](https://github.com/lemonmade/quilt/commit/6b52390142a0d075d6ce75e014e45cb02f5c6d9a) Thanks [@lemonmade](https://github.com/lemonmade)! - Simpler AppContext component
+
 ## 0.1.5
 
 ### Patch Changes
