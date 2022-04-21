@@ -51,7 +51,7 @@ export type {
 export {
   Localization,
   useLocale,
-  useLocaleFromRequest,
+  useLocaleFromEnvironment,
   useLocalizedFormatting,
 } from '@quilted/react-localize';
 export type {
