@@ -2,7 +2,7 @@
   "name": "@quilted/react-utilities",
   "description": "",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
