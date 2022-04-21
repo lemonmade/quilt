@@ -1,4 +1,4 @@
-import {Router, AppContext} from '@quilted/quilt';
+import {Router, AppContext, PerformanceContext} from '@quilted/quilt';
 
 import {Http} from './foundation/Http';
 import {Head} from './foundation/Head';
@@ -8,9 +8,11 @@ export default function App() {
   return (
     <AppContext>
       <Router>
-        <Http />
-        <Head />
-        <Routes />
+        <PerformanceContext>
+          <Http />
+          <Head />
+          <Routes />
+        </PerformanceContext>
       </Router>
     </AppContext>
   );

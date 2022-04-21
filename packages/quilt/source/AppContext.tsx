@@ -2,7 +2,6 @@ import type {PropsWithChildren} from 'react';
 
 import {HttpContext, CookieContext} from '@quilted/react-http';
 import {useHtmlUpdater} from '@quilted/react-html';
-import {PerformanceContext} from '@quilted/react-performance';
 import type {Performance} from '@quilted/react-performance';
 
 interface Props {
@@ -11,16 +10,12 @@ interface Props {
 
 // TODO: have craft options to remove the bundle impact of parts of this that are
 // unused.
-export function AppContext({children, performance}: PropsWithChildren<Props>) {
+export function AppContext({children}: PropsWithChildren<Props>) {
   useHtmlUpdater();
 
   return (
     <HttpContext>
-      <CookieContext>
-        <PerformanceContext performance={performance}>
-          {children}
-        </PerformanceContext>
-      </CookieContext>
+      <CookieContext>{children}</CookieContext>
     </HttpContext>
   );
 }
