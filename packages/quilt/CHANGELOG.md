@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.83
+
+### Patch Changes
+
+- [#263](https://github.com/lemonmade/quilt/pull/263) [`6df853eb`](https://github.com/lemonmade/quilt/commit/6df853eb1e83abfa00e88b43e91b350da28d2704) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename locale from environment hook
+
 ## 0.5.82
 
 ### Patch Changes
