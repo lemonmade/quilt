@@ -6,5 +6,6 @@
       "components": ["./components"]
     }
   },
-  "include": ["**/*"]
+  "include": ["**/*"],
+  "references": [{"path": "../../../packages/quilt"}]
 }

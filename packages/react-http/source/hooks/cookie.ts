@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {HttpAppContext} from '../context';
+import {HttpCookiesContext} from '../context';
 
 /**
  * Provides access to the cookie manager for the application. This
@@ -12,10 +12,10 @@ import {HttpAppContext} from '../context';
  * or the `ResponseCookie` component.
  */
 export function useCookies() {
-  const cookies = useContext(HttpAppContext)?.cookies;
+  const cookies = useContext(HttpCookiesContext);
 
   if (cookies == null) {
-    throw new Error('No HTTP context found');
+    throw new Error('No cookie context found');
   }
 
   return cookies;
