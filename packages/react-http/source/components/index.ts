@@ -1,4 +1,5 @@
 export {CacheControl} from './CacheControl';
+export {CookieContext} from './CookieContext';
 export {ContentSecurityPolicy} from './ContentSecurityPolicy';
 export {HttpContext} from './HttpContext';
 export {NotFound} from './NotFound';

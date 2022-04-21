@@ -21,11 +21,7 @@ export function TestGraphQL({
     [controller],
   );
 
-  return (
-    <GraphQLContext.Provider value={graphql}>
-      {children}
-    </GraphQLContext.Provider>
-  );
+  return <GraphQLContext client={graphql}>{children}</GraphQLContext>;
 }
 
 function toFetch(controller: GraphQLController): GraphQLFetch {
