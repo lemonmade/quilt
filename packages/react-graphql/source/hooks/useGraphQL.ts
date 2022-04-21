@@ -1,5 +1,5 @@
 import {createUseContextHook} from '@quilted/react-utilities';
 
-import {GraphQLContext} from '../context';
+import {GraphQLClientContext} from '../context';
 
-export const useGraphQL = createUseContextHook(GraphQLContext);
+export const useGraphQL = createUseContextHook(GraphQLClientContext);

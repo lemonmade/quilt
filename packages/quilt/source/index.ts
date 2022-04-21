@@ -97,9 +97,9 @@ export type {
   BasicWorkerCreator,
   CallableWorkerCreator,
 } from '@quilted/react-workers';
-export {useCookie, useCookies} from '@quilted/react-http';
+export {useCookie, useCookies, CookieContext} from '@quilted/react-http';
 export type {PropsWithChildren} from '@quilted/useful-react-types';
 export {createUseContextHook} from '@quilted/react-utilities';
 export type {UseContextHook} from '@quilted/react-utilities';
 
-export {App} from './App';
+export {AppContext} from './AppContext';

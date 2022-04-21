@@ -8,6 +8,7 @@ import type {
   Router as RouterControl,
   Options as RouterOptions,
 } from '../../router';
+import {useInitialUrl} from '../../hooks';
 
 interface Props extends RouterOptions {
   url?: URL;
@@ -23,12 +24,16 @@ export const Router = memo(function Router({
   state,
   isExternal,
 }: Props) {
+  const initialUrl = useInitialUrl();
+
   const router = useMemo(
     () =>
-      explicitRouter ?? createRouter(explicitUrl, {prefix, state, isExternal}),
-    [explicitRouter, explicitUrl, prefix, state, isExternal],
+      explicitRouter ??
+      createRouter(explicitUrl ?? initialUrl, {prefix, state, isExternal}),
+    [explicitRouter, explicitUrl, initialUrl, prefix, state, isExternal],
   );
   const [url, setUrl] = useState(router.currentUrl);
+
   const currentUrlRef = useRef(url);
   currentUrlRef.current = url;
 
