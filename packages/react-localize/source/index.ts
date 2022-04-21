@@ -12,7 +12,7 @@ export type {
 export {Localization} from './Localization';
 export {useLocalizedFormatting} from './hooks/formatting';
 export {useLocale} from './hooks/locale';
-export {useLocaleFromRequestHeaders} from './hooks/locale-from-request';
+export {useLocaleFromEnvironment} from './hooks/locale-from-environment';
 export {LocalizedFormattingContext} from './context';
 
 // export function useLocale(): string {}
