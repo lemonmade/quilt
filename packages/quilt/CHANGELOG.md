@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.85
+
+### Patch Changes
+
+- [`6a7539b6`](https://github.com/lemonmade/quilt/commit/6a7539b67c4a85b6319acd14a378d1363dd95663) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more http-handler exports to quilt/server
+
 ## 0.5.84
 
 ### Patch Changes
