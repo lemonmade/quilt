@@ -46,6 +46,7 @@ export type {
   Response,
   ResponseOptions,
 } from '@quilted/http-handlers';
+export {parseAcceptLanguageHeader} from '@quilted/react-localize';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
