@@ -34,7 +34,18 @@ export type {
 } from '@quilted/react-server-render/server';
 export {renderEmail} from '@quilted/react-email/server';
 export type {HttpState} from '@quilted/react-http/server';
-export {createHttpHandler} from '@quilted/http-handlers';
+export {createHttpHandler, createHeaders} from '@quilted/http-handlers';
+export type {
+  Headers,
+  Cookies,
+  CookieOptions,
+  HttpHandler,
+  Request,
+  RequestHandler,
+  RequestOptions,
+  Response,
+  ResponseOptions,
+} from '@quilted/http-handlers';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
