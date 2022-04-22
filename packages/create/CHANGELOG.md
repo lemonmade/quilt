@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.7
+
+### Patch Changes
+
+- [`64008ce5`](https://github.com/lemonmade/quilt/commit/64008ce54c91178001fac29c80e0afa55c185ae3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add a server to the default app template
+
 ## 0.1.6
 
 ### Patch Changes

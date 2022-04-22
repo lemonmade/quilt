@@ -1,5 +1,11 @@
 # @quilted/react-router
 
+## 0.3.40
+
+### Patch Changes
+
+- [`33519735`](https://github.com/lemonmade/quilt/commit/335197356fe7e5adcd51ed04d7483a38e2eccd26) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some routing types
+
 ## 0.3.39
 
 ### Patch Changes
