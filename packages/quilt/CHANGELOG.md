@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.86
+
+### Patch Changes
+
+- [`b58c7857`](https://github.com/lemonmade/quilt/commit/b58c78570e75b8c431f3d30adf3f98ee3e68da0c) Thanks [@lemonmade](https://github.com/lemonmade)! - Re-export accept language parser utility
+
 ## 0.5.85
 
 ### Patch Changes
