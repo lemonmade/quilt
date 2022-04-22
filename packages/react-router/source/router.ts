@@ -29,14 +29,14 @@ const KEY_STATE_FIELD_NAME = '_key';
 export interface Router {
   readonly currentUrl: EnhancedURL;
   readonly prefix?: Prefix;
-  navigate(to: NavigateTo, options?: NavigateOptions): void;
+  navigate(to: NavigateTo<EnhancedURL>, options?: NavigateOptions): void;
   listen(listener: Listener): () => void;
   block(blocker?: Blocker): () => void;
   go(count: number): void;
   back(count?: number): void;
   forward(count?: number): void;
   resolve(
-    to: NavigateTo,
+    to: NavigateTo<EnhancedURL>,
     options?: {relativeTo?: RelativeTo},
   ): {readonly url: URL; readonly external: boolean};
 }

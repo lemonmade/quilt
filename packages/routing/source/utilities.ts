@@ -27,9 +27,9 @@ export function enhanceUrl(url: URL, prefix?: Prefix): EnhancedURL {
   return url as EnhancedURL;
 }
 
-export function resolveUrl(
-  to: NavigateTo,
-  from: EnhancedURL,
+export function resolveUrl<URLType extends EnhancedURL = EnhancedURL>(
+  to: NavigateTo<URLType>,
+  from: URLType,
   relativeTo?: RelativeTo,
 ): URL {
   const prefix = relativeTo === 'root' ? '/' : from.prefix;
