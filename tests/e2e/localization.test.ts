@@ -80,5 +80,66 @@ describe('localization', () => {
         expect(await page.textContent('body')).toBe('Locale: fr-CA');
       });
     });
+
+    it('can localize by route', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'App.tsx': stripIndent`
+            import {AppContext, PerformanceContext, LocalizedRouter, createRoutePathLocalization} from '@quilted/quilt';
+
+            import {Http} from './foundation/Http';
+            import {Head} from './foundation/Head';
+            import {Routes} from './foundation/Routes';
+
+            const localization = createRoutePathLocalization({
+              locales: ['en', 'fr'],
+              defaultLocale: 'en',
+            })
+            
+            export default function App() {
+              return (
+                <AppContext>
+                  <LocalizedRouter localization={localization}>
+                    <PerformanceContext>
+                      <Http />
+                      <Head />
+                      <Routes />
+                    </PerformanceContext>
+                  </LocalizedRouter>
+                </AppContext>
+              );
+            }
+          `,
+        })
+
+        await fs.write({
+          'foundation/Routes.tsx': stripIndent`
+            import {useLocale} from '@quilted/quilt';
+            
+            export function Routes() {
+              const locale = useLocale();
+
+              return (
+                <div>Locale: {locale}</div>
+              );
+            }
+          `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/fr',
+          locale: 'fr-CA',
+        });
+
+        expect(
+          await page.evaluate(() =>
+            document.documentElement.getAttribute('lang'),
+          ),
+        ).toBe('fr');
+        expect(await page.textContent('body')).toBe('Locale: fr');
+      });
+    });
   });
 });
