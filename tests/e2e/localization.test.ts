@@ -112,7 +112,7 @@ describe('localization', () => {
               );
             }
           `,
-        })
+        });
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
