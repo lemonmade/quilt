@@ -15,5 +15,7 @@ export {useLocale} from './hooks/locale';
 export {useLocaleFromEnvironment} from './hooks/locale-from-environment';
 export {LocalizedFormattingContext} from './context';
 
+export * from './routing';
+
 // export function useLocale(): string {}
 // export function useTranslate(): Translate {}

@@ -554,15 +554,21 @@ importers:
 
   packages/react-localize:
     specifiers:
+      '@quilted/http-handlers': ^0.2.31
       '@quilted/localize': ^0.1.0
       '@quilted/react-html': ^0.3.29
       '@quilted/react-http': ^0.3.17
+      '@quilted/react-router': ^0.3.40
+      '@quilted/react-utilities': ^0.1.0
       '@quilted/useful-react-types': ^0.1.6
     dependencies:
       '@quilted/localize': link:../localize
       '@quilted/react-html': link:../react-html
+      '@quilted/react-router': link:../react-router
+      '@quilted/react-utilities': link:../react-utilities
       '@quilted/useful-react-types': link:../useful-react-types
     devDependencies:
+      '@quilted/http-handlers': link:../http-handlers
       '@quilted/react-http': link:../react-http
 
   packages/react-performance:
