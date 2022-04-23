@@ -1,28 +1,39 @@
 import type {RouteLocalization} from '../types';
 
 export function createRouteLocalization({
-  locales,
+  locales: localeMap,
   default: defaultLocale,
 }: {
   locales: Map<string, string>;
   default: string;
 }): RouteLocalization {
-  const sortedLocales = [...locales].sort(
+  const sortedLocaleMap = [...localeMap].sort(
     ([, a], [, b]) => b.length - a.length,
   );
 
+  const locales = [...localeMap.keys()].sort((a, b) => b.length - a.length);
+
   return {
-    locales: [...locales.keys()],
+    locales,
     redirectUrl,
+    matchLocale,
     localeFromUrl,
     defaultLocale,
   };
+
+  function matchLocale(requestLocale: string) {
+    const language = requestLocale.split('-')[0];
+
+    return locales.find(
+      (locale) => locale === requestLocale || locale === language,
+    );
+  }
 
   function localeFromUrl(url: URL) {
     const hostname = url.hostname.toLowerCase();
     const pathname = normalizePath(url.pathname.toLowerCase());
 
-    for (const [locale, target] of sortedLocales) {
+    for (const [locale, target] of sortedLocaleMap) {
       if (target.startsWith('/')) {
         if (pathname.startsWith(target)) return locale;
       } else {
@@ -37,11 +48,11 @@ export function createRouteLocalization({
 
     if (fromLocale === toLocale) return toUrl;
 
-    const target = locales.get(toLocale) ?? locales.get(defaultLocale)!;
+    const target = localeMap.get(toLocale) ?? localeMap.get(defaultLocale)!;
 
     if (target.startsWith('/')) {
       const fromTarget =
-        fromLocale == null ? '/' : locales.get(fromLocale) ?? '/';
+        fromLocale == null ? '/' : localeMap.get(fromLocale) ?? '/';
 
       toUrl.pathname = normalizePath(
         toUrl.pathname.replace(fromTarget, target),

@@ -22,7 +22,6 @@ export interface HttpHandlerLocalization {
       'status' | 'headers'
     >,
   ): Response;
-  findMatchedLocale(requestLocale: string): string | undefined;
   localizedRequestHandler(
     handler: RequestHandler,
     options?: {include?(request: Request): boolean},
@@ -32,16 +31,14 @@ export interface HttpHandlerLocalization {
 export function createHttpHandlerLocalization({
   localization,
   requestLocale: customRequestLocale,
-  matchedLocale: customMatchedLocale,
 }: {
   localization: RouteLocalization;
   requestLocale?(
     request: Request,
     getDefaultFromRequest: () => string | undefined,
   ): string | undefined;
-  matchedLocale?(requestLocale: string): string | undefined;
 }): HttpHandlerLocalization {
-  const {locales, redirectUrl, defaultLocale, localeFromUrl} = localization;
+  const {matchLocale, redirectUrl, defaultLocale, localeFromUrl} = localization;
 
   const getDefaultLocaleFromRequest = (request: Request) => {
     const acceptLanguage = request.headers.get('Accept-Language');
@@ -52,8 +49,6 @@ export function createHttpHandlerLocalization({
 
   const getLocaleForRequest =
     customRequestLocale ?? getDefaultLocaleFromRequest;
-
-  const findMatchedLocale = customMatchedLocale ?? createLocaleMatcher(locales);
 
   function localeRedirect(
     request: Request,
@@ -70,7 +65,6 @@ export function createHttpHandlerLocalization({
 
   return {
     redirect: localeRedirect,
-    findMatchedLocale,
     localizedRequestHandler(
       handler: RequestHandler,
       {include = () => true}: {include?(request: Request): boolean} = {},
@@ -83,9 +77,8 @@ export function createHttpHandlerLocalization({
           getDefaultLocaleFromRequest(request),
         );
         const matchedLocale =
-          (requestLocale == null
-            ? undefined
-            : findMatchedLocale(requestLocale)) ?? defaultLocale;
+          (requestLocale == null ? undefined : matchLocale(requestLocale)) ??
+          defaultLocale;
 
         if (urlLocale !== matchedLocale) {
           return redirect(
@@ -98,19 +91,5 @@ export function createHttpHandlerLocalization({
         return handler(request, ...args);
       };
     },
-  };
-}
-
-function createLocaleMatcher(locales: string[]) {
-  const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
-
-  return function getLocale(requestLocale: string) {
-    const language = requestLocale.split('-')[0];
-
-    const matchedLocale = sortedLocales.find(
-      (locale) => locale === requestLocale || locale === language,
-    );
-
-    return matchedLocale;
   };
 }

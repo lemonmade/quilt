@@ -3,6 +3,7 @@ import type {ComponentProps} from 'react';
 import {Router, useInitialUrl} from '@quilted/react-router';
 
 import {Localization} from '../Localization';
+import {useLocaleFromEnvironment} from '../hooks/locale-from-environment';
 
 import type {RouteLocalization, ResolvedRouteLocalization} from './types';
 import {RouteLocalizationContext} from './context';
@@ -23,6 +24,7 @@ export function LocalizedRouter({
   ...props
 }: LocalizedRouterProps) {
   const initialUrl = useInitialUrl();
+  const localeFromEnvironment = useLocaleFromEnvironment();
 
   const {
     prefix,
@@ -60,9 +62,24 @@ export function LocalizedRouter({
     [isExplicitlyExternal, isExternalByRouteLocale],
   );
 
+  let resolvedLocale: string;
+
+  if (explicitLocale) {
+    resolvedLocale = explicitLocale;
+  } else if (
+    localeFromEnvironment != null &&
+    localeFromEnvironment
+      .toLowerCase()
+      .startsWith(resolvedLocalization.locale.toLowerCase())
+  ) {
+    resolvedLocale = localeFromEnvironment;
+  } else {
+    resolvedLocale = resolvedLocalization.locale;
+  }
+
   return (
     <Router {...props} prefix={prefix} url={initialUrl} isExternal={isExternal}>
-      <Localization locale={explicitLocale ?? resolvedLocalization.locale}>
+      <Localization locale={resolvedLocale}>
         <RouteLocalizationContext.Provider value={resolvedLocalization}>
           {children}
         </RouteLocalizationContext.Provider>
