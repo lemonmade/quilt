@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.88
+
+### Patch Changes
+
+- [`38024ed6`](https://github.com/lemonmade/quilt/commit/38024ed6fd4f31a41bf910dbcfb5384f199ce186) Thanks [@lemonmade](https://github.com/lemonmade)! - Expose route localization in quilt
+
 ## 0.5.87
 
 ### Patch Changes
