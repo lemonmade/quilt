@@ -53,12 +53,20 @@ export {
   useLocale,
   useLocaleFromEnvironment,
   useLocalizedFormatting,
+  LocalizedLink,
+  LocalizedRouter,
+  createRouteLocalization,
+  createRoutePathLocalization,
+  createRouteSubdomainLocalization,
 } from '@quilted/react-localize';
 export type {
   LocalizedFormatting,
   LocalizedFormattingCache,
   LocalizedNumberFormatOptions,
   LocalizedDateTimeFormatOptions,
+  RouteLocalization,
+  ResolvedRouteLocalization,
+  DefaultLocaleDefinition,
 } from '@quilted/react-localize';
 export {
   PerformanceContext,

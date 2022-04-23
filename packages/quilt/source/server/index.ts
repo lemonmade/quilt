@@ -34,6 +34,12 @@ export type {
 } from '@quilted/react-server-render/server';
 export {renderEmail} from '@quilted/react-email/server';
 export type {HttpState} from '@quilted/react-http/server';
+export {createHttpHandlerLocalization} from '@quilted/react-localize/http-handlers';
+export type {
+  HttpHandlerLocalization,
+  RouteLocalization,
+  ResolvedRouteLocalization,
+} from '@quilted/react-localize/http-handlers';
 export {createHttpHandler, createHeaders} from '@quilted/http-handlers';
 export type {
   Headers,

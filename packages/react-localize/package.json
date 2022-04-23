@@ -17,28 +17,49 @@
   },
   "exports": {
     ".": {
+      "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
+    },
+    "./http-handlers": {
+      "quilt:source": "./source/http-handlers.ts",
+      "quilt:esnext": "./build/esnext/http-handlers.esnext",
+      "import": "./build/esm/http-handlers.mjs",
+      "require": "./build/cjs/http-handlers.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "http-handlers": [
+        "./build/typescript/http-handlers.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/localize": "^0.1.0",
     "@quilted/react-html": "^0.3.29",
+    "@quilted/react-router": "^0.3.40",
+    "@quilted/react-utilities": "^0.1.0",
     "@quilted/useful-react-types": "^0.1.6"
   },
   "devDependencies": {
+    "@quilted/http-handlers": "^0.2.31",
     "@quilted/react-http": "^0.3.17"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
+    "@quilted/http-handlers": "^0.2.31",
     "@quilted/react-http": "^0.3.17",
     "react": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
+      "optional": true
+    },
+    "@quilted/http-handlers": {
       "optional": true
     },
     "@quilted/react-http": {
