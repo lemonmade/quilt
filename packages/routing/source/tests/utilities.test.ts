@@ -2,6 +2,15 @@ import {enhanceUrl, resolveUrl} from '../utilities';
 
 describe('utilities', () => {
   describe('resolveUrl()', () => {
+    it('resolves to the relative root path', () => {
+      const resolvedUrl = resolveUrl(
+        '/',
+        enhanceUrl(new URL('http://example.com/prefix/a'), '/prefix'),
+      );
+
+      expect(resolvedUrl.pathname).toBe('/prefix');
+    });
+
     it('uses the origin prefix when no relativeTo is passed', () => {
       const resolvedUrl = resolveUrl(
         '/b',

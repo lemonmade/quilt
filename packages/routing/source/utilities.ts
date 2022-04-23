@@ -147,7 +147,7 @@ function prefixPath(pathname: string, prefix?: string) {
   if (!prefix) return pathname;
 
   return pathname.indexOf('/') === 0
-    ? `${postfixSlash(prefix)}${pathname.slice(1)}`
+    ? removePostfixSlash(`${postfixSlash(prefix)}${pathname.slice(1)}`)
     : pathname;
 }
 
