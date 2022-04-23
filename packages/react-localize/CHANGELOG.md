@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.1.2
+
+### Patch Changes
+
+- [#269](https://github.com/lemonmade/quilt/pull/269) [`c78a1e13`](https://github.com/lemonmade/quilt/commit/c78a1e1365807e072cda4fece55d53712210cad4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add localized routing
+
 ## 0.1.1
 
 ### Patch Changes
