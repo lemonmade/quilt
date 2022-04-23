@@ -94,8 +94,8 @@ describe('localization', () => {
             import {Routes} from './foundation/Routes';
 
             const localization = createRoutePathLocalization({
+              default: 'en',
               locales: ['en', 'fr'],
-              defaultLocale: 'en',
             })
             
             export default function App() {
