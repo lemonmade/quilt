@@ -1,4 +1,5 @@
 import {join} from 'path';
+import {createRequire} from 'module';
 
 import type {Config} from '@jest/types';
 
@@ -57,6 +58,8 @@ declare module '@quilted/sewing-kit' {
 }
 
 const RESOLVER_MODULE = '@quilted/craft/jest/resolver.cjs';
+
+const require = createRequire(import.meta.url);
 
 /**
  * Adds a collection of hooks to the workspace and all its projects
@@ -311,8 +314,8 @@ export function jest() {
             const [watchPlugins] = await Promise.all([
               jestWatchPlugins!.run([
                 // These are so useful, they should be on by default. Sue me.
-                'jest-watch-typeahead/filename',
-                'jest-watch-typeahead/testname',
+                require.resolve('jest-watch-typeahead/filename'),
+                require.resolve('jest-watch-typeahead/testname'),
               ]),
             ]);
 
