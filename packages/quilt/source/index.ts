@@ -55,6 +55,7 @@ export {
   useLocalizedFormatting,
   LocalizedLink,
   LocalizedRouter,
+  useRouteLocalization,
   createRouteLocalization,
   createRoutePathLocalization,
   createRouteSubdomainLocalization,
