@@ -1,5 +1,11 @@
 # @quilted/routing
 
+## 0.2.18
+
+### Patch Changes
+
+- [`d32ae753`](https://github.com/lemonmade/quilt/commit/d32ae7533182faa4d632237e9c0664f16eae47c9) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix resolving root URL with a prefix
+
 ## 0.2.17
 
 ### Patch Changes
