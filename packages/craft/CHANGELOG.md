@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.102
+
+### Patch Changes
+
+- [`4f08906d`](https://github.com/lemonmade/quilt/commit/4f08906dc45f2224d89f9fd8e6c5d2360239328d) Thanks [@lemonmade](https://github.com/lemonmade)! - Move swr package to vendors bundle
+
+* [`54beb61d`](https://github.com/lemonmade/quilt/commit/54beb61d64d91d0fb7a80e68ceb4f6e1f8e36106) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Jest plugin inclusion
+
 ## 0.1.101
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.1.3
+
+### Patch Changes
+
+- [`ddaa8197`](https://github.com/lemonmade/quilt/commit/ddaa8197c5576d5c29b90bfc7752596df56c97b1) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve localization fallback behavior
+
 ## 0.1.2
 
 ### Patch Changes
