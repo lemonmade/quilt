@@ -1,7 +1,7 @@
 import type {MouseEvent, DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
 import type {NavigateTo} from '@quilted/routing';
 
-import {useRouter} from '../../hooks';
+import {useRouter, useCurrentUrl} from '../../hooks';
 
 interface Props
   extends Omit<
@@ -23,6 +23,7 @@ export function Link({
   ...rest
 }: Props) {
   const router = useRouter();
+  const currentUrl = useCurrentUrl();
   const {url, external} = router.resolve(to);
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -43,8 +44,13 @@ export function Link({
     router.navigate(to);
   };
 
+  const href =
+    url.origin === currentUrl.origin
+      ? url.href.slice(url.origin.length)
+      : url.href;
+
   return (
-    <a href={url.href} onClick={handleClick} {...rest}>
+    <a href={href} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

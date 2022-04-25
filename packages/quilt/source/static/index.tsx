@@ -257,6 +257,7 @@ export async function renderStatic(
 
     const minifiedHtml = render(
       <Html
+        url={url}
         manager={htmlManager}
         styles={styles}
         scripts={scripts}

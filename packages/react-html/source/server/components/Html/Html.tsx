@@ -13,6 +13,7 @@ interface Asset {
 }
 
 interface Props {
+  url?: URL;
   manager?: HtmlManager;
   children: ReactElement | string;
   noModule?: boolean;
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function Html({
+  url,
   manager,
   children,
   noModule = true,
@@ -41,6 +43,14 @@ export function Html({
     typeof children === 'string'
       ? children
       : render(children, {htmlManager: manager});
+
+  const normalizeSource =
+    url == null
+      ? (source: string) => source
+      : (source: string) =>
+          source.startsWith(url.origin)
+            ? source.slice(url.origin.length)
+            : source;
 
   const extracted = manager?.extract();
 
@@ -72,7 +82,7 @@ export function Html({
         rel="stylesheet"
         type="text/css"
         key={style.source}
-        href={style.source}
+        href={normalizeSource(style.source)}
         crossOrigin=""
         {...style.attributes}
       />
@@ -89,7 +99,7 @@ export function Html({
     return (
       <script
         key={script.source}
-        src={script.source}
+        src={normalizeSource(script.source)}
         crossOrigin=""
         type="text/javascript"
         noModule={
@@ -106,7 +116,7 @@ export function Html({
     return (
       <script
         key={script.source}
-        src={script.source}
+        src={normalizeSource(script.source)}
         crossOrigin=""
         defer
         type="text/javascript"
@@ -124,7 +134,7 @@ export function Html({
     <link
       key={asset.source}
       rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
-      href={asset.source}
+      href={normalizeSource(asset.source)}
       crossOrigin=""
       as={asset.source.endsWith('.css') ? 'style' : 'script'}
     />
@@ -144,13 +154,12 @@ export function Html({
         {stylesMarkup}
 
         {headMarkup}
+        {serializationMarkup}
 
         {blockingScriptsMarkup}
         {deferredScriptsMarkup}
 
         {preloadAssetsMarkup}
-
-        {serializationMarkup}
       </head>
 
       <body {...bodyAttributes}>

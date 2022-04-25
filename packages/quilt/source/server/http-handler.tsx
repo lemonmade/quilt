@@ -85,6 +85,7 @@ export async function renderToResponse<Props>(
   return html(
     renderToString(
       <Html
+        url={request.url}
         manager={htmlManager}
         styles={styles}
         scripts={scripts}
