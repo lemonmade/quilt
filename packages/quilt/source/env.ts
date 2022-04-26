@@ -1,4 +1,6 @@
-export interface EnvironmentVariables {}
+export interface EnvironmentVariables {
+  MODE: string;
+}
 
 const Env: EnvironmentVariables = {} as any;
 

@@ -1,3 +1,4 @@
+import Env from '@quilted/quilt/env';
 import {useCurrentUrl} from '@quilted/quilt';
 import {
   CacheControl,
@@ -32,6 +33,7 @@ export function Http() {
        * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
        */}
       <ContentSecurityPolicy
+        reportOnly={Env.MODE === 'development'}
         // By default, only allow sources from the page’s origin.
         defaultSources={["'self'"]}
         // Includes `'unsafe-inline'` because CSS is often necessary in development,

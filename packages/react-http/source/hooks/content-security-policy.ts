@@ -323,6 +323,14 @@ export interface ContentSecurityPolicyOptions {
    * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for
    */
   requireTrustedTypesFor?: 'script'[];
+
+  /**
+   * Whether the content security policy should be set to “report-only” mode.
+   * In this mode, violations of the policy are reported, but content can
+   * still be loaded even if it violates one of the directives.
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only
+   */
+  reportOnly?: boolean;
 }
 
 /**
@@ -338,6 +346,7 @@ export function useContentSecurityPolicy(
 ) {
   useHttpAction((http) => {
     let normalizedValue = '';
+    let header = 'Content-Security-Policy';
 
     if (typeof value === 'string') {
       normalizedValue = value;
@@ -371,6 +380,7 @@ export function useContentSecurityPolicy(
         styleSources,
         upgradeInsecureRequests,
         workerSources,
+        reportOnly = false,
       } = value;
 
       const appendContent = (content: string) => {
@@ -450,10 +460,14 @@ export function useContentSecurityPolicy(
 
       if (reportTo) addDirective('report-to', reportTo);
       if (reportUri) addDirective('report-uri', reportUri);
+
+      if (reportOnly) {
+        header = 'Content-Security-Policy-Report-Only';
+      }
     }
 
     if (normalizedValue.length > 0) {
-      http.responseHeaders.append('Content-Security-Policy', normalizedValue);
+      http.responseHeaders.append(header, normalizedValue);
     }
   });
 }
