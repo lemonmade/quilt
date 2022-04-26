@@ -19,7 +19,7 @@ export function createTestRouter(
   );
 
   const isExternal =
-    explicitIsExternal ?? ((url) => url.origin === currentUrl.origin);
+    explicitIsExternal ?? ((url) => url.origin !== currentUrl.origin);
 
   return {
     currentUrl,
