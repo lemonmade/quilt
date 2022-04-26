@@ -1,5 +1,13 @@
 # @quilted/quilt
 
+## 0.5.89
+
+### Patch Changes
+
+- [`b939a411`](https://github.com/lemonmade/quilt/commit/b939a411f76086915994789eb873641f0c7dd8cd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some quilt test exports
+
+* [`281b36fd`](https://github.com/lemonmade/quilt/commit/281b36fd1dc6ea640da23e676b70673ce96d0080) Thanks [@lemonmade](https://github.com/lemonmade)! - Shorten URLs in HTML output
+
 ## 0.5.88
 
 ### Patch Changes
