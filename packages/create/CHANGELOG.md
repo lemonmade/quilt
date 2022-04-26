@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.8
+
+### Patch Changes
+
+- [`f4069df8`](https://github.com/lemonmade/quilt/commit/f4069df83ce5166056c7605144333445311427e1) Thanks [@lemonmade](https://github.com/lemonmade)! - Add reportOnly ContentSecurityPolicy prop
+
 ## 0.1.7
 
 ### Patch Changes
