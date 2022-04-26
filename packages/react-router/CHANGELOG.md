@@ -1,5 +1,13 @@
 # @quilted/react-router
 
+## 0.3.41
+
+### Patch Changes
+
+- [`6456b836`](https://github.com/lemonmade/quilt/commit/6456b83631a968793e082fea11cecac2765db53d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix test router isExternal implementation
+
+* [`281b36fd`](https://github.com/lemonmade/quilt/commit/281b36fd1dc6ea640da23e676b70673ce96d0080) Thanks [@lemonmade](https://github.com/lemonmade)! - Shorten URLs in HTML output
+
 ## 0.3.40
 
 ### Patch Changes

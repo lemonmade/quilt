@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.30
+
+### Patch Changes
+
+- [`281b36fd`](https://github.com/lemonmade/quilt/commit/281b36fd1dc6ea640da23e676b70673ce96d0080) Thanks [@lemonmade](https://github.com/lemonmade)! - Shorten URLs in HTML output
+
 ## 0.3.29
 
 ### Patch Changes
