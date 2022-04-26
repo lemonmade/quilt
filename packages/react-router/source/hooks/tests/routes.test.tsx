@@ -2,31 +2,16 @@
  * @jest-environment jsdom
  */
 
-import '@quilted/quilt/matchers';
-
 import type {PropsWithChildren} from 'react';
-import {createMount} from '@quilted/quilt/testing';
 
 import {useRoutes} from '../routes';
-import {createTestRouter, TestRouter} from '../../testing';
+import {mount} from '../../tests/utilities';
 
 jest.mock('../redirect', () => ({
   useRedirect: jest.fn(),
 }));
 
 const {useRedirect} = jest.requireMock<{useRedirect: jest.Mock}>('../redirect');
-
-const mount = createMount<
-  {path?: string; prefix?: string | RegExp},
-  {router: ReturnType<typeof createTestRouter>}
->({
-  context({path, prefix}) {
-    return {router: createTestRouter(path, {prefix})};
-  },
-  render(element, {router}) {
-    return <TestRouter router={router}>{element}</TestRouter>;
-  },
-});
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function RouteComponent({children}: PropsWithChildren<{}>) {
