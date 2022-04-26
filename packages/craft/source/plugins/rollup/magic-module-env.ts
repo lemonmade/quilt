@@ -37,7 +37,9 @@ async function createEnvModuleContent({
   inline: getInline,
   runtime: getRuntime,
 }: Pick<Options, 'mode' | 'project' | 'workspace' | 'inline' | 'runtime'>) {
-  const inlineEnv: Record<string, string> = {};
+  const inlineEnv: Record<string, string> = {
+    MODE: mode,
+  };
 
   const [env, inline, runtime] = await Promise.all([
     loadEnv(project, workspace, {mode}),
@@ -46,6 +48,7 @@ async function createEnvModuleContent({
   ]);
 
   for (const inlineVariable of inline.sort()) {
+    if (inlineVariable in inlineEnv) continue;
     const value = env[inlineVariable];
     if (value == null) continue;
     inlineEnv[inlineVariable] = value;

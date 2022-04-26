@@ -49,6 +49,33 @@ describe('app builds', () => {
       });
     });
 
+    it('automatically inlines a MODE environment variable', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'foundation/Routes.tsx': stripIndent`
+            import Env from '@quilted/quilt/env';
+            import {useRoutes} from '@quilted/quilt';
+            
+            export function Routes() {
+              return useRoutes([{match: '/', render: () => <Start />}]);
+            }
+            
+            function Start() {
+              return <div>{Env.MODE}</div>;
+            }
+          `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/',
+        });
+
+        expect(await page.textContent('body')).toMatch(`production`);
+      });
+    });
+
     it('loads .env files for production builds', async () => {
       await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
         const {fs} = workspace;
