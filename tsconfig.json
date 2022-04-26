@@ -10,7 +10,7 @@
     "**/quilt.project.ts",
     "*.test.ts",
     "*.test.tsx",
-    "tests/e2e/**/*"
+    "tests/**/*"
   ],
   "exclude": ["tests/e2e/output/**/*"],
   "references": [
