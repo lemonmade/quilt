@@ -3,9 +3,9 @@
   "compilerOptions": {
     "outDir": "build/typescript",
     "paths": {
-      "components": ["./components"]
+      "~/shared/*": ["./shared/*"]
     }
   },
   "include": ["**/*"],
-  "references": [{"path": "../../../packages/quilt"}]
+  "references": []
 }
