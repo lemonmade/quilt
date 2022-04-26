@@ -1,4 +1,11 @@
-export {mount, unmountAll, createMount} from '@quilted/react-testing';
+export {mount, mounted, unmountAll, createMount} from '@quilted/react-testing';
+export type {
+  CustomMount,
+  Node,
+  NodeApi,
+  Root,
+  RootApi,
+} from '@quilted/react-testing';
 export {TestRouter, createTestRouter} from '@quilted/react-router/testing';
 export {
   TestGraphQL,
