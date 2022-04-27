@@ -1,6 +1,6 @@
 import type {ComponentType} from 'react';
 
-import type {AssetLoader} from '@quilted/async/server';
+import type {AssetManifest} from '@quilted/async/server';
 import {render, Html} from '@quilted/react-html/server';
 import type {RouteDefinition} from '@quilted/react-router';
 import {
@@ -26,7 +26,7 @@ interface RenderableRoute {
 
 export interface Options {
   routes: string[];
-  assets: AssetLoader<{modules: boolean}>;
+  assets: AssetManifest<{modules: boolean}>;
   crawl?: boolean;
   baseUrl?: string;
   prettify?: boolean;

@@ -4,13 +4,13 @@ import {rm} from 'fs/promises';
 
 import {stripIndent} from 'common-tags';
 
-import type {HttpState, AssetManifest} from '@quilted/quilt/server';
+import type {HttpState, AssetBuild} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
 import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
 import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
 import {
-  MAGIC_MODULE_APP_ASSET_LOADER,
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
 
@@ -263,14 +263,14 @@ export function appStatic({
             plugins.unshift({
               name: '@quilted/magic-module/static-asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_LOADER) {
+                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) {
                   return id;
                 }
 
                 return null;
               },
               async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_LOADER) {
+                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) {
                   return null;
                 }
 
@@ -286,7 +286,7 @@ export function appStatic({
                         manifestFile,
                       );
 
-                      return JSON.parse(manifestString) as AssetManifest;
+                      return JSON.parse(manifestString) as AssetBuild;
                     }),
                   )
                 )
@@ -306,40 +306,42 @@ export function appStatic({
                     ? undefined
                     : defaultManifest;
 
-                const manifestToCode = (manifest?: AssetManifest) =>
+                const manifestToCode = (manifest?: AssetBuild) =>
                   manifest == null
                     ? 'undefined'
                     : `JSON.parse(${JSON.stringify(JSON.stringify(manifest))})`;
 
                 return stripIndent`
-                  import {createAssetLoader} from '@quilted/quilt/server';
+                  import {createAssetManifest} from '@quilted/quilt/server';
 
-                  const noModuleManifest = ${manifestToCode(noModuleManifest)};
-                  const moduleManifest = ${manifestToCode(moduleManifest)};
+                  export default function createManifest() {
+                    const noModuleManifest = ${manifestToCode(
+                      noModuleManifest,
+                    )};
+                    const moduleManifest = ${manifestToCode(moduleManifest)};
 
-                  const assetLoader = createAssetLoader({
-                    getManifest({modules}) {
-                      if (modules) {
-                        if (moduleManifest) return moduleManifest;
-
+                    return createAssetManifest({
+                      getBuild({modules}) {
+                        if (modules) {
+                          if (moduleManifest) return moduleManifest;
+  
+                          return {
+                            metadata: {modules: true},
+                            async: {},
+                            entry: {scripts: [], styles: []},
+                          };
+                        }
+  
+                        if (noModuleManifest) return noModuleManifest;
+  
                         return {
-                          metadata: {modules: true},
+                          metadata: {modules: false},
                           async: {},
                           entry: {scripts: [], styles: []},
                         };
-                      }
-
-                      if (noModuleManifest) return noModuleManifest;
-
-                      return {
-                        metadata: {modules: false},
-                        async: {},
-                        entry: {scripts: [], styles: []},
-                      };
-                    },
-                  });
-
-                  export default assetLoader;
+                      },
+                    });
+                  }
                 `;
               },
             });
@@ -366,7 +368,7 @@ export function appStatic({
                 return stripIndent`
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                   import assets from ${JSON.stringify(
-                    MAGIC_MODULE_APP_ASSET_LOADER,
+                    MAGIC_MODULE_APP_ASSET_MANIFEST,
                   )};
                   import {renderStatic} from '@quilted/quilt/static';
 

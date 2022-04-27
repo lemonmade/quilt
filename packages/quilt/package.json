@@ -215,8 +215,8 @@
       "magic/app": [
         "./build/typescript/magic/app.d.ts"
       ],
-      "magic/asset-loader": [
-        "./build/typescript/magic/asset-loader.d.ts"
+      "magic/asset-manifest": [
+        "./build/typescript/magic/app/asset-manifest.d.ts"
       ],
       "magic/http-handler": [
         "./build/typescript/magic/http-handler.d.ts"

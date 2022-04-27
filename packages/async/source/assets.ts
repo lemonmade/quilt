@@ -3,17 +3,17 @@ export interface Asset {
   readonly attributes: Record<string, string | boolean | number>;
 }
 
-export interface AssetManifestEntry {
+export interface AssetBuildEntry {
   readonly scripts: Asset[];
   readonly styles: Asset[];
 }
 
-export interface AssetManifest {
+export interface AssetBuild {
   readonly id: string;
   readonly default: boolean;
   readonly metadata: Record<string, any>;
-  readonly entry: AssetManifestEntry;
-  readonly async: {[key: string]: AssetManifestEntry};
+  readonly entry: AssetBuildEntry;
+  readonly async: {[key: string]: AssetBuildEntry};
 }
 
 export interface AsyncAssetSelector {
@@ -27,7 +27,7 @@ export interface AssetSelector<Options> {
   readonly options?: Options;
 }
 
-export interface AssetLoader<Options> {
+export interface AssetManifest<Options> {
   scripts(selector?: AssetSelector<Options>): Promise<Asset[]>;
   styles(selector?: AssetSelector<Options>): Promise<Asset[]>;
   asyncAssets(
@@ -36,13 +36,13 @@ export interface AssetLoader<Options> {
   ): Promise<Asset[]>;
 }
 
-export interface CreateAssetLoaderOptions<Options> {
-  getManifest(options: Options): Promise<AssetManifest | undefined>;
+export interface CreateAssetManifestOptions<Options> {
+  getBuild(options: Options): Promise<AssetBuild | undefined>;
 }
 
-export function createAssetLoader<Options>({
-  getManifest,
-}: CreateAssetLoaderOptions<Options>): AssetLoader<Options> {
+export function createAssetManifest<Options>({
+  getBuild,
+}: CreateAssetManifestOptions<Options>): AssetManifest<Options> {
   // Ordering of asset:
   // - vendors (anything other than the first file) for the entry
   // - the actual entry CSS
@@ -59,7 +59,7 @@ export function createAssetLoader<Options>({
     scripts: boolean;
     styles: boolean;
   }) {
-    const manifest = await getManifest(options ?? ({} as any));
+    const manifest = await getBuild(options ?? ({} as any));
 
     const resolvedEntry = entry ? manifest?.entry : undefined;
 

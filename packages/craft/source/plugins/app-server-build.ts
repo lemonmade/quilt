@@ -4,7 +4,7 @@ import {stripIndent} from 'common-tags';
 import type {ModuleFormat} from 'rollup';
 
 import {
-  MAGIC_MODULE_APP_ASSET_LOADER,
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_HTTP_HANDLER,
 } from '../constants';
 import {createProjectPlugin} from '../kit';
@@ -70,11 +70,11 @@ export function appServerBuild(options?: AppServerOptions) {
             plugins.unshift({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
+                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
                 return null;
               },
               async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_LOADER) return null;
+                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
 
                 const manifestFiles = await project.fs.glob('manifest*.json', {
                   cwd: project.fs.buildPath('manifests'),
@@ -98,38 +98,38 @@ export function appServerBuild(options?: AppServerOptions) {
                 );
 
                 return stripIndent`
-                  import {createAssetLoader} from '@quilted/quilt/server';
+                  import {createAssetManifest} from '@quilted/quilt/server';
 
-                  const manifests = JSON.parse(${JSON.stringify(
-                    JSON.stringify(manifests),
-                  )});
+                  export default function createManifest() {
+                    const manifests = JSON.parse(${JSON.stringify(
+                      JSON.stringify(manifests),
+                    )});
+  
+                    for (const manifest of manifests) {
+                      manifest.metadata.browsers =
+                        manifest.metadata.browsers
+                          ? new RegExp(manifest.metadata.browsers)
+                          : undefined;
+                    }
+  
+                    // The default manifest is the last one, since it has the widest browser support.
+                    const defaultManifest = manifests[manifests.length - 1];
 
-                  for (const manifest of manifests) {
-                    manifest.metadata.browsers =
-                      manifest.metadata.browsers
-                        ? new RegExp(manifest.metadata.browsers)
-                        : undefined;
-                  }
-
-                  // The default manifest is the last one, since it has the widest browser support.
-                  const defaultManifest = manifests[manifests.length - 1];
-
-                  const assetLoader = createAssetLoader({
-                    getManifest({userAgent}) {
-                      // If there is no user agent, use the default manifest.
-                      if (typeof userAgent !== 'string') return defaultManifest;
-
-                      for (const manifest of manifests) {
-                        if (manifest.metadata.browsers instanceof RegExp && manifest.metadata.browsers.test(userAgent)) {
-                          return manifest;
+                    return createAssetManifest({
+                      getBuild({userAgent}) {
+                        // If there is no user agent, use the default manifest.
+                        if (typeof userAgent !== 'string') return defaultManifest;
+  
+                        for (const manifest of manifests) {
+                          if (manifest.metadata.browsers instanceof RegExp && manifest.metadata.browsers.test(userAgent)) {
+                            return manifest;
+                          }
                         }
-                      }
-
-                      return defaultManifest;
-                    },
-                  });
-
-                  export default assetLoader;
+  
+                        return defaultManifest;
+                      },
+                    });
+                  }
                 `;
               },
             });

@@ -10,6 +10,7 @@
     {"path": "../async"},
     {"path": "../graphql"},
     {"path": "../polyfills"},
+    {"path": "../quilt"},
     {"path": "../react-testing"},
     {"path": "../rollup-plugin-fix-commonjs-preserve-modules"},
     {"path": "../sewing-kit"},
