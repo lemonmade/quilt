@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.1.9
+
+### Patch Changes
+
+- [#283](https://github.com/lemonmade/quilt/pull/283) [`daf06328`](https://github.com/lemonmade/quilt/commit/daf06328f242ac621b70942aa063a6138a12f62f) Thanks [@lemonmade](https://github.com/lemonmade)! - Rework asset manifest
+
+* [`590e790b`](https://github.com/lemonmade/quilt/commit/590e790bebffcf367e00fe7248f83208e92a6eb5) Thanks [@lemonmade](https://github.com/lemonmade)! - Add missing global import
+
+- [`cdecff17`](https://github.com/lemonmade/quilt/commit/cdecff1728876a8b9849f74ef1219220a3f60835) Thanks [@lemonmade](https://github.com/lemonmade)! - Simply Routes component in template apps
+
 ## 0.1.8
 
 ### Patch Changes

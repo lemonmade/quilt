@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.104
+
+### Patch Changes
+
+- [#283](https://github.com/lemonmade/quilt/pull/283) [`daf06328`](https://github.com/lemonmade/quilt/commit/daf06328f242ac621b70942aa063a6138a12f62f) Thanks [@lemonmade](https://github.com/lemonmade)! - Rework asset manifest
+
+- Updated dependencies [[`daf06328`](https://github.com/lemonmade/quilt/commit/daf06328f242ac621b70942aa063a6138a12f62f)]:
+  - @quilted/async@0.3.23
+  - @quilted/quilt@0.5.91
+
 ## 0.1.103
 
 ### Patch Changes
