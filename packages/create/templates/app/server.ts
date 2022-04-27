@@ -1,3 +1,4 @@
+import '@quilted/quilt/global';
 import {
   createHttpHandler,
   createServerRenderingRequestHandler,
@@ -7,11 +8,12 @@ import assets from '@quilted/quilt/magic/asset-loader';
 import App from './App';
 
 const httpHandler = createHttpHandler();
-const requestHandler = createServerRenderingRequestHandler(App, {
-  assets,
-});
 
 // For all GET requests, render our React application.
-httpHandler.get(requestHandler);
+httpHandler.get(
+  createServerRenderingRequestHandler(App, {
+    assets,
+  }),
+);
 
 export default httpHandler;
