@@ -54,10 +54,10 @@ You can write any code for your server that you like. Quilt provides some utilit
 
 // This is a “magic module in Quilt — it doesn’t actually exist anywhere on
 // disk. Quilt creates it at runtime for you. This magic module gives you
-// access to a `@quilted/async` `AssetLoader` object that knows how to resolve
+// access to a `@quilted/async` `AssetManifest` object that knows how to resolve
 // the right assets during server rendering, including the ability to select
 // the files with the right browser targets.
-import assets from '__quilt__/AssetManifest.ts';
+import createAssetManifest from '@quilted/quilt/magic/app/asset-manifest';
 
 import {createHttpHandler, response} from '@quilted/http-handlers';
 import {createServerRenderingRequestHandler} from '@quilted/quilt/server';
@@ -67,7 +67,9 @@ import App from './App';
 const handler = createHttpHandler();
 
 handler.get('ping', () => response('pong!'));
-handler.get(createServerRenderingRequestHandler(App, {assets}));
+handler.get(
+  createServerRenderingRequestHandler(App, {assets: createAssetManifest()}),
+);
 
 export default handler;
 ```

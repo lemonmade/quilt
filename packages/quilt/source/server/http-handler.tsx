@@ -1,6 +1,6 @@
 import type {ComponentType, ReactElement} from 'react';
 
-import type {AssetLoader} from '@quilted/async/server';
+import type {AssetManifest} from '@quilted/async/server';
 import {render as renderToString, Html} from '@quilted/react-html/server';
 import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
 
@@ -14,7 +14,7 @@ import type {
 import {renderApp} from './render';
 
 export interface Options<Props = Record<string, never>> extends ExtractOptions {
-  assets?: AssetLoader<unknown>;
+  assets?: AssetManifest<unknown>;
   handler?: HttpHandler;
   renderProps?(options: {request: Request}): Props;
 }

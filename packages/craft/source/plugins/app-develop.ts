@@ -27,7 +27,7 @@ import type {EnvironmentOptions} from './magic-module-env';
 import {
   MAGIC_MODULE_HTTP_HANDLER,
   MAGIC_MODULE_APP_COMPONENT,
-  MAGIC_MODULE_APP_ASSET_LOADER,
+  MAGIC_MODULE_APP_ASSET_MANIFEST,
 } from '../constants';
 
 export const STEP_NAME = 'Quilt.App.Develop';
@@ -128,13 +128,13 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       import App from ${JSON.stringify(
                         MAGIC_MODULE_APP_COMPONENT,
                       )};
-                      import assets from ${JSON.stringify(
-                        MAGIC_MODULE_APP_ASSET_LOADER,
+                      import createAssetManifest from ${JSON.stringify(
+                        MAGIC_MODULE_APP_ASSET_MANIFEST,
                       )};
                       import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
       
                       export default createServerRenderingHttpHandler(App, {
-                        assets,
+                        assets: createAssetManifest(),
                       });
                     `;
 
@@ -144,40 +144,38 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               {
                 name: '@quilted/magic-module/asset-loader',
                 async resolveId(id) {
-                  if (id === MAGIC_MODULE_APP_ASSET_LOADER) return id;
+                  if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
                   return null;
                 },
                 async load(source) {
-                  if (source !== MAGIC_MODULE_APP_ASSET_LOADER) return null;
+                  if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
 
                   return stripIndent`
-                  import {createAssetLoader} from '@quilted/quilt/server';
+                  import {createAssetManifest} from '@quilted/quilt/server';
 
-                  const assetLoader = createAssetLoader({
-                    getManifest() {
-                      return {
-                        metadata: {
-                          priority: 0,
-                          modules: true,
-                        },
-                        entry: {
-                          scripts: [
-                            {
-                              source: ${JSON.stringify(
-                                MAGIC_MODULE_BROWSER_ENTRY,
-                              )},
-                              attributes: {
-                                type: 'module',
+                  export default function createManifest() {
+                    return createAssetManifest({
+                      getBuild() {
+                        return ${JSON.stringify({
+                          metadata: {
+                            priority: 0,
+                            modules: true,
+                          },
+                          entry: {
+                            scripts: [
+                              {
+                                source: MAGIC_MODULE_BROWSER_ENTRY,
+                                attributes: {
+                                  type: 'module',
+                                },
                               },
-                            },
-                          ],
-                          styles: [],
-                        },
-                      };
-                    }
-                  });
-
-                  export default assetLoader;
+                            ],
+                            styles: [],
+                          },
+                        })};
+                      },
+                    })
+                  }
                 `;
                 },
               },

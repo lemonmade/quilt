@@ -1,10 +1,10 @@
 export type {
   Asset,
   AssetManifest,
-  AssetManifestEntry,
-  AssetLoader,
+  AssetBuild,
+  AssetBuildEntry,
   AssetSelector,
   AsyncAssetSelector,
-  CreateAssetLoaderOptions,
+  CreateAssetManifestOptions,
 } from './assets';
-export {createAssetLoader} from './assets';
+export {createAssetManifest} from './assets';
