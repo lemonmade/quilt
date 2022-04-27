@@ -141,11 +141,13 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
         `
       : stripIndent`
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-        import assets from ${JSON.stringify(MAGIC_MODULE_APP_ASSET_MANIFEST)};
+        import createAssetManifest from ${JSON.stringify(
+          MAGIC_MODULE_APP_ASSET_MANIFEST,
+        )};
         import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
   
         export default createServerRenderingHttpHandler(App, {
-          assets,
+          assets: createAssetManifest(),
         });
       `;
 
