@@ -12,6 +12,12 @@ import type {
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
 
+export type {
+  Plugin as RollupPlugin,
+  InputOptions as RollupInputOptions,
+  OutputOptions as RollupOutputOptions,
+};
+
 // TODO
 export interface RollupNodeBundle {
   readonly builtins?: boolean;

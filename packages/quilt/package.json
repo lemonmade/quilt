@@ -215,8 +215,11 @@
       "magic/app": [
         "./build/typescript/magic/app.d.ts"
       ],
+      "magic/app/api": [
+        "./build/typescript/magic/app/api.d.ts"
+      ],
       "magic/app/asset-manifest": [
-        "./build/typescript/magic/asset-manifest.d.ts"
+        "./build/typescript/magic/app/asset-manifest.d.ts"
       ],
       "magic/http-handler": [
         "./build/typescript/magic/http-handler.d.ts"
@@ -231,6 +234,7 @@
   ],
   "dependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
+    "@quilted/api-modules": "^0.0.0",
     "@quilted/async": "^0.3.12",
     "@quilted/graphql": "^0.4.14",
     "@quilted/http-handlers": "^0.2.20",

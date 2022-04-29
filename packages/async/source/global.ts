@@ -112,12 +112,10 @@ export function installAsyncAssetsGlobal({
     },
   };
 
-  Reflect.defineProperty(globalThis, 'Quilt', {
-    writable: true,
+  Reflect.defineProperty((globalThis as any).Quilt, 'AsyncAssets', {
+    writable: false,
     configurable: true,
-    enumerable: false,
-    value: {
-      AsyncAssets,
-    },
+    enumerable: true,
+    value: AsyncAssets,
   });
 }

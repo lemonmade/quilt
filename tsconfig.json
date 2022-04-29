@@ -14,6 +14,7 @@
   ],
   "exclude": ["tests/e2e/output/**/*"],
   "references": [
+    {"path": "./packages/api-modules"},
     {"path": "./packages/async"},
     {"path": "./packages/craft"},
     {"path": "./packages/create"},
