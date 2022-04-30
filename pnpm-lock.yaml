@@ -39,7 +39,6 @@ importers:
   examples/basic-app:
     specifiers:
       '@quilted/browserslist-config': ^0.1.0
-      '@quilted/cloudflare': 0.1.29
       '@quilted/craft': ^0.1.0
       '@quilted/eslint-config': ^0.1.0
       '@quilted/prettier': ^0.2.0
@@ -49,7 +48,6 @@ importers:
       react-dom: npm:@quilted/react@^0.1.0
       typescript: ^4.6.0
     dependencies:
-      '@quilted/cloudflare': link:../../integrations/cloudflare
       '@quilted/quilt': link:../../packages/quilt
       react: link:../../packages/react
       react-dom: link:../../packages/react
