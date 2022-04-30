@@ -46,7 +46,8 @@
   "sideEffects": false,
   "dependencies": {
     "common-tags": "^1.8.0",
-    "mime": "^2.5.0"
+    "mime": "^2.5.0",
+    "miniflare": "^2.4.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

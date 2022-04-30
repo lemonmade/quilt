@@ -12,6 +12,7 @@ import type {
   BuildServiceOptions,
   BuildAppConfigurationHooks,
   BuildServiceConfigurationHooks,
+  ResolvedDevelopProjectConfigurationHooks,
 } from '@quilted/craft/kit';
 
 export type WorkerFormat = 'modules' | 'service-worker';
@@ -65,192 +66,251 @@ export function cloudflareWorkers({
     name: 'Quilt.Cloudflare.Workers',
     build({project, configure}) {
       configure(
-        (
-          {
-            rollupOutputs,
-            quiltAssetBaseUrl,
-            quiltServiceOutputFormat,
-            quiltAppServerOutputFormat,
-            quiltHttpHandlerRuntimeContent,
-            quiltPolyfillFeatures,
-            quiltRuntimeEnvironmentVariables,
-          }: ResolvedHooks<
-            BuildAppConfigurationHooks & BuildServiceConfigurationHooks
-          >,
-          options: ResolvedOptions<BuildAppOptions & BuildServiceOptions>,
-        ) => {
-          if (
-            !(options as ResolvedOptions<BuildAppOptions>).quiltAppServer &&
-            !(options as ResolvedOptions<BuildServiceOptions>).quiltService
-          ) {
-            return;
-          }
-
-          // Runtime variables are provided to the HTTP handler for module workers,
-          // and are just properties on the global scope for non-module workers.
-          if (format === 'modules') {
-            quiltRuntimeEnvironmentVariables?.(() => undefined);
-          } else {
-            quiltRuntimeEnvironmentVariables?.(
-              () =>
-                `new Proxy({}, {get: (_, property) => Reflect.get(globalThis, property)})`,
-            );
-          }
-
-          quiltServiceOutputFormat?.(() =>
-            format === 'modules' ? 'module' : 'iife',
-          );
-
-          quiltAppServerOutputFormat?.(() =>
-            format === 'modules' ? 'module' : 'iife',
-          );
-
-          quiltPolyfillFeatures?.((features) => {
-            // Workers support fetch natively.
-            return features.filter((feature) => feature !== 'fetch');
-          });
-
-          rollupOutputs?.((outputs) => {
-            for (const output of outputs) {
-              if (format === 'modules') {
-                // Cloudflare workers assume .js/.cjs are commonjs by default,
-                // if we are using modules we default file names to .mjs so they
-                // are automatically interpreted as modules.
-                output.entryFileNames = ensureMjsExtension(
-                  output.entryFileNames,
-                );
-                output.chunkFileNames = ensureMjsExtension(
-                  output.chunkFileNames,
-                );
-                output.assetFileNames = ensureMjsExtension(
-                  output.assetFileNames,
-                );
-              }
-
-              output.inlineDynamicImports = true;
-            }
-
-            return outputs;
-          });
-
-          const shouldServeAssets =
-            serveAssets ?? project.kind === ProjectKind.App;
-
-          if (shouldServeAssets) {
-            if (format === 'modules') {
-              quiltHttpHandlerRuntimeContent?.(
-                async () => stripIndent`
-                  import HttpHandler from ${JSON.stringify(
-                    MAGIC_MODULE_HTTP_HANDLER,
-                  )};
-      
-                  import {createRequestHandler, respondWithAsset} from '@quilted/cloudflare/http-handlers';
-      
-                  const handler = createRequestHandler(HttpHandler, {
-                    cache: ${String(cache)},
-                  });
-  
-                  export default {
-                    async fetch(...args) {
-                      const assetResponse = await respondWithAsset(...args, {
-                        assetsPath: ${JSON.stringify(
-                          await quiltAssetBaseUrl!.run(),
-                        )}
-                      });
-  
-                      if (assetResponse) {
-                        return assetResponse;
-                      }
-  
-                      const response = await handler(...args);
-                      return response;
-                    }
-                  }
-                `,
-              );
-            } else {
-              quiltHttpHandlerRuntimeContent?.(
-                async () => stripIndent`
-                  import HttpHandler from ${JSON.stringify(
-                    MAGIC_MODULE_HTTP_HANDLER,
-                  )};
-      
-                  import {createRequestHandler, respondWithAsset, transformFetchEvent} from '@quilted/cloudflare/http-handlers';
-      
-                  const handler = createRequestHandler(HttpHandler, {
-                    cache: ${String(cache)},
-                  });
-  
-                  addEventListener('fetch', (event) => {
-                    const argumentsFromEvent = transformFetchEvent(event);
-
-                    event.respondWith(
-                      (async () => {
-                        const assetResponse = await respondWithAsset(...argumentsFromEvent, {
-                          assetsPath: ${JSON.stringify(
-                            await quiltAssetBaseUrl!.run(),
-                          )}
-                        });
-      
-                        if (assetResponse) {
-                          return assetResponse;
-                        }
-    
-                        const response = await handler(...argumentsFromEvent);
-
-                        return response;
-                      })(),
-                    );
-                  });
-                `,
-              );
-            }
-          } else {
-            if (format === 'modules') {
-              quiltHttpHandlerRuntimeContent?.(
-                () => stripIndent`
-                  import HttpHandler from ${JSON.stringify(
-                    MAGIC_MODULE_HTTP_HANDLER,
-                  )};
-      
-                  import {createRequestHandler} from '@quilted/cloudflare/http-handlers';
-      
-                  const handler = createRequestHandler(HttpHandler, {
-                    cache: ${String(cache)},
-                  });
-  
-                  export default {
-                    async fetch(...args) {
-                      const response = await handler(...args);
-                      return response;
-                    }
-                  }
-                `,
-              );
-            } else {
-              quiltHttpHandlerRuntimeContent?.(
-                () => stripIndent`
-                  import HttpHandler from ${JSON.stringify(
-                    MAGIC_MODULE_HTTP_HANDLER,
-                  )};
-      
-                  import {createRequestHandler} from '@quilted/cloudflare/http-handlers';
-      
-                  const handler = createRequestHandler(HttpHandler, {
-                    cache: ${String(cache)},
-                  });
-  
-                  addEventListener('fetch', (event) => {
-                    event.respondWith(handler(...transformFetchEvent(event)));
-                  });
-                `,
-              );
-            }
-          }
-        },
+        addConfiguration({
+          cache,
+          format,
+          serveAssets: serveAssets ?? project.kind === ProjectKind.App,
+        }),
       );
     },
+    develop({configure}) {
+      const addBaseConfiguration = addConfiguration({
+        cache,
+        format,
+        serveAssets: false,
+      });
+
+      configure((hooks, options) => {
+        addBaseConfiguration(hooks, options);
+
+        const {quiltAppDevelopmentServer} =
+          hooks as ResolvedDevelopProjectConfigurationHooks<App>;
+
+        quiltAppDevelopmentServer?.(async () => {
+          const [{Miniflare}, {response}] = await Promise.all([
+            import('miniflare'),
+            import('@quilted/quilt/http-handlers'),
+          ]);
+
+          let miniflare: InstanceType<typeof Miniflare>;
+
+          return {
+            rebuild(entry) {
+              miniflare ??= new Miniflare({
+                watch: true,
+                modules: true,
+                scriptPath: entry,
+                packagePath: true,
+                wranglerConfigPath: true,
+              });
+
+              return Promise.resolve({
+                async run({url, body, headers, method}) {
+                  const workerResponse = await miniflare!.dispatchFetch(url, {
+                    body:
+                      method === 'GET' || method === 'OPTIONS'
+                        ? undefined
+                        : body,
+                    method,
+                    headers,
+                  });
+
+                  return response(await workerResponse.text(), {
+                    status: workerResponse.status,
+                    headers: [...workerResponse.headers],
+                  });
+                },
+              });
+            },
+          };
+        });
+      });
+    },
   });
+}
+
+function addConfiguration({
+  cache,
+  format,
+  serveAssets,
+}: {
+  cache: boolean;
+  format: WorkerFormat;
+  serveAssets: boolean;
+}) {
+  return (
+    {
+      rollupOutputs,
+      rollupNodeBundle,
+      quiltAssetBaseUrl,
+      quiltServiceOutputFormat,
+      quiltAppServerOutputFormat,
+      quiltHttpHandlerRuntimeContent,
+      quiltPolyfillFeatures,
+      quiltRuntimeEnvironmentVariables,
+    }: ResolvedHooks<
+      BuildAppConfigurationHooks & BuildServiceConfigurationHooks
+    >,
+    options: ResolvedOptions<BuildAppOptions & BuildServiceOptions>,
+  ) => {
+    if (
+      !(options as ResolvedOptions<BuildAppOptions>).quiltAppServer &&
+      !(options as ResolvedOptions<BuildServiceOptions>).quiltService
+    ) {
+      return;
+    }
+
+    rollupNodeBundle?.(() => true);
+
+    // Runtime variables are provided to the HTTP handler for module workers,
+    // and are just properties on the global scope for non-module workers.
+    if (format === 'modules') {
+      quiltRuntimeEnvironmentVariables?.(() => undefined);
+    } else {
+      quiltRuntimeEnvironmentVariables?.(
+        () =>
+          `new Proxy({}, {get: (_, property) => Reflect.get(globalThis, property)})`,
+      );
+    }
+
+    quiltServiceOutputFormat?.(() =>
+      format === 'modules' ? 'module' : 'iife',
+    );
+
+    quiltAppServerOutputFormat?.(() =>
+      format === 'modules' ? 'module' : 'iife',
+    );
+
+    quiltPolyfillFeatures?.((features) => {
+      // Workers support fetch natively.
+      return features.filter((feature) => feature !== 'fetch');
+    });
+
+    rollupOutputs?.((outputs) => {
+      for (const output of outputs) {
+        if (format === 'modules') {
+          // Cloudflare workers assume .js/.cjs are commonjs by default,
+          // if we are using modules we default file names to .mjs so they
+          // are automatically interpreted as modules.
+          output.entryFileNames = ensureMjsExtension(output.entryFileNames);
+          output.chunkFileNames = ensureMjsExtension(output.chunkFileNames);
+          output.assetFileNames = ensureMjsExtension(output.assetFileNames);
+        }
+      }
+
+      return outputs;
+    });
+
+    if (serveAssets) {
+      if (format === 'modules') {
+        quiltHttpHandlerRuntimeContent?.(
+          async () => stripIndent`
+            import HttpHandler from ${JSON.stringify(
+              MAGIC_MODULE_HTTP_HANDLER,
+            )};
+
+            import {createRequestHandler, respondWithAsset} from '@quilted/cloudflare/http-handlers';
+
+            const handler = createRequestHandler(HttpHandler, {
+              cache: ${String(cache)},
+            });
+
+            export default {
+              async fetch(...args) {
+                const assetResponse = await respondWithAsset(...args, {
+                  assetsPath: ${JSON.stringify(await quiltAssetBaseUrl!.run())}
+                });
+
+                if (assetResponse) {
+                  return assetResponse;
+                }
+
+                const response = await handler(...args);
+                return response;
+              }
+            }
+          `,
+        );
+      } else {
+        quiltHttpHandlerRuntimeContent?.(
+          async () => stripIndent`
+            import HttpHandler from ${JSON.stringify(
+              MAGIC_MODULE_HTTP_HANDLER,
+            )};
+
+            import {createRequestHandler, respondWithAsset, transformFetchEvent} from '@quilted/cloudflare/http-handlers';
+
+            const handler = createRequestHandler(HttpHandler, {
+              cache: ${String(cache)},
+            });
+
+            addEventListener('fetch', (event) => {
+              const argumentsFromEvent = transformFetchEvent(event);
+
+              event.respondWith(
+                (async () => {
+                  const assetResponse = await respondWithAsset(...argumentsFromEvent, {
+                    assetsPath: ${JSON.stringify(
+                      await quiltAssetBaseUrl!.run(),
+                    )}
+                  });
+
+                  if (assetResponse) {
+                    return assetResponse;
+                  }
+
+                  const response = await handler(...argumentsFromEvent);
+
+                  return response;
+                })(),
+              );
+            });
+          `,
+        );
+      }
+    } else {
+      if (format === 'modules') {
+        quiltHttpHandlerRuntimeContent?.(
+          () => stripIndent`
+            import HttpHandler from ${JSON.stringify(
+              MAGIC_MODULE_HTTP_HANDLER,
+            )};
+
+            import {createRequestHandler} from '@quilted/cloudflare/http-handlers';
+
+            const handler = createRequestHandler(HttpHandler, {
+              cache: ${String(cache)},
+            });
+
+            export default {
+              async fetch(...args) {
+                const response = await handler(...args);
+                return response;
+              }
+            }
+          `,
+        );
+      } else {
+        quiltHttpHandlerRuntimeContent?.(
+          () => stripIndent`
+            import HttpHandler from ${JSON.stringify(
+              MAGIC_MODULE_HTTP_HANDLER,
+            )};
+
+            import {createRequestHandler} from '@quilted/cloudflare/http-handlers';
+
+            const handler = createRequestHandler(HttpHandler, {
+              cache: ${String(cache)},
+            });
+
+            addEventListener('fetch', (event) => {
+              event.respondWith(handler(...transformFetchEvent(event)));
+            });
+          `,
+        );
+      }
+    }
+  };
 }
 
 function ensureMjsExtension<T>(file?: T) {
