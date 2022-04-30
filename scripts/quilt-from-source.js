@@ -11,7 +11,6 @@ try {
       'node',
       '--no-warnings',
       '--experimental-specifier-resolution=node',
-      '--experimental-vm-modules',
       '--loader',
       resolve(root, './scripts/esbuild-module-loader.js'),
       '--conditions',
