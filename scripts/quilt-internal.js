@@ -21,6 +21,8 @@ try {
       '\\"./integrations/**/quilt.project.ts\\"',
       '--projects',
       '\\"!./packages/create-quilt-app/template/quilt.project.ts\\"',
+      '--projects',
+      '\\"!./packages/create/templates/**/quilt.project.ts\\"',
     ].join(' '),
     {
       stdio: 'inherit',
