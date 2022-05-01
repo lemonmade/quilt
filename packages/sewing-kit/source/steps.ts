@@ -1,10 +1,21 @@
-import type {ExecOptions, PromiseWithChild} from 'child_process';
+import type {ExecOptions, SpawnOptions, PromiseWithChild} from 'child_process';
 
 import type {Project, Workspace} from './model';
 import type {WorkspacePlugin, AnyPlugin} from './plugins';
 import type {Log, Loggable} from './types';
 
 export interface StepRunnerExecOptions extends ExecOptions {
+  /**
+   * You can use this option to indicate that the command being run was
+   * installed as a binary for a node module. You should pass this option
+   * the `import.meta.url` so that we can select the correct binary location
+   * for this module. When set to `true`, this script will assume you want
+   * to get the current working directory's binary directory.
+   */
+  fromNodeModules?: string | boolean;
+}
+
+export interface StepRunnerSpawnOptions extends SpawnOptions {
   /**
    * You can use this option to indicate that the command being run was
    * installed as a binary for a node module. You should pass this option
@@ -29,6 +40,11 @@ export interface BaseStepRunner {
     args?: string[] | null,
     options?: StepRunnerExecOptions,
   ): StepRunnerExecResult;
+  spawn(
+    command: string,
+    args?: string[] | null,
+    options?: StepRunnerSpawnOptions,
+  ): Promise<unknown>;
 }
 
 export interface ProjectStepRunner<_ProjectType extends Project>

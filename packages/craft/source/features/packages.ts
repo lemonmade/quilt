@@ -3,11 +3,15 @@ import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 import type {OutputOptions} from 'rollup';
 
 import {createProjectPlugin} from '../kit';
-import type {Package, PackageBinary} from '../kit';
+import type {Package, PackageBinary, WaterfallHook} from '../kit';
 
 import type {} from '../tools/rollup';
 
 export type PackageModuleType = 'commonjs' | 'esmodules';
+
+export interface PackageHooks {
+  packageBinaryNodeOptions: WaterfallHook<string[]>;
+}
 
 declare module '@quilted/sewing-kit' {
   interface BuildPackageOptions {
@@ -17,6 +21,8 @@ declare module '@quilted/sewing-kit' {
      */
     packageBuildModule: PackageModuleType;
   }
+
+  interface BuildPackageConfigurationHooks extends PackageHooks {}
 }
 
 export interface Options {
@@ -53,7 +59,11 @@ const COMMONJS_EXTENSION = '.cjs';
 export function packageBuild({commonjs = true}: Options = {}) {
   return createProjectPlugin<Package>({
     name: 'SewingKit.PackageBuild',
-    build({project, configure, run}) {
+    build({project, configure, run, hooks}) {
+      hooks<PackageHooks>(({waterfall}) => ({
+        packageBinaryNodeOptions: waterfall(),
+      }));
+
       if (project.packageJson?.private) return;
 
       configure(
@@ -183,13 +193,19 @@ export function packageBuild({commonjs = true}: Options = {}) {
               name: 'SewingKit.PackageBuild.Binaries',
               label: `Building binaries for ${project.name}`,
               async run(step) {
-                const {outputDirectory} = await configuration({
-                  packageBuildModule: 'esmodules',
-                });
+                const {outputDirectory, packageBinaryNodeOptions} =
+                  await configuration({
+                    packageBuildModule: 'esmodules',
+                  });
 
-                const resolvedOutputDirectory = await outputDirectory.run(
-                  project.fs.buildPath(),
-                );
+                const [resolvedOutputDirectory, nodeOptions] =
+                  await Promise.all([
+                    outputDirectory.run(project.fs.buildPath()),
+                    packageBinaryNodeOptions!.run([
+                      // Try to normalize more places where you can use ESModules
+                      '--experimental-vm-modules',
+                    ]),
+                  ]);
 
                 await Promise.all(
                   project.binaries.map((binary) => writeBinary(binary)),
@@ -231,7 +247,11 @@ export function packageBuild({commonjs = true}: Options = {}) {
                     await project.fs.write(
                       binaryFile,
                       [
-                        `#!/usr/bin/env node`,
+                        `#!/usr/bin/env -S node${
+                          nodeOptions.length > 0
+                            ? ` ${nodeOptions.join(' ')}`
+                            : ''
+                        }`,
                         `import ${JSON.stringify(relativeFromBinary)};`,
                       ].join('\n'),
                     );

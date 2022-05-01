@@ -1,7 +1,7 @@
 import {promisify} from 'util';
 import {join, dirname} from 'path';
 import {fileURLToPath} from 'url';
-import {exec as childExec, execSync} from 'child_process';
+import {exec as childExec, execSync, spawn as childSpawn} from 'child_process';
 import {Readable, Writable} from 'stream';
 
 import arg from 'arg';
@@ -834,6 +834,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
 export function createStepRunner({ui}: {ui: Ui}): BaseStepRunner {
   return {
     exec,
+    spawn,
     log(...args) {
       ui.log(...args);
     },
@@ -863,7 +864,30 @@ export class StepExecError extends DiagnosticError {
   }
 }
 
+const promiseSpawn = promisify(childSpawn);
 const promiseExec = promisify(childExec);
+
+const spawn: BaseStepRunner['spawn'] = (
+  command,
+  args,
+  {fromNodeModules, ...options} = {},
+) => {
+  const normalizedCommand = fromNodeModules
+    ? join(
+        binDirectoryForModule(
+          fromNodeModules === true
+            ? process.cwd()
+            : dirname(fileURLToPath(fromNodeModules)),
+        ),
+        command,
+      )
+    : command;
+
+  return promiseSpawn(normalizedCommand, args ?? [], {
+    stdio: 'inherit',
+    ...options,
+  });
+};
 
 const exec: BaseStepRunner['exec'] = (
   command,

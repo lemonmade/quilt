@@ -103,9 +103,8 @@ export function jest() {
         step({
           name: 'SewingKit.Jest',
           label: 'Run Jest',
-          async run() {
+          async run(runner) {
             const [
-              {default: jest},
               {defaults},
               {
                 jestConfig,
@@ -121,11 +120,7 @@ export function jest() {
                 jestIgnore,
                 jestWatchIgnore,
               },
-            ] = await Promise.all([
-              import('jest'),
-              import('jest-config'),
-              configuration(),
-            ]);
+            ] = await Promise.all([import('jest-config'), configuration()]);
 
             const truthyEnvValues = new Set(['true', '1']);
             const isCi = [process.env.CI, process.env.GITHUB_ACTIONS].some(
@@ -359,7 +354,10 @@ export function jest() {
               detectOpenHandles: debug,
             });
 
-            await jest.run([...includePatterns, ...toArgs(flags)]);
+            runner.spawn('jest', [...includePatterns, ...toArgs(flags)], {
+              stdio: 'inherit',
+              fromNodeModules: import.meta.url,
+            });
           },
         }),
       );

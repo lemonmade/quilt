@@ -22,14 +22,14 @@ const extensionsRegex = /\.ts$/;
 //    - @live/simple-cli-helper/lib/swc.js
 //    - ./index
 //
-export function resolve(specifier, context, defaultResolve) {
+export async function resolve(specifier, context, defaultResolve) {
   const {parentURL = baseURL} = context;
 
   // Node.js `defaultResolve` normally errors on unknown file extensions so we resolve it ourselves.
 
   if (extensionsRegex.test(specifier)) {
     const newUrl = new URL(specifier, parentURL);
-    return {url: newUrl.href};
+    return {url: newUrl.href, format: 'module'};
   }
 
   if (
@@ -43,7 +43,14 @@ export function resolve(specifier, context, defaultResolve) {
       newUrl = new URL(`${specifier}/index.ts`, parentURL);
     }
 
-    return {url: newUrl.href};
+    return {url: newUrl.href, format: 'module'};
+  }
+
+  if (specifier.startsWith('@quilted')) {
+    return {
+      ...(await defaultResolve(specifier, context, defaultResolve)),
+      format: 'module',
+    };
   }
 
   // Let Node.js handle all other specifiers.
@@ -54,35 +61,17 @@ function hasExtension(specifier) {
   return path.extname(specifier) !== '';
 }
 
-export function getFormat(url, context, defaultGetFormat) {
-  // Now that we patched resolve to let TS URLs through, we need to
-  // tell Node.js what format such URLs should be interpreted as. For the
-  // purposes of this loader, all TS URLs are ES modules.
-  if (extensionsRegex.test(url)) {
-    return {
-      format: 'module',
-    };
-  }
-
-  // Let Node.js handle all other URLs.
-  return defaultGetFormat(url, context, defaultGetFormat);
-}
-
-export function transformSource(source, context, defaultTransformSource) {
-  const {url} = context;
-
+export async function load(url, context, defaultLoad) {
   const opts = {};
 
   if (extensionsRegex.test(url)) {
-    if (typeof source !== 'string') {
-      source = source.toString();
-    }
-    const code = compile(url, source, opts);
-    return {source: code};
+    const {source} = await defaultLoad(url, context, defaultLoad);
+    const compiled = compile(url, source.toString(), opts);
+    return {source: compiled, format: 'module'};
   }
 
   // Let Node.js handle all other sources.
-  return defaultTransformSource(source, context, defaultTransformSource);
+  return defaultLoad(url, context, defaultLoad);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
