@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.27
+
+### Patch Changes
+
+- [#284](https://github.com/lemonmade/quilt/pull/284) [`a113062b`](https://github.com/lemonmade/quilt/commit/a113062b7807b3738a652ac8905fa834c0c4c7b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for custom development servers
+
 ## 0.2.26
 
 ### Patch Changes

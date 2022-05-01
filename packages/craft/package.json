@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.104",
+  "version": "0.1.105",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -174,7 +174,7 @@
     "@quilted/prettier": "0.2.8",
     "@quilted/react-testing": "0.5.11",
     "@quilted/rollup-plugin-fix-commonjs-preserve-modules": "0.1.8",
-    "@quilted/sewing-kit": "0.2.26",
+    "@quilted/sewing-kit": "0.2.27",
     "@quilted/typescript": "0.2.11",
     "@quilted/workers": "0.2.21",
     "@rollup/plugin-alias": "^3.1.0",
