@@ -1,5 +1,17 @@
 # @quilted/craft
 
+## 0.1.106
+
+### Patch Changes
+
+- [#287](https://github.com/lemonmade/quilt/pull/287) [`ba876cbe`](https://github.com/lemonmade/quilt/commit/ba876cbe4ddc313966dce0550349319a50490ba6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add better development server hooks
+
+* [`7960a7bf`](https://github.com/lemonmade/quilt/commit/7960a7bf1723cb555fbf7500a4b4bf96a02377fa) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix package binary generation
+
+* Updated dependencies [[`ba876cbe`](https://github.com/lemonmade/quilt/commit/ba876cbe4ddc313966dce0550349319a50490ba6), [`4c8ca274`](https://github.com/lemonmade/quilt/commit/4c8ca274fe5b42b12c06f516f55a93733dfce415)]:
+  - @quilted/quilt@0.5.92
+  - @quilted/graphql@0.4.33
+
 ## 0.1.105
 
 ### Patch Changes

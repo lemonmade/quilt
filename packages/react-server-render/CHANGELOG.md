@@ -1,5 +1,11 @@
 # @quilted/react-server-render
 
+## 0.3.17
+
+### Patch Changes
+
+- [#287](https://github.com/lemonmade/quilt/pull/287) [`ba876cbe`](https://github.com/lemonmade/quilt/commit/ba876cbe4ddc313966dce0550349319a50490ba6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add request context
+
 ## 0.3.16
 
 ### Patch Changes
