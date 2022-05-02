@@ -73,7 +73,7 @@ export function cloudflareWorkers({
         }),
       );
     },
-    develop({configure}) {
+    develop({project, configure}) {
       const addBaseConfiguration = addConfiguration({
         cache,
         format,
@@ -100,8 +100,10 @@ export function cloudflareWorkers({
                 watch: true,
                 modules: true,
                 scriptPath: entry,
-                packagePath: true,
-                wranglerConfigPath: true,
+                packagePath: project.fs.resolvePath('package.json'),
+                wranglerConfigPath: (await project.fs.hasFile('wrangler.toml'))
+                  ? project.fs.resolvePath('wrangler.toml')
+                  : true,
                 // TODO: would be nice to have a clean flow for running this
                 // without the cached geolocation data.
                 cfFetch: true,
