@@ -47,7 +47,10 @@ export interface Options {
 }
 
 export interface AppDevelopmentServerHandler {
-  run(options: RequestOptions): Promise<Response | undefined>;
+  run(
+    options: RequestOptions,
+    nodeRequest: IncomingMessage,
+  ): Promise<Response | undefined>;
 }
 
 export interface AppDevelopmentServer {
@@ -551,7 +554,8 @@ async function createAppServer(
         transformRequest(request),
       ]);
 
-      const response = (await handler.run(transformedRequest)) ?? notFound();
+      const response =
+        (await handler.run(transformedRequest, request)) ?? notFound();
 
       const contentType = response.headers.get('Content-Type');
 

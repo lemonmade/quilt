@@ -95,17 +95,22 @@ export function cloudflareWorkers({
           let miniflare: InstanceType<typeof Miniflare>;
 
           return {
-            rebuild(entry) {
+            async rebuild(entry) {
               miniflare ??= new Miniflare({
                 watch: true,
                 modules: true,
                 scriptPath: entry,
                 packagePath: true,
                 wranglerConfigPath: true,
+                // TODO: would be nice to have a clean flow for running this
+                // without the cached geolocation data.
+                cfFetch: true,
               });
 
-              return Promise.resolve({
-                async run({url, body, headers, method}) {
+              const {HTTPPlugin} = await miniflare.getPlugins();
+
+              return {
+                async run({url, body, headers, method}, nodeRequest) {
                   const workerResponse = await miniflare!.dispatchFetch(
                     url.toString(),
                     {
@@ -115,6 +120,7 @@ export function cloudflareWorkers({
                           : body,
                       method,
                       headers,
+                      cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
                     },
                   );
 
@@ -123,7 +129,7 @@ export function cloudflareWorkers({
                     headers: [...workerResponse.headers],
                   });
                 },
-              });
+              };
             },
           };
         });
