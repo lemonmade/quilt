@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.33
+
+### Patch Changes
+
+- [`4c8ca274`](https://github.com/lemonmade/quilt/commit/4c8ca274fe5b42b12c06f516f55a93733dfce415) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix passing `undefined` as the credential to `fetch()`
+
 ## 0.4.32
 
 ### Patch Changes
