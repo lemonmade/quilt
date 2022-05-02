@@ -247,7 +247,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
                     await project.fs.write(
                       binaryFile,
                       [
-                        `#!/usr/bin/env -S node${
+                        `#!/usr/bin/env node${
                           nodeOptions.length > 0
                             ? ` ${nodeOptions.join(' ')}`
                             : ''
