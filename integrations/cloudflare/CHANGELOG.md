@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.1.32
+
+### Patch Changes
+
+- [`5a2ed581`](https://github.com/lemonmade/quilt/commit/5a2ed5816e775ae3a6a309aed406f29b04512cc7) Thanks [@lemonmade](https://github.com/lemonmade)! - Use project’s wrangler configuration in a monorepo
+
 ## 0.1.31
 
 ### Patch Changes
