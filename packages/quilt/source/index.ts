@@ -41,12 +41,17 @@ export type {
   GraphQLMutationOptions,
 } from '@quilted/react-graphql';
 export {useIdleCallback} from '@quilted/react-idle';
-export {ServerAction, useServerAction} from '@quilted/react-server-render';
+export {
+  ServerAction,
+  useServerAction,
+  useServerContext,
+} from '@quilted/react-server-render';
 export type {
   ServerActionKind,
   ServerActionOptions,
   ServerActionPerform,
   ServerRenderPass,
+  ServerRenderRequestContext,
 } from '@quilted/react-server-render';
 export {
   Localization,

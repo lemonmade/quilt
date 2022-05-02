@@ -2,21 +2,30 @@ import type {ComponentType, ReactElement} from 'react';
 
 import type {AssetManifest} from '@quilted/async/server';
 import {render as renderToString, Html} from '@quilted/react-html/server';
-import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
+import type {
+  Options as ExtractOptions,
+  ServerRenderRequestContext,
+} from '@quilted/react-server-render/server';
 
 import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
 import type {
   Request,
   HttpHandler,
   RequestHandler,
+  RequestContext,
 } from '@quilted/http-handlers';
 
 import {renderApp} from './render';
 
-export interface Options<Props = Record<string, never>> extends ExtractOptions {
+export interface Options<Props = Record<string, never>>
+  extends Omit<ExtractOptions, 'context'> {
   assets?: AssetManifest<unknown>;
   handler?: HttpHandler;
-  renderProps?(options: {request: Request}): Props;
+  context?(
+    request: Request,
+    context: RequestContext,
+  ): ServerRenderRequestContext;
+  renderProps?(request: Request, context: RequestContext): Props;
 }
 
 export function createServerRenderingHttpHandler<Props>(
@@ -29,13 +38,16 @@ export function createServerRenderingHttpHandler<Props>(
 
 export function createServerRenderingRequestHandler<Props>(
   App: ComponentType<Props>,
-  {renderProps, ...options}: Omit<Options<Props>, 'handler'> = {},
+  {renderProps, context, ...options}: Omit<Options<Props>, 'handler'> = {},
 ): RequestHandler {
-  return (request) => {
+  return (request, requestContext) => {
     return renderToResponse(
-      <App {...(renderProps?.({request}) as any)} />,
+      <App {...(renderProps?.(request, requestContext) as any)} />,
       request,
-      options,
+      {
+        ...options,
+        context: context?.(request, requestContext) ?? (requestContext as any),
+      },
     );
   };
 }

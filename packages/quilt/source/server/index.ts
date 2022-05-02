@@ -10,7 +10,7 @@ export {
   ServerAction,
   useServerAction,
   ServerRenderManager,
-  ServerRenderContext,
+  ServerRenderManagerContext,
   extract,
 } from '@quilted/react-server-render/server';
 export {createAssetManifest} from '@quilted/async/server';

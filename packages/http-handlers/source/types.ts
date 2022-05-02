@@ -23,6 +23,8 @@ export interface Request {
   readonly cookies: ReadonlyCookies;
 }
 
+export interface RequestContext {}
+
 export interface CookieDefinition {
   path?: string;
   domain?: string;
@@ -52,7 +54,9 @@ export interface ResponseOptions {
 export type ValueOrPromise<T> = T | Promise<T>;
 
 export interface RequestHandler {
-  (request: Request): ValueOrPromise<Response | undefined | null>;
+  (request: Request, context: RequestContext): ValueOrPromise<
+    Response | undefined | null
+  >;
 }
 
 export type RequestRegistration = RequestHandler | HttpHandler;
@@ -92,5 +96,8 @@ export interface HttpHandler {
     handler: RequestRegistration,
     options?: RequestRegistrationOptions,
   ): this;
-  run(request: RequestOptions): Promise<Response | undefined>;
+  run(
+    request: RequestOptions,
+    context?: RequestContext,
+  ): Promise<Response | undefined>;
 }

@@ -1,11 +1,27 @@
+import type {} from '@quilted/quilt';
 import {notFound} from '@quilted/quilt/http-handlers';
 import type {HttpHandler} from '@quilted/quilt/http-handlers';
 
 import {getAssetFromKV} from './forked/kv-asset-handler';
-import type {
-  WorkerRequestContext,
-  KVNamespaceBinding,
-} from './forked/kv-asset-handler';
+import type {KVNamespaceBinding} from './forked/kv-asset-handler';
+
+import type {} from './types';
+
+export interface AssetOptions {
+  /**
+   * The path on your domain where your static assets should be served from.
+   * The resulting `fetch` function will only attempt to serve static assets
+   * under this path.
+   */
+  path: string;
+
+  /**
+   * The [KV Namespace](https://developers.cloudflare.com/workers/runtime-apis/kv)
+   * that holds your assets. If not specified, this function will use `__STATIC_CONTENT`,
+   * which is the default namespace Cloudflare uses for Cloudflare Site assets.
+   */
+  namespace?: string;
+}
 
 export interface RequestHandlerOptions {
   /**
@@ -18,6 +34,14 @@ export interface RequestHandlerOptions {
    * responses.
    */
   cache?: boolean;
+
+  /**
+   * Whether the resulting fetch handler should also fetch static assets
+   * associated with this worker. By default, assets are not served. If you
+   * want assets to be served, you must pass an option that lists at least
+   * the path that assets are served from.
+   */
+  assets?: false | AssetOptions;
 }
 
 /**
@@ -27,33 +51,41 @@ export interface RequestHandlerOptions {
  * format, you can use the `transformFetchEvent()` function from this library
  * to adapt the `FetchEvent` type you get in your fetch event listener.
  */
-export function createRequestHandler(
+export function createFetchHandler<Env = unknown>(
   handler: HttpHandler,
-  {cache: shouldCache = true}: RequestHandlerOptions = {},
-) {
+  {cache: shouldCache = true, assets = false}: RequestHandlerOptions = {},
+): ExportedHandlerFetchHandler<Env> {
   const cache = shouldCache
     ? (caches as any as {default: Cache}).default
     : undefined;
 
   return async (
-    request: Request,
-    _env: Record<string, KVNamespaceBinding>,
-    context: WorkerRequestContext,
+    request: Request & {cf?: IncomingRequestCfProperties},
+    env,
+    context,
   ) => {
     if (cache) {
       const response = await cache.match(request);
       if (response) return response;
     }
 
+    if (assets) {
+      const response = await respondWithAsset(request, env, context, assets);
+      if (response) return response;
+    }
+
     const requestBody = await request.text();
 
     const {body, status, headers} =
-      (await handler.run({
-        headers: request.headers,
-        method: request.method,
-        body: requestBody,
-        url: new URL(request.url),
-      })) ?? notFound();
+      (await handler.run(
+        {
+          headers: request.headers,
+          method: request.method,
+          body: requestBody,
+          url: new URL(request.url),
+        },
+        {cf: request.cf, env, ...context},
+      )) ?? notFound();
 
     const response = new Response(body, {
       status,
@@ -66,21 +98,6 @@ export function createRequestHandler(
 
     return response;
   };
-}
-
-export interface AssetOptions {
-  /**
-   * The path on your domain where your static assets should be served from.
-   * If the request does not start with this path, `respondWithAsset()` will
-   * not attempt to handle the request.
-   */
-  assetsPath: string;
-  /**
-   * The [KV Namespace](https://developers.cloudflare.com/workers/runtime-apis/kv)
-   * that holds your assets. If not specified, this function will use `__STATIC_CONTENT`,
-   * which is the default namespace Cloudflare uses for Cloudflare Site assets.
-   */
-  assetNamespace?: string;
 }
 
 const MAX_MAX_AGE = 365 * 24 * 60 * 60;
@@ -99,36 +116,26 @@ const MAX_MAX_AGE = 365 * 24 * 60 * 60;
 export async function respondWithAsset(
   request: Request,
   env: Record<string, KVNamespaceBinding>,
-  context: WorkerRequestContext,
-  {assetsPath, assetNamespace = '__STATIC_CONTENT'}: AssetOptions,
+  context: ExecutionContext,
+  {path, namespace = '__STATIC_CONTENT'}: AssetOptions,
 ) {
-  if (!new URL(request.url).pathname.startsWith(assetsPath)) return undefined;
+  if (!new URL(request.url).pathname.startsWith(path)) return undefined;
 
   const assetResponse = await getAssetFromKV(request, context, {
-    ASSET_NAMESPACE: env[assetNamespace],
+    ASSET_NAMESPACE: env[namespace],
     cacheControl: {
       edgeTTL: MAX_MAX_AGE,
       browserTTL: MAX_MAX_AGE,
     },
     mapRequestToAsset(request) {
       const url = new URL(request.url);
-      const rewrittenUrl = new URL(
-        url.pathname.slice(assetsPath.length),
-        url.origin,
-      );
+      const rewrittenUrl = new URL(url.pathname.slice(path.length), url.origin);
 
       return new Request(rewrittenUrl.href, request);
     },
   });
 
   return assetResponse;
-}
-
-export interface FetchEvent {
-  request: Request;
-  waitUntil(promise: Promise<any>): void;
-  respondWith(response: Response | Promise<Response>): void;
-  passThroughOnException(): void;
 }
 
 /**
@@ -150,7 +157,7 @@ export interface FetchEvent {
  */
 export function transformFetchEvent(
   event: FetchEvent,
-): Parameters<ReturnType<typeof createRequestHandler>> {
+): Parameters<ReturnType<typeof createFetchHandler>> {
   return [
     event.request,
     // In the new module format, the second argument has references to
@@ -168,6 +175,9 @@ export function transformFetchEvent(
     {
       waitUntil(promise) {
         return event.waitUntil(promise);
+      },
+      passThroughOnException() {
+        return event.passThroughOnException();
       },
     },
   ];

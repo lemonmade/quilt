@@ -1,29 +1,32 @@
 import type {ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
-import {ServerRenderContext} from './context';
+import {ServerRenderManagerContext} from './context';
 import {ServerRenderManager} from './manager';
 import type {
   ServerRenderPass,
   ServerActionKind,
   ServerActionOptions,
   ServerActionPerform,
+  ServerRenderRequestContext,
 } from './types';
 
-export {ServerRenderManager, ServerRenderContext};
+export {ServerRenderManager, ServerRenderManagerContext};
 export type {
   ServerRenderPass,
   ServerActionKind,
   ServerActionOptions,
   ServerActionPerform,
+  ServerRenderRequestContext,
 };
 
-export {useServerAction} from './hook';
+export {useServerAction} from './hooks';
 export {ServerAction} from './ServerAction';
 
 export interface Options {
   includeKinds?: symbol[] | boolean;
   maxPasses?: number;
+  context?: ServerRenderRequestContext;
   decorate?(element: ReactElement<any>): ReactElement<any>;
   renderFunction?(element: ReactElement<Record<string, never>>): string;
   betweenEachPass?(pass: ServerRenderPass): any;
@@ -35,6 +38,7 @@ const DEFAULT_MAX_PASSES = 5;
 export function extract(
   app: ReactElement<any>,
   {
+    context,
     includeKinds,
     maxPasses = DEFAULT_MAX_PASSES,
     decorate = identity,
@@ -43,11 +47,11 @@ export function extract(
     afterEachPass,
   }: Options = {},
 ) {
-  const manager = new ServerRenderManager({includeKinds});
+  const manager = new ServerRenderManager({context, includeKinds});
   const element = (
-    <ServerRenderContext.Provider value={manager}>
+    <ServerRenderManagerContext.Provider value={manager}>
       {decorate(app)}
-    </ServerRenderContext.Provider>
+    </ServerRenderManagerContext.Provider>
   );
 
   return (async function perform(index = 0): Promise<string> {

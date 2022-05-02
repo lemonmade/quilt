@@ -17,3 +17,5 @@ export interface ServerActionKind {
 export interface ServerActionOptions {
   readonly deferred?: boolean;
 }
+
+export interface ServerRenderRequestContext {}
