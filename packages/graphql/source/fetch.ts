@@ -44,16 +44,21 @@ export function createGraphQLHttpFetch({
       ...explicitHeaders,
     });
 
-    const response = await fetch(uri, {
+    const request: RequestInit = {
       method: 'POST',
-      credentials,
       headers,
       body: JSON.stringify({
         query: operation.operation.source,
         variables: operation.variables,
         operationName: operation.operation.name,
       }),
-    });
+    };
+
+    if (credentials != null) {
+      request.credentials = credentials;
+    }
+
+    const response = await fetch(uri, request);
 
     context.set('response', response);
 
