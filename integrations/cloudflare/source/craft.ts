@@ -106,14 +106,17 @@ export function cloudflareWorkers({
 
               return Promise.resolve({
                 async run({url, body, headers, method}) {
-                  const workerResponse = await miniflare!.dispatchFetch(url, {
-                    body:
-                      method === 'GET' || method === 'OPTIONS'
-                        ? undefined
-                        : body,
-                    method,
-                    headers,
-                  });
+                  const workerResponse = await miniflare!.dispatchFetch(
+                    url.toString(),
+                    {
+                      body:
+                        method === 'GET' || method === 'OPTIONS'
+                          ? undefined
+                          : body,
+                      method,
+                      headers,
+                    },
+                  );
 
                   return response(await workerResponse.text(), {
                     status: workerResponse.status,

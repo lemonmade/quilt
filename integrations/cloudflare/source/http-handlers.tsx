@@ -79,7 +79,7 @@ export function createFetchHandler<Env = unknown>(
     const {body, status, headers} =
       (await handler.run(
         {
-          headers: request.headers,
+          headers: request.headers as any,
           method: request.method,
           body: requestBody,
           url: new URL(request.url),
