@@ -95,32 +95,41 @@ export function cloudflareWorkers({
           let miniflare: InstanceType<typeof Miniflare>;
 
           return {
-            rebuild(entry) {
+            async rebuild(entry) {
               miniflare ??= new Miniflare({
                 watch: true,
                 modules: true,
                 scriptPath: entry,
                 packagePath: true,
                 wranglerConfigPath: true,
+                // TODO: would be nice to have a clean flow for running this
+                // without the cached geolocation data.
+                cfFetch: true,
               });
 
-              return Promise.resolve({
-                async run({url, body, headers, method}) {
-                  const workerResponse = await miniflare!.dispatchFetch(url, {
-                    body:
-                      method === 'GET' || method === 'OPTIONS'
-                        ? undefined
-                        : body,
-                    method,
-                    headers,
-                  });
+              const {HTTPPlugin} = await miniflare.getPlugins();
+
+              return {
+                async run({url, body, headers, method}, nodeRequest) {
+                  const workerResponse = await miniflare!.dispatchFetch(
+                    url.toString(),
+                    {
+                      body:
+                        method === 'GET' || method === 'OPTIONS'
+                          ? undefined
+                          : body,
+                      method,
+                      headers,
+                      cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
+                    },
+                  );
 
                   return response(await workerResponse.text(), {
                     status: workerResponse.status,
                     headers: [...workerResponse.headers],
                   });
                 },
-              });
+              };
             },
           };
         });
@@ -201,114 +210,54 @@ function addConfiguration({
       return outputs;
     });
 
-    if (serveAssets) {
-      if (format === 'modules') {
-        quiltHttpHandlerRuntimeContent?.(
-          async () => stripIndent`
-            import HttpHandler from ${JSON.stringify(
-              MAGIC_MODULE_HTTP_HANDLER,
-            )};
+    if (format === 'modules') {
+      quiltHttpHandlerRuntimeContent?.(
+        async () => stripIndent`
+          import HttpHandler from ${JSON.stringify(MAGIC_MODULE_HTTP_HANDLER)};
 
-            import {createRequestHandler, respondWithAsset} from '@quilted/cloudflare/http-handlers';
+          import {createFetchHandler} from '@quilted/cloudflare/http-handlers';
 
-            const handler = createRequestHandler(HttpHandler, {
-              cache: ${String(cache)},
-            });
-
-            export default {
-              async fetch(...args) {
-                const assetResponse = await respondWithAsset(...args, {
-                  assetsPath: ${JSON.stringify(await quiltAssetBaseUrl!.run())}
-                });
-
-                if (assetResponse) {
-                  return assetResponse;
-                }
-
-                const response = await handler(...args);
-                return response;
-              }
+          const handler = createFetchHandler(HttpHandler, {
+            cache: ${String(cache)},
+            assets: ${
+              serveAssets
+                ? JSON.stringify({
+                    path: await quiltAssetBaseUrl!.run(),
+                  })
+                : 'false'
             }
-          `,
-        );
-      } else {
-        quiltHttpHandlerRuntimeContent?.(
-          async () => stripIndent`
-            import HttpHandler from ${JSON.stringify(
-              MAGIC_MODULE_HTTP_HANDLER,
-            )};
+          });
 
-            import {createRequestHandler, respondWithAsset, transformFetchEvent} from '@quilted/cloudflare/http-handlers';
-
-            const handler = createRequestHandler(HttpHandler, {
-              cache: ${String(cache)},
-            });
-
-            addEventListener('fetch', (event) => {
-              const argumentsFromEvent = transformFetchEvent(event);
-
-              event.respondWith(
-                (async () => {
-                  const assetResponse = await respondWithAsset(...argumentsFromEvent, {
-                    assetsPath: ${JSON.stringify(
-                      await quiltAssetBaseUrl!.run(),
-                    )}
-                  });
-
-                  if (assetResponse) {
-                    return assetResponse;
-                  }
-
-                  const response = await handler(...argumentsFromEvent);
-
-                  return response;
-                })(),
-              );
-            });
-          `,
-        );
-      }
+          export default {
+            fetch: handler,
+          }
+        `,
+      );
     } else {
-      if (format === 'modules') {
-        quiltHttpHandlerRuntimeContent?.(
-          () => stripIndent`
-            import HttpHandler from ${JSON.stringify(
-              MAGIC_MODULE_HTTP_HANDLER,
-            )};
+      quiltHttpHandlerRuntimeContent?.(
+        async () => stripIndent`
+          import HttpHandler from ${JSON.stringify(MAGIC_MODULE_HTTP_HANDLER)};
 
-            import {createRequestHandler} from '@quilted/cloudflare/http-handlers';
+          import {createFetchHandler, transformFetchEvent} from '@quilted/cloudflare/http-handlers';
 
-            const handler = createRequestHandler(HttpHandler, {
-              cache: ${String(cache)},
-            });
-
-            export default {
-              async fetch(...args) {
-                const response = await handler(...args);
-                return response;
-              }
+          const handler = createRequestHandler(HttpHandler, {
+            cache: ${String(cache)},
+            assets: ${
+              serveAssets
+                ? JSON.stringify({
+                    path: await quiltAssetBaseUrl!.run(),
+                  })
+                : 'false'
             }
-          `,
-        );
-      } else {
-        quiltHttpHandlerRuntimeContent?.(
-          () => stripIndent`
-            import HttpHandler from ${JSON.stringify(
-              MAGIC_MODULE_HTTP_HANDLER,
-            )};
+          });
 
-            import {createRequestHandler} from '@quilted/cloudflare/http-handlers';
-
-            const handler = createRequestHandler(HttpHandler, {
-              cache: ${String(cache)},
-            });
-
-            addEventListener('fetch', (event) => {
-              event.respondWith(handler(...transformFetchEvent(event)));
-            });
-          `,
-        );
-      }
+          addEventListener('fetch', (event) => {
+            event.respondWith(
+              handler(...transformFetchEvent(event)),
+            );
+          });
+        `,
+      );
     }
   };
 }

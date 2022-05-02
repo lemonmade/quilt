@@ -72,11 +72,15 @@ importers:
 
   integrations/cloudflare:
     specifiers:
+      '@cloudflare/kv-asset-handler': ^0.2.0
+      '@cloudflare/workers-types': ^3.7.1
       '@types/mime': ^2.0.0
       common-tags: ^1.8.0
       mime: ^2.5.0
       miniflare: ^2.4.0
     dependencies:
+      '@cloudflare/kv-asset-handler': 0.2.0
+      '@cloudflare/workers-types': 3.7.1
       common-tags: 1.8.0
       mime: 2.5.2
       miniflare: 2.4.0
@@ -599,8 +603,10 @@ importers:
 
   packages/react-server-render:
     specifiers:
+      '@quilted/react-utilities': ^0.1.0
       '@types/react': ^17.0.0
     dependencies:
+      '@quilted/react-utilities': link:../react-utilities
       '@types/react': 17.0.13
 
   packages/react-testing:
@@ -2602,6 +2608,16 @@ packages:
       human-id: 1.0.2
       prettier: 1.19.1
     dev: true
+
+  /@cloudflare/kv-asset-handler/0.2.0:
+    resolution: {integrity: sha512-MVbXLbTcAotOPUj0pAMhVtJ+3/kFkwJqc5qNOleOZTv6QkZZABDMS21dSrSlVswEHwrpWC03e4fWytjqKvuE2A==}
+    dependencies:
+      mime: 3.0.0
+    dev: false
+
+  /@cloudflare/workers-types/3.7.1:
+    resolution: {integrity: sha512-GJU304vzbKI9SvEsdBp/ObYClWe+7Fc0vyKPNia1VWi9Cj2WVsRaH2tXaQPMgAhjsFrQLhI3lBAkMhFPhBVliQ==}
+    dev: false
 
   /@csstools/postcss-color-function/1.1.0_postcss@8.3.5:
     resolution: {integrity: sha512-5D5ND/mZWcQoSfYnSPsXtuiFxhzmhxt6pcjrFLJyldj+p0ZN2vvRpYNX+lahFTtMhAYOa2WmkdGINr0yP0CvGA==}
@@ -7405,7 +7421,6 @@ packages:
     resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
     engines: {node: '>=10.0.0'}
     hasBin: true
-    dev: true
 
   /mimic-fn/2.1.0:
     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}

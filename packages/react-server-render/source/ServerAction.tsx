@@ -1,4 +1,4 @@
-import {useServerAction} from './hook';
+import {useServerAction} from './hooks';
 import {ServerActionKind, ServerActionPerform} from './types';
 
 interface Props {

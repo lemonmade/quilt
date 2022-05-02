@@ -52,6 +52,7 @@
     }
   },
   "dependencies": {
+    "@quilted/react-utilities": "^0.1.0",
     "@types/react": "^17.0.0"
   },
   "eslintConfig": {

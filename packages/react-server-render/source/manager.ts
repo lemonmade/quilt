@@ -3,19 +3,23 @@ import type {
   ServerRenderPass,
   ServerActionPerform,
   ServerActionOptions,
+  ServerRenderRequestContext,
 } from './types';
 
 interface Options {
+  context?: ServerRenderRequestContext;
   includeKinds?: symbol[] | boolean;
 }
 
 export class ServerRenderManager {
+  readonly context: ServerRenderRequestContext;
   private pendingActions: Promise<any>[] = [];
   private deferredActions: ServerActionPerform[] = [];
   private actionKinds = new Set<ServerActionKind>();
   private readonly includeKinds: NonNullable<Options['includeKinds']>;
 
-  constructor({includeKinds = true}: Options = {}) {
+  constructor({includeKinds = true, context}: Options = {}) {
+    this.context = context ?? ({} as any);
     this.includeKinds = includeKinds;
   }
 

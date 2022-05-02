@@ -20,6 +20,7 @@ export type {
   Request,
   RequestHandler,
   RequestOptions,
+  RequestContext,
   Response,
   ResponseOptions,
   EnhancedWritableCookies,

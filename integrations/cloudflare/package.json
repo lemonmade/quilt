@@ -45,6 +45,8 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@cloudflare/workers-types": "^3.7.1",
+    "@cloudflare/kv-asset-handler": "^0.2.0",
     "common-tags": "^1.8.0",
     "mime": "^2.5.0",
     "miniflare": "^2.4.0"

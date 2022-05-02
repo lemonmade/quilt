@@ -6,6 +6,7 @@ import type {Match, Prefix} from '@quilted/routing';
 import type {
   HttpHandler,
   Request,
+  RequestContext,
   RequestOptions,
   RequestRegistration,
   RequestRegistrationOptions,
@@ -51,8 +52,8 @@ export function createHttpHandler({
       registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
       return httpHandler;
     },
-    async run(requestOptions) {
-      return runInternal(createRequest(requestOptions));
+    async run(requestOptions, requestContext = {}) {
+      return runInternal(createRequest(requestOptions), requestContext);
     },
   };
 
@@ -63,7 +64,11 @@ export function createHttpHandler({
 
   return httpHandler;
 
-  async function runInternal(request: Request, previouslyConsumed?: string) {
+  async function runInternal(
+    request: Request,
+    context: RequestContext,
+    previouslyConsumed?: string,
+  ) {
     const matchedPrefix =
       prefix == null
         ? undefined
@@ -97,9 +102,10 @@ export function createHttpHandler({
 
       const result =
         typeof handler === 'function'
-          ? await handler(request)
+          ? await handler(request, context)
           : await Reflect.get(handler, HTTP_HANDLER_RUN_INTERNAL)(
               request,
+              context,
               matchDetails.consumed,
             );
 

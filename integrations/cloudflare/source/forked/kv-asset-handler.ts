@@ -9,10 +9,6 @@ import mime from 'mime';
 
 export type KVNamespaceBinding = any;
 
-export interface WorkerRequestContext {
-  waitUntil(promise: Promise<any>): void;
-}
-
 interface CacheControl {
   browserTTL?: number | null;
   edgeTTL?: number | null;
@@ -68,7 +64,7 @@ export {defaultMapRequestToAsset as mapRequestToAsset};
 
 export async function getAssetFromKV(
   request: Request,
-  ctx: WorkerRequestContext,
+  ctx: ExecutionContext,
   {
     ASSET_NAMESPACE,
     cacheControl: explicitCacheControl = defaultCacheControl,
