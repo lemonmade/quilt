@@ -46,8 +46,9 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
             configuration,
           );
 
-          plugins.unshift(...nodePlugins);
-          plugins.push(
+          return [
+            ...nodePlugins.filter((plugin) => plugin.name !== 'node-externals'),
+            ...plugins,
             esbuild({target: 'es2017'}),
             esbuild({
               include: /\.esnext$/,
@@ -57,9 +58,7 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
                 '.esnext': 'js',
               },
             }),
-          );
-
-          return plugins;
+          ];
         });
       });
     },
