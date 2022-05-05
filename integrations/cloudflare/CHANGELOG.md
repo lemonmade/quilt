@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.1.33
+
+### Patch Changes
+
+- [`e8e1ec5f`](https://github.com/lemonmade/quilt/commit/e8e1ec5f7863d17721a73c02404e38cf641ea2b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Make miniflare options configurable in craft
+
+- Updated dependencies [[`d1178849`](https://github.com/lemonmade/quilt/commit/d11788499cdd19208d763df3fd78795b1ef1bd81)]:
+  - @quilted/craft@0.1.107
+
 ## 0.1.32
 
 ### Patch Changes
