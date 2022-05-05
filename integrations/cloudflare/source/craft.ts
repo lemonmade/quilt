@@ -2,7 +2,11 @@ import {extname} from 'path';
 import {stripIndent} from 'common-tags';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
-import {createProjectPlugin, ProjectKind} from '@quilted/craft/kit';
+import {
+  createProjectPlugin,
+  ProjectKind,
+  WaterfallHook,
+} from '@quilted/craft/kit';
 import type {
   App,
   Service,
@@ -14,6 +18,7 @@ import type {
   BuildServiceConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
 } from '@quilted/craft/kit';
+import type {MiniflareOptions} from 'miniflare';
 
 export type WorkerFormat = 'modules' | 'service-worker';
 
@@ -51,6 +56,25 @@ export interface Options {
    * @see https://developers.cloudflare.com/workers/cli-wrangler/configuration#build
    */
   format?: WorkerFormat;
+
+  /**
+   * Configures how miniflare is used during development. By default, miniflare
+   * is used to run your compiled workers with smart default configuration options.
+   * You can pass `miniflare: false` to disable miniflare entirely, or pass any
+   * subset of miniflare’s options.
+   *
+   * @see https://miniflare.dev/get-started/api#reference
+   */
+  miniflare?: boolean | MiniflareOptions;
+}
+
+export interface CloudflareDevelopHooks {
+  miniflareOptions?: WaterfallHook<MiniflareOptions>;
+}
+
+declare module '@quilted/craft/kit' {
+  interface DevelopAppConfigurationHooks extends CloudflareDevelopHooks {}
+  interface DevelopServiceConfigurationHooks extends CloudflareDevelopHooks {}
 }
 
 /**
@@ -61,6 +85,7 @@ export function cloudflareWorkers({
   format = 'modules',
   cache = true,
   serveAssets,
+  miniflare: useMiniflare = true,
 }: Options = {}) {
   return createProjectPlugin<App | Service>({
     name: 'Quilt.Cloudflare.Workers',
@@ -73,7 +98,11 @@ export function cloudflareWorkers({
         }),
       );
     },
-    develop({project, configure}) {
+    develop({project, configure, hooks}) {
+      hooks<CloudflareDevelopHooks>(({waterfall}) => ({
+        miniflareOptions: waterfall(),
+      }));
+
       const addBaseConfiguration = addConfiguration({
         cache,
         format,
@@ -83,8 +112,10 @@ export function cloudflareWorkers({
       configure((hooks, options) => {
         addBaseConfiguration(hooks, options);
 
-        const {quiltAppDevelopmentServer} =
+        const {quiltAppDevelopmentServer, miniflareOptions} =
           hooks as ResolvedDevelopProjectConfigurationHooks<App>;
+
+        if (!useMiniflare) return;
 
         quiltAppDevelopmentServer?.(async () => {
           const [{Miniflare}, {response}] = await Promise.all([
@@ -96,18 +127,23 @@ export function cloudflareWorkers({
 
           return {
             async rebuild(entry) {
-              miniflare ??= new Miniflare({
-                watch: true,
-                modules: true,
-                scriptPath: entry,
-                packagePath: project.fs.resolvePath('package.json'),
-                wranglerConfigPath: (await project.fs.hasFile('wrangler.toml'))
-                  ? project.fs.resolvePath('wrangler.toml')
-                  : true,
-                // TODO: would be nice to have a clean flow for running this
-                // without the cached geolocation data.
-                cfFetch: true,
-              });
+              miniflare ??= new Miniflare(
+                await miniflareOptions!.run({
+                  watch: true,
+                  modules: true,
+                  scriptPath: entry,
+                  packagePath: project.fs.resolvePath('package.json'),
+                  wranglerConfigPath: (await project.fs.hasFile(
+                    'wrangler.toml',
+                  ))
+                    ? project.fs.resolvePath('wrangler.toml')
+                    : true,
+                  // TODO: would be nice to have a clean flow for running this
+                  // without the cached geolocation data.
+                  cfFetch: true,
+                  ...(typeof useMiniflare === 'boolean' ? {} : useMiniflare),
+                }),
+              );
 
               const {HTTPPlugin} = await miniflare.getPlugins();
 
