@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.108
+
+### Patch Changes
+
+- [`4e682689`](https://github.com/lemonmade/quilt/commit/4e6826899e6b8356b956823df0fe636e8cff20a1) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix old SewingKit references
+
 ## 0.1.107
 
 ### Patch Changes
