@@ -11,14 +11,6 @@ import arg from 'arg';
 import * as color from 'colorette';
 import {packageDirectory} from 'pkg-dir';
 
-const RENAME_FILES = new Map(
-  Object.entries({
-    _nvmrc: '.nvmrc',
-    _gitignore: '.gitignore',
-    _prettierignore: '.prettierignore',
-  }),
-);
-
 class CancellationError extends Error {}
 
 const argv = arg({});
@@ -356,11 +348,17 @@ async function createApp() {
 function createTemplateFileSystem(templateRoot: string, targetRoot: string) {
   return {
     write(file: string, content: string) {
-      const targetPath = path.join(targetRoot, RENAME_FILES.get(file) ?? file);
+      const targetPath = path.join(
+        targetRoot,
+        file.startsWith('_') ? `.${file.slice(1)}` : file,
+      );
       fs.writeFileSync(targetPath, content);
     },
     copy(file: string) {
-      const targetPath = path.join(targetRoot, RENAME_FILES.get(file) ?? file);
+      const targetPath = path.join(
+        targetRoot,
+        file.startsWith('_') ? `.${file.slice(1)}` : file,
+      );
       copy(path.join(templateRoot, file), targetPath);
     },
     read(file: string) {
