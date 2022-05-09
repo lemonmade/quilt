@@ -13,6 +13,7 @@ import {packageDirectory} from 'pkg-dir';
 
 const RENAME_FILES = new Map(
   Object.entries({
+    _nvmrc: '.nvmrc',
     _gitignore: '.gitignore',
     _prettierignore: '.prettierignore',
   }),
