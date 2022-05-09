@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.1.10
+
+### Patch Changes
+
+- [`fa6163ad`](https://github.com/lemonmade/quilt/commit/fa6163ad7c56bad7225423153b03624a481a4438) Thanks [@lemonmade](https://github.com/lemonmade)! - Add basic Github actions to template workspace
+
+* [`766293be`](https://github.com/lemonmade/quilt/commit/766293be188977c7bbed98792c5546f086c3bdb4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add pnpm lockfile to gitignore in create template
+
+- [`88dc70be`](https://github.com/lemonmade/quilt/commit/88dc70be5a31cec98155662939bccc38b38c40e9) Thanks [@lemonmade](https://github.com/lemonmade)! - Add nvmrc to template workspace
+
 ## 0.1.9
 
 ### Patch Changes
