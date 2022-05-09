@@ -30,7 +30,7 @@ const DEFAULT_EXTENSIONS = ['.mjs', '.cjs', '.js'];
  */
 export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
   return createWorkspacePlugin({
-    name: 'SewingKit.ESLint',
+    name: 'Quilt.ESLint',
     lint({hooks, configure, run, options, internal}) {
       hooks<ESLintHooks>(({waterfall}) => ({
         eslintExtensions: waterfall(),
@@ -52,7 +52,7 @@ export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
 
       run((step, {configuration}) =>
         step({
-          name: 'SewingKit.ESLint',
+          name: 'Quilt.ESLint',
           label: 'Running ESLint on your workspace',
           async run(step) {
             const {eslintExtensions} = await configuration();

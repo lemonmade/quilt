@@ -44,12 +44,12 @@ export type {Page};
 type RunResult = PromiseWithChild<{stdout: string; stderr: string}>;
 
 export interface Command {
-  readonly sewingKit: SewingKitCli;
+  readonly quilt: QuiltCli;
   run(command: string, options?: ExecOptions): RunResult;
   node(script: string, options?: ExecOptions): RunResult;
 }
 
-export interface SewingKitCli {
+export interface QuiltCli {
   build(options?: ExecOptions): RunResult;
   typeCheck(options?: ExecOptions): RunResult;
 }
@@ -63,7 +63,7 @@ export interface Workspace {
 const execAsync = promisify(exec);
 const monorepoRoot = path.resolve(__dirname, '../..');
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
-const sewingKitFromSourceScript = path.join(
+const quiltFromSourceScript = path.join(
   monorepoRoot,
   'scripts/quilt-from-source.js',
 );
@@ -138,8 +138,8 @@ export async function withWorkspace<T>(
     return runCommand(`${process.execPath} ${command}`, options);
   };
 
-  const runSewingKitFromSource = (command: string, options?: ExecOptions) => {
-    return runNode(`${sewingKitFromSourceScript} ${command}`, options);
+  const runQuiltFromSource = (command: string, options?: ExecOptions) => {
+    return runNode(`${quiltFromSourceScript} ${command}`, options);
   };
 
   const writeFileInProject = async (file: string, content: string) => {
@@ -203,9 +203,9 @@ export async function withWorkspace<T>(
       },
     },
     command: {
-      sewingKit: {
-        build: (...args) => runSewingKitFromSource('build', ...args),
-        typeCheck: (...args) => runSewingKitFromSource('type-check', ...args),
+      quilt: {
+        build: (...args) => runQuiltFromSource('build', ...args),
+        typeCheck: (...args) => runQuiltFromSource('type-check', ...args),
       },
       run: (...args) => runCommand(...args),
       node: (...args) => runNode(...args),
@@ -245,7 +245,7 @@ export async function buildAppAndRunServer(
   {command, fs}: Workspace,
   {env}: BuildAndRunOptions = {},
 ) {
-  await command.sewingKit.build({env});
+  await command.quilt.build({env});
 
   const port = await getPort();
   const url = new URL(`http://localhost:${port}`);

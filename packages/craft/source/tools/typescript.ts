@@ -24,7 +24,7 @@ const require = createRequire(import.meta.url);
  */
 export function typescriptProject() {
   return createProjectPlugin({
-    name: 'SewingKit.TypeScript',
+    name: 'Quilt.TypeScript',
     build({configure}) {
       configure(({extensions, babelPresets}) => {
         // Let us import from TypeScript files without extensions
@@ -101,7 +101,7 @@ export function typescriptProject() {
  */
 export function typescriptWorkspace() {
   return createWorkspacePlugin({
-    name: 'SewingKit.TypeScript',
+    name: 'Quilt.TypeScript',
     build({workspace, hooks, configure, run}) {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
 
@@ -121,7 +121,7 @@ export function typescriptWorkspace() {
 
       run((step, {configuration}) =>
         step({
-          name: 'SewingKit.TypeScript',
+          name: 'Quilt.TypeScript',
           label:
             'Building type definitions for public packages in the workspace',
           async run(step) {
@@ -215,7 +215,7 @@ export function typescriptWorkspace() {
 
       run((step, {configuration}) =>
         step({
-          name: 'SewingKit.TypeScript',
+          name: 'Quilt.TypeScript',
           label: 'Run TypeScript on your workspace',
           async run(step) {
             const {typescriptHeap} = await configuration();

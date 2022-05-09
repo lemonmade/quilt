@@ -67,7 +67,7 @@ const require = createRequire(import.meta.url);
  */
 export function jest() {
   return createWorkspacePlugin({
-    name: 'SewingKit.Jest',
+    name: 'Quilt.Jest',
     test({workspace, hooks, run, project, internal, options}) {
       hooks<JestWorkspaceHooks>(({waterfall}) => ({
         jestConfig: waterfall(),
@@ -101,7 +101,7 @@ export function jest() {
 
       run((step, {configuration, projectConfiguration}) =>
         step({
-          name: 'SewingKit.Jest',
+          name: 'Quilt.Jest',
           label: 'Run Jest',
           async run(runner) {
             const [

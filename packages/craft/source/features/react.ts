@@ -42,7 +42,7 @@ export function react({
   importSource: defaultImportSource = 'react',
 }: Options = {}) {
   return createProjectPlugin({
-    name: 'SewingKit.React',
+    name: 'Quilt.React',
     build({hooks, configure}) {
       hooks<ReactHooks>(({waterfall}) => ({
         reactRuntime: waterfall(),

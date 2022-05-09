@@ -58,7 +58,7 @@ const COMMONJS_EXTENSION = '.cjs';
  */
 export function packageBuild({commonjs = true}: Options = {}) {
   return createProjectPlugin<Package>({
-    name: 'SewingKit.PackageBuild',
+    name: 'Quilt.PackageBuild',
     build({project, configure, run, hooks}) {
       hooks<PackageHooks>(({waterfall}) => ({
         packageBinaryNodeOptions: waterfall(),
@@ -153,7 +153,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
       run(async (step, {configuration}) => {
         const steps = [
           step({
-            name: 'SewingKit.PackageBuild.ESModules',
+            name: 'Quilt.PackageBuild.ESModules',
             label: `Build esmodules output for ${project.name}`,
             async run() {
               const [configure, {buildWithRollup}] = await Promise.all([
@@ -171,7 +171,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
         if (commonjs) {
           steps.push(
             step({
-              name: 'SewingKit.PackageBuild.CommonJS',
+              name: 'Quilt.PackageBuild.CommonJS',
               label: `Build commonjs output for ${project.name}`,
               async run() {
                 const [configure, {buildWithRollup}] = await Promise.all([
@@ -190,7 +190,7 @@ export function packageBuild({commonjs = true}: Options = {}) {
         if (project.binaries.length > 0) {
           steps.push(
             step({
-              name: 'SewingKit.PackageBuild.Binaries',
+              name: 'Quilt.PackageBuild.Binaries',
               label: `Building binaries for ${project.name}`,
               async run(step) {
                 const {outputDirectory, packageBinaryNodeOptions} =

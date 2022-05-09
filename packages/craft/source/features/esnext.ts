@@ -54,7 +54,7 @@ const require = createRequire(import.meta.url);
  */
 export function esnextBuild() {
   return createProjectPlugin<Package>({
-    name: 'SewingKit.ESNextBuild',
+    name: 'Quilt.ESNextBuild',
     build({project, configure, run}) {
       if (project.packageJson?.private) return;
 
@@ -103,7 +103,7 @@ export function esnextBuild() {
 
       run((step, {configuration}) =>
         step({
-          name: 'SewingKit.ESNextBuild',
+          name: 'Quilt.ESNextBuild',
           label: `Build esnext output for ${project.name}`,
           async run() {
             const [configure, {buildWithRollup}] = await Promise.all([
@@ -137,7 +137,7 @@ export function esnextBuild() {
  */
 export function esnext() {
   return createProjectPlugin({
-    name: 'SewingKit.ESNextConsumer',
+    name: 'Quilt.ESNextConsumer',
     develop({configure}) {
       configure(
         ({

@@ -62,7 +62,7 @@ const require = createRequire(import.meta.url);
  */
 export function targets() {
   return createProjectPlugin({
-    name: 'SewingKit.Targets',
+    name: 'Quilt.Targets',
     build({hooks, configure, project, workspace}) {
       hooks<TargetHooks>(({waterfall}) => ({
         targets: waterfall(),
@@ -289,7 +289,7 @@ export function targets() {
  */
 export function workspaceTargets() {
   return createWorkspacePlugin({
-    name: 'SewingKit.Targets.Workspace',
+    name: 'Quilt.Targets.Workspace',
     build({configure}) {
       configure(({babelPresets, babelTargets}) => {
         const defaultTargets = ['current node'];

@@ -47,7 +47,7 @@ describe('graphql', () => {
           `,
         });
 
-        const typeCheck = workspace.command.sewingKit.typeCheck();
+        const typeCheck = workspace.command.quilt.typeCheck();
         const result = await typeCheck;
 
         expect(typeCheck.child.exitCode).toBe(0);
@@ -138,7 +138,7 @@ describe('graphql', () => {
           `,
         });
 
-        const typeCheck = workspace.command.sewingKit.typeCheck();
+        const typeCheck = workspace.command.quilt.typeCheck();
         const result = await typeCheck;
 
         expect(typeCheck.child.exitCode).toBe(0);

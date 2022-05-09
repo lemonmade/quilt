@@ -105,7 +105,7 @@ declare module '@quilted/sewing-kit' {
  */
 export function rollupHooks() {
   return createProjectPlugin({
-    name: 'SewingKit.Rollup',
+    name: 'Quilt.Rollup',
     build({hooks}) {
       hooks<RollupHooks>(({waterfall}) => ({
         rollupInput: waterfall(),
@@ -142,7 +142,7 @@ export function rollupNode<ProjectType extends Project = Project>({
   bundle: explicitShouldBundle,
 }: RollupNodeOptions = {}) {
   return createProjectPlugin<ProjectType>({
-    name: 'SewingKit.Rollup.Node',
+    name: 'Quilt.Rollup.Node',
     build({project, workspace, hooks, configure}) {
       hooks<RollupNodeHooks>(({waterfall}) => ({
         rollupNodeExtensions: waterfall(),

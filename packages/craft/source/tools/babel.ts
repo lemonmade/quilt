@@ -47,7 +47,7 @@ const require = createRequire(import.meta.url);
  */
 export function babelHooks() {
   return createProjectPlugin({
-    name: 'SewingKit.Babel',
+    name: 'Quilt.Babel',
     build({hooks}) {
       hooks<BabelHooks>(({waterfall}) => ({
         babelPlugins: waterfall(),
@@ -81,7 +81,7 @@ export function babelHooks() {
  */
 export function babelWorkspaceHooks() {
   return createWorkspacePlugin({
-    name: 'SewingKit.Babel.Workspace',
+    name: 'Quilt.Babel.Workspace',
     build({hooks}) {
       hooks<BabelHooks>(({waterfall}) => ({
         babelPlugins: waterfall(),
@@ -111,7 +111,7 @@ export function babelWorkspaceHooks() {
 
 export function babelRollup() {
   return createProjectPlugin({
-    name: 'SewingKit.Babel.Rollup',
+    name: 'Quilt.Babel.Rollup',
     build({project, configure}) {
       configure(
         ({

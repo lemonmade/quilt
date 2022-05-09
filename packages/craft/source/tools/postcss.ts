@@ -40,7 +40,7 @@ export function postcss() {
   >();
 
   return createProjectPlugin<App>({
-    name: 'SewingKit.Babel',
+    name: 'Quilt.Babel',
     build({hooks, project}) {
       hooks<PostCSSHooks>(({waterfall}) => ({
         postcssPlugins: waterfall({

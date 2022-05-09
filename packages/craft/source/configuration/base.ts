@@ -22,7 +22,7 @@ export enum ConfigurationKind {
   Workspace = 'Workspace',
 }
 
-export const BUILDER_RESULT_MARKER = Symbol.for('SewingKit.BuilderResult');
+export const BUILDER_RESULT_MARKER = Symbol.for('Quilt.BuilderResult');
 
 const DIRECTORIES_NOT_TO_USE_FOR_NAME = new Set(['src', 'source', 'lib']);
 

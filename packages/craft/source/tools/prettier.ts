@@ -50,7 +50,7 @@ export function prettier({
   extensions: defaultExtensions = DEFAULT_EXTENSIONS,
 }: Options = {}) {
   return createWorkspacePlugin({
-    name: 'SewingKit.Prettier',
+    name: 'Quilt.Prettier',
     lint({hooks, run, options}) {
       hooks<PrettierHooks>(({waterfall}) => ({
         prettierExtensions: waterfall(),
@@ -58,7 +58,7 @@ export function prettier({
 
       run((step, {configuration}) =>
         step({
-          name: 'SewingKit.Prettier',
+          name: 'Quilt.Prettier',
           label: 'Running Prettier on your workspace',
           async run(step) {
             const {prettierExtensions} = await configuration();

@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url);
 
 export function javascriptProject() {
   return createProjectPlugin({
-    name: 'SewingKit.JavaScript',
+    name: 'Quilt.JavaScript',
     test({configure}) {
       configure(
         ({
@@ -60,7 +60,7 @@ export function javascriptProject() {
 
 export function javascriptWorkspace() {
   return createWorkspacePlugin({
-    name: 'SewingKit.JavaScript',
+    name: 'Quilt.JavaScript',
     test({configure}) {
       configure(
         ({
