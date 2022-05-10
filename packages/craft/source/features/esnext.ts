@@ -180,6 +180,8 @@ export function esnext() {
               ...plugins,
               esbuild({
                 include: /\.esnext$/,
+                // Support very modern features
+                target: 'es2020',
                 // Forces this to run on node_modules
                 exclude: [],
                 loaders: {
@@ -196,6 +198,8 @@ export function esnext() {
               ...plugins,
               esbuild({
                 include: /\.esnext$/,
+                // Support very modern features
+                target: 'es2020',
                 // Forces this to run on node_modules
                 exclude: [],
                 loaders: {
