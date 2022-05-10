@@ -26,5 +26,8 @@
   "prettier": "@quilted/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/workspace"
-  }
+  },
+  "browserslist": [
+    "extends @quilted/browserslist-config/defaults"
+  ]
 }
