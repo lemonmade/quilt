@@ -27,7 +27,10 @@ async function run() {
     '--package': graphQLPackage,
   } = argv;
 
-  const builder = await createBuilder(cwd, {package: graphQLPackage});
+  const builder = await createBuilder(
+    cwd,
+    graphQLPackage ? {package: graphQLPackage} : {},
+  );
 
   builder.on('schema:build:end', ({outputKinds}) => {
     for (const outputKind of outputKinds) {

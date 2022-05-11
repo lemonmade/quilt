@@ -79,10 +79,16 @@ export class Builder extends EventEmitter {
 
   private readonly watchers: Set<FSWatcher> = new Set();
 
-  constructor(config?: GraphQLConfiguration, options?: Partial<Options>) {
+  constructor(
+    config?: GraphQLConfiguration,
+    {
+      package: graphqlPackage = '@quilted/graphql',
+      ...options
+    }: Partial<Options> = {},
+  ) {
     super();
     this.config = config;
-    this.options = {package: '@quilted/graphql', ...options};
+    this.options = {package: graphqlPackage, ...options};
   }
 
   once(event: 'error', handler: (error: Error) => void): this;
