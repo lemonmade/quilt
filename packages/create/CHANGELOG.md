@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.11
+
+### Patch Changes
+
+- [`f6d06424`](https://github.com/lemonmade/quilt/commit/f6d064242c0a5ea6e5b227786b42a5cc8299b2d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add a base browserslist config to workspace template
+
 ## 0.1.10
 
 ### Patch Changes
