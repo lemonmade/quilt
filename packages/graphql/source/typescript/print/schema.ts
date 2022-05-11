@@ -75,9 +75,12 @@ export function generateSchemaTypes(
     }
   }
 
+  if (printOutputTypes) {
+    fileBody.push(t.exportNamedDeclaration(tsTypeForSchema(schema)));
+  }
+
   if (kind.kind === 'definitions') {
     fileBody.push(
-      t.exportNamedDeclaration(tsTypeForSchema(schema)),
       t.variableDeclaration('const', [
         t.variableDeclarator(
           t.identifier('schema'),
