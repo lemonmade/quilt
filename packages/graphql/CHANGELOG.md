@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.4.34
+
+### Patch Changes
+
+- [`8a8c878b`](https://github.com/lemonmade/quilt/commit/8a8c878bd8d5214b56af3381d28c1769820d84d7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL document type generation CLI
+
+* [`ce7faaf8`](https://github.com/lemonmade/quilt/commit/ce7faaf8199e88a59a0fba8b1ac19943f8294867) Thanks [@lemonmade](https://github.com/lemonmade)! - Print `Schema` type for schema `outputType` outputs
+
 ## 0.4.33
 
 ### Patch Changes

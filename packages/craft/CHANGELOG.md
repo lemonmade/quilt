@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.109
+
+### Patch Changes
+
+- [`cee6a292`](https://github.com/lemonmade/quilt/commit/cee6a292f3afc18eefb42880f1b52a31535a6e79) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix .esnext containing more modern language features in dev
+
+- Updated dependencies [[`8a8c878b`](https://github.com/lemonmade/quilt/commit/8a8c878bd8d5214b56af3381d28c1769820d84d7), [`ce7faaf8`](https://github.com/lemonmade/quilt/commit/ce7faaf8199e88a59a0fba8b1ac19943f8294867)]:
+  - @quilted/graphql@0.4.34
+
 ## 0.1.108
 
 ### Patch Changes
