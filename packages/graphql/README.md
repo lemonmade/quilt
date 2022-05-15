@@ -1,6 +1,6 @@
 # `@quilted/graphql`
 
-This library provides a collection of utilities for performance-minded usage of GraphQL in JavaScript applications. It includes a [minimal GraphQL client](#client), a command line tool to [generate TypeScript definitions from GraphQL files](#typescript), and utilities to [generate type-safe GraphQL fixtures](#fixtures). This library also provides well-integrated React bindings through [`@quilted/react-graphql`](../react-graphql).
+This library provides a collection of utilities for performance-minded usage of GraphQL in JavaScript applications. It includes a [minimal GraphQL client](#client), a command line tool to [generate TypeScript definitions from GraphQL files](#typescript), and utilities to [generate type-safe GraphQL fixtures](#fixtures).
 
 ## Installation
 
@@ -55,11 +55,12 @@ const controller = createGraphQLController({
 });
 
 // Returns a promise with {mockQueryData: {count: 10}}
-const result = await controller.run({
-  operation: myQuery,
+const result = await controller.run(operation, {
   variables: {first: 10},
 });
 ```
+
+`GraphQLController#run()` is aliased as `GraphQLController#fetch()`.
 
 The GraphQL controller has a few other features that can be useful when mocking out a GraphQL API. The first is the ability to control the delay before returning a GraphQL result with `GraphQLController#timing()`. This allows you to simulate slower network conditions, or to prevent GraphQL results from being returned automatically when `run()` is called. This method accepts the operation and a `delay` option to control how long a GraphQL result should be delayed (in milliseconds).
 
@@ -72,8 +73,7 @@ const controller = createGraphQLController({
 controller.timing(myQuery, {delay: 100});
 
 // Same as before, but now takes 100ms longer!
-const result = await controller.run({
-  operation: myQuery,
+const result = await controller.run(myQuery, {
   variables: {first: 10},
 });
 ```
@@ -88,8 +88,7 @@ const controller = createGraphQLController({
 
 controller.timing(myQuery, {delay: true});
 
-const resultPromise = controller.run({
-  operation: myQuery,
+const resultPromise = controller.run(myQuery, {
   variables: {first: 10},
 });
 
@@ -107,8 +106,7 @@ const controller = createGraphQLController({
 
 controller.timing(myQuery, {delay: true});
 
-const resultPromise = controller.run({
-  operation: myQuery,
+const resultPromise = controller.run(myQuery, {
   variables: {first: 10},
 });
 
@@ -121,25 +119,6 @@ await controller.resolveAll({
 });
 
 const result = await resultPromise;
-```
-
-#### `toFetch()`
-
-The [GraphQL client](#client) provided by this library accepts a `fetch` option that controls how GraphQL results not in the cache are retrieved. In order to use a `GraphQLController` object as the source for such cache misses, you can create a compatible `fetch` function with the `toFetch` utility.
-
-```ts
-import {createGraphQL} from '@quilted/graphql';
-import {createGraphQLController, toFetch} from '@quilted/graphql/fixtures';
-import myQuery from './MyQuery.graphql';
-
-const controller = createGraphQLController({
-  operation: myQuery,
-  data: ({variables}) => ({mockQueryData: {count: variables.first}}),
-});
-
-const graphql = createGraphQL({
-  fetch: toFetch(controller),
-});
 ```
 
 #### `createFiller()`

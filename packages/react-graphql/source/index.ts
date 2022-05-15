@@ -1,22 +1,18 @@
 export type {
-  GraphQL,
   GraphQLData,
   GraphQLResult,
   GraphQLVariables,
   GraphQLOperation,
   GraphQLOperationType,
-  GraphQLRequest,
-  GraphQLRequestContext,
   GraphQLDeepPartialData,
+  GraphQLError,
   GraphQLFetch,
-  GraphQLQueryOptions,
-  GraphQLMutationOptions,
+  GraphQLFetchContext,
   GraphQLHttpFetchContext,
   GraphQLHttpFetchOptions,
   GraphQLVariableOptions,
   PickGraphQLType,
 } from '@quilted/graphql';
-export {createGraphQL, createGraphQLHttpFetch} from '@quilted/graphql';
+export {createGraphQLHttpFetch} from '@quilted/graphql';
 export {GraphQLContext} from './context';
-export {useDeferredQuery, useMutation, useQuery, useGraphQL} from './hooks';
-export {createAsyncQuery} from './async';
+export {useGraphQLFetch} from './hooks';

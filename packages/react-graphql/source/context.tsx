@@ -1,19 +1,19 @@
 import {createContext} from 'react';
 import type {PropsWithChildren} from 'react';
-import type {GraphQL} from '@quilted/graphql';
+import type {GraphQLFetch} from '@quilted/graphql';
 
-export const GraphQLClientContext = createContext<GraphQL | undefined>(
+export const GraphQLFetchContext = createContext<GraphQLFetch | undefined>(
   undefined,
 );
 
 export interface Props {
-  client: GraphQL;
+  fetch: GraphQLFetch;
 }
 
-export function GraphQLContext({client, children}: PropsWithChildren<Props>) {
+export function GraphQLContext({fetch, children}: PropsWithChildren<Props>) {
   return (
-    <GraphQLClientContext.Provider value={client}>
+    <GraphQLFetchContext.Provider value={fetch}>
       {children}
-    </GraphQLClientContext.Provider>
+    </GraphQLFetchContext.Provider>
   );
 }

@@ -39,22 +39,14 @@ The `ReactQueryContext` takes care of ensuring that all queries made by your app
 That’s all the setup you need! Elsewhere in your application, you can now use React Query’s [`useQuery` hook](https://react-query.tanstack.com/guides/queries) to load data in your components. The example below shows how you might use Quilt’s GraphQL utilities to perform type-safe GraphQL queries using React Query:
 
 ```tsx
-import {useMemo} from 'react';
-import {createGraphQL, createGraphQLHttpFetch} from '@quilted/quilt';
+import {createGraphQLHttpFetch} from '@quilted/quilt';
 import {useQuery} from 'react-query';
 
 import startQuery from './Start.graphql';
 
-export function Start() {
-  const {query} = useMemo(
-    () =>
-      createGraphQL({
-        cache: false,
-        fetch: createGraphQLHttpFetch({uri: 'https://my-graphql-api.com'}),
-      }),
-    [],
-  );
+const query = createGraphQLHttpFetch({uri: 'https://my-graphql-api.com'});
 
+export function Start() {
   const result = useQuery('start-query', () => query(startQuery));
 
   return <pre>{JSON.stringify(result, null, 2)}</pre>;

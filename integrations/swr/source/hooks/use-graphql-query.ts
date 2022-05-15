@@ -1,7 +1,7 @@
 import type {SWRConfiguration} from 'swr';
-import {useGraphQL} from '@quilted/quilt';
+import {useGraphQLFetch} from '@quilted/quilt';
 import type {
-  GraphQL,
+  GraphQLFetch,
   GraphQLOperation,
   GraphQLVariableOptions,
 } from '@quilted/quilt';
@@ -11,7 +11,7 @@ import {useSWR} from './use-swr';
 
 export type GraphQLQueryOptions<Data, Variables> = SWRConfiguration<Data> &
   GraphQLVariableOptions<Variables> & {
-    graphql?: GraphQL;
+    fetch?: GraphQLFetch;
   };
 
 export function useGraphQLQuery<Data, Variables>(
@@ -24,26 +24,29 @@ export function useGraphQLQuery<Data, Variables>(
 ) {
   const [options = {} as any as GraphQLQueryOptions<Data, Variables>] = args;
 
-  const {variables, graphql: explicitGraphQL, ...swrOptions} = options;
+  const {variables, fetch: explicitFetch, ...swrOptions} = options;
 
-  const graphqlFromContext = useGraphQL({required: false});
-  const graphql = explicitGraphQL ?? graphqlFromContext;
+  const fetchFromContext = useGraphQLFetch({required: false});
+  const fetch = explicitFetch ?? fetchFromContext;
 
-  if (graphql == null) {
+  if (fetch == null) {
     throw new Error(
-      `No GraphQL client found. You either need to have access to a GraphQL client in context, or pass one in as the \`graphql\` option to this function.`,
+      `No GraphQL fetch found. You either need to have access to a GraphQL fetch in context, or pass one in as the \`fetch\` option to this function.`,
     );
   }
 
   return useSWR<Data>(
     [`__quilt-swr-graphql:${queryToKey(query)}`, variables],
     async () => {
-      const {data, error} = await graphql.query(query, {
-        variables: variables as any,
-      });
+      const {data, errors} = await fetch(
+        typeof query === 'string' ? {id: query, source: query} : query,
+        {
+          variables: variables as any,
+        },
+      );
 
-      if (error) {
-        throw error;
+      if (errors && errors.length > 0) {
+        throw new Error(errors[0]!.message);
       }
 
       return data!;

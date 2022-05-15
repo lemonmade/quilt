@@ -1,4 +1,3 @@
-import type {GraphQLError} from 'graphql';
 import type {GraphQLFetch} from './types';
 
 export class GraphQLHttpError extends Error {
@@ -7,18 +6,6 @@ export class GraphQLHttpError extends Error {
     public readonly response: string,
   ) {
     super(`GraphQL fetch failed with status: ${status}, response: ${response}`);
-  }
-}
-
-export class GraphQLExecutionError extends Error {
-  constructor(public readonly errors: GraphQLError[]) {
-    super(
-      `GraphQL execution failed with errors: ${JSON.stringify(
-        errors,
-        null,
-        2,
-      )}`,
-    );
   }
 }
 
@@ -32,12 +19,18 @@ export interface GraphQLHttpFetchContext {
   response?: Response;
 }
 
+declare module './types' {
+  interface GraphQLFetchContext {
+    response?: Response;
+  }
+}
+
 export function createGraphQLHttpFetch({
   uri,
   credentials,
   headers: explicitHeaders,
-}: GraphQLHttpFetchOptions): GraphQLFetch<GraphQLHttpFetchContext> {
-  return async (operation, context) => {
+}: GraphQLHttpFetchOptions): GraphQLFetch {
+  return async (operation, options, context) => {
     const headers = new Headers({
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -48,9 +41,9 @@ export function createGraphQLHttpFetch({
       method: 'POST',
       headers,
       body: JSON.stringify({
-        query: operation.operation.source,
-        variables: operation.variables,
-        operationName: operation.operation.name,
+        query: operation.source,
+        variables: options.variables ?? {},
+        operationName: operation.name,
       }),
     };
 
@@ -60,30 +53,14 @@ export function createGraphQLHttpFetch({
 
     const response = await fetch(uri, request);
 
-    context.set('response', response);
+    if (context) context.response = response;
 
     if (!response.ok) {
-      throw new GraphQLHttpError(response.status, await response.text());
+      return {
+        errors: [new GraphQLHttpError(response.status, await response.text())],
+      };
     }
 
-    const {data, errors} = (await response.json()) as {
-      data?: Record<string, any>;
-      errors?: GraphQLError[];
-    };
-
-    if (errors != null && errors.length > 0) {
-      throw new GraphQLExecutionError(errors);
-    }
-
-    if (data == null) {
-      throw new GraphQLExecutionError([
-        {
-          name: 'NoDataError',
-          message: 'No data returned by GraphQL',
-        } as any,
-      ]);
-    }
-
-    return data!;
+    return await response.json();
   };
 }

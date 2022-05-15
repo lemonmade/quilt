@@ -1,34 +1,31 @@
 import {useMemo} from 'react';
 import type {PropsWithChildren} from 'react';
 
-import {createGraphQL} from '@quilted/graphql';
-import type {GraphQLFetch} from '@quilted/graphql';
-import {createGraphQLController, createFiller} from '@quilted/graphql/fixtures';
-import type {GraphQLController} from '@quilted/graphql/fixtures';
+import {
+  createGraphQLController,
+  createFiller,
+  createSchema,
+  GraphQLController,
+} from '@quilted/graphql/fixtures';
+import type {
+  GraphQLMock,
+  GraphQLMockFunction,
+  GraphQLMockObject,
+} from '@quilted/graphql/fixtures';
 
 import {GraphQLContext} from './context';
 
-export {createGraphQLController as createTestGraphQL, createFiller};
-export type {GraphQLController};
+export {createGraphQLController, GraphQLController, createFiller, createSchema};
+export type {GraphQLMock, GraphQLMockFunction, GraphQLMockObject};
 
 export function TestGraphQL({
   children,
   controller,
 }: PropsWithChildren<{controller?: GraphQLController}>) {
-  const graphql = useMemo(
-    () =>
-      createGraphQL({fetch: toFetch(controller ?? createGraphQLController())}),
+  const fetch = useMemo(
+    () => (controller ?? createGraphQLController()).fetch,
     [controller],
   );
 
-  return <GraphQLContext client={graphql}>{children}</GraphQLContext>;
-}
-
-function toFetch(controller: GraphQLController): GraphQLFetch {
-  return ({operation, variables}) => {
-    return controller.run<any, any>({
-      operation,
-      variables: variables as any,
-    });
-  };
+  return <GraphQLContext fetch={fetch}>{children}</GraphQLContext>;
 }

@@ -180,7 +180,7 @@ export function getSelectionTypeMap(
 }
 
 export function normalizeOperation(
-  operation: string | GraphQLOperation | DocumentNode,
+  operation: string | GraphQLOperation<any, any> | DocumentNode,
 ) {
   if (typeof operation === 'string') {
     const document = parse(operation);

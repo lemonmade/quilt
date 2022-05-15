@@ -31,48 +31,41 @@ export type GraphQLVariables<T> = T extends GraphQLOperationType<
   ? Variables
   : never;
 
-export interface GraphQLRequest<Data, Variables> {
-  operation: GraphQLOperation<Data, Variables>;
-  variables: Variables;
+export interface GraphQLError {
+  readonly message: string;
+  readonly path?: readonly (string | number)[];
+  readonly locations?: readonly {
+    readonly line: number;
+    readonly column: number;
+  }[];
 }
 
-export interface GraphQLRequestContext<T = Record<string, unknown>> {
-  has<K extends keyof T>(key: K): boolean;
-  get<K extends keyof T>(key: K): T[K] | undefined;
-  set<K extends keyof T>(key: K, value: T[K]): this;
-  delete<K extends keyof T>(key: K): boolean;
-}
-
-export type GraphQLFetch<T = Record<string, unknown>> = (
-  request: GraphQLRequest<unknown, unknown>,
-  context: GraphQLRequestContext<T>,
-) => Promise<Record<string, any>>;
+export interface GraphQLFetchContext {}
 
 export type GraphQLResult<Data> =
   | {
-      data: Data;
-      error?: undefined;
+      readonly data: Data;
+      readonly errors?: never;
+      readonly extensions?: Record<string, any>;
     }
-  | {data?: undefined; error: Error};
+  | {
+      readonly data?: Data | null;
+      readonly errors: readonly GraphQLError[];
+      readonly extensions?: Record<string, any>;
+    };
+
+export interface GraphQLFetch {
+  <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
+    operation: GraphQLOperation<Data, Variables>,
+    options: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
+    context?: GraphQLFetchContext,
+  ): GraphQLResult<Data> | Promise<GraphQLResult<Data>>;
+}
 
 export type GraphQLAnyOperation<Data, Variables> =
   | string
   | DocumentNode
   | GraphQLOperation<Data, Variables>;
-
-export interface GraphQLMockFunction<Data, Variables> {
-  operation: GraphQLAnyOperation<Data, Variables>;
-  result: (request: {variables: Variables}) => Data | Error;
-}
-
-export interface GraphQLMockObject<Data, Variables> {
-  operation: GraphQLAnyOperation<Data, Variables>;
-  result: Data | Error;
-}
-
-export type GraphQLMock<Data, Variables> =
-  | GraphQLMockFunction<Data, Variables>
-  | GraphQLMockObject<Data, Variables>;
 
 export type GraphQLVariableOptions<Variables> = IfEmptyObject<
   Variables,
@@ -83,13 +76,6 @@ export type GraphQLVariableOptions<Variables> = IfEmptyObject<
     {variables: Variables}
   >
 >;
-
-export type GraphQLQueryOptions<_Data, Variables> = {
-  cache?: boolean;
-} & GraphQLVariableOptions<Variables>;
-
-export type GraphQLMutationOptions<_Data, Variables> =
-  GraphQLVariableOptions<Variables>;
 
 export type PickGraphQLType<T, Type extends Typenames<T>> = Extract<
   T,
@@ -139,3 +125,19 @@ export type DeepPartialUnion<T> = T extends {__typename: string}
 export type Typenames<T> = T extends {__typename: string}
   ? T['__typename']
   : never;
+
+// Mocks
+
+export interface GraphQLMockFunction<Data, Variables> {
+  operation: GraphQLAnyOperation<Data, Variables>;
+  result: (request: {variables: Variables}) => Data | Error;
+}
+
+export interface GraphQLMockObject<Data, Variables> {
+  operation: GraphQLAnyOperation<Data, Variables>;
+  result: Data | Error;
+}
+
+export type GraphQLMock<Data, Variables> =
+  | GraphQLMockFunction<Data, Variables>
+  | GraphQLMockObject<Data, Variables>;
