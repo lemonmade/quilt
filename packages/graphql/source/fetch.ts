@@ -30,7 +30,7 @@ export function createGraphQLHttpFetch({
   credentials,
   headers: explicitHeaders,
 }: GraphQLHttpFetchOptions): GraphQLFetch {
-  return async (operation, options, context) => {
+  const fetchGraphQL: GraphQLFetch = async (operation, options, context) => {
     const headers = new Headers({
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -42,7 +42,7 @@ export function createGraphQLHttpFetch({
       headers,
       body: JSON.stringify({
         query: operation.source,
-        variables: options.variables ?? {},
+        variables: options?.variables ?? {},
         operationName: operation.name,
       }),
     };
@@ -63,4 +63,6 @@ export function createGraphQLHttpFetch({
 
     return await response.json();
   };
+
+  return fetchGraphQL;
 }

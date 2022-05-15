@@ -83,7 +83,7 @@ export class GraphQLController {
 
   run: GraphQLFetch = <Data, Variables>(
     operation: GraphQLOperation<Data, Variables>,
-    {variables}: {variables?: Variables},
+    {variables}: {variables?: Variables} = {},
   ) => {
     const {name, document} = normalizeOperation(operation);
     const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.get(name);
