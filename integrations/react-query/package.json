@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-query",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -43,8 +43,8 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/craft": "^0.1.97",
-    "@quilted/quilt": "^0.5.79",
+    "@quilted/craft": "^0.1.110",
+    "@quilted/quilt": "^0.5.93",
     "react": ">=17.0.0 <18.0.0",
     "react-query": "^3.0.0"
   },
