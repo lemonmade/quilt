@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.93
+
+### Patch Changes
+
+- [#298](https://github.com/lemonmade/quilt/pull/298) [`86afb486`](https://github.com/lemonmade/quilt/commit/86afb486023848fba9daba81e98e3b0eeb0bfbb6) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify GraphQL libraries
+
 ## 0.5.92
 
 ### Patch Changes
