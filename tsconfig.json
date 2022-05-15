@@ -28,7 +28,6 @@
     {"path": "./packages/async"},
     {"path": "./packages/react-async"},
     {"path": "./packages/react-email"},
-    {"path": "./packages/react-graphql"},
     {"path": "./packages/react-html"},
     {"path": "./packages/react-http"},
     {"path": "./packages/react-idle"},

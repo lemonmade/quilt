@@ -184,7 +184,7 @@ Mounts a component to the DOM and returns a [`Root`](#root) instance. Note that 
 
 #### <a name="createMount"></a> `createMount<MountOptions, Context, Actions, Async>(options: CreateMountOptions<MountOptions, Context, Actions, Async>): MountFunction`
 
-The [`mount`](#mount) function is powerful on its own, but applications will often want a more powerful version tailored to their application. A common example is app-wide context, where a set of context providers are generally assumed to be present for every component under test. It can also be useful for providing custom GraphQL infrastructure that enables easy testing of different API responses, such as the [`createGraphQL` factory from `@shopify/graphql-testing`](../graphql-testing).
+The [`mount`](#mount) function is powerful on its own, but applications will often want a more powerful version tailored to their application. A common example is app-wide context, where a set of context providers are generally assumed to be present for every component under test.
 
 `createMount` enables this kind of customization by vending a custom `mount` function that will automatically wrap the component under test in an appropriate test wrapper. This custom mount function can do four things:
 
@@ -216,77 +216,6 @@ If your `Action` type has non-optional keys, you **must** provide this option.
 This function allows you to perform additional logic after a component has been mounted. It gets called with a special [`Root`](#root) instance that has one additional property: `context`, the object with the context you created in `context()` (or an empty object). You can use this hook to perform some additional resolution after the component has mounted, such as resolving all GraphQL.
 
 If this option returns a `Promise`, the result of calling `mount()` will become a promise that resolves to the custom `Root` instance. Otherwise, it will synchronously return the `Root` instance. If you specify the `Async` generic argument as `true`, you **must** pass this option.
-
-##### Complete example
-
-We usually want to create a mocked version of the GraphQL infrastructure for our app to prevent relying on real API calls. We provide the [`@quilted/react-graphql/testing` library](../react-graphql) to create a mock GraphQL source for tests.
-
-In our example mount, we want people to be able to pass a custom GraphQL instance. We want the initial GraphQL results to resolve, unless the user of mount specifies that GraphQL should _not_ resolve until done manually. Finally, we want to expose this GraphQL instance on the returned wrapper for use to drive test results.
-
-The custom mount for this situation would be built as demonstrated below.
-
-```tsx
-import {ApolloProvider} from 'react-apollo';
-import {createTestGraphQL, GraphQLController, TestGraphQL} from '@quilted/react-graphql/testing';
-import {createMount} from '@quilted/react-testing';
-
-// Here, we define the options a user can pass to mount. We need them to be able
-// to pass two things: an optional GraphQL instance to drive the test, and an
-//optional flag to skip initial GraphQL resolution.
-interface Options {
-  graphql?: GraphQLController;
-  skipInitialGraphQL?: boolean;
-}
-
-// Next is the context. We only want to expose one thing as "context": The GraphQL
-// instance driving the test.
-interface Context {
-  graphql: GraphQLController;
-}
-
-// We’ll also expose a helper action on every node created by our `mount` function
-// that allows the test author to easily flush any in-process GraphQL queries in
-// an `act` block.
-interface Actions {
-  flushGraphQL(): Promise<void>;
-}
-
-export const mount = createMount<Options, Context, Actions>({
-  // Now, we can create our custom mount function! Unfortunately, due to limitations in
-  // TypeScript, you usually need to pass all the generic arguments, including the last
-  // one, which specifies whether your `afterMount` is async or not.
-export const mountWithGraphQL = createMount<Options, Context, true>({
-  // Step one: convert Options to Context
-  context({graphql = createTestGraphQL()}) {
-    return {graphql};
-  },
-  // Step two: use Context and Options to render the element under the test
-  // with the necessary providers
-  render(element, {graphql}) {
-    return <TestGraphQL controller={graphql}>{element}</TestGraphQL>;
-  },
-  // Step three: use the rendered root and options to create our helper actions
-  actions(root) {
-    return {
-      async flushGraphQL() {
-        await root.act(() => root.context.graphql.resolveAll());
-      },
-    };
-  },
-  // Final step: if we need post-mount behavior, inject it in. If it returns
-  // a promise, like it does here, the final mount function will be async too.
-  async afterMount(root, {skipInitialGraphQL}) {
-    if (skipInitialGraphQL) {
-      return;
-    }
-
-    // Here's the important bit: resolve the GraphQL so our first queries are
-    // in use for the component under test. Since we already wrote a helper for
-    // that, we can go ahead and use it here!
-    await root.actions.flushGraphQL();
-  },
-});
-```
 
 ##### Extending a custom mount function
 

@@ -6,12 +6,8 @@ import type {
   GraphQLMock,
   GraphQLAnyOperation,
   GraphQLFetch,
+  GraphQLResult,
 } from '../types';
-
-interface GraphQLAnyRequest<Data, Variables> {
-  operation: DocumentNode | string | GraphQLOperation<Data, Variables>;
-  variables?: Variables;
-}
 
 export interface GraphQLRequest<_Data, Variables> {
   name: string;
@@ -82,13 +78,13 @@ export class GraphQLController {
     } while (matchingPending.length > 0);
   }
 
-  async run<
-    Data extends Record<string, any>,
-    Variables extends Record<string, any>,
-  >({
-    operation,
-    variables,
-  }: GraphQLAnyRequest<Data, Variables>): Promise<Data | Error> {
+  fetch: GraphQLFetch = <Data, Variables>(...args: [any, any, any]) =>
+    this.run<Data, Variables>(...args);
+
+  run: GraphQLFetch = <Data, Variables>(
+    operation: GraphQLOperation<Data, Variables>,
+    {variables}: {variables?: Variables},
+  ) => {
     const {name, document} = normalizeOperation(operation);
     const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.get(name);
 
@@ -96,7 +92,7 @@ export class GraphQLController {
       throw new Error(`No mock provided for operation ${JSON.stringify(name)}`);
     }
 
-    const promise = new Promise<Data | Error>((resolve) => {
+    const promise = new Promise<GraphQLResult<Data>>((resolve) => {
       let hasRun = false;
 
       this.enqueue(name, () => {
@@ -106,7 +102,7 @@ export class GraphQLController {
 
         hasRun = true;
 
-        let response: Data | Error;
+        let response: GraphQLResult<Data>;
 
         try {
           response =
@@ -116,7 +112,7 @@ export class GraphQLController {
                 })
               : mock.result;
         } catch (error) {
-          response = error as Error;
+          response = {data: null, errors: [error as any]};
         }
 
         resolve(response);
@@ -133,7 +129,7 @@ export class GraphQLController {
     });
 
     return promise;
-  }
+  };
 
   private enqueue(name: string, resolver: () => Promise<any>) {
     const timing = this.timings.get(name);
@@ -149,15 +145,6 @@ export class GraphQLController {
       setTimeout(resolver, delay);
     }
   }
-}
-
-export function toFetch(controller: GraphQLController): GraphQLFetch {
-  return ({operation, variables}) => {
-    return controller.run<any, any>({
-      operation,
-      variables: variables as any,
-    });
-  };
 }
 
 class CompleteRequests {

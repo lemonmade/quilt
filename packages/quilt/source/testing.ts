@@ -10,5 +10,12 @@ export {TestRouter, createTestRouter} from '@quilted/react-router/testing';
 export {
   TestGraphQL,
   createFiller,
-  createTestGraphQL,
+  createSchema,
+  GraphQLController,
+  createGraphQLController,
+} from '@quilted/react-graphql/testing';
+export type {
+  GraphQLMock,
+  GraphQLMockFunction,
+  GraphQLMockObject,
 } from '@quilted/react-graphql/testing';

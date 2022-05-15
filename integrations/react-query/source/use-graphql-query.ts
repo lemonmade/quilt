@@ -1,19 +1,21 @@
 import {useQuery} from 'react-query';
 import type {UseQueryOptions} from 'react-query';
-import {useGraphQL} from '@quilted/quilt';
+import {useGraphQLFetch} from '@quilted/quilt';
 import type {
-  GraphQL,
+  GraphQLFetch,
   GraphQLOperation,
   GraphQLVariableOptions,
 } from '@quilted/quilt';
 import type {IfAllFieldsNullable} from '@quilted/useful-types';
+
+import {throwIfError} from './utilities';
 
 export type GraphQLQueryOptions<Data, Variables> = Omit<
   UseQueryOptions<Data>,
   'queryFn'
 > &
   GraphQLVariableOptions<Variables> & {
-    graphql?: GraphQL;
+    fetch?: GraphQLFetch;
   };
 
 export function useGraphQLQuery<Data, Variables>(
@@ -28,37 +30,38 @@ export function useGraphQLQuery<Data, Variables>(
 
   const {
     variables,
-    graphql: explicitGraphQL,
+    fetch: explicitFetch,
     queryKey,
     ...reactQueryOptions
   } = options as GraphQLQueryOptions<Data, Variables>;
 
-  const graphqlFromContext = useGraphQL({required: false});
-  const graphql = explicitGraphQL ?? graphqlFromContext;
+  const fetchFromContext = useGraphQLFetch({required: false});
+  const fetch = explicitFetch ?? fetchFromContext;
 
-  if (graphql == null) {
+  if (fetch == null) {
     throw new Error(
-      `No GraphQL client found. You either need to have access to a GraphQL client in context, or pass one in as the \`graphql\` option to this function.`,
+      `No GraphQL fetch found. You either need to have access to a GraphQL fetch in context, or pass one in as the \`fetch\` option to this function.`,
     );
   }
 
   return useQuery<Data>(
     [
-      graphql,
+      fetch,
       query,
       variables,
       ...(Array.isArray(queryKey) ? queryKey : [queryKey]),
     ],
     async () => {
-      const {data, error} = await graphql.query(query, {
-        variables: variables as any,
-      });
+      const result = await fetch(
+        typeof query === 'string' ? {id: query, source: query} : query,
+        {
+          variables: variables as any,
+        },
+      );
 
-      if (error) {
-        throw error;
-      }
+      throwIfError(result);
 
-      return data!;
+      return result.data!;
     },
     reactQueryOptions,
   );

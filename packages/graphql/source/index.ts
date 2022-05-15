@@ -1,5 +1,3 @@
-export {createGraphQL} from './client';
-export type {GraphQL} from './client';
 export {createGraphQLHttpFetch} from './fetch';
 export type {GraphQLHttpFetchContext, GraphQLHttpFetchOptions} from './fetch';
 export {cacheKey} from './utilities/cache';
@@ -10,11 +8,12 @@ export type {
   GraphQLVariables,
   GraphQLDeepPartialData,
   GraphQLFetch,
-  GraphQLRequest,
+  GraphQLFetchContext,
+  GraphQLMock,
+  GraphQLMockFunction,
+  GraphQLMockObject,
   GraphQLResult,
-  GraphQLRequestContext,
-  GraphQLMutationOptions,
-  GraphQLQueryOptions,
+  GraphQLError,
   GraphQLVariableOptions,
   PickGraphQLType,
 } from './types';

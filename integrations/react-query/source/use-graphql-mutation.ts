@@ -1,48 +1,53 @@
 import {useMutation} from 'react-query';
 import type {UseMutationOptions} from 'react-query';
-import {useGraphQL} from '@quilted/quilt';
-import type {GraphQL, GraphQLOperation} from '@quilted/quilt';
+import {useGraphQLFetch} from '@quilted/quilt';
+import type {GraphQLFetch, GraphQLOperation} from '@quilted/quilt';
+
+import {throwIfError} from './utilities';
 
 export type GraphQLMutationOptions<Data, Variables> = Omit<
   UseMutationOptions<Data, unknown, Variables>,
   'mutationFn'
 > & {
-  graphql?: GraphQL;
+  fetch?: GraphQLFetch;
 };
 
 export function useGraphQLMutation<Data, Variables>(
   mutation: GraphQLOperation<Data, Variables> | string,
   {
-    graphql: explicitGraphQL,
+    fetch: explicitFetch,
     mutationKey,
     ...reactMutationOptions
   }: GraphQLMutationOptions<Data, Variables> = {},
 ) {
-  const graphqlFromContext = useGraphQL({required: false});
-  const graphql = explicitGraphQL ?? graphqlFromContext;
+  const fetchFromContext = useGraphQLFetch({required: false});
+  const fetch = explicitFetch ?? fetchFromContext;
 
-  if (graphql == null) {
+  if (fetch == null) {
     throw new Error(
-      `No GraphQL client found. You either need to have access to a GraphQL client in context, or pass one in as the \`graphql\` option to this function.`,
+      `No GraphQL fetch found. You either need to have access to a GraphQL fetch in context, or pass one in as the \`fetch\` option to this function.`,
     );
   }
 
   return useMutation<Data, unknown, Variables>(
     [
-      graphql,
+      fetch,
       mutation,
       ...(Array.isArray(mutationKey) ? mutationKey : [mutationKey]),
     ],
     async (variables) => {
-      const {data, error} = await graphql.mutate(mutation, {
-        variables: variables as any,
-      });
+      const result = await fetch(
+        typeof mutation === 'string'
+          ? {id: mutation, source: mutation}
+          : mutation,
+        {
+          variables: variables as any,
+        },
+      );
 
-      if (error) {
-        throw error;
-      }
+      throwIfError(result);
 
-      return data!;
+      return result.data!;
     },
     reactMutationOptions,
   );
