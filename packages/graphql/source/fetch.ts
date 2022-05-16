@@ -40,6 +40,7 @@ export function createGraphQLHttpFetch({
     const request: RequestInit = {
       method: 'POST',
       headers,
+      signal: options?.signal,
       body: JSON.stringify({
         query: operation.source,
         variables: options?.variables ?? {},
