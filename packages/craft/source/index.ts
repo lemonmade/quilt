@@ -210,7 +210,7 @@ export function quiltApp({
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
-            features: ['fetch'],
+            features: ['fetch', 'abort-controller'],
             ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
           }),
       );

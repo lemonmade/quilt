@@ -48,7 +48,25 @@
       "import": "./build/esm/noop.mjs",
       "require": "./build/cjs/noop.cjs"
     },
+    "./abort-controller": {
+      "browser": {
+        "quilt:from-source": "./source/noop.ts",
+        "quilt:esnext": "./build/esnext/noop.esnext",
+        "import": "./build/esm/noop.mjs",
+        "require": "./build/cjs/noop.cjs"
+      },
+      "quilt:from-source": "./source/abort-controller.ts",
+      "quilt:esnext": "./build/esnext/abort-controller.esnext",
+      "import": "./build/esm/abort-controller.mjs",
+      "require": "./build/cjs/abort-controller.cjs"
+    },
     "./crypto": {
+      "browser": {
+        "quilt:from-source": "./source/noop.ts",
+        "quilt:esnext": "./build/esnext/noop.esnext",
+        "import": "./build/esm/noop.mjs",
+        "require": "./build/cjs/noop.cjs"
+      },
       "quilt:from-source": "./source/crypto.ts",
       "quilt:esnext": "./build/esnext/crypto.esnext",
       "import": "./build/esm/crypto.mjs",
@@ -70,6 +88,9 @@
       "fetch": [
         "./build/typescript/noop.d.ts"
       ],
+      "abort-controller": [
+        "./build/typescript/noop.d.ts"
+      ],
       "crypto": [
         "./build/typescript/noop.d.ts"
       ],
@@ -88,6 +109,7 @@
     "@rollup/plugin-alias": "^3.1.0",
     "@types/caniuse-api": "^3.0.0",
     "@types/node-fetch": "^2.6.0",
+    "abort-controller": "^3.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.21.0",
     "magic-string": "^0.26.0",

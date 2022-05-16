@@ -11,6 +11,9 @@ const POLYFILLS: {
   fetch: {
     featureTest: 'fetch',
   },
+  'abort-controller': {
+    featureTest: 'abortcontroller',
+  },
   crypto: {
     featureTest: 'cryptography',
   },

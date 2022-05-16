@@ -18,6 +18,7 @@ import type {
 import type {Performance} from '@quilted/quilt';
 
 export {stripIndent} from 'common-tags';
+export {getPort};
 
 export interface FileSystem {
   readonly root: string;
@@ -78,7 +79,7 @@ afterAll(async () => {
   browserPromise = undefined;
 });
 
-export type Fixture = 'basic-app';
+export type Fixture = 'basic-app' | 'basic-api';
 
 export interface WorkspaceOptions {
   debug?: boolean;
@@ -262,6 +263,15 @@ export async function buildAppAndRunServer(
     }
   })();
 
+  await waitForUrl(url);
+
+  return {
+    url,
+    server,
+  };
+}
+
+export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
   const startedAt = Date.now();
 
   // eslint-disable-next-line no-constant-condition
@@ -273,17 +283,12 @@ export async function buildAppAndRunServer(
       // intentional noop
     }
 
-    if (Date.now() - startedAt > 500) {
-      throw new Error(`Server at ${url.href} did not start up in time`);
+    if (Date.now() - startedAt > timeout) {
+      throw new Error(`Server at ${url.toString()} did not start up in time`);
     }
 
     await sleep(25);
   }
-
-  return {
-    url,
-    server,
-  };
 }
 
 function sleep(time: number) {

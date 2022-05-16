@@ -1,0 +1,6 @@
+{
+  "extends": "@quilted/typescript/service.json",
+  "compilerOptions": {
+    "outDir": "build/typescript"
+  }
+}
