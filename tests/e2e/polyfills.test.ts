@@ -55,7 +55,7 @@ describe('http', () => {
 
         await waitForUrl(url);
         const result = await (await fetch(url)).json();
-        
+
         expect(result).toMatchObject({data: {__schema: expect.any(Object)}});
       });
     });
