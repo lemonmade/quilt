@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.97
+
+### Patch Changes
+
+- [`950955b4`](https://github.com/lemonmade/quilt/commit/950955b447d74daa16a8f81f9afaaf1dc52f56cf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix quilt/threads entrypoint
+
 ## 0.5.96
 
 ### Patch Changes
