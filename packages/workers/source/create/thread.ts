@@ -1,44 +1,30 @@
-import {
-  createEndpoint,
-  Endpoint,
-  MessageEndpoint,
-  CreateEndpointOptions,
-} from '@remote-ui/rpc';
-import {createWorkerMessenger} from '../messenger';
-import {createScriptUrl} from './utilities';
+import {createThread, targetFromWebWorker} from '@quilted/threads';
+import type {Thread, ThreadTarget, ThreadOptions} from '@quilted/threads';
+
+import {createScriptUrl, createCrossDomainWorkerUrl} from './utilities';
 import type {FileOrModuleResolver} from './utilities';
 
-export interface CreateCallableWorkerOptions<T>
-  extends CreateEndpointOptions<T> {
-  createMessenger?(url: URL): MessageEndpoint;
+export interface CreateThreadWorkerOptions<Self, Target>
+  extends ThreadOptions<Self, Target> {
+  createTarget?(url: URL): ThreadTarget;
 }
 
-export interface CallableWorkerCreator<T> {
+export interface ThreadWorkerCreator<Self, Target> {
   readonly url?: URL;
-  (options?: CreateCallableWorkerOptions<T>): Endpoint<T>['call'];
+  (options?: CreateThreadWorkerOptions<Self, Target>): Thread<Target>;
 }
 
-const workerEndpointCache = new WeakMap<Endpoint<any>['call'], Endpoint<any>>();
-
-export function createCallableWorker<T = unknown>(
-  script: FileOrModuleResolver<T>,
-): CallableWorkerCreator<T> {
+export function createThreadWorker<Self = unknown, Target = unknown>(
+  script: FileOrModuleResolver<Target>,
+): ThreadWorkerCreator<Self, Target> {
   const scriptUrl = createScriptUrl(script);
 
   function createWorker({
-    createMessenger = createWorkerMessenger,
+    createTarget = createDefaultTarget,
     ...endpointOptions
-  }: CreateCallableWorkerOptions<T> = {}): Endpoint<T>['call'] {
+  }: CreateThreadWorkerOptions<Self, Target> = {}): Thread<Target> {
     if (scriptUrl) {
-      const endpoint = createEndpoint(
-        createMessenger(scriptUrl),
-        endpointOptions,
-      );
-      const {call: caller} = endpoint;
-
-      workerEndpointCache.set(caller, endpoint);
-
-      return caller as any;
+      return createThread(createTarget(scriptUrl), endpointOptions);
     }
 
     // The babel plugin that comes with this package actually turns the argument
@@ -87,26 +73,24 @@ export function createCallableWorker<T = unknown>(
   return createWorker as any;
 }
 
-export function expose(
-  caller: any,
-  api: {[key: string]: ((...args: any[]) => any) | undefined},
-) {
-  const endpoint = getEndpoint(caller);
+function createDefaultTarget(url: URL): ThreadTarget {
+  const workerUrl = createCrossDomainWorkerUrl(url);
+  const worker = new Worker(workerUrl);
+  const baseTarget = targetFromWebWorker(worker);
 
-  endpoint?.expose(api);
+  return {
+    ...baseTarget,
+    listen(options) {
+      options?.signal?.addEventListener(
+        'abort',
+        () => {
+          worker.terminate();
+          URL.revokeObjectURL(workerUrl);
+        },
+        {once: true},
+      );
 
-  return endpoint != null;
-}
-
-export function terminate(caller: any) {
-  const endpoint = getEndpoint(caller);
-
-  endpoint?.terminate();
-  workerEndpointCache.delete(caller);
-
-  return endpoint != null;
-}
-
-export function getEndpoint<T = unknown>(caller: any): Endpoint<T> | undefined {
-  return workerEndpointCache.get(caller);
+      return baseTarget.listen(options);
+    },
+  };
 }

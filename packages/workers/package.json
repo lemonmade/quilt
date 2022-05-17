@@ -19,12 +19,6 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
-    "./worker": {
-      "quilt:from-source": "./source/worker.ts",
-      "quilt:esnext": "./build/esnext/worker.esnext",
-      "import": "./build/esm/worker.mjs",
-      "require": "./build/cjs/worker.cjs"
-    },
     "./babel": {
       "import": "./build/esm/babel.mjs",
       "require": "./build/cjs/babel.cjs"
@@ -52,7 +46,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@remote-ui/rpc": "^1.2.0",
+    "@quilted/threads": "^0.1.0",
     "common-tags": "^1.8.0"
   },
   "peerDependencies": {

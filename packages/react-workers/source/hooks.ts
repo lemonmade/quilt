@@ -1,25 +1,32 @@
 import {useEffect, useRef} from 'react';
 
-import {terminate} from '@quilted/workers';
-import type {CallableWorkerCreator} from '@quilted/workers';
+import type {ThreadWorkerCreator} from '@quilted/workers';
 
-export function useWorker<Worker>(
-  creator: CallableWorkerCreator<Worker>,
-  ...args: Parameters<typeof creator>
-): ReturnType<CallableWorkerCreator<Worker>> {
-  const workerRef = useRef<ReturnType<typeof creator>>(null as any);
+export function useThreadWorker<Worker>(
+  creator: ThreadWorkerCreator<unknown, Worker>,
+  options?: Parameters<typeof creator>[0],
+): ReturnType<ThreadWorkerCreator<unknown, Worker>> {
+  const workerRef = useRef<{
+    readonly worker: ReturnType<typeof creator>;
+    readonly controller: AbortController;
+  }>(null as any);
 
   if (workerRef.current === null) {
-    workerRef.current = creator(...args);
+    const controller = new AbortController();
+
+    workerRef.current = {
+      controller,
+      worker: creator({signal: controller.signal, ...options}),
+    };
   }
 
-  const {current: worker} = workerRef;
+  const {worker, controller} = workerRef.current;
 
   useEffect(() => {
     return () => {
-      terminate(worker);
+      controller.abort();
     };
-  }, [worker]);
+  }, [controller]);
 
   return worker;
 }

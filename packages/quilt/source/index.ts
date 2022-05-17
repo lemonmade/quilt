@@ -1,6 +1,23 @@
 export {createAsyncLoader} from '@quilted/async';
 export type {AsyncLoader} from '@quilted/async';
 export {
+  on,
+  once,
+  createEmitter,
+  AbortError,
+  NestedAbortController,
+} from '@quilted/events';
+export type {
+  AbortBehavior,
+  Emitter,
+  EmitterEventType,
+  EmitterHandler,
+  EventTarget,
+  EventTargetAddEventListener,
+  EventTargetFunction,
+  EventTargetOn,
+} from '@quilted/events';
+export {
   useAsync,
   useAsyncAsset,
   usePreload,
@@ -96,15 +113,6 @@ export {
   useRouteChangeFocusRef,
 } from '@quilted/react-router';
 export type {NavigateTo, RouteDefinition} from '@quilted/react-router';
-export {
-  useWorker,
-  createWorker,
-  createCallableWorker,
-} from '@quilted/react-workers';
-export type {
-  BasicWorkerCreator,
-  CallableWorkerCreator,
-} from '@quilted/react-workers';
 export {useCookie, useCookies, CookieContext} from '@quilted/react-http';
 export type {PropsWithChildren} from '@quilted/useful-react-types';
 export {createUseContextHook} from '@quilted/react-utilities';

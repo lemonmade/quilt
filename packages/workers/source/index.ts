@@ -1,9 +1,16 @@
-export {retain, release} from '@remote-ui/rpc';
-export type {SafeRpcArgument as SafeWorkerArgument} from '@remote-ui/rpc';
-export {expose, terminate, createCallableWorker, createWorker} from './create';
+export {retain, release} from '@quilted/threads';
 export type {
-  CallableWorkerCreator,
-  CreateCallableWorkerOptions,
+  Thread,
+  ThreadTarget,
+  ThreadOptions,
+  ThreadCallable,
+  ThreadExposable,
+  ThreadSafeArgument,
+  ThreadSafeReturnType,
+} from '@quilted/threads';
+export {createWorker, createThreadWorker} from './create';
+export type {
   BasicWorkerCreator,
+  ThreadWorkerCreator,
+  CreateThreadWorkerOptions,
 } from './create';
-export {createWorkerMessenger} from './messenger';

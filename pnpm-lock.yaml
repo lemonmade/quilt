@@ -316,6 +316,9 @@ importers:
       eslint-plugin-react-hooks: 4.2.0_eslint@7.29.0
       prettier: 2.3.2
 
+  packages/events:
+    specifiers: {}
+
   packages/graphql:
     specifiers:
       '@babel/generator': '>=7.0.0'
@@ -438,6 +441,7 @@ importers:
     specifiers:
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@quilted/async': ^0.3.12
+      '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
       '@quilted/http-handlers': ^0.2.20
       '@quilted/polyfills': ^0.2.12
@@ -455,11 +459,13 @@ importers:
       '@quilted/react-testing': ^0.5.1
       '@quilted/react-utilities': ^0.1.0
       '@quilted/react-workers': ^0.2.12
+      '@quilted/threads': ^0.1.0
       '@quilted/useful-react-types': ^0.1.0
       '@types/prettier': ^2.0.0
     dependencies:
       '@babel/runtime': 7.17.2
       '@quilted/async': link:../async
+      '@quilted/events': link:../events
       '@quilted/graphql': link:../graphql
       '@quilted/http-handlers': link:../http-handlers
       '@quilted/polyfills': link:../polyfills
@@ -477,6 +483,7 @@ importers:
       '@quilted/react-testing': link:../react-testing
       '@quilted/react-utilities': link:../react-utilities
       '@quilted/react-workers': link:../react-workers
+      '@quilted/threads': link:../threads
       '@quilted/useful-react-types': link:../useful-react-types
     devDependencies:
       '@types/prettier': 2.3.1
@@ -657,6 +664,12 @@ importers:
       common-tags: 1.8.0
       globby: 13.1.1
 
+  packages/threads:
+    specifiers:
+      '@quilted/events': ^0.1.0
+    dependencies:
+      '@quilted/events': link:../events
+
   packages/typescript:
     specifiers: {}
 
@@ -671,10 +684,10 @@ importers:
 
   packages/workers:
     specifiers:
-      '@remote-ui/rpc': ^1.2.0
+      '@quilted/threads': ^0.1.0
       common-tags: ^1.8.0
     dependencies:
-      '@remote-ui/rpc': 1.2.2
+      '@quilted/threads': link:../threads
       common-tags: 1.8.0
 
   tests/e2e:
@@ -3364,10 +3377,6 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: false
-
-  /@remote-ui/rpc/1.2.2:
-    resolution: {integrity: sha512-R4AuKYmSrYDV3c00Wh97B4b0vdHILW243C6jL75mil0aHMH50J1243VY1QECTwVsymUkwP3sXQnIdeX8YxSA2Q==}
     dev: false
 
   /@rollup/plugin-alias/3.1.2_rollup@2.70.0:

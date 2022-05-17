@@ -15,12 +15,7 @@ export default createPackage((pkg) => {
   });
   pkg.entry({source: './source/react/jsx-runtime', name: 'react/jsx-runtime'});
   pkg.entry({source: './source/react/test-utils', name: 'react/test-utils'});
-  pkg.entry({source: './source/workers', name: 'workers'});
-  pkg.entry({
-    source: './source/workers/worker',
-    name: 'workers/worker',
-    runtime: Runtime.Browser,
-  });
+  pkg.entry({source: './source/threads', name: 'threads'});
   pkg.entry({source: './source/http-handlers', name: 'http-handlers'});
   pkg.entry({
     source: './source/http-handlers/node',
