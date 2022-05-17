@@ -29,6 +29,11 @@ export default createPackage((pkg) => {
   });
   pkg.entry({source: './source/polyfills/base', name: 'polyfills/base'});
   pkg.entry({source: './source/polyfills/fetch', name: 'polyfills/fetch'});
+  pkg.entry({
+    source: './source/abort-controller',
+    name: 'abort-controller',
+    runtime: Runtime.Node,
+  });
   pkg.entry({source: './source/polyfills/crypto', name: 'polyfills/crypto'});
   pkg.entry({source: './source/polyfills/noop', name: 'polyfills/noop'});
   pkg.entry({source: './source/server', name: 'server', runtime: Runtime.Node});
