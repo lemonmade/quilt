@@ -243,7 +243,7 @@ const workerFunctionContent = (pkg: string) =>
   new Map([
     ['createWorker', `import ${JSON.stringify(MAGIC_MODULE_WORKER)};`],
     [
-      'createCallableWorker',
+      'createThreadWorker',
       stripIndent`
         import * as Worker from ${JSON.stringify(MAGIC_MODULE_WORKER)};
         import {endpoint} from '${pkg}/worker';
@@ -255,7 +255,7 @@ const workerFunctionContent = (pkg: string) =>
 const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
   ['@quilted/workers', workerFunctionContent('@quilted/workers')],
   ['@quilted/react-workers', workerFunctionContent('@quilted/react-workers')],
-  ['@quilted/quilt', workerFunctionContent('@quilted/quilt/workers')],
+  ['@quilted/quilt/threads', workerFunctionContent('@quilted/quilt/workers')],
 ]);
 
 function defaultContentForWorker({wrapper}: WorkerContext) {
