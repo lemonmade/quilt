@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.95
+
+### Patch Changes
+
+- [`36b26d19`](https://github.com/lemonmade/quilt/commit/36b26d1997d8e5d558f46e3979cee24d48d1c71f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing abort controller entry
+
 ## 0.5.94
 
 ### Patch Changes
