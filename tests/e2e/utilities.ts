@@ -251,17 +251,11 @@ export async function buildAppAndRunServer(
   const port = await getPort();
   const url = new URL(`http://localhost:${port}`);
 
-  const server = (async () => {
-    try {
-      await command.node(fs.resolve('build/server/index.js'), {
-        env: {PORT: String(port)},
-      });
-    } catch (error) {
-      // Ignore errors from killing the server at the end of tests
-      if ((error as {signal?: string})?.signal === 'SIGTERM') return;
-      throw error;
-    }
-  })();
+  const server = startServer(async () => {
+    await command.node(fs.resolve('build/server/index.js'), {
+      env: {PORT: String(port)},
+    });
+  });
 
   await waitForUrl(url);
 
@@ -269,6 +263,16 @@ export async function buildAppAndRunServer(
     url,
     server,
   };
+}
+
+export async function startServer(start: () => Promise<any>) {
+  try {
+    await start();
+  } catch (error) {
+    // Ignore errors from killing the server at the end of tests
+    if ((error as {signal?: string})?.signal === 'SIGTERM') return;
+    throw error;
+  }
 }
 
 export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
