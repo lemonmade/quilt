@@ -30,8 +30,8 @@ export default createPackage((pkg) => {
   pkg.entry({source: './source/polyfills/base', name: 'polyfills/base'});
   pkg.entry({source: './source/polyfills/fetch', name: 'polyfills/fetch'});
   pkg.entry({
-    source: './source/abort-controller',
-    name: 'abort-controller',
+    source: './source/polyfills/abort-controller',
+    name: 'polyfills/abort-controller',
     runtime: Runtime.Node,
   });
   pkg.entry({source: './source/polyfills/crypto', name: 'polyfills/crypto'});
