@@ -1,12 +1,20 @@
 export {
   createWorker,
-  createCallableWorker,
-  createWorkerMessenger,
-  expose,
-  terminate,
+  createThreadWorker,
   retain,
   release,
 } from '@quilted/workers';
-export type {BasicWorkerCreator, CallableWorkerCreator} from '@quilted/workers';
+export type {
+  Thread,
+  ThreadOptions,
+  ThreadTarget,
+  ThreadCallable,
+  ThreadExposable,
+  ThreadSafeArgument,
+  ThreadSafeReturnType,
+  BasicWorkerCreator,
+  ThreadWorkerCreator,
+  CreateThreadWorkerOptions,
+} from '@quilted/workers';
 
-export {useWorker} from './hooks';
+export {useThreadWorker} from './hooks';

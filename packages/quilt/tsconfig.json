@@ -8,6 +8,7 @@
   "exclude": ["quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../async"},
+    {"path": "../events"},
     {"path": "../graphql"},
     {"path": "../http-handlers"},
     {"path": "../polyfills"},
@@ -25,6 +26,7 @@
     {"path": "../react-testing"},
     {"path": "../react-utilities"},
     {"path": "../react-workers"},
+    {"path": "../threads"},
     {"path": "../useful-react-types"},
     {"path": "../workers"}
   ]
