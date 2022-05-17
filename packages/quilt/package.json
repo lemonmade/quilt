@@ -230,8 +230,10 @@
     }
   },
   "sideEffects": [
+    "./source/global.ts",
     "./build/esnext/global.esnext",
     "./build/esm/global.mjs",
+    "./source/polyfills/*.ts",
     "./build/esnext/polyfills/*.esnext",
     "./build/esm/polyfills/*.mjs"
   ],

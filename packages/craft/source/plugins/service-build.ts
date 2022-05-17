@@ -102,6 +102,10 @@ export function serviceBuild({
           });
 
           rollupPlugins?.(async (plugins) => {
+            const [{visualizer}] = await Promise.all([
+              import('rollup-plugin-visualizer'),
+            ]);
+
             plugins.unshift({
               name: '@quilted/magic-module-service',
               resolveId(id, importer) {
@@ -119,6 +123,18 @@ export function serviceBuild({
               const {minify} = await import('rollup-plugin-esbuild');
               plugins.push(minify());
             }
+
+            plugins.push(
+              visualizer({
+                template: 'treemap',
+                open: false,
+                brotliSize: true,
+                filename: project.fs.buildPath(
+                  'reports',
+                  `bundle-visualizer.html`,
+                ),
+              }),
+            );
 
             return plugins;
           });

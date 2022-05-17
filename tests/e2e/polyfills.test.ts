@@ -1,9 +1,11 @@
+import '@quilted/quilt/polyfills/fetch';
+
 import {withWorkspace, stripIndent, getPort, waitForUrl} from './utilities';
 
 describe('http', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
-      await withWorkspace({fixture: 'basic-api'}, async (workspace) => {
+      await withWorkspace({fixture: 'basic-api', debug: true}, async (workspace) => {
         const {fs, command} = workspace;
 
         await fs.write({
@@ -14,11 +16,14 @@ describe('http', () => {
             
             handler.get('/', async () => {
               const result = await fetch('https://swapi-graphql.netlify.app/.netlify/functions/index', {
+                method: 'POST',
                 signal: new AbortController().signal,
                 body: JSON.stringify({
                   query: '{ __schema { types { name } } }',
-
                 }),
+                headers: {
+                  'Content-Type': 'application/json',
+                }
               });
 
               return json(await result.json());

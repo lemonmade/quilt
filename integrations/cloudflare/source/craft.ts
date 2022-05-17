@@ -19,6 +19,7 @@ import type {
   ResolvedDevelopProjectConfigurationHooks,
 } from '@quilted/craft/kit';
 import type {MiniflareOptions} from 'miniflare';
+import type {PolyfillFeature} from '@quilted/craft/polyfills';
 
 export type WorkerFormat = 'modules' | 'service-worker';
 
@@ -193,7 +194,7 @@ function addConfiguration({
       quiltServiceOutputFormat,
       quiltAppServerOutputFormat,
       quiltHttpHandlerRuntimeContent,
-      quiltPolyfillFeatures,
+      quiltPolyfillFeaturesForEnvironment,
       quiltRuntimeEnvironmentVariables,
     }: ResolvedHooks<
       BuildAppConfigurationHooks & BuildServiceConfigurationHooks
@@ -228,9 +229,16 @@ function addConfiguration({
       format === 'modules' ? 'module' : 'iife',
     );
 
-    quiltPolyfillFeatures?.((features) => {
-      // Workers support fetch natively.
-      return features.filter((feature) => feature !== 'fetch');
+    const polyfillsWithNativeWorkersSupport = new Set<PolyfillFeature>([
+      'crypto',
+      'fetch',
+      'abort-controller',
+    ]);
+
+    quiltPolyfillFeaturesForEnvironment?.((features) => {
+      return features.filter(
+        (feature) => !polyfillsWithNativeWorkersSupport.has(feature),
+      );
     });
 
     rollupOutputs?.((outputs) => {
