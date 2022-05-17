@@ -139,6 +139,12 @@
       "import": "./build/esm/polyfills/fetch.mjs",
       "require": "./build/cjs/polyfills/fetch.cjs"
     },
+    "./polyfills/abort-controller": {
+      "quilt:from-source": "./source/polyfills/abort-controller.ts",
+      "quilt:esnext": "./build/esnext/polyfills/abort-controller.esnext",
+      "import": "./build/esm/polyfills/abort-controller.mjs",
+      "require": "./build/cjs/polyfills/abort-controller.cjs"
+    },
     "./polyfills/noop": {
       "quilt:from-source": "./source/polyfills/noop.ts",
       "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
@@ -224,8 +230,10 @@
     }
   },
   "sideEffects": [
+    "./source/global.ts",
     "./build/esnext/global.esnext",
     "./build/esm/global.mjs",
+    "./source/polyfills/*.ts",
     "./build/esnext/polyfills/*.esnext",
     "./build/esm/polyfills/*.mjs"
   ],

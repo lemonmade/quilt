@@ -20,17 +20,17 @@
       "require": "./build/cjs/index.cjs"
     },
     "./node": {
-      "quilt:from-source": "./source/node.ts",
-      "quilt:esnext": "./build/esnext/node.esnext",
-      "import": "./build/esm/node.mjs",
-      "require": "./build/cjs/node.cjs"
+      "quilt:from-source": "./source/node/index.ts",
+      "quilt:esnext": "./build/esnext/node/index.esnext",
+      "import": "./build/esm/node/index.mjs",
+      "require": "./build/cjs/node/index.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
       "node": [
-        "./build/typescript/node.d.ts"
+        "./build/typescript/node/index.d.ts"
       ]
     }
   },

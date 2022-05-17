@@ -67,6 +67,12 @@
       "import": "./build/esm/features/packages.mjs",
       "require": "./build/cjs/features/packages.cjs"
     },
+    "./polyfills": {
+      "quilt:from-source": "./source/features/polyfills.ts",
+      "quilt:esnext": "./build/esnext/features/polyfills.esnext",
+      "import": "./build/esm/features/polyfills.mjs",
+      "require": "./build/cjs/features/polyfills.cjs"
+    },
     "./postcss": {
       "quilt:from-source": "./source/tools/postcss.ts",
       "quilt:esnext": "./build/esnext/tools/postcss.esnext",
@@ -124,6 +130,9 @@
       ],
       "packages": [
         "./build/typescript/features/packages.d.ts"
+      ],
+      "polyfills": [
+        "./build/typescript/features/polyfills.d.ts"
       ],
       "react": [
         "./build/typescript/features/react.d.ts"

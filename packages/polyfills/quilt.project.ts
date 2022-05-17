@@ -20,6 +20,11 @@ export default createPackage((pkg) => {
     name: 'fetch.node',
     runtime: Runtime.Node,
   });
+  pkg.entry({
+    source: './source/abort-controller',
+    name: 'abort-controller',
+    runtime: Runtime.Node,
+  });
 
   pkg.use(quiltPackage());
 });

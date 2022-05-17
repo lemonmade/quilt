@@ -18,6 +18,7 @@ import type {
 import type {Performance} from '@quilted/quilt';
 
 export {stripIndent} from 'common-tags';
+export {getPort};
 
 export interface FileSystem {
   readonly root: string;
@@ -78,7 +79,7 @@ afterAll(async () => {
   browserPromise = undefined;
 });
 
-export type Fixture = 'basic-app';
+export type Fixture = 'basic-app' | 'basic-api';
 
 export interface WorkspaceOptions {
   debug?: boolean;
@@ -250,18 +251,31 @@ export async function buildAppAndRunServer(
   const port = await getPort();
   const url = new URL(`http://localhost:${port}`);
 
-  const server = (async () => {
-    try {
-      await command.node(fs.resolve('build/server/index.js'), {
-        env: {PORT: String(port)},
-      });
-    } catch (error) {
-      // Ignore errors from killing the server at the end of tests
-      if ((error as {signal?: string})?.signal === 'SIGTERM') return;
-      throw error;
-    }
-  })();
+  const server = startServer(async () => {
+    await command.node(fs.resolve('build/server/index.js'), {
+      env: {PORT: String(port)},
+    });
+  });
 
+  await waitForUrl(url);
+
+  return {
+    url,
+    server,
+  };
+}
+
+export async function startServer(start: () => Promise<any>) {
+  try {
+    await start();
+  } catch (error) {
+    // Ignore errors from killing the server at the end of tests
+    if ((error as {signal?: string})?.signal === 'SIGTERM') return;
+    throw error;
+  }
+}
+
+export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
   const startedAt = Date.now();
 
   // eslint-disable-next-line no-constant-condition
@@ -273,17 +287,12 @@ export async function buildAppAndRunServer(
       // intentional noop
     }
 
-    if (Date.now() - startedAt > 500) {
-      throw new Error(`Server at ${url.href} did not start up in time`);
+    if (Date.now() - startedAt > timeout) {
+      throw new Error(`Server at ${url.toString()} did not start up in time`);
     }
 
     await sleep(25);
   }
-
-  return {
-    url,
-    server,
-  };
 }
 
 function sleep(time: number) {
