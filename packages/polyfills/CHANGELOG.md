@@ -1,5 +1,13 @@
 # @quilted/polyfills
 
+## 0.2.24
+
+### Patch Changes
+
+- [#302](https://github.com/lemonmade/quilt/pull/302) [`b8940174`](https://github.com/lemonmade/quilt/commit/b894017459fa8e4e6d1a4fc918816356d36c8765) Thanks [@lemonmade](https://github.com/lemonmade)! - Add AbortController polyfill
+
+* [#302](https://github.com/lemonmade/quilt/pull/302) [`b8940174`](https://github.com/lemonmade/quilt/commit/b894017459fa8e4e6d1a4fc918816356d36c8765) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve service outputs
+
 ## 0.2.23
 
 ### Patch Changes

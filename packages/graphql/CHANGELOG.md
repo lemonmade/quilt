@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.37
+
+### Patch Changes
+
+- [`fbf35f12`](https://github.com/lemonmade/quilt/commit/fbf35f12cc5fe3d1da976e7fcd47898051620979) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow passing abort signal to GraphQL fetch
+
 ## 0.4.36
 
 ### Patch Changes
