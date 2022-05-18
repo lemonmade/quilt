@@ -1,5 +1,11 @@
 # @quilted/workers
 
+## 0.2.23
+
+### Patch Changes
+
+- [`94dcb682`](https://github.com/lemonmade/quilt/commit/94dcb68224e7076a08070c46b5e3c31e7568a970) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix worker build configuration
+
 ## 0.2.22
 
 ### Patch Changes

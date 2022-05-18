@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.98
+
+### Patch Changes
+
+- [`f88502ca`](https://github.com/lemonmade/quilt/commit/f88502ca8c969d0da0991523cb1326c9fd6d2203) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some events types and exports
+
 ## 0.5.97
 
 ### Patch Changes
