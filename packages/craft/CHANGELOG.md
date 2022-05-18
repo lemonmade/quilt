@@ -1,5 +1,16 @@
 # @quilted/craft
 
+## 0.1.117
+
+### Patch Changes
+
+- [`78b5f802`](https://github.com/lemonmade/quilt/commit/78b5f8029d3f9dddae8c7000a5ab711063500f6c) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve signature of app request handler helpers
+
+* [`4f7d5738`](https://github.com/lemonmade/quilt/commit/4f7d5738890b65c984558ec613509b6e15ab3121) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve name of root entry CSS file
+
+* Updated dependencies [[`78b5f802`](https://github.com/lemonmade/quilt/commit/78b5f8029d3f9dddae8c7000a5ab711063500f6c)]:
+  - @quilted/quilt@0.5.99
+
 ## 0.1.116
 
 ### Patch Changes
