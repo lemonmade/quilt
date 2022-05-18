@@ -49,11 +49,11 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
           return [
             ...nodePlugins.filter((plugin) => plugin.name !== 'node-externals'),
             ...plugins,
-            esbuild({target: 'es2017'}),
+            esbuild({target: 'es2020'}),
             esbuild({
               include: /\.esnext$/,
               exclude: [],
-              target: 'es2017',
+              target: 'es2020',
               loaders: {
                 '.esnext': 'js',
               },
