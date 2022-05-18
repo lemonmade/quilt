@@ -21,6 +21,22 @@ export type {
   ThreadEncodingStrategyApi,
 } from '@quilted/threads';
 export {
+  on,
+  once,
+  createEmitter,
+  AbortError,
+  NestedAbortController,
+} from '@quilted/events';
+export type {
+  AbortBehavior,
+  Emitter,
+  EmitterHandler,
+  EventTarget,
+  EventTargetAddEventListener,
+  EventTargetFunction,
+  EventTargetOn,
+} from '@quilted/events';
+export {
   useThreadWorker,
   createWorker,
   createThreadWorker,

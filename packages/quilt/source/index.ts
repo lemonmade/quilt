@@ -10,7 +10,6 @@ export {
 export type {
   AbortBehavior,
   Emitter,
-  EmitterEventType,
   EmitterHandler,
   EventTarget,
   EventTargetAddEventListener,

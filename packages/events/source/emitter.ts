@@ -2,10 +2,10 @@ import {on as onEvent} from './on';
 import {once as onceEvent} from './once';
 import type {AbortBehavior} from './abort';
 
-export type EmitterEventType = string | symbol;
 export type EmitterHandler<T = unknown> = (event: T) => void;
 
-export interface Emitter<Events extends Record<EmitterEventType, unknown>> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export interface Emitter<Events = {}> {
   on<Event extends keyof Events>(
     type: Event,
     handler: EmitterHandler<Events[Event]>,
@@ -32,9 +32,8 @@ export interface Emitter<Events extends Record<EmitterEventType, unknown>> {
   ): void;
 }
 
-export function createEmitter<
-  Events extends Record<EmitterEventType, unknown>,
->(): Emitter<Events> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function createEmitter<Events = {}>(): Emitter<Events> {
   const handlerMap = new Map<keyof Events, Set<any>>();
 
   return {
@@ -70,10 +69,10 @@ export function createEmitter<
     const once = argTwo?.once as boolean | undefined;
 
     let handlers = handlerMap.get(event);
-    const signalAbort = new AbortController();
+    const signalAbort = signal && new AbortController();
 
     const remove = () => {
-      signalAbort.abort();
+      signalAbort?.abort();
       handlers!.delete(normalizedHandler);
     };
 
@@ -92,6 +91,6 @@ export function createEmitter<
       handlerMap.set(event, handlers);
     }
 
-    signal?.addEventListener('abort', remove, {signal: signalAbort.signal});
+    signal?.addEventListener('abort', remove, {signal: signalAbort!.signal});
   }
 }
