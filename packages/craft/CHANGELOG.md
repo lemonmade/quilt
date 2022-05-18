@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.116
+
+### Patch Changes
+
+- [`1942470a`](https://github.com/lemonmade/quilt/commit/1942470aff9e18ea4499d15ee42727a4ddf24969) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix final worker build issues
+
+- Updated dependencies [[`1942470a`](https://github.com/lemonmade/quilt/commit/1942470aff9e18ea4499d15ee42727a4ddf24969)]:
+  - @quilted/workers@0.2.25
+
 ## 0.1.115
 
 ### Patch Changes
