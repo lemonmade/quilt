@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.99
+
+### Patch Changes
+
+- [`78b5f802`](https://github.com/lemonmade/quilt/commit/78b5f8029d3f9dddae8c7000a5ab711063500f6c) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve signature of app request handler helpers
+
 ## 0.5.98
 
 ### Patch Changes
