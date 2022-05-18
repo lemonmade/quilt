@@ -11,7 +11,7 @@ const httpHandler = createHttpHandler();
 
 // For all GET requests, render our React application.
 httpHandler.get(
-  createServerRenderingRequestHandler(App, {
+  createServerRenderingRequestHandler(() => <App />, {
     assets: createAssetManifest(),
   }),
 );

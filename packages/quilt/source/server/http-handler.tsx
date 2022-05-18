@@ -1,4 +1,4 @@
-import type {ComponentType, ReactElement} from 'react';
+import type {ReactElement} from 'react';
 
 import type {AssetManifest} from '@quilted/async/server';
 import {render as renderToString, Html} from '@quilted/react-html/server';
@@ -17,45 +17,47 @@ import type {
 
 import {renderApp} from './render';
 
-export interface Options<Props = Record<string, never>>
-  extends Omit<ExtractOptions, 'context'> {
+export interface Options extends Omit<ExtractOptions, 'context'> {
   assets?: AssetManifest<unknown>;
   handler?: HttpHandler;
   context?(
     request: Request,
     context: RequestContext,
   ): ServerRenderRequestContext;
-  renderProps?(request: Request, context: RequestContext): Props;
 }
 
-export function createServerRenderingHttpHandler<Props>(
-  App: ComponentType<Props>,
-  {handler = createHttpHandler(), ...options}: Options<Props>,
+export function createServerRenderingHttpHandler(
+  render: (
+    request: Request,
+    context: RequestContext,
+  ) => ReactElement<any> | Promise<ReactElement<any>>,
+  {handler = createHttpHandler(), ...options}: Options,
 ) {
-  handler.get(createServerRenderingRequestHandler(App, options));
+  handler.get(createServerRenderingRequestHandler(render, options));
   return handler;
 }
 
-export function createServerRenderingRequestHandler<Props>(
-  App: ComponentType<Props>,
-  {renderProps, context, ...options}: Omit<Options<Props>, 'handler'> = {},
+export function createServerRenderingRequestHandler(
+  render: (
+    request: Request,
+    context: RequestContext,
+  ) => ReactElement<any> | Promise<ReactElement<any>>,
+  {context, ...options}: Omit<Options, 'handler'> = {},
 ): RequestHandler {
-  return (request, requestContext) => {
-    return renderToResponse(
-      <App {...(renderProps?.(request, requestContext) as any)} />,
-      request,
-      {
-        ...options,
-        context: context?.(request, requestContext) ?? (requestContext as any),
-      },
-    );
+  return async (request, requestContext) => {
+    const app = await render(request, requestContext);
+
+    return renderToResponse(app, request, {
+      ...options,
+      context: context?.(request, requestContext) ?? (requestContext as any),
+    });
   };
 }
 
-export async function renderToResponse<Props>(
-  element: ReactElement<Props>,
+export async function renderToResponse(
+  app: ReactElement<any>,
   request: Request,
-  {assets, ...options}: Omit<Options<Props>, 'handler' | 'renderProps'> = {},
+  {assets, ...options}: Omit<Options, 'handler' | 'renderProps'> = {},
 ) {
   const accepts = request.headers.get('Accept');
 
@@ -66,7 +68,7 @@ export async function renderToResponse<Props>(
     http,
     markup,
     asyncAssets,
-  } = await renderApp(element, {
+  } = await renderApp(app, {
     ...options,
     url: request.url,
     headers: request.headers,

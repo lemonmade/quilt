@@ -49,7 +49,7 @@ export default createApp((app) => {
 
 You can write any code for your server that you like. Quilt provides some utilities in the `@quilted/quilt/server` entrypoint that lets you reintroduce Quilt’s default rendering logic as part of a larger server. For example, the following custom server does the exact same logic as the normal HTTP server, but adds an additional `ping` route that is handled before the React app:
 
-```ts
+```tsx
 // server.ts
 
 // This is a “magic module in Quilt — it doesn’t actually exist anywhere on
@@ -59,8 +59,8 @@ You can write any code for your server that you like. Quilt provides some utilit
 // the files with the right browser targets.
 import createAssetManifest from '@quilted/quilt/magic/app/asset-manifest';
 
-import {createHttpHandler, response} from '@quilted/http-handlers';
 import {createServerRenderingRequestHandler} from '@quilted/quilt/server';
+import {createHttpHandler, response} from '@quilted/quilt/http-handlers';
 
 import App from './App';
 
@@ -68,7 +68,9 @@ const handler = createHttpHandler();
 
 handler.get('ping', () => response('pong!'));
 handler.get(
-  createServerRenderingRequestHandler(App, {assets: createAssetManifest()}),
+  createServerRenderingRequestHandler(() => <App />, {
+    assets: createAssetManifest(),
+  }),
 );
 
 export default handler;

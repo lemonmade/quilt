@@ -164,7 +164,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       )};
                       import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
       
-                      export default createServerRenderingHttpHandler(App, {
+                      export default createServerRenderingHttpHandler(() => <App />, {
                         assets: createAssetManifest(),
                       });
                     `;
