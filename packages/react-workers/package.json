@@ -18,22 +18,9 @@
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
-    },
-    "./worker": {
-      "quilt:from-source": "./source/worker.ts",
-      "quilt:esnext": "./build/esnext/worker.esnext",
-      "import": "./build/esm/worker.mjs",
-      "require": "./build/cjs/worker.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "worker": [
-        "./build/typescript/worker.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/workers": "^0.2.12"

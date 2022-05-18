@@ -1,4 +1,9 @@
-export {retain, release} from '@quilted/threads';
+export {
+  retain,
+  release,
+  createThread,
+  targetFromWebWorker,
+} from '@quilted/threads';
 export type {
   Thread,
   ThreadTarget,

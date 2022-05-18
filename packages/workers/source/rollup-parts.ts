@@ -245,9 +245,10 @@ const workerFunctionContent = (pkg: string) =>
     [
       'createThreadWorker',
       stripIndent`
-        import * as Worker from ${JSON.stringify(MAGIC_MODULE_WORKER)};
-        import {endpoint} from '${pkg}/worker';
-        endpoint.expose(Worker);
+        import {createThread, targetFromWebWorker} from ${JSON.stringify(pkg)};
+        import * as expose from ${JSON.stringify(MAGIC_MODULE_WORKER)};
+
+        createThread(targetFromWebWorker(self), {expose});
       `,
     ],
   ]);
@@ -255,7 +256,7 @@ const workerFunctionContent = (pkg: string) =>
 const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
   ['@quilted/workers', workerFunctionContent('@quilted/workers')],
   ['@quilted/react-workers', workerFunctionContent('@quilted/react-workers')],
-  ['@quilted/quilt/threads', workerFunctionContent('@quilted/quilt/workers')],
+  ['@quilted/quilt/threads', workerFunctionContent('@quilted/quilt/threads')],
 ]);
 
 function defaultContentForWorker({wrapper}: WorkerContext) {

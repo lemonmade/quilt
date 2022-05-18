@@ -3,6 +3,8 @@ export {
   createThreadWorker,
   retain,
   release,
+  createThread,
+  targetFromWebWorker,
 } from '@quilted/workers';
 export type {
   Thread,
