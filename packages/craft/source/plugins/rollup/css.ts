@@ -76,7 +76,7 @@ export function cssRollupPlugin({
 
       const fileHandle = this.emitFile({
         type: 'asset',
-        name: `${chunk.name}.css`,
+        name: `${chunk.fileName.split('.')[0]}.css`,
         source: code,
       });
 
