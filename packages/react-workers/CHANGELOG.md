@@ -1,5 +1,11 @@
 # @quilted/react-workers
 
+## 0.2.22
+
+### Patch Changes
+
+- [`b197bb17`](https://github.com/lemonmade/quilt/commit/b197bb171c66cb4d51f9ecf97f29ddd6a808157d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix thread worker entry point
+
 ## 0.2.21
 
 ### Patch Changes
