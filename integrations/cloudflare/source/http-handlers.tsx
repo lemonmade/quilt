@@ -5,7 +5,7 @@ import type {HttpHandler} from '@quilted/quilt/http-handlers';
 import {getAssetFromKV} from './forked/kv-asset-handler';
 import type {KVNamespaceBinding} from './forked/kv-asset-handler';
 
-import type {} from './types';
+export type {CloudflareRequestContext} from './types';
 
 export interface AssetOptions {
   /**

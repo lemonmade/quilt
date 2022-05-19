@@ -12,3 +12,8 @@ declare module '@quilted/quilt' {
 declare module '@quilted/quilt/http-handlers' {
   interface RequestContext extends CloudflareRequestContext {}
 }
+
+// @ts-expect-error This module augmentation does work when consumed in real projects
+declare module '@quilted/http-handlers' {
+  interface RequestContext extends CloudflareRequestContext {}
+}
