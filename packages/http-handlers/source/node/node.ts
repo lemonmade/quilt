@@ -7,6 +7,8 @@ import {createHeaders} from '@quilted/http';
 import {notFound} from '../response';
 import type {HttpHandler, Response, RequestOptions} from '../types';
 
+import type {} from './types';
+
 export function createHttpServer(handler: HttpHandler) {
   return createServer(createHttpRequestListener(handler));
 }
@@ -18,7 +20,9 @@ export function createHttpRequestListener(
     try {
       const transformedRequest = await transformRequest(request);
 
-      const result = (await handler.run(transformedRequest)) ?? notFound();
+      const result =
+        (await handler.run(transformedRequest, {request, response})) ??
+        notFound();
 
       const {status, headers, cookies, body: resultBody} = result;
       const setCookieHeaders = cookies.getAll();

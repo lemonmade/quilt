@@ -52,7 +52,7 @@ export function createHttpHandler({
       registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
       return httpHandler;
     },
-    async run(requestOptions, requestContext = {}) {
+    async run(requestOptions, requestContext = {} as any) {
       return runInternal(createRequest(requestOptions), requestContext);
     },
   };
