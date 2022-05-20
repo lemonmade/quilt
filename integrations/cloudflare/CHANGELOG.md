@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.1.35
+
+### Patch Changes
+
+- [`03d98d20`](https://github.com/lemonmade/quilt/commit/03d98d201fdab69e4cf57dce588d253c4071f471) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some Cloudflare HTTP handler types
+
 ## 0.1.34
 
 ### Patch Changes
