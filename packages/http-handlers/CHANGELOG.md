@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.34
+
+### Patch Changes
+
+- [`1c994ae3`](https://github.com/lemonmade/quilt/commit/1c994ae394f03e3b5660fd86f5166a26d2125ab8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add Node HTTP handler context
+
 ## 0.2.33
 
 ### Patch Changes
