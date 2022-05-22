@@ -61,5 +61,5 @@ export type SchemaOutputKind =
 export interface DocumentOutputKind {
   kind: 'value' | 'types';
   match?: string[];
-  addTypename?: boolean;
+  addTypename?: boolean | 'smart';
 }

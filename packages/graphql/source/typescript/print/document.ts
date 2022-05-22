@@ -5,6 +5,7 @@ import {
   isObjectType,
   isScalarType,
   isCompositeType,
+  isAbstractType,
   TypeNode,
   isEnumType,
 } from 'graphql';
@@ -158,7 +159,7 @@ export function generateDocumentTypes(
 
     const operationVariableInit = isType
       ? undefined
-      : createDocumentExportValue(document, kind);
+      : createDocumentExportValue(document, context);
 
     const operationVariableDeclaration = t.variableDeclaration('const', [
       t.variableDeclarator(operationExportIdentifier, operationVariableInit),
@@ -179,6 +180,7 @@ export function generateDocumentTypes(
       ).get(rootType) ?? new Map(),
       rootType,
       context,
+      false,
     );
 
     // Mark all top-level namespace exports as `declare` so Babel
@@ -221,6 +223,7 @@ export function generateDocumentTypes(
             ).get(onType) ?? new Map(),
             onType,
             baseContext,
+            isAbstractType(onType),
           );
         })
         .flat(),
@@ -342,13 +345,18 @@ function exportsForSelection(
   fieldMap: Map<string, Field>,
   type: GraphQLObjectType | GraphQLInterfaceType,
   context: Context,
+  isPossiblyOnAbstractType: boolean,
 ) {
   const interfaceBody: TSTypeElement[] = [];
   const namespaceBody: Statement[] = [];
 
-  const {addTypename = true} = context.kind;
+  const {addTypename = 'smart'} = context.kind;
 
-  if (type !== context.rootType && addTypename) {
+  if (
+    type !== context.rootType &&
+    (addTypename === true ||
+      (addTypename === 'smart' && isPossiblyOnAbstractType))
+  ) {
     const typenameField = t.tsPropertySignature(
       t.identifier('__typename'),
       t.tsTypeAnnotation(
@@ -392,6 +400,7 @@ function exportsForSelection(
           ) ?? new Map(),
           unwrappedType.type,
           context,
+          false,
         ),
       );
     } else if (isCompositeType(unwrappedType.type)) {
@@ -432,6 +441,7 @@ function exportsForSelection(
             fieldMap,
             matchedType,
             context,
+            true,
           ),
         );
       }
@@ -593,12 +603,18 @@ function unwrapAstType(type: TypeNode): {
 
 function createDocumentExportValue(
   document: DocumentNode,
-  outputKind: DocumentOutputKind,
+  {schema, kind: outputKind}: Context,
 ) {
-  const {addTypename: shouldAddTypename = true} = outputKind;
+  const {addTypename: shouldAddTypename = 'smart'} = outputKind;
 
   const minifiedDocument = minify(
-    shouldAddTypename ? addTypename(document, {clone: true}) : document,
+    shouldAddTypename
+      ? addTypename(document, {
+          schema,
+          clone: true,
+          strategy: shouldAddTypename === true ? 'always' : shouldAddTypename,
+        })
+      : document,
     {clone: !shouldAddTypename},
   );
 

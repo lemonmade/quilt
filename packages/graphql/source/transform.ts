@@ -12,6 +12,7 @@ import type {
 } from 'graphql';
 
 import type {GraphQLOperation} from './types';
+import {addTypename} from './utilities/document';
 
 const IMPORT_REGEX = /^#import\s+['"]([^'"]*)['"];?[\s\n]*/gm;
 const DEFAULT_NAME = 'Operation';
@@ -160,25 +161,6 @@ function definitionDependencies(definitions: readonly DefinitionNode[]) {
   );
 }
 
-const TYPENAME_FIELD = {
-  kind: 'Field',
-  alias: null,
-  name: {kind: 'Name', value: '__typename'},
-};
-
-function addTypename(definition: DefinitionNode) {
-  for (const {selections} of selectionSetsForDefinition(definition)) {
-    const hasTypename = selections.some(
-      (selection) =>
-        selection.kind === 'Field' && selection.name.value === '__typename',
-    );
-
-    if (!hasTypename) {
-      (selections as any[]).push(TYPENAME_FIELD);
-    }
-  }
-}
-
 function collectUsedFragmentSpreads(
   definition: DefinitionNode,
   usedSpreads: Set<string>,
@@ -200,27 +182,6 @@ function selectionsForDefinition(
   }
 
   return selectionsForSelectionSet(definition.selectionSet);
-}
-
-function* selectionSetsForDefinition(
-  definition: DefinitionNode,
-): IterableIterator<SelectionSetNode> {
-  if (!('selectionSet' in definition) || definition.selectionSet == null) {
-    return [][Symbol.iterator]();
-  }
-
-  if (definition.kind !== 'OperationDefinition') {
-    yield definition.selectionSet;
-  }
-
-  for (const nestedSelection of selectionsForDefinition(definition)) {
-    if (
-      'selectionSet' in nestedSelection &&
-      nestedSelection.selectionSet != null
-    ) {
-      yield nestedSelection.selectionSet;
-    }
-  }
 }
 
 function* selectionsForSelectionSet({
