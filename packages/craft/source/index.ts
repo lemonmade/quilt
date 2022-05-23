@@ -21,6 +21,7 @@ import type {Options as PolyfillOptions} from './features/polyfills';
 import {workers} from './features/workers';
 import {reactTesting} from './features/testing';
 import {assets as staticAssets} from './features/assets';
+import {AssetOptions} from './features/assets';
 
 import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
 import {rollupHooks, rollupNode} from './tools/rollup';
@@ -98,7 +99,7 @@ export interface AppOptions {
   /**
    * Customizes the assets created for your application.
    */
-  assets?: Partial<AppBuildAssetOptions>;
+  assets?: Partial<AppBuildAssetOptions & AssetOptions>;
 
   /**
    * Customizes the browser entrypoint of your application.
@@ -177,15 +178,15 @@ export function quiltApp({
         server && appServer(typeof server === 'boolean' ? undefined : server),
         server && useHttpHandler && httpHandler(),
         server && useHttpHandler && httpHandlerDevelopment(),
+        build && staticAssets({baseUrl, ...assetOptions}),
         build &&
           appBuild({
             env,
             browser,
             server: Boolean(server),
             static: Boolean(renderStatic),
-            assets: {minify, baseUrl, ...assetOptions},
+            assets: {minify},
           }),
-        build && staticAssets(),
         build &&
           renderStatic &&
           appStatic(

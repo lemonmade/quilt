@@ -49,8 +49,14 @@
     "./jest/resolver.cjs": {
       "require": "./jest/resolver.cjs"
     },
-    "./jest/asset.cjs": {
-      "require": "./jest/asset.cjs"
+    "./jest/assets.cjs": {
+      "require": "./jest/assets.cjs"
+    },
+    "./jest/styles.cjs": {
+      "require": "./jest/styles.cjs"
+    },
+    "./jest/css-modules.cjs": {
+      "require": "./jest/css-modules.cjs"
     },
     "./jest": {
       "quilt:from-source": "./source/tools/jest.ts",
