@@ -57,7 +57,9 @@ describe('app builds', () => {
 
         expect(await getLoadedImages(page)).toHaveLength(0);
 
-        const imageSource = await page.evaluate(() => document.querySelector('img')?.src);
+        const imageSource = await page.evaluate(
+          () => document.querySelector('img')?.src,
+        );
 
         expect(imageSource).toMatch('data:image/png;base64,');
       });
@@ -100,7 +102,9 @@ describe('app builds', () => {
 
         expect(await getLoadedImages(page)).toStrictEqual([
           expect.objectContaining({
-            url: expect.stringMatching(/[/]assets[/]lemon-tiny\.[a-zA-Z0-9]*\.png/),
+            url: expect.stringMatching(
+              /[/]assets[/]lemon-tiny\.[a-zA-Z0-9]*\.png/,
+            ),
           }),
         ]);
       });
@@ -151,7 +155,9 @@ describe('app builds', () => {
 
         expect(await getLoadedImages(page)).toStrictEqual([
           expect.objectContaining({
-            url: expect.stringMatching(/[/]assets[/]images[/]lemon\.[a-zA-Z0-9]*\.png/),
+            url: expect.stringMatching(
+              /[/]assets[/]images[/]lemon\.[a-zA-Z0-9]*\.png/,
+            ),
           }),
         ]);
       });
@@ -161,17 +167,15 @@ describe('app builds', () => {
 
 async function getLoadedImages(page: Page) {
   const images = await page.evaluate(() => {
-    return performance
-      .getEntriesByType('resource')
-      .flatMap((entry) => {
-        if (!/\.(png|jpg|svg)/.test(entry.name)) return [];
+    return performance.getEntriesByType('resource').flatMap((entry) => {
+      if (!/\.(png|jpg|svg)/.test(entry.name)) return [];
 
-        return {
-          url: entry.name,
-          size: (entry as PerformanceResourceTiming).transferSize,
-        };
-      });
+      return {
+        url: entry.name,
+        size: (entry as PerformanceResourceTiming).transferSize,
+      };
+    });
   });
-  
+
   return images;
 }
