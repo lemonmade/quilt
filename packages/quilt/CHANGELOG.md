@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.101
+
+### Patch Changes
+
+- [`7a077060`](https://github.com/lemonmade/quilt/commit/7a077060b793839bd9e426e2690f82596aab198c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset and style handling for apps
+
 ## 0.5.100
 
 ### Patch Changes
