@@ -20,6 +20,7 @@ import {polyfills} from './features/polyfills';
 import type {Options as PolyfillOptions} from './features/polyfills';
 import {workers} from './features/workers';
 import {reactTesting} from './features/testing';
+import {assets as staticAssets} from './features/assets';
 
 import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
 import {rollupHooks, rollupNode} from './tools/rollup';
@@ -144,7 +145,7 @@ export function quiltApp({
   static: renderStatic = false,
   server = !renderStatic,
 }: AppOptions = {}) {
-  const {minify = true, baseUrl = '/assets/'} = assets;
+  const {minify = true, baseUrl = '/assets/', ...assetOptions} = assets;
 
   const useHttpHandler =
     typeof server === 'boolean' ? server : server.httpHandler ?? true;
@@ -182,8 +183,9 @@ export function quiltApp({
             browser,
             server: Boolean(server),
             static: Boolean(renderStatic),
-            assets: {minify, baseUrl},
+            assets: {minify, baseUrl, ...assetOptions},
           }),
+        build && staticAssets(),
         build &&
           renderStatic &&
           appStatic(

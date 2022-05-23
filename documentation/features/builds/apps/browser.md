@@ -1,24 +1,27 @@
 # Browser builds
 
-Quilt’s bread and butter is building web applications. If you use [Sewing Kit](./TODO), Quilt’s build tool, you’ll get browser builds that have been heavily optimized for performance out of the box. Quilt also provides a few configuration options for customizing the browser entrypoint, browsers targets, and other details about your application’s assets.
+Quilt’s bread and butter is building web applications. If you use [Craft](./TODO), Quilt’s build tool, you’ll get browser builds that have been heavily optimized for performance out of the box. Quilt also provides a few configuration options for customizing the browser entrypoint, browsers targets, and other details about your application’s assets.
 
-> **Note:** like all of Quilt’s builds, application builds are powered by [Rollup](https://rollupjs.org/guide/en/). If you want to customize the build, you’ll often do so with custom Rollup plugins. You can learn more about customizing Rollup through Sewing Kit in the [`@quilted/sewing-kit-rollup` package documentation](https://github.com/lemonmade/quilt/tree/main/packages/sewing-kit-rollup).
+> **Note:** like all of Quilt’s builds, application builds are powered by [Rollup](https://rollupjs.org/guide/en/). If you want to customize the build, you’ll often do so with custom Rollup plugins. You can learn more about customizing Rollup through Craft in the [`@quilted/sewing-kit-rollup` package documentation](https://github.com/lemonmade/quilt/tree/main/packages/sewing-kit-rollup).
 
 ## Assets
 
-Quilt builds all your assets into a `build/assets` directory inside the root of your application’s root directory. We recommend ignoring the `build` directory in version control so that you don’t accidentally commit these built files.
+Quilt builds all your assets into a `build/assets` directory inside the root of your application’s root directory. This includes the bundled JavaScript and CSS for your application, as well as static asset files like `.png` and `.svg` that you import in your source code.
+
+We recommend ignoring the `build` directory in version control so that you don’t accidentally commit these built files.
 
 ### Customizing assets
 
-You can customize the assets that are loaded in the browser by passing an `assets` option to the [`quiltApp` Sewing Kit plugin](./TODO). You can currently provide the following options:
+You can customize the assets that are loaded in the browser by passing an `assets` option to the [`quiltApp` Craft plugin](./TODO). You can currently provide the following options:
 
 - `minify`: Determines whether the assets built by Quilt will be minified. Defaults to `true`.
 - `baseUrl`: The base URL where your assets will be hosted in production. By default, this is set to `/assets/`, which means that assets are assumed to be served from the `/assets/` path of your application domain.
+- `inline`: The settings to use for inlining static assets into your JavaScript by bundle. By default, Quilt will transform imports of small image files into base64 data URIs, instead of creating a dedicated file for them in your build. You can pass `false` to disable this behavior, or pass `{limit: number}` to the maximum file size that will be inlined.
 
 The example below shows how you could use the `assets` option to change the `baseUrl` to a dedicated CDN URL, which you would do if you host your assets separately from your application:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp, quiltApp} from '@quilted/craft';
 
@@ -32,6 +35,57 @@ export default createApp((app) => {
 });
 ```
 
+The example below shows how you can use the `assets.inline` option to fully disable asset inlining:
+
+```ts
+// quilt.project.ts
+
+import {createApp, quiltApp} from '@quilted/craft';
+
+export default createApp((app) => {
+  app.entry('./App');
+  app.use(
+    quiltApp({
+      assets: {inline: false},
+    }),
+  );
+});
+```
+
+#### Customizing the browser builds with Craft
+
+Quilt provides fine-grained control over the browser entry through a collection of [Craft hooks](./TODO). The following hooks are available for the [`build` task](./TODO):
+
+- `quiltAssetBaseUrl`: customizes the base URL used for assets in your application. This value will be appended to any assets built by Quilt. The default is `/assets/`.
+- `quiltAssetStaticExtensions`: the file extensions that will be considered as static assets. Defaults to a list of common static asset extensions.
+- `quiltAssetStaticInlineLimit`: customizes the maximum size for static assets that will be inlined into your JavaScript bundles.
+- `quiltAssetStaticOutputFilenamePattern`: customizes the filename pattern used when creating output files for your static assets.
+
+The example below shows how you can write a custom Craft plugin that uses the `quiltAssetStaticOutputFilenamePattern` hook to nest static assets under an `images` directory in your build outputs:
+
+```ts
+// quilt.project.ts
+
+import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
+
+export default createApp((app) => {
+  app.entry('./App');
+  app.use(quiltApp());
+  app.use(
+    createProjectPlugin({
+      name: 'MyApp.CustomizeStaticAssetPattern',
+      build({configure}) {
+        configure(({quiltAssetStaticOutputFilenamePattern}) => {
+          quiltAssetStaticOutputFilenamePattern?.(
+            (pattern) => `images/${pattern}`,
+          );
+        });
+      },
+    }),
+  );
+});
+```
+
 ## Browser entrypoint
 
 When you [create an app with Quilt](./TODO), you might be surprised to find that there are no calls to React’s `render()` or `hydrate()` methods anywhere in the template code. Instead, Quilt defaults the “entry point” of your application to an `App` component. This is a very intentional design decision — Quilt is a [component-focused framework](./TODO), which means that it provides all the capabilities you typically need when building an application as component-friendly APIs.
@@ -40,7 +94,7 @@ When you leave this default setup in place, Quilt will automatically create a br
 
 ### Replacing the default entrypoint
 
-The default entrypoint is quite simple, and there are many common cases where you may want to customize it. For example, you might want to initialize an error reporting library as early as possible, or you might want to start some workers as your React application boots. You can customize the entry by passing the `browser` option to the `quiltWebApp` plugin in your app’s `sewing-kit.config.ts`. The `browser` option lets you specify two modules (files) that customize the default browser entrypoint:
+The default entrypoint is quite simple, and there are many common cases where you may want to customize it. For example, you might want to initialize an error reporting library as early as possible, or you might want to start some workers as your React application boots. You can customize the entry by passing the `browser` option to the `quiltWebApp` plugin in your app’s `quilt.project.ts`. The `browser` option lets you specify two modules (files) that customize the default browser entrypoint:
 
 - `initializeModule`, which will be imported before anything else in the browser entry. Use this for code that must run as early as possible.
 - `entryModule`, which will be imported after the Quilt runtime has been installed, and will be used in place of the default rendering content. Use this if you want to completely replace the rendering code in the default browser entrypoint.
@@ -48,7 +102,7 @@ The default entrypoint is quite simple, and there are many common cases where yo
 Let’s say you want to bootstrap an error reporting library before your application renders. You can do this by providing the `initializeModule` option that points at a file in your application:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp, quiltApp} from '@quilted/craft';
 
@@ -74,18 +128,18 @@ import {ErrorLogging} from 'my-error-logging-library/browser';
 ErrorLogging.start();
 ```
 
-### Customizing the browser builds with Sewing Kit
+### Customizing the browser builds with Craft
 
-Quilt provides fine-grained control over the browser entry through a collection of [Sewing Kit hooks](./TODO). The following hooks are available:
+Quilt provides fine-grained control over the browser entry through a collection of [Craft hooks](./TODO). The following hooks are available:
 
 - `quiltAppBrowserEntryShouldHydrate`: customizes whether the browser entry should use hydration or rendering to initialize your app. If you provided `browser.entryModule`, this hook is not run, as the `browser.entryModule` is used for rendering logic instead.
 - `quiltAppBrowserEntryCssSelector`: customizes the CSS selector that finds the DOM node your app is rendered into. If you provided `browser.entryModule`, this hook is not run, as the `browser.entryModule` is used for rendering logic instead.
 - `quiltAppBrowserEntryContent`: customizes the full content of the browser entry, after both the `browser` option and the default logic provided by Quilt have been resolved.
 
-The example below shows how you can write a custom Sewing Kit plugin that uses the `quiltAppBrowserEntryCssSelector` hook to change just the CSS selector used to target the application:
+The example below shows how you can write a custom Craft plugin that uses the `quiltAppBrowserEntryCssSelector` hook to change just the CSS selector used to target the application:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
 
@@ -108,7 +162,7 @@ export default createApp((app) => {
 When Quilt is building the browser version of your app, it sets the `quiltAppBrowser` option to an object that describes the browser build being produced. You can use the presence of this option to perform tooling customizations that only apply to the browser build:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
 

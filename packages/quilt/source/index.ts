@@ -1,3 +1,5 @@
+export type {} from './modules';
+
 export {createAsyncLoader} from '@quilted/async';
 export type {AsyncLoader} from '@quilted/async';
 export {

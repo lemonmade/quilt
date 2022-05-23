@@ -174,6 +174,7 @@ importers:
       jest: ^27.5.0
       jest-config: ^27.5.0
       jest-watch-typeahead: ^1.0.0
+      mrmime: ^1.0.0
       pkg-dir: ^6.0.0
       postcss: ^8.0.0
       postcss-load-config: ^3.1.0
@@ -234,6 +235,7 @@ importers:
       jest: 27.5.1
       jest-config: 27.5.1
       jest-watch-typeahead: 1.0.0_jest@27.5.1
+      mrmime: 1.0.0
       pkg-dir: 6.0.1
       postcss: 8.3.5
       postcss-load-config: 3.1.4_postcss@8.3.5
@@ -7526,6 +7528,11 @@ packages:
     resolution: {integrity: sha512-3KYa4m4Vlqx98GPdOHghxSdNtTvcP8E0kkaJ5Dlh+h2DRzF7zpuVVcA8B0QpKd11YJeP9QQ7ASkKzOeu195Wzw==}
     engines: {node: '>= 8.0.0'}
     dev: true
+
+  /mrmime/1.0.0:
+    resolution: {integrity: sha512-a70zx7zFfVO7XpnQ2IX1Myh9yY4UYvfld/dikWRnsXxbyvMcfz+u6UfgNAtH+k2QqtJuzVpv6eLTx1G2+WKZbQ==}
+    engines: {node: '>=10'}
+    dev: false
 
   /ms/2.0.0:
     resolution: {integrity: sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=}
