@@ -86,6 +86,11 @@ module.exports = {
       files: ['*.test.*'],
       plugins: ['jest'],
       extends: ['plugin:jest/recommended'],
+      settings: {
+        jest: {
+          version: 27,
+        },
+      },
       env: {
         node: true,
         jest: true,

@@ -1,11 +1,18 @@
 import * as path from 'path';
-import {rm} from 'fs/promises';
+import {rm, readFile} from 'fs/promises';
+import {createHash} from 'crypto';
 
-import type {GetModuleInfo, GetManualChunk} from 'rollup';
+import type {
+  Plugin as RollupPlugin,
+  GetModuleInfo,
+  GetManualChunk,
+} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
+import * as mime from 'mrmime';
 
 import type {} from '../tools/postcss';
 import type {} from '../features/async';
+import {DEFAULT_STATIC_ASSET_EXTENSIONS} from '../constants';
 
 import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
 import type {App, WaterfallHookWithDefault} from '../kit';
@@ -30,6 +37,19 @@ export interface AssetOptions {
    * sure this value is the whole URL, like `https://my-cdn.com/assets/`.
    */
   baseUrl: string;
+
+  /**
+   * Controls how Quilt inlines assets into your bundles.
+   */
+  inline?:
+    | boolean
+    | {
+        /**
+         * The maximum size in bytes that an asset should be in order to
+         * be inlined into the bundle. Defaults to `4096`.
+         */
+        limit?: number;
+      };
 }
 
 export type AppBrowserOptions = Pick<
@@ -52,6 +72,33 @@ export interface AppBuildHooks {
    * additions to Quilt in order to correctly load assets.
    */
   quiltAssetBaseUrl: WaterfallHookWithDefault<string>;
+
+  /**
+   * The file extensions that will be considered as static assets. When you import these
+   * files, Quilt will copy them to your output directory with the hash of the file contents
+   * in the file name, and will replace the import with a URL pointing to this asset.
+   */
+  quiltAssetStaticExtensions: WaterfallHookWithDefault<readonly string[]>;
+
+  /**
+   * The file size limit for inlining static assets into your JavaScript bundles.
+   * When you import a file that is less than this size, Quilt will convert it to
+   * a bas64-encoded data URI; when the asset is larger than this size, it will
+   * instead be output as an asset file, and Quilt will replace the import with
+   * a URL pointing at that asset.
+   *
+   * Inlining images reduces network requests at the expense of a larger image size.
+   * By default, this inlining is only performed for images less than 4KB, and is
+   * never applied to SVG files.
+   */
+  quiltAssetStaticInlineLimit: WaterfallHookWithDefault<number>;
+
+  /**
+   * The pattern used when generating the file name for static assets being copied
+   * to your output directory. By default, the output files will have the same file
+   * name and extension as the input files, separated by the file’s content hash.
+   */
+  quiltAssetStaticOutputFilenamePattern: WaterfallHookWithDefault<string>;
 }
 
 const BROWSERSLIST_MODULES_QUERY =
@@ -114,9 +161,29 @@ export function appBuild({
   return createProjectPlugin<App>({
     name: STEP_NAME,
     build({project, hooks, configure, run}) {
+      let assetsInline: Exclude<
+        Options['assets']['inline'],
+        boolean | undefined
+      >;
+
+      if (typeof assets.inline === 'boolean') {
+        assetsInline = assets.inline ? {} : {limit: 0};
+      } else {
+        assetsInline = assets.inline ?? {};
+      }
+
       hooks<AppBuildHooks>(({waterfall}) => ({
         quiltAssetBaseUrl: waterfall({
           default: assets.baseUrl,
+        }),
+        quiltAssetStaticExtensions: waterfall<readonly string[]>({
+          default: () => [...DEFAULT_STATIC_ASSET_EXTENSIONS],
+        }),
+        quiltAssetStaticInlineLimit: waterfall({
+          default: assetsInline.limit ?? 4096,
+        }),
+        quiltAssetStaticOutputFilenamePattern: waterfall({
+          default: '[name].[hash].[ext]',
         }),
       }));
 
@@ -134,6 +201,9 @@ export function appBuild({
             quiltAsyncManifestPath,
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
+            quiltAssetStaticExtensions,
+            quiltAssetStaticInlineLimit,
+            quiltAssetStaticOutputFilenamePattern,
             quiltAsyncAssetBaseUrl,
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
@@ -149,6 +219,29 @@ export function appBuild({
               Array.from(new Set([...variables, ...inlineEnv])),
             );
           }
+
+          rollupPlugins?.(async (plugins) => {
+            const [baseUrl, extensions, inlineLimit, outputPattern] =
+              await Promise.all([
+                quiltAssetBaseUrl!.run(),
+                quiltAssetStaticExtensions!.run(),
+                quiltAssetStaticInlineLimit!.run(),
+                quiltAssetStaticOutputFilenamePattern!.run(),
+              ]);
+
+            return [
+              staticAssetsPlugin({
+                emit: Boolean(browserTargets),
+                baseUrl,
+                extensions,
+                inlineLimit,
+                outputPattern,
+                name: (file) =>
+                  path.posix.normalize(project.fs.relativePath(file)),
+              }),
+              ...plugins,
+            ];
+          });
 
           if (!browserTargets) return;
 
@@ -244,16 +337,24 @@ export function appBuild({
           });
 
           rollupOutputs?.(async (outputs) => {
-            const [outputRoot, isESM] = await Promise.all([
+            const [outputRoot, assetBaseUrl, isESM] = await Promise.all([
               outputDirectory.run(project.fs.buildPath()),
+              quiltAssetBaseUrl!.run(),
               browserTargets
                 ? targetsSupportModules(browserTargets.targets)
                 : Promise.resolve(true),
             ]);
 
+            const assetDirectory = assetBaseUrl.startsWith('/')
+              ? assetBaseUrl.slice(1)
+              : 'assets';
+
             outputs.push({
               format: isESM ? 'esm' : 'systemjs',
-              dir: path.join(outputRoot, isStatic ? 'public/assets' : 'assets'),
+              dir: path.join(
+                outputRoot,
+                isStatic ? `public/${assetDirectory}` : assetDirectory,
+              ),
               entryFileNames: `app${targetFilenamePart}.[hash].js`,
               assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
               chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
@@ -484,4 +585,126 @@ function getImportMetadata(
 
   cache.set(id, result);
   return result;
+}
+
+function staticAssetsPlugin({
+  emit,
+  name,
+  baseUrl,
+  extensions,
+  inlineLimit,
+  outputPattern,
+}: {
+  emit: boolean;
+  baseUrl: string;
+  extensions: readonly string[];
+  inlineLimit: number;
+  outputPattern: string;
+  name(id: string): string;
+}): RollupPlugin {
+  const assetCache = new Map<string, string>();
+  const assetMatcher = new RegExp(
+    `\\.(` +
+      extensions
+        .map((extension) =>
+          extension.startsWith('.') ? extension.slice(1) : extension,
+        )
+        .join('|') +
+      `)(\\?.*)?$`,
+  );
+
+  return {
+    name: '@quilt/assets',
+    async load(id) {
+      if (id.startsWith('\0') || !assetMatcher.test(id)) {
+        return null;
+      }
+
+      const cached = assetCache.get(id);
+
+      if (cached) {
+        return cached;
+      }
+
+      const file = cleanModuleIdentifier(id);
+      const content = await readFile(file);
+
+      let url: string;
+
+      if (!file.endsWith('.svg') && content.length < inlineLimit) {
+        // base64 inlined as a string
+        url = `data:${mime.lookup(file)};base64,${content.toString('base64')}`;
+      } else {
+        const contentHash = getHash(content);
+
+        const filename = assetFileNamesToFileName(
+          outputPattern,
+          file,
+          contentHash,
+        );
+
+        url = `${
+          baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
+        }/${filename}`;
+
+        if (emit) {
+          this.emitFile({
+            name: name(file),
+            type: 'asset',
+            fileName: filename,
+            source: content,
+          });
+        }
+      }
+
+      const source = `export default ${JSON.stringify(url)};`;
+
+      assetCache.set(id, source);
+
+      return source;
+    },
+  };
+}
+
+function assetFileNamesToFileName(
+  pattern: string,
+  file: string,
+  contentHash: string,
+): string {
+  const basename = path.basename(file);
+
+  const extname = path.extname(basename);
+  const ext = extname.substring(1);
+  const name = basename.slice(0, -extname.length);
+  const hash = contentHash;
+
+  return pattern.replace(/\[\w+\]/g, (placeholder) => {
+    switch (placeholder) {
+      case '[ext]':
+        return ext;
+
+      case '[extname]':
+        return extname;
+
+      case '[hash]':
+        return hash;
+
+      case '[name]':
+        return name;
+    }
+    throw new Error(
+      `invalid placeholder ${placeholder} in assetFileNames "${pattern}"`,
+    );
+  });
+}
+
+function getHash(text: Buffer | string): string {
+  return createHash('sha256').update(text).digest('hex').substring(0, 8);
+}
+
+const QUERY_PATTERN = /\?.*$/s;
+const HASH_PATTERN = /#.*$/s;
+
+function cleanModuleIdentifier(url: string) {
+  return url.replace(HASH_PATTERN, '').replace(QUERY_PATTERN, '');
 }

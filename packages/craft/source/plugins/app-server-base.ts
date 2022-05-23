@@ -140,13 +140,14 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
           import ${JSON.stringify(project.fs.resolvePath(entry))};
         `
       : stripIndent`
+        import {jsx} from 'react/jsx-runtime';
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
         import createAssetManifest from ${JSON.stringify(
           MAGIC_MODULE_APP_ASSET_MANIFEST,
         )};
         import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
   
-        export default createServerRenderingHttpHandler(() => <App />, {
+        export default createServerRenderingHttpHandler(() => jsx(App), {
           assets: createAssetManifest(),
         });
       `;
