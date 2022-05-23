@@ -1,5 +1,11 @@
 # @quilted/eslint-config
 
+## 0.1.10
+
+### Patch Changes
+
+- [#318](https://github.com/lemonmade/quilt/pull/318) [`0a43680e`](https://github.com/lemonmade/quilt/commit/0a43680e5425064f7d44bcede8b4df2afb72b3d4) Thanks [@lemonmade](https://github.com/lemonmade)! - Force Jest version in ESLint plugin
+
 ## 0.1.9
 
 ### Patch Changes

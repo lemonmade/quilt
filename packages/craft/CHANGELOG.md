@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.118
+
+### Patch Changes
+
+- [#318](https://github.com/lemonmade/quilt/pull/318) [`0a43680e`](https://github.com/lemonmade/quilt/commit/0a43680e5425064f7d44bcede8b4df2afb72b3d4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for importing static assets
+
+- Updated dependencies [[`0a43680e`](https://github.com/lemonmade/quilt/commit/0a43680e5425064f7d44bcede8b4df2afb72b3d4), [`0a43680e`](https://github.com/lemonmade/quilt/commit/0a43680e5425064f7d44bcede8b4df2afb72b3d4)]:
+  - @quilted/eslint-config@0.1.10
+  - @quilted/quilt@0.5.100
+
 ## 0.1.117
 
 ### Patch Changes
