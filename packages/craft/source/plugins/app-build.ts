@@ -231,7 +231,6 @@ export function appBuild({
 
             return [
               staticAssetsPlugin({
-                // baseUrl:
                 emit: Boolean(browserTargets),
                 baseUrl,
                 extensions,
