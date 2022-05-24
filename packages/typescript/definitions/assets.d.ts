@@ -120,3 +120,10 @@ declare module '*.txt' {
   const source: string;
   export default source;
 }
+
+// Special query params
+
+declare module '*?raw' {
+  const source: string;
+  export default source;
+}

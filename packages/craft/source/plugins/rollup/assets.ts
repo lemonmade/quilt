@@ -5,6 +5,27 @@ import {createHash} from 'crypto';
 import type {Plugin} from 'rollup';
 import * as mime from 'mrmime';
 
+const QUERY_PATTERN = /\?.*$/s;
+const HASH_PATTERN = /#.*$/s;
+const RAW_PATTERN = /(\?|&)raw(?:&|$)/;
+
+export function rawAssets(): Plugin {
+  return {
+    name: '@quilt/raw-assets',
+    async load(id) {
+      if (id.startsWith('\0') || !RAW_PATTERN.test(id)) {
+        return null;
+      }
+
+      const file = await readFile(cleanModuleIdentifier(id), {
+        encoding: 'utf-8',
+      });
+
+      return `export default ${JSON.stringify(file)}`;
+    },
+  };
+}
+
 export function staticAssets({
   emit,
   name,
@@ -159,9 +180,6 @@ function assetFileNamesToFileName(
 function getHash(text: Buffer | string): string {
   return createHash('sha256').update(text).digest('hex').substring(0, 8);
 }
-
-const QUERY_PATTERN = /\?.*$/s;
-const HASH_PATTERN = /#.*$/s;
 
 function cleanModuleIdentifier(url: string) {
   return url.replace(HASH_PATTERN, '').replace(QUERY_PATTERN, '');

@@ -118,7 +118,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
         ) => {
           rollupPlugins?.(async (plugins) => {
             const [
-              {staticAssets},
+              {staticAssets, rawAssets},
               baseUrl,
               extensions,
               inlineLimit,
@@ -133,6 +133,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
 
             return [
               ...plugins,
+              rawAssets(),
               staticAssets({
                 emit: Boolean(quiltAppBrowser),
                 baseUrl,
@@ -156,31 +157,39 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
 
       configure(({rollupPlugins, quiltAssetStaticExtensions}) => {
         rollupPlugins?.(async (plugins) => {
-          const [{staticAssetsDevelopment}, extensions] = await Promise.all([
-            import('../plugins/rollup/assets'),
-            quiltAssetStaticExtensions!.run(),
-          ]);
+          const [{staticAssetsDevelopment, rawAssets}, extensions] =
+            await Promise.all([
+              import('../plugins/rollup/assets'),
+              quiltAssetStaticExtensions!.run(),
+            ]);
 
           return [
             ...plugins,
+            rawAssets(),
             staticAssetsDevelopment({root: workspace.fs.root, extensions}),
           ];
         });
       });
     },
     test({configure}) {
-      configure(({jestModuleMapper}) => {
-        jestModuleMapper?.(async (moduleMapper) => {
+      configure(({jestModuleMapper, jestTransforms}) => {
+        jestTransforms?.((transforms) => {
           const assetsMatcher = DEFAULT_STATIC_ASSET_EXTENSIONS.map(
             (extension) =>
               extension.startsWith('.') ? extension.slice(1) : extension,
           ).join('|');
 
           return {
+            ...transforms,
+            [`\\.(${assetsMatcher})$`]: '@quilted/craft/jest/assets.cjs',
+          };
+        });
+
+        jestModuleMapper?.((moduleMapper) => {
+          return {
             ...moduleMapper,
             '\\.module.css$': '@quilted/craft/jest/css-modules.cjs',
             '\\.css$': '@quilted/craft/jest/styles.cjs',
-            [`\\.(${assetsMatcher})$`]: '@quilted/craft/jest/assets.cjs',
           };
         });
       });

@@ -162,6 +162,32 @@ describe('app builds', () => {
         ]);
       });
     });
+
+    it('inlines raw file contents into the JavaScript bundle', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'message.txt': 'Hello, world!',
+          'foundation/Routes.tsx': stripIndent`
+            import {useRoutes} from '@quilted/quilt';
+            import message from '../message.txt?raw';
+            
+            export function Routes() {
+              return useRoutes([{match: '/', render: () => <Start />}]);
+            }
+            
+            function Start() {
+              return <div>{message}</div>;
+            }
+          `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace);
+
+        expect(await page.textContent('body')).toBe('Hello, world!');
+      });
+    });
   });
 });
 

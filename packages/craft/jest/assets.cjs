@@ -1,6 +1,11 @@
-const source = '/test.asset';
+const path = require('path');
 
 module.exports = {
-  __esModule: true,
-  default: source,
+  process(_, sourcePath) {
+    return {
+      code: `module.exports = ${JSON.stringify(
+        `/assets/${path.basename(sourcePath)}`,
+      )};`,
+    };
+  },
 };
