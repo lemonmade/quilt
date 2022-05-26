@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.120
+
+### Patch Changes
+
+- [`27fff2a8`](https://github.com/lemonmade/quilt/commit/27fff2a8a30429c54d56a7f3f651576381f76ca5) Thanks [@lemonmade](https://github.com/lemonmade)! - Add raw asset loading
+
+- Updated dependencies [[`27fff2a8`](https://github.com/lemonmade/quilt/commit/27fff2a8a30429c54d56a7f3f651576381f76ca5), [`4e2764c1`](https://github.com/lemonmade/quilt/commit/4e2764c1763c3aa30de10e694d7cf12ffb6748e8)]:
+  - @quilted/typescript@0.2.13
+  - @quilted/workers@0.2.26
+
 ## 0.1.119
 
 ### Patch Changes

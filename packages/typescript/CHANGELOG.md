@@ -1,5 +1,11 @@
 # @quilted/typescript
 
+## 0.2.13
+
+### Patch Changes
+
+- [`27fff2a8`](https://github.com/lemonmade/quilt/commit/27fff2a8a30429c54d56a7f3f651576381f76ca5) Thanks [@lemonmade](https://github.com/lemonmade)! - Add raw asset loading
+
 ## 0.2.12
 
 ### Patch Changes
