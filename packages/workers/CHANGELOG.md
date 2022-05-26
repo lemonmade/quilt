@@ -1,5 +1,11 @@
 # @quilted/workers
 
+## 0.2.26
+
+### Patch Changes
+
+- [`4e2764c1`](https://github.com/lemonmade/quilt/commit/4e2764c1763c3aa30de10e694d7cf12ffb6748e8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix workers module references
+
 ## 0.2.25
 
 ### Patch Changes
