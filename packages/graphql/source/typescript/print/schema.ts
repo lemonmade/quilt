@@ -111,7 +111,7 @@ export function generateSchemaTypes(
     ]),
   );
 
-  return generate(file).code;
+  return generate(file as any).code;
 }
 
 function excludeTypeFromGeneration(type: GraphQLNamedType) {

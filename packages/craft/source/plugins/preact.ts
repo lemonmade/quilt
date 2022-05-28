@@ -14,10 +14,10 @@ const ALIASES = {
   // in our re-exporting of it either.
   'react/jsx-runtime': '@quilted/quilt/react/jsx-runtime',
   'react/jsx-dev-runtime': '@quilted/quilt/react/jsx-runtime',
-  'react/test-utils': '@quilted/quilt/react/test-utils',
   react: '@quilted/quilt/react',
-  'react-dom/server': '@quilted/quilt/react/server',
-  'react-dom': '@quilted/quilt/react',
+  'react-dom/test-utils': '@quilted/quilt/react-dom/test-utils',
+  'react-dom/server': '@quilted/quilt/react-dom/server',
+  'react-dom': '@quilted/quilt/react-dom',
 };
 
 export function preact() {

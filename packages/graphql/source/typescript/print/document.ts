@@ -245,7 +245,7 @@ export function generateDocumentTypes(
 
   fileBody.unshift(...schemaImports);
 
-  return generate(t.file(t.program(fileBody), [], [])).code;
+  return generate(t.file(t.program(fileBody), [], []) as any).code;
 }
 
 function findFragment(

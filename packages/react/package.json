@@ -30,27 +30,24 @@
       "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
       "import": "./build/esm/jsx-runtime.mjs",
       "require": "./build/cjs/jsx-runtime.cjs"
-    },
-    "./server": {
-      "quilt:from-source": "./source/server.ts",
-      "quilt:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs",
-      "require": "./build/cjs/server.cjs"
-    },
-    "./test-utils": {
-      "quilt:from-source": "./source/test-utils.ts",
-      "quilt:esnext": "./build/esnext/test-utils.esnext",
-      "import": "./build/esm/test-utils.mjs",
-      "require": "./build/cjs/test-utils.cjs"
+    }
+  },
+  "types": "./source/types.d.ts",
+  "typesVersions": {
+    "*": {
+      "jsx-runtime": [
+        "./build/typescript/jsx-runtime.d.ts"
+      ],
+      "jsx-dev-runtime": [
+        "./build/typescript/jsx-runtime.d.ts"
+      ]
     }
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/preact-mini-compat": "0.2.15",
+    "@quilted/preact-mini-compat": "^0.2.15",
     "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "preact": "^10.7.0",
-    "preact-render-to-string": "^5.1.0"
+    "preact": "^10.7.0"
   },
   "eslintConfig": {
     "extends": [
