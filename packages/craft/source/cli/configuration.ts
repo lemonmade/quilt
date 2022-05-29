@@ -75,6 +75,7 @@ export async function loadWorkspace(
   );
 
   if (workspaceConfigs.length > 1) {
+    console.log(workspaceConfigs);
     // needs a better error, showing files/ what workspace plugins exist
     throw new DiagnosticError({
       title: `Multiple workspace configurations found`,
