@@ -54,12 +54,12 @@ importers:
       '@quilted/typescript': ^0.2.0
       '@types/react': ^17.0.0
       react: npm:@quilted/react@^0.1.0
-      react-dom: npm:@quilted/react@^0.1.0
+      react-dom: npm:@quilted/react-dom@^0.1.0
       typescript: ^4.6.0
     dependencies:
       '@quilted/quilt': link:../../packages/quilt
       react: link:../../packages/react
-      react-dom: link:../../packages/react
+      react-dom: link:../../packages/react-dom
     devDependencies:
       '@quilted/browserslist-config': link:../../packages/browserslist-config
       '@quilted/craft': link:../../packages/craft
