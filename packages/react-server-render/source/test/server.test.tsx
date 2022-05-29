@@ -3,6 +3,7 @@
  */
 
 import {renderToString, renderToStaticMarkup} from 'react-dom/server';
+import {describe, it, expect} from '@quilted/testing';
 
 import {ServerAction} from '../ServerAction';
 import {extract} from '../server';

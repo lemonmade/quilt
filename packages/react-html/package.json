@@ -47,11 +47,15 @@
   "sideEffects": false,
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
+    "@types/react": "^17.0.0",
     "react": ">=17.0.0 <18.0.0",
     "react-dom": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
+      "optional": true
+    },
+    "@types/react": {
       "optional": true
     },
     "react": {
@@ -62,8 +66,7 @@
     }
   },
   "dependencies": {
-    "@quilted/react-server-render": "^0.3.7",
-    "@types/react": "^17.0.0"
+    "@quilted/react-server-render": "^0.3.7"
   },
   "devDependencies": {
     "@types/react-dom": "^17.0.3"

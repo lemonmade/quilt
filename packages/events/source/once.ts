@@ -39,7 +39,7 @@ export async function once<
     if (abortBehavior === 'returns') {
       return undefined as any;
     } else {
-      throw new AbortError(undefined, {cause: signal?.reason});
+      throw new AbortError();
     }
   }
 
@@ -67,7 +67,7 @@ export async function once<
           if (abortBehavior === 'returns') {
             resolve();
           } else {
-            reject(new AbortError(undefined, {cause: signal?.reason}));
+            reject(new AbortError());
           }
         },
         {once: true},

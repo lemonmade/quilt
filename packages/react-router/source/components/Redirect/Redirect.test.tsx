@@ -1,4 +1,4 @@
-import {createMount} from '@quilted/quilt/testing';
+import {createMount, describe, it, expect} from '@quilted/quilt/testing';
 
 import {createTestRouter, TestRouter} from '../../testing';
 import {Redirect} from './Redirect';

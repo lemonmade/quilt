@@ -14,6 +14,7 @@
     {"path": "../polyfills"},
     {"path": "../react"},
     {"path": "../react-async"},
+    {"path": "../react-dom"},
     {"path": "../react-email"},
     {"path": "../react-graphql"},
     {"path": "../react-html"},
@@ -26,6 +27,7 @@
     {"path": "../react-testing"},
     {"path": "../react-utilities"},
     {"path": "../react-workers"},
+    {"path": "../testing"},
     {"path": "../threads"},
     {"path": "../useful-react-types"},
     {"path": "../workers"}

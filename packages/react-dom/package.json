@@ -1,0 +1,57 @@
+{
+  "name": "@quilted/react-dom",
+  "description": "",
+  "type": "module",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<USER>/<REPOSITORY>"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    ".": {
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    },
+    "./server": {
+      "quilt:from-source": "./source/server.ts",
+      "quilt:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs",
+      "require": "./build/cjs/server.cjs"
+    },
+    "./test-utils": {
+      "quilt:from-source": "./source/test-utils.ts",
+      "quilt:esnext": "./build/esnext/test-utils.esnext",
+      "import": "./build/esm/test-utils.mjs",
+      "require": "./build/cjs/test-utils.cjs"
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@quilted/preact-mini-compat": "^0.2.15",
+    "@types/react-dom": "^17.0.0",
+    "preact": "^10.7.0",
+    "preact-render-to-string": "^5.2.0"
+  },
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/package"
+    ]
+  }
+}

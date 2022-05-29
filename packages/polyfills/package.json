@@ -122,6 +122,9 @@
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "rollup": "^2.0.0"
   },
+  "devDependencies": {
+    "rollup": "^2.0.0"
+  },
   "peerDependenciesMeta": {
     "@babel/runtime": {
       "optional": true
