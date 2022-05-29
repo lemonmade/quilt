@@ -415,7 +415,9 @@ export function createEnvironment<
 
               if (propValue == null) {
                 throw new Error(
-                  `Attempted to call prop ${String(prop)} but it was not defined.`,
+                  `Attempted to call prop ${String(
+                    prop,
+                  )} but it was not defined.`,
                 );
               }
 
