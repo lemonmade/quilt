@@ -158,7 +158,7 @@ export function cloudflareWorkers({
                           ? undefined
                           : body,
                       method,
-                      headers,
+                      headers: headers as any,
                       cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
                     },
                   );
