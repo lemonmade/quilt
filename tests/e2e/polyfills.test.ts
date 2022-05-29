@@ -1,3 +1,4 @@
+import {jest, describe, it, expect} from '@quilted/testing';
 import fetch from 'node-fetch';
 
 import {
@@ -7,6 +8,8 @@ import {
   getPort,
   waitForUrl,
 } from './utilities';
+
+jest.setTimeout(20_000);
 
 describe('http', () => {
   describe('cookies', () => {

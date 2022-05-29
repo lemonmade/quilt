@@ -1,4 +1,4 @@
-import {describe, it} from '@quilted/testing';
+import {describe, it, expect} from '@quilted/testing';
 import {createThread, targetFromMessagePort} from '..';
 import {MessageChannel} from './utiltiies';
 

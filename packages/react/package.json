@@ -32,17 +32,6 @@
       "require": "./build/cjs/jsx-runtime.cjs"
     }
   },
-  "types": "./source/types.d.ts",
-  "typesVersions": {
-    "*": {
-      "jsx-runtime": [
-        "./build/typescript/jsx-runtime.d.ts"
-      ],
-      "jsx-dev-runtime": [
-        "./build/typescript/jsx-runtime.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/preact-mini-compat": "^0.2.15",

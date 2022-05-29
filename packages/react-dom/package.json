@@ -34,17 +34,6 @@
       "require": "./build/cjs/test-utils.cjs"
     }
   },
-  "types": "./source/types.d.ts",
-  "typesVersions": {
-    "*": {
-      "server": [
-        "./build/typescript/server.d.ts"
-      ],
-      "test-utils": [
-        "./build/typescript/test-utils.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/preact-mini-compat": "^0.2.15",

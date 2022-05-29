@@ -82,6 +82,7 @@ importers:
     specifiers:
       '@cloudflare/kv-asset-handler': ^0.2.0
       '@cloudflare/workers-types': ^3.7.1
+      '@types/common-tags': ^1.8.0
       '@types/mime': ^2.0.0
       common-tags: ^1.8.0
       mime: ^2.5.0
@@ -93,6 +94,7 @@ importers:
       mime: 2.5.2
       miniflare: 2.4.0
     devDependencies:
+      '@types/common-tags': 1.8.0
       '@types/mime': 2.0.3
 
   integrations/react-query:
@@ -748,7 +750,9 @@ importers:
   tests/e2e:
     specifiers:
       '@quilted/quilt': ^0.5.0
+      '@types/common-tags': ^1.8.0
       '@types/fs-extra': ^9.0.13
+      '@types/node-fetch': ^2.0.0
       common-tags: ^1.8.0
       fs-extra: ^10.0.0
       get-port: ^5.0.0
@@ -757,7 +761,9 @@ importers:
       playwright: ^1.15.0
     devDependencies:
       '@quilted/quilt': link:../../packages/quilt
+      '@types/common-tags': 1.8.0
       '@types/fs-extra': 9.0.13
+      '@types/node-fetch': 2.6.1
       common-tags: 1.8.0
       fs-extra: 10.0.0
       get-port: 5.1.1
@@ -3775,7 +3781,6 @@ packages:
     dependencies:
       '@types/node': 15.12.5
       form-data: 3.0.1
-    dev: false
 
   /@types/node/12.20.46:
     resolution: {integrity: sha512-cPjLXj8d6anFPzFvOPxS3fvly3Shm5nTfl6g8X5smexixbuGUf7hfr21J5tX9JW+UPStp/5P5R8qrKL5IyVJ+A==}
@@ -4241,7 +4246,6 @@ packages:
 
   /asynckit/0.4.0:
     resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
-    dev: false
 
   /autoprefixer/10.4.4_postcss@8.4.8:
     resolution: {integrity: sha512-Tm8JxsB286VweiZ5F0anmbyGiNI3v3wGv3mz9W+cxEDYB/6jbnj6GM9H9mK3wIL8ftgl+C07Lcwb8PG5PCCPzA==}
@@ -4837,7 +4841,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: false
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -5145,7 +5148,6 @@ packages:
   /delayed-stream/1.0.0:
     resolution: {integrity: sha1-3zrhmayt+31ECqrgsp4icrJOxhk=}
     engines: {node: '>=0.4.0'}
-    dev: false
 
   /depd/1.1.2:
     resolution: {integrity: sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=}
@@ -6065,7 +6067,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.31
-    dev: false
 
   /formdata-polyfill/4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
@@ -7659,7 +7660,6 @@ packages:
   /mime-db/1.48.0:
     resolution: {integrity: sha512-FM3QwxV+TnZYQ2aRqhlKBMHxk10lTbMt3bBkMAp54ddrNeVSfcQYOOKuGuy3Ddrm38I04If834fOUSq1yzslJQ==}
     engines: {node: '>= 0.6'}
-    dev: false
 
   /mime-db/1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
@@ -7671,7 +7671,6 @@ packages:
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.48.0
-    dev: false
 
   /mime-types/2.1.35:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}

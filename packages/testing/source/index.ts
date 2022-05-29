@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 const globalIt = it;
 const globalDescribe = describe;
 const globalExpect = expect;
