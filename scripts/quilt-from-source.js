@@ -6,7 +6,6 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cli = resolve(root, 'packages/craft/source/cli/cli.ts');
 
 try {
-  console.log(process.argv.slice(2));
   execSync(
     [
       'node',
