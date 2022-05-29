@@ -9,5 +9,5 @@ runs:
         registry-url: 'https://registry.npmjs.org'
         node-version-file: '.nvmrc'
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --no-strict-peer-dependencies
       shell: bash
