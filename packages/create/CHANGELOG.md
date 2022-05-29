@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.13
+
+### Patch Changes
+
+- [#331](https://github.com/lemonmade/quilt/pull/331) [`efc54f75`](https://github.com/lemonmade/quilt/commit/efc54f75cb29ec4143a8e52f577edff518014a6b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix React types in stricter package managers
+
 ## 0.1.12
 
 ### Patch Changes
