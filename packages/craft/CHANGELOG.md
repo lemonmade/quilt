@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.122
+
+### Patch Changes
+
+- [`81e69086`](https://github.com/lemonmade/quilt/commit/81e6908640f61bd9f6553826aa227a67c241146c) Thanks [@lemonmade](https://github.com/lemonmade)! - Release craft react fixes
+
 ## 0.1.121
 
 ### Patch Changes
