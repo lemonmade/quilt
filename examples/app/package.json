@@ -1,0 +1,21 @@
+{
+  "name": "app",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {},
+  "eslintConfig": {
+    "extends": "@quilted/eslint-config/app"
+  },
+  "browserslist": {
+    "defaults": [
+      "extends @quilted/browserslist-config/defaults"
+    ],
+    "modules": [
+      "extends @quilted/browserslist-config/modules"
+    ],
+    "evergreen": [
+      "extends @quilted/browserslist-config/evergreen"
+    ]
+  }
+}

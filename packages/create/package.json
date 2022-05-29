@@ -15,12 +15,15 @@
   "bin": "./bin/create-quilt.mjs",
   "sideEffects": true,
   "devDependencies": {
+    "@quilted/prettier": "^0.2.8",
     "@types/fs-extra": "^9.0.11",
     "@types/prompts": "^2.0.13",
     "arg": "^5.0.0",
     "colorette": "^2.0.0",
+    "common-tags": "^1.8.2",
     "fs-extra": "^10.0.0",
     "pkg-dir": "^6.0.0",
+    "prettier": "^2.6.2",
     "prompts": "^2.4.0"
   },
   "eslintConfig": {

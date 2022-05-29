@@ -26,5 +26,6 @@
     "**/*.code-search": true,
     "**/build": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "jest.jestCommandLine": "./node_modules/@quilted/craft/node_modules/.bin/jest --config ./.quilt/temp/jest/config.mjs"
 }

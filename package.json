@@ -8,7 +8,7 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "create-quilt": "node --no-warnings --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
+    "create": "node --no-warnings --experimental-specifier-resolution=node --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
     "test": "node ./scripts/quilt-internal.js test",
     "test:unit": "node ./scripts/quilt-internal.js test --exclude-pattern tests/e2e",
     "test:e2e": "node ./scripts/quilt-internal.js test tests/e2e/",
