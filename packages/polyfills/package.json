@@ -18,12 +18,6 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
-    "./rollup": {
-      "quilt:from-source": "./source/rollup-parts.ts",
-      "quilt:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs",
-      "require": "./build/cjs/rollup-parts.cjs"
-    },
     "./base": {
       "quilt:from-source": "./source/base.ts",
       "quilt:esnext": "./build/esnext/base.esnext",
@@ -106,30 +100,21 @@
   "sideEffects": true,
   "dependencies": {
     "@peculiar/webcrypto": "^1.3.0",
-    "@rollup/plugin-alias": "^3.1.0",
     "@types/caniuse-api": "^3.0.0",
     "@types/node-fetch": "^2.6.0",
     "abort-controller": "^3.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.21.0",
-    "magic-string": "^0.26.0",
     "node-fetch": "^3.2.0",
     "pkg-dir": "^6.0.0",
     "regenerator-runtime": "^0.13.0",
     "whatwg-fetch": "^3.6.0"
   },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
-    "rollup": "^2.0.0"
-  },
-  "devDependencies": {
-    "rollup": "^2.0.0"
+    "@babel/runtime": ">=7.0.0 <8.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
-      "optional": true
-    },
-    "rollup": {
       "optional": true
     }
   },

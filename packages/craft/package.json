@@ -222,6 +222,7 @@
     "jest": "^27.5.0",
     "jest-config": "^27.5.0",
     "jest-watch-typeahead": "^1.0.0",
+    "magic-string": "^0.26.0",
     "mrmime": "^1.0.0",
     "pkg-dir": "^6.0.0",
     "postcss": "^8.4.0",

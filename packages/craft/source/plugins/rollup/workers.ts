@@ -5,12 +5,14 @@ import {rollup} from 'rollup';
 import type {Plugin, InputOptions, OutputOptions, OutputChunk} from 'rollup';
 import {stripIndent} from 'common-tags';
 
-import type {WorkerWrapper} from './types';
-import {PREFIX} from './constants';
-import {wrapperToSearchString} from './utilities';
-
+const PREFIX = 'quilt-worker:';
 const ENTRY_PREFIX = 'quilt-worker-entry:';
 const MAGIC_MODULE_WORKER = '__quilt__/Worker.tsx';
+
+export interface WorkerWrapper {
+  readonly module: string;
+  readonly function: string;
+}
 
 export interface WorkerContext {
   readonly module: string;
@@ -273,4 +275,12 @@ function defaultContentForWorker({wrapper}: WorkerContext) {
 
 function defaultPlugins(mainBuildPlugins: Plugin[]) {
   return mainBuildPlugins.filter((plugin) => plugin.name !== 'serve');
+}
+
+export function wrapperToSearchParams(wrapper: WorkerWrapper) {
+  return new URLSearchParams(Object.entries(wrapper));
+}
+
+export function wrapperToSearchString(wrapper: WorkerWrapper) {
+  return `?${wrapperToSearchParams(wrapper).toString()}`;
 }

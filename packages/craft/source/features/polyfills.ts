@@ -1,4 +1,5 @@
 import {createRequire} from 'module';
+import type {Plugin as RollupPlugin} from 'rollup';
 import type {PolyfillFeature} from '@quilted/polyfills';
 
 import {createProjectPlugin, Runtime} from '../kit';
@@ -150,13 +151,11 @@ export function polyfills({features, package: packageName}: Options = {}) {
       const [
         {packageDirectory},
         {default: alias},
-        {polyfill},
         allNecessaryFeatures,
         resolvedRuntime,
       ] = await Promise.all([
         import('pkg-dir'),
         import('@rollup/plugin-alias'),
-        import('@quilted/polyfills/rollup'),
         quiltPolyfillFeatures!.run(),
         runtime.run(),
       ]);
@@ -174,19 +173,79 @@ export function polyfills({features, package: packageName}: Options = {}) {
         }),
       );
 
+      const polyfillPlugin = await polyfillRollup({
+        package: packageName,
+        features: featuresNeedingPolyfills,
+        target: resolvedRuntime.includes(Runtime.Browser)
+          ? await targets?.run([])
+          : 'node',
+      });
+
       return [
         alias({
           entries: Object.fromEntries(aliases),
         }),
-        polyfill({
-          package: packageName,
-          features: featuresNeedingPolyfills,
-          target: resolvedRuntime.includes(Runtime.Browser)
-            ? await targets?.run([])
-            : 'node',
-        }),
+        polyfillPlugin,
         ...plugins,
       ];
     });
   }
+}
+
+interface RollupOptions {
+  target?: string[] | 'node';
+  features?: PolyfillFeature[];
+  sourceMap?: boolean;
+  package?: string;
+}
+
+async function polyfillRollup({
+  target,
+  features,
+  sourceMap = true,
+  package: packageName,
+}: RollupOptions): Promise<RollupPlugin> {
+  const [{default: MagicString}, {polyfillAliasesForTarget}] =
+    await Promise.all([import('magic-string'), import('@quilted/polyfills')]);
+
+  const polyfills = new Map(
+    target
+      ? Object.entries(polyfillAliasesForTarget(target, {package: packageName}))
+      : undefined,
+  );
+
+  return {
+    name: '@quilted/polyfills',
+    transform(code, id) {
+      if (features == null || features.length === 0) return null;
+
+      const isEntry = this.getModuleInfo(id)?.isEntry ?? false;
+      if (!isEntry) return null;
+
+      // This thing helps with generating source maps...
+      // @see https://github.com/rollup/plugins/blob/master/packages/inject/source/index.js#L203
+      const magicString = new MagicString(code);
+
+      magicString.prepend(
+        `${features
+          .map((feature) => {
+            const mappedPolyfill = polyfills.get(feature);
+
+            if (!mappedPolyfill) {
+              throw new Error(
+                `No polyfill available for feature ${JSON.stringify(feature)}`,
+              );
+            }
+
+            return `import ${JSON.stringify(mappedPolyfill)};`;
+          })
+          .join('\n')}\n`,
+      );
+
+      return {
+        code: magicString.toString(),
+        map: sourceMap ? magicString.generateMap({hires: true}) : null,
+      };
+    },
+  };
 }

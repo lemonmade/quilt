@@ -2,11 +2,6 @@ import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
 
 export default createPackage((pkg) => {
   pkg.entry({source: './source/index'});
-  pkg.entry({
-    source: './source/rollup-parts',
-    name: 'rollup',
-    runtime: Runtime.Node,
-  });
 
   pkg.entry({source: './source/base', name: 'base'});
   pkg.entry({source: './source/noop', name: 'noop'});
