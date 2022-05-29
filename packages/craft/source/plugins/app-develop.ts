@@ -281,11 +281,13 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
           vitePlugins?.(async (plugins) => {
             const [
+              {default: prefresh},
               {magicBrowserEntry},
               {magicModuleEnv},
               requestedBabelPlugins,
               requestedBabelPresets,
             ] = await Promise.all([
+              import('@prefresh/vite'),
               import('./rollup/magic-browser-entry'),
               import('./rollup/magic-module-env'),
               babelPlugins!.run([]),
@@ -374,6 +376,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                 },
               });
             }
+
+            plugins.push(prefresh());
 
             return plugins;
           });
