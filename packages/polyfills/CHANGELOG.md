@@ -1,5 +1,11 @@
 # @quilted/polyfills
 
+## 0.2.26
+
+### Patch Changes
+
+- [`af598b0e`](https://github.com/lemonmade/quilt/commit/af598b0ebe7962bde1423ef54339f3ae5b6b29bf) Thanks [@lemonmade](https://github.com/lemonmade)! - Move rollup plugins into craft
+
 ## 0.2.25
 
 ### Patch Changes

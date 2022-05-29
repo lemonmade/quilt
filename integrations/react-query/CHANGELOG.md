@@ -1,5 +1,14 @@
 # @quilted/react-query
 
+## 0.1.8
+
+### Patch Changes
+
+- [`8fdaece1`](https://github.com/lemonmade/quilt/commit/8fdaece1a270e109b3e874267c7387bd977b0706) Thanks [@lemonmade](https://github.com/lemonmade)! - Match React versions
+
+- Updated dependencies [[`af598b0e`](https://github.com/lemonmade/quilt/commit/af598b0ebe7962bde1423ef54339f3ae5b6b29bf)]:
+  - @quilted/craft@0.1.124
+
 ## 0.1.7
 
 ### Patch Changes

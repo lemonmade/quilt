@@ -1,5 +1,11 @@
 # @quilted/swr
 
+## 0.1.4
+
+### Patch Changes
+
+- [`8fdaece1`](https://github.com/lemonmade/quilt/commit/8fdaece1a270e109b3e874267c7387bd977b0706) Thanks [@lemonmade](https://github.com/lemonmade)! - Match React versions
+
 ## 0.1.3
 
 ### Patch Changes
