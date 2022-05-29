@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "react-query": "^3.34.0",
-    "react": "workspace:@quilted/react@^0.1.0"
+    "react": "workspace:@quilted/react@^17.0.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

@@ -16,7 +16,7 @@
     "type-check": "node ./scripts/quilt-internal.js type-check",
     "build": "node ./scripts/quilt-internal.js build",
     "develop": "node ./scripts/quilt-internal.js develop",
-    "version-bump": "changeset version && pnpm install --no-frozen-lockfile --no-strict-peer-dependencies",
+    "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "version-bump:prerelease": "changeset version --snapshot next",
     "version-bump:snapshot": "changeset version --snapshot",
     "deploy": "pnpm publish -r"
@@ -36,8 +36,8 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "esbuild": "^0.14.0",
-    "react": "workspace:@quilted/react@^0.1.0",
-    "react-dom": "workspace:@quilted/react-dom@^0.1.0",
+    "react": "workspace:@quilted/react@^17.0.0",
+    "react-dom": "workspace:@quilted/react-dom@^17.0.0",
     "rollup": "^2.0.0",
     "source-map-support": "^0.5.0",
     "typescript": "^4.6.0"

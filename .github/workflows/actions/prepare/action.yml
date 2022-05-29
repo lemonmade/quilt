@@ -12,5 +12,5 @@ runs:
       run: corepack enable && pnpm -v
       shell: bash
     - name: Install dependencies
-      run: pnpm install --no-strict-peer-dependencies
+      run: pnpm install
       shell: bash
