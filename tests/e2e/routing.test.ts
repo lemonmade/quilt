@@ -1,3 +1,4 @@
+import {jest, describe, it, expect} from '@quilted/testing';
 import {
   buildAppAndOpenPage,
   waitForPerformanceNavigation,

@@ -21,7 +21,7 @@ export class AbortError extends Error {
   readonly code = 'ABORT_ERR';
   readonly name = 'AbortError';
 
-  constructor(message = 'The operation was aborted', options?: {cause?: any}) {
-    super(message, options);
+  constructor(message = 'The operation was aborted') {
+    super(message);
   }
 }

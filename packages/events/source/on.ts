@@ -20,7 +20,7 @@ export function on<
     if (abortBehavior === 'returns') {
       return noop();
     } else {
-      throw new AbortError(undefined, {cause: signal?.reason});
+      throw new AbortError();
     }
   }
 
@@ -108,7 +108,7 @@ export function on<
     if (abortBehavior === 'returns') {
       iterator.return!();
     } else {
-      handleError(new AbortError(undefined, {cause: signal?.reason}));
+      handleError(new AbortError());
     }
   }
 

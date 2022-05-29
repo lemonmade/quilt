@@ -43,7 +43,7 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: -- --only-project async --only-project workers
+          arguments: --only-project async --only-project workers
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:unit
@@ -58,7 +58,7 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: -- --only-project package:*
+          arguments: --only-project package:*
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:e2e

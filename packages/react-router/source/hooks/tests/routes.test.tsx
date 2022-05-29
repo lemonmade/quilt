@@ -3,6 +3,7 @@
  */
 
 import type {PropsWithChildren} from 'react';
+import {describe, it, expect} from '@quilted/testing';
 
 import {useRoutes} from '../routes';
 import {mount} from '../../tests/utilities';

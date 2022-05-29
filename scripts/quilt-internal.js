@@ -23,6 +23,8 @@ try {
       '\\"!./packages/create-quilt-app/template/quilt.project.ts\\"',
       '--projects',
       '\\"!./packages/create/templates/**/quilt.project.ts\\"',
+      '--projects',
+      '\\"!./packages/create/templates/**/quilt.workspace.ts\\"',
     ].join(' '),
     {
       stdio: 'inherit',

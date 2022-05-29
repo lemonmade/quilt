@@ -116,6 +116,7 @@
   "devDependencies": {
     "@jest/globals": "^27.0.0",
     "@jest/transform": "^27.0.0",
+    "@types/babel__generator": ">=7.0.0",
     "@types/is-glob": "^4.0.0",
     "expect": "^27.0.0",
     "jest-matcher-utils": "^27.0.0"

@@ -23,6 +23,6 @@
     "sourceMap": false,
     "noEmitOnError": false,
     "isolatedModules": true,
-    "lib": ["DOM", "ESNext"]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }
 }

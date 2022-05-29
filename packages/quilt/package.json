@@ -240,6 +240,7 @@
     "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^0.1.0",
     "@quilted/react-async": "^0.3.22",
+    "@quilted/react-dom": "^0.1.0",
     "@quilted/react-email": "^0.2.18",
     "@quilted/react-graphql": "^0.4.30",
     "@quilted/react-html": "^0.3.18",
@@ -252,8 +253,10 @@
     "@quilted/react-testing": "^0.5.1",
     "@quilted/react-utilities": "^0.1.0",
     "@quilted/react-workers": "^0.2.12",
+    "@quilted/testing": "^0.1.0",
     "@quilted/threads": "^0.1.0",
-    "@quilted/useful-react-types": "^0.1.0"
+    "@quilted/useful-react-types": "^0.1.0",
+    "@types/jest": "^27.0.0"
   },
   "devDependencies": {
     "@types/prettier": "^2.0.0"

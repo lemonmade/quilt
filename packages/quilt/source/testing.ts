@@ -1,3 +1,4 @@
+export * from '@quilted/testing';
 export {mount, mounted, unmountAll, createMount} from '@quilted/react-testing';
 export type {
   CustomMount,

@@ -1,6 +1,7 @@
 /* eslint no-console: off */
 
 import {Component, useState} from 'react';
+import {describe, it, expect, beforeEach, afterEach} from '@quilted/testing';
 import {mount} from '..';
 
 describe('e2e', () => {
