@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.123
+
+### Patch Changes
+
+- [`22d9a701`](https://github.com/lemonmade/quilt/commit/22d9a70110390ef8e50cf8f9f31b268d0e0818f4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add back prefresh plugin
+
 ## 0.1.122
 
 ### Patch Changes
