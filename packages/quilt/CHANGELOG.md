@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.103
+
+### Patch Changes
+
+- [`a6e54ed1`](https://github.com/lemonmade/quilt/commit/a6e54ed1bae17b248e4c3d3ec28048a6b42b81e7) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove quilt re-export of React
+
 ## 0.5.102
 
 ### Patch Changes
