@@ -1,5 +1,21 @@
 # @quilted/craft
 
+## 0.1.121
+
+### Patch Changes
+
+- [#331](https://github.com/lemonmade/quilt/pull/331) [`efc54f75`](https://github.com/lemonmade/quilt/commit/efc54f75cb29ec4143a8e52f577edff518014a6b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix React types in stricter package managers
+
+- Updated dependencies [[`efc54f75`](https://github.com/lemonmade/quilt/commit/efc54f75cb29ec4143a8e52f577edff518014a6b)]:
+  - @quilted/async@0.3.24
+  - @quilted/eslint-config@0.1.11
+  - @quilted/graphql@0.4.38
+  - @quilted/polyfills@0.2.25
+  - @quilted/quilt@0.5.102
+  - @quilted/react-testing@0.5.12
+  - @quilted/typescript@0.2.14
+  - @quilted/workers@0.2.27
+
 ## 0.1.120
 
 ### Patch Changes
