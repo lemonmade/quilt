@@ -73,30 +73,6 @@
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
     },
-    "./react/jsx-runtime": {
-      "quilt:from-source": "./source/react/jsx-runtime.ts",
-      "quilt:esnext": "./build/esnext/react/jsx-runtime.esnext",
-      "import": "./build/esm/react/jsx-runtime.mjs",
-      "require": "./build/cjs/react/jsx-runtime.cjs"
-    },
-    "./react/server": {
-      "quilt:from-source": "./source/react/server.ts",
-      "quilt:esnext": "./build/esnext/react/server.esnext",
-      "import": "./build/esm/react/server.mjs",
-      "require": "./build/cjs/react/server.cjs"
-    },
-    "./react/test-utils": {
-      "quilt:from-source": "./source/react/test-utils.ts",
-      "quilt:esnext": "./build/esnext/react/test-utils.esnext",
-      "import": "./build/esm/react/test-utils.mjs",
-      "require": "./build/cjs/react/test-utils.cjs"
-    },
-    "./react": {
-      "quilt:from-source": "./source/react/index.ts",
-      "quilt:esnext": "./build/esnext/react/index.esnext",
-      "import": "./build/esm/react/index.mjs",
-      "require": "./build/cjs/react/index.cjs"
-    },
     "./http-handlers/node": {
       "quilt:from-source": "./source/http-handlers/node.ts",
       "quilt:esnext": "./build/esnext/http-handlers/node.esnext",
@@ -175,18 +151,6 @@
       ],
       "matchers": [
         "./build/typescript/matchers.d.ts"
-      ],
-      "react/jsx-runtime": [
-        "./build/typescript/react/jsx-runtime.d.ts"
-      ],
-      "react/server": [
-        "./build/typescript/react/server.d.ts"
-      ],
-      "react/test-utils": [
-        "./build/typescript/react/test-utils.d.ts"
-      ],
-      "react": [
-        "./build/typescript/react/index.d.ts"
       ],
       "threads": [
         "./build/typescript/threads.d.ts"

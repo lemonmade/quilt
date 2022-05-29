@@ -35,7 +35,6 @@ import {typescriptProject, typescriptWorkspace} from './tools/typescript';
 
 import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
 import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
-import {preact} from './plugins/preact';
 import {appBuild} from './plugins/app-build';
 import type {
   AssetOptions as AppBuildAssetOptions,
@@ -167,7 +166,6 @@ export function quiltApp({
         tsconfigAliases(),
         esnext(),
         react(),
-        preact(),
         aliasWorkspacePackages(),
         // Magic modules
         magicModuleApp(),
@@ -266,7 +264,6 @@ export function quiltService({
         tsconfigAliases(),
         esnext(),
         useReact && react(),
-        useReact && preact(),
         aliasWorkspacePackages(),
         magicModuleEnv(),
         // Build and http handler setup
@@ -324,7 +321,6 @@ export function quiltPackage({
         javascriptProject(),
         typescriptProject(),
         useReact && react(),
-        useReact && preact(),
         useReact && reactTesting({environment: 'preact'}),
         useGraphQL && graphql(),
         rollupNode({

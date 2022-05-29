@@ -7,18 +7,6 @@ export default createPackage((pkg) => {
   pkg.entry({source: './source/email', name: 'email'});
   pkg.entry({source: './source/global', name: 'global'});
   pkg.entry({source: './source/env', name: 'env'});
-  pkg.entry({source: './source/react', name: 'react'});
-  pkg.entry({source: './source/react/jsx-runtime', name: 'react/jsx-runtime'});
-  pkg.entry({source: './source/react-dom', name: 'react-dom'});
-  pkg.entry({
-    source: './source/react-dom/server',
-    name: 'react/server',
-    runtime: Runtime.Node,
-  });
-  pkg.entry({
-    source: './source/react-dom/test-utils',
-    name: 'react/test-utils',
-  });
   pkg.entry({source: './source/threads', name: 'threads'});
   pkg.entry({source: './source/http-handlers', name: 'http-handlers'});
   pkg.entry({

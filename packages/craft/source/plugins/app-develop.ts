@@ -275,8 +275,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             ...excluded,
             'react',
             'react-dom',
-            '@quilted/quilt/react',
-            '@quilted/quilt/react/jsx-runtime',
             '@quilted/quilt/env',
             '@quilted/quilt/global',
           ]);
