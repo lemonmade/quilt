@@ -55,10 +55,12 @@ export function loadTemplate(
 export function createOutputTarget(target: string) {
   return {
     read(file: string) {
-      return fs.promises.readFile(path.join(target, file), {encoding: 'utf8'});
+      return fs.promises.readFile(path.resolve(target, file), {
+        encoding: 'utf8',
+      });
     },
     async write(file: string, content: string) {
-      await writeFile(file, content);
+      await writeFile(path.resolve(target, file), content);
     },
   };
 }

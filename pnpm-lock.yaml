@@ -297,6 +297,7 @@ importers:
       pkg-dir: ^6.0.0
       prettier: ^2.6.2
       prompts: ^2.4.0
+      yaml: ^2.1.0
     devDependencies:
       '@quilted/events': link:../events
       '@types/common-tags': 1.8.1
@@ -309,6 +310,7 @@ importers:
       pkg-dir: 6.0.1
       prettier: 2.6.2
       prompts: 2.4.2
+      yaml: 2.1.1
 
   packages/create-quilt-app:
     specifiers:
@@ -9692,6 +9694,11 @@ packages:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
     dev: false
+
+  /yaml/2.1.1:
+    resolution: {integrity: sha512-o96x3OPo8GjWeSLF+wOAbrPfhFOGY0W00GNaxCDv+9hkcDJEnev1yh8S7pgHF0ik6zc8sQLuL8hjHjJULZp8bw==}
+    engines: {node: '>= 14'}
+    dev: true
 
   /yamlparser/0.0.2:
     resolution: {integrity: sha1-Mjk+avxwyMoGa2ZQrGc4tIFnjrw=}

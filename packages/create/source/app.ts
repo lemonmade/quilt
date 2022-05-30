@@ -32,7 +32,9 @@ export async function createApp() {
   const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(argv));
   const shouldInstall = await getShouldInstall(argv);
   const packageManager = await getPackageManager(argv);
-  const setupExtras = await getExtrasToSetup();
+  const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
+
+  const partOfMonorepo = inWorkspace || createAsMonorepo;
 
   const appDirectory = createAsMonorepo
     ? path.join(directory, 'app')
@@ -48,60 +50,131 @@ export async function createApp() {
     fs.mkdirSync(appDirectory, {recursive: true});
   }
 
-  const outputRoot = createOutputTarget(directory);
+  const rootDirectory = inWorkspace ? process.cwd() : directory;
+  const outputRoot = createOutputTarget(rootDirectory);
   const appTemplate = loadTemplate(
     templateType === 'basic' ? 'app-basic' : 'app-single-file',
   );
   const workspaceTemplate = loadTemplate('workspace');
 
-  await workspaceTemplate.copy(directory, (file) => {
-    // When this is a single project, we use the Quilt and TypeScript configurations
-    // from the app, not the workspace version of those.
-    if (!createAsMonorepo && file === 'quilt.workspace.ts') return false;
+  // If we aren’t already in a workspace, copy the workspace files over, which
+  // are needed if we are making a monorepo or not.
+  if (!inWorkspace) {
+    await workspaceTemplate.copy(directory, (file) => {
+      // When this is a single project, we use the project’s Quilt  configuration as the base.
+      if (file === 'quilt.workspace.ts') return createAsMonorepo;
 
-    // When this is a single project, we use the project tsconfig as the base
-    return file !== 'package.json' && file !== 'tsconfig.json';
-  });
-
-  await appTemplate.copy(appDirectory, (file) => {
-    if (!createAsMonorepo && file === 'quilt.project.ts') return false;
-
-    return file !== 'tsconfig.json' && file !== 'tsconfig.json';
-  });
-
-  const [projectPackageJson, projectTSConfig, workspacePackageJson] =
-    await Promise.all([
-      appTemplate.read('package.json').then((content) => JSON.parse(content)),
-      appTemplate.read('tsconfig.json').then((content) => JSON.parse(content)),
-      workspaceTemplate
-        .read('package.json')
-        .then((content) => JSON.parse(content)),
-    ]);
-
-  if (createAsMonorepo) {
-    workspacePackageJson.name = toValidPackageName(name!);
-    projectPackageJson.name = path.basename(appDirectory);
-
-    if (packageManager === 'npm' || packageManager === 'yarn') {
-      workspacePackageJson.workspaces = [
-        path.relative(directory, appDirectory),
-        'packages/*',
-      ];
-    }
-
-    const tsconfig = JSON.parse(await workspaceTemplate.read('tsconfig.json'));
-
-    tsconfig.references ??= [];
-    tsconfig.references.push({
-      path: relativeDirectoryForDisplay(path.relative(directory, appDirectory)),
+      // We need to make some adjustments to the root package.json
+      return file !== 'package.json';
     });
 
-    await outputRoot.write(
-      'package.json',
-      await format(JSON.stringify(workspacePackageJson), {
-        as: 'json-stringify',
-      }),
+    // If we are creating a monorepo, we need to add the root package.json and
+    // package manager workspace configuration.
+    if (createAsMonorepo) {
+      const workspacePackageJson = JSON.parse(
+        await workspaceTemplate.read('package.json'),
+      );
+
+      workspacePackageJson.name = toValidPackageName(name!);
+
+      if (packageManager === 'pnpm') {
+        await outputRoot.write(
+          'pnpm-workspace.yaml',
+          await format(
+            `
+              packages:
+              - './packages/*'
+            `,
+            {as: 'yaml'},
+          ),
+        );
+      } else {
+        workspacePackageJson.workspaces = ['packages/*'];
+      }
+
+      await outputRoot.write(
+        'package.json',
+        await format(JSON.stringify(workspacePackageJson), {
+          as: 'json-stringify',
+        }),
+      );
+    } else {
+      const [projectPackageJson, projectTSConfig, workspacePackageJson] =
+        await Promise.all([
+          appTemplate
+            .read('package.json')
+            .then((content) => JSON.parse(content)),
+          appTemplate
+            .read('tsconfig.json')
+            .then((content) => JSON.parse(content)),
+          workspaceTemplate
+            .read('package.json')
+            .then((content) => JSON.parse(content)),
+        ]);
+
+      workspacePackageJson.name = toValidPackageName(name!);
+      workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
+      workspacePackageJson.browserslist = projectPackageJson.browserslist;
+
+      const addBackToTSConfigInclude = new Set([
+        'quilt.project.ts',
+        '*.test.ts',
+        '*.test.tsx',
+      ]);
+
+      projectTSConfig.exclude = projectTSConfig.exclude.filter(
+        (excluded: string) => !addBackToTSConfigInclude.has(excluded),
+      );
+
+      let quiltProject = await appTemplate.read('quilt.project.ts');
+      quiltProject = quiltProject
+        .replace('quiltApp', 'quiltWorkspace, quiltApp')
+        .replace('quiltApp(', 'quiltWorkspace(), quiltApp(');
+
+      await outputRoot.write(
+        'quilt.project.ts',
+        await format(quiltProject, {as: 'typescript'}),
+      );
+
+      await outputRoot.write(
+        'package.json',
+        await format(JSON.stringify(workspacePackageJson), {
+          as: 'json-stringify',
+        }),
+      );
+
+      await outputRoot.write(
+        'tsconfig.json',
+        await format(JSON.stringify(projectTSConfig), {as: 'json'}),
+      );
+    }
+
+    if (setupExtras.has('github')) {
+      await loadTemplate('github').copy(directory);
+    }
+
+    if (setupExtras.has('vscode')) {
+      await loadTemplate('vscode').copy(directory);
+    }
+  }
+
+  await appTemplate.copy(appDirectory, (file) => {
+    // If we are in a monorepo, we can use all the template files as they are
+    if (file === 'quilt.project.ts' || file === 'tsconfig.json') {
+      return partOfMonorepo;
+    }
+
+    // We need to make some adjustments the project’s package.json
+    return file !== 'package.json';
+  });
+
+  if (partOfMonorepo) {
+    // Write the app’s package.json (the root one was already created)
+    const projectPackageJson = JSON.parse(
+      await appTemplate.read('package.json'),
     );
+
+    projectPackageJson.name = path.basename(appDirectory);
 
     await outputRoot.write(
       path.join(appDirectory, 'package.json'),
@@ -110,66 +183,56 @@ export async function createApp() {
       }),
     );
 
+    // Update the TSConfig to include the new app
+    const tsconfig = JSON.parse(await outputRoot.read('tsconfig.json'));
+
+    tsconfig.references ??= [];
+    tsconfig.references.push({
+      path: relativeDirectoryForDisplay(
+        path.relative(rootDirectory, appDirectory),
+      ),
+    });
+
     await outputRoot.write(
       'tsconfig.json',
       await format(JSON.stringify(tsconfig), {as: 'json'}),
     );
 
+    // Update the workspaces configuration to include the new app
     if (packageManager === 'pnpm') {
+      const {parse, stringify} = await import('yaml');
+      const workspaceYaml = parse(await outputRoot.read('pnpm-workspace.yaml'));
+
+      workspaceYaml.packages ??= [];
+      workspaceYaml.packages.push(
+        relativeDirectoryForDisplay(path.relative(rootDirectory, appDirectory)),
+      );
+
       await outputRoot.write(
         'pnpm-workspace.yaml',
-        await format(
-          `
-            packages:
-            - '${path.relative(directory, appDirectory)}'
-            - 'packages/*'
-          `,
-          {as: 'yaml'},
-        ),
+        await format(stringify(workspaceYaml), {as: 'yaml'}),
+      );
+    } else {
+      const packageJson = JSON.parse(await outputRoot.read('package.json'));
+
+      packageJson.workspaces ??= [];
+      packageJson.workspaces.push(
+        relativeDirectoryForDisplay(path.relative(rootDirectory, appDirectory)),
+      );
+
+      await outputRoot.write(
+        'package.json',
+        await format(JSON.stringify(packageJson), {
+          as: 'json-stringify',
+        }),
       );
     }
-  } else {
-    workspacePackageJson.name = toValidPackageName(name!);
-    workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
-    workspacePackageJson.browserslist = projectPackageJson.browserslist;
-
-    const addBackToTSConfigInclude = new Set([
-      'quilt.project.ts',
-      '*.test.ts',
-      '*.test.tsx',
-    ]);
-
-    projectTSConfig.exclude = projectTSConfig.exclude.filter(
-      (excluded: string) => !addBackToTSConfigInclude.has(excluded),
-    );
-
-    await outputRoot.write(
-      'package.json',
-      await format(JSON.stringify(workspacePackageJson), {
-        as: 'json-stringify',
-      }),
-    );
-
-    await outputRoot.write(
-      'tsconfig.json',
-      await format(JSON.stringify(projectTSConfig), {as: 'json'}),
-    );
-  }
-
-  if (setupExtras.has('github')) {
-    await loadTemplate('github').copy(directory);
-  }
-
-  if (setupExtras.has('vscode')) {
-    await loadTemplate('vscode').copy(directory);
   }
 
   if (shouldInstall) {
     process.stdout.write('\nInstalling dependencies...\n');
     // TODO: better loading, handle errors
-    let install = `${packageManager} install`;
-    if (packageManager === 'npm') install += ' --legacy-peer-deps';
-    execSync(install, {cwd: directory, stdio: 'inherit'});
+    execSync(`${packageManager} install`, {cwd: rootDirectory});
     process.stdout.moveCursor(0, -1);
     process.stdout.clearLine(1);
     console.log('Installed dependencies.');
@@ -177,7 +240,7 @@ export async function createApp() {
 
   const commands: string[] = [];
 
-  if (directory !== process.cwd()) {
+  if (!inWorkspace && directory !== process.cwd()) {
     commands.push(
       `cd ${color.cyan(
         relativeDirectoryForDisplay(path.relative(process.cwd(), directory)),
@@ -203,7 +266,9 @@ export async function createApp() {
   commands.push(`pnpm develop ${color.dim('# Start the development server')}`);
 
   const whatsNext = stripIndent`
-    Your new app is ready to go! There’s just a few more steps you’ll need to take
+    Your new app is ready to go! There’s just ${
+      commands.length > 1 ? 'a few more steps' : 'one more step'
+    } you’ll need to take
     in order to start developing:
   `;
 
@@ -373,9 +438,9 @@ async function getPackageManager(argv: Arguments) {
   } else {
     const npmUserAgent = process.env['npm_config_user_agent'] ?? 'npm';
 
-    if (npmUserAgent.includes('pnpm')) {
+    if (npmUserAgent.includes('pnpm') || fs.existsSync('pnpm-lock.yaml')) {
       packageManager = 'pnpm';
-    } else if (npmUserAgent.includes('yarn')) {
+    } else if (npmUserAgent.includes('yarn') || fs.existsSync('yarn.lock')) {
       packageManager = 'yarn';
     } else {
       packageManager = 'npm';
@@ -385,7 +450,12 @@ async function getPackageManager(argv: Arguments) {
   return packageManager;
 }
 
-async function getExtrasToSetup() {
+async function getExtrasToSetup(
+  _argv: Arguments,
+  {inWorkspace}: {inWorkspace: boolean},
+) {
+  if (inWorkspace) return new Set<'github' | 'vscode'>();
+
   const setupExtras = await prompt({
     type: 'multiselect',
     message: 'Which additional tools would you like to configure?',
