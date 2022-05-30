@@ -286,7 +286,8 @@ importers:
 
   packages/create:
     specifiers:
-      '@quilted/prettier': ^0.2.8
+      '@quilted/events': ^0.1.3
+      '@types/common-tags': ^1.8.0
       '@types/fs-extra': ^9.0.11
       '@types/prompts': ^2.0.13
       arg: ^5.0.0
@@ -297,7 +298,8 @@ importers:
       prettier: ^2.6.2
       prompts: ^2.4.0
     devDependencies:
-      '@quilted/prettier': link:../prettier
+      '@quilted/events': link:../events
+      '@types/common-tags': 1.8.1
       '@types/fs-extra': 9.0.13
       '@types/prompts': 2.0.14
       arg: 5.0.1
