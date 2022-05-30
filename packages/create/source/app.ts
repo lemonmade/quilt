@@ -19,15 +19,13 @@ import {
 
 type Arguments = ReturnType<typeof getArgv>;
 
-const VALID_PACKAGE_MANAGERS = new Set(['pnpm', 'npm', 'yarn']);
-
 export async function createApp() {
   const argv = getArgv();
   const inWorkspace = fs.existsSync('quilt.workspace.ts');
 
   const name = await getName(argv, {inWorkspace});
   const directory = await getDirectory(argv, {name});
-  const templateType = await getTemplate();
+  const template = await getTemplate(argv);
 
   const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(argv));
   const shouldInstall = await getShouldInstall(argv);
@@ -53,7 +51,7 @@ export async function createApp() {
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
   const appTemplate = loadTemplate(
-    templateType === 'basic' ? 'app-basic' : 'app-single-file',
+    template === 'basic' ? 'app-basic' : 'app-single-file',
   );
   const workspaceTemplate = loadTemplate('workspace');
 
@@ -298,13 +296,18 @@ export async function createApp() {
 function getArgv() {
   const argv = arg(
     {
+      '--yes': Boolean,
+      '-y': '--yes',
       '--name': String,
+      '--template': String,
       '--directory': String,
       '--install': Boolean,
       '--no-install': Boolean,
       '--monorepo': Boolean,
       '--no-monorepo': Boolean,
       '--package-manager': String,
+      '--extras': [String],
+      '--no-extras': Boolean,
     },
     {permissive: true},
   );
@@ -331,8 +334,7 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
     argv['--directory'] ?? toValidPackageName(name!),
   );
 
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  while (!argv['--yes']) {
     if (fs.existsSync(directory) && !(await isEmpty(directory))) {
       const relativeDirectory = path.relative(process.cwd(), directory);
 
@@ -360,8 +362,15 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-async function getTemplate() {
-  const templateType: 'basic' | 'single-file' = await prompt({
+type Template = 'basic' | 'single-file';
+const VALID_TEMPLATES = new Set<Template>(['basic', 'single-file']);
+
+async function getTemplate(argv: Arguments) {
+  if (argv['--template'] && VALID_TEMPLATES.has(argv['--template'] as any)) {
+    return argv['--template'] as Template;
+  }
+
+  const template: Template = await prompt({
     type: 'select',
     message: 'What template would you like to use?',
     hint: `Use ${color.bold('arrow keys')} to select, and ${color.bold(
@@ -384,13 +393,13 @@ async function getTemplate() {
     ],
   });
 
-  return templateType;
+  return template;
 }
 
 async function getCreateAsMonorepo(argv: Arguments) {
   let createAsMonorepo: boolean;
 
-  if (argv['--monorepo']) {
+  if (argv['--monorepo' || argv['--yes']]) {
     createAsMonorepo = true;
   } else if (argv['--no-monorepo']) {
     createAsMonorepo = false;
@@ -409,7 +418,7 @@ async function getCreateAsMonorepo(argv: Arguments) {
 async function getShouldInstall(argv: Arguments) {
   let shouldInstall: boolean;
 
-  if (argv['--install']) {
+  if (argv['--install'] || argv['--yes']) {
     shouldInstall = true;
   } else if (argv['--no-install']) {
     shouldInstall = false;
@@ -424,6 +433,8 @@ async function getShouldInstall(argv: Arguments) {
 
   return shouldInstall;
 }
+
+const VALID_PACKAGE_MANAGERS = new Set(['pnpm', 'npm', 'yarn']);
 
 async function getPackageManager(argv: Arguments) {
   let packageManager!: 'yarn' | 'npm' | 'pnpm';
@@ -450,11 +461,22 @@ async function getPackageManager(argv: Arguments) {
   return packageManager;
 }
 
+type Extra = 'github' | 'vscode';
+const VALID_EXTRAS = new Set<Extra>(['github', 'vscode']);
+
 async function getExtrasToSetup(
-  _argv: Arguments,
+  argv: Arguments,
   {inWorkspace}: {inWorkspace: boolean},
 ) {
-  if (inWorkspace) return new Set<'github' | 'vscode'>();
+  if (inWorkspace || argv['--no-extras']) return new Set<Extra>();
+
+  if (argv['--extras']) {
+    return new Set<Extra>(
+      argv['--extras'].filter((extra) =>
+        VALID_EXTRAS.has(extra as any),
+      ) as Extra[],
+    );
+  }
 
   const setupExtras = await prompt({
     type: 'multiselect',
@@ -470,7 +492,7 @@ async function getExtrasToSetup(
     ],
   });
 
-  const extrasToSetup = new Set<'github' | 'vscode'>(setupExtras as any[]);
+  const extrasToSetup = new Set<Extra>(setupExtras as any[]);
 
   return extrasToSetup;
 }
