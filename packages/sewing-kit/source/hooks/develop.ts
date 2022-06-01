@@ -11,7 +11,6 @@ import type {
   WaterfallHookWithDefault,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
-  SewingKitInternalContext,
 } from './shared';
 
 /**
@@ -169,13 +168,6 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
   readonly options: DevelopTaskOptions;
 
   /**
-   * Access to internals details, like the ability to write to a private, project-local
-   * directory. This object is particularly useful in plugins, as it offers a clean
-   * way of writing temporary files.
-   */
-  readonly internal: SewingKitInternalContext;
-
-  /**
    * Allows you to create additional hooks that can collect custom
    * configuration. Make sure you augment the `DevelopProjectConfigurationHooks`
    * (or the project-specific variant you want to add hooks for) in
@@ -252,13 +244,6 @@ export interface DevelopWorkspaceTask {
    * The options passed by the user when running this task.
    */
   readonly options: DevelopTaskOptions;
-
-  /**
-   * Access to internals details, like the ability to write to a private, project-local
-   * directory. This object is particularly useful in plugins, as it offers a clean
-   * way of writing temporary files.
-   */
-  readonly internal: SewingKitInternalContext;
 
   /**
    * Allows you to create additional hooks that can collect custom

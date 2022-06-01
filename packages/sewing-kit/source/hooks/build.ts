@@ -11,7 +11,6 @@ import type {
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
-  SewingKitInternalContext,
 } from './shared';
 
 /**
@@ -179,13 +178,6 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
   readonly options: BuildTaskOptions;
 
   /**
-   * Access to internals details, like the ability to write to a private, project-local
-   * directory. This object is particularly useful in plugins, as it offers a clean
-   * way of writing temporary files.
-   */
-  readonly internal: SewingKitInternalContext;
-
-  /**
    * Allows you to create additional hooks that can collect custom
    * configuration. Make sure you augment the `BuildProjectConfigurationHooks`
    * (or the project-specific variant you want to add hooks for) in
@@ -262,13 +254,6 @@ export interface BuildWorkspaceTask {
    * The options passed by the user when running this task.
    */
   readonly options: BuildTaskOptions;
-
-  /**
-   * Access to internals details, like the ability to write to a private, project-local
-   * directory. This object is particularly useful in plugins, as it offers a clean
-   * way of writing temporary files.
-   */
-  readonly internal: SewingKitInternalContext;
 
   /**
    * Allows you to create additional hooks that can collect custom

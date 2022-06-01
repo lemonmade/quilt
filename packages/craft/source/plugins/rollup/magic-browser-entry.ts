@@ -54,8 +54,8 @@ export interface Options {
   customizeContent(content: string): Promise<string>;
 }
 
-const MAGIC_MODULE_CUSTOM_INITIALIZE = '__quilt__/BrowserCustomInitialize';
-const MAGIC_MODULE_CUSTOM_ENTRY = '__quilt__/BrowserCustomEntry';
+const MAGIC_MODULE_CUSTOM_INITIALIZE = '.quilt/magic/initialize.js';
+const MAGIC_MODULE_CUSTOM_ENTRY = '.quilt/magic/browser-entry.js';
 
 export function magicBrowserEntry({
   module: magicEntryModule,
@@ -71,13 +71,16 @@ export function magicBrowserEntry({
     async resolveId(id) {
       if (
         id === magicEntryModule ||
+        // Some tools require you to use a `/` so that the identifier is a valid
+        // JavaScript asset module reference
+        id === `/${magicEntryModule}` ||
         id === MAGIC_MODULE_CUSTOM_ENTRY ||
         id === MAGIC_MODULE_CUSTOM_INITIALIZE
       ) {
         // We resolve to a path within the project’s directory
         // so that it can use the app’s node_modules.
         return {
-          id: project.fs.resolvePath(id),
+          id: project.fs.resolvePath(id.startsWith('/') ? id.slice(1) : id),
           moduleSideEffects: 'no-treeshake',
         };
       }
@@ -138,10 +141,11 @@ export function magicBrowserEntry({
               : ''
           }
           import '@quilted/quilt/global';
+          import {jsx} from 'react/jsx-dev-runtime';
           import {${reactFunction}} from 'react-dom';
           import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
 
-          ${reactFunction}(<App />, document.querySelector(${JSON.stringify(
+          ${reactFunction}(jsx(App), document.querySelector(${JSON.stringify(
           selector,
         )}));
         `;

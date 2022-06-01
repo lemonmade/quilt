@@ -373,6 +373,11 @@ export async function buildWithRollup<ProjectType extends Project = Project>(
     onwarn(warning, defaultHandler) {
       // Ignore warnings about empty bundles by default.
       if (warning.code === 'EMPTY_BUNDLE') return;
+
+      // This warning complains about arrow functions at the top-level scope
+      // of a module.
+      if (warning.code === 'THIS_IS_UNDEFINED') return;
+
       defaultHandler(warning);
     },
   });

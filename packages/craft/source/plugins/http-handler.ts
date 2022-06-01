@@ -7,7 +7,7 @@ import {addRollupNodeBundleInclusion, addRollupOnWarn} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
-const MAGIC_ENTRY_MODULE = '__quilt__/HttpHandlerEntry.tsx';
+const MAGIC_ENTRY_MODULE = '.quilt/magic/http-handler-entry.js';
 
 export interface HttpHandlerHooks {
   quiltHttpHandlerPort: WaterfallHook<number | undefined>;
@@ -66,7 +66,9 @@ export function httpHandler({port: explicitPort}: Options = {}) {
 
           runtime(() => new TargetRuntime([Runtime.Node]));
 
-          rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
+          // We resolve to a path within the project’s directory
+          // so that it can use the app’s node_modules.
+          rollupInput?.(() => [project.fs.resolvePath(MAGIC_ENTRY_MODULE)]);
 
           // Some of our Node dependencies have an older `depd` as a dependency, which
           // uses `eval()`. It’s not actually an issue, in practice.
@@ -90,12 +92,11 @@ export function httpHandler({port: explicitPort}: Options = {}) {
               {
                 name: '@quilted/http-handler/magic-entry',
                 resolveId(id) {
-                  if (id !== MAGIC_ENTRY_MODULE) return null;
+                  if (id !== project.fs.resolvePath(MAGIC_ENTRY_MODULE))
+                    return null;
 
-                  // We resolve to a path within the project’s directory
-                  // so that it can use the app’s node_modules.
                   return {
-                    id: project.fs.resolvePath(id),
+                    id,
                     moduleSideEffects: 'no-treeshake',
                   };
                 },
@@ -211,7 +212,7 @@ export function httpHandlerDevelopment({
 
           runtime?.(() => new TargetRuntime([Runtime.Node]));
 
-          rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
+          rollupInput?.(() => [project.fs.resolvePath(MAGIC_ENTRY_MODULE)]);
 
           // Some of our Node dependencies have an older `depd` as a dependency, which
           // uses `eval()`. It’s not actually an issue, in practice.
@@ -245,11 +246,16 @@ export function httpHandlerDevelopment({
               {
                 name: '@quilted/http-handler/magic-entry',
                 resolveId(id) {
-                  if (id !== MAGIC_ENTRY_MODULE) return null;
+                  if (id !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                    return null;
+                  }
+
                   return {id, moduleSideEffects: 'no-treeshake'};
                 },
                 async load(source) {
-                  if (source !== MAGIC_ENTRY_MODULE) return null;
+                  if (source !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
+                    return null;
+                  }
 
                   const content = await quiltHttpHandlerRuntimeContent!.run(
                     undefined,

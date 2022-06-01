@@ -35,8 +35,9 @@ import {
 } from '../constants';
 
 export const STEP_NAME = 'Quilt.App.Develop';
-const MAGIC_MODULE_BROWSER_ENTRY = '/@quilted/magic/browser.tsx';
-const MAGIC_MODULE_SERVER_ENTRY = '/@quilted/magic/server.tsx';
+const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
+const MAGIC_MODULE_SERVER_ENTRY = '.quilt/magic/server.js';
+const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest';
 const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
 
 export interface Options {
@@ -76,7 +77,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
   return createProjectPlugin<App>({
     name: STEP_NAME,
-    develop({hooks, project, internal, workspace, configure, run}) {
+    develop({hooks, project, workspace, configure, run}) {
       hooks<AppDevelopmentServerConfigurationHooks>(({waterfall}) => ({
         quiltAppDevelopmentServer: waterfall(),
       }));
@@ -140,13 +141,21 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           rollupPlugins?.((plugins) => {
             return [
               {
-                name: '@quilted/magic-module/app-manifest',
+                name: '@quilted/magic-module/app/server-entry',
                 async resolveId(id) {
-                  if (id === MAGIC_MODULE_SERVER_ENTRY) return id;
-                  return null;
+                  if (
+                    id !== project.fs.resolvePath(MAGIC_MODULE_SERVER_ENTRY)
+                  ) {
+                    return null;
+                  }
+
+                  return {id, moduleSideEffects: 'no-treeshake'};
                 },
                 async load(source) {
-                  if (source !== MAGIC_MODULE_SERVER_ENTRY) return null;
+                  if (
+                    source !== project.fs.resolvePath(MAGIC_MODULE_SERVER_ENTRY)
+                  )
+                    return null;
 
                   const baseContent =
                     httpHandler && serverEntry
@@ -173,13 +182,21 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                 },
               },
               {
-                name: '@quilted/magic-module/asset-loader',
+                name: '@quilted/magic-module/app/asset-loader',
                 async resolveId(id) {
-                  if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
-                  return null;
+                  if (id !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+
+                  return project.fs.resolvePath(
+                    MAGIC_MODULE_ASSET_MANIFEST_ENTRY,
+                  );
                 },
                 async load(source) {
-                  if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+                  if (
+                    source !==
+                    project.fs.resolvePath(MAGIC_MODULE_ASSET_MANIFEST_ENTRY)
+                  ) {
+                    return null;
+                  }
 
                   return stripIndent`
                   import {createAssetManifest} from '@quilted/quilt/server';
@@ -195,7 +212,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                           entry: {
                             scripts: [
                               {
-                                source: MAGIC_MODULE_BROWSER_ENTRY,
+                                source: `/${MAGIC_MODULE_BROWSER_ENTRY}`,
                                 attributes: {
                                   type: 'module',
                                 },
@@ -409,7 +426,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             ]);
 
             const viteServer = await createServer(
-              await createViteConfig(configurationHooks, {internal}),
+              await createViteConfig(project, configurationHooks),
             );
 
             const appServer = await createAppServer(serverConfigurationHooks, {
@@ -477,7 +494,7 @@ async function createAppServer(
   let resolveHandler!: (handler: AppDevelopmentServerHandler) => void;
   let httpHandlerPromise!: Promise<AppDevelopmentServerHandler>;
 
-  const file = project.fs.buildPath('develop/quilt-app-server/built.js');
+  const file = project.fs.temporaryPath('develop/server/built.js');
 
   const [input, plugins, external] = await Promise.all([
     rollupInput!.run([]),
@@ -497,6 +514,8 @@ async function createAppServer(
         format: 'esm',
         dir: path.dirname(file),
         entryFileNames: path.basename(file),
+        assetFileNames: `[name].[ext]`,
+        chunkFileNames: `[name].js`,
         exports: 'auto',
       },
     ]),

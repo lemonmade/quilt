@@ -62,8 +62,5 @@ export interface FileSystem {
 
 export interface UserFileSystem extends FileSystem {
   buildPath(...paths: string[]): string;
-}
-
-export interface InternalFileSystem extends FileSystem {
-  tempPath(...paths: string[]): string;
+  temporaryPath(...paths: string[]): string;
 }

@@ -163,9 +163,9 @@ export function appStatic({
 }: AppStaticOptions = {}) {
   return createProjectPlugin<App>({
     name: 'Quilt.App.Static',
-    build({project, internal, hooks, configure, run}) {
-      const nodeScriptOutputDirectory = internal.fs.tempPath(
-        'quilt-static',
+    build({project, hooks, configure, run}) {
+      const nodeScriptOutputDirectory = project.fs.temporaryPath(
+        'static',
         project.name,
       );
       const outputFilename = 'index.js';

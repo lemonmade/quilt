@@ -34,9 +34,7 @@ export interface LoadedWorkspace {
 
 export async function loadWorkspace(
   root: string,
-  {
-    projectPatterns = '**/quilt.{project,workspace}.{js,ts}',
-  }: {projectPatterns?: string | string[]} = {},
+  {projectPatterns}: {projectPatterns?: string | string[]} = {},
 ): Promise<LoadedWorkspace> {
   const packages = new Set<Package>();
   const apps = new Set<App>();
@@ -46,11 +44,14 @@ export async function loadWorkspace(
     readonly (WorkspacePlugin | ProjectPlugin<any>)[]
   >();
 
-  const configFiles = await globby(projectPatterns, {
-    cwd: root,
-    ignore: ['**/node_modules/**', '**/build/**'],
-    absolute: true,
-  });
+  const configFiles = await globby(
+    projectPatterns ?? '**/quilt.{project,workspace}.{js,ts}',
+    {
+      cwd: root,
+      ignore: ['**/node_modules/**', '**/build/**'],
+      absolute: true,
+    },
+  );
 
   // Rollup creates a `process` event listener for each build, and
   // we do one per configuration file in this case. We’ll temporarily
