@@ -8,7 +8,6 @@ import type {InputOptions} from 'rollup';
 import {App, createProjectPlugin} from '../kit';
 import type {
   WaterfallHook,
-  SewingKitInternalContext,
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
 
@@ -96,7 +95,7 @@ declare module '@quilted/sewing-kit' {
 export function vite({run: shouldRun = true} = {}) {
   return createProjectPlugin<App>({
     name: 'Quilt.Vite',
-    develop({project, internal, hooks, run}) {
+    develop({project, hooks, run}) {
       hooks<ViteHooks>(({waterfall}) => ({
         viteConfig: waterfall(),
         viteHost: waterfall(),
@@ -125,9 +124,7 @@ export function vite({run: shouldRun = true} = {}) {
               configuration(),
             ]);
 
-            const config = await createViteConfig(configurationHooks, {
-              internal,
-            });
+            const config = await createViteConfig(project, configurationHooks);
 
             const server = await createServer(config);
             await server.listen();
@@ -150,6 +147,7 @@ export function vite({run: shouldRun = true} = {}) {
 }
 
 export async function createViteConfig(
+  app: App,
   {
     extensions,
     viteConfig,
@@ -166,7 +164,6 @@ export async function createViteConfig(
     viteSsrExternals,
     viteServerOptions,
   }: ResolvedDevelopProjectConfigurationHooks<App>,
-  {internal}: {internal: SewingKitInternalContext},
 ) {
   const baseExtensions = await extensions.run([
     '.mjs',
@@ -214,9 +211,10 @@ export async function createViteConfig(
   const serverOptions = await viteServerOptions!.run({port, host});
 
   const config = await viteConfig!.run({
+    root: app.root,
     configFile: false,
     clearScreen: false,
-    cacheDir: internal.fs.tempPath('vite/cache'),
+    cacheDir: app.fs.temporaryPath('vite/cache'),
     build: {
       rollupOptions,
     },

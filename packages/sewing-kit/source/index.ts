@@ -51,7 +51,6 @@ export type {
   SequenceHook,
   ResolvedHooks,
   ResolvedOptions,
-  SewingKitInternalContext,
   ConfigurableProjectStep,
   ConfigurableWorkspaceStep,
   // Build
@@ -172,5 +171,5 @@ export type {
   BaseStepRunner,
 } from './steps';
 
-export {FileSystem, InternalFileSystem} from './utilities/fs';
+export {FileSystem} from './utilities/fs';
 export {PackageJson} from './utilities/dependencies';

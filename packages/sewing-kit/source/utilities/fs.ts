@@ -1,4 +1,4 @@
-import {join, resolve, relative, dirname} from 'path';
+import {resolve, relative, dirname} from 'path';
 
 import {
   appendFile,
@@ -14,7 +14,6 @@ import type {Options as GlobbyOptions} from 'globby';
 import type {
   FileSystem as FSType,
   UserFileSystem as UserFSType,
-  InternalFileSystem as InternalFSType,
 } from '../types';
 
 class BaseFileSystem implements FSType {
@@ -75,17 +74,8 @@ export class FileSystem extends BaseFileSystem implements UserFSType {
   buildPath(...paths: string[]) {
     return this.resolvePath('build', ...paths);
   }
-}
 
-export class InternalFileSystem
-  extends BaseFileSystem
-  implements InternalFSType
-{
-  constructor(root: string, {name = '.sewing-kit'} = {}) {
-    super(join(root, name));
-  }
-
-  tempPath(...paths: string[]) {
-    return this.resolvePath('temp', ...paths);
+  temporaryPath(...paths: string[]) {
+    return this.resolvePath('.quilt', ...paths);
   }
 }

@@ -35,6 +35,8 @@ declare module '@quilted/sewing-kit' {
   interface BuildAppConfigurationHooks extends AppServerBuildHooks {}
 }
 
+const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest.js';
+
 export function appServerBuild(options?: AppServerOptions) {
   const httpHandler = options?.httpHandler ?? true;
   const serveAssets = options?.serveAssets ?? true;
@@ -70,11 +72,21 @@ export function appServerBuild(options?: AppServerOptions) {
             plugins.unshift({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) return id;
+                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) {
+                  return project.fs.resolvePath(
+                    MAGIC_MODULE_ASSET_MANIFEST_ENTRY,
+                  );
+                }
+
                 return null;
               },
               async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+                if (
+                  source !==
+                  project.fs.resolvePath(MAGIC_MODULE_ASSET_MANIFEST_ENTRY)
+                ) {
+                  return null;
+                }
 
                 const manifestFiles = await project.fs.glob('manifest*.json', {
                   cwd: project.fs.buildPath('manifests'),

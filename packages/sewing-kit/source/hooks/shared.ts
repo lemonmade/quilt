@@ -1,6 +1,6 @@
 import type {Project} from '../model';
 import type {ProjectStep, WorkspaceStep} from '../steps';
-import type {ValueOrPromise, InternalFileSystem} from '../types';
+import type {ValueOrPromise} from '../types';
 
 export const NONE = Symbol.for('SewingKit.None');
 export type None = typeof NONE;
@@ -232,8 +232,4 @@ export interface WorkspaceStepAdder<
       WorkspaceStep | WorkspaceStep[] | null | undefined | false
     >,
   ): void;
-}
-
-export interface SewingKitInternalContext {
-  readonly fs: InternalFileSystem;
 }

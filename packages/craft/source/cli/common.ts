@@ -37,12 +37,10 @@ import type {
   LintWorkspaceConfigurationCoreHooks,
   TestWorkspaceConfigurationCoreHooks,
   TypeCheckWorkspaceConfigurationCoreHooks,
-  SewingKitInternalContext,
 } from '../kit';
 import {
   Task,
   DiagnosticError,
-  InternalFileSystem,
   createWaterfallHook,
   createSequenceHook,
 } from '../kit';
@@ -75,7 +73,6 @@ export interface TaskFilter {
 export interface TaskContext extends LoadedWorkspace {
   readonly ui: Ui;
   readonly filter: TaskFilter;
-  readonly internal: SewingKitInternalContext;
 }
 
 export function createCommand<Flags extends Spec>(
@@ -145,9 +142,6 @@ export function createCommand<Flags extends Spec>(
           onlyWorkspace: onlyWorkspace as boolean,
           skipWorkspace: skipWorkspace as boolean,
         }),
-        internal: {
-          fs: new InternalFileSystem(workspace.root, {name: '.quilt'}),
-        },
       });
     } catch (error) {
       logError(error, ui);
@@ -511,7 +505,6 @@ async function loadStepsForTask<TaskType extends Task = Task>(
     plugins,
     options,
     workspace,
-    internal,
     coreHooksForProject,
     coreHooksForWorkspace,
   }: RunStepOptions<TaskType>,
@@ -565,7 +558,6 @@ async function loadStepsForTask<TaskType extends Task = Task>(
     await plugin[pluginMethod]?.({
       options: options as BuildTaskOptions,
       workspace,
-      internal,
       hooks(adder) {
         configurationHooksForWorkspace.push((allHooks) => {
           Object.assign(
@@ -708,7 +700,6 @@ async function loadStepsForTask<TaskType extends Task = Task>(
     const task: BuildProjectTaskInternal<ProjectType> = {
       project,
       workspace,
-      internal,
       options: options as BuildTaskOptions,
       hooks(adder) {
         configurationHooks.push((allHooks) => {

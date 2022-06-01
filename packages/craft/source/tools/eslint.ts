@@ -31,7 +31,7 @@ const DEFAULT_EXTENSIONS = ['.mjs', '.cjs', '.js'];
 export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
   return createWorkspacePlugin({
     name: 'Quilt.ESLint',
-    lint({hooks, configure, run, options, internal}) {
+    lint({hooks, configure, run, options, workspace}) {
       hooks<ESLintHooks>(({waterfall}) => ({
         eslintExtensions: waterfall(),
       }));
@@ -68,7 +68,7 @@ export function eslint({prettier: usesPrettierESLint = true}: Options = {}) {
                 '--cache-location',
                 // ESLint requires the trailing slash, don’t remove it
                 // @see https://eslint.org/docs/user-guide/command-line-interface#-cache-location
-                `${internal.fs.tempPath('eslint/cache')}/`,
+                `${workspace.fs.temporaryPath('eslint/cache')}/`,
                 ...(options.fix ? ['--fix'] : []),
                 ...extensions.map((ext) => ['--ext', ext]).flat(),
               ],

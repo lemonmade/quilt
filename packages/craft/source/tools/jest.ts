@@ -68,7 +68,7 @@ const require = createRequire(import.meta.url);
 export function jest() {
   return createWorkspacePlugin({
     name: 'Quilt.Jest',
-    test({workspace, hooks, run, project, internal, options}) {
+    test({workspace, hooks, run, project, options}) {
       hooks<JestWorkspaceHooks>(({waterfall}) => ({
         jestConfig: waterfall(),
         jestFlags: waterfall(),
@@ -207,7 +207,7 @@ export function jest() {
                 watchPathIgnorePatterns: watchIgnore,
                 transform,
                 resolver: RESOLVER_MODULE,
-                cacheDirectory: internal.fs.tempPath('jest/cache/workspace'),
+                cacheDirectory: workspace.fs.temporaryPath('jest/cache'),
               });
 
               return config;
@@ -295,10 +295,7 @@ export function jest() {
                     watchPathIgnorePatterns: watchIgnore,
                     transform,
                     resolver: RESOLVER_MODULE,
-                    cacheDirectory: internal.fs.tempPath(
-                      'jest/cache',
-                      project.name,
-                    ),
+                    cacheDirectory: project.fs.temporaryPath('jest/cache'),
                   });
 
                   return projectConfig;
@@ -330,9 +327,9 @@ export function jest() {
                   : undefined,
             });
 
-            const configPath = internal.fs.tempPath('jest/config.mjs');
+            const configPath = workspace.fs.temporaryPath('jest/config.mjs');
 
-            await internal.fs.write(
+            await workspace.fs.write(
               configPath,
               `export default ${JSON.stringify(config, null, 2)};`,
             );
