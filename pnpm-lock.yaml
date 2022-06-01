@@ -162,7 +162,6 @@ importers:
       '@quilted/polyfills': 0.2.26
       '@quilted/prettier': 0.2.8
       '@quilted/quilt': ^0.5.0
-      '@quilted/react-testing': 0.5.12
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.8
       '@quilted/sewing-kit': 0.2.27
       '@quilted/typescript': 0.2.14
@@ -230,7 +229,6 @@ importers:
       '@quilted/graphql': link:../graphql
       '@quilted/polyfills': link:../polyfills
       '@quilted/prettier': link:../prettier
-      '@quilted/react-testing': link:../react-testing
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': link:../rollup-plugin-fix-commonjs-preserve-modules
       '@quilted/sewing-kit': link:../sewing-kit
       '@quilted/typescript': link:../typescript
