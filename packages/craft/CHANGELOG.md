@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.125
+
+### Patch Changes
+
+- [#339](https://github.com/lemonmade/quilt/pull/339) [`f78240c4`](https://github.com/lemonmade/quilt/commit/f78240c43adf51ad29973a733357627ea8172320) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve craft to run with project dependencies
+
+- Updated dependencies [[`f78240c4`](https://github.com/lemonmade/quilt/commit/f78240c43adf51ad29973a733357627ea8172320)]:
+  - @quilted/sewing-kit@0.2.28
+
 ## 0.1.124
 
 ### Patch Changes
