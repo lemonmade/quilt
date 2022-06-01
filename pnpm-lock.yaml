@@ -163,7 +163,7 @@ importers:
       '@quilted/prettier': 0.2.8
       '@quilted/quilt': ^0.5.0
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.8
-      '@quilted/sewing-kit': 0.2.27
+      '@quilted/sewing-kit': 0.2.28
       '@quilted/typescript': 0.2.14
       '@quilted/workers': 0.2.28
       '@rollup/plugin-alias': ^3.1.0
