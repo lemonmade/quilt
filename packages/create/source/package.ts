@@ -25,13 +25,14 @@ import {
 
 type Arguments = ReturnType<typeof getArgv>;
 
-export async function createApp() {
+export async function createPackage() {
   const argv = getArgv();
   const inWorkspace = fs.existsSync('quilt.workspace.ts');
 
-  const name = await getName(argv, {inWorkspace});
-  const directory = await getDirectory(argv, {name});
-  const template = await getTemplate(argv);
+  const name = await getName(argv);
+  const directory = await getDirectory(argv, {name, inWorkspace});
+  const isPublic = await getPublic(argv);
+  const useReact = await getReact(argv);
 
   const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(argv));
   const shouldInstall = await getShouldInstall(argv);
@@ -40,26 +41,33 @@ export async function createApp() {
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
 
-  const appDirectory = createAsMonorepo
-    ? path.join(directory, 'app')
+  const packageDirectory = createAsMonorepo
+    ? path.join(
+        directory,
+        `packages/${toValidPackageName(name.split('/').pop()!)}`,
+      )
     : directory;
 
   if (fs.existsSync(directory)) {
     await emptyDirectory(directory);
 
-    if (appDirectory !== directory) {
-      fs.mkdirSync(appDirectory, {recursive: true});
+    if (packageDirectory !== directory) {
+      fs.mkdirSync(packageDirectory, {recursive: true});
     }
   } else {
-    fs.mkdirSync(appDirectory, {recursive: true});
+    fs.mkdirSync(packageDirectory, {recursive: true});
   }
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
-  const appTemplate = loadTemplate(
-    template === 'basic' ? 'app-basic' : 'app-single-file',
-  );
+  const packageTemplate = loadTemplate('package');
   const workspaceTemplate = loadTemplate('workspace');
+
+  let quiltProject = await packageTemplate.read('quilt.project.ts');
+
+  if (useReact) {
+    quiltProject = quiltProject.replace('react: false', 'react: true');
+  }
 
   // If we aren’t already in a workspace, copy the workspace files over, which
   // are needed if we are making a monorepo or not.
@@ -105,10 +113,10 @@ export async function createApp() {
     } else {
       const [projectPackageJson, projectTSConfig, workspacePackageJson] =
         await Promise.all([
-          appTemplate
+          packageTemplate
             .read('package.json')
             .then((content) => JSON.parse(content)),
-          appTemplate
+          packageTemplate
             .read('tsconfig.json')
             .then((content) => JSON.parse(content)),
           workspaceTemplate
@@ -120,6 +128,16 @@ export async function createApp() {
       workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
       workspacePackageJson.browserslist = projectPackageJson.browserslist;
 
+      if (isPublic) {
+        delete workspacePackageJson.private;
+      }
+
+      if (!useReact) {
+        delete workspacePackageJson.dependencies['react'];
+        delete workspacePackageJson.dependencies['react-dom'];
+        delete workspacePackageJson.devDependencies['@types/react'];
+      }
+
       const addBackToTSConfigInclude = new Set([
         'quilt.project.ts',
         '*.test.ts',
@@ -130,10 +148,9 @@ export async function createApp() {
         (excluded: string) => !addBackToTSConfigInclude.has(excluded),
       );
 
-      let quiltProject = await appTemplate.read('quilt.project.ts');
       quiltProject = quiltProject
-        .replace('quiltApp', 'quiltWorkspace, quiltApp')
-        .replace('quiltApp(', 'quiltWorkspace(), quiltApp(');
+        .replace('quiltPackage', 'quiltWorkspace, quiltPackage')
+        .replace('quiltPackage(', 'quiltWorkspace(), quiltPackage(');
 
       await outputRoot.write(
         'quilt.project.ts',
@@ -162,38 +179,42 @@ export async function createApp() {
     }
   }
 
-  await appTemplate.copy(appDirectory, (file) => {
+  await packageTemplate.copy(packageDirectory, (file) => {
     // If we are in a monorepo, we can use all the template files as they are
-    if (file === 'quilt.project.ts' || file === 'tsconfig.json') {
+    if (file === 'tsconfig.json') {
       return partOfMonorepo;
     }
 
-    // We need to make some adjustments the project’s package.json
-    return file !== 'package.json';
+    // We need to make some adjustments the project’s package.json and Quilt config
+    return file !== 'package.json' && file !== 'quilt.project.ts';
   });
 
   if (partOfMonorepo) {
-    // Write the app’s package.json (the root one was already created)
+    // Write the package’s package.json (the root one was already created)
     const projectPackageJson = JSON.parse(
-      await appTemplate.read('package.json'),
+      await packageTemplate.read('package.json'),
     );
 
-    projectPackageJson.name = path.basename(appDirectory);
+    projectPackageJson.name = toValidPackageName(name);
+
+    if (isPublic) {
+      delete projectPackageJson.private;
+    }
 
     await outputRoot.write(
-      path.join(appDirectory, 'package.json'),
+      path.join(packageDirectory, 'package.json'),
       await format(JSON.stringify(projectPackageJson), {
         as: 'json-stringify',
       }),
     );
 
-    // Update the TSConfig to include the new app
+    // Update the TSConfig to include the new package
     const tsconfig = JSON.parse(await outputRoot.read('tsconfig.json'));
 
     tsconfig.references ??= [];
     tsconfig.references.push({
       path: relativeDirectoryForDisplay(
-        path.relative(rootDirectory, appDirectory),
+        path.relative(rootDirectory, packageDirectory),
       ),
     });
 
@@ -209,7 +230,9 @@ export async function createApp() {
 
       workspaceYaml.packages ??= [];
       workspaceYaml.packages.push(
-        relativeDirectoryForDisplay(path.relative(rootDirectory, appDirectory)),
+        relativeDirectoryForDisplay(
+          path.relative(rootDirectory, packageDirectory),
+        ),
       );
 
       await outputRoot.write(
@@ -221,7 +244,9 @@ export async function createApp() {
 
       packageJson.workspaces ??= [];
       packageJson.workspaces.push(
-        relativeDirectoryForDisplay(path.relative(rootDirectory, appDirectory)),
+        relativeDirectoryForDisplay(
+          path.relative(rootDirectory, packageDirectory),
+        ),
       );
 
       await outputRoot.write(
@@ -248,7 +273,7 @@ export async function createApp() {
     commands.push(
       `cd ${color.cyan(
         relativeDirectoryForDisplay(path.relative(process.cwd(), directory)),
-      )} ${color.dim('# Move into your new app’s directory')}`,
+      )} ${color.dim('# Move into your new package’s directory')}`,
     );
   }
 
@@ -267,13 +292,11 @@ export async function createApp() {
     );
   }
 
-  commands.push(`pnpm develop ${color.dim('# Start the development server')}`);
-
   const whatsNext = stripIndent`
-    Your new app is ready to go! There’s just ${
+    Your new package is ready to go! There’s just ${
       commands.length > 1 ? 'a few more steps' : 'one more step'
     } you’ll need to take
-    in order to start developing:
+    in order to start building:
   `;
 
   console.log();
@@ -282,8 +305,8 @@ export async function createApp() {
   console.log(commands.map((command) => `  ${command}`).join('\n'));
 
   const followUp = stripIndent`
-    Quilt can also help you build, test, lint, and type-check your new application.
-    You can learn more about building apps with Quilt by reading the documentation:
+    Quilt can also help you build, test, lint, and type-check your new package.
+    You can learn more about building packages with Quilt by reading the documentation:
     ${color.underline(
       color.magenta(
         'https://github.com/lemonmade/quilt/tree/main/documentation',
@@ -305,7 +328,6 @@ function getArgv() {
       '--yes': Boolean,
       '-y': '--yes',
       '--name': String,
-      '--template': String,
       '--directory': String,
       '--install': Boolean,
       '--no-install': Boolean,
@@ -314,6 +336,10 @@ function getArgv() {
       '--package-manager': String,
       '--extras': [String],
       '--no-extras': Boolean,
+      '--react': Boolean,
+      '--no-react': Boolean,
+      '--public': Boolean,
+      '--private': Boolean,
     },
     {permissive: true},
   );
@@ -321,24 +347,42 @@ function getArgv() {
   return argv;
 }
 
-async function getName(argv: Arguments, {inWorkspace}: {inWorkspace: boolean}) {
+async function getName(argv: Arguments) {
   let {'--name': name} = argv;
 
   if (name == null) {
     name = await prompt({
       type: 'text',
-      message: 'What would you like to name your new app?',
-      initial: inWorkspace ? 'app' : 'my-quilt-app',
+      message: 'What would you like to name your new package?',
+      initial: '@my-team/package',
     });
   }
 
   return name!;
 }
 
-async function getDirectory(argv: Arguments, {name}: {name: string}) {
-  let directory = path.resolve(
-    argv['--directory'] ?? toValidPackageName(name!),
-  );
+async function getDirectory(
+  argv: Arguments,
+  {name, inWorkspace}: {name: string; inWorkspace: boolean},
+) {
+  let directory = argv['--directory']
+    ? path.resolve(argv['--directory'])
+    : undefined;
+
+  if (directory == null) {
+    const basePackageName = toValidPackageName(name.split('/').pop()!);
+    const defaultDirectory = inWorkspace
+      ? `packages/${basePackageName}`
+      : basePackageName;
+
+    directory = path.resolve(
+      await prompt({
+        type: 'text',
+        message: 'Where would you like to create your new package?',
+        initial: defaultDirectory,
+      }),
+    );
+  }
 
   while (!argv['--yes']) {
     if (fs.existsSync(directory) && !(await isEmpty(directory))) {
@@ -356,7 +400,7 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
 
       const promptDirectory = await prompt({
         type: 'text',
-        message: 'What directory do you want to create your new app in?',
+        message: 'What directory do you want to create your package in?',
       });
 
       directory = path.resolve(promptDirectory);
@@ -368,36 +412,38 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-type Template = 'basic' | 'single-file';
-const VALID_TEMPLATES = new Set<Template>(['basic', 'single-file']);
+async function getPublic(argv: Arguments) {
+  let isPublic: boolean;
 
-async function getTemplate(argv: Arguments) {
-  if (argv['--template'] && VALID_TEMPLATES.has(argv['--template'] as any)) {
-    return argv['--template'] as Template;
+  if (argv['--public'] || argv['--yes']) {
+    isPublic = true;
+  } else if (argv['--private']) {
+    isPublic = false;
+  } else {
+    isPublic = await prompt({
+      type: 'confirm',
+      message: 'Will this package be released publicly?',
+      initial: true,
+    });
   }
 
-  const template: Template = await prompt({
-    type: 'select',
-    message: 'What template would you like to use?',
-    hint: `Use ${color.bold('arrow keys')} to select, and ${color.bold(
-      'return',
-    )} to submit`,
-    choices: [
-      {
-        title: `${color.bold(
-          'The basics',
-        )}, a web app with a minimal file structure`,
-        value: 'basic',
-      },
-      {
-        title: `${color.bold(
-          'Itty-bitty',
-        )}, an entire web app in a single file`,
-        value: 'single-file',
-      },
-      // TODO: GraphQL API
-    ],
-  });
+  return isPublic;
+}
 
-  return template;
+async function getReact(argv: Arguments) {
+  let useReact: boolean;
+
+  if (argv['--react'] || argv['--yes']) {
+    useReact = true;
+  } else if (argv['--no-react']) {
+    useReact = false;
+  } else {
+    useReact = await prompt({
+      type: 'confirm',
+      message: 'Will this package depend on React?',
+      initial: true,
+    });
+  }
+
+  return useReact;
 }

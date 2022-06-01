@@ -1,11 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {fileURLToPath} from 'url';
-import prompts from 'prompts';
-import type {PromptObject} from 'prompts';
 import type {BuiltInParserName} from 'prettier';
 
-import {AbortError} from '@quilted/events';
+export {prompt} from './shared/prompts';
 
 export function loadTemplate(
   name:
@@ -91,19 +89,6 @@ async function getPackageRoot(): Promise<string> {
   }
 
   return packageRootPromise;
-}
-
-export async function prompt(prompt: Omit<PromptObject, 'name'>) {
-  const result = await prompts<'value'>(
-    {name: 'value', ...prompt},
-    {
-      onCancel() {
-        throw new AbortError();
-      },
-    },
-  );
-
-  return result.value;
 }
 
 export function toValidPackageName(projectName: string) {

@@ -67,8 +67,16 @@ async function run() {
     });
   }
 
-  if (kind === 'app') {
-    const {createApp} = await import('./app');
-    await createApp();
+  switch (kind) {
+    case 'app': {
+      const {createApp} = await import('./app');
+      await createApp();
+      break;
+    }
+    case 'package': {
+      const {createPackage} = await import('./package');
+      await createPackage();
+      break;
+    }
   }
 }
