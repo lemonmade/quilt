@@ -8,6 +8,7 @@ import {addRollupNodeBundleInclusion, addRollupOnWarn} from '../tools/rollup';
 import type {EnvironmentOptions} from './magic-module-env';
 
 const MAGIC_ENTRY_MODULE = '.quilt/magic/http-handler-entry.js';
+const MAGIC_HTTP_HANDLER_MODULE_ENTRY = '.quilt/magic/http-handler.js';
 
 export interface HttpHandlerHooks {
   quiltHttpHandlerPort: WaterfallHook<number | undefined>;
@@ -301,15 +302,23 @@ export function httpHandlerDevelopment({
                 async resolveId(id) {
                   if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
+                  return {
+                    id: project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY),
+                    moduleSideEffects: 'no-treeshake',
+                  };
+                },
+                load(id) {
+                  if (
+                    id !==
+                    project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY)
+                  ) {
+                    return null;
+                  }
+
                   // If we were given content, we will use that as the content
                   // for the entry. Otherwise, just point to the project’s entry,
                   // which is assumed to be a module that exports a `createHttpHandler()`
                   // object as the default export.
-                  return {id, moduleSideEffects: 'no-treeshake'};
-                },
-                load(id) {
-                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
-
                   return (
                     content ??
                     `export {default} from ${JSON.stringify(
