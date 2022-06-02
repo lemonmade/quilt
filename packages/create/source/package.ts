@@ -6,6 +6,7 @@ import arg from 'arg';
 import * as color from 'colorette';
 import {stripIndent} from 'common-tags';
 
+import {printHelp} from './help';
 import {
   format,
   loadTemplate,
@@ -29,6 +30,30 @@ type Arguments = ReturnType<typeof getArgv>;
 
 export async function createPackage() {
   const argv = getArgv();
+
+  if (argv['--help']) {
+    const additionalOptions = stripIndent`
+      ${color.cyan(`--react`)}, ${color.cyan(`--no-react`)}
+      Whether this package will use React. If you don’t provide this option, the command
+      will ask you about it later.
+
+      ${color.cyan(`--public`)}, ${color.cyan(`--private`)}
+      Whether this package will be published for other projects to install. If you do not
+      provide this option, the command will ask you about it later.
+
+      ${color.cyan(`--registry`)}
+      The package registry to publish this package to. This option only applies if you create
+      a public package. If you do not provide this option, it will use the default NPM registry.
+    `;
+
+    printHelp({
+      kind: 'package',
+      options: additionalOptions,
+      packageManager: argv['--package-manager']?.toLowerCase(),
+    });
+    return;
+  }
+
   const inWorkspace = fs.existsSync('quilt.workspace.ts');
 
   const name = await getName(argv);
@@ -320,6 +345,8 @@ function getArgv() {
       '--public': Boolean,
       '--private': Boolean,
       '--registry': String,
+      '--help': Boolean,
+      '-h': '--help',
     },
     {permissive: true},
   );

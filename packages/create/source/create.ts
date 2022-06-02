@@ -19,7 +19,7 @@ run().catch((error) => {
 
 async function run() {
   const permissiveArgs = arg(
-    {'--help': Boolean, '-h': '--help'},
+    {'--help': Boolean, '-h': '--help', '--package-manager': String},
     {permissive: true},
   );
 
@@ -40,20 +40,18 @@ async function run() {
       ? undefined
       : firstArgument;
 
-  if (permissiveArgs['--help']) {
-    if (kind) {
-      // TODO
-    }
-
-    printHelp();
-    return;
-  } else {
-    const header = stripIndent`
+  const header = stripIndent`
       🧵 ${color.bold('quilt create')}
     `;
 
-    console.log(header);
-    console.log();
+  console.log(header);
+  console.log();
+
+  if (permissiveArgs['--help'] && !kind) {
+    printHelp({
+      packageManager: permissiveArgs['--package-manager']?.toLowerCase(),
+    });
+    return;
   }
 
   if (kind == null) {

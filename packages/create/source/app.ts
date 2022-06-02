@@ -6,6 +6,7 @@ import arg from 'arg';
 import * as color from 'colorette';
 import {stripIndent} from 'common-tags';
 
+import {printHelp} from './help';
 import {
   format,
   loadTemplate,
@@ -29,6 +30,25 @@ type Arguments = ReturnType<typeof getArgv>;
 
 export async function createApp() {
   const argv = getArgv();
+
+  if (argv['--help']) {
+    const additionalOptions = stripIndent`
+      ${color.cyan(`--template`)}
+      The template to use for your new application. If you don’t specify a template,
+      this command will ask you for one instead. Must be one of the following:
+
+       - ${color.bold('basic')}, a web app with a minimal file structure
+       - ${color.bold('single-file')}, an entire web app in a single file
+    `;
+
+    printHelp({
+      kind: 'app',
+      options: additionalOptions,
+      packageManager: argv['--package-manager']?.toLowerCase(),
+    });
+    return;
+  }
+
   const inWorkspace = fs.existsSync('quilt.workspace.ts');
 
   const name = await getName(argv, {inWorkspace});
@@ -276,6 +296,8 @@ function getArgv() {
       '--package-manager': String,
       '--extras': [String],
       '--no-extras': Boolean,
+      '--help': Boolean,
+      '-h': '--help',
     },
     {permissive: true},
   );
