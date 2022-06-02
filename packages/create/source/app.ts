@@ -22,6 +22,8 @@ import {
   getPackageManager,
   getShouldInstall,
 } from './shared/prompts';
+import {addToTsConfig} from './shared/tsconfig';
+import {addToPackageManagerWorkspaces} from './shared/package-manager';
 
 type Arguments = ReturnType<typeof getArgv>;
 
@@ -187,50 +189,10 @@ export async function createApp() {
       }),
     );
 
-    // Update the TSConfig to include the new app
-    const tsconfig = JSON.parse(await outputRoot.read('tsconfig.json'));
-
-    tsconfig.references ??= [];
-    tsconfig.references.push({
-      path: relativeDirectoryForDisplay(
-        path.relative(rootDirectory, appDirectory),
-      ),
-    });
-
-    await outputRoot.write(
-      'tsconfig.json',
-      await format(JSON.stringify(tsconfig), {as: 'json'}),
-    );
-
-    // Update the workspaces configuration to include the new app
-    if (packageManager === 'pnpm') {
-      const {parse, stringify} = await import('yaml');
-      const workspaceYaml = parse(await outputRoot.read('pnpm-workspace.yaml'));
-
-      workspaceYaml.packages ??= [];
-      workspaceYaml.packages.push(
-        relativeDirectoryForDisplay(path.relative(rootDirectory, appDirectory)),
-      );
-
-      await outputRoot.write(
-        'pnpm-workspace.yaml',
-        await format(stringify(workspaceYaml), {as: 'yaml'}),
-      );
-    } else {
-      const packageJson = JSON.parse(await outputRoot.read('package.json'));
-
-      packageJson.workspaces ??= [];
-      packageJson.workspaces.push(
-        relativeDirectoryForDisplay(path.relative(rootDirectory, appDirectory)),
-      );
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(packageJson), {
-          as: 'json-stringify',
-        }),
-      );
-    }
+    await Promise.all([
+      addToTsConfig(appDirectory, outputRoot),
+      addToPackageManagerWorkspaces(appDirectory, outputRoot, packageManager),
+    ]);
   }
 
   if (shouldInstall) {

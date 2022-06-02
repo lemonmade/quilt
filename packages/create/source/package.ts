@@ -22,6 +22,8 @@ import {
   getPackageManager,
   getShouldInstall,
 } from './shared/prompts';
+import {addToTsConfig} from './shared/tsconfig';
+import {addToPackageManagerWorkspaces} from './shared/package-manager';
 
 type Arguments = ReturnType<typeof getArgv>;
 
@@ -124,19 +126,35 @@ export async function createPackage() {
             .then((content) => JSON.parse(content)),
         ]);
 
-      workspacePackageJson.name = toValidPackageName(name!);
       workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
       workspacePackageJson.browserslist = projectPackageJson.browserslist;
 
-      if (isPublic) {
-        delete workspacePackageJson.private;
+      const newPackageJson: Record<string, any> = {};
+
+      // We want to put the project’s dependencies in the package.json, respecting
+      // the preferred ordering (dependencies, peer dependencies, dev dependencies).
+      for (const [key, value] of Object.entries(projectPackageJson)) {
+        if (key !== 'devDependencies') {
+          newPackageJson[key] = value;
+          continue;
+        }
+
+        newPackageJson.dependencies = projectPackageJson.dependencies;
+        newPackageJson.peerDependencies = projectPackageJson.peerDependencies;
+        newPackageJson.peerDependenciesMeta =
+          projectPackageJson.peerDependenciesMeta;
+        newPackageJson.devDependencies = sortKeys({
+          ...workspacePackageJson.devDependencies,
+          ...projectPackageJson.devDependencies,
+        });
       }
 
-      if (!useReact) {
-        delete workspacePackageJson.dependencies['react'];
-        delete workspacePackageJson.dependencies['react-dom'];
-        delete workspacePackageJson.devDependencies['@types/react'];
-      }
+      adjustPackageJson(newPackageJson, {
+        name: toValidPackageName(name!),
+        react: useReact,
+        isPublic,
+        registry: argv['--registry'],
+      });
 
       const addBackToTSConfigInclude = new Set([
         'quilt.project.ts',
@@ -159,7 +177,7 @@ export async function createPackage() {
 
       await outputRoot.write(
         'package.json',
-        await format(JSON.stringify(workspacePackageJson), {
+        await format(JSON.stringify(newPackageJson), {
           as: 'json-stringify',
         }),
       );
@@ -195,11 +213,12 @@ export async function createPackage() {
       await packageTemplate.read('package.json'),
     );
 
-    projectPackageJson.name = toValidPackageName(name);
-
-    if (isPublic) {
-      delete projectPackageJson.private;
-    }
+    adjustPackageJson(projectPackageJson, {
+      name: toValidPackageName(name),
+      react: useReact,
+      isPublic,
+      registry: argv['--registry'],
+    });
 
     await outputRoot.write(
       path.join(packageDirectory, 'package.json'),
@@ -208,54 +227,14 @@ export async function createPackage() {
       }),
     );
 
-    // Update the TSConfig to include the new package
-    const tsconfig = JSON.parse(await outputRoot.read('tsconfig.json'));
-
-    tsconfig.references ??= [];
-    tsconfig.references.push({
-      path: relativeDirectoryForDisplay(
-        path.relative(rootDirectory, packageDirectory),
+    await Promise.all([
+      addToTsConfig(packageDirectory, outputRoot),
+      addToPackageManagerWorkspaces(
+        packageDirectory,
+        outputRoot,
+        packageManager,
       ),
-    });
-
-    await outputRoot.write(
-      'tsconfig.json',
-      await format(JSON.stringify(tsconfig), {as: 'json'}),
-    );
-
-    // Update the workspaces configuration to include the new app
-    if (packageManager === 'pnpm') {
-      const {parse, stringify} = await import('yaml');
-      const workspaceYaml = parse(await outputRoot.read('pnpm-workspace.yaml'));
-
-      workspaceYaml.packages ??= [];
-      workspaceYaml.packages.push(
-        relativeDirectoryForDisplay(
-          path.relative(rootDirectory, packageDirectory),
-        ),
-      );
-
-      await outputRoot.write(
-        'pnpm-workspace.yaml',
-        await format(stringify(workspaceYaml), {as: 'yaml'}),
-      );
-    } else {
-      const packageJson = JSON.parse(await outputRoot.read('package.json'));
-
-      packageJson.workspaces ??= [];
-      packageJson.workspaces.push(
-        relativeDirectoryForDisplay(
-          path.relative(rootDirectory, packageDirectory),
-        ),
-      );
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(packageJson), {
-          as: 'json-stringify',
-        }),
-      );
-    }
+    ]);
   }
 
   if (shouldInstall) {
@@ -340,6 +319,7 @@ function getArgv() {
       '--no-react': Boolean,
       '--public': Boolean,
       '--private': Boolean,
+      '--registry': String,
     },
     {permissive: true},
   );
@@ -422,7 +402,7 @@ async function getPublic(argv: Arguments) {
   } else {
     isPublic = await prompt({
       type: 'confirm',
-      message: 'Will this package be released publicly?',
+      message: 'Will you publish this package to use in other projects?',
       initial: true,
     });
   }
@@ -446,4 +426,58 @@ async function getReact(argv: Arguments) {
   }
 
   return useReact;
+}
+
+function adjustPackageJson(
+  packageJson: Record<string, any>,
+  {
+    name,
+    react,
+    isPublic,
+    registry,
+  }: {name: string; react: boolean; isPublic: boolean; registry?: string},
+) {
+  packageJson.name = name;
+
+  const packageParts = name.split('/');
+  const scope = packageParts[0]!.startsWith('@') ? packageParts[0] : undefined;
+  const finalRegistry = registry ?? 'https://registry.npmjs.org';
+
+  if (scope) {
+    packageJson.publishConfig[`${scope}/registry`] = finalRegistry;
+  } else if (registry) {
+    packageJson.publishConfig.registry = finalRegistry;
+  }
+
+  if (isPublic) {
+    delete packageJson.private;
+  } else {
+    delete packageJson.publishConfig;
+  }
+
+  if (!react) {
+    delete packageJson.dependencies['@types/react'];
+    delete packageJson.devDependencies['react'];
+    delete packageJson.peerDependencies['react'];
+    delete packageJson.peerDependenciesMeta['react'];
+
+    packageJson.eslintConfig.extends = packageJson.eslintConfig.extends.filter(
+      (extend: string) => !extend.includes('react'),
+    );
+  }
+
+  return packageJson;
+}
+
+function sortKeys(object: Record<string, any>) {
+  const newObject: Record<string, any> = {};
+  const sortedEntries = Object.entries(object).sort(([keyOne], [keyTwo]) =>
+    keyOne.localeCompare(keyTwo),
+  );
+
+  for (const [key, value] of sortedEntries) {
+    newObject[key] = value;
+  }
+
+  return newObject;
 }

@@ -50,8 +50,15 @@ export function loadTemplate(
   };
 }
 
-export function createOutputTarget(target: string) {
+export interface OutputTarget {
+  readonly root: string;
+  read(file: string): Promise<string>;
+  write(file: string, content: string): Promise<void>;
+}
+
+export function createOutputTarget(target: string): OutputTarget {
   return {
+    root: target,
     read(file: string) {
       return fs.promises.readFile(path.resolve(target, file), {
         encoding: 'utf8',
