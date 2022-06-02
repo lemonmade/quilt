@@ -363,7 +363,7 @@ const COMMONJS_HELPER_MODULE = '\x00commonjsHelpers.js';
 
 // When building from source, quilt packages are not in node_modules,
 // so we instead add their repo paths to the list of framework test strings.
-if (process.env.SEWING_KIT_FROM_SOURCE) {
+if (process.env.QUILT_FROM_SOURCE) {
   FRAMEWORK_TEST_STRINGS.push('/quilt/packages/');
 }
 

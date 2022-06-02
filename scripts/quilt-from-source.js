@@ -23,7 +23,7 @@ try {
       stdio: 'inherit',
       env: {
         ...process.env,
-        SEWING_KIT_FROM_SOURCE: '1',
+        QUILT_FROM_SOURCE: '1',
       },
     },
   );

@@ -1,5 +1,5 @@
-import Env from '@quilted/quilt/env';
-import {useCurrentUrl} from '@quilted/quilt';
+import {Router, useRoutes, useCurrentUrl, AppContext} from '@quilted/quilt';
+import {Title, Viewport, Favicon, SearchRobots} from '@quilted/quilt/html';
 import {
   CacheControl,
   ResponseHeader,
@@ -7,13 +7,75 @@ import {
   PermissionsPolicy,
   StrictTransportSecurity,
 } from '@quilted/quilt/http';
+import Env from '@quilted/quilt/env';
 
+// The root component for your application. You will typically render any
+// app-wide context in this component.
+export default function App() {
+  return (
+    <AppContext>
+      <Router>
+        <Http />
+        <Head />
+        <Routes />
+      </Router>
+    </AppContext>
+  );
+}
+
+// This component renders the routes for your application. If you have a lot
+// of routes, you may want to split this component into its own file.
+function Routes() {
+  return useRoutes([{match: '/', render: () => <Start />}]);
+}
+
+// This component will be rendered for the root URL of your application. Feel
+// free to edit it, rename it, remove it entirely, or move it to a dedicated file.
+function Start() {
+  return <div>Hello world!</div>;
+}
+
+// This component sets details of the HTML page. If you need to customize
+// any of these details based on conditions like the active route, or some
+// state about the user, you can move these components to wherever in your
+// application you can read that state.
+function Head() {
+  return (
+    <>
+      {/* Sets the default `<title>` for this application. */}
+      <Title>App</Title>
+
+      {/*
+       * Sets the default favicon used by the application. You can
+       * change this to a different emoji, make it `blank`, or pass
+       * a URL with the `source` prop.
+       */}
+      <Favicon emoji="🧶" />
+
+      {/* Adds a responsive-friendly `viewport` `<meta>` tag. */}
+      <Viewport cover />
+
+      {/*
+       * Disables all search indexing for this application. If you are
+       * building an unauthenticated app, you probably want to remove
+       * this component, or update it to control how your site is indexed
+       * by search engines.
+       */}
+      <SearchRobots index={false} follow={false} />
+    </>
+  );
+}
+
+// This component sets details on the HTTP response for all HTML server-rendering
+// requests. If you need to customize any of these details based on conditions like
+// the active route, or some state about the user, you can move these components to
+// wherever in your application you can read that state.
 export function Http() {
   const isHttps = useCurrentUrl().protocol === 'https:';
 
   return (
     <>
-      {/**
+      {/*
        * Disables the cache for this page, which is generally the best option
        * when dealing with authenticated content. If your site doesn’t have
        * authentication, or you have a better cache policy that works for your
@@ -23,7 +85,7 @@ export function Http() {
        */}
       <CacheControl cache={false} />
 
-      {/**
+      {/*
        * Sets a strict content security policy for this page. If you load
        * assets from other origins, or want to allow some more dangerous
        * resource loading techniques like `eval`, you can change the
@@ -50,7 +112,7 @@ export function Http() {
         upgradeInsecureRequests={isHttps}
       />
 
-      {/**
+      {/*
        * Sets a strict permissions policy for this page, which limits access
        * to some native browser features.
        *
@@ -73,7 +135,7 @@ export function Http() {
         geolocation={false}
       />
 
-      {/**
+      {/*
        * Instructs browsers to only load this page over HTTPS using the
        * `Strict-Transport-Security` header.
        *
@@ -81,7 +143,7 @@ export function Http() {
        */}
       {isHttps && <StrictTransportSecurity />}
 
-      {/**
+      {/*
        * Controls how much information about the current page is included in
        * requests (through the `Referer` header). The default value
        * (strict-origin-when-cross-origin) means that only the origin is included
@@ -95,7 +157,7 @@ export function Http() {
         value="strict-origin-when-cross-origin"
       />
 
-      {/**
+      {/*
        * Instructs browsers to respect the MIME type in the `Content-Type` header.
        *
        * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options

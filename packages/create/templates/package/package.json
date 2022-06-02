@@ -1,9 +1,13 @@
 {
   "name": "template-package",
-  "description": "",
+  "description": "<YOUR DESCRIPTION HERE>",
   "type": "module",
-  "version": "0.0.0",
   "license": "MIT",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.0",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -11,11 +15,9 @@
     "type": "git",
     "url": "https://github.com/<USER>/<REPOSITORY>"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "exports": {
     ".": {
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
@@ -23,18 +25,31 @@
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
-  "dependencies": {},
+  "dependencies": {
+    "@types/react": "^17.0.0"
+  },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0"
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "react": "^17.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
       "optional": true
+    },
+    "react": {
+      "optional": true
     }
+  },
+  "devDependencies": {
+    "react": "npm:@quilted/react@^17.0.0"
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/package"
+      "@quilted/eslint-config/package",
+      "@quilted/eslint-config/react"
     ]
-  }
+  },
+  "browserslist": [
+    "extends @quilted/browserslist-config/defaults"
+  ]
 }
