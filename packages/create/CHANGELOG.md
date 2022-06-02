@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.14
+
+### Patch Changes
+
+- [#338](https://github.com/lemonmade/quilt/pull/338) [`3e2993f5`](https://github.com/lemonmade/quilt/commit/3e2993f598be4aad1b16ef378d7cd449de81c3b5) Thanks [@lemonmade](https://github.com/lemonmade)! - Update create package
+
 ## 0.1.13
 
 ### Patch Changes
