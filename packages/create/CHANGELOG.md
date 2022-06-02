@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.16
+
+### Patch Changes
+
+- [`910c7dbe`](https://github.com/lemonmade/quilt/commit/910c7dbe0ba5ad9b348c77e045faf13ba4b94219) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix prettier standalone usage
+
 ## 0.1.15
 
 ### Patch Changes
