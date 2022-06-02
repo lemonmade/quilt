@@ -12,6 +12,7 @@ import {
 import {packageBuild} from './features/packages';
 import type {Options as PackageBuildOptions} from './features/packages';
 import {esnextBuild, esnext} from './features/esnext';
+import {fromSource} from './features/from-source';
 import {react} from './features/react';
 import {targets, workspaceTargets} from './features/targets';
 import {graphql, workspaceGraphQL} from './features/graphql';
@@ -165,6 +166,7 @@ export function quiltApp({
         typescriptProject(),
         tsconfigAliases(),
         esnext(),
+        fromSource(),
         react(),
         aliasWorkspacePackages(),
         // Magic modules
@@ -263,6 +265,7 @@ export function quiltService({
         typescriptProject(),
         tsconfigAliases(),
         esnext(),
+        fromSource(),
         useReact && react(),
         aliasWorkspacePackages(),
         magicModuleEnv(),
@@ -320,6 +323,8 @@ export function quiltPackage({
         targets(),
         javascriptProject(),
         typescriptProject(),
+        esnext(),
+        fromSource(),
         useReact && react(),
         useReact && reactTesting({environment: 'preact'}),
         useGraphQL && graphql(),
