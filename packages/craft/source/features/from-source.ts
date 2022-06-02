@@ -19,6 +19,8 @@ export function fromSource() {
   return createProjectPlugin({
     name: 'Quilt.ESNextConsumer',
     develop({configure}) {
+      if (!isFromSource()) return;
+
       configure(
         ({
           viteResolveExportConditions,
@@ -38,6 +40,8 @@ export function fromSource() {
       );
     },
     build({configure}) {
+      if (!isFromSource()) return;
+
       configure(({rollupNodeExportConditions}) => {
         rollupNodeExportConditions?.((exportConditions) =>
           Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
@@ -45,4 +49,8 @@ export function fromSource() {
       });
     },
   });
+}
+
+function isFromSource() {
+  return Boolean(process.env.QUILT_FROM_SOURCE);
 }
