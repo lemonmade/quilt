@@ -209,15 +209,17 @@ function createFilter({
         }
       }
 
+      if (searches.some((search) => skipProjects.has(search))) {
+        return {included: false, reason: ExcludedReason.Skipped};
+      }
+
       if (onlyProjects.size > 0) {
         return searches.some((search) => onlyProjects.has(search))
           ? {included: true, reason: IncludedReason.Only}
           : {included: false, reason: ExcludedReason.Only};
       }
 
-      return searches.some((search) => skipProjects.has(search))
-        ? {included: false, reason: ExcludedReason.Skipped}
-        : {included: true, reason: IncludedReason.Normal};
+      return {included: true, reason: IncludedReason.Normal};
     },
     includeWorkspace() {
       if (onlyWorkspace) {
