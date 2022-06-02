@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.128
+
+### Patch Changes
+
+- [`88bcd4b5`](https://github.com/lemonmade/quilt/commit/88bcd4b559a1376fd89f176cdad569196222255b) Thanks [@lemonmade](https://github.com/lemonmade)! - Undo from-source applying to consumers
+
 ## 0.1.127
 
 ### Patch Changes
