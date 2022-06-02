@@ -238,6 +238,11 @@ export async function createPackage() {
       await packageTemplate.read('package.json'),
     );
 
+    projectPackageJson.repository.directory = path.relative(
+      directory,
+      packageDirectory,
+    );
+
     adjustPackageJson(projectPackageJson, {
       name: toValidPackageName(name),
       react: useReact,
