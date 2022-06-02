@@ -55,10 +55,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
+      - name: Install Playwright browsers
+        run: pnpm --filter e2e-tests exec playwright install
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: --only-project package:*
+          arguments: --only-project package:* --skip-project create
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:e2e
