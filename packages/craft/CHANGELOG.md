@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.129
+
+### Patch Changes
+
+- [`542675c4`](https://github.com/lemonmade/quilt/commit/542675c4422ca2f643296f6de1668ad0310ef1ff) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix HTTP handler build entries
+
 ## 0.1.128
 
 ### Patch Changes
