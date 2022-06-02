@@ -153,7 +153,7 @@ export async function format(
   content: string,
   {as: parser}: {as: BuiltInParserName},
 ) {
-  const [{format}] = await Promise.all([import('prettier')]);
+  const [{format}] = await Promise.all([import('prettier/standalone')]);
 
   return format(content, {
     arrowParens: 'always',
