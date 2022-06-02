@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.17
+
+### Patch Changes
+
+- [`78d28015`](https://github.com/lemonmade/quilt/commit/78d280157c239175a431e12dbb9fda08f2c84a09) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix create package flow in monorepos
+
+* [`ae3bbaa8`](https://github.com/lemonmade/quilt/commit/ae3bbaa8e2cc50bb8f57e332fa0aa12100153fc6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `directory` to package.json in monorepo packages
+
 ## 0.1.16
 
 ### Patch Changes
