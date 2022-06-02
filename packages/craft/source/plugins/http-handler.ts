@@ -140,10 +140,18 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                 async resolveId(id) {
                   if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
 
-                  return id;
+                  return {
+                    id: project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY),
+                    moduleSideEffects: 'no-treeshake',
+                  };
                 },
                 load(id) {
-                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
+                  if (
+                    id !==
+                    project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY)
+                  ) {
+                    return null;
+                  }
 
                   // If we were given content, we will use that as the content
                   // for the entry. Otherwise, just point to the project’s entry,
