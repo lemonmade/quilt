@@ -153,7 +153,11 @@ export async function format(
   content: string,
   {as: parser}: {as: BuiltInParserName},
 ) {
-  const [{format}] = await Promise.all([import('prettier/standalone')]);
+  const [{format}, {default: babel}, {default: yaml}] = await Promise.all([
+    import('prettier/standalone'),
+    import('prettier/parser-babel'),
+    import('prettier/parser-yaml'),
+  ]);
 
   return format(content, {
     arrowParens: 'always',
@@ -161,5 +165,6 @@ export async function format(
     singleQuote: true,
     trailingComma: 'all',
     parser,
+    plugins: [babel, yaml],
   });
 }
