@@ -252,6 +252,11 @@ export async function createPackage() {
       }),
     );
 
+    await outputRoot.write(
+      path.join(packageDirectory, 'quilt.project.ts'),
+      quiltProject,
+    );
+
     await Promise.all([
       addToTsConfig(packageDirectory, outputRoot),
       addToPackageManagerWorkspaces(
@@ -270,6 +275,28 @@ export async function createPackage() {
     process.stdout.clearLine(1);
     console.log('Installed dependencies.');
   }
+
+  const packageJsonInstructions = stripIndent`
+    Your new package is ready to go! However, before you go too much further,
+    you should update the following fields in ${color.cyan(
+      relativeDirectoryForDisplay(
+        path.relative(
+          process.cwd(),
+          path.join(packageDirectory, 'package.json'),
+        ),
+      ),
+    )}:
+
+     - ${color.bold(
+       `"description"`,
+     )}, where you provide a description of what your package does
+     - ${color.bold(`"repository"`)}, where you should include the ${color.bold(
+    `"url"`,
+  )} of your project’s repo
+  `;
+
+  console.log();
+  console.log(packageJsonInstructions);
 
   const commands: string[] = [];
 
@@ -296,21 +323,23 @@ export async function createPackage() {
     );
   }
 
-  const whatsNext = stripIndent`
-    Your new package is ready to go! There’s just ${
-      commands.length > 1 ? 'a few more steps' : 'one more step'
-    } you’ll need to take
-    in order to start building:
-  `;
+  if (commands.length > 0) {
+    const whatsNext = stripIndent`
+      After you update your package.json, there’s ${
+        commands.length > 1 ? 'a few more steps' : 'one more step'
+      } you’ll need to take
+      in order to start building:
+    `;
 
-  console.log();
-  console.log(whatsNext);
-  console.log();
-  console.log(commands.map((command) => `  ${command}`).join('\n'));
+    console.log();
+    console.log(whatsNext);
+    console.log();
+    console.log(commands.map((command) => `  ${command}`).join('\n'));
+  }
 
   const followUp = stripIndent`
-    Quilt can also help you build, test, lint, and type-check your new package.
-    You can learn more about building packages with Quilt by reading the documentation:
+    Quilt can help you build, test, lint, and type-check your new package. You
+    can learn more about building packages with Quilt by reading the documentation:
     ${color.underline(
       color.magenta(
         'https://github.com/lemonmade/quilt/tree/main/documentation',
