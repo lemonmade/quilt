@@ -121,6 +121,21 @@ export function appBuild({
             );
           }
 
+          rollupPlugins?.(async (plugins) => {
+            const {default: replace} = await import('@rollup/plugin-replace');
+
+            return [
+              ...plugins,
+              replace({
+                preventAssignment: true,
+                values: {
+                  // eslint-disable-next-line @typescript-eslint/naming-convention
+                  'process.env.NODE_ENV': JSON.stringify('production'),
+                },
+              }),
+            ];
+          });
+
           if (!browserTargets) return;
 
           runtime(() => new TargetRuntime([Runtime.Browser]));

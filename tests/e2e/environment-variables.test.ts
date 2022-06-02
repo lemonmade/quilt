@@ -77,6 +77,33 @@ describe('app builds', () => {
       });
     });
 
+    it('automatically replaces process.env.NODE_ENV with the MODE environment variable', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'foundation/Routes.tsx': stripIndent`
+              import {useRoutes} from '@quilted/quilt';
+              
+              export function Routes() {
+                return useRoutes([{match: '/', render: () => <Start />}]);
+              }
+              
+              function Start() {
+                const nodeEnv = process.env.NODE_ENV;
+                return <div>NODE_ENV: {nodeEnv}</div>;
+              }
+            `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/',
+        });
+
+        expect(await page.textContent('body')).toMatch(`NODE_ENV: production`);
+      });
+    });
+
     it('loads .env files for production builds', async () => {
       await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
         const {fs} = workspace;
@@ -125,15 +152,13 @@ describe('app builds', () => {
     });
 
     it('inlines environment variables into the app server', async () => {
-      await withWorkspace(
-        {fixture: 'basic-app', debug: true},
-        async (workspace) => {
-          const {fs} = workspace;
-          const builder = 'Chris';
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+        const builder = 'Chris';
 
-          await fs.write({
-            '.env': `BUILDER=${builder}`,
-            'quilt.project.ts': stripIndent`
+        await fs.write({
+          '.env': `BUILDER=${builder}`,
+          'quilt.project.ts': stripIndent`
               import {createApp, quiltApp} from '@quilted/craft';
               import {addInternalExportCondition} from '../../common/craft';
               
@@ -147,7 +172,7 @@ describe('app builds', () => {
                 app.use(addInternalExportCondition());
               });
             `,
-            'foundation/Routes.tsx': stripIndent`
+          'foundation/Routes.tsx': stripIndent`
               import Env from '@quilted/quilt/env';
               import {useRoutes} from '@quilted/quilt';
               import {useSerialized} from '@quilted/quilt/html';
@@ -161,15 +186,14 @@ describe('app builds', () => {
                 return <div>Hello, {builder}!</div>;
               }
             `,
-          });
+        });
 
-          const {page} = await buildAppAndOpenPage(workspace, {
-            path: '/',
-          });
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/',
+        });
 
-          expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
-        },
-      );
+        expect(await page.textContent('body')).toMatch(`Hello, ${builder}!`);
+      });
     });
   });
 });
