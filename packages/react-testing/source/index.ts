@@ -1,3 +1,11 @@
 export * from './implementations/test-renderer';
-export type {Node, NodeApi, Root, RootApi} from './types';
-export type {CustomMount} from './environment';
+export * from './types';
+export {createEnvironment} from './environment';
+export type {
+  CustomMount,
+  HookRunner,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+} from './environment';
