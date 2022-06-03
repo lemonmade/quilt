@@ -298,6 +298,11 @@ export async function createPackage() {
      - ${color.bold(`"repository"`)}, where you should include the ${color.bold(
     `"url"`,
   )} of your project’s repo
+
+    Before you publish your package, you will also want to update the ${color.bold(
+      `"version"`,
+    )}
+    field in the package.json file.
   `;
 
   console.log();
