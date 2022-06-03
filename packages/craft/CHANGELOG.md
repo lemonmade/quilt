@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.130
+
+### Patch Changes
+
+- [#347](https://github.com/lemonmade/quilt/pull/347) [`ff9f7d62`](https://github.com/lemonmade/quilt/commit/ff9f7d62efc36140aa9add301f745b99115ac9bd) Thanks [@lemonmade](https://github.com/lemonmade)! - Inline process.env.NODE_ENV into built applications
+
 ## 0.1.129
 
 ### Patch Changes
