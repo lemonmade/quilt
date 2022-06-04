@@ -1,5 +1,16 @@
 # @quilted/craft
 
+## 0.1.131
+
+### Patch Changes
+
+- [`739ccd7a`](https://github.com/lemonmade/quilt/commit/739ccd7abffb397b8ec9f22bb65ddae4e3e6101f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some Jest aliases
+
+* [`da164887`](https://github.com/lemonmade/quilt/commit/da1648879b459f4e2a496de75a664c2dfee37b67) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix binary resolution in non-pnpm package managers
+
+* Updated dependencies [[`d9bedaf5`](https://github.com/lemonmade/quilt/commit/d9bedaf5fa212b37d3d3633a9495586df2d9e40c)]:
+  - @quilted/quilt@0.5.104
+
 ## 0.1.130
 
 ### Patch Changes

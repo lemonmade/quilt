@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.18
+
+### Patch Changes
+
+- [`a98c7c2b`](https://github.com/lemonmade/quilt/commit/a98c7c2bc40fa29b95e1ca3005d5c0fe995c9a5f) Thanks [@lemonmade](https://github.com/lemonmade)! - Add versioning instructions to package create
+
+* [`ae2475f7`](https://github.com/lemonmade/quilt/commit/ae2475f735a5e83969cbb596efe7b31cfd9f893b) Thanks [@lemonmade](https://github.com/lemonmade)! - Add tests to created packages
+
 ## 0.1.17
 
 ### Patch Changes
