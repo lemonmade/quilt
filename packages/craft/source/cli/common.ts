@@ -1,7 +1,8 @@
 import {promisify} from 'util';
+import {existsSync} from 'fs';
 import {join, dirname} from 'path';
 import {fileURLToPath} from 'url';
-import {exec as childExec, execSync, spawn as childSpawn} from 'child_process';
+import {exec as childExec, spawn as childSpawn} from 'child_process';
 import {Readable, Writable} from 'stream';
 
 import arg from 'arg';
@@ -929,6 +930,24 @@ function stringifyOptions(variant: {[key: string]: any} = {}) {
 }
 
 function binDirectoryForModule(cwd: string) {
-  const result = execSync('npm bin', {cwd});
-  return result.toString().trim();
+  const lookWithin = dirname(process.cwd());
+  let currentDirectory = cwd;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const binDirectory = join(currentDirectory, 'node_modules', '.bin');
+    if (existsSync(binDirectory)) return binDirectory;
+
+    const oldDirectory = currentDirectory;
+    currentDirectory = dirname(oldDirectory);
+
+    if (
+      oldDirectory === currentDirectory ||
+      lookWithin.includes(currentDirectory)
+    ) {
+      break;
+    }
+  }
+
+  throw new Error(`No NPM binary directory found for ${cwd}`);
 }
