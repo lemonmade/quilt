@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.13
+
+### Patch Changes
+
+- [`d9bedaf5`](https://github.com/lemonmade/quilt/commit/d9bedaf5fa212b37d3d3633a9495586df2d9e40c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing React type exports
+
 ## 0.5.12
 
 ### Patch Changes
