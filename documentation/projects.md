@@ -12,12 +12,12 @@ A workspace can have any number of these projects, which allows it to support an
 
 ## Defining your workspace and projects
 
-[Sewing Kit](./sewing-kit.md) uses a `sewing-kit.config.ts` file for configuring the development commands in your repo, and these same commands are used to discover the shape of your workspace and its projects. When you run a development command, Sewing Kit will first find all nested `sewing-kit.config.ts` files in order to build up its picture of your repo.
+[Craft](./craft.md) uses `quilt.workspace.ts` and `quilt.project.ts` files for configuring the development commands in your repo. When you run a development command, Craft will first find all nested `quilt.project.ts` files in order to build up its picture of your repo.
 
-The simplest Quilt project would only have a single `sewing-kit.config.ts` file at the root of the repo. That project would use the `createApp`, `createService`, or `createPackage` functions from `@quilted/craft` to declare that your entire workspace is just a single project:
+The simplest Quilt project would only have a single `quilt.project.ts` file at the root of the repo. That project would use the `createApp`, `createService`, or `createPackage` functions from `@quilted/craft` to declare that your entire workspace is just a single project:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.project.ts
 
 // We’re also importing the quiltApp and quiltWorkspace sewing-kit plugins here,
 // which add all tooling integrations Quilt provides for apps and the overall
@@ -29,10 +29,10 @@ export default createApp((app) => {
 });
 ```
 
-In workspace with more than a single project, the root `sewing-kit.config.ts` file is used only to describe the workspace, not individual projects. You’ll need to switch it to use `createWorkspace`, and you’ll need to remove any Sewing Kit plugins that only apply to a single project, like `quiltApp()`:
+In workspace with more than a single project, a root `quilt.workspace.ts` file is used only to describe the workspace, not individual projects. You’ll need to switch it to use `createWorkspace`, and you’ll need to remove any Sewing Kit plugins that only apply to a single project, like `quiltApp()`:
 
 ```ts
-// sewing-kit.config.ts
+// quilt.workspace.ts
 
 import {createWorkspace, quiltWorkspace} from '@quilted/craft';
 
@@ -41,10 +41,10 @@ export default createWorkspace((workspace) => {
 });
 ```
 
-Then, for each of your projects, you’ll have a separate `sewing-kit.config.ts` that that describes the details for that app/ service/ package:
+Then, for each of your projects, you’ll have a separate `quilt.project.ts` that that describes the details for that app/ service/ package:
 
 ```ts
-// app/sewing-kit.config.ts
+// app/quilt.project.ts
 
 import {createApp, quiltApp} from '@quilted/craft';
 
@@ -53,7 +53,7 @@ export default createApp((app) => {
   app.use(quiltApp());
 });
 
-// functions/api/sewing-kit.config.ts
+// functions/api/quilt.project.ts
 
 import {createService, quiltService} from '@quilted/craft';
 
@@ -62,7 +62,7 @@ export default createService((service) => {
   service.use(quiltService());
 });
 
-// packages/package-one/sewing-kit.config.ts
+// packages/package-one/quilt.project.ts
 
 import {createPackage, quiltPackage} from '@quilted/craft';
 
@@ -71,7 +71,7 @@ export default createPackage((pkg) => {
   pkg.use(quiltPackage());
 });
 
-// packages/package-two/sewing-kit.config.ts
+// packages/package-two/quilt.project.ts
 
 import {createPackage, quiltPackage} from '@quilted/craft';
 
@@ -108,7 +108,7 @@ Quilt provides a [good build command for services](./features/builds/services.md
 ```ts
 // This simple JSON API can be adapted to run on Cloudflare Workers,
 // AWS Lambda, a Node service on Render, and more, all just by changing
-// your sewing-kit.config.ts file!
+// your quilt.project.ts file!
 
 import {createHttpHandler, json} from '@quilted/http-handlers';
 

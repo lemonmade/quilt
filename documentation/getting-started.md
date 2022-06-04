@@ -6,13 +6,13 @@ Quilt lets you build projects as simple as a single web application, all the way
 
 There are two things you’ll need before you create your first project:
 
-**A modern version of [Node.js](https://nodejs.org/en/)**. `@quilted/create` is written using Node.js, and is distributed on the public NPM registry. It requires a Node.js version that [supports ES modules](https://nodejs.org/api/esm.html) (Quilt is an [ES modules-first JavaScript framework](./TODO)). We recommend using the latest version of Node.js’s [“long-term support” release](https://nodejs.org/en/about/releases/) for most projects. If you don’t know how to manage your Node.js version, we recommend trying [`nvm`](https://github.com/nvm-sh/nvm).
+- **A modern version of [Node.js](https://nodejs.org/en/)**. `@quilted/create` is written using Node.js, and is distributed on the public NPM registry. It requires a Node.js version that [supports ES modules](https://nodejs.org/api/esm.html) (Quilt is an [ES modules-first JavaScript framework](./TODO)). We recommend using the latest version of Node.js’s [“long-term support” release](https://nodejs.org/en/about/releases/) for most projects. If you don’t know how to manage your Node.js version, we recommend trying [`nvm`](https://github.com/nvm-sh/nvm).
 
-If you run the `node --version` command and see at least `v14.0.0`, you should be good to continue.
+  If you run the `node --version` command and see at least `v14.0.0`, you should be good to continue.
 
-**A package manager to run the `create` command**. Node.js ships with built-in support for [npm](https://docs.npmjs.com/about-npm), and Quilt works great with this default. If you’d prefer, you can also use [yarn](https://yarnpkg.com) or [pnpm](https://pnpm.io) instead.
+- **A package manager to run the `create` command**. Node.js ships with built-in support for [npm](https://docs.npmjs.com/about-npm), and Quilt works great with this default. If you’d prefer, you can also use [yarn](https://yarnpkg.com) or [pnpm](https://pnpm.io) instead.
 
-If you don’t already have a favorite package manager, we recommend [pnpm](https://pnpm.io). pnpm is fast, takes up less space on disk, and produces a strict package installation that enforces dependency management best practices.
+  If you don’t already have a favorite package manager, we recommend [pnpm](https://pnpm.io). pnpm is fast, takes up less space on disk, and produces a strict package installation that enforces dependency management best practices.
 
 You’ve now got the tools you need. Open your favorite terminal, go to the directory where you’d like to create your new project, and follow the instructions below to start building.
 
@@ -41,9 +41,9 @@ Once you’re ready to make your application public, you can follow one of the [
 
 The `@quilted/create` command you ran in the previous section can output a few different structures for your new application. The following templates are available:
 
-**Basic**, a good starting point for most projects. It includes a minimal file structure that offers lots of flexibility. It also gives you easy access to customize the server-rendering backend code for your application, which allows you to build [custom APIs for your web app](./TODO).
+- **Basic**, a good starting point for most projects. It includes a minimal file structure that offers lots of flexibility, and a basic [testing setup](./features/testing.md). It also gives you easy access to customize the server-rendering backend code for your application, which allows you to build [custom APIs for your web app](./TODO).
 
-**Itty-bitty**, a whole Quilt application in a single file. This is the simplest way to get started with Quilt, as you can learn all the basic [features](./features) Quilt makes available to your app by reading just one file.
+- **Itty-bitty**, a whole Quilt application in a single file. This is the simplest way to get started with Quilt, as you can learn all the basic [features](./features) Quilt makes available to your app by reading just one file.
 
 Regardless of which template you choose, your application will get all of Quilt’s powerful tools for building performant and flexible applications: [server-side rendering](./features/server-rendering.md), [multi-browser asset builds](./features/builds/apps/browser.md), managing [HTML](./features/html.md) and [HTTP](./features/http.md), and [much more](./features).
 
