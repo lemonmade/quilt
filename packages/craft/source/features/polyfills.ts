@@ -111,7 +111,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
               mappedPolyfills,
             )) {
               if (!mappedPolyfill) continue;
-              moduleMappings[`${packageName}/${polyfill}$`] = mappedPolyfill;
+              moduleMappings[`^${packageName}/${polyfill}$`] = mappedPolyfill;
             }
 
             return moduleMappings;
