@@ -181,16 +181,6 @@ export async function createPackage() {
         registry: argv['--registry'],
       });
 
-      const addBackToTSConfigInclude = new Set([
-        'quilt.project.ts',
-        '*.test.ts',
-        '*.test.tsx',
-      ]);
-
-      projectTSConfig.exclude = projectTSConfig.exclude.filter(
-        (excluded: string) => !addBackToTSConfigInclude.has(excluded),
-      );
-
       quiltProject = quiltProject
         .replace('quiltPackage', 'quiltWorkspace, quiltPackage')
         .replace('quiltPackage(', 'quiltWorkspace(), quiltPackage(');

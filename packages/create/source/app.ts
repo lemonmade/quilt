@@ -142,16 +142,6 @@ export async function createApp() {
       workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
       workspacePackageJson.browserslist = projectPackageJson.browserslist;
 
-      const addBackToTSConfigInclude = new Set([
-        'quilt.project.ts',
-        '*.test.ts',
-        '*.test.tsx',
-      ]);
-
-      projectTSConfig.exclude = projectTSConfig.exclude.filter(
-        (excluded: string) => !addBackToTSConfigInclude.has(excluded),
-      );
-
       let quiltProject = await appTemplate.read('quilt.project.ts');
       quiltProject = quiltProject
         .replace('quiltApp', 'quiltWorkspace, quiltApp')

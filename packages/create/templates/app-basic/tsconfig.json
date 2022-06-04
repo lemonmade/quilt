@@ -3,10 +3,11 @@
   "compilerOptions": {
     "outDir": "build/typescript",
     "paths": {
-      "~/shared/*": ["./shared/*"]
+      "~/shared/*": ["./shared/*"],
+      "~/tests/*": ["./tests/*"]
     }
   },
   "include": ["**/*"],
-  "exclude": ["quilt.project.ts", "*.test.ts", "*.test.tsx", "build"],
+  "exclude": ["build"],
   "references": []
 }
