@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.36
+
+### Patch Changes
+
+- [`25d0bdff`](https://github.com/lemonmade/quilt/commit/25d0bdff66212700d99770ecfbb5875f418f96bb) Thanks [@lemonmade](https://github.com/lemonmade)! - Make it easier to do custom transformations for node http-handlers
+
 ## 0.2.35
 
 ### Patch Changes
