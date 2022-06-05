@@ -9,16 +9,25 @@ import type {HttpHandler, Response, RequestOptions} from '../types';
 
 import type {} from './types';
 
-export function createHttpServer(handler: HttpHandler) {
-  return createServer(createHttpRequestListener(handler));
+export function createHttpServer(
+  ...args: Parameters<typeof createHttpRequestListener>
+) {
+  return createServer(createHttpRequestListener(...args));
 }
 
 export function createHttpRequestListener(
   handler: HttpHandler,
+  {
+    transformRequest: transform = transformRequest,
+  }: {
+    transformRequest?(
+      request: IncomingMessage,
+    ): RequestOptions | Promise<RequestOptions>;
+  } = {},
 ): RequestListener {
   return async (request, response) => {
     try {
-      const transformedRequest = await transformRequest(request);
+      const transformedRequest = await transform(request);
 
       const result =
         (await handler.run(transformedRequest, {request, response})) ??
