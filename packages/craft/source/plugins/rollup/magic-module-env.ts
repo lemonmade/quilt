@@ -62,7 +62,7 @@ async function createEnvModuleContent({
       {},
       {
         get(_, property) {
-          const value = inline[property] ?? runtime[property];
+          const value = runtime[property] ?? inline[property];
           
           return typeof value === 'string' && value[0] === '"' && value[value.length - 1] === '"'
             ? JSON.parse(value)
