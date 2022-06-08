@@ -3,7 +3,7 @@ import {stripIndent} from 'common-tags';
 import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
 import type {App, Service, WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
-import {addRollupNodeBundleInclusion, addRollupOnWarn} from '../tools/rollup';
+import {addRollupOnWarn} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
@@ -81,6 +81,10 @@ export function httpHandler({port: explicitPort}: Options = {}) {
               ) {
                 return;
               }
+
+              // This warning complains about arrow functions at the top-level scope
+              // of a module.
+              if (warning.code === 'THIS_IS_UNDEFINED') return;
 
               defaultWarn(warning);
             }),
@@ -194,7 +198,6 @@ export function httpHandlerDevelopment({
             runtime,
             rollupInput,
             rollupPlugins,
-            rollupNodeBundle,
             rollupInputOptions,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
@@ -234,19 +237,13 @@ export function httpHandlerDevelopment({
                 return;
               }
 
+              // This warning complains about arrow functions at the top-level scope
+              // of a module.
+              if (warning.code === 'THIS_IS_UNDEFINED') return;
+
               defaultWarn(warning);
             }),
           );
-
-          // We want to force some of our “magic” modules to be internalized
-          // no matter what, and otherwise allow all other node dependencies
-          // to be unbundled.
-          rollupNodeBundle?.((bundle) => {
-            return addRollupNodeBundleInclusion(
-              /@quilted[/]quilt[/](magic|env|polyfills)/,
-              bundle,
-            );
-          });
 
           rollupPlugins?.(async (plugins) => {
             const content = await quiltHttpHandlerContent!.run(undefined);

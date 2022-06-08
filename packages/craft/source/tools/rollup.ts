@@ -7,7 +7,6 @@ import type {
   Project,
   Workspace,
   WaterfallHook,
-  WaterfallHookWithDefault,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
@@ -81,7 +80,7 @@ export interface RollupNodeHooks {
    * bundled. The default is `true` for packages, and `false` for all
    * other projects.
    */
-  rollupNodeBundle: WaterfallHookWithDefault<boolean | RollupNodeBundle>;
+  rollupNodeBundle: WaterfallHook<boolean | RollupNodeBundle>;
 
   /**
    * The options that will be passed to the rollup commonjs plugin,
@@ -138,9 +137,9 @@ export interface RollupNodeOptions {
  * commonjs Rollup plugins, which allow Rollup-based builds to import
  * from Node.js dependencies, using Node.js resolution.
  */
-export function rollupNode<ProjectType extends Project = Project>({
-  bundle: explicitShouldBundle,
-}: RollupNodeOptions = {}) {
+export function rollupNode<ProjectType extends Project = Project>(
+  options?: RollupNodeOptions,
+) {
   return createProjectPlugin<ProjectType>({
     name: 'Quilt.Rollup.Node',
     build({project, workspace, hooks, configure}) {
@@ -148,14 +147,12 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
-        rollupNodeBundle: waterfall({
-          default: explicitShouldBundle ?? project.kind !== ProjectKind.Package,
-        }),
+        rollupNodeBundle: waterfall(),
         rollupCommonJSOptions: waterfall(),
       }));
 
       configure((configuration) =>
-        addConfiguration(project, workspace, configuration),
+        addConfiguration(project, workspace, configuration, options),
       );
     },
     develop({project, workspace, hooks, configure}) {
@@ -163,14 +160,12 @@ export function rollupNode<ProjectType extends Project = Project>({
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
-        rollupNodeBundle: waterfall<RollupNodeBundle | boolean>({
-          default: false,
-        }),
+        rollupNodeBundle: waterfall(),
         rollupCommonJSOptions: waterfall(),
       }));
 
       configure((configuration) =>
-        addConfiguration(project, workspace, configuration),
+        addConfiguration(project, workspace, configuration, options),
       );
     },
   });
@@ -182,12 +177,14 @@ function addConfiguration<ProjectType extends Project>(
   configuration:
     | ResolvedBuildProjectConfigurationHooks<ProjectType>
     | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+  options?: RollupNodeOptions,
 ) {
   configuration.rollupPlugins?.(async (plugins) => {
     const nodePlugins = await getRollupNodePlugins(
       project,
       workspace,
       configuration,
+      options,
     );
     plugins.unshift(...nodePlugins);
     return plugins;
@@ -213,6 +210,7 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
   }:
     | ResolvedBuildProjectConfigurationHooks<ProjectType>
     | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+  {bundle: explicitShouldBundle}: RollupNodeOptions = {},
 ) {
   const targetRuntime = await runtime.run();
 
@@ -250,8 +248,11 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
 
   let nodeExternalsPlugin: import('rollup').Plugin;
 
-  const defaultShouldBundle = project.kind === ProjectKind.App;
-  const shouldBundle = await rollupNodeBundle!.run();
+  const defaultShouldBundle =
+    explicitShouldBundle == null
+      ? getDefaultNodeBundle(project, targetRuntime.includes(Runtime.Browser))
+      : normalizeRollupNodeBundle(explicitShouldBundle);
+  const shouldBundle = await rollupNodeBundle!.run(defaultShouldBundle);
 
   if (shouldBundle === true) {
     // If the consumer wants to bundle node dependencies, we use our
@@ -264,11 +265,12 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
       devDeps: false,
       peerDeps: false,
       optDeps: false,
-      packagePath: project.packageJson?.path,
+      packagePath: [
+        project.packageJson?.path,
+        workspace.packageJson?.path,
+      ].filter((item): item is string => Boolean(item)),
     });
   } else if (shouldBundle === false) {
-    // If the consumer does not want to bundle node dependencies,
-    // we mark all dependencies as external.
     // If the consumer does not want to bundle node dependencies,
     // we mark all dependencies as external.
     nodeExternalsPlugin = nodeExternals({
@@ -278,7 +280,10 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
       devDeps: true,
       peerDeps: true,
       optDeps: true,
-      packagePath: project.packageJson?.path,
+      packagePath: [
+        project.packageJson?.path,
+        workspace.packageJson?.path,
+      ].filter((item): item is string => Boolean(item)),
     });
   } else {
     // Use the customized bundling configuration. Because this option
@@ -286,10 +291,12 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     // we need to invert all their options, and default any unspecified
     // options to the same value as using `bundle: true`
     const {
-      builtins: bundleBuiltins = false,
-      dependencies: bundleDependencies = defaultShouldBundle,
-      devDependencies: bundleDevDependencies = defaultShouldBundle,
-      peerDependencies: bundlePeerDependencies = defaultShouldBundle,
+      builtins: bundleBuiltins = defaultShouldBundle.builtins,
+      dependencies: bundleDependencies = defaultShouldBundle.dependencies,
+      devDependencies:
+        bundleDevDependencies = defaultShouldBundle.devDependencies,
+      peerDependencies:
+        bundlePeerDependencies = defaultShouldBundle.peerDependencies,
       include: alwaysBundleDependencies,
       exclude: neverBundleDependencies,
     } = shouldBundle;
@@ -374,10 +381,6 @@ export async function buildWithRollup<ProjectType extends Project = Project>(
       // Ignore warnings about empty bundles by default.
       if (warning.code === 'EMPTY_BUNDLE') return;
 
-      // This warning complains about arrow functions at the top-level scope
-      // of a module.
-      if (warning.code === 'THIS_IS_UNDEFINED') return;
-
       defaultHandler(warning);
     },
   });
@@ -456,4 +459,27 @@ export function addRollupOnWarn(
       });
     },
   };
+}
+
+function getDefaultNodeBundle(
+  project: Project,
+  isBrowser = false,
+): RollupNodeBundle {
+  if (project.kind === ProjectKind.App && isBrowser) {
+    return {
+      builtins: false,
+      dependencies: true,
+      devDependencies: true,
+      peerDependencies: true,
+    };
+  } else {
+    // In all other projects, we want to leave explicit dependencies unbundled,
+    // but have any dev-time dependencies be bundles.
+    return {
+      builtins: false,
+      dependencies: false,
+      devDependencies: true,
+      peerDependencies: false,
+    };
+  }
 }

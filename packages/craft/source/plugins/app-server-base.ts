@@ -25,7 +25,7 @@ export interface AppServerOptions {
    *
    * @example './server'
    */
-  entry: string;
+  entry?: string;
 
   /**
    * Whether this server code uses the `http-handlers` library to
@@ -58,11 +58,11 @@ export interface AppServerOptions {
 
   /**
    * Determines how dependencies will be bundled into your app server.
-   * By default, Quilt will bundle all dependencies (other than node
-   * built-in modules) into the build outputs, which optimizes for
-   * performance. You can change this behavior by passing `false`,
-   * which will force all dependencies to be resolved at runtime, or
-   * by passing an object with granular controls on what dependencies
+   * By default, Quilt will bundle all dev dependencies in your build
+   * outputs, but will leave production dependencies and node built-in
+   * modules as runtime dependencies. You can change this behavior by
+   * passing `true`, which will force all dependencies to be bundled,
+   * or by passing an object with granular controls on what dependencies
    * are bundled.
    */
   bundle?: boolean | RollupNodeBundle;
@@ -97,7 +97,7 @@ export function appServer(options?: AppServerOptions) {
 function setupConfiguration(project: App, options?: AppServerOptions) {
   const entry = options?.entry;
   const httpHandler = options?.httpHandler ?? true;
-  const bundle = options?.bundle ?? true;
+  const explicitBundle = options?.bundle;
   const inlineEnv = options?.env?.inline;
 
   return (
@@ -155,10 +155,13 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
     quiltAsyncPreload?.(() => false);
     quiltAsyncManifest?.(() => false);
 
-    rollupNodeBundle?.(() => {
+    // We want to force some of our “magic” modules to be internalized
+    // no matter what, and other wise defer to the user-specified or
+    // fallback behavior.
+    rollupNodeBundle?.((defaultBundle) => {
       return addRollupNodeBundleInclusion(
         /@quilted[/]quilt[/](magic|env|polyfills)/,
-        bundle,
+        explicitBundle ?? defaultBundle,
       );
     });
 

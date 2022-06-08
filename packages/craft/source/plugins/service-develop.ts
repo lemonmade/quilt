@@ -53,8 +53,8 @@ export function serviceDevelopment() {
                 format: 'esm',
                 dir: path.dirname(file),
                 entryFileNames: path.basename(file),
-                assetFileNames: `[name].[ext]`,
-                chunkFileNames: `[name].js`,
+                assetFileNames: `[name].[hash].[ext]`,
+                chunkFileNames: `[name].[hash].js`,
               },
             });
 
