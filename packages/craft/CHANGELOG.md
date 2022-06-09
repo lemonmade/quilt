@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.134
+
+### Patch Changes
+
+- [`1da4887d`](https://github.com/lemonmade/quilt/commit/1da4887da85cd8a3d285b9b827cdb788373e6207) Thanks [@lemonmade](https://github.com/lemonmade)! - Make raw assets be reloaded in watch mode
+
 ## 0.1.133
 
 ### Patch Changes
