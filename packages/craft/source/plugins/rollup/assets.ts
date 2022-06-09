@@ -17,7 +17,11 @@ export function rawAssets(): Plugin {
         return null;
       }
 
-      const file = await readFile(cleanModuleIdentifier(id), {
+      const moduleId = cleanModuleIdentifier(id);
+
+      this.addWatchFile(moduleId);
+
+      const file = await readFile(moduleId, {
         encoding: 'utf-8',
       });
 
