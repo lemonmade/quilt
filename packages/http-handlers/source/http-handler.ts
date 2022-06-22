@@ -17,11 +17,7 @@ export interface HttpHandlerOptions {
 }
 
 interface RequestHandlerRegistration {
-  readonly method:
-    | HttpMethod.Get
-    | HttpMethod.Post
-    | HttpMethod.Options
-    | typeof REQUEST_METHOD_ANY;
+  readonly method: HttpMethod | typeof REQUEST_METHOD_ANY;
   readonly handler: RequestRegistration;
   readonly exact: boolean;
   readonly match?: Match;
@@ -40,16 +36,36 @@ export function createHttpHandler({
       registrations.push(normalizeRouteArguments(REQUEST_METHOD_ANY, ...args));
       return httpHandler;
     },
+    head(...args: any[]) {
+      registrations.push(normalizeRouteArguments(HttpMethod.Head, ...args));
+      return httpHandler;
+    },
     get(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Get, ...args));
+      return httpHandler;
+    },
+    connect(...args: any[]) {
+      registrations.push(normalizeRouteArguments(HttpMethod.Connect, ...args));
+      return httpHandler;
+    },
+    options(...args: any[]) {
+      registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
       return httpHandler;
     },
     post(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Post, ...args));
       return httpHandler;
     },
-    options(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
+    put(...args: any[]) {
+      registrations.push(normalizeRouteArguments(HttpMethod.Put, ...args));
+      return httpHandler;
+    },
+    patch(...args: any[]) {
+      registrations.push(normalizeRouteArguments(HttpMethod.Patch, ...args));
+      return httpHandler;
+    },
+    delete(...args: any[]) {
+      registrations.push(normalizeRouteArguments(HttpMethod.Delete, ...args));
       return httpHandler;
     },
     async run(requestOptions, requestContext = {} as any) {

@@ -72,6 +72,15 @@ export interface HttpHandler {
     handler: RequestRegistration,
     options?: RequestRegistrationOptions,
   ): this;
+  head(
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  head(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
   get(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
   get(
     match: Match,
@@ -92,6 +101,39 @@ export interface HttpHandler {
     options?: RequestRegistrationOptions,
   ): this;
   options(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  put(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
+  put(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  patch(
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  patch(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  delete(
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  delete(
+    match: Match,
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  connect(
+    handler: RequestRegistration,
+    options?: RequestRegistrationOptions,
+  ): this;
+  connect(
     match: Match,
     handler: RequestRegistration,
     options?: RequestRegistrationOptions,
