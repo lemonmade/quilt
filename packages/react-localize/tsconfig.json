@@ -10,6 +10,7 @@
     {"path": "../localize"},
     {"path": "../react-http"},
     {"path": "../react-router"},
-    {"path": "../react-utilities"}
+    {"path": "../react-utilities"},
+    {"path": "../useful-react-types"}
   ]
 }
