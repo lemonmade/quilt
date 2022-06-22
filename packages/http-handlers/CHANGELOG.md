@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.37
+
+### Patch Changes
+
+- [`20754f33`](https://github.com/lemonmade/quilt/commit/20754f33cb83f529949e0f86ded5720e89e4c066) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow more HTTP methods in http-handlers
+
 ## 0.2.36
 
 ### Patch Changes
