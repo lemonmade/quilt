@@ -18,6 +18,7 @@
   },
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"

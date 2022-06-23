@@ -17,48 +17,56 @@
   },
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./transform": {
+      "types": "./build/typescript/transform.d.ts",
       "quilt:from-source": "./source/transform.ts",
       "quilt:esnext": "./build/esnext/transform.esnext",
       "import": "./build/esm/transform.mjs",
       "require": "./build/cjs/transform.cjs"
     },
     "./typescript": {
+      "types": "./build/typescript/typescript/index.d.ts",
       "quilt:from-source": "./source/typescript/index.ts",
       "quilt:esnext": "./build/esnext/typescript/index.esnext",
       "import": "./build/esm/typescript/index.mjs",
       "require": "./build/cjs/typescript/index.cjs"
     },
     "./fixtures": {
+      "types": "./build/typescript/fixtures/index.d.ts",
       "quilt:from-source": "./source/fixtures/index.ts",
       "quilt:esnext": "./build/esnext/fixtures/index.esnext",
       "import": "./build/esm/fixtures/index.mjs",
       "require": "./build/cjs/fixtures/index.cjs"
     },
     "./matchers": {
+      "types": "./build/typescript/matchers/index.d.ts",
       "quilt:from-source": "./source/matchers/index.ts",
       "quilt:esnext": "./build/esnext/matchers/index.esnext",
       "import": "./build/esm/matchers/index.mjs",
       "require": "./build/cjs/matchers/index.cjs"
     },
     "./rollup": {
+      "types": "./build/typescript/rollup-parts.d.ts",
       "quilt:from-source": "./source/rollup-parts.ts",
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
       "require": "./build/cjs/rollup-parts.cjs"
     },
     "./jest": {
+      "types": "./build/typescript/jest-parts.d.ts",
       "quilt:from-source": "./source/jest-parts.ts",
       "quilt:esnext": "./build/esnext/jest-parts.esnext",
       "import": "./build/esm/jest-parts.mjs",
       "require": "./build/cjs/jest-parts.cjs"
     },
     "./configuration": {
+      "types": "./build/typescript/configuration.d.ts",
       "quilt:from-source": "./source/configuration.ts",
       "quilt:esnext": "./build/esnext/configuration.esnext",
       "import": "./build/esm/configuration.mjs",

@@ -17,30 +17,35 @@
   },
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./babel": {
+      "types": "./build/typescript/tools/babel.d.ts",
       "quilt:from-source": "./source/tools/babel.ts",
       "quilt:esnext": "./build/esnext/tools/babel.esnext",
       "import": "./build/esm/tools/babel.mjs",
       "require": "./build/cjs/tools/babel.cjs"
     },
     "./eslint": {
+      "types": "./build/typescript/tools/eslint.d.ts",
       "quilt:from-source": "./source/tools/eslint.ts",
       "quilt:esnext": "./build/esnext/tools/eslint.esnext",
       "import": "./build/esm/tools/eslint.mjs",
       "require": "./build/cjs/tools/eslint.cjs"
     },
     "./esnext": {
+      "types": "./build/typescript/features/esnext.d.ts",
       "quilt:from-source": "./source/features/esnext.ts",
       "quilt:esnext": "./build/esnext/features/esnext.esnext",
       "import": "./build/esm/features/esnext.mjs",
       "require": "./build/cjs/features/esnext.cjs"
     },
     "./graphql": {
+      "types": "./build/typescript/features/graphql.d.ts",
       "quilt:from-source": "./source/features/graphql.ts",
       "quilt:esnext": "./build/esnext/features/graphql.esnext",
       "import": "./build/esm/features/graphql.mjs",
@@ -59,66 +64,77 @@
       "require": "./jest/css-modules.cjs"
     },
     "./jest": {
+      "types": "./build/typescript/tools/jest.d.ts",
       "quilt:from-source": "./source/tools/jest.ts",
       "quilt:esnext": "./build/esnext/tools/jest.esnext",
       "import": "./build/esm/tools/jest.mjs",
       "require": "./build/cjs/tools/jest.cjs"
     },
     "./kit": {
+      "types": "./build/typescript/kit.d.ts",
       "quilt:from-source": "./source/kit.ts",
       "quilt:esnext": "./build/esnext/kit.esnext",
       "import": "./build/esm/kit.mjs",
       "require": "./build/cjs/kit.cjs"
     },
     "./packages": {
+      "types": "./build/typescript/features/packages.d.ts",
       "quilt:from-source": "./source/features/packages.ts",
       "quilt:esnext": "./build/esnext/features/packages.esnext",
       "import": "./build/esm/features/packages.mjs",
       "require": "./build/cjs/features/packages.cjs"
     },
     "./polyfills": {
+      "types": "./build/typescript/features/polyfills.d.ts",
       "quilt:from-source": "./source/features/polyfills.ts",
       "quilt:esnext": "./build/esnext/features/polyfills.esnext",
       "import": "./build/esm/features/polyfills.mjs",
       "require": "./build/cjs/features/polyfills.cjs"
     },
     "./postcss": {
+      "types": "./build/typescript/tools/postcss.d.ts",
       "quilt:from-source": "./source/tools/postcss.ts",
       "quilt:esnext": "./build/esnext/tools/postcss.esnext",
       "import": "./build/esm/tools/postcss.mjs",
       "require": "./build/cjs/tools/postcss.cjs"
     },
     "./prettier": {
+      "types": "./build/typescript/tools/prettier.d.ts",
       "quilt:from-source": "./source/tools/prettier.ts",
       "quilt:esnext": "./build/esnext/tools/prettier.esnext",
       "import": "./build/esm/tools/prettier.mjs",
       "require": "./build/cjs/tools/prettier.cjs"
     },
     "./react": {
+      "types": "./build/typescript/features/react.d.ts",
       "quilt:from-source": "./source/features/react.ts",
       "quilt:esnext": "./build/esnext/features/react.esnext",
       "import": "./build/esm/features/react.mjs",
       "require": "./build/cjs/features/react.cjs"
     },
     "./rollup": {
+      "types": "./build/typescript/tools/rollup.d.ts",
       "quilt:from-source": "./source/tools/rollup.ts",
       "quilt:esnext": "./build/esnext/tools/rollup.esnext",
       "import": "./build/esm/tools/rollup.mjs",
       "require": "./build/cjs/tools/rollup.cjs"
     },
     "./targets": {
+      "types": "./build/typescript/features/targets.d.ts",
       "quilt:from-source": "./source/features/targets.ts",
       "quilt:esnext": "./build/esnext/features/targets.esnext",
       "import": "./build/esm/features/targets.mjs",
       "require": "./build/cjs/features/targets.cjs"
     },
     "./typescript": {
+      "types": "./build/typescript/tools/typescript.d.ts",
       "quilt:from-source": "./source/tools/typescript.ts",
       "quilt:esnext": "./build/esnext/tools/typescript.esnext",
       "import": "./build/esm/tools/typescript.mjs",
       "require": "./build/cjs/tools/typescript.cjs"
     },
     "./vite": {
+      "types": "./build/typescript/tools/vite.d.ts",
       "quilt:from-source": "./source/tools/vite.ts",
       "quilt:esnext": "./build/esnext/tools/vite.esnext",
       "import": "./build/esm/tools/vite.mjs",
@@ -215,7 +231,7 @@
     "dotenv": "^16.0.0",
     "enhanced-resolve": "^5.9.0",
     "esbuild": "^0.14.0",
-    "eslint": "^7.27.0",
+    "eslint": "^8.18.0",
     "express": "^4.17.0",
     "globby": "^13.0.0",
     "jest": "^27.5.0",
@@ -229,7 +245,7 @@
     "postcss-modules": "^4.0.0",
     "postcss-preset-env": "^7.4.0",
     "preact": "^10.7.0",
-    "prettier": "^2.6.0",
+    "prettier": "^2.7.0",
     "regenerator-runtime": "^0.13.0",
     "rollup": "^2.70.0",
     "rollup-plugin-esbuild": "^4.8.0",
@@ -250,7 +266,7 @@
   "peerDependencies": {
     "@quilted/quilt": "^0.5.104",
     "react": "^17.0.0",
-    "typescript": ">=4.0.0 <5.0.0"
+    "typescript": "^4.7.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

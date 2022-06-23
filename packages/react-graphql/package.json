@@ -14,12 +14,14 @@
   "license": "MIT",
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./testing": {
+      "types": "./build/typescript/testing.d.ts",
       "quilt:from-source": "./source/testing.tsx",
       "quilt:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",

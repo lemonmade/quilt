@@ -17,13 +17,15 @@
   },
   "exports": {
     ".": {
-      "quilt:source": "./source/index.ts",
+      "types": "./build/typescript/index.d.ts",
+      "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./http-handlers": {
-      "quilt:source": "./source/http-handlers.ts",
+      "types": "./build/typescript/http-handlers.d.ts",
+      "quilt:from-source": "./source/http-handlers.ts",
       "quilt:esnext": "./build/esnext/http-handlers.esnext",
       "import": "./build/esm/http-handlers.mjs",
       "require": "./build/cjs/http-handlers.cjs"

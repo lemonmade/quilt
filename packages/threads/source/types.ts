@@ -47,8 +47,7 @@ export type ThreadSafeReturnType<T> = T extends AsyncGenerator<any, any, any>
   ? ThreadSafeReturnType<ArrayElement>[]
   : T extends readonly (infer ArrayElement)[]
   ? readonly ThreadSafeReturnType<ArrayElement>[]
-  : // eslint-disable-next-line @typescript-eslint/ban-types
-  T extends object
+  : T extends object
   ? {[K in keyof T]: ThreadSafeReturnType<T[K]>}
   : T;
 

@@ -129,7 +129,6 @@ export function appBuild({
               replace({
                 preventAssignment: true,
                 values: {
-                  // eslint-disable-next-line @typescript-eslint/naming-convention
                   'process.env.NODE_ENV': JSON.stringify('production'),
                 },
               }),

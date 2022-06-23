@@ -13,18 +13,21 @@
   },
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./base": {
+      "types": "./build/typescript/noop.d.ts",
       "quilt:from-source": "./source/base.ts",
       "quilt:esnext": "./build/esnext/base.esnext",
       "import": "./build/esm/base.mjs",
       "require": "./build/cjs/base.cjs"
     },
     "./fetch": {
+      "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:from-source": "./source/fetch.browser.ts",
         "quilt:esnext": "./build/esnext/fetch.browser.esnext",
@@ -43,6 +46,7 @@
       "require": "./build/cjs/noop.cjs"
     },
     "./abort-controller": {
+      "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:from-source": "./source/noop.ts",
         "quilt:esnext": "./build/esnext/noop.esnext",
@@ -55,6 +59,7 @@
       "require": "./build/cjs/abort-controller.cjs"
     },
     "./crypto": {
+      "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:from-source": "./source/noop.ts",
         "quilt:esnext": "./build/esnext/noop.esnext",
@@ -67,6 +72,7 @@
       "require": "./build/cjs/crypto.cjs"
     },
     "./noop": {
+      "types": "./build/typescript/noop.d.ts",
       "quilt:from-source": "./source/noop.ts",
       "quilt:esnext": "./build/esnext/noop.esnext",
       "import": "./build/esm/noop.mjs",

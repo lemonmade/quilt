@@ -19,7 +19,7 @@
     "./workspace.json": "./workspace.json"
   },
   "peerDependencies": {
-    "typescript": "^4.6.0"
+    "typescript": "^4.7.0"
   },
   "peerDependenciesMeta": {
     "typescript": {
