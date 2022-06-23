@@ -8,7 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "moduleResolution": "Node",
-    "module": "ESNext",
+    "module": "NodeNext",
     "target": "ESNext",
     "jsx": "preserve",
     "strict": true,

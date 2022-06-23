@@ -15,18 +15,21 @@
   "license": "MIT",
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./testing": {
+      "types": "./build/typescript/testing/index.d.ts",
       "quilt:from-source": "./source/testing/index.ts",
       "quilt:esnext": "./build/esnext/testing/index.esnext",
       "import": "./build/esm/testing/index.mjs",
       "require": "./build/cjs/testing/index.cjs"
     },
     "./server": {
+      "types": "./build/typescript/server/index.d.ts",
       "quilt:from-source": "./source/server/index.ts",
       "quilt:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",

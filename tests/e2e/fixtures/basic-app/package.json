@@ -11,6 +11,6 @@
   },
   "devDependencies": {
     "@quilted/craft": "^0.1.0",
-    "typescript": "^4.6.0"
+    "typescript": "^4.7.0"
   }
 }

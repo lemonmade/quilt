@@ -21,7 +21,7 @@
     "@quilted/eslint-config": "^0.1.0",
     "@quilted/prettier": "^0.2.0",
     "@quilted/typescript": "^0.2.0",
-    "typescript": "^4.6.0"
+    "typescript": "^4.7.0"
   },
   "prettier": "@quilted/prettier",
   "eslintConfig": {

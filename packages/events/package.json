@@ -18,6 +18,7 @@
   },
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
       "quilt:from-source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
