@@ -57,43 +57,6 @@ module.exports = {
             },
           },
         ],
-        // Enforce camelCase naming convention and PascalCase class and interface names
-        '@typescript-eslint/naming-convention': [
-          'error',
-          {
-            selector: 'default',
-            format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-            leadingUnderscore: 'allowSingleOrDouble',
-            trailingUnderscore: 'allowSingleOrDouble',
-          },
-          {
-            selector: 'typeLike',
-            format: ['PascalCase'],
-          },
-          {
-            selector: 'typeParameter',
-            format: ['PascalCase'],
-            leadingUnderscore: 'allow',
-          },
-          {
-            selector: 'interface',
-            format: ['PascalCase'],
-          },
-        ],
-      },
-    },
-    {
-      files: ['*.test.*'],
-      plugins: ['jest'],
-      extends: ['plugin:jest/recommended'],
-      settings: {
-        jest: {
-          version: 27,
-        },
-      },
-      env: {
-        node: true,
-        jest: true,
       },
     },
   ],

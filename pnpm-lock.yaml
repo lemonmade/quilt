@@ -316,7 +316,6 @@ importers:
       eslint: ^8.18.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-eslint-comments: ^3.2.0
-      eslint-plugin-jest: ^26.5.0
       eslint-plugin-jsx-a11y: ^6.5.0
       eslint-plugin-prettier: ^4.0.0
       eslint-plugin-react: ^7.30.0
@@ -329,7 +328,6 @@ importers:
       eslint: 8.18.0
       eslint-config-prettier: 8.5.0_eslint@8.18.0
       eslint-plugin-eslint-comments: 3.2.0_eslint@8.18.0
-      eslint-plugin-jest: 26.5.3_hnviikkihfcmdtisc2fvc2243e
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.18.0
       eslint-plugin-prettier: 4.0.0_xu6ewijrtliw5q5lksq5uixwby
       eslint-plugin-react: 7.30.0_eslint@8.18.0
@@ -5249,27 +5247,6 @@ packages:
       ignore: 5.2.0
     dev: false
 
-  /eslint-plugin-jest/26.5.3_hnviikkihfcmdtisc2fvc2243e:
-    resolution: {integrity: sha512-sICclUqJQnR1bFRZGLN2jnSVsYOsmPYYnroGCIMVSvTS3y8XR3yjzy1EcTQmk6typ5pRgyIWzbjqxK6cZHEZuQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      '@typescript-eslint/eslint-plugin': ^5.0.0
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
-    peerDependenciesMeta:
-      '@typescript-eslint/eslint-plugin':
-        optional: true
-      jest:
-        optional: true
-    dependencies:
-      '@typescript-eslint/eslint-plugin': 5.29.0_4yivrgvzypjk7auizgihnme2gm
-      '@typescript-eslint/utils': 5.29.0_jy2jd5t2lznmjxpvwxnj7idzze
-      eslint: 8.18.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: false
-
   /eslint-plugin-jsx-a11y/6.5.1_eslint@8.18.0:
     resolution: {integrity: sha512-sVCFKX9fllURnXT2JwLN5Qgo24Ug5NF6dxhkmxsMEUZhXRcGg+X3e1JbJ84YePQKBl5E0ZjAH5Q4rkdcGY99+g==}
     engines: {node: '>=4.0'}
@@ -8534,7 +8511,7 @@ packages:
     dev: false
 
   /require-directory/2.1.1:
-    resolution: {integrity: sha1-jGStX9MNqxyXbiNE/+f3kqam30I=}
+    resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
 
   /require-main-filename/2.0.0:
