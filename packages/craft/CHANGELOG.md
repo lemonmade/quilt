@@ -1,5 +1,24 @@
 # @quilted/craft
 
+## 0.1.135
+
+### Patch Changes
+
+- [#359](https://github.com/lemonmade/quilt/pull/359) [`2eceac54`](https://github.com/lemonmade/quilt/commit/2eceac546fa3ee3e2c4d2887ab4a6a021acb52cd) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TypeScript and ESLint to latest versions
+
+* [#361](https://github.com/lemonmade/quilt/pull/361) [`47065859`](https://github.com/lemonmade/quilt/commit/47065859c330e2da23d8758fb165ae84a4f1af4f) Thanks [@lemonmade](https://github.com/lemonmade)! - Move to native Request and Response objects
+
+* Updated dependencies [[`2eceac54`](https://github.com/lemonmade/quilt/commit/2eceac546fa3ee3e2c4d2887ab4a6a021acb52cd), [`47065859`](https://github.com/lemonmade/quilt/commit/47065859c330e2da23d8758fb165ae84a4f1af4f)]:
+  - @quilted/async@0.3.25
+  - @quilted/eslint-config@0.1.12
+  - @quilted/graphql@0.4.39
+  - @quilted/polyfills@0.2.27
+  - @quilted/quilt@0.5.105
+  - @quilted/rollup-plugin-fix-commonjs-preserve-modules@0.1.9
+  - @quilted/sewing-kit@0.2.29
+  - @quilted/typescript@0.2.15
+  - @quilted/workers@0.2.29
+
 ## 0.1.134
 
 ### Patch Changes

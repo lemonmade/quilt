@@ -2,7 +2,7 @@
   "name": "@quilted/react-http",
   "description": "Provides components and hooks for interacting with HTTP primitives.",
   "type": "module",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "license": "MIT",
   "repository": {
     "type": "git",
