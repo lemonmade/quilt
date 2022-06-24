@@ -74,23 +74,9 @@ export function createFetchHandler<Env = unknown>(
       if (response) return response;
     }
 
-    const requestBody = await request.text();
-
-    const {body, status, headers} =
-      (await handler.run(
-        {
-          headers: request.headers as any,
-          method: request.method,
-          body: requestBody,
-          url: new URL(request.url),
-        },
-        {cf: request.cf, env, ...context},
-      )) ?? notFound();
-
-    const response = new Response(body, {
-      status,
-      headers,
-    });
+    const response =
+      (await handler.run(request, {cf: request.cf, env, ...context} as any)) ??
+      notFound();
 
     if (cache && response.headers.has('Cache-Control')) {
       context.waitUntil(cache.put(request, response.clone()));

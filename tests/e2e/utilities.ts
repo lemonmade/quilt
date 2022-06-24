@@ -8,7 +8,7 @@ import {copy} from 'fs-extra';
 import {customAlphabet} from 'nanoid';
 import getPort from 'get-port';
 import {chromium} from 'playwright';
-import fetch from 'node-fetch';
+import {fetch} from '@remix-run/web-fetch';
 import type {
   Page,
   Browser as PlaywrightBrowser,

@@ -9,7 +9,6 @@ import type {
 
 import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
 import type {
-  Request,
   HttpHandler,
   RequestHandler,
   RequestContext,
@@ -99,7 +98,7 @@ export async function renderToResponse(
   return html(
     renderToString(
       <Html
-        url={request.url}
+        url={new URL(request.url)}
         manager={htmlManager}
         styles={styles}
         scripts={scripts}

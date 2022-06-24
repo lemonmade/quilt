@@ -1,7 +1,9 @@
 import {resolveUrl as baseResolveUrl} from '@quilted/routing';
 import type {RelativeTo} from '@quilted/routing';
 
-import type {Request, NavigateTo} from './types';
+import type {NavigateTo} from './types';
+
+export type {NavigateTo};
 
 export function resolveTo(
   to: NavigateTo,
@@ -22,7 +24,11 @@ export function resolveTo(
       );
     }
   } else {
-    resolvedLocation = baseResolveUrl(to, request.url as any, relativeTo).href;
+    resolvedLocation = baseResolveUrl(
+      to,
+      new URL(request.url) as any,
+      relativeTo,
+    ).href;
   }
 
   return resolvedLocation;

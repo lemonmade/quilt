@@ -95,7 +95,7 @@ export function serviceBuild({
           // fallback behavior.
           rollupNodeBundle?.((defaultBundle) => {
             return addRollupNodeBundleInclusion(
-              /@quilted[/]quilt[/](magic|env|polyfills)/,
+              /@quilted[/]quilt[/](magic|env)/,
               explicitBundle ?? defaultBundle,
             );
           });

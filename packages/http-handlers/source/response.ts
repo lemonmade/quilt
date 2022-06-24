@@ -1,65 +1,27 @@
-import {RelativeTo} from '@quilted/routing';
 import {createHeaders, CookieString} from '@quilted/http';
 
-import {resolveTo} from './utilities';
-import type {Response, Request, ResponseOptions, NavigateTo} from './types';
+import {
+  Response,
+  type BodyInit,
+  type ResponseInit,
+  type RequestInit,
+} from './globals';
 
-export function response(
-  body?: string | null,
-  {status = 200, headers: explicitHeaders}: ResponseOptions = {},
-): Response {
-  const headers = createHeaders(explicitHeaders);
+import type {EnhancedWritableCookies} from './types';
 
-  return {
-    status,
-    headers,
-    cookies: responseCookiesFromHeaders(headers),
-    body: body ?? undefined,
-  };
-}
+export type {BodyInit, ResponseInit, RequestInit};
 
-export function notFound(options: Pick<ResponseOptions, 'headers'> = {}) {
-  return response(null, {status: 404, ...options});
-}
+export type ResponseOrEnhancedResponse = Response &
+  Partial<Pick<EnhancedResponse, 'cookies'>>;
 
-export function noContent(options: Pick<ResponseOptions, 'headers'> = {}) {
-  return response(null, {status: 204, ...options});
-}
+export class EnhancedResponse extends Response {
+  readonly cookies: EnhancedWritableCookies;
 
-// @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections
-export function redirect(
-  to: NavigateTo,
-  {
-    status = 308,
-    request,
-    relativeTo,
-    ...options
-  }: Omit<ResponseOptions, 'status'> & {
-    status?: 300 | 301 | 302 | 303 | 304 | 305 | 305 | 307 | 308;
-    request?: Request;
-    relativeTo?: RelativeTo;
-  } = {},
-): Response {
-  const redirectResponse = response(null, {status, ...options});
-
-  redirectResponse.headers.set(
-    'Location',
-    resolveTo(to, {request, relativeTo}),
-  );
-
-  return redirectResponse;
-}
-
-export function html(body: string, options?: ResponseOptions) {
-  const htmlResponse = response(body, options);
-  htmlResponse.headers.set('Content-Type', 'text/html');
-  return htmlResponse;
-}
-
-export function json(body: any, options?: ResponseOptions) {
-  const jsonResponse = response(JSON.stringify(body), options);
-  jsonResponse.headers.set('Content-Type', 'application/json');
-  return jsonResponse;
+  constructor(body?: BodyInit | null, options?: ResponseInit) {
+    const headers = createHeaders(options?.headers);
+    super(body, {...options, headers});
+    this.cookies = responseCookiesFromHeaders(headers);
+  }
 }
 
 // Utilities
@@ -70,8 +32,8 @@ interface HeadersWithRaw extends Headers {
 
 function responseCookiesFromHeaders(
   headers: Response['headers'],
-): Response['cookies'] {
-  const cookies: Response['cookies'] = {
+): EnhancedWritableCookies {
+  const cookies: EnhancedResponse['cookies'] = {
     set(cookie, value, options) {
       headers.append(
         'Set-Cookie',

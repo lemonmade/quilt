@@ -1,5 +1,4 @@
-import {redirect} from '@quilted/http-handlers';
-import type {Response, Request, RequestHandler} from '@quilted/http-handlers';
+import {redirect, type RequestHandler} from '@quilted/http-handlers';
 import {parseAcceptLanguageHeader} from '@quilted/localize';
 
 import type {
@@ -60,7 +59,7 @@ export function createHttpHandlerLocalization({
       'status' | 'headers'
     >,
   ): Response {
-    return redirect(redirectUrl(request.url, {to}), options);
+    return redirect(redirectUrl(new URL(request.url), {to}), options);
   }
 
   return {
@@ -72,7 +71,8 @@ export function createHttpHandlerLocalization({
       return async (request, ...args) => {
         if (!include(request)) return handler(request, ...args);
 
-        const urlLocale = localeFromUrl(request.url);
+        const url = new URL(request.url);
+        const urlLocale = localeFromUrl(url);
         const requestLocale = getLocaleForRequest(request, () =>
           getDefaultLocaleFromRequest(request),
         );
@@ -82,7 +82,7 @@ export function createHttpHandlerLocalization({
 
         if (urlLocale !== matchedLocale) {
           return redirect(
-            redirectUrl(request.url, {
+            redirectUrl(url, {
               to: matchedLocale,
             }),
           );

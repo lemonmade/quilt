@@ -19,23 +19,27 @@ export function createLambdaApiGatewayProxy(
     }
 
     const response =
-      (await handler.run({
-        headers,
-        method: event.requestContext.http.method,
-        body: event.body,
-        url: new URL(
+      (await handler.run(
+        new Request(
           `${headers.get('X-Forwarded-Proto') ?? 'https'}://${
             headers.get('X-Forwarded-Host') ?? event.requestContext.domainName
           }${event.rawPath}${
             event.rawQueryString ? `?${event.rawQueryString}` : ''
           }`,
+          {
+            headers,
+            method: event.requestContext.http.method,
+            body: event.body,
+          },
         ),
-      })) ?? notFound();
+      )) ?? notFound();
+
+    const body = await response.text();
 
     return {
       statusCode: response.status,
-      body: response.body,
-      cookies: response.cookies.getAll(),
+      body,
+      cookies: response.cookies?.getAll(),
       headers: [...response.headers].reduce<Record<string, string>>(
         (allHeaders, [header, value]) => {
           if (header.toLowerCase() === 'set-cookie') return allHeaders;
