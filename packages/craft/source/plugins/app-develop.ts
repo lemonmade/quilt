@@ -4,9 +4,6 @@ import type {IncomingMessage, ServerResponse} from 'http';
 import {stripIndent} from 'common-tags';
 import type {ViteDevServer} from 'vite';
 
-import {notFound, Response} from '@quilted/quilt/http-handlers';
-import {createRequest, sendResponse} from '@quilted/quilt/http-handlers/node';
-
 import type {} from '../tools/babel';
 import {createViteConfig} from '../tools/vite';
 
@@ -481,8 +478,15 @@ async function createAppServer(
     onMessage,
   }: {project: App; vite: ViteDevServer; onMessage(message: string): void},
 ) {
-  const [{watch}, developmentServer] = await Promise.all([
+  const [
+    {watch},
+    {notFound, EnhancedResponse},
+    {createRequest, sendResponse},
+    developmentServer,
+  ] = await Promise.all([
     import('rollup'),
+    import('@quilted/quilt/http-handlers'),
+    import('@quilted/quilt/http-handlers/node'),
     quiltAppDevelopmentServer!.run(createDefaultAppDevelopmentServer()),
   ]);
 
@@ -579,7 +583,7 @@ async function createAppServer(
         );
 
         await sendResponse(
-          new Response(transformedHtml, response),
+          new EnhancedResponse(transformedHtml, response),
           serverResponse,
         );
 
