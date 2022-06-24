@@ -3,6 +3,6 @@ export type {StaticOptions} from './static';
 export {
   createHttpServer,
   createHttpRequestListener,
-  applyResponse,
-  transformRequest,
+  createRequest,
+  sendResponse,
 } from './node';

@@ -4,8 +4,9 @@ import {URL} from 'url';
 
 import {createHeaders} from '@quilted/http';
 
-import {notFound} from '../response';
-import type {HttpHandler, Response, RequestOptions} from '../types';
+import {notFound} from '../response-helpers';
+import type {ResponseOrEnhancedResponse} from '../response';
+import type {HttpHandler} from '../types';
 
 import type {} from './types';
 
@@ -18,81 +19,39 @@ export function createHttpServer(
 export function createHttpRequestListener(
   handler: HttpHandler,
   {
-    transformRequest: transform = transformRequest,
+    createRequest: transform = createRequest,
   }: {
-    transformRequest?(
-      request: IncomingMessage,
-    ): RequestOptions | Promise<RequestOptions>;
+    createRequest?(request: IncomingMessage): Request | Promise<Request>;
   } = {},
 ): RequestListener {
-  return async (request, response) => {
+  return async (req, res) => {
     try {
-      const transformedRequest = await transform(request);
+      const request = await transform(req);
 
-      const result =
-        (await handler.run(transformedRequest, {request, response})) ??
-        notFound();
+      const response =
+        (await handler.run(request, {
+          request: req,
+          response: res,
+        })) ?? notFound();
 
-      const {status, headers, cookies, body: resultBody} = result;
-      const setCookieHeaders = cookies.getAll();
-
-      response.writeHead(
-        status,
-        [...headers].reduce<Record<string, string | string[]>>(
-          (allHeaders, [key, value]) => {
-            if (key.toLowerCase() === 'set-cookie') return allHeaders;
-
-            allHeaders[key] = value;
-            return allHeaders;
-          },
-          setCookieHeaders ? {'Set-Cookie': setCookieHeaders} : {},
-        ),
-      );
-
-      if (resultBody != null) response.write(resultBody);
-      response.end();
+      await sendResponse(response, res);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
-      response.writeHead(500);
-      response.end();
+      res.writeHead(500);
+      res.end();
     }
   };
 }
 
-export async function transformRequest(
+export function createRequest(
   request: IncomingMessage,
-): Promise<RequestOptions> {
-  const body = await new Promise<string>((resolve, reject) => {
-    let data = '';
+  {signal}: {signal?: AbortSignal} = {},
+): Request {
+  const method = request.method;
 
-    request.on('data', (chunk) => {
-      data += String(chunk);
-    });
-
-    request.on('end', () => {
-      resolve(data);
-    });
-
-    request.on('close', () => {
-      reject();
-    });
-  });
-
-  const forwardedProtocolHeader = request.headers['x-forwarded-proto'];
-  const forwardedProtocol = Array.isArray(forwardedProtocolHeader)
-    ? forwardedProtocolHeader[0]
-    : forwardedProtocolHeader?.split(/\s*,\s*/)[0];
-
-  return {
-    body,
-    method: request.method!,
-    url: new URL(
-      request.url!,
-      `${forwardedProtocol ?? 'http'}://${
-        request.headers['x-forwarded-host'] ?? request.headers.host
-      }`,
-    ),
+  const requestInit: RequestInit = {
+    method,
     headers: createHeaders(
       Object.entries(request.headers).map<[string, string]>(
         ([header, value]) => [
@@ -101,15 +60,35 @@ export async function transformRequest(
         ],
       ),
     ),
+    signal,
   };
+
+  if (method !== 'GET' && method !== 'HEAD') {
+    requestInit.body = request as any;
+  }
+
+  const forwardedProtocolHeader = request.headers['x-forwarded-proto'];
+  const forwardedProtocol = Array.isArray(forwardedProtocolHeader)
+    ? forwardedProtocolHeader[0]
+    : forwardedProtocolHeader?.split(/\s*,\s*/)[0];
+
+  return new Request(
+    new URL(
+      request.url!,
+      `${forwardedProtocol ?? 'http'}://${
+        request.headers['x-forwarded-host'] ?? request.headers.host
+      }`,
+    ),
+    requestInit,
+  );
 }
 
-export function applyResponse(
-  response: Response,
+export async function sendResponse(
+  response: ResponseOrEnhancedResponse,
   httpResponse: ServerResponse,
 ) {
-  const {status, headers, cookies, body: resultBody} = response;
-  const setCookieHeaders = cookies.getAll();
+  const {status, headers, body, cookies} = response;
+  const setCookieHeaders = cookies?.getAll();
 
   httpResponse.writeHead(
     status,
@@ -124,6 +103,18 @@ export function applyResponse(
     ),
   );
 
-  if (resultBody != null) httpResponse.write(resultBody);
+  if (body) {
+    const reader = body.getReader();
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const {done, value} = await reader.read();
+
+      if (done) break;
+
+      httpResponse.write(value);
+    }
+  }
+
   httpResponse.end();
 }

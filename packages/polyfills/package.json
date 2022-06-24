@@ -106,12 +106,11 @@
   "sideEffects": true,
   "dependencies": {
     "@peculiar/webcrypto": "^1.3.0",
+    "@remix-run/web-fetch": "^4.1.0",
     "@types/caniuse-api": "^3.0.0",
-    "@types/node-fetch": "^2.6.0",
     "abort-controller": "^3.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.21.0",
-    "node-fetch": "^3.2.0",
     "pkg-dir": "^6.0.0",
     "regenerator-runtime": "^0.13.0",
     "whatwg-fetch": "^3.6.0"

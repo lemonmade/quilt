@@ -42,17 +42,28 @@ export type {
   RouteLocalization,
   ResolvedRouteLocalization,
 } from '@quilted/react-localize/http-handlers';
-export {createHttpHandler, createHeaders} from '@quilted/http-handlers';
+export {
+  Request,
+  Response,
+  EnhancedRequest,
+  EnhancedResponse,
+  createHttpHandler,
+  createHeaders,
+} from '@quilted/http-handlers';
 export type {
   Headers,
+  BodyInit,
+  ResponseInit,
+  RequestInit,
   Cookies,
   CookieOptions,
   HttpHandler,
-  Request,
+  RequestContext,
   RequestHandler,
-  RequestOptions,
-  Response,
-  ResponseOptions,
+  ResponseOrEnhancedResponse,
+  CookieDefinition,
+  RequestRegistration,
+  RequestRegistrationOptions,
 } from '@quilted/http-handlers';
 export {parseAcceptLanguageHeader} from '@quilted/react-localize';
 

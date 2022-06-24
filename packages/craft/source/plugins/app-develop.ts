@@ -4,15 +4,8 @@ import type {IncomingMessage, ServerResponse} from 'http';
 import {stripIndent} from 'common-tags';
 import type {ViteDevServer} from 'vite';
 
-import {
-  notFound,
-  response as createResponse,
-} from '@quilted/quilt/http-handlers';
-import type {Response, RequestOptions} from '@quilted/quilt/http-handlers';
-import {
-  transformRequest,
-  applyResponse,
-} from '@quilted/quilt/http-handlers/node';
+import {notFound, Response} from '@quilted/quilt/http-handlers';
+import {createRequest, sendResponse} from '@quilted/quilt/http-handlers/node';
 
 import type {} from '../tools/babel';
 import {createViteConfig} from '../tools/vite';
@@ -49,7 +42,7 @@ export interface Options {
 
 export interface AppDevelopmentServerHandler {
   run(
-    options: RequestOptions,
+    request: Request,
     nodeRequest: IncomingMessage,
   ): Promise<Response | undefined>;
 }
@@ -406,6 +399,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           name: 'App.Develop',
           label: `Running app ${project.name} in development mode`,
           async run(runner) {
+            await import('@quilted/quilt/polyfills/fetch');
+
             const [
               {createServer},
               {default: express},
@@ -569,32 +564,29 @@ async function createAppServer(
   });
 
   return {
-    async handle(request: IncomingMessage, serverResponse: ServerResponse) {
-      const [handler, transformedRequest] = await Promise.all([
-        httpHandlerPromise,
-        transformRequest(request),
-      ]);
+    async handle(req: IncomingMessage, serverResponse: ServerResponse) {
+      const handler = await httpHandlerPromise;
+      const request = createRequest(req);
 
-      const response =
-        (await handler.run(transformedRequest, request)) ?? notFound();
+      const response = (await handler.run(request, req)) ?? notFound();
 
       const contentType = response.headers.get('Content-Type');
 
       if (contentType != null && contentType.includes('text/html')) {
         const transformedHtml = await vite.transformIndexHtml(
-          transformedRequest.url.toString(),
-          response.body ?? '',
+          request.url,
+          await response.text(),
         );
 
-        applyResponse(
-          createResponse(transformedHtml, response),
+        await sendResponse(
+          new Response(transformedHtml, response),
           serverResponse,
         );
 
         return;
       }
 
-      applyResponse(response, serverResponse);
+      await sendResponse(response, serverResponse);
     },
   };
 }

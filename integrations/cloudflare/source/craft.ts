@@ -119,10 +119,7 @@ export function cloudflareWorkers({
         if (!useMiniflare) return;
 
         quiltAppDevelopmentServer?.(async () => {
-          const [{Miniflare}, {response}] = await Promise.all([
-            import('miniflare'),
-            import('@quilted/quilt/http-handlers'),
-          ]);
+          const {Miniflare} = await import('miniflare');
 
           let miniflare: InstanceType<typeof Miniflare>;
 
@@ -149,24 +146,18 @@ export function cloudflareWorkers({
               const {HTTPPlugin} = await miniflare.getPlugins();
 
               return {
-                async run({url, body, headers, method}, nodeRequest) {
+                async run(request, nodeRequest) {
                   const workerResponse = await miniflare!.dispatchFetch(
-                    url.toString(),
+                    request.url,
                     {
-                      body:
-                        method === 'GET' || method === 'OPTIONS'
-                          ? undefined
-                          : body,
-                      method,
-                      headers: headers as any,
+                      body: request.body as any,
+                      method: request.method,
+                      headers: request.headers,
                       cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
                     },
                   );
 
-                  return response(await workerResponse.text(), {
-                    status: workerResponse.status,
-                    headers: [...workerResponse.headers],
-                  });
+                  return workerResponse as any;
                 },
               };
             },

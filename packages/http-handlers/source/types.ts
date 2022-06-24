@@ -1,27 +1,8 @@
 import type {Match, NavigateToLiteral} from '@quilted/routing';
-import type {
-  Headers,
-  ReadonlyCookies,
-  ReadonlyHeaders,
-  WritableCookies,
-} from '@quilted/http';
+import type {WritableCookies} from '@quilted/http';
+import type {EnhancedResponse} from './response';
 
 export type NavigateTo = NavigateToLiteral | ((url: URL) => URL);
-
-export interface RequestOptions {
-  readonly url: URL | string;
-  readonly body?: string | null;
-  readonly method?: string;
-  readonly headers?: ReadonlyHeaders;
-}
-
-export interface Request {
-  readonly url: URL;
-  readonly body?: string | null;
-  readonly method: string;
-  readonly headers: ReadonlyHeaders;
-  readonly cookies: ReadonlyCookies;
-}
 
 export interface RequestContext {}
 
@@ -39,23 +20,11 @@ export interface EnhancedWritableCookies extends WritableCookies {
   getAll(): string[] | undefined;
 }
 
-export interface Response {
-  readonly body?: string;
-  readonly status: number;
-  readonly headers: Headers;
-  readonly cookies: EnhancedWritableCookies;
-}
-
-export interface ResponseOptions {
-  status?: number;
-  headers?: HeadersInit;
-}
-
 export type ValueOrPromise<T> = T | Promise<T>;
 
 export interface RequestHandler {
   (request: Request, context: RequestContext): ValueOrPromise<
-    Response | undefined | null
+    Response | EnhancedResponse | undefined | null
   >;
 }
 
@@ -139,7 +108,9 @@ export interface HttpHandler {
     options?: RequestRegistrationOptions,
   ): this;
   run(
-    request: RequestOptions,
+    request: Request,
     context?: RequestContext,
-  ): Promise<Response | undefined>;
+  ): Promise<
+    (Response & {readonly cookies?: EnhancedResponse['cookies']}) | undefined
+  >;
 }

@@ -1,13 +1,12 @@
-import {createHeaders, HttpMethod, CookieString} from '@quilted/http';
+import {HttpMethod} from '@quilted/http';
 import {getMatchDetails} from '@quilted/routing';
 
 import type {Match, Prefix} from '@quilted/routing';
 
+import {EnhancedRequest} from './request';
 import type {
   HttpHandler,
-  Request,
   RequestContext,
-  RequestOptions,
   RequestRegistration,
   RequestRegistrationOptions,
 } from './types';
@@ -68,8 +67,8 @@ export function createHttpHandler({
       registrations.push(normalizeRouteArguments(HttpMethod.Delete, ...args));
       return httpHandler;
     },
-    async run(requestOptions, requestContext = {} as any) {
-      return runInternal(createRequest(requestOptions), requestContext);
+    async run(request, requestContext = {} as any) {
+      return runInternal(new EnhancedRequest(request), requestContext);
     },
   };
 
@@ -85,16 +84,12 @@ export function createHttpHandler({
     context: RequestContext,
     previouslyConsumed?: string,
   ) {
+    const url = new URL(request.url);
     const matchedPrefix =
       prefix == null
         ? undefined
-        : getMatchDetails(
-            request.url,
-            prefix,
-            undefined,
-            previouslyConsumed,
-            false,
-          )?.consumed;
+        : getMatchDetails(url, prefix, undefined, previouslyConsumed, false)
+            ?.consumed;
 
     // Not contained in the prefix
     if (prefix != null && matchedPrefix == null) return undefined;
@@ -105,7 +100,7 @@ export function createHttpHandler({
       }
 
       const matchDetails = getMatchDetails(
-        request.url,
+        url,
         match,
         undefined,
         matchedPrefix ?? previouslyConsumed,
@@ -171,36 +166,4 @@ function isHttpHandler(value?: unknown): value is HttpHandler {
     typeof value === 'object' &&
     Reflect.has(value, HTTP_HANDLER_RUN_INTERNAL)
   );
-}
-
-function createRequest({
-  url,
-  method = 'GET',
-  body,
-  headers = createHeaders(),
-}: RequestOptions): Request {
-  return {
-    url: new URL(typeof url === 'string' ? url : url.href),
-    body,
-    method,
-    headers,
-    cookies: requestCookiesFromHeaders(headers),
-  };
-}
-
-function requestCookiesFromHeaders(
-  headers: Request['headers'],
-): Request['cookies'] {
-  const internalCookies = CookieString.parse(headers.get('Cookie') ?? '');
-
-  return {
-    get: (key) => internalCookies[key],
-    has: (key) => internalCookies[key] != null,
-    *entries() {
-      yield* Object.entries(internalCookies);
-    },
-    *[Symbol.iterator]() {
-      yield* Object.values(internalCookies);
-    },
-  };
 }
