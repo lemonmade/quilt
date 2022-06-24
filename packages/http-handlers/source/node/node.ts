@@ -19,14 +19,23 @@ export function createHttpServer(
 export function createHttpRequestListener(
   handler: HttpHandler,
   {
-    createRequest: transform = createRequest,
+    createRequest: create = createRequest,
   }: {
-    createRequest?(request: IncomingMessage): Request | Promise<Request>;
+    createRequest?(
+      request: IncomingMessage,
+      options?: Omit<RequestInit, 'method' | 'headers'>,
+    ): Request | Promise<Request>;
   } = {},
 ): RequestListener {
   return async (req, res) => {
+    const abort = new AbortController();
+
+    req.on('close', () => {
+      abort.abort();
+    });
+
     try {
-      const request = await transform(req);
+      const request = await create(req, {signal: abort.signal});
 
       const response =
         (await handler.run(request, {
@@ -46,7 +55,7 @@ export function createHttpRequestListener(
 
 export function createRequest(
   request: IncomingMessage,
-  {signal}: {signal?: AbortSignal} = {},
+  explicitOptions?: Omit<RequestInit, 'method' | 'headers'>,
 ): Request {
   const method = request.method;
 
@@ -60,7 +69,7 @@ export function createRequest(
         ],
       ),
     ),
-    signal,
+    ...explicitOptions,
   };
 
   if (method !== 'GET' && method !== 'HEAD') {

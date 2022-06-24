@@ -25,34 +25,19 @@ export function redirect(
     relativeTo?: RelativeTo;
   } = {},
 ) {
-  const redirectResponse = new EnhancedResponse(null, {status, ...options});
-
-  if (!redirectResponse.headers.has('Location')) {
-    redirectResponse.headers.set(
-      'Location',
-      resolveTo(to, {request, relativeTo}),
-    );
-  }
-
-  return redirectResponse;
+  const response = new EnhancedResponse(null, {status, ...options});
+  response.headers.set('Location', resolveTo(to, {request, relativeTo}));
+  return response;
 }
 
 export function html(body: BodyInit, options?: ResponseInit) {
   const response = new EnhancedResponse(body, options);
-
-  if (!response.headers.has('Content-Type')) {
-    response.headers.set('Content-Type', 'text/html');
-  }
-
+  response.headers.set('Content-Type', 'text/html');
   return response;
 }
 
 export function json(body: any, options?: ResponseInit) {
   const response = new EnhancedResponse(JSON.stringify(body), options);
-
-  if (!response.headers.has('Content-Type')) {
-    response.headers.set('Content-Type', 'application/json');
-  }
-
+  response.headers.set('Content-Type', 'application/json');
   return response;
 }

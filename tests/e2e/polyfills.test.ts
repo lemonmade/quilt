@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import fetch from 'node-fetch';
+import {fetch} from '@remix-run/web-fetch';
 
 import {
   withWorkspace,
