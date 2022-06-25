@@ -1,4 +1,4 @@
-import {createHeaders, CookieString} from '@quilted/http';
+import {CookieString} from '@quilted/http';
 
 import {
   Response,
@@ -18,9 +18,8 @@ export class EnhancedResponse extends Response {
   readonly cookies: EnhancedWritableCookies;
 
   constructor(body?: BodyInit | null, options?: ResponseInit) {
-    const headers = createHeaders(options?.headers);
-    super(body, {...options, headers});
-    this.cookies = responseCookiesFromHeaders(headers);
+    super(body, options);
+    this.cookies = responseCookiesFromHeaders(this.headers);
   }
 }
 
