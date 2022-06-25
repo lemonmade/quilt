@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.39
+
+### Patch Changes
+
+- [`0494abe6`](https://github.com/lemonmade/quilt/commit/0494abe622462b540747b969e5f69b0757b8b1b1) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix writing cookies in dev server responses
+
 ## 0.2.38
 
 ### Patch Changes
