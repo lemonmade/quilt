@@ -10,6 +10,25 @@ import type {
 } from '../kit';
 
 export interface EnvironmentOptions {
+  /**
+   * Environment variables that should be hardcoded on the `Env` module from
+   * `@quilted/quilt/env`. Any environment variables passed here will have their
+   * value preserved from the build environment, so this option is most useful for
+   * copying environment variables from the build to production environment.
+   *
+   * Before attempting to preserve an environment variable’s value, Quilt will
+   * attempt to load .env configuration from your project and workspace root directories.
+   * Quilt will look for environment variables in the following files, depending on
+   * environment:
+   *
+   * - .env
+   * - .env.local (for local overrides)
+   * - .env.{production,development} (for environment-specific overrides)
+   * - .env.{production,development}.local (for local environment-specific overrides)
+   *
+   * Runtime environment variables always take precedence over build-time variables,
+   * if both are defined.
+   */
   inline?: string[];
 }
 

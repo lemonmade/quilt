@@ -1,4 +1,4 @@
-import type {Plugin} from 'rollup';
+import type {Plugin, PluginContext} from 'rollup';
 import {stripIndent} from 'common-tags';
 
 import {MAGIC_MODULE_ENV} from '../../constants';
@@ -23,40 +23,45 @@ export function magicModuleEnv({customize, ...options}: Options): Plugin {
     async load(id) {
       if (id !== MAGIC_MODULE_ENV) return null;
 
-      const content = await customize(await createEnvModuleContent(options));
+      const content = await customize(
+        await createEnvModuleContent.call(this, options),
+      );
 
       return content;
     },
   };
 }
 
-async function createEnvModuleContent({
-  mode,
-  project,
-  workspace,
-  inline: getInline,
-  runtime: getRuntime,
-}: Pick<Options, 'mode' | 'project' | 'workspace' | 'inline' | 'runtime'>) {
+async function createEnvModuleContent(
+  this: PluginContext,
+  {
+    mode,
+    project,
+    workspace,
+    inline: getInline,
+    runtime: getRuntime,
+  }: Pick<Options, 'mode' | 'project' | 'workspace' | 'inline' | 'runtime'>,
+) {
   const inlineEnv: Record<string, string> = {
     MODE: mode,
   };
 
   const [env, inline, runtime] = await Promise.all([
-    loadEnv(project, workspace, {mode}),
+    loadEnv.call(this, project, workspace, {mode}),
     getInline(),
     getRuntime(),
   ]);
 
   for (const inlineVariable of inline.sort()) {
     if (inlineVariable in inlineEnv) continue;
-    const value = env[inlineVariable];
+    const value = process.env[inlineVariable] ?? env[inlineVariable];
     if (value == null) continue;
     inlineEnv[inlineVariable] = value;
   }
 
   return stripIndent`
     const runtime = (${runtime ?? '{}'});
-    const inline = ${JSON.stringify(inlineEnv)};
+    const inline = JSON.parse(${JSON.stringify(JSON.stringify(env))});
 
     const Env = new Proxy(
       {},
@@ -77,6 +82,7 @@ async function createEnvModuleContent({
 
 // Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/source/node/config.ts#L1050-L1113
 export async function loadEnv(
+  this: PluginContext,
   project: Project,
   workspace: Workspace,
   {mode}: {mode: 'production' | 'development'},
@@ -98,6 +104,7 @@ export async function loadEnv(
 
   const loadEnvFile = async (file: string) => {
     if (await workspace.fs.hasFile(file)) {
+      this.addWatchFile(file);
       return parse(await workspace.fs.read(file));
     }
   };
