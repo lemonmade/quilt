@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.136
+
+### Patch Changes
+
+- [`ef446c6d`](https://github.com/lemonmade/quilt/commit/ef446c6db8384f285efa57c6d5b05a9d9a91fe11) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix web app development server fetch usage
+
 ## 0.1.135
 
 ### Patch Changes
