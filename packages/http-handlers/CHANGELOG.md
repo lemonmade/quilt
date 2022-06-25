@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.2.40
+
+### Patch Changes
+
+- [`6bc139e7`](https://github.com/lemonmade/quilt/commit/6bc139e76c02c3dfc9452b22a4cc88e50678683d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix typing of http handler request
+
 ## 0.2.39
 
 ### Patch Changes
