@@ -1,6 +1,7 @@
 import type {Match, NavigateToLiteral} from '@quilted/routing';
 import type {WritableCookies} from '@quilted/http';
 import type {EnhancedResponse} from './response';
+import type {EnhancedRequest} from './request';
 
 export type NavigateTo = NavigateToLiteral | ((url: URL) => URL);
 
@@ -23,7 +24,7 @@ export interface EnhancedWritableCookies extends WritableCookies {
 export type ValueOrPromise<T> = T | Promise<T>;
 
 export interface RequestHandler {
-  (request: Request, context: RequestContext): ValueOrPromise<
+  (request: EnhancedRequest, context: RequestContext): ValueOrPromise<
     Response | EnhancedResponse | undefined | null
   >;
 }

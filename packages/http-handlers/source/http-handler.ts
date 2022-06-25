@@ -80,7 +80,7 @@ export function createHttpHandler({
   return httpHandler;
 
   async function runInternal(
-    request: Request,
+    request: EnhancedRequest,
     context: RequestContext,
     previouslyConsumed?: string,
   ) {
