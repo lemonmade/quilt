@@ -3,7 +3,7 @@ import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 import type {OutputOptions} from 'rollup';
 
 import {createProjectPlugin} from '../kit';
-import type {Package, PackageBinary, WaterfallHook} from '../kit';
+import type {WaterfallHook} from '../kit';
 
 import type {} from '../tools/rollup';
 
@@ -14,7 +14,7 @@ export interface PackageHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildPackageOptions {
+  interface BuildProjectOptions {
     /**
      * Controls the output format and transpilation settings of the
      * build.
@@ -22,7 +22,7 @@ declare module '@quilted/sewing-kit' {
     packageBuildModule: PackageModuleType;
   }
 
-  interface BuildPackageConfigurationHooks extends PackageHooks {}
+  interface BuildProjectConfigurationHooks extends PackageHooks {}
 }
 
 export interface Options {
@@ -57,7 +57,7 @@ const COMMONJS_EXTENSION = '.cjs';
  * supports `commonjs`.
  */
 export function packageBuild({commonjs = true}: Options = {}) {
-  return createProjectPlugin<Package>({
+  return createProjectPlugin({
     name: 'Quilt.PackageBuild',
     build({project, configure, run, hooks}) {
       hooks<PackageHooks>(({waterfall}) => ({

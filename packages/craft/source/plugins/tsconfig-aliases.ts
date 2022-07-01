@@ -1,9 +1,5 @@
 import {createProjectPlugin, Workspace} from '../kit';
-import type {
-  Project,
-  ResolvedHooks,
-  DevelopAppConfigurationHooks,
-} from '../kit';
+import type {Project} from '../kit';
 
 import type {} from '../tools/jest';
 import type {} from '../tools/rollup';
@@ -24,28 +20,23 @@ export function tsconfigAliases() {
       });
     },
     develop({configure, project, workspace}) {
-      configure(
-        ({
-          rollupPlugins,
-          vitePlugins,
-        }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
-          rollupPlugins?.(async (plugins) => {
-            const plugin = await getAliasPlugin(project, workspace);
+      configure(({rollupPlugins, vitePlugins}) => {
+        rollupPlugins?.(async (plugins) => {
+          const plugin = await getAliasPlugin(project, workspace);
 
-            if (plugin) plugins.unshift(plugin);
+          if (plugin) plugins.unshift(plugin);
 
-            return plugins;
-          });
+          return plugins;
+        });
 
-          vitePlugins?.(async (plugins) => {
-            const plugin = await getAliasPlugin(project, workspace);
+        vitePlugins?.(async (plugins) => {
+          const plugin = await getAliasPlugin(project, workspace);
 
-            if (plugin) plugins.unshift(plugin);
+          if (plugin) plugins.unshift(plugin);
 
-            return plugins;
-          });
-        },
-      );
+          return plugins;
+        });
+      });
     },
     test({configure, project, workspace}) {
       configure(({jestModuleMapper}) => {

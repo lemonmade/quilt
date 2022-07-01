@@ -5,7 +5,7 @@ import type {InputOptions, OutputOptions, Plugin} from 'rollup';
 import type {Options as BabelOptions} from '@quilted/workers/babel';
 
 import {createProjectPlugin, Runtime} from '../kit';
-import type {App, WaterfallHook, ResolvedHooks} from '../kit';
+import type {WaterfallHook, ResolvedHooks} from '../kit';
 
 import type {BabelHooks} from '../tools/babel';
 import type {RollupHooks} from '../tools/rollup';
@@ -50,7 +50,7 @@ declare module '@quilted/sewing-kit' {
 const require = createRequire(import.meta.url);
 
 export function workers() {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.Workers',
     build({hooks, configure}) {
       hooks<WorkerHooks>(({waterfall}) => ({

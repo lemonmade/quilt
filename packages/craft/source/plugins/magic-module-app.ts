@@ -1,12 +1,11 @@
 import type {Plugin} from 'rollup';
 
-import {createProjectPlugin} from '../kit';
-import type {App} from '../kit';
+import {createProjectPlugin, type Project} from '../kit';
 
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
 
 export function magicModuleApp() {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.MagicModule.App',
     build({project, configure}) {
       configure(({rollupPlugins}) => {
@@ -29,7 +28,7 @@ export function magicModuleApp() {
   });
 }
 
-function rollupPlugin(project: App): Plugin {
+function rollupPlugin(project: Project): Plugin {
   return {
     name: '@quilted/magic-module/app',
     async resolveId(id) {

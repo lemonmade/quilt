@@ -2,7 +2,7 @@ import type {Plugin, InputOptions, OutputOptions} from 'rollup';
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
-import {App, createProjectPlugin, ProjectKind, Runtime} from '../kit';
+import {createProjectPlugin, Runtime} from '../kit';
 import type {
   Project,
   Workspace,
@@ -137,10 +137,8 @@ export interface RollupNodeOptions {
  * commonjs Rollup plugins, which allow Rollup-based builds to import
  * from Node.js dependencies, using Node.js resolution.
  */
-export function rollupNode<ProjectType extends Project = Project>(
-  options?: RollupNodeOptions,
-) {
-  return createProjectPlugin<ProjectType>({
+export function rollupNode(options?: RollupNodeOptions) {
+  return createProjectPlugin({
     name: 'Quilt.Rollup.Node',
     build({project, workspace, hooks, configure}) {
       hooks<RollupNodeHooks>(({waterfall}) => ({
@@ -171,12 +169,12 @@ export function rollupNode<ProjectType extends Project = Project>(
   });
 }
 
-function addConfiguration<ProjectType extends Project>(
-  project: ProjectType,
+function addConfiguration(
+  project: Project,
   workspace: Workspace,
   configuration:
-    | ResolvedBuildProjectConfigurationHooks<ProjectType>
-    | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+    | ResolvedBuildProjectConfigurationHooks
+    | ResolvedDevelopProjectConfigurationHooks,
   options?: RollupNodeOptions,
 ) {
   configuration.rollupPlugins?.(async (plugins) => {
@@ -196,8 +194,8 @@ function addConfiguration<ProjectType extends Project>(
  * returns a set of plugins that configure rollup to work well with
  * Node.
  */
-export async function getRollupNodePlugins<ProjectType extends Project>(
-  project: ProjectType,
+export async function getRollupNodePlugins(
+  project: Project,
   workspace: Workspace,
   {
     runtime,
@@ -208,8 +206,8 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     rollupNodeResolveOptions,
     rollupCommonJSOptions,
   }:
-    | ResolvedBuildProjectConfigurationHooks<ProjectType>
-    | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+    | ResolvedBuildProjectConfigurationHooks
+    | ResolvedDevelopProjectConfigurationHooks,
   {bundle: explicitShouldBundle}: RollupNodeOptions = {},
 ) {
   const targetRuntime = await runtime.run();
@@ -343,8 +341,8 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
  *   },
  * })
  */
-export async function buildWithRollup<ProjectType extends Project = Project>(
-  project: ProjectType,
+export async function buildWithRollup(
+  project: Project,
   {
     runtime,
     rollupInput,
@@ -352,7 +350,7 @@ export async function buildWithRollup<ProjectType extends Project = Project>(
     rollupExternals,
     rollupInputOptions,
     rollupOutputs,
-  }: ResolvedBuildProjectConfigurationHooks<ProjectType>,
+  }: ResolvedBuildProjectConfigurationHooks,
 ) {
   const [{rollup}, targetRuntime, inputs, plugins, externals, outputs] =
     await Promise.all([

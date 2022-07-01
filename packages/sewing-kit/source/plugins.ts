@@ -1,4 +1,3 @@
-import type {Project} from './model';
 import type {
   BuildProjectTask,
   BuildWorkspaceTask,
@@ -20,14 +19,8 @@ import type {FileSystem} from './utilities/fs';
 
 export const PLUGIN_MARKER = Symbol.for('SewingKit.Plugin');
 
-export enum PluginTarget {
-  Project,
-  Workspace,
-}
-
 export interface BasePlugin {
   readonly name: string;
-  readonly target: PluginTarget;
   readonly [PLUGIN_MARKER]: true;
 }
 
@@ -37,13 +30,13 @@ export interface BasePlugin {
 
 // TODO
 export interface PluginCreateHelper<
-  Plugin extends ProjectPlugin<any> | WorkspacePlugin,
+  Plugin extends ProjectPlugin | WorkspacePlugin,
 > {
   readonly fs: FileSystem;
   use(...plugins: ValueOrFalsy<Plugin>[]): void;
 }
 
-export interface ProjectPluginHooks<ProjectType extends Project = Project> {
+export interface ProjectPluginHooks {
   /**
    * Perform additional logic when creating this plugin, before any
    * task is actually run. This function is called with a `helper`
@@ -55,55 +48,48 @@ export interface ProjectPluginHooks<ProjectType extends Project = Project> {
    * value of the plugin system is allowing plugins to collaborate
    * together to perform a larger, highly-configurable task.
    */
-  create?(
-    helper: PluginCreateHelper<ProjectPlugin<ProjectType>>,
-  ): ValueOrPromise<void>;
+  create?(helper: PluginCreateHelper<ProjectPlugin>): ValueOrPromise<void>;
 
   /**
    * Customize the `build` task for an individual project.
    */
-  build?(hooks: BuildProjectTask<ProjectType>): void | Promise<void>;
+  build?(hooks: BuildProjectTask): void | Promise<void>;
 
   /**
    * Customize the `develop` task for an individual project.
    */
-  develop?(hooks: DevelopProjectTask<ProjectType>): void | Promise<void>;
+  develop?(hooks: DevelopProjectTask): void | Promise<void>;
 
   /**
    * Customize the `lint` task for an individual project.
    */
-  lint?(hooks: LintProjectTask<ProjectType>): void | Promise<void>;
+  lint?(hooks: LintProjectTask): void | Promise<void>;
 
   /**
    * Customize the `test` task for an individual project.
    */
-  test?(hooks: TestProjectTask<ProjectType>): void | Promise<void>;
+  test?(hooks: TestProjectTask): void | Promise<void>;
 
   /**
    * Customize the `type-check` task for an individual project.
    */
-  typeCheck?(hooks: TypeCheckProjectTask<ProjectType>): void | Promise<void>;
+  typeCheck?(hooks: TypeCheckProjectTask): void | Promise<void>;
 }
 
 // TODO
-export interface ProjectPlugin<ProjectType extends Project = Project>
-  extends BasePlugin,
-    ProjectPluginHooks<ProjectType> {
-  readonly target: PluginTarget.Project;
+export interface ProjectPlugin extends BasePlugin, ProjectPluginHooks {
+  readonly target: 'project';
 }
 
 /**
- * Creates a new plugin that applies to a single project. You can optionally
- * supply the generic `ProjectType` type argument to indicate that this plugin
- * can only be used on some project types.
+ * Creates a new plugin that applies to a single project.
  */
-export function createProjectPlugin<ProjectType extends Project = Project>(
-  plugin: ProjectPluginHooks<ProjectType> &
-    Pick<ProjectPlugin<ProjectType>, 'name'>,
-): ProjectPlugin<ProjectType> {
+export function createProjectPlugin(
+  plugin: ProjectPluginHooks & Pick<ProjectPlugin, 'name'>,
+): ProjectPlugin {
   return {
     ...plugin,
-    target: PluginTarget.Project,
+    target: 'project',
     [PLUGIN_MARKER]: true,
   };
 }
@@ -154,7 +140,7 @@ export interface WorkspacePluginHooks {
 
 // TODO
 export interface WorkspacePlugin extends BasePlugin, WorkspacePluginHooks {
-  readonly target: PluginTarget.Workspace;
+  readonly target: 'workspace';
 }
 
 /**
@@ -165,12 +151,12 @@ export function createWorkspacePlugin(
 ): WorkspacePlugin {
   return {
     ...plugin,
-    target: PluginTarget.Workspace,
+    target: 'workspace',
     [PLUGIN_MARKER]: true,
   };
 }
 
-export type AnyPlugin = ProjectPlugin<Project> | WorkspacePlugin;
+export type AnyPlugin = ProjectPlugin | WorkspacePlugin;
 
 export function isPlugin(value: unknown): value is AnyPlugin {
   return Boolean((value as any)?.[PLUGIN_MARKER]);

@@ -3,7 +3,7 @@ import type {Result as PostCSSConfigResult} from 'postcss-load-config';
 import type {pluginOptions as PostCSSPresetEnvPluginOptions} from 'postcss-preset-env';
 
 import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, WaterfallHookWithDefault, App} from '../kit';
+import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 import type {} from './rollup';
 
@@ -26,8 +26,8 @@ export interface PostCSSHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends PostCSSHooks {}
-  interface DevelopAppConfigurationHooks extends PostCSSHooks {}
+  interface BuildProjectConfigurationHooks extends PostCSSHooks {}
+  interface DevelopProjectConfigurationHooks extends PostCSSHooks {}
 }
 
 /**
@@ -35,12 +35,12 @@ declare module '@quilted/sewing-kit' {
  */
 export function postcss() {
   const configurationCache = new Map<
-    App,
+    Project,
     Promise<PostCSSConfigResult | undefined>
   >();
 
-  return createProjectPlugin<App>({
-    name: 'Quilt.Babel',
+  return createProjectPlugin({
+    name: 'Quilt.PostCSS',
     build({hooks, project}) {
       hooks<PostCSSHooks>(({waterfall}) => ({
         postcssPlugins: waterfall({
@@ -70,7 +70,7 @@ export function postcss() {
   });
 
   async function loadPostCSSConfig(
-    project: App,
+    project: Project,
   ): Promise<
     | (Omit<PostCSSConfigResult, 'plugins'> & {plugins: PostCSSPlugin[]})
     | undefined

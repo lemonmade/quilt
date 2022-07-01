@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import {createProjectPlugin} from '../kit';
-import type {App, WaterfallHookWithDefault} from '../kit';
+import type {WaterfallHookWithDefault} from '../kit';
 
 import type {} from '../tools/jest';
 import type {} from '../tools/rollup';
@@ -46,8 +46,8 @@ export interface AssetHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends AssetHooks {}
-  interface DevelopAppConfigurationHooks
+  interface BuildProjectConfigurationHooks extends AssetHooks {}
+  interface DevelopProjectConfigurationHooks
     extends Pick<AssetHooks, 'quiltAssetStaticExtensions'> {}
 }
 
@@ -87,7 +87,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
     assetsInline = explicitInline ?? {};
   }
 
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: NAME,
     build({project, configure, hooks}) {
       hooks<AssetHooks>(({waterfall}) => ({

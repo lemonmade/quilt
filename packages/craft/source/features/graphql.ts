@@ -5,11 +5,7 @@ import type {
 } from '@quilted/graphql/configuration';
 
 import {createWorkspacePlugin, createProjectPlugin} from '../kit';
-import type {
-  ResolvedHooks,
-  DevelopAppConfigurationHooks,
-  WorkspaceStepRunner,
-} from '../kit';
+import type {WorkspaceStepRunner} from '../kit';
 import type {} from '../tools/jest';
 import type {} from '../tools/rollup';
 import type {} from '../tools/vite';
@@ -30,22 +26,17 @@ export function graphql() {
       });
     },
     develop({configure}) {
-      configure(
-        ({
-          rollupPlugins,
-          vitePlugins,
-        }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
-          rollupPlugins?.(async (plugins) => {
-            const {graphql} = await import('@quilted/graphql/rollup');
-            return [...plugins, graphql()];
-          });
+      configure(({rollupPlugins, vitePlugins}) => {
+        rollupPlugins?.(async (plugins) => {
+          const {graphql} = await import('@quilted/graphql/rollup');
+          return [...plugins, graphql()];
+        });
 
-          vitePlugins?.(async (plugins) => {
-            const {graphql} = await import('@quilted/graphql/rollup');
-            return [...plugins, graphql()];
-          });
-        },
-      );
+        vitePlugins?.(async (plugins) => {
+          const {graphql} = await import('@quilted/graphql/rollup');
+          return [...plugins, graphql()];
+        });
+      });
     },
     test({configure}) {
       configure(({jestModuleMapper}) => {

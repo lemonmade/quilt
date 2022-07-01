@@ -1,12 +1,6 @@
 import {basename, dirname} from 'path';
 
-import {
-  FileSystem,
-  DiagnosticError,
-  PackageJson,
-  isPlugin,
-  PluginTarget,
-} from '../kit';
+import {FileSystem, DiagnosticError, PackageJson, isPlugin} from '../kit';
 import type {WorkspacePlugin, ProjectPlugin, PluginCreateHelper} from '../kit';
 
 type WritableValue<T> = T extends readonly (infer U)[] ? U[] : T;
@@ -114,7 +108,7 @@ export class ConfigurationBuilder<PluginType, Options> {
         });
       }
 
-      if (plugin.target === PluginTarget.Workspace) {
+      if (plugin.target === 'workspace') {
         this.workspacePlugins.add(plugin);
       } else {
         this.projectPlugins.add(plugin);
@@ -142,9 +136,7 @@ export class ConfigurationBuilder<PluginType, Options> {
   }
 }
 
-async function expandPlugins<
-  Plugin extends ProjectPlugin<any> | WorkspacePlugin,
->(
+async function expandPlugins<Plugin extends ProjectPlugin | WorkspacePlugin>(
   plugins: Iterable<Plugin>,
   helper: Omit<PluginCreateHelper<Plugin>, 'use'>,
 ): Promise<Plugin[]> {

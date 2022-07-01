@@ -1,31 +1,16 @@
 import {Base} from './base';
-import type {Options as BaseOptions} from './base';
+import type {Project} from './project';
 
-import type {App} from './app';
-import type {Service} from './service';
-import type {Package} from './package';
-
-export interface WorkspaceOptions extends BaseOptions {
-  readonly apps: readonly App[];
-  readonly packages: readonly Package[];
-  readonly services: readonly Service[];
-}
+export type WorkspaceOptions = ConstructorParameters<typeof Base>[0] & {
+  readonly projects: Project[];
+};
 
 export class Workspace extends Base {
   readonly kind = 'workspace';
-  readonly apps: readonly App[];
-  readonly packages: readonly Package[];
-  readonly services: readonly Service[];
+  readonly projects: Project[];
 
-  get projects() {
-    return [...this.packages, ...this.apps, ...this.services];
-  }
-
-  constructor({apps, packages, services, ...rest}: WorkspaceOptions) {
-    super(rest);
-
-    this.apps = apps;
-    this.packages = packages;
-    this.services = services;
+  constructor({projects, ...options}: WorkspaceOptions) {
+    super(options);
+    this.projects = projects;
   }
 }

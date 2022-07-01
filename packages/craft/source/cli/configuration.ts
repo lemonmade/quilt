@@ -4,14 +4,7 @@ import {access} from 'fs/promises';
 
 import {globby} from 'globby';
 
-import {
-  DiagnosticError,
-  Package,
-  App,
-  Service,
-  Workspace,
-  Project,
-} from '../kit';
+import {Workspace, Project, DiagnosticError} from '../kit';
 import type {ProjectPlugin, WorkspacePlugin} from '../kit';
 import {ConfigurationKind, ConfigurationBuilder} from '../configuration';
 import type {ConfigurationBuilderResult} from '../configuration';
@@ -27,7 +20,7 @@ export interface LoadedWorkspace {
     for<Target extends Workspace | Project>(
       target: Target,
     ): Target extends Project
-      ? readonly ProjectPlugin<Target>[]
+      ? readonly ProjectPlugin[]
       : readonly WorkspacePlugin[];
   };
 }

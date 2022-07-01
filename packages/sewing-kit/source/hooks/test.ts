@@ -1,5 +1,5 @@
-import type {Project, App, Service, Workspace} from '../model';
 import type {ValueOrPromise} from '../types';
+import type {Project, Workspace} from '../model';
 
 import type {
   HookAdder,
@@ -18,31 +18,6 @@ import type {
 export interface TestProjectOptions {}
 
 /**
- * Options that are available to configuration hooks for testing applications.
- */
-export interface TestAppOptions extends TestProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for testing projects.
- */
-export interface TestServiceOptions extends TestProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for testing backend services.
- */
-export interface TestPackageOptions extends TestProjectOptions {}
-
-/**
- * Selects the testing options that match the provided project type.
- */
-export type TestOptionsForProject<ProjectType extends Project = Project> =
-  ProjectType extends App
-    ? TestAppOptions
-    : ProjectType extends Service
-    ? TestServiceOptions
-    : TestPackageOptions;
-
-/**
  * Options that are available to configuration hooks for testing
  * code related to your overall workspace.
  */
@@ -59,47 +34,15 @@ export interface TestProjectConfigurationCoreHooks {}
 export interface TestProjectConfigurationHooks {}
 
 /**
- * Configuration hooks for testing applications.
+ * The full set of resolved test hooks for a single project. This includes
+ * all the core hooks provided automatically, and any hooks added by plugins
+ * during the `hooks` phase of running this task. All plugins added by hooks
+ * are marked as optional in this type because the plugin that added the type
+ * may not have been used in this project.
  */
-export interface TestAppConfigurationHooks
-  extends TestProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for testing backend services.
- */
-export interface TestServiceConfigurationHooks
-  extends TestProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for testing packages.
- */
-export interface TestPackageConfigurationHooks
-  extends TestProjectConfigurationHooks {}
-
-/**
- * Selects the testing configuration hooks that match the provided
- * project type.
- */
-export type TestConfigurationHooksForProject<
-  ProjectType extends Project = Project,
-> = ProjectType extends App
-  ? TestAppConfigurationHooks
-  : ProjectType extends Service
-  ? TestServiceConfigurationHooks
-  : TestPackageConfigurationHooks;
-
-/**
- * The full set of resolved testing hooks for a single project of the
- * provided type. This includes all the core hooks provided automatically,
- * and any hooks added by plugins during the `hooks` phase of running this
- * task. All plugins added by hooks are marked as optional in this type
- * because the plugin that added the type may not have been used in this
- * project.
- */
-export type ResolvedTestProjectConfigurationHooks<
-  ProjectType extends Project = Project,
-> = ResolvedHooks<TestConfigurationHooksForProject<ProjectType>> &
-  TestProjectConfigurationCoreHooks;
+export type ResolvedTestProjectConfigurationHooks =
+  ResolvedHooks<TestProjectConfigurationHooks> &
+    TestProjectConfigurationCoreHooks;
 
 /**
  * Hooks for testing the entire workspace.
@@ -155,11 +98,11 @@ export interface TestTaskOptions {
  * The hooks and additional metadata for running the test command on
  * a single project.
  */
-export interface TestProjectTask<ProjectType extends Project = Project> {
+export interface TestProjectTask {
   /**
    * The project being tested.
    */
-  readonly project: ProjectType;
+  readonly project: Project;
 
   /**
    * The workspace this project is part of.
@@ -179,7 +122,7 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
    * TypeScript, and to ensure consumers get appropriate type-checking
    * on their use of the hooks.
    */
-  readonly hooks: HookAdder<TestConfigurationHooksForProject<ProjectType>>;
+  readonly hooks: HookAdder<TestProjectConfigurationHooks>;
 
   /**
    * Provide additional configuration for testing the project. Custom
@@ -189,8 +132,8 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
    * to include your hooks for other plugins to reference.
    */
   readonly configure: ConfigurationCollector<
-    ResolvedTestProjectConfigurationHooks<ProjectType>,
-    ResolvedOptions<TestOptionsForProject<ProjectType>>
+    ResolvedTestProjectConfigurationHooks,
+    ResolvedOptions<TestProjectOptions>
   >;
 
   /**
@@ -205,9 +148,8 @@ export interface TestProjectTask<ProjectType extends Project = Project> {
    * what steps need to be added.
    */
   readonly run: ProjectStepAdder<
-    ProjectType,
-    ResolvedTestProjectConfigurationHooks<ProjectType>,
-    TestOptionsForProject<ProjectType>
+    ResolvedTestProjectConfigurationHooks,
+    TestProjectOptions
   >;
 }
 
@@ -230,8 +172,8 @@ export interface TestWorkspaceStepAdderContext
    */
   projectConfiguration<ProjectType extends Project = Project>(
     project: ProjectType,
-    options?: TestOptionsForProject<ProjectType>,
-  ): Promise<ResolvedTestProjectConfigurationHooks<ProjectType>>;
+    options?: TestProjectOptions,
+  ): Promise<ResolvedTestProjectConfigurationHooks>;
 }
 
 /**
@@ -288,7 +230,5 @@ export interface TestWorkspaceTask {
    * hook of a project plugin. You can use this hook to add configuration or
    * steps to multiple projects in the workspace.
    */
-  project<ProjectType extends Project = Project>(
-    handler: (task: TestProjectTask<ProjectType>) => ValueOrPromise<void>,
-  ): void;
+  project(handler: (task: TestProjectTask) => ValueOrPromise<void>): void;
 }

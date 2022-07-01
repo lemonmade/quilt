@@ -2,7 +2,7 @@ import {createRequire} from 'module';
 
 import type {PluginItem} from '@babel/core';
 
-import {ProjectKind, createProjectPlugin, createWorkspacePlugin} from '../kit';
+import {createProjectPlugin, createWorkspacePlugin} from '../kit';
 import type {WaterfallHook} from '../kit';
 
 import type {} from './rollup';

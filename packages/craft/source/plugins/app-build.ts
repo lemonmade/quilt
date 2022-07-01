@@ -70,7 +70,7 @@ export interface QuiltMetadata {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppOptions {
+  interface BuildProjectOptions {
     /**
      * Details about the browser build being created by Quilt.
      */
@@ -88,7 +88,7 @@ export function appBuild({
   browser,
   env,
 }: Options) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: STEP_NAME,
     build({project, configure, run}) {
       configure(

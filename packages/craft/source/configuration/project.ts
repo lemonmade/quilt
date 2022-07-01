@@ -1,46 +1,39 @@
 import {relative} from 'path';
 
-import type {WorkspacePlugin} from '../kit';
+import type {WorkspacePlugin, ProjectPlugin} from '../kit';
 import {FileSystem, DiagnosticError, PackageJson, isPlugin} from '../kit';
 
 import type {
+  ProjectConfiguration,
   ConfigurationContext,
-  WorkspaceConfiguration,
-  WorkspaceConfigurationBuilder,
+  ProjectConfigurationBuilder,
 } from './types';
 
-export function createWorkspace(
-  create: (workspace: WorkspaceConfigurationBuilder) => void | Promise<void>,
-): WorkspaceConfiguration {
+export function createProject(
+  create: (workspace: ProjectConfigurationBuilder) => void | Promise<void>,
+): ProjectConfiguration {
   return async (context) => {
-    const builder = createWorkspaceConfigurationBuilder(context);
+    const builder = createProjectConfigurationBuilder(context);
     await create(builder);
     return builder.result();
   };
 }
 
-function createWorkspaceConfigurationBuilder({
-  root,
+function createProjectConfigurationBuilder({
   file,
-}: ConfigurationContext): WorkspaceConfigurationBuilder {
+  root,
+}: ConfigurationContext): ProjectConfigurationBuilder {
   let name: string | undefined;
 
+  const projectPlugins = new Set<ProjectPlugin>();
   const workspacePlugins = new Set<WorkspacePlugin>();
-  const projectPatterns = new Set<string>();
 
-  const builder: WorkspaceConfigurationBuilder = {
+  const builder: ProjectConfigurationBuilder = {
     root,
     fs: new FileSystem(root),
     packageJson: PackageJson.load(root),
     name(newName) {
       name = newName;
-      return builder;
-    },
-    projects(...patterns) {
-      for (const pattern of patterns) {
-        projectPatterns.add(pattern);
-      }
-
       return builder;
     },
     use(...plugins) {
@@ -61,27 +54,20 @@ function createWorkspaceConfigurationBuilder({
         }
 
         if (plugin.target === 'project') {
-          throw new DiagnosticError({
-            title: 'Invalid configuration file',
-            content: `The ${relative(
-              process.cwd(),
-              file,
-            )} configuration file uses project plugins for a workspace configuration`,
-            suggestion: `When using createWorkspace(), you can only use plugins that target the overall workspace. If you only have a single project in your repo, consider switching from createWorkspace() to createProject().`,
-          });
+          projectPlugins.add(plugin);
+        } else {
+          workspacePlugins.add(plugin);
         }
-
-        workspacePlugins.add(plugin);
       }
 
       return builder;
     },
     result() {
       return {
-        kind: 'workspace',
+        kind: 'project',
         name,
-        plugins: [...workspacePlugins],
-        projects: [...projectPatterns],
+        plugins: [...projectPlugins],
+        workspacePlugins: [...workspacePlugins],
       };
     },
   };

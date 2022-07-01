@@ -12,28 +12,23 @@ export function aliasWorkspacePackages() {
   return createProjectPlugin({
     name: 'Quilt.AliasWorkspacePackages',
     develop({configure, workspace}) {
-      configure(
-        ({
-          rollupPlugins,
-          viteResolveAliases,
-        }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
-          viteResolveAliases?.((aliases) => ({
-            ...aliases,
-            ...getAliases(workspace),
-          }));
+      configure(({rollupPlugins, viteResolveAliases}) => {
+        viteResolveAliases?.((aliases) => ({
+          ...aliases,
+          ...getAliases(workspace),
+        }));
 
-          rollupPlugins?.(async (plugins) => {
-            const {default: alias} = await import('@rollup/plugin-alias');
+        rollupPlugins?.(async (plugins) => {
+          const {default: alias} = await import('@rollup/plugin-alias');
 
-            return [
-              alias({
-                entries: getAliases(workspace),
-              }),
-              ...plugins,
-            ];
-          });
-        },
-      );
+          return [
+            alias({
+              entries: getAliases(workspace),
+            }),
+            ...plugins,
+          ];
+        });
+      });
     },
     build({configure, workspace}) {
       configure(({rollupPlugins}) => {

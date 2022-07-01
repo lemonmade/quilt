@@ -112,9 +112,11 @@ export function typescriptWorkspace() {
         ]);
       });
 
-      // We only need to run a TypeScript build if there are public packages
+      // We only need to run a TypeScript build if there are public projects
       if (
-        workspace.packages.every((pkg) => pkg.packageJson?.private ?? false)
+        workspace.projects.every(
+          (project) => project.packageJson?.private ?? false,
+        )
       ) {
         return;
       }

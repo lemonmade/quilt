@@ -1,5 +1,5 @@
 import {createProjectPlugin} from '../kit';
-import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 export interface Options {
   hydrate: boolean;
@@ -35,14 +35,14 @@ export interface Hooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends Hooks {}
-  interface DevelopAppConfigurationHooks extends Hooks {}
+  interface BuildProjectConfigurationHooks extends Hooks {}
+  interface DevelopProjectConfigurationHooks extends Hooks {}
 }
 
 export const NAME = 'Quilt.MagicModule.BrowserEntry';
 
 export function magicModuleBrowserEntry({hydrate}: Options) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: NAME,
     build({hooks}) {
       hooks<Hooks>(({waterfall}) => ({

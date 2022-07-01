@@ -1,14 +1,14 @@
-import type {Project, App, Service, Workspace, TargetRuntime} from '../model';
 import type {ValueOrPromise} from '../types';
+import type {Project, Workspace, TargetRuntime} from '../model';
 
 import type {
   HookAdder,
   ProjectStepAdder,
   ResolvedHooks,
   ResolvedOptions,
-  ConfigurationCollector,
   WaterfallHook,
   WaterfallHookWithDefault,
+  ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
 } from './shared';
@@ -18,31 +18,6 @@ import type {
  * code project.
  */
 export interface DevelopProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for developing applications.
- */
-export interface DevelopAppOptions extends DevelopProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for developing projects.
- */
-export interface DevelopServiceOptions extends DevelopProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for developing backend services.
- */
-export interface DevelopPackageOptions extends DevelopProjectOptions {}
-
-/**
- * Selects the development options that match the provided project type.
- */
-export type DevelopOptionsForProject<ProjectType extends Project = Project> =
-  ProjectType extends App
-    ? DevelopAppOptions
-    : ProjectType extends Service
-    ? DevelopServiceOptions
-    : DevelopPackageOptions;
 
 /**
  * Options that are available to configuration hooks for developing
@@ -61,7 +36,7 @@ export interface DevelopProjectConfigurationCoreHooks {
   readonly extensions: WaterfallHook<string[]>;
 
   /**
-   * The runtimes that this build will execute in
+   * The runtimes of the development environment.
    */
   readonly runtime: WaterfallHookWithDefault<TargetRuntime>;
 }
@@ -72,47 +47,15 @@ export interface DevelopProjectConfigurationCoreHooks {
 export interface DevelopProjectConfigurationHooks {}
 
 /**
- * Configuration hooks for developing applications.
+ * The full set of resolved develop hooks for a single project. This includes
+ * all the core hooks provided automatically, and any hooks added by plugins
+ * during the `hooks` phase of running this task. All plugins added by hooks
+ * are marked as optional in this type because the plugin that added the type
+ * may not have been used in this project.
  */
-export interface DevelopAppConfigurationHooks
-  extends DevelopProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for developing backend services.
- */
-export interface DevelopServiceConfigurationHooks
-  extends DevelopProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for developing packages.
- */
-export interface DevelopPackageConfigurationHooks
-  extends DevelopProjectConfigurationHooks {}
-
-/**
- * Selects the development configuration hooks that match the provided
- * project type.
- */
-export type DevelopConfigurationHooksForProject<
-  ProjectType extends Project = Project,
-> = ProjectType extends App
-  ? DevelopAppConfigurationHooks
-  : ProjectType extends Service
-  ? DevelopServiceConfigurationHooks
-  : DevelopPackageConfigurationHooks;
-
-/**
- * The full set of resolved development hooks for a single project of the
- * provided type. This includes all the core hooks provided automatically,
- * and any hooks added by plugins during the `hooks` phase of running this
- * task. All plugins added by hooks are marked as optional in this type
- * because the plugin that added the type may not have been used in this
- * project.
- */
-export type ResolvedDevelopProjectConfigurationHooks<
-  ProjectType extends Project = Project,
-> = ResolvedHooks<DevelopConfigurationHooksForProject<ProjectType>> &
-  DevelopProjectConfigurationCoreHooks;
+export type ResolvedDevelopProjectConfigurationHooks =
+  ResolvedHooks<DevelopProjectConfigurationHooks> &
+    DevelopProjectConfigurationCoreHooks;
 
 /**
  * Hooks for developing the entire workspace.
@@ -151,11 +94,11 @@ export interface DevelopTaskOptions {
  * The hooks and additional metadata for running the develop command on
  * a single project.
  */
-export interface DevelopProjectTask<ProjectType extends Project = Project> {
+export interface DevelopProjectTask {
   /**
    * The project being developed.
    */
-  readonly project: ProjectType;
+  readonly project: Project;
 
   /**
    * The workspace this project is part of.
@@ -175,7 +118,7 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
    * TypeScript, and to ensure consumers get appropriate type-checking
    * on their use of the hooks.
    */
-  readonly hooks: HookAdder<DevelopConfigurationHooksForProject<ProjectType>>;
+  readonly hooks: HookAdder<DevelopProjectConfigurationHooks>;
 
   /**
    * Provide additional configuration for developing the project. Custom
@@ -185,8 +128,8 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
    * to include your hooks for other plugins to reference.
    */
   readonly configure: ConfigurationCollector<
-    ResolvedDevelopProjectConfigurationHooks<ProjectType>,
-    ResolvedOptions<DevelopOptionsForProject<ProjectType>>
+    ResolvedDevelopProjectConfigurationHooks,
+    ResolvedOptions<DevelopProjectOptions>
   >;
 
   /**
@@ -201,9 +144,8 @@ export interface DevelopProjectTask<ProjectType extends Project = Project> {
    * what steps need to be added.
    */
   readonly run: ProjectStepAdder<
-    ProjectType,
-    ResolvedDevelopProjectConfigurationHooks<ProjectType>,
-    DevelopOptionsForProject<ProjectType>
+    ResolvedDevelopProjectConfigurationHooks,
+    DevelopProjectOptions
   >;
 }
 
@@ -226,8 +168,8 @@ export interface DevelopWorkspaceStepAdderContext
    */
   projectConfiguration<ProjectType extends Project = Project>(
     project: ProjectType,
-    options?: DevelopOptionsForProject<ProjectType>,
-  ): Promise<ResolvedDevelopProjectConfigurationHooks<ProjectType>>;
+    options?: DevelopProjectOptions,
+  ): Promise<ResolvedDevelopProjectConfigurationHooks>;
 }
 
 /**
@@ -284,7 +226,5 @@ export interface DevelopWorkspaceTask {
    * hook of a project plugin. You can use this hook to add configuration or
    * steps to multiple projects in the workspace.
    */
-  project<ProjectType extends Project = Project>(
-    handler: (task: DevelopProjectTask<ProjectType>) => ValueOrPromise<void>,
-  ): void;
+  project(handler: (task: DevelopProjectTask) => ValueOrPromise<void>): void;
 }
