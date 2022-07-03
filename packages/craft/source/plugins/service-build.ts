@@ -27,7 +27,7 @@ declare module '@quilted/sewing-kit' {
     quiltService: boolean;
   }
 
-  interface BuildServiceConfigurationHooks extends ServiceBuildHooks {}
+  interface BuildProjectConfigurationHooks extends ServiceBuildHooks {}
 }
 
 export interface Options {

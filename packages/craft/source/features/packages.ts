@@ -48,6 +48,22 @@ export interface Options {
 const ESM_EXTENSION = '.mjs';
 const COMMONJS_EXTENSION = '.cjs';
 
+export function packageBase() {
+  return createProjectPlugin({
+    name: 'Quilt.Package',
+    build({configure}) {
+      configure(({babelRuntimeHelpers}) => {
+        babelRuntimeHelpers?.(() => 'runtime');
+      });
+    },
+    develop({configure}) {
+      configure(({babelRuntimeHelpers}) => {
+        babelRuntimeHelpers?.(() => 'runtime');
+      });
+    },
+  });
+}
+
 /**
  * Creates build steps that generate package outputs that are appropriate
  * for a public package. By default, this includes one output: an `esm`

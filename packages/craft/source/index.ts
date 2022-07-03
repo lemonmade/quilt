@@ -1,13 +1,8 @@
 /* eslint @typescript-eslint/no-empty-interface: off */
 
 import {Runtime, createProjectPlugin, createWorkspacePlugin} from './kit';
-import type {App, Service, Package, Project} from './kit';
-import {
-  createApp,
-  createPackage,
-  createService,
-  createWorkspace,
-} from './configuration';
+import type {Project} from './kit';
+import {createProject, createWorkspace} from './configuration';
 
 import {packageBuild} from './features/packages';
 import type {Options as PackageBuildOptions} from './features/packages';
@@ -82,12 +77,10 @@ export {
   Runtime,
   createProjectPlugin,
   createWorkspacePlugin,
-  createApp,
-  createPackage,
-  createService,
+  createProject,
   createWorkspace,
 };
-export type {App, Service, Package, Project};
+export type {Project};
 
 export * from './constants';
 
@@ -151,7 +144,7 @@ export function quiltApp({
   const useHttpHandler =
     typeof server === 'boolean' ? server : server.httpHandler ?? true;
 
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.App',
     async create({use}) {
       use(
@@ -251,7 +244,7 @@ export function quiltService({
     ...(typeof build === 'boolean' ? {} : build),
   };
 
-  return createProjectPlugin<Service>({
+  return createProjectPlugin({
     name: 'Quilt.Service',
     async create({use}) {
       use(
@@ -312,7 +305,7 @@ export function quiltPackage({
   graphql: useGraphQL = false,
   commonjs,
 }: PackageOptions = {}) {
-  return createProjectPlugin<Package>({
+  return createProjectPlugin({
     name: 'Quilt.Package',
     async create({use}) {
       use(

@@ -1,7 +1,7 @@
 import {stripIndent} from 'common-tags';
 
 import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
-import type {App, Service, WaterfallHook} from '../kit';
+import type {WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
 import {addRollupOnWarn} from '../tools/rollup';
 
@@ -22,15 +22,11 @@ export interface HttpHandlerOptions {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends HttpHandlerHooks {}
-  interface DevelopAppConfigurationHooks extends HttpHandlerHooks {}
-  interface BuildServiceConfigurationHooks extends HttpHandlerHooks {}
-  interface DevelopServiceConfigurationHooks extends HttpHandlerHooks {}
+  interface BuildProjectConfigurationHooks extends HttpHandlerHooks {}
+  interface DevelopProjectConfigurationHooks extends HttpHandlerHooks {}
 
-  interface BuildAppOptions extends HttpHandlerOptions {}
-  interface DevelopAppOptions extends HttpHandlerOptions {}
-  interface BuildServiceOptions extends HttpHandlerOptions {}
-  interface DevelopServiceOptions extends HttpHandlerOptions {}
+  interface BuildProjectOptions extends HttpHandlerOptions {}
+  interface DevelopProjectOptions extends HttpHandlerOptions {}
 }
 
 export interface Options {
@@ -39,7 +35,7 @@ export interface Options {
 }
 
 export function httpHandler({port: explicitPort}: Options = {}) {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.HttpHandler',
     build({hooks, configure, project}) {
       hooks<HttpHandlerHooks>(({waterfall}) => ({
@@ -182,7 +178,7 @@ export function httpHandlerDevelopment({
   port: explicitPort,
   env,
 }: Options = {}) {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.HttpHandler.Development',
     develop({project, hooks, configure}) {
       hooks<HttpHandlerHooks>(({waterfall}) => ({

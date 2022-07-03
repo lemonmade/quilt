@@ -8,7 +8,6 @@ import type {} from '../tools/postcss';
 import type {} from '../features/async';
 
 import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
-import type {App} from '../kit';
 
 import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
@@ -102,6 +101,8 @@ export function appBuild({
             rollupInput,
             rollupOutputs,
             rollupPlugins,
+            rollupNodeBundle,
+            rollupPreserveEntrySignatures,
             quiltAsyncManifestPath,
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
@@ -120,6 +121,21 @@ export function appBuild({
               Array.from(new Set([...variables, ...inlineEnv])),
             );
           }
+
+          // When we are only building a web app, we don’t care about preserving
+          // any details about the entry module. When we are building for any other
+          // environment, we want to do our best to preserve that
+          rollupPreserveEntrySignatures?.(() => false);
+
+          rollupNodeBundle?.((currentBundle) => {
+            return {
+              ...(typeof currentBundle === 'boolean' ? {} : currentBundle),
+              builtins: false,
+              dependencies: true,
+              devDependencies: true,
+              peerDependencies: true,
+            };
+          });
 
           rollupPlugins?.(async (plugins) => {
             const {default: replace} = await import('@rollup/plugin-replace');

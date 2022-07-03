@@ -42,9 +42,9 @@ export interface WorkerHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends WorkerHooks {}
-  interface DevelopAppConfigurationHooks extends WorkerHooks {}
-  interface TestAppConfigurationHooks extends WorkerHooks {}
+  interface BuildProjectConfigurationHooks extends WorkerHooks {}
+  interface DevelopProjectConfigurationHooks extends WorkerHooks {}
+  interface TestProjectConfigurationHooks extends WorkerHooks {}
 }
 
 const require = createRequire(import.meta.url);

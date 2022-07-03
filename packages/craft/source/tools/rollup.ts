@@ -1,4 +1,9 @@
-import type {Plugin, InputOptions, OutputOptions} from 'rollup';
+import type {
+  Plugin,
+  InputOptions,
+  OutputOptions,
+  PreserveEntrySignaturesOption,
+} from 'rollup';
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
@@ -7,6 +12,7 @@ import type {
   Project,
   Workspace,
   WaterfallHook,
+  ResolvedHooks,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
@@ -49,6 +55,11 @@ export interface RollupHooks {
    * Rollup outputs to generate for this project.
    */
   rollupOutputs: WaterfallHook<OutputOptions[]>;
+
+  /**
+   * Determines how Rollup will preserve the exports of entry modules.
+   */
+  rollupPreserveEntrySignatures: WaterfallHook<PreserveEntrySignaturesOption>;
 }
 
 export interface RollupNodeHooks {
@@ -112,6 +123,7 @@ export function rollupHooks() {
         rollupExternals: waterfall(),
         rollupInputOptions: waterfall(),
         rollupOutputs: waterfall(),
+        rollupPreserveEntrySignatures: waterfall(),
       }));
     },
     develop({hooks}) {
@@ -121,6 +133,7 @@ export function rollupHooks() {
         rollupExternals: waterfall(),
         rollupInputOptions: waterfall(),
         rollupOutputs: waterfall(),
+        rollupPreserveEntrySignatures: waterfall(),
       }));
     },
   });
@@ -248,7 +261,12 @@ export async function getRollupNodePlugins(
 
   const defaultShouldBundle =
     explicitShouldBundle == null
-      ? getDefaultNodeBundle(project, targetRuntime.includes(Runtime.Browser))
+      ? {
+          builtins: false,
+          dependencies: false,
+          devDependencies: true,
+          peerDependencies: false,
+        }
       : normalizeRollupNodeBundle(explicitShouldBundle);
   const shouldBundle = await rollupNodeBundle!.run(defaultShouldBundle);
 
@@ -342,39 +360,37 @@ export async function getRollupNodePlugins(
  * })
  */
 export async function buildWithRollup(
-  project: Project,
+  _project: Project,
   {
-    runtime,
     rollupInput,
     rollupPlugins,
     rollupExternals,
     rollupInputOptions,
     rollupOutputs,
-  }: ResolvedBuildProjectConfigurationHooks,
+    rollupPreserveEntrySignatures,
+  }: ResolvedHooks<RollupHooks>,
 ) {
-  const [{rollup}, targetRuntime, inputs, plugins, externals, outputs] =
-    await Promise.all([
-      import('rollup'),
-      runtime.run(),
-      rollupInput!.run([]),
-      rollupPlugins!.run([]),
-      rollupExternals!.run([]),
-      rollupOutputs!.run([]),
-    ]);
+  const [
+    {rollup},
+    inputs,
+    plugins,
+    externals,
+    outputs,
+    preserveEntrySignatures,
+  ] = await Promise.all([
+    import('rollup'),
+    rollupInput!.run([]),
+    rollupPlugins!.run([]),
+    rollupExternals!.run([]),
+    rollupOutputs!.run([]),
+    rollupPreserveEntrySignatures!.run('exports-only'),
+  ]);
 
   const inputOptions = await rollupInputOptions!.run({
     input: inputs,
     external: externals,
     plugins,
-    // When we are only building a web app, we don’t care about preserving
-    // any details about the entry module. When we are building for any other
-    // environment, we want to do our best to preserve that
-    preserveEntrySignatures:
-      project instanceof App &&
-      targetRuntime.includes(Runtime.Browser) &&
-      targetRuntime.runtimes.size === 1
-        ? false
-        : 'exports-only',
+    preserveEntrySignatures,
     onwarn(warning, defaultHandler) {
       // Ignore warnings about empty bundles by default.
       if (warning.code === 'EMPTY_BUNDLE') return;
@@ -457,27 +473,4 @@ export function addRollupOnWarn(
       });
     },
   };
-}
-
-function getDefaultNodeBundle(
-  project: Project,
-  isBrowser = false,
-): RollupNodeBundle {
-  if (project.kind === ProjectKind.App && isBrowser) {
-    return {
-      builtins: false,
-      dependencies: true,
-      devDependencies: true,
-      peerDependencies: true,
-    };
-  } else {
-    // In all other projects, we want to leave explicit dependencies unbundled,
-    // but have any dev-time dependencies be bundles.
-    return {
-      builtins: false,
-      dependencies: false,
-      devDependencies: true,
-      peerDependencies: false,
-    };
-  }
 }

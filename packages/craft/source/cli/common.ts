@@ -94,7 +94,7 @@ export function createCommand<Flags extends Spec>(
   ) => {
     const {
       '--root': root = process.cwd(),
-      '--projects': projects,
+      '--workspace-configuration': workspaceConfigurationFile,
       '--log-level': logLevel,
       '--interactive': isInteractive,
       '--skip-project': skipProjects,
@@ -108,7 +108,7 @@ export function createCommand<Flags extends Spec>(
       {
         ...flagSpec,
         '--root': String,
-        '--projects': [String],
+        '--workspace-configuration': String,
         '--log-level': String,
         '--interactive': Boolean,
         '--skip-project': [String],
@@ -129,7 +129,7 @@ export function createCommand<Flags extends Spec>(
 
     try {
       const {workspace, plugins} = await loadWorkspace(root as string, {
-        projectPatterns: projects,
+        configurationFile: workspaceConfigurationFile as string,
       });
       await run(flags as any, {
         workspace,

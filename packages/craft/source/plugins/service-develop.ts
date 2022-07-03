@@ -3,10 +3,9 @@ import {spawn} from 'child_process';
 import type {ChildProcess} from 'child_process';
 
 import {createProjectPlugin} from '../kit';
-import type {App, Service} from '../kit';
 
 export function serviceDevelopment() {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.HttpHandler.Development',
     develop({project, run}) {
       run((step, {configuration}) =>

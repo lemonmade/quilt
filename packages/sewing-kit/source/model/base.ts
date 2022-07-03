@@ -25,7 +25,7 @@ export class Base {
     this.packageJson = PackageJson.load(this.root);
   }
 
-  dependencies({prod, dev, all}: DependencyOptions = {prod: true}) {
+  dependencies({prod = true, dev, all}: DependencyOptions = {}) {
     const dependencies: string[] = [];
 
     if (this.packageJson == null) {
@@ -43,25 +43,18 @@ export class Base {
     return dependencies;
   }
 
-  dependency(name: string) {
-    if (!this.hasDependency(name)) return undefined;
-
-    try {
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        version: require(`${name}/package.json`).version,
-      };
-    } catch {
-      return undefined;
-    }
-  }
-
   hasDependency(
     name: string,
-    _options?: DependencyOptions & {version?: string},
+    {dev, prod = true, all}: DependencyOptions = {},
   ): boolean {
     const {packageJson} = this;
 
-    return packageJson != null && packageJson.dependency(name) != null;
+    if (packageJson == null) return false;
+
+    if ((prod || all) && packageJson.dependency(name) != null) return true;
+
+    if ((dev || all) && packageJson.devDependency(name) != null) return true;
+
+    return false;
   }
 }

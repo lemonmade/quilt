@@ -16,6 +16,7 @@ export interface WorkspaceConfiguration {
 
 export interface WorkspaceConfigurationBuilder {
   readonly root: string;
+  readonly file: string;
   readonly fs: FileSystem;
   readonly packageJson?: PackageJson;
 
@@ -28,7 +29,9 @@ export interface WorkspaceConfigurationBuilder {
 
 export interface WorkspaceConfigurationResult {
   readonly kind: 'workspace';
-  readonly name?: string;
+  readonly root: string;
+  readonly file: string;
+  readonly name: string;
   readonly plugins: readonly WorkspacePlugin[];
   readonly projects: readonly string[];
 }
@@ -39,6 +42,7 @@ export interface ProjectConfiguration {
 
 export interface ProjectConfigurationBuilder {
   readonly root: string;
+  readonly file: string;
   readonly fs: FileSystem;
   readonly packageJson?: PackageJson;
 
@@ -52,7 +56,9 @@ export interface ProjectConfigurationBuilder {
 
 export interface ProjectConfigurationResult {
   readonly kind: 'project';
-  readonly name?: string;
+  readonly root: string;
+  readonly file: string;
+  readonly name: string;
   readonly plugins: readonly ProjectPlugin[];
   readonly workspacePlugins: readonly WorkspacePlugin[];
 }

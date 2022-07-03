@@ -9,9 +9,9 @@ import {
 } from '../constants';
 import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
 import type {
-  App,
+  Project,
   ResolvedOptions,
-  BuildOptionsForProject,
+  BuildProjectOptions,
   ResolvedBuildProjectConfigurationHooks,
 } from '../kit';
 
@@ -76,14 +76,14 @@ export interface AppServerConfigurationOptions {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppOptions extends AppServerConfigurationOptions {}
-  interface DevelopAppOptions extends AppServerConfigurationOptions {}
+  interface BuildProjectOptions extends AppServerConfigurationOptions {}
+  interface DevelopProjectOptions extends AppServerConfigurationOptions {}
 }
 
 const MAGIC_CUSTOM_SERVER_ENTRY_MODULE = '__quilt__/CustomAppServer';
 
 export function appServer(options?: AppServerOptions) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.App.Server',
     build({project, configure}) {
       configure(setupConfiguration(project, options));
@@ -94,7 +94,7 @@ export function appServer(options?: AppServerOptions) {
   });
 }
 
-function setupConfiguration(project: App, options?: AppServerOptions) {
+function setupConfiguration(project: Project, options?: AppServerOptions) {
   const entry = options?.entry;
   const httpHandler = options?.httpHandler ?? true;
   const explicitBundle = options?.bundle;
@@ -114,8 +114,8 @@ function setupConfiguration(project: App, options?: AppServerOptions) {
       quiltAsyncManifest,
       quiltInlineEnvironmentVariables,
       quiltRuntimeEnvironmentVariables,
-    }: ResolvedBuildProjectConfigurationHooks<App>,
-    {quiltAppServer = false}: ResolvedOptions<BuildOptionsForProject<App>>,
+    }: ResolvedBuildProjectConfigurationHooks,
+    {quiltAppServer = false}: ResolvedOptions<BuildProjectOptions>,
   ) => {
     if (!quiltAppServer) return;
 

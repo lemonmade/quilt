@@ -72,8 +72,8 @@ async function run() {
       break;
     }
     case 'package': {
-      const {createPackage} = await import('./package');
-      await createPackage();
+      const {createProject} = await import('./package');
+      await createProject();
       break;
     }
   }

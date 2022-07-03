@@ -1,6 +1,6 @@
-import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
+import {createProject, quiltPackage, Runtime} from '@quilted/craft';
 
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   pkg.entry({source: './source/index'});
   pkg.entry({source: './source/http', name: 'http'});
   pkg.entry({source: './source/html', name: 'html'});

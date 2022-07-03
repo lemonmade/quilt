@@ -1,6 +1,6 @@
-import {quiltPackage, createPackage} from '@quilted/craft';
+import {quiltPackage, createProject} from '@quilted/craft';
 
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   pkg.entry({source: './source/index'});
   pkg.entry({name: 'craft', source: './source/craft'});
   pkg.use(quiltPackage({react: true}));

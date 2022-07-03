@@ -1,7 +1,7 @@
-import {createPackage, quiltPackage, createProjectPlugin} from '@quilted/craft';
+import {createProject, quiltPackage, createProjectPlugin} from '@quilted/craft';
 import type {MangleOptions} from 'terser';
 
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   pkg.entry({source: './source/index'});
   pkg.use(
     quiltPackage(),

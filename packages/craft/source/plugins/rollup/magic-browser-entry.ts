@@ -1,7 +1,7 @@
 import type {Plugin} from 'rollup';
 import {stripIndent} from 'common-tags';
 
-import type {App} from '../../kit';
+import type {Project} from '../../kit';
 import {MAGIC_MODULE_APP_COMPONENT} from '../../constants';
 
 export interface Options {
@@ -30,7 +30,7 @@ export interface Options {
   /**
    * The project being built.
    */
-  project: App;
+  project: Project;
 
   /**
    * The identifier to handle as the magic browser entry module.

@@ -3,6 +3,7 @@ import {relative} from 'path';
 import type {WorkspacePlugin, ProjectPlugin} from '../kit';
 import {FileSystem, DiagnosticError, PackageJson, isPlugin} from '../kit';
 
+import {nameFromFileSystem} from './shared';
 import type {
   ProjectConfiguration,
   ConfigurationContext,
@@ -23,15 +24,22 @@ function createProjectConfigurationBuilder({
   file,
   root,
 }: ConfigurationContext): ProjectConfigurationBuilder {
-  let name: string | undefined;
+  const fs = new FileSystem(root);
+  const packageJson = PackageJson.load(root);
+
+  let name = nameFromFileSystem(root, {packageJson});
 
   const projectPlugins = new Set<ProjectPlugin>();
   const workspacePlugins = new Set<WorkspacePlugin>();
 
   const builder: ProjectConfigurationBuilder = {
     root,
-    fs: new FileSystem(root),
-    packageJson: PackageJson.load(root),
+    file,
+    fs,
+    packageJson,
+    entry() {},
+    runtime() {},
+    binary() {},
     name(newName) {
       name = newName;
       return builder;
@@ -66,6 +74,8 @@ function createProjectConfigurationBuilder({
       return {
         kind: 'project',
         name,
+        root,
+        file,
         plugins: [...projectPlugins],
         workspacePlugins: [...workspacePlugins],
       };

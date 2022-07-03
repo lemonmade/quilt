@@ -4,15 +4,9 @@ import {
   Runtime,
   DiagnosticError,
   createProjectPlugin,
-  ProjectKind,
   createWorkspacePlugin,
 } from '../kit';
-import type {
-  App,
-  WaterfallHook,
-  ResolvedBuildProjectConfigurationHooks,
-  ResolvedDevelopProjectConfigurationHooks,
-} from '../kit';
+import type {WaterfallHook} from '../kit';
 
 import type {} from '../tools/babel';
 import type {} from '../tools/postcss';
@@ -76,8 +70,9 @@ export function targets() {
           targetName,
           babelTargets,
           babelPresets,
+          babelPresetEnvOptions,
           postcssPlugins,
-        }: ResolvedBuildProjectConfigurationHooks<App>) => {
+        }) => {
           targets!(async (targets) => {
             if (targets.length > 0) return targets;
 
@@ -143,33 +138,22 @@ export function targets() {
           });
 
           babelTargets?.(() => targets!.run([]));
-          babelPresets?.((presets) => {
-            const isPackage = project.kind === ProjectKind.Package;
+          babelPresets?.(async (presets) => {
+            const options = await babelPresetEnvOptions?.run({
+              corejs: '3.15' as any,
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+              // I thought I wanted this on, but if you do this, Babel
+              // stops respecting the top-level `targets` option and tries
+              // to use the targets passed to the preset directly instead.
+              // ignoreBrowserslistConfig: true,
+            });
 
-            const options = isPackage
-              ? {
-                  useBuiltIns: false,
-                  bugfixes: true,
-                  shippedProposals: true,
-                  // I thought I wanted this on, but if you do this, Babel
-                  // stops respecting the top-level `targets` option and tries
-                  // to use the targets passed to the preset directly instead.
-                  // ignoreBrowserslistConfig: true,
-                }
-              : {
-                  corejs: '3.15',
-                  useBuiltIns: 'usage',
-                  bugfixes: true,
-                  shippedProposals: true,
-                  // I thought I wanted this on, but if you do this, Babel
-                  // stops respecting the top-level `targets` option and tries
-                  // to use the targets passed to the preset directly instead.
-                  // ignoreBrowserslistConfig: true,
-                };
-
-            presets.unshift([require.resolve('@babel/preset-env'), options]);
-
-            return presets;
+            return [
+              [require.resolve('@babel/preset-env'), options],
+              ...presets,
+            ];
           });
 
           postcssPlugins?.(async (plugins) => {
@@ -196,13 +180,7 @@ export function targets() {
       }));
 
       configure(
-        ({
-          runtime,
-          targets,
-          babelTargets,
-          babelPresets,
-          postcssPlugins,
-        }: ResolvedDevelopProjectConfigurationHooks<App>) => {
+        ({runtime, targets, babelTargets, babelPresets, postcssPlugins}) => {
           targets!(async (targets) => {
             if (targets.length > 0) return targets;
 

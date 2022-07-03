@@ -1,18 +1,19 @@
+import * as path from 'path';
 import {unlinkSync} from 'fs';
-import {basename, dirname} from 'path';
 import {access} from 'fs/promises';
 
 import {globby} from 'globby';
 
 import {Workspace, Project, DiagnosticError} from '../kit';
-import type {ProjectPlugin, WorkspacePlugin} from '../kit';
-import {ConfigurationKind, ConfigurationBuilder} from '../configuration';
-import type {ConfigurationBuilderResult} from '../configuration';
+import type {ProjectPlugin, WorkspacePlugin, PluginCreateHelper} from '../kit';
+import type {
+  ProjectConfigurationResult,
+  WorkspaceConfigurationResult,
+} from '../configuration';
 
-interface LoadedConfigurationFile<Options>
-  extends ConfigurationBuilderResult<Options> {
-  readonly file: string;
-}
+type ConfigurationResult =
+  | ProjectConfigurationResult
+  | WorkspaceConfigurationResult;
 
 export interface LoadedWorkspace {
   readonly workspace: Workspace;
@@ -27,114 +28,171 @@ export interface LoadedWorkspace {
 
 export async function loadWorkspace(
   root: string,
-  {projectPatterns}: {projectPatterns?: string | string[]} = {},
+  {configurationFile}: {configurationFile?: string} = {},
 ): Promise<LoadedWorkspace> {
-  const packages = new Set<Package>();
-  const apps = new Set<App>();
-  const services = new Set<Service>();
+  const projects = new Set<Project>();
   const pluginMap = new Map<
     Workspace | Project,
-    readonly (WorkspacePlugin | ProjectPlugin<any>)[]
+    readonly (WorkspacePlugin | ProjectPlugin)[]
   >();
 
-  const configFiles = await globby(
-    projectPatterns ?? '**/quilt.{project,workspace}.{js,ts}',
-    {
-      cwd: root,
-      ignore: ['**/node_modules/**', '**/build/**'],
-      absolute: true,
-    },
-  );
+  let rootConfiguration: ConfigurationResult | null = null;
+
+  if (configurationFile) {
+    const workspaceFile = path.resolve(configurationFile);
+
+    if (
+      !(await access(workspaceFile)
+        .then(() => true)
+        .catch(() => false))
+    ) {
+      throw new DiagnosticError({
+        title: `No configuration file found at ${path.relative(
+          process.cwd(),
+          workspaceFile,
+        )}`,
+        suggestion:
+          'Make sure you have specified the --config flag to point at a valid workspace configuration file.',
+      });
+    }
+
+    const loadedConfig = await loadConfig(path.resolve(configurationFile));
+
+    if (loadedConfig == null) {
+      throw new DiagnosticError({
+        title: 'Invalid configuration file',
+        content: `The configuration file ${path.relative(
+          process.cwd(),
+          workspaceFile,
+        )} did not export any configuration`,
+        suggestion: `Make sure you are exporting the result of calling a function from @quilted/craft as the default export, then run your command again.`,
+      });
+    }
+
+    rootConfiguration = loadedConfig;
+  }
+
+  if (rootConfiguration == null) {
+    const rootConfigurationFileGlob = await globby(
+      'quilt.{project,workspace}.{js,ts}',
+      {
+        cwd: root,
+        absolute: true,
+      },
+    );
+
+    if (rootConfigurationFileGlob.length > 0) {
+      const rootConfigurationFile = rootConfigurationFileGlob.sort().pop()!;
+      const loadedConfig = await loadConfig(rootConfigurationFile);
+
+      if (loadedConfig == null) {
+        throw new DiagnosticError({
+          title: 'Invalid configuration file',
+          content: `The configuration file ${path.relative(
+            process.cwd(),
+            rootConfigurationFile,
+          )} did not export any configuration`,
+          suggestion: `Make sure you are exporting the result of calling a function from @quilted/craft as the default export, then run your command again.`,
+        });
+      }
+
+      rootConfiguration = loadedConfig;
+    }
+  }
+
+  const projectPatterns =
+    rootConfiguration?.kind === 'workspace' &&
+    rootConfiguration.projects.length > 0
+      ? rootConfiguration.projects
+      : ['**/quilt.{project,workspace}.{js,ts}'];
+
+  const configFiles = await globby(projectPatterns, {
+    cwd: root,
+    ignore: [
+      '**/node_modules/**',
+      '**/build/**',
+      ...(rootConfiguration ? [rootConfiguration.file] : []),
+    ],
+    absolute: true,
+  });
 
   // Rollup creates a `process` event listener for each build, and
   // we do one per configuration file in this case. We’ll temporarily
   // remove the limit and reset it later.
 
-  let loadedConfigs: LoadedConfigurationFile<Record<string, any>>[];
+  let loadedConfigurations: ConfigurationResult[];
   const maxListeners = process.getMaxListeners();
 
   try {
     process.setMaxListeners(Infinity);
-    loadedConfigs = (
+    loadedConfigurations = (
       await Promise.all(configFiles.map((config) => loadConfig(config)))
-    ).filter((config) => Boolean(config)) as typeof loadedConfigs;
+    ).filter((config) => Boolean(config)) as typeof loadedConfigurations;
   } finally {
     process.setMaxListeners(maxListeners);
   }
 
-  const workspaceConfigs = loadedConfigs.filter(
-    (config) =>
-      config.workspacePlugins.length > 0 ||
-      config.kind === ConfigurationKind.Workspace,
-  );
+  const workspaceConfigurations: ConfigurationResult[] =
+    rootConfiguration?.kind === 'workspace' ? [rootConfiguration] : [];
 
-  if (workspaceConfigs.length > 1) {
+  for (const configuration of loadedConfigurations) {
+    if (
+      configuration.kind === 'workspace' ||
+      configuration.workspacePlugins.length > 0
+    ) {
+      workspaceConfigurations.push(configuration);
+    }
+  }
+
+  if (workspaceConfigurations.length > 1) {
     // needs a better error, showing files/ what workspace plugins exist
     throw new DiagnosticError({
       title: `Multiple workspace configurations found`,
-      content: `Found ${workspaceConfigs.length} workspace configurations. Only one quilt config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/craft`,
+      content: `Found ${workspaceConfigurations.length} workspace configurations. Only one quilt config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/craft`,
     });
   }
 
-  const [workspaceConfig] = workspaceConfigs;
+  const [workspaceConfiguration] = workspaceConfigurations;
 
-  if (
-    workspaceConfig != null &&
-    workspaceConfig.kind !== ConfigurationKind.Workspace &&
-    loadedConfigs.length > 1
-  ) {
-    // needs a better error, showing which project
-    throw new DiagnosticError({
-      title: `Invalid workspace plugins in project configuration`,
-      content: `You declared workspace plugins in a project, but this is only supported for workspace with a single project.`,
-      suggestion: `Move the workspace plugins to a root quilt configuration file, and include them using the createWorkspace() function from @quilted/craft`,
+  for (const configuration of loadedConfigurations) {
+    if (configuration.kind === 'workspace') continue;
+
+    const project = new Project({
+      root: configuration.root,
+      name: configuration.name,
     });
-  }
 
-  for (const {kind, name, root, options, projectPlugins} of loadedConfigs) {
-    switch (kind) {
-      case ConfigurationKind.Package: {
-        const pkg = new Package({
-          name,
-          root,
-          entries: [],
-          ...options,
-        } as any);
-        packages.add(pkg);
-        pluginMap.set(pkg, projectPlugins);
-        break;
-      }
-      case ConfigurationKind.App: {
-        const app = new App({name, root, entry: './index', ...options} as any);
-        apps.add(app);
-        pluginMap.set(app, projectPlugins);
-        break;
-      }
-      case ConfigurationKind.Service: {
-        const service = new Service({
-          name,
-          root,
-          entry: './index',
-          ...options,
-        } as any);
-        services.add(service);
-        pluginMap.set(service, projectPlugins);
-        break;
-      }
-    }
+    projects.add(project);
+    pluginMap.set(
+      project,
+      await expandPlugins(configuration.plugins, {fs: project.fs}),
+    );
   }
 
   const workspace = new Workspace({
     root,
-    name: basename(root),
-    ...(workspaceConfig?.options ?? {}),
-    apps: [...apps],
-    packages: [...packages],
-    services: [...services],
+    name: workspaceConfiguration?.name
+      ? workspaceConfiguration.name
+      : path.basename(root),
+    projects: [...projects],
   });
 
-  if (workspaceConfig?.workspacePlugins) {
-    pluginMap.set(workspace, workspaceConfig.workspacePlugins);
+  if (workspaceConfiguration) {
+    if (workspaceConfiguration.kind === 'workspace') {
+      pluginMap.set(
+        workspace,
+        await expandPlugins(workspaceConfiguration.plugins, {
+          fs: workspace.fs,
+        }),
+      );
+    } else {
+      pluginMap.set(
+        workspace,
+        await expandPlugins(workspaceConfiguration.workspacePlugins, {
+          fs: workspace.fs,
+        }),
+      );
+    }
   }
 
   return {
@@ -147,60 +205,33 @@ export async function loadWorkspace(
   };
 }
 
-async function loadConfig<
-  T extends {name: string; root: string} = {name: string; root: string},
->(file: string) {
-  if (
-    !(await access(file)
-      .then(() => true)
-      .catch(() => false))
-  ) {
-    throw new DiagnosticError({
-      title: `No config file found at ${file}`,
-      suggestion:
-        'Make sure you have specified the --config flag to point at a valid workspace config file.',
-    });
-  }
-
-  return loadConfigFile<T>(file);
-}
-
-async function loadConfigFile<Options>(
-  file: string,
-): Promise<LoadedConfigurationFile<Options> | null> {
+async function loadConfig(file: string): Promise<ConfigurationResult | null> {
   const normalized = await normalizeConfigurationFile(file);
 
   if (normalized == null) {
     throw new DiagnosticError({
       title: 'Invalid configuration file',
-      content: `The configuration file ${file} did not export any configuration`,
-      suggestion: file.endsWith('.ts')
-        ? `Ensure that you are exporting the result of calling a function from @quilted/craft as the default export, then run your command again.`
-        : `Ensure that you are setting the result of calling a function from @quilted/craft to module.exports, then run your command again.`,
+      content: `The configuration file ${path.relative(
+        process.cwd(),
+        file,
+      )} did not export any configuration`,
+      suggestion: `Make sure you are exporting the result of calling a function from @quilted/craft as the default export, then run your command again.`,
     });
   } else if (typeof normalized !== 'function') {
     throw new DiagnosticError({
       title: 'Invalid configuration file',
-      content: `The configuration file ${file} did not export a function`,
+      content: `The configuration file ${path.relative(
+        process.cwd(),
+        file,
+      )} did not export a function`,
       suggestion: `Ensure that you are exporting the result of calling a function from @quilted/craft, then run your command again.`,
     });
   }
 
-  const root = dirname(file);
-  const result = await normalized(root);
+  const root = path.dirname(file);
+  const result = await normalized({root, file});
 
-  if (!ConfigurationBuilder.isResult(result)) {
-    throw new DiagnosticError({
-      title: 'Invalid configuration file',
-      content: `The configuration file ${file} did not export a function that creates a configuration object`,
-      suggestion: `Ensure that you are exporting the result of calling a function from @quilted/craft, then run your command again.`,
-    });
-  }
-
-  return {
-    ...result,
-    file,
-  };
+  return result;
 }
 
 async function normalizeConfigurationFile(file: string) {
@@ -281,4 +312,30 @@ async function normalizeConfigurationFile(file: string) {
 
   const {default: defaultExport} = await import(file);
   return defaultExport;
+}
+
+async function expandPlugins<Plugin extends ProjectPlugin | WorkspacePlugin>(
+  plugins: Iterable<Plugin>,
+  helper: Omit<PluginCreateHelper<Plugin>, 'use'>,
+): Promise<Plugin[]> {
+  const expanded = await Promise.all(
+    [...plugins].map(async (plugin) => {
+      if (plugin.create == null) return plugin;
+
+      const usedPlugins: Plugin[] = [];
+
+      await plugin.create({
+        ...helper,
+        use(...newPlugins: Plugin[]) {
+          for (const newPlugin of newPlugins) {
+            if (newPlugin) usedPlugins.push(newPlugin);
+          }
+        },
+      } as PluginCreateHelper<Plugin> as any);
+
+      return expandPlugins(usedPlugins, helper);
+    }),
+  );
+
+  return expanded.flat() as Plugin[];
 }

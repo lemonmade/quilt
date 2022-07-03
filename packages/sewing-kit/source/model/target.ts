@@ -1,34 +1,9 @@
 import {Runtime} from '../types';
-
-import {Package} from './package';
-import {App} from './app';
-import {Service} from './service';
+import type {Project} from './project';
 
 export class TargetRuntime {
-  static fromProject(project: Service | App | Package) {
-    if (project instanceof Service) {
-      return new TargetRuntime([Runtime.Node]);
-    }
-
-    if (project instanceof App) {
-      return new TargetRuntime([Runtime.Browser]);
-    }
-
-    const runtimes = new Set(project.runtimes ?? []);
-
-    if (project.binaries.length > 0) {
-      runtimes.add(Runtime.Node);
-    }
-
-    for (const entry of project.entries) {
-      if (entry.runtimes) {
-        for (const entryRuntime of entry.runtimes) {
-          runtimes.add(entryRuntime);
-        }
-      }
-    }
-
-    return new TargetRuntime(runtimes);
+  static fromProject(_project: Project) {
+    return new TargetRuntime([]);
   }
 
   readonly runtimes: Set<Runtime>;

@@ -35,7 +35,7 @@ There are many more tasks that are run in a normal development process, but Craf
 
 As a developer using Quilt, you will probably notice Craft mostly by the presence of `quilt.project.ts` and `quilt.workspace.ts` files in your repo. As noted in the [documentation on workspaces and projects](./projects.md), these configuration files let Craft understand the structure of your repo, including the apps, backend services, and packages that may require customized handling for one of the steps documented above.
 
-These files will be executed using [native ES modules in Node](./esmodules.md). They **must** export a default export, which should be an object created by one of the `createWorkspace`, `createApp`, `createService`, or `createPackage` functions from `@quilted/craft`:
+These files will be executed using [native ES modules in Node](./esmodules.md). They **must** export a default export, which should be an object created by one of the `createWorkspace`, `createApp`, `createService`, or `createProject` functions from `@quilted/craft`:
 
 ```ts
 // quilt.project.ts
@@ -65,9 +65,9 @@ In packages, you can declare multiple entries and executables that your package 
 ```ts
 // quilt.project.ts
 
-import {createPackage, Runtime} from '@quilted/craft';
+import {createProject, Runtime} from '@quilted/craft';
 
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   // Only works in Node
   pkg.runtime(Runtime.Node);
 
@@ -150,7 +150,7 @@ export function myPackagePlugin() {
 // In a consuming quilt.project.ts file...
 
 // All good!
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   pkg.use(myPackagePlugin());
 });
 

@@ -1,6 +1,7 @@
 import {createRequire} from 'module';
 
 import type {PluginItem} from '@babel/core';
+import type {Options as BabelPresetEnvOptions} from '@babel/preset-env';
 
 import {createProjectPlugin, createWorkspacePlugin} from '../kit';
 import type {WaterfallHook} from '../kit';
@@ -19,6 +20,11 @@ export interface BabelHooks {
   babelPresets: WaterfallHook<PluginItem[]>;
 
   /**
+   * Options to use for the @babel/preset-env Babel preset.
+   */
+  babelPresetEnvOptions: WaterfallHook<BabelPresetEnvOptions>;
+
+  /**
    * Babel presets to use for this project.
    */
   babelExtensions: WaterfallHook<string[]>;
@@ -28,6 +34,11 @@ export interface BabelHooks {
    * to use for in Babel plugins.
    */
   babelTargets: WaterfallHook<string[]>;
+
+  /**
+   * How Babel’s runtime helpers will be referenced in your build outputs.
+   */
+  babelRuntimeHelpers: WaterfallHook<'runtime' | 'bundled'>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -54,6 +65,8 @@ export function babelHooks() {
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
         babelTargets: waterfall(),
+        babelPresetEnvOptions: waterfall(),
+        babelRuntimeHelpers: waterfall(),
       }));
     },
     develop({hooks}) {
@@ -62,6 +75,8 @@ export function babelHooks() {
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
         babelTargets: waterfall(),
+        babelPresetEnvOptions: waterfall(),
+        babelRuntimeHelpers: waterfall(),
       }));
     },
     test({hooks}) {
@@ -70,6 +85,8 @@ export function babelHooks() {
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
         babelTargets: waterfall(),
+        babelPresetEnvOptions: waterfall(),
+        babelRuntimeHelpers: waterfall(),
       }));
     },
   });
@@ -88,6 +105,8 @@ export function babelWorkspaceHooks() {
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
         babelTargets: waterfall(),
+        babelPresetEnvOptions: waterfall(),
+        babelRuntimeHelpers: waterfall(),
       }));
     },
     develop({hooks}) {
@@ -96,6 +115,8 @@ export function babelWorkspaceHooks() {
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
         babelTargets: waterfall(),
+        babelPresetEnvOptions: waterfall(),
+        babelRuntimeHelpers: waterfall(),
       }));
     },
     test({hooks}) {
@@ -104,6 +125,8 @@ export function babelWorkspaceHooks() {
         babelPresets: waterfall(),
         babelExtensions: waterfall(),
         babelTargets: waterfall(),
+        babelPresetEnvOptions: waterfall(),
+        babelRuntimeHelpers: waterfall(),
       }));
     },
   });
@@ -112,7 +135,7 @@ export function babelWorkspaceHooks() {
 export function babelRollup() {
   return createProjectPlugin({
     name: 'Quilt.Babel.Rollup',
-    build({project, configure}) {
+    build({configure}) {
       configure(
         ({
           extensions,
@@ -120,11 +143,11 @@ export function babelRollup() {
           babelPlugins,
           babelTargets,
           babelExtensions,
+          babelRuntimeHelpers,
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const helpers =
-              project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
+            const helpers = await babelRuntimeHelpers!.run('bundled');
 
             const [
               {babel},
@@ -166,7 +189,7 @@ export function babelRollup() {
         },
       );
     },
-    develop({project, configure}) {
+    develop({configure}) {
       configure(
         ({
           extensions,
@@ -174,11 +197,11 @@ export function babelRollup() {
           babelPlugins,
           babelTargets,
           babelExtensions,
+          babelRuntimeHelpers,
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const helpers =
-              project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
+            const helpers = await babelRuntimeHelpers!.run('bundled');
 
             const [
               {babel},

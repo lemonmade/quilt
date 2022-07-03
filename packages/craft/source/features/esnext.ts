@@ -1,17 +1,11 @@
 import {createRequire} from 'module';
 import {join, dirname, sep as pathSeparator} from 'path';
 
-import {createProjectPlugin, ProjectKind} from '../kit';
-import type {
-  Project,
-  Package,
-  ResolvedHooks,
-  DevelopConfigurationHooksForProject,
-} from '../kit';
+import {createProjectPlugin} from '../kit';
+import type {Project} from '../kit';
 
 import type {} from '../tools/babel';
 import type {} from '../tools/rollup';
-import type {ViteHooks} from '../tools/vite';
 
 export const EXPORT_CONDITION = 'quilt:esnext';
 // Some older packages published with use this condition name, so we
@@ -53,7 +47,7 @@ const require = createRequire(import.meta.url);
  * ```
  */
 export function esnextBuild() {
-  return createProjectPlugin<Package>({
+  return createProjectPlugin({
     name: 'Quilt.ESNextBuild',
     build({project, configure, run}) {
       if (project.packageJson?.private) return;
@@ -139,84 +133,76 @@ export function esnext() {
   return createProjectPlugin({
     name: 'Quilt.ESNextConsumer',
     develop({configure}) {
-      configure(
-        ({
-          vitePlugins,
-          // viteResolveExportConditions,
-          rollupPlugins,
-          rollupNodeExportConditions,
-        }: ResolvedHooks<
-          DevelopConfigurationHooksForProject<Project> & ViteHooks
-        >) => {
-          // Prefer the esnext export condition
-          rollupNodeExportConditions?.((exportConditions) =>
-            Array.from(
-              new Set([
-                EXPORT_CONDITION,
-                LEGACY_EXPORT_CONDITION,
-                ...exportConditions,
-              ]),
-            ),
-          );
+      configure(({vitePlugins, rollupPlugins, rollupNodeExportConditions}) => {
+        // Prefer the esnext export condition
+        rollupNodeExportConditions?.((exportConditions) =>
+          Array.from(
+            new Set([
+              EXPORT_CONDITION,
+              LEGACY_EXPORT_CONDITION,
+              ...exportConditions,
+            ]),
+          ),
+        );
 
-          // Vite has an issue where it passes an invalid `loader` to esbuild
-          // when the entrypoint to a project is a .esnext file. I should open
-          // an issue for this...
-          // viteResolveExportConditions?.((exportConditions) =>
-          //   Array.from(
-          //     new Set([
-          //       EXPORT_CONDITION,
-          //       LEGACY_EXPORT_CONDITION,
-          //       ...exportConditions,
-          //     ]),
-          //   ),
-          // );
+        // Vite has an issue where it passes an invalid `loader` to esbuild
+        // when the entrypoint to a project is a .esnext file. I should open
+        // an issue for this...
+        // viteResolveExportConditions?.((exportConditions) =>
+        //   Array.from(
+        //     new Set([
+        //       EXPORT_CONDITION,
+        //       LEGACY_EXPORT_CONDITION,
+        //       ...exportConditions,
+        //     ]),
+        //   ),
+        // );
 
-          // Add the ESBuild plugin to process .esnext files like source code
-          rollupPlugins?.(async (plugins) => {
-            const {default: esbuild} = await import('rollup-plugin-esbuild');
+        // Add the ESBuild plugin to process .esnext files like source code
+        rollupPlugins?.(async (plugins) => {
+          const {default: esbuild} = await import('rollup-plugin-esbuild');
 
-            return [
-              ...plugins,
-              esbuild({
-                include: /\.esnext$/,
-                // Support very modern features
-                target: 'es2020',
-                // Forces this to run on node_modules
-                exclude: [],
-                loaders: {
-                  [EXTENSION]: 'js',
-                },
-              }),
-            ];
-          });
+          return [
+            ...plugins,
+            esbuild({
+              include: /\.esnext$/,
+              // Support very modern features
+              target: 'es2020',
+              // Forces this to run on node_modules
+              exclude: [],
+              loaders: {
+                [EXTENSION]: 'js',
+              },
+            }),
+          ];
+        });
 
-          vitePlugins?.(async (plugins) => {
-            const {default: esbuild} = await import('rollup-plugin-esbuild');
+        vitePlugins?.(async (plugins) => {
+          const {default: esbuild} = await import('rollup-plugin-esbuild');
 
-            return [
-              ...plugins,
-              esbuild({
-                include: /\.esnext$/,
-                // Support very modern features
-                target: 'es2020',
-                // Forces this to run on node_modules
-                exclude: [],
-                loaders: {
-                  [EXTENSION]: 'jsx',
-                },
-              }),
-            ];
-          });
-        },
-      );
+          return [
+            ...plugins,
+            esbuild({
+              include: /\.esnext$/,
+              // Support very modern features
+              target: 'es2020',
+              // Forces this to run on node_modules
+              exclude: [],
+              loaders: {
+                [EXTENSION]: 'jsx',
+              },
+            }),
+          ];
+        });
+      });
     },
-    build({project, configure}) {
+    build({configure}) {
       configure(
         ({
           babelTargets,
           babelPresets,
           babelPlugins,
+          babelRuntimeHelpers,
           rollupPlugins,
           rollupNodeExportConditions,
         }) => {
@@ -234,7 +220,7 @@ export function esnext() {
           // Add the Babel plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {
             const helpers =
-              project.kind === ProjectKind.Package ? 'runtime' : 'bundled';
+              (await babelRuntimeHelpers?.run('runtime')) ?? 'runtime';
 
             const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
               await Promise.all([
@@ -273,18 +259,18 @@ export function esnext() {
   });
 }
 
-function getEntryFiles({fs, entries, binaries}: Package) {
+function getEntryFiles({fs, entries, binaries}: Project) {
   return [
     ...entries.map((entry) => fs.resolvePath(entry.source)),
     ...binaries.map((binary) => fs.resolvePath(binary.source)),
   ];
 }
 
-function sourceRoot(pkg: Package) {
-  const entries = getEntryFiles(pkg);
+function sourceRoot(project: Project) {
+  const entries = getEntryFiles(project);
 
   if (entries.length === 0) {
-    throw new Error(`No entries for package: ${pkg.name}`);
+    throw new Error(`No entries for package: ${project.name}`);
   }
 
   if (entries.length === 1) {
@@ -292,7 +278,7 @@ function sourceRoot(pkg: Package) {
   }
 
   const [firstEntry, ...otherEntries] = entries;
-  let sharedRoot = pkg.fs.root + pathSeparator;
+  let sharedRoot = project.fs.root + pathSeparator;
 
   for (const segment of firstEntry!
     .replace(sharedRoot, '')
