@@ -1,6 +1,6 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
 import {addRollupOnWarn} from '../tools/rollup';
@@ -48,7 +48,7 @@ export function httpHandler({port: explicitPort}: Options = {}) {
       configure(
         (
           {
-            runtime,
+            // runtime,
             rollupInput,
             rollupInputOptions,
             rollupPlugins,
@@ -61,7 +61,7 @@ export function httpHandler({port: explicitPort}: Options = {}) {
         ) => {
           if (!quiltHttpHandler) return;
 
-          runtime(() => new TargetRuntime([Runtime.Node]));
+          // runtime(() => new TargetRuntime([Runtime.Node]));
 
           // We resolve to a path within the project’s directory
           // so that it can use the app’s node_modules.
@@ -191,7 +191,7 @@ export function httpHandlerDevelopment({
       configure(
         (
           {
-            runtime,
+            // runtime,
             rollupInput,
             rollupPlugins,
             rollupInputOptions,
@@ -218,7 +218,7 @@ export function httpHandlerDevelopment({
             (runtime) => runtime ?? 'process.env',
           );
 
-          runtime?.(() => new TargetRuntime([Runtime.Node]));
+          // runtime?.(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [project.fs.resolvePath(MAGIC_ENTRY_MODULE)]);
 

@@ -7,7 +7,7 @@ import type {
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
-import {createProjectPlugin, Runtime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {
   Project,
   Workspace,
@@ -211,7 +211,7 @@ export async function getRollupNodePlugins(
   project: Project,
   workspace: Workspace,
   {
-    runtime,
+    // runtime,
     extensions,
     rollupNodeBundle,
     rollupNodeExtensions,
@@ -223,7 +223,7 @@ export async function getRollupNodePlugins(
     | ResolvedDevelopProjectConfigurationHooks,
   {bundle: explicitShouldBundle}: RollupNodeOptions = {},
 ) {
-  const targetRuntime = await runtime.run();
+  // const targetRuntime = await runtime.run();
 
   const [
     {default: commonjs},
@@ -239,11 +239,12 @@ export async function getRollupNodePlugins(
     import('rollup-plugin-node-externals'),
     extensions.run(['.mjs', '.cjs', '.js', '.json', '.node']),
     rollupNodeExportConditions!.run(
-      targetRuntime.includes(Runtime.Node)
-        ? ['node', 'module', 'import', 'require', 'default']
-        : targetRuntime.includes(Runtime.Browser)
-        ? ['browser', 'module', 'import', 'require', 'default']
-        : ['module', 'import', 'require', 'default'],
+      ['module', 'import', 'require', 'default'],
+      // targetRuntime.includes(Runtime.Node)
+      //   ? ['node', 'module', 'import', 'require', 'default']
+      //   : targetRuntime.includes(Runtime.Browser)
+      //   ? ['browser', 'module', 'import', 'require', 'default']
+      //   : ['module', 'import', 'require', 'default'],
     ),
   ]);
 

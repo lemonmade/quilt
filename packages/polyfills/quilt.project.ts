@@ -1,25 +1,18 @@
-import {createProject, quiltPackage, Runtime} from '@quilted/craft';
+import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createProject((pkg) => {
-  pkg.entry({source: './source/index'});
-
-  pkg.entry({source: './source/base', name: 'base'});
-  pkg.entry({source: './source/noop', name: 'noop'});
-  pkg.entry({
-    source: './source/fetch.browser',
-    name: 'fetch.browser',
-    runtime: Runtime.Browser,
-  });
-  pkg.entry({
-    source: './source/fetch.node',
-    name: 'fetch.node',
-    runtime: Runtime.Node,
-  });
-  pkg.entry({
-    source: './source/abort-controller',
-    name: 'abort-controller',
-    runtime: Runtime.Node,
-  });
-
-  pkg.use(quiltPackage());
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      // Need to manually declare these because Quilt can’t determine them automatically
+      // from the complex export conditions of this package.
+      entries: {
+        '.': './source/index.ts',
+        base: './source/base.ts',
+        noop: './source/noop.ts',
+        'fetch.browser': './source/fetch.browser.ts',
+        'fetch.node': './source/fetch.node.ts',
+        'abort-controller': './source/abort-controller.ts',
+      },
+    }),
+  );
 });

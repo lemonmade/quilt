@@ -11,7 +11,7 @@ export type {
 export {Project, Workspace, TargetRuntime} from './model';
 export type {ProjectOptions, WorkspaceOptions} from './model';
 
-export {Environment, Runtime, Task} from './types';
+export {Environment, Task} from './types';
 export type {
   Log,
   Loggable,

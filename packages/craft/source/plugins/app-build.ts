@@ -7,7 +7,7 @@ import type {Config as BrowserslistConfig} from 'browserslist';
 import type {} from '../tools/postcss';
 import type {} from '../features/async';
 
-import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
+import {createProjectPlugin} from '../kit';
 
 import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
@@ -93,7 +93,7 @@ export function appBuild({
       configure(
         (
           {
-            runtime,
+            // runtime,
             targets,
             outputDirectory,
             postcssPlugins,
@@ -153,7 +153,7 @@ export function appBuild({
 
           if (!browserTargets) return;
 
-          runtime(() => new TargetRuntime([Runtime.Browser]));
+          // runtime(() => new TargetRuntime([Runtime.Browser]));
 
           const targetFilenamePart = `.${browserTargets.name}`;
 

@@ -1,5 +1,5 @@
 {
-  "extends": "./pkg.json",
+  "extends": "./project.json",
   "compilerOptions": {
     "rootDir": "source",
     "outDir": "build/typescript"

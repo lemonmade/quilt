@@ -1,7 +1,10 @@
-import {createProject, quiltPackage, Runtime} from '@quilted/craft';
+import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createProject((pkg) => {
-  pkg.runtime(Runtime.Node);
-  pkg.binary({name: 'create-quilt', source: './source/index'});
-  pkg.use(quiltPackage({build: {bundle: true}}));
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      binaries: {'create-quilt': './source/index.ts'},
+      build: {bundle: true},
+    }),
+  );
 });

@@ -3,7 +3,7 @@ import {createProjectPlugin} from '../kit';
 import type {} from '../tools/babel';
 import type {} from '../tools/rollup';
 
-export const EXPORT_CONDITION = 'quilt:from-source';
+export const EXPORT_CONDITION = 'quilt:source';
 
 /**
  * Adds configuration to various tools to prefer the `from-source` build

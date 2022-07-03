@@ -13,9 +13,7 @@
   },
   "license": "MIT",
   "exports": {
-    "./app.json": "./app.json",
-    "./pkg.json": "./pkg.json",
-    "./service.json": "./service.json",
+    "./project.json": "./project.json",
     "./workspace.json": "./workspace.json"
   },
   "peerDependencies": {
@@ -29,7 +27,7 @@
   "sideEffects": false,
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/package"
+      "@quilted/eslint-config/project"
     ]
   }
 }

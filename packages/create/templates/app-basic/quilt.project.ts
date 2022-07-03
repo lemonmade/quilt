@@ -1,11 +1,11 @@
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
-  app.use(
+export default createProject((project) => {
+  project.use(
     quiltApp({
+      entry: './App.tsx',
       server: {
-        entry: './server',
+        entry: './server.tsx',
       },
     }),
   );

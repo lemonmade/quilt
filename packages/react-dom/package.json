@@ -17,19 +17,19 @@
   },
   "exports": {
     ".": {
-      "quilt:from-source": "./source/index.ts",
+      "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
-      "quilt:from-source": "./source/server.ts",
+      "quilt:source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
       "import": "./build/esm/server.mjs",
       "require": "./build/cjs/server.cjs"
     },
     "./test-utils": {
-      "quilt:from-source": "./source/test-utils.ts",
+      "quilt:source": "./source/test-utils.ts",
       "quilt:esnext": "./build/esnext/test-utils.esnext",
       "import": "./build/esm/test-utils.mjs",
       "require": "./build/cjs/test-utils.cjs"
@@ -52,7 +52,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/package"
+      "@quilted/eslint-config/project"
     ]
   }
 }

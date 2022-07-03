@@ -1,11 +1,14 @@
 /* eslint @typescript-eslint/no-empty-interface: off */
 
-import {Runtime, createProjectPlugin, createWorkspacePlugin} from './kit';
+import {createProjectPlugin, createWorkspacePlugin} from './kit';
 import type {Project} from './kit';
 import {createProject, createWorkspace} from './configuration';
 
-import {packageBuild} from './features/packages';
-import type {Options as PackageBuildOptions} from './features/packages';
+import {packageBase, packageBuild} from './features/packages';
+import type {
+  Options as PackageBaseOptions,
+  BuildOptions as PackageBuildOptions,
+} from './features/packages';
 import {esnextBuild, esnext} from './features/esnext';
 import {fromSource} from './features/from-source';
 import {react} from './features/react';
@@ -74,7 +77,6 @@ export type {} from './plugins/http-handler';
 // create many plugins without having to grab types from the
 // (significantly more complex) `@quilted/craft/kit` entry.
 export {
-  Runtime,
   createProjectPlugin,
   createWorkspacePlugin,
   createProject,
@@ -288,7 +290,8 @@ export function quiltService({
 }
 
 // TODO
-export interface PackageOptions {
+export interface PackageOptions
+  extends Pick<PackageBaseOptions, 'entries' | 'binaries'> {
   build?: boolean | {bundle?: RollupNodeOptions['bundle']};
   react?: boolean;
   graphql?: boolean;
@@ -300,6 +303,8 @@ export interface PackageOptions {
  * and both standard and `esnext` builds, if the package is public.
  */
 export function quiltPackage({
+  entries,
+  binaries,
   build = true,
   react: useReact = false,
   graphql: useGraphQL = false,
@@ -324,6 +329,7 @@ export function quiltPackage({
         rollupNode({
           bundle: typeof build === 'boolean' ? undefined : build.bundle,
         }),
+        packageBase({entries, binaries}),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),

@@ -4,6 +4,8 @@ import type {Project, Workspace} from '../kit';
 import type {} from '../tools/rollup';
 import type {} from '../tools/vite';
 
+import {sourceEntriesForProject} from '../features/packages';
+
 export function aliasWorkspacePackages() {
   return createProjectPlugin({
     name: 'Quilt.AliasWorkspacePackages',
@@ -55,40 +57,11 @@ async function getAliases(project: Project, workspace: Workspace) {
 
     if (name == null || !project.hasDependency(name, {all: true})) continue;
 
-    const entries: [string, string][] = [];
+    const packageEntries = await sourceEntriesForProject(otherProject);
 
-    for (const [exportPath, exportCondition] of Object.entries(
-      (project.packageJson?.raw.exports ?? {}) as Record<
-        string,
-        string | Record<string, string>
-      >,
-    )) {
-      const targetFile =
-        typeof exportCondition === 'string'
-          ? exportCondition
-          : exportCondition['quilt:from-source'] ??
-            Object.values(exportCondition).pop()!;
-
-      const sourceFile = targetFile.includes('/build/')
-        ? (
-            await otherProject.fs.glob(
-              targetFile.replace('/build/', '/*/').replace(/\.[\w]+$/, '.*'),
-              {ignore: [otherProject.fs.resolvePath(targetFile)]},
-            )
-          )[0]!
-        : otherProject.fs.resolvePath(targetFile);
-
-      const exportEntry = `${name}${
-        exportPath === './' ? '' : `${exportPath.slice(2)}`
-      }`;
-
-      entries.push([exportEntry, sourceFile]);
-    }
-
-    for (const [exportEntry, sourceFile] of entries.sort(
-      ([entryOne], [entryTwo]) => entryTwo.length - entryOne.length,
-    )) {
-      aliases[exportEntry] = sourceFile;
+    for (const [entry, source] of Object.entries(packageEntries)) {
+      const aliasEntry = `${name}${entry === '.' ? '' : `/${entry.slice(2)}`}`;
+      aliases[aliasEntry] = source;
     }
   }
 

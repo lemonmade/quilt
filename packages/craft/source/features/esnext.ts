@@ -54,18 +54,24 @@ export function esnextBuild() {
 
       configure(
         (
-          {outputDirectory, rollupInput, rollupPlugins, rollupOutputs},
+          {
+            outputDirectory,
+            packageEntries,
+            rollupInput,
+            rollupPlugins,
+            rollupOutputs,
+          },
           {esnext = false},
         ) => {
           if (!esnext) return;
 
           outputDirectory((output) => join(output, 'esnext'));
 
-          rollupInput?.(() => {
-            return Promise.all(
-              project.entries.map((entry) =>
-                project.fs.resolvePath(entry.source),
-              ),
+          rollupInput?.(async () => {
+            const entries = await packageEntries!.run();
+
+            return Object.values(entries).map((file) =>
+              project.fs.resolvePath(file),
             );
           });
 
@@ -86,7 +92,10 @@ export function esnextBuild() {
               format: 'esm',
               dir: await outputDirectory.run(project.fs.buildPath()),
               preserveModules: true,
-              preserveModulesRoot: sourceRoot(project),
+              preserveModulesRoot: sourceRoot(
+                project,
+                await rollupInput!.run([]),
+              ),
               entryFileNames: `[name][assetExtname]${EXTENSION}`,
               assetFileNames: `[name].[ext]`,
               chunkFileNames: `[name]${EXTENSION}`,
@@ -259,25 +268,21 @@ export function esnext() {
   });
 }
 
-function getEntryFiles({fs, entries, binaries}: Project) {
-  return [
-    ...entries.map((entry) => fs.resolvePath(entry.source)),
-    ...binaries.map((binary) => fs.resolvePath(binary.source)),
-  ];
-}
-
-function sourceRoot(project: Project) {
-  const entries = getEntryFiles(project);
-
+function sourceRoot(project: Project, entries: string[]) {
   if (entries.length === 0) {
-    throw new Error(`No entries for package: ${project.name}`);
+    return project.fs.root + pathSeparator;
   }
 
   if (entries.length === 1) {
     return dirname(entries[0]!);
   }
 
-  const [firstEntry, ...otherEntries] = entries;
+  const [firstEntry, ...denormalizedOtherEntries] = entries;
+
+  const otherEntries = denormalizedOtherEntries.map((entry) =>
+    project.fs.resolvePath(entry),
+  );
+
   let sharedRoot = project.fs.root + pathSeparator;
 
   for (const segment of firstEntry!

@@ -7,7 +7,7 @@ import {stripIndent} from 'common-tags';
 import type {HttpState, AssetBuild} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
-import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
 import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
@@ -191,7 +191,7 @@ export function appStatic({
       configure(
         (
           {
-            runtime,
+            // runtime,
             targets,
             postcssPlugins,
             postcssProcessOptions,
@@ -206,7 +206,7 @@ export function appStatic({
         ) => {
           if (!quiltAppStatic) return;
 
-          runtime?.(() => new TargetRuntime([Runtime.Node]));
+          // runtime?.(() => new TargetRuntime([Runtime.Node]));
           targets?.(() => ['current node']);
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);

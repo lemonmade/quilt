@@ -15,126 +15,126 @@
   "exports": {
     ".": {
       "types": "./build/typescript/index.d.ts",
-      "quilt:from-source": "./source/index.ts",
+      "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./server": {
       "types": "./build/typescript/server/index.d.ts",
-      "quilt:from-source": "./source/server/index.ts",
+      "quilt:source": "./source/server/index.ts",
       "quilt:esnext": "./build/esnext/server/index.esnext",
       "import": "./build/esm/server/index.mjs",
       "require": "./build/cjs/server/index.cjs"
     },
     "./static": {
       "types": "./build/typescript/static/index.d.ts",
-      "quilt:from-source": "./source/static/index.tsx",
+      "quilt:source": "./source/static/index.tsx",
       "quilt:esnext": "./build/esnext/static/index.esnext",
       "import": "./build/esm/static/index.mjs",
       "require": "./build/cjs/static/index.cjs"
     },
     "./html": {
       "types": "./build/typescript/html.d.ts",
-      "quilt:from-source": "./source/html.ts",
+      "quilt:source": "./source/html.ts",
       "quilt:esnext": "./build/esnext/html.esnext",
       "import": "./build/esm/html.mjs",
       "require": "./build/cjs/html.cjs"
     },
     "./email": {
       "types": "./build/typescript/email.d.ts",
-      "quilt:from-source": "./source/email.ts",
+      "quilt:source": "./source/email.ts",
       "quilt:esnext": "./build/esnext/email.esnext",
       "import": "./build/esm/email.mjs",
       "require": "./build/cjs/email.cjs"
     },
     "./global": {
       "types": "./build/typescript/global.d.ts",
-      "quilt:from-source": "./source/global.ts",
+      "quilt:source": "./source/global.ts",
       "quilt:esnext": "./build/esnext/global.esnext",
       "import": "./build/esm/global.mjs",
       "require": "./build/cjs/global.cjs"
     },
     "./http": {
       "types": "./build/typescript/http.d.ts",
-      "quilt:from-source": "./source/http.ts",
+      "quilt:source": "./source/http.ts",
       "quilt:esnext": "./build/esnext/http.esnext",
       "import": "./build/esm/http.mjs",
       "require": "./build/cjs/http.cjs"
     },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
-      "quilt:from-source": "./source/testing.ts",
+      "quilt:source": "./source/testing.ts",
       "quilt:esnext": "./build/esnext/testing.esnext",
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"
     },
     "./env": {
       "types": "./build/typescript/env.d.ts",
-      "quilt:from-source": "./source/env.ts",
+      "quilt:source": "./source/env.ts",
       "quilt:esnext": "./build/esnext/env.esnext",
       "import": "./build/esm/env.mjs",
       "require": "./build/cjs/env.cjs"
     },
     "./matchers": {
       "types": "./build/typescript/matchers.d.ts",
-      "quilt:from-source": "./source/matchers.ts",
+      "quilt:source": "./source/matchers.ts",
       "quilt:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
     },
     "./http-handlers/node": {
       "types": "./build/typescript/http-handlers/node.d.ts",
-      "quilt:from-source": "./source/http-handlers/node.ts",
+      "quilt:source": "./source/http-handlers/node.ts",
       "quilt:esnext": "./build/esnext/http-handlers/node.esnext",
       "import": "./build/esm/http-handlers/node.mjs",
       "require": "./build/cjs/http-handlers/node.cjs"
     },
     "./http-handlers": {
       "types": "./build/typescript/http-handlers/index.d.ts",
-      "quilt:from-source": "./source/http-handlers/index.ts",
+      "quilt:source": "./source/http-handlers/index.ts",
       "quilt:esnext": "./build/esnext/http-handlers/index.esnext",
       "import": "./build/esm/http-handlers/index.mjs",
       "require": "./build/cjs/http-handlers/index.cjs"
     },
     "./threads": {
       "types": "./build/typescript/threads.d.ts",
-      "quilt:from-source": "./source/threads.ts",
+      "quilt:source": "./source/threads.ts",
       "quilt:esnext": "./build/esnext/threads.esnext",
       "import": "./build/esm/threads.mjs",
       "require": "./build/cjs/threads.cjs"
     },
     "./polyfills/base": {
       "types": "./build/typescript/polyfills/base.d.ts",
-      "quilt:from-source": "./source/polyfills/base.ts",
+      "quilt:source": "./source/polyfills/base.ts",
       "quilt:esnext": "./build/esnext/polyfills/base.esnext",
       "import": "./build/esm/polyfills/base.mjs",
       "require": "./build/cjs/polyfills/base.cjs"
     },
     "./polyfills/crypto": {
       "types": "./build/typescript/polyfills/crypto.d.ts",
-      "quilt:from-source": "./source/polyfills/crypto.ts",
+      "quilt:source": "./source/polyfills/crypto.ts",
       "quilt:esnext": "./build/esnext/polyfills/crypto.esnext",
       "import": "./build/esm/polyfills/crypto.mjs",
       "require": "./build/cjs/polyfills/crypto.cjs"
     },
     "./polyfills/fetch": {
       "types": "./build/typescript/polyfills/fetch.d.ts",
-      "quilt:from-source": "./source/polyfills/fetch.ts",
+      "quilt:source": "./source/polyfills/fetch.ts",
       "quilt:esnext": "./build/esnext/polyfills/fetch.esnext",
       "import": "./build/esm/polyfills/fetch.mjs",
       "require": "./build/cjs/polyfills/fetch.cjs"
     },
     "./polyfills/abort-controller": {
       "types": "./build/typescript/polyfills/abort-controller.d.ts",
-      "quilt:from-source": "./source/polyfills/abort-controller.ts",
+      "quilt:source": "./source/polyfills/abort-controller.ts",
       "quilt:esnext": "./build/esnext/polyfills/abort-controller.esnext",
       "import": "./build/esm/polyfills/abort-controller.mjs",
       "require": "./build/cjs/polyfills/abort-controller.cjs"
     },
     "./polyfills/noop": {
       "types": "./build/typescript/polyfills/noop.d.ts",
-      "quilt:from-source": "./source/polyfills/noop.ts",
+      "quilt:source": "./source/polyfills/noop.ts",
       "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
       "import": "./build/esm/polyfills/noop.mjs",
       "require": "./build/cjs/polyfills/noop.cjs"
@@ -265,8 +265,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/react",
-      "@quilted/eslint-config/package"
+      "@quilted/eslint-config/project",
+      "@quilted/eslint-config/react"
     ]
   }
 }

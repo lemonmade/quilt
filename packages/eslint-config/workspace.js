@@ -1,3 +1,6 @@
 module.exports = {
-  extends: ['./core.js', './node.js', 'prettier'],
+  extends: ['./core.js', 'prettier'],
+  env: {
+    node: true,
+  },
 };

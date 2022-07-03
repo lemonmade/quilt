@@ -7,7 +7,7 @@ import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
-import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {
   Project,
   ResolvedOptions,
@@ -102,7 +102,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
 
   return (
     {
-      runtime,
+      // runtime,
       postcssPlugins,
       postcssProcessOptions,
       rollupInput,
@@ -127,7 +127,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
 
     quiltRuntimeEnvironmentVariables?.((runtime) => runtime ?? 'process.env');
 
-    runtime(() => new TargetRuntime([Runtime.Node]));
+    // runtime(() => new TargetRuntime([Runtime.Node]));
 
     const content = entry
       ? httpHandler

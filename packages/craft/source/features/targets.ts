@@ -1,7 +1,6 @@
 import {createRequire} from 'module';
 
 import {
-  Runtime,
   DiagnosticError,
   createProjectPlugin,
   createWorkspacePlugin,
@@ -65,7 +64,7 @@ export function targets() {
 
       configure(
         ({
-          runtime,
+          // runtime,
           targets,
           targetName,
           babelTargets,
@@ -76,10 +75,10 @@ export function targets() {
           targets!(async (targets) => {
             if (targets.length > 0) return targets;
 
-            const resolvedRuntime = await runtime!.run();
+            // const resolvedRuntime = await runtime!.run();
 
-            const useNodeTarget = resolvedRuntime.includes(Runtime.Node);
-            const useBrowserTarget = resolvedRuntime.includes(Runtime.Browser);
+            const useNodeTarget = true; //resolvedRuntime.includes(Runtime.Node);
+            const useBrowserTarget = true; //resolvedRuntime.includes(Runtime.Browser);
 
             if (useNodeTarget) {
               const engines: {node?: string} | undefined =
@@ -179,57 +178,52 @@ export function targets() {
         targetName: waterfall(),
       }));
 
-      configure(
-        ({runtime, targets, babelTargets, babelPresets, postcssPlugins}) => {
-          targets!(async (targets) => {
-            if (targets.length > 0) return targets;
+      configure(({targets, babelTargets, babelPresets, postcssPlugins}) => {
+        targets!(async (targets) => {
+          if (targets.length > 0) return targets;
 
-            const resolvedRuntime = await runtime!.run();
+          // const resolvedRuntime = await runtime!.run();
 
-            const useNodeTarget = resolvedRuntime.includes(Runtime.Node);
-            const useBrowserTarget = resolvedRuntime.includes(Runtime.Browser);
+          const useNodeTarget = true; //resolvedRuntime.includes(Runtime.Node);
+          const useBrowserTarget = true; //resolvedRuntime.includes(Runtime.Browser);
 
-            if (useNodeTarget) {
-              targets.push('current node');
-            }
+          if (useNodeTarget) {
+            targets.push('current node');
+          }
 
-            if (useBrowserTarget) {
-              targets.push('last 1 major version');
-            }
+          if (useBrowserTarget) {
+            targets.push('last 1 major version');
+          }
 
-            return targets;
-          });
+          return targets;
+        });
 
-          babelTargets?.(() => targets!.run([]));
-          babelPresets?.((presets) => [
-            [
-              require.resolve('@babel/preset-env'),
-              {
-                corejs: '3.15',
-                useBuiltIns: 'usage',
-                bugfixes: true,
-                shippedProposals: true,
-              },
-            ],
-            ...presets,
-          ]);
+        babelTargets?.(() => targets!.run([]));
+        babelPresets?.((presets) => [
+          [
+            require.resolve('@babel/preset-env'),
+            {
+              corejs: '3.15',
+              useBuiltIns: 'usage',
+              bugfixes: true,
+              shippedProposals: true,
+            },
+          ],
+          ...presets,
+        ]);
 
-          postcssPlugins?.(async (plugins) => {
-            const [{default: postcssPresetEnv}, resolvedTargets] =
-              await Promise.all([
-                import('postcss-preset-env'),
-                targets!.run([]),
-              ]);
+        postcssPlugins?.(async (plugins) => {
+          const [{default: postcssPresetEnv}, resolvedTargets] =
+            await Promise.all([import('postcss-preset-env'), targets!.run([])]);
 
-            return [
-              postcssPresetEnv({
-                browsers: resolvedTargets,
-              }) as any,
-              ...plugins,
-            ];
-          });
-        },
-      );
+          return [
+            postcssPresetEnv({
+              browsers: resolvedTargets,
+            }) as any,
+            ...plugins,
+          ];
+        });
+      });
     },
     test({hooks, configure}) {
       hooks<TargetHooks>(({waterfall}) => ({

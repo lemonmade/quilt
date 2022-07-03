@@ -269,7 +269,7 @@ async function normalizeConfigurationFile(file: string) {
     // some packages that resolves to source code. This allows us to
     // use those packages for the build, without having to build them first.
     if (fromSource) {
-      exportConditions.unshift('quilt:from-source');
+      exportConditions.unshift('quilt:source');
     }
 
     const bundle = await rollup({

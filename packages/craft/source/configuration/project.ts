@@ -37,9 +37,6 @@ function createProjectConfigurationBuilder({
     file,
     fs,
     packageJson,
-    entry() {},
-    runtime() {},
-    binary() {},
     name(newName) {
       name = newName;
       return builder;

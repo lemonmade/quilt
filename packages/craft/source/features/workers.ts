@@ -4,7 +4,7 @@ import type {InputOptions, OutputOptions, Plugin} from 'rollup';
 
 import type {Options as BabelOptions} from '@quilted/workers/babel';
 
-import {createProjectPlugin, Runtime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {WaterfallHook, ResolvedHooks} from '../kit';
 
 import type {BabelHooks} from '../tools/babel';
@@ -67,8 +67,9 @@ export function workers() {
       configure((configuration) => {
         addConfiguration(configuration, {
           noop: async () => {
-            const resolvedRuntime = await configuration.runtime.run();
-            return !resolvedRuntime.includes(Runtime.Browser);
+            return false;
+            // const resolvedRuntime = await configuration.runtime.run();
+            // return !resolvedRuntime.includes(Runtime.Browser);
           },
         });
       });
@@ -88,8 +89,9 @@ export function workers() {
       configure((configuration) => {
         addConfiguration(configuration, {
           noop: async () => {
-            const resolvedRuntime = await configuration.runtime.run();
-            return !resolvedRuntime.includes(Runtime.Browser);
+            return false;
+            // const resolvedRuntime = await configuration.runtime.run();
+            // return !resolvedRuntime.includes(Runtime.Browser);
           },
         });
       });
