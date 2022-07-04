@@ -152,7 +152,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         {packageDirectory},
         {default: alias},
         allNecessaryFeatures,
-        // resolvedRuntime,
+        resolvedRuntime,
       ] = await Promise.all([
         import('pkg-dir'),
         import('@rollup/plugin-alias'),
@@ -176,7 +176,11 @@ export function polyfills({features, package: packageName}: Options = {}) {
       const polyfillPlugin = await polyfillRollup({
         package: packageName,
         features: featuresNeedingPolyfills,
-        target: await browserslistTargets?.run([]),
+        target: resolvedRuntime.some((runtime) => runtime.target === 'browser')
+          ? await browserslistTargets?.run([])
+          : resolvedRuntime.some((runtime) => runtime.target === 'node')
+          ? 'node'
+          : await browserslistTargets?.run([]),
       });
 
       return [

@@ -6,34 +6,30 @@ jest.setTimeout(20_000);
 describe('app builds', () => {
   describe('environment variables', () => {
     it('inlines environment variables specified in the configuration file', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
         const builder = 'Chris';
 
         await fs.write({
           'quilt.project.ts': stripIndent`
-              import {createProject, quiltApp} from '@quilted/craft';
-              import {addInternalExportCondition} from '../../common/craft';
-              
-              export default createProject((project) => {
-                project.use(quiltApp({
-                  env: {inline: ['BUILDER']},
-                }));
-                project.use(addInternalExportCondition());
-              });
-            `,
-          'foundation/Routes.tsx': stripIndent`
-              import Env from '@quilted/quilt/env';
-              import {useRoutes} from '@quilted/quilt';
-              
-              export function Routes() {
-                return useRoutes([{match: '/', render: () => <Start />}]);
-              }
-              
-              function Start() {
-                return <div>Hello, {Env.BUILDER}!</div>;
-              }
-            `,
+            import {createProject, quiltApp} from '@quilted/craft';
+            import {addInternalExportCondition} from '../../common/craft';
+            
+            export default createProject((project) => {
+              project.use(quiltApp({
+                entry: './App.tsx',
+                env: {inline: ['BUILDER']},
+              }));
+              project.use(addInternalExportCondition());
+            });
+          `,
+          'App.tsx': stripIndent`
+            import Env from '@quilted/quilt/env';
+
+            export default function App() {
+              return <div>Hello, {Env.BUILDER}!</div>;
+            }
+          `,
         });
 
         const {page} = await buildAppAndOpenPage(workspace, {
@@ -50,19 +46,14 @@ describe('app builds', () => {
     });
 
     it('automatically inlines a MODE environment variable', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
+          'App.tsx': stripIndent`
             import Env from '@quilted/quilt/env';
-            import {useRoutes} from '@quilted/quilt';
             
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+            export default function App() {
               return <div>{Env.MODE}</div>;
             }
           `,
@@ -77,22 +68,16 @@ describe('app builds', () => {
     });
 
     it('automatically replaces process.env.NODE_ENV with the MODE environment variable', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-              import {useRoutes} from '@quilted/quilt';
-              
-              export function Routes() {
-                return useRoutes([{match: '/', render: () => <Start />}]);
-              }
-              
-              function Start() {
-                const nodeEnv = process.env.NODE_ENV;
-                return <div>NODE_ENV: {nodeEnv}</div>;
-              }
-            `,
+          'App.tsx': stripIndent`
+            export default function App() {
+              const nodeEnv = process.env.NODE_ENV;
+              return <div>NODE_ENV: {nodeEnv}</div>;
+            }
+          `,
         });
 
         const {page} = await buildAppAndOpenPage(workspace, {
@@ -104,7 +89,7 @@ describe('app builds', () => {
     });
 
     it('loads .env files for production builds', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         await fs.write({
@@ -127,15 +112,10 @@ describe('app builds', () => {
               project.use(addInternalExportCondition());
             });
           `,
-          'foundation/Routes.tsx': stripIndent`
+          'App.tsx': stripIndent`
             import Env from '@quilted/quilt/env';
-            import {useRoutes} from '@quilted/quilt';
             
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+            export default function App() {
               return <div>{Env.FROM_ENV}{Env.FROM_ENV_LOCAL}{Env.FROM_ENV_MODE}{Env.FROM_ENV_MODE_LOCAL}</div>;
             }
           `,
@@ -150,39 +130,34 @@ describe('app builds', () => {
     });
 
     it('inlines environment variables into the app server', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
         const builder = 'Chris';
 
         await fs.write({
           '.env': `BUILDER=${builder}`,
           'quilt.project.ts': stripIndent`
-              import {createProject, quiltApp} from '@quilted/craft';
-              import {addInternalExportCondition} from '../../common/craft';
-              
-              export default createProject((project) => {
-                project.use(quiltApp({
-                  server: {
-                    env: {inline: ['BUILDER']},
-                  },
-                }));
-                project.use(addInternalExportCondition());
-              });
-            `,
-          'foundation/Routes.tsx': stripIndent`
-              import Env from '@quilted/quilt/env';
-              import {useRoutes} from '@quilted/quilt';
-              import {useSerialized} from '@quilted/quilt/html';
-              
-              export function Routes() {
-                return useRoutes([{match: '/', render: () => <Start />}]);
-              }
-              
-              function Start() {
-                const builder = useSerialized('Builder', Env.BUILDER);
-                return <div>Hello, {builder}!</div>;
-              }
-            `,
+            import {createProject, quiltApp} from '@quilted/craft';
+            import {addInternalExportCondition} from '../../common/craft';
+            
+            export default createProject((project) => {
+              project.use(quiltApp({
+                server: {
+                  env: {inline: ['BUILDER']},
+                },
+              }));
+              project.use(addInternalExportCondition());
+            });
+          `,
+          'App.tsx': stripIndent`
+            import Env from '@quilted/quilt/env';
+            import {useSerialized} from '@quilted/quilt/html';
+            
+            export default function App() {
+              const builder = useSerialized('Builder', Env.BUILDER);
+              return <div>Hello, {builder}!</div>;
+            }
+          `,
         });
 
         const {page} = await buildAppAndOpenPage(workspace, {

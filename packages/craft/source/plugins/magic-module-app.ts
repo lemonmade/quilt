@@ -41,7 +41,8 @@ function rollupPlugin(getEntry: () => Promise<string>): Plugin {
     },
     async load(source) {
       if (source === MAGIC_MODULE_APP_COMPONENT) {
-        return `export {default} from ${JSON.stringify(await getEntry())}`;
+        const entry = await getEntry();
+        return `export {default} from ${JSON.stringify(entry)}`;
       }
     },
   };

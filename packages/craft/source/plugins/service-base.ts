@@ -25,23 +25,27 @@ export function serviceBase({entry}: Options = {}) {
     build({hooks, configure, project}) {
       hooks<ServiceBaseConfigurationHooks>(({waterfall}) => ({
         quiltServiceEntry: waterfall({
-          default: () => entry ?? getEntryForProject(project),
+          default: () =>
+            entry ? project.fs.resolvePath(entry) : getEntryForProject(project),
         }),
       }));
 
-      configure(({runtimes}) => {
+      configure(({runtimes, quiltServiceEntry, quiltHttpHandlerEntry}) => {
         runtimes(() => [{target: 'node'}]);
+        quiltHttpHandlerEntry?.(() => quiltServiceEntry!.run());
       });
     },
     develop({hooks, configure, project}) {
       hooks<ServiceBaseConfigurationHooks>(({waterfall}) => ({
         quiltServiceEntry: waterfall({
-          default: () => entry ?? getEntryForProject(project),
+          default: () =>
+            entry ? project.fs.resolvePath(entry) : getEntryForProject(project),
         }),
       }));
 
-      configure(({runtimes}) => {
+      configure(({runtimes, quiltServiceEntry, quiltHttpHandlerEntry}) => {
         runtimes(() => [{target: 'node'}]);
+        quiltHttpHandlerEntry?.(() => quiltServiceEntry!.run());
       });
     },
   });

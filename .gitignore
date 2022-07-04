@@ -4,3 +4,4 @@ node_modules/
 .DS_STORE
 packages/*/bin/
 *.log
+tests/e2e/output/

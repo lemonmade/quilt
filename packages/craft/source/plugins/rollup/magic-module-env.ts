@@ -56,22 +56,23 @@ async function createEnvModuleContent(
     if (inlineVariable in inlineEnv) continue;
     const value = process.env[inlineVariable] ?? env[inlineVariable];
     if (value == null) continue;
-    inlineEnv[inlineVariable] = value;
+    inlineEnv[inlineVariable] =
+      typeof value === 'string' &&
+      value[0] === '"' &&
+      value[value.length - 1] === '"'
+        ? JSON.parse(value)
+        : value;
   }
 
   return stripIndent`
     const runtime = (${runtime ?? '{}'});
-    const inline = JSON.parse(${JSON.stringify(JSON.stringify(env))});
+    const inline = JSON.parse(${JSON.stringify(JSON.stringify(inlineEnv))});
 
     const Env = new Proxy(
       {},
       {
         get(_, property) {
-          const value = runtime[property] ?? inline[property];
-          
-          return typeof value === 'string' && value[0] === '"' && value[value.length - 1] === '"'
-            ? JSON.parse(value)
-            : value;
+          return runtime[property] ?? inline[property];
         },
       },
     );

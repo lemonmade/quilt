@@ -120,20 +120,25 @@ export async function loadWorkspace(
   // we do one per configuration file in this case. We’ll temporarily
   // remove the limit and reset it later.
 
-  let loadedConfigurations: ConfigurationResult[];
+  const loadedConfigurations: ConfigurationResult[] = rootConfiguration
+    ? [rootConfiguration]
+    : [];
   const maxListeners = process.getMaxListeners();
 
   try {
     process.setMaxListeners(Infinity);
-    loadedConfigurations = (
-      await Promise.all(configFiles.map((config) => loadConfig(config)))
-    ).filter((config) => Boolean(config)) as typeof loadedConfigurations;
+
+    for (const loadedConfiguration of await Promise.all(
+      configFiles.map((config) => loadConfig(config)),
+    )) {
+      if (!loadedConfiguration) continue;
+      loadedConfigurations.push(loadedConfiguration);
+    }
   } finally {
     process.setMaxListeners(maxListeners);
   }
 
-  const workspaceConfigurations: ConfigurationResult[] =
-    rootConfiguration?.kind === 'workspace' ? [rootConfiguration] : [];
+  const workspaceConfigurations: ConfigurationResult[] = [];
 
   for (const configuration of loadedConfigurations) {
     if (
@@ -148,7 +153,7 @@ export async function loadWorkspace(
     // needs a better error, showing files/ what workspace plugins exist
     throw new DiagnosticError({
       title: `Multiple workspace configurations found`,
-      content: `Found ${workspaceConfigurations.length} workspace configurations. Only one quilt config can declare workspace plugins and/ or use the createWorkspace() utility from @quilted/craft`,
+      content: `Found ${workspaceConfigurations.length} workspace configurations. Only one quilt config can declare workspace plugins in your entire project.`,
     });
   }
 

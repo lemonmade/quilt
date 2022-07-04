@@ -24,14 +24,16 @@ export function appBase({entry}: Options = {}) {
     build({hooks, project}) {
       hooks<AppBaseConfigurationHooks>(({waterfall}) => ({
         quiltAppEntry: waterfall({
-          default: () => entry ?? getEntryForProject(project),
+          default: () =>
+            entry ? project.fs.resolvePath(entry) : getEntryForProject(project),
         }),
       }));
     },
     develop({hooks, project}) {
       hooks<AppBaseConfigurationHooks>(({waterfall}) => ({
         quiltAppEntry: waterfall({
-          default: () => entry ?? getEntryForProject(project),
+          default: () =>
+            entry ? project.fs.resolvePath(entry) : getEntryForProject(project),
         }),
       }));
     },
