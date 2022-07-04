@@ -75,6 +75,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
       configure(
         (
           {
+            runtimes,
             babelPlugins,
             babelPresets,
             babelExtensions,
@@ -85,6 +86,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             viteServerOptions,
             viteOptimizeDepsExclude,
             rollupPlugins,
+            quiltAppEntry,
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerEntryContent,
@@ -96,8 +98,10 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             quiltEnvModuleContent,
             quiltHttpHandlerRuntimeContent,
           },
-          {quiltHttpHandler = false},
+          {quiltHttpHandler = false, quiltAppServer = false},
         ) => {
+          runtimes(() => [{target: quiltAppServer ? 'node' : 'browser'}]);
+
           const inlineEnv = env?.inline;
 
           if (
@@ -233,7 +237,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             if (options.input) return options;
 
             const entryFiles = await Promise.all([
-              resolveToActualFiles(project.entry ?? 'index'),
+              quiltAppEntry!.run(),
               browser?.entryModule
                 ? resolveToActualFiles(browser.entryModule)
                 : Promise.resolve([]),

@@ -47,7 +47,7 @@ export interface Options {
   httpHandler: boolean;
 }
 
-const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService';
+const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService.tsx';
 
 export function serviceBuild({
   minify,
@@ -70,6 +70,7 @@ export function serviceBuild({
             rollupPlugins,
             rollupOutputs,
             rollupNodeBundle,
+            quiltServiceEntry,
             quiltServiceOutputFormat,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
@@ -111,14 +112,12 @@ export function serviceBuild({
 
             plugins.unshift({
               name: '@quilted/magic-module-service',
-              resolveId(id, importer) {
+              async resolveId(id, importer) {
                 if (id !== MAGIC_ENTRY_MODULE) return null;
 
-                return this.resolve(
-                  project.fs.resolvePath(project.entry ?? ''),
-                  importer,
-                  {skipSelf: true},
-                );
+                return this.resolve(await quiltServiceEntry!.run(), importer, {
+                  skipSelf: true,
+                });
               },
             });
 

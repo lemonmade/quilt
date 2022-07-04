@@ -59,7 +59,11 @@ async function getAliases(project: Project, workspace: Workspace) {
 
     const packageEntries = await sourceEntriesForProject(otherProject);
 
-    for (const [entry, source] of Object.entries(packageEntries)) {
+    // We sort the entries from longest to shortest so that more specific entries take
+    // precedence.
+    for (const [entry, source] of Object.entries(packageEntries).sort(
+      ([entryOne], [entryTwo]) => entryTwo.length - entryOne.length,
+    )) {
       const aliasEntry = `${name}${entry === '.' ? '' : `/${entry.slice(2)}`}`;
       aliases[aliasEntry] = source;
     }

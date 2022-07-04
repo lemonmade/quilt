@@ -1,5 +1,6 @@
 import type {Environment, ValueOrPromise} from '../types';
-import type {Project, Workspace, TargetRuntime} from '../model';
+import type {Project, Workspace} from '../model';
+import type {Runtime} from '../runtime';
 
 import type {
   HookAdder,
@@ -7,7 +8,6 @@ import type {
   ResolvedHooks,
   ResolvedOptions,
   WaterfallHook,
-  WaterfallHookWithDefault,
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
@@ -44,7 +44,7 @@ export interface BuildProjectConfigurationCoreHooks {
   /**
    * The runtimes that this build will execute in
    */
-  readonly runtime: WaterfallHookWithDefault<TargetRuntime>;
+  readonly runtimes: WaterfallHook<Runtime[]>;
 }
 
 /**

@@ -1,34 +1,37 @@
 import type {Plugin} from 'rollup';
 
-import {createProjectPlugin, type Project} from '../kit';
+import {createProjectPlugin} from '../kit';
 
 import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
 
 export function magicModuleApp() {
   return createProjectPlugin({
     name: 'Quilt.MagicModule.App',
-    build({project, configure}) {
-      configure(({rollupPlugins}) => {
+    build({configure}) {
+      configure(({rollupPlugins, quiltAppEntry}) => {
         rollupPlugins?.((plugins) => {
-          return [rollupPlugin(project), ...plugins];
+          return [rollupPlugin(() => quiltAppEntry!.run()), ...plugins];
         });
       });
     },
-    develop({project, configure}) {
-      configure(({rollupPlugins, vitePlugins}) => {
+    develop({configure}) {
+      configure(({rollupPlugins, vitePlugins, quiltAppEntry}) => {
         rollupPlugins?.((plugins) => {
-          return [rollupPlugin(project), ...plugins];
+          return [rollupPlugin(() => quiltAppEntry!.run()), ...plugins];
         });
 
         vitePlugins?.((plugins) => {
-          return [{...rollupPlugin(project), enforce: 'pre'}, ...plugins];
+          return [
+            {...rollupPlugin(() => quiltAppEntry!.run()), enforce: 'pre'},
+            ...plugins,
+          ];
         });
       });
     },
   });
 }
 
-function rollupPlugin(project: Project): Plugin {
+function rollupPlugin(getEntry: () => Promise<string>): Plugin {
   return {
     name: '@quilted/magic-module/app',
     async resolveId(id) {
@@ -36,11 +39,9 @@ function rollupPlugin(project: Project): Plugin {
 
       return null;
     },
-    load(source) {
+    async load(source) {
       if (source === MAGIC_MODULE_APP_COMPONENT) {
-        return `export {default} from ${JSON.stringify(
-          project.fs.resolvePath(project.entry ?? 'index'),
-        )}`;
+        return `export {default} from ${JSON.stringify(await getEntry())}`;
       }
     },
   };

@@ -122,8 +122,8 @@ export function polyfills({features, package: packageName}: Options = {}) {
   });
 
   function addConfiguration({
-    runtime,
-    targets,
+    runtimes,
+    browserslistTargets,
     rollupPlugins,
     rollupInputOptions,
     quiltPolyfillFeatures,
@@ -157,7 +157,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         import('pkg-dir'),
         import('@rollup/plugin-alias'),
         quiltPolyfillFeatures!.run(),
-        runtime.run(),
+        runtimes.run([]),
       ]);
 
       const featuresNeedingPolyfills =
@@ -176,10 +176,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
       const polyfillPlugin = await polyfillRollup({
         package: packageName,
         features: featuresNeedingPolyfills,
-        target: await targets?.run([]),
-        // target: resolvedRuntime.includes(Runtime.Browser)
-        //   ? await targets?.run([])
-        //   : 'node',
+        target: await browserslistTargets?.run([]),
       });
 
       return [

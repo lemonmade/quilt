@@ -72,17 +72,16 @@ describe('app builds', () => {
 
         await fs.write({
           'quilt.project.ts': stripIndent`
-            import {createApp, quiltApp} from '@quilted/craft';
+            import {createProject, quiltApp} from '@quilted/craft';
             import {addInternalExportCondition} from '../../common/craft';
             
-            export default createApp((app) => {
-              app.entry('./App');
-              app.use(quiltApp({
+            export default createProject((project) => {
+              project.use(quiltApp({
                 assets: {
                   inline: {limit: 0},
                 },
               }));
-              app.use(addInternalExportCondition());
+              project.use(addInternalExportCondition());
             });
           `,
           'foundation/Routes.tsx': stripIndent`
@@ -117,13 +116,12 @@ describe('app builds', () => {
 
         await fs.write({
           'quilt.project.ts': stripIndent`
-            import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
+            import {createProject, quiltApp, createProjectPlugin} from '@quilted/craft';
             import {addInternalExportCondition} from '../../common/craft';
             
-            export default createApp((app) => {
-              app.entry('./App');
-              app.use(quiltApp());
-              app.use(
+            export default createProject((project) => {
+              project.use(quiltApp());
+              project.use(
                 createProjectPlugin({
                   name: 'MyApp.CustomizeStaticAssetPattern',
                   build({configure}) {
@@ -135,7 +133,7 @@ describe('app builds', () => {
                   },
                 }),
               )
-              app.use(addInternalExportCondition());
+              project.use(addInternalExportCondition());
             });
           `,
           'foundation/Routes.tsx': stripIndent`

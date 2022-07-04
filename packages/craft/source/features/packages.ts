@@ -214,10 +214,23 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
             rollupInput,
             rollupOutputs,
             rollupPlugins,
+            babelPresetEnvOptions,
           },
           {packageBuildModule},
         ) => {
           if (packageBuildModule == null) return;
+
+          babelPresetEnvOptions?.(() => {
+            return {
+              useBuiltIns: false,
+              bugfixes: true,
+              shippedProposals: true,
+              // I thought I wanted this on, but if you do this, Babel
+              // stops respecting the top-level `targets` option and tries
+              // to use the targets passed to the preset directly instead.
+              // ignoreBrowserslistConfig: true,
+            };
+          });
 
           outputDirectory?.((directory) =>
             join(directory, packageBuildModule === 'commonjs' ? 'cjs' : 'esm'),

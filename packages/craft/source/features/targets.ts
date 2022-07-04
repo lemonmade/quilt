@@ -15,7 +15,7 @@ export interface TargetHooks {
    * A browserslist query that represents the target environments
    * for this project.
    */
-  targets: WaterfallHook<string[]>;
+  browserslistTargets: WaterfallHook<string[]>;
 
   /**
    * The environment section to use from the browserslist configuration
@@ -38,7 +38,7 @@ export interface TargetHooks {
    * }
    * ```
    */
-  targetName: WaterfallHook<string | undefined>;
+  browserslistTargetName: WaterfallHook<string | undefined>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -58,27 +58,31 @@ export function targets() {
     name: 'Quilt.Targets',
     build({hooks, configure, project, workspace}) {
       hooks<TargetHooks>(({waterfall}) => ({
-        targets: waterfall(),
-        targetName: waterfall(),
+        browserslistTargets: waterfall(),
+        browserslistTargetName: waterfall(),
       }));
 
       configure(
         ({
-          // runtime,
-          targets,
-          targetName,
+          runtimes,
+          browserslistTargets,
+          browserslistTargetName,
           babelTargets,
           babelPresets,
           babelPresetEnvOptions,
           postcssPlugins,
         }) => {
-          targets!(async (targets) => {
+          browserslistTargets!(async (targets) => {
             if (targets.length > 0) return targets;
 
-            // const resolvedRuntime = await runtime!.run();
+            const resolvedRuntimes = await runtimes!.run([]);
 
-            const useNodeTarget = true; //resolvedRuntime.includes(Runtime.Node);
-            const useBrowserTarget = true; //resolvedRuntime.includes(Runtime.Browser);
+            const useNodeTarget = resolvedRuntimes.some(
+              (runtime) => runtime.target === 'node',
+            );
+            const useBrowserTarget = resolvedRuntimes.some(
+              (runtime) => runtime.target === 'browser',
+            );
 
             if (useNodeTarget) {
               const engines: {node?: string} | undefined =
@@ -112,7 +116,7 @@ export function targets() {
             if (useBrowserTarget) {
               const [{default: browserslist}, env] = await Promise.all([
                 import('browserslist'),
-                targetName!.run(undefined),
+                browserslistTargetName!.run(undefined),
               ]);
 
               const browserslistConfig = browserslist.findConfig(
@@ -125,7 +129,7 @@ export function targets() {
               if (env != null && matchingConfiguration == null) {
                 throw new DiagnosticError({
                   title: `Could not find browserslist configuration for environment ${JSON.stringify(
-                    targetName,
+                    env,
                   )} in project ${JSON.stringify(project.name)}`,
                 });
               }
@@ -136,7 +140,7 @@ export function targets() {
             return targets;
           });
 
-          babelTargets?.(() => targets!.run([]));
+          babelTargets?.(() => browserslistTargets!.run([]));
           babelPresets?.(async (presets) => {
             const options = await babelPresetEnvOptions?.run({
               corejs: '3.15' as any,
@@ -159,7 +163,7 @@ export function targets() {
             const [{default: postcssPresetEnv}, resolvedTargets] =
               await Promise.all([
                 import('postcss-preset-env'),
-                targets!.run([]),
+                browserslistTargets!.run([]),
               ]);
 
             return [
@@ -174,71 +178,76 @@ export function targets() {
     },
     develop({hooks, configure}) {
       hooks<TargetHooks>(({waterfall}) => ({
-        targets: waterfall(),
-        targetName: waterfall(),
+        browserslistTargets: waterfall(),
+        browserslistTargetName: waterfall(),
       }));
 
-      configure(({targets, babelTargets, babelPresets, postcssPlugins}) => {
-        targets!(async (targets) => {
-          if (targets.length > 0) return targets;
+      configure(
+        ({browserslistTargets, babelTargets, babelPresets, postcssPlugins}) => {
+          browserslistTargets!(async (targets) => {
+            if (targets.length > 0) return targets;
 
-          // const resolvedRuntime = await runtime!.run();
+            // const resolvedRuntime = await runtime!.run();
 
-          const useNodeTarget = true; //resolvedRuntime.includes(Runtime.Node);
-          const useBrowserTarget = true; //resolvedRuntime.includes(Runtime.Browser);
+            const useNodeTarget = true; //resolvedRuntime.includes(Runtime.Node);
+            const useBrowserTarget = true; //resolvedRuntime.includes(Runtime.Browser);
 
-          if (useNodeTarget) {
-            targets.push('current node');
-          }
+            if (useNodeTarget) {
+              targets.push('current node');
+            }
 
-          if (useBrowserTarget) {
-            targets.push('last 1 major version');
-          }
+            if (useBrowserTarget) {
+              targets.push('last 1 major version');
+            }
 
-          return targets;
-        });
+            return targets;
+          });
 
-        babelTargets?.(() => targets!.run([]));
-        babelPresets?.((presets) => [
-          [
-            require.resolve('@babel/preset-env'),
-            {
-              corejs: '3.15',
-              useBuiltIns: 'usage',
-              bugfixes: true,
-              shippedProposals: true,
-            },
-          ],
-          ...presets,
-        ]);
+          babelTargets?.(() => browserslistTargets!.run([]));
+          babelPresets?.((presets) => [
+            [
+              require.resolve('@babel/preset-env'),
+              {
+                corejs: '3.15',
+                useBuiltIns: 'usage',
+                bugfixes: true,
+                shippedProposals: true,
+              },
+            ],
+            ...presets,
+          ]);
 
-        postcssPlugins?.(async (plugins) => {
-          const [{default: postcssPresetEnv}, resolvedTargets] =
-            await Promise.all([import('postcss-preset-env'), targets!.run([])]);
+          postcssPlugins?.(async (plugins) => {
+            const [{default: postcssPresetEnv}, resolvedTargets] =
+              await Promise.all([
+                import('postcss-preset-env'),
+                browserslistTargets!.run([]),
+              ]);
 
-          return [
-            postcssPresetEnv({
-              browsers: resolvedTargets,
-            }) as any,
-            ...plugins,
-          ];
-        });
-      });
+            return [
+              postcssPresetEnv({
+                browsers: resolvedTargets,
+              }) as any,
+              ...plugins,
+            ];
+          });
+        },
+      );
     },
     test({hooks, configure}) {
       hooks<TargetHooks>(({waterfall}) => ({
-        targets: waterfall(),
-        targetName: waterfall(),
+        browserslistTargets: waterfall(),
+        browserslistTargetName: waterfall(),
       }));
 
-      configure(({targets, babelPresets, babelTargets}) => {
+      configure(({browserslistTargets, babelPresets, babelTargets}) => {
         const defaultTargets = ['current node'];
 
-        targets!((existingTargets) =>
+        browserslistTargets!((existingTargets) =>
           existingTargets.length > 0 ? existingTargets : defaultTargets,
         );
 
-        babelTargets?.(() => targets!.run([]));
+        babelTargets?.(() => browserslistTargets!.run([]));
         babelPresets?.((presets) => [
           [
             require.resolve('@babel/preset-env'),

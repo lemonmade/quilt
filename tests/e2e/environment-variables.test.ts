@@ -12,15 +12,14 @@ describe('app builds', () => {
 
         await fs.write({
           'quilt.project.ts': stripIndent`
-              import {createApp, quiltApp} from '@quilted/craft';
+              import {createProject, quiltApp} from '@quilted/craft';
               import {addInternalExportCondition} from '../../common/craft';
               
-              export default createApp((app) => {
-                app.entry('./App');
-                app.use(quiltApp({
+              export default createProject((project) => {
+                project.use(quiltApp({
                   env: {inline: ['BUILDER']},
                 }));
-                app.use(addInternalExportCondition());
+                project.use(addInternalExportCondition());
               });
             `,
           'foundation/Routes.tsx': stripIndent`
@@ -116,17 +115,16 @@ describe('app builds', () => {
           '.env.production': 'FROM_ENV_MODE=3\nFROM_ENV_MODE_LOCAL=3',
           '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
           'quilt.project.ts': stripIndent`
-            import {createApp, quiltApp} from '@quilted/craft';
+            import {createProject, quiltApp} from '@quilted/craft';
             import {addInternalExportCondition} from '../../common/craft';
             
-            export default createApp((app) => {
-              app.entry('./App');
-              app.use(quiltApp({
+            export default createProject((project) => {
+              project.use(quiltApp({
                 env: {
                   inline: ['FROM_ENV', 'FROM_ENV_LOCAL', 'FROM_ENV_MODE', 'FROM_ENV_MODE_LOCAL'],
                 },
               }));
-              app.use(addInternalExportCondition());
+              project.use(addInternalExportCondition());
             });
           `,
           'foundation/Routes.tsx': stripIndent`
@@ -159,17 +157,16 @@ describe('app builds', () => {
         await fs.write({
           '.env': `BUILDER=${builder}`,
           'quilt.project.ts': stripIndent`
-              import {createApp, quiltApp} from '@quilted/craft';
+              import {createProject, quiltApp} from '@quilted/craft';
               import {addInternalExportCondition} from '../../common/craft';
               
-              export default createApp((app) => {
-                app.entry('./App');
-                app.use(quiltApp({
+              export default createProject((project) => {
+                project.use(quiltApp({
                   server: {
                     env: {inline: ['BUILDER']},
                   },
                 }));
-                app.use(addInternalExportCondition());
+                project.use(addInternalExportCondition());
               });
             `,
           'foundation/Routes.tsx': stripIndent`

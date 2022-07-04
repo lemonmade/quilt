@@ -23,7 +23,7 @@ export interface AppServerOptions {
    * entry for your app server. When provided, this completely
    * overwrites the default server content.
    *
-   * @example './server'
+   * @example './server.tsx'
    */
   entry?: string;
 
@@ -102,7 +102,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
 
   return (
     {
-      // runtime,
+      runtimes,
       postcssPlugins,
       postcssProcessOptions,
       rollupInput,
@@ -127,7 +127,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
 
     quiltRuntimeEnvironmentVariables?.((runtime) => runtime ?? 'process.env');
 
-    // runtime(() => new TargetRuntime([Runtime.Node]));
+    runtimes(() => [{target: 'node'}]);
 
     const content = entry
       ? httpHandler

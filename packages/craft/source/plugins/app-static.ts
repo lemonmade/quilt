@@ -152,7 +152,7 @@ declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends AppStaticHooks {}
 }
 
-const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry';
+const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry.tsx';
 
 const require = createRequire(import.meta.url);
 
@@ -191,8 +191,8 @@ export function appStatic({
       configure(
         (
           {
-            // runtime,
-            targets,
+            runtimes,
+            browserslistTargets,
             postcssPlugins,
             postcssProcessOptions,
             rollupInput,
@@ -206,8 +206,8 @@ export function appStatic({
         ) => {
           if (!quiltAppStatic) return;
 
-          // runtime?.(() => new TargetRuntime([Runtime.Node]));
-          targets?.(() => ['current node']);
+          runtimes?.(() => [{target: 'node'}]);
+          browserslistTargets?.(() => ['current node']);
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 

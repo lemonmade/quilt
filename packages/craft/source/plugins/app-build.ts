@@ -93,8 +93,8 @@ export function appBuild({
       configure(
         (
           {
-            // runtime,
-            targets,
+            runtimes,
+            browserslistTargets,
             outputDirectory,
             postcssPlugins,
             postcssProcessOptions,
@@ -153,11 +153,11 @@ export function appBuild({
 
           if (!browserTargets) return;
 
-          // runtime(() => new TargetRuntime([Runtime.Browser]));
+          runtimes(() => [{target: 'browser'}]);
 
           const targetFilenamePart = `.${browserTargets.name}`;
 
-          targets?.(() => browserTargets.targets);
+          browserslistTargets?.(() => browserTargets.targets);
 
           quiltAsyncManifestMetadata?.(async (metadata) => {
             const [{getUserAgentRegExp}, modules] = await Promise.all([

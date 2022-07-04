@@ -26,6 +26,7 @@ export interface FileSystem {
   read(file: string): Promise<string>;
   write(files: Record<string, string>): Promise<void>;
   write(file: string, content: string): Promise<void>;
+  remove(file: string): Promise<void>;
 }
 
 export interface Browser {
@@ -79,7 +80,7 @@ afterAll(async () => {
   browserPromise = undefined;
 });
 
-export type Fixture = 'basic-app' | 'basic-api';
+export type Fixture = 'basic-app' | 'empty-app' | 'basic-api';
 
 export interface WorkspaceOptions {
   debug?: boolean;
@@ -153,6 +154,9 @@ export async function withWorkspace<T>(
     fs: {
       root,
       resolve,
+      async remove(file) {
+        await rm(resolve(file), {force: true, recursive: true});
+      },
       async read(file) {
         const contents = await readFile(resolve(file), {
           encoding: 'utf8',

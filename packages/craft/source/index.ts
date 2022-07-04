@@ -34,6 +34,8 @@ import {typescriptProject, typescriptWorkspace} from './tools/typescript';
 
 import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
 import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
+
+import {appBase} from './plugins/app-base';
 import {appBuild} from './plugins/app-build';
 import type {
   AssetOptions as AppBuildAssetOptions,
@@ -44,24 +46,24 @@ import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
 import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry';
-import {magicModuleEnv} from './plugins/magic-module-env';
-import type {EnvironmentOptions} from './plugins/magic-module-env';
-
 import {appServer} from './plugins/app-server-base';
 import type {AppServerOptions} from './plugins/app-server-base';
 import {appServerBuild} from './plugins/app-server-build';
 import type {} from './plugins/app-server-build';
-
 import {appStatic} from './plugins/app-static';
 import type {AppStaticOptions} from './plugins/app-static';
-
 import {appWorkers} from './plugins/app-workers';
+
+import {serviceBase} from './plugins/service-base';
 import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
 import {serviceDevelopment} from './plugins/service-develop';
 
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
+
+import {magicModuleEnv} from './plugins/magic-module-env';
+import type {EnvironmentOptions} from './plugins/magic-module-env';
 
 import {tsconfigAliases} from './plugins/tsconfig-aliases';
 
@@ -87,6 +89,25 @@ export type {Project};
 export * from './constants';
 
 export interface AppOptions {
+  /**
+   * The entry module for this app. This should be an absolute path, or relative
+   * path from the root directory containing your project. This entry should just be
+   * for the main `App` component in your project, which Quilt will automatically use
+   * to create browser and server-side entries for your project.
+   *
+   * If you only want to use a custom entry module for the browser build, use the
+   * `browser.entry` option instead. If you only want to use a custom entry module
+   * for the server-side build, use the `server.entry` option instead.
+   *
+   * If you do not provide this option explicitly, Quilt will first try to infer it
+   * from the `main` field of your `package.json`, and if that file does not exist,
+   * will attempt to find a file named `index.{js,ts,tsx}`, `App.{js,ts,tsx}`, or
+   * `app.{js,ts,tsx}` at the root of your project.
+   *
+   * @example './App.tsx'
+   */
+  entry?: string;
+
   polyfill?: boolean | PolyfillOptions;
   develop?: boolean | Pick<AppDevelopOptions, 'port'>;
   build?: boolean;
@@ -132,6 +153,7 @@ export interface AppOptions {
 }
 
 export function quiltApp({
+  entry,
   env,
   polyfill: shouldPolyfill = true,
   develop = true,
@@ -163,6 +185,7 @@ export function quiltApp({
         esnext(),
         fromSource(),
         react(),
+        appBase({entry}),
         aliasWorkspacePackages(),
         // Magic modules
         magicModuleApp(),
@@ -218,6 +241,17 @@ export function quiltApp({
 
 export interface ServiceOptions {
   /**
+   * The entry module for this service. This should be an absolute path, or relative
+   * path from the root directory containing your project.
+   *
+   * If you do not provide this option explicitly, Quilt will first try to infer it
+   * from the `main` field of your `package.json`, and if that file does not exist,
+   * will attempt to find a file named `index.{js,ts,tsx}`, `App.{js,ts,tsx}`, or
+   * `app.{js,ts,tsx}` at the root of your project.
+   */
+  entry?: string;
+
+  /**
    * Whether this service requires React syntax transformations. Defaults
    * to `false`.
    */
@@ -231,6 +265,7 @@ export interface ServiceOptions {
 }
 
 export function quiltService({
+  entry,
   env,
   build = true,
   develop = true,
@@ -262,6 +297,7 @@ export function quiltService({
         esnext(),
         fromSource(),
         useReact && react(),
+        serviceBase({entry}),
         aliasWorkspacePackages(),
         magicModuleEnv(),
         // Build and http handler setup

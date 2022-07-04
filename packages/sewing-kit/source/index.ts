@@ -8,8 +8,16 @@ export type {
   AnyPlugin,
 } from './plugins';
 
-export {Project, Workspace, TargetRuntime} from './model';
+export {Project, Workspace} from './model';
 export type {ProjectOptions, WorkspaceOptions} from './model';
+
+export type {
+  Runtime,
+  RuntimeBrowser,
+  RuntimeNode,
+  RuntimeWorker,
+  RuntimeOther,
+} from './runtime';
 
 export {Environment, Task} from './types';
 export type {

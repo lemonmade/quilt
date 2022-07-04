@@ -11,7 +11,7 @@ export interface Options {
    * the tiny Quilt runtime. This path can be absolute, or relative from
    * the root directory of the application.
    *
-   * @example './browser/bootstrap'
+   * @example './browser/bootstrap.ts'
    */
   initializeModule?: string;
 
@@ -23,7 +23,7 @@ export interface Options {
    * application with React, so if you provide this option, you **must**
    * do this rendering yourself.
    *
-   * @example './browser/entry'
+   * @example './browser/entry.tsx'
    */
   entryModule?: string;
 
