@@ -227,7 +227,7 @@ export function quiltApp({
         workers(),
         appWorkers({baseUrl}),
         asyncQuilt({preload: true}),
-        reactTesting({environment: 'preact'}),
+        reactTesting(),
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
@@ -314,7 +314,7 @@ export function quiltService({
           }),
         develop && useHttpHandler && serviceDevelopment(),
         useGraphQL && graphql(),
-        useReact && reactTesting({environment: 'preact'}),
+        useReact && reactTesting(),
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
@@ -360,7 +360,7 @@ export function quiltPackage({
         esnext(),
         fromSource(),
         useReact && react(),
-        useReact && reactTesting({environment: 'preact'}),
+        useReact && reactTesting(),
         useGraphQL && graphql(),
         rollupNode({
           bundle: typeof build === 'boolean' ? undefined : build.bundle,

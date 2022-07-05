@@ -19,6 +19,19 @@ export class EnhancedResponse extends Response {
 
   constructor(body?: BodyInit | null, options?: ResponseInit) {
     super(body, options);
+
+    if (typeof (options?.headers as HeadersWithRaw)?.raw === 'function') {
+      for (const [header, values] of Object.entries(
+        (options!.headers as HeadersWithRaw).raw(),
+      )) {
+        this.headers.delete(header);
+
+        for (const value of values) {
+          this.headers.append(header, value);
+        }
+      }
+    }
+
     this.cookies = responseCookiesFromHeaders(this.headers);
   }
 }

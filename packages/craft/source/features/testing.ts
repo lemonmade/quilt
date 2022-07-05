@@ -1,3 +1,4 @@
+import {createRequire} from 'module';
 import {createProjectPlugin} from '../kit';
 
 import type {} from '../tools/jest';
@@ -25,7 +26,9 @@ export interface Options {
   environment?: Environment;
 }
 
-export function reactTesting({environment = 'react'}: Options = {}) {
+const require = createRequire(import.meta.url);
+
+export function reactTesting({environment = 'preact'}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Testing',
     test({configure}) {
@@ -68,6 +71,12 @@ export function reactTesting({environment = 'react'}: Options = {}) {
               newModuleMapper['^@quilted/react-testing/dom$'] =
                 moduleMapper['^@quilted/react-testing/preact$'] ??
                 '@quilted/react-testing/preact';
+
+              newModuleMapper['^preact$'] = require.resolve('preact');
+              newModuleMapper['^preact/compat$'] =
+                require.resolve('preact/compat');
+              newModuleMapper['^preact/test-utils$'] =
+                require.resolve('preact/test-utils');
               break;
             }
           }

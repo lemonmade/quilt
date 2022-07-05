@@ -1,6 +1,8 @@
+import '@quilted/quilt/polyfills/fetch';
+
 import {describe, it, expect} from '@quilted/testing';
 import {createHttpHandler} from '../http-handler';
-import {noContent} from '../response';
+import {noContent} from '../response-helpers';
 
 describe('createHttpHandler()', () => {
   it('can register a handler for any method and path', async () => {
@@ -8,8 +10,8 @@ describe('createHttpHandler()', () => {
     const handler = createHttpHandler();
     handler.any(() => response);
 
-    expect(await handler.run({url: url('/')})).toBe(response);
-    expect(await handler.run({url: url('/any-path')})).toBe(response);
+    expect(await handler.run(new Request(url('/')))).toBe(response);
+    expect(await handler.run(new Request(url('/any-path')))).toBe(response);
   });
 
   it('can register a handler for a specific method', async () => {
@@ -17,8 +19,12 @@ describe('createHttpHandler()', () => {
     const handler = createHttpHandler();
     handler.get(() => response);
 
-    expect(await handler.run({url: url('/'), method: 'GET'})).toBe(response);
-    expect(await handler.run({url: url('/'), method: 'POST'})).toBeUndefined();
+    expect(await handler.run(new Request(url('/'), {method: 'GET'}))).toBe(
+      response,
+    );
+    expect(
+      await handler.run(new Request(url('/'), {method: 'POST'})),
+    ).toBeUndefined();
   });
 
   it('can register a handler for a string path', async () => {
@@ -26,8 +32,8 @@ describe('createHttpHandler()', () => {
     const handler = createHttpHandler();
     handler.get('/', () => response);
 
-    expect(await handler.run({url: url('/')})).toBe(response);
-    expect(await handler.run({url: url('/not-a-match')})).toBeUndefined();
+    expect(await handler.run(new Request(url('/')))).toBe(response);
+    expect(await handler.run(new Request(url('/not-a-match')))).toBeUndefined();
   });
 
   it('can register a handler for a regular expression path', async () => {
@@ -35,8 +41,8 @@ describe('createHttpHandler()', () => {
     const handler = createHttpHandler();
     handler.get(/\d+/, () => response);
 
-    expect(await handler.run({url: url('/123')})).toBe(response);
-    expect(await handler.run({url: url('/hello')})).toBeUndefined();
+    expect(await handler.run(new Request(url('/123')))).toBe(response);
+    expect(await handler.run(new Request(url('/hello')))).toBeUndefined();
   });
 
   it('can register a handler for a non-exact match', async () => {
@@ -44,9 +50,9 @@ describe('createHttpHandler()', () => {
     const handler = createHttpHandler();
     handler.get('/hello', () => response, {exact: false});
 
-    expect(await handler.run({url: url('/')})).toBeUndefined();
-    expect(await handler.run({url: url('/hello')})).toBe(response);
-    expect(await handler.run({url: url('/hello/world')})).toBe(response);
+    expect(await handler.run(new Request(url('/')))).toBeUndefined();
+    expect(await handler.run(new Request(url('/hello')))).toBe(response);
+    expect(await handler.run(new Request(url('/hello/world')))).toBe(response);
   });
 
   it('excludes a prefix before attempting to match', async () => {
@@ -54,9 +60,11 @@ describe('createHttpHandler()', () => {
     const handler = createHttpHandler({prefix: '/hello'});
     handler.get('/world', () => response);
 
-    expect(await handler.run({url: url('/hello/world')})).toBe(response);
-    expect(await handler.run({url: url('/hello/goodbye')})).toBeUndefined();
-    expect(await handler.run({url: url('/world')})).toBeUndefined();
+    expect(await handler.run(new Request(url('/hello/world')))).toBe(response);
+    expect(
+      await handler.run(new Request(url('/hello/goodbye'))),
+    ).toBeUndefined();
+    expect(await handler.run(new Request(url('/world')))).toBeUndefined();
   });
 
   it('expands matches in nested http handlers', async () => {
@@ -66,9 +74,11 @@ describe('createHttpHandler()', () => {
     nestedHandler.get('world', () => response);
     handler.get('hello', nestedHandler);
 
-    expect(await handler.run({url: url('/hello/world')})).toBe(response);
-    expect(await handler.run({url: url('/hello/goodbye')})).toBeUndefined();
-    expect(await handler.run({url: url('/world')})).toBeUndefined();
+    expect(await handler.run(new Request(url('/hello/world')))).toBe(response);
+    expect(
+      await handler.run(new Request(url('/hello/goodbye'))),
+    ).toBeUndefined();
+    expect(await handler.run(new Request(url('/world')))).toBeUndefined();
   });
 
   it('expands matches and prefixes in nested http handlers', async () => {
@@ -78,12 +88,14 @@ describe('createHttpHandler()', () => {
     nestedHandler.get('/', () => response);
     handler.get('hello', nestedHandler);
 
-    expect(await handler.run({url: url('/hello/world')})).toBe(response);
+    expect(await handler.run(new Request(url('/hello/world')))).toBe(response);
     expect(
-      await handler.run({url: url('/hello/world/beyond')}),
+      await handler.run(new Request(url('/hello/world/beyond'))),
     ).toBeUndefined();
-    expect(await handler.run({url: url('/hello/goodbye')})).toBeUndefined();
-    expect(await handler.run({url: url('/world')})).toBeUndefined();
+    expect(
+      await handler.run(new Request(url('/hello/goodbye'))),
+    ).toBeUndefined();
+    expect(await handler.run(new Request(url('/world')))).toBeUndefined();
   });
 });
 

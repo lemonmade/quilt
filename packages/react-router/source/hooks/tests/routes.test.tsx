@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import type {PropsWithChildren} from 'react';
 import {describe, it, expect} from '@quilted/testing';
 
