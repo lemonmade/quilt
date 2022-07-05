@@ -60,7 +60,7 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: --only-project package:* --skip-project create
+          arguments: --skip-project create
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:e2e
