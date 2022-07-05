@@ -369,10 +369,24 @@ export function jest() {
               detectOpenHandles: debug,
             });
 
-            runner.spawn('jest', [...includePatterns, ...toArgs(flags)], {
-              stdio: 'inherit',
-              fromNodeModules: import.meta.url,
-            });
+            const spawned = runner.spawn(
+              'jest',
+              [...includePatterns, ...toArgs(flags)],
+              {
+                stdio: 'inherit',
+                fromNodeModules: import.meta.url,
+              },
+            );
+
+            if (!watch) {
+              await new Promise<void>((resolve) => {
+                spawned.on('exit', () => resolve());
+              });
+
+              if (spawned.exitCode !== 0) {
+                runner.fail();
+              }
+            }
           },
         }),
       );

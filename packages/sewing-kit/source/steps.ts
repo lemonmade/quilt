@@ -1,4 +1,9 @@
-import type {ExecOptions, SpawnOptions, PromiseWithChild} from 'child_process';
+import type {
+  ExecOptions,
+  SpawnOptions,
+  PromiseWithChild,
+  ChildProcess,
+} from 'child_process';
 
 import type {Project, Workspace} from './model';
 import type {WorkspacePlugin, AnyPlugin} from './plugins';
@@ -44,7 +49,7 @@ export interface BaseStepRunner {
     command: string,
     args?: string[] | null,
     options?: StepRunnerSpawnOptions,
-  ): Promise<unknown>;
+  ): ChildProcess;
 }
 
 export interface ProjectStepRunner extends BaseStepRunner {}

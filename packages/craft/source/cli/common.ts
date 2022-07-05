@@ -856,7 +856,6 @@ export class StepExecError extends DiagnosticError {
   }
 }
 
-const promiseSpawn = promisify(childSpawn);
 const promiseExec = promisify(childExec);
 
 const spawn: BaseStepRunner['spawn'] = (
@@ -875,7 +874,7 @@ const spawn: BaseStepRunner['spawn'] = (
       )
     : command;
 
-  return promiseSpawn(normalizedCommand, args ?? [], {
+  return childSpawn(normalizedCommand, args ?? [], {
     stdio: 'inherit',
     ...options,
   });
