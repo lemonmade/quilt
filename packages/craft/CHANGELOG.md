@@ -1,5 +1,24 @@
 # @quilted/craft
 
+## 0.1.138
+
+### Patch Changes
+
+- [#364](https://github.com/lemonmade/quilt/pull/364) [`4dc1808a`](https://github.com/lemonmade/quilt/commit/4dc1808a86d15e821b218b528617430cbd8b5b48) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to simplified Quilt config
+
+- Updated dependencies [[`4dc1808a`](https://github.com/lemonmade/quilt/commit/4dc1808a86d15e821b218b528617430cbd8b5b48)]:
+  - @quilted/async@0.3.26
+  - @quilted/browserslist-config@0.1.7
+  - @quilted/eslint-config@0.1.13
+  - @quilted/graphql@0.4.40
+  - @quilted/polyfills@0.2.28
+  - @quilted/prettier@0.2.9
+  - @quilted/quilt@0.5.106
+  - @quilted/rollup-plugin-fix-commonjs-preserve-modules@0.1.10
+  - @quilted/sewing-kit@0.2.30
+  - @quilted/typescript@0.2.16
+  - @quilted/workers@0.2.30
+
 ## 0.1.137
 
 ### Patch Changes

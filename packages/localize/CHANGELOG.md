@@ -1,5 +1,11 @@
 # @quilted/localize
 
+## 0.1.3
+
+### Patch Changes
+
+- [#364](https://github.com/lemonmade/quilt/pull/364) [`4dc1808a`](https://github.com/lemonmade/quilt/commit/4dc1808a86d15e821b218b528617430cbd8b5b48) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to simplified Quilt config
+
 ## 0.1.2
 
 ### Patch Changes
