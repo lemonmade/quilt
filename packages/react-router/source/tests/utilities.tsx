@@ -1,4 +1,4 @@
-import '@quilted/quilt/matchers';
+import '@quilted/react-testing/matchers';
 
 import {createMount} from '@quilted/react-testing';
 import type {Prefix} from '@quilted/routing';

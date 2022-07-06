@@ -211,24 +211,6 @@ export function jest() {
               return config;
             })();
 
-            const getSourceAliasesForProjectDependencies = async (
-              project: Project,
-            ) => {
-              const aliases: Record<string, string> = {};
-
-              for (const otherProject of workspace.projects) {
-                const name = otherProject.packageJson?.name;
-
-                if (name == null || !project.hasDependency(name, {all: true}))
-                  continue;
-
-                const projectAliases = await getEntryAliases(otherProject);
-                Object.assign(aliases, projectAliases);
-              }
-
-              return aliases;
-            };
-
             const projects = await Promise.all(
               workspace.projects.map(
                 async (project): Promise<JestProjectConfig> => {
@@ -285,9 +267,7 @@ export function jest() {
                         ext.startsWith('.') ? ext : `.${ext}`,
                       ),
                     ),
-                    jestModuleMapper!.run(
-                      await getSourceAliasesForProjectDependencies(project),
-                    ),
+                    jestModuleMapper!.run({...internalModuleMap}),
                     jestSetupEnv!.run([]),
                     jestSetupTests!.run([]),
                   ]);

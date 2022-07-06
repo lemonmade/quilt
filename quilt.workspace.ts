@@ -19,7 +19,7 @@ export default createWorkspace((workspace) => {
   workspace.use(
     quiltWorkspace({graphql: false}),
     createWorkspacePlugin({
-      name: 'Quilt.IgnoreE2EOutput',
+      name: 'Quilt.WorkspaceExtras',
       test({configure}) {
         configure(({jestWatchIgnore}) => {
           jestWatchIgnore?.((ignore) => [
