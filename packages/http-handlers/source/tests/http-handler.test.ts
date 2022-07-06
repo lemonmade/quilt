@@ -1,4 +1,4 @@
-import '@quilted/quilt/polyfills/fetch';
+import '@quilted/polyfills/fetch';
 
 import {describe, it, expect} from '@quilted/testing';
 import {createHttpHandler} from '../http-handler';

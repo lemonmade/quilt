@@ -402,7 +402,9 @@ importers:
   packages/http-handlers:
     specifiers:
       '@quilted/http': ^0.2.11
+      '@quilted/polyfills': workspace:*
       '@quilted/routing': ^0.2.7
+      '@quilted/testing': workspace:*
       '@types/cookie': ^0.4.0
       '@types/send': ^0.17.0
       send: ^0.17.0
@@ -411,6 +413,8 @@ importers:
       '@quilted/routing': link:../routing
       send: 0.17.2
     devDependencies:
+      '@quilted/polyfills': link:../polyfills
+      '@quilted/testing': link:../testing
       '@types/cookie': 0.4.1
       '@types/send': 0.17.1
 
@@ -630,8 +634,9 @@ importers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
       '@quilted/react-server-render': ^0.3.7
-      '@quilted/react-testing': ^0.5.1
+      '@quilted/react-testing': workspace:*
       '@quilted/routing': ^0.2.7
+      '@quilted/testing': workspace:*
     dependencies:
       '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
@@ -639,6 +644,7 @@ importers:
       '@quilted/routing': link:../routing
     devDependencies:
       '@quilted/react-testing': link:../react-testing
+      '@quilted/testing': link:../testing
 
   packages/react-server-render:
     specifiers:
@@ -682,7 +688,10 @@ importers:
     specifiers: {}
 
   packages/routing:
-    specifiers: {}
+    specifiers:
+      '@quilted/testing': workspace:*
+    devDependencies:
+      '@quilted/testing': link:../testing
 
   packages/sewing-kit:
     specifiers:
@@ -701,8 +710,11 @@ importers:
   packages/threads:
     specifiers:
       '@quilted/events': ^0.1.0
+      '@quilted/testing': workspace:*
     dependencies:
       '@quilted/events': link:../events
+    devDependencies:
+      '@quilted/testing': link:../testing
 
   packages/typescript:
     specifiers: {}

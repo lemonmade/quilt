@@ -38,6 +38,9 @@
       "optional": true
     }
   },
+  "devDependencies": {
+    "@quilted/testing": "workspace:*"
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"

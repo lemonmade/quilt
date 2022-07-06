@@ -54,7 +54,8 @@
     "@quilted/routing": "^0.2.7"
   },
   "devDependencies": {
-    "@quilted/react-testing": "^0.5.1"
+    "@quilted/react-testing": "workspace:*",
+    "@quilted/testing": "workspace:*"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
