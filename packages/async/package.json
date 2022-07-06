@@ -1,7 +1,7 @@
 {
   "name": "@quilted/async",
   "type": "module",
-  "version": "0.3.26",
+  "version": "0.3.27",
   "license": "MIT",
   "repository": {
     "type": "git",

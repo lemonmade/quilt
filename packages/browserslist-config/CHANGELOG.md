@@ -1,5 +1,11 @@
 # @quilted/browserslist-config
 
+## 0.1.8
+
+### Patch Changes
+
+- [`0629288e`](https://github.com/lemonmade/quilt/commit/0629288ee4ba2e2ccfd73fbb216c3559e1a5c77e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing package builds
+
 ## 0.1.7
 
 ### Patch Changes

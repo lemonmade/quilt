@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-graphql",
   "type": "module",
-  "version": "0.4.45",
+  "version": "0.4.46",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
