@@ -659,21 +659,21 @@ importers:
       expect: ^27.0.0
       jest-matcher-utils: ^27.0.0
       preact: ^10.7.0
-      react: npm:@quilted/react@^17.0.0
-      react-dom: npm:@quilted/react-dom@^17.0.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
       react-reconciler: ^0.26.0
       react-test-renderer: ^17.0.0
     dependencies:
       '@types/react-test-renderer': 17.0.2
       jest-matcher-utils: 27.5.1
-      react-reconciler: 0.26.2_react@packages+react
-      react-test-renderer: 17.0.2_react@packages+react
+      react-reconciler: 0.26.2_react@17.0.2
+      react-test-renderer: 17.0.2_react@17.0.2
     devDependencies:
       '@jest/globals': 27.5.1
       expect: 27.5.1
       preact: 10.7.2
-      react: link:../react
-      react-dom: link:../react-dom
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
 
   packages/react-utilities:
     specifiers: {}
@@ -7153,7 +7153,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: false
 
   /lru-cache/4.1.5:
     resolution: {integrity: sha512-sWZlbEP2OsHNkXrMl5GYk/jKk70MBng6UU4YI/qGDYbgf6YbP4EvmqISbXCoJiRKs+1bSpFHVgQxvJ17F2li5g==}
@@ -7470,7 +7469,6 @@ packages:
   /object-assign/4.1.1:
     resolution: {integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /object-inspect/1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
@@ -8329,6 +8327,17 @@ packages:
       unpipe: 1.0.0
     dev: false
 
+  /react-dom/17.0.2_react@17.0.2:
+    resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
+    peerDependencies:
+      react: 17.0.2
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react: 17.0.2
+      scheduler: 0.20.2
+    dev: true
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: false
@@ -8358,7 +8367,7 @@ packages:
       react: link:packages/react
     dev: true
 
-  /react-reconciler/0.26.2_react@packages+react:
+  /react-reconciler/0.26.2_react@17.0.2:
     resolution: {integrity: sha512-nK6kgY28HwrMNwDnMui3dvm3rCFjZrcGiuwLc5COUipBK5hWHLOxMJhSnSomirqWwjPBJKV1QcbkI0VJr7Gl1Q==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
@@ -8366,31 +8375,38 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-      react: link:packages/react
+      react: 17.0.2
       scheduler: 0.20.2
     dev: false
 
-  /react-shallow-renderer/16.15.0_react@packages+react:
+  /react-shallow-renderer/16.15.0_react@17.0.2:
     resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
     peerDependencies:
       react: ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:
       object-assign: 4.1.1
-      react: link:packages/react
+      react: 17.0.2
       react-is: 17.0.2
     dev: false
 
-  /react-test-renderer/17.0.2_react@packages+react:
+  /react-test-renderer/17.0.2_react@17.0.2:
     resolution: {integrity: sha512-yaQ9cB89c17PUb0x6UfWRs7kQCorVdHlutU1boVPEsB8IDZH6n9tHxMacc3y0JoXOJUsZb/t/Mb8FUWMKaM7iQ==}
     peerDependencies:
       react: 17.0.2
     dependencies:
       object-assign: 4.1.1
-      react: link:packages/react
+      react: 17.0.2
       react-is: 17.0.2
-      react-shallow-renderer: 16.15.0_react@packages+react
+      react-shallow-renderer: 16.15.0_react@17.0.2
       scheduler: 0.20.2
     dev: false
+
+  /react/17.0.2:
+    resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
 
   /read-pkg-up/7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
@@ -8656,7 +8672,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-    dev: false
 
   /selfsigned/2.0.1:
     resolution: {integrity: sha512-LmME957M1zOsUhG+67rAjKfiWFox3SBxE/yymatMZsAx+oMrJ0YQ8AToOnyCm7xbeg2ep37IHLxdu0o2MavQOQ==}
