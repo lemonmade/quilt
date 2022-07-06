@@ -1,7 +1,7 @@
 {
   "name": "@quilted/rollup-plugin-fix-commonjs-preserve-modules",
   "type": "module",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
