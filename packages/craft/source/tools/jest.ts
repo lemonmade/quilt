@@ -425,7 +425,9 @@ function createCachedEntryAliasesGetter(): (
     let cached = cache.get(project);
 
     if (cached == null) {
-      cached = sourceEntriesForProject(project).then((entries) => {
+      cached = sourceEntriesForProject(project, {
+        conditions: ['node'],
+      }).then((entries) => {
         const normalizedEntries: Record<string, string> = {};
 
         for (const [entry, source] of Object.entries(entries)) {

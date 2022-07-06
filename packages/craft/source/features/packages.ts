@@ -131,7 +131,10 @@ function createCachedSourceEntriesGetter(
   };
 }
 
-export async function sourceEntriesForProject(project: Project) {
+export async function sourceEntriesForProject(
+  project: Project,
+  {conditions = []}: {conditions?: string[]} = {},
+) {
   const entries: Record<string, string> = {};
 
   for (const [exportPath, exportCondition] of Object.entries(
@@ -140,17 +143,39 @@ export async function sourceEntriesForProject(project: Project) {
       null | string | Record<string, string>
     >,
   )) {
-    const targetFile =
-      exportCondition == null
-        ? undefined
-        : typeof exportCondition === 'string'
-        ? exportCondition
-        : exportCondition['quilt:source'] ??
-          exportCondition['quilt:esnext'] ??
-          Object.values(exportCondition).find(
-            (condition) =>
-              typeof condition === 'string' && condition.startsWith('./build/'),
-          );
+    let targetFile: string | null | undefined = null;
+
+    if (exportCondition == null) continue;
+
+    if (typeof exportCondition === 'string') {
+      targetFile = exportCondition;
+    } else {
+      if (conditions.length > 0) {
+        for (const [condition, conditionValue] of Object.entries(
+          exportCondition,
+        )) {
+          if (!conditions.includes(condition)) continue;
+          if (conditionValue == null || typeof conditionValue !== 'object') {
+            continue;
+          }
+
+          const sourceForCondition = conditionValue['quilt:source'];
+
+          if (sourceForCondition != null) {
+            targetFile = sourceForCondition;
+            break;
+          }
+        }
+      }
+
+      targetFile ??=
+        exportCondition['quilt:source'] ??
+        exportCondition['quilt:esnext'] ??
+        Object.values(exportCondition).find(
+          (condition) =>
+            typeof condition === 'string' && condition.startsWith('./build/'),
+        );
+    }
 
     if (targetFile == null) continue;
 
