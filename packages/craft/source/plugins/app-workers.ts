@@ -1,12 +1,11 @@
 import {createProjectPlugin} from '../kit';
-import type {App} from '../kit';
 
 import type {} from '../features/workers';
 
 export const STEP_NAME = 'Quilt.AppWorkers';
 
 export function appWorkers({baseUrl}: {baseUrl: string}) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: STEP_NAME,
     develop({project, workspace, configure}) {
       configure((configuration) => {

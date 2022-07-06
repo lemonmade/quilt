@@ -1,5 +1,6 @@
 import type {Environment, ValueOrPromise} from '../types';
-import type {Project, App, Service, Workspace, TargetRuntime} from '../model';
+import type {Project, Workspace} from '../model';
+import type {Runtime} from '../runtime';
 
 import type {
   HookAdder,
@@ -7,7 +8,6 @@ import type {
   ResolvedHooks,
   ResolvedOptions,
   WaterfallHook,
-  WaterfallHookWithDefault,
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
@@ -18,31 +18,6 @@ import type {
  * code project.
  */
 export interface BuildProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for building applications.
- */
-export interface BuildAppOptions extends BuildProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for building backend services.
- */
-export interface BuildServiceOptions extends BuildProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for building packages.
- */
-export interface BuildPackageOptions extends BuildProjectOptions {}
-
-/**
- * Selects the build options that match the provided project type.
- */
-export type BuildOptionsForProject<ProjectType extends Project = Project> =
-  ProjectType extends App
-    ? BuildAppOptions
-    : ProjectType extends Service
-    ? BuildServiceOptions
-    : BuildPackageOptions;
 
 /**
  * Options that are available to configuration hooks for building
@@ -69,7 +44,7 @@ export interface BuildProjectConfigurationCoreHooks {
   /**
    * The runtimes that this build will execute in
    */
-  readonly runtime: WaterfallHookWithDefault<TargetRuntime>;
+  readonly runtimes: WaterfallHook<Runtime[]>;
 }
 
 /**
@@ -78,47 +53,15 @@ export interface BuildProjectConfigurationCoreHooks {
 export interface BuildProjectConfigurationHooks {}
 
 /**
- * Configuration hooks for building applications.
+ * The full set of resolved build hooks for a single project. This includes
+ * all the core hooks provided automatically, and any hooks added by plugins
+ * during the `hooks` phase of running this task. All plugins added by hooks
+ * are marked as optional in this type because the plugin that added the type
+ * may not have been used in this project.
  */
-export interface BuildAppConfigurationHooks
-  extends BuildProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for building backend services.
- */
-export interface BuildServiceConfigurationHooks
-  extends BuildProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for building packages.
- */
-export interface BuildPackageConfigurationHooks
-  extends BuildProjectConfigurationHooks {}
-
-/**
- * Selects the build configuration hooks that match the provided
- * project type.
- */
-export type BuildConfigurationHooksForProject<
-  ProjectType extends Project = Project,
-> = ProjectType extends App
-  ? BuildAppConfigurationHooks
-  : ProjectType extends Service
-  ? BuildServiceConfigurationHooks
-  : BuildPackageConfigurationHooks;
-
-/**
- * The full set of resolved build hooks for a single project of the
- * provided type. This includes all the core hooks provided automatically,
- * and any hooks added by plugins during the `hooks` phase of running this
- * task. All plugins added by hooks are marked as optional in this type
- * because the plugin that added the type may not have been used in this
- * project.
- */
-export type ResolvedBuildProjectConfigurationHooks<
-  ProjectType extends Project = Project,
-> = ResolvedHooks<BuildConfigurationHooksForProject<ProjectType>> &
-  BuildProjectConfigurationCoreHooks;
+export type ResolvedBuildProjectConfigurationHooks =
+  ResolvedHooks<BuildProjectConfigurationHooks> &
+    BuildProjectConfigurationCoreHooks;
 
 /**
  * Hooks for building the entire workspace.
@@ -161,11 +104,11 @@ export interface BuildTaskOptions {
  * The hooks and additional metadata for running the build command on
  * a single project.
  */
-export interface BuildProjectTask<ProjectType extends Project = Project> {
+export interface BuildProjectTask {
   /**
    * The project being built.
    */
-  readonly project: ProjectType;
+  readonly project: Project;
 
   /**
    * The workspace this project is part of.
@@ -185,7 +128,7 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
    * TypeScript, and to ensure consumers get appropriate type-checking
    * on their use of the hooks.
    */
-  readonly hooks: HookAdder<BuildConfigurationHooksForProject<ProjectType>>;
+  readonly hooks: HookAdder<BuildProjectConfigurationHooks>;
 
   /**
    * Provide additional configuration for building the project. Custom
@@ -195,8 +138,8 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
    * to include your hooks for other plugins to reference.
    */
   readonly configure: ConfigurationCollector<
-    ResolvedBuildProjectConfigurationHooks<ProjectType>,
-    ResolvedOptions<BuildOptionsForProject<ProjectType>>
+    ResolvedBuildProjectConfigurationHooks,
+    ResolvedOptions<BuildProjectOptions>
   >;
 
   /**
@@ -211,9 +154,8 @@ export interface BuildProjectTask<ProjectType extends Project = Project> {
    * what steps need to be added.
    */
   readonly run: ProjectStepAdder<
-    ProjectType,
-    ResolvedBuildProjectConfigurationHooks<ProjectType>,
-    BuildOptionsForProject<ProjectType>
+    ResolvedBuildProjectConfigurationHooks,
+    BuildProjectOptions
   >;
 }
 
@@ -236,8 +178,8 @@ export interface BuildWorkspaceStepAdderContext
    */
   projectConfiguration<ProjectType extends Project = Project>(
     project: ProjectType,
-    options?: BuildOptionsForProject<ProjectType>,
-  ): Promise<ResolvedBuildProjectConfigurationHooks<ProjectType>>;
+    options?: BuildProjectOptions,
+  ): Promise<ResolvedBuildProjectConfigurationHooks>;
 }
 
 /**
@@ -294,7 +236,5 @@ export interface BuildWorkspaceTask {
    * hook of a project plugin. You can use this hook to add configuration or
    * steps to multiple projects in the workspace.
    */
-  project<ProjectType extends Project = Project>(
-    handler: (task: BuildProjectTask<ProjectType>) => ValueOrPromise<void>,
-  ): void;
+  project(handler: (task: BuildProjectTask) => ValueOrPromise<void>): void;
 }

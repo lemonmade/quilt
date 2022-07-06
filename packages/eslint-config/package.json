@@ -19,17 +19,11 @@
     "./app": {
       "require": "./app.js"
     },
-    "./package": {
-      "require": "./package.js"
-    },
-    "./service": {
-      "require": "./service.js"
+    "./project": {
+      "require": "./project.js"
     },
     "./react": {
       "require": "./react.js"
-    },
-    "./node": {
-      "require": "./node.js"
     },
     "./workspace": {
       "require": "./workspace.js"
@@ -60,8 +54,10 @@
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/node",
-      "@quilted/eslint-config/package"
-    ]
+      "@quilted/eslint-config/project"
+    ],
+    "env": {
+      "node": true
+    }
   }
 }

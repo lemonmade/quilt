@@ -1,16 +1,14 @@
 /* eslint @typescript-eslint/no-empty-interface: off */
 
-import {Runtime, createProjectPlugin, createWorkspacePlugin} from './kit';
-import type {App, Service, Package, Project} from './kit';
-import {
-  createApp,
-  createPackage,
-  createService,
-  createWorkspace,
-} from './configuration';
+import {createProjectPlugin, createWorkspacePlugin} from './kit';
+import type {Project} from './kit';
+import {createProject, createWorkspace} from './configuration';
 
-import {packageBuild} from './features/packages';
-import type {Options as PackageBuildOptions} from './features/packages';
+import {packageBase, packageBuild} from './features/packages';
+import type {
+  Options as PackageBaseOptions,
+  BuildOptions as PackageBuildOptions,
+} from './features/packages';
 import {esnextBuild, esnext} from './features/esnext';
 import {fromSource} from './features/from-source';
 import {react} from './features/react';
@@ -36,6 +34,8 @@ import {typescriptProject, typescriptWorkspace} from './tools/typescript';
 
 import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
 import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
+
+import {appBase} from './plugins/app-base';
 import {appBuild} from './plugins/app-build';
 import type {
   AssetOptions as AppBuildAssetOptions,
@@ -46,24 +46,24 @@ import type {Options as AppDevelopOptions} from './plugins/app-develop';
 import {magicModuleApp} from './plugins/magic-module-app';
 import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
 import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry';
-import {magicModuleEnv} from './plugins/magic-module-env';
-import type {EnvironmentOptions} from './plugins/magic-module-env';
-
 import {appServer} from './plugins/app-server-base';
 import type {AppServerOptions} from './plugins/app-server-base';
 import {appServerBuild} from './plugins/app-server-build';
 import type {} from './plugins/app-server-build';
-
 import {appStatic} from './plugins/app-static';
 import type {AppStaticOptions} from './plugins/app-static';
-
 import {appWorkers} from './plugins/app-workers';
+
+import {serviceBase} from './plugins/service-base';
 import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
 import {serviceDevelopment} from './plugins/service-develop';
 
 import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
 import type {Options as HttpHandlerOptions} from './plugins/http-handler';
+
+import {magicModuleEnv} from './plugins/magic-module-env';
+import type {EnvironmentOptions} from './plugins/magic-module-env';
 
 import {tsconfigAliases} from './plugins/tsconfig-aliases';
 
@@ -79,19 +79,35 @@ export type {} from './plugins/http-handler';
 // create many plugins without having to grab types from the
 // (significantly more complex) `@quilted/craft/kit` entry.
 export {
-  Runtime,
   createProjectPlugin,
   createWorkspacePlugin,
-  createApp,
-  createPackage,
-  createService,
+  createProject,
   createWorkspace,
 };
-export type {App, Service, Package, Project};
+export type {Project};
 
 export * from './constants';
 
 export interface AppOptions {
+  /**
+   * The entry module for this app. This should be an absolute path, or relative
+   * path from the root directory containing your project. This entry should just be
+   * for the main `App` component in your project, which Quilt will automatically use
+   * to create browser and server-side entries for your project.
+   *
+   * If you only want to use a custom entry module for the browser build, use the
+   * `browser.entry` option instead. If you only want to use a custom entry module
+   * for the server-side build, use the `server.entry` option instead.
+   *
+   * If you do not provide this option explicitly, Quilt will first try to infer it
+   * from the `main` field of your `package.json`, and if that file does not exist,
+   * will attempt to find a file named `index.{js,ts,tsx}`, `App.{js,ts,tsx}`, or
+   * `app.{js,ts,tsx}` at the root of your project.
+   *
+   * @example './App.tsx'
+   */
+  entry?: string;
+
   polyfill?: boolean | PolyfillOptions;
   develop?: boolean | Pick<AppDevelopOptions, 'port'>;
   build?: boolean;
@@ -137,6 +153,7 @@ export interface AppOptions {
 }
 
 export function quiltApp({
+  entry,
   env,
   polyfill: shouldPolyfill = true,
   develop = true,
@@ -151,7 +168,7 @@ export function quiltApp({
   const useHttpHandler =
     typeof server === 'boolean' ? server : server.httpHandler ?? true;
 
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.App',
     async create({use}) {
       use(
@@ -168,6 +185,7 @@ export function quiltApp({
         esnext(),
         fromSource(),
         react(),
+        appBase({entry}),
         aliasWorkspacePackages(),
         // Magic modules
         magicModuleApp(),
@@ -209,7 +227,7 @@ export function quiltApp({
         workers(),
         appWorkers({baseUrl}),
         asyncQuilt({preload: true}),
-        reactTesting({environment: 'preact'}),
+        reactTesting(),
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
@@ -222,6 +240,17 @@ export function quiltApp({
 }
 
 export interface ServiceOptions {
+  /**
+   * The entry module for this service. This should be an absolute path, or relative
+   * path from the root directory containing your project.
+   *
+   * If you do not provide this option explicitly, Quilt will first try to infer it
+   * from the `main` field of your `package.json`, and if that file does not exist,
+   * will attempt to find a file named `index.{js,ts,tsx}`, `App.{js,ts,tsx}`, or
+   * `app.{js,ts,tsx}` at the root of your project.
+   */
+  entry?: string;
+
   /**
    * Whether this service requires React syntax transformations. Defaults
    * to `false`.
@@ -236,6 +265,7 @@ export interface ServiceOptions {
 }
 
 export function quiltService({
+  entry,
   env,
   build = true,
   develop = true,
@@ -251,7 +281,7 @@ export function quiltService({
     ...(typeof build === 'boolean' ? {} : build),
   };
 
-  return createProjectPlugin<Service>({
+  return createProjectPlugin({
     name: 'Quilt.Service',
     async create({use}) {
       use(
@@ -267,6 +297,7 @@ export function quiltService({
         esnext(),
         fromSource(),
         useReact && react(),
+        serviceBase({entry}),
         aliasWorkspacePackages(),
         magicModuleEnv(),
         // Build and http handler setup
@@ -283,7 +314,7 @@ export function quiltService({
           }),
         develop && useHttpHandler && serviceDevelopment(),
         useGraphQL && graphql(),
-        useReact && reactTesting({environment: 'preact'}),
+        useReact && reactTesting(),
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
@@ -295,7 +326,8 @@ export function quiltService({
 }
 
 // TODO
-export interface PackageOptions {
+export interface PackageOptions
+  extends Pick<PackageBaseOptions, 'entries' | 'binaries'> {
   build?: boolean | {bundle?: RollupNodeOptions['bundle']};
   react?: boolean;
   graphql?: boolean;
@@ -307,12 +339,14 @@ export interface PackageOptions {
  * and both standard and `esnext` builds, if the package is public.
  */
 export function quiltPackage({
+  entries,
+  binaries,
   build = true,
   react: useReact = false,
   graphql: useGraphQL = false,
   commonjs,
 }: PackageOptions = {}) {
-  return createProjectPlugin<Package>({
+  return createProjectPlugin({
     name: 'Quilt.Package',
     async create({use}) {
       use(
@@ -326,11 +360,12 @@ export function quiltPackage({
         esnext(),
         fromSource(),
         useReact && react(),
-        useReact && reactTesting({environment: 'preact'}),
+        useReact && reactTesting(),
         useGraphQL && graphql(),
         rollupNode({
           bundle: typeof build === 'boolean' ? undefined : build.bundle,
         }),
+        packageBase({entries, binaries}),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),

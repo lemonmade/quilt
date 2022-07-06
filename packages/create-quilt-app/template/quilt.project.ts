@@ -1,6 +1,5 @@
-import {createApp, quiltApp, quiltWorkspace} from '@quilted/craft';
+import {createProject, quiltApp, quiltWorkspace} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./app');
-  app.use(quiltWorkspace(), quiltApp());
+export default createProject((project) => {
+  project.use(quiltWorkspace(), quiltApp({entry: './app/index.ts'}));
 });

@@ -3,18 +3,20 @@ import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 import type {OutputOptions} from 'rollup';
 
 import {createProjectPlugin} from '../kit';
-import type {Package, PackageBinary, WaterfallHook} from '../kit';
+import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 import type {} from '../tools/rollup';
 
 export type PackageModuleType = 'commonjs' | 'esmodules';
 
 export interface PackageHooks {
+  packageEntries: WaterfallHookWithDefault<Record<string, string>>;
+  packageBinaries: WaterfallHookWithDefault<Record<string, string>>;
   packageBinaryNodeOptions: WaterfallHook<string[]>;
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildPackageOptions {
+  interface BuildProjectOptions {
     /**
      * Controls the output format and transpilation settings of the
      * build.
@@ -22,10 +24,179 @@ declare module '@quilted/sewing-kit' {
     packageBuildModule: PackageModuleType;
   }
 
-  interface BuildPackageConfigurationHooks extends PackageHooks {}
+  interface BuildProjectConfigurationHooks extends PackageHooks {}
+  interface DevelopProjectConfigurationHooks extends PackageHooks {}
 }
 
+const ESM_EXTENSION = '.mjs';
+const COMMONJS_EXTENSION = '.cjs';
+
 export interface Options {
+  /**
+   * A map of package entry to source file name. The keys in this
+   * object should be in the same format as the keys for the `exports`
+   * property in the package.json file. For example, the following object
+   * species a "root" entry point
+   *
+   * ```ts
+   * createPackage({
+   *   entries: {
+   *     '.': './source/index.ts',
+   *     './testing': './source/testing.ts',
+   *   },
+   * });
+   * ```
+   *
+   * When you do not explicitly provide this option, Quilt will provide a
+   * default option that reads the `exports` property of your package.json,
+   * and attempts to infer the source files for the entry points listed
+   * there.
+   */
+  entries?: Record<string, string>;
+
+  /**
+   * A map of binaries to output for this package. The keys in this
+   * object should be the filenames of the binary you want to produce,
+   * and the values should be the source file that will be executed when
+   * the binary is run. For example, the following object species a `quilt`
+   * binary, which will run the `./source/cli.ts` file:
+   *
+   * ```ts
+   * createPackage({
+   *   binaries: {
+   *     quilt: './source/cli.ts',
+   *   },
+   * });
+   * ```
+   *
+   * By default, no binaries are built for a package.
+   */
+  binaries?: Record<string, string>;
+}
+
+export function packageBase({entries, binaries = {}}: Options = {}) {
+  return createProjectPlugin({
+    name: 'Quilt.Package',
+    build({project, configure, hooks}) {
+      const getEntries = createCachedSourceEntriesGetter(project, entries);
+
+      hooks<PackageHooks>(({waterfall}) => ({
+        packageEntries: waterfall({
+          default: getEntries,
+        }),
+        packageBinaries: waterfall({
+          default: () => binaries,
+        }),
+        packageBinaryNodeOptions: waterfall(),
+      }));
+
+      configure(({babelRuntimeHelpers}) => {
+        babelRuntimeHelpers?.(() => 'runtime');
+      });
+    },
+    develop({project, configure, hooks}) {
+      const getEntries = createCachedSourceEntriesGetter(project, entries);
+
+      hooks<PackageHooks>(({waterfall}) => ({
+        packageEntries: waterfall({
+          default: getEntries,
+        }),
+        packageBinaries: waterfall({
+          default: () => binaries,
+        }),
+        packageBinaryNodeOptions: waterfall(),
+      }));
+
+      configure(({babelRuntimeHelpers}) => {
+        babelRuntimeHelpers?.(() => 'runtime');
+      });
+    },
+  });
+}
+
+function createCachedSourceEntriesGetter(
+  project: Project,
+  defaultEntries?: Record<string, string>,
+): () => Promise<Record<string, string>> {
+  if (defaultEntries != null) return () => Promise.resolve({...defaultEntries});
+
+  let cached: Promise<Record<string, string>> | undefined;
+
+  return () => {
+    if (cached == null) {
+      cached = sourceEntriesForProject(project);
+    }
+
+    return cached;
+  };
+}
+
+export async function sourceEntriesForProject(
+  project: Project,
+  {conditions = []}: {conditions?: string[]} = {},
+) {
+  const entries: Record<string, string> = {};
+
+  for (const [exportPath, exportCondition] of Object.entries(
+    (project.packageJson?.raw.exports ?? {}) as Record<
+      string,
+      null | string | Record<string, string>
+    >,
+  )) {
+    let targetFile: string | null | undefined = null;
+
+    if (exportCondition == null) continue;
+
+    if (typeof exportCondition === 'string') {
+      targetFile = exportCondition;
+    } else {
+      if (conditions.length > 0) {
+        for (const [condition, conditionValue] of Object.entries(
+          exportCondition,
+        )) {
+          if (!conditions.includes(condition)) continue;
+          if (conditionValue == null || typeof conditionValue !== 'object') {
+            continue;
+          }
+
+          const sourceForCondition = conditionValue['quilt:source'];
+
+          if (sourceForCondition != null) {
+            targetFile = sourceForCondition;
+            break;
+          }
+        }
+      }
+
+      targetFile ??=
+        exportCondition['quilt:source'] ??
+        exportCondition['quilt:esnext'] ??
+        Object.values(exportCondition).find(
+          (condition) =>
+            typeof condition === 'string' && condition.startsWith('./build/'),
+        );
+    }
+
+    if (targetFile == null) continue;
+
+    const sourceFile = targetFile.includes('/build/')
+      ? (
+          await project.fs.glob(
+            targetFile
+              .replace(/[/]build[/][^/]+[/]/, '/*/')
+              .replace(/(\.d\.ts|\.[\w]+)$/, '.*'),
+            {ignore: [project.fs.resolvePath(targetFile)]},
+          )
+        )[0]!
+      : project.fs.resolvePath(targetFile);
+
+    entries[exportPath] = sourceFile;
+  }
+
+  return entries;
+}
+
+export interface BuildOptions {
   /**
    * Whether to build a CommonJS version of this library. This build
    * will be placed in `./build/cjs`; you’ll need to add a `require`
@@ -45,9 +216,6 @@ export interface Options {
   commonjs?: boolean | {exports?: 'named' | 'default'};
 }
 
-const ESM_EXTENSION = '.mjs';
-const COMMONJS_EXTENSION = '.cjs';
-
 /**
  * Creates build steps that generate package outputs that are appropriate
  * for a public package. By default, this includes one output: an `esm`
@@ -56,28 +224,58 @@ const COMMONJS_EXTENSION = '.cjs';
  * `commonjs: true` to build a second version of your library that natively
  * supports `commonjs`.
  */
-export function packageBuild({commonjs = true}: Options = {}) {
-  return createProjectPlugin<Package>({
+export function packageBuild({commonjs = true}: BuildOptions = {}) {
+  return createProjectPlugin({
     name: 'Quilt.PackageBuild',
-    build({project, configure, run, hooks}) {
-      hooks<PackageHooks>(({waterfall}) => ({
-        packageBinaryNodeOptions: waterfall(),
-      }));
-
+    build({project, configure, run}) {
       if (project.packageJson?.private) return;
 
       configure(
         (
-          {outputDirectory, rollupInput, rollupOutputs, rollupPlugins},
+          {
+            outputDirectory,
+            packageEntries,
+            packageBinaries,
+            rollupInput,
+            rollupOutputs,
+            rollupPlugins,
+            babelPresetEnvOptions,
+          },
           {packageBuildModule},
         ) => {
           if (packageBuildModule == null) return;
+
+          babelPresetEnvOptions?.(() => {
+            return {
+              useBuiltIns: false,
+              bugfixes: true,
+              shippedProposals: true,
+              // I thought I wanted this on, but if you do this, Babel
+              // stops respecting the top-level `targets` option and tries
+              // to use the targets passed to the preset directly instead.
+              // ignoreBrowserslistConfig: true,
+            };
+          });
 
           outputDirectory?.((directory) =>
             join(directory, packageBuildModule === 'commonjs' ? 'cjs' : 'esm'),
           );
 
-          rollupInput?.(() => getEntryFiles(project));
+          rollupInput?.(async () => {
+            const [entries, binaries] = await Promise.all([
+              packageEntries!.run(),
+              packageBinaries!.run(),
+            ]);
+
+            return [
+              ...Object.values(entries).map((file) =>
+                project.fs.resolvePath(file),
+              ),
+              ...Object.values(binaries).map((file) =>
+                project.fs.resolvePath(file),
+              ),
+            ];
+          });
 
           rollupPlugins?.(async (plugins) => {
             const extension =
@@ -102,11 +300,13 @@ export function packageBuild({commonjs = true}: Options = {}) {
             // to bundling the entire project into as few files as possible.
             // When the project is imported normally, we preserve the original
             // source structure.
-            const preserveModules = project.entries.length > 0;
+            const entries = await packageEntries!.run();
+            const rollupInputs = await rollupInput!.run([]);
+            const preserveModules = Object.keys(entries).length > 0;
             const preserveOptions: Partial<OutputOptions> = preserveModules
               ? {
                   preserveModules: true,
-                  preserveModulesRoot: sourceRoot(project),
+                  preserveModulesRoot: sourceRoot(project, rollupInputs),
                 }
               : {};
 
@@ -187,20 +387,24 @@ export function packageBuild({commonjs = true}: Options = {}) {
           );
         }
 
-        if (project.binaries.length > 0) {
+        const {packageBinaries} = await configuration();
+        const binaries = await packageBinaries!.run();
+
+        if (Object.keys(binaries).length > 0) {
           steps.push(
             step({
               name: 'Quilt.PackageBuild.Binaries',
               label: `Building binaries for ${project.name}`,
               async run(step) {
-                const {outputDirectory, packageBinaryNodeOptions} =
+                const {outputDirectory, packageBinaryNodeOptions, rollupInput} =
                   await configuration({
                     packageBuildModule: 'esmodules',
                   });
 
-                const [resolvedOutputDirectory, nodeOptions] =
+                const [resolvedOutputDirectory, inputs, nodeOptions] =
                   await Promise.all([
                     outputDirectory.run(project.fs.buildPath()),
+                    rollupInput!.run([]),
                     packageBinaryNodeOptions!.run([
                       // Try to normalize more places where you can use ESModules
                       '--experimental-vm-modules',
@@ -208,16 +412,20 @@ export function packageBuild({commonjs = true}: Options = {}) {
                   ]);
 
                 await Promise.all(
-                  project.binaries.map((binary) => writeBinary(binary)),
+                  Object.entries(binaries).map(([name, source]) =>
+                    writeBinary({name, source}),
+                  ),
                 );
 
                 async function writeBinary({
                   name,
                   source,
-                  aliases,
-                }: PackageBinary) {
+                }: {
+                  name: string;
+                  source: string;
+                }) {
                   const relativeFromSourceRoot = relative(
-                    sourceRoot(project),
+                    sourceRoot(project, inputs),
                     project.fs.resolvePath(source),
                   );
 
@@ -226,38 +434,36 @@ export function packageBuild({commonjs = true}: Options = {}) {
                     relativeFromSourceRoot,
                   );
 
-                  for (const binaryName of [name, ...aliases]) {
-                    const binaryFile = project.fs.resolvePath(
-                      'bin',
-                      // Node needs a .mjs extension to parse the file as ESM
-                      `${binaryName}.mjs`,
-                    );
+                  const binaryFile = project.fs.resolvePath(
+                    'bin',
+                    // Node needs a .mjs extension to parse the file as ESM
+                    name.endsWith('.mjs') ? name : `${name}.mjs`,
+                  );
 
-                    const originalExtension = extname(source);
+                  const originalExtension = extname(source);
 
-                    const relativeFromBinary = normalizedRelative(
-                      dirname(binaryFile),
-                      `${
-                        originalExtension
-                          ? destinationInOutput.replace(/\.\w+$/, '')
-                          : destinationInOutput
-                      }${ESM_EXTENSION}`,
-                    );
+                  const relativeFromBinary = normalizedRelative(
+                    dirname(binaryFile),
+                    `${
+                      originalExtension
+                        ? destinationInOutput.replace(/\.\w+$/, '')
+                        : destinationInOutput
+                    }${ESM_EXTENSION}`,
+                  );
 
-                    await project.fs.write(
-                      binaryFile,
-                      [
-                        `#!/usr/bin/env node${
-                          nodeOptions.length > 0
-                            ? ` ${nodeOptions.join(' ')}`
-                            : ''
-                        }`,
-                        `import ${JSON.stringify(relativeFromBinary)};`,
-                      ].join('\n'),
-                    );
+                  await project.fs.write(
+                    binaryFile,
+                    [
+                      `#!/usr/bin/env node${
+                        nodeOptions.length > 0
+                          ? ` ${nodeOptions.join(' ')}`
+                          : ''
+                      }`,
+                      `import ${JSON.stringify(relativeFromBinary)};`,
+                    ].join('\n'),
+                  );
 
-                    await step.exec('chmod', ['+x', binaryFile]);
-                  }
+                  await step.exec('chmod', ['+x', binaryFile]);
                 }
               },
             }),
@@ -270,26 +476,22 @@ export function packageBuild({commonjs = true}: Options = {}) {
   });
 }
 
-function getEntryFiles({fs, entries, binaries}: Package) {
-  return [
-    ...entries.map((entry) => fs.resolvePath(entry.source)),
-    ...binaries.map((binary) => fs.resolvePath(binary.source)),
-  ];
-}
-
-function sourceRoot(pkg: Package) {
-  const entries = getEntryFiles(pkg);
-
+function sourceRoot(project: Project, entries: string[]) {
   if (entries.length === 0) {
-    throw new Error(`No entries for package: ${pkg.name}`);
+    return project.fs.root + pathSeparator;
   }
 
   if (entries.length === 1) {
     return dirname(entries[0]!);
   }
 
-  const [firstEntry, ...otherEntries] = entries;
-  let sharedRoot = pkg.fs.root + pathSeparator;
+  const [firstEntry, ...denormalizedOtherEntries] = entries;
+
+  const otherEntries = denormalizedOtherEntries.map((entry) =>
+    project.fs.resolvePath(entry),
+  );
+
+  let sharedRoot = project.fs.root + pathSeparator;
 
   for (const segment of firstEntry!
     .replace(sharedRoot, '')

@@ -5,8 +5,9 @@ import type {
 } from 'vite';
 import type {InputOptions} from 'rollup';
 
-import {App, createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {
+  Project,
   WaterfallHook,
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
@@ -86,14 +87,14 @@ export interface ViteHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface DevelopAppConfigurationHooks extends ViteHooks {}
+  interface DevelopProjectConfigurationHooks extends ViteHooks {}
 }
 
 /**
  * Runs vite during development for this application.
  */
 export function vite({run: shouldRun = true} = {}) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.Vite',
     develop({project, hooks, run}) {
       hooks<ViteHooks>(({waterfall}) => ({
@@ -147,7 +148,7 @@ export function vite({run: shouldRun = true} = {}) {
 }
 
 export async function createViteConfig(
-  app: App,
+  project: Project,
   {
     extensions,
     viteConfig,
@@ -163,7 +164,7 @@ export async function createViteConfig(
     viteSsrNoExternals,
     viteSsrExternals,
     viteServerOptions,
-  }: ResolvedDevelopProjectConfigurationHooks<App>,
+  }: ResolvedDevelopProjectConfigurationHooks,
 ) {
   const baseExtensions = await extensions.run([
     '.mjs',
@@ -211,10 +212,10 @@ export async function createViteConfig(
   const serverOptions = await viteServerOptions!.run({port, host});
 
   const config = await viteConfig!.run({
-    root: app.root,
+    root: project.root,
     configFile: false,
     clearScreen: false,
-    cacheDir: app.fs.temporaryPath('vite/cache'),
+    cacheDir: project.fs.temporaryPath('vite/cache'),
     build: {
       rollupOptions,
     },

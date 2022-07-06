@@ -1,9 +1,8 @@
-import {createPackage, quiltPackage, createProjectPlugin} from '@quilted/craft';
+import {createProject, quiltPackage, createProjectPlugin} from '@quilted/craft';
 import type {MangleOptions} from 'terser';
 
-export default createPackage((pkg) => {
-  pkg.entry({source: './source/index'});
-  pkg.use(
+export default createProject((project) => {
+  project.use(
     quiltPackage(),
     // @see https://github.com/preactjs/preact/blob/master/mangle.json
     terser({

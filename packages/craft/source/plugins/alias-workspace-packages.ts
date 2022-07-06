@@ -1,48 +1,45 @@
 import {createProjectPlugin} from '../kit';
-import type {
-  Workspace,
-  ResolvedHooks,
-  DevelopAppConfigurationHooks,
-} from '../kit';
+import type {Project, Workspace} from '../kit';
 
 import type {} from '../tools/rollup';
 import type {} from '../tools/vite';
 
+import {sourceEntriesForProject} from '../features/packages';
+
 export function aliasWorkspacePackages() {
   return createProjectPlugin({
     name: 'Quilt.AliasWorkspacePackages',
-    develop({configure, workspace}) {
-      configure(
-        ({
-          rollupPlugins,
-          viteResolveAliases,
-        }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
-          viteResolveAliases?.((aliases) => ({
-            ...aliases,
-            ...getAliases(workspace),
-          }));
+    develop({configure, project, workspace}) {
+      if (project.packageJson == null) return;
 
-          rollupPlugins?.(async (plugins) => {
-            const {default: alias} = await import('@rollup/plugin-alias');
+      configure(({rollupPlugins, viteResolveAliases}) => {
+        viteResolveAliases?.(async (aliases) => ({
+          ...aliases,
+          ...(await getAliases(project, workspace)),
+        }));
 
-            return [
-              alias({
-                entries: getAliases(workspace),
-              }),
-              ...plugins,
-            ];
-          });
-        },
-      );
+        rollupPlugins?.(async (plugins) => {
+          const {default: alias} = await import('@rollup/plugin-alias');
+
+          return [
+            alias({
+              entries: await getAliases(project, workspace),
+            }),
+            ...plugins,
+          ];
+        });
+      });
     },
-    build({configure, workspace}) {
+    build({configure, project, workspace}) {
+      if (project.packageJson == null) return;
+
       configure(({rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
           const {default: alias} = await import('@rollup/plugin-alias');
 
           return [
             alias({
-              entries: getAliases(workspace),
+              entries: await getAliases(project, workspace),
             }),
             ...plugins,
           ];
@@ -52,18 +49,23 @@ export function aliasWorkspacePackages() {
   });
 }
 
-function getAliases(workspace: Workspace) {
+async function getAliases(project: Project, workspace: Workspace) {
   const aliases: Record<string, string> = {};
 
-  for (const pkg of workspace.packages) {
-    const sortedEntries = [...pkg.entries].sort(
-      (entryOne, entryTwo) =>
-        (entryTwo.name ?? '').length - (entryOne.name ?? '').length,
-    );
+  for (const otherProject of workspace.projects) {
+    const name = otherProject.packageJson?.name;
 
-    for (const entry of sortedEntries) {
-      aliases[`${pkg.runtimeName}${entry.name ? `/${entry.name}` : ''}`] =
-        pkg.fs.resolvePath(entry.source);
+    if (name == null || !project.hasDependency(name, {all: true})) continue;
+
+    const packageEntries = await sourceEntriesForProject(otherProject);
+
+    // We sort the entries from longest to shortest so that more specific entries take
+    // precedence.
+    for (const [entry, source] of Object.entries(packageEntries).sort(
+      ([entryOne], [entryTwo]) => entryTwo.length - entryOne.length,
+    )) {
+      const aliasEntry = `${name}${entry === '.' ? '' : `/${entry.slice(2)}`}`;
+      aliases[aliasEntry] = source;
     }
   }
 

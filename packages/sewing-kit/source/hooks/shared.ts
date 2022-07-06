@@ -1,4 +1,3 @@
-import type {Project} from '../model';
 import type {ProjectStep, WorkspaceStep} from '../steps';
 import type {ValueOrPromise} from '../types';
 
@@ -180,29 +179,19 @@ export interface ProjectStepAdderContext<
 }
 
 export interface ConfigurableProjectStep
-  extends Omit<ProjectStep<any>, 'target' | 'source' | 'stage'> {
-  readonly stage?: ProjectStep<any>['stage'];
+  extends Omit<ProjectStep, 'target' | 'source' | 'stage'> {
+  readonly stage?: ProjectStep['stage'];
 }
 
-export interface ProjectStepAdder<
-  ProjectType extends Project,
-  ProjectConfigurationHooks,
-  ProjectOptions,
-> {
+export interface ProjectStepAdder<ProjectConfigurationHooks, ProjectOptions> {
   (
     adder: (
-      step: (step: ConfigurableProjectStep) => ProjectStep<ProjectType>,
+      step: (step: ConfigurableProjectStep) => ProjectStep,
       context: ProjectStepAdderContext<
         ProjectConfigurationHooks,
         ProjectOptions
       >,
-    ) => ValueOrPromise<
-      | ProjectStep<ProjectType>
-      | ProjectStep<ProjectType>[]
-      | null
-      | undefined
-      | false
-    >,
+    ) => ValueOrPromise<ProjectStep | ProjectStep[] | null | undefined | false>,
   ): void;
 }
 

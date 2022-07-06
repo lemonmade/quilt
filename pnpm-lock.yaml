@@ -148,6 +148,7 @@ importers:
       '@rollup/plugin-node-resolve': ^13.0.0
       '@rollup/plugin-replace': ^2.4.0
       '@types/babel__core': '>=7.0.0'
+      '@types/babel__preset-env': ^7.9.0
       '@types/clean-css': ^4.0.0
       '@types/common-tags': ^1.8.0
       '@types/express': ^4.17.0
@@ -214,6 +215,7 @@ importers:
       '@rollup/plugin-json': 4.1.0_rollup@2.75.1
       '@rollup/plugin-node-resolve': 13.3.0_rollup@2.75.1
       '@rollup/plugin-replace': 2.4.2_rollup@2.75.1
+      '@types/babel__preset-env': 7.9.2
       '@types/jest': 27.5.1
       '@types/postcss-preset-env': 6.7.3
       '@types/prettier': 2.6.3
@@ -400,7 +402,9 @@ importers:
   packages/http-handlers:
     specifiers:
       '@quilted/http': ^0.2.11
+      '@quilted/polyfills': workspace:*
       '@quilted/routing': ^0.2.7
+      '@quilted/testing': workspace:*
       '@types/cookie': ^0.4.0
       '@types/send': ^0.17.0
       send: ^0.17.0
@@ -409,6 +413,8 @@ importers:
       '@quilted/routing': link:../routing
       send: 0.17.2
     devDependencies:
+      '@quilted/polyfills': link:../polyfills
+      '@quilted/testing': link:../testing
       '@types/cookie': 0.4.1
       '@types/send': 0.17.1
 
@@ -628,8 +634,9 @@ importers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
       '@quilted/react-server-render': ^0.3.7
-      '@quilted/react-testing': ^0.5.1
+      '@quilted/react-testing': workspace:*
       '@quilted/routing': ^0.2.7
+      '@quilted/testing': workspace:*
     dependencies:
       '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
@@ -637,6 +644,7 @@ importers:
       '@quilted/routing': link:../routing
     devDependencies:
       '@quilted/react-testing': link:../react-testing
+      '@quilted/testing': link:../testing
 
   packages/react-server-render:
     specifiers:
@@ -680,7 +688,10 @@ importers:
     specifiers: {}
 
   packages/routing:
-    specifiers: {}
+    specifiers:
+      '@quilted/testing': workspace:*
+    devDependencies:
+      '@quilted/testing': link:../testing
 
   packages/sewing-kit:
     specifiers:
@@ -699,8 +710,11 @@ importers:
   packages/threads:
     specifiers:
       '@quilted/events': ^0.1.0
+      '@quilted/testing': workspace:*
     dependencies:
       '@quilted/events': link:../events
+    devDependencies:
+      '@quilted/testing': link:../testing
 
   packages/typescript:
     specifiers: {}
@@ -767,6 +781,17 @@ importers:
       typescript: 4.7.2
 
   tests/e2e/fixtures/basic-app:
+    specifiers:
+      '@quilted/craft': ^0.1.0
+      '@quilted/quilt': ^0.5.0
+      typescript: ^4.7.0
+    dependencies:
+      '@quilted/quilt': link:../../../../packages/quilt
+    devDependencies:
+      '@quilted/craft': link:../../../../packages/craft
+      typescript: 4.7.2
+
+  tests/e2e/fixtures/empty-app:
     specifiers:
       '@quilted/craft': ^0.1.0
       '@quilted/quilt': ^0.5.0
@@ -3470,6 +3495,10 @@ packages:
     resolution: {integrity: sha512-tFkciB9j2K755yrTALxD44McOrk+gfpIpvC3sxHjRawj6PfnQxrse4Clq5y/Rq+G3mrBurMax/lG8Qn2t9mSsg==}
     dependencies:
       '@babel/types': 7.18.2
+
+  /@types/babel__preset-env/7.9.2:
+    resolution: {integrity: sha512-epEgKQiqTDZdPgYwtriYK1GVAGcyVZVvvw2UatX3+95mogKGimebApcMEWLF12uhUbNIvX284CSQEavnV/OIgw==}
+    dev: false
 
   /@types/babel__template/7.4.1:
     resolution: {integrity: sha512-azBFKemX6kMg5Io+/rdGT0dkGreboUVR0Cdm3fz9QJWpaQGJRQXl7C+6hOTCZcMll7KFyEQpgbYI2lHdsS4U7g==}
@@ -9459,7 +9488,7 @@ packages:
       makeerror: 1.0.12
 
   /wcwidth/1.0.1:
-    resolution: {integrity: sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=}
+    resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
     dependencies:
       defaults: 1.0.3
 

@@ -1,9 +1,6 @@
-import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
+import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createPackage((pkg) => {
-  pkg.entry({source: './source/index'});
-  pkg.entry({name: 'babel', source: './source/babel', runtime: Runtime.Node});
-
+export default createProject((project) => {
   // We need commonjs for the babel plugin
-  pkg.use(quiltPackage({commonjs: true}));
+  project.use(quiltPackage({commonjs: true}));
 });

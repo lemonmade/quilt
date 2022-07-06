@@ -1,7 +1,21 @@
-import {createPackage, quiltPackage, Runtime} from '@quilted/craft';
+import {createProject, createProjectPlugin, quiltPackage} from '@quilted/craft';
 
-export default createPackage((pkg) => {
-  pkg.runtime(Runtime.Node);
-  pkg.binary({name: 'create-quilt', source: './source/index'});
-  pkg.use(quiltPackage({build: {bundle: true}}));
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      binaries: {'create-quilt': './source/index.ts'},
+      build: {bundle: true},
+    }),
+    createProjectPlugin({
+      name: 'Quilt.Create.IgnoreTemplateTests',
+      test({configure, project}) {
+        configure(({jestIgnore}) => {
+          jestIgnore?.((ignore) => [
+            ...ignore,
+            project.fs.resolvePath('templates'),
+          ]);
+        });
+      },
+    }),
+  );
 });

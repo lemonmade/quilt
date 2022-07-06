@@ -17,6 +17,8 @@
   },
   "exports": {
     ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
@@ -53,7 +55,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/package",
+      "@quilted/eslint-config/project",
       "@quilted/eslint-config/react"
     ]
   }

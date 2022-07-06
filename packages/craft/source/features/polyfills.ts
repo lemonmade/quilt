@@ -2,7 +2,7 @@ import {createRequire} from 'module';
 import type {Plugin as RollupPlugin} from 'rollup';
 import type {PolyfillFeature} from '@quilted/polyfills';
 
-import {createProjectPlugin, Runtime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {
   WaterfallHook,
   WaterfallHookWithDefault,
@@ -122,8 +122,8 @@ export function polyfills({features, package: packageName}: Options = {}) {
   });
 
   function addConfiguration({
-    runtime,
-    targets,
+    runtimes,
+    browserslistTargets,
     rollupPlugins,
     rollupInputOptions,
     quiltPolyfillFeatures,
@@ -157,7 +157,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         import('pkg-dir'),
         import('@rollup/plugin-alias'),
         quiltPolyfillFeatures!.run(),
-        runtime.run(),
+        runtimes.run([]),
       ]);
 
       const featuresNeedingPolyfills =
@@ -176,9 +176,11 @@ export function polyfills({features, package: packageName}: Options = {}) {
       const polyfillPlugin = await polyfillRollup({
         package: packageName,
         features: featuresNeedingPolyfills,
-        target: resolvedRuntime.includes(Runtime.Browser)
-          ? await targets?.run([])
-          : 'node',
+        target: resolvedRuntime.some((runtime) => runtime.target === 'browser')
+          ? await browserslistTargets?.run([])
+          : resolvedRuntime.some((runtime) => runtime.target === 'node')
+          ? 'node'
+          : await browserslistTargets?.run([]),
       });
 
       return [

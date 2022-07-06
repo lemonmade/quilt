@@ -1,7 +1,7 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
-import type {App, Service, WaterfallHook} from '../kit';
+import {createProjectPlugin} from '../kit';
+import type {WaterfallHook} from '../kit';
 import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
 import {addRollupOnWarn} from '../tools/rollup';
 
@@ -11,6 +11,7 @@ const MAGIC_ENTRY_MODULE = '.quilt/magic/http-handler-entry.js';
 const MAGIC_HTTP_HANDLER_MODULE_ENTRY = '.quilt/magic/http-handler.js';
 
 export interface HttpHandlerHooks {
+  quiltHttpHandlerEntry: WaterfallHook<string>;
   quiltHttpHandlerPort: WaterfallHook<number | undefined>;
   quiltHttpHandlerHost: WaterfallHook<string | undefined>;
   quiltHttpHandlerContent: WaterfallHook<string | undefined>;
@@ -22,15 +23,11 @@ export interface HttpHandlerOptions {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends HttpHandlerHooks {}
-  interface DevelopAppConfigurationHooks extends HttpHandlerHooks {}
-  interface BuildServiceConfigurationHooks extends HttpHandlerHooks {}
-  interface DevelopServiceConfigurationHooks extends HttpHandlerHooks {}
+  interface BuildProjectConfigurationHooks extends HttpHandlerHooks {}
+  interface DevelopProjectConfigurationHooks extends HttpHandlerHooks {}
 
-  interface BuildAppOptions extends HttpHandlerOptions {}
-  interface DevelopAppOptions extends HttpHandlerOptions {}
-  interface BuildServiceOptions extends HttpHandlerOptions {}
-  interface DevelopServiceOptions extends HttpHandlerOptions {}
+  interface BuildProjectOptions extends HttpHandlerOptions {}
+  interface DevelopProjectOptions extends HttpHandlerOptions {}
 }
 
 export interface Options {
@@ -39,10 +36,11 @@ export interface Options {
 }
 
 export function httpHandler({port: explicitPort}: Options = {}) {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.HttpHandler',
     build({hooks, configure, project}) {
       hooks<HttpHandlerHooks>(({waterfall}) => ({
+        quiltHttpHandlerEntry: waterfall(),
         quiltHttpHandlerPort: waterfall(),
         quiltHttpHandlerHost: waterfall(),
         quiltHttpHandlerContent: waterfall(),
@@ -52,10 +50,10 @@ export function httpHandler({port: explicitPort}: Options = {}) {
       configure(
         (
           {
-            runtime,
             rollupInput,
             rollupInputOptions,
             rollupPlugins,
+            quiltHttpHandlerEntry,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -64,8 +62,6 @@ export function httpHandler({port: explicitPort}: Options = {}) {
           {quiltHttpHandler = false},
         ) => {
           if (!quiltHttpHandler) return;
-
-          runtime(() => new TargetRuntime([Runtime.Node]));
 
           // We resolve to a path within the project’s directory
           // so that it can use the app’s node_modules.
@@ -149,7 +145,7 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                     moduleSideEffects: 'no-treeshake',
                   };
                 },
-                load(id) {
+                async load(id) {
                   if (
                     id !==
                     project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY)
@@ -164,7 +160,9 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                   return (
                     content ??
                     `export {default} from ${JSON.stringify(
-                      project.fs.resolvePath(project.entry ?? 'index'),
+                      await quiltHttpHandlerEntry!.run(
+                        project.fs.resolvePath('index'),
+                      ),
                     )}`
                   );
                 },
@@ -182,10 +180,11 @@ export function httpHandlerDevelopment({
   port: explicitPort,
   env,
 }: Options = {}) {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.HttpHandler.Development',
     develop({project, hooks, configure}) {
       hooks<HttpHandlerHooks>(({waterfall}) => ({
+        quiltHttpHandlerEntry: waterfall(),
         quiltHttpHandlerPort: waterfall(),
         quiltHttpHandlerHost: waterfall(),
         quiltHttpHandlerContent: waterfall(),
@@ -195,10 +194,10 @@ export function httpHandlerDevelopment({
       configure(
         (
           {
-            runtime,
             rollupInput,
             rollupPlugins,
             rollupInputOptions,
+            quiltHttpHandlerEntry,
             quiltHttpHandlerHost,
             quiltHttpHandlerPort,
             quiltHttpHandlerContent,
@@ -221,8 +220,6 @@ export function httpHandlerDevelopment({
           quiltRuntimeEnvironmentVariables?.(
             (runtime) => runtime ?? 'process.env',
           );
-
-          runtime?.(() => new TargetRuntime([Runtime.Node]));
 
           rollupInput?.(() => [project.fs.resolvePath(MAGIC_ENTRY_MODULE)]);
 
@@ -312,7 +309,7 @@ export function httpHandlerDevelopment({
                     moduleSideEffects: 'no-treeshake',
                   };
                 },
-                load(id) {
+                async load(id) {
                   if (
                     id !==
                     project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY)
@@ -327,7 +324,9 @@ export function httpHandlerDevelopment({
                   return (
                     content ??
                     `export {default} from ${JSON.stringify(
-                      project.fs.resolvePath(project.entry ?? 'index'),
+                      await quiltHttpHandlerEntry!.run(
+                        project.fs.resolvePath('index'),
+                      ),
                     )}`
                   );
                 },

@@ -8,7 +8,7 @@ import {
   MAGIC_MODULE_HTTP_HANDLER,
 } from '../constants';
 import {createProjectPlugin} from '../kit';
-import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 import {STEP_NAME} from './app-build';
 import type {AppServerOptions} from './app-server-base';
@@ -32,7 +32,7 @@ export interface AppServerBuildHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends AppServerBuildHooks {}
+  interface BuildProjectConfigurationHooks extends AppServerBuildHooks {}
 }
 
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest.js';
@@ -41,7 +41,7 @@ export function appServerBuild(options?: AppServerOptions) {
   const httpHandler = options?.httpHandler ?? true;
   const serveAssets = options?.serveAssets ?? true;
 
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.App.Server',
     build({project, hooks, configure, run}) {
       hooks<AppServerBuildHooks>(({waterfall}) => ({

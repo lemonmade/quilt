@@ -108,19 +108,14 @@ describe('http', () => {
     });
 
     it('can set response cookies from the node server', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
+          'App.tsx': stripIndent`
             import {ResponseCookie} from '@quilted/quilt/http';
             
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+            export default function App() {
               return (
                 <>
                   <ResponseCookie

@@ -7,17 +7,6 @@ export enum Environment {
   Test = 'test',
 }
 
-export enum Runtime {
-  Node = 'node',
-  Browser = 'browser',
-}
-
-export enum ProjectKind {
-  App = 'app',
-  Service = 'service',
-  Package = 'package',
-}
-
 export enum Task {
   Lint = 'lint',
   Test = 'test',

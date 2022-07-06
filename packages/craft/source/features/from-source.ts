@@ -1,15 +1,9 @@
 import {createProjectPlugin} from '../kit';
-import type {
-  Project,
-  ResolvedHooks,
-  DevelopConfigurationHooksForProject,
-} from '../kit';
 
 import type {} from '../tools/babel';
 import type {} from '../tools/rollup';
-import type {ViteHooks} from '../tools/vite';
 
-export const EXPORT_CONDITION = 'quilt:from-source';
+export const EXPORT_CONDITION = 'quilt:source';
 
 /**
  * Adds configuration to various tools to prefer the `from-source` build
@@ -21,23 +15,16 @@ export function fromSource() {
     develop({configure}) {
       if (!isFromSource()) return;
 
-      configure(
-        ({
-          viteResolveExportConditions,
-          rollupNodeExportConditions,
-        }: ResolvedHooks<
-          DevelopConfigurationHooksForProject<Project> & ViteHooks
-        >) => {
-          // Prefer the esnext export condition
-          rollupNodeExportConditions?.((exportConditions) =>
-            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
-          );
+      configure(({viteResolveExportConditions, rollupNodeExportConditions}) => {
+        // Prefer the esnext export condition
+        rollupNodeExportConditions?.((exportConditions) =>
+          Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+        );
 
-          viteResolveExportConditions?.((exportConditions) =>
-            Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
-          );
-        },
-      );
+        viteResolveExportConditions?.((exportConditions) =>
+          Array.from(new Set([EXPORT_CONDITION, ...exportConditions])),
+        );
+      });
     },
     build({configure}) {
       if (!isFromSource()) return;

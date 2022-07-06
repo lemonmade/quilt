@@ -15,14 +15,14 @@
   "exports": {
     ".": {
       "types": "./build/typescript/index.d.ts",
-      "quilt:from-source": "./source/index.ts",
+      "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./node": {
       "types": "./build/typescript/node/index.d.ts",
-      "quilt:from-source": "./source/node/index.ts",
+      "quilt:source": "./source/node/index.ts",
       "quilt:esnext": "./build/esnext/node/index.esnext",
       "import": "./build/esm/node/index.mjs",
       "require": "./build/cjs/node/index.cjs"
@@ -43,6 +43,8 @@
     "send": "^0.17.0"
   },
   "devDependencies": {
+    "@quilted/polyfills": "workspace:*",
+    "@quilted/testing": "workspace:*",
     "@types/cookie": "^0.4.0",
     "@types/send": "^0.17.0"
   },
@@ -56,7 +58,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/package"
+      "@quilted/eslint-config/project"
     ]
   }
 }

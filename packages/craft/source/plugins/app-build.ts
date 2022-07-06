@@ -7,8 +7,7 @@ import type {Config as BrowserslistConfig} from 'browserslist';
 import type {} from '../tools/postcss';
 import type {} from '../features/async';
 
-import {createProjectPlugin, TargetRuntime, Runtime} from '../kit';
-import type {App} from '../kit';
+import {createProjectPlugin} from '../kit';
 
 import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
@@ -70,7 +69,7 @@ export interface QuiltMetadata {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppOptions {
+  interface BuildProjectOptions {
     /**
      * Details about the browser build being created by Quilt.
      */
@@ -88,20 +87,22 @@ export function appBuild({
   browser,
   env,
 }: Options) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: STEP_NAME,
     build({project, configure, run}) {
       configure(
         (
           {
-            runtime,
-            targets,
+            runtimes,
+            browserslistTargets,
             outputDirectory,
             postcssPlugins,
             postcssProcessOptions,
             rollupInput,
             rollupOutputs,
             rollupPlugins,
+            rollupNodeBundle,
+            rollupPreserveEntrySignatures,
             quiltAsyncManifestPath,
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
@@ -121,6 +122,21 @@ export function appBuild({
             );
           }
 
+          // When we are only building a web app, we don’t care about preserving
+          // any details about the entry module. When we are building for any other
+          // environment, we want to do our best to preserve that
+          rollupPreserveEntrySignatures?.(() => false);
+
+          rollupNodeBundle?.((currentBundle) => {
+            return {
+              ...(typeof currentBundle === 'boolean' ? {} : currentBundle),
+              builtins: false,
+              dependencies: true,
+              devDependencies: true,
+              peerDependencies: true,
+            };
+          });
+
           rollupPlugins?.(async (plugins) => {
             const {default: replace} = await import('@rollup/plugin-replace');
 
@@ -137,11 +153,11 @@ export function appBuild({
 
           if (!browserTargets) return;
 
-          runtime(() => new TargetRuntime([Runtime.Browser]));
+          runtimes(() => [{target: 'browser'}]);
 
           const targetFilenamePart = `.${browserTargets.name}`;
 
-          targets?.(() => browserTargets.targets);
+          browserslistTargets?.(() => browserTargets.targets);
 
           quiltAsyncManifestMetadata?.(async (metadata) => {
             const [{getUserAgentRegExp}, modules] = await Promise.all([

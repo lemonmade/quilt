@@ -1,7 +1,7 @@
 import type {Plugin} from 'rollup';
 import {stripIndent} from 'common-tags';
 
-import type {App} from '../../kit';
+import type {Project} from '../../kit';
 import {MAGIC_MODULE_APP_COMPONENT} from '../../constants';
 
 export interface Options {
@@ -11,7 +11,7 @@ export interface Options {
    * the tiny Quilt runtime. This path can be absolute, or relative from
    * the root directory of the application.
    *
-   * @example './browser/bootstrap'
+   * @example './browser/bootstrap.ts'
    */
   initializeModule?: string;
 
@@ -23,14 +23,14 @@ export interface Options {
    * application with React, so if you provide this option, you **must**
    * do this rendering yourself.
    *
-   * @example './browser/entry'
+   * @example './browser/entry.tsx'
    */
   entryModule?: string;
 
   /**
    * The project being built.
    */
-  project: App;
+  project: Project;
 
   /**
    * The identifier to handle as the magic browser entry module.

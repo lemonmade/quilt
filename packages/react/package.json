@@ -14,19 +14,19 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "quilt:from-source": "./source/index.ts",
+      "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
     "./jsx-runtime": {
-      "quilt:from-source": "./source/jsx-runtime.ts",
+      "quilt:source": "./source/jsx-runtime.ts",
       "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
       "import": "./build/esm/jsx-runtime.mjs",
       "require": "./build/cjs/jsx-runtime.cjs"
     },
     "./jsx-dev-runtime": {
-      "quilt:from-source": "./source/jsx-runtime.ts",
+      "quilt:source": "./source/jsx-runtime.ts",
       "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
       "import": "./build/esm/jsx-runtime.mjs",
       "require": "./build/cjs/jsx-runtime.cjs"
@@ -40,8 +40,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "@quilted/eslint-config/react",
-      "@quilted/eslint-config/package"
+      "@quilted/eslint-config/project",
+      "@quilted/eslint-config/react"
     ]
   }
 }

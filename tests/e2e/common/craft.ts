@@ -6,7 +6,7 @@ export function addInternalExportCondition() {
     build({configure}) {
       configure(({rollupNodeExportConditions}) => {
         rollupNodeExportConditions?.((conditions) => [
-          'quilt:from-source',
+          'quilt:source',
           ...conditions,
         ]);
       });
@@ -14,7 +14,7 @@ export function addInternalExportCondition() {
     develop({configure}) {
       configure(({rollupNodeExportConditions}) => {
         rollupNodeExportConditions?.((conditions) => [
-          'quilt:from-source',
+          'quilt:source',
           ...conditions,
         ]);
       });

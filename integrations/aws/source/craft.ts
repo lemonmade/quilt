@@ -2,19 +2,9 @@ import {stripIndent} from 'common-tags';
 
 import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
 import {createProjectPlugin} from '@quilted/craft/kit';
-import type {
-  App,
-  Service,
-  ResolvedHooks,
-  BuildAppConfigurationHooks,
-  BuildServiceConfigurationHooks,
-  ResolvedOptions,
-  BuildAppOptions,
-  BuildServiceOptions,
-} from '@quilted/craft/kit';
 
 export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.AWS.Lambda',
     build({configure}) {
       configure(
@@ -26,9 +16,7 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             quiltHttpHandlerRuntimeContent,
             quiltServiceOutputFormat,
             quiltAppServerOutputFormat,
-          }: ResolvedHooks<
-            BuildAppConfigurationHooks & BuildServiceConfigurationHooks
-          >,
+          },
           options,
         ) => {
           quiltHttpHandlerRuntimeContent?.(
@@ -43,10 +31,7 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             `,
           );
 
-          if (
-            !(options as ResolvedOptions<BuildAppOptions>).quiltAppServer &&
-            !(options as ResolvedOptions<BuildServiceOptions>).quiltService
-          ) {
+          if (!options.quiltAppServer && !options.quiltService) {
             return;
           }
 

@@ -1,5 +1,5 @@
 import {createProjectPlugin} from '../kit';
-import type {App, WaterfallHook} from '../kit';
+import type {WaterfallHook} from '../kit';
 
 export interface Hooks {
   /**
@@ -30,14 +30,14 @@ export interface Hooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends Hooks {}
-  interface DevelopAppConfigurationHooks extends Hooks {}
+  interface BuildProjectConfigurationHooks extends Hooks {}
+  interface DevelopProjectConfigurationHooks extends Hooks {}
 }
 
 export const NAME = 'Quilt.MagicModule.AppServerEntry';
 
 export function magicModuleAppServerEntry() {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: NAME,
     build({hooks}) {
       hooks<Hooks>(({waterfall}) => ({

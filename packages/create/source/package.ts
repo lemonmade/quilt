@@ -28,7 +28,7 @@ import {addToPackageManagerWorkspaces} from './shared/package-manager';
 
 type Arguments = ReturnType<typeof getArgv>;
 
-export async function createPackage() {
+export async function createProject() {
   const argv = getArgv();
 
   if (argv['--help']) {

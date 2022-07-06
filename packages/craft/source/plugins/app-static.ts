@@ -7,8 +7,8 @@ import {stripIndent} from 'common-tags';
 import type {HttpState, AssetBuild} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
-import {createProjectPlugin, Runtime, TargetRuntime} from '../kit';
-import type {App, WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import {createProjectPlugin} from '../kit';
+import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
 import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
   MAGIC_MODULE_APP_COMPONENT,
@@ -148,11 +148,11 @@ export interface AppStaticHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppOptions extends AppStaticBuildOptions {}
-  interface BuildAppConfigurationHooks extends AppStaticHooks {}
+  interface BuildProjectOptions extends AppStaticBuildOptions {}
+  interface BuildProjectConfigurationHooks extends AppStaticHooks {}
 }
 
-const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry';
+const MAGIC_ENTRY_MODULE = '__quilt__/AppStaticEntry.tsx';
 
 const require = createRequire(import.meta.url);
 
@@ -161,7 +161,7 @@ export function appStatic({
   crawl = true,
   prettify = true,
 }: AppStaticOptions = {}) {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.App.Static',
     build({project, hooks, configure, run}) {
       const nodeScriptOutputDirectory = project.fs.temporaryPath(
@@ -191,8 +191,8 @@ export function appStatic({
       configure(
         (
           {
-            runtime,
-            targets,
+            runtimes,
+            browserslistTargets,
             postcssPlugins,
             postcssProcessOptions,
             rollupInput,
@@ -206,8 +206,8 @@ export function appStatic({
         ) => {
           if (!quiltAppStatic) return;
 
-          runtime?.(() => new TargetRuntime([Runtime.Node]));
-          targets?.(() => ['current node']);
+          runtimes?.(() => [{target: 'node'}]);
+          browserslistTargets?.(() => ['current node']);
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 

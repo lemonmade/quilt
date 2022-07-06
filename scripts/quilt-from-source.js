@@ -15,7 +15,7 @@ try {
       '--loader',
       resolve(root, './scripts/esbuild-module-loader.js'),
       '--conditions',
-      'quilt:from-source',
+      'quilt:source',
       cli,
       ...process.argv.slice(2),
     ].join(' '),

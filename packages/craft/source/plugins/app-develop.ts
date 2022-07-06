@@ -9,7 +9,7 @@ import {createViteConfig} from '../tools/vite';
 
 import {createProjectPlugin} from '../kit';
 import type {
-  App,
+  Project,
   WaterfallHook,
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
@@ -56,7 +56,7 @@ export interface AppDevelopmentServerConfigurationHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface DevelopAppConfigurationHooks
+  interface DevelopProjectConfigurationHooks
     extends AppDevelopmentServerConfigurationHooks {}
 }
 
@@ -65,7 +65,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
   const httpHandler = server?.httpHandler ?? true;
   const serverInlineEnv = server?.env?.inline;
 
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: STEP_NAME,
     develop({hooks, project, workspace, configure, run}) {
       hooks<AppDevelopmentServerConfigurationHooks>(({waterfall}) => ({
@@ -75,6 +75,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
       configure(
         (
           {
+            runtimes,
             babelPlugins,
             babelPresets,
             babelExtensions,
@@ -85,6 +86,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             viteServerOptions,
             viteOptimizeDepsExclude,
             rollupPlugins,
+            quiltAppEntry,
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerEntryContent,
@@ -96,8 +98,10 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             quiltEnvModuleContent,
             quiltHttpHandlerRuntimeContent,
           },
-          {quiltHttpHandler = false},
+          {quiltHttpHandler = false, quiltAppServer = false},
         ) => {
+          runtimes(() => [{target: quiltAppServer ? 'node' : 'browser'}]);
+
           const inlineEnv = env?.inline;
 
           if (
@@ -233,7 +237,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             if (options.input) return options;
 
             const entryFiles = await Promise.all([
-              resolveToActualFiles(project.entry ?? 'index'),
+              quiltAppEntry!.run(),
               browser?.entryModule
                 ? resolveToActualFiles(browser.entryModule)
                 : Promise.resolve([]),
@@ -471,12 +475,12 @@ async function createAppServer(
     rollupOutputs,
     rollupInputOptions,
     quiltAppDevelopmentServer,
-  }: ResolvedDevelopProjectConfigurationHooks<App>,
+  }: ResolvedDevelopProjectConfigurationHooks,
   {
     project,
     vite,
     onMessage,
-  }: {project: App; vite: ViteDevServer; onMessage(message: string): void},
+  }: {project: Project; vite: ViteDevServer; onMessage(message: string): void},
 ) {
   const [
     {watch},

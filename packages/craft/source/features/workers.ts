@@ -4,8 +4,8 @@ import type {InputOptions, OutputOptions, Plugin} from 'rollup';
 
 import type {Options as BabelOptions} from '@quilted/workers/babel';
 
-import {createProjectPlugin, Runtime} from '../kit';
-import type {App, WaterfallHook, ResolvedHooks} from '../kit';
+import {createProjectPlugin} from '../kit';
+import type {WaterfallHook, ResolvedHooks} from '../kit';
 
 import type {BabelHooks} from '../tools/babel';
 import type {RollupHooks} from '../tools/rollup';
@@ -42,15 +42,15 @@ export interface WorkerHooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends WorkerHooks {}
-  interface DevelopAppConfigurationHooks extends WorkerHooks {}
-  interface TestAppConfigurationHooks extends WorkerHooks {}
+  interface BuildProjectConfigurationHooks extends WorkerHooks {}
+  interface DevelopProjectConfigurationHooks extends WorkerHooks {}
+  interface TestProjectConfigurationHooks extends WorkerHooks {}
 }
 
 const require = createRequire(import.meta.url);
 
 export function workers() {
-  return createProjectPlugin<App>({
+  return createProjectPlugin({
     name: 'Quilt.Workers',
     build({hooks, configure}) {
       hooks<WorkerHooks>(({waterfall}) => ({
@@ -67,8 +67,9 @@ export function workers() {
       configure((configuration) => {
         addConfiguration(configuration, {
           noop: async () => {
-            const resolvedRuntime = await configuration.runtime.run();
-            return !resolvedRuntime.includes(Runtime.Browser);
+            return false;
+            // const resolvedRuntime = await configuration.runtime.run();
+            // return !resolvedRuntime.includes(Runtime.Browser);
           },
         });
       });
@@ -88,8 +89,9 @@ export function workers() {
       configure((configuration) => {
         addConfiguration(configuration, {
           noop: async () => {
-            const resolvedRuntime = await configuration.runtime.run();
-            return !resolvedRuntime.includes(Runtime.Browser);
+            return false;
+            // const resolvedRuntime = await configuration.runtime.run();
+            // return !resolvedRuntime.includes(Runtime.Browser);
           },
         });
       });

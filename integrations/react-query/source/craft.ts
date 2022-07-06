@@ -1,12 +1,11 @@
 import {createProjectPlugin} from '@quilted/craft/kit';
-import type {App, Service} from '@quilted/craft/kit';
 import {addRollupNodeBundleInclusion} from '@quilted/craft/rollup';
 
 /**
  * Configures this project to performantly load react-query in all environments.
  */
 export function reactQuery() {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.ReactQuery',
     build({configure}) {
       configure(({rollupNodeBundle}) => {

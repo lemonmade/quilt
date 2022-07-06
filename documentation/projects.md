@@ -14,7 +14,7 @@ A workspace can have any number of these projects, which allows it to support an
 
 [Craft](./craft.md) uses `quilt.workspace.ts` and `quilt.project.ts` files for configuring the development commands in your repo. When you run a development command, Craft will first find all nested `quilt.project.ts` files in order to build up its picture of your repo.
 
-The simplest Quilt project would only have a single `quilt.project.ts` file at the root of the repo. That project would use the `createApp`, `createService`, or `createPackage` functions from `@quilted/craft` to declare that your entire workspace is just a single project:
+The simplest Quilt project would only have a single `quilt.project.ts` file at the root of the repo. That project would use the `createApp`, `createService`, or `createProject` functions from `@quilted/craft` to declare that your entire workspace is just a single project:
 
 ```ts
 // quilt.project.ts
@@ -64,18 +64,18 @@ export default createService((service) => {
 
 // packages/package-one/quilt.project.ts
 
-import {createPackage, quiltPackage} from '@quilted/craft';
+import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   pkg.entry('./source/index');
   pkg.use(quiltPackage());
 });
 
 // packages/package-two/quilt.project.ts
 
-import {createPackage, quiltPackage} from '@quilted/craft';
+import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createPackage((pkg) => {
+export default createProject((pkg) => {
   pkg.entry('./source/index');
   pkg.use(quiltPackage());
 });

@@ -18,8 +18,8 @@ import type {
   ProjectStep,
   WorkspaceStep,
   ResolvedOptions,
-  BuildOptionsForProject,
   BuildTaskOptions,
+  BuildProjectOptions,
   DevelopTaskOptions,
   LintTaskOptions,
   TestTaskOptions,
@@ -94,7 +94,7 @@ export function createCommand<Flags extends Spec>(
   ) => {
     const {
       '--root': root = process.cwd(),
-      '--projects': projects,
+      '--workspace-configuration': workspaceConfigurationFile,
       '--log-level': logLevel,
       '--interactive': isInteractive,
       '--skip-project': skipProjects,
@@ -108,7 +108,7 @@ export function createCommand<Flags extends Spec>(
       {
         ...flagSpec,
         '--root': String,
-        '--projects': [String],
+        '--workspace-configuration': String,
         '--log-level': String,
         '--interactive': Boolean,
         '--skip-project': [String],
@@ -129,7 +129,7 @@ export function createCommand<Flags extends Spec>(
 
     try {
       const {workspace, plugins} = await loadWorkspace(root as string, {
-        projectPatterns: projects,
+        configurationFile: workspaceConfigurationFile as string,
       });
       await run(flags as any, {
         workspace,
@@ -494,12 +494,11 @@ async function runStepsInStage(
   }
 }
 
-interface BuildProjectTaskInternal<ProjectType extends Project = Project>
-  extends Omit<BuildProjectTask<ProjectType>, 'run'> {
+interface BuildProjectTaskInternal extends Omit<BuildProjectTask, 'run'> {
   run: (
     plugin: AnyPlugin,
-    ...args: Parameters<BuildProjectTask<ProjectType>['run']>
-  ) => ReturnType<BuildProjectTask<ProjectType>['run']>;
+    ...args: Parameters<BuildProjectTask['run']>
+  ) => ReturnType<BuildProjectTask['run']>;
 }
 
 async function loadStepsForTask<TaskType extends Task = Task>(
@@ -514,23 +513,23 @@ async function loadStepsForTask<TaskType extends Task = Task>(
 ): Promise<StepList> {
   const configurationHooksForProject = new Map<
     Project,
-    ((hooks: ResolvedBuildProjectConfigurationHooks<any>) => void)[]
+    ((hooks: ResolvedBuildProjectConfigurationHooks) => void)[]
   >();
   const configurersForProject = new Map<
     Project,
     ((
-      hooks: ResolvedBuildProjectConfigurationHooks<any>,
-      options: ResolvedOptions<BuildOptionsForProject<any>>,
+      hooks: ResolvedBuildProjectConfigurationHooks,
+      options: ResolvedOptions<BuildProjectOptions>,
     ) => Promise<void>)[]
   >();
   const stepAddersForProject = new Map<
     Project,
-    ((steps: ProjectStep<any>[]) => Promise<void>)[]
+    ((steps: ProjectStep[]) => Promise<void>)[]
   >();
-  const taskForProject = new Map<Project, BuildProjectTaskInternal<any>>();
+  const taskForProject = new Map<Project, BuildProjectTaskInternal>();
   const resolvedConfigurationForProject = new Map<
     Project,
-    Map<string, Promise<ResolvedBuildProjectConfigurationHooks<any>>>
+    Map<string, Promise<ResolvedBuildProjectConfigurationHooks>>
   >();
 
   const configurationHooksForWorkspace: ((
@@ -548,7 +547,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
   >();
   const projectTaskHandlersForWorkspace: {
     plugin: WorkspacePlugin;
-    handler(task: BuildProjectTask<any>): void;
+    handler(task: BuildProjectTask): void;
   }[] = [];
 
   // Task is in dash case, but the method is in camelcase. This is a
@@ -634,7 +633,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
   const projectStepsByProject = await Promise.all(
     workspace.projects.map(async (project) => {
       const stepAdders = stepAddersForProject.get(project) ?? [];
-      const steps: ProjectStep<any>[] = [];
+      const steps: ProjectStep[] = [];
 
       for (const stepAdder of stepAdders) {
         await stepAdder(steps);
@@ -661,7 +660,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
   function getTaskForProjectAndPlugin<ProjectType extends Project = Project>(
     project: ProjectType,
     plugin: AnyPlugin,
-  ): BuildProjectTask<ProjectType> {
+  ): BuildProjectTask {
     const internalTask = getInternalTaskForProject(project);
 
     return {
@@ -700,7 +699,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
       stepAddersForProject.set(project, stepAdders);
     }
 
-    const task: BuildProjectTaskInternal<ProjectType> = {
+    const task: BuildProjectTaskInternal = {
       project,
       workspace,
       options: options as BuildTaskOptions,
@@ -741,7 +740,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
             : [newStepOrSteps];
 
           steps.push(
-            ...newMaybeFalsySteps.filter((value): value is ProjectStep<any> =>
+            ...newMaybeFalsySteps.filter((value): value is ProjectStep =>
               Boolean(value),
             ),
           );
@@ -770,10 +769,9 @@ async function loadStepsForTask<TaskType extends Task = Task>(
     if (configurationMap.has(id)) return configurationMap.get(id)!;
 
     const configurationPromise = (async () => {
-      const hooks: ResolvedBuildProjectConfigurationHooks<any> =
-        coreHooksForProject(
-          project,
-        ) as ResolvedBuildProjectConfigurationHooks<any>;
+      const hooks: ResolvedBuildProjectConfigurationHooks = coreHooksForProject(
+        project,
+      ) as ResolvedBuildProjectConfigurationHooks;
 
       const configurationHooks = configurationHooksForProject.get(project);
       const configurers = configurersForProject.get(project);
@@ -858,7 +856,6 @@ export class StepExecError extends DiagnosticError {
   }
 }
 
-const promiseSpawn = promisify(childSpawn);
 const promiseExec = promisify(childExec);
 
 const spawn: BaseStepRunner['spawn'] = (
@@ -877,7 +874,7 @@ const spawn: BaseStepRunner['spawn'] = (
       )
     : command;
 
-  return promiseSpawn(normalizedCommand, args ?? [], {
+  return childSpawn(normalizedCommand, args ?? [], {
     stdio: 'inherit',
     ...options,
   });

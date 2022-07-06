@@ -1,10 +1,11 @@
-import {join} from 'path';
 import {createRequire} from 'module';
 
 import type {Config} from '@jest/types';
 
 import {createWorkspacePlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import type {WaterfallHook, Project} from '../kit';
+
+import {sourceEntriesForProject} from '../features/packages';
 
 export type JestConfig = Config.InitialOptions;
 export type JestProjectConfig = Config.InitialProjectOptions;
@@ -104,6 +105,8 @@ export function jest() {
           name: 'Quilt.Jest',
           label: 'Run Jest',
           async run(runner) {
+            const getEntryAliases = createCachedEntryAliasesGetter();
+
             const [
               {defaults},
               {
@@ -135,17 +138,12 @@ export function jest() {
             // package), even though the outputs might be from an older build.
             const internalModuleMap: Record<string, string> = {};
 
-            for (const pkg of workspace.packages) {
-              for (const entry of pkg.entries) {
-                internalModuleMap[
-                  `^${
-                    entry.name
-                      ? join(pkg.runtimeName, entry.name)
-                      : pkg.runtimeName
-                  }$`
-                ] = pkg.fs.resolvePath(entry.source);
-              }
-            }
+            await Promise.all(
+              workspace.projects.map(async (project) => {
+                const entryAliases = await getEntryAliases(project);
+                Object.assign(internalModuleMap, entryAliases);
+              }),
+            );
 
             const ignorePatternsFromOptions = excludePatterns.map(
               (pattern) => `/${pattern.replace(/(^"|"$)/, '')}/`,
@@ -351,10 +349,24 @@ export function jest() {
               detectOpenHandles: debug,
             });
 
-            runner.spawn('jest', [...includePatterns, ...toArgs(flags)], {
-              stdio: 'inherit',
-              fromNodeModules: import.meta.url,
-            });
+            const spawned = runner.spawn(
+              'jest',
+              [...includePatterns, ...toArgs(flags)],
+              {
+                stdio: 'inherit',
+                fromNodeModules: import.meta.url,
+              },
+            );
+
+            if (!watch) {
+              await new Promise<void>((resolve) => {
+                spawned.on('exit', () => resolve());
+              });
+
+              if (spawned.exitCode !== 0) {
+                runner.fail();
+              }
+            }
           },
         }),
       );
@@ -382,4 +394,35 @@ function toArgs(flags: {[key: string]: unknown}) {
   }
 
   return args;
+}
+
+function createCachedEntryAliasesGetter(): (
+  project: Project,
+) => Promise<Record<string, string>> {
+  const cache = new Map<Project, Promise<Record<string, string>>>();
+
+  return (project) => {
+    let cached = cache.get(project);
+
+    if (cached == null) {
+      cached = sourceEntriesForProject(project, {
+        conditions: ['node'],
+      }).then((entries) => {
+        const normalizedEntries: Record<string, string> = {};
+
+        for (const [entry, source] of Object.entries(entries)) {
+          const name = project.packageJson?.name ?? project.name;
+          const aliasEntry = `^${name}${
+            entry === '.' ? '' : `/${entry.slice(2)}`
+          }$`;
+          normalizedEntries[aliasEntry] = source;
+        }
+
+        return normalizedEntries;
+      });
+      cache.set(project, cached);
+    }
+
+    return cached;
+  };
 }

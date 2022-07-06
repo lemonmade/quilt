@@ -1,5 +1,5 @@
-import type {Project, App, Service, Workspace} from '../model';
 import type {ValueOrPromise} from '../types';
+import type {Project, Workspace} from '../model';
 
 import type {
   HookAdder,
@@ -18,31 +18,6 @@ import type {
 export interface TypeCheckProjectOptions {}
 
 /**
- * Options that are available to configuration hooks for type checking applications.
- */
-export interface TypeCheckAppOptions extends TypeCheckProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for type checking projects.
- */
-export interface TypeCheckServiceOptions extends TypeCheckProjectOptions {}
-
-/**
- * Options that are available to configuration hooks for type checking backend services.
- */
-export interface TypeCheckPackageOptions extends TypeCheckProjectOptions {}
-
-/**
- * Selects the type checking options that match the provided project type.
- */
-export type TypeCheckOptionsForProject<ProjectType extends Project = Project> =
-  ProjectType extends App
-    ? TypeCheckAppOptions
-    : ProjectType extends Service
-    ? TypeCheckServiceOptions
-    : TypeCheckPackageOptions;
-
-/**
  * Options that are available to configuration hooks for type checking
  * code related to your overall workspace.
  */
@@ -59,47 +34,15 @@ export interface TypeCheckProjectConfigurationCoreHooks {}
 export interface TypeCheckProjectConfigurationHooks {}
 
 /**
- * Configuration hooks for type checking applications.
+ * The full set of resolved type check hooks for a single project. This includes
+ * all the core hooks provided automatically, and any hooks added by plugins
+ * during the `hooks` phase of running this task. All plugins added by hooks
+ * are marked as optional in this type because the plugin that added the type
+ * may not have been used in this project.
  */
-export interface TypeCheckAppConfigurationHooks
-  extends TypeCheckProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for type checking backend services.
- */
-export interface TypeCheckServiceConfigurationHooks
-  extends TypeCheckProjectConfigurationHooks {}
-
-/**
- * Configuration hooks for type checking packages.
- */
-export interface TypeCheckPackageConfigurationHooks
-  extends TypeCheckProjectConfigurationHooks {}
-
-/**
- * Selects the type checking configuration hooks that match the provided
- * project type.
- */
-export type TypeCheckConfigurationHooksForProject<
-  ProjectType extends Project = Project,
-> = ProjectType extends App
-  ? TypeCheckAppConfigurationHooks
-  : ProjectType extends Service
-  ? TypeCheckServiceConfigurationHooks
-  : TypeCheckPackageConfigurationHooks;
-
-/**
- * The full set of resolved type checking hooks for a single project of the
- * provided type. This includes all the core hooks provided automatically,
- * and any hooks added by plugins during the `hooks` phase of running this
- * task. All plugins added by hooks are marked as optional in this type
- * because the plugin that added the type may not have been used in this
- * project.
- */
-export type ResolvedTypeCheckProjectConfigurationHooks<
-  ProjectType extends Project = Project,
-> = ResolvedHooks<TypeCheckConfigurationHooksForProject<ProjectType>> &
-  TypeCheckProjectConfigurationCoreHooks;
+export type ResolvedTypeCheckProjectConfigurationHooks =
+  ResolvedHooks<TypeCheckProjectConfigurationHooks> &
+    TypeCheckProjectConfigurationCoreHooks;
 
 /**
  * Hooks for type checking the entire workspace.
@@ -131,11 +74,11 @@ export interface TypeCheckTaskOptions {}
  * The hooks and additional metadata for running the type-check command on
  * a single project.
  */
-export interface TypeCheckProjectTask<ProjectType extends Project = Project> {
+export interface TypeCheckProjectTask {
   /**
-   * The project being type checked.
+   * The project being typeChecked.
    */
-  readonly project: ProjectType;
+  readonly project: Project;
 
   /**
    * The workspace this project is part of.
@@ -155,7 +98,7 @@ export interface TypeCheckProjectTask<ProjectType extends Project = Project> {
    * TypeScript, and to ensure consumers get appropriate type-checking
    * on their use of the hooks.
    */
-  readonly hooks: HookAdder<TypeCheckConfigurationHooksForProject<ProjectType>>;
+  readonly hooks: HookAdder<TypeCheckProjectConfigurationHooks>;
 
   /**
    * Provide additional configuration for type checking the project. Custom
@@ -165,8 +108,8 @@ export interface TypeCheckProjectTask<ProjectType extends Project = Project> {
    * to include your hooks for other plugins to reference.
    */
   readonly configure: ConfigurationCollector<
-    ResolvedTypeCheckProjectConfigurationHooks<ProjectType>,
-    ResolvedOptions<TypeCheckOptionsForProject<ProjectType>>
+    ResolvedTypeCheckProjectConfigurationHooks,
+    ResolvedOptions<TypeCheckProjectOptions>
   >;
 
   /**
@@ -181,9 +124,8 @@ export interface TypeCheckProjectTask<ProjectType extends Project = Project> {
    * what steps need to be added.
    */
   readonly run: ProjectStepAdder<
-    ProjectType,
-    ResolvedTypeCheckProjectConfigurationHooks<ProjectType>,
-    TypeCheckOptionsForProject<ProjectType>
+    ResolvedTypeCheckProjectConfigurationHooks,
+    TypeCheckProjectOptions
   >;
 }
 
@@ -206,8 +148,8 @@ export interface TypeCheckWorkspaceStepAdderContext
    */
   projectConfiguration<ProjectType extends Project = Project>(
     project: ProjectType,
-    options?: TypeCheckOptionsForProject<ProjectType>,
-  ): Promise<ResolvedTypeCheckProjectConfigurationHooks<ProjectType>>;
+    options?: TypeCheckProjectOptions,
+  ): Promise<ResolvedTypeCheckProjectConfigurationHooks>;
 }
 
 /**
@@ -264,7 +206,5 @@ export interface TypeCheckWorkspaceTask {
    * hook of a project plugin. You can use this hook to add configuration or
    * steps to multiple projects in the workspace.
    */
-  project<ProjectType extends Project = Project>(
-    handler: (task: TypeCheckProjectTask<ProjectType>) => ValueOrPromise<void>,
-  ): void;
+  project(handler: (task: TypeCheckProjectTask) => ValueOrPromise<void>): void;
 }

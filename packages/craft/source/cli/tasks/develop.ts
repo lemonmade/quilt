@@ -1,4 +1,4 @@
-import {Task, TargetRuntime, createWaterfallHook} from '../../kit';
+import {Task, createWaterfallHook} from '../../kit';
 
 import type {DevelopTaskOptions} from '../../kit';
 
@@ -19,11 +19,9 @@ export async function runDev(
   await runStepsForTask(Task.Develop, {
     ...context,
     options,
-    coreHooksForProject: (project) => ({
-      extensions: createWaterfallHook<string[]>(),
-      runtime: createWaterfallHook({
-        default: TargetRuntime.fromProject(project),
-      }),
+    coreHooksForProject: () => ({
+      extensions: createWaterfallHook(),
+      runtimes: createWaterfallHook(),
     }),
     coreHooksForWorkspace: () => ({}),
   });

@@ -1,25 +1,16 @@
 import {extname} from 'path';
 import {stripIndent} from 'common-tags';
 
-import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
-import {
-  createProjectPlugin,
-  ProjectKind,
+import {createProjectPlugin, MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
+import type {
+  BuildProjectOptions,
+  DevelopProjectOptions,
+  ResolvedBuildProjectConfigurationHooks,
+  ResolvedDevelopProjectConfigurationHooks,
   WaterfallHook,
 } from '@quilted/craft/kit';
-import type {
-  App,
-  Service,
-  ResolvedHooks,
-  ResolvedOptions,
-  BuildAppOptions,
-  BuildServiceOptions,
-  BuildAppConfigurationHooks,
-  BuildServiceConfigurationHooks,
-  ResolvedDevelopProjectConfigurationHooks,
-} from '@quilted/craft/kit';
-import type {MiniflareOptions} from 'miniflare';
 import type {PolyfillFeature} from '@quilted/craft/polyfills';
+import type {MiniflareOptions} from 'miniflare';
 
 export type WorkerFormat = 'modules' | 'service-worker';
 
@@ -74,8 +65,7 @@ export interface CloudflareDevelopHooks {
 }
 
 declare module '@quilted/craft/kit' {
-  interface DevelopAppConfigurationHooks extends CloudflareDevelopHooks {}
-  interface DevelopServiceConfigurationHooks extends CloudflareDevelopHooks {}
+  interface DevelopProjectConfigurationHooks extends CloudflareDevelopHooks {}
 }
 
 /**
@@ -85,17 +75,17 @@ declare module '@quilted/craft/kit' {
 export function cloudflareWorkers({
   format = 'modules',
   cache = true,
-  serveAssets,
+  serveAssets = false,
   miniflare: useMiniflare = true,
 }: Options = {}) {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: 'Quilt.Cloudflare.Workers',
-    build({project, configure}) {
+    build({configure}) {
       configure(
         addConfiguration({
           cache,
           format,
-          serveAssets: serveAssets ?? project.kind === ProjectKind.App,
+          serveAssets,
         }),
       );
     },
@@ -113,8 +103,7 @@ export function cloudflareWorkers({
       configure((hooks, options) => {
         addBaseConfiguration(hooks, options);
 
-        const {quiltAppDevelopmentServer, miniflareOptions} =
-          hooks as ResolvedDevelopProjectConfigurationHooks<App>;
+        const {quiltAppDevelopmentServer, miniflareOptions} = hooks;
 
         if (!useMiniflare) return;
 
@@ -187,15 +176,13 @@ function addConfiguration({
       quiltHttpHandlerRuntimeContent,
       quiltPolyfillFeaturesForEnvironment,
       quiltRuntimeEnvironmentVariables,
-    }: ResolvedHooks<
-      BuildAppConfigurationHooks & BuildServiceConfigurationHooks
+    }: Partial<
+      ResolvedBuildProjectConfigurationHooks &
+        ResolvedDevelopProjectConfigurationHooks
     >,
-    options: ResolvedOptions<BuildAppOptions & BuildServiceOptions>,
+    options: Partial<BuildProjectOptions & DevelopProjectOptions>,
   ) => {
-    if (
-      !(options as ResolvedOptions<BuildAppOptions>).quiltAppServer &&
-      !(options as ResolvedOptions<BuildServiceOptions>).quiltService
-    ) {
+    if (!options.quiltAppServer && !options.quiltService) {
       return;
     }
 

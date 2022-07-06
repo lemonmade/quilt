@@ -1,12 +1,18 @@
-import type {Plugin, InputOptions, OutputOptions} from 'rollup';
+import type {
+  Plugin,
+  InputOptions,
+  OutputOptions,
+  PreserveEntrySignaturesOption,
+} from 'rollup';
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
-import {App, createProjectPlugin, ProjectKind, Runtime} from '../kit';
+import {createProjectPlugin} from '../kit';
 import type {
   Project,
   Workspace,
   WaterfallHook,
+  ResolvedHooks,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit';
@@ -49,6 +55,11 @@ export interface RollupHooks {
    * Rollup outputs to generate for this project.
    */
   rollupOutputs: WaterfallHook<OutputOptions[]>;
+
+  /**
+   * Determines how Rollup will preserve the exports of entry modules.
+   */
+  rollupPreserveEntrySignatures: WaterfallHook<PreserveEntrySignaturesOption>;
 }
 
 export interface RollupNodeHooks {
@@ -112,6 +123,7 @@ export function rollupHooks() {
         rollupExternals: waterfall(),
         rollupInputOptions: waterfall(),
         rollupOutputs: waterfall(),
+        rollupPreserveEntrySignatures: waterfall(),
       }));
     },
     develop({hooks}) {
@@ -121,6 +133,7 @@ export function rollupHooks() {
         rollupExternals: waterfall(),
         rollupInputOptions: waterfall(),
         rollupOutputs: waterfall(),
+        rollupPreserveEntrySignatures: waterfall(),
       }));
     },
   });
@@ -137,10 +150,8 @@ export interface RollupNodeOptions {
  * commonjs Rollup plugins, which allow Rollup-based builds to import
  * from Node.js dependencies, using Node.js resolution.
  */
-export function rollupNode<ProjectType extends Project = Project>(
-  options?: RollupNodeOptions,
-) {
-  return createProjectPlugin<ProjectType>({
+export function rollupNode(options?: RollupNodeOptions) {
+  return createProjectPlugin({
     name: 'Quilt.Rollup.Node',
     build({project, workspace, hooks, configure}) {
       hooks<RollupNodeHooks>(({waterfall}) => ({
@@ -171,12 +182,12 @@ export function rollupNode<ProjectType extends Project = Project>(
   });
 }
 
-function addConfiguration<ProjectType extends Project>(
-  project: ProjectType,
+function addConfiguration(
+  project: Project,
   workspace: Workspace,
   configuration:
-    | ResolvedBuildProjectConfigurationHooks<ProjectType>
-    | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+    | ResolvedBuildProjectConfigurationHooks
+    | ResolvedDevelopProjectConfigurationHooks,
   options?: RollupNodeOptions,
 ) {
   configuration.rollupPlugins?.(async (plugins) => {
@@ -196,11 +207,11 @@ function addConfiguration<ProjectType extends Project>(
  * returns a set of plugins that configure rollup to work well with
  * Node.
  */
-export async function getRollupNodePlugins<ProjectType extends Project>(
-  project: ProjectType,
+export async function getRollupNodePlugins(
+  project: Project,
   workspace: Workspace,
   {
-    runtime,
+    runtimes,
     extensions,
     rollupNodeBundle,
     rollupNodeExtensions,
@@ -208,11 +219,21 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     rollupNodeResolveOptions,
     rollupCommonJSOptions,
   }:
-    | ResolvedBuildProjectConfigurationHooks<ProjectType>
-    | ResolvedDevelopProjectConfigurationHooks<ProjectType>,
+    | ResolvedBuildProjectConfigurationHooks
+    | ResolvedDevelopProjectConfigurationHooks,
   {bundle: explicitShouldBundle}: RollupNodeOptions = {},
 ) {
-  const targetRuntime = await runtime.run();
+  const resolvedRuntimes = await runtimes.run([]);
+
+  const defaultExportConditions = ['module', 'import', 'require', 'default'];
+
+  if (resolvedRuntimes.some((runtime) => runtime.target === 'node')) {
+    defaultExportConditions.unshift('node');
+  }
+
+  if (resolvedRuntimes.some((runtime) => runtime.target === 'browser')) {
+    defaultExportConditions.unshift('browser');
+  }
 
   const [
     {default: commonjs},
@@ -227,13 +248,7 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
     import('@rollup/plugin-node-resolve'),
     import('rollup-plugin-node-externals'),
     extensions.run(['.mjs', '.cjs', '.js', '.json', '.node']),
-    rollupNodeExportConditions!.run(
-      targetRuntime.includes(Runtime.Node)
-        ? ['node', 'module', 'import', 'require', 'default']
-        : targetRuntime.includes(Runtime.Browser)
-        ? ['browser', 'module', 'import', 'require', 'default']
-        : ['module', 'import', 'require', 'default'],
-    ),
+    rollupNodeExportConditions!.run(defaultExportConditions),
   ]);
 
   const finalExtensions = await rollupNodeExtensions!.run(baseExtensions);
@@ -250,7 +265,12 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
 
   const defaultShouldBundle =
     explicitShouldBundle == null
-      ? getDefaultNodeBundle(project, targetRuntime.includes(Runtime.Browser))
+      ? {
+          builtins: false,
+          dependencies: false,
+          devDependencies: true,
+          peerDependencies: false,
+        }
       : normalizeRollupNodeBundle(explicitShouldBundle);
   const shouldBundle = await rollupNodeBundle!.run(defaultShouldBundle);
 
@@ -343,40 +363,38 @@ export async function getRollupNodePlugins<ProjectType extends Project>(
  *   },
  * })
  */
-export async function buildWithRollup<ProjectType extends Project = Project>(
-  project: ProjectType,
+export async function buildWithRollup(
+  _project: Project,
   {
-    runtime,
     rollupInput,
     rollupPlugins,
     rollupExternals,
     rollupInputOptions,
     rollupOutputs,
-  }: ResolvedBuildProjectConfigurationHooks<ProjectType>,
+    rollupPreserveEntrySignatures,
+  }: ResolvedHooks<RollupHooks>,
 ) {
-  const [{rollup}, targetRuntime, inputs, plugins, externals, outputs] =
-    await Promise.all([
-      import('rollup'),
-      runtime.run(),
-      rollupInput!.run([]),
-      rollupPlugins!.run([]),
-      rollupExternals!.run([]),
-      rollupOutputs!.run([]),
-    ]);
+  const [
+    {rollup},
+    inputs,
+    plugins,
+    externals,
+    outputs,
+    preserveEntrySignatures,
+  ] = await Promise.all([
+    import('rollup'),
+    rollupInput!.run([]),
+    rollupPlugins!.run([]),
+    rollupExternals!.run([]),
+    rollupOutputs!.run([]),
+    rollupPreserveEntrySignatures!.run('exports-only'),
+  ]);
 
   const inputOptions = await rollupInputOptions!.run({
     input: inputs,
     external: externals,
     plugins,
-    // When we are only building a web app, we don’t care about preserving
-    // any details about the entry module. When we are building for any other
-    // environment, we want to do our best to preserve that
-    preserveEntrySignatures:
-      project instanceof App &&
-      targetRuntime.includes(Runtime.Browser) &&
-      targetRuntime.runtimes.size === 1
-        ? false
-        : 'exports-only',
+    preserveEntrySignatures,
     onwarn(warning, defaultHandler) {
       // Ignore warnings about empty bundles by default.
       if (warning.code === 'EMPTY_BUNDLE') return;
@@ -459,27 +477,4 @@ export function addRollupOnWarn(
       });
     },
   };
-}
-
-function getDefaultNodeBundle(
-  project: Project,
-  isBrowser = false,
-): RollupNodeBundle {
-  if (project.kind === ProjectKind.App && isBrowser) {
-    return {
-      builtins: false,
-      dependencies: true,
-      devDependencies: true,
-      peerDependencies: true,
-    };
-  } else {
-    // In all other projects, we want to leave explicit dependencies unbundled,
-    // but have any dev-time dependencies be bundles.
-    return {
-      builtins: false,
-      dependencies: false,
-      devDependencies: true,
-      peerDependencies: false,
-    };
-  }
 }

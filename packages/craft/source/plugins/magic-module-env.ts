@@ -1,13 +1,8 @@
 import type {} from '../tools/rollup';
 import type {} from '../tools/vite';
 
-import {createProjectPlugin, ResolvedHooks} from '../kit';
-import type {
-  App,
-  Service,
-  WaterfallHook,
-  DevelopAppConfigurationHooks,
-} from '../kit';
+import {createProjectPlugin} from '../kit';
+import type {WaterfallHook} from '../kit';
 
 export interface EnvironmentOptions {
   /**
@@ -52,8 +47,8 @@ export interface Hooks {
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildAppConfigurationHooks extends Hooks {}
-  interface DevelopAppConfigurationHooks extends Hooks {}
+  interface BuildProjectConfigurationHooks extends Hooks {}
+  interface DevelopProjectConfigurationHooks extends Hooks {}
   interface BuildServiceConfigurationHooks extends Hooks {}
   interface DevelopServiceConfigurationHooks extends Hooks {}
 }
@@ -61,7 +56,7 @@ declare module '@quilted/sewing-kit' {
 export const NAME = 'Quilt.MagicModule.Env';
 
 export function magicModuleEnv() {
-  return createProjectPlugin<App | Service>({
+  return createProjectPlugin({
     name: NAME,
     build({project, workspace, hooks, configure}) {
       hooks<Hooks>(({waterfall}) => ({
@@ -108,7 +103,7 @@ export function magicModuleEnv() {
           quiltInlineEnvironmentVariables,
           quiltRuntimeEnvironmentVariables,
           quiltEnvModuleContent,
-        }: ResolvedHooks<DevelopAppConfigurationHooks>) => {
+        }) => {
           rollupPlugins?.(async (plugins) => {
             const {magicModuleEnv} = await import('./rollup/magic-module-env');
 

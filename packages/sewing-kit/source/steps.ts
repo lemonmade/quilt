@@ -1,4 +1,9 @@
-import type {ExecOptions, SpawnOptions, PromiseWithChild} from 'child_process';
+import type {
+  ExecOptions,
+  SpawnOptions,
+  PromiseWithChild,
+  ChildProcess,
+} from 'child_process';
 
 import type {Project, Workspace} from './model';
 import type {WorkspacePlugin, AnyPlugin} from './plugins';
@@ -44,11 +49,10 @@ export interface BaseStepRunner {
     command: string,
     args?: string[] | null,
     options?: StepRunnerSpawnOptions,
-  ): Promise<unknown>;
+  ): ChildProcess;
 }
 
-export interface ProjectStepRunner<_ProjectType extends Project>
-  extends BaseStepRunner {}
+export interface ProjectStepRunner extends BaseStepRunner {}
 
 export type StepStage = 'pre' | 'default' | 'post';
 
@@ -57,17 +61,13 @@ export interface StepNeed {
   readonly allowSkip?: boolean;
 }
 
-export interface ProjectStep<ProjectType extends Project = Project> {
+export interface ProjectStep {
   readonly name: string;
   readonly label: Loggable;
-  // I want to make this `ProjectType`, but when I do that, it blows up the
-  // feature where you can pass `ProjectPlugin<Project>` in place of a plugin
-  // for the specific project type. I don’t know why, and it’s not a huge
-  // loss in type safety, but would definitely love to find a better way!
   readonly target: Project;
   readonly stage: StepStage;
   readonly source: AnyPlugin;
-  run(runner: ProjectStepRunner<ProjectType>): void | Promise<void>;
+  run(runner: ProjectStepRunner): void | Promise<void>;
   needs?(otherStep: AnyStep): boolean | StepNeed;
 }
 
@@ -83,4 +83,4 @@ export interface WorkspaceStep {
   needs?(otherStep: WorkspaceStep): boolean | StepNeed;
 }
 
-export type AnyStep = WorkspaceStep | ProjectStep<Project>;
+export type AnyStep = WorkspaceStep | ProjectStep;
