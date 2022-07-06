@@ -77,12 +77,12 @@ export function targets() {
 
             const resolvedRuntimes = await runtimes!.run([]);
 
-            const useNodeTarget = resolvedRuntimes.some(
-              (runtime) => runtime.target === 'node',
-            );
-            const useBrowserTarget = resolvedRuntimes.some(
-              (runtime) => runtime.target === 'browser',
-            );
+            const useNodeTarget =
+              resolvedRuntimes.length === 0 ||
+              resolvedRuntimes.some((runtime) => runtime.target === 'node');
+            const useBrowserTarget =
+              resolvedRuntimes.length === 0 ||
+              resolvedRuntimes.some((runtime) => runtime.target === 'browser');
 
             if (useNodeTarget) {
               const engines: {node?: string} | undefined =
@@ -183,14 +183,25 @@ export function targets() {
       }));
 
       configure(
-        ({browserslistTargets, babelTargets, babelPresets, postcssPlugins}) => {
+        ({
+          runtimes,
+          browserslistTargets,
+          babelTargets,
+          babelPresets,
+          postcssPlugins,
+          babelPresetEnvOptions,
+        }) => {
           browserslistTargets!(async (targets) => {
             if (targets.length > 0) return targets;
 
-            // const resolvedRuntime = await runtime!.run();
+            const resolvedRuntimes = await runtimes!.run([]);
 
-            const useNodeTarget = true; //resolvedRuntime.includes(Runtime.Node);
-            const useBrowserTarget = true; //resolvedRuntime.includes(Runtime.Browser);
+            const useNodeTarget =
+              resolvedRuntimes.length === 0 ||
+              resolvedRuntimes.some((runtime) => runtime.target === 'node');
+            const useBrowserTarget =
+              resolvedRuntimes.length === 0 ||
+              resolvedRuntimes.some((runtime) => runtime.target === 'browser');
 
             if (useNodeTarget) {
               targets.push('current node');
@@ -204,15 +215,15 @@ export function targets() {
           });
 
           babelTargets?.(() => browserslistTargets!.run([]));
-          babelPresets?.((presets) => [
+          babelPresets?.(async (presets) => [
             [
               require.resolve('@babel/preset-env'),
-              {
-                corejs: '3.15',
+              await babelPresetEnvOptions?.run({
+                corejs: '3.15' as any,
                 useBuiltIns: 'usage',
                 bugfixes: true,
                 shippedProposals: true,
-              },
+              }),
             ],
             ...presets,
           ]);
@@ -240,27 +251,34 @@ export function targets() {
         browserslistTargetName: waterfall(),
       }));
 
-      configure(({browserslistTargets, babelPresets, babelTargets}) => {
-        const defaultTargets = ['current node'];
+      configure(
+        ({
+          browserslistTargets,
+          babelPresets,
+          babelTargets,
+          babelPresetEnvOptions,
+        }) => {
+          const defaultTargets = ['current node'];
 
-        browserslistTargets!((existingTargets) =>
-          existingTargets.length > 0 ? existingTargets : defaultTargets,
-        );
+          browserslistTargets!((existingTargets) =>
+            existingTargets.length > 0 ? existingTargets : defaultTargets,
+          );
 
-        babelTargets?.(() => browserslistTargets!.run([]));
-        babelPresets?.((presets) => [
-          [
-            require.resolve('@babel/preset-env'),
-            {
-              corejs: '3.15',
-              useBuiltIns: 'usage',
-              bugfixes: true,
-              shippedProposals: true,
-            },
-          ],
-          ...presets,
-        ]);
-      });
+          babelTargets?.(() => browserslistTargets!.run([]));
+          babelPresets?.(async (presets) => [
+            [
+              require.resolve('@babel/preset-env'),
+              await babelPresetEnvOptions?.run({
+                corejs: '3.15' as any,
+                useBuiltIns: 'usage',
+                bugfixes: true,
+                shippedProposals: true,
+              }),
+            ],
+            ...presets,
+          ]);
+        },
+      );
     },
   });
 }

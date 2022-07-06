@@ -168,6 +168,7 @@ function addConfiguration({
 }) {
   return (
     {
+      runtimes,
       rollupOutputs,
       rollupNodeBundle,
       quiltAssetBaseUrl,
@@ -185,6 +186,13 @@ function addConfiguration({
     if (!options.quiltAppServer && !options.quiltService) {
       return;
     }
+
+    runtimes?.((runtimes) => [
+      {target: 'worker'},
+      ...runtimes.filter(
+        (runtime) => runtime.target !== 'node' && runtime.target !== 'worker',
+      ),
+    ]);
 
     rollupNodeBundle?.(() => true);
 

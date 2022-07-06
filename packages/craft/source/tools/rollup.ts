@@ -227,11 +227,17 @@ export async function getRollupNodePlugins(
 
   const defaultExportConditions = ['module', 'import', 'require', 'default'];
 
-  if (resolvedRuntimes.some((runtime) => runtime.target === 'node')) {
+  if (
+    resolvedRuntimes.length === 0 ||
+    resolvedRuntimes.some((runtime) => runtime.target === 'node')
+  ) {
     defaultExportConditions.unshift('node');
   }
 
-  if (resolvedRuntimes.some((runtime) => runtime.target === 'browser')) {
+  if (
+    resolvedRuntimes.length === 0 ||
+    resolvedRuntimes.some((runtime) => runtime.target === 'browser')
+  ) {
     defaultExportConditions.unshift('browser');
   }
 

@@ -122,7 +122,6 @@ export function polyfills({features, package: packageName}: Options = {}) {
   });
 
   function addConfiguration({
-    runtimes,
     browserslistTargets,
     rollupPlugins,
     rollupInputOptions,
@@ -148,17 +147,12 @@ export function polyfills({features, package: packageName}: Options = {}) {
     );
 
     rollupPlugins?.(async (plugins) => {
-      const [
-        {packageDirectory},
-        {default: alias},
-        allNecessaryFeatures,
-        resolvedRuntime,
-      ] = await Promise.all([
-        import('pkg-dir'),
-        import('@rollup/plugin-alias'),
-        quiltPolyfillFeatures!.run(),
-        runtimes.run([]),
-      ]);
+      const [{packageDirectory}, {default: alias}, allNecessaryFeatures] =
+        await Promise.all([
+          import('pkg-dir'),
+          import('@rollup/plugin-alias'),
+          quiltPolyfillFeatures!.run(),
+        ]);
 
       const featuresNeedingPolyfills =
         await quiltPolyfillFeaturesForEnvironment!.run(allNecessaryFeatures);
@@ -176,11 +170,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
       const polyfillPlugin = await polyfillRollup({
         package: packageName,
         features: featuresNeedingPolyfills,
-        target: resolvedRuntime.some((runtime) => runtime.target === 'browser')
-          ? await browserslistTargets?.run([])
-          : resolvedRuntime.some((runtime) => runtime.target === 'node')
-          ? 'node'
-          : await browserslistTargets?.run([]),
+        target: await browserslistTargets?.run([]),
       });
 
       return [
