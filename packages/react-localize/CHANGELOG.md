@@ -1,5 +1,15 @@
 # @quilted/react-localize
 
+## 0.1.6
+
+### Patch Changes
+
+- [`0629288e`](https://github.com/lemonmade/quilt/commit/0629288ee4ba2e2ccfd73fbb216c3559e1a5c77e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing package builds
+
+- Updated dependencies [[`0629288e`](https://github.com/lemonmade/quilt/commit/0629288ee4ba2e2ccfd73fbb216c3559e1a5c77e)]:
+  - @quilted/http-handlers@0.2.42
+  - @quilted/react-http@0.3.22
+
 ## 0.1.5
 
 ### Patch Changes
