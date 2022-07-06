@@ -1,5 +1,11 @@
 # @quilted/useful-types
 
+## 0.2.17
+
+### Patch Changes
+
+- [`a12c3576`](https://github.com/lemonmade/quilt/commit/a12c357693b173461f51a35fb7efdd0a9267e471) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix more build issues
+
 ## 0.2.16
 
 ### Patch Changes

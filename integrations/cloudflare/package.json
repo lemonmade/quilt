@@ -1,7 +1,7 @@
 {
   "name": "@quilted/cloudflare",
   "type": "module",
-  "version": "0.1.39",
+  "version": "0.1.40",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -56,8 +56,8 @@
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/craft": "^0.1.139",
-    "@quilted/quilt": "^0.5.107"
+    "@quilted/craft": "^0.1.140",
+    "@quilted/quilt": "^0.5.108"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.0",
