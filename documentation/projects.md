@@ -1,20 +1,20 @@
 # Workspaces and projects
 
-Quilt and [Sewing Kit](./sewing-kit.md) let you organize your repo however you like, but they do require you to describe that structure so that they can run your build, testing, and linting commands effectively.
+Quilt and [Craft](./craft.md) let you organize your repo however you like, but they do require you to describe that structure so that they can run your build, testing, and linting commands effectively.
 
-In Quilt, your repo is referred to as a **“workspace”**. A workspace can contain any number of **“projects”**, which represent distinct codebases that are built and deployed separately. There are three types of projects that you can represent with Quilt:
+In Quilt, your repo is referred to as a **“workspace”**. A workspace can contain any number of **“projects”**, which represent distinct codebases that are built and deployed separately. A project can be anything, but Quilt provides special handling for three broad types of projects:
 
-- An **app**, which are projects that users interact with directly.
+- An **app**, which are projects that users interact with directly, typically as a web application.
 - A **service**, which are parts of the codebase that are deployed to the backend. This category could include what we traditionally think of as “servers”, but it is also used to represent smaller pieces of code that are deployed as serverless functions, cron triggers, and more.
 - A **package**, which is a library that is consumed by an app or service, or published for consumption by other developers.
 
-A workspace can have any number of these projects, which allows it to support anything from a codebase that just has a single app in it, all the way to a monorepo with multiple apps, services, and packages. Some tools, like [ESLint](../packages/sewing-kit-eslint), are configured and run at the workspace level; some, like [Vite](../packages/sewing-kit-vite), are instead run at the project level; and still others, like [Jest](../packages/sewing-kit-jest), are a bit of a mix.
+A workspace can have any number of these projects, which allows it to support anything from a codebase that just has a single app in it, all the way to a monorepo with multiple apps, services, and packages. Some tools, like [ESLint](./features/linting.md), are configured and run at the workspace level; some, like [Vite](./features/developing/apps.md), are instead run at the project level; and still others, like [Jest](./features/testing.md), are a bit of a mix.
 
 ## Defining your workspace and projects
 
 [Craft](./craft.md) uses `quilt.workspace.ts` and `quilt.project.ts` files for configuring the development commands in your repo. When you run a development command, Craft will first find all nested `quilt.project.ts` files in order to build up its picture of your repo.
 
-The simplest Quilt project would only have a single `quilt.project.ts` file at the root of the repo. That project would use the `createApp`, `createService`, or `createProject` functions from `@quilted/craft` to declare that your entire workspace is just a single project:
+The simplest Quilt project would only have a single `quilt.project.ts` file at the root of the repo. That project would use the `createProject` function from `@quilted/craft` to declare that your entire workspace is just a single project:
 
 ```ts
 // quilt.project.ts
@@ -22,10 +22,10 @@ The simplest Quilt project would only have a single `quilt.project.ts` file at t
 // We’re also importing the quiltApp and quiltWorkspace sewing-kit plugins here,
 // which add all tooling integrations Quilt provides for apps and the overall
 // workspace.
-import {createApp, quiltApp, quiltWorkspace} from '@quilted/craft';
+import {createProject, quiltApp, quiltWorkspace} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.use(quiltApp(), quiltWorkspace());
+export default createProject((project) => {
+  project.use(quiltApp(), quiltWorkspace());
 });
 ```
 
@@ -41,47 +41,43 @@ export default createWorkspace((workspace) => {
 });
 ```
 
-Then, for each of your projects, you’ll have a separate `quilt.project.ts` that that describes the details for that app/ service/ package:
+Then, for each of your projects, you’ll have a separate `quilt.project.ts` that that describes the details for that app, service, or package:
 
 ```ts
 // app/quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
-  app.use(quiltApp());
+export default createProject((project) => {
+  project.use(createProject({entry: './App.tsx'}));
 });
 
 // functions/api/quilt.project.ts
 
-import {createService, quiltService} from '@quilted/craft';
+import {createProject, quiltService} from '@quilted/craft';
 
-export default createService((service) => {
-  service.entry('./api');
-  service.use(quiltService());
+export default createProject((project) => {
+  project.use(quiltService({entry: './api.ts'}));
 });
 
 // packages/package-one/quilt.project.ts
 
 import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createProject((pkg) => {
-  pkg.entry('./source/index');
-  pkg.use(quiltPackage());
+export default createProject((project) => {
+  project.use(quiltPackage());
 });
 
 // packages/package-two/quilt.project.ts
 
 import {createProject, quiltPackage} from '@quilted/craft';
 
-export default createProject((pkg) => {
-  pkg.entry('./source/index');
-  pkg.use(quiltPackage());
+export default createProject((project) => {
+  project.use(quiltPackage());
 });
 ```
 
-Not everyone loves to have lots of configuration files in their project, but we really like having this approach for Quilt. It makes the structure of your repo clear and precise, because you are in complete control. Because these files are the same ones you use to configure [Sewing Kit plugins](./sewing-kit.md#plugins), it also gives you a spot to easily customize individual projects for their unique needs.
+Not everyone loves to have lots of configuration files in their project, but we really like having this approach for Quilt. It makes the structure of your repo clear and precise, because you are in complete control. Because these files are the same ones you use to configure [Craft plugins](./craft.md#plugins), it also gives you a spot to easily customize individual projects for their unique needs.
 
 ## Quilt’s support for different project types
 
