@@ -20,7 +20,6 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: --only-project package:*
       - name: Deploy
         run: pnpm deploy
         env:
