@@ -30,6 +30,13 @@
       "import": "./build/esm/tools/babel.mjs",
       "require": "./build/cjs/tools/babel.cjs"
     },
+    "./browserslist": {
+      "types": "./build/typescript/tools/browserslist.d.ts",
+      "quilt:source": "./source/tools/browserslist.ts",
+      "quilt:esnext": "./build/esnext/tools/browserslist.esnext",
+      "import": "./build/esm/tools/browserslist.mjs",
+      "require": "./build/cjs/tools/browserslist.cjs"
+    },
     "./eslint": {
       "types": "./build/typescript/tools/eslint.d.ts",
       "quilt:source": "./source/tools/eslint.ts",
@@ -167,6 +174,9 @@
       ],
       "babel": [
         "./build/typescript/tools/babel.d.ts"
+      ],
+      "browserslist": [
+        "./build/typescript/tools/browserslist.d.ts"
       ],
       "eslint": [
         "./build/typescript/tools/eslint.d.ts"

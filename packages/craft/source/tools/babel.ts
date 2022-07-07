@@ -147,7 +147,7 @@ export function babelRollup() {
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const helpers = await babelRuntimeHelpers!.run('runtime');
+            const helpers = await babelRuntimeHelpers!.run('bundled');
 
             const [
               {babel},
@@ -201,7 +201,7 @@ export function babelRollup() {
           rollupPlugins,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const helpers = await babelRuntimeHelpers!.run('runtime');
+            const helpers = await babelRuntimeHelpers!.run('bundled');
 
             const [
               {babel},

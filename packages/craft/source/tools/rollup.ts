@@ -262,6 +262,7 @@ export async function getRollupNodePlugins(
   const [resolveOptions, commonjsOptions] = await Promise.all([
     rollupNodeResolveOptions!.run({
       exportConditions,
+      preferBuiltins: true,
       extensions: finalExtensions,
     }),
     rollupCommonJSOptions!.run({}),

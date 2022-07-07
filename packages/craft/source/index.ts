@@ -23,6 +23,7 @@ import {assets as staticAssets} from './features/assets';
 import {AssetOptions} from './features/assets';
 
 import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
+import {browserslist} from './tools/browserslist';
 import {rollupHooks, rollupNode} from './tools/rollup';
 import type {RollupNodeOptions} from './tools/rollup';
 import {eslint} from './tools/eslint';
@@ -178,6 +179,7 @@ export function quiltApp({
         babelHooks(),
         babelRollup(),
         postcss(),
+        browserslist(),
         targets(),
         javascriptProject(),
         typescriptProject(),
@@ -290,6 +292,7 @@ export function quiltService({
         rollupNode(),
         babelHooks(),
         babelRollup(),
+        browserslist(),
         targets(),
         javascriptProject(),
         typescriptProject(),
@@ -354,6 +357,7 @@ export function quiltPackage({
         rollupHooks(),
         babelHooks(),
         babelRollup(),
+        browserslist(),
         targets(),
         javascriptProject(),
         typescriptProject(),

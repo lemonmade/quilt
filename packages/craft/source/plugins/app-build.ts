@@ -127,16 +127,6 @@ export function appBuild({
           // environment, we want to do our best to preserve that
           rollupPreserveEntrySignatures?.(() => false);
 
-          rollupNodeBundle?.((currentBundle) => {
-            return {
-              ...(typeof currentBundle === 'boolean' ? {} : currentBundle),
-              builtins: false,
-              dependencies: true,
-              devDependencies: true,
-              peerDependencies: true,
-            };
-          });
-
           rollupPlugins?.(async (plugins) => {
             const {default: replace} = await import('@rollup/plugin-replace');
 
@@ -152,6 +142,16 @@ export function appBuild({
           });
 
           if (!browserTargets) return;
+
+          rollupNodeBundle?.((currentBundle) => {
+            return {
+              ...(typeof currentBundle === 'boolean' ? {} : currentBundle),
+              builtins: false,
+              dependencies: true,
+              devDependencies: true,
+              peerDependencies: true,
+            };
+          });
 
           runtimes(() => [{target: 'browser'}]);
 

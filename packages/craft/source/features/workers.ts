@@ -67,9 +67,10 @@ export function workers() {
       configure((configuration) => {
         addConfiguration(configuration, {
           noop: async () => {
-            return false;
-            // const resolvedRuntime = await configuration.runtime.run();
-            // return !resolvedRuntime.includes(Runtime.Browser);
+            const resolvedRuntimes = await configuration.runtimes.run([]);
+            return !resolvedRuntimes.some(
+              (runtime) => runtime.target === 'browser',
+            );
           },
         });
       });
@@ -89,9 +90,10 @@ export function workers() {
       configure((configuration) => {
         addConfiguration(configuration, {
           noop: async () => {
-            return false;
-            // const resolvedRuntime = await configuration.runtime.run();
-            // return !resolvedRuntime.includes(Runtime.Browser);
+            const resolvedRuntimes = await configuration.runtimes.run([]);
+            return !resolvedRuntimes.some(
+              (runtime) => runtime.target === 'browser',
+            );
           },
         });
       });

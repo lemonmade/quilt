@@ -10,6 +10,7 @@ import type {
   WaterfallHook,
 } from '@quilted/craft/kit';
 import type {PolyfillFeature} from '@quilted/craft/polyfills';
+import type {} from '@quilted/craft/browserslist';
 import type {MiniflareOptions} from 'miniflare';
 
 export type WorkerFormat = 'modules' | 'service-worker';
@@ -169,6 +170,7 @@ function addConfiguration({
   return (
     {
       runtimes,
+      browserslistTargets,
       rollupOutputs,
       rollupNodeBundle,
       quiltAssetBaseUrl,
@@ -193,6 +195,8 @@ function addConfiguration({
         (runtime) => runtime.target !== 'node' && runtime.target !== 'worker',
       ),
     ]);
+
+    browserslistTargets?.(() => ['last 1 chrome version']);
 
     rollupNodeBundle?.(() => true);
 
