@@ -50,7 +50,7 @@ import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry
 import {appServer} from './plugins/app-server-base';
 import type {AppServerOptions} from './plugins/app-server-base';
 import {appServerBuild} from './plugins/app-server-build';
-import type {} from './plugins/app-server-build';
+export type {AppServerBuildHooks} from './plugins/app-server-build';
 import {appStatic} from './plugins/app-static';
 import type {AppStaticOptions} from './plugins/app-static';
 import {appWorkers} from './plugins/app-workers';
@@ -321,6 +321,7 @@ export function quiltService({
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
+            features: ['fetch', 'abort-controller'],
             ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
           }),
       );

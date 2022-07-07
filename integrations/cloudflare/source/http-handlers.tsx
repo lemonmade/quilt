@@ -1,6 +1,6 @@
 import type {} from '@quilted/quilt';
-import {notFound} from '@quilted/quilt/http-handlers';
-import type {HttpHandler} from '@quilted/quilt/http-handlers';
+import {notFound, runHandler} from '@quilted/quilt/http-handlers';
+import type {HttpHandler, RequestHandler} from '@quilted/quilt/http-handlers';
 
 import {getAssetFromKV} from './forked/kv-asset-handler';
 import type {KVNamespaceBinding} from './forked/kv-asset-handler';
@@ -52,7 +52,7 @@ export interface RequestHandlerOptions {
  * to adapt the `FetchEvent` type you get in your fetch event listener.
  */
 export function createFetchHandler<Env = unknown>(
-  handler: HttpHandler,
+  handler: HttpHandler | RequestHandler,
   {cache: shouldCache = true, assets = false}: RequestHandlerOptions = {},
 ): ExportedHandlerFetchHandler<Env> {
   const cache = shouldCache
@@ -75,8 +75,11 @@ export function createFetchHandler<Env = unknown>(
     }
 
     const response =
-      (await handler.run(request, {cf: request.cf, env, ...context} as any)) ??
-      notFound();
+      (await runHandler(handler, request, {
+        cf: request.cf,
+        env,
+        ...context,
+      } as any)) ?? notFound();
 
     if (cache && response.headers.has('Cache-Control')) {
       context.waitUntil(cache.put(request, response.clone()));
