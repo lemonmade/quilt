@@ -1,5 +1,5 @@
-import type {HttpHandler} from '@quilted/http-handlers';
+import type {HttpHandler, RequestHandler} from '@quilted/http-handlers';
 
-declare const handler: HttpHandler;
+declare const handler: HttpHandler | RequestHandler;
 
 export default handler;

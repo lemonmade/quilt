@@ -5,8 +5,9 @@ import {URL} from 'url';
 import {createHeaders} from '@quilted/http';
 
 import {notFound} from '../response-helpers';
+import {runHandler} from '../run';
 import type {ResponseOrEnhancedResponse} from '../response';
-import type {HttpHandler} from '../types';
+import type {HttpHandler, RequestHandler} from '../types';
 
 import type {} from './types';
 
@@ -17,7 +18,7 @@ export function createHttpServer(
 }
 
 export function createHttpRequestListener(
-  handler: HttpHandler,
+  handler: HttpHandler | RequestHandler,
   {
     createRequest: create = createRequest,
   }: {
@@ -37,11 +38,13 @@ export function createHttpRequestListener(
     try {
       const request = await create(req, {signal: abort.signal});
 
+      const context = {
+        request: req,
+        response: res,
+      };
+
       const response =
-        (await handler.run(request, {
-          request: req,
-          response: res,
-        })) ?? notFound();
+        (await runHandler(handler, request, context)) ?? notFound();
 
       await sendResponse(response, res);
     } catch (error) {

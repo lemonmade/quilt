@@ -14,6 +14,7 @@ export * from './globals';
 export * from './response';
 export * from './request';
 export * from './response-helpers';
+export {runHandler} from './run';
 
 export type {
   HttpHandler,

@@ -11,9 +11,9 @@ import {
 
 jest.setTimeout(20_000);
 
-describe('http', () => {
-  describe('cookies', () => {
-    it('provides the request cookies during server rendering', async () => {
+describe('polyfills', () => {
+  describe('services', () => {
+    it('can polyfill node for services', async () => {
       await withWorkspace({fixture: 'basic-api'}, async (workspace) => {
         const {fs, command} = workspace;
 
