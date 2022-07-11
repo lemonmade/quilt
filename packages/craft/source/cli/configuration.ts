@@ -16,6 +16,7 @@ type ConfigurationResult =
   | WorkspaceConfigurationResult;
 
 export interface LoadedWorkspace {
+  readonly root: 'workspace' | 'project';
   readonly workspace: Workspace;
   readonly plugins: {
     for<Target extends Workspace | Project>(
@@ -201,6 +202,7 @@ export async function loadWorkspace(
   }
 
   return {
+    root: 'workspace',
     workspace,
     plugins: {
       for(target) {
