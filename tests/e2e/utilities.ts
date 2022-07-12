@@ -1,5 +1,5 @@
 import {ChildProcess, spawn} from 'child_process';
-import type {ExecOptions, SpawnOptions, PromiseWithChild} from 'child_process';
+import type {SpawnOptions, PromiseWithChild} from 'child_process';
 import {writeFile, readFile, mkdir, rm} from 'fs/promises';
 import * as path from 'path';
 
@@ -50,22 +50,22 @@ type RunResult = PromiseWithChild<{
 
 export interface Command {
   readonly quilt: QuiltCli;
-  run(command: string, options?: ExecOptions): RunResult;
-  node(script: string, options?: ExecOptions): RunResult;
+  run(command: string, options?: SpawnOptions): RunResult;
+  node(script: string, options?: SpawnOptions): RunResult;
 }
 
 export interface QuiltCli {
-  build(options?: ExecOptions): RunResult;
-  build(args?: string[], options?: ExecOptions): RunResult;
-  lint(options?: ExecOptions): RunResult;
-  lint(args?: string[], options?: ExecOptions): RunResult;
-  test(options?: ExecOptions): RunResult;
-  test(args?: string[], options?: ExecOptions): RunResult;
-  typeCheck(options?: ExecOptions): RunResult;
-  typeCheck(args?: string[], options?: ExecOptions): RunResult;
+  build(options?: SpawnOptions): RunResult;
+  build(args?: string[], options?: SpawnOptions): RunResult;
+  lint(options?: SpawnOptions): RunResult;
+  lint(args?: string[], options?: SpawnOptions): RunResult;
+  test(options?: SpawnOptions): RunResult;
+  test(args?: string[], options?: SpawnOptions): RunResult;
+  typeCheck(options?: SpawnOptions): RunResult;
+  typeCheck(args?: string[], options?: SpawnOptions): RunResult;
   // TODO: should add better typing for the tool
-  run(tool: string, options?: ExecOptions): RunResult;
-  run(tool: string, args?: string[], options?: ExecOptions): RunResult;
+  run(tool: string, options?: SpawnOptions): RunResult;
+  run(tool: string, args?: string[], options?: SpawnOptions): RunResult;
 }
 
 export interface Workspace {
@@ -177,16 +177,16 @@ export async function withWorkspace<T>(
     return promise as any;
   };
 
-  const runNode = (command: string, options?: ExecOptions) => {
+  const runNode = (command: string, options?: SpawnOptions) => {
     return runCommand(`${process.execPath} ${command}`, options);
   };
 
   const runQuilt = (
     command: string,
-    argsOrOptions?: string[] | ExecOptions,
+    argsOrOptions?: string[] | SpawnOptions,
     optionsOrNothing?: any,
   ) => {
-    let options: ExecOptions | undefined;
+    let options: SpawnOptions | undefined;
     let args: string[] | undefined;
 
     if (Array.isArray(argsOrOptions)) {
