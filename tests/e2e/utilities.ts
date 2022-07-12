@@ -69,6 +69,10 @@ const quiltFromSourceScript = path.join(
   monorepoRoot,
   'scripts/quilt-from-source.js',
 );
+const quiltProductionExecutable = path.join(
+  monorepoRoot,
+  'packages/craft/bin/quilt.mjs',
+);
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
@@ -109,7 +113,11 @@ export async function withWorkspace<T>(
     action = definitelyAction!;
   }
 
-  const {debug = false, name = `test-${nanoid()}`, fixture} = options;
+  const {
+    debug = false,
+    name = debug ? 'test' : `test-${nanoid()}`,
+    fixture,
+  } = options;
 
   const root = path.join(__dirname, `output/${name}`);
 
@@ -140,7 +148,11 @@ export async function withWorkspace<T>(
     return runCommand(`${process.execPath} ${command}`, options);
   };
 
-  const runQuiltFromSource = (command: string, options?: ExecOptions) => {
+  const runQuilt = (command: string, options?: ExecOptions) => {
+    if (process.env.CI) {
+      return runCommand(`${quiltProductionExecutable} ${command}`, options);
+    }
+
     return runNode(`${quiltFromSourceScript} ${command}`, options);
   };
 
@@ -209,8 +221,8 @@ export async function withWorkspace<T>(
     },
     command: {
       quilt: {
-        build: (...args) => runQuiltFromSource('build', ...args),
-        typeCheck: (...args) => runQuiltFromSource('type-check', ...args),
+        build: (...args) => runQuilt('build', ...args),
+        typeCheck: (...args) => runQuilt('type-check', ...args),
       },
       run: (...args) => runCommand(...args),
       node: (...args) => runNode(...args),

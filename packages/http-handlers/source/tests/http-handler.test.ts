@@ -4,7 +4,7 @@ import {describe, it, expect} from '@quilted/testing';
 import {createHttpHandler} from '../http-handler';
 import {noContent} from '../response-helpers';
 
-describe('createHttpHandler()', () => {
+describe('createHttpHandlers()', () => {
   it('can register a handler for any method and path', async () => {
     const response = noContent();
     const handler = createHttpHandler();

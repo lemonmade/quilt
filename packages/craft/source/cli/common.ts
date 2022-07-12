@@ -964,6 +964,7 @@ export function getNodeExecutable(
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const executable = join(currentDirectory, 'node_modules', '.bin', command);
+
     if (existsSync(executable)) {
       foundExecutable = executable;
       break;
@@ -974,7 +975,7 @@ export function getNodeExecutable(
 
     if (
       oldDirectory === currentDirectory ||
-      lookWithinParent.includes(currentDirectory)
+      lookWithinParent === currentDirectory
     ) {
       break;
     }

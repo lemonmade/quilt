@@ -27,5 +27,5 @@
     "**/build": true
   },
   "typescript.tsdk": "node_modules/typescript/lib",
-  "jest.jestCommandLine": "./node_modules/@quilted/craft/node_modules/.bin/jest --config ./.quilt/temp/jest/config.mjs"
+  "jest.jestCommandLine": "node ./scripts/quilt-from-source.js run jest"
 }

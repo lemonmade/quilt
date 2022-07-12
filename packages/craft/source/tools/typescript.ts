@@ -133,7 +133,7 @@ export function typescriptWorkspace() {
               ? `--max-old-space-size=${heap}`
               : undefined;
 
-            await step.exec('tsc', ['--build', '--pretty'], {
+            await step.exec('tsc', ['--build'], {
               env: {
                 ...process.env,
                 FORCE_COLOR: '1',
