@@ -71,7 +71,7 @@ const quiltFromSourceScript = path.join(
 );
 const quiltProductionExecutable = path.join(
   monorepoRoot,
-  'packages/craft/bin/quilt.mjs',
+  'packages/craft/build/esm/cli/cli.mjs',
 );
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
@@ -150,7 +150,7 @@ export async function withWorkspace<T>(
 
   const runQuilt = (command: string, options?: ExecOptions) => {
     if (process.env.CI) {
-      return runCommand(`${quiltProductionExecutable} ${command}`, options);
+      return runNode(`${quiltProductionExecutable} ${command}`, options);
     }
 
     return runNode(`${quiltFromSourceScript} ${command}`, options);
