@@ -34,8 +34,6 @@ pnpm exec quilt run typescript --no-build
 pnpm exec quilt run jest app --silent --coverage
 ```
 
-`quilt run
-
 Unlike when running the [`quilt test` command](TODO), Using `quilt run jest` does not automatically run Jest in watch mode. To enable watch mode, you must run this command with the [`--watch`](https://jestjs.io/docs/cli#--watch) or [`--watchAll`](https://jestjs.io/docs/cli#--watchall) Jest flags:
 
 ```sh
