@@ -79,7 +79,7 @@ pnpm exec quilt run eslint --no-cache
 pnpm exec quilt run prettier --single-quote
 ```
 
-By default, this command runs on a set of extensions that includes all the file types [Prettier is able to format](https://prettier.io/docs/en/index.html). Unlike `quilt lint`, which delegates Prettier checking of JavaScript and TypeScript files to ESLint, running `quilt run prettier` will run check JavaScript and TypeScript files with Prettier directly. You can customize the files that will be checked with prettier by passing an explicit glob pattern to this command:
+By default, this command runs on a set of extensions that includes all the file types [Prettier is able to format](https://prettier.io/docs/en/index.html), except for JavaScript and TypeScript files, which are assumed to be run Prettier through ESLint. You can customize the files that will be checked with prettier by passing an explicit glob pattern to this command:
 
 ```sh
 # Run `prettier` on GraphQL files in the app directory.

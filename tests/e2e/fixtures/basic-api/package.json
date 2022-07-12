@@ -9,5 +9,9 @@
   "devDependencies": {
     "@quilted/craft": "^0.1.0",
     "typescript": "^4.7.0"
+  },
+  "eslintConfig": {
+    "extends": "@quilted/eslint-config/project",
+    "ignorePatterns": []
   }
 }

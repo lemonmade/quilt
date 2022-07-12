@@ -1,6 +1,5 @@
-import {promisify} from 'util';
-import {exec} from 'child_process';
-import type {ExecOptions, PromiseWithChild} from 'child_process';
+import {ChildProcess, spawn} from 'child_process';
+import type {ExecOptions, SpawnOptions, PromiseWithChild} from 'child_process';
 import {writeFile, readFile, mkdir, rm} from 'fs/promises';
 import * as path from 'path';
 
@@ -43,7 +42,11 @@ export interface Browser {
 
 export type {Page};
 
-type RunResult = PromiseWithChild<{stdout: string; stderr: string}>;
+type RunResult = PromiseWithChild<{
+  stdout: string;
+  stderr: string;
+  child: ChildProcess;
+}>;
 
 export interface Command {
   readonly quilt: QuiltCli;
@@ -53,7 +56,16 @@ export interface Command {
 
 export interface QuiltCli {
   build(options?: ExecOptions): RunResult;
+  build(args?: string[], options?: ExecOptions): RunResult;
+  lint(options?: ExecOptions): RunResult;
+  lint(args?: string[], options?: ExecOptions): RunResult;
+  test(options?: ExecOptions): RunResult;
+  test(args?: string[], options?: ExecOptions): RunResult;
   typeCheck(options?: ExecOptions): RunResult;
+  typeCheck(args?: string[], options?: ExecOptions): RunResult;
+  // TODO: should add better typing for the tool
+  run(tool: string, options?: ExecOptions): RunResult;
+  run(tool: string, args?: string[], options?: ExecOptions): RunResult;
 }
 
 export interface Workspace {
@@ -62,7 +74,6 @@ export interface Workspace {
   readonly browser: Browser;
 }
 
-const execAsync = promisify(exec);
 const monorepoRoot = path.resolve(__dirname, '../..');
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
 const quiltFromSourceScript = path.join(
@@ -125,35 +136,76 @@ export async function withWorkspace<T>(
 
   const resolve = (...parts: string[]) => path.resolve(root, ...parts);
 
-  const runCommand = (command: string, options?: ExecOptions) => {
-    const result = execAsync(command, {
+  const runCommand = (command: string, options?: SpawnOptions): RunResult => {
+    const [executable, ...args] = command.split(' ');
+    const child = spawn(executable!, args, {
       ...options,
       cwd: root,
       env: {...process.env, ...options?.env},
+      stdio: options?.stdio ?? (debug ? 'inherit' : 'pipe'),
+    });
+
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout?.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    child.stderr?.on('data', (data) => {
+      stderr += data.toString();
     });
 
     if (debug) {
-      result.child.stdout?.pipe(process.stdout);
-      result.child.stderr?.pipe(process.stderr);
+      child.stdout?.pipe(process.stdout);
+      child.stderr?.pipe(process.stderr);
     }
 
     teardownActions.push(() => {
-      if (!result.child.killed) result.child.kill();
+      if (!child.killed) child.kill();
     });
 
-    return result;
+    const promise = new Promise<Awaited<RunResult>>((resolve, reject) => {
+      child.on('error', reject);
+      child.on('exit', () => {
+        resolve({stdout, stderr, child});
+      });
+    });
+
+    Reflect.defineProperty(promise, 'child', {value: child});
+
+    return promise as any;
   };
 
   const runNode = (command: string, options?: ExecOptions) => {
     return runCommand(`${process.execPath} ${command}`, options);
   };
 
-  const runQuilt = (command: string, options?: ExecOptions) => {
-    if (process.env.CI) {
-      return runNode(`${quiltProductionExecutable} ${command}`, options);
+  const runQuilt = (
+    command: string,
+    argsOrOptions?: string[] | ExecOptions,
+    optionsOrNothing?: any,
+  ) => {
+    let options: ExecOptions | undefined;
+    let args: string[] | undefined;
+
+    if (Array.isArray(argsOrOptions)) {
+      args = argsOrOptions;
+      options = optionsOrNothing;
+    } else {
+      options = argsOrOptions;
     }
 
-    return runNode(`${quiltFromSourceScript} ${command}`, options);
+    const commandWithArgs = [command, ...(args ?? [])].join(' ');
+
+    if (process.env.CI) {
+      return runNode(
+        `${quiltProductionExecutable} ${commandWithArgs}`,
+        options,
+      );
+    }
+
+    return runNode(`${quiltFromSourceScript} ${commandWithArgs}`, options);
   };
 
   const writeFileInProject = async (file: string, content: string) => {
@@ -222,7 +274,16 @@ export async function withWorkspace<T>(
     command: {
       quilt: {
         build: (...args) => runQuilt('build', ...args),
+        lint: (...args) => runQuilt('lint', ...args),
+        test: (...args) => runQuilt('test', ...args),
         typeCheck: (...args) => runQuilt('type-check', ...args),
+        run: (tool, ...args) => {
+          if (Array.isArray(args[0])) {
+            return runQuilt('run', [tool, ...args[0]], args[1]);
+          }
+
+          return runQuilt('run', [tool], args[0]);
+        },
       },
       run: (...args) => runCommand(...args),
       node: (...args) => runNode(...args),
@@ -239,7 +300,7 @@ export async function withWorkspace<T>(
       packageJson.name = path.basename(root);
       await workspace.fs.write(
         'package.json',
-        JSON.stringify(packageJson, null, 2),
+        JSON.stringify(packageJson, null, 2) + '\n',
       );
     }
 
