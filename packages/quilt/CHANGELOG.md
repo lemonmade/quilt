@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.109
+
+### Patch Changes
+
+- [#370](https://github.com/lemonmade/quilt/pull/370) [`c7adecdf`](https://github.com/lemonmade/quilt/commit/c7adecdf5830dad00f1c071aa92469b922f68123) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow simpler http handlers
+
 ## 0.5.108
 
 ### Patch Changes
