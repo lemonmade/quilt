@@ -142,7 +142,7 @@ export async function withWorkspace<T>(
       ...options,
       cwd: root,
       env: {...process.env, ...options?.env},
-      stdio: options?.stdio ?? (debug ? 'inherit' : 'pipe'),
+      stdio: options?.stdio ?? 'pipe',
     });
 
     let stdout = '';
