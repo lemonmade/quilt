@@ -133,15 +133,13 @@ export function typescriptWorkspace() {
               ? `--max-old-space-size=${heap}`
               : undefined;
 
-            await step.exec('tsc', ['--build', '--pretty'], {
+            await step.exec('tsc', ['--build'], {
               env: {
                 ...process.env,
                 FORCE_COLOR: '1',
                 NODE_OPTIONS: heapOption,
               },
-              // The user is supposed to have typescript installed in the
-              // workspace.
-              fromNodeModules: true,
+              fromNodeModules: import.meta.url,
             });
           },
         }),
@@ -232,9 +230,7 @@ export function typescriptWorkspace() {
                 FORCE_COLOR: '1',
                 NODE_OPTIONS: heapOption,
               },
-              // The user is supposed to have typescript installed in the
-              // workspace.
-              fromNodeModules: true,
+              fromNodeModules: import.meta.url,
             });
           },
         }),

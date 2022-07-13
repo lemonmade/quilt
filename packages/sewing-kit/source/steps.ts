@@ -17,7 +17,7 @@ export interface StepRunnerExecOptions extends ExecOptions {
    * for this module. When set to `true`, this script will assume you want
    * to get the current working directory's binary directory.
    */
-  fromNodeModules?: string | boolean;
+  fromNodeModules?: string;
 }
 
 export interface StepRunnerSpawnOptions extends SpawnOptions {
@@ -25,10 +25,9 @@ export interface StepRunnerSpawnOptions extends SpawnOptions {
    * You can use this option to indicate that the command being run was
    * installed as a binary for a node module. You should pass this option
    * the `import.meta.url` so that we can select the correct binary location
-   * for this module. When set to `true`, this script will assume you want
-   * to get the current working directory's binary directory.
+   * for this module.
    */
-  fromNodeModules?: string | boolean;
+  fromNodeModules?: string;
 }
 
 export type StepRunnerExecResult = PromiseWithChild<{

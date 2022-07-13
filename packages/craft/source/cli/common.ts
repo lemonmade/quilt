@@ -9,6 +9,7 @@ import arg from 'arg';
 import type {Result, Spec} from 'arg';
 
 import type {
+  Workspace,
   AnyStep,
   StepNeed,
   Project,
@@ -25,15 +26,32 @@ import type {
   TestTaskOptions,
   TypeCheckTaskOptions,
   BuildProjectTask,
+  BuildProjectConfigurationHooks,
+  DevelopProjectOptions,
+  LintProjectOptions,
+  TypeCheckProjectOptions,
+  TestProjectOptions,
   BuildWorkspaceOptions,
+  DevelopWorkspaceOptions,
+  LintWorkspaceOptions,
+  TypeCheckWorkspaceOptions,
+  TestWorkspaceOptions,
   BuildProjectConfigurationCoreHooks,
   ResolvedBuildProjectConfigurationHooks,
+  DevelopProjectConfigurationHooks,
+  TestProjectConfigurationHooks,
+  LintProjectConfigurationHooks,
+  TypeCheckProjectConfigurationHooks,
   DevelopProjectConfigurationCoreHooks,
   LintProjectConfigurationCoreHooks,
   TestProjectConfigurationCoreHooks,
   TypeCheckProjectConfigurationCoreHooks,
   BuildWorkspaceConfigurationCoreHooks,
   ResolvedBuildWorkspaceConfigurationHooks,
+  ResolvedDevelopWorkspaceConfigurationHooks,
+  ResolvedLintWorkspaceConfigurationHooks,
+  ResolvedTestWorkspaceConfigurationHooks,
+  ResolvedTypeCheckWorkspaceConfigurationHooks,
   DevelopWorkspaceConfigurationCoreHooks,
   LintWorkspaceConfigurationCoreHooks,
   TestWorkspaceConfigurationCoreHooks,
@@ -50,6 +68,8 @@ import {loadWorkspace} from './configuration';
 import type {LoadedWorkspace} from './configuration';
 
 import {Ui} from './ui';
+
+export {DiagnosticError, loadWorkspace};
 
 export enum IncludedReason {
   Normal,
@@ -71,7 +91,7 @@ export interface TaskFilter {
   includeStep(step: AnyStep): InclusionResult;
 }
 
-export interface TaskContext extends LoadedWorkspace {
+export interface TaskContext extends Omit<LoadedWorkspace, 'root'> {
   readonly ui: Ui;
   readonly filter: TaskFilter;
 }
@@ -118,7 +138,7 @@ export function createCommand<Flags extends Spec>(
         '--skip-step': [String],
         '--only-step': [String],
       },
-      {argv},
+      {argv, permissive: true},
     );
 
     const ui = new Ui({
@@ -151,7 +171,7 @@ export function createCommand<Flags extends Spec>(
   };
 }
 
-function createFilter({
+export function createFilter({
   onlySteps: rawOnlySteps = [],
   skipSteps: rawSkipSteps = [],
   onlyProjects: rawOnlyProjects = [],
@@ -165,7 +185,7 @@ function createFilter({
   skipProjects?: string[];
   onlyWorkspace?: boolean;
   skipWorkspace?: boolean;
-}): TaskFilter {
+} = {}): TaskFilter {
   const normalize = (values: string[]) => {
     const mapped = values.flatMap((value) => {
       return value
@@ -332,6 +352,38 @@ interface WorkspaceCoreHooksTaskMap {
   [Task.Test]: TestWorkspaceConfigurationCoreHooks;
 }
 
+interface ResolvedWorkspaceConfigurationMap {
+  [Task.Build]: ResolvedBuildWorkspaceConfigurationHooks;
+  [Task.Develop]: ResolvedDevelopWorkspaceConfigurationHooks;
+  [Task.Lint]: ResolvedLintWorkspaceConfigurationHooks;
+  [Task.TypeCheck]: ResolvedTypeCheckWorkspaceConfigurationHooks;
+  [Task.Test]: ResolvedTestWorkspaceConfigurationHooks;
+}
+
+interface ResolvedProjectConfigurationMap {
+  [Task.Build]: BuildProjectConfigurationHooks;
+  [Task.Develop]: DevelopProjectConfigurationHooks;
+  [Task.Lint]: LintProjectConfigurationHooks;
+  [Task.TypeCheck]: TypeCheckProjectConfigurationHooks;
+  [Task.Test]: TestProjectConfigurationHooks;
+}
+
+interface WorkspaceOptionsMap {
+  [Task.Build]: BuildWorkspaceOptions;
+  [Task.Develop]: DevelopWorkspaceOptions;
+  [Task.Lint]: LintWorkspaceOptions;
+  [Task.TypeCheck]: TypeCheckWorkspaceOptions;
+  [Task.Test]: TestWorkspaceOptions;
+}
+
+interface ProjectOptionsMap {
+  [Task.Build]: BuildProjectOptions;
+  [Task.Develop]: DevelopProjectOptions;
+  [Task.Lint]: LintProjectOptions;
+  [Task.TypeCheck]: TypeCheckProjectOptions;
+  [Task.Test]: TestProjectOptions;
+}
+
 interface RunStepOptions<TaskType extends Task> extends TaskContext {
   options: OptionsTaskMap[TaskType];
   coreHooksForProject<ProjectType extends Project = Project>(
@@ -363,7 +415,7 @@ interface StepNeedWithStep extends StepNeed {
 
 async function runStepsInStage(
   steps: AnyStep[],
-  {ui, filter}: RunStepOptions<any>,
+  {ui, filter, workspace}: RunStepOptions<any>,
 ) {
   const stepMetadata = new Map<
     AnyStep,
@@ -490,7 +542,7 @@ async function runStepsInStage(
 
   async function runStep(step: AnyStep) {
     ui.log(`Running step: ${step.label} (${step.name})`);
-    await step.run(createStepRunner({ui}));
+    await step.run(createStepRunner({ui, workspace}));
   }
 }
 
@@ -501,7 +553,21 @@ interface BuildProjectTaskInternal extends Omit<BuildProjectTask, 'run'> {
   ) => ReturnType<BuildProjectTask['run']>;
 }
 
-async function loadStepsForTask<TaskType extends Task = Task>(
+export interface LoadedPlugins<TaskType extends Task> {
+  configurationForProject<ProjectType extends Project>(
+    project: ProjectType,
+    options?: ResolvedOptions<ProjectOptionsMap[TaskType]>,
+  ): Promise<ResolvedProjectConfigurationMap[TaskType]>;
+  configurationForWorkspace(
+    options?: ResolvedOptions<WorkspaceOptionsMap[TaskType]>,
+  ): Promise<ResolvedWorkspaceConfigurationMap[TaskType]>;
+  stepsForWorkspace(): Promise<WorkspaceStep[]>;
+  stepsForProject<ProjectType extends Project>(
+    project: ProjectType,
+  ): Promise<ProjectStep[]>;
+}
+
+export async function loadPluginsForTask<TaskType extends Task = Task>(
   task: TaskType,
   {
     plugins,
@@ -510,7 +576,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
     coreHooksForProject,
     coreHooksForWorkspace,
   }: RunStepOptions<TaskType>,
-): Promise<StepList> {
+): Promise<LoadedPlugins<TaskType>> {
   const configurationHooksForProject = new Map<
     Project,
     ((hooks: ResolvedBuildProjectConfigurationHooks) => void)[]
@@ -624,14 +690,21 @@ async function loadStepsForTask<TaskType extends Task = Task>(
     }
   }
 
-  const workspaceSteps: WorkspaceStep[] = [];
+  return {
+    configurationForProject: loadConfigurationForProject as any,
+    configurationForWorkspace: loadConfigurationForWorkspace,
+    async stepsForWorkspace() {
+      const steps: WorkspaceStep[] = [];
 
-  for (const stepAdder of stepAddersForWorkspace) {
-    await stepAdder(workspaceSteps);
-  }
+      for (const stepAdder of stepAddersForWorkspace) {
+        await stepAdder(steps);
+      }
 
-  const projectStepsByProject = await Promise.all(
-    workspace.projects.map(async (project) => {
+      return steps;
+    },
+    async stepsForProject<ProjectType extends Project>(
+      project: ProjectType,
+    ): Promise<ProjectStep[]> {
       const stepAdders = stepAddersForProject.get(project) ?? [];
       const steps: ProjectStep[] = [];
 
@@ -640,22 +713,8 @@ async function loadStepsForTask<TaskType extends Task = Task>(
       }
 
       return steps;
-    }),
-  );
-
-  const stepList: StepList = {pre: [], default: [], post: []};
-
-  for (const workspaceStep of workspaceSteps) {
-    stepList[workspaceStep.stage].push(workspaceStep);
-  }
-
-  for (const projectSteps of projectStepsByProject) {
-    for (const projectStep of projectSteps) {
-      stepList[projectStep.stage].push(projectStep);
-    }
-  }
-
-  return stepList;
+    },
+  };
 
   function getTaskForProjectAndPlugin<ProjectType extends Project = Project>(
     project: ProjectType,
@@ -755,7 +814,7 @@ async function loadStepsForTask<TaskType extends Task = Task>(
 
   function loadConfigurationForProject<ProjectType extends Project = Project>(
     project: ProjectType,
-    options: BuildWorkspaceOptions = {} as any,
+    options: ResolvedOptions<BuildProjectOptions> = {} as any,
   ) {
     const id = stringifyOptions(options);
 
@@ -823,10 +882,45 @@ async function loadStepsForTask<TaskType extends Task = Task>(
   }
 }
 
-export function createStepRunner({ui}: {ui: Ui}): BaseStepRunner {
+async function loadStepsForTask<TaskType extends Task = Task>(
+  task: TaskType,
+  options: RunStepOptions<TaskType>,
+): Promise<StepList> {
+  const {workspace} = options;
+
+  const plugins = await loadPluginsForTask(task, options);
+
+  const workspaceSteps = await plugins.stepsForWorkspace();
+
+  const projectStepsByProject = await Promise.all(
+    workspace.projects.map((project) => plugins.stepsForProject(project)),
+  );
+
+  const stepList: StepList = {pre: [], default: [], post: []};
+
+  for (const workspaceStep of workspaceSteps) {
+    stepList[workspaceStep.stage].push(workspaceStep);
+  }
+
+  for (const projectSteps of projectStepsByProject) {
+    for (const projectStep of projectSteps) {
+      stepList[projectStep.stage].push(projectStep);
+    }
+  }
+
+  return stepList;
+}
+
+function createStepRunner({
+  ui,
+  workspace,
+}: {
+  ui: Ui;
+  workspace: Workspace;
+}): BaseStepRunner {
   return {
     exec,
-    spawn,
+    spawn: createSpawn(workspace),
     log(...args) {
       ui.log(...args);
     },
@@ -858,27 +952,60 @@ export class StepExecError extends DiagnosticError {
 
 const promiseExec = promisify(childExec);
 
-const spawn: BaseStepRunner['spawn'] = (
-  command,
-  args,
-  {fromNodeModules, ...options} = {},
-) => {
-  const normalizedCommand = fromNodeModules
-    ? join(
-        binDirectoryForModule(
-          fromNodeModules === true
-            ? process.cwd()
-            : dirname(fileURLToPath(fromNodeModules)),
-        ),
-        command,
-      )
-    : command;
+export function getNodeExecutable(
+  command: string,
+  from: string,
+  lookWithin = process.cwd(),
+) {
+  const lookWithinParent = dirname(lookWithin);
+  let foundExecutable: string | undefined;
+  let currentDirectory = dirname(fileURLToPath(from));
 
-  return childSpawn(normalizedCommand, args ?? [], {
-    stdio: 'inherit',
-    ...options,
-  });
-};
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const executable = join(currentDirectory, 'node_modules', '.bin', command);
+
+    if (existsSync(executable)) {
+      foundExecutable = executable;
+      break;
+    }
+
+    const oldDirectory = currentDirectory;
+    currentDirectory = dirname(oldDirectory);
+
+    if (
+      oldDirectory === currentDirectory ||
+      lookWithinParent === currentDirectory
+    ) {
+      break;
+    }
+  }
+
+  if (!foundExecutable) {
+    throw new Error(`No NPM executable found for ${command} (from ${from})`);
+  }
+
+  return foundExecutable;
+}
+
+function createSpawn(workspace: Workspace) {
+  const spawn: BaseStepRunner['spawn'] = (
+    command,
+    args,
+    {fromNodeModules, ...options} = {},
+  ) => {
+    const normalizedCommand = fromNodeModules
+      ? getNodeExecutable(command, fromNodeModules, workspace.root)
+      : command;
+
+    return childSpawn(normalizedCommand, args ?? [], {
+      stdio: 'inherit',
+      ...options,
+    });
+  };
+
+  return spawn;
+}
 
 const exec: BaseStepRunner['exec'] = (
   command,
@@ -886,14 +1013,7 @@ const exec: BaseStepRunner['exec'] = (
   {fromNodeModules, ...options} = {},
 ) => {
   const normalizedCommand = fromNodeModules
-    ? join(
-        binDirectoryForModule(
-          fromNodeModules === true
-            ? process.cwd()
-            : dirname(fileURLToPath(fromNodeModules)),
-        ),
-        command,
-      )
+    ? getNodeExecutable(command, fromNodeModules)
     : command;
 
   const execPromise = promiseExec(
@@ -924,27 +1044,4 @@ function stringifyOptions(variant: {[key: string]: any} = {}) {
       return value === true ? key : `${key}: ${JSON.stringify(value)}`;
     })
     .join(',');
-}
-
-function binDirectoryForModule(cwd: string) {
-  const lookWithin = dirname(process.cwd());
-  let currentDirectory = cwd;
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const binDirectory = join(currentDirectory, 'node_modules', '.bin');
-    if (existsSync(binDirectory)) return binDirectory;
-
-    const oldDirectory = currentDirectory;
-    currentDirectory = dirname(oldDirectory);
-
-    if (
-      oldDirectory === currentDirectory ||
-      lookWithin.includes(currentDirectory)
-    ) {
-      break;
-    }
-  }
-
-  throw new Error(`No NPM binary directory found for ${cwd}`);
 }

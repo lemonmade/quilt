@@ -1,12 +1,15 @@
+import arg from 'arg';
 import {Task} from '../kit';
 
 run();
 
 async function run() {
   const [, , ...args] = process.argv;
-  const [task, ...argv] = args;
+  const {
+    _: [command, ...argv],
+  } = arg({}, {argv: args, stopAtPositional: true});
 
-  if (!task) {
+  if (!command) {
     // eslint-disable-next-line no-console
     console.log(
       `You must run quilt with one of the following commands: build, develop, lint, test, or type-check.`,
@@ -15,7 +18,7 @@ async function run() {
     return;
   }
 
-  switch (task.toLowerCase()) {
+  switch (command.toLowerCase()) {
     case Task.Build: {
       const {build} = await import('./tasks/build');
       await build(argv);
@@ -41,9 +44,14 @@ async function run() {
       await typeCheck(argv);
       break;
     }
+    case 'run': {
+      const {run} = await import('./tasks/run');
+      await run(argv);
+      break;
+    }
     default: {
       // eslint-disable-next-line no-console
-      console.log(`Task not found: ${task} (${argv.join(' ')})`);
+      console.log(`Command not found: ${command} (${argv.join(' ')})`);
       process.exitCode = 1;
     }
   }

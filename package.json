@@ -8,6 +8,7 @@
     "node": ">=14.0.0"
   },
   "scripts": {
+    "quilt-from-source": "node ./scripts/quilt-from-source.js",
     "create": "node --no-warnings --experimental-specifier-resolution=node --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
     "test": "node ./scripts/quilt-from-source.js test",
     "test:unit": "node ./scripts/quilt-from-source.js test --exclude-pattern tests/e2e",
