@@ -29,7 +29,7 @@ export interface LoadedWorkspace {
 
 export async function loadWorkspace(
   root: string,
-  {configurationFile}: {configurationFile?: string} = {},
+  options?: {configurationFile?: string},
 ): Promise<LoadedWorkspace> {
   const projects = new Set<Project>();
   const pluginMap = new Map<
@@ -38,6 +38,7 @@ export async function loadWorkspace(
   >();
 
   let rootConfiguration: ConfigurationResult | null = null;
+  const configurationFile = options?.configurationFile;
 
   if (configurationFile) {
     const workspaceFile = path.resolve(configurationFile);
