@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.144
+
+### Patch Changes
+
+- [#377](https://github.com/lemonmade/quilt/pull/377) [`55ccd529`](https://github.com/lemonmade/quilt/commit/55ccd52997190d9d16359c0e9c3fbd74137f84d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Use modern rollup outputs when possible
+
+* [#378](https://github.com/lemonmade/quilt/pull/378) [`940dd0b0`](https://github.com/lemonmade/quilt/commit/940dd0b0bd18805577b9f5cdf88619c3af3293a9) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix node-externals deprecation warning
+
 ## 0.1.143
 
 ### Patch Changes
