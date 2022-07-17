@@ -1,4 +1,5 @@
 import {createRequire} from 'module';
+import type {GeneratedCodeOptions} from 'rollup';
 
 import {
   DiagnosticError,
@@ -9,6 +10,7 @@ import type {WaterfallHook} from '../kit';
 
 import type {} from '../tools/babel';
 import type {} from '../tools/postcss';
+import type {} from '../tools/rollup';
 
 export interface TargetHooks {
   /**
@@ -71,6 +73,7 @@ export function targets() {
           babelPresets,
           babelPresetEnvOptions,
           postcssPlugins,
+          rollupOutputs,
         }) => {
           browserslistTargets!(async (targets) => {
             if (targets.length > 0) return targets;
@@ -157,6 +160,45 @@ export function targets() {
               [require.resolve('@babel/preset-env'), options],
               ...presets,
             ];
+          });
+
+          rollupOutputs?.(async (outputs) => {
+            const targets = await browserslistTargets?.run([]);
+
+            if (targets == null || targets.length === 0) return outputs;
+
+            let generateOptions: GeneratedCodeOptions;
+
+            // caniuse-api does not have the data for Node, so reports all features to be
+            // unsupported. In actuality, all LTS versions of Node support all the ES2015
+            // features used by Rollup.
+            if (targets.every((target) => target.includes('node'))) {
+              generateOptions = {
+                arrowFunctions: true,
+                constBindings: true,
+                objectShorthand: true,
+                reservedNamesAsProps: true,
+                symbols: true,
+              };
+            } else {
+              const {isSupported} = await import('caniuse-api');
+              const supportsES2015 = isSupported('es6', targets);
+
+              generateOptions = {
+                arrowFunctions: isSupported('arrow-functions', targets),
+                constBindings: isSupported('const', targets),
+                objectShorthand: supportsES2015,
+                reservedNamesAsProps: supportsES2015,
+                symbols: supportsES2015,
+              };
+            }
+
+            return outputs.map((output) => {
+              return {
+                ...output,
+                generatedCode: output.generatedCode ?? generateOptions,
+              };
+            });
           });
 
           postcssPlugins?.(async (plugins) => {
