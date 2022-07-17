@@ -18,7 +18,7 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
-          arguments: --only-project package:*
+          cache-key: v2
       - name: Version
         run: pnpm version-bump:snapshot ${{ steps.branch-name.outputs.current_branch }}
         env:
