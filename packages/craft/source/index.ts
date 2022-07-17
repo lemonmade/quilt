@@ -180,7 +180,6 @@ export function quiltApp({
         babelRollup(),
         postcss(),
         browserslist(),
-        targets(),
         javascriptProject(),
         typescriptProject(),
         tsconfigAliases(),
@@ -230,6 +229,7 @@ export function quiltApp({
         appWorkers({baseUrl}),
         asyncQuilt({preload: true}),
         reactTesting(),
+        targets(),
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
@@ -293,7 +293,6 @@ export function quiltService({
         babelHooks(),
         babelRollup(),
         browserslist(),
-        targets(),
         javascriptProject(),
         typescriptProject(),
         tsconfigAliases(),
@@ -318,6 +317,7 @@ export function quiltService({
         develop && useHttpHandler && serviceDevelopment(),
         useGraphQL && graphql(),
         useReact && reactTesting(),
+        targets(),
         shouldPolyfill &&
           polyfills({
             package: '@quilted/quilt/polyfills',
@@ -359,7 +359,6 @@ export function quiltPackage({
         babelHooks(),
         babelRollup(),
         browserslist(),
-        targets(),
         javascriptProject(),
         typescriptProject(),
         esnext(),
@@ -374,6 +373,7 @@ export function quiltPackage({
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),
+        targets(),
       );
     },
   });

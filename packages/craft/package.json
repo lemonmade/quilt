@@ -8,6 +8,9 @@
     "url": "https://github.com/lemonmade/quilt.git",
     "directory": "packages/craft"
   },
+  "browserslist": [
+    "current node"
+  ],
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org",
@@ -235,6 +238,7 @@
     "babel-jest": "^27.0.0",
     "browserslist": "^4.0.0",
     "browserslist-useragent-regexp": "^3.0.0",
+    "caniuse-api": "^3.0.0",
     "clean-css": "^5.0.0",
     "colorette": "^2.0.0",
     "common-tags": "^1.8.0",
@@ -269,6 +273,7 @@
   "devDependencies": {
     "@quilted/quilt": "^0.5.0",
     "@types/babel__core": ">=7.0.0",
+    "@types/caniuse-api": "^3.0.0",
     "@types/clean-css": "^4.0.0",
     "@types/common-tags": "^1.8.0",
     "@types/express": "^4.17.0",
