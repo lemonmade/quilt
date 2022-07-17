@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.24
+
+### Patch Changes
+
+- [`dae904fe`](https://github.com/lemonmade/quilt/commit/dae904fe489f7b869bcc2fa2398b3826651e75b9) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix non-monorepo app creation issues
+
 ## 0.1.23
 
 ### Patch Changes
