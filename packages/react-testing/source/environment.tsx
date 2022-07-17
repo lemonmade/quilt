@@ -17,21 +17,27 @@ import type {ImperativeApi as HookRunnerImperativeApi} from './HookRunner';
 
 import {nodeName, toReactString} from './print';
 
+export type {BaseNode as Node, RootNode as Root};
+
 const IS_NODE = Symbol.for('QuiltTesting.Node');
 
-interface BaseNodeCreationOptions<T, Extensions extends PlainObject> {
+export interface BaseNodeCreationOptions<T, Extensions extends PlainObject> {
   props: T;
   instance: any;
   type: BaseNode<T, Extensions>['type'];
   children: (BaseNode<unknown, Extensions> | string)[];
 }
 
-type NodeCreationOptions<
+export type NodeCreationOptions<
   T,
   Extensions extends PlainObject = EmptyObject,
 > = EmptyObject extends Extensions
   ? BaseNodeCreationOptions<T, Extensions>
   : BaseNodeCreationOptions<T, Extensions> & Extensions;
+
+export interface EnvironmentNodeCreator<Extensions> {
+  <T>(options: NodeCreationOptions<T, Extensions>): BaseNode<T, Extensions>;
+}
 
 export interface EnvironmentOptions<
   Context,
@@ -42,15 +48,13 @@ export interface EnvironmentOptions<
   unmount(context: Context): void;
   update(
     instance: any,
-    create: <T>(
-      options: NodeCreationOptions<T, Extensions>,
-    ) => BaseNode<T, Extensions>,
+    create: EnvironmentNodeCreator<Extensions>,
     context: Context,
   ): BaseNode<unknown, Extensions> | null;
   destroy?(context: Context): void;
 }
 
-type AfterMountOption<
+export type AfterMountOption<
   MountOptions extends PlainObject,
   Context extends PlainObject,
   Actions extends PlainObject,
@@ -121,7 +125,7 @@ export type MountOptionsOverrideOption<
       ): Partial<AdditionalMountOptions>;
     };
 
-type CustomMountOptions<
+export type CustomMountOptions<
   MountOptions extends PlainObject = EmptyObject,
   ExistingContext extends PlainObject = EmptyObject,
   AdditionalContext extends PlainObject = EmptyObject,
@@ -149,7 +153,7 @@ type CustomMountOptions<
     Async
   >;
 
-type CustomMountExtendOptions<
+export type CustomMountExtendOptions<
   ExistingMountOptions extends PlainObject = EmptyObject,
   AdditionalMountOptions extends PlainObject = EmptyObject,
   ExistingContext extends PlainObject = EmptyObject,
@@ -226,7 +230,7 @@ export interface HookRunner<
   act<T>(action: (value: HookReturn) => T): T;
 }
 
-type CustomMountResult<
+export type CustomMountResult<
   Props,
   Context extends PlainObject,
   Actions extends PlainObject,
@@ -236,7 +240,7 @@ type CustomMountResult<
   ? Promise<RootNode<Props, Context, Actions, Extensions>>
   : RootNode<Props, Context, Actions, Extensions>;
 
-interface Environment<Extensions extends PlainObject = EmptyObject> {
+export interface Environment<Extensions extends PlainObject = EmptyObject> {
   readonly mounted: Set<RootNode<any, any, any, Extensions>>;
   readonly mount: CustomMount<
     EmptyObject,
