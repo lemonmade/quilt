@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.18
+
+### Patch Changes
+
+- [`809f3bca`](https://github.com/lemonmade/quilt/commit/809f3bcaad614b80012b32777f5d64ca00a70f18) Thanks [@lemonmade](https://github.com/lemonmade)! - Export more testing environment types
+
 ## 0.5.17
 
 ### Patch Changes
