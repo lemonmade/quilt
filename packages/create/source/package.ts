@@ -11,6 +11,7 @@ import {
   format,
   loadTemplate,
   createOutputTarget,
+  mergeDependencies,
   isEmpty,
   emptyDirectory,
   toValidPackageName,
@@ -168,10 +169,10 @@ export async function createProject() {
         newPackageJson.peerDependencies = projectPackageJson.peerDependencies;
         newPackageJson.peerDependenciesMeta =
           projectPackageJson.peerDependenciesMeta;
-        newPackageJson.devDependencies = sortKeys({
-          ...workspacePackageJson.devDependencies,
-          ...projectPackageJson.devDependencies,
-        });
+        newPackageJson.devDependencies = mergeDependencies(
+          workspacePackageJson.devDependencies,
+          projectPackageJson.devDependencies,
+        );
       }
 
       adjustPackageJson(newPackageJson, {
@@ -523,17 +524,4 @@ function adjustPackageJson(
   }
 
   return packageJson;
-}
-
-function sortKeys(object: Record<string, any>) {
-  const newObject: Record<string, any> = {};
-  const sortedEntries = Object.entries(object).sort(([keyOne], [keyTwo]) =>
-    keyOne.localeCompare(keyTwo),
-  );
-
-  for (const [key, value] of sortedEntries) {
-    newObject[key] = value;
-  }
-
-  return newObject;
 }

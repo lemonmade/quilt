@@ -11,6 +11,7 @@ import {
   format,
   loadTemplate,
   createOutputTarget,
+  mergeDependencies,
   isEmpty,
   emptyDirectory,
   toValidPackageName,
@@ -141,6 +142,10 @@ export async function createApp() {
       workspacePackageJson.name = toValidPackageName(name!);
       workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
       workspacePackageJson.browserslist = projectPackageJson.browserslist;
+      workspacePackageJson.devDependencies = mergeDependencies(
+        workspacePackageJson.devDependencies,
+        projectPackageJson.devDependencies,
+      );
 
       let quiltProject = await appTemplate.read('quilt.project.ts');
       quiltProject = quiltProject
@@ -215,6 +220,8 @@ export async function createApp() {
   }
 
   const commands: string[] = [];
+  const packageManagerRun = (command: string) =>
+    packageManager === 'npm' ? `npm run ${command}` : `pnpm ${command}`;
 
   if (!inWorkspace && directory !== process.cwd()) {
     commands.push(
@@ -226,7 +233,9 @@ export async function createApp() {
 
   if (!shouldInstall) {
     commands.push(
-      `pnpm install ${color.dim('# Install all your dependencies')}`,
+      `${packageManager} install ${color.dim(
+        '# Install all your dependencies',
+      )}`,
     );
   }
 
@@ -239,7 +248,11 @@ export async function createApp() {
     );
   }
 
-  commands.push(`pnpm develop ${color.dim('# Start the development server')}`);
+  commands.push(
+    `${packageManagerRun('develop')} ${color.dim(
+      '# Start the development server',
+    )}`,
+  );
 
   const whatsNext = stripIndent`
     Your new app is ready to go! There’s just ${

@@ -153,11 +153,13 @@ export async function format(
   content: string,
   {as: parser}: {as: BuiltInParserName},
 ) {
-  const [{format}, {default: babel}, {default: yaml}] = await Promise.all([
-    import('prettier/standalone'),
-    import('prettier/parser-babel'),
-    import('prettier/parser-yaml'),
-  ]);
+  const [{format}, {default: babel}, {default: typescript}, {default: yaml}] =
+    await Promise.all([
+      import('prettier/standalone'),
+      import('prettier/parser-babel'),
+      import('prettier/parser-typescript'),
+      import('prettier/parser-yaml'),
+    ]);
 
   return format(content, {
     arrowParens: 'always',
@@ -165,6 +167,22 @@ export async function format(
     singleQuote: true,
     trailingComma: 'all',
     parser,
-    plugins: [babel, yaml],
+    plugins: [babel, typescript, yaml],
   });
+}
+
+export function mergeDependencies(
+  first: Record<string, string> = {},
+  second: Record<string, string> = {},
+) {
+  const all = {...first, ...second};
+  const merged: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(all).sort(([keyOne], [keyTwo]) =>
+    keyOne.localeCompare(keyTwo),
+  )) {
+    merged[key] = value;
+  }
+
+  return merged;
 }
