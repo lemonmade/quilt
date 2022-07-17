@@ -8,9 +8,6 @@
     "url": "https://github.com/lemonmade/quilt.git",
     "directory": "packages/craft"
   },
-  "browserslist": [
-    "current node"
-  ],
   "publishConfig": {
     "access": "public",
     "@quilted:registry": "https://registry.npmjs.org",
