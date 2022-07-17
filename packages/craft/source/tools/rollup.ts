@@ -287,7 +287,7 @@ export async function getRollupNodePlugins(
     // other than node builtins.
     nodeExternalsPlugin = nodeExternals({
       builtins: true,
-      prefixedBuiltins: true,
+      builtinsPrefix: 'add',
       deps: false,
       devDeps: false,
       peerDeps: false,
@@ -302,7 +302,7 @@ export async function getRollupNodePlugins(
     // we mark all dependencies as external.
     nodeExternalsPlugin = nodeExternals({
       builtins: true,
-      prefixedBuiltins: true,
+      builtinsPrefix: 'add',
       deps: true,
       devDeps: true,
       peerDeps: true,
@@ -330,7 +330,7 @@ export async function getRollupNodePlugins(
 
     nodeExternalsPlugin = nodeExternals({
       builtins: !bundleBuiltins,
-      prefixedBuiltins: !bundleBuiltins,
+      builtinsPrefix: 'add',
       deps: !bundleDependencies,
       devDeps: !bundleDevDependencies,
       peerDeps: !bundlePeerDependencies,

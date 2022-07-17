@@ -187,7 +187,7 @@ importers:
       regenerator-runtime: ^0.13.0
       rollup: ^2.70.0
       rollup-plugin-esbuild: ^4.8.0
-      rollup-plugin-node-externals: ^4.0.0
+      rollup-plugin-node-externals: ^4.1.0
       rollup-plugin-visualizer: ^5.6.0
       semver: ^7.0.0
       systemjs: ^6.10.2
@@ -251,7 +251,7 @@ importers:
       regenerator-runtime: 0.13.9
       rollup: 2.75.1
       rollup-plugin-esbuild: 4.9.1_4owotmri2q2u7ngksxy3z2dmse
-      rollup-plugin-node-externals: 4.0.0_rollup@2.75.1
+      rollup-plugin-node-externals: 4.1.1_rollup@2.75.1
       rollup-plugin-visualizer: 5.6.0_rollup@2.75.1
       semver: 7.3.7
       systemjs: 6.12.1
@@ -8579,9 +8579,9 @@ packages:
       - supports-color
     dev: false
 
-  /rollup-plugin-node-externals/4.0.0_rollup@2.75.1:
-    resolution: {integrity: sha512-7L0lqN+AEJqS13x240F5zyArHn2tNpHC7Ju8vtS893DkutIU89k5v3A7jhnOqLvOXAzjm9Ha7UZdwHOPyqiPDQ==}
-    engines: {node: '>=14.0.0', rollup: '>=2.60.0'}
+  /rollup-plugin-node-externals/4.1.1_rollup@2.75.1:
+    resolution: {integrity: sha512-hiGCMTKHVoueaTmtcUv1KR0/dlNBuI9GYzHUlSHQbMd7T7yomYdXCFnBisoBqdZYy61EGAIfz8AvJaWWBho3Pg==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^2.60.0
     dependencies:
