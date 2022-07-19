@@ -209,7 +209,16 @@ export async function createViteConfig(
     viteSsrExternals!.run([]),
   ]);
 
-  const serverOptions = await viteServerOptions!.run({port, host});
+  const serverOptions = await viteServerOptions!.run({
+    port,
+    host,
+    watch: {
+      ignored: [
+        project.fs.temporaryPath('vite/cache'),
+        project.fs.temporaryPath('develop'),
+      ],
+    },
+  });
 
   const config = await viteConfig!.run({
     root: project.root,

@@ -21,12 +21,12 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
         quiltWorkerWrite?.(() => true);
 
         quiltWorkerRollupOutputOptions?.((options) => {
-          options.dir = project.fs.buildPath('vite/workers');
+          options.dir = project.fs.temporaryPath('vite/workers');
           return options;
         });
 
         quiltWorkerRollupPublicPath?.(
-          () => `/@fs${project.fs.buildPath('vite/workers/')}`,
+          () => `/@fs${project.fs.temporaryPath('vite/workers/')}`,
         );
 
         // Vite does not call the `option` hook properly, so we don’t get
