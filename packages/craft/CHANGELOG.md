@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.145
+
+### Patch Changes
+
+- [`477e842c`](https://github.com/lemonmade/quilt/commit/477e842cfc9ef3dfa7f7ca910aa4eeee423d40a0) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix dev reloading of workers
+
+* [`5c727ee3`](https://github.com/lemonmade/quilt/commit/5c727ee369ce0abfebff1bf3c4dcac2efb8311f8) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up some app worker handling in dev
+
 ## 0.1.144
 
 ### Patch Changes
