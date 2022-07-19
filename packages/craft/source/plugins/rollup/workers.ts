@@ -66,6 +66,7 @@ export interface Options {
   outputOptions?: ValueOrUpdateGetter<OutputOptions>;
   contentForWorker?: ValueOrGetter<string | undefined>;
   publicPath?: ValueOrGetter<string | undefined, PublicPathContext>;
+  onIncludeFile?(file: string, worker: string): void;
 }
 
 export function workers({
@@ -75,6 +76,7 @@ export function workers({
   plugins = defaultPlugins,
   inputOptions = {},
   outputOptions = {},
+  onIncludeFile,
 }: Options = {}): Plugin {
   let parentInputOptions: InputOptions;
   const workerMap = new Map<string, OutputChunk>();
@@ -191,6 +193,7 @@ export function workers({
       workerMap.set(workerId, firstChunk);
 
       for (const module of Object.keys(firstChunk.modules)) {
+        onIncludeFile?.(module, id);
         this.addWatchFile(module);
       }
 

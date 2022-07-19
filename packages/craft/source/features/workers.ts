@@ -173,6 +173,7 @@ export function workers() {
 
       if (noop) return plugins;
 
+      const filesToWorkerMap = new Map<string, Set<string>>();
       const options: RollupOptions = {
         write,
         contentForWorker: (context) =>
@@ -185,9 +186,36 @@ export function workers() {
           quiltWorkerRollupOutputOptions!.run(outputOptions, context),
         publicPath: (context) =>
           quiltWorkerRollupPublicPath!.run(undefined, context),
+        onIncludeFile(file, worker) {
+          let workersForFile = filesToWorkerMap.get(file);
+
+          if (workersForFile == null) {
+            workersForFile = new Set();
+            filesToWorkerMap.set(file, workersForFile);
+          }
+
+          workersForFile.add(worker);
+        },
       };
 
-      plugins.push(workers(options));
+      plugins.push({
+        ...workers(options),
+        // Gets around Vite not hot reloading modules when using `addWatchFile()`
+        handleHotUpdate({file, server, modules}) {
+          const modulesToInvalidate = filesToWorkerMap.get(file);
+
+          if (modulesToInvalidate != null) {
+            for (const module of modulesToInvalidate) {
+              const root = server.moduleGraph.getModuleById(module);
+              if (root) server.moduleGraph.invalidateModule(root);
+            }
+
+            server.ws.send({type: 'full-reload', path: '*'});
+          }
+
+          return modules;
+        },
+      });
 
       return plugins;
     });
