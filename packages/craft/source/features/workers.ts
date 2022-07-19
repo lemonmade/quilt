@@ -201,6 +201,7 @@ export function workers() {
       plugins.push({
         ...workers(options),
         // Gets around Vite not hot reloading modules when using `addWatchFile()`
+        // @see https://github.com/vitejs/vite/issues/3474
         handleHotUpdate({file, server, modules}) {
           const modulesToInvalidate = filesToWorkerMap.get(file);
 
