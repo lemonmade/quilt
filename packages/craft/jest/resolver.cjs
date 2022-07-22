@@ -1,38 +1,29 @@
-// Jest’s support for ESM is a bit of a mess. It doesn’t support
-// export maps, which we use to declare all the multi-entry packages
-// in quilt. It has some native support for ESM, but I had a lot of
-// issues with it. It technically supports transpiling ESM in node_modules
-// to CommonJS, but it is very difficult to do so because you have to create
-// a regular expression that prevents some subset of node_modules from being
-// ignored by transformers.
+// These libraries ship with the browser export condition targeting ESM. This breaks Jest,
+// because it prefers the browser condition but does not understand ESM yet. This deletes the
+// offending package.json fields so that the CommonJS variants are preferred.
 //
-// After some thought, I am just solving one part of this for now:
-// support for export maps. This custom resolver lets the entries in Quilt
-// and other export map packages be resolved by Jest. Unfortunately, if those
-// packages are ESM-only, they will not work; for Quilt, I added a `require`
-// export condition to all packages that might be imported in tests that
-// points to a CommonJS build.
-//
-// See https://github.com/facebook/jest/issues/9771 for details on this approach.
+// @see https://github.com/microsoft/accessibility-insights-web/pull/5421#issuecomment-1109168149
+const PACKAGES_WITH_ESM_BROWSER_ENTRIES = new Set([
+  '@remix-run/web-fetch',
+  '@remix-run/web-blob',
+  '@remix-run/web-stream',
+  '@remix-run/web-form-data',
+  '@web3-storage/multipart-parser',
+  'preact',
+]);
 
-const enhancedResolve = require('enhanced-resolve');
+module.exports = (path, options) => {
+  // Call the defaultResolver, so we leverage its cache, error handling, etc.
+  return options.defaultResolver(path, {
+    ...options,
+    // Use packageFilter to process parsed `package.json` before the resolution (see https://www.npmjs.com/package/resolve#resolveid-opts-cb)
+    packageFilter: (pkg) => {
+      if (PACKAGES_WITH_ESM_BROWSER_ENTRIES.has(pkg.name)) {
+        delete pkg['exports'];
+        delete pkg['module'];
+      }
 
-const resolve = enhancedResolve.create.sync({
-  conditionNames: [
-    // 'quilt:esnext',
-    // 'esnext',
-    // 'import',
-    'require',
-    'default',
-    'node',
-  ],
-  mainFields: [
-    // 'module',
-    'main',
-  ],
-  extensions: ['.ts', '.tsx', '.js', '.mjs', '.json', '.node'],
-});
-
-module.exports = function resolver(request, options) {
-  return resolve(options.basedir, request);
+      return pkg;
+    },
+  });
 };

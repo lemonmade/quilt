@@ -92,6 +92,19 @@ export interface TestTaskOptions {
    * hooks, and other configuration changes.
    */
   readonly debug: boolean;
+
+  /**
+   * A string representing what part of the tests in the project to run, when running
+   * with multiple parallel test runners. By default, parallelism is not used. When
+   * parallelism is explicitly enabled, it is passed as a string in the format
+   * `${number}/${number}`, where the first number is the index of the current parallel
+   * run, and the second number is the total number of parallel runs. For example,
+   * the string `"2/3"` indicates that this is the second of three parallel runs.
+   *
+   * Test tools that support parallelism should use this string to determine an appropriate
+   * subset of the project’s tests that should be run.
+   */
+  readonly parallel?: `${number}/${number}`;
 }
 
 /**
