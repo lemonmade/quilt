@@ -1,4 +1,4 @@
-import {Task} from '../../kit';
+import {Task, DiagnosticError} from '../../kit';
 
 import type {TestTaskOptions} from '../../kit';
 
@@ -10,6 +10,7 @@ export const test = createCommand(
     '--watch': Boolean,
     '--no-watch': Boolean,
     '--debug': Boolean,
+    '--parallel': String,
     '--include-pattern': [String],
     '--exclude-pattern': [String],
   },
@@ -18,6 +19,7 @@ export const test = createCommand(
       _: includePatterns,
       '--include-pattern': includePatternsAsFlag = [],
       '--exclude-pattern': excludePatterns = [],
+      '--parallel': parallel,
       '--watch': watch = !process.env.CI,
       '--no-watch': noWatch,
       '--debug': debug = false,
@@ -29,6 +31,7 @@ export const test = createCommand(
       debug,
       includePatterns: [...includePatterns, ...includePatternsAsFlag],
       excludePatterns,
+      parallel: parallel ? validateParallel(parallel) : undefined,
     });
   },
 );
@@ -40,4 +43,17 @@ export async function runTest(context: TaskContext, options: TestTaskOptions) {
     coreHooksForProject: () => ({}),
     coreHooksForWorkspace: () => ({}),
   });
+}
+
+const PARALLELISM_REGEX = /^\d+[/]\d+$/;
+
+function validateParallel(parallel: string): `${number}/${number}` {
+  if (!PARALLELISM_REGEX.test(parallel)) {
+    throw new DiagnosticError({
+      title: 'Invalid --parallel argument',
+      content: `This argument must be in the format \`\${number}/\${number}\`, where the first number is the index of the current parallel, run, and the second number is the total number of parallel runs.`,
+    });
+  }
+
+  return parallel as any;
 }

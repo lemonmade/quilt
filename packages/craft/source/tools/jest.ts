@@ -43,6 +43,7 @@ export interface JestFlags {
   cacheDirectory?: string;
   passWithNoTests?: boolean;
   detectOpenHandles?: boolean;
+  shard?: string;
   [key: string]: unknown;
 }
 
@@ -51,6 +52,7 @@ export interface JestWorkspaceHooks
   jestConfig: WaterfallHook<JestConfig>;
   jestFlags: WaterfallHook<JestFlags>;
   jestWatchPlugins: WaterfallHook<string[]>;
+  jestShard: WaterfallHook<`${number}/${number}` | undefined>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -83,6 +85,7 @@ export function jest() {
         jestTransforms: waterfall(),
         jestIgnore: waterfall(),
         jestWatchIgnore: waterfall(),
+        jestShard: waterfall(),
       }));
 
       project(({hooks}) => {
@@ -121,6 +124,7 @@ export function jest() {
                 jestSetupTests,
                 jestTransforms,
                 jestIgnore,
+                jestShard,
                 jestWatchIgnore,
               },
             ] = await Promise.all([import('jest-config'), configuration()]);
@@ -130,7 +134,8 @@ export function jest() {
               (envVar) => Boolean(envVar) && truthyEnvValues.has(envVar!),
             );
 
-            const {watch, debug, includePatterns, excludePatterns} = options;
+            const {watch, debug, parallel, includePatterns, excludePatterns} =
+              options;
 
             // We create an alias map of the repo’s internal packages. This prevents
             // issues where Jest might try to use the built output for a package (as
@@ -227,19 +232,6 @@ export function jest() {
                     jestWatchIgnore,
                   } = await projectConfiguration(project);
 
-                  // TODO move to craft
-                  // const [
-                  //   setupEnvironment,
-                  //   setupEnvironmentIndexes,
-                  //   setupTests,
-                  //   setupTestsIndexes,
-                  // ] = await Promise.all([
-                  //   project.fs.glob('tests/setup/environment.*'),
-                  //   project.fs.glob('tests/setup/environment/index.*'),
-                  //   project.fs.glob('tests/setup/tests.*'),
-                  //   project.fs.glob('tests/setup/tests/index.*'),
-                  // ]);
-
                   const [
                     environment,
                     testIgnore,
@@ -301,12 +293,13 @@ export function jest() {
               ),
             );
 
-            const [watchPlugins] = await Promise.all([
+            const [watchPlugins, shard] = await Promise.all([
               jestWatchPlugins!.run([
                 // These are so useful, they should be on by default. Sue me.
                 require.resolve('jest-watch-typeahead/filename'),
                 require.resolve('jest-watch-typeahead/testname'),
               ]),
+              jestShard!.run(parallel),
             ]);
 
             const config = await jestConfig!.run({
@@ -347,6 +340,7 @@ export function jest() {
               forceExit: isCi || debug,
               runInBand: debug,
               detectOpenHandles: debug,
+              shard,
             });
 
             const spawned = runner.spawn(
