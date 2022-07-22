@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.34
+
+### Patch Changes
+
+- [#383](https://github.com/lemonmade/quilt/pull/383) [`1647d73e`](https://github.com/lemonmade/quilt/commit/1647d73e074f1f26653634c2bda6dcba79dc6527) Thanks [@lemonmade](https://github.com/lemonmade)! - Add test --parallel option
+
 ## 0.2.33
 
 ### Patch Changes
