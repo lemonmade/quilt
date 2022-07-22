@@ -346,7 +346,7 @@ export function quiltPackage({
   entries,
   binaries,
   build = true,
-  react: useReact = false,
+  react: useReact = true,
   graphql: useGraphQL = false,
   commonjs,
 }: PackageOptions = {}) {
