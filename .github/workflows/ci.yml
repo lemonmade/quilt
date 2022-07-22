@@ -35,9 +35,6 @@ jobs:
     name: Unit tests 🧪
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    strategy:
-      matrix:
-        parallel: [1/3, 2/3, 3/3]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
@@ -49,12 +46,15 @@ jobs:
           arguments: --only-project async --only-project workers
       - uses: quilt-framework/action-test@v2
         with:
-          command: pnpm test:unit --parallel ${{ matrix.parallel }}
+          command: pnpm test:unit
 
   e2e-tests:
     name: End-to-end tests 🔬
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        parallel: [1/3, 2/3, 3/3]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
@@ -66,4 +66,4 @@ jobs:
           arguments: --skip-project create
       - uses: quilt-framework/action-test@v2
         with:
-          command: pnpm test:e2e
+          command: pnpm test:e2e --parallel ${{ matrix.parallel }}
