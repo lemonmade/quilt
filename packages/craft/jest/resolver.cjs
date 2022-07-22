@@ -1,38 +1,19 @@
-// Jest’s support for ESM is a bit of a mess. It doesn’t support
-// export maps, which we use to declare all the multi-entry packages
-// in quilt. It has some native support for ESM, but I had a lot of
-// issues with it. It technically supports transpiling ESM in node_modules
-// to CommonJS, but it is very difficult to do so because you have to create
-// a regular expression that prevents some subset of node_modules from being
-// ignored by transformers.
-//
-// After some thought, I am just solving one part of this for now:
-// support for export maps. This custom resolver lets the entries in Quilt
-// and other export map packages be resolved by Jest. Unfortunately, if those
-// packages are ESM-only, they will not work; for Quilt, I added a `require`
-// export condition to all packages that might be imported in tests that
-// points to a CommonJS build.
-//
-// See https://github.com/facebook/jest/issues/9771 for details on this approach.
+module.exports = (path, options) => {
+  // Call the defaultResolver, so we leverage its cache, error handling, etc.
+  return options.defaultResolver(path, {
+    ...options,
+    // Use packageFilter to process parsed `package.json` before the resolution (see https://www.npmjs.com/package/resolve#resolveid-opts-cb)
+    packageFilter: (pkg) => {
+      // Currently, preact ships packages where the browser export condition targets ESM. This breaks Jest,
+      // because it prefers the browser condition but does not understand ESM yet. This deletes the
+      // offending package.json fields so that the CommonJS variants are preferred.
+      // @see https://github.com/microsoft/accessibility-insights-web/pull/5421#issuecomment-1109168149
+      if (pkg.name === 'preact') {
+        delete pkg['exports'];
+        delete pkg['module'];
+      }
 
-const enhancedResolve = require('enhanced-resolve');
-
-const resolve = enhancedResolve.create.sync({
-  conditionNames: [
-    // 'quilt:esnext',
-    // 'esnext',
-    // 'import',
-    'require',
-    'default',
-    'node',
-  ],
-  mainFields: [
-    // 'module',
-    'main',
-  ],
-  extensions: ['.ts', '.tsx', '.js', '.mjs', '.json', '.node'],
-});
-
-module.exports = function resolver(request, options) {
-  return resolve(options.basedir, request);
+      return pkg;
+    },
+  });
 };

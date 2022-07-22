@@ -53,6 +53,7 @@ export interface JestWorkspaceHooks
   jestFlags: WaterfallHook<JestFlags>;
   jestWatchPlugins: WaterfallHook<string[]>;
   jestShard: WaterfallHook<`${number}/${number}` | undefined>;
+  jestReporters: WaterfallHook<(string | Config.ReporterConfig)[]>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -86,6 +87,7 @@ export function jest() {
         jestIgnore: waterfall(),
         jestWatchIgnore: waterfall(),
         jestShard: waterfall(),
+        jestReporters: waterfall(),
       }));
 
       project(({hooks}) => {
@@ -126,6 +128,7 @@ export function jest() {
                 jestIgnore,
                 jestShard,
                 jestWatchIgnore,
+                jestReporters,
               },
             ] = await Promise.all([import('jest-config'), configuration()]);
 
@@ -164,6 +167,7 @@ export function jest() {
                 moduleMapper,
                 setupEnvironmentFiles,
                 setupTestsFiles,
+                reporters,
               ] = await Promise.all([
                 // TODO should this be inferred...
                 jestEnvironment!.run('node'),
@@ -187,6 +191,11 @@ export function jest() {
                 jestModuleMapper!.run({...internalModuleMap}),
                 jestSetupEnv!.run([]),
                 jestSetupTests!.run([]),
+                jestReporters!.run(
+                  process.env.GITHUB_ACTIONS
+                    ? ['default', 'github-actions']
+                    : [],
+                ),
               ]);
 
               const normalizedExtensions = extensions.map((extension) =>
@@ -210,6 +219,7 @@ export function jest() {
                 watchPathIgnorePatterns: watchIgnore,
                 transform,
                 resolver: RESOLVER_MODULE,
+                reporters: reporters.length > 0 ? reporters : undefined,
                 cacheDirectory: workspace.fs.temporaryPath('jest/cache'),
               });
 
