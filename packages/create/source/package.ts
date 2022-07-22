@@ -93,10 +93,6 @@ export async function createProject() {
 
   let quiltProject = await packageTemplate.read('quilt.project.ts');
 
-  if (useReact) {
-    quiltProject = quiltProject.replace('react: false', 'react: true');
-  }
-
   // If we aren’t already in a workspace, copy the workspace files over, which
   // are needed if we are making a monorepo or not.
   if (!inWorkspace) {
