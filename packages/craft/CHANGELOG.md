@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.146
+
+### Patch Changes
+
+- [`b4e0cffa`](https://github.com/lemonmade/quilt/commit/b4e0cffa908a00ad0b0a3138edeb2bb6121db056) Thanks [@lemonmade](https://github.com/lemonmade)! - Default packages to supporting React
+
 ## 0.1.145
 
 ### Patch Changes
