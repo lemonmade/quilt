@@ -1,11 +1,9 @@
-# `quilt`
+# Quilt
 
-Quilt is a component-first framework for building complex web applications. It is highly flexible and customizable, but makes no compromises on [performance](./performance) — the whole framework is less than 15kb when minified and compressed.
+Quilt is a framework for building complex web projects. It is focused on building [web applications](./documentation/projects/apps), but can also help you build [shared packages](./documentation/projects/packages) and [backend services](./documentation/projects/services).
 
-Quilt provides a collection of libraries for handling common needs in web development, including [routing](./documentation/features/routing), [adding content to the `<head>`](./documentation/features/html), [internationalization](./documentation/features/i18n), and [unit testing](./documentation/features/testing). It also provides powerful abstractions for optimizing performance through [async loading and preloading](./documentation/features/async), component-driven control of [server-side rendering](./documentation/features/server-rendering), and [offloading code to workers](./documentation/features/workers).
+Quilt tries to deliver a great experience of using [TypeScript](./documentation/technology/typescript), [GraphQL](./documentation/technology/graphql), and [Preact](./documentation/technology/preact). You can still use Quilt without using these technologies, but we focus on optimizing the holistic experience of using them together. Quilt also tries to help make it easy to run a curated collection of [other popular web tools](./documentation/technologies) on all the projects in your repo.
 
-Quilt works best with applications that use [TypeScript](./documentation/technology/typescript), [GraphQL](./documentation/technology/graphql), and [React (or a React-compatible variant)](./documentation/technology/react). You can still use Quilt without using TypeScript, GraphQL, or React, but we focus on optimizing the holistic experience of using these three technologies together.
-
-[Craft](./documentation/craft) is a sister project to Quilt. It provides configuration of all Quilt’s recommended development tools, and allows you to deeply customize the configuration of how Quilt handles the `develop`, `test`, `lint`, `type-check`, and `build` tasks for your projects.
+There are a lot of great web frameworks out there. Quilt tries to strike a particular balance of flexibility, scalability, and safety that differentiates it from other frameworks. This set of tradeoffs is not “right” for every project, though! You should read about Quilt’s [design priorities](./documentation/priorities.md) to see if Quilt is right for you.
 
 Ready to learn more? Check out the [getting started guide](./documentation/getting-started.md).

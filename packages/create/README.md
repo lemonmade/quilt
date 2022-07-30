@@ -2,7 +2,7 @@
 
 This package provides a command line tool for generating new Quilt projects.
 
-When run inside an existing [Quilt workspace](../../documentation/projects.md), this command will add additional [apps](../../documentation/projects.md#apps) or [packages](../../documentation/projects.md#packages) to the same workspace.
+When run inside an existing [Quilt workspace](../../documentation/projects.md), this command will add additional [apps](../../documentation/projects/apps) or [packages](../../documentation/projects.md#packages) to the same workspace.
 
 You can also run it outside an existing repository, and it will create a new repository with a Quilt app or package. This new repo can be configured either as a “monorepo”, with room for additional projects, or as a repo just focused on a single project.
 
