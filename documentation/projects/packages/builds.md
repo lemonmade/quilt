@@ -70,6 +70,15 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 }
 ```
 
+> **Note:** because the native JavaScript module format is the default version preferred by this package, we recommend setting the [`"type"` field in your `package.json` to `"module"`](TODO):
+>
+> ```json
+> {
+>   "name": "my-package",
+>   "type": "module"
+> }
+> ```
+
 ### Runtime targets
 
 When creating the ESModule and CommonJS builds, Quilt will “transpile” your code to remove references to language features that are not supported by your minimum supported runtime versions. The following logic is used to determine the minimum supported runtime version for your package:
@@ -413,6 +422,56 @@ To expose these executable files to consuming projects, you will need to list th
 }
 ```
 
+## Complete example
+
+The example below shows a complete example of a package’s configuration files. It references all of Quilt’s build outputs, and like other examples in this guide, includes both a “root” entry (`"."`) and a `"testing"` entry:
+
+```json
+// package.json
+{
+  "name": "my-package",
+  "type": "module",
+  "version": "1.0.0",
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    },
+    "./testing": {
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs",
+      "require": "./build/cjs/testing.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "typeVersions": {
+    "*": {
+      "testing": "./build/typescript/testing.d.ts"
+    }
+  },
+  "sideEffects": false
+}
+```
+
+```json
+// tsconfig.json
+{
+  "extends": "@quilted/typescript/project.json",
+  "include": ["source"],
+  "compilerOptions": {
+    "rootDir": "source",
+    "outDir": "build/typescript"
+  }
+}
+```
+
+> **Note:** if you want a shortcut that lets you skip most of this manual work, you can use [Quilt’s `create` command to build your package](../../getting-started.md#creating-a-package).
+
 ## Advanced build concepts
 
 ### Using `private` packages in a monorepo
@@ -440,17 +499,113 @@ In the example above, we’ve included the [`"typesVersions"` mapping for older 
 
 ### Tree shaking
 
+Tree shaking refers to the process of a consuming app or service being able to exclude parts of a package it does not use, keeping only the minimal amount of necessary code. The builds performed by Quilt are configured to maximize their “tree shakability”.
+
+Native JavaScript modules are necessary for tree shaking, as they can be statically analyzed by bundlers. As noted above, Quilt always generates an [ESModules build](#esmodules-build), as well as a special [“ESNext” build](#esnext-build) that can be optimized even further.
+
+By default, all of Quilt’s builds will preserve your source module structure. This is important because most JavaScript bundlers can only remove unused code on module boundaries; few are able to remove unused code _within_ a particular module.
+
+To get tree shaking working optimally in most bundlers, you will need to add the [`"sideEffects"` field](TODO) to your `package.json`. The simplest configuration of this field is to set it to `false`, which tells bundlers that all files are safe to remove from consuming applications, if they are not otherwise used:
+
+```json
+{
+  "sideEffects": false
+}
+```
+
 ### Dependency bundling
+
+Bundling dependencies refers to the process of embedding the code for some of your dependencies into the built output of your package. A package that bundles its dependencies does not need to list those dependencies in the `"dependencies"` field of its `package.json`; the package will always use the bundled code instead.
 
 Bundling some of the dependencies with your package can be useful for a few reasons:
 
 - Guarantees the version of a particular dependency is used at runtime
 - Minimizes the number of dependencies your package has, which can make it easier for consumers to install
+- In some cases, optimizes the performance of importing the code from dependencies
+
+There is a downside, though: consumers can’t rely on their dependency manager to deduplicate the same package across all the packages they use. You should only use this technique for dependencies you are confident that consumers will not need separately from your package.
+
+When Quilt builds your project, any dependencies you list in `"devDependencies"` (as opposed to `"dependencies"` or `"peerDependencies"`) will be bundled into your project. Change a dependency from being listed in `"dependencies"` to instead be listed in `"devDependencies"`, and Quilt will take care of the rest!
+
+If you’d like to force all dependencies to be bundled instead of just development dependencies, you can set the `build.bundle` option to `true` in your package’s `quiltPackage()` plugin:
+
+```ts
+// quilt.project.ts
+
+import {createProject, quiltPackage} from '@quilted/craft';
+
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      build: {
+        bundle: true,
+      },
+    }),
+  );
+});
+```
+
+This `bundle` option also accepts a more complex structure that lets you deeply customize which dependencies are and aren’t bundled. For more details, see the [`rollup-plugin-node-externals` plugin documentation](TODO), which is used to perform this selective bundling. Note that, because Quilt frames this option as which dependencies are bundled, you pass the opposite options as you would to `rollup-plugin-node-externals`, which frames the option in terms of which dependencies are “externalized”. So, for example, if you want to bundle only a special `my-bundled-dependency` package, you would pass the following options:
+
+```ts
+// quilt.project.ts
+
+import {createProject, quiltPackage} from '@quilted/craft';
+
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      build: {
+        bundle: {
+          // In rollup-plugin-node-externals, these would both be `true` instead
+          dependencies: false,
+          devDependencies: false,
+          // In rollup-plugin-node-externals, this would be passed as the `exclude` option instead
+          include: ['my-bundled-dependency'],
+        },
+      },
+    }),
+  );
+});
+```
 
 ### Source files
 
-### Side effects
+In some guides, you will see advice to exclude your source files from the list of files that are distributed in your package. This is often done either with the [`"files"` list in `package.json`](TODO), or with a [`.npmignore` file](TODO).
 
-### JSX compilation
+Quilt instead recommends that you **include** source files with your published package. Doing so increases the amount of code a consumer needs to download, but it ensures that go-to-definition navigates right into source code for TypeScript consumers.
 
-## Complete example
+### React and JSX
+
+Quilt supports packages that use JSX to author React components. Any JSX is compiled to React’s [more modern JSX transform](TODO). For example, the following source code would produce the built version below it:
+
+```tsx
+// source/index.tsx
+
+export function Emphasize({children}: {children: string}) {
+  return <strong>{children}!</strong>;
+}
+```
+
+```js
+import {jsx} from 'react/jsx-runtime';
+
+export function Emphasize({children}) {
+  return jsx('strong', {children: [children, '!']});
+}
+```
+
+The `react/jsx-runtime` entry is only available in React version 17 and up. Your package should therefore list `react` as a peer dependency with a minimum version of `17.0.0`. You may also want to mark `react` as an optional peer dependency (using [`"peerDependenciesMeta"`](TODO)), since consumers may alias `react` to a different package, like [`preact`](../../technology/preact.md):
+
+```json
+{
+  "peerDependencies": {
+    "react": ">=17.0.0 <19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}
+```
