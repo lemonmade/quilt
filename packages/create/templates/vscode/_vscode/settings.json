@@ -14,9 +14,9 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "typescript.tsdk": "node_modules/typescript/lib",
-  // Quilt includes Jest as a dependency, so not all package managers will put the Jest binary
+  // Quilt includes Jest as a dependency, so not all package managers will put the Jest executable
   // in the root `node_modules` directory. This override will always work, regardless of where
-  // the Jest binary gets installed.
+  // the Jest executable gets installed.
   // @see https://github.com/jest-community/vscode-jest#jestcommandline
   "jest.jestCommandLine": "./node_modules/.bin/quilt run jest"
 }

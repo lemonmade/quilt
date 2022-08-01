@@ -331,7 +331,7 @@ export function quiltService({
 
 // TODO
 export interface PackageOptions
-  extends Pick<PackageBaseOptions, 'entries' | 'binaries'> {
+  extends Pick<PackageBaseOptions, 'entries' | 'executable'> {
   build?: boolean | {bundle?: RollupNodeOptions['bundle']};
   react?: boolean;
   graphql?: boolean;
@@ -344,7 +344,7 @@ export interface PackageOptions
  */
 export function quiltPackage({
   entries,
-  binaries,
+  executable,
   build = true,
   react: useReact = true,
   graphql: useGraphQL = false,
@@ -369,7 +369,7 @@ export function quiltPackage({
         rollupNode({
           bundle: typeof build === 'boolean' ? undefined : build.bundle,
         }),
-        packageBase({entries, binaries}),
+        packageBase({entries, executable}),
         // Builds
         build && packageBuild({commonjs}),
         build && esnextBuild(),

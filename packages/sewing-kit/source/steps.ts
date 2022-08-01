@@ -12,10 +12,10 @@ import type {Log, Loggable} from './types';
 export interface StepRunnerExecOptions extends ExecOptions {
   /**
    * You can use this option to indicate that the command being run was
-   * installed as a binary for a node module. You should pass this option
-   * the `import.meta.url` so that we can select the correct binary location
+   * installed as a executable for a node module. You should pass this option
+   * the `import.meta.url` so that we can select the correct executable location
    * for this module. When set to `true`, this script will assume you want
-   * to get the current working directory's binary directory.
+   * to get the current working directory's executable directory.
    */
   fromNodeModules?: string;
 }
@@ -23,8 +23,8 @@ export interface StepRunnerExecOptions extends ExecOptions {
 export interface StepRunnerSpawnOptions extends SpawnOptions {
   /**
    * You can use this option to indicate that the command being run was
-   * installed as a binary for a node module. You should pass this option
-   * the `import.meta.url` so that we can select the correct binary location
+   * installed as a executable for a node module. You should pass this option
+   * the `import.meta.url` so that we can select the correct executable location
    * for this module.
    */
   fromNodeModules?: string;
