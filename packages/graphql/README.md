@@ -216,7 +216,7 @@ expect(graphql).toHavePerformedGraphQLOperation(myQuery, {
 
 This package is basically an simplified amalgamation of a few of Shopify’s GraphQL libraries:
 
-- The TypeScript type generation of [`graphql-typescript-definitions`](https://github.com/Shopify/graphql-tools-web/tree/main/packages/graphql-typescript-definitions) (through the `quilt-graphql-typescript` binary)
+- The TypeScript type generation of [`graphql-typescript-definitions`](https://github.com/Shopify/graphql-tools-web/tree/main/packages/graphql-typescript-definitions) (through the `quilt-graphql-typescript` executable)
 - The GraphQL operation “filler” from [`graphql-fixtures`](https://github.com/Shopify/graphql-tools-web/tree/main/packages/graphql-fixtures)
 - The non-Apollo parts of [`graphql-testing`](https://github.com/Shopify/quilt/tree/master/packages/graphql-testing)
 

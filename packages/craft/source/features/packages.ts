@@ -11,8 +11,8 @@ export type PackageModuleType = 'commonjs' | 'esmodules';
 
 export interface PackageHooks {
   packageEntries: WaterfallHookWithDefault<Record<string, string>>;
-  packageBinaries: WaterfallHookWithDefault<Record<string, string>>;
-  packageBinaryNodeOptions: WaterfallHook<string[]>;
+  packageExecutables: WaterfallHookWithDefault<Record<string, string>>;
+  packageExecutableNodeOptions: WaterfallHook<string[]>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -55,11 +55,11 @@ export interface Options {
   entries?: Record<string, string>;
 
   /**
-   * A map of binaries to output for this package. The keys in this
-   * object should be the filenames of the binary you want to produce,
-   * and the values should be the source file that will be executed when
-   * the binary is run. For example, the following object species a `quilt`
-   * binary, which will run the `./source/cli.ts` file:
+   * A map of executables to output for this package. The keys in this
+   * object should be the filenames of the executable you want to create,
+   * and the values should be the source file that will be run. For example,
+   * the following object species a `quilt` executable, which will run the
+   * `./source/cli.ts` file:
    *
    * ```ts
    * createPackage({
@@ -69,12 +69,13 @@ export interface Options {
    * });
    * ```
    *
-   * By default, no binaries are built for a package.
+   * By default, no executables are built for a package. For more on building
+   * executables, see [Quilt’s package build documentation](https://github.com/lemonmade/quilt/blob/main/documentation/projects/packages/build.md#executable-files)
    */
-  binaries?: Record<string, string>;
+  executable?: Record<string, string>;
 }
 
-export function packageBase({entries, binaries = {}}: Options = {}) {
+export function packageBase({entries, executable = {}}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Package',
     build({project, configure, hooks}) {
@@ -84,10 +85,10 @@ export function packageBase({entries, binaries = {}}: Options = {}) {
         packageEntries: waterfall({
           default: getEntries,
         }),
-        packageBinaries: waterfall({
-          default: () => binaries,
+        packageExecutables: waterfall({
+          default: () => executable,
         }),
-        packageBinaryNodeOptions: waterfall(),
+        packageExecutableNodeOptions: waterfall(),
       }));
 
       configure(({babelRuntimeHelpers}) => {
@@ -101,10 +102,10 @@ export function packageBase({entries, binaries = {}}: Options = {}) {
         packageEntries: waterfall({
           default: getEntries,
         }),
-        packageBinaries: waterfall({
-          default: () => binaries,
+        packageExecutables: waterfall({
+          default: () => executable,
         }),
-        packageBinaryNodeOptions: waterfall(),
+        packageExecutableNodeOptions: waterfall(),
       }));
 
       configure(({babelRuntimeHelpers}) => {
@@ -212,6 +213,9 @@ export interface BuildOptions {
    * be changed to `false` before release. It’s only `true` right now
    * because Jest’s support for ES modules is not totally ready for
    * prime-time.
+   *
+   * @default true
+   * @see https://github.com/lemonmade/quilt/blob/main/documentation/projects/packages/builds.md#commonjs-build
    */
   commonjs?: boolean | {exports?: 'named' | 'default'};
 }
@@ -235,7 +239,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
           {
             outputDirectory,
             packageEntries,
-            packageBinaries,
+            packageExecutables,
             rollupInput,
             rollupOutputs,
             rollupPlugins,
@@ -264,7 +268,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
           rollupInput?.(async () => {
             const [entries, binaries] = await Promise.all([
               packageEntries!.run(),
-              packageBinaries!.run(),
+              packageExecutables!.run(),
             ]);
 
             return [
@@ -296,7 +300,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
           rollupOutputs?.(async (outputs) => {
             const dir = await outputDirectory.run(project.fs.buildPath());
 
-            // When we are building a binary-only package, we default
+            // When we are building a executable-only package, we default
             // to bundling the entire project into as few files as possible.
             // When the project is imported normally, we preserve the original
             // source structure.
@@ -387,37 +391,40 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
           );
         }
 
-        const {packageBinaries} = await configuration();
-        const binaries = await packageBinaries!.run();
+        const {packageExecutables} = await configuration();
+        const executables = await packageExecutables!.run();
 
-        if (Object.keys(binaries).length > 0) {
+        if (Object.keys(executables).length > 0) {
           steps.push(
             step({
-              name: 'Quilt.PackageBuild.Binaries',
+              name: 'Quilt.PackageBuild.Executables',
               label: `Building binaries for ${project.name}`,
               async run(step) {
-                const {outputDirectory, packageBinaryNodeOptions, rollupInput} =
-                  await configuration({
-                    packageBuildModule: 'esmodules',
-                  });
+                const {
+                  outputDirectory,
+                  packageExecutableNodeOptions,
+                  rollupInput,
+                } = await configuration({
+                  packageBuildModule: 'esmodules',
+                });
 
                 const [resolvedOutputDirectory, inputs, nodeOptions] =
                   await Promise.all([
                     outputDirectory.run(project.fs.buildPath()),
                     rollupInput!.run([]),
-                    packageBinaryNodeOptions!.run([
+                    packageExecutableNodeOptions!.run([
                       // Try to normalize more places where you can use ESModules
                       '--experimental-vm-modules',
                     ]),
                   ]);
 
                 await Promise.all(
-                  Object.entries(binaries).map(([name, source]) =>
-                    writeBinary({name, source}),
+                  Object.entries(executables).map(([name, source]) =>
+                    writeExecutable({name, source}),
                   ),
                 );
 
-                async function writeBinary({
+                async function writeExecutable({
                   name,
                   source,
                 }: {
@@ -434,7 +441,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                     relativeFromSourceRoot,
                   );
 
-                  const binaryFile = project.fs.resolvePath(
+                  const executableFile = project.fs.resolvePath(
                     'bin',
                     // Node needs a .mjs extension to parse the file as ESM
                     name.endsWith('.mjs') ? name : `${name}.mjs`,
@@ -442,8 +449,8 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
 
                   const originalExtension = extname(source);
 
-                  const relativeFromBinary = normalizedRelative(
-                    dirname(binaryFile),
+                  const relativeFromExecutable = normalizedRelative(
+                    dirname(executableFile),
                     `${
                       originalExtension
                         ? destinationInOutput.replace(/\.\w+$/, '')
@@ -452,18 +459,18 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                   );
 
                   await project.fs.write(
-                    binaryFile,
+                    executableFile,
                     [
                       `#!/usr/bin/env node${
                         nodeOptions.length > 0
                           ? ` ${nodeOptions.join(' ')}`
                           : ''
                       }`,
-                      `import ${JSON.stringify(relativeFromBinary)};`,
+                      `import ${JSON.stringify(relativeFromExecutable)};`,
                     ].join('\n'),
                   );
 
-                  await step.exec('chmod', ['+x', binaryFile]);
+                  await step.exec('chmod', ['+x', executableFile]);
                 }
               },
             }),

@@ -3,7 +3,9 @@ import {createProject, createProjectPlugin, quiltPackage} from '@quilted/craft';
 export default createProject((project) => {
   project.use(
     quiltPackage({
-      binaries: {'create-quilt': './source/index.ts'},
+      executable: {
+        'create-quilt': './source/index.ts',
+      },
       build: {bundle: true},
     }),
     createProjectPlugin({

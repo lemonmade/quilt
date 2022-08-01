@@ -26,7 +26,7 @@ npm create @quilted app # for npm
 yarn create @quilted app # for yarn
 ```
 
-This command will install [`@quilted/create`](../packages/create) and run its included binary. This binary will ask you some questions about the app:
+This command will install [`@quilted/create`](../packages/create) and run its included executable. This executable will ask you some questions about the app:
 
 - What **name** you want to use for the app
 - The [**template**](#app-templates) you want to start from for your new app
@@ -59,7 +59,7 @@ npm create @quilted package # for npm
 yarn create @quilted package # for yarn
 ```
 
-This command will install [`@quilted/create`](../packages/create) and run its included binary. This binary will ask you some questions about the package:
+This command will install [`@quilted/create`](../packages/create) and run its included executable. This executable will ask you some questions about the package:
 
 - What **name** you want to use for the package. If you intend to publish this package with a [scoped name](https://docs.npmjs.com/about-scopes), you should include the scope when asked for the name.
 - The **directory** you want to use to contain your new package
