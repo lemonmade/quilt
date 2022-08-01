@@ -85,7 +85,7 @@ Quilt supports apps, packages, and services, but does not support them all equal
 
 ### Apps
 
-Quilt’s focus is on building web applications, so its support for apps is the most extensive. Every feature of Quilt, including [i18n](./features/i18n.md), [workers](./features/workers.md), and [async loading](./features/async.md), are fully supported in applications.
+Quilt’s focus is on building web applications, so its support for apps is the most extensive. Every feature of Quilt, including [i18n](../features/i18n.md), [workers](../features/workers.md), and [async loading](../features/async.md), are fully supported in applications.
 
 Most other documentation in this repo is focused on using Quilt for apps. There are also extensive guides on the [different build strategies available for Quilt apps](./features/builds/apps) and [Quilt’s application development mode](./features/developing/apps.md). All of our [deployment guides](./deploy) also provide detailed instructions for deploying applications to various hosting platforms.
 
