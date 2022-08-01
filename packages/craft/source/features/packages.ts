@@ -213,6 +213,9 @@ export interface BuildOptions {
    * be changed to `false` before release. It’s only `true` right now
    * because Jest’s support for ES modules is not totally ready for
    * prime-time.
+   *
+   * @default true
+   * @see https://github.com/lemonmade/quilt/blob/main/documentation/projects/packages/builds.md#commonjs-build
    */
   commonjs?: boolean | {exports?: 'named' | 'default'};
 }

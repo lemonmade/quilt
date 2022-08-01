@@ -332,10 +332,25 @@ export function quiltService({
 // TODO
 export interface PackageOptions
   extends Pick<PackageBaseOptions, 'entries' | 'executable'> {
-  build?: boolean | {bundle?: RollupNodeOptions['bundle']};
+  build?:
+    | boolean
+    | ({
+        bundle?: RollupNodeOptions['bundle'];
+
+        /**
+         * Whether to build an “ESNext” version of your package. This version
+         * will do minimal transpilation, keeping the resulting builds extremely
+         * close to your source code. Quilt apps and services that depend on your
+         * package will then re-compile the ESNext outputs to match the language
+         * features in the runtime environment they are targeting.
+         *
+         * @default true
+         * @see https://github.com/lemonmade/quilt/blob/main/documentation/projects/packages/builds.md#esnext-build
+         */
+        esnext?: boolean;
+      } & Pick<PackageBuildOptions, 'commonjs'>);
   react?: boolean;
   graphql?: boolean;
-  commonjs?: PackageBuildOptions['commonjs'];
 }
 
 /**
@@ -348,11 +363,22 @@ export function quiltPackage({
   build = true,
   react: useReact = true,
   graphql: useGraphQL = false,
-  commonjs,
 }: PackageOptions = {}) {
   return createProjectPlugin({
     name: 'Quilt.Package',
     async create({use}) {
+      let buildOption: PackageBuildOptions | undefined;
+      let bundleOption: RollupNodeOptions['bundle'] | undefined;
+      let buildESNext = true;
+
+      if (typeof build === 'object') {
+        const {bundle, esnext, ...rest} = build;
+
+        buildOption = rest;
+        bundleOption = build.bundle;
+        buildESNext = esnext ?? buildESNext;
+      }
+
       use(
         // Basic tool configuration
         rollupHooks(),
@@ -366,13 +392,11 @@ export function quiltPackage({
         useReact && react(),
         useReact && reactTesting(),
         useGraphQL && graphql(),
-        rollupNode({
-          bundle: typeof build === 'boolean' ? undefined : build.bundle,
-        }),
+        rollupNode({bundle: bundleOption}),
         packageBase({entries, executable}),
         // Builds
-        build && packageBuild({commonjs}),
-        build && esnextBuild(),
+        build && packageBuild(buildOption),
+        buildESNext && esnextBuild(),
         targets(),
       );
     },
