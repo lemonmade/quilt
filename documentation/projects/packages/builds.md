@@ -70,7 +70,7 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 }
 ```
 
-> **Note:** because the native JavaScript module format is the default version preferred by this package, we recommend setting the [`"type"` field in your `package.json` to `"module"`](TODO):
+> **Note:** because the native JavaScript module format is the default version preferred by this package, we recommend setting the [`"type"` field in your `package.json` to `"module"`](https://nodejs.org/api/packages.html#type):
 >
 > ```json
 > {
@@ -83,7 +83,7 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 
 When creating the ESModule and CommonJS builds, Quilt will “transpile” your code to remove references to language features that are not supported by your minimum supported runtime versions. The following logic is used to determine the minimum supported runtime version for your package:
 
-- If you explicitly list browsers as a [supported runtime](./README.md#runtimes) for your package, or you do not explicitly set any supported runtimes, Quilt will attempt to read the [browserslist configuration](https://github.com/browserslist/browserslist) for the package. The easiest way to set this supported browser list is to include the [`"browserslist" key in your `package.json`](https://github.com/browserslist/browserslist#packagejson) (you can extend the [`@quilted/browserslist/defaults`](../../../packages/browserslist-config) shared configuration if you want a good, wide browser support matrix):
+- If you explicitly list browsers as a [supported runtime](./README.md#runtimes) for your package, or you do not explicitly set any supported runtimes, Quilt will attempt to read the [browserslist configuration](https://github.com/browserslist/browserslist) for the package. The easiest way to set this supported browser list is to include the [`"browserslist"` key in your `package.json`](https://github.com/browserslist/browserslist#packagejson) (you can extend the [`@quilted/browserslist/defaults`](../../../packages/browserslist-config) shared configuration if you want a good, wide browser support matrix):
 
   ```json
   {
@@ -298,7 +298,7 @@ For TypeScript consumers to use your package, you need to provide type definitio
 
 For each project in your workspace, you will also need to configure how and where TypeScript will produce type definitions. At the root of each project written in TypeScript, you should have a `tsconfig.json`. We recommend including at least the following options for projects that use Quilt:
 
-```json
+```jsonc
 {
   // Tells TypeScript where to look for your TypeScript source files. If you want to structure
   // your package differently (for example, you put your source files in a `src` instead), update
@@ -339,7 +339,7 @@ For each project in your workspace, you will also need to configure how and wher
 
 The [`@quilted/typescript` package](../../../packages/typescript) provides a collection of shared TypeScript configuration files you can use to automatically enable most of this configuration. The configuration above can be achieved more simply by relying on the `@quilted/typescript/project.json` shared configuration:
 
-```json
+```jsonc
 {
   "extends": "@quilted/typescript/project.json",
   // You must still set the `include`, `rootDir`, and `outDir` options. The shared configuration
@@ -426,7 +426,7 @@ To expose these executable files to consuming projects, you will need to list th
 
 The example below shows a complete example of a package’s configuration files. It references all of Quilt’s build outputs, and like other examples in this guide, includes both a “root” entry (`"."`) and a `"testing"` entry:
 
-```json
+```jsonc
 // package.json
 {
   "name": "my-package",
@@ -458,7 +458,7 @@ The example below shows a complete example of a package’s configuration files.
 }
 ```
 
-```json
+```jsonc
 // tsconfig.json
 {
   "extends": "@quilted/typescript/project.json",
@@ -505,7 +505,7 @@ Native JavaScript modules are necessary for tree shaking, as they can be statica
 
 By default, all of Quilt’s builds will preserve your source module structure. This is important because most JavaScript bundlers can only remove unused code on module boundaries; few are able to remove unused code _within_ a particular module.
 
-To get tree shaking working optimally in most bundlers, you will need to add the [`"sideEffects"` field](TODO) to your `package.json`. The simplest configuration of this field is to set it to `false`, which tells bundlers that all files are safe to remove from consuming applications, if they are not otherwise used:
+To get tree shaking working optimally in most bundlers, you will need to add the [`"sideEffects"` field](https://webpack.js.org/guides/tree-shaking/) to your `package.json`. The simplest configuration of this field is to set it to `false`, which tells bundlers that all files are safe to remove from consuming applications, if they are not otherwise used:
 
 ```json
 {
@@ -545,7 +545,7 @@ export default createProject((project) => {
 });
 ```
 
-This `bundle` option also accepts a more complex structure that lets you deeply customize which dependencies are and aren’t bundled. For more details, see the [`rollup-plugin-node-externals` plugin documentation](TODO), which is used to perform this selective bundling. Note that, because Quilt frames this option as which dependencies are bundled, you pass the opposite options as you would to `rollup-plugin-node-externals`, which frames the option in terms of which dependencies are “externalized”. So, for example, if you want to bundle only a special `my-bundled-dependency` package, you would pass the following options:
+This `bundle` option also accepts a more complex structure that lets you deeply customize which dependencies are and aren’t bundled. For more details, see the [`rollup-plugin-node-externals` plugin documentation](https://github.com/Septh/rollup-plugin-node-externals), which is used to perform this selective bundling. Note that, because Quilt frames this option as which dependencies are bundled, you pass the opposite options as you would to `rollup-plugin-node-externals`, which frames the option in terms of which dependencies are “externalized”. So, for example, if you want to bundle only a special `my-bundled-dependency` package, you would pass the following options:
 
 ```ts
 // quilt.project.ts
@@ -571,13 +571,13 @@ export default createProject((project) => {
 
 ### Source files
 
-In some guides, you will see advice to exclude your source files from the list of files that are distributed in your package. This is often done either with the [`"files"` list in `package.json`](TODO), or with a [`.npmignore` file](TODO).
+In some guides, you will see advice to exclude your source files from the list of files that are distributed in your package. This is often done either with the [`"files"` list in `package.json`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#files), or with a [`.npmignore` file](https://npm.github.io/publishing-pkgs-docs/publishing/the-npmignore-file.html).
 
 Quilt instead recommends that you **include** source files with your published package. Doing so increases the amount of code a consumer needs to download, but it ensures that go-to-definition navigates right into source code for TypeScript consumers.
 
 ### React and JSX
 
-Quilt supports packages that use JSX to author React components. Any JSX is compiled to React’s [more modern JSX transform](TODO). For example, the following source code would produce the built version below it:
+Quilt supports packages that use JSX to author React components. Any JSX is compiled to React’s [more modern JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html). For example, the following source code would produce the built version below it:
 
 ```tsx
 // source/index.tsx
@@ -595,7 +595,7 @@ export function Emphasize({children}) {
 }
 ```
 
-The `react/jsx-runtime` entry is only available in React version 17 and up. Your package should therefore list `react` as a peer dependency with a minimum version of `17.0.0`. You may also want to mark `react` as an optional peer dependency (using [`"peerDependenciesMeta"`](TODO)), since consumers may alias `react` to a different package, like [`preact`](../../technology/preact.md):
+The `react/jsx-runtime` entry is only available in React version 17 and up. Your package should therefore list `react` as a peer dependency with a minimum version of `17.0.0`. You may also want to mark `react` as an optional peer dependency (using [`"peerDependenciesMeta"`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#peerdependenciesmeta)), since consumers may alias `react` to a different package, like [`preact`](../../technology/preact.md):
 
 ```json
 {
