@@ -2,7 +2,7 @@
 
 Quilt provides a default strategy for building packages that optimizes for bundle size in consuming projects. This document describes the different parts of this build, including some changes you have to make to your package’s `package.json`.
 
-For private packages (that is, the package’s `package.json` includes [`"private": true`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private)), Quilt does not build your package. Any consumers within this repo will use the source code of the package directly, so no build outputs are needed.
+> **Note:** For private packages (that is, the package’s `package.json` includes [`"private": true`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private)), Quilt does not build your package. Any consumers within this repo will use the source code of the package directly, so no build outputs are needed. You will still need to [configure the entry files](#using-private-packages-in-a-monorepo) for your private packages, though.
 
 For public packages, Quilt creates four different sets of outputs for your project by default, based on the [entries you specify in your `package.json`](./README.md#entries):
 
@@ -11,7 +11,7 @@ For public packages, Quilt creates four different sets of outputs for your proje
 - [ESNext build](#esnext-build), which is a minimally-transformed build that Quilt will use in consuming apps and services to get the smallest possible bundle size
 - [TypeScript declarations build](#typescript-declarations-build), which includes TypeScript definition files based on your source files
 
-Quilt provides smart defaults for handling package dependencies during build, but you can also [customize the bundling behavior](#dependency-bundling) for your package to create even more optimized outputs. Quilt can also help you generate [binaries for your package](#binaries).
+Quilt provides smart defaults for handling package dependencies during build, but you can also [customize the bundling behavior](#dependency-bundling) for your package to create even more optimized outputs. Quilt can also help you generate [executable files for your package](#executable-files).
 
 ## ESModules build
 
@@ -263,13 +263,189 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 }
 ```
 
+### Disabling the ESNext build
+
+If you do not want the ESNext build, you can disable it by passing `false` for the `build.esnext` option of `quiltPackage()` in your package’s `quilt.project.ts`:
+
+```ts
+// ./packages/my-package/quilt.project.ts
+
+import {createProject, quiltPackage} from '@quilted/craft';
+
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      build: {esnext: false},
+    }),
+  );
+});
+```
+
+If you disable this build, you **should not** include the `"quilt:esnext"` conditional export in your package’s `package.json`.
+
 ## TypeScript declarations build
 
-## Dependency bundling
+For TypeScript consumers to use your package, you need to provide type definitions for your package. Unlike the other build outputs described in this document, TypeScript outputs are not generated per-project. Instead, Quilt recommends using [TypeScript project references](../../technology/typescript.md). When you run `quilt build`, Quilt knows to run the TypeScript type checker on your entire workspace (assuming you have a Quilt configuration using the [`quiltWorkspace`](../README.md#defining-your-workspace-and-projects) plugin), which will generate type definitions for all projects in the workspace.
 
-## Binaries
+For each project in your workspace, you will also need to configure how and where TypeScript will produce type definitions. At the root of each project written in TypeScript, you should have a `tsconfig.json`. We recommend including at least the following options for projects that use Quilt:
+
+```json
+{
+  // Tells TypeScript where to look for your TypeScript source files. If you want to structure
+  // your package differently (for example, you put your source files in a `src` instead), update
+  // this pattern to match where you actually keep your files.
+  // Learn more: https://www.typescriptlang.org/tsconfig#include
+  "include": ["source"],
+  "compilerOptions": {
+    // Enables TypeScript project references. These allow TypeScript to generate the type definitions
+    // for your workspace more quickly, because only projects that change need to be recompiled.
+    // Learn more: https://www.typescriptlang.org/tsconfig#composite
+    "composite": true,
+    // Tells TypeScript where to output type definitions. You can change this to any path you prefer,
+    // but the rest of the examples in this section assume you use `build/typescript`.
+    // Learn more: https://www.typescriptlang.org/tsconfig#outDir
+    "outDir": "build/typescript",
+    // Tells TypeScript the root directory of your source files, which allows it to avoid unnecessary
+    // nesting in the generated type definition files. If you keep your source files in a different
+    // directory, change this option to the relative path from the `tsconfig.json` file to your source
+    // files.
+    // Learn more: https://www.typescriptlang.org/tsconfig#rootDir
+    "rootDir": "source",
+    // Tells TypeScript to generate type definition files (files ending in `.d.ts`).
+    // Learn more: https://www.typescriptlang.org/tsconfig#declaration
+    "declaration": true,
+    // Tells TypeScript to generate source maps that link the `.d.ts` type definition files
+    // back to your source files. This allows consumers to jump to your package’s source files
+    // when inspecting its types, rather than the type definition files.
+    // Learn more: https://www.typescriptlang.org/tsconfig#declarationMap
+    "declarationMap": true,
+    // Tells TypeScript to only generate type definitions, not JavaScript (`.js`) files.
+    // Quilt uses a separate build step to generate the JavaScript outputs for your project,
+    // as described in earlier sections, so you don’t need TypeScript’s JavaScript outputs.
+    // Learn more: https://www.typescriptlang.org/tsconfig#emitDeclarationOnly
+    "emitDeclarationOnly": true
+  }
+}
+```
+
+The [`@quilted/typescript` package](../../../packages/typescript) provides a collection of shared TypeScript configuration files you can use to automatically enable most of this configuration. The configuration above can be achieved more simply by relying on the `@quilted/typescript/project.json` shared configuration:
+
+```json
+{
+  "extends": "@quilted/typescript/project.json",
+  // You must still set the `include`, `rootDir`, and `outDir` options. The shared configuration
+  // does not set these since they are relative to the root of your project, and because you may
+  // want to change the structure of your package’s source files.
+  "include": ["source"],
+  "compilerOptions": {
+    "rootDir": "source",
+    "outDir": "build/typescript"
+  }
+}
+```
+
+Once these type definition files are being created successfully (you can verify that your configuration is working as expected by running `quilt build` or [`quilt type-check`](../../cli/type-check.md) and checking the directory you specified with the `outDir` option), you need to update your `package.json` so consuming projects will see them.
+
+TypeScript recently [introduced support](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-7.html#packagejson-exports-imports-and-self-referencing) for the [`package.json` `"exports"` field](https://nodejs.org/api/packages.html#exports), but consumers with older versions of TypeScript will have issues if you only use the new `type` [export condition](https://nodejs.org/api/packages.html#conditional-exports). For now, you will need to provide two separate mappings for type definition files: one using the `exports` field, and the other using an older TypeScript feature called [`typesVersions`](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html#version-selection-with-typesversions).
+
+The following example shows a package with a “root” entry (`"."`) and a `"testing"` entry, using both TypeScript declaration mappings, in addition to all the JavaScript export conditions described in earlier sections:
+
+```json
+{
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    },
+    "./testing": {
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs",
+      "require": "./build/cjs/testing.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "typeVersions": {
+    "*": {
+      "testing": "./build/typescript/testing.d.ts"
+    }
+  }
+}
+```
+
+If you only have a “root” entrypoint, you can omit the `"typesVersions"` field. If you have more entrypoints for your package, you would include each as an additional key in the `typesVersions.*` object, like `"testing"` in the example above.
+
+## Executable files
+
+So far, we have only looked at entrypoints into your package — parts of your package that consumers can import for use in their own projects. However, a package may want to provide executable files that a developer can run directly, either as the only thing the package does or in addition to importable code. Quilt can also help you with generating these files.
+
+To get started, you will need to teach Quilt what source code in your project should be treated as an executable, and what the name of that executable will be. In an executable package’s `quilt.project.ts` file, update the `quiltProject()` plugin to include a mapping of executable modules:
+
+```ts
+// ./packages/my-package/quilt.project.ts
+
+import {createProject, quiltPackage} from '@quilted/craft';
+
+export default createProject((project) => {
+  project.use(
+    quiltPackage({
+      executable: {
+        'my-executable': './source/index.ts',
+      },
+    }),
+  );
+});
+```
+
+When you run `quilt build`, Quilt will generate an executable file for each entry in this mapping, placing the output in the `bin` directory at the root of your package. These executables will reference the [ESModules build](#esmodules-build) for your project; in order for this to work, the resulting executable files will have `.mjs` file extensions.
+
+To expose these executable files to consuming projects, you will need to list them in your [`package.json`’s `"bin"` field](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#bin):
+
+```json
+{
+  "bin": {
+    "my-executable": "./bin/my-executable.mjs"
+  }
+}
+```
 
 ## Advanced build concepts
+
+### Using `private` packages in a monorepo
+
+If you do not intend to publish a package for use in other workspaces, you should set the [`"private": true` in the package’s `package.json`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private). When you do so, Quilt will not perform any of the builds described here, since any consuming projects in the same workspace can use the source code of the package instead of compiled outputs.
+
+For other projects to find the correct source files to use for your package, you will still need to provide some module mappings in the package’s `package.json`. However, the mappings can be significantly simpler than projects that produce built outputs. The following example shows a private package with a “root” entry (`"."`) and a `"testing"` entry:
+
+```json
+{
+  "exports": {
+    ".": "./source/index.ts",
+    "./testing": "./source/testing.ts"
+  },
+  "types": "./build/typescript/index.d.ts",
+  "typeVersions": {
+    "*": {
+      "testing": "./build/typescript/testing.d.ts"
+    }
+  }
+}
+```
+
+In the example above, we’ve included the [`"typesVersions"` mapping for older TypeScript versions](). If your project only has single entry, and uses [TypeScript’s support for the `"exports"` field](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-7.html#packagejson-exports-imports-and-self-referencing), you can omit both the `"types"` and `"typesVersions"` fields.
+
+### Tree shaking
+
+### Dependency bundling
+
+Bundling some of the dependencies with your package can be useful for a few reasons:
+
+- Guarantees the version of a particular dependency is used at runtime
+- Minimizes the number of dependencies your package has, which can make it easier for consumers to install
 
 ### Source files
 
