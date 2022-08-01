@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.43
+
+### Patch Changes
+
+- [#390](https://github.com/lemonmade/quilt/pull/390) [`15cf0022`](https://github.com/lemonmade/quilt/commit/15cf00222e8109d9076b4e90c438429628c86095) Thanks [@lemonmade](https://github.com/lemonmade)! - Switch from binary => executable
+
 ## 0.4.42
 
 ### Patch Changes

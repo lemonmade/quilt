@@ -1,5 +1,17 @@
 # @quilted/craft
 
+## 0.1.148
+
+### Patch Changes
+
+- [#390](https://github.com/lemonmade/quilt/pull/390) [`15cf0022`](https://github.com/lemonmade/quilt/commit/15cf00222e8109d9076b4e90c438429628c86095) Thanks [@lemonmade](https://github.com/lemonmade)! - Update commonjs and esnext opt-outs
+
+* [#390](https://github.com/lemonmade/quilt/pull/390) [`15cf0022`](https://github.com/lemonmade/quilt/commit/15cf00222e8109d9076b4e90c438429628c86095) Thanks [@lemonmade](https://github.com/lemonmade)! - Switch from binary => executable
+
+* Updated dependencies [[`15cf0022`](https://github.com/lemonmade/quilt/commit/15cf00222e8109d9076b4e90c438429628c86095)]:
+  - @quilted/graphql@0.4.43
+  - @quilted/sewing-kit@0.2.35
+
 ## 0.1.147
 
 ### Patch Changes
