@@ -599,15 +599,21 @@ export class Builder extends EventEmitter {
 function getOptions(project: GraphQLProjectConfiguration): QuiltExtensions {
   const quiltExtensions = project.extensions.quilt ?? {};
 
+  const schema = [...(quiltExtensions.schema ?? [])];
+
+  // If we have documents, we will always generate input types, because the documents
+  // will need to import their referenced scalars and enums.
+  if (
+    quiltExtensions.documents != null &&
+    quiltExtensions.documents.length > 0 &&
+    !schema.some((outputKind) => outputKind.kind === 'inputTypes')
+  ) {
+    schema.push({kind: 'inputTypes'});
+  }
+
   return {
     ...quiltExtensions,
-    schema:
-      quiltExtensions.schema != null &&
-      quiltExtensions.schema.some(
-        (outputKind) => outputKind.kind === 'inputTypes',
-      )
-        ? quiltExtensions.schema
-        : [...(quiltExtensions.schema ?? []), {kind: 'inputTypes'}],
+    schema,
   };
 }
 
