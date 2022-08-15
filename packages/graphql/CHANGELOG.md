@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.4.44
+
+### Patch Changes
+
+- [`3e5cae74`](https://github.com/lemonmade/quilt/commit/3e5cae74ff923636cfdb371ca722b1473c617aa2) Thanks [@lemonmade](https://github.com/lemonmade)! - Only generate schema input types when needed
+
+* [`6b18de9e`](https://github.com/lemonmade/quilt/commit/6b18de9e4ade25668bc81f2f9e3dc96b1fd82615) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade @graphql-tools/schema
+
 ## 0.4.43
 
 ### Patch Changes
