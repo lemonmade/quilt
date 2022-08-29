@@ -226,7 +226,7 @@ export async function createProject() {
     );
 
     projectPackageJson.repository.directory = path.relative(
-      directory,
+      rootDirectory,
       packageDirectory,
     );
 
