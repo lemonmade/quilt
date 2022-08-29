@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.150
+
+### Patch Changes
+
+- [`a266ef28`](https://github.com/lemonmade/quilt/commit/a266ef2819ecd3e53df56f36e070c72317d113f6) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix issues with Vite and Preact
+
 ## 0.1.149
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 0.1.9
+
+### Patch Changes
+
+- [`ee630a83`](https://github.com/lemonmade/quilt/commit/ee630a832b2582a71398a720a2b0ac990eae027d) Thanks [@lemonmade](https://github.com/lemonmade)! - Export addListener utility
+
 ## 0.1.8
 
 ### Patch Changes
