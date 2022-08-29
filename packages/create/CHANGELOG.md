@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.26
+
+### Patch Changes
+
+- [`9ad07bf7`](https://github.com/lemonmade/quilt/commit/9ad07bf727208151b81030858eb65643040b994d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix package.json git.directory for packages
+
 ## 0.1.25
 
 ### Patch Changes
