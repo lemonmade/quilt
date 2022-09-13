@@ -1,5 +1,6 @@
 import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 
+import {stripIndent} from 'common-tags';
 import type {OutputOptions} from 'rollup';
 
 import {createProjectPlugin} from '../kit';
@@ -412,10 +413,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                   await Promise.all([
                     outputDirectory.run(project.fs.buildPath()),
                     rollupInput!.run([]),
-                    packageExecutableNodeOptions!.run([
-                      // Try to normalize more places where you can use ESModules
-                      '--experimental-vm-modules',
-                    ]),
+                    packageExecutableNodeOptions!.run([]),
                   ]);
 
                 await Promise.all(
@@ -458,17 +456,43 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                     }${ESM_EXTENSION}`,
                   );
 
-                  await project.fs.write(
-                    executableFile,
-                    [
-                      `#!/usr/bin/env node${
-                        nodeOptions.length > 0
-                          ? ` ${nodeOptions.join(' ')}`
-                          : ''
-                      }`,
-                      `import ${JSON.stringify(relativeFromExecutable)};`,
-                    ].join('\n'),
-                  );
+                  // Cross-platform node options override borrowed from
+                  // https://github.com/cloudflare/miniflare/blob/master/packages/miniflare/bootstrap.js#L29-L47
+                  const executableContent =
+                    nodeOptions.length > 0
+                      ? stripIndent`
+                        #!/usr/bin/env node
+
+                        import {spawn} from 'child_process';
+                        import {fileURLToPath} from 'url';
+                        import {dirname, resolve} from 'path';
+
+                        const executableFile = resolve(
+                          dirname(fileURLToPath(import.meta.url)),
+                          ${JSON.stringify(relativeFromExecutable)},
+                        );
+
+                        spawn(
+                          process.execPath,
+                          [
+                        ${nodeOptions
+                          .map((option) => `    ${JSON.stringify(option)},`)
+                          .join('\n')}
+                            ...process.execArgv,
+                            executableFile,
+                            ...process.argv.slice(2),
+                          ],
+                          {stdio: 'inherit'},
+                        ).on('exit', (code) => {
+                          process.exit(code == null ? 1 : code);
+                        });
+                      `
+                      : stripIndent`
+                        #!/usr/bin/env node
+                        import ${JSON.stringify(relativeFromExecutable)};
+                      `;
+
+                  await project.fs.write(executableFile, executableContent);
 
                   await step.exec('chmod', ['+x', executableFile]);
                 }
