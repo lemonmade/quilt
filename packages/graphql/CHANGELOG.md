@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.45
+
+### Patch Changes
+
+- [`c5d05da9`](https://github.com/lemonmade/quilt/commit/c5d05da920c329191c90fe8aa2654958ec14293f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix cross-platform node options for executables
+
 ## 0.4.44
 
 ### Patch Changes
