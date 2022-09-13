@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.151
+
+### Patch Changes
+
+- [`c5d05da9`](https://github.com/lemonmade/quilt/commit/c5d05da920c329191c90fe8aa2654958ec14293f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix cross-platform node options for executables
+
+- Updated dependencies [[`c5d05da9`](https://github.com/lemonmade/quilt/commit/c5d05da920c329191c90fe8aa2654958ec14293f)]:
+  - @quilted/graphql@0.4.45
+
 ## 0.1.150
 
 ### Patch Changes
