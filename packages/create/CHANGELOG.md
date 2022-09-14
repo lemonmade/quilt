@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.28
+
+### Patch Changes
+
+- [`bfe0ae39`](https://github.com/lemonmade/quilt/commit/bfe0ae394fbaef08482c3855e19004b8cdb0badb) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for stylelint
+
 ## 0.1.27
 
 ### Patch Changes
