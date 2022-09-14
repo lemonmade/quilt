@@ -1,0 +1,39 @@
+{
+  "name": "@quilted/stylelint-config",
+  "type": "commonjs",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt",
+    "directory": "packages/stylelint-config"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js"
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "stylelint": "^14.11.0",
+    "stylelint-config-prettier": "^9.0.0",
+    "stylelint-config-recommended": "^9.0.0",
+    "stylelint-prettier": "^2.0.0",
+    "prettier": "^2.7.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/project"
+    ],
+    "env": {
+      "node": true
+    }
+  }
+}

@@ -31,6 +31,7 @@
     "@quilted/eslint-config": "^0.1.0",
     "@quilted/prettier": "^0.2.0",
     "@quilted/quilt": "^0.5.0",
+    "@quilted/stylelint-config": "^0.1.0",
     "@quilted/testing": "^0.1.0",
     "@quilted/typescript": "^0.2.0",
     "@types/node": "^16.0.0",
@@ -49,6 +50,9 @@
     "ignorePatterns": [
       "tests/e2e/output"
     ]
+  },
+  "stylelint": {
+    "extends": "@quilted/stylelint-config"
   },
   "browserslist": [
     "extends @quilted/browserslist-config/defaults"

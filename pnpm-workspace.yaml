@@ -1,6 +1,6 @@
 packages:
-  - 'packages/*'
-  - 'integrations/*'
-  - 'examples/basic-app'
-  - 'tests/e2e'
-  - 'tests/e2e/fixtures/*'
+  - packages/*
+  - integrations/*
+  - examples/basic-app
+  - tests/e2e
+  - tests/e2e/fixtures/*

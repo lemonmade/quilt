@@ -1,8 +1,6 @@
 {
   "extends": "@quilted/typescript/workspace.json",
-  "compilerOptions": {
-    "outDir": "build/typescript/workspace"
-  },
+  "compilerOptions": {"outDir": "build/typescript/workspace"},
   "include": [
     "config/**/*.ts",
     "scripts/**/*.ts",
@@ -14,6 +12,11 @@
   ],
   "exclude": ["tests/e2e/output/**/*"],
   "references": [
+    {"path": "./integrations/aws"},
+    {"path": "./integrations/cloudflare"},
+    {"path": "./integrations/react-query"},
+    {"path": "./integrations/swr"},
+    {"path": "./packages/async"},
     {"path": "./packages/async"},
     {"path": "./packages/craft"},
     {"path": "./packages/create"},
@@ -26,10 +29,9 @@
     {"path": "./packages/performance"},
     {"path": "./packages/polyfills"},
     {"path": "./packages/quilt"},
-    {"path": "./packages/async"},
     {"path": "./packages/react"},
-    {"path": "./packages/react-dom"},
     {"path": "./packages/react-async"},
+    {"path": "./packages/react-dom"},
     {"path": "./packages/react-email"},
     {"path": "./packages/react-html"},
     {"path": "./packages/react-http"},
@@ -50,10 +52,6 @@
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
-    {"path": "./packages/workers"},
-    {"path": "./integrations/aws"},
-    {"path": "./integrations/cloudflare"},
-    {"path": "./integrations/react-query"},
-    {"path": "./integrations/swr"}
+    {"path": "./packages/workers"}
   ]
 }

@@ -32,6 +32,7 @@ import {prettier} from './tools/prettier';
 import {jest} from './tools/jest';
 import {vite} from './tools/vite';
 import {typescriptProject, typescriptWorkspace} from './tools/typescript';
+import {stylelint} from './tools/stylelint';
 
 import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
 import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
@@ -405,17 +406,28 @@ export function quiltPackage({
 
 export interface WorkspaceOptions {
   graphql?: boolean;
+  lint?: {styles?: boolean; scripts?: boolean};
 }
 
 /**
  * Configures your workspace to run ESLint, TypeScript, and Jest.
  */
-export function quiltWorkspace({graphql = true}: WorkspaceOptions = {}) {
+export function quiltWorkspace({
+  graphql = true,
+  lint: lintOptions,
+}: WorkspaceOptions = {}) {
+  const lint: Required<NonNullable<WorkspaceOptions['lint']>> = {
+    scripts: true,
+    styles: true,
+    ...lintOptions,
+  };
+
   return createWorkspacePlugin({
     name: 'Quilt.Workspace',
     async create({use}) {
       use(
-        eslint(),
+        lint.scripts && eslint(),
+        lint.styles && stylelint(),
         prettier(),
         babelWorkspaceHooks(),
         workspaceTargets(),

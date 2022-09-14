@@ -126,6 +126,13 @@
       "import": "./build/esm/tools/rollup.mjs",
       "require": "./build/cjs/tools/rollup.cjs"
     },
+    "./stylelint": {
+      "types": "./build/typescript/tools/stylelint.d.ts",
+      "quilt:source": "./source/tools/stylelint.ts",
+      "quilt:esnext": "./build/esnext/tools/stylelint.esnext",
+      "import": "./build/esm/tools/stylelint.mjs",
+      "require": "./build/cjs/tools/stylelint.cjs"
+    },
     "./targets": {
       "types": "./build/typescript/features/targets.d.ts",
       "quilt:source": "./source/features/targets.ts",
@@ -264,6 +271,7 @@
     "rollup-plugin-node-externals": "^4.1.0",
     "rollup-plugin-visualizer": "^5.6.0",
     "semver": "^7.0.0",
+    "stylelint": "^14.11.0",
     "systemjs": "^6.10.2",
     "vite": "^2.0.0"
   },
