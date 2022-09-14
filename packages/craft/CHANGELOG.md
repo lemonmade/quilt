@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.152
+
+### Patch Changes
+
+- [`bfe0ae39`](https://github.com/lemonmade/quilt/commit/bfe0ae394fbaef08482c3855e19004b8cdb0badb) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for stylelint
+
+* [`c37183a7`](https://github.com/lemonmade/quilt/commit/c37183a7591ab0a4ab4b09bccb4e37bd0687efe5) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Vite PostCSS configuration and allow nesting by default
+
 ## 0.1.151
 
 ### Patch Changes
