@@ -73,6 +73,7 @@ export function targets() {
           babelPresets,
           babelPresetEnvOptions,
           postcssPlugins,
+          postcssPresetEnvOptions,
           rollupOutputs,
         }) => {
           browserslistTargets!(async (targets) => {
@@ -208,12 +209,12 @@ export function targets() {
                 browserslistTargets!.run([]),
               ]);
 
-            return [
-              postcssPresetEnv({
-                browsers: resolvedTargets,
-              }) as any,
-              ...plugins,
-            ];
+            const defaultOptions = {browsers: resolvedTargets};
+            const options =
+              (await postcssPresetEnvOptions?.run(defaultOptions)) ??
+              defaultOptions;
+
+            return [postcssPresetEnv(options) as any, ...plugins];
           });
         },
       );
@@ -230,8 +231,9 @@ export function targets() {
           browserslistTargets,
           babelTargets,
           babelPresets,
-          postcssPlugins,
           babelPresetEnvOptions,
+          postcssPlugins,
+          postcssPresetEnvOptions,
         }) => {
           browserslistTargets!(async (targets) => {
             if (targets.length > 0) return targets;
@@ -277,12 +279,12 @@ export function targets() {
                 browserslistTargets!.run([]),
               ]);
 
-            return [
-              postcssPresetEnv({
-                browsers: resolvedTargets,
-              }) as any,
-              ...plugins,
-            ];
+            const defaultOptions = {browsers: resolvedTargets};
+            const options =
+              (await postcssPresetEnvOptions?.run(defaultOptions)) ??
+              defaultOptions;
+
+            return [postcssPresetEnv(options) as any, ...plugins];
           });
         },
       );

@@ -105,6 +105,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
       runtimes,
       postcssPlugins,
       postcssProcessOptions,
+      postcssCSSModulesOptions,
       rollupInput,
       rollupPlugins,
       rollupNodeBundle,
@@ -173,6 +174,8 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
           extract: false,
           postcssPlugins: () => postcssPlugins!.run(),
           postcssProcessOptions: () => postcssProcessOptions!.run(),
+          postcssCSSModulesOptions: (options) =>
+            postcssCSSModulesOptions!.run(options),
         }),
       );
 

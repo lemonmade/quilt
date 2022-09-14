@@ -98,6 +98,8 @@ export function appBuild({
             outputDirectory,
             postcssPlugins,
             postcssProcessOptions,
+            postcssPresetEnvOptions,
+            postcssCSSModulesOptions,
             rollupInput,
             rollupOutputs,
             rollupPlugins,
@@ -187,6 +189,14 @@ export function appBuild({
             ),
           );
 
+          postcssPresetEnvOptions?.((options) => ({
+            ...options,
+            features: {
+              ...options.features,
+              'nesting-rules': true,
+            },
+          }));
+
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
           rollupPlugins?.(async (plugins) => {
@@ -221,6 +231,8 @@ export function appBuild({
                 extract: true,
                 postcssPlugins: () => postcssPlugins!.run(),
                 postcssProcessOptions: () => postcssProcessOptions!.run(),
+                postcssCSSModulesOptions: (options) =>
+                  postcssCSSModulesOptions!.run(options),
               }),
             );
 

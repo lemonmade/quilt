@@ -195,6 +195,7 @@ export function appStatic({
             browserslistTargets,
             postcssPlugins,
             postcssProcessOptions,
+            postcssCSSModulesOptions,
             rollupInput,
             rollupPlugins,
             rollupExternals,
@@ -257,6 +258,8 @@ export function appStatic({
                 extract: false,
                 postcssPlugins: () => postcssPlugins!.run(),
                 postcssProcessOptions: () => postcssProcessOptions!.run(),
+                postcssCSSModulesOptions: (options) =>
+                  postcssCSSModulesOptions!.run(options),
               }),
             );
 

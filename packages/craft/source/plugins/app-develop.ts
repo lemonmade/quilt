@@ -86,6 +86,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             viteServerOptions,
             viteOptimizeDepsExclude,
             rollupPlugins,
+            postcssPresetEnvOptions,
             quiltAppEntry,
             quiltAppServerHost,
             quiltAppServerPort,
@@ -232,6 +233,14 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               )};
             `;
           });
+
+          postcssPresetEnvOptions?.((options) => ({
+            ...options,
+            features: {
+              ...options.features,
+              'nesting-rules': true,
+            },
+          }));
 
           viteRollupOptions?.(async (options) => {
             if (options.input) return options;

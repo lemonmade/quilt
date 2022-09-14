@@ -5,12 +5,16 @@ import type {
   ProcessOptions as PostCSSProcessOptions,
   SourceMap,
 } from 'postcss';
+import type {PostCSSModulesOptions} from '../../tools/postcss';
 
 export interface Options {
   minify?: boolean;
   extract?: boolean;
   postcssPlugins: () => Promise<PostCSSPlugin[]>;
   postcssProcessOptions: () => Promise<PostCSSProcessOptions>;
+  postcssCSSModulesOptions: (
+    initial: PostCSSModulesOptions,
+  ) => Promise<PostCSSModulesOptions>;
 }
 
 const CSS_REGEX = /\.css$/;
@@ -90,7 +94,10 @@ export function cssRollupPlugin({
 async function transformCss(
   code: string,
   id: string,
-  options: Pick<Options, 'postcssPlugins' | 'postcssProcessOptions'> & {
+  options: Pick<
+    Options,
+    'postcssPlugins' | 'postcssProcessOptions' | 'postcssCSSModulesOptions'
+  > & {
     extract: boolean;
   },
 ): Promise<{
@@ -118,10 +125,14 @@ async function transformCss(
   const plugins = [...postcssPlugins];
 
   if (isCssModule) {
+    const cssModulesOptions = await options.postcssCSSModulesOptions({});
+
     plugins.push(
       postcssModules({
-        getJSON(_, parsedModules) {
+        ...cssModulesOptions,
+        getJSON(filename, parsedModules, ...rest) {
           modules = parsedModules;
+          return cssModulesOptions.getJSON?.(filename, parsedModules, ...rest);
         },
       }),
     );

@@ -164,6 +164,9 @@ export async function createViteConfig(
     viteSsrNoExternals,
     viteSsrExternals,
     viteServerOptions,
+    postcssPlugins,
+    postcssProcessOptions,
+    postcssCSSModulesOptions,
   }: ResolvedDevelopProjectConfigurationHooks,
 ) {
   const baseExtensions = await extensions.run([
@@ -187,6 +190,9 @@ export async function createViteConfig(
     rollupOptions,
     noExternals,
     externals,
+    cssModulesOptions,
+    cssPlugins,
+    cssProcessOptions,
   ] = await Promise.all([
     vitePlugins!.run([]),
     vitePort!.run(undefined),
@@ -207,6 +213,9 @@ export async function createViteConfig(
     viteRollupOptions!.run({}),
     viteSsrNoExternals!.run([]),
     viteSsrExternals!.run([]),
+    postcssCSSModulesOptions!.run({}),
+    postcssPlugins!.run(),
+    postcssProcessOptions!.run(),
   ]);
 
   const serverOptions = await viteServerOptions!.run({
@@ -240,6 +249,13 @@ export async function createViteConfig(
     optimizeDeps: {
       include: optimizeDepsInclude,
       exclude: optimizeDepsExclude,
+    },
+    css: {
+      modules: cssModulesOptions as any,
+      postcss: {
+        ...cssProcessOptions,
+        plugins: cssPlugins as any,
+      },
     },
     plugins,
   });
