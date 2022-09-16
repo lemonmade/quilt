@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.153
+
+### Patch Changes
+
+- [`5b2789b7`](https://github.com/lemonmade/quilt/commit/5b2789b78d8f9a9c0f43ddf974a3d7777bfd496c) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `quilt run stylelint` command
+
+* [`d5fd7f67`](https://github.com/lemonmade/quilt/commit/d5fd7f67a6aa67ca9d776e1ada2a17c4febb11cf) Thanks [@lemonmade](https://github.com/lemonmade)! - More modern development browsers
+
 ## 0.1.152
 
 ### Patch Changes
