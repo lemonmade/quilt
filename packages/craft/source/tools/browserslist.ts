@@ -142,7 +142,12 @@ export function browserslist() {
           }
 
           if (useBrowserTarget) {
-            targets.push('last 1 major version');
+            // We expect developers to use a recent version of a browser with great developer tools
+            targets.push(
+              'last 1 chrome version',
+              'last 1 safari version',
+              'last 1 firefox version',
+            );
           }
 
           return targets;
