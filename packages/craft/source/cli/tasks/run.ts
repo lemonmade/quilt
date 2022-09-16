@@ -20,11 +20,13 @@ import type {JestProjectConfig} from '../../tools/jest';
 const VALID_TOOLS = new Set([
   'prettier',
   'eslint',
+  'stylelint',
   'tsc',
   'typescript',
   'jest',
 ]);
 
+const DEFAULT_STYLELINT_EXTENSIONS = ['.css'];
 const DEFAULT_ESLINT_EXTENSIONS = ['.mjs', '.cjs', '.js'];
 export const DEFAULT_PRETTIER_EXTENSIONS = [
   '.mjs',
@@ -241,6 +243,106 @@ export async function run(argv: string[]) {
             ...(extensions
               ? extensions.map((ext) => ['--ext', ext]).flat()
               : []),
+          ],
+          {
+            stdio: 'inherit',
+            env: {
+              ...process.env,
+              FORCE_COLOR: '1',
+            },
+          },
+        );
+
+        await runChild(child);
+        break;
+      }
+      case 'stylelint': {
+        const {
+          '--fix': explicitFix,
+          '--ext': explicitExtensions,
+          '--no-cache': explicitNoCache,
+          '--cache': explicitCache,
+          '--cache-location': explicitCacheLocation,
+          '--max-warnings': explicitMaxWarnings,
+          _: otherArgs,
+        } = arg(
+          {
+            '--fix': Boolean,
+            '--ext': [String],
+            '--no-cache': Boolean,
+            '--cache': Boolean,
+            '--cache-location': String,
+            '--max-warnings': Number,
+          },
+          {argv: args, permissive: true, stopAtPositional: false},
+        );
+
+        const shouldPassthroughCommand =
+          Boolean(otherArgs[0]) &&
+          new Set(['-v', '--version', '-h', '--help']).has(otherArgs[0]!);
+
+        if (shouldPassthroughCommand) {
+          const child = spawn(
+            getNodeExecutable('stylelint', import.meta.url),
+            otherArgs,
+            {
+              stdio: 'inherit',
+              env: {...process.env, FORCE_COLOR: '1'},
+            },
+          );
+
+          await runChild(child);
+          break;
+        }
+
+        const {plugins, workspace} = await loadWorkspace(process.cwd());
+        const {configurationForWorkspace} = await loadPluginsForTask(
+          Task.Lint,
+          {
+            ui,
+            filter: createFilter(),
+            plugins,
+            workspace,
+            options: {fix: explicitFix ?? false},
+            coreHooksForProject: () => ({}),
+            coreHooksForWorkspace: () => ({}),
+          },
+        );
+
+        const {stylelintExtensions} = await configurationForWorkspace();
+        const [extensions] = await Promise.all([
+          explicitExtensions ??
+            stylelintExtensions?.run(DEFAULT_STYLELINT_EXTENSIONS) ??
+            DEFAULT_STYLELINT_EXTENSIONS,
+        ]);
+
+        const hasExplicitTarget =
+          Boolean(otherArgs[0]) && !otherArgs[0]!.startsWith('-');
+
+        const child = spawn(
+          getNodeExecutable('stylelint', import.meta.url, workspace.root),
+          [
+            ...(hasExplicitTarget
+              ? otherArgs
+              : [
+                  `**/*.${
+                    extensions.length === 1
+                      ? stripLeadingDot(extensions[0]!)
+                      : extensions.map(stripLeadingDot).join(',')
+                  }`,
+                  ...otherArgs,
+                ]),
+            '--max-warnings',
+            explicitMaxWarnings ? String(explicitMaxWarnings) : '0',
+            ...(explicitCache ?? !explicitNoCache
+              ? [
+                  '--cache',
+                  '--cache-location',
+                  explicitCacheLocation ??
+                    workspace.fs.temporaryPath('stylelint/cache'),
+                ]
+              : []),
+            ...(explicitFix ?? false ? ['--fix'] : []),
           ],
           {
             stdio: 'inherit',
