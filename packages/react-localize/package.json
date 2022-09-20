@@ -2,7 +2,7 @@
   "name": "@quilted/react-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
