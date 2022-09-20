@@ -114,7 +114,10 @@ export {
 export type {NavigateTo, RouteDefinition} from '@quilted/react-router';
 export {useCookie, useCookies, CookieContext} from '@quilted/react-http';
 export type {PropsWithChildren} from '@quilted/useful-react-types';
-export {createUseContextHook} from '@quilted/react-utilities';
+export {
+  createUseContextHook,
+  createOptionalContext,
+} from '@quilted/react-utilities';
 export type {UseContextHook} from '@quilted/react-utilities';
 
 export {AppContext} from './AppContext';

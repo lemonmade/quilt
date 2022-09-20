@@ -1,10 +1,14 @@
-import {useContext} from 'react';
+import {useContext, createContext} from 'react';
 import type {Context} from 'react';
 
 export interface UseContextHook<T> {
   <Required extends boolean = true>(options?: {
     required?: Required;
   }): Required extends true ? NonNullable<T> : NonNullable<T> | undefined;
+}
+
+export function createOptionalContext<T>() {
+  return createContext<T | undefined>(undefined);
 }
 
 export function createUseContextHook<T>(

@@ -1,10 +1,8 @@
-import {createContext} from 'react';
 import type {PropsWithChildren} from 'react';
 import type {GraphQLFetch} from '@quilted/graphql';
+import {createOptionalContext} from '@quilted/react-utilities';
 
-export const GraphQLFetchContext = createContext<GraphQLFetch | undefined>(
-  undefined,
-);
+export const GraphQLFetchContext = createOptionalContext<GraphQLFetch>();
 
 export interface Props {
   fetch: GraphQLFetch;

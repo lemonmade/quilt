@@ -1,6 +1,6 @@
-import {createContext} from 'react';
+import {createOptionalContext} from '@quilted/react-utilities';
 
 import type {ServerRenderManager} from './manager';
 
 export const ServerRenderManagerContext =
-  createContext<ServerRenderManager | null>(null);
+  createOptionalContext<ServerRenderManager>();
