@@ -1,5 +1,11 @@
 # @quilted/react-utilities
 
+## 0.1.5
+
+### Patch Changes
+
+- [`51482122`](https://github.com/lemonmade/quilt/commit/514821223b4d8eb9c5289265c7cd2b4ef0b2e8b3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add a utility for creating optional context
+
 ## 0.1.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/react-router
 
+## 0.3.47
+
+### Patch Changes
+
+- [`7e8396a0`](https://github.com/lemonmade/quilt/commit/7e8396a0fa550c52eb45216cb7c2477c97b89c91) Thanks [@lemonmade](https://github.com/lemonmade)! - Make Link a forwardRef component
+
 ## 0.3.46
 
 ### Patch Changes
