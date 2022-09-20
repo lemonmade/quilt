@@ -1,3 +1,4 @@
+import {forwardRef} from 'react';
 import type {MouseEvent, DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
 import type {NavigateTo} from '@quilted/routing';
 
@@ -15,13 +16,10 @@ interface Props
   external?: boolean;
 }
 
-export function Link({
-  children,
-  to,
-  onClick,
-  external: explicitlyExternal = false,
-  ...rest
-}: Props) {
+export const Link = forwardRef<HTMLAnchorElement, Props>(function Link(
+  {children, to, onClick, external: explicitlyExternal = false, ...rest},
+  ref,
+) {
   const router = useRouter();
   const currentUrl = useCurrentUrl();
   const {url, external} = router.resolve(to);
@@ -50,8 +48,10 @@ export function Link({
       : url.href;
 
   return (
-    <a href={href} onClick={handleClick} {...rest}>
+    <a ref={ref} href={href} onClick={handleClick} {...rest}>
       {children}
     </a>
   );
-}
+});
+
+Link.displayName = 'Link';
