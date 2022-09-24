@@ -33,7 +33,9 @@ export interface Emitter<Events = {}> {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export function createEmitter<Events = {}>(): Emitter<Events> {
+export function createEmitter<Events = {}>(
+  internal?: Emitter<EmitterInternalEvents<Events>>,
+): Emitter<Events> {
   const handlerMap = new Map<keyof Events, Set<any>>();
 
   return {
@@ -73,7 +75,11 @@ export function createEmitter<Events = {}>(): Emitter<Events> {
 
     const remove = () => {
       signalAbort?.abort();
-      handlers!.delete(normalizedHandler);
+
+      if (handlers == null) return;
+      handlers.delete(normalizedHandler);
+      internal?.emit('remove', {event, handler: handler as any, all: handlers});
+      if (handlers!.size === 0) handlerMap.delete(event);
     };
 
     const normalizedHandler = once
@@ -91,6 +97,39 @@ export function createEmitter<Events = {}>(): Emitter<Events> {
       handlerMap.set(event, handlers);
     }
 
+    internal?.emit('add', {event, handler: handler as any, all: handlers});
+
     signal?.addEventListener('abort', remove, {signal: signalAbort!.signal});
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export interface EmitterInternalEvents<Events = {}> {
+  add: {
+    event: keyof Events;
+    handler: EmitterHandler<unknown>;
+    all: Set<EmitterHandler<unknown>>;
+  };
+  remove: {
+    event: keyof Events;
+    handler: EmitterHandler<unknown>;
+    all: Set<EmitterHandler<unknown>>;
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export interface EmitterWithInternals<Events = {}> extends Emitter<Events> {
+  readonly internal: Emitter<EmitterInternalEvents<Events>>;
+}
+
+export function createEmitterWithInternals<
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  Events = {},
+>(): EmitterWithInternals<Events> {
+  const internal = createEmitter<EmitterInternalEvents<Events>>();
+  const emitter = createEmitter(internal);
+
+  (emitter as any).internal = internal;
+
+  return emitter as any;
 }

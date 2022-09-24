@@ -2,9 +2,14 @@ export {on} from './on';
 export {once} from './once';
 export {AbortError, NestedAbortController} from './abort';
 export type {AbortBehavior} from './abort';
-export {createEmitter} from './emitter';
 export {addListener} from './listeners';
-export type {Emitter, EmitterHandler} from './emitter';
+export {createEmitter, createEmitterWithInternals} from './emitter';
+export type {
+  Emitter,
+  EmitterHandler,
+  EmitterInternalEvents,
+  EmitterWithInternals,
+} from './emitter';
 export type {
   EventTarget,
   EventTargetOn,
