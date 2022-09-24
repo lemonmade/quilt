@@ -27,7 +27,9 @@
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
-  "dependencies": {},
+  "dependencies": {
+    "@quilted/useful-react-types": "^0.1.10"
+  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "react": ">=17.0.0 <18.0.0"
