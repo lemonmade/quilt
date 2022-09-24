@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 0.1.10
+
+### Patch Changes
+
+- [`a419953a`](https://github.com/lemonmade/quilt/commit/a419953aff8c955aa8ca7ef2923869f051c3f24d) Thanks [@lemonmade](https://github.com/lemonmade)! - Add internal events for emitter
+
 ## 0.1.9
 
 ### Patch Changes
