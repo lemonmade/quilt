@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.155
+
+### Patch Changes
+
+- [`ac1e08de`](https://github.com/lemonmade/quilt/commit/ac1e08de022852ac0fe6f5331ea58066e375015d) Thanks [@lemonmade](https://github.com/lemonmade)! - Put all polyfills in the right bundle
+
 ## 0.1.154
 
 ### Patch Changes
