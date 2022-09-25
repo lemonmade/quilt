@@ -1,5 +1,11 @@
 # @quilted/react-utilities
 
+## 0.1.6
+
+### Patch Changes
+
+- [`fdb89f80`](https://github.com/lemonmade/quilt/commit/fdb89f8049ef48e774d310d37ab37815fea735b3) Thanks [@lemonmade](https://github.com/lemonmade)! - Export react-types from react-utilities
+
 ## 0.1.5
 
 ### Patch Changes

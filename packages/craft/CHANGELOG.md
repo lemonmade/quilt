@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.154
+
+### Patch Changes
+
+- [`4fe2460f`](https://github.com/lemonmade/quilt/commit/4fe2460f1320bb0707c13ce820b34c5262c42ed8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix app build outputs when framework code imports from @babel/runtime
+
 ## 0.1.153
 
 ### Patch Changes
