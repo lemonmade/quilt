@@ -400,7 +400,15 @@ const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
   // TODO I should turn this into an allowlist
   /node_modules[/]@quilted[/](?!react-query|swr)/,
 ];
-const POLYFILL_TEST_STRINGS = ['/node_modules/core-js/'];
+
+const POLYFILL_TEST_STRINGS = [
+  '/node_modules/@quilted/polyfills/',
+  '/node_modules/core-js/',
+  '/node_modules/whatwg-fetch/',
+  '/node_modules/regenerator-runtime/',
+  '/node_modules/abort-controller/',
+];
+
 const UTILITY_TEST_STRINGS = [
   '\x00commonjsHelpers.js',
   '/node_modules/@babel/runtime/',
