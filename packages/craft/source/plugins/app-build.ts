@@ -401,7 +401,10 @@ const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
   /node_modules[/]@quilted[/](?!react-query|swr)/,
 ];
 const POLYFILL_TEST_STRINGS = ['/node_modules/core-js/'];
-const COMMONJS_HELPER_MODULE = '\x00commonjsHelpers.js';
+const UTILITY_TEST_STRINGS = [
+  '\x00commonjsHelpers.js',
+  '/node_modules/@babel/runtime/',
+];
 
 // When building from source, quilt packages are not in node_modules,
 // so we instead add their repo paths to the list of framework test strings.
@@ -420,7 +423,11 @@ function createManualChunksSorter(): GetManualChunk {
   const cache = new Map<string, ImportMetadata>();
 
   return (id, {getModuleInfo}) => {
-    if (id === COMMONJS_HELPER_MODULE) return UTILITIES_CHUNK_NAME;
+    if (id.endsWith('.css')) return;
+
+    if (UTILITY_TEST_STRINGS.some((test) => id.includes(test))) {
+      return UTILITIES_CHUNK_NAME;
+    }
 
     if (
       !id.includes('node_modules') &&
@@ -430,8 +437,6 @@ function createManualChunksSorter(): GetManualChunk {
     ) {
       return;
     }
-
-    if (id.endsWith('.css')) return;
 
     const importMetadata = getImportMetadata(id, getModuleInfo, cache);
 
