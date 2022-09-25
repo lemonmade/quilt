@@ -6,6 +6,10 @@ on:
     paths:
       ['packages/*/source/**', 'packages/*/package.json', '!*.test.*', '!*.md']
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   remind:
     name: Changeset Reminder
