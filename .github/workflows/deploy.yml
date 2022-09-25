@@ -9,9 +9,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: CI
-    uses: ./.github/workflows/ci.yml
+  checks:
+    name: Checks 📝
+    uses: ./.github/workflows/checks.yml
 
   deploy:
     name: Deploy 🚀
