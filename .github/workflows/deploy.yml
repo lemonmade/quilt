@@ -15,7 +15,7 @@ jobs:
 
   deploy:
     name: Deploy 🚀
-    needs: ci
+    needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
