@@ -1,4 +1,4 @@
-import {h, render} from 'preact';
+import {h, render, options} from 'preact';
 import type {VNode, ComponentChild, Component} from 'preact';
 import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
@@ -58,8 +58,32 @@ function createNodeFromComponentChild(
   return child?.toString() as any;
 }
 
+// Check that we have a native DOM node and not a custom element
+function isDomVNode(vnode: VNode) {
+  return typeof vnode.type === "string" && vnode.type.indexOf("-") === -1
+}
+
+// Preact may modify property names and assign a new props object when
+// preact/compat is used. This hook stores the original props object so
+// that we have the original casing.
+const originalProps = new WeakMap<VNode, object>();
+const oldVNodeHook = options.vnode;
+options.vnode = (vnode) => {
+  if (isDomVNode(vnode)) {
+    originalProps.set(vnode, vnode.props);
+  }
+  if (oldVNodeHook) oldVNodeHook(vnode)
+}
+
 function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
-  const props = {...node.props};
+  let props;
+  if (isDomVNode(node)) {
+    props = originalProps.get(node);
+    originalProps.delete(node)
+  } else {
+    props = {...node.props}
+  }
+
   const instance = getComponent(node) ?? getDOMNode(node);
   const isDom = instance instanceof HTMLElement;
   const children = toArray(getDescendants(node))
