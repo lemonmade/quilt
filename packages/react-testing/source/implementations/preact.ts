@@ -60,7 +60,7 @@ function createNodeFromComponentChild(
 
 // Check that we have a native DOM node and not a custom element
 function isDomVNode(vnode: VNode) {
-  return typeof vnode.type === "string" && !vnode.type.includes("-");
+  return typeof vnode.type === 'string' && !vnode.type.includes('-');
 }
 
 // Preact may modify property names and assign a new props object when
@@ -73,16 +73,17 @@ options.vnode = (vnode) => {
     originalProps.set(vnode, vnode.props);
   }
 
-  oldVNodeHook?.(vnode)
-}
+  oldVNodeHook?.(vnode);
+};
 
 function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
-  let props;
+  let props: object;
+
   if (isDomVNode(node)) {
-    props = originalProps.get(node);
-    originalProps.delete(node)
+    props = {...originalProps.get(node)};
+    originalProps.delete(node);
   } else {
-    props = {...node.props}
+    props = {...node.props};
   }
 
   const instance = getComponent(node) ?? getDOMNode(node);
