@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.19
+
+### Patch Changes
+
+- [`fe480d5d`](https://github.com/lemonmade/quilt/commit/fe480d5d6f27c11b9b402eef4fe9e76faf76b6a7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix casing of preact props
+
 ## 0.5.18
 
 ### Patch Changes
