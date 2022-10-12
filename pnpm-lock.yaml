@@ -487,6 +487,7 @@ importers:
       '@quilted/react-performance': ^0.1.0
       '@quilted/react-router': ^0.3.28
       '@quilted/react-server-render': ^0.3.7
+      '@quilted/react-signals': ^0.1.0
       '@quilted/react-testing': ^0.5.1
       '@quilted/react-utilities': ^0.1.0
       '@quilted/react-workers': ^0.2.12
@@ -514,6 +515,7 @@ importers:
       '@quilted/react-performance': link:../react-performance
       '@quilted/react-router': link:../react-router
       '@quilted/react-server-render': link:../react-server-render
+      '@quilted/react-signals': link:../react-signals
       '@quilted/react-testing': link:../react-testing
       '@quilted/react-utilities': link:../react-utilities
       '@quilted/react-workers': link:../react-workers
@@ -659,6 +661,21 @@ importers:
       '@quilted/react-utilities': ^0.1.0
     dependencies:
       '@quilted/react-utilities': link:../react-utilities
+
+  packages/react-signals:
+    specifiers:
+      '@preact/signals': ^1.1.0
+      '@quilted/testing': ^0.1.0
+      '@types/react': ^17.0.0
+      preact: ^10.7.0
+      react: npm:@quilted/react@^17.0.0
+    dependencies:
+      '@preact/signals': 1.1.1_preact@10.7.2
+      '@types/react': 17.0.45
+      preact: 10.7.2
+    devDependencies:
+      '@quilted/testing': link:../testing
+      react: link:../react
 
   packages/react-testing:
     specifiers:
@@ -3399,6 +3416,19 @@ packages:
       pvtsutils: 1.3.2
       tslib: 2.4.0
       webcrypto-core: 1.7.5
+    dev: false
+
+  /@preact/signals-core/1.2.1:
+    resolution: {integrity: sha512-aqzRMNFU1hoQyP4Kb1ldJrUTCnA9vqPDa7qHEQzHJ3upnBOcC2pjmvjAuTqGuY4AVTtUkCQV0FvOCuIQQ2hSdA==}
+    dev: false
+
+  /@preact/signals/1.1.1_preact@10.7.2:
+    resolution: {integrity: sha512-I1DhYo2d1t9qDkEq1jYDVTQdBGmo4NlqatNEtulsS/87kVdwhZluP6TTDS4/5sc2h86TlBF6UA6LO+tDpIt/Gw==}
+    peerDependencies:
+      preact: 10.x
+    dependencies:
+      '@preact/signals-core': 1.2.1
+      preact: 10.7.2
     dev: false
 
   /@prefresh/babel-plugin/0.4.3:

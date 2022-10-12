@@ -24,6 +24,7 @@
     {"path": "../react-performance"},
     {"path": "../react-router"},
     {"path": "../react-server-render"},
+    {"path": "../react-signals"},
     {"path": "../react-testing"},
     {"path": "../react-utilities"},
     {"path": "../react-workers"},

@@ -1,0 +1,60 @@
+{
+  "name": "@quilted/react-signals",
+  "description": "Utilities for working with Preact signals.",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt",
+    "directory": "packages/react-signals"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "dependencies": {
+    "@types/react": "^17.0.0",
+    "@preact/signals": "^1.1.0",
+    "preact": "^10.7.0"
+  },
+  "peerDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
+    "react": "^17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/runtime": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@quilted/testing": "^0.1.0",
+    "react": "npm:@quilted/react@^17.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/project",
+      "@quilted/eslint-config/react"
+    ]
+  },
+  "browserslist": [
+    "extends @quilted/browserslist-config/defaults"
+  ]
+}

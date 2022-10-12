@@ -232,6 +232,7 @@
     "@quilted/react-performance": "^0.1.0",
     "@quilted/react-router": "^0.3.28",
     "@quilted/react-server-render": "^0.3.7",
+    "@quilted/react-signals": "^0.1.0",
     "@quilted/react-testing": "^0.5.1",
     "@quilted/react-utilities": "^0.1.0",
     "@quilted/react-workers": "^0.2.12",

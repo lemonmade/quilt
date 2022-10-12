@@ -119,5 +119,18 @@ export {
   createOptionalContext,
 } from '@quilted/react-utilities';
 export type {UseContextHook} from '@quilted/react-utilities';
+export {
+  useSignal,
+  useComputed,
+  useSignalEffect,
+  signal,
+  batch as signalBatch,
+  computed as computedSignal,
+  effect as signalEffect,
+  isSignal,
+  resolveSignalOrValue,
+  Signal,
+  type SignalOrValue,
+} from '@quilted/react-signals';
 
 export {AppContext} from './AppContext';
