@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.111
+
+### Patch Changes
+
+- [`da699190`](https://github.com/lemonmade/quilt/commit/da699190fc9b5aa082533da2ab83e2b3f6d3c5bb) Thanks [@lemonmade](https://github.com/lemonmade)! - Add signals package
+
 ## 0.5.110
 
 ### Patch Changes
