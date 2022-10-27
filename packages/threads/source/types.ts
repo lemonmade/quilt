@@ -1,4 +1,9 @@
-import type {RELEASE_METHOD, RETAIN_METHOD, RETAINED_BY} from './constants';
+import type {
+  RELEASE_METHOD,
+  RETAIN_METHOD,
+  ENCODE_METHOD,
+  RETAINED_BY,
+} from './constants';
 
 export type Thread<Target> = ThreadCallable<Target>;
 
@@ -91,6 +96,10 @@ export interface ThreadEncodingStrategyApi {
     args: any[],
     retainedBy?: Iterable<MemoryRetainer>,
   ): Promise<any>;
+}
+
+export interface ThreadEncodable {
+  [ENCODE_METHOD](api: {encode(value: any): unknown}): any;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types

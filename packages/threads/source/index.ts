@@ -2,7 +2,12 @@ export {createThread} from './thread';
 export type {ThreadOptions} from './thread';
 export {retain, release, StackFrame, isMemoryManageable} from './memory';
 export type {MemoryManageable, MemoryRetainer} from './memory';
-export {RELEASE_METHOD, RETAIN_METHOD, RETAINED_BY} from './constants';
+export {
+  RELEASE_METHOD,
+  RETAIN_METHOD,
+  RETAINED_BY,
+  ENCODE_METHOD,
+} from './constants';
 export {
   targetFromWebWorker,
   targetFromMessagePort,
@@ -20,5 +25,6 @@ export type {
   ThreadSafeReturnType,
   ThreadEncodingStrategy,
   ThreadEncodingStrategyApi,
+  ThreadEncodable,
   AnyFunction,
 } from './types';

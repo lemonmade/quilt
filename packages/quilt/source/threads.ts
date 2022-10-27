@@ -7,6 +7,7 @@ export {
   targetFromMessagePort,
   targetFromWebWorker,
   targetFromBrowserWebSocket,
+  ENCODE_METHOD,
 } from '@quilted/threads';
 export type {
   Thread,
@@ -19,6 +20,7 @@ export type {
   ThreadAbortSignal,
   ThreadEncodingStrategy,
   ThreadEncodingStrategyApi,
+  ThreadEncodable,
 } from '@quilted/threads';
 export {
   on,

@@ -1,7 +1,13 @@
-import {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD} from '../constants';
+import {
+  RETAINED_BY,
+  RETAIN_METHOD,
+  ENCODE_METHOD,
+  RELEASE_METHOD,
+} from '../constants';
 import type {
   ThreadEncodingStrategy,
   ThreadEncodingStrategyApi,
+  ThreadEncodable,
   AnyFunction,
 } from '../types';
 import type {MemoryRetainer} from '../memory';
@@ -76,6 +82,14 @@ export function createBasicEncoder(
         transferables.push(...nestedTransferables);
         return fieldValue;
       };
+
+      if (typeof (value as any)[ENCODE_METHOD] === 'function') {
+        const result = (value as ThreadEncodable)[ENCODE_METHOD]({
+          encode: encodeValue,
+        });
+
+        return [result, transferables];
+      }
 
       if (Array.isArray(value)) {
         const result = value.map((item) => encodeValue(item));
