@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.113
+
+### Patch Changes
+
+- [`717494e8`](https://github.com/lemonmade/quilt/commit/717494e8d1ff76ce2b02ce6f583373924af44153) Thanks [@lemonmade](https://github.com/lemonmade)! - Expose additional thread types and functions
+
 ## 0.5.112
 
 ### Patch Changes
