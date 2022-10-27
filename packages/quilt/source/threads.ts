@@ -1,9 +1,11 @@
 export {
   retain,
   release,
+  isMemoryManageable,
   createThread,
   createThreadAbortSignal,
   acceptThreadAbortSignal,
+  createBasicEncoder,
   targetFromMessagePort,
   targetFromWebWorker,
   targetFromBrowserWebSocket,
@@ -21,6 +23,8 @@ export type {
   ThreadEncodingStrategy,
   ThreadEncodingStrategyApi,
   ThreadEncodable,
+  MemoryManageable,
+  MemoryRetainer,
 } from '@quilted/threads';
 export {
   on,
