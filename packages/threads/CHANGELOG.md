@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 0.1.7
+
+### Patch Changes
+
+- [`163db45f`](https://github.com/lemonmade/quilt/commit/163db45f7a398a66d4ac0bac0dc5e6c3b3a62144) Thanks [@lemonmade](https://github.com/lemonmade)! - Add custom encoding method
+
 ## 0.1.6
 
 ### Patch Changes
