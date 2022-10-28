@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.29
+
+### Patch Changes
+
+- [`df633042`](https://github.com/lemonmade/quilt/commit/df633042aecadc8c978c5b492cc1d17d1d168690) Thanks [@lemonmade](https://github.com/lemonmade)! - Add explicit preact dependency
+
 ## 0.1.28
 
 ### Patch Changes
