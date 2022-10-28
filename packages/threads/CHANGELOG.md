@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 0.1.8
+
+### Patch Changes
+
+- [`86587484`](https://github.com/lemonmade/quilt/commit/86587484846906e194bba956bbd338aa00544625) Thanks [@lemonmade](https://github.com/lemonmade)! - Add basic encoder overrides
+
 ## 0.1.7
 
 ### Patch Changes
