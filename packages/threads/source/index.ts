@@ -13,7 +13,7 @@ export {
   targetFromMessagePort,
   targetFromBrowserWebSocket,
 } from './targets';
-export {createBasicEncoder} from './encoding';
+export {createBasicEncoder, createBasicEncoderWithOverrides} from './encoding';
 export {createThreadAbortSignal, acceptThreadAbortSignal} from './abort';
 export type {ThreadAbortSignal} from './abort';
 export type {

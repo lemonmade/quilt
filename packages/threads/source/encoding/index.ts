@@ -1,1 +1,1 @@
-export {createBasicEncoder} from './basic';
+export {createBasicEncoder, createBasicEncoderWithOverrides} from './basic';

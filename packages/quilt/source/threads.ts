@@ -6,6 +6,7 @@ export {
   createThreadAbortSignal,
   acceptThreadAbortSignal,
   createBasicEncoder,
+  createBasicEncoderWithOverrides,
   targetFromMessagePort,
   targetFromWebWorker,
   targetFromBrowserWebSocket,

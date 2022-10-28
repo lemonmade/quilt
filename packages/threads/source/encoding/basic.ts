@@ -16,202 +16,235 @@ import {StackFrame, isMemoryManageable} from '../memory';
 const FUNCTION = '_@f';
 const ASYNC_ITERATOR = '_@i';
 
-export function createBasicEncoder(
-  api: ThreadEncodingStrategyApi,
-): ThreadEncodingStrategy {
-  const functionsToId = new Map<AnyFunction, string>();
-  const idsToFunction = new Map<string, AnyFunction>();
-  const idsToProxy = new Map<string, AnyFunction>();
+export function createBasicEncoderWithOverrides({
+  encode: encodeOverride,
+  decode: decodeOverride,
+}: {
+  encode?(
+    value: unknown,
+    api: ThreadEncodingStrategyApi & Pick<ThreadEncodingStrategy, 'encode'>,
+  ): ReturnType<ThreadEncodingStrategy['encode']> | undefined;
+  decode?(
+    value: unknown,
+    retainedBy: Iterable<MemoryRetainer> | undefined,
+    api: ThreadEncodingStrategyApi & Pick<ThreadEncodingStrategy, 'decode'>,
+  ): unknown;
+} = {}) {
+  function createBasicEncoder(
+    api: ThreadEncodingStrategyApi,
+  ): ThreadEncodingStrategy {
+    const functionsToId = new Map<AnyFunction, string>();
+    const idsToFunction = new Map<string, AnyFunction>();
+    const idsToProxy = new Map<string, AnyFunction>();
 
-  return {
-    encode,
-    decode,
-    call(id, args) {
-      const stackFrame = new StackFrame();
-      const func = idsToFunction.get(id);
+    const encodeOverrideApi = {...api, encode};
+    const decodeOverrideApi = {...api, decode};
 
-      if (func == null) {
-        throw new Error(
-          'You attempted to call a function that was already released.',
-        );
-      }
+    return {
+      encode,
+      decode,
+      call(id, args) {
+        const stackFrame = new StackFrame();
+        const func = idsToFunction.get(id);
 
-      const retainedBy = isMemoryManageable(func)
-        ? [stackFrame, ...func[RETAINED_BY]]
-        : [stackFrame];
+        if (func == null) {
+          throw new Error(
+            'You attempted to call a function that was already released.',
+          );
+        }
 
-      const result = func(...(decode(args, retainedBy) as any[]));
+        const retainedBy = isMemoryManageable(func)
+          ? [stackFrame, ...func[RETAINED_BY]]
+          : [stackFrame];
 
-      if (result == null || typeof result.then !== 'function') {
-        stackFrame.release();
-      }
+        const result = func(...(decode(args, retainedBy) as any[]));
 
-      return (async () => {
-        try {
-          const resolved = await result;
-          return resolved;
-        } finally {
+        if (result == null || typeof result.then !== 'function') {
           stackFrame.release();
         }
-      })();
-    },
-    release(id) {
-      const func = idsToFunction.get(id);
 
-      if (func) {
-        idsToFunction.delete(id);
-        functionsToId.delete(func);
-      }
-    },
-    terminate() {
-      functionsToId.clear();
-      idsToFunction.clear();
-      idsToProxy.clear();
-    },
-  };
+        return (async () => {
+          try {
+            const resolved = await result;
+            return resolved;
+          } finally {
+            stackFrame.release();
+          }
+        })();
+      },
+      release(id) {
+        const func = idsToFunction.get(id);
 
-  function encode(value: unknown): [any, Transferable[]?] {
-    if (typeof value === 'object') {
-      if (value == null) {
-        return [value];
-      }
+        if (func) {
+          idsToFunction.delete(id);
+          functionsToId.delete(func);
+        }
+      },
+      terminate() {
+        functionsToId.clear();
+        idsToFunction.clear();
+        idsToProxy.clear();
+      },
+    };
 
-      const transferables: Transferable[] = [];
-      const encodeValue = (value: any) => {
-        const [fieldValue, nestedTransferables = []] = encode(value);
-        transferables.push(...nestedTransferables);
-        return fieldValue;
-      };
+    function encode(value: unknown): [any, Transferable[]?] {
+      const override = encodeOverride?.(value, encodeOverrideApi);
 
-      if (typeof (value as any)[ENCODE_METHOD] === 'function') {
-        const result = (value as ThreadEncodable)[ENCODE_METHOD]({
-          encode: encodeValue,
-        });
+      if (override) return override;
+
+      if (typeof value === 'object') {
+        if (value == null) {
+          return [value];
+        }
+
+        const transferables: Transferable[] = [];
+        const encodeValue = (value: any) => {
+          const [fieldValue, nestedTransferables = []] = encode(value);
+          transferables.push(...nestedTransferables);
+          return fieldValue;
+        };
+
+        if (typeof (value as any)[ENCODE_METHOD] === 'function') {
+          const result = (value as ThreadEncodable)[ENCODE_METHOD]({
+            encode: encodeValue,
+          });
+
+          return [result, transferables];
+        }
+
+        if (Array.isArray(value)) {
+          const result = value.map((item) => encodeValue(item));
+          return [result, transferables];
+        }
+
+        const result: Record<string, any> = {};
+
+        for (const key of Object.keys(value)) {
+          result[key] = encodeValue((value as any)[key]);
+        }
+
+        if (
+          (Symbol.asyncIterator in value || Symbol.iterator in value) &&
+          typeof (value as any).next === 'function'
+        ) {
+          result.next ??= encodeValue((value as any).next.bind(value));
+          result.return ??= encodeValue((value as any).return.bind(value));
+          result.throw ??= encodeValue((value as any).throw.bind(value));
+          result[ASYNC_ITERATOR] = true;
+        }
 
         return [result, transferables];
       }
 
-      if (Array.isArray(value)) {
-        const result = value.map((item) => encodeValue(item));
-        return [result, transferables];
-      }
+      if (typeof value === 'function') {
+        if (functionsToId.has(value)) {
+          const id = functionsToId.get(value)!;
+          return [{[FUNCTION]: id}];
+        }
 
-      const result: Record<string, any> = {};
+        const id = api.uuid();
 
-      for (const key of Object.keys(value)) {
-        result[key] = encodeValue((value as any)[key]);
-      }
+        functionsToId.set(value, id);
+        idsToFunction.set(id, value);
 
-      if (
-        (Symbol.asyncIterator in value || Symbol.iterator in value) &&
-        typeof (value as any).next === 'function'
-      ) {
-        result.next ??= encodeValue((value as any).next.bind(value));
-        result.return ??= encodeValue((value as any).return.bind(value));
-        result.throw ??= encodeValue((value as any).throw.bind(value));
-        result[ASYNC_ITERATOR] = true;
-      }
-
-      return [result, transferables];
-    }
-
-    if (typeof value === 'function') {
-      if (functionsToId.has(value)) {
-        const id = functionsToId.get(value)!;
         return [{[FUNCTION]: id}];
       }
 
-      const id = api.uuid();
-
-      functionsToId.set(value, id);
-      idsToFunction.set(id, value);
-
-      return [{[FUNCTION]: id}];
+      return [value];
     }
 
-    return [value];
-  }
+    function decode(
+      value: unknown,
+      retainedBy?: Iterable<MemoryRetainer>,
+    ): any {
+      const override = decodeOverride?.(value, retainedBy, decodeOverrideApi);
 
-  function decode(value: unknown, retainedBy?: Iterable<MemoryRetainer>): any {
-    if (typeof value === 'object') {
-      if (value == null) {
-        return value as any;
-      }
+      if (override) return override;
 
-      if (Array.isArray(value)) {
-        return value.map((value) => decode(value, retainedBy));
-      }
-
-      if (FUNCTION in value) {
-        const id = (value as {[FUNCTION]: string})[FUNCTION];
-
-        if (idsToProxy.has(id)) {
-          return idsToProxy.get(id)! as any;
+      if (typeof value === 'object') {
+        if (value == null) {
+          return value as any;
         }
 
-        let retainCount = 0;
-        let released = false;
-
-        const release = () => {
-          retainCount -= 1;
-
-          if (retainCount === 0) {
-            released = true;
-            idsToProxy.delete(id);
-            api.release(id);
-          }
-        };
-
-        const retain = () => {
-          retainCount += 1;
-        };
-
-        const retainers = new Set(retainedBy);
-
-        const proxy = (...args: any[]) => {
-          if (released) {
-            throw new Error(
-              'You attempted to call a function that was already released.',
-            );
-          }
-
-          if (!idsToProxy.has(id)) {
-            throw new Error(
-              'You attempted to call a function that was already revoked.',
-            );
-          }
-
-          return api.call(id, args);
-        };
-
-        Object.defineProperties(proxy, {
-          [RELEASE_METHOD]: {value: release, writable: false},
-          [RETAIN_METHOD]: {value: retain, writable: false},
-          [RETAINED_BY]: {value: retainers, writable: false},
-        });
-
-        for (const retainer of retainers) {
-          retainer.add(proxy as any);
+        if (Array.isArray(value)) {
+          return value.map((value) => decode(value, retainedBy));
         }
 
-        idsToProxy.set(id, proxy);
+        if (FUNCTION in value) {
+          const id = (value as {[FUNCTION]: string})[FUNCTION];
 
-        return proxy as any;
-      }
+          if (idsToProxy.has(id)) {
+            return idsToProxy.get(id)! as any;
+          }
 
-      const result: Record<string | symbol, any> = {};
+          let retainCount = 0;
+          let released = false;
 
-      for (const key of Object.keys(value)) {
-        if (key === ASYNC_ITERATOR) {
-          result[Symbol.asyncIterator] = () => result;
-        } else {
-          result[key] = decode((value as any)[key], retainedBy);
+          const release = () => {
+            retainCount -= 1;
+
+            if (retainCount === 0) {
+              released = true;
+              idsToProxy.delete(id);
+              api.release(id);
+            }
+          };
+
+          const retain = () => {
+            retainCount += 1;
+          };
+
+          const retainers = new Set(retainedBy);
+
+          const proxy = (...args: any[]) => {
+            if (released) {
+              throw new Error(
+                'You attempted to call a function that was already released.',
+              );
+            }
+
+            if (!idsToProxy.has(id)) {
+              throw new Error(
+                'You attempted to call a function that was already revoked.',
+              );
+            }
+
+            return api.call(id, args);
+          };
+
+          Object.defineProperties(proxy, {
+            [RELEASE_METHOD]: {value: release, writable: false},
+            [RETAIN_METHOD]: {value: retain, writable: false},
+            [RETAINED_BY]: {value: retainers, writable: false},
+          });
+
+          for (const retainer of retainers) {
+            retainer.add(proxy as any);
+          }
+
+          idsToProxy.set(id, proxy);
+
+          return proxy as any;
         }
+
+        const result: Record<string | symbol, any> = {};
+
+        for (const key of Object.keys(value)) {
+          if (key === ASYNC_ITERATOR) {
+            result[Symbol.asyncIterator] = () => result;
+          } else {
+            result[key] = decode((value as any)[key], retainedBy);
+          }
+        }
+
+        return result;
       }
 
-      return result;
+      return value;
     }
-
-    return value;
   }
+
+  return createBasicEncoder;
 }
+
+export const createBasicEncoder = createBasicEncoderWithOverrides();
