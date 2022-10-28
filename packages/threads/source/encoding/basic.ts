@@ -87,7 +87,10 @@ export function createBasicEncoderWithOverrides({
       },
     };
 
-    function encode(value: unknown): [any, Transferable[]?] {
+    function encode(
+      value: unknown,
+      context: {encoded: WeakSet<any>} = {encoded: new WeakSet()},
+    ): [any, Transferable[]?] {
       const override = encodeOverride?.(value, encodeOverrideApi);
 
       if (override) return override;
@@ -97,9 +100,15 @@ export function createBasicEncoderWithOverrides({
           return [value];
         }
 
+        if (context.encoded.has(value)) {
+          return [undefined];
+        }
+
+        context.encoded.add(value);
+
         const transferables: Transferable[] = [];
         const encodeValue = (value: any) => {
-          const [fieldValue, nestedTransferables = []] = encode(value);
+          const [fieldValue, nestedTransferables = []] = encode(value, context);
           transferables.push(...nestedTransferables);
           return fieldValue;
         };
