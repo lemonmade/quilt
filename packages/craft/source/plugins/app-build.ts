@@ -397,6 +397,8 @@ const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
   '/node_modules/react/',
   '/node_modules/js-cookie/',
   '/node_modules/@quilted/quilt/',
+  '/node_modules/@preact/signals/',
+  '/node_modules/@preact/signals-core/',
   // TODO I should turn this into an allowlist
   /node_modules[/]@quilted[/](?!react-query|swr)/,
 ];
