@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.156
+
+### Patch Changes
+
+- [`dd2d60b1`](https://github.com/lemonmade/quilt/commit/dd2d60b1ef9bf39887e3c553c482ebea5fffb7ac) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix preact signals bundling
+
 ## 0.1.155
 
 ### Patch Changes
