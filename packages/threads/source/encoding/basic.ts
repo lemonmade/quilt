@@ -93,7 +93,7 @@ export function createBasicEncoderWithOverrides({
     ): [any, Transferable[]?] {
       const override = encodeOverride?.(value, encodeOverrideApi);
 
-      if (override) return override;
+      if (override !== undefined) return override;
 
       if (typeof value === 'object') {
         if (value == null) {
@@ -168,7 +168,7 @@ export function createBasicEncoderWithOverrides({
     ): any {
       const override = decodeOverride?.(value, retainedBy, decodeOverrideApi);
 
-      if (override) return override;
+      if (override !== undefined) return override;
 
       if (typeof value === 'object') {
         if (value == null) {
