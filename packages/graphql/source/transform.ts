@@ -22,10 +22,12 @@ export interface EnhancedDocumentNode extends DocumentNode {
 
 export function cleanDocument(
   document: DocumentNode,
-  {removeUnused = true} = {},
+  {removeUnused = true}: {removeUnused?: boolean | {exclude: Set<string>}} = {},
 ): EnhancedDocumentNode {
   if (removeUnused) {
-    removeUnusedDefinitions(document);
+    removeUnusedDefinitions(document, {
+      exclude: removeUnused === true ? new Set() : removeUnused.exclude,
+    });
   }
 
   for (const definition of document.definitions) {
@@ -89,7 +91,10 @@ function operationNameForDocument(document: DocumentNode) {
   )?.name?.value;
 }
 
-function removeUnusedDefinitions(document: DocumentNode) {
+function removeUnusedDefinitions(
+  document: DocumentNode,
+  {exclude}: {exclude: Set<string>},
+) {
   const usedDefinitions = new Set<DefinitionNode>();
   const dependencies = definitionDependencies(document.definitions);
 
@@ -106,7 +111,11 @@ function removeUnusedDefinitions(document: DocumentNode) {
   };
 
   for (const definition of document.definitions) {
-    if (definition.kind !== 'FragmentDefinition') {
+    if (definition.kind === 'FragmentDefinition') {
+      if (exclude.has(definition.name.value)) {
+        markAsUsed(definition);
+      }
+    } else {
       markAsUsed(definition);
     }
   }
