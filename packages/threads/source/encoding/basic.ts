@@ -10,8 +10,12 @@ import type {
   ThreadEncodable,
   AnyFunction,
 } from '../types';
-import type {MemoryRetainer} from '../memory';
-import {StackFrame, isMemoryManageable} from '../memory';
+import {
+  StackFrame,
+  isBasicObject,
+  isMemoryManageable,
+  type MemoryRetainer,
+} from '../memory';
 
 const FUNCTION = '_@f';
 const ASYNC_ITERATOR = '_@i';
@@ -87,28 +91,30 @@ export function createBasicEncoderWithOverrides({
       },
     };
 
+    type EncodeResult = ReturnType<ThreadEncodingStrategy['encode']>;
+
     function encode(
       value: unknown,
-      context: {encoded: WeakSet<any>} = {encoded: new WeakSet()},
-    ): [any, Transferable[]?] {
+      seen: Map<any, EncodeResult> = new Map(),
+    ): EncodeResult {
+      if (value == null) return [value];
+
+      const seenValue = seen.get(value);
+      if (seenValue) return seenValue;
+
+      seen.set(value, [undefined]);
+
       const override = encodeOverride?.(value, encodeOverrideApi);
 
-      if (override !== undefined) return override;
+      if (override !== undefined) {
+        seen.set(value, override);
+        return override;
+      }
 
       if (typeof value === 'object') {
-        if (value == null) {
-          return [value];
-        }
-
-        if (context.encoded.has(value)) {
-          return [undefined];
-        }
-
-        context.encoded.add(value);
-
         const transferables: Transferable[] = [];
         const encodeValue = (value: any) => {
-          const [fieldValue, nestedTransferables = []] = encode(value, context);
+          const [fieldValue, nestedTransferables = []] = encode(value, seen);
           transferables.push(...nestedTransferables);
           return fieldValue;
         };
@@ -118,37 +124,49 @@ export function createBasicEncoderWithOverrides({
             encode: encodeValue,
           });
 
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
+
           return [result, transferables];
         }
 
         if (Array.isArray(value)) {
           const result = value.map((item) => encodeValue(item));
-          return [result, transferables];
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
+
+          return fullResult;
         }
 
-        const result: Record<string, any> = {};
+        const valueIsIterator = isIterator(value);
 
-        for (const key of Object.keys(value)) {
-          result[key] = encodeValue((value as any)[key]);
+        if (isBasicObject(value) || valueIsIterator) {
+          const result: Record<string, any> = {};
+
+          for (const key of Object.keys(value)) {
+            result[key] = encodeValue((value as any)[key]);
+          }
+
+          if (valueIsIterator) {
+            result.next ??= encodeValue((value as any).next.bind(value));
+            result.return ??= encodeValue((value as any).return.bind(value));
+            result.throw ??= encodeValue((value as any).throw.bind(value));
+            result[ASYNC_ITERATOR] = true;
+          }
+
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
+
+          return fullResult;
         }
-
-        if (
-          (Symbol.asyncIterator in value || Symbol.iterator in value) &&
-          typeof (value as any).next === 'function'
-        ) {
-          result.next ??= encodeValue((value as any).next.bind(value));
-          result.return ??= encodeValue((value as any).return.bind(value));
-          result.throw ??= encodeValue((value as any).throw.bind(value));
-          result[ASYNC_ITERATOR] = true;
-        }
-
-        return [result, transferables];
       }
 
       if (typeof value === 'function') {
         if (functionsToId.has(value)) {
           const id = functionsToId.get(value)!;
-          return [{[FUNCTION]: id}];
+          const result: EncodeResult = [{[FUNCTION]: id}];
+          seen.set(value, result);
+          return result;
         }
 
         const id = api.uuid();
@@ -156,10 +174,16 @@ export function createBasicEncoderWithOverrides({
         functionsToId.set(value, id);
         idsToFunction.set(id, value);
 
-        return [{[FUNCTION]: id}];
+        const result: EncodeResult = [{[FUNCTION]: id}];
+        seen.set(value, result);
+
+        return result;
       }
 
-      return [value];
+      const result: EncodeResult = [value];
+      seen.set(value, result);
+
+      return result;
     }
 
     function decode(
@@ -257,3 +281,11 @@ export function createBasicEncoderWithOverrides({
 }
 
 export const createBasicEncoder = createBasicEncoderWithOverrides();
+
+function isIterator(value: any) {
+  return (
+    value != null &&
+    (Symbol.asyncIterator in value || Symbol.iterator in value) &&
+    typeof (value as any).next === 'function'
+  );
+}
