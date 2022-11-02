@@ -1,4 +1,4 @@
-import {useState, useEffect, useMemo, useCallback} from 'react';
+import {useState, useEffect, useMemo, useCallback, useRef} from 'react';
 import {signal, computed, effect, Signal} from '@preact/signals';
 
 export * from '@preact/signals';
@@ -22,6 +22,21 @@ export function useComputed<T>(
 ): Signal<T> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => computed(value), args);
+}
+
+export function useSignalEffect(
+  cb: () => void | (() => void),
+  args: unknown[] = EMPTY_ARGUMENTS,
+) {
+  const callback = useRef(cb);
+  callback.current = cb;
+
+  useEffect(() => {
+    return effect(() => {
+      callback.current();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, args);
 }
 
 export function useSignalState<T>(signal: Signal<T>) {
