@@ -1,5 +1,13 @@
 # @quilted/threads
 
+## 0.1.10
+
+### Patch Changes
+
+- [`8afad785`](https://github.com/lemonmade/quilt/commit/8afad7855d8f8f7d9ca8f9caaa8cbfd79a6432d0) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve self-referencing detection in threads
+
+* [`9df5024d`](https://github.com/lemonmade/quilt/commit/9df5024d1594fcdc16d51c8bbb1ae7f26026ae43) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix custom encoders and decoders returning falsy values
+
 ## 0.1.9
 
 ### Patch Changes

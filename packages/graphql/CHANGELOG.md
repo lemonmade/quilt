@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.46
+
+### Patch Changes
+
+- [`aeb9655b`](https://github.com/lemonmade/quilt/commit/aeb9655bccdcaea6a1474b7a53c70353ceda3af6) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix fragment-only GraphQL documents
+
 ## 0.4.45
 
 ### Patch Changes
