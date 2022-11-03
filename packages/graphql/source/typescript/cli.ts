@@ -52,6 +52,29 @@ async function run() {
     );
   });
 
+  builder.on('document:build:error', ({error, documentPath, outputKinds}) => {
+    const isType = outputKinds.some(({kind}) => kind === 'types');
+
+    console.log(
+      `${ERROR} ${documentPath.replace(path.join(process.cwd(), '/'), '')}${dim(
+        isType ? '.d.ts' : '.ts',
+      )}`,
+    );
+
+    console.log();
+    console.log(error.message);
+
+    if (error.stack) {
+      console.log(dim(error.stack));
+    }
+
+    console.log();
+
+    if (!watch) {
+      process.exitCode = 1;
+    }
+  });
+
   builder.on('error', (error) => {
     console.log(`${ERROR} ${error.message}`);
 

@@ -8,6 +8,7 @@ import {
 } from 'graphql';
 import type {
   DocumentNode,
+  FieldNode,
   SelectionNode,
   FragmentDefinitionNode,
   OperationDefinitionNode,
@@ -18,6 +19,12 @@ import type {
   GraphQLCompositeType,
 } from 'graphql';
 import type {GraphQLOperation} from '../types';
+
+export class InvalidSelectionError extends Error {
+  constructor(readonly type: GraphQLCompositeType, readonly field: FieldNode) {
+    super(`Invalid selection: ${field.name.value} on type ${type.name}`);
+  }
+}
 
 export function getRootType(
   operation: OperationDefinitionNode,
@@ -115,6 +122,24 @@ export function getSelectionTypeMap(
         if (name === '__typename') {
           fieldType = GraphQLString;
         } else {
+          if (typeConditionFields) {
+            const typeConditionField = typeConditionFields[name];
+
+            if (typeConditionField == null) {
+              throw new InvalidSelectionError(type, selection);
+            }
+
+            fieldType = typeConditionField.type;
+          } else {
+            const typeField = typeFields[name];
+
+            if (typeField == null) {
+              throw new InvalidSelectionError(type, selection);
+            }
+
+            fieldType = typeField.type;
+          }
+
           fieldType = typeConditionFields
             ? typeConditionFields[name]!.type
             : typeFields[name]!.type;

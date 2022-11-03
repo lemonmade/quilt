@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import type {createBuilder} from '@quilted/graphql/typescript';
 import type {
   Configuration,
@@ -102,6 +104,40 @@ async function runGraphQLTypes(
 ) {
   const {createBuilder} = await import('@quilted/graphql/typescript');
   const builder = await createBuilder(undefined, options);
+
+  builder.on('document:build:error', ({error}) => {
+    step.log((ui) =>
+      ui.Text(error.message ?? 'An unexpected error occurred', {
+        role: 'critical',
+      }),
+    );
+
+    if (error.stack) {
+      step.log(error.stack);
+    }
+  });
+
+  builder.on('document:build:error', ({error, documentPath}) => {
+    step.log(
+      (ui) =>
+        `${ui.Text('Error', {
+          role: 'critical',
+        })} Failed to build GraphQL types for ${documentPath.replace(
+          path.join(process.cwd(), '/'),
+          '',
+        )}`,
+    );
+
+    step.log(error.message);
+
+    if (error.stack) {
+      step.log((ui) => ui.Text(error.stack!, {emphasis: 'subdued'}));
+    }
+
+    if (!watch) {
+      process.exitCode = 1;
+    }
+  });
 
   builder.on('error', (error) => {
     step.log((ui) =>

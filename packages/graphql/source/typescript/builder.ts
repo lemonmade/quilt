@@ -50,6 +50,14 @@ interface DocumentBuildDetails {
   outputKinds: DocumentOutputKind[];
 }
 
+interface DocumentBuildErrorDetails extends DocumentBuildDetails {
+  error: Error;
+  project: GraphQLProjectConfiguration;
+  document: DocumentNode;
+  documentPath: string;
+  dependencies: Set<string>;
+}
+
 type ProjectDetailsMap = Map<GraphQLProjectConfiguration, ProjectDetails>;
 
 export async function createBuilder(cwd?: string, options?: Partial<Options>) {
@@ -108,6 +116,11 @@ export class Builder extends EventEmitter {
   ): this;
 
   once(
+    event: 'document:build:error',
+    handler: (built: DocumentBuildErrorDetails) => void,
+  ): this;
+
+  once(
     event: 'document:build:end',
     handler: (built: DocumentBuildDetails) => void,
   ): this;
@@ -133,6 +146,11 @@ export class Builder extends EventEmitter {
   ): this;
 
   on(
+    event: 'document:build:error',
+    handler: (built: DocumentBuildErrorDetails) => void,
+  ): this;
+
+  on(
     event: 'document:build:end',
     handler: (built: DocumentBuildDetails) => void,
   ): this;
@@ -146,6 +164,10 @@ export class Builder extends EventEmitter {
   emit(event: 'project:build:end', end: ProjectBuildEndDetails): boolean;
   emit(event: 'schema:build:end', built: SchemaBuildDetails): boolean;
   emit(event: 'document:build:end', built: DocumentBuildDetails): boolean;
+  emit(
+    event: 'document:build:error',
+    built: DocumentBuildErrorDetails,
+  ): boolean;
   emit(event: string, ...args: any[]): boolean {
     return super.emit(event, ...args);
   }
@@ -450,9 +472,15 @@ export class Builder extends EventEmitter {
 
     const outputPath = `${file}${isType ? '.d.ts' : '.ts'}`;
 
-    await writeFile(
-      outputPath,
-      generateDocumentTypes(documentDetails, projectDetails, {
+    const buildDetails: DocumentBuildDetails = {
+      project,
+      documentPath: file,
+      outputKinds: [resolvedOutputKind],
+      ...documentDetails,
+    };
+
+    try {
+      const types = generateDocumentTypes(documentDetails, projectDetails, {
         kind: resolvedOutputKind,
         package: this.options.package,
         importPath: (type) => {
@@ -490,17 +518,14 @@ export class Builder extends EventEmitter {
               .replace(/(\.d)?\.ts$/, ''),
           );
         },
-      }),
-    );
+      });
 
-    const buildDetails: DocumentBuildDetails = {
-      project,
-      documentPath: file,
-      outputKinds: [resolvedOutputKind],
-      ...documentDetails,
-    };
+      await writeFile(outputPath, types);
 
-    this.emit('document:build:end', buildDetails);
+      this.emit('document:build:end', buildDetails);
+    } catch (error) {
+      this.emit('document:build:error', {...buildDetails, error: error as any});
+    }
 
     return buildDetails;
   }
