@@ -16,6 +16,22 @@ export class NestedAbortController extends AbortController {
   }
 }
 
+export function anyAbortSignal(...signals: readonly AbortSignal[]) {
+  const controller = new AbortController();
+
+  if (signals.some((signal) => signal.aborted)) {
+    controller.abort();
+  } else {
+    for (const signal of signals) {
+      signal.addEventListener('abort', () => controller.abort(signal.reason), {
+        signal: controller.signal,
+      });
+    }
+  }
+
+  return controller.signal;
+}
+
 // @see https://github.com/nodejs/node/blob/master/lib/internal/errors.js#L822-L834
 export class AbortError extends Error {
   static test(error: unknown): error is AbortError {

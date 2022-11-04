@@ -6,6 +6,7 @@ export {
   createEmitter,
   AbortError,
   NestedAbortController,
+  anyAbortSignal,
 } from '@quilted/events';
 export type {
   AbortBehavior,
