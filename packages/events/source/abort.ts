@@ -18,9 +18,10 @@ export class NestedAbortController extends AbortController {
 
 export function anyAbortSignal(...signals: readonly AbortSignal[]) {
   const controller = new AbortController();
+  const abortedSignal = signals.find((signal) => signal.aborted);
 
-  if (signals.some((signal) => signal.aborted)) {
-    controller.abort();
+  if (abortedSignal) {
+    controller.abort(abortedSignal.reason);
   } else {
     for (const signal of signals) {
       signal.addEventListener('abort', () => controller.abort(signal.reason), {
