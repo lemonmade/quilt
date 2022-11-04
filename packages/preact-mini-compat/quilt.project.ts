@@ -47,9 +47,9 @@ function terser({
             const run = limit(10);
 
             const nameCache = nameCacheFile
-              ? (async () => {
+              ? await (async () => {
                   try {
-                    JSON.parse(
+                    return JSON.parse(
                       await project.fs.read(
                         project.fs.resolvePath(nameCacheFile),
                       ),
