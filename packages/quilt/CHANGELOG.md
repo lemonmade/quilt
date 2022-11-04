@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.115
+
+### Patch Changes
+
+- [`39544227`](https://github.com/lemonmade/quilt/commit/39544227abefed9185b500e3461ad4ec2e5f11cb) Thanks [@lemonmade](https://github.com/lemonmade)! - Add anyAbortSignal utility
+
 ## 0.5.114
 
 ### Patch Changes

@@ -135,7 +135,7 @@ importers:
       '@quilted/async': 0.3.28
       '@quilted/browserslist-config': 0.1.9
       '@quilted/eslint-config': 0.1.15
-      '@quilted/graphql': 0.4.46
+      '@quilted/graphql': 0.4.47
       '@quilted/polyfills': 0.2.30
       '@quilted/prettier': 0.2.11
       '@quilted/quilt': ^0.5.0
