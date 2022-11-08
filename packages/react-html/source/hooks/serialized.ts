@@ -7,7 +7,7 @@ import {useDomServerAction} from './dom-effect-server';
 
 export function useSerialized<T>(
   id: string,
-  serialize: () => Serializable<T> | Promise<Serializable<T>>,
+  serialize: () => T | Promise<T>,
 ): Serializable<T> | undefined;
 export function useSerialized<T>(id: string, serialize: T): Serializable<T>;
 export function useSerialized<T>(
@@ -16,9 +16,7 @@ export function useSerialized<T>(
 ): Serializable<T> | undefined;
 export function useSerialized<T>(
   id: string,
-  serialize?:
-    | Serializable<T>
-    | (() => Serializable<T> | Promise<Serializable<T>>),
+  serialize?: T | (() => T | Promise<T>),
 ) {
   const manager = useContext(HtmlContext);
 
@@ -34,7 +32,8 @@ export function useSerialized<T>(
     (manager) => {
       if (serialize == null) return;
 
-      const result = typeof serialize === 'function' ? serialize() : serialize;
+      const result =
+        typeof serialize === 'function' ? (serialize as () => T)() : serialize;
       const handleResult = manager.setSerialization.bind(manager, id);
       return isPromise(result)
         ? result.then(handleResult)
