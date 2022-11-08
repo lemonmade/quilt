@@ -1,5 +1,11 @@
 # @quilted/react-server-render
 
+## 0.3.24
+
+### Patch Changes
+
+- [`aaa9178e`](https://github.com/lemonmade/quilt/commit/aaa9178e546bc4514e5581e586c4d3be2a708b1b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix serialization types
+
 ## 0.3.23
 
 ### Patch Changes

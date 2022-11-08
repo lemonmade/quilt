@@ -1,5 +1,13 @@
 # @quilted/react-html
 
+## 0.3.37
+
+### Patch Changes
+
+- [`aaa9178e`](https://github.com/lemonmade/quilt/commit/aaa9178e546bc4514e5581e586c4d3be2a708b1b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix serialization types
+
+* [`c5f3a832`](https://github.com/lemonmade/quilt/commit/c5f3a832d84f1f5694e552ea27e9951aec52e43b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix serialized hook to prefer function typings
+
 ## 0.3.36
 
 ### Patch Changes
