@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 0.1.12
+
+### Patch Changes
+
+- [`73c73555`](https://github.com/lemonmade/quilt/commit/73c735555b8feaaf19f7355fab87a4021925d099) Thanks [@lemonmade](https://github.com/lemonmade)! - Add reason to anyAbortController
+
 ## 0.1.11
 
 ### Patch Changes

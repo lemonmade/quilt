@@ -1,5 +1,13 @@
 # @quilted/quilt
 
+## 0.5.116
+
+### Patch Changes
+
+- [`d745ac4d`](https://github.com/lemonmade/quilt/commit/d745ac4d45275ad3c9185f091b1ae2e0571e0617) Thanks [@lemonmade](https://github.com/lemonmade)! - Update some Request types to EnhancedRequest
+
+* [`f656f254`](https://github.com/lemonmade/quilt/commit/f656f2543b789c0cefb4ad6035c43cf714ccf6f6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add createUseOptionalValueHook utility
+
 ## 0.5.115
 
 ### Patch Changes
