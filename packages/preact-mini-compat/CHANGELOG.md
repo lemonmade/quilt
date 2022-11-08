@@ -1,5 +1,11 @@
 # @quilted/preact-mini-compat
 
+## 0.2.20
+
+### Patch Changes
+
+- [`dc462651`](https://github.com/lemonmade/quilt/commit/dc46265156993701888ad1ae4c480ac6b07ae79c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect preact minification
+
 ## 0.2.19
 
 ### Patch Changes

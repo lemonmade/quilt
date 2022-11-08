@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.36
+
+### Patch Changes
+
+- [`293bb487`](https://github.com/lemonmade/quilt/commit/293bb487d085af798067f1ee78d480816669b0fa) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve serializable types
+
 ## 0.3.35
 
 ### Patch Changes

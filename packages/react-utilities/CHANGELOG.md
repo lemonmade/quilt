@@ -1,5 +1,11 @@
 # @quilted/react-utilities
 
+## 0.1.7
+
+### Patch Changes
+
+- [`f656f254`](https://github.com/lemonmade/quilt/commit/f656f2543b789c0cefb4ad6035c43cf714ccf6f6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add createUseOptionalValueHook utility
+
 ## 0.1.6
 
 ### Patch Changes
