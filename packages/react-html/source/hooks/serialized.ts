@@ -5,14 +5,14 @@ import {HtmlContext} from '../context';
 import {type Serializable} from '../types';
 import {useDomServerAction} from './dom-effect-server';
 
+export function useSerialized<T>(
+  id: string,
+  serialize: () => Serializable<T> | Promise<Serializable<T>>,
+): Serializable<T> | undefined;
 export function useSerialized<T>(id: string, serialize: T): Serializable<T>;
 export function useSerialized<T>(
   id: string,
   serialize?: T,
-): Serializable<T> | undefined;
-export function useSerialized<T>(
-  id: string,
-  serialize: () => Serializable<T> | Promise<Serializable<T>>,
 ): Serializable<T> | undefined;
 export function useSerialized<T>(
   id: string,
