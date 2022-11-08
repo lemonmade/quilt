@@ -1,11 +1,14 @@
-import {createUseContextHook} from '@quilted/react-utilities';
+import {useContext} from 'react';
+import {
+  createUseContextHook,
+  createUseOptionalValueHook,
+} from '@quilted/react-utilities';
 
 import {ServerRenderManagerContext} from './context';
 import {
   ServerActionKind,
   ServerActionPerform,
   ServerActionOptions,
-  ServerRenderRequestContext,
 } from './types';
 
 const useServerRenderManager = createUseContextHook(ServerRenderManagerContext);
@@ -19,11 +22,6 @@ export function useServerAction(
   manager?.perform(perform, kind, options);
 }
 
-export function useServerContext<Required extends boolean = false>({
-  required = false as Required,
-}: {required?: Required} = {}): Required extends true
-  ? ServerRenderRequestContext
-  : ServerRenderRequestContext | undefined {
-  const manager = useServerRenderManager<Required>({required});
-  return manager?.context as any;
-}
+export const useServerContext = createUseOptionalValueHook(
+  () => useContext(ServerRenderManagerContext)?.context,
+);

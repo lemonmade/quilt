@@ -17,9 +17,9 @@ export function getSerializationsFromDocument() {
   return serializations;
 }
 
-function getSerializedFromNode<Data extends Serializable>(
+function getSerializedFromNode<Data>(
   node: Element,
-): Data | undefined {
+): Serializable<Data> | undefined {
   const value = (node as HTMLMetaElement).content;
 
   try {
@@ -36,7 +36,7 @@ function getSerializedFromNode<Data extends Serializable>(
  * you need to read a serialized value from outside of the React part
  * of your application.
  */
-export function getSerialized<Data extends Serializable>(id: string) {
+export function getSerialized<Data>(id: string) {
   const node = document.querySelector(`meta[name="serialized-${id}"]`);
 
   if (node == null) {
