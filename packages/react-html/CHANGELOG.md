@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.38
+
+### Patch Changes
+
+- [`601c9ad3`](https://github.com/lemonmade/quilt/commit/601c9ad3b14d553c4b4f45db9520fe3d3f32e502) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix serialize types for function arguments
+
 ## 0.3.37
 
 ### Patch Changes
