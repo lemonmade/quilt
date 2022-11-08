@@ -1,7 +1,6 @@
 import {useSerialized} from '../hooks';
-import type {Serializable} from '../types';
 
-export function Serialize({id, value}: {id: string; value: Serializable}) {
+export function Serialize<T>({id, value}: {id: string; value: T}) {
   useSerialized(id, value);
   return null;
 }

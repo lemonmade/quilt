@@ -2,24 +2,23 @@
 
 import {useContext, useMemo} from 'react';
 import {HtmlContext} from '../context';
-import type {Serializable} from '../types';
+import {type Serializable} from '../types';
 import {useDomServerAction} from './dom-effect-server';
 
-export function useSerialized<T extends Serializable>(
-  id: string,
-  serialize: T,
-): T;
-export function useSerialized<T extends Serializable>(
+export function useSerialized<T>(id: string, serialize: T): Serializable<T>;
+export function useSerialized<T>(
   id: string,
   serialize?: T,
-): T | undefined;
-export function useSerialized<T extends Serializable>(
+): Serializable<T> | undefined;
+export function useSerialized<T>(
   id: string,
-  serialize: () => T | Promise<T>,
-): T | undefined;
-export function useSerialized<T extends Serializable>(
+  serialize: () => Serializable<T> | Promise<Serializable<T>>,
+): Serializable<T> | undefined;
+export function useSerialized<T>(
   id: string,
-  serialize?: T | (() => T | Promise<T>),
+  serialize?:
+    | Serializable<T>
+    | (() => Serializable<T> | Promise<Serializable<T>>),
 ) {
   const manager = useContext(HtmlContext);
 
