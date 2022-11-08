@@ -1,4 +1,12 @@
 export * from '@quilted/useful-react-types';
 
-export {createUseContextHook, createOptionalContext} from './use-context';
-export type {UseContextHook} from './use-context';
+export {
+  createUseOptionalValueHook,
+  type UseOptionalValueHook,
+  type UseOptionalValueHookOptions,
+} from './use-optional';
+export {
+  createUseContextHook,
+  createOptionalContext,
+  type UseContextHook,
+} from './use-context';
