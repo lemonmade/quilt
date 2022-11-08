@@ -10,6 +10,7 @@ import type {
 import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
 import type {
   HttpHandler,
+  EnhancedRequest,
   RequestHandler,
   RequestContext,
 } from '@quilted/http-handlers';
@@ -20,14 +21,14 @@ export interface Options extends Omit<ExtractOptions, 'context'> {
   assets?: AssetManifest<unknown>;
   handler?: HttpHandler;
   context?(
-    request: Request,
+    request: EnhancedRequest,
     context: RequestContext,
   ): ServerRenderRequestContext;
 }
 
 export function createServerRenderingHttpHandler(
   render: (
-    request: Request,
+    request: EnhancedRequest,
     context: RequestContext,
   ) => ReactElement<any> | Promise<ReactElement<any>>,
   {handler = createHttpHandler(), ...options}: Options,
@@ -38,7 +39,7 @@ export function createServerRenderingHttpHandler(
 
 export function createServerRenderingRequestHandler(
   render: (
-    request: Request,
+    request: EnhancedRequest,
     context: RequestContext,
   ) => ReactElement<any> | Promise<ReactElement<any>>,
   {context, ...options}: Omit<Options, 'handler'> = {},
