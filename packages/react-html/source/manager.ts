@@ -140,7 +140,8 @@ export class HtmlManager {
   }
 
   hydrated() {
-    this.serializations.clear();
+    // intentional no-op. This may be used in the future to “clear out” server-
+    // provided content.
   }
 
   extract() {
