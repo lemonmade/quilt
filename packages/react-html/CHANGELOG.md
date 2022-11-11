@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.39
+
+### Patch Changes
+
+- [`2da12a52`](https://github.com/lemonmade/quilt/commit/2da12a5211bc2f41dcf999b353616cb4aed07ed5) Thanks [@lemonmade](https://github.com/lemonmade)! - Prevent losing serializations after initial load
+
 ## 0.3.38
 
 ### Patch Changes
