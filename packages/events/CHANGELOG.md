@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 0.1.13
+
+### Patch Changes
+
+- [`2128fbe4`](https://github.com/lemonmade/quilt/commit/2128fbe469abc5589544d59317577cdc4f876353) Thanks [@lemonmade](https://github.com/lemonmade)! - Add raceAgainstAbortSignal utility
+
 ## 0.1.12
 
 ### Patch Changes
