@@ -4,6 +4,7 @@ export {
   AbortError,
   NestedAbortController,
   anyAbortSignal,
+  raceAgainstAbortSignal,
   type AbortBehavior,
 } from './abort';
 export {addListener} from './listeners';
