@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 0.1.14
+
+### Patch Changes
+
+- [`fc34575a`](https://github.com/lemonmade/quilt/commit/fc34575a565760c352d7417dc26bfc989828acdd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix types for emitter once events
+
 ## 0.1.13
 
 ### Patch Changes
