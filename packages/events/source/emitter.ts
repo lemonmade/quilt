@@ -8,15 +8,6 @@ export type EmitterHandler<T = unknown> = (event: T) => void;
 export interface Emitter<Events = {}> {
   on<Event extends keyof Events>(
     type: Event,
-    handler: EmitterHandler<Events[Event]>,
-    options?: {once?: boolean; signal?: AbortSignal; abort?: never},
-  ): void;
-  on<Event extends keyof Events>(
-    type: Event,
-    options?: {once?: boolean; signal?: AbortSignal; abort?: AbortBehavior},
-  ): AsyncGenerator<Events[Event], void, void>;
-  on<Event extends keyof Events>(
-    type: Event,
     options: {once: true; signal?: never; abort?: never},
   ): Promise<Events[Event]>;
   on<Event extends keyof Events, Abort extends AbortBehavior = 'returns'>(
@@ -25,6 +16,15 @@ export interface Emitter<Events = {}> {
   ): Promise<
     Abort extends 'returns' ? Events[Event] | undefined : Events[Event]
   >;
+  on<Event extends keyof Events>(
+    type: Event,
+    options?: {once?: boolean; signal?: AbortSignal; abort?: AbortBehavior},
+  ): AsyncGenerator<Events[Event], void, void>;
+  on<Event extends keyof Events>(
+    type: Event,
+    handler: EmitterHandler<Events[Event]>,
+    options?: {once?: boolean; signal?: AbortSignal; abort?: never},
+  ): void;
 
   emit<Event extends keyof Events>(type: Event, event: Events[Event]): void;
   emit<Event extends keyof Events>(
