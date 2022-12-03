@@ -1,3 +1,8 @@
-import {AbortController} from 'abort-controller';
+import {AbortController, AbortSignal} from 'abort-controller';
 
-Reflect.defineProperty(globalThis, 'AbortController', {value: AbortController});
+if (typeof globalThis.AbortController === 'undefined') {
+  Reflect.defineProperty(globalThis, 'AbortController', {
+    value: AbortController,
+  });
+  Reflect.defineProperty(globalThis, 'AbortSignal', {value: AbortSignal});
+}
