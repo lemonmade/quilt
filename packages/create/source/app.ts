@@ -363,7 +363,7 @@ async function getTemplate(argv: Arguments) {
     return argv['--template'] as Template;
   }
 
-  const template: Template = await prompt({
+  const template = (await prompt({
     type: 'select',
     message: 'What template would you like to use?',
     hint: `Use ${color.bold('arrow keys')} to select, and ${color.bold(
@@ -384,7 +384,7 @@ async function getTemplate(argv: Arguments) {
       },
       // TODO: GraphQL API
     ],
-  });
+  })) as Template;
 
   return template;
 }

@@ -1,5 +1,4 @@
-import * as color from 'colorette';
-import {stripIndent} from 'common-tags';
+import {stripIndent, color} from '@quilted/cli-kit';
 
 export function printHelp({
   kind,

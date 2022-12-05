@@ -18,6 +18,7 @@
     {"path": "./integrations/swr"},
     {"path": "./packages/async"},
     {"path": "./packages/async"},
+    {"path": "./packages/cli-kit"},
     {"path": "./packages/craft"},
     {"path": "./packages/create"},
     {"path": "./packages/create-quilt-app"},

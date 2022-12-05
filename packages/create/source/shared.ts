@@ -2,8 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {fileURLToPath} from 'url';
 import type {BuiltInParserName} from 'prettier';
-
-export {prompt} from './shared/prompts';
+export {prompt} from '@quilted/cli-kit';
 
 export function loadTemplate(
   name:

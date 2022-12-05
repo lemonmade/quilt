@@ -1,24 +1,9 @@
-import * as fs from 'fs';
-
 import type {Result as ArgvResult} from 'arg';
-import prompts from 'prompts';
-import type {PromptObject} from 'prompts';
 import * as color from 'colorette';
-
-import {AbortError} from '@quilted/events';
-
-export async function prompt(prompt: Omit<PromptObject, 'name'>) {
-  const result = await prompts<'value'>(
-    {name: 'value', ...prompt},
-    {
-      onCancel() {
-        throw new AbortError();
-      },
-    },
-  );
-
-  return result.value;
-}
+import {
+  prompt,
+  getPackageManager as baseGetPackageManager,
+} from '@quilted/cli-kit';
 
 type BaseArguments = ArgvResult<{
   '--yes': BooleanConstructor;
@@ -30,6 +15,8 @@ type BaseArguments = ArgvResult<{
   '--no-extras': BooleanConstructor;
   '--package-manager': StringConstructor;
 }>;
+
+export {prompt};
 
 export async function getCreateAsMonorepo(argv: BaseArguments) {
   let createAsMonorepo: boolean;
@@ -69,31 +56,9 @@ export async function getShouldInstall(argv: BaseArguments) {
   return shouldInstall;
 }
 
-const VALID_PACKAGE_MANAGERS = new Set(['pnpm', 'npm', 'yarn']);
-
 export async function getPackageManager(argv: BaseArguments) {
-  let packageManager!: 'yarn' | 'npm' | 'pnpm';
-
-  if (argv['--package-manager']) {
-    const explicitPackageManager =
-      argv['--package-manager'].toLocaleLowerCase();
-
-    packageManager = VALID_PACKAGE_MANAGERS.has(explicitPackageManager)
-      ? (explicitPackageManager as any)
-      : 'npm';
-  } else {
-    const npmUserAgent = process.env['npm_config_user_agent'] ?? 'npm';
-
-    if (npmUserAgent.includes('pnpm') || fs.existsSync('pnpm-lock.yaml')) {
-      packageManager = 'pnpm';
-    } else if (npmUserAgent.includes('yarn') || fs.existsSync('yarn.lock')) {
-      packageManager = 'yarn';
-    } else {
-      packageManager = 'npm';
-    }
-  }
-
-  return packageManager;
+  const packageManager = await baseGetPackageManager(argv['--package-manager']);
+  return packageManager ?? 'npm';
 }
 
 type Extra = 'github' | 'vscode';

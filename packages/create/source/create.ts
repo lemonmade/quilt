@@ -1,9 +1,6 @@
 /* eslint no-console: off */
 
-import arg from 'arg';
-import * as color from 'colorette';
-import {stripIndent} from 'common-tags';
-import {AbortError} from '@quilted/events';
+import {AbortError, stripIndent, color, parseArguments} from '@quilted/cli-kit';
 
 import {printHelp} from './help';
 import {prompt} from './shared';
@@ -18,7 +15,7 @@ run().catch((error) => {
 });
 
 async function run() {
-  const permissiveArgs = arg(
+  const permissiveArgs = parseArguments(
     {'--help': Boolean, '-h': '--help', '--package-manager': String},
     {permissive: true},
   );

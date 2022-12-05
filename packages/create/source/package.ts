@@ -2,9 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {execSync} from 'child_process';
 
-import arg from 'arg';
-import * as color from 'colorette';
-import {stripIndent} from 'common-tags';
+import {stripIndent, color, prompt, parseArguments} from '@quilted/cli-kit';
 
 import {printHelp} from './help';
 import {
@@ -18,7 +16,6 @@ import {
   relativeDirectoryForDisplay,
 } from './shared';
 import {
-  prompt,
   getCreateAsMonorepo,
   getExtrasToSetup,
   getPackageManager,
@@ -27,12 +24,12 @@ import {
 import {addToTsConfig} from './shared/tsconfig';
 import {addToPackageManagerWorkspaces} from './shared/package-manager';
 
-type Arguments = ReturnType<typeof getArgv>;
+type Arguments = ReturnType<typeof getArguments>;
 
 export async function createProject() {
-  const argv = getArgv();
+  const args = getArguments();
 
-  if (argv['--help']) {
+  if (args['--help']) {
     const additionalOptions = stripIndent`
       ${color.cyan(`--react`)}, ${color.cyan(`--no-react`)}
       Whether this package will use React. If you don’t provide this option, the command
@@ -50,22 +47,22 @@ export async function createProject() {
     printHelp({
       kind: 'package',
       options: additionalOptions,
-      packageManager: argv['--package-manager']?.toLowerCase(),
+      packageManager: args['--package-manager']?.toLowerCase(),
     });
     return;
   }
 
   const inWorkspace = fs.existsSync('quilt.workspace.ts');
 
-  const name = await getName(argv);
-  const directory = await getDirectory(argv, {name, inWorkspace});
-  const isPublic = await getPublic(argv);
-  const useReact = await getReact(argv);
+  const name = await getName(args);
+  const directory = await getDirectory(args, {name, inWorkspace});
+  const isPublic = await getPublic(args);
+  const useReact = await getReact(args);
 
-  const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(argv));
-  const shouldInstall = await getShouldInstall(argv);
-  const packageManager = await getPackageManager(argv);
-  const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
+  const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(args));
+  const shouldInstall = await getShouldInstall(args);
+  const packageManager = await getPackageManager(args);
+  const setupExtras = await getExtrasToSetup(args, {inWorkspace});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
 
@@ -175,7 +172,7 @@ export async function createProject() {
         name: toValidPackageName(name!),
         react: useReact,
         isPublic,
-        registry: argv['--registry'],
+        registry: args['--registry'],
       });
 
       quiltProject = quiltProject
@@ -234,7 +231,7 @@ export async function createProject() {
       name: toValidPackageName(name),
       react: useReact,
       isPublic,
-      registry: argv['--registry'],
+      registry: args['--registry'],
     });
 
     await outputRoot.write(
@@ -352,8 +349,8 @@ export async function createProject() {
 
 // Argument handling
 
-function getArgv() {
-  const argv = arg(
+function getArguments() {
+  const args = parseArguments(
     {
       '--yes': Boolean,
       '-y': '--yes',
@@ -377,11 +374,11 @@ function getArgv() {
     {permissive: true},
   );
 
-  return argv;
+  return args;
 }
 
-async function getName(argv: Arguments) {
-  let {'--name': name} = argv;
+async function getName(args: Arguments) {
+  let {'--name': name} = args;
 
   if (name == null) {
     name = await prompt({
@@ -395,11 +392,11 @@ async function getName(argv: Arguments) {
 }
 
 async function getDirectory(
-  argv: Arguments,
+  args: Arguments,
   {name, inWorkspace}: {name: string; inWorkspace: boolean},
 ) {
-  let directory = argv['--directory']
-    ? path.resolve(argv['--directory'])
+  let directory = args['--directory']
+    ? path.resolve(args['--directory'])
     : undefined;
 
   if (directory == null) {
@@ -417,7 +414,7 @@ async function getDirectory(
     );
   }
 
-  while (!argv['--yes']) {
+  while (!args['--yes']) {
     if (fs.existsSync(directory) && !(await isEmpty(directory))) {
       const relativeDirectory = path.relative(process.cwd(), directory);
 
@@ -445,12 +442,12 @@ async function getDirectory(
   return directory;
 }
 
-async function getPublic(argv: Arguments) {
+async function getPublic(args: Arguments) {
   let isPublic: boolean;
 
-  if (argv['--public'] || argv['--yes']) {
+  if (args['--public'] || args['--yes']) {
     isPublic = true;
-  } else if (argv['--private']) {
+  } else if (args['--private']) {
     isPublic = false;
   } else {
     isPublic = await prompt({
@@ -463,12 +460,12 @@ async function getPublic(argv: Arguments) {
   return isPublic;
 }
 
-async function getReact(argv: Arguments) {
+async function getReact(args: Arguments) {
   let useReact: boolean;
 
-  if (argv['--react'] || argv['--yes']) {
+  if (args['--react'] || args['--yes']) {
     useReact = true;
-  } else if (argv['--no-react']) {
+  } else if (args['--no-react']) {
     useReact = false;
   } else {
     useReact = await prompt({
