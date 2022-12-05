@@ -1,7 +1,7 @@
 import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 
 import {stripIndent} from 'common-tags';
-import type {OutputOptions} from 'rollup';
+import type {OutputOptions, PreRenderedChunk} from 'rollup';
 
 import {createProjectPlugin} from '../kit';
 import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit';
@@ -307,11 +307,12 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
             // source structure.
             const entries = await packageEntries!.run();
             const rollupInputs = await rollupInput!.run([]);
+            const sourceRootDirectory = sourceRoot(project, rollupInputs);
             const preserveModules = Object.keys(entries).length > 0;
             const preserveOptions: Partial<OutputOptions> = preserveModules
               ? {
                   preserveModules: true,
-                  preserveModulesRoot: sourceRoot(project, rollupInputs),
+                  preserveModulesRoot: sourceRootDirectory,
                 }
               : {};
 
@@ -331,7 +332,10 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                       ? `[name][assetExtname]${COMMONJS_EXTENSION}`
                       : `[name]${COMMONJS_EXTENSION}`,
                     assetFileNames: `[name].[ext]`,
-                    chunkFileNames: `[name]${COMMONJS_EXTENSION}`,
+                    chunkFileNames: createChunkNamer({
+                      extension: COMMONJS_EXTENSION,
+                      sourceRoot: sourceRootDirectory,
+                    }),
                   },
                 ];
               }
@@ -346,7 +350,10 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                       ? `[name][assetExtname]${ESM_EXTENSION}`
                       : `[name]${ESM_EXTENSION}`,
                     assetFileNames: `[name].[ext]`,
-                    chunkFileNames: `[name]${ESM_EXTENSION}`,
+                    chunkFileNames: createChunkNamer({
+                      extension: ESM_EXTENSION,
+                      sourceRoot: sourceRootDirectory,
+                    }),
                   },
                 ];
               }
@@ -540,4 +547,36 @@ function sourceRoot(project: Project, entries: string[]) {
 function normalizedRelative(from: string, to: string) {
   const rel = relative(from, to);
   return rel.startsWith('.') ? rel : `./${rel}`;
+}
+
+export function createChunkNamer({
+  sourceRoot,
+  extension,
+}: {
+  sourceRoot: string;
+  extension: string;
+}) {
+  return (chunk: PreRenderedChunk) => {
+    const {modules, facadeModuleId} = chunk;
+
+    const module = facadeModuleId ?? Object.keys(modules).pop();
+
+    if (!module || !module.startsWith(sourceRoot)) {
+      return `[name]${extension}`;
+    }
+
+    let normalizedName = relative(sourceRoot, module);
+
+    if (/index\.(jsx?|tsx?)$/.test(normalizedName)) {
+      normalizedName = dirname(normalizedName);
+    }
+
+    const moduleExtension = extname(normalizedName);
+
+    if (moduleExtension) {
+      normalizedName = normalizedName.slice(0, -1 * moduleExtension.length);
+    }
+
+    return `${normalizedName}${extension}`;
+  };
 }

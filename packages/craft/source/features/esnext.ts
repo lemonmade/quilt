@@ -7,6 +7,8 @@ import type {Project} from '../kit';
 import type {} from '../tools/babel';
 import type {} from '../tools/rollup';
 
+import {createChunkNamer} from './packages';
+
 export const EXPORT_CONDITION = 'quilt:esnext';
 // Some older packages published with use this condition name, so we
 // support it too (even though it's a bit dangerous, given how generic
@@ -86,21 +88,28 @@ export function esnextBuild() {
           });
 
           // Creates the esnext outputs
-          rollupOutputs?.(async (outputs) => [
-            ...outputs,
-            {
-              format: 'esm',
-              dir: await outputDirectory.run(project.fs.buildPath()),
-              preserveModules: true,
-              preserveModulesRoot: sourceRoot(
-                project,
-                await rollupInput!.run([]),
-              ),
-              entryFileNames: `[name][assetExtname]${EXTENSION}`,
-              assetFileNames: `[name].[ext]`,
-              chunkFileNames: `[name]${EXTENSION}`,
-            },
-          ]);
+          rollupOutputs?.(async (outputs) => {
+            const sourceRootDirectory = sourceRoot(
+              project,
+              await rollupInput!.run([]),
+            );
+
+            return [
+              ...outputs,
+              {
+                format: 'esm',
+                dir: await outputDirectory.run(project.fs.buildPath()),
+                preserveModules: true,
+                preserveModulesRoot: sourceRootDirectory,
+                entryFileNames: `[name][assetExtname]${EXTENSION}`,
+                assetFileNames: `[name].[ext]`,
+                chunkFileNames: createChunkNamer({
+                  extension: EXTENSION,
+                  sourceRoot: sourceRootDirectory,
+                }),
+              },
+            ];
+          });
         },
       );
 
