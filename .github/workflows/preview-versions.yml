@@ -1,6 +1,7 @@
 name: Preview versions
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -21,4 +22,5 @@ jobs:
       - name: Deploy preview versions to NPM
         run: pnpm deploy:preview
         env:
+          GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
