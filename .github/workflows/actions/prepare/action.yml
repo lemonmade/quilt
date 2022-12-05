@@ -2,7 +2,7 @@ name: Prepare repo
 runs:
   using: 'composite'
   steps:
-    - uses: pnpm/action-setup@v2.2.1
+    - uses: pnpm/action-setup@v2.2.4
     - uses: actions/setup-node@v2
       with:
         cache: pnpm
