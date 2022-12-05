@@ -1,6 +1,6 @@
 {
   "name": "@quilted/cli-kit",
-  "description": "<YOUR DESCRIPTION HERE>",
+  "description": "Utilities for creating simple Node-based CLIs",
   "type": "module",
   "license": "MIT",
   "publishConfig": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<USER>/<REPOSITORY>",
+    "url": "https://github.com/lemonmade/quilt",
     "directory": "packages/cli-kit"
   },
   "exports": {
