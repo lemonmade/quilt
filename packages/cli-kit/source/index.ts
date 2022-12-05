@@ -17,10 +17,10 @@ export {default as parseArguments} from 'arg';
 export {prompt} from './prompt';
 export {
   createTemplate,
-  createTemplateCreator,
+  createPackageTemplates,
   type Template,
-  type TemplateCreator,
   type TemplateCopyOptions,
+  type PackageTemplates,
 } from './template';
 export {getPackageManager, type PackageManager} from './package-manager';
 

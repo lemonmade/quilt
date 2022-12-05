@@ -1,8 +1,9 @@
 import * as path from 'path';
+import {fileURLToPath} from 'url';
 import * as fs from 'fs/promises';
 import glob from 'glob';
 
-export interface TemplateCreator {
+export interface PackageTemplates {
   load(template: string): Promise<Template>;
 }
 
@@ -18,16 +19,18 @@ export interface TemplateCopyOptions {
   ): boolean | string | Promise<string | boolean>;
 }
 
-export async function createTemplateCreator({
+export async function createPackageTemplates({
   from,
   directory,
 }: {
   from: string;
   directory: string;
-}): Promise<TemplateCreator> {
+}): Promise<PackageTemplates> {
   const {packageDirectory} = await import('pkg-dir');
 
-  const packageRoot = await packageDirectory({cwd: from});
+  const packageRoot = await packageDirectory({
+    cwd: path.dirname(fileURLToPath(from)),
+  });
   const templateRoot = path.join(packageRoot!, directory);
 
   return {
