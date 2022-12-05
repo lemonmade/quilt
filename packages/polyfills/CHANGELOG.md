@@ -1,5 +1,11 @@
 # @quilted/polyfills
 
+## 0.2.31
+
+### Patch Changes
+
+- [`a9c2b818`](https://github.com/lemonmade/quilt/commit/a9c2b81825c77f7fc27f58272b6a5f54cde7cd38) Thanks [@lemonmade](https://github.com/lemonmade)! - Add AbortSignal polyfill
+
 ## 0.2.30
 
 ### Patch Changes
