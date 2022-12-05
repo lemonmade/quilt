@@ -18,9 +18,8 @@
     "build": "node ./scripts/quilt-from-source.js build",
     "develop": "node ./scripts/quilt-from-source.js develop",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
-    "version-bump:prerelease": "changeset version --snapshot next",
-    "version-bump:snapshot": "changeset version --snapshot",
-    "deploy": "pnpm publish -r"
+    "deploy": "pnpm publish -r",
+    "deploy:preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag"
   },
   "devDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

@@ -1,0 +1,24 @@
+name: Preview versions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.changeset/**/*.md'
+
+jobs:
+  preview:
+    name: Preview 🔮
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/prepare
+      - uses: quilt-framework/action-build@v2
+        with:
+          command: pnpm build
+      - name: Deploy preview versions to NPM
+        run: pnpm deploy:preview
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
