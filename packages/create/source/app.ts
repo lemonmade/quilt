@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import {execSync} from 'child_process';
 
 import arg from 'arg';
 import * as color from 'colorette';
@@ -58,7 +57,7 @@ export async function createApp() {
 
   const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(argv));
   const shouldInstall = await getShouldInstall(argv);
-  const packageManager = await getPackageManager(argv);
+  const packageManager = await getPackageManager(argv, {root: directory});
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
@@ -104,7 +103,7 @@ export async function createApp() {
 
       workspacePackageJson.name = toValidPackageName(name!);
 
-      if (packageManager === 'pnpm') {
+      if (packageManager.type === 'pnpm') {
         await outputRoot.write(
           'pnpm-workspace.yaml',
           await format(
@@ -206,22 +205,24 @@ export async function createApp() {
 
     await Promise.all([
       addToTsConfig(appDirectory, outputRoot),
-      addToPackageManagerWorkspaces(appDirectory, outputRoot, packageManager),
+      addToPackageManagerWorkspaces(
+        appDirectory,
+        outputRoot,
+        packageManager.type,
+      ),
     ]);
   }
 
   if (shouldInstall) {
     process.stdout.write('\nInstalling dependencies...\n');
     // TODO: better loading, handle errors
-    execSync(`${packageManager} install`, {cwd: rootDirectory});
+    await packageManager.install();
     process.stdout.moveCursor(0, -1);
     process.stdout.clearLine(1);
     console.log('Installed dependencies.');
   }
 
   const commands: string[] = [];
-  const packageManagerRun = (command: string) =>
-    packageManager === 'npm' ? `npm run ${command}` : `pnpm ${command}`;
 
   if (!inWorkspace && directory !== process.cwd()) {
     commands.push(
@@ -233,7 +234,7 @@ export async function createApp() {
 
   if (!shouldInstall) {
     commands.push(
-      `${packageManager} install ${color.dim(
+      `${packageManager.commands.install()} ${color.dim(
         '# Install all your dependencies',
       )}`,
     );
@@ -249,7 +250,7 @@ export async function createApp() {
   }
 
   commands.push(
-    `${packageManagerRun('develop')} ${color.dim(
+    `${packageManager.commands.run('develop')} ${color.dim(
       '# Start the development server',
     )}`,
   );

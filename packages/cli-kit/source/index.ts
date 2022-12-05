@@ -22,6 +22,11 @@ export {
   type TemplateCopyOptions,
   type PackageTemplates,
 } from './template';
-export {getPackageManager, type PackageManager} from './package-manager';
+export {
+  getPackageManager,
+  createPackageManagerRunner,
+  type PackageManager,
+  type PackageManagerRunner,
+} from './package-manager';
 
 export {color};

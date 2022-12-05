@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import {execSync} from 'child_process';
 
 import {stripIndent, color, prompt, parseArguments} from '@quilted/cli-kit';
 
@@ -61,7 +60,7 @@ export async function createProject() {
 
   const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(args));
   const shouldInstall = await getShouldInstall(args);
-  const packageManager = await getPackageManager(args);
+  const packageManager = await getPackageManager(args, {root: directory});
   const setupExtras = await getExtrasToSetup(args, {inWorkspace});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
@@ -110,7 +109,7 @@ export async function createProject() {
 
       workspacePackageJson.name = toValidPackageName(name!);
 
-      if (packageManager === 'pnpm') {
+      if (packageManager.type === 'pnpm') {
         await outputRoot.write(
           'pnpm-workspace.yaml',
           await format(
@@ -251,7 +250,7 @@ export async function createProject() {
       addToPackageManagerWorkspaces(
         packageDirectory,
         outputRoot,
-        packageManager,
+        packageManager.type,
       ),
     ]);
   }
@@ -259,7 +258,7 @@ export async function createProject() {
   if (shouldInstall) {
     process.stdout.write('\nInstalling dependencies...\n');
     // TODO: better loading, handle errors
-    execSync(`${packageManager} install`, {cwd: rootDirectory});
+    await packageManager.install();
     process.stdout.moveCursor(0, -1);
     process.stdout.clearLine(1);
     console.log('Installed dependencies.');
@@ -304,7 +303,9 @@ export async function createProject() {
 
   if (!shouldInstall) {
     commands.push(
-      `pnpm install ${color.dim('# Install all your dependencies')}`,
+      `${packageManager.commands.install()} ${color.dim(
+        '# Install all your dependencies',
+      )}`,
     );
   }
 

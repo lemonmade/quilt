@@ -3,6 +3,7 @@ import * as color from 'colorette';
 import {
   prompt,
   getPackageManager as baseGetPackageManager,
+  createPackageManagerRunner,
 } from '@quilted/cli-kit';
 
 type BaseArguments = ArgvResult<{
@@ -56,9 +57,12 @@ export async function getShouldInstall(argv: BaseArguments) {
   return shouldInstall;
 }
 
-export async function getPackageManager(argv: BaseArguments) {
+export async function getPackageManager(
+  argv: BaseArguments,
+  options?: Parameters<typeof createPackageManagerRunner>[1],
+) {
   const packageManager = await baseGetPackageManager(argv['--package-manager']);
-  return packageManager ?? 'npm';
+  return createPackageManagerRunner(packageManager ?? 'npm', options);
 }
 
 type Extra = 'github' | 'vscode';
