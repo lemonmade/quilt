@@ -53,7 +53,7 @@ export function createTemplate(root: string): Template {
       await Promise.all(
         files.map(async (file) => {
           const read = () => fs.readFile(path.resolve(root, file), 'utf-8');
-          const content = await handleFile?.(file, {read});
+          const content = (await handleFile?.(file, {read})) ?? true;
 
           if (!content) return;
 
