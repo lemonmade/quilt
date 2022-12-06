@@ -23,7 +23,7 @@ jobs:
       # and does not accidentally publish the new, non-preview version numbers
       # prematurely.
       - name: Reset changeset entries
-        run: git checkout origin/main -- .changeset
+        run: git checkout main -- .changeset
 
       - uses: quilt-framework/action-build@v2
         with:
