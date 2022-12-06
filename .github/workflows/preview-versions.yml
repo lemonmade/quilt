@@ -13,11 +13,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: origin/main
-
-      - uses: actions/checkout@v3
-
       - uses: ./.github/workflows/actions/prepare
 
       # Changeset entries are consumed on this branch. We need to reset the
@@ -25,7 +20,9 @@ jobs:
       # and does not accidentally publish the new, non-preview version numbers
       # prematurely.
       - name: Reset changeset entries
-        run: git checkout origin/main -- .changeset
+        run: |
+          git fetch origin main
+          git checkout origin/main -- .changeset
 
       - uses: quilt-framework/action-build@v2
         with:
