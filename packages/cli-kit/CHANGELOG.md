@@ -1,5 +1,11 @@
 # @quilted/cli-kit
 
+## 0.1.6
+
+### Patch Changes
+
+- [`00830710`](https://github.com/lemonmade/quilt/commit/00830710c2369087457ba4e877ed767946f34c04) Thanks [@lemonmade](https://github.com/lemonmade)! - Try fixing CLI kit version
+
 ## 0.1.3
 
 ### Patch Changes
