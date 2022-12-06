@@ -15,7 +15,7 @@
   "bin": "./bin/create-quilt.mjs",
   "sideEffects": true,
   "devDependencies": {
-    "@quilted/cli-kit": "^0.1.0",
+    "@quilted/cli-kit": "^0.1.5",
     "@types/common-tags": "^1.8.0",
     "@types/fs-extra": "^9.0.11",
     "@types/minimatch": "^3.0.5",
