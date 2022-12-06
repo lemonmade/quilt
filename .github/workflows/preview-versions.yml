@@ -14,6 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
+
+      # Changeset entries are consumed on this branch. We need to reset the
+      # changeset files so that the snapshot command knows the correct packages,
+      # and does not accidentally publish the new, non-preview version numbers
+      # prematurely.
+      - name: Reset changeset entries
+        run: git checkout origin/main -- .changeset
+
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
