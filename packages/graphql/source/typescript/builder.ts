@@ -302,7 +302,8 @@ export class Builder extends EventEmitter {
       });
     }
 
-    const {schema: schemaOutputKinds = [], customScalars} = getOptions(project);
+    const {schema: schemaOutputKinds = [{kind: 'inputTypes'}], customScalars} =
+      getOptions(project);
 
     if (schemaOutputKinds.length === 0) {
       return {
@@ -494,7 +495,8 @@ export class Builder extends EventEmitter {
 
           const outputPath =
             inputTypes &&
-            (inputTypes.outputPath ?? getDefaultSchemaOutputPath(project));
+            (inputTypes.outputPath ??
+              getDefaultSchemaOutputPath(project, {typesOnly: true}));
 
           if (outputPath == null) {
             throw new Error(
@@ -629,8 +631,7 @@ function getOptions(project: GraphQLProjectConfiguration): QuiltExtensions {
   // If we have documents, we will always generate input types, because the documents
   // will need to import their referenced scalars and enums.
   if (
-    quiltExtensions.documents != null &&
-    quiltExtensions.documents.length > 0 &&
+    project.documentPatterns.length > 0 &&
     !schema.some((outputKind) => outputKind.kind === 'inputTypes')
   ) {
     schema.push({kind: 'inputTypes'});
@@ -661,7 +662,7 @@ function normalizeSchemaTypesPath(
 
 function getDefaultSchemaOutputPath(
   {name, schemaPatterns}: GraphQLProjectConfiguration,
-  {typesOnly = true} = {},
+  {typesOnly = true}: {typesOnly?: boolean},
 ) {
   const firstProbablyFileSchemaPattern = schemaPatterns.find(
     (pattern) => !isGlob(pattern),
