@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.4.48
+
+### Patch Changes
+
+- [`734f60c8`](https://github.com/lemonmade/quilt/commit/734f60c8d94eb692d5e641392feeff3c20a9f29d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL schema types with simple projects
+
+* [`5e64e711`](https://github.com/lemonmade/quilt/commit/5e64e711c881c2969e08f40be72f50352449fa6a) Thanks [@lemonmade](https://github.com/lemonmade)! - Add GraphQL schema output type
+
 ## 0.4.47
 
 ### Patch Changes
