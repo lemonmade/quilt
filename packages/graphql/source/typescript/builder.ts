@@ -2,7 +2,7 @@ import {EventEmitter} from 'events';
 import * as path from 'path';
 import {mkdir, readFile, writeFile} from 'fs/promises';
 
-import {DocumentNode, parse, Source, GraphQLSchema} from 'graphql';
+import {DocumentNode, parse, printSchema, Source, GraphQLSchema} from 'graphql';
 import {FSWatcher, watch} from 'chokidar';
 import {globby} from 'globby';
 import isGlob from 'is-glob';
@@ -390,6 +390,10 @@ export class Builder extends EventEmitter {
             await mkdir(path.dirname(finalOutputPath), {recursive: true});
             await writeFile(finalOutputPath, schemaDefinitionTypes);
             break;
+          }
+          case 'graphql': {
+            await mkdir(path.dirname(outputPath), {recursive: true});
+            await writeFile(outputPath, printSchema(schema));
           }
         }
       }),

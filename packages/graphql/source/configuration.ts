@@ -53,10 +53,16 @@ export interface SchemaOutputKindDefinitions {
   outputPath?: string;
 }
 
+export interface SchemaOutputKindGraphQL {
+  kind: 'graphql';
+  outputPath: string;
+}
+
 export type SchemaOutputKind =
   | SchemaOutputKindInputTypes
   | SchemaOutputKindOutputTypes
-  | SchemaOutputKindDefinitions;
+  | SchemaOutputKindDefinitions
+  | SchemaOutputKindGraphQL;
 
 export interface DocumentOutputKind {
   kind: 'value' | 'types';
