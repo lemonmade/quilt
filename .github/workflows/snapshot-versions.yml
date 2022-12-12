@@ -10,6 +10,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   snapshot:
     name: Snapshots 📸
+    if: github.event.issue.pull_request && (github.event.comment.body == '/snap' || github.event.comment.body == '/snapshot' || github.event.comment.body == '📸')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -8,6 +8,8 @@ try {
 }
 
 async function run() {
+  console.log(context.payload.comment);
+
   const {graphql} = getOctokit(process.env.GITHUB_TOKEN!);
 
   console.log(await graphql('query { viewer { login } }'));
