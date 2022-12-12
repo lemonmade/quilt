@@ -31,7 +31,7 @@ async function run() {
         }
       `,
       {
-        subjectId: context.payload.comment!.id,
+        subjectId: context.payload.comment!.node_id,
       },
     ),
   );
