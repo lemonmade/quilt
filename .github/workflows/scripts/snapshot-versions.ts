@@ -8,7 +8,13 @@ try {
 }
 
 async function run() {
+  console.log('REPO:');
   console.log(context.repo);
+
+  console.log('PULL REQUEST:');
+  console.log(context.payload.pull_request);
+
+  console.log('COMMENT:');
   console.log(context.payload.comment);
 
   const {graphql} = getOctokit(process.env.GITHUB_TOKEN!);
@@ -37,7 +43,7 @@ async function run() {
 
   console.log(JSON.stringify(reaction, null, 2));
 
-  const repositoryDetails = await graphql(
+  const repositoryDetails = await graphql<any>(
     `
       query RepositoryDetails(
         $owner: String!
@@ -45,6 +51,7 @@ async function run() {
         $username: String!
       ) {
         repository(owner: $owner, name: $repo) {
+          isFork
           collaborators(first: 1, query: $username) {
             edges {
               permission
@@ -62,42 +69,57 @@ async function run() {
 
   console.log(JSON.stringify(repositoryDetails, null, 2));
 
-  // const actorPermission = (
-  //   await github.rest.repos.getCollaboratorPermissionLevel({
-  //     ...context.repo,
-  //     username: context.actor,
-  //   })
-  // ).data.permission;
-  // const isPermitted = ['write', 'admin'].includes(actorPermission);
-  // if (!isPermitted) {
-  //   const errorMessage =
-  //     'Only users with write permission to the respository can run /snapit';
-  //   await github.rest.issues.createComment({
-  //     ...context.repo,
-  //     issue_number: context.issue.number,
-  //     body: errorMessage,
-  //   });
-  //   core.setFailed(errorMessage);
-  //   return;
-  // }
-  // const pullRequest = await github.rest.pulls.get({
-  //   ...context.repo,
-  //   pull_number: context.issue.number,
-  // });
-  // // Pull request from fork
-  // if (
-  //   context.payload.repository.full_name !==
-  //   pullRequest.data.head.repo.full_name
-  // ) {
-  //   const errorMessage =
-  //     '`/snapit` is not supported on pull requests from forked repositories.';
-  //   await github.rest.issues.createComment({
-  //     ...context.repo,
-  //     issue_number: context.issue.number,
-  //     body: errorMessage,
-  //   });
-  //   core.setFailed(errorMessage);
-  // }
+  const permission = repositoryDetails.repository?.collaborators?.edges?.[0]?.permission;
+
+  if (!['WRITE', 'ADMIN'].includes(permission)) {
+    const errorMessage = 'Only users with write permission to the respository can create snapshot releases, sorry!';
+
+    await graphql(
+      `
+        mutation AddComment($subjectId: ID!, $comment: String!) {
+          addComment(input: {subjectId: $subjectId, body: $comment}) {
+            commentEdge {
+              node {
+                url
+              }
+            }
+          }
+        }
+      `, {
+        subjectId: context.payload.pull_request!.node_id,
+        comment: errorMessage,
+      },
+    );
+    
+    setFailed(errorMessage);
+
+    return;
+  }
+
+  if (repositoryDetails.repository?.isFork) {
+    const errorMessage = 'Snapshots cannot be created from forked repositories.';
+
+    await graphql(
+      `
+        mutation AddComment($subjectId: ID!, $comment: String!) {
+          addComment(input: {subjectId: $subjectId, body: $comment}) {
+            commentEdge {
+              node {
+                url
+              }
+            }
+          }
+        }
+      `, {
+        subjectId: context.payload.pull_request!.node_id,
+        comment: errorMessage,
+      },
+    );
+
+    setFailed(errorMessage);
+
+    return;
+  }
 }
 
 export {};
