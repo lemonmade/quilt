@@ -8,39 +8,60 @@ try {
 }
 
 async function run() {
+  console.log(context.repo);
   console.log(context.payload.comment);
 
   const {graphql} = getOctokit(process.env.GITHUB_TOKEN!);
 
   console.log(await graphql('query { viewer { login } }'));
 
-  console.log(
-    await graphql(
-      `
-        mutation AddReaction($subjectId: ID!) {
-          addReaction(input: {subjectId: $subjectId, content: EYES}) {
-            reaction {
-              content
-              reactable {
-                ... on IssueComment {
-                  url
-                }
+  const reaction = await graphql(
+    `
+      mutation AddReaction($subjectId: ID!) {
+        addReaction(input: {subjectId: $subjectId, content: EYES}) {
+          reaction {
+            content
+            reactable {
+              ... on IssueComment {
+                url
               }
             }
           }
         }
-      `,
-      {
-        subjectId: context.payload.comment!.node_id,
-      },
-    ),
+      }
+    `,
+    {
+      subjectId: context.payload.comment!.node_id,
+    },
   );
 
-  // await github.rest.reactions.createForIssueComment({
-  //   ...context.repo,
-  //   comment_id: context.payload.comment.id,
-  //   content: 'eyes',
-  // });
+  console.log(JSON.stringify(reaction, null, 2));
+
+  const repositoryDetails = await graphql(
+    `
+      query RepositoryDetails(
+        $owner: String!
+        $repo: String!
+        $username: String!
+      ) {
+        repository(owner: $owner, name: $repo) {
+          collaborators(first: 1, query: $username) {
+            edges {
+              permission
+            }
+          }
+        }
+      }
+    `,
+    {
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      username: context.actor,
+    },
+  );
+
+  console.log(JSON.stringify(repositoryDetails, null, 2));
+
   // const actorPermission = (
   //   await github.rest.repos.getCollaboratorPermissionLevel({
   //     ...context.repo,
