@@ -19,9 +19,12 @@
     "develop": "node ./scripts/quilt-from-source.js develop",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r",
-    "deploy:preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag"
+    "deploy:preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
+    "typescript:run": "node --no-warnings --experimental-specifier-resolution=node --experimental-vm-modules --loader \"./scripts/esbuild-module-loader.js\" --conditions quilt:source"
   },
   "devDependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.0",
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@changesets/changelog-github": "^0.4.3",
     "@changesets/cli": "^2.21.1",
