@@ -2,7 +2,13 @@ import {posix} from 'path';
 import {URLSearchParams} from 'url';
 
 import {rollup} from 'rollup';
-import type {Plugin, InputOptions, OutputOptions, OutputChunk} from 'rollup';
+import type {
+  Plugin,
+  InputOptions,
+  OutputOptions,
+  OutputChunk,
+  NormalizedInputOptions,
+} from 'rollup';
 import {stripIndent} from 'common-tags';
 
 const PREFIX = 'quilt-worker:';
@@ -78,7 +84,7 @@ export function workers({
   outputOptions = {},
   onIncludeFile,
 }: Options = {}): Plugin {
-  let parentInputOptions: InputOptions;
+  let parentInputOptions: NormalizedInputOptions;
   const workerMap = new Map<string, OutputChunk>();
 
   return {

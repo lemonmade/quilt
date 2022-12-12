@@ -10,12 +10,10 @@ jest.mock('../redirect', () => ({
 
 const {useRedirect} = jest.requireMock<{useRedirect: jest.Mock}>('../redirect');
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function RouteComponent({children}: PropsWithChildren<{}>) {
   return children ? <>{children}</> : null;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function NestedRouteComponent({children}: PropsWithChildren<{}>) {
   return children ? <>{children}</> : null;
 }

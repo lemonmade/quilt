@@ -48,6 +48,7 @@ module.exports = {
           'error',
           {
             types: {
+              '{}': false,
               String: {message: 'Use string instead', fixWith: 'string'},
               Boolean: {message: 'Use boolean instead', fixWith: 'boolean'},
               Number: {message: 'Use number instead', fixWith: 'number'},

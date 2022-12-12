@@ -238,8 +238,6 @@ export async function createViteConfig(
       rollupOptions,
     },
     server: serverOptions,
-    // @ts-expect-error The types do not have this field, but it
-    // is supported.
     ssr: {external: externals, noExternal: noExternals},
     resolve: {
       alias: aliases,

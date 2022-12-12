@@ -36,7 +36,7 @@
   "dependencies": {
     "@quilted/preact-mini-compat": "^0.2.15",
     "@types/react": "^17.0.0",
-    "preact": "^10.7.0"
+    "preact": "^10.11.0"
   },
   "eslintConfig": {
     "extends": [

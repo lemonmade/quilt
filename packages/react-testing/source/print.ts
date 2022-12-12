@@ -20,7 +20,7 @@ export function toReactString<Props>(
 
   const name = nodeName(node);
   const indent = '  '.repeat(level);
-  const props = Object.keys(node.props)
+  const props = Object.keys(node.props as any)
     // we always filter out children no matter what, but unless all option
     // is present we will also filter out DOM implementation details
     .filter((key) =>

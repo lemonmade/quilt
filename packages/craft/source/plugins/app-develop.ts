@@ -79,6 +79,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             babelPlugins,
             babelPresets,
             babelExtensions,
+            viteConfig,
             vitePort,
             viteHost,
             vitePlugins,
@@ -125,12 +126,12 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             );
           }
 
+          viteConfig?.((options) => {
+            return {...options, appType: 'custom'};
+          });
+
           viteServerOptions?.((options) => {
-            const newOptions = {...options};
-
-            newOptions.middlewareMode = 'ssr';
-
-            return newOptions;
+            return {...options, middlewareMode: true};
           });
 
           rollupPlugins?.((plugins) => {

@@ -10,10 +10,7 @@ import {HttpCookiesContext, HttpServerContext} from '../context';
  * Provides a consistent API for cookies, accessible through the
  * `useCookie()` and `useCookies()` hooks.
  */
-export function CookieContext({
-  children,
-}: // eslint-disable-next-line @typescript-eslint/ban-types
-PropsWithChildren<{}>) {
+export function CookieContext({children}: PropsWithChildren<{}>) {
   const http = useContext(HttpServerContext);
 
   const cookies = useMemo<ContextType<typeof HttpCookiesContext>>(

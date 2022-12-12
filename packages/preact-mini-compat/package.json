@@ -24,13 +24,13 @@
   "license": "MIT",
   "sideEffects": false,
   "devDependencies": {
-    "preact": "^10.7.0",
     "p-limit": "^3.1.0",
+    "preact": "^10.11.0",
     "terser": "^5.5.1"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "preact": "^10.7.0"
+    "preact": "^10.11.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {

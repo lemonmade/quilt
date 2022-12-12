@@ -37,7 +37,7 @@ export function useIdleCallback(
         window as any as RequestIdleCallbackApi
       ).requestIdleCallback(() => callback());
     } else if (unsupportedBehavior === 'animationFrame') {
-      handle.current = window.requestAnimationFrame(() => {
+      handle.current = (window as Window).requestAnimationFrame(() => {
         callback();
       });
     } else {
@@ -57,7 +57,7 @@ export function useIdleCallback(
           currentHandle,
         );
       } else if (unsupportedBehavior === 'animationFrame') {
-        window.cancelAnimationFrame(currentHandle);
+        (window as Window).cancelAnimationFrame(currentHandle);
       }
     };
   }, [callback, unsupportedBehavior]);

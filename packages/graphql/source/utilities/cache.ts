@@ -14,7 +14,7 @@ export function cacheKey<Data, Variables>(
   )}`;
 }
 
-function sortVariables<T>(variables: T) {
+function sortVariables<T extends {}>(variables: T) {
   const newVariables: T = {} as any;
 
   for (const sortedKey of Object.keys(variables).sort((keyOne, keyTwo) =>

@@ -328,9 +328,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                       typeof commonjs === 'object'
                         ? commonjs.exports ?? 'named'
                         : 'named',
-                    entryFileNames: preserveModules
-                      ? `[name][assetExtname]${COMMONJS_EXTENSION}`
-                      : `[name]${COMMONJS_EXTENSION}`,
+                    entryFileNames: `[name]${COMMONJS_EXTENSION}`,
                     assetFileNames: `[name].[ext]`,
                     chunkFileNames: createChunkNamer({
                       extension: COMMONJS_EXTENSION,
@@ -346,9 +344,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                     ...preserveOptions,
                     format: 'esm',
                     dir,
-                    entryFileNames: preserveModules
-                      ? `[name][assetExtname]${ESM_EXTENSION}`
-                      : `[name]${ESM_EXTENSION}`,
+                    entryFileNames: `[name]${ESM_EXTENSION}`,
                     assetFileNames: `[name].[ext]`,
                     chunkFileNames: createChunkNamer({
                       extension: ESM_EXTENSION,
@@ -557,9 +553,9 @@ export function createChunkNamer({
   extension: string;
 }) {
   return (chunk: PreRenderedChunk) => {
-    const {modules, facadeModuleId} = chunk;
+    const {moduleIds, facadeModuleId} = chunk;
 
-    const module = facadeModuleId ?? Object.keys(modules).pop();
+    const module = facadeModuleId ?? moduleIds[moduleIds.length - 1];
 
     if (!module || !module.startsWith(sourceRoot)) {
       return `[name]${extension}`;

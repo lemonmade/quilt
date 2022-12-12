@@ -137,7 +137,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
       addRollupOnWarn(options, (warning, defaultWarn) => {
         if (
           warning.code === 'CIRCULAR_DEPENDENCY' &&
-          (warning.importer?.includes('node_modules/core-js') ?? false)
+          (warning.exporter?.includes('node_modules/core-js') ?? false)
         ) {
           return;
         }
@@ -157,13 +157,17 @@ export function polyfills({features, package: packageName}: Options = {}) {
       const featuresNeedingPolyfills =
         await quiltPolyfillFeaturesForEnvironment!.run(allNecessaryFeatures);
 
-      const aliases = await Promise.all(
+      const aliases: Record<string, string> = {};
+
+      await Promise.all(
         ALIAS_DEPENDENCIES.map(async (dependency) => {
           const dependencyRoot = await packageDirectory({
             cwd: require.resolve(dependency),
           });
 
-          return [dependency, dependencyRoot] as const;
+          if (dependencyRoot) {
+            aliases[dependency] = dependencyRoot;
+          }
         }),
       );
 
@@ -175,7 +179,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
 
       return [
         alias({
-          entries: Object.fromEntries(aliases),
+          entries: aliases,
         }),
         polyfillPlugin,
         ...plugins,
@@ -206,12 +210,26 @@ async function polyfillRollup({
       : undefined,
   );
 
+  let entries: string[] = [];
+
   return {
     name: '@quilted/polyfills',
+    options(options) {
+      const inputOption = options.input;
+
+      if (inputOption == null) return;
+      if (Array.isArray(inputOption)) {
+        entries = [...inputOption];
+      } else {
+        entries = Object.values(inputOption);
+      }
+    },
     transform(code, id) {
       if (features == null || features.length === 0) return null;
 
-      const isEntry = this.getModuleInfo(id)?.isEntry ?? false;
+      // I don’t know why this doesn’t work... my guess is that it fails if the entry is a virtual module?
+      // const isEntry = this.getModuleInfo(id)?.isEntry ?? false;
+      const isEntry = entries.includes(id);
       if (!isEntry) return null;
 
       // This thing helps with generating source maps...

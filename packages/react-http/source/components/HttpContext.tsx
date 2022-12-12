@@ -12,10 +12,7 @@ const SERIALIZED_ID = '_quilt.http';
  * makes headers available on the server-side, and takes care of serializing
  * any headers used for reference on the client.
  */
-export function HttpContext({
-  children,
-}: // eslint-disable-next-line @typescript-eslint/ban-types
-PropsWithChildren<{}>) {
+export function HttpContext({children}: PropsWithChildren<{}>) {
   const http = useContext(HttpServerContext);
 
   const serializedHeaders = useSerialized(SERIALIZED_ID, () => {
