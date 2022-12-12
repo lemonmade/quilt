@@ -11,8 +11,8 @@ async function run() {
   console.log('REPO:');
   console.log(context.repo);
 
-  console.log('PULL REQUEST:');
-  console.log(context.payload.pull_request);
+  console.log('ISSUE:');
+  console.log(context.payload.issue);
 
   console.log('COMMENT:');
   console.log(context.payload.comment);
@@ -111,7 +111,7 @@ async function run() {
           }
         }
       `, {
-        subjectId: context.payload.pull_request!.node_id,
+        subjectId: context.payload.issue!.node_id,
         comment: errorMessage,
       },
     );
