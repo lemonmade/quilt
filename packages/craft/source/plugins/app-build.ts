@@ -162,14 +162,14 @@ export function appBuild({
           browserslistTargets?.(() => browserTargets.targets);
 
           quiltAsyncManifestMetadata?.(async (metadata) => {
-            const [{getUserAgentRegExp}, modules] = await Promise.all([
+            const [{getUserAgentRegex}, modules] = await Promise.all([
               import('browserslist-useragent-regexp'),
               targetsSupportModules(browserTargets.targets),
             ]);
 
             Object.assign(metadata, {
               priority: browserTargets.priority,
-              browsers: getUserAgentRegExp({
+              browsers: getUserAgentRegex({
                 browsers: browserTargets.targets,
                 ignoreMinor: true,
                 ignorePatch: true,

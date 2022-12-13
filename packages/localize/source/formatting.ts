@@ -72,7 +72,7 @@ export function createLocalizedFormatting(locale: string): LocalizedFormatting {
   };
 }
 
-function createLocalizedFormattingCache<Formatter, Options>(
+function createLocalizedFormattingCache<Formatter, Options extends {}>(
   create: (options?: Options) => Formatter,
 ): LocalizedFormattingCache<Formatter, Options> {
   const cache = new Map<string, Formatter>();

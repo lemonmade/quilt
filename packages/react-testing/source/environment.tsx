@@ -35,7 +35,7 @@ export type NodeCreationOptions<
   ? BaseNodeCreationOptions<T, Extensions>
   : BaseNodeCreationOptions<T, Extensions> & Extensions;
 
-export interface EnvironmentNodeCreator<Extensions> {
+export interface EnvironmentNodeCreator<Extensions extends PlainObject> {
   <T>(options: NodeCreationOptions<T, Extensions>): BaseNode<T, Extensions>;
 }
 
@@ -711,7 +711,9 @@ export function createEnvironment<
       };
 
       return 'then' in rootOrPromise
-        ? rootOrPromise.then((root) => withRoot(root))
+        ? (rootOrPromise as Promise<Root<any, any, any>>).then((root) =>
+            withRoot(root),
+          )
         : withRoot(rootOrPromise);
     }
 

@@ -16,8 +16,7 @@ export const INTENTION_DELAY_MS = 150;
 
 export const Preloader = memo(function Preloader({
   children,
-}: // eslint-disable-next-line @typescript-eslint/ban-types
-PropsWithChildren<{}>) {
+}: PropsWithChildren<{}>) {
   const router = useRouter();
   const preloader = useMemo(() => createPreloader(router), [router]);
 

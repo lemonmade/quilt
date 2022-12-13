@@ -3,7 +3,6 @@ import {notFound, runHandler} from '@quilted/quilt/http-handlers';
 import type {HttpHandler, RequestHandler} from '@quilted/quilt/http-handlers';
 
 import {getAssetFromKV} from './forked/kv-asset-handler';
-import type {KVNamespaceBinding} from './forked/kv-asset-handler';
 
 export type {CloudflareRequestContext} from './types';
 
@@ -51,7 +50,9 @@ export interface RequestHandlerOptions {
  * format, you can use the `transformFetchEvent()` function from this library
  * to adapt the `FetchEvent` type you get in your fetch event listener.
  */
-export function createFetchHandler<Env = unknown>(
+export function createFetchHandler<
+  Env extends Record<string, any> = Record<string, unknown>,
+>(
   handler: HttpHandler | RequestHandler,
   {cache: shouldCache = true, assets = false}: RequestHandlerOptions = {},
 ): ExportedHandlerFetchHandler<Env> {
@@ -104,7 +105,7 @@ const MAX_MAX_AGE = 365 * 24 * 60 * 60;
  */
 export async function respondWithAsset(
   request: Request,
-  env: Record<string, KVNamespaceBinding>,
+  env: Record<string, unknown>,
   context: ExecutionContext,
   {path, namespace = '__STATIC_CONTENT'}: AssetOptions,
 ) {

@@ -18,9 +18,6 @@ declare global {
   // As far as I know, this is needed for the module augmentation  to work.
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
-    // As far as I know, this is also needed for the module augmentation
-    // to work.
-    // eslint-disable-next-line @typescript-eslint/ban-types
     interface Matchers<R, T = {}> {
       toHaveReactProps(props: Partial<PropsFromNode<T>>): void;
       toContainReactComponent<Type extends string | ComponentType<any>>(

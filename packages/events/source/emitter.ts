@@ -4,7 +4,6 @@ import type {AbortBehavior} from './abort';
 
 export type EmitterHandler<T = unknown> = (event: T) => void;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export interface Emitter<Events = {}> {
   on<Event extends keyof Events>(
     type: Event,
@@ -32,7 +31,6 @@ export interface Emitter<Events = {}> {
   ): void;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export function createEmitter<Events = {}>(
   internal?: Emitter<EmitterInternalEvents<Events>>,
 ): Emitter<Events> {
@@ -103,7 +101,6 @@ export function createEmitter<Events = {}>(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export interface EmitterInternalEvents<Events = {}> {
   add: {
     event: keyof Events;
@@ -117,13 +114,11 @@ export interface EmitterInternalEvents<Events = {}> {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export interface EmitterWithInternals<Events = {}> extends Emitter<Events> {
   readonly internal: Emitter<EmitterInternalEvents<Events>>;
 }
 
 export function createEmitterWithInternals<
-  // eslint-disable-next-line @typescript-eslint/ban-types
   Events = {},
 >(): EmitterWithInternals<Events> {
   const internal = createEmitter<EmitterInternalEvents<Events>>();

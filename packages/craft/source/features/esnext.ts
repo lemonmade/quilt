@@ -101,7 +101,7 @@ export function esnextBuild() {
                 dir: await outputDirectory.run(project.fs.buildPath()),
                 preserveModules: true,
                 preserveModulesRoot: sourceRootDirectory,
-                entryFileNames: `[name][assetExtname]${EXTENSION}`,
+                entryFileNames: `[name]${EXTENSION}`,
                 assetFileNames: `[name].[ext]`,
                 chunkFileNames: createChunkNamer({
                   extension: EXTENSION,
