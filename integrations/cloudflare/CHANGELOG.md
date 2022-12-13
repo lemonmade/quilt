@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.1.43
+
+### Patch Changes
+
+- [#429](https://github.com/lemonmade/quilt/pull/429) [`69a5d2a1`](https://github.com/lemonmade/quilt/commit/69a5d2a1f9c2fe8d93be3157eb33506b0b8f7df7) Thanks [@lemonmade](https://github.com/lemonmade)! - Update all development dependencies to their latest versions
+
+- Updated dependencies [[`69a5d2a1`](https://github.com/lemonmade/quilt/commit/69a5d2a1f9c2fe8d93be3157eb33506b0b8f7df7)]:
+  - @quilted/craft@0.1.162
+
 ## 0.1.42
 
 ### Patch Changes
