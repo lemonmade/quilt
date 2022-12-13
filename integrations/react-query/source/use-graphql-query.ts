@@ -1,12 +1,11 @@
-import {useQuery} from 'react-query';
-import type {UseQueryOptions} from 'react-query';
-import {useGraphQLFetch} from '@quilted/quilt';
-import type {
-  GraphQLFetch,
-  GraphQLOperation,
-  GraphQLVariableOptions,
+import {useQuery, type UseQueryOptions} from '@tanstack/react-query';
+import {
+  useGraphQLFetch,
+  type GraphQLFetch,
+  type GraphQLOperation,
+  type GraphQLVariableOptions,
 } from '@quilted/quilt';
-import type {IfAllFieldsNullable} from '@quilted/useful-types';
+import {type IfAllFieldsNullable} from '@quilted/useful-types';
 
 import {throwIfError} from './utilities';
 

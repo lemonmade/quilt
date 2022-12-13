@@ -1,19 +1,15 @@
-import {useMemo, createContext} from 'react';
+import {useMemo, type PropsWithChildren} from 'react';
 import {
   QueryClientProvider,
   QueryClient,
   dehydrate,
   Hydrate,
-} from 'react-query';
-import type {PropsWithChildren} from '@quilted/quilt';
+} from '@tanstack/react-query';
 import {useSerialized} from '@quilted/quilt/html';
 
 export interface ReactQueryServerRenderer {
   fetchAll(): Promise<void> | undefined;
 }
-
-const ReactQueryServerRendererContext =
-  createContext<ReactQueryServerRenderer | null>(null);
 
 export function ReactQueryContext({
   client,
@@ -56,10 +52,8 @@ export function ReactQueryContext({
   });
 
   return (
-    <ReactQueryServerRendererContext.Provider value={serverRenderer}>
-      <QueryClientProvider client={client}>
-        <Hydrate state={hydrationState}>{children}</Hydrate>
-      </QueryClientProvider>
-    </ReactQueryServerRendererContext.Provider>
+    <QueryClientProvider client={client}>
+      <Hydrate state={hydrationState}>{children}</Hydrate>
+    </QueryClientProvider>
   );
 }

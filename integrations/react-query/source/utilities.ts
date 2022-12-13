@@ -1,6 +1,6 @@
-import type {
-  GraphQLResult,
-  GraphQLError as GraphQLErrorType,
+import {
+  type GraphQLResult,
+  type GraphQLError as GraphQLErrorType,
 } from '@quilted/quilt';
 
 class GraphQLError extends Error {

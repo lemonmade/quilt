@@ -1,7 +1,9 @@
-import {useMutation} from 'react-query';
-import type {UseMutationOptions} from 'react-query';
-import {useGraphQLFetch} from '@quilted/quilt';
-import type {GraphQLFetch, GraphQLOperation} from '@quilted/quilt';
+import {useMutation, type UseMutationOptions} from '@tanstack/react-query';
+import {
+  useGraphQLFetch,
+  type GraphQLFetch,
+  type GraphQLOperation,
+} from '@quilted/quilt';
 
 import {throwIfError} from './utilities';
 
