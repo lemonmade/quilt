@@ -1,5 +1,11 @@
 # @quilted/react-http
 
+## 0.3.24
+
+### Patch Changes
+
+- [#429](https://github.com/lemonmade/quilt/pull/429) [`69a5d2a1`](https://github.com/lemonmade/quilt/commit/69a5d2a1f9c2fe8d93be3157eb33506b0b8f7df7) Thanks [@lemonmade](https://github.com/lemonmade)! - Update all development dependencies to their latest versions
+
 ## 0.3.23
 
 ### Patch Changes
