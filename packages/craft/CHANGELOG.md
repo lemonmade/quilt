@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.163
+
+### Patch Changes
+
+- [`7d2c4353`](https://github.com/lemonmade/quilt/commit/7d2c4353ab96c1de96faf53ea328b8e054e8fd3e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix resolution of @babel/plugin-syntax-typescript
+
 ## 0.1.162
 
 ### Patch Changes
