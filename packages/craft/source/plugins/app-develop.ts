@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {createRequire} from 'module';
 import type {IncomingMessage, ServerResponse} from 'http';
 
 import {stripIndent} from 'common-tags';
@@ -59,6 +60,8 @@ declare module '@quilted/sewing-kit' {
   interface DevelopProjectConfigurationHooks
     extends AppDevelopmentServerConfigurationHooks {}
 }
+
+const require = createRequire(import.meta.url);
 
 export function appDevelop({env, port, browser, server}: Options = {}) {
   const serverEntry = server?.entry;
@@ -355,7 +358,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                 babelConfigItemIs(requestedPreset, '@babel/preset-typescript')
               ) {
                 normalizedBabelPlugins.unshift([
-                  '@babel/plugin-syntax-typescript',
+                  require.resolve('@babel/plugin-syntax-typescript'),
                   {isTSX: true},
                 ]);
                 continue;
