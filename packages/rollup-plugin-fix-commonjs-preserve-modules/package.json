@@ -23,7 +23,7 @@
   },
   "types": "./build/typescript/index.d.ts",
   "peerDependencies": {
-    "rollup": "^2.0.0"
+    "rollup": "^2.0.0 || ^3.0.0"
   },
   "peerDependenciesMeta": {
     "rollup": {
