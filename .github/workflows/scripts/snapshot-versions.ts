@@ -50,7 +50,10 @@ async function run() {
     return;
   }
 
-  const {stdout} = await execa('pnpm', ['run', 'deploy:snapshot']);
+  const {stdout, stderr} = await execa('pnpm', ['run', 'deploy:snapshot']);
+
+  console.log(stdout);
+  console.log(stderr);
 
   const newTags = Array.from(stdout.matchAll(/New tag:\s+([^\s\n]+)/g)).map(
     ([_, tag]) => tag,
