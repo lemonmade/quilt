@@ -1,5 +1,7 @@
 import {setFailed} from '@actions/core';
 import {context, getOctokit} from '@actions/github';
+import {execa} from 'execa';
+import {stripIndent} from 'common-tags';
 
 const {graphql} = getOctokit(process.env.GITHUB_TOKEN!);
 
@@ -47,6 +49,40 @@ async function run() {
     setFailed(errorMessage);
     return;
   }
+
+  const {stdout} = await execa('pnpm', ['run', 'deploy:snapshot']);
+
+  const newTags = Array.from(stdout.matchAll(/New tag:\s+([^\s\n]+)/g)).map(
+    ([_, tag]) => tag,
+  );
+
+  if (newTags.length === 0) {
+    console.log(
+      'There are no snapshot versions to deploy. Exiting early, have a great day!',
+    );
+    return;
+  }
+
+  const multiple = newTags.length > 1;
+
+  const comment = stripIndent`
+    🧵📸 **Thanks @${context.actor}!**
+
+    Your snapshot${multiple ? 's have' : ' has'} been published to npm.
+
+    Test the snapshot${
+      multiple ? 's' : ''
+    } by updating your \`package.json\` with the newly published version${
+    multiple ? 's' : ''
+  }:
+
+    \`\`\`sh
+    ${newTags.map((tag) => `pnpm add ${tag}`).join('\n')}
+    \`\`\`
+  `;
+
+  await addComment(comment);
+  await addReaction('ROCKET');
 }
 
 function getRepositoryDetails() {

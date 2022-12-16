@@ -20,6 +20,7 @@
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r",
     "deploy:preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
+    "deploy:snapshot": "changeset version --snapshot snapshot && changeset publish --tag snapshot --no-git-tag",
     "typescript:run": "node --no-warnings --experimental-specifier-resolution=node --experimental-vm-modules --loader \"./scripts/esbuild-module-loader.js\" --conditions quilt:source"
   },
   "devDependencies": {
@@ -36,10 +37,13 @@
     "@quilted/stylelint-config": "^0.1.0",
     "@quilted/testing": "^0.1.0",
     "@quilted/typescript": "^0.2.0",
+    "@types/common-tags": "^1.8.1",
     "@types/node": "^16.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "common-tags": "^1.8.2",
     "esbuild": "^0.16.0",
+    "execa": "^6.1.0",
     "react": "workspace:@quilted/react@^17.0.0",
     "react-dom": "workspace:@quilted/react-dom@^17.0.0",
     "rollup": "^3.7.0",
