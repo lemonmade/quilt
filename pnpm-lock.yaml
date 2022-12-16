@@ -559,11 +559,9 @@ importers:
 
   packages/react:
     specifiers:
-      '@quilted/preact-mini-compat': ^0.2.15
       '@types/react': ^17.0.0
       preact: ^10.11.0
     dependencies:
-      '@quilted/preact-mini-compat': link:../preact-mini-compat
       '@types/react': 17.0.45
       preact: 10.11.3
 
@@ -581,12 +579,10 @@ importers:
 
   packages/react-dom:
     specifiers:
-      '@quilted/preact-mini-compat': ^0.2.15
       '@types/react-dom': ^17.0.0
       preact: ^10.11.0
       preact-render-to-string: ^5.2.0
     dependencies:
-      '@quilted/preact-mini-compat': link:../preact-mini-compat
       '@types/react-dom': 17.0.17
       preact: 10.11.3
       preact-render-to-string: 5.2.0_preact@10.11.3

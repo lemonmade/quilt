@@ -300,6 +300,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             'react',
             'react-dom',
             'preact',
+            'preact/compat',
+            'preact/hooks',
             '@quilted/quilt/env',
             '@quilted/quilt/global',
           ]);
