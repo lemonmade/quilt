@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.164
+
+### Patch Changes
+
+- [`b573c247`](https://github.com/lemonmade/quilt/commit/b573c2474fd466804b8e7550634f728f257fb0fe) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify Preact integration
+
+- Updated dependencies [[`10bd0508`](https://github.com/lemonmade/quilt/commit/10bd0508885078de817b07a43ae73a0ab57f66fa)]:
+  - @quilted/rollup-plugin-fix-commonjs-preserve-modules@0.1.13
+
 ## 0.1.163
 
 ### Patch Changes
