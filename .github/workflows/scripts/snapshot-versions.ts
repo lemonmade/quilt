@@ -116,6 +116,7 @@ function getRepositoryDetails() {
   );
 }
 
+// @see https://docs.github.com/en/graphql/reference/mutations#addreaction
 function addReaction(reaction: 'EYES' | 'ROCKET') {
   return graphql<{
     addReaction: {
@@ -128,7 +129,7 @@ function addReaction(reaction: 'EYES' | 'ROCKET') {
     };
   }>(
     `
-      mutation AddReaction($subjectId: ID!) {
+      mutation AddReaction($subjectId: ID!, $reaction: ReactionContent!) {
         addReaction(input: {subjectId: $subjectId, content: $reaction}) {
           reaction {
             content
@@ -148,6 +149,7 @@ function addReaction(reaction: 'EYES' | 'ROCKET') {
   );
 }
 
+// @see https://docs.github.com/en/graphql/reference/mutations#addcomment
 function addComment(comment: string) {
   return graphql<{
     addComment: {
