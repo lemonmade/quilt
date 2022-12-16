@@ -171,7 +171,7 @@ importers:
       '@quilted/polyfills': 0.2.31
       '@quilted/prettier': 0.2.11
       '@quilted/quilt': ^0.5.0
-      '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.12
+      '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.13
       '@quilted/sewing-kit': 0.2.35
       '@quilted/typescript': 0.2.18
       '@quilted/workers': 0.2.32

@@ -1,5 +1,11 @@
 # @quilted/react-dom
 
+## 17.0.7
+
+### Patch Changes
+
+- [`b573c247`](https://github.com/lemonmade/quilt/commit/b573c2474fd466804b8e7550634f728f257fb0fe) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify Preact integration
+
 ## 17.0.6
 
 ### Patch Changes

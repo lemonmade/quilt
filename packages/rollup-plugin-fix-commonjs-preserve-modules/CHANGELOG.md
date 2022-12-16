@@ -1,5 +1,11 @@
 # @quilted/rollup-plugin-fix-commonjs-preserve-modules
 
+## 0.1.13
+
+### Patch Changes
+
+- [`10bd0508`](https://github.com/lemonmade/quilt/commit/10bd0508885078de817b07a43ae73a0ab57f66fa) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow rollup@3.x.x
+
 ## 0.1.12
 
 ### Patch Changes
