@@ -515,7 +515,6 @@ importers:
       '@quilted/react': ^17.0.3
       '@quilted/react-async': ^0.3.22
       '@quilted/react-dom': ^17.0.3
-      '@quilted/react-email': ^0.2.18
       '@quilted/react-graphql': ^0.4.30
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
@@ -543,7 +542,6 @@ importers:
       '@quilted/react': link:../react
       '@quilted/react-async': link:../react-async
       '@quilted/react-dom': link:../react-dom
-      '@quilted/react-email': link:../react-email
       '@quilted/react-graphql': link:../react-graphql
       '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http

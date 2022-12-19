@@ -41,13 +41,6 @@
       "import": "./build/esm/html.mjs",
       "require": "./build/cjs/html.cjs"
     },
-    "./email": {
-      "types": "./build/typescript/email.d.ts",
-      "quilt:source": "./source/email.ts",
-      "quilt:esnext": "./build/esnext/email.esnext",
-      "import": "./build/esm/email.mjs",
-      "require": "./build/cjs/email.cjs"
-    },
     "./global": {
       "types": "./build/typescript/global.d.ts",
       "quilt:source": "./source/global.ts",
@@ -152,9 +145,6 @@
       "html": [
         "./build/typescript/html.d.ts"
       ],
-      "email": [
-        "./build/typescript/email.d.ts"
-      ],
       "global": [
         "./build/typescript/global.d.ts"
       ],
@@ -223,7 +213,6 @@
     "@quilted/react": "^17.0.3",
     "@quilted/react-async": "^0.3.22",
     "@quilted/react-dom": "^17.0.3",
-    "@quilted/react-email": "^0.2.18",
     "@quilted/react-graphql": "^0.4.30",
     "@quilted/react-html": "^0.3.18",
     "@quilted/react-http": "^0.3.8",

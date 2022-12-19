@@ -15,7 +15,6 @@
     {"path": "../react"},
     {"path": "../react-async"},
     {"path": "../react-dom"},
-    {"path": "../react-email"},
     {"path": "../react-graphql"},
     {"path": "../react-html"},
     {"path": "../react-http"},
