@@ -43,7 +43,7 @@ export function reactTesting({environment = 'preact'}: Options = {}) {
           switch (environment) {
             case 'react-dom':
             case 'preact':
-              return 'jsdom';
+              return require.resolve('jest-environment-jsdom');
             default:
               return currentJestEnvironment;
           }
