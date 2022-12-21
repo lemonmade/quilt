@@ -1,5 +1,11 @@
 # @quilted/react-router
 
+## 0.3.49
+
+### Patch Changes
+
+- [`45c7fe06`](https://github.com/lemonmade/quilt/commit/45c7fe063975eecfc65bc52f8e250fc4018881b5) Thanks [@lemonmade](https://github.com/lemonmade)! - Support array of matches
+
 ## 0.3.48
 
 ### Patch Changes

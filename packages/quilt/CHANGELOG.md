@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.118
+
+### Patch Changes
+
+- [`f8157c47`](https://github.com/lemonmade/quilt/commit/f8157c4751cd2cde941e452036fdb814124e0840) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove email package from core
+
 ## 0.5.117
 
 ### Patch Changes
