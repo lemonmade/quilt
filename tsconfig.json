@@ -6,11 +6,11 @@
     "scripts/**/*.ts",
     "quilt.workspace.ts",
     "**/quilt.project.ts",
-    "*.test.ts",
-    "*.test.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
     "tests/**/*"
   ],
-  "exclude": ["tests/e2e/output/**/*"],
+  "exclude": ["tests/e2e/output/**/*", "packages/create/templates/**/*"],
   "references": [
     {"path": "./integrations/aws"},
     {"path": "./integrations/cloudflare"},
