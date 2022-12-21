@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.164",
+  "version": "0.1.165",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -285,7 +285,7 @@
     "@types/semver": "^7.0.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.115",
+    "@quilted/quilt": "^0.5.118",
     "react": "^17.0.0",
     "typescript": "^4.9.0"
   },

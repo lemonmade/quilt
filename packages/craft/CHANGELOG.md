@@ -1,5 +1,18 @@
 # @quilted/craft
 
+## 0.1.165
+
+### Patch Changes
+
+- [`55d4668c`](https://github.com/lemonmade/quilt/commit/55d4668c329988efe354964817461f6cd9d5f538) Thanks [@lemonmade](https://github.com/lemonmade)! - Don’t add prefix to node modules when inlining
+
+- [`ff68c1d2`](https://github.com/lemonmade/quilt/commit/ff68c1d244359e1efec73fa40a8be4d450a11399) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix jsdom environment
+
+- [#434](https://github.com/lemonmade/quilt/pull/434) [`79b1481f`](https://github.com/lemonmade/quilt/commit/79b1481fe2b5d617abe823d80d385c95e588dd44) Thanks [@lemonmade](https://github.com/lemonmade)! - Use prettier cache options
+
+- Updated dependencies [[`f8157c47`](https://github.com/lemonmade/quilt/commit/f8157c4751cd2cde941e452036fdb814124e0840)]:
+  - @quilted/quilt@0.5.118
+
 ## 0.1.164
 
 ### Patch Changes
