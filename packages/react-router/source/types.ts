@@ -30,7 +30,8 @@ export interface RouteRenderPreloadDetails {
 }
 
 export interface RouteDefinition {
-  match?: Match;
+  match?: Match | Match[];
+  exact?: boolean;
   children?: RouteDefinition[];
   redirect?: NavigateTo;
   render?(details: RouteRenderDetails): ReactNode;

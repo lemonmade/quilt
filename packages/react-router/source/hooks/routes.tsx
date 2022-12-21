@@ -1,10 +1,15 @@
 /* eslint react/jsx-no-useless-fragment: off */
 
-import {memo, useContext, useEffect, useRef} from 'react';
-import type {ReactNode, ReactElement} from 'react';
+import {
+  memo,
+  useContext,
+  useEffect,
+  useRef,
+  type ReactNode,
+  type ReactElement,
+} from 'react';
 import {NotFound} from '@quilted/react-http';
-import {getMatchDetails} from '@quilted/routing';
-import type {NavigateTo} from '@quilted/routing';
+import {getMatchDetails, type NavigateTo, type Prefix} from '@quilted/routing';
 
 import type {EnhancedURL, RouteDefinition} from '../types';
 import {PreloaderContext, ConsumedPathContext} from '../context';
@@ -107,12 +112,11 @@ const RoutesInternal = memo(function RoutesInternal({
     | undefined;
 
   for (const route of routes) {
-    const matchDetailsForRoute = getMatchDetails(
+    const matchDetailsForRoute = getRouteMatchDetails(
+      route,
       currentUrl,
-      route.match,
       router.prefix,
       previouslyConsumedPath,
-      false,
       staticRender?.forceFallback(previouslyConsumedPath ?? '/'),
     );
 
@@ -190,4 +194,38 @@ const RoutesInternal = memo(function RoutesInternal({
 function Redirect({to}: {to: NavigateTo}) {
   useRedirect(to);
   return null;
+}
+
+function getRouteMatchDetails(
+  route: RouteDefinition,
+  currentUrl: EnhancedURL,
+  prefix?: Prefix,
+  consumed?: string,
+  forceFallback?: boolean,
+) {
+  if (Array.isArray(route.match)) {
+    for (const match of route.match) {
+      const matchDetails = getMatchDetails(
+        currentUrl,
+        match,
+        prefix,
+        consumed,
+        route.children == null && (route.exact ?? true),
+        forceFallback,
+      );
+
+      if (matchDetails) return matchDetails;
+    }
+
+    return;
+  }
+
+  return getMatchDetails(
+    currentUrl,
+    route.match,
+    prefix,
+    consumed,
+    route.children == null && (route.exact ?? true),
+    forceFallback,
+  );
 }

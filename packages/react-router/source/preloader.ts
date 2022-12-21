@@ -7,7 +7,7 @@ import type {Router} from './router';
 
 interface PreloadRegistration {
   id: string;
-  matches: Match[];
+  matches: (Match | Match[])[];
   render: NonNullable<RouteDefinition['renderPreload']>;
 }
 
@@ -48,7 +48,7 @@ export function createPreloader(router: Router): Preloader {
 
         function processRoute(
           route: RouteDefinition,
-          parentMatches: Match[] = [],
+          parentMatches: (Match | Match[])[] = [],
         ) {
           const {children, match, renderPreload} = route;
 
@@ -148,25 +148,58 @@ export function createPreloader(router: Router): Preloader {
   }
 }
 
-function stringifyMatch(match?: Match) {
+function stringifyMatch(match?: Match | Match[]): string {
   if (match == null) {
     return '';
   } else if (typeof match === 'string') {
     return match;
   } else if (match instanceof RegExp) {
     return match.source;
+  } else if (Array.isArray(match)) {
+    return match.map(stringifyMatch).join(',');
   } else {
     return match.toString();
   }
 }
 
-function getUrlMatch(url: EnhancedURL, router: Router, matchers: Match[]) {
+function getUrlMatch(
+  url: EnhancedURL,
+  router: Router,
+  matchers: (Match | Match[])[],
+) {
   if (matchers.length === 0) return '';
 
   let currentlyConsumed: string | undefined;
   let lastMatch = '';
 
   for (const matcher of matchers) {
+    if (Array.isArray(matcher)) {
+      let hasMatch = false;
+
+      for (const subMatcher of matcher) {
+        const matchDetails = getMatchDetails(
+          url,
+          subMatcher,
+          router.prefix,
+          currentlyConsumed,
+          false,
+        );
+
+        if (matchDetails != null) {
+          hasMatch = true;
+          currentlyConsumed = matchDetails.consumed ?? currentlyConsumed;
+          lastMatch = matchDetails.matched;
+          break;
+        }
+      }
+
+      if (!hasMatch) {
+        return false;
+      }
+
+      continue;
+    }
+
     const matchDetails = getMatchDetails(
       url,
       matcher,

@@ -180,7 +180,9 @@ describe('useRoutes()', () => {
         }
 
         function Routes() {
-          return useRoutes([{match: 'a', render: () => <NestedRoutes />}]);
+          return useRoutes([
+            {match: 'a', exact: false, render: () => <NestedRoutes />},
+          ]);
         }
 
         expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
@@ -396,7 +398,9 @@ describe('useRoutes()', () => {
         }
 
         function Routes() {
-          return useRoutes([{match: /\w/, render: () => <NestedRoutes />}]);
+          return useRoutes([
+            {match: /\w/, exact: false, render: () => <NestedRoutes />},
+          ]);
         }
 
         expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
@@ -521,6 +525,35 @@ describe('useRoutes()', () => {
       });
     });
 
+    describe('array', () => {
+      it('matches if any of the elements matches', () => {
+        function Routes() {
+          return useRoutes([
+            {
+              match: ['a', /b/, ({pathname}) => pathname === '/c'],
+              render: () => <RouteComponent />,
+            },
+          ]);
+        }
+
+        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/b'})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/c'})).toContainReactComponent(
+          RouteComponent,
+        );
+
+        expect(mount(<Routes />, {path: '/d'})).not.toContainReactComponent(
+          RouteComponent,
+        );
+      });
+    });
+
     describe('fallback', () => {
       it('matches a route with no match property', () => {
         function Routes() {
@@ -557,6 +590,30 @@ describe('useRoutes()', () => {
         expect(nestedMatchRoutes.find(RouteComponent)).toContainReactComponent(
           NestedRouteComponent,
         );
+      });
+    });
+
+    describe('exact', () => {
+      it('renders routes without children only if they are an exact match by default', () => {
+        function Routes() {
+          return useRoutes([{match: 'a', render: () => <RouteComponent />}]);
+        }
+
+        const routes = mount(<Routes />, {path: '/a/b/c'});
+
+        expect(routes).not.toContainReactComponent(RouteComponent);
+      });
+
+      it('allows routes without children to be inexact', () => {
+        function Routes() {
+          return useRoutes([
+            {match: 'a', exact: false, render: () => <RouteComponent />},
+          ]);
+        }
+
+        const routes = mount(<Routes />, {path: '/a/b/c'});
+
+        expect(routes).toContainReactComponent(RouteComponent);
       });
     });
 
