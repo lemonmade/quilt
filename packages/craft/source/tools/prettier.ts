@@ -51,7 +51,7 @@ export function prettier({
 }: Options = {}) {
   return createWorkspacePlugin({
     name: 'Quilt.Prettier',
-    lint({hooks, run, options}) {
+    lint({hooks, run, options, workspace}) {
       hooks<PrettierHooks>(({waterfall}) => ({
         prettierExtensions: waterfall(),
       }));
@@ -79,6 +79,9 @@ export function prettier({
                 glob,
                 options.fix ? '--write' : '--check',
                 '--no-error-on-unmatched-pattern',
+                '--cache',
+                '--cache-location',
+                workspace.fs.temporaryPath('prettier/cache'),
               ],
               {
                 fromNodeModules: import.meta.url,
