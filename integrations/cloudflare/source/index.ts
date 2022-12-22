@@ -1,2 +1,5 @@
-export type {CloudflareRequestContext, KVNamespaceBinding} from './types';
+export type {
+  CloudflareRequestContext,
+  CloudflareRequestEnvironment,
+} from './types';
 export {};

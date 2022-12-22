@@ -1,8 +1,8 @@
-export type KVNamespaceBinding = any;
+export interface CloudflareRequestEnvironment {}
 
 export interface CloudflareRequestContext extends ExecutionContext {
   readonly cf?: IncomingRequestCfProperties;
-  readonly env: Record<string, KVNamespaceBinding>;
+  readonly env: CloudflareRequestEnvironment;
 }
 
 declare module '@quilted/quilt' {
