@@ -1,5 +1,13 @@
 # @quilted/cloudflare
 
+## 0.1.45
+
+### Patch Changes
+
+- [`1495af4c`](https://github.com/lemonmade/quilt/commit/1495af4ce637b7f5dc6a22b9f00a9609f204c554) Thanks [@lemonmade](https://github.com/lemonmade)! - Default cloudflare adaptor to not cache
+
+- [`b5d12b76`](https://github.com/lemonmade/quilt/commit/b5d12b76394d53c09b63914a32c6f1dfcbfdff82) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow overriding Cloudflare environment
+
 ## 0.1.44
 
 ### Patch Changes
