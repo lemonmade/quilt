@@ -152,9 +152,9 @@ function setupConfiguration(
         import createAssetManifest from ${JSON.stringify(
           MAGIC_MODULE_APP_ASSET_MANIFEST,
         )};
-        import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
+        import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
   
-        export default createServerRenderingHttpHandler(() => jsx(App), {
+        export default createServerRenderingRequestRouter(() => jsx(App), {
           assets: createAssetManifest(),
         });
       `;

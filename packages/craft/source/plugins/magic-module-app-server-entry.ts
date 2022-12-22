@@ -14,7 +14,7 @@ export interface Hooks {
    * Node server build (that is, you do not add any plugins that adapt
    * the server to a different environment, and you do not specify a
    * custom server with the `server.entry` option). This result is passed
-   * to the `quiltHttpHandlerPort`, which may customize it further, before
+   * to the `quiltRequestRouterPort`, which may customize it further, before
    * falling back to the `PORT` environment if no explicit value is set.
    */
   quiltAppServerPort: WaterfallHook<number | undefined>;
@@ -24,7 +24,7 @@ export interface Hooks {
    * Node server build (that is, you do not add any plugins that adapt
    * the server to a different environment, and you do not specify a
    * custom server with the `server.entry` option). This result is passed
-   * to the `quiltHttpHandlerHost`, which may customize it further.
+   * to the `quiltRequestRouterHost`, which may customize it further.
    */
   quiltAppServerHost: WaterfallHook<string | undefined>;
 }

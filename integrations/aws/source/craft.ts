@@ -21,13 +21,13 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
         ) => {
           quiltRequestRouterRuntimeContent?.(
             () => stripIndent`
-              import HttpHandler from ${JSON.stringify(
+              import RequestRouter from ${JSON.stringify(
                 MAGIC_MODULE_REQUEST_ROUTER,
               )};
 
               import {createLambdaApiGatewayProxy} from '@quilted/aws/request-router';
 
-              export const ${handlerName} = createLambdaApiGatewayProxy(HttpHandler);
+              export const ${handlerName} = createLambdaApiGatewayProxy(RequestRouter);
             `,
           );
 

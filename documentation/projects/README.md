@@ -106,13 +106,13 @@ Quilt provides a [good build command for services](../features/builds/services.m
 // AWS Lambda, a Node service on Render, and more, all just by changing
 // your quilt.project.ts file!
 
-import {createHttpHandler, json} from '@quilted/request-router';
+import {createRequestRouter, json} from '@quilted/request-router';
 
-const handler = createHttpHandler();
+const router = createRequestRouter();
 
-handler.get('/api', () => json({hello: 'world'}));
+router.get('/api', () => json({hello: 'world'}));
 
-export default handler;
+export default router;
 ```
 
 Quilt also supports a [minimal development flow](../features/developing/services.md) for services so you can preview your work locally.
