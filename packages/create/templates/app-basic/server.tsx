@@ -1,19 +1,19 @@
 import '@quilted/quilt/global';
 import {
-  createHttpHandler,
+  createRequestRouter,
   createServerRenderingRequestHandler,
 } from '@quilted/quilt/server';
 import createAssetManifest from '@quilted/quilt/magic/app/asset-manifest';
 
 import App from './App';
 
-const httpHandler = createHttpHandler();
+const router = createRequestRouter();
 
 // For all GET requests, render our React application.
-httpHandler.get(
+router.get(
   createServerRenderingRequestHandler(() => <App />, {
     assets: createAssetManifest(),
   }),
 );
 
-export default httpHandler;
+export default router;

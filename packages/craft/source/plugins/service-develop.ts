@@ -6,15 +6,15 @@ import {createProjectPlugin} from '../kit';
 
 export function serviceDevelopment() {
   return createProjectPlugin({
-    name: 'Quilt.HttpHandler.Development',
+    name: 'Quilt.RequestRouter.Development',
     develop({project, run}) {
       run((step, {configuration}) =>
         step({
-          name: 'Quilt.HttpHandler.Development',
+          name: 'Quilt.RequestRouter.Development',
           label: `Running local development server for ${project.name}`,
           async run() {
             const file = project.fs.buildPath(
-              'develop/quilt-http-handler/built.js',
+              'develop/quilt-request-router/built.js',
             );
 
             const [
@@ -22,7 +22,7 @@ export function serviceDevelopment() {
               {rollupInput, rollupExternals, rollupPlugins, rollupInputOptions},
             ] = await Promise.all([
               import('rollup'),
-              configuration({quiltHttpHandler: true}),
+              configuration({quiltRequestRouter: true}),
             ]);
 
             const [input, plugins, external] = await Promise.all([

@@ -11,6 +11,7 @@
     {"path": "../react-http"},
     {"path": "../react-router"},
     {"path": "../react-utilities"},
+    {"path": "../request-router"},
     {"path": "../useful-react-types"}
   ]
 }

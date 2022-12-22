@@ -28,17 +28,17 @@ export interface AppServerOptions {
   entry?: string;
 
   /**
-   * Whether this server code uses the `http-handlers` library to
+   * Whether this server code uses the `request-router` library to
    * define itself in a generic way, which can be adapted to a variety
-   * of environments. By default, this is `true`, and when `true`,
-   * the `entry` you specified must export an `HttpHandler` object as
+   * of environments. By default, this is `'request-router'`, and when `'request-router'`,
+   * the `entry` you specified must export an `RequestRouter` object as
    * its default export. When set to `false`, the app server will be built
    * as a basic server-side JavaScript project, without the special
-   * `http-handlers` adaptor.
+   * `request-router` adaptor.
    *
-   * @default true
+   * @default 'request-router'
    */
-  httpHandler?: boolean;
+  format?: 'request-router' | 'custom';
 
   /**
    * Whether the automatic server will serve assets for the browser build.
@@ -94,11 +94,17 @@ export function appServer(options?: AppServerOptions) {
   });
 }
 
-function setupConfiguration(project: Project, options?: AppServerOptions) {
-  const entry = options?.entry;
-  const httpHandler = options?.httpHandler ?? true;
-  const explicitBundle = options?.bundle;
-  const inlineEnv = options?.env?.inline;
+function setupConfiguration(
+  project: Project,
+  {
+    env,
+    entry,
+    format = 'request-router',
+    bundle: explicitBundle,
+  }: AppServerOptions = {},
+) {
+  const requestRouter = format === 'request-router';
+  const inlineEnv = env?.inline;
 
   return (
     {
@@ -110,7 +116,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
       rollupPlugins,
       rollupNodeBundle,
       quiltAppServerEntryContent,
-      quiltHttpHandlerContent,
+      quiltRequestRouterContent,
       quiltAsyncPreload,
       quiltAsyncManifest,
       quiltInlineEnvironmentVariables,
@@ -131,7 +137,7 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
     runtimes(() => [{target: 'node'}]);
 
     const content = entry
-      ? httpHandler
+      ? requestRouter
         ? stripIndent`
           export {default} from ${JSON.stringify(
             project.fs.resolvePath(entry),
@@ -146,9 +152,9 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
         import createAssetManifest from ${JSON.stringify(
           MAGIC_MODULE_APP_ASSET_MANIFEST,
         )};
-        import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
+        import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
   
-        export default createServerRenderingHttpHandler(() => jsx(App), {
+        export default createServerRenderingRequestRouter(() => jsx(App), {
           assets: createAssetManifest(),
         });
       `;
@@ -182,8 +188,8 @@ function setupConfiguration(project: Project, options?: AppServerOptions) {
       return plugins;
     });
 
-    if (httpHandler) {
-      quiltHttpHandlerContent?.(
+    if (requestRouter) {
+      quiltRequestRouterContent?.(
         async () => await quiltAppServerEntryContent!.run(content),
       );
     } else {

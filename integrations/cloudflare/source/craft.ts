@@ -1,7 +1,7 @@
 import {extname} from 'path';
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin, MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
+import {createProjectPlugin, MAGIC_MODULE_REQUEST_ROUTER} from '@quilted/craft';
 import type {
   BuildProjectOptions,
   DevelopProjectOptions,
@@ -176,7 +176,7 @@ function addConfiguration({
       quiltAssetBaseUrl,
       quiltServiceOutputFormat,
       quiltAppServerOutputFormat,
-      quiltHttpHandlerRuntimeContent,
+      quiltRequestRouterRuntimeContent,
       quiltPolyfillFeaturesForEnvironment,
       quiltRuntimeEnvironmentVariables,
     }: Partial<
@@ -247,13 +247,15 @@ function addConfiguration({
     });
 
     if (format === 'modules') {
-      quiltHttpHandlerRuntimeContent?.(
+      quiltRequestRouterRuntimeContent?.(
         async () => stripIndent`
-          import HttpHandler from ${JSON.stringify(MAGIC_MODULE_HTTP_HANDLER)};
+          import RequestRouter from ${JSON.stringify(
+            MAGIC_MODULE_REQUEST_ROUTER,
+          )};
 
-          import {createFetchHandler} from '@quilted/cloudflare/http-handlers';
+          import {createFetchHandler} from '@quilted/cloudflare/request-router';
 
-          const handler = createFetchHandler(HttpHandler, {
+          const handler = createFetchHandler(RequestRouter, {
             cache: ${String(cache)},
             assets: ${
               serveAssets
@@ -270,13 +272,15 @@ function addConfiguration({
         `,
       );
     } else {
-      quiltHttpHandlerRuntimeContent?.(
+      quiltRequestRouterRuntimeContent?.(
         async () => stripIndent`
-          import HttpHandler from ${JSON.stringify(MAGIC_MODULE_HTTP_HANDLER)};
+          import RequestRouter from ${JSON.stringify(
+            MAGIC_MODULE_REQUEST_ROUTER,
+          )};
 
-          import {createFetchHandler, transformFetchEvent} from '@quilted/cloudflare/http-handlers';
+          import {createFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
 
-          const handler = createRequestHandler(HttpHandler, {
+          const handler = createFetchHandler(RequestRouter, {
             cache: ${String(cache)},
             assets: ${
               serveAssets

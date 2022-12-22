@@ -286,16 +286,16 @@ You should get feedback from this command about the URL your application is depl
 
 ### Deploying a service
 
-Quilt also comes with a way to automatically turn your backend services into Cloudflare Workers. To use this transformation, your service must be written using [Quilt’s `http-handlers` library](./TODO), which provides a simple abstraction over HTTP requests and responses.
+Quilt also comes with a way to automatically turn your backend services into Cloudflare Workers. To use this transformation, your service must be written using [Quilt’s `request-router` library](./TODO), which provides a simple abstraction over HTTP requests and responses.
 
-> **Note:** `@quilted/http-handlers` is a very small library that is meant to expose only the small set of APIs that overlap between many server environments. If you are heavily using Cloudflare’s APIs, you may not be able to use this automatic transformation, and will need to instead author the full Cloudflare Workers runtime code for your function. In that case, you can set `httpHandler: false` in your Sewing Kit config for this service, which runs a build without the automatic transformations.
+> **Note:** `@quilted/request-router` is a very small library that is meant to expose only the small set of APIs that overlap between many server environments. If you are heavily using Cloudflare’s APIs, you may not be able to use this automatic transformation, and will need to instead author the full Cloudflare Workers runtime code for your function. In that case, you can set `format: 'custom'` in your Sewing Kit config for this service, which runs a build without the automatic transformations.
 
-#### Step 1: Write your service using `@quilted/http-handlers`
+#### Step 1: Write your service using `@quilted/request-router`
 
-As noted above, you will need to author your function using the tiny HTTP library in `@quilted/http-handlers` to get automatic transformations for Cloudflare Workers. You’ll first need to install this library as a dependency, either of the whole repo (as shown below) or for an individual service inside the repo:
+As noted above, you will need to author your function using the tiny HTTP library in `@quilted/request-router` to get automatic transformations for Cloudflare Workers. You’ll first need to install this library as a dependency, either of the whole repo (as shown below) or for an individual service inside the repo:
 
 ```zsh
-yarn install @quilted/http-handlers
+yarn install @quilted/request-router
 ```
 
 You can review the [documentation for this library](./TODO) to see the full set of APIs it provides. A simple JSON API could be implemented as follows:
@@ -303,13 +303,13 @@ You can review the [documentation for this library](./TODO) to see the full set 
 ```ts
 // In a file for your service, say, functions/api/index.ts
 
-import {createHttpHandler, json} from '@quilted/http-handlers';
+import {createRequestRouter, json} from '@quilted/request-router';
 
-const handler = createHttpHandler();
+const router = createRequestRouter();
 
-handler.get(() => json({hello: 'world!'}));
+router.get(() => json({hello: 'world!'}));
 
-export default handler;
+export default router;
 ```
 
 #### Step 2: Add the Cloudflare Sewing Kit plugin

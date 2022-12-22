@@ -20,7 +20,7 @@ import type {AppBrowserOptions} from './app-build';
 import type {EnvironmentOptions} from './magic-module-env';
 
 import {
-  MAGIC_MODULE_HTTP_HANDLER,
+  MAGIC_MODULE_REQUEST_ROUTER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_APP_ASSET_MANIFEST,
 } from '../constants';
@@ -34,7 +34,7 @@ const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
 export interface Options {
   env?: EnvironmentOptions;
   port?: number;
-  server?: Pick<AppServerOptions, 'entry' | 'httpHandler' | 'env'>;
+  server?: Pick<AppServerOptions, 'entry' | 'format' | 'env'>;
   browser?: Pick<AppBrowserOptions, 'entryModule' | 'initializeModule'>;
 }
 
@@ -65,7 +65,7 @@ const require = createRequire(import.meta.url);
 
 export function appDevelop({env, port, browser, server}: Options = {}) {
   const serverEntry = server?.entry;
-  const httpHandler = server?.httpHandler ?? true;
+  const requestRouter = server?.format ?? 'request-router';
   const serverInlineEnv = server?.env?.inline;
 
   return createProjectPlugin({
@@ -101,16 +101,16 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
             quiltEnvModuleContent,
-            quiltHttpHandlerRuntimeContent,
+            quiltRequestRouterRuntimeContent,
           },
-          {quiltHttpHandler = false, quiltAppServer = false},
+          {quiltRequestRouter = false, quiltAppServer = false},
         ) => {
           runtimes(() => [{target: quiltAppServer ? 'node' : 'browser'}]);
 
           const inlineEnv = env?.inline;
 
           if (
-            quiltHttpHandler &&
+            quiltRequestRouter &&
             serverInlineEnv != null &&
             serverInlineEnv.length > 0
           ) {
@@ -157,7 +157,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                     return null;
 
                   const baseContent =
-                    httpHandler && serverEntry
+                    requestRouter && serverEntry
                       ? stripIndent`
                       export {default} from ${JSON.stringify(
                         project.fs.resolvePath(serverEntry),
@@ -170,9 +170,9 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       import createAssetManifest from ${JSON.stringify(
                         MAGIC_MODULE_APP_ASSET_MANIFEST,
                       )};
-                      import {createServerRenderingHttpHandler} from '@quilted/quilt/server';
+                      import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
       
-                      export default createServerRenderingHttpHandler(() => <App />, {
+                      export default createServerRenderingRequestRouter(() => <App />, {
                         assets: createAssetManifest(),
                       });
                     `;
@@ -230,10 +230,10 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             ];
           });
 
-          quiltHttpHandlerRuntimeContent?.(async () => {
+          quiltRequestRouterRuntimeContent?.(async () => {
             return stripIndent`
               export {default} from ${JSON.stringify(
-                MAGIC_MODULE_HTTP_HANDLER,
+                MAGIC_MODULE_REQUEST_ROUTER,
               )};
             `;
           });
@@ -427,7 +427,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               import('vite'),
               import('express'),
               configuration(),
-              configuration({quiltAppServer: true, quiltHttpHandler: true}),
+              configuration({quiltAppServer: true, quiltRequestRouter: true}),
             ]);
 
             const {quiltAppServerPort, quiltAppServerHost} = configurationHooks;
@@ -505,13 +505,13 @@ async function createAppServer(
     developmentServer,
   ] = await Promise.all([
     import('rollup'),
-    import('@quilted/quilt/http-handlers'),
-    import('@quilted/quilt/http-handlers/node'),
+    import('@quilted/quilt/request-router'),
+    import('@quilted/quilt/request-router/node'),
     quiltAppDevelopmentServer!.run(createDefaultAppDevelopmentServer()),
   ]);
 
   let resolveHandler!: (handler: AppDevelopmentServerHandler) => void;
-  let httpHandlerPromise!: Promise<AppDevelopmentServerHandler>;
+  let requestRouterPromise!: Promise<AppDevelopmentServerHandler>;
 
   const file = project.fs.temporaryPath('develop/server/built.js');
 
@@ -555,7 +555,7 @@ async function createAppServer(
   watcher.on('event', (event) => {
     switch (event.code) {
       case 'BUNDLE_START': {
-        httpHandlerPromise = new Promise<AppDevelopmentServerHandler>(
+        requestRouterPromise = new Promise<AppDevelopmentServerHandler>(
           (resolve) => {
             resolveHandler = resolve;
           },
@@ -589,10 +589,10 @@ async function createAppServer(
 
   return {
     async handle(req: IncomingMessage, serverResponse: ServerResponse) {
-      const handler = await httpHandlerPromise;
+      const router = await requestRouterPromise;
       const request = createRequest(req);
 
-      const response = (await handler.run(request, req)) ?? notFound();
+      const response = (await router.run(request, req)) ?? notFound();
 
       const contentType = response.headers.get('Content-Type');
 

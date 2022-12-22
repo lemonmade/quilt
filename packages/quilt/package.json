@@ -76,19 +76,19 @@
       "import": "./build/esm/matchers.mjs",
       "require": "./build/cjs/matchers.cjs"
     },
-    "./http-handlers/node": {
-      "types": "./build/typescript/http-handlers/node.d.ts",
-      "quilt:source": "./source/http-handlers/node.ts",
-      "quilt:esnext": "./build/esnext/http-handlers/node.esnext",
-      "import": "./build/esm/http-handlers/node.mjs",
-      "require": "./build/cjs/http-handlers/node.cjs"
+    "./request-router/node": {
+      "types": "./build/typescript/request-router/node.d.ts",
+      "quilt:source": "./source/request-router/node.ts",
+      "quilt:esnext": "./build/esnext/request-router/node.esnext",
+      "import": "./build/esm/request-router/node.mjs",
+      "require": "./build/cjs/request-router/node.cjs"
     },
-    "./http-handlers": {
-      "types": "./build/typescript/http-handlers/index.d.ts",
-      "quilt:source": "./source/http-handlers/index.ts",
-      "quilt:esnext": "./build/esnext/http-handlers/index.esnext",
-      "import": "./build/esm/http-handlers/index.mjs",
-      "require": "./build/cjs/http-handlers/index.cjs"
+    "./request-router": {
+      "types": "./build/typescript/request-router/index.d.ts",
+      "quilt:source": "./source/request-router/index.ts",
+      "quilt:esnext": "./build/esnext/request-router/index.esnext",
+      "import": "./build/esm/request-router/index.mjs",
+      "require": "./build/cjs/request-router/index.cjs"
     },
     "./threads": {
       "types": "./build/typescript/threads.d.ts",
@@ -166,11 +166,11 @@
       "workers/worker": [
         "./build/typescript/workers/worker.d.ts"
       ],
-      "http-handlers/node": [
-        "./build/typescript/http-handlers/node.d.ts"
+      "request-router/node": [
+        "./build/typescript/request-router/node.d.ts"
       ],
-      "http-handlers": [
-        "./build/typescript/http-handlers/index.d.ts"
+      "request-router": [
+        "./build/typescript/request-router/index.d.ts"
       ],
       "polyfills/base": [
         "./build/typescript/polyfills/base.d.ts"
@@ -190,8 +190,8 @@
       "magic/app/asset-manifest": [
         "./build/typescript/magic/asset-manifest.d.ts"
       ],
-      "magic/http-handler": [
-        "./build/typescript/magic/http-handler.d.ts"
+      "magic/request-router": [
+        "./build/typescript/magic/request-router.d.ts"
       ]
     }
   },
@@ -208,7 +208,6 @@
     "@quilted/async": "^0.3.12",
     "@quilted/events": "^0.1.0",
     "@quilted/graphql": "^0.4.34",
-    "@quilted/http-handlers": "^0.2.20",
     "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^17.0.3",
     "@quilted/react-async": "^0.3.22",
@@ -219,12 +218,13 @@
     "@quilted/react-idle": "^0.3.6",
     "@quilted/react-localize": "^0.1.0",
     "@quilted/react-performance": "^0.1.0",
-    "@quilted/react-router": "^0.3.28",
+    "@quilted/react-router": "^0.3.49",
     "@quilted/react-server-render": "^0.3.7",
     "@quilted/react-signals": "^0.1.0",
     "@quilted/react-testing": "^0.5.1",
     "@quilted/react-utilities": "^0.1.0",
     "@quilted/react-workers": "^0.2.12",
+    "@quilted/request-router": "^0.1.0",
     "@quilted/testing": "^0.1.0",
     "@quilted/threads": "^0.1.0",
     "@quilted/useful-react-types": "^0.1.0",

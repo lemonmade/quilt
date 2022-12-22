@@ -12,7 +12,7 @@ PORT=3000 node ./build/server/index.js
 
 ## Building the server for other environments
 
-The automatic server that Quilt creates uses [Sewing Kit](./TODO) to coordinate its builds. It also makes use of the [http-handlers](./TODO) library to define the default server. Taken together, these design decisions mean that you can use the same Sewing Kit plugins that adapt a [service using `@quilted/http-handlers`](./TODO) to a specific deployment platform for the server generated for your app. For example, the [`@quilted/cloudflare` package](../../../packages/cloudflare) provides a `cloudflareWorkers()` Sewing Kit plugin that adapts the automatic server to run perfectly as a [Cloudflare Worker](https://developers.cloudflare.com/workers/):
+The automatic server that Quilt creates uses [Sewing Kit](./TODO) to coordinate its builds. It also makes use of the [request-router](./TODO) library to define the default server. Taken together, these design decisions mean that you can use the same Sewing Kit plugins that adapt a [service using `@quilted/request-router`](./TODO) to a specific deployment platform for the server generated for your app. For example, the [`@quilted/cloudflare` package](../../../packages/cloudflare) provides a `cloudflareWorkers()` Sewing Kit plugin that adapts the automatic server to run perfectly as a [Cloudflare Worker](https://developers.cloudflare.com/workers/):
 
 ```ts
 // sewing-kit.config.ts
@@ -29,7 +29,7 @@ export default createApp((app) => {
 
 The default server will listen for all `GET` requests, will perform [server rendering](../../server-rendering.md), and will set the response status, headers, and body accordingly. This default works great for most cases, but just like with Quilt’s [browser builds](./browsers.md), you can completely replace Quilt’s default.
 
-If you want to write a custom server, you can do so by passing the `server` option to the `quiltApp()` Sewing Kit plugin. You can pass the `entry` option to point to a file in your repo that exports a [`@quilted/http-handlers` `HttpHandler` object](../../../packages/http-handlers) as the default export:
+If you want to write a custom server, you can do so by passing the `server` option to the `quiltApp()` Sewing Kit plugin. You can pass the `entry` option to point to a file in your repo that exports a [`@quilted/request-router` `RequestRouter` object](../../../packages/request-router) as the default export:
 
 ```ts
 // sewing-kit.config.ts
@@ -60,23 +60,23 @@ You can write any code for your server that you like. Quilt provides some utilit
 import createAssetManifest from '@quilted/quilt/magic/app/asset-manifest';
 
 import {createServerRenderingRequestHandler} from '@quilted/quilt/server';
-import {createHttpHandler, response} from '@quilted/quilt/http-handlers';
+import {createRequestRouter, response} from '@quilted/quilt/request-router';
 
 import App from './App';
 
-const handler = createHttpHandler();
+const router = createRequestRouter();
 
-handler.get('ping', () => response('pong!'));
-handler.get(
+router.get('ping', () => response('pong!'));
+router.get(
   createServerRenderingRequestHandler(() => <App />, {
     assets: createAssetManifest(),
   }),
 );
 
-export default handler;
+export default router;
 ```
 
-You don’t need to use Quilt’s `http-handlers` library to create your server if you don’t want to. You can set the `server.httpHandler` option to `false` to disable the HTTP handlers builds, and to instead build your custom server entry as a basic JavaScript project. You can use this option if you want to directly author the runtime code for your project, which might be needed for some complex use cases.
+You don’t need to use Quilt’s `request-router` library to create your server if you don’t want to. You can set the `server.kind` option to `'custom'` to disable the automatic request-router builds, and to instead build your custom server entry as a basic JavaScript project. You can use this option if you want to directly author the runtime code for your project, which might be needed for some complex use cases.
 
 ```ts
 // sewing-kit.config.ts
@@ -86,7 +86,7 @@ import {createApp, quiltApp} from '@quilted/sewing-kit';
 export default createApp((app) => {
   app.use(
     quiltApp({
-      server: {entry: './server', httpHandler: false},
+      server: {entry: './server', format: 'custom'},
     }),
   );
 });
@@ -149,7 +149,7 @@ Quilt exposes a collection of [Sewing Kit hooks](./TODO) for deeply customizing 
 - `quiltAppServerOutputFormat`, which lets you control the module format that the server output will use (defaults to `module`, which produces native ES modules).
 - `quiltAppServerEntryContent`, which lets you customize the magic entry point that Quilt creates to build your server.
 
-Quilt also uses all of the [http-handler Sewing Kit hooks](../services.md#deeper-customizations-with-sewing-kit) when your app server uses the http-handlers library.
+Quilt also uses all of the [request-router Sewing Kit hooks](../services.md#deeper-customizations-with-sewing-kit) when your app server uses the request-router library.
 
 When Quilt is building the server version of your app, it sets the `quiltAppServer` option to `true`. You can use the presence of this option to perform tooling customizations that only apply to the server build:
 

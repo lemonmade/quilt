@@ -4,9 +4,11 @@ import {Request, type RequestInit} from './globals';
 
 export class EnhancedRequest extends Request {
   readonly cookies: ReadonlyCookies;
+  readonly URL: URL;
 
   constructor(info: RequestInfo | URL, options?: RequestInit) {
     super(info, options);
+    this.URL = new URL(this.url);
     this.cookies = requestCookiesFromHeaders(this.headers);
   }
 }

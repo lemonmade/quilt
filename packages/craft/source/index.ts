@@ -61,8 +61,11 @@ import {serviceBuild} from './plugins/service-build';
 import type {Options as ServiceBuildOptions} from './plugins/service-build';
 import {serviceDevelopment} from './plugins/service-develop';
 
-import {httpHandler, httpHandlerDevelopment} from './plugins/http-handler';
-import type {Options as HttpHandlerOptions} from './plugins/http-handler';
+import {
+  requestRouter,
+  requestRouterDevelopment,
+} from './plugins/request-router';
+import type {Options as RequestRouterOptions} from './plugins/request-router';
 
 import {magicModuleEnv} from './plugins/magic-module-env';
 import type {EnvironmentOptions} from './plugins/magic-module-env';
@@ -75,7 +78,7 @@ export type {} from './plugins/app-build';
 export type {} from './plugins/app-server-build';
 export type {} from './plugins/app-auto-server';
 export type {} from './plugins/browser-entry';
-export type {} from './plugins/http-handler';
+export type {} from './plugins/request-router';
 
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
@@ -167,8 +170,10 @@ export function quiltApp({
 }: AppOptions = {}) {
   const {minify = true, baseUrl = '/assets/', ...assetOptions} = assets;
 
-  const useHttpHandler =
-    typeof server === 'boolean' ? server : server.httpHandler ?? true;
+  const useRequestRouter =
+    typeof server === 'boolean'
+      ? server
+      : server.format == null || server.format === 'request-router';
 
   return createProjectPlugin({
     name: 'Quilt.App',
@@ -196,8 +201,8 @@ export function quiltApp({
         magicModuleEnv(),
         // Build and auto-server setup
         server && appServer(typeof server === 'boolean' ? undefined : server),
-        server && useHttpHandler && httpHandler(),
-        server && useHttpHandler && httpHandlerDevelopment(),
+        server && useRequestRouter && requestRouter(),
+        server && useRequestRouter && requestRouterDevelopment(),
         build && staticAssets({baseUrl, ...assetOptions}),
         build &&
           appBuild({
@@ -260,26 +265,29 @@ export interface ServiceOptions {
    */
   react?: boolean;
   graphql?: boolean;
-  build?: boolean | Partial<Omit<ServiceBuildOptions, 'httpHandler'>>;
+  build?: boolean | Partial<Omit<ServiceBuildOptions, 'format'>>;
   polyfill?: boolean | PolyfillOptions;
-  develop?: boolean | Pick<HttpHandlerOptions, 'port'>;
-  httpHandler?: boolean | Pick<HttpHandlerOptions, 'port'>;
+  develop?: boolean | Pick<RequestRouterOptions, 'port'>;
+  format?: 'request-router' | 'custom';
+  port?: number;
   env?: EnvironmentOptions;
 }
 
 export function quiltService({
   entry,
   env,
+  port,
+  format = 'request-router',
   build = true,
   develop = true,
   graphql: useGraphQL = true,
   react: useReact = false,
   polyfill: shouldPolyfill = true,
-  httpHandler: useHttpHandler = true,
 }: ServiceOptions = {}) {
+  const useRequestRouter = format === 'request-router';
   const buildOptions: ServiceBuildOptions = {
     env,
-    httpHandler: Boolean(useHttpHandler),
+    format,
     minify: false,
     ...(typeof build === 'boolean' ? {} : build),
   };
@@ -305,17 +313,15 @@ export function quiltService({
         magicModuleEnv(),
         // Build and http handler setup
         build && serviceBuild(buildOptions),
-        useHttpHandler &&
-          httpHandler(
-            typeof useHttpHandler === 'boolean' ? undefined : useHttpHandler,
-          ),
+        useRequestRouter && requestRouter({port}),
         develop &&
-          useHttpHandler &&
-          httpHandlerDevelopment({
+          useRequestRouter &&
+          requestRouterDevelopment({
             env,
+            port,
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
-        develop && useHttpHandler && serviceDevelopment(),
+        develop && useRequestRouter && serviceDevelopment(),
         useGraphQL && graphql(),
         useReact && reactTesting(),
         targets(),

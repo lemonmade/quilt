@@ -23,89 +23,100 @@ export interface EnhancedWritableCookies extends WritableCookies {
 
 export type ValueOrPromise<T> = T | Promise<T>;
 
-export interface RequestHandler {
-  (request: EnhancedRequest, context: RequestContext): ValueOrPromise<
+export interface RequestHandler<Context = RequestContext> {
+  (request: EnhancedRequest, context: Context): ValueOrPromise<
     Response | EnhancedResponse | undefined | null
   >;
 }
 
-export type RequestRegistration = RequestHandler | HttpHandler;
+export type RequestRegistration<Context = RequestContext> =
+  | RequestHandler<Context>
+  | RequestRouter<Context>;
 
 export interface RequestRegistrationOptions {
   exact?: boolean;
 }
 
-export interface HttpHandler {
-  any(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
+export interface RequestRouter<Context = RequestContext> {
+  any(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
   any(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   head(
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   head(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
-  get(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
+  get(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
   get(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   post(
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   post(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   options(
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   options(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
-  put(handler: RequestRegistration, options?: RequestRegistrationOptions): this;
+  put(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
   put(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   patch(
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   patch(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   delete(
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   delete(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   connect(
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   connect(
     match: Match,
-    handler: RequestRegistration,
+    handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   run(

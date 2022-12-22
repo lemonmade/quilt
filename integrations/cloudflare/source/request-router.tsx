@@ -1,6 +1,9 @@
 import type {} from '@quilted/quilt';
-import {notFound, runHandler} from '@quilted/quilt/http-handlers';
-import type {HttpHandler, RequestHandler} from '@quilted/quilt/http-handlers';
+import {notFound, handleRequest} from '@quilted/quilt/request-router';
+import type {
+  RequestRouter,
+  RequestHandler,
+} from '@quilted/quilt/request-router';
 
 import {getAssetFromKV} from './forked/kv-asset-handler';
 
@@ -31,6 +34,8 @@ export interface RequestHandlerOptions {
    * (typically by using the `CacheControl` component and `useCacheControl`
    * hooks from `@quilted/quilt/http`) to customize the cache duration of
    * responses.
+   *
+   * @default false
    */
   cache?: boolean;
 
@@ -53,8 +58,8 @@ export interface RequestHandlerOptions {
 export function createFetchHandler<
   Env extends Record<string, any> = Record<string, unknown>,
 >(
-  handler: HttpHandler | RequestHandler,
-  {cache: shouldCache = true, assets = false}: RequestHandlerOptions = {},
+  handler: RequestRouter | RequestHandler,
+  {cache: shouldCache = false, assets = false}: RequestHandlerOptions = {},
 ): ExportedHandlerFetchHandler<Env> {
   const cache = shouldCache
     ? (caches as any as {default: Cache}).default
@@ -76,7 +81,7 @@ export function createFetchHandler<
     }
 
     const response =
-      (await runHandler(handler, request, {
+      (await handleRequest(handler, request, {
         cf: request.cf,
         env,
         ...context,

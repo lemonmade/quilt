@@ -2,32 +2,32 @@ import {stripIndent} from 'common-tags';
 
 import {createProjectPlugin} from '../kit';
 import type {WaterfallHook} from '../kit';
-import {MAGIC_MODULE_HTTP_HANDLER} from '../constants';
+import {MAGIC_MODULE_REQUEST_ROUTER} from '../constants';
 import {addRollupOnWarn} from '../tools/rollup';
 
 import type {EnvironmentOptions} from './magic-module-env';
 
-const MAGIC_ENTRY_MODULE = '.quilt/magic/http-handler-entry.js';
-const MAGIC_HTTP_HANDLER_MODULE_ENTRY = '.quilt/magic/http-handler.js';
+const MAGIC_ENTRY_MODULE = '.quilt/magic/request-router-entry.js';
+const MAGIC_REQUEST_ROUTER_MODULE_ENTRY = '.quilt/magic/request-router.js';
 
-export interface HttpHandlerHooks {
-  quiltHttpHandlerEntry: WaterfallHook<string>;
-  quiltHttpHandlerPort: WaterfallHook<number | undefined>;
-  quiltHttpHandlerHost: WaterfallHook<string | undefined>;
-  quiltHttpHandlerContent: WaterfallHook<string | undefined>;
-  quiltHttpHandlerRuntimeContent: WaterfallHook<string | undefined>;
+export interface RequestRouterHooks {
+  quiltRequestRouterEntry: WaterfallHook<string>;
+  quiltRequestRouterPort: WaterfallHook<number | undefined>;
+  quiltRequestRouterHost: WaterfallHook<string | undefined>;
+  quiltRequestRouterContent: WaterfallHook<string | undefined>;
+  quiltRequestRouterRuntimeContent: WaterfallHook<string | undefined>;
 }
 
-export interface HttpHandlerOptions {
-  quiltHttpHandler: boolean;
+export interface RequestRouterOptions {
+  quiltRequestRouter: boolean;
 }
 
 declare module '@quilted/sewing-kit' {
-  interface BuildProjectConfigurationHooks extends HttpHandlerHooks {}
-  interface DevelopProjectConfigurationHooks extends HttpHandlerHooks {}
+  interface BuildProjectConfigurationHooks extends RequestRouterHooks {}
+  interface DevelopProjectConfigurationHooks extends RequestRouterHooks {}
 
-  interface BuildProjectOptions extends HttpHandlerOptions {}
-  interface DevelopProjectOptions extends HttpHandlerOptions {}
+  interface BuildProjectOptions extends RequestRouterOptions {}
+  interface DevelopProjectOptions extends RequestRouterOptions {}
 }
 
 export interface Options {
@@ -35,16 +35,16 @@ export interface Options {
   port?: number;
 }
 
-export function httpHandler({port: explicitPort}: Options = {}) {
+export function requestRouter({port: explicitPort}: Omit<Options, 'env'> = {}) {
   return createProjectPlugin({
-    name: 'Quilt.HttpHandler',
+    name: 'Quilt.RequestRouter',
     build({hooks, configure, project}) {
-      hooks<HttpHandlerHooks>(({waterfall}) => ({
-        quiltHttpHandlerEntry: waterfall(),
-        quiltHttpHandlerPort: waterfall(),
-        quiltHttpHandlerHost: waterfall(),
-        quiltHttpHandlerContent: waterfall(),
-        quiltHttpHandlerRuntimeContent: waterfall(),
+      hooks<RequestRouterHooks>(({waterfall}) => ({
+        quiltRequestRouterEntry: waterfall(),
+        quiltRequestRouterPort: waterfall(),
+        quiltRequestRouterHost: waterfall(),
+        quiltRequestRouterContent: waterfall(),
+        quiltRequestRouterRuntimeContent: waterfall(),
       }));
 
       configure(
@@ -53,15 +53,15 @@ export function httpHandler({port: explicitPort}: Options = {}) {
             rollupInput,
             rollupInputOptions,
             rollupPlugins,
-            quiltHttpHandlerEntry,
-            quiltHttpHandlerHost,
-            quiltHttpHandlerPort,
-            quiltHttpHandlerContent,
-            quiltHttpHandlerRuntimeContent,
+            quiltRequestRouterEntry,
+            quiltRequestRouterHost,
+            quiltRequestRouterPort,
+            quiltRequestRouterContent,
+            quiltRequestRouterRuntimeContent,
           },
-          {quiltHttpHandler = false},
+          {quiltRequestRouter = false},
         ) => {
-          if (!quiltHttpHandler) return;
+          if (!quiltRequestRouter) return;
 
           // We resolve to a path within the project’s directory
           // so that it can use the app’s node_modules.
@@ -87,11 +87,11 @@ export function httpHandler({port: explicitPort}: Options = {}) {
           );
 
           rollupPlugins?.(async (plugins) => {
-            const content = await quiltHttpHandlerContent!.run(undefined);
+            const content = await quiltRequestRouterContent!.run(undefined);
 
             return [
               {
-                name: '@quilted/http-handler/magic-entry',
+                name: '@quilted/request-router/magic-entry',
                 resolveId(id) {
                   if (id !== project.fs.resolvePath(MAGIC_ENTRY_MODULE))
                     return null;
@@ -106,23 +106,23 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                     return null;
                   }
 
-                  const content = await quiltHttpHandlerRuntimeContent!.run(
+                  const content = await quiltRequestRouterRuntimeContent!.run(
                     undefined,
                   );
 
                   if (content) return content;
 
                   const [port, host] = await Promise.all([
-                    quiltHttpHandlerPort!.run(explicitPort),
-                    quiltHttpHandlerHost!.run(undefined),
+                    quiltRequestRouterPort!.run(explicitPort),
+                    quiltRequestRouterHost!.run(undefined),
                   ]);
 
                   return stripIndent`
-                    import httpHandler from ${JSON.stringify(
-                      MAGIC_MODULE_HTTP_HANDLER,
+                    import requestRouter from ${JSON.stringify(
+                      MAGIC_MODULE_REQUEST_ROUTER,
                     )};
           
-                    import {createHttpServer} from '@quilted/quilt/http-handlers/node';
+                    import {createHttpServer} from '@quilted/quilt/request-router/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
@@ -131,36 +131,38 @@ export function httpHandler({port: explicitPort}: Options = {}) {
                       host ? JSON.stringify(host) : 'process.env.HOST'
                     };
                   
-                    createHttpServer(httpHandler).listen(port, host);
+                    createHttpServer(requestRouter).listen(port, host);
                   `;
                 },
               },
               {
-                name: '@quilted/http-handler/magic-module',
+                name: '@quilted/request-router/magic-module',
                 async resolveId(id) {
-                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
+                  if (id !== MAGIC_MODULE_REQUEST_ROUTER) return null;
 
                   return {
-                    id: project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY),
+                    id: project.fs.resolvePath(
+                      MAGIC_REQUEST_ROUTER_MODULE_ENTRY,
+                    ),
                     moduleSideEffects: 'no-treeshake',
                   };
                 },
                 async load(id) {
                   if (
                     id !==
-                    project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY)
+                    project.fs.resolvePath(MAGIC_REQUEST_ROUTER_MODULE_ENTRY)
                   ) {
                     return null;
                   }
 
                   // If we were given content, we will use that as the content
                   // for the entry. Otherwise, just point to the project’s entry,
-                  // which is assumed to be a module that exports a `createHttpHandler()`
+                  // which is assumed to be a module that exports a `createRequestRouter()`
                   // object as the default export.
                   return (
                     content ??
                     `export {default} from ${JSON.stringify(
-                      await quiltHttpHandlerEntry!.run(
+                      await quiltRequestRouterEntry!.run(
                         project.fs.resolvePath('index'),
                       ),
                     )}`
@@ -176,19 +178,19 @@ export function httpHandler({port: explicitPort}: Options = {}) {
   });
 }
 
-export function httpHandlerDevelopment({
+export function requestRouterDevelopment({
   port: explicitPort,
   env,
 }: Options = {}) {
   return createProjectPlugin({
-    name: 'Quilt.HttpHandler.Development',
+    name: 'Quilt.RequestRouter.Development',
     develop({project, hooks, configure}) {
-      hooks<HttpHandlerHooks>(({waterfall}) => ({
-        quiltHttpHandlerEntry: waterfall(),
-        quiltHttpHandlerPort: waterfall(),
-        quiltHttpHandlerHost: waterfall(),
-        quiltHttpHandlerContent: waterfall(),
-        quiltHttpHandlerRuntimeContent: waterfall(),
+      hooks<RequestRouterHooks>(({waterfall}) => ({
+        quiltRequestRouterEntry: waterfall(),
+        quiltRequestRouterPort: waterfall(),
+        quiltRequestRouterHost: waterfall(),
+        quiltRequestRouterContent: waterfall(),
+        quiltRequestRouterRuntimeContent: waterfall(),
       }));
 
       configure(
@@ -197,17 +199,17 @@ export function httpHandlerDevelopment({
             rollupInput,
             rollupPlugins,
             rollupInputOptions,
-            quiltHttpHandlerEntry,
-            quiltHttpHandlerHost,
-            quiltHttpHandlerPort,
-            quiltHttpHandlerContent,
-            quiltHttpHandlerRuntimeContent,
+            quiltRequestRouterEntry,
+            quiltRequestRouterHost,
+            quiltRequestRouterPort,
+            quiltRequestRouterContent,
+            quiltRequestRouterRuntimeContent,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
           },
-          {quiltHttpHandler},
+          {quiltRequestRouter},
         ) => {
-          if (!quiltHttpHandler) return;
+          if (!quiltRequestRouter) return;
 
           const inlineEnv = env?.inline;
 
@@ -243,11 +245,11 @@ export function httpHandlerDevelopment({
           );
 
           rollupPlugins?.(async (plugins) => {
-            const content = await quiltHttpHandlerContent!.run(undefined);
+            const content = await quiltRequestRouterContent!.run(undefined);
 
             return [
               {
-                name: '@quilted/http-handler/magic-entry',
+                name: '@quilted/request-router/magic-entry',
                 resolveId(id) {
                   if (id !== project.fs.resolvePath(MAGIC_ENTRY_MODULE)) {
                     return null;
@@ -260,23 +262,23 @@ export function httpHandlerDevelopment({
                     return null;
                   }
 
-                  const content = await quiltHttpHandlerRuntimeContent!.run(
+                  const content = await quiltRequestRouterRuntimeContent!.run(
                     undefined,
                   );
 
                   if (content) return content;
 
                   const [port, host] = await Promise.all([
-                    quiltHttpHandlerPort!.run(explicitPort),
-                    quiltHttpHandlerHost!.run(undefined),
+                    quiltRequestRouterPort!.run(explicitPort),
+                    quiltRequestRouterHost!.run(undefined),
                   ]);
 
                   return stripIndent`
-                    import httpHandler from ${JSON.stringify(
-                      MAGIC_MODULE_HTTP_HANDLER,
+                    import requestRouter from ${JSON.stringify(
+                      MAGIC_MODULE_REQUEST_ROUTER,
                     )};
           
-                    import {createHttpServer} from '@quilted/quilt/http-handlers/node';
+                    import {createHttpServer} from '@quilted/quilt/request-router/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
@@ -291,7 +293,7 @@ export function httpHandlerDevelopment({
                       console.error(...args);
                     });
 
-                    createHttpServer(httpHandler).listen(port, host, () => {
+                    createHttpServer(requestRouter).listen(port, host, () => {
                       console.log(\`${
                         project.name
                       } is listening for requests on http://\${host}:\${port}\`);
@@ -300,31 +302,33 @@ export function httpHandlerDevelopment({
                 },
               },
               {
-                name: '@quilted/http-handler/magic-module',
+                name: '@quilted/request-router/magic-module',
                 async resolveId(id) {
-                  if (id !== MAGIC_MODULE_HTTP_HANDLER) return null;
+                  if (id !== MAGIC_MODULE_REQUEST_ROUTER) return null;
 
                   return {
-                    id: project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY),
+                    id: project.fs.resolvePath(
+                      MAGIC_REQUEST_ROUTER_MODULE_ENTRY,
+                    ),
                     moduleSideEffects: 'no-treeshake',
                   };
                 },
                 async load(id) {
                   if (
                     id !==
-                    project.fs.resolvePath(MAGIC_HTTP_HANDLER_MODULE_ENTRY)
+                    project.fs.resolvePath(MAGIC_REQUEST_ROUTER_MODULE_ENTRY)
                   ) {
                     return null;
                   }
 
                   // If we were given content, we will use that as the content
                   // for the entry. Otherwise, just point to the project’s entry,
-                  // which is assumed to be a module that exports a `createHttpHandler()`
+                  // which is assumed to be a module that exports a `createRequestRouter()`
                   // object as the default export.
                   return (
                     content ??
                     `export {default} from ${JSON.stringify(
-                      await quiltHttpHandlerEntry!.run(
+                      await quiltRequestRouterEntry!.run(
                         project.fs.resolvePath('index'),
                       ),
                     )}`

@@ -1,7 +1,7 @@
-import {createHttpHandler, html} from '@quilted/quilt/http-handlers';
+import {createRequestRouter, html} from '@quilted/quilt/request-router';
 
-const handler = createHttpHandler();
+const router = createRequestRouter();
 
-handler.get('/', () => html('Hello world!'));
+router.get('/', () => html('Hello world!'));
 
-export default handler;
+export default router;

@@ -30,9 +30,9 @@ export function serviceBase({entry}: Options = {}) {
         }),
       }));
 
-      configure(({runtimes, quiltServiceEntry, quiltHttpHandlerEntry}) => {
+      configure(({runtimes, quiltServiceEntry, quiltRequestRouterEntry}) => {
         runtimes(() => [{target: 'node'}]);
-        quiltHttpHandlerEntry?.(() => quiltServiceEntry!.run());
+        quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
       });
     },
     develop({hooks, configure, project}) {
@@ -43,9 +43,9 @@ export function serviceBase({entry}: Options = {}) {
         }),
       }));
 
-      configure(({runtimes, quiltServiceEntry, quiltHttpHandlerEntry}) => {
+      configure(({runtimes, quiltServiceEntry, quiltRequestRouterEntry}) => {
         runtimes(() => [{target: 'node'}]);
-        quiltHttpHandlerEntry?.(() => quiltServiceEntry!.run());
+        quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
       });
     },
   });

@@ -8,17 +8,16 @@ export type {
   CookieOptions,
 } from '@quilted/http';
 
-export * from './http-handler';
-
+export * from './router';
 export * from './globals';
 export * from './response';
 export * from './request';
 export * from './response-helpers';
-export {runHandler} from './run';
+export {handleRequest} from './handle';
 
 export type {
-  HttpHandler,
   CookieDefinition,
+  RequestRouter,
   RequestRegistration,
   RequestRegistrationOptions,
   RequestHandler,

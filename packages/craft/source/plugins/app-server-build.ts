@@ -5,7 +5,7 @@ import type {ModuleFormat} from 'rollup';
 
 import {
   MAGIC_MODULE_APP_ASSET_MANIFEST,
-  MAGIC_MODULE_HTTP_HANDLER,
+  MAGIC_MODULE_REQUEST_ROUTER,
 } from '../constants';
 import {createProjectPlugin} from '../kit';
 import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
@@ -37,9 +37,11 @@ declare module '@quilted/sewing-kit' {
 
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest.js';
 
-export function appServerBuild(options?: AppServerOptions) {
-  const httpHandler = options?.httpHandler ?? true;
-  const serveAssets = options?.serveAssets ?? true;
+export function appServerBuild({
+  format = 'request-router',
+  serveAssets = true,
+}: AppServerOptions = {}) {
+  const requestRouter = format === 'request-router';
 
   return createProjectPlugin({
     name: 'Quilt.App.Server',
@@ -59,9 +61,9 @@ export function appServerBuild(options?: AppServerOptions) {
             quiltAppServerPort,
             quiltAppServerOutputFormat,
             quiltAppServerServeAssets,
-            quiltHttpHandlerHost,
-            quiltHttpHandlerPort,
-            quiltHttpHandlerRuntimeContent,
+            quiltRequestRouterHost,
+            quiltRequestRouterPort,
+            quiltRequestRouterRuntimeContent,
             quiltAssetBaseUrl,
           },
           {quiltAppServer = false},
@@ -164,22 +166,22 @@ export function appServerBuild(options?: AppServerOptions) {
             return outputs;
           });
 
-          if (httpHandler) {
-            quiltHttpHandlerHost?.(async () =>
+          if (requestRouter) {
+            quiltRequestRouterHost?.(async () =>
               quiltAppServerHost!.run(undefined),
             );
 
-            quiltHttpHandlerPort?.(async () =>
+            quiltRequestRouterPort?.(async () =>
               quiltAppServerPort!.run(undefined),
             );
 
-            quiltHttpHandlerRuntimeContent?.(async (content) => {
+            quiltRequestRouterRuntimeContent?.(async (content) => {
               if (content) return content;
 
               const [port, host, serveAssets, format, assetBaseUrl] =
                 await Promise.all([
-                  quiltHttpHandlerPort!.run(undefined),
-                  quiltHttpHandlerHost!.run(undefined),
+                  quiltRequestRouterPort!.run(undefined),
+                  quiltRequestRouterHost!.run(undefined),
                   quiltAppServerServeAssets!.run(),
                   quiltAppServerOutputFormat!.run('module'),
                   quiltAssetBaseUrl!.run(),
@@ -194,13 +196,13 @@ export function appServerBuild(options?: AppServerOptions) {
                 }
                 import {createServer} from 'http';
 
-                import httpHandler from ${JSON.stringify(
-                  MAGIC_MODULE_HTTP_HANDLER,
+                import requestRouter from ${JSON.stringify(
+                  MAGIC_MODULE_REQUEST_ROUTER,
                 )};
       
                 import {createHttpRequestListener${
                   serveAssets ? ', serveStatic' : ''
-                }} from '@quilted/quilt/http-handlers/node';
+                }} from '@quilted/quilt/request-router/node';
 
                 const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
                 const host = ${
@@ -218,7 +220,7 @@ export function appServerBuild(options?: AppServerOptions) {
                       });`
                     : ''
                 }
-                const listener = createHttpRequestListener(httpHandler);
+                const listener = createHttpRequestListener(requestRouter);
               
                 createServer(async (request, response) => {
                   ${
@@ -251,7 +253,7 @@ export function appServerBuild(options?: AppServerOptions) {
             const [configure, {buildWithRollup}] = await Promise.all([
               configuration({
                 quiltAppServer: true,
-                quiltHttpHandler: httpHandler,
+                quiltRequestRouter: requestRouter,
               }),
               import('../tools/rollup'),
             ]);

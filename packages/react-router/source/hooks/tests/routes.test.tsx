@@ -30,10 +30,6 @@ describe('useRoutes()', () => {
           return useRoutes([{match: '/', render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: ''})).toContainReactComponent(
-          RouteComponent,
-        );
-
         expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
           RouteComponent,
         );
@@ -239,7 +235,7 @@ describe('useRoutes()', () => {
         }
 
         expect(
-          mount(<Routes />, {path: 'must-match/full-path'}),
+          mount(<Routes />, {path: '/must-match/full-path'}),
         ).toContainReactComponent(RouteComponent);
       });
     });
@@ -249,10 +245,6 @@ describe('useRoutes()', () => {
         function Routes() {
           return useRoutes([{match: /^\/$/, render: () => <RouteComponent />}]);
         }
-
-        expect(mount(<Routes />, {path: ''})).toContainReactComponent(
-          RouteComponent,
-        );
 
         expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
           RouteComponent,
@@ -269,10 +261,6 @@ describe('useRoutes()', () => {
             {match: /\/some-route|^\/$/, render: () => <RouteComponent />},
           ]);
         }
-
-        expect(mount(<Routes />, {path: ''})).toContainReactComponent(
-          RouteComponent,
-        );
 
         expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
           RouteComponent,
@@ -458,7 +446,7 @@ describe('useRoutes()', () => {
         }
 
         expect(
-          mount(<Routes />, {path: 'must-match/full-path'}),
+          mount(<Routes />, {path: '/must-match/full-path'}),
         ).toContainReactComponent(RouteComponent);
       });
     });

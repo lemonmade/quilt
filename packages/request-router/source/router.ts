@@ -5,13 +5,13 @@ import type {Match, Prefix} from '@quilted/routing';
 
 import {EnhancedRequest} from './request';
 import type {
-  HttpHandler,
+  RequestRouter,
   RequestContext,
   RequestRegistration,
   RequestRegistrationOptions,
 } from './types';
 
-export interface HttpHandlerOptions {
+export interface RequestRouterOptions {
   readonly prefix?: Prefix;
 }
 
@@ -23,61 +23,61 @@ interface RequestHandlerRegistration {
 }
 
 const REQUEST_METHOD_ANY = 'ANY';
-const HTTP_HANDLER_RUN_INTERNAL = Symbol.for('Quilt.HttpHandler.RunInternal');
+const HTTP_HANDLER_RUN_INTERNAL = Symbol.for('Quilt.RequestRouter.RunInternal');
 
-export function createHttpHandler({
+export function createRequestRouter<Context = RequestContext>({
   prefix,
-}: HttpHandlerOptions = {}): HttpHandler {
+}: RequestRouterOptions = {}): RequestRouter<Context> {
   const registrations: RequestHandlerRegistration[] = [];
 
-  const httpHandler: HttpHandler = {
+  const requestRouter: RequestRouter<Context> = {
     any(...args: any[]) {
       registrations.push(normalizeRouteArguments(REQUEST_METHOD_ANY, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     head(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Head, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     get(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Get, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     connect(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Connect, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     options(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     post(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Post, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     put(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Put, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     patch(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Patch, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     delete(...args: any[]) {
       registrations.push(normalizeRouteArguments(HttpMethod.Delete, ...args));
-      return httpHandler;
+      return requestRouter;
     },
     async run(request, requestContext = {} as any) {
       return runInternal(new EnhancedRequest(request), requestContext);
     },
   };
 
-  Reflect.defineProperty(httpHandler, HTTP_HANDLER_RUN_INTERNAL, {
+  Reflect.defineProperty(requestRouter, HTTP_HANDLER_RUN_INTERNAL, {
     enumerable: false,
     value: runInternal,
   });
 
-  return httpHandler;
+  return requestRouter;
 
   async function runInternal(
     request: EnhancedRequest,
@@ -130,19 +130,19 @@ function normalizeRouteArguments(
   ...args: any[]
 ): RequestHandlerRegistration {
   // There is no `match`...
-  if (isHttpHandler(args[0]) || typeof args[0] === 'function') {
+  if (isRequestRouter(args[0]) || typeof args[0] === 'function') {
     return {
       method,
       handler: args[0],
       exact:
-        isHttpHandler(args[0]) ||
+        isRequestRouter(args[0]) ||
         ((args[1] as RequestRegistrationOptions | undefined)?.exact ?? true),
     };
   }
 
-  // There is a `match`, `HttpHandler`, and maybe `options` (no options
+  // There is a `match`, `RequestRouter`, and maybe `options` (no options
   // respected for now)...
-  if (isHttpHandler(args[1])) {
+  if (isRequestRouter(args[1])) {
     return {
       method,
       match: args[0],
@@ -160,7 +160,7 @@ function normalizeRouteArguments(
   };
 }
 
-function isHttpHandler(value?: unknown): value is HttpHandler {
+function isRequestRouter(value?: unknown): value is RequestRouter {
   return (
     value != null &&
     typeof value === 'object' &&

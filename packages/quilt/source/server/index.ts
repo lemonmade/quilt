@@ -35,20 +35,20 @@ export type {
   ServerRenderPass,
 } from '@quilted/react-server-render/server';
 export type {HttpState} from '@quilted/react-http/server';
-export {createHttpHandlerLocalization} from '@quilted/react-localize/http-handlers';
+export {createRequestRouterLocalization} from '@quilted/react-localize/request-router';
 export type {
-  HttpHandlerLocalization,
+  RequestRouterLocalization,
   RouteLocalization,
   ResolvedRouteLocalization,
-} from '@quilted/react-localize/http-handlers';
+} from '@quilted/react-localize/request-router';
 export {
   Request,
   Response,
   EnhancedRequest,
   EnhancedResponse,
-  createHttpHandler,
+  createRequestRouter,
   createHeaders,
-} from '@quilted/http-handlers';
+} from '@quilted/request-router';
 export type {
   Headers,
   BodyInit,
@@ -56,20 +56,20 @@ export type {
   RequestInit,
   Cookies,
   CookieOptions,
-  HttpHandler,
+  RequestRouter,
   RequestContext,
   RequestHandler,
   ResponseOrEnhancedResponse,
   CookieDefinition,
   RequestRegistration,
   RequestRegistrationOptions,
-} from '@quilted/http-handlers';
+} from '@quilted/request-router';
 export {parseAcceptLanguageHeader} from '@quilted/react-localize';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
 export {
   createServerRenderingRequestHandler,
-  createServerRenderingHttpHandler,
+  createServerRenderingRequestRouter,
   renderToResponse,
-} from './http-handler';
+} from './request-router';

@@ -2,14 +2,15 @@ import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
 import {
   notFound,
-  runHandler,
+  handleRequest,
   createHeaders,
   EnhancedResponse,
-} from '@quilted/quilt/http-handlers';
-import type {HttpHandler, RequestHandler} from '@quilted/quilt/http-handlers';
+  type RequestRouter,
+  type RequestHandler,
+} from '@quilted/quilt/request-router';
 
 export function createLambdaApiGatewayProxy(
-  handler: HttpHandler | RequestHandler,
+  handler: RequestRouter | RequestHandler,
 ): APIGatewayProxyHandlerV2 {
   return async (event, context) => {
     // eslint-disable-next-line no-console
@@ -24,7 +25,7 @@ export function createLambdaApiGatewayProxy(
     }
 
     const response: Response | EnhancedResponse =
-      (await runHandler(
+      (await handleRequest(
         handler,
         new Request(
           `${headers.get('X-Forwarded-Proto') ?? 'https'}://${
