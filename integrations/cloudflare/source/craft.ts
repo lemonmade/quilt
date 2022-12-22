@@ -75,7 +75,7 @@ declare module '@quilted/craft/kit' {
  */
 export function cloudflareWorkers({
   format = 'modules',
-  cache = true,
+  cache = false,
   serveAssets = false,
   miniflare: useMiniflare = true,
 }: Options = {}) {
