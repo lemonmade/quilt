@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.1.1
+
+### Patch Changes
+
+- [#436](https://github.com/lemonmade/quilt/pull/436) [`3171fcee`](https://github.com/lemonmade/quilt/commit/3171fceeddfb14c253ac45e34e1e2f9ab6e3f6c0) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename http-handlers to request-router
+
 ## 0.2.45
 
 ### Patch Changes
