@@ -1,8 +1,8 @@
-import type {HttpHandler, RequestHandler, RequestContext} from './types';
+import type {RequestRouter, RequestHandler, RequestContext} from './types';
 import {EnhancedRequest} from './request';
 
-export function runHandler(
-  handler: HttpHandler | RequestHandler,
+export function handleRequest(
+  handler: RequestRouter | RequestHandler,
   request: Request,
   context?: RequestContext,
 ) {

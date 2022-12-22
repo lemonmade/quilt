@@ -1,12 +1,12 @@
 {
-  "name": "@quilted/http-handlers",
+  "name": "@quilted/request-router",
   "type": "module",
-  "version": "0.2.45",
+  "version": "0.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
-    "directory": "packages/http-handlers"
+    "directory": "packages/request-router"
   },
   "publishConfig": {
     "access": "public",

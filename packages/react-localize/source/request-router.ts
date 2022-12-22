@@ -1,4 +1,4 @@
-import {redirect, type RequestHandler} from '@quilted/http-handlers';
+import {redirect, type RequestHandler} from '@quilted/request-router';
 import {parseAcceptLanguageHeader} from '@quilted/localize';
 
 import type {
@@ -13,7 +13,7 @@ export type {
   DefaultLocaleDefinition,
 };
 
-export interface HttpHandlerLocalization {
+export interface RequestRouterLocalization {
   redirect(
     request: Request,
     options: {to: string} & Pick<
@@ -27,7 +27,7 @@ export interface HttpHandlerLocalization {
   ): RequestHandler;
 }
 
-export function createHttpHandlerLocalization({
+export function createRequestRouterLocalization({
   localization,
   requestLocale: customRequestLocale,
 }: {
@@ -36,7 +36,7 @@ export function createHttpHandlerLocalization({
     request: Request,
     getDefaultFromRequest: () => string | undefined,
   ): string | undefined;
-}): HttpHandlerLocalization {
+}): RequestRouterLocalization {
   const {matchLocale, redirectUrl, defaultLocale, localeFromUrl} = localization;
 
   const getDefaultLocaleFromRequest = (request: Request) => {

@@ -19,11 +19,11 @@ describe('polyfills', () => {
 
         await fs.write({
           'api.ts': stripIndent`
-            import {createHttpHandler, json} from '@quilted/quilt/http-handlers';
+            import {createRequestRouter, json} from '@quilted/quilt/request-router';
 
-            const handler = createHttpHandler();
+            const router = createRequestRouter();
             
-            handler.get('/', async () => {
+            router.get('/', async () => {
               const result = await fetch('https://swapi-graphql.netlify.app/.netlify/functions/index', {
                 method: 'POST',
                 signal: new AbortController().signal,
@@ -38,7 +38,7 @@ describe('polyfills', () => {
               return json(await result.json());
             });
             
-            export default handler;          
+            export default router;          
           `,
           'quilt.project.ts': stripIndent`
             import {createProject, quiltService, quiltWorkspace} from '@quilted/craft';

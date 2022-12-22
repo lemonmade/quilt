@@ -444,25 +444,6 @@ importers:
   packages/http:
     specifiers: {}
 
-  packages/http-handlers:
-    specifiers:
-      '@quilted/http': ^0.2.11
-      '@quilted/polyfills': workspace:*
-      '@quilted/routing': ^0.2.7
-      '@quilted/testing': workspace:*
-      '@types/cookie': ^0.4.0
-      '@types/send': ^0.17.0
-      send: ^0.17.0
-    dependencies:
-      '@quilted/http': link:../http
-      '@quilted/routing': link:../routing
-      send: 0.17.2
-    devDependencies:
-      '@quilted/polyfills': link:../polyfills
-      '@quilted/testing': link:../testing
-      '@types/cookie': 0.4.1
-      '@types/send': 0.17.1
-
   packages/localize:
     specifiers: {}
 
@@ -510,7 +491,6 @@ importers:
       '@quilted/async': ^0.3.12
       '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
-      '@quilted/http-handlers': ^0.2.20
       '@quilted/polyfills': ^0.2.12
       '@quilted/react': ^17.0.3
       '@quilted/react-async': ^0.3.22
@@ -521,12 +501,13 @@ importers:
       '@quilted/react-idle': ^0.3.6
       '@quilted/react-localize': ^0.1.0
       '@quilted/react-performance': ^0.1.0
-      '@quilted/react-router': ^0.3.28
+      '@quilted/react-router': ^0.3.49
       '@quilted/react-server-render': ^0.3.7
       '@quilted/react-signals': ^0.1.0
       '@quilted/react-testing': ^0.5.1
       '@quilted/react-utilities': ^0.1.0
       '@quilted/react-workers': ^0.2.12
+      '@quilted/request-router': ^0.1.0
       '@quilted/testing': ^0.1.0
       '@quilted/threads': ^0.1.0
       '@quilted/useful-react-types': ^0.1.0
@@ -537,7 +518,6 @@ importers:
       '@quilted/async': link:../async
       '@quilted/events': link:../events
       '@quilted/graphql': link:../graphql
-      '@quilted/http-handlers': link:../http-handlers
       '@quilted/polyfills': link:../polyfills
       '@quilted/react': link:../react
       '@quilted/react-async': link:../react-async
@@ -554,6 +534,7 @@ importers:
       '@quilted/react-testing': link:../react-testing
       '@quilted/react-utilities': link:../react-utilities
       '@quilted/react-workers': link:../react-workers
+      '@quilted/request-router': link:../request-router
       '@quilted/testing': link:../testing
       '@quilted/threads': link:../threads
       '@quilted/useful-react-types': link:../useful-react-types
@@ -644,12 +625,12 @@ importers:
 
   packages/react-localize:
     specifiers:
-      '@quilted/http-handlers': ^0.2.31
       '@quilted/localize': ^0.1.0
       '@quilted/react-html': ^0.3.29
       '@quilted/react-http': ^0.3.17
       '@quilted/react-router': ^0.3.40
       '@quilted/react-utilities': ^0.1.0
+      '@quilted/request-router': ^0.1.0
       '@quilted/useful-react-types': ^0.1.6
     dependencies:
       '@quilted/localize': link:../localize
@@ -658,8 +639,8 @@ importers:
       '@quilted/react-utilities': link:../react-utilities
       '@quilted/useful-react-types': link:../useful-react-types
     devDependencies:
-      '@quilted/http-handlers': link:../http-handlers
       '@quilted/react-http': link:../react-http
+      '@quilted/request-router': link:../request-router
 
   packages/react-performance:
     specifiers:
@@ -742,6 +723,25 @@ importers:
       '@quilted/workers': ^0.2.12
     dependencies:
       '@quilted/workers': link:../workers
+
+  packages/request-router:
+    specifiers:
+      '@quilted/http': ^0.2.11
+      '@quilted/polyfills': workspace:*
+      '@quilted/routing': ^0.2.7
+      '@quilted/testing': workspace:*
+      '@types/cookie': ^0.4.0
+      '@types/send': ^0.17.0
+      send: ^0.17.0
+    dependencies:
+      '@quilted/http': link:../http
+      '@quilted/routing': link:../routing
+      send: 0.17.2
+    devDependencies:
+      '@quilted/polyfills': link:../polyfills
+      '@quilted/testing': link:../testing
+      '@types/cookie': 0.4.1
+      '@types/send': 0.17.1
 
   packages/rollup-plugin-fix-commonjs-preserve-modules:
     specifiers: {}
@@ -8580,7 +8580,7 @@ packages:
     dev: false
 
   /on-finished/2.3.0:
-    resolution: {integrity: sha1-IPEzZIGwg811M3mSoWlxqi2QaUc=}
+    resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
     engines: {node: '>= 0.8'}
     dependencies:
       ee-first: 1.1.1
@@ -9991,7 +9991,7 @@ packages:
       escape-string-regexp: 2.0.0
 
   /statuses/1.5.0:
-    resolution: {integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=}
+    resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
     dev: false
 

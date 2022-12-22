@@ -44,7 +44,7 @@ export interface Options {
    * are bundled.
    */
   bundle?: boolean | RollupNodeBundle;
-  httpHandler: boolean;
+  format?: 'custom' | 'request-router';
 }
 
 const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService.tsx';
@@ -52,7 +52,7 @@ const MAGIC_ENTRY_MODULE = '__quilt__/MagicEntryService.tsx';
 export function serviceBuild({
   minify,
   bundle: explicitBundle,
-  httpHandler,
+  format = 'request-router',
   env,
 }: Options) {
   return createProjectPlugin({
@@ -166,7 +166,7 @@ export function serviceBuild({
             const [configure, {buildWithRollup}] = await Promise.all([
               configuration({
                 quiltService: true,
-                quiltHttpHandler: httpHandler,
+                quiltRequestRouter: format === 'request-router',
               }),
               import('../tools/rollup'),
             ]);

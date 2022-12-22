@@ -11,7 +11,7 @@ import {
 
 jest.setTimeout(20_000);
 
-describe('http-handlers', () => {
+describe('request-router', () => {
   it('can generate a service from a request handler', async () => {
     await withWorkspace({fixture: 'basic-api'}, async (workspace) => {
       const {fs, command} = workspace;

@@ -9,11 +9,11 @@ declare module '@quilted/quilt' {
   interface ServerRenderRequestContext extends CloudflareRequestContext {}
 }
 
-declare module '@quilted/quilt/http-handlers' {
+declare module '@quilted/quilt/request-router' {
   interface RequestContext extends CloudflareRequestContext {}
 }
 
 // @ts-expect-error This module augmentation does work when consumed in real projects
-declare module '@quilted/http-handlers' {
+declare module '@quilted/request-router' {
   interface RequestContext extends CloudflareRequestContext {}
 }

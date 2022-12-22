@@ -7,43 +7,44 @@ import type {
   ServerRenderRequestContext,
 } from '@quilted/react-server-render/server';
 
-import {createHttpHandler, html, redirect} from '@quilted/http-handlers';
+import {createRequestRouter, html, redirect} from '@quilted/request-router';
 import type {
-  HttpHandler,
+  RequestRouter,
   EnhancedRequest,
   RequestHandler,
   RequestContext,
-} from '@quilted/http-handlers';
+} from '@quilted/request-router';
 
 import {renderApp} from './render';
 
-export interface Options extends Omit<ExtractOptions, 'context'> {
+export interface Options<Context = RequestContext>
+  extends Omit<ExtractOptions, 'context'> {
   assets?: AssetManifest<unknown>;
-  handler?: HttpHandler;
+  router?: RequestRouter<Context>;
   context?(
     request: EnhancedRequest,
-    context: RequestContext,
+    context: Context,
   ): ServerRenderRequestContext;
 }
 
-export function createServerRenderingHttpHandler(
+export function createServerRenderingRequestRouter<Context = RequestContext>(
   render: (
     request: EnhancedRequest,
-    context: RequestContext,
+    context: Context,
   ) => ReactElement<any> | Promise<ReactElement<any>>,
-  {handler = createHttpHandler(), ...options}: Options,
+  {router = createRequestRouter<Context>(), ...options}: Options<Context>,
 ) {
-  handler.get(createServerRenderingRequestHandler(render, options));
-  return handler;
+  router.get(createServerRenderingRequestHandler<Context>(render, options));
+  return router;
 }
 
-export function createServerRenderingRequestHandler(
+export function createServerRenderingRequestHandler<Context = RequestContext>(
   render: (
     request: EnhancedRequest,
-    context: RequestContext,
+    context: Context,
   ) => ReactElement<any> | Promise<ReactElement<any>>,
-  {context, ...options}: Omit<Options, 'handler'> = {},
-): RequestHandler {
+  {context, ...options}: Omit<Options<Context>, 'router'> = {},
+): RequestHandler<Context> {
   return async (request, requestContext) => {
     const app = await render(request, requestContext);
 

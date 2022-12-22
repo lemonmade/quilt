@@ -2,7 +2,7 @@
 
 This library provides a set of runtime utilities and build configuration that can adapt Quilt [apps](./TODO) and [services](./TODO) to run on Cloudflare.
 
-If you’re using Quilt’s [automatic app server](./TODO) or [HTTP handler](./TODO) features, configuring your projects to run on Cloudflare is pretty straightforward. We’ve written a [comprehensive guide to deploying Quilt on Cloudflare](../../documentation/deploy/cloudflare.md) that covers the necessary configuration for Quilt and [Wrangler](https://github.com/cloudflare/wrangler), the CLI provided by Cloudflare for deploying to their platform.
+If you’re using Quilt’s [automatic app server](./TODO) or [HTTP request router](./TODO) features, configuring your projects to run on Cloudflare is pretty straightforward. We’ve written a [comprehensive guide to deploying Quilt on Cloudflare](../../documentation/deploy/cloudflare.md) that covers the necessary configuration for Quilt and [Wrangler](https://github.com/cloudflare/wrangler), the CLI provided by Cloudflare for deploying to their platform.
 
 ## Getting the library
 
@@ -16,7 +16,7 @@ yarn add @quilted/cloudflare --dev
 
 ### `@quilted/cloudflare/sewing-kit`
 
-The `sewing-kit` entry in this package includes plugins for [Sewing Kit](./TODO), Quilt’s tooling orchestrator. Currently, there is only a single export, `cloudflareWorkers`, which returns a Sewing Kit plugin that configures a project to run as a [Cloudflare Worker](https://developers.cloudflare.com/workers/). This Sewing Kit plugin can be used for an app, where it configures the [automatic server-rendering server](./TODO) to run as a worker (including the ability to serve static assets from [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites)). It can also be used for a service, where any use of [`@quilted/http-handlers`](./TODO) is adapted to run on Cloudflare Workers.
+The `sewing-kit` entry in this package includes plugins for [Sewing Kit](./TODO), Quilt’s tooling orchestrator. Currently, there is only a single export, `cloudflareWorkers`, which returns a Sewing Kit plugin that configures a project to run as a [Cloudflare Worker](https://developers.cloudflare.com/workers/). This Sewing Kit plugin can be used for an app, where it configures the [automatic server-rendering server](./TODO) to run as a worker (including the ability to serve static assets from [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites)). It can also be used for a service, where any use of [`@quilted/request-router`](./TODO) is adapted to run on Cloudflare Workers.
 
 ```ts
 // app/sewing-kit.config.ts
@@ -46,8 +46,8 @@ export default createApp((app) => {
 
 Additional options are documented in code, so refer to your editor’s intellisence for details.
 
-### `@quilted/cloudflare/http-handlers`
+### `@quilted/cloudflare/request-router`
 
-The `http-handlers` entry point exports a few utility functions for adapting handlers from [`@quilted/http-handlers`](../http-handlers) to the Cloudflare Workers runtime. They are mostly used internally by `@quilted/cloudflare/sewing-kit`, but might also be useful for writing more complex, custom adaptors.
+The `request-router` entry point exports a few utility functions for adapting request routers from [`@quilted/request-router`](../request-router) to the Cloudflare Workers runtime. They are mostly used internally by `@quilted/cloudflare/sewing-kit`, but might also be useful for writing more complex, custom adaptors.
 
 All utilities from this library are documented in code.

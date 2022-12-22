@@ -52,19 +52,19 @@ The rest of our app will use this router (and its associated TypeScript type) to
 
 ## Expose tRPC through your app server
 
-tRPC needs to be accessible through an API endpoint on your server. If you have created a [“basic” Quilt app](../getting-started.md#app-templates), you will have a customizable server in your `app/server.tsx` file. You can add an `/api` path that will contain all of your tRPC procedures bya adding the following route to your [HTTP handler](../features/http-handlers.md):
+tRPC needs to be accessible through an API endpoint on your server. If you have created a [“basic” Quilt app](../getting-started.md#app-templates), you will have a customizable server in your `app/server.tsx` file. You can add an `/api` path that will contain all of your tRPC procedures bya adding the following route to your [request router](../features/request-routing.md):
 
 ```tsx
 // app/server.tsx
 
-import {createHttpHandler} from '@quilted/quilt/server';
+import {createRequestRouter} from '@quilted/quilt/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
 import {appRouter} from './trpc';
 
-const httpHandler = createHttpHandler();
+const router = createRequestRouter();
 
-httpHandler.any(
+router.any(
   'api',
   (request) => {
     return fetchRequestHandler({
@@ -80,7 +80,7 @@ httpHandler.any(
 // Other routes, like the one to render your React app, go here...
 ```
 
-For more details on setting up the tRPC server, you can read up on [tRPC’s `fetch` adaptor](https://trpc.io/docs/fetch), which supports the request and response format used by Quilt’s HTTP handler library.
+For more details on setting up the tRPC server, you can read up on [tRPC’s `fetch` adaptor](https://trpc.io/docs/fetch), which supports the request and response format used by Quilt’s request router library.
 
 ## Render tRPC’s React providers
 

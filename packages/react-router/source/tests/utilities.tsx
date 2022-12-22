@@ -9,7 +9,7 @@ export {createTestRouter};
 
 export const mount = createMount<
   | {router?: ReturnType<typeof createTestRouter>; path?: never; prefix?: never}
-  | {router?: never; path?: string; prefix?: Prefix},
+  | {router?: never; path?: `/${string}`; prefix?: Prefix},
   {router: ReturnType<typeof createTestRouter>}
 >({
   context({path, prefix, router = createTestRouter(path, {prefix})}) {

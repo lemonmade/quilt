@@ -1,6 +1,6 @@
 import {stripIndent} from 'common-tags';
 
-import {MAGIC_MODULE_HTTP_HANDLER} from '@quilted/craft';
+import {MAGIC_MODULE_REQUEST_ROUTER} from '@quilted/craft';
 import {createProjectPlugin} from '@quilted/craft/kit';
 
 export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
@@ -13,19 +13,19 @@ export function lambda({handlerName = 'handler'}: {handlerName?: string} = {}) {
             rollupExternals,
             rollupNodeBundle,
             rollupOutputs,
-            quiltHttpHandlerRuntimeContent,
+            quiltRequestRouterRuntimeContent,
             quiltServiceOutputFormat,
             quiltAppServerOutputFormat,
           },
           options,
         ) => {
-          quiltHttpHandlerRuntimeContent?.(
+          quiltRequestRouterRuntimeContent?.(
             () => stripIndent`
               import HttpHandler from ${JSON.stringify(
-                MAGIC_MODULE_HTTP_HANDLER,
+                MAGIC_MODULE_REQUEST_ROUTER,
               )};
 
-              import {createLambdaApiGatewayProxy} from '@quilted/aws/http-handlers';
+              import {createLambdaApiGatewayProxy} from '@quilted/aws/request-router';
 
               export const ${handlerName} = createLambdaApiGatewayProxy(HttpHandler);
             `,
