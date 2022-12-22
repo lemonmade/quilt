@@ -122,7 +122,7 @@ export function requestRouter({port: explicitPort}: Omit<Options, 'env'> = {}) {
                       MAGIC_MODULE_REQUEST_ROUTER,
                     )};
           
-                    import {createHttpServer} from '@quilted/quilt/request-routers/node';
+                    import {createHttpServer} from '@quilted/quilt/request-router/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
@@ -278,7 +278,7 @@ export function requestRouterDevelopment({
                       MAGIC_MODULE_REQUEST_ROUTER,
                     )};
           
-                    import {createHttpServer} from '@quilted/quilt/request-routers/node';
+                    import {createHttpServer} from '@quilted/quilt/request-router/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
