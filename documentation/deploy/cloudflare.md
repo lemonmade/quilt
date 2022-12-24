@@ -3,26 +3,27 @@
 [Cloudflare](https://www.cloudflare.com) provides a couple different hosting options that are supported by Quilt:
 
 - [Deploying applications as a static site on Cloudflare Pages](#cloudflare-pages), which is great for smaller projects that don’t need server-side rendering or access to Cloudflare’s backend APIs
-- [Deploying applications and backend services to Cloudflare Workers](#cloudflare-workers), which lets you build APIs or server-rendered application rendered on Cloudflare’s edge network
+- [Cloudflare Workers](#cloudflare-workers)
+  - [Deploying applications to Cloudflare Workers](#deploying-an-app), which lets you build a server-rendered application rendered on Cloudflare’s edge network
+  - [Deploying a service to Cloudflare Workers](#deploying-a-service), which lets you build a APIs and other backend services that run on Cloudflare’s edge network
 
 ## Cloudflare Pages
 
-[Cloudflare Pages](https://pages.cloudflare.com) lets you build static sites hosted on Cloudflare’s CDN. You typically deploy your application entirely by using git, and Cloudflare generates preview versions of your site for each branch you create. Cloudflare Pages is a great match for Quilt’s [static rendering capabilities](../static-rendering.md).
+[Cloudflare Pages](https://pages.cloudflare.com) lets you build static sites hosted on Cloudflare’s CDN. You typically deploy your application entirely by using git, and Cloudflare generates preview versions of your site for each branch you create. Cloudflare Pages is a great match for Quilt’s [static rendering capabilities](../static.md).
 
-This guide assumes you have already [created an app or service with Quilt and Sewing Kit](./TODO). If you don’t already have a Quilt project, you can create one from the [static site template repo](https://github.com/quilt-framework/quilt-template-static-site).
+This guide assumes you have already [created an app or service with Quilt](../getting-started.md).
 
 ### Getting Started
 
-Before you start, make sure that your application is configured to be statically rendered. If you cloned the [template repo](https://github.com/quilt-framework/quilt-template-static-site), this is already done, but if not, be aware that this rendering mode is [disabled by default](../static-rendering.md). Enabling it is pretty easy, though. Find your app’s Sewing Kit configuration file (usually `app/sewing-kit.config.ts` or just `sewing-kit.config.ts`), and set `static: true` in the `quiltApp` plugin options:
+Before you start, make sure that your application is configured to be statically rendered. This rendering mode is [disabled by default](../static.md). Enabling it is pretty easy, though. Find your app’s Quilt configuration file (usually `./quilt.project.ts` in a simple project, or `app/quilt.project.ts` in a monorepo), and set `static: true` in the `quiltApp` plugin options:
 
 ```ts
-// app/sewing-kit.config.ts
+// app/quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.index('./app');
-  app.use(
+export default createProject((project) => {
+  project.use(
     quiltApp({
       static: true,
     }),
@@ -33,13 +34,12 @@ export default createApp((app) => {
 When setting `static: true`, Quilt’s [automatic server-rendering](../server-rendering.md) becomes disabled by default. If you want to have both the static build and the server-rendering builds at the same time, you’ll need to explicitly enable both.
 
 ```ts
-// app/sewing-kit.config.ts
+// app/quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.index('./app');
-  app.use(
+export default createProject((project) => {
+  project.use(
     quiltApp({
       server: true,
       static: true,
@@ -65,7 +65,7 @@ Quilt projects generally use the following values for the **Build settings** sec
   <dl>None</dl>
 
   <dt>Build command:</dt>
-  <dl>yarn build</dl>
+  <dl>npm run build</dl>
 
   <dt>Build output directory:</dt>
   <dl>build/public</dl>
@@ -77,9 +77,9 @@ For more details, you can read the [Cloudflare Pages](https://developers.cloudfl
 
 ## Cloudflare Workers
 
-Quilt and [Sewing Kit](./TODO) make it easy to deploy your apps and backend services as [Cloudflare Workers](https://workers.cloudflare.com). The small, modern JavaScript bundles Quilt creates are a great fit for Cloudflare’s quick startup times and global distribution.
+Quilt and [Craft](../craft.md) make it easy to deploy your apps and backend services as [Cloudflare Workers](https://workers.cloudflare.com). The small, modern JavaScript bundles Quilt creates are a great fit for Cloudflare’s quick startup times and global distribution.
 
-This guide assumes you have already [created an app or service with Quilt and Sewing Kit](./TODO). If you don’t already have a Quilt project and would prefer to create your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
+This guide assumes you have already [created an app or service with Quilt and Sewing Kit](../getting-started.md). If you don’t already have a Quilt project and would prefer to create your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
 
 - **Basic app** ([template repo](https://github.com/quilt-framework/quilt-template-cloudflare-workers), [live site](https://quilt-template-cloudflare-workers.lemons.workers.dev/)): a web application with server side rendering (using [Cloudflare Workers](https://developers.cloudflare.com/workers/)) and asset hosting (using [Worker Sites](https://developers.cloudflare.com/workers/platform/sites)).
 
@@ -97,76 +97,81 @@ This guide assumes you have already [created an app or service with Quilt and Se
 
 ### Getting started
 
-To configure your builds to target Cloudflare, you’ll first need to install the `@quilted/cloudflare` package, which contains all the necessary build configuration:
+To configure your builds to target Cloudflare, you’ll first need to install the [`@quilted/cloudflare` package](../../integrations/cloudflare/), which contains all the necessary build configuration:
 
 ```zsh
-yarn add @quilted/cloudflare --dev
+pnpm install @quilted/cloudflare --save-dev
 ```
 
 If you are working on a monorepo and have many projects with their own `package.json`s, you can install `@quilted/cloudflare` as a `devDependency` for the entire workspace, or you can install it as a `devDependency` for each individual project — the choice is yours.
 
 ### Deploying an app
 
-You can deploy the server created by Quilt’s [automatic server-side rendering feature](./TODO) as a Cloudflare Worker. That server also supports [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites), which can serve the static assets Quilt creates for the browser.
+You can deploy the server created by Quilt’s [automatic server-side rendering feature](../server.md) as a Cloudflare Worker. That server also supports [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites), which can serve the static assets Quilt creates for the browser.
 
-#### Step 1: Add the Cloudflare Sewing Kit plugin
+#### Step 1: Add the Cloudflare plugin
 
-Import the Cloudflare plugin to your app’s `sewing-kit.config.ts` file. The new plugin can go anywhere in your configuration, but we generally recommend putting the plugin later in your configuration, so the build setup it adds overwrites settings provided by other plugins.
+Import the Cloudflare plugin to your app’s `quilt.project.ts` file. The new plugin can go anywhere in your configuration, but we generally recommend putting the plugin later in your configuration, so the build setup it adds overwrites settings provided by other plugins.
 
 ```ts
-// In an app’s Sewing Kit configuration, like app/sewing-kit.config.ts
+// app/quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/sewing-kit';
-import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+import {createProject, quiltApp} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
 
-export default createApp((app) => {
-  app.use(quiltApp());
-  app.use(cloudflareWorkers());
+export default createProject((project) => {
+  project.use(quiltApp());
+  project.use(cloudflareWorkers());
 });
 ```
 
-By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules), which current requires a paid Cloudflare plan. If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare Sewing Kit plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
+This plugin will make sure your server build output is compatible with Cloudflare worker’s lightweight JavaScript environment.
+
+By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules). If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare Sewing Kit plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
 
 ```ts
-import {createApp, quiltApp} from '@quilted/craft';
-import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+// app/quilt.project.ts
 
-export default createApp((app) => {
-  app.use(quiltApp());
-  app.use(cloudflareWorkers({format: 'service-worker'}));
+import {createProject, quiltApp} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+
+export default createProject((project) => {
+  project.use(quiltApp());
+  project.use(cloudflareWorkers({format: 'service-worker'}));
 });
 ```
 
-Quilt will default to assuming your assets are served from `/assets/` relative to the domain of your application, and the Cloudflare plugin will use this path as the prefix to check for when serving your browser assets. If you want to use a different path, you can do so by passing a custom `assets.baseUrl` option to the `quiltApp` Sewing Kit plugin:
+Quilt will default to assuming your assets are served from `/assets/` relative to the domain of your application, and the Cloudflare plugin will use this path as the prefix to check for when serving your browser assets. If you want to use a different path, you can do so by passing a custom `assets.baseUrl` option to the `quiltApp` plugin:
 
 ```ts
-import {createApp, quiltApp} from '@quilted/sewing-kit';
-import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+// app/quilt.project.ts
 
-export default createApp((app) => {
-  app.use(
+import {createProject, quiltApp} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+
+export default createProject((project) => {
+  project.use(
     quiltApp({
       // This **must** be an absolute path when using Cloudflare Workers
-      // if you want your browser assets to be served by the autogenerated
-      // Cloudflare Worker.
+      // if you want your browser assets to be served by the worker.
       assets: {baseUrl: '/public/assets/'},
     }),
   );
-  app.use(cloudflareWorkers());
+  project.use(cloudflareWorkers());
 });
 ```
 
-If you want to disable the automatic serving of your browser assets (you might want to do this if you are uploading your browser assets to a separate CDN), you can do so by passing `serveAssets: false` to the Cloudflare Sewing Kit plugin:
+You might want to disable the automatic serving of your browser assets if you are serving those assets from a dedicated CDN. To do so, pass `serveAssets: false` to the Cloudflare plugin:
 
 ```ts
-// In an app’s Sewing Kit configuration, like app/sewing-kit.config.ts
+// In an app’s Sewing Kit configuration, like app/craft.config.ts
 
-import {createApp, quiltApp} from '@quilted/sewing-kit';
-import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+import {createProject, quiltApp} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
 
-export default createApp((app) => {
-  app.use(quiltApp());
-  app.use(cloudflareWorkers({serveAssets: false}));
+export default createProject((project) => {
+  project.use(quiltApp());
+  project.use(cloudflareWorkers({serveAssets: false}));
 });
 ```
 
@@ -184,13 +189,11 @@ Quilt supports the two different formats for Cloudflare Workers: the newer [modu
 
 ##### Option 1: Deploying your app in modules format
 
-> **Note:** deploying your Cloudflare Worker using the module format is the default for Quilt, because it matches Quilt’s general preference for using native ES modules when possible. However, as of June 17, 2021, the module format is still in beta and requires a paid account. If you want to deploy to Cloudflare without paying anything, you’ll need to refer to the service worker instructions instead.
-
 Replace any initial configuration for `build` and `site` with the following snippet:
 
 ```toml
 [build]
-command = "yarn install && yarn build"
+command = "pnpm install && pnpm build"
 
 [build.upload]
 format = "modules"
@@ -206,7 +209,7 @@ With this configuration, you’re already ready to run `wrangler publish` to dep
 
 ```toml
 [build]
-command = "yarn install && yarn build"
+command = "pnpm install && pnpm build"
 ```
 
 This configuration tells Wrangler to install your dependencies and run your NPM `build` script before deploying your worker. This line assumes that you have a sibling `package.json` to your `wrangler.toml` that contains a script section that looks something like this:
@@ -219,6 +222,20 @@ This configuration tells Wrangler to install your dependencies and run your NPM 
 }
 ```
 
+If you use a different package manager, or want to run a different build command, you can change the `command` option to be whatever works for your setup:
+
+```toml
+[build]
+command = "yarn install && yarn build"
+```
+
+Id you build your assets before running `wrangler publish`, you can set the `command` to an empty string:
+
+```toml
+[build]
+command = ""
+```
+
 ```toml
 [build.upload]
 format = "modules"
@@ -226,7 +243,7 @@ dir = "./build/server"
 main = "./index.mjs"
 ```
 
-This section of your configuration tells Wrangler to use the modules format for your worker. It also tells Wrangler where to look for your server-side assets. Quilt outputs these assets into `build/server` (relative to the app’s `sewing-kit.config.ts`) by default, with `index.mjs` as the entry into the worker.
+This section of your configuration tells Wrangler to use the modules format for your worker. It also tells Wrangler where to look for your server-side assets. Quilt outputs these assets into `build/server` (relative to the app’s `quilt.project.ts`) by default, with `index.mjs` as the entry into the worker.
 
 ```toml
 [site]
@@ -236,7 +253,7 @@ entry-point = "."
 
 This final section configures [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites), which is an additional part of your worker that manages your static assets. This part of the configuration tells Wrangler where the static assets Quilt produces will be on disk.
 
-If you are passing `serveAssets: false` in the [Cloudflare Sewing Kit plugin](#step-1-add-the-cloudflare-sewing-kit-plugin), you can omit this section entirely.
+If you are passing `serveAssets: false` in the [Cloudflare plugin](#step-1-add-the-cloudflare-craft-plugin), you can omit this section entirely.
 
 ##### Option 2: Deploying your app in the service worker format
 
@@ -244,7 +261,7 @@ Replace any initial `build` configuration in your `wrangler.toml` with the follo
 
 ```toml
 [build]
-command = "yarn install && yarn build"
+command = "pnpm install && pnpm build"
 
 [build.upload]
 format = "service-worker"
@@ -286,7 +303,7 @@ You should get feedback from this command about the URL your application is depl
 
 ### Deploying a service
 
-Quilt also comes with a way to automatically turn your backend services into Cloudflare Workers. To use this transformation, your service must be written using [Quilt’s `request-router` library](./TODO), which provides a simple abstraction over HTTP requests and responses.
+Quilt also comes with a way to automatically turn your backend services into Cloudflare Workers. To use this transformation, your service must be written using [Quilt’s `request-router` library](../features/request-routing.md), which provides a simple abstraction over HTTP requests and responses.
 
 > **Note:** `@quilted/request-router` is a very small library that is meant to expose only the small set of APIs that overlap between many server environments. If you are heavily using Cloudflare’s APIs, you may not be able to use this automatic transformation, and will need to instead author the full Cloudflare Workers runtime code for your function. In that case, you can set `format: 'custom'` in your Sewing Kit config for this service, which runs a build without the automatic transformations.
 
@@ -295,13 +312,13 @@ Quilt also comes with a way to automatically turn your backend services into Clo
 As noted above, you will need to author your function using the tiny HTTP library in `@quilted/request-router` to get automatic transformations for Cloudflare Workers. You’ll first need to install this library as a dependency, either of the whole repo (as shown below) or for an individual service inside the repo:
 
 ```zsh
-yarn install @quilted/request-router
+pnpm install @quilted/request-router --save-dev
 ```
 
-You can review the [documentation for this library](./TODO) to see the full set of APIs it provides. A simple JSON API could be implemented as follows:
+You can review the [documentation for this library](../../packages/request-router) to see the full set of APIs it provides. A simple JSON API could be implemented as follows:
 
 ```ts
-// In a file for your service, say, functions/api/index.ts
+// In a file for your service, say, functions/api/api.ts
 
 import {createRequestRouter, json} from '@quilted/request-router';
 
@@ -312,33 +329,66 @@ router.get(() => json({hello: 'world!'}));
 export default router;
 ```
 
-#### Step 2: Add the Cloudflare Sewing Kit plugin
+Alternatively, you can use Quilt just to do the build of your service, but use Cloudflare’s native module-based APIs. You might want to do this if your worker doesn’t need the routing utilities provided by `@quilted/request-router`, or you want to make use of non-HTTP APIs available in Cloudflare, like [scheduled events](https://developers.cloudflare.com/workers/runtime-apis/scheduled-event/) or [Cloudflare Queues](https://developers.cloudflare.com/queues/javascript-apis/#consumer).
 
-Import the Cloudflare plugin to your services’s `sewing-kit.config.ts` file. The new plugin can go anywhere in your configuration, but we generally recommend putting the plugin later in your configuration, so the build setup it adds overwrites settings provided by other plugins.
+In your application code, you can write your Cloudflare Worker using its default export convention:
 
 ```ts
-// In an service’s Sewing Kit configuration, which would be
-// functions/api/sewing-kit.config.ts in the example from the
-// previous step.
+export default {
+  async fetch(request, env) {
+    if (request.url === '/ping') {
+      await env.MY_QUEUE.send({ping: true});
+      return new Response('pong', {status: 200});
+    }
 
-import {createService, quiltService} from '@quilted/sewing-kit';
-import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+    return new Response('Not found', {status: 404});
+  },
+  queue(batch) {
+    console.log(batch);
+  },
+};
+```
 
-export default createService((service) => {
-  service.use(quiltService());
-  service.use(cloudflareWorkers());
+Then, when setting up the Cloudflare plugin in the next section, you will need to pass `{format: 'custom'}` in the `quiltService` plugin’s options to tell Quilt to skip the automatic transformations.
+
+#### Step 2: Add the Cloudflare plugin
+
+Import the Cloudflare plugin to your services’s `craft.config.ts` file. The new plugin can go anywhere in your configuration, but we generally recommend putting the plugin later in your configuration, so the build setup it adds overwrites settings provided by other plugins.
+
+```ts
+// In an service’s Quilt configuration, which would be functions/api/quilt.project.ts
+// in the example from the previous step.
+
+import {createProject, quiltService} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+
+export default createProject((project) => {
+  project.use(quiltService());
+  project.use(cloudflareWorkers());
 });
 ```
 
-By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules), which current requires a paid Cloudflare plan. If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare Sewing Kit plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
+As described in the previous section, you can choose not to use Quilt’s `request-router` library to author your worker, and to instead use Cloudflare’s standard, module-based API. If you are doing so, pass `{format: 'custom'}` to the `quiltService` plugin:
 
 ```ts
-import {createService, quiltService} from '@quilted/sewing-kit';
-import {cloudflareWorkers} from '@quilted/cloudflare/sewing-kit';
+import {createProject, quiltService} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
 
-export default createService((service) => {
-  service.use(quiltService());
-  service.use(cloudflareWorkers({format: 'service-worker'}));
+export default createProject((project) => {
+  project.use(quiltService({format: 'custom'}));
+  project.use(cloudflareWorkers());
+});
+```
+
+By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules). If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
+
+```ts
+import {createProject, quiltService} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+
+export default createProject((project) => {
+  project.use(quiltService());
+  project.use(cloudflareWorkers({format: 'service-worker'}));
 });
 ```
 
@@ -352,15 +402,13 @@ wrangler init my-service-name
 
 After running the command above, a `wrangler.toml` will exist at the root of your repo. As with deploying an application, you will need to customize some of the configuration in this file, but the edits depend on which format you’d like to use for the worker: [modules](#option-1-deploying-your-worker-in-modules-format) or [service worker](#option-2-deploying-your-worker-in-service-worker-format)
 
-##### Option 1: Deploying your worker in modules format
-
-> **Note:** deploying your Cloudflare Worker using the module format is the default for Quilt, because it matches Quilt’s general preference for using native ES modules when possible. However, as of June 17, 2021, the module format is still in beta and requires a paid account. If you want to deploy to Cloudflare without paying anything, you’ll need to refer to the service worker instructions instead.
+##### Option 1: Deploying your service in modules format
 
 Replace any initial `build` configuration in your `wrangler.toml` with the following snippet:
 
 ```toml
 [build]
-command = "yarn install && yarn build"
+command = "pnpm install && pnpm build"
 
 [build.upload]
 format = "modules"
@@ -384,7 +432,7 @@ Replace any initial `build` configuration in your `wrangler.toml` with the follo
 
 ```toml
 [build]
-command = "yarn install && yarn build"
+command = "pnpm install && pnpm build"
 
 [build.upload]
 format = "service-worker"
@@ -417,9 +465,3 @@ wrangler publish
 ```
 
 You should get feedback from this command about the URL your worker is deployed to.
-
-### Additional notes
-
-You can use `wrangler dev` to run the development mode for your application or service, but we recommend sticking with `sewing-kit develop`, Quilt’s default development command, instead. Sewing Kit’s `develop` command will run your application, serve your client-side assets, and run your service in Node using a very fast, development-focused tools. In contrast, `wrangler dev` will build the entire workspace to more accurately simulate the production environment.
-
-If you need access to additional Cloudflare Workers globals, like [key-value storage](https://developers.cloudflare.com/workers/runtime-apis/kv) or [WebSockets](https://developers.cloudflare.com/workers/runtime-apis/websockets), you will have to use `wrangler dev`, as Quilt is not able to simulate this environment correctly.
