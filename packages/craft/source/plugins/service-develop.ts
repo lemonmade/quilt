@@ -36,7 +36,7 @@ export function serviceDevelopment() {
                 input,
                 plugins,
                 external,
-                preserveEntrySignatures: false,
+                preserveEntrySignatures: 'exports-only',
               }),
             ]);
 

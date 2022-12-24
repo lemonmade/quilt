@@ -104,7 +104,6 @@ export function appBuild({
             rollupOutputs,
             rollupPlugins,
             rollupNodeBundle,
-            rollupPreserveEntrySignatures,
             quiltAsyncManifestPath,
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
@@ -123,11 +122,6 @@ export function appBuild({
               Array.from(new Set([...variables, ...inlineEnv])),
             );
           }
-
-          // When we are only building a web app, we don’t care about preserving
-          // any details about the entry module. When we are building for any other
-          // environment, we want to do our best to preserve that
-          rollupPreserveEntrySignatures?.(() => false);
 
           rollupPlugins?.(async (plugins) => {
             const {default: replace} = await import('@rollup/plugin-replace');
