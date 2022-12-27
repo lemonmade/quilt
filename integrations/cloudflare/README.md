@@ -102,6 +102,10 @@ Quilt provides these bindings on the second `context` argument to a [`@quilted/r
 import type {KVNamespace} from '@cloudflare/workers-types';
 import {createRequestRouter, json} from '@quilted/request-router';
 
+// This import adds the types for request context that is only available
+// in Cloudflare Workers, like the `env` object for accessing bindings.
+import type {} from '@quilted/cloudflare';
+
 declare module '@quilted/cloudflare' {
   interface CloudflareRequestEnvironment {
     // Example of an environment variable
@@ -134,6 +138,10 @@ The [`cf` object](https://developers.cloudflare.com/workers/runtime-apis/request
 // In a file for your service, say, functions/api/api.ts
 
 import {createRequestRouter, html} from '@quilted/request-router';
+
+// This import adds the types for request context that is only available
+// in Cloudflare Workers, like the `cf` object containing request metadata.
+import type {} from '@quilted/cloudflare';
 
 const router = createRequestRouter();
 
