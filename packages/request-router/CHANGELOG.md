@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.1.2
+
+### Patch Changes
+
+- [`783e6417`](https://github.com/lemonmade/quilt/commit/783e6417373de0a60137aa02d0c9bfcf353f38c4) Thanks [@lemonmade](https://github.com/lemonmade)! - Update request-router to use `fetch` instead of `run`
+
 ## 0.1.1
 
 ### Patch Changes
