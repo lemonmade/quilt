@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.1.46
+
+### Patch Changes
+
+- [`77d4a3ab`](https://github.com/lemonmade/quilt/commit/77d4a3ab896f122e5f04378941431cd2fb1e49f4) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify Cloudflare outputs
+
 ## 0.1.45
 
 ### Patch Changes
