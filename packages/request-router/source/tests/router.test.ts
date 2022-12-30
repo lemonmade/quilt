@@ -10,8 +10,8 @@ describe('createRequestRouter()', () => {
     const router = createRequestRouter();
     router.any(() => response);
 
-    expect(await router.run(new Request(url('/')))).toBe(response);
-    expect(await router.run(new Request(url('/any-path')))).toBe(response);
+    expect(await router.fetch(new Request(url('/')))).toBe(response);
+    expect(await router.fetch(new Request(url('/any-path')))).toBe(response);
   });
 
   it('can register a handler for a specific method', async () => {
@@ -19,11 +19,11 @@ describe('createRequestRouter()', () => {
     const router = createRequestRouter();
     router.get(() => response);
 
-    expect(await router.run(new Request(url('/'), {method: 'GET'}))).toBe(
+    expect(await router.fetch(new Request(url('/'), {method: 'GET'}))).toBe(
       response,
     );
     expect(
-      await router.run(new Request(url('/'), {method: 'POST'})),
+      await router.fetch(new Request(url('/'), {method: 'POST'})),
     ).toBeUndefined();
   });
 
@@ -32,8 +32,10 @@ describe('createRequestRouter()', () => {
     const router = createRequestRouter();
     router.get('/', () => response);
 
-    expect(await router.run(new Request(url('/')))).toBe(response);
-    expect(await router.run(new Request(url('/not-a-match')))).toBeUndefined();
+    expect(await router.fetch(new Request(url('/')))).toBe(response);
+    expect(
+      await router.fetch(new Request(url('/not-a-match'))),
+    ).toBeUndefined();
   });
 
   it('can register a handler for a regular expression path', async () => {
@@ -41,8 +43,8 @@ describe('createRequestRouter()', () => {
     const router = createRequestRouter();
     router.get(/\d+/, () => response);
 
-    expect(await router.run(new Request(url('/123')))).toBe(response);
-    expect(await router.run(new Request(url('/hello')))).toBeUndefined();
+    expect(await router.fetch(new Request(url('/123')))).toBe(response);
+    expect(await router.fetch(new Request(url('/hello')))).toBeUndefined();
   });
 
   it('can register a handler for a non-exact match', async () => {
@@ -50,9 +52,9 @@ describe('createRequestRouter()', () => {
     const router = createRequestRouter();
     router.get('/hello', () => response, {exact: false});
 
-    expect(await router.run(new Request(url('/')))).toBeUndefined();
-    expect(await router.run(new Request(url('/hello')))).toBe(response);
-    expect(await router.run(new Request(url('/hello/world')))).toBe(response);
+    expect(await router.fetch(new Request(url('/')))).toBeUndefined();
+    expect(await router.fetch(new Request(url('/hello')))).toBe(response);
+    expect(await router.fetch(new Request(url('/hello/world')))).toBe(response);
   });
 
   it('excludes a prefix before attempting to match', async () => {
@@ -60,11 +62,11 @@ describe('createRequestRouter()', () => {
     const router = createRequestRouter({prefix: '/hello'});
     router.get('/world', () => response);
 
-    expect(await router.run(new Request(url('/hello/world')))).toBe(response);
+    expect(await router.fetch(new Request(url('/hello/world')))).toBe(response);
     expect(
-      await router.run(new Request(url('/hello/goodbye'))),
+      await router.fetch(new Request(url('/hello/goodbye'))),
     ).toBeUndefined();
-    expect(await router.run(new Request(url('/world')))).toBeUndefined();
+    expect(await router.fetch(new Request(url('/world')))).toBeUndefined();
   });
 
   it('expands matches in nested http routers', async () => {
@@ -74,11 +76,11 @@ describe('createRequestRouter()', () => {
     nestedRouter.get('world', () => response);
     router.get('hello', nestedRouter);
 
-    expect(await router.run(new Request(url('/hello/world')))).toBe(response);
+    expect(await router.fetch(new Request(url('/hello/world')))).toBe(response);
     expect(
-      await router.run(new Request(url('/hello/goodbye'))),
+      await router.fetch(new Request(url('/hello/goodbye'))),
     ).toBeUndefined();
-    expect(await router.run(new Request(url('/world')))).toBeUndefined();
+    expect(await router.fetch(new Request(url('/world')))).toBeUndefined();
   });
 
   it('expands matches and prefixes in nested http routers', async () => {
@@ -88,14 +90,14 @@ describe('createRequestRouter()', () => {
     nestedRouter.get('/', () => response);
     router.get('hello', nestedRouter);
 
-    expect(await router.run(new Request(url('/hello/world')))).toBe(response);
+    expect(await router.fetch(new Request(url('/hello/world')))).toBe(response);
     expect(
-      await router.run(new Request(url('/hello/world/beyond'))),
+      await router.fetch(new Request(url('/hello/world/beyond'))),
     ).toBeUndefined();
     expect(
-      await router.run(new Request(url('/hello/goodbye'))),
+      await router.fetch(new Request(url('/hello/goodbye'))),
     ).toBeUndefined();
-    expect(await router.run(new Request(url('/world')))).toBeUndefined();
+    expect(await router.fetch(new Request(url('/world')))).toBeUndefined();
   });
 });
 

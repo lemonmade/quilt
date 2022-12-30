@@ -119,7 +119,7 @@ export interface RequestRouter<Context = RequestContext> {
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
-  run(
+  fetch(
     request: Request,
     context?: RequestContext,
   ): Promise<

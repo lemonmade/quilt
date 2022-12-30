@@ -8,5 +8,5 @@ export function handleRequest(
 ) {
   return typeof handler === 'function'
     ? handler(new EnhancedRequest(request), context ?? ({} as any))
-    : handler.run(request, context);
+    : handler.fetch(request, context);
 }

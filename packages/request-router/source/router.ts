@@ -23,7 +23,9 @@ interface RequestHandlerRegistration {
 }
 
 const REQUEST_METHOD_ANY = 'ANY';
-const HTTP_HANDLER_RUN_INTERNAL = Symbol.for('Quilt.RequestRouter.RunInternal');
+const HTTP_HANDLER_FETCH_INTERNAL = Symbol.for(
+  'Quilt.RequestRouter.FetchInternal',
+);
 
 export function createRequestRouter<Context = RequestContext>({
   prefix,
@@ -67,19 +69,19 @@ export function createRequestRouter<Context = RequestContext>({
       registrations.push(normalizeRouteArguments(HttpMethod.Delete, ...args));
       return requestRouter;
     },
-    async run(request, requestContext = {} as any) {
-      return runInternal(new EnhancedRequest(request), requestContext);
+    async fetch(request, requestContext = {} as any) {
+      return fetchInternal(new EnhancedRequest(request), requestContext);
     },
   };
 
-  Reflect.defineProperty(requestRouter, HTTP_HANDLER_RUN_INTERNAL, {
+  Reflect.defineProperty(requestRouter, HTTP_HANDLER_FETCH_INTERNAL, {
     enumerable: false,
-    value: runInternal,
+    value: fetchInternal,
   });
 
   return requestRouter;
 
-  async function runInternal(
+  async function fetchInternal(
     request: EnhancedRequest,
     context: RequestContext,
     previouslyConsumed?: string,
@@ -114,7 +116,7 @@ export function createRequestRouter<Context = RequestContext>({
       const result =
         typeof handler === 'function'
           ? await handler(request, context)
-          : await Reflect.get(handler, HTTP_HANDLER_RUN_INTERNAL)(
+          : await Reflect.get(handler, HTTP_HANDLER_FETCH_INTERNAL)(
               request,
               context,
               matchDetails.consumed,
@@ -164,6 +166,6 @@ function isRequestRouter(value?: unknown): value is RequestRouter {
   return (
     value != null &&
     typeof value === 'object' &&
-    Reflect.has(value, HTTP_HANDLER_RUN_INTERNAL)
+    Reflect.has(value, HTTP_HANDLER_FETCH_INTERNAL)
   );
 }
