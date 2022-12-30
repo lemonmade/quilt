@@ -1,3 +1,5 @@
+import type {} from '@quilted/quilt';
+
 export interface CloudflareRequestEnvironment {}
 
 export interface CloudflareRequestContext extends ExecutionContext {

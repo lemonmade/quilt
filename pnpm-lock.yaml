@@ -69,16 +69,16 @@ importers:
 
   integrations/cloudflare:
     specifiers:
-      '@cloudflare/kv-asset-handler': ^0.2.0
-      '@cloudflare/workers-types': ^3.7.1
+      '@cloudflare/kv-asset-handler': ^0.3.0
+      '@cloudflare/workers-types': ^4.20221111.1
       '@types/common-tags': ^1.8.0
       '@types/mime': ^2.0.0
       common-tags: ^1.8.0
       mime: ^2.5.0
       miniflare: ^2.4.0
     dependencies:
-      '@cloudflare/kv-asset-handler': 0.2.0
-      '@cloudflare/workers-types': 3.11.0
+      '@cloudflare/kv-asset-handler': 0.3.0
+      '@cloudflare/workers-types': 4.20221111.1
       common-tags: 1.8.2
       mime: 2.6.0
       miniflare: 2.5.0
@@ -2861,14 +2861,14 @@ packages:
       prettier: 2.8.1
     dev: true
 
-  /@cloudflare/kv-asset-handler/0.2.0:
-    resolution: {integrity: sha512-MVbXLbTcAotOPUj0pAMhVtJ+3/kFkwJqc5qNOleOZTv6QkZZABDMS21dSrSlVswEHwrpWC03e4fWytjqKvuE2A==}
+  /@cloudflare/kv-asset-handler/0.3.0:
+    resolution: {integrity: sha512-9CB/MKf/wdvbfkUdfrj+OkEwZ5b7rws0eogJ4293h+7b6KX5toPwym+VQKmILafNB9YiehqY0DlNrDcDhdWHSQ==}
     dependencies:
       mime: 3.0.0
     dev: false
 
-  /@cloudflare/workers-types/3.11.0:
-    resolution: {integrity: sha512-XmKgZZHrCdPsoVQkdd365R7GvwTwDVJsMyEG3Dq/Tgxz6vgrps2c8PXBqEutguwvl0zDAF0AL0e2Z8WG9Dffjw==}
+  /@cloudflare/workers-types/4.20221111.1:
+    resolution: {integrity: sha512-BNV2wN8V6Zduvo7UzxcdjBbLQ906D2KhS804PDufLgx/sanGJCHVJMOIaLvS/b61JKtot1U7P/l1fjrjZ7/E3A==}
     dev: false
 
   /@csstools/postcss-cascade-layers/1.1.1_postcss@8.4.20:

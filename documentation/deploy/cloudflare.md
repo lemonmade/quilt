@@ -79,7 +79,7 @@ For more details, you can read the [Cloudflare Pages](https://developers.cloudfl
 
 Quilt and [Craft](../craft.md) make it easy to deploy your apps and backend services as [Cloudflare Workers](https://workers.cloudflare.com). The small, modern JavaScript bundles Quilt creates are a great fit for Cloudflare’s quick startup times and global distribution.
 
-This guide assumes you have already [created an app or service with Quilt and Sewing Kit](../getting-started.md). If you don’t already have a Quilt project and would prefer to create your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
+This guide assumes you have already [created an app or service with Quilt](../getting-started.md). If you don’t already have a Quilt project and would prefer to create your project with Cloudflare’s tools, you can skip this guide and use the [Wrangler CLI](https://github.com/cloudflare/wrangler) to generate one of the Quilt templates instead:
 
 - **Basic app** ([template repo](https://github.com/quilt-framework/quilt-template-cloudflare-workers), [live site](https://quilt-template-cloudflare-workers.lemons.workers.dev/)): a web application with server side rendering (using [Cloudflare Workers](https://developers.cloudflare.com/workers/)) and asset hosting (using [Worker Sites](https://developers.cloudflare.com/workers/platform/sites)).
 
@@ -121,13 +121,13 @@ import {cloudflareWorkers} from '@quilted/cloudflare/craft';
 
 export default createProject((project) => {
   project.use(quiltApp());
-  project.use(cloudflareWorkers());
+  project.use(cloudflareWorkers({site: true}));
 });
 ```
 
-This plugin will make sure your server build output is compatible with Cloudflare worker’s lightweight JavaScript environment.
+This plugin will make sure your server build output is compatible with Cloudflare worker’s lightweight JavaScript environment. The `site: true` option makes it so that our server will also serve the static assets Quilt creates for the browser, served on Cloudflare through [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites).
 
-By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules). If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare Sewing Kit plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
+By default, Quilt produces Cloudflare Workers in the newer [modules format](https://developers.cloudflare.com/workers/cli-wrangler/configuration#modules). If you want to deploy to a free Cloudflare account, you will need to update the Cloudflare plugin to change the output format to [service-worker](https://developers.cloudflare.com/workers/cli-wrangler/configuration#service-workers):
 
 ```ts
 // app/quilt.project.ts
@@ -137,7 +137,7 @@ import {cloudflareWorkers} from '@quilted/cloudflare/craft';
 
 export default createProject((project) => {
   project.use(quiltApp());
-  project.use(cloudflareWorkers({format: 'service-worker'}));
+  project.use(cloudflareWorkers({site: true, format: 'service-worker'}));
 });
 ```
 
@@ -157,21 +157,21 @@ export default createProject((project) => {
       assets: {baseUrl: '/public/assets/'},
     }),
   );
-  project.use(cloudflareWorkers());
+  project.use(cloudflareWorkers({site: true}));
 });
 ```
 
-You might want to disable the automatic serving of your browser assets if you are serving those assets from a dedicated CDN. To do so, pass `serveAssets: false` to the Cloudflare plugin:
+You might want to disable the automatic serving of your browser assets if you are serving those assets from a dedicated CDN. To do so, pass `site: false` to the Cloudflare plugin:
 
 ```ts
-// In an app’s Sewing Kit configuration, like app/craft.config.ts
+// In an app’s configuration, like app/quilt.project.ts
 
 import {createProject, quiltApp} from '@quilted/craft';
 import {cloudflareWorkers} from '@quilted/cloudflare/craft';
 
 export default createProject((project) => {
   project.use(quiltApp());
-  project.use(cloudflareWorkers({serveAssets: false}));
+  project.use(cloudflareWorkers({site: false}));
 });
 ```
 
@@ -253,7 +253,7 @@ entry-point = "."
 
 This final section configures [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites), which is an additional part of your worker that manages your static assets. This part of the configuration tells Wrangler where the static assets Quilt produces will be on disk.
 
-If you are passing `serveAssets: false` in the [Cloudflare plugin](#step-1-add-the-cloudflare-craft-plugin), you can omit this section entirely.
+If you are passing `site: false` in the [Cloudflare plugin](#step-1-add-the-cloudflare-craft-plugin), you can omit this section entirely.
 
 ##### Option 2: Deploying your app in the service worker format
 
@@ -266,7 +266,7 @@ command = "pnpm install && pnpm build"
 [build.upload]
 format = "service-worker"
 
-# As noted above, if you are passing serveAssets: false in your Sewing Kit
+# As noted above, if you are passing site: false in your project’s
 # configuration, you do not need to include this configuration.
 [site]
 bucket = "./build/assets"
@@ -305,7 +305,7 @@ You should get feedback from this command about the URL your application is depl
 
 Quilt also comes with a way to automatically turn your backend services into Cloudflare Workers. To use this transformation, your service must be written using [Quilt’s `request-router` library](../features/request-routing.md), which provides a simple abstraction over HTTP requests and responses.
 
-> **Note:** `@quilted/request-router` is a very small library that is meant to expose only the small set of APIs that overlap between many server environments. If you are heavily using Cloudflare’s APIs, you may not be able to use this automatic transformation, and will need to instead author the full Cloudflare Workers runtime code for your function. In that case, you can set `format: 'custom'` in your Sewing Kit config for this service, which runs a build without the automatic transformations.
+> **Note:** `@quilted/request-router` is a very small library that is meant to expose only the small set of APIs that overlap between many server environments. If you are heavily using Cloudflare’s APIs, you may not be able to use this automatic transformation, and will need to instead author the full Cloudflare Workers runtime code for your function. In that case, you can set `format: 'custom'` in your configuration for this service, which runs a build without the automatic transformations.
 
 #### Step 1: Write your service using `@quilted/request-router`
 

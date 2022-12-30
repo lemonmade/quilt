@@ -18,13 +18,14 @@ export type WorkerFormat = 'modules' | 'service-worker';
 export interface Options {
   /**
    * Controls whether the auto-generated server will also serve
-   * static assets hosted on Cloudflare Sites. This is `true` by
-   * default for applications.
+   * static assets hosted on Cloudflare Sites.
    *
    * To make use of the asset server, you’ll need to update your
    * Wrangler configuration to upload the browser assets Quilt creates.
+   *
+   * @default false
    */
-  serveAssets?: boolean;
+  site?: boolean;
 
   /**
    * Whether the resulting request handler will use the Cloudflare cache
@@ -76,7 +77,7 @@ declare module '@quilted/craft/kit' {
 export function cloudflareWorkers({
   format = 'modules',
   cache = false,
-  serveAssets = false,
+  site = false,
   miniflare: useMiniflare = true,
 }: Options = {}) {
   return createProjectPlugin({
@@ -86,7 +87,7 @@ export function cloudflareWorkers({
         addConfiguration({
           cache,
           format,
-          serveAssets,
+          site,
         }),
       );
     },
@@ -98,7 +99,7 @@ export function cloudflareWorkers({
       const addBaseConfiguration = addConfiguration({
         cache,
         format,
-        serveAssets: false,
+        site: false,
       });
 
       configure((hooks, options) => {
@@ -161,11 +162,11 @@ export function cloudflareWorkers({
 function addConfiguration({
   cache,
   format,
-  serveAssets,
+  site,
 }: {
   cache: boolean;
   format: WorkerFormat;
-  serveAssets: boolean;
+  site: boolean;
 }) {
   return (
     {
@@ -247,57 +248,75 @@ function addConfiguration({
     });
 
     if (format === 'modules') {
-      quiltRequestRouterRuntimeContent?.(
-        async () => stripIndent`
+      quiltRequestRouterRuntimeContent?.(async () => {
+        const handlerContent = site
+          ? stripIndent`
+            import {createSiteFetchHandler} from '@quilted/cloudflare/request-router';
+
+            const handler = createSiteFetchHandler(RequestRouter, {
+              cache: ${String(cache)},
+              assets: ${JSON.stringify({
+                path: await quiltAssetBaseUrl!.run(),
+              })}
+            });
+          `
+          : stripIndent`
+            import {createFetchHandler} from '@quilted/cloudflare/request-router';
+
+            const handler = createFetchHandler(RequestRouter, {
+              cache: ${String(cache)},
+            });
+          `;
+
+        return stripIndent`
           import RequestRouter from ${JSON.stringify(
             MAGIC_MODULE_REQUEST_ROUTER,
           )};
 
-          import {createFetchHandler} from '@quilted/cloudflare/request-router';
-
-          const handler = createFetchHandler(RequestRouter, {
-            cache: ${String(cache)},
-            assets: ${
-              serveAssets
-                ? JSON.stringify({
-                    path: await quiltAssetBaseUrl!.run(),
-                  })
-                : 'false'
-            }
-          });
+          ${handlerContent}
 
           export default {
             fetch: handler,
           }
-        `,
-      );
+        `;
+      });
     } else {
-      quiltRequestRouterRuntimeContent?.(
-        async () => stripIndent`
+      quiltRequestRouterRuntimeContent?.(async () => {
+        const handlerContent = site
+          ? stripIndent`
+            import {createSiteFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
+
+            const handler = createSiteFetchHandler(RequestRouter, {
+              cache: ${String(cache)},
+              assets: ${JSON.stringify({
+                path: await quiltAssetBaseUrl!.run(),
+              })}
+            });
+          `
+          : stripIndent`
+            import {createFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
+
+            const handler = createFetchHandler(RequestRouter, {
+              cache: ${String(cache)},
+            });
+          `;
+
+        return stripIndent`
           import RequestRouter from ${JSON.stringify(
             MAGIC_MODULE_REQUEST_ROUTER,
           )};
 
           import {createFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
 
-          const handler = createFetchHandler(RequestRouter, {
-            cache: ${String(cache)},
-            assets: ${
-              serveAssets
-                ? JSON.stringify({
-                    path: await quiltAssetBaseUrl!.run(),
-                  })
-                : 'false'
-            }
-          });
+          ${handlerContent}
 
           addEventListener('fetch', (event) => {
             event.respondWith(
               handler(...transformFetchEvent(event)),
             );
           });
-        `,
-      );
+        `;
+      });
     }
   };
 }

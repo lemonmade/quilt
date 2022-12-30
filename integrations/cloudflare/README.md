@@ -52,6 +52,20 @@ export default createProject((project) => {
 });
 ```
 
+If you use [Cloudflare Sites](https://developers.cloudflare.com/workers/platform/sites) to serve static assets, you can set `site: true` on the Cloudflare plugin to automatically have these assets served as part of your worker.
+
+```ts
+// app/quilt.project.ts
+
+import {createProject, quiltApp} from '@quilted/craft';
+import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+
+export default createProject((project) => {
+  project.use(quiltApp());
+  project.use(cloudflareWorkers({site: true}));
+});
+```
+
 #### Using Cloudflare’s native APIs instead of `@quilted/request-router`
 
 You can also use Quilt build your project “as-is”, using Cloudflare’s native module-based APIs. You might want to do this if your worker doesn’t need the routing utilities provided by `@quilted/request-router`, or you want to make use of non-HTTP APIs available in Cloudflare, like [scheduled events](https://developers.cloudflare.com/workers/runtime-apis/scheduled-event/) or [Cloudflare Queues](https://developers.cloudflare.com/queues/javascript-apis/#consumer).
