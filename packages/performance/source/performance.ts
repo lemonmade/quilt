@@ -73,7 +73,7 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
         start: now(),
         metadata,
         end(options) {
-          return finishNavigation('cancelled', options);
+          return finishNavigation('completed', options);
         },
         cancel(options) {
           return finishNavigation('cancelled', options);
