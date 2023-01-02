@@ -475,13 +475,19 @@ export async function waitForPerformanceNavigation(
         return;
       }
 
+      const abort = new AbortController();
+
       await new Promise<void>((resolve) => {
-        const stopListening = performance.on('navigation', (navigation) => {
-          if (navigation.target.href === href) {
-            stopListening();
-            resolve();
-          }
-        });
+        performance.on(
+          'navigation',
+          (navigation) => {
+            if (navigation.target.href === href) {
+              abort.abort();
+              resolve();
+            }
+          },
+          {signal: abort.signal},
+        );
       });
     },
     {href: url.href, checkCompleteNavigations},
