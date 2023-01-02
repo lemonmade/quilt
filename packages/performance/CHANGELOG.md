@@ -1,5 +1,11 @@
 # @quilted/performance
 
+## 0.1.14
+
+### Patch Changes
+
+- [`2db1dc5a`](https://github.com/lemonmade/quilt/commit/2db1dc5ae162edfd793e55d690c6dbd3eb2f061a) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix performance navigation status
+
 ## 0.1.13
 
 ### Patch Changes
