@@ -4,7 +4,7 @@ import type {RouteDefinition} from './types';
 export {StaticRendererContext} from './context';
 
 export interface RouteRecord {
-  routes: RouteDefinition[];
+  routes: readonly RouteDefinition[];
   prefix?: string;
   fallback?: boolean;
   consumedPath?: string;

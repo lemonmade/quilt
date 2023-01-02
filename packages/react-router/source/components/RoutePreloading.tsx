@@ -14,7 +14,7 @@ interface NavigatorWithConnection {
 
 export const INTENTION_DELAY_MS = 150;
 
-export const Preloader = memo(function Preloader({
+export const RoutePreloading = memo(function RoutePreloading({
   children,
 }: PropsWithChildren<{}>) {
   const router = useRouter();

@@ -19,9 +19,9 @@ export interface PreloadMatch {
 
 export interface Preloader {
   registerRoutes(
-    routes: RouteDefinition[],
+    routes: readonly RouteDefinition[],
     consumed?: string,
-  ): (routes: RouteDefinition[], consumed?: string) => void;
+  ): (routes: readonly RouteDefinition[], consumed?: string) => void;
   listenForMatch(
     url: URL,
     onMatch: (matches: PreloadMatch[]) => void,
@@ -42,7 +42,10 @@ export function createPreloader(router: Router): Preloader {
 
       return update;
 
-      function update(newRoutes: RouteDefinition[], newConsumed?: string) {
+      function update(
+        newRoutes: readonly RouteDefinition[],
+        newConsumed?: string,
+      ) {
         let needsUpdate = false;
         const removeRegistrations = new Set(registrationsByKey.keys());
 

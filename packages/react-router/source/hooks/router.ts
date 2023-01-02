@@ -6,7 +6,7 @@ export function useRouter() {
 
   if (router == null) {
     throw new Error(
-      'You attempted to use the current router, but none was found. Make sure your code is nested in a <Router />',
+      'You attempted to use the current router, but none was found. Make sure your code is nested in a <Routing /> component',
     );
   }
 

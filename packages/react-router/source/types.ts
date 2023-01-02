@@ -38,3 +38,5 @@ export interface RouteDefinition {
   renderPreload?(details: RouteRenderPreloadDetails): ReactNode;
   renderStatic?: boolean | (() => string[] | Promise<string[]>);
 }
+
+export type Routes = readonly RouteDefinition[];

@@ -3,7 +3,7 @@ import '@quilted/react-testing/matchers';
 import {createMount} from '@quilted/react-testing';
 import type {Prefix} from '@quilted/routing';
 
-import {createTestRouter, TestRouter} from '../testing';
+import {createTestRouter, TestRouting} from '../testing';
 
 export {createTestRouter};
 
@@ -16,6 +16,6 @@ export const mount = createMount<
     return {router};
   },
   render(element, {router}) {
-    return <TestRouter router={router}>{element}</TestRouter>;
+    return <TestRouting router={router}>{element}</TestRouting>;
   },
 });

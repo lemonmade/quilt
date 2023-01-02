@@ -48,7 +48,7 @@ interface Props {
   children: ReactNode;
 }
 
-export function TestRouter({children, router: initialRouter}: Props) {
+export function TestRouting({children, router: initialRouter}: Props) {
   const router = useMemo(
     () => initialRouter ?? createTestRouter(),
     [initialRouter],

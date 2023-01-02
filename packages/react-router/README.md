@@ -10,11 +10,11 @@ $ yarn add @quilted/react-router
 
 ## Usage
 
-### `<Router />`
+### `<Routing />`
 
-The `<Router />` component manages the state of the [current URL](#useCurrentUrl) passed to the rest of the application, provides a [programmatic API](#useRouter) for the application to change the URL, and activates [route-based focus management](#useRouteChangeFocusRef). You **must** render a single `Router` component around all the parts of your app that make use of the hooks and other components this library provides.
+The `<Routing />` component manages the state of the [current URL](#useCurrentUrl) passed to the rest of the application, provides a [programmatic API](#useRouter) for the application to change the URL, and activates [route-based focus management](#useRouteChangeFocusRef). You **must** render a single `Routing` component around all the parts of your app that make use of the hooks and other components this library provides.
 
-The `Router` component accepts the following props:
+The `Routing` component accepts the following props:
 
 - `url`: on the client, this component will infer the initial URL from `window.location`. When rendering this component in a non-browser environment, however, there is no way for the component to know what the initial URL should be. You can help the router out by manually providing the initial URL in these cases, which is done by passing a `URL` object to the `url` prop.
 
@@ -23,31 +23,31 @@ The `Router` component accepts the following props:
 
   import Koa from 'koa';
   import {renderToString} from 'react-dom/server';
-  import {Router} from '@quilted/react-router';
+  import {Routing} from '@quilted/react-router';
   import {App} from './App';
 
   const app = new Koa();
 
   app.use((ctx) => {
     ctx.body = renderToString(
-      <Router url={ctx.URL}>
+      <Routing url={ctx.URL}>
         <App />
-      </Router>,
+      </Routing>,
     );
   });
   ```
 
-- `prefix`: in many applications, the “root” path for URLs is `/`. However, some complex applications may be entirely hosted under a common URL path, like `/app`. The default `Router` component can handle these cases just fine, but you’d need to always include the prefix when navigating through the application. In the case of `/app` as a prefix, for example, navigating to a `home` route would require navigating to `/app/home`. You can use the `prefix` prop on the router to treat some part of the start of the path as a “prefix” that will automatically be prepended to any paths. Going back to our `/app` example, we could render the router as shown below to allow ourselves to navigate to `/home`, and have it resolve to the full `/app/home` route for us:
+- `prefix`: in many applications, the “root” path for URLs is `/`. However, some complex applications may be entirely hosted under a common URL path, like `/app`. The default `Routing` component can handle these cases just fine, but you’d need to always include the prefix when navigating through the application. In the case of `/app` as a prefix, for example, navigating to a `home` route would require navigating to `/app/home`. You can use the `prefix` prop on the router to treat some part of the start of the path as a “prefix” that will automatically be prepended to any paths. Going back to our `/app` example, we could render the router as shown below to allow ourselves to navigate to `/home`, and have it resolve to the full `/app/home` route for us:
 
   ```tsx
-  import {Router, Link} from '@quilted/react-router';
+  import {Routing, Link} from '@quilted/react-router';
 
   function App() {
     return (
-      <Router prefix="/app">
+      <Routing prefix="/app">
         <Link to="/home">Home</Link>
         {/* rest of app goes here... */}
-      </Router>
+      </Routing>
     );
   }
   ```
@@ -55,38 +55,38 @@ The `Router` component accepts the following props:
   The `prefix` prop can also be a regular expression. This can be useful in cases where you have identifiers as part of the prefix that are not static.
 
   ```tsx
-  import {Router, Link} from '@quilted/react-router';
+  import {Routing, Link} from '@quilted/react-router';
 
   function App() {
     return (
-      <Router prefix={/\/product\/\d+}>
+      <Routing prefix={/\/product\/\d+}>
         {/*
           assuming the initial URL path is /products/123, this link will resolve to
           /product/123/inventory
         */}
         <Link to="/inventory">Inventory</Link>
         {/* rest of app goes here... */}
-      </Router>
+      </Routing>
     );
   }
   ```
 
-### `<Preloader />`
+### `<RoutePreloading />`
 
-An important feature of this library is being able to register components to render when the user looks like they are about to navigate to a particular route. You register these preload operations alongside your [route definitions](#useRoutes), but the `Preloader` component is the one that is responsible for actually tracking the route the user intends to navigate to, and rendering the appropriate “preloads”.
+An important feature of this library is being able to register components to render when the user looks like they are about to navigate to a particular route. You register these preload operations alongside your [route definitions](#useRoutes), but the `RoutePreloading` component is the one that is responsible for actually tracking the route the user intends to navigate to, and rendering the appropriate “preloads”.
 
-The `Preloader` works by listening for mouse and touch events on elements with an `href` attribute (or `data-href`, for rare cases where you can’t use actual links for some navigation elements), figuring out which routes would match that URL, and rendering a component that can start prefetching assets or data for the route, using the [`renderPreload` option of `useRoutes`](#useRoutes).
+The `RoutePreloading` works by listening for mouse and touch events on elements with an `href` attribute (or `data-href`, for rare cases where you can’t use actual links for some navigation elements), figuring out which routes would match that URL, and rendering a component that can start prefetching assets or data for the route, using the [`renderPreload` option of `useRoutes`](#useRoutes).
 
-This capability is not provided by the `Router` because it requires a fair chunk of code to work, and not every application needs these capabilities. If you do want route-based preloading to work, you’ll need to render the `Preloader` component as a child of the `Router`:
+This capability is not provided by the `Routing` because it requires a fair chunk of code to work, and not every application needs preloading. If you do want route-based preloading to work, you’ll need to render the `RoutePreloading` component as a child of the `Routing` component:
 
 ```tsx
-import {Router, Preloader} from '@quilted/react-router';
+import {Routing, RoutePreloading} from '@quilted/react-router';
 
 function App() {
   return (
-    <Router>
-      <Preloader>{/* rest of app goes here... */}</Preloader>
-    </Router>
+    <Routing>
+      <RoutePreloading>{/* rest of app goes here... */}</RoutePreloading>
+    </Routing>
   );
 }
 ```
@@ -98,7 +98,7 @@ The `useRoutes` hook lets you conditionally render components in response to the
 ```tsx
 import {useRoutes} from '@quilted/react-router';
 
-// This component must be rendered inside a <Router />, otherwise the current URL
+// This component must be rendered inside a <Routing /> component, otherwise the current URL
 // is not known!
 function App() {
   return useRoutes([
@@ -255,7 +255,7 @@ function App() {
 
 #### `renderPreload`
 
-This field lets you register a component to render when the user looks like they are about to navigate to this route. The intention is that this component will kick off any data fetching required for that route in such a way that the route will be able to reuse that data on mount, reducing the cost of deferring assets and data per route. In order for this route-based preloading to work, you must render the [`Preloader` component in your application](#Preloader).
+This field lets you register a component to render when the user looks like they are about to navigate to this route. The intention is that this component will kick off any data fetching required for that route in such a way that the route will be able to reuse that data on mount, reducing the cost of deferring assets and data per route. In order for this route-based preloading to work, you must render the [`RoutePreloading` component in your application](#RoutePreloading).
 
 The following example shows a component created by [`@quilted/react-async`](../react-async) that is rendered for `/products`, and preloaded when the user is about to navigate to that route:
 
@@ -265,8 +265,8 @@ import {createAsyncComponent} from '@quilted/react-async';
 
 const Products = createAsyncComponent(() => import('./Products'));
 
-// Remember, you need to render this under **both** a <Router /> and
-// <Preloader /> to get routing and route-based preloading.
+// Remember, you need to render this under **both** a <Routing /> and
+// <RoutePreloading /> to get routing and route-based preloading.
 function App() {
   return useRoutes([
     {

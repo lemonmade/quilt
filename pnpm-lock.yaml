@@ -648,18 +648,16 @@ importers:
   packages/react-performance:
     specifiers:
       '@quilted/performance': ^0.1.0
-      '@quilted/react-router': ^0.3.25
       '@quilted/react-utilities': ^0.1.7
     dependencies:
       '@quilted/performance': link:../performance
       '@quilted/react-utilities': link:../react-utilities
-    devDependencies:
-      '@quilted/react-router': link:../react-router
 
   packages/react-router:
     specifiers:
       '@quilted/react-html': ^0.3.18
       '@quilted/react-http': ^0.3.8
+      '@quilted/react-performance': ^0.1.12
       '@quilted/react-server-render': ^0.3.7
       '@quilted/react-testing': workspace:*
       '@quilted/routing': ^0.2.7
@@ -667,6 +665,7 @@ importers:
     dependencies:
       '@quilted/react-html': link:../react-html
       '@quilted/react-http': link:../react-http
+      '@quilted/react-performance': link:../react-performance
       '@quilted/react-server-render': link:../react-server-render
       '@quilted/routing': link:../routing
     devDependencies:

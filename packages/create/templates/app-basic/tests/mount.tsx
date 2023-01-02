@@ -2,7 +2,7 @@ import '@quilted/quilt/matchers';
 
 import {
   createMount,
-  TestRouter,
+  QuiltAppTesting,
   createTestRouter,
 } from '@quilted/quilt/testing';
 
@@ -18,6 +18,11 @@ export interface MountOptions {
    * you expect.
    */
   router?: Router;
+
+  /**
+   * A custom locale to use for this component test.
+   */
+  locale?: string;
 }
 
 export interface MountContext {
@@ -36,12 +41,27 @@ export interface MountActions extends Record<string, never> {}
 export const mountWithAppContext = createMount<
   MountOptions,
   MountContext,
-  MountActions
+  MountActions,
+  true
 >({
+  // Create context that can be used by the `render` function, and referenced by test
+  // authors on the `root.context` property. Context is used to share data between your
+  // React tree and your test code, and is ideal for mocking out global context providers.
   context({router = createTestRouter()}) {
     return {router};
   },
-  render(element, {router}) {
-    return <TestRouter router={router}>{element}</TestRouter>;
+  // Render all of our app-wide context providers around each component under test.
+  render(element, {router}, {locale}) {
+    return (
+      <QuiltAppTesting routing={router} localization={locale}>
+        {element}
+      </QuiltAppTesting>
+    );
+  },
+  async afterMount() {
+    // If your components need to resolve data before they can render, you can
+    // use this hook to wait for that data to be ready. This will cause the
+    // `mount` function to return a promise, so that the component is only usable
+    // once the data is ready.
   },
 });

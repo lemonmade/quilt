@@ -1,4 +1,4 @@
-import {Router, useRoutes, useCurrentUrl, AppContext} from '@quilted/quilt';
+import {QuiltApp, useCurrentUrl, type Routes} from '@quilted/quilt';
 import {Title, Viewport, Favicon, SearchRobots} from '@quilted/quilt/html';
 import {
   CacheControl,
@@ -9,24 +9,16 @@ import {
 } from '@quilted/quilt/http';
 import Env from '@quilted/quilt/env';
 
+// This component renders the routes for your application. If you have a lot
+// of routes, or you need to customize the routes based on React context,
+// you can declare dynamic routes in component with Quilt’s `useRoutes()`
+// hook.
+const routes: Routes = [{match: '/', render: () => <Start />}];
+
 // The root component for your application. You will typically render any
 // app-wide context in this component.
 export default function App() {
-  return (
-    <AppContext>
-      <Router>
-        <Http />
-        <Head />
-        <Routes />
-      </Router>
-    </AppContext>
-  );
-}
-
-// This component renders the routes for your application. If you have a lot
-// of routes, you may want to split this component into its own file.
-function Routes() {
-  return useRoutes([{match: '/', render: () => <Start />}]);
+  return <QuiltApp http={<Http />} html={<Head />} routes={routes} />;
 }
 
 // This component will be rendered for the root URL of your application. Feel

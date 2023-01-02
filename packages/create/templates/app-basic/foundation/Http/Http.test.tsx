@@ -6,16 +6,16 @@ import {mountWithAppContext} from '~/tests/mount';
 import {Http} from './Http';
 
 describe('<Http />', () => {
-  it('does not cache the response', () => {
-    const http = mountWithAppContext(<Http />);
+  it('does not cache the response', async () => {
+    const http = await mountWithAppContext(<Http />);
 
     expect(http).toContainReactComponent(CacheControl, {
       cache: false,
     });
   });
 
-  it('adds a content security policy with a strict default policy', () => {
-    const http = mountWithAppContext(<Http />);
+  it('adds a content security policy with a strict default policy', async () => {
+    const http = await mountWithAppContext(<Http />);
 
     expect(http).toContainReactComponent(ContentSecurityPolicy, {
       defaultSources: ["'self'"],

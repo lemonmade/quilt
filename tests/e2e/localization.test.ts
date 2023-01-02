@@ -88,7 +88,7 @@ describe('localization', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {AppContext, PerformanceContext, LocalizedRouter, createRoutePathLocalization} from '@quilted/quilt';
+            import {QuiltApp, PerformanceContext, LocalizedRouting, createRoutePathLocalization} from '@quilted/quilt';
 
             import {Http} from './foundation/Http';
             import {Head} from './foundation/Head';
@@ -101,15 +101,11 @@ describe('localization', () => {
             
             export default function App() {
               return (
-                <AppContext>
-                  <LocalizedRouter localization={localization}>
-                    <PerformanceContext>
-                      <Http />
-                      <Head />
-                      <Routes />
-                    </PerformanceContext>
-                  </LocalizedRouter>
-                </AppContext>
+                <QuiltApp routing={false} localization={false} http={<Http />} html={<Head />}>
+                  <LocalizedRouting localization={localization}>
+                    <Routes />
+                  </LocalizedRouting>
+                </QuiltApp>
               );
             }
           `,
@@ -149,7 +145,7 @@ describe('localization', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {AppContext, PerformanceContext, LocalizedRouter, createRoutePathLocalization} from '@quilted/quilt';
+            import {QuiltApp, PerformanceContext, LocalizedRouting, createRoutePathLocalization} from '@quilted/quilt';
 
             import {Http} from './foundation/Http';
             import {Head} from './foundation/Head';
@@ -162,15 +158,11 @@ describe('localization', () => {
             
             export default function App() {
               return (
-                <AppContext>
-                  <LocalizedRouter localization={localization}>
-                    <PerformanceContext>
-                      <Http />
-                      <Head />
-                      <Routes />
-                    </PerformanceContext>
-                  </LocalizedRouter>
-                </AppContext>
+                <QuiltApp routing={false} localization={false} http={<Http />} html={<Head />}>
+                  <LocalizedRouting localization={localization}>
+                    <Routes />
+                  </LocalizedRouting>
+                </QuiltApp>
               );
             }
           `,
