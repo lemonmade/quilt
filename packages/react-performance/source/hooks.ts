@@ -1,28 +1,8 @@
-import {useContext, useEffect} from 'react';
-import {PerformanceContextInternal} from './context';
-
-export function usePerformance() {
-  return useContext(PerformanceContextInternal) ?? undefined;
-}
-
-export interface PerformanceNavigationOptions {
-  stage: 'loading' | 'usable' | 'complete';
-}
-
-export function usePerformanceNavigation(
-  {stage}: PerformanceNavigationOptions = {stage: 'complete'},
-) {
-  const performance = usePerformance();
-
-  useEffect(() => {
-    const currentNavigation = performance?.currentNavigation;
-
-    if (currentNavigation == null) return;
-
-    switch (stage) {
-      case 'complete':
-        currentNavigation.end();
-        break;
-    }
-  }, [stage, performance]);
-}
+export {usePerformance} from './hooks/performance';
+export {
+  usePerformanceNavigation,
+  type PerformanceNavigationOptions,
+  type PerformanceNavigationOptionsComplete,
+  type PerformanceNavigationOptionsLoading,
+} from './hooks/navigation';
+export {usePerformanceNavigationEvent} from './hooks/navigation-event';

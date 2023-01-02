@@ -448,7 +448,10 @@ importers:
     specifiers: {}
 
   packages/performance:
-    specifiers: {}
+    specifiers:
+      '@quilted/events': ^0.1.15
+    dependencies:
+      '@quilted/events': link:../events
 
   packages/polyfills:
     specifiers:
@@ -646,8 +649,10 @@ importers:
     specifiers:
       '@quilted/performance': ^0.1.0
       '@quilted/react-router': ^0.3.25
+      '@quilted/react-utilities': ^0.1.7
     dependencies:
       '@quilted/performance': link:../performance
+      '@quilted/react-utilities': link:../react-utilities
     devDependencies:
       '@quilted/react-router': link:../react-router
 

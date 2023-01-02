@@ -5,5 +5,10 @@ export type {
   PerformanceInflightNavigation,
 } from '@quilted/performance';
 
-export {usePerformance, usePerformanceNavigation} from './hooks';
+export {
+  usePerformance,
+  usePerformanceNavigation,
+  usePerformanceNavigationEvent,
+} from './hooks';
+
 export {PerformanceContext} from './PerformanceContext';

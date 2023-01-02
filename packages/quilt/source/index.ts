@@ -87,9 +87,11 @@ export type {
   DefaultLocaleDefinition,
 } from '@quilted/react-localize';
 export {
+  createPerformance,
   PerformanceContext,
   usePerformance,
   usePerformanceNavigation,
+  usePerformanceNavigationEvent,
 } from '@quilted/react-performance';
 export type {
   Performance,
