@@ -30,6 +30,7 @@ export interface PerformanceNavigation<Metadata = Record<string, unknown>> {
   readonly end: number;
   readonly duration: number;
   readonly metadata: Metadata;
+  toJSON(): object;
 }
 
 interface PerformanceEventMap<Metadata = Record<string, unknown>> {
@@ -101,6 +102,20 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
           metadata: options?.metadata
             ? {...inflightNavigation.metadata, ...options.metadata}
             : inflightNavigation.metadata,
+          toJSON() {
+            const {index, target, status, start, end, duration, metadata} =
+              navigation;
+
+            return {
+              index,
+              target: target.href,
+              status,
+              start,
+              end,
+              duration,
+              metadata,
+            };
+          },
         };
 
         if (currentNavigation === inflightNavigation) {
