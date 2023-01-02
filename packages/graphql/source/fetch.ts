@@ -25,12 +25,16 @@ declare module './types' {
   }
 }
 
-export function createGraphQLHttpFetch({
+export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
   uri,
   credentials,
   headers: explicitHeaders,
-}: GraphQLHttpFetchOptions): GraphQLFetch {
-  const fetchGraphQL: GraphQLFetch = async (operation, options, context) => {
+}: GraphQLHttpFetchOptions): GraphQLFetch<Extensions> {
+  const fetchGraphQL: GraphQLFetch<Extensions> = async function fetchGraphQL(
+    operation,
+    options,
+    context,
+  ) {
     const headers = new Headers({
       'Content-Type': 'application/json',
       Accept: 'application/json',

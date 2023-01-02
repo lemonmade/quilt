@@ -42,24 +42,24 @@ export interface GraphQLError {
 
 export interface GraphQLFetchContext {}
 
-export type GraphQLResult<Data> =
+export type GraphQLResult<Data, Extensions = Record<string, unknown>> =
   | {
       readonly data: Data;
       readonly errors?: never;
-      readonly extensions?: Record<string, any>;
+      readonly extensions?: Extensions;
     }
   | {
       readonly data?: Data | null;
       readonly errors: readonly GraphQLError[];
-      readonly extensions?: Record<string, any>;
+      readonly extensions?: Extensions;
     };
 
-export interface GraphQLFetch {
+export interface GraphQLFetch<Extensions = Record<string, unknown>> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLOperation<Data, Variables>,
     options?: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
     context?: GraphQLFetchContext,
-  ): GraphQLResult<Data> | Promise<GraphQLResult<Data>>;
+  ): GraphQLResult<Data, Extensions> | Promise<GraphQLResult<Data, Extensions>>;
 }
 
 export type GraphQLAnyOperation<Data, Variables> =
