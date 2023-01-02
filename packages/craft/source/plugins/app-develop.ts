@@ -130,7 +130,11 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           }
 
           viteConfig?.((options) => {
-            return {...options, appType: 'custom'};
+            return {
+              ...options,
+              appType: 'custom',
+              esbuild: {...options.esbuild, jsx: 'automatic'},
+            };
           });
 
           viteServerOptions?.((options) => {
@@ -350,19 +354,20 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             const normalizedBabelPresets: typeof requestedBabelPresets = [];
 
             for (const requestedPreset of requestedBabelPresets) {
-              // Omit preset-env entirely, Vite handles that with esbuild
-              if (babelConfigItemIs(requestedPreset, '@babel/preset-env'))
+              // Omit preset-env and preset-react entirely, Vite handles that with esbuild
+              if (
+                babelConfigItemIs(requestedPreset, '@babel/preset-env') ||
+                babelConfigItemIs(requestedPreset, '@babel/preset-react')
+              ) {
                 continue;
+              }
 
               // Instead of compiling TypeScript away entirely, we will just teach Babel
-              // to parse the syntax
+              // to parse the syntax by adding the syntax plugin, but only if other plugins
+              // are needed.
               if (
                 babelConfigItemIs(requestedPreset, '@babel/preset-typescript')
               ) {
-                normalizedBabelPlugins.unshift([
-                  require.resolve('@babel/plugin-syntax-typescript'),
-                  {isTSX: true},
-                ]);
                 continue;
               }
 
@@ -380,6 +385,14 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                 '.js',
               ]);
 
+              const finalPlugins = [
+                [
+                  require.resolve('@babel/plugin-syntax-typescript'),
+                  {isTSX: true},
+                ],
+                ...normalizedBabelPlugins,
+              ];
+
               plugins.push({
                 name: '@quilted/babel-preprocess',
                 enforce: 'pre',
@@ -396,7 +409,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       babelrc: false,
                       configFile: false,
                       presets: normalizedBabelPresets,
-                      plugins: normalizedBabelPlugins,
+                      plugins: finalPlugins,
                     })) ?? {};
 
                   return {code: transformedCode ?? undefined, map};
