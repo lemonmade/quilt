@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.120
+
+### Patch Changes
+
+- [`b4848099`](https://github.com/lemonmade/quilt/commit/b48480993d6d98a0d563a365f1d10b5bba3ad4c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `usePerformanceNavigationEvent` hook
+
 ## 0.5.119
 
 ### Patch Changes
