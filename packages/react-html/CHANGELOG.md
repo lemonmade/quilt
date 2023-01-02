@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.40
+
+### Patch Changes
+
+- [`98c6aa4b`](https://github.com/lemonmade/quilt/commit/98c6aa4b9b5f45cc947f25446e1f05e2145d64a7) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve HTML customization
+
 ## 0.3.39
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.21
+
+### Patch Changes
+
+- [#446](https://github.com/lemonmade/quilt/pull/446) [`9c634f73`](https://github.com/lemonmade/quilt/commit/9c634f733077370afa549114bb8b776785d6e190) Thanks [@lemonmade](https://github.com/lemonmade)! - Lazy initialize React testing elements
+
 ## 0.5.20
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.169
+
+### Patch Changes
+
+- [`a14c2f98`](https://github.com/lemonmade/quilt/commit/a14c2f98ccc85bd2d6c1599c09a6c6d4d8236247) Thanks [@lemonmade](https://github.com/lemonmade)! - Use esbuild JSX transform in development
+
+- Updated dependencies [[`98c6aa4b`](https://github.com/lemonmade/quilt/commit/98c6aa4b9b5f45cc947f25446e1f05e2145d64a7), [`18edaf58`](https://github.com/lemonmade/quilt/commit/18edaf58aa66a8a138cbd36040d70cba373ccd6f), [`6ad741b2`](https://github.com/lemonmade/quilt/commit/6ad741b241027c8d7612e206497935ad938ea6c9)]:
+  - @quilted/quilt@0.5.121
+  - @quilted/graphql@0.4.50
+
 ## 0.1.168
 
 ### Patch Changes

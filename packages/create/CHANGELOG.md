@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.34
+
+### Patch Changes
+
+- [#447](https://github.com/lemonmade/quilt/pull/447) [`6ad741b2`](https://github.com/lemonmade/quilt/commit/6ad741b241027c8d7612e206497935ad938ea6c9) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify app templates
+
+- [`7cadc8fd`](https://github.com/lemonmade/quilt/commit/7cadc8fdcc99e7b95292b61c2af6cb3aabfa1d33) Thanks [@lemonmade](https://github.com/lemonmade)! - Add Metrics component to app templates
+
 ## 0.1.33
 
 ### Patch Changes
