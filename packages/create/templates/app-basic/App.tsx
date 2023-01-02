@@ -1,7 +1,8 @@
-import {QuiltApp, useRoutes} from '@quilted/quilt';
+import {QuiltApp, useRoutes, type PropsWithChildren} from '@quilted/quilt';
 
 import {Http} from './foundation/Http';
 import {Head} from './foundation/Head';
+import {Metrics} from './foundation/Metrics';
 
 import {Start} from './features/Start';
 
@@ -10,7 +11,9 @@ import {Start} from './features/Start';
 export default function App() {
   return (
     <QuiltApp http={<Http />} html={<Head />}>
-      <Routes />
+      <AppContext>
+        <Routes />
+      </AppContext>
     </QuiltApp>
   );
 }
@@ -19,4 +22,9 @@ export default function App() {
 // of routes, you may want to split this component into its own file.
 function Routes() {
   return useRoutes([{match: '/', render: () => <Start />}]);
+}
+
+// This component renders any app-wide context.
+function AppContext({children}: PropsWithChildren) {
+  return <Metrics>{children}</Metrics>;
 }

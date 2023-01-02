@@ -1,5 +1,6 @@
 import '@quilted/quilt/matchers';
 
+import {type PropsWithChildren} from '@quilted/quilt';
 import {
   createMount,
   QuiltAppTesting,
@@ -54,7 +55,7 @@ export const mountWithAppContext = createMount<
   render(element, {router}, {locale}) {
     return (
       <QuiltAppTesting routing={router} localization={locale}>
-        {element}
+        <TestAppContext>{element}</TestAppContext>
       </QuiltAppTesting>
     );
   },
@@ -65,3 +66,8 @@ export const mountWithAppContext = createMount<
     // once the data is ready.
   },
 });
+
+// This component renders any app-wide context needed for component tests.
+function TestAppContext({children}: PropsWithChildren) {
+  return <>{children}</>;
+}

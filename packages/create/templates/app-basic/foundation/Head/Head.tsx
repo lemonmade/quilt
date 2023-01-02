@@ -4,6 +4,8 @@ import {Title, Viewport, Favicon, SearchRobots} from '@quilted/quilt/html';
 // any of these details based on conditions like the active route, or some
 // state about the user, you can move these components to wherever in your
 // application you can read that state.
+//
+// @see https://github.com/lemonmade/quilt/blob/main/documentation/features/html.md
 export function Head() {
   return (
     <>
