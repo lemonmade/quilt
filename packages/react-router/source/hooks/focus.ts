@@ -10,7 +10,7 @@ export function useRouteChangeFocusRef<
 
   if (context == null) {
     throw new Error(
-      'You attempted to use the focus context, but none was found. Make sure your code is nested in a <Router />',
+      'You attempted to use the focus context, but none was found. Make sure your code is nested in a <Routing /> component',
     );
   }
 

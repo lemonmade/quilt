@@ -1,22 +1,26 @@
-import {memo, useState, useEffect, useRef, useMemo} from 'react';
-import type {ReactNode} from 'react';
+import {
+  memo,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  type ReactNode,
+} from 'react';
+import {usePerformance} from '@quilted/react-performance';
 
 import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
 import {createRouter} from '../../router';
-import type {
-  Router as RouterControl,
-  Options as RouterOptions,
-} from '../../router';
+import type {Router, Options as RouterOptions} from '../../router';
 import {useInitialUrl} from '../../hooks';
 
 interface Props extends RouterOptions {
   url?: URL;
-  router?: RouterControl;
+  router?: Router;
   children?: ReactNode;
 }
 
-export const Router = memo(function Router({
+export const Routing = memo(function Routing({
   children,
   url: explicitUrl,
   router: explicitRouter,
@@ -36,6 +40,28 @@ export const Router = memo(function Router({
 
   const currentUrlRef = useRef(url);
   currentUrlRef.current = url;
+
+  const performance = usePerformance({required: false});
+
+  useEffect(() => {
+    if (performance == null || typeof globalThis.performance === 'undefined') {
+      return;
+    }
+
+    performance.start({
+      at: globalThis.performance.timeOrigin,
+      target: router.currentUrl,
+    });
+
+    const stopListening = router.listen((url) => {
+      performance.start({target: url});
+    });
+
+    return () => {
+      stopListening();
+      performance.currentNavigation?.cancel();
+    };
+  }, [router, performance]);
 
   useEffect(() => {
     // currentUrl changed before the effect had the chance to run, so we need

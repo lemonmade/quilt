@@ -11,7 +11,7 @@ export interface Options {
 }
 
 export function useStaticRenderer(
-  routes: RouteDefinition[],
+  routes: readonly RouteDefinition[],
   {prefix, fallback = false, consumedPath}: Options = {},
 ) {
   const staticRender = useContext(StaticRendererContext) ?? undefined;

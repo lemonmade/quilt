@@ -71,7 +71,7 @@ export {
   useLocaleFromEnvironment,
   useLocalizedFormatting,
   LocalizedLink,
-  LocalizedRouter,
+  LocalizedRouting,
   useRouteLocalization,
   createRouteLocalization,
   createRoutePathLocalization,
@@ -101,8 +101,8 @@ export type {
 export {
   Link,
   Redirect,
-  Router,
-  Preloader,
+  Routing,
+  RoutePreloading,
   NavigationBlock,
   useCurrentUrl,
   useInitialUrl,
@@ -115,7 +115,12 @@ export {
   useScrollRestoration,
   useRouteChangeFocusRef,
 } from '@quilted/react-router';
-export type {NavigateTo, RouteDefinition} from '@quilted/react-router';
+export type {
+  Router,
+  NavigateTo,
+  Routes,
+  RouteDefinition,
+} from '@quilted/react-router';
 export {useCookie, useCookies, CookieContext} from '@quilted/react-http';
 export type {PropsWithChildren} from '@quilted/useful-react-types';
 export {
@@ -140,4 +145,4 @@ export {
   type SignalOrValue,
 } from '@quilted/react-signals';
 
-export {AppContext} from './AppContext';
+export {QuiltApp} from './App';

@@ -6,7 +6,7 @@ export function useCurrentUrl() {
 
   if (url == null) {
     throw new Error(
-      'You attempted to use the current URL, but none was found. Make sure your code is nested in a <Router />',
+      'You attempted to use the current URL, but none was found. Make sure your code is nested in a <Routing /> component',
     );
   }
 

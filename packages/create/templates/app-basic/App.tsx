@@ -1,4 +1,4 @@
-import {Router, useRoutes, AppContext} from '@quilted/quilt';
+import {QuiltApp, useRoutes} from '@quilted/quilt';
 
 import {Http} from './foundation/Http';
 import {Head} from './foundation/Head';
@@ -9,13 +9,9 @@ import {Start} from './features/Start';
 // app-wide context in this component.
 export default function App() {
   return (
-    <AppContext>
-      <Router>
-        <Http />
-        <Head />
-        <Routes />
-      </Router>
-    </AppContext>
+    <QuiltApp http={<Http />} html={<Head />}>
+      <Routes />
+    </QuiltApp>
   );
 }
 

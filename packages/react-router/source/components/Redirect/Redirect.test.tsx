@@ -1,6 +1,6 @@
 import {createMount, describe, it, expect} from '@quilted/quilt/testing';
 
-import {createTestRouter, TestRouter} from '../../testing';
+import {createTestRouter, TestRouting} from '../../testing';
 import {Redirect} from './Redirect';
 
 describe('<Redirect />', () => {
@@ -42,6 +42,6 @@ const mountWithNavigateSpy = createMount<
     return {router};
   },
   render(element, {router}) {
-    return <TestRouter router={router}>{element}</TestRouter>;
+    return <TestRouting router={router}>{element}</TestRouting>;
   },
 });

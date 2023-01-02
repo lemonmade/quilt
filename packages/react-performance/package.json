@@ -27,20 +27,13 @@
     "@quilted/performance": "^0.1.0",
     "@quilted/react-utilities": "^0.1.7"
   },
-  "devDependencies": {
-    "@quilted/react-router": "^0.3.25"
-  },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "@quilted/react-router": "^0.3.46",
     "react": ">=17.0.0 <18.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
       "optional": true
-    },
-    "@quilted/react-router": {
-      "optional": false
     },
     "react": {
       "optional": true

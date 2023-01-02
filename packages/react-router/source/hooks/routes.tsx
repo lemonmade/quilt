@@ -28,7 +28,7 @@ export interface Options {
 }
 
 export function useRoutes(
-  routes: RouteDefinition[],
+  routes: readonly RouteDefinition[],
   {notFound = true}: Options = {},
 ) {
   const router = useRouter();
@@ -56,7 +56,7 @@ export function useRoutes(
 }
 
 function useRoutePreloadRegistration(
-  routes: RouteDefinition[],
+  routes: readonly RouteDefinition[],
   consumedPath?: string,
 ) {
   const preloader = useContext(PreloaderContext) ?? undefined;
@@ -91,7 +91,7 @@ function useRoutePreloadRegistration(
 }
 
 interface Props {
-  routes: RouteDefinition[];
+  routes: readonly RouteDefinition[];
   router: Router;
   currentUrl: EnhancedURL;
   notFound: NonNullable<Options['notFound']>;

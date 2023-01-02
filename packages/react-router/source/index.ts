@@ -1,6 +1,12 @@
 export type {NavigateTo, EnhancedURL} from '@quilted/routing';
 
-export {Link, Router, Redirect, Preloader, NavigationBlock} from './components';
+export {
+  Link,
+  Routing,
+  Redirect,
+  RoutePreloading,
+  NavigationBlock,
+} from './components';
 export {InitialUrlContext} from './context';
 export {
   useRoutes,
@@ -15,5 +21,5 @@ export {
   useScrollRestoration,
 } from './hooks';
 export {containedByPrefix} from './utilities';
-export type {Router as RouterType} from './router';
-export type {RouteDefinition, RouteRenderDetails} from './types';
+export type {Router} from './router';
+export type {Routes, RouteDefinition, RouteRenderDetails} from './types';
