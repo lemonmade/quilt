@@ -2,4 +2,4 @@
 '@quilted/create': patch
 ---
 
-Add Metrics component to basic app template
+Add Metrics component to app templates

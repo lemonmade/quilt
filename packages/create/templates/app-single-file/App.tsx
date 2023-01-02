@@ -1,4 +1,9 @@
-import {QuiltApp, useCurrentUrl, type Routes} from '@quilted/quilt';
+import {
+  QuiltApp,
+  useCurrentUrl,
+  usePerformanceNavigationEvent,
+  type Routes,
+} from '@quilted/quilt';
 import {Title, Viewport, Favicon, SearchRobots} from '@quilted/quilt/html';
 import {
   CacheControl,
@@ -18,7 +23,11 @@ const routes: Routes = [{match: '/', render: () => <Start />}];
 // The root component for your application. You will typically render any
 // app-wide context in this component.
 export default function App() {
-  return <QuiltApp http={<Http />} html={<Head />} routes={routes} />;
+  return (
+    <QuiltApp http={<Http />} html={<Head />} routes={routes}>
+      <Metrics />
+    </QuiltApp>
+  );
 }
 
 // This component will be rendered for the root URL of your application. Feel
@@ -157,4 +166,22 @@ export function Http() {
       <ResponseHeader name="X-Content-Type-Options" value="nosniff" />
     </>
   );
+}
+
+// This component records metrics about your application.
+export function Metrics() {
+  usePerformanceNavigationEvent(async (navigation) => {
+    if (Env.MODE === 'development') {
+      // eslint-disable-next-line no-console
+      console.log('Navigation:');
+      // eslint-disable-next-line no-console
+      console.log(navigation);
+      return;
+    }
+
+    // If you have a service that collects metrics, you can send navigation
+    // data to them here.
+  });
+
+  return null;
 }
