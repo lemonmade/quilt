@@ -25,7 +25,7 @@ export interface BaseNodeCreationOptions<T, Extensions extends PlainObject> {
   props: T;
   instance: any;
   type: BaseNode<T, Extensions>['type'];
-  children: (BaseNode<unknown, Extensions> | string)[];
+  children: () => (BaseNode<unknown, Extensions> | string)[];
 }
 
 export type NodeCreationOptions<
@@ -355,44 +355,79 @@ export function createEnvironment<
       delete extensionPropertyDescriptors.props;
       delete extensionPropertyDescriptors.instance;
       delete extensionPropertyDescriptors.type;
+      delete extensionPropertyDescriptors.children;
 
-      const descendants = children.flatMap(getDescendants);
+      let resolvedChildren: (string | BaseNode<any, any>)[];
+      let resolvedDescendants: (string | BaseNode<any, any>)[];
 
-      function getDescendants(child: typeof children[number]): typeof children {
-        return [
-          child,
-          ...(typeof child === 'string'
-            ? []
-            : child.children.flatMap(getDescendants)),
-        ];
+      function getChildren() {
+        if (resolvedChildren == null) {
+          resolvedChildren = children();
+        }
+
+        return resolvedChildren;
       }
 
-      const find: BaseNode<T>['find'] = (type, props) =>
-        (descendants.find(
-          (element) =>
-            isNode(element) &&
-            isMatchingType(element.type, type) &&
-            (props == null || equalSubset(props, element.props as PlainObject)),
-        ) as any) ?? null;
+      function getDescendants() {
+        if (resolvedDescendants == null) {
+          const children = getChildren();
+
+          const getNestedDescendants = (
+            child: typeof children[number],
+          ): typeof children => {
+            return [
+              child,
+              ...(typeof child === 'string'
+                ? []
+                : child.children.flatMap(getNestedDescendants)),
+            ];
+          };
+
+          resolvedDescendants = getChildren().flatMap(getNestedDescendants);
+        }
+
+        return resolvedDescendants;
+      }
+
+      const find: BaseNode<T>['find'] = (type, props) => {
+        return (
+          (getDescendants().find((element) => {
+            return (
+              isNode(element) &&
+              isMatchingType(element.type, type) &&
+              (props == null ||
+                equalSubset(props, element.props as PlainObject))
+            );
+          }) as any) ?? null
+        );
+      };
 
       const baseNode: BaseNode<T> & {[IS_NODE]: true} = {
         [IS_NODE]: true,
         type,
         props,
         instance,
+
+        get children() {
+          return getChildren();
+        },
+        get descendants() {
+          return getDescendants();
+        },
         get text() {
-          return children.reduce<string>(
+          return getChildren().reduce<string>(
             (text, child) =>
               `${text}${typeof child === 'string' ? child : child.text}`,
             '',
           );
         },
+
         prop: (key) => props[key],
         is: (checkType) => isMatchingType(type, checkType),
 
         find,
         findAll: (type, props) =>
-          descendants.filter(
+          getDescendants().filter(
             (element) =>
               isNode(element) &&
               isMatchingType(element.type, type) &&
@@ -401,12 +436,12 @@ export function createEnvironment<
           ) as any,
 
         findWhere: (predicate) =>
-          (descendants.find(
+          (getDescendants().find(
             (element) => isNode<Extensions>(element) && predicate(element),
           ) as any) ?? null,
 
         findAllWhere: (predicate) =>
-          descendants.filter(
+          getDescendants().filter(
             (element) => isNode<Extensions>(element) && predicate(element),
           ) as any,
 
@@ -462,8 +497,6 @@ export function createEnvironment<
             {eager: true},
           ),
 
-        children,
-        descendants,
         debug: (options) => toReactString(baseNode, options),
         toString: () => `<${nodeName(baseNode)} />`,
       };

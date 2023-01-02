@@ -56,17 +56,21 @@ export function createNodeFromFiber(element: any, create: Create): Child {
 
   const props = {...((fiber.memoizedProps as any) || {})};
 
-  let currentFiber: Fiber | null = fiber.child;
-  const children: Child[] = [];
-
-  while (currentFiber != null) {
-    const result = createNodeFromFiber(currentFiber, create);
-    children.push(result);
-    currentFiber = currentFiber.sibling;
-  }
-
   const instance = fiber.stateNode;
   const isDom = typeof fiber.type === 'string';
+
+  function children() {
+    let currentFiber: Fiber | null = fiber.child;
+    const children: Child[] = [];
+
+    while (currentFiber != null) {
+      const result = createNodeFromFiber(currentFiber, create);
+      children.push(result);
+      currentFiber = currentFiber.sibling;
+    }
+
+    return children;
+  }
 
   return create<unknown>({
     props,
@@ -77,10 +81,10 @@ export function createNodeFromFiber(element: any, create: Create): Child {
       return isDom;
     },
     get domNodes() {
-      return getDomNodes();
+      return getDomNodes(this as any);
     },
     get domNode() {
-      const domNodes = getDomNodes();
+      const domNodes = getDomNodes(this as any);
 
       if (domNodes.length > 1) {
         throw new Error(
@@ -95,7 +99,9 @@ export function createNodeFromFiber(element: any, create: Create): Child {
         return instance.outerHTML;
       }
 
-      return children.reduce<string>(
+      return (
+        this as any as NodeApi<any, HtmlNodeExtensions>
+      ).children.reduce<string>(
         (text, child) =>
           `${text}${typeof child === 'string' ? child : child.html}`,
         '',
@@ -104,7 +110,9 @@ export function createNodeFromFiber(element: any, create: Create): Child {
     get text() {
       if (instance instanceof HTMLElement) return instance.textContent ?? '';
 
-      return children.reduce<string>(
+      return (
+        this as any as NodeApi<any, HtmlNodeExtensions>
+      ).children.reduce<string>(
         (text, child) =>
           `${text}${typeof child === 'string' ? child : child.text}`,
         '',
@@ -115,10 +123,10 @@ export function createNodeFromFiber(element: any, create: Create): Child {
     },
   });
 
-  function getDomNodes() {
+  function getDomNodes(node: NodeApi<any, HtmlNodeExtensions>) {
     if (isDom) return [instance];
 
-    return children
+    return node.children
       .filter(
         (child): child is Node<unknown, HtmlNodeExtensions> =>
           typeof child !== 'string' && child.isDom,

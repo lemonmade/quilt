@@ -1,8 +1,4 @@
 import type {ComponentType, LegacyRef} from 'react';
-import type {EnvironmentOptions} from '../../environment';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const {findCurrentFiberUsingSlowPath} = require('react-reconciler/reflection');
 
 // https://github.com/facebook/react/blob/master/packages/shared/ReactWorkTag.js
 export enum Tag {
@@ -45,33 +41,4 @@ export interface Fiber {
 
 export interface ReactInstance {
   _reactInternalFiber: Fiber;
-}
-
-type Create = Parameters<EnvironmentOptions<any>['update']>[1];
-type Child = ReturnType<Create> | string;
-
-export function createNodeFromFiber(element: any, create: Create): Child {
-  const fiber: Fiber = findCurrentFiberUsingSlowPath(element);
-
-  if (fiber.tag === Tag.HostText) {
-    return fiber.memoizedProps as string;
-  }
-
-  const props = {...((fiber.memoizedProps as any) || {})};
-
-  let currentFiber: Fiber | null = fiber.child;
-  const allChildren: Child[] = [];
-
-  while (currentFiber != null) {
-    const result = createNodeFromFiber(currentFiber, create);
-    allChildren.push(result);
-    currentFiber = currentFiber.sibling;
-  }
-
-  return create<unknown>({
-    props,
-    type: fiber.type,
-    instance: fiber.stateNode,
-    children: allChildren.filter((child) => typeof child !== 'string') as any,
-  });
 }

@@ -88,23 +88,23 @@ function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
 
   const instance = getComponent(node) ?? getDOMNode(node);
   const isDom = instance instanceof HTMLElement;
-  const children = toArray(getDescendants(node))
-    .filter(Boolean)
-    .map((child) => createNodeFromComponentChild(child, create));
 
   return create({
     props,
-    children,
+    children: () =>
+      toArray(getDescendants(node))
+        .filter(Boolean)
+        .map((child) => createNodeFromComponentChild(child, create)),
     instance,
     type: node.type as any,
     get isDom() {
       return isDom;
     },
     get domNodes() {
-      return getDomNodes();
+      return getDomNodes(this as any);
     },
     get domNode() {
-      const domNodes = getDomNodes();
+      const domNodes = getDomNodes(this as any);
 
       if (domNodes.length > 1) {
         throw new Error(
@@ -119,7 +119,9 @@ function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
         return instance.outerHTML;
       }
 
-      return children.reduce<string>(
+      return (
+        this as any as NodeApi<any, HtmlNodeExtensions>
+      ).children.reduce<string>(
         (text, child) =>
           `${text}${typeof child === 'string' ? child : child.html}`,
         '',
@@ -128,7 +130,9 @@ function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
     get text() {
       if (instance instanceof HTMLElement) return instance.textContent ?? '';
 
-      return children.reduce<string>(
+      return (
+        this as any as NodeApi<any, HtmlNodeExtensions>
+      ).children.reduce<string>(
         (text, child) =>
           `${text}${typeof child === 'string' ? child : child.text}`,
         '',
@@ -139,10 +143,10 @@ function createNodeFromVNode(node: VNode<unknown>, create: Create): Child {
     },
   });
 
-  function getDomNodes() {
+  function getDomNodes(node: NodeApi<any, HtmlNodeExtensions>) {
     if (isDom) return [instance];
 
-    return children
+    return node.children
       .filter(
         (child): child is Node<unknown, HtmlNodeExtensions> =>
           typeof child !== 'string' && child.isDom,
