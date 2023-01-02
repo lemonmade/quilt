@@ -137,7 +137,7 @@ export function cloudflareWorkers({
               const {HTTPPlugin} = await miniflare.getPlugins();
 
               return {
-                async run(request, nodeRequest) {
+                async fetch(request, nodeRequest) {
                   const workerResponse = await miniflare!.dispatchFetch(
                     request.url,
                     {

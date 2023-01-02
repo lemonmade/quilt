@@ -39,7 +39,7 @@ export interface Options {
 }
 
 export interface AppDevelopmentServerHandler {
-  run(
+  fetch(
     request: Request,
     nodeRequest: IncomingMessage,
   ): Promise<Response | undefined>;
@@ -592,7 +592,7 @@ async function createAppServer(
       const router = await requestRouterPromise;
       const request = createRequest(req);
 
-      const response = (await router.run(request, req)) ?? notFound();
+      const response = (await router.fetch(request, req)) ?? notFound();
 
       const contentType = response.headers.get('Content-Type');
 
@@ -622,10 +622,16 @@ function createDefaultAppDevelopmentServer(): AppDevelopmentServer {
         const {default: handler} = await import(
           `${entry}?update=${Date.now()}`
         );
-        return handler;
+
+        return {
+          fetch(request) {
+            return handler.fetch(request);
+          },
+        };
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
+        throw error;
       }
     },
   };
