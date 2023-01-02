@@ -1,6 +1,6 @@
 import type {ReactElement} from 'react';
 
-import type {AssetManifest} from '@quilted/async/server';
+import type {Asset, AssetManifest} from '@quilted/async/server';
 import {render as renderToString, Html} from '@quilted/react-html/server';
 import type {
   Options as ExtractOptions,
@@ -15,7 +15,7 @@ import type {
   RequestContext,
 } from '@quilted/request-router';
 
-import {renderApp} from './render';
+import {renderApp, type RenderResult as RenderAppResult} from './render';
 
 export interface Options<Context = RequestContext>
   extends Omit<ExtractOptions, 'context'> {
@@ -25,6 +25,15 @@ export interface Options<Context = RequestContext>
     request: EnhancedRequest,
     context: Context,
   ): ServerRenderRequestContext;
+  renderHtml?(
+    content: string,
+    request: Request,
+    details: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
+      readonly styles: readonly Asset[];
+      readonly scripts: readonly Asset[];
+      readonly preload: readonly Asset[];
+    },
+  ): ReactElement<any> | Promise<ReactElement<any>>;
 }
 
 export function createServerRenderingRequestRouter<Context = RequestContext>(
@@ -58,7 +67,11 @@ export function createServerRenderingRequestHandler<Context = RequestContext>(
 export async function renderToResponse(
   app: ReactElement<any>,
   request: Request,
-  {assets, ...options}: Omit<Options, 'handler' | 'renderProps'> = {},
+  {
+    assets,
+    renderHtml = defaultRenderHtml,
+    ...options
+  }: Omit<Options, 'handler' | 'renderProps'> = {},
 ) {
   const accepts = request.headers.get('Accept');
 
@@ -95,23 +108,45 @@ export async function renderToResponse(
           options: assetOptions,
         }),
       ])
-    : [];
+    : [[], [], []];
 
-  return html(
-    renderToString(
-      <Html
-        url={new URL(request.url)}
-        manager={htmlManager}
-        styles={styles}
-        scripts={scripts}
-        preloadAssets={preload}
-      >
-        {markup}
-      </Html>,
-    ),
-    {
-      headers,
-      status: statusCode,
-    },
+  const htmlElement = await renderHtml(markup, request, {
+    html: htmlManager,
+    http,
+    styles,
+    scripts,
+    preload,
+  });
+
+  return html(renderToString(htmlElement), {
+    headers,
+    status: statusCode,
+  });
+}
+
+function defaultRenderHtml(
+  content: string,
+  request: Request,
+  {
+    html,
+    styles,
+    scripts,
+    preload,
+  }: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
+    readonly styles: readonly Asset[];
+    readonly scripts: readonly Asset[];
+    readonly preload: readonly Asset[];
+  },
+) {
+  return (
+    <Html
+      url={new URL(request.url)}
+      manager={html}
+      styles={styles}
+      scripts={scripts}
+      preloadAssets={preload}
+    >
+      {content}
+    </Html>
   );
 }

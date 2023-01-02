@@ -18,12 +18,12 @@ interface Props {
   children: ReactElement | string;
   noModule?: boolean;
   locale?: string;
-  styles?: Asset[];
-  scripts?: Asset[];
-  blockingScripts?: Asset[];
-  preloadAssets?: Asset[];
-  headMarkup?: ReactNode;
-  bodyMarkup?: ReactNode;
+  styles?: readonly Asset[];
+  scripts?: readonly Asset[];
+  blockingScripts?: readonly Asset[];
+  preloadAssets?: readonly Asset[];
+  headContent?: ReactNode;
+  bodyContent?: ReactNode;
 }
 
 export function Html({
@@ -36,10 +36,10 @@ export function Html({
   scripts,
   blockingScripts,
   preloadAssets,
-  headMarkup,
-  bodyMarkup,
+  headContent,
+  bodyContent,
 }: Props) {
-  const markup =
+  const content =
     typeof children === 'string'
       ? children
       : render(children, {htmlManager: manager});
@@ -54,29 +54,29 @@ export function Html({
 
   const extracted = manager?.extract();
 
-  const serializationMarkup = extracted?.serializations.map(({id, data}) => (
+  const serializationContent = extracted?.serializations.map(({id, data}) => (
     <Serialize key={id} id={id} data={data} />
   ));
 
   const managedProps = {[MANAGED_ATTRIBUTE]: true};
 
-  const titleMarkup = extracted?.title ? (
+  const titleContentcontent = extracted?.title ? (
     <title {...managedProps}>{extracted.title}</title>
   ) : null;
 
-  const metaMarkup = extracted?.metas.map((metaProps, index) => (
+  const metaContentcontent = extracted?.metas.map((metaProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <meta key={index} {...managedProps} {...metaProps} />
   ));
 
-  const linkMarkup = extracted?.links.map((linkProps, index) => (
+  const linkContentcontent = extracted?.links.map((linkProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <link key={index} {...managedProps} {...linkProps} />
   ));
 
-  const stylesMarkup = styles?.map((style) => {
+  const stylesContentcontent = styles?.map((style) => {
     return (
       <link
         rel="stylesheet"
@@ -95,7 +95,7 @@ export function Html({
       scripts?.some((script) => script.attributes.type === 'module') ||
       false);
 
-  const blockingScriptsMarkup = blockingScripts?.map((script) => {
+  const blockingScriptsContentcontent = blockingScripts?.map((script) => {
     return (
       <script
         key={script.source}
@@ -112,7 +112,7 @@ export function Html({
     );
   });
 
-  const deferredScriptsMarkup = scripts?.map((script) => {
+  const deferredScriptsContentcontent = scripts?.map((script) => {
     return (
       <script
         key={script.source}
@@ -130,7 +130,7 @@ export function Html({
     );
   });
 
-  const preloadAssetsMarkup = preloadAssets?.map((asset) => (
+  const preloadAssetsContentcontent = preloadAssets?.map((asset) => (
     <link
       key={asset.source}
       rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
@@ -146,26 +146,27 @@ export function Html({
   return (
     <html lang={locale} {...htmlAttributes}>
       <head>
-        {titleMarkup}
+        {titleContentcontent}
+
         <meta charSet="utf-8" />
-        {metaMarkup}
-        {linkMarkup}
+        {metaContentcontent}
 
-        {stylesMarkup}
+        {linkContentcontent}
+        {preloadAssetsContentcontent}
 
-        {headMarkup}
-        {serializationMarkup}
+        {stylesContentcontent}
 
-        {blockingScriptsMarkup}
-        {deferredScriptsMarkup}
+        {headContent}
+        {serializationContent}
 
-        {preloadAssetsMarkup}
+        {blockingScriptsContentcontent}
+        {deferredScriptsContentcontent}
       </head>
 
       <body {...bodyAttributes}>
-        <div id="app" dangerouslySetInnerHTML={{__html: markup}} />
+        <div id="app" dangerouslySetInnerHTML={{__html: content}} />
 
-        {bodyMarkup}
+        {bodyContent}
       </body>
     </html>
   );

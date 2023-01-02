@@ -8,17 +8,24 @@ import {AsyncAssetManager} from '@quilted/react-async/server';
 
 import {ServerContext} from './ServerContext';
 
-interface Options extends ExtractOptions {
+export interface Options extends ExtractOptions {
   url?: string | URL;
   headers?: NonNullable<
     ConstructorParameters<typeof HttpManager>[0]
   >['headers'];
 }
 
+export interface RenderResult {
+  readonly http: HttpManager;
+  readonly html: HtmlManager;
+  readonly markup: string;
+  readonly asyncAssets: AsyncAssetManager;
+}
+
 export async function renderApp(
   app: ReactElement<any>,
   {decorate, url, headers, ...rest}: Options = {},
-) {
+): Promise<RenderResult> {
   const html = new HtmlManager();
   const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
