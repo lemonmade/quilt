@@ -1,5 +1,11 @@
 # @quilted/performance
 
+## 0.1.13
+
+### Patch Changes
+
+- [`eab89fa2`](https://github.com/lemonmade/quilt/commit/eab89fa26f35d1a428123a5185b4bae7486e600e) Thanks [@lemonmade](https://github.com/lemonmade)! - Add toJSON method for performance navigation objects
+
 ## 0.1.12
 
 ### Patch Changes
