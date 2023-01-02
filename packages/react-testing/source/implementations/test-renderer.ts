@@ -32,12 +32,15 @@ function createNodeFromTestInstance(
   testInstance: ReactTestInstance,
   create: Create,
 ): ReturnType<Create> {
-  const children =
-    testInstance.children.map((child) =>
-      typeof child === 'string'
-        ? child
-        : createNodeFromTestInstance(child, create),
-    ) ?? [];
+  function children() {
+    return (
+      testInstance.children.map((child) =>
+        typeof child === 'string'
+          ? child
+          : createNodeFromTestInstance(child, create),
+      ) ?? []
+    );
+  }
 
   return create<unknown>({
     props: testInstance.props,
