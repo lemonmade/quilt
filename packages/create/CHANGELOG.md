@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.36
+
+### Patch Changes
+
+- [`5bf437ea`](https://github.com/lemonmade/quilt/commit/5bf437ea344d3818f249480c9db90c4ce418b256) Thanks [@lemonmade](https://github.com/lemonmade)! - Async load app in server render by default
+
 ## 0.1.35
 
 ### Patch Changes
