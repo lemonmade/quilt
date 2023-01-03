@@ -1,5 +1,11 @@
 # @quilted/cli-kit
 
+## 0.1.7
+
+### Patch Changes
+
+- [`6b307aac`](https://github.com/lemonmade/quilt/commit/6b307aac84423e17286ecc8ace2170673919e6d8) Thanks [@lemonmade](https://github.com/lemonmade)! - Show package installation logs
+
 ## 0.1.6
 
 ### Patch Changes
