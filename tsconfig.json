@@ -12,6 +12,7 @@
   ],
   "exclude": ["tests/e2e/output/**/*", "packages/create/templates/**/*"],
   "references": [
+    {"path": "./integrations/apollo"},
     {"path": "./integrations/aws"},
     {"path": "./integrations/cloudflare"},
     {"path": "./integrations/react-query"},
