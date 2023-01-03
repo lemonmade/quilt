@@ -36,9 +36,9 @@ export function ApolloProvider({
 
   return (
     <ApolloContext.Provider value={apolloContext}>
-      <ApolloProvider client={client} {...rest}>
+      <BaseApolloProvider client={client} {...rest}>
         {children}
-      </ApolloProvider>
+      </BaseApolloProvider>
     </ApolloContext.Provider>
   );
 }
