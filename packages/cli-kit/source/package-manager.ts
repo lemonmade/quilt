@@ -32,10 +32,13 @@ export function createPackageManagerRunner(
       },
     },
     async install() {
-      execSync(`${type} install`, {cwd: root});
+      execSync(`${type} install`, {cwd: root, stdio: 'inherit'});
     },
     async run(command, args) {
-      execSync(`${type} ${command} ${args.join(' ')}`, {cwd: root});
+      execSync(`${type} ${command} ${args.join(' ')}`, {
+        cwd: root,
+        stdio: 'inherit',
+      });
     },
   };
 }
