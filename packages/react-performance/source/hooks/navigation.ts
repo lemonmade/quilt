@@ -2,12 +2,12 @@ import {useEffect} from 'react';
 import {usePerformance} from './performance';
 
 export interface PerformanceNavigationOptionsComplete {
-  state: 'complete';
+  state?: 'complete';
   metadata?: Record<string, unknown>;
 }
 
 export interface PerformanceNavigationOptionsLoading {
-  state: 'loading';
+  state?: 'loading';
   metadata?: never;
 }
 
@@ -15,13 +15,15 @@ export type PerformanceNavigationOptions =
   | PerformanceNavigationOptionsLoading
   | PerformanceNavigationOptionsComplete;
 
-export function usePerformanceNavigation(
-  {state, metadata}: PerformanceNavigationOptions = {state: 'complete'},
-) {
-  const performance = usePerformance();
+export function usePerformanceNavigation({
+  state = 'complete',
+  metadata,
+  required = true,
+}: PerformanceNavigationOptions & {required?: boolean} = {}) {
+  const performance = usePerformance({required: required as false});
 
   useEffect(() => {
-    const currentNavigation = performance.currentNavigation;
+    const currentNavigation = performance?.currentNavigation;
 
     if (currentNavigation == null) return;
 

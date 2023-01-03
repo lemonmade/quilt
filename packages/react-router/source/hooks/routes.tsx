@@ -10,6 +10,7 @@ import {
 } from 'react';
 import {NotFound} from '@quilted/react-http';
 import {getMatchDetails, type NavigateTo, type Prefix} from '@quilted/routing';
+import {usePerformanceNavigation} from '@quilted/react-performance';
 
 import type {EnhancedURL, RouteDefinition} from '../types';
 import {PreloaderContext, ConsumedPathContext} from '../context';
@@ -130,7 +131,7 @@ const RoutesInternal = memo(function RoutesInternal({
     if (typeof notFound === 'function') {
       return notFound();
     } else if (notFound) {
-      return <NotFound />;
+      return <DefaultNotFound />;
     } else {
       return null;
     }
@@ -228,4 +229,9 @@ function getRouteMatchDetails(
     route.children == null && (route.exact ?? true),
     forceFallback,
   );
+}
+
+function DefaultNotFound() {
+  usePerformanceNavigation({required: false, state: 'complete'});
+  return <NotFound />;
 }
