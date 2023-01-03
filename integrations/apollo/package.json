@@ -1,5 +1,5 @@
 {
-  "name": "@quilted/apollo-client",
+  "name": "@quilted/apollo",
   "description": "Integrates Apollo with Quilt",
   "type": "module",
   "license": "MIT",
