@@ -1,5 +1,11 @@
 # @quilted/react-router
 
+## 0.3.53
+
+### Patch Changes
+
+- [`907c7bb2`](https://github.com/lemonmade/quilt/commit/907c7bb29f3f4e3d74b0d833cb8094a10e087be3) Thanks [@lemonmade](https://github.com/lemonmade)! - Make default notFound handler terminate active route
+
 ## 0.3.52
 
 ### Patch Changes
