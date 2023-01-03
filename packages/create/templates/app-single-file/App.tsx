@@ -1,6 +1,7 @@
 import {
   QuiltApp,
   useCurrentUrl,
+  usePerformanceNavigation,
   usePerformanceNavigationEvent,
   type Routes,
 } from '@quilted/quilt';
@@ -33,6 +34,11 @@ export default function App() {
 // This component will be rendered for the root URL of your application. Feel
 // free to edit it, rename it, remove it entirely, or move it to a dedicated file.
 function Start() {
+  // This hook indicates that the page has loaded. It is used as part of Quilt’s
+  // navigation performance tracking feature. If you have disabled this feature,
+  // you can remove this hook.
+  usePerformanceNavigation();
+
   return <div>Hello world!</div>;
 }
 

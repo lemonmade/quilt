@@ -27,7 +27,6 @@ export interface PerformanceNavigation<Metadata = Record<string, unknown>> {
   readonly target: URL;
   readonly status: 'cancelled' | 'completed';
   readonly start: number;
-  readonly end: number;
   readonly duration: number;
   readonly metadata: Metadata;
   toJSON(): object;
@@ -52,7 +51,7 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
   let navigationCount = 0;
 
   const navigations: PerformanceNavigation<Metadata>[] = [];
-  const emitter = createEmitter<PerformanceEventMap>();
+  const emitter = createEmitter<PerformanceEventMap<Metadata>>();
 
   const performance: Performance<Metadata> = {
     get currentNavigation() {
@@ -64,13 +63,13 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
     get navigations() {
       return navigations;
     },
-    start({target, metadata = {} as Metadata}) {
+    start({at, target, metadata = {} as Metadata}) {
       const oldNavigation = currentNavigation;
 
       const inflightNavigation: PerformanceInflightNavigation<Metadata> = {
         index: navigationCount,
         target,
-        start: now(),
+        start: at ?? now(),
         metadata,
         end(options) {
           return finishNavigation('completed', options);
@@ -90,20 +89,23 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
       function finishNavigation(
         status: PerformanceNavigation['status'],
         options?: PerformanceNavigationTimingOptions<Metadata>,
-      ) {
+      ): PerformanceNavigation<Metadata> {
         const end = options?.at ?? now();
         const navigation: PerformanceNavigation<Metadata> = {
           index: inflightNavigation.index,
           target,
           status,
           start: inflightNavigation.start,
-          end,
           duration: end - inflightNavigation.start,
           metadata: options?.metadata
             ? {...inflightNavigation.metadata, ...options.metadata}
             : inflightNavigation.metadata,
-          toJSON() {
-            const {index, target, status, start, end, duration, metadata} =
+        } as any;
+
+        Reflect.defineProperty(navigation, 'toJSON', {
+          enumerable: false,
+          value: function toJSON() {
+            const {index, target, status, start, duration, metadata} =
               navigation;
 
             return {
@@ -116,7 +118,7 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
               metadata,
             };
           },
-        };
+        });
 
         if (currentNavigation === inflightNavigation) {
           currentNavigation = undefined;
@@ -124,7 +126,7 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
 
         navigations.push(navigation);
 
-        emitter.emit('navigation', navigation as any);
+        emitter.emit('navigation', navigation);
 
         return navigation;
       }

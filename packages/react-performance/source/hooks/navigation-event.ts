@@ -13,6 +13,11 @@ export function usePerformanceNavigationEvent<
   useEffect(() => {
     const abort = new AbortController();
 
+    // Iterate over navigations that happened before we registered the listener
+    for (const navigation of performance.navigations) {
+      listenerRef.current(navigation as PerformanceNavigation<Metadata>);
+    }
+
     performance.on(
       'navigation',
       (navigation) => {

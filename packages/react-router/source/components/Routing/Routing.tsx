@@ -41,6 +41,30 @@ export const Routing = memo(function Routing({
   const currentUrlRef = useRef(url);
   currentUrlRef.current = url;
 
+  useEffect(() => {
+    // currentUrl changed before the effect had the chance to run, so we need
+    // to set state now for that URL change to be reflected in the app.
+    if (currentUrlRef.current !== router.currentUrl) {
+      setUrl(router.currentUrl);
+    }
+
+    return router.listen((newUrl) => setUrl(newUrl));
+  }, [router]);
+
+  return (
+    <RouterContext.Provider value={router}>
+      <CurrentUrlContext.Provider value={url}>
+        <Performance router={router} />
+        <FocusContext>{children}</FocusContext>
+      </CurrentUrlContext.Provider>
+    </RouterContext.Provider>
+  );
+});
+
+// We put this in a dedicated component to ensure its effects run before any siblings.
+// This is important because sibling components may mark a navigation as completed, so
+// we need to start the very first navigation before any of them do.
+function Performance({router}: {router: Router}) {
   const performance = usePerformance({required: false});
 
   useEffect(() => {
@@ -63,21 +87,5 @@ export const Routing = memo(function Routing({
     };
   }, [router, performance]);
 
-  useEffect(() => {
-    // currentUrl changed before the effect had the chance to run, so we need
-    // to set state now for that URL change to be reflected in the app.
-    if (currentUrlRef.current !== router.currentUrl) {
-      setUrl(router.currentUrl);
-    }
-
-    return router.listen((newUrl) => setUrl(newUrl));
-  }, [router]);
-
-  return (
-    <RouterContext.Provider value={router}>
-      <CurrentUrlContext.Provider value={url}>
-        <FocusContext>{children}</FocusContext>
-      </CurrentUrlContext.Provider>
-    </RouterContext.Provider>
-  );
-});
+  return null;
+}
