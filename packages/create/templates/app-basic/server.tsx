@@ -5,15 +5,19 @@ import {
 } from '@quilted/quilt/server';
 import createAssetManifest from '@quilted/quilt/magic/app/asset-manifest';
 
-import App from './App';
-
 const router = createRequestRouter();
 
 // For all GET requests, render our React application.
 router.get(
-  createServerRenderingRequestHandler(() => <App />, {
-    assets: createAssetManifest(),
-  }),
+  createServerRenderingRequestHandler(
+    async () => {
+      const {default: App} = await import('./App');
+      return <App />;
+    },
+    {
+      assets: createAssetManifest(),
+    },
+  ),
 );
 
 export default router;
