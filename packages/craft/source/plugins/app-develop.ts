@@ -8,7 +8,7 @@ import type {ViteDevServer} from 'vite';
 import type {} from '../tools/babel';
 import {createViteConfig} from '../tools/vite';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin, DiagnosticError} from '../kit';
 import type {
   Project,
   WaterfallHook,
@@ -434,18 +434,20 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             const [
               {createServer},
               {default: express},
+              {default: getPort},
               configurationHooks,
               serverConfigurationHooks,
             ] = await Promise.all([
               import('vite'),
               import('express'),
+              import('get-port'),
               configuration(),
               configuration({quiltAppServer: true, quiltRequestRouter: true}),
             ]);
 
             const {quiltAppServerPort, quiltAppServerHost} = configurationHooks;
 
-            const [resolvedPort = 3000, resolvedHost] = await Promise.all([
+            const [resolvedPort, resolvedHost] = await Promise.all([
               quiltAppServerPort!.run(port),
               quiltAppServerHost!.run(undefined),
             ]);
@@ -478,16 +480,36 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               appServer.handle(request, response);
             });
 
-            if (resolvedHost) {
-              app.listen(resolvedPort, resolvedHost, () => {
-                // eslint-disable-next-line no-console
-                console.log(`Listening on ${resolvedHost}:${resolvedPort}`);
-              });
-            } else {
-              app.listen(resolvedPort, () => {
-                // eslint-disable-next-line no-console
-                console.log(`Listening on localhost:${resolvedPort}`);
-              });
+            const finalPort = resolvedPort ?? (await getPort({port: 3000}));
+
+            try {
+              if (resolvedHost) {
+                app.listen(finalPort, resolvedHost, () => {
+                  // eslint-disable-next-line no-console
+                  console.log(`Listening on ${resolvedHost}:${resolvedPort}`);
+                });
+              } else {
+                app.listen(finalPort, () => {
+                  // eslint-disable-next-line no-console
+                  console.log(`Listening on localhost:${resolvedPort}`);
+                });
+              }
+            } catch (error) {
+              if ((error as any)?.code === 'EADDRINUSE') {
+                throw new DiagnosticError({
+                  title: `${project.name}’s development server failed to start`,
+                  suggestion(ui) {
+                    return `The requested port (${finalPort}) is already in use. Set a different port in ${ui.Text(
+                      path.relative(process.cwd(), project.configuration.path),
+                      {emphasis: 'strong'},
+                    )}’s ${ui.Code(
+                      'develop.port',
+                    )} option, or remove this option entirely to get an available port automatically.`;
+                  },
+                });
+              }
+
+              throw error;
             }
           },
         }),
