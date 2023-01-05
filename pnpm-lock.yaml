@@ -226,6 +226,7 @@ importers:
       esbuild: ^0.16.0
       eslint: ^8.18.0
       express: ^4.18.0
+      get-port: ^6.1.0
       globby: ^13.0.0
       jest: ^29.3.0
       jest-config: ^29.3.0
@@ -291,6 +292,7 @@ importers:
       esbuild: 0.16.4
       eslint: 8.18.0
       express: 4.18.1
+      get-port: 6.1.2
       globby: 13.1.1
       jest: 29.3.1
       jest-config: 29.3.1
@@ -6843,6 +6845,11 @@ packages:
     resolution: {integrity: sha512-g/Q1aTSDOxFpchXC4i8ZWvxA1lnPqx/JHqcpIw0/LX9T8x/GBbi6YnlN5nhaKIFkT8oFsscUKgDJYxfwfS6QsQ==}
     engines: {node: '>=8'}
     dev: true
+
+  /get-port/6.1.2:
+    resolution: {integrity: sha512-BrGGraKm2uPqurfGVj/z97/zv8dPleC6x9JBNRTrDNtCkkRF4rPwrQXFgL7+I+q8QSdU4ntLQX2D7KIxSy8nGw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: false
 
   /get-stream/6.0.1:
     resolution: {integrity: sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg==}

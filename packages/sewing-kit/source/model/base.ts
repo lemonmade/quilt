@@ -4,6 +4,11 @@ import {PackageJson} from '../utilities/dependencies';
 export interface Options {
   readonly name: string;
   readonly root: string;
+  readonly configuration: Configuration;
+}
+
+export interface Configuration {
+  readonly path: string;
 }
 
 export interface DependencyOptions {
@@ -15,12 +20,14 @@ export interface DependencyOptions {
 export class Base {
   readonly name: string;
   readonly root: string;
+  readonly configuration: Configuration;
   readonly fs: FileSystem;
   readonly packageJson?: PackageJson;
 
-  constructor({name, root}: Options) {
+  constructor({name, root, configuration}: Options) {
     this.name = name;
     this.root = root;
+    this.configuration = configuration;
     this.fs = new FileSystem(root);
     this.packageJson = PackageJson.load(this.root);
   }

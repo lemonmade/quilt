@@ -167,6 +167,7 @@ export async function loadWorkspace(
     const project = new Project({
       root: configuration.root,
       name: configuration.name,
+      configuration: {path: configuration.file},
     });
 
     projects.add(project);
@@ -182,6 +183,11 @@ export async function loadWorkspace(
       ? workspaceConfiguration.name
       : path.basename(root),
     projects: [...projects],
+    configuration: {
+      path: workspaceConfiguration
+        ? workspaceConfiguration.file
+        : path.resolve(root, 'quilt.workspace.ts'),
+    },
   });
 
   if (workspaceConfiguration) {
