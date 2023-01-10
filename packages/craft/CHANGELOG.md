@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.170
+
+### Patch Changes
+
+- [#454](https://github.com/lemonmade/quilt/pull/454) [`af3c4cf5`](https://github.com/lemonmade/quilt/commit/af3c4cf5caa33b46e7f362817110a9df21bf446e) Thanks [@lemonmade](https://github.com/lemonmade)! - Make app dev server take another available port
+
+- Updated dependencies [[`af3c4cf5`](https://github.com/lemonmade/quilt/commit/af3c4cf5caa33b46e7f362817110a9df21bf446e)]:
+  - @quilted/sewing-kit@0.2.36
+
 ## 0.1.169
 
 ### Patch Changes
