@@ -10,14 +10,15 @@ import {
   format,
   loadTemplate,
   createOutputTarget,
-  mergeDependencies,
   isEmpty,
   emptyDirectory,
   toValidPackageName,
   relativeDirectoryForDisplay,
+  mergeWorkspaceAndProjectPackageJsons,
 } from './shared';
 import {
   prompt,
+  getInWorkspace,
   getCreateAsMonorepo,
   getExtrasToSetup,
   getPackageManager,
@@ -49,16 +50,16 @@ export async function createApp() {
     return;
   }
 
-  const inWorkspace = fs.existsSync('quilt.workspace.ts');
-
+  const inWorkspace = await getInWorkspace(argv);
   const name = await getName(argv, {inWorkspace});
   const directory = await getDirectory(argv, {name});
   const template = await getTemplate(argv);
 
-  const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(argv));
-  const shouldInstall = await getShouldInstall(argv);
-  const packageManager = await getPackageManager(argv, {root: directory});
+  const createAsMonorepo =
+    !inWorkspace && (await getCreateAsMonorepo(argv, {type: 'app'}));
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
+  const shouldInstall = await getShouldInstall(argv, {type: 'app'});
+  const packageManager = await getPackageManager(argv, {root: directory});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
 
@@ -97,11 +98,16 @@ export async function createApp() {
     // If we are creating a monorepo, we need to add the root package.json and
     // package manager workspace configuration.
     if (createAsMonorepo) {
+      const appRelativeToRoot = relativeDirectoryForDisplay(
+        path.relative(directory, appDirectory),
+      );
+
       const workspacePackageJson = JSON.parse(
         await workspaceTemplate.read('package.json'),
       );
 
       workspacePackageJson.name = toValidPackageName(name!);
+      workspacePackageJson.workspaces = [appRelativeToRoot, './packages/*'];
 
       if (packageManager.type === 'pnpm') {
         await outputRoot.write(
@@ -109,13 +115,12 @@ export async function createApp() {
           await format(
             `
               packages:
+              - '${appRelativeToRoot}'
               - './packages/*'
             `,
             {as: 'yaml'},
           ),
         );
-      } else {
-        workspacePackageJson.workspaces = ['packages/*'];
       }
 
       await outputRoot.write(
@@ -138,13 +143,12 @@ export async function createApp() {
             .then((content) => JSON.parse(content)),
         ]);
 
-      workspacePackageJson.name = toValidPackageName(name!);
-      workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
-      workspacePackageJson.browserslist = projectPackageJson.browserslist;
-      workspacePackageJson.devDependencies = mergeDependencies(
-        workspacePackageJson.devDependencies,
-        projectPackageJson.devDependencies,
+      const combinedPackageJson = mergeWorkspaceAndProjectPackageJsons(
+        projectPackageJson,
+        workspacePackageJson,
       );
+
+      combinedPackageJson.name = toValidPackageName(name!);
 
       let quiltProject = await appTemplate.read('quilt.project.ts');
       quiltProject = quiltProject
@@ -158,7 +162,7 @@ export async function createApp() {
 
       await outputRoot.write(
         'package.json',
-        await format(JSON.stringify(workspacePackageJson), {
+        await format(JSON.stringify(combinedPackageJson), {
           as: 'json-stringify',
         }),
       );
@@ -214,12 +218,8 @@ export async function createApp() {
   }
 
   if (shouldInstall) {
-    process.stdout.write('\nInstalling dependencies...\n');
     // TODO: better loading, handle errors
     await packageManager.install();
-    process.stdout.moveCursor(0, -1);
-    process.stdout.clearLine(1);
-    console.log('Installed dependencies.');
   }
 
   const commands: string[] = [];
@@ -236,15 +236,6 @@ export async function createApp() {
     commands.push(
       `${packageManager.commands.install()} ${color.dim(
         '# Install all your dependencies',
-      )}`,
-    );
-  }
-
-  if (!inWorkspace) {
-    // TODO: change this condition to check if git was initialized already
-    commands.push(
-      `git init && git add -A && git commit -m "Initial commit" ${color.dim(
-        '# Start your git history (optional)',
       )}`,
     );
   }

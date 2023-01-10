@@ -10,6 +10,10 @@
     "develop": "quilt develop",
     "build": "quilt build"
   },
+  "workspaces": [
+    "./app",
+    "./packages/*"
+  ],
   "devDependencies": {
     "@quilted/browserslist-config": "^0.1.0",
     "@quilted/craft": "^0.1.0",

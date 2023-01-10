@@ -152,13 +152,20 @@ export async function format(
   content: string,
   {as: parser}: {as: BuiltInParserName},
 ) {
-  const [{format}, {default: babel}, {default: typescript}, {default: yaml}] =
-    await Promise.all([
-      import('prettier/standalone'),
-      import('prettier/parser-babel'),
-      import('prettier/parser-typescript'),
-      import('prettier/parser-yaml'),
-    ]);
+  const [
+    {format: rootFormat, default: prettier},
+    {default: babel},
+    {default: typescript},
+    {default: yaml},
+  ] = await Promise.all([
+    import('prettier/standalone'),
+    import('prettier/parser-babel'),
+    import('prettier/parser-typescript'),
+    import('prettier/parser-yaml'),
+  ]);
+
+  // CJS workaround
+  const format = rootFormat ?? prettier.format;
 
   return format(content, {
     arrowParens: 'always',
@@ -184,4 +191,59 @@ export function mergeDependencies(
   }
 
   return merged;
+}
+
+const PACKAGE_JSON_DEPENDENCY_KEYS = new Set([
+  'dependencies',
+  'devDependencies',
+  'peerDependencies',
+  'peerDependenciesMeta',
+]);
+
+// Merges a project and workspace package.json together, with the following nitpicky preferences:
+//
+// - Take all the project’s fields in the order they appear by default
+// - Merge the relevant dependencies together
+// - Projects don’t come with `scripts` by default, but that should go before the first dependency list
+// - If there are other keys in the workspace package.json, they should go last, in the order they appeared
+export function mergeWorkspaceAndProjectPackageJsons(
+  projectPackageJson: Record<string, unknown>,
+  workspacePackageJson: Record<string, unknown>,
+) {
+  const newPackageJson: Record<string, unknown> = {};
+  const seenKeys = new Set<string>();
+  let hasHandledScriptsField =
+    workspacePackageJson.scripts != null && projectPackageJson.scripts == null;
+
+  for (const [key, value] of Object.entries(projectPackageJson)) {
+    seenKeys.add(key);
+
+    const isDependencyKey = PACKAGE_JSON_DEPENDENCY_KEYS.has(key);
+
+    if (key === 'scripts' || (isDependencyKey && !hasHandledScriptsField)) {
+      newPackageJson.scripts = {
+        ...(workspacePackageJson.scripts as any),
+        ...(projectPackageJson.scripts as any),
+      };
+      hasHandledScriptsField = true;
+    }
+
+    if (isDependencyKey) {
+      newPackageJson[key] = mergeDependencies(
+        value as any,
+        workspacePackageJson[key] as any,
+      );
+    } else {
+      newPackageJson[key] = value;
+    }
+  }
+
+  for (const [key, value] of Object.entries(workspacePackageJson)) {
+    if (seenKeys.has(key)) continue;
+    // Merged workspace + project package.json means we are not in a monorepo
+    if (key === 'workspaces') continue;
+    newPackageJson[key] = value;
+  }
+
+  return newPackageJson;
 }

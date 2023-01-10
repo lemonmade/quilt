@@ -1,5 +1,5 @@
 import {createProject, quiltPackage} from '@quilted/craft';
 
 export default createProject((project) => {
-  project.use(quiltPackage({react: false}));
+  project.use(quiltPackage());
 });

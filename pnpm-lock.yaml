@@ -336,6 +336,7 @@ importers:
       colorette: ^2.0.0
       common-tags: ^1.8.2
       fs-extra: ^10.0.0
+      globby: ^13.0.0
       minimatch: ^5.1.0
       pkg-dir: ^6.0.0
       prettier: ^2.6.2
@@ -351,6 +352,7 @@ importers:
       colorette: 2.0.16
       common-tags: 1.8.2
       fs-extra: 10.1.0
+      globby: 13.1.1
       minimatch: 5.1.0
       pkg-dir: 6.0.1
       prettier: 2.6.2
@@ -6943,7 +6945,6 @@ packages:
       ignore: 5.2.0
       merge2: 1.4.1
       slash: 4.0.0
-    dev: false
 
   /globjoin/0.1.4:
     resolution: {integrity: sha512-xYfnw62CKG8nLkZBfWbhWwDw02CHty86jfPcc2cr3ZfeuK9ysoVPPEUxf21bAD/rWAgk52SuBrLJlefNy8mvFg==}
@@ -10008,7 +10009,6 @@ packages:
   /slash/4.0.0:
     resolution: {integrity: sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==}
     engines: {node: '>=12'}
-    dev: false
 
   /slash/5.0.0:
     resolution: {integrity: sha512-n6KkmvKS0623igEVj3FF0OZs1gYYJ0o0Hj939yc1fyxl2xt+xYpLnzJB6xBSqOfV9ZFLEWodBBN/heZJahuIJQ==}

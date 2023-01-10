@@ -8,13 +8,14 @@ import {
   format,
   loadTemplate,
   createOutputTarget,
-  mergeDependencies,
   isEmpty,
   emptyDirectory,
   toValidPackageName,
   relativeDirectoryForDisplay,
+  mergeWorkspaceAndProjectPackageJsons,
 } from './shared';
 import {
+  getInWorkspace,
   getCreateAsMonorepo,
   getExtrasToSetup,
   getPackageManager,
@@ -30,6 +31,13 @@ export async function createProject() {
 
   if (args['--help']) {
     const additionalOptions = stripIndent`
+      ${color.cyan(`--description`)}, ${color.cyan(`--no-description`)}
+      A short description of the package. If you don’t provide this option, the command will ask
+      you for a description later.
+      ${color.dim(
+        `@see https://docs.npmjs.com/cli/v9/configuring-npm/package-json#description`,
+      )}
+
       ${color.cyan(`--react`)}, ${color.cyan(`--no-react`)}
       Whether this package will use React. If you don’t provide this option, the command
       will ask you about it later.
@@ -37,6 +45,13 @@ export async function createProject() {
       ${color.cyan(`--public`)}, ${color.cyan(`--private`)}
       Whether this package will be published for other projects to install. If you do not
       provide this option, the command will ask you about it later.
+
+      ${color.cyan(`--repository`)}, ${color.cyan(`--no-repository`)}
+      The URL of a git repository where your code lives. If you do not provide this option,
+      this command will try to guess the correct repository to use based on existing packages.
+      ${color.dim(
+        `@see https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository`,
+      )}
 
       ${color.cyan(`--registry`)}
       The package registry to publish this package to. This option only applies if you create
@@ -51,17 +66,19 @@ export async function createProject() {
     return;
   }
 
-  const inWorkspace = fs.existsSync('quilt.workspace.ts');
-
   const name = await getName(args);
+  const description = await getDescription(args);
+  const inWorkspace = await getInWorkspace(args);
   const directory = await getDirectory(args, {name, inWorkspace});
   const isPublic = await getPublic(args);
+  const repository = await getRepository(args, {inWorkspace});
   const useReact = await getReact(args);
 
-  const createAsMonorepo = !inWorkspace && (await getCreateAsMonorepo(args));
-  const shouldInstall = await getShouldInstall(args);
-  const packageManager = await getPackageManager(args, {root: directory});
+  const createAsMonorepo =
+    !inWorkspace && (await getCreateAsMonorepo(args, {type: 'package'}));
   const setupExtras = await getExtrasToSetup(args, {inWorkspace});
+  const shouldInstall = await getShouldInstall(args, {type: 'package'});
+  const packageManager = await getPackageManager(args, {root: directory});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
 
@@ -89,11 +106,18 @@ export async function createProject() {
 
   let quiltProject = await packageTemplate.read('quilt.project.ts');
 
+  if (!useReact) {
+    quiltProject = quiltProject.replace(
+      'quiltPackage()',
+      'quiltPackage({react: false})',
+    );
+  }
+
   // If we aren’t already in a workspace, copy the workspace files over, which
   // are needed if we are making a monorepo or not.
   if (!inWorkspace) {
     await workspaceTemplate.copy(directory, (file) => {
-      // When this is a single project, we use the project’s Quilt  configuration as the base.
+      // When this is a single project, we use the project’s Quilt configuration as the base.
       if (file === 'quilt.workspace.ts') return createAsMonorepo;
 
       // We need to make some adjustments to the root package.json
@@ -103,11 +127,19 @@ export async function createProject() {
     // If we are creating a monorepo, we need to add the root package.json and
     // package manager workspace configuration.
     if (createAsMonorepo) {
+      const packageRelativeToRoot = path.relative(
+        rootDirectory,
+        packageDirectory,
+      );
+      const packageGlobRelativeToRoot = relativeDirectoryForDisplay(
+        path.join(packageRelativeToRoot, '*'),
+      );
       const workspacePackageJson = JSON.parse(
         await workspaceTemplate.read('package.json'),
       );
 
       workspacePackageJson.name = toValidPackageName(name!);
+      workspacePackageJson.workspaces = [packageGlobRelativeToRoot];
 
       if (packageManager.type === 'pnpm') {
         await outputRoot.write(
@@ -115,13 +147,11 @@ export async function createProject() {
           await format(
             `
               packages:
-              - './packages/*'
+              - '${packageGlobRelativeToRoot}'
             `,
             {as: 'yaml'},
           ),
         );
-      } else {
-        workspacePackageJson.workspaces = ['packages/*'];
       }
 
       await outputRoot.write(
@@ -144,31 +174,14 @@ export async function createProject() {
             .then((content) => JSON.parse(content)),
         ]);
 
-      workspacePackageJson.eslintConfig = projectPackageJson.eslintConfig;
-      workspacePackageJson.browserslist = projectPackageJson.browserslist;
+      const mergedPackageJson = mergeWorkspaceAndProjectPackageJsons(
+        projectPackageJson,
+        workspacePackageJson,
+      );
 
-      const newPackageJson: Record<string, any> = {};
-
-      // We want to put the project’s dependencies in the package.json, respecting
-      // the preferred ordering (dependencies, peer dependencies, dev dependencies).
-      for (const [key, value] of Object.entries(projectPackageJson)) {
-        if (key !== 'devDependencies') {
-          newPackageJson[key] = value;
-          continue;
-        }
-
-        newPackageJson.dependencies = projectPackageJson.dependencies;
-        newPackageJson.peerDependencies = projectPackageJson.peerDependencies;
-        newPackageJson.peerDependenciesMeta =
-          projectPackageJson.peerDependenciesMeta;
-        newPackageJson.devDependencies = mergeDependencies(
-          workspacePackageJson.devDependencies,
-          projectPackageJson.devDependencies,
-        );
-      }
-
-      adjustPackageJson(newPackageJson, {
+      adjustPackageJson(mergedPackageJson, {
         name: toValidPackageName(name!),
+        description,
         react: useReact,
         isPublic,
         registry: args['--registry'],
@@ -185,7 +198,7 @@ export async function createProject() {
 
       await outputRoot.write(
         'package.json',
-        await format(JSON.stringify(newPackageJson), {
+        await format(JSON.stringify(mergedPackageJson), {
           as: 'json-stringify',
         }),
       );
@@ -221,13 +234,27 @@ export async function createProject() {
       await packageTemplate.read('package.json'),
     );
 
-    projectPackageJson.repository.directory = path.relative(
-      rootDirectory,
-      packageDirectory,
-    );
+    if (repository === false) {
+      delete projectPackageJson.repository;
+    } else {
+      const directory = path.relative(rootDirectory, packageDirectory);
+
+      if (typeof repository === 'string') {
+        projectPackageJson.repository = {
+          type: 'git',
+          url: repository,
+          directory,
+        };
+      } else if (repository != null) {
+        projectPackageJson.repository = {type: 'git', ...repository, directory};
+      } else {
+        projectPackageJson.repository.directory = directory;
+      }
+    }
 
     adjustPackageJson(projectPackageJson, {
       name: toValidPackageName(name),
+      description,
       react: useReact,
       isPublic,
       registry: args['--registry'],
@@ -256,80 +283,74 @@ export async function createProject() {
   }
 
   if (shouldInstall) {
-    process.stdout.write('\nInstalling dependencies...\n');
     // TODO: better loading, handle errors
     await packageManager.install();
-    process.stdout.moveCursor(0, -1);
-    process.stdout.clearLine(1);
-    console.log('Installed dependencies.');
   }
-
-  const packageJsonInstructions = stripIndent`
-    Your new package is ready to go! However, before you go too much further,
-    you should update the following fields in ${color.cyan(
-      relativeDirectoryForDisplay(
-        path.relative(
-          process.cwd(),
-          path.join(packageDirectory, 'package.json'),
-        ),
-      ),
-    )}:
-
-     - ${color.bold(
-       `"description"`,
-     )}, where you provide a description of what your package does
-     - ${color.bold(`"repository"`)}, where you should include the ${color.bold(
-    `"url"`,
-  )} of your project’s repo
-
-    Before you publish your package, you will also want to update the ${color.bold(
-      `"version"`,
-    )}
-    field in the package.json file.
-  `;
 
   console.log();
-  console.log(packageJsonInstructions);
+  console.log(
+    stripIndent`
+      Your new package, ${color.bold(
+        name,
+      )}, is ready to go! You can edit the code for your package in
+    ${color.cyan(
+      relativeDirectoryForDisplay(
+        path.relative(process.cwd(), path.join(packageDirectory, 'source')),
+      ),
+    )}.
+    `,
+  );
 
-  const commands: string[] = [];
+  if (isPublic) {
+    const needsPackageJsonKeys: string[] = [];
 
-  if (!inWorkspace && directory !== process.cwd()) {
-    commands.push(
-      `cd ${color.cyan(
-        relativeDirectoryForDisplay(path.relative(process.cwd(), directory)),
-      )} ${color.dim('# Move into your new package’s directory')}`,
-    );
-  }
+    if (!description) {
+      needsPackageJsonKeys.push('description');
+    }
 
-  if (!shouldInstall) {
-    commands.push(
-      `${packageManager.commands.install()} ${color.dim(
-        '# Install all your dependencies',
-      )}`,
-    );
-  }
-
-  if (!inWorkspace) {
-    // TODO: change this condition to check if git was initialized already
-    commands.push(
-      `git init && git add -A && git commit -m "Initial commit" ${color.dim(
-        '# Start your git history (optional)',
-      )}`,
-    );
-  }
-
-  if (commands.length > 0) {
-    const whatsNext = stripIndent`
-      After you update your package.json, there’s ${
-        commands.length > 1 ? 'a few more steps' : 'one more step'
-      } you’ll need to take
-      in order to start building:
-    `;
+    if (repository == null) {
+      needsPackageJsonKeys.push('repository.url');
+    }
 
     console.log();
-    console.log(whatsNext);
-    console.log();
-    console.log(commands.map((command) => `  ${command}`).join('\n'));
+
+    if (needsPackageJsonKeys.length > 0) {
+      console.log(
+        stripIndent`
+          Before you publish your package, you will need to add the ${needsPackageJsonKeys
+            .map((key) => color.bold(JSON.stringify(key)))
+            .join(' and ')} key${needsPackageJsonKeys.length > 1 ? 's' : ''}
+          to ${color.cyan(
+            relativeDirectoryForDisplay(
+              path.relative(
+                process.cwd(),
+                path.join(packageDirectory, 'package.json'),
+              ),
+            ),
+          )}. In that same file, make sure the contents of the
+          ${color.bold('"version"')}, ${color.bold(
+          '"exports"',
+        )}, and ${color.bold('"license"')} fields are correct for your package.
+        `,
+      );
+    } else {
+      console.log(
+        stripIndent`
+          Before you publish your package, make sure the content of the
+          ${color.bold('"version"')}, ${color.bold(
+          'exports',
+        )}, and ${color.bold('license')} fields in
+        ${color.cyan(
+          relativeDirectoryForDisplay(
+            path.relative(
+              process.cwd(),
+              path.join(packageDirectory, 'package.json'),
+            ),
+          ),
+        )} are correct for your package.
+        `,
+      );
+    }
   }
 
   const followUp = stripIndent`
@@ -357,6 +378,10 @@ function getArguments() {
       '-y': '--yes',
       '--name': String,
       '--directory': String,
+      '--description': String,
+      '--no-description': Boolean,
+      '--repository': String,
+      '--no-repository': Boolean,
       '--install': Boolean,
       '--no-install': Boolean,
       '--monorepo': Boolean,
@@ -443,6 +468,38 @@ async function getDirectory(
   return directory;
 }
 
+async function getDescription(args: Arguments) {
+  if (args['--description']) return args['--description'];
+  if (args['--no-description']) return false;
+
+  const description = await prompt({
+    type: 'text',
+    message: 'What is a short description of what this package will do?',
+  });
+
+  return description;
+}
+
+async function getRepository(args: Arguments, {inWorkspace = false} = {}) {
+  if (args['--repository']) return args['--repository'];
+  if (args['--no-repository']) return false;
+
+  if (!inWorkspace) return;
+
+  const {globby} = await import('globby');
+
+  const files = await globby('**/package.json', {ignore: ['**/node_modules']});
+
+  for (const file of files) {
+    try {
+      const json = JSON.parse(await fs.promises.readFile(file, 'utf8'));
+      if (json.repository) return json.repository as string | {url: string};
+    } catch {
+      // noop
+    }
+  }
+}
+
 async function getPublic(args: Arguments) {
   let isPublic: boolean;
 
@@ -483,16 +540,29 @@ function adjustPackageJson(
   packageJson: Record<string, any>,
   {
     name,
+    description,
     react,
     isPublic,
     registry,
-  }: {name: string; react: boolean; isPublic: boolean; registry?: string},
+  }: {
+    name: string;
+    description: string | false;
+    react: boolean;
+    isPublic: boolean;
+    registry?: string;
+  },
 ) {
   packageJson.name = name;
 
   const packageParts = name.split('/');
   const scope = packageParts[0]!.startsWith('@') ? packageParts[0] : undefined;
   const finalRegistry = registry ?? 'https://registry.npmjs.org';
+
+  if (description) {
+    packageJson.description = description;
+  } else {
+    delete packageJson.description;
+  }
 
   if (scope) {
     packageJson.publishConfig[`${scope}/registry`] = finalRegistry;
@@ -502,6 +572,8 @@ function adjustPackageJson(
 
   if (isPublic) {
     delete packageJson.private;
+    delete packageJson.license;
+    delete packageJson.repository;
   } else {
     delete packageJson.publishConfig;
   }

@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import type {Result as ArgvResult} from 'arg';
 import * as color from 'colorette';
 import {
@@ -12,6 +14,8 @@ type BaseArguments = ArgvResult<{
   '--no-install': BooleanConstructor;
   '--monorepo': BooleanConstructor;
   '--no-monorepo': BooleanConstructor;
+  '--in-workspace': BooleanConstructor;
+  '--not-in-workspace': BooleanConstructor;
   '--extras': [StringConstructor];
   '--no-extras': BooleanConstructor;
   '--package-manager': StringConstructor;
@@ -19,7 +23,17 @@ type BaseArguments = ArgvResult<{
 
 export {prompt};
 
-export async function getCreateAsMonorepo(argv: BaseArguments) {
+export async function getInWorkspace(argv: BaseArguments) {
+  if (argv['--in-workspace']) return true;
+  if (argv['--not-in-workspace']) return false;
+
+  return fs.existsSync('quilt.workspace.ts');
+}
+
+export async function getCreateAsMonorepo(
+  argv: BaseArguments,
+  {type}: {type: 'app' | 'package'},
+) {
   let createAsMonorepo: boolean;
 
   if (argv['--monorepo' || argv['--yes']]) {
@@ -29,8 +43,7 @@ export async function getCreateAsMonorepo(argv: BaseArguments) {
   } else {
     createAsMonorepo = await prompt({
       type: 'confirm',
-      message:
-        'Do you want to create this app as a monorepo, with room for more projects?',
+      message: `Do you want to create this ${type} as a monorepo, with room for more projects?`,
       initial: true,
     });
   }
@@ -38,7 +51,10 @@ export async function getCreateAsMonorepo(argv: BaseArguments) {
   return createAsMonorepo;
 }
 
-export async function getShouldInstall(argv: BaseArguments) {
+export async function getShouldInstall(
+  argv: BaseArguments,
+  {type}: {type: 'app' | 'package'},
+) {
   let shouldInstall: boolean;
 
   if (argv['--install'] || argv['--yes']) {
@@ -48,8 +64,7 @@ export async function getShouldInstall(argv: BaseArguments) {
   } else {
     shouldInstall = await prompt({
       type: 'confirm',
-      message:
-        'Do you want to install dependencies for this app after creating it?',
+      message: `Do you want to install dependencies for this ${type} after creating it?`,
       initial: true,
     });
   }
