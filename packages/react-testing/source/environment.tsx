@@ -51,7 +51,6 @@ export interface EnvironmentOptions<
     create: EnvironmentNodeCreator<Extensions>,
     context: Context,
   ): BaseNode<unknown, Extensions> | null;
-  destroy?(context: Context): void;
 }
 
 export type AfterMountOption<
@@ -316,6 +315,7 @@ export function createEnvironment<
     let mounted = false;
     let acting = false;
     let context!: EnvironmentContext;
+    const abort = new AbortController();
     const testRendererRef = createRef<TestRenderer<Props>>();
 
     const rootApi: RootApi<Props, Context, Actions> = {
@@ -325,6 +325,7 @@ export function createEnvironment<
       setProps,
       context: rootContext ?? ({} as any),
       actions: rootActions ?? ({} as any),
+      signal: abort.signal,
     };
 
     const root: Root<Props, Context, Actions> = new Proxy(rootApi, {
@@ -543,6 +544,7 @@ export function createEnvironment<
 
       allMounted.delete(root);
       mounted = false;
+      abort.abort();
     }
 
     function setProps(props: Partial<Props>) {

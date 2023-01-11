@@ -59,6 +59,7 @@ export interface RootApi<
 > {
   readonly context: Context;
   readonly actions: Actions;
+  readonly signal: AbortSignal;
   mount(): void;
   unmount(): void;
   setProps(props: Partial<Props>): void;
