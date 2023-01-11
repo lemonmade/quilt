@@ -212,8 +212,7 @@ export function mergeWorkspaceAndProjectPackageJsons(
 ) {
   const newPackageJson: Record<string, unknown> = {};
   const seenKeys = new Set<string>();
-  let hasHandledScriptsField =
-    workspacePackageJson.scripts != null && projectPackageJson.scripts == null;
+  let hasHandledScriptsField = false;
 
   for (const [key, value] of Object.entries(projectPackageJson)) {
     seenKeys.add(key);

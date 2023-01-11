@@ -218,6 +218,7 @@ export async function createApp() {
   }
 
   if (shouldInstall) {
+    console.log();
     // TODO: better loading, handle errors
     await packageManager.install();
   }

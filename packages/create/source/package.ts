@@ -224,9 +224,20 @@ export async function createProject() {
       return partOfMonorepo;
     }
 
-    // We need to make some adjustments the project’s package.json and Quilt config
-    return file !== 'package.json' && file !== 'quilt.project.ts';
+    // We need to make some adjustments the project’s package.json, README, and Quilt config
+    return (
+      file !== 'package.json' &&
+      file !== 'quilt.project.ts' &&
+      file !== 'README.md'
+    );
   });
+
+  await outputRoot.write(
+    path.join(packageDirectory, 'package.json'),
+    (
+      await packageTemplate.read('README.md')
+    ).replaceAll('{{name}}', toValidPackageName(name!)),
+  );
 
   if (partOfMonorepo) {
     // Write the package’s package.json (the root one was already created)
@@ -283,6 +294,7 @@ export async function createProject() {
   }
 
   if (shouldInstall) {
+    console.log();
     // TODO: better loading, handle errors
     await packageManager.install();
   }
@@ -292,34 +304,48 @@ export async function createProject() {
     stripIndent`
       Your new package, ${color.bold(
         name,
-      )}, is ready to go! You can edit the code for your package in
-    ${color.cyan(
-      relativeDirectoryForDisplay(
-        path.relative(process.cwd(), path.join(packageDirectory, 'source')),
-      ),
-    )}.
+      )}, is ready to go! You can edit the code
+      for your package in ${color.cyan(
+        relativeDirectoryForDisplay(
+          path.relative(process.cwd(), path.join(packageDirectory, 'source')),
+        ),
+      )}.
     `,
   );
 
   if (isPublic) {
-    const needsPackageJsonKeys: string[] = [];
+    const needsPackageJsonKeys: {field: string; url: string}[] = [];
 
     if (!description) {
-      needsPackageJsonKeys.push('description');
+      needsPackageJsonKeys.push({
+        field: 'description',
+        url: 'https://docs.npmjs.com/cli/v9/configuring-npm/package-json#description',
+      });
     }
 
     if (repository == null) {
-      needsPackageJsonKeys.push('repository.url');
+      needsPackageJsonKeys.push({
+        field: 'repository.url',
+        url: 'https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository',
+      });
     }
 
     console.log();
 
+    const logPackageJsonField = (field: string, url: string) => {
+      console.log(
+        `  ${color.bold(JSON.stringify(field))} ${color.dim(
+          `(${color.underline(url)})`,
+        )}`,
+      );
+    };
+
     if (needsPackageJsonKeys.length > 0) {
       console.log(
         stripIndent`
-          Before you publish your package, you will need to add the ${needsPackageJsonKeys
-            .map((key) => color.bold(JSON.stringify(key)))
-            .join(' and ')} key${needsPackageJsonKeys.length > 1 ? 's' : ''}
+          Before you publish your package, you will need to add the following key${
+            needsPackageJsonKeys.length > 1 ? 's' : ''
+          }
           to ${color.cyan(
             relativeDirectoryForDisplay(
               path.relative(
@@ -327,30 +353,53 @@ export async function createProject() {
                 path.join(packageDirectory, 'package.json'),
               ),
             ),
-          )}. In that same file, make sure the contents of the
-          ${color.bold('"version"')}, ${color.bold(
-          '"exports"',
-        )}, and ${color.bold('"license"')} fields are correct for your package.
+          )}:
         `,
       );
+
+      console.log();
+
+      for (const {field, url} of needsPackageJsonKeys) {
+        logPackageJsonField(field, url);
+      }
+
+      console.log();
+
+      console.log(
+        'In that same file, make sure the contents of these fields are right for your package:',
+      );
+
+      console.log();
     } else {
       console.log(
         stripIndent`
-          Before you publish your package, make sure the content of the
-          ${color.bold('"version"')}, ${color.bold(
-          'exports',
-        )}, and ${color.bold('license')} fields in
-        ${color.cyan(
-          relativeDirectoryForDisplay(
-            path.relative(
-              process.cwd(),
-              path.join(packageDirectory, 'package.json'),
+          Before you publish your package, make the following fields look right
+          in ${color.cyan(
+            relativeDirectoryForDisplay(
+              path.relative(
+                process.cwd(),
+                path.join(packageDirectory, 'package.json'),
+              ),
             ),
-          ),
-        )} are correct for your package.
+          )}:
         `,
       );
+
+      console.log();
     }
+
+    logPackageJsonField(
+      'version',
+      'https://docs.npmjs.com/cli/v9/configuring-npm/package-json#version',
+    );
+    logPackageJsonField(
+      'license',
+      'https://docs.npmjs.com/cli/v9/configuring-npm/package-json#license',
+    );
+    logPackageJsonField(
+      'exports',
+      'https://nodejs.org/api/packages.html#package-entry-points',
+    );
   }
 
   const followUp = stripIndent`
@@ -572,10 +621,27 @@ function adjustPackageJson(
 
   if (isPublic) {
     delete packageJson.private;
+  } else {
     delete packageJson.license;
     delete packageJson.repository;
-  } else {
     delete packageJson.publishConfig;
+
+    // in private packages, we just need to reference the source.
+    const newExports: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(packageJson.exports)) {
+      if (typeof value === 'string') {
+        newExports[key] = value;
+      }
+
+      const sourceEntry = (value as any)?.['quilt:source'];
+
+      if (typeof sourceEntry === 'string') {
+        newExports[key] = sourceEntry;
+      }
+    }
+
+    packageJson.exports = newExports;
   }
 
   if (!react) {
