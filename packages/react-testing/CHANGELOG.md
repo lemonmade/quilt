@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.22
+
+### Patch Changes
+
+- [#466](https://github.com/lemonmade/quilt/pull/466) [`dd1a4532`](https://github.com/lemonmade/quilt/commit/dd1a45320c01e5be93cfc331567ac0e16bf745f4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add signal to react-testing root nodes
+
 ## 0.5.21
 
 ### Patch Changes
