@@ -233,7 +233,7 @@ export async function createProject() {
   });
 
   await outputRoot.write(
-    path.join(packageDirectory, 'package.json'),
+    path.join(packageDirectory, 'README.md'),
     (
       await packageTemplate.read('README.md')
     ).replaceAll('{{name}}', toValidPackageName(name!)),
@@ -334,7 +334,7 @@ export async function createProject() {
 
     const logPackageJsonField = (field: string, url: string) => {
       console.log(
-        `  ${color.bold(JSON.stringify(field))} ${color.dim(
+        `  - ${color.bold(JSON.stringify(field))} ${color.dim(
           `(${color.underline(url)})`,
         )}`,
       );
