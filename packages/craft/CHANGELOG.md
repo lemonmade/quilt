@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.171
+
+### Patch Changes
+
+- [`82359ac1`](https://github.com/lemonmade/quilt/commit/82359ac151607bf76b807fe0991c31f33981783a) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix app server listening message in dev
+
 ## 0.1.170
 
 ### Patch Changes
