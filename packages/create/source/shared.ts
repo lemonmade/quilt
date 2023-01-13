@@ -225,6 +225,7 @@ export function mergeWorkspaceAndProjectPackageJsons(
         ...(projectPackageJson.scripts as any),
       };
       hasHandledScriptsField = true;
+      if (key === 'scripts') continue;
     }
 
     if (isDependencyKey) {
