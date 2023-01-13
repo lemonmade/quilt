@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.1.39
+
+### Patch Changes
+
+- [`5a61b0d9`](https://github.com/lemonmade/quilt/commit/5a61b0d9fb5a04c6893eaa5a64d631ff29d10ffe) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix merging project and workspace scripts during create
+
+- [`d413672a`](https://github.com/lemonmade/quilt/commit/d413672aca87bdc42c1743aff345e2aa71238fb5) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix create package package.json overwrite
+
+- [`d3ea2c6e`](https://github.com/lemonmade/quilt/commit/d3ea2c6e65f30b95090e9fb7007ecbda252fc4e9) Thanks [@lemonmade](https://github.com/lemonmade)! - Bump workspace TypeScript version
+
 ## 0.1.38
 
 ### Patch Changes
