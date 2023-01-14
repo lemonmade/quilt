@@ -45,11 +45,15 @@ function cookiesFromDom(): Cookies {
         );
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
+      subscribe() {},
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       *entries() {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       *[Symbol.iterator]() {},
     };
   }
+
+  const listeners = new Map<string, Set<(value?: string) => void>>();
 
   return {
     has(cookie) {
@@ -59,10 +63,20 @@ function cookiesFromDom(): Cookies {
       return BrowserCookies.get(cookie);
     },
     set(cookie, value, options) {
-      return BrowserCookies.set(cookie, value, options);
+      BrowserCookies.set(cookie, value, options);
+      runListeners(cookie, BrowserCookies.get(cookie));
     },
     delete(cookie, options) {
       BrowserCookies.remove(cookie, options);
+      runListeners(cookie, undefined);
+    },
+    subscribe(cookie, callback, {signal} = {}) {
+      const callbacks = listeners.get(cookie) ?? new Set();
+      callbacks.add(callback);
+      listeners.set(cookie, callbacks);
+      signal?.addEventListener('abort', () => callbacks.delete(callback), {
+        once: true,
+      });
     },
     *entries() {
       yield* Object.entries(BrowserCookies.get());
@@ -71,4 +85,13 @@ function cookiesFromDom(): Cookies {
       yield* Object.keys(BrowserCookies.get());
     },
   };
+
+  function runListeners(cookie: string, value?: string) {
+    const callbacks = listeners.get(cookie);
+    if (callbacks == null) return;
+
+    for (const callback of callbacks) {
+      callback(value);
+    }
+  }
 }

@@ -1,4 +1,7 @@
-import {useContext} from 'react';
+import {createUseContextHook} from '@quilted/react-utilities';
+import {useSubscription, type Subscription} from '@quilted/use-subscription';
+import {useMemo} from 'react';
+
 import {HttpCookiesContext} from '../context';
 
 /**
@@ -11,15 +14,7 @@ import {HttpCookiesContext} from '../context';
  * you can use the `useResponseCookie` or `useDeleteResponseCookie` hooks,
  * or the `ResponseCookie` component.
  */
-export function useCookies() {
-  const cookies = useContext(HttpCookiesContext);
-
-  if (cookies == null) {
-    throw new Error('No cookie context found');
-  }
-
-  return cookies;
-}
+export const useCookies = createUseContextHook(HttpCookiesContext);
 
 /**
  * Provides the current value of the requested cookie. When run on the
@@ -29,5 +24,19 @@ export function useCookies() {
  * from the HTTP request during server-side rendering.
  */
 export function useCookie(cookie: string) {
-  return useCookies().get(cookie);
+  const cookies = useCookies();
+
+  const subscription = useMemo<Subscription<string | undefined>>(
+    () => ({
+      getCurrentValue: () => cookies.get(cookie),
+      subscribe: (callback) => {
+        const abort = new AbortController();
+        cookies.subscribe(cookie, callback, {signal: abort.signal});
+        return () => abort.abort();
+      },
+    }),
+    [cookie, cookies],
+  );
+
+  return useSubscription(subscription);
 }

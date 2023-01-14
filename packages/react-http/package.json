@@ -42,6 +42,8 @@
     "@quilted/http": "^0.2.11",
     "@quilted/react-html": "^0.3.18",
     "@quilted/react-server-render": "^0.3.7",
+    "@quilted/react-utilities": "^0.1.7",
+    "@quilted/use-subscription": "^0.2.17",
     "js-cookie": "^3.0.0"
   },
   "peerDependencies": {

@@ -11,30 +11,32 @@ jest.setTimeout(20_000);
 describe('http', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         const cookieName = 'user';
         const cookieValue = 'Chris';
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-              import {useRoutes, useCookie} from '@quilted/quilt';
-              
-              export function Routes() {
-                return useRoutes([{match: '/', render: () => <Start />}]);
-              }
-              
-              function Start() {
-                const user = useCookie(${JSON.stringify(cookieName)});
+          'App.tsx': stripIndent`
+            import {useCookie, QuiltApp} from '@quilted/quilt';
 
-                return (
-                  <>
-                    <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
-                  </>
-                );
-              }
-            `,
+            export default function App() {
+              return (
+                <QuiltApp>
+                  <CookieUi />
+                </QuiltApp>
+              )
+            }
+            
+            function CookieUi() {
+              const user = useCookie(${JSON.stringify(cookieName)});
+
+              return (
+                <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
+              );
+            }
+          `,
         });
 
         const {page} = await buildAppAndOpenPage(workspace, {
@@ -56,30 +58,36 @@ describe('http', () => {
     });
 
     it('can set client-side cookies', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         const cookieName = 'user';
         const cookieValue = 'Chris';
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes, useCookie, useCookies} from '@quilted/quilt';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
+          'App.tsx': stripIndent`
+            import {QuiltApp, useCookie, useCookies} from '@quilted/quilt';
+
+            export default function App() {
+              return (
+                <QuiltApp>
+                  <CookieUi />
+                </QuiltApp>
+              )
             }
-            
-            function Start() {
+
+            function CookieUi() {
               const cookies = useCookies();
               const user = useCookie(${JSON.stringify(cookieName)});
 
               return (
                 <>
                   <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
-                  <button onClick={() => cookies.set(${JSON.stringify(
-                    cookieName,
-                  )}, ${JSON.stringify(cookieValue)})}>
+                  <button onClick={() => {
+                    cookies.set(${JSON.stringify(cookieName)}, ${JSON.stringify(
+            cookieValue,
+          )});
+                  }}>
                     Set user cookie
                   </button>
                 </>
@@ -97,6 +105,9 @@ describe('http', () => {
         );
 
         await page.click('button');
+
+        expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
+
         await page.reload();
         await waitForPerformanceNavigation(page, {
           to: '/',

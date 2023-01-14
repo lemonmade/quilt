@@ -88,9 +88,9 @@ export default createApp((app) => {
 
 ## Browser entrypoint
 
-When you [create an app with Quilt](./TODO), you might be surprised to find that there are no calls to React’s `render()` or `hydrate()` methods anywhere in the template code. Instead, Quilt defaults the “entry point” of your application to an `App` component. This is a very intentional design decision — Quilt is a [component-focused framework](./TODO), which means that it provides all the capabilities you typically need when building an application as component-friendly APIs.
+When you [create an app with Quilt](./TODO), you might be surprised to find that there are no calls to React DOM’s [`createRoot()` or `hydrateRoot()` functions](https://reactjs.org/docs/react-dom-client.html) anywhere in the template code. Instead, Quilt defaults the “entry point” of your application to an `App` component. This is an intentional design decision — Quilt is a [component-focused framework](./TODO), which means that it provides all the capabilities you typically need when building an application as component-friendly APIs.
 
-When you leave this default setup in place, Quilt will automatically create a browser entry for you that will set up a tiny `Quilt` runtime, and render your application into a DOM element with `id="app"`. This automatic browser entry takes into account the version of React you use, and will automatically use hydration when you are also using the [automatic app server](./server.md).
+When you leave this default setup in place, Quilt will automatically create a browser entry for you that will set up a tiny `Quilt` runtime, and render your application into a DOM element with `id="app"`. This automatic browser entry takes into account the version of React you use, and will automatically use hydration when you are also using the [app server](./server.md).
 
 ### Replacing the default entrypoint
 

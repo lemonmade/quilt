@@ -1,8 +1,8 @@
-import {createContext} from 'react';
+import {createOptionalContext} from '@quilted/react-utilities';
 import type {ReadonlyHeaders, Cookies} from '@quilted/http';
 
 import type {HttpManager} from './manager';
 
-export const HttpServerContext = createContext<HttpManager | null>(null);
-export const HttpCookiesContext = createContext<Cookies | null>(null);
-export const HttpHeadersContext = createContext<ReadonlyHeaders | null>(null);
+export const HttpServerContext = createOptionalContext<HttpManager>();
+export const HttpCookiesContext = createOptionalContext<Cookies>();
+export const HttpHeadersContext = createOptionalContext<ReadonlyHeaders>();

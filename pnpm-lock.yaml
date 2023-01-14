@@ -632,6 +632,8 @@ importers:
       '@quilted/http': ^0.2.11
       '@quilted/react-html': ^0.3.18
       '@quilted/react-server-render': ^0.3.7
+      '@quilted/react-utilities': ^0.1.7
+      '@quilted/use-subscription': ^0.2.17
       '@types/cookie': ^0.4.0
       '@types/js-cookie': ^2.2.0
       js-cookie: ^3.0.0
@@ -639,6 +641,8 @@ importers:
       '@quilted/http': link:../http
       '@quilted/react-html': link:../react-html
       '@quilted/react-server-render': link:../react-server-render
+      '@quilted/react-utilities': link:../react-utilities
+      '@quilted/use-subscription': link:../use-subscription
       js-cookie: 3.0.1
     devDependencies:
       '@types/cookie': 0.4.1
