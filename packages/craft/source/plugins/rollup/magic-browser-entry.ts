@@ -149,7 +149,7 @@ export function magicBrowserEntry({
 
           ${
             hydrate
-              ? `${reactRootFunction}(jsx(App), element);`
+              ? `${reactRootFunction}(element, jsx(App));`
               : `${reactRootFunction}(element).render(jsx(App));`
           }
         `;
