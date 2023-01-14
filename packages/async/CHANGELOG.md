@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.29
+
+### Patch Changes
+
+- [`4755e44c`](https://github.com/lemonmade/quilt/commit/4755e44c4c0f7bd5519fed0aeb8428abd8c185f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify async prefetching markup
+
 ## 0.3.28
 
 ### Patch Changes

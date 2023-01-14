@@ -181,7 +181,7 @@ importers:
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@jest/types': ^29.3.0
       '@prefresh/vite': ^2.2.0
-      '@quilted/async': 0.3.28
+      '@quilted/async': 0.3.29
       '@quilted/browserslist-config': 0.1.9
       '@quilted/eslint-config': 0.1.16
       '@quilted/graphql': 0.4.50
