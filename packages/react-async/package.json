@@ -39,7 +39,7 @@
   "sideEffects": false,
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",
-    "react": "^17.0.0 || ^18.0.0"
+    "react": "^18.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/runtime": {
@@ -52,8 +52,7 @@
   "dependencies": {
     "@quilted/async": "^0.3.12",
     "@quilted/react-html": "^0.3.18",
-    "@quilted/react-server-render": "^0.3.7",
-    "@quilted/use-subscription": "^0.2.6"
+    "@quilted/react-server-render": "^0.3.7"
   },
   "eslintConfig": {
     "extends": [

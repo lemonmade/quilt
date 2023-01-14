@@ -1,6 +1,5 @@
+import {useMemo, useSyncExternalStore} from 'react';
 import {createUseContextHook} from '@quilted/react-utilities';
-import {useSubscription, type Subscription} from '@quilted/use-subscription';
-import {useMemo} from 'react';
 
 import {HttpCookiesContext} from '../context';
 
@@ -26,17 +25,19 @@ export const useCookies = createUseContextHook(HttpCookiesContext);
 export function useCookie(cookie: string) {
   const cookies = useCookies();
 
-  const subscription = useMemo<Subscription<string | undefined>>(
-    () => ({
-      getCurrentValue: () => cookies.get(cookie),
-      subscribe: (callback) => {
-        const abort = new AbortController();
-        cookies.subscribe(cookie, callback, {signal: abort.signal});
-        return () => abort.abort();
-      },
-    }),
-    [cookie, cookies],
+  const value = useSyncExternalStore(
+    ...useMemo<Parameters<typeof useSyncExternalStore<string | undefined>>>(
+      () => [
+        (callback) => {
+          const abort = new AbortController();
+          cookies.subscribe(cookie, callback, {signal: abort.signal});
+          return () => abort.abort();
+        },
+        () => cookies.get(cookie),
+      ],
+      [cookie, cookies],
+    ),
   );
 
-  return useSubscription(subscription);
+  return value;
 }

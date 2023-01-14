@@ -1,7 +1,6 @@
-import {useCallback, useContext, useMemo} from 'react';
+import {useCallback, useContext, useMemo, useSyncExternalStore} from 'react';
 import type {AsyncLoader} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
-import {useSubscription} from '@quilted/use-subscription';
 
 import {AsyncAssetContext} from '../context';
 import type {AssetLoadTiming} from '../types';
@@ -21,19 +20,20 @@ export function useAsync<T>(
   const {id} = asyncLoader;
   const load = useCallback(() => asyncLoader.load(), [asyncLoader]);
 
-  const value = useSubscription<T | undefined>(
-    useMemo(() => {
-      return {
-        getCurrentValue() {
+  const value = useSyncExternalStore(
+    ...useMemo<Parameters<typeof useSyncExternalStore<T | undefined>>>(
+      () => [
+        (callback) => {
+          return asyncLoader.subscribe(callback);
+        },
+        () => {
           return typeof window !== 'undefined' || immediate
             ? asyncLoader.loaded
             : undefined;
         },
-        subscribe(callback) {
-          return asyncLoader.subscribe(callback);
-        },
-      };
-    }, [immediate, asyncLoader]),
+      ],
+      [immediate, asyncLoader],
+    ),
   );
 
   useServerAction(() => {
