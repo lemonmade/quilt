@@ -491,7 +491,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               } else {
                 app.listen(finalPort, () => {
                   // eslint-disable-next-line no-console
-                  console.log(`Listening on localhost:${resolvedPort}`);
+                  console.log(`Listening on localhost:${finalPort}`);
                 });
               }
             } catch (error) {
