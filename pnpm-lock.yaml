@@ -725,6 +725,7 @@ importers:
   packages/react-testing:
     specifiers:
       '@jest/globals': ^27.0.0
+      '@types/react-test-renderer': ^17.0.0
       expect: ^27.0.0
       jest-matcher-utils: ^27.0.0
       preact: ^10.11.0
@@ -735,6 +736,7 @@ importers:
       jest-matcher-utils: 27.5.1
     devDependencies:
       '@jest/globals': 27.5.1
+      '@types/react-test-renderer': 17.0.2
       expect: 27.5.1
       preact: 10.11.3
       react: 17.0.2
@@ -4551,13 +4553,18 @@ packages:
       '@types/react': 18.0.26
     dev: true
 
+  /@types/react-test-renderer/17.0.2:
+    resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
+    dependencies:
+      '@types/react': 17.0.52
+    dev: true
+
   /@types/react/17.0.52:
     resolution: {integrity: sha512-vwk8QqVODi0VaZZpDXQCmEmiOuyjEFPY7Ttaw5vjM112LOq37yz1CDJGrRJwA1fYEq4Iitd5rnjd1yWAc/bT+A==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.0
-    dev: false
 
   /@types/react/18.0.26:
     resolution: {integrity: sha512-hCR3PJQsAIXyxhTNSiDFY//LhnMZWpNNr5etoCqx/iUfGc5gXWtQR2Phl908jVR6uPXacojQWTg4qRpkxTuGug==}
