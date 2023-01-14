@@ -79,9 +79,17 @@ export function installAsyncAssetsGlobal({
           seenAssets.add(asset);
           const isCss = asset.endsWith('.css');
 
+          const normalizedSource = asset.startsWith(location.origin)
+            ? asset.slice(location.origin.length)
+            : asset;
+
           // If we’ve already appended the link in server markup, no need to do it
           // again.
-          if (document.querySelector(`link[href=${JSON.stringify(asset)}]`)) {
+          if (
+            document.querySelector(
+              `link[href=${JSON.stringify(normalizedSource)}]`,
+            )
+          ) {
             return;
           }
 
@@ -90,10 +98,13 @@ export function installAsyncAssetsGlobal({
 
           if (!isCss) {
             link.as = 'script';
-            link.crossOrigin = '';
+
+            if (normalizedSource.startsWith('/')) {
+              link.crossOrigin = '';
+            }
           }
 
-          link.href = asset;
+          link.href = normalizedSource;
           document.head.appendChild(link);
 
           if (isCss) {
