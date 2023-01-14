@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.43
+
+### Patch Changes
+
+- [#478](https://github.com/lemonmade/quilt/pull/478) [`a2adeba4`](https://github.com/lemonmade/quilt/commit/a2adeba4b55dca0ff2fc6816090aaf128b9c0d60) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up initial HTML
+
 ## 0.3.42
 
 ### Patch Changes
