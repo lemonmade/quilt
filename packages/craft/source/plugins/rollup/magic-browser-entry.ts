@@ -132,7 +132,7 @@ export function magicBrowserEntry({
           cssSelector(),
         ]);
 
-        const reactFunction = hydrate ? 'hydrate' : 'render';
+        const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
 
         initialContent = stripIndent`
           ${
@@ -142,11 +142,16 @@ export function magicBrowserEntry({
           }
           import '@quilted/quilt/global';
           import {jsx} from 'react/jsx-dev-runtime';
-          import {${reactFunction}} from 'react-dom';
+          import {${reactRootFunction}} from 'react-dom/client';
           import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
 
-          ${reactFunction}(jsx(App), document.querySelector(${JSON.stringify(
-          selector,
+          const element = document.querySelector(${JSON.stringify(selector)});
+
+          ${
+            hydrate
+              ? `${reactRootFunction}(jsx(App), element);`
+              : `${reactRootFunction}(element).render(jsx(App));`
+          }
         )}));
         `;
       }
