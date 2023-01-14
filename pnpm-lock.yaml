@@ -65,7 +65,7 @@ importers:
       graphql: ^16.6.0
       react: npm:@quilted/react@^17.0.0
     dependencies:
-      '@types/react': 17.0.45
+      '@types/react': 18.0.26
     devDependencies:
       '@apollo/client': 3.7.3_ykungk7kg73w2jchtvdq5ion64
       '@quilted/quilt': link:../../packages/quilt
@@ -625,7 +625,7 @@ importers:
       '@types/react-dom': ^18.0.0
     dependencies:
       '@quilted/react-server-render': link:../react-server-render
-      '@types/react': 17.0.45
+      '@types/react': 18.0.26
     devDependencies:
       '@types/react-dom': 18.0.10
 
@@ -705,7 +705,7 @@ importers:
       '@types/react': ^17.0.0 || ^18.0.0
     dependencies:
       '@quilted/react-utilities': link:../react-utilities
-      '@types/react': 17.0.45
+      '@types/react': 18.0.26
 
   packages/react-signals:
     specifiers:
@@ -716,7 +716,7 @@ importers:
       react: npm:@quilted/react@^17.0.0
     dependencies:
       '@preact/signals': 1.1.2_preact@10.11.3
-      '@types/react': 17.0.45
+      '@types/react': 18.0.26
       preact: 10.11.3
     devDependencies:
       '@quilted/testing': link:../testing
@@ -4546,7 +4546,7 @@ packages:
   /@types/react-dom/17.0.17:
     resolution: {integrity: sha512-VjnqEmqGnasQKV0CWLevqMTXBYG9GbwuE6x3VetERLh0cq2LTptFE73MrQi2S7GkKXCf2GgwItB/melLnxfnsg==}
     dependencies:
-      '@types/react': 17.0.45
+      '@types/react': 17.0.52
     dev: false
 
   /@types/react-dom/18.0.10:
@@ -4558,11 +4558,11 @@ packages:
   /@types/react-test-renderer/17.0.2:
     resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
     dependencies:
-      '@types/react': 17.0.45
+      '@types/react': 17.0.52
     dev: false
 
-  /@types/react/17.0.45:
-    resolution: {integrity: sha512-YfhQ22Lah2e3CHPsb93tRwIGNiSwkuz1/blk4e6QrWS0jQzCSNbGLtOEYhPg02W0yGTTmpajp7dCTbBAMN3qsg==}
+  /@types/react/17.0.52:
+    resolution: {integrity: sha512-vwk8QqVODi0VaZZpDXQCmEmiOuyjEFPY7Ttaw5vjM112LOq37yz1CDJGrRJwA1fYEq4Iitd5rnjd1yWAc/bT+A==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
