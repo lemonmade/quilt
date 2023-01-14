@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.1.11
+
+### Patch Changes
+
+- [`a011fa25`](https://github.com/lemonmade/quilt/commit/a011fa25808818ed4e5651a25f267becc327ef2d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Localization `lang` attribute on client
+
 ## 0.1.10
 
 ### Patch Changes

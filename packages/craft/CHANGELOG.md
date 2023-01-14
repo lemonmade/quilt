@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.172
+
+### Patch Changes
+
+- [`29c906c0`](https://github.com/lemonmade/quilt/commit/29c906c065b675a6009e84780f43a44012411ba4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix additional incorrect port log
+
 ## 0.1.171
 
 ### Patch Changes
