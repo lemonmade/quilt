@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.122
+
+### Patch Changes
+
+- [#470](https://github.com/lemonmade/quilt/pull/470) [`03e8da71`](https://github.com/lemonmade/quilt/commit/03e8da71c1c54b497f2b0d153a8414ae8e772666) Thanks [@lemonmade](https://github.com/lemonmade)! - Support suspense in react-server-render
+
 ## 0.5.121
 
 ### Patch Changes
