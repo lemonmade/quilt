@@ -18,7 +18,7 @@ export interface Options extends ExtractOptions {
 export interface RenderResult {
   readonly http: HttpManager;
   readonly html: HtmlManager;
-  readonly markup: string;
+  readonly rendered?: string;
   readonly asyncAssets: AsyncAssetManager;
 }
 
@@ -30,7 +30,7 @@ export async function renderApp(
   const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
 
-  const markup = await extract(app, {
+  const rendered = await extract(app, {
     decorate(app) {
       return (
         <ServerContext
@@ -46,5 +46,5 @@ export async function renderApp(
     ...rest,
   });
 
-  return {markup, http, html, asyncAssets};
+  return {rendered, http, html, asyncAssets};
 }

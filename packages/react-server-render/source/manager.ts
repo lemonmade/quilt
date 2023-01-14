@@ -23,15 +23,29 @@ export class ServerRenderManager {
     this.includeKinds = includeKinds;
   }
 
-  seal() {
-    for (const perform of [...this.deferredActions].reverse()) {
-      const result = perform();
-      if (isPromise(result)) this.pendingActions.push(result);
+  render(render: () => string) {
+    const seal = (rendered?: string) => {
+      for (const perform of [...this.deferredActions].reverse()) {
+        const result = perform();
+        if (isPromise(result)) this.pendingActions.push(result);
+      }
+
+      this.deferredActions.length = 0;
+
+      return {rendered, finished: this.pendingActions.length === 0};
+    };
+
+    try {
+      const rendered = render();
+      return seal(rendered);
+    } catch (error) {
+      if (error != null && typeof (error as any).then === 'function') {
+        this.pendingActions.push(error as Promise<any>);
+        return seal();
+      }
+
+      throw error;
     }
-
-    this.deferredActions.length = 0;
-
-    return {finished: this.pendingActions.length === 0};
   }
 
   reset() {

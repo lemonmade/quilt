@@ -26,7 +26,7 @@ export interface Options<Context = RequestContext>
     context: Context,
   ): ServerRenderRequestContext;
   renderHtml?(
-    content: string,
+    content: string | undefined,
     request: Request,
     details: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
       readonly styles: readonly Asset[];
@@ -80,7 +80,7 @@ export async function renderToResponse(
   const {
     html: htmlManager,
     http,
-    markup,
+    rendered,
     asyncAssets,
   } = await renderApp(app, {
     ...options,
@@ -110,7 +110,7 @@ export async function renderToResponse(
       ])
     : [[], [], []];
 
-  const htmlElement = await renderHtml(markup, request, {
+  const htmlElement = await renderHtml(rendered, request, {
     html: htmlManager,
     http,
     styles,
@@ -125,7 +125,7 @@ export async function renderToResponse(
 }
 
 function defaultRenderHtml(
-  content: string,
+  content: string | undefined,
   request: Request,
   {
     html,
