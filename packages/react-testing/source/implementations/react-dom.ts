@@ -1,4 +1,4 @@
-import {render, unmountComponentAtNode} from 'react-dom';
+import {createRoot, type Root as ReactDomRoot} from 'react-dom/client';
 import {act} from 'react-dom/test-utils';
 
 import {createEnvironment, isNode} from '../environment';
@@ -9,6 +9,7 @@ import {Tag, findCurrentFiberUsingSlowPath} from './shared/react';
 import type {Fiber} from './shared/react';
 
 interface Context {
+  root: ReactDomRoot;
   element: HTMLDivElement;
 }
 
@@ -24,12 +25,13 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
     const element = document.createElement('div');
     document.body.appendChild(element);
 
-    render(tree, element);
+    const root = createRoot(element);
+    root.render(tree);
 
-    return {element};
+    return {root, element};
   },
-  unmount({element}) {
-    unmountComponentAtNode(element);
+  unmount({root, element}) {
+    root.unmount();
     element.remove();
   },
   update(instance, create) {

@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@quilted/testing": "^0.1.0",
-    "react": "npm:@quilted/react@^17.0.0"
+    "react": "workspace:@quilted/react@*"
   },
   "eslintConfig": {
     "extends": [

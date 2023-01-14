@@ -70,10 +70,7 @@
   },
   "devDependencies": {
     "@apollo/client": "^3.0.0",
-    "@quilted/testing": "^0.1.0",
-    "@quilted/quilt": "workspace:^0.5.123",
-    "graphql": "^16.6.0",
-    "react": "npm:@quilted/react@^17.0.0"
+    "graphql": "^16.6.0"
   },
   "eslintConfig": {
     "extends": [
