@@ -1,5 +1,14 @@
 # @quilted/apollo
 
+## 0.1.3
+
+### Patch Changes
+
+- [#475](https://github.com/lemonmade/quilt/pull/475) [`de6bb615`](https://github.com/lemonmade/quilt/commit/de6bb615c1cdb763f9116e0649b21d6c46aaf9a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to React 18
+
+- Updated dependencies [[`de6bb615`](https://github.com/lemonmade/quilt/commit/de6bb615c1cdb763f9116e0649b21d6c46aaf9a4)]:
+  - @quilted/quilt@0.5.124
+
 ## 0.1.2
 
 ### Patch Changes

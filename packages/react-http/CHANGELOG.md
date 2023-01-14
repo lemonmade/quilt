@@ -1,5 +1,11 @@
 # @quilted/react-http
 
+## 0.3.26
+
+### Patch Changes
+
+- [#475](https://github.com/lemonmade/quilt/pull/475) [`de6bb615`](https://github.com/lemonmade/quilt/commit/de6bb615c1cdb763f9116e0649b21d6c46aaf9a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Move to useSyncExternalStore
+
 ## 0.3.25
 
 ### Patch Changes
