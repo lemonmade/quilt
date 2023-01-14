@@ -44,7 +44,7 @@ function createNodeFromTestInstance(
 
   return create<unknown>({
     props: testInstance.props,
-    type: testInstance.type,
+    type: testInstance.type as any,
     children,
     instance: testInstance.instance,
   });
