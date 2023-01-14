@@ -1,5 +1,13 @@
 # @quilted/react-http
 
+## 0.3.25
+
+### Patch Changes
+
+- [#473](https://github.com/lemonmade/quilt/pull/473) [`e647289c`](https://github.com/lemonmade/quilt/commit/e647289c14a2bf8d0d9d322cd3fe1be3f675c535) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser cookies reactive
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
 ## 0.3.24
 
 ### Patch Changes

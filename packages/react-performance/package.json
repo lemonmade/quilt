@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-performance",
   "type": "module",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",

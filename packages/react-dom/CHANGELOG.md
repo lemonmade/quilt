@@ -1,5 +1,13 @@
 # @quilted/react-dom
 
+## 17.0.8
+
+### Patch Changes
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
+- [`f727015c`](https://github.com/lemonmade/quilt/commit/f727015c95bec2c5ebbc20111563adf494b04670) Thanks [@lemonmade](https://github.com/lemonmade)! - Add @quilted/react-dom/client entry
+
 ## 17.0.7
 
 ### Patch Changes
