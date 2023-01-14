@@ -21,10 +21,11 @@ export function ReactQueryContext({
         const promises: Promise<any>[] = [];
 
         for (const query of client.getQueryCache().getAll()) {
-          const {state} = query;
+          const {state, options, meta} = query;
 
           if (state.status === 'success' || state.status === 'error') continue;
-          if (query.meta != null && query.meta.server === false) continue;
+          if ((options as any).enabled === false) continue;
+          if (meta != null && meta.server === false) continue;
 
           promises.push(query.fetch());
         }
