@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
 import {createLocalizedFormatting} from '@quilted/localize';
-import {useHtmlAttributes} from '@quilted/react-html';
+import {HtmlAttributes} from '@quilted/react-html';
 import type {PropsWithChildren} from '@quilted/useful-react-types';
 
 import {LocaleContext, LocalizedFormattingContext} from './context';
@@ -13,13 +13,12 @@ export function Localization({
   locale,
   children,
 }: PropsWithChildren<LocalizationProps>) {
-  useHtmlAttributes({lang: locale});
-
   const formatting = useMemo(() => createLocalizedFormatting(locale), [locale]);
 
   return (
     <LocaleContext.Provider value={locale}>
       <LocalizedFormattingContext.Provider value={formatting}>
+        <HtmlAttributes lang={locale} />
         {children}
       </LocalizedFormattingContext.Provider>
     </LocaleContext.Provider>
