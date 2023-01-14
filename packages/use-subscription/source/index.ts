@@ -1,6 +1,6 @@
 import {useDebugValue, useEffect, useState} from 'react';
 
-interface Options<T> {
+export interface Subscription<T> {
   getCurrentValue: () => T;
   subscribe: (callback: () => void) => () => void;
 }
@@ -8,7 +8,7 @@ interface Options<T> {
 export function useSubscription<T>({
   getCurrentValue,
   subscribe,
-}: Options<T>): T {
+}: Subscription<T>): T {
   const [state, setState] = useState(() => ({
     getCurrentValue,
     subscribe,
