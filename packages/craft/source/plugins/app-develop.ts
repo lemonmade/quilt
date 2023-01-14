@@ -535,7 +535,7 @@ async function createAppServer(
 ) {
   const [
     {watch},
-    {notFound, EnhancedResponse},
+    {notFound, html, EnhancedResponse},
     {createRequest, sendResponse},
     developmentServer,
   ] = await Promise.all([
@@ -627,25 +627,38 @@ async function createAppServer(
       const router = await requestRouterPromise;
       const request = createRequest(req);
 
-      const response = (await router.fetch(request, req)) ?? notFound();
+      try {
+        const response = (await router.fetch(request, req)) ?? notFound();
 
-      const contentType = response.headers.get('Content-Type');
+        const contentType = response.headers.get('Content-Type');
 
-      if (contentType != null && contentType.includes('text/html')) {
-        const transformedHtml = await vite.transformIndexHtml(
-          request.url,
-          await response.text(),
-        );
+        if (contentType != null && contentType.includes('text/html')) {
+          const transformedHtml = await vite.transformIndexHtml(
+            request.url,
+            await response.text(),
+          );
 
+          await sendResponse(
+            new EnhancedResponse(transformedHtml, response),
+            serverResponse,
+          );
+
+          return;
+        }
+
+        await sendResponse(response, serverResponse);
+      } catch (error: any) {
+        // eslint-disable-next-line no-console
+        console.error(error);
         await sendResponse(
-          new EnhancedResponse(transformedHtml, response),
+          html(
+            `<html><body><pre>${
+              error.stack ?? error.message
+            }</pre></body></html>`,
+          ),
           serverResponse,
         );
-
-        return;
       }
-
-      await sendResponse(response, serverResponse);
     },
   };
 }
