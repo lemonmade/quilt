@@ -302,7 +302,10 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
           viteOptimizeDepsExclude?.((excluded) => [
             ...excluded,
             'react',
+            'react/jsx-runtime',
+            'react/jsx-dev-runtime',
             'react-dom',
+            'react-dom/client',
             'preact',
             'preact/compat',
             'preact/hooks',
