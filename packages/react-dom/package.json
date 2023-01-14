@@ -22,6 +22,12 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
+    "./client": {
+      "quilt:source": "./source/client.ts",
+      "quilt:esnext": "./build/esnext/client.esnext",
+      "import": "./build/esm/client.mjs",
+      "require": "./build/cjs/client.cjs"
+    },
     "./server": {
       "quilt:source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
