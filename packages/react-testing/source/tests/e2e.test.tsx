@@ -60,7 +60,7 @@ describe('e2e', () => {
   it('does not throw an error when an intermediate error boundary intercepts the error', () => {
     const error = new Error('oh no!');
 
-    class ErrorBoundary extends Component {
+    class ErrorBoundary extends Component<{children: any}> {
       state: {error?: Error} = {};
 
       static getDerivedStateFromError(error: any) {
