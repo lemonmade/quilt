@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "^4.19.0",
-    "react": "workspace:@quilted/react@^17.0.0"
+    "react": "workspace:@quilted/react@^18.2.0"
   },
   "peerDependencies": {
     "@babel/runtime": ">=7.0.0 <8.0.0",

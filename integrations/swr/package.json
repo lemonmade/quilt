@@ -30,7 +30,7 @@
     "@quilted/useful-types": "^0.2.13"
   },
   "devDependencies": {
-    "react": "workspace:@quilted/react@^17.0.0",
+    "react": "workspace:@quilted/react@^18.2.0",
     "swr": "^1.3.0"
   },
   "peerDependencies": {

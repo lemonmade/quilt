@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@quilted/quilt": "^0.5.0",
-    "react": "npm:@quilted/react@^0.1.0",
-    "react-dom": "npm:@quilted/react@^0.1.0"
+    "react": "npm:@quilted/react@^18.2.0",
+    "react-dom": "npm:@quilted/react@^18.2.0"
   },
   "devDependencies": {
     "@quilted/browserslist-config": "^0.1.0",
