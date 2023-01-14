@@ -1,10 +1,10 @@
+/* eslint react/no-unknown-property: off */
+
 import type {ReactElement, ReactNode} from 'react';
 import {renderToString} from 'react-dom/server';
-// import {HydrationContext, HydrationManager} from '@shopify/react-hydrate';
 
 import {HtmlManager} from '../../../manager';
 import {HtmlContext} from '../../../context';
-import {MANAGED_ATTRIBUTE} from '../../../utilities/update';
 import {Serialize} from '../Serialize';
 
 interface Asset {
@@ -44,13 +44,15 @@ export function Html({
       ? children
       : render(children, {htmlManager: manager});
 
-  const normalizeSource =
+  const getAssetDetails =
     url == null
-      ? (source: string) => source
-      : (source: string) =>
-          source.startsWith(url.origin)
+      ? (source: string) => ({source, crossorigin: false})
+      : (source: string) => ({
+          source: source.startsWith(url.origin)
             ? source.slice(url.origin.length)
-            : source;
+            : source,
+          crossorigin: true,
+        });
 
   const extracted = manager?.extract();
 
@@ -58,32 +60,33 @@ export function Html({
     <Serialize key={id} id={id} data={data} />
   ));
 
-  const managedProps = {[MANAGED_ATTRIBUTE]: true};
-
   const titleContent = extracted?.title ? (
-    <title {...managedProps}>{extracted.title}</title>
+    <title>{extracted.title}</title>
   ) : null;
 
   const metaContent = extracted?.metas.map((metaProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
-    <meta key={index} {...managedProps} {...metaProps} />
+    <meta key={index} {...metaProps} />
   ));
 
   const linkContent = extracted?.links.map((linkProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
-    <link key={index} {...managedProps} {...linkProps} />
+    <link key={index} {...linkProps} />
   ));
 
   const stylesContent = styles?.map((style) => {
+    const {source, crossorigin} = getAssetDetails(style.source);
+
     return (
       <link
         rel="stylesheet"
         type="text/css"
-        key={style.source}
-        href={normalizeSource(style.source)}
-        crossOrigin=""
+        key={source}
+        href={source}
+        // @ts-expect-error This gets rendered directly as HTML
+        crossorigin={crossorigin ? '' : undefined}
         {...style.attributes}
       />
     );
@@ -96,49 +99,60 @@ export function Html({
       false);
 
   const blockingScriptsContent = blockingScripts?.map((script) => {
+    const {source, crossorigin} = getAssetDetails(script.source);
+
     return (
       <script
         key={script.source}
-        src={normalizeSource(script.source)}
-        crossOrigin=""
+        src={source}
         type="text/javascript"
         noModule={
           !needsNoModule || script.attributes.type === 'module'
             ? undefined
             : true
         }
+        // @ts-expect-error This gets rendered directly as HTML
+        crossorigin={crossorigin ? '' : undefined}
         {...script.attributes}
       />
     );
   });
 
   const deferredScriptsContent = scripts?.map((script) => {
+    const {source, crossorigin} = getAssetDetails(script.source);
+
     return (
       <script
-        key={script.source}
-        src={normalizeSource(script.source)}
-        crossOrigin=""
-        defer
+        key={source}
+        src={source}
         type="text/javascript"
         noModule={
           !needsNoModule || script.attributes.type === 'module'
             ? undefined
             : true
         }
+        defer={script.attributes.type === 'module' ? undefined : true}
+        // @ts-expect-error This gets rendered directly as HTML
+        crossorigin={crossorigin ? '' : undefined}
         {...script.attributes}
       />
     );
   });
 
-  const preloadAssetsContent = preloadAssets?.map((asset) => (
-    <link
-      key={asset.source}
-      rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
-      href={normalizeSource(asset.source)}
-      crossOrigin=""
-      as={asset.source.endsWith('.css') ? 'style' : 'script'}
-    />
-  ));
+  const preloadAssetsContent = preloadAssets?.map((asset) => {
+    const {source, crossorigin} = getAssetDetails(asset.source);
+
+    return (
+      <link
+        key={source}
+        rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
+        href={source}
+        // @ts-expect-error This gets rendered directly as HTML
+        crossorigin={crossorigin ? '' : undefined}
+        as={asset.source.endsWith('.css') ? 'style' : 'script'}
+      />
+    );
+  });
 
   const htmlAttributes = extracted?.htmlAttributes ?? {};
   const bodyAttributes = extracted?.bodyAttributes ?? {};
@@ -148,7 +162,8 @@ export function Html({
       <head>
         {titleContent}
 
-        <meta charSet="utf-8" />
+        {/* @ts-expect-error This gets rendered directly as HTML */}
+        <meta charset="utf-8" />
         {metaContent}
 
         {linkContent}
