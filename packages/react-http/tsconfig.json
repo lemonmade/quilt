@@ -9,6 +9,8 @@
   "references": [
     {"path": "../http"},
     {"path": "../react-html"},
-    {"path": "../react-server-render"}
+    {"path": "../react-server-render"},
+    {"path": "../react-utilities"},
+    {"path": "../use-subscription"}
   ]
 }

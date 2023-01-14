@@ -409,6 +409,8 @@ export async function buildAppAndOpenPage(
   });
 
   page.on('console', async (message) => {
+    // eslint-disable-next-line no-console
+    console.log('Browser console message:');
     for (const arg of message.args()) {
       // eslint-disable-next-line no-console
       console[message.type() as 'log'](await arg.jsonValue());

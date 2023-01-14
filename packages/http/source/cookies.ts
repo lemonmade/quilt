@@ -55,11 +55,22 @@ export interface WritableCookies {
   ): void;
 }
 
+export interface SubscribableCookies {
+  subscribe(
+    cookie: string,
+    callback: (value?: string) => void,
+    options?: {signal?: AbortSignal},
+  ): void;
+}
+
 /**
  * A wrapper around the cookies for a website, either on the server
  * or client.
  */
-export interface Cookies extends ReadonlyCookies, WritableCookies {}
+export interface Cookies
+  extends ReadonlyCookies,
+    WritableCookies,
+    SubscribableCookies {}
 
 // What follows is a basic re-implementation of https://www.npmjs.com/package/cookie.
 // That library only uses CommonJS, which makes for some awkward build issues.
