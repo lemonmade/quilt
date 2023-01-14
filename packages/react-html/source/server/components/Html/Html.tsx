@@ -15,7 +15,7 @@ interface Asset {
 interface Props {
   url?: URL;
   manager?: HtmlManager;
-  children: ReactElement | string;
+  children?: ReactElement | string;
   noModule?: boolean;
   locale?: string;
   styles?: readonly Asset[];
@@ -40,7 +40,7 @@ export function Html({
   bodyContent,
 }: Props) {
   const content =
-    typeof children === 'string'
+    children == null || typeof children !== 'object'
       ? children
       : render(children, {htmlManager: manager});
 
@@ -60,23 +60,23 @@ export function Html({
 
   const managedProps = {[MANAGED_ATTRIBUTE]: true};
 
-  const titleContentcontent = extracted?.title ? (
+  const titleContent = extracted?.title ? (
     <title {...managedProps}>{extracted.title}</title>
   ) : null;
 
-  const metaContentcontent = extracted?.metas.map((metaProps, index) => (
+  const metaContent = extracted?.metas.map((metaProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <meta key={index} {...managedProps} {...metaProps} />
   ));
 
-  const linkContentcontent = extracted?.links.map((linkProps, index) => (
+  const linkContent = extracted?.links.map((linkProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <link key={index} {...managedProps} {...linkProps} />
   ));
 
-  const stylesContentcontent = styles?.map((style) => {
+  const stylesContent = styles?.map((style) => {
     return (
       <link
         rel="stylesheet"
@@ -95,7 +95,7 @@ export function Html({
       scripts?.some((script) => script.attributes.type === 'module') ||
       false);
 
-  const blockingScriptsContentcontent = blockingScripts?.map((script) => {
+  const blockingScriptsContent = blockingScripts?.map((script) => {
     return (
       <script
         key={script.source}
@@ -112,7 +112,7 @@ export function Html({
     );
   });
 
-  const deferredScriptsContentcontent = scripts?.map((script) => {
+  const deferredScriptsContent = scripts?.map((script) => {
     return (
       <script
         key={script.source}
@@ -130,7 +130,7 @@ export function Html({
     );
   });
 
-  const preloadAssetsContentcontent = preloadAssets?.map((asset) => (
+  const preloadAssetsContent = preloadAssets?.map((asset) => (
     <link
       key={asset.source}
       rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
@@ -146,25 +146,25 @@ export function Html({
   return (
     <html lang={locale} {...htmlAttributes}>
       <head>
-        {titleContentcontent}
+        {titleContent}
 
         <meta charSet="utf-8" />
-        {metaContentcontent}
+        {metaContent}
 
-        {linkContentcontent}
-        {preloadAssetsContentcontent}
+        {linkContent}
+        {preloadAssetsContent}
 
-        {stylesContentcontent}
+        {stylesContent}
 
         {headContent}
         {serializationContent}
 
-        {blockingScriptsContentcontent}
-        {deferredScriptsContentcontent}
+        {blockingScriptsContent}
+        {deferredScriptsContent}
       </head>
 
       <body {...bodyAttributes}>
-        <div id="app" dangerouslySetInnerHTML={{__html: content}} />
+        <div id="app" dangerouslySetInnerHTML={{__html: content ?? ''}} />
 
         {bodyContent}
       </body>

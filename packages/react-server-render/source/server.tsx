@@ -54,10 +54,9 @@ export function extract(
     </ServerRenderManagerContext.Provider>
   );
 
-  return (async function perform(index = 0): Promise<string> {
+  return (async function perform(index = 0): Promise<string | undefined> {
     const start = Date.now();
-    const result = renderFunction(element);
-    const {finished} = manager.seal();
+    const {rendered, finished} = manager.render(() => renderFunction(element));
     const cancelled = !finished && index + 1 >= maxPasses;
 
     const resolveStart = Date.now();
@@ -88,7 +87,7 @@ export function extract(
         });
       }
 
-      return result;
+      return rendered;
     } else {
       let performNextPass = true;
 
@@ -138,7 +137,7 @@ export function extract(
         manager.reset();
       }
 
-      return performNextPass ? perform(index + 1) : result;
+      return performNextPass ? perform(index + 1) : rendered;
     }
   })();
 }
