@@ -44,15 +44,19 @@ export function Html({
       ? children
       : render(children, {htmlManager: manager});
 
-  const getAssetDetails =
-    url == null
-      ? (source: string) => ({source, crossorigin: false})
-      : (source: string) => ({
-          source: source.startsWith(url.origin)
-            ? source.slice(url.origin.length)
-            : source,
-          crossorigin: true,
-        });
+  const getAssetDetails = (source: string) => {
+    const crossorigin =
+      !source.startsWith('/') &&
+      (url == null || !source.startsWith(url.origin));
+
+    return {
+      source:
+        url && source.startsWith(url.origin)
+          ? source.slice(url.origin.length)
+          : source,
+      crossorigin,
+    };
+  };
 
   const extracted = manager?.extract();
 
@@ -81,9 +85,9 @@ export function Html({
 
     return (
       <link
+        key={source}
         rel="stylesheet"
         type="text/css"
-        key={source}
         href={source}
         // @ts-expect-error This gets rendered directly as HTML
         crossorigin={crossorigin ? '' : undefined}
@@ -103,9 +107,9 @@ export function Html({
 
     return (
       <script
-        key={script.source}
-        src={source}
+        key={source}
         type="text/javascript"
+        src={source}
         noModule={
           !needsNoModule || script.attributes.type === 'module'
             ? undefined
@@ -124,8 +128,8 @@ export function Html({
     return (
       <script
         key={source}
-        src={source}
         type="text/javascript"
+        src={source}
         noModule={
           !needsNoModule || script.attributes.type === 'module'
             ? undefined
