@@ -1,4 +1,5 @@
-export const MANAGED_ATTRIBUTE = 'data-react-html';
+let initiallyUnmatchedMetas: Element[];
+let initiallyUnmatchedLinks: Element[];
 
 export function updateOnClient(state: import('../manager').State) {
   const {title, metas, links, bodyAttributes, htmlAttributes} = state;
@@ -14,19 +15,15 @@ export function updateOnClient(state: import('../manager').State) {
       document.head.appendChild(titleElement);
     }
 
-    titleElement.setAttribute(MANAGED_ATTRIBUTE, 'true');
     titleElement.textContent = title;
   }
 
   const fragment = document.createDocumentFragment();
 
-  const oldMetas = Array.from(
-    document.head.querySelectorAll(`meta[${MANAGED_ATTRIBUTE}]`),
-  );
+  const oldMetas = Array.from(document.head.querySelectorAll('meta'));
 
   for (const meta of metas) {
     const element = document.createElement('meta');
-    element.setAttribute(MANAGED_ATTRIBUTE, 'true');
 
     for (const [attribute, value] of Object.entries(meta)) {
       element.setAttribute(attribute, value);
@@ -43,13 +40,10 @@ export function updateOnClient(state: import('../manager').State) {
     }
   }
 
-  const oldLinks = Array.from(
-    document.head.querySelectorAll(`link[${MANAGED_ATTRIBUTE}]`),
-  );
+  const oldLinks = Array.from(document.head.querySelectorAll('link'));
 
   for (const link of links) {
     const element = document.createElement('link');
-    element.setAttribute(MANAGED_ATTRIBUTE, 'true');
 
     for (const [attribute, value] of Object.entries(link)) {
       element.setAttribute(attribute, value);
@@ -66,12 +60,24 @@ export function updateOnClient(state: import('../manager').State) {
     }
   }
 
+  if (initiallyUnmatchedLinks == null) {
+    initiallyUnmatchedLinks = oldLinks;
+  }
+
+  if (initiallyUnmatchedMetas == null) {
+    initiallyUnmatchedMetas = oldMetas;
+  }
+
   for (const link of oldLinks) {
-    link.remove();
+    if (!initiallyUnmatchedLinks.includes(link)) {
+      link.remove();
+    }
   }
 
   for (const meta of oldMetas) {
-    meta.remove();
+    if (!initiallyUnmatchedMetas.includes(meta)) {
+      meta.remove();
+    }
   }
 
   document.head.appendChild(fragment);
