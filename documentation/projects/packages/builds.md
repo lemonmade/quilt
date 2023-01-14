@@ -600,7 +600,7 @@ The `react/jsx-runtime` entry is only available in React version 17 and up. Your
 ```json
 {
   "peerDependencies": {
-    "react": ">=17.0.0 <19.0.0"
+    "react": "^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
     "react": {

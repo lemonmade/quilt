@@ -5,11 +5,8 @@ import {createEnvironment, isNode} from '../environment';
 import type {CustomMount, EnvironmentOptions} from '../environment';
 import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
 
-import {Tag} from './shared/react';
+import {Tag, findCurrentFiberUsingSlowPath} from './shared/react';
 import type {Fiber} from './shared/react';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const {findCurrentFiberUsingSlowPath} = require('react-reconciler/reflection');
 
 interface Context {
   element: HTMLDivElement;
@@ -48,7 +45,7 @@ type Create = Parameters<
 type Child = ReturnType<Create> | string;
 
 export function createNodeFromFiber(element: any, create: Create): Child {
-  const fiber: Fiber = findCurrentFiberUsingSlowPath(element);
+  const fiber = findCurrentFiberUsingSlowPath(element)!;
 
   if (fiber.tag === Tag.HostText) {
     return fiber.memoizedProps as string;
