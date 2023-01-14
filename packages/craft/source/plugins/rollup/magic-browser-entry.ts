@@ -152,7 +152,6 @@ export function magicBrowserEntry({
               ? `${reactRootFunction}(jsx(App), element);`
               : `${reactRootFunction}(element).render(jsx(App));`
           }
-        )}));
         `;
       }
 
