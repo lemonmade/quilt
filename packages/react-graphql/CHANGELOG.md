@@ -1,5 +1,11 @@
 # @quilted/react-graphql
 
+## 0.4.49
+
+### Patch Changes
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
 ## 0.4.48
 
 ### Patch Changes

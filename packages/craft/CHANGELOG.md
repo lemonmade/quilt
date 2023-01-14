@@ -1,5 +1,16 @@
 # @quilted/craft
 
+## 0.1.174
+
+### Patch Changes
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
+- [#473](https://github.com/lemonmade/quilt/pull/473) [`e647289c`](https://github.com/lemonmade/quilt/commit/e647289c14a2bf8d0d9d322cd3fe1be3f675c535) Thanks [@lemonmade](https://github.com/lemonmade)! - Use React’s root functions to render client entry
+
+- Updated dependencies [[`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04)]:
+  - @quilted/quilt@0.5.123
+
 ## 0.1.173
 
 ### Patch Changes

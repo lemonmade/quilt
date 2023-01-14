@@ -59,7 +59,7 @@ importers:
   integrations/apollo:
     specifiers:
       '@apollo/client': ^3.0.0
-      '@quilted/quilt': workspace:^0.5.0
+      '@quilted/quilt': workspace:^0.5.123
       '@quilted/testing': ^0.1.0
       '@types/react': ^17.0.0 || ^18.0.0
       graphql: ^16.6.0

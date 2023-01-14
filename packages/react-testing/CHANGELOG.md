@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.23
+
+### Patch Changes
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
 ## 0.5.22
 
 ### Patch Changes

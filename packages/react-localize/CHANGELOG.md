@@ -1,5 +1,14 @@
 # @quilted/react-localize
 
+## 0.1.12
+
+### Patch Changes
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
+- Updated dependencies [[`e647289c`](https://github.com/lemonmade/quilt/commit/e647289c14a2bf8d0d9d322cd3fe1be3f675c535), [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04)]:
+  - @quilted/react-http@0.3.25
+
 ## 0.1.11
 
 ### Patch Changes

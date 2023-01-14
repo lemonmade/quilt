@@ -1,5 +1,17 @@
 # @quilted/react-query
 
+## 0.1.13
+
+### Patch Changes
+
+- [#474](https://github.com/lemonmade/quilt/pull/474) [`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04) Thanks [@lemonmade](https://github.com/lemonmade)! - Looser React version restrictions
+
+- [`686d5b92`](https://github.com/lemonmade/quilt/commit/686d5b92d5f35bb2946b8b2d0696fda7c3b88294) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix detecting disabled queries in react-query
+
+- Updated dependencies [[`8890fad8`](https://github.com/lemonmade/quilt/commit/8890fad8d04efa95b362f4beaefcdbd51e65ba04), [`e647289c`](https://github.com/lemonmade/quilt/commit/e647289c14a2bf8d0d9d322cd3fe1be3f675c535)]:
+  - @quilted/craft@0.1.174
+  - @quilted/quilt@0.5.123
+
 ## 0.1.12
 
 ### Patch Changes
