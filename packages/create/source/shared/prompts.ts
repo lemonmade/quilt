@@ -32,7 +32,10 @@ export async function getInWorkspace(argv: BaseArguments) {
 
 export async function getCreateAsMonorepo(
   argv: BaseArguments,
-  {type}: {type: 'app' | 'package'},
+  {
+    type,
+    default: defaultCreateAsMonorepo = true,
+  }: {type: 'app' | 'package'; default?: boolean},
 ) {
   let createAsMonorepo: boolean;
 
@@ -44,7 +47,7 @@ export async function getCreateAsMonorepo(
     createAsMonorepo = await prompt({
       type: 'confirm',
       message: `Do you want to create this ${type} as a monorepo, with room for more projects?`,
-      initial: true,
+      initial: defaultCreateAsMonorepo,
     });
   }
 
