@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.31
+
+### Patch Changes
+
+- [`55336251`](https://github.com/lemonmade/quilt/commit/5533625189999f06e5111a9acba14e001a9d847c) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up async APIs
+
 ## 0.3.30
 
 ### Patch Changes
