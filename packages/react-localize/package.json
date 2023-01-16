@@ -52,15 +52,11 @@
     "@quilted/react-http": "^0.3.17"
   },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/request-router": "^0.1.1",
     "@quilted/react-http": "^0.3.25",
     "react": "^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "@quilted/request-router": {
       "optional": true
     },

@@ -6,7 +6,6 @@ importers:
     specifiers:
       '@actions/core': ^1.10.0
       '@actions/github': ^5.1.0
-      '@babel/runtime': '>=7.0.0 <8.0.0'
       '@changesets/changelog-github': ^0.4.7
       '@changesets/cli': ^2.25.0
       '@quilted/browserslist-config': ^0.1.0
@@ -32,7 +31,6 @@ importers:
     devDependencies:
       '@actions/core': 1.10.0
       '@actions/github': 5.1.1
-      '@babel/runtime': 7.18.3
       '@changesets/changelog-github': 0.4.7
       '@changesets/cli': 2.25.2
       '@quilted/browserslist-config': link:packages/browserslist-config
@@ -505,7 +503,6 @@ importers:
 
   packages/quilt:
     specifiers:
-      '@babel/runtime': '>=7.0.0 <8.0.0'
       '@quilted/async': ^0.3.12
       '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
@@ -532,7 +529,6 @@ importers:
       '@types/jest': ^27.0.0
       '@types/prettier': ^2.0.0
     dependencies:
-      '@babel/runtime': 7.18.3
       '@quilted/async': link:../async
       '@quilted/events': link:../events
       '@quilted/graphql': link:../graphql

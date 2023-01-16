@@ -55,7 +55,6 @@
     "miniflare": "^2.4.0"
   },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/craft": "^0.1.168",
     "@quilted/quilt": "^0.5.119"
   },
@@ -64,9 +63,6 @@
     "@types/mime": "^2.0.0"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "@quilted/craft": {
       "optional": true
     },

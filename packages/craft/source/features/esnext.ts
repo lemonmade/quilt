@@ -1,4 +1,3 @@
-import {createRequire} from 'module';
 import {join, dirname, sep as pathSeparator} from 'path';
 
 import {createProjectPlugin} from '../kit';
@@ -25,8 +24,6 @@ declare module '@quilted/sewing-kit' {
     esnext: boolean;
   }
 }
-
-const require = createRequire(import.meta.url);
 
 /**
  * Creates a special `esnext` build that is a minimally-processed version
@@ -220,7 +217,6 @@ export function esnext() {
           babelTargets,
           babelPresets,
           babelPlugins,
-          babelRuntimeHelpers,
           rollupPlugins,
           rollupNodeExportConditions,
         }) => {
@@ -237,19 +233,12 @@ export function esnext() {
 
           // Add the Babel plugin to process .esnext files like source code
           rollupPlugins?.(async (plugins) => {
-            const helpers =
-              (await babelRuntimeHelpers?.run('runtime')) ?? 'runtime';
-
             const [{babel}, targets, babelPresetsOption, babelPluginsOption] =
               await Promise.all([
                 import('@rollup/plugin-babel'),
                 babelTargets!.run([]),
                 babelPresets!.run([]),
-                babelPlugins!.run(
-                  helpers === 'runtime'
-                    ? [require.resolve('@babel/plugin-transform-runtime')]
-                    : [],
-                ),
+                babelPlugins!.run([]),
               ]);
 
             return [
@@ -260,7 +249,7 @@ export function esnext() {
                 extensions: [EXTENSION],
                 // Forces this to run on node_modules
                 exclude: [],
-                babelHelpers: helpers,
+                babelHelpers: 'bundled',
                 configFile: false,
                 babelrc: false,
                 skipPreflightCheck: true,

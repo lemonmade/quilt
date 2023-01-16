@@ -47,14 +47,10 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@babel/core": ">=7.0.0 <8.0.0",
-    "@babel/runtime": ">=7.0.0 <8.0.0"
+    "@babel/core": ">=7.0.0 <8.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
-      "optional": true
-    },
-    "@babel/runtime": {
       "optional": true
     }
   },

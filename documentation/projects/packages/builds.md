@@ -107,23 +107,6 @@ When creating the ESModule and CommonJS builds, Quilt will “transpile” your
 
   Quilt will look for this field in your package’s `package.json`. If it is not found, Quilt will look for this field in your workspace’s `package.json`. If Quilt does not find a match in either location, the current version of Node.js will be used as a fallback.
 
-When Quilt compiles your code, it may add imports for [`@babel/runtime`](https://babeljs.io/docs/en/babel-runtime). These are added when you use JavaScript runtime features that are not supported by the targets for your package. To signal this possible dependency to your package consumers, you should add `@babel/runtime` as an optional `"peerDependency"`:
-
-```json
-{
-  "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    }
-  }
-}
-```
-
-An optional peer dependency is recommended because the [ESNext build](#esnext-build) does not generally require these helpers, so the package can function correctly even if `@babel/runtime` is not installed.
-
 ## CommonJS build
 
 To support some legacy Node.js tools that don’t fully support ESModules (including [Jest](https://jestjs.io/docs/ecmascript-modules)), Quilt also defaults to producing a CommonJS build. This build applies the same [runtime target transpilation](#runtime-targets) as the ESModules build, but uses `require()` and `module.exports` instead of native JavaScript modules.

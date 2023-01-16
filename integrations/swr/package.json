@@ -34,15 +34,11 @@
     "swr": "^1.3.0"
   },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/quilt": "^0.5.124",
     "react": ">^17.0.0 || ^18.0.0",
     "swr": "^1.3.0"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "@quilted/quilt": {
       "optional": true
     },

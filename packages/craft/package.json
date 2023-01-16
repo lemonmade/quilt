@@ -291,9 +291,6 @@
     "typescript": "^4.9.0"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "@quilted/quilt": {
       "optional": true
     },

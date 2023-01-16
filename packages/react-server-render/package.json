@@ -38,14 +38,10 @@
   },
   "sideEffects": false,
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "react": {
       "optional": true
     },

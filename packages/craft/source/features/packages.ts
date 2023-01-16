@@ -93,7 +93,7 @@ export function packageBase({entries, executable = {}}: Options = {}) {
       }));
 
       configure(({babelRuntimeHelpers}) => {
-        babelRuntimeHelpers?.(() => 'runtime');
+        babelRuntimeHelpers?.(() => 'bundled');
       });
     },
     develop({project, configure, hooks}) {
@@ -110,7 +110,7 @@ export function packageBase({entries, executable = {}}: Options = {}) {
       }));
 
       configure(({babelRuntimeHelpers}) => {
-        babelRuntimeHelpers?.(() => 'runtime');
+        babelRuntimeHelpers?.(() => 'bundled');
       });
     },
   });

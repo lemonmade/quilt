@@ -55,14 +55,10 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/quilt": "^0.5.119",
     "@quilted/craft": "^0.1.166"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "@quilted/craft": {
       "optional": true
     },

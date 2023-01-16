@@ -46,7 +46,6 @@
   },
   "peerDependencies": {
     "@apollo/client": "^3.0.0",
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@quilted/quilt": "^0.5.124",
     "graphql": "^16.0.0",
     "react": "^17.0.0 || ^18.0.0"
@@ -54,9 +53,6 @@
   "peerDependenciesMeta": {
     "@apollo/client": {
       "optional": false
-    },
-    "@babel/runtime": {
-      "optional": true
     },
     "@quilted/quilt": {
       "optional": true

@@ -47,14 +47,6 @@
     "preact": "^10.11.0",
     "preact-render-to-string": "^5.2.0"
   },
-  "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    }
-  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"

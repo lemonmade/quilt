@@ -46,13 +46,9 @@
     "js-cookie": "^3.0.0"
   },
   "peerDependencies": {
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "react": "^18.0.0"
   },
   "peerDependenciesMeta": {
-    "@babel/runtime": {
-      "optional": true
-    },
     "react": {
       "optional": true
     }

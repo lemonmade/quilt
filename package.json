@@ -26,7 +26,6 @@
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.0",
-    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@changesets/changelog-github": "^0.4.7",
     "@changesets/cli": "^2.25.0",
     "@quilted/browserslist-config": "^0.1.0",
