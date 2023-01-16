@@ -104,6 +104,7 @@ export function appBuild({
             rollupOutputs,
             rollupPlugins,
             rollupNodeBundle,
+            rollupNodeResolveDedupe,
             quiltAsyncManifestPath,
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
@@ -136,6 +137,17 @@ export function appBuild({
               }),
             ];
           });
+
+          rollupNodeResolveDedupe?.((dedupe) => [
+            ...dedupe,
+            // These packages kind of need to be singletons
+            'preact',
+            '@preact/signals-core',
+            // We don’t want to duplicate framework code
+            '@quilted/quilt',
+            // Don’t want duplicate copies of polyfills
+            '@quilted/polyfills',
+          ]);
 
           if (!browserTargets) return;
 

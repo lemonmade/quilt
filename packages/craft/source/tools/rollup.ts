@@ -76,8 +76,18 @@ export interface RollupNodeHooks {
   rollupNodeExtensions: WaterfallHook<string[]>;
 
   /**
+   * Extensions to use for bare module specifiers in the node
+   * resolution algorithm in rollup.
+   *
+   * @see https://www.npmjs.com/package/@rollup/plugin-node-resolve#dedupe
+   */
+  rollupNodeResolveDedupe: WaterfallHook<string[]>;
+
+  /**
    * The options that will be passed to the rollup node-resolve plugin,
    * if it is included.
+   *
+   * @see https://www.npmjs.com/package/@rollup/plugin-node-resolve
    */
   rollupNodeResolveOptions: WaterfallHook<RollupNodeResolveOptions>;
 
@@ -158,6 +168,7 @@ export function rollupNode(options?: RollupNodeOptions) {
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
+        rollupNodeResolveDedupe: waterfall(),
         rollupNodeBundle: waterfall(),
         rollupCommonJSOptions: waterfall(),
       }));
@@ -171,6 +182,7 @@ export function rollupNode(options?: RollupNodeOptions) {
         rollupNodeExtensions: waterfall(),
         rollupNodeExportConditions: waterfall(),
         rollupNodeResolveOptions: waterfall(),
+        rollupNodeResolveDedupe: waterfall(),
         rollupNodeBundle: waterfall(),
         rollupCommonJSOptions: waterfall(),
       }));
@@ -216,6 +228,7 @@ export async function getRollupNodePlugins(
     rollupNodeBundle,
     rollupNodeExtensions,
     rollupNodeExportConditions,
+    rollupNodeResolveDedupe,
     rollupNodeResolveOptions,
     rollupCommonJSOptions,
   }:
@@ -257,12 +270,16 @@ export async function getRollupNodePlugins(
     rollupNodeExportConditions!.run(defaultExportConditions),
   ]);
 
-  const finalExtensions = await rollupNodeExtensions!.run(baseExtensions);
+  const [finalExtensions, nodeResolveDedupe] = await Promise.all([
+    rollupNodeExtensions!.run(baseExtensions),
+    rollupNodeResolveDedupe!.run([]),
+  ]);
 
   const [resolveOptions, commonjsOptions] = await Promise.all([
     rollupNodeResolveOptions!.run({
       exportConditions,
       preferBuiltins: true,
+      dedupe: nodeResolveDedupe,
       extensions: finalExtensions,
     }),
     rollupCommonJSOptions!.run({}),

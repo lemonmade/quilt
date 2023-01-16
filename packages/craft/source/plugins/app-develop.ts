@@ -90,6 +90,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             viteServerOptions,
             viteOptimizeDepsExclude,
             rollupPlugins,
+            rollupNodeResolveDedupe,
             postcssPresetEnvOptions,
             quiltAppEntry,
             quiltAppServerHost,
@@ -233,6 +234,17 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               ...plugins,
             ];
           });
+
+          rollupNodeResolveDedupe?.((dedupe) => [
+            ...dedupe,
+            // These packages kind of need to be singletons
+            'preact',
+            '@preact/signals-core',
+            // We don’t want to duplicate framework code
+            '@quilted/quilt',
+            // Don’t want duplicate copies of polyfills
+            '@quilted/polyfills',
+          ]);
 
           quiltRequestRouterRuntimeContent?.(async () => {
             return stripIndent`

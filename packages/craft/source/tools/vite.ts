@@ -167,15 +167,12 @@ export async function createViteConfig(
     postcssPlugins,
     postcssProcessOptions,
     postcssCSSModulesOptions,
+    rollupNodeResolveDedupe,
   }: ResolvedDevelopProjectConfigurationHooks,
 ) {
-  const baseExtensions = await extensions.run([
-    '.mjs',
-    '.js',
-    '.ts',
-    '.jsx',
-    '.tsx',
-    '.json',
+  const [baseExtensions, rollupDedupe] = await Promise.all([
+    extensions.run(['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']),
+    rollupNodeResolveDedupe!.run([]),
   ]);
 
   const [
@@ -243,6 +240,7 @@ export async function createViteConfig(
       alias: aliases,
       extensions: resolveExtensions,
       conditions: exportConditions,
+      dedupe: rollupDedupe,
     },
     optimizeDeps: {
       include: optimizeDepsInclude,
