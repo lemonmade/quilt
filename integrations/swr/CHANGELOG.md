@@ -1,5 +1,14 @@
 # @quilted/swr
 
+## 0.1.10
+
+### Patch Changes
+
+- [`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove need for @babel/runtime peer dependency
+
+- Updated dependencies [[`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474), [`50215b7c`](https://github.com/lemonmade/quilt/commit/50215b7c005c21440bca04935fda87d98d9d9d01)]:
+  - @quilted/quilt@0.5.125
+
 ## 0.1.9
 
 ### Patch Changes

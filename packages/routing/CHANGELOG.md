@@ -1,5 +1,11 @@
 # @quilted/routing
 
+## 0.2.24
+
+### Patch Changes
+
+- [`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove need for @babel/runtime peer dependency
+
 ## 0.2.23
 
 ### Patch Changes

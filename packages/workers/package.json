@@ -1,7 +1,7 @@
 {
   "name": "@quilted/workers",
   "type": "module",
-  "version": "0.2.32",
+  "version": "0.2.33",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",

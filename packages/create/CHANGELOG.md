@@ -1,5 +1,17 @@
 # @quilted/create
 
+## 0.1.42
+
+### Patch Changes
+
+- [`ff1e1a1d`](https://github.com/lemonmade/quilt/commit/ff1e1a1dad7bc7e5b8c9cf6b2d481cd164ea76b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Default single-file app to not use monorepo
+
+- [`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove need for @babel/runtime peer dependency
+
+- [`6307c6f6`](https://github.com/lemonmade/quilt/commit/6307c6f6d6dcc5cadcea21f436cb1bb4ce4dfcff) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up template ignore files
+
+- [`a19a0635`](https://github.com/lemonmade/quilt/commit/a19a0635227fcb07147e38edd57773452ef0d07b) Thanks [@lemonmade](https://github.com/lemonmade)! - Delete workspaces package.json key when creating a single app
+
 ## 0.1.41
 
 ### Patch Changes
