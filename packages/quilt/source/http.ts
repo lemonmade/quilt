@@ -6,6 +6,9 @@ export {
   StatusCode,
   useCacheControl,
   useContentSecurityPolicy,
+  useCrossOriginEmbedderPolicy,
+  useCrossOriginOpenerPolicy,
+  useCrossOriginResourcePolicy,
   usePermissionsPolicy,
   useRequestHeader,
   useResponseCookie,
@@ -24,4 +27,7 @@ export {
   ContentSecurityPolicyDirective,
   ContentSecurityPolicySandboxAllow,
   ContentSecurityPolicySpecialSource,
+  CrossOriginEmbedderPolicy,
+  CrossOriginOpenerPolicy,
+  CrossOriginResourcePolicy,
 } from '@quilted/react-http';

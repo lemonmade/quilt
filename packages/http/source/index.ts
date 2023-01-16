@@ -19,3 +19,8 @@ export {
   PermissionsPolicyDirective,
   PermissionsPolicySpecialSource,
 } from './permissions-policy';
+export type {
+  CrossOriginEmbedderPolicyHeaderValue,
+  CrossOriginOpenerPolicyHeaderValue,
+  CrossOriginResourcePolicyHeaderValue,
+} from './cross-origin-headers';

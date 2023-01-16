@@ -147,18 +147,27 @@ export function Http() {
 This library also provides dedicated components and hooks for a few common HTTP headers:
 
 - [`Cache-Control`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) with `useCacheControl` or `<CacheControl />`
-- [`Strict-Transport-Security`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) with `useStrictTransportSecurity` or `<StrictTransportSecurity />`
 - [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) with `useContentSecurityPolicy` or `<ContentSecurityPolicy />`
+- [`Cross-Origin-Embedder-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy) with `useCrossOriginEmbedderPolicy` or `<CrossOriginEmbedderPolicy />`
+- [`Cross-Origin-Opener-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy) with `useCrossOriginOpenerPolicy` or `<CrossOriginOpenerPolicy />`
+- [`Cross-Origin-Resource-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Resource-Policy) with `useCrossOriginResourcePolicy` or `<CrossOriginResourcePolicy />`
 - [`Permissions-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy) with `usePermissionsPolicy` or `<PermissionsPolicy />`
+- [`Strict-Transport-Security`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) with `useStrictTransportSecurity` or `<StrictTransportSecurity />`
 
 ```tsx
 import {
   useCacheControl,
   useContentSecurityPolicy,
+  useCrossOriginEmbedderPolicy,
+  useCrossOriginOpenerPolicy,
+  useCrossOriginResourcePolicy,
   usePermissionsPolicy,
   useStrictTransportSecurity,
   CacheControl,
   ContentSecurityPolicy,
+  CrossOriginEmbedderPolicy,
+  CrossOriginOpenerPolicy,
+  CrossOriginResourcePolicy,
   PermissionsPolicy,
   StrictTransportSecurity,
 } from '@quilted/react-http';
@@ -166,26 +175,32 @@ import {
 
 export function Http() {
   useCacheControl({maxAge: 60, revalidate: true});
-  useStrictTransportSecurity();
   useContentSecurityPolicy({
     defaultSources: ["'self'"],
     frameAncestors: false,
     upgradeInsecureRequests: true,
   });
+  useCrossOriginEmbedderPolicy('require-corp');
+  useCrossOriginOpenerPolicy('same-origin');
+  useCrossOriginResourcePolicy('same-origin');
   usePermissionsPolicy({interestCohort: false, geolocation: false});
+  useStrictTransportSecurity();
 
   // or...
 
   return (
     <>
       <CacheControl maxAge={60} revalidate />
-      <StrictTransportSecurity />
       <ContentSecurityPolicy
         defaultSources={["'self'"]}
         frameAncestors={false}
         upgradeInsecureRequests
       />
+      <CrossOriginEmbedderPolicy value="require-corp" />
+      <CrossOriginOpenerPolicy value="same-origin" />
+      <CrossOriginResourcePolicy value="same-origin" />
       <PermissionsPolicy interestCohort={false} geolocation={false} />
+      <StrictTransportSecurity />
     </>
   );
 }
