@@ -179,6 +179,8 @@ export async function createProject() {
         workspacePackageJson,
       );
 
+      delete mergedPackageJson.workspaces;
+
       adjustPackageJson(mergedPackageJson, {
         name: toValidPackageName(name!),
         description,

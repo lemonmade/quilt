@@ -153,6 +153,7 @@ export async function createApp() {
       );
 
       combinedPackageJson.name = toValidPackageName(name!);
+      delete combinedPackageJson.workspaces;
 
       let quiltProject = await appTemplate.read('quilt.project.ts');
       quiltProject = quiltProject
