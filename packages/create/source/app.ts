@@ -40,6 +40,9 @@ export async function createApp() {
 
        - ${color.bold('basic')}, a web app with a minimal file structure
        - ${color.bold('single-file')}, an entire web app in a single file
+       - ${color.bold(
+         'empty',
+       )}, a basic React app without any extra runtime dependencies
     `;
 
     printHelp({
@@ -355,8 +358,8 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-type Template = 'basic' | 'single-file';
-const VALID_TEMPLATES = new Set<Template>(['basic', 'single-file']);
+type Template = 'basic' | 'single-file' | 'empty';
+const VALID_TEMPLATES = new Set<Template>(['basic', 'single-file', 'empty']);
 
 async function getTemplate(argv: Arguments) {
   if (argv['--template'] && VALID_TEMPLATES.has(argv['--template'] as any)) {
@@ -381,6 +384,12 @@ async function getTemplate(argv: Arguments) {
           'Itty-bitty',
         )}, an entire web app in a single file`,
         value: 'single-file',
+      },
+      {
+        title: `${color.bold(
+          'Empty',
+        )},  a basic React app without any extra runtime dependencies`,
+        value: 'empty',
       },
       // TODO: GraphQL API
     ],

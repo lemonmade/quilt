@@ -45,7 +45,9 @@ The `@quilted/create` command you ran in the previous section can output a few d
 
 - **Itty-bitty**, a whole Quilt application in a single file. This is the simplest way to get started with Quilt, as you can learn all the basic [features](./features) Quilt makes available to your app by reading just one file.
 
-Regardless of which template you choose, your application will get all of Quilt’s powerful tools for building performant and flexible applications: [server-side rendering](./features/server-rendering.md), [multi-browser asset builds](./projects/apps/browser.md), managing [HTML](./features/html.md) and [HTTP](./features/http.md), and [much more](./features).
+- **Empty**, a React app that is ready to develop and deploy, but doesn’t come with any of Quilt’s features. You can use this template to give you a blank slate to start from when you are using alternative libraries for things like routing, data loading, and state management.
+
+Unless you pick the “empty” template, your application will get all of Quilt’s powerful tools for building performant and flexible applications: [server-side rendering](./features/server-rendering.md), [multi-browser asset builds](./projects/apps/browser.md), managing [HTML](./features/html.md) and [HTTP](./features/http.md), and [much more](./features).
 
 ## Creating a package
 
