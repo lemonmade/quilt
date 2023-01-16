@@ -121,7 +121,9 @@ export async function createProject() {
       if (file === 'quilt.workspace.ts') return createAsMonorepo;
 
       // We need to make some adjustments to the root package.json
-      return file !== 'package.json';
+      if (file === 'package.json') return false;
+
+      return true;
     });
 
     // If we are creating a monorepo, we need to add the root package.json and

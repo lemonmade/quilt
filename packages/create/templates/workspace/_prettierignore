@@ -1,8 +1,9 @@
 # Dependencies
 node_modules/
 pnpm-lock.yaml
+package-lock.json
 
 # Quilt build outputs
 .quilt/
 build/
-packages/*/bin/
+bin/

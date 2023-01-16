@@ -4,11 +4,10 @@ node_modules/
 # Quilt build outputs
 .quilt/
 build/
-packages/*/bin
+bin/
 
 # Special operating system files
 .DS_STORE
 
 # Temporary files
 *.log
-
