@@ -1,5 +1,21 @@
 # @quilted/craft
 
+## 0.1.176
+
+### Patch Changes
+
+- [`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove need for @babel/runtime peer dependency
+
+- [`dce549a1`](https://github.com/lemonmade/quilt/commit/dce549a19f296e3b20b70cff8da46fca517dda79) Thanks [@lemonmade](https://github.com/lemonmade)! - Dedupe key dependencies
+
+- Updated dependencies [[`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474), [`50215b7c`](https://github.com/lemonmade/quilt/commit/50215b7c005c21440bca04935fda87d98d9d9d01)]:
+  - @quilted/async@0.3.30
+  - @quilted/graphql@0.4.51
+  - @quilted/polyfills@0.2.32
+  - @quilted/quilt@0.5.125
+  - @quilted/sewing-kit@0.2.37
+  - @quilted/workers@0.2.33
+
 ## 0.1.175
 
 ### Patch Changes

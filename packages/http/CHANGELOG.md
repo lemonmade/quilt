@@ -1,5 +1,13 @@
 # @quilted/http
 
+## 0.2.29
+
+### Patch Changes
+
+- [`8f1d275b`](https://github.com/lemonmade/quilt/commit/8f1d275b6de0abbc6f61bcd5401555f6480eb474) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove need for @babel/runtime peer dependency
+
+- [`50215b7c`](https://github.com/lemonmade/quilt/commit/50215b7c005c21440bca04935fda87d98d9d9d01) Thanks [@lemonmade](https://github.com/lemonmade)! - Add additional security headers
+
 ## 0.2.28
 
 ### Patch Changes
