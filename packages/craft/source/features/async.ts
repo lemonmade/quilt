@@ -39,9 +39,9 @@ declare module '@quilted/sewing-kit' {
 }
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
-  '@quilted/async': ['createAsyncLoader'],
-  '@quilted/quilt': ['createAsyncLoader', 'createAsyncComponent'],
-  '@quilted/react-async': ['createAsyncLoader', 'createAsyncComponent'],
+  '@quilted/async': ['createAsyncModule'],
+  '@quilted/quilt': ['createAsyncModule', 'createAsyncComponent'],
+  '@quilted/react-async': ['createAsyncModule', 'createAsyncComponent'],
 };
 
 const require = createRequire(import.meta.url);

@@ -1,4 +1,4 @@
-import type {AsyncLoader} from '@quilted/async';
+import type {AsyncModule} from '@quilted/async';
 import type {ComponentType, FunctionComponent} from 'react';
 
 export type RenderTiming = 'server' | 'client';
@@ -36,7 +36,7 @@ export interface AsyncComponentType<
 > extends Preloadable<PreloadOptions>,
     FunctionComponent<Props> {
   load(): Promise<T>;
-  readonly loader: AsyncLoader<T>;
+  readonly module: AsyncModule<T>;
   readonly Preload: ComponentType<PreloadOptions>;
 }
 

@@ -1,5 +1,5 @@
-export {createAsyncLoader} from '@quilted/async';
-export type {AsyncLoader, AsyncLoaderOptions} from '@quilted/async';
+export {createAsyncModule} from '@quilted/async';
+export type {AsyncModule, AsyncModuleOptions} from '@quilted/async';
 
 export type {
   NoOptions,
@@ -10,4 +10,4 @@ export type {
   Preloadable,
 } from './types';
 export {createAsyncComponent} from './component';
-export {useAsync, useAsyncAsset, usePreload} from './hooks';
+export {useAsyncModule, useAsyncAssetsForModule, usePreload} from './hooks';

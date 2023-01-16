@@ -2,31 +2,34 @@ import type {AsyncAssetsGlobal} from './global';
 
 declare const Quilt: {readonly AsyncAssets: AsyncAssetsGlobal} | undefined;
 
-export interface AsyncLoader<T> {
+export interface AsyncModule<Module = Record<string, unknown>> {
   readonly id?: string;
-  readonly loaded?: T;
-  load(): Promise<T>;
-  subscribe(listener: (loaded: T) => void): () => void;
+  readonly loaded?: Module;
+  load(): Promise<Module>;
+  subscribe(
+    listener: (loaded: Module) => void,
+    options?: {signal?: AbortSignal},
+  ): void;
 }
 
-export interface AsyncLoaderLoad<T> {
-  (): Promise<{default: T}>;
+export interface AsyncModuleLoad<Module = Record<string, unknown>> {
+  (): Promise<Module>;
 }
 
-export interface AsyncLoaderOptions {
+export interface AsyncModuleOptions {
   id?(): string;
 }
 
-export function createAsyncLoader<T>(
-  load: AsyncLoaderLoad<T>,
-  {id}: AsyncLoaderOptions = {},
-): AsyncLoader<T> {
-  let resolved: T | undefined;
-  let resolvePromise: Promise<T> | undefined;
+export function createAsyncModule<Module = Record<string, unknown>>(
+  load: AsyncModuleLoad<Module>,
+  {id}: AsyncModuleOptions = {},
+): AsyncModule<Module> {
+  let resolved: Module | undefined;
+  let resolvePromise: Promise<Module> | undefined;
   let hasTriedSyncResolve = false;
 
   const resolvedId = id?.();
-  const listeners = new Set<(value: T) => void>();
+  const listeners = new Set<(value: Module) => void>();
 
   return {
     get id() {
@@ -37,7 +40,7 @@ export function createAsyncLoader<T>(
         hasTriedSyncResolve = true;
         resolved =
           typeof Quilt === 'object'
-            ? normalize(Quilt.AsyncAssets?.get<{default: T}>(resolvedId))
+            ? Quilt.AsyncAssets?.get<Module>(resolvedId)
             : undefined;
       }
 
@@ -48,17 +51,21 @@ export function createAsyncLoader<T>(
       const resolved = await resolvePromise;
       return resolved;
     },
-    subscribe(listener: (value: T) => void) {
+    subscribe(listener, {signal} = {}) {
       listeners.add(listener);
 
-      return () => {
-        listeners.delete(listener);
-      };
+      signal?.addEventListener(
+        'abort',
+        () => {
+          listeners.delete(listener);
+        },
+        {once: true},
+      );
     },
   };
 
-  async function resolve(): Promise<T> {
-    resolved = normalize(await load());
+  async function resolve(): Promise<Module> {
+    resolved = await load();
 
     for (const listener of listeners) {
       listener(resolved!);
@@ -66,14 +73,4 @@ export function createAsyncLoader<T>(
 
     return resolved!;
   }
-}
-
-function normalize(module: any) {
-  if (module == null) {
-    return undefined;
-  }
-
-  const value =
-    typeof module === 'object' && 'default' in module ? module.default : module;
-  return value == null ? undefined : value;
 }

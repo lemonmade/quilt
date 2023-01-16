@@ -1,5 +1,5 @@
-export {createAsyncLoader} from '@quilted/async';
-export type {AsyncLoader} from '@quilted/async';
+export {createAsyncModule} from '@quilted/async';
+export type {AsyncModule} from '@quilted/async';
 export {
   on,
   once,
@@ -19,8 +19,8 @@ export type {
   EventTargetOn,
 } from '@quilted/events';
 export {
-  useAsync,
-  useAsyncAsset,
+  useAsyncModule,
+  useAsyncAssetsForModule,
   usePreload,
   createAsyncComponent,
 } from '@quilted/react-async';

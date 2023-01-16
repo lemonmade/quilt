@@ -1,5 +1,5 @@
 import {useCallback, useContext, useMemo, useSyncExternalStore} from 'react';
-import type {AsyncLoader} from '@quilted/async';
+import type {AsyncModule} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
 
 import {AsyncAssetContext} from '../context';
@@ -11,40 +11,42 @@ interface Options {
   scripts?: AssetLoadTiming;
 }
 
-export function useAsync<T>(
-  asyncLoader: AsyncLoader<T>,
+export function useAsyncModule<Module = Record<string, unknown>>(
+  asyncModule: AsyncModule<Module>,
   {scripts, styles, immediate = true}: Options = {},
 ) {
   const async = useContext(AsyncAssetContext);
 
-  const {id} = asyncLoader;
-  const load = useCallback(() => asyncLoader.load(), [asyncLoader]);
+  const {id} = asyncModule;
+  const load = useCallback(() => asyncModule.load(), [asyncModule]);
 
   const value = useSyncExternalStore(
-    ...useMemo<Parameters<typeof useSyncExternalStore<T | undefined>>>(
+    ...useMemo<Parameters<typeof useSyncExternalStore<Module | undefined>>>(
       () => [
         (callback) => {
-          return asyncLoader.subscribe(callback);
+          const abort = new AbortController();
+          asyncModule.subscribe(callback, {signal: abort.signal});
+          return () => abort.abort();
         },
         () => {
           return typeof window !== 'undefined' || immediate
-            ? asyncLoader.loaded
+            ? asyncModule.loaded
             : undefined;
         },
       ],
-      [immediate, asyncLoader],
+      [immediate, asyncModule],
     ),
   );
 
   useServerAction(() => {
-    if (!immediate || asyncLoader.loaded != null) return;
-    return asyncLoader.load();
+    if (!immediate || asyncModule.loaded != null) return;
+    return asyncModule.load();
   }, async?.serverAction);
 
-  useAsyncAsset(id, {scripts, styles});
+  useAsyncAssetsForModule(id, {scripts, styles});
 
   return value instanceof Error
-    ? {id, resolved: null, error: value, loading: false, load}
+    ? {id, resolved: undefined, error: value, loading: false, load}
     : {
         id,
         resolved: value,
@@ -54,7 +56,7 @@ export function useAsync<T>(
       };
 }
 
-export function useAsyncAsset(
+export function useAsyncAssetsForModule(
   id?: string,
   {scripts, styles}: {styles?: AssetLoadTiming; scripts?: AssetLoadTiming} = {},
 ) {

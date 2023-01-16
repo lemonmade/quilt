@@ -4,7 +4,6 @@ import type {
   GraphQLData,
   GraphQLVariables,
 } from '@quilted/graphql';
-import type {Preloadable, AsyncLoader} from '@quilted/react-async';
 import type {IfUnionSize} from '@quilted/useful-types';
 
 export type {
@@ -47,19 +46,6 @@ export type QueryOptions<_Data, Variables> = {
 } & VariableOptions<Variables>;
 
 export type MutationOptions<_Data, Variables> = VariableOptions<Variables>;
-
-export interface AsyncGraphQLOperation<Data, Variables> {
-  readonly loader: AsyncLoader<GraphQLOperation<Data, Variables>>;
-}
-
-export type AnyGraphQLOperation<Data, Variables> =
-  | GraphQLOperation<Data, Variables>
-  | AsyncGraphQLOperation<Data, Variables>;
-
-export interface AsyncQuery<Data, Variables>
-  extends AsyncGraphQLOperation<Data, Variables>,
-    GraphQLOperation<Data, Variables>,
-    Preloadable<VariableOptions<Variables>> {}
 
 export interface GraphQLRequest<Data, Variables> {
   operation: GraphQLOperation<Data, Variables>;

@@ -8,7 +8,6 @@
   "exclude": ["quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../graphql"},
-    {"path": "../react-async"},
     {"path": "../react-utilities"},
     {"path": "../useful-types"}
   ]

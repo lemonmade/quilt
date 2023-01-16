@@ -1,12 +1,12 @@
 import {useEffect, useCallback, ReactNode, ComponentType} from 'react';
 import {
-  createAsyncLoader,
-  AsyncLoaderLoad,
-  AsyncLoaderOptions,
+  createAsyncModule,
+  AsyncModuleLoad,
+  AsyncModuleOptions,
 } from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
-import {useAsync} from './hooks';
+import {useAsyncModule} from './hooks';
 import type {
   NoOptions,
   RenderTiming,
@@ -18,7 +18,7 @@ import type {
 export interface Options<
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
-> extends AsyncLoaderOptions {
+> extends AsyncModuleOptions {
   render?: RenderTiming;
   hydrate?: boolean | HydrationTiming;
   preload?: boolean;
@@ -38,7 +38,7 @@ export function createAsyncComponent<
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
 >(
-  load: AsyncLoaderLoad<ComponentType<Props>>,
+  load: AsyncModuleLoad<{default: ComponentType<Props>}>,
   {
     id,
     render = 'server',
@@ -51,8 +51,8 @@ export function createAsyncComponent<
   }: Options<Props, PreloadOptions> = {},
 ): AsyncComponentType<ComponentType<Props>, Props, PreloadOptions> {
   const hydrate = normalizeHydrate(explicitHydrate);
-  const asyncLoader = createAsyncLoader(load, {id});
-  const componentName = displayName ?? displayNameFromId(asyncLoader.id);
+  const asyncModule = createAsyncModule(load, {id});
+  const componentName = displayName ?? displayNameFromId(asyncModule.id);
 
   let scriptTiming: AssetLoadTiming;
   let styleTiming: AssetLoadTiming;
@@ -88,12 +88,7 @@ export function createAsyncComponent<
   }
 
   function Async(props: Props) {
-    const {
-      resolved: Component,
-      load,
-      loading,
-      error,
-    } = useAsync(asyncLoader, {
+    const {resolved, load, loading, error} = useAsyncModule(asyncModule, {
       scripts: scriptTiming,
       styles: styleTiming,
       immediate: render === 'server',
@@ -103,15 +98,17 @@ export function createAsyncComponent<
       return renderError(error);
     }
 
-    let content: ReactNode | null = null;
+    const Component = resolved?.default;
     const rendered = Component ? <Component {...props} /> : null;
+
+    let content: ReactNode = null;
 
     if (loading) {
       content = renderLoading(props);
     } else {
       content =
         hydrate === 'defer' ? (
-          <Hydrator id={asyncLoader.id} render={rendered != null}>
+          <Hydrator id={asyncModule.id} render={rendered != null}>
             {rendered}
           </Hydrator>
         ) : (
@@ -130,7 +127,7 @@ export function createAsyncComponent<
   Async.displayName = `Async(${componentName})`;
 
   function usePreload(props: PreloadOptions) {
-    const {load} = useAsync(asyncLoader, {
+    const {load} = useAsyncModule(asyncModule, {
       styles: 'preload',
       scripts: 'preload',
     });
@@ -160,12 +157,12 @@ export function createAsyncComponent<
   > = Async as any;
 
   Reflect.defineProperty(FinalComponent, 'load', {
-    value: () => asyncLoader.load(),
+    value: () => asyncModule.load(),
     writable: false,
   });
 
-  Reflect.defineProperty(FinalComponent, 'loader', {
-    value: asyncLoader,
+  Reflect.defineProperty(FinalComponent, 'module', {
+    value: asyncModule,
     writable: false,
   });
 
