@@ -1,1 +1,230 @@
-# Asynchronous modules
+# Asynchronous code
+
+As your application gets more complicated, you will add more code that is not seen by every user, on every visit. As soon as you add a second [route](./routing.md) to your application, it’s very likely that at least some users would be better off if the application only loaded code for the pages they actually visit. Even a single, complicated page may have many sections that are not always rendered.
+
+Many frameworks, like [Next.js](https://nextjs.org/docs/routing/introduction) and [Remix](https://remix.run/docs/en/v1/guides/routing), offer automatic route-based bundle splitting. This is a great feature, because route boundaries are the most reliable place to split up your application into smaller “chunks”, with each part being loaded only as needed. However, Quilt does not use [file-system based routing](./routing.md), and this approach does not help in cases where you have code on a single route that can be split up.
+
+Quilt’s solution to this problem is to add a bit of sugar on top of JavaScript’s native [dynamic import (`import(...)`)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import). As the developer, you are fully in control of what parts of your application are split up, and Quilt helps you load and preload the relevant client-side assets, whether you render on the server, client, or both.
+
+## Asynchronous components
+
+Quilt is a [component-first framework](TODO); components are used to declare all the UI in your application. To make sure you can use components for everything this without your app’s bundles growing indefinitely, Quilt provides a first-class way to make a component be asynchronously loaded — that is, components that only load the JavaScript and CSS assets they need when they are rendered to the page.
+
+To create an asynchronous component, use the `createAsyncComponent()` helper provided by this library. This function takes a single argument: a function that asynchronously imports another module containing a React component as the default export:
+
+```tsx
+// AsyncComponent.tsx
+import {createAsyncComponent} from '@quilted/quilt';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponentImplementation'),
+);
+
+// AsyncComponentImplementation.tsx
+export default function AsyncComponent() {
+  return <div>My async component!</div>;
+}
+```
+
+This process is very similar to how React’s built-in [`lazy()` utility](https://reactjs.org/docs/code-splitting.html#reactlazy) works. Components created with Quilt’s `createAsyncComponent()` have a number of differences from React’s `lazy` components, though:
+
+- When rendered during server rendering, Quilt loads the component and renders it as if it were synchronous, and records all the JavaScript and CSS assets to include in the initial HTML response
+- When loaded on the client, Quilt can synchronously render an asynchronous component, if it was rendered during server rendering or has been rendered on the client before
+- Quilt’s asynchronous components have additional features, like preloading and fine-grained asset controls, which are described below
+
+Unlike `lazy()`, `createAsyncComponent()` does not use Suspense. Instead, you can use the `renderLoading()` and `renderError()` options when creating the component to control how it should render in cases where the component’s assets have not loaded successfully:
+
+```tsx
+import {createAsyncComponent} from '@quilted/quilt';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponentImplementation'),
+  {
+    renderLoading() {
+      return <SkeletonAsyncComponent />;
+    },
+    renderError(error) {
+      return <div>Something went wrong: {error.message}</div>;
+    },
+  },
+);
+```
+
+### Preloading component assets
+
+Sometimes, you don’t need to render a component yet, but you might need to in the future. This is common on “list” pages for a resource, where you can reasonably expect that a user will navigate to the “detail” page for an individual resource. Quilt provides a `usePreload()` hook that can use to mark assets for an asynchronous component as needing preloading:
+
+```tsx
+import {createAsyncComponent, usePreload} from '@quilted/quilt';
+
+const Detail = createAsyncComponent(() => import('./Detail'));
+
+export function List() {
+  const preload = usePreload(Detail);
+
+  useEffect(() => {
+    preload();
+  }, [preload]);
+
+  return <ul>{/* List that might later display a `Detail` component... */}</ul>;
+}
+```
+
+Async components also have a convenience `Preload` component available to use, which lets you conditionally preload the component using JSX, without manually calling the `preload` function yourself:
+
+```tsx
+import {createAsyncComponent, usePreload} from '@quilted/quilt';
+
+const Detail = createAsyncComponent(() => import('./Detail'));
+
+export function List() {
+  return (
+    <>
+      <ul>{/* List that might later display a `Detail` component... */}</ul>
+      <Detail.Preload />
+    </>
+  );
+}
+```
+
+To preload a resource, Quilt will include a [`<link rel="preload">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/preload) tag (or [`<link rel="modulepreload">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/modulepreload), for module scripts) for the entire dependency graph of that asynchronous component. This same mechanism works both for server rendering and client-side rendering.
+
+#### Preloading routes
+
+As noted earlier, splitting your app based on the routes in your application is a great place to start, since users only see content for one route at a time. A very common case for asynchronous components is to use them as the [content for a route](./routing.md):
+
+```tsx
+import {createAsyncComponent, useRoutes} from '@quilted/quilt';
+
+const Home = createAsyncComponent(() => import('./Home'));
+const Account = createAsyncComponent(() => import('./Account'));
+const NotFound = createAsyncComponent(() => import('./NotFound'));
+
+export function Routes() {
+  return useRoutes(
+    [
+      {path: '/', render: () => <Home />},
+      {path: '/account', render: () => <Account />},
+    ],
+    {notFound: () => <NotFound />},
+  );
+}
+```
+
+If we use asynchronous components in this way, we will indeed prevent the user from loading code for routes they do not visit. However, this might make their experience quite a bit worse in some cases, because the JavaScript and CSS the component needs is only fetched when the component is rendered — that is, when the user navigates to the route. While the assets are loading, the user is stuck waiting. If your component needs to fetch additional data to render anything useful, the user will be waiting even longer.
+
+In addition to manually preloading assets as shown above, each route you define can have an additional `renderPreload` key. This function will be run, and the resulting React element rendered, whenever a user signals intention to navigate to this route. We can use the `Preload` component discussed above to add route-based preloading to our example:
+
+```tsx
+import {createAsyncComponent, useRoutes} from '@quilted/quilt';
+
+const Home = createAsyncComponent(() => import('./Home'));
+const Account = createAsyncComponent(() => import('./Account'));
+const NotFound = createAsyncComponent(() => import('./NotFound'));
+
+export function Routes() {
+  return useRoutes(
+    [
+      {
+        path: '/',
+        render: () => <Home />,
+        renderPreload: () => <Home.Preload />,
+      },
+      {
+        path: '/account',
+        render: () => <Account />,
+        renderPreload: () => <Account.Preload />,
+      },
+    ],
+    {notFound: () => <NotFound />},
+  );
+}
+```
+
+#### Customizing preloading
+
+By default, preloading an asynchronous component simply loads that component’s assets. However, complex components might want to preload other assets that could be used by the component, or to start fetching data ahead of the component’s assets being ready. You can accomplish this by passing a custom `usePreload` option to `createAsyncComponent()`:
+
+```tsx
+import {createAsyncComponent, usePreload} from '@quilted/quilt';
+
+import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponent'),
+  {
+    usePreload() {
+      // AsyncComponent might use DeeplyNestedAsyncComponent, so preload its assets too
+      usePreload(DeeplyNestedAsyncComponent);
+    },
+  },
+);
+```
+
+This option will be called as a React hook, so it must follow the [rules of hooks](https://reactjs.org/docs/hooks-rules.html). As shown above, a common pattern is to call the `usePreload()` hook on other, preloadable objects, but this is not the only option! You can also do things like add your own [`<link rel="preload">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/preload) tags, or start manually fetching data that you keep in some sort of global JavaScript object.
+
+```tsx
+import {createAsyncComponent} from '@quilted/quilt';
+import {useLink} from '@quilted/quilt/html';
+
+import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponent'),
+  {
+    usePreload() {
+      // Add a preload tag for a JSON file that our component will request
+      useLink({
+        rel: 'preload',
+        href: '/api/data.json',
+        as: 'fetch',
+      });
+    },
+  },
+);
+```
+
+Sometimes, the preloading work you need to do depends on some properties that are passed to the component. In this case, you can define a custom set of “preload options” that must be passed to this component, and use those options to customize your `usePreload()` logic:
+
+```tsx
+import {createAsyncComponent} from '@quilted/quilt';
+import {useLink} from '@quilted/quilt/html';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponentImplementation'),
+  {
+    usePreload({id}: {id: string}) {
+      // Add a preload tag for a JSON file that our component will request,
+      // which is dependent on the `id` prop passed when preloading
+      useLink({
+        rel: 'preload',
+        href: `/api/products/${id}.json`,
+        as: 'fetch',
+      });
+    },
+  },
+);
+```
+
+Now, when preloading the component, you will be forced to pass the `id` option:
+
+```tsx
+import {usePreload} from '@quilted/quilt';
+import {AsyncComponent} from './AsyncComponent';
+
+function UsesAsyncComponent() {
+  usePreload(AsyncComponent, {id: '123'});
+
+  // or
+
+  return <AsyncComponent.Preload id="123" />;
+}
+```
+
+### Controlling render timing
+
+### Controlling hydration timing
+
+## Asynchronous modules
+
+## Asynchronous loading in packages and services
