@@ -1,5 +1,11 @@
 # @quilted/react-async
 
+## 0.3.40
+
+### Patch Changes
+
+- [#486](https://github.com/lemonmade/quilt/pull/486) [`81f44ec5`](https://github.com/lemonmade/quilt/commit/81f44ec5fb7e379009e01beaf3cddc50a3e47953) Thanks [@lemonmade](https://github.com/lemonmade)! - Make async preload a little simpler
+
 ## 0.3.39
 
 ### Patch Changes
