@@ -223,8 +223,174 @@ function UsesAsyncComponent() {
 
 ### Controlling render timing
 
+By default, asynchronous components will render during server-side rendering. You can disable this behavior by passing `render: 'client'` when creating the component with `createAsyncComponent()`:
+
+```tsx
+import {createAsyncComponent} from '@quilted/quilt';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponent'),
+  {render: 'client'},
+);
+```
+
+When a component like this is rendered on the server, it will render whatever you return from the `renderLoading()` option, or `null` if you do not provide that option.
+
+You may want to use this technique for components that rely on libraries that only work on the client, such as the [Web Authentication API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API). If you do restrict your component to client-side rendering, Quilt defaults to enabling the `preload` option for the asynchronous component, which will cause the component’s assets to be preloaded by the browser. You can disable this behavior by setting `preload: false`, but only do this if there is a strong technical reason why the assets can’t be preloaded.
+
 ### Controlling hydration timing
+
+When an asynchronous component is rendered on the server, Quilt will include its assets in the initial HTML payload. Quilt makes sure these assets are available _before_ your main app bundle so that the component can be hydrated synchronously, without waiting for its assets to load. However, Quilt also supports alternative strategies that allow you to delay when the component’s assets are actually loaded by the browser. This technique could be described as “deferred hydration”, and it is useful for components that you want to render on the server, but which are less important to make interactive than other content on the page.
+
+To enable this “deferred hydration” behavior, pass `hydrate: 'deferred'` (or `hydrate: false`) when creating an asynchronous component with `createAsyncComponent()`:
+
+```tsx
+import {createAsyncComponent} from '@quilted/quilt';
+
+export const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponent'),
+  {hydrate: 'defer'},
+);
+```
+
+This component will be rendered during server rendering, but **you** are in charge of when its actual assets are loaded. You can do this by calling the asynchronous component’s `load()` method whenever you feel is the right time to load the component’s assets:
+
+```tsx
+import {useEffect} from 'react';
+import {createAsyncComponent} from '@quilted/quilt';
+
+const AsyncComponent = createAsyncComponent(() => import('./AsyncComponent'), {
+  hydrate: 'defer',
+});
+
+export function Home() {
+  // Load the component’s assets in an effect, so they are deferred until after
+  // the rest of our component has rendered.
+  useEffect(() => {
+    AsyncComponent.load();
+  }, []);
+
+  return <AsyncComponent />;
+}
+```
+
+You can call this `load()` method whenever you like, including in response to events or information read from the browser. A common pattern is to load the component’s assets when the browser has some idle time, which you can do easily using Quilt’s `useIdleCallback()` hook:
+
+```tsx
+import {createAsyncComponent, useIdleCallback} from '@quilted/quilt';
+
+const AsyncComponent = createAsyncComponent(() => import('./AsyncComponent'), {
+  hydrate: 'defer',
+});
+
+export function Home() {
+  useIdleCallback(() => {
+    AsyncComponent.load();
+  });
+
+  return <AsyncComponent />;
+}
+```
+
+Keep in mind that this deferred hydration only applies to components rendered during server rendering. Asynchronous components encountered during client-side rendering (for example, in response to a route change) will be hydrated immediately, regardless of the `hydrate` option.
 
 ## Asynchronous modules
 
+Asynchronous components are actually just a think wrapper around a more general concept of “asynchronous modules”. You can use asynchronous modules to split out non-component parts of your codebase that may not be needed for every page load, such as complex mutation handling or libraries you use in response to user events. Asynchronous modules also have the same server-rendering and preloading capabilities documented above for asynchronous components.
+
+To create an asynchronous module, use the `createAsyncModule()` function to wrap a dynamic import for the module you want to split out of your main bundles:
+
+```tsx
+import {createAsyncModule} from '@quilted/quilt';
+
+const asyncDependency = createAsyncModule(
+  () => import('my-expensive-dependency'),
+);
+```
+
+The asynchronous module comes with a `load()` method that you can call to gain access to the wrapped module. It also has a `loaded` field that provides the module synchronously, if you have already loaded it before.
+
+```tsx
+import {createAsyncModule} from '@quilted/quilt';
+
+const asyncDependency = createAsyncModule(
+  () => import('my-expensive-dependency'),
+);
+
+function Start() {
+  return (
+    <button
+      onClick={async () => {
+        // The type of `load()` is a promise that resoles with the module, so
+        // you should see all the types you declared in that module reflected here.
+        const {dependencyMethod} =
+          asyncDependency.loaded ?? (await asyncDependency.load());
+
+        dependencyMethod();
+      }}
+    >
+      Use your expensive library!
+    </button>
+  );
+}
+```
+
+Using an asynchronous module this way is no different than using `import()` directly, other than the `loaded` field giving cached access to previously-loaded modules. However, the wrapping object offers a few performance-minded features that can’t be achieved with `import()` alone.
+
+If you aren’t using the library just yet, but know you will likely use it when the app has loaded, you can preload its assets using the `useAsyncModulePreload()` hook:
+
+```tsx
+import {createAsyncModule, useAsyncModulePreload} from '@quilted/quilt';
+
+const asyncDependency = createAsyncModule(
+  () => import('my-expensive-dependency'),
+);
+
+function Start() {
+  useAsyncModulePreload(asyncDependency);
+
+  return (
+    <button
+      onClick={async () => {
+        // The type of `load()` is a promise that resoles with the module, so
+        // you should see all the types you declared in that module reflected here.
+        const {dependencyMethod} =
+          asyncDependency.loaded ?? (await asyncDependency.load());
+
+        dependencyMethod();
+      }}
+    >
+      Use your expensive library!
+    </button>
+  );
+}
+```
+
+If you need the asynchronous module to render your component, you can use the `useAsyncModule()` hook to load the module and keep track of its loading state. When called during server-side rendering, this hook will ensure the module’s assets are included in the HTML payload so that they are available synchronously when rendering on the client.
+
+```tsx
+import {createAsyncModule, useAsyncModule} from '@quilted/quilt';
+
+const asyncDependency = createAsyncModule(
+  () => import('my-expensive-dependency'),
+);
+
+function Start() {
+  const {
+    resolved: dependency,
+    loading,
+    error,
+  } = useAsyncModule(asyncDependency);
+
+  if (error) return <p>Something went wrong!</p>;
+  if (loading) return <p>Loading...</p>;
+
+  return <div>{dependency.getContent()}</div>;
+}
+```
+
 ## Asynchronous loading in packages and services
+
+When writing libraries and packages, we recommend that you stick to using JavaScript’s standard dynamic `import()` statements to load code asynchronously. This technique can be just as important in backend applications and packages as it is in the front-end, as it allows you to defer loading code that the user (be they human or machine) may not need.
+
+Quilt’s `build` command automatically splits code outputs for both [packages](../projects/packages/builds.md) and [services](../projects/services/builds.md), so you can use `import()` without worrying too much about the details. If you need to be able to cache asynchronously loaded modules, you can use the [`createAsyncModule()` function documented above](#asynchronous-modules).
