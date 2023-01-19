@@ -388,7 +388,7 @@ async function getTemplate(argv: Arguments) {
       {
         title: `${color.bold(
           'Empty',
-        )},  a basic React app without any extra runtime dependencies`,
+        )}, a basic React app without any extra runtime dependencies`,
         value: 'empty',
       },
       // TODO: GraphQL API
