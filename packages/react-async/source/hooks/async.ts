@@ -1,4 +1,10 @@
-import {useCallback, useContext, useMemo, useSyncExternalStore} from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useSyncExternalStore,
+} from 'react';
 import type {AsyncModule} from '@quilted/async';
 import {useServerAction} from '@quilted/react-server-render';
 
@@ -28,22 +34,17 @@ export function useAsyncModule<Module = Record<string, unknown>>(
           asyncModule.subscribe(callback, {signal: abort.signal});
           return () => abort.abort();
         },
-        () => {
-          return typeof window !== 'undefined' || immediate
-            ? asyncModule.loaded
-            : undefined;
-        },
+        () => (immediate ? asyncModule.loaded : undefined),
       ],
-      [immediate, asyncModule],
+      [asyncModule, immediate],
     ),
   );
 
   useServerAction(() => {
-    if (!immediate || asyncModule.loaded != null) return;
-    return asyncModule.load();
+    if (immediate && asyncModule.loaded == null) return asyncModule.load();
   }, async?.serverAction);
 
-  useAsyncAssetsForModule(id, {scripts, styles});
+  useAsyncModuleAssets(asyncModule, {scripts, styles});
 
   return value instanceof Error
     ? {id, resolved: undefined, error: value, loading: false, load}
@@ -56,8 +57,18 @@ export function useAsyncModule<Module = Record<string, unknown>>(
       };
 }
 
-export function useAsyncAssetsForModule(
-  id?: string,
+export function useAsyncModulePreload<Module = Record<string, unknown>>(
+  asyncModule: AsyncModule<Module>,
+) {
+  useAsyncModuleAssets(asyncModule, {scripts: 'preload', styles: 'preload'});
+
+  useEffect(() => {
+    asyncModule.load();
+  }, [asyncModule]);
+}
+
+export function useAsyncModuleAssets<Module = Record<string, unknown>>(
+  {id}: AsyncModule<Module>,
   {scripts, styles}: {styles?: AssetLoadTiming; scripts?: AssetLoadTiming} = {},
 ) {
   const async = useContext(AsyncAssetContext);

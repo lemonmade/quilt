@@ -27,9 +27,25 @@ interface Options {
 
 export function useIdleCallback(
   callback: () => void,
-  {unsupportedBehavior = 'animationFrame'}: Options = {},
+  optionsOrDependencies?: Options | readonly any[],
+  forSureOptions?: Options,
 ) {
   const handle = useRef<RequestIdleCallbackHandle | null>(null);
+
+  let options: Options;
+  let dependencies: any[];
+
+  if (Array.isArray(optionsOrDependencies)) {
+    options = forSureOptions ?? {};
+    dependencies = optionsOrDependencies;
+  } else {
+    options = (optionsOrDependencies as any) ?? {};
+    dependencies = [];
+  }
+
+  const {unsupportedBehavior = 'animationFrame'} = options;
+
+  dependencies.push(unsupportedBehavior);
 
   useEffect(() => {
     if ('requestIdleCallback' in window) {
@@ -60,5 +76,6 @@ export function useIdleCallback(
         (window as Window).cancelAnimationFrame(currentHandle);
       }
     };
-  }, [callback, unsupportedBehavior]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies);
 }

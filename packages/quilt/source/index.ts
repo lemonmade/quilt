@@ -20,7 +20,7 @@ export type {
 } from '@quilted/events';
 export {
   useAsyncModule,
-  useAsyncAssetsForModule,
+  useAsyncModulePreload,
   usePreload,
   createAsyncComponent,
 } from '@quilted/react-async';
