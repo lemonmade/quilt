@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-idle",
   "type": "module",
-  "version": "0.3.20",
+  "version": "0.3.21",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
