@@ -25,8 +25,8 @@ export type NoOptions = Record<string, never>;
 
 export interface Preloadable<Options extends Record<string, any> = NoOptions> {
   readonly usePreload: Options extends NoOptions
-    ? () => () => undefined | (() => void)
-    : (options: Options) => () => undefined | (() => void);
+    ? () => void
+    : (options: Options) => void;
 }
 
 export interface AsyncComponentType<

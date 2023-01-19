@@ -1,4 +1,4 @@
-import {useEffect, useCallback, ReactNode, ComponentType} from 'react';
+import {useEffect, ReactNode, ComponentType} from 'react';
 import {
   createAsyncModule,
   AsyncModuleLoad,
@@ -6,7 +6,7 @@ import {
 } from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
-import {useAsyncModule} from './hooks';
+import {useAsyncModule, useAsyncModulePreload} from './hooks';
 import type {
   NoOptions,
   RenderTiming,
@@ -31,7 +31,7 @@ export interface Options<
    * component. Because this logic will be used as part of a generated
    * custom hook, it must follow the rules of hooks.
    */
-  usePreload?(props: PreloadOptions): () => undefined | (() => void);
+  usePreload?(props: PreloadOptions): void;
 }
 
 export function createAsyncComponent<
@@ -91,7 +91,7 @@ export function createAsyncComponent<
     const {resolved, load, loading, error} = useAsyncModule(asyncModule, {
       scripts: scriptTiming,
       styles: styleTiming,
-      immediate: render === 'server',
+      immediate: typeof window !== 'undefined' || render === 'server',
     });
 
     if (error) {
@@ -127,24 +127,12 @@ export function createAsyncComponent<
   Async.displayName = `Async(${componentName})`;
 
   function usePreload(props: PreloadOptions) {
-    const {load} = useAsyncModule(asyncModule, {
-      styles: 'preload',
-      scripts: 'preload',
-    });
-
-    const customPreload = useCustomPreload?.(props);
-
-    return useCallback(() => {
-      load();
-      return customPreload?.() ?? noop;
-    }, [load, customPreload]);
+    useAsyncModulePreload(asyncModule);
+    useCustomPreload?.(props);
   }
 
   function Preload(options: PreloadOptions) {
-    const preload = usePreload(options);
-
-    useEffect(() => preload(), [preload]);
-
+    usePreload(options);
     return null;
   }
 
@@ -178,9 +166,6 @@ export function createAsyncComponent<
 
   return FinalComponent;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}
 
 function noopRender() {
   return null;
