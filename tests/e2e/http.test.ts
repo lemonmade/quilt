@@ -11,16 +11,14 @@ jest.setTimeout(20_000);
 describe('http', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
-      await withWorkspace(
-        {debug: true, fixture: 'empty-app'},
-        async (workspace) => {
-          const {fs} = workspace;
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+        const {fs} = workspace;
 
-          const cookieName = 'user';
-          const cookieValue = 'Chris';
+        const cookieName = 'user';
+        const cookieValue = 'Chris';
 
-          await fs.write({
-            'App.tsx': stripIndent`
+        await fs.write({
+          'App.tsx': stripIndent`
             import {useCookie, QuiltApp} from '@quilted/quilt';
 
             export default function App() {
@@ -39,27 +37,24 @@ describe('http', () => {
               );
             }
           `,
-          });
+        });
 
-          const {page} = await buildAppAndOpenPage(workspace, {
-            path: '/',
-            javaScriptEnabled: false,
-            async customizeContext(context, {url}) {
-              await context.addCookies([
-                {
-                  name: 'user',
-                  value: cookieValue,
-                  url: new URL('/', url).href,
-                },
-              ]);
-            },
-          });
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/',
+          javaScriptEnabled: false,
+          async customizeContext(context, {url}) {
+            await context.addCookies([
+              {
+                name: 'user',
+                value: cookieValue,
+                url: new URL('/', url).href,
+              },
+            ]);
+          },
+        });
 
-          expect(await page.textContent('body')).toMatch(
-            `Hello, ${cookieValue}`,
-          );
-        },
-      );
+        expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
+      });
     });
 
     it('can set client-side cookies', async () => {

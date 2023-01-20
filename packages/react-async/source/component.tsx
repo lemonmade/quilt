@@ -1,9 +1,5 @@
 import {useEffect, ReactNode, ComponentType} from 'react';
-import {
-  createAsyncModule,
-  AsyncModuleLoad,
-  AsyncModuleOptions,
-} from '@quilted/async';
+import {createAsyncModule, AsyncModuleLoad} from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
 import {useAsyncModule, useAsyncModulePreload} from './hooks';
@@ -18,7 +14,7 @@ import type {
 export interface Options<
   Props extends Record<string, any>,
   PreloadOptions extends Record<string, any> = NoOptions,
-> extends AsyncModuleOptions {
+> {
   render?: RenderTiming;
   hydrate?: boolean | HydrationTiming;
   preload?: boolean;
@@ -40,7 +36,6 @@ export function createAsyncComponent<
 >(
   load: AsyncModuleLoad<{default: ComponentType<Props>}>,
   {
-    id,
     render = 'server',
     hydrate: explicitHydrate = 'immediate',
     preload = true,
@@ -51,7 +46,7 @@ export function createAsyncComponent<
   }: Options<Props, PreloadOptions> = {},
 ): AsyncComponentType<ComponentType<Props>, Props, PreloadOptions> {
   const hydrate = normalizeHydrate(explicitHydrate);
-  const asyncModule = createAsyncModule(load, {id});
+  const asyncModule = createAsyncModule(load);
   const componentName = displayName ?? displayNameFromId(asyncModule.id);
 
   let scriptTiming: AssetLoadTiming;

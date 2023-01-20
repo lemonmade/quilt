@@ -13,10 +13,8 @@ import type {
 import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
 
-import {PREFIX} from './constants';
+import {IMPORT_PREFIX, MODULE_PREFIX} from './constants';
 import type {AssetBuild, AssetBuildEntry, Asset} from './assets';
-
-const ENTRY_PREFIX = 'quilt-async-entry:';
 
 export interface ManifestOptions {
   path: string;
@@ -43,47 +41,78 @@ export function asyncQuilt({
 
   return {
     name: '@quilted/async',
-    async resolveDynamicImport(source, importer) {
-      if (typeof source !== 'string') return null;
+    async resolveId(id, importer) {
+      if (!id.startsWith(MODULE_PREFIX)) return null;
 
-      const asyncRequest = getAsyncRequest(source.replace(PREFIX, ''));
+      const imported = id.replace(MODULE_PREFIX, '');
 
-      if (asyncRequest == null) return null;
-
-      const {asyncId, moduleId} = asyncRequest;
-      const resolvedWorker = await this.resolve(moduleId, importer, {
+      const resolved = await this.resolve(imported, importer, {
         skipSelf: true,
       });
 
-      if (resolvedWorker == null) return null;
+      if (resolved == null) return null;
 
-      return `${ENTRY_PREFIX}${resolvedWorker.id}?id=${asyncId}`;
+      return `${MODULE_PREFIX}${resolved.id}`;
     },
-    load(id: string) {
-      if (!id.startsWith(ENTRY_PREFIX)) return;
+    resolveDynamicImport(specifier) {
+      if (
+        typeof specifier === 'string' &&
+        specifier.startsWith(IMPORT_PREFIX)
+      ) {
+        return specifier;
+      }
 
-      const asyncRequest = getAsyncRequest(id.replace(ENTRY_PREFIX, ''));
+      return null;
+    },
+    async load(id: string) {
+      if (id.startsWith(MODULE_PREFIX)) {
+        const imported = id.replace(MODULE_PREFIX, '');
+        const asyncId = imported;
 
-      if (asyncRequest == null) return;
+        const code = stripIndent`
+          const id = ${JSON.stringify(asyncId)};
 
-      const {asyncId, moduleId} = asyncRequest;
+          const doImport = () => import(${JSON.stringify(
+            `${IMPORT_PREFIX}${imported}?id=${asyncId}`,
+          )}).then((module) => module.default);
 
-      const code = stripIndent`
-        import * as AsyncModule from ${JSON.stringify(moduleId)};
-        export {default} from ${JSON.stringify(moduleId)};
-        export * from ${JSON.stringify(moduleId)};
+          export default function createAsyncModule(load) {
+            return {
+              id,
+              import: () => load(doImport),
+            };
+          }
+        `;
 
-        if (typeof Quilt !== 'undefined' && Quilt.AsyncAssets != null) {
-          Quilt.AsyncAssets.set(${JSON.stringify(asyncId)}, AsyncModule);
-        }
-      `;
+        return code;
+      }
 
-      return {
-        code,
-        meta: {
-          quilt: {asyncId},
-        },
-      };
+      if (id.startsWith(IMPORT_PREFIX)) {
+        const [imported, searchString] = id
+          .replace(IMPORT_PREFIX, '')
+          .split('?');
+        const searchParams = new URLSearchParams(searchString);
+        const asyncId = searchParams.get('id') ?? undefined;
+
+        const code = stripIndent`
+          import * as AsyncModule from ${JSON.stringify(imported)};
+
+          if (typeof Quilt !== 'undefined' && Quilt.AsyncAssets != null) {
+            Quilt.AsyncAssets.set(${JSON.stringify(asyncId)}, AsyncModule);
+          }
+
+          export default AsyncModule;
+        `;
+
+        return {
+          code,
+          meta: {
+            quilt: {asyncId},
+          },
+        };
+      }
+
+      return null;
     },
     transform: assetBaseUrl
       ? (code) =>
@@ -274,7 +303,7 @@ async function writeManifestForBundle(
 
   for (const output of outputs) {
     if (output.type !== 'chunk' || output.facadeModuleId == null) continue;
-    if (!output.facadeModuleId.startsWith(ENTRY_PREFIX)) continue;
+    if (!output.facadeModuleId.startsWith(IMPORT_PREFIX)) continue;
 
     // This metadata is added by the rollup plugin for @quilted/async
     const asyncId = this.getModuleInfo(output.facadeModuleId)?.meta.quilt
@@ -311,25 +340,4 @@ function createAsset(
   }
 
   return {scripts, styles};
-}
-
-function getAsyncRequest(id: string):
-  | {
-      asyncId: string;
-      moduleId: string;
-    }
-  | undefined {
-  const [moduleId, searchString] = id.split('?');
-
-  if (!searchString) return undefined;
-
-  const searchParams = new URLSearchParams(searchString);
-  const asyncId = searchParams.get('id');
-
-  return asyncId
-    ? {
-        asyncId,
-        moduleId: moduleId!,
-      }
-    : undefined;
 }

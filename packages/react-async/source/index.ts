@@ -1,5 +1,5 @@
 export {createAsyncModule} from '@quilted/async';
-export type {AsyncModule, AsyncModuleOptions} from '@quilted/async';
+export type {AsyncModule} from '@quilted/async';
 
 export type {
   NoOptions,
