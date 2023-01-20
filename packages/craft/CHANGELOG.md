@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.178
+
+### Patch Changes
+
+- [#489](https://github.com/lemonmade/quilt/pull/489) [`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix async loading in Vite
+
+- Updated dependencies [[`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565), [`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565)]:
+  - @quilted/async@0.3.32
+
 ## 0.1.177
 
 ### Patch Changes

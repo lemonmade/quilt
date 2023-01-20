@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.44
+
+### Patch Changes
+
+- [#489](https://github.com/lemonmade/quilt/pull/489) [`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565) Thanks [@lemonmade](https://github.com/lemonmade)! - Use async component in basic template
+
+- [`73f0748b`](https://github.com/lemonmade/quilt/commit/73f0748b77c8e88fc0bb088ad544c6a47c1501e8) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove excess space in create package
+
 ## 0.1.43
 
 ### Patch Changes
