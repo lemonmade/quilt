@@ -1,6 +1,6 @@
-import {posix, dirname} from 'path';
+import {createHash} from 'crypto';
+import {posix, sep, dirname} from 'path';
 import {mkdir, writeFile} from 'fs/promises';
-import {URLSearchParams} from 'url';
 
 import type {
   Plugin,
@@ -25,12 +25,14 @@ export interface Options {
   preload?: boolean;
   manifest?: string | ManifestOptions | false;
   assetBaseUrl?: string;
+  moduleId?(details: {imported: string}): string;
 }
 
 export function asyncQuilt({
   preload = true,
   manifest = false,
   assetBaseUrl = '/assets/',
+  moduleId = defaultModuleId,
 }: Options = {}): Plugin {
   const manifestOptions: ManifestOptions | false =
     typeof manifest === 'boolean'
@@ -42,6 +44,7 @@ export function asyncQuilt({
   return {
     name: '@quilted/async',
     async resolveId(id, importer) {
+      if (id.startsWith(IMPORT_PREFIX)) return id;
       if (!id.startsWith(MODULE_PREFIX)) return null;
 
       const imported = id.replace(MODULE_PREFIX, '');
@@ -67,13 +70,13 @@ export function asyncQuilt({
     async load(id: string) {
       if (id.startsWith(MODULE_PREFIX)) {
         const imported = id.replace(MODULE_PREFIX, '');
-        const asyncId = imported;
+        const asyncId = moduleId({imported});
 
         const code = stripIndent`
           const id = ${JSON.stringify(asyncId)};
 
           const doImport = () => import(${JSON.stringify(
-            `${IMPORT_PREFIX}${imported}?id=${asyncId}`,
+            `${IMPORT_PREFIX}${imported}`,
           )}).then((module) => module.default);
 
           export default function createAsyncModule(load) {
@@ -88,11 +91,8 @@ export function asyncQuilt({
       }
 
       if (id.startsWith(IMPORT_PREFIX)) {
-        const [imported, searchString] = id
-          .replace(IMPORT_PREFIX, '')
-          .split('?');
-        const searchParams = new URLSearchParams(searchString);
-        const asyncId = searchParams.get('id') ?? undefined;
+        const imported = id.replace(IMPORT_PREFIX, '');
+        const asyncId = moduleId({imported});
 
         const code = stripIndent`
           import * as AsyncModule from ${JSON.stringify(imported)};
@@ -143,6 +143,17 @@ export function asyncQuilt({
       }
     },
   };
+}
+
+function defaultModuleId({imported}: {imported: string}) {
+  const name = imported.split(sep).pop()!.split('.')[0]!;
+
+  const hash = createHash('sha256')
+    .update(imported)
+    .digest('hex')
+    .substring(0, 8);
+
+  return `${name}_${hash}`;
 }
 
 async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {

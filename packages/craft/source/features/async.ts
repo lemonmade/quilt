@@ -9,9 +9,6 @@ import type {
 import {createProjectPlugin} from '../kit';
 import type {WaterfallHookWithDefault, ResolvedHooks} from '../kit';
 
-import type {BabelHooks} from '../tools/babel';
-import type {RollupHooks} from '../tools/rollup';
-
 export interface Options extends Omit<RollupOptions, 'manifest'> {
   readonly manifest?: boolean | string;
   readonly applyBabelToPackages?: BabelOptions['packages'];
@@ -36,6 +33,7 @@ export interface AsyncHooks {
 
 declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends AsyncHooks {}
+  interface DevelopProjectConfigurationHooks extends AsyncHooks {}
 }
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
@@ -84,64 +82,109 @@ export function asyncQuilt({
         }),
       }));
 
-      configure(addConfiguration());
+      configure((hooks) => {
+        const {babelPlugins, rollupPlugins} = hooks;
+
+        babelPlugins?.(async (plugins) => {
+          return [...plugins, await getAsyncBabelPlugin(hooks)];
+        });
+
+        rollupPlugins?.(async (plugins) => {
+          return [...plugins, await getAsyncRollupPlugin(hooks)];
+        });
+      });
+    },
+    develop({project, hooks, configure}) {
+      hooks<AsyncHooks>(({waterfall}) => ({
+        quiltAsyncApplyBabelToPackages: waterfall<
+          NonNullable<BabelOptions['packages']>
+        >({
+          default: defaultApplyBabelToPackages,
+        }),
+        quiltAsyncPreload: waterfall<NonNullable<RollupOptions['preload']>>({
+          default: preload,
+        }),
+        quiltAsyncAssetBaseUrl: waterfall<
+          NonNullable<RollupOptions['assetBaseUrl']>
+        >({default: '/'}),
+        quiltAsyncManifest: waterfall<boolean>({
+          default: false,
+        }),
+        quiltAsyncManifestPath: waterfall<ManifestOptions['path']>({
+          default: project.fs.buildPath('async-manifest.json'),
+        }),
+        quiltAsyncManifestMetadata: waterfall<
+          NonNullable<ManifestOptions['metadata']>
+        >({
+          default: () => ({}),
+        }),
+      }));
+
+      configure((hooks) => {
+        const {babelPlugins, rollupPlugins, vitePlugins} = hooks;
+
+        babelPlugins?.(async (plugins) => {
+          return [...plugins, await getAsyncBabelPlugin(hooks)];
+        });
+
+        rollupPlugins?.(async (plugins) => {
+          return [...plugins, await getAsyncRollupPlugin(hooks, {moduleId})];
+        });
+
+        vitePlugins?.(async (plugins) => {
+          const plugin = await getAsyncRollupPlugin(hooks, {moduleId});
+          return [...plugins, {...plugin, enforce: 'pre'}];
+        });
+
+        function moduleId({imported}: {imported: string}) {
+          return `/@id/quilt-async-import:${imported}`;
+        }
+      });
     },
   });
+}
 
-  function addConfiguration() {
-    return ({
-      babelPlugins,
-      rollupPlugins,
-      quiltAsyncPreload,
-      quiltAsyncAssetBaseUrl,
-      quiltAsyncManifest,
-      quiltAsyncManifestPath,
-      quiltAsyncManifestMetadata,
-      quiltAsyncApplyBabelToPackages,
-    }: ResolvedHooks<BabelHooks & RollupHooks & AsyncHooks>) => {
-      babelPlugins?.(async (plugins) => {
-        const [packages] = await Promise.all([
-          quiltAsyncApplyBabelToPackages!.run(),
-        ]);
+async function getAsyncBabelPlugin({
+  quiltAsyncApplyBabelToPackages,
+}: ResolvedHooks<AsyncHooks>) {
+  const [packages] = await Promise.all([quiltAsyncApplyBabelToPackages!.run()]);
 
-        plugins.push([
-          require.resolve('@quilted/async/babel'),
-          {packages} as BabelOptions,
-        ]);
+  return [require.resolve('@quilted/async/babel'), {packages} as BabelOptions];
+}
 
-        return plugins;
-      });
+async function getAsyncRollupPlugin(
+  {
+    quiltAsyncPreload,
+    quiltAsyncAssetBaseUrl,
+    quiltAsyncManifest,
+    quiltAsyncManifestPath,
+    quiltAsyncManifestMetadata,
+  }: ResolvedHooks<AsyncHooks>,
+  options: Partial<RollupOptions> = {},
+) {
+  const [
+    {asyncQuilt},
+    preload,
+    assetBaseUrl,
+    includeManifest,
+    manifestPath,
+    manifestMetadata,
+  ] = await Promise.all([
+    import('@quilted/async/rollup'),
+    quiltAsyncPreload!.run(),
+    quiltAsyncAssetBaseUrl!.run(),
+    quiltAsyncManifest!.run(),
+    quiltAsyncManifestPath!.run(),
+    quiltAsyncManifestMetadata!.run(),
+  ]);
 
-      rollupPlugins?.(async (plugins) => {
-        const [
-          {asyncQuilt},
-          preload,
-          assetBaseUrl,
-          includeManifest,
-          manifestPath,
-          manifestMetadata,
-        ] = await Promise.all([
-          import('@quilted/async/rollup'),
-          quiltAsyncPreload!.run(),
-          quiltAsyncAssetBaseUrl!.run(),
-          quiltAsyncManifest!.run(),
-          quiltAsyncManifestPath!.run(),
-          quiltAsyncManifestMetadata!.run(),
-        ]);
-
-        plugins.push(
-          asyncQuilt({
-            preload,
-            manifest: includeManifest && {
-              path: manifestPath,
-              metadata: manifestMetadata,
-            },
-            assetBaseUrl,
-          }),
-        );
-
-        return plugins;
-      });
-    };
-  }
+  return asyncQuilt({
+    preload,
+    manifest: includeManifest && {
+      path: manifestPath,
+      metadata: manifestMetadata,
+    },
+    assetBaseUrl,
+    ...options,
+  });
 }
