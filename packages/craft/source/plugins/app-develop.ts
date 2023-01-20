@@ -1,6 +1,7 @@
 import * as path from 'path';
 import {createRequire} from 'module';
 import type {IncomingMessage, ServerResponse} from 'http';
+import type {AssetBuild} from '@quilted/async/server';
 
 import {stripIndent} from 'common-tags';
 import type {ViteDevServer} from 'vite';
@@ -29,6 +30,7 @@ export const STEP_NAME = 'Quilt.App.Develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
 const MAGIC_MODULE_SERVER_ENTRY = '.quilt/magic/server.js';
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest';
+const MAGIC_MODULE_GLOBALS = '.quilt/magic/globals.js';
 const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
 
 export interface Options {
@@ -186,7 +188,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               },
               {
                 name: '@quilted/magic-module/app/asset-loader',
-                async resolveId(id) {
+                resolveId(id) {
                   if (id !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
 
                   return project.fs.resolvePath(
@@ -201,33 +203,67 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                     return null;
                   }
 
-                  return stripIndent`
-                  import {createAssetManifest} from '@quilted/quilt/server';
-
-                  export default function createManifest() {
-                    return createAssetManifest({
-                      getBuild() {
-                        return ${JSON.stringify({
-                          metadata: {
-                            priority: 0,
-                            modules: true,
+                  const baseAssets: Omit<AssetBuild, 'async'> = {
+                    id: 'dev',
+                    default: true,
+                    metadata: {
+                      priority: 0,
+                      modules: true,
+                    },
+                    entry: {
+                      scripts: [
+                        {
+                          source: `/${MAGIC_MODULE_GLOBALS}`,
+                          attributes: {
+                            type: 'module',
                           },
-                          entry: {
+                        },
+                        {
+                          source: `/${MAGIC_MODULE_BROWSER_ENTRY}`,
+                          attributes: {
+                            type: 'module',
+                          },
+                        },
+                      ],
+                      styles: [],
+                    },
+                  };
+
+                  return stripIndent`
+                    import {createAssetManifest} from '@quilted/quilt/server';
+
+                    const ASSETS = ${JSON.stringify(baseAssets)};
+                    ASSETS.async = new Proxy(
+                      {},
+                      {
+                        get(_, key) {
+                          if (typeof key !== 'string') {
+                            return undefined;
+                          }
+  
+                          return {
                             scripts: [
                               {
-                                source: `/${MAGIC_MODULE_BROWSER_ENTRY}`,
+                                source: key,
                                 attributes: {
                                   type: 'module',
                                 },
                               },
                             ],
                             styles: [],
-                          },
-                        })};
+                          };
+                        },
                       },
-                    })
-                  }
-                `;
+                    );
+
+                    export default function createManifest() {
+                      return createAssetManifest({
+                        getBuild() {
+                          return ASSETS;
+                        },
+                      })
+                    }
+                  `;
                 },
               },
               ...plugins,
@@ -351,6 +387,27 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                   quiltAppBrowserEntryContent!.run(content),
               }),
               enforce: 'pre',
+            });
+
+            plugins.unshift({
+              name: '@quilted/magic-module/app/globals',
+              enforce: 'pre',
+              resolveId(id) {
+                if (id !== `/${MAGIC_MODULE_GLOBALS}`) return null;
+                return {
+                  id: project.fs.resolvePath(MAGIC_MODULE_GLOBALS),
+                  moduleSideEffects: 'no-treeshake',
+                };
+              },
+              async load(source) {
+                if (source !== project.fs.resolvePath(MAGIC_MODULE_GLOBALS)) {
+                  return null;
+                }
+
+                return stripIndent`
+                  import '@quilted/quilt/global';
+                `;
+              },
             });
 
             const normalizedBabelPlugins = requestedBabelPlugins;

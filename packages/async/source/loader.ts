@@ -12,35 +12,36 @@ export interface AsyncModule<Module = Record<string, unknown>> {
   ): void;
 }
 
-export interface AsyncModuleLoad<Module = Record<string, unknown>> {
+export interface AsyncModuleLoadFunction<Module = Record<string, unknown>> {
   (): Promise<Module>;
 }
-
-export interface AsyncModuleOptions {
-  id?(): string;
+export interface AsyncModuleLoadObject<Module = Record<string, unknown>> {
+  readonly id?: string;
+  import(): Promise<Module>;
 }
+
+export type AsyncModuleLoad<Module = Record<string, unknown>> =
+  | AsyncModuleLoadFunction<Module>
+  | AsyncModuleLoadObject<Module>;
 
 export function createAsyncModule<Module = Record<string, unknown>>(
   load: AsyncModuleLoad<Module>,
-  {id}: AsyncModuleOptions = {},
 ): AsyncModule<Module> {
   let resolved: Module | undefined;
   let resolvePromise: Promise<Module> | undefined;
   let hasTriedSyncResolve = false;
 
-  const resolvedId = id?.();
+  const id = (load as any).id;
   const listeners = new Set<(value: Module) => void>();
 
   return {
-    get id() {
-      return resolvedId;
-    },
+    id,
     get loaded() {
-      if (resolved == null && resolvedId && !hasTriedSyncResolve) {
+      if (resolved == null && id && !hasTriedSyncResolve) {
         hasTriedSyncResolve = true;
         resolved =
           typeof Quilt === 'object'
-            ? Quilt.AsyncAssets?.get<Module>(resolvedId)
+            ? Quilt.AsyncAssets?.get<Module>(id)
             : undefined;
       }
 
@@ -65,7 +66,7 @@ export function createAsyncModule<Module = Record<string, unknown>>(
   };
 
   async function resolve(): Promise<Module> {
-    resolved = await load();
+    resolved = typeof load === 'function' ? await load() : await load.import();
 
     for (const listener of listeners) {
       listener(resolved!);

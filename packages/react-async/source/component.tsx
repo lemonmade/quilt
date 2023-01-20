@@ -1,9 +1,10 @@
-import {useEffect, ReactNode, ComponentType} from 'react';
 import {
-  createAsyncModule,
-  AsyncModuleLoad,
-  AsyncModuleOptions,
-} from '@quilted/async';
+  useEffect,
+  type ReactNode,
+  type ReactElement,
+  type ComponentType,
+} from 'react';
+import {createAsyncModule, AsyncModuleLoad} from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
 import {useAsyncModule, useAsyncModulePreload} from './hooks';
@@ -16,9 +17,9 @@ import type {
 } from './types';
 
 export interface Options<
-  Props extends Record<string, any>,
+  Props extends Record<string, any> = Record<string, never>,
   PreloadOptions extends Record<string, any> = NoOptions,
-> extends AsyncModuleOptions {
+> {
   render?: RenderTiming;
   hydrate?: boolean | HydrationTiming;
   preload?: boolean;
@@ -35,12 +36,15 @@ export interface Options<
 }
 
 export function createAsyncComponent<
-  Props extends Record<string, any>,
+  Props extends Record<string, any> = Record<string, never>,
   PreloadOptions extends Record<string, any> = NoOptions,
 >(
-  load: AsyncModuleLoad<{default: ComponentType<Props>}>,
+  load: AsyncModuleLoad<
+    | ComponentType<Props>
+    | (() => ReactElement<any, any>)
+    | {default: ComponentType<Props>}
+  >,
   {
-    id,
     render = 'server',
     hydrate: explicitHydrate = 'immediate',
     preload = true,
@@ -51,7 +55,7 @@ export function createAsyncComponent<
   }: Options<Props, PreloadOptions> = {},
 ): AsyncComponentType<ComponentType<Props>, Props, PreloadOptions> {
   const hydrate = normalizeHydrate(explicitHydrate);
-  const asyncModule = createAsyncModule(load, {id});
+  const asyncModule = createAsyncModule(load);
   const componentName = displayName ?? displayNameFromId(asyncModule.id);
 
   let scriptTiming: AssetLoadTiming;
@@ -98,7 +102,7 @@ export function createAsyncComponent<
       return renderError(error);
     }
 
-    const Component = resolved?.default;
+    const Component = (resolved as any)?.default ?? resolved;
     const rendered = Component ? <Component {...props} /> : null;
 
     let content: ReactNode = null;
