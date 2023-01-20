@@ -1,4 +1,9 @@
-import {useEffect, ReactNode, ComponentType} from 'react';
+import {
+  useEffect,
+  type ReactNode,
+  type ReactElement,
+  type ComponentType,
+} from 'react';
 import {createAsyncModule, AsyncModuleLoad} from '@quilted/async';
 import {Hydrator} from '@quilted/react-html';
 
@@ -12,7 +17,7 @@ import type {
 } from './types';
 
 export interface Options<
-  Props extends Record<string, any>,
+  Props extends Record<string, any> = Record<string, never>,
   PreloadOptions extends Record<string, any> = NoOptions,
 > {
   render?: RenderTiming;
@@ -31,10 +36,14 @@ export interface Options<
 }
 
 export function createAsyncComponent<
-  Props extends Record<string, any>,
+  Props extends Record<string, any> = Record<string, never>,
   PreloadOptions extends Record<string, any> = NoOptions,
 >(
-  load: AsyncModuleLoad<{default: ComponentType<Props>}>,
+  load: AsyncModuleLoad<
+    | ComponentType<Props>
+    | (() => ReactElement<any, any>)
+    | {default: ComponentType<Props>}
+  >,
   {
     render = 'server',
     hydrate: explicitHydrate = 'immediate',
@@ -93,7 +102,7 @@ export function createAsyncComponent<
       return renderError(error);
     }
 
-    const Component = resolved?.default;
+    const Component = (resolved as any)?.default ?? resolved;
     const rendered = Component ? <Component {...props} /> : null;
 
     let content: ReactNode = null;

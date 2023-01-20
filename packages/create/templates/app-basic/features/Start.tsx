@@ -1,1 +1,3 @@
-export {Start} from './Start/Start';
+import {createAsyncComponent} from '@quilted/quilt';
+
+export const Start = createAsyncComponent(() => import('./Start/Start'));
