@@ -1,5 +1,15 @@
 # @quilted/react-async
 
+## 0.3.41
+
+### Patch Changes
+
+- [#489](https://github.com/lemonmade/quilt/pull/489) [`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow non-default async component imports
+
+- [#489](https://github.com/lemonmade/quilt/pull/489) [`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix async loading in Vite
+
+- [#489](https://github.com/lemonmade/quilt/pull/489) [`c0dee75a`](https://github.com/lemonmade/quilt/commit/c0dee75aae600e882d419ee4e81b2c35d4772565) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify async Babel/Rollup transforms
+
 ## 0.3.40
 
 ### Patch Changes
