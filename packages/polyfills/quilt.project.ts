@@ -8,6 +8,7 @@ export default createProject((project) => {
       entries: {
         '.': './source/index.ts',
         base: './source/base.ts',
+        crypto: './source/crypto.ts',
         noop: './source/noop.ts',
         'fetch.browser': './source/fetch.browser.ts',
         'fetch.node': './source/fetch.node.ts',

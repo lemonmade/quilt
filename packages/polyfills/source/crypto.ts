@@ -1,7 +1,9 @@
 import {Crypto} from '@peculiar/webcrypto';
 
-const crypto = new Crypto();
+if (typeof globalThis.crypto === 'undefined') {
+  const crypto = new Crypto();
 
-Reflect.defineProperty(globalThis, 'crypto', {value: crypto});
+  Reflect.defineProperty(globalThis, 'crypto', {value: crypto});
+}
 
 export {};
