@@ -140,7 +140,7 @@ export class GraphQLController {
     const delay = timing ? normalizeDelay(timing.delay) : 0;
 
     if (delay === 0) {
-      setImmediate(resolver);
+      resolver();
     } else if (Number.isFinite(delay)) {
       setTimeout(resolver, delay);
     }

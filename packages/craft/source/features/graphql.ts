@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {createRequire} from 'module';
 
 import type {createBuilder} from '@quilted/graphql/typescript';
 import type {
@@ -41,10 +42,14 @@ export function graphql() {
       });
     },
     test({configure}) {
-      configure(({jestModuleMapper}) => {
-        jestModuleMapper?.(async (moduleMapper) => {
-          moduleMapper['\\.graphql$'] = '@quilted/graphql/jest';
-          return moduleMapper;
+      const require = createRequire(import.meta.url);
+
+      configure(({jestTransforms}) => {
+        jestTransforms?.((transforms) => {
+          return {
+            ...transforms,
+            ['\\.graphql$']: require.resolve('@quilted/graphql/jest'),
+          };
         });
       });
     },

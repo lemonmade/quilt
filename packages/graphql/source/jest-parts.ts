@@ -1,4 +1,3 @@
-import {join} from 'path';
 import {readFileSync} from 'fs';
 import {createHash} from 'crypto';
 
@@ -20,10 +19,13 @@ const transformer: Transformer = {
   process(rawSource) {
     const {imports, source} = extractImports(rawSource);
 
+    // This module only runs for Jest, which is CJS only, so we can use a global `require` here.
     const utilityImports = `
-      var {print, parse} = require('graphql');
+      var {print, parse} = require(${JSON.stringify(
+        require.resolve('graphql'),
+      )});
       var {cleanDocument, toSimpleDocument} = require(${JSON.stringify(
-        join(__dirname, 'document.js'),
+        require.resolve('./transform.cjs'),
       )});
     `;
 
@@ -43,16 +45,18 @@ const transformer: Transformer = {
       )
       .join('\n');
 
-    return `
-      ${utilityImports}
-      ${importSource}
+    return {
+      code: `
+        ${utilityImports}
+        ${importSource}
 
-      var document = ${JSON.stringify(parse(source))};
+        var document = ${JSON.stringify(parse(source))};
 
-      ${appendDefinitionsSource}
+        ${appendDefinitionsSource}
 
-      module.exports = toSimpleDocument(cleanDocument(document, {removeUnused: false}));
-    `;
+        module.exports = toSimpleDocument(cleanDocument(document, {removeUnused: false}));
+      `,
+    };
   },
 };
 
