@@ -1,5 +1,19 @@
 # @quilted/craft
 
+## 0.1.180
+
+### Patch Changes
+
+- [`8dedbf8b`](https://github.com/lemonmade/quilt/commit/8dedbf8b263347577c534a57658de748387cb9c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL test issues
+
+- [`507bebfd`](https://github.com/lemonmade/quilt/commit/507bebfd8cde2bd71ef7c25e38fac915e3f9b925) Thanks [@lemonmade](https://github.com/lemonmade)! - Only run GraphQL types when needed
+
+- [`8867494f`](https://github.com/lemonmade/quilt/commit/8867494f90526c4147fdaf1d79195349bcb7d459) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix resolving signals libraries in Jest
+
+- Updated dependencies [[`8dedbf8b`](https://github.com/lemonmade/quilt/commit/8dedbf8b263347577c534a57658de748387cb9c7), [`507bebfd`](https://github.com/lemonmade/quilt/commit/507bebfd8cde2bd71ef7c25e38fac915e3f9b925)]:
+  - @quilted/graphql@0.4.53
+  - @quilted/sewing-kit@0.2.38
+
 ## 0.1.179
 
 ### Patch Changes

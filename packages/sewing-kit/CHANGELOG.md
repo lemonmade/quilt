@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.38
+
+### Patch Changes
+
+- [`507bebfd`](https://github.com/lemonmade/quilt/commit/507bebfd8cde2bd71ef7c25e38fac915e3f9b925) Thanks [@lemonmade](https://github.com/lemonmade)! - Only run GraphQL types when needed
+
 ## 0.2.37
 
 ### Patch Changes

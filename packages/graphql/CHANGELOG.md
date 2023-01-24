@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.53
+
+### Patch Changes
+
+- [`8dedbf8b`](https://github.com/lemonmade/quilt/commit/8dedbf8b263347577c534a57658de748387cb9c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL test issues
+
 ## 0.4.52
 
 ### Patch Changes
