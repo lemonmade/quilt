@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.4.54
+
+### Patch Changes
+
+- [`7978e6eb`](https://github.com/lemonmade/quilt/commit/7978e6eb62978b4ea970ceb4683d9f0a64040912) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix return value of GraphQL controller fetch
+
+- [`7978e6eb`](https://github.com/lemonmade/quilt/commit/7978e6eb62978b4ea970ceb4683d9f0a64040912) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up schema type generation
+
 ## 0.4.53
 
 ### Patch Changes
