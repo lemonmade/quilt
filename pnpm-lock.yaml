@@ -182,12 +182,12 @@ importers:
       '@quilted/async': 0.3.32
       '@quilted/browserslist-config': 0.1.9
       '@quilted/eslint-config': 0.1.16
-      '@quilted/graphql': 0.4.52
+      '@quilted/graphql': 0.4.53
       '@quilted/polyfills': 0.2.33
       '@quilted/prettier': 0.2.11
       '@quilted/quilt': ^0.5.0
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.13
-      '@quilted/sewing-kit': 0.2.37
+      '@quilted/sewing-kit': 0.2.38
       '@quilted/typescript': 0.2.18
       '@quilted/workers': 0.2.33
       '@rollup/plugin-alias': ^4.0.0
