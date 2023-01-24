@@ -10,6 +10,8 @@ const PACKAGES_WITH_ESM_BROWSER_ENTRIES = new Set([
   '@remix-run/web-form-data',
   '@web3-storage/multipart-parser',
   'preact',
+  '@preact/signals',
+  '@preact/signals-core',
 ]);
 
 module.exports = (path, options) => {
