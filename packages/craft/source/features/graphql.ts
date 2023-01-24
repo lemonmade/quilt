@@ -7,7 +7,7 @@ import type {
 } from '@quilted/graphql/configuration';
 
 import {createWorkspacePlugin, createProjectPlugin} from '../kit';
-import type {WorkspaceStepRunner} from '../kit';
+import type {Workspace, WorkspaceStepRunner} from '../kit';
 import type {} from '../tools/jest';
 import type {} from '../tools/rollup';
 import type {} from '../tools/vite';
@@ -56,7 +56,9 @@ const WORKSPACE_NAME = `${NAME}.TypeScriptDefinitions`;
 export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
   return createWorkspacePlugin({
     name: WORKSPACE_NAME,
-    build({run}) {
+    async build({run, workspace}) {
+      if (!(await workspaceHasGraphQL(workspace))) return;
+
       run((step) =>
         step({
           name: WORKSPACE_NAME,
@@ -68,7 +70,9 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
         }),
       );
     },
-    develop({run}) {
+    async develop({run, workspace}) {
+      if (!(await workspaceHasGraphQL(workspace))) return;
+
       run((step) =>
         step({
           name: WORKSPACE_NAME,
@@ -80,7 +84,9 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
         }),
       );
     },
-    typeCheck({run}) {
+    async typeCheck({run, workspace}) {
+      if (!(await workspaceHasGraphQL(workspace))) return;
+
       run((step) =>
         step({
           name: WORKSPACE_NAME,
@@ -93,6 +99,11 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
       );
     },
   });
+}
+
+async function workspaceHasGraphQL(workspace: Workspace) {
+  const configs = await workspace.fs.glob(['.graphqlrc*', 'graphql.config*']);
+  return configs.length > 0;
 }
 
 async function runGraphQLTypes(
