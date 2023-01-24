@@ -1,5 +1,11 @@
 # @quilted/polyfills
 
+## 0.2.33
+
+### Patch Changes
+
+- [`4534547f`](https://github.com/lemonmade/quilt/commit/4534547f3677f643ce89ec3c364769bfc0bafc55) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix crypto polyfill
+
 ## 0.2.32
 
 ### Patch Changes
