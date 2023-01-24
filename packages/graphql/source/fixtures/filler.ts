@@ -33,35 +33,37 @@ import type {
   GraphQLAnyOperation,
 } from '../types';
 
-export interface ResolverContext {
+export interface GraphQLFillerResolverContext {
   readonly type: GraphQLOutputType;
   readonly parent: GraphQLObjectType;
   readonly field: string;
   readonly random: Chance.Chance;
 }
 
-export type Resolver = (details: ResolverContext) => any;
+export type GraphQLFillerResolver = (
+  details: GraphQLFillerResolverContext,
+) => any;
 
-interface ResolverMap {
-  [key: string]: Resolver;
+export interface GraphQLFillerResolverMap {
+  [key: string]: GraphQLFillerResolver;
 }
 
-export interface FillerDetails<Variables> {
+export interface GraphQLFillerDetails<Variables> {
   readonly variables: Variables;
 }
 
-interface Options {
-  resolvers?: ResolverMap;
+export interface GraphQLFillerOptions {
+  resolvers?: GraphQLFillerResolverMap;
 }
 
 interface Context {
   readonly random: Chance.Chance;
   readonly schema: GraphQLSchema;
-  readonly resolvers: ResolverMap;
+  readonly resolvers: GraphQLFillerResolverMap;
   readonly document: DocumentNode;
 }
 
-const defaultResolvers: ResolverMap = {
+const defaultResolvers: GraphQLFillerResolverMap = {
   [GraphQLString.name]: ({random}) => random.word(),
   [GraphQLInt.name]: ({random}) => random.integer(),
   [GraphQLFloat.name]: ({random}) => random.floating({fixed: 2}),
@@ -69,17 +71,22 @@ const defaultResolvers: ResolverMap = {
   [GraphQLID.name]: ({random}) => random.guid(),
 };
 
-export function createFiller(
+export function createGraphQLFiller(
   schema: GraphQLSchema,
-  {resolvers: customResolvers = {}}: Options = {},
+  {resolvers: customResolvers = {}}: GraphQLFillerOptions = {},
 ) {
   const resolvers = {...defaultResolvers, ...customResolvers};
 
-  return function fillGraphQL<Data, Variables>(
+  return function fillGraphQL<
+    Data = Record<string, unknown>,
+    Variables = Record<string, unknown>,
+  >(
     operation: GraphQLAnyOperation<Data, Variables>,
     partialData?:
       | GraphQLDeepPartialData<Data>
-      | ((details: FillerDetails<Variables>) => GraphQLDeepPartialData<Data>),
+      | ((
+          details: GraphQLFillerDetails<Variables>,
+        ) => GraphQLDeepPartialData<Data>),
   ): GraphQLMockFunction<Data, Variables> {
     const {document} = normalizeOperation(operation as any);
     const operationNode = getFirstOperationFromDocument(document);
@@ -230,7 +237,7 @@ function fillValue(
   type: Extract<GraphQLNamedType, GraphQLOutputType>,
   selections: readonly SelectionNode[],
   context: Context,
-  resolverContext: ResolverContext,
+  resolverContext: GraphQLFillerResolverContext,
 ) {
   if (isScalarType(type)) {
     return (

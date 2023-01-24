@@ -17,17 +17,5 @@ export type {
   Predicate,
 } from '@quilted/react-testing';
 export {TestRouting, createTestRouter} from '@quilted/react-router/testing';
-export {
-  TestGraphQL,
-  createFiller,
-  createSchema,
-  GraphQLController,
-  createGraphQLController,
-} from '@quilted/react-graphql/testing';
-export type {
-  GraphQLMock,
-  GraphQLMockFunction,
-  GraphQLMockObject,
-} from '@quilted/react-graphql/testing';
 
 export {QuiltAppTesting} from './TestApp';

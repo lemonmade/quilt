@@ -62,6 +62,13 @@
       "import": "./build/esm/testing.mjs",
       "require": "./build/cjs/testing.cjs"
     },
+    "./graphql/testing": {
+      "types": "./build/typescript/graphql/testing.d.ts",
+      "quilt:source": "./source/graphql/testing.ts",
+      "quilt:esnext": "./build/esnext/graphql/testing.esnext",
+      "import": "./build/esm/graphql/testing.mjs",
+      "require": "./build/cjs/graphql/testing.cjs"
+    },
     "./env": {
       "types": "./build/typescript/env.d.ts",
       "quilt:source": "./source/env.ts",
@@ -156,6 +163,9 @@
       ],
       "testing": [
         "./build/typescript/testing.d.ts"
+      ],
+      "graphql/testing": [
+        "./build/typescript/graphql/testing.d.ts"
       ],
       "matchers": [
         "./build/typescript/matchers.d.ts"

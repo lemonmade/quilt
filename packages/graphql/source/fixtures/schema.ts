@@ -1,5 +1,5 @@
 import {mergeSchemas} from '@graphql-tools/schema';
 
-export function createSchema(...definitions: string[]) {
+export function createGraphQLSchema(...definitions: string[]) {
   return mergeSchemas({typeDefs: definitions});
 }

@@ -4,6 +4,7 @@ export {cacheKey} from './utilities/cache';
 export type {
   GraphQLOperation,
   GraphQLOperationType,
+  GraphQLAnyOperation,
   GraphQLData,
   GraphQLVariables,
   GraphQLDeepPartialData,

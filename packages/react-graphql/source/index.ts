@@ -4,6 +4,7 @@ export type {
   GraphQLVariables,
   GraphQLOperation,
   GraphQLOperationType,
+  GraphQLAnyOperation,
   GraphQLDeepPartialData,
   GraphQLError,
   GraphQLFetch,
