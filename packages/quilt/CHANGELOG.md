@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.128
+
+### Patch Changes
+
+- [`76e88c75`](https://github.com/lemonmade/quilt/commit/76e88c75d89e194e084d879392fb7a718197ccdf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix typings for GraphQL utilities and add dedicated quilt entrypoint
+
 ## 0.5.127
 
 ### Patch Changes
