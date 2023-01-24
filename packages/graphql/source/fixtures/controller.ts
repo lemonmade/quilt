@@ -105,12 +105,14 @@ export class GraphQLController {
         let response: GraphQLResult<Data>;
 
         try {
-          response =
-            typeof mock.result === 'function'
-              ? (mock.result as any)({
-                  variables: variables ?? ({} as any),
-                })
-              : mock.result;
+          response = {
+            data:
+              typeof mock.result === 'function'
+                ? (mock.result as any)({
+                    variables: variables ?? ({} as any),
+                  })
+                : mock.result,
+          };
         } catch (error) {
           response = {data: null, errors: [error as any]};
         }

@@ -69,6 +69,10 @@ export interface Options {
   package: string;
 }
 
+const SCHEMA_OUTPUT_KINDS_WITH_INPUT_TYPE_EXPORTS = new Set<
+  SchemaOutputKind['kind']
+>(['inputTypes', 'definitions']);
+
 export class Builder extends EventEmitter {
   readonly options: Options;
 
@@ -416,7 +420,7 @@ export class Builder extends EventEmitter {
       absolute: true,
       cwd: project.root,
       onlyFiles: true,
-      ignore: project.excludePatterns,
+      ignore: [...project.excludePatterns, ...project.schemaPatterns],
     });
 
     await Promise.all(
@@ -491,11 +495,10 @@ export class Builder extends EventEmitter {
         importPath: (type) => {
           const {schema: schemaOutputKinds} = getOptions(project);
 
-          const inputTypes =
-            schemaOutputKinds?.find(
-              (schemaType): schemaType is SchemaOutputKindInputTypes =>
-                schemaType.kind === 'inputTypes',
-            ) ?? schemaOutputKinds?.[0];
+          const inputTypes = schemaOutputKinds?.find(
+            (schemaType): schemaType is SchemaOutputKindInputTypes =>
+              SCHEMA_OUTPUT_KINDS_WITH_INPUT_TYPE_EXPORTS.has(schemaType.kind),
+          );
 
           const outputPath =
             inputTypes &&
@@ -504,7 +507,7 @@ export class Builder extends EventEmitter {
 
           if (outputPath == null) {
             throw new Error(
-              `You must add at least one schemaTypes option with types: 'input' when importing custom scalar or enum types in your query (encountered while importing type ${JSON.stringify(
+              `You must add at least one schemaTypes option with kind: 'inputTypes' or kind: 'definitions' when importing custom scalar or enum types in your query (encountered while importing type ${JSON.stringify(
                 type.name,
               )})`,
             );
@@ -636,7 +639,9 @@ function getOptions(project: GraphQLProjectConfiguration): QuiltExtensions {
   // will need to import their referenced scalars and enums.
   if (
     project.documentPatterns.length > 0 &&
-    !schema.some((outputKind) => outputKind.kind === 'inputTypes')
+    !schema.some((outputKind) =>
+      SCHEMA_OUTPUT_KINDS_WITH_INPUT_TYPE_EXPORTS.has(outputKind.kind),
+    )
   ) {
     schema.push({kind: 'inputTypes'});
   }
