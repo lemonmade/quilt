@@ -1,0 +1,2 @@
+templates/**/*.graphql.d.ts
+templates/app-graphql/graphql/schema.ts

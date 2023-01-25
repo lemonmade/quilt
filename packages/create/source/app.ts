@@ -358,8 +358,13 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-type Template = 'basic' | 'single-file' | 'empty';
-const VALID_TEMPLATES = new Set<Template>(['basic', 'single-file', 'empty']);
+type Template = 'basic' | 'graphql' | 'single-file' | 'empty';
+const VALID_TEMPLATES = new Set<Template>([
+  'basic',
+  'graphql',
+  'single-file',
+  'empty',
+]);
 
 async function getTemplate(argv: Arguments) {
   if (argv['--template'] && VALID_TEMPLATES.has(argv['--template'] as any)) {
@@ -391,7 +396,12 @@ async function getTemplate(argv: Arguments) {
         )}, a basic React app without any extra runtime dependencies`,
         value: 'empty',
       },
-      // TODO: GraphQL API
+      {
+        title: `${color.bold(
+          'GraphQL',
+        )}, a web app with a GraphQL API, fetched using @tanstack/react-query`,
+        value: 'graphql',
+      },
     ],
   })) as Template;
 

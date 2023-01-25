@@ -1,0 +1,3 @@
+# Temporary files
+*.graphql.d.ts
+graphql/schema.ts

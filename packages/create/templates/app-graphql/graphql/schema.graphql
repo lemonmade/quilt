@@ -1,0 +1,9 @@
+scalar Name
+
+type Query {
+  name: Name!
+}
+
+schema {
+  query: Query
+}
