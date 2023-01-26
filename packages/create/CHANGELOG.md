@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.45
+
+### Patch Changes
+
+- [`58e3190e`](https://github.com/lemonmade/quilt/commit/58e3190e122aa9a4dc37d3dfb9ec42c7fefd627f) Thanks [@lemonmade](https://github.com/lemonmade)! - Add initial GraphQL template
+
+- [#495](https://github.com/lemonmade/quilt/pull/495) [`0b7db36e`](https://github.com/lemonmade/quilt/commit/0b7db36e5333067761c8a88fec5722057ab0e04f) Thanks [@lemonmade](https://github.com/lemonmade)! - Match server and browser app entries
+
 ## 0.1.44
 
 ### Patch Changes

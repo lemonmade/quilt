@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.182
+
+### Patch Changes
+
+- [#495](https://github.com/lemonmade/quilt/pull/495) [`0b7db36e`](https://github.com/lemonmade/quilt/commit/0b7db36e5333067761c8a88fec5722057ab0e04f) Thanks [@lemonmade](https://github.com/lemonmade)! - Match server and browser app entries
+
+- Updated dependencies [[`0b7db36e`](https://github.com/lemonmade/quilt/commit/0b7db36e5333067761c8a88fec5722057ab0e04f)]:
+  - @quilted/quilt@0.5.129
+
 ## 0.1.181
 
 ### Patch Changes
