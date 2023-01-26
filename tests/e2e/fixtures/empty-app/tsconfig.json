@@ -4,5 +4,6 @@
     "outDir": "build/typescript"
   },
   "include": ["**/*"],
-  "exclude": ["build"]
+  "exclude": ["build"],
+  "references": [{"path": "../../common"}]
 }

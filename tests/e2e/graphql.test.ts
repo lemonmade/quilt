@@ -30,11 +30,9 @@ describe('graphql', () => {
             }
           `,
           'features/Start/index.tsx': stripIndent`
-            import {useQuery} from '@quilted/quilt';
-            import startQuery from './StartQuery.graphql';
+            import type {StartQueryData} from './StartQuery.graphql';
 
-            export function Start() {
-              const {data} = useQuery(startQuery);
+            export function Start({data}: {data?: StartQueryData}) {
               if (data == null) return null;
 
               const title: string = data.title;
@@ -48,11 +46,12 @@ describe('graphql', () => {
           `,
         });
 
-        const typeCheck = workspace.command.quilt.typeCheck();
-        const result = await typeCheck;
+        const typeCheck = await workspace.command.quilt.typeCheck();
 
         expect(typeCheck.child.exitCode).toBe(0);
-        expect(result.stdout).toMatch(/Quilt\.GraphQL\.TypeScriptDefinitions/);
+        expect(typeCheck.stdout).toMatch(
+          /Quilt\.GraphQL\.TypeScriptDefinitions/,
+        );
       });
     });
 
@@ -104,11 +103,9 @@ describe('graphql', () => {
             }
           `,
           'features/Start/index.tsx': stripIndent`
-            import {useQuery} from '@quilted/quilt';
-            import startQuery from './StartQuery.graphql';
+            import type {StartQueryData} from './StartQuery.graphql';
 
-            export function Start() {
-              const {data} = useQuery(startQuery);
+            export function Start({data}: {data?: StartQueryData}) {
               if (data == null) return null;
 
               const title: string = data.title;
@@ -121,14 +118,12 @@ describe('graphql', () => {
             }
           `,
           'features/Admin/index.tsx': stripIndent`
-            import {useQuery} from '@quilted/quilt';
-            import adminQuery from './AdminQuery.graphql';
+            import type {AdminQueryData} from './AdminQuery.graphql';
 
-            export function Admin() {
-              const {data} = useQuery(adminQuery);
+            export function Admin({data}: {data?: AdminQueryData}) {
               if (data == null) return null;
 
-              const title: boolean = data.secret;
+              const secret: boolean = data.secret;
               return <div>{secret && 'It’s a secret!'}</div>;
             }
           `,
@@ -139,11 +134,12 @@ describe('graphql', () => {
           `,
         });
 
-        const typeCheck = workspace.command.quilt.typeCheck();
-        const result = await typeCheck;
+        const typeCheck = await workspace.command.quilt.typeCheck();
 
         expect(typeCheck.child.exitCode).toBe(0);
-        expect(result.stdout).toMatch(/Quilt\.GraphQL\.TypeScriptDefinitions/);
+        expect(typeCheck.stdout).toMatch(
+          /Quilt\.GraphQL\.TypeScriptDefinitions/,
+        );
       });
     });
   });
