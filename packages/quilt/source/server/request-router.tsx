@@ -1,13 +1,13 @@
 import type {ReactElement} from 'react';
 
 import type {Asset, AssetManifest} from '@quilted/async/server';
-import {render as renderToString, Html} from '@quilted/react-html/server';
+import {renderHtmlToString, Html} from '@quilted/react-html/server';
 import type {
   Options as ExtractOptions,
   ServerRenderRequestContext,
 } from '@quilted/react-server-render/server';
 
-import {createRequestRouter, html, redirect} from '@quilted/request-router';
+import {html, redirect} from '@quilted/request-router';
 import type {
   RequestRouter,
   EnhancedRequest,
@@ -36,18 +36,7 @@ export interface Options<Context = RequestContext>
   ): ReactElement<any> | Promise<ReactElement<any>>;
 }
 
-export function createServerRenderingRequestRouter<Context = RequestContext>(
-  render: (
-    request: EnhancedRequest,
-    context: Context,
-  ) => ReactElement<any> | Promise<ReactElement<any>>,
-  {router = createRequestRouter<Context>(), ...options}: Options<Context>,
-) {
-  router.get(createServerRenderingRequestHandler<Context>(render, options));
-  return router;
-}
-
-export function createServerRenderingRequestHandler<Context = RequestContext>(
+export function createServerRender<Context = RequestContext>(
   render: (
     request: EnhancedRequest,
     context: Context,
@@ -55,16 +44,20 @@ export function createServerRenderingRequestHandler<Context = RequestContext>(
   {context, ...options}: Omit<Options<Context>, 'router'> = {},
 ): RequestHandler<Context> {
   return async (request, requestContext) => {
+    const accepts = request.headers.get('Accept');
+
+    if (accepts != null && !accepts.includes('text/html')) return;
+
     const app = await render(request, requestContext);
 
-    return renderToResponse(app, request, {
+    return renderAppToResponse(app, request, {
       ...options,
       context: context?.(request, requestContext) ?? (requestContext as any),
     });
   };
 }
 
-export async function renderToResponse(
+export async function renderAppToResponse(
   app: ReactElement<any>,
   request: Request,
   {
@@ -73,10 +66,6 @@ export async function renderToResponse(
     ...options
   }: Omit<Options, 'handler' | 'renderProps'> = {},
 ) {
-  const accepts = request.headers.get('Accept');
-
-  if (accepts != null && !accepts.includes('text/html')) return;
-
   const {
     html: htmlManager,
     http,
@@ -118,7 +107,7 @@ export async function renderToResponse(
     preload,
   });
 
-  return html(renderToString(htmlElement), {
+  return html(renderHtmlToString(htmlElement), {
     headers,
     status: statusCode,
   });

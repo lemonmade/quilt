@@ -37,7 +37,7 @@ export interface Options {
   env?: EnvironmentOptions;
   port?: number;
   server?: Pick<AppServerOptions, 'entry' | 'format' | 'env'>;
-  browser?: Pick<AppBrowserOptions, 'entryModule' | 'initializeModule'>;
+  browser?: Pick<AppBrowserOptions, 'entry'>;
 }
 
 export interface AppDevelopmentServerHandler {
@@ -230,7 +230,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                   };
 
                   return stripIndent`
-                    import {createAssetManifest} from '@quilted/quilt/server';
+                    import {createAssetManifest as createBaseAssetManifest} from '@quilted/quilt/server';
 
                     const ASSETS = ${JSON.stringify(baseAssets)};
                     ASSETS.async = new Proxy(
@@ -256,8 +256,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       },
                     );
 
-                    export default function createManifest() {
-                      return createAssetManifest({
+                    export function createAssetManifest() {
+                      return createBaseAssetManifest({
                         getBuild() {
                           return ASSETS;
                         },
@@ -291,11 +291,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
             const entryFiles = await Promise.all([
               quiltAppEntry!.run(),
-              browser?.entryModule
-                ? resolveToActualFiles(browser.entryModule)
-                : Promise.resolve([]),
-              browser?.initializeModule
-                ? resolveToActualFiles(browser.initializeModule)
+              browser?.entry
+                ? resolveToActualFiles(browser.entry)
                 : Promise.resolve([]),
             ]);
 

@@ -23,10 +23,9 @@ The example below shows how you could use the `assets` option to change the `bas
 ```ts
 // quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
+export default createProject((app) => {
   app.use(
     quiltApp({
       assets: {baseUrl: 'https://my-cdn.com/my-app/assets/'},
@@ -40,10 +39,9 @@ The example below shows how you can use the `assets.inline` option to fully disa
 ```ts
 // quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
+export default createProject((app) => {
   app.use(
     quiltApp({
       assets: {inline: false},
@@ -66,10 +64,9 @@ The example below shows how you can write a custom Craft plugin that uses the `q
 ```ts
 // quilt.project.ts
 
-import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
+import {createProject, quiltApp, createProjectPlugin} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
+export default createProject((app) => {
   app.use(quiltApp());
   app.use(
     createProjectPlugin({
@@ -94,38 +91,43 @@ When you leave this default setup in place, Quilt will automatically create a br
 
 ### Replacing the default entrypoint
 
-The default entrypoint is quite simple, and there are many common cases where you may want to customize it. For example, you might want to initialize an error reporting library as early as possible, or you might want to start some workers as your React application boots. You can customize the entry by passing the `browser` option to the `quiltWebApp` plugin in your app’s `quilt.project.ts`. The `browser` option lets you specify two modules (files) that customize the default browser entrypoint:
+The default browser entrypoint is quite simple, and there are many common cases where you may want to customize it. For example, you might want to initialize an error reporting library as early as possible, or you might want to start some workers as your React application boots. You can customize the entry by passing the `browser` option to the `quiltWebApp` plugin in your app’s `quilt.project.ts`. The `browser` option lets you specify an `entry` field, which is a path to a file to use as the browser entrypoint of your application.
 
-- `initializeModule`, which will be imported before anything else in the browser entry. Use this for code that must run as early as possible.
-- `entryModule`, which will be imported after the Quilt runtime has been installed, and will be used in place of the default rendering content. Use this if you want to completely replace the rendering code in the default browser entrypoint.
-
-Let’s say you want to bootstrap an error reporting library before your application renders. You can do this by providing the `initializeModule` option that points at a file in your application:
+As an example, let’s say you want to bootstrap an error reporting library before your application renders. You can do this by providing the `entry` option that points at a file in your application:
 
 ```ts
 // quilt.project.ts
 
-import {createApp, quiltApp} from '@quilted/craft';
+import {createProject, quiltApp} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
+export default createProject((app) => {
   app.use(
     quiltApp({
-      // `initializeModule` can be an absolute or relative path, and like an
-      // import in your source code, it can omit the file extension. If you
-      // use a relative path, like we do here, it should be relative to this
-      // configuration file.
-      browser: {initializeModule: './browser/bootstrap'},
+      // `entry` is like an import — it is relative to this file
+      browser: {entry: './browser.tsx'},
     }),
   );
 });
 ```
 
-Then, in the referenced file, you can provide all the custom initialization logic, using all the same features as you can in your “normal” app code:
+Then, in the referenced file, you can provide all the custom initialization logic, followed by the basic React code required to render your application in the browser:
 
 ```ts
+// Make sure to include this import if you are using Quilt’s async features
+import '@quilted/quilt/global';
+
 import {ErrorLogging} from 'my-error-logging-library/browser';
 
+// If you are not server rendering, swap this out with `renderRoot` instead
+import {hydrateRoot} from 'react-dom/client';
+
+import App from './App';
+
 ErrorLogging.start();
+
+const element = document.querySelector('#root')!;
+
+hydrateRoot(element, <App />);
 ```
 
 ### Customizing the browser builds with Craft
@@ -141,10 +143,9 @@ The example below shows how you can write a custom Craft plugin that uses the `q
 ```ts
 // quilt.project.ts
 
-import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
+import {createProject, quiltApp, createProjectPlugin} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
+export default createProject((app) => {
   app.use(quiltApp());
   app.use(
     createProjectPlugin({
@@ -164,10 +165,9 @@ When Quilt is building the browser version of your app, it sets the `quiltAppBro
 ```ts
 // quilt.project.ts
 
-import {createApp, quiltApp, createProjectPlugin} from '@quilted/craft';
+import {createProject, quiltApp, createProjectPlugin} from '@quilted/craft';
 
-export default createApp((app) => {
-  app.entry('./App');
+export default createProject((app) => {
   app.use(quiltApp());
   app.use(
     createProjectPlugin({

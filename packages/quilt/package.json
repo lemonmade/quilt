@@ -197,7 +197,7 @@
       "magic/app": [
         "./build/typescript/magic/app.d.ts"
       ],
-      "magic/app/asset-manifest": [
+      "magic/asset-manifest": [
         "./build/typescript/magic/asset-manifest.d.ts"
       ],
       "magic/request-router": [

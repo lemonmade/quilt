@@ -112,9 +112,9 @@ export function appServerBuild({
                 );
 
                 return stripIndent`
-                  import {createAssetManifest} from '@quilted/quilt/server';
+                  import {createAssetManifest as createBaseAssetManifest} from '@quilted/quilt/server';
 
-                  export default function createManifest() {
+                  export function createAssetManifest() {
                     const manifests = JSON.parse(${JSON.stringify(
                       JSON.stringify(manifests),
                     )});
@@ -129,7 +129,7 @@ export function appServerBuild({
                     // The default manifest is the last one, since it has the widest browser support.
                     const defaultManifest = manifests[manifests.length - 1];
 
-                    return createAssetManifest({
+                    return createBaseAssetManifest({
                       getBuild({userAgent}) {
                         // If there is no user agent, use the default manifest.
                         if (typeof userAgent !== 'string') return defaultManifest;

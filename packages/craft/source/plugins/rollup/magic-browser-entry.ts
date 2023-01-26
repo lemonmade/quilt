@@ -6,26 +6,13 @@ import {MAGIC_MODULE_APP_COMPONENT} from '../../constants';
 
 export interface Options {
   /**
-   * The path to a module in your project that will be run before anything
-   * else in your browser entrypoint, including the code that initializes
-   * the tiny Quilt runtime. This path can be absolute, or relative from
-   * the root directory of the application.
+   * The relative path to the module you want to use as the
+   * entry for your browser bundles. When provided, this completely
+   * overwrites the default browser content.
    *
-   * @example './browser/bootstrap.ts'
+   * @example './browser.tsx'
    */
-  initializeModule?: string;
-
-  /**
-   * The path to a module in your project that will be run after the
-   * `initializeModule` (if provided), and after the Quilt runtime is
-   * installed. If you provide this option, it replaces the default content
-   * that Quilt uses. The default content either renders or hydrates your
-   * application with React, so if you provide this option, you **must**
-   * do this rendering yourself.
-   *
-   * @example './browser/entry.tsx'
-   */
-  entryModule?: string;
+  entry?: string;
 
   /**
    * The project being built.
@@ -54,17 +41,13 @@ export interface Options {
   customizeContent(content: string): Promise<string>;
 }
 
-const MAGIC_MODULE_CUSTOM_INITIALIZE = '.quilt/magic/initialize.js';
-const MAGIC_MODULE_CUSTOM_ENTRY = '.quilt/magic/browser-entry.js';
-
 export function magicBrowserEntry({
   module: magicEntryModule,
   project,
   customizeContent,
   shouldHydrate,
   cssSelector,
-  initializeModule,
-  entryModule,
+  entry,
 }: Options): Plugin {
   return {
     name: '@quilted/app/magic-entry',
@@ -73,9 +56,7 @@ export function magicBrowserEntry({
         id === magicEntryModule ||
         // Some tools require you to use a `/` so that the identifier is a valid
         // JavaScript asset module reference
-        id === `/${magicEntryModule}` ||
-        id === MAGIC_MODULE_CUSTOM_ENTRY ||
-        id === MAGIC_MODULE_CUSTOM_INITIALIZE
+        id === `/${magicEntryModule}`
       ) {
         // We resolve to a path within the project’s directory
         // so that it can use the app’s node_modules.
@@ -88,72 +69,35 @@ export function magicBrowserEntry({
       return null;
     },
     async load(source) {
-      if (source === project.fs.resolvePath(MAGIC_MODULE_CUSTOM_INITIALIZE)) {
-        if (initializeModule == null) {
-          throw new Error(
-            'Can’t load initialize module because browser.initializeModule was not provided',
-          );
-        }
-
-        return `import ${JSON.stringify(
-          project.fs.resolvePath(initializeModule),
-        )}`;
-      }
-
-      if (source === project.fs.resolvePath(MAGIC_MODULE_CUSTOM_ENTRY)) {
-        if (entryModule == null) {
-          throw new Error(
-            'Can’t load entry module because browser.entryModule was not provided',
-          );
-        }
-
-        return `import ${JSON.stringify(project.fs.resolvePath(entryModule))}`;
-      }
-
       if (source !== project.fs.resolvePath(magicEntryModule)) {
         return null;
       }
 
-      let initialContent: string;
-
-      if (entryModule) {
-        initialContent = stripIndent`
-          ${
-            initializeModule
-              ? `import ${JSON.stringify(MAGIC_MODULE_CUSTOM_INITIALIZE)}`
-              : ''
-          }
-          import '@quilted/quilt/global';
-          import ${JSON.stringify(MAGIC_MODULE_CUSTOM_ENTRY)}
-        `;
-      } else {
-        const [hydrate, selector] = await Promise.all([
-          shouldHydrate(),
-          cssSelector(),
-        ]);
-
-        const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
-
-        initialContent = stripIndent`
-          ${
-            initializeModule
-              ? `import ${JSON.stringify(MAGIC_MODULE_CUSTOM_INITIALIZE)}`
-              : ''
-          }
-          import '@quilted/quilt/global';
-          import {jsx} from 'react/jsx-dev-runtime';
-          import {${reactRootFunction}} from 'react-dom/client';
-          import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-
-          const element = document.querySelector(${JSON.stringify(selector)});
-
-          ${
-            hydrate
-              ? `${reactRootFunction}(element, jsx(App));`
-              : `${reactRootFunction}(element).render(jsx(App));`
-          }
-        `;
+      if (entry) {
+        return `import ${JSON.stringify(project.fs.resolvePath(entry))};`;
       }
+
+      const [hydrate, selector] = await Promise.all([
+        shouldHydrate(),
+        cssSelector(),
+      ]);
+
+      const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
+
+      const initialContent = stripIndent`
+        import '@quilted/quilt/global';
+        import {jsx} from 'react/jsx-dev-runtime';
+        import {${reactRootFunction}} from 'react-dom/client';
+        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+
+        const element = document.querySelector(${JSON.stringify(selector)});
+
+        ${
+          hydrate
+            ? `${reactRootFunction}(element, jsx(App));`
+            : `${reactRootFunction}(element).render(jsx(App));`
+        }
+      `;
 
       const content = await customizeContent(initialContent);
 

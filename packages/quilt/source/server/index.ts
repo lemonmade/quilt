@@ -1,9 +1,9 @@
 export {
-  render,
   Html,
   Serialize,
   HtmlManager,
   HtmlContext,
+  renderHtmlToString,
   SERVER_ACTION_ID as HTML_SERVER_ACTION_ID,
 } from '@quilted/react-html/server';
 export {
@@ -68,8 +68,4 @@ export {parseAcceptLanguageHeader} from '@quilted/react-localize';
 
 export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
-export {
-  createServerRenderingRequestHandler,
-  createServerRenderingRequestRouter,
-  renderToResponse,
-} from './request-router';
+export {createServerRender, renderAppToResponse} from './request-router';

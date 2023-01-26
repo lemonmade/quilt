@@ -1,11 +1,9 @@
 import '@quilted/quilt/global';
+
 import {type GraphQLFetch, type GraphQLData} from '@quilted/quilt';
-import {
-  createRequestRouter,
-  createServerRenderingRequestHandler,
-} from '@quilted/quilt/server';
-import {json} from '@quilted/quilt/request-router';
-import createAssetManifest from '@quilted/quilt/magic/app/asset-manifest';
+import {createRequestRouter, json} from '@quilted/quilt/request-router';
+import {createServerRender} from '@quilted/quilt/server';
+import {createAssetManifest} from '@quilted/quilt/magic/asset-manifest';
 
 import {performGraphQLOperation} from './server/graphql';
 
@@ -25,7 +23,7 @@ router.post('/api/graphql', async (request) => {
 
 // For all GET requests, render our React application.
 router.get(
-  createServerRenderingRequestHandler(
+  createServerRender(
     async () => {
       const {default: App} = await import('./App');
 
