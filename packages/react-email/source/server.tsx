@@ -6,7 +6,7 @@ import {
   HtmlManager,
   HtmlContext,
   Html,
-  render,
+  renderHtmlToString,
 } from '@quilted/react-html/server';
 
 import {EmailContext} from './context';
@@ -38,7 +38,7 @@ export async function renderEmail(
 
   return {
     ...state,
-    html: render(<Html manager={html}>{markup}</Html>, {
+    html: renderHtmlToString(<Html manager={html}>{markup}</Html>, {
       doctype:
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
     }),

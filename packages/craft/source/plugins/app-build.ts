@@ -19,10 +19,7 @@ export interface AssetOptions {
   minify: boolean;
 }
 
-export type AppBrowserOptions = Pick<
-  MagicBrowserEntryOptions,
-  'entryModule' | 'initializeModule'
->;
+export type AppBrowserOptions = Pick<MagicBrowserEntryOptions, 'entry'>;
 
 export interface Options {
   server: boolean;

@@ -147,14 +147,15 @@ function setupConfiguration(
           import ${JSON.stringify(project.fs.resolvePath(entry))};
         `
       : stripIndent`
+        import '@quilted/quilt/global';
         import {jsx} from 'react/jsx-runtime';
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-        import createAssetManifest from ${JSON.stringify(
+        import {createAssetManifest} from ${JSON.stringify(
           MAGIC_MODULE_APP_ASSET_MANIFEST,
         )};
-        import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
+        import {createServerRender} from '@quilted/quilt/server';
   
-        export default createServerRenderingRequestRouter(() => jsx(App), {
+        export default createServerRender(() => jsx(App), {
           assets: createAssetManifest(),
         });
       `;

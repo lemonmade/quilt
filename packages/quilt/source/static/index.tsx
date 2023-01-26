@@ -1,7 +1,7 @@
 import type {ComponentType} from 'react';
 
 import type {AssetManifest} from '@quilted/async/server';
-import {render, Html} from '@quilted/react-html/server';
+import {renderHtmlToString, Html} from '@quilted/react-html/server';
 import type {RouteDefinition} from '@quilted/react-router';
 import {
   StaticRenderer,
@@ -255,7 +255,7 @@ export async function renderStatic(
       ...nomoduleScripts.map((script) => ({...script, nomodule: true})),
     ];
 
-    const minifiedHtml = render(
+    const minifiedHtml = renderHtmlToString(
       <Html
         url={url}
         manager={htmlManager}

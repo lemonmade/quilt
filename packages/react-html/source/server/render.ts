@@ -1,7 +1,7 @@
 import type {ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
-export function render(
+export function renderHtmlToString(
   tree: ReactElement<any>,
   {doctype = '<!DOCTYPE html>'} = {},
 ) {

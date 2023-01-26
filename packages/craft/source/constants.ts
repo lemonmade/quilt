@@ -1,6 +1,6 @@
 export const MAGIC_MODULE_APP_COMPONENT = '@quilted/quilt/magic/app';
 export const MAGIC_MODULE_APP_ASSET_MANIFEST =
-  '@quilted/quilt/magic/app/asset-manifest';
+  '@quilted/quilt/magic/asset-manifest';
 export const MAGIC_MODULE_REQUEST_ROUTER =
   '@quilted/quilt/magic/request-router';
 export const MAGIC_MODULE_ENV = '@quilted/quilt/env';

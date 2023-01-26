@@ -3,7 +3,9 @@ import {createProject, quiltApp} from '@quilted/craft';
 export default createProject((project) => {
   project.use(
     quiltApp({
-      entry: './App.tsx',
+      browser: {
+        entry: './browser.tsx',
+      },
       server: {
         entry: './server.tsx',
       },

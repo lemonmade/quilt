@@ -369,14 +369,15 @@ export function appStatic({
                 }
 
                 return stripIndent`
+                  import '@quilted/quilt/global';
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-                  import assets from ${JSON.stringify(
+                  import {createAssetManifest} from ${JSON.stringify(
                     MAGIC_MODULE_APP_ASSET_MANIFEST,
                   )};
                   import {renderStatic} from '@quilted/quilt/static';
 
                   export default async function render(options) {
-                    await renderStatic(App, {assets, ...options});
+                    await renderStatic(App, {assets: createAssetManifest(), ...options});
                   }
                 `;
               },
