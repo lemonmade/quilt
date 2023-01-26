@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.47
+
+### Patch Changes
+
+- [`585d7acb`](https://github.com/lemonmade/quilt/commit/585d7acb4a95ec3e2d0a9a90b27cc52d146b3585) Thanks [@lemonmade](https://github.com/lemonmade)! - Add react-dom types to app templates
+
 ## 0.1.46
 
 ### Patch Changes
