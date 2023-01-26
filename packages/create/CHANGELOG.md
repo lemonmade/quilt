@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.46
+
+### Patch Changes
+
+- [`139d7b57`](https://github.com/lemonmade/quilt/commit/139d7b57dbc0ff64554360fa32e2f0f4f9a33181) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix graphql and empty app templates
+
 ## 0.1.45
 
 ### Patch Changes

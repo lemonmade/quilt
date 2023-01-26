@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.183
+
+### Patch Changes
+
+- [`139d7b57`](https://github.com/lemonmade/quilt/commit/139d7b57dbc0ff64554360fa32e2f0f4f9a33181) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix default server entry
+
+- [`139d7b57`](https://github.com/lemonmade/quilt/commit/139d7b57dbc0ff64554360fa32e2f0f4f9a33181) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve default server log
+
 ## 0.1.182
 
 ### Patch Changes
