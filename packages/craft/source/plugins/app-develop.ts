@@ -173,7 +173,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       import App from ${JSON.stringify(
                         MAGIC_MODULE_APP_COMPONENT,
                       )};
-                      import createAssetManifest from ${JSON.stringify(
+                      import {createAssetManifest} from ${JSON.stringify(
                         MAGIC_MODULE_APP_ASSET_MANIFEST,
                       )};
                       import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
