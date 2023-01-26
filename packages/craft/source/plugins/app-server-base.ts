@@ -153,11 +153,17 @@ function setupConfiguration(
         import {createAssetManifest} from ${JSON.stringify(
           MAGIC_MODULE_APP_ASSET_MANIFEST,
         )};
-        import {createServerRender} from '@quilted/quilt/server';
+        import {createServerRender, createRequestRouter} from '@quilted/quilt/server';
+
+        const router = createRequestRouter();
+
+        router.get(
+          createServerRender(() => jsx(App), {
+            assets: createAssetManifest(),
+          }),
+        );
   
-        export default createServerRender(() => jsx(App), {
-          assets: createAssetManifest(),
-        });
+        export default router;
       `;
 
     quiltAsyncPreload?.(() => false);

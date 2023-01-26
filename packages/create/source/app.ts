@@ -86,9 +86,7 @@ export async function createApp() {
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
-  const appTemplate = loadTemplate(
-    template === 'basic' ? 'app-basic' : 'app-single-file',
-  );
+  const appTemplate = loadTemplate(`app-${template}`);
   const workspaceTemplate = loadTemplate('workspace');
 
   // If we aren’t already in a workspace, copy the workspace files over, which

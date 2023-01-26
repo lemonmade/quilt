@@ -543,12 +543,14 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               if (resolvedHost) {
                 app.listen(finalPort, resolvedHost, () => {
                   // eslint-disable-next-line no-console
-                  console.log(`Listening on ${resolvedHost}:${finalPort}`);
+                  console.log(
+                    `Listening on http://${resolvedHost}:${finalPort}`,
+                  );
                 });
               } else {
                 app.listen(finalPort, () => {
                   // eslint-disable-next-line no-console
-                  console.log(`Listening on localhost:${finalPort}`);
+                  console.log(`Listening on http://localhost:${finalPort}`);
                 });
               }
             } catch (error) {
