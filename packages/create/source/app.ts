@@ -222,7 +222,7 @@ export async function createApp() {
         };
         
         export default configuration;      
-      `,
+      ` + '\n',
     );
   }
 
