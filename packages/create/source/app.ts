@@ -200,6 +200,32 @@ export async function createApp() {
     return file !== 'package.json';
   });
 
+  if (template === 'graphql' && !inWorkspace) {
+    const relativeFromRootToAppPath = (filePath: string) =>
+      path.relative(outputRoot.root, path.join(appDirectory, filePath));
+
+    await outputRoot.write(
+      'graphql.config.ts',
+      stripIndent`
+        import {type Configuration} from '@quilted/craft/graphql';
+
+        const configuration: Configuration = {
+          schema: '${relativeFromRootToAppPath('graphql/schema.graphql')}',
+          documents: ['${relativeFromRootToAppPath('**/*.graphql')}'],
+          extensions: {
+            quilt: {
+              schema: [{kind: 'definitions', outputPath: '${relativeFromRootToAppPath(
+                'graphql/schema.ts',
+              )}'}],
+            },
+          },
+        };
+        
+        export default configuration;      
+      `,
+    );
+  }
+
   if (partOfMonorepo) {
     // Write the app’s package.json (the root one was already created)
     const projectPackageJson = JSON.parse(

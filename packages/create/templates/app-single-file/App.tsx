@@ -105,6 +105,12 @@ export function Http() {
         reportOnly={Env.MODE === 'development'}
         // By default, only allow sources from the page’s origin.
         defaultSources={["'self'"]}
+        // In development, allow connections to local websockets for hot reloading.
+        connectSources={
+          Env.MODE === 'development'
+            ? ["'self'", `${isHttps ? 'ws' : 'wss'}://localhost:*`]
+            : undefined
+        }
         // Includes `'unsafe-inline'` because CSS is often necessary in development,
         // and can be difficult to avoid in production.
         styleSources={["'self'", "'unsafe-inline'"]}
