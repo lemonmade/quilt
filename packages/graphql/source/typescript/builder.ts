@@ -203,6 +203,7 @@ export class Builder extends EventEmitter {
       const schemasWatcher = watch(project.schemaPatterns, {
         cwd: project.root,
         ignoreInitial: true,
+        followSymlinks: false,
       })
         .on('add', () => this.updateProjectTypes(project))
         .on('unlink', () => this.updateProjectTypes(project))
@@ -214,6 +215,7 @@ export class Builder extends EventEmitter {
         cwd: project.root,
         ignored: project.excludePatterns,
         ignoreInitial: true,
+        followSymlinks: false,
       })
         .on('add', (filePath: string) => updateDocument(filePath, project))
         .on('change', (filePath: string) => updateDocument(filePath, project))
