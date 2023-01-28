@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.55
+
+### Patch Changes
+
+- [`be817feb`](https://github.com/lemonmade/quilt/commit/be817feb777fd056b3e868f62a2359df8c1d9e37) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix unnexpected files getting built by GraphQL type generator
+
 ## 0.4.54
 
 ### Patch Changes

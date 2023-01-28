@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.49
+
+### Patch Changes
+
+- [`01a1b865`](https://github.com/lemonmade/quilt/commit/01a1b8657fb75bb10a3996cefbc1ba71e147dbb2) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix linting issue in graphql template
+
 ## 0.1.48
 
 ### Patch Changes

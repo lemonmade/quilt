@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.33
+
+### Patch Changes
+
+- [`96b3a48b`](https://github.com/lemonmade/quilt/commit/96b3a48b649f86995f6d95ab1c85001b14bb4c67) Thanks [@lemonmade](https://github.com/lemonmade)! - Try fixing async style inclusion
+
 ## 0.3.32
 
 ### Patch Changes
