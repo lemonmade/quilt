@@ -302,12 +302,19 @@ async function writeManifestForBundle(
   // entry (though, from a separate build).
   const entryChunk = entries[0]!;
 
+  const assetMap = new Map<string, string[]>();
+
+  for (const output of outputs) {
+    if (output.type !== 'chunk') continue;
+    assetMap.set(output.fileName, output.imports);
+  }
+
   const manifest: Partial<AssetBuild> = {
     metadata: manifestOptions.metadata ?? {},
     entry: createAsset(
       assetBaseUrl,
       [...entryChunk.imports, entryChunk.fileName],
-      {format},
+      {format, assetMap},
     ),
     async: {},
   };
@@ -323,7 +330,7 @@ async function writeManifestForBundle(
     manifest.async![asyncId] = createAsset(
       assetBaseUrl,
       [...output.imports, output.fileName],
-      {format},
+      {format, assetMap},
     );
   }
 
@@ -334,12 +341,27 @@ async function writeManifestForBundle(
 function createAsset(
   baseUrl: string,
   files: string[],
-  {format}: {format: ModuleFormat},
+  {format, assetMap}: {format: ModuleFormat; assetMap: Map<string, string[]>},
 ): AssetBuildEntry {
   const styles: Asset[] = [];
   const scripts: Asset[] = [];
 
+  const allFiles = new Set<string>();
+  const addFile = (file: string) => {
+    if (allFiles.has(file)) return;
+
+    for (const dependency of assetMap.get(file) ?? []) {
+      addFile(dependency);
+    }
+
+    allFiles.add(file);
+  };
+
   for (const file of files) {
+    addFile(file);
+  }
+
+  for (const file of allFiles) {
     if (file.endsWith('.css')) {
       styles.push({source: `${baseUrl}${file}`, attributes: {}});
     } else {
