@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.34
+
+### Patch Changes
+
+- [`8945415d`](https://github.com/lemonmade/quilt/commit/8945415d8f196724e409a259cf319d9f09631ae2) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve some bundling defaults
+
 ## 0.3.33
 
 ### Patch Changes
