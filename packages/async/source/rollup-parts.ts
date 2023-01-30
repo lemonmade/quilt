@@ -320,12 +320,15 @@ async function writeManifestForBundle(
   };
 
   for (const output of outputs) {
-    if (output.type !== 'chunk' || output.facadeModuleId == null) continue;
-    if (!output.facadeModuleId.startsWith(IMPORT_PREFIX)) continue;
+    if (output.type !== 'chunk') continue;
+
+    const originalModuleId =
+      output.facadeModuleId ?? output.moduleIds[output.moduleIds.length - 1];
+
+    if (!originalModuleId?.startsWith(IMPORT_PREFIX)) continue;
 
     // This metadata is added by the rollup plugin for @quilted/async
-    const asyncId = this.getModuleInfo(output.facadeModuleId)?.meta.quilt
-      ?.asyncId;
+    const asyncId = this.getModuleInfo(originalModuleId)?.meta.quilt?.asyncId;
 
     manifest.async![asyncId] = createAsset(
       assetBaseUrl,

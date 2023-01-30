@@ -7,7 +7,7 @@ import type {Config as BrowserslistConfig} from 'browserslist';
 import type {} from '../tools/postcss';
 import type {} from '../features/async';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin, Project, Workspace} from '../kit';
 
 import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
@@ -86,7 +86,7 @@ export function appBuild({
 }: Options) {
   return createProjectPlugin({
     name: STEP_NAME,
-    build({project, configure, run}) {
+    build({project, workspace, configure, run}) {
       configure(
         (
           {
@@ -269,7 +269,7 @@ export function appBuild({
               entryFileNames: `app${targetFilenamePart}.[hash].js`,
               assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
               chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
-              manualChunks: createManualChunksSorter(),
+              manualChunks: createManualChunksSorter({project, workspace}),
             });
 
             return outputs;
@@ -383,6 +383,8 @@ const FRAMEWORK_CHUNK_NAME = 'framework';
 const POLYFILLS_CHUNK_NAME = 'polyfills';
 const VENDOR_CHUNK_NAME = 'vendor';
 const UTILITIES_CHUNK_NAME = 'utilities';
+const SHARED_CHUNK_NAME = 'shared';
+const PACKAGES_CHUNK_NAME = 'packages';
 const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
   '/node_modules/preact/',
   '/node_modules/react/',
@@ -420,11 +422,23 @@ interface ImportMetadata {
 }
 
 // Inspired by Vite: https://github.com/vitejs/vite/blob/c69f83615292953d40f07b1178d1ed1d72abe695/packages/vite/source/node/build.ts#L567
-function createManualChunksSorter(): GetManualChunk {
+function createManualChunksSorter({
+  project,
+  workspace,
+}: {
+  project: Project;
+  workspace: Workspace;
+}): GetManualChunk {
   const cache = new Map<string, ImportMetadata>();
 
+  // TODO: make this more configurable, and make it so that we bundle more intelligently
+  // for split entries
+  const packagesPath = workspace.fs.resolvePath('packages/');
+  const sharedPath = project.fs.resolvePath('shared/');
+
   return (id, {getModuleInfo}) => {
-    if (id.endsWith('.css')) return;
+    if (id.startsWith(packagesPath)) return PACKAGES_CHUNK_NAME;
+    if (id.startsWith(sharedPath)) return SHARED_CHUNK_NAME;
 
     if (UTILITY_TEST_STRINGS.some((test) => id.includes(test))) {
       return UTILITIES_CHUNK_NAME;
@@ -440,8 +454,6 @@ function createManualChunksSorter(): GetManualChunk {
     }
 
     const importMetadata = getImportMetadata(id, getModuleInfo, cache);
-
-    if (!importMetadata.fromEntry) return;
 
     if (importMetadata.fromFramework) {
       return FRAMEWORK_CHUNK_NAME;
