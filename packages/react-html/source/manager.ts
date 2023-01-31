@@ -1,7 +1,6 @@
 import type {HTMLProps, HtmlHTMLAttributes} from 'react';
 import type {ServerActionKind} from '@quilted/react-server-render';
 
-import {getHydrationsFromDocument} from './utilities/hydration';
 import {getSerializationsFromDocument} from './utilities/serialization';
 
 export interface State {
@@ -37,7 +36,6 @@ export class HtmlManager {
   };
 
   private serializations: Map<string, unknown>;
-  private hydrations: Map<string, string>;
   private hydrationIds = new Map<
     string | typeof DEFAULT_HYDRATION_ID,
     number
@@ -70,10 +68,8 @@ export class HtmlManager {
 
   constructor({
     serializations = getSerializationsFromDocument(),
-    hydrations = getHydrationsFromDocument(),
   }: Options = {}) {
     this.serializations = serializations;
-    this.hydrations = hydrations;
   }
 
   reset({includeSerializations = false} = {}) {
@@ -85,7 +81,6 @@ export class HtmlManager {
 
     if (includeSerializations) {
       this.serializations.clear();
-      this.hydrations.clear();
     }
   }
 
@@ -133,10 +128,6 @@ export class HtmlManager {
     const current = this.hydrationIds.get(finalId) ?? 0;
     this.hydrationIds.set(finalId, current + 1);
     return `${id ?? DEFAULT_HYDRATION_PREFIX}${current + 1}`;
-  }
-
-  getHydration(id: string) {
-    return this.hydrations.get(id);
   }
 
   hydrated() {

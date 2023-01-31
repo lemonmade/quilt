@@ -2,7 +2,6 @@ export {
   Alternate,
   BodyAttributes,
   HtmlAttributes,
-  Hydrator,
   Link,
   Meta,
   SearchRobots,

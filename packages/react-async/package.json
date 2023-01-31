@@ -37,6 +37,10 @@
     }
   },
   "sideEffects": false,
+  "dependencies": {
+    "@quilted/async": "^0.3.12",
+    "@quilted/react-server-render": "^0.3.7"
+  },
   "peerDependencies": {
     "react": "^18.0.0"
   },
@@ -44,11 +48,6 @@
     "react": {
       "optional": true
     }
-  },
-  "dependencies": {
-    "@quilted/async": "^0.3.12",
-    "@quilted/react-html": "^0.3.18",
-    "@quilted/react-server-render": "^0.3.7"
   },
   "eslintConfig": {
     "extends": [

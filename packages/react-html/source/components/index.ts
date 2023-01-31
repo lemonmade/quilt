@@ -1,7 +1,6 @@
 export {Alternate} from './Alternate';
 export {BodyAttributes} from './BodyAttributes';
 export {HtmlAttributes} from './HtmlAttributes';
-export {Hydrator} from './Hydrator';
 export {Link} from './Link';
 export {Meta} from './Meta';
 export {ThemeColor} from './ThemeColor';

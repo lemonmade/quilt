@@ -1,11 +1,13 @@
 import {
-  useEffect,
+  Component,
+  createRef,
   type ReactNode,
   type ReactElement,
   type ComponentType,
+  type PropsWithChildren,
 } from 'react';
+import {createRoot, hydrateRoot} from 'react-dom/client';
 import {createAsyncModule, AsyncModuleLoad} from '@quilted/async';
-import {Hydrator} from '@quilted/react-html';
 
 import {useAsyncModule, useAsyncModulePreload} from './hooks';
 import type {
@@ -34,6 +36,8 @@ export interface Options<
    */
   usePreload?(props: PreloadOptions): void;
 }
+
+const EMPTY_OBJECT = {};
 
 export function createAsyncComponent<
   Props extends Record<string, any> = Record<string, never>,
@@ -91,44 +95,104 @@ export function createAsyncComponent<
     scriptTiming = 'never';
   }
 
-  function Async(props: Props) {
-    const {resolved, load, loading, error} = useAsyncModule(asyncModule, {
+  function ServerAsync(props: Props) {
+    const {resolved, loading, error} = useAsyncModule(asyncModule, {
       scripts: scriptTiming,
       styles: styleTiming,
-      immediate: typeof window !== 'undefined' || render === 'server',
+      immediate: typeof document !== 'undefined' || render === 'server',
     });
 
-    if (error) {
-      return renderError(error);
-    }
-
     const Component = (resolved as any)?.default ?? resolved;
-    const rendered = Component ? <Component {...props} /> : null;
 
-    let content: ReactNode = null;
-
-    if (loading) {
-      content = renderLoading(props);
-    } else {
-      content =
-        hydrate === 'defer' ? (
-          <Hydrator id={asyncModule.id} render={rendered != null}>
-            {rendered}
-          </Hydrator>
-        ) : (
-          rendered
-        );
+    // TODO error state will not persist to client rendering...
+    if (error) {
+      return <>{renderError(error)}</>;
     }
 
-    return (
-      <>
-        {content}
-        {loading && <Loader load={load} />}
-      </>
+    return loading ? (
+      <>{renderLoading(props)}</>
+    ) : (
+      <div>{Component ? <Component {...props} /> : null}</div>
     );
   }
 
-  Async.displayName = `Async(${componentName})`;
+  class Async extends Component<Props> {
+    static displayName = `Async(${componentName})`;
+
+    private root = createRef<HTMLElement | null>();
+    private mounted = false;
+    private hydrated = false;
+
+    shouldComponentUpdate(nextProps: Props) {
+      if (this.hydrated) {
+        this.handleLoad(asyncModule.loaded!, nextProps);
+      }
+
+      return false;
+    }
+
+    componentWillUnmount() {
+      this.mounted = false;
+
+      if ((this.root.current?.children.length ?? 0) > 0) {
+        createRoot(this.root.current!).unmount();
+      }
+    }
+
+    componentDidMount() {
+      this.mounted = true;
+      const resolved = asyncModule.loaded;
+
+      if (resolved) {
+        this.handleLoad(resolved);
+      } else {
+        asyncModule.load().then((loaded) => {
+          this.handleLoad(loaded);
+        });
+      }
+    }
+
+    render() {
+      if (typeof document === 'undefined') {
+        return <ServerAsync {...this.props} />;
+      }
+
+      return (
+        <div
+          ref={this.root as any}
+          // suppressHydrationWarning
+          dangerouslySetInnerHTML={EMPTY_OBJECT as any}
+        />
+      );
+    }
+
+    private handleLoad(
+      loaded: NonNullable<typeof asyncModule['loaded']>,
+      props = this.props,
+    ) {
+      if (this.root.current == null || !this.mounted) return;
+
+      const Component = (loaded as any)?.default ?? loaded;
+
+      // hydrate on first run, then normal renders thereafter
+      if (!this.hydrated && this.root.current.children.length > 0) {
+        hydrateRoot(
+          this.root.current,
+          <ContextProvider context={this.context}>
+            <Component {...props} />
+          </ContextProvider>,
+        );
+      } else {
+        createRoot(this.root.current).render(
+          <ContextProvider context={this.context}>
+            <Component {...props} />
+          </ContextProvider>,
+        );
+      }
+
+      this.hydrated = true;
+    }
+  }
 
   function usePreload(props: PreloadOptions) {
     useAsyncModulePreload(asyncModule);
@@ -204,10 +268,12 @@ function defaultRenderError(error: Error) {
   return null;
 }
 
-function Loader({load}: {load(): void}) {
-  useEffect(() => {
-    load();
-  }, [load]);
+class ContextProvider extends Component<PropsWithChildren<{context: any}>> {
+  getChildContext() {
+    return this.props.context;
+  }
 
-  return null;
+  render() {
+    return this.props.children;
+  }
 }

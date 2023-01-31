@@ -5,7 +5,6 @@ export {
   BodyAttributes,
   Favicon,
   HtmlAttributes,
-  Hydrator,
   Link,
   Meta,
   SearchRobots,
