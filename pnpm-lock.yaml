@@ -567,15 +567,10 @@ importers:
   packages/react-async:
     specifiers:
       '@quilted/async': ^0.3.12
-      '@quilted/react-html': ^0.3.18
       '@quilted/react-server-render': ^0.3.7
-      preact: ^10.11.3
     dependencies:
       '@quilted/async': link:../async
-      '@quilted/react-html': link:../react-html
       '@quilted/react-server-render': link:../react-server-render
-    devDependencies:
-      preact: 10.11.3
 
   packages/react-dom:
     specifiers:
