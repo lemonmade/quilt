@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.130
+
+### Patch Changes
+
+- [`8f0f7ae1`](https://github.com/lemonmade/quilt/commit/8f0f7ae1e8f4678155bedcb0d4e5ac63a73d19d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Update hydration approach for async components
+
 ## 0.5.129
 
 ### Patch Changes
