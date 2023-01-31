@@ -1,5 +1,11 @@
 # @quilted/react-async
 
+## 0.3.43
+
+### Patch Changes
+
+- [`31c5834b`](https://github.com/lemonmade/quilt/commit/31c5834b71e2ecca383cae4aab39e1ee6d857484) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix react-async react-dom peer dependency
+
 ## 0.3.42
 
 ### Patch Changes
