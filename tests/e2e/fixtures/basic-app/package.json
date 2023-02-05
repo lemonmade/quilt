@@ -9,7 +9,7 @@
     "react-dom": "workspace:@quilted/react-dom@*"
   },
   "devDependencies": {
-    "@quilted/quilt": "workspace:*",
+    "@quilted/craft": "workspace:*",
     "typescript": "^4.9.0"
   },
   "browserslist": [

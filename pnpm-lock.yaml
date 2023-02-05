@@ -859,8 +859,8 @@ importers:
 
   tests/e2e/fixtures/basic-api:
     specifiers:
-      '@quilted/craft': ^0.1.0
-      '@quilted/quilt': ^0.5.0
+      '@quilted/craft': workspace:*
+      '@quilted/quilt': workspace:*
       typescript: ^4.7.0
     dependencies:
       '@quilted/quilt': link:../../../../packages/quilt
@@ -870,6 +870,7 @@ importers:
 
   tests/e2e/fixtures/basic-app:
     specifiers:
+      '@quilted/craft': workspace:*
       '@quilted/quilt': workspace:*
       react: workspace:@quilted/react@*
       react-dom: workspace:@quilted/react-dom@*
@@ -879,10 +880,12 @@ importers:
       react: link:../../../../packages/react
       react-dom: link:../../../../packages/react-dom
     devDependencies:
+      '@quilted/craft': link:../../../../packages/craft
       typescript: 4.9.4
 
   tests/e2e/fixtures/empty-app:
     specifiers:
+      '@quilted/craft': workspace:*
       '@quilted/quilt': workspace:*
       react: workspace:@quilted/react@*
       react-dom: workspace:@quilted/react-dom@*
@@ -892,6 +895,7 @@ importers:
       react: link:../../../../packages/react
       react-dom: link:../../../../packages/react-dom
     devDependencies:
+      '@quilted/craft': link:../../../../packages/craft
       typescript: 4.9.4
 
 packages:

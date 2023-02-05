@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@quilted/quilt": "^0.5.0"
+    "@quilted/quilt": "workspace:*"
   },
   "devDependencies": {
-    "@quilted/craft": "^0.1.0",
+    "@quilted/craft": "workspace:*",
     "typescript": "^4.7.0"
   },
   "eslintConfig": {
