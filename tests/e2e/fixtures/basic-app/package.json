@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@quilted/quilt": "^0.5.0",
-    "react": "npm:@quilted/react@^18.2.0",
-    "react-dom": "npm:@quilted/react-dom@^18.2.0"
+    "@quilted/quilt": "workspace:*",
+    "react": "workspace:@quilted/react@*",
+    "react-dom": "workspace:@quilted/react-dom@*"
   },
   "devDependencies": {
-    "@quilted/craft": "^0.1.0",
-    "typescript": "^4.7.0"
+    "@quilted/quilt": "workspace:*",
+    "typescript": "^4.9.0"
   },
   "browserslist": [
     "extends @quilted/browserslist-config/evergreen"
