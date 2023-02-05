@@ -1,5 +1,11 @@
 # @quilted/react-async
 
+## 0.3.44
+
+### Patch Changes
+
+- [#504](https://github.com/lemonmade/quilt/pull/504) [`c3b95b5c`](https://github.com/lemonmade/quilt/commit/c3b95b5c17345394a99035bd43eee1e7440e6979) Thanks [@lemonmade](https://github.com/lemonmade)! - Use suspense by default for async components
+
 ## 0.3.43
 
 ### Patch Changes
