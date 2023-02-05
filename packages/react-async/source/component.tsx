@@ -5,7 +5,11 @@ import {
   type ReactElement,
   type ComponentType,
 } from 'react';
-import {createAsyncModule, AsyncModuleLoad} from '@quilted/async';
+import {
+  createAsyncModule,
+  type AsyncModuleLoad,
+  type AsyncModule,
+} from '@quilted/async';
 
 import {useAsyncModule, useAsyncModulePreload} from './hooks';
 import type {
@@ -118,11 +122,7 @@ export function createAsyncComponent<
 
         const Component = getComponent(module);
 
-        return Component ? (
-          <Component {...props} />
-        ) : (
-          renderLoading?.(props) ?? null
-        );
+        return Component ? <Component {...props} /> : null;
       }
     : function Async(props: Props) {
         const {
@@ -155,8 +155,22 @@ export function createAsyncComponent<
   const AsyncWithWrappers: any =
     suspense && renderLoading
       ? function AsyncWithWrappers(props: Props) {
+          const clientRenderOnly = render === 'client';
+
           // TODO handle renderError
-          return (
+          return clientRenderOnly ? (
+            <>
+              <div>
+                <Suspense>
+                  <Async {...props} />
+                </Suspense>
+              </div>
+              <RenderWhileLoading
+                module={asyncModule}
+                render={() => renderLoading(props)}
+              />
+            </>
+          ) : (
             <Suspense fallback={renderLoading(props)}>
               <Async {...props} />
             </Suspense>
@@ -213,6 +227,30 @@ function DoLoad({load}: {load: () => Promise<any>}) {
   }, [load]);
 
   return null;
+}
+
+function RenderWhileLoading({
+  module,
+  render,
+}: {
+  module: AsyncModule<any>;
+  render: () => ReactNode;
+}) {
+  if (typeof document === 'undefined' && module.loaded != null) {
+    return null;
+  }
+
+  const {
+    resolved,
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+  } = useAsyncModule(module, {
+    suspense: false,
+    immediate: false,
+    scripts: 'never',
+    styles: 'never',
+  });
+
+  return resolved ? null : (render() as any) ?? null;
 }
 
 function noopRender() {

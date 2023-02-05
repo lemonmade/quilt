@@ -93,8 +93,6 @@ export function useAsyncModule<Module = Record<string, unknown>>(
     const async = useContext(AsyncAssetContext);
 
     useServerAction(() => {
-      if (!immediate) return;
-
       if (asyncModule.loaded == null && immediate) {
         return load();
       }
