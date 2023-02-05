@@ -1,13 +1,15 @@
 import {
-  Component,
-  createRef,
+  useEffect,
+  Suspense,
   type ReactNode,
   type ReactElement,
   type ComponentType,
-  type PropsWithChildren,
 } from 'react';
-import {createRoot, hydrateRoot} from 'react-dom/client';
-import {createAsyncModule, AsyncModuleLoad} from '@quilted/async';
+import {
+  createAsyncModule,
+  type AsyncModuleLoad,
+  type AsyncModule,
+} from '@quilted/async';
 
 import {useAsyncModule, useAsyncModulePreload} from './hooks';
 import type {
@@ -22,12 +24,14 @@ export interface Options<
   Props extends Record<string, any> = Record<string, never>,
   PreloadOptions extends Record<string, any> = NoOptions,
 > {
+  name?: string;
   render?: RenderTiming;
   hydrate?: boolean | HydrationTiming;
   preload?: boolean;
-  displayName?: string;
+  suspense?: boolean;
+
+  renderError?(props: Props, error: Error): ReactNode;
   renderLoading?(props: Props): ReactNode;
-  renderError?(error: Error): ReactNode;
 
   /**
    * Custom logic to use for the usePreload hook of the new, async
@@ -36,8 +40,6 @@ export interface Options<
    */
   usePreload?(props: PreloadOptions): void;
 }
-
-const EMPTY_OBJECT = {};
 
 export function createAsyncComponent<
   Props extends Record<string, any> = Record<string, never>,
@@ -49,10 +51,11 @@ export function createAsyncComponent<
     | {default: ComponentType<Props>}
   >,
   {
+    name,
     render = 'server',
     hydrate: explicitHydrate = 'immediate',
     preload = true,
-    displayName,
+    suspense = true,
     renderLoading = noopRender,
     renderError = defaultRenderError,
     usePreload: useCustomPreload,
@@ -60,7 +63,7 @@ export function createAsyncComponent<
 ): AsyncComponentType<ComponentType<Props>, Props, PreloadOptions> {
   const hydrate = normalizeHydrate(explicitHydrate);
   const asyncModule = createAsyncModule(load);
-  const componentName = displayName ?? displayNameFromId(asyncModule.id);
+  const componentName = name ?? displayNameFromId(asyncModule.id);
 
   let scriptTiming: AssetLoadTiming;
   let styleTiming: AssetLoadTiming;
@@ -95,104 +98,87 @@ export function createAsyncComponent<
     scriptTiming = 'never';
   }
 
-  function ServerAsync(props: Props) {
-    const {resolved, loading, error} = useAsyncModule(asyncModule, {
-      scripts: scriptTiming,
-      styles: styleTiming,
-      immediate: typeof document !== 'undefined' || render === 'server',
-    });
+  const isBrowser = typeof document === 'object';
+  const renderImmediately = render === 'server' || isBrowser;
+  const hydrateImmediately = renderImmediately && hydrate === 'immediate';
 
-    const Component = (resolved as any)?.default ?? resolved;
+  const getComponent = (module: typeof asyncModule['loaded']) => {
+    if (!renderImmediately) return undefined;
+    return module && 'default' in module ? module.default : module;
+  };
 
-    // TODO error state will not persist to client rendering...
-    if (error) {
-      return <>{renderError(error)}</>;
-    }
+  const Async: any = suspense
+    ? function Async(props: Props) {
+        if (hydrateImmediately || (renderImmediately && !isBrowser)) {
+          asyncModule.load();
+        }
 
-    return loading ? (
-      <>{renderLoading(props)}</>
-    ) : (
-      <div>{Component ? <Component {...props} /> : null}</div>
-    );
-  }
-
-  class Async extends Component<Props> {
-    static displayName = `Async(${componentName})`;
-
-    private root = createRef<HTMLElement | null>();
-    private mounted = false;
-    private hydrated = false;
-
-    shouldComponentUpdate(nextProps: Props) {
-      if (this.hydrated) {
-        this.handleLoad(asyncModule.loaded!, nextProps);
-      }
-
-      return false;
-    }
-
-    componentWillUnmount() {
-      this.mounted = false;
-
-      if ((this.root.current?.children.length ?? 0) > 0) {
-        createRoot(this.root.current!).unmount();
-      }
-    }
-
-    componentDidMount() {
-      this.mounted = true;
-      const resolved = asyncModule.loaded;
-
-      if (resolved) {
-        this.handleLoad(resolved);
-      } else {
-        asyncModule.load().then((loaded) => {
-          this.handleLoad(loaded);
+        const module = useAsyncModule(asyncModule, {
+          suspense: true,
+          immediate: renderImmediately,
+          scripts: scriptTiming,
+          styles: styleTiming,
         });
+
+        const Component = getComponent(module);
+
+        return Component ? <Component {...props} /> : null;
       }
-    }
+    : function Async(props: Props) {
+        const {
+          resolved: module,
+          load,
+          error,
+        } = useAsyncModule(asyncModule, {
+          suspense: false,
+          immediate: renderImmediately,
+          scripts: scriptTiming,
+          styles: styleTiming,
+        });
 
-    render() {
-      if (typeof document === 'undefined') {
-        return <ServerAsync {...this.props} />;
-      }
+        if (error) {
+          return renderError?.(props, error) ?? null;
+        }
 
-      return (
-        <div
-          ref={this.root as any}
-          // suppressHydrationWarning
-          dangerouslySetInnerHTML={EMPTY_OBJECT as any}
-        />
-      );
-    }
+        const Component = getComponent(module);
 
-    private handleLoad(
-      loaded: NonNullable<typeof asyncModule['loaded']>,
-      props = this.props,
-    ) {
-      if (this.root.current == null || !this.mounted) return;
-
-      const Component = (loaded as any)?.default ?? loaded;
-
-      // hydrate on first run, then normal renders thereafter
-      if (!this.hydrated && this.root.current.children.length > 0) {
-        hydrateRoot(
-          this.root.current,
-          <ContextProvider context={this.context}>
-            <Component {...props} />
-          </ContextProvider>,
+        return Component ? (
+          <Component {...props} />
+        ) : (
+          <>
+            {renderLoading?.(props) ?? null}
+            {hydrateImmediately && <DoLoad load={load} />}
+          </>
         );
-      } else {
-        createRoot(this.root.current).render(
-          <ContextProvider context={this.context}>
-            <Component {...props} />
-          </ContextProvider>,
-        );
-      }
+      };
 
-      this.hydrated = true;
-    }
-  }
+  const AsyncWithWrappers: any =
+    suspense && renderLoading
+      ? function AsyncWithWrappers(props: Props) {
+          const clientRenderOnly = render === 'client';
+
+          // TODO handle renderError
+          return clientRenderOnly ? (
+            <>
+              <div>
+                <Suspense>
+                  <Async {...props} />
+                </Suspense>
+              </div>
+              <RenderWhileLoading
+                module={asyncModule}
+                render={() => renderLoading(props)}
+              />
+            </>
+          ) : (
+            <Suspense fallback={renderLoading(props)}>
+              <Async {...props} />
+            </Suspense>
+          );
+        }
+      : Async;
+
+  AsyncWithWrappers.displayName = `Async(${componentName})`;
 
   function usePreload(props: PreloadOptions) {
     useAsyncModulePreload(asyncModule);
@@ -210,7 +196,7 @@ export function createAsyncComponent<
     ComponentType<Props>,
     Props,
     PreloadOptions
-  > = Async as any;
+  > = AsyncWithWrappers;
 
   Reflect.defineProperty(FinalComponent, 'load', {
     value: () => asyncModule.load(),
@@ -235,7 +221,47 @@ export function createAsyncComponent<
   return FinalComponent;
 }
 
+function DoLoad({load}: {load: () => Promise<any>}) {
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return null;
+}
+
+function RenderWhileLoading({
+  module,
+  render,
+}: {
+  module: AsyncModule<any>;
+  render: () => ReactNode;
+}) {
+  if (typeof document === 'undefined' && module.loaded != null) {
+    return null;
+  }
+
+  const {
+    resolved,
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+  } = useAsyncModule(module, {
+    suspense: false,
+    immediate: false,
+    scripts: 'never',
+    styles: 'never',
+  });
+
+  return resolved ? null : (render() as any) ?? null;
+}
+
 function noopRender() {
+  return null;
+}
+
+function defaultRenderError(_: any, error: Error) {
+  if (error) {
+    throw error;
+  }
+
   return null;
 }
 
@@ -258,22 +284,4 @@ function displayNameFromId(id?: string) {
   }
 
   return id.split('_')[0];
-}
-
-function defaultRenderError(error: Error) {
-  if (error) {
-    throw error;
-  }
-
-  return null;
-}
-
-class ContextProvider extends Component<PropsWithChildren<{context: any}>> {
-  getChildContext() {
-    return this.props.context;
-  }
-
-  render() {
-    return this.props.children;
-  }
 }

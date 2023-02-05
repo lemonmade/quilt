@@ -1,15 +1,13 @@
+import {createEmitter, type Emitter} from '@quilted/events';
 import type {AsyncAssetsGlobal} from './global';
 
 declare const Quilt: {readonly AsyncAssets: AsyncAssetsGlobal} | undefined;
 
-export interface AsyncModule<Module = Record<string, unknown>> {
+export interface AsyncModule<Module = Record<string, unknown>>
+  extends Pick<Emitter<{resolve: Error | Module}>, 'on'> {
   readonly id?: string;
   readonly loaded?: Module;
   load(): Promise<Module>;
-  subscribe(
-    listener: (loaded: Module) => void,
-    options?: {signal?: AbortSignal},
-  ): void;
 }
 
 export interface AsyncModuleLoadFunction<Module = Record<string, unknown>> {
@@ -32,46 +30,46 @@ export function createAsyncModule<Module = Record<string, unknown>>(
   let hasTriedSyncResolve = false;
 
   const id = (load as any).id;
-  const listeners = new Set<(value: Module) => void>();
+  const emitter = createEmitter<{resolve: Error | Module}>();
 
   return {
     id,
     get loaded() {
-      if (resolved == null && id && !hasTriedSyncResolve) {
-        hasTriedSyncResolve = true;
-        resolved =
-          typeof Quilt === 'object'
-            ? Quilt.AsyncAssets?.get<Module>(id)
-            : undefined;
-      }
-
-      return resolved;
+      return getResolved();
     },
     load: async () => {
+      let resolved = getResolved();
+      if (resolved != null) return resolved;
       resolvePromise = resolvePromise ?? resolve();
-      const resolved = await resolvePromise;
+      resolved = await resolvePromise;
       return resolved;
     },
-    subscribe(listener, {signal} = {}) {
-      listeners.add(listener);
-
-      signal?.addEventListener(
-        'abort',
-        () => {
-          listeners.delete(listener);
-        },
-        {once: true},
-      );
-    },
+    on: emitter.on,
   };
 
-  async function resolve(): Promise<Module> {
-    resolved = typeof load === 'function' ? await load() : await load.import();
-
-    for (const listener of listeners) {
-      listener(resolved!);
+  function getResolved() {
+    if (!hasTriedSyncResolve && resolved == null && id) {
+      hasTriedSyncResolve = true;
+      resolved =
+        typeof Quilt === 'object'
+          ? Quilt.AsyncAssets?.get<Module>(id)
+          : undefined;
     }
 
-    return resolved!;
+    return resolved;
+  }
+
+  async function resolve(): Promise<Module> {
+    try {
+      resolved =
+        typeof load === 'function' ? await load() : await load.import();
+      emitter.emit('resolve', resolved);
+      resolvePromise = undefined;
+      return resolved!;
+    } catch (error) {
+      emitter.emit('resolve', error as Error);
+      resolvePromise = undefined;
+      throw error;
+    }
   }
 }
