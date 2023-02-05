@@ -94,18 +94,20 @@ export function createAsyncComponent<
     scriptTiming = 'never';
   }
 
-  const renderImmediately = render === 'server' || typeof document === 'object';
-  const hydrateImmediately =
-    typeof document === 'object' && hydrate === 'immediate';
+  const isBrowser = typeof document === 'object';
+  const renderImmediately = render === 'server' || isBrowser;
+  const hydrateImmediately = renderImmediately && hydrate === 'immediate';
 
   const getComponent = (module: typeof asyncModule['loaded']) => {
     if (!renderImmediately) return undefined;
     return module && 'default' in module ? module.default : module;
   };
 
-  const Async = suspense
+  const Async: any = suspense
     ? function Async(props: Props) {
-        if (hydrateImmediately) asyncModule.load();
+        if (hydrateImmediately || (renderImmediately && !isBrowser)) {
+          asyncModule.load();
+        }
 
         const module = useAsyncModule(asyncModule, {
           suspense: true,
@@ -152,7 +154,7 @@ export function createAsyncComponent<
 
   const AsyncWithWrappers: any =
     suspense && renderLoading
-      ? function Async(props: Props) {
+      ? function AsyncWithWrappers(props: Props) {
           // TODO handle renderError
           return (
             <Suspense fallback={renderLoading(props)}>

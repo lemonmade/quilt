@@ -51,6 +51,8 @@ export function useAsyncModule<Module = Record<string, unknown>>(
 
   const isServer = typeof document !== 'object';
 
+  console.log({id, immediate, suspense});
+
   const value = isServer
     ? asyncModule.loaded
     : useSyncExternalStore(

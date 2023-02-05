@@ -214,12 +214,12 @@
     "./build/esm/polyfills/*.mjs"
   ],
   "dependencies": {
-    "@quilted/async": "^0.3.12",
+    "@quilted/async": "^0.3.34",
     "@quilted/events": "^0.1.0",
     "@quilted/graphql": "^0.4.34",
     "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^18.2.0",
-    "@quilted/react-async": "^0.3.22",
+    "@quilted/react-async": "^0.3.43",
     "@quilted/react-dom": "^18.2.0",
     "@quilted/react-graphql": "^0.4.30",
     "@quilted/react-html": "^0.3.18",

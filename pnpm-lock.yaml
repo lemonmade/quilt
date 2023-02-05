@@ -505,12 +505,12 @@ importers:
 
   packages/quilt:
     specifiers:
-      '@quilted/async': ^0.3.12
+      '@quilted/async': ^0.3.34
       '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
       '@quilted/polyfills': ^0.2.12
       '@quilted/react': ^18.2.0
-      '@quilted/react-async': ^0.3.22
+      '@quilted/react-async': ^0.3.43
       '@quilted/react-dom': ^18.2.0
       '@quilted/react-graphql': ^0.4.30
       '@quilted/react-html': ^0.3.18
@@ -536,7 +536,7 @@ importers:
       '@quilted/graphql': link:../graphql
       '@quilted/polyfills': link:../polyfills
       '@quilted/react': link:../react
-      '@quilted/react-async': 0.3.43
+      '@quilted/react-async': link:../react-async
       '@quilted/react-dom': link:../react-dom
       '@quilted/react-graphql': link:../react-graphql
       '@quilted/react-html': link:../react-html
@@ -4106,76 +4106,6 @@ packages:
       vite: 4.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /@quilted/async/0.3.34:
-    resolution: {integrity: sha512-TvebPY1KWzef005KDN648KJ/6PSUoAYgx65gk2tWlXuWrffqj7BodNWh50QMd4tgkxB5Nplmz88UB7JOdIiczA==}
-    peerDependencies:
-      '@babel/core': '>=7.0.0'
-      '@babel/traverse': '>=7.0.0'
-      '@babel/types': '>=7.0.0'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@babel/traverse':
-        optional: true
-      '@babel/types':
-        optional: true
-    dependencies:
-      '@types/web': 0.0.59
-      common-tags: 1.8.2
-      es-module-lexer: 0.4.1
-      magic-string: 0.25.9
-    dev: false
-
-  /@quilted/react-async/0.3.43:
-    resolution: {integrity: sha512-u7uv6/qgrxRWFO1Q12vARMSE2PqVbmsaC3vO8cQgKCKuK1q274TD+z2WNc7yt1IlBCkvmFvMWTvBwaY5gpzGUQ==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@quilted/async': 0.3.34
-      '@quilted/react-server-render': 0.3.27
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/traverse'
-      - '@babel/types'
-    dev: false
-
-  /@quilted/react-server-render/0.3.27:
-    resolution: {integrity: sha512-hIeNO3xoengOPStoq80a8TJ2dQbo951BZGcnO3GLwmBFrFyegLZ3zEOLmWR1VAkxxv1xVf2ipxo9+JSl5It8dA==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0
-      react-dom: ^17.0.0 || ^18.0.0
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@quilted/react-utilities': 0.1.9
-      '@types/react': 18.0.26
-    dev: false
-
-  /@quilted/react-utilities/0.1.9:
-    resolution: {integrity: sha512-W64xjBIurWPhZv3u0rryNr9090k19737hZWAkcLdAI3hrs4O5zPOEIY15uaHCsJ8l3VBNv48DVIlupRFS4Q0TQ==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0
-    peerDependenciesMeta:
-      react:
-        optional: true
-    dependencies:
-      '@quilted/useful-react-types': 0.1.11
-    dev: false
-
-  /@quilted/useful-react-types/0.1.11:
-    resolution: {integrity: sha512-wZaWOIQlYDWzD5cGxQprNXCB56brQP+LoLPFhjR+YgKfNynT9sBsv1BO29bboKDQlt2EfMD3vFIzQWoHRiLJdQ==}
     dev: false
 
   /@remix-run/web-blob/3.0.4:
