@@ -85,7 +85,7 @@ describe('async', () => {
     });
   });
 
-  it('can server render an async component and defer hydration', async () => {
+  it('can server render an async component with deferred hydration', async () => {
     await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
       const {fs} = workspace;
 
@@ -147,6 +147,66 @@ describe('async', () => {
       await page.waitForSelector('#hydrated');
 
       expect(await page.textContent('body')).toMatch(`Hydrated!`);
+    });
+  });
+
+  it('can client render an async component with deferred hydration', async () => {
+    await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+      const {fs} = workspace;
+
+      await fs.write({
+        'Async.tsx': stripIndent`
+          export default function Async() {
+            return <div id="rendered">Rendered!</div>;
+          }
+        `,
+        'App.tsx': stripIndent`
+        import {useState} from 'react';
+          import {createAsyncComponent} from '@quilted/quilt';
+
+          const Async = createAsyncComponent(() => import('./Async'), {
+            hydrate: 'defer',
+            renderLoading: () => <div id="loading">Loading...</div>,
+          });
+
+          export default function App() {
+            const [rendered, setRendered] = useState(false);
+
+            return (
+              <>
+                {rendered && <Async />}
+                <button id="render" onClick={() => setRendered(true)}>Render</button>
+                <button id="load" onClick={() => Async.load()}>Load</button>
+              </>
+            );
+          }
+        `,
+      });
+
+      const {page} = await buildAppAndOpenPage(workspace);
+
+      expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
+      expect(
+        await page.$('link[rel=moduleprefetch][href^="/assets/Async"]'),
+      ).toBeNull();
+
+      let pageContent = await page.textContent('body');
+      expect(pageContent).not.toMatch(`Loading...`);
+      expect(pageContent).not.toMatch(`Rendered!`);
+
+      await page.click('button#render');
+      await page.waitForSelector('#loading');
+
+      pageContent = await page.textContent('body');
+      expect(pageContent).toMatch(`Loading...`);
+      expect(pageContent).not.toMatch(`Rendered!`);
+
+      await page.click('button#load');
+      await page.waitForSelector('#rendered');
+
+      pageContent = await page.textContent('body');
+      expect(pageContent).not.toMatch(`Loading...`);
+      expect(pageContent).toMatch(`Rendered!`);
     });
   });
 
