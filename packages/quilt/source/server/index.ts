@@ -72,6 +72,9 @@ export type {
 } from '@quilted/request-router';
 export {parseAcceptLanguageHeader} from '@quilted/react-localize';
 
-export {renderApp} from './render';
 export {ServerContext} from './ServerContext';
-export {createServerRender, renderAppToResponse} from './request-router';
+export {
+  createServerRender,
+  renderAppToResponse,
+  renderAppToStreamedResponse,
+} from './request-router';
