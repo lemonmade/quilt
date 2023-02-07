@@ -222,7 +222,7 @@ export function scriptAssetPreloadAttributes(
     crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
 
   return {
-    type: type === 'module' ? 'modulepreload' : 'preload',
+    rel: type === 'module' ? 'modulepreload' : 'preload',
     href,
     as: 'script',
     // @ts-expect-error - rendering real HTML, so using the attribute rather than property names
