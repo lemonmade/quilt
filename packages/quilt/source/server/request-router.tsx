@@ -56,10 +56,12 @@ export interface ServerRenderAppDetails {
 }
 
 export function createServerRender<Context = RequestContext>(
-  render: (
-    request: EnhancedRequest,
-    context: Context,
-  ) => ReactElement<any> | Promise<ReactElement<any>>,
+  getApp:
+    | ReactElement<any>
+    | ((
+        request: EnhancedRequest,
+        context: Context,
+      ) => ReactElement<any> | Promise<ReactElement<any>>),
   {context, stream, ...options}: ServerRenderOptions<Context> = {},
 ): RequestHandler<Context> {
   return async (request, requestContext) => {
@@ -67,27 +69,33 @@ export function createServerRender<Context = RequestContext>(
 
     if (accepts != null && !accepts.includes('text/html')) return;
 
-    const app = await render(request, requestContext);
-
     const renderResponse = stream
       ? renderAppToStreamedResponse
       : renderAppToResponse;
 
-    return renderResponse(app, request, {
-      ...options,
-      extract: {
-        ...options.extract,
-        context:
-          options.extract ??
-          context?.(request, requestContext) ??
-          (requestContext as any),
+    return renderResponse(
+      typeof getApp === 'function'
+        ? () => getApp(request, requestContext)
+        : getApp,
+      request,
+      {
+        ...options,
+        extract: {
+          ...options.extract,
+          context:
+            options.extract ??
+            context?.(request, requestContext) ??
+            (requestContext as any),
+        },
       },
-    });
+    );
   };
 }
 
 export async function renderAppToResponse(
-  app: ReactElement<any>,
+  getApp:
+    | ReactElement<any>
+    | (() => ReactElement<any> | Promise<ReactElement<any>>),
   request: Request,
   {
     assets,
@@ -95,6 +103,8 @@ export async function renderAppToResponse(
     renderHtml,
   }: Pick<ServerRenderOptions, 'assets' | 'renderHtml' | 'extract'> = {},
 ) {
+  const app = typeof getApp === 'function' ? await getApp() : getApp;
+
   const renderDetails = await serverRenderDetailsForApp(app, {
     extract,
     url: request.url,
@@ -122,7 +132,9 @@ export async function renderAppToResponse(
 }
 
 export async function renderAppToStreamedResponse(
-  app: ReactElement<any>,
+  getApp:
+    | ReactElement<any>
+    | (() => ReactElement<any> | Promise<ReactElement<any>>),
   request: Request,
   {
     assets,
@@ -157,6 +169,8 @@ export async function renderAppToStreamedResponse(
   });
 
   async function renderResponseToStream() {
+    const app = typeof getApp === 'function' ? await getApp() : getApp;
+
     const renderDetails = await serverRenderDetailsForApp(app, {
       extract,
       url: request.url,
