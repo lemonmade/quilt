@@ -1,26 +1,39 @@
-import type {ReactElement} from 'react';
+import {Fragment, type ReactElement, type LinkHTMLAttributes} from 'react';
 
-import type {Asset, AssetManifest} from '@quilted/async/server';
-import {renderHtmlToString, Html} from '@quilted/react-html/server';
+import {
+  styleAssetAttributes,
+  styleAssetPreloadAttributes,
+  scriptAssetAttributes,
+  scriptAssetPreloadAttributes,
+  type AssetsEntry,
+  type AssetManifest,
+} from '@quilted/async/server';
+import {AsyncAssetManager} from '@quilted/react-async/server';
+import {HttpManager} from '@quilted/react-http/server';
+import {
+  renderHtmlToString,
+  HtmlManager,
+  Html,
+} from '@quilted/react-html/server';
 import type {
   Options as ExtractOptions,
   ServerRenderRequestContext,
 } from '@quilted/react-server-render/server';
+import {extract} from '@quilted/react-server-render/server';
 
 import {html, redirect} from '@quilted/request-router';
 import type {
-  RequestRouter,
   EnhancedRequest,
   RequestHandler,
   RequestContext,
 } from '@quilted/request-router';
 
-import {renderApp, type RenderResult as RenderAppResult} from './render';
+import {ServerContext} from './ServerContext';
 
-export interface Options<Context = RequestContext>
-  extends Omit<ExtractOptions, 'context'> {
+export interface ServerRenderOptions<Context = RequestContext> {
+  stream?: 'headers' | false;
   assets?: AssetManifest<unknown>;
-  router?: RequestRouter<Context>;
+  extract?: ExtractOptions;
   context?(
     request: EnhancedRequest,
     context: Context,
@@ -28,12 +41,18 @@ export interface Options<Context = RequestContext>
   renderHtml?(
     content: string | undefined,
     request: Request,
-    details: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
-      readonly styles: readonly Asset[];
-      readonly scripts: readonly Asset[];
-      readonly preload: readonly Asset[];
+    details: Pick<ServerRenderAppDetails, 'http' | 'html'> & {
+      readonly assets?: AssetsEntry;
+      readonly preloadAssets?: AssetsEntry;
     },
   ): ReactElement<any> | Promise<ReactElement<any>>;
+}
+
+export interface ServerRenderAppDetails {
+  readonly http: HttpManager;
+  readonly html: HtmlManager;
+  readonly rendered?: string;
+  readonly asyncAssets: AsyncAssetManager;
 }
 
 export function createServerRender<Context = RequestContext>(
@@ -41,7 +60,7 @@ export function createServerRender<Context = RequestContext>(
     request: EnhancedRequest,
     context: Context,
   ) => ReactElement<any> | Promise<ReactElement<any>>,
-  {context, ...options}: Omit<Options<Context>, 'router'> = {},
+  {context, stream, ...options}: ServerRenderOptions<Context> = {},
 ): RequestHandler<Context> {
   return async (request, requestContext) => {
     const accepts = request.headers.get('Accept');
@@ -50,9 +69,19 @@ export function createServerRender<Context = RequestContext>(
 
     const app = await render(request, requestContext);
 
-    return renderAppToResponse(app, request, {
+    const renderResponse = stream
+      ? renderAppToStreamedResponse
+      : renderAppToResponse;
+
+    return renderResponse(app, request, {
       ...options,
-      context: context?.(request, requestContext) ?? (requestContext as any),
+      extract: {
+        ...options.extract,
+        context:
+          options.extract ??
+          context?.(request, requestContext) ??
+          (requestContext as any),
+      },
     });
   };
 }
@@ -62,22 +91,17 @@ export async function renderAppToResponse(
   request: Request,
   {
     assets,
-    renderHtml = defaultRenderHtml,
-    ...options
-  }: Omit<Options, 'handler' | 'renderProps'> = {},
+    extract,
+    renderHtml,
+  }: Pick<ServerRenderOptions, 'assets' | 'renderHtml' | 'extract'> = {},
 ) {
-  const {
-    html: htmlManager,
-    http,
-    rendered,
-    asyncAssets,
-  } = await renderApp(app, {
-    ...options,
+  const renderDetails = await serverRenderDetailsForApp(app, {
+    extract,
     url: request.url,
     headers: request.headers,
   });
 
-  const {headers, statusCode = 200, redirectUrl} = http.state;
+  const {headers, statusCode = 200, redirectUrl} = renderDetails.http.state;
 
   if (redirectUrl) {
     return redirect(redirectUrl, {
@@ -86,56 +110,219 @@ export async function renderAppToResponse(
     });
   }
 
-  const usedAssets = asyncAssets.used({timing: 'load'});
-  const assetOptions = {userAgent: request.headers.get('User-Agent')};
-
-  const [styles, scripts, preload] = assets
-    ? await Promise.all([
-        assets.styles({async: usedAssets, options: assetOptions}),
-        assets.scripts({async: usedAssets, options: assetOptions}),
-        assets.asyncAssets(asyncAssets.used({timing: 'preload'}), {
-          options: assetOptions,
-        }),
-      ])
-    : [[], [], []];
-
-  const htmlElement = await renderHtml(rendered, request, {
-    html: htmlManager,
-    http,
-    styles,
-    scripts,
-    preload,
+  const content = await renderAppDetailsToHtmlString(renderDetails, request, {
+    assets,
+    renderHtml,
   });
 
-  return html(renderHtmlToString(htmlElement), {
+  return html(content, {
     headers,
     status: statusCode,
   });
 }
 
-function defaultRenderHtml(
-  content: string | undefined,
+export async function renderAppToStreamedResponse(
+  app: ReactElement<any>,
   request: Request,
   {
-    html,
-    styles,
-    scripts,
-    preload,
-  }: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
-    readonly styles: readonly Asset[];
-    readonly scripts: readonly Asset[];
-    readonly preload: readonly Asset[];
-  },
+    assets,
+    extract,
+    renderHtml,
+  }: Pick<ServerRenderOptions, 'assets' | 'renderHtml' | 'extract'> = {},
 ) {
-  return (
-    <Html
-      url={new URL(request.url)}
-      manager={html}
-      styles={styles}
-      scripts={scripts}
-      preloadAssets={preload}
-    >
-      {content}
-    </Html>
-  );
+  const headers = new Headers();
+  const stream = new TransformStream();
+
+  const assetContext = {userAgent: request.headers.get('User-Agent')};
+  const guaranteedAssets = await assets?.assets({context: assetContext});
+
+  if (guaranteedAssets) {
+    for (const style of guaranteedAssets.styles) {
+      headers.append('Link', preloadHeader(styleAssetPreloadAttributes(style)));
+    }
+
+    for (const script of guaranteedAssets.scripts) {
+      headers.append(
+        'Link',
+        preloadHeader(scriptAssetPreloadAttributes(script)),
+      );
+    }
+  }
+
+  renderResponseToStream();
+
+  return html(stream.readable, {
+    headers,
+    status: 200,
+  });
+
+  async function renderResponseToStream() {
+    const renderDetails = await serverRenderDetailsForApp(app, {
+      extract,
+      url: request.url,
+      headers: request.headers,
+    });
+
+    const content = await renderAppDetailsToHtmlString(renderDetails, request, {
+      assets,
+      renderHtml,
+    });
+
+    const writer = stream.writable.getWriter();
+    await writer.write(content);
+    await writer.close();
+  }
+}
+
+async function serverRenderDetailsForApp(
+  app: ReactElement<any>,
+  {
+    url,
+    headers,
+    extract: extractOptions,
+  }: Pick<ServerRenderOptions, 'extract'> & {
+    url?: string | URL;
+    headers?: NonNullable<
+      ConstructorParameters<typeof HttpManager>[0]
+    >['headers'];
+  } = {},
+): Promise<ServerRenderAppDetails> {
+  const html = new HtmlManager();
+  const asyncAssets = new AsyncAssetManager();
+  const http = new HttpManager({headers});
+
+  const {decorate, ...rest} = extractOptions ?? {};
+
+  const rendered = await extract(app, {
+    decorate(app) {
+      return (
+        <ServerContext
+          asyncAssets={asyncAssets}
+          http={http}
+          html={html}
+          url={url}
+        >
+          {decorate?.(app) ?? app}
+        </ServerContext>
+      );
+    },
+    ...rest,
+  });
+
+  return {rendered, http, html, asyncAssets};
+}
+
+async function renderAppDetailsToHtmlString(
+  details: ServerRenderAppDetails,
+  request: Request,
+  {
+    assets,
+    renderHtml = defaultRenderHtml,
+  }: Pick<ServerRenderOptions, 'assets' | 'renderHtml'> = {},
+) {
+  const {html: htmlManager, http, rendered, asyncAssets} = details;
+
+  const usedAssets = asyncAssets.used({timing: 'load'});
+  const assetContext = {userAgent: request.headers.get('User-Agent')};
+
+  const [entryAssets, preloadAssets] = assets
+    ? await Promise.all([
+        assets.assets({async: usedAssets, context: assetContext}),
+        assets.asyncAssets(asyncAssets.used({timing: 'preload'}), {
+          context: assetContext,
+        }),
+      ])
+    : [];
+
+  const htmlElement = await renderHtml(rendered, request, {
+    html: htmlManager,
+    http,
+    assets: entryAssets,
+    preloadAssets,
+  });
+
+  return renderHtmlToString(htmlElement);
+}
+
+const defaultRenderHtml: NonNullable<ServerRenderOptions<any>['renderHtml']> =
+  function defaultRenderHtml(content, request, {html, assets, preloadAssets}) {
+    const baseUrl = new URL(request.url);
+
+    return (
+      <Html
+        manager={html}
+        headEndContent={
+          <>
+            {assets &&
+              [...assets.styles].map((style) => {
+                const attributes = styleAssetAttributes(style, {baseUrl});
+                return <link key={style.source} {...attributes} />;
+              })}
+
+            {assets &&
+              [...assets.scripts].map((script) => {
+                const isModule = script.attributes.type === 'module';
+
+                const attributes = scriptAssetAttributes(script, {
+                  baseUrl,
+                });
+
+                if (isModule) {
+                  return (
+                    <Fragment key={script.source}>
+                      <link {...scriptAssetPreloadAttributes(script)} />
+                      <script {...attributes} async />
+                    </Fragment>
+                  );
+                }
+
+                return <script key={script.source} {...attributes} defer />;
+              })}
+
+            {preloadAssets &&
+              [...preloadAssets.styles].map((style) => {
+                const attributes = styleAssetPreloadAttributes(style, {
+                  baseUrl,
+                });
+
+                return <link key={style.source} {...attributes} />;
+              })}
+
+            {preloadAssets &&
+              [...preloadAssets.scripts].map((script) => {
+                const attributes = scriptAssetPreloadAttributes(script, {
+                  baseUrl,
+                });
+
+                return <link key={script.source} {...attributes} />;
+              })}
+          </>
+        }
+      >
+        {content}
+      </Html>
+    );
+  };
+
+function preloadHeader(attributes: LinkHTMLAttributes<HTMLLinkElement>) {
+  const {
+    as,
+    rel = 'preload',
+    href,
+    crossOrigin,
+    crossorigin,
+  } = attributes as any;
+
+  // Support both property and attribute versions of the casing
+  const finalCrossOrigin = crossOrigin ?? crossorigin;
+
+  let header = `<${href}>; rel="${rel}"; as="${as}"`;
+
+  if (finalCrossOrigin === '' || finalCrossOrigin === true) {
+    header += `; crossorigin`;
+  } else if (typeof finalCrossOrigin === 'string') {
+    header += `; crossorigin="${finalCrossOrigin}"`;
+  }
+
+  return header;
 }

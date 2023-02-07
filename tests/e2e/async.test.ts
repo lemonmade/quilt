@@ -139,7 +139,7 @@ describe('async', () => {
 
       expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
       expect(
-        await page.$('link[rel=moduleprefetch][href^="/assets/Async"]'),
+        await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
       ).not.toBeNull();
 
       await page.click('button');
@@ -187,7 +187,7 @@ describe('async', () => {
 
       expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
       expect(
-        await page.$('link[rel=moduleprefetch][href^="/assets/Async"]'),
+        await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
       ).toBeNull();
 
       let pageContent = await page.textContent('body');
@@ -247,7 +247,7 @@ describe('async', () => {
 
       expect(await noJSPage.$('script[src^="/assets/Async"]')).toBeNull();
       expect(
-        await noJSPage.$('link[rel=moduleprefetch][href^="/assets/Async"]'),
+        await noJSPage.$('link[rel=modulepreload][href^="/assets/Async"]'),
       ).not.toBeNull();
 
       const {page} = await buildAppAndOpenPage(workspace);

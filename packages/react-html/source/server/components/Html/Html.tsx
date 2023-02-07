@@ -7,56 +7,29 @@ import {HtmlManager} from '../../../manager';
 import {HtmlContext} from '../../../context';
 import {Serialize} from '../Serialize';
 
-interface Asset {
-  source: string;
-  attributes: Record<string, string | boolean | number>;
-}
-
 interface Props {
-  url?: URL;
   manager?: HtmlManager;
-  children?: ReactElement | string;
-  noModule?: boolean;
   locale?: string;
-  styles?: readonly Asset[];
-  scripts?: readonly Asset[];
-  blockingScripts?: readonly Asset[];
-  preloadAssets?: readonly Asset[];
-  headContent?: ReactNode;
-  bodyContent?: ReactNode;
+  headStartContent?: ReactNode;
+  headEndContent?: ReactNode;
+  bodyStartContent?: ReactNode;
+  children?: ReactElement | string;
+  bodyEndContent?: ReactNode;
 }
 
 export function Html({
-  url,
   manager,
-  children,
-  noModule = true,
   locale,
-  styles,
-  scripts,
-  blockingScripts,
-  preloadAssets,
-  headContent,
-  bodyContent,
+  headStartContent,
+  headEndContent,
+  bodyStartContent,
+  children,
+  bodyEndContent,
 }: Props) {
   const content =
     children == null || typeof children !== 'object'
       ? children
-      : render(children, {htmlManager: manager});
-
-  const getAssetDetails = (source: string) => {
-    const crossorigin =
-      !source.startsWith('/') &&
-      (url == null || !source.startsWith(url.origin));
-
-    return {
-      source:
-        url && source.startsWith(url.origin)
-          ? source.slice(url.origin.length)
-          : source,
-      crossorigin,
-    };
-  };
+      : renderContent(children, {htmlManager: manager});
 
   const extracted = manager?.extract();
 
@@ -80,134 +53,45 @@ export function Html({
     <link key={index} {...linkProps} />
   ));
 
-  const stylesContent = styles?.map((style) => {
-    const {source, crossorigin} = getAssetDetails(style.source);
-
-    return (
-      <link
-        key={source}
-        rel="stylesheet"
-        type="text/css"
-        href={source}
-        // @ts-expect-error This gets rendered directly as HTML
-        crossorigin={crossorigin ? '' : undefined}
-        {...style.attributes}
-      />
-    );
-  });
-
-  const needsNoModule =
-    noModule &&
-    (blockingScripts?.some((script) => script.attributes.type === 'module') ||
-      scripts?.some((script) => script.attributes.type === 'module') ||
-      false);
-
-  const blockingScriptsContent = blockingScripts?.map((script) => {
-    const {source, crossorigin} = getAssetDetails(script.source);
-
-    return (
-      <script
-        key={source}
-        type="text/javascript"
-        src={source}
-        noModule={
-          !needsNoModule || script.attributes.type === 'module'
-            ? undefined
-            : true
-        }
-        // @ts-expect-error This gets rendered directly as HTML
-        crossorigin={crossorigin ? '' : undefined}
-        {...script.attributes}
-      />
-    );
-  });
-
-  const deferredScriptsContent = scripts?.map((script) => {
-    const {source, crossorigin} = getAssetDetails(script.source);
-
-    return (
-      <script
-        key={source}
-        type="text/javascript"
-        src={source}
-        noModule={
-          !needsNoModule || script.attributes.type === 'module'
-            ? undefined
-            : true
-        }
-        defer={script.attributes.type === 'module' ? undefined : true}
-        // @ts-expect-error This gets rendered directly as HTML
-        crossorigin={crossorigin ? '' : undefined}
-        {...script.attributes}
-      />
-    );
-  });
-
-  const preloadAssetsContent = preloadAssets?.map((asset) => {
-    const {source, crossorigin} = getAssetDetails(asset.source);
-
-    return (
-      <link
-        key={source}
-        rel={asset.attributes.type === 'module' ? 'moduleprefetch' : 'prefetch'}
-        href={source}
-        // @ts-expect-error This gets rendered directly as HTML
-        crossorigin={crossorigin ? '' : undefined}
-        as={asset.source.endsWith('.css') ? 'style' : 'script'}
-      />
-    );
-  });
-
   const htmlAttributes = extracted?.htmlAttributes ?? {};
   const bodyAttributes = extracted?.bodyAttributes ?? {};
 
   return (
     <html lang={locale} {...htmlAttributes}>
       <head>
+        {headStartContent}
+
         {titleContent}
+
+        {linkContent}
 
         {/* @ts-expect-error This gets rendered directly as HTML */}
         <meta charset="utf-8" />
         {metaContent}
-
-        {linkContent}
-        {preloadAssetsContent}
-
-        {stylesContent}
-
-        {headContent}
         {serializationContent}
 
-        {blockingScriptsContent}
-        {deferredScriptsContent}
+        {headEndContent}
       </head>
 
       <body {...bodyAttributes}>
+        {bodyStartContent}
+
         <div id="app" dangerouslySetInnerHTML={{__html: content ?? ''}} />
 
-        {bodyContent}
+        {bodyEndContent}
       </body>
     </html>
   );
 }
 
-function render(
+function renderContent(
   app: ReactElement<any>,
   {
     htmlManager,
   }: {
     htmlManager?: HtmlManager;
-    // hydrationManager?: HydrationManager;
   },
 ) {
-  // const hydrationWrapped = hydrationManager ? (
-  //   <HydrationContext.Provider value={hydrationManager}>
-  //     {app}
-  //   </HydrationContext.Provider>
-  // ) : (
-  //   app
-  // );
-
   const content =
     htmlManager == null ? (
       app

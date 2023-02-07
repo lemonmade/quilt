@@ -1,6 +1,12 @@
 import type {ComponentType} from 'react';
 
-import type {AssetManifest} from '@quilted/async/server';
+import {
+  styleAssetAttributes,
+  styleAssetPreloadAttributes,
+  scriptAssetAttributes,
+  scriptAssetPreloadAttributes,
+  type AssetManifest,
+} from '@quilted/async/server';
 import {renderHtmlToString, Html} from '@quilted/react-html/server';
 import type {RouteDefinition} from '@quilted/react-router';
 import {
@@ -224,44 +230,72 @@ export async function renderStatic(
 
     const usedAssets = asyncAssets.used({timing: 'load'});
 
-    const [
-      moduleStyles,
-      moduleScripts,
-      modulePreload,
-      nomoduleStyles,
-      nomoduleScripts,
-    ] = await Promise.all([
-      assets.styles({async: usedAssets, options: {modules: true}}),
-      assets.scripts({async: usedAssets, options: {modules: true}}),
+    const [moduleAssets, modulePreload, nomoduleAssets] = await Promise.all([
+      assets.assets({async: usedAssets, context: {modules: true}}),
       assets.asyncAssets(asyncAssets.used({timing: 'preload'}), {
-        options: {modules: true},
+        context: {modules: true},
       }),
-      assets.styles({async: usedAssets, options: {modules: false}}),
-      assets.scripts({async: usedAssets, options: {modules: false}}),
+      assets.assets({async: usedAssets, context: {modules: false}}),
     ]);
 
     // We don’t want to load styles from both bundles, so we only use module styles,
     // since modules are intended to be the default and CSS (usually) doesn’t
     // have features that meaningfully break older user agents.
-    const styles = moduleStyles.length > 0 ? moduleStyles : nomoduleStyles;
-
-    // If there are nomodule scripts, we can’t really do preloading, because we can’t
-    // prevent the nomodule scripts from being preloaded in module browsers. If there
-    // are only module scripts, we can preload those.
-    const preload = nomoduleScripts.length > 0 ? [] : modulePreload;
-
-    const scripts = [
-      ...moduleScripts,
-      ...nomoduleScripts.map((script) => ({...script, nomodule: true})),
-    ];
+    const styles =
+      moduleAssets.styles.length > 0
+        ? moduleAssets.styles
+        : nomoduleAssets.styles;
 
     const minifiedHtml = renderHtmlToString(
       <Html
-        url={url}
         manager={htmlManager}
-        styles={styles}
-        scripts={scripts}
-        preloadAssets={preload}
+        headEndContent={
+          <>
+            {[...styles].map((style) => {
+              const attributes = styleAssetAttributes(style, {baseUrl: url});
+              return <link key={style.source} {...attributes} />;
+            })}
+
+            {[...moduleAssets.scripts].map((script) => {
+              const attributes = scriptAssetAttributes(script, {
+                baseUrl: url,
+              });
+
+              return <script key={script.source} {...attributes} />;
+            })}
+
+            {[...nomoduleAssets.scripts].map((script) => {
+              const attributes = scriptAssetAttributes(script, {
+                baseUrl: url,
+              });
+
+              return (
+                <script
+                  key={script.source}
+                  {...attributes}
+                  // @ts-expect-error Rendering to HTML, so using the lowercase name
+                  nomodule={moduleAssets.scripts.length > 0 ? true : undefined}
+                />
+              );
+            })}
+
+            {[...modulePreload.styles].map((style) => {
+              const attributes = styleAssetPreloadAttributes(style, {
+                baseUrl: url,
+              });
+
+              return <link key={style.source} {...attributes} />;
+            })}
+
+            {[...modulePreload.scripts].map((script) => {
+              const attributes = scriptAssetPreloadAttributes(script, {
+                baseUrl: url,
+              });
+
+              return <link key={script.source} {...attributes} />;
+            })}
+          </>
+        }
       >
         {markup}
       </Html>,
