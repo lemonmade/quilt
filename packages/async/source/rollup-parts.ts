@@ -14,7 +14,7 @@ import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
 
 import {IMPORT_PREFIX, MODULE_PREFIX} from './constants';
-import type {AssetBuild, AssetBuildEntry, Asset} from './assets';
+import type {AssetBuild, AssetsEntry, Asset} from './assets';
 
 export interface ManifestOptions {
   path: string;
@@ -311,11 +311,13 @@ async function writeManifestForBundle(
 
   const manifest: Partial<AssetBuild> = {
     metadata: manifestOptions.metadata ?? {},
-    entry: createAsset(
-      assetBaseUrl,
-      [...entryChunk.imports, entryChunk.fileName],
-      {format, assetMap},
-    ),
+    entry: {
+      default: createAsset(
+        assetBaseUrl,
+        [...entryChunk.imports, entryChunk.fileName],
+        {format, assetMap},
+      ),
+    },
     async: {},
   };
 
@@ -345,7 +347,7 @@ function createAsset(
   baseUrl: string,
   files: string[],
   {format, assetMap}: {format: ModuleFormat; assetMap: Map<string, string[]>},
-): AssetBuildEntry {
+): AssetsEntry {
   const styles: Asset[] = [];
   const scripts: Asset[] = [];
 

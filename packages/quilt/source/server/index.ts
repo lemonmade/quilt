@@ -13,15 +13,21 @@ export {
   ServerRenderManagerContext,
   extract,
 } from '@quilted/react-server-render/server';
-export {createAssetManifest} from '@quilted/async/server';
+export {
+  createAssetManifest,
+  styleAssetAttributes,
+  styleAssetPreloadAttributes,
+  scriptAssetAttributes,
+  scriptAssetPreloadAttributes,
+} from '@quilted/async/server';
 export type {
   Asset,
-  AssetSelector,
   AsyncAssetSelector,
+  AssetSelectorOptions,
   CreateAssetManifestOptions,
   AssetManifest,
   AssetBuild,
-  AssetBuildEntry,
+  AssetsEntry,
 } from '@quilted/async/server';
 export {
   AsyncAssetContext,

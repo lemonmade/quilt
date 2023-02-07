@@ -1,6 +1,13 @@
-import type {ReactElement} from 'react';
+import {Fragment, type ReactElement} from 'react';
 
-import type {Asset, AssetManifest} from '@quilted/async/server';
+import {
+  styleAssetAttributes,
+  styleAssetPreloadAttributes,
+  scriptAssetAttributes,
+  scriptAssetPreloadAttributes,
+  type AssetsEntry,
+  type AssetManifest,
+} from '@quilted/async/server';
 import {renderHtmlToString, Html} from '@quilted/react-html/server';
 import type {
   Options as ExtractOptions,
@@ -29,9 +36,8 @@ export interface Options<Context = RequestContext>
     content: string | undefined,
     request: Request,
     details: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
-      readonly styles: readonly Asset[];
-      readonly scripts: readonly Asset[];
-      readonly preload: readonly Asset[];
+      readonly assets?: AssetsEntry;
+      readonly preloadAssets?: AssetsEntry;
     },
   ): ReactElement<any> | Promise<ReactElement<any>>;
 }
@@ -87,24 +93,22 @@ export async function renderAppToResponse(
   }
 
   const usedAssets = asyncAssets.used({timing: 'load'});
-  const assetOptions = {userAgent: request.headers.get('User-Agent')};
+  const assetContext = {userAgent: request.headers.get('User-Agent')};
 
-  const [styles, scripts, preload] = assets
+  const [entryAssets, preloadAssets] = assets
     ? await Promise.all([
-        assets.styles({async: usedAssets, options: assetOptions}),
-        assets.scripts({async: usedAssets, options: assetOptions}),
+        assets.assets({async: usedAssets, context: assetContext}),
         assets.asyncAssets(asyncAssets.used({timing: 'preload'}), {
-          options: assetOptions,
+          context: assetContext,
         }),
       ])
-    : [[], [], []];
+    : [];
 
   const htmlElement = await renderHtml(rendered, request, {
     html: htmlManager,
     http,
-    styles,
-    scripts,
-    preload,
+    assets: entryAssets,
+    preloadAssets,
   });
 
   return html(renderHtmlToString(htmlElement), {
@@ -113,29 +117,62 @@ export async function renderAppToResponse(
   });
 }
 
-function defaultRenderHtml(
-  content: string | undefined,
-  request: Request,
-  {
-    html,
-    styles,
-    scripts,
-    preload,
-  }: Omit<RenderAppResult, 'asyncAssets' | 'markup'> & {
-    readonly styles: readonly Asset[];
-    readonly scripts: readonly Asset[];
-    readonly preload: readonly Asset[];
-  },
-) {
-  return (
-    <Html
-      url={new URL(request.url)}
-      manager={html}
-      styles={styles}
-      scripts={scripts}
-      preloadAssets={preload}
-    >
-      {content}
-    </Html>
-  );
-}
+const defaultRenderHtml: NonNullable<Options<any>['renderHtml']> =
+  function defaultRenderHtml(content, request, {html, assets, preloadAssets}) {
+    const baseUrl = new URL(request.url);
+
+    return (
+      <Html
+        manager={html}
+        headEndContent={
+          <>
+            {assets &&
+              [...assets.styles].map((style) => {
+                const attributes = styleAssetAttributes(style, {baseUrl});
+                return <link key={style.source} {...attributes} />;
+              })}
+
+            {assets &&
+              [...assets.scripts].map((script) => {
+                const isModule = script.attributes.type === 'module';
+
+                const attributes = scriptAssetAttributes(script, {
+                  baseUrl,
+                });
+
+                if (isModule) {
+                  return (
+                    <Fragment key={script.source}>
+                      <link {...scriptAssetPreloadAttributes(script)} />
+                      <script {...attributes} async />
+                    </Fragment>
+                  );
+                }
+
+                return <script key={script.source} {...attributes} defer />;
+              })}
+
+            {preloadAssets &&
+              [...preloadAssets.styles].map((style) => {
+                const attributes = styleAssetPreloadAttributes(style, {
+                  baseUrl,
+                });
+
+                return <link key={style.source} {...attributes} />;
+              })}
+
+            {preloadAssets &&
+              [...preloadAssets.scripts].map((script) => {
+                const attributes = scriptAssetPreloadAttributes(script, {
+                  baseUrl,
+                });
+
+                return <link key={script.source} {...attributes} />;
+              })}
+          </>
+        }
+      >
+        {content}
+      </Html>
+    );
+  };

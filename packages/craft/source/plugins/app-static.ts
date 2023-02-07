@@ -331,7 +331,9 @@ export function appStatic({
                           return {
                             metadata: {modules: true},
                             async: {},
-                            entry: {scripts: [], styles: []},
+                            entry: {
+                              default: {scripts: [], styles: []},
+                            },
                           };
                         }
   
@@ -340,7 +342,9 @@ export function appStatic({
                         return {
                           metadata: {modules: false},
                           async: {},
-                          entry: {scripts: [], styles: []},
+                          entry: {
+                            default: {scripts: [], styles: []},
+                          },
                         };
                       },
                     });

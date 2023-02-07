@@ -211,21 +211,23 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       modules: true,
                     },
                     entry: {
-                      scripts: [
-                        {
-                          source: `/${MAGIC_MODULE_GLOBALS}`,
-                          attributes: {
-                            type: 'module',
+                      default: {
+                        scripts: [
+                          {
+                            source: `/${MAGIC_MODULE_GLOBALS}`,
+                            attributes: {
+                              type: 'module',
+                            },
                           },
-                        },
-                        {
-                          source: `/${MAGIC_MODULE_BROWSER_ENTRY}`,
-                          attributes: {
-                            type: 'module',
+                          {
+                            source: `/${MAGIC_MODULE_BROWSER_ENTRY}`,
+                            attributes: {
+                              type: 'module',
+                            },
                           },
-                        },
-                      ],
-                      styles: [],
+                        ],
+                        styles: [],
+                      },
                     },
                   };
 
