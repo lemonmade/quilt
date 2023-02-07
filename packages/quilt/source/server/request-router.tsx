@@ -182,8 +182,9 @@ export async function renderAppToStreamedResponse(
       renderHtml,
     });
 
+    const encoder = new TextEncoder();
     const writer = stream.writable.getWriter();
-    await writer.write(content);
+    await writer.write(encoder.encode(content));
     await writer.close();
   }
 }
