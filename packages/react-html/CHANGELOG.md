@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.47
+
+### Patch Changes
+
+- [#508](https://github.com/lemonmade/quilt/pull/508) [`befb2aa9`](https://github.com/lemonmade/quilt/commit/befb2aa9d374aff66cbfe54fc8157522e3d3af21) Thanks [@lemonmade](https://github.com/lemonmade)! - Move logic out of HTML component
+
 ## 0.3.46
 
 ### Patch Changes
