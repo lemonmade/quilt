@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.132
+
+### Patch Changes
+
+- [`ad97e366`](https://github.com/lemonmade/quilt/commit/ad97e366a1663d39873d5f0c37938e708069f9fa) Thanks [@lemonmade](https://github.com/lemonmade)! - Preserve async app getter through response creation
+
 ## 0.5.131
 
 ### Patch Changes
