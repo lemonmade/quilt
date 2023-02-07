@@ -1,8 +1,7 @@
 import * as path from 'path';
-import {createHash} from 'crypto';
 import {rm} from 'fs/promises';
 
-import type {GetModuleInfo, GetManualChunk, ModuleInfo} from 'rollup';
+import type {GetManualChunk} from 'rollup';
 import type {Config as BrowserslistConfig} from 'browserslist';
 
 import type {} from '../tools/postcss';
@@ -417,13 +416,6 @@ if (process.env.QUILT_FROM_SOURCE) {
   FRAMEWORK_TEST_STRINGS.push('/quilt/packages/');
 }
 
-interface ImportMetadata {
-  id: string;
-  module?: ModuleInfo;
-  importers: ImportMetadata[];
-  dynamicImporters: ImportMetadata[];
-}
-
 // Inspired by Vite: https://github.com/vitejs/vite/blob/c69f83615292953d40f07b1178d1ed1d72abe695/packages/vite/source/node/build.ts#L567
 function createManualChunksSorter({
   project,
@@ -432,13 +424,11 @@ function createManualChunksSorter({
   project: Project;
   workspace: Workspace;
 }): GetManualChunk {
-  const cache = new Map<string, ImportMetadata>();
-
   // TODO: make this more configurable, and make it so that we bundle more intelligently
   // for split entries
-  const packagesPath = workspace.fs.resolvePath('packages/');
-  const globalPath = workspace.fs.resolvePath('global/');
-  const sharedPath = project.fs.resolvePath('shared/');
+  const packagesPath = workspace.fs.resolvePath('packages') + path.sep;
+  const globalPath = workspace.fs.resolvePath('global') + path.sep;
+  const sharedPath = project.fs.resolvePath('shared') + path.sep;
 
   return (id, {getModuleInfo}) => {
     if (INTERNALS_TEST_STRINGS.some((test) => id.includes(test))) {
@@ -457,113 +447,40 @@ function createManualChunksSorter({
       return POLYFILLS_CHUNK_NAME;
     }
 
-    const bundleBaseName = id.includes('/node_modules/')
-      ? VENDOR_CHUNK_NAME
-      : id.startsWith(packagesPath)
-      ? PACKAGES_CHUNK_NAME
-      : id.startsWith(globalPath)
-      ? GLOBAL_CHUNK_NAME
-      : id.startsWith(sharedPath)
-      ? SHARED_CHUNK_NAME
-      : undefined;
+    let bundleBaseName: string | undefined;
+    let relativeId: string | undefined;
 
-    // Not one of the directories that are used for code sharing: let Rollup name the resulting chunk
-    if (bundleBaseName == null) {
-      return;
-    }
+    if (id.includes('/node_modules/')) {
+      const moduleInfo = getModuleInfo(id);
 
-    const importMetadata = getImportMetadata(id, getModuleInfo, cache);
-
-    // Dynamic importers: let Rollup name the resulting chunk
-    if (importMetadata.dynamicImporters.length > 0) {
-      return;
-    }
-
-    const importingEntries = new Set(importMetadata.dynamicImporters);
-
-    const addImportingEntries = (importer: ImportMetadata) => {
-      if (importer.importers.length === 0) {
-        importingEntries.add(importer);
+      // If the only dependency is another vendor, let Rollup handle the naming
+      if (moduleInfo == null) return;
+      if (
+        moduleInfo.importers.length > 0 &&
+        moduleInfo.importers.every((importer) =>
+          importer.includes('/node_modules/'),
+        )
+      ) {
         return;
       }
 
-      for (const nestedImporter of importer.importers) {
-        addImportingEntries(nestedImporter);
-      }
-    };
-
-    addImportingEntries(importMetadata);
-
-    // TODO: make this more configurable, do a better job of detecting
-    // interdependencies between packages, vendors, and shared code
-    if (importingEntries.size > 0) {
-      const hash = createHash('sha256')
-        .update(
-          [...importingEntries]
-            .map((importer) => importer.id)
-            .sort()
-            .join(''),
-        )
-        .digest('hex')
-        .substring(0, 8);
-
-      return `${bundleBaseName}-${hash}`;
+      bundleBaseName = VENDOR_CHUNK_NAME;
+      relativeId = id.replace(/^.*[/]node_modules[/]/, '');
+    } else if (id.startsWith(packagesPath)) {
+      bundleBaseName = PACKAGES_CHUNK_NAME;
+      relativeId = id.replace(packagesPath, '');
+    } else if (id.startsWith(globalPath)) {
+      bundleBaseName = GLOBAL_CHUNK_NAME;
+      relativeId = id.replace(globalPath, '');
+    } else if (id.startsWith(sharedPath)) {
+      bundleBaseName = SHARED_CHUNK_NAME;
+      relativeId = id.replace(sharedPath, '');
     }
 
-    if (id.startsWith(packagesPath)) return PACKAGES_CHUNK_NAME;
-    if (id.startsWith(sharedPath)) return SHARED_CHUNK_NAME;
-    if (id.startsWith(globalPath)) return GLOBAL_CHUNK_NAME;
-    return VENDOR_CHUNK_NAME;
+    if (bundleBaseName == null || relativeId == null) {
+      return;
+    }
+
+    return `${bundleBaseName}-${relativeId.split(path.sep)[0]?.split('.')[0]}`;
   };
-}
-
-function getImportMetadata(
-  id: string,
-  getModuleInfo: GetModuleInfo,
-  cache: Map<string, ImportMetadata>,
-  importStack: string[] = [],
-): ImportMetadata {
-  if (cache.has(id)) return cache.get(id)!;
-
-  if (importStack.includes(id)) {
-    // circular dependencies
-    const result: ImportMetadata = {
-      id,
-      importers: [],
-      dynamicImporters: [],
-    };
-    cache.set(id, result);
-    return result;
-  }
-
-  const module = getModuleInfo(id);
-
-  if (!module) {
-    const result: ImportMetadata = {
-      id,
-      importers: [],
-      dynamicImporters: [],
-    };
-    cache.set(id, result);
-    return result;
-  }
-
-  const newImportStack = [...importStack, id];
-  const importersMetadata = module.importers.map((importer) =>
-    getImportMetadata(importer, getModuleInfo, cache, newImportStack),
-  );
-
-  const dynamicImportersMetadata = module.dynamicImporters.map((importer) =>
-    getImportMetadata(importer, getModuleInfo, cache, newImportStack),
-  );
-
-  const result: ImportMetadata = {
-    id,
-    module,
-    importers: importersMetadata,
-    dynamicImporters: dynamicImportersMetadata,
-  };
-
-  cache.set(id, result);
-  return result;
 }

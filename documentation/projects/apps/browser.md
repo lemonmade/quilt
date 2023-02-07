@@ -136,6 +136,7 @@ Quilt creates separate bundles for code in your application that act as global d
 
 - The `framework` bundle contains Quilt and Preact, the code that makes Quilt work
 - The `polyfills` bundle contains any [polyfills that you have enabled](TODO)
+- The `loader` bundle contains the [System.js loader code](https://github.com/systemjs/systemjs) (only present for browser builds that can’t use native ES modules)
 - `packages` bundles will be created for code in the `packages` directory of your workspace, which is the [default location Quilt puts packages in monorepo workspaces](TODO)
 - `global` bundles will be created for code in the `global` directory of your workspace, which is the [conventional location for code shared across your entire repo](TODO)
 - `shared` bundles will be created for code in the `shared` directory of your app, which is the [conventional location for code shared by multiple features of your app](TODO)
