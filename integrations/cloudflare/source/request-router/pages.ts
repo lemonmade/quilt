@@ -41,7 +41,19 @@ export function createPagesFetchHandler<
   return async (request, env, context) => {
     if (assets) {
       const {pathname} = new URL(request.url);
-      if (pathname.startsWith(basePath)) return env.ASSETS.fetch(request);
+
+      if (pathname.startsWith(basePath)) {
+        const assetResponse: Response = await env.ASSETS.fetch(request);
+
+        if (assetResponse.ok) {
+          assetResponse.headers.set(
+            'Cache-Control',
+            'public, max-age=31536000, immutable',
+          );
+        }
+
+        return assetResponse as any;
+      }
     }
 
     return baseFetch(request as any, env, context);
