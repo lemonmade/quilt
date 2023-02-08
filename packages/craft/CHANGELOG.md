@@ -1,5 +1,16 @@
 # @quilted/craft
 
+## 0.1.190
+
+### Patch Changes
+
+- [`255118b0`](https://github.com/lemonmade/quilt/commit/255118b0eb90a511fc8f4d7c2d19a79808cd2377) Thanks [@lemonmade](https://github.com/lemonmade)! - Add a hook to customize asset output directory
+
+- [`94ad3bf9`](https://github.com/lemonmade/quilt/commit/94ad3bf9f5e71bf0aba8eecc7e535e3af599fdf2) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Cloudflare integration to support Pages
+
+- Updated dependencies [[`3bcf9904`](https://github.com/lemonmade/quilt/commit/3bcf99041e5c27ecdafeeee96a176639269cb006)]:
+  - @quilted/quilt@0.5.133
+
 ## 0.1.189
 
 ### Patch Changes
