@@ -43,9 +43,12 @@ export function createPagesFetchHandler<
       const {pathname} = new URL(request.url);
 
       if (pathname.startsWith(basePath)) {
-        const assetResponse: Response = await env.ASSETS.fetch(request);
+        let assetResponse: Response = await env.ASSETS.fetch(request);
 
+        // Clone response and add immutable Cache-Control header, since assets
+        // have content-based hashes.
         if (assetResponse.ok) {
+          assetResponse = new Response(assetResponse.body, assetResponse);
           assetResponse.headers.set(
             'Cache-Control',
             'public, max-age=31536000, immutable',
