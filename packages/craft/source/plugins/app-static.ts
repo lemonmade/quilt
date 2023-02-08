@@ -202,9 +202,18 @@ export function appStatic({
             rollupOutputs,
             quiltAsyncPreload,
             quiltAsyncManifest,
+            quiltAssetOutputRoot,
           },
-          {quiltAppStatic = false},
+          {quiltAppStatic = false, quiltAppBrowser = false},
         ) => {
+          if (quiltAppBrowser) {
+            quiltAssetOutputRoot?.((currentRoot) =>
+              currentRoot.startsWith('/')
+                ? currentRoot
+                : `public/${currentRoot}`,
+            );
+          }
+
           if (!quiltAppStatic) return;
 
           runtimes?.(() => [{target: 'node'}]);

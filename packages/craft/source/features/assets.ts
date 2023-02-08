@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import {createProjectPlugin} from '../kit';
-import type {WaterfallHookWithDefault} from '../kit';
+import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
 
 import type {} from '../tools/jest';
 import type {} from '../tools/rollup';
@@ -16,6 +16,14 @@ export interface AssetHooks {
    * additions to Quilt in order to correctly load assets.
    */
   quiltAssetBaseUrl: WaterfallHookWithDefault<string>;
+
+  /**
+   * The directory to create browser assets in. If this URL is relative,
+   * it will be resolved relative to the result of the `outputRoot` directory.
+   * If this URL is absolute, it will be used as-is. It will be called initially
+   * with a value inferred from the `quiltAssetBaseUrl`, defaulting to `assets`.
+   */
+  quiltAssetOutputRoot: WaterfallHook<string>;
 
   /**
    * The file extensions that will be considered as static assets. When you import these
@@ -94,6 +102,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
         quiltAssetBaseUrl: waterfall({
           default: baseUrl,
         }),
+        quiltAssetOutputRoot: waterfall(),
         quiltAssetStaticExtensions: waterfall<readonly string[]>({
           default: () => [...DEFAULT_STATIC_ASSET_EXTENSIONS],
         }),

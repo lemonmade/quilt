@@ -104,6 +104,7 @@ export function appBuild({
             quiltAsyncManifestPath,
             quiltAsyncManifestMetadata,
             quiltAssetBaseUrl,
+            quiltAssetOutputRoot,
             quiltAsyncAssetBaseUrl,
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
@@ -256,16 +257,19 @@ export function appBuild({
                 : Promise.resolve(true),
             ]);
 
-            const assetDirectory = assetBaseUrl.startsWith('/')
-              ? assetBaseUrl.slice(1)
-              : 'assets';
+            const defaultAssetDirectory =
+              assetBaseUrl.startsWith('/') ||
+              !assetBaseUrl.startsWith(workspace.fs.root)
+                ? assetBaseUrl.slice(1)
+                : 'assets';
+
+            const assetOutputRoot = await quiltAssetOutputRoot!.run(
+              defaultAssetDirectory,
+            );
 
             outputs.push({
               format: isESM ? 'esm' : 'systemjs',
-              dir: path.join(
-                outputRoot,
-                isStatic ? `public/${assetDirectory}` : assetDirectory,
-              ),
+              dir: path.resolve(outputRoot, assetOutputRoot),
               entryFileNames: `app${targetFilenamePart}.[hash].js`,
               assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
               chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
