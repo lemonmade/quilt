@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.1.50
+
+### Patch Changes
+
+- [`1d7cdb6c`](https://github.com/lemonmade/quilt/commit/1d7cdb6c495f5286053caca91265a5714450b289) Thanks [@lemonmade](https://github.com/lemonmade)! - Add good headers on Cloudflare assets
+
 ## 0.1.49
 
 ### Patch Changes
