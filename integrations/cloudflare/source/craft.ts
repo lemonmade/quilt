@@ -1,13 +1,14 @@
-import {extname} from 'path';
+import * as path from 'path';
 import {stripIndent} from 'common-tags';
 
 import {createProjectPlugin, MAGIC_MODULE_REQUEST_ROUTER} from '@quilted/craft';
 import type {
+  Project,
+  WaterfallHook,
   BuildProjectOptions,
   DevelopProjectOptions,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
-  WaterfallHook,
 } from '@quilted/craft/kit';
 import type {PolyfillFeature} from '@quilted/craft/polyfills';
 import type {} from '@quilted/craft/browserslist';
@@ -17,15 +18,20 @@ export type WorkerFormat = 'modules' | 'service-worker';
 
 export interface Options {
   /**
-   * Controls whether the auto-generated server will also serve
-   * static assets hosted on Cloudflare Sites.
+   * Controls whether the built application server will be run on
+   * Cloudflare Pages. When set to `true`, Quilt will do the following:
    *
-   * To make use of the asset server, you’ll need to update your
-   * Wrangler configuration to upload the browser assets Quilt creates.
+   * - Your app’s assets will be generated into the `public/assets`
+   *   folder in your build directory
+   * - Your app’s server will be generated into `public/_worker.js`,
+   *   in order for Cloudflare to use it for all requests
+   * - Your app’s server will use Cloudflare Pages APIs to serve
+   *   the static assets generated at build time.
    *
+   * @see https://developers.cloudflare.com/pages/
    * @default false
    */
-  site?: boolean;
+  pages?: boolean;
 
   /**
    * Whether the resulting request handler will use the Cloudflare cache
@@ -77,17 +83,18 @@ declare module '@quilted/craft/kit' {
 export function cloudflareWorkers({
   format = 'modules',
   cache = false,
-  site = false,
+  pages = false,
   miniflare: useMiniflare = true,
 }: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Cloudflare.Workers',
-    build({configure}) {
+    build({project, configure}) {
       configure(
         addConfiguration({
           cache,
           format,
-          site,
+          pages,
+          project,
         }),
       );
     },
@@ -99,7 +106,8 @@ export function cloudflareWorkers({
       const addBaseConfiguration = addConfiguration({
         cache,
         format,
-        site: false,
+        pages: false,
+        project,
       });
 
       configure((hooks, options) => {
@@ -161,20 +169,24 @@ export function cloudflareWorkers({
 
 function addConfiguration({
   cache,
+  pages,
   format,
-  site,
+  project,
 }: {
   cache: boolean;
+  pages: boolean;
   format: WorkerFormat;
-  site: boolean;
+  project: Project;
 }) {
   return (
     {
       runtimes,
+      outputDirectory,
       browserslistTargets,
       rollupOutputs,
       rollupNodeBundle,
       quiltAssetBaseUrl,
+      quiltAssetOutputRoot,
       quiltServiceOutputFormat,
       quiltAppServerOutputFormat,
       quiltRequestRouterRuntimeContent,
@@ -186,6 +198,14 @@ function addConfiguration({
     >,
     options: Partial<BuildProjectOptions & DevelopProjectOptions>,
   ) => {
+    if (options.quiltAppBrowser) {
+      quiltAssetOutputRoot?.((currentRoot) =>
+        currentRoot.startsWith('/') || currentRoot.startsWith('public/')
+          ? currentRoot
+          : `public/${currentRoot}`,
+      );
+    }
+
     if (!options.quiltAppServer && !options.quiltService) {
       return;
     }
@@ -232,28 +252,31 @@ function addConfiguration({
       );
     });
 
-    rollupOutputs?.((outputs) => {
-      for (const output of outputs) {
-        if (format === 'modules') {
-          // Cloudflare workers assume .js/.cjs are commonjs by default,
-          // if we are using modules we default file names to .mjs so they
-          // are automatically interpreted as modules.
-          output.entryFileNames = ensureMjsExtension(output.entryFileNames);
-          output.chunkFileNames = ensureMjsExtension(output.chunkFileNames);
-          output.assetFileNames = ensureMjsExtension(output.assetFileNames);
-        }
-      }
+    if (pages) {
+      // Pages want one, specific file in the output directory
+      rollupOutputs?.(async (outputs) => {
+        const [outputRoot] = await Promise.all([
+          outputDirectory!.run(project.fs.buildPath()),
+        ]);
 
-      return outputs;
-    });
+        return outputs.map((output) => {
+          return {
+            ...output,
+            dir: path.join(outputRoot, 'public'),
+            inlineDynamicImports: true,
+            entryFileNames: '_worker.js',
+          };
+        });
+      });
+    }
 
     if (format === 'modules') {
       quiltRequestRouterRuntimeContent?.(async () => {
-        const handlerContent = site
+        const handlerContent = pages
           ? stripIndent`
-            import {createSiteFetchHandler} from '@quilted/cloudflare/request-router';
+            import {createPagesFetchHandler} from '@quilted/cloudflare/request-router';
 
-            const handler = createSiteFetchHandler(RequestRouter, {
+            const handler = createPagesFetchHandler(RequestRouter, {
               cache: ${String(cache)},
               assets: ${JSON.stringify({
                 path: await quiltAssetBaseUrl!.run(),
@@ -282,11 +305,11 @@ function addConfiguration({
       });
     } else {
       quiltRequestRouterRuntimeContent?.(async () => {
-        const handlerContent = site
+        const handlerContent = pages
           ? stripIndent`
-            import {createSiteFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
+            import {createPagesFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
 
-            const handler = createSiteFetchHandler(RequestRouter, {
+            const handler = createPagesFetchHandler(RequestRouter, {
               cache: ${String(cache)},
               assets: ${JSON.stringify({
                 path: await quiltAssetBaseUrl!.run(),
@@ -319,10 +342,4 @@ function addConfiguration({
       });
     }
   };
-}
-
-function ensureMjsExtension<T>(file?: T) {
-  if (typeof file !== 'string') return file;
-  const extension = extname(file);
-  return `${file.slice(0, file.length - extension.length)}.mjs`;
 }

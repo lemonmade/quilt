@@ -208,7 +208,7 @@ export function appStatic({
         ) => {
           if (quiltAppBrowser) {
             quiltAssetOutputRoot?.((currentRoot) =>
-              currentRoot.startsWith('/')
+              currentRoot.startsWith('/') || currentRoot.startsWith('public/')
                 ? currentRoot
                 : `public/${currentRoot}`,
             );
