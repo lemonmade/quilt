@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.133
+
+### Patch Changes
+
+- [`3bcf9904`](https://github.com/lemonmade/quilt/commit/3bcf99041e5c27ecdafeeee96a176639269cb006) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix streaming responses missing body
+
 ## 0.5.132
 
 ### Patch Changes
