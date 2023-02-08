@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.1.51
+
+### Patch Changes
+
+- [`0f4bc02e`](https://github.com/lemonmade/quilt/commit/0f4bc02ea63d53d76e15d78dba113ba6b81f6ab9) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix immutable header editing
+
 ## 0.1.50
 
 ### Patch Changes
