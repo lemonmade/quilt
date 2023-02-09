@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.37
+
+### Patch Changes
+
+- [`40b334a4`](https://github.com/lemonmade/quilt/commit/40b334a4ec3bcebc2568134bbb1e1286754df8cd) Thanks [@lemonmade](https://github.com/lemonmade)! - Nicer identifiers for async entries
+
 ## 0.3.36
 
 ### Patch Changes
