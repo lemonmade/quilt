@@ -19,13 +19,13 @@ export interface AssetBuild {
 }
 
 export interface AsyncAssetSelector {
-  readonly id: string;
+  readonly id: string | RegExp;
   readonly styles: boolean;
   readonly scripts: boolean;
 }
 
 export interface AssetSelectorOptions<Context> {
-  readonly async?: Iterable<string | AsyncAssetSelector>;
+  readonly async?: Iterable<AsyncAssetSelector | AsyncAssetSelector['id']>;
   readonly context?: Context;
 }
 
@@ -80,32 +80,51 @@ export function createAssetManifest<Context>({
     );
 
     if (asyncAssets && manifest != null) {
-      for (const asyncAsset of asyncAssets) {
-        const {
-          id,
-          styles: includeStyles,
-          scripts: includeScripts,
-        } = typeof asyncAsset === 'string'
-          ? {id: asyncAsset, styles: true, scripts: true}
-          : asyncAsset;
+      const dynamicSelectors: (AsyncAssetSelector & {id: RegExp})[] = [];
 
-        const resolvedAsyncEntry = manifest.async[id];
-
-        if (resolvedAsyncEntry == null) continue;
-
-        if (includeStyles) {
-          for (const asset of resolvedAsyncEntry.styles) {
+      const addAsyncAsset = (
+        assetsEntry: AssetsEntry,
+        {styles, scripts}: AsyncAssetSelector,
+      ) => {
+        if (styles) {
+          for (const asset of assetsEntry.styles) {
             if (seen.has(asset.source)) continue;
             seen.add(asset.source);
             assets.styles.push(asset);
           }
         }
 
-        if (includeScripts) {
-          for (const asset of resolvedAsyncEntry.scripts) {
+        if (scripts) {
+          for (const asset of assetsEntry.scripts) {
             if (seen.has(asset.source)) continue;
             seen.add(asset.source);
             assets.scripts.push(asset);
+          }
+        }
+      };
+
+      for (const asyncAsset of asyncAssets) {
+        const selector =
+          typeof asyncAsset === 'object' && 'id' in asyncAsset
+            ? asyncAsset
+            : {id: asyncAsset, styles: true, scripts: true};
+
+        if (typeof selector.id !== 'string') {
+          dynamicSelectors.push({...selector, id: selector.id});
+          continue;
+        }
+
+        const resolvedAsyncEntry = manifest.async[selector.id];
+
+        if (resolvedAsyncEntry) addAsyncAsset(resolvedAsyncEntry, selector);
+      }
+
+      if (dynamicSelectors.length > 0) {
+        for (const [id, asyncEntry] of Object.entries(manifest.async)) {
+          for (const selector of dynamicSelectors) {
+            if (selector.id.test(id)) {
+              addAsyncAsset(asyncEntry, selector);
+            }
           }
         }
       }

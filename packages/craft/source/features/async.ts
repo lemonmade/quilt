@@ -90,8 +90,12 @@ export function asyncQuilt({
         });
 
         rollupPlugins?.(async (plugins) => {
-          return [...plugins, await getAsyncRollupPlugin(hooks)];
+          return [...plugins, await getAsyncRollupPlugin(hooks, {moduleId})];
         });
+
+        function moduleId({imported}: {imported: string}) {
+          return project.fs.relativePath(imported);
+        }
       });
     },
     develop({project, hooks, configure}) {
