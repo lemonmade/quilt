@@ -11,6 +11,8 @@ importers:
       '@quilted/browserslist-config': ^0.1.0
       '@quilted/craft': ^0.1.0
       '@quilted/eslint-config': ^0.1.0
+      '@quilted/events': ^0.1.0
+      '@quilted/performance': ^0.1.0
       '@quilted/prettier': ^0.2.0
       '@quilted/quilt': ^0.5.0
       '@quilted/stylelint-config': ^0.1.0
@@ -36,6 +38,8 @@ importers:
       '@quilted/browserslist-config': link:packages/browserslist-config
       '@quilted/craft': link:packages/craft
       '@quilted/eslint-config': link:packages/eslint-config
+      '@quilted/events': link:packages/events
+      '@quilted/performance': link:packages/performance
       '@quilted/prettier': link:packages/prettier
       '@quilted/quilt': link:packages/quilt
       '@quilted/stylelint-config': link:packages/stylelint-config
