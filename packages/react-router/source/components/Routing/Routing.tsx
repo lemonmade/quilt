@@ -10,12 +10,17 @@ import {usePerformance} from '@quilted/react-performance';
 
 import {FocusContext} from '../FocusContext';
 import {CurrentUrlContext, RouterContext} from '../../context';
-import {createRouter} from '../../router';
-import type {Router, Options as RouterOptions} from '../../router';
-import {useInitialUrl} from '../../hooks';
+import {
+  createRouter,
+  type Router,
+  type Options as RouterOptions,
+} from '../../router';
+import {useRoutes, useInitialUrl} from '../../hooks';
+import type {Routes} from '../../types';
 
 interface Props extends RouterOptions {
   url?: URL;
+  routes?: Routes;
   router?: Router;
   children?: ReactNode;
 }
@@ -24,6 +29,7 @@ export const Routing = memo(function Routing({
   children,
   url: explicitUrl,
   router: explicitRouter,
+  routes,
   prefix,
   state,
   isExternal,
@@ -55,7 +61,10 @@ export const Routing = memo(function Routing({
     <RouterContext.Provider value={router}>
       <CurrentUrlContext.Provider value={url}>
         <Performance router={router} />
-        <FocusContext>{children}</FocusContext>
+        <FocusContext>
+          {children}
+          {routes ? <StaticRoutes routes={routes} /> : null}
+        </FocusContext>
       </CurrentUrlContext.Provider>
     </RouterContext.Provider>
   );
@@ -88,4 +97,8 @@ function Performance({router}: {router: Router}) {
   }, [router, performance]);
 
   return null;
+}
+
+function StaticRoutes({routes}: {routes: Routes}) {
+  return useRoutes(routes);
 }

@@ -2,12 +2,7 @@ import type {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 
 import {HttpContext, CookieContext} from '@quilted/react-http';
 import {useHtmlUpdater} from '@quilted/react-html';
-import {
-  Routing,
-  useRoutes,
-  type Routes,
-  type Router,
-} from '@quilted/react-router';
+import {Routing, type Routes, type Router} from '@quilted/react-router';
 import {PerformanceContext, type Performance} from '@quilted/react-performance';
 import {Localization} from '@quilted/react-localize';
 
@@ -78,9 +73,6 @@ export function QuiltApp({
   children,
   performance = true,
 }: PropsWithChildren<Props>) {
-  const routesContent =
-    routing !== false && routes ? <StaticRoutes routes={routes} /> : null;
-
   const htmlContent =
     typeof html === 'boolean' ? (
       html ? (
@@ -99,7 +91,6 @@ export function QuiltApp({
     <>
       {httpContent}
       {htmlContent}
-      {routesContent}
       {children}
     </>
   );
@@ -107,7 +98,7 @@ export function QuiltApp({
   const withMaybeRouting =
     typeof routing === 'boolean' ? (
       routing ? (
-        <Routing>{content}</Routing>
+        <Routing routes={routes}>{content}</Routing>
       ) : (
         content
       )
@@ -164,8 +155,4 @@ export function QuiltApp({
 function HtmlUpdater() {
   useHtmlUpdater();
   return null;
-}
-
-function StaticRoutes({routes}: {routes: Routes}) {
-  return useRoutes(routes);
 }
