@@ -3,9 +3,11 @@ export type {AsyncModule} from '@quilted/async';
 export {
   on,
   once,
+  sleep,
   createEmitter,
   AbortError,
   NestedAbortController,
+  TimedAbortController,
   anyAbortSignal,
   raceAgainstAbortSignal,
 } from '@quilted/events';

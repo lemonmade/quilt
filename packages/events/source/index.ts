@@ -15,6 +15,7 @@ export type {
   EmitterInternalEvents,
   EmitterWithInternals,
 } from './emitter';
+export {TimedAbortController, sleep} from './timeouts';
 export type {
   EventTarget,
   EventTargetOn,
