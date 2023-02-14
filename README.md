@@ -1,6 +1,6 @@
 # Quilt
 
-Quilt is a framework for building complex web projects. It is focused on building [web applications](./documentation/projects/apps), but can also help you build [shared packages](./documentation/projects/packages) and [backend services](./documentation/projects/services).
+Quilt is a framework for building complex web projects. It is focused on building [small-but-mighty web applications](./documentation/projects/apps), but can also help you build [shared packages](./documentation/projects/packages) and [backend services](./documentation/projects/services).
 
 Quilt tries to deliver a great experience of using [TypeScript](./documentation/technology/typescript), [GraphQL](./documentation/technology/graphql), and [Preact](./documentation/technology/preact). You can still use Quilt without using these technologies, but we focus on optimizing the holistic experience of using them together. Quilt also tries to help make it easy to run a curated collection of [other popular web tools](./documentation/technologies) on all the projects in your repo.
 
