@@ -15,24 +15,18 @@ These components add the routing-related context to your application. In most of
 
 Frameworks like [Next.js](https://nextjs.org/docs/routing/introduction), [Remix](https://remix.run), [Astro](https://docs.astro.build/core-concepts/astro-pages), and others use a technique called “file-based routing”. In this technique, there is a special directory in your application (usually `pages` or `app`), and the framework expects you to use a specific file naming system to describe what files are rendered for what paths. This technique is very popular, and can reduce a lot of boilerplate for applications that follow a conventional routing scheme.
 
-Quilt **does not** implement file-based routing; there is no special routing-related directory. Routes are entirely declared in React components, using the `useRoutes` hook:
+Quilt **does not** implement file-based routing; there is no special routing-related directory. Routes are entirely declared in React components, using the `routes` prop of the `<Routing />` and `<QuiltApp />` components (or, as shown later, with the `useRoutes()` hook):
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing} from '@quilted/quilt';
+
+const routes = [
+  {match: '/', render: <Start />},
+  {match: 'products', render: <Products />},
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'products', render: () => <Products />},
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -54,7 +48,7 @@ Quilt uses a component-based routing system to take a different set of tradeoffs
 
 - Quilt wants to be a [“component-first” framework](./TODO), which includes the idea that all components in the app have the same capabilities, and components should be freely composable. In most file-based routing setups, route components are in some way “special” (e.g., in Next.js, only route components can define data fetching methods), and you need to invent additional conventions or configuration to enable common composition use cases, like layouts that wrap some routes in your app.
 - It is usually impossible to use file-based routing to build an application where the routing scheme is dynamic, based on the data fetched by the application. For example, Shopify’s checkout has a variable number of pages, and different content on each page, depending on the items in a buyer’s cart and the shop’s checkout configuration. When you move routing into application code, you can make it as dynamic as you like.
-- Declaring routes in code allows you to attach additional metadata and functionality to the routing scheme. Quilt supports defining how to preload routes and what routes to include for static rendering as part of its `useRoutes` hook, which would otherwise need to be defined separately.
+- Declaring routes in code allows you to attach additional metadata and functionality to the routing scheme. Quilt supports defining how to preload routes and what routes to include for static rendering as part of its `routes` prop and `useRoutes()` hook, which would otherwise need to be defined separately.
 - You do not need to adhere to any file naming conventions for routes or other routing-related components, like “layouts” that wrap a subset of your application
 
 If you want to use file system routing, you should use a framework that provides first-class support for them instead of using Quilt.
@@ -66,17 +60,13 @@ To declare routes for your application, you create a list of route “descriptor
 ```tsx
 import {Routing} from '@quilted/quilt';
 
-const ROUTES = [
-  {match: '/', render: () => <Start />},
-  {match: 'products', render: () => <Products />},
+const routes = [
+  {match: '/', render: <Start />},
+  {match: 'products', render: <Products />},
 ];
 
 function App() {
-  return (
-    <Routing routes={ROUTES}>
-      <Routes />
-    </Routing>
-  );
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -88,24 +78,44 @@ function Products() {
 }
 ```
 
-As shown in the section on [component- versus file system-based routing](#component-versus-file-system-based-routing), Quilt provides a `useRoutes()` hook for declaring routes as part of dedicated React components:
+In some applications, you may want to customize where the Routes are rendered in your application. For example, you may want to have all routes render inside a top-level “frame” component that provides persistent UI. This can be accomplished using the `useRoutes()` hook, which allows you to register routes — and resolve them into a rendered React element — anywhere in your React tree.
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Link, Routing, useRoutes, type PropsWithChildren} from '@quilted/quilt';
 
 function App() {
   return (
     <Routing>
-      <Routes />
+      <Frame>
+        <Routes />
+      </Frame>
     </Routing>
   );
 }
 
 function Routes() {
   return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'products', render: () => <Products />},
+    {match: '/', render: <Start />},
+    {match: 'products', render: <Products />},
   ]);
+}
+
+function Frame({children}: PropsWithChildren) {
+  return (
+    <div>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/products">Products</Link>
+          </li>
+        </ul>
+      </nav>
+      <main>{children}</main>
+    </div>
+  );
 }
 
 function Start() {
@@ -117,7 +127,7 @@ function Products() {
 }
 ```
 
-When you declare routes with the `useRoutes()` hook, Quilt assumes they never change. If your routes do change — for example, they depend on some data about the user that you fetch, or on some piece of context — you can provide a dependency array as the last argument. This dependency array works just like the one you would pass to [`useMemo()`](https://reactjs.org/docs/hooks-reference.html#usememo) or [`useCallback()`](https://reactjs.org/docs/hooks-reference.html#usecallback) hooks.
+When you declare routes with the `routes` prop or the `useRoutes()` hook, Quilt assumes they never change. If your routes do change — for example, they depend on some data about the user that you fetch, or on some piece of context — you can make the routes dynamic by providing a dependency array as the last argument to `useRoutes()`. This dependency array works just like the one you would pass to [`useMemo()`](https://reactjs.org/docs/hooks-reference.html#usememo) or [`useCallback()`](https://reactjs.org/docs/hooks-reference.html#usecallback) hooks.
 
 ```tsx
 import {Routing, useRoutes, useCookie} from '@quilted/quilt';
@@ -168,23 +178,17 @@ The `match` property describes whether a given route matches the current URL. Qu
 - As strings. These strings will be compared to the pathname of the current URL, and will match only if the entire pathname matches. The exception is the behavior of leading and trailing slashes. As noted in the [pathname normalization](#pathname-normalization) section, Quilt always strips trailing slashes, so you should not include them in your `match`. Additionally, for route definitions, Quilt allows you to omit the leading slash in route matches, and they will act the same as if you include them. You only ever need to include a leading slash when you are targeting the “root” path.
 
   ```tsx
-  import {Routing, useRoutes} from '@quilted/quilt';
+  import {Routing} from '@quilted/quilt';
+
+  const routes = [
+    {match: '/', render: <Start />},
+    {match: 'products', render: <Products />},
+    // You could also have provided this match with the leading slash:
+    // {match: '/products', render: <Products />},
+  ];
 
   function App() {
-    return (
-      <Routing>
-        <Routes />
-      </Routing>
-    );
-  }
-
-  function Routes() {
-    return useRoutes([
-      {match: '/', render: () => <Start />},
-      {match: 'products', render: () => <Products />},
-      // You could also have provided this match with the leading slash:
-      // {match: '/products', render: () => <Products />},
-    ]);
+    return <Routing routes={routes} />;
   }
 
   function Start() {
@@ -199,24 +203,18 @@ The `match` property describes whether a given route matches the current URL. Qu
 - As regular expressions. These regular expressions will be compared to the pathname of the current URL, and will match only if the entire pathname matches. Regular expressions allow you to define “dynamic routes”, which can match many different URLs. As with strings, your regular expressions can omit the leading and trailing slashes from matches.
 
   ```tsx
-  import {Routing, useRoutes} from '@quilted/quilt';
+  import {Routing} from '@quilted/quilt';
+
+  const routes = [
+    {match: '/', render: <Start />},
+    // This route matches paths like '/product/1', '/product/2', ...
+    {match: /products\/\d+/, render: <Product />},
+    // You could also have provided this match with the leading slash:
+    // {match: /\/products\/\d+/, render: () => <Products />},
+  ];
 
   function App() {
-    return (
-      <Routing>
-        <Routes />
-      </Routing>
-    );
-  }
-
-  function Routes() {
-    return useRoutes([
-      {match: '/', render: () => <Start />},
-      // This route matches paths like '/product/1', '/product/2', ...
-      {match: /products\/\d+/, render: () => <Product />},
-      // You could also have provided this match with the leading slash:
-      // {match: /\/products\/\d+/, render: () => <Products />},
-    ]);
+    return <Routing routes={routes} />;
   }
 
   function Start() {
@@ -231,28 +229,22 @@ The `match` property describes whether a given route matches the current URL. Qu
 - A function, which accepts the target URL (as a `URL` instance), and returns a boolean indicating whether the URL matches. This allows you to define arbitrarily complex matches, because you can run any code you want, and compare against more parts of the URL, like search parameters.
 
   ```tsx
-  import {Routing, useRoutes} from '@quilted/quilt';
+  import {Routing} from '@quilted/quilt';
 
   const ANIMALS = new Set(['dog', 'cat', 'giraffe', 'panda', 'anteater']);
 
-  function App() {
-    return (
-      <Routing>
-        <Routes />
-      </Routing>
-    );
-  }
+  const routes = [
+    {match: '/', render: <Start />},
+    // The URLs have Quilt’s pathname normalization applied, so they always
+    // include a leading slash, and never include a trailing slash.
+    {
+      match: (url) => ANIMAL.has(url.pathname.slice(1)),
+      render: <Animal />,
+    },
+  ];
 
-  function Routes() {
-    return useRoutes([
-      {match: '/', render: () => <Start />},
-      // The URLs have Quilt’s pathname normalization applied, so they always
-      // include a leading slash, and never include a trailing slash.
-      {
-        match: (url) => ANIMAL.has(url.pathname.slice(1)),
-        render: () => <Animal />,
-      },
-    ]);
+  function App() {
+    return <Routing routes={routes} />;
   }
 
   function Start() {
@@ -267,22 +259,13 @@ The `match` property describes whether a given route matches the current URL. Qu
 - `undefined`, or omitted entirely. A route description where there is no `match` always matches, no matter what the current URL is. This makes them ideal to implement “fallback” routes, like custom 404 pages. Because these routes always match, they should always come _last_ in the array you pass to `useRoutes()`.
 
   ```tsx
-  import {Routing, useRoutes} from '@quilted/quilt';
+  import {Routing} from '@quilted/quilt';
   import {useStatusCode} from '@quilted/quilt/http';
 
-  function App() {
-    return (
-      <Routing>
-        <Routes />
-      </Routing>
-    );
-  }
+  const routes = [{match: '/prize', render: <Prize />}, {render: <NotFound />}];
 
-  function Routes() {
-    return useRoutes([
-      {match: '/prize', render: () => <Prize />},
-      {render: () => <NotFound />},
-    ]);
+  function App() {
+    return <Routing routes={routes} />;
   }
 
   function Prize() {
@@ -297,29 +280,26 @@ The `match` property describes whether a given route matches the current URL. Qu
 
 ### Rendering matched routes
 
-As we saw in the last section, our routes always included a `render` key, which was a function that returned a React element. When the route matches, `render` is called, and the React element you return is included in the return result of `useRoutes()`, so it can be rendered to the screen.
+As we saw in the last section, our routes always included a `render` key, which was a a React element. When the route matches, this element will be rendered to the screen.
 
-The `render` function is called with an object that contains some details about the current URL and the match that was made.
+Instead of a React element, `render` can also be a function. A `render` function is called only when the route matches, and should return a React element to render. It gets called with with an object that contains some details about the current URL and the match that was made.
 
-The most common property to use from this object is `matched`, which provides a string indicating the part of the pathname that was matched by this route. These matches respect whether the `match` property was constructed to match a relative or absolute path — when you match an absolute path, the leading `/` is included, but when you use a relative one, it is not. If you use a function for `match`, or do not include `match`, `matched` will be the entire (absolute) pathname of the current URL.
+The most commonly-needed property on this object is `matched`, which provides a string indicating the part of the pathname that was matched by this route. These matches respect whether the `match` property was constructed to match a relative or absolute path — when you match an absolute path, the leading `/` is included, but when you use a relative one, it is not. If you use a function for `match`, or do not include `match`, `matched` will be the entire (absolute) pathname of the current URL.
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing} from '@quilted/quilt';
 import {useStatusCode} from '@quilted/quilt/http';
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [
+  {
+    match: /\d+/,
+    render: ({matched}) => <LuckyNumber number={matched} />,
+  },
+  {render: ({matched}) => <NotFound path={matched} />},
+];
 
-function Routes() {
-  return useRoutes([
-    {match: /\d+/, render: ({matched}) => <LuckyNumber number={matched} />},
-    {render: ({matched}) => <NotFound path={matched} />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function LuckyNumber({number}: {number: string}) {
@@ -338,40 +318,34 @@ function NotFound({path}: {path: string}) {
 }
 ```
 
-There’s also a `url` property, which gives you access to the current URL (the same one you can read with the [`useCurrentUrl()` hook](#reading-the-current-url), which we will cover soon). You can use this property to access additional parts of the matched URL, like the search params or hash. The `useRoutes()` hook re-renders whenever the current URL changes, just like components that use the `useCurrentUrl()` hook, so you can use this technique if you prefer to more cleanly separate your routing from your React components.
+There’s also a `url` property, which gives you access to the current URL (the same one you can read with the [`useCurrentUrl()` hook](#reading-the-current-url), which we will cover soon). You can use this property to access additional parts of the matched URL, like the search params or hash. The routes will re-render whenever the current URL changes, just like components that use the `useCurrentUrl()` hook, so you can use this technique if you prefer to more cleanly separate your routing from your React components.
 
 ### Allowing inexact matches
 
 All the `match` properties we’ve seen so far have been treated as “exact” matches — the route will only be rendered if the `match` property matches the entire pathname. You can make it so that the current URL only needs to _start_ with the `match` property before your route is rendered by passing `exact: false`. When you set `exact` to be false, as long as your `match` parameter ends on a path separator (either the `/` character, or the end of the path), it will be rendered.
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
+
+const routes = [
+  {
+    // Since this match does not need to be exact, this route will be rendered
+    // when the URL is `/products`, `/products-legacy`, `/products/search`,
+    // `/products-legacy/123`, and any other sub-paths of `/products` or
+    // `/products-legacy`. Because your routes still need to be matched on path
+    // separator boundaries, this route will **not match** for routes like
+    // `/products-list`.
+    match: /products(-legacy)?/,
+    exact: false,
+    // `matched` only returns the part of the pathname that actually matched; there
+    // could be more to the pathname than that since we are allowing inexact matches!
+    render: ({matched}) =>
+      matched === 'products-legacy' ? <ProductsLegacy /> : <Products />,
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {
-      // Since this match does not need to be exact, this route will be rendered
-      // when the URL is `/products`, `/products-legacy`, `/products/search`,
-      // `/products-legacy/123`, and any other sub-paths of `/products` or
-      // `/products-legacy`. Because your routes still need to be matched on path
-      // separator boundaries, this route will **not match** for routes like
-      // `/products-list`.
-      match: /products(-legacy)?/,
-      exact: false,
-      // `matched` only returns the part of the pathname that actually matched; there
-      // could be more to the pathname than that since we are allowing inexact matches!
-      render: ({matched}) =>
-        matched === 'products-legacy' ? <ProductsLegacy /> : <Products />,
-    },
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Products() {
@@ -402,34 +376,28 @@ Up until now, we have only declared a “flat” list of routes. However, you ca
 These features are a key part of Quilt’s powerful router. With this system, you can split your routes up into their individual parts, extract useful information out of the URL, and pass it in as props to your React components. The example below shows how you can break up a larger URL into small segments, using the `matched` property to extract dynamic portions of the URL:
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing} from '@quilted/quilt';
+
+const routes = [
+  {
+    match: 'shows',
+    children: [
+      // Renders for the “root” route, which in this case will be
+      // `/shows`, since we are nested under a `shows` match.
+      {match: '/', render: <ShowList />},
+      {
+        // This will match a single additional path portion with only
+        // word characters and dashes, like `/shows/kims-convenience`
+        // (in that case, `matched` will be `'kims-convenience'`).
+        match: /[\w\-]+/,
+        render: ({matched}) => <ShowDetails handle={matched} />,
+      },
+    ],
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {
-      match: 'shows',
-      children: [
-        // Renders for the “root” route, which in this case will be
-        // `/shows`, since we are nested under a `shows` match.
-        {match: '/', render: () => <ShowList />},
-        {
-          // This will match a single additional path portion with only
-          // word characters and dashes, like `/shows/kims-convenience`
-          // (in that case, `matched` will be `'kims-convenience'`).
-          match: /[\w\-]+/,
-          render: ({matched}) => <ShowDetails handle={matched} />,
-        },
-      ],
-    },
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function ShowList() {
@@ -448,32 +416,29 @@ When a route has `children`, and not `render`, as shown in the previous example,
 When a route has children, its `render` function is called with a `children` property that is the rendered child route that matched. Make sure you include `children` in your rendered output, otherwise the child routes won’t actually be rendered to the screen!
 
 ```tsx
-import {Routing, useRoutes, type PropsWithChildren} from '@quilted/quilt';
+import {Routing, type PropsWithChildren} from '@quilted/quilt';
+
+const routes = [
+  {
+    match: 'shows',
+    // In this case, `children` will include either `ShowList`, `ShowDetails`,
+    // or the default “not found” content, depending on the full URL.
+    render: ({children}) => <ShowLayout>{children}</ShowLayout>,
+    children: [
+      {
+        match: '/',
+        render: <ShowList />,
+      },
+      {
+        match: /[\w\-]+/,
+        render: ({matched}) => <ShowDetails handle={matched} />,
+      },
+    ],
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {
-      match: 'shows',
-      // In this case, `children` will include either `ShowList`, `ShowDetails`,
-      // or the default “not found” content, depending on the full URL.
-      render: ({children}) => <ShowLayout>{children}</ShowLayout>,
-      children: [
-        {match: '/', render: () => <ShowList />},
-        {
-          match: /[\w\-]+/,
-          render: ({matched}) => <ShowDetails handle={matched} />,
-        },
-      ],
-    },
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function ShowLayout({children}: PropsWithChildren) {
@@ -503,12 +468,18 @@ Here’s the same routing structure as the previous example, but built using nes
 ```tsx
 import {Routing, useRoutes, type PropsWithChildren} from '@quilted/quilt';
 
+const routes = [
+  {
+    match: 'shows',
+    // Needs to allow inexact matches so that we can match against the
+    // remainder of the path in our `Shows` component.
+    exact: false,
+    render: <Shows />,
+  },
+];
+
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
+  return <Routing routes={routes} />;
 }
 
 function Routes() {
@@ -525,7 +496,7 @@ function Routes() {
 
 function Shows() {
   const routes = useRoutes([
-    {match: '/', render: () => <ShowList />},
+    {match: '/', render: <ShowList />},
     {
       match: /[\w\-]+/,
       render: ({matched}) => <ShowDetails handle={matched} />,
@@ -567,27 +538,21 @@ If you want to split your routes across multiple bundles (by using [async compon
 Sometimes, you need to redirect the user from one route to another. Maybe you’ve changed the path a feature is available at, or you want to redirect common misspellings of a route to the correct spot. Quilt provides a `Redirect` component that can render for a route that will accomplish this task:
 
 ```tsx
-import {Routing, Redirect, useRoutes} from '@quilted/quilt';
+import {Routing, Redirect} from '@quilted/quilt';
+
+const routes = [
+  {
+    match: 'products',
+    render: <Products />,
+  },
+  {
+    match: 'product',
+    render: <Redirect to="/products" />,
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {
-      match: 'products',
-      render: () => <Products />,
-    },
-    {
-      match: 'product',
-      render: () => <Redirect to="/products" />,
-    },
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Products() {
@@ -602,84 +567,69 @@ The `to` prop on `Redirect` works the same way as the [`Link` component](#naviga
 All of these redirects in the next example would go to `/redirected`:
 
 ```tsx
-import {Routing, Redirect, useRoutes} from '@quilted/quilt';
+import {Routing, Redirect} from '@quilted/quilt';
+
+const routes = [
+  {
+    match: '/',
+    render: ({url}) => {
+      return (
+        <Redirect to="/redirected" />
+        // <Redirect to="redirected" />
+        // <Redirect to={new URL('redirected', url)} />
+        // <Redirect to={{path: '/redirected'}} />
+        // <Redirect to={(currentUrl) => new URL('/redirected', currentUrl)} />
+      );
+    },
+  },
+  {
+    match: 'redirected',
+    render: <div>Redirected!</div>,
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {
-      match: '/',
-      render: ({url}) => {
-        return (
-          <Redirect to="/redirected" />
-          // <Redirect to="redirected" />
-          // <Redirect to={new URL('redirected', url)} />
-          // <Redirect to={{path: '/redirected'}} />
-          // <Redirect to={(currentUrl) => new URL('/redirected', currentUrl)} />
-        );
-      },
-    },
-    {match: 'redirected', render: () => <div>Redirected!</div>},
-  ]);
+  return <Routing routes={routes} />;
 }
 ```
 
 As a convenience, if you are just redirecting one route to another, you can use the route’s `redirect` property instead of rendering a `Redirect` component. This property can be any of the types allowed in the `<Redirect />`’s `to` prop:
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing, Redirect} from '@quilted/quilt';
+
+const routes = [
+  {
+    match: '/',
+    redirect: '/redirected',
+    // or redirect: 'redirected',
+    // or redirect: new URL('redirected', url),
+    // or redirect: {path: '/redirected'},
+    // or redirect: (currentUrl) => new URL('/redirected', currentUrl),
+  },
+  {
+    match: 'redirected',
+    render: <div>Redirected!</div>,
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {
-      match: '/',
-      redirect: '/redirected',
-      // or redirect: 'redirected',
-      // or redirect: new URL('redirected', url),
-      // or redirect: {path: '/redirected'},
-      // or redirect: (currentUrl) => new URL('/redirected', currentUrl),
-    },
-    {match: 'redirected', render: () => <div>Redirected!</div>},
-  ]);
+  return <Routing routes={routes} />;
 }
 ```
 
 ### Handling URLs that don’t match
 
-By default, if no routes in a `useRoutes()` call match the current URL, Quilt will render a `<NotFound />` component. The `<NotFound />` component sets a 404 status code, and does not render any UI. If you want to provide a custom “not found” page, you can do so by registering a route without a `match` property as your last route:
+By default, if no routes match the current URL, Quilt will render a `<NotFound />` component. The `<NotFound />` component sets a 404 status code, and does not render any UI. If you want to provide a custom “not found” page, you can do so by registering a route without a `match` property as your last route:
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing} from '@quilted/quilt';
 import {useStatusCode} from '@quilted/quilt/http';
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [{match: '/prize', render: <Prize />}, {render: <NotFound />}];
 
-function Routes() {
-  return useRoutes([
-    {match: '/prize', render: () => <Prize />},
-    {render: () => <NotFound />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function Prize() {
@@ -695,35 +645,29 @@ function NotFound() {
 This works great, but if you define child routes, your custom “not found” route will not be rendered if Quilt matches a parent route, but fails to match a child:
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing} from '@quilted/quilt';
 import {useStatusCode} from '@quilted/quilt/http';
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [
+  {
+    match: 'shows',
+    children: [
+      {match: '/', render: <ShowList />},
+      // If `shows` matched, but no `children` matched, Quilt goes
+      // back to rendering its default, no-UI 404 page; it does not go
+      // back “up the stack” to try to find a fallback route.
+      //
+      // If we wanted our `NotFound` component to get rendered for routes
+      // like `/shows/abc`, we’d need to declare it as a fallback route
+      // in this list, too:
+      // {render: <NotFound />},
+    ],
+  },
+  {render: <NotFound />},
+];
 
-function Routes() {
-  return useRoutes([
-    {
-      match: 'shows',
-      children: [
-        {match: '/', render: () => <ShowList />},
-        // If `shows` matched, but no `children` matched, Quilt goes
-        // back to rendering its default, no-UI 404 page; it does not go
-        // back “up the stack” to try to find a fallback route.
-        //
-        // If we wanted our `NotFound` component to get rendered for routes
-        // like `/shows/abc`, we’d need to declare it as a fallback route
-        // in this list, too:
-        // {render: () => <NotFound />},
-      ],
-    },
-    {render: () => <NotFound />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function ShowList() {
@@ -846,7 +790,7 @@ In Quilt, there is no notion of “URL parameters”. Instead, the expectation i
 import {Routing, Link} from '@quilted/quilt';
 
 const routes = [
-  {match: '/', render: () => <List />},
+  {match: '/', render: <List />},
   {match: /\w+/, render: ({matched}) => <Detail id={matched} />},
 ];
 
@@ -884,23 +828,21 @@ Usually, you’ll want to use the `useRoutes()` hook to define what components a
 Quilt provides a `useRouteMatch()` hook that runs the route matching calculation on the provided matching pattern, and returns a boolean indicating whether or not that pattern matches. This match determination takes into account the currently “consumed” path, and so supports the same relative routing patterns as the `useRoutes()` hook.
 
 ```tsx
-import {Routing, useRoutes, useRouteMatch} from '@quilted/quilt';
+import {Routing, useRouteMatch} from '@quilted/quilt';
+// We pass `exact: false` so that any route that starts with `/top-secret`
+// matches. We will check whether there is an additional `prize` part of
+// the route in our `TopSecretArea` component.
+
+const routes = [
+  {
+    match: 'top-secret',
+    exact: false,
+    render: <TopSecretArea />,
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    // We pass `exact: false` so that any route that starts with `/top-secret`
-    // matches. We will check whether there is an additional `prize` part of
-    // the route in our `TopSecretArea` component.
-    {match: 'top-secret', exact: false, render: () => <TopSecretArea />},
-  ]);
+  return <Routing routes={routes} />;
 }
 
 // This component will render `You found the prize!` when the route is:
@@ -928,21 +870,15 @@ function TopSecretArea() {
 Declaring routes isn’t very useful if you can’t navigate between them. Quilt provides a few ways of navigating around your application, and the most important of them is the `<Link />` component. This component renders an actual HTML [anchor (`<a>`) element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a) that targets the route you pass as the `to` prop. Because it renders an HTML element, `<Link />` works whether JavaScript has loaded on the page or not, which makes it ideal for any piece of UI that triggers navigation.
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing} from '@quilted/quilt';
+
+const routes = [
+  {match: 'thing-one', render: <ThingOne />},
+  {match: 'thing-two', render: <ThingTwo />},
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: 'thing-one', render: () => <ThingOne />},
-    {match: 'thing-two', render: () => <ThingTwo />},
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function ThingOne() {
@@ -1099,21 +1035,15 @@ Sometimes, you may want a navigation to _replace_ the current entry in the histo
 Quilt lets you accomplish this both with the `<Link />` component and the function returned by `useNavigate()`. When rendering a link, pass the `replace` prop to have the navigation performed by that link replace the current URL:
 
 ```tsx
-import {Link, Routing, useRoutes} from '@quilted/quilt';
+import {Link, Routing} from '@quilted/quilt';
+
+const routes = [
+  {match: '/home', render: <Home />},
+  {match: '/dead-end', render: <DeadEnd />},
+];
 
 export function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: '/home', render: () => <Home />},
-    {match: '/dead-end', render: () => <DeadEnd />},
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Home() {
@@ -1169,27 +1099,21 @@ There are many ways to solve this problem. Quilt’s router lets you include que
 Quilt provides one additional mechanism for passing state between routes that does not include the content in the URL, and does not require you to use any client or server storage. It uses the [browsers’s `history.state` API](https://developer.mozilla.org/en-US/docs/Web/API/History/state) under the hood to associate state with individual route navigations. You provide the history state by including the `state` option when navigating. The `state` option should be an object, and should have only JSON-serializable values (so, no functions, class instances, or data structures like `Map` or `Set`). The history state is then made available to the target route through the `state` field on the URL returned by `useCurrentUrl()`:
 
 ```tsx
-import {Link, Routing, useRoutes, useCurrentUrl} from '@quilted/quilt';
-
-export function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+import {Link, Routing, useCurrentUrl} from '@quilted/quilt';
 
 enum Path {
   TheEasyWay,
   TheHardWay,
 }
 
-function Routes() {
-  return useRoutes([
-    {match: 'the-easy-way', render: () => <TheEasyWay />},
-    {match: 'the-hard-way', render: () => <TheHardWay />},
-    {match: 'destination', render: () => <Destination />},
-  ]);
+const routes = [
+  {match: 'the-easy-way', render: <TheEasyWay />},
+  {match: 'the-hard-way', render: <TheHardWay />},
+  {match: 'destination', render: <Destination />},
+];
+
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function TheEasyWay() {
@@ -1220,7 +1144,7 @@ function Destination() {
       return <p>Congratulations on making it through, enjoy your stay!</p>;
     }
     default: {
-      return <p>Wow, how’s you even get here?</p>;
+      return <p>Wow, how’d you even get here?</p>;
     }
   }
 }
@@ -1241,27 +1165,21 @@ Some applications can definitely find creative uses for differentiating paths wi
 An important performance optimization technique for JavaScript applications is [code splitting](https://developer.mozilla.org/en-US/docs/Glossary/Code_splitting): only loading the assets for the features on the screen. Routes are an ideal place to do this, as each route acts as a logical “split point” for code in your application. Quilt’s [async components](./async.md#asynchronous-components) pair well with the router to implement route-based splitting:
 
 ```tsx
-import {Routing, useRoutes, createAsyncComponent} from '@quilted/quilt';
+import {Routing, createAsyncComponent} from '@quilted/quilt';
 
 const Start = createAsyncComponent(() => import('./Start'));
 const Products = createAsyncComponent(() => import('./Products'));
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [
+  // Now, if `/` is rendered, only the code for `Start` is loaded; if
+  // `/products` is rendered, only the code for `Products` is loaded; and
+  // for any other URL, no extra code is loaded!
+  {match: '/', render: <Start />},
+  {match: 'products', render: <Products />},
+];
 
-function Routes() {
-  return useRoutes([
-    // Now, if `/` is rendered, only the code for `Start` is loaded; if
-    // `/products` is rendered, only the code for `Products` is loaded; and
-    // for any other URL, no extra code is loaded!
-    {match: '/', render: () => <Start />},
-    {match: 'products', render: () => <Products />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 ```
 
@@ -1296,13 +1214,13 @@ function Routes() {
   return useRoutes([
     {
       match: '/',
-      render: () => <Start />,
-      renderPreload: () => <Start.Preload />,
+      render: <Start />,
+      renderPreload: <Start.Preload />,
     },
     {
       match: 'products',
-      render: () => <Products />,
-      renderPreload: () => <Products.Preload />,
+      render: <Products />,
+      renderPreload: <Products.Preload />,
     },
   ]);
 }
@@ -1335,12 +1253,12 @@ function Routes() {
   return useRoutes([
     {
       match: 'step-one',
-      render: () => <StepOne />,
+      render: <StepOne />,
     },
     {
       match: 'step-two',
-      render: () => <StepTwo />,
-      renderPreload: () => <StepTwo.Preload />,
+      render: <StepTwo />,
+      renderPreload: <StepTwo.Preload />,
     },
   ]);
 }
@@ -1398,30 +1316,24 @@ async function deleteProduct() {
 As we discuss in the [static rendering guide](./static-rendering.md), Quilt can render your application to static HTML files. Quilt will run your application, and will automatically detect the routes you declare in order to render each one in turn. Imagine the following example application:
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
+
+const routes = [
+  {match: '/', render: <Start />},
+  {
+    match: 'shows',
+    children: [
+      {match: '/', render: <ShowList />},
+      {
+        match: /[\w\-]+/,
+        render: ({matched}) => <ShowDetails handle={matched} />,
+      },
+    ],
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {
-      match: 'shows',
-      children: [
-        {match: '/', render: () => <ShowList />},
-        {
-          match: /[\w\-]+/,
-          render: ({matched}) => <ShowDetails handle={matched} />,
-        },
-      ],
-    },
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -1448,31 +1360,25 @@ Any route declared with a `match` property using a regular expression or functio
 You can teach Quilt what matches to render during static rendering using the `renderStatic` property of a route. This property should be a function, which can return either an array of path parts to render, or a promise for an array of path parts to render. We can update our earlier example to force Quilt to render our dynamic `/shows/{handle}` route with a few matches:
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
+
+const routes = [
+  {match: '/', render: () => <Start />},
+  {
+    match: 'shows',
+    children: [
+      {match: '/', render: () => <ShowList />},
+      {
+        match: /[\w\-]+/,
+        render: ({matched}) => <ShowDetails handle={matched} />,
+        renderStatic: () => ['survivor', 'ted-lasso', 'tuca-and-bertie'],
+      },
+    ],
+  },
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {
-      match: 'shows',
-      children: [
-        {match: '/', render: () => <ShowList />},
-        {
-          match: /[\w\-]+/,
-          render: ({matched}) => <ShowDetails handle={matched} />,
-          renderStatic: () => ['survivor', 'ted-lasso', 'tuca-and-bertie'],
-        },
-      ],
-    },
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -1497,21 +1403,15 @@ Now, in addition to the routes that were statically rendered before, Quilt will 
 If you want to prevent a route from being statically rendered, you can set its `renderStatic` property to `false`:
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
+
+const routes = [
+  {match: '/', render: <Public />},
+  {match: 'admin', renderStatic: false, render: <Admin />},
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Public />},
-    {match: 'admin', renderStatic: false, render: () => <Admin />},
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Public() {
@@ -1535,23 +1435,17 @@ Sometimes, all the routes in your application are nested under a particular path
 Quilt provides a convenience for applications that use this strategy. It’s called a “router prefix”: you declare some part of the pathname that is constant for all URLs in your application by passing a `prefix` prop on the router component. For example, let’s imagine we are deploying an application where all URLs are nested under `/admin`:
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
+
+const routes = [
+  // This route will render when the full path is `/admin`
+  {match: '/', render: <Start />},
+  // This route will render when the full path is `/admin/account`
+  {match: 'account', render: <Account />},
+];
 
 function App() {
-  return (
-    <Routing prefix="/admin">
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    // This route will render when the full path is `/admin`
-    {match: '/', render: () => <Start />},
-    // This route will render when the full path is `/admin/account`
-    {match: 'account', render: () => <Account />},
-  ]);
+  return <Routing prefix="/admin" routes={routes} />;
 }
 
 function Start() {
@@ -1595,7 +1489,7 @@ If you do nothing at all, Quilt will automatically measure the scroll position o
 Quilt will default to persisting scroll measurements to [`sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage), which lets the behavior to persist across page refreshes. You can provide a custom persistence strategy by passing the `scrollRestoration` prop to `Router`. Quilt provides a few helpers, like `createSessionStorageScrollRestoration()` and `createMemoryScrollRestoration()`, for constructing customized approaches to persisting scroll positions.
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
 import {createMemoryScrollRestoration} from '@quilted/react-router';
 
 // Some applications may not be able to access `sessionStorage`. This
@@ -1603,19 +1497,15 @@ import {createMemoryScrollRestoration} from '@quilted/react-router';
 // scroll measurements in memory.
 const inMemoryScrollRestoration = createMemoryScrollRestoration();
 
+const routes = [
+  {match: 'one', render: <One />},
+  {match: 'two', render: <Two />},
+];
+
 function App() {
   return (
-    <Routing scrollRestoration={inMemoryScrollRestoration}>
-      <Routes />
-    </Routing>
+    <Routing routes={routes} scrollRestoration={inMemoryScrollRestoration} />
   );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: 'one', render: () => <One />},
-    {match: 'two', render: () => <Two />},
-  ]);
 }
 
 function One() {
@@ -1632,7 +1522,6 @@ If you have a custom scroll container for your app, you can call the `useRouteCh
 ```tsx
 import {
   Routing,
-  useRoutes,
   useRouteChangeScrollRestoration,
   type PropsWithChildren,
 } from '@quilted/quilt';
@@ -1647,8 +1536,8 @@ function App() {
 
 function Routes() {
   const routes = useRoutes([
-    {match: 'one', render: () => <One />},
-    {match: 'two', render: () => <Two />},
+    {match: 'one', render: <One />},
+    {match: 'two', render: <Two />},
   ]);
 
   return <Container>{routes}</Container>;
@@ -1681,26 +1570,15 @@ For scroll restoration to work well, you need to have all the same UI rendered w
 The `useRouteChangeScrollRestoration()` hook supports implementing this kind of “delayed” scroll restoration. You can pass an `ready: false` option to this hook to indicate that scroll restoration should be delayed. When you set the `ready` option to anything but `false`, any delayed scroll restoration will be applied to the page.
 
 ```tsx
-import {
-  Link,
-  Routing,
-  useRoutes,
-  useRouteChangeScrollRestoration,
-} from '@quilted/quilt';
+import {Link, Routing, useRouteChangeScrollRestoration} from '@quilted/quilt';
+
+const routes = [
+  {match: '/', render: <Start />},
+  {match: 'payments', render: <Payments />},
+];
 
 function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
-
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'payments', render: () => <Payments />},
-  ]);
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -1736,8 +1614,8 @@ function App() {
 
 function Routes() {
   const routes = useRoutes([
-    {match: 'one', render: () => <One />},
-    {match: 'two', render: () => <Two />},
+    {match: 'one', render: <One />},
+    {match: 'two', render: <Two />},
   ]);
 
   return <Container>{routes}</Container>;
@@ -1802,8 +1680,8 @@ function Frame({children}: PropsWithChildren) {
 
 function Routes() {
   return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'account', render: () => <Account />},
+    {match: '/', render: <Start />},
+    {match: 'account', render: <Account />},
   ]);
 }
 
@@ -1828,22 +1706,16 @@ The function you pass to `useNavigationBlock()` is called with an object contain
 
 ```tsx
 import {useState} from 'react';
-import {Routing, useNavigationBlock, useRoutes} from '@quilted/quilt';
+import {Routing, useNavigationBlock} from '@quilted/quilt';
 import {TextField} from 'some-ui-library';
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [
+  {match: '/', render: <Start />},
+  {match: 'edit', render: <Edit />},
+];
 
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'edit', render: () => <Edit />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -1873,22 +1745,16 @@ These details are especially useful when using a simplified version of the `useN
 
 ```tsx
 import {useState} from 'react';
-import {Routing, useNavigationBlock, useRoutes} from '@quilted/quilt';
+import {Routing, useNavigationBlock} from '@quilted/quilt';
 import {TextField, Dialog} from 'my-ui-library';
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [
+  {match: '/', render: <Start />},
+  {match: 'edit', render: <Edit />},
+];
 
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'edit', render: () => <Edit />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function Start() {
@@ -1919,26 +1785,19 @@ import {
   Routing,
   Link,
   useNavigationBlock,
-  useRoutes,
   usePreload,
   createAsyncComponent,
 } from '@quilted/quilt';
 
 const BigRoute = createAsyncComponent(() => import('./Big'));
 
-function App() {
-  return (
-    <Routing>
-      <Routes />
-    </Routing>
-  );
-}
+const routes = [
+  {match: '/', render: <Start />},
+  {match: 'big', render: <BigRoute />},
+];
 
-function Routes() {
-  return useRoutes([
-    {match: '/', render: () => <Start />},
-    {match: 'big', render: () => <BigRoute />},
-  ]);
+function App() {
+  return <Routing routes={routes} />;
 }
 
 function Start() {
