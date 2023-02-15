@@ -5,8 +5,12 @@ export * from './implementations/test-renderer';
 export * from './types';
 export {createEnvironment} from './environment';
 export type {
-  CustomMount,
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
   HookRunner,
+  Environment,
   EnvironmentOptions,
   ContextOption,
   RenderOption,

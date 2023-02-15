@@ -1,16 +1,16 @@
 import {describe, it, expect} from '@quilted/testing';
-import {mount, createTestRouter} from '../../tests/utilities';
+import {render, createTestRouter} from '../../tests/utilities';
 
 import {Link} from './Link';
 
 describe('<Link />', () => {
   it('creates an anchor tag', () => {
-    const link = mount(<Link to="/" />);
+    const link = render(<Link to="/" />);
     expect(link).toContainReactComponent('a', {href: '/'});
   });
 
   it('creates an anchor from a relative `to`', () => {
-    const link = mount(<Link to="my-product" />, {
+    const link = render(<Link to="my-product" />, {
       router: createTestRouter('/products'),
     });
 
@@ -19,7 +19,7 @@ describe('<Link />', () => {
 
   it('passes additional props through to the anchor tag', () => {
     const label = 'Home';
-    const link = mount(<Link to="/" aria-label={label} />);
+    const link = render(<Link to="/" aria-label={label} />);
     expect(link).toContainReactComponent('a', {'aria-label': label});
   });
 
@@ -28,7 +28,7 @@ describe('<Link />', () => {
       const onClick = jest.fn();
       const event = createClickEvent();
 
-      const link = mount(<Link to="/" onClick={onClick} />);
+      const link = render(<Link to="/" onClick={onClick} />);
       link.find('a')!.trigger('onClick', event);
 
       expect(onClick).toHaveBeenCalledWith(event);
@@ -39,7 +39,7 @@ describe('<Link />', () => {
       const router = createTestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
-      const link = mount(<Link to={to} />, {router});
+      const link = render(<Link to={to} />, {router});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).toHaveBeenCalledWith(to);
@@ -49,7 +49,7 @@ describe('<Link />', () => {
       const router = createTestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
-      const link = mount(<Link to="/" external />, {router});
+      const link = render(<Link to="/" external />, {router});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).not.toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe('<Link />', () => {
       const router = createTestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
-      const link = mount(
+      const link = render(
         <Link to="/" onClick={(event) => event.preventDefault()} />,
         {router},
       );
@@ -72,7 +72,7 @@ describe('<Link />', () => {
       const router = createTestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
-      const link = mount(<Link to="/" />, {router});
+      const link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({shiftKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
@@ -82,7 +82,7 @@ describe('<Link />', () => {
       const router = createTestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
-      const link = mount(<Link to="/" />, {router});
+      const link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({metaKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe('<Link />', () => {
       const router = createTestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
-      const link = mount(<Link to="/" />, {router});
+      const link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({ctrlKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
