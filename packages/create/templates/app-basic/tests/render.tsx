@@ -39,7 +39,7 @@ export interface RenderActions extends Record<string, never> {}
  * Renders a component with test-friendly versions of all global
  * context available to the application.
  */
-export const mountWithAppContext = createRender<
+export const renderWithAppContext = createRender<
   RenderOptions,
   RenderContext,
   RenderActions,
@@ -62,7 +62,7 @@ export const mountWithAppContext = createRender<
   async afterRender() {
     // If your components need to resolve data before they can render, you can
     // use this hook to wait for that data to be ready. This will cause the
-    // `mount` function to return a promise, so that the component is only usable
+    // `render` function to return a promise, so that the component is only usable
     // once the data is ready.
   },
 });

@@ -1,13 +1,13 @@
 import {Viewport, SearchRobots} from '@quilted/quilt/html';
 import {describe, it, expect} from '@quilted/quilt/testing';
 
-import {mountWithAppContext} from '~/tests/mount';
+import {renderWithAppContext} from '~/tests/render';
 
 import {Head} from './Head';
 
 describe('<Head />', () => {
   it('includes a responsive viewport tag', async () => {
-    const head = await mountWithAppContext(<Head />);
+    const head = await renderWithAppContext(<Head />);
 
     expect(head).toContainReactComponent(Viewport, {
       cover: true,
@@ -15,7 +15,7 @@ describe('<Head />', () => {
   });
 
   it('prevents search robots from indexing the application', async () => {
-    const head = await mountWithAppContext(<Head />);
+    const head = await renderWithAppContext(<Head />);
 
     expect(head).toContainReactComponent(SearchRobots, {
       index: false,
