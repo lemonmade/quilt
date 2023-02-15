@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.26
+
+### Patch Changes
+
+- [#518](https://github.com/lemonmade/quilt/pull/518) [`10574343`](https://github.com/lemonmade/quilt/commit/105743435ad7143acb50dfdee92f6d3422167888) Thanks [@lemonmade](https://github.com/lemonmade)! - Update testing functions from mount() => render()
+
 ## 0.5.25
 
 ### Patch Changes

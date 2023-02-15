@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.50
+
+### Patch Changes
+
+- [`b378b4f4`](https://github.com/lemonmade/quilt/commit/b378b4f40906f9edc81d4283cf29e753255a0362) Thanks [@lemonmade](https://github.com/lemonmade)! - Update default build output locations
+
+- [#518](https://github.com/lemonmade/quilt/pull/518) [`10574343`](https://github.com/lemonmade/quilt/commit/105743435ad7143acb50dfdee92f6d3422167888) Thanks [@lemonmade](https://github.com/lemonmade)! - Update testing functions from mount() => render()
+
 ## 0.1.49
 
 ### Patch Changes
