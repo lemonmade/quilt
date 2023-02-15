@@ -18,22 +18,6 @@ export type WorkerFormat = 'modules' | 'service-worker';
 
 export interface Options {
   /**
-   * Controls whether the built application server will be run on
-   * Cloudflare Pages. When set to `true`, Quilt will do the following:
-   *
-   * - Your app’s assets will be generated into the `public/assets`
-   *   folder in your build directory
-   * - Your app’s server will be generated into `public/_worker.js`,
-   *   in order for Cloudflare to use it for all requests
-   * - Your app’s server will use Cloudflare Pages APIs to serve
-   *   the static assets generated at build time.
-   *
-   * @see https://developers.cloudflare.com/pages/
-   * @default false
-   */
-  pages?: boolean;
-
-  /**
    * Whether the resulting request handler will use the Cloudflare cache
    * for responses. When set to `true`, which is the default, the request
    * handler will check the cache for all incoming requests, and respond
@@ -83,7 +67,6 @@ declare module '@quilted/craft/kit' {
 export function cloudflareWorkers({
   format = 'modules',
   cache = false,
-  pages = false,
   miniflare: useMiniflare = true,
 }: Options = {}) {
   return createProjectPlugin({
@@ -93,7 +76,105 @@ export function cloudflareWorkers({
         addConfiguration({
           cache,
           format,
-          pages,
+          pages: false,
+          project,
+        }),
+      );
+    },
+    develop({project, configure, hooks}) {
+      hooks<CloudflareDevelopHooks>(({waterfall}) => ({
+        miniflareOptions: waterfall(),
+      }));
+
+      const addBaseConfiguration = addConfiguration({
+        cache,
+        format,
+        pages: false,
+        project,
+      });
+
+      configure((hooks, options) => {
+        addBaseConfiguration(hooks, options);
+
+        const {quiltAppDevelopmentServer, miniflareOptions} = hooks;
+
+        if (!useMiniflare) return;
+
+        quiltAppDevelopmentServer?.(async () => {
+          const {Miniflare} = await import('miniflare');
+
+          let miniflare: InstanceType<typeof Miniflare>;
+
+          return {
+            async rebuild(entry) {
+              miniflare ??= new Miniflare(
+                await miniflareOptions!.run({
+                  watch: true,
+                  modules: true,
+                  scriptPath: entry,
+                  packagePath: project.fs.resolvePath('package.json'),
+                  wranglerConfigPath: (await project.fs.hasFile(
+                    'wrangler.toml',
+                  ))
+                    ? project.fs.resolvePath('wrangler.toml')
+                    : true,
+                  // TODO: would be nice to have a clean flow for running this
+                  // without the cached geolocation data.
+                  cfFetch: true,
+                  ...(typeof useMiniflare === 'boolean' ? {} : useMiniflare),
+                }),
+              );
+
+              const {HTTPPlugin} = await miniflare.getPlugins();
+
+              return {
+                async fetch(request, nodeRequest) {
+                  const workerResponse = await miniflare!.dispatchFetch(
+                    request.url,
+                    {
+                      body: request.body as any,
+                      method: request.method,
+                      headers: request.headers,
+                      cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
+                    },
+                  );
+
+                  return workerResponse as any;
+                },
+              };
+            },
+          };
+        });
+      });
+    },
+  });
+}
+
+/**
+ * Configures an application to run on Cloudflare Pages:
+ *
+ * - Your app’s assets will be generated into the `public/assets`
+ *   folder in your build directory
+ * - Your app’s server will be generated into `public/_worker.js`,
+ *   in order for Cloudflare to use it for all requests
+ * - Your app’s server will use Cloudflare Pages APIs to serve
+ *   the static assets generated at build time.
+ *
+ * @see https://developers.cloudflare.com/pages/
+ */
+export function cloudflarePages({
+  format = 'modules',
+  cache = false,
+  miniflare: useMiniflare = true,
+}: Omit<Options, 'pages'> = {}) {
+  return createProjectPlugin({
+    name: 'Quilt.Cloudflare.Pages',
+    build({project, configure}) {
+      configure(
+        addConfiguration({
+          cache,
+          format,
+          pages: true,
           project,
         }),
       );
