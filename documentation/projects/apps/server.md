@@ -7,7 +7,7 @@ As noted in the documentation on [browser builds](./browser.md), Quilt doesn’t
 When you run `sewing-kit build` in your workspace, the server build will be placed in the `build/server` directory relative to the root of your application. Without any additional configuration, Quilt produces a small HTTP server using native Node APIs (including ES modules). This server will run on the port specified by the `PORT` environment variable. So, to run the server on port 3000, you could run the following command from the root of your application:
 
 ```zsh
-PORT=3000 node ./build/server/index.js
+PORT=3000 node ./build/server/server.js
 ```
 
 ## Building the server for other environments

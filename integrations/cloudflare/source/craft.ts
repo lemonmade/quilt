@@ -279,7 +279,7 @@ function addConfiguration({
     >,
     options: Partial<BuildProjectOptions & DevelopProjectOptions>,
   ) => {
-    if (options.quiltAppBrowser) {
+    if (pages && options.quiltAppBrowser) {
       quiltAssetOutputRoot?.((currentRoot) =>
         currentRoot.startsWith('/') || currentRoot.startsWith('public/')
           ? currentRoot

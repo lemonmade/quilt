@@ -249,22 +249,38 @@ npm run wrangler init my-project-name
 yarn run wrangler init my-project-name
 ```
 
-After running the command above, a `wrangler.toml` will exist at the root of your repo. For complex workspaces with multiple workers, you can also nest this `wrangler.toml` file in a subdirectory of your repo.
+If this command asks you if you would like to create a Worker file, you can select “None” — Quilt will generate your worker based on the source code of your project.
 
-In your new `wrangler.toml` file, you will need to change the [`main` field](https://developers.cloudflare.com/workers/wrangler/configuration/#inheritable-keys) to point to Quilt’s build outputs. Update your `wrangler.toml` to include the following content:
+After running the command above, a `wrangler.toml` will exist at the root of your repo. For complex workspaces with multiple workers, we recommend you nest this `wrangler.toml` file in the subdirectory of your repo that contains your project.
+
+In your new `wrangler.toml` file, you will need to change the [`main` field](https://developers.cloudflare.com/workers/wrangler/configuration/#inheritable-keys) to point to Quilt’s build outputs. Where Quilt outputs its built files depends on the type of project and the nesting of your workspace. In a typical app, you will need to update your `wrangler.toml` to include the following content:
 
 ```toml
-main = "./build/runtime/index.js"
+# ./app/wrangler.toml
+
+# You will need to make sure this is the relative path from your
+# `wrangler.toml` to your service’s build outputs.
+main = "./build/server/server.js"
+```
+
+In a typical service, you will need to update your `wrangler.toml` to include the following content:
+
+```toml
+# ./functions/my-function/wrangler.toml
+
+# You will need to make sure this is the relative path from your
+# `wrangler.toml` to your service’s build outputs.
+main = "./build/runtime/runtime.js"
 ```
 
 With this configuration, you’re already ready to run `wrangler publish` to deploy your application:
 
 ```bash
-pnpm run wrangler publish
+pnpm run wrangler publish --config ./path/to/wrangler.toml
 # or
-npm run wrangler publish
+npm run wrangler publish --config ./path/to/wrangler.toml
 # or
-yarn run wrangler publish
+yarn run wrangler publish --config ./path/to/wrangler.toml
 ```
 
 That’s it! Your project should now be live on Cloudflare. Follow the links in the console to see your code in production.

@@ -329,7 +329,7 @@ export async function buildAppAndRunServer(
   const url = new URL(`http://localhost:${port}`);
 
   const server = startServer(async () => {
-    await command.node(fs.resolve('build/server/index.js'), {
+    await command.node(fs.resolve('build/server/server.js'), {
       env: {PORT: String(port)},
     });
   });

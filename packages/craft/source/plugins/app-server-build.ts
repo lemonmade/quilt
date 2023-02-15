@@ -159,7 +159,7 @@ export function appServerBuild({
 
             outputs.push({
               format,
-              entryFileNames: 'index.js',
+              entryFileNames: 'server.js',
               dir: path.join(outputRoot, 'server'),
             });
 

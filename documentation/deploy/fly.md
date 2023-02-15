@@ -23,7 +23,7 @@ COPY build/server build/server
 
 ENV NODE_ENV production
 
-CMD ["node", "./build/server/index.js"]
+CMD ["node", "./build/server/server.js"]
 ```
 
 This Dockerfile assumes that you will build your application outside the Docker image, and then copies the files you need at runtime into the image (the `COPY` statements). It uses a slim base Docker image that includes Node 16 (the `FROM` statement), and has the container run the server output file with node when it starts up (the `CMD` statement).

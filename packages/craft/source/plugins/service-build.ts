@@ -149,7 +149,7 @@ export function serviceBuild({
 
             outputs.push({
               format,
-              entryFileNames: 'index.js',
+              entryFileNames: 'runtime.js',
               dir: path.join(outputRoot, 'runtime'),
             });
 
@@ -171,7 +171,7 @@ export function serviceBuild({
               import('../tools/rollup'),
             ]);
 
-            await rm(project.fs.buildPath('runtime'), {
+            await rm(project.fs.buildPath(), {
               recursive: true,
               force: true,
             });
