@@ -64,7 +64,7 @@ describe('polyfills', () => {
 
         // Start the server
         startServer(() =>
-          command.node(fs.resolve('build/runtime/index.js'), {
+          command.node(fs.resolve('build/runtime/runtime.js'), {
             env: {PORT: String(port)},
           }),
         );
