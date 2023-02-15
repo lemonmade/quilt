@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-testing",
   "type": "module",
-  "version": "0.5.25",
+  "version": "0.5.26",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
