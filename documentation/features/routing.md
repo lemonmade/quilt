@@ -800,30 +800,40 @@ In many other routing systems, routes are declared using a special syntax that a
 TODO: check if still valid
 
 ```tsx
-import {
-  BrowserRouter as Routing,
-  Switch,
-  Route,
-  useParams,
-} from 'react-router-dom';
+import {Link, RouterProvider, createBrowserRouter} from 'react-router-dom';
 
-export function App() {
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <List />,
+  },
+  {
+    path: '/:id',
+    element: <Detail />,
+  },
+]);
+
+function App() {
+  return <RouterProvider router={router} />;
+}
+
+function List() {
+  // You would probably fetch this from a server, potentially using
+  // React Router’s `loader` system.
+  const items = ['1', '2'];
+
   return (
-    <Routing>
-      <Routes />
-    </Routing>
+    <ul>
+      {data.map((item) => (
+        <li key={item}>
+          <Link to={item}>Go to item {item}</Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function Routes() {
-  return (
-    <Switch>
-      <Route path="/:id" children={<Child />} />
-    </Switch>
-  );
-}
-
-function Child() {
+function Detail() {
   const {id} = useParams();
 
   return <p>ID: {id}</p>;
@@ -833,28 +843,39 @@ function Child() {
 In Quilt, there is no notion of “URL parameters”. Instead, the expectation is that your child components accept any information they need as props, and you can use the router’s matching patterns to capture information from the URL:
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt';
+import {Routing, Link} from '@quilted/quilt';
+
+const routes = [
+  {match: '/', render: () => <List />},
+  {match: /\w+/, render: ({matched}) => <Detail id={matched} />},
+];
 
 function App() {
+  return <Routing routes={routes} />;
+}
+
+function List() {
+  // You would probably fetch this from a server, potentially using
+  // react-query or swr.
+  const items = ['1', '2'];
+
   return (
-    <Routing>
-      <Routes />
-    </Routing>
+    <ul>
+      {data.map((item) => (
+        <li key={item}>
+          <Link to={item}>Go to item {item}</Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function Routes() {
-  return useRoutes([
-    {match: /\w+/, render: ({matched}) => <Child id={matched} />},
-  ]);
-}
-
-function Child({id}: {id: string}) {
+function Detail({id}: {id: string}) {
   return <p>ID: {id}</p>;
 }
 ```
 
-Not everyone will prefer Quilt’s approach — there’s definitely advantages to having a special syntax for extracting information from the path! Quilt prefers its more explicit approach because it is [is less prone to introduce type check errors](./TODO).
+Not everyone will prefer Quilt’s approach — there’s definitely advantages to having a special syntax for extracting information from the path! Quilt prefers its more explicit approach because it is [easier to make type-safe](./TODO).
 
 ### Reading the URL to manually check for route matches
 
