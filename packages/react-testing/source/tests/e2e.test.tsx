@@ -2,7 +2,7 @@
 
 import {Component, useState} from 'react';
 import {describe, it, expect, beforeEach, afterEach} from '@quilted/testing';
-import {mount} from '..';
+import {render} from '..';
 
 describe('e2e', () => {
   let consoleError = console.error;
@@ -28,7 +28,7 @@ describe('e2e', () => {
     console.error = consoleError;
   });
 
-  it('throws if an React component throws during mount', () => {
+  it('throws if an React component throws during render', () => {
     const error = new Error('oh no!');
 
     function ThrowingComponent() {
@@ -36,7 +36,7 @@ describe('e2e', () => {
       return null;
     }
 
-    expect(() => mount(<ThrowingComponent />)).toThrowError(error);
+    expect(() => render(<ThrowingComponent />)).toThrowError(error);
   });
 
   it('throws if a React component throws after an update', () => {
@@ -50,7 +50,7 @@ describe('e2e', () => {
       return <button onClick={() => setShouldThrow(true)}>Throw!</button>;
     }
 
-    const throwingComponent = mount(<ThrowingComponent />);
+    const throwingComponent = render(<ThrowingComponent />);
 
     expect(() =>
       throwingComponent.find('button')!.trigger('onClick'),
@@ -78,7 +78,7 @@ describe('e2e', () => {
     }
 
     expect(() =>
-      mount(
+      render(
         <ErrorBoundary>
           <ThrowingComponent />
         </ErrorBoundary>,

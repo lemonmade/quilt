@@ -2,7 +2,7 @@ import '@quilted/quilt/matchers';
 
 import {type Router} from '@quilted/quilt';
 import {
-  createMount,
+  createRender,
   QuiltAppTesting,
   createTestRouter,
 } from '@quilted/quilt/testing';
@@ -17,7 +17,7 @@ import {
 
 export {createTestRouter, fillGraphQL, createGraphQLController};
 
-export interface MountOptions {
+export interface RenderOptions {
   /**
    * A custom router to use for this component test. You can use a
    * custom router to simulate a particular URL, and you can spy on
@@ -33,12 +33,12 @@ export interface MountOptions {
    * by this module.
    *
    * ```tsx
-   * import {mountWithAppContext, fillGraphQL, createGraphQLController} from '~/tests/mount';
+   * import {renderWithAppContext, fillGraphQL, createGraphQLController} from '~/tests/render';
    *
    * import {MyComponent} from './MyComponent';
    * import myComponentQuery from './MyComponentQuery.graphql';
    *
-   * const myComponent = await mountWithAppContext(<MyComponent />, {
+   * const myComponent = await renderWithAppContext(<MyComponent />, {
    *   graphql: createGraphQLController(
    *     fillGraphQL(myComponentQuery, {user: {name: 'Winston'}}),
    *   ),
@@ -53,7 +53,7 @@ export interface MountOptions {
   locale?: string;
 }
 
-export interface MountContext {
+export interface RenderContext {
   /**
    * The router used for this component test.
    */
@@ -70,16 +70,16 @@ export interface MountContext {
   readonly queryClient: QueryClient;
 }
 
-export interface MountActions extends Record<string, never> {}
+export interface RenderActions extends Record<string, never> {}
 
 /**
- * Mounts a component with test-friendly versions of all global
+ * Renders a component with test-friendly versions of all global
  * context available to the application.
  */
-export const mountWithAppContext = createMount<
-  MountOptions,
-  MountContext,
-  MountActions,
+export const renderWithAppContext = createRender<
+  RenderOptions,
+  RenderContext,
+  RenderActions,
   true
 >({
   // Create context that can be used by the `render` function, and referenced by test
@@ -100,10 +100,10 @@ export const mountWithAppContext = createMount<
       </QuiltAppTesting>
     );
   },
-  async afterMount(wrapper) {
+  async afterRender(wrapper) {
     // If your components need to resolve data before they can render, you can
     // use this hook to wait for that data to be ready. This will cause the
-    // `mount` function to return a promise, so that the component is only usable
+    // `render` function to return a promise, so that the component is only usable
     // once the data is ready.
 
     await wrapper.act(async () => {

@@ -2,7 +2,18 @@ import {createRoot, type Root as ReactDomRoot} from 'react-dom/client';
 import {act} from 'react-dom/test-utils';
 
 import {createEnvironment, isNode} from '../environment';
-import type {CustomMount, EnvironmentOptions} from '../environment';
+import type {
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
+  HookRunner,
+  Environment,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+} from '../environment';
 import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
 
 import {Tag, findCurrentFiberUsingSlowPath} from './shared/react';
@@ -14,9 +25,25 @@ interface Context {
 }
 
 export {isNode};
-export type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions, CustomMount};
+export type {
+  Node,
+  NodeApi,
+  Root,
+  RootApi,
+  HtmlNodeExtensions,
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
+  HookRunner,
+  Environment,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+};
 
-const {mount, createMount, mounted, unmountAll} = createEnvironment<
+const {render, createRender, rendered, destroyAll} = createEnvironment<
   Context,
   HtmlNodeExtensions
 >({
@@ -39,7 +66,7 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
   },
 });
 
-export {mount, createMount, mounted, unmountAll};
+export {render, createRender, rendered, destroyAll};
 
 type Create = Parameters<
   EnvironmentOptions<any, HtmlNodeExtensions>['update']

@@ -1,4 +1,4 @@
-import {createMount, describe, it, expect} from '@quilted/quilt/testing';
+import {createRender, describe, it, expect} from '@quilted/quilt/testing';
 
 import {createTestRouter, TestRouting} from '../../testing';
 import {Redirect} from './Redirect';
@@ -6,7 +6,7 @@ import {Redirect} from './Redirect';
 describe('<Redirect />', () => {
   it('works', () => {
     const to = '/my/path';
-    const redirect = mountWithNavigateSpy(<Redirect to={to} />);
+    const redirect = renderWithNavigateSpy(<Redirect to={to} />);
 
     expect(redirect.context.router.navigate).toHaveBeenCalledWith(to, {
       replace: true,
@@ -15,7 +15,7 @@ describe('<Redirect />', () => {
 
   it('works with relativeTo', () => {
     const to = '/my/path';
-    const redirect = mountWithNavigateSpy(
+    const redirect = renderWithNavigateSpy(
       <Redirect to={to} relativeTo="root" />,
     );
 
@@ -30,7 +30,7 @@ type MockedRouter = Omit<ReturnType<typeof createTestRouter>, 'navigate'> & {
   navigate: jest.Mock;
 };
 
-const mountWithNavigateSpy = createMount<
+const renderWithNavigateSpy = createRender<
   Record<string, never>,
   {router: MockedRouter}
 >({

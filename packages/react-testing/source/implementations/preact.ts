@@ -1,10 +1,21 @@
-import {h, render, options} from 'preact';
+import {h, render as renderPreact, options} from 'preact';
 import type {VNode, ComponentChild, Component} from 'preact';
 import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
 
 import {createEnvironment, isNode} from '../environment';
-import type {CustomMount, EnvironmentOptions} from '../environment';
+import type {
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
+  HookRunner,
+  Environment,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+} from '../environment';
 import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
 
 interface Context {
@@ -12,9 +23,25 @@ interface Context {
 }
 
 export {isNode};
-export type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions, CustomMount};
+export type {
+  Node,
+  NodeApi,
+  Root,
+  RootApi,
+  HtmlNodeExtensions,
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
+  HookRunner,
+  Environment,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+};
 
-const {mount, createMount, mounted, unmountAll} = createEnvironment<
+const {render, createRender, rendered, destroyAll} = createEnvironment<
   Context,
   HtmlNodeExtensions
 >({
@@ -23,12 +50,12 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
     const element = document.createElement('div');
     document.body.appendChild(element);
 
-    render(tree, element);
+    renderPreact(tree, element);
 
     return {element};
   },
   unmount({element}) {
-    render(null, element);
+    renderPreact(null, element);
     element.remove();
   },
   update(instance, create) {
@@ -36,7 +63,7 @@ const {mount, createMount, mounted, unmountAll} = createEnvironment<
   },
 });
 
-export {mount, createMount, mounted, unmountAll};
+export {render, createRender, rendered, destroyAll};
 
 type Create = Parameters<
   EnvironmentOptions<any, HtmlNodeExtensions>['update']

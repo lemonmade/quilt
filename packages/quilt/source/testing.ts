@@ -1,16 +1,25 @@
 export * from '@quilted/testing';
-export {mount, mounted, unmountAll, createMount} from '@quilted/react-testing';
+export {
+  render,
+  createRender,
+  rendered,
+  destroyAll,
+} from '@quilted/react-testing';
 export type {
-  CustomMount,
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
   HookRunner,
-  Node,
-  NodeApi,
-  Root,
-  RootApi,
+  Environment,
   EnvironmentOptions,
   ContextOption,
   RenderOption,
   ActionsOption,
+  Node,
+  NodeApi,
+  Root,
+  RootApi,
   DebugOptions,
   EmptyObject,
   PlainObject,

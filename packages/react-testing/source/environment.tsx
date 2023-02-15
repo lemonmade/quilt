@@ -53,41 +53,41 @@ export interface EnvironmentOptions<
   ): BaseNode<unknown, Extensions> | null;
 }
 
-export type AfterMountOption<
-  MountOptions extends PlainObject,
+export type AfterRenderOption<
+  RenderOptions extends PlainObject,
   Context extends PlainObject,
   Actions extends PlainObject,
   Extensions extends PlainObject,
   Async extends boolean,
 > = Async extends true
   ? {
-      afterMount(
+      afterRender(
         wrapper: RootNode<unknown, Context, Actions, Extensions>,
-        options: MountOptions,
+        options: RenderOptions,
       ): PromiseLike<void>;
     }
   : {
-      afterMount?(
+      afterRender?(
         wrapper: RootNode<unknown, Context, Actions, Extensions>,
-        options: MountOptions,
+        options: RenderOptions,
       ): void;
     };
 
 export type ContextOption<
-  MountOptions extends PlainObject = EmptyObject,
+  RenderOptions extends PlainObject = EmptyObject,
   ExistingContext extends PlainObject = EmptyObject,
   AdditionalContext extends PlainObject = EmptyObject,
 > = AdditionalContext extends EmptyObject
   ? {context?: never}
   : {
       context(
-        options: MountOptions,
+        options: RenderOptions,
         existingContext: ExistingContext,
       ): AdditionalContext;
     };
 
 export type ActionsOption<
-  MountOptions extends PlainObject = EmptyObject,
+  RenderOptions extends PlainObject = EmptyObject,
   Context extends PlainObject = EmptyObject,
   ExistingActions extends PlainObject = EmptyObject,
   AdditionalActions extends PlainObject = EmptyObject,
@@ -97,35 +97,35 @@ export type ActionsOption<
   : {
       actions(
         root: Omit<RootNode<unknown, Context, any, Extensions>, 'actions'>,
-        options: MountOptions,
+        options: RenderOptions,
         existingActions: ExistingActions,
       ): AdditionalActions;
     };
 
 export interface RenderOption<
-  MountOptions extends PlainObject = EmptyObject,
+  RenderOptions extends PlainObject = EmptyObject,
   Context extends PlainObject = EmptyObject,
 > {
   render?(
     element: ReactElement<any>,
     context: Context,
-    options: MountOptions,
+    options: RenderOptions,
   ): ReactElement<any>;
 }
 
-export type MountOptionsOverrideOption<
-  ExistingMountOptions extends PlainObject = EmptyObject,
-  AdditionalMountOptions extends PlainObject = EmptyObject,
-> = AdditionalMountOptions extends EmptyObject
+export type RenderOptionsOverrideOption<
+  ExistingRenderOptions extends PlainObject = EmptyObject,
+  AdditionalRenderOptions extends PlainObject = EmptyObject,
+> = AdditionalRenderOptions extends EmptyObject
   ? {options?: never}
   : {
       options?(
-        current: MergeObjects<ExistingMountOptions, AdditionalMountOptions>,
-      ): Partial<AdditionalMountOptions>;
+        current: MergeObjects<ExistingRenderOptions, AdditionalRenderOptions>,
+      ): Partial<AdditionalRenderOptions>;
     };
 
-export type CustomMountOptions<
-  MountOptions extends PlainObject = EmptyObject,
+export type CustomRenderOptions<
+  RenderOptions extends PlainObject = EmptyObject,
   ExistingContext extends PlainObject = EmptyObject,
   AdditionalContext extends PlainObject = EmptyObject,
   ExistingActions extends PlainObject = EmptyObject,
@@ -133,36 +133,36 @@ export type CustomMountOptions<
   Extensions extends PlainObject = EmptyObject,
   Async extends boolean = false,
 > = RenderOption<
-  MountOptions,
+  RenderOptions,
   MergeObjects<ExistingContext, AdditionalContext>
 > &
-  ContextOption<MountOptions, ExistingContext, AdditionalContext> &
+  ContextOption<RenderOptions, ExistingContext, AdditionalContext> &
   ActionsOption<
-    MountOptions,
+    RenderOptions,
     MergeObjects<ExistingContext, AdditionalContext>,
     ExistingActions,
     AdditionalActions,
     Extensions
   > &
-  AfterMountOption<
-    MountOptions,
+  AfterRenderOption<
+    RenderOptions,
     MergeObjects<ExistingContext, AdditionalContext>,
     MergeObjects<ExistingActions, AdditionalActions>,
     Extensions,
     Async
   >;
 
-export type CustomMountExtendOptions<
-  ExistingMountOptions extends PlainObject = EmptyObject,
-  AdditionalMountOptions extends PlainObject = EmptyObject,
+export type CustomRenderExtendOptions<
+  ExistingRenderOptions extends PlainObject = EmptyObject,
+  AdditionalRenderOptions extends PlainObject = EmptyObject,
   ExistingContext extends PlainObject = EmptyObject,
   AdditionalContext extends PlainObject = EmptyObject,
   ExistingActions extends PlainObject = EmptyObject,
   AdditionalActions extends PlainObject = EmptyObject,
   Extensions extends PlainObject = EmptyObject,
   Async extends boolean = false,
-> = CustomMountOptions<
-  MergeObjects<ExistingMountOptions, AdditionalMountOptions>,
+> = CustomRenderOptions<
+  MergeObjects<ExistingRenderOptions, AdditionalRenderOptions>,
   ExistingContext,
   AdditionalContext,
   ExistingActions,
@@ -170,10 +170,10 @@ export type CustomMountExtendOptions<
   Extensions,
   Async
 > &
-  MountOptionsOverrideOption<ExistingMountOptions, AdditionalMountOptions>;
+  RenderOptionsOverrideOption<ExistingRenderOptions, AdditionalRenderOptions>;
 
-export interface CustomMount<
-  MountOptions extends PlainObject,
+export interface CustomRender<
+  RenderOptions extends PlainObject,
   Context extends PlainObject,
   Actions extends PlainObject,
   Extensions extends PlainObject,
@@ -181,17 +181,17 @@ export interface CustomMount<
 > {
   <Props>(
     element: ReactElement<any>,
-    options?: MountOptions,
-  ): CustomMountResult<Props, Context, Actions, Extensions, Async>;
+    options?: RenderOptions,
+  ): CustomRenderResult<Props, Context, Actions, Extensions, Async>;
   extend<
-    AdditionalMountOptions extends PlainObject = EmptyObject,
+    AdditionalRenderOptions extends PlainObject = EmptyObject,
     AdditionalContext extends PlainObject = EmptyObject,
     AdditionalActions extends PlainObject = EmptyObject,
     AdditionalAsync extends boolean = false,
   >(
-    options: CustomMountExtendOptions<
-      MountOptions,
-      AdditionalMountOptions,
+    options: CustomRenderExtendOptions<
+      RenderOptions,
+      AdditionalRenderOptions,
       Context,
       AdditionalContext,
       Actions,
@@ -199,8 +199,8 @@ export interface CustomMount<
       Extensions,
       AdditionalAsync
     >,
-  ): CustomMount<
-    MergeObjects<MountOptions, AdditionalMountOptions>,
+  ): CustomRender<
+    MergeObjects<RenderOptions, AdditionalRenderOptions>,
     MergeObjects<Context, AdditionalContext>,
     MergeObjects<Actions, AdditionalActions>,
     Extensions,
@@ -208,7 +208,7 @@ export interface CustomMount<
   >;
   hook<T>(
     useHook: () => T,
-    options?: MountOptions,
+    options?: RenderOptions,
   ): Async extends true
     ? Promise<HookRunner<T, Context, Actions>>
     : HookRunner<T, Context, Actions>;
@@ -229,7 +229,7 @@ export interface HookRunner<
   act<T>(action: (value: HookReturn) => T): T;
 }
 
-export type CustomMountResult<
+export type CustomRenderResult<
   Props,
   Context extends PlainObject,
   Actions extends PlainObject,
@@ -240,22 +240,22 @@ export type CustomMountResult<
   : RootNode<Props, Context, Actions, Extensions>;
 
 export interface Environment<Extensions extends PlainObject = EmptyObject> {
-  readonly mounted: Set<RootNode<any, any, any, Extensions>>;
-  readonly mount: CustomMount<
+  readonly rendered: Set<RootNode<any, any, any, Extensions>>;
+  readonly render: CustomRender<
     EmptyObject,
     EmptyObject,
     EmptyObject,
     Extensions,
     false
   >;
-  createMount<
-    MountOptions extends PlainObject = EmptyObject,
+  createRender<
+    RenderOptions extends PlainObject = EmptyObject,
     Context extends PlainObject = EmptyObject,
     Actions extends PlainObject = EmptyObject,
     Async extends boolean = false,
   >(
-    options: CustomMountOptions<
-      MountOptions,
+    options: CustomRenderOptions<
+      RenderOptions,
       Context,
       Context,
       Actions,
@@ -263,8 +263,8 @@ export interface Environment<Extensions extends PlainObject = EmptyObject> {
       Extensions,
       Async
     >,
-  ): CustomMount<MountOptions, Context, Actions, Extensions, Async>;
-  unmountAll(): void;
+  ): CustomRender<RenderOptions, Context, Actions, Extensions, Async>;
+  destroyAll(): void;
 }
 
 export function createEnvironment<
@@ -280,10 +280,10 @@ export function createEnvironment<
     Actions extends PlainObject = EmptyObject,
   > = RootNode<Props, Context, Actions, Extensions>;
 
-  const allMounted = new Set<Root<any, any, any>>();
-  const mount = createMount({});
+  const allRendered = new Set<Root<any, any, any>>();
+  const render = createRender({});
 
-  return {mount, createMount, mounted: allMounted, unmountAll};
+  return {render, createRender, rendered: allRendered, destroyAll};
 
   type ResolveRoot = (node: Node<unknown>) => Node<unknown> | null;
   type Render = (element: ReactElement<unknown>) => ReactElement<unknown>;
@@ -525,7 +525,7 @@ export function createEnvironment<
         );
       });
 
-      allMounted.add(root);
+      allRendered.add(root);
       mounted = true;
     }
 
@@ -542,7 +542,7 @@ export function createEnvironment<
         env.unmount(context);
       });
 
-      allMounted.delete(root);
+      allRendered.delete(root);
       mounted = false;
       abort.abort();
     }
@@ -633,20 +633,20 @@ export function createEnvironment<
       : (node.children[0] as any);
   }
 
-  function unmountAll() {
-    for (const wrapper of allMounted) {
+  function destroyAll() {
+    for (const wrapper of allRendered) {
       wrapper.unmount();
     }
   }
 
-  function createMount<
-    MountOptions extends PlainObject = EmptyObject,
+  function createRender<
+    RenderOptions extends PlainObject = EmptyObject,
     Context extends PlainObject = EmptyObject,
     Actions extends PlainObject = EmptyObject,
     Async extends boolean = false,
   >(
-    createMountOptions: CustomMountOptions<
-      MountOptions,
+    createRenderOptions: CustomRenderOptions<
+      RenderOptions,
       Context,
       Context,
       Actions,
@@ -654,13 +654,13 @@ export function createEnvironment<
       Extensions,
       Async
     >,
-  ): CustomMount<MountOptions, Context, Actions, Extensions, Async> {
+  ): CustomRender<RenderOptions, Context, Actions, Extensions, Async> {
     const {
       render = defaultRender,
       context: createContext = defaultContext,
       actions: createActions = defaultActions,
-      afterMount,
-    } = createMountOptions as CustomMountOptions<
+      afterRender,
+    } = createRenderOptions as CustomRenderOptions<
       PlainObject,
       PlainObject,
       PlainObject,
@@ -672,7 +672,7 @@ export function createEnvironment<
 
     function mount<Props>(
       element: ReactElement<Props>,
-      options: MountOptions = {} as any,
+      options: RenderOptions = {} as any,
     ) {
       const context: any = createContext(options, {});
       const actions: any = {};
@@ -688,18 +688,18 @@ export function createEnvironment<
 
       root.mount();
 
-      if (afterMount) {
-        const afterMountResult = root.act(() => afterMount(root, options));
+      if (afterRender) {
+        const afterRenderResult = root.act(() => afterRender(root, options));
 
-        return isPromise(afterMountResult)
-          ? afterMountResult.then(() => root)
+        return isPromise(afterRenderResult)
+          ? afterRenderResult.then(() => root)
           : root;
       } else {
         return root;
       }
     }
 
-    function testHook<T>(useHook: () => T, options?: MountOptions) {
+    function testHook<T>(useHook: () => T, options?: RenderOptions) {
       const hookRunnerRef = createRef<HookRunnerImperativeApi<T>>();
 
       const rootOrPromise = mount(
@@ -764,11 +764,11 @@ export function createEnvironment<
         context: createAdditionalContext = defaultContext,
         actions: createAdditionalActions = defaultActions,
         render: additionalRender = defaultRender,
-        afterMount: additionalAfterMount = noop,
-      }: CustomMountExtendOptions<any, any, any, any, any, any, any>) => {
-        const extendedMount = createMount<any, any, any, any>({
+        afterRender: additionalAfterRender = noop,
+      }: CustomRenderExtendOptions<any, any, any, any, any, any, any>) => {
+        const extendedRender = createRender<any, any, any, any>({
           context(options, initialContext) {
-            const baseContext = {
+            const baseContext: any = {
               ...initialContext,
               ...createContext(options, initialContext),
             };
@@ -800,10 +800,10 @@ export function createEnvironment<
               context,
               options,
             ),
-          afterMount: (wrapper, options) => {
-            const result = additionalAfterMount(wrapper, options) as any;
+          afterRender: (wrapper, options) => {
+            const result = additionalAfterRender(wrapper, options) as any;
             const finalResult = () =>
-              afterMount ? afterMount(wrapper, options) : undefined;
+              afterRender ? afterRender(wrapper, options) : undefined;
 
             return isPromise(result) ? result.then(finalResult) : finalResult();
           },
@@ -811,8 +811,11 @@ export function createEnvironment<
 
         return customizeOptions
           ? (element: any, options = {}) =>
-              extendedMount(element, {...options, ...customizeOptions(options)})
-          : extendedMount;
+              extendedRender(element, {
+                ...options,
+                ...customizeOptions(options),
+              })
+          : extendedRender;
       },
     });
 

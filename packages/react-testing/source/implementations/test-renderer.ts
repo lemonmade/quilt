@@ -6,25 +6,51 @@ import {
 } from 'react-test-renderer';
 
 import {createEnvironment} from '../environment';
-import type {EnvironmentOptions} from '../environment';
+import type {
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
+  HookRunner,
+  Environment,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+} from '../environment';
+
+export type {
+  CustomRender,
+  CustomRenderResult,
+  CustomRenderOptions,
+  CustomRenderExtendOptions,
+  HookRunner,
+  Environment,
+  EnvironmentOptions,
+  ContextOption,
+  RenderOption,
+  ActionsOption,
+};
 
 interface Context {
   renderer: ReactTestRenderer;
 }
 
-const {mount, createMount, mounted, unmountAll} = createEnvironment<Context>({
-  act,
-  mount(tree) {
-    const renderer = createTestRenderer(tree);
-    return {renderer};
+const {render, createRender, rendered, destroyAll} = createEnvironment<Context>(
+  {
+    act,
+    mount(tree) {
+      const renderer = createTestRenderer(tree);
+      return {renderer};
+    },
+    unmount({renderer}) {
+      renderer.unmount();
+    },
+    update(_, create, {renderer}) {
+      return createNodeFromTestInstance(renderer.root, create) as any;
+    },
   },
-  unmount({renderer}) {
-    renderer.unmount();
-  },
-  update(_, create, {renderer}) {
-    return createNodeFromTestInstance(renderer.root, create) as any;
-  },
-});
+);
 
 type Create = Parameters<EnvironmentOptions<any>['update']>[1];
 
@@ -50,4 +76,4 @@ function createNodeFromTestInstance(
   });
 }
 
-export {mount, createMount, mounted, unmountAll};
+export {render, createRender, rendered, destroyAll};

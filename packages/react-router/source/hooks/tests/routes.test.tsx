@@ -2,7 +2,7 @@ import type {PropsWithChildren} from 'react';
 import {describe, it, expect} from '@quilted/testing';
 
 import {useRoutes} from '../routes';
-import {mount} from '../../tests/utilities';
+import {render} from '../../tests/utilities';
 
 jest.mock('../redirect', () => ({
   useRedirect: jest.fn(),
@@ -30,11 +30,11 @@ describe('useRoutes()', () => {
           return useRoutes([{match: '/', render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).not.toContainReactComponent(
           RouteComponent,
         );
       });
@@ -44,11 +44,11 @@ describe('useRoutes()', () => {
           return useRoutes([{match: '/a', render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/b'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -63,15 +63,15 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/b/a'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/b/a'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -96,19 +96,19 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/b/d'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b/d'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/b/d'})).not.toContainReactComponent(
-          NestedRouteComponent,
-        );
+        expect(
+          render(<Routes />, {path: '/a/b/d'}),
+        ).not.toContainReactComponent(NestedRouteComponent);
 
-        expect(mount(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
           NestedRouteComponent,
         );
       });
@@ -118,11 +118,11 @@ describe('useRoutes()', () => {
           return useRoutes([{match: 'a', render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/b'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -137,7 +137,7 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -157,15 +157,15 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/b/a/c'})).not.toContainReactComponent(
-          RouteComponent,
-        );
+        expect(
+          render(<Routes />, {path: '/b/a/c'}),
+        ).not.toContainReactComponent(RouteComponent);
 
-        expect(mount(<Routes />, {path: '/a/c/b'})).not.toContainReactComponent(
-          RouteComponent,
-        );
+        expect(
+          render(<Routes />, {path: '/a/c/b'}),
+        ).not.toContainReactComponent(RouteComponent);
 
-        expect(mount(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -181,7 +181,7 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -191,7 +191,7 @@ describe('useRoutes()', () => {
           return useRoutes([{match: '/a', render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/a/'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -204,15 +204,15 @@ describe('useRoutes()', () => {
         }
 
         expect(
-          mount(<Routes />, {path: prefix, prefix}),
+          render(<Routes />, {path: prefix, prefix}),
         ).toContainReactComponent(RouteComponent);
 
         expect(
-          mount(<Routes />, {path: `${prefix}/`, prefix}),
+          render(<Routes />, {path: `${prefix}/`, prefix}),
         ).toContainReactComponent(RouteComponent);
 
         expect(
-          mount(<Routes />, {path: `${prefix}/a`, prefix}),
+          render(<Routes />, {path: `${prefix}/a`, prefix}),
         ).not.toContainReactComponent(RouteComponent);
       });
 
@@ -235,7 +235,7 @@ describe('useRoutes()', () => {
         }
 
         expect(
-          mount(<Routes />, {path: '/must-match/full-path'}),
+          render(<Routes />, {path: '/must-match/full-path'}),
         ).toContainReactComponent(RouteComponent);
       });
     });
@@ -246,11 +246,11 @@ describe('useRoutes()', () => {
           return useRoutes([{match: /^\/$/, render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).not.toContainReactComponent(
           RouteComponent,
         );
       });
@@ -262,11 +262,11 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).not.toContainReactComponent(
           RouteComponent,
         );
       });
@@ -276,11 +276,11 @@ describe('useRoutes()', () => {
           return useRoutes([{match: /\/a/, render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/b'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -295,15 +295,15 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/b/a'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/b/a'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -321,19 +321,19 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/c'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/b/d'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b/d'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a/b/d'})).not.toContainReactComponent(
-          NestedRouteComponent,
-        );
+        expect(
+          render(<Routes />, {path: '/a/b/d'}),
+        ).not.toContainReactComponent(NestedRouteComponent);
 
-        expect(mount(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
           NestedRouteComponent,
         );
       });
@@ -343,11 +343,11 @@ describe('useRoutes()', () => {
           return useRoutes([{match: /a/, render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/b'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -367,15 +367,15 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/b/a/c'})).not.toContainReactComponent(
-          RouteComponent,
-        );
+        expect(
+          render(<Routes />, {path: '/b/a/c'}),
+        ).not.toContainReactComponent(RouteComponent);
 
-        expect(mount(<Routes />, {path: '/a/c/b'})).not.toContainReactComponent(
-          RouteComponent,
-        );
+        expect(
+          render(<Routes />, {path: '/a/c/b'}),
+        ).not.toContainReactComponent(RouteComponent);
 
-        expect(mount(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b/c'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -391,7 +391,7 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/a/b'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/b'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -401,7 +401,7 @@ describe('useRoutes()', () => {
           return useRoutes([{match: /\/a$/, render: () => <RouteComponent />}]);
         }
 
-        expect(mount(<Routes />, {path: '/a/'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a/'})).toContainReactComponent(
           RouteComponent,
         );
       });
@@ -415,15 +415,15 @@ describe('useRoutes()', () => {
         }
 
         expect(
-          mount(<Routes />, {path: prefixMatch, prefix}),
+          render(<Routes />, {path: prefixMatch, prefix}),
         ).toContainReactComponent(RouteComponent);
 
         expect(
-          mount(<Routes />, {path: `${prefixMatch}/`, prefix}),
+          render(<Routes />, {path: `${prefixMatch}/`, prefix}),
         ).toContainReactComponent(RouteComponent);
 
         expect(
-          mount(<Routes />, {path: `${prefixMatch}/a`, prefix}),
+          render(<Routes />, {path: `${prefixMatch}/a`, prefix}),
         ).not.toContainReactComponent(RouteComponent);
       });
 
@@ -446,7 +446,7 @@ describe('useRoutes()', () => {
         }
 
         expect(
-          mount(<Routes />, {path: '/must-match/full-path'}),
+          render(<Routes />, {path: '/must-match/full-path'}),
         ).toContainReactComponent(RouteComponent);
       });
     });
@@ -459,7 +459,7 @@ describe('useRoutes()', () => {
           return useRoutes([{match, render: () => <RouteComponent />}]);
         }
 
-        const routes = mount(<Routes />, {path: '/a'});
+        const routes = render(<Routes />, {path: '/a'});
 
         expect(match).toHaveBeenCalledWith(routes.context.router.currentUrl);
       });
@@ -471,7 +471,7 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />)).toContainReactComponent(RouteComponent);
+        expect(render(<Routes />)).toContainReactComponent(RouteComponent);
       });
 
       it('does not match a route when a match function returns false', () => {
@@ -481,7 +481,7 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />)).not.toContainReactComponent(RouteComponent);
+        expect(render(<Routes />)).not.toContainReactComponent(RouteComponent);
       });
 
       it('does not consume the matched pathname when a match function returns true', () => {
@@ -497,14 +497,14 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        const noNestedMatchRoutes = mount(<Routes />, {path: '/b'});
+        const noNestedMatchRoutes = render(<Routes />, {path: '/b'});
 
         expect(noNestedMatchRoutes).toContainReactComponent(RouteComponent);
         expect(
           noNestedMatchRoutes.find(RouteComponent),
         ).not.toContainReactComponent(NestedRouteComponent);
 
-        const nestedMatchRoutes = mount(<Routes />, {path: '/a'});
+        const nestedMatchRoutes = render(<Routes />, {path: '/a'});
 
         expect(noNestedMatchRoutes).toContainReactComponent(RouteComponent);
         expect(nestedMatchRoutes.find(RouteComponent)).toContainReactComponent(
@@ -524,19 +524,19 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        expect(mount(<Routes />, {path: '/a'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/a'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/b'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/b'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/c'})).toContainReactComponent(
+        expect(render(<Routes />, {path: '/c'})).toContainReactComponent(
           RouteComponent,
         );
 
-        expect(mount(<Routes />, {path: '/d'})).not.toContainReactComponent(
+        expect(render(<Routes />, {path: '/d'})).not.toContainReactComponent(
           RouteComponent,
         );
       });
@@ -548,7 +548,7 @@ describe('useRoutes()', () => {
           return useRoutes([{render: () => <RouteComponent />}]);
         }
 
-        const routes = mount(<Routes />);
+        const routes = render(<Routes />);
 
         expect(routes).toContainReactComponent(RouteComponent);
       });
@@ -565,14 +565,14 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        const noNestedMatchRoutes = mount(<Routes />, {path: '/b'});
+        const noNestedMatchRoutes = render(<Routes />, {path: '/b'});
 
         expect(noNestedMatchRoutes).toContainReactComponent(RouteComponent);
         expect(
           noNestedMatchRoutes.find(RouteComponent),
         ).not.toContainReactComponent(NestedRouteComponent);
 
-        const nestedMatchRoutes = mount(<Routes />, {path: '/a'});
+        const nestedMatchRoutes = render(<Routes />, {path: '/a'});
 
         expect(noNestedMatchRoutes).toContainReactComponent(RouteComponent);
         expect(nestedMatchRoutes.find(RouteComponent)).toContainReactComponent(
@@ -587,7 +587,7 @@ describe('useRoutes()', () => {
           return useRoutes([{match: 'a', render: () => <RouteComponent />}]);
         }
 
-        const routes = mount(<Routes />, {path: '/a/b/c'});
+        const routes = render(<Routes />, {path: '/a/b/c'});
 
         expect(routes).not.toContainReactComponent(RouteComponent);
       });
@@ -599,7 +599,7 @@ describe('useRoutes()', () => {
           ]);
         }
 
-        const routes = mount(<Routes />, {path: '/a/b/c'});
+        const routes = render(<Routes />, {path: '/a/b/c'});
 
         expect(routes).toContainReactComponent(RouteComponent);
       });
@@ -622,7 +622,7 @@ describe('useRoutes()', () => {
         ]);
       }
 
-      const routes = mount(<Routes />, {path: '/a'});
+      const routes = render(<Routes />, {path: '/a'});
 
       expect(routes).toContainReactComponent(RouteComponent);
       expect(routes).not.toContainReactComponent(MatchedButNotRendered);
@@ -631,15 +631,15 @@ describe('useRoutes()', () => {
 
   describe('render', () => {
     it('calls the render function with the current URL', () => {
-      const render = jest.fn(() => <RouteComponent />);
+      const renderRoute = jest.fn(() => <RouteComponent />);
 
       function Routes() {
-        return useRoutes([{match: 'a', render}]);
+        return useRoutes([{match: 'a', render: renderRoute}]);
       }
 
-      const routes = mount(<Routes />, {path: '/a'});
+      const routes = render(<Routes />, {path: '/a'});
 
-      expect(render).toHaveBeenCalledWith(
+      expect(renderRoute).toHaveBeenCalledWith(
         expect.objectContaining({
           url: routes.context.router.currentUrl,
         }),
@@ -658,20 +658,22 @@ describe('useRoutes()', () => {
       }
 
       expect(
-        mount(<Routes />, {path: '/a/b'}).find(RouteComponent),
+        render(<Routes />, {path: '/a/b'}).find(RouteComponent),
       ).toContainReactComponent(NestedRouteComponent);
     });
 
     it('passes the matched pathname part to the render function', () => {
-      const render = jest.fn(() => <RouteComponent />);
+      const renderRoute = jest.fn(() => <RouteComponent />);
 
       function Routes() {
-        return useRoutes([{match: 'a', children: [{match: /\d+/, render}]}]);
+        return useRoutes([
+          {match: 'a', children: [{match: /\d+/, render: renderRoute}]},
+        ]);
       }
 
-      mount(<Routes />, {path: '/a/123'});
+      render(<Routes />, {path: '/a/123'});
 
-      expect(render).toHaveBeenCalledWith(
+      expect(renderRoute).toHaveBeenCalledWith(
         expect.objectContaining({
           matched: '123',
         }),
@@ -687,7 +689,7 @@ describe('useRoutes()', () => {
         return useRoutes([{match: 'a', redirect}]);
       }
 
-      mount(<Routes />, {path: '/a'});
+      render(<Routes />, {path: '/a'});
 
       expect(useRedirect).toHaveBeenCalledWith(redirect);
     });
