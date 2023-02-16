@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 0.1.12
+
+### Patch Changes
+
+- [`c4fbe548`](https://github.com/lemonmade/quilt/commit/c4fbe548d8f2bfd568ee21797896026148a3e37d) Thanks [@lemonmade](https://github.com/lemonmade)! - Add thread target utilities for iframes
+
 ## 0.1.11
 
 ### Patch Changes
