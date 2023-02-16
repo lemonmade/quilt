@@ -9,6 +9,8 @@ export {
   ENCODE_METHOD,
 } from './constants';
 export {
+  targetFromIframe,
+  targetFromInsideIframe,
   targetFromWebWorker,
   targetFromMessagePort,
   targetFromBrowserWebSocket,

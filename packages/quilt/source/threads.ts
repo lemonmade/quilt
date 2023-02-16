@@ -7,6 +7,8 @@ export {
   acceptThreadAbortSignal,
   createBasicEncoder,
   createBasicEncoderWithOverrides,
+  targetFromIframe,
+  targetFromInsideIframe,
   targetFromMessagePort,
   targetFromWebWorker,
   targetFromBrowserWebSocket,
