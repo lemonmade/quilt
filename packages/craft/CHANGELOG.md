@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.194
+
+### Patch Changes
+
+- [`a2fb1f89`](https://github.com/lemonmade/quilt/commit/a2fb1f89a00313a8d6040ff534acb3ab38ebd440) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix module build minification and file names
+
 ## 0.1.193
 
 ### Patch Changes
