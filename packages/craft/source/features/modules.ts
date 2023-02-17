@@ -199,7 +199,7 @@ export function moduleBuild({
 
           runtimes(() => [{target: 'browser'}]);
 
-          outputDirectory?.((directory) => join(directory, 'module'));
+          outputDirectory?.((directory) => join(directory, 'assets'));
 
           const targetFilenamePart = quiltModuleBuild.only
             ? ''
@@ -235,8 +235,8 @@ export function moduleBuild({
             const [{visualizer}, {minify}] = await Promise.all([
               import('rollup-plugin-visualizer'),
               shouldMinify
-                ? Promise.resolve({minify: undefined})
-                : import('rollup-plugin-esbuild'),
+                ? import('rollup-plugin-esbuild')
+                : Promise.resolve({minify: undefined}),
             ]);
 
             const newPlugins = [...plugins];
@@ -287,8 +287,8 @@ export function moduleBuild({
               {
                 format: isESM ? 'esm' : 'iife',
                 dir,
-                entryFileNames: `[name]${hashPart}.js`,
-                assetFileNames: `[name]${hashPart}.[ext]`,
+                entryFileNames: `[name]${targetFilenamePart}${hashPart}.js`,
+                assetFileNames: `[name]${targetFilenamePart}${hashPart}.[ext]`,
               },
             ];
           });
@@ -303,7 +303,7 @@ export function moduleBuild({
             label: `Cleaning build directory for ${project.name}`,
             async run() {
               await Promise.all([
-                rm(project.fs.buildPath('module'), {
+                rm(project.fs.buildPath('assets'), {
                   recursive: true,
                   force: true,
                 }),
