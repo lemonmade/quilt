@@ -1,0 +1,38 @@
+{
+  "name": "template-app-trpc",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./build/server/server.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@quilted/quilt": "^0.5.0",
+    "@quilted/react-query": "^0.1.15",
+    "@tanstack/react-query": "^4.24.0",
+    "@trpc/client": "^10.11.0",
+    "@trpc/server": "^10.11.0",
+    "@trpc/react-query": "^10.11.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "graphql": "^16.6.0",
+    "preact": "^10.11.0",
+    "react": "npm:@quilted/react@^18.2.0",
+    "react-dom": "npm:@quilted/react-dom@^18.2.0"
+  },
+  "eslintConfig": {
+    "extends": "@quilted/eslint-config/app"
+  },
+  "browserslist": {
+    "defaults": [
+      "extends @quilted/browserslist-config/defaults"
+    ],
+    "modules": [
+      "extends @quilted/browserslist-config/modules"
+    ],
+    "evergreen": [
+      "extends @quilted/browserslist-config/evergreen"
+    ]
+  }
+}
