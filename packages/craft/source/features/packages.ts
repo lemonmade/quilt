@@ -40,7 +40,7 @@ export interface Options {
    * species a "root" entry point
    *
    * ```ts
-   * createPackage({
+   * quiltPackage({
    *   entries: {
    *     '.': './source/index.ts',
    *     './testing': './source/testing.ts',
@@ -63,7 +63,7 @@ export interface Options {
    * `./source/cli.ts` file:
    *
    * ```ts
-   * createPackage({
+   * quiltPackage({
    *   binaries: {
    *     quilt: './source/cli.ts',
    *   },
@@ -125,10 +125,7 @@ function createCachedSourceEntriesGetter(
   let cached: Promise<Record<string, string>> | undefined;
 
   return () => {
-    if (cached == null) {
-      cached = sourceEntriesForProject(project);
-    }
-
+    cached ??= sourceEntriesForProject(project);
     return cached;
   };
 }
@@ -137,13 +134,24 @@ export async function sourceEntriesForProject(
   project: Project,
   {conditions = []}: {conditions?: string[]} = {},
 ) {
+  const main = project.packageJson?.raw.main;
   const entries: Record<string, string> = {};
 
+  if (typeof main === 'string') {
+    entries['.'] = await resolveTargetFileAsSource(main, project);
+  }
+
+  const exports = project.packageJson?.raw.exports;
+
+  if (typeof exports === 'string') {
+    entries['.'] = await resolveTargetFileAsSource(exports, project);
+    return entries;
+  } else if (exports == null || typeof exports !== 'object') {
+    return entries;
+  }
+
   for (const [exportPath, exportCondition] of Object.entries(
-    (project.packageJson?.raw.exports ?? {}) as Record<
-      string,
-      null | string | Record<string, string>
-    >,
+    exports as Record<string, null | string | Record<string, string>>,
   )) {
     let targetFile: string | null | undefined = null;
 
@@ -161,7 +169,8 @@ export async function sourceEntriesForProject(
             continue;
           }
 
-          const sourceForCondition = conditionValue['quilt:source'];
+          const sourceForCondition =
+            conditionValue['source'] ?? conditionValue['quilt:source'];
 
           if (sourceForCondition != null) {
             targetFile = sourceForCondition;
@@ -171,6 +180,7 @@ export async function sourceEntriesForProject(
       }
 
       targetFile ??=
+        exportCondition['source'] ??
         exportCondition['quilt:source'] ??
         exportCondition['quilt:esnext'] ??
         Object.values(exportCondition).find(
@@ -181,21 +191,27 @@ export async function sourceEntriesForProject(
 
     if (targetFile == null) continue;
 
-    const sourceFile = targetFile.includes('/build/')
-      ? (
-          await project.fs.glob(
-            targetFile
-              .replace(/[/]build[/][^/]+[/]/, '/*/')
-              .replace(/(\.d\.ts|\.[\w]+)$/, '.*'),
-            {ignore: [project.fs.resolvePath(targetFile)]},
-          )
-        )[0]!
-      : project.fs.resolvePath(targetFile);
+    const sourceFile = await resolveTargetFileAsSource(targetFile, project);
 
     entries[exportPath] = sourceFile;
   }
 
   return entries;
+}
+
+async function resolveTargetFileAsSource(file: string, project: Project) {
+  const sourceFile = file.includes('/build/')
+    ? (
+        await project.fs.glob(
+          file
+            .replace(/[/]build[/][^/]+[/]/, '/*/')
+            .replace(/(\.d\.ts|\.[\w]+)$/, '.*'),
+          {ignore: [project.fs.resolvePath(file)]},
+        )
+      )[0]!
+    : project.fs.resolvePath(file);
+
+  return sourceFile;
 }
 
 export interface BuildOptions {

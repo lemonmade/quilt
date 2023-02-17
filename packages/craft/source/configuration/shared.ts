@@ -7,7 +7,7 @@ export function nameFromFileSystem(
   root: string,
   {packageJson}: {packageJson?: PackageJson},
 ) {
-  const rootDirectoryName = dirname(root);
+  const rootDirectoryName = basename(root);
 
   return (
     nameFromPackageJson(packageJson) ??

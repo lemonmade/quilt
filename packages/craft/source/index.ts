@@ -4,6 +4,11 @@ import {createProjectPlugin, createWorkspacePlugin} from './kit';
 import type {Project} from './kit';
 import {createProject, createWorkspace} from './configuration';
 
+import {
+  moduleBase,
+  moduleBuild,
+  type BuildOptions as ModuleBuildOptions,
+} from './features/modules';
 import {packageBase, packageBuild} from './features/packages';
 import type {
   Options as PackageBaseOptions,
@@ -382,7 +387,7 @@ export function quiltPackage({
         const {bundle, esnext, ...rest} = build;
 
         buildOption = rest;
-        bundleOption = build.bundle;
+        bundleOption = bundle;
         buildESNext = esnext ?? buildESNext;
       }
 
@@ -404,6 +409,63 @@ export function quiltPackage({
         // Builds
         build && packageBuild(buildOption),
         buildESNext && esnextBuild(),
+        targets(),
+      );
+    },
+  });
+}
+
+// TODO
+export interface ModuleOptions {
+  entry?: string;
+  build?:
+    | boolean
+    | ({
+        bundle?: RollupNodeOptions['bundle'];
+      } & ModuleBuildOptions);
+  react?: boolean;
+  graphql?: boolean;
+}
+
+/**
+ * Configures a JavaScript module that will be run in a browser.
+ */
+export function quiltModule({
+  entry,
+  build = true,
+  react: useReact = true,
+  graphql: useGraphQL = false,
+}: ModuleOptions = {}) {
+  return createProjectPlugin({
+    name: 'Quilt.Module',
+    async create({use}) {
+      let bundleOption: RollupNodeOptions['bundle'] | undefined;
+      let buildOptions: ModuleBuildOptions | undefined;
+
+      if (typeof build === 'object') {
+        const {bundle, ...rest} = build;
+
+        bundleOption = bundle;
+        buildOptions = rest;
+      }
+
+      use(
+        // Basic tool configuration
+        rollupHooks(),
+        babelHooks(),
+        babelRollup(),
+        browserslist(),
+        javascriptProject(),
+        typescriptProject(),
+        esnext(),
+        fromSource(),
+        useReact && react(),
+        useReact && reactTesting(),
+        useGraphQL && graphql(),
+        rollupNode({bundle: bundleOption}),
+        moduleBase({entry}),
+        // Builds
+        build && moduleBuild(buildOptions),
         targets(),
       );
     },

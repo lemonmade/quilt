@@ -24,9 +24,9 @@ export interface AsyncHooks {
   quiltAsyncAssetBaseUrl: WaterfallHookWithDefault<
     NonNullable<RollupOptions['assetBaseUrl']>
   >;
-  quiltAsyncManifest: WaterfallHookWithDefault<boolean>;
-  quiltAsyncManifestPath: WaterfallHookWithDefault<ManifestOptions['path']>;
-  quiltAsyncManifestMetadata: WaterfallHookWithDefault<
+  quiltAssetsManifest: WaterfallHookWithDefault<boolean>;
+  quiltAssetsManifestPath: WaterfallHookWithDefault<ManifestOptions['path']>;
+  quiltAssetsManifestMetadata: WaterfallHookWithDefault<
     NonNullable<ManifestOptions['metadata']>
   >;
 }
@@ -66,16 +66,16 @@ export function asyncQuilt({
         quiltAsyncAssetBaseUrl: waterfall<
           NonNullable<RollupOptions['assetBaseUrl']>
         >({default: assetBaseUrl}),
-        quiltAsyncManifest: waterfall<boolean>({
+        quiltAssetsManifest: waterfall<boolean>({
           default: true,
         }),
-        quiltAsyncManifestPath: waterfall<ManifestOptions['path']>({
+        quiltAssetsManifestPath: waterfall<ManifestOptions['path']>({
           default:
             typeof manifest === 'string'
               ? manifest
               : project.fs.buildPath('async-manifest.json'),
         }),
-        quiltAsyncManifestMetadata: waterfall<
+        quiltAssetsManifestMetadata: waterfall<
           NonNullable<ManifestOptions['metadata']>
         >({
           default: () => ({}),
@@ -111,13 +111,13 @@ export function asyncQuilt({
         quiltAsyncAssetBaseUrl: waterfall<
           NonNullable<RollupOptions['assetBaseUrl']>
         >({default: '/'}),
-        quiltAsyncManifest: waterfall<boolean>({
+        quiltAssetsManifest: waterfall<boolean>({
           default: false,
         }),
-        quiltAsyncManifestPath: waterfall<ManifestOptions['path']>({
+        quiltAssetsManifestPath: waterfall<ManifestOptions['path']>({
           default: project.fs.buildPath('async-manifest.json'),
         }),
-        quiltAsyncManifestMetadata: waterfall<
+        quiltAssetsManifestMetadata: waterfall<
           NonNullable<ManifestOptions['metadata']>
         >({
           default: () => ({}),
@@ -160,9 +160,9 @@ async function getAsyncRollupPlugin(
   {
     quiltAsyncPreload,
     quiltAsyncAssetBaseUrl,
-    quiltAsyncManifest,
-    quiltAsyncManifestPath,
-    quiltAsyncManifestMetadata,
+    quiltAssetsManifest,
+    quiltAssetsManifestPath,
+    quiltAssetsManifestMetadata,
   }: ResolvedHooks<AsyncHooks>,
   options: Partial<RollupOptions> = {},
 ) {
@@ -177,9 +177,9 @@ async function getAsyncRollupPlugin(
     import('@quilted/async/rollup'),
     quiltAsyncPreload!.run(),
     quiltAsyncAssetBaseUrl!.run(),
-    quiltAsyncManifest!.run(),
-    quiltAsyncManifestPath!.run(),
-    quiltAsyncManifestMetadata!.run(),
+    quiltAssetsManifest!.run(),
+    quiltAssetsManifestPath!.run(),
+    quiltAssetsManifestMetadata!.run(),
   ]);
 
   return asyncQuilt({

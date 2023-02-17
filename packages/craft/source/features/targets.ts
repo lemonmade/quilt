@@ -401,3 +401,18 @@ export function workspaceTargets() {
     },
   });
 }
+
+let esmBrowserslist: Set<string>;
+
+export const BROWSERSLIST_MODULES_QUERY =
+  'extends @quilted/browserslist-config/modules';
+
+export async function targetsSupportModules(targets: string[]) {
+  if (esmBrowserslist == null) {
+    const {default: browserslist} = await import('browserslist');
+
+    esmBrowserslist = new Set(browserslist(BROWSERSLIST_MODULES_QUERY));
+  }
+
+  return targets.every((target) => esmBrowserslist.has(target));
+}

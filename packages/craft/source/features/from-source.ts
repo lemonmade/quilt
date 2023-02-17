@@ -11,7 +11,7 @@ export const EXPORT_CONDITION = 'quilt:source';
  */
 export function fromSource() {
   return createProjectPlugin({
-    name: 'Quilt.ESNextConsumer',
+    name: 'Quilt.FromSourceConsumer',
     develop({configure}) {
       if (!isFromSource()) return;
 

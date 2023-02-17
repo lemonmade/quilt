@@ -11,6 +11,7 @@ export function loadTemplate(
     | 'app-single-file'
     | 'app-empty'
     | 'app-graphql'
+    | 'module'
     | 'workspace'
     | 'github'
     | 'vscode',
@@ -80,6 +81,7 @@ async function templateDirectory(
     | 'app-single-file'
     | 'app-empty'
     | 'app-graphql'
+    | 'module'
     | 'workspace'
     | 'github'
     | 'vscode',

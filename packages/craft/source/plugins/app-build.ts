@@ -101,8 +101,8 @@ export function appBuild({
             rollupOutputs,
             rollupPlugins,
             rollupNodeBundle,
-            quiltAsyncManifestPath,
-            quiltAsyncManifestMetadata,
+            quiltAssetsManifestPath,
+            quiltAssetsManifestMetadata,
             quiltAssetBaseUrl,
             quiltAssetOutputRoot,
             quiltAsyncAssetBaseUrl,
@@ -153,7 +153,7 @@ export function appBuild({
 
           browserslistTargets?.(() => browserTargets.targets);
 
-          quiltAsyncManifestMetadata?.(async (metadata) => {
+          quiltAssetsManifestMetadata?.(async (metadata) => {
             const [{getUserAgentRegex}, modules] = await Promise.all([
               import('browserslist-useragent-regexp'),
               targetsSupportModules(browserTargets.targets),
@@ -175,7 +175,7 @@ export function appBuild({
 
           quiltAsyncAssetBaseUrl?.(() => quiltAssetBaseUrl!.run());
 
-          quiltAsyncManifestPath?.(() =>
+          quiltAssetsManifestPath?.(() =>
             project.fs.buildPath(
               `manifests/manifest${targetFilenamePart}.json`,
             ),

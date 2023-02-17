@@ -35,7 +35,7 @@ export async function getCreateAsMonorepo(
   {
     type,
     default: defaultCreateAsMonorepo = true,
-  }: {type: 'app' | 'package'; default?: boolean},
+  }: {type: 'app' | 'package' | 'module'; default?: boolean},
 ) {
   let createAsMonorepo: boolean;
 
@@ -56,7 +56,7 @@ export async function getCreateAsMonorepo(
 
 export async function getShouldInstall(
   argv: BaseArguments,
-  {type}: {type: 'app' | 'package'},
+  {type}: {type: 'app' | 'package' | 'module'},
 ) {
   let shouldInstall: boolean;
 

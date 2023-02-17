@@ -5,7 +5,7 @@ import {AbortError, stripIndent, color, parseArguments} from '@quilted/cli-kit';
 import {printHelp} from './help';
 import {prompt} from './shared';
 
-const VALID_PROJECT_KINDS = new Set(['app', 'package']);
+const VALID_PROJECT_KINDS = new Set(['app', 'package', 'module']);
 
 run().catch((error) => {
   if (AbortError.test(error)) return;
@@ -57,6 +57,7 @@ async function run() {
       message: 'What kind of project would you like to create?',
       choices: [
         {title: 'App', value: 'app'},
+        {title: 'Module', value: 'module'},
         {title: 'Package', value: 'package'},
       ],
     });
@@ -66,6 +67,11 @@ async function run() {
     case 'app': {
       const {createApp} = await import('./app');
       await createApp();
+      break;
+    }
+    case 'module': {
+      const {createModule} = await import('./module');
+      await createModule();
       break;
     }
     case 'package': {

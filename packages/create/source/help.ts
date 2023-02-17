@@ -4,7 +4,11 @@ export function printHelp({
   kind,
   options: customOptions,
   packageManager,
-}: {kind?: 'app' | 'package'; options?: string; packageManager?: string} = {}) {
+}: {
+  kind?: 'app' | 'package' | 'module';
+  options?: string;
+  packageManager?: string;
+} = {}) {
   const command = createCommand(packageManager);
 
   const usage = stripIndent`
@@ -31,6 +35,7 @@ export function printHelp({
 
      - ${color.magenta('app')}, a web application
      - ${color.magenta('package')}, a shared library of code
+     - ${color.magenta('module')}, a standalone JavaScript module for a browser
 
     You’ll be asked a few additional questions based on the kind you choose.
   `;

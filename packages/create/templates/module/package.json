@@ -1,0 +1,21 @@
+{
+  "name": "template-module",
+  "type": "module",
+  "main": "./module.ts",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "preact": "^10.11.0",
+    "react": "npm:@quilted/react@^18.2.0",
+    "react-dom": "npm:@quilted/react-dom@^18.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/project",
+      "@quilted/eslint-config/react"
+    ]
+  }
+}

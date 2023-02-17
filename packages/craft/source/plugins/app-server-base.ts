@@ -118,7 +118,7 @@ function setupConfiguration(
       quiltAppServerEntryContent,
       quiltRequestRouterContent,
       quiltAsyncPreload,
-      quiltAsyncManifest,
+      quiltAssetsManifest,
       quiltInlineEnvironmentVariables,
       quiltRuntimeEnvironmentVariables,
     }: ResolvedBuildProjectConfigurationHooks,
@@ -167,7 +167,7 @@ function setupConfiguration(
       `;
 
     quiltAsyncPreload?.(() => false);
-    quiltAsyncManifest?.(() => false);
+    quiltAssetsManifest?.(() => false);
 
     // We want to force some of our “magic” modules to be internalized
     // no matter what, and other wise defer to the user-specified or
