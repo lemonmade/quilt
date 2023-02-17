@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.193
+
+### Patch Changes
+
+- [`aa62176c`](https://github.com/lemonmade/quilt/commit/aa62176c695993d43e34a4ef08400c7effda8a76) Thanks [@lemonmade](https://github.com/lemonmade)! - Add basic ability to create a module
+
 ## 0.1.192
 
 ### Patch Changes

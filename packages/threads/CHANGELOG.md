@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 0.1.13
+
+### Patch Changes
+
+- [`4e871d12`](https://github.com/lemonmade/quilt/commit/4e871d1235847dc472f5aab59412761d57fdeea1) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix outer iframe target helper
+
 ## 0.1.12
 
 ### Patch Changes
