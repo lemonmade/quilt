@@ -43,10 +43,9 @@ export async function createModule() {
   const inWorkspace = await getInWorkspace(argv);
   const name = await getName(argv);
   const directory = await getDirectory(argv, {name});
+  const entry = await getEntry(argv, {name});
 
   const useReact = await getReact(argv);
-
-  const entry = `${toValidPackageName(name)}.${useReact ? 'tsx' : 'ts'}`;
 
   const createAsMonorepo =
     !inWorkspace &&
@@ -298,6 +297,7 @@ function getArgv() {
       '-y': '--yes',
       '--name': String,
       '--directory': String,
+      '--entry': String,
       '--install': Boolean,
       '--no-install': Boolean,
       '--monorepo': Boolean,
@@ -328,6 +328,20 @@ async function getName(argv: Arguments) {
   }
 
   return name!;
+}
+
+async function getEntry(argv: Arguments, {name}: {name: string}) {
+  if (argv['--entry']) {
+    return argv['--entry'];
+  }
+
+  const entry = await prompt({
+    type: 'text',
+    message: 'What do you want to name your entry file?',
+    initial: `${toValidPackageName(name)}.ts`,
+  });
+
+  return entry;
 }
 
 async function getDirectory(argv: Arguments, {name}: {name: string}) {

@@ -12,6 +12,9 @@
     "react": "npm:@quilted/react@^18.2.0",
     "react-dom": "npm:@quilted/react-dom@^18.2.0"
   },
+  "browserslist": [
+    "extends @quilted/browserslist-config/modules"
+  ],
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project",
