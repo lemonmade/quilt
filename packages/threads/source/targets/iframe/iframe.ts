@@ -9,7 +9,7 @@ export function targetFromIframe(
   let connected = false;
 
   const sendMessage: ThreadTarget['send'] = function send(message, transfer) {
-    iframe.contentWindow!.postMessage(message, targetOrigin, transfer);
+    iframe.contentWindow?.postMessage(message, targetOrigin, transfer);
   };
 
   const connectedPromise = new Promise<void>((resolve) => {
@@ -42,7 +42,7 @@ export function targetFromIframe(
     },
     async *listen({signal}) {
       const messages = on<WindowEventHandlersEventMap, 'message'>(
-        iframe,
+        self,
         'message',
         {
           signal,
@@ -50,6 +50,7 @@ export function targetFromIframe(
       );
 
       for await (const message of messages) {
+        if (message.source !== iframe.contentWindow) continue;
         if (message.data === RESPONSE_MESSAGE) continue;
         yield message.data;
       }
