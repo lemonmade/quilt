@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.52
+
+### Patch Changes
+
+- [`313e10fc`](https://github.com/lemonmade/quilt/commit/313e10fcc0eb4c45737bac241e96f01659efc6cf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix module create command
+
 ## 0.1.51
 
 ### Patch Changes
