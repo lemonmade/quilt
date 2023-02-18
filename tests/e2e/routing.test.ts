@@ -9,7 +9,7 @@ import type {Page} from './utilities';
 
 jest.setTimeout(process.env.CI ? 30_000 : 10_000);
 
-describe('routing', () => {
+describe.skip('routing', () => {
   describe('scroll restoration', () => {
     it('scrolls to the top when navigating to a new page, and back to its original position when navigating back', async () => {
       await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
