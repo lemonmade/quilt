@@ -35,16 +35,16 @@ export interface Options {
 const DEFAULT_DEPENDENCIES: readonly any[] = [];
 
 export function useRoutes(
-  routes: RouteDefinition[],
+  routes: readonly RouteDefinition[],
   dependencies?: readonly any[],
 ): ReactElement<unknown>;
 export function useRoutes(
-  routes: RouteDefinition[],
+  routes: readonly RouteDefinition[],
   options: Options,
   dependencies?: readonly any[],
 ): ReactElement<unknown>;
 export function useRoutes(
-  routes: RouteDefinition[],
+  routes: readonly RouteDefinition[],
   optionsOrDependencies?: Options | readonly any[],
   forSureDependencies?: readonly any[],
 ): ReactElement<unknown> {
