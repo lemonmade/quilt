@@ -7,19 +7,14 @@ jest.setTimeout(20_000);
 describe('app builds', () => {
   describe('assets', () => {
     it('creates a hashed URL pointing to a publicly-served version of the image', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
-            import image from '../../../common/images/lemon.png';
+          'App.tsx': stripIndent`
+            import image from '../../common/images/lemon.png';
             
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+            export default function App() {
               return <img src={image} alt="A lemon." />;
             }
           `,
@@ -40,15 +35,10 @@ describe('app builds', () => {
         const {fs} = workspace;
 
         await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
-            import image from '../../../common/images/lemon-tiny.png';
+          'App.tsx': stripIndent`
+            import image from '../../common/images/lemon-tiny.png';
             
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+            export default function App() {
               return <img src={image} alt="A lemon." />;
             }
           `,
@@ -84,15 +74,10 @@ describe('app builds', () => {
               project.use(addInternalExportCondition());
             });
           `,
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
-            import image from '../../../common/images/lemon-tiny.png';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+          'App.tsx': stripIndent`
+            import image from '../../common/images/lemon-tiny.png';
+              
+            export default function App() {
               return <img src={image} alt="A lemon." />;
             }
           `,
@@ -136,15 +121,10 @@ describe('app builds', () => {
               project.use(addInternalExportCondition());
             });
           `,
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
-            import image from '../../../common/images/lemon.png';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+          'App.tsx': stripIndent`
+            import image from '../../common/images/lemon.png';
+              
+            export default function App() {
               return <img src={image} alt="A lemon." />;
             }
           `,
@@ -168,15 +148,10 @@ describe('app builds', () => {
 
         await fs.write({
           'message.txt': 'Hello, world!',
-          'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
-            import message from '../message.txt?raw';
-            
-            export function Routes() {
-              return useRoutes([{match: '/', render: () => <Start />}]);
-            }
-            
-            function Start() {
+          'App.tsx': stripIndent`
+            import message from './message.txt?raw';
+
+            export default function App() {
               return <div>{message}</div>;
             }
           `,
