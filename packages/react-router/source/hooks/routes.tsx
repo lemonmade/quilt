@@ -4,6 +4,7 @@ import {
   memo,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   type ReactNode,
   type ReactElement,
@@ -25,20 +26,51 @@ import {useConsumedPath} from './consumed';
 import {useStaticRenderer} from './static';
 
 export interface Options {
-  notFound?: boolean | (() => ReactElement);
+  notFound?:
+    | boolean
+    | ReactElement
+    | ((details: {url: EnhancedURL}) => ReactElement);
 }
 
+const DEFAULT_DEPENDENCIES: readonly any[] = [];
+
 export function useRoutes(
-  routes: readonly RouteDefinition[],
-  {notFound = true}: Options = {},
-) {
+  routes: RouteDefinition[],
+  dependencies?: readonly any[],
+): ReactElement<unknown>;
+export function useRoutes(
+  routes: RouteDefinition[],
+  options: Options,
+  dependencies?: readonly any[],
+): ReactElement<unknown>;
+export function useRoutes(
+  routes: RouteDefinition[],
+  optionsOrDependencies?: Options | readonly any[],
+  forSureDependencies?: readonly any[],
+): ReactElement<unknown> {
   const router = useRouter();
   const currentUrl = useCurrentUrl();
   const consumedPath = useConsumedPath();
 
-  useRoutePreloadRegistration(routes, consumedPath);
+  let dependencies = DEFAULT_DEPENDENCIES;
+  let notFound: NonNullable<Options['notFound']> = true;
 
-  const staticRender = useStaticRenderer(routes, {
+  if (Array.isArray(optionsOrDependencies)) {
+    dependencies = optionsOrDependencies;
+  } else {
+    notFound = (optionsOrDependencies as Options | undefined)?.notFound ?? true;
+
+    if (forSureDependencies) {
+      dependencies = forSureDependencies;
+    }
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedRoutes = useMemo(() => routes, dependencies);
+
+  useRoutePreloadRegistration(memoizedRoutes, consumedPath);
+
+  const staticRender = useStaticRenderer(memoizedRoutes, {
     fallback: Boolean(notFound),
     prefix: currentUrl.prefix,
     consumedPath,
@@ -129,7 +161,9 @@ const RoutesInternal = memo(function RoutesInternal({
 
   if (matchDetails == null) {
     if (typeof notFound === 'function') {
-      return notFound();
+      return notFound({url: currentUrl});
+    } else if (typeof notFound === 'object') {
+      return notFound;
     } else if (notFound) {
       return <DefaultNotFound />;
     } else {
@@ -148,7 +182,7 @@ const RoutesInternal = memo(function RoutesInternal({
 
   const nestedConsumedPath = consumedPath ?? previouslyConsumedPath;
 
-  if (render) {
+  if (typeof render === 'function') {
     routeContents = render({
       url: currentUrl,
       matched: matchedPath,
@@ -164,6 +198,8 @@ const RoutesInternal = memo(function RoutesInternal({
         />
       ),
     });
+  } else if (render != null) {
+    routeContents = render;
   } else if (children) {
     routeContents = (
       <RoutesInternal

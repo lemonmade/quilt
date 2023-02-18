@@ -103,9 +103,13 @@ export function QuiltApp({
         content
       )
     ) : 'navigate' in routing ? (
-      <Routing router={routing}>{content}</Routing>
+      <Routing routes={routes} router={routing}>
+        {content}
+      </Routing>
     ) : (
-      <Routing {...routing}>{content}</Routing>
+      <Routing routes={routes} {...routing}>
+        {content}
+      </Routing>
     );
 
   const withMaybePerformance =

@@ -19,7 +19,7 @@ import Env from '@quilted/quilt/env';
 // of routes, or you need to customize the routes based on React context,
 // you can declare dynamic routes in component with Quilt’s `useRoutes()`
 // hook.
-const routes: Routes = [{match: '/', render: () => <Start />}];
+const routes: Routes = [{match: '/', render: <Start />}];
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.

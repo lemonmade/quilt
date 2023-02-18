@@ -21,7 +21,9 @@ export default function App() {
 // This component renders the routes for your application. If you have a lot
 // of routes, you may want to split this component into its own file.
 function Routes() {
-  return useRoutes([{match: '/', render: () => <Start />}]);
+  return useRoutes([
+    {match: '/', render: <Start />, renderPreload: <Start.Preload />},
+  ]);
 }
 
 // This component renders any app-wide context.

@@ -120,7 +120,11 @@ export const RoutePreloading = memo(function RoutePreloading({
   const preloadMarkup = url ? (
     <div style={{visibility: 'hidden'}}>
       {preloadMatches.map(({id, matched, render}) => {
-        return <div key={id}>{render({url, matched})}</div>;
+        return (
+          <div key={id}>
+            {typeof render === 'function' ? render({url, matched}) : render}
+          </div>
+        );
       })}
     </div>
   ) : null;

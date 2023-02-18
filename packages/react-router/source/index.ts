@@ -13,12 +13,14 @@ export {
   useInitialUrl,
   useCurrentUrl,
   useRouter,
-  useMatch,
+  useRouteMatch,
+  useRouteMatchDetails,
   useNavigate,
   useRedirect,
   useNavigationBlock,
   useRouteChangeFocusRef,
   useScrollRestoration,
+  type RouteMatchOptions,
 } from './hooks';
 export {containedByPrefix} from './utilities';
 export type {Router} from './router';

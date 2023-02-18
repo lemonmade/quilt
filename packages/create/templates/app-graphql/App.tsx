@@ -41,8 +41,8 @@ function Routes() {
   return useRoutes([
     {
       match: '/',
-      render: () => <Start />,
-      renderPreload: () => <Start.Preload />,
+      render: <Start />,
+      renderPreload: <Start.Preload />,
     },
   ]);
 }
