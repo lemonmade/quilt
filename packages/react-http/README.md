@@ -107,7 +107,7 @@ function MyComponent({shouldRedirect = false} = {}) {
 }
 ```
 
-When you perform a redirect, Quilt will bail out of its server rendering process, set a `302` status code, and set the `Location` header to the URL resolved from the `to` prop. If you want to perform a redirect on both the server and client, you should use the `Redirect` component from [`@quilted/react-router`](../react-router) instead.
+When you perform a redirect on the server, Quilt will bail out of its server rendering process, set a `302` status code, and set the `Location` header to the URL resolved from the `to` prop. If you want to perform a redirect on both the server and client, you should use the `Redirect` component from [`@quilted/react-router`](../react-router) instead.
 
 You can set an HTTP cookie by using the `useResponseCookie` hook or `ResponseCookie` component. Both accept the cookie name, value, and [other cookie options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies).
 

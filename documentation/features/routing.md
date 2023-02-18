@@ -9,7 +9,7 @@ This guide also assumes you have already rendered either of the following from `
 - a `<QuiltApp>` component, or
 - a `<Routing>` component (and, for [route-based preloading](#route-based-preloading), a `<RoutePreloading>` component)
 
-These components add the routing-related context to your application. In most of the examples of this guide, we will render a `Routing` component so that the example works as-is. In your own application, you only need to render a single `Routing`, `RoutePreloading`, or `QuiltApp` components, which you will typically do as one of the outermost components in your application.
+These components add the routing-related context to your application. In most of the examples of this guide, we will render a `Routing` component so that the example works as-is. In your own application, you only need to render a single `Routing`, `RoutePreloading`, or `QuiltApp` component, which you will typically do as one of the outermost components in your application.
 
 ## Component- versus file-based routing
 
