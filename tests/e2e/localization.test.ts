@@ -11,7 +11,7 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useRoutes, useLocale, Localization} from '@quilted/quilt';
+            import {useRoutes, useLocale, Localization, usePerformanceNavigation} from '@quilted/quilt';
             
             export function Routes() {
               return useRoutes([{
@@ -22,6 +22,8 @@ describe('localization', () => {
             }
             
             function Localized() {
+              usePerformanceNavigation();
+
               const locale = useLocale();
 
               return (
@@ -50,7 +52,7 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useLocale, useLocaleFromEnvironment, Localization} from '@quilted/quilt';
+            import {useLocale, usePerformanceNavigation, useLocaleFromEnvironment, Localization} from '@quilted/quilt';
             
             export function Routes() {
               const locale = useLocaleFromEnvironment();
@@ -59,6 +61,8 @@ describe('localization', () => {
             }
             
             function Localized() {
+              usePerformanceNavigation();
+
               const locale = useLocale();
 
               return (
@@ -113,9 +117,11 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useLocale} from '@quilted/quilt';
+            import {useLocale, usePerformanceNavigation} from '@quilted/quilt';
             
             export function Routes() {
+              usePerformanceNavigation();
+
               const locale = useLocale();
 
               return (
@@ -170,9 +176,11 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useLocale} from '@quilted/quilt';
+            import {useLocale, usePerformanceNavigation} from '@quilted/quilt';
             
             export function Routes() {
+              usePerformanceNavigation();
+
               const locale = useLocale();
 
               return (

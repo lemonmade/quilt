@@ -11,6 +11,9 @@ describe('http', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
+              import {Suspense} from 'react';
+              import {usePerformanceNavigation} from '@quilted/quilt';
+
               let resolved;
               function useSuspenseValue() {
                 if (resolved) return resolved;
@@ -23,11 +26,16 @@ describe('http', () => {
               }
               
               export function Routes() {
-                return <Start />;
+                return (
+                  <Suspense>
+                    <Start />
+                  </Suspense>
+                );
               }
               
               function Start() {
                 const value = useSuspenseValue();
+                usePerformanceNavigation();
                 return <p>{value}</p>;
               }
             `,

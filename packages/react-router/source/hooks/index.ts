@@ -6,5 +6,9 @@ export {useNavigationBlock} from './navigation-block';
 export {useRouteChangeFocusRef} from './focus';
 export {useScrollRestoration} from './scroll';
 export {useRedirect} from './redirect';
-export {useMatch} from './match';
+export {
+  useRouteMatch,
+  useRouteMatchDetails,
+  type RouteMatchOptions,
+} from './match';
 export {useNavigate} from './navigate';

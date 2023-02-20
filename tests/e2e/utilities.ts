@@ -14,7 +14,7 @@ import type {
   BrowserContext as PlaywrightBrowserContext,
 } from 'playwright';
 
-import type {Performance} from '@quilted/quilt';
+import {sleep} from '@quilted/events';
 
 export {stripIndent} from 'common-tags';
 export {getPort};
@@ -372,22 +372,6 @@ export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
   }
 }
 
-function sleep(time: number) {
-  return new Promise<void>((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
-
-declare global {
-  interface Window {
-    readonly Quilt?: {
-      readonly E2E?: {
-        Performance?: Performance;
-      };
-    };
-  }
-}
-
 export async function buildAppAndOpenPage(
   workspace: Workspace,
   {
@@ -448,10 +432,12 @@ export async function waitForPerformanceNavigation(
   page: Page,
   {
     to = '',
-    action,
+    timeout = 1_000,
     checkCompleteNavigations = false,
+    action,
   }: {
     to?: URL | string;
+    timeout?: number;
     checkCompleteNavigations?: boolean;
     action?(page: Page): Promise<void>;
   },
@@ -463,7 +449,7 @@ export async function waitForPerformanceNavigation(
   }
 
   const navigationFinished = page.evaluate(
-    async ({href, checkCompleteNavigations}) => {
+    async ({href, timeout, checkCompleteNavigations}) => {
       const performance = window.Quilt?.E2E?.Performance;
 
       if (performance == null) return;
@@ -477,7 +463,29 @@ export async function waitForPerformanceNavigation(
         return;
       }
 
-      const abort = new AbortController();
+      // We have to define this inline since this script is executed
+      // in a different JS environment :/
+      class TimedAbortController extends AbortController {
+        readonly promise: Promise<void>;
+        private timeout!: ReturnType<typeof setTimeout>;
+
+        constructor({time}: {time: number}) {
+          super();
+          this.promise = new Promise((resolve) => {
+            this.timeout = setTimeout(() => {
+              if (this.signal.aborted) return;
+              this.abort();
+              resolve();
+            }, time);
+          });
+
+          this.signal.addEventListener('abort', () => {
+            if (this.timeout) clearTimeout(this.timeout);
+          });
+        }
+      }
+
+      const abort = new TimedAbortController({time: timeout});
 
       await new Promise<void>((resolve) => {
         performance.on(
@@ -492,7 +500,7 @@ export async function waitForPerformanceNavigation(
         );
       });
     },
-    {href: url.href, checkCompleteNavigations},
+    {href: url.href, timeout, checkCompleteNavigations},
   );
 
   if (!checkCompleteNavigations && action != null) {
@@ -500,4 +508,13 @@ export async function waitForPerformanceNavigation(
   }
 
   await navigationFinished;
+}
+
+export async function reloadAndWaitForPerformanceNavigation(page: Page) {
+  const url = page.url();
+  await page.reload();
+  await waitForPerformanceNavigation(page, {
+    to: url,
+    checkCompleteNavigations: true,
+  });
 }

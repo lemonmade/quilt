@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import type {ReactElement, ReactNode} from 'react';
 import type {
   Match,
   NavigateTo,
@@ -34,8 +34,10 @@ export interface RouteDefinition {
   exact?: boolean;
   children?: RouteDefinition[];
   redirect?: NavigateTo;
-  render?(details: RouteRenderDetails): ReactNode;
-  renderPreload?(details: RouteRenderPreloadDetails): ReactNode;
+  render?: ReactElement<any> | ((details: RouteRenderDetails) => ReactNode);
+  renderPreload?:
+    | ReactElement<any>
+    | ((details: RouteRenderPreloadDetails) => ReactNode);
   renderStatic?: boolean | (() => string[] | Promise<string[]>);
 }
 

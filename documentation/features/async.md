@@ -126,16 +126,16 @@ export function Routes() {
     [
       {
         path: '/',
-        render: () => <Home />,
-        renderPreload: () => <Home.Preload />,
+        render: <Home />,
+        renderPreload: <Home.Preload />,
       },
       {
         path: '/account',
-        render: () => <Account />,
-        renderPreload: () => <Account.Preload />,
+        render: <Account />,
+        renderPreload: <Account.Preload />,
       },
     ],
-    {notFound: () => <NotFound />},
+    {notFound: <NotFound />},
   );
 }
 ```

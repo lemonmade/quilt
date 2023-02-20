@@ -27,7 +27,7 @@ describe('useRoutes()', () => {
     describe('string', () => {
       it('matches the root path', () => {
         function Routes() {
-          return useRoutes([{match: '/', render: () => <RouteComponent />}]);
+          return useRoutes([{match: '/', render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/'})).toContainReactComponent(
@@ -41,7 +41,7 @@ describe('useRoutes()', () => {
 
       it('matches a route based on an absolute path', () => {
         function Routes() {
-          return useRoutes([{match: '/a', render: () => <RouteComponent />}]);
+          return useRoutes([{match: '/a', render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
@@ -58,7 +58,7 @@ describe('useRoutes()', () => {
           return useRoutes([
             {
               match: 'a',
-              children: [{match: '/b', render: () => <RouteComponent />}],
+              children: [{match: '/b', render: <RouteComponent />}],
             },
           ]);
         }
@@ -87,9 +87,7 @@ describe('useRoutes()', () => {
                   render: ({children}) => (
                     <RouteComponent>{children}</RouteComponent>
                   ),
-                  children: [
-                    {match: 'c', render: () => <NestedRouteComponent />},
-                  ],
+                  children: [{match: 'c', render: <NestedRouteComponent />}],
                 },
               ],
             },
@@ -115,7 +113,7 @@ describe('useRoutes()', () => {
 
       it('matches a route based on a relative path', () => {
         function Routes() {
-          return useRoutes([{match: 'a', render: () => <RouteComponent />}]);
+          return useRoutes([{match: 'a', render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
@@ -132,7 +130,7 @@ describe('useRoutes()', () => {
           return useRoutes([
             {
               match: 'a',
-              children: [{match: '/', render: () => <RouteComponent />}],
+              children: [{match: '/', render: <RouteComponent />}],
             },
           ]);
         }
@@ -150,7 +148,7 @@ describe('useRoutes()', () => {
               children: [
                 {
                   match: 'b',
-                  children: [{match: 'c', render: () => <RouteComponent />}],
+                  children: [{match: 'c', render: <RouteComponent />}],
                 },
               ],
             },
@@ -172,12 +170,12 @@ describe('useRoutes()', () => {
 
       it('matches nested relative paths split across components', () => {
         function NestedRoutes() {
-          return useRoutes([{match: 'b', render: () => <RouteComponent />}]);
+          return useRoutes([{match: 'b', render: <RouteComponent />}]);
         }
 
         function Routes() {
           return useRoutes([
-            {match: 'a', exact: false, render: () => <NestedRoutes />},
+            {match: 'a', exact: false, render: <NestedRoutes />},
           ]);
         }
 
@@ -188,7 +186,7 @@ describe('useRoutes()', () => {
 
       it('removes trailing slashes before attempting to match a pathname', () => {
         function Routes() {
-          return useRoutes([{match: '/a', render: () => <RouteComponent />}]);
+          return useRoutes([{match: '/a', render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/a/'})).toContainReactComponent(
@@ -200,7 +198,7 @@ describe('useRoutes()', () => {
         const prefix = '/my-prefix';
 
         function Routes() {
-          return useRoutes([{match: '/', render: () => <RouteComponent />}]);
+          return useRoutes([{match: '/', render: <RouteComponent />}]);
         }
 
         expect(
@@ -223,12 +221,12 @@ describe('useRoutes()', () => {
 
         function Routes() {
           return useRoutes([
-            {match: 'must', render: () => <OtherComponent />},
+            {match: 'must', render: <OtherComponent />},
             {
               match: 'must-match',
               children: [
-                {match: 'full', render: () => <OtherComponent />},
-                {match: 'full-path', render: () => <RouteComponent />},
+                {match: 'full', render: <OtherComponent />},
+                {match: 'full-path', render: <RouteComponent />},
               ],
             },
           ]);
@@ -243,7 +241,7 @@ describe('useRoutes()', () => {
     describe('regex', () => {
       it('matches the root path', () => {
         function Routes() {
-          return useRoutes([{match: /^\/$/, render: () => <RouteComponent />}]);
+          return useRoutes([{match: /^\/$/, render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/'})).toContainReactComponent(
@@ -258,7 +256,7 @@ describe('useRoutes()', () => {
       it('matches the root path in a complex regex', () => {
         function Routes() {
           return useRoutes([
-            {match: /\/some-route|^\/$/, render: () => <RouteComponent />},
+            {match: /\/some-route|^\/$/, render: <RouteComponent />},
           ]);
         }
 
@@ -273,7 +271,7 @@ describe('useRoutes()', () => {
 
       it('matches a route based on an regex that matches an absolute path', () => {
         function Routes() {
-          return useRoutes([{match: /\/a/, render: () => <RouteComponent />}]);
+          return useRoutes([{match: /\/a/, render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
@@ -290,7 +288,7 @@ describe('useRoutes()', () => {
           return useRoutes([
             {
               match: /a/,
-              children: [{match: /\/b/, render: () => <RouteComponent />}],
+              children: [{match: /\/b/, render: <RouteComponent />}],
             },
           ]);
         }
@@ -316,7 +314,7 @@ describe('useRoutes()', () => {
               render: ({children}) => (
                 <RouteComponent>{children}</RouteComponent>
               ),
-              children: [{match: /c/, render: () => <NestedRouteComponent />}],
+              children: [{match: /c/, render: <NestedRouteComponent />}],
             },
           ]);
         }
@@ -340,7 +338,7 @@ describe('useRoutes()', () => {
 
       it('matches a route based on a regex that matches a relative path', () => {
         function Routes() {
-          return useRoutes([{match: /a/, render: () => <RouteComponent />}]);
+          return useRoutes([{match: /a/, render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainReactComponent(
@@ -360,7 +358,7 @@ describe('useRoutes()', () => {
               children: [
                 {
                   match: /b/,
-                  children: [{match: /c/, render: () => <RouteComponent />}],
+                  children: [{match: /c/, render: <RouteComponent />}],
                 },
               ],
             },
@@ -382,12 +380,12 @@ describe('useRoutes()', () => {
 
       it('matches nested relative paths split across components', () => {
         function NestedRoutes() {
-          return useRoutes([{match: /\w/, render: () => <RouteComponent />}]);
+          return useRoutes([{match: /\w/, render: <RouteComponent />}]);
         }
 
         function Routes() {
           return useRoutes([
-            {match: /\w/, exact: false, render: () => <NestedRoutes />},
+            {match: /\w/, exact: false, render: <NestedRoutes />},
           ]);
         }
 
@@ -398,7 +396,7 @@ describe('useRoutes()', () => {
 
       it('removes trailing slashes before attempting to match a pathname', () => {
         function Routes() {
-          return useRoutes([{match: /\/a$/, render: () => <RouteComponent />}]);
+          return useRoutes([{match: /\/a$/, render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />, {path: '/a/'})).toContainReactComponent(
@@ -411,7 +409,7 @@ describe('useRoutes()', () => {
         const prefixMatch = '/my-prefix';
 
         function Routes() {
-          return useRoutes([{match: /^\/$/, render: () => <RouteComponent />}]);
+          return useRoutes([{match: /^\/$/, render: <RouteComponent />}]);
         }
 
         expect(
@@ -434,12 +432,12 @@ describe('useRoutes()', () => {
 
         function Routes() {
           return useRoutes([
-            {match: /must/, render: () => <OtherComponent />},
+            {match: /must/, render: <OtherComponent />},
             {
               match: /must-match/,
               children: [
-                {match: /^[/]full/, render: () => <OtherComponent />},
-                {match: /^[/]full-path/, render: () => <RouteComponent />},
+                {match: /^[/]full/, render: <OtherComponent />},
+                {match: /^[/]full-path/, render: <RouteComponent />},
               ],
             },
           ]);
@@ -456,7 +454,7 @@ describe('useRoutes()', () => {
         const match = jest.fn(() => false);
 
         function Routes() {
-          return useRoutes([{match, render: () => <RouteComponent />}]);
+          return useRoutes([{match, render: <RouteComponent />}]);
         }
 
         const routes = render(<Routes />, {path: '/a'});
@@ -466,9 +464,7 @@ describe('useRoutes()', () => {
 
       it('matches a route when a match function returns true', () => {
         function Routes() {
-          return useRoutes([
-            {match: () => true, render: () => <RouteComponent />},
-          ]);
+          return useRoutes([{match: () => true, render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />)).toContainReactComponent(RouteComponent);
@@ -476,9 +472,7 @@ describe('useRoutes()', () => {
 
       it('does not match a route when a match function returns false', () => {
         function Routes() {
-          return useRoutes([
-            {match: () => false, render: () => <RouteComponent />},
-          ]);
+          return useRoutes([{match: () => false, render: <RouteComponent />}]);
         }
 
         expect(render(<Routes />)).not.toContainReactComponent(RouteComponent);
@@ -492,7 +486,7 @@ describe('useRoutes()', () => {
               render: ({children}) => (
                 <RouteComponent>{children}</RouteComponent>
               ),
-              children: [{match: 'a', render: () => <NestedRouteComponent />}],
+              children: [{match: 'a', render: <NestedRouteComponent />}],
             },
           ]);
         }
@@ -519,7 +513,7 @@ describe('useRoutes()', () => {
           return useRoutes([
             {
               match: ['a', /b/, ({pathname}) => pathname === '/c'],
-              render: () => <RouteComponent />,
+              render: <RouteComponent />,
             },
           ]);
         }
@@ -545,7 +539,7 @@ describe('useRoutes()', () => {
     describe('fallback', () => {
       it('matches a route with no match property', () => {
         function Routes() {
-          return useRoutes([{render: () => <RouteComponent />}]);
+          return useRoutes([{render: <RouteComponent />}]);
         }
 
         const routes = render(<Routes />);
@@ -560,7 +554,7 @@ describe('useRoutes()', () => {
               render: ({children}) => (
                 <RouteComponent>{children}</RouteComponent>
               ),
-              children: [{match: 'a', render: () => <NestedRouteComponent />}],
+              children: [{match: 'a', render: <NestedRouteComponent />}],
             },
           ]);
         }
@@ -584,7 +578,7 @@ describe('useRoutes()', () => {
     describe('exact', () => {
       it('renders routes without children only if they are an exact match by default', () => {
         function Routes() {
-          return useRoutes([{match: 'a', render: () => <RouteComponent />}]);
+          return useRoutes([{match: 'a', render: <RouteComponent />}]);
         }
 
         const routes = render(<Routes />, {path: '/a/b/c'});
@@ -595,7 +589,7 @@ describe('useRoutes()', () => {
       it('allows routes without children to be inexact', () => {
         function Routes() {
           return useRoutes([
-            {match: 'a', exact: false, render: () => <RouteComponent />},
+            {match: 'a', exact: false, render: <RouteComponent />},
           ]);
         }
 
@@ -612,13 +606,13 @@ describe('useRoutes()', () => {
 
       function Routes() {
         return useRoutes([
-          {match: 'a', render: () => <RouteComponent />},
-          {match: /a/, render: () => <MatchedButNotRendered />},
+          {match: 'a', render: <RouteComponent />},
+          {match: /a/, render: <MatchedButNotRendered />},
           {
             match: (url) => url.pathname === '/a',
-            render: () => <MatchedButNotRendered />,
+            render: <MatchedButNotRendered />,
           },
-          {render: () => <MatchedButNotRendered />},
+          {render: <MatchedButNotRendered />},
         ]);
       }
 
@@ -652,7 +646,7 @@ describe('useRoutes()', () => {
           {
             match: 'a',
             render: ({children}) => <RouteComponent>{children}</RouteComponent>,
-            children: [{match: 'b', render: () => <NestedRouteComponent />}],
+            children: [{match: 'b', render: <NestedRouteComponent />}],
           },
         ]);
       }
