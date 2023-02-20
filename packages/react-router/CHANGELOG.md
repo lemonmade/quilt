@@ -1,5 +1,13 @@
 # @quilted/react-router
 
+## 0.3.57
+
+### Patch Changes
+
+- [#516](https://github.com/lemonmade/quilt/pull/516) [`575d9033`](https://github.com/lemonmade/quilt/commit/575d9033cfafa438b2998c6fea7e00a307ef0be7) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `routes` to `Routing` component
+
+- [#516](https://github.com/lemonmade/quilt/pull/516) [`575d9033`](https://github.com/lemonmade/quilt/commit/575d9033cfafa438b2998c6fea7e00a307ef0be7) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve router hooks
+
 ## 0.3.56
 
 ### Patch Changes
