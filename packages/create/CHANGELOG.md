@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.53
+
+### Patch Changes
+
+- [#516](https://github.com/lemonmade/quilt/pull/516) [`575d9033`](https://github.com/lemonmade/quilt/commit/575d9033cfafa438b2998c6fea7e00a307ef0be7) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve router hooks
+
 ## 0.1.52
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 0.1.17
+
+### Patch Changes
+
+- [#516](https://github.com/lemonmade/quilt/pull/516) [`575d9033`](https://github.com/lemonmade/quilt/commit/575d9033cfafa438b2998c6fea7e00a307ef0be7) Thanks [@lemonmade](https://github.com/lemonmade)! - Add timeout event helpers
+
 ## 0.1.16
 
 ### Patch Changes
