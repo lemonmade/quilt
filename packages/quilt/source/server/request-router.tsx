@@ -7,7 +7,7 @@ import {
   scriptAssetPreloadAttributes,
   type AssetsEntry,
   type AssetManifest,
-} from '@quilted/async/server';
+} from '@quilted/assets';
 import {AsyncAssetManager} from '@quilted/react-async/server';
 import {HttpManager} from '@quilted/react-http/server';
 import {
@@ -28,20 +28,37 @@ import type {
   RequestContext,
 } from '@quilted/request-router';
 
+import type {DefaultAssetContext} from '../assets';
+
 import {ServerContext} from './ServerContext';
 
-export interface ServerRenderOptions<Context = RequestContext> {
+export interface ServerRenderOptions<
+  Context = RequestContext,
+  AssetContext = DefaultAssetContext,
+> {
   stream?: 'headers' | false;
-  assets?: AssetManifest<unknown>;
-  extract?: ExtractOptions;
-  context?(
-    request: EnhancedRequest,
-    context: Context,
-  ): ServerRenderRequestContext;
+  assets?:
+    | AssetManifest<AssetContext>
+    | {
+        readonly manifest: AssetManifest<AssetContext>;
+        context?(
+          request: EnhancedRequest,
+          requestContext: Context,
+        ): AssetContext | undefined | Promise<AssetContext | undefined>;
+      };
+  extract?: Omit<ExtractOptions, 'context'> & {
+    readonly context?:
+      | ServerRenderRequestContext
+      | ((
+          request: EnhancedRequest,
+          context: Context,
+        ) => ServerRenderRequestContext);
+  };
   renderHtml?(
     content: string | undefined,
-    request: Request,
     details: Pick<ServerRenderAppDetails, 'http' | 'html'> & {
+      readonly request: EnhancedRequest;
+      readonly context: Context;
       readonly assets?: AssetsEntry;
       readonly preloadAssets?: AssetsEntry;
     },
@@ -55,14 +72,17 @@ export interface ServerRenderAppDetails {
   readonly asyncAssets: AsyncAssetManager;
 }
 
-export function createServerRender<Context = RequestContext>(
+export function createServerRender<
+  Context = RequestContext,
+  AssetContext = DefaultAssetContext,
+>(
   getApp:
     | ReactElement<any>
     | ((
         request: EnhancedRequest,
         context: Context,
       ) => ReactElement<any> | Promise<ReactElement<any>>),
-  {context, stream, ...options}: ServerRenderOptions<Context> = {},
+  {stream, ...options}: ServerRenderOptions<Context, AssetContext> = {},
 ): RequestHandler<Context> {
   return async (request, requestContext) => {
     const accepts = request.headers.get('Accept');
@@ -77,31 +97,39 @@ export function createServerRender<Context = RequestContext>(
       typeof getApp === 'function'
         ? () => getApp(request, requestContext)
         : getApp,
-      request,
       {
         ...options,
+        request,
+        context: requestContext,
         extract: {
           ...options.extract,
           context:
-            options.extract ??
-            context?.(request, requestContext) ??
-            (requestContext as any),
+            typeof options.extract?.context === 'function'
+              ? options.extract.context(request, requestContext)
+              : options.extract?.context,
         },
       },
     );
   };
 }
 
-export async function renderAppToResponse(
+export async function renderAppToResponse<
+  Context = RequestContext,
+  AssetContext = DefaultAssetContext,
+>(
   getApp:
     | ReactElement<any>
     | (() => ReactElement<any> | Promise<ReactElement<any>>),
-  request: Request,
   {
+    request,
+    context,
     assets,
     extract,
     renderHtml,
-  }: Pick<ServerRenderOptions, 'assets' | 'renderHtml' | 'extract'> = {},
+  }: Pick<
+    ServerRenderOptions<Context, AssetContext>,
+    'assets' | 'renderHtml' | 'extract'
+  > & {readonly request: EnhancedRequest; readonly context: Context},
 ) {
   const app = typeof getApp === 'function' ? await getApp() : getApp;
 
@@ -120,7 +148,9 @@ export async function renderAppToResponse(
     });
   }
 
-  const content = await renderAppDetailsToHtmlString(renderDetails, request, {
+  const content = await renderAppDetailsToHtmlString(renderDetails, {
+    request,
+    context,
     assets,
     renderHtml,
   });
@@ -131,22 +161,33 @@ export async function renderAppToResponse(
   });
 }
 
-export async function renderAppToStreamedResponse(
+export async function renderAppToStreamedResponse<
+  Context = RequestContext,
+  AssetContext = DefaultAssetContext,
+>(
   getApp:
     | ReactElement<any>
     | (() => ReactElement<any> | Promise<ReactElement<any>>),
-  request: Request,
   {
+    request,
+    context,
     assets,
     extract,
     renderHtml,
-  }: Pick<ServerRenderOptions, 'assets' | 'renderHtml' | 'extract'> = {},
+  }: Pick<
+    ServerRenderOptions<Context, AssetContext>,
+    'assets' | 'renderHtml' | 'extract'
+  > & {readonly request: EnhancedRequest; readonly context: Context},
 ) {
   const headers = new Headers();
   const stream = new TransformStream();
 
-  const assetContext = {userAgent: request.headers.get('User-Agent')};
-  const guaranteedAssets = await assets?.assets({context: assetContext});
+  const {manifest, context: assetContext} = await getAssetManifestAndContext(
+    assets,
+    {request, context},
+  );
+
+  const guaranteedAssets = await manifest?.assets({context: assetContext});
 
   if (guaranteedAssets) {
     for (const style of guaranteedAssets.styles) {
@@ -177,7 +218,9 @@ export async function renderAppToStreamedResponse(
       headers: request.headers,
     });
 
-    const content = await renderAppDetailsToHtmlString(renderDetails, request, {
+    const content = await renderAppDetailsToHtmlString(renderDetails, {
+      request,
+      context,
       assets,
       renderHtml,
     });
@@ -227,29 +270,42 @@ async function serverRenderDetailsForApp(
   return {rendered, http, html, asyncAssets};
 }
 
-async function renderAppDetailsToHtmlString(
+async function renderAppDetailsToHtmlString<
+  Context = RequestContext,
+  AssetContext = DefaultAssetContext,
+>(
   details: ServerRenderAppDetails,
-  request: Request,
   {
+    request,
+    context,
     assets,
     renderHtml = defaultRenderHtml,
-  }: Pick<ServerRenderOptions, 'assets' | 'renderHtml'> = {},
+  }: Pick<
+    ServerRenderOptions<Context, AssetContext>,
+    'assets' | 'renderHtml'
+  > & {readonly request: EnhancedRequest; readonly context: Context},
 ) {
   const {html: htmlManager, http, rendered, asyncAssets} = details;
 
   const usedAssets = asyncAssets.used({timing: 'load'});
-  const assetContext = {userAgent: request.headers.get('User-Agent')};
 
-  const [entryAssets, preloadAssets] = assets
+  const {manifest, context: assetContext} = await getAssetManifestAndContext(
+    assets,
+    {request, context},
+  );
+
+  const [entryAssets, preloadAssets] = manifest
     ? await Promise.all([
-        assets.assets({async: usedAssets, context: assetContext}),
-        assets.asyncAssets(asyncAssets.used({timing: 'preload'}), {
+        manifest.assets({async: usedAssets, context: assetContext}),
+        manifest.asyncAssets(asyncAssets.used({timing: 'preload'}), {
           context: assetContext,
         }),
       ])
     : [];
 
-  const htmlElement = await renderHtml(rendered, request, {
+  const htmlElement = await renderHtml(rendered, {
+    request,
+    context,
     html: htmlManager,
     http,
     assets: entryAssets,
@@ -259,8 +315,40 @@ async function renderAppDetailsToHtmlString(
   return renderHtmlToString(htmlElement);
 }
 
+async function getAssetManifestAndContext<
+  Context = RequestContext,
+  AssetContext = DefaultAssetContext,
+>(
+  assets: ServerRenderOptions<Context, AssetContext>['assets'],
+  {
+    request,
+    context,
+  }: {readonly request: EnhancedRequest; readonly context: Context},
+) {
+  if (assets == null) {
+    return {manifest: undefined, context: undefined};
+  }
+
+  const defaultAssetContext = {
+    userAgent: request.headers.get('User-Agent') ?? undefined,
+  } as AssetContext;
+
+  if ('manifest' in assets) {
+    return {
+      manifest: assets.manifest,
+      context:
+        (await assets.context?.(request, context)) ?? defaultAssetContext,
+    };
+  }
+
+  return {
+    manifest: assets,
+    context: defaultAssetContext,
+  };
+}
+
 const defaultRenderHtml: NonNullable<ServerRenderOptions<any>['renderHtml']> =
-  function defaultRenderHtml(content, request, {html, assets, preloadAssets}) {
+  function defaultRenderHtml(content, {request, html, assets, preloadAssets}) {
     const baseUrl = new URL(request.url);
 
     return (
@@ -269,13 +357,13 @@ const defaultRenderHtml: NonNullable<ServerRenderOptions<any>['renderHtml']> =
         headEndContent={
           <>
             {assets &&
-              [...assets.styles].map((style) => {
+              assets.styles.map((style) => {
                 const attributes = styleAssetAttributes(style, {baseUrl});
                 return <link key={style.source} {...attributes} />;
               })}
 
             {assets &&
-              [...assets.scripts].map((script) => {
+              assets.scripts.map((script) => {
                 const isModule = script.attributes.type === 'module';
 
                 const attributes = scriptAssetAttributes(script, {
@@ -295,7 +383,7 @@ const defaultRenderHtml: NonNullable<ServerRenderOptions<any>['renderHtml']> =
               })}
 
             {preloadAssets &&
-              [...preloadAssets.styles].map((style) => {
+              preloadAssets.styles.map((style) => {
                 const attributes = styleAssetPreloadAttributes(style, {
                   baseUrl,
                 });
@@ -304,7 +392,7 @@ const defaultRenderHtml: NonNullable<ServerRenderOptions<any>['renderHtml']> =
               })}
 
             {preloadAssets &&
-              [...preloadAssets.scripts].map((script) => {
+              preloadAssets.scripts.map((script) => {
                 const attributes = scriptAssetPreloadAttributes(script, {
                   baseUrl,
                 });

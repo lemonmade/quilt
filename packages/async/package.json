@@ -20,13 +20,6 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
-    "./server": {
-      "types": "./build/typescript/server.d.ts",
-      "quilt:source": "./source/server.ts",
-      "quilt:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs",
-      "require": "./build/cjs/server.cjs"
-    },
     "./babel": {
       "types": "./build/typescript/babel-plugin.d.ts",
       "import": "./build/esm/babel-plugin.mjs",
@@ -43,9 +36,6 @@
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
-      "server": [
-        "./build/typescript/server.d.ts"
-      ],
       "babel": [
         "./build/typescript/babel-plugin.d.ts"
       ],

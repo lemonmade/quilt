@@ -214,6 +214,7 @@
     "./build/esm/polyfills/*.mjs"
   ],
   "dependencies": {
+    "@quilted/assets": "^0.0.0",
     "@quilted/async": "^0.3.34",
     "@quilted/events": "^0.1.0",
     "@quilted/graphql": "^0.4.34",

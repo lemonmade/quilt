@@ -19,16 +19,17 @@ export {
   styleAssetPreloadAttributes,
   scriptAssetAttributes,
   scriptAssetPreloadAttributes,
-} from '@quilted/async/server';
+} from '@quilted/assets';
 export type {
   Asset,
+  AssetCacheKey,
   AsyncAssetSelector,
   AssetSelectorOptions,
   CreateAssetManifestOptions,
   AssetManifest,
   AssetBuild,
   AssetsEntry,
-} from '@quilted/async/server';
+} from '@quilted/assets';
 export {
   AsyncAssetContext,
   AsyncAssetManager,
@@ -78,3 +79,4 @@ export {
   renderAppToResponse,
   renderAppToStreamedResponse,
 } from './request-router';
+export {createAssetPreloader, type AssetPreloadOptions} from './preload';
