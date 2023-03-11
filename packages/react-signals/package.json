@@ -30,7 +30,7 @@
   "dependencies": {
     "@preact/signals": "^1.1.2",
     "@types/react": "^17.0.0 || ^18.0.0",
-    "preact": "^10.11.0"
+    "preact": "^10.13.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"
