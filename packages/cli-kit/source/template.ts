@@ -1,7 +1,7 @@
 import * as path from 'path';
 import {fileURLToPath} from 'url';
 import * as fs from 'fs/promises';
-import glob from 'glob';
+import {globby} from 'globby';
 
 export interface PackageTemplates {
   load(template: string): Promise<Template>;

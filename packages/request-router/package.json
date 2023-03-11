@@ -40,12 +40,11 @@
   "dependencies": {
     "@quilted/http": "^0.2.11",
     "@quilted/routing": "^0.2.7",
-    "send": "^0.17.0"
+    "send": "^0.18.0"
   },
   "devDependencies": {
     "@quilted/polyfills": "workspace:*",
     "@quilted/testing": "workspace:*",
-    "@types/cookie": "^0.4.0",
     "@types/send": "^0.17.0"
   },
   "eslintConfig": {

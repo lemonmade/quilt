@@ -49,10 +49,9 @@
   "sideEffects": false,
   "dependencies": {
     "@cloudflare/workers-types": "^4.20221111.1",
-    "@cloudflare/kv-asset-handler": "^0.3.0",
     "common-tags": "^1.8.0",
-    "mime": "^2.5.0",
-    "miniflare": "^2.4.0"
+    "mime": "^3.0.0",
+    "miniflare": "^2.12.0"
   },
   "peerDependencies": {
     "@quilted/craft": "^0.1.192",
@@ -60,7 +59,7 @@
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.0",
-    "@types/mime": "^2.0.0"
+    "@types/mime": "^3.0.0"
   },
   "peerDependenciesMeta": {
     "@quilted/craft": {

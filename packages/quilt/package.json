@@ -236,11 +236,10 @@
     "@quilted/request-router": "^0.1.0",
     "@quilted/testing": "^0.1.0",
     "@quilted/threads": "^0.1.0",
-    "@quilted/useful-react-types": "^0.1.0",
-    "@types/jest": "^27.0.0"
+    "@quilted/useful-react-types": "^0.1.0"
   },
   "devDependencies": {
-    "@types/prettier": "^2.0.0"
+    "@types/prettier": "^2.7.0"
   },
   "peerDependencies": {
     "prettier": "^2.0.0",
