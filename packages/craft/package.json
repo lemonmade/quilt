@@ -264,7 +264,7 @@
     "postcss-load-config": "^4.0.0",
     "postcss-modules": "^6.0.0",
     "postcss-preset-env": "^7.8.0",
-    "preact": "^10.11.3",
+    "preact": "^10.13.0",
     "prettier": "^2.8.0",
     "regenerator-runtime": "^0.13.0",
     "rollup": "^3.7.0",
