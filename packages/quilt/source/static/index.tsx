@@ -274,6 +274,7 @@ export async function renderStatic(
                   key={script.source}
                   {...attributes}
                   // @ts-expect-error Rendering to HTML, so using the lowercase name
+                  // eslint-disable-next-line react/no-unknown-property
                   nomodule={moduleAssets.scripts.length > 0 ? true : undefined}
                 />
               );

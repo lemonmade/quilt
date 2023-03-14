@@ -1,4 +1,4 @@
-import type {MatcherState} from 'expect';
+import type {MatcherContext} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -12,7 +12,7 @@ import {normalizeOperation} from '../utilities/ast';
 import {assertIsGraphQLController, diffVariables} from './utilities';
 
 export function toHavePerformedGraphQLOperation<Variables>(
-  this: MatcherState,
+  this: MatcherContext,
   graphql: GraphQLController,
   operation: GraphQLAnyOperation<any, Variables>,
   variables?: Variables,

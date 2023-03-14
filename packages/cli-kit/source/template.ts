@@ -45,7 +45,7 @@ export function createTemplate(root: string): Template {
     async copy(to, {handleFile} = {}) {
       const targetRoot = path.resolve(to);
 
-      const files = glob.sync('**/*', {
+      const files = await globby('**/*', {
         cwd: root,
         absolute: false,
       });

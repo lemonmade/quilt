@@ -1,4 +1,4 @@
-import type {MatcherState} from 'expect';
+import type {MatcherContext} from 'expect';
 import {
   matcherHint,
   printReceived,
@@ -30,7 +30,7 @@ expect.extend({
 });
 
 export function toContainReactHtml<Props>(
-  this: MatcherState,
+  this: MatcherContext,
   node: Node<Props, HtmlNodeExtensions>,
   text: string,
 ) {
@@ -63,7 +63,7 @@ export function toContainReactHtml<Props>(
 }
 
 export function toHaveReactDataProps(
-  this: MatcherState,
+  this: MatcherContext,
   node: Node<unknown>,
   data: {[key: string]: string},
 ) {

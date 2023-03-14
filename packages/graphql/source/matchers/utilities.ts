@@ -11,7 +11,7 @@ import {GraphQLController} from '../fixtures';
 
 export function assertIsGraphQLController(
   graphql: unknown,
-  {expectation, isNot}: {expectation: string; isNot: boolean},
+  {expectation, isNot = false}: {expectation: string; isNot?: boolean},
 ) {
   if (!(graphql instanceof GraphQLController)) {
     throw new Error(

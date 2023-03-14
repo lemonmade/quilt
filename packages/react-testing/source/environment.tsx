@@ -374,7 +374,7 @@ export function createEnvironment<
           const children = getChildren();
 
           const getNestedDescendants = (
-            child: typeof children[number],
+            child: (typeof children)[number],
           ): typeof children => {
             return [
               child,

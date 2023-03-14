@@ -1,5 +1,5 @@
 import type {ComponentType} from 'react';
-import type {MatcherState} from 'expect';
+import type {MatcherContext} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -20,7 +20,7 @@ import {
 export function toContainReactComponent<
   Type extends string | ComponentType<any>,
 >(
-  this: MatcherState,
+  this: MatcherContext,
   node: Node<any, any>,
   type: Type,
   props?: Partial<PropsFor<Type>>,
@@ -84,7 +84,7 @@ export function toContainReactComponent<
 export function toContainReactComponentTimes<
   Type extends string | ComponentType<any>,
 >(
-  this: MatcherState,
+  this: MatcherContext,
   node: Node<unknown>,
   type: Type,
   times: number,

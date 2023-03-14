@@ -94,9 +94,11 @@ async function getPackageRoot(): Promise<string> {
     packageRootPromise = (async () => {
       const {packageDirectory} = await import('pkg-dir');
 
-      return packageDirectory({
+      const result = await packageDirectory({
         cwd: path.dirname(fileURLToPath(import.meta.url)),
       });
+
+      return result!;
     })();
   }
 

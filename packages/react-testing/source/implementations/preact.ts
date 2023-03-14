@@ -201,7 +201,7 @@ interface PreactComponent<P> extends Component<P> {
 
 interface PreactVNode<P> extends VNode<P> {
   // the DOM node
-  __e: typeof window['Node'] | null;
+  __e: (typeof window)['Node'] | null;
 
   // the component instance
   __c: PreactComponent<P> | null;

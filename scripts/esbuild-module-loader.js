@@ -29,7 +29,7 @@ export async function resolve(specifier, context, defaultResolve) {
 
   if (extensionsRegex.test(specifier)) {
     const newUrl = new URL(specifier, parentURL);
-    return {url: newUrl.href, format: 'module'};
+    return {url: newUrl.href, shortCircuit: true, format: 'module'};
   }
 
   if (
@@ -43,7 +43,7 @@ export async function resolve(specifier, context, defaultResolve) {
       newUrl = new URL(`${specifier}/index.ts`, parentURL);
     }
 
-    return {url: newUrl.href, format: 'module'};
+    return {url: newUrl.href, shortCircuit: true, format: 'module'};
   }
 
   if (specifier.startsWith('@quilted')) {

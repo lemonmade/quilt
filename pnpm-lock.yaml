@@ -108,17 +108,6 @@ importers:
       '@tanstack/react-query': 4.26.1_react@packages+react
       react: link:../../packages/react
 
-  integrations/swr:
-    specifiers:
-      '@quilted/useful-types': ^0.2.13
-      react: workspace:@quilted/react@^18.2.0
-      swr: ^2.1.0
-    dependencies:
-      '@quilted/useful-types': link:../../packages/useful-types
-    devDependencies:
-      react: link:../../packages/react
-      swr: 2.1.0_react@packages+react
-
   packages/async:
     specifiers:
       '@babel/core': ^7.21.0
@@ -9974,16 +9963,6 @@ packages:
   /svg-tags/1.0.0:
     resolution: {integrity: sha512-ovssysQTa+luh7A5Weu3Rta6FJlFBBbInjOh722LIt6klpU2/HtdUbszju/G4devcvk8PGt7FCLv5wftu3THUA==}
     dev: false
-
-  /swr/2.1.0_react@packages+react:
-    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
-    engines: {pnpm: '7'}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: link:packages/react
-      use-sync-external-store: 1.2.0_react@packages+react
-    dev: true
 
   /symbol-observable/4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}

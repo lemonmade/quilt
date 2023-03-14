@@ -15,7 +15,7 @@ import {isNode} from '../environment';
 
 export function assertIsNode(
   node: unknown,
-  {expectation, isNot}: {expectation: string; isNot: boolean},
+  {expectation, isNot = false}: {expectation: string; isNot?: boolean},
 ) {
   if (node == null) {
     throw new Error(
@@ -60,7 +60,7 @@ export function assertIsNode(
 
 export function assertIsType(
   type: unknown,
-  {expectation, isNot}: {expectation: string; isNot: boolean},
+  {expectation, isNot = false}: {expectation: string; isNot?: boolean},
 ) {
   if (type == null) {
     throw new Error(

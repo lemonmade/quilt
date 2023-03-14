@@ -475,7 +475,7 @@ async function runStepsInStage(
         if (checkStep === step) continue;
 
         const needResult = step.needs(checkStep as any);
-        const stepNeed: typeof needs[number] =
+        const stepNeed: (typeof needs)[number] =
           typeof needResult === 'boolean'
             ? {step: checkStep, need: needResult}
             : {...needResult, step: checkStep};

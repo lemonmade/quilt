@@ -9,7 +9,6 @@
 '@quilted/react-http': patch
 '@quilted/typescript': patch
 '@quilted/polyfills': patch
-'@quilted/swr': patch
 '@quilted/cli-kit': patch
 '@quilted/graphql': patch
 '@quilted/testing': patch

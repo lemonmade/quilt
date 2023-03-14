@@ -1,6 +1,9 @@
 {
   "extends": "@quilted/typescript/workspace.json",
-  "compilerOptions": {"outDir": "build/typescript/workspace"},
+  "compilerOptions": {
+    "outDir": "build/typescript/workspace",
+    "skipLibCheck": true
+  },
   "include": [
     "config/**/*.ts",
     "scripts/**/*.ts",
@@ -16,13 +19,11 @@
     {"path": "./integrations/aws"},
     {"path": "./integrations/cloudflare"},
     {"path": "./integrations/react-query"},
-    {"path": "./integrations/swr"},
     {"path": "./packages/async"},
     {"path": "./packages/async"},
     {"path": "./packages/cli-kit"},
     {"path": "./packages/craft"},
     {"path": "./packages/create"},
-    {"path": "./packages/create-quilt-app"},
     {"path": "./packages/events"},
     {"path": "./packages/graphql"},
     {"path": "./packages/http"},

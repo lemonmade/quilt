@@ -1,4 +1,4 @@
-import type {MatcherState} from 'expect';
+import type {MatcherContext} from 'expect';
 import {
   matcherHint,
   printReceived,
@@ -11,7 +11,7 @@ import type {Node} from '../types';
 import {assertIsNode, diffPropsForNode} from './utilities';
 
 export function toHaveReactProps<Props>(
-  this: MatcherState,
+  this: MatcherContext,
   node: Node<Props, any>,
   props: Partial<Props>,
 ) {

@@ -102,7 +102,7 @@ export function createAsyncComponent<
   const renderImmediately = render === 'server' || isBrowser;
   const hydrateImmediately = renderImmediately && hydrate === 'immediate';
 
-  const getComponent = (module: typeof asyncModule['loaded']) => {
+  const getComponent = (module: (typeof asyncModule)['loaded']) => {
     if (!renderImmediately) return undefined;
     return module && 'default' in module ? module.default : module;
   };

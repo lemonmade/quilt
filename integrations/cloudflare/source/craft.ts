@@ -134,7 +134,7 @@ export function cloudflareWorkers({
                     {
                       body: request.body as any,
                       method: request.method,
-                      headers: request.headers,
+                      headers: request.headers as any,
                       cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
                     },
                   );
@@ -232,7 +232,7 @@ export function cloudflarePages({
                     {
                       body: request.body as any,
                       method: request.method,
-                      headers: request.headers,
+                      headers: request.headers as any,
                       cf: (await HTTPPlugin.getRequestMeta(nodeRequest)).cf,
                     },
                   );
