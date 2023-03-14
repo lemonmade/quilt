@@ -371,20 +371,7 @@ export function createEnvironment<
 
       function getDescendants() {
         if (resolvedDescendants == null) {
-          const children = getChildren();
-
-          const getNestedDescendants = (
-            child: typeof children[number],
-          ): typeof children => {
-            return [
-              child,
-              ...(typeof child === 'string'
-                ? []
-                : child.children.flatMap(getNestedDescendants)),
-            ];
-          };
-
-          resolvedDescendants = getChildren().flatMap(getNestedDescendants);
+          resolvedDescendants = collectDescendants([], getChildren());
         }
 
         return resolvedDescendants;
@@ -842,6 +829,24 @@ export function isNode<Extensions extends PlainObject = EmptyObject>(
   maybeNode: unknown,
 ): maybeNode is BaseNode<unknown, Extensions> {
   return maybeNode != null && (maybeNode as any)[IS_NODE];
+}
+
+// We do a highly optimized loop since this can be called for very
+// large trees of components.
+function collectDescendants(
+  descendants: BaseNode<any>['descendants'],
+  children: BaseNode<any>['children'],
+) {
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i]!;
+    descendants.push(child);
+
+    if (typeof child !== 'string' && child.children.length > 0) {
+      collectDescendants(descendants, child.children);
+    }
+  }
+
+  return descendants;
 }
 
 function isPromise<T>(promise: unknown): promise is Promise<T> {
