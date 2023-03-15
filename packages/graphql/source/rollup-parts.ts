@@ -46,6 +46,7 @@ async function loadDocument(
   plugin: TransformPluginContext,
   add?: (document: DocumentNode, level: number) => void,
   level = 0,
+  seen = new Set<string>(),
 ) {
   const {imports, source} = extractImports(code);
   const document = parse(source);
@@ -58,6 +59,10 @@ async function loadDocument(
 
   const resolvedImports = await Promise.all(
     imports.map(async (imported) => {
+      if (seen.has(imported)) return;
+
+      seen.add(imported);
+
       const resolvedId = await plugin.resolve(imported, file);
 
       if (resolvedId == null) {
@@ -73,12 +78,20 @@ async function loadDocument(
         encoding: 'utf8',
       });
 
-      return loadDocument(contents, resolvedId.id, plugin, add, level + 1);
+      return loadDocument(
+        contents,
+        resolvedId.id,
+        plugin,
+        add,
+        level + 1,
+        seen,
+      );
     }),
   );
 
-  for (const {definitions} of resolvedImports) {
-    (document.definitions as any[]).push(...definitions);
+  for (const importedDocument of resolvedImports) {
+    if (importedDocument == null) continue;
+    (document.definitions as any[]).push(...importedDocument.definitions);
   }
 
   return document;
