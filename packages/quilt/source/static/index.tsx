@@ -5,8 +5,8 @@ import {
   styleAssetPreloadAttributes,
   scriptAssetAttributes,
   scriptAssetPreloadAttributes,
-  type AssetManifest,
-} from '@quilted/async/server';
+  type BrowserAssets,
+} from '@quilted/assets';
 import {renderHtmlToString, Html} from '@quilted/react-html/server';
 import type {RouteDefinition} from '@quilted/react-router';
 import {
@@ -32,7 +32,7 @@ interface RenderableRoute {
 
 export interface Options {
   routes: string[];
-  assets: AssetManifest<{modules: boolean}>;
+  assets: BrowserAssets<any>;
   crawl?: boolean;
   baseUrl?: string;
   prettify?: boolean;
@@ -228,71 +228,53 @@ export async function renderStatic(
       },
     });
 
-    const usedAssets = asyncAssets.used({timing: 'load'});
-
-    const [moduleAssets, modulePreload, nomoduleAssets] = await Promise.all([
-      assets.assets({async: usedAssets, context: {modules: true}}),
-      assets.asyncAssets(asyncAssets.used({timing: 'preload'}), {
-        context: {modules: true},
-      }),
-      assets.assets({async: usedAssets, context: {modules: false}}),
+    const [mainAssets, preloadAssets] = await Promise.all([
+      assets.entry({modules: asyncAssets.used({timing: 'load'})}),
+      assets.modules(asyncAssets.used({timing: 'preload'})),
     ]);
-
-    // We don’t want to load styles from both bundles, so we only use module styles,
-    // since modules are intended to be the default and CSS (usually) doesn’t
-    // have features that meaningfully break older user agents.
-    const styles =
-      moduleAssets.styles.length > 0
-        ? moduleAssets.styles
-        : nomoduleAssets.styles;
 
     const minifiedHtml = renderHtmlToString(
       <Html
         manager={htmlManager}
         headEndContent={
           <>
-            {[...styles].map((style) => {
+            {[...mainAssets.styles].map((style) => {
               const attributes = styleAssetAttributes(style, {baseUrl: url});
-              return <link key={style.source} {...attributes} />;
+              return <link key={style.source} {...(attributes as any)} />;
             })}
 
-            {[...moduleAssets.scripts].map((script) => {
+            {[...mainAssets.scripts].map((script) => {
               const attributes = scriptAssetAttributes(script, {
                 baseUrl: url,
               });
 
-              return <script key={script.source} {...attributes} />;
-            })}
-
-            {[...nomoduleAssets.scripts].map((script) => {
-              const attributes = scriptAssetAttributes(script, {
-                baseUrl: url,
-              });
-
-              return (
-                <script
-                  key={script.source}
-                  {...attributes}
-                  // @ts-expect-error Rendering to HTML, so using the lowercase name
-                  nomodule={moduleAssets.scripts.length > 0 ? true : undefined}
-                />
+              return attributes.type === 'module' ? (
+                <>
+                  <script key={script.source} {...(attributes as any)} />
+                  <link
+                    key={script.source}
+                    {...(scriptAssetPreloadAttributes(script) as any)}
+                  />
+                </>
+              ) : (
+                <script key={script.source} {...(attributes as any)} />
               );
             })}
 
-            {[...modulePreload.styles].map((style) => {
+            {[...preloadAssets.styles].map((style) => {
               const attributes = styleAssetPreloadAttributes(style, {
                 baseUrl: url,
               });
 
-              return <link key={style.source} {...attributes} />;
+              return <link key={style.source} {...(attributes as any)} />;
             })}
 
-            {[...modulePreload.scripts].map((script) => {
+            {[...preloadAssets.scripts].map((script) => {
               const attributes = scriptAssetPreloadAttributes(script, {
                 baseUrl: url,
               });
 
-              return <link key={script.source} {...attributes} />;
+              return <link key={script.source} {...(attributes as any)} />;
             })}
           </>
         }

@@ -101,8 +101,10 @@ export function appBuild({
             rollupOutputs,
             rollupPlugins,
             rollupNodeBundle,
+            quiltAssetsManifestId,
             quiltAssetsManifestPath,
-            quiltAssetsManifestMetadata,
+            quiltAssetsManifestPriority,
+            quiltAssetsManifestCacheKey,
             quiltAssetBaseUrl,
             quiltAssetOutputRoot,
             quiltAsyncAssetBaseUrl,
@@ -153,33 +155,24 @@ export function appBuild({
 
           browserslistTargets?.(() => browserTargets.targets);
 
-          quiltAssetsManifestMetadata?.(async (metadata) => {
-            const [{getUserAgentRegex}, modules] = await Promise.all([
-              import('browserslist-useragent-regexp'),
-              targetsSupportModules(browserTargets.targets),
-            ]);
-
-            Object.assign(metadata, {
-              priority: browserTargets.priority,
-              browsers: getUserAgentRegex({
-                browsers: browserTargets.targets,
-                ignoreMinor: true,
-                ignorePatch: true,
-                allowHigherVersions: true,
-              }).source,
-              modules,
-            } as QuiltMetadata);
-
-            return metadata;
-          });
-
           quiltAsyncAssetBaseUrl?.(() => quiltAssetBaseUrl!.run());
+
+          quiltAssetsManifestId?.((id) => id ?? browserTargets.name);
 
           quiltAssetsManifestPath?.(() =>
             project.fs.buildPath(
               `manifests/manifest${targetFilenamePart}.json`,
             ),
           );
+
+          quiltAssetsManifestPriority?.(
+            (priority) => priority ?? browserTargets.priority,
+          );
+
+          quiltAssetsManifestCacheKey?.((cacheKey) => ({
+            browserGroup: browserTargets.name,
+            ...cacheKey,
+          }));
 
           postcssPresetEnvOptions?.((options) => ({
             ...options,

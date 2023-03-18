@@ -4,7 +4,7 @@ import {addRollupNodeBundleInclusion} from '../tools/rollup';
 import type {RollupNodeBundle} from '../tools/rollup';
 
 import {
-  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
 import {createProjectPlugin} from '../kit';
@@ -150,8 +150,8 @@ function setupConfiguration(
         import '@quilted/quilt/global';
         import {jsx} from 'react/jsx-runtime';
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-        import {createAssetManifest} from ${JSON.stringify(
-          MAGIC_MODULE_APP_ASSET_MANIFEST,
+        import {createBrowserAssets} from ${JSON.stringify(
+          MAGIC_MODULE_BROWSER_ASSETS,
         )};
         import {createServerRender, createRequestRouter} from '@quilted/quilt/server';
 
@@ -159,7 +159,7 @@ function setupConfiguration(
 
         router.get(
           createServerRender(() => jsx(App), {
-            assets: createAssetManifest(),
+            assets: createBrowserAssets(),
           }),
         );
   

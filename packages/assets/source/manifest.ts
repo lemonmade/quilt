@@ -3,6 +3,6 @@ export type {
   AssetsBuildManifestEntry,
 } from './manifest/types';
 export {
-  createAssetsEntryFromManifest,
+  createBrowserAssetsEntryFromManifest,
   createBrowserAssetsFromManifests,
 } from './manifest/runtime';

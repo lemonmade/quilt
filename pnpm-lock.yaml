@@ -130,6 +130,7 @@ importers:
   packages/async:
     specifiers:
       '@babel/types': '>=7.0.0'
+      '@quilted/assets': ^0.0.0
       '@quilted/events': ^0.1.16
       '@types/babel__core': '>=7.0.0'
       '@types/babel__traverse': '>=7.0.0'
@@ -139,6 +140,7 @@ importers:
       es-module-lexer: ^0.4.0
       magic-string: ^0.25.0
     dependencies:
+      '@quilted/assets': link:../assets
       '@quilted/events': link:../events
       '@types/web': 0.0.59
       common-tags: 1.8.2

@@ -59,7 +59,7 @@ import {createRequestRouter} from '@quilted/quilt/request-router';
 // access to a `@quilted/async` `AssetManifest` object that knows how to resolve
 // the right assets during server rendering, including the ability to select
 // the files with the right browser targets.
-import {createAssetManifest} from '@quilted/quilt/magic/asset-manifest';
+import {createBrowserAssets} from '@quilted/quilt/magic/assets';
 
 const router = createRequestRouter();
 
@@ -73,7 +73,7 @@ router.get(
       return <App />;
     },
     {
-      assets: createAssetManifest(),
+      assets: createBrowserAssets(),
     },
   ),
 );

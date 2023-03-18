@@ -38,7 +38,7 @@ export function createBrowserAssetsFromManifests<CacheKey = AssetsCacheKey>(
 
       if (manifest == null) return {styles: [], scripts: []};
 
-      return createAssetsEntryFromManifest(manifest, {
+      return createBrowserAssetsEntryFromManifest(manifest, {
         ...options,
         entry: true,
       });
@@ -48,7 +48,7 @@ export function createBrowserAssetsFromManifests<CacheKey = AssetsCacheKey>(
 
       if (manifest == null) return {styles: [], scripts: []};
 
-      return createAssetsEntryFromManifest(manifest, {
+      return createBrowserAssetsEntryFromManifest(manifest, {
         ...options,
         modules,
         entry: false,
@@ -62,7 +62,10 @@ export function createBrowserAssetsFromManifests<CacheKey = AssetsCacheKey>(
   ): AssetsBuildManifest<CacheKey> | undefined {
     if (cacheKey == null) return manifestMap.get(DEFAULT_CACHE_KEY_NAME);
 
-    return manifestMap.get(normalizeCacheKey(cacheKey));
+    return (
+      manifestMap.get(normalizeCacheKey(cacheKey)) ??
+      manifestMap.get(DEFAULT_CACHE_KEY_NAME)
+    );
   }
 
   function normalizeCacheKey(cacheKey: CacheKey) {
@@ -80,7 +83,7 @@ export function createBrowserAssetsFromManifests<CacheKey = AssetsCacheKey>(
   }
 }
 
-export function createAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
+export function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
   manifest: AssetsBuildManifest<CacheKey>,
   {
     entry,

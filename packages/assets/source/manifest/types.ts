@@ -2,6 +2,7 @@ import type {AssetsCacheKey} from '../cache-key';
 
 export interface AssetsBuildManifest<CacheKey = AssetsCacheKey> {
   id?: string;
+  priority?: number;
   cacheKey?: CacheKey;
   attributes?: {
     styles?: Record<string, string | boolean | number>;
