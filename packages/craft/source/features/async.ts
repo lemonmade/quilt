@@ -25,9 +25,13 @@ export interface AsyncHooks {
     NonNullable<RollupOptions['assetBaseUrl']>
   >;
   quiltAssetsManifest: WaterfallHookWithDefault<boolean>;
+  quiltAssetsManifestId: WaterfallHookWithDefault<ManifestOptions['id']>;
   quiltAssetsManifestPath: WaterfallHookWithDefault<ManifestOptions['path']>;
-  quiltAssetsManifestMetadata: WaterfallHookWithDefault<
-    NonNullable<ManifestOptions['metadata']>
+  quiltAssetsManifestPriority: WaterfallHookWithDefault<
+    ManifestOptions['priority']
+  >;
+  quiltAssetsManifestCacheKey: WaterfallHookWithDefault<
+    ManifestOptions['cacheKey']
   >;
 }
 
@@ -69,16 +73,20 @@ export function asyncQuilt({
         quiltAssetsManifest: waterfall<boolean>({
           default: true,
         }),
+        quiltAssetsManifestId: waterfall<ManifestOptions['id']>({
+          default: undefined,
+        }),
         quiltAssetsManifestPath: waterfall<ManifestOptions['path']>({
           default:
             typeof manifest === 'string'
               ? manifest
               : project.fs.buildPath('async-manifest.json'),
         }),
-        quiltAssetsManifestMetadata: waterfall<
-          NonNullable<ManifestOptions['metadata']>
-        >({
-          default: () => ({}),
+        quiltAssetsManifestPriority: waterfall<ManifestOptions['priority']>({
+          default: undefined,
+        }),
+        quiltAssetsManifestCacheKey: waterfall<ManifestOptions['cacheKey']>({
+          default: undefined,
         }),
       }));
 
@@ -114,13 +122,20 @@ export function asyncQuilt({
         quiltAssetsManifest: waterfall<boolean>({
           default: false,
         }),
-        quiltAssetsManifestPath: waterfall<ManifestOptions['path']>({
-          default: project.fs.buildPath('async-manifest.json'),
+        quiltAssetsManifestId: waterfall<ManifestOptions['id']>({
+          default: undefined,
         }),
-        quiltAssetsManifestMetadata: waterfall<
-          NonNullable<ManifestOptions['metadata']>
-        >({
-          default: () => ({}),
+        quiltAssetsManifestPath: waterfall<ManifestOptions['path']>({
+          default:
+            typeof manifest === 'string'
+              ? manifest
+              : project.fs.buildPath('async-manifest.json'),
+        }),
+        quiltAssetsManifestPriority: waterfall<ManifestOptions['priority']>({
+          default: undefined,
+        }),
+        quiltAssetsManifestCacheKey: waterfall<ManifestOptions['cacheKey']>({
+          default: undefined,
         }),
       }));
 
@@ -161,8 +176,10 @@ async function getAsyncRollupPlugin(
     quiltAsyncPreload,
     quiltAsyncAssetBaseUrl,
     quiltAssetsManifest,
+    quiltAssetsManifestId,
     quiltAssetsManifestPath,
-    quiltAssetsManifestMetadata,
+    quiltAssetsManifestPriority,
+    quiltAssetsManifestCacheKey,
   }: ResolvedHooks<AsyncHooks>,
   options: Partial<RollupOptions> = {},
 ) {
@@ -171,22 +188,28 @@ async function getAsyncRollupPlugin(
     preload,
     assetBaseUrl,
     includeManifest,
+    manifestId,
     manifestPath,
-    manifestMetadata,
+    manifestPriority,
+    manifestCacheKey,
   ] = await Promise.all([
     import('@quilted/async/rollup'),
     quiltAsyncPreload!.run(),
     quiltAsyncAssetBaseUrl!.run(),
     quiltAssetsManifest!.run(),
+    quiltAssetsManifestId!.run(),
     quiltAssetsManifestPath!.run(),
-    quiltAssetsManifestMetadata!.run(),
+    quiltAssetsManifestPriority!.run(),
+    quiltAssetsManifestCacheKey!.run(),
   ]);
 
   return asyncQuilt({
     preload,
     manifest: includeManifest && {
+      id: manifestId,
       path: manifestPath,
-      metadata: manifestMetadata,
+      priority: manifestPriority,
+      cacheKey: manifestCacheKey,
     },
     assetBaseUrl,
     ...options,

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import {createRequire} from 'module';
 import type {IncomingMessage, ServerResponse} from 'http';
-import type {AssetBuild} from '@quilted/async/server';
+import type {AssetsBuildManifest} from '@quilted/quilt';
 
 import {stripIndent} from 'common-tags';
 import type {ViteDevServer} from 'vite';
@@ -23,7 +23,7 @@ import type {EnvironmentOptions} from './magic-module-env';
 import {
   MAGIC_MODULE_REQUEST_ROUTER,
   MAGIC_MODULE_APP_COMPONENT,
-  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_BROWSER_ASSETS,
 } from '../constants';
 
 export const STEP_NAME = 'Quilt.App.Develop';
@@ -173,13 +173,13 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       import App from ${JSON.stringify(
                         MAGIC_MODULE_APP_COMPONENT,
                       )};
-                      import {createAssetManifest} from ${JSON.stringify(
-                        MAGIC_MODULE_APP_ASSET_MANIFEST,
+                      import {createBrowserAssets} from ${JSON.stringify(
+                        MAGIC_MODULE_BROWSER_ASSETS,
                       )};
                       import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
       
                       export default createServerRenderingRequestRouter(() => <App />, {
-                        assets: createAssetManifest(),
+                        assets: createBrowserAssets(),
                       });
                     `;
 
@@ -189,7 +189,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               {
                 name: '@quilted/magic-module/app/asset-loader',
                 resolveId(id) {
-                  if (id !== MAGIC_MODULE_APP_ASSET_MANIFEST) return null;
+                  if (id !== MAGIC_MODULE_BROWSER_ASSETS) return null;
 
                   return project.fs.resolvePath(
                     MAGIC_MODULE_ASSET_MANIFEST_ENTRY,
@@ -203,67 +203,55 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                     return null;
                   }
 
-                  const baseAssets: Omit<AssetBuild, 'async'> = {
+                  const baseManifest: Omit<AssetsBuildManifest, 'modules'> = {
                     id: 'dev',
-                    default: true,
-                    metadata: {
-                      priority: 0,
-                      modules: true,
+                    priority: 0,
+                    attributes: {
+                      scripts: {type: 'module'},
                     },
-                    entry: {
+                    assets: [
+                      `/${MAGIC_MODULE_GLOBALS}`,
+                      `/${MAGIC_MODULE_BROWSER_ENTRY}`,
+                    ],
+                    entries: {
                       default: {
-                        scripts: [
-                          {
-                            source: `/${MAGIC_MODULE_GLOBALS}`,
-                            attributes: {
-                              type: 'module',
-                            },
-                          },
-                          {
-                            source: `/${MAGIC_MODULE_BROWSER_ENTRY}`,
-                            attributes: {
-                              type: 'module',
-                            },
-                          },
-                        ],
+                        scripts: [0, 1],
                         styles: [],
                       },
                     },
                   };
 
                   return stripIndent`
-                    import {createAssetManifest as createBaseAssetManifest} from '@quilted/quilt/server';
+                    import {createBrowserAssetsFromManifests} from '@quilted/quilt/server';
 
-                    const ASSETS = ${JSON.stringify(baseAssets)};
-                    ASSETS.async = new Proxy(
+                    const MANIFEST = ${JSON.stringify(baseManifest)};
+                    MANIFEST.modules = new Proxy(
                       {},
                       {
                         get(_, key) {
                           if (typeof key !== 'string') {
                             return undefined;
                           }
+
+                          let index = MANIFEST.assets.indexOf(key);
+
+                          if (index < 0) {
+                            MANIFEST.assets.push(key);
+                            index = MANIFEST.assets.length - 1;
+                          }
   
                           return {
-                            scripts: [
-                              {
-                                source: key,
-                                attributes: {
-                                  type: 'module',
-                                },
-                              },
-                            ],
+                            scripts: [index],
                             styles: [],
                           };
                         },
                       },
                     );
 
-                    export function createAssetManifest() {
-                      return createBaseAssetManifest({
-                        getBuild() {
-                          return ASSETS;
-                        },
-                      })
+                    export function createBrowserAssets() {
+                      return createBrowserAssetsFromManifests([], {
+                        defaultManifest: MANIFEST,
+                      });
                     }
                   `;
                 },

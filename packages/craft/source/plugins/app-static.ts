@@ -4,13 +4,13 @@ import {rm} from 'fs/promises';
 
 import {stripIndent} from 'common-tags';
 
-import type {HttpState, AssetBuild} from '@quilted/quilt/server';
+import type {HttpState, AssetsBuildManifest} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
 import {createProjectPlugin} from '../kit';
 import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
 import {
-  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants';
 
@@ -198,8 +198,8 @@ export function appStatic({
             postcssCSSModulesOptions,
             rollupInput,
             rollupPlugins,
-            rollupExternals,
             rollupOutputs,
+            rollupNodeBundle,
             quiltAsyncPreload,
             quiltAssetsManifest,
             quiltAssetOutputRoot,
@@ -221,11 +221,15 @@ export function appStatic({
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
-          // Let prettier use native Node resolution, we include it as
-          // a dependency.
-          rollupExternals?.((externals) => {
-            // externals.push('prettier');
-            return externals;
+          rollupNodeBundle?.(() => {
+            return {
+              dependencies: true,
+              devDependencies: true,
+              peerDependencies: true,
+              // Let prettier use native Node resolution, we include it as
+              // a dependency.
+              exclude: ['prettier'],
+            };
           });
 
           quiltAsyncPreload?.(() => false);
@@ -275,14 +279,14 @@ export function appStatic({
             plugins.unshift({
               name: '@quilted/magic-module/static-asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) {
+                if (id === MAGIC_MODULE_BROWSER_ASSETS) {
                   return id;
                 }
 
                 return null;
               },
               async load(source) {
-                if (source !== MAGIC_MODULE_APP_ASSET_MANIFEST) {
+                if (source !== MAGIC_MODULE_BROWSER_ASSETS) {
                   return null;
                 }
 
@@ -298,65 +302,79 @@ export function appStatic({
                         manifestFile,
                       );
 
-                      return JSON.parse(manifestString) as AssetBuild;
+                      return JSON.parse(
+                        manifestString,
+                      ) as AssetsBuildManifest<any>;
                     }),
                   )
                 )
                   // Sort in ascending priority, we want to get the lowest module and nomodule targets
                   .sort(
                     (manifestA, manifestB) =>
-                      (manifestB.metadata.priority ?? 0) -
-                      (manifestA.metadata.priority ?? 0),
+                      (manifestB.priority ?? 0) - (manifestA.priority ?? 0),
                   );
 
                 const defaultManifest = manifests[0];
                 const moduleManifest = manifests.find(
-                  (manifest) => manifest.metadata.modules,
+                  (manifest) => manifest.attributes?.scripts?.type === 'module',
                 );
                 const noModuleManifest =
                   defaultManifest === moduleManifest
                     ? undefined
                     : defaultManifest;
 
-                const manifestToCode = (manifest?: AssetBuild) =>
+                const manifestToCode = (manifest?: AssetsBuildManifest<any>) =>
                   manifest == null
                     ? 'undefined'
                     : `JSON.parse(${JSON.stringify(JSON.stringify(manifest))})`;
 
                 return stripIndent`
-                  import {createAssetManifest} from '@quilted/quilt/server';
+                  import {createBrowserAssetsEntryFromManifest} from '@quilted/quilt/server';
 
-                  export default function createManifest() {
+                  export function createBrowserAssets() {
                     const noModuleManifest = ${manifestToCode(
                       noModuleManifest,
                     )};
                     const moduleManifest = ${manifestToCode(moduleManifest)};
 
-                    return createAssetManifest({
-                      getBuild({modules}) {
-                        if (modules) {
-                          if (moduleManifest) return moduleManifest;
-  
-                          return {
-                            metadata: {modules: true},
-                            async: {},
-                            entry: {
-                              default: {scripts: [], styles: []},
-                            },
-                          };
-                        }
-  
-                        if (noModuleManifest) return noModuleManifest;
-  
-                        return {
-                          metadata: {modules: false},
-                          async: {},
-                          entry: {
-                            default: {scripts: [], styles: []},
-                          },
-                        };
+                    return {
+                      entry(options) {
+                        return assetEntry({...options, entry: true});
                       },
-                    });
+                      modules(modules, options) {
+                        return assetEntry({...options, entry: false, modules});
+                      },
+                    }
+
+                    function assetEntry(options) {
+                      const moduleManifestEntry = moduleManifest && createBrowserAssetsEntryFromManifest(moduleManifest, options);
+                      const noModuleManifestEntry = noModuleManifest && createBrowserAssetsEntryFromManifest(noModuleManifest, options);
+
+                      if (moduleManifestEntry == null) {
+                        return noModuleManifestEntry;
+                      } else if (noModuleManifestEntry == null) {
+                        return moduleManifestEntry;
+                      }
+
+                      return {
+                        // We don’t want to load styles from both bundles, so we only use module styles,
+                        // since modules are intended to be the default and CSS (usually) doesn’t
+                        // have features that meaningfully break older user agents.
+                        styles: moduleManifestEntry.styles,
+                        scripts: [
+                          ...noModuleManifestEntry.scripts.map((script) => {
+                            return {
+                              ...script,
+                              attributes: {
+                                ...script.attributes,
+                                nomodule: true,
+                              },
+                            };
+                          }),
+                          ...moduleManifestEntry.scripts,
+                        ],
+                      };
+                    }
                   }
                 `;
               },
@@ -384,13 +402,13 @@ export function appStatic({
                 return stripIndent`
                   import '@quilted/quilt/global';
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-                  import {createAssetManifest} from ${JSON.stringify(
-                    MAGIC_MODULE_APP_ASSET_MANIFEST,
+                  import {createBrowserAssets} from ${JSON.stringify(
+                    MAGIC_MODULE_BROWSER_ASSETS,
                   )};
                   import {renderStatic} from '@quilted/quilt/static';
 
                   export default async function render(options) {
-                    await renderStatic(App, {assets: createAssetManifest(), ...options});
+                    await renderStatic(App, {assets: createBrowserAssets(), ...options});
                   }
                 `;
               },

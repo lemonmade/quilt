@@ -1,3 +1,21 @@
+export {
+  styleAssetAttributes,
+  styleAssetPreloadAttributes,
+  scriptAssetAttributes,
+  scriptAssetPreloadAttributes,
+  createBrowserAssetsEntryFromManifest,
+  createBrowserAssetsFromManifests,
+} from '@quilted/assets';
+export type {
+  Asset,
+  AssetsCacheKey,
+  BrowserAssets,
+  BrowserAssetsEntry,
+  BrowserAssetSelector,
+  BrowserAssetModuleSelector,
+  AssetsBuildManifest,
+  AssetsBuildManifestEntry,
+} from '@quilted/assets';
 export {createAsyncModule} from '@quilted/async';
 export type {AsyncModule} from '@quilted/async';
 export {
@@ -20,6 +38,7 @@ export type {
   EventTargetFunction,
   EventTargetOn,
 } from '@quilted/events';
+export {useUpdateCacheKey} from '@quilted/react-assets';
 export {
   useAsyncModule,
   useAsyncModulePreload,

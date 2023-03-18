@@ -7,11 +7,13 @@
   "include": ["source"],
   "exclude": ["quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
+    {"path": "../assets"},
     {"path": "../async"},
     {"path": "../events"},
     {"path": "../graphql"},
     {"path": "../polyfills"},
     {"path": "../react"},
+    {"path": "../react-assets"},
     {"path": "../react-async"},
     {"path": "../react-dom"},
     {"path": "../react-graphql"},

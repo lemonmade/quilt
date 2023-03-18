@@ -1,6 +1,6 @@
 import '@quilted/quilt/global';
 import {createRequestRouter, createServerRender} from '@quilted/quilt/server';
-import {createAssetManifest} from '@quilted/quilt/magic/asset-manifest';
+import {createBrowserAssets} from '@quilted/quilt/magic/assets';
 
 const router = createRequestRouter();
 
@@ -12,7 +12,7 @@ router.get(
       return <App />;
     },
     {
-      assets: createAssetManifest(),
+      assets: createBrowserAssets(),
     },
   ),
 );

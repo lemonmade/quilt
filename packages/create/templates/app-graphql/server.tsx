@@ -3,7 +3,7 @@ import '@quilted/quilt/global';
 import {type GraphQLFetch, type GraphQLData} from '@quilted/quilt';
 import {createRequestRouter, json} from '@quilted/quilt/request-router';
 import {createServerRender} from '@quilted/quilt/server';
-import {createAssetManifest} from '@quilted/quilt/magic/asset-manifest';
+import {createBrowserAssets} from '@quilted/quilt/magic/assets';
 
 import {performGraphQLOperation} from './server/graphql';
 
@@ -42,7 +42,7 @@ router.get(
       return <App fetchGraphQL={fetchGraphQL} />;
     },
     {
-      assets: createAssetManifest(),
+      assets: createBrowserAssets(),
     },
   ),
 );

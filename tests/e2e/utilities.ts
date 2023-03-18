@@ -387,10 +387,20 @@ export async function buildAppAndOpenPage(
   const {url, server} = await buildAppAndRunServer(workspace, build);
   const targetUrl = new URL(path, url);
 
-  const page = await workspace.browser.open(targetUrl, {
+  const page = await openPageAndWaitForNavigation(workspace, targetUrl, {
     ...options,
     javaScriptEnabled,
   });
+
+  return {page, url: targetUrl, server};
+}
+
+export async function openPageAndWaitForNavigation(
+  workspace: Workspace,
+  url: URL | string,
+  options?: Parameters<Browser['open']>[1],
+) {
+  const page = await workspace.browser.open(url, options);
 
   page.on('console', async (message) => {
     // eslint-disable-next-line no-console
@@ -421,11 +431,11 @@ export async function buildAppAndOpenPage(
   });
 
   await waitForPerformanceNavigation(page, {
-    to: targetUrl,
+    to: url,
     checkCompleteNavigations: true,
   });
 
-  return {page, url: targetUrl, server};
+  return page;
 }
 
 export async function waitForPerformanceNavigation(

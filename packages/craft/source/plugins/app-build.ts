@@ -2,13 +2,13 @@ import * as path from 'path';
 import {rm} from 'fs/promises';
 
 import type {GetManualChunk} from 'rollup';
-import type {Config as BrowserslistConfig} from 'browserslist';
 
 import type {} from '../tools/postcss';
 import type {} from '../features/async';
 
 import {createProjectPlugin, Project, Workspace} from '../kit';
 
+import {BROWSERSLIST_MODULES_QUERY} from './app-base';
 import type {EnvironmentOptions} from './magic-module-env';
 import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
 
@@ -28,20 +28,6 @@ export interface Options {
   browser: AppBrowserOptions;
   env?: EnvironmentOptions;
 }
-
-const BROWSERSLIST_MODULES_QUERY =
-  'extends @quilted/browserslist-config/modules';
-
-const DEFAULT_BROWSERSLIST_CONFIG: BrowserslistConfig = {
-  defaults: ['extends @quilted/browserslist-config/defaults'],
-  modules: [BROWSERSLIST_MODULES_QUERY],
-  evergreen: ['extends @quilted/browserslist-config/evergreen'],
-};
-
-const DEFAULT_STATIC_BROWSERSLIST_CONFIG: BrowserslistConfig = {
-  defaults: ['extends @quilted/browserslist-config/defaults'],
-  modules: [BROWSERSLIST_MODULES_QUERY],
-};
 
 export interface BrowserTarget {
   name: string;
@@ -77,13 +63,7 @@ declare module '@quilted/sewing-kit' {
 const MAGIC_ENTRY_MODULE = '__quilt__/AppEntry.tsx';
 export const STEP_NAME = 'Quilt.App.Build';
 
-export function appBuild({
-  server,
-  static: isStatic,
-  assets,
-  browser,
-  env,
-}: Options) {
+export function appBuild({assets, browser, env}: Options) {
   return createProjectPlugin({
     name: STEP_NAME,
     build({project, workspace, configure, run}) {
@@ -101,8 +81,10 @@ export function appBuild({
             rollupOutputs,
             rollupPlugins,
             rollupNodeBundle,
+            quiltAssetsManifestId,
             quiltAssetsManifestPath,
-            quiltAssetsManifestMetadata,
+            quiltAssetsManifestPriority,
+            quiltAssetsManifestCacheKey,
             quiltAssetBaseUrl,
             quiltAssetOutputRoot,
             quiltAsyncAssetBaseUrl,
@@ -153,33 +135,24 @@ export function appBuild({
 
           browserslistTargets?.(() => browserTargets.targets);
 
-          quiltAssetsManifestMetadata?.(async (metadata) => {
-            const [{getUserAgentRegex}, modules] = await Promise.all([
-              import('browserslist-useragent-regexp'),
-              targetsSupportModules(browserTargets.targets),
-            ]);
-
-            Object.assign(metadata, {
-              priority: browserTargets.priority,
-              browsers: getUserAgentRegex({
-                browsers: browserTargets.targets,
-                ignoreMinor: true,
-                ignorePatch: true,
-                allowHigherVersions: true,
-              }).source,
-              modules,
-            } as QuiltMetadata);
-
-            return metadata;
-          });
-
           quiltAsyncAssetBaseUrl?.(() => quiltAssetBaseUrl!.run());
+
+          quiltAssetsManifestId?.((id) => id ?? browserTargets.name);
 
           quiltAssetsManifestPath?.(() =>
             project.fs.buildPath(
               `manifests/manifest${targetFilenamePart}.json`,
             ),
           );
+
+          quiltAssetsManifestPriority?.(
+            (priority) => priority ?? browserTargets.priority,
+          );
+
+          quiltAssetsManifestCacheKey?.((cacheKey) => ({
+            browserGroup: browserTargets.name,
+            ...cacheKey,
+          }));
 
           postcssPresetEnvOptions?.((options) => ({
             ...options,
@@ -284,27 +257,9 @@ export function appBuild({
       run(async (step, {configuration}) => {
         const steps: ReturnType<typeof step>[] = [];
 
-        const {default: browserslist} = await import('browserslist');
+        const {quiltAppBrowserTargets} = await configuration();
 
-        const foundConfig =
-          browserslist.findConfig(project.root) ??
-          (isStatic && !server
-            ? DEFAULT_STATIC_BROWSERSLIST_CONFIG
-            : DEFAULT_BROWSERSLIST_CONFIG);
-
-        const browserslistConfig: Record<string, string[]> = {};
-
-        for (const [name, query] of Object.entries(foundConfig)) {
-          browserslistConfig[name] = browserslist(query);
-        }
-
-        // We assume that the smallest set of browser targets is the highest priority,
-        // since that usually means that the bundle sizes will be smaller.
-        const targetsBySize = Object.values(browserslistConfig).sort(
-          (targetsA, targetsB) => {
-            return (targetsA?.length ?? 0) - (targetsB?.length ?? 0);
-          },
-        );
+        const targets = await quiltAppBrowserTargets!.run();
 
         steps.push(
           step({
@@ -338,8 +293,8 @@ export function appBuild({
           }),
         );
 
-        for (const [name, targets] of Object.entries(browserslistConfig)) {
-          if (targets == null || targets.length === 0) continue;
+        for (const [index, {name, browsers}] of targets.entries()) {
+          if (browsers.length === 0) continue;
 
           const normalizedName = name === 'defaults' ? 'default' : name;
 
@@ -352,8 +307,8 @@ export function appBuild({
                   configuration({
                     quiltAppBrowser: {
                       name: normalizedName,
-                      targets,
-                      priority: targetsBySize.indexOf(targets),
+                      targets: browsers,
+                      priority: index,
                     },
                   }),
                   import('../tools/rollup'),

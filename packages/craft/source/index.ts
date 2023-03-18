@@ -197,7 +197,11 @@ export function quiltApp({
         esnext(),
         fromSource(),
         react(),
-        appBase({entry}),
+        appBase({
+          entry,
+          server: Boolean(server),
+          static: Boolean(renderStatic),
+        }),
         aliasWorkspacePackages(),
         // Magic modules
         magicModuleApp(),

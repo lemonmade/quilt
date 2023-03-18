@@ -2,9 +2,10 @@ import * as path from 'path';
 
 import {stripIndent} from 'common-tags';
 import type {ModuleFormat} from 'rollup';
+import type {AssetsBuildManifest} from '@quilted/quilt';
 
 import {
-  MAGIC_MODULE_APP_ASSET_MANIFEST,
+  MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
 } from '../constants';
 import {createProjectPlugin} from '../kit';
@@ -57,6 +58,7 @@ export function appServerBuild({
             outputDirectory,
             rollupPlugins,
             rollupOutputs,
+            quiltAppBrowserTargets,
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerOutputFormat,
@@ -74,7 +76,7 @@ export function appServerBuild({
             plugins.unshift({
               name: '@quilted/magic-module/asset-manifest',
               async resolveId(id) {
-                if (id === MAGIC_MODULE_APP_ASSET_MANIFEST) {
+                if (id === MAGIC_MODULE_BROWSER_ASSETS) {
                   return project.fs.resolvePath(
                     MAGIC_MODULE_ASSET_MANIFEST_ENTRY,
                   );
@@ -102,45 +104,74 @@ export function appServerBuild({
                         manifestFile,
                       );
 
-                      return JSON.parse(manifestString);
+                      return JSON.parse(manifestString) as AssetsBuildManifest;
                     }),
                   )
                 ).sort(
                   (manifestA, manifestB) =>
-                    (manifestA.metadata.priority ?? 0) -
-                    (manifestB.metadata.priority ?? 0),
+                    (manifestA.priority ?? 0) - (manifestB.priority ?? 0),
                 );
 
-                return stripIndent`
-                  import {createAssetManifest as createBaseAssetManifest} from '@quilted/quilt/server';
+                const browserTargets = await quiltAppBrowserTargets!.run();
+                const defaultBrowserTarget =
+                  browserTargets[browserTargets.length - 1];
+                const browserTests: {name: string; test: string}[] = [];
 
-                  export function createAssetManifest() {
+                const {getUserAgentRegex} = await import(
+                  'browserslist-useragent-regexp'
+                );
+
+                for (const target of browserTargets) {
+                  const {name, browsers} = target;
+
+                  browserTests.push({
+                    name,
+                    test:
+                      target === defaultBrowserTarget
+                        ? ''
+                        : getUserAgentRegex({
+                            browsers,
+                            ignoreMinor: true,
+                            ignorePatch: true,
+                            allowHigherVersions: true,
+                          }).source,
+                  });
+                }
+
+                return stripIndent`
+                  import {createBrowserAssetsFromManifests} from '@quilted/quilt/server';
+
+                  export function createBrowserAssets() {
                     const manifests = JSON.parse(${JSON.stringify(
                       JSON.stringify(manifests),
                     )});
-  
-                    for (const manifest of manifests) {
-                      manifest.metadata.browsers =
-                        manifest.metadata.browsers
-                          ? new RegExp(manifest.metadata.browsers)
-                          : undefined;
-                    }
+
+                    const browserGroupTests = [
+                      ${browserTests
+                        .map(
+                          ({name, test}) =>
+                            `[${JSON.stringify(
+                              name,
+                            )}, new RegExp(${JSON.stringify(test)})]`,
+                        )
+                        .join(', ')}
+                    ];
   
                     // The default manifest is the last one, since it has the widest browser support.
                     const defaultManifest = manifests[manifests.length - 1];
 
-                    return createBaseAssetManifest({
-                      getBuild({userAgent}) {
-                        // If there is no user agent, use the default manifest.
-                        if (typeof userAgent !== 'string') return defaultManifest;
-  
-                        for (const manifest of manifests) {
-                          if (manifest.metadata.browsers instanceof RegExp && manifest.metadata.browsers.test(userAgent)) {
-                            return manifest;
+                    return createBrowserAssetsFromManifests(manifests, {
+                      defaultManifest,
+                      cacheKey(request) {
+                        const userAgent = request.headers.get('User-Agent');
+
+                        if (userAgent) {
+                          for (const [name, test] of browserGroupTests) {
+                            if (test.test(userAgent)) return {browserGroup: name};
                           }
                         }
-  
-                        return defaultManifest;
+
+                        return {};
                       },
                     });
                   }

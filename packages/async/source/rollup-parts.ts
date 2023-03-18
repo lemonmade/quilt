@@ -8,17 +8,21 @@ import type {
   OutputChunk,
   OutputBundle,
   NormalizedOutputOptions,
-  ModuleFormat,
 } from 'rollup';
 import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
+import type {
+  AssetsBuildManifest,
+  AssetsBuildManifestEntry,
+} from '@quilted/assets';
 
 import {IMPORT_PREFIX, MODULE_PREFIX} from './constants';
-import type {AssetBuild, AssetsEntry, Asset} from './assets';
 
 export interface ManifestOptions {
+  id?: string;
+  priority?: number;
+  cacheKey?: Record<string, any>;
   path: string;
-  metadata?: Record<string, any>;
 }
 
 export interface Options {
@@ -302,23 +306,41 @@ async function writeManifestForBundle(
   // entry (though, from a separate build).
   const entryChunk = entries[0]!;
 
-  const assetMap = new Map<string, string[]>();
+  const dependencyMap = new Map<string, string[]>();
 
   for (const output of outputs) {
     if (output.type !== 'chunk') continue;
-    assetMap.set(output.fileName, output.imports);
+    dependencyMap.set(output.fileName, output.imports);
   }
 
-  const manifest: Partial<AssetBuild> = {
-    metadata: manifestOptions.metadata ?? {},
-    entry: {
-      default: createAsset(
-        assetBaseUrl,
-        [...entryChunk.imports, entryChunk.fileName],
-        {format, assetMap},
-      ),
+  const assets: string[] = [];
+  const assetIdMap = new Map<string, number>();
+
+  function getAssetId(file: string) {
+    let id = assetIdMap.get(file);
+
+    if (id == null) {
+      assets.push(`${assetBaseUrl}${file}`);
+      id = assets.length - 1;
+      assetIdMap.set(file, id);
+    }
+
+    return id;
+  }
+
+  const manifest: AssetsBuildManifest<any> = {
+    id: manifestOptions.id,
+    priority: manifestOptions.priority,
+    cacheKey: manifestOptions.cacheKey,
+    assets,
+    attributes: format === 'es' ? {scripts: {type: 'module'}} : undefined,
+    entries: {
+      default: createAssetsEntry([...entryChunk.imports, entryChunk.fileName], {
+        dependencyMap,
+        getAssetId,
+      }),
     },
-    async: {},
+    modules: {},
   };
 
   for (const output of outputs) {
@@ -332,10 +354,9 @@ async function writeManifestForBundle(
     // This metadata is added by the rollup plugin for @quilted/async
     const asyncId = this.getModuleInfo(originalModuleId)?.meta.quilt?.asyncId;
 
-    manifest.async![asyncId] = createAsset(
-      assetBaseUrl,
+    manifest.modules![asyncId] = createAssetsEntry(
       [...output.imports, output.fileName],
-      {format, assetMap},
+      {dependencyMap, getAssetId},
     );
   }
 
@@ -343,23 +364,27 @@ async function writeManifestForBundle(
   await writeFile(manifestOptions.path, JSON.stringify(manifest, null, 2));
 }
 
-function createAsset(
-  baseUrl: string,
+function createAssetsEntry(
   files: string[],
-  {format, assetMap}: {format: ModuleFormat; assetMap: Map<string, string[]>},
-): AssetsEntry {
-  const styles: Asset[] = [];
-  const scripts: Asset[] = [];
+  {
+    dependencyMap,
+    getAssetId,
+  }: {
+    dependencyMap: Map<string, string[]>;
+    getAssetId(file: string): number;
+  },
+): AssetsBuildManifestEntry {
+  const styles: number[] = [];
+  const scripts: number[] = [];
 
   const allFiles = new Set<string>();
   const addFile = (file: string) => {
     if (allFiles.has(file)) return;
+    allFiles.add(file);
 
-    for (const dependency of assetMap.get(file) ?? []) {
+    for (const dependency of dependencyMap.get(file) ?? []) {
       addFile(dependency);
     }
-
-    allFiles.add(file);
   };
 
   for (const file of files) {
@@ -368,12 +393,9 @@ function createAsset(
 
   for (const file of allFiles) {
     if (file.endsWith('.css')) {
-      styles.push({source: `${baseUrl}${file}`, attributes: {}});
+      styles.push(getAssetId(file));
     } else {
-      scripts.push({
-        source: `${baseUrl}${file}`,
-        attributes: format === 'es' || format === 'esm' ? {type: 'module'} : {},
-      });
+      scripts.push(getAssetId(file));
     }
   }
 

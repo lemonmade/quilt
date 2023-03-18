@@ -1,11 +1,58 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities';
+import {
+  buildAppAndOpenPage,
+  buildAppAndRunServer,
+  openPageAndWaitForNavigation,
+  stripIndent,
+  withWorkspace,
+} from './utilities';
 import type {Page} from './utilities';
 
 jest.setTimeout(20_000);
 
 describe('app builds', () => {
   describe('assets', () => {
+    it('loads the assets for each browser build', async () => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'package.json': JSON.stringify(
+            {
+              ...JSON.parse(await fs.read('package.json')),
+              browserslist: {
+                ie11: ['ie 11'],
+                defaults: ['extends @quilted/browserslist-config/defaults'],
+              },
+            },
+            null,
+            2,
+          ),
+        });
+
+        const {url} = await buildAppAndRunServer(workspace);
+        const defaultPage = await openPageAndWaitForNavigation(workspace, url);
+        const ie11Page = await openPageAndWaitForNavigation(workspace, url, {
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko',
+        });
+
+        expect(
+          await defaultPage.$('script[src^="/assets/app.default"]'),
+        ).not.toBeNull();
+        expect(
+          await ie11Page.$('script[src^="/assets/app.default"]'),
+        ).toBeNull();
+
+        expect(
+          await defaultPage.$('script[src^="/assets/app.ie11"]'),
+        ).toBeNull();
+        expect(
+          await ie11Page.$('script[src^="/assets/app.ie11"]'),
+        ).not.toBeNull();
+      });
+    });
+
     it('creates a hashed URL pointing to a publicly-served version of the image', async () => {
       await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;

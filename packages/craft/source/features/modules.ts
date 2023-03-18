@@ -178,7 +178,6 @@ export function moduleBuild({
             rollupNodeBundle,
             babelPresetEnvOptions,
             browserslistTargets,
-            quiltAssetsManifestMetadata,
             quiltAssetsManifestPath,
           },
           {quiltModuleBuild},
@@ -206,24 +205,6 @@ export function moduleBuild({
             : `.${quiltModuleBuild.name}`;
 
           browserslistTargets?.(() => quiltModuleBuild.targets);
-
-          quiltAssetsManifestMetadata?.(async (metadata) => {
-            const [{getUserAgentRegex}, modules] = await Promise.all([
-              import('browserslist-useragent-regexp'),
-              targetsSupportModules(quiltModuleBuild.targets),
-            ]);
-
-            return {
-              ...metadata,
-              browsers: getUserAgentRegex({
-                browsers: quiltModuleBuild.targets,
-                ignoreMinor: true,
-                ignorePatch: true,
-                allowHigherVersions: true,
-              }).source,
-              modules,
-            };
-          });
 
           quiltAssetsManifestPath?.(() =>
             project.fs.buildPath(
