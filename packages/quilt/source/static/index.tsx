@@ -212,13 +212,17 @@ export async function renderStatic(
       forceFallback: fallback ? url.pathname : undefined,
     });
 
+    const initialCacheKey = await assets.cacheKey?.(new Request(url));
+
     const {
       http,
       html: htmlManager,
+      assets: assetsManager,
       markup,
       asyncAssets,
     } = await renderApp(<App />, {
       url,
+      cacheKey: initialCacheKey,
       decorate(app) {
         return (
           <StaticRendererContext.Provider value={routeRecorder}>
@@ -228,9 +232,11 @@ export async function renderStatic(
       },
     });
 
+    const cacheKey = assetsManager.cacheKey;
+
     const [mainAssets, preloadAssets] = await Promise.all([
-      assets.entry({modules: asyncAssets.used({timing: 'load'})}),
-      assets.modules(asyncAssets.used({timing: 'preload'})),
+      assets.entry({modules: asyncAssets.used({timing: 'load'}), cacheKey}),
+      assets.modules(asyncAssets.used({timing: 'preload'}), {cacheKey}),
     ]);
 
     const minifiedHtml = renderHtmlToString(
