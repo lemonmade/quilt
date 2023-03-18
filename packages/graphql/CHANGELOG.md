@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.56
+
+### Patch Changes
+
+- [`59f08f2f`](https://github.com/lemonmade/quilt/commit/59f08f2f2ec344cb438b764e34fe62f8b0d40ebd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix rollup plugin duplicate fragment imports
+
 ## 0.4.55
 
 ### Patch Changes

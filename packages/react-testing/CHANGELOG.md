@@ -1,5 +1,13 @@
 # @quilted/react-testing
 
+## 0.5.27
+
+### Patch Changes
+
+- [#525](https://github.com/lemonmade/quilt/pull/525) [`57d13aed`](https://github.com/lemonmade/quilt/commit/57d13aed3815adb36ae74993b068903a7efc680c) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Preact dependency
+
+- [`ee45ad50`](https://github.com/lemonmade/quilt/commit/ee45ad508478da8e7df8383d1b2b8cb431bf80a0) Thanks [@lemonmade](https://github.com/lemonmade)! - Faster descendants API for react-testing
+
 ## 0.5.26
 
 ### Patch Changes
