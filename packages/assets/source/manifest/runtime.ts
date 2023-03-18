@@ -99,18 +99,28 @@ export function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
 
   if (modules) {
     for (const module of modules) {
-      const moduleId =
-        typeof module === 'string'
-          ? module
-          : typeof (module as any).id === 'string'
-          ? (module as any).id
-          : // TODO: handle regex
-            undefined;
+      let includeStyles = true;
+      let includeScripts = true;
+      let moduleId: string | RegExp;
 
-      const moduleAssets = manifest.modules[moduleId];
+      if (typeof module === 'string') {
+        moduleId = module;
+      } else if (module instanceof RegExp) {
+        moduleId = module;
+      } else {
+        includeStyles = module.styles ?? true;
+        includeScripts = module.scripts ?? true;
+        moduleId = module.id;
+      }
+
+      const moduleAssets = manifest.modules[String(moduleId)];
 
       if (moduleAssets) {
-        addAssetsBuildManifestEntry(moduleAssets, styles, scripts);
+        addAssetsBuildManifestEntry(
+          moduleAssets,
+          includeStyles && styles,
+          includeScripts && scripts,
+        );
       }
     }
   }
@@ -136,14 +146,18 @@ export function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
 
 function addAssetsBuildManifestEntry(
   entry: AssetsBuildManifestEntry,
-  styles: Set<number>,
-  scripts: Set<number>,
+  styles: Set<number> | false,
+  scripts: Set<number> | false,
 ) {
-  for (const index of entry.styles) {
-    styles.add(index);
+  if (styles) {
+    for (const index of entry.styles) {
+      styles.add(index);
+    }
   }
 
-  for (const index of entry.scripts) {
-    scripts.add(index);
+  if (scripts) {
+    for (const index of entry.scripts) {
+      scripts.add(index);
+    }
   }
 }
