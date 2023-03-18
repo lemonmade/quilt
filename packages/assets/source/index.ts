@@ -12,3 +12,9 @@ export {
   scriptAssetAttributes,
   scriptAssetPreloadAttributes,
 } from './attributes';
+export {
+  createAssetsEntryFromManifest,
+  createBrowserAssetsFromManifests,
+  type AssetsBuildManifest,
+  type AssetsBuildManifestEntry,
+} from './manifest';

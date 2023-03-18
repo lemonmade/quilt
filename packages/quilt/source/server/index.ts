@@ -13,11 +13,14 @@ export {
   ServerRenderManagerContext,
   extract,
 } from '@quilted/react-server-render/server';
+
 export {
   styleAssetAttributes,
   styleAssetPreloadAttributes,
   scriptAssetAttributes,
   scriptAssetPreloadAttributes,
+  createAssetsEntryFromManifest,
+  createBrowserAssetsFromManifests,
 } from '@quilted/assets';
 export type {
   Asset,
@@ -26,21 +29,15 @@ export type {
   BrowserAssetsEntry,
   BrowserAssetSelector,
   BrowserAssetModuleSelector,
-} from '@quilted/assets';
-export type {
   AssetsBuildManifest,
   AssetsBuildManifestEntry,
-} from '@quilted/assets/server';
-export {
-  createAssetsEntryFromManifest,
-  createBrowserAssetsFromManifests,
-} from '@quilted/assets/server';
+} from '@quilted/assets';
 export {
   useAssetsCacheKey,
   AssetsContext,
   AssetsManager,
   SERVER_ACTION_ID as ASSETS_SERVER_ACTION_ID,
-} from '@quilted/react-assets';
+} from '@quilted/react-assets/server';
 export {
   AsyncAssetContext,
   AsyncAssetManager,

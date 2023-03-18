@@ -1,7 +1,7 @@
 import type {PropsWithChildren} from 'react';
 
-import {AssetsContext} from '@quilted/react-assets';
-import type {AssetsManager} from '@quilted/react-assets';
+import {AssetsContext} from '@quilted/react-assets/server';
+import type {AssetsManager} from '@quilted/react-assets/server';
 import {InitialUrlContext} from '@quilted/react-router';
 import {HtmlContext} from '@quilted/react-html/server';
 import type {HtmlManager} from '@quilted/react-html/server';

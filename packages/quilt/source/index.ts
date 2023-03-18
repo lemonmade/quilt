@@ -1,3 +1,21 @@
+export {
+  styleAssetAttributes,
+  styleAssetPreloadAttributes,
+  scriptAssetAttributes,
+  scriptAssetPreloadAttributes,
+  createAssetsEntryFromManifest,
+  createBrowserAssetsFromManifests,
+} from '@quilted/assets';
+export type {
+  Asset,
+  AssetsCacheKey,
+  BrowserAssets,
+  BrowserAssetsEntry,
+  BrowserAssetSelector,
+  BrowserAssetModuleSelector,
+  AssetsBuildManifest,
+  AssetsBuildManifestEntry,
+} from '@quilted/assets';
 export {createAsyncModule} from '@quilted/async';
 export type {AsyncModule} from '@quilted/async';
 export {

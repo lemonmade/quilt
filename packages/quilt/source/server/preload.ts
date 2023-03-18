@@ -1,35 +1,32 @@
-import type {AssetManifest, AssetsEntry} from '@quilted/assets';
+import type {
+  AssetsCacheKey,
+  BrowserAssets,
+  BrowserAssetsEntry,
+} from '@quilted/assets';
 import {
   json,
   type EnhancedRequest,
   type RequestHandler,
   type RequestContext,
 } from '@quilted/request-router';
-import type {DefaultAssetContext} from '../assets';
 
 export interface AssetPreloadOptions<
   Context = RequestContext,
-  AssetContext = DefaultAssetContext,
+  CacheKey = AssetsCacheKey,
 > {
-  readonly assets:
-    | AssetManifest<AssetContext>
-    | {
-        readonly manifest: AssetManifest<AssetContext>;
-        context?(
-          request: EnhancedRequest,
-          context: Context,
-        ): AssetContext | undefined | Promise<AssetContext | undefined>;
-      };
+  readonly assets: BrowserAssets<CacheKey>;
+  cacheKey?(
+    request: EnhancedRequest,
+    context: Context,
+  ): CacheKey | Promise<CacheKey>;
 }
 
 export function createAssetPreloader<
   Context = RequestContext,
-  AssetContext = DefaultAssetContext,
->(
-  options: AssetPreloadOptions<Context, AssetContext>,
-): RequestHandler<Context> {
+  CacheKey = AssetsCacheKey,
+>(options: AssetPreloadOptions<Context, CacheKey>): RequestHandler<Context> {
   return async function handler(request, requestContext) {
-    const manifest = await assetsForRequest<Context, AssetContext>(request, {
+    const manifest = await assetsForRequest<Context, CacheKey>(request, {
       ...options,
       context: requestContext,
     });
@@ -40,42 +37,33 @@ export function createAssetPreloader<
 
 async function assetsForRequest<
   Context = RequestContext,
-  AssetContext = DefaultAssetContext,
+  CacheKey = AssetsCacheKey,
 >(
   request: EnhancedRequest,
   {
     assets,
     context,
-  }: AssetPreloadOptions<Context, AssetContext> & {readonly context: Context},
+    cacheKey: getCacheKey,
+  }: AssetPreloadOptions<Context, CacheKey> & {context: Context},
 ) {
   const url = new URL(request.url);
-  const async = url.searchParams.get('async')?.split(',') ?? [];
+  const modules = url.searchParams.get('modules')?.split(',') ?? [];
   const includeStyles = url.searchParams.get('styles') !== 'false';
   const includeScripts = url.searchParams.get('scripts') !== 'false';
 
-  let manifest: AssetManifest<AssetContext>;
-  let assetContext: AssetContext | undefined;
+  const cacheKey =
+    (await getCacheKey?.(request, context)) ??
+    ((await assets.cacheKey?.(request)) as CacheKey);
 
-  if ('manifest' in assets) {
-    manifest = assets.manifest;
-    assetContext = await assets.context?.(request, context);
-  } else {
-    manifest = assets;
-  }
-
-  const {styles, scripts} = await manifest.assets({
-    async,
-    context:
-      assetContext ??
-      ({
-        userAgent: request.headers.get('User-Agent') ?? undefined,
-      } as AssetContext),
+  const {styles, scripts} = await assets.entry({
+    modules,
+    cacheKey,
   });
 
-  const result: Partial<AssetsEntry> = {};
+  const result: Partial<BrowserAssetsEntry> = {};
 
   if (includeStyles) (result as any).styles = styles;
   if (includeScripts) (result as any).scripts = scripts;
 
-  return result as Partial<AssetsEntry>;
+  return result as Partial<BrowserAssetsEntry>;
 }
