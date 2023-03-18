@@ -1,5 +1,18 @@
 # @quilted/craft
 
+## 0.1.195
+
+### Patch Changes
+
+- [#527](https://github.com/lemonmade/quilt/pull/527) [`a255c7c2`](https://github.com/lemonmade/quilt/commit/a255c7c284391b2c3157fffed5a5feb576cd45ac) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve asset manifests
+
+- [#525](https://github.com/lemonmade/quilt/pull/525) [`57d13aed`](https://github.com/lemonmade/quilt/commit/57d13aed3815adb36ae74993b068903a7efc680c) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Preact dependency
+
+- Updated dependencies [[`a255c7c2`](https://github.com/lemonmade/quilt/commit/a255c7c284391b2c3157fffed5a5feb576cd45ac), [`59f08f2f`](https://github.com/lemonmade/quilt/commit/59f08f2f2ec344cb438b764e34fe62f8b0d40ebd)]:
+  - @quilted/async@0.3.38
+  - @quilted/quilt@0.5.137
+  - @quilted/graphql@0.4.56
+
 ## 0.1.194
 
 ### Patch Changes

@@ -130,7 +130,7 @@ importers:
   packages/async:
     specifiers:
       '@babel/types': '>=7.0.0'
-      '@quilted/assets': ^0.0.0
+      '@quilted/assets': ^0.0.1
       '@quilted/events': ^0.1.16
       '@types/babel__core': '>=7.0.0'
       '@types/babel__traverse': '>=7.0.0'
@@ -193,10 +193,10 @@ importers:
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@jest/types': ^29.3.0
       '@prefresh/vite': ^2.2.0
-      '@quilted/async': 0.3.37
+      '@quilted/async': 0.3.38
       '@quilted/browserslist-config': 0.1.9
       '@quilted/eslint-config': 0.1.16
-      '@quilted/graphql': 0.4.55
+      '@quilted/graphql': 0.4.56
       '@quilted/polyfills': 0.2.33
       '@quilted/prettier': 0.2.11
       '@quilted/quilt': ^0.5.0
@@ -517,13 +517,13 @@ importers:
 
   packages/quilt:
     specifiers:
-      '@quilted/assets': ^0.0.0
+      '@quilted/assets': ^0.0.1
       '@quilted/async': ^0.3.34
       '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
       '@quilted/polyfills': ^0.2.12
       '@quilted/react': ^18.2.0
-      '@quilted/react-assets': ^0.0.0
+      '@quilted/react-assets': ^0.0.1
       '@quilted/react-async': ^0.3.43
       '@quilted/react-dom': ^18.2.0
       '@quilted/react-graphql': ^0.4.30
@@ -584,7 +584,7 @@ importers:
 
   packages/react-assets:
     specifiers:
-      '@quilted/assets': ^0.0.0
+      '@quilted/assets': ^0.0.1
       '@quilted/react-server-render': ^0.3.27
       '@quilted/testing': ^0.1.0
       '@types/react': ^17.0.0 || ^18.0.0
