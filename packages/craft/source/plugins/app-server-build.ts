@@ -58,6 +58,7 @@ export function appServerBuild({
             outputDirectory,
             rollupPlugins,
             rollupOutputs,
+            quiltAppBrowserTargets,
             quiltAppServerHost,
             quiltAppServerPort,
             quiltAppServerOutputFormat,
@@ -111,7 +112,31 @@ export function appServerBuild({
                     (manifestA.priority ?? 0) - (manifestB.priority ?? 0),
                 );
 
-                const browserGroups: any[] = [];
+                const browserTargets = await quiltAppBrowserTargets!.run();
+                const defaultBrowserTarget =
+                  browserTargets[browserTargets.length - 1];
+                const browserTests: {name: string; test: string}[] = [];
+
+                const {getUserAgentRegex} = await import(
+                  'browserslist-useragent-regexp'
+                );
+
+                for (const target of browserTargets) {
+                  const {name, browsers} = target;
+
+                  browserTests.push({
+                    name,
+                    test:
+                      target === defaultBrowserTarget
+                        ? ''
+                        : getUserAgentRegex({
+                            browsers,
+                            ignoreMinor: true,
+                            ignorePatch: true,
+                            allowHigherVersions: true,
+                          }).source,
+                  });
+                }
 
                 return stripIndent`
                   import {createBrowserAssetsFromManifests} from '@quilted/quilt/server';
@@ -122,7 +147,7 @@ export function appServerBuild({
                     )});
 
                     const browserGroupTests = [
-                      ${browserGroups
+                      ${browserTests
                         .map(
                           ({name, test}) =>
                             `[${JSON.stringify(

@@ -380,12 +380,11 @@ function createAssetsEntry(
   const allFiles = new Set<string>();
   const addFile = (file: string) => {
     if (allFiles.has(file)) return;
+    allFiles.add(file);
 
     for (const dependency of dependencyMap.get(file) ?? []) {
       addFile(dependency);
     }
-
-    allFiles.add(file);
   };
 
   for (const file of files) {
