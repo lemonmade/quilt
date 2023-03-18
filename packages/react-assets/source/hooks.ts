@@ -4,10 +4,10 @@ import {useServerAction} from '@quilted/react-server-render';
 
 import {AssetsContext} from './context';
 
-export function useAssetsCacheKey(cacheKey: Partial<AssetsCacheKey>) {
+export function useUpdateCacheKey(cacheKey: Partial<AssetsCacheKey>) {
   const assets = useContext(AssetsContext);
 
   useServerAction(() => {
-    assets.update(cacheKey);
+    assets.updateCacheKey(cacheKey);
   }, assets.serverAction);
 }

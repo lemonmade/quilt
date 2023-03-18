@@ -33,7 +33,7 @@ export type {
   AssetsBuildManifestEntry,
 } from '@quilted/assets';
 export {
-  useAssetsCacheKey,
+  useUpdateCacheKey,
   AssetsContext,
   AssetsManager,
   SERVER_ACTION_ID as ASSETS_SERVER_ACTION_ID,

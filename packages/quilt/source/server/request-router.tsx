@@ -9,6 +9,7 @@ import {
   type BrowserAssets,
   type BrowserAssetsEntry,
 } from '@quilted/assets';
+import {AssetsManager} from '@quilted/react-assets/server';
 import {AsyncAssetManager} from '@quilted/react-async/server';
 import {HttpManager} from '@quilted/react-http/server';
 import {
@@ -56,9 +57,13 @@ export interface ServerRenderOptions<
   ): ReactElement<any> | Promise<ReactElement<any>>;
 }
 
-export interface ServerRenderAppDetails {
+export interface ServerRenderAppDetails<
+  _Context = RequestContext,
+  CacheKey = AssetsCacheKey,
+> {
   readonly http: HttpManager;
   readonly html: HtmlManager;
+  readonly assets: AssetsManager<CacheKey>;
   readonly rendered?: string;
   readonly asyncAssets: AsyncAssetManager;
 }
@@ -123,9 +128,11 @@ export async function renderAppToResponse<
   > & {readonly request: EnhancedRequest; readonly context: Context},
 ) {
   const app = typeof getApp === 'function' ? await getApp() : getApp;
+  const cacheKey = (await assets?.cacheKey?.(request)) as CacheKey;
 
   const renderDetails = await serverRenderDetailsForApp(app, {
     extract,
+    cacheKey,
     url: request.url,
     headers: request.headers,
   });
@@ -139,12 +146,15 @@ export async function renderAppToResponse<
     });
   }
 
-  const content = await renderAppDetailsToHtmlString(renderDetails, {
-    request,
-    context,
-    assets,
-    renderHtml,
-  });
+  const content = await renderAppDetailsToHtmlString<Context, CacheKey>(
+    renderDetails,
+    {
+      request,
+      context,
+      assets,
+      renderHtml,
+    },
+  );
 
   return html(content, {
     headers,
@@ -201,16 +211,20 @@ export async function renderAppToStreamedResponse<
 
     const renderDetails = await serverRenderDetailsForApp(app, {
       extract,
+      cacheKey,
       url: request.url,
       headers: request.headers,
     });
 
-    const content = await renderAppDetailsToHtmlString(renderDetails, {
-      request,
-      context,
-      assets,
-      renderHtml,
-    });
+    const content = await renderAppDetailsToHtmlString<Context, CacheKey>(
+      renderDetails,
+      {
+        request,
+        context,
+        assets,
+        renderHtml,
+      },
+    );
 
     const encoder = new TextEncoder();
     const writer = stream.writable.getWriter();
@@ -219,22 +233,28 @@ export async function renderAppToStreamedResponse<
   }
 }
 
-async function serverRenderDetailsForApp(
+async function serverRenderDetailsForApp<
+  Context = RequestContext,
+  CacheKey = AssetsCacheKey,
+>(
   app: ReactElement<any>,
   {
     url,
     headers,
+    cacheKey,
     extract: extractOptions,
   }: Pick<ServerRenderOptions, 'extract'> & {
     url?: string | URL;
+    cacheKey?: CacheKey;
     headers?: NonNullable<
       ConstructorParameters<typeof HttpManager>[0]
     >['headers'];
   } = {},
-): Promise<ServerRenderAppDetails> {
+): Promise<ServerRenderAppDetails<Context, CacheKey>> {
   const html = new HtmlManager();
   const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
+  const assets = new AssetsManager<CacheKey>({cacheKey});
 
   const {decorate, ...rest} = extractOptions ?? {};
 
@@ -246,6 +266,7 @@ async function serverRenderDetailsForApp(
           http={http}
           html={html}
           url={url}
+          assets={assets}
         >
           {decorate?.(app) ?? app}
         </ServerContext>
@@ -254,14 +275,14 @@ async function serverRenderDetailsForApp(
     ...rest,
   });
 
-  return {rendered, http, html, asyncAssets};
+  return {rendered, http, html, asyncAssets, assets};
 }
 
 async function renderAppDetailsToHtmlString<
   Context = RequestContext,
   CacheKey = AssetsCacheKey,
 >(
-  details: ServerRenderAppDetails,
+  details: ServerRenderAppDetails<Context, CacheKey>,
   {
     request,
     context,
@@ -270,12 +291,19 @@ async function renderAppDetailsToHtmlString<
   }: Pick<ServerRenderOptions<Context, CacheKey>, 'assets' | 'renderHtml'> & {
     readonly request: EnhancedRequest;
     readonly context: Context;
+    readonly cacheKey?: Partial<CacheKey>;
   },
 ) {
-  const {html: htmlManager, http, rendered, asyncAssets} = details;
+  const {
+    http,
+    rendered,
+    asyncAssets,
+    html: htmlManager,
+    assets: assetsManager,
+  } = details;
 
   const usedModules = asyncAssets.used({timing: 'load'});
-  const cacheKey = (await assets?.cacheKey?.(request)) as CacheKey;
+  const cacheKey = assetsManager.cacheKey as CacheKey;
 
   const [entryAssets, preloadAssets] = assets
     ? await Promise.all([
