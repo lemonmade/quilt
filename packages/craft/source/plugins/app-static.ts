@@ -198,8 +198,8 @@ export function appStatic({
             postcssCSSModulesOptions,
             rollupInput,
             rollupPlugins,
-            rollupExternals,
             rollupOutputs,
+            rollupNodeBundle,
             quiltAsyncPreload,
             quiltAssetsManifest,
             quiltAssetOutputRoot,
@@ -221,11 +221,15 @@ export function appStatic({
 
           rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
 
-          // Let prettier use native Node resolution, we include it as
-          // a dependency.
-          rollupExternals?.((externals) => {
-            // externals.push('prettier');
-            return externals;
+          rollupNodeBundle?.(() => {
+            return {
+              dependencies: true,
+              devDependencies: true,
+              peerDependencies: true,
+              // Let prettier use native Node resolution, we include it as
+              // a dependency.
+              exclude: ['prettier'],
+            };
           });
 
           quiltAsyncPreload?.(() => false);
@@ -327,7 +331,7 @@ export function appStatic({
                 return stripIndent`
                   import {createBrowserAssetsEntryFromManifest} from '@quilted/quilt/server';
 
-                  export default function createManifest() {
+                  export function createBrowserAssets() {
                     const noModuleManifest = ${manifestToCode(
                       noModuleManifest,
                     )};
@@ -343,12 +347,14 @@ export function appStatic({
                     }
 
                     function assetEntry(options) {
-                      if (moduleManifest == null) {
-                        return createBrowserAssetsEntryFromManifest(noModuleManifest, options);
-                      }
+                      const moduleManifestEntry = moduleManifest && createBrowserAssetsEntryFromManifest(moduleManifest, options);
+                      const noModuleManifestEntry = noModuleManifest && createBrowserAssetsEntryFromManifest(noModuleManifest, options);
 
-                      const moduleManifestEntry = createBrowserAssetsEntryFromManifest(moduleManifest, options);
-                      const noModuleManifestEntry = createBrowserAssetsEntryFromManifest(noModuleManifest, options);
+                      if (moduleManifestEntry == null) {
+                        return noModuleManifestEntry;
+                      } else if (noModuleManifestEntry == null) {
+                        return moduleManifestEntry;
+                      }
 
                       return {
                         // We don’t want to load styles from both bundles, so we only use module styles,

@@ -1,4 +1,4 @@
-import type {ComponentType} from 'react';
+import {Fragment, type ComponentType} from 'react';
 
 import {
   styleAssetAttributes,
@@ -249,13 +249,10 @@ export async function renderStatic(
               });
 
               return attributes.type === 'module' ? (
-                <>
-                  <script key={script.source} {...(attributes as any)} />
-                  <link
-                    key={script.source}
-                    {...(scriptAssetPreloadAttributes(script) as any)}
-                  />
-                </>
+                <Fragment key={script.source}>
+                  <link {...(scriptAssetPreloadAttributes(script) as any)} />
+                  <script {...(attributes as any)} />
+                </Fragment>
               ) : (
                 <script key={script.source} {...(attributes as any)} />
               );
