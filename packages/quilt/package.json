@@ -197,8 +197,8 @@
       "magic/app": [
         "./build/typescript/magic/app.d.ts"
       ],
-      "magic/asset-manifest": [
-        "./build/typescript/magic/asset-manifest.d.ts"
+      "magic/assets": [
+        "./build/typescript/magic/assets.d.ts"
       ],
       "magic/request-router": [
         "./build/typescript/magic/request-router.d.ts"
@@ -220,6 +220,7 @@
     "@quilted/graphql": "^0.4.34",
     "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^18.2.0",
+    "@quilted/react-assets": "^0.0.0",
     "@quilted/react-async": "^0.3.43",
     "@quilted/react-dom": "^18.2.0",
     "@quilted/react-graphql": "^0.4.30",

@@ -121,6 +121,12 @@ importers:
       react: link:../../packages/react
       swr: 1.3.0_react@packages+react
 
+  packages/assets:
+    specifiers:
+      '@quilted/testing': ^0.1.0
+    devDependencies:
+      '@quilted/testing': link:../testing
+
   packages/async:
     specifiers:
       '@babel/types': '>=7.0.0'
@@ -509,11 +515,13 @@ importers:
 
   packages/quilt:
     specifiers:
+      '@quilted/assets': ^0.0.0
       '@quilted/async': ^0.3.34
       '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
       '@quilted/polyfills': ^0.2.12
       '@quilted/react': ^18.2.0
+      '@quilted/react-assets': ^0.0.0
       '@quilted/react-async': ^0.3.43
       '@quilted/react-dom': ^18.2.0
       '@quilted/react-graphql': ^0.4.30
@@ -535,11 +543,13 @@ importers:
       '@types/jest': ^27.0.0
       '@types/prettier': ^2.0.0
     dependencies:
+      '@quilted/assets': link:../assets
       '@quilted/async': link:../async
       '@quilted/events': link:../events
       '@quilted/graphql': link:../graphql
       '@quilted/polyfills': link:../polyfills
       '@quilted/react': link:../react
+      '@quilted/react-assets': link:../react-assets
       '@quilted/react-async': link:../react-async
       '@quilted/react-dom': link:../react-dom
       '@quilted/react-graphql': link:../react-graphql
@@ -569,6 +579,21 @@ importers:
     dependencies:
       '@types/react': 18.0.26
       preact: 10.11.3
+
+  packages/react-assets:
+    specifiers:
+      '@quilted/assets': ^0.0.0
+      '@quilted/react-server-render': ^0.3.27
+      '@quilted/testing': ^0.1.0
+      '@types/react': ^17.0.0 || ^18.0.0
+      react: npm:@quilted/react@^18.2.0
+    dependencies:
+      '@quilted/assets': link:../assets
+      '@quilted/react-server-render': link:../react-server-render
+      '@types/react': 18.0.26
+    devDependencies:
+      '@quilted/testing': link:../testing
+      react: link:../react
 
   packages/react-async:
     specifiers:

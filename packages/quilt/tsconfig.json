@@ -13,6 +13,7 @@
     {"path": "../graphql"},
     {"path": "../polyfills"},
     {"path": "../react"},
+    {"path": "../react-assets"},
     {"path": "../react-async"},
     {"path": "../react-dom"},
     {"path": "../react-graphql"},
