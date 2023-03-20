@@ -101,11 +101,9 @@ export function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
     for (const module of modules) {
       let includeStyles = true;
       let includeScripts = true;
-      let moduleId: string | RegExp;
+      let moduleId: string;
 
       if (typeof module === 'string') {
-        moduleId = module;
-      } else if (module instanceof RegExp) {
         moduleId = module;
       } else {
         includeStyles = module.styles ?? true;
@@ -113,7 +111,7 @@ export function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
         moduleId = module.id;
       }
 
-      const moduleAssets = manifest.modules[String(moduleId)];
+      const moduleAssets = manifest.modules[moduleId];
 
       if (moduleAssets) {
         addAssetsBuildManifestEntry(

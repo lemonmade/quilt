@@ -1,16 +1,9 @@
 /* eslint react-hooks/rules-of-hooks: off */
 
-import {
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useSyncExternalStore,
-} from 'react';
+import {useEffect, useMemo, useRef, useSyncExternalStore} from 'react';
+import {useModuleAssets} from '@quilted/react-assets';
 import type {AsyncModule} from '@quilted/async';
-import {useServerAction} from '@quilted/react-server-render';
 
-import {AsyncAssetContext} from '../context';
 import type {AssetLoadTiming} from '../types';
 
 export interface Options {
@@ -90,17 +83,10 @@ export function useAsyncModule<Module = Record<string, unknown>>(
   }
 
   if (isServer) {
-    const async = useContext(AsyncAssetContext);
-
-    useServerAction(() => {
-      if (asyncModule.loaded == null && immediate) {
-        return load();
-      }
-
-      if (async && id) {
-        async.markAsUsed(id, {scripts, styles});
-      }
-    }, async?.serverAction);
+    useModuleAssets(asyncModule.loaded && immediate ? id : undefined, {
+      styles,
+      scripts,
+    });
   }
 
   if (suspense) {
@@ -118,24 +104,11 @@ export function useAsyncModule<Module = Record<string, unknown>>(
 export function useAsyncModulePreload<Module = Record<string, unknown>>(
   asyncModule: AsyncModule<Module>,
 ) {
-  useAsyncModuleAssets(asyncModule, {scripts: 'preload', styles: 'preload'});
+  useModuleAssets(asyncModule.id, {scripts: 'preload', styles: 'preload'});
 
   useEffect(() => {
     asyncModule.load().catch(() => {
       // Do nothing
     });
   }, [asyncModule]);
-}
-
-export function useAsyncModuleAssets<Module = Record<string, unknown>>(
-  {id}: AsyncModule<Module>,
-  {scripts, styles}: {styles?: AssetLoadTiming; scripts?: AssetLoadTiming} = {},
-) {
-  const async = useContext(AsyncAssetContext);
-
-  useServerAction(() => {
-    if (async && id) {
-      async.markAsUsed(id, {scripts, styles});
-    }
-  }, async?.serverAction);
 }

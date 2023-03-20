@@ -81,13 +81,12 @@ export function appBuild({assets, browser, env}: Options) {
             rollupOutputs,
             rollupPlugins,
             rollupNodeBundle,
-            quiltAssetsManifestId,
-            quiltAssetsManifestPath,
-            quiltAssetsManifestPriority,
-            quiltAssetsManifestCacheKey,
+            quiltAssetManifestId,
+            quiltAssetManifestPath,
+            quiltAssetManifestPriority,
+            quiltAssetManifestCacheKey,
             quiltAssetBaseUrl,
             quiltAssetOutputRoot,
-            quiltAsyncAssetBaseUrl,
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
             quiltAppBrowserEntryCssSelector,
@@ -135,21 +134,19 @@ export function appBuild({assets, browser, env}: Options) {
 
           browserslistTargets?.(() => browserTargets.targets);
 
-          quiltAsyncAssetBaseUrl?.(() => quiltAssetBaseUrl!.run());
+          quiltAssetManifestId?.((id) => id ?? browserTargets.name);
 
-          quiltAssetsManifestId?.((id) => id ?? browserTargets.name);
-
-          quiltAssetsManifestPath?.(() =>
+          quiltAssetManifestPath?.(() =>
             project.fs.buildPath(
               `manifests/manifest${targetFilenamePart}.json`,
             ),
           );
 
-          quiltAssetsManifestPriority?.(
+          quiltAssetManifestPriority?.(
             (priority) => priority ?? browserTargets.priority,
           );
 
-          quiltAssetsManifestCacheKey?.((cacheKey) => ({
+          quiltAssetManifestCacheKey?.((cacheKey) => ({
             browserGroup: browserTargets.name,
             ...cacheKey,
           }));

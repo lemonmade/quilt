@@ -1,4 +1,5 @@
 import * as path from 'path';
+import type {Options as RollupOptions} from '@quilted/assets/rollup';
 
 import {createProjectPlugin} from '../kit';
 import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
@@ -51,6 +52,16 @@ export interface AssetHooks {
    * name and extension as the input files, separated by the file’s content hash.
    */
   quiltAssetStaticOutputFilenamePattern: WaterfallHookWithDefault<string>;
+
+  quiltAssetManifest: WaterfallHookWithDefault<boolean>;
+  quiltAssetManifestId: WaterfallHookWithDefault<RollupOptions['id']>;
+  quiltAssetManifestPath: WaterfallHookWithDefault<RollupOptions['path']>;
+  quiltAssetManifestPriority: WaterfallHookWithDefault<
+    RollupOptions['priority']
+  >;
+  quiltAssetManifestCacheKey: WaterfallHookWithDefault<
+    RollupOptions['cacheKey']
+  >;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -112,6 +123,21 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
         quiltAssetStaticOutputFilenamePattern: waterfall({
           default: '[name].[hash].[ext]',
         }),
+        quiltAssetManifest: waterfall<boolean>({
+          default: true,
+        }),
+        quiltAssetManifestId: waterfall<RollupOptions['id']>({
+          default: undefined,
+        }),
+        quiltAssetManifestPath: waterfall<RollupOptions['path']>({
+          default: project.fs.buildPath('manifests/manifest.json'),
+        }),
+        quiltAssetManifestPriority: waterfall<RollupOptions['priority']>({
+          default: undefined,
+        }),
+        quiltAssetManifestCacheKey: waterfall<RollupOptions['cacheKey']>({
+          default: undefined,
+        }),
       }));
 
       configure(
@@ -122,6 +148,11 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
             quiltAssetStaticExtensions,
             quiltAssetStaticInlineLimit,
             quiltAssetStaticOutputFilenamePattern,
+            quiltAssetManifest,
+            quiltAssetManifestId,
+            quiltAssetManifestPath,
+            quiltAssetManifestCacheKey,
+            quiltAssetManifestPriority,
           },
           {quiltAppBrowser},
         ) => {
@@ -132,16 +163,21 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
               extensions,
               inlineLimit,
               outputPattern,
+              includeManifest,
             ] = await Promise.all([
               import('../plugins/rollup/assets'),
               quiltAssetBaseUrl!.run(),
               quiltAssetStaticExtensions!.run(),
               quiltAssetStaticInlineLimit!.run(),
               quiltAssetStaticOutputFilenamePattern!.run(),
+              quiltAssetManifest!.run(),
+              quiltAssetManifestId!.run(),
+              quiltAssetManifestPath!.run(),
+              quiltAssetManifestCacheKey!.run(),
+              quiltAssetManifestPriority!.run(),
             ]);
 
-            return [
-              ...plugins,
+            const newPlugins = [
               rawAssets(),
               staticAssets({
                 emit: Boolean(quiltAppBrowser),
@@ -153,6 +189,23 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
                   path.posix.normalize(project.fs.relativePath(file)),
               }),
             ];
+
+            if (includeManifest) {
+              const [{assetManifest}, id, path, cacheKey, priority] =
+                await Promise.all([
+                  import('@quilted/assets/rollup'),
+                  quiltAssetManifestId!.run(),
+                  quiltAssetManifestPath!.run(),
+                  quiltAssetManifestCacheKey!.run(),
+                  quiltAssetManifestPriority!.run(),
+                ]);
+
+              newPlugins.push(
+                assetManifest({id, path, cacheKey, priority, baseUrl}),
+              );
+            }
+
+            return [...plugins, ...newPlugins];
           });
         },
       );

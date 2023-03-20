@@ -4,7 +4,6 @@ import {extract} from '@quilted/react-server-render/server';
 import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
 import {HtmlManager} from '@quilted/react-html/server';
 import {HttpManager} from '@quilted/react-http/server';
-import {AsyncAssetManager} from '@quilted/react-async/server';
 import {AssetsManager} from '@quilted/react-assets/server';
 import type {AssetsCacheKey} from '@quilted/assets';
 
@@ -23,19 +22,13 @@ export async function renderApp<CacheKey = AssetsCacheKey>(
   {decorate, url, headers, cacheKey, ...rest}: Options<CacheKey> = {},
 ) {
   const html = new HtmlManager();
-  const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
   const assets = new AssetsManager<CacheKey>({cacheKey});
 
   const markup = await extract(app, {
     decorate(app) {
       return (
-        <StaticContext
-          asyncAssets={asyncAssets}
-          html={html}
-          http={http}
-          url={url}
-        >
+        <StaticContext html={html} http={http} url={url}>
           {decorate?.(app) ?? app}
         </StaticContext>
       );
@@ -43,5 +36,5 @@ export async function renderApp<CacheKey = AssetsCacheKey>(
     ...rest,
   });
 
-  return {markup, http, html, assets, asyncAssets};
+  return {markup, http, html, assets};
 }

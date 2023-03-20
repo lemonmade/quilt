@@ -30,7 +30,7 @@
       "quilt:source": "./source/rollup-parts.ts",
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
       "import": "./build/esm/rollup-parts.mjs",
-      "require": "./build/esm/cjs-parts.cjs"
+      "require": "./build/cjs/rollup-parts.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",

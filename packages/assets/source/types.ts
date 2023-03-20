@@ -5,6 +5,8 @@ export interface Asset {
   attributes?: Record<string, string | boolean | number>;
 }
 
+export type AssetLoadTiming = 'never' | 'preload' | 'load';
+
 export interface BrowserAssetSelector<CacheKey = AssetsCacheKey> {
   modules?: Iterable<
     BrowserAssetModuleSelector | BrowserAssetModuleSelector['id']
@@ -13,7 +15,7 @@ export interface BrowserAssetSelector<CacheKey = AssetsCacheKey> {
 }
 
 export interface BrowserAssetModuleSelector {
-  id: string | RegExp;
+  id: string;
   styles?: boolean;
   scripts?: boolean;
 }

@@ -10,9 +10,4 @@ export type {
   Preloadable,
 } from './types';
 export {createAsyncComponent} from './component';
-export {
-  useAsyncModule,
-  useAsyncModuleAssets,
-  useAsyncModulePreload,
-  usePreload,
-} from './hooks';
+export {useAsyncModule, useAsyncModulePreload, usePreload} from './hooks';

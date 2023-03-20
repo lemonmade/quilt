@@ -219,7 +219,6 @@ export async function renderStatic(
       html: htmlManager,
       assets: assetsManager,
       markup,
-      asyncAssets,
     } = await renderApp(<App />, {
       url,
       cacheKey: initialCacheKey,
@@ -235,8 +234,13 @@ export async function renderStatic(
     const cacheKey = assetsManager.cacheKey;
 
     const [mainAssets, preloadAssets] = await Promise.all([
-      assets.entry({modules: asyncAssets.used({timing: 'load'}), cacheKey}),
-      assets.modules(asyncAssets.used({timing: 'preload'}), {cacheKey}),
+      assets.entry({
+        modules: assetsManager.usedModules({timing: 'load'}),
+        cacheKey,
+      }),
+      assets.modules(assetsManager.usedModules({timing: 'preload'}), {
+        cacheKey,
+      }),
     ]);
 
     const minifiedHtml = renderHtmlToString(

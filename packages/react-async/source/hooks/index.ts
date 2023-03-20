@@ -1,6 +1,2 @@
-export {
-  useAsyncModule,
-  useAsyncModulePreload,
-  useAsyncModuleAssets,
-} from './async';
+export {useAsyncModule, useAsyncModulePreload} from './async';
 export {usePreload} from './preload';
