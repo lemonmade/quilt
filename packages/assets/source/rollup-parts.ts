@@ -98,7 +98,9 @@ async function writeManifestForBundle(
     // This metadata is added by the rollup plugin for @quilted/async
     const moduleId = this.getModuleInfo(originalModuleId)?.meta.quilt?.moduleId;
 
-    manifest.modules![moduleId] = createAssetsEntry(
+    if (moduleId == null) continue;
+
+    manifest.modules[moduleId] = createAssetsEntry(
       [...output.imports, output.fileName],
       {dependencyMap, getAssetId},
     );

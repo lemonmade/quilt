@@ -28,7 +28,7 @@ export async function renderApp<CacheKey = AssetsCacheKey>(
   const markup = await extract(app, {
     decorate(app) {
       return (
-        <StaticContext html={html} http={http} url={url}>
+        <StaticContext html={html} http={http} url={url} assets={assets}>
           {decorate?.(app) ?? app}
         </StaticContext>
       );
