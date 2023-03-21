@@ -1,5 +1,14 @@
 # @quilted/react-async
 
+## 0.3.45
+
+### Patch Changes
+
+- [#532](https://github.com/lemonmade/quilt/pull/532) [`70b042d2`](https://github.com/lemonmade/quilt/commit/70b042d256579ab88e4ac65b2f869f143332de56) Thanks [@lemonmade](https://github.com/lemonmade)! - Move asset manifest code into asset packages
+
+- Updated dependencies [[`70b042d2`](https://github.com/lemonmade/quilt/commit/70b042d256579ab88e4ac65b2f869f143332de56)]:
+  - @quilted/react-assets@0.0.2
+
 ## 0.3.44
 
 ### Patch Changes

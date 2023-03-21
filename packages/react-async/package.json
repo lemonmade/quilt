@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-async",
   "type": "module",
-  "version": "0.3.44",
+  "version": "0.3.45",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -25,7 +25,7 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/async": "^0.3.12",
-    "@quilted/react-assets": "^0.0.1",
+    "@quilted/react-assets": "^0.0.2",
     "@quilted/react-server-render": "^0.3.27"
   },
   "peerDependencies": {
