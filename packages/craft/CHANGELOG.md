@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.197
+
+### Patch Changes
+
+- [`21018f1b`](https://github.com/lemonmade/quilt/commit/21018f1b80925c033241a3d8728a95f1374004ef) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset base URL in dev
+
 ## 0.1.196
 
 ### Patch Changes
