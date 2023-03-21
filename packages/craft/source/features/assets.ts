@@ -67,7 +67,10 @@ export interface AssetHooks {
 declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends AssetHooks {}
   interface DevelopProjectConfigurationHooks
-    extends Pick<AssetHooks, 'quiltAssetStaticExtensions'> {}
+    extends Pick<
+      AssetHooks,
+      'quiltAssetBaseUrl' | 'quiltAssetStaticExtensions'
+    > {}
 }
 
 export interface AssetOptions {
@@ -211,7 +214,10 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
       );
     },
     develop({workspace, configure, hooks}) {
-      hooks<Pick<AssetHooks, 'quiltAssetStaticExtensions'>>(({waterfall}) => ({
+      hooks<
+        Pick<AssetHooks, 'quiltAssetBaseUrl' | 'quiltAssetStaticExtensions'>
+      >(({waterfall}) => ({
+        quiltAssetBaseUrl: waterfall({default: '/'}),
         quiltAssetStaticExtensions: waterfall<readonly string[]>({
           default: () => [...DEFAULT_STATIC_ASSET_EXTENSIONS],
         }),
