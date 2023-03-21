@@ -25,7 +25,8 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/async": "^0.3.12",
-    "@quilted/react-assets": "^0.0.1"
+    "@quilted/react-assets": "^0.0.1",
+    "@quilted/react-server-render": "^0.3.27"
   },
   "peerDependencies": {
     "react": "^18.0.0",

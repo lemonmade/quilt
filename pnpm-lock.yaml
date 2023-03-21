@@ -603,9 +603,11 @@ importers:
     specifiers:
       '@quilted/async': ^0.3.12
       '@quilted/react-assets': ^0.0.1
+      '@quilted/react-server-render': ^0.3.27
     dependencies:
       '@quilted/async': link:../async
       '@quilted/react-assets': link:../react-assets
+      '@quilted/react-server-render': link:../react-server-render
 
   packages/react-dom:
     specifiers:

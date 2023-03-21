@@ -2,6 +2,7 @@
 
 import {useEffect, useMemo, useRef, useSyncExternalStore} from 'react';
 import {useModuleAssets} from '@quilted/react-assets';
+import {useServerAction} from '@quilted/react-server-render';
 import type {AsyncModule} from '@quilted/async';
 
 import type {AssetLoadTiming} from '../types';
@@ -83,9 +84,10 @@ export function useAsyncModule<Module = Record<string, unknown>>(
   }
 
   if (isServer) {
-    useModuleAssets(asyncModule.loaded && immediate ? id : undefined, {
-      styles,
-      scripts,
+    useModuleAssets(id, {styles, scripts});
+
+    useServerAction(() => {
+      if (asyncModule.loaded == null && immediate) return asyncModule.load();
     });
   }
 
