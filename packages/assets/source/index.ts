@@ -1,6 +1,7 @@
 export type {AssetsCacheKey} from './cache-key';
 export type {
   Asset,
+  AssetLoadTiming,
   BrowserAssets,
   BrowserAssetsEntry,
   BrowserAssetSelector,

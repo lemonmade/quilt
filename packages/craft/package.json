@@ -219,6 +219,7 @@
     "@babel/runtime": ">=7.0.0 <8.0.0",
     "@jest/types": "^29.3.0",
     "@prefresh/vite": "^2.2.0",
+    "@quilted/assets": "0.0.1",
     "@quilted/async": "0.3.38",
     "@quilted/browserslist-config": "0.1.9",
     "@quilted/eslint-config": "0.1.16",

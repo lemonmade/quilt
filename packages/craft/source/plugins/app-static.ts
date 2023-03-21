@@ -201,7 +201,7 @@ export function appStatic({
             rollupOutputs,
             rollupNodeBundle,
             quiltAsyncPreload,
-            quiltAssetsManifest,
+            quiltAssetManifest,
             quiltAssetOutputRoot,
           },
           {quiltAppStatic = false, quiltAppBrowser = false},
@@ -233,7 +233,7 @@ export function appStatic({
           });
 
           quiltAsyncPreload?.(() => false);
-          quiltAssetsManifest?.(() => false);
+          quiltAssetManifest?.(() => false);
 
           rollupPlugins?.(async (plugins) => {
             const {cssRollupPlugin} = await import('./rollup/css');

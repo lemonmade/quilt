@@ -1,3 +1,3 @@
 export {AssetsContext} from './context';
-export {useUpdateCacheKey} from './hooks';
+export {useAssetsCacheKey, useModuleAssets} from './hooks';
 export {AssetsManager} from './manager';

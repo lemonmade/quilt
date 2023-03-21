@@ -24,7 +24,7 @@ import {polyfills} from './features/polyfills';
 import type {Options as PolyfillOptions} from './features/polyfills';
 import {workers} from './features/workers';
 import {reactTesting} from './features/testing';
-import {assets as staticAssets} from './features/assets';
+import {assets as browserAssets} from './features/assets';
 import {AssetOptions} from './features/assets';
 
 import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
@@ -212,7 +212,7 @@ export function quiltApp({
         server && appServer(typeof server === 'boolean' ? undefined : server),
         server && useRequestRouter && requestRouter(),
         server && useRequestRouter && requestRouterDevelopment(),
-        build && staticAssets({baseUrl, ...assetOptions}),
+        build && browserAssets({baseUrl, ...assetOptions}),
         build &&
           appBuild({
             env,

@@ -10,7 +10,6 @@ import {
   type BrowserAssetsEntry,
 } from '@quilted/assets';
 import {AssetsManager} from '@quilted/react-assets/server';
-import {AsyncAssetManager} from '@quilted/react-async/server';
 import {HttpManager} from '@quilted/react-http/server';
 import {
   renderHtmlToString,
@@ -65,7 +64,6 @@ export interface ServerRenderAppDetails<
   readonly html: HtmlManager;
   readonly assets: AssetsManager<CacheKey>;
   readonly rendered?: string;
-  readonly asyncAssets: AsyncAssetManager;
 }
 
 export function createServerRender<
@@ -252,7 +250,6 @@ async function serverRenderDetailsForApp<
   } = {},
 ): Promise<ServerRenderAppDetails<Context, CacheKey>> {
   const html = new HtmlManager();
-  const asyncAssets = new AsyncAssetManager();
   const http = new HttpManager({headers});
   const assets = new AssetsManager<CacheKey>({cacheKey});
 
@@ -261,13 +258,7 @@ async function serverRenderDetailsForApp<
   const rendered = await extract(app, {
     decorate(app) {
       return (
-        <ServerContext
-          asyncAssets={asyncAssets}
-          http={http}
-          html={html}
-          url={url}
-          assets={assets}
-        >
+        <ServerContext http={http} html={html} url={url} assets={assets}>
           {decorate?.(app) ?? app}
         </ServerContext>
       );
@@ -275,7 +266,7 @@ async function serverRenderDetailsForApp<
     ...rest,
   });
 
-  return {rendered, http, html, asyncAssets, assets};
+  return {rendered, http, html, assets};
 }
 
 async function renderAppDetailsToHtmlString<
@@ -294,21 +285,15 @@ async function renderAppDetailsToHtmlString<
     readonly cacheKey?: Partial<CacheKey>;
   },
 ) {
-  const {
-    http,
-    rendered,
-    asyncAssets,
-    html: htmlManager,
-    assets: assetsManager,
-  } = details;
+  const {http, rendered, html: htmlManager, assets: assetsManager} = details;
 
-  const usedModules = asyncAssets.used({timing: 'load'});
   const cacheKey = assetsManager.cacheKey as CacheKey;
+  const usedModules = assetsManager.usedModules({timing: 'load'});
 
   const [entryAssets, preloadAssets] = assets
     ? await Promise.all([
         assets.entry({modules: usedModules, cacheKey}),
-        assets.modules(asyncAssets.used({timing: 'preload'}), {
+        assets.modules(assetsManager.usedModules({timing: 'preload'}), {
           cacheKey,
         }),
       ])

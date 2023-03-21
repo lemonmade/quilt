@@ -193,6 +193,7 @@ importers:
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@jest/types': ^29.3.0
       '@prefresh/vite': ^2.2.0
+      '@quilted/assets': 0.0.1
       '@quilted/async': 0.3.38
       '@quilted/browserslist-config': 0.1.9
       '@quilted/eslint-config': 0.1.16
@@ -266,6 +267,7 @@ importers:
       '@babel/runtime': 7.18.3
       '@jest/types': 29.3.1
       '@prefresh/vite': 2.2.8_preact@10.13.1+vite@4.0.0
+      '@quilted/assets': link:../assets
       '@quilted/async': link:../async
       '@quilted/browserslist-config': link:../browserslist-config
       '@quilted/eslint-config': link:../eslint-config
@@ -600,9 +602,11 @@ importers:
   packages/react-async:
     specifiers:
       '@quilted/async': ^0.3.12
-      '@quilted/react-server-render': ^0.3.7
+      '@quilted/react-assets': ^0.0.1
+      '@quilted/react-server-render': ^0.3.27
     dependencies:
       '@quilted/async': link:../async
+      '@quilted/react-assets': link:../react-assets
       '@quilted/react-server-render': link:../react-server-render
 
   packages/react-dom:

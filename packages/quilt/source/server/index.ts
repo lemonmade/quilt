@@ -33,16 +33,12 @@ export type {
   AssetsBuildManifestEntry,
 } from '@quilted/assets';
 export {
-  useUpdateCacheKey,
+  useAssetsCacheKey,
+  useModuleAssets,
   AssetsContext,
   AssetsManager,
   SERVER_ACTION_ID as ASSETS_SERVER_ACTION_ID,
 } from '@quilted/react-assets/server';
-export {
-  AsyncAssetContext,
-  AsyncAssetManager,
-  SERVER_ACTION_ID as ASYNC_ASSETS_SERVER_ACTION_ID,
-} from '@quilted/react-async/server';
 export type {
   ServerActionKind,
   ServerActionOptions,

@@ -1,50 +1,23 @@
 import {createHash} from 'crypto';
-import {posix, sep, dirname} from 'path';
-import {mkdir, writeFile} from 'fs/promises';
+import {posix, sep} from 'path';
 
-import type {
-  Plugin,
-  PluginContext,
-  OutputChunk,
-  OutputBundle,
-  NormalizedOutputOptions,
-} from 'rollup';
+import type {Plugin, OutputChunk, OutputBundle} from 'rollup';
 import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
-import type {
-  AssetsBuildManifest,
-  AssetsBuildManifestEntry,
-} from '@quilted/assets';
 
 import {IMPORT_PREFIX, MODULE_PREFIX} from './constants';
 
-export interface ManifestOptions {
-  id?: string;
-  priority?: number;
-  cacheKey?: Record<string, any>;
-  path: string;
-}
-
 export interface Options {
   preload?: boolean;
-  manifest?: string | ManifestOptions | false;
   assetBaseUrl?: string;
   moduleId?(details: {imported: string}): string;
 }
 
 export function asyncQuilt({
   preload = true,
-  manifest = false,
   assetBaseUrl = '/assets/',
-  moduleId = defaultModuleId,
+  moduleId: getModuleId = defaultModuleId,
 }: Options = {}): Plugin {
-  const manifestOptions: ManifestOptions | false =
-    typeof manifest === 'boolean'
-      ? manifest
-      : typeof manifest === 'string'
-      ? {path: manifest}
-      : manifest;
-
   return {
     name: '@quilted/async',
     async resolveId(id, importer) {
@@ -74,10 +47,10 @@ export function asyncQuilt({
     async load(id: string) {
       if (id.startsWith(MODULE_PREFIX)) {
         const imported = id.replace(MODULE_PREFIX, '');
-        const asyncId = moduleId({imported});
+        const moduleId = getModuleId({imported});
 
         const code = stripIndent`
-          const id = ${JSON.stringify(asyncId)};
+          const id = ${JSON.stringify(moduleId)};
 
           const doImport = () => import(${JSON.stringify(
             `${IMPORT_PREFIX}${imported}`,
@@ -96,13 +69,13 @@ export function asyncQuilt({
 
       if (id.startsWith(IMPORT_PREFIX)) {
         const imported = id.replace(IMPORT_PREFIX, '');
-        const asyncId = moduleId({imported});
+        const moduleId = getModuleId({imported});
 
         const code = stripIndent`
           import * as AsyncModule from ${JSON.stringify(imported)};
 
           if (typeof Quilt !== 'undefined' && Quilt.AsyncAssets != null) {
-            Quilt.AsyncAssets.set(${JSON.stringify(asyncId)}, AsyncModule);
+            Quilt.AsyncAssets.set(${JSON.stringify(moduleId)}, AsyncModule);
           }
 
           export default AsyncModule;
@@ -111,7 +84,7 @@ export function asyncQuilt({
         return {
           code,
           meta: {
-            quilt: {asyncId},
+            quilt: {moduleId},
           },
         };
       }
@@ -137,13 +110,6 @@ export function asyncQuilt({
             break;
           }
         }
-      }
-
-      if (manifestOptions) {
-        await writeManifestForBundle.call(this, bundle, manifestOptions, {
-          ...options,
-          assetBaseUrl,
-        });
       }
     },
   };
@@ -282,122 +248,4 @@ function getDependenciesForImport(
   addDependencies(normalizedFile);
 
   return dependencies;
-}
-
-async function writeManifestForBundle(
-  this: PluginContext,
-  bundle: OutputBundle,
-  manifestOptions: ManifestOptions,
-  {format, assetBaseUrl}: NormalizedOutputOptions & {assetBaseUrl: string},
-) {
-  const outputs = Object.values(bundle);
-
-  const entries = outputs.filter(
-    (output): output is OutputChunk =>
-      output.type === 'chunk' && output.isEntry,
-  );
-
-  if (entries.length === 0) {
-    throw new Error(`Could not find any entries in your rollup bundle...`);
-  }
-
-  // We assume the first entry is the "main" one. There can be
-  // more than one because each worker script is also listed as an
-  // entry (though, from a separate build).
-  const entryChunk = entries[0]!;
-
-  const dependencyMap = new Map<string, string[]>();
-
-  for (const output of outputs) {
-    if (output.type !== 'chunk') continue;
-    dependencyMap.set(output.fileName, output.imports);
-  }
-
-  const assets: string[] = [];
-  const assetIdMap = new Map<string, number>();
-
-  function getAssetId(file: string) {
-    let id = assetIdMap.get(file);
-
-    if (id == null) {
-      assets.push(`${assetBaseUrl}${file}`);
-      id = assets.length - 1;
-      assetIdMap.set(file, id);
-    }
-
-    return id;
-  }
-
-  const manifest: AssetsBuildManifest<any> = {
-    id: manifestOptions.id,
-    priority: manifestOptions.priority,
-    cacheKey: manifestOptions.cacheKey,
-    assets,
-    attributes: format === 'es' ? {scripts: {type: 'module'}} : undefined,
-    entries: {
-      default: createAssetsEntry([...entryChunk.imports, entryChunk.fileName], {
-        dependencyMap,
-        getAssetId,
-      }),
-    },
-    modules: {},
-  };
-
-  for (const output of outputs) {
-    if (output.type !== 'chunk') continue;
-
-    const originalModuleId =
-      output.facadeModuleId ?? output.moduleIds[output.moduleIds.length - 1];
-
-    if (!originalModuleId?.startsWith(IMPORT_PREFIX)) continue;
-
-    // This metadata is added by the rollup plugin for @quilted/async
-    const asyncId = this.getModuleInfo(originalModuleId)?.meta.quilt?.asyncId;
-
-    manifest.modules![asyncId] = createAssetsEntry(
-      [...output.imports, output.fileName],
-      {dependencyMap, getAssetId},
-    );
-  }
-
-  await mkdir(dirname(manifestOptions.path), {recursive: true});
-  await writeFile(manifestOptions.path, JSON.stringify(manifest, null, 2));
-}
-
-function createAssetsEntry(
-  files: string[],
-  {
-    dependencyMap,
-    getAssetId,
-  }: {
-    dependencyMap: Map<string, string[]>;
-    getAssetId(file: string): number;
-  },
-): AssetsBuildManifestEntry {
-  const styles: number[] = [];
-  const scripts: number[] = [];
-
-  const allFiles = new Set<string>();
-  const addFile = (file: string) => {
-    if (allFiles.has(file)) return;
-    allFiles.add(file);
-
-    for (const dependency of dependencyMap.get(file) ?? []) {
-      addFile(dependency);
-    }
-  };
-
-  for (const file of files) {
-    addFile(file);
-  }
-
-  for (const file of allFiles) {
-    if (file.endsWith('.css')) {
-      styles.push(getAssetId(file));
-    } else {
-      scripts.push(getAssetId(file));
-    }
-  }
-
-  return {scripts, styles};
 }

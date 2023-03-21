@@ -38,7 +38,7 @@ export type {
   EventTargetFunction,
   EventTargetOn,
 } from '@quilted/events';
-export {useUpdateCacheKey} from '@quilted/react-assets';
+export {useAssetsCacheKey, useModuleAssets} from '@quilted/react-assets';
 export {
   useAsyncModule,
   useAsyncModulePreload,
