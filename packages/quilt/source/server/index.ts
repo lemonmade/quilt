@@ -77,10 +77,10 @@ export type {
 } from '@quilted/request-router';
 export {parseAcceptLanguageHeader} from '@quilted/react-localize';
 
-export {ServerContext} from './ServerContext';
+export {ServerContext} from './ServerContext.tsx';
 export {
   createServerRender,
   renderAppToResponse,
   renderAppToStreamedResponse,
-} from './request-router';
-export {createAssetPreloader, type AssetPreloadOptions} from './preload';
+} from './request-router.tsx';
+export {createAssetPreloader, type AssetPreloadOptions} from './preload.ts';

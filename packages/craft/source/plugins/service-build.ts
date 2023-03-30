@@ -3,12 +3,14 @@ import {rm} from 'fs/promises';
 
 import type {ModuleFormat} from 'rollup';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {createProjectPlugin, type WaterfallHook} from '../kit.ts';
 
-import {addRollupNodeBundleInclusion, RollupNodeBundle} from '../tools/rollup';
+import {
+  addRollupNodeBundleInclusion,
+  RollupNodeBundle,
+} from '../tools/rollup.ts';
 
-import type {EnvironmentOptions} from './magic-module-env';
+import type {EnvironmentOptions} from './magic-module-env.ts';
 
 export interface ServiceBuildHooks {
   /**
@@ -168,7 +170,7 @@ export function serviceBuild({
                 quiltService: true,
                 quiltRequestRouter: format === 'request-router',
               }),
-              import('../tools/rollup'),
+              import('../tools/rollup.ts'),
             ]);
 
             await rm(project.fs.buildPath(), {

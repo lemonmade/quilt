@@ -27,4 +27,4 @@ export type {
 } from '@quilted/react-testing';
 export {TestRouting, createTestRouter} from '@quilted/react-router/testing';
 
-export {QuiltAppTesting} from './TestApp';
+export {QuiltAppTesting} from './TestApp.tsx';

@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import {stripIndent, color, prompt, parseArguments} from '@quilted/cli-kit';
 
-import {printHelp} from './help';
+import {printHelp} from './help.ts';
 import {
   format,
   loadTemplate,
@@ -13,16 +13,16 @@ import {
   toValidPackageName,
   relativeDirectoryForDisplay,
   mergeWorkspaceAndProjectPackageJsons,
-} from './shared';
+} from './shared.ts';
 import {
   getInWorkspace,
   getCreateAsMonorepo,
   getExtrasToSetup,
   getPackageManager,
   getShouldInstall,
-} from './shared/prompts';
-import {addToTsConfig} from './shared/tsconfig';
-import {addToPackageManagerWorkspaces} from './shared/package-manager';
+} from './shared/prompts.ts';
+import {addToTsConfig} from './shared/tsconfig.ts';
+import {addToPackageManagerWorkspaces} from './shared/package-manager.ts';
 
 type Arguments = ReturnType<typeof getArguments>;
 

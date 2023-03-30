@@ -56,18 +56,17 @@ import type {
   LintWorkspaceConfigurationCoreHooks,
   TestWorkspaceConfigurationCoreHooks,
   TypeCheckWorkspaceConfigurationCoreHooks,
-} from '../kit';
+} from '../kit.ts';
 import {
   Task,
   DiagnosticError,
   createWaterfallHook,
   createSequenceHook,
-} from '../kit';
+} from '../kit.ts';
 
-import {loadWorkspace} from './configuration';
-import type {LoadedWorkspace} from './configuration';
+import {loadWorkspace, type LoadedWorkspace} from './configuration.ts';
 
-import {Ui} from './ui';
+import {Ui} from './ui.ts';
 
 export {DiagnosticError, loadWorkspace};
 

@@ -1,7 +1,10 @@
 import {relative} from 'path';
 
-import type {OutputTarget} from '../shared';
-import {format, relativeDirectoryForDisplay} from '../shared';
+import {
+  format,
+  relativeDirectoryForDisplay,
+  type OutputTarget,
+} from '../shared.ts';
 
 export async function addToPackageManagerWorkspaces(
   directory: string,

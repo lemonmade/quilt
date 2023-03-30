@@ -1,12 +1,15 @@
 import {createRequire} from 'module';
 
-import {createProjectPlugin, createWorkspacePlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {
+  createProjectPlugin,
+  createWorkspacePlugin,
+  type WaterfallHook,
+} from '../kit.ts';
 
-import type {} from '../tools/babel';
-import type {} from '../tools/eslint';
-import type {} from '../tools/jest';
-import type {} from '../tools/rollup';
+import type {} from '../tools/babel.ts';
+import type {} from '../tools/eslint.ts';
+import type {} from '../tools/jest.ts';
+import type {} from '../tools/rollup.ts';
 
 export interface TypeScriptHooks {
   typescriptHeap: WaterfallHook<number | undefined>;

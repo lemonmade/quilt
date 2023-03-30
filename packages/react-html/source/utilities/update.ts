@@ -1,7 +1,7 @@
 let initiallyUnmatchedMetas: Element[];
 let initiallyUnmatchedLinks: Element[];
 
-export function updateOnClient(state: import('../manager').State) {
+export function updateOnClient(state: import('../manager.ts').State) {
   const {title, metas, links, bodyAttributes, htmlAttributes} = state;
   let titleElement = document.querySelector('title');
 

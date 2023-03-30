@@ -2,7 +2,7 @@ import {type PropsWithChildren} from 'react';
 
 import {type Router} from '@quilted/react-router';
 
-import {QuiltApp} from './App';
+import {QuiltApp} from './App.tsx';
 
 interface Props {
   /**

@@ -5,11 +5,11 @@ import {
   EXPECTED_COLOR as expectedColor,
 } from 'jest-matcher-utils';
 
-import type {GraphQLAnyOperation} from '../types';
-import type {GraphQLController, GraphQLRequest} from '../fixtures';
-import {normalizeOperation} from '../utilities/ast';
+import type {GraphQLAnyOperation} from '../types.ts';
+import type {GraphQLController, GraphQLRequest} from '../fixtures.ts';
+import {normalizeOperation} from '../utilities/ast.ts';
 
-import {assertIsGraphQLController, diffVariables} from './utilities';
+import {assertIsGraphQLController, diffVariables} from './utilities.ts';
 
 export function toHavePerformedGraphQLOperation<Variables>(
   this: MatcherState,

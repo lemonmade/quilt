@@ -1,9 +1,5 @@
-import {Task, DiagnosticError} from '../../kit';
-
-import type {TestTaskOptions} from '../../kit';
-
-import {createCommand, runStepsForTask} from '../common';
-import type {TaskContext} from '../common';
+import {Task, DiagnosticError, type TestTaskOptions} from '../../kit.ts';
+import {createCommand, runStepsForTask, type TaskContext} from '../common.ts';
 
 export const test = createCommand(
   {

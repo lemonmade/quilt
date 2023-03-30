@@ -1,7 +1,7 @@
 import {expect} from '@jest/globals';
 
-import type {GraphQLAnyOperation} from '../types';
-import {toHavePerformedGraphQLOperation} from './operations';
+import type {GraphQLAnyOperation} from './types.ts';
+import {toHavePerformedGraphQLOperation} from './matchers/operations.ts';
 
 declare global {
   // As far as I know, this is needed for the module augmentation  to work.

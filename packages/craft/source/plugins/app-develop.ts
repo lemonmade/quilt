@@ -6,25 +6,25 @@ import type {AssetsBuildManifest} from '@quilted/quilt';
 import {stripIndent} from 'common-tags';
 import type {ViteDevServer} from 'vite';
 
-import type {} from '../tools/babel';
-import {createViteConfig} from '../tools/vite';
+import type {} from '../tools/babel.ts';
+import {createViteConfig} from '../tools/vite.ts';
 
-import {createProjectPlugin, DiagnosticError} from '../kit';
+import {createProjectPlugin, DiagnosticError} from '../kit.ts';
 import type {
   Project,
   WaterfallHook,
   ResolvedDevelopProjectConfigurationHooks,
-} from '../kit';
+} from '../kit.ts';
 
-import type {AppServerOptions} from './app-server-base';
-import type {AppBrowserOptions} from './app-build';
-import type {EnvironmentOptions} from './magic-module-env';
+import type {AppServerOptions} from './app-server-base.ts';
+import type {AppBrowserOptions} from './app-build.ts';
+import type {EnvironmentOptions} from './magic-module-env.ts';
 
 import {
   MAGIC_MODULE_REQUEST_ROUTER,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_BROWSER_ASSETS,
-} from '../constants';
+} from '../constants.ts';
 
 export const STEP_NAME = 'Quilt.App.Develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
@@ -348,8 +348,8 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               import('@prefresh/vite') as Promise<{
                 default: () => import('vite').Plugin;
               }>,
-              import('./rollup/magic-browser-entry'),
-              import('./rollup/magic-module-env'),
+              import('./rollup/magic-browser-entry.ts'),
+              import('./rollup/magic-module-env.ts'),
               babelPlugins!.run([]),
               babelPresets!.run([]),
             ]);

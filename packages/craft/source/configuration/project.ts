@@ -1,14 +1,14 @@
 import {relative} from 'path';
 
-import type {WorkspacePlugin, ProjectPlugin} from '../kit';
-import {FileSystem, DiagnosticError, PackageJson, isPlugin} from '../kit';
+import type {WorkspacePlugin, ProjectPlugin} from '../kit.ts';
+import {FileSystem, DiagnosticError, PackageJson, isPlugin} from '../kit.ts';
 
-import {nameFromFileSystem} from './shared';
+import {nameFromFileSystem} from './shared.ts';
 import type {
   ProjectConfiguration,
   ConfigurationContext,
   ProjectConfigurationBuilder,
-} from './types';
+} from './types.ts';
 
 export function createProject(
   create: (workspace: ProjectConfigurationBuilder) => void | Promise<void>,

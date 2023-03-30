@@ -11,7 +11,7 @@ import type {
   Location,
 } from 'graphql';
 
-import type {GraphQLOperation} from './types';
+import type {GraphQLOperation} from './types.ts';
 
 const IMPORT_REGEX = /^#import\s+['"]([^'"]*)['"];?[\s\n]*/gm;
 const DEFAULT_NAME = 'Operation';

@@ -31,7 +31,7 @@ function getSchema() {
     schemaPromise = (async () => {
       const [{buildSchema}, {default: schemaSource}] = await Promise.all([
         import('graphql'),
-        import('../graphql/schema'),
+        import('../graphql/schema.ts'),
       ]);
 
       return buildSchema(schemaSource);

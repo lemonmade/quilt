@@ -18,9 +18,12 @@ export type {
   IsUnion,
   MaybeNullableValue,
   Typenames,
-} from '../types';
-export {GraphQLController, createGraphQLController} from './controller';
-export type {GraphQLRequest} from './controller';
+} from './types.ts';
+export {
+  GraphQLController,
+  createGraphQLController,
+} from './fixtures/controller.ts';
+export type {GraphQLRequest} from './fixtures/controller.ts';
 export {
   createGraphQLFiller,
   type GraphQLFillerOptions,
@@ -28,5 +31,5 @@ export {
   type GraphQLFillerResolver,
   type GraphQLFillerResolverContext,
   type GraphQLFillerResolverMap,
-} from './filler';
-export {createGraphQLSchema} from './schema';
+} from './fixtures/filler.ts';
+export {createGraphQLSchema} from './fixtures/schema.ts';

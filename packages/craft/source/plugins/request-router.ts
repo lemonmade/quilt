@@ -1,11 +1,10 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
-import {MAGIC_MODULE_REQUEST_ROUTER} from '../constants';
-import {addRollupOnWarn} from '../tools/rollup';
+import {createProjectPlugin, type WaterfallHook} from '../kit.ts';
+import {MAGIC_MODULE_REQUEST_ROUTER} from '../constants.ts';
+import {addRollupOnWarn} from '../tools/rollup.ts';
 
-import type {EnvironmentOptions} from './magic-module-env';
+import type {EnvironmentOptions} from './magic-module-env.ts';
 
 const MAGIC_ENTRY_MODULE = '.quilt/magic/request-router-entry.js';
 const MAGIC_REQUEST_ROUTER_MODULE_ENTRY = '.quilt/magic/request-router.js';

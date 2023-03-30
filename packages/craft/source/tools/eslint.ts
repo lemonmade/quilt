@@ -1,7 +1,6 @@
-import {createWorkspacePlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {createWorkspacePlugin, WaterfallHook} from '../kit.ts';
 
-import type {} from './prettier';
+import type {} from './prettier.ts';
 
 export interface ESLintHooks {
   eslintExtensions: WaterfallHook<string[]>;

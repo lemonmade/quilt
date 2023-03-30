@@ -1,12 +1,15 @@
 import * as path from 'path';
 import type {Options as RollupOptions} from '@quilted/assets/rollup';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import {
+  createProjectPlugin,
+  type WaterfallHook,
+  type WaterfallHookWithDefault,
+} from '../kit.ts';
 
-import type {} from '../tools/jest';
-import type {} from '../tools/rollup';
-import {DEFAULT_STATIC_ASSET_EXTENSIONS} from '../constants';
+import type {} from '../tools/jest.ts';
+import type {} from '../tools/rollup.ts';
+import {DEFAULT_STATIC_ASSET_EXTENSIONS} from '../constants.ts';
 
 const NAME = 'Quilt.Assets';
 
@@ -168,7 +171,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
               outputPattern,
               includeManifest,
             ] = await Promise.all([
-              import('../plugins/rollup/assets'),
+              import('../plugins/rollup/assets.ts'),
               quiltAssetBaseUrl!.run(),
               quiltAssetStaticExtensions!.run(),
               quiltAssetStaticInlineLimit!.run(),
@@ -227,7 +230,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
         rollupPlugins?.(async (plugins) => {
           const [{staticAssetsDevelopment, rawAssets}, extensions] =
             await Promise.all([
-              import('../plugins/rollup/assets'),
+              import('../plugins/rollup/assets.ts'),
               quiltAssetStaticExtensions!.run(),
             ]);
 

@@ -17,7 +17,7 @@ To create an asynchronous component, use the `createAsyncComponent()` helper pro
 import {createAsyncComponent} from '@quilted/quilt';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponentImplementation'),
+  () => import('./AsyncComponentImplementation.tsx'),
 );
 
 // AsyncComponentImplementation.tsx
@@ -41,7 +41,7 @@ If you know what content you want to render in response to loading and error sta
 import {createAsyncComponent} from '@quilted/quilt';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponentImplementation'),
+  () => import('./AsyncComponentImplementation.tsx'),
   {
     renderLoading({title}) {
       return <SkeletonAsyncComponent title={title} />;
@@ -60,7 +60,7 @@ Sometimes, you don’t need to render a component yet, but you might need to in 
 ```tsx
 import {createAsyncComponent, usePreload} from '@quilted/quilt';
 
-const Detail = createAsyncComponent(() => import('./Detail'));
+const Detail = createAsyncComponent(() => import('./Detail.tsx'));
 
 export function List() {
   usePreload(Detail);
@@ -74,7 +74,7 @@ Async components also have a convenience `Preload` component available to use, w
 ```tsx
 import {createAsyncComponent, usePreload} from '@quilted/quilt';
 
-const Detail = createAsyncComponent(() => import('./Detail'));
+const Detail = createAsyncComponent(() => import('./Detail.tsx'));
 
 export function List() {
   return (
@@ -95,9 +95,9 @@ As noted earlier, splitting your app based on the routes in your application is 
 ```tsx
 import {createAsyncComponent, useRoutes} from '@quilted/quilt';
 
-const Home = createAsyncComponent(() => import('./Home'));
-const Account = createAsyncComponent(() => import('./Account'));
-const NotFound = createAsyncComponent(() => import('./NotFound'));
+const Home = createAsyncComponent(() => import('./Home.tsx'));
+const Account = createAsyncComponent(() => import('./Account.tsx'));
+const NotFound = createAsyncComponent(() => import('./NotFound.tsx'));
 
 export function Routes() {
   return useRoutes(
@@ -117,9 +117,9 @@ In addition to manually preloading assets as shown above, each route you define 
 ```tsx
 import {createAsyncComponent, useRoutes} from '@quilted/quilt';
 
-const Home = createAsyncComponent(() => import('./Home'));
-const Account = createAsyncComponent(() => import('./Account'));
-const NotFound = createAsyncComponent(() => import('./NotFound'));
+const Home = createAsyncComponent(() => import('./Home.tsx'));
+const Account = createAsyncComponent(() => import('./Account.tsx'));
+const NotFound = createAsyncComponent(() => import('./NotFound.tsx'));
 
 export function Routes() {
   return useRoutes(
@@ -150,7 +150,7 @@ import {createAsyncComponent, usePreload} from '@quilted/quilt';
 import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent.tsx';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponent'),
+  () => import('./AsyncComponent.tsx'),
   {
     usePreload() {
       // AsyncComponent might use DeeplyNestedAsyncComponent, so preload its assets too
@@ -170,7 +170,7 @@ import {useLink} from '@quilted/quilt/html';
 import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent.tsx';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponent'),
+  () => import('./AsyncComponent.tsx'),
   {
     usePreload() {
       // Add a preload tag for a JSON file that our component will request
@@ -197,7 +197,7 @@ import {createAsyncComponent} from '@quilted/quilt';
 import {useLink} from '@quilted/quilt/html';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponentImplementation'),
+  () => import('./AsyncComponentImplementation.tsx'),
   {
     usePreload({id}: {id: string}) {
       // Add a preload tag for a JSON file that our component will request,
@@ -235,7 +235,7 @@ By default, asynchronous components will render during server-side rendering. Yo
 import {createAsyncComponent} from '@quilted/quilt';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponent'),
+  () => import('./AsyncComponent.tsx'),
   {render: 'client'},
 );
 ```
@@ -254,7 +254,7 @@ To enable this “deferred hydration” behavior, pass `hydrate: 'deferred'` (or
 import {createAsyncComponent} from '@quilted/quilt';
 
 export const AsyncComponent = createAsyncComponent(
-  () => import('./AsyncComponent'),
+  () => import('./AsyncComponent.tsx'),
   {hydrate: 'defer'},
 );
 ```
@@ -265,9 +265,12 @@ This component will be rendered during server rendering, and its CSS (if it has 
 import {useEffect} from 'react';
 import {createAsyncComponent} from '@quilted/quilt';
 
-const AsyncComponent = createAsyncComponent(() => import('./AsyncComponent'), {
-  hydrate: 'defer',
-});
+const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponent.tsx'),
+  {
+    hydrate: 'defer',
+  },
+);
 
 export function Home() {
   // Load the component’s assets in an effect, so they are deferred until after
@@ -285,9 +288,12 @@ You can call this `load()` method whenever you like, including in response to ev
 ```tsx
 import {createAsyncComponent, useIdleCallback} from '@quilted/quilt';
 
-const AsyncComponent = createAsyncComponent(() => import('./AsyncComponent'), {
-  hydrate: 'defer',
-});
+const AsyncComponent = createAsyncComponent(
+  () => import('./AsyncComponent.tsx'),
+  {
+    hydrate: 'defer',
+  },
+);
 
 export function Home() {
   useIdleCallback(() => {

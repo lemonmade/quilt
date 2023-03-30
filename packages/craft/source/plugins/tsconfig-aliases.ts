@@ -1,9 +1,8 @@
-import {createProjectPlugin, Workspace} from '../kit';
-import type {Project} from '../kit';
+import {createProjectPlugin, Workspace, type Project} from '../kit.ts';
 
-import type {} from '../tools/jest';
-import type {} from '../tools/rollup';
-import type {} from '../tools/vite';
+import type {} from '../tools/jest.ts';
+import type {} from '../tools/rollup.ts';
+import type {} from '../tools/vite.ts';
 
 export function tsconfigAliases() {
   return createProjectPlugin({

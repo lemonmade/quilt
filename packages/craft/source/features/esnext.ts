@@ -1,12 +1,11 @@
 import {join, dirname, sep as pathSeparator} from 'path';
 
-import {createProjectPlugin} from '../kit';
-import type {Project} from '../kit';
+import {createProjectPlugin, type Project} from '../kit.ts';
 
-import type {} from '../tools/babel';
-import type {} from '../tools/rollup';
+import type {} from '../tools/babel.ts';
+import type {} from '../tools/rollup.ts';
 
-import {createChunkNamer} from './packages';
+import {createChunkNamer} from './packages.ts';
 
 export const EXPORT_CONDITION = 'quilt:esnext';
 // Some older packages published with use this condition name, so we
@@ -117,7 +116,7 @@ export function esnextBuild() {
           async run() {
             const [configure, {buildWithRollup}] = await Promise.all([
               configuration({esnext: true}),
-              import('../tools/rollup'),
+              import('../tools/rollup.ts'.ts),
             ]);
 
             // We want to keep the output code as close as possible to source
@@ -141,7 +140,7 @@ export function esnextBuild() {
 }
 
 /**
- * Adds configuration to various tools to prefer the `esnext` build
+ * Adds configuration to various tools to prefer the `esnext` bui.tsld
  * for Node.js dependencies.
  */
 export function esnext() {

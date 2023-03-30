@@ -1,7 +1,7 @@
 import {createRequire} from 'module';
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 
-import type {} from '../tools/jest';
+import type {} from '../tools/jest.ts';
 
 export type Environment = 'react' | 'react-dom' | 'preact';
 

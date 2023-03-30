@@ -1,9 +1,5 @@
-import {Task} from '../../kit';
-
-import type {LintTaskOptions} from '../../kit';
-
-import {createCommand, runStepsForTask} from '../common';
-import type {TaskContext} from '../common';
+import {Task, type LintTaskOptions} from '../../kit.ts';
+import {createCommand, runStepsForTask, type TaskContext} from '../common.ts';
 
 export const lint = createCommand(
   {

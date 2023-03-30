@@ -11,14 +11,14 @@ import {
   type AsyncModule,
 } from '@quilted/async';
 
-import {useAsyncModule, useAsyncModulePreload} from './hooks';
+import {useAsyncModule, useAsyncModulePreload} from './hooks.ts';
 import type {
   NoOptions,
   RenderTiming,
   HydrationTiming,
   AssetLoadTiming,
   AsyncComponentType,
-} from './types';
+} from './types.ts';
 
 export interface Options<
   Props extends Record<string, any> = Record<string, never>,

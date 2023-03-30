@@ -26,12 +26,12 @@ import {
   getAllObjectTypes,
   getSelectionTypeMap,
   getFirstOperationFromDocument,
-} from '../utilities/ast';
+} from '../utilities/ast.ts';
 import type {
   GraphQLDeepPartialData,
   GraphQLMockFunction,
   GraphQLAnyOperation,
-} from '../types';
+} from '../types.ts';
 
 export interface GraphQLFillerResolverContext {
   readonly type: GraphQLOutputType;

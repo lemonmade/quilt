@@ -2,7 +2,7 @@ import * as path from 'path';
 import {spawn} from 'child_process';
 import type {ChildProcess} from 'child_process';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 
 export function serviceDevelopment() {
   return createProjectPlugin({

@@ -1,9 +1,5 @@
-import {Task} from '../../kit';
-
-import type {TypeCheckTaskOptions} from '../../kit';
-
-import {createCommand, runStepsForTask} from '../common';
-import type {TaskContext} from '../common';
+import {Task, type TypeCheckTaskOptions} from '../../kit.ts';
+import {createCommand, runStepsForTask, type TaskContext} from '../common.ts';
 
 export const typeCheck = createCommand({}, async (_, context) => {
   await runTypeCheck(context, {});

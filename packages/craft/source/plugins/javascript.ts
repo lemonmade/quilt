@@ -1,9 +1,9 @@
 import {createRequire} from 'module';
 
-import type {} from '../tools/babel';
-import type {} from '../tools/jest';
+import type {} from '../tools/babel.ts';
+import type {} from '../tools/jest.ts';
 
-import {createProjectPlugin, createWorkspacePlugin} from '../kit';
+import {createProjectPlugin, createWorkspacePlugin} from '../kit.ts';
 
 const require = createRequire(import.meta.url);
 

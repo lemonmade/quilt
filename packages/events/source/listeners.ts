@@ -2,7 +2,7 @@ import type {
   EventTarget,
   EventTargetOn,
   EventTargetAddEventListener,
-} from './types';
+} from './types.ts';
 
 export function addListener(
   target: EventTarget<any>,

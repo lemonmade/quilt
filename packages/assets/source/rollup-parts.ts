@@ -9,7 +9,10 @@ import type {
   NormalizedOutputOptions,
 } from 'rollup';
 
-import type {AssetsBuildManifest, AssetsBuildManifestEntry} from './manifest';
+import type {
+  AssetsBuildManifest,
+  AssetsBuildManifestEntry,
+} from './manifest.ts';
 
 export interface Options {
   id?: string;

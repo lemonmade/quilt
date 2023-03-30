@@ -1,10 +1,13 @@
-export {installAsyncAssetsGlobal} from './global';
-export type {AsyncAssetsGlobal, AsyncAssetsOptions} from './global';
+export {
+  installAsyncAssetsGlobal,
+  type AsyncAssetsGlobal,
+  type AsyncAssetsOptions,
+} from './global.ts';
 
-export {createAsyncModule} from './loader';
+export {createAsyncModule} from './loader.ts';
 export type {
   AsyncModule,
   AsyncModuleLoad,
   AsyncModuleLoadFunction,
   AsyncModuleLoadObject,
-} from './loader';
+} from './loader.ts';

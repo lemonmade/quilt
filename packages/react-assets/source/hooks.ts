@@ -2,7 +2,7 @@ import {useContext} from 'react';
 import type {AssetsCacheKey, AssetLoadTiming} from '@quilted/assets';
 import {useServerAction} from '@quilted/react-server-render';
 
-import {AssetsContext} from './context';
+import {AssetsContext} from './context.ts';
 
 export function useAssetsCacheKey(cacheKey: Partial<AssetsCacheKey>) {
   const assets = useContext(AssetsContext);

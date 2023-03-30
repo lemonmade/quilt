@@ -3,10 +3,10 @@ import {createRequire} from 'module';
 import type {PluginItem} from '@babel/core';
 import type {Options as BabelPresetEnvOptions} from '@babel/preset-env';
 
-import {createProjectPlugin, createWorkspacePlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {createProjectPlugin, createWorkspacePlugin} from '../kit.ts';
+import type {WaterfallHook} from '../kit.ts';
 
-import type {} from './rollup';
+import type {} from './rollup.ts';
 
 export interface BabelHooks {
   /**

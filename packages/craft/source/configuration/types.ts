@@ -3,7 +3,7 @@ import type {
   ProjectPlugin,
   FileSystem,
   PackageJson,
-} from '../kit';
+} from '../kit.ts';
 
 export interface ConfigurationContext {
   root: string;

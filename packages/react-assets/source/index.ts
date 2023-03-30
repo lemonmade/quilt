@@ -1,3 +1,3 @@
-export {AssetsContext} from './context';
-export {useAssetsCacheKey, useModuleAssets} from './hooks';
-export {AssetsManager} from './manager';
+export {AssetsContext} from './context.ts';
+export {useAssetsCacheKey, useModuleAssets} from './hooks.ts';
+export {AssetsManager} from './manager.ts';

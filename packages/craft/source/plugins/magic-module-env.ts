@@ -1,8 +1,7 @@
-import type {} from '../tools/rollup';
-import type {} from '../tools/vite';
+import type {} from '../tools/rollup.ts';
+import type {} from '../tools/vite.ts';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {createProjectPlugin, type WaterfallHook} from '../kit.ts';
 
 export interface EnvironmentOptions {
   /**
@@ -73,7 +72,9 @@ export function magicModuleEnv() {
           quiltEnvModuleContent,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const {magicModuleEnv} = await import('./rollup/magic-module-env');
+            const {magicModuleEnv} = await import(
+              './rollup/magic-module-env.ts'
+            );
 
             return [
               magicModuleEnv({
@@ -105,7 +106,9 @@ export function magicModuleEnv() {
           quiltEnvModuleContent,
         }) => {
           rollupPlugins?.(async (plugins) => {
-            const {magicModuleEnv} = await import('./rollup/magic-module-env');
+            const {magicModuleEnv} = await import(
+              './rollup/magic-module-env.ts'
+            );
 
             return [
               magicModuleEnv({

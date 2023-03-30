@@ -1,4 +1,4 @@
-export type {AssetsCacheKey} from './cache-key';
+export type {AssetsCacheKey} from './cache-key.ts';
 export type {
   Asset,
   AssetLoadTiming,
@@ -6,16 +6,16 @@ export type {
   BrowserAssetsEntry,
   BrowserAssetSelector,
   BrowserAssetModuleSelector,
-} from './types';
+} from './types.ts';
 export {
   styleAssetAttributes,
   styleAssetPreloadAttributes,
   scriptAssetAttributes,
   scriptAssetPreloadAttributes,
-} from './attributes';
+} from './attributes.ts';
 export {
   createBrowserAssetsEntryFromManifest,
   createBrowserAssetsFromManifests,
   type AssetsBuildManifest,
   type AssetsBuildManifestEntry,
-} from './manifest';
+} from './manifest.ts';

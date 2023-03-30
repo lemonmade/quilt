@@ -5,7 +5,7 @@ import {createRequestRouter, json} from '@quilted/quilt/request-router';
 import {createServerRender} from '@quilted/quilt/server';
 import {createBrowserAssets} from '@quilted/quilt/magic/assets';
 
-import {performGraphQLOperation} from './server/graphql';
+import {performGraphQLOperation} from './server/graphql.ts';
 
 const router = createRequestRouter();
 
@@ -25,7 +25,7 @@ router.post('/api/graphql', async (request) => {
 router.get(
   createServerRender(
     async () => {
-      const {default: App} = await import('./App');
+      const {default: App} = await import('./App.tsx');
 
       // GraphQL API, called during server rendering
       const fetchGraphQL: GraphQLFetch = async (operation, variables) => {

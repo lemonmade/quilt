@@ -1,5 +1,5 @@
 import {dirname, basename} from 'path';
-import {PackageJson} from '../kit';
+import {PackageJson} from '../kit.ts';
 
 const DIRECTORIES_NOT_TO_USE_FOR_NAME = new Set(['src', 'source', 'lib']);
 

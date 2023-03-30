@@ -7,11 +7,11 @@ import type {
   Extensions as ConfigurationExtensions,
 } from '@quilted/graphql/configuration';
 
-import {createWorkspacePlugin, createProjectPlugin} from '../kit';
-import type {Workspace, WorkspaceStepRunner} from '../kit';
-import type {} from '../tools/jest';
-import type {} from '../tools/rollup';
-import type {} from '../tools/vite';
+import {createWorkspacePlugin, createProjectPlugin} from '../kit.ts';
+import type {Workspace, WorkspaceStepRunner} from '../kit.ts';
+import type {} from '../tools/jest.ts';
+import type {} from '../tools/rollup.ts';
+import type {} from '../tools/vite.ts';
 
 export type {Configuration, ConfigurationExtensions};
 

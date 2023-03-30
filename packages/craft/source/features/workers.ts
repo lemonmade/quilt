@@ -4,17 +4,20 @@ import type {InputOptions, OutputOptions, Plugin} from 'rollup';
 
 import type {Options as BabelOptions} from '@quilted/workers/babel';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, ResolvedHooks} from '../kit';
+import {
+  createProjectPlugin,
+  type WaterfallHook,
+  type ResolvedHooks,
+} from '../kit.ts';
 
-import type {BabelHooks} from '../tools/babel';
-import type {RollupHooks} from '../tools/rollup';
-import type {ViteHooks} from '../tools/vite';
+import type {BabelHooks} from '../tools/babel.ts';
+import type {RollupHooks} from '../tools/rollup.ts';
+import type {ViteHooks} from '../tools/vite.ts';
 import type {
   Options as RollupOptions,
   WorkerContext,
   PublicPathContext,
-} from '../plugins/rollup/workers';
+} from '../plugins/rollup/workers.ts';
 
 export interface Options {}
 
@@ -138,7 +141,7 @@ export function workers() {
       const [noop, write, {workers}] = await Promise.all([
         quiltWorkerNoop!.run(defaultNoop),
         quiltWorkerWrite!.run(defaultNoop),
-        import('../plugins/rollup/workers'),
+        import('../plugins/rollup/workers.ts'),
       ]);
 
       if (noop) return plugins;
@@ -168,7 +171,7 @@ export function workers() {
       const [noop, write, {workers}] = await Promise.all([
         quiltWorkerNoop!.run(defaultNoop),
         quiltWorkerWrite!.run(true),
-        import('../plugins/rollup/workers'),
+        import('../plugins/rollup/workers.ts'),
       ]);
 
       if (noop) return plugins;

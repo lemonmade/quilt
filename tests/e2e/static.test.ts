@@ -41,9 +41,9 @@ describe('app builds', () => {
               createAsyncComponent,
             } from '@quilted/quilt';
 
-            const PageOne = createAsyncComponent(() => import('../pages/One'));
-            const PageTwo = createAsyncComponent(() => import('../pages/Two'));
-            const PageThree = createAsyncComponent(() => import('../pages/Three'));
+            const PageOne = createAsyncComponent(() => import('../pages/One.tsx'));
+            const PageTwo = createAsyncComponent(() => import('../pages/Two.tsx'));
+            const PageThree = createAsyncComponent(() => import('../pages/Three.tsx'));
 
             export function Routes() {
               return useRoutes([

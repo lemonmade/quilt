@@ -7,12 +7,12 @@ import type {AssetsBuildManifest} from '@quilted/quilt';
 import {
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
-} from '../constants';
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
+} from '../constants.ts';
+import {createProjectPlugin} from '../kit.ts';
+import type {WaterfallHook, WaterfallHookWithDefault} from '../kit.ts';
 
-import {STEP_NAME} from './app-build';
-import type {AppServerOptions} from './app-server-base';
+import {STEP_NAME} from './app-build.ts';
+import type {AppServerOptions} from './app-server-base.ts';
 
 export interface AppServerBuildHooks {
   /**
@@ -286,7 +286,7 @@ export function appServerBuild({
                 quiltAppServer: true,
                 quiltRequestRouter: requestRouter,
               }),
-              import('../tools/rollup'),
+              import('../tools/rollup.ts'),
             ]);
 
             await buildWithRollup(project, configure);

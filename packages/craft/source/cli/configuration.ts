@@ -4,12 +4,16 @@ import {access} from 'fs/promises';
 
 import {globby} from 'globby';
 
-import {Workspace, Project, DiagnosticError} from '../kit';
-import type {ProjectPlugin, WorkspacePlugin, PluginCreateHelper} from '../kit';
+import {Workspace, Project, DiagnosticError} from '../kit.ts';
+import type {
+  ProjectPlugin,
+  WorkspacePlugin,
+  PluginCreateHelper,
+} from '../kit.ts';
 import type {
   ProjectConfigurationResult,
   WorkspaceConfigurationResult,
-} from '../configuration';
+} from '../configuration.ts';
 
 type ConfigurationResult =
   | ProjectConfigurationResult

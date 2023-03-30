@@ -2,17 +2,17 @@ import {createRequire} from 'module';
 import type {Plugin as RollupPlugin} from 'rollup';
 import type {PolyfillFeature} from '@quilted/polyfills';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 import type {
   WaterfallHook,
   WaterfallHookWithDefault,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
-} from '../kit';
+} from '../kit.ts';
 
-import {addRollupOnWarn} from '../tools/rollup';
-import type {} from '../tools/jest';
-import type {} from './targets';
+import {addRollupOnWarn} from '../tools/rollup.ts';
+import type {} from '../tools/jest.ts';
+import type {} from './targets.ts';
 
 export type {PolyfillFeature};
 

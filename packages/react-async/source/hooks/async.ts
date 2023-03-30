@@ -5,7 +5,7 @@ import {useModuleAssets} from '@quilted/react-assets';
 import {useServerAction} from '@quilted/react-server-render';
 import type {AsyncModule} from '@quilted/async';
 
-import type {AssetLoadTiming} from '../types';
+import type {AssetLoadTiming} from '../types.ts';
 
 export interface Options {
   immediate?: boolean;

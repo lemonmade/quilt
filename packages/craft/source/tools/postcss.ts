@@ -3,10 +3,10 @@ import type {Result as PostCSSConfigResult} from 'postcss-load-config';
 import type {pluginOptions as PostCSSPresetEnvPluginOptions} from 'postcss-preset-env';
 import type PostcssModulesPlugin from 'postcss-modules';
 
-import {createProjectPlugin} from '../kit';
-import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
+import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit.ts';
 
-import type {} from './rollup';
+import type {} from './rollup.ts';
 
 export type PostCSSModulesOptions = Parameters<PostcssModulesPlugin>[0];
 

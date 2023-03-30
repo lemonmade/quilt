@@ -1,2 +1,2 @@
-export {polyfillAliasesForTarget} from './aliases';
-export type {PolyfillFeature} from './types';
+export {polyfillAliasesForTarget} from './aliases.ts';
+export type {PolyfillFeature} from './types.ts';

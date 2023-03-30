@@ -1,4 +1,4 @@
-import type {GraphQLFetch} from './types';
+import type {GraphQLFetch} from './types.ts';
 
 export class GraphQLHttpError extends Error {
   constructor(

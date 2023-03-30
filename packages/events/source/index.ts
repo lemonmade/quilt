@@ -1,24 +1,24 @@
-export {on} from './on';
-export {once} from './once';
+export {on} from './on.ts';
+export {once} from './once.ts';
 export {
   AbortError,
   NestedAbortController,
   anyAbortSignal,
   raceAgainstAbortSignal,
   type AbortBehavior,
-} from './abort';
-export {addListener} from './listeners';
-export {createEmitter, createEmitterWithInternals} from './emitter';
+} from './abort.ts';
+export {addListener} from './listeners.ts';
+export {createEmitter, createEmitterWithInternals} from './emitter.ts';
 export type {
   Emitter,
   EmitterHandler,
   EmitterInternalEvents,
   EmitterWithInternals,
-} from './emitter';
-export {TimedAbortController, sleep} from './timeouts';
+} from './emitter.ts';
+export {TimedAbortController, sleep} from './timeouts.ts';
 export type {
   EventTarget,
   EventTargetOn,
   EventTargetAddEventListener,
   EventTargetFunction,
-} from './types';
+} from './types.ts';

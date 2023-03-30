@@ -1,5 +1,4 @@
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {createProjectPlugin, type WaterfallHook} from '../kit.ts';
 
 export interface Hooks {
   /**

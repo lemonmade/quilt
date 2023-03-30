@@ -1,9 +1,10 @@
-import {Environment, Task, createWaterfallHook} from '../../kit';
-
-import type {BuildTaskOptions} from '../../kit';
-
-import {createCommand, runStepsForTask} from '../common';
-import type {TaskContext} from '../common';
+import {
+  Environment,
+  Task,
+  createWaterfallHook,
+  type BuildTaskOptions,
+} from '../../kit.ts';
+import {createCommand, runStepsForTask, type TaskContext} from '../common.ts';
 
 export const build = createCommand(
   {

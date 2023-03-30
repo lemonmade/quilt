@@ -11,11 +11,11 @@ import {
 import {ReactQueryContext} from '@quilted/react-query';
 import {QueryClient} from '@tanstack/react-query';
 
-import {Http} from './foundation/Http';
-import {Head} from './foundation/Head';
-import {Metrics} from './foundation/Metrics';
+import {Http} from './foundation/Http.tsx';
+import {Head} from './foundation/Head.tsx';
+import {Metrics} from './foundation/Metrics.tsx';
 
-import {Start} from './features/Start';
+import {Start} from './features/Start.tsx';
 
 export interface Props {
   fetchGraphQL?: GraphQLFetch;

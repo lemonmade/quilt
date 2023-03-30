@@ -31,25 +31,25 @@
       "require": "./build/cjs/transform.cjs"
     },
     "./typescript": {
-      "types": "./build/typescript/typescript/index.d.ts",
-      "quilt:source": "./source/typescript/index.ts",
-      "quilt:esnext": "./build/esnext/typescript/index.esnext",
-      "import": "./build/esm/typescript/index.mjs",
-      "require": "./build/cjs/typescript/index.cjs"
+      "types": "./build/typescript/typescript.d.ts",
+      "quilt:source": "./source/typescript.ts",
+      "quilt:esnext": "./build/esnext/typescript.esnext",
+      "import": "./build/esm/typescript.mjs",
+      "require": "./build/cjs/typescript.cjs"
     },
     "./fixtures": {
-      "types": "./build/typescript/fixtures/index.d.ts",
-      "quilt:source": "./source/fixtures/index.ts",
-      "quilt:esnext": "./build/esnext/fixtures/index.esnext",
-      "import": "./build/esm/fixtures/index.mjs",
-      "require": "./build/cjs/fixtures/index.cjs"
+      "types": "./build/typescript/fixtures.d.ts",
+      "quilt:source": "./source/fixtures.ts",
+      "quilt:esnext": "./build/esnext/fixtures.esnext",
+      "import": "./build/esm/fixtures.mjs",
+      "require": "./build/cjs/fixtures.cjs"
     },
     "./matchers": {
-      "types": "./build/typescript/matchers/index.d.ts",
-      "quilt:source": "./source/matchers/index.ts",
-      "quilt:esnext": "./build/esnext/matchers/index.esnext",
-      "import": "./build/esm/matchers/index.mjs",
-      "require": "./build/cjs/matchers/index.cjs"
+      "types": "./build/typescript/matchers.d.ts",
+      "quilt:source": "./source/matchers.ts",
+      "quilt:esnext": "./build/esnext/matchers.esnext",
+      "import": "./build/esm/matchers.mjs",
+      "require": "./build/cjs/matchers.cjs"
     },
     "./rollup": {
       "types": "./build/typescript/rollup-parts.d.ts",

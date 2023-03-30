@@ -1,11 +1,11 @@
-import {createProjectPlugin} from '../kit';
-import type {Project, Workspace} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
+import type {Project, Workspace} from '../kit.ts';
 
-import {addRollupNodeBundleInclusion} from '../tools/rollup';
-import type {} from '../tools/rollup';
-import type {} from '../tools/vite';
+import {addRollupNodeBundleInclusion} from '../tools/rollup.ts';
+import type {} from '../tools/rollup.ts';
+import type {} from '../tools/vite.ts';
 
-import {sourceEntriesForProject} from '../features/packages';
+import {sourceEntriesForProject} from '../features/packages.ts';
 
 export function aliasWorkspacePackages() {
   let internalSourceAliases: Promise<Record<string, string>> | undefined;

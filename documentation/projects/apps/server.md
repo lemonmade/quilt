@@ -69,7 +69,7 @@ router.get(
     async () => {
       // We can asynchronously load the app so we don’t pay its cost
       // until we are server rendering our app.
-      const {default: App} = await import('./App');
+      const {default: App} = await import('./App.tsx');
       return <App />;
     },
     {
@@ -103,7 +103,7 @@ export default createProject((app) => {
 import Koa from 'koa';
 import {Html, renderApp, renderHtmlToString} from '@quilted/quilt/server';
 
-import App from './App';
+import App from './App.tsx';
 
 const app = new Koa();
 

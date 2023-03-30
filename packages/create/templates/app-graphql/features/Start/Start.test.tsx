@@ -4,9 +4,9 @@ import {
   renderWithAppContext,
   createGraphQLController,
   fillGraphQL,
-} from '~/tests/render';
+} from '~/tests/render.tsx';
 
-import Start from './Start';
+import Start from './Start.tsx';
 import startQuery from './StartQuery.graphql';
 
 describe('<Start />', () => {

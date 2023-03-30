@@ -1,7 +1,7 @@
 import type * as Babel from '@babel/types';
 import type {NodePath, Binding} from '@babel/traverse';
 
-import {MODULE_PREFIX} from './constants';
+import {MODULE_PREFIX} from './constants.ts';
 
 export interface Options {
   packages?: {[key: string]: string[]};

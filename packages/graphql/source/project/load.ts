@@ -5,8 +5,11 @@ import {GraphQLFileLoader} from '@graphql-tools/graphql-file-loader';
 import {cosmiconfig as createCosmiconfig} from 'cosmiconfig';
 import {loadToml} from 'cosmiconfig-toml-loader';
 
-import type {GraphQLConfiguration, GraphQLProjectConfiguration} from './types';
-import type {GraphQLProject, GraphQLProjectMap} from '../configuration';
+import type {
+  GraphQLConfiguration,
+  GraphQLProjectConfiguration,
+} from './types.ts';
+import type {GraphQLProject, GraphQLProjectMap} from '../configuration.ts';
 
 const NAME = 'graphql';
 

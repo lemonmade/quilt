@@ -1,7 +1,7 @@
-import {addListener} from './listeners';
-import type {AbortBehavior} from './abort';
-import {AbortError, NestedAbortController} from './abort';
-import type {EventTarget} from './types';
+import {addListener} from './listeners.ts';
+import type {AbortBehavior} from './abort.ts';
+import {AbortError, NestedAbortController} from './abort.ts';
+import type {EventTarget} from './types.ts';
 
 // @see https://github.com/nodejs/node/blob/master/lib/events.js#L1012-L1019
 export function on<

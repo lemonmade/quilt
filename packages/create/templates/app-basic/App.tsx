@@ -1,10 +1,10 @@
 import {QuiltApp, useRoutes, type PropsWithChildren} from '@quilted/quilt';
 
-import {Http} from './foundation/Http';
-import {Head} from './foundation/Head';
-import {Metrics} from './foundation/Metrics';
+import {Http} from './foundation/Http.tsx';
+import {Head} from './foundation/Head.tsx';
+import {Metrics} from './foundation/Metrics.tsx';
 
-import {Start} from './features/Start';
+import {Start} from './features/Start.tsx';
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.

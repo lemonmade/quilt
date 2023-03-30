@@ -1,8 +1,8 @@
 import type {Plugin, PluginContext} from 'rollup';
 import {stripIndent} from 'common-tags';
 
-import {MAGIC_MODULE_ENV} from '../../constants';
-import type {Project, Workspace} from '../../kit';
+import {MAGIC_MODULE_ENV} from '../../constants.ts';
+import type {Project, Workspace} from '../../kit.ts';
 
 export interface Options {
   mode: 'production' | 'development';

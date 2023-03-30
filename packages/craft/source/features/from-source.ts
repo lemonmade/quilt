@@ -1,7 +1,7 @@
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 
-import type {} from '../tools/babel';
-import type {} from '../tools/rollup';
+import type {} from '../tools/babel.ts';
+import type {} from '../tools/rollup.ts';
 
 export const EXPORT_CONDITION = 'quilt:source';
 

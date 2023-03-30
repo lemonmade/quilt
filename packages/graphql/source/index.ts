@@ -1,6 +1,9 @@
-export {createGraphQLHttpFetch} from './fetch';
-export type {GraphQLHttpFetchContext, GraphQLHttpFetchOptions} from './fetch';
-export {cacheKey} from './utilities/cache';
+export {
+  createGraphQLHttpFetch,
+  type GraphQLHttpFetchContext,
+  type GraphQLHttpFetchOptions,
+} from './fetch.ts';
+export {cacheKey} from './utilities/cache.ts';
 export type {
   GraphQLOperation,
   GraphQLOperationType,
@@ -17,4 +20,4 @@ export type {
   GraphQLError,
   GraphQLVariableOptions,
   PickGraphQLType,
-} from './types';
+} from './types.ts';
