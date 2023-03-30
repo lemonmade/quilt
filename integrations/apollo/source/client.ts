@@ -1,2 +1,2 @@
-export {ApolloProvider} from './ApolloProvider';
-export {parseDocument} from './parse';
+export {ApolloProvider} from './ApolloProvider.tsx';
+export {parseDocument} from './parse.ts';

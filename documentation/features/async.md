@@ -147,7 +147,7 @@ By default, preloading an asynchronous component simply loads that component’s
 ```tsx
 import {createAsyncComponent, usePreload} from '@quilted/quilt';
 
-import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent';
+import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent.tsx';
 
 export const AsyncComponent = createAsyncComponent(
   () => import('./AsyncComponent'),
@@ -167,7 +167,7 @@ import {useEffect} from 'react';
 import {createAsyncComponent} from '@quilted/quilt';
 import {useLink} from '@quilted/quilt/html';
 
-import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent';
+import {DeeplyNestedAsyncComponent} from './DeeplyNestedAsyncComponent.tsx';
 
 export const AsyncComponent = createAsyncComponent(
   () => import('./AsyncComponent'),
@@ -216,7 +216,7 @@ Now, when preloading the component, you will be forced to pass the `id` option:
 
 ```tsx
 import {usePreload} from '@quilted/quilt';
-import {AsyncComponent} from './AsyncComponent';
+import {AsyncComponent} from './AsyncComponent.tsx';
 
 function UsesAsyncComponent() {
   usePreload(AsyncComponent, {id: '123'});

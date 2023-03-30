@@ -7,7 +7,7 @@ import {
 } from '@quilted/quilt';
 import {type IfAllFieldsNullable} from '@quilted/useful-types';
 
-import {throwIfError} from './utilities';
+import {throwIfError} from './utilities.ts';
 
 export type GraphQLQueryOptions<Data, Variables> = Omit<
   UseQueryOptions<Data>,
