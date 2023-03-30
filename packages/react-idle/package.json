@@ -14,7 +14,7 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./build/typescript/index.ts",
+      "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",

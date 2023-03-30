@@ -2,7 +2,6 @@
 
 import {createProjectPlugin, createWorkspacePlugin} from './kit';
 import type {Project} from './kit';
-import {createProject, createWorkspace} from './configuration';
 
 import {
   moduleBase,
@@ -85,18 +84,14 @@ export type {} from './plugins/app-auto-server';
 export type {} from './plugins/browser-entry';
 export type {} from './plugins/request-router';
 
+export * from './constants';
+export * from './configuration';
+
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
 // (significantly more complex) `@quilted/craft/kit` entry.
-export {
-  createProjectPlugin,
-  createWorkspacePlugin,
-  createProject,
-  createWorkspace,
-};
+export {createProjectPlugin, createWorkspacePlugin};
 export type {Project};
-
-export * from './constants';
 
 export interface AppOptions {
   /**

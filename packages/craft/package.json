@@ -259,7 +259,7 @@
     "jest-environment-jsdom": "^29.3.0",
     "jest-watch-typeahead": "^2.2.0",
     "magic-string": "^0.27.0",
-    "mrmime": "^1.0.0",
+    "mrmime": "^1.0.1",
     "pkg-dir": "^7.0.0",
     "postcss": "^8.4.20",
     "postcss-load-config": "^4.0.0",
@@ -289,7 +289,7 @@
   "peerDependencies": {
     "@quilted/quilt": "^0.5.138",
     "react": "^18.0.0",
-    "typescript": "^4.9.0"
+    "typescript": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {

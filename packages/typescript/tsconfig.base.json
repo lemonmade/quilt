@@ -6,10 +6,11 @@
     "emitDeclarationOnly": true,
     "pretty": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "module": "ESNext",
-    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "module": "esnext",
+    "target": "esnext",
     "jsx": "preserve",
     "strict": true,
     "noImplicitAny": true,
@@ -23,6 +24,6 @@
     "sourceMap": false,
     "noEmitOnError": false,
     "isolatedModules": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "lib": ["dom", "dom.iterable", "esnext"]
   }
 }

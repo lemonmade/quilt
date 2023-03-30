@@ -103,10 +103,10 @@
   "dependencies": {
     "@babel/generator": ">=7.0.0",
     "@babel/types": ">=7.0.0",
-    "@graphql-tools/load": "^7.5.0",
+    "@graphql-tools/load": "^7.8.0",
     "@graphql-tools/schema": "^9.0.0",
-    "@graphql-tools/graphql-file-loader": "^7.3.0",
-    "@graphql-tools/json-file-loader": "^7.3.0",
+    "@graphql-tools/graphql-file-loader": "^7.5.0",
+    "@graphql-tools/json-file-loader": "^7.4.0",
     "@quilted/useful-types": "^0.2.5",
     "@types/chance": "^1.1.0",
     "arg": "^4.1.3",

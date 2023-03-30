@@ -9,7 +9,12 @@ export async function addToPackageManagerWorkspaces(
   packageManager: 'yarn' | 'npm' | 'pnpm',
 ) {
   if (packageManager === 'pnpm') {
-    const {parse, stringify} = await import('yaml');
+    // @ts-expect-error Yaml doesn’t implement `exports.types`
+    const {parse, stringify} = await (import('yaml') as Promise<{
+      parse: (content: string) => any;
+      stringify: (value: any) => string;
+    }>);
+
     const workspaceYaml = parse(await output.read('pnpm-workspace.yaml'));
 
     workspaceYaml.packages = await addToWorkspaces(

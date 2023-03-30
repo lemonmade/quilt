@@ -344,7 +344,10 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               requestedBabelPlugins,
               requestedBabelPresets,
             ] = await Promise.all([
-              import('@prefresh/vite'),
+              // @ts-expect-error Prefresh doesn’t implement an `exports.types` field
+              import('@prefresh/vite') as Promise<{
+                default: () => import('vite').Plugin;
+              }>,
               import('./rollup/magic-browser-entry'),
               import('./rollup/magic-module-env'),
               babelPlugins!.run([]),
