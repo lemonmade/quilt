@@ -130,7 +130,7 @@ importers:
   packages/async:
     specifiers:
       '@babel/types': '>=7.0.0'
-      '@quilted/assets': ^0.0.2
+      '@quilted/assets': ^0.0.3
       '@quilted/events': ^0.1.16
       '@types/babel__core': '>=7.0.0'
       '@types/babel__traverse': '>=7.0.0'
@@ -193,18 +193,18 @@ importers:
       '@babel/runtime': '>=7.0.0 <8.0.0'
       '@jest/types': ^29.3.0
       '@prefresh/vite': ^2.2.0
-      '@quilted/assets': 0.0.2
-      '@quilted/async': 0.3.39
+      '@quilted/assets': 0.0.3
+      '@quilted/async': 0.3.40
       '@quilted/browserslist-config': 0.1.9
-      '@quilted/eslint-config': 0.1.16
-      '@quilted/graphql': 0.4.56
-      '@quilted/polyfills': 0.2.33
+      '@quilted/eslint-config': 0.1.17
+      '@quilted/graphql': 0.4.57
+      '@quilted/polyfills': 0.2.34
       '@quilted/prettier': 0.2.11
       '@quilted/quilt': ^0.5.0
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules': 0.1.13
-      '@quilted/sewing-kit': 0.2.38
-      '@quilted/typescript': 0.2.18
-      '@quilted/workers': 0.2.33
+      '@quilted/sewing-kit': 0.2.39
+      '@quilted/typescript': 0.2.19
+      '@quilted/workers': 0.2.34
       '@rollup/plugin-alias': ^4.0.0
       '@rollup/plugin-babel': ^6.0.0
       '@rollup/plugin-commonjs': ^23.0.0
@@ -519,13 +519,13 @@ importers:
 
   packages/quilt:
     specifiers:
-      '@quilted/assets': ^0.0.2
+      '@quilted/assets': ^0.0.3
       '@quilted/async': ^0.3.34
       '@quilted/events': ^0.1.0
       '@quilted/graphql': ^0.4.34
       '@quilted/polyfills': ^0.2.12
       '@quilted/react': ^18.2.0
-      '@quilted/react-assets': ^0.0.2
+      '@quilted/react-assets': ^0.0.3
       '@quilted/react-async': ^0.3.43
       '@quilted/react-dom': ^18.2.0
       '@quilted/react-graphql': ^0.4.30
@@ -586,7 +586,7 @@ importers:
 
   packages/react-assets:
     specifiers:
-      '@quilted/assets': ^0.0.2
+      '@quilted/assets': ^0.0.3
       '@quilted/react-server-render': ^0.3.27
       '@quilted/testing': ^0.1.0
       '@types/react': ^17.0.0 || ^18.0.0
@@ -602,7 +602,7 @@ importers:
   packages/react-async:
     specifiers:
       '@quilted/async': ^0.3.12
-      '@quilted/react-assets': ^0.0.2
+      '@quilted/react-assets': ^0.0.3
       '@quilted/react-server-render': ^0.3.27
     dependencies:
       '@quilted/async': link:../async

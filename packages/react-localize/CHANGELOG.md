@@ -1,5 +1,15 @@
 # @quilted/react-localize
 
+## 0.1.14
+
+### Patch Changes
+
+- [#536](https://github.com/lemonmade/quilt/pull/536) [`cf6e2de1`](https://github.com/lemonmade/quilt/commit/cf6e2de186d8644fad9afcedda85c05002e909e1) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to TypeScript 5.0
+
+- Updated dependencies [[`cf6e2de1`](https://github.com/lemonmade/quilt/commit/cf6e2de186d8644fad9afcedda85c05002e909e1)]:
+  - @quilted/react-http@0.3.28
+  - @quilted/request-router@0.1.4
+
 ## 0.1.13
 
 ### Patch Changes

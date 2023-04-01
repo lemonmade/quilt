@@ -2,7 +2,7 @@
   "name": "@quilted/events",
   "description": "",
   "type": "module",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
