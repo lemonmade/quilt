@@ -1,5 +1,5 @@
 import {type CrossOriginResourcePolicyHeaderValue} from '@quilted/http';
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Sets the `Cross-Origin-Resource-Policy` header for this request.

@@ -5,7 +5,7 @@ import {
   ReactTestInstance,
 } from 'react-test-renderer';
 
-import {createEnvironment} from '../environment';
+import {createEnvironment} from '../environment.tsx';
 import type {
   CustomRender,
   CustomRenderResult,
@@ -17,7 +17,7 @@ import type {
   ContextOption,
   RenderOption,
   ActionsOption,
-} from '../environment';
+} from '../environment.tsx';
 
 export type {
   CustomRender,

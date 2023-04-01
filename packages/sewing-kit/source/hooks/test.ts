@@ -1,5 +1,5 @@
-import type {ValueOrPromise} from '../types';
-import type {Project, Workspace} from '../model';
+import type {ValueOrPromise} from '../types.ts';
+import type {Project, Workspace} from '../model.ts';
 
 import type {
   HookAdder,
@@ -9,7 +9,7 @@ import type {
   ConfigurationCollector,
   WorkspaceStepAdder,
   WorkspaceStepAdderContext,
-} from './shared';
+} from './shared.ts';
 
 /**
  * Options that are available to configuration hooks for testing any

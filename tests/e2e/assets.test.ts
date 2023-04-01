@@ -1,12 +1,12 @@
 import {jest, describe, it, expect} from '@quilted/testing';
 import {
+  type Page,
   buildAppAndOpenPage,
   buildAppAndRunServer,
   openPageAndWaitForNavigation,
   stripIndent,
   withWorkspace,
-} from './utilities';
-import type {Page} from './utilities';
+} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -59,7 +59,7 @@ describe('app builds', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon.png';
+            import image from '../../common/images/lemon.png.ts';
             
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -83,7 +83,7 @@ describe('app builds', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon-tiny.png';
+            import image from '../../common/images/lemon-tiny.png.ts';
             
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -110,7 +110,7 @@ describe('app builds', () => {
         await fs.write({
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(quiltApp({
@@ -122,7 +122,7 @@ describe('app builds', () => {
             });
           `,
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon-tiny.png';
+            import image from '../../common/images/lemon-tiny.png.ts';
               
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -149,7 +149,7 @@ describe('app builds', () => {
         await fs.write({
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp, createProjectPlugin} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(quiltApp());
@@ -169,7 +169,7 @@ describe('app builds', () => {
             });
           `,
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon.png';
+            import image from '../../common/images/lemon.png.ts';
               
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -196,7 +196,7 @@ describe('app builds', () => {
         await fs.write({
           'message.txt': 'Hello, world!',
           'App.tsx': stripIndent`
-            import message from './message.txt?raw';
+            import message from './message.txt?raw.ts';
 
             export default function App() {
               return <div>{message}</div>;

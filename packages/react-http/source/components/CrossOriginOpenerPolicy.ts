@@ -1,4 +1,4 @@
-import {useCrossOriginOpenerPolicy} from '../hooks';
+import {useCrossOriginOpenerPolicy} from '../hooks/cross-origin-opener-policy.ts';
 
 /**
  * Sets the `Cross-Origin-Opener-Policy` header for this request.

@@ -3,7 +3,7 @@ import {
   createUseOptionalValueHook,
   type UseOptionalValueHook,
   type UseOptionalValueHookOptions,
-} from './use-optional';
+} from './use-optional.ts';
 
 export function createOptionalContext<T>() {
   return createContext<T | undefined>(undefined);

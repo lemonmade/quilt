@@ -4,12 +4,12 @@ import {URL} from 'url';
 
 import {createHeaders} from '@quilted/http';
 
-import {notFound} from '../response-helpers';
-import {handleRequest} from '../handle';
-import type {ResponseOrEnhancedResponse} from '../response';
-import type {RequestRouter, RequestHandler} from '../types';
+import {notFound} from '../response-helpers.ts';
+import {handleRequest} from '../handle.ts';
+import type {ResponseOrEnhancedResponse} from '../response.ts';
+import type {RequestRouter, RequestHandler} from '../types.ts';
 
-import type {} from './types';
+import type {} from './types.ts';
 
 export function createHttpServer(
   ...args: Parameters<typeof createHttpRequestListener>

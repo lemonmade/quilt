@@ -1,5 +1,5 @@
-import {useNavigationBlock} from '../../hooks';
-import type {Blocker} from '../../types';
+import {useNavigationBlock} from '../hooks/navigation-block.ts';
+import type {Blocker} from '../types.ts';
 
 interface Props {
   onNavigation?: Blocker;

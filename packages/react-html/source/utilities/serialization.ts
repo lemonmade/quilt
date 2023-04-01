@@ -1,4 +1,4 @@
-import type {Serializable} from '../types';
+import type {Serializable} from '../types.ts';
 
 export function getSerializationsFromDocument() {
   const serializations = new Map<string, unknown>();

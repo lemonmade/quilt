@@ -1,7 +1,8 @@
 import {describe, it, expect} from '@quilted/testing';
-import {render, createTestRouter} from '../../tests/utilities';
 
-import {Link} from './Link';
+import {render, createTestRouter} from '../../tests/utilities.tsx';
+
+import {Link} from './Link.tsx';
 
 describe('<Link />', () => {
   it('creates an anchor tag', () => {

@@ -3,7 +3,7 @@ import {createLocalizedFormatting} from '@quilted/localize';
 import {HtmlAttributes} from '@quilted/react-html';
 import type {PropsWithChildren} from '@quilted/useful-react-types';
 
-import {LocaleContext, LocalizedFormattingContext} from './context';
+import {LocaleContext, LocalizedFormattingContext} from './context.ts';
 
 export interface LocalizationProps {
   locale: string;

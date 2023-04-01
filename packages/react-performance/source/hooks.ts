@@ -1,8 +1,8 @@
-export {usePerformance} from './hooks/performance';
+export {usePerformance} from './hooks/performance.ts';
 export {
   usePerformanceNavigation,
   type PerformanceNavigationOptions,
   type PerformanceNavigationOptionsComplete,
   type PerformanceNavigationOptionsLoading,
-} from './hooks/navigation';
-export {usePerformanceNavigationEvent} from './hooks/navigation-event';
+} from './hooks/navigation.ts';
+export {usePerformanceNavigationEvent} from './hooks/navigation-event.ts';

@@ -1,4 +1,4 @@
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Options for controlling the Cache-Control header of the current

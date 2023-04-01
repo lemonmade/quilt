@@ -9,9 +9,9 @@ import type {
   TestWorkspaceTask,
   TypeCheckProjectTask,
   TypeCheckWorkspaceTask,
-} from './hooks';
-import type {ValueOrPromise, ValueOrFalsy} from './types';
-import type {FileSystem} from './utilities/fs';
+} from './hooks.ts';
+import type {ValueOrPromise, ValueOrFalsy} from './types.ts';
+import type {FileSystem} from './utilities/fs.ts';
 
 // === === === ===
 // SHARED

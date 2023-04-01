@@ -1,6 +1,6 @@
 import {useContext} from 'react';
-import {HttpHeadersContext} from '../context';
-import {useHttpAction} from './http-action';
+import {HttpHeadersContext} from '../context.ts';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Returns the request header with the provided name, if server

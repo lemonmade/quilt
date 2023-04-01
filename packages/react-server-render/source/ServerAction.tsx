@@ -1,5 +1,5 @@
-import {useServerAction} from './hooks';
-import {ServerActionKind, ServerActionPerform} from './types';
+import {useServerAction} from './hooks.ts';
+import {ServerActionKind, ServerActionPerform} from './types.ts';
 
 interface Props {
   kind?: ServerActionKind;

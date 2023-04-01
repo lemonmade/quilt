@@ -1,5 +1,5 @@
 import type {StatusCode} from '@quilted/http';
-import {useResponseStatus} from '../hooks';
+import {useResponseStatus} from '../hooks/response-status.ts';
 
 export interface Props {
   /**

@@ -1,4 +1,4 @@
-import {useMeta} from '../hooks';
+import {useMeta} from '../hooks/meta.ts';
 
 /**
  * Adds a `<meta>` tag to the `<head>` of the document with the

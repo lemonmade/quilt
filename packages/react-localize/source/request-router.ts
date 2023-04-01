@@ -5,7 +5,7 @@ import type {
   RouteLocalization,
   ResolvedRouteLocalization,
   DefaultLocaleDefinition,
-} from './routing';
+} from './routing.ts';
 
 export type {
   RouteLocalization,

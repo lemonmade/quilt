@@ -1,8 +1,8 @@
 import {useContext} from 'react';
 import {useServerAction} from '@quilted/react-server-render';
 
-import {HttpServerContext} from '../context';
-import type {HttpManager} from '../manager';
+import {HttpServerContext} from '../context.ts';
+import type {HttpManager} from '../manager.ts';
 
 /**
  * During server-side rendering, the function you pass to this hook is

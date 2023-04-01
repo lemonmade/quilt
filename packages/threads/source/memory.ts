@@ -1,5 +1,5 @@
-import {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD} from './constants';
-import type {MemoryRetainer, MemoryManageable} from './types';
+import {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD} from './constants.ts';
+import type {MemoryRetainer, MemoryManageable} from './types.ts';
 
 export {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD};
 export type {MemoryRetainer, MemoryManageable};

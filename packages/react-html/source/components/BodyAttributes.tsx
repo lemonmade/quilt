@@ -1,4 +1,4 @@
-import {useBodyAttributes} from '../hooks';
+import {useBodyAttributes} from '../hooks/body-attributes.ts';
 
 type Props = Parameters<typeof useBodyAttributes>[0];
 

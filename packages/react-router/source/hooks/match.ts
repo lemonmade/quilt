@@ -1,9 +1,9 @@
 import {getMatchDetails} from '@quilted/routing';
 import type {Match} from '@quilted/routing';
 
-import {useRouter} from './router';
-import {useCurrentUrl} from './url';
-import {useConsumedPath} from './consumed';
+import {useRouter} from './router.ts';
+import {useCurrentUrl} from './url.ts';
+import {useConsumedPath} from './consumed.ts';
 
 export interface RouteMatchOptions {
   exact?: boolean;

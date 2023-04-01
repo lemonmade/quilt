@@ -8,14 +8,14 @@ import type {
   PlainObject,
   EmptyObject,
   MergeObjects,
-} from './types';
+} from './types.ts';
 
-import {TestRenderer} from './TestRenderer';
+import {TestRenderer} from './TestRenderer.tsx';
 
-import {HookRunner} from './HookRunner';
-import type {ImperativeApi as HookRunnerImperativeApi} from './HookRunner';
+import {HookRunner} from './HookRunner.tsx';
+import type {ImperativeApi as HookRunnerImperativeApi} from './HookRunner.tsx';
 
-import {nodeName, toReactString} from './print';
+import {nodeName, toReactString} from './print.ts';
 
 export type {BaseNode as Node, RootNode as Root};
 

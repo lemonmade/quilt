@@ -5,9 +5,9 @@ import type {
   ChildProcess,
 } from 'child_process';
 
-import type {Project, Workspace} from './model';
-import type {WorkspacePlugin, AnyPlugin} from './plugins';
-import type {Log, Loggable} from './types';
+import type {Project, Workspace} from './model.ts';
+import type {WorkspacePlugin, AnyPlugin} from './plugins.ts';
+import type {Log, Loggable} from './types.ts';
 
 export interface StepRunnerExecOptions extends ExecOptions {
   /**

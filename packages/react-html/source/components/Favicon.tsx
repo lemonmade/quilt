@@ -1,4 +1,4 @@
-import {useFavicon} from '../hooks';
+import {useFavicon} from '../hooks/favicon.ts';
 
 export type Props =
   | {

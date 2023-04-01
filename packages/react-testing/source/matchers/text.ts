@@ -6,9 +6,9 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import type {Node} from '../types';
+import type {Node} from '../types.ts';
 
-import {assertIsNode, printReceivedWithHighlight} from './utilities';
+import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
 
 export function toContainReactText<Props>(
   this: MatcherState,

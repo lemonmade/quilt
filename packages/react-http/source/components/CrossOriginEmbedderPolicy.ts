@@ -1,4 +1,4 @@
-import {useCrossOriginEmbedderPolicy} from '../hooks';
+import {useCrossOriginEmbedderPolicy} from '../hooks/cross-origin-embedder-policy.ts';
 
 /**
  * Sets the `Cross-Origin-Embedder-Policy` header for this request.

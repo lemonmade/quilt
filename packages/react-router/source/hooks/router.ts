@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {RouterContext} from '../context';
+import {RouterContext} from '../context.ts';
 
 export function useRouter() {
   const router = useContext(RouterContext);

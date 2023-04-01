@@ -3,7 +3,7 @@ import type {
   RETAIN_METHOD,
   ENCODE_METHOD,
   RETAINED_BY,
-} from './constants';
+} from './constants.ts';
 
 export type Thread<Target> = ThreadCallable<Target>;
 

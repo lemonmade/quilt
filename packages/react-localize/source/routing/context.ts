@@ -3,7 +3,7 @@ import {
   createOptionalContext,
 } from '@quilted/react-utilities';
 
-import type {ResolvedRouteLocalization} from './types';
+import type {ResolvedRouteLocalization} from './types.ts';
 
 export const RouteLocalizationContext =
   createOptionalContext<ResolvedRouteLocalization>();

@@ -1,4 +1,4 @@
-import {useCrossOriginResourcePolicy} from '../hooks';
+import {useCrossOriginResourcePolicy} from '../hooks/cross-origin-resource-policy.ts';
 
 /**
  * Sets the `Cross-Origin-Resource-Policy` header for this request.

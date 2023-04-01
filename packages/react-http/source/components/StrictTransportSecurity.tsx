@@ -1,4 +1,4 @@
-import {useStrictTransportSecurity} from '../hooks';
+import {useStrictTransportSecurity} from '../hooks/strict-transport-security.ts';
 
 interface ExplicitProps {
   /**

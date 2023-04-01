@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {stripIndent, withWorkspace} from './utilities';
+import {stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -133,7 +133,7 @@ describe('lint', () => {
         const {fs, command} = workspace;
 
         await fs.write({
-          'index.ts': `export {default} from './App';\n`,
+          'index.ts': `export {default} from './App.tsx';\n`,
           'App.tsx': CODE_WITH_LINT_ERRORS,
         });
 

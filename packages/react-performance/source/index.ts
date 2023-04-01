@@ -9,6 +9,6 @@ export {
   usePerformance,
   usePerformanceNavigation,
   usePerformanceNavigationEvent,
-} from './hooks';
+} from './hooks.ts';
 
-export {PerformanceContext} from './PerformanceContext';
+export {PerformanceContext} from './PerformanceContext.tsx';

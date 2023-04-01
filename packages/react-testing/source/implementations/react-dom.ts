@@ -1,7 +1,7 @@
 import {createRoot, type Root as ReactDomRoot} from 'react-dom/client';
 import {act} from 'react-dom/test-utils';
 
-import {createEnvironment, isNode} from '../environment';
+import {createEnvironment, isNode} from '../environment.tsx';
 import type {
   CustomRender,
   CustomRenderResult,
@@ -13,11 +13,20 @@ import type {
   ContextOption,
   RenderOption,
   ActionsOption,
-} from '../environment';
-import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
+} from '../environment.tsx';
+import type {
+  Node,
+  NodeApi,
+  Root,
+  RootApi,
+  HtmlNodeExtensions,
+} from '../types.ts';
 
-import {Tag, findCurrentFiberUsingSlowPath} from './shared/react';
-import type {Fiber} from './shared/react';
+import {
+  Tag,
+  findCurrentFiberUsingSlowPath,
+  type Fiber,
+} from './shared/react.ts';
 
 interface Context {
   root: ReactDomRoot;

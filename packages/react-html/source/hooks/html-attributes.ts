@@ -1,7 +1,7 @@
 /* eslint react-hooks/exhaustive-deps: off */
 
-import type {HtmlManager} from '../manager';
-import {useDomEffect} from './dom-effect';
+import type {HtmlManager} from '../manager.ts';
+import {useDomEffect} from './dom-effect.ts';
 
 type FirstArgument<T> = T extends (arg: infer U, ...rest: any[]) => any
   ? U

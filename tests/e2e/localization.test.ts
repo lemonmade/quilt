@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities';
+import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -94,9 +94,9 @@ describe('localization', () => {
           'App.tsx': stripIndent`
             import {QuiltApp, PerformanceContext, LocalizedRouting, createRoutePathLocalization} from '@quilted/quilt';
 
-            import {Http} from './foundation/Http';
-            import {Head} from './foundation/Head';
-            import {Routes} from './foundation/Routes';
+            import {Http} from './foundation/Http.tsx';
+            import {Head} from './foundation/Head.tsx';
+            import {Routes} from './foundation/Routes.tsx';
 
             const localization = createRoutePathLocalization({
               default: 'en',
@@ -153,9 +153,9 @@ describe('localization', () => {
           'App.tsx': stripIndent`
             import {QuiltApp, PerformanceContext, LocalizedRouting, createRoutePathLocalization} from '@quilted/quilt';
 
-            import {Http} from './foundation/Http';
-            import {Head} from './foundation/Head';
-            import {Routes} from './foundation/Routes';
+            import {Http} from './foundation/Http.tsx';
+            import {Head} from './foundation/Head.tsx';
+            import {Routes} from './foundation/Routes.tsx';
 
             const localization = createRoutePathLocalization({
               default: 'en',

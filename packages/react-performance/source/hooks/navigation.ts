@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {usePerformance} from './performance';
+import {usePerformance} from './performance.ts';
 
 export interface PerformanceNavigationOptionsComplete {
   state?: 'complete';

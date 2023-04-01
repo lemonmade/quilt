@@ -1,5 +1,5 @@
 import type {StatusCode} from '@quilted/http';
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Registers an HTTP redirect during server-side rendering. This will

@@ -1,4 +1,4 @@
-import {useViewport} from '../hooks';
+import {useViewport} from '../hooks/viewport.ts';
 
 /**
  * Adds a `viewport` `<meta>` tag to the `<head>` of the document.

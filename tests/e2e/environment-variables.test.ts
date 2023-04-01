@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities';
+import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -13,7 +13,7 @@ describe('app builds', () => {
         await fs.write({
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(quiltApp({
@@ -101,7 +101,7 @@ describe('app builds', () => {
           '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(quiltApp({
@@ -138,7 +138,7 @@ describe('app builds', () => {
           '.env': `BUILDER=${builder}`,
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(quiltApp({

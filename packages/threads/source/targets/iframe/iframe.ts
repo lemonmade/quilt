@@ -1,6 +1,6 @@
 import {on} from '@quilted/events';
-import type {ThreadTarget} from '../../types';
-import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared';
+import type {ThreadTarget} from '../../types.ts';
+import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
 
 export function targetFromIframe(
   iframe: HTMLIFrameElement,

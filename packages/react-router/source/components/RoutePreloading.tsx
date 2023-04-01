@@ -1,12 +1,12 @@
 import {memo, useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 
-import {useRouter} from '../hooks';
-import {PreloaderContext} from '../context';
-import {createPreloader} from '../preloader';
-import type {PreloadMatch} from '../preloader';
+import {useRouter} from '../hooks.ts';
+import {PreloaderContext} from '../context.ts';
+import {createPreloader} from '../preloader.ts';
+import type {PreloadMatch} from '../preloader.ts';
 
-import {EventListener} from './EventListener';
+import {EventListener} from './EventListener.tsx';
 
 interface NavigatorWithConnection {
   connection: {saveData: boolean};

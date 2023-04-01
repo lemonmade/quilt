@@ -3,9 +3,9 @@ import {useHttpAction} from '@quilted/react-http';
 import type {StatusCode} from '@quilted/react-http';
 import type {NavigateTo} from '@quilted/routing';
 
-import type {NavigateOptions} from '../router';
+import type {NavigateOptions} from '../router.ts';
 
-import {useRouter} from './router';
+import {useRouter} from './router.ts';
 
 export interface Options extends Pick<NavigateOptions, 'relativeTo'> {
   statusCode?: StatusCode;

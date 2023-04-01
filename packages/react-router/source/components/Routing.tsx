@@ -8,15 +8,16 @@ import {
 } from 'react';
 import {usePerformance} from '@quilted/react-performance';
 
-import {FocusContext} from '../FocusContext';
-import {CurrentUrlContext, RouterContext} from '../../context';
+import {CurrentUrlContext, RouterContext} from '../context.ts';
 import {
   createRouter,
   type Router,
   type Options as RouterOptions,
-} from '../../router';
-import {useRoutes, useInitialUrl} from '../../hooks';
-import type {Routes} from '../../types';
+} from '../router.ts';
+import {useRoutes, useInitialUrl} from '../hooks.ts';
+import type {Routes} from '../types.ts';
+
+import {FocusContext} from './FocusContext.tsx';
 
 interface Props extends RouterOptions {
   url?: URL;

@@ -9,13 +9,13 @@ export type {
   LocalizedDateTimeFormatOptions,
 } from '@quilted/localize';
 
-export {Localization} from './Localization';
-export {useLocalizedFormatting} from './hooks/formatting';
-export {useLocale} from './hooks/locale';
-export {useLocaleFromEnvironment} from './hooks/locale-from-environment';
-export {LocalizedFormattingContext} from './context';
+export {Localization} from './Localization.tsx';
+export {useLocalizedFormatting} from './hooks/formatting.ts';
+export {useLocale} from './hooks/locale.ts';
+export {useLocaleFromEnvironment} from './hooks/locale-from-environment.ts';
+export {LocalizedFormattingContext} from './context.ts';
 
-export * from './routing';
+export * from './routing.ts';
 
 // export function useLocale(): string {}
 // export function useTranslate(): Translate {}

@@ -14,7 +14,7 @@ import type {Options as GlobbyOptions} from 'globby';
 import type {
   FileSystem as FSType,
   UserFileSystem as UserFSType,
-} from '../types';
+} from '../types.ts';
 
 class BaseFileSystem implements FSType {
   constructor(public readonly root: string) {}

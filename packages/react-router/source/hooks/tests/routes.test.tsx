@@ -1,8 +1,8 @@
 import type {PropsWithChildren} from 'react';
 import {describe, it, expect} from '@quilted/testing';
 
-import {useRoutes} from '../routes';
-import {render} from '../../tests/utilities';
+import {useRoutes} from '../routes.ts';
+import {render} from '../../tests/utilities.tsx';
 
 jest.mock('../redirect', () => ({
   useRedirect: jest.fn(),

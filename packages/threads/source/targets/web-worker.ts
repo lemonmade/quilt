@@ -1,5 +1,5 @@
 import {on} from '@quilted/events';
-import type {ThreadTarget} from '../types';
+import type {ThreadTarget} from '../types.ts';
 
 export function targetFromWebWorker(worker: Worker): ThreadTarget {
   return {

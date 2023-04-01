@@ -1,4 +1,4 @@
-import {useContentSecurityPolicy} from '../hooks';
+import {useContentSecurityPolicy} from '../hooks/content-security-policy.ts';
 
 interface ExplicitProps {
   /**

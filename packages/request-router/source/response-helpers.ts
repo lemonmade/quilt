@@ -1,7 +1,7 @@
 import type {RelativeTo} from '@quilted/routing';
 
-import {EnhancedResponse, type ResponseInit} from './response';
-import {resolveTo, type NavigateTo} from './utilities';
+import {EnhancedResponse, type ResponseInit} from './response.ts';
+import {resolveTo, type NavigateTo} from './utilities.ts';
 
 export function notFound(options: Omit<ResponseInit, 'status'> = {}) {
   return new EnhancedResponse(null, {status: 404, ...options});

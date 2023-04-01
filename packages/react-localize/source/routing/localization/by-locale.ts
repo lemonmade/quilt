@@ -1,4 +1,4 @@
-import type {RouteLocalization} from '../types';
+import type {RouteLocalization} from '../types.ts';
 
 export function createRouteLocalization({
   locales: localeMap,

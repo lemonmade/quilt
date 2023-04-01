@@ -1,11 +1,11 @@
 import {
+  type Page,
   stripIndent,
   withWorkspace,
   buildAppAndOpenPage,
   waitForPerformanceNavigation,
   reloadAndWaitForPerformanceNavigation,
-} from './utilities';
-import type {Page} from './utilities';
+} from './utilities.ts';
 
 jest.setTimeout(process.env.CI ? 30_000 : 10_000);
 

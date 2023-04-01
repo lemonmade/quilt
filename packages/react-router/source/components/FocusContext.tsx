@@ -1,9 +1,9 @@
 import {useRef, useEffect} from 'react';
 import type {ReactNode} from 'react';
 
-import {FocusContext as Context} from '../../context';
-import {useCurrentUrl} from '../../hooks';
-import {Focusable} from '../../types';
+import {FocusContext as Context} from '../context.ts';
+import {useCurrentUrl} from '../hooks/url.ts';
+import type {Focusable} from '../types.ts';
 
 export function FocusContext({children}: {children: ReactNode}) {
   const currentUrl = useCurrentUrl();

@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {InitialUrlContext} from '../context';
+import {InitialUrlContext} from '../context.ts';
 
 export function useInitialUrl() {
   return useContext(InitialUrlContext);

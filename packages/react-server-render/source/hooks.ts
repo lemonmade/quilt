@@ -4,12 +4,12 @@ import {
   createUseOptionalValueHook,
 } from '@quilted/react-utilities';
 
-import {ServerRenderManagerContext} from './context';
+import {ServerRenderManagerContext} from './context.ts';
 import {
   ServerActionKind,
   ServerActionPerform,
   ServerActionOptions,
-} from './types';
+} from './types.ts';
 
 const useServerRenderManager = createUseContextHook(ServerRenderManagerContext);
 

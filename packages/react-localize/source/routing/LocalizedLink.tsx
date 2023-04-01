@@ -2,7 +2,7 @@ import {useMemo} from 'react';
 import type {ComponentProps} from 'react';
 import {useCurrentUrl, Link, useRouter} from '@quilted/react-router';
 
-import {useRouteLocalization} from './context';
+import {useRouteLocalization} from './context.ts';
 
 type LinkProps = ComponentProps<typeof Link>;
 

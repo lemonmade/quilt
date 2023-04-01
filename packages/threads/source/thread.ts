@@ -6,10 +6,10 @@ import type {
   ThreadEncodingStrategy,
   ThreadEncodingStrategyApi,
   AnyFunction,
-} from './types';
+} from './types.ts';
 
-import {StackFrame, MemoryRetainer} from './memory';
-import {createBasicEncoder} from './encoding/basic';
+import {StackFrame, MemoryRetainer} from './memory.ts';
+import {createBasicEncoder} from './encoding/basic.ts';
 
 export interface ThreadOptions<
   Self = Record<string, never>,

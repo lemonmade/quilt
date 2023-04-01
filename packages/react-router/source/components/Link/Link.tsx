@@ -2,7 +2,8 @@ import {forwardRef} from 'react';
 import type {MouseEvent, DetailedHTMLProps, AnchorHTMLAttributes} from 'react';
 import type {NavigateTo} from '@quilted/routing';
 
-import {useRouter, useCurrentUrl} from '../../hooks';
+import {useRouter} from '../../hooks/router.ts';
+import {useCurrentUrl} from '../../hooks/url.ts';
 
 interface Props
   extends Omit<

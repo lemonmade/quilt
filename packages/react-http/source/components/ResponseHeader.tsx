@@ -1,4 +1,4 @@
-import {useResponseHeader} from '../hooks';
+import {useResponseHeader} from '../hooks/response-header.ts';
 
 interface Props {
   /**

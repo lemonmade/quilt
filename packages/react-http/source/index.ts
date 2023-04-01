@@ -27,7 +27,7 @@ export {
   useResponseStatus,
   useHttpAction,
   useStrictTransportSecurity,
-} from './hooks';
+} from './hooks.ts';
 export {
   CacheControl,
   CookieContext,
@@ -42,4 +42,4 @@ export {
   ResponseHeader,
   ResponseStatus,
   StrictTransportSecurity,
-} from './components';
+} from './components.ts';

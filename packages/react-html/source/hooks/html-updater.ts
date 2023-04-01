@@ -1,6 +1,6 @@
 import {useRef} from 'react';
-import {updateOnClient} from '../utilities/update';
-import {useDomClientEffect} from './dom-effect-client';
+import {updateOnClient} from '../utilities/update.ts';
+import {useDomClientEffect} from './dom-effect-client.ts';
 
 /**
  * Batches and applies updates to the HTML document. This hook uses

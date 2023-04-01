@@ -1,8 +1,7 @@
-export {serveStatic} from './static';
-export type {StaticOptions} from './static';
+export {serveStatic, type StaticOptions} from './static.ts';
 export {
   createHttpServer,
   createHttpRequestListener,
   createRequest,
   sendResponse,
-} from './node';
+} from './node.ts';

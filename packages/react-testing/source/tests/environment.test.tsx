@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {describe, it, expect} from '@quilted/testing';
-import {render} from '../implementations/test-renderer';
+import {render} from '../implementations/test-renderer.ts';
 
 describe('render()', () => {
   describe('hook()', () => {

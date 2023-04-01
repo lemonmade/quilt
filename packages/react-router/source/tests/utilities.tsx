@@ -3,7 +3,7 @@ import '@quilted/react-testing/matchers';
 import {createRender} from '@quilted/react-testing';
 import type {Prefix} from '@quilted/routing';
 
-import {createTestRouter, TestRouting} from '../testing';
+import {createTestRouter, TestRouting} from '../testing.tsx';
 
 export {createTestRouter};
 

@@ -1,4 +1,4 @@
-import {retain, release} from './memory';
+import {retain, release} from './memory.ts';
 
 export type ThreadAbortSignal =
   | {

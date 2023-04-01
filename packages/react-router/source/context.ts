@@ -1,9 +1,9 @@
 import {createContext} from 'react';
 import type {MutableRefObject} from 'react';
-import type {EnhancedURL, Focusable} from './types';
-import type {Router} from './router';
-import type {Preloader} from './preloader';
-import type {StaticRenderer} from './static';
+import type {EnhancedURL, Focusable} from './types.ts';
+import type {Router} from './router.ts';
+import type {Preloader} from './preloader.ts';
+import type {StaticRenderer} from './static.ts';
 
 export const CurrentUrlContext = createContext<EnhancedURL | null>(null);
 export const RouterContext = createContext<Router | null>(null);

@@ -4,7 +4,7 @@ import type {
   ServerActionPerform,
   ServerActionOptions,
   ServerRenderRequestContext,
-} from './types';
+} from './types.ts';
 
 interface Options {
   context?: ServerRenderRequestContext;

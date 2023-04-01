@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {LocalizedFormattingContext} from '../context';
+import {LocalizedFormattingContext} from '../context.ts';
 
 export function useLocalizedFormatting() {
   const formatting = useContext(LocalizedFormattingContext);

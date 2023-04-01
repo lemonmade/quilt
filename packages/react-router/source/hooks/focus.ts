@@ -1,7 +1,7 @@
 import {useContext, MutableRefObject} from 'react';
 
-import {Focusable} from '../types';
-import {FocusContext} from '../context';
+import {Focusable} from '../types.ts';
+import {FocusContext} from '../context.ts';
 
 export function useRouteChangeFocusRef<
   T extends Focusable,

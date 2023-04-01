@@ -4,7 +4,7 @@ import type {PropsWithChildren} from 'react';
 
 import type {Cookies} from '@quilted/http';
 
-import {HttpCookiesContext, HttpServerContext} from '../context';
+import {HttpCookiesContext, HttpServerContext} from '../context.ts';
 
 /**
  * Provides a consistent API for cookies, accessible through the

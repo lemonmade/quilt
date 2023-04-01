@@ -1,5 +1,8 @@
-import {createScriptUrl, createCrossDomainWorkerUrl} from './utilities';
-import type {FileOrModuleResolver} from './utilities';
+import {
+  createScriptUrl,
+  createCrossDomainWorkerUrl,
+  type FileOrModuleResolver,
+} from './utilities.ts';
 
 export interface BasicWorkerCreator {
   readonly url?: URL;

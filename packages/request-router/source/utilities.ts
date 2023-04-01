@@ -1,7 +1,7 @@
 import {resolveUrl as baseResolveUrl} from '@quilted/routing';
 import type {RelativeTo} from '@quilted/routing';
 
-import type {NavigateTo} from './types';
+import type {NavigateTo} from './types.ts';
 
 export type {NavigateTo};
 

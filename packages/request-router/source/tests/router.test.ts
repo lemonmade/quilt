@@ -1,8 +1,9 @@
 import '@quilted/polyfills/fetch';
 
 import {describe, it, expect} from '@quilted/testing';
-import {createRequestRouter} from '../router';
-import {noContent} from '../response-helpers';
+
+import {createRequestRouter} from '../router.ts';
+import {noContent} from '../response-helpers.ts';
 
 describe('createRequestRouter()', () => {
   it('can register a handler for any method and path', async () => {

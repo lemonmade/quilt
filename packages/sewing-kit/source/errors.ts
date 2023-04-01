@@ -1,4 +1,4 @@
-import {Loggable} from './types';
+import {Loggable} from './types.ts';
 
 interface DiagnosticErrorOptions {
   title?: string;

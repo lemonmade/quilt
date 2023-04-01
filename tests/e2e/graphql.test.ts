@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {stripIndent, withWorkspace} from './utilities';
+import {stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -23,7 +23,7 @@ describe('graphql', () => {
           `,
           'foundation/Routes.tsx': stripIndent`
             import {useRoutes} from '@quilted/quilt';
-            import {Start} from '../features/Start';
+            import {Start} from '../features/Start.tsx';
             
             export function Routes() {
               return useRoutes([{match: '/', render: () => <Start />}]);
@@ -92,8 +92,8 @@ describe('graphql', () => {
           `,
           'foundation/Routes.tsx': stripIndent`
             import {useRoutes} from '@quilted/quilt';
-            import {Start} from '../features/Start';
-            import {Admin} from '../features/Admin';
+            import {Start} from '../features/Start.tsx';
+            import {Admin} from '../features/Admin.tsx';
             
             export function Routes() {
               return useRoutes([

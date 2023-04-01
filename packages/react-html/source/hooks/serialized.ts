@@ -1,9 +1,11 @@
 /* eslint react-hooks/exhaustive-deps: off */
 
 import {useContext, useMemo} from 'react';
-import {HtmlContext} from '../context';
-import {type Serializable} from '../types';
-import {useDomServerAction} from './dom-effect-server';
+
+import {HtmlContext} from '../context.ts';
+import {type Serializable} from '../types.ts';
+
+import {useDomServerAction} from './dom-effect-server.ts';
 
 export function useSerialized<T>(
   id: string,

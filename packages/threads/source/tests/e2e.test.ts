@@ -1,6 +1,6 @@
 import {describe, it, expect} from '@quilted/testing';
-import {createThread, targetFromMessagePort} from '..';
-import {MessageChannel} from './utiltiies';
+import {createThread, targetFromMessagePort} from '../index.ts';
+import {MessageChannel} from './utiltiies.ts';
 
 describe('thread', () => {
   it('calls the exposed API over a message channel', async () => {

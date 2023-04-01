@@ -116,7 +116,7 @@ export function esnextBuild() {
           async run() {
             const [configure, {buildWithRollup}] = await Promise.all([
               configuration({esnext: true}),
-              import('../tools/rollup.ts'.ts),
+              import('../tools/rollup.ts'),
             ]);
 
             // We want to keep the output code as close as possible to source

@@ -3,19 +3,19 @@ import {
   RETAIN_METHOD,
   ENCODE_METHOD,
   RELEASE_METHOD,
-} from '../constants';
+} from '../constants.ts';
 import type {
   ThreadEncodingStrategy,
   ThreadEncodingStrategyApi,
   ThreadEncodable,
   AnyFunction,
-} from '../types';
+} from '../types.ts';
 import {
   StackFrame,
   isBasicObject,
   isMemoryManageable,
   type MemoryRetainer,
-} from '../memory';
+} from '../memory.ts';
 
 const FUNCTION = '_@f';
 const ASYNC_ITERATOR = '_@i';

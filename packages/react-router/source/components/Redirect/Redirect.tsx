@@ -1,7 +1,7 @@
 import type {StatusCode} from '@quilted/react-http';
 import type {NavigateTo, RelativeTo} from '@quilted/routing';
 
-import {useRedirect} from '../../hooks';
+import {useRedirect} from '../../hooks/redirect.ts';
 
 interface Props {
   to: NavigateTo;

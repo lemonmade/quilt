@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
-import type {Router} from '../router';
-import {useRouter} from './router';
+import type {Router} from '../router.ts';
+import {useRouter} from './router.ts';
 
 export function useNavigate() {
   const router = useRouter();

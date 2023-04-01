@@ -1,7 +1,8 @@
 import type {Match, NavigateToLiteral} from '@quilted/routing';
 import type {WritableCookies} from '@quilted/http';
-import type {EnhancedResponse} from './response';
-import type {EnhancedRequest} from './request';
+
+import type {EnhancedResponse} from './response.ts';
+import type {EnhancedRequest} from './request.ts';
 
 export type NavigateTo = NavigateToLiteral | ((url: URL) => URL);
 

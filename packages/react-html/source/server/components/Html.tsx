@@ -3,9 +3,9 @@
 import type {ReactElement, ReactNode} from 'react';
 import {renderToString} from 'react-dom/server';
 
-import {HtmlManager} from '../../../manager';
-import {HtmlContext} from '../../../context';
-import {Serialize} from '../Serialize';
+import {HtmlManager} from '../../manager.ts';
+import {HtmlContext} from '../../context.ts';
+import {Serialize} from './Serialize.tsx';
 
 interface Props {
   manager?: HtmlManager;
