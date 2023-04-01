@@ -1,5 +1,11 @@
 # @quilted/cli-kit
 
+## 0.1.9
+
+### Patch Changes
+
+- [#536](https://github.com/lemonmade/quilt/pull/536) [`cf6e2de1`](https://github.com/lemonmade/quilt/commit/cf6e2de186d8644fad9afcedda85c05002e909e1) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to TypeScript 5.0
+
 ## 0.1.8
 
 ### Patch Changes

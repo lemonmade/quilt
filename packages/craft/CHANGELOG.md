@@ -1,5 +1,22 @@
 # @quilted/craft
 
+## 0.1.198
+
+### Patch Changes
+
+- [#536](https://github.com/lemonmade/quilt/pull/536) [`cf6e2de1`](https://github.com/lemonmade/quilt/commit/cf6e2de186d8644fad9afcedda85c05002e909e1) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to TypeScript 5.0
+
+- Updated dependencies [[`cf6e2de1`](https://github.com/lemonmade/quilt/commit/cf6e2de186d8644fad9afcedda85c05002e909e1)]:
+  - @quilted/assets@0.0.3
+  - @quilted/async@0.3.40
+  - @quilted/eslint-config@0.1.17
+  - @quilted/graphql@0.4.57
+  - @quilted/polyfills@0.2.34
+  - @quilted/quilt@0.5.139
+  - @quilted/sewing-kit@0.2.39
+  - @quilted/typescript@0.2.19
+  - @quilted/workers@0.2.34
+
 ## 0.1.197
 
 ### Patch Changes

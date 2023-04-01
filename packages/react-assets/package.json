@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -42,7 +42,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/assets": "^0.0.2",
+    "@quilted/assets": "^0.0.3",
     "@quilted/react-server-render": "^0.3.27",
     "@types/react": "^17.0.0 || ^18.0.0"
   },

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react",
   "type": "module",
-  "version": "18.2.1",
+  "version": "18.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
