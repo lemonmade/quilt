@@ -59,7 +59,7 @@ describe('app builds', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon.png.ts';
+            import image from '../../common/images/lemon.png';
             
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -83,7 +83,7 @@ describe('app builds', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon-tiny.png.ts';
+            import image from '../../common/images/lemon-tiny.png';
             
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -122,7 +122,7 @@ describe('app builds', () => {
             });
           `,
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon-tiny.png.ts';
+            import image from '../../common/images/lemon-tiny.png';
               
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -169,7 +169,7 @@ describe('app builds', () => {
             });
           `,
           'App.tsx': stripIndent`
-            import image from '../../common/images/lemon.png.ts';
+            import image from '../../common/images/lemon.png';
               
             export default function App() {
               return <img src={image} alt="A lemon." />;
@@ -196,7 +196,7 @@ describe('app builds', () => {
         await fs.write({
           'message.txt': 'Hello, world!',
           'App.tsx': stripIndent`
-            import message from './message.txt?raw.ts';
+            import message from './message.txt?raw';
 
             export default function App() {
               return <div>{message}</div>;
