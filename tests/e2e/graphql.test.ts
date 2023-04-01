@@ -29,7 +29,10 @@ describe('graphql', () => {
               return useRoutes([{match: '/', render: () => <Start />}]);
             }
           `,
-          'features/Start/index.tsx': stripIndent`
+          'features/Start.tsx': stripIndent`
+            export {Start} from './Start/Start.tsx';
+          `,
+          'features/Start/Start.tsx': stripIndent`
             import type {StartQueryData} from './StartQuery.graphql';
 
             export function Start({data}: {data?: StartQueryData}) {
@@ -102,7 +105,10 @@ describe('graphql', () => {
               ]);
             }
           `,
-          'features/Start/index.tsx': stripIndent`
+          'features/Start.tsx': stripIndent`
+            export {Start} from './Start/Start.tsx';
+          `,
+          'features/Start/Start.tsx': stripIndent`
             import type {StartQueryData} from './StartQuery.graphql';
 
             export function Start({data}: {data?: StartQueryData}) {
@@ -117,7 +123,10 @@ describe('graphql', () => {
               title
             }
           `,
-          'features/Admin/index.tsx': stripIndent`
+          'features/Admin.tsx': stripIndent`
+            export {Admin} from './Admin/Admin.tsx';
+          `,
+          'features/Admin/Admin.tsx': stripIndent`
             import type {AdminQueryData} from './AdminQuery.graphql';
 
             export function Admin({data}: {data?: AdminQueryData}) {
