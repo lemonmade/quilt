@@ -16,5 +16,5 @@ export type {
 } from '@quilted/graphql';
 export {createGraphQLHttpFetch} from '@quilted/graphql';
 
-export {GraphQLContext} from './context.ts';
+export {GraphQLContext} from './context.tsx';
 export {useGraphQLFetch} from './hooks.ts';

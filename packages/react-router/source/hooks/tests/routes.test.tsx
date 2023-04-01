@@ -1,7 +1,7 @@
 import type {PropsWithChildren} from 'react';
 import {describe, it, expect} from '@quilted/testing';
 
-import {useRoutes} from '../routes.ts';
+import {useRoutes} from '../routes.tsx';
 import {render} from '../../tests/utilities.tsx';
 
 jest.mock('../redirect', () => ({

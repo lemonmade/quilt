@@ -1,4 +1,4 @@
-export {useRoutes} from './hooks/routes.ts';
+export {useRoutes} from './hooks/routes.tsx';
 export {useInitialUrl} from './hooks/initial-url.ts';
 export {useCurrentUrl} from './hooks/url.ts';
 export {useRouter} from './hooks/router.ts';
