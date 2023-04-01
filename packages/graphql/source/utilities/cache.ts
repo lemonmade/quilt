@@ -1,4 +1,4 @@
-import type {GraphQLOperation} from '../types';
+import type {GraphQLOperation} from '../types.ts';
 
 export function cacheKey<Data, Variables>(
   operation: GraphQLOperation<Data, Variables> | string,

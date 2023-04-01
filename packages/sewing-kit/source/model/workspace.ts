@@ -1,5 +1,5 @@
-import {Base} from './base';
-import type {Project} from './project';
+import {Base} from './base.ts';
+import type {Project} from './project.ts';
 
 export type WorkspaceOptions = ConstructorParameters<typeof Base>[0] & {
   readonly projects: Project[];

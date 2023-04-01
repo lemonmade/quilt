@@ -5,9 +5,9 @@ import {
   type BodyInit,
   type ResponseInit,
   type RequestInit,
-} from './globals';
+} from './globals.ts';
 
-import type {EnhancedWritableCookies} from './types';
+import type {EnhancedWritableCookies} from './types.ts';
 
 export type {BodyInit, ResponseInit, RequestInit};
 

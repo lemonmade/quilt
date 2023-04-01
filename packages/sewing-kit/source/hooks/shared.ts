@@ -1,5 +1,5 @@
-import type {ProjectStep, WorkspaceStep} from '../steps';
-import type {ValueOrPromise} from '../types';
+import type {ProjectStep, WorkspaceStep} from '../steps.ts';
+import type {ValueOrPromise} from '../types.ts';
 
 export const NONE = Symbol.for('SewingKit.None');
 export type None = typeof NONE;

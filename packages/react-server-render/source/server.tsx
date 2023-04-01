@@ -1,15 +1,15 @@
 import type {ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
-import {ServerRenderManagerContext} from './context';
-import {ServerRenderManager} from './manager';
+import {ServerRenderManagerContext} from './context.ts';
+import {ServerRenderManager} from './manager.ts';
 import type {
   ServerRenderPass,
   ServerActionKind,
   ServerActionOptions,
   ServerActionPerform,
   ServerRenderRequestContext,
-} from './types';
+} from './types.ts';
 
 export {ServerRenderManager, ServerRenderManagerContext};
 export type {
@@ -20,8 +20,8 @@ export type {
   ServerRenderRequestContext,
 };
 
-export {useServerAction} from './hooks';
-export {ServerAction} from './ServerAction';
+export {useServerAction} from './hooks.ts';
+export {ServerAction} from './ServerAction.tsx';
 
 export interface Options {
   includeKinds?: symbol[] | boolean;

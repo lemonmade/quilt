@@ -8,6 +8,6 @@ export type {
   RenderTiming,
   AsyncComponentType,
   Preloadable,
-} from './types';
-export {createAsyncComponent} from './component';
-export {useAsyncModule, useAsyncModulePreload, usePreload} from './hooks';
+} from './types.ts';
+export {createAsyncComponent} from './component.tsx';
+export {useAsyncModule, useAsyncModulePreload, usePreload} from './hooks.ts';

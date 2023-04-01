@@ -60,7 +60,7 @@ tRPC needs to be accessible through an API endpoint on your server. If you have 
 import {createRequestRouter} from '@quilted/quilt/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
-import {appRouter} from './trpc';
+import {appRouter} from './trpc.ts';
 
 const router = createRequestRouter();
 
@@ -96,7 +96,7 @@ import {createTRPCReact} from '@trpc/react-query';
 // Get access to our app’s router type signature, which will
 // provide strong typing on the queries and mutations we can
 // perform.
-import {type AppRouter} from '../../trpc';
+import {type AppRouter} from '../../trpc.ts';
 
 export const trpc = createTRPCReact<AppRouter>();
 ```
@@ -119,7 +119,7 @@ import {createTRPCReact} from '@trpc/react-query';
 import {QueryClient} from '@tanstack/react-query';
 import {ReactQueryContext} from '@quilted/react-query';
 
-import {trpc} from '~/shared/trpc';
+import {trpc} from '~/shared/trpc.ts';
 
 // This is your default App component. When creating a template, it
 // will already be defined, so you will just need to wrap the main
@@ -162,7 +162,7 @@ function Trpc({children}: PropsWithChildren) {
 Now, for the important part: using tRPC to fetch data for our UI! We can use the `shared/trpc.ts` file we created earlier to access our strongly-typed hooks for querying tRPC data from any component in our app:
 
 ```tsx
-import {trpc} from '~/shared/trpc';
+import {trpc} from '~/shared/trpc.ts';
 
 export function Greeting() {
   // Get the name to greet from the URL search params

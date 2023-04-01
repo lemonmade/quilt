@@ -1,8 +1,8 @@
 import type {Plugin} from 'rollup';
 import {stripIndent} from 'common-tags';
 
-import type {Project} from '../../kit';
-import {MAGIC_MODULE_APP_COMPONENT} from '../../constants';
+import type {Project} from '../../kit.ts';
+import {MAGIC_MODULE_APP_COMPONENT} from '../../constants.ts';
 
 export interface Options {
   /**

@@ -1,5 +1,5 @@
 import type {CookieOptions} from '@quilted/http';
-import {useHttpAction} from '../hooks';
+import {useHttpAction} from '../hooks/http-action.ts';
 
 export interface DeleteProps {
   /**

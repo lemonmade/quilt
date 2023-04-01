@@ -7,14 +7,14 @@ import {stripIndent} from 'common-tags';
 import type {HttpState, AssetsBuildManifest} from '@quilted/quilt/server';
 import type {Options as StaticRenderOptions} from '@quilted/quilt/static';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
+import type {WaterfallHook, WaterfallHookWithDefault} from '../kit.ts';
 import {
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_APP_COMPONENT,
-} from '../constants';
+} from '../constants.ts';
 
-import {STEP_NAME} from './app-build';
+import {STEP_NAME} from './app-build.ts';
 
 export interface AppStaticOptions {
   /**
@@ -236,7 +236,7 @@ export function appStatic({
           quiltAssetManifest?.(() => false);
 
           rollupPlugins?.(async (plugins) => {
-            const {cssRollupPlugin} = await import('./rollup/css');
+            const {cssRollupPlugin} = await import('./rollup/css.ts');
             const resolvedPrettier = require.resolve('prettier');
 
             // Our static generation script depends on prettier. If we just
@@ -449,7 +449,7 @@ export function appStatic({
               configuration({
                 quiltAppStatic: true,
               }),
-              import('../tools/rollup'),
+              import('../tools/rollup.ts'),
             ]);
 
             await buildWithRollup(project, configure);

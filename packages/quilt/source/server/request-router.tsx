@@ -29,7 +29,7 @@ import type {
   RequestContext,
 } from '@quilted/request-router';
 
-import {ServerContext} from './ServerContext';
+import {ServerContext} from './ServerContext.tsx';
 
 export interface ServerRenderOptions<
   Context = RequestContext,

@@ -1,14 +1,18 @@
 import {relative} from 'path';
 
-import type {WorkspacePlugin} from '../kit';
-import {FileSystem, DiagnosticError, PackageJson, isPlugin} from '../kit';
-
-import {nameFromFileSystem} from './shared';
+import {
+  FileSystem,
+  DiagnosticError,
+  PackageJson,
+  isPlugin,
+  type WorkspacePlugin,
+} from '../kit.ts';
+import {nameFromFileSystem} from './shared.ts';
 import type {
   ConfigurationContext,
   WorkspaceConfiguration,
   WorkspaceConfigurationBuilder,
-} from './types';
+} from './types.ts';
 
 export function createWorkspace(
   create: (workspace: WorkspaceConfigurationBuilder) => void | Promise<void>,

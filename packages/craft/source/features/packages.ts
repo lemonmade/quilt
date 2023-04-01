@@ -3,10 +3,10 @@ import {join, relative, extname, dirname, sep as pathSeparator} from 'path';
 import {stripIndent} from 'common-tags';
 import type {OutputOptions, PreRenderedChunk} from 'rollup';
 
-import {createProjectPlugin} from '../kit';
-import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
+import type {Project, WaterfallHook, WaterfallHookWithDefault} from '../kit.ts';
 
-import type {} from '../tools/rollup';
+import type {} from '../tools/rollup.ts';
 
 export type PackageModuleType = 'commonjs' | 'esmodules';
 
@@ -384,7 +384,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                 configuration({
                   packageBuildModule: 'esmodules',
                 }),
-                import('../tools/rollup'),
+                import('../tools/rollup.ts'),
               ]);
 
               await buildWithRollup(project, configure);
@@ -402,7 +402,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
                   configuration({
                     packageBuildModule: 'commonjs',
                   }),
-                  import('../tools/rollup'),
+                  import('../tools/rollup.ts'),
                 ]);
 
                 await buildWithRollup(project, configure);

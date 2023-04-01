@@ -5,14 +5,14 @@ import type {
 } from 'vite';
 import type {InputOptions} from 'rollup';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 import type {
   Project,
   WaterfallHook,
   ResolvedDevelopProjectConfigurationHooks,
-} from '../kit';
+} from '../kit.ts';
 
-import type {} from './rollup';
+import type {} from './rollup.ts';
 
 export interface ViteHooks {
   /**

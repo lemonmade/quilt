@@ -1,21 +1,21 @@
 import {stripIndent} from 'common-tags';
 
-import {addRollupNodeBundleInclusion} from '../tools/rollup';
-import type {RollupNodeBundle} from '../tools/rollup';
+import {addRollupNodeBundleInclusion} from '../tools/rollup.ts';
+import type {RollupNodeBundle} from '../tools/rollup.ts';
 
 import {
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_APP_COMPONENT,
-} from '../constants';
-import {createProjectPlugin} from '../kit';
+} from '../constants.ts';
+import {createProjectPlugin} from '../kit.ts';
 import type {
   Project,
   ResolvedOptions,
   BuildProjectOptions,
   ResolvedBuildProjectConfigurationHooks,
-} from '../kit';
+} from '../kit.ts';
 
-import type {EnvironmentOptions} from './magic-module-env';
+import type {EnvironmentOptions} from './magic-module-env.ts';
 
 export interface AppServerOptions {
   /**
@@ -180,7 +180,7 @@ function setupConfiguration(
     });
 
     rollupPlugins?.(async (plugins) => {
-      const {cssRollupPlugin} = await import('./rollup/css');
+      const {cssRollupPlugin} = await import('./rollup/css.ts');
 
       plugins.push(
         cssRollupPlugin({

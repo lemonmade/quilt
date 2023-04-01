@@ -1,8 +1,11 @@
 import {createThread, targetFromWebWorker} from '@quilted/threads';
 import type {Thread, ThreadTarget, ThreadOptions} from '@quilted/threads';
 
-import {createScriptUrl, createCrossDomainWorkerUrl} from './utilities';
-import type {FileOrModuleResolver} from './utilities';
+import {
+  createScriptUrl,
+  createCrossDomainWorkerUrl,
+  type FileOrModuleResolver,
+} from './utilities.ts';
 
 export interface CreateThreadWorkerOptions<Self, Target>
   extends ThreadOptions<Self, Target> {

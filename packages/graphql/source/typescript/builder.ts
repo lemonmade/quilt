@@ -7,20 +7,20 @@ import {FSWatcher, watch} from 'chokidar';
 import {globby} from 'globby';
 import isGlob from 'is-glob';
 
-import {extractImports} from '../transform';
-import {loadConfiguration} from '../project';
-import type {
-  GraphQLConfiguration,
+import {extractImports} from '../transform.ts';
+import {
+  loadConfiguration,
+  type GraphQLConfiguration,
   GraphQLProjectConfiguration,
-} from '../project';
+} from '../project.ts';
 import type {
   DocumentOutputKind,
   SchemaOutputKind,
   SchemaOutputKindInputTypes,
   QuiltExtensions,
-} from '../configuration';
-import {generateDocumentTypes, generateSchemaTypes} from './print';
-import type {DocumentDetails, ProjectDetails} from './types';
+} from '../configuration.ts';
+import {generateDocumentTypes, generateSchemaTypes} from './print.ts';
+import type {DocumentDetails, ProjectDetails} from './types.ts';
 
 export interface RunOptions {
   watch?: boolean;

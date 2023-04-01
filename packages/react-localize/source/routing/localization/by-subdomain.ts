@@ -1,5 +1,5 @@
-import type {DefaultLocaleDefinition} from '../types';
-import {createRouteLocalization} from './by-locale';
+import type {DefaultLocaleDefinition} from '../types.ts';
+import {createRouteLocalization} from './by-locale.ts';
 
 export function createRouteSubdomainLocalization({
   base,

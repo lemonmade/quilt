@@ -22,10 +22,13 @@ import type {
   GraphQLNamedType,
 } from 'graphql';
 
-import type {PrintSchemaOptions, ScalarDefinition} from '../../configuration';
+import type {
+  PrintSchemaOptions,
+  ScalarDefinition,
+} from '../../configuration.ts';
 
-import generate from './generate';
-import {scalarTypeMap} from './utilities';
+import generate from './generate.ts';
+import {scalarTypeMap} from './utilities.ts';
 
 export function generateSchemaTypes(
   schema: GraphQLSchema,

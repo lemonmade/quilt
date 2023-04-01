@@ -3,7 +3,7 @@ import type {VNode, ComponentChild, Component} from 'preact';
 import {createPortal} from 'preact/compat';
 import {act} from 'preact/test-utils';
 
-import {createEnvironment, isNode} from '../environment';
+import {createEnvironment, isNode} from '../environment.tsx';
 import type {
   CustomRender,
   CustomRenderResult,
@@ -15,8 +15,14 @@ import type {
   ContextOption,
   RenderOption,
   ActionsOption,
-} from '../environment';
-import type {Node, NodeApi, Root, RootApi, HtmlNodeExtensions} from '../types';
+} from '../environment.tsx';
+import type {
+  Node,
+  NodeApi,
+  Root,
+  RootApi,
+  HtmlNodeExtensions,
+} from '../types.ts';
 
 interface Context {
   element: HTMLDivElement;

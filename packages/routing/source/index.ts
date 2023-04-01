@@ -5,7 +5,7 @@ export {
   extractPrefix,
   containedByPrefix,
   getMatchDetails,
-} from './utilities';
+} from './utilities.ts';
 export type {
   EnhancedURL,
   Match,
@@ -16,4 +16,4 @@ export type {
   NavigateTo,
   NavigateToLiteral,
   Search,
-} from './types';
+} from './types.ts';

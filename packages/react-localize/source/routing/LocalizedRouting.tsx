@@ -2,11 +2,11 @@ import {useCallback, useMemo} from 'react';
 import type {ComponentProps} from 'react';
 import {Routing, useInitialUrl} from '@quilted/react-router';
 
-import {Localization} from '../Localization';
-import {useLocaleFromEnvironment} from '../hooks/locale-from-environment';
+import {Localization} from '../Localization.tsx';
+import {useLocaleFromEnvironment} from '../hooks/locale-from-environment.ts';
 
-import type {RouteLocalization, ResolvedRouteLocalization} from './types';
-import {RouteLocalizationContext} from './context';
+import type {RouteLocalization, ResolvedRouteLocalization} from './types.ts';
+import {RouteLocalizationContext} from './context.ts';
 
 export type LocalizedRoutingProps = Omit<
   ComponentProps<typeof Routing>,

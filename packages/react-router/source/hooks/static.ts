@@ -1,8 +1,8 @@
 import {useContext} from 'react';
 import {useServerAction} from '@quilted/react-server-render';
 
-import {StaticRendererContext} from '../context';
-import type {RouteDefinition} from '../types';
+import {StaticRendererContext} from '../context.ts';
+import type {RouteDefinition} from '../types.ts';
 
 export interface Options {
   prefix?: string;

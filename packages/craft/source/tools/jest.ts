@@ -2,10 +2,13 @@ import {createRequire} from 'module';
 
 import type {Config} from '@jest/types';
 
-import {createWorkspacePlugin} from '../kit';
-import type {WaterfallHook, Project} from '../kit';
+import {
+  createWorkspacePlugin,
+  type WaterfallHook,
+  type Project,
+} from '../kit.ts';
 
-import {sourceEntriesForProject} from '../features/packages';
+import {sourceEntriesForProject} from '../features/packages.ts';
 
 export type JestConfig = Config.InitialOptions;
 export type JestProjectConfig = Config.InitialProjectOptions;

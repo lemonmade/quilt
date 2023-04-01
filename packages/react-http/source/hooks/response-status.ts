@@ -1,5 +1,5 @@
 import type {StatusCode} from '@quilted/http';
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Sets the HTTP response status code for this request. If multiple calls

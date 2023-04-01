@@ -1,4 +1,4 @@
-import {useHtmlAttributes} from '../hooks';
+import {useHtmlAttributes} from '../hooks/html-attributes.ts';
 
 type Props = Parameters<typeof useHtmlAttributes>[0];
 

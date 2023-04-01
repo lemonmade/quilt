@@ -121,7 +121,7 @@ import {ErrorLogging} from 'my-error-logging-library/browser';
 // If you are not server rendering, swap this out with `renderRoot` instead
 import {hydrateRoot} from 'react-dom/client';
 
-import App from './App';
+import App from './App.tsx';
 
 ErrorLogging.start();
 

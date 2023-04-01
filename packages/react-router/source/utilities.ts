@@ -1,7 +1,7 @@
 import {enhanceUrl as baseEnhancedURL} from '@quilted/routing';
 import type {Prefix} from '@quilted/routing';
 
-import type {EnhancedURL} from './types';
+import type {EnhancedURL} from './types.ts';
 
 export function enhanceUrl(
   url: URL,

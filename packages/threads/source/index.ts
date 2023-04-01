@@ -1,23 +1,26 @@
-export {createThread} from './thread';
-export type {ThreadOptions} from './thread';
-export {retain, release, StackFrame, isMemoryManageable} from './memory';
-export type {MemoryManageable, MemoryRetainer} from './memory';
+export {createThread} from './thread.ts';
+export type {ThreadOptions} from './thread.ts';
+export {retain, release, StackFrame, isMemoryManageable} from './memory.ts';
+export type {MemoryManageable, MemoryRetainer} from './memory.ts';
 export {
   RELEASE_METHOD,
   RETAIN_METHOD,
   RETAINED_BY,
   ENCODE_METHOD,
-} from './constants';
+} from './constants.ts';
 export {
   targetFromIframe,
   targetFromInsideIframe,
   targetFromWebWorker,
   targetFromMessagePort,
   targetFromBrowserWebSocket,
-} from './targets';
-export {createBasicEncoder, createBasicEncoderWithOverrides} from './encoding';
-export {createThreadAbortSignal, acceptThreadAbortSignal} from './abort';
-export type {ThreadAbortSignal} from './abort';
+} from './targets.ts';
+export {
+  createBasicEncoder,
+  createBasicEncoderWithOverrides,
+} from './encoding.ts';
+export {createThreadAbortSignal, acceptThreadAbortSignal} from './abort.ts';
+export type {ThreadAbortSignal} from './abort.ts';
 export type {
   Thread,
   ThreadTarget,
@@ -29,4 +32,4 @@ export type {
   ThreadEncodingStrategyApi,
   ThreadEncodable,
   AnyFunction,
-} from './types';
+} from './types.ts';

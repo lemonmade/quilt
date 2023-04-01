@@ -5,7 +5,7 @@ import {InitialUrlContext} from '@quilted/react-router';
 import {HtmlContext, type HtmlManager} from '@quilted/react-html/server';
 import {HttpServerContext, type HttpManager} from '@quilted/react-http/server';
 
-import {maybeWrapContext} from '../utilities/react';
+import {maybeWrapContext} from '../utilities/react.tsx';
 
 interface Props {
   url?: string | URL;

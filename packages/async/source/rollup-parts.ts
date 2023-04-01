@@ -5,7 +5,7 @@ import type {Plugin, OutputChunk, OutputBundle} from 'rollup';
 import {stripIndent} from 'common-tags';
 import MagicString from 'magic-string';
 
-import {IMPORT_PREFIX, MODULE_PREFIX} from './constants';
+import {IMPORT_PREFIX, MODULE_PREFIX} from './constants.ts';
 
 export interface Options {
   preload?: boolean;

@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {stripIndent, withWorkspace} from './utilities';
+import {stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -12,7 +12,7 @@ describe('app builds', () => {
         await fs.write({
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(quiltApp({static: true}));
@@ -41,9 +41,9 @@ describe('app builds', () => {
               createAsyncComponent,
             } from '@quilted/quilt';
 
-            const PageOne = createAsyncComponent(() => import('../pages/One'));
-            const PageTwo = createAsyncComponent(() => import('../pages/Two'));
-            const PageThree = createAsyncComponent(() => import('../pages/Three'));
+            const PageOne = createAsyncComponent(() => import('../pages/One.tsx'));
+            const PageTwo = createAsyncComponent(() => import('../pages/Two.tsx'));
+            const PageThree = createAsyncComponent(() => import('../pages/Three.tsx'));
 
             export function Routes() {
               return useRoutes([

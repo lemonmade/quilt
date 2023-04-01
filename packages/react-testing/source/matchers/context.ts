@@ -7,9 +7,9 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import {Node} from '../types';
+import type {Node} from '../types.ts';
 
-import {assertIsNode, diffs, printType} from './utilities';
+import {assertIsNode, diffs, printType} from './utilities.ts';
 
 export function toProvideReactContext<Type>(
   this: MatcherState,

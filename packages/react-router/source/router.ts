@@ -1,8 +1,8 @@
 import {resolveUrl} from '@quilted/routing';
 import type {Prefix, NavigateTo, RelativeTo} from '@quilted/routing';
 
-import type {EnhancedURL, Blocker} from './types';
-import {enhanceUrl, createKey} from './utilities';
+import type {EnhancedURL, Blocker} from './types.ts';
+import {enhanceUrl, createKey} from './utilities.ts';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 

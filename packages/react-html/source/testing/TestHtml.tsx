@@ -1,7 +1,8 @@
 import {useMemo} from 'react';
 import type {ReactNode} from 'react';
-import {HtmlContext} from '../context';
-import {HtmlManager} from '../manager';
+
+import {HtmlContext} from '../context.ts';
+import {HtmlManager} from '../manager.ts';
 
 interface Props {
   serializations?: {[key: string]: any} | Map<string, any>;

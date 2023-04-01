@@ -1,9 +1,9 @@
-export {ServerAction} from './ServerAction';
-export {useServerAction, useServerContext} from './hooks';
+export {ServerAction} from './ServerAction.tsx';
+export {useServerAction, useServerContext} from './hooks.ts';
 export type {
   ServerActionPerform,
   ServerActionKind,
   ServerActionOptions,
   ServerRenderPass,
   ServerRenderRequestContext,
-} from './types';
+} from './types.ts';

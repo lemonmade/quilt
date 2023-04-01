@@ -3,13 +3,13 @@ import {getMatchDetails} from '@quilted/routing';
 
 import type {Match, Prefix} from '@quilted/routing';
 
-import {EnhancedRequest} from './request';
+import {EnhancedRequest} from './request.ts';
 import type {
   RequestRouter,
   RequestContext,
   RequestRegistration,
   RequestRegistrationOptions,
-} from './types';
+} from './types.ts';
 
 export interface RequestRouterOptions {
   readonly prefix?: Prefix;

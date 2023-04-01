@@ -3,14 +3,14 @@ import {createRequire} from 'module';
 import type {Options as BabelOptions} from '@quilted/async/babel';
 import type {Options as RollupOptions} from '@quilted/async/rollup';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 import type {
   WaterfallHookWithDefault,
   ResolvedHooks,
   BuildProjectConfigurationHooks,
-} from '../kit';
+} from '../kit.ts';
 
-import type {} from './assets';
+import type {} from './assets.ts';
 
 export interface Options extends Omit<RollupOptions, 'assetBaseUrl'> {
   readonly applyBabelToPackages?: BabelOptions['packages'];

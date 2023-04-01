@@ -5,7 +5,7 @@ import type {
   ProcessOptions as PostCSSProcessOptions,
   SourceMap,
 } from 'postcss';
-import type {PostCSSModulesOptions} from '../../tools/postcss';
+import type {PostCSSModulesOptions} from '../../tools/postcss.ts';
 
 export interface Options {
   minify?: boolean;

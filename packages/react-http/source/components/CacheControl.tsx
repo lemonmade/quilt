@@ -1,4 +1,4 @@
-import {useCacheControl} from '../hooks';
+import {useCacheControl} from '../hooks/cache-control.ts';
 
 interface ExplicitProps {
   /**

@@ -1,6 +1,6 @@
 import type {ServerActionKind} from '@quilted/react-server-render';
-import {SERVER_ACTION_ID} from './constants';
-import type {Sender} from './types';
+import {SERVER_ACTION_ID} from './constants.ts';
+import type {Sender} from './types.ts';
 
 export interface State {
   readonly subject?: string;

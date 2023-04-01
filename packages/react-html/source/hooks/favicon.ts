@@ -1,4 +1,4 @@
-import {useDomEffect} from './dom-effect';
+import {useDomEffect} from './dom-effect.ts';
 
 export interface FaviconOptions {
   /**

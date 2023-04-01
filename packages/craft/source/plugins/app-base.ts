@@ -1,7 +1,7 @@
 import type {Config as BrowserslistConfig} from 'browserslist';
 
-import {createProjectPlugin, DiagnosticError} from '../kit';
-import type {Project, WaterfallHookWithDefault} from '../kit';
+import {createProjectPlugin, DiagnosticError} from '../kit.ts';
+import type {Project, WaterfallHookWithDefault} from '../kit.ts';
 
 export interface Options {
   entry?: string;

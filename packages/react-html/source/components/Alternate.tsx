@@ -1,4 +1,4 @@
-import {useAlternateUrl} from '../hooks';
+import {useAlternateUrl} from '../hooks/alternate-url.ts';
 
 export type Props = Parameters<typeof useAlternateUrl>[1] & {
   /**

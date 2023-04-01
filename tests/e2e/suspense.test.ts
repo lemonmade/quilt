@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities';
+import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 

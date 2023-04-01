@@ -22,28 +22,28 @@
       "require": "./build/cjs/index.cjs"
     },
     "./testing": {
-      "types": "./build/typescript/testing/index.d.ts",
-      "quilt:source": "./source/testing/index.ts",
-      "quilt:esnext": "./build/esnext/testing/index.esnext",
-      "import": "./build/esm/testing/index.mjs",
-      "require": "./build/cjs/testing/index.cjs"
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs",
+      "require": "./build/cjs/testing.cjs"
     },
     "./server": {
-      "types": "./build/typescript/server/index.d.ts",
-      "quilt:source": "./source/server/index.ts",
-      "quilt:esnext": "./build/esnext/server/index.esnext",
-      "import": "./build/esm/server/index.mjs",
-      "require": "./build/cjs/server/index.cjs"
+      "types": "./build/typescript/server.d.ts",
+      "quilt:source": "./source/server.ts",
+      "quilt:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs",
+      "require": "./build/cjs/server.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
       "server": [
-        "./build/typescript/server/index.d.ts"
+        "./build/typescript/server.d.ts"
       ],
       "testing": [
-        "./build/typescript/testing/index.d.ts"
+        "./build/typescript/testing.d.ts"
       ]
     }
   },

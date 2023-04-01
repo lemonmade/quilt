@@ -1,9 +1,9 @@
 import {CacheControl, ContentSecurityPolicy} from '@quilted/quilt/http';
 import {describe, it, expect} from '@quilted/quilt/testing';
 
-import {renderWithAppContext} from '~/tests/render';
+import {renderWithAppContext} from '~/tests/render.tsx';
 
-import {Http} from './Http';
+import {Http} from './Http.tsx';
 
 describe('<Http />', () => {
   it('does not cache the response', async () => {

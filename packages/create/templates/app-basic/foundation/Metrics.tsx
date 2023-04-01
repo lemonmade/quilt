@@ -1,1 +1,1 @@
-export {Metrics} from './Metrics/Metrics';
+export {Metrics} from './Metrics/Metrics.tsx';

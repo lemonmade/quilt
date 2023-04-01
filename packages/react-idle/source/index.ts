@@ -1,2 +1,1 @@
-export {useIdleCallback} from './hooks';
-export type {UnsupportedBehavior} from './hooks';
+export {useIdleCallback, type UnsupportedBehavior} from './hooks.ts';

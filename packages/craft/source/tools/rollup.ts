@@ -7,7 +7,7 @@ import type {
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 import type {
   Project,
   Workspace,
@@ -15,7 +15,7 @@ import type {
   ResolvedHooks,
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
-} from '../kit';
+} from '../kit.ts';
 
 // TODO
 export interface RollupNodeBundle {

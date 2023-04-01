@@ -5,7 +5,7 @@ export {
   useSendTo,
   useSendCc,
   useSendBcc,
-} from './hooks';
-export {EmailContext} from './context';
-export {EmailManager} from './manager';
-export type {Sender} from './types';
+} from './hooks.ts';
+export {EmailContext} from './context.ts';
+export {EmailManager} from './manager.ts';
+export type {Sender} from './types.ts';

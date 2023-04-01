@@ -4,7 +4,7 @@ import type {
   BrowserAssetModuleSelector,
 } from '@quilted/assets';
 import type {ServerActionKind} from '@quilted/react-server-render';
-import {SERVER_ACTION_ID} from './constants';
+import {SERVER_ACTION_ID} from './constants.ts';
 
 const ASSET_TIMING_PRIORITY: AssetLoadTiming[] = ['never', 'preload', 'load'];
 

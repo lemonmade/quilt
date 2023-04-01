@@ -10,8 +10,8 @@ import {
   printExpected,
 } from 'jest-matcher-utils';
 
-import type {Node} from '../types';
-import {isNode} from '../environment';
+import type {Node} from '../types.ts';
+import {isNode} from '../environment.tsx';
 
 export function assertIsNode(
   node: unknown,

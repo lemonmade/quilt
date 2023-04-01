@@ -1,6 +1,6 @@
-import type {WorkerWrapper} from './types';
-import {PREFIX, QUILT_WORKER_EXPORTS} from './constants';
-import {wrapperToSearchString} from './utilities';
+import type {WorkerWrapper} from './types.ts';
+import {PREFIX, QUILT_WORKER_EXPORTS} from './constants.ts';
+import {wrapperToSearchString} from './utilities.ts';
 
 export interface ProcessableImport {
   name: string;

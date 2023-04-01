@@ -1,5 +1,8 @@
-import {DiagnosticError, createProjectPlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {
+  DiagnosticError,
+  createProjectPlugin,
+  type WaterfallHook,
+} from '../kit.ts';
 
 export interface TargetHooks {
   /**

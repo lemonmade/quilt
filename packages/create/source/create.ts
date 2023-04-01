@@ -2,8 +2,8 @@
 
 import {AbortError, stripIndent, color, parseArguments} from '@quilted/cli-kit';
 
-import {printHelp} from './help';
-import {prompt} from './shared';
+import {printHelp} from './help.ts';
+import {prompt} from './shared.ts';
 
 const VALID_PROJECT_KINDS = new Set(['app', 'package', 'module']);
 
@@ -65,17 +65,17 @@ async function run() {
 
   switch (kind) {
     case 'app': {
-      const {createApp} = await import('./app');
+      const {createApp} = await import('./app.ts');
       await createApp();
       break;
     }
     case 'module': {
-      const {createModule} = await import('./module');
+      const {createModule} = await import('./module.ts');
       await createModule();
       break;
     }
     case 'package': {
-      const {createProject} = await import('./package');
+      const {createProject} = await import('./package.ts');
       await createProject();
       break;
     }

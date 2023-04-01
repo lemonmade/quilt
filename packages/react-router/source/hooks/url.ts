@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {CurrentUrlContext} from '../context';
+import {CurrentUrlContext} from '../context.ts';
 
 export function useCurrentUrl() {
   const url = useContext(CurrentUrlContext);

@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@quilted/craft": "workspace:*",
-    "typescript": "^4.9.0"
+    "typescript": "^5.0.0"
   },
   "browserslist": [
     "extends @quilted/browserslist-config/evergreen"

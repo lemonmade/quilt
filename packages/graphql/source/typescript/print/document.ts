@@ -20,20 +20,24 @@ import type {
   FragmentDefinitionNode,
 } from 'graphql';
 
-import type {DocumentDetails, ProjectDetails} from '../types';
-import type {DocumentOutputKind} from '../../configuration';
+import type {DocumentDetails, ProjectDetails} from '../types.ts';
+import type {DocumentOutputKind} from '../../configuration.ts';
 
-import {addTypename, minify, toSimpleDocument} from '../../utilities/document';
-import type {Field} from '../../utilities/ast';
+import {
+  addTypename,
+  minify,
+  toSimpleDocument,
+} from '../../utilities/document.ts';
+import type {Field} from '../../utilities/ast.ts';
 import {
   getRootType,
   unwrapType,
   getAllObjectTypes,
   getSelectionTypeMap,
-} from '../../utilities/ast';
+} from '../../utilities/ast.ts';
 
-import generate from './generate';
-import {scalarTypeMap} from './utilities';
+import generate from './generate.ts';
+import {scalarTypeMap} from './utilities.ts';
 
 interface Options {
   kind: DocumentOutputKind;

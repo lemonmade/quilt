@@ -1,4 +1,4 @@
-import type {Preloadable, IfAllOptionalKeys, NoInfer} from '../types';
+import type {Preloadable, IfAllOptionalKeys, NoInfer} from '../types.ts';
 
 export function usePreload<PreloadOptions extends Record<string, any>>(
   ...args: IfAllOptionalKeys<

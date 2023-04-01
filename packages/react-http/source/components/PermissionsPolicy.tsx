@@ -1,4 +1,4 @@
-import {usePermissionsPolicy} from '../hooks';
+import {usePermissionsPolicy} from '../hooks/permissions-policy.ts';
 
 interface ExplicitProps {
   /**

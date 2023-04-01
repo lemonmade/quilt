@@ -1,5 +1,5 @@
 import {on, once} from '@quilted/events';
-import type {ThreadTarget} from '../types';
+import type {ThreadTarget} from '../types.ts';
 
 export function targetFromBrowserWebSocket(websocket: WebSocket): ThreadTarget {
   return {

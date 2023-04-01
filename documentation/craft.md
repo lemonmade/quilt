@@ -88,7 +88,7 @@ import {createApp} from '@quilted/craft';
 import {
   someSewingKitPlugin,
   anotherSewingKitPlugin,
-} from './configuration/craft';
+} from './configuration/craft.ts';
 
 export default createApp((app) => {
   app.use(someSewingKitPlugin(), anotherSewingKitPlugin());
@@ -379,7 +379,7 @@ You may want to wrap a collection of Craft plugins up as a single plugin. This c
 import {
   someSewingKitPlugin,
   anotherSewingKitPlugin,
-} from './configuration/craft';
+} from './configuration/craft.ts';
 
 export function composedPlugin() {
   return createProjectPlugin({

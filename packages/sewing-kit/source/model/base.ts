@@ -1,5 +1,5 @@
-import {FileSystem} from '../utilities/fs';
-import {PackageJson} from '../utilities/dependencies';
+import {FileSystem} from '../utilities/fs.ts';
+import {PackageJson} from '../utilities/dependencies.ts';
 
 export interface Options {
   readonly name: string;

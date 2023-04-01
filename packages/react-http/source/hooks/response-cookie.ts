@@ -1,5 +1,5 @@
 import type {CookieOptions} from '@quilted/http';
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Sets an HTTP cookie on the response. You can optionally provide

@@ -2,7 +2,7 @@
 
 import {Component, useState} from 'react';
 import {describe, it, expect, beforeEach, afterEach} from '@quilted/testing';
-import {render} from '..';
+import {render} from '../index.ts';
 
 describe('e2e', () => {
   let consoleError = console.error;

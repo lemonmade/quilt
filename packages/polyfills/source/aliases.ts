@@ -1,5 +1,5 @@
 import {isSupported} from 'caniuse-api';
-import type {PolyfillFeature} from './types';
+import type {PolyfillFeature} from './types.ts';
 
 interface PolyfillDescriptor {
   featureTest?: string;

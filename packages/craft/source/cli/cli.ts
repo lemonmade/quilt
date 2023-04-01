@@ -1,5 +1,5 @@
 import arg from 'arg';
-import {Task} from '../kit';
+import {Task} from '../kit.ts';
 
 run();
 
@@ -20,32 +20,32 @@ async function run() {
 
   switch (command.toLowerCase()) {
     case Task.Build: {
-      const {build} = await import('./tasks/build');
+      const {build} = await import('./tasks/build.ts');
       await build(argv);
       break;
     }
     case Task.Develop: {
-      const {develop} = await import('./tasks/develop');
+      const {develop} = await import('./tasks/develop.ts');
       await develop(argv);
       break;
     }
     case Task.Lint: {
-      const {lint} = await import('./tasks/lint');
+      const {lint} = await import('./tasks/lint.ts');
       await lint(argv);
       break;
     }
     case Task.Test: {
-      const {test} = await import('./tasks/test');
+      const {test} = await import('./tasks/test.ts');
       await test(argv);
       break;
     }
     case Task.TypeCheck: {
-      const {typeCheck} = await import('./tasks/type-check');
+      const {typeCheck} = await import('./tasks/type-check.ts');
       await typeCheck(argv);
       break;
     }
     case 'run': {
-      const {run} = await import('./tasks/run');
+      const {run} = await import('./tasks/run.ts');
       await run(argv);
       break;
     }

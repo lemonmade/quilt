@@ -1,5 +1,5 @@
 import {createEmitter, type Emitter} from '@quilted/events';
-import type {AsyncAssetsGlobal} from './global';
+import type {AsyncAssetsGlobal} from './global.ts';
 
 declare const Quilt: {readonly AsyncAssets: AsyncAssetsGlobal} | undefined;
 

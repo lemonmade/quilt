@@ -1,4 +1,4 @@
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Appends a response header to the provided value. Only works during

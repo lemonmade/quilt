@@ -2,7 +2,7 @@ import {PropsWithChildren, useMemo} from 'react';
 import {createPerformance} from '@quilted/performance';
 import type {Performance} from '@quilted/performance';
 
-import {PerformanceContextInternal} from './context';
+import {PerformanceContextInternal} from './context.ts';
 
 export interface Props {
   performance?: Performance;

@@ -1,10 +1,10 @@
 import {QuiltApp} from '@quilted/quilt';
 
-import {performance} from '../../common/globals';
+import {performance} from '../../common/globals.ts';
 
-import {Http} from './foundation/Http';
-import {Head} from './foundation/Head';
-import {Routes} from './foundation/Routes';
+import {Http} from './foundation/Http.tsx';
+import {Head} from './foundation/Head.tsx';
+import {Routes} from './foundation/Routes.tsx';
 
 export default function App() {
   return (

@@ -7,7 +7,7 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import {Node, PropsFor} from '../types';
+import {Node, PropsFor} from '../types.ts';
 
 import {
   assertIsNode,
@@ -15,7 +15,7 @@ import {
   diffs,
   pluralize,
   printType,
-} from './utilities';
+} from './utilities.ts';
 
 export function toContainReactComponent<
   Type extends string | ComponentType<any>,

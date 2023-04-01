@@ -13,7 +13,7 @@ import {
   fillGraphQL,
   createGraphQLController,
   type GraphQLController,
-} from './graphql';
+} from './graphql.ts';
 
 export {createTestRouter, fillGraphQL, createGraphQLController};
 
@@ -33,9 +33,9 @@ export interface RenderOptions {
    * by this module.
    *
    * ```tsx
-   * import {renderWithAppContext, fillGraphQL, createGraphQLController} from '~/tests/render';
+   * import {renderWithAppContext, fillGraphQL, createGraphQLController} from '~/tests/render.tsx';
    *
-   * import {MyComponent} from './MyComponent';
+   * import {MyComponent} from './MyComponent.tsx';
    * import myComponentQuery from './MyComponentQuery.graphql';
    *
    * const myComponent = await renderWithAppContext(<MyComponent />, {

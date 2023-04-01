@@ -1,4 +1,8 @@
-export {isPlugin, createProjectPlugin, createWorkspacePlugin} from './plugins';
+export {
+  isPlugin,
+  createProjectPlugin,
+  createWorkspacePlugin,
+} from './plugins.ts';
 export type {
   PluginCreateHelper,
   ProjectPlugin,
@@ -6,10 +10,10 @@ export type {
   WorkspacePlugin,
   WorkspacePluginHooks,
   AnyPlugin,
-} from './plugins';
+} from './plugins.ts';
 
-export {Project, Workspace} from './model';
-export type {ProjectOptions, WorkspaceOptions} from './model';
+export {Project, Workspace} from './model.ts';
+export type {ProjectOptions, WorkspaceOptions} from './model.ts';
 
 export type {
   Runtime,
@@ -17,20 +21,20 @@ export type {
   RuntimeNode,
   RuntimeWorker,
   RuntimeOther,
-} from './runtime';
+} from './runtime.ts';
 
-export {Environment, Task} from './types';
+export {Environment, Task} from './types.ts';
 export type {
   Log,
   Loggable,
   LogLevel,
   LogOptions,
   LogUiComponents,
-} from './types';
+} from './types.ts';
 
-export {DiagnosticError, MissingPluginError} from './errors';
+export {DiagnosticError, MissingPluginError} from './errors.ts';
 
-export {createSequenceHook, createWaterfallHook} from './hooks';
+export {createSequenceHook, createWaterfallHook} from './hooks.ts';
 export type {
   WaterfallHook,
   WaterfallHookWithDefault,
@@ -104,7 +108,7 @@ export type {
   TypeCheckWorkspaceConfigurationHooks,
   TypeCheckWorkspaceStepAdderContext,
   ResolvedTypeCheckWorkspaceConfigurationHooks,
-} from './hooks';
+} from './hooks.ts';
 
 export type {
   StepStage,
@@ -115,7 +119,7 @@ export type {
   WorkspaceStepRunner,
   AnyStep,
   BaseStepRunner,
-} from './steps';
+} from './steps.ts';
 
-export {FileSystem} from './utilities/fs';
-export {PackageJson} from './utilities/dependencies';
+export {FileSystem} from './utilities/fs.ts';
+export {PackageJson} from './utilities/dependencies.ts';

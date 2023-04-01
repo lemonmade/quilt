@@ -7,7 +7,7 @@ import type {
 } from '@quilted/http';
 import type {ServerActionKind} from '@quilted/react-server-render';
 
-import {SERVER_ACTION_ID} from './constants';
+import {SERVER_ACTION_ID} from './constants.ts';
 
 interface Options {
   headers?: ReadonlyHeaders;

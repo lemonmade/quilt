@@ -3,7 +3,7 @@ import type {
   ContentSecurityPolicySpecialSource,
 } from '@quilted/http';
 
-import {useHttpAction} from './http-action';
+import {useHttpAction} from './http-action.ts';
 
 /**
  * Options for creating a content security policy.

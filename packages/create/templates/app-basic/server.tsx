@@ -8,7 +8,7 @@ const router = createRequestRouter();
 router.get(
   createServerRender(
     async () => {
-      const {default: App} = await import('./App');
+      const {default: App} = await import('./App.tsx');
       return <App />;
     },
     {

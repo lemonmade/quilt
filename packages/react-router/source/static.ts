@@ -1,7 +1,7 @@
 import type {ServerActionKind} from '@quilted/react-server-render';
-import type {RouteDefinition} from './types';
 
-export {StaticRendererContext} from './context';
+import type {RouteDefinition} from './types.ts';
+export {StaticRendererContext} from './context.ts';
 
 export interface RouteRecord {
   routes: readonly RouteDefinition[];

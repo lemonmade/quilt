@@ -1,4 +1,4 @@
-import {useLink} from '../hooks';
+import {useLink} from '../hooks/link.ts';
 
 /**
  * Adds a `<link>` tag to the `<head>` of the document with the

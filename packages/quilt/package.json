@@ -138,6 +138,27 @@
       "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
       "import": "./build/esm/polyfills/noop.mjs",
       "require": "./build/cjs/polyfills/noop.cjs"
+    },
+    "./magic/app": {
+      "types": "./build/typescript/magic/app.d.ts",
+      "quilt:source": "./source/magic/app.ts",
+      "quilt:esnext": "./build/esnext/magic/app.esnext",
+      "import": "./build/esm/magic/app.mjs",
+      "require": "./build/cjs/magic/app.cjs"
+    },
+    "./magic/assets": {
+      "types": "./build/typescript/magic/assets.d.ts",
+      "quilt:source": "./source/magic/assets.ts",
+      "quilt:esnext": "./build/esnext/magic/assets.esnext",
+      "import": "./build/esm/magic/assets.mjs",
+      "require": "./build/cjs/magic/assets.cjs"
+    },
+    "./magic/request-router": {
+      "types": "./build/typescript/magic/request-router.d.ts",
+      "quilt:source": "./source/magic/request-router.ts",
+      "quilt:esnext": "./build/esnext/magic/request-router.esnext",
+      "import": "./build/esm/magic/request-router.mjs",
+      "require": "./build/cjs/magic/request-router.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",

@@ -115,7 +115,7 @@ The following example shows these steps in practice. This example uses [jest](ht
 
 ```tsx
 import {render} from '@quilted/react-testing';
-import ClickCounter from './ClickCounter';
+import ClickCounter from './ClickCounter.tsx';
 
 describe('<ClickCounter />', () => {
   it('triggers handlers', () => {
@@ -144,8 +144,8 @@ This will allow you to use matchers such as [`toContainReactText`](#toContainRea
 
 ```tsx
 import {render} from '@quilted/react-testing';
-import ClickCounter from './ClickCounter';
-import LinkComponent from './LinkComponent';
+import ClickCounter from './ClickCounter.tsx';
+import LinkComponent from './LinkComponent.tsx';
 
 describe('<ClickCounter />', () => {
   it('renders a link to a cool website', () => {

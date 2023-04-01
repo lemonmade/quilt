@@ -1,4 +1,4 @@
-import {useTitle} from '../hooks';
+import {useTitle} from '../hooks/title.ts';
 
 /**
  * Adds a `<title>` tag to the `<head>` of the document with the

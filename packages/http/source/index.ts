@@ -1,26 +1,26 @@
-export {CookieString} from './cookies';
+export {CookieString} from './cookies.ts';
 export type {
   Cookies,
   CookieOptions,
   ReadonlyCookies,
   WritableCookies,
-} from './cookies';
-export {createHeaders} from './headers';
-export type {Headers, ReadonlyHeaders} from './headers';
-export {HttpMethod} from './method';
-export {StatusCode} from './status-code';
-export {ResponseType} from './response-type';
+} from './cookies.ts';
+export {createHeaders} from './headers.ts';
+export type {Headers, ReadonlyHeaders} from './headers.ts';
+export {HttpMethod} from './method.ts';
+export {StatusCode} from './status-code.ts';
+export {ResponseType} from './response-type.ts';
 export {
   ContentSecurityPolicyDirective,
   ContentSecurityPolicySandboxAllow,
   ContentSecurityPolicySpecialSource,
-} from './content-security-policy';
+} from './content-security-policy.ts';
 export {
   PermissionsPolicyDirective,
   PermissionsPolicySpecialSource,
-} from './permissions-policy';
+} from './permissions-policy.ts';
 export type {
   CrossOriginEmbedderPolicyHeaderValue,
   CrossOriginOpenerPolicyHeaderValue,
   CrossOriginResourcePolicyHeaderValue,
-} from './cross-origin-headers';
+} from './cross-origin-headers.ts';

@@ -1,14 +1,14 @@
 import type {ComponentType, Context as ReactContext} from 'react';
 
-import type {Node, PropsFor} from '../types';
+import type {Node, PropsFor} from '../types.ts';
 
-import {toHaveReactProps} from './props';
+import {toHaveReactProps} from './props.ts';
 import {
   toContainReactComponent,
   toContainReactComponentTimes,
-} from './components';
-import {toContainReactText} from './text';
-import {toProvideReactContext} from './context';
+} from './components.ts';
+import {toContainReactText} from './text.ts';
+import {toProvideReactContext} from './context.ts';
 
 import {expect} from '@jest/globals';
 

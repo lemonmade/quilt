@@ -13,17 +13,17 @@ import {NotFound} from '@quilted/react-http';
 import {getMatchDetails, type NavigateTo, type Prefix} from '@quilted/routing';
 import {usePerformanceNavigation} from '@quilted/react-performance';
 
-import type {EnhancedURL, RouteDefinition} from '../types';
-import {PreloaderContext, ConsumedPathContext} from '../context';
-import type {Router} from '../router';
-import type {Preloader} from '../preloader';
-import type {StaticRenderer} from '../static';
+import type {EnhancedURL, RouteDefinition} from '../types.ts';
+import {PreloaderContext, ConsumedPathContext} from '../context.ts';
+import type {Router} from '../router.ts';
+import type {Preloader} from '../preloader.ts';
+import type {StaticRenderer} from '../static.ts';
 
-import {useRedirect} from './redirect';
-import {useCurrentUrl} from './url';
-import {useRouter} from './router';
-import {useConsumedPath} from './consumed';
-import {useStaticRenderer} from './static';
+import {useRedirect} from './redirect.ts';
+import {useCurrentUrl} from './url.ts';
+import {useRouter} from './router.ts';
+import {useConsumedPath} from './consumed.ts';
+import {useStaticRenderer} from './static.ts';
 
 export interface Options {
   notFound?:

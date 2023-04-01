@@ -1,6 +1,6 @@
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 
-import type {} from '../features/workers';
+import type {} from '../features/workers.ts';
 
 export const STEP_NAME = 'Quilt.AppWorkers';
 
@@ -36,7 +36,7 @@ export function appWorkers({baseUrl}: {baseUrl: string}) {
           const [{default: esbuild}, {getRollupNodePlugins}] =
             await Promise.all([
               import('rollup-plugin-esbuild'),
-              import('../tools/rollup'),
+              import('../tools/rollup.ts'),
             ]);
 
           const nodePlugins = await getRollupNodePlugins(

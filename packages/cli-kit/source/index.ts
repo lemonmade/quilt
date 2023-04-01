@@ -14,19 +14,19 @@ export {
 export {stripIndent} from 'common-tags';
 export {default as parseArguments} from 'arg';
 
-export {prompt} from './prompt';
+export {prompt} from './prompt.ts';
 export {
   createTemplate,
   createPackageTemplates,
   type Template,
   type TemplateCopyOptions,
   type PackageTemplates,
-} from './template';
+} from './template.ts';
 export {
   getPackageManager,
   createPackageManagerRunner,
   type PackageManager,
   type PackageManagerRunner,
-} from './package-manager';
+} from './package-manager.ts';
 
 export {color};

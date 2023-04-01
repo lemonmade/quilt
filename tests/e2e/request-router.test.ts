@@ -7,7 +7,7 @@ import {
   startServer,
   getPort,
   waitForUrl,
-} from './utilities';
+} from './utilities.ts';
 
 jest.setTimeout(20_000);
 

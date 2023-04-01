@@ -1,10 +1,10 @@
-import type {AssetsCacheKey} from '../cache-key';
+import type {AssetsCacheKey} from '../cache-key.ts';
 import type {
   BrowserAssets,
   BrowserAssetSelector,
   BrowserAssetsEntry,
-} from '../types';
-import type {AssetsBuildManifest, AssetsBuildManifestEntry} from './types';
+} from '../types.ts';
+import type {AssetsBuildManifest, AssetsBuildManifestEntry} from './types.ts';
 
 const DEFAULT_CACHE_KEY_NAME = '__default';
 

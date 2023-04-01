@@ -1,5 +1,5 @@
-import type {RequestRouter, RequestHandler, RequestContext} from './types';
-import {EnhancedRequest} from './request';
+import type {RequestRouter, RequestHandler, RequestContext} from './types.ts';
+import {EnhancedRequest} from './request.ts';
 
 export function handleRequest(
   handler: RequestRouter | RequestHandler,

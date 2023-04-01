@@ -7,7 +7,7 @@ import {HttpManager} from '@quilted/react-http/server';
 import {AssetsManager} from '@quilted/react-assets/server';
 import type {AssetsCacheKey} from '@quilted/assets';
 
-import {StaticContext} from './StaticContext';
+import {StaticContext} from './StaticContext.tsx';
 
 interface Options<CacheKey = AssetsCacheKey> extends ExtractOptions {
   url?: string | URL;

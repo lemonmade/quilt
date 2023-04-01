@@ -3,14 +3,14 @@ import {rm} from 'fs/promises';
 
 import type {GetManualChunk} from 'rollup';
 
-import type {} from '../tools/postcss';
-import type {} from '../features/async';
+import type {} from '../tools/postcss.ts';
+import type {} from '../features/async.ts';
 
-import {createProjectPlugin, Project, Workspace} from '../kit';
+import {createProjectPlugin, Project, Workspace} from '../kit.ts';
 
-import {BROWSERSLIST_MODULES_QUERY} from './app-base';
-import type {EnvironmentOptions} from './magic-module-env';
-import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry';
+import {BROWSERSLIST_MODULES_QUERY} from './app-base.ts';
+import type {EnvironmentOptions} from './magic-module-env.ts';
+import type {Options as MagicBrowserEntryOptions} from './rollup/magic-browser-entry.ts';
 
 export interface AssetOptions {
   /**
@@ -169,9 +169,9 @@ export function appBuild({assets, browser, env}: Options) {
               {systemJs},
             ] = await Promise.all([
               import('rollup-plugin-visualizer'),
-              import('./rollup/magic-browser-entry'),
-              import('./rollup/css'),
-              import('./rollup/system-js'),
+              import('./rollup/magic-browser-entry.ts'),
+              import('./rollup/css.ts'),
+              import('./rollup/system-js.ts'),
             ]);
 
             plugins.unshift(

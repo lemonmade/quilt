@@ -1,13 +1,13 @@
 import * as format from 'colorette';
 
-import {DiagnosticError} from '../kit';
+import {DiagnosticError} from '../kit.ts';
 import type {
   LogLevel,
   Log,
   LogOptions,
   Loggable,
   LogUiComponents,
-} from '../kit';
+} from '../kit.ts';
 
 export type {LogLevel};
 export type {Log, LogOptions, Loggable, LogUiComponents};

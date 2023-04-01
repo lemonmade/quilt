@@ -2,9 +2,8 @@ import {useContext} from 'react';
 import {useServerAction} from '@quilted/react-server-render';
 import type {ServerActionOptions} from '@quilted/react-server-render';
 
-import {HtmlContext} from '../context';
-import {SERVER_ACTION_KIND} from '../manager';
-import type {HtmlManager} from '../manager';
+import {HtmlContext} from '../context.ts';
+import {SERVER_ACTION_KIND, type HtmlManager} from '../manager.ts';
 
 export function useDomServerAction(
   perform: (manager: HtmlManager) => void,

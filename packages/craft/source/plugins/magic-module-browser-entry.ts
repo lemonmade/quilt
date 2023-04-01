@@ -1,5 +1,8 @@
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, WaterfallHookWithDefault} from '../kit';
+import {
+  createProjectPlugin,
+  type WaterfallHook,
+  type WaterfallHookWithDefault,
+} from '../kit.ts';
 
 export interface Options {
   hydrate: boolean;

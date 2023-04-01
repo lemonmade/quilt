@@ -5,8 +5,8 @@
 import {renderToString, renderToStaticMarkup} from 'react-dom/server';
 import {describe, it, expect} from '@quilted/testing';
 
-import {ServerAction} from '../ServerAction';
-import {extract} from '../server';
+import {ServerAction} from '../ServerAction.tsx';
+import {extract} from '../server.tsx';
 
 describe('extract()', () => {
   it('calls actions', async () => {

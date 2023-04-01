@@ -5,7 +5,7 @@ import {
   type GraphQLOperation,
 } from '@quilted/quilt';
 
-import {throwIfError} from './utilities';
+import {throwIfError} from './utilities.ts';
 
 export type GraphQLMutationOptions<Data, Variables> = Omit<
   UseMutationOptions<Data, unknown, Variables>,

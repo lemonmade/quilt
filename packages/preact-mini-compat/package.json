@@ -26,7 +26,7 @@
   "devDependencies": {
     "p-limit": "^3.1.0",
     "preact": "^10.13.0",
-    "terser": "^5.5.1"
+    "terser": "^5.16.0"
   },
   "peerDependencies": {
     "preact": "^10.13.0"

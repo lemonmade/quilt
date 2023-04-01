@@ -6,7 +6,7 @@ import type {
   Search,
   RelativeTo,
   MatchDetails,
-} from './types';
+} from './types.ts';
 
 export function enhanceUrl(url: URL, prefix?: Prefix): EnhancedURL {
   const extractedPrefix = extractPrefix(url, prefix);

@@ -7,7 +7,7 @@ import type {
   ExportedHandlerFetchHandler,
 } from '@cloudflare/workers-types';
 
-import {createFetchHandler, type RequestHandlerOptions} from './fetch';
+import {createFetchHandler, type RequestHandlerOptions} from './fetch.ts';
 
 export interface PagesAssetOptions {
   /**

@@ -1,9 +1,5 @@
-import {Task, createWaterfallHook} from '../../kit';
-
-import type {DevelopTaskOptions} from '../../kit';
-
-import {createCommand, runStepsForTask} from '../common';
-import type {TaskContext} from '../common';
+import {Task, createWaterfallHook, type DevelopTaskOptions} from '../../kit.ts';
+import {createCommand, runStepsForTask, type TaskContext} from '../common.ts';
 
 export const develop = createCommand(
   {'--debug': Boolean},

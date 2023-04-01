@@ -1,7 +1,7 @@
 /* eslint react-hooks/exhaustive-deps: off */
 
 import type {HTMLProps} from 'react';
-import {useDomEffect} from './dom-effect';
+import {useDomEffect} from './dom-effect.ts';
 
 /**
  * Adds a `<link>` tag to the `<head>` of the document with the

@@ -1,4 +1,4 @@
-import {useSearchRobots} from '../hooks';
+import {useSearchRobots} from '../hooks/search-robots.ts';
 
 /**
  * Adds a `robots` `<meta>` tag to the `<head>` of the document. You can

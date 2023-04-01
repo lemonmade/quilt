@@ -2,10 +2,10 @@ import {useMemo} from 'react';
 import type {ReactNode} from 'react';
 import {resolveUrl} from '@quilted/routing';
 
-import type {Router, Options} from './router';
-import {CurrentUrlContext, RouterContext} from './context';
-import {enhanceUrl, createKey} from './utilities';
-import {FocusContext} from './components';
+import type {Router, Options} from './router.ts';
+import {CurrentUrlContext, RouterContext} from './context.ts';
+import {enhanceUrl, createKey} from './utilities.ts';
+import {FocusContext} from './components.ts';
 
 export function createTestRouter(
   url: URL | string = '/',

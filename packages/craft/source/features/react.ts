@@ -1,9 +1,12 @@
 import {createRequire} from 'module';
 
-import {createProjectPlugin} from '../kit';
-import type {WaterfallHook, ResolvedHooks} from '../kit';
+import {
+  createProjectPlugin,
+  type WaterfallHook,
+  type ResolvedHooks,
+} from '../kit.ts';
 
-import type {BabelHooks} from '../tools/babel';
+import type {BabelHooks} from '../tools/babel.ts';
 
 // TODO
 export interface ReactHooks {

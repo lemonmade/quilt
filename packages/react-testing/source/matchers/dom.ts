@@ -8,10 +8,10 @@ import {
 
 import {expect} from '@jest/globals';
 
-import type {Node, HtmlNodeExtensions} from '../types';
+import type {Node, HtmlNodeExtensions} from '../types.ts';
 
-import {toHaveReactProps} from './props';
-import {assertIsNode, printReceivedWithHighlight} from './utilities';
+import {toHaveReactProps} from './props.ts';
+import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
 
 declare global {
   // As far as I know, this is needed for the module augmentation  to work.

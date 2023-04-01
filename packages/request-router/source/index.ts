@@ -8,12 +8,12 @@ export type {
   CookieOptions,
 } from '@quilted/http';
 
-export * from './router';
-export * from './globals';
-export * from './response';
-export * from './request';
-export * from './response-helpers';
-export {handleRequest} from './handle';
+export * from './router.ts';
+export * from './globals.ts';
+export * from './response.ts';
+export * from './request.ts';
+export * from './response-helpers.ts';
+export {handleRequest} from './handle.ts';
 
 export type {
   CookieDefinition,
@@ -23,4 +23,4 @@ export type {
   RequestHandler,
   RequestContext,
   EnhancedWritableCookies,
-} from './types';
+} from './types.ts';

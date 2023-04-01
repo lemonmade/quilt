@@ -1,5 +1,5 @@
 import type {GraphQLSchema} from 'graphql';
-import type {Extensions} from '../configuration';
+import type {Extensions} from '../configuration.ts';
 
 export interface GraphQLConfiguration {
   readonly projects: Record<string, GraphQLProjectConfiguration>;

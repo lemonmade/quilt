@@ -1,12 +1,15 @@
 import {rm} from 'fs/promises';
 import {join} from 'path';
 
-import {createProjectPlugin} from '../kit';
-import type {Project, WaterfallHookWithDefault} from '../kit';
+import {
+  createProjectPlugin,
+  type Project,
+  type WaterfallHookWithDefault,
+} from '../kit.ts';
 
-import type {} from '../tools/rollup';
+import type {} from '../tools/rollup.ts';
 
-import {targetsSupportModules} from './targets';
+import {targetsSupportModules} from './targets.ts';
 
 export interface ModuleHooks {
   moduleEntry: WaterfallHookWithDefault<string>;
@@ -333,7 +336,7 @@ export function moduleBuild({
                       targets,
                     },
                   }),
-                  import('../tools/rollup'),
+                  import('../tools/rollup.ts'),
                 ]);
 
                 await buildWithRollup(project, configure);

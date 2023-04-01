@@ -1,5 +1,4 @@
-import {Base} from './base';
-import type {Options as BaseOptions} from './base';
+import {Base, type Options as BaseOptions} from './base.ts';
 
 export interface ProjectOptions extends BaseOptions {}
 

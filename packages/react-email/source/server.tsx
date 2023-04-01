@@ -9,8 +9,8 @@ import {
   renderHtmlToString,
 } from '@quilted/react-html/server';
 
-import {EmailContext} from './context';
-import {EmailManager} from './manager';
+import {EmailContext} from './context.ts';
+import {EmailManager} from './manager.ts';
 
 export type Options = ExtractOptions;
 

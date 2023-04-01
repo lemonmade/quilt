@@ -1,6 +1,6 @@
-import {on as onEvent} from './on';
-import {once as onceEvent} from './once';
-import type {AbortBehavior} from './abort';
+import {on as onEvent} from './on.ts';
+import {once as onceEvent} from './once.ts';
+import type {AbortBehavior} from './abort.ts';
 
 export type EmitterHandler<T = unknown> = (event: T) => void;
 

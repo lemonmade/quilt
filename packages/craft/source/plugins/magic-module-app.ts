@@ -1,8 +1,8 @@
 import type {Plugin} from 'rollup';
 
-import {createProjectPlugin} from '../kit';
+import {createProjectPlugin} from '../kit.ts';
 
-import {MAGIC_MODULE_APP_COMPONENT} from '../constants';
+import {MAGIC_MODULE_APP_COMPONENT} from '../constants.ts';
 
 export function magicModuleApp() {
   return createProjectPlugin({

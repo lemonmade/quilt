@@ -1,9 +1,9 @@
 import {useLayoutEffect, useCallback, useMemo, useRef} from 'react';
 import type {MutableRefObject} from 'react';
 
-import type {EnhancedURL} from '../types';
+import type {EnhancedURL} from '../types.ts';
 
-import {useCurrentUrl} from './url';
+import {useCurrentUrl} from './url.ts';
 
 interface Options {
   /**

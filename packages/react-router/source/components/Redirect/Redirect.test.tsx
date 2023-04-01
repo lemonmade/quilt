@@ -1,7 +1,7 @@
 import {createRender, describe, it, expect} from '@quilted/quilt/testing';
 
-import {createTestRouter, TestRouting} from '../../testing';
-import {Redirect} from './Redirect';
+import {createTestRouter, TestRouting} from '../../testing.tsx';
+import {Redirect} from './Redirect.tsx';
 
 describe('<Redirect />', () => {
   it('works', () => {

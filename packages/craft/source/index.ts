@@ -1,102 +1,97 @@
 /* eslint @typescript-eslint/no-empty-interface: off */
 
-import {createProjectPlugin, createWorkspacePlugin} from './kit';
-import type {Project} from './kit';
-import {createProject, createWorkspace} from './configuration';
+import {createProjectPlugin, createWorkspacePlugin} from './kit.ts';
+import type {Project} from './kit.ts';
 
 import {
   moduleBase,
   moduleBuild,
   type BuildOptions as ModuleBuildOptions,
-} from './features/modules';
-import {packageBase, packageBuild} from './features/packages';
+} from './features/modules.ts';
+import {packageBase, packageBuild} from './features/packages.ts';
 import type {
   Options as PackageBaseOptions,
   BuildOptions as PackageBuildOptions,
-} from './features/packages';
-import {esnextBuild, esnext} from './features/esnext';
-import {fromSource} from './features/from-source';
-import {react} from './features/react';
-import {targets, workspaceTargets} from './features/targets';
-import {graphql, workspaceGraphQL} from './features/graphql';
-import {asyncQuilt} from './features/async';
-import {polyfills} from './features/polyfills';
-import type {Options as PolyfillOptions} from './features/polyfills';
-import {workers} from './features/workers';
-import {reactTesting} from './features/testing';
-import {assets as browserAssets} from './features/assets';
-import {AssetOptions} from './features/assets';
+} from './features/packages.ts';
+import {esnextBuild, esnext} from './features/esnext.ts';
+import {fromSource} from './features/from-source.ts';
+import {react} from './features/react.ts';
+import {targets, workspaceTargets} from './features/targets.ts';
+import {graphql, workspaceGraphQL} from './features/graphql.ts';
+import {asyncQuilt} from './features/async.ts';
+import {polyfills} from './features/polyfills.ts';
+import type {Options as PolyfillOptions} from './features/polyfills.ts';
+import {workers} from './features/workers.ts';
+import {reactTesting} from './features/testing.ts';
+import {assets as browserAssets} from './features/assets.ts';
+import {AssetOptions} from './features/assets.ts';
 
-import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel';
-import {browserslist} from './tools/browserslist';
-import {rollupHooks, rollupNode} from './tools/rollup';
-import type {RollupNodeOptions} from './tools/rollup';
-import {eslint} from './tools/eslint';
-import {postcss} from './tools/postcss';
-import {prettier} from './tools/prettier';
-import {jest} from './tools/jest';
-import {vite} from './tools/vite';
-import {typescriptProject, typescriptWorkspace} from './tools/typescript';
-import {stylelint} from './tools/stylelint';
+import {babelHooks, babelWorkspaceHooks, babelRollup} from './tools/babel.ts';
+import {browserslist} from './tools/browserslist.ts';
+import {rollupHooks, rollupNode} from './tools/rollup.ts';
+import type {RollupNodeOptions} from './tools/rollup.ts';
+import {eslint} from './tools/eslint.ts';
+import {postcss} from './tools/postcss.ts';
+import {prettier} from './tools/prettier.ts';
+import {jest} from './tools/jest.ts';
+import {vite} from './tools/vite.ts';
+import {typescriptProject, typescriptWorkspace} from './tools/typescript.ts';
+import {stylelint} from './tools/stylelint.ts';
 
-import {javascriptProject, javascriptWorkspace} from './plugins/javascript';
-import {aliasWorkspacePackages} from './plugins/alias-workspace-packages';
+import {javascriptProject, javascriptWorkspace} from './plugins/javascript.ts';
+import {aliasWorkspacePackages} from './plugins/alias-workspace-packages.ts';
 
-import {appBase} from './plugins/app-base';
-import {appBuild} from './plugins/app-build';
+import {appBase} from './plugins/app-base.ts';
+import {appBuild} from './plugins/app-build.ts';
 import type {
   AssetOptions as AppBuildAssetOptions,
   AppBrowserOptions,
-} from './plugins/app-build';
-import {appDevelop} from './plugins/app-develop';
-import type {Options as AppDevelopOptions} from './plugins/app-develop';
-import {magicModuleApp} from './plugins/magic-module-app';
-import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry';
-import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry';
-import {appServer} from './plugins/app-server-base';
-import type {AppServerOptions} from './plugins/app-server-base';
-import {appServerBuild} from './plugins/app-server-build';
-export type {AppServerBuildHooks} from './plugins/app-server-build';
-import {appStatic} from './plugins/app-static';
-import type {AppStaticOptions} from './plugins/app-static';
-import {appWorkers} from './plugins/app-workers';
+} from './plugins/app-build.ts';
+import {appDevelop} from './plugins/app-develop.ts';
+import type {Options as AppDevelopOptions} from './plugins/app-develop.ts';
+import {magicModuleApp} from './plugins/magic-module-app.ts';
+import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry.ts';
+import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry.ts';
+import {appServer} from './plugins/app-server-base.ts';
+import type {AppServerOptions} from './plugins/app-server-base.ts';
+import {appServerBuild} from './plugins/app-server-build.ts';
+export type {AppServerBuildHooks} from './plugins/app-server-build.ts';
+import {appStatic} from './plugins/app-static.ts';
+import type {AppStaticOptions} from './plugins/app-static.ts';
+import {appWorkers} from './plugins/app-workers.ts';
 
-import {serviceBase} from './plugins/service-base';
-import {serviceBuild} from './plugins/service-build';
-import type {Options as ServiceBuildOptions} from './plugins/service-build';
-import {serviceDevelopment} from './plugins/service-develop';
+import {serviceBase} from './plugins/service-base.ts';
+import {serviceBuild} from './plugins/service-build.ts';
+import type {Options as ServiceBuildOptions} from './plugins/service-build.ts';
+import {serviceDevelopment} from './plugins/service-develop.ts';
 
 import {
   requestRouter,
   requestRouterDevelopment,
-} from './plugins/request-router';
-import type {Options as RequestRouterOptions} from './plugins/request-router';
+} from './plugins/request-router.ts';
+import type {Options as RequestRouterOptions} from './plugins/request-router.ts';
 
-import {magicModuleEnv} from './plugins/magic-module-env';
-import type {EnvironmentOptions} from './plugins/magic-module-env';
+import {magicModuleEnv} from './plugins/magic-module-env.ts';
+import type {EnvironmentOptions} from './plugins/magic-module-env.ts';
 
-import {tsconfigAliases} from './plugins/tsconfig-aliases';
+import {tsconfigAliases} from './plugins/tsconfig-aliases.ts';
 
 // Without these exports, TypeScript doesn’t see all the module augmentations
 // added by these modules when you try to reference them from another package.
-export type {} from './plugins/app-build';
-export type {} from './plugins/app-server-build';
-export type {} from './plugins/app-auto-server';
-export type {} from './plugins/browser-entry';
-export type {} from './plugins/request-router';
+export type {} from './plugins/app-build.ts';
+export type {} from './plugins/app-server-build.ts';
+export type {} from './plugins/app-auto-server.ts';
+export type {} from './plugins/browser-entry.ts';
+export type {} from './plugins/request-router.ts';
+
+export * from './constants.ts';
+export * from './configuration.ts';
 
 // Re-export for convenience in consumers, these allow them to
 // create many plugins without having to grab types from the
 // (significantly more complex) `@quilted/craft/kit` entry.
-export {
-  createProjectPlugin,
-  createWorkspacePlugin,
-  createProject,
-  createWorkspace,
-};
+export {createProjectPlugin, createWorkspacePlugin};
 export type {Project};
-
-export * from './constants';
 
 export interface AppOptions {
   /**

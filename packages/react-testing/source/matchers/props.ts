@@ -6,9 +6,9 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import type {Node} from '../types';
+import type {Node} from '../types.ts';
 
-import {assertIsNode, diffPropsForNode} from './utilities';
+import {assertIsNode, diffPropsForNode} from './utilities.ts';
 
 export function toHaveReactProps<Props>(
   this: MatcherState,

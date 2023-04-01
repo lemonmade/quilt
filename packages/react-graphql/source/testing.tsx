@@ -15,7 +15,7 @@ import type {
   GraphQLFillerResolverMap,
 } from '@quilted/graphql/fixtures';
 
-import {GraphQLContext} from './context';
+import {GraphQLContext} from './context.tsx';
 
 export type {
   GraphQLOperation,

@@ -167,4 +167,4 @@ export {
   type SignalOrValue,
 } from '@quilted/react-signals';
 
-export {QuiltApp} from './App';
+export {QuiltApp} from './App.tsx';

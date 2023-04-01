@@ -3,7 +3,7 @@ import type {PropsWithChildren} from 'react';
 
 import {useSerialized} from '@quilted/react-html';
 
-import {HttpHeadersContext, HttpServerContext} from '../context';
+import {HttpHeadersContext, HttpServerContext} from '../context.ts';
 
 const SERIALIZED_ID = '_quilt.http';
 

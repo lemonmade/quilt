@@ -19,4 +19,4 @@ export type {
   CreateThreadWorkerOptions,
 } from '@quilted/workers';
 
-export {useThreadWorker} from './hooks';
+export {useThreadWorker} from './hooks.ts';

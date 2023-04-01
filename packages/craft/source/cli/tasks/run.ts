@@ -2,20 +2,19 @@ import {createRequire} from 'module';
 import {ChildProcess, spawn} from 'child_process';
 import arg from 'arg';
 
-import {Task, DiagnosticError} from '../../kit';
-import type {Project} from '../../kit';
-import type {} from '../../tools/typescript';
+import {Task, DiagnosticError, type Project} from '../../kit.ts';
+import type {} from '../../tools/typescript.ts';
 
-import {Ui} from '../ui';
+import {Ui} from '../ui.ts';
 import {
   logError,
   loadWorkspace,
   loadPluginsForTask,
   createFilter,
   getNodeExecutable,
-} from '../common';
-import {sourceEntriesForProject} from '../../features/packages';
-import type {JestProjectConfig} from '../../tools/jest';
+} from '../common.ts';
+import {sourceEntriesForProject} from '../../features/packages.ts';
+import type {JestProjectConfig} from '../../tools/jest.ts';
 
 const VALID_TOOLS = new Set([
   'prettier',

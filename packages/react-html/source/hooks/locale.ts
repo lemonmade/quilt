@@ -1,4 +1,4 @@
-import {useDomEffect} from './dom-effect';
+import {useDomEffect} from './dom-effect.ts';
 
 export function useLocale(locale: string) {
   useDomEffect(

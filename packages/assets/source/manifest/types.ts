@@ -1,4 +1,4 @@
-import type {AssetsCacheKey} from '../cache-key';
+import type {AssetsCacheKey} from '../cache-key.ts';
 
 export interface AssetsBuildManifest<CacheKey = AssetsCacheKey> {
   id?: string;

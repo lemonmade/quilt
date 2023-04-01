@@ -1,4 +1,4 @@
-export type {Serializable} from './types';
+export type {Serializable} from './types.ts';
 
 export {
   Alternate,
@@ -12,7 +12,7 @@ export {
   ThemeColor,
   Title,
   Viewport,
-} from './components';
+} from './components.ts';
 
 export {
   useAlternateUrl,
@@ -28,6 +28,6 @@ export {
   useThemeColor,
   useTitle,
   useViewport,
-} from './hooks';
+} from './hooks.ts';
 
-export {getSerialized} from './utilities/serialization';
+export {getSerialized} from './utilities/serialization.ts';

@@ -15,7 +15,7 @@ import {
 } from '@quilted/react-router/static';
 import type {HttpState} from '@quilted/react-http/server';
 
-import {renderApp} from './render';
+import {renderApp} from './render.tsx';
 
 export interface RenderDetails {
   readonly route: string;

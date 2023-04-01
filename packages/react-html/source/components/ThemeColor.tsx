@@ -1,4 +1,4 @@
-import {useThemeColor} from '../hooks';
+import {useThemeColor} from '../hooks/theme-color.ts';
 
 type Options = NonNullable<Parameters<typeof useThemeColor>[1]>;
 

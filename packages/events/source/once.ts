@@ -1,7 +1,7 @@
-import {addListener} from './listeners';
-import type {AbortBehavior} from './abort';
-import {AbortError, NestedAbortController} from './abort';
-import type {EventTarget} from './types';
+import {addListener} from './listeners.ts';
+import type {AbortBehavior} from './abort.ts';
+import {AbortError, NestedAbortController} from './abort.ts';
+import type {EventTarget} from './types.ts';
 
 export async function once<
   EventMap = Record<string, unknown>,

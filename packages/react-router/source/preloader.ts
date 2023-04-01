@@ -2,8 +2,8 @@ import {enhanceUrl} from '@quilted/routing';
 import {getMatchDetails} from '@quilted/routing';
 import type {Match, EnhancedURL} from '@quilted/routing';
 
-import type {RouteDefinition} from './types';
-import type {Router} from './router';
+import type {RouteDefinition} from './types.ts';
+import type {Router} from './router.ts';
 
 interface PreloadRegistration {
   id: string;

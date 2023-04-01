@@ -1,6 +1,6 @@
 import {stringify} from 'jest-matcher-utils';
 
-import type {DebugOptions, Node} from './types';
+import type {DebugOptions, Node} from './types.ts';
 
 const HIDE_NODE_CHILDREN = ['svg'];
 

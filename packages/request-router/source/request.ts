@@ -1,6 +1,6 @@
 import {CookieString} from '@quilted/http';
 import type {ReadonlyCookies} from '@quilted/http';
-import {Request, type RequestInit} from './globals';
+import {Request, type RequestInit} from './globals.ts';
 
 export class EnhancedRequest extends Request {
   readonly cookies: ReadonlyCookies;

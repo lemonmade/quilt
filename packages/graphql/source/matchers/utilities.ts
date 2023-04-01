@@ -7,7 +7,7 @@ import {
   printReceived,
 } from 'jest-matcher-utils';
 
-import {GraphQLController} from '../fixtures';
+import {GraphQLController} from '../fixtures.ts';
 
 export function assertIsGraphQLController(
   graphql: unknown,

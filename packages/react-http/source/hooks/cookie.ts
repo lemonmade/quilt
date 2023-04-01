@@ -1,7 +1,7 @@
 import {useMemo, useSyncExternalStore} from 'react';
 import {createUseContextHook} from '@quilted/react-utilities';
 
-import {HttpCookiesContext} from '../context';
+import {HttpCookiesContext} from '../context.ts';
 
 /**
  * Provides access to the cookie manager for the application. This

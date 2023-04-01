@@ -2,7 +2,7 @@ import {readFile} from 'fs/promises';
 import {DocumentNode, parse} from 'graphql';
 import type {Plugin, TransformPluginContext} from 'rollup';
 
-import {cleanDocument, extractImports, toSimpleDocument} from './transform';
+import {cleanDocument, extractImports, toSimpleDocument} from './transform.ts';
 
 export function graphql(): Plugin {
   return {

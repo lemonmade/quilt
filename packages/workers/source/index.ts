@@ -13,9 +13,9 @@ export type {
   ThreadSafeArgument,
   ThreadSafeReturnType,
 } from '@quilted/threads';
-export {createWorker, createThreadWorker} from './create';
-export type {
-  BasicWorkerCreator,
-  ThreadWorkerCreator,
-  CreateThreadWorkerOptions,
-} from './create';
+export {createWorker, type BasicWorkerCreator} from './create/basic.ts';
+export {
+  createThreadWorker,
+  type ThreadWorkerCreator,
+  type CreateThreadWorkerOptions,
+} from './create/thread.ts';

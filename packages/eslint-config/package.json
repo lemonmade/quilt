@@ -42,10 +42,10 @@
     "prettier": "^2.7.0"
   },
   "devDependencies": {
-    "typescript": "^4.7.0"
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "typescript": "^4.7.0"
+    "typescript": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "typescript": {

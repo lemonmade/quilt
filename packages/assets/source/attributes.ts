@@ -1,4 +1,4 @@
-import type {Asset} from './types';
+import type {Asset} from './types.ts';
 
 export function styleAssetAttributes(
   {source, attributes}: Asset,

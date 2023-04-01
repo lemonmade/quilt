@@ -1167,8 +1167,8 @@ An important performance optimization technique for JavaScript applications is [
 ```tsx
 import {Routing, createAsyncComponent} from '@quilted/quilt';
 
-const Start = createAsyncComponent(() => import('./Start'));
-const Products = createAsyncComponent(() => import('./Products'));
+const Start = createAsyncComponent(() => import('./Start.tsx'));
+const Products = createAsyncComponent(() => import('./Products.tsx'));
 
 const routes = [
   // Now, if `/` is rendered, only the code for `Start` is loaded; if
@@ -1197,8 +1197,8 @@ import {
   createAsyncComponent,
 } from '@quilted/quilt';
 
-const Start = createAsyncComponent(() => import('./Start'));
-const Products = createAsyncComponent(() => import('./Products'));
+const Start = createAsyncComponent(() => import('./Start.tsx'));
+const Products = createAsyncComponent(() => import('./Products.tsx'));
 
 function App() {
   return (
@@ -1237,7 +1237,7 @@ import {
   createAsyncComponent,
 } from '@quilted/quilt';
 
-const StepTwo = createAsyncComponent(() => import('./StepTwo'));
+const StepTwo = createAsyncComponent(() => import('./StepTwo.tsx'));
 
 function App() {
   return (
@@ -1789,7 +1789,7 @@ import {
   createAsyncComponent,
 } from '@quilted/quilt';
 
-const BigRoute = createAsyncComponent(() => import('./Big'));
+const BigRoute = createAsyncComponent(() => import('./Big.tsx'));
 
 const routes = [
   {match: '/', render: <Start />},

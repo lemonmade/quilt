@@ -1,5 +1,5 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities';
+import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -48,7 +48,7 @@ describe('app builds', () => {
           ),
           'quilt.project.ts': stripIndent`
             import {createProject, quiltApp, quiltWorkspace} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(

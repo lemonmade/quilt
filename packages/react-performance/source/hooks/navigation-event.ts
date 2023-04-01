@@ -1,7 +1,7 @@
 import {useEffect, useRef} from 'react';
 import {type PerformanceNavigation} from '@quilted/performance';
 
-import {usePerformance} from './performance';
+import {usePerformance} from './performance.ts';
 
 export function usePerformanceNavigationEvent<
   Metadata = Record<string, unknown>,

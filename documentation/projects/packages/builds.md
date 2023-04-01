@@ -28,7 +28,7 @@ For example, with the following source code:
 ```ts
 // ./source/index.ts
 
-export {shout} from './shout';
+export {shout} from './shout.ts';
 
 // ./source/shout.ts
 
@@ -122,7 +122,7 @@ For example, with the following source code:
 ```ts
 // ./source/index.ts
 
-export {shout} from './shout';
+export {shout} from './shout.ts';
 
 // ./source/shout.ts
 
@@ -209,7 +209,7 @@ For example, with the following source code:
 ```ts
 // ./source/index.ts
 
-export {shout} from './shout';
+export {shout} from './shout.ts';
 
 // ./source/shout.ts
 

@@ -7,7 +7,7 @@ import {
   startServer,
   getPort,
   waitForUrl,
-} from './utilities';
+} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -42,7 +42,7 @@ describe('polyfills', () => {
           `,
           'quilt.project.ts': stripIndent`
             import {createProject, quiltService, quiltWorkspace} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft';
+            import {addInternalExportCondition} from '../../common/craft.ts';
             
             export default createProject((project) => {
               project.use(

@@ -1,5 +1,4 @@
-import {createWorkspacePlugin} from '../kit';
-import type {WaterfallHook} from '../kit';
+import {createWorkspacePlugin, type WaterfallHook} from '../kit.ts';
 
 export interface PrettierHooks {
   prettierExtensions: WaterfallHook<string[]>;
