@@ -613,11 +613,11 @@ importers:
     specifiers:
       '@types/react-dom': ^18.0.0
       preact: ^10.13.0
-      preact-render-to-string: ^6.0.0
+      preact-render-to-string: ^6.0.2
     dependencies:
       '@types/react-dom': 18.0.10
       preact: 10.13.1
-      preact-render-to-string: 6.0.0_preact@10.13.1
+      preact-render-to-string: 6.0.2_preact@10.13.1
 
   packages/react-email:
     specifiers:
@@ -9410,8 +9410,8 @@ packages:
       source-map-js: 1.0.2
     dev: false
 
-  /preact-render-to-string/6.0.0_preact@10.13.1:
-    resolution: {integrity: sha512-ROmdw0igiAlXW+XtLBBLkesI55dpBwo7i+LIRBEJDK4AyQv7rKaFZKb3SZ3YfurRH3wPb47xYvf+NMzlPdJ5mA==}
+  /preact-render-to-string/6.0.2_preact@10.13.1:
+    resolution: {integrity: sha512-/dls6xmcFc8PvnCVke5Hu5ll70pZZu+jZuvw3i/ya2CNu6B0ev9F937+oFyzdlNKVp68III89oYMbE6dcmuyRA==}
     peerDependencies:
       preact: '>=10'
     dependencies:

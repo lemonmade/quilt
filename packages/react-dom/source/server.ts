@@ -6,7 +6,4 @@
 // unfortunately those are busted in the CommonJS version of the
 // library.
 // @see https://github.com/preactjs/preact-render-to-string/issues/197
-export {
-  default as renderToString,
-  default as renderToStaticMarkup,
-} from 'preact-render-to-string';
+export {renderToString, renderToStaticMarkup} from 'preact-render-to-string';

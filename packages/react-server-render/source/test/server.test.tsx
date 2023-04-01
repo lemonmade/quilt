@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 
+import * as Foo from 'react-dom/server';
 import {renderToString, renderToStaticMarkup} from 'react-dom/server';
 import {describe, it, expect} from '@quilted/testing';
 
