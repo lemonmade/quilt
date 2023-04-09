@@ -15,9 +15,10 @@
     "react": "npm:@quilted/react@^18.2.0",
     "react-dom": "npm:@quilted/react-dom@^18.2.0"
   },
-  "eslintConfig": {
-    "extends": "@quilted/eslint-config/app"
-  },
+  "sideEffects": [
+    "*.css",
+    "browser.tsx"
+  ],
   "browserslist": {
     "defaults": [
       "extends @quilted/browserslist-config/defaults"
@@ -28,5 +29,8 @@
     "evergreen": [
       "extends @quilted/browserslist-config/evergreen"
     ]
+  },
+  "eslintConfig": {
+    "extends": "@quilted/eslint-config/app"
   }
 }
