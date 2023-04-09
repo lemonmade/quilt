@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.56
+
+### Patch Changes
+
+- [`b26de13b`](https://github.com/lemonmade/quilt/commit/b26de13b89f8433479f0d7931e5dcf1a381bb6c6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add side effects to app templates
+
+- [`96e837ee`](https://github.com/lemonmade/quilt/commit/96e837ee04f689898386891a926724597cf96937) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix empty app template
+
 ## 0.1.55
 
 ### Patch Changes
