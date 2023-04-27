@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.57
+
+### Patch Changes
+
+- [`d6b6d45d`](https://github.com/lemonmade/quilt/commit/d6b6d45d69f1a2d015eb6ec86ba90f7291a5ebbf) Thanks [@lemonmade](https://github.com/lemonmade)! - Export create functions
+
 ## 0.1.56
 
 ### Patch Changes
