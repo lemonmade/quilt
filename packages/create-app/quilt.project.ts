@@ -6,7 +6,6 @@ export default createProject((project) => {
       executable: {
         'create-quilt-app': './source/cli.ts',
       },
-      build: {bundle: true},
     }),
   );
 });

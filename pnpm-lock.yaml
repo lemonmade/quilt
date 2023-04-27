@@ -372,9 +372,10 @@ importers:
       '@quilted/cli-kit': ^0.1.9
       '@quilted/create': ^0.1.56
       '@quilted/testing': ^0.1.0
-    devDependencies:
+    dependencies:
       '@quilted/cli-kit': link:../cli-kit
       '@quilted/create': link:../create
+    devDependencies:
       '@quilted/testing': link:../testing
 
   packages/create-quilt-app:
