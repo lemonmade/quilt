@@ -4,7 +4,7 @@ export default createProject((project) => {
   project.use(
     quiltPackage({
       executable: {
-        'create-quilt': './source/index.ts',
+        'create-quilt': './source/cli.ts',
       },
       build: {bundle: true},
     }),

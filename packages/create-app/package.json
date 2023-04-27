@@ -1,0 +1,36 @@
+{
+  "name": "@quilted/create-app",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/create-app"
+  },
+  "bin": "./bin/create-quilt-app.mjs",
+  "sideEffects": false,
+  "dependencies": {},
+  "peerDependencies": {},
+  "peerDependenciesMeta": {},
+  "devDependencies": {
+    "@quilted/cli-kit": "^0.1.9",
+    "@quilted/create": "^0.1.56",
+    "@quilted/testing": "^0.1.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/project"
+    ]
+  },
+  "browserslist": [
+    "extends @quilted/browserslist-config/defaults"
+  ]
+}

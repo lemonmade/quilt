@@ -13,6 +13,16 @@
     "@quilted:registry": "https://registry.npmjs.org"
   },
   "bin": "./bin/create-quilt.mjs",
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
   "sideEffects": true,
   "devDependencies": {
     "@quilted/cli-kit": "^0.1.5",
