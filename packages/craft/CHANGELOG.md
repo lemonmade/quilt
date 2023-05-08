@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.199
+
+### Patch Changes
+
+- [`7fdb3221`](https://github.com/lemonmade/quilt/commit/7fdb3221e233e87105cdf24c95f117b8e2005c2f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Babel decorator transpilation
+
 ## 0.1.198
 
 ### Patch Changes
