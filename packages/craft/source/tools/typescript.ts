@@ -29,7 +29,7 @@ export function typescriptProject() {
   return createProjectPlugin({
     name: 'Quilt.TypeScript',
     build({configure}) {
-      configure(({extensions, babelPresets}) => {
+      configure(({extensions, babelPresets, babelPlugins}) => {
         // Let us import from TypeScript files without extensions
         extensions((extensions) =>
           Array.from(new Set(['.tsx', '.ts', ...extensions])),
@@ -40,10 +40,18 @@ export function typescriptProject() {
           ...presets,
           require.resolve('@babel/preset-typescript'),
         ]);
+
+        babelPlugins?.((plugins) => [
+          ...plugins,
+          [
+            require.resolve('@babel/plugin-syntax-decorators'),
+            {version: '2023-01'},
+          ],
+        ]);
       });
     },
     develop({configure}) {
-      configure(({extensions, babelPresets}) => {
+      configure(({extensions, babelPresets, babelPlugins}) => {
         // Let us import from TypeScript files without extensions
         extensions((extensions) =>
           Array.from(new Set(['.tsx', '.ts', ...extensions])),
@@ -53,6 +61,14 @@ export function typescriptProject() {
         babelPresets?.((presets) => [
           ...presets,
           require.resolve('@babel/preset-typescript'),
+        ]);
+
+        babelPlugins?.((plugins) => [
+          ...plugins,
+          [
+            require.resolve('@babel/plugin-syntax-decorators'),
+            {version: '2023-01'},
+          ],
         ]);
       });
     },
@@ -62,6 +78,14 @@ export function typescriptProject() {
           babelPresets?.((presets) => [
             ...presets,
             require.resolve('@babel/preset-typescript'),
+          ]);
+
+          babelPlugins?.((plugins) => [
+            ...plugins,
+            [
+              require.resolve('@babel/plugin-syntax-decorators'),
+              {version: '2023-01'},
+            ],
           ]);
 
           // Add TypeScript extensions for project-level tests
@@ -108,10 +132,18 @@ export function typescriptWorkspace() {
     build({workspace, hooks, configure, run}) {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
 
-      configure(({babelPresets}) => {
+      configure(({babelPresets, babelPlugins}) => {
         babelPresets?.((presets) => [
           ...presets,
           require.resolve('@babel/preset-typescript'),
+        ]);
+
+        babelPlugins?.((plugins) => [
+          ...plugins,
+          [
+            require.resolve('@babel/plugin-syntax-decorators'),
+            {version: '2023-01'},
+          ],
         ]);
       });
 
@@ -149,10 +181,18 @@ export function typescriptWorkspace() {
       );
     },
     develop({configure}) {
-      configure(({babelPresets}) => {
+      configure(({babelPresets, babelPlugins}) => {
         babelPresets?.((presets) => [
           ...presets,
           require.resolve('@babel/preset-typescript'),
+        ]);
+
+        babelPlugins?.((plugins) => [
+          ...plugins,
+          [
+            require.resolve('@babel/plugin-syntax-decorators'),
+            {version: '2023-01'},
+          ],
         ]);
       });
     },
@@ -176,6 +216,14 @@ export function typescriptWorkspace() {
           babelPresets?.((presets) => [
             ...presets,
             require.resolve('@babel/preset-typescript'),
+          ]);
+
+          babelPlugins?.((plugins) => [
+            ...plugins,
+            [
+              require.resolve('@babel/plugin-syntax-decorators'),
+              {version: '2023-01'},
+            ],
           ]);
 
           // Add TypeScript extensions for workspace-level tests
