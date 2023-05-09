@@ -44,7 +44,7 @@ export function typescriptProject() {
         babelPlugins?.((plugins) => [
           ...plugins,
           [
-            require.resolve('@babel/plugin-syntax-decorators'),
+            require.resolve('@babel/plugin-proposal-decorators'),
             {version: '2023-01'},
           ],
         ]);
@@ -66,7 +66,7 @@ export function typescriptProject() {
         babelPlugins?.((plugins) => [
           ...plugins,
           [
-            require.resolve('@babel/plugin-syntax-decorators'),
+            require.resolve('@babel/plugin-proposal-decorators'),
             {version: '2023-01'},
           ],
         ]);
@@ -83,7 +83,7 @@ export function typescriptProject() {
           babelPlugins?.((plugins) => [
             ...plugins,
             [
-              require.resolve('@babel/plugin-syntax-decorators'),
+              require.resolve('@babel/plugin-proposal-decorators'),
               {version: '2023-01'},
             ],
           ]);
@@ -141,7 +141,7 @@ export function typescriptWorkspace() {
         babelPlugins?.((plugins) => [
           ...plugins,
           [
-            require.resolve('@babel/plugin-syntax-decorators'),
+            require.resolve('@babel/plugin-proposal-decorators'),
             {version: '2023-01'},
           ],
         ]);
@@ -190,7 +190,7 @@ export function typescriptWorkspace() {
         babelPlugins?.((plugins) => [
           ...plugins,
           [
-            require.resolve('@babel/plugin-syntax-decorators'),
+            require.resolve('@babel/plugin-proposal-decorators'),
             {version: '2023-01'},
           ],
         ]);
@@ -221,7 +221,7 @@ export function typescriptWorkspace() {
           babelPlugins?.((plugins) => [
             ...plugins,
             [
-              require.resolve('@babel/plugin-syntax-decorators'),
+              require.resolve('@babel/plugin-proposal-decorators'),
               {version: '2023-01'},
             ],
           ]);

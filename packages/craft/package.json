@@ -212,7 +212,7 @@
   "dependencies": {
     "@babel/core": "^7.21.0",
     "@babel/plugin-transform-runtime": ">=7.0.0 <8.0.0",
-    "@babel/plugin-syntax-decorators": "^7.21.0",
+    "@babel/plugin-proposal-decorators": "^7.21.0",
     "@babel/plugin-syntax-typescript": "^7.21.0",
     "@babel/preset-env": "^7.21.0",
     "@babel/preset-react": "^7.18.0",
