@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.200
+
+### Patch Changes
+
+- [`06bf4cbf`](https://github.com/lemonmade/quilt/commit/06bf4cbf21539d6ca84dc4ab1836165b360fc27a) Thanks [@lemonmade](https://github.com/lemonmade)! - Actually fix test decorators
+
 ## 0.1.199
 
 ### Patch Changes
