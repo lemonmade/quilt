@@ -118,7 +118,7 @@ describe('http', () => {
       });
     });
 
-    fit('can set response cookies from the node server', async () => {
+    it('can set response cookies from the node server', async () => {
       await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;
 
@@ -148,8 +148,6 @@ describe('http', () => {
         });
 
         const cookies = await page.context().cookies();
-
-        console.log(cookies);
 
         expect(cookies).toStrictEqual([
           expect.objectContaining({

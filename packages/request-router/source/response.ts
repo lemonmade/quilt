@@ -42,6 +42,10 @@ interface HeadersWithRaw extends Headers {
   raw(): Record<string, string[]>;
 }
 
+interface HeadersWithGetSetCookie extends Headers {
+  getSetCookie(): string[];
+}
+
 function responseCookiesFromHeaders(
   headers: Response['headers'],
 ): EnhancedWritableCookies {
@@ -56,7 +60,12 @@ function responseCookiesFromHeaders(
       cookies.set(cookie, '', {expires: new Date(0), ...options});
     },
     getAll() {
-      if (typeof (headers as HeadersWithRaw).raw === 'function') {
+      if (
+        typeof (headers as HeadersWithGetSetCookie).getSetCookie === 'function'
+      ) {
+        const setCookie = (headers as HeadersWithGetSetCookie).getSetCookie();
+        return setCookie.length > 0 ? setCookie : undefined;
+      } else if (typeof (headers as HeadersWithRaw).raw === 'function') {
         try {
           const rawHeaders = (headers as HeadersWithRaw).raw();
 
