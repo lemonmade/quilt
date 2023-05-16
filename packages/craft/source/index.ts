@@ -15,7 +15,7 @@ import type {
 } from './features/packages.ts';
 import {esnextBuild, esnext} from './features/esnext.ts';
 import {fromSource} from './features/from-source.ts';
-import {react} from './features/react.ts';
+import {react, type Options as ReactOptions} from './features/react.ts';
 import {targets, workspaceTargets} from './features/targets.ts';
 import {graphql, workspaceGraphQL} from './features/graphql.ts';
 import {asyncQuilt} from './features/async.ts';
@@ -155,6 +155,14 @@ export interface AppOptions {
    * rendering by passing `server.env`.
    */
   env?: EnvironmentOptions;
+
+  /**
+   * Whether this package requires React syntax transformations. Alternatively,
+   * you can pass an object of options to configure React transformations.
+   *
+   * @default true
+   */
+  react?: boolean | ReactOptions;
 }
 
 export function quiltApp({
@@ -167,6 +175,7 @@ export function quiltApp({
   browser = {},
   static: renderStatic = false,
   server = !renderStatic,
+  react: reactOptions = true,
 }: AppOptions = {}) {
   const {minify = true, baseUrl = '/assets/', ...assetOptions} = assets;
 
@@ -191,7 +200,8 @@ export function quiltApp({
         tsconfigAliases(),
         esnext(),
         fromSource(),
-        react(),
+        Boolean(reactOptions) &&
+          react(typeof reactOptions === 'object' ? reactOptions : undefined),
         appBase({
           entry,
           server: Boolean(server),
@@ -238,7 +248,7 @@ export function quiltApp({
         workers(),
         appWorkers({baseUrl}),
         asyncQuilt({preload: true}),
-        reactTesting(),
+        Boolean(reactOptions) && reactTesting(),
         targets(),
         shouldPolyfill &&
           polyfills({
@@ -264,10 +274,12 @@ export interface ServiceOptions {
   entry?: string;
 
   /**
-   * Whether this service requires React syntax transformations. Defaults
-   * to `false`.
+   * Whether this package requires React syntax transformations. Alternatively,
+   * you can pass an object of options to configure React transformations.
+   *
+   * @default false
    */
-  react?: boolean;
+  react?: boolean | ReactOptions;
   graphql?: boolean;
   build?: boolean | Partial<Omit<ServiceBuildOptions, 'format'>>;
   polyfill?: boolean | PolyfillOptions;
@@ -285,7 +297,7 @@ export function quiltService({
   build = true,
   develop = true,
   graphql: useGraphQL = true,
-  react: useReact = false,
+  react: reactOptions = false,
   polyfill: shouldPolyfill = true,
 }: ServiceOptions = {}) {
   const useRequestRouter = format === 'request-router';
@@ -311,7 +323,8 @@ export function quiltService({
         tsconfigAliases(),
         esnext(),
         fromSource(),
-        useReact && react(),
+        Boolean(reactOptions) &&
+          react(typeof reactOptions === 'object' ? reactOptions : undefined),
         serviceBase({entry}),
         aliasWorkspacePackages(),
         magicModuleEnv(),
@@ -327,7 +340,7 @@ export function quiltService({
           }),
         develop && useRequestRouter && serviceDevelopment(),
         useGraphQL && graphql(),
-        useReact && reactTesting(),
+        Boolean(reactOptions) && reactTesting(),
         targets(),
         shouldPolyfill &&
           polyfills({
@@ -360,7 +373,14 @@ export interface PackageOptions
          */
         esnext?: boolean;
       } & Pick<PackageBuildOptions, 'commonjs'>);
-  react?: boolean;
+
+  /**
+   * Whether this package requires React syntax transformations. Alternatively,
+   * you can pass an object of options to configure React transformations.
+   *
+   * @default true
+   */
+  react?: boolean | ReactOptions;
   graphql?: boolean;
 }
 
@@ -372,7 +392,7 @@ export function quiltPackage({
   entries,
   executable,
   build = true,
-  react: useReact = true,
+  react: reactOptions = true,
   graphql: useGraphQL = false,
 }: PackageOptions = {}) {
   return createProjectPlugin({
@@ -400,8 +420,9 @@ export function quiltPackage({
         typescriptProject(),
         esnext(),
         fromSource(),
-        useReact && react(),
-        useReact && reactTesting(),
+        Boolean(reactOptions) &&
+          react(typeof reactOptions === 'object' ? reactOptions : undefined),
+        Boolean(reactOptions) && reactTesting(),
         useGraphQL && graphql(),
         rollupNode({bundle: bundleOption}),
         packageBase({entries, executable}),
@@ -422,7 +443,15 @@ export interface ModuleOptions {
     | ({
         bundle?: RollupNodeOptions['bundle'];
       } & ModuleBuildOptions);
-  react?: boolean;
+
+  /**
+   * Whether this package requires React syntax transformations. Alternatively,
+   * you can pass an object of options to configure React transformations.
+   *
+   * @default true
+   */
+  react?: boolean | ReactOptions;
+
   graphql?: boolean;
 }
 
@@ -432,7 +461,7 @@ export interface ModuleOptions {
 export function quiltModule({
   entry,
   build = true,
-  react: useReact = true,
+  react: reactOptions = true,
   graphql: useGraphQL = false,
 }: ModuleOptions = {}) {
   return createProjectPlugin({
@@ -458,8 +487,9 @@ export function quiltModule({
         typescriptProject(),
         esnext(),
         fromSource(),
-        useReact && react(),
-        useReact && reactTesting(),
+        Boolean(reactOptions) &&
+          react(typeof reactOptions === 'object' ? reactOptions : undefined),
+        Boolean(reactOptions) && reactTesting(),
         useGraphQL && graphql(),
         rollupNode({bundle: bundleOption}),
         moduleBase({entry}),

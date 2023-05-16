@@ -2,7 +2,7 @@ import {createRequire} from 'module';
 
 import {
   createProjectPlugin,
-  type WaterfallHook,
+  type WaterfallHookWithDefault,
   type ResolvedHooks,
 } from '../kit.ts';
 
@@ -10,8 +10,8 @@ import type {BabelHooks} from '../tools/babel.ts';
 
 // TODO
 export interface ReactHooks {
-  reactRuntime: WaterfallHook<'automatic' | 'classic'>;
-  reactImportSource: WaterfallHook<string>;
+  reactRuntime: WaterfallHookWithDefault<'automatic' | 'classic'>;
+  reactImportSource: WaterfallHookWithDefault<string>;
 }
 
 export interface Options {
@@ -48,24 +48,36 @@ export function react({
     name: 'Quilt.React',
     build({hooks, configure}) {
       hooks<ReactHooks>(({waterfall}) => ({
-        reactRuntime: waterfall(),
-        reactImportSource: waterfall(),
+        reactRuntime: waterfall({
+          default: defaultRuntime,
+        }),
+        reactImportSource: waterfall({
+          default: defaultImportSource,
+        }),
       }));
 
       configure(addConfiguration({development: false}));
     },
     develop({hooks, configure}) {
       hooks<ReactHooks>(({waterfall}) => ({
-        reactRuntime: waterfall(),
-        reactImportSource: waterfall(),
+        reactRuntime: waterfall({
+          default: defaultRuntime,
+        }),
+        reactImportSource: waterfall({
+          default: defaultImportSource,
+        }),
       }));
 
       configure(addConfiguration({development: true}));
     },
     test({hooks, configure}) {
       hooks<ReactHooks>(({waterfall}) => ({
-        reactRuntime: waterfall(),
-        reactImportSource: waterfall(),
+        reactRuntime: waterfall({
+          default: defaultRuntime,
+        }),
+        reactImportSource: waterfall({
+          default: defaultImportSource,
+        }),
       }));
 
       configure(addConfiguration({development: true}));
@@ -80,8 +92,8 @@ export function react({
     }: ResolvedHooks<BabelHooks & ReactHooks>) => {
       babelPresets?.(async (presets) => {
         const [runtime, importSource] = await Promise.all([
-          reactRuntime!.run(defaultRuntime),
-          reactImportSource!.run(defaultImportSource),
+          reactRuntime!.run(),
+          reactImportSource!.run(),
         ]);
 
         presets.push([
