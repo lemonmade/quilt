@@ -2,7 +2,7 @@
   "name": "@quilted/react-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -48,8 +48,8 @@
     "@quilted/useful-react-types": "^0.1.6"
   },
   "peerDependencies": {
-    "@quilted/request-router": "^0.1.4",
-    "@quilted/react-http": "^0.3.28",
+    "@quilted/request-router": "^0.1.5",
+    "@quilted/react-http": "^0.3.29",
     "react": "^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {

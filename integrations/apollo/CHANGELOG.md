@@ -1,5 +1,14 @@
 # @quilted/apollo
 
+## 0.1.6
+
+### Patch Changes
+
+- [`97812120`](https://github.com/lemonmade/quilt/commit/978121207c65a4450a8ca9e43d017c6425a315c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies and fix some missing peer dependencies
+
+- Updated dependencies [[`97812120`](https://github.com/lemonmade/quilt/commit/978121207c65a4450a8ca9e43d017c6425a315c3)]:
+  - @quilted/quilt@0.5.140
+
 ## 0.1.5
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @quilted/react-async
 
+## 0.3.47
+
+### Patch Changes
+
+- [`97812120`](https://github.com/lemonmade/quilt/commit/978121207c65a4450a8ca9e43d017c6425a315c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies and fix some missing peer dependencies
+
+- Updated dependencies [[`97812120`](https://github.com/lemonmade/quilt/commit/978121207c65a4450a8ca9e43d017c6425a315c3)]:
+  - @quilted/react-assets@0.0.4
+
 ## 0.3.46
 
 ### Patch Changes
