@@ -1,5 +1,11 @@
 # @quilted/react-workers
 
+## 0.2.30
+
+### Patch Changes
+
+- [`97812120`](https://github.com/lemonmade/quilt/commit/978121207c65a4450a8ca9e43d017c6425a315c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies and fix some missing peer dependencies
+
 ## 0.2.29
 
 ### Patch Changes

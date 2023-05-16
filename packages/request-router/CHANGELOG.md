@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.1.5
+
+### Patch Changes
+
+- [`1a22a1c5`](https://github.com/lemonmade/quilt/commit/1a22a1c572c3d37d2564eb9eb908904a6d254201) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix node cookies for modern Node versions
+
 ## 0.1.4
 
 ### Patch Changes

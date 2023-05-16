@@ -93,7 +93,7 @@ importers:
         specifier: ^3.0.0
         version: 3.7.3(graphql@16.6.0)(react-dom@packages+react-dom)(react@packages+react)
       '@quilted/quilt':
-        specifier: workspace:^0.5.0
+        specifier: workspace:^0.5.140
         version: link:../../packages/quilt
       graphql:
         specifier: ^16.6.0
@@ -159,10 +159,10 @@ importers:
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/craft':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.201
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: workspace:^0.5.0
+        specifier: workspace:^0.5.140
         version: link:../../packages/quilt
       '@tanstack/react-query':
         specifier: ^4.19.0
@@ -178,7 +178,7 @@ importers:
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.0
+        specifier: workspace:^0.5.140
         version: link:../../packages/quilt
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -484,7 +484,7 @@ importers:
         version: 4.0.0(@types/node@16.11.36)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.0
+        specifier: workspace:^0.5.140
         version: link:../quilt
       '@types/babel__core':
         specifier: '>=7.0.0'
@@ -790,7 +790,7 @@ importers:
         specifier: ^18.2.0
         version: link:../react
       '@quilted/react-assets':
-        specifier: ^0.0.3
+        specifier: ^0.0.4
         version: link:../react-assets
       '@quilted/react-async':
         specifier: ^0.3.43
@@ -897,7 +897,7 @@ importers:
         specifier: ^0.3.12
         version: link:../async
       '@quilted/react-assets':
-        specifier: ^0.0.3
+        specifier: ^0.0.4
         version: link:../react-assets
       '@quilted/react-server-render':
         specifier: ^0.3.27
