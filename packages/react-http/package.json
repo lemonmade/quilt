@@ -55,7 +55,8 @@
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
-    "@types/js-cookie": "^2.2.0"
+    "@types/js-cookie": "^2.2.0",
+    "react": "workspace:@quilted/react@^18.2.0"
   },
   "eslintConfig": {
     "extends": [

@@ -30,7 +30,7 @@
   "dependencies": {
     "@preact/signals": "^1.1.2",
     "@types/react": "^17.0.0 || ^18.0.0",
-    "preact": "^10.13.0"
+    "preact": "^10.14.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@quilted/testing": "^0.1.0",
-    "react": "workspace:@quilted/react@*"
+    "react": "workspace:@quilted/react@^18.2.0"
   },
   "eslintConfig": {
     "extends": [

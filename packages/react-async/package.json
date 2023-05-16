@@ -40,6 +40,10 @@
       "optional": true
     }
   },
+  "devDependencies": {
+    "react": "workspace:@quilted/react@^18.2.0",
+    "react-dom": "workspace:@quilted/react-dom@^18.2.0"
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project",

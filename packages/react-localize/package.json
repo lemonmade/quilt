@@ -47,10 +47,6 @@
     "@quilted/react-utilities": "^0.1.0",
     "@quilted/useful-react-types": "^0.1.6"
   },
-  "devDependencies": {
-    "@quilted/request-router": "^0.1.0",
-    "@quilted/react-http": "^0.3.17"
-  },
   "peerDependencies": {
     "@quilted/request-router": "^0.1.4",
     "@quilted/react-http": "^0.3.28",
@@ -66,6 +62,11 @@
     "react": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "@quilted/request-router": "^0.1.0",
+    "@quilted/react-http": "^0.3.17",
+    "react": "workspace:@quilted/react@^18.2.0"
   },
   "eslintConfig": {
     "extends": [

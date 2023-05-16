@@ -262,9 +262,6 @@
     "@quilted/useful-react-types": "^0.1.0",
     "@types/jest": "^27.0.0"
   },
-  "devDependencies": {
-    "@types/prettier": "^2.0.0"
-  },
   "peerDependencies": {
     "prettier": "^2.0.0",
     "react": "^18.0.0",
@@ -280,6 +277,11 @@
     "react-dom": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "@types/prettier": "^2.0.0",
+    "react": "workspace:@quilted/react@^18.2.0",
+    "react-dom": "workspace:@quilted/react-dom@^18.2.0"
   },
   "eslintConfig": {
     "extends": [

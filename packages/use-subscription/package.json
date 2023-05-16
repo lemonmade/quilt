@@ -21,6 +21,7 @@
       "require": "./build/cjs/index.cjs"
     }
   },
+  "sideEffects": false,
   "types": "./build/typescript/index.d.ts",
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"
@@ -30,7 +31,9 @@
       "optional": true
     }
   },
-  "sideEffects": false,
+  "devDependencies": {
+    "react": "workspace:@quilted/react@^18.2.0"
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project",
