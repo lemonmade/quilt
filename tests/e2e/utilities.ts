@@ -358,7 +358,7 @@ export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      await fetch(url);
+      await fetch(url, {redirect: 'manual'});
       break;
     } catch {
       // intentional noop

@@ -1,12 +1,28 @@
-import type {RequestRouter, RequestHandler, RequestContext} from './types.ts';
 import {EnhancedRequest} from './request.ts';
+import {ResponseShortCircuitError} from './errors/ResponseShortCircuitError.ts';
+import type {RequestRouter, RequestHandler, RequestContext} from './types.ts';
 
-export function handleRequest(
+export async function handleRequest(
   handler: RequestRouter | RequestHandler,
   request: Request,
   context?: RequestContext,
 ) {
-  return typeof handler === 'function'
-    ? handler(new EnhancedRequest(request), context ?? ({} as any))
-    : handler.fetch(request, context);
+  try {
+    const response =
+      typeof handler === 'function'
+        ? await handler(new EnhancedRequest(request), context ?? ({} as any))
+        : await handler.fetch(request, context);
+
+    return response ?? undefined;
+  } catch (error) {
+    if (error instanceof Response) {
+      return error;
+    } else if (
+      (error as any as ResponseShortCircuitError)?.response instanceof Response
+    ) {
+      return (error as any as ResponseShortCircuitError).response;
+    } else {
+      throw error;
+    }
+  }
 }
