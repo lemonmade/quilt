@@ -77,6 +77,8 @@ export function createRequest(
 
   if (method !== 'GET' && method !== 'HEAD') {
     requestInit.body = request as any;
+    // @see https://github.com/nodejs/node/issues/46221
+    (requestInit as any).duplex = 'half';
   }
 
   const forwardedProtocolHeader = request.headers['x-forwarded-proto'];
