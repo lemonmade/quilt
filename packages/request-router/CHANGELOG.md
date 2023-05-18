@@ -1,5 +1,13 @@
 # @quilted/http-handlers
 
+## 0.1.6
+
+### Patch Changes
+
+- [`2e21f396`](https://github.com/lemonmade/quilt/commit/2e21f3968629afd6217ca8b1deeaa72bdb166e09) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Node request creation for newer node versions
+
+- [`5ae2b585`](https://github.com/lemonmade/quilt/commit/5ae2b585c587e4bbf27188e119f8756a8413a4f8) Thanks [@lemonmade](https://github.com/lemonmade)! - Support throwing to redirect in request handlers
+
 ## 0.1.5
 
 ### Patch Changes
