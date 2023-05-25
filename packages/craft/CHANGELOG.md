@@ -1,5 +1,14 @@
 # @quilted/craft
 
+## 0.1.202
+
+### Patch Changes
+
+- [`ebce2c8a`](https://github.com/lemonmade/quilt/commit/ebce2c8a91a97c1fc41911db3b2cce4b67122e1d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update linting dependencies
+
+- Updated dependencies [[`ebce2c8a`](https://github.com/lemonmade/quilt/commit/ebce2c8a91a97c1fc41911db3b2cce4b67122e1d)]:
+  - @quilted/eslint-config@0.2.0
+
 ## 0.1.201
 
 ### Patch Changes
