@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.1.16
+
+### Patch Changes
+
+- [`7a431339`](https://github.com/lemonmade/quilt/commit/7a4313390827aefdbbf9b28f2a5aa6213d6b33f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Add automatic `dir` property in Automatically add `dir` HTML attribute
+
 ## 0.1.15
 
 ### Patch Changes
