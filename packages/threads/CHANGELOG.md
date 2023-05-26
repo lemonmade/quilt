@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 0.1.15
+
+### Patch Changes
+
+- [`54e3db19`](https://github.com/lemonmade/quilt/commit/54e3db19094207d5eb5a073cfdbe98cb9ca68372) Thanks [@lemonmade](https://github.com/lemonmade)! - Encode more native JS types
+
 ## 0.1.14
 
 ### Patch Changes
