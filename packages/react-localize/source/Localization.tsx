@@ -7,10 +7,29 @@ import {LocaleContext, LocalizedFormattingContext} from './context.ts';
 
 export interface LocalizationProps {
   locale: string;
+  direction?: 'ltr' | 'rtl';
 }
+
+const RTL_LOCALES = new Set([
+  'ar',
+  'arc',
+  'ckb',
+  'dv',
+  'fa',
+  'ha',
+  'he',
+  'khw',
+  'ks',
+  'ps',
+  'sd',
+  'ur',
+  'uz-AF',
+  'yi',
+]);
 
 export function Localization({
   locale,
+  direction = RTL_LOCALES.has(locale) ? 'rtl' : 'ltr',
   children,
 }: PropsWithChildren<LocalizationProps>) {
   const formatting = useMemo(() => createLocalizedFormatting(locale), [locale]);
@@ -18,7 +37,7 @@ export function Localization({
   return (
     <LocaleContext.Provider value={locale}>
       <LocalizedFormattingContext.Provider value={formatting}>
-        <HtmlAttributes lang={locale} />
+        <HtmlAttributes lang={locale} dir={direction} />
         {children}
       </LocalizedFormattingContext.Provider>
     </LocaleContext.Provider>
