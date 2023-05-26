@@ -18,6 +18,10 @@ import {
 } from '../memory.ts';
 
 const FUNCTION = '_@f';
+const MAP = '_@m';
+const SET = '_@s';
+const DATE = '_@d';
+const REGEXP = '_@r';
 const ASYNC_ITERATOR = '_@i';
 
 export function createBasicEncoderWithOverrides({
@@ -127,14 +131,45 @@ export function createBasicEncoderWithOverrides({
           const fullResult: EncodeResult = [result, transferables];
           seen.set(value, fullResult);
 
-          return [result, transferables];
+          return fullResult;
         }
 
         if (Array.isArray(value)) {
           const result = value.map((item) => encodeValue(item));
           const fullResult: EncodeResult = [result, transferables];
           seen.set(value, fullResult);
+          return fullResult;
+        }
 
+        if (value instanceof RegExp) {
+          const result = [{[REGEXP]: [value.source, value.flags]}];
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
+          return fullResult;
+        }
+
+        if (value instanceof Date) {
+          const result = [{[DATE]: value.toISOString()}];
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
+          return fullResult;
+        }
+
+        if (value instanceof Map) {
+          const entries = [...value.entries()].map(([key, value]) => {
+            return [encodeValue(key), encodeValue(value)];
+          });
+          const result = [{[MAP]: entries}];
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
+          return fullResult;
+        }
+
+        if (value instanceof Set) {
+          const entries = [...value].map((entry) => encodeValue(entry));
+          const result = [{[SET]: entries}];
+          const fullResult: EncodeResult = [result, transferables];
+          seen.set(value, fullResult);
           return fullResult;
         }
 
@@ -201,6 +236,31 @@ export function createBasicEncoderWithOverrides({
 
         if (Array.isArray(value)) {
           return value.map((value) => decode(value, retainedBy));
+        }
+
+        if (REGEXP in value) {
+          return new RegExp(...(value as {[REGEXP]: [string, string]})[REGEXP]);
+        }
+
+        if (DATE in value) {
+          return new Date((value as {[DATE]: string})[DATE]);
+        }
+
+        if (MAP in value) {
+          return new Map(
+            (value as {[MAP]: [any, any]})[MAP].map(([key, value]) => [
+              decode(key, retainedBy),
+              decode(value, retainedBy),
+            ]),
+          );
+        }
+
+        if (SET in value) {
+          return new Set(
+            (value as {[SET]: any[]})[SET].map((entry) =>
+              decode(entry, retainedBy),
+            ),
+          );
         }
 
         if (FUNCTION in value) {
