@@ -1,5 +1,11 @@
 import {jest, describe, it, expect} from '@quilted/testing';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
+import {
+  buildAppAndRunServer,
+  openPageAndWaitForNavigation,
+  buildAppAndOpenPage,
+  stripIndent,
+  withWorkspace,
+} from './utilities.ts';
 
 jest.setTimeout(20_000);
 
@@ -43,6 +49,54 @@ describe('localization', () => {
           ),
         ).toBe('fr-CA');
         expect(await page.textContent('body')).toBe('Locale: fr-CA');
+      });
+    });
+
+    it('applies a direction to the HTML document', async () => {
+      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'foundation/Routes.tsx': stripIndent`
+            import {useRoutes, useLocale, Localization, usePerformanceNavigation} from '@quilted/quilt';
+            
+            export function Routes() {
+              return useRoutes([{
+                match: /\\w+(-\\w+)?/i, render: ({matched}) => (
+                  <Localization locale={matched}><Localized /></Localization>
+                ),
+              }]);
+            }
+            
+            function Localized() {
+              usePerformanceNavigation();
+
+              const locale = useLocale();
+
+              return (
+                <div>Locale: {locale}</div>
+              );
+            }
+          `,
+        });
+
+        const {url} = await buildAppAndRunServer(workspace);
+
+        const [leftToRightPage, rightToLeftPage] = await Promise.all([
+          openPageAndWaitForNavigation(workspace, new URL('/en', url)),
+          openPageAndWaitForNavigation(workspace, new URL('/ar', url)),
+        ]);
+
+        expect(
+          await leftToRightPage.evaluate(() =>
+            document.documentElement.getAttribute('dir'),
+          ),
+        ).toBe('ltr');
+        expect(
+          await rightToLeftPage.evaluate(() =>
+            document.documentElement.getAttribute('dir'),
+          ),
+        ).toBe('rtl');
       });
     });
 
