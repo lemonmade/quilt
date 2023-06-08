@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.58
+
+### Patch Changes
+
+- [`8fac6a8d`](https://github.com/lemonmade/quilt/commit/8fac6a8d089dad2905ab9d4e1192d96b628a48eb) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify GraphQLVariableOptions type
+
 ## 0.4.57
 
 ### Patch Changes
