@@ -1,5 +1,5 @@
 import type {DocumentNode} from 'graphql';
-import type {IfEmptyObject, IfAllFieldsNullable} from '@quilted/useful-types';
+import type {IfAllFieldsNullable} from '@quilted/useful-types';
 
 export interface GraphQLOperationType<
   Data = unknown,
@@ -67,14 +67,10 @@ export type GraphQLAnyOperation<Data, Variables> =
   | DocumentNode
   | GraphQLOperation<Data, Variables>;
 
-export type GraphQLVariableOptions<Variables> = IfEmptyObject<
+export type GraphQLVariableOptions<Variables> = IfAllFieldsNullable<
   Variables,
-  {variables?: never},
-  IfAllFieldsNullable<
-    Variables,
-    {variables?: Variables},
-    {variables: Variables}
-  >
+  {variables?: Variables},
+  {variables: Variables}
 >;
 
 export type PickGraphQLType<T, Type extends Typenames<T>> = Extract<
