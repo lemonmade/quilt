@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.1.205
+
+### Patch Changes
+
+- [`67dc06e8`](https://github.com/lemonmade/quilt/commit/67dc06e8a680c3d35f08b721ae717e3643add4a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix process.env.NODE_ENV in workers
+
+- [`67dc06e8`](https://github.com/lemonmade/quilt/commit/67dc06e8a680c3d35f08b721ae717e3643add4a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix React use client warning detection
+
 ## 0.1.204
 
 ### Patch Changes
