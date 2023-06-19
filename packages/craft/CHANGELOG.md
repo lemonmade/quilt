@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.204
+
+### Patch Changes
+
+- [`639e2a35`](https://github.com/lemonmade/quilt/commit/639e2a35d6ce3f4319217d5791152c0a29c2edf8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix warnings from 'use client' directives
+
 ## 0.1.203
 
 ### Patch Changes
