@@ -1236,6 +1236,18 @@ importers:
         specifier: workspace:*
         version: link:../testing
 
+  packages/trpc:
+    devDependencies:
+      '@quilted/testing':
+        specifier: ^0.1.0
+        version: link:../testing
+      '@trpc/client':
+        specifier: ^10.31.0
+        version: 10.31.0(@trpc/server@10.31.0)
+      '@trpc/server':
+        specifier: ^10.31.0
+        version: 10.31.0
+
   packages/typescript:
     dependencies:
       typescript:
@@ -4871,6 +4883,18 @@ packages:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
     dev: false
+
+  /@trpc/client@10.31.0(@trpc/server@10.31.0):
+    resolution: {integrity: sha512-VCqbJEvFJb8C4hQFw7AD+dkQTjgEdV/QAzO4D+/cX5e93u5NpfNXI+PKS0QFXwG/zqgwQwVV6OkYc/D/MFwA6g==}
+    peerDependencies:
+      '@trpc/server': 10.31.0
+    dependencies:
+      '@trpc/server': 10.31.0
+    dev: true
+
+  /@trpc/server@10.31.0:
+    resolution: {integrity: sha512-9EnRTSDE9nF11LZsvSOqNKqkRYzHqFX4ch5AJ6VIu8uta2vxVTN4FxxsNRSOluTzVYZDeaCISbwmOJ5iihCCIg==}
+    dev: true
 
   /@types/aws-lambda@8.10.97:
     resolution: {integrity: sha512-BZk3qO4R2KN8Ts3eR6CW1n8LI46UOgv1KoDZjo8J9vOQvDeX/rsrv1H0BpEAMcSqZ1mLwTEyAMtlua5tlSn0kw==}

@@ -53,6 +53,7 @@
     {"path": "./packages/sewing-kit"},
     {"path": "./packages/testing"},
     {"path": "./packages/threads"},
+    {"path": "./packages/trpc"},
     {"path": "./packages/typescript"},
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-react-types"},
