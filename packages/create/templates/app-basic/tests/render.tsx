@@ -1,11 +1,15 @@
 import '@quilted/quilt/matchers';
 
-import {type PropsWithChildren} from '@quilted/quilt';
 import {
   createRender,
   QuiltAppTesting,
   createTestRouter,
 } from '@quilted/quilt/testing';
+
+import {
+  AppContextReact,
+  type AppContext as AppContextType,
+} from '~/shared/context.ts';
 
 type Router = ReturnType<typeof createTestRouter>;
 
@@ -26,7 +30,7 @@ export interface RenderOptions {
   locale?: string;
 }
 
-export interface RenderContext {
+export interface RenderContext extends AppContextType {
   /**
    * The router used for this component test.
    */
@@ -52,10 +56,14 @@ export const renderWithAppContext = createRender<
     return {router};
   },
   // Render all of our app-wide context providers around each component under test.
-  render(element, {router}, {locale}) {
+  render(element, context, {locale}) {
+    const {router} = context;
+
     return (
       <QuiltAppTesting routing={router} localization={locale}>
-        <TestAppContext>{element}</TestAppContext>
+        <AppContextReact.Provider value={context}>
+          {element}
+        </AppContextReact.Provider>
       </QuiltAppTesting>
     );
   },
@@ -66,8 +74,3 @@ export const renderWithAppContext = createRender<
     // once the data is ready.
   },
 });
-
-// This component renders any app-wide context needed for component tests.
-function TestAppContext({children}: PropsWithChildren) {
-  return <>{children}</>;
-}

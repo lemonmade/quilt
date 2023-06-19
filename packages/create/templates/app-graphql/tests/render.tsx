@@ -1,6 +1,5 @@
 import '@quilted/quilt/matchers';
 
-import {type Router} from '@quilted/quilt';
 import {
   createRender,
   QuiltAppTesting,
@@ -9,11 +8,18 @@ import {
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import {
+  AppContextReact,
+  type AppContext as AppContextType,
+} from '~/shared/context.ts';
+
+import {
   TestGraphQL,
   fillGraphQL,
   createGraphQLController,
   type GraphQLController,
 } from './graphql.ts';
+
+type Router = ReturnType<typeof createTestRouter>;
 
 export {createTestRouter, fillGraphQL, createGraphQLController};
 
@@ -53,7 +59,7 @@ export interface RenderOptions {
   locale?: string;
 }
 
-export interface RenderContext {
+export interface RenderContext extends AppContextType {
   /**
    * The router used for this component test.
    */
@@ -89,14 +95,18 @@ export const renderWithAppContext = createRender<
     return {router, graphql, queryClient: new QueryClient()};
   },
   // Render all of our app-wide context providers around each component under test.
-  render(element, {router, graphql, queryClient}, {locale}) {
+  render(element, context, {locale}) {
+    const {router, graphql, queryClient} = context;
+
     return (
       <QuiltAppTesting routing={router} localization={locale}>
-        <TestGraphQL controller={graphql}>
-          <QueryClientProvider client={queryClient}>
-            {element}
-          </QueryClientProvider>
-        </TestGraphQL>
+        <AppContextReact.Provider value={context}>
+          <TestGraphQL controller={graphql}>
+            <QueryClientProvider client={queryClient}>
+              {element}
+            </QueryClientProvider>
+          </TestGraphQL>
+        </AppContextReact.Provider>
       </QuiltAppTesting>
     );
   },
