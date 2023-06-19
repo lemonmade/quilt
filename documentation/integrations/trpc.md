@@ -2,6 +2,8 @@
 
 tRPC lets you build type-safe APIs that are easy to call from your front-end. It lets you define a clear contract over the inputs and outputs of your backend, without you needing to worry about REST or GraphQL endpoints.
 
+> **Note:** this guide walks you through how to add tRPC to an existing Quilt app. If you are starting from scratch, Quilt’s [`create` command](../getting-started.md#creating-an-app) provides a tRPC template that will set up a tRPC-powered, server-rendering app for you. Just pick the [**tRPC template**](../getting-started.md#app-templates), or pass `--template trpc` to the `create` command.
+
 Because tRPC has both a client and server component, you’ll need to follow a few steps to use it in a [Quilt application](../projects/apps):
 
 1. [Create a tRPC router](#create-a-trpc-router)
@@ -9,7 +11,7 @@ Because tRPC has both a client and server component, you’ll need to follow a f
 1. [Render tRPC’s React providers](#render-trpcs-react-providers)
 1. [Use tRPC’s React hooks](#use-trpcs-react-hooks)
 
-To follow this guide, you’ll need a Quilt app with a [custom server](../projects/apps/server.md). The easiest way to get started is to follow the [app creation guide, and picking the “basic” template](../getting-started.md#creating-an-app). You’ll also need to install [tRPC’s server and React dependencies](https://trpc.io/docs/react), and [`@quilted/react-query`](../../integrations/react-query/) (tRPC uses [`@tanstack/react-query`](https://tanstack.com/query/v4) for client-side data fetching):
+To follow this guide, you’ll need a Quilt app with a [custom server](../projects/apps/server.md). You’ll also need to install [tRPC’s server and React dependencies](https://trpc.io/docs/react), and [`@quilted/react-query`](../../integrations/react-query/) (tRPC uses [`@tanstack/react-query`](https://tanstack.com/query/v4) for client-side data fetching):
 
 ```bash
 # npm
@@ -172,3 +174,120 @@ export function Greeting() {
   return <p>{isLoading ? 'Loading...' : data}</p>;
 }
 ```
+
+## Optimizing tRPC queries during server rendering
+
+Using the instructions in the rest of this guide, your tRPC queries will be run during [server side rendering](../features/server-rendering.md) so that the initial HTML content of your page includes all the necessary data. However, the tRPC “link” we created in the previous section connects using HTTP, the same way that tRPC will make queries during client-side rendering. Creating an HTTP request to satisfy these queries on the server is wasteful if you are implementing your tRPC server in the same application as your server-rendering code, as we are in the previous section.
+
+Quilt provides an additional set of utilities for optimizing this setup. It allows you to create a custom link during server rendering that will directly call your tRPC router, instead of calling it over HTTP. To get started, install the `@quilted/trpc` package:
+
+```bash
+npm install --save-dev @quilted/trpc
+# pnpm
+pnpm add --save-dev @quilted/trpc
+# yarn
+yarn add --dev @quilted/trpc
+```
+
+To use this optimization, you’ll need to accept a different tRPC link when server-rendering your app. You can add it as a prop to your root `App` component, and pass it through to tRPC’s context providers:
+
+```tsx
+// app/App.tsx
+
+import {useMemo} from 'react';
+import {
+  AppContext,
+  useInitialUrl,
+  type PropsWithChildren,
+} from '@quilted/quilt';
+
+import {httpBatchLink, type TRPCClient} from '@trpc/client';
+import {createTRPCReact} from '@trpc/react-query';
+
+import {QueryClient} from '@tanstack/react-query';
+import {ReactQueryContext} from '@quilted/react-query';
+
+import {trpc} from '~/shared/trpc.ts';
+
+export interface Props {
+  trpc?: TRPCClient<any>;
+}
+
+// This is your default App component. When creating a template, it
+// will already be defined, so you will just need to wrap the main
+// part of your app in the Trpc component defined below.
+export default function App({trpc}: Props) {
+  return (
+    <AppContext>
+      <Trpc client={trpc}>{/* existing children of AppContext */}</Trpc>
+    </AppContext>
+  );
+}
+
+function Trpc({
+  client,
+  children,
+}: PropsWithChildren<{client?: Props['trpcClient']}>) {
+  const initialUrl = useInitialUrl();
+
+  const queryClient = useMemo(() => new QueryClient(), []);
+
+  // Use the custom client if it was provided, otherwise use the
+  // default HTTP-based client.
+  const trpcClient = useMemo(
+    () =>
+      client ??
+      trpc.createClient({
+        links: [
+          // We need to use an absolute URL so that queries will
+          // work during server-side rendering
+          httpBatchLink({url: new URL('/api', initialUrl).href}),
+        ],
+      }),
+    [initialUrl],
+  );
+
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <ReactQueryContext client={queryClient}>{children}</ReactQueryContext>
+    </trpc.Provider>
+  );
+}
+```
+
+Then, in your server entrypoint, pass in your custom link. You’ll use your tRPC router (the object created with `t.router()`) to create a “direct” tRPC connection using the utilities in `@quilted/trpc`:
+
+```tsx
+import {createDirectClient} from '@quilted/trpc/server';
+import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
+import type {} from '@quilted/cloudflare';
+
+import App from './App.tsx';
+import {appRouter} from './trpc.ts';
+
+const router = createRequestRouter();
+
+// Make sure to keep your existing tRPC HTTP routes, as they
+// will be used when your app runs on the client.
+router.any(
+  'api',
+  (request) => {
+    return fetchRequestHandler({
+      endpoint: '/api',
+      req: request,
+      router: appRouter,
+      createContext: () => ({}),
+    });
+  },
+  {exact: false},
+);
+
+const reactHandler = createServerRender(
+  () => <App trpc={createDirectClient(appRouter)} />,
+  {
+    assets: createBrowserAssets(),
+  },
+);
+```
+
+That’s it! Your application code and tRPC procedures don’t need to change to make use of this optimization, they’ll just benefit from the direct JavaScript calls during server-rendering.

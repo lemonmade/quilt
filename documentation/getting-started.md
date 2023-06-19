@@ -43,6 +43,10 @@ The `@quilted/create` command you ran in the previous section can output a few d
 
 - **Basic**, a good starting point for most projects. It includes a minimal file structure that offers lots of flexibility, and a basic [testing setup](./features/testing.md). It also gives you easy access to customize the server-rendering backend code for your application, which allows you to build [custom APIs for your web app](./projects/apps/server.md).
 
+- **GraphQL**, a server-side rendering app and a type-safe [GraphQL](./technology/graphql.md) API, rolled up in one. GraphQL queries and mutations are performed on the client and server using [`@tanstack/react-query`](https://tanstack.com/query/latest).
+
+- **tRPC**, a server-side rendering app and a type-safe [tRPC](./integrations/trpc.md) API, rolled up in one.
+
 - **Itty-bitty**, a whole Quilt application in a single file. This is the simplest way to get started with Quilt, as you can learn all the basic [features](./features) Quilt makes available to your app by reading just one file.
 
 - **Empty**, a React app that is ready to develop and deploy, but doesn’t come with any of Quilt’s features. You can use this template to give you a blank slate to start from when you are using alternative libraries for things like routing, data loading, and state management.

@@ -382,10 +382,11 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-type Template = 'basic' | 'graphql' | 'single-file' | 'empty';
+type Template = 'basic' | 'graphql' | 'trpc' | 'single-file' | 'empty';
 const VALID_TEMPLATES = new Set<Template>([
   'basic',
   'graphql',
+  'trpc',
   'single-file',
   'empty',
 ]);
@@ -425,6 +426,12 @@ async function getTemplate(argv: Arguments) {
           'GraphQL',
         )}, a web app with a GraphQL API, fetched using @tanstack/react-query`,
         value: 'graphql',
+      },
+      {
+        title: `${color.bold(
+          'tRPC',
+        )}, a web app with a tRPC API, fetched using @tanstack/react-query`,
+        value: 'trpc',
       },
     ],
   })) as Template;
