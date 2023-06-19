@@ -7,6 +7,7 @@ import {
 } from '../kit.ts';
 
 import type {BabelHooks} from '../tools/babel.ts';
+import {addRollupOnWarn, type RollupHooks} from '../tools/rollup.ts';
 
 // TODO
 export interface ReactHooks {
@@ -87,9 +88,25 @@ export function react({
   function addConfiguration({development = false} = {}) {
     return ({
       babelPresets,
+      rollupInputOptions,
       reactRuntime,
       reactImportSource,
-    }: ResolvedHooks<BabelHooks & ReactHooks>) => {
+    }: ResolvedHooks<BabelHooks & RollupHooks & ReactHooks>) => {
+      // Removes annoying warnings for React-focused libraries that
+      // include 'use client' directives.
+      rollupInputOptions?.((options) =>
+        addRollupOnWarn(options, (warning, defaultWarn) => {
+          if (
+            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+            warning.message.includes(`'use client'`)
+          ) {
+            return;
+          }
+
+          defaultWarn(warning);
+        }),
+      );
+
       babelPresets?.(async (presets) => {
         const [runtime, importSource] = await Promise.all([
           reactRuntime!.run(),
