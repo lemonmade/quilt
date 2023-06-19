@@ -10,7 +10,10 @@ import {transformResult} from '@trpc/client/shared';
 
 export function createDirectClient<Router extends AnyRouter>(
   router: Router,
-  {links = [], transformer}: CreateTRPCClientOptions<Router>,
+  {
+    links = [] as any,
+    transformer,
+  }: Partial<CreateTRPCClientOptions<Router>> = {},
 ) {
   return createTRPCClient<Router>({
     transformer,

@@ -103,17 +103,14 @@ export function appBuild({assets, browser, env}: Options) {
           }
 
           rollupPlugins?.(async (plugins) => {
-            const {default: replace} = await import('@rollup/plugin-replace');
+            const {addRollupReplace} = await import('../tools/rollup.ts');
 
-            return [
-              ...plugins,
-              replace({
-                preventAssignment: true,
-                values: {
-                  'process.env.NODE_ENV': JSON.stringify('production'),
-                },
-              }),
-            ];
+            return addRollupReplace(plugins, {
+              preventAssignment: true,
+              values: {
+                'process.env.NODE_ENV': JSON.stringify('production'),
+              },
+            });
           });
 
           if (!browserTargets) return;

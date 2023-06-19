@@ -6,6 +6,7 @@ import type {
 } from 'rollup';
 import type {RollupNodeResolveOptions} from '@rollup/plugin-node-resolve';
 import type {RollupCommonJSOptions} from '@rollup/plugin-commonjs';
+import type {RollupReplaceOptions} from '@rollup/plugin-replace';
 
 import {createProjectPlugin} from '../kit.ts';
 import type {
@@ -501,4 +502,12 @@ export function addRollupOnWarn(
       });
     },
   };
+}
+
+export async function addRollupReplace(
+  plugins: Plugin[],
+  replacements: RollupReplaceOptions,
+) {
+  const {default: replace} = await import('@rollup/plugin-replace');
+  return [...plugins, replace(replacements)];
 }

@@ -74,6 +74,7 @@ export function cloudflareWorkers({
     build({project, configure}) {
       configure(
         addConfiguration({
+          mode: 'production',
           cache,
           format,
           pages: false,
@@ -87,6 +88,7 @@ export function cloudflareWorkers({
       }));
 
       const addBaseConfiguration = addConfiguration({
+        mode: 'development',
         cache,
         format,
         pages: false,
@@ -172,6 +174,7 @@ export function cloudflarePages({
     build({project, configure}) {
       configure(
         addConfiguration({
+          mode: 'production',
           cache,
           format,
           pages: true,
@@ -185,6 +188,7 @@ export function cloudflarePages({
       }));
 
       const addBaseConfiguration = addConfiguration({
+        mode: 'production',
         cache,
         format,
         pages: false,
@@ -249,11 +253,13 @@ export function cloudflarePages({
 }
 
 function addConfiguration({
+  mode,
   cache,
   pages,
   format,
   project,
 }: {
+  mode: string;
   cache: boolean;
   pages: boolean;
   format: WorkerFormat;
@@ -264,6 +270,7 @@ function addConfiguration({
       runtimes,
       outputDirectory,
       browserslistTargets,
+      rollupPlugins,
       rollupOutputs,
       rollupNodeBundle,
       quiltAssetBaseUrl,
@@ -299,6 +306,17 @@ function addConfiguration({
     ]);
 
     browserslistTargets?.(() => ['last 1 chrome version']);
+
+    rollupPlugins?.(async (plugins) => {
+      const {addRollupReplace} = await import('@quilted/craft/rollup');
+
+      return addRollupReplace(plugins, {
+        preventAssignment: true,
+        values: {
+          'process.env.NODE_ENV': JSON.stringify(mode),
+        },
+      });
+    });
 
     rollupNodeBundle?.(() => true);
 

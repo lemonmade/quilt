@@ -98,7 +98,7 @@ export function react({
         addRollupOnWarn(options, (warning, defaultWarn) => {
           if (
             warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-            warning.message.includes(`'use client'`)
+            /['"]use client['"]/.test(warning.message)
           ) {
             return;
           }
