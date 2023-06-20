@@ -75,8 +75,13 @@ export function extractImports(rawSource: string) {
 }
 
 export function toSimpleDocument<Data = unknown, Variables = unknown>(
-  document: EnhancedDocumentNode,
+  documentOrSource: EnhancedDocumentNode | string,
 ): GraphQLOperation<Data, Variables> {
+  const document =
+    typeof documentOrSource === 'string'
+      ? cleanDocument(parse(documentOrSource))
+      : documentOrSource;
+
   return {
     id: document.id,
     name: operationNameForDocument(document),
