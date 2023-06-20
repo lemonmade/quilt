@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.60
+
+### Patch Changes
+
+- [`977a2fac`](https://github.com/lemonmade/quilt/commit/977a2faca2a3f819e29529dc88e5e80766e552ae) Thanks [@lemonmade](https://github.com/lemonmade)! - Add tRPC template
+
 ## 0.1.59
 
 ### Patch Changes
