@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.61
+
+### Patch Changes
+
+- [`d594a118`](https://github.com/lemonmade/quilt/commit/d594a118cb1686410f66ab0aee47e1455ef38b6c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix TypeScript excludes in templates
+
 ## 0.1.60
 
 ### Patch Changes
