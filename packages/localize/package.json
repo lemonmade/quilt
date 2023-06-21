@@ -27,6 +27,9 @@
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
+  "devDependencies": {
+    "@quilted/testing": "workspace:*"
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"
