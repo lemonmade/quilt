@@ -1,8 +1,13 @@
 export {
+  createTranslate,
   createLocalizedFormatting,
   parseAcceptLanguageHeader,
+  MissingTranslationError,
+  MissingTranslationPlaceholderError,
 } from '@quilted/localize';
 export type {
+  Translate,
+  TranslationDictionary,
   LocalizedFormatting,
   LocalizedFormattingCache,
   LocalizedNumberFormatOptions,
