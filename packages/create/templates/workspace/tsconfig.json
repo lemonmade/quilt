@@ -6,8 +6,8 @@
   "include": [
     "quilt.workspace.ts",
     "**/quilt.project.ts",
-    "*.test.ts",
-    "*.test.tsx"
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ],
   "references": []
 }

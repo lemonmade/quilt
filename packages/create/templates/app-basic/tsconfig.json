@@ -8,6 +8,6 @@
     }
   },
   "include": ["**/*"],
-  "exclude": ["build"],
+  "exclude": ["build", "quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
   "references": []
 }
