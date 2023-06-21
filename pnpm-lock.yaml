@@ -713,11 +713,7 @@ importers:
 
   packages/http: {}
 
-  packages/localize:
-    devDependencies:
-      '@quilted/testing':
-        specifier: workspace:*
-        version: link:../testing
+  packages/localize: {}
 
   packages/performance:
     dependencies:
