@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.59
+
+### Patch Changes
+
+- [`7c4c416d`](https://github.com/lemonmade/quilt/commit/7c4c416d86624d24678485e6b6254bbbf73f203b) Thanks [@lemonmade](https://github.com/lemonmade)! - Support passing document source to simpleDocument
+
 ## 0.4.58
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.1.17
+
+### Patch Changes
+
+- [`6e999a5f`](https://github.com/lemonmade/quilt/commit/6e999a5f2b3001923fdb83d9954318742e3a84e3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add basic translation function
+
 ## 0.1.16
 
 ### Patch Changes
