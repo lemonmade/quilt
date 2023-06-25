@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.4.60
+
+### Patch Changes
+
+- [`2f187348`](https://github.com/lemonmade/quilt/commit/2f1873489b508bf4333739e784d0f2139bdb33ed) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow omiting custom scalar name when it matches the type name
+
+- [`69402e99`](https://github.com/lemonmade/quilt/commit/69402e99ed3a8f4a08e3f4c948d8c8539de39812) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix custom scalar type generation
+
 ## 0.4.59
 
 ### Patch Changes
