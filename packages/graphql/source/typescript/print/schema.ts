@@ -58,7 +58,20 @@ export function generateSchemaTypes(
       }
 
       const scalarType = tsScalarForType(type, customScalarDefinition);
-      fileBody.push(t.exportNamedDeclaration(scalarType));
+
+      if (scalarType.type === 'ExportSpecifier') {
+        const exported = t.exportNamedDeclaration(undefined, [scalarType]);
+        exported.exportKind = 'type';
+        fileBody.push(exported);
+      } else {
+        fileBody.push(t.exportNamedDeclaration(scalarType));
+      }
+
+      fileBody.push(
+        scalarType.type === 'ExportSpecifier'
+          ? t.exportNamedDeclaration(undefined, [scalarType])
+          : t.exportNamedDeclaration(scalarType),
+      );
     } else if (isUnionType(type)) {
       if (printOutputTypes) {
         fileBody.push(t.exportNamedDeclaration(tsTypeForUnion(type)));
@@ -101,12 +114,16 @@ export function generateSchemaTypes(
     t.program([
       ...Array.from(importMap.entries()).map(([pkg, imported]) => {
         return t.importDeclaration(
-          [...imported].map((importName) =>
-            t.importSpecifier(
+          [...imported].map((importName) => {
+            const importSpecifier = t.importSpecifier(
               t.identifier(importName),
               t.identifier(importName),
-            ),
-          ),
+            );
+
+            importSpecifier.importKind = 'type';
+
+            return importSpecifier;
+          }),
           t.stringLiteral(pkg),
         );
       }),
@@ -275,9 +292,20 @@ function tsScalarForType(
   type: GraphQLScalarType,
   customScalarDefinition?: ScalarDefinition,
 ) {
-  const alias = customScalarDefinition
-    ? t.tsTypeReference(t.identifier(customScalarDefinition.name))
-    : t.tsStringKeyword();
+  let alias: t.TSType;
+
+  if (customScalarDefinition) {
+    if (type.name === customScalarDefinition.name) {
+      return t.exportSpecifier(
+        t.identifier(customScalarDefinition.name),
+        t.identifier(customScalarDefinition.name),
+      );
+    } else {
+      alias = t.tsTypeReference(t.identifier(customScalarDefinition.name));
+    }
+  } else {
+    alias = t.tsStringKeyword();
+  }
 
   return t.tsTypeAliasDeclaration(t.identifier(type.name), null, alias);
 }
