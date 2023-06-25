@@ -66,12 +66,6 @@ export function generateSchemaTypes(
       } else {
         fileBody.push(t.exportNamedDeclaration(scalarType));
       }
-
-      fileBody.push(
-        scalarType.type === 'ExportSpecifier'
-          ? t.exportNamedDeclaration(undefined, [scalarType])
-          : t.exportNamedDeclaration(scalarType),
-      );
     } else if (isUnionType(type)) {
       if (printOutputTypes) {
         fileBody.push(t.exportNamedDeclaration(tsTypeForUnion(type)));
