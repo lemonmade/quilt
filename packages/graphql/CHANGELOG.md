@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.4.61
+
+### Patch Changes
+
+- [`147f7984`](https://github.com/lemonmade/quilt/commit/147f798467b77b39b92b833efaeb8511bba0a6b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix duplicate custom scalar exports
+
 ## 0.4.60
 
 ### Patch Changes
