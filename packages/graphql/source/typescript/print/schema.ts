@@ -53,7 +53,7 @@ export function generateSchemaTypes(
         const imported =
           importMap.get(customScalarDefinition.package) ?? new Set();
 
-        imported.add(customScalarDefinition.name);
+        imported.add(customScalarDefinition.name ?? type.name);
         importMap.set(customScalarDefinition.package, imported);
       }
 
@@ -293,21 +293,24 @@ function tsScalarForType(
   customScalarDefinition?: ScalarDefinition,
 ) {
   let alias: t.TSType;
+  const typeName = type.name;
 
   if (customScalarDefinition) {
-    if (type.name === customScalarDefinition.name) {
+    const customScalarName = customScalarDefinition.name ?? typeName;
+
+    if (typeName === customScalarName) {
       return t.exportSpecifier(
-        t.identifier(customScalarDefinition.name),
-        t.identifier(customScalarDefinition.name),
+        t.identifier(customScalarName),
+        t.identifier(customScalarName),
       );
     } else {
-      alias = t.tsTypeReference(t.identifier(customScalarDefinition.name));
+      alias = t.tsTypeReference(t.identifier(customScalarName));
     }
   } else {
     alias = t.tsStringKeyword();
   }
 
-  return t.tsTypeAliasDeclaration(t.identifier(type.name), null, alias);
+  return t.tsTypeAliasDeclaration(t.identifier(typeName), null, alias);
 }
 
 function tsTypeForEnum(type: GraphQLEnumType) {

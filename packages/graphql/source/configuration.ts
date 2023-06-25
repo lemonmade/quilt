@@ -34,7 +34,7 @@ export interface PrintSchemaOptions {
 }
 
 export interface ScalarDefinition {
-  name: string;
+  name?: string;
   package?: string;
 }
 
