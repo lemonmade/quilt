@@ -1,72 +1,98 @@
-import type {GraphQLFetch} from './types.ts';
-
-export class GraphQLHttpError extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly response: string,
-  ) {
-    super(`GraphQL fetch failed with status: ${status}, response: ${response}`);
-  }
-}
+import type {GraphQLFetch, GraphQLOperation} from './types.ts';
 
 export interface GraphQLHttpFetchOptions
   extends Pick<RequestInit, 'credentials'> {
-  uri: string;
-  headers?: Record<string, string>;
+  url: string | URL | ((request: GraphQLOperation) => string | URL);
+  headers?: Record<string, string> | ((headers: Headers) => Headers | void);
+  customizeRequest?(request: Request): Request | Promise<Request>;
 }
 
 export interface GraphQLHttpFetchContext {
   response?: Response;
 }
 
-declare module './types' {
+declare module './types.ts' {
   interface GraphQLFetchContext {
     response?: Response;
   }
 }
 
 export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
-  uri,
+  url,
   credentials,
   headers: explicitHeaders,
+  customizeRequest,
 }: GraphQLHttpFetchOptions): GraphQLFetch<Extensions> {
   const fetchGraphQL: GraphQLFetch<Extensions> = async function fetchGraphQL(
     operation,
     options,
     context,
   ) {
-    const headers = new Headers({
+    let id: string;
+    let source: string;
+    let operationName: string | undefined;
+    const variables = options?.variables ?? {};
+
+    if (typeof operation === 'string') {
+      id = source = operation;
+    } else {
+      id = operation.id;
+      source = operation.source;
+      operationName = operation.name;
+    }
+
+    const resolvedUrl =
+      typeof url === 'function' ? url({id, source, name: operationName}) : url;
+
+    let headers = new Headers({
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      ...explicitHeaders,
     });
 
-    const request: RequestInit = {
+    if (typeof explicitHeaders === 'function') {
+      headers = explicitHeaders(headers) ?? headers;
+    } else if (explicitHeaders) {
+      for (const header of Object.keys(explicitHeaders)) {
+        headers.set(header, explicitHeaders[header]!);
+      }
+    }
+
+    const requestInit: RequestInit = {
       method: 'POST',
       headers,
       signal: options?.signal,
       body: JSON.stringify({
-        query: operation.source,
-        variables: options?.variables ?? {},
-        operationName: operation.name,
+        query: source,
+        variables,
+        operationName,
       }),
     };
 
-    if (credentials != null) {
-      request.credentials = credentials;
-    }
+    if (credentials != null) requestInit.credentials = credentials;
 
-    const response = await fetch(uri, request);
+    let request = new Request(resolvedUrl, requestInit);
+    if (customizeRequest) request = await customizeRequest(request);
+
+    const response = await fetch(request);
 
     if (context) context.response = response;
 
     if (!response.ok) {
       return {
-        errors: [new GraphQLHttpError(response.status, await response.text())],
+        errors: [
+          {
+            response,
+            message: `GraphQL fetch failed with status: ${
+              response.status
+            }, response: ${await response.text()}`,
+          },
+        ],
       };
     }
 
-    return await response.json();
+    const {data, errors, extensions} = (await response.json()) as any;
+
+    return {data, errors, extensions};
   };
 
   return fetchGraphQL;

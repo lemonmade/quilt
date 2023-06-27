@@ -56,7 +56,7 @@ export type GraphQLResult<Data, Extensions = Record<string, unknown>> =
 
 export interface GraphQLFetch<Extensions = Record<string, unknown>> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
-    operation: GraphQLOperation<Data, Variables>,
+    operation: GraphQLOperation<Data, Variables> | string,
     options?: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
     context?: GraphQLFetchContext,
   ): GraphQLResult<Data, Extensions> | Promise<GraphQLResult<Data, Extensions>>;

@@ -82,7 +82,7 @@ export class GraphQLController {
     this.run<Data, Variables>(...args);
 
   run: GraphQLFetch = <Data, Variables>(
-    operation: GraphQLOperation<Data, Variables>,
+    operation: GraphQLOperation<Data, Variables> | string,
     {variables}: {variables?: Variables} = {},
   ) => {
     const {name, document} = normalizeOperation(operation);
