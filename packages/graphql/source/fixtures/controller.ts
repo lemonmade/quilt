@@ -2,7 +2,6 @@ import {DocumentNode} from 'graphql';
 
 import {normalizeOperation} from '../utilities/ast.ts';
 import type {
-  GraphQLOperation,
   GraphQLMock,
   GraphQLAnyOperation,
   GraphQLFetch,
@@ -82,7 +81,7 @@ export class GraphQLController {
     this.run<Data, Variables>(...args);
 
   run: GraphQLFetch = <Data, Variables>(
-    operation: GraphQLOperation<Data, Variables> | string,
+    operation: GraphQLAnyOperation<Data, Variables>,
     {variables}: {variables?: Variables} = {},
   ) => {
     const {name, document} = normalizeOperation(operation);

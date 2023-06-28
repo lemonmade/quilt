@@ -35,6 +35,14 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
 
     if (typeof operation === 'string') {
       id = source = operation;
+    } else if ('definitions' in operation) {
+      id = source = operation.loc?.source.body ?? '';
+      if (!source) {
+        throw new Error(
+          `Can’t determine source for document node: ${operation}`,
+        );
+      }
+      operationName = operation.definitions[0]?.name?.value;
     } else {
       id = operation.id;
       source = operation.source;

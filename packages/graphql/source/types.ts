@@ -1,4 +1,4 @@
-import type {DocumentNode} from 'graphql';
+import type {TypedQueryDocumentNode} from 'graphql';
 import type {IfAllFieldsNullable} from '@quilted/useful-types';
 
 export interface GraphQLOperationType<
@@ -56,7 +56,7 @@ export type GraphQLResult<Data, Extensions = Record<string, unknown>> =
 
 export interface GraphQLFetch<Extensions = Record<string, unknown>> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
-    operation: GraphQLOperation<Data, Variables> | string,
+    operation: GraphQLAnyOperation<Data, Variables>,
     options?: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
     context?: GraphQLFetchContext,
   ): GraphQLResult<Data, Extensions> | Promise<GraphQLResult<Data, Extensions>>;
@@ -64,8 +64,8 @@ export interface GraphQLFetch<Extensions = Record<string, unknown>> {
 
 export type GraphQLAnyOperation<Data, Variables> =
   | string
-  | DocumentNode
-  | GraphQLOperation<Data, Variables>;
+  | GraphQLOperation<Data, Variables>
+  | TypedQueryDocumentNode<Data, Variables>;
 
 export type GraphQLVariableOptions<Variables> = IfAllFieldsNullable<
   Variables,
