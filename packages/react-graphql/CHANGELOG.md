@@ -1,5 +1,12 @@
 # @quilted/react-graphql
 
+## 0.4.55
+
+### Patch Changes
+
+- Updated dependencies [[`350d2074`](https://github.com/lemonmade/quilt/commit/350d2074917e22bfa77ccad6bdcfe2f0f83ceb21)]:
+  - @quilted/graphql@0.5.0
+
 ## 0.4.54
 
 ### Patch Changes

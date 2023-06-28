@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.62
+
+### Patch Changes
+
+- [`2b040069`](https://github.com/lemonmade/quilt/commit/2b040069ae642666001ca94ea84ea95ea9e85122) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix trpc template duplicate name
+
 ## 0.1.61
 
 ### Patch Changes

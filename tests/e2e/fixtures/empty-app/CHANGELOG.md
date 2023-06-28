@@ -1,5 +1,12 @@
 # e2e-fixture-empty-app
 
+## 0.0.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @quilted/quilt@0.5.141
+
 ## 0.0.10
 
 ### Patch Changes
