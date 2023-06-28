@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.5.1
+
+### Patch Changes
+
+- [`2b810f91`](https://github.com/lemonmade/quilt/commit/2b810f91dab9a1c30c06d40c0e8018d59ecb77b3) Thanks [@lemonmade](https://github.com/lemonmade)! - Support DocumentNodes in GraphQL fetch()
+
 ## 0.5.0
 
 ### Minor Changes
