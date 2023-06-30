@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.6.2
+
+### Patch Changes
+
+- [`409fa00f`](https://github.com/lemonmade/quilt/commit/409fa00ffd0436dda34d22a658d4c843a606709b) Thanks [@lemonmade](https://github.com/lemonmade)! - Store GraphQL variables
+
 ## 0.6.1
 
 ### Patch Changes
