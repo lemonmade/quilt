@@ -263,11 +263,23 @@
     "@types/jest": "^27.0.0"
   },
   "peerDependencies": {
+    "@jest/globals": "^27.0.0",
+    "jest-matcher-utils": "^27.0.0",
+    "graphql": "^16.6.0",
     "prettier": "^2.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "peerDependenciesMeta": {
+    "@jest/globals": {
+      "optional": true
+    },
+    "jest-matcher-utils": {
+      "optional": true
+    },
+    "graphql": {
+      "optional": true
+    },
     "prettier": {
       "optional": true
     },
@@ -279,7 +291,10 @@
     }
   },
   "devDependencies": {
+    "@jest/globals": "^27.0.0",
     "@types/prettier": "^2.0.0",
+    "expect": "^27.0.0",
+    "jest-matcher-utils": "^27.0.0",
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0"
   },

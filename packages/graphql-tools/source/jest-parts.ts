@@ -4,7 +4,7 @@ import {createHash} from 'crypto';
 import type {Transformer} from '@jest/transform';
 import {parse} from 'graphql';
 
-import {extractImports} from './transform.ts';
+import {extractGraphQLImports} from './transform.ts';
 
 const THIS_FILE = readFileSync(__filename);
 
@@ -17,14 +17,14 @@ const transformer: Transformer = {
       .digest('hex');
   },
   process(rawSource) {
-    const {imports, source} = extractImports(rawSource);
+    const {imports, source} = extractGraphQLImports(rawSource);
 
     // This module only runs for Jest, which is CJS only, so we can use a global `require` here.
     const utilityImports = `
       var {print, parse} = require(${JSON.stringify(
         require.resolve('graphql'),
       )});
-      var {cleanDocument, toSimpleDocument} = require(${JSON.stringify(
+      var {cleanGraphQLDocument, toGraphQLOperation} = require(${JSON.stringify(
         require.resolve('./transform.cjs'),
       )});
     `;
@@ -54,7 +54,7 @@ const transformer: Transformer = {
 
         ${appendDefinitionsSource}
 
-        module.exports = toSimpleDocument(cleanDocument(document, {removeUnused: false}));
+        module.exports = toGraphQLOperation(cleanGraphQLDocument(document, {removeUnused: false}));
       `,
     };
   },

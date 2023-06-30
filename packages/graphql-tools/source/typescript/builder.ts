@@ -7,7 +7,7 @@ import {FSWatcher, watch} from 'chokidar';
 import {globby} from 'globby';
 import isGlob from 'is-glob';
 
-import {extractImports} from '../transform.ts';
+import {extractGraphQLImports} from '../transform.ts';
 import {
   loadConfiguration,
   type GraphQLConfiguration,
@@ -580,7 +580,7 @@ export class Builder extends EventEmitter {
     if (contents.length === 0) return;
 
     const documentMap = this.projectDetails.get(project)!.documents;
-    const {imports, source} = extractImports(contents);
+    const {imports, source} = extractGraphQLImports(contents);
     const normalizedImport = imports.map((imported) =>
       path.join(path.dirname(filePath), imported),
     );

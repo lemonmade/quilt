@@ -34,7 +34,7 @@ export function minify(originalDocument: DocumentNode, {clone = true} = {}) {
   return document;
 }
 
-export function toSimpleDocument(document: DocumentNode) {
+export function toGraphQLOperation(document: DocumentNode) {
   const source = minifyGraphQLSource(print(document));
   return {
     source,

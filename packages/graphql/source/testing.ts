@@ -7,9 +7,6 @@ export type {
   GraphQLDeepPartialData,
   GraphQLFetch,
   GraphQLFetchContext,
-  GraphQLMock,
-  GraphQLMockFunction,
-  GraphQLMockObject,
   GraphQLResult,
   GraphQLError,
   GraphQLVariableOptions,
@@ -18,12 +15,18 @@ export type {
   GraphQLIsUnion,
   GraphQLMaybeNullableValue,
   GraphQLTypenames,
-} from './types.ts';
+} from '@quilted/graphql';
+
+export type {
+  GraphQLMock,
+  GraphQLMockFunction,
+  GraphQLMockObject,
+} from './testing/types.ts';
 export {
   GraphQLController,
   createGraphQLController,
-} from './fixtures/controller.ts';
-export type {GraphQLRequest} from './fixtures/controller.ts';
+} from './testing/controller.ts';
+export type {GraphQLRequest} from './testing/controller.ts';
 export {
   createGraphQLFiller,
   type GraphQLFillerOptions,
@@ -31,5 +34,4 @@ export {
   type GraphQLFillerResolver,
   type GraphQLFillerResolverContext,
   type GraphQLFillerResolverMap,
-} from './fixtures/filler.ts';
-export {createGraphQLSchema} from './fixtures/schema.ts';
+} from './testing/filler.ts';

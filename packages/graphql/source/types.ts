@@ -120,19 +120,3 @@ export type GraphQLDeepPartialUnion<T> = T extends {__typename: string}
 export type GraphQLTypenames<T> = T extends {__typename: string}
   ? T['__typename']
   : never;
-
-// Mocks
-
-export interface GraphQLMockFunction<Data, Variables> {
-  operation: GraphQLAnyOperation<Data, Variables>;
-  result: (request: {variables: Variables}) => Data | Error;
-}
-
-export interface GraphQLMockObject<Data, Variables> {
-  operation: GraphQLAnyOperation<Data, Variables>;
-  result: Data | Error;
-}
-
-export type GraphQLMock<Data, Variables> =
-  | GraphQLMockFunction<Data, Variables>
-  | GraphQLMockObject<Data, Variables>;

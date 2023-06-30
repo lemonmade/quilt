@@ -26,6 +26,7 @@
     {"path": "./packages/create-quilt-app"},
     {"path": "./packages/events"},
     {"path": "./packages/graphql"},
+    {"path": "./packages/graphql-tools"},
     {"path": "./packages/http"},
     {"path": "./packages/localize"},
     {"path": "./packages/performance"},

@@ -9,7 +9,7 @@
   "references": [
     {"path": "../assets"},
     {"path": "../async"},
-    {"path": "../graphql"},
+    {"path": "../graphql-tools"},
     {"path": "../polyfills"},
     {"path": "../quilt"},
     {"path": "../react-testing"},

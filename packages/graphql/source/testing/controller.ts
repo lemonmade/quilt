@@ -1,12 +1,13 @@
 import {DocumentNode} from 'graphql';
 
-import {normalizeOperation} from '../utilities/ast.ts';
+import {normalizeOperation} from '../ast.ts';
 import type {
-  GraphQLMock,
   GraphQLAnyOperation,
   GraphQLFetch,
   GraphQLResult,
 } from '../types.ts';
+
+import type {GraphQLMock} from './types.ts';
 
 export interface GraphQLRequest<_Data, Variables> {
   name: string;

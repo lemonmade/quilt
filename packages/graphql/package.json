@@ -10,10 +10,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "@quilted:registry": "https://registry.npmjs.org",
-    "bin": {
-      "quilt-graphql-typescript": "./bin/quilt-graphql-typescript.mjs"
-    }
+    "@quilted:registry": "https://registry.npmjs.org"
   },
   "exports": {
     ".": {
@@ -23,123 +20,38 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
-    "./transform": {
-      "types": "./build/typescript/transform.d.ts",
-      "quilt:source": "./source/transform.ts",
-      "quilt:esnext": "./build/esnext/transform.esnext",
-      "import": "./build/esm/transform.mjs",
-      "require": "./build/cjs/transform.cjs"
+    "./ast": {
+      "types": "./build/typescript/ast.d.ts",
+      "quilt:source": "./source/ast.ts",
+      "quilt:esnext": "./build/esnext/ast.esnext",
+      "import": "./build/esm/ast.mjs",
+      "require": "./build/cjs/ast.cjs"
     },
-    "./typescript": {
-      "types": "./build/typescript/typescript.d.ts",
-      "quilt:source": "./source/typescript.ts",
-      "quilt:esnext": "./build/esnext/typescript.esnext",
-      "import": "./build/esm/typescript.mjs",
-      "require": "./build/cjs/typescript.cjs"
-    },
-    "./fixtures": {
-      "types": "./build/typescript/fixtures.d.ts",
-      "quilt:source": "./source/fixtures.ts",
-      "quilt:esnext": "./build/esnext/fixtures.esnext",
-      "import": "./build/esm/fixtures.mjs",
-      "require": "./build/cjs/fixtures.cjs"
-    },
-    "./matchers": {
-      "types": "./build/typescript/matchers.d.ts",
-      "quilt:source": "./source/matchers.ts",
-      "quilt:esnext": "./build/esnext/matchers.esnext",
-      "import": "./build/esm/matchers.mjs",
-      "require": "./build/cjs/matchers.cjs"
-    },
-    "./rollup": {
-      "types": "./build/typescript/rollup-parts.d.ts",
-      "quilt:source": "./source/rollup-parts.ts",
-      "quilt:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs",
-      "require": "./build/cjs/rollup-parts.cjs"
-    },
-    "./jest": {
-      "types": "./build/typescript/jest-parts.d.ts",
-      "quilt:source": "./source/jest-parts.ts",
-      "quilt:esnext": "./build/esnext/jest-parts.esnext",
-      "import": "./build/esm/jest-parts.mjs",
-      "require": "./build/cjs/jest-parts.cjs"
-    },
-    "./configuration": {
-      "types": "./build/typescript/configuration.d.ts",
-      "quilt:source": "./source/configuration.ts",
-      "quilt:esnext": "./build/esnext/configuration.esnext",
-      "import": "./build/esm/configuration.mjs",
-      "require": "./build/cjs/configuration.cjs"
+    "./testing": {
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs",
+      "require": "./build/cjs/testing.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
-      "transform": [
-        "./build/typescript/transform.d.ts"
+      "ast": [
+        "./build/typescript/ast.d.ts"
       ],
-      "fixtures": [
-        "./build/typescript/fixtures/index.d.ts"
-      ],
-      "typescript": [
-        "./build/typescript/typescript/index.d.ts"
-      ],
-      "matchers": [
-        "./build/typescript/matchers/index.d.ts"
-      ],
-      "rollup": [
-        "./build/typescript/rollup-parts.d.ts"
-      ],
-      "jest": [
-        "./build/typescript/jest-parts.d.ts"
-      ],
-      "configuration": [
-        "./build/typescript/configuration.d.ts"
+      "testing": [
+        "./build/typescript/testing.d.ts"
       ]
     }
   },
   "sideEffects": false,
   "dependencies": {
-    "@babel/generator": ">=7.0.0",
-    "@babel/types": ">=7.0.0",
-    "@graphql-tools/load": "^7.8.0",
-    "@graphql-tools/schema": "^9.0.0",
-    "@graphql-tools/graphql-file-loader": "^7.5.0",
-    "@graphql-tools/json-file-loader": "^7.4.0",
-    "@quilted/useful-types": "^0.2.5",
-    "@types/chance": "^1.1.0",
-    "arg": "^4.1.3",
+    "@quilted/useful-types": "^0.2.17",
+    "@types/chance": "^1.1.3",
     "chance": "^1.1.7",
-    "chokidar": "^3.4.3",
-    "colorette": "^2.0.0",
-    "cosmiconfig": "^7.0.0",
-    "cosmiconfig-toml-loader": "^1.0.0",
-    "esbuild": "^0.14.0",
-    "globby": "^13.0.0",
-    "graphql": "^16.3.0",
-    "is-glob": "^4.0.0",
-    "p-limit": "^4.0.0"
-  },
-  "devDependencies": {
-    "@jest/globals": "^27.0.0",
-    "@jest/transform": "^27.0.0",
-    "@types/babel__generator": ">=7.0.0",
-    "@types/is-glob": "^4.0.0",
-    "expect": "^27.0.0",
-    "jest-matcher-utils": "^27.0.0"
-  },
-  "peerDependencies": {
-    "@jest/globals": "^27.0.0",
-    "jest-matcher-utils": "^27.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@jest/globals": {
-      "optional": true
-    },
-    "jest-matcher-utils": {
-      "optional": true
-    }
+    "graphql": "^16.6.0"
   },
   "eslintConfig": {
     "extends": [

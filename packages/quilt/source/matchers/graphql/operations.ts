@@ -5,9 +5,12 @@ import {
   EXPECTED_COLOR as expectedColor,
 } from 'jest-matcher-utils';
 
-import type {GraphQLAnyOperation} from '../types.ts';
-import type {GraphQLController, GraphQLRequest} from '../fixtures.ts';
-import {normalizeOperation} from '../utilities/ast.ts';
+import type {
+  GraphQLAnyOperation,
+  GraphQLController,
+  GraphQLRequest,
+} from '@quilted/graphql/testing';
+import {normalizeOperation} from '@quilted/graphql/ast';
 
 import {assertIsGraphQLController, diffVariables} from './utilities.ts';
 
