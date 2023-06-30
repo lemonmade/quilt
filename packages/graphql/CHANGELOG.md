@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.5.2
+
+### Patch Changes
+
+- [`26f85af8`](https://github.com/lemonmade/quilt/commit/26f85af81e17f7206811043050ccaaa7e308aa9a) Thanks [@lemonmade](https://github.com/lemonmade)! - Modernize some GraphQL types and clean up package exports
+
 ## 0.5.1
 
 ### Patch Changes
