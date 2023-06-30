@@ -2,9 +2,12 @@ import type {GraphQLFetch, GraphQLOperation} from '../types.ts';
 
 export interface GraphQLHttpFetchOptions
   extends Pick<RequestInit, 'credentials'> {
-  url: string | URL | ((request: GraphQLOperation) => string | URL);
-  headers?: Record<string, string> | ((headers: Headers) => Headers | void);
-  customizeRequest?(request: Request): Request | Promise<Request>;
+  url: string | URL | ((operation: GraphQLOperation) => string | URL);
+  headers?: HeadersInit | ((operation: GraphQLOperation) => Headers);
+  customizeRequest?(
+    request: Request,
+    operation: GraphQLOperation,
+  ): Request | Promise<Request>;
 }
 
 export interface GraphQLHttpFetchContext {
@@ -49,20 +52,26 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
       operationName = operation.name;
     }
 
+    const resolvedOperation: GraphQLOperation = {
+      id,
+      source,
+      name: operationName,
+    };
+
     const resolvedUrl =
-      typeof url === 'function' ? url({id, source, name: operationName}) : url;
+      typeof url === 'function' ? url(resolvedOperation) : url;
 
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    });
+    const headers =
+      typeof explicitHeaders === 'function'
+        ? explicitHeaders(resolvedOperation)
+        : new Headers(explicitHeaders);
 
-    if (typeof explicitHeaders === 'function') {
-      headers = explicitHeaders(headers) ?? headers;
-    } else if (explicitHeaders) {
-      for (const header of Object.keys(explicitHeaders)) {
-        headers.set(header, explicitHeaders[header]!);
-      }
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+
+    if (!headers.has('Accept')) {
+      headers.set('Accept', 'application/json');
     }
 
     const requestInit: RequestInit = {
@@ -79,7 +88,8 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
     if (credentials != null) requestInit.credentials = credentials;
 
     let request = new Request(resolvedUrl, requestInit);
-    if (customizeRequest) request = await customizeRequest(request);
+    if (customizeRequest)
+      request = await customizeRequest(request, resolvedOperation);
 
     const response = await fetch(request);
 
