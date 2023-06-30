@@ -1,6 +1,8 @@
 import {toGraphQLOperation} from '../operation.ts';
 import type {GraphQLFetch, GraphQLOperation} from '../types.ts';
 
+import {GraphQLFetchRequest} from './request.ts';
+
 export interface GraphQLHttpFetchOptions
   extends Pick<RequestInit, 'credentials'> {
   url:
@@ -13,10 +15,9 @@ export interface GraphQLHttpFetchOptions
     | HeadersInit
     | (<Data, Variables>(
         operation: GraphQLOperation<Data, Variables>,
-      ) => Headers);
+      ) => HeadersInit);
   customizeRequest?<Data, Variables>(
-    request: Request,
-    operation: GraphQLOperation<Data, Variables>,
+    request: GraphQLFetchRequest<Data, Variables>,
   ): Request | Promise<Request>;
 }
 
@@ -41,7 +42,7 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
     options,
     context,
   ) {
-    const variables = options?.variables ?? {};
+    const variables = (options?.variables ?? {}) as any;
     const resolvedOperation = toGraphQLOperation(operation);
 
     const resolvedUrl =
@@ -50,32 +51,19 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
     const headers =
       typeof explicitHeaders === 'function'
         ? explicitHeaders(resolvedOperation)
-        : new Headers(explicitHeaders);
+        : explicitHeaders;
 
-    if (!headers.has('Content-Type')) {
-      headers.set('Content-Type', 'application/json');
-    }
-
-    if (!headers.has('Accept')) {
-      headers.set('Accept', 'application/json');
-    }
-
-    const requestInit: RequestInit = {
-      method: 'POST',
+    const graphqlRequest = new GraphQLFetchRequest(resolvedUrl, {
       headers,
+      credentials,
       signal: options?.signal,
-      body: JSON.stringify({
-        query: resolvedOperation.source,
-        variables,
-        operationName: resolvedOperation.name,
-      }),
-    };
+      operation: resolvedOperation,
+      variables,
+    });
 
-    if (credentials != null) requestInit.credentials = credentials;
-
-    let request = new Request(resolvedUrl, requestInit);
-    if (customizeRequest)
-      request = await customizeRequest(request, resolvedOperation);
+    const request = customizeRequest
+      ? await customizeRequest(graphqlRequest)
+      : graphqlRequest;
 
     const response = await fetch(request);
 
