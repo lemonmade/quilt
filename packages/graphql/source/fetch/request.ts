@@ -1,19 +1,17 @@
 import {toGraphQLOperation} from '../operation.ts';
 import type {GraphQLOperation, GraphQLAnyOperation} from '../types.ts';
 
+export interface GraphQLFetchRequestInit<Data, Variables> extends RequestInit {
+  operation: GraphQLAnyOperation<Data, Variables>;
+  variables?: Variables;
+}
+
 export class GraphQLFetchRequest<Data, Variables> extends Request {
   readonly operation: GraphQLOperation<Data, Variables>;
 
   constructor(
     url: string | URL,
-    {
-      operation,
-      variables,
-      ...init
-    }: RequestInit & {
-      operation: GraphQLAnyOperation<Data, Variables>;
-      variables?: Variables;
-    },
+    {operation, variables, ...init}: GraphQLFetchRequestInit<Data, Variables>,
   ) {
     let {body} = init;
     const {method = 'POST', headers: headersInit} = init;
