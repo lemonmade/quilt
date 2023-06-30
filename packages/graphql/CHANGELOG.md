@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.6.0
+
+### Minor Changes
+
+- [#560](https://github.com/lemonmade/quilt/pull/560) [`553ff0fd`](https://github.com/lemonmade/quilt/commit/553ff0fd5b58ea6e788ad84dd6301b13210face9) Thanks [@lemonmade](https://github.com/lemonmade)! - Add changeset
+
 ## 0.5.2
 
 ### Patch Changes
