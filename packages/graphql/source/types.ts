@@ -59,6 +59,36 @@ export interface GraphQLFetch<Extensions = Record<string, unknown>> {
   ): GraphQLResult<Data, Extensions> | Promise<GraphQLResult<Data, Extensions>>;
 }
 
+export interface GraphQLStreamingIncrementalResult<Extensions> {
+  label?: string | null;
+  path: readonly (string | number)[];
+  // For @defer
+  data?: Record<string, unknown> | null;
+  // For @stream
+  items?: readonly unknown[] | null;
+  errors?: GraphQLResult<unknown, Extensions>['errors'] | null;
+  extensions?: Partial<Extensions>;
+}
+
+export interface GraphQLStreamingResult<Data, Extensions>
+  extends GraphQLResult<Data, Extensions> {
+  incremental?: GraphQLStreamingIncrementalResult<Extensions>[];
+  hasNext?: boolean;
+}
+
+export type GraphQLStreamingFetchResult<Data, Extensions> = Promise<
+  GraphQLResult<Data, Extensions>
+> &
+  AsyncIterableIterator<GraphQLStreamingResult<Data, Extensions>>;
+
+export interface GraphQLStreamingFetch<Extensions = Record<string, unknown>> {
+  <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
+    operation: GraphQLAnyOperation<Data, Variables>,
+    options?: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
+    context?: GraphQLFetchContext,
+  ): GraphQLStreamingFetchResult<Data, Extensions>;
+}
+
 export type GraphQLAnyOperation<Data, Variables> =
   | string
   | GraphQLOperation<Data, Variables>

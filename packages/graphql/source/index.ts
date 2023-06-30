@@ -4,6 +4,11 @@ export {
   type GraphQLHttpFetchOptions,
 } from './fetch/fetch.ts';
 export {
+  createGraphQLHttpStreamingFetch,
+  type GraphQLHttpStreamingFetchContext,
+  type GraphQLHttpStreamingFetchOptions,
+} from './fetch/stream.ts';
+export {
   GraphQLFetchRequest,
   type GraphQLFetchRequestInit,
 } from './fetch/request.ts';
@@ -18,6 +23,10 @@ export type {
   GraphQLDeepPartialData,
   GraphQLFetch,
   GraphQLFetchContext,
+  GraphQLStreamingFetch,
+  GraphQLStreamingFetchResult,
+  GraphQLStreamingResult,
+  GraphQLStreamingIncrementalResult,
   GraphQLResult,
   GraphQLError,
   GraphQLVariableOptions,
