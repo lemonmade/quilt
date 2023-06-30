@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.6.1
+
+### Patch Changes
+
+- [`f86b689c`](https://github.com/lemonmade/quilt/commit/f86b689c7f5b9f7c6a280ad8c38c77437f0c4656) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve GraphQL operation construction
+
+- [`e167b740`](https://github.com/lemonmade/quilt/commit/e167b740b33f3bdcd6c3237a18c70b1f0138111b) Thanks [@lemonmade](https://github.com/lemonmade)! - Add helper for creating GraphQL operations
+
 ## 0.6.0
 
 ### Minor Changes
