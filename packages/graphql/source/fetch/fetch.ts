@@ -1,12 +1,22 @@
+import {toGraphQLOperation} from '../operation.ts';
 import type {GraphQLFetch, GraphQLOperation} from '../types.ts';
 
 export interface GraphQLHttpFetchOptions
   extends Pick<RequestInit, 'credentials'> {
-  url: string | URL | ((operation: GraphQLOperation) => string | URL);
-  headers?: HeadersInit | ((operation: GraphQLOperation) => Headers);
-  customizeRequest?(
+  url:
+    | string
+    | URL
+    | (<Data, Variables>(
+        operation: GraphQLOperation<Data, Variables>,
+      ) => string | URL);
+  headers?:
+    | HeadersInit
+    | (<Data, Variables>(
+        operation: GraphQLOperation<Data, Variables>,
+      ) => Headers);
+  customizeRequest?<Data, Variables>(
     request: Request,
-    operation: GraphQLOperation,
+    operation: GraphQLOperation<Data, Variables>,
   ): Request | Promise<Request>;
 }
 
@@ -22,8 +32,8 @@ declare module '../types.ts' {
 
 export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
   url,
-  credentials,
   headers: explicitHeaders,
+  credentials,
   customizeRequest,
 }: GraphQLHttpFetchOptions): GraphQLFetch<Extensions> {
   const fetchGraphQL: GraphQLFetch<Extensions> = async function fetchGraphQL(
@@ -31,32 +41,8 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
     options,
     context,
   ) {
-    let id: string;
-    let source: string;
-    let operationName: string | undefined;
     const variables = options?.variables ?? {};
-
-    if (typeof operation === 'string') {
-      id = source = operation;
-    } else if ('definitions' in operation) {
-      id = source = operation.loc?.source.body ?? '';
-      if (!source) {
-        throw new Error(
-          `Can’t determine source for document node: ${operation}`,
-        );
-      }
-      operationName = operation.definitions[0]?.name?.value;
-    } else {
-      id = operation.id;
-      source = operation.source;
-      operationName = operation.name;
-    }
-
-    const resolvedOperation: GraphQLOperation = {
-      id,
-      source,
-      name: operationName,
-    };
+    const resolvedOperation = toGraphQLOperation(operation);
 
     const resolvedUrl =
       typeof url === 'function' ? url(resolvedOperation) : url;
@@ -79,9 +65,9 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
       headers,
       signal: options?.signal,
       body: JSON.stringify({
-        query: source,
+        query: resolvedOperation.source,
         variables,
-        operationName,
+        operationName: resolvedOperation.name,
       }),
     };
 
