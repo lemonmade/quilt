@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.6.3
+
+### Patch Changes
+
+- [`7baeec0e`](https://github.com/lemonmade/quilt/commit/7baeec0ec8b9ca85dba0431802701475530fb6fc) Thanks [@lemonmade](https://github.com/lemonmade)! - Add initial streaming fetch support
+
 ## 0.6.2
 
 ### Patch Changes
