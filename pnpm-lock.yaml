@@ -321,7 +321,7 @@ importers:
         specifier: 0.2.0
         version: link:../eslint-config
       '@quilted/graphql-tools':
-        specifier: 0.1.0
+        specifier: 0.1.1
         version: link:../graphql-tools
       '@quilted/polyfills':
         specifier: 0.2.34
@@ -484,7 +484,7 @@ importers:
         version: 4.0.0(@types/node@16.11.36)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.141
+        specifier: workspace:^0.5.142
         version: link:../quilt
       '@types/babel__core':
         specifier: '>=7.0.0'
@@ -665,7 +665,7 @@ importers:
         specifier: ^7.8.0
         version: 7.8.13(graphql@16.6.0)
       '@quilted/graphql':
-        specifier: ^0.5.1
+        specifier: ^0.6.0
         version: link:../graphql
       '@quilted/useful-types':
         specifier: ^0.2.5
@@ -784,7 +784,7 @@ importers:
         specifier: ^0.1.0
         version: link:../events
       '@quilted/graphql':
-        specifier: ^0.5.0
+        specifier: ^0.6.0
         version: link:../graphql
       '@quilted/polyfills':
         specifier: ^0.2.12
@@ -956,7 +956,7 @@ importers:
         specifier: ^0.3.12
         version: link:../async
       '@quilted/graphql':
-        specifier: ^0.5.0
+        specifier: ^0.6.0
         version: link:../graphql
       '@quilted/react-utilities':
         specifier: ^0.1.0
