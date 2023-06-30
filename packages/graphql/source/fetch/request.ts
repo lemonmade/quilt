@@ -7,6 +7,7 @@ export interface GraphQLFetchRequestInit<Data, Variables> extends RequestInit {
 }
 
 export class GraphQLFetchRequest<Data, Variables> extends Request {
+  readonly variables?: Variables;
   readonly operation: GraphQLOperation<Data, Variables>;
 
   constructor(
@@ -36,6 +37,7 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
 
     super(url, {...init, method, headers, body});
 
+    this.variables = variables;
     this.operation = resolvedOperation;
   }
 }
