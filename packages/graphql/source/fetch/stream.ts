@@ -190,6 +190,7 @@ export function createGraphQLHttpStreamingFetch<
           }
         }
       } catch (err) {
+        finished = true;
         const toError = unconsumedPromises.shift();
 
         if (toError) {
