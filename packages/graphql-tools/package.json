@@ -30,13 +30,6 @@
       "import": "./build/esm/typescript.mjs",
       "require": "./build/cjs/typescript.cjs"
     },
-    "./matchers": {
-      "types": "./build/typescript/matchers.d.ts",
-      "quilt:source": "./source/matchers.ts",
-      "quilt:esnext": "./build/esnext/matchers.esnext",
-      "import": "./build/esm/matchers.mjs",
-      "require": "./build/cjs/matchers.cjs"
-    },
     "./rollup": {
       "types": "./build/typescript/rollup-parts.d.ts",
       "quilt:source": "./source/rollup-parts.ts",
@@ -81,7 +74,6 @@
     "@babel/generator": ">=7.0.0",
     "@babel/types": ">=7.0.0",
     "@graphql-tools/load": "^7.8.0",
-    "@graphql-tools/schema": "^9.0.0",
     "@graphql-tools/graphql-file-loader": "^7.5.0",
     "@graphql-tools/json-file-loader": "^7.4.0",
     "@quilted/useful-types": "^0.2.5",
