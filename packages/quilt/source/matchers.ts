@@ -1,2 +1,2 @@
 import '@quilted/react-testing/matchers';
-import '@quilted/graphql-tools/matchers';
+import '@quilted/graphql/matchers';

@@ -239,7 +239,6 @@
     "@quilted/async": "^0.3.34",
     "@quilted/events": "^0.1.0",
     "@quilted/graphql": "^0.5.0",
-    "@quilted/graphql-tools": "^0.1.0",
     "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^18.2.0",
     "@quilted/react-assets": "^0.0.4",

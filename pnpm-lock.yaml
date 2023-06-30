@@ -789,9 +789,6 @@ importers:
       '@quilted/graphql':
         specifier: ^0.5.0
         version: link:../graphql
-      '@quilted/graphql-tools':
-        specifier: ^0.1.0
-        version: link:../graphql-tools
       '@quilted/polyfills':
         specifier: ^0.2.12
         version: link:../polyfills

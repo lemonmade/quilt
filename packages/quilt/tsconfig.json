@@ -11,7 +11,6 @@
     {"path": "../async"},
     {"path": "../events"},
     {"path": "../graphql"},
-    {"path": "../graphql-tools"},
     {"path": "../polyfills"},
     {"path": "../react"},
     {"path": "../react-assets"},
