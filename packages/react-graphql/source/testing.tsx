@@ -4,16 +4,18 @@ import type {PropsWithChildren} from 'react';
 import {
   createGraphQLController,
   createGraphQLFiller,
-  createGraphQLSchema,
   GraphQLController,
-} from '@quilted/graphql/fixtures';
+} from '@quilted/graphql/testing';
 import type {
+  GraphQLMock,
+  GraphQLMockFunction,
+  GraphQLMockObject,
   GraphQLFillerOptions,
   GraphQLFillerDetails,
   GraphQLFillerResolver,
   GraphQLFillerResolverContext,
   GraphQLFillerResolverMap,
-} from '@quilted/graphql/fixtures';
+} from '@quilted/graphql/testing';
 
 import {GraphQLContext} from './context.tsx';
 
@@ -26,23 +28,18 @@ export type {
   GraphQLDeepPartialData,
   GraphQLFetch,
   GraphQLFetchContext,
-  GraphQLMock,
-  GraphQLMockFunction,
-  GraphQLMockObject,
   GraphQLResult,
   GraphQLError,
   GraphQLVariableOptions,
   PickGraphQLType,
 } from '@quilted/graphql';
 
-export {
-  createGraphQLController,
-  GraphQLController,
-  createGraphQLFiller,
-  createGraphQLSchema,
-};
+export {createGraphQLController, GraphQLController, createGraphQLFiller};
 
 export type {
+  GraphQLMock,
+  GraphQLMockFunction,
+  GraphQLMockObject,
   GraphQLFillerOptions,
   GraphQLFillerDetails,
   GraphQLFillerResolver,

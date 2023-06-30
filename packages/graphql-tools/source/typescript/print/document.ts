@@ -19,6 +19,13 @@ import type {
   OperationDefinitionNode,
   FragmentDefinitionNode,
 } from 'graphql';
+import {
+  getRootType,
+  unwrapType,
+  getAllObjectTypes,
+  getSelectionTypeMap,
+  type Field,
+} from '@quilted/graphql/ast';
 
 import type {DocumentDetails, ProjectDetails} from '../types.ts';
 import type {DocumentOutputKind} from '../../configuration.ts';
@@ -26,15 +33,8 @@ import type {DocumentOutputKind} from '../../configuration.ts';
 import {
   addTypename,
   minify,
-  toSimpleDocument,
+  toGraphQLOperation,
 } from '../../utilities/document.ts';
-import type {Field} from '../../utilities/ast.ts';
-import {
-  getRootType,
-  unwrapType,
-  getAllObjectTypes,
-  getSelectionTypeMap,
-} from '../../utilities/ast.ts';
 
 import generate from './generate.ts';
 import {scalarTypeMap} from './utilities.ts';
@@ -606,7 +606,7 @@ function createDocumentExportValue(
     {clone: !shouldAddTypename},
   );
 
-  const {id, name, source} = toSimpleDocument(minifiedDocument);
+  const {id, name, source} = toGraphQLOperation(minifiedDocument);
 
   return t.objectExpression([
     t.objectProperty(t.identifier('id'), t.stringLiteral(id)),

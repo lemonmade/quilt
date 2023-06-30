@@ -7,7 +7,7 @@ import {
   printReceived,
 } from 'jest-matcher-utils';
 
-import {GraphQLController} from '../fixtures.ts';
+import {GraphQLController} from '@quilted/graphql/testing';
 
 export function assertIsGraphQLController(
   graphql: unknown,

@@ -18,7 +18,8 @@ import type {
   GraphQLAbstractType,
   GraphQLCompositeType,
 } from 'graphql';
-import type {GraphQLOperation} from '../types.ts';
+
+import type {GraphQLOperation} from './types.ts';
 
 export class InvalidSelectionError extends Error {
   constructor(readonly type: GraphQLCompositeType, readonly field: FieldNode) {

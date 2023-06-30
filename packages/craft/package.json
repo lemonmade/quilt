@@ -224,7 +224,7 @@
     "@quilted/async": "0.3.40",
     "@quilted/browserslist-config": "0.1.9",
     "@quilted/eslint-config": "0.2.0",
-    "@quilted/graphql": "0.5.2",
+    "@quilted/graphql-tools": "0.1.0",
     "@quilted/polyfills": "0.2.34",
     "@quilted/prettier": "0.2.11",
     "@quilted/rollup-plugin-fix-commonjs-preserve-modules": "0.1.13",

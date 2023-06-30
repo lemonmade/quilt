@@ -2,8 +2,8 @@ export {
   createGraphQLHttpFetch,
   type GraphQLHttpFetchContext,
   type GraphQLHttpFetchOptions,
-} from './fetch.ts';
-export {minifyGraphQLSource} from './utilities/minify.ts';
+} from './fetch/fetch.ts';
+export {minifyGraphQLSource} from './minify.ts';
 export type {
   GraphQLOperation,
   GraphQLOperationType,
@@ -13,11 +13,12 @@ export type {
   GraphQLDeepPartialData,
   GraphQLFetch,
   GraphQLFetchContext,
-  GraphQLMock,
-  GraphQLMockFunction,
-  GraphQLMockObject,
   GraphQLResult,
   GraphQLError,
   GraphQLVariableOptions,
+  GraphQLDeepPartialUnion,
+  GraphQLIsUnion,
+  GraphQLMaybeNullableValue,
+  GraphQLTypenames,
   PickGraphQLType,
 } from './types.ts';

@@ -1,7 +1,6 @@
 export {
   TestGraphQL,
   createGraphQLFiller,
-  createGraphQLSchema,
   GraphQLController,
   createGraphQLController,
 } from '@quilted/react-graphql/testing';

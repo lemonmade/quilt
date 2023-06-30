@@ -2,7 +2,11 @@ import {readFile} from 'fs/promises';
 import {DocumentNode, parse} from 'graphql';
 import type {Plugin, TransformPluginContext} from 'rollup';
 
-import {cleanDocument, extractImports, toSimpleDocument} from './transform.ts';
+import {
+  cleanGraphQLDocument,
+  extractGraphQLImports,
+  toGraphQLOperation,
+} from './transform.ts';
 
 export function graphql(): Plugin {
   return {
@@ -27,8 +31,8 @@ export function graphql(): Plugin {
         },
       );
 
-      const document = toSimpleDocument(
-        cleanDocument(loadedDocument, {
+      const document = toGraphQLOperation(
+        cleanGraphQLDocument(loadedDocument, {
           removeUnused: {exclude: topLevelDefinitions},
         }),
       );
@@ -48,7 +52,7 @@ async function loadDocument(
   level = 0,
   seen = new Set<string>(),
 ) {
-  const {imports, source} = extractImports(code);
+  const {imports, source} = extractGraphQLImports(code);
   const document = parse(source);
 
   add?.(document, level);

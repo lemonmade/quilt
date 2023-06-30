@@ -1,4 +1,4 @@
-import type {GraphQLFetch, GraphQLOperation} from './types.ts';
+import type {GraphQLFetch, GraphQLOperation} from '../types.ts';
 
 export interface GraphQLHttpFetchOptions
   extends Pick<RequestInit, 'credentials'> {
@@ -11,7 +11,7 @@ export interface GraphQLHttpFetchContext {
   response?: Response;
 }
 
-declare module './types.ts' {
+declare module '../types.ts' {
   interface GraphQLFetchContext {
     response?: Response;
   }

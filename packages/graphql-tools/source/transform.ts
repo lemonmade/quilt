@@ -11,8 +11,8 @@ import type {
   SelectionNode,
   Location,
 } from 'graphql';
+import type {GraphQLOperation} from '@quilted/graphql';
 
-import type {GraphQLOperation} from './types.ts';
 import {minifyGraphQLSource} from './utilities/minify.ts';
 
 const IMPORT_REGEX = /^#import\s+['"]([^'"]*)['"];?[\s\n]*/gm;
@@ -25,7 +25,7 @@ export interface EnhancedDocumentNode<
   readonly id: string;
 }
 
-export function cleanDocument<
+export function cleanGraphQLDocument<
   Data = Record<string, any>,
   Variables = Record<string, any>,
 >(
@@ -71,7 +71,7 @@ export function cleanDocument<
   return normalizedDocument as any;
 }
 
-export function extractImports(rawSource: string) {
+export function extractGraphQLImports(rawSource: string) {
   const imports = new Set<string>();
 
   const source = rawSource.replace(IMPORT_REGEX, (_, imported) => {
@@ -82,12 +82,12 @@ export function extractImports(rawSource: string) {
   return {imports: [...imports], source};
 }
 
-export function toSimpleDocument<Data = unknown, Variables = unknown>(
+export function toGraphQLOperation<Data = unknown, Variables = unknown>(
   documentOrSource: EnhancedDocumentNode<Data, Variables> | string,
 ): GraphQLOperation<Data, Variables> {
   const document =
     typeof documentOrSource === 'string'
-      ? cleanDocument(parse(documentOrSource))
+      ? cleanGraphQLDocument(parse(documentOrSource))
       : documentOrSource;
 
   return {

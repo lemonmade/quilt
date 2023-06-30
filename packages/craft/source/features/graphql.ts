@@ -1,11 +1,11 @@
 import * as path from 'path';
 import {createRequire} from 'module';
 
-import type {createBuilder} from '@quilted/graphql/typescript';
+import type {createBuilder} from '@quilted/graphql-tools/typescript';
 import type {
   Configuration,
   Extensions as ConfigurationExtensions,
-} from '@quilted/graphql/configuration';
+} from '@quilted/graphql-tools/configuration';
 
 import {createWorkspacePlugin, createProjectPlugin} from '../kit.ts';
 import type {Workspace, WorkspaceStepRunner} from '../kit.ts';
@@ -23,7 +23,7 @@ export function graphql() {
     build({configure}) {
       configure(({rollupPlugins}) => {
         rollupPlugins?.(async (plugins) => {
-          const {graphql} = await import('@quilted/graphql/rollup');
+          const {graphql} = await import('@quilted/graphql-tools/rollup');
           return [...plugins, graphql()];
         });
       });
@@ -31,12 +31,12 @@ export function graphql() {
     develop({configure}) {
       configure(({rollupPlugins, vitePlugins}) => {
         rollupPlugins?.(async (plugins) => {
-          const {graphql} = await import('@quilted/graphql/rollup');
+          const {graphql} = await import('@quilted/graphql-tools/rollup');
           return [...plugins, graphql()];
         });
 
         vitePlugins?.(async (plugins) => {
-          const {graphql} = await import('@quilted/graphql/rollup');
+          const {graphql} = await import('@quilted/graphql-tools/rollup');
           return [...plugins, graphql()];
         });
       });
@@ -118,7 +118,7 @@ async function runGraphQLTypes(
     ...options
   }: NonNullable<Parameters<typeof createBuilder>[1]> & {watch?: boolean},
 ) {
-  const {createBuilder} = await import('@quilted/graphql/typescript');
+  const {createBuilder} = await import('@quilted/graphql-tools/typescript');
   const builder = await createBuilder(undefined, options);
 
   builder.on('document:build:error', ({error}) => {
