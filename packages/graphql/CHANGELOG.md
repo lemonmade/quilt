@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.6.4
+
+### Patch Changes
+
+- [`4707ac31`](https://github.com/lemonmade/quilt/commit/4707ac31e47ab57947f9f2af005a21aaac105628) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix finishing iterable on thrown error
+
 ## 0.6.3
 
 ### Patch Changes
