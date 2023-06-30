@@ -14,10 +14,10 @@ export type {
   GraphQLError,
   GraphQLVariableOptions,
   PickGraphQLType,
-  DeepPartialUnion,
-  IsUnion,
-  MaybeNullableValue,
-  Typenames,
+  GraphQLDeepPartialUnion,
+  GraphQLIsUnion,
+  GraphQLMaybeNullableValue,
+  GraphQLTypenames,
 } from './types.ts';
 export {
   GraphQLController,

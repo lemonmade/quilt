@@ -3,6 +3,7 @@ import {createHash} from 'crypto';
 import {print, parse} from 'graphql';
 import type {
   DocumentNode,
+  TypedQueryDocumentNode,
   DefinitionNode,
   SelectionSetNode,
   ExecutableDefinitionNode,
@@ -12,18 +13,25 @@ import type {
 } from 'graphql';
 
 import type {GraphQLOperation} from './types.ts';
+import {minifyGraphQLSource} from './utilities/minify.ts';
 
 const IMPORT_REGEX = /^#import\s+['"]([^'"]*)['"];?[\s\n]*/gm;
 const DEFAULT_NAME = 'Operation';
 
-export interface EnhancedDocumentNode extends DocumentNode {
+export interface EnhancedDocumentNode<
+  Data = Record<string, any>,
+  Variables = Record<string, any>,
+> extends TypedQueryDocumentNode<Data, Variables> {
   readonly id: string;
 }
 
-export function cleanDocument(
-  document: DocumentNode,
+export function cleanDocument<
+  Data = Record<string, any>,
+  Variables = Record<string, any>,
+>(
+  document: DocumentNode | TypedQueryDocumentNode<Data, Variables>,
   {removeUnused = true}: {removeUnused?: boolean | {exclude: Set<string>}} = {},
-): EnhancedDocumentNode {
+): EnhancedDocumentNode<Data, Variables> {
   if (removeUnused) {
     removeUnusedDefinitions(document, {
       exclude: removeUnused === true ? new Set() : removeUnused.exclude,
@@ -34,7 +42,7 @@ export function cleanDocument(
     addTypename(definition);
   }
 
-  const normalizedSource = minifySource(print(document));
+  const normalizedSource = minifyGraphQLSource(print(document));
   const normalizedDocument = parse(normalizedSource);
 
   for (const definition of normalizedDocument.definitions) {
@@ -75,7 +83,7 @@ export function extractImports(rawSource: string) {
 }
 
 export function toSimpleDocument<Data = unknown, Variables = unknown>(
-  documentOrSource: EnhancedDocumentNode | string,
+  documentOrSource: EnhancedDocumentNode<Data, Variables> | string,
 ): GraphQLOperation<Data, Variables> {
   const document =
     typeof documentOrSource === 'string'
@@ -126,14 +134,6 @@ function removeUnusedDefinitions(
   }
 
   (document as any).definitions = [...usedDefinitions];
-}
-
-function minifySource(source: string) {
-  return source
-    .replace(/#.*/g, '')
-    .replace(/\\n/g, ' ')
-    .replace(/\s\s+/g, ' ')
-    .replace(/\s*({|}|\(|\)|\.|:|,)\s*/g, '$1');
 }
 
 function definitionDependencies(definitions: readonly DefinitionNode[]) {

@@ -11,6 +11,8 @@ import type {
   SelectionNode,
 } from 'graphql';
 
+import {minifyGraphQLSource} from './minify.ts';
+
 const DEFAULT_NAME = 'Operation';
 
 export function addTypename(
@@ -33,7 +35,7 @@ export function minify(originalDocument: DocumentNode, {clone = true} = {}) {
 }
 
 export function toSimpleDocument(document: DocumentNode) {
-  const source = minifySource(print(document));
+  const source = minifyGraphQLSource(print(document));
   return {
     source,
     name: operationNameForDocument(document),
@@ -109,14 +111,6 @@ function definitionDependencies(definitions: readonly DefinitionNode[]) {
       ],
     ),
   );
-}
-
-function minifySource(source: string) {
-  return source
-    .replace(/#.*/g, '')
-    .replace(/\\n/g, ' ')
-    .replace(/\s\s+/g, ' ')
-    .replace(/\s*({|}|\(|\)|\.|:|,)\s*/g, '$1');
 }
 
 const TYPENAME_FIELD = {

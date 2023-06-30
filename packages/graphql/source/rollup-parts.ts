@@ -8,7 +8,7 @@ export function graphql(): Plugin {
   return {
     name: '@quilted/graphql',
     async transform(code, id) {
-      if (!id.endsWith('.graphql')) return null;
+      if (!id.endsWith('.graphql') && !id.endsWith('.gql')) return null;
 
       const topLevelDefinitions = new Set<string>();
 

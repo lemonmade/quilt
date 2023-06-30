@@ -3,7 +3,7 @@ export {
   type GraphQLHttpFetchContext,
   type GraphQLHttpFetchOptions,
 } from './fetch.ts';
-export {cacheKey} from './utilities/cache.ts';
+export {minifyGraphQLSource} from './utilities/minify.ts';
 export type {
   GraphQLOperation,
   GraphQLOperationType,

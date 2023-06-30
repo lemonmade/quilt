@@ -1,4 +1,4 @@
-import type {TypedQueryDocumentNode} from 'graphql';
+import type {TypedQueryDocumentNode, FormattedExecutionResult} from 'graphql';
 import type {IfAllFieldsNullable} from '@quilted/useful-types';
 
 export interface GraphQLOperationType<
@@ -22,12 +22,16 @@ export interface GraphQLOperation<
 
 export type GraphQLData<T> = T extends GraphQLOperationType<infer Data, any>
   ? Data
+  : T extends TypedQueryDocumentNode<infer Data, any>
+  ? Data
   : never;
 
 export type GraphQLVariables<T> = T extends GraphQLOperationType<
   any,
   infer Variables
 >
+  ? Variables
+  : T extends TypedQueryDocumentNode<any, infer Variables>
   ? Variables
   : never;
 
@@ -42,17 +46,10 @@ export interface GraphQLError {
 
 export interface GraphQLFetchContext {}
 
-export type GraphQLResult<Data, Extensions = Record<string, unknown>> =
-  | {
-      readonly data: Data;
-      readonly errors?: never;
-      readonly extensions?: Extensions;
-    }
-  | {
-      readonly data?: Data | null;
-      readonly errors: readonly GraphQLError[];
-      readonly extensions?: Extensions;
-    };
+export type GraphQLResult<
+  Data,
+  Extensions = Record<string, unknown>,
+> = FormattedExecutionResult<Data, Extensions>;
 
 export interface GraphQLFetch<Extensions = Record<string, unknown>> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
@@ -73,7 +70,7 @@ export type GraphQLVariableOptions<Variables> = IfAllFieldsNullable<
   {variables: Variables}
 >;
 
-export type PickGraphQLType<T, Type extends Typenames<T>> = Extract<
+export type PickGraphQLType<T, Type extends GraphQLTypenames<T>> = Extract<
   T,
   {readonly __typename: Type}
 >;
@@ -81,36 +78,38 @@ export type PickGraphQLType<T, Type extends Typenames<T>> = Extract<
 // Partial data
 
 export type GraphQLDeepPartialData<T> = {
-  [K in keyof T]?: MaybeNullableValue<
+  [K in keyof T]?: GraphQLMaybeNullableValue<
     T[K],
     NonNullable<T[K]> extends readonly (infer U)[]
-      ? readonly MaybeNullableValue<
+      ? readonly GraphQLMaybeNullableValue<
           U,
           NonNullable<U> extends Record<string, any>
-            ? IsUnion<
+            ? GraphQLIsUnion<
                 NonNullable<U>,
-                DeepPartialUnion<NonNullable<U>>,
+                GraphQLDeepPartialUnion<NonNullable<U>>,
                 GraphQLDeepPartialData<NonNullable<U>>
               >
             : NonNullable<U>
         >[]
       : NonNullable<T[K]> extends Record<string, any>
-      ? IsUnion<
+      ? GraphQLIsUnion<
           NonNullable<T[K]>,
-          DeepPartialUnion<NonNullable<T[K]>>,
+          GraphQLDeepPartialUnion<NonNullable<T[K]>>,
           GraphQLDeepPartialData<NonNullable<T[K]>>
         >
       : NonNullable<T[K]>
   >;
 };
 
-export type MaybeNullableValue<T, V> = T extends null ? V | null : V;
+export type GraphQLMaybeNullableValue<T, V> = T extends null ? V | null : V;
 
-export type IsUnion<T, If, Else> = Typenames<T> | '' extends Typenames<T>
+export type GraphQLIsUnion<T, If, Else> =
+  | GraphQLTypenames<T>
+  | '' extends GraphQLTypenames<T>
   ? If
   : Else;
 
-export type DeepPartialUnion<T> = T extends {__typename: string}
+export type GraphQLDeepPartialUnion<T> = T extends {__typename: string}
   ? T extends {__typename: ''}
     ? never
     : {__typename: T['__typename']} & GraphQLDeepPartialData<
@@ -118,7 +117,7 @@ export type DeepPartialUnion<T> = T extends {__typename: string}
       >
   : never;
 
-export type Typenames<T> = T extends {__typename: string}
+export type GraphQLTypenames<T> = T extends {__typename: string}
   ? T['__typename']
   : never;
 
