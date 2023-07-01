@@ -1,5 +1,15 @@
 # @quilted/async
 
+## 0.3.41
+
+### Patch Changes
+
+- [`1335ce47`](https://github.com/lemonmade/quilt/commit/1335ce47fb86ae628a421a22c22c794d94a307ea) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TypeScript
+
+- [`345e40b7`](https://github.com/lemonmade/quilt/commit/345e40b73bbc95e23b6d2ecf822b2ea2a705363a) Thanks [@lemonmade](https://github.com/lemonmade)! - Update build dependencies
+
+- [`039d6572`](https://github.com/lemonmade/quilt/commit/039d6572ffe0a16054fa52c67261fe163407c3df) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Babel dependencies
+
 ## 0.3.40
 
 ### Patch Changes

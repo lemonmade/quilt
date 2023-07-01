@@ -1,5 +1,27 @@
 # @quilted/craft
 
+## 0.1.213
+
+### Patch Changes
+
+- [`1335ce47`](https://github.com/lemonmade/quilt/commit/1335ce47fb86ae628a421a22c22c794d94a307ea) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TypeScript
+
+- [`968084d7`](https://github.com/lemonmade/quilt/commit/968084d73cf3fcb0bb884348a24d9f93ca90e9b3) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact
+
+- [`345e40b7`](https://github.com/lemonmade/quilt/commit/345e40b73bbc95e23b6d2ecf822b2ea2a705363a) Thanks [@lemonmade](https://github.com/lemonmade)! - Update build dependencies
+
+- [`039d6572`](https://github.com/lemonmade/quilt/commit/039d6572ffe0a16054fa52c67261fe163407c3df) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Babel dependencies
+
+- [`839c33f6`](https://github.com/lemonmade/quilt/commit/839c33f6d22a5db0d97989e8c6ef9fa049698182) Thanks [@lemonmade](https://github.com/lemonmade)! - Random assortment of other dependency updates
+
+- Updated dependencies [[`1335ce47`](https://github.com/lemonmade/quilt/commit/1335ce47fb86ae628a421a22c22c794d94a307ea), [`345e40b7`](https://github.com/lemonmade/quilt/commit/345e40b73bbc95e23b6d2ecf822b2ea2a705363a), [`039d6572`](https://github.com/lemonmade/quilt/commit/039d6572ffe0a16054fa52c67261fe163407c3df), [`839c33f6`](https://github.com/lemonmade/quilt/commit/839c33f6d22a5db0d97989e8c6ef9fa049698182)]:
+  - @quilted/async@0.3.41
+  - @quilted/eslint-config@0.2.1
+  - @quilted/typescript@0.2.20
+  - @quilted/workers@0.2.35
+  - @quilted/graphql-tools@0.1.2
+  - @quilted/quilt@0.5.143
+
 ## 0.1.212
 
 ### Patch Changes

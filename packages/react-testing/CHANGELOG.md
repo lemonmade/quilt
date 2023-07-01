@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.5.30
+
+### Patch Changes
+
+- [`968084d7`](https://github.com/lemonmade/quilt/commit/968084d73cf3fcb0bb884348a24d9f93ca90e9b3) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact
+
 ## 0.5.29
 
 ### Patch Changes
