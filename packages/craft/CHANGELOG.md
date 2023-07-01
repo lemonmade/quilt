@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.214
+
+### Patch Changes
+
+- [`ed2b8c44`](https://github.com/lemonmade/quilt/commit/ed2b8c44fc0a9b9bcfda78e8958f1dc7e717a138) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL imports in tests
+
 ## 0.1.213
 
 ### Patch Changes
