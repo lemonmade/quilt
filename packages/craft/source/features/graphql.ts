@@ -48,7 +48,7 @@ export function graphql() {
         jestTransforms?.((transforms) => {
           return {
             ...transforms,
-            ['\\.graphql$']: require.resolve('@quilted/graphql/jest'),
+            ['\\.graphql$']: require.resolve('@quilted/graphql-tools/jest'),
           };
         });
       });
@@ -102,6 +102,18 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
           },
         }),
       );
+    },
+    test({configure}) {
+      const require = createRequire(import.meta.url);
+
+      configure(({jestTransforms}) => {
+        jestTransforms?.((transforms) => {
+          return {
+            ...transforms,
+            ['\\.graphql$']: require.resolve('@quilted/graphql-tools/jest'),
+          };
+        });
+      });
     },
   });
 }
