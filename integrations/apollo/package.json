@@ -47,7 +47,7 @@
   "peerDependencies": {
     "@apollo/client": "^3.0.0",
     "@quilted/quilt": "^0.5.140",
-    "graphql": "^16.0.0",
+    "graphql": "^16.7.0",
     "react": "^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
@@ -65,9 +65,9 @@
     }
   },
   "devDependencies": {
-    "@apollo/client": "^3.0.0",
+    "@apollo/client": "^3.7.0",
     "@quilted/quilt": "workspace:^0.5.140",
-    "graphql": "^16.6.0",
+    "graphql": "^16.7.0",
     "react": "workspace:@quilted/react@^18.2.0"
   },
   "eslintConfig": {

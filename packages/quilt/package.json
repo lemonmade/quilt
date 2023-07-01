@@ -265,7 +265,7 @@
   "peerDependencies": {
     "@jest/globals": "^27.0.0",
     "jest-matcher-utils": "^27.0.0",
-    "graphql": "^16.6.0",
+    "graphql": "^16.7.0",
     "prettier": "^2.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
