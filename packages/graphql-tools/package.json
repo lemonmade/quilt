@@ -71,8 +71,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@babel/generator": ">=7.0.0",
-    "@babel/types": ">=7.0.0",
+    "@babel/generator": ">=7.0.0 <8.0.0",
+    "@babel/types": ">=7.0.0 <8.0.0",
     "@graphql-tools/load": "^7.8.0",
     "@graphql-tools/graphql-file-loader": "^7.5.0",
     "@graphql-tools/json-file-loader": "^7.4.0",
@@ -91,7 +91,7 @@
   },
   "devDependencies": {
     "@jest/transform": "^27.0.0",
-    "@types/babel__generator": ">=7.0.0",
+    "@types/babel__generator": "^7.6.0",
     "@types/is-glob": "^4.0.0",
     "jest-matcher-utils": "^27.0.0"
   },
