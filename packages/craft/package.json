@@ -281,7 +281,7 @@
   "peerDependencies": {
     "@quilted/quilt": "^0.5.142",
     "react": "^18.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.1.0"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {
@@ -296,7 +296,7 @@
   },
   "devDependencies": {
     "@quilted/quilt": "workspace:^0.5.142",
-    "@types/babel__core": ">=7.0.0",
+    "@types/babel__core": "^7.20.0",
     "@types/caniuse-api": "^3.0.0",
     "@types/clean-css": "^4.0.0",
     "@types/common-tags": "^1.8.0",

@@ -40,10 +40,10 @@
     "common-tags": "^1.8.0"
   },
   "devDependencies": {
-    "@babel/core": ">=7.0.0 <8.0.0",
-    "@types/babel__core": ">=7.0.0 <8.0.0",
-    "@types/babel__template": ">=7.0.0 <8.0.0",
-    "@types/babel__traverse": ">=7.0.0 <8.0.0",
+    "@babel/core": "^7.22.0",
+    "@types/babel__core": "^7.20.0",
+    "@types/babel__template": "^7.4.0",
+    "@types/babel__traverse": "^7.20.0",
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {

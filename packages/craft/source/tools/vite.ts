@@ -248,6 +248,7 @@ export async function createViteConfig(
     },
     css: {
       modules: cssModulesOptions as any,
+      // @ts-expect-error We have an issue with PostCSS types
       postcss: {
         ...cssProcessOptions,
         plugins: cssPlugins as any,

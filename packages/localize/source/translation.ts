@@ -61,7 +61,6 @@ export function createTranslate(
     let returnValue: string | (string | Placeholder)[] = '';
 
     let lastOffset = 0;
-    // @ts-expect-error I don’t know why this is complaining
     let matchIndex = 0;
 
     PLACEHOLDER_FINDER.lastIndex = 0;
