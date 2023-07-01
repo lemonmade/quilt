@@ -25,7 +25,7 @@ jobs:
       - uses: quilt-framework/action-type-check@v2
         with:
           command: pnpm type-check
-          cache-key: v4
+          cache-key: v5
 
   unit-tests:
     name: Unit tests 🧪
@@ -40,6 +40,7 @@ jobs:
         with:
           command: pnpm build
           arguments: --only-project async --only-project workers
+          cache-key: v5
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:unit
@@ -60,6 +61,7 @@ jobs:
         with:
           command: pnpm build
           arguments: --skip-project create
+          cache-key: v5
       - uses: quilt-framework/action-test@v2
         with:
           command: pnpm test:e2e --parallel ${{ matrix.parallel }}

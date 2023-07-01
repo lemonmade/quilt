@@ -24,6 +24,7 @@ jobs:
       - uses: quilt-framework/action-build@v2
         with:
           command: pnpm build
+          cache-key: v5
       - name: Deploy
         run: pnpm run deploy
         env:
