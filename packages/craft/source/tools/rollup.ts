@@ -494,7 +494,7 @@ export function addRollupOnWarn(
     ...options,
     onwarn(warning, defaultWarn) {
       warn(warning, (warning) => {
-        if (originalOnWarn) {
+        if (originalOnWarn && typeof warning === 'object') {
           originalOnWarn(warning, defaultWarn);
         } else {
           defaultWarn(warning);

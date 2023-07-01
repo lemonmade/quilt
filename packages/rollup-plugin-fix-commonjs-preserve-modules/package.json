@@ -30,6 +30,9 @@
       "optional": false
     }
   },
+  "devDependencies": {
+    "rollup": "^3.26.0"
+  },
   "sideEffects": false,
   "eslintConfig": {
     "extends": [
