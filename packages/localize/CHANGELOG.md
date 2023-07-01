@@ -1,5 +1,11 @@
 # @quilted/localize
 
+## 0.1.10
+
+### Patch Changes
+
+- [`1335ce47`](https://github.com/lemonmade/quilt/commit/1335ce47fb86ae628a421a22c22c794d94a307ea) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TypeScript
+
 ## 0.1.9
 
 ### Patch Changes

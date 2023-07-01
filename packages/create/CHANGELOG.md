@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.1.64
+
+### Patch Changes
+
+- [`1335ce47`](https://github.com/lemonmade/quilt/commit/1335ce47fb86ae628a421a22c22c794d94a307ea) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TypeScript
+
+- [`968084d7`](https://github.com/lemonmade/quilt/commit/968084d73cf3fcb0bb884348a24d9f93ca90e9b3) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact
+
+- [`839c33f6`](https://github.com/lemonmade/quilt/commit/839c33f6d22a5db0d97989e8c6ef9fa049698182) Thanks [@lemonmade](https://github.com/lemonmade)! - Random assortment of other dependency updates
+
 ## 0.1.63
 
 ### Patch Changes
