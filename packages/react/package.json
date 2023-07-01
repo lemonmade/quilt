@@ -35,7 +35,7 @@
   "sideEffects": false,
   "dependencies": {
     "@types/react": "^18.0.0",
-    "preact": "^10.14.0"
+    "preact": "^10.15.0"
   },
   "eslintConfig": {
     "extends": [

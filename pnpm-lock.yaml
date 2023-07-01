@@ -307,7 +307,7 @@ importers:
         version: 29.3.1
       '@prefresh/vite':
         specifier: ^2.4.0
-        version: 2.4.0(preact@10.14.0)(vite@4.3.0)
+        version: 2.4.0(preact@10.15.0)(vite@4.3.0)
       '@quilted/assets':
         specifier: 0.0.3
         version: link:../assets
@@ -447,8 +447,8 @@ importers:
         specifier: ^7.8.0
         version: 7.8.3(postcss@8.4.20)
       preact:
-        specifier: ^10.14.0
-        version: 10.14.0
+        specifier: ^10.15.0
+        version: 10.15.0
       prettier:
         specifier: ^2.8.0
         version: 2.8.1
@@ -884,8 +884,8 @@ importers:
         specifier: ^18.0.0
         version: 18.0.26
       preact:
-        specifier: ^10.14.0
-        version: 10.14.0
+        specifier: ^10.15.0
+        version: 10.15.0
 
   packages/react-assets:
     dependencies:
@@ -931,11 +931,11 @@ importers:
         specifier: ^18.0.0
         version: 18.0.10
       preact:
-        specifier: ^10.14.0
-        version: 10.14.0
+        specifier: ^10.15.0
+        version: 10.15.0
       preact-render-to-string:
-        specifier: ^6.0.2
-        version: 6.0.2(preact@10.14.0)
+        specifier: ^6.1.0
+        version: 6.1.0(preact@10.15.0)
 
   packages/react-email:
     dependencies:
@@ -1110,14 +1110,14 @@ importers:
   packages/react-signals:
     dependencies:
       '@preact/signals':
-        specifier: ^1.1.2
-        version: 1.1.2(preact@10.14.0)
+        specifier: ^1.1.4
+        version: 1.1.4(preact@10.15.0)
       '@types/react':
         specifier: ^17.0.0 || ^18.0.0
         version: 18.0.26
       preact:
-        specifier: ^10.14.0
-        version: 10.14.0
+        specifier: ^10.15.0
+        version: 10.15.0
     devDependencies:
       '@quilted/testing':
         specifier: ^0.1.0
@@ -1142,8 +1142,8 @@ importers:
         specifier: ^27.0.0
         version: 27.5.1
       preact:
-        specifier: ^10.14.0
-        version: 10.14.0
+        specifier: ^10.15.0
+        version: 10.15.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -4792,36 +4792,36 @@ packages:
       webcrypto-core: 1.7.5
     dev: false
 
-  /@preact/signals-core@1.2.2:
-    resolution: {integrity: sha512-z3/bCj7rRA21RJb4FeJ4guCrD1CQbaURHkCTunUWQpxUMAFOPXCD8tSFqERyGrrcSb4T3Hrmdc1OAl0LXBHwiw==}
+  /@preact/signals-core@1.3.1:
+    resolution: {integrity: sha512-DL+3kDssZ3UOMz9HufwSYE/gK0+TnT1jzegfF5rstgyPrnyfjz4BHAoxmzQA6Mkp4UlKe8qjsgl3v5a/obzNig==}
     dev: false
 
-  /@preact/signals@1.1.2(preact@10.14.0):
-    resolution: {integrity: sha512-MLNNrICSllHBhpXBvXbl7K5L1HmIjuTzgBw+zdODqjM/cLGPXdYiAWt4lqXlrxNavYdoU4eljb+TLE+DRL+6yw==}
+  /@preact/signals@1.1.4(preact@10.15.0):
+    resolution: {integrity: sha512-4s0U8yHfy6OzBjTx8lgG0JZGFq1y+ye7xLmaaI8SXyJ5p+jAtMKW40Mg3GDLISM5WyKnqbfrQ4SOmbq1VTBtTw==}
     peerDependencies:
       preact: 10.x
     dependencies:
-      '@preact/signals-core': 1.2.2
-      preact: 10.14.0
+      '@preact/signals-core': 1.3.1
+      preact: 10.15.0
     dev: false
 
   /@prefresh/babel-plugin@0.5.0:
     resolution: {integrity: sha512-joAwpkUDwo7ZqJnufXRGzUb+udk20RBgfA8oLPBh5aJH2LeStmV1luBfeJTztPdyCscC2j2SmZ/tVxFRMIxAEw==}
     dev: false
 
-  /@prefresh/core@1.5.1(preact@10.14.0):
+  /@prefresh/core@1.5.1(preact@10.15.0):
     resolution: {integrity: sha512-e0mB0Oxtog6ZpKPDBYbzFniFJDIktuKMzOHp7sguntU+ot0yi6dbhJRE9Css1qf0u16wdSZjpL2W2ODWuU05Cw==}
     peerDependencies:
       preact: ^10.0.0
     dependencies:
-      preact: 10.14.0
+      preact: 10.15.0
     dev: false
 
   /@prefresh/utils@1.2.0:
     resolution: {integrity: sha512-KtC/fZw+oqtwOLUFM9UtiitB0JsVX0zLKNyRTA332sqREqSALIIQQxdUCS1P3xR/jT1e2e8/5rwH6gdcMLEmsQ==}
     dev: false
 
-  /@prefresh/vite@2.4.0(preact@10.14.0)(vite@4.3.0):
+  /@prefresh/vite@2.4.0(preact@10.15.0)(vite@4.3.0):
     resolution: {integrity: sha512-makifAztmlWCMx79E8tl/gMKPKe3WartplGk+GTqtXSZ/JqoTiN4nkF9GqlhATqGEvsdtRnlDGKQ09s7fneJ/Q==}
     peerDependencies:
       preact: ^10.4.0
@@ -4829,10 +4829,10 @@ packages:
     dependencies:
       '@babel/core': 7.22.0
       '@prefresh/babel-plugin': 0.5.0
-      '@prefresh/core': 1.5.1(preact@10.14.0)
+      '@prefresh/core': 1.5.1(preact@10.15.0)
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
-      preact: 10.14.0
+      preact: 10.15.0
       vite: 4.3.0(@types/node@16.11.36)
     transitivePeerDependencies:
       - supports-color
@@ -9885,17 +9885,21 @@ packages:
       source-map-js: 1.0.2
     dev: false
 
-  /preact-render-to-string@6.0.2(preact@10.14.0):
-    resolution: {integrity: sha512-/dls6xmcFc8PvnCVke5Hu5ll70pZZu+jZuvw3i/ya2CNu6B0ev9F937+oFyzdlNKVp68III89oYMbE6dcmuyRA==}
+  /preact-render-to-string@6.1.0(preact@10.15.0):
+    resolution: {integrity: sha512-/AsKU4Q4R8r4aKwwNQrkQQNUVEDmTeZr6IwesDffobFRPcTk4dSQrfo1VOcXjtlcUss6QYEe7JShUGbQIhaw+A==}
     peerDependencies:
       preact: '>=10'
     dependencies:
-      preact: 10.14.0
+      preact: 10.15.0
       pretty-format: 3.8.0
     dev: false
 
   /preact@10.14.0:
     resolution: {integrity: sha512-4oh2sf208mKAdL5AQtzXxE387iSGNWMX/YjwMjH6m/XROILKAmx5Pbs2FsXrW7ixoVGGjpfYSBB833vOwYxNxw==}
+    dev: true
+
+  /preact@10.15.0:
+    resolution: {integrity: sha512-nZSa8M2R2m1n7nJSBlzDpxRJaIsejrTO1vlFbdpFvyC8qM1iU+On2y0otfoUm6SRB5o0lF0CKDFxg6grEFU0iQ==}
 
   /preferred-pm@3.0.3:
     resolution: {integrity: sha512-+wZgbxNES/KlJs9q40F/1sfOd/j7f1O9JaHcW5Dsn3aUUOZg3L2bjpVUcKV2jvtElYfoTuQiNeMfQJ4kwUAhCQ==}
