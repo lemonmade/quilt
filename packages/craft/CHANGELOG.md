@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.215
+
+### Patch Changes
+
+- [`530da479`](https://github.com/lemonmade/quilt/commit/530da479415230c9e307f3c93f535a5839e3b2bd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix process.env.NODE_ENV replacement
+
 ## 0.1.214
 
 ### Patch Changes
