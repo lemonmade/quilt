@@ -29,6 +29,7 @@ export function createGraphQLHttpStreamingFetch<
   Extensions = Record<string, unknown>,
 >({
   url,
+  method,
   headers: explicitHeaders,
   credentials,
   customizeRequest,
@@ -132,11 +133,14 @@ export function createGraphQLHttpStreamingFetch<
       let lastResult: GraphQLResult<Data, Extensions> | null = null;
 
       try {
-        const variables = (options?.variables ?? {}) as any;
+        const variables = options?.variables as any;
         const resolvedOperation = toGraphQLOperation(operation);
 
         const resolvedUrl =
           typeof url === 'function' ? url(resolvedOperation) : url;
+
+        const resolvedMethod =
+          typeof method === 'function' ? method(resolvedOperation) : method;
 
         const headers =
           typeof explicitHeaders === 'function'
@@ -144,6 +148,7 @@ export function createGraphQLHttpStreamingFetch<
             : explicitHeaders;
 
         const graphqlRequest = new GraphQLFetchRequest(resolvedUrl, {
+          method: resolvedMethod,
           headers,
           credentials,
           signal: options?.signal,

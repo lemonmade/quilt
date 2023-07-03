@@ -16,6 +16,12 @@ export interface GraphQLHttpFetchOptions
     | (<Data, Variables>(
         operation: GraphQLOperation<Data, Variables>,
       ) => HeadersInit);
+  method:
+    | 'GET'
+    | 'POST'
+    | (<Data, Variables>(
+        operation: GraphQLOperation<Data, Variables>,
+      ) => 'GET' | 'POST');
   customizeRequest?<Data, Variables>(
     request: GraphQLFetchRequest<Data, Variables>,
   ): Request | Promise<Request>;
@@ -33,6 +39,7 @@ declare module '../types.ts' {
 
 export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
   url,
+  method,
   headers: explicitHeaders,
   credentials,
   customizeRequest,
@@ -42,11 +49,14 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
     options,
     context,
   ) {
-    const variables = (options?.variables ?? {}) as any;
+    const variables = options?.variables as any;
     const resolvedOperation = toGraphQLOperation(operation);
 
     const resolvedUrl =
       typeof url === 'function' ? url(resolvedOperation) : url;
+
+    const resolvedMethod =
+      typeof method === 'function' ? method(resolvedOperation) : method;
 
     const headers =
       typeof explicitHeaders === 'function'
@@ -54,6 +64,7 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
         : explicitHeaders;
 
     const graphqlRequest = new GraphQLFetchRequest(resolvedUrl, {
+      method: resolvedMethod,
       headers,
       credentials,
       signal: options?.signal,
