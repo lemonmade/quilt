@@ -88,6 +88,27 @@ describe('app builds', () => {
       });
     });
 
+    it('automatically replaces globalThis.process.env.NODE_ENV with the MODE environment variable', async () => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'App.tsx': stripIndent`
+            export default function App() {
+              const nodeEnv = globalThis.process.env.NODE_ENV;
+              return <div>NODE_ENV: {nodeEnv}</div>;
+            }
+          `,
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace, {
+          path: '/',
+        });
+
+        expect(await page.textContent('body')).toMatch(`NODE_ENV: production`);
+      });
+    });
+
     it('loads .env files for production builds', async () => {
       await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
         const {fs} = workspace;

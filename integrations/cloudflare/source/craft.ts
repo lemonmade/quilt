@@ -308,14 +308,12 @@ function addConfiguration({
     browserslistTargets?.(() => ['last 1 chrome version']);
 
     rollupPlugins?.(async (plugins) => {
-      const {addRollupReplace} = await import('@quilted/craft/rollup');
+      const {rollupReplaceProcessEnv} = await import('@quilted/craft/rollup');
 
-      return addRollupReplace(plugins, {
-        preventAssignment: true,
-        values: {
-          'process.env.NODE_ENV': JSON.stringify(mode),
-        },
-      });
+      return [
+        ...plugins,
+        await rollupReplaceProcessEnv({mode, preserve: false}),
+      ];
     });
 
     rollupNodeBundle?.(() => true);

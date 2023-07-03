@@ -504,10 +504,41 @@ export function addRollupOnWarn(
   };
 }
 
-export async function addRollupReplace(
-  plugins: Plugin[],
-  replacements: RollupReplaceOptions,
+export async function rollupReplace(
+  values: NonNullable<RollupReplaceOptions['values']>,
+  options?: Omit<RollupReplaceOptions, 'values'>,
 ) {
   const {default: replace} = await import('@rollup/plugin-replace');
-  return [...plugins, replace(replacements)];
+  return replace({
+    // @see https://github.com/vitejs/vite/blob/2b1ffe86328f9d06ef9528ee117b61889893ddcc/packages/vite/src/node/plugins/define.ts#L108-L119
+    delimiters: [
+      '(?<![\\p{L}\\p{N}_$]|(?<!\\.\\.)\\.)(',
+      ')(?:(?<=\\.)|(?![\\p{L}\\p{N}_$]|\\s*?=[^=]))',
+    ],
+    preventAssignment: true,
+    ...options,
+    values,
+  });
+}
+
+const EMPTY_PROCESS_ENV_OBJECT = {
+  'globalThis.process.env.': `({}).`,
+  'global.process.env.': `({}).`,
+  'process.env.': `({}).`,
+};
+
+export async function rollupReplaceProcessEnv({
+  mode,
+  preserve = true,
+}: {
+  mode: string;
+  preserve?: boolean;
+}) {
+  return await rollupReplace({
+    // @see https://github.com/vitejs/vite/blob/2b1ffe86328f9d06ef9528ee117b61889893ddcc/packages/vite/src/node/plugins/define.ts#L112
+    'globalThis.process.env.NODE_ENV': JSON.stringify(mode),
+    'global.process.env.NODE_ENV': JSON.stringify(mode),
+    'process.env.NODE_ENV': JSON.stringify(mode),
+    ...(preserve ? {} : EMPTY_PROCESS_ENV_OBJECT),
+  });
 }
