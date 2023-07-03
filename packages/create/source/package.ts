@@ -77,7 +77,7 @@ export async function createProject() {
   const createAsMonorepo =
     !inWorkspace && (await getCreateAsMonorepo(args, {type: 'package'}));
   const setupExtras = await getExtrasToSetup(args, {inWorkspace});
-  const shouldInstall = await getShouldInstall(args, {type: 'package'});
+  const shouldInstall = await getShouldInstall(args);
   const packageManager = await getPackageManager(args, {root: directory});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;

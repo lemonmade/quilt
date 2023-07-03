@@ -54,7 +54,7 @@ export async function createModule() {
       default: false,
     }));
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
-  const shouldInstall = await getShouldInstall(argv, {type: 'module'});
+  const shouldInstall = await getShouldInstall(argv);
   const packageManager = await getPackageManager(argv, {root: directory});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;

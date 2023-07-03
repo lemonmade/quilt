@@ -56,23 +56,8 @@ export async function getCreateAsMonorepo(
 
 export async function getShouldInstall(
   argv: BaseArguments,
-  {type}: {type: 'app' | 'package' | 'module'},
 ) {
-  let shouldInstall: boolean;
-
-  if (argv['--install'] || argv['--yes']) {
-    shouldInstall = true;
-  } else if (argv['--no-install']) {
-    shouldInstall = false;
-  } else {
-    shouldInstall = await prompt({
-      type: 'confirm',
-      message: `Do you want to install dependencies for this ${type} after creating it?`,
-      initial: true,
-    });
-  }
-
-  return shouldInstall;
+  return !argv['--no-install'];
 }
 
 export async function getPackageManager(

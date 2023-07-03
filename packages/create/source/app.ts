@@ -65,7 +65,7 @@ export async function createApp() {
       default: template !== 'single-file',
     }));
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
-  const shouldInstall = await getShouldInstall(argv, {type: 'app'});
+  const shouldInstall = await getShouldInstall(argv);
   const packageManager = await getPackageManager(argv, {root: directory});
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
