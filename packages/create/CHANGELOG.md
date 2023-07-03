@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.65
+
+### Patch Changes
+
+- [`48f1ab06`](https://github.com/lemonmade/quilt/commit/48f1ab067f6875e2f101b711b00d8fad255a469d) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify create CLI
+
 ## 0.1.64
 
 ### Patch Changes

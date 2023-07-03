@@ -130,7 +130,7 @@ importers:
         specifier: ^4.20221111.1
         version: 4.20221111.1
       '@quilted/craft':
-        specifier: ^0.1.205
+        specifier: ^0.1.215
         version: link:../../packages/craft
       '@quilted/quilt':
         specifier: ^0.5.139

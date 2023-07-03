@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.1.55
+
+### Patch Changes
+
+- [`530da479`](https://github.com/lemonmade/quilt/commit/530da479415230c9e307f3c93f535a5839e3b2bd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix process.env.NODE_ENV replacement
+
+- Updated dependencies [[`530da479`](https://github.com/lemonmade/quilt/commit/530da479415230c9e307f3c93f535a5839e3b2bd)]:
+  - @quilted/craft@0.1.215
+
 ## 0.1.54
 
 ### Patch Changes
