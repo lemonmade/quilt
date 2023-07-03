@@ -54,9 +54,7 @@ export async function getCreateAsMonorepo(
   return createAsMonorepo;
 }
 
-export async function getShouldInstall(
-  argv: BaseArguments,
-) {
+export async function getShouldInstall(argv: BaseArguments) {
   return !argv['--no-install'];
 }
 
