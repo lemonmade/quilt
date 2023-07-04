@@ -12,10 +12,19 @@ import type {
 import {GraphQLFetchRequest} from './request.ts';
 import type {GraphQLHttpFetchOptions} from './fetch.ts';
 
+/**
+ * The context used by HTTP-based `GraphQLStreamingFetch` functions.
+ */
 export interface GraphQLHttpStreamingFetchContext {
+  /**
+   * The `Response` that contained the GraphQL result.
+   */
   response?: Response;
 }
 
+/**
+ * Options for creating a `GraphQLStreamingFetch` function.
+ */
 export interface GraphQLHttpStreamingFetchOptions
   extends GraphQLHttpFetchOptions {}
 
@@ -25,6 +34,31 @@ declare module '../types.ts' {
 
 const STREAMING_OPERATION_REGEX = /@(stream|defer)\b/i;
 
+/**
+ * Creates a function that can fetch GraphQL queries and mutations over HTTP,
+ * including responses streamed in multiple parts for `@defer` and `@stream`
+ * directives. This function does not do any caching; it does the bare minimum
+ * required to send GraphQL requests to a specific URL and return the parsed response.
+ *
+ * The resulting function returns both a `Promise` and an `AsyncIterator`. As
+ * incremental results are retrieved, they are pushed to the iterator. Once the
+ * query or mutation has fully resolved (there are no more active `@defer` or
+ * `@stream` directives), the iterator will be marked as done and the promise
+ * will be resolved with the final, combined GraphQL result.
+ *
+ * @example
+ * const fetchGraphQL = createGraphQLHttpStreamingFetch({
+ *   url: '/graphql',
+ * });
+ *
+ * const fetched = fetchGraphQL(`
+ *   query { my { name } }
+ * `);
+ *
+ * for await (const {data, errors, incremental} of fetched) {
+ *   // ...
+ * }
+ */
 export function createGraphQLHttpStreamingFetch<
   Extensions = Record<string, unknown>,
 >({
