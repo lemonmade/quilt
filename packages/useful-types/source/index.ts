@@ -1,3 +1,7 @@
+/**
+ * If `Union` has exactly `Size` members, resolves to `If`. Otherwise, resolves
+ * to `Else`.
+ */
 export type IfUnionSize<
   Union,
   Size extends number,
@@ -5,12 +9,20 @@ export type IfUnionSize<
   Else = false,
 > = TupleFromUnion<Union> extends {length: Size} ? If : Else;
 
+/**
+ * A helper that can prevent a particular use of a generic type parameter
+ * from being inferred as the resolved type.
+ */
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 
 type NonNullableKeys<T> = {
   [K in keyof T]-?: T[K] extends NonNullable<T[K]> ? K : never;
 }[keyof T];
 
+/**
+ * If all the fields of `Obj` can be `null` or `undefined`, resolves to `If`.
+ * Otherwise, resolves to `Else`.
+ */
 export type IfAllFieldsNullable<Obj, If, Else = never> = IfUnionSize<
   NonNullableKeys<Obj>,
   0,
@@ -18,6 +30,9 @@ export type IfAllFieldsNullable<Obj, If, Else = never> = IfUnionSize<
   Else
 >;
 
+/**
+ * If `Obj` has no keys, resolved to `If`. Otherwise, resolves to `Else`.
+ */
 export type IfEmptyObject<Obj, If, Else = never> = IfUnionSize<
   keyof Obj,
   0,

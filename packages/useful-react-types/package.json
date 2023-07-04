@@ -1,5 +1,6 @@
 {
   "name": "@quilted/useful-react-types",
+  "description": "A collection of useful TypeScript types for React projects",
   "type": "module",
   "version": "0.1.11",
   "repository": {
