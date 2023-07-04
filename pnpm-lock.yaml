@@ -321,7 +321,7 @@ importers:
         specifier: 0.2.1
         version: link:../eslint-config
       '@quilted/graphql-tools':
-        specifier: 0.1.2
+        specifier: 0.1.3
         version: link:../graphql-tools
       '@quilted/polyfills':
         specifier: 0.2.34
