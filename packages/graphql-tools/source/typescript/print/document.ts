@@ -333,6 +333,7 @@ function variablesExportForOperation(
           );
 
           property.optional = !unwrappedType.isNonNullable;
+          property.readonly = true;
 
           return property;
         }),
