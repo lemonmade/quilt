@@ -1,5 +1,6 @@
 {
   "name": "@quilted/graphql",
+  "description": "Tiny, type-safe helpers for using GraphQL",
   "type": "module",
   "version": "0.6.6",
   "license": "MIT",

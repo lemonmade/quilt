@@ -48,14 +48,25 @@ export interface GraphQLOperation<
 }
 
 /**
+ * A GraphQL operation source, with the types of the operation attached.
+ */
+export type GraphQLSource<
+  Data = unknown,
+  Variables = Record<string, unknown>,
+> = string & GraphQLOperationType<Data, Variables>;
+
+/**
  * Any of the basic options for expressing a GraphQL operation:
  *
  * - A `GraphQLOperation` object, providing the key details of a query or mutation
  * - A `DocumentNode` object, representing a parsed GraphQL query or mutation
  * - A `string` containing the source of a GraphQL query or mutation
  */
-export type GraphQLAnyOperation<Data, Variables> =
-  | string
+export type GraphQLAnyOperation<
+  Data = unknown,
+  Variables = Record<string, unknown>,
+> =
+  | GraphQLSource<Data, Variables>
   | GraphQLOperation<Data, Variables>
   | TypedQueryDocumentNode<Data, Variables>;
 
