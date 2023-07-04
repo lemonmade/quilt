@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.6.6
+
+### Patch Changes
+
+- [`cc688ff9`](https://github.com/lemonmade/quilt/commit/cc688ff9a67261705500b7ec2081169a072eef0a) Thanks [@lemonmade](https://github.com/lemonmade)! - Support GraphQL over GET
+
 ## 0.6.5
 
 ### Patch Changes

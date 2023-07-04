@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.1.3
+
+### Patch Changes
+
+- [`0a5e1036`](https://github.com/lemonmade/quilt/commit/0a5e10369e2687b967fdf36387f2c4c72e45b70e) Thanks [@lemonmade](https://github.com/lemonmade)! - Mark GraphQL variables as readonly
+
 ## 0.1.2
 
 ### Patch Changes
