@@ -1,6 +1,6 @@
-import {buildSchema} from 'graphql';
 import {
   TestGraphQL,
+  createGraphQLSchema,
   createGraphQLFiller,
   createGraphQLController,
   type GraphQLController,
@@ -8,6 +8,6 @@ import {
 
 import schema from '../graphql/schema.ts';
 
-export const fillGraphQL = createGraphQLFiller(buildSchema(schema));
+export const fillGraphQL = createGraphQLFiller(createGraphQLSchema(schema));
 
 export {createGraphQLController, TestGraphQL, type GraphQLController};

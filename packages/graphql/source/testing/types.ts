@@ -16,7 +16,10 @@ export interface GraphQLMockFunction<Data, Variables> {
    * (representing a successful result) or an `Error` object
    * (representing an error outside the operation execution).
    */
-  result: (request: {variables: Variables}) => Data | Error;
+  result: (request: {
+    variables: Variables;
+    signal?: AbortSignal;
+  }) => Data | Error | Promise<Data | Error>;
 }
 
 /**
@@ -34,7 +37,7 @@ export interface GraphQLMockObject<Data, Variables> {
    * or an `Error` object (representing an error outside the operation
    * execution).
    */
-  result: Data | Error;
+  result: Data | Error | Promise<Data | Error>;
 }
 
 /**

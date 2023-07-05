@@ -8,7 +8,7 @@ import {buildSchema} from 'graphql/utilities';
 
 export function createGraphQLSchema(
   source: string,
-  resolvers: Record<string, Record<string, any>>,
+  resolvers: Record<string, Record<string, any>> = {},
 ) {
   const schema = buildSchema(source);
 

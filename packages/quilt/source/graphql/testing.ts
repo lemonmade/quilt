@@ -1,8 +1,9 @@
 export {
   TestGraphQL,
+  createGraphQLSchema,
   createGraphQLFiller,
-  GraphQLController,
   createGraphQLController,
+  GraphQLController,
 } from '@quilted/react-graphql/testing';
 export type {
   GraphQLOperation,
@@ -25,4 +26,5 @@ export type {
   GraphQLFillerResolver,
   GraphQLFillerResolverContext,
   GraphQLFillerResolverMap,
+  GraphQLControllerRequest,
 } from '@quilted/react-graphql/testing';

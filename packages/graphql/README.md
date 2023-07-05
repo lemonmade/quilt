@@ -273,3 +273,5 @@ const result = await graphql(schema, 'query { me { name } }');
 ```
 
 ### Testing GraphQL-dependent code
+
+During testing, it can be useful to have a GraphQL fetcher that always returns specific results. Having this tool at your disposal lets you simulate a GraphQL-dependent UI in various states. This library helps you implement this pattern, while taking advantage of the type safety of GraphQL to ensure test results are always valid.

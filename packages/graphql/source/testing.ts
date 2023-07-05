@@ -25,8 +25,9 @@ export type {
 export {
   GraphQLController,
   createGraphQLController,
+  GraphQLControllerCompletedRequests,
 } from './testing/controller.ts';
-export type {GraphQLRequest} from './testing/controller.ts';
+export type {GraphQLControllerRequest} from './testing/controller.ts';
 export {
   createGraphQLFiller,
   type GraphQLFillerOptions,
@@ -35,3 +36,5 @@ export {
   type GraphQLFillerResolverContext,
   type GraphQLFillerResolverMap,
 } from './testing/filler.ts';
+
+export {createGraphQLSchema} from './schema.ts';
