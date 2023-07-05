@@ -239,12 +239,14 @@ const Query = createQueryResolver({
 });
 ```
 
-To actually run a GraphQL query, you need to include the resolvers created with these helpers in a GraphQL server. Most GraphQL servers, including [the reference JavaScript implementation](https://graphql.org/graphql-js/) and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server), provide a way to create a GraphQL server with these resolvers. For example, here’s how you would create a GraphQL server from these resolvers using [`@graphql-tools/schema`](https://the-guild.dev/graphql/tools/docs/generate-schema):
+To actually run a GraphQL query, you need to include the resolvers created with these helpers in a GraphQL server. Most GraphQL servers, including [the reference JavaScript implementation](https://graphql.org/graphql-js/) and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server), provide a way to create a GraphQL server with these resolvers. For convenience, this library provides a `createGraphQLSchema()` helper that can create a GraphQL schema object from your resolvers, which you can then use to execute GraphQL queries with the `graphql` library:
 
 ```tsx
 import {graphql} from 'graphql';
-import {makeExecutableSchema} from '@graphql-tools/schema';
-import {createGraphQLResolverBuilder} from '@quilted/graphql/server';
+import {
+  createGraphQLSchema,
+  createGraphQLResolverBuilder,
+} from '@quilted/graphql/server';
 
 // Assumes we are using `@quilted/graphql-tools`, which gives us both
 // the schema source and type definitions as exports from the schema file
@@ -265,10 +267,7 @@ const Mutation = createMutationResolver({
   },
 });
 
-const schema = makeExecutableSchema({
-  typeDefs: schemaSource,
-  resolvers: {Query, Mutation},
-});
+const schema = createGraphQLSchema(schemaSource, {Query, Mutation});
 
 const result = await graphql(schema, 'query { me { name } }');
 ```

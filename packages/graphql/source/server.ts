@@ -7,3 +7,4 @@ export type {
   GraphQLDefaultObjectReturnResult,
 } from './server/types.ts';
 export {createGraphQLResolverBuilder} from './server/server.ts';
+export {createGraphQLSchema} from './server/schema.ts';
