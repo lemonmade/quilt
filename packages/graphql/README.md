@@ -1,6 +1,6 @@
 # `@quilted/graphql`
 
-Tiny, type-safe helpers for using GraphQL. This includes helpers for fetching GraphQL queries and mutations, and utilities for testing projects that depend on GraphQL results.
+Tiny, type-safe helpers for using GraphQL. This includes helpers for fetching GraphQL queries and mutations, functions to help you create GraphQL resolvers for your server, and utilities for testing projects that depend on GraphQL results.
 
 To provide better integration for GraphQL in your build tools, combine this with [`@quilted/graphql-tools`](../graphql-tools/), or use [Quilt as a framework](../../documentation/features/graphql.md).
 
@@ -111,6 +111,166 @@ const query = graphql`
 for await (const {data, errors, incremental} of fetchGraphQL(query)) {
   // ...
 }
+```
+
+### Building type-safe GraphQL resolvers
+
+[GraphQL resolvers](https://graphql.org/learn/execution/#root-fields-resolvers) are functions that return the data for a particular type in a GraphQL schema. Writing these resolvers with the benefits of type-safe can be tricky, so this library provides a set of “resolver builders” to make this process easier.
+
+To start, you need a type that describes your GraphQL schema. Quilt expects a schema to be represented as a single layer of nested objects, matching the types as named in your GraphQL schema. Fields on these types are expected to be functions that take the variable type for that field, and return the data for that field. For example, given the following GraphQL schema:
+
+```graphql
+type Query {
+  me: Person!
+}
+
+type Mutation {
+  greet(name: String!): String!
+}
+
+type Person {
+  name: String!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+```
+
+Quilt expects a type like this:
+
+```tsx
+interface Schema {
+  Query: {
+    me(variables: Record<string, never>): Person;
+  };
+  Mutation: {
+    greet(variables: {readonly name: string}): string;
+  };
+  Person: {
+    name(variables: Record<string, never>): string;
+  };
+}
+```
+
+If you use [`@quilted/graphql-tools` to generate type definitions](../graphql-tools/README.md#typescript), you can have Quilt create this type for you automatically by importing from a `.graphql` file:
+
+```tsx
+import type {Schema} from './schema.graphql';
+```
+
+Once you have this type, you can use the `createGraphQLResolverBuilder()` helper provided by this library. This helper returns a collection of functions that are used to create GraphQL resolver objects matching the schema. In the example above, the resolvers for the schema could be written like this:
+
+```tsx
+import {createGraphQLResolverBuilder} from '@quilted/graphql/server';
+
+import type {Schema} from './schema.graphql';
+
+const {createQueryResolver, createMutationResolver} =
+  createGraphQLResolverBuilder<Schema>();
+
+const Query = createQueryResolver({
+  me() {
+    return {name: 'Winston'};
+  },
+});
+
+const Mutation = createMutationResolver({
+  greet(_, {name}) {
+    return `Hello, ${name}!`;
+  },
+});
+```
+
+Commonly, you will want to have all fields in your schema that return a particular type to return some base object. That base object is then used by the resolver for that type to construct the final return value. You can indicate these type mappings by providing a second type argument to `createGraphQLResolverBuilder()`. For example, if we wanted all fields returning a `Person` to return an object that the `Person` resolver will use to construct its GraphQL fields, we could write the following:
+
+```tsx
+import {createGraphQLResolverBuilder} from '@quilted/graphql/server';
+
+import type {Schema} from './schema.graphql';
+
+interface GraphQLResolverValues {
+  Person: {firstName: string; lastName?: string};
+}
+
+const {createResolver, createQueryResolver} = createGraphQLResolverBuilder<
+  Schema,
+  GraphQLResolverValues
+>();
+
+const Query = createQueryResolver({
+  me() {
+    return {firstName: 'Winston'};
+  },
+});
+
+const Person = createResolver('Person', {
+  name({firstName, lastName}) {
+    return lastName ? `${firstName} ${lastName}` : firstName;
+  },
+});
+```
+
+GraphQL servers also commonly provide “context”, values shared throughout all resolvers in the schema. You can indicate the type of the context argument by providing a third type argument to `createGraphQLResolverBuilder()`. For example, if we will provide a `database` value through context, we could expose it to our resolvers like this:
+
+```tsx
+import {createGraphQLResolverBuilder} from '@quilted/graphql/server';
+
+import type {Schema} from './schema.graphql';
+
+interface GraphQLContext {
+  database: Database;
+}
+
+const {createQueryResolver} = createGraphQLResolverBuilder<
+  Schema,
+  {},
+  GraphQLContext
+>();
+
+const Query = createQueryResolver({
+  // First argument is the "base" object, which is usually ignored for query fields
+  // Second argument are the variables, which we don’t have for this field
+  async me(_, __, {database}) {
+    const me = await database.user.findFirst();
+    return me;
+  },
+});
+```
+
+To actually run a GraphQL query, you need to include the resolvers created with these helpers in a GraphQL server. Most GraphQL servers, including [the reference JavaScript implementation](https://graphql.org/graphql-js/) and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server), provide a way to create a GraphQL server with these resolvers. For example, here’s how you would create a GraphQL server from these resolvers using [`@graphql-tools/schema`](https://the-guild.dev/graphql/tools/docs/generate-schema):
+
+```tsx
+import {graphql} from 'graphql';
+import {makeExecutableSchema} from '@graphql-tools/schema';
+import {createGraphQLResolverBuilder} from '@quilted/graphql/server';
+
+// Assumes we are using `@quilted/graphql-tools`, which gives us both
+// the schema source and type definitions as exports from the schema file
+import schemaSource, {type Schema} from './schema.graphql';
+
+const {createQueryResolver, createMutationResolver} =
+  createGraphQLResolverBuilder<Schema>();
+
+const Query = createQueryResolver({
+  me() {
+    return {name: 'Winston'};
+  },
+});
+
+const Mutation = createMutationResolver({
+  greet(_, {name}) {
+    return `Hello, ${name}!`;
+  },
+});
+
+const schema = makeExecutableSchema({
+  typeDefs: schemaSource,
+  resolvers: {Query, Mutation},
+});
+
+const result = await graphql(schema, 'query { me { name } }');
 ```
 
 ### Testing GraphQL-dependent code
