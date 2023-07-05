@@ -181,14 +181,17 @@ export function createGraphQLHttpStreamingFetch<
             ? explicitHeaders(resolvedOperation)
             : explicitHeaders;
 
-        const graphqlRequest = new GraphQLFetchRequest(resolvedUrl, {
-          method: resolvedMethod,
-          headers,
-          credentials,
-          signal: options?.signal,
-          operation: resolvedOperation,
-          variables,
-        });
+        const graphqlRequest = new GraphQLFetchRequest(
+          resolvedUrl,
+          resolvedOperation,
+          {
+            variables,
+            method: resolvedMethod,
+            headers,
+            credentials,
+            signal: options?.signal,
+          },
+        );
 
         if (STREAMING_OPERATION_REGEX.test(resolvedOperation.source)) {
           graphqlRequest.headers.append('Accept', 'multipart/mixed');

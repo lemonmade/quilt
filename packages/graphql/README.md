@@ -87,6 +87,23 @@ try {
 }
 ```
 
+If you want to take more control over the HTTP request, this library also provides a helpful subclass of the built-in [`Request` class](https://developer.mozilla.org/en-US/docs/Web/API/Request) that will automatically serialize GraphQL operations into the body of the request. You can use instances of this object with the global `fetch()` API, but remember that you will need to parse the response yourself.
+
+```tsx
+import {GraphQLFetchRequest} from '@quilted/graphql';
+
+const request = new GraphQLFetchRequest(
+  '/graphql',
+  'query MyQuery($name: String!) { ... }',
+  {
+    variables: {name: 'Winston'},
+  },
+);
+
+const response = await fetch(request);
+const result = await response.json();
+```
+
 Some GraphQL servers support streaming results for the [`@defer` and `@stream` directives](https://graphql.org/blog/2020-12-08-improving-latency-with-defer-and-stream-directives/). When an operation contains these directives, partial results are streamed to the client as they are available, and must be combined together to form a final result. To create a function that lets you fetch data from an HTTP endpoint like this, use the `createGraphQLStreamingHttpFetch()` function:
 
 ```tsx

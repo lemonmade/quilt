@@ -111,14 +111,17 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
         ? explicitHeaders(resolvedOperation)
         : explicitHeaders;
 
-    const graphqlRequest = new GraphQLFetchRequest(resolvedUrl, {
-      method: resolvedMethod,
-      headers,
-      credentials,
-      signal: options?.signal,
-      operation: resolvedOperation,
-      variables,
-    });
+    const graphqlRequest = new GraphQLFetchRequest(
+      resolvedUrl,
+      resolvedOperation,
+      {
+        variables,
+        method: resolvedMethod,
+        headers,
+        credentials,
+        signal: options?.signal,
+      },
+    );
 
     const request = customizeRequest
       ? await customizeRequest(graphqlRequest)
