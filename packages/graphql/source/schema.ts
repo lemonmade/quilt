@@ -3,13 +3,14 @@ import {
   isUnionType,
   isObjectType,
   isInterfaceType,
+  type GraphQLSchema,
 } from 'graphql';
 import {buildSchema} from 'graphql/utilities';
 
 export function createGraphQLSchema(
   source: string,
   resolvers: Record<string, Record<string, any>> = {},
-) {
+): GraphQLSchema {
   const schema = buildSchema(source);
 
   for (const typeName in resolvers) {

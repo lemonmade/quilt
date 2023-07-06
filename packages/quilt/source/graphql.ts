@@ -1,23 +1,23 @@
 export type {
-  GraphQLData,
   GraphQLResult,
-  GraphQLSource,
-  GraphQLVariables,
-  GraphQLOperation,
-  GraphQLOperationType,
-  GraphQLAnyOperation,
-  GraphQLDeepPartialData,
-  GraphQLError,
   GraphQLFetch,
+  GraphQLFetchContext,
   GraphQLStreamingFetch,
   GraphQLStreamingFetchResult,
   GraphQLStreamingResult,
   GraphQLFetchRequestInit,
-  GraphQLFetchContext,
+  GraphQLSource,
+  GraphQLData,
+  GraphQLVariables,
+  GraphQLError,
+  GraphQLOperation,
+  GraphQLAnyOperation,
+  GraphQLOperationType,
+  GraphQLDeepPartialData,
   GraphQLHttpFetchContext,
   GraphQLHttpFetchOptions,
-  GraphQLVariableOptions,
   PickGraphQLType,
+  GraphQLVariableOptions,
 } from '@quilted/graphql';
 export {
   gql,
@@ -26,6 +26,4 @@ export {
   createGraphQLHttpFetch,
   createGraphQLHttpStreamingFetch,
 } from '@quilted/graphql';
-
-export {GraphQLContext} from './context.tsx';
-export {useGraphQLFetch} from './hooks.ts';
+export {GraphQLContext, useGraphQLFetch} from '@quilted/react-graphql';

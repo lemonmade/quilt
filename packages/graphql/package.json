@@ -28,6 +28,13 @@
       "import": "./build/esm/ast.mjs",
       "require": "./build/cjs/ast.cjs"
     },
+    "./server": {
+      "types": "./build/typescript/server.d.ts",
+      "quilt:source": "./source/server.ts",
+      "quilt:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs",
+      "require": "./build/cjs/server.cjs"
+    },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
       "quilt:source": "./source/testing.ts",
@@ -41,6 +48,9 @@
     "*": {
       "ast": [
         "./build/typescript/ast.d.ts"
+      ],
+      "server": [
+        "./build/typescript/server.d.ts"
       ],
       "testing": [
         "./build/typescript/testing.d.ts"

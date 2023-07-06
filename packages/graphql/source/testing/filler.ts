@@ -177,7 +177,9 @@ export function createGraphQLFiller(
       | GraphQLDeepPartialData<Data>
       | ((
           details: GraphQLFillerDetails<Variables>,
-        ) => GraphQLDeepPartialData<Data>),
+        ) =>
+          | GraphQLDeepPartialData<Data>
+          | Promise<GraphQLDeepPartialData<Data>>),
   ): GraphQLMockFunction<Data, Variables> {
     const {document} = normalizeOperation(operation as any);
     const operationNode = getFirstOperationFromDocument(document);
@@ -198,17 +200,23 @@ export function createGraphQLFiller(
           ? partialData({variables: variables ?? ({} as any)})
           : partialData) ?? ({} as any);
 
-      return fillObject(
-        partial,
-        rootType,
-        operationNode.selectionSet.selections,
-        {
-          random,
-          schema,
-          resolvers,
-          document,
-        },
-      ) as any;
+      function handleData(partialData: any) {
+        return fillObject(
+          partialData,
+          rootType,
+          operationNode!.selectionSet.selections,
+          {
+            random,
+            schema,
+            resolvers,
+            document,
+          },
+        ) as any;
+      }
+
+      return typeof partial.then === 'function'
+        ? partial.then(handleData)
+        : handleData(partial);
     };
 
     return {result, operation};

@@ -44,7 +44,7 @@ export interface GraphQLOperation<
    * source in this property so that fetches of this document contain the
    * smallest possible payload.
    */
-  source: string;
+  source: GraphQLSource<Data, Variables>;
 }
 
 /**

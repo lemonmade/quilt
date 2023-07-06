@@ -68,8 +68,10 @@ interface GraphQLControllerResolveAllOptions {
  * function, which can produce mocks that automatically fill in queries
  * and mutations with data matching the GraphQL schema.
  */
-export function createGraphQLController(...mocks: GraphQLMock<any, any>[]) {
-  return new GraphQLController({mocks});
+export function createGraphQLController(
+  mocks: Iterable<GraphQLMock<any, any>>,
+) {
+  return new GraphQLController(mocks);
 }
 
 /**
@@ -87,7 +89,7 @@ export class GraphQLController {
   private readonly mocks = new Map<string, GraphQLMock<any, any>>();
   private readonly pending = new Map<string, Set<Promise<any>>>();
 
-  constructor({mocks}: {mocks: GraphQLMock<any, any>[]}) {
+  constructor(mocks: Iterable<GraphQLMock<any, any>>) {
     this.mock(...mocks);
   }
 

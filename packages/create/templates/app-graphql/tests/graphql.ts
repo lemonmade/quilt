@@ -6,8 +6,9 @@ import {
   type GraphQLController,
 } from '@quilted/quilt/graphql/testing';
 
-import schema from '../graphql/schema.ts';
+import schemaSource from '../graphql/schema.ts';
 
-export const fillGraphQL = createGraphQLFiller(createGraphQLSchema(schema));
+export const schema = createGraphQLSchema(schemaSource);
+export const fillGraphQL = createGraphQLFiller(schema);
 
 export {createGraphQLController, TestGraphQL, type GraphQLController};

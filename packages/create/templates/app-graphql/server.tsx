@@ -1,17 +1,16 @@
 import '@quilted/quilt/global';
 
-import {type GraphQLFetch, type GraphQLData} from '@quilted/quilt';
 import {createRequestRouter, json} from '@quilted/quilt/request-router';
 import {createServerRender} from '@quilted/quilt/server';
+import {type GraphQLFetch} from '@quilted/quilt/graphql';
 import {createBrowserAssets} from '@quilted/quilt/magic/assets';
-
-import {performGraphQLOperation} from './server/graphql.ts';
 
 const router = createRequestRouter();
 
 // GraphQL API, called from the client
 router.post('/api/graphql', async (request) => {
-  const {query, operationName, variables} = await request.json();
+  const [{performGraphQLOperation}, {query, operationName, variables}] =
+    await Promise.all([import('./server/graphql.ts'), request.json()]);
 
   const result = await performGraphQLOperation(query, {
     variables,
@@ -25,13 +24,14 @@ router.post('/api/graphql', async (request) => {
 router.get(
   createServerRender(
     async () => {
-      const {default: App} = await import('./App.tsx');
+      const [{default: App}, {performGraphQLOperation}] = await Promise.all([
+        import('./App.tsx'),
+        import('./server/graphql.ts'),
+      ]);
 
       // GraphQL API, called during server rendering
       const fetchGraphQL: GraphQLFetch = async (operation, variables) => {
-        type Data = GraphQLData<typeof operation>;
-
-        const result = await performGraphQLOperation<Data>(operation.source, {
+        const result = await performGraphQLOperation(operation.source, {
           variables,
           operationName: operation.name,
         });

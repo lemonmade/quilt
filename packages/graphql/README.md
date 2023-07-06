@@ -256,7 +256,7 @@ const Query = createQueryResolver({
 });
 ```
 
-To actually run a GraphQL query, you need to include the resolvers created with these helpers in a GraphQL server. Most GraphQL servers, including [the reference JavaScript implementation](https://graphql.org/graphql-js/) and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server), provide a way to create a GraphQL server with these resolvers. For convenience, this library provides a `createGraphQLSchema()` helper that can create a GraphQL schema object from your resolvers, which you can then use to execute GraphQL queries with the `graphql` library:
+To actually run a GraphQL query, you need to include the resolvers created with these helpers in a GraphQL server. Most GraphQL servers, including [the reference JavaScript implementation](https://graphql.org/graphql-js/) and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server), need a GraphQL schema to execute a query or mutation. For convenience, this library provides a `createGraphQLSchema()` helper that can create a GraphQL schema object from your resolvers:
 
 ```tsx
 import {graphql} from 'graphql';
@@ -286,9 +286,165 @@ const Mutation = createMutationResolver({
 
 const schema = createGraphQLSchema(schemaSource, {Query, Mutation});
 
-const result = await graphql(schema, 'query { me { name } }');
+const result = await execute({
+  schema,
+  source: 'query { me { name } }',
+});
 ```
 
 ### Testing GraphQL-dependent code
 
 During testing, it can be useful to have a GraphQL fetcher that always returns specific results. Having this tool at your disposal lets you simulate a GraphQL-dependent UI in various states. This library helps you implement this pattern, while taking advantage of the type safety of GraphQL to ensure test results are always valid.
+
+There are two main parts to these GraphQL testing utilities: a GraphQL “controller”, which can fetch mock GraphQL results, and GraphQL “fillers”, which can provide type-safe mocked results for individual GraphQL queries and mutations.
+
+To create a controller, use the `createGraphQLController()` function. This function accepts one or more GraphQL “mocks”: objects that contain an `operation` key, detailing the GraphQL operation this mock should be used for, and a `result` key. The result can either be an object, or a function that returns an object, or a function that returns a promise for an object. This `result` will be used to fulfill a GraphQL operation matching the `operation` key.
+
+To demonstrate, we’ll assume you have a GraphQL schema that looks like this:
+
+```graphql
+type Person {
+  name: String!
+  age: Int!
+}
+
+type Query {
+  me: Person!
+}
+
+schema {
+  query: Query
+}
+```
+
+We could create a GraphQL controller with a hand-written mock:
+
+```tsx
+import {graphql, createGraphQLController} from '@quilted/graphql/testing';
+
+// `graphql` is optional, but it can provide better syntax
+// highlighting in some editors.
+const query = graphql`
+  query Me {
+    me {
+      name
+      age
+    }
+  }
+`;
+
+const controller = createGraphQLController();
+
+controller.mock({
+  operation: query,
+  result() {
+    return {
+      me: {name: 'Winston', age: 9},
+    };
+  },
+});
+```
+
+And you can then use this controller to fetch results by using its `fetch()` method:
+
+```tsx
+const result = await controller.fetch(query);
+// {data: {me: {name: 'Winston', age: 9}}}
+```
+
+We have a controller, but we haven’t done anything particularly useful yet — we had to know the exact shape of our GraphQL queries, and mock all the fields manually. This is where GraphQL “fillers” come in: they let you create mocks for GraphQL queries that will automatically fill in the correct shape of the query.
+
+To create GraphQL fillers, we need a GraphQL schema to describe the available types. If you use [`@quilted/graphql-tools`](../graphql-tools/README.md#typescript), you can import this schema’s TypeScript type and schema source, which can be used to create a GraphQL schema (using the `createGraphQLSchema()` helper) and filler function (using the `createGraphQLFiller()` helper):
+
+```tsx
+import {
+  createGraphQLSchema,
+  createGraphQLFiller,
+} from '@quilted/graphql/testing';
+
+import schemaSource from './schema.graphql';
+
+const schema = createGraphQLSchema(schemaSource);
+const fillGraphQL = createGraphQLFiller(schema);
+```
+
+Now, when we create GraphQL controllers, we can use the `fillGraphQL` function to create fillers for our queries and mutations. If we provide just a GraphQL operation to this function, it will create a GraphQL mock that fills in data for the query, respecting the nullability of your GraphQL schema and the types of your fields:
+
+```tsx
+import {createGraphQLController} from '@quilted/graphql/testing';
+
+const controller = createGraphQLController();
+
+const query = `
+  query Me {
+    me {
+      name
+      age
+    }
+  }
+`;
+
+controller.mock(fillGraphQL(query));
+
+const result = await controller.fetch(query);
+// {data: {me: {name: 'random string', age: 123}}}
+```
+
+When writing tests, it’s common to want to set a specific subset of fields, but allow other fields outside of the area under the test to be random values. You can do this by providing a subset of the GraphQL operation as the second argument to `fillGraphQL()`:
+
+```tsx
+import {createGraphQLController} from '@quilted/graphql/testing';
+
+const controller = createGraphQLController();
+
+const query = `
+  query Me {
+    me {
+      name
+      age
+    }
+  }
+`;
+
+controller.mock(fillGraphQL(query, {me: {name: 'Winston'}}));
+
+const result = await controller.fetch(query);
+// {data: {me: {name: 'Winston', age: 123}}}
+```
+
+When you use [`@quilted/graphql-tools`](../graphql-tools/README.md#typescript) to import GraphQL queries and mutations, TypeScript will ensure you only provide matching fields in your mock data:
+
+```tsx
+import {createGraphQLController} from '@quilted/graphql/testing';
+
+import meQuery from './MeQuery.graphql';
+
+const controller = createGraphQLController();
+
+controller.mock(fillGraphQL(meQuery, {me: {age: '123'}}));
+// Type error: `me.age` must be a number
+```
+
+The automatically filled data will match the shape of your operation, but otherwise will be randomly generated using the [chance library](https://chancejs.com). If you have specific types that always return data in a particular shape (such as [custom scalars](https://graphql.org/learn/schema/)), you can provide default value creators for those types when calling `createGraphQLFiller()`:
+
+```tsx
+import {
+  createGraphQLSchema,
+  createGraphQLFiller,
+} from '@quilted/graphql/testing';
+
+import schemaSource from './schema.graphql';
+
+const schema = createGraphQLSchema(schemaSource);
+const fillGraphQL = createGraphQLFiller(schema, {
+  resolvers: {
+    // For convenience, the Chance object is provided for you to generate
+    // random values matching your custom data shape
+    Date: ({random}) => random.date().toISOString(),
+
+    // This overrides the default `ID` mock to provide ids in a consistent shape,
+    // here using a gid pattern.
+    ID: ({random, parent}) => `gid://my-app/${parent.name}/${random.integer()}`,
+  },
+});
+```

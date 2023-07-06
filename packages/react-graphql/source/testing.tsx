@@ -2,6 +2,8 @@ import {useMemo} from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {
+  gql,
+  graphql,
   createGraphQLSchema,
   createGraphQLController,
   createGraphQLFiller,
@@ -38,6 +40,8 @@ export type {
 } from '@quilted/graphql';
 
 export {
+  gql,
+  graphql,
   createGraphQLSchema,
   createGraphQLFiller,
   createGraphQLController,
