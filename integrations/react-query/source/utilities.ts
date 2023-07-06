@@ -1,7 +1,7 @@
 import {
   type GraphQLResult,
   type GraphQLError as GraphQLErrorType,
-} from '@quilted/quilt';
+} from '@quilted/quilt/graphql';
 
 class GraphQLError extends Error {
   readonly path?: GraphQLErrorType['path'];

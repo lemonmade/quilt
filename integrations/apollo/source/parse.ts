@@ -1,6 +1,6 @@
-import {type GraphQLOperation} from '@quilted/quilt';
-import {type TypedDocumentNode} from '@apollo/client';
 import {parse} from 'graphql';
+import {type GraphQLOperation} from '@quilted/quilt/graphql';
+import {type TypedDocumentNode} from '@apollo/client';
 
 export function parseDocument<Data, Variables>({
   source,
