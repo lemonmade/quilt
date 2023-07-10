@@ -1,4 +1,5 @@
 import {
+  print,
   parse,
   isNonNullType,
   isListType,
@@ -17,9 +18,10 @@ import type {
   GraphQLNamedType,
   GraphQLAbstractType,
   GraphQLCompositeType,
+  TypedQueryDocumentNode,
 } from 'graphql';
 
-import type {GraphQLOperation} from './types.ts';
+import type {GraphQLAnyOperation, GraphQLOperation} from './types.ts';
 
 export class InvalidSelectionError extends Error {
   constructor(readonly type: GraphQLCompositeType, readonly field: FieldNode) {
@@ -205,20 +207,32 @@ export function getSelectionTypeMap(
   return typeMap;
 }
 
-export function normalizeOperation(
-  operation: string | GraphQLOperation<any, any> | DocumentNode,
-) {
+export function normalizeOperation<Data = unknown, Variables = unknown>(
+  operation: GraphQLAnyOperation<Data, Variables>,
+): GraphQLOperation<Data, Variables> & {
+  document: TypedQueryDocumentNode<Data, Variables>;
+} {
   if (typeof operation === 'string') {
-    const document = parse(operation);
-    return {document, name: getFirstOperationNameFromDocument(document)};
-  } else if ('source' in operation) {
-    const document = parse(operation.source);
+    const document = parse(operation) as any;
     return {
+      id: operation,
+      source: operation,
+      name: getFirstOperationNameFromDocument(document),
+      document,
+    };
+  } else if ('source' in operation) {
+    const document = parse(operation.source) as any;
+    return {
+      ...operation,
       document,
       name: operation.name ?? getFirstOperationNameFromDocument(document),
     };
   } else {
+    const source = operation.loc?.source.body ?? print(operation);
+
     return {
+      id: source,
+      source,
       document: operation,
       name: getFirstOperationNameFromDocument(operation),
     };
@@ -232,15 +246,5 @@ export function getFirstOperationFromDocument(document: DocumentNode) {
 }
 
 function getFirstOperationNameFromDocument(document: DocumentNode) {
-  const operation = getFirstOperationFromDocument(document);
-
-  if (operation?.name?.value == null) {
-    throw new Error(
-      `No named operation found in document ${
-        document.loc?.source.body ?? JSON.stringify(document, null, 2)
-      }`,
-    );
-  }
-
-  return operation.name.value;
+  return getFirstOperationFromDocument(document)?.name?.value;
 }

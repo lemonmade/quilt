@@ -1,9 +1,10 @@
-import type {TypedQueryDocumentNode} from 'graphql';
+import {type TypedQueryDocumentNode} from 'graphql';
 
 import {normalizeOperation} from '../ast.ts';
 import type {
   GraphQLAnyOperation,
-  GraphQLFetch,
+  GraphQLFetchContext,
+  GraphQLOperation,
   GraphQLResult,
 } from '../types.ts';
 
@@ -12,12 +13,8 @@ import type {GraphQLMock} from './types.ts';
 /**
  * A single GraphQL request managed by the GraphQL controller.
  */
-export interface GraphQLControllerRequest<Data, Variables> {
-  /**
-   * The name of the operation being performed.
-   */
-  name: string;
-
+export interface GraphQLControllerRequest<Data, Variables>
+  extends GraphQLOperation<Data, Variables> {
   /**
    * The parsed GraphQL document node for this request.
    */
@@ -86,8 +83,13 @@ export class GraphQLController {
    */
   readonly completed = new GraphQLControllerCompletedRequests();
 
-  private readonly mocks = new Map<string, GraphQLMock<any, any>>();
-  private readonly pending = new Map<string, Set<Promise<any>>>();
+  private readonly mocks: (Pick<GraphQLMock<any, any>, 'result'> & {
+    operation: GraphQLOperation<any, any>;
+  })[] = [];
+  private readonly pending = new Set<{
+    request: GraphQLControllerRequest<any, any>;
+    promise: Promise<any>;
+  }>();
 
   constructor(mocks?: Iterable<GraphQLMock<any, any>>) {
     if (mocks) this.mock(...mocks);
@@ -97,9 +99,11 @@ export class GraphQLController {
    * Provides additional mock responses for this controller.
    */
   mock(...mocks: GraphQLMock<any, any>[]) {
-    for (const mock of mocks) {
-      const {name} = normalizeOperation(mock.operation);
-      this.mocks.set(name, mock);
+    for (const {operation, result} of mocks) {
+      this.mocks.unshift({
+        operation: normalizeOperation(operation),
+        result,
+      });
     }
 
     return this;
@@ -116,13 +120,29 @@ export class GraphQLController {
     operation,
     untilEmpty = true,
   }: GraphQLControllerResolveAllOptions = {}) {
-    let matchingPending = extractPendingOperations(this.pending, operation);
+    const normalizedOperation = operation && normalizeOperation(operation);
+
+    const getPendingRequests = () => {
+      const pending: Promise<void>[] = [];
+
+      for (const {request, promise} of this.pending) {
+        if (
+          normalizedOperation == null ||
+          request.id === normalizedOperation.id ||
+          request.source === normalizedOperation.source
+        ) {
+          pending.push(promise);
+        }
+      }
+
+      return pending;
+    };
+
+    let matchingPending = getPendingRequests();
 
     do {
       await Promise.all(matchingPending);
-      matchingPending = untilEmpty
-        ? extractPendingOperations(this.pending, operation)
-        : [];
+      matchingPending = untilEmpty ? getPendingRequests() : [];
     } while (matchingPending.length > 0);
   }
 
@@ -130,29 +150,32 @@ export class GraphQLController {
    * Performs a GraphQL requests against the current mocks registered
    * with this controller.
    */
-  fetch: GraphQLFetch = <Data, Variables>(...args: [any, any, any]) =>
-    this.run<Data, Variables>(...args);
-
-  /**
-   * Performs a GraphQL requests against the current mocks registered
-   * with this controller.
-   */
-  run: GraphQLFetch = <Data, Variables>(
+  fetch = <Data, Variables>(
     operation: GraphQLAnyOperation<Data, Variables>,
     {variables, signal}: {variables?: Variables; signal?: AbortSignal} = {},
+    _?: GraphQLFetchContext,
   ) => {
-    const {name, document} = normalizeOperation(operation);
-    const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.get(name);
+    const normalizedOperation = normalizeOperation(operation);
+    const request: GraphQLControllerRequest<Data, Variables> = {
+      ...normalizedOperation,
+      variables: variables ?? ({} as any),
+    };
+
+    const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.find(
+      (mock) => {
+        return (
+          mock.operation.id === normalizedOperation.id ||
+          mock.operation.source === normalizedOperation.source
+        );
+      },
+    );
 
     if (mock == null) {
-      throw new Error(`No mock provided for operation ${JSON.stringify(name)}`);
-    }
-
-    let pending = this.pending.get(name);
-
-    if (pending == null) {
-      pending = new Set();
-      this.pending.set(name, pending);
+      throw new Error(
+        `No mock provided for operation ${JSON.stringify(
+          normalizedOperation.name ?? normalizedOperation.id,
+        )}`,
+      );
     }
 
     // eslint-disable-next-line no-async-promise-executor
@@ -177,22 +200,23 @@ export class GraphQLController {
 
       resolve(response);
     }).then((result) => {
-      pending!.delete(promise);
-      if (pending!.size === 0) this.pending.delete(name);
-
-      this.completed.push({
-        name,
-        variables,
-        document: document as any,
-      });
+      this.pending.delete(pendingRequest);
+      this.completed.push(request);
 
       return result;
     });
 
-    pending.add(promise);
+    const pendingRequest = {request, promise};
+    this.pending.add(pendingRequest);
 
     return promise;
   };
+
+  /**
+   * Performs a GraphQL requests against the current mocks registered
+   * with this controller.
+   */
+  run = this.fetch;
 }
 
 /**
@@ -201,7 +225,7 @@ export class GraphQLController {
 export class GraphQLControllerCompletedRequests {
   private requests: GraphQLControllerRequest<unknown, unknown>[] = [];
 
-  constructor(requests?: GraphQLControllerRequest<unknown, unknown>[]) {
+  constructor(requests?: GraphQLControllerRequest<any, any>[]) {
     this.requests = requests ? [...requests] : [];
   }
 
@@ -212,7 +236,7 @@ export class GraphQLControllerCompletedRequests {
   /**
    * @internal
    */
-  push(...requests: GraphQLControllerRequest<unknown, unknown>[]) {
+  push(...requests: GraphQLControllerRequest<any, any>[]) {
     this.requests.push(...requests);
   }
 
@@ -259,16 +283,4 @@ export class GraphQLControllerCompletedRequests {
       ? this.requests.filter((request) => request.name === name)
       : this.requests;
   }
-}
-
-function extractPendingOperations(
-  pending: Map<string, Set<Promise<any>>>,
-  operation?: GraphQLAnyOperation<any, any>,
-) {
-  if (operation == null) {
-    return [...pending.values()].flatMap((pending) => [...pending]);
-  }
-
-  const {name} = normalizeOperation(operation);
-  return [...(pending.get(name) ?? [])];
 }
