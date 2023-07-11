@@ -31,34 +31,88 @@ import type {GraphQLDeepPartialData, GraphQLAnyOperation} from '../types.ts';
 
 import type {GraphQLMockFunction} from './types.ts';
 
+/**
+ * The context provided to a function for resolving a default
+ * value of a given GraphQL field.
+ */
 export interface GraphQLFillerResolverContext {
+  /**
+   * The GraphQL type of the field.
+   */
   readonly type: GraphQLOutputType;
+
+  /**
+   * The parent object on which this field is being resolved.
+   */
   readonly parent: GraphQLObjectType;
+
+  /**
+   * The name of the field being resolved.
+   */
   readonly field: string;
+
+  /**
+   * A `chance` instance that can be used to generate random data.
+   * @see https://chancejs.com
+   */
   readonly random: Chance.Chance;
 }
 
+/**
+ * A function that returns GraphQL results for a given GraphQL
+ * field.
+ */
 export type GraphQLFillerResolver = (
-  details: GraphQLFillerResolverContext,
+  context: GraphQLFillerResolverContext,
 ) => any;
 
+/**
+ * A map of GraphQL type name to a function that provides default
+ * values for that type.
+ */
 export interface GraphQLFillerResolverMap {
   [key: string]: GraphQLFillerResolver;
 }
 
+/**
+ * The details provided to a function for filling in a GraphQL operation.
+ */
 export interface GraphQLFillerDetails<Variables> {
   readonly variables: Variables;
 }
 
+/**
+ * Options for creating a GraphQL operation filler.
+ */
 export interface GraphQLFillerOptions {
-  resolvers?: GraphQLFillerResolverMap;
+  readonly resolvers?: GraphQLFillerResolverMap;
 }
 
+/**
+ * Context provided when filling a GraphQL operation.
+ */
 interface Context {
-  readonly random: Chance.Chance;
+  /**
+   * The GraphQL schema the operation is being run against.
+   */
   readonly schema: GraphQLSchema;
+
+  /**
+   * A map of resolvers that provide default values for fields in the
+   * GraphQL operation.
+   */
   readonly resolvers: GraphQLFillerResolverMap;
+
+  /**
+   * The parsed document node of the GraphQL query or mutation being performed.
+   */
   readonly document: DocumentNode;
+
+  /**
+   * A `chance` instance that can be used to generate random data.
+   * @see https://chancejs.com
+   */
+  readonly random: Chance.Chance;
 }
 
 const defaultResolvers: GraphQLFillerResolverMap = {
@@ -69,12 +123,51 @@ const defaultResolvers: GraphQLFillerResolverMap = {
   [GraphQLID.name]: ({random}) => random.guid(),
 };
 
+/**
+ * Creates a function that can be used to profile “filled” GraphQL result.
+ * The resulting “filler” function takes a GraphQL operation and an (optional)
+ * subset of data that should be fixed for that filler, and returns a
+ * `GraphQLMock` object that will fill in other required fields with random
+ * data.
+ *
+ * This filler function is ideal for tests, as it allows you to force the parts
+ * of the query or mutation you care about to be specific values, while providing
+ * random-but-realistic data for the rest of the operation. This function is
+ * also type-safe, so you will automatically be informed if you are providing
+ * the wrong data, or providing data for fields that are never queried.
+ *
+ * @param schema - The GraphQL schema that the operation will be run against.
+ * @param options - Options for creating the filler function.
+ *
+ * @example
+ * const fillGraphQL = createGraphQLFiller(schema);
+ * const mock = fillGraphQL('query { me { name age } }', {me: {name: 'Winston'}});
+ * const result = mock.result({variables: {}});
+ * // => {me: {name: 'Winston', age: SOME_RANDOM_NUMBER}}
+ */
 export function createGraphQLFiller(
   schema: GraphQLSchema,
   {resolvers: customResolvers = {}}: GraphQLFillerOptions = {},
 ) {
   const resolvers = {...defaultResolvers, ...customResolvers};
 
+  /**
+   * A function that takes a GraphQL operation and an (optional)
+   * subset of data that should be fixed for that filler, and returns a
+   * `GraphQLMock` object that will fill in other required fields with random
+   * data.
+   *
+   * This filler function is ideal for tests, as it allows you to force the parts
+   * of the query or mutation you care about to be specific values, while providing
+   * random-but-realistic data for the rest of the operation. This function is
+   * also type-safe, so you will automatically be informed if you are providing
+   * the wrong data, or providing data for fields that are never queried.
+   *
+   * @param operation - The GraphQL query or mutation being run.
+   * @param partialData - An optional subset of data that should be fixed for this
+   * operation. You can either provide an object that matches any subset of the
+   * required data object, or a function that returns such an object.
+   */
   return function fillGraphQL<
     Data = Record<string, unknown>,
     Variables = Record<string, unknown>,
@@ -84,7 +177,9 @@ export function createGraphQLFiller(
       | GraphQLDeepPartialData<Data>
       | ((
           details: GraphQLFillerDetails<Variables>,
-        ) => GraphQLDeepPartialData<Data>),
+        ) =>
+          | GraphQLDeepPartialData<Data>
+          | Promise<GraphQLDeepPartialData<Data>>),
   ): GraphQLMockFunction<Data, Variables> {
     const {document} = normalizeOperation(operation as any);
     const operationNode = getFirstOperationFromDocument(document);
@@ -105,17 +200,23 @@ export function createGraphQLFiller(
           ? partialData({variables: variables ?? ({} as any)})
           : partialData) ?? ({} as any);
 
-      return fillObject(
-        partial,
-        rootType,
-        operationNode.selectionSet.selections,
-        {
-          random,
-          schema,
-          resolvers,
-          document,
-        },
-      ) as any;
+      function handleData(partialData: any) {
+        return fillObject(
+          partialData,
+          rootType,
+          operationNode!.selectionSet.selections,
+          {
+            random,
+            schema,
+            resolvers,
+            document,
+          },
+        ) as any;
+      }
+
+      return typeof partial.then === 'function'
+        ? partial.then(handleData)
+        : handleData(partial);
     };
 
     return {result, operation};

@@ -8,7 +8,7 @@ import {
 import type {
   GraphQLAnyOperation,
   GraphQLController,
-  GraphQLRequest,
+  GraphQLControllerRequest,
 } from '@quilted/graphql/testing';
 import {normalizeOperation} from '@quilted/graphql/ast';
 
@@ -85,7 +85,7 @@ export function toHavePerformedGraphQLOperation<Variables>(
 }
 
 function diffs(
-  requests: GraphQLRequest<unknown, unknown>[],
+  requests: GraphQLControllerRequest<unknown, unknown>[],
   variables: Record<string, any>,
   expand?: boolean,
 ) {
@@ -104,7 +104,7 @@ function diffs(
 }
 
 function normalizedDiff(
-  request: GraphQLRequest<unknown, unknown>,
+  request: GraphQLControllerRequest<unknown, unknown>,
   variables: Record<string, any>,
   {expand = false, showLegend = false},
 ) {

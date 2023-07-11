@@ -2,9 +2,13 @@ import {useMemo} from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {
+  gql,
+  graphql,
+  createGraphQLSchema,
   createGraphQLController,
   createGraphQLFiller,
   GraphQLController,
+  GraphQLControllerCompletedRequests,
 } from '@quilted/graphql/testing';
 import type {
   GraphQLMock,
@@ -15,6 +19,7 @@ import type {
   GraphQLFillerResolver,
   GraphQLFillerResolverContext,
   GraphQLFillerResolverMap,
+  GraphQLControllerRequest,
 } from '@quilted/graphql/testing';
 
 import {GraphQLContext} from './context.tsx';
@@ -34,7 +39,15 @@ export type {
   PickGraphQLType,
 } from '@quilted/graphql';
 
-export {createGraphQLController, GraphQLController, createGraphQLFiller};
+export {
+  gql,
+  graphql,
+  createGraphQLSchema,
+  createGraphQLFiller,
+  createGraphQLController,
+  GraphQLController,
+  GraphQLControllerCompletedRequests,
+};
 
 export type {
   GraphQLMock,
@@ -45,6 +58,7 @@ export type {
   GraphQLFillerResolver,
   GraphQLFillerResolverContext,
   GraphQLFillerResolverMap,
+  GraphQLControllerRequest,
 };
 
 export function TestGraphQL({

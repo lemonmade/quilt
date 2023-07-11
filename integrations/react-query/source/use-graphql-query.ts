@@ -4,7 +4,7 @@ import {
   type GraphQLFetch,
   type GraphQLOperation,
   type GraphQLVariableOptions,
-} from '@quilted/quilt';
+} from '@quilted/quilt/graphql';
 import {type IfAllFieldsNullable} from '@quilted/useful-types';
 
 import {throwIfError} from './utilities.ts';

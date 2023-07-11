@@ -53,26 +53,6 @@ export type {
   AsyncComponentType,
   Preloadable,
 } from '@quilted/react-async';
-export type {
-  GraphQLResult,
-  GraphQLFetch,
-  GraphQLFetchContext,
-  GraphQLData,
-  GraphQLVariables,
-  GraphQLError,
-  GraphQLOperation,
-  GraphQLOperationType,
-  GraphQLDeepPartialData,
-  GraphQLHttpFetchContext,
-  GraphQLHttpFetchOptions,
-  PickGraphQLType,
-  GraphQLVariableOptions,
-} from '@quilted/react-graphql';
-export {
-  GraphQLContext,
-  createGraphQLHttpFetch,
-  useGraphQLFetch,
-} from '@quilted/react-graphql';
 export {useIdleCallback} from '@quilted/react-idle';
 export {
   ServerAction,

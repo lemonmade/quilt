@@ -1,13 +1,17 @@
 import {useMemo} from 'react';
+
 import {
   QuiltApp,
-  GraphQLContext,
-  createGraphQLHttpFetch,
-  type GraphQLFetch,
   useRoutes,
   RoutePreloading,
   type PropsWithChildren,
 } from '@quilted/quilt';
+import {
+  GraphQLContext,
+  createGraphQLHttpFetch,
+  type GraphQLFetch,
+} from '@quilted/quilt/graphql';
+
 import {ReactQueryContext} from '@quilted/react-query';
 import {QueryClient} from '@tanstack/react-query';
 
@@ -55,7 +59,7 @@ function AppContext({
   const {fetchGraphQL, queryClient} = useMemo(() => {
     return {
       fetchGraphQL:
-        customFetchGraphQL ?? createGraphQLHttpFetch({uri: '/api/graphql'}),
+        customFetchGraphQL ?? createGraphQLHttpFetch({url: '/api/graphql'}),
       queryClient: new QueryClient(),
     };
   }, [customFetchGraphQL]);

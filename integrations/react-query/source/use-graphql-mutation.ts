@@ -3,7 +3,7 @@ import {
   useGraphQLFetch,
   type GraphQLFetch,
   type GraphQLOperation,
-} from '@quilted/quilt';
+} from '@quilted/quilt/graphql';
 
 import {throwIfError} from './utilities.ts';
 

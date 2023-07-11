@@ -1,42 +1,42 @@
-import {type GraphQLResult} from '@quilted/quilt';
-import {type GraphQLSchema} from 'graphql';
+import {graphql} from 'graphql';
+import {
+  createGraphQLSchema,
+  createGraphQLResolverBuilder,
+} from '@quilted/quilt/graphql/server';
+import type {GraphQLResult, GraphQLSource} from '@quilted/quilt/graphql';
 
-export async function performGraphQLOperation<Data = Record<string, unknown>>(
-  operation: string,
+import schemaSource, {type Schema} from '../graphql/schema.ts';
+
+const {createResolver, createQueryResolver} =
+  createGraphQLResolverBuilder<Schema>();
+
+const Person = createResolver('Person', {
+  name: 'Winston',
+});
+
+const Query = createQueryResolver({
+  me: () => ({}),
+});
+
+const schema = createGraphQLSchema(schemaSource, {Query, Person});
+
+export async function performGraphQLOperation<
+  Data = Record<string, unknown>,
+  Variables = Record<string, unknown>,
+>(
+  operation: GraphQLSource<Data, Variables>,
   {
     variables,
     operationName,
-  }: {variables?: Record<string, unknown>; operationName?: string} = {},
+  }: {variables?: Variables; operationName?: string} = {},
 ) {
-  const [schema, {execute, parse}] = await Promise.all([
-    getSchema(),
-    import('graphql'),
-  ]);
-
-  const result = await execute({
+  const result = await graphql({
     schema,
-    document: parse(operation),
+    source: operation,
     operationName,
     variableValues: variables,
     rootValue: {name: () => 'Winston'},
   });
 
   return result as GraphQLResult<Data>;
-}
-
-let schemaPromise: Promise<GraphQLSchema>;
-
-function getSchema() {
-  if (!schemaPromise) {
-    schemaPromise = (async () => {
-      const [{buildSchema}, {default: schemaSource}] = await Promise.all([
-        import('graphql'),
-        import('../graphql/schema.ts'),
-      ]);
-
-      return buildSchema(schemaSource);
-    })();
-  }
-
-  return schemaPromise;
 }

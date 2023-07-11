@@ -1,5 +1,9 @@
 import {GraphQLAnyOperation, GraphQLOperation} from './types.ts';
 
+/**
+ * Converts the common formats of representing a GraphQL query or mutation
+ * into Quilt’s `GraphQLOperation` format.
+ */
 export function toGraphQLOperation<Data, Variables>(
   operation: GraphQLAnyOperation<Data, Variables>,
 ): GraphQLOperation<Data, Variables> {
