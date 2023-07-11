@@ -40,7 +40,7 @@ export interface GraphQLHttpFetchOptions
    * a function, it will be called with the `GraphQLOperation` that is being
    * performed, which allows you to customize the headers per operation.
    */
-  method:
+  method?:
     | 'GET'
     | 'POST'
     | (<Data, Variables>(
