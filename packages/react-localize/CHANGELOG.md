@@ -1,5 +1,12 @@
 # @quilted/react-localize
 
+## 0.1.18
+
+### Patch Changes
+
+- Updated dependencies [[`9122cbbc`](https://github.com/lemonmade/quilt/commit/9122cbbce965bf5b432027e0707b2d619857fa67)]:
+  - @quilted/useful-react-types@1.0.0
+
 ## 0.1.17
 
 ### Patch Changes

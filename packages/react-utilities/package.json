@@ -2,7 +2,7 @@
   "name": "@quilted/react-utilities",
   "description": "",
   "type": "module",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -28,7 +28,7 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/useful-react-types": "^0.1.10"
+    "@quilted/useful-react-types": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

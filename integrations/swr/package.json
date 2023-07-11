@@ -2,7 +2,7 @@
   "name": "@quilted/swr",
   "description": "",
   "type": "module",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -27,15 +27,15 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/useful-types": "^0.2.13"
+    "@quilted/useful-types": "^1.0.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.140",
+    "@quilted/quilt": "^0.5.144",
     "react": ">^17.0.0 || ^18.0.0",
     "swr": "^1.3.0"
   },
   "devDependencies": {
-    "@quilted/quilt": "workspace:^0.5.140",
+    "@quilted/quilt": "workspace:^0.5.144",
     "react": "workspace:@quilted/react@^18.2.0",
     "swr": "^1.3.0"
   },

@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`3bdd0dd3`](https://github.com/lemonmade/quilt/commit/3bdd0dd39654e64e52465c46aea95c7c06f2e1cb), [`9122cbbc`](https://github.com/lemonmade/quilt/commit/9122cbbce965bf5b432027e0707b2d619857fa67)]:
+  - @quilted/graphql@1.0.0
+  - @quilted/useful-types@1.0.0
+
 ## 0.1.3
 
 ### Patch Changes

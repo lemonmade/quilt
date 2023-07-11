@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-query",
   "type": "module",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,17 +24,17 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/useful-types": "^0.2.12"
+    "@quilted/useful-types": "^1.0.0"
   },
   "peerDependencies": {
-    "@quilted/craft": "^0.1.201",
-    "@quilted/quilt": "^0.5.140",
+    "@quilted/craft": "^0.1.217",
+    "@quilted/quilt": "^0.5.144",
     "react": "^17.0.0 || ^18.0.0",
     "@tanstack/react-query": "^4.19.0"
   },
   "devDependencies": {
-    "@quilted/craft": "workspace:^0.1.201",
-    "@quilted/quilt": "workspace:^0.5.140",
+    "@quilted/craft": "workspace:^0.1.217",
+    "@quilted/quilt": "workspace:^0.5.144",
     "@tanstack/react-query": "^4.19.0",
     "react": "workspace:@quilted/react@^18.2.0"
   },
