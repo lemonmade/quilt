@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 1.0.1
+
+### Patch Changes
+
+- [`d7c46287`](https://github.com/lemonmade/quilt/commit/d7c46287fd02ad3519723774781df8d096f268e1) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow GraphQL fetch to take undefined `method` option
+
 ## 1.0.0
 
 ### Major Changes
