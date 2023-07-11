@@ -299,14 +299,54 @@ async function* splitChunksOnBoundary(
   chunks: AsyncIterableIterator<string>,
   boundary: string,
 ) {
+  const separator = boundary + NEWLINE_SEPARATOR;
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
   let buffer = '';
   let boundaryIndex: number;
+  let headersEnd: number;
+  let contentEnd: number;
+  let rawHeaders: string;
+  let headers: Headers;
+  let contentLength;
 
   for await (const chunk of chunks) {
     buffer += chunk;
+
     while ((boundaryIndex = buffer.indexOf(boundary)) > -1) {
       yield buffer.slice(0, boundaryIndex);
       buffer = buffer.slice(boundaryIndex + boundary.length);
+    }
+
+    if ((headersEnd = buffer.indexOf(HEADER_SEPARATOR)) > -1) {
+      if ((boundaryIndex = buffer.indexOf(separator)) > -1) {
+        rawHeaders = buffer.slice(boundaryIndex + separator.length, headersEnd);
+      } else {
+        rawHeaders = buffer.slice(0, headersEnd);
+      }
+
+      const emptyHeaderPairs: [string, string][] = [];
+      headers = new Headers(
+        rawHeaders.split(NEWLINE_SEPARATOR).reduce((headerPairs, element) => {
+          const [key, value, ..._] = element.split(': ');
+          if (key && value) {
+            headerPairs.push([key, value]);
+          }
+
+          return headerPairs;
+        }, emptyHeaderPairs),
+      );
+
+      if (headers.has('content-length')) {
+        contentLength = parseInt(headers.get('content-length') as string);
+        const encodedBuffer = encoder.encode(buffer);
+        const encodedSeparator = encoder.encode(HEADER_SEPARATOR);
+        headersEnd = indexOfSequence(encodedBuffer, encodedSeparator);
+        contentEnd = headersEnd + encodedSeparator.length + contentLength;
+        yield decoder.decode(encodedBuffer.slice(0, contentEnd));
+        buffer = decoder.decode(encodedBuffer.slice(contentEnd));
+      }
     }
   }
 }
@@ -386,4 +426,33 @@ function deepMerge(target: any, source: any): any {
   }
 
   return source;
+}
+
+function indexOfSequence(
+  byteArray: Uint8Array,
+  sequence: Uint8Array,
+  fromIndex?: number,
+): number {
+  fromIndex = fromIndex || 0;
+  let byteIndex: number;
+  let byte: number;
+
+  while (sequence.length > 0) {
+    byte = sequence[0] as number;
+    byteIndex = byteArray.indexOf(byte, fromIndex);
+    if (byteIndex == -1) {
+      return -1;
+    }
+
+    const match = sequence
+      .subarray(1)
+      .every((byte, i) => byteArray.at(byteIndex + i + 1) === byte);
+
+    if (match) {
+      return byteIndex;
+    }
+    fromIndex = byteIndex + 1;
+  }
+
+  return -1;
 }
