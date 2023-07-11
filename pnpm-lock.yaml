@@ -159,7 +159,7 @@ importers:
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/craft':
-        specifier: workspace:^0.1.217
+        specifier: workspace:^0.1.218
         version: link:../../packages/craft
       '@quilted/quilt':
         specifier: workspace:^0.5.144
