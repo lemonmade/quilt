@@ -1,5 +1,11 @@
 # @quilted/useful-react-types
 
+## 1.0.0
+
+### Major Changes
+
+- [`9122cbbc`](https://github.com/lemonmade/quilt/commit/9122cbbce965bf5b432027e0707b2d619857fa67) Thanks [@lemonmade](https://github.com/lemonmade)! - Prepare first useful-types major release
+
 ## 0.1.11
 
 ### Patch Changes

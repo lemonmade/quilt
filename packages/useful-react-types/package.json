@@ -2,7 +2,7 @@
   "name": "@quilted/useful-react-types",
   "description": "A collection of useful TypeScript types for React projects",
   "type": "module",
-  "version": "0.1.11",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",

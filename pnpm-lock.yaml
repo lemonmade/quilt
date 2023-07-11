@@ -93,7 +93,7 @@ importers:
         specifier: ^3.7.0
         version: 3.7.3(graphql@16.7.0)(react-dom@packages+react-dom)(react@packages+react)
       '@quilted/quilt':
-        specifier: workspace:^0.5.143
+        specifier: workspace:^0.5.144
         version: link:../../packages/quilt
       graphql:
         specifier: ^16.7.0
@@ -155,14 +155,14 @@ importers:
   integrations/react-query:
     dependencies:
       '@quilted/useful-types':
-        specifier: ^0.2.12
+        specifier: ^1.0.0
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/craft':
-        specifier: workspace:^0.1.201
+        specifier: workspace:^0.1.217
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: workspace:^0.5.140
+        specifier: workspace:^0.5.144
         version: link:../../packages/quilt
       '@tanstack/react-query':
         specifier: ^4.19.0
@@ -174,11 +174,11 @@ importers:
   integrations/swr:
     dependencies:
       '@quilted/useful-types':
-        specifier: ^0.2.13
+        specifier: ^1.0.0
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.140
+        specifier: workspace:^0.5.144
         version: link:../../packages/quilt
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -321,7 +321,7 @@ importers:
         specifier: 0.2.1
         version: link:../eslint-config
       '@quilted/graphql-tools':
-        specifier: 0.1.3
+        specifier: 0.1.4
         version: link:../graphql-tools
       '@quilted/polyfills':
         specifier: 0.2.34
@@ -481,7 +481,7 @@ importers:
         version: 4.3.0(@types/node@16.11.36)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.143
+        specifier: workspace:^0.5.144
         version: link:../quilt
       '@types/babel__core':
         specifier: ^7.20.0
@@ -632,7 +632,7 @@ importers:
   packages/graphql:
     dependencies:
       '@quilted/useful-types':
-        specifier: ^0.2.17
+        specifier: ^1.0.0
         version: link:../useful-types
       '@types/chance':
         specifier: ^1.1.3
@@ -662,10 +662,10 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.7.0)
       '@quilted/graphql':
-        specifier: ^0.6.0
+        specifier: ^1.0.0
         version: link:../graphql
       '@quilted/useful-types':
-        specifier: ^0.2.17
+        specifier: ^1.0.0
         version: link:../useful-types
       arg:
         specifier: ^5.0.0
@@ -778,7 +778,7 @@ importers:
         specifier: ^0.1.0
         version: link:../events
       '@quilted/graphql':
-        specifier: ^0.6.0
+        specifier: ^1.0.0
         version: link:../graphql
       '@quilted/polyfills':
         specifier: ^0.2.12
@@ -841,7 +841,7 @@ importers:
         specifier: ^0.1.0
         version: link:../threads
       '@quilted/useful-react-types':
-        specifier: ^0.1.0
+        specifier: ^1.0.0
         version: link:../useful-react-types
       '@types/jest':
         specifier: ^27.0.0
@@ -950,13 +950,13 @@ importers:
         specifier: ^0.3.12
         version: link:../async
       '@quilted/graphql':
-        specifier: ^0.6.0
+        specifier: ^1.0.0
         version: link:../graphql
       '@quilted/react-utilities':
         specifier: ^0.1.0
         version: link:../react-utilities
       '@quilted/useful-types':
-        specifier: ^0.2.5
+        specifier: ^1.0.0
         version: link:../useful-types
     devDependencies:
       react:
@@ -1031,7 +1031,7 @@ importers:
         specifier: ^0.1.0
         version: link:../react-utilities
       '@quilted/useful-react-types':
-        specifier: ^0.1.6
+        specifier: ^1.0.0
         version: link:../useful-react-types
     devDependencies:
       '@quilted/react-http':
@@ -1151,7 +1151,7 @@ importers:
   packages/react-utilities:
     dependencies:
       '@quilted/useful-react-types':
-        specifier: ^0.1.10
+        specifier: ^1.0.0
         version: link:../useful-react-types
     devDependencies:
       react:
