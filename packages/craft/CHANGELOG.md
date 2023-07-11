@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.218
+
+### Patch Changes
+
+- [`59f67964`](https://github.com/lemonmade/quilt/commit/59f67964d5751df84b3150fd1e2a6e00b85f52e8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix type errors from new GraphQL types
+
 ## 0.1.217
 
 ### Patch Changes
