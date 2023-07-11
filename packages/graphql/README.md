@@ -259,7 +259,7 @@ const Query = createQueryResolver({
 To actually run a GraphQL query, you need to include the resolvers created with these helpers in a GraphQL server. Most GraphQL servers, including [the reference JavaScript implementation](https://graphql.org/graphql-js/) and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server), need a GraphQL schema to execute a query or mutation. For convenience, this library provides a `createGraphQLSchema()` helper that can create a GraphQL schema object from your resolvers:
 
 ```tsx
-import {execute, parse} from 'graphql';
+import {graphql} from 'graphql';
 import {
   createGraphQLSchema,
   createGraphQLResolverBuilder,
@@ -286,9 +286,9 @@ const Mutation = createMutationResolver({
 
 const schema = createGraphQLSchema(schemaSource, {Query, Mutation});
 
-const result = await execute({
+const result = await graphql({
   schema,
-  document: parse('query { me { name } }'),
+  source: 'query { me { name } }',
 });
 ```
 

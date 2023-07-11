@@ -2,6 +2,7 @@ import {type TypedQueryDocumentNode} from 'graphql';
 
 import {normalizeOperation} from '../ast.ts';
 import type {
+  GraphQLFetch,
   GraphQLAnyOperation,
   GraphQLFetchContext,
   GraphQLOperation,
@@ -128,8 +129,7 @@ export class GraphQLController {
       for (const {request, promise} of this.pending) {
         if (
           normalizedOperation == null ||
-          request.id === normalizedOperation.id ||
-          request.source === normalizedOperation.source
+          operationsMatch(request, normalizedOperation)
         ) {
           pending.push(promise);
         }
@@ -150,7 +150,7 @@ export class GraphQLController {
    * Performs a GraphQL requests against the current mocks registered
    * with this controller.
    */
-  fetch = <Data, Variables>(
+  fetch = (<Data, Variables>(
     operation: GraphQLAnyOperation<Data, Variables>,
     {variables, signal}: {variables?: Variables; signal?: AbortSignal} = {},
     _?: GraphQLFetchContext,
@@ -163,10 +163,7 @@ export class GraphQLController {
 
     const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.find(
       (mock) => {
-        return (
-          mock.operation.id === normalizedOperation.id ||
-          mock.operation.source === normalizedOperation.source
-        );
+        return operationsMatch(mock.operation, normalizedOperation);
       },
     );
 
@@ -210,7 +207,7 @@ export class GraphQLController {
     this.pending.add(pendingRequest);
 
     return promise;
-  };
+  }) satisfies GraphQLFetch;
 
   /**
    * Performs a GraphQL requests against the current mocks registered
@@ -277,10 +274,19 @@ export class GraphQLControllerCompletedRequests {
   }
 
   private filterWhere({operation}: GraphQLControllerFindOptions = {}) {
-    const name = operation && normalizeOperation(operation).name;
+    const normalizedOperation = operation && normalizeOperation(operation);
 
-    return name
-      ? this.requests.filter((request) => request.name === name)
+    return normalizedOperation
+      ? this.requests.filter((request) =>
+          operationsMatch(request, normalizedOperation),
+        )
       : this.requests;
   }
+}
+
+function operationsMatch(
+  one: GraphQLOperation<any, any>,
+  two: GraphQLOperation<any, any>,
+) {
+  return one.id === two.id || one.source === two.source;
 }

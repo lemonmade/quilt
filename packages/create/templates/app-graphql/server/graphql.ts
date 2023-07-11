@@ -1,4 +1,4 @@
-import {execute} from 'graphql';
+import {graphql} from 'graphql';
 import {
   createGraphQLSchema,
   createGraphQLResolverBuilder,
@@ -30,7 +30,7 @@ export async function performGraphQLOperation<
     operationName,
   }: {variables?: Variables; operationName?: string} = {},
 ) {
-  const result = await execute({
+  const result = await graphql({
     schema,
     source: operation,
     operationName,

@@ -1,6 +1,6 @@
 import {describe, it, expect} from '@quilted/testing';
 
-import {parse, execute, type GraphQLSchema} from 'graphql';
+import {graphql as runGraphQL, type GraphQLSchema} from 'graphql';
 
 import {graphql} from '../../gql.ts';
 import {createGraphQLSchema} from '../../schema.ts';
@@ -124,9 +124,9 @@ describe('resolvers', () => {
 });
 
 async function query(query: string, schema: GraphQLSchema) {
-  const {data} = await execute({
+  const {data} = await runGraphQL({
     schema,
-    document: parse(query),
+    source: query,
   });
 
   // Make this a "real" object so we can use `.toStrictEqual()` with it
