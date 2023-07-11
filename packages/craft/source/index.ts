@@ -531,7 +531,7 @@ export function quiltWorkspace({
         javascriptWorkspace(),
         typescriptWorkspace(),
         jest(),
-        graphql && workspaceGraphQL({package: '@quilted/quilt'}),
+        graphql && workspaceGraphQL({package: '@quilted/quilt/graphql'}),
       );
     },
   });

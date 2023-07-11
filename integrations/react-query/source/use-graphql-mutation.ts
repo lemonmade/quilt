@@ -2,7 +2,7 @@ import {useMutation, type UseMutationOptions} from '@tanstack/react-query';
 import {
   useGraphQLFetch,
   type GraphQLFetch,
-  type GraphQLOperation,
+  type GraphQLAnyOperation,
 } from '@quilted/quilt/graphql';
 
 import {throwIfError} from './utilities.ts';
@@ -15,7 +15,7 @@ export type GraphQLMutationOptions<Data, Variables> = Omit<
 };
 
 export function useGraphQLMutation<Data, Variables>(
-  mutation: GraphQLOperation<Data, Variables> | string,
+  mutation: GraphQLAnyOperation<Data, Variables>,
   {
     fetch: explicitFetch,
     mutationKey,
@@ -38,14 +38,9 @@ export function useGraphQLMutation<Data, Variables>(
       ...(Array.isArray(mutationKey) ? mutationKey : [mutationKey]),
     ],
     async (variables) => {
-      const result = await fetch(
-        typeof mutation === 'string'
-          ? {id: mutation, source: mutation}
-          : mutation,
-        {
-          variables: variables as any,
-        },
-      );
+      const result = await fetch(mutation, {
+        variables: variables!,
+      });
 
       throwIfError(result);
 

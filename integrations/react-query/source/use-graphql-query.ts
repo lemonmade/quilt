@@ -2,7 +2,7 @@ import {useQuery, type UseQueryOptions} from '@tanstack/react-query';
 import {
   useGraphQLFetch,
   type GraphQLFetch,
-  type GraphQLOperation,
+  type GraphQLAnyOperation,
   type GraphQLVariableOptions,
 } from '@quilted/quilt/graphql';
 import {type IfAllFieldsNullable} from '@quilted/useful-types';
@@ -18,7 +18,7 @@ export type GraphQLQueryOptions<Data, Variables> = Omit<
   };
 
 export function useGraphQLQuery<Data, Variables>(
-  query: GraphQLOperation<Data, Variables> | string,
+  query: GraphQLAnyOperation<Data, Variables>,
   ...args: IfAllFieldsNullable<
     Variables,
     [GraphQLQueryOptions<Data, Variables>?],
@@ -51,12 +51,9 @@ export function useGraphQLQuery<Data, Variables>(
       ...(Array.isArray(queryKey) ? queryKey : [queryKey]),
     ],
     async () => {
-      const result = await fetch(
-        typeof query === 'string' ? {id: query, source: query} : query,
-        {
-          variables: variables as any,
-        },
-      );
+      const result = await fetch(query, {
+        variables: variables!,
+      });
 
       throwIfError(result);
 
