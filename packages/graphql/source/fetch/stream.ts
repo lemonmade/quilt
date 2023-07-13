@@ -299,17 +299,13 @@ async function* splitChunksOnBoundary(
   chunks: AsyncIterableIterator<string>,
   boundary: string,
 ) {
-  const separator = boundary + NEWLINE_SEPARATOR;
+  const boundarySeparator = boundary + NEWLINE_SEPARATOR;
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
   let buffer = '';
   let boundaryIndex: number;
   let headersEnd: number;
-  let contentEnd: number;
-  let rawHeaders: string;
-  let headers: Headers;
-  let contentLength;
 
   for await (const chunk of chunks) {
     buffer += chunk;
@@ -319,35 +315,30 @@ async function* splitChunksOnBoundary(
       buffer = buffer.slice(boundaryIndex + boundary.length);
     }
 
-    if ((headersEnd = buffer.indexOf(HEADER_SEPARATOR)) > -1) {
-      if ((boundaryIndex = buffer.indexOf(separator)) > -1) {
-        rawHeaders = buffer.slice(boundaryIndex + separator.length, headersEnd);
-      } else {
-        rawHeaders = buffer.slice(0, headersEnd);
-      }
+    if ((headersEnd = buffer.indexOf(HEADER_SEPARATOR)) == -1) {
+      continue;
+    }
 
-      const emptyHeaderPairs: [string, string][] = [];
-      headers = new Headers(
-        rawHeaders.split(NEWLINE_SEPARATOR).reduce((headerPairs, element) => {
-          const [key, value, ..._] = element.split(': ');
-          if (key && value) {
-            headerPairs.push([key, value]);
-          }
+    const boundaryEnd =
+      (boundaryIndex = buffer.indexOf(boundarySeparator)) > -1
+        ? boundaryIndex + boundarySeparator.length
+        : 0;
 
-          return headerPairs;
-        }, emptyHeaderPairs),
-      );
+    const rawHeaders = buffer.slice(boundaryEnd, headersEnd);
+    const headers = parseHeadersFromString(rawHeaders);
 
-      if (headers.has('content-length')) {
-        contentLength = parseInt(headers.get('content-length') as string);
-        const encodedBuffer = encoder.encode(buffer);
-        const encodedSeparator = encoder.encode(HEADER_SEPARATOR);
-        headersEnd = indexOfSequence(encodedBuffer, encodedSeparator);
-        contentEnd = headersEnd + encodedSeparator.byteLength + contentLength;
-        if (encodedBuffer.byteLength >= contentEnd) {
-          yield decoder.decode(encodedBuffer.slice(0, contentEnd));
-          buffer = decoder.decode(encodedBuffer.slice(contentEnd));
-        }
+    if (headers.has('content-length')) {
+      const contentLength = parseInt(headers.get('content-length') as string);
+      const encodedBuffer = encoder.encode(buffer);
+      const encodedSeparator = encoder.encode(HEADER_SEPARATOR);
+
+      headersEnd = indexOfSequence(encodedBuffer, encodedSeparator);
+      const contentEnd =
+        headersEnd + encodedSeparator.byteLength + contentLength;
+
+      if (encodedBuffer.byteLength >= contentEnd) {
+        yield decoder.decode(encodedBuffer.slice(0, contentEnd));
+        buffer = decoder.decode(encodedBuffer.slice(contentEnd));
       }
     }
   }
@@ -408,6 +399,20 @@ function mergeResultPatch<Data, Extensions>(
   result.hasNext = nextResult.hasNext ?? result.hasNext;
 
   return result;
+}
+
+function parseHeadersFromString(rawHeaders: string): Headers {
+  const emptyHeaderPairs: [string, string][] = [];
+
+  return new Headers(
+    rawHeaders.split(NEWLINE_SEPARATOR).reduce((headerPairs, element) => {
+      const [key, value, ..._] = element.split(': ');
+      if (key && value) {
+        headerPairs.push([key, value]);
+      }
+      return headerPairs;
+    }, emptyHeaderPairs),
+  );
 }
 
 function deepMerge(target: any, source: any): any {
