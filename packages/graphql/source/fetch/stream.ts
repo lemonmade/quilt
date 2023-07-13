@@ -344,8 +344,10 @@ async function* splitChunksOnBoundary(
         const encodedSeparator = encoder.encode(HEADER_SEPARATOR);
         headersEnd = indexOfSequence(encodedBuffer, encodedSeparator);
         contentEnd = headersEnd + encodedSeparator.byteLength + contentLength;
-        yield decoder.decode(encodedBuffer.slice(0, contentEnd));
-        buffer = decoder.decode(encodedBuffer.slice(contentEnd));
+        if (encodedBuffer.byteLength >= contentEnd) {
+          yield decoder.decode(encodedBuffer.slice(0, contentEnd));
+          buffer = decoder.decode(encodedBuffer.slice(contentEnd));
+        }
       }
     }
   }
