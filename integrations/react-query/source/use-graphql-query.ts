@@ -50,8 +50,9 @@ export function useGraphQLQuery<Data, Variables>(
       variables,
       ...(Array.isArray(queryKey) ? queryKey : [queryKey]),
     ],
-    async () => {
+    async ({signal}) => {
       const result = await fetch(query, {
+        signal,
         variables: variables!,
       });
 
