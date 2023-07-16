@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 
 const globalIt = it;
+const globalTest = test;
 const globalDescribe = describe;
 const globalExpect = expect;
 const globalBeforeEach = beforeEach;
@@ -11,6 +12,7 @@ const globalJest = jest;
 
 export {
   globalIt as it,
+  globalTest as test,
   globalDescribe as describe,
   globalExpect as expect,
   globalBeforeEach as beforeEach,
