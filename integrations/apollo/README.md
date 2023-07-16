@@ -57,13 +57,11 @@ That’s all the setup you need! Elsewhere in your application, you can now use 
 import {gql, useQuery} from '@apollo/client';
 
 export function Start() {
-  const {data, loading} = useQuery<{hello: string}>(
-    gql`
-      query {
-        hello
-      }
-    `,
-  );
+  const {data, loading} = useQuery<{hello: string}>(gql`
+    query {
+      hello
+    }
+  `);
 
   return loading ? <p>Loading…</p> : <p>{data?.hello ?? 'Server error…'}</p>;
 }
