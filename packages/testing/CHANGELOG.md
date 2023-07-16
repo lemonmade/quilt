@@ -1,5 +1,11 @@
 # @quilted/testing
 
+## 0.1.6
+
+### Patch Changes
+
+- [`a7fb0007`](https://github.com/lemonmade/quilt/commit/a7fb0007228788b66424329c3c46a800047a76bc) Thanks [@lemonmade](https://github.com/lemonmade)! - Export `test` from testing library
+
 ## 0.1.5
 
 ### Patch Changes

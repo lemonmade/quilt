@@ -159,10 +159,10 @@ importers:
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/craft':
-        specifier: workspace:^0.1.218
+        specifier: workspace:^0.1.219
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: workspace:^0.5.144
+        specifier: workspace:^0.5.145
         version: link:../../packages/quilt
       '@tanstack/react-query':
         specifier: ^4.19.0
@@ -318,7 +318,7 @@ importers:
         specifier: 0.1.9
         version: link:../browserslist-config
       '@quilted/eslint-config':
-        specifier: 0.2.1
+        specifier: 0.2.2
         version: link:../eslint-config
       '@quilted/graphql-tools':
         specifier: 0.1.4
@@ -481,7 +481,7 @@ importers:
         version: 4.3.0(@types/node@16.11.36)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.144
+        specifier: workspace:^0.5.145
         version: link:../quilt
       '@types/babel__core':
         specifier: ^7.20.0

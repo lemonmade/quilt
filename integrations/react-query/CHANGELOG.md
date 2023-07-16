@@ -1,5 +1,15 @@
 # @quilted/react-query
 
+## 0.1.20
+
+### Patch Changes
+
+- [`da6a0767`](https://github.com/lemonmade/quilt/commit/da6a0767653eb32980036d244160c721a96265ed) Thanks [@lemonmade](https://github.com/lemonmade)! - Thread signal through `useGraphQLQuery`
+
+- Updated dependencies [[`8fa1a6bd`](https://github.com/lemonmade/quilt/commit/8fa1a6bd67d3112ae0054f6fff531889f762cd52)]:
+  - @quilted/craft@0.1.219
+  - @quilted/quilt@0.5.145
+
 ## 0.1.19
 
 ### Patch Changes
