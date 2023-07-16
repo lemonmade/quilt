@@ -14,7 +14,10 @@ import type {HttpManager} from '../manager.ts';
 export function useHttpAction(perform: (http: HttpManager) => void) {
   const http = useContext(HttpServerContext);
 
-  useServerAction(() => {
-    if (http) perform(http);
-  }, http?.actionKind);
+  useServerAction(
+    () => {
+      if (http) perform(http);
+    },
+    http?.actionKind,
+  );
 }

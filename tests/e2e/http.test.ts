@@ -85,8 +85,8 @@ describe('http', () => {
                   <div>{user ? \`Hello, \${user}!\` : 'Hello, mystery user!'}</div>
                   <button onClick={() => {
                     cookies.set(${JSON.stringify(cookieName)}, ${JSON.stringify(
-            cookieValue,
-          )});
+                      cookieValue,
+                    )});
                   }}>
                     Set user cookie
                   </button>

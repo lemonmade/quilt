@@ -266,7 +266,7 @@
     "postcss-modules": "^6.0.0",
     "postcss-preset-env": "^8.5.0",
     "preact": "^10.15.0",
-    "prettier": "^2.8.0",
+    "prettier": "^3.0.0",
     "regenerator-runtime": "^0.13.0",
     "rollup": "^3.26.0",
     "rollup-plugin-esbuild": "^5.0.0",

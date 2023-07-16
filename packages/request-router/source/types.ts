@@ -25,9 +25,10 @@ export interface EnhancedWritableCookies extends WritableCookies {
 export type ValueOrPromise<T> = T | Promise<T>;
 
 export interface RequestHandler<Context = RequestContext> {
-  (request: EnhancedRequest, context: Context): ValueOrPromise<
-    Response | EnhancedResponse | undefined | null
-  >;
+  (
+    request: EnhancedRequest,
+    context: Context,
+  ): ValueOrPromise<Response | EnhancedResponse | undefined | null>;
 }
 
 export type RequestRegistration<Context = RequestContext> =

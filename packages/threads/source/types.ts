@@ -13,7 +13,9 @@ export interface ThreadTarget {
 }
 
 export interface ThreadExposableFunction<Args extends any[], ReturnType> {
-  (...args: ThreadSafeArgument<Args>): ReturnType extends Promise<any>
+  (
+    ...args: ThreadSafeArgument<Args>
+  ): ReturnType extends Promise<any>
     ? ReturnType
     : ReturnType extends AsyncGenerator<any, any, any>
     ? ReturnType

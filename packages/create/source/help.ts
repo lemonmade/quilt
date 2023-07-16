@@ -13,16 +13,16 @@ export function printHelp({
 
   const usage = stripIndent`
     ${color.bold('Usage:')}   ${command} ${
-    kind ? color.magenta(kind) : color.magenta('[kind]')
-  } ${color.green('[name]')} ${color.cyan('[options]')}
+      kind ? color.magenta(kind) : color.magenta('[kind]')
+    } ${color.green('[name]')} ${color.cyan('[options]')}
   `;
 
   console.log(usage);
 
   const example = stripIndent`
     ${color.bold('Example:')} ${command} ${color.magenta(
-    kind ?? 'app',
-  )} ${color.green(`my-${kind ?? 'app'}`)} ${color.cyan('--install')}
+      kind ?? 'app',
+    )} ${color.green(`my-${kind ?? 'app'}`)} ${color.cyan('--install')}
   `;
 
   console.log(color.dim(example));
@@ -72,8 +72,8 @@ export function printHelp({
     )} flag is set.
 
     Must be one of the following: ${color.bold('pnpm')}, ${color.bold(
-    'npm',
-  )}, or ${color.bold('yarn')}.
+      'npm',
+    )}, or ${color.bold('yarn')}.
 
     ${color.cyan(`--extras`)}, ${color.cyan(`--no-extras`)}
     Extra developer tools to configure when creating your new project. This option only

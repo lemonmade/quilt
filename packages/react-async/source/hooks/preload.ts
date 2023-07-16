@@ -6,7 +6,7 @@ export function usePreload<PreloadOptions extends Record<string, any>>(
     [Preloadable<PreloadOptions>, NoInfer<PreloadOptions>?],
     [Preloadable<PreloadOptions>, NoInfer<PreloadOptions>]
   >
-): ReturnType<typeof args[0]['usePreload']> {
+): ReturnType<(typeof args)[0]['usePreload']> {
   const [preloadable, options = {}] = args;
   return (preloadable.usePreload as any)(options);
 }

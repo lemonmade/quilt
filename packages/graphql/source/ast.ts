@@ -24,7 +24,10 @@ import type {
 import type {GraphQLAnyOperation, GraphQLOperation} from './types.ts';
 
 export class InvalidSelectionError extends Error {
-  constructor(readonly type: GraphQLCompositeType, readonly field: FieldNode) {
+  constructor(
+    readonly type: GraphQLCompositeType,
+    readonly field: FieldNode,
+  ) {
     super(`Invalid selection: ${field.name.value} on type ${type.name}`);
   }
 }

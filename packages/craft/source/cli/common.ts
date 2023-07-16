@@ -474,7 +474,7 @@ async function runStepsInStage(
         if (checkStep === step) continue;
 
         const needResult = step.needs(checkStep as any);
-        const stepNeed: typeof needs[number] =
+        const stepNeed: (typeof needs)[number] =
           typeof needResult === 'boolean'
             ? {step: checkStep, need: needResult}
             : {...needResult, step: checkStep};
@@ -939,7 +939,10 @@ export class StepExecError extends DiagnosticError {
     return this.error.stdout;
   }
 
-  constructor(command: string, private readonly error: any) {
+  constructor(
+    command: string,
+    private readonly error: any,
+  ) {
     super({
       title: `Command \`${command}\` failed`,
       content: [error.stderr?.trim(), error.stdout?.trim()]

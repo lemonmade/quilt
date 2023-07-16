@@ -7,7 +7,10 @@ import type {EmailManager} from '../manager.ts';
 export function useEmailAction(perform: (email: EmailManager) => void) {
   const email = useContext(EmailContext);
 
-  useServerAction(() => {
-    if (email) perform(email);
-  }, email?.actionKind);
+  useServerAction(
+    () => {
+      if (email) perform(email);
+    },
+    email?.actionKind,
+  );
 }

@@ -238,9 +238,10 @@ export async function createProject() {
 
   await outputRoot.write(
     path.join(packageDirectory, 'README.md'),
-    (
-      await packageTemplate.read('README.md')
-    ).replaceAll('{{name}}', toValidPackageName(name!)),
+    (await packageTemplate.read('README.md')).replaceAll(
+      '{{name}}',
+      toValidPackageName(name!),
+    ),
   );
 
   if (partOfMonorepo) {
