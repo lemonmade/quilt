@@ -1,5 +1,15 @@
 # @quilted/craft
 
+## 0.1.219
+
+### Patch Changes
+
+- [`8fa1a6bd`](https://github.com/lemonmade/quilt/commit/8fa1a6bd67d3112ae0054f6fff531889f762cd52) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Prettier dependencies
+
+- Updated dependencies [[`8fa1a6bd`](https://github.com/lemonmade/quilt/commit/8fa1a6bd67d3112ae0054f6fff531889f762cd52)]:
+  - @quilted/eslint-config@0.2.2
+  - @quilted/quilt@0.5.145
+
 ## 0.1.218
 
 ### Patch Changes

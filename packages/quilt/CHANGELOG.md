@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.145
+
+### Patch Changes
+
+- [`8fa1a6bd`](https://github.com/lemonmade/quilt/commit/8fa1a6bd67d3112ae0054f6fff531889f762cd52) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Prettier dependencies
+
 ## 0.5.144
 
 ### Patch Changes
