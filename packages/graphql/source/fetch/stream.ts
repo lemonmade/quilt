@@ -67,6 +67,7 @@ export function createGraphQLHttpStreamingFetch<
   headers: explicitHeaders,
   credentials,
   customizeRequest,
+  fetch = globalThis.fetch,
 }: GraphQLHttpStreamingFetchOptions): GraphQLStreamingFetch<Extensions> {
   const fetchGraphQL: GraphQLStreamingFetch<Extensions> = function fetchGraphQL<
     Data,
@@ -205,8 +206,20 @@ export function createGraphQLHttpStreamingFetch<
 
         if (context) context.response = response;
 
-        if (!response.ok) {
-          const result = {
+        if (response.ok) {
+          const contentType = response.headers.get('Content-Type');
+
+          if (contentType?.includes('multipart/mixed')) {
+            for await (const result of parseMultipartMixed<Data, Extensions>(
+              response,
+            )) {
+              pushResult(result);
+            }
+          } else {
+            pushResult(await response.json());
+          }
+        } else {
+          pushResult({
             errors: [
               {
                 message: `GraphQL fetch failed with status: ${
@@ -214,22 +227,7 @@ export function createGraphQLHttpStreamingFetch<
                 }, response: ${await response.text()}`,
               },
             ],
-          } satisfies GraphQLResult<Data, Extensions>;
-
-          return result;
-        }
-
-        for await (const result of parseMultipartMixed<Data, Extensions>(
-          response,
-        )) {
-          lastResult = result;
-
-          const promise = unconsumedPromises.shift();
-          if (promise) {
-            promise.resolve({value: result, done: false});
-          } else {
-            unconsumedResults.push(result);
-          }
+          });
         }
       } catch (err) {
         finished = true;
@@ -247,9 +245,26 @@ export function createGraphQLHttpStreamingFetch<
 
       finish();
 
-      const {data, errors, extensions} = lastResult ?? {};
+      const {data, errors, extensions} =
+        (lastResult as any as GraphQLResult<Data, Extensions>) ?? {};
 
       return {data, errors, extensions};
+
+      function pushResult(result: GraphQLResult<Data, Extensions>) {
+        if (finished) {
+          return;
+        }
+
+        lastResult = result;
+
+        const promise = unconsumedPromises.shift();
+
+        if (promise) {
+          promise.resolve({value: result, done: false});
+        } else {
+          unconsumedResults.push(result);
+        }
+      }
     }
   };
 

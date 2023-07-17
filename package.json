@@ -34,6 +34,7 @@
     "@quilted/eslint-config": "workspace:^",
     "@quilted/events": "workspace:^",
     "@quilted/performance": "workspace:^",
+    "@quilted/polyfills": "workspace:^",
     "@quilted/prettier": "workspace:^",
     "@quilted/quilt": "workspace:^",
     "@quilted/stylelint-config": "workspace:^",

@@ -9,6 +9,12 @@ import {GraphQLFetchRequest} from './request.ts';
 export interface GraphQLHttpFetchOptions
   extends Pick<RequestInit, 'credentials'> {
   /**
+   * A customized version of `fetch()` to use when making HTTP requests.
+   * If this is not provided, the global `fetch` will be used.
+   */
+  fetch?: typeof fetch;
+
+  /**
    * The URL to send GraphQL requests to. This can be a `string`, a `URL`
    * object, or a function that returns either of those. If you provide
    * a function, it will be called with the `GraphQLOperation` that is
@@ -91,6 +97,7 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
   headers: explicitHeaders,
   credentials,
   customizeRequest,
+  fetch = globalThis.fetch,
 }: GraphQLHttpFetchOptions): GraphQLFetch<Extensions> {
   const fetchGraphQL: GraphQLFetch<Extensions> = async function fetchGraphQL(
     operation,

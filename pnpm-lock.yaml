@@ -31,6 +31,9 @@ importers:
       '@quilted/performance':
         specifier: workspace:^
         version: link:packages/performance
+      '@quilted/polyfills':
+        specifier: workspace:^
+        version: link:packages/polyfills
       '@quilted/prettier':
         specifier: workspace:^
         version: link:packages/prettier
