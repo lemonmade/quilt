@@ -1,7 +1,4 @@
 import {createEmitter, type Emitter} from '@quilted/events';
-import type {AsyncAssetsGlobal} from './global.ts';
-
-declare const Quilt: {readonly AsyncAssets: AsyncAssetsGlobal} | undefined;
 
 export interface AsyncModule<Module = Record<string, unknown>>
   extends Pick<Emitter<{resolve: Error | Module}>, 'on'> {
@@ -50,10 +47,9 @@ export function createAsyncModule<Module = Record<string, unknown>>(
   function getResolved() {
     if (!hasTriedSyncResolve && resolved == null && id) {
       hasTriedSyncResolve = true;
-      resolved =
-        typeof Quilt === 'object'
-          ? Quilt.AsyncAssets?.get<Module>(id)
-          : undefined;
+      resolved = (globalThis as any)[Symbol.for('quilt')]?.AsyncModules?.get(
+        id,
+      );
     }
 
     return resolved;
