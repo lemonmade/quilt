@@ -30,7 +30,6 @@ export const STEP_NAME = 'Quilt.App.Develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
 const MAGIC_MODULE_SERVER_ENTRY = '.quilt/magic/server.js';
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest';
-const MAGIC_MODULE_GLOBALS = '.quilt/magic/globals.js';
 const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
 
 export interface Options {
@@ -209,10 +208,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                     attributes: {
                       scripts: {type: 'module'},
                     },
-                    assets: [
-                      `/${MAGIC_MODULE_GLOBALS}`,
-                      `/${MAGIC_MODULE_BROWSER_ENTRY}`,
-                    ],
+                    assets: [`/${MAGIC_MODULE_BROWSER_ENTRY}`],
                     entries: {
                       default: {
                         scripts: [0, 1],
@@ -377,27 +373,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                   quiltAppBrowserEntryContent!.run(content),
               }),
               enforce: 'pre',
-            });
-
-            plugins.unshift({
-              name: '@quilted/magic-module/app/globals',
-              enforce: 'pre',
-              resolveId(id) {
-                if (id !== `/${MAGIC_MODULE_GLOBALS}`) return null;
-                return {
-                  id: project.fs.resolvePath(MAGIC_MODULE_GLOBALS),
-                  moduleSideEffects: 'no-treeshake',
-                };
-              },
-              async load(source) {
-                if (source !== project.fs.resolvePath(MAGIC_MODULE_GLOBALS)) {
-                  return null;
-                }
-
-                return stripIndent`
-                  import '@quilted/quilt/global';
-                `;
-              },
             });
 
             const normalizedBabelPlugins = requestedBabelPlugins;

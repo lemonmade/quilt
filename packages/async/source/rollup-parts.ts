@@ -74,9 +74,9 @@ export function asyncQuilt({
         const code = stripIndent`
           import * as AsyncModule from ${JSON.stringify(imported)};
 
-          if (typeof Quilt !== 'undefined' && Quilt.AsyncAssets != null) {
-            Quilt.AsyncAssets.set(${JSON.stringify(moduleId)}, AsyncModule);
-          }
+          ((globalThis[Symbol.for('quilt')] ??= {}).AsyncModules ??= new Map).set(${JSON.stringify(
+            moduleId,
+          )}, AsyncModule);
 
           export default AsyncModule;
         `;
