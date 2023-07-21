@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 1.1.0
+
+### Minor Changes
+
+- [`e121e639`](https://github.com/lemonmade/quilt/commit/e121e639fb656ddf14e3e47de87d347f38edae7f) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow passing a custom `fetch()` to GraphQL fetchers
+
 ## 1.0.1
 
 ### Patch Changes

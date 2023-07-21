@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.5.146
+
+### Patch Changes
+
+- [#582](https://github.com/lemonmade/quilt/pull/582) [`6dca6fcf`](https://github.com/lemonmade/quilt/commit/6dca6fcf62fbed7600400b619e5509c7d7f7fb45) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow async module global to be lazy initialized
+
+- Updated dependencies [[`e121e639`](https://github.com/lemonmade/quilt/commit/e121e639fb656ddf14e3e47de87d347f38edae7f)]:
+  - @quilted/graphql@1.1.0
+
 ## 0.5.145
 
 ### Patch Changes

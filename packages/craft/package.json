@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.219",
+  "version": "0.1.220",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -221,7 +221,7 @@
     "@jest/types": "^29.5.0",
     "@prefresh/vite": "^2.4.0",
     "@quilted/assets": "0.0.3",
-    "@quilted/async": "0.3.41",
+    "@quilted/async": "0.3.42",
     "@quilted/browserslist-config": "0.1.9",
     "@quilted/eslint-config": "0.2.2",
     "@quilted/graphql-tools": "0.1.4",
@@ -278,7 +278,7 @@
     "vite": "^4.3.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.145",
+    "@quilted/quilt": "^0.5.146",
     "react": "^18.0.0",
     "typescript": "^5.1.0"
   },
@@ -294,7 +294,7 @@
     }
   },
   "devDependencies": {
-    "@quilted/quilt": "workspace:^0.5.145",
+    "@quilted/quilt": "workspace:^0.5.146",
     "@types/babel__core": "^7.20.0",
     "@types/caniuse-api": "^3.0.0",
     "@types/clean-css": "^4.0.0",
