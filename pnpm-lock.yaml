@@ -315,7 +315,7 @@ importers:
         specifier: 0.0.3
         version: link:../assets
       '@quilted/async':
-        specifier: 0.3.41
+        specifier: 0.3.42
         version: link:../async
       '@quilted/browserslist-config':
         specifier: 0.1.9
@@ -484,7 +484,7 @@ importers:
         version: 4.3.0(@types/node@16.11.36)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.145
+        specifier: workspace:^0.5.146
         version: link:../quilt
       '@types/babel__core':
         specifier: ^7.20.0
@@ -781,7 +781,7 @@ importers:
         specifier: ^0.1.0
         version: link:../events
       '@quilted/graphql':
-        specifier: ^1.0.0
+        specifier: ^1.1.0
         version: link:../graphql
       '@quilted/polyfills':
         specifier: ^0.2.12
