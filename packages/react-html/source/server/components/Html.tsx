@@ -7,7 +7,7 @@ import {HtmlManager} from '../../manager.ts';
 import {HtmlContext} from '../../context.ts';
 import {Serialize} from './Serialize.tsx';
 
-interface Props {
+export interface HtmlProps {
   manager?: HtmlManager;
   locale?: string;
   headStartContent?: ReactNode;
@@ -15,6 +15,7 @@ interface Props {
   bodyStartContent?: ReactNode;
   children?: ReactElement | string;
   bodyEndContent?: ReactNode;
+  rootElement?: boolean | {id?: string};
 }
 
 export function Html({
@@ -25,7 +26,8 @@ export function Html({
   bodyStartContent,
   children,
   bodyEndContent,
-}: Props) {
+  rootElement,
+}: HtmlProps) {
   const content =
     children == null || typeof children !== 'object'
       ? children
@@ -56,6 +58,18 @@ export function Html({
   const htmlAttributes = extracted?.htmlAttributes ?? {};
   const bodyAttributes = extracted?.bodyAttributes ?? {};
 
+  const resolvedRootElement: {id: string} | false =
+    rootElement === false
+      ? false
+      : {
+          id: 'app',
+          ...(typeof rootElement === 'object' ? rootElement : undefined),
+        };
+
+  if (resolvedRootElement === false && content) {
+    bodyAttributes.dangerouslySetInnerHTML = {__html: content};
+  }
+
   return (
     <html lang={locale} {...htmlAttributes}>
       <head>
@@ -76,7 +90,12 @@ export function Html({
       <body {...bodyAttributes}>
         {bodyStartContent}
 
-        <div id="app" dangerouslySetInnerHTML={{__html: content ?? ''}} />
+        {resolvedRootElement ? (
+          <div
+            id={resolvedRootElement.id}
+            dangerouslySetInnerHTML={{__html: content ?? ''}}
+          />
+        ) : null}
 
         {bodyEndContent}
       </body>

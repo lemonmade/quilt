@@ -136,5 +136,55 @@ describe('app builds', () => {
         ).toBe('Hello world');
       });
     });
+
+    it('supports apps that have completely custom browser entries', async () => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.remove('App.tsx');
+        await fs.write({
+          'browser.ts': stripIndent`
+            const element = document.createElement('main');
+            element.textContent = 'Hello world';
+
+            document.body.append(element);
+          `,
+          'server.ts': stripIndent`
+            import {createRequestRouter, createServerRender} from '@quilted/quilt/server';
+            import {createBrowserAssets} from '@quilted/quilt/magic/assets';
+                      
+            const router = createRequestRouter();
+
+            router.get(
+              createServerRender({
+                assets: createBrowserAssets(),
+                html: {
+                  rootElement: false,
+                },
+              }),
+            );
+            
+            export default router;
+          `,
+          'quilt.project.ts': (await fs.read('quilt.project.ts')).replace(
+            `quiltApp()`,
+            stripIndent`
+              quiltApp({
+                browser: {entry: "./browser.ts"},
+                server: {entry: "./server.ts"},
+              })
+            `,
+          ),
+        });
+
+        const {page} = await buildAppAndOpenPage(workspace);
+
+        await page.waitForSelector('main');
+
+        expect(await page.evaluate(() => document.body.innerHTML)).toBe(
+          '<main>Hello world</main>',
+        );
+      });
+    });
   });
 });
