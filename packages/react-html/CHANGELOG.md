@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.50
+
+### Patch Changes
+
+- [`93facb53`](https://github.com/lemonmade/quilt/commit/93facb530324894667817a6d2f78baea19a3b622) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow omitting React element from server renderer
+
 ## 0.3.49
 
 ### Patch Changes

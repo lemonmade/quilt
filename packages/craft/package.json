@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.220",
+  "version": "0.1.221",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -278,7 +278,7 @@
     "vite": "^4.3.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.146",
+    "@quilted/quilt": "^0.5.147",
     "react": "^18.0.0",
     "typescript": "^5.1.0"
   },
@@ -294,7 +294,7 @@
     }
   },
   "devDependencies": {
-    "@quilted/quilt": "workspace:^0.5.146",
+    "@quilted/quilt": "workspace:^0.5.147",
     "@types/babel__core": "^7.20.0",
     "@types/caniuse-api": "^3.0.0",
     "@types/clean-css": "^4.0.0",
