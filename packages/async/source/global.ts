@@ -2,28 +2,29 @@
 
 declare const __QUILT_ASSETS_BASE_URL__: string | undefined;
 
-export interface AsyncAssetsOptions {
+export interface AsyncModulesOptions {
+  cache?: Iterable<[string, any]>;
   baseUrl?: string;
 }
 
-export interface AsyncAssetsGlobal {
+export interface AsyncModulesGlobal {
   /**
    * The content to prepend to assets that are preloaded. If you are using
    * quilt to build your application, this will automatically be set to the
    * `assets.baseUrl` value passed in your configuration. For other setups,
-   * you can use `Quilt.AsyncAssets.configure()` to update this value for
-   * all new assets being loaded. If no value is provided, this defaults
-   * to `/assets/`, which requires that your application serve its assets
-   * from the `/assets` path on the same domain as your website.
+   * you can use `globalThis[Symbol.for('quilt')].AsyncModules.configure()`
+   * to update this value for all new assets being loaded. If no value is
+   * provided, this defaults to `/assets/`, which requires that your application
+   * serve its assets from the `/assets` path on the same domain as your website.
    */
   readonly baseUrl: string;
   /**
    * Allows you to cache a module by a unique identifier in order to be able
-   * to retrieve it synchronously later using `Quilt.AsyncAssets.get(id)`.
+   * to retrieve it synchronously later using `AsyncModules.get(id)`.
    */
   set<T = unknown>(id: string, module: T): void;
   /**
-   * Loads a module that has been cached with `Quilt.AsyncAssets.set()`. If no
+   * Loads a module that has been cached with `AsyncModules.set()`. If no
    * module with the provided identifier has been saved, this function returns
    * `undefined`.
    */
@@ -38,20 +39,26 @@ export interface AsyncAssetsGlobal {
    * the `baseUrl` that assets will be resolved relative to.
    *
    * ```ts
-   * Quilt.AsyncAssets.configure({
+   * globalThis[Symbol.for('quilt')].AsyncModules.configure({
    *   baseUrl: 'https://my-cdn.com/assets/',
    * });
    * ```
    */
-  configure(options: AsyncAssetsOptions): void;
+  configure(options: AsyncModulesOptions): void;
+
+  /**
+   * Iterates over each of the modules that have been cached.
+   */
+  [Symbol.iterator]<T = unknown>(): IterableIterator<[string, T]>;
 }
 
-export function installAsyncAssetsGlobal({
+export function createAsyncModulesGlobal({
+  cache,
   baseUrl = typeof __QUILT_ASSETS_BASE_URL__ === 'string'
     ? __QUILT_ASSETS_BASE_URL__
     : '/assets/',
-}: AsyncAssetsOptions = {}) {
-  const asyncCacheInternal = new Map<string, unknown>();
+}: AsyncModulesOptions = {}) {
+  const asyncCacheInternal = new Map<string, unknown>(cache);
   const seenAssets = new Set<string>();
   const linkRel =
     typeof document !== 'undefined' &&
@@ -59,7 +66,7 @@ export function installAsyncAssetsGlobal({
       ? 'modulepreload'
       : 'preload';
 
-  const AsyncAssets: AsyncAssetsGlobal = {
+  const AsyncModules: AsyncModulesGlobal = {
     get baseUrl() {
       return baseUrl;
     },
@@ -121,14 +128,10 @@ export function installAsyncAssetsGlobal({
         baseUrl = newBaseUrl.endsWith('/') ? newBaseUrl : `${newBaseUrl}/`;
       }
     },
+    [Symbol.iterator]() {
+      return asyncCacheInternal[Symbol.iterator]() as any;
+    },
   };
 
-  Reflect.defineProperty(globalThis, 'Quilt', {
-    writable: true,
-    configurable: true,
-    enumerable: false,
-    value: {
-      AsyncAssets,
-    },
-  });
+  return AsyncModules;
 }

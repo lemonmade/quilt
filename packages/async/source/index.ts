@@ -1,7 +1,7 @@
 export {
-  installAsyncAssetsGlobal,
-  type AsyncAssetsGlobal,
-  type AsyncAssetsOptions,
+  createAsyncModulesGlobal,
+  type AsyncModulesGlobal,
+  type AsyncModulesOptions,
 } from './global.ts';
 
 export {createAsyncModule} from './loader.ts';

@@ -74,9 +74,9 @@ export function asyncQuilt({
         const code = stripIndent`
           import * as AsyncModule from ${JSON.stringify(imported)};
 
-          if (typeof Quilt !== 'undefined' && Quilt.AsyncAssets != null) {
-            Quilt.AsyncAssets.set(${JSON.stringify(moduleId)}, AsyncModule);
-          }
+          ((globalThis[Symbol.for('quilt')] ??= {}).AsyncModules ??= new Map).set(${JSON.stringify(
+            moduleId,
+          )}, AsyncModule);
 
           export default AsyncModule;
         `;
@@ -211,9 +211,11 @@ function preloadContentForDependencies(
   dependencies: Iterable<string>,
   originalExpression: string,
 ) {
-  return `Quilt.AsyncAssets.preload(${Array.from(dependencies)
+  return `Promise.resolve().then(() => globalThis[Symbol.for('quilt')]?.preload?.(${Array.from(
+    dependencies,
+  )
     .map((dependency) => JSON.stringify(dependency))
-    .join(',')}).then(function(){return ${originalExpression}})`;
+    .join(',')})).then(function(){return ${originalExpression}})`;
 }
 
 function getDependenciesForImport(
