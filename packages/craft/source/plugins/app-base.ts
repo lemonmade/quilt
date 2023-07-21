@@ -48,14 +48,15 @@ const DEFAULT_STATIC_BROWSERSLIST_CONFIG: BrowserslistConfig = {
   modules: [BROWSERSLIST_MODULES_QUERY],
 };
 
+const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
+
 export function appBase({entry, ...options}: Options) {
   return createProjectPlugin({
     name: 'Quilt.AppBase',
     build({hooks, project}) {
       hooks<AppBaseConfigurationHooks>(({waterfall}) => ({
         quiltAppEntry: waterfall({
-          default: () =>
-            entry ? project.fs.resolvePath(entry) : getEntryForProject(project),
+          default: () => getEntryForProject(project, entry),
         }),
         quiltAppBrowserTargets: waterfall({
           default: () => getDefaultBrowserTargets(project, options),
@@ -65,8 +66,7 @@ export function appBase({entry, ...options}: Options) {
     develop({hooks, project}) {
       hooks<AppBaseConfigurationHooks>(({waterfall}) => ({
         quiltAppEntry: waterfall({
-          default: () =>
-            entry ? project.fs.resolvePath(entry) : getEntryForProject(project),
+          default: () => getEntryForProject(project, entry),
         }),
         quiltAppBrowserTargets: waterfall({
           default: () => getDefaultBrowserTargets(project, options),
@@ -108,14 +108,35 @@ async function getDefaultBrowserTargets(
   );
 }
 
-async function getEntryForProject(project: Project) {
+export async function getEntryForProject(
+  project: Project,
+  explicitEntry?: string,
+) {
+  if (explicitEntry) {
+    const [found] = await resolveToActualFiles(explicitEntry, project);
+
+    if (found == null) {
+      throw new DiagnosticError({
+        title: `Could not find entry for app ${project.name}`,
+        suggestion: `The \`entry\` option ${JSON.stringify(
+          explicitEntry,
+        )} did not resolve to any files.`,
+      });
+    }
+
+    return found;
+  }
+
   const main = project.packageJson?.raw.main;
 
   if (typeof main === 'string') return project.fs.resolvePath(main);
 
-  const [entry] = await project.fs.glob('{index,app,App}.{ts,tsx,js,jsx}', {
-    absolute: true,
-  });
+  const [entry] = await project.fs.glob(
+    `{index,app,App}.{${ENTRY_EXTENSIONS.join(',')}}`,
+    {
+      absolute: true,
+    },
+  );
 
   if (entry == null) {
     throw new DiagnosticError({
@@ -125,4 +146,29 @@ async function getEntryForProject(project: Project) {
   }
 
   return entry;
+}
+
+export async function resolveToActualFiles(
+  specifier: string,
+  project: Project,
+) {
+  if (
+    ENTRY_EXTENSIONS.some((extension) => specifier.endsWith(`.${extension}`))
+  ) {
+    return [project.fs.resolvePath(specifier)];
+  }
+
+  const matchedAsFiles = await project.fs.glob(
+    `${specifier}.{${ENTRY_EXTENSIONS.join(',')}}`,
+  );
+
+  if (matchedAsFiles.length > 0) {
+    return matchedAsFiles;
+  }
+
+  const matchedAsDirectory = await project.fs.glob(
+    `${specifier}/index.{${ENTRY_EXTENSIONS.join(',')}}`,
+  );
+
+  return matchedAsDirectory;
 }

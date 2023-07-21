@@ -16,6 +16,7 @@ import type {
   ResolvedDevelopProjectConfigurationHooks,
 } from '../kit.ts';
 
+import {resolveToActualFiles} from './app-base.ts';
 import type {AppServerOptions} from './app-server-base.ts';
 import type {AppBrowserOptions} from './app-build.ts';
 import type {EnvironmentOptions} from './magic-module-env.ts';
@@ -30,7 +31,6 @@ export const STEP_NAME = 'Quilt.App.Develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
 const MAGIC_MODULE_SERVER_ENTRY = '.quilt/magic/server.js';
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest';
-const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
 
 export interface Options {
   env?: EnvironmentOptions;
@@ -276,40 +276,23 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             if (options.input) return options;
 
             const entryFiles = await Promise.all([
-              quiltAppEntry!.run(),
               browser?.entry
-                ? resolveToActualFiles(browser.entry)
-                : Promise.resolve([]),
+                ? resolveToActualFiles(browser.entry, project)
+                : quiltAppEntry!.run(),
             ]);
+
+            const flatEntryFiles = entryFiles.flat();
+
+            if (flatEntryFiles.length === 0) {
+              throw new Error(
+                `Could not find any entry files for project ${project.name}`,
+              );
+            }
 
             return {
               ...options,
-              input: entryFiles.flat(),
+              input: flatEntryFiles,
             };
-
-            async function resolveToActualFiles(specifier: string) {
-              if (
-                ENTRY_EXTENSIONS.some((extension) =>
-                  specifier.endsWith(`.${extension}`),
-                )
-              ) {
-                return [project.fs.resolvePath(specifier)];
-              }
-
-              const matchedAsFiles = await project.fs.glob(
-                `${specifier}.{${ENTRY_EXTENSIONS.join(',')}}`,
-              );
-
-              if (matchedAsFiles.length > 0) {
-                return matchedAsFiles;
-              }
-
-              const matchedAsDirectory = await project.fs.glob(
-                `${specifier}/index.{${ENTRY_EXTENSIONS.join(',')}}`,
-              );
-
-              return matchedAsDirectory;
-            }
           });
 
           vitePort?.((existingPort) =>
