@@ -1,5 +1,16 @@
 # @quilted/craft
 
+## 0.1.221
+
+### Patch Changes
+
+- [`c0fbb640`](https://github.com/lemonmade/quilt/commit/c0fbb64016aa3b347bf83424c389891304dc5360) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix dev asset manifest
+
+- [`361a0d25`](https://github.com/lemonmade/quilt/commit/361a0d253534db599cbac6a49c6e8216a6b0410f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix entry file errors for projects that don't need an entry
+
+- Updated dependencies [[`93facb53`](https://github.com/lemonmade/quilt/commit/93facb530324894667817a6d2f78baea19a3b622)]:
+  - @quilted/quilt@0.5.147
+
 ## 0.1.220
 
 ### Patch Changes
