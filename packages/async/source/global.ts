@@ -20,11 +20,11 @@ export interface AsyncModulesGlobal {
   readonly baseUrl: string;
   /**
    * Allows you to cache a module by a unique identifier in order to be able
-   * to retrieve it synchronously later using `Quilt.AsyncModules.get(id)`.
+   * to retrieve it synchronously later using `AsyncModules.get(id)`.
    */
   set<T = unknown>(id: string, module: T): void;
   /**
-   * Loads a module that has been cached with `Quilt.AsyncModules.set()`. If no
+   * Loads a module that has been cached with `AsyncModules.set()`. If no
    * module with the provided identifier has been saved, this function returns
    * `undefined`.
    */
