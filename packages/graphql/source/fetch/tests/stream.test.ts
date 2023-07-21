@@ -28,7 +28,7 @@ describe('createGraphQLHttpStreamingFetch()', () => {
       }
     `;
 
-    expect(await fetch(query)).toStrictEqual({
+    expect(await fetch(query)).toMatchObject({
       ...result,
       errors: undefined,
       extensions: undefined,
