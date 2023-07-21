@@ -211,7 +211,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                     assets: [`/${MAGIC_MODULE_BROWSER_ENTRY}`],
                     entries: {
                       default: {
-                        scripts: [0, 1],
+                        scripts: [0],
                         styles: [],
                       },
                     },
