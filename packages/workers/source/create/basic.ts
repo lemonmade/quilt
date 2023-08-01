@@ -1,6 +1,6 @@
 import {
   createScriptUrl,
-  createCrossDomainWorkerUrl,
+  getSameOriginWorkerUrl,
   type FileOrModuleResolver,
 } from './utilities.ts';
 
@@ -16,15 +16,17 @@ export function createWorker(
 
   function createWorker(): Worker {
     if (scriptUrl) {
-      const workerUrl = createCrossDomainWorkerUrl(scriptUrl);
+      const workerUrl = getSameOriginWorkerUrl(scriptUrl);
 
       const worker = new Worker(workerUrl);
 
-      const originalTerminate = worker.terminate.bind(worker);
-      worker.terminate = () => {
-        URL.revokeObjectURL(workerUrl);
-        originalTerminate();
-      };
+      if (workerUrl.href !== scriptUrl.href) {
+        const originalTerminate = worker.terminate.bind(worker);
+        worker.terminate = () => {
+          URL.revokeObjectURL(workerUrl.href);
+          originalTerminate();
+        };
+      }
 
       return worker;
     }

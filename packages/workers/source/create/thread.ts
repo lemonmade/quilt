@@ -1,20 +1,15 @@
-import {createThread, targetFromWebWorker} from '@quilted/threads';
-import type {Thread, ThreadTarget, ThreadOptions} from '@quilted/threads';
+import {createThreadFromWebWorker} from '@quilted/threads';
+import type {Thread, ThreadOptions} from '@quilted/threads';
 
 import {
   createScriptUrl,
-  createCrossDomainWorkerUrl,
+  getSameOriginWorkerUrl,
   type FileOrModuleResolver,
 } from './utilities.ts';
 
-export interface CreateThreadWorkerOptions<Self, Target>
-  extends ThreadOptions<Self, Target> {
-  createTarget?(url: URL): ThreadTarget;
-}
-
 export interface ThreadWorkerCreator<Self, Target> {
   readonly url?: URL;
-  (options?: CreateThreadWorkerOptions<Self, Target>): Thread<Target>;
+  (options?: ThreadOptions<Self, Target>): Thread<Target>;
 }
 
 export function createThreadWorker<Self = unknown, Target = unknown>(
@@ -22,12 +17,12 @@ export function createThreadWorker<Self = unknown, Target = unknown>(
 ): ThreadWorkerCreator<Self, Target> {
   const scriptUrl = createScriptUrl(script);
 
-  function createWorker({
-    createTarget = createDefaultTarget,
-    ...endpointOptions
-  }: CreateThreadWorkerOptions<Self, Target> = {}): Thread<Target> {
+  function createWorker(options?: ThreadOptions<Self, Target>): Thread<Target> {
     if (scriptUrl) {
-      return createThread(createTarget(scriptUrl), endpointOptions);
+      return createThreadFromWebWorker(
+        createWebWorker(scriptUrl, options),
+        options,
+      );
     }
 
     // The babel plugin that comes with this package actually turns the argument
@@ -76,24 +71,22 @@ export function createThreadWorker<Self = unknown, Target = unknown>(
   return createWorker as any;
 }
 
-function createDefaultTarget(url: URL): ThreadTarget {
-  const workerUrl = createCrossDomainWorkerUrl(url);
+function createWebWorker(
+  url: URL,
+  {signal}: {signal?: AbortSignal} = {},
+): Worker {
+  const workerUrl = getSameOriginWorkerUrl(url);
   const worker = new Worker(workerUrl);
-  const baseTarget = targetFromWebWorker(worker);
 
-  return {
-    ...baseTarget,
-    listen(options) {
-      options?.signal?.addEventListener(
-        'abort',
-        () => {
-          worker.terminate();
-          URL.revokeObjectURL(workerUrl);
-        },
-        {once: true},
-      );
+  if (workerUrl.href !== url.href) {
+    signal?.addEventListener(
+      'abort',
+      () => {
+        URL.revokeObjectURL(workerUrl.href);
+      },
+      {once: true},
+    );
+  }
 
-      return baseTarget.listen(options);
-    },
-  };
+  return worker;
 }

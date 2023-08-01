@@ -1244,6 +1244,9 @@ importers:
         specifier: ^0.1.0
         version: link:../events
     devDependencies:
+      '@preact/signals-core':
+        specifier: ^1.3.0
+        version: 1.3.1
       '@quilted/testing':
         specifier: workspace:*
         version: link:../testing
@@ -4795,7 +4798,6 @@ packages:
 
   /@preact/signals-core@1.3.1:
     resolution: {integrity: sha512-DL+3kDssZ3UOMz9HufwSYE/gK0+TnT1jzegfF5rstgyPrnyfjz4BHAoxmzQA6Mkp4UlKe8qjsgl3v5a/obzNig==}
-    dev: false
 
   /@preact/signals@1.1.4(preact@10.15.0):
     resolution: {integrity: sha512-4s0U8yHfy6OzBjTx8lgG0JZGFq1y+ye7xLmaaI8SXyJ5p+jAtMKW40Mg3GDLISM5WyKnqbfrQ4SOmbq1VTBtTw==}

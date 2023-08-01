@@ -2,7 +2,7 @@ export {
   retain,
   release,
   createThread,
-  targetFromWebWorker,
+  createThreadFromWebWorker,
 } from '@quilted/threads';
 export type {
   Thread,
@@ -13,9 +13,6 @@ export type {
   ThreadSafeArgument,
   ThreadSafeReturnType,
 } from '@quilted/threads';
+
 export {createWorker, type BasicWorkerCreator} from './create/basic.ts';
-export {
-  createThreadWorker,
-  type ThreadWorkerCreator,
-  type CreateThreadWorkerOptions,
-} from './create/thread.ts';
+export {createThreadWorker, type ThreadWorkerCreator} from './create/thread.ts';

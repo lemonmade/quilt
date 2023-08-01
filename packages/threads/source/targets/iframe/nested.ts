@@ -1,10 +1,14 @@
 import {on} from '@quilted/events';
-import type {ThreadTarget} from '../../types.ts';
+import {createThread, type ThreadOptions} from '../target.ts';
 import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
 
-export function targetFromInsideIframe({
+export function createThreadFromInsideIframe<
+  Self = Record<string, never>,
+  Target = Record<string, never>,
+>({
   targetOrigin = '*',
-}: {targetOrigin?: string} = {}): ThreadTarget {
+  ...options
+}: ThreadOptions<Self, Target> & {targetOrigin?: string} = {}) {
   if (typeof self === 'undefined' || self.parent == null) {
     throw new Error(
       'You are not inside an iframe, because there is no parent window.',
@@ -43,23 +47,26 @@ export function targetFromInsideIframe({
     );
   }
 
-  return {
-    send(message, transfer) {
-      return parent.postMessage(message, targetOrigin, transfer);
-    },
-    async *listen({signal}) {
-      const messages = on<WindowEventHandlersEventMap, 'message'>(
-        self,
-        'message',
-        {
-          signal,
-        },
-      );
+  return createThread(
+    {
+      send(message, transfer) {
+        return parent.postMessage(message, targetOrigin, transfer);
+      },
+      async *listen({signal}) {
+        const messages = on<WindowEventHandlersEventMap, 'message'>(
+          self,
+          'message',
+          {
+            signal,
+          },
+        );
 
-      for await (const message of messages) {
-        if (message.data === CHECK_MESSAGE) continue;
-        yield message.data;
-      }
+        for await (const message of messages) {
+          if (message.data === CHECK_MESSAGE) continue;
+          yield message.data;
+        }
+      },
     },
-  };
+    options,
+  );
 }

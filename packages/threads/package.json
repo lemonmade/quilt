@@ -23,14 +23,37 @@
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
+    },
+    "./signals": {
+      "types": "./build/typescript/signals.d.ts",
+      "quilt:source": "./source/signals.ts",
+      "quilt:esnext": "./build/esnext/signals.esnext",
+      "import": "./build/esm/signals.mjs",
+      "require": "./build/cjs/signals.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "signals": [
+        "./build/typescript/signals.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "dependencies": {
     "@quilted/events": "^0.1.0"
   },
+  "peerDependencies": {
+    "@preact/signals-core": "^1.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@preact/signals-core": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@preact/signals-core": "^1.3.0",
     "@quilted/testing": "workspace:*"
   },
   "eslintConfig": {

@@ -1,11 +1,21 @@
 import {on} from '@quilted/events';
-import type {ThreadTarget} from '../../types.ts';
+import {
+  createThread,
+  type ThreadTarget,
+  type ThreadOptions,
+} from '../target.ts';
 import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
 
-export function targetFromIframe(
+export function createThreadFromIframe<
+  Self = Record<string, never>,
+  Target = Record<string, never>,
+>(
   iframe: HTMLIFrameElement,
-  {targetOrigin = '*'}: {targetOrigin?: string} = {},
-): ThreadTarget {
+  {
+    targetOrigin = '*',
+    ...options
+  }: ThreadOptions<Self, Target> & {targetOrigin?: string} = {},
+) {
   let connected = false;
 
   const sendMessage: ThreadTarget['send'] = function send(message, transfer) {
@@ -32,28 +42,31 @@ export function targetFromIframe(
     sendMessage(CHECK_MESSAGE);
   });
 
-  return {
-    send(message, transfer) {
-      if (!connected) {
-        return connectedPromise.then(() => sendMessage(message, transfer));
-      }
+  return createThread(
+    {
+      send(message, transfer) {
+        if (!connected) {
+          return connectedPromise.then(() => sendMessage(message, transfer));
+        }
 
-      return sendMessage(message, transfer);
-    },
-    async *listen({signal}) {
-      const messages = on<WindowEventHandlersEventMap, 'message'>(
-        self,
-        'message',
-        {
-          signal,
-        },
-      );
+        return sendMessage(message, transfer);
+      },
+      async *listen({signal}) {
+        const messages = on<WindowEventHandlersEventMap, 'message'>(
+          self,
+          'message',
+          {
+            signal,
+          },
+        );
 
-      for await (const message of messages) {
-        if (message.source !== iframe.contentWindow) continue;
-        if (message.data === RESPONSE_MESSAGE) continue;
-        yield message.data;
-      }
+        for await (const message of messages) {
+          if (message.source !== iframe.contentWindow) continue;
+          if (message.data === RESPONSE_MESSAGE) continue;
+          yield message.data;
+        }
+      },
     },
-  };
+    options,
+  );
 }

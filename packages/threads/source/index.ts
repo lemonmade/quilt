@@ -1,5 +1,3 @@
-export {createThread} from './thread.ts';
-export type {ThreadOptions} from './thread.ts';
 export {retain, release, StackFrame, isMemoryManageable} from './memory.ts';
 export type {MemoryManageable, MemoryRetainer} from './memory.ts';
 export {
@@ -9,11 +7,13 @@ export {
   ENCODE_METHOD,
 } from './constants.ts';
 export {
-  targetFromIframe,
-  targetFromInsideIframe,
-  targetFromWebWorker,
-  targetFromMessagePort,
-  targetFromBrowserWebSocket,
+  createThread,
+  createThreadFromBrowserWebSocket,
+  createThreadFromIframe,
+  createThreadFromInsideIframe,
+  createThreadFromMessagePort,
+  createThreadFromWebWorker,
+  type ThreadOptions,
 } from './targets.ts';
 export {
   createBasicEncoder,

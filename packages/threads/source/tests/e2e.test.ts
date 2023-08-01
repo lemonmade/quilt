@@ -1,6 +1,6 @@
 import {describe, it, expect} from '@quilted/testing';
-import {createThread, targetFromMessagePort} from '../index.ts';
-import {MessageChannel} from './utiltiies.ts';
+import {createThreadFromMessagePort} from '../index.ts';
+import {MessageChannel} from './utilities.ts';
 
 describe('thread', () => {
   it('calls the exposed API over a message channel', async () => {
@@ -9,11 +9,12 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1);
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {hello: () => 'world'},
     });
 
@@ -26,11 +27,12 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1);
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {
         greet: async (getName) => `Hello, ${await getName()}!`,
       },
@@ -45,14 +47,15 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1);
 
     let yielded = 0;
     let expected = 0;
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {
         *iterate() {
           while (yielded < 5) {
@@ -73,14 +76,15 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1);
 
     let yielded = 0;
     let expected = 0;
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {
         async *iterate() {
           while (yielded < 5) {
@@ -103,12 +107,12 @@ describe('thread', () => {
     const abort = new AbortController();
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-      {signal: abort.signal},
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1, {signal: abort.signal});
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {
         greet: () => 'Hello, world!',
       },
@@ -127,12 +131,12 @@ describe('thread', () => {
     const abort = new AbortController();
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-      {signal: abort.signal},
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1, {signal: abort.signal});
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         greet: () => new Promise(() => {}),
@@ -154,11 +158,12 @@ describe('thread', () => {
     const abort = new AbortController();
 
     const {port1, port2} = new MessageChannel();
-    const threadOne = createThread<Record<string, never>, EndpointApi>(
-      targetFromMessagePort(port1),
-    );
+    const threadOne = createThreadFromMessagePort<
+      Record<string, never>,
+      EndpointApi
+    >(port1);
 
-    createThread<EndpointApi>(targetFromMessagePort(port2), {
+    createThreadFromMessagePort<EndpointApi>(port2, {
       signal: abort.signal,
       expose: {
         // eslint-disable-next-line @typescript-eslint/no-empty-function

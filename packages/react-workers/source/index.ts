@@ -4,7 +4,7 @@ export {
   retain,
   release,
   createThread,
-  targetFromWebWorker,
+  createThreadFromWebWorker,
 } from '@quilted/workers';
 export type {
   Thread,
@@ -16,7 +16,6 @@ export type {
   ThreadSafeReturnType,
   BasicWorkerCreator,
   ThreadWorkerCreator,
-  CreateThreadWorkerOptions,
 } from '@quilted/workers';
 
 export {useThreadWorker} from './hooks.ts';

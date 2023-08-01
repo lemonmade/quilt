@@ -1,19 +1,25 @@
 import {on} from '@quilted/events';
-import type {ThreadTarget} from '../types.ts';
+import {createThread, type ThreadOptions} from './target.ts';
 
-export function targetFromWebWorker(worker: Worker): ThreadTarget {
-  return {
-    send(...args: [any, Transferable[]]) {
-      worker.postMessage(...args);
-    },
-    async *listen({signal}) {
-      const messages = on<WorkerEventMap, 'message'>(worker, 'message', {
-        signal,
-      });
+export function createThreadFromWebWorker<
+  Self = Record<string, never>,
+  Target = Record<string, never>,
+>(worker: Worker, options?: ThreadOptions<Self, Target>) {
+  return createThread(
+    {
+      send(...args: [any, Transferable[]]) {
+        worker.postMessage(...args);
+      },
+      async *listen({signal}) {
+        const messages = on<WorkerEventMap, 'message'>(worker, 'message', {
+          signal,
+        });
 
-      for await (const message of messages) {
-        yield message.data;
-      }
+        for await (const message of messages) {
+          yield message.data;
+        }
+      },
     },
-  };
+    options,
+  );
 }

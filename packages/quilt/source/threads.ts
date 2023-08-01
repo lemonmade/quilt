@@ -7,11 +7,11 @@ export {
   acceptThreadAbortSignal,
   createBasicEncoder,
   createBasicEncoderWithOverrides,
-  targetFromIframe,
-  targetFromInsideIframe,
-  targetFromMessagePort,
-  targetFromWebWorker,
-  targetFromBrowserWebSocket,
+  createThreadFromIframe,
+  createThreadFromInsideIframe,
+  createThreadFromMessagePort,
+  createThreadFromWebWorker,
+  createThreadFromBrowserWebSocket,
   ENCODE_METHOD,
 } from '@quilted/threads';
 export type {
@@ -29,6 +29,12 @@ export type {
   MemoryManageable,
   MemoryRetainer,
 } from '@quilted/threads';
+export {
+  createThreadSignal,
+  acceptThreadSignal,
+  signalToIterator,
+  type ThreadSignal,
+} from '@quilted/threads/signals';
 export {
   on,
   once,
@@ -53,5 +59,4 @@ export {
 export type {
   BasicWorkerCreator,
   ThreadWorkerCreator,
-  CreateThreadWorkerOptions,
 } from '@quilted/react-workers';

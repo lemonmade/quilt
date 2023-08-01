@@ -6,8 +6,12 @@ export function createScriptUrl(script: FileOrModuleResolver<any>) {
     : new URL(script, window.location.href);
 }
 
-export function createCrossDomainWorkerUrl(url: URL) {
-  return URL.createObjectURL(
-    new Blob([`importScripts(${JSON.stringify(url.href)})`]),
-  );
+export function getSameOriginWorkerUrl(url: URL) {
+  return url.origin === window.location.origin
+    ? url
+    : new URL(
+        URL.createObjectURL(
+          new Blob([`importScripts(${JSON.stringify(url.href)})`]),
+        ),
+      );
 }
