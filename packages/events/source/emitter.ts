@@ -1,9 +1,11 @@
 import {on as onEvent} from './on.ts';
 import {once as onceEvent} from './once.ts';
+import {addEventHandler} from './handler.ts';
 import type {
   AbortBehavior,
   EventHandler,
   EventHandlerMap,
+  EventTarget,
   EventTargetFunction,
 } from './types.ts';
 
@@ -45,12 +47,28 @@ export class EventEmitter<Events extends EventHandlerMap = {}> {
   >();
 
   /**
+   * A reference to an `EventTarget` that is being wrapped with this `EventEmitter`.
+   * As handlers are added for events on the emitter, matching events are listened
+   * for lazily on the `EventTarget`. This is useful for converting event producers
+   * in existing environments into objects that can be used with `once()` and `on()`.
+   *
+   * @example
+   * const button = document.querySelector('button');
+   * const emitter = new EventEmitter(button);
+   * // emitter.eventTarget === button
+   *
+   * const click = await emitter.once('click');
+   * console.log('clicked!', click);
+   */
+  readonly eventTarget: EventTarget<Events> | undefined;
+
+  /**
    * An `EventEmitter` that triggers events when handlers are added
    * or removed from this emitter. This is useful for debugging, and for
    * building higher-level abstractions that need to know when handlers
    * are registered for a given event.
    */
-  get internal(): Pick<EventEmitter<Events>, 'all' | 'on'> {
+  get internal(): Pick<EventEmitter<Events>, 'on' | 'once'> {
     if (this._internal) {
       return this._internal;
     } else {
@@ -102,10 +120,43 @@ export class EventEmitter<Events extends EventHandlerMap = {}> {
     signal?.addEventListener('abort', remove, {signal: signalAbort!.signal});
   };
 
-  constructor() {
+  constructor(eventTarget?: EventTarget<Events>) {
     this.on = this.on.bind(this);
     this.once = this.once.bind(this);
     this.emit = this.emit.bind(this);
+
+    if (eventTarget) {
+      this.eventTarget = eventTarget;
+
+      const abortMap = new Map<keyof Events, AbortController>();
+
+      this.internal.on('add', ({event: eventName, all}) => {
+        if (all.size !== 1) return;
+
+        const abort = new AbortController();
+        abortMap.set(eventName, abort);
+
+        addEventHandler(
+          eventTarget,
+          eventName,
+          (event) => {
+            this.emit(eventName, event);
+          },
+          {
+            signal: abort.signal,
+          },
+        );
+      });
+
+      this.internal.on('remove', ({event: eventName, all}) => {
+        const abort = all.size === 0 ? abortMap.get(eventName) : undefined;
+
+        if (abort == null) return;
+
+        abort.abort();
+        abortMap.delete(eventName);
+      });
+    }
   }
 
   /**
