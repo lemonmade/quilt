@@ -135,11 +135,11 @@ hydrateRoot(element, <App />);
 Quilt creates separate bundles for code in your application that act as global dependencies. You’ll notice this effect in your production application by the names of your JavaScript bundles. Quilt uses the following rules to name your dependency bundles:
 
 - The `framework` bundle contains Quilt and Preact, the code that makes Quilt work
-- The `polyfills` bundle contains any [polyfills that you have enabled](TODO)
+- The `polyfills` bundle contains any [polyfills that you have enabled](../../features/performance.md#polyfills)
 - The `loader` bundle contains the [System.js loader code](https://github.com/systemjs/systemjs) (only present for browser builds that can’t use native ES modules)
 - `packages` bundles will be created for code in the `packages` directory of your workspace, which is the [default location Quilt puts packages in monorepo workspaces](TODO)
 - `global` bundles will be created for code in the `global` directory of your workspace, which is the [conventional location for code shared across your entire repo](TODO)
-- `shared` bundles will be created for code in the `shared` directory of your app, which is the [conventional location for code shared by multiple features of your app](TODO)
+- `shared` bundles will be created for code in the `shared` directory of your app, which is the [conventional location for code shared by multiple features of your app](./conventions.md#shared)
 - The `internals` bundle is used for some internal Quilt dependencies that need to be split into separate bundles
 
 When using Quilt’s [server rendering](./server.md) and [static rendering](./static.md) features, you won’t need to worry too much about the way these assets are split. These modes automatically include the correct bundles in your HTML, and Quilt will preload the necessary dependency bundles when loading your code at runtime.
