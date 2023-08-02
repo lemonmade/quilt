@@ -38,14 +38,16 @@ export {
 export {
   on,
   once,
-  createEmitter,
+  addEventHandler,
+  createEventEmitter,
+  EventEmitter,
   AbortError,
   NestedAbortController,
+  TimedAbortController,
 } from '@quilted/events';
 export type {
   AbortBehavior,
-  Emitter,
-  EmitterHandler,
+  EventHandler,
   EventTarget,
   EventTargetAddEventListener,
   EventTargetFunction,

@@ -1,49 +1,45 @@
+export type AbortBehavior = 'reject' | 'resolve';
+
+export type EventHandler<Argument = unknown> = (arg: Argument) => void;
+
+export type EventHandlerMap = {[key: string]: any};
+
 export interface EventTargetAddEventListener<
-  EventMap = Record<string, unknown>,
+  Events extends EventHandlerMap = Record<string, unknown>,
 > {
-  addEventListener<Event extends keyof EventMap>(
+  addEventListener<Event extends keyof Events>(
     event: Event,
-    listener: (
-      ...args: EventMap[Event] extends any[]
-        ? EventMap[Event]
-        : [EventMap[Event]]
-    ) => void,
+    listener: (arg: Events[Event]) => void,
     options?: {once?: boolean; signal?: AbortSignal},
   ): void;
 }
 
-export interface EventTargetOn<EventMap = Record<string, unknown>> {
-  on<Event extends keyof EventMap>(
+export interface EventTargetOn<
+  Events extends EventHandlerMap = Record<string, unknown>,
+> {
+  on<Event extends keyof Events>(
     event: Event,
-    listener: (
-      ...args: EventMap[Event] extends any[]
-        ? EventMap[Event]
-        : [EventMap[Event]]
-    ) => void,
+    listener: (arg: Events[Event]) => void,
   ): void;
-  off<Event extends keyof EventMap>(
+  off<Event extends keyof Events>(
     event: Event,
-    listener: (
-      ...args: EventMap[Event] extends any[]
-        ? EventMap[Event]
-        : [EventMap[Event]]
-    ) => void,
+    listener: (arg: Events[Event]) => void,
   ): void;
 }
 
-export interface EventTargetFunction<EventMap = Record<string, unknown>> {
-  <Event extends keyof EventMap>(
+export interface EventTargetFunction<
+  Events extends EventHandlerMap = Record<string, unknown>,
+> {
+  <Event extends keyof Events>(
     event: Event,
-    listener: (
-      ...args: EventMap[Event] extends any[]
-        ? EventMap[Event]
-        : [EventMap[Event]]
-    ) => void,
+    listener: (arg: Events[Event]) => void,
     options?: {once?: boolean; signal?: AbortSignal},
   ): void;
 }
 
-export type EventTarget<EventMap = Record<string, unknown>> =
-  | EventTargetAddEventListener<EventMap>
-  | EventTargetOn<EventMap>
-  | EventTargetFunction<EventMap>;
+export type EventTarget<
+  Events extends EventHandlerMap = Record<string, unknown>,
+> =
+  | EventTargetAddEventListener<Events>
+  | EventTargetOn<Events>
+  | EventTargetFunction<Events>;

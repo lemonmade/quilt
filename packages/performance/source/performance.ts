@@ -1,4 +1,4 @@
-import {createEmitter, type Emitter} from '@quilted/events';
+import {EventEmitter} from '@quilted/events';
 
 export interface PerformanceNavigationTimingOptions<
   Metadata = Record<string, unknown>,
@@ -36,14 +36,14 @@ interface PerformanceEventMap<Metadata = Record<string, unknown>> {
   navigation: PerformanceNavigation<Metadata>;
 }
 
-export interface Performance<Metadata = Record<string, unknown>> {
+export interface Performance<Metadata = Record<string, unknown>>
+  extends Pick<EventEmitter<PerformanceEventMap<Metadata>>, 'on' | 'once'> {
   readonly currentNavigation?: PerformanceInflightNavigation<Metadata>;
   readonly navigationCount: number;
   readonly navigations: PerformanceNavigation<Metadata>[];
   start(
     options: {target: URL} & PerformanceNavigationTimingOptions<Metadata>,
   ): PerformanceInflightNavigation<Metadata>;
-  on: Emitter<PerformanceEventMap<Metadata>>['on'];
 }
 
 export function createPerformance<Metadata = Record<string, unknown>>() {
@@ -51,7 +51,7 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
   let navigationCount = 0;
 
   const navigations: PerformanceNavigation<Metadata>[] = [];
-  const emitter = createEmitter<PerformanceEventMap<Metadata>>();
+  const emitter = new EventEmitter<PerformanceEventMap<Metadata>>();
 
   const performance: Performance<Metadata> = {
     get currentNavigation() {
@@ -132,6 +132,7 @@ export function createPerformance<Metadata = Record<string, unknown>>() {
       }
     },
     on: emitter.on,
+    once: emitter.once,
   };
 
   return performance;

@@ -3,20 +3,20 @@ export {once} from './once.ts';
 export {
   AbortError,
   NestedAbortController,
-  anyAbortSignal,
+  TimedAbortController,
   raceAgainstAbortSignal,
-  type AbortBehavior,
 } from './abort.ts';
-export {addListener} from './listeners.ts';
-export {createEmitter, createEmitterWithInternals} from './emitter.ts';
-export type {
-  Emitter,
-  EmitterHandler,
-  EmitterInternalEvents,
-  EmitterWithInternals,
+export {addEventHandler} from './handler.ts';
+export {
+  EventEmitter,
+  createEventEmitter,
+  type EmitterEmitterInternalEvents,
 } from './emitter.ts';
-export {TimedAbortController, sleep} from './timeouts.ts';
+export {sleep} from './sleep.ts';
 export type {
+  AbortBehavior,
+  EventHandler,
+  EventHandlerMap,
   EventTarget,
   EventTargetOn,
   EventTargetAddEventListener,

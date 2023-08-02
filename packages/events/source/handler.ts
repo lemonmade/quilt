@@ -1,17 +1,18 @@
 import type {
+  EventHandler,
   EventTarget,
   EventTargetOn,
   EventTargetAddEventListener,
 } from './types.ts';
 
-export function addListener(
+export function addEventHandler(
   target: EventTarget<any>,
-  name: string | symbol,
-  listener: (...args: any[]) => void,
+  event: string | symbol,
+  handler: EventHandler<any>,
   flags?: {once?: boolean; signal?: AbortSignal},
 ) {
   if (typeof target === 'function') {
-    target(name, listener, flags);
+    target(event, handler, flags);
     return;
   }
 
@@ -20,8 +21,8 @@ export function addListener(
     'function'
   ) {
     (target as EventTargetAddEventListener).addEventListener(
-      name as any,
-      listener,
+      event as any,
+      handler,
       flags,
     );
 
@@ -33,17 +34,17 @@ export function addListener(
 
     const teardown = () => {
       signalAbort.abort();
-      (target as EventTargetOn).off(name as any, listener);
+      (target as EventTargetOn).off(event as any, normalizedListener);
     };
 
-    const normalizedListener: typeof listener = flags?.once
+    const normalizedListener: typeof handler = flags?.once
       ? (...args) => {
           teardown();
-          return listener(...args);
+          return handler(...args);
         }
-      : listener;
+      : handler;
 
-    (target as EventTargetOn).on(name as any, normalizedListener);
+    (target as EventTargetOn).on(event as any, normalizedListener);
 
     flags?.signal?.addEventListener('abort', teardown, {
       signal: signalAbort.signal,
