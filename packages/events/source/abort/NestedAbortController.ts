@@ -30,7 +30,7 @@ export class NestedAbortController extends AbortController {
       const options = {signal: this.signal};
 
       for (const signal of parents) {
-        signal?.addEventListener('abort', abort, options);
+        signal.addEventListener('abort', abort, options);
       }
     }
   }
