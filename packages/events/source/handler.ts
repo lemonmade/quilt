@@ -5,6 +5,10 @@ import type {
   EventTargetAddEventListener,
 } from './types.ts';
 
+/**
+ * Adds an event handler function to any kind of object capable of
+ * handling events. This includes DOM `EventTarget`s and Node `EventEmitter`s.
+ */
 export function addEventHandler(
   target: EventTarget<any>,
   event: string | symbol,

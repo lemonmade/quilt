@@ -265,6 +265,23 @@ export class EventEmitter<Events extends EventHandlerMap = {}> {
       /**
        * An `AbortSignal` to cancel listening to the event.
        */
+      signal?: never;
+
+      /**
+       * How to handle the `AbortSignal` being aborted. Defaults to `'resolve'`,
+       * which causes the promise to resolve with `undefined` if the signal is
+       * aborted before the next matching event. If set to `'reject'`, the promise
+       * will instead reject with an `AbortError` in this case.
+       */
+      abort?: AbortBehavior;
+    },
+  ): Promise<Events[Event]>;
+  once<Event extends keyof Events>(
+    event: Event,
+    options?: {
+      /**
+       * An `AbortSignal` to cancel listening to the event.
+       */
       signal?: AbortSignal;
 
       /**

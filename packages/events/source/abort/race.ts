@@ -1,11 +1,32 @@
 import {AbortError} from './AbortError.ts';
 
+/**
+ * Waits for the result of a function that returns a promise, and
+ * returns its result. However, this promise is "raced" against the
+ * `AbortSignal` you provide, and if it aborts before the promise resolves,
+ * the promise returned by this function will be rejected.
+ *
+ * @param race A function that returns a promise. If this function resolves
+ * before the `AbortSignal` aborts, the promise returned by `raceAgainstAbortSignal()`
+ * will resolve with the same value.
+ */
 export async function raceAgainstAbortSignal<T>(
   race: () => Promise<T>,
   {
     signal,
-    ifAborted,
-  }: {signal: AbortSignal; ifAborted?(): void | Promise<void>},
+    onAbort,
+  }: {
+    /**
+     * The `AbortSignal` to race your promise against.
+     */
+    signal: AbortSignal;
+    /**
+     * A function that will be called if the `AbortSignal` aborts. You
+     * can use this function to perform some logic when the `AbortSignal`
+     * wins the race, without needing to handle the rejected promise.
+     */
+    onAbort?(): void | Promise<void>;
+  },
 ): Promise<T> {
   const raceAbort = new AbortController();
 
@@ -28,7 +49,7 @@ export async function raceAgainstAbortSignal<T>(
         'abort',
         async () => {
           try {
-            if (ifAborted) await ifAborted();
+            if (onAbort) await onAbort();
             reject(new AbortError());
           } catch (error) {
             reject(error);
