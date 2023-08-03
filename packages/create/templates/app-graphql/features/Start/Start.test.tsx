@@ -1,9 +1,9 @@
 import {describe, it, expect} from '@quilted/quilt/testing';
 
 import {
-  renderWithAppContext,
-  createGraphQLController,
+  renderApp,
   fillGraphQL,
+  createGraphQLController,
 } from '~/tests/render.tsx';
 
 import Start from './Start.tsx';
@@ -14,7 +14,7 @@ describe('<Start />', () => {
     const name = 'Winston';
     const graphql = createGraphQLController(fillGraphQL(startQuery, {name}));
 
-    const start = await renderWithAppContext(<Start />, {graphql});
+    const start = await renderApp(<Start />, {graphql});
 
     expect(graphql).toHavePerformedGraphQLOperation(startQuery);
     expect(start).toContainReactText(`Hello ${name}!`);
