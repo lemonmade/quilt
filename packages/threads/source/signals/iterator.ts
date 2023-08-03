@@ -1,11 +1,11 @@
 import {type Signal} from '@preact/signals-core';
-import {createEmitter} from '@quilted/events';
+import {EventEmitter} from '@quilted/events';
 
 export function signalToIterator<T>(
   signal: Signal<T>,
   {signal: abortSignal}: {signal?: AbortSignal} = {},
 ) {
-  const emitter = createEmitter<{value: T}>();
+  const emitter = new EventEmitter<{value: T}>();
 
   const unsubscribe = signal.subscribe((value) => {
     emitter.emit('value', value);

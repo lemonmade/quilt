@@ -1,6 +1,6 @@
 {
   "name": "@quilted/events",
-  "description": "",
+  "description": "Tiny helpers for working with events in any JavaScript environment",
   "type": "module",
   "version": "0.1.18",
   "license": "MIT",

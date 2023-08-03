@@ -73,11 +73,9 @@ export function useAsyncModule<Module = Record<string, unknown>>(
     if (ref.current.error != null) throw ref.current.error;
 
     if (value == null && immediate) {
-      ref.current.promise ??= asyncModule
-        .on('resolve', {once: true})
-        .then(() => {
-          ref.current.promise = undefined;
-        });
+      ref.current.promise ??= asyncModule.once('resolve').then(() => {
+        ref.current.promise = undefined;
+      });
 
       throw ref.current.promise;
     }

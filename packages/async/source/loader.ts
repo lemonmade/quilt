@@ -1,7 +1,7 @@
-import {createEmitter, type Emitter} from '@quilted/events';
+import {EventEmitter} from '@quilted/events';
 
 export interface AsyncModule<Module = Record<string, unknown>>
-  extends Pick<Emitter<{resolve: Error | Module}>, 'on'> {
+  extends Pick<EventEmitter<{resolve: Error | Module}>, 'on' | 'once'> {
   readonly id?: string;
   readonly loaded?: Module;
   load(): Promise<Module>;
@@ -27,7 +27,7 @@ export function createAsyncModule<Module = Record<string, unknown>>(
   let hasTriedSyncResolve = false;
 
   const id = (load as any).id;
-  const emitter = createEmitter<{resolve: Error | Module}>();
+  const emitter = new EventEmitter<{resolve: Error | Module}>();
 
   return {
     id,
@@ -42,6 +42,7 @@ export function createAsyncModule<Module = Record<string, unknown>>(
       return resolved;
     },
     on: emitter.on,
+    once: emitter.once,
   };
 
   function getResolved() {

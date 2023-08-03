@@ -1,30 +1,58 @@
-import {addListener} from './listeners.ts';
-import type {AbortBehavior} from './abort.ts';
+import {addEventHandler} from './handler.ts';
 import {AbortError, NestedAbortController} from './abort.ts';
-import type {EventTarget} from './types.ts';
+import type {EventTarget, AbortBehavior, EventHandlerMap} from './types.ts';
 
-// @see https://github.com/nodejs/node/blob/master/lib/events.js#L1012-L1019
+/**
+ * Listens to an `event` on the `target` object. Instead of providing a callback
+ * function to run when the event is emitted, this function returns an `AsyncGenerator`
+ * that yields each event as it is emitted.
+ *
+ * @param target The target to add the event handler to.
+ * @param event The name of the event you are targeting.
+ *
+ * @returns An `AsyncGenerator` that yields each event as it is emitted.
+ *
+ * @example
+ * const button = document.querySelector('button');
+ *
+ * for await (const event of on(button, 'click')) {
+ *   console.log('clicked!', event);
+ * }
+ */
 export function on<
-  EventMap = Record<string, unknown>,
-  Event extends keyof EventMap = keyof EventMap,
-  Target extends EventTarget<EventMap> = EventTarget<EventMap>,
+  Events extends EventHandlerMap = Record<string, unknown>,
+  Event extends keyof Events = keyof Events,
 >(
-  emitter: Target,
+  target: EventTarget<Events>,
   event: Event,
-  options?: {signal?: AbortSignal; abort?: AbortBehavior},
-): AsyncIterator<EventMap[Event], void, void> & AsyncIterable<EventMap[Event]> {
+  options?: {
+    /**
+     * An `AbortSignal` to cancel listening to the event.
+     */
+    signal?: AbortSignal;
+
+    /**
+     * How to handle the `AbortSignal` being aborted. Defaults to `'resolve'`,
+     * which causes the iterator to complete. If set to `'reject'`, the iterator
+     * will throw an `AbortError` when the signal is aborted instead.
+     */
+    abort?: AbortBehavior;
+  },
+): AsyncGenerator<Events[Event], void, void> {
   const signal = options?.signal;
-  const abortBehavior = options?.abort ?? 'returns';
+  const abortBehavior = options?.abort ?? 'resolve';
 
   if (signal?.aborted) {
-    if (abortBehavior === 'returns') {
+    if (abortBehavior === 'resolve') {
       return noop();
     } else {
-      throw new AbortError();
+      return noopThrow(new AbortError());
     }
   }
 
-  const listenerAbortController = new NestedAbortController(signal);
+  const listenerAbortController = signal
+    ? new NestedAbortController(signal)
+    : new AbortController();
   const signalAbortController = signal && new AbortController();
 
   const unconsumedEvents: any[] = [];
@@ -36,8 +64,7 @@ export function on<
   let error: Error | null = null;
   let finished = false;
 
-  const iterator: AsyncIterator<EventMap[Event], void, void> &
-    AsyncIterable<EventMap[Event]> = {
+  const iterator: AsyncGenerator<Events[Event], void, void> = {
     next() {
       // First, we consume all unread events
       const value = unconsumedEvents.shift();
@@ -91,12 +118,12 @@ export function on<
     },
   };
 
-  addListener(emitter, event as any, eventHandler, {
+  addEventHandler(target, event as any, eventHandler, {
     signal: listenerAbortController.signal,
   });
 
   if (signal) {
-    addListener(signal, 'abort', abortListener, {
+    addEventHandler(signal, 'abort', abortListener, {
       once: true,
       signal: signalAbortController!.signal,
     });
@@ -105,7 +132,7 @@ export function on<
   return iterator;
 
   function abortListener() {
-    if (abortBehavior === 'returns') {
+    if (abortBehavior === 'resolve') {
       iterator.return!();
     } else {
       handleError(new AbortError());
@@ -141,4 +168,9 @@ export function on<
 
 async function* noop() {
   // intentionally empty
+}
+
+// eslint-disable-next-line require-yield
+async function* noopThrow(error: Error) {
+  throw error;
 }
