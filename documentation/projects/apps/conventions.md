@@ -93,9 +93,7 @@ export const AccountHome = createAsyncComponent(
   () => import('./accounts/AccountHome.tsx'),
 );
 
-export const LogIn = createAsyncComponent(
-  () => import('./accounts/LogIn.tsx'),
-);
+export const LogIn = createAsyncComponent(() => import('./accounts/LogIn.tsx'));
 
 export const Settings = createAsyncComponent(
   () => import('./accounts/Settings.tsx'),

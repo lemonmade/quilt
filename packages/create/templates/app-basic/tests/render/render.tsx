@@ -1,49 +1,18 @@
-import '@quilted/quilt/matchers';
-
 import {
   createRender,
   QuiltAppTesting,
   createTestRouter,
 } from '@quilted/quilt/testing';
 
-import {
-  AppContextReact,
-  type AppContext as AppContextType,
-} from '~/shared/context.ts';
+import {AppContextReact} from '~/shared/context.ts';
 
-type Router = ReturnType<typeof createTestRouter>;
-
-export {createTestRouter};
-
-export interface RenderOptions {
-  /**
-   * A custom router to use for this component test. You can use a
-   * custom router to simulate a particular URL, and you can spy on
-   * its navigation method to check that components navigate as
-   * you expect.
-   */
-  router?: Router;
-
-  /**
-   * A custom locale to use for this component test.
-   */
-  locale?: string;
-}
-
-export interface RenderContext extends AppContextType {
-  /**
-   * The router used for this component test.
-   */
-  router: Router;
-}
-
-export interface RenderActions extends Record<string, never> {}
+import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
 /**
  * Renders a component with test-friendly versions of all global
  * context available to the application.
  */
-export const renderWithAppContext = createRender<
+export const renderApp = createRender<
   RenderOptions,
   RenderContext,
   RenderActions,

@@ -1,15 +1,26 @@
-import {QuiltApp, useRoutes, type PropsWithChildren} from '@quilted/quilt';
+import {
+  QuiltApp,
+  useRoutes,
+  type PropsWithChildren,
+  useInitialUrl,
+} from '@quilted/quilt';
+
+import {httpBatchLink} from '@trpc/client';
+import {QueryClient} from '@tanstack/react-query';
+import {ReactQueryContext} from '@quilted/react-query';
 
 import {
   AppContextReact,
   type AppContext as AppContextType,
 } from '~/shared/context.ts';
+import {trpc} from '~/shared/trpc.ts';
 
 import {Http} from './foundation/Http.tsx';
 import {Head} from './foundation/Head.tsx';
 import {Metrics} from './foundation/Metrics.tsx';
 
 import {Start} from './features/Start.tsx';
+import {useMemo} from 'react';
 
 export interface Props extends AppContextType {}
 
@@ -38,9 +49,28 @@ function AppContext({
   children,
   ...appContext
 }: PropsWithChildren<AppContextType>) {
+  const initialUrl = useInitialUrl();
+
+  const {queryClient, trpcClient} = useMemo(() => {
+    return {
+      queryClient: new QueryClient(),
+      trpcClient: trpc.createClient({
+        links: [
+          // We need to use an absolute URL so that queries will
+          // work during server-side rendering
+          httpBatchLink({url: new URL('/api', initialUrl).href}),
+        ],
+      }),
+    };
+  }, [initialUrl]);
+
   return (
     <AppContextReact.Provider value={appContext}>
-      <Metrics>{children}</Metrics>
+      <Metrics>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <ReactQueryContext client={queryClient}>{children}</ReactQueryContext>
+        </trpc.Provider>
+      </Metrics>
     </AppContextReact.Provider>
   );
 }

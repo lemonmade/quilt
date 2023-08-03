@@ -116,8 +116,6 @@ import {
 } from '@quilted/quilt';
 
 import {httpBatchLink} from '@trpc/client';
-import {createTRPCReact} from '@trpc/react-query';
-
 import {QueryClient} from '@tanstack/react-query';
 import {ReactQueryContext} from '@quilted/react-query';
 

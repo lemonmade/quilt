@@ -7,10 +7,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import {AppContextReact} from '~/shared/context.ts';
 
-import {
-  TestGraphQL,
-  createGraphQLController,
-} from '../graphql.ts';
+import {TestGraphQL, createGraphQLController} from '../graphql.ts';
 
 import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
