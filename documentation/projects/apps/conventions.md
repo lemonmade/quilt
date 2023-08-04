@@ -50,18 +50,18 @@ import {addToCart, type Cart} from '~/shared/cart.ts';
 
 The tests directory is similar to `shared`, but is used to used for global test utilities for your application. You may choose to export test-related contents from `shared`, too, but the root `tests` directory is useful for code that is exclusively used in tests. Like `shared`, you are expected to include TypeScript files at the root of this directory that export each test-only domain, and each is accessible with a `~/tests/` import prefix.
 
-The Quilt templates use this directory to export a `mount()` function that can be used to unit test React components with your app-level context provided:
+The Quilt templates use this directory to export a `renderApp()` function that can be used to unit test React components with your app-level context provided:
 
 ```tsx
 import {test, expect} from '@quilted/quilt/testing';
-import {mount} from '~/tests/mount.ts';
+import {renderApp} from '~/tests/render.ts';
 
 function MyComponent() {
   return <div>Hello, world!</div>;
 }
 
 test('my component works!', async () => {
-  const myComponent = await mount(<MyComponent />);
+  const myComponent = await renderApp(<MyComponent />);
   expect(myComponent.text).toBe('Hello, world!');
 });
 ```
