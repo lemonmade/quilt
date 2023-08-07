@@ -1,4 +1,4 @@
-import {on} from '@quilted/events';
+import {NestedAbortController} from '@quilted/events';
 import {createThread, type ThreadOptions} from '../target.ts';
 import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
 
@@ -17,15 +17,21 @@ export function createThreadFromInsideIframe<
 
   const {parent} = self;
 
-  const abort = new AbortController();
+  const abort = options.signal
+    ? new NestedAbortController(options.signal)
+    : new AbortController();
 
   const ready = () => {
     const respond = () => parent.postMessage(RESPONSE_MESSAGE, targetOrigin);
 
     // Handles wrappers that want to connect after the page has already loaded
-    self.addEventListener('message', ({data}) => {
-      if (data === CHECK_MESSAGE) respond();
-    });
+    self.addEventListener(
+      'message',
+      ({data}) => {
+        if (data === CHECK_MESSAGE) respond();
+      },
+      {signal: options.signal},
+    );
 
     respond();
   };
@@ -52,19 +58,15 @@ export function createThreadFromInsideIframe<
       send(message, transfer) {
         return parent.postMessage(message, targetOrigin, transfer);
       },
-      async *listen({signal}) {
-        const messages = on<WindowEventHandlersEventMap, 'message'>(
-          self,
+      listen(listen, {signal}) {
+        self.addEventListener(
           'message',
-          {
-            signal,
+          (event) => {
+            if (event.data === CHECK_MESSAGE) return;
+            listen(event.data);
           },
+          {signal},
         );
-
-        for await (const message of messages) {
-          if (message.data === CHECK_MESSAGE) continue;
-          yield message.data;
-        }
       },
     },
     options,

@@ -1,4 +1,4 @@
-import {type ThreadAbortSignal} from '../abort.ts';
+import type {ThreadAbortSignal} from '../abort-signal.ts';
 
 export interface ThreadSignal<T> {
   initial: T;

@@ -2,13 +2,18 @@ import type {
   Thread,
   ThreadTarget,
   ThreadCallable,
-  ThreadExposable,
-  ThreadEncodingStrategy,
-  ThreadEncodingStrategyApi,
+  ThreadEncoder,
+  ThreadEncoderApi,
   AnyFunction,
 } from '../types.ts';
 
-import {StackFrame, MemoryRetainer} from '../memory.ts';
+import {
+  RELEASE_METHOD,
+  RETAINED_BY,
+  RETAIN_METHOD,
+  StackFrame,
+  isMemoryManageable,
+} from '../memory.ts';
 import {createBasicEncoder} from '../encoding/basic.ts';
 
 export type {ThreadTarget};
@@ -18,10 +23,10 @@ export interface ThreadOptions<
   Target = Record<string, never>,
 > {
   callable?: (keyof Target)[];
-  expose?: ThreadExposable<Self>;
+  expose?: Self;
   signal?: AbortSignal;
+  encoder?: ThreadEncoder;
   uuid?(): string;
-  encoder?(api: ThreadEncodingStrategyApi): ThreadEncodingStrategy;
 }
 
 const CALL = 0;
@@ -40,6 +45,10 @@ interface MessageMap {
   [FUNCTION_RESULT]: [string, Error?, any?];
 }
 
+/**
+ * Creates a thread from any object that conforms to the `ThreadTarget`
+ * interface.
+ */
 export function createThread<
   Self = Record<string, never>,
   Target = Record<string, never>,
@@ -50,11 +59,14 @@ export function createThread<
     callable,
     signal,
     uuid = defaultUuid,
-    encoder: createEncoder = createBasicEncoder,
+    encoder = createBasicEncoder(),
   }: ThreadOptions<Self, Target> = {},
 ): Thread<Target> {
   let terminated = false;
   const activeApi = new Map<string | number, AnyFunction>();
+  const functionsToId = new Map<AnyFunction, string>();
+  const idsToFunction = new Map<string, AnyFunction>();
+  const idsToProxy = new Map<string, AnyFunction>();
 
   if (expose) {
     for (const key of Object.keys(expose)) {
@@ -72,21 +84,76 @@ export function createThread<
 
   const call = createCallable<Target>(handlerForCall, callable);
 
-  const encoder = createEncoder({
-    uuid,
-    release(id) {
-      send(RELEASE, [id]);
-    },
-    call(id, args, retainedBy) {
-      const callId = uuid();
-      const done = waitForResult(callId, retainedBy);
-      const [encoded, transferables] = encoder.encode(args);
+  const encoderApi: ThreadEncoderApi = {
+    functions: {
+      add(func) {
+        let id = functionsToId.get(func);
 
-      send(FUNCTION_APPLY, [callId, id, encoded], transferables);
+        if (id == null) {
+          id = uuid();
+          functionsToId.set(func, id);
+          idsToFunction.set(id, func);
+        }
 
-      return done;
+        return id;
+      },
+      get(id) {
+        let proxy = idsToProxy.get(id);
+
+        if (proxy) return proxy;
+
+        let retainCount = 0;
+        let released = false;
+
+        const release = () => {
+          retainCount -= 1;
+
+          if (retainCount === 0) {
+            released = true;
+            idsToProxy.delete(id);
+            send(RELEASE, [id]);
+          }
+        };
+
+        const retain = () => {
+          retainCount += 1;
+        };
+
+        proxy = (...args: any[]) => {
+          if (released) {
+            throw new Error(
+              'You attempted to call a function that was already released.',
+            );
+          }
+
+          if (!idsToProxy.has(id)) {
+            throw new Error(
+              'You attempted to call a function that was already revoked.',
+            );
+          }
+
+          const [encoded, transferable] = encoder.encode(args, encoderApi);
+
+          const callId = uuid();
+          const done = waitForResult(callId);
+
+          send(FUNCTION_APPLY, [callId, id, encoded], transferable);
+
+          return done;
+        };
+
+        Object.defineProperties(proxy, {
+          [RELEASE_METHOD]: {value: release, writable: false},
+          [RETAIN_METHOD]: {value: retain, writable: false},
+          [RETAINED_BY]: {value: new Set(), writable: false},
+        });
+
+        idsToProxy.set(id, proxy);
+
+        return proxy;
+      },
     },
-  });
+  };
 
   const terminate = () => {
     if (terminated) return;
@@ -98,7 +165,9 @@ export function createThread<
     terminated = true;
     activeApi.clear();
     callIdsToResolver.clear();
-    encoder.terminate?.();
+    functionsToId.clear();
+    idsToFunction.clear();
+    idsToProxy.clear();
   };
 
   signal?.addEventListener(
@@ -110,11 +179,7 @@ export function createThread<
     {once: true},
   );
 
-  (async () => {
-    for await (const message of target.listen({signal})) {
-      listener(message);
-    }
-  })();
+  target.listen(listener, {signal});
 
   return call;
 
@@ -149,8 +214,10 @@ export function createThread<
             );
           }
 
-          const result = func(...(encoder.decode(args, [stackFrame]) as any[]));
-          const [encoded, transferables] = await encodeFunctionResult(result);
+          const result = await func(
+            ...(encoder.decode(args, encoderApi, [stackFrame]) as any[]),
+          );
+          const [encoded, transferables] = encoder.encode(result, encoderApi);
           send(RESULT, [id, undefined, encoded], transferables);
         } catch (error) {
           const {name, message, stack} = error as Error;
@@ -167,7 +234,13 @@ export function createThread<
       }
       case RELEASE: {
         const [id] = data[1] as MessageMap[typeof RELEASE];
-        encoder.release(id);
+        const func = idsToFunction.get(id);
+
+        if (func) {
+          idsToFunction.delete(id);
+          functionsToId.delete(func);
+        }
+
         break;
       }
       case FUNCTION_RESULT: {
@@ -178,13 +251,34 @@ export function createThread<
         const [callId, funcId, args] =
           data[1] as MessageMap[typeof FUNCTION_APPLY];
 
+        const stackFrame = new StackFrame();
+
         try {
-          const result = encoder.call(funcId, args);
-          const [encoded, transferables] = await encodeFunctionResult(result);
+          const func = idsToFunction.get(funcId);
+
+          if (func == null) {
+            throw new Error(
+              'You attempted to call a function that was already released.',
+            );
+          }
+
+          const result = await func(
+            funcId,
+            encoder.decode(
+              args,
+              encoderApi,
+              isMemoryManageable(func)
+                ? [...func[RETAINED_BY], stackFrame]
+                : [stackFrame],
+            ) as any[],
+          );
+          const [encoded, transferables] = encoder.encode(result, encoderApi);
           send(FUNCTION_RESULT, [callId, undefined, encoded], transferables);
         } catch (error) {
           const {name, message, stack} = error as Error;
           send(FUNCTION_RESULT, [callId, {name, message, stack}]);
+        } finally {
+          stackFrame.release();
         }
 
         break;
@@ -207,7 +301,7 @@ export function createThread<
 
         const id = uuid();
         const done = waitForResult(id);
-        const [encoded, transferables] = encoder.encode(args);
+        const [encoded, transferables] = encoder.encode(args, encoderApi);
 
         send(CALL, [id, property, encoded], transferables);
 
@@ -218,11 +312,11 @@ export function createThread<
     };
   }
 
-  function waitForResult(id: string, retainedBy?: Iterable<MemoryRetainer>) {
+  function waitForResult(id: string) {
     const promise = new Promise<any>((resolve, reject) => {
       callIdsToResolver.set(id, (_, errorResult, value) => {
         if (errorResult == null) {
-          resolve(value && encoder.decode(value, retainedBy));
+          resolve(encoder.decode(value, encoderApi));
         } else {
           const error = new Error();
           Object.assign(error, errorResult);
@@ -244,16 +338,6 @@ export function createThread<
     });
 
     return promise;
-  }
-
-  async function encodeFunctionResult(
-    result: any,
-  ): Promise<[any, Transferable[]?]> {
-    if (typeof result !== 'object' || result == null) {
-      return encoder.encode(result);
-    } else {
-      return encoder.encode(await result);
-    }
   }
 
   function resolveCall(...args: MessageMap[typeof RESULT]) {

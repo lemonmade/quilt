@@ -1,6 +1,6 @@
 import {signal as createSignal, type Signal} from '@preact/signals-core';
 
-import {createThreadAbortSignal} from '../abort.ts';
+import {createThreadAbortSignal} from '../abort-signal.ts';
 
 import {type ThreadSignal} from './types.ts';
 

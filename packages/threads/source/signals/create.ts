@@ -2,7 +2,7 @@ import {type Signal} from '@preact/signals-core';
 import {NestedAbortController} from '@quilted/events';
 
 import {retain, release} from '../memory.ts';
-import {acceptThreadAbortSignal} from '../abort.ts';
+import {acceptThreadAbortSignal} from '../abort-signal.ts';
 
 import {type ThreadSignal} from './types.ts';
 

@@ -15,21 +15,22 @@ export {
   createThreadFromWebWorker,
   type ThreadOptions,
 } from './targets.ts';
+export {createBasicEncoder} from './encoding.ts';
 export {
-  createBasicEncoder,
-  createBasicEncoderWithOverrides,
-} from './encoding.ts';
-export {createThreadAbortSignal, acceptThreadAbortSignal} from './abort.ts';
-export type {ThreadAbortSignal} from './abort.ts';
+  createThreadAbortSignal,
+  acceptThreadAbortSignal,
+  type ThreadAbortSignal,
+} from './abort-signal.ts';
 export type {
   Thread,
   ThreadTarget,
   ThreadCallable,
-  ThreadExposable,
+  ThreadCallableFunction,
   ThreadSafeArgument,
   ThreadSafeReturnType,
-  ThreadEncodingStrategy,
-  ThreadEncodingStrategyApi,
+  ThreadSafeReturnValueType,
+  ThreadEncoder,
+  ThreadEncoderApi,
   ThreadEncodable,
   AnyFunction,
 } from './types.ts';

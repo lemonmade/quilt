@@ -1,4 +1,3 @@
-import {on, once} from '@quilted/events';
 import {createThread, type ThreadOptions} from './target.ts';
 
 export function createThreadFromBrowserWebSocket<
@@ -9,29 +8,27 @@ export function createThreadFromBrowserWebSocket<
     {
       async send(message) {
         if (websocket.readyState !== websocket.OPEN) {
-          await once(websocket, 'open');
+          await new Promise<void>((resolve) => {
+            websocket.addEventListener(
+              'open',
+              () => {
+                resolve();
+              },
+              {once: true},
+            );
+          });
         }
 
         websocket.send(JSON.stringify(message));
       },
-      async *listen({signal}) {
-        const messages = on<WebSocketEventMap, 'message'>(
-          websocket,
+      listen(listener, {signal}) {
+        websocket.addEventListener(
           'message',
-          {
-            signal,
+          (event) => {
+            listener(JSON.parse(event.data));
           },
+          {signal},
         );
-
-        if (websocket.readyState !== websocket.OPEN) {
-          await once(websocket, 'open', {signal});
-        }
-
-        if (signal?.aborted) return;
-
-        for await (const message of messages) {
-          yield JSON.parse(message.data);
-        }
       },
     },
     options,

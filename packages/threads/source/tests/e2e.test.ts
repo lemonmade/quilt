@@ -1,5 +1,5 @@
 import {describe, it, expect} from '@quilted/testing';
-import {createThreadFromMessagePort} from '../index.ts';
+import {createThreadFromMessagePort, type ThreadCallable} from '../index.ts';
 import {MessageChannel} from './utilities.ts';
 
 describe('thread', () => {
@@ -22,9 +22,9 @@ describe('thread', () => {
   });
 
   it('proxies function calls', async () => {
-    interface EndpointApi {
+    type EndpointApi = ThreadCallable<{
       greet(getName: () => string): string;
-    }
+    }>;
 
     const {port1, port2} = new MessageChannel();
     const threadOne = createThreadFromMessagePort<
@@ -42,9 +42,9 @@ describe('thread', () => {
   });
 
   it('proxies generators', async () => {
-    interface EndpointApi {
+    type EndpointApi = ThreadCallable<{
       iterate(): Generator<number, void, void>;
-    }
+    }>;
 
     const {port1, port2} = new MessageChannel();
     const threadOne = createThreadFromMessagePort<
@@ -124,9 +124,9 @@ describe('thread', () => {
   });
 
   it('rejects all in-flight requests when a thread terminates', async () => {
-    interface EndpointApi {
+    type EndpointApi = ThreadCallable<{
       greet(): string;
-    }
+    }>;
 
     const abort = new AbortController();
 
@@ -151,9 +151,9 @@ describe('thread', () => {
   });
 
   it('rejects all in-flight requests when a target thread terminates', async () => {
-    interface EndpointApi {
+    type EndpointApi = ThreadCallable<{
       greet(): string;
-    }
+    }>;
 
     const abort = new AbortController();
 

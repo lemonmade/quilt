@@ -1,4 +1,3 @@
-import {on} from '@quilted/events';
 import {createThread, type ThreadOptions} from './target.ts';
 
 export function createThreadFromWebWorker<
@@ -10,14 +9,14 @@ export function createThreadFromWebWorker<
       send(...args: [any, Transferable[]]) {
         worker.postMessage(...args);
       },
-      async *listen({signal}) {
-        const messages = on<WorkerEventMap, 'message'>(worker, 'message', {
-          signal,
-        });
-
-        for await (const message of messages) {
-          yield message.data;
-        }
+      listen(listener, {signal}) {
+        worker.addEventListener(
+          'message',
+          (event) => {
+            listener(event.data);
+          },
+          {signal},
+        );
       },
     },
     options,

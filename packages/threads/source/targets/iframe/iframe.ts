@@ -1,4 +1,4 @@
-import {on} from '@quilted/events';
+import {NestedAbortController} from '@quilted/events';
 import {
   createThread,
   type ThreadTarget,
@@ -23,7 +23,9 @@ export function createThreadFromIframe<
   };
 
   const connectedPromise = new Promise<void>((resolve) => {
-    const abort = new AbortController();
+    const abort = options.signal
+      ? new NestedAbortController(options.signal)
+      : new AbortController();
 
     window.addEventListener(
       'message',
@@ -39,6 +41,14 @@ export function createThreadFromIframe<
       {signal: abort.signal},
     );
 
+    abort.signal.addEventListener(
+      'abort',
+      () => {
+        resolve();
+      },
+      {once: true},
+    );
+
     sendMessage(CHECK_MESSAGE);
   });
 
@@ -46,25 +56,23 @@ export function createThreadFromIframe<
     {
       send(message, transfer) {
         if (!connected) {
-          return connectedPromise.then(() => sendMessage(message, transfer));
+          return connectedPromise.then(() => {
+            if (connected) return sendMessage(message, transfer);
+          });
         }
 
         return sendMessage(message, transfer);
       },
-      async *listen({signal}) {
-        const messages = on<WindowEventHandlersEventMap, 'message'>(
-          self,
+      listen(listen, {signal}) {
+        self.addEventListener(
           'message',
-          {
-            signal,
+          (event) => {
+            if (event.source !== iframe.contentWindow) return;
+            if (event.data === RESPONSE_MESSAGE) return;
+            listen(event.data);
           },
+          {signal},
         );
-
-        for await (const message of messages) {
-          if (message.source !== iframe.contentWindow) continue;
-          if (message.data === RESPONSE_MESSAGE) continue;
-          yield message.data;
-        }
       },
     },
     options,
