@@ -1,6 +1,17 @@
-import {on, once} from '@quilted/events';
 import {createThread, type ThreadOptions} from './target.ts';
 
+/**
+ * Creates a thread from a `WebSocket` instance in the browser.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+ *
+ * @example
+ * import {createThreadFromBrowserWebSocket} from '@quilted/threads';
+ *
+ * const websocket = new WebSocket('ws://localhost:8080');
+ * const thread = createThreadFromBrowserWebSocket(websocket);
+ * await thread.sendMessage('Hello world!');
+ */
 export function createThreadFromBrowserWebSocket<
   Self = Record<string, never>,
   Target = Record<string, never>,
@@ -9,29 +20,27 @@ export function createThreadFromBrowserWebSocket<
     {
       async send(message) {
         if (websocket.readyState !== websocket.OPEN) {
-          await once(websocket, 'open');
+          await new Promise<void>((resolve) => {
+            websocket.addEventListener(
+              'open',
+              () => {
+                resolve();
+              },
+              {once: true},
+            );
+          });
         }
 
         websocket.send(JSON.stringify(message));
       },
-      async *listen({signal}) {
-        const messages = on<WebSocketEventMap, 'message'>(
-          websocket,
+      listen(listener, {signal}) {
+        websocket.addEventListener(
           'message',
-          {
-            signal,
+          (event) => {
+            listener(JSON.parse(event.data));
           },
+          {signal},
         );
-
-        if (websocket.readyState !== websocket.OPEN) {
-          await once(websocket, 'open', {signal});
-        }
-
-        if (signal?.aborted) return;
-
-        for await (const message of messages) {
-          yield JSON.parse(message.data);
-        }
       },
     },
     options,

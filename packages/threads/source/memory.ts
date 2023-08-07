@@ -4,6 +4,11 @@ import type {MemoryRetainer, MemoryManageable} from './types.ts';
 export {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD};
 export type {MemoryRetainer, MemoryManageable};
 
+/**
+ * A simple representation of a called function. This object allows this library to
+ * release references to functions immediately when the function call that transferred
+ * them into this thread is completed.
+ */
 export class StackFrame {
   private readonly memoryManaged = new Set<MemoryManageable>();
 
@@ -23,12 +28,34 @@ export class StackFrame {
   }
 }
 
+/**
+ * Indicates that a value is being manually memory-managed across threads by this library.
+ */
 export function isMemoryManageable(value: unknown): value is MemoryManageable {
   return Boolean(
     value && (value as any)[RETAIN_METHOD] && (value as any)[RELEASE_METHOD],
   );
 }
 
+/**
+ * Marks a value as being used so it will not be automatically released. Calling `retain` will,
+ * by default, deeply retain the value — that is, it will traverse into nested array elements
+ * and object properties, and retain every `retain`-able thing it finds.
+ *
+ * You will typically use this alongside also storing that value in a variable that lives outside
+ * the context of the function where that value was received.
+ *
+ * @example
+ * import {retain} from '@quilted/threads';
+ *
+ * const allUsers = new Set<User>();
+ *
+ * async function sayHello(user: User) {
+ *   allUsers.add(user);
+ *   retain(user);
+ *   return `Hey, ${await user.fullName()}!`;
+ * }
+ */
 export function retain(value: any, {deep = true} = {}): boolean {
   return retainInternal(value, deep, new Map());
 }
@@ -74,6 +101,21 @@ function retainInternal(
   return canRetain;
 }
 
+/**
+ * Once you are no longer using the a `retain`-ed value, you can use this function to mark it as
+ * being unused. Like `retain()`, this function will apply to all nested array elements and object
+ * properties.
+ *
+ * @example
+ * import {retain} from '@quilted/threads';
+ *
+ * const allUsers = new Set<User>();
+ *
+ * function removeUser(user: User) {
+ *   allUsers.delete(user);
+ *   release(user);
+ * }
+ */
 export function release(value: any, {deep = true} = {}): boolean {
   return releaseInternal(value, deep, new Map());
 }

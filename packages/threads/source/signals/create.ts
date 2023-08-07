@@ -2,14 +2,33 @@ import {type Signal} from '@preact/signals-core';
 import {NestedAbortController} from '@quilted/events';
 
 import {retain, release} from '../memory.ts';
-import {acceptThreadAbortSignal} from '../abort.ts';
+import {acceptThreadAbortSignal} from '../abort-signal.ts';
 
 import {type ThreadSignal} from './types.ts';
 
+/**
+ * Converts a Preact signal into a version of that signal that can
+ * be transferred to a target `Thread`. On the paired thread, this
+ * "thread-safe" version of the signal can be turned into an actual,
+ * live Preact signal using `acceptThreadSignal()`.
+ */
 export function createThreadSignal<T>(
   signal: Signal<T>,
   {
+    /**
+     * Whether the thread signal should have a method to write a value
+     * back to the original signal. This allows you to create two-way
+     * synchronization between the two threads, which can be useful, but
+     * can also be hard to reason about.
+     *
+     * @default false
+     */
     writable = false,
+
+    /**
+     * An optional `AbortSignal` that can cancel synchronizing the
+     * signal to its paired thread.
+     */
     signal: teardownAbortSignal,
   }: {writable?: boolean; signal?: AbortSignal} = {},
 ): ThreadSignal<T> {
@@ -50,8 +69,6 @@ export function createThreadSignal<T>(
         teardown();
         release(subscriber);
       });
-
-      return signal.peek();
     },
   };
 }

@@ -9,9 +9,10 @@ export type {
   ThreadTarget,
   ThreadOptions,
   ThreadCallable,
-  ThreadExposable,
+  ThreadCallableFunction,
   ThreadSafeArgument,
   ThreadSafeReturnType,
+  ThreadSafeReturnValueType,
 } from '@quilted/threads';
 
 export {createWorker, type BasicWorkerCreator} from './create/basic.ts';

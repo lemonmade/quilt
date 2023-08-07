@@ -11,7 +11,6 @@ export type {
   ThreadOptions,
   ThreadTarget,
   ThreadCallable,
-  ThreadExposable,
   ThreadSafeArgument,
   ThreadSafeReturnType,
   BasicWorkerCreator,

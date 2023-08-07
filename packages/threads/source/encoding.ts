@@ -1,4 +1,1 @@
-export {
-  createBasicEncoder,
-  createBasicEncoderWithOverrides,
-} from './encoding/basic.ts';
+export {createBasicEncoder} from './encoding/basic.ts';

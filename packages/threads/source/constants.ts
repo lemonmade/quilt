@@ -1,4 +1,4 @@
-export const RETAIN_METHOD = Symbol.for('Threads::Retain');
-export const RELEASE_METHOD = Symbol.for('Threads::Release');
-export const RETAINED_BY = Symbol.for('Threads::RetainedBy');
-export const ENCODE_METHOD = Symbol.for('Threads::Encode');
+export const RETAIN_METHOD = Symbol.for('quilt.threads.retain');
+export const RELEASE_METHOD = Symbol.for('quilt.threads.release');
+export const RETAINED_BY = Symbol.for('quilt.threads.retained-by');
+export const ENCODE_METHOD = Symbol.for('quilt.threads.encode');

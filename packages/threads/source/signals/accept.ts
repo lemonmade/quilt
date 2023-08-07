@@ -1,23 +1,28 @@
 import {signal as createSignal, type Signal} from '@preact/signals-core';
 
-import {createThreadAbortSignal} from '../abort.ts';
+import {createThreadAbortSignal} from '../abort-signal.ts';
 
 import {type ThreadSignal} from './types.ts';
 
-export function isThreadSignal<T = unknown>(
-  value?: unknown,
-): value is ThreadSignal<T> {
-  return (
-    value != null &&
-    typeof value === 'object' &&
-    'initial' in value &&
-    typeof (value as any).start === 'function'
-  );
-}
-
+/**
+ * Call this function in a thread receiving a `ThreadSignal` to
+ * turn it into a "live" Preact signal. The resulting signal will
+ * connect the thread to its sending pair, and will update it as the
+ * signal value changes. If the thread signal is writable, writing
+ * the value of the resulting signal will also update it on the paired
+ * thread.
+ */
 export function acceptThreadSignal<T>(
   threadSignal: ThreadSignal<T>,
-  {signal: abortSignal}: {signal?: AbortSignal} = {},
+  {
+    signal: abortSignal,
+  }: {
+    /**
+     * An optional `AbortSignal` that can cancel synchronizing the
+     * signal to its paired thread.
+     */
+    signal?: AbortSignal;
+  } = {},
 ): Signal<T> {
   const signal = createSignal(threadSignal.initial);
   const threadAbortSignal = abortSignal && createThreadAbortSignal(abortSignal);
