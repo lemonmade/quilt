@@ -162,14 +162,17 @@ export async function format(
 ) {
   const [
     {format: rootFormat, default: prettier},
-    {default: babel},
-    {default: typescript},
-    {default: yaml},
+    babel,
+    typescript,
+    yaml,
+    estree,
   ] = await Promise.all([
     import('prettier/standalone'),
-    import('prettier/parser-babel'),
-    import('prettier/parser-typescript'),
-    import('prettier/parser-yaml'),
+    import('prettier/plugins/babel'),
+    import('prettier/plugins/typescript'),
+    import('prettier/plugins/yaml'),
+    // @ts-expect-error Types are not generated correctly for this entry
+    import('prettier/plugins/estree'),
   ]);
 
   // CJS workaround
@@ -181,7 +184,7 @@ export async function format(
     singleQuote: true,
     trailingComma: 'all',
     parser,
-    plugins: [babel, typescript, yaml],
+    plugins: [babel, typescript, yaml, estree],
   });
 }
 
