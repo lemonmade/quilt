@@ -1,5 +1,5 @@
 {
-  "name": "@quilted/react-signals",
+  "name": "@quilted/signals",
   "description": "Utilities for working with Preact signals.",
   "type": "module",
   "license": "MIT",
@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt",
-    "directory": "packages/react-signals"
+    "directory": "packages/signals"
   },
   "exports": {
     ".": {
@@ -28,22 +28,11 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@preact/signals": "^1.2.0",
-    "@quilted/signals": "^0.1.0",
-    "@types/react": "^17.0.0 || ^18.0.0",
-    "preact": "^10.15.0"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    }
+    "@preact/signals-core": "^1.4.0",
+    "@quilted/events": "^0.1.18"
   },
   "devDependencies": {
-    "@quilted/testing": "^0.1.0",
-    "react": "workspace:@quilted/react@^18.2.0"
+    "@quilted/testing": "^0.1.0"
   },
   "eslintConfig": {
     "extends": [

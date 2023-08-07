@@ -134,17 +134,15 @@ export {
   type UseOptionalValueHookOptions,
 } from '@quilted/react-utilities';
 export {
-  useSignal,
-  useComputed,
-  useSignalEffect,
   signal,
+  Signal,
   batch as signalBatch,
   computed as computedSignal,
   effect as signalEffect,
   isSignal,
   resolveSignalOrValue,
-  Signal,
   type SignalOrValue,
-} from '@quilted/react-signals';
+} from '@quilted/signals';
+export {useSignal, useComputed, useSignalEffect} from '@quilted/react-signals';
 
 export {QuiltApp} from './App.tsx';

@@ -277,6 +277,7 @@
     "@quilted/react-utilities": "^0.1.0",
     "@quilted/react-workers": "^0.2.12",
     "@quilted/request-router": "^0.1.0",
+    "@quilted/signals": "^0.1.0",
     "@quilted/testing": "^0.1.0",
     "@quilted/threads": "^0.1.0",
     "@quilted/useful-react-types": "^1.0.0",

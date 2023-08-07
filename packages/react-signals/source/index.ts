@@ -1,7 +1,7 @@
 import {useState, useEffect, useMemo, useCallback, useRef} from 'react';
 import {signal, computed, effect, Signal} from '@preact/signals';
 
-export * from '@preact/signals';
+export * from '@quilted/signals';
 
 const EMPTY_ARGUMENTS = Object.freeze([]) as any as unknown[];
 
@@ -91,14 +91,4 @@ export function useSignalValue<T>(signal: Signal<T>) {
   }, [signal]);
 
   return valueToReturn;
-}
-
-export type SignalOrValue<T> = T | Signal<T>;
-
-export function isSignal<T = unknown>(value: unknown): value is Signal<T> {
-  return value != null && value instanceof Signal;
-}
-
-export function resolveSignalOrValue<T>(value: SignalOrValue<T>): T {
-  return isSignal(value) ? value.value : value;
 }

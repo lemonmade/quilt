@@ -52,6 +52,7 @@
     {"path": "./packages/rollup-plugin-fix-commonjs-preserve-modules"},
     {"path": "./packages/routing"},
     {"path": "./packages/sewing-kit"},
+    {"path": "./packages/signals"},
     {"path": "./packages/testing"},
     {"path": "./packages/threads"},
     {"path": "./packages/trpc"},
