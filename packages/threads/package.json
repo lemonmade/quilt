@@ -1,6 +1,6 @@
 {
   "name": "@quilted/threads",
-  "description": "",
+  "description": "Helpers for communicating between JavaScript environments using message passing.",
   "type": "module",
   "version": "0.1.15",
   "license": "MIT",

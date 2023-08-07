@@ -1,6 +1,12 @@
 import {retain, release} from '../memory.ts';
 import type {ThreadAbortSignal} from './types.ts';
 
+/**
+ * Call this function in a thread receiving a `ThreadAbortSignal` to
+ * turn it into a "live" `AbortSignal`. The resulting signal will
+ * connect the thread to its sending pair, and will abort it when the
+ * original `AbortSignal` is aborted.
+ */
 export function acceptThreadAbortSignal(
   signal: AbortSignal | ThreadAbortSignal,
 ): AbortSignal {
@@ -8,23 +14,24 @@ export function acceptThreadAbortSignal(
 
   const abort = new AbortController();
 
-  if (signal.aborted) {
+  const {aborted, start} = signal;
+
+  if (aborted) {
     abort.abort();
     return abort.signal;
   }
 
-  retain(signal);
-
-  const handleAbort = (aborted: boolean) => {
-    if (aborted) abort.abort();
-  };
-
-  Promise.resolve(signal.start(handleAbort)).then(handleAbort);
+  if (start) {
+    retain(start);
+    start((aborted) => {
+      if (aborted) abort.abort();
+    });
+  }
 
   abort.signal.addEventListener(
     'abort',
     async () => {
-      release(signal);
+      release(start);
     },
     {once: true},
   );

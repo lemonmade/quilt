@@ -18,6 +18,10 @@ const DATE = '_@d';
 const REGEXP = '_@r';
 const ASYNC_ITERATOR = '_@i';
 
+/**
+ * Creates an encoder that converts most common JavaScript types into a format
+ * that can be transferred via message passing.
+ */
 export function createBasicEncoder(): ThreadEncoder {
   return {
     encode,

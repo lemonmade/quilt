@@ -226,7 +226,6 @@ import {
   acceptThreadAbortSignal,
   type ThreadAbortSignal,
 } from '@quilted/threads';
-import {acceptThreadSignal, type ThreadSignal} from '@quilted/threads/signals';
 
 const thread = createThreadFromWebWorker(self, {
   expose: {calculateResult},

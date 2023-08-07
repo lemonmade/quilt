@@ -1,6 +1,12 @@
 import {retain, release} from '../memory.ts';
 import type {ThreadAbortSignal} from './types.ts';
 
+/**
+ * Converts an `AbortSignal` into a version of that signal that can
+ * be transferred to a target `Thread`. The resulting object can be
+ * transferred to the paired thread, and turned into an actual `AbortSignal`
+ * object using `acceptThreadAbortSignal()`.
+ */
 export function createThreadAbortSignal(
   signal: AbortSignal,
 ): ThreadAbortSignal {
@@ -18,8 +24,9 @@ export function createThreadAbortSignal(
       for (const listener of listeners) {
         listener(signal.aborted);
         release(listener);
-        listeners.clear();
       }
+
+      listeners.clear();
     },
     {once: true},
   );
@@ -27,11 +34,12 @@ export function createThreadAbortSignal(
   return {
     aborted: false,
     start(listener) {
-      if (signal.aborted) return true;
-
-      retain(listener);
-      listeners.add(listener);
-      return false;
+      if (signal.aborted) {
+        listener(true);
+      } else {
+        retain(listener);
+        listeners.add(listener);
+      }
     },
   };
 }
