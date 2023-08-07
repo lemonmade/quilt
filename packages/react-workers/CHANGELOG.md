@@ -1,5 +1,11 @@
 # @quilted/react-workers
 
+## 0.2.31
+
+### Patch Changes
+
+- [`e45f766b`](https://github.com/lemonmade/quilt/commit/e45f766bce9e8632fe17d9e9c2e3d446d0783feb) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify thread creation and add helpers for transferring signals over threads
+
 ## 0.2.30
 
 ### Patch Changes

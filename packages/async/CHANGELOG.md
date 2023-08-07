@@ -1,5 +1,14 @@
 # @quilted/async
 
+## 0.3.43
+
+### Patch Changes
+
+- [#587](https://github.com/lemonmade/quilt/pull/587) [`1180dde2`](https://github.com/lemonmade/quilt/commit/1180dde278793006b8ae153804130cad6dab36c2) Thanks [@lemonmade](https://github.com/lemonmade)! - First major version for `@quilted/events`
+
+- Updated dependencies [[`1180dde2`](https://github.com/lemonmade/quilt/commit/1180dde278793006b8ae153804130cad6dab36c2)]:
+  - @quilted/events@1.0.0
+
 ## 0.3.42
 
 ### Patch Changes

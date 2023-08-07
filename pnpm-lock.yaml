@@ -212,7 +212,7 @@ importers:
         specifier: ^0.0.3
         version: link:../assets
       '@quilted/events':
-        specifier: ^0.1.16
+        specifier: ^1.0.0
         version: link:../events
       '@types/web':
         specifier: ^0.0.59
@@ -245,7 +245,7 @@ importers:
   packages/cli-kit:
     dependencies:
       '@quilted/events':
-        specifier: ^0.1.14
+        specifier: ^1.0.0
         version: link:../events
       '@types/common-tags':
         specifier: ^1.8.1
@@ -315,7 +315,7 @@ importers:
         specifier: 0.0.3
         version: link:../assets
       '@quilted/async':
-        specifier: 0.3.42
+        specifier: 0.3.43
         version: link:../async
       '@quilted/browserslist-config':
         specifier: 0.1.9
@@ -342,7 +342,7 @@ importers:
         specifier: 0.2.20
         version: link:../typescript
       '@quilted/workers':
-        specifier: 0.2.35
+        specifier: 0.2.36
         version: link:../workers
       '@rollup/plugin-alias':
         specifier: ^5.0.0
@@ -484,7 +484,7 @@ importers:
         version: 4.3.0(@types/node@16.11.36)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.147
+        specifier: workspace:^0.5.148
         version: link:../quilt
       '@types/babel__core':
         specifier: ^7.20.0
@@ -718,7 +718,7 @@ importers:
   packages/performance:
     dependencies:
       '@quilted/events':
-        specifier: ^0.1.15
+        specifier: ^1.0.0
         version: link:../events
     devDependencies:
       react:
@@ -778,7 +778,7 @@ importers:
         specifier: ^0.3.34
         version: link:../async
       '@quilted/events':
-        specifier: ^0.1.0
+        specifier: ^1.0.0
         version: link:../events
       '@quilted/graphql':
         specifier: ^1.1.0
@@ -844,7 +844,7 @@ importers:
         specifier: ^0.1.0
         version: link:../testing
       '@quilted/threads':
-        specifier: ^0.1.0
+        specifier: ^1.0.0
         version: link:../threads
       '@quilted/useful-react-types':
         specifier: ^1.0.0
@@ -1229,7 +1229,7 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       '@quilted/events':
-        specifier: ^0.1.18
+        specifier: ^1.0.0
         version: link:../events
     devDependencies:
       '@quilted/testing':
@@ -1260,7 +1260,7 @@ importers:
   packages/threads:
     dependencies:
       '@quilted/events':
-        specifier: ^0.1.0
+        specifier: ^1.0.0
         version: link:../events
     devDependencies:
       '@preact/signals-core':
@@ -1301,7 +1301,7 @@ importers:
   packages/workers:
     dependencies:
       '@quilted/threads':
-        specifier: ^0.1.0
+        specifier: ^1.0.0
         version: link:../threads
       common-tags:
         specifier: ^1.8.0

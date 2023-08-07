@@ -2,7 +2,7 @@
   "name": "@quilted/threads",
   "description": "Helpers for communicating between JavaScript environments using message passing.",
   "type": "module",
-  "version": "0.1.15",
+  "version": "1.0.0",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -42,7 +42,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@quilted/events": "^0.1.0"
+    "@quilted/events": "^1.0.0"
   },
   "peerDependencies": {
     "@preact/signals-core": "^1.4.0"
