@@ -2,13 +2,34 @@ import {NestedAbortController} from '@quilted/events';
 import {createThread, type ThreadOptions} from '../target.ts';
 import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
 
+/**
+ * Creates a thread from within an iframe nested in a top-level document. To create
+ * a thread from this iframe in the top-level document, use `createThreadFromIframe()`
+ * instead.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+ *
+ * @example
+ * import {createThreadFromInsideIframe} from '@quilted/threads';
+ *
+ * const thread = createThreadFromInsideIframe();
+ * await thread.sendMessage('Hello world!');
+ */
 export function createThreadFromInsideIframe<
   Self = Record<string, never>,
   Target = Record<string, never>,
 >({
   targetOrigin = '*',
   ...options
-}: ThreadOptions<Self, Target> & {targetOrigin?: string} = {}) {
+}: ThreadOptions<Self, Target> & {
+  /**
+   * The target origin to use when sending `postMessage` events to the parent frame.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin
+   * @default '*'
+   */
+  targetOrigin?: string;
+} = {}) {
   if (typeof self === 'undefined' || self.parent == null) {
     throw new Error(
       'You are not inside an iframe, because there is no parent window.',

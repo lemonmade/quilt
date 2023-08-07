@@ -18,14 +18,48 @@ import {createBasicEncoder} from '../encoding/basic.ts';
 
 export type {ThreadTarget};
 
+/**
+ * Options to customize the creation of a `Thread` instance.
+ */
 export interface ThreadOptions<
   Self = Record<string, never>,
   Target = Record<string, never>,
 > {
-  callable?: (keyof Target)[];
+  /**
+   * Methods to expose on this thread, so that they are callable on the paired thread.
+   * This should be an object, with each member of that object being a function. Remember
+   * that these functions will become asynchronous when called over the thread boundary.
+   */
   expose?: Self;
+
+  /**
+   * An `AbortSignal` that controls whether the thread is active or not. When aborted,
+   * the thread will no longer send any messages to the underlying object, will stop
+   * listening for messages from that object, and will clean up any memory associated
+   * with in-progress communication between the threads.
+   */
   signal?: AbortSignal;
+
+  /**
+   * An object that will encode and decode messages sent between threads. If not
+   * provided, a default implementation created with `createBasicEncoder()` will be used instead.
+   */
   encoder?: ThreadEncoder;
+
+  /**
+   * A list of callable methods exposed on the paired `Thread`. This option is
+   * required if you want to call methods and your environment does not support
+   * the `Proxy` constructor. When the `Proxy` constructor is available, `createThread()`
+   * will forward all method calls to the paired `Thread` by default.
+   */
+  callable?: (keyof Target)[];
+
+  /**
+   * A function for generating unique identifiers. Unique identifiers are used by
+   * some encoding and decoding operations to maintain stable references to objects
+   * transferred between the threads. If not provided, a simple default implementation
+   * will be used instead.
+   */
   uuid?(): string;
 }
 

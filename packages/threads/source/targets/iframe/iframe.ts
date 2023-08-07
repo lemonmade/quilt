@@ -6,6 +6,20 @@ import {
 } from '../target.ts';
 import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
 
+/**
+ * Creates a thread from an iframe nested on a top-level document. To create
+ * a thread from the contents of this iframe, use `createThreadFromInsideIframe()`
+ * instead.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+ *
+ * @example
+ * import {createThreadFromIframe} from '@quilted/threads';
+ *
+ * const iframe = document.createElement('iframe');
+ * const thread = createThreadFromInsideIframe(iframe);
+ * await thread.sendMessage('Hello world!');
+ */
 export function createThreadFromIframe<
   Self = Record<string, never>,
   Target = Record<string, never>,
@@ -14,7 +28,15 @@ export function createThreadFromIframe<
   {
     targetOrigin = '*',
     ...options
-  }: ThreadOptions<Self, Target> & {targetOrigin?: string} = {},
+  }: ThreadOptions<Self, Target> & {
+    /**
+     * The target origin to use when sending `postMessage` events to the child frame.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin
+     * @default '*'
+     */
+    targetOrigin?: string;
+  } = {},
 ) {
   let connected = false;
 

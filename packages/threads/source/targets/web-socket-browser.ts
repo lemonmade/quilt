@@ -1,5 +1,17 @@
 import {createThread, type ThreadOptions} from './target.ts';
 
+/**
+ * Creates a thread from a `WebSocket` instance in the browser.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+ *
+ * @example
+ * import {createThreadFromBrowserWebSocket} from '@quilted/threads';
+ *
+ * const websocket = new WebSocket('ws://localhost:8080');
+ * const thread = createThreadFromBrowserWebSocket(websocket);
+ * await thread.sendMessage('Hello world!');
+ */
 export function createThreadFromBrowserWebSocket<
   Self = Record<string, never>,
   Target = Record<string, never>,

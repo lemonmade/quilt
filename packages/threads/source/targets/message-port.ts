@@ -1,5 +1,23 @@
 import {createThread, type ThreadOptions} from './target.ts';
 
+/**
+ * Creates a thread from a `WebSocket` instance in the browser.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
+ *
+ * @example
+ * import {createThreadFromMessagePort} from '@quilted/threads';
+ *
+ * const channel = new MessageChannel();
+ * const threadOne = createThreadFromMessagePort(channel.port1);
+ * const threadTwo = createThreadFromMessagePort(channel.port2, {
+ *   expose: {
+ *     sendMessage: (message) => console.log(message),
+ *   },
+ * });
+ *
+ * await threadOne.sendMessage('Hello world!');
+ */
 export function createThreadFromMessagePort<
   Self = Record<string, never>,
   Target = Record<string, never>,
