@@ -32,7 +32,6 @@ export type {
 export {
   createThreadSignal,
   acceptThreadSignal,
-  signalToIterator,
   type ThreadSignal,
 } from '@quilted/threads/signals';
 export {
