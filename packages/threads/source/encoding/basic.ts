@@ -13,6 +13,7 @@ import {
 const FUNCTION = '_@f';
 const MAP = '_@m';
 const SET = '_@s';
+const URL_ID = '_@u';
 const DATE = '_@d';
 const REGEXP = '_@r';
 const ASYNC_ITERATOR = '_@i';
@@ -65,6 +66,13 @@ export function createBasicEncoder(): ThreadEncoder {
 
       if (value instanceof RegExp) {
         const result = [{[REGEXP]: [value.source, value.flags]}];
+        const fullResult: EncodeResult = [result, transferables];
+        seen.set(value, fullResult);
+        return fullResult;
+      }
+
+      if (value instanceof URL) {
+        const result = [{[URL_ID]: value.href}];
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
@@ -151,6 +159,10 @@ export function createBasicEncoder(): ThreadEncoder {
 
       if (REGEXP in value) {
         return new RegExp(...(value as {[REGEXP]: [string, string]})[REGEXP]);
+      }
+
+      if (URL_ID in value) {
+        return new URL((value as {[URL_ID]: string})[URL_ID]);
       }
 
       if (DATE in value) {

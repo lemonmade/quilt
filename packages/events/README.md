@@ -6,16 +6,16 @@ Tiny helpers for working with events in any JavaScript environment.
 
 ```bash
 # npm
-npm install @quilted/graphql --save
+npm install @quilted/events --save
 # pnpm
-pnpm install @quilted/graphql --save
+pnpm install @quilted/events --save
 # yarn
-yarn add @quilted/graphql
+yarn add @quilted/events
 ```
 
 ## Usage
 
-## Emitting and listening for events
+### Emitting and listening for events
 
 This library provides an `EventEmitter` class, which is the main utility you’ll use to work with events. It’s similar to the browser’s [`EventTarget` interface](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget), but instead of accepting only callbacks to listen for events, it turns events into other JavaScript types.
 
@@ -50,7 +50,7 @@ const message = await events.once('message');
 console.log('Message received:', message);
 ```
 
-Both `on()` and `once()` accept a [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) option as their second argument, which allows you to cancel the listener. By default, aborting `on()` will cause the async generator to end stop yielding values, and will cause `once()` to resolve its promise with `undefined`. However, you can also pass an `abort` option set to `'reject'` in order to have these method instead reject with `AbortError`s:
+Both `on()` and `once()` accept an [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) option as their second argument, which allows you to cancel the listener. By default, aborting `on()` will cause the async generator to end stop yielding values, and will cause `once()` to resolve its promise with `undefined`. However, you can also pass an `abort` option set to `'reject'` in order to have these method instead reject with `AbortError`s:
 
 ```ts
 import {EventEmitter} from '@quilted/events';
