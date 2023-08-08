@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.149
+
+### Patch Changes
+
+- [`c3f3298b`](https://github.com/lemonmade/quilt/commit/c3f3298b4458d939c0bfc7b83fe6ce120f4fbde8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing `isThreadSignal()` utility
+
 ## 0.5.148
 
 ### Patch Changes

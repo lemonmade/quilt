@@ -1,5 +1,12 @@
 # e2e-fixture-basic-app
 
+## 0.0.19
+
+### Patch Changes
+
+- Updated dependencies [[`c3f3298b`](https://github.com/lemonmade/quilt/commit/c3f3298b4458d939c0bfc7b83fe6ce120f4fbde8)]:
+  - @quilted/quilt@0.5.149
+
 ## 0.0.18
 
 ### Patch Changes
