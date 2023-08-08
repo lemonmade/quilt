@@ -30,6 +30,7 @@ export type {
   MemoryRetainer,
 } from '@quilted/threads';
 export {
+  isThreadSignal,
   createThreadSignal,
   acceptThreadSignal,
   type ThreadSignal,

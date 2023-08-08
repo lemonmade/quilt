@@ -56,3 +56,17 @@ export function acceptThreadSignal<T>(
 
   return signal;
 }
+
+/**
+ * Returns `true` if the passed object is a `ThreadSignal`.
+ */
+export function isThreadSignal<T = unknown>(
+  value?: unknown,
+): value is ThreadSignal<T> {
+  return (
+    value != null &&
+    typeof value === 'object' &&
+    'initial' in value &&
+    typeof (value as any).start === 'function'
+  );
+}
