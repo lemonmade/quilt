@@ -68,7 +68,10 @@ export class EventEmitter<Events extends EventHandlerMap = {}> {
    * building higher-level abstractions that need to know when handlers
    * are registered for a given event.
    */
-  get internal(): Pick<EventEmitter<Events>, 'on' | 'once'> {
+  get internal(): Pick<
+    EventEmitter<EmitterEmitterInternalEvents<Events>>,
+    'on' | 'once'
+  > {
     if (this._internal) {
       return this._internal;
     } else {
@@ -138,7 +141,7 @@ export class EventEmitter<Events extends EventHandlerMap = {}> {
 
         addEventHandler(
           eventTarget,
-          eventName,
+          eventName as any,
           (event) => {
             this.emit(eventName, event);
           },
