@@ -1,5 +1,13 @@
 # @quilted/threads
 
+## 1.0.1
+
+### Patch Changes
+
+- [`c3f3298b`](https://github.com/lemonmade/quilt/commit/c3f3298b4458d939c0bfc7b83fe6ce120f4fbde8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing `isThreadSignal()` utility
+
+- [`0366b6c7`](https://github.com/lemonmade/quilt/commit/0366b6c7bc321054325d036199e75fa7222913de) Thanks [@lemonmade](https://github.com/lemonmade)! - Add back encoding overrides feature
+
 ## 1.0.0
 
 ### Major Changes
