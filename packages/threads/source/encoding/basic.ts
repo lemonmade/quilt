@@ -18,11 +18,36 @@ const DATE = '_@d';
 const REGEXP = '_@r';
 const ASYNC_ITERATOR = '_@i';
 
+export interface ThreadEncoderOptions {
+  /**
+   * Customizes the encoding of each value in a passed message.
+   */
+  encode?(
+    value: unknown,
+    defaultEncode: (value: unknown) => [any, Transferable[]?],
+  ): [any, Transferable[]?];
+
+  /**
+   * Customizes the decoding of each value in a passed message.
+   */
+  decode?(
+    value: unknown,
+    defaultDecode: (
+      value: unknown,
+      retainedBy?: Iterable<MemoryRetainer>,
+    ) => unknown,
+    retainedBy?: Iterable<MemoryRetainer>,
+  ): unknown;
+}
+
 /**
  * Creates an encoder that converts most common JavaScript types into a format
  * that can be transferred via message passing.
  */
-export function createBasicEncoder(): ThreadEncoder {
+export function createBasicEncoder({
+  encode: encodeOverride,
+  decode: decodeOverride,
+}: ThreadEncoderOptions = {}): ThreadEncoder {
   return {
     encode,
     decode,
@@ -30,11 +55,33 @@ export function createBasicEncoder(): ThreadEncoder {
 
   type EncodeResult = ReturnType<ThreadEncoder['encode']>;
 
-  function encode(
+  interface EncodeContext {
+    api: ThreadEncoderApi;
+    seen: Map<any, EncodeResult>;
+    encode: Parameters<NonNullable<ThreadEncoderOptions['encode']>>[1];
+  }
+
+  function encode(value: unknown, api: ThreadEncoderApi): EncodeResult {
+    const context: EncodeContext = {
+      api,
+      seen: new Map(),
+      encode: (value: any) => encodeInternal(value, context, true),
+    };
+
+    return encodeInternal(value, context);
+  }
+
+  function encodeInternal(
     value: unknown,
-    api: ThreadEncoderApi,
-    seen: Map<any, EncodeResult> = new Map(),
+    context: EncodeContext,
+    isFromOverride = false,
   ): EncodeResult {
+    const {seen, api, encode} = context;
+
+    if (!isFromOverride && encodeOverride) {
+      return encodeOverride(value, encode);
+    }
+
     if (value == null) return [value];
 
     const seenValue = seen.get(value);
@@ -45,7 +92,10 @@ export function createBasicEncoder(): ThreadEncoder {
     if (typeof value === 'object') {
       const transferables: Transferable[] = [];
       const encodeValue = (value: any) => {
-        const [fieldValue, nestedTransferables = []] = encode(value, api, seen);
+        const [fieldValue, nestedTransferables = []] = encodeInternal(
+          value,
+          context,
+        );
         transferables.push(...nestedTransferables);
         return fieldValue;
       };
@@ -147,18 +197,43 @@ export function createBasicEncoder(): ThreadEncoder {
     return result;
   }
 
+  interface DecodeContext {
+    api: ThreadEncoderApi;
+    decode: Parameters<NonNullable<ThreadEncoderOptions['decode']>>[1];
+  }
+
   function decode(
     value: unknown,
     api: ThreadEncoderApi,
     retainedBy?: Iterable<MemoryRetainer>,
+  ) {
+    const context: DecodeContext = {
+      api,
+      decode: (value: any) => decodeInternal(value, context, retainedBy, true),
+    };
+
+    return decodeInternal(value, context);
+  }
+
+  function decodeInternal(
+    value: unknown,
+    context: DecodeContext,
+    retainedBy?: Iterable<MemoryRetainer>,
+    isFromOverride = false,
   ): any {
+    const {api, decode} = context;
+
+    if (!isFromOverride && decodeOverride) {
+      return decodeOverride(value, decode, retainedBy);
+    }
+
     if (typeof value === 'object') {
       if (value == null) {
         return value as any;
       }
 
       if (Array.isArray(value)) {
-        return value.map((value) => decode(value, api, retainedBy));
+        return value.map((value) => decodeInternal(value, context, retainedBy));
       }
 
       if (REGEXP in value) {
@@ -176,8 +251,8 @@ export function createBasicEncoder(): ThreadEncoder {
       if (MAP in value) {
         return new Map(
           (value as {[MAP]: [any, any]})[MAP].map(([key, value]) => [
-            decode(key, api, retainedBy),
-            decode(value, api, retainedBy),
+            decodeInternal(key, context, retainedBy),
+            decodeInternal(value, context, retainedBy),
           ]),
         );
       }
@@ -185,7 +260,7 @@ export function createBasicEncoder(): ThreadEncoder {
       if (SET in value) {
         return new Set(
           (value as {[SET]: any[]})[SET].map((entry) =>
-            decode(entry, api, retainedBy),
+            decodeInternal(entry, context, retainedBy),
           ),
         );
       }
@@ -210,7 +285,11 @@ export function createBasicEncoder(): ThreadEncoder {
         if (key === ASYNC_ITERATOR) {
           result[Symbol.asyncIterator] = () => result;
         } else {
-          result[key] = decode((value as any)[key], api, retainedBy);
+          result[key] = decodeInternal(
+            (value as any)[key],
+            context,
+            retainedBy,
+          );
         }
       }
 
