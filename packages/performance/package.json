@@ -1,7 +1,7 @@
 {
   "name": "@quilted/performance",
   "type": "module",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -24,7 +24,7 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/events": "^0.1.15"
+    "@quilted/events": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

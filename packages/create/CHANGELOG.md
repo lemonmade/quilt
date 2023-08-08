@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.68
+
+### Patch Changes
+
+- [#586](https://github.com/lemonmade/quilt/pull/586) [`48046de7`](https://github.com/lemonmade/quilt/commit/48046de73bec4d7bc3f8a5ac2bb21888208740ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Update testing of template apps
+
+- [`40329e93`](https://github.com/lemonmade/quilt/commit/40329e93d1a08832282e01e23697f999306dc859) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix prettier plugins
+
 ## 0.1.67
 
 ### Patch Changes

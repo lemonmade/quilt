@@ -1,5 +1,11 @@
 # @quilted/react-signals
 
+## 0.1.9
+
+### Patch Changes
+
+- [`00d90d10`](https://github.com/lemonmade/quilt/commit/00d90d10f4eb97fe55712adcc8b34aa3d3ec1aa1) Thanks [@lemonmade](https://github.com/lemonmade)! - Update signals dependency and add dedicated package for signal utilities
+
 ## 0.1.8
 
 ### Patch Changes

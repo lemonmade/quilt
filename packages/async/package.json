@@ -1,7 +1,7 @@
 {
   "name": "@quilted/async",
   "type": "module",
-  "version": "0.3.42",
+  "version": "0.3.43",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   "sideEffects": false,
   "dependencies": {
     "@quilted/assets": "^0.0.3",
-    "@quilted/events": "^0.1.16",
+    "@quilted/events": "^1.0.0",
     "@types/web": "^0.0.59",
     "common-tags": "^1.8.0",
     "es-module-lexer": "^0.4.0",

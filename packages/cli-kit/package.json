@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.9",
+  "version": "0.1.10",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -28,7 +28,7 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@quilted/events": "^0.1.14",
+    "@quilted/events": "^1.0.0",
     "@types/common-tags": "^1.8.1",
     "@types/glob": "^8.0.0",
     "@types/prompts": "^2.4.1",
