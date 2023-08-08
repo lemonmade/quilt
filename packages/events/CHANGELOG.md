@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 1.0.1
+
+### Patch Changes
+
+- [`2bbcef8e`](https://github.com/lemonmade/quilt/commit/2bbcef8e69d2f228a0d23e43acb4f89130e2bbd9) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix type of EventEmitter.internal
+
 ## 1.0.0
 
 ### Major Changes

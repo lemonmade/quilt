@@ -2,7 +2,7 @@
   "name": "@quilted/events",
   "description": "Tiny helpers for working with events in any JavaScript environment",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
