@@ -76,7 +76,7 @@ Quilt projects generally use the following values for the **Build settings** sec
   <dl>build/public</dl>
 </dl>
 
-> **Note:** If you are using pnpm, you will want to use the build command [discussed in this support thread](https://community.cloudflare.com/t/add-pnpm-to-pre-installed-cloudflare-pages-tools/288514/5), instead of using the `npm` command shown above
+> **Note:** If you are using `pnpm` or `yarn`, replace the build command above with `pnpm run build` or `yarn run build`. Cloudflare Pages should automatically detect your package manager and install your dependencies before building your app.
 
 When you’re ready, save your project. And that’s pretty much it! Cloudflare will pull down the code on your main branch, build your application, and upload the static site and assets to its CDN. In the Cloudflare dashboard, you’ll be able to see the automatically-created URL for the project, and a variety of actions you can take on the project (including the ability to assign a custom domain).
 
@@ -142,7 +142,7 @@ Quilt projects generally use the following values for the **Build settings** sec
   <dl>build/public</dl>
 </dl>
 
-> **Note:** If you are using pnpm, you will want to use the build command [discussed in this support thread](https://community.cloudflare.com/t/add-pnpm-to-pre-installed-cloudflare-pages-tools/288514/5), instead of using the `npm` command shown above
+> **Note:** If you are using `pnpm` or `yarn`, replace the build command above with `pnpm run build` or `yarn run build`. Cloudflare Pages should automatically detect your package manager and install your dependencies before building your app.
 
 When you’re ready, save your project. And that’s pretty much it! Cloudflare will pull down the code on your main branch, build your application, and upload the static site and assets to its CDN. In the Cloudflare dashboard, you’ll be able to see the automatically-created URL for the project, and a variety of actions you can take on the project (including the ability to assign a custom domain).
 
@@ -156,7 +156,7 @@ This guide assumes you have already [created an app or service with Quilt](../ge
 
 ### Step 1: Configure your project to run as a Cloudflare Worker
 
-In your project’s `quilt.project.ts` file, use the `cloudflareWorkers()` plugin from `@quilted/cloudflare/craft` to configure your application to run on Cloudflare Pages:
+In your project’s `quilt.project.ts` file, use the `cloudflareWorkers()` plugin from `@quilted/cloudflare/craft` to configure your application to run on Cloudflare Workers:
 
 ```ts
 // app/quilt.project.ts
@@ -169,7 +169,7 @@ export default createProject((project) => {
 });
 ```
 
-This plugin will make sure your server build output is compatible with Cloudflare worker’s lightweight JavaScript environment.
+This plugin will make sure your server build output is compatible with Cloudflare Workers’ lightweight JavaScript environment.
 
 Quilt apps and services default to using [`@quilted/request-router` for writing backend code](../features/request-routing.md). This library is small, so it works well in Cloudflare Workers. However, you can use Quilt just to do the build of your app or service, and use [Cloudflare’s native module-based APIs](https://developers.cloudflare.com/workers/runtime-apis/fetch-event/#syntax-module-worker). You might want to do this if your worker doesn’t need the routing utilities provided by `@quilted/request-router`, or you want to make use of non-HTTP APIs available in Cloudflare, like [scheduled events](https://developers.cloudflare.com/workers/runtime-apis/scheduled-event/) or [Cloudflare Queues](https://developers.cloudflare.com/queues/javascript-apis/#consumer).
 

@@ -7,15 +7,17 @@ import {
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_APP_COMPONENT,
 } from '../constants.ts';
-import {createProjectPlugin} from '../kit.ts';
+import {DiagnosticError, createProjectPlugin} from '../kit.ts';
 import type {
   Project,
   ResolvedOptions,
   BuildProjectOptions,
   ResolvedBuildProjectConfigurationHooks,
+  WaterfallHookWithDefault,
 } from '../kit.ts';
 
 import type {EnvironmentOptions} from './magic-module-env.ts';
+import {resolveToActualFiles} from './app-base.ts';
 
 export interface AppServerOptions {
   /**
@@ -75,20 +77,44 @@ export interface AppServerConfigurationOptions {
   quiltAppServer: boolean;
 }
 
+export interface AppServerBaseConfigurationHooks {
+  /**
+   * The module that acts as the entrypoint for this app.
+   */
+  readonly quiltAppServerEntry: WaterfallHookWithDefault<string>;
+}
+
 declare module '@quilted/sewing-kit' {
   interface BuildProjectOptions extends AppServerConfigurationOptions {}
   interface DevelopProjectOptions extends AppServerConfigurationOptions {}
+
+  interface BuildProjectConfigurationHooks
+    extends AppServerBaseConfigurationHooks {}
+  interface DevelopProjectConfigurationHooks
+    extends AppServerBaseConfigurationHooks {}
 }
 
-const MAGIC_CUSTOM_SERVER_ENTRY_MODULE = '__quilt__/CustomAppServer';
+const MAGIC_SERVER_ENTRY_MODULE = '__quilt__/CustomAppServer.tsx';
 
 export function appServer(options?: AppServerOptions) {
   return createProjectPlugin({
     name: 'Quilt.App.Server',
-    build({project, configure}) {
+    build({project, hooks, configure}) {
+      hooks<AppServerBaseConfigurationHooks>(({waterfall}) => ({
+        quiltAppServerEntry: waterfall({
+          default: () => getEntryForProject(project, options?.entry),
+        }),
+      }));
+
       configure(setupConfiguration(project, options));
     },
-    develop({project, configure}) {
+    develop({project, hooks, configure}) {
+      hooks<AppServerBaseConfigurationHooks>(({waterfall}) => ({
+        quiltAppServerEntry: waterfall({
+          default: () => getEntryForProject(project, options?.entry),
+        }),
+      }));
+
       configure(setupConfiguration(project, options) as any);
     },
   });
@@ -115,6 +141,7 @@ function setupConfiguration(
       rollupInput,
       rollupPlugins,
       rollupNodeBundle,
+      quiltAppServerEntry,
       quiltAppServerEntryContent,
       quiltRequestRouterContent,
       quiltAsyncPreload,
@@ -192,6 +219,17 @@ function setupConfiguration(
         }),
       );
 
+      plugins.unshift({
+        name: '@quilted/magic-module-app-server',
+        async resolveId(id, importer) {
+          if (id !== MAGIC_SERVER_ENTRY_MODULE) return null;
+
+          return this.resolve(await quiltAppServerEntry!.run(), importer, {
+            skipSelf: true,
+          });
+        },
+      });
+
       return plugins;
     });
 
@@ -200,7 +238,46 @@ function setupConfiguration(
         async () => await quiltAppServerEntryContent!.run(content),
       );
     } else {
-      rollupInput?.(() => [MAGIC_CUSTOM_SERVER_ENTRY_MODULE]);
+      rollupInput?.(() => [MAGIC_SERVER_ENTRY_MODULE]);
     }
   };
+}
+
+const ENTRY_EXTENSIONS = ['mjs', 'js', 'jsx', 'ts', 'tsx'];
+
+async function getEntryForProject(project: Project, explicitEntry?: string) {
+  if (explicitEntry) {
+    const [found] = await resolveToActualFiles(explicitEntry, project);
+
+    if (found == null) {
+      throw new DiagnosticError({
+        title: `Could not find server entry for app ${project.name}`,
+        suggestion: `The \`server.entry\` option ${JSON.stringify(
+          explicitEntry,
+        )} did not resolve to any files.`,
+      });
+    }
+
+    return found;
+  }
+
+  const main = project.packageJson?.raw.main;
+
+  if (typeof main === 'string') return project.fs.resolvePath(main);
+
+  const [entry] = await project.fs.glob(
+    `{server,service,backend}.{${ENTRY_EXTENSIONS.join(',')}}`,
+    {
+      absolute: true,
+    },
+  );
+
+  if (entry == null) {
+    throw new DiagnosticError({
+      title: `Could not find entry for app ${project.name}`,
+      suggestion: `Add the \`entry\` option to the \`quiltApp()\` call in its \`quilt.project.ts\` file. This option should point to a file that exports your main React component as the default export. Alternatively, you can set the path to this file as the "main" property in the app’s package.json file.`,
+    });
+  }
+
+  return entry;
 }
