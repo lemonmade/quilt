@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.224
+
+### Patch Changes
+
+- [`dca06910`](https://github.com/lemonmade/quilt/commit/dca069108b5d26816b5e2331106c53bf64198578) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix browser entry not preserving exports
+
 ## 0.1.223
 
 ### Patch Changes
