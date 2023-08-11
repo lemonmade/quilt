@@ -74,7 +74,10 @@ export function magicBrowserEntry({
       }
 
       if (entry) {
-        return `import ${JSON.stringify(project.fs.resolvePath(entry))};`;
+        return stripIndent`
+          import ${JSON.stringify(project.fs.resolvePath(entry))};
+          export * from ${JSON.stringify(project.fs.resolvePath(entry))};
+        `;
       }
 
       const [hydrate, selector] = await Promise.all([
