@@ -5,7 +5,7 @@ import {AbortError, stripIndent, color, parseArguments} from '@quilted/cli-kit';
 import {printHelp} from './help.ts';
 import {prompt} from './shared.ts';
 
-const VALID_PROJECT_KINDS = new Set(['app', 'package', 'module']);
+const VALID_PROJECT_KINDS = new Set(['app', 'package', 'module', 'service']);
 
 run().catch((error) => {
   if (AbortError.test(error)) return;
@@ -59,6 +59,7 @@ async function run() {
         {title: 'App', value: 'app'},
         {title: 'Module', value: 'module'},
         {title: 'Package', value: 'package'},
+        {title: 'Backend service', value: 'service'},
       ],
     });
   }
@@ -77,6 +78,11 @@ async function run() {
     case 'package': {
       const {createProject} = await import('./package.ts');
       await createProject();
+      break;
+    }
+    case 'service': {
+      const {createService} = await import('./service.ts');
+      await createService();
       break;
     }
   }

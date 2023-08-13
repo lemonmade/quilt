@@ -5,7 +5,7 @@ export function printHelp({
   options: customOptions,
   packageManager,
 }: {
-  kind?: 'app' | 'package' | 'module';
+  kind?: 'app' | 'package' | 'module' | 'service';
   options?: string;
   packageManager?: string;
 } = {}) {

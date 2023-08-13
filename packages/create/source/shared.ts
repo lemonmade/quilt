@@ -13,6 +13,7 @@ export function loadTemplate(
     | 'app-graphql'
     | 'app-trpc'
     | 'module'
+    | 'service-basic'
     | 'workspace'
     | 'github'
     | 'vscode',
@@ -84,6 +85,7 @@ async function templateDirectory(
     | 'app-graphql'
     | 'app-trpc'
     | 'module'
+    | 'service-basic'
     | 'workspace'
     | 'github'
     | 'vscode',

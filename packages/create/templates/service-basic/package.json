@@ -1,0 +1,12 @@
+{
+  "name": "template-service-basic",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@quilted/request-router": "^0.1.6"
+  },
+  "eslintConfig": {
+    "extends": "@quilted/eslint-config/project"
+  }
+}

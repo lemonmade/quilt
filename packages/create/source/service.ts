@@ -29,12 +29,12 @@ import {addToPackageManagerWorkspaces} from './shared/package-manager.ts';
 
 type Arguments = ReturnType<typeof getArgv>;
 
-export async function createModule() {
+export async function createService() {
   const argv = getArgv();
 
   if (argv['--help']) {
     printHelp({
-      kind: 'module',
+      kind: 'service',
       packageManager: argv['--package-manager']?.toLowerCase(),
     });
     return;
@@ -45,12 +45,10 @@ export async function createModule() {
   const directory = await getDirectory(argv, {name});
   const entry = await getEntry(argv, {name});
 
-  const useReact = await getReact(argv);
-
   const createAsMonorepo =
     !inWorkspace &&
     (await getCreateAsMonorepo(argv, {
-      type: 'module',
+      type: 'service',
       default: false,
     }));
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
@@ -59,23 +57,23 @@ export async function createModule() {
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
 
-  const moduleDirectory = createAsMonorepo
+  const serviceDirectory = createAsMonorepo
     ? path.join(directory, toValidPackageName(name))
     : directory;
 
   if (fs.existsSync(directory)) {
     await emptyDirectory(directory);
 
-    if (moduleDirectory !== directory) {
-      fs.mkdirSync(moduleDirectory, {recursive: true});
+    if (serviceDirectory !== directory) {
+      fs.mkdirSync(serviceDirectory, {recursive: true});
     }
   } else {
-    fs.mkdirSync(moduleDirectory, {recursive: true});
+    fs.mkdirSync(serviceDirectory, {recursive: true});
   }
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
-  const moduleTemplate = loadTemplate('module');
+  const serviceTemplate = loadTemplate('service-basic');
   const workspaceTemplate = loadTemplate('workspace');
 
   // If we aren’t already in a workspace, copy the workspace files over, which
@@ -94,8 +92,8 @@ export async function createModule() {
     // If we are creating a monorepo, we need to add the root package.json and
     // package manager workspace configuration.
     if (createAsMonorepo) {
-      const moduleRelativeToRoot = relativeDirectoryForDisplay(
-        path.relative(directory, moduleDirectory),
+      const serviceRelativeToRoot = relativeDirectoryForDisplay(
+        path.relative(directory, serviceDirectory),
       );
 
       const workspacePackageJson = JSON.parse(
@@ -103,7 +101,7 @@ export async function createModule() {
       );
 
       workspacePackageJson.name = toValidPackageName(name!);
-      workspacePackageJson.workspaces = [moduleRelativeToRoot, './packages/*'];
+      workspacePackageJson.workspaces = [serviceRelativeToRoot, './packages/*'];
 
       if (packageManager.type === 'pnpm') {
         await outputRoot.write(
@@ -111,7 +109,7 @@ export async function createModule() {
           await format(
             `
               packages:
-              - '${moduleRelativeToRoot}'
+              - '${serviceRelativeToRoot}'
               - './packages/*'
             `,
             {as: 'yaml'},
@@ -128,10 +126,10 @@ export async function createModule() {
     } else {
       const [projectPackageJson, projectTSConfig, workspacePackageJson] =
         await Promise.all([
-          moduleTemplate
+          serviceTemplate
             .read('package.json')
             .then((content) => JSON.parse(content)),
-          moduleTemplate
+          serviceTemplate
             .read('tsconfig.json')
             .then((content) => JSON.parse(content)),
           workspaceTemplate
@@ -144,20 +142,14 @@ export async function createModule() {
         workspacePackageJson,
       );
 
-      adjustPackageJson(combinedPackageJson, {name, entry, react: useReact});
+      adjustPackageJson(combinedPackageJson, {name, entry});
       delete combinedPackageJson.workspaces;
 
-      let quiltProject = await moduleTemplate.read('quilt.project.ts');
+      let quiltProject = await serviceTemplate.read('quilt.project.ts');
       quiltProject = quiltProject
-        .replace('quiltModule', 'quiltWorkspace, quiltModule')
-        .replace('quiltModule(', 'quiltWorkspace(), quiltModule(');
-
-      if (!useReact) {
-        quiltProject = quiltProject.replace(
-          'quiltPackage()',
-          'quiltPackage({react: false})',
-        );
-      }
+        .replace('quiltService', 'quiltWorkspace, quiltService')
+        .replace('quiltService(', 'quiltWorkspace(), quiltService(')
+        .replace('service.ts', entry.replace(/^\.[/]/, ''));
 
       await outputRoot.write(
         'quilt.project.ts',
@@ -186,14 +178,14 @@ export async function createModule() {
     }
   }
 
-  await moduleTemplate.copy(moduleDirectory, (file) => {
+  await serviceTemplate.copy(serviceDirectory, (file) => {
     // If we are in a monorepo, we can use all the template files as they are
-    if (file === 'quilt.project.ts' || file === 'tsconfig.json') {
+    if (file === 'tsconfig.json') {
       return partOfMonorepo;
     }
 
-    // We will adjust the entry file
-    if (file === 'module.ts') {
+    // We will adjust the entry file and quilt project file
+    if (file === 'service.ts' || file === 'quilt.project.ts') {
       return false;
     }
 
@@ -202,29 +194,40 @@ export async function createModule() {
   });
 
   await outputRoot.write(
-    path.join(moduleDirectory, entry),
-    await moduleTemplate.read('module.ts'),
+    path.join(serviceDirectory, entry),
+    await serviceTemplate.read('service.ts'),
+  );
+
+  let quiltProject = await serviceTemplate.read('quilt.project.ts');
+  quiltProject = quiltProject.replace(
+    'service.ts',
+    entry.replace(/^\.[/]/, ''),
+  );
+
+  await outputRoot.write(
+    path.join(serviceDirectory, 'quilt.project.ts'),
+    await format(quiltProject, {as: 'typescript'}),
   );
 
   if (partOfMonorepo) {
     // Write the app’s package.json (the root one was already created)
     const projectPackageJson = JSON.parse(
-      await moduleTemplate.read('package.json'),
+      await serviceTemplate.read('package.json'),
     );
 
-    adjustPackageJson(projectPackageJson, {name, entry, react: useReact});
+    adjustPackageJson(projectPackageJson, {name, entry});
 
     await outputRoot.write(
-      path.join(moduleDirectory, 'package.json'),
+      path.join(serviceDirectory, 'package.json'),
       await format(JSON.stringify(projectPackageJson), {
         as: 'json-stringify',
       }),
     );
 
     await Promise.all([
-      addToTsConfig(moduleDirectory, outputRoot),
+      addToTsConfig(serviceDirectory, outputRoot),
       addToPackageManagerWorkspaces(
-        moduleDirectory,
+        serviceDirectory,
         outputRoot,
         packageManager.type,
       ),
@@ -243,7 +246,7 @@ export async function createModule() {
     commands.push(
       `cd ${color.cyan(
         relativeDirectoryForDisplay(path.relative(process.cwd(), directory)),
-      )} ${color.dim('# Move into your new module’s directory')}`,
+      )} ${color.dim('# Move into your new service’s directory')}`,
     );
   }
 
@@ -257,10 +260,10 @@ export async function createModule() {
 
   if (commands.length === 0) {
     console.log();
-    console.log('Your new module is ready to go!');
+    console.log('Your new service is ready to go!');
   } else {
     const whatsNext = stripIndent`
-      Your new module is ready to go! There’s just ${
+      Your new service is ready to go! There’s just ${
         commands.length > 1 ? 'a few more steps' : 'one more step'
       } you’ll need to take
       in order to start developing:
@@ -273,8 +276,8 @@ export async function createModule() {
   }
 
   const followUp = stripIndent`
-    Quilt can also help you build, test, lint, and type-check your new module.
-    You can learn more about building modules with Quilt by reading the documentation:
+    Quilt can also help you build, develop, test, lint, and type-check your new service.
+    You can learn more about building services with Quilt by reading the documentation:
     ${color.underline(
       color.magenta(
         'https://github.com/lemonmade/quilt/tree/main/documentation',
@@ -305,8 +308,6 @@ function getArgv() {
       '--package-manager': String,
       '--extras': [String],
       '--no-extras': Boolean,
-      '--react': Boolean,
-      '--no-react': Boolean,
       '--help': Boolean,
       '-h': '--help',
     },
@@ -322,8 +323,8 @@ async function getName(argv: Arguments) {
   if (name == null) {
     name = await prompt({
       type: 'text',
-      message: 'What would you like to name your new module?',
-      initial: 'my-module',
+      message: 'What would you like to name your new service?',
+      initial: 'my-service',
     });
   }
 
@@ -335,13 +336,7 @@ async function getEntry(argv: Arguments, {name}: {name: string}) {
     return argv['--entry'];
   }
 
-  const entry = await prompt({
-    type: 'text',
-    message: 'What do you want to name your entry file?',
-    initial: `${toValidPackageName(name)}.ts`,
-  });
-
-  return entry;
+  return `${toValidPackageName(name)}.ts`;
 }
 
 async function getDirectory(argv: Arguments, {name}: {name: string}) {
@@ -365,7 +360,7 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
 
       const promptDirectory = await prompt({
         type: 'text',
-        message: 'What directory do you want to create your new module in?',
+        message: 'What directory do you want to create your new service in?',
       });
 
       directory = path.resolve(promptDirectory);
@@ -377,50 +372,17 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-async function getReact(args: Arguments) {
-  let useReact: boolean;
-
-  if (args['--react'] || args['--yes']) {
-    useReact = true;
-  } else if (args['--no-react']) {
-    useReact = false;
-  } else {
-    useReact = await prompt({
-      type: 'confirm',
-      message: 'Will this module depend on React?',
-      initial: false,
-    });
-  }
-
-  return useReact;
-}
-
 function adjustPackageJson(
   packageJson: Record<string, any>,
   {
     name,
-    entry,
-    react,
   }: {
     name: string;
     entry: string;
-    react: boolean;
   },
 ) {
   packageJson.name = name;
-  packageJson.main = `./${entry}`;
-
-  if (!react) {
-    delete packageJson.devDependencies['@types/react'];
-    delete packageJson.devDependencies['@types/react-dom'];
-    delete packageJson.devDependencies['preact'];
-    delete packageJson.devDependencies['react'];
-    delete packageJson.devDependencies['react-dom'];
-
-    packageJson.eslintConfig.extends = packageJson.eslintConfig.extends.filter(
-      (extend: string) => !extend.includes('react'),
-    );
-  }
+  packageJson.main = `./build/runtime/runtime.js`;
 
   return packageJson;
 }
