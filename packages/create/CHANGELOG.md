@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.69
+
+### Patch Changes
+
+- [`741949fa`](https://github.com/lemonmade/quilt/commit/741949faf946b7d98150c48c29310ffd74ab2e27) Thanks [@lemonmade](https://github.com/lemonmade)! - Add service template
+
 ## 0.1.68
 
 ### Patch Changes
