@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.226
+
+### Patch Changes
+
+- [`998641d8`](https://github.com/lemonmade/quilt/commit/998641d8a7ef3370c556c50a30111ffde6287eb9) Thanks [@lemonmade](https://github.com/lemonmade)! - More polyfill and request-handler craft fixes
+
 ## 0.1.225
 
 ### Patch Changes
