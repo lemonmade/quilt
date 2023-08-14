@@ -3,7 +3,7 @@ import {ResponseShortCircuitError} from './errors/ResponseShortCircuitError.ts';
 import type {RequestRouter, RequestHandler, RequestContext} from './types.ts';
 
 export async function handleRequest(
-  handler: RequestRouter | RequestHandler,
+  handler: Pick<RequestRouter, 'fetch'> | RequestHandler,
   request: Request,
   context?: RequestContext,
 ) {
