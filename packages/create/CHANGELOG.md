@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.70
+
+### Patch Changes
+
+- [`5a10d5f2`](https://github.com/lemonmade/quilt/commit/5a10d5f26a2ae8a14ec4e37fcb1b1a33f92bc21e) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve create module entry file prompt
+
+- [`5a10d5f2`](https://github.com/lemonmade/quilt/commit/5a10d5f26a2ae8a14ec4e37fcb1b1a33f92bc21e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix service template
+
 ## 0.1.69
 
 ### Patch Changes
