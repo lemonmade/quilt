@@ -1,6 +1,10 @@
 import {stripIndent} from 'common-tags';
 
-import {createProjectPlugin, type WaterfallHook} from '../kit.ts';
+import {
+  createProjectPlugin,
+  type WaterfallHook,
+  type WaterfallHookWithDefault,
+} from '../kit.ts';
 import {MAGIC_MODULE_REQUEST_ROUTER} from '../constants.ts';
 import {addRollupOnWarn} from '../tools/rollup.ts';
 
@@ -15,6 +19,7 @@ export interface RequestRouterHooks {
   quiltRequestRouterHost: WaterfallHook<string | undefined>;
   quiltRequestRouterContent: WaterfallHook<string | undefined>;
   quiltRequestRouterRuntimeContent: WaterfallHook<string | undefined>;
+  quiltRequestRouterPackage: WaterfallHookWithDefault<string>;
 }
 
 export interface RequestRouterOptions {
@@ -44,6 +49,12 @@ export function requestRouter({port: explicitPort}: Omit<Options, 'env'> = {}) {
         quiltRequestRouterHost: waterfall(),
         quiltRequestRouterContent: waterfall(),
         quiltRequestRouterRuntimeContent: waterfall(),
+        quiltRequestRouterPackage: waterfall<string>({
+          default: () =>
+            project.hasDependency('@quilted/request-router')
+              ? '@quilted/request-router'
+              : '@quilted/quilt/request-router',
+        }),
       }));
 
       configure(
@@ -57,6 +68,7 @@ export function requestRouter({port: explicitPort}: Omit<Options, 'env'> = {}) {
             quiltRequestRouterPort,
             quiltRequestRouterContent,
             quiltRequestRouterRuntimeContent,
+            quiltRequestRouterPackage,
           },
           {quiltRequestRouter = false},
         ) => {
@@ -121,7 +133,7 @@ export function requestRouter({port: explicitPort}: Omit<Options, 'env'> = {}) {
                       MAGIC_MODULE_REQUEST_ROUTER,
                     )};
           
-                    import {createHttpServer} from '@quilted/quilt/request-router/node';
+                    import {createHttpServer} from '${await quiltRequestRouterPackage!.run()}/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'
@@ -190,6 +202,12 @@ export function requestRouterDevelopment({
         quiltRequestRouterHost: waterfall(),
         quiltRequestRouterContent: waterfall(),
         quiltRequestRouterRuntimeContent: waterfall(),
+        quiltRequestRouterPackage: waterfall<string>({
+          default: () =>
+            project.hasDependency('@quilted/request-router')
+              ? '@quilted/request-router'
+              : '@quilted/quilt/request-router',
+        }),
       }));
 
       configure(
@@ -202,6 +220,7 @@ export function requestRouterDevelopment({
             quiltRequestRouterHost,
             quiltRequestRouterPort,
             quiltRequestRouterContent,
+            quiltRequestRouterPackage,
             quiltRequestRouterRuntimeContent,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
@@ -267,8 +286,12 @@ export function requestRouterDevelopment({
 
                   if (content) return content;
 
+                  const {default: getPort} = await import('get-port');
+
                   const [port, host] = await Promise.all([
-                    quiltRequestRouterPort!.run(explicitPort),
+                    quiltRequestRouterPort!.run(
+                      await getPort({port: explicitPort}),
+                    ),
                     quiltRequestRouterHost!.run(undefined),
                   ]);
 
@@ -277,7 +300,7 @@ export function requestRouterDevelopment({
                       MAGIC_MODULE_REQUEST_ROUTER,
                     )};
           
-                    import {createHttpServer} from '@quilted/quilt/request-router/node';
+                    import {createHttpServer} from '${await quiltRequestRouterPackage!.run()}/node';
           
                     const port = ${
                       port ?? 'Number.parseInt(process.env.PORT, 10)'

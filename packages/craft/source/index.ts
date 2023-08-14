@@ -252,7 +252,6 @@ export function quiltApp({
         targets(),
         shouldPolyfill &&
           polyfills({
-            package: '@quilted/quilt/polyfills',
             features: ['fetch', 'abort-controller'],
             ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
           }),
@@ -344,7 +343,6 @@ export function quiltService({
         targets(),
         shouldPolyfill &&
           polyfills({
-            package: '@quilted/quilt/polyfills',
             features: ['fetch', 'abort-controller'],
             ...(typeof shouldPolyfill === 'object' ? shouldPolyfill : {}),
           }),

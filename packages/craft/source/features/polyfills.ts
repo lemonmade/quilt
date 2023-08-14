@@ -27,6 +27,12 @@ export interface PolyfillHooks {
    * of this project.
    */
   quiltPolyfillFeaturesForEnvironment: WaterfallHook<PolyfillFeature[]>;
+
+  /**
+   * The package to import polyfills from. Defaults to `@quilted/polyfills` if this
+   * dependency is installed for the project, otherwise `@quilted/quilt/polyfills`.
+   */
+  quiltPolyfillPackage: WaterfallHookWithDefault<string>;
 }
 
 declare module '@quilted/sewing-kit' {
@@ -55,32 +61,53 @@ const require = createRequire(import.meta.url);
 export function polyfills({features, package: packageName}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.Polyfills',
-    build({configure, hooks}) {
+    build({configure, hooks, project}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
         quiltPolyfillFeatures: waterfall({
           default: () => features ?? [],
         }),
         quiltPolyfillFeaturesForEnvironment: waterfall(),
+        quiltPolyfillPackage: waterfall<string>({
+          default: () =>
+            packageName ??
+            (project.hasDependency('@quilted/polyfills')
+              ? '@quilted/polyfills'
+              : '@quilted/quilt/polyfills'),
+        }),
       }));
 
       configure(addConfiguration);
     },
-    develop({configure, hooks}) {
+    develop({configure, hooks, project}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
         quiltPolyfillFeatures: waterfall({
           default: () => features ?? [],
         }),
         quiltPolyfillFeaturesForEnvironment: waterfall(),
+        quiltPolyfillPackage: waterfall<string>({
+          default: () =>
+            packageName ??
+            (project.hasDependency('@quilted/polyfills')
+              ? '@quilted/polyfills'
+              : '@quilted/quilt/polyfills'),
+        }),
       }));
 
       configure(addConfiguration);
     },
-    test({configure, hooks}) {
+    test({configure, hooks, project}) {
       hooks<PolyfillHooks>(({waterfall}) => ({
         quiltPolyfillFeatures: waterfall({
           default: () => features ?? [],
         }),
         quiltPolyfillFeaturesForEnvironment: waterfall(),
+        quiltPolyfillPackage: waterfall<string>({
+          default: () =>
+            packageName ??
+            (project.hasDependency('@quilted/polyfills')
+              ? '@quilted/polyfills'
+              : '@quilted/quilt/polyfills'),
+        }),
       }));
 
       configure(
