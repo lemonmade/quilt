@@ -2,7 +2,7 @@
 
 Core Web Vitals are a set of metrics that measure the experience of using your application. In contrast with Quilt’s [built-in performance tracking features](../features/performance.md#navigation), Core Web Vitals primarily measure experience of your app’s initial page load. These two sources of metrics are complementary, and many apps will benefit from tracking both.
 
-Google provides the [`web-vitals`](https://github.com/GoogleChrome/web-vitals) package for tracking Core Web Vitals on your app’s front-end. This guide will show how to use this package in a Quilt application. If you don’t already have an app, easiest way to get started is to follow the [app creation guide](../getting-started.md#creating-an-app). Once you have an app, you’ll need to install the `web-vitals` package:
+Google provides the [`web-vitals`](https://github.com/GoogleChrome/web-vitals) package for tracking Core Web Vitals on your app’s front-end. This guide will show how to use this package in a Quilt application. If you don’t already have an app, the easiest way to get started is to follow the [app creation guide](../getting-started.md#creating-an-app). Once you have an app, you’ll need to install the `web-vitals` package:
 
 ```bash
 # npm

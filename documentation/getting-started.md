@@ -112,6 +112,27 @@ npm install # for npm
 yarn install # for yarn
 ```
 
+## Creating a service
+
+A [Quilt service](./projects/services) is a piece of code that runs on the backend. You will usually create a service to act as an HTTP server, in order to return HTML or JSON responses.
+
+To create a service, you can run one of the following commands, depending on your preferred package manager:
+
+```bash
+pnpm create @quilted service # for pnpm
+npm create @quilted service # for npm
+yarn create @quilted service # for yarn
+```
+
+This command will install [`@quilted/create`](../packages/create) and run its included executable. This executable will ask you some questions about the package:
+
+- What **name** you want to use for the service. You can use any name, but we recommend using a dash-case name. This name will be used for both the directory and entry file name of your new service.
+- What **entry** file will be used for your service. This file will be built during development and production builds to produce a runnable JavaScript service.
+
+If you run this command from a workspace that already has one or more Quilt projects, the new service will be added as a sibling to the rest. If you don’t already have a workspace, Quilt will ask if you’d like to set one up. You can create your new service as part of a new “monorepo”, ready to include even more packages, applications, and services. You can also create a simpler repo structure if you only plan on building the one package.
+
+Once you generate a service, you’ll be ready to run the [build, test, lint, and type-check commands](./cli).
+
 ## Need help?
 
 Did this guide not leave you with a working project? Are you unsure of what to do next? We’d really appreciate you [raising an issue](https://github.com/lemonmade/quilt/issues/new) so we can help you out, and so we can make the experience of getting started with Quilt smooth for others.
