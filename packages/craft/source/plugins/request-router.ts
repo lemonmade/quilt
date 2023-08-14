@@ -51,7 +51,7 @@ export function requestRouter({port: explicitPort}: Omit<Options, 'env'> = {}) {
         quiltRequestRouterRuntimeContent: waterfall(),
         quiltRequestRouterPackage: waterfall<string>({
           default: () =>
-            project.hasDependency('@quilted/request-router')
+            project.hasDependency('@quilted/request-router', {all: true})
               ? '@quilted/request-router'
               : '@quilted/quilt/request-router',
         }),
@@ -204,7 +204,7 @@ export function requestRouterDevelopment({
         quiltRequestRouterRuntimeContent: waterfall(),
         quiltRequestRouterPackage: waterfall<string>({
           default: () =>
-            project.hasDependency('@quilted/request-router')
+            project.hasDependency('@quilted/request-router', {all: true})
               ? '@quilted/request-router'
               : '@quilted/quilt/request-router',
         }),
@@ -290,7 +290,7 @@ export function requestRouterDevelopment({
 
                   const [port, host] = await Promise.all([
                     quiltRequestRouterPort!.run(
-                      await getPort({port: explicitPort}),
+                      await getPort({port: explicitPort ?? 3000}),
                     ),
                     quiltRequestRouterHost!.run(undefined),
                   ]);

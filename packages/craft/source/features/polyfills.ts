@@ -70,7 +70,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         quiltPolyfillPackage: waterfall<string>({
           default: () =>
             packageName ??
-            (project.hasDependency('@quilted/polyfills')
+            (project.hasDependency('@quilted/polyfills', {all: true})
               ? '@quilted/polyfills'
               : '@quilted/quilt/polyfills'),
         }),
@@ -87,7 +87,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         quiltPolyfillPackage: waterfall<string>({
           default: () =>
             packageName ??
-            (project.hasDependency('@quilted/polyfills')
+            (project.hasDependency('@quilted/polyfills', {all: true})
               ? '@quilted/polyfills'
               : '@quilted/quilt/polyfills'),
         }),
@@ -104,7 +104,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
         quiltPolyfillPackage: waterfall<string>({
           default: () =>
             packageName ??
-            (project.hasDependency('@quilted/polyfills')
+            (project.hasDependency('@quilted/polyfills', {all: true})
               ? '@quilted/polyfills'
               : '@quilted/quilt/polyfills'),
         }),
@@ -114,14 +114,19 @@ export function polyfills({features, package: packageName}: Options = {}) {
         ({
           jestModuleMapper,
           quiltPolyfillFeatures,
+          quiltPolyfillPackage,
           quiltPolyfillFeaturesForEnvironment,
         }) => {
           jestModuleMapper?.(async (moduleMappings) => {
-            const [{polyfillAliasesForTarget}, allNecessaryFeatures] =
-              await Promise.all([
-                import('@quilted/polyfills'),
-                quiltPolyfillFeatures!.run(),
-              ]);
+            const [
+              {polyfillAliasesForTarget},
+              allNecessaryFeatures,
+              polyfillPackage,
+            ] = await Promise.all([
+              import('@quilted/polyfills'),
+              quiltPolyfillFeatures!.run(),
+              quiltPolyfillPackage!.run(),
+            ]);
 
             const featuresNeedingPolyfills =
               await quiltPolyfillFeaturesForEnvironment!.run(
@@ -129,7 +134,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
               );
 
             const mappedPolyfills = polyfillAliasesForTarget('node', {
-              package: packageName,
+              package: polyfillPackage,
               features: featuresNeedingPolyfills,
               polyfill: 'usage',
             });
@@ -138,7 +143,8 @@ export function polyfills({features, package: packageName}: Options = {}) {
               mappedPolyfills,
             )) {
               if (!mappedPolyfill) continue;
-              moduleMappings[`^${packageName}/${polyfill}$`] = mappedPolyfill;
+              moduleMappings[`^${polyfillPackage}/${polyfill}$`] =
+                mappedPolyfill;
             }
 
             return moduleMappings;
@@ -153,6 +159,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
     rollupPlugins,
     rollupInputOptions,
     quiltPolyfillFeatures,
+    quiltPolyfillPackage,
     quiltPolyfillFeaturesForEnvironment,
   }:
     | ResolvedBuildProjectConfigurationHooks
@@ -174,12 +181,17 @@ export function polyfills({features, package: packageName}: Options = {}) {
     );
 
     rollupPlugins?.(async (plugins) => {
-      const [{packageDirectory}, {default: alias}, allNecessaryFeatures] =
-        await Promise.all([
-          import('pkg-dir'),
-          import('@rollup/plugin-alias'),
-          quiltPolyfillFeatures!.run(),
-        ]);
+      const [
+        {packageDirectory},
+        {default: alias},
+        allNecessaryFeatures,
+        polyfillPackage,
+      ] = await Promise.all([
+        import('pkg-dir'),
+        import('@rollup/plugin-alias'),
+        quiltPolyfillFeatures!.run(),
+        quiltPolyfillPackage!.run(),
+      ]);
 
       const featuresNeedingPolyfills =
         await quiltPolyfillFeaturesForEnvironment!.run(allNecessaryFeatures);
@@ -199,7 +211,7 @@ export function polyfills({features, package: packageName}: Options = {}) {
       );
 
       const polyfillPlugin = await polyfillRollup({
-        package: packageName,
+        package: polyfillPackage,
         features: featuresNeedingPolyfills,
         target: await browserslistTargets?.run([]),
       });
