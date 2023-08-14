@@ -336,7 +336,15 @@ async function getEntry(argv: Arguments, {name}: {name: string}) {
     return argv['--entry'];
   }
 
-  return `${toValidPackageName(name)}.ts`;
+  const defaultEntry = `${toValidPackageName(name)}.ts`;
+
+  const entry = await prompt({
+    type: 'text',
+    message: 'What do you want to name your entry file?',
+    initial: defaultEntry,
+  });
+
+  return entry;
 }
 
 async function getDirectory(argv: Arguments, {name}: {name: string}) {

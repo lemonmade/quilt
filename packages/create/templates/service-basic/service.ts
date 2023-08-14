@@ -1,4 +1,4 @@
-import {createRequestRouter} from '@quilted/request-router';
+import {createRequestRouter} from '@quilted/quilt/request-router';
 
 const app = createRequestRouter();
 

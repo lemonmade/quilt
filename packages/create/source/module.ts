@@ -335,10 +335,16 @@ async function getEntry(argv: Arguments, {name}: {name: string}) {
     return argv['--entry'];
   }
 
+  const defaultEntry = `${toValidPackageName(name)}.ts`;
+
+  if (argv['--yes']) {
+    return defaultEntry;
+  }
+
   const entry = await prompt({
     type: 'text',
     message: 'What do you want to name your entry file?',
-    initial: `${toValidPackageName(name)}.ts`,
+    initial: defaultEntry,
   });
 
   return entry;

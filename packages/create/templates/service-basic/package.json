@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@quilted/request-router": "^0.1.6"
+    "@quilted/quilt": "^0.5.0"
   },
   "eslintConfig": {
     "extends": "@quilted/eslint-config/project"
