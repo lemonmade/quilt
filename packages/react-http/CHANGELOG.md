@@ -1,5 +1,11 @@
 # @quilted/react-http
 
+## 0.3.30
+
+### Patch Changes
+
+- [`8312d827`](https://github.com/lemonmade/quilt/commit/8312d827216321e380a004db8157eb6e48e9c4d6) Thanks [@lemonmade](https://github.com/lemonmade)! - Better defaults for StrictTransportSecurity component and hook
+
 ## 0.3.29
 
 ### Patch Changes

@@ -2,7 +2,7 @@
   "name": "@quilted/graphql",
   "description": "Tiny, type-safe helpers for using GraphQL",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "repository": {
     "type": "git",
