@@ -29,26 +29,7 @@ import {createGraphQLHttpFetch} from '@quilted/graphql';
 const fetchGraphQL = createGraphQLHttpFetch({url: '/graphql'});
 ```
 
-The `createGraphQLHttpFetch()` function accepts options to customize the GraphQL request before it is performed. The only required option is `url`, which specifies the URL to send the GraphQL request to. You can also provide `method` and `headers` options to customize the HTTP method and headers, respectively. Each of these options can be a function, which allows you to customize them per-operation:
-
-```tsx
-import {createGraphQLHttpFetch} from '@quilted/graphql';
-
-const fetchGraphQL = createGraphQLHttpFetch({
-  url(operation) {
-    const url = new URL('/graphql');
-
-    if (operation.name) {
-      url.searchParams.set('operationName', operation.name);
-    }
-
-    return url;
-  },
-  headers: {
-    'Content-Type': 'application/json+graphql',
-  },
-});
-```
+The `createGraphQLHttpFetch()` function accepts options to customize the GraphQL request before it is performed. The only required option is `url`, which specifies the URL to send the GraphQL request to.
 
 The resulting function can be called with a GraphQL query or mutation, and returns a promise that resolves to the data (or errors) returned by the GraphQL server:
 
@@ -87,6 +68,134 @@ try {
 }
 ```
 
+#### Customizing GraphQL HTTP requests
+
+By default, operations are sent to the specified `url` using a `POST` request, according to the [GraphQL over HTTP specification](https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md). You can force operations to be made using `GET` requests instead by setting the `method` option:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+
+const fetch = createGraphQLHttpFetch({
+  url: 'https://my-app.com/query',
+  method: 'GET',
+});
+```
+
+You can add additional headers by specifying a `headers` option:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+
+const fetch = createGraphQLHttpFetch({
+  url: 'https://my-app.com/query',
+  // You can pass anything accepted by `new Headers()` here
+  headers: {
+    'X-Client': 'web',
+  },
+});
+```
+
+In addition to being able to the `method`, `headers`, and `url` as global, statically-defined options, each can also be set as a function that is called with the operation being fetched, and returns the value to use:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+
+const fetch = createGraphQLHttpFetch({
+  url: 'https://my-app.com/query',
+  // POST for mutations, GET for queries
+  method: (operation) =>
+    /^mutation\s/.test(operation.source) ? 'POST' : 'GET',
+});
+```
+
+Alternatively, each option can be set per-fetch, as part of the second argument to the fetch function:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+
+const fetch = createGraphQLHttpFetch({
+  url: 'https://my-app.com/query',
+});
+
+const {data} = await fetch(`query { me { name } }`, {
+  method: 'GET',
+});
+```
+
+The operation source is sent in all HTTP requests: as the `query` parameter for `GET` requests, and as the `query` body field for `POST` requests. To accomplish techniques like "persisted" GraphQL queries, you may want to exclude the operation source, and send only only a hashed identifier of each GraphQL operation. You can disable sending the source for all GraphQL fetches by setting `source: false` when creating your `fetch()` function:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+
+// Importing `.graphql` files automatically generates hashed
+// identifiers for your operations. If you don’t use this feature,
+// you must pass the identifier yourself.
+import myQuery from './MyQuery.graphql';
+
+const fetch = createGraphQLHttpFetch({
+  source: false,
+  url: 'https://my-app.com/query',
+});
+
+const {data} = await fetch(myQuery);
+```
+
+This isn’t typically useful unless you also communicate the operation’s hash identifier. Here’s an example showing how you could pass the identifier as an additional URL parameter:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+import myQuery from './MyQuery.graphql';
+
+const fetch = createGraphQLHttpFetch({
+  source: false,
+  url(operation) {
+    const url = new URL('https://my-app.com/query');
+    url.searchParams.set('id', operation.id);
+    return url;
+  },
+});
+
+const {data} = await fetch(myQuery);
+```
+
+Here’s an alternative approach, which sends the operation using a GraphQL `extensions` field, according to Apollo’s [automatic persisted queries protocol](https://www.google.com/search?client=safari&rls=en&q=apollo+autoamtic+persisted+queries&ie=UTF-8&oe=UTF-8):
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+import myQuery from './MyQuery.graphql';
+
+const fetch = createGraphQLHttpFetch({
+  source: false,
+  url: 'https://my-app.com/query',
+  extensions(operation) {
+    return {
+      persistedQuery: {version: 1, sha256Hash: operation.id},
+    };
+  },
+});
+
+const {data} = await fetch(myQuery);
+```
+
+These `source` and `extension` options can be set globally, as shown above, or per-fetch:
+
+```ts
+import {createGraphQLHttpFetch} from '@quilted/graphql';
+import myQuery from './MyQuery.graphql';
+
+const fetch = createGraphQLHttpFetch({
+  url: 'https://my-app.com/query',
+});
+
+const {data} = await fetch(myQuery, {
+  source: false,
+  method: 'GET',
+  extensions: {
+    persistedQuery: {version: 1, sha256Hash: myQuery.id},
+  },
+});
+```
+
 If you want to take more control over the HTTP request, this library also provides a helpful subclass of the built-in [`Request` class](https://developer.mozilla.org/en-US/docs/Web/API/Request) that will automatically serialize GraphQL operations into the body of the request. You can use instances of this object with the global `fetch()` API, but remember that you will need to parse the response yourself.
 
 ```tsx
@@ -103,6 +212,8 @@ const request = new GraphQLFetchRequest(
 const response = await fetch(request);
 const result = await response.json();
 ```
+
+#### Streaming GraphQL results with `@stream` and `@defer`
 
 Some GraphQL servers support streaming results for the [`@defer` and `@stream` directives](https://graphql.org/blog/2020-12-08-improving-latency-with-defer-and-stream-directives/). When an operation contains these directives, partial results are streamed to the client as they are available, and must be combined together to form a final result. To create a function that lets you fetch data from an HTTP endpoint like this, use the `createGraphQLStreamingHttpFetch()` function:
 

@@ -16,6 +16,7 @@ export type {
   GraphQLFetchContext,
   GraphQLHttpFetchContext,
   GraphQLHttpFetchOptions,
+  GraphQLHttpFetchOperationOptions,
   GraphQLVariableOptions,
   PickGraphQLType,
 } from '@quilted/graphql';

@@ -16,6 +16,7 @@ export type {
   GraphQLDeepPartialData,
   GraphQLHttpFetchContext,
   GraphQLHttpFetchOptions,
+  GraphQLHttpFetchOperationOptions,
   PickGraphQLType,
   GraphQLVariableOptions,
 } from '@quilted/graphql';

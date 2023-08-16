@@ -7,6 +7,7 @@ export type {
   GraphQLDeepPartialData,
   GraphQLFetch,
   GraphQLFetchContext,
+  GraphQLHttpFetchOperationOptions,
   GraphQLResult,
   GraphQLError,
   GraphQLVariableOptions,

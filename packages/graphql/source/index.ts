@@ -25,6 +25,7 @@ export type {
   GraphQLDeepPartialData,
   GraphQLFetch,
   GraphQLFetchContext,
+  GraphQLHttpFetchOperationOptions,
   GraphQLStreamingFetch,
   GraphQLStreamingFetchResult,
   GraphQLStreamingResult,

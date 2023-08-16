@@ -150,7 +150,7 @@ export type GraphQLResult<
 export interface GraphQLFetch<Extensions = Record<string, unknown>> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLAnyOperation<Data, Variables>,
-    options?: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
+    options?: GraphQLHttpFetchOperationOptions<Data, Variables>,
     context?: GraphQLFetchContext,
   ): GraphQLResult<Data, Extensions> | Promise<GraphQLResult<Data, Extensions>>;
 }
@@ -219,10 +219,65 @@ export type GraphQLStreamingFetchResult<Data, Extensions> = Promise<
 export interface GraphQLStreamingFetch<Extensions = Record<string, unknown>> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLAnyOperation<Data, Variables>,
-    options?: GraphQLVariableOptions<Variables> & {signal?: AbortSignal},
+    options?: GraphQLHttpFetchOperationOptions<Data, Variables>,
     context?: GraphQLFetchContext,
   ): GraphQLStreamingFetchResult<Data, Extensions>;
 }
+
+/**
+ * Options that can be provided to an individual `fetch()` of a
+ * GraphQL operation.
+ */
+export type GraphQLHttpFetchOperationOptions<_Data, Variables> = Pick<
+  GraphQLVariableOptions<Variables>,
+  'variables'
+> & {
+  /**
+   * The URL to send GraphQL requests to.
+   */
+  url: string | URL;
+
+  /**
+   * The HTTP headers to send with GraphQL requests. This can be any object
+   * that can be used to construct a `Headers` instance.
+   */
+  headers?: HeadersInit;
+
+  /**
+   * The HTTP method to use for this GraphQL. This should be either `GET` or
+   * `POST`, corresponding to the HTTP verb that will be used for the request.
+   * This will override any default method set for the `GraphQLFetch` function
+   * performing the request.
+   */
+  method?: 'GET' | 'POST';
+
+  /**
+   * Overrides the operation source included in the GraphQL request.
+   *
+   * If this option is a string, it will be used as the operation source, regardless
+   * of the `operation` provided to the `GraphQLFetchRequest` constructor.
+   *
+   * If this option is `false`, the operation source will not be sent as part
+   * of the request. This may be used to implement "persisted queries", where
+   * the operation is stored on the server, and the client sends only the
+   * hash of the request.
+   *
+   * If this option is `true` or omitted, the operation source will be inferred
+   * from the `operation` argument you provide.
+   */
+  source?: string | boolean;
+
+  /**
+   * Additional metadata to send alongside your GraphQL request. This content will
+   * be sent as the `extensions` request parameter.
+   */
+  extensions?: Record<string, any>;
+
+  /**
+   * An abort signal that can be used to cancel the request.
+   */
+  signal?: AbortSignal;
+};
 
 /**
  * A helper type that resolves to an object with a `variables` property that

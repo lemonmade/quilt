@@ -1,15 +1,21 @@
 import {toGraphQLOperation} from '../operation.ts';
-import type {GraphQLOperation, GraphQLAnyOperation} from '../types.ts';
+import type {
+  GraphQLOperation,
+  GraphQLAnyOperation,
+  GraphQLHttpFetchOperationOptions,
+} from '../types.ts';
+
+const ACCEPT_HEADER = 'Accept';
+const CONTENT_TYPE_HEADER = 'Content-Type';
 
 /**
  * Options for creating a `GraphQLFetchRequest`.
  */
-export interface GraphQLFetchRequestInit<_Data, Variables> extends RequestInit {
-  /**
-   * The variables used for this GraphQL operation.
-   */
-  variables?: Variables;
-}
+export type GraphQLFetchRequestInit<Data, Variables> = RequestInit &
+  Pick<
+    GraphQLHttpFetchOperationOptions<Data, Variables>,
+    'source' | 'variables' | 'extensions'
+  >;
 
 /**
  * A custom `Request` object that represents a GraphQL operation being
@@ -29,7 +35,12 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
   constructor(
     url: string | URL,
     operation: GraphQLAnyOperation<Data, Variables>,
-    {variables, ...init}: GraphQLFetchRequestInit<Data, Variables> = {},
+    {
+      variables,
+      source = true,
+      extensions,
+      ...init
+    }: GraphQLFetchRequestInit<Data, Variables> = {},
   ) {
     const {method = 'POST', headers: headersInit, body} = init;
 
@@ -38,34 +49,49 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
     const requestOptions: RequestInit = {...init, method, headers};
 
     const resolvedOperation = toGraphQLOperation(operation);
+    const resolvedName = resolvedOperation.name;
+    const resolvedSource =
+      typeof source === 'string'
+        ? source
+        : source
+        ? resolvedOperation.source
+        : undefined;
+
+    const queryParameters: Record<string, any> = {};
+
+    if (resolvedSource) queryParameters.query = resolvedSource;
+    if (variables) queryParameters.variables = variables;
+    if (extensions) queryParameters.extensions = extensions;
+    if (resolvedName) queryParameters.operationName = resolvedName;
 
     if (method === 'GET') {
       resolvedUrl = new URL(url);
-      resolvedUrl.searchParams.set('query', resolvedOperation.source);
+      const {searchParams} = resolvedUrl;
 
-      if (variables) {
-        resolvedUrl.searchParams.set('variables', JSON.stringify(variables));
-      }
+      for (const key in queryParameters) {
+        const value = queryParameters[key];
 
-      if (resolvedOperation.name) {
-        resolvedUrl.searchParams.set('operationName', resolvedOperation.name);
+        if (!value) continue;
+
+        searchParams.set(
+          key,
+          typeof value === 'string' ? value : JSON.stringify(value),
+        );
       }
     } else {
-      requestOptions.body =
-        body ??
-        JSON.stringify({
-          query: resolvedOperation.source,
-          variables,
-          operationName: resolvedOperation.name,
-        });
+      requestOptions.body = body ?? JSON.stringify(queryParameters);
     }
 
-    if (!headers.has('Content-Type')) {
-      headers.set('Content-Type', 'application/json');
+    if (!headers.has(CONTENT_TYPE_HEADER)) {
+      // @see https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md#media-types
+      headers.set(CONTENT_TYPE_HEADER, 'application/json');
     }
 
-    if (!headers.has('Accept')) {
-      headers.set('Accept', 'application/json');
+    if (!headers.has(ACCEPT_HEADER)) {
+      // @see https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md#media-types
+      // @see https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md#legacy-watershed
+      headers.append(ACCEPT_HEADER, 'application/graphql-response+json');
+      headers.append(ACCEPT_HEADER, 'application/json');
     }
 
     super(url, requestOptions);
