@@ -235,7 +235,7 @@ export type GraphQLHttpFetchOperationOptions<_Data, Variables> = Pick<
   /**
    * The URL to send GraphQL requests to.
    */
-  url: string | URL;
+  url?: string | URL;
 
   /**
    * The HTTP headers to send with GraphQL requests. This can be any object
