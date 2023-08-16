@@ -16,6 +16,8 @@ export interface StrictTransportSecurityOptions {
 
   /**
    * Applies this rule to all of the site’s subdomains.
+   *
+   * @default true
    */
   includeSubDomains?: boolean;
 
@@ -23,6 +25,8 @@ export interface StrictTransportSecurityOptions {
    * Allows this site to be added to an HSTS preload service,
    * which browsers can use to determine ahead of time what sites
    * should default to being accessed via HTTPS.
+   *
+   * @default true
    */
   preload?: boolean;
 }
@@ -51,7 +55,11 @@ export function useStrictTransportSecurity(
     if (typeof value === 'string') {
       normalizedValue = value;
     } else {
-      const {maxAge = DEFAULT_MAX_AGE, includeSubDomains, preload} = value;
+      const {
+        maxAge = DEFAULT_MAX_AGE,
+        includeSubDomains = true,
+        preload = true,
+      } = value;
 
       normalizedValue = String(maxAge);
 
