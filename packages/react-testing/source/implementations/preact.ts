@@ -263,6 +263,7 @@ function getVNode<P>(component: Component<P>) {
 
 // Portals always use the same component function but it is only accessible by the `type` of the vdom node returned by `createPortal`
 const PORTAL_TYPE = createPortal(
+  // @ts-expect-error createPortal() has a weird type as of Preact 10.17
   h('div', {}, 'test portal'),
   document.createElement('div'),
 ).type;
