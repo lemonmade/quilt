@@ -1,5 +1,11 @@
 # @quilted/react-signals
 
+## 0.1.10
+
+### Patch Changes
+
+- [`1a18edbb`](https://github.com/lemonmade/quilt/commit/1a18edbb8b69d5175ec9adf2d6c29e708f1cb8e4) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependency
+
 ## 0.1.9
 
 ### Patch Changes
