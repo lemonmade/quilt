@@ -310,7 +310,7 @@ importers:
         version: 29.5.0
       '@prefresh/vite':
         specifier: ^2.4.0
-        version: 2.4.0(preact@10.15.0)(vite@4.3.0)
+        version: 2.4.0(preact@10.17.0)(vite@4.3.0)
       '@quilted/assets':
         specifier: 0.0.3
         version: link:../assets
@@ -447,8 +447,8 @@ importers:
         specifier: ^8.5.0
         version: 8.5.0(postcss@8.4.20)
       preact:
-        specifier: ^10.15.0
-        version: 10.15.0
+        specifier: ^10.17.0
+        version: 10.17.0
       prettier:
         specifier: ^3.0.0
         version: 3.0.0
@@ -761,8 +761,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       preact:
-        specifier: ^10.13.0
-        version: 10.15.0
+        specifier: ^10.17.0
+        version: 10.17.0
       terser:
         specifier: ^5.16.0
         version: 5.16.8
@@ -884,8 +884,8 @@ importers:
         specifier: ^18.0.0
         version: 18.0.26
       preact:
-        specifier: ^10.15.0
-        version: 10.15.0
+        specifier: ^10.17.0
+        version: 10.17.0
 
   packages/react-assets:
     dependencies:
@@ -931,11 +931,11 @@ importers:
         specifier: ^18.0.0
         version: 18.0.10
       preact:
-        specifier: ^10.15.0
-        version: 10.15.0
+        specifier: ^10.17.0
+        version: 10.17.0
       preact-render-to-string:
         specifier: ^6.1.0
-        version: 6.1.0(preact@10.15.0)
+        version: 6.1.0(preact@10.17.0)
 
   packages/react-email:
     dependencies:
@@ -1111,7 +1111,7 @@ importers:
     dependencies:
       '@preact/signals':
         specifier: ^1.2.0
-        version: 1.2.0(preact@10.15.0)
+        version: 1.2.0(preact@10.17.0)
       '@quilted/signals':
         specifier: ^0.1.8
         version: link:../signals
@@ -1119,8 +1119,8 @@ importers:
         specifier: ^17.0.0 || ^18.0.0
         version: 18.0.26
       preact:
-        specifier: ^10.15.0
-        version: 10.15.0
+        specifier: ^10.17.0
+        version: 10.17.0
     devDependencies:
       '@quilted/testing':
         specifier: ^0.1.0
@@ -1145,8 +1145,8 @@ importers:
         specifier: ^27.0.0
         version: 27.5.1
       preact:
-        specifier: ^10.15.0
-        version: 10.15.0
+        specifier: ^10.17.0
+        version: 10.17.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -4818,32 +4818,32 @@ packages:
   /@preact/signals-core@1.4.0:
     resolution: {integrity: sha512-5iYoZBhELLIhUQceZI7sDTQWPb+xcVSn2qk8T/aNl/VMh+A4AiPX9YRSh4XO7fZ6pncrVxl1Iln82poVqYVbbw==}
 
-  /@preact/signals@1.2.0(preact@10.15.0):
+  /@preact/signals@1.2.0(preact@10.17.0):
     resolution: {integrity: sha512-hrPOJ6L4XI/6iFJ++JitYG7W22E0+oNDkWH9W1gCutcKYCJq5tvhKcnxkLShCuctNZkwUBpu4XeIiVr5wC4NnA==}
     peerDependencies:
       preact: 10.x
     dependencies:
       '@preact/signals-core': 1.4.0
-      preact: 10.15.0
+      preact: 10.17.0
     dev: false
 
   /@prefresh/babel-plugin@0.5.0:
     resolution: {integrity: sha512-joAwpkUDwo7ZqJnufXRGzUb+udk20RBgfA8oLPBh5aJH2LeStmV1luBfeJTztPdyCscC2j2SmZ/tVxFRMIxAEw==}
     dev: false
 
-  /@prefresh/core@1.5.1(preact@10.15.0):
+  /@prefresh/core@1.5.1(preact@10.17.0):
     resolution: {integrity: sha512-e0mB0Oxtog6ZpKPDBYbzFniFJDIktuKMzOHp7sguntU+ot0yi6dbhJRE9Css1qf0u16wdSZjpL2W2ODWuU05Cw==}
     peerDependencies:
       preact: ^10.0.0
     dependencies:
-      preact: 10.15.0
+      preact: 10.17.0
     dev: false
 
   /@prefresh/utils@1.2.0:
     resolution: {integrity: sha512-KtC/fZw+oqtwOLUFM9UtiitB0JsVX0zLKNyRTA332sqREqSALIIQQxdUCS1P3xR/jT1e2e8/5rwH6gdcMLEmsQ==}
     dev: false
 
-  /@prefresh/vite@2.4.0(preact@10.15.0)(vite@4.3.0):
+  /@prefresh/vite@2.4.0(preact@10.17.0)(vite@4.3.0):
     resolution: {integrity: sha512-makifAztmlWCMx79E8tl/gMKPKe3WartplGk+GTqtXSZ/JqoTiN4nkF9GqlhATqGEvsdtRnlDGKQ09s7fneJ/Q==}
     peerDependencies:
       preact: ^10.4.0
@@ -4851,10 +4851,10 @@ packages:
     dependencies:
       '@babel/core': 7.22.0
       '@prefresh/babel-plugin': 0.5.0
-      '@prefresh/core': 1.5.1(preact@10.15.0)
+      '@prefresh/core': 1.5.1(preact@10.17.0)
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
-      preact: 10.15.0
+      preact: 10.17.0
       vite: 4.3.0(@types/node@16.11.36)
     transitivePeerDependencies:
       - supports-color
@@ -9911,17 +9911,17 @@ packages:
       source-map-js: 1.0.2
     dev: false
 
-  /preact-render-to-string@6.1.0(preact@10.15.0):
+  /preact-render-to-string@6.1.0(preact@10.17.0):
     resolution: {integrity: sha512-/AsKU4Q4R8r4aKwwNQrkQQNUVEDmTeZr6IwesDffobFRPcTk4dSQrfo1VOcXjtlcUss6QYEe7JShUGbQIhaw+A==}
     peerDependencies:
       preact: '>=10'
     dependencies:
-      preact: 10.15.0
+      preact: 10.17.0
       pretty-format: 3.8.0
     dev: false
 
-  /preact@10.15.0:
-    resolution: {integrity: sha512-nZSa8M2R2m1n7nJSBlzDpxRJaIsejrTO1vlFbdpFvyC8qM1iU+On2y0otfoUm6SRB5o0lF0CKDFxg6grEFU0iQ==}
+  /preact@10.17.0:
+    resolution: {integrity: sha512-SNsI8cbaCcUS5tbv9nlXuCfIXnJ9ysBMWk0WnB6UWwcVA3qZ2O6FxqDFECMAMttvLQcW/HaNZUe2BLidyvrVYw==}
 
   /preferred-pm@3.0.3:
     resolution: {integrity: sha512-+wZgbxNES/KlJs9q40F/1sfOd/j7f1O9JaHcW5Dsn3aUUOZg3L2bjpVUcKV2jvtElYfoTuQiNeMfQJ4kwUAhCQ==}
