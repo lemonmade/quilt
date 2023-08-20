@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.1.5
+
+### Patch Changes
+
+- [`bbdb541b`](https://github.com/lemonmade/quilt/commit/bbdb541bd0816554b7f7578967b6337ec15c5cf9) Thanks [@lemonmade](https://github.com/lemonmade)! - Add GraphQL manifest generation
+
 ## 0.1.4
 
 ### Patch Changes
