@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.3.44
+
+### Patch Changes
+
+- [`fa75574c`](https://github.com/lemonmade/quilt/commit/fa75574c8697726f70321e43c2d2d554ea674926) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix loading CSS files for async modules
+
 ## 0.3.43
 
 ### Patch Changes
