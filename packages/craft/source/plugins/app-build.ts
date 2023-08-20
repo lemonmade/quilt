@@ -5,6 +5,7 @@ import type {GetManualChunk} from 'rollup';
 
 import type {} from '../tools/postcss.ts';
 import type {} from '../features/async.ts';
+import type {} from '../features/graphql.ts';
 
 import {createProjectPlugin, Project, Workspace} from '../kit.ts';
 
@@ -90,6 +91,8 @@ export function appBuild({assets, browser, env}: Options) {
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
             quiltAppBrowserEntryCssSelector,
+            quiltGraphQLManifest,
+            quiltGraphQLManifestPath,
             quiltInlineEnvironmentVariables,
           },
           {quiltAppBrowser: browserTargets},
@@ -134,9 +137,13 @@ export function appBuild({assets, browser, env}: Options) {
           quiltAssetManifestId?.((id) => id ?? browserTargets.name);
 
           quiltAssetManifestPath?.(() =>
-            project.fs.buildPath(
-              `manifests/manifest${targetFilenamePart}.json`,
-            ),
+            project.fs.buildPath(`manifests/assets${targetFilenamePart}.json`),
+          );
+
+          quiltGraphQLManifest?.(() => true);
+
+          quiltGraphQLManifestPath?.(() =>
+            project.fs.buildPath(`manifests/graphql${targetFilenamePart}.json`),
           );
 
           quiltAssetManifestPriority?.(

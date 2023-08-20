@@ -1,4 +1,6 @@
-import {readFile} from 'fs/promises';
+import {dirname} from 'path';
+import {readFile, mkdir, writeFile} from 'fs/promises';
+
 import {DocumentNode, parse} from 'graphql';
 import type {Plugin, TransformPluginContext} from 'rollup';
 
@@ -8,7 +10,13 @@ import {
   toGraphQLOperation,
 } from './transform.ts';
 
-export function graphql(): Plugin {
+export interface Options {
+  manifest?: string;
+}
+
+export function graphql({manifest: manifestPath}: Options = {}): Plugin {
+  const shouldWriteManifest = Boolean(manifestPath);
+
   return {
     name: '@quilted/graphql',
     async transform(code, id) {
@@ -37,9 +45,36 @@ export function graphql(): Plugin {
         }),
       );
 
-      return `export default JSON.parse(${JSON.stringify(
-        JSON.stringify(document),
-      )})`;
+      return {
+        code: `export default JSON.parse(${JSON.stringify(
+          JSON.stringify(document),
+        )})`,
+        meta: shouldWriteManifest
+          ? {
+              quilt: {graphql: document},
+            }
+          : undefined,
+      };
+    },
+    async generateBundle() {
+      if (!shouldWriteManifest) return;
+
+      const operations: Record<string, string> = {};
+
+      for (const moduleId of this.getModuleIds()) {
+        const operation = this.getModuleInfo(moduleId)?.meta?.quilt?.graphql;
+
+        if (
+          operation != null &&
+          typeof operation.id === 'string' &&
+          typeof operation.source === 'string'
+        ) {
+          operations[operation.id] = operation.source;
+        }
+      }
+
+      await mkdir(dirname(manifestPath!), {recursive: true});
+      await writeFile(manifestPath!, JSON.stringify(operations, null, 2));
     },
   };
 }

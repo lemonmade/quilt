@@ -136,7 +136,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
           default: undefined,
         }),
         quiltAssetManifestPath: waterfall<RollupOptions['path']>({
-          default: project.fs.buildPath('manifests/manifest.json'),
+          default: project.fs.buildPath('manifests/assets.json'),
         }),
         quiltAssetManifestPriority: waterfall<RollupOptions['priority']>({
           default: undefined,

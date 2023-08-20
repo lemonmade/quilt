@@ -290,7 +290,7 @@ export function appStatic({
                   return null;
                 }
 
-                const manifestFiles = await project.fs.glob('manifest*.json', {
+                const manifestFiles = await project.fs.glob('assets*.json', {
                   cwd: project.fs.buildPath('manifests'),
                   onlyFiles: true,
                 });

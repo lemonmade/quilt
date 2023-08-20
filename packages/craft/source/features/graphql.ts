@@ -8,7 +8,11 @@ import type {
 } from '@quilted/graphql-tools/configuration';
 
 import {createWorkspacePlugin, createProjectPlugin} from '../kit.ts';
-import type {Workspace, WorkspaceStepRunner} from '../kit.ts';
+import type {
+  Workspace,
+  WorkspaceStepRunner,
+  WaterfallHookWithDefault,
+} from '../kit.ts';
 import type {} from '../tools/jest.ts';
 import type {} from '../tools/rollup.ts';
 import type {} from '../tools/vite.ts';
@@ -17,29 +21,99 @@ export type {Configuration, ConfigurationExtensions};
 
 const NAME = 'Quilt.GraphQL';
 
+export interface GraphQLHooks {
+  quiltGraphQLManifest: WaterfallHookWithDefault<boolean>;
+  quiltGraphQLManifestPath: WaterfallHookWithDefault<string>;
+}
+
+declare module '@quilted/sewing-kit' {
+  interface BuildProjectConfigurationHooks extends GraphQLHooks {}
+  interface DevelopProjectConfigurationHooks extends GraphQLHooks {}
+}
+
 export function graphql() {
   return createProjectPlugin({
     name: NAME,
-    build({configure}) {
-      configure(({rollupPlugins}) => {
-        rollupPlugins?.(async (plugins) => {
-          const {graphql} = await import('@quilted/graphql-tools/rollup');
-          return [...plugins, graphql()];
-        });
-      });
-    },
-    develop({configure}) {
-      configure(({rollupPlugins, vitePlugins}) => {
-        rollupPlugins?.(async (plugins) => {
-          const {graphql} = await import('@quilted/graphql-tools/rollup');
-          return [...plugins, graphql()];
-        });
+    build({configure, hooks, project}) {
+      hooks<GraphQLHooks>(({waterfall}) => ({
+        quiltGraphQLManifest: waterfall<boolean>({
+          default: false,
+        }),
+        quiltGraphQLManifestPath: waterfall<string>({
+          default: project.fs.buildPath('manifests/graphql.json'),
+        }),
+      }));
 
-        vitePlugins?.(async (plugins) => {
-          const {graphql} = await import('@quilted/graphql-tools/rollup');
-          return [...plugins, graphql()];
-        });
-      });
+      configure(
+        ({rollupPlugins, quiltGraphQLManifest, quiltGraphQLManifestPath}) => {
+          rollupPlugins?.(async (plugins) => {
+            const [{graphql}, includeManifest, manifestPath] =
+              await Promise.all([
+                import('@quilted/graphql-tools/rollup'),
+                quiltGraphQLManifest!.run(),
+                quiltGraphQLManifestPath!.run(),
+              ]);
+
+            return [
+              ...plugins,
+              graphql({
+                manifest: includeManifest ? manifestPath : undefined,
+              }),
+            ];
+          });
+        },
+      );
+    },
+    develop({configure, hooks, project}) {
+      hooks<GraphQLHooks>(({waterfall}) => ({
+        quiltGraphQLManifest: waterfall<boolean>({
+          default: false,
+        }),
+        quiltGraphQLManifestPath: waterfall<string>({
+          default: project.fs.buildPath('manifests/graphql.json'),
+        }),
+      }));
+
+      configure(
+        ({
+          rollupPlugins,
+          vitePlugins,
+          quiltGraphQLManifest,
+          quiltGraphQLManifestPath,
+        }) => {
+          rollupPlugins?.(async (plugins) => {
+            const [{graphql}, includeManifest, manifestPath] =
+              await Promise.all([
+                import('@quilted/graphql-tools/rollup'),
+                quiltGraphQLManifest!.run(),
+                quiltGraphQLManifestPath!.run(),
+              ]);
+
+            return [
+              ...plugins,
+              graphql({
+                manifest: includeManifest ? manifestPath : undefined,
+              }),
+            ];
+          });
+
+          vitePlugins?.(async (plugins) => {
+            const [{graphql}, includeManifest, manifestPath] =
+              await Promise.all([
+                import('@quilted/graphql-tools/rollup'),
+                quiltGraphQLManifest!.run(),
+                quiltGraphQLManifestPath!.run(),
+              ]);
+
+            return [
+              ...plugins,
+              graphql({
+                manifest: includeManifest ? manifestPath : undefined,
+              }),
+            ];
+          });
+        },
+      );
     },
     test({configure}) {
       const require = createRequire(import.meta.url);

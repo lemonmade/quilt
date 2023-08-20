@@ -182,6 +182,8 @@ export function moduleBuild({
             babelPresetEnvOptions,
             browserslistTargets,
             quiltAssetManifestPath,
+            quiltGraphQLManifest,
+            quiltGraphQLManifestPath,
           },
           {quiltModuleBuild},
         ) => {
@@ -210,9 +212,13 @@ export function moduleBuild({
           browserslistTargets?.(() => quiltModuleBuild.targets);
 
           quiltAssetManifestPath?.(() =>
-            project.fs.buildPath(
-              `manifests/manifest${targetFilenamePart}.json`,
-            ),
+            project.fs.buildPath(`manifests/assets${targetFilenamePart}.json`),
+          );
+
+          quiltGraphQLManifest?.(() => true);
+
+          quiltGraphQLManifestPath?.(() =>
+            project.fs.buildPath(`manifests/graphql${targetFilenamePart}.json`),
           );
 
           rollupPlugins?.(async (plugins) => {
