@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 1.0.2
+
+### Patch Changes
+
+- [`10f361dd`](https://github.com/lemonmade/quilt/commit/10f361dd60d85e5dbb2ccbfc16b3a88c55bc83ca) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix function serialization
+
 ## 1.0.1
 
 ### Patch Changes
