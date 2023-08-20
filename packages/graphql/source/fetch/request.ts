@@ -71,7 +71,7 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
         searchParams = new URLSearchParams();
       } else {
         resolvedUrl = new URL(url);
-        searchParams = url.searchParams;
+        searchParams = resolvedUrl.searchParams;
       }
 
       for (const key in queryParameters) {
