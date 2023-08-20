@@ -211,7 +211,7 @@ function preloadContentForDependencies(
   dependencies: Iterable<string>,
   originalExpression: string,
 ) {
-  return `Promise.resolve().then(() => globalThis[Symbol.for('quilt')]?.preload?.(${Array.from(
+  return `Promise.resolve().then(() => globalThis[Symbol.for('quilt')]?.AsyncModules?.preload?.(${Array.from(
     dependencies,
   )
     .map((dependency) => JSON.stringify(dependency))
