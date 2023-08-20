@@ -297,14 +297,13 @@ export function createThread<
           }
 
           const result = await func(
-            funcId,
-            encoder.decode(
+            ...(encoder.decode(
               args,
               encoderApi,
               isMemoryManageable(func)
                 ? [...func[RETAINED_BY], stackFrame]
                 : [stackFrame],
-            ) as any[],
+            ) as any[]),
           );
           const [encoded, transferables] = encoder.encode(result, encoderApi);
           send(FUNCTION_RESULT, [callId, undefined, encoded], transferables);
