@@ -65,8 +65,14 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
     if (resolvedName) queryParameters.operationName = resolvedName;
 
     if (method === 'GET') {
-      resolvedUrl = new URL(url);
-      const {searchParams} = resolvedUrl;
+      let searchParams: URLSearchParams;
+
+      if (typeof url === 'string') {
+        searchParams = new URLSearchParams();
+      } else {
+        resolvedUrl = new URL(url);
+        searchParams = url.searchParams;
+      }
 
       for (const key in queryParameters) {
         const value = queryParameters[key];
@@ -77,6 +83,12 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
           key,
           typeof value === 'string' ? value : JSON.stringify(value),
         );
+
+        if (typeof url === 'string') {
+          resolvedUrl = `${url}${
+            url.includes('?') ? '&' : '?'
+          }${searchParams.toString()}`;
+        }
       }
     } else {
       requestOptions.body = body ?? JSON.stringify(queryParameters);
@@ -94,7 +106,7 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
       headers.append(ACCEPT_HEADER, 'application/json');
     }
 
-    super(url, requestOptions);
+    super(resolvedUrl, requestOptions);
 
     this.variables = variables;
     this.operation = resolvedOperation;
