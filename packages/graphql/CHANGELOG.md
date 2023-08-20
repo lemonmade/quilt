@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 1.2.2
+
+### Patch Changes
+
+- [`199efb69`](https://github.com/lemonmade/quilt/commit/199efb69212fbf0195438f2d8a05def3a7ed044c) Thanks [@lemonmade](https://github.com/lemonmade)! - Correct first GET URL construction fix
+
 ## 1.2.1
 
 ### Patch Changes
