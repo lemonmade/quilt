@@ -315,7 +315,7 @@ importers:
         specifier: 0.0.3
         version: link:../assets
       '@quilted/async':
-        specifier: 0.3.43
+        specifier: 0.3.44
         version: link:../async
       '@quilted/browserslist-config':
         specifier: 0.1.9

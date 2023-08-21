@@ -1,7 +1,7 @@
 {
   "name": "@quilted/craft",
   "type": "module",
-  "version": "0.1.228",
+  "version": "0.1.229",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -221,7 +221,7 @@
     "@jest/types": "^29.5.0",
     "@prefresh/vite": "^2.4.0",
     "@quilted/assets": "0.0.3",
-    "@quilted/async": "0.3.43",
+    "@quilted/async": "0.3.44",
     "@quilted/browserslist-config": "0.1.9",
     "@quilted/eslint-config": "0.2.2",
     "@quilted/graphql-tools": "0.1.5",
