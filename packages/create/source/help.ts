@@ -34,6 +34,7 @@ export function printHelp({
     )} can be one of the following project types:
 
      - ${color.magenta('app')}, a web application
+     - ${color.magenta('service')}, a web server without a user interface
      - ${color.magenta('package')}, a shared library of code
      - ${color.magenta('module')}, a standalone JavaScript module for a browser
 
