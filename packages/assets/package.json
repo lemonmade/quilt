@@ -51,7 +51,8 @@
     }
   },
   "devDependencies": {
-    "@quilted/testing": "^0.1.0"
+    "@quilted/testing": "^0.1.0",
+    "rollup": "^3.29.0"
   },
   "eslintConfig": {
     "extends": [
