@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.151
+
+### Patch Changes
+
+- [`beff1a54`](https://github.com/lemonmade/quilt/commit/beff1a5427f83feb846a11767cc810533f7062ba) Thanks [@lemonmade](https://github.com/lemonmade)! - Set proper script defer attribute for static render
+
 ## 0.5.150
 
 ### Patch Changes

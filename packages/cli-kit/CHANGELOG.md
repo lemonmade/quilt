@@ -1,5 +1,11 @@
 # @quilted/cli-kit
 
+## 0.1.11
+
+### Patch Changes
+
+- [`17a4aa36`](https://github.com/lemonmade/quilt/commit/17a4aa36883e05c711894ed5e211f5cf32877a31) Thanks [@lemonmade](https://github.com/lemonmade)! - Use corepack to manage package manager version
+
 ## 0.1.10
 
 ### Patch Changes
