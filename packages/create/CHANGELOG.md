@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.73
+
+### Patch Changes
+
+- [`73298cbb`](https://github.com/lemonmade/quilt/commit/73298cbb2c1e8ef4faa0439838605b5d9ee8d811) Thanks [@lemonmade](https://github.com/lemonmade)! - Add service to create CLI help text
+
 ## 0.1.72
 
 ### Patch Changes
