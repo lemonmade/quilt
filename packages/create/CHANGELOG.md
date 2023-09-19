@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.74
+
+### Patch Changes
+
+- [`ad56e94b`](https://github.com/lemonmade/quilt/commit/ad56e94b0ce634c89674117f5a4c26075ac080b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix create => cli-kit version dependency again
+
 ## 0.1.73
 
 ### Patch Changes
