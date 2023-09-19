@@ -630,7 +630,11 @@ importers:
         specifier: ^5.2.0
         version: 5.2.2
 
-  packages/events: {}
+  packages/events:
+    devDependencies:
+      '@quilted/testing':
+        specifier: ^0.1.6
+        version: link:../testing
 
   packages/graphql:
     dependencies:
