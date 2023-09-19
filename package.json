@@ -45,11 +45,11 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "common-tags": "^1.8.2",
-    "esbuild": "^0.18.0",
+    "esbuild": "^0.19.0",
     "execa": "^6.1.0",
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0",
-    "rollup": "^3.26.0",
+    "rollup": "^3.29.0",
     "source-map-support": "^0.5.0",
     "typescript": "^5.2.0"
   },
