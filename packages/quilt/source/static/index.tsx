@@ -261,10 +261,10 @@ export async function renderStatic(
               return attributes.type === 'module' ? (
                 <Fragment key={script.source}>
                   <link {...(scriptAssetPreloadAttributes(script) as any)} />
-                  <script {...(attributes as any)} />
+                  <script {...(attributes as any)} async />
                 </Fragment>
               ) : (
-                <script key={script.source} {...(attributes as any)} />
+                <script key={script.source} {...(attributes as any)} defer />
               );
             })}
 
