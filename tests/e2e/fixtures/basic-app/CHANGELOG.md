@@ -1,5 +1,11 @@
 # e2e-fixture-basic-app
 
+## 0.0.21
+
+### Patch Changes
+
+- [`7191e030`](https://github.com/lemonmade/quilt/commit/7191e03087ae3197e57240eb560314c7df691c05) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade TypeScript and Node dependencies
+
 ## 0.0.20
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.1.6
+
+### Patch Changes
+
+- [`be6e9c40`](https://github.com/lemonmade/quilt/commit/be6e9c40daa76a6568767c58cb373c3de7015ca5) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Rollup, Vite, and ESBuild dependencies
+
 ## 0.1.5
 
 ### Patch Changes

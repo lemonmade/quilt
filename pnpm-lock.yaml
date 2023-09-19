@@ -320,10 +320,10 @@ importers:
         specifier: 0.1.9
         version: link:../browserslist-config
       '@quilted/eslint-config':
-        specifier: 0.2.2
+        specifier: 0.2.3
         version: link:../eslint-config
       '@quilted/graphql-tools':
-        specifier: 0.1.5
+        specifier: 0.1.6
         version: link:../graphql-tools
       '@quilted/polyfills':
         specifier: 0.2.34
@@ -332,13 +332,13 @@ importers:
         specifier: 0.2.11
         version: link:../prettier
       '@quilted/rollup-plugin-fix-commonjs-preserve-modules':
-        specifier: 0.1.13
+        specifier: 0.1.14
         version: link:../rollup-plugin-fix-commonjs-preserve-modules
       '@quilted/sewing-kit':
         specifier: 0.2.39
         version: link:../sewing-kit
       '@quilted/typescript':
-        specifier: 0.2.20
+        specifier: 0.2.21
         version: link:../typescript
       '@quilted/workers':
         specifier: 0.2.36
