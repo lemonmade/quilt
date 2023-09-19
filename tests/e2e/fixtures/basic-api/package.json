@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@quilted/craft": "workspace:*",
-    "typescript": "^5.1.0"
+    "typescript": "^5.2.0"
   },
   "eslintConfig": {
     "extends": "@quilted/eslint-config/project",

@@ -72,6 +72,10 @@ export class HeadersPolyfill implements Headers {
     );
   }
 
+  getSetCookie(): string[] {
+    return this.normalized.get('set-cookie') ?? [];
+  }
+
   has(header: string) {
     return this.normalized.has(normalizeHeader(header));
   }
