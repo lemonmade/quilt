@@ -514,7 +514,7 @@ importers:
   packages/create:
     devDependencies:
       '@quilted/cli-kit':
-        specifier: ^0.1.5
+        specifier: ^0.1.10
         version: link:../cli-kit
       '@types/common-tags':
         specifier: ^1.8.0
