@@ -78,14 +78,18 @@ describe('app builds', () => {
         expect(indexPage).toContain('<a href="/one">Page one</a>');
 
         expect(pageOne).toContain('Page one');
-        expect(pageOne).toContain('<script type="module" src="/assets/One.');
+        expect(pageOne).toMatch(
+          /<script\s+type="module"\s+src="[/]assets[/]One./,
+        );
 
         expect(pageTwo).toContain('Page two');
-        expect(pageTwo).toContain('<script type="module" src="/assets/Two.');
+        expect(pageTwo).toMatch(
+          /<script\s+type="module"\s+src="[/]assets[/]Two./,
+        );
 
         expect(pageThree).toContain('Page three');
-        expect(pageThree).toContain(
-          '<script type="module" src="/assets/Three.',
+        expect(pageThree).toMatch(
+          /<script\s+type="module"\s+src="[/]assets[/]Three./,
         );
       });
     });
