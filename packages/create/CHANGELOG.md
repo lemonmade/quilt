@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.75
+
+### Patch Changes
+
+- [`66c414cd`](https://github.com/lemonmade/quilt/commit/66c414cd01c708ab5fd1da56678c34877452d158) Thanks [@lemonmade](https://github.com/lemonmade)! - Update create template node version
+
 ## 0.1.74
 
 ### Patch Changes

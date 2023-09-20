@@ -1,5 +1,11 @@
 # @quilted/cli-kit
 
+## 0.1.12
+
+### Patch Changes
+
+- [`9987ad87`](https://github.com/lemonmade/quilt/commit/9987ad87eb24c2505e8bf6ceb48fbfdd9d7fa2cf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix create `corepack use` running in wrong directory
+
 ## 0.1.11
 
 ### Patch Changes
