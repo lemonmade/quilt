@@ -33,7 +33,10 @@ export function createPackageManagerRunner(
     },
     async install() {
       try {
-        execSync(`corepack use ${type}@latest`);
+        execSync(`corepack use ${type}@latest`, {
+          cwd: root,
+          stdio: 'inherit',
+        });
       } catch {
         // intentional noop
       }
