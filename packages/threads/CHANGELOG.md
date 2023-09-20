@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 1.0.3
+
+### Patch Changes
+
+- [`a9279252`](https://github.com/lemonmade/quilt/commit/a9279252d933f1cb41132acc84ca5dd4fe73307a) Thanks [@lemonmade](https://github.com/lemonmade)! - Update signal dependencies
+
 ## 1.0.2
 
 ### Patch Changes
