@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.76
+
+### Patch Changes
+
+- [`2f149c61`](https://github.com/lemonmade/quilt/commit/2f149c6131fde16908d8d50a4aafc4465cd9f859) Thanks [@lemonmade](https://github.com/lemonmade)! - Update eslint and stylelint template dependencies
+
 ## 0.1.75
 
 ### Patch Changes

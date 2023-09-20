@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.152
+
+### Patch Changes
+
+- [`86e584a5`](https://github.com/lemonmade/quilt/commit/86e584a5e95baf609f01a91ed89ca1b45116eb29) Thanks [@lemonmade](https://github.com/lemonmade)! - Add head script and style hooks/ components
+
 ## 0.5.151
 
 ### Patch Changes
