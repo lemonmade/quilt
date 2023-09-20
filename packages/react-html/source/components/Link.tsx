@@ -6,7 +6,9 @@ import {useLink} from '../hooks/link.ts';
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
  */
-export function Link(options: Exclude<Parameters<typeof useLink>[0], false>) {
+export function Link(
+  options: Exclude<Parameters<typeof useLink>[0], false | null | undefined>,
+) {
   useLink(options);
   return null;
 }

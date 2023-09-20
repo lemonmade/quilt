@@ -10,7 +10,9 @@ import {useDomEffect} from './dom-effect.ts';
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
  */
-export function useMeta(meta: false | HTMLProps<HTMLMetaElement>) {
+export function useMeta(
+  meta: false | null | undefined | HTMLProps<HTMLMetaElement>,
+) {
   useDomEffect(
     (manager) => {
       if (meta) return manager.addMeta(meta);

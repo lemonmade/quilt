@@ -1,6 +1,8 @@
 export {
   Alternate,
   BodyAttributes,
+  HeadScript,
+  HeadStyle,
   HtmlAttributes,
   Link,
   Meta,
@@ -13,6 +15,8 @@ export {
   useAlternateUrl,
   useSerialized,
   useBodyAttributes,
+  useHeadScript,
+  useHeadStyle,
   useHtmlAttributes,
   useFavicon,
   useLink,

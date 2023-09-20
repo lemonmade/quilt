@@ -10,7 +10,9 @@ import {useDomEffect} from './dom-effect.ts';
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
  */
-export function useLink(link: false | HTMLProps<HTMLLinkElement>) {
+export function useLink(
+  link: false | null | undefined | HTMLProps<HTMLLinkElement>,
+) {
   useDomEffect(
     (manager) => {
       if (link) return manager.addLink(link);

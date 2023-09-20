@@ -7,6 +7,7 @@ export interface State {
   title?: string;
   metas: HTMLProps<HTMLMetaElement>[];
   links: HTMLProps<HTMLLinkElement>[];
+  scripts: HTMLProps<HTMLScriptElement>[];
   bodyAttributes: HTMLProps<HTMLBodyElement>;
   htmlAttributes: HtmlHTMLAttributes<HTMLHtmlElement>;
 }
@@ -44,6 +45,7 @@ export class HtmlManager {
   private titles: Ref<string>[] = [];
   private metas: Ref<HTMLProps<HTMLMetaElement>>[] = [];
   private links: Ref<HTMLProps<HTMLLinkElement>>[] = [];
+  private scripts: Ref<HTMLProps<HTMLScriptElement>>[] = [];
   private htmlAttributes: Ref<HtmlHTMLAttributes<HTMLHtmlElement>>[] = [];
   private bodyAttributes: Ref<HTMLProps<HTMLBodyElement>>[] = [];
   private subscriptions = new Set<Subscription>();
@@ -55,6 +57,7 @@ export class HtmlManager {
       title: lastTitle?.current,
       metas: this.metas.map(({current}) => current),
       links: this.links.map(({current}) => current),
+      scripts: this.scripts.map(({current}) => current),
       bodyAttributes: Object.assign(
         {},
         ...this.bodyAttributes.map(({current}) => current),
@@ -76,6 +79,7 @@ export class HtmlManager {
     this.titles = [];
     this.metas = [];
     this.links = [];
+    this.scripts = [];
     this.subscriptions.clear();
     this.hydrationIds.clear();
 
@@ -101,6 +105,10 @@ export class HtmlManager {
 
   addLink(link: HTMLProps<HTMLLinkElement>) {
     return this.addDescriptor(link, this.links);
+  }
+
+  addScript(script: HTMLProps<HTMLScriptElement>) {
+    return this.addDescriptor(script, this.scripts);
   }
 
   addHtmlAttributes(attributes: HtmlHTMLAttributes<HTMLHtmlElement>) {

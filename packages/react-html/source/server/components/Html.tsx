@@ -55,6 +55,12 @@ export function Html({
     <link key={index} {...linkProps} />
   ));
 
+  const scriptContent = extracted?.scripts.map((scriptProps, index) => (
+    // Fine for server rendering
+    // eslint-disable-next-line react/no-array-index-key
+    <script key={index} {...scriptProps} />
+  ));
+
   const htmlAttributes = extracted?.htmlAttributes ?? {};
   const bodyAttributes = extracted?.bodyAttributes ?? {};
 
@@ -83,6 +89,8 @@ export function Html({
         <meta charset="utf-8" />
         {metaContent}
         {serializationContent}
+
+        {scriptContent}
 
         {headEndContent}
       </head>

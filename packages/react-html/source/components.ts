@@ -1,5 +1,7 @@
 export {Alternate} from './components/Alternate.tsx';
 export {BodyAttributes} from './components/BodyAttributes.tsx';
+export {HeadScript} from './components/HeadScript.tsx';
+export {HeadStyle} from './components/HeadStyle.tsx';
 export {HtmlAttributes} from './components/HtmlAttributes.tsx';
 export {Link} from './components/Link.tsx';
 export {Meta} from './components/Meta.tsx';

@@ -4,6 +4,8 @@ export {useDomEffect} from './hooks/dom-effect.ts';
 export {useDomClientEffect} from './hooks/dom-effect-client.ts';
 export {useDomServerAction} from './hooks/dom-effect-server.ts';
 export {useFavicon} from './hooks/favicon.ts';
+export {useHeadScript} from './hooks/head-script.ts';
+export {useHeadStyle} from './hooks/head-style.ts';
 export {useHtmlAttributes} from './hooks/html-attributes.ts';
 export {useHtmlUpdater} from './hooks/html-updater.ts';
 export {useLink} from './hooks/link.ts';

@@ -1,8 +1,9 @@
 let initiallyUnmatchedMetas: Element[];
 let initiallyUnmatchedLinks: Element[];
+let initiallyUnmatchedScripts: Element[];
 
 export function updateOnClient(state: import('../manager.ts').State) {
-  const {title, metas, links, bodyAttributes, htmlAttributes} = state;
+  const {title, metas, links, scripts, bodyAttributes, htmlAttributes} = state;
   let titleElement = document.querySelector('title');
 
   if (title == null) {
@@ -60,12 +61,36 @@ export function updateOnClient(state: import('../manager.ts').State) {
     }
   }
 
+  const oldScripts = Array.from(document.head.querySelectorAll('link'));
+
+  for (const script of scripts) {
+    const element = document.createElement('script');
+
+    for (const [attribute, value] of Object.entries(script)) {
+      element.setAttribute(attribute, value);
+    }
+
+    const matchingOldLinkIndex = oldScripts.findIndex((oldLink) =>
+      oldLink.isEqualNode(element),
+    );
+
+    if (matchingOldLinkIndex >= 0) {
+      oldScripts.splice(matchingOldLinkIndex, 1);
+    } else {
+      fragment.appendChild(element);
+    }
+  }
+
   if (initiallyUnmatchedLinks == null) {
     initiallyUnmatchedLinks = oldLinks;
   }
 
   if (initiallyUnmatchedMetas == null) {
     initiallyUnmatchedMetas = oldMetas;
+  }
+
+  if (initiallyUnmatchedScripts == null) {
+    initiallyUnmatchedScripts = oldScripts;
   }
 
   for (const link of oldLinks) {
@@ -77,6 +102,12 @@ export function updateOnClient(state: import('../manager.ts').State) {
   for (const meta of oldMetas) {
     if (!initiallyUnmatchedMetas.includes(meta)) {
       meta.remove();
+    }
+  }
+
+  for (const script of oldScripts) {
+    if (!initiallyUnmatchedScripts.includes(script)) {
+      script.remove();
     }
   }
 
