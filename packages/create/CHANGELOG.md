@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.77
+
+### Patch Changes
+
+- [`5dc12510`](https://github.com/lemonmade/quilt/commit/5dc12510fa05a29b6ef23ba5263671fdd7571d0b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix create service quilt config for non-monorepo projects
+
 ## 0.1.76
 
 ### Patch Changes

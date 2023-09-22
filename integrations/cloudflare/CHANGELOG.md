@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.1.56
+
+### Patch Changes
+
+- [`9696dba6`](https://github.com/lemonmade/quilt/commit/9696dba6c59733b865b41bea303f91340ae5931f) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Cloudflare plugin dependencies
+
+- Updated dependencies []:
+  - @quilted/craft@0.1.231
+
 ## 0.1.55
 
 ### Patch Changes
