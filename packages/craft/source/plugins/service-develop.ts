@@ -4,13 +4,15 @@ import type {ChildProcess} from 'child_process';
 
 import {createProjectPlugin} from '../kit.ts';
 
+export const NAME = 'quilt.service.develop';
+
 export function serviceDevelopment() {
   return createProjectPlugin({
-    name: 'Quilt.RequestRouter.Development',
+    name: NAME,
     develop({project, run}) {
       run((step, {configuration}) =>
         step({
-          name: 'Quilt.RequestRouter.Development',
+          name: NAME,
           label: `Running local development server for ${project.name}`,
           async run() {
             const file = project.fs.buildPath(

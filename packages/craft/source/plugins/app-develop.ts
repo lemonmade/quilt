@@ -27,7 +27,7 @@ import {
   MAGIC_MODULE_BROWSER_ASSETS,
 } from '../constants.ts';
 
-export const STEP_NAME = 'Quilt.App.Develop';
+export const NAME = 'quilt.app.develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
 const MAGIC_MODULE_SERVER_ENTRY = '.quilt/magic/server.js';
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest';
@@ -70,7 +70,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
   const serverInlineEnv = server?.env?.inline;
 
   return createProjectPlugin({
-    name: STEP_NAME,
+    name: NAME,
     develop({hooks, project, workspace, configure, run}) {
       hooks<AppDevelopmentServerConfigurationHooks>(({waterfall}) => ({
         quiltAppDevelopmentServer: waterfall(),
@@ -434,7 +434,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
       run((step, {configuration}) =>
         step({
-          name: 'App.Develop',
+          name: NAME,
           label: `Running app ${project.name} in development mode`,
           async run(runner) {
             await import('@quilted/quilt/polyfills/fetch');
