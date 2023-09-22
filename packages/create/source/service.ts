@@ -145,17 +145,6 @@ export async function createService() {
       adjustPackageJson(combinedPackageJson, {name, entry});
       delete combinedPackageJson.workspaces;
 
-      let quiltProject = await serviceTemplate.read('quilt.project.ts');
-      quiltProject = quiltProject
-        .replace('quiltService', 'quiltWorkspace, quiltService')
-        .replace('quiltService(', 'quiltWorkspace(), quiltService(')
-        .replace('service.ts', entry.replace(/^\.[/]/, ''));
-
-      await outputRoot.write(
-        'quilt.project.ts',
-        await format(quiltProject, {as: 'typescript'}),
-      );
-
       await outputRoot.write(
         'package.json',
         await format(JSON.stringify(combinedPackageJson), {
@@ -193,6 +182,24 @@ export async function createService() {
     return file !== 'package.json';
   });
 
+  let quiltProject = await serviceTemplate.read('quilt.project.ts');
+
+  if (!partOfMonorepo) {
+    quiltProject = quiltProject
+      .replace('quiltService', 'quiltWorkspace, quiltService')
+      .replace('quiltService(', 'quiltWorkspace(), quiltService(');
+  }
+
+  quiltProject = quiltProject.replace(
+    'service.ts',
+    entry.replace(/^\.[/]/, ''),
+  );
+
+  await outputRoot.write(
+    path.join(serviceDirectory, 'quilt.project.ts'),
+    await format(quiltProject, {as: 'typescript'}),
+  );
+
   await outputRoot.write(
     path.join(serviceDirectory, entry),
     await serviceTemplate.read('service.ts'),
@@ -221,18 +228,6 @@ export async function createService() {
         packageManager.type,
       ),
     ]);
-  } else {
-    // We already wrote a root `quilt.project.ts` file if the project is a monorepo
-    let quiltProject = await serviceTemplate.read('quilt.project.ts');
-    quiltProject = quiltProject.replace(
-      'service.ts',
-      entry.replace(/^\.[/]/, ''),
-    );
-
-    await outputRoot.write(
-      path.join(serviceDirectory, 'quilt.project.ts'),
-      await format(quiltProject, {as: 'typescript'}),
-    );
   }
 
   if (shouldInstall) {

@@ -147,23 +147,6 @@ export async function createModule() {
       adjustPackageJson(combinedPackageJson, {name, entry, react: useReact});
       delete combinedPackageJson.workspaces;
 
-      let quiltProject = await moduleTemplate.read('quilt.project.ts');
-      quiltProject = quiltProject
-        .replace('quiltModule', 'quiltWorkspace, quiltModule')
-        .replace('quiltModule(', 'quiltWorkspace(), quiltModule(');
-
-      if (!useReact) {
-        quiltProject = quiltProject.replace(
-          'quiltPackage()',
-          'quiltPackage({react: false})',
-        );
-      }
-
-      await outputRoot.write(
-        'quilt.project.ts',
-        await format(quiltProject, {as: 'typescript'}),
-      );
-
       await outputRoot.write(
         'package.json',
         await format(JSON.stringify(combinedPackageJson), {
@@ -193,13 +176,34 @@ export async function createModule() {
     }
 
     // We will adjust the entry file
-    if (file === 'module.ts') {
-      return false;
-    }
+    if (file === 'module.ts') return false;
 
-    // We need to make some adjustments the project’s package.json
-    return file !== 'package.json';
+    // We need to make some adjustments the project’s package.json and quilt
+    // config
+    if (file === 'package.json' || file === 'quilt.project.ts') return false;
+
+    return true;
   });
+
+  let quiltProject = await moduleTemplate.read('quilt.project.ts');
+
+  if (!partOfMonorepo) {
+    quiltProject = quiltProject
+      .replace('quiltModule', 'quiltWorkspace, quiltModule')
+      .replace('quiltModule(', 'quiltWorkspace(), quiltModule(');
+  }
+
+  if (!useReact) {
+    quiltProject = quiltProject.replace(
+      'quiltPackage()',
+      'quiltPackage({react: false})',
+    );
+  }
+
+  await outputRoot.write(
+    path.join(moduleDirectory, 'quilt.project.ts'),
+    await format(quiltProject, {as: 'typescript'}),
+  );
 
   await outputRoot.write(
     path.join(moduleDirectory, entry),

@@ -104,15 +104,6 @@ export async function createProject() {
   const packageTemplate = loadTemplate('package');
   const workspaceTemplate = loadTemplate('workspace');
 
-  let quiltProject = await packageTemplate.read('quilt.project.ts');
-
-  if (!useReact) {
-    quiltProject = quiltProject.replace(
-      'quiltPackage()',
-      'quiltPackage({react: false})',
-    );
-  }
-
   // If we aren’t already in a workspace, copy the workspace files over, which
   // are needed if we are making a monorepo or not.
   if (!inWorkspace) {
@@ -191,15 +182,6 @@ export async function createProject() {
         registry: args['--registry'],
       });
 
-      quiltProject = quiltProject
-        .replace('quiltPackage', 'quiltWorkspace, quiltPackage')
-        .replace('quiltPackage(', 'quiltWorkspace(), quiltPackage(');
-
-      await outputRoot.write(
-        'quilt.project.ts',
-        await format(quiltProject, {as: 'typescript'}),
-      );
-
       await outputRoot.write(
         'package.json',
         await format(JSON.stringify(mergedPackageJson), {
@@ -235,6 +217,26 @@ export async function createProject() {
       file !== 'README.md'
     );
   });
+
+  let quiltProject = await packageTemplate.read('quilt.project.ts');
+
+  if (!partOfMonorepo) {
+    quiltProject = quiltProject
+      .replace('quiltPackage', 'quiltWorkspace, quiltPackage')
+      .replace('quiltPackage(', 'quiltWorkspace(), quiltPackage(');
+  }
+
+  if (!useReact) {
+    quiltProject = quiltProject.replace(
+      'quiltPackage()',
+      'quiltPackage({react: false})',
+    );
+  }
+
+  await outputRoot.write(
+    path.join(packageDirectory, 'quilt.project.ts'),
+    await format(quiltProject, {as: 'typescript'}),
+  );
 
   await outputRoot.write(
     path.join(packageDirectory, 'README.md'),
@@ -281,11 +283,6 @@ export async function createProject() {
       await format(JSON.stringify(projectPackageJson), {
         as: 'json-stringify',
       }),
-    );
-
-    await outputRoot.write(
-      path.join(packageDirectory, 'quilt.project.ts'),
-      quiltProject,
     );
 
     await Promise.all([

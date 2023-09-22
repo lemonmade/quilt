@@ -158,16 +158,6 @@ export async function createApp() {
       combinedPackageJson.name = toValidPackageName(name!);
       delete combinedPackageJson.workspaces;
 
-      let quiltProject = await appTemplate.read('quilt.project.ts');
-      quiltProject = quiltProject
-        .replace('quiltApp', 'quiltWorkspace, quiltApp')
-        .replace('quiltApp(', 'quiltWorkspace(), quiltApp(');
-
-      await outputRoot.write(
-        'quilt.project.ts',
-        await format(quiltProject, {as: 'typescript'}),
-      );
-
       await outputRoot.write(
         'package.json',
         await format(JSON.stringify(combinedPackageJson), {
@@ -192,13 +182,29 @@ export async function createApp() {
 
   await appTemplate.copy(appDirectory, (file) => {
     // If we are in a monorepo, we can use all the template files as they are
-    if (file === 'quilt.project.ts' || file === 'tsconfig.json') {
+    if (file === 'tsconfig.json') {
       return partOfMonorepo;
     }
 
-    // We need to make some adjustments the project’s package.json
-    return file !== 'package.json';
+    // We need to make some adjustments the project’s package.json and
+    // quilt config file
+    if (file === 'package.json' || file === 'quilt.project.ts') return false;
+
+    return true;
   });
+
+  let quiltProject = await appTemplate.read('quilt.project.ts');
+
+  if (!partOfMonorepo) {
+    quiltProject = quiltProject
+      .replace('quiltApp', 'quiltWorkspace, quiltApp')
+      .replace('quiltApp(', 'quiltWorkspace(), quiltApp(');
+  }
+
+  await outputRoot.write(
+    path.join(appDirectory, 'quilt.project.ts'),
+    await format(quiltProject, {as: 'typescript'}),
+  );
 
   if (template === 'graphql' && !inWorkspace) {
     const relativeFromRootToAppPath = (filePath: string) =>
