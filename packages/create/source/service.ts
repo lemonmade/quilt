@@ -184,7 +184,7 @@ export async function createService() {
       return partOfMonorepo;
     }
 
-    // We will adjust the entry file and quilt project file
+    // We will adjust the entry file, and write an adjusted quilt project file if necessary
     if (file === 'service.ts' || file === 'quilt.project.ts') {
       return false;
     }
@@ -196,17 +196,6 @@ export async function createService() {
   await outputRoot.write(
     path.join(serviceDirectory, entry),
     await serviceTemplate.read('service.ts'),
-  );
-
-  let quiltProject = await serviceTemplate.read('quilt.project.ts');
-  quiltProject = quiltProject.replace(
-    'service.ts',
-    entry.replace(/^\.[/]/, ''),
-  );
-
-  await outputRoot.write(
-    path.join(serviceDirectory, 'quilt.project.ts'),
-    await format(quiltProject, {as: 'typescript'}),
   );
 
   if (partOfMonorepo) {
@@ -232,6 +221,18 @@ export async function createService() {
         packageManager.type,
       ),
     ]);
+  } else {
+    // We already wrote a root `quilt.project.ts` file if the project is a monorepo
+    let quiltProject = await serviceTemplate.read('quilt.project.ts');
+    quiltProject = quiltProject.replace(
+      'service.ts',
+      entry.replace(/^\.[/]/, ''),
+    );
+
+    await outputRoot.write(
+      path.join(serviceDirectory, 'quilt.project.ts'),
+      await format(quiltProject, {as: 'typescript'}),
+    );
   }
 
   if (shouldInstall) {
