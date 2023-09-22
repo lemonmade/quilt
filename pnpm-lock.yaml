@@ -137,10 +137,10 @@ importers:
         specifier: ^4.20221111.1
         version: 4.20221111.1
       '@quilted/craft':
-        specifier: ^0.1.215
+        specifier: ^0.1.229
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: ^0.5.139
+        specifier: ^0.5.152
         version: link:../../packages/quilt
       common-tags:
         specifier: ^1.8.0
@@ -158,6 +158,22 @@ importers:
       '@types/mime':
         specifier: ^2.0.0
         version: 2.0.3
+
+  integrations/deno:
+    dependencies:
+      '@quilted/craft':
+        specifier: ^0.1.229
+        version: link:../../packages/craft
+      '@quilted/quilt':
+        specifier: ^0.5.152
+        version: link:../../packages/quilt
+      '@types/common-tags':
+        specifier: ^1.8.0
+        version: 1.8.1
+    devDependencies:
+      '@quilted/testing':
+        specifier: ^0.1.0
+        version: link:../../packages/testing
 
   integrations/react-query:
     dependencies:

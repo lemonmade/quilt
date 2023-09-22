@@ -15,6 +15,7 @@
     {"path": "./integrations/apollo"},
     {"path": "./integrations/aws"},
     {"path": "./integrations/cloudflare"},
+    {"path": "./integrations/deno"},
     {"path": "./integrations/react-query"},
     {"path": "./packages/assets"},
     {"path": "./packages/async"},
