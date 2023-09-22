@@ -110,7 +110,7 @@ function addConfiguration({mode}: {mode: string; project: Project}) {
       ]);
 
       return stripIndent`
-        import {createFetchHandler} from '@quilted/deno/request-router';
+        import {createServeHandler} from '@quilted/deno/request-router';
         import RequestRouter from ${JSON.stringify(
           MAGIC_MODULE_REQUEST_ROUTER,
         )};
