@@ -1,5 +1,11 @@
 # @quilted/sewing-kit
 
+## 0.2.40
+
+### Patch Changes
+
+- [`9696dba6`](https://github.com/lemonmade/quilt/commit/9696dba6c59733b865b41bea303f91340ae5931f) Thanks [@lemonmade](https://github.com/lemonmade)! - Add Deno target
+
 ## 0.2.39
 
 ### Patch Changes
