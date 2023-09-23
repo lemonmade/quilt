@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.78
+
+### Patch Changes
+
+- [`e8626447`](https://github.com/lemonmade/quilt/commit/e86264471e99107b6a393fe09237800d2ca6fe1c) Thanks [@lemonmade](https://github.com/lemonmade)! - Another attempted create() fix
+
 ## 0.1.77
 
 ### Patch Changes
