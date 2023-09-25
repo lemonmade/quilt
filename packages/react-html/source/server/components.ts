@@ -1,2 +1,2 @@
-export {Html, type HtmlProps} from './components/Html.tsx';
+export {Head, type HeadProps} from './components/Head.tsx';
 export {Serialize, type SerializeProps} from './components/Serialize.tsx';

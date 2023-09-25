@@ -88,7 +88,7 @@ export function magicBrowserEntry({
       const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
 
       const initialContent = stripIndent`
-        import '@quilted/quilt/global';
+        import '@quilted/quilt/globals';
         import {jsx} from 'react/jsx-dev-runtime';
         import {${reactRootFunction}} from 'react-dom/client';
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};

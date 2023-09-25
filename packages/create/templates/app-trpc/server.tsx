@@ -1,4 +1,4 @@
-import '@quilted/quilt/global';
+import '@quilted/quilt/globals';
 import {createRequestRouter, createServerRender} from '@quilted/quilt/server';
 import {createBrowserAssets} from '@quilted/quilt/magic/assets';
 import {createDirectClient} from '@quilted/trpc/server';

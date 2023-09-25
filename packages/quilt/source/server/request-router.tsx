@@ -1,9 +1,8 @@
-import {Fragment, type ReactElement} from 'react';
+import {type ReactElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
 
 import {
-  styleAssetAttributes,
   styleAssetPreloadAttributes,
-  scriptAssetAttributes,
   scriptAssetPreloadAttributes,
   type AssetsCacheKey,
   type BrowserAssets,
@@ -11,452 +10,207 @@ import {
 } from '@quilted/assets';
 import {AssetsManager} from '@quilted/react-assets/server';
 import {HttpManager} from '@quilted/react-http/server';
-import {
-  renderHtmlToString,
-  HtmlManager,
-  Html,
-  type HtmlProps,
-} from '@quilted/react-html/server';
-import type {
-  Options as ExtractOptions,
-  ServerRenderRequestContext,
-} from '@quilted/react-server-render/server';
+import {Head, HtmlManager} from '@quilted/react-html/server';
 import {extract} from '@quilted/react-server-render/server';
 
-import {html, redirect} from '@quilted/request-router';
-import type {
-  EnhancedRequest,
-  RequestHandler,
-  RequestContext,
-} from '@quilted/request-router';
+import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
 
-export interface ServerRenderOptions<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
-> {
-  stream?: 'headers' | false;
-  assets?: BrowserAssets<CacheKey>;
-  extract?: Omit<ExtractOptions, 'context'> & {
-    readonly context?:
-      | ServerRenderRequestContext
-      | ((
-          request: EnhancedRequest,
-          context: Context,
-        ) => ServerRenderRequestContext);
-  };
-  html?:
-    | ServerRenderHtmlRender<Context>
-    | {
-        readonly rootElement?: HtmlProps['rootElement'];
-      };
-}
-
-export interface ServerRenderHtmlRender<Context> {
-  (
-    content: string | undefined,
-    details: Pick<ServerRenderAppDetails, 'http' | 'html'> & {
-      readonly request: EnhancedRequest;
-      readonly context: Context;
-      readonly assets?: BrowserAssetsEntry;
-      readonly preloadAssets?: BrowserAssetsEntry;
-      readonly rootElement?: HtmlProps['rootElement'];
-    },
-  ): ReactElement<any> | Promise<ReactElement<any>>;
-}
-
-export interface ServerRenderAppDetails<
-  _Context = RequestContext,
-  CacheKey = AssetsCacheKey,
-> {
-  readonly http: HttpManager;
-  readonly html: HtmlManager;
-  readonly assets: AssetsManager<CacheKey>;
-  readonly rendered?: string;
-}
-
-export function createServerRender<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(
-  getApp:
-    | ReactElement<any>
-    | ((
-        request: EnhancedRequest,
-        context: Context,
-      ) =>
-        | ReactElement<any>
-        | undefined
-        | Promise<ReactElement<any> | undefined>),
-  options?: ServerRenderOptions<Context, CacheKey>,
-): RequestHandler<Context>;
-export function createServerRender<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(options?: ServerRenderOptions<Context, CacheKey>): RequestHandler<Context>;
-export function createServerRender<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(
-  ...args: [
-    (
-      | ReactElement<any>
-      | ((
-          request: EnhancedRequest,
-          context: Context,
-        ) =>
-          | ReactElement<any>
-          | undefined
-          | Promise<ReactElement<any> | undefined>)
-      | ServerRenderOptions<Context, CacheKey>
-      | undefined
-    ),
-    ServerRenderOptions<Context, CacheKey>?,
-  ]
-): RequestHandler<Context> {
-  let getApp:
-    | ReactElement<any>
-    | ((
-        request: EnhancedRequest,
-        context: Context,
-      ) =>
-        | ReactElement<any>
-        | undefined
-        | Promise<ReactElement<any> | undefined>)
-    | undefined;
-  let options: ServerRenderOptions<Context, CacheKey>;
-
-  if (args.length > 1) {
-    getApp = args[0] as any;
-    options = (args[1] ?? {}) as any;
-  } else {
-    options = (args[0] ?? {}) as any;
-  }
-
-  const stream = options.stream;
-
-  return async (request, requestContext) => {
-    const accepts = request.headers.get('Accept');
-
-    if (accepts != null && !accepts.includes('text/html')) return;
-
-    const renderResponse = stream
-      ? renderAppToStreamedResponse
-      : renderAppToResponse;
-
-    return renderResponse(
-      typeof getApp === 'function'
-        ? () => (getApp as any)(request, requestContext)
-        : getApp,
-      {
-        ...options,
-        request,
-        context: requestContext,
-        extract: {
-          ...options.extract,
-          context:
-            typeof options.extract?.context === 'function'
-              ? options.extract.context(request, requestContext)
-              : options.extract?.context,
-        },
+export async function renderToResponse<CacheKey = AssetsCacheKey>(
+  element: ReactElement<any>,
+  {
+    request,
+    stream: shouldStream = false,
+    assets,
+    cacheKey: explicitCacheKey,
+    waitUntil = noop,
+    renderHtml,
+  }: {
+    readonly request: Request;
+    readonly stream?: 'headers' | false;
+    readonly assets?: BrowserAssets<CacheKey>;
+    readonly cacheKey?: CacheKey;
+    waitUntil?(promise: Promise<any>): void;
+    renderHtml?(
+      content: ReadableStream<string>,
+      context: {
+        readonly manager: HtmlManager;
+        readonly assets?: BrowserAssetsEntry;
+        readonly preloadAssets?: BrowserAssetsEntry;
       },
-    );
-  };
-}
-
-export async function renderAppToResponse<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(
-  getApp:
-    | ReactElement<any>
-    | (() =>
-        | ReactElement<any>
-        | undefined
-        | Promise<ReactElement<any> | undefined>)
-    | undefined,
-  {
-    request,
-    context,
-    assets,
-    extract,
-    html: htmlOptions,
-  }: Pick<
-    ServerRenderOptions<Context, CacheKey>,
-    'assets' | 'html' | 'extract'
-  > & {readonly request: EnhancedRequest; readonly context: Context},
+    ): ReadableStream<any> | Promise<ReadableStream<any>>;
+  },
 ) {
-  const app = typeof getApp === 'function' ? await getApp() : getApp;
-  const cacheKey = (await assets?.cacheKey?.(request)) as CacheKey;
+  const baseUrl = (request as any).URL ?? new URL(request.url);
 
-  const renderDetails = await serverRenderDetailsForApp(app, {
-    extract,
-    cacheKey,
-    url: request.url,
-    headers: request.headers,
-  });
-
-  const {headers, statusCode = 200, redirectUrl} = renderDetails.http.state;
-
-  if (redirectUrl) {
-    return redirect(redirectUrl, {
-      status: statusCode as 301,
-      headers,
-    });
-  }
-
-  const content = await renderAppDetailsToHtmlString<Context, CacheKey>(
-    renderDetails,
-    {
-      request,
-      context,
-      assets,
-      html: htmlOptions,
-    },
+  const cacheKey =
+    explicitCacheKey ??
+    (((await assets?.cacheKey?.(request)) ?? {}) as CacheKey);
+  const synchronousAssets: BrowserAssetsEntry | undefined = await assets?.entry(
+    {cacheKey},
   );
+  let preloadAssets: BrowserAssetsEntry | undefined;
+  let asyncAssets: BrowserAssetsEntry | undefined;
 
-  return html(content, {
-    headers,
-    status: statusCode,
-  });
-}
+  const html = new HtmlManager();
+  const http = new HttpManager({headers: request.headers});
+  const assetsManager = new AssetsManager<CacheKey>({cacheKey});
 
-export async function renderAppToStreamedResponse<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(
-  getApp:
-    | ReactElement<any>
-    | (() =>
-        | ReactElement<any>
-        | undefined
-        | Promise<ReactElement<any> | undefined>)
-    | undefined,
-  {
-    request,
-    context,
-    assets,
-    extract,
-    html: htmlOptions,
-  }: Pick<
-    ServerRenderOptions<Context, CacheKey>,
-    'assets' | 'html' | 'extract'
-  > & {readonly request: EnhancedRequest; readonly context: Context},
-) {
-  const headers = new Headers();
-  const stream = new TransformStream();
+  let responseStatus = 200;
+  let appHeaders: Headers | undefined;
+  let appStream: ReadableStream<any> | undefined;
 
-  const cacheKey = (await assets?.cacheKey?.(request)) as CacheKey;
-  const guaranteedAssets = await assets?.entry({cacheKey});
+  if (shouldStream === false) {
+    const rendered = await extract(element, {
+      decorate(element) {
+        return (
+          <ServerContext
+            http={http}
+            html={html}
+            url={baseUrl}
+            assets={assetsManager}
+          >
+            {element}
+          </ServerContext>
+        );
+      },
+    });
 
-  if (guaranteedAssets) {
-    for (const style of guaranteedAssets.styles) {
-      headers.append('Link', preloadHeader(styleAssetPreloadAttributes(style)));
+    const {headers, statusCode = 200, redirectUrl} = http.state;
+
+    if (redirectUrl) {
+      return new RedirectResponse(redirectUrl, {
+        status: statusCode as 301,
+        headers,
+        request,
+      });
     }
 
-    for (const script of guaranteedAssets.scripts) {
-      headers.append(
+    appHeaders = headers;
+    responseStatus = statusCode;
+
+    const [] = await Promise.all([
+      assets?.modules(assetsManager.usedModules({timing: 'load'})),
+      assets?.modules(assetsManager.usedModules({timing: 'preload'})),
+    ]);
+
+    const appTransformStream = new TransformStream();
+    const appWriter = appTransformStream.writable.getWriter();
+    appStream = appTransformStream.readable;
+
+    appWriter.write(rendered);
+    appWriter.close();
+  }
+
+  const responseHeaders = new Headers(appHeaders);
+
+  if (synchronousAssets) {
+    for (const style of synchronousAssets.styles) {
+      responseHeaders.append(
+        'Link',
+        preloadHeader(styleAssetPreloadAttributes(style)),
+      );
+    }
+
+    for (const script of synchronousAssets.scripts) {
+      responseHeaders.append(
         'Link',
         preloadHeader(scriptAssetPreloadAttributes(script)),
       );
     }
   }
 
-  renderResponseToStream();
+  if (appStream == null) {
+    const appTransformStream = new TransformStream();
+    appStream = appTransformStream.readable;
 
-  return html(stream.readable, {
-    headers,
-    status: 200,
-  });
+    const renderAppStream = async function renderAppStream() {
+      const appWriter = appTransformStream.writable.getWriter();
 
-  async function renderResponseToStream() {
-    const app = typeof getApp === 'function' ? await getApp() : getApp;
-
-    const renderDetails = await serverRenderDetailsForApp(app, {
-      extract,
-      cacheKey,
-      url: request.url,
-      headers: request.headers,
-    });
-
-    const content = await renderAppDetailsToHtmlString<Context, CacheKey>(
-      renderDetails,
-      {
-        request,
-        context,
-        assets,
-        html: htmlOptions,
-      },
-    );
-
-    const encoder = new TextEncoder();
-    const writer = stream.writable.getWriter();
-    await writer.write(encoder.encode(content));
-    await writer.close();
-  }
-}
-
-async function serverRenderDetailsForApp<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(
-  app: ReactElement<any> | undefined,
-  {
-    url,
-    headers,
-    cacheKey,
-    extract: extractOptions,
-  }: Pick<ServerRenderOptions, 'extract'> & {
-    url?: string | URL;
-    cacheKey?: CacheKey;
-    headers?: NonNullable<
-      ConstructorParameters<typeof HttpManager>[0]
-    >['headers'];
-  } = {},
-): Promise<ServerRenderAppDetails<Context, CacheKey>> {
-  const html = new HtmlManager();
-  const http = new HttpManager({headers});
-  const assets = new AssetsManager<CacheKey>({cacheKey});
-
-  const {decorate, ...rest} = extractOptions ?? {};
-
-  const rendered = app
-    ? await extract(app, {
-        decorate(app) {
+      const rendered = await extract(element, {
+        decorate(element) {
           return (
-            <ServerContext http={http} html={html} url={url} assets={assets}>
-              {decorate?.(app) ?? app}
+            <ServerContext
+              http={http}
+              html={html}
+              url={baseUrl}
+              assets={assetsManager}
+            >
+              {element}
             </ServerContext>
           );
         },
-        ...rest,
-      })
-    : undefined;
+      });
 
-  return {rendered, http, html, assets};
-}
+      appWriter.write(rendered);
+      appWriter.close();
+    };
 
-async function renderAppDetailsToHtmlString<
-  Context = RequestContext,
-  CacheKey = AssetsCacheKey,
->(
-  details: ServerRenderAppDetails<Context, CacheKey>,
-  {
-    request,
-    context,
-    assets,
-    html: htmlOptions,
-  }: Pick<ServerRenderOptions<Context, CacheKey>, 'assets' | 'html'> & {
-    readonly request: EnhancedRequest;
-    readonly context: Context;
-    readonly cacheKey?: Partial<CacheKey>;
-  },
-) {
-  const {http, rendered, html: htmlManager, assets: assetsManager} = details;
-
-  const cacheKey = assetsManager.cacheKey as CacheKey;
-  const usedModules = assetsManager.usedModules({timing: 'load'});
-
-  const [entryAssets, preloadAssets] = assets
-    ? await Promise.all([
-        assets.entry({modules: usedModules, cacheKey}),
-        assets.modules(assetsManager.usedModules({timing: 'preload'}), {
-          cacheKey,
-        }),
-      ])
-    : [];
-
-  let renderHtml: ServerRenderHtmlRender<Context>;
-  let rootElement: HtmlProps['rootElement'];
-
-  if (typeof htmlOptions === 'function') {
-    renderHtml = htmlOptions;
-  } else {
-    rootElement = htmlOptions?.rootElement;
-    renderHtml = defaultRenderHtml;
+    waitUntil(renderAppStream());
   }
 
-  const htmlElement = await renderHtml(rendered, {
-    request,
-    context,
-    html: htmlManager,
-    http,
-    assets: entryAssets,
-    preloadAssets,
-    rootElement,
+  const responseBody = await renderToHtmlStream(appStream);
+
+  return new HTMLResponse(responseBody, {
+    status: responseStatus,
+    headers: responseHeaders,
   });
 
-  return renderHtmlToString(htmlElement);
-}
+  async function renderToHtmlStream(content: ReadableStream<any>) {
+    if (renderHtml) {
+      return await renderHtml(content, {
+        manager: html,
+        assets: synchronousAssets,
+        preloadAssets,
+      });
+    }
 
-const defaultRenderHtml: ServerRenderHtmlRender<any> =
-  function defaultRenderHtml(
-    content,
-    {request, html, assets, preloadAssets, rootElement},
-  ) {
-    const baseUrl = new URL(request.url);
+    const responseStream = new TextEncoderStream();
 
-    return (
-      <Html
-        manager={html}
-        rootElement={rootElement}
-        headEndContent={
-          <>
-            {assets &&
-              assets.styles.map((style) => {
-                const attributes = styleAssetAttributes(style, {baseUrl});
-                return <link key={style.source} {...(attributes as any)} />;
-              })}
+    const renderFullHtml = async function renderFullHtml() {
+      const writer = responseStream.writable.getWriter();
 
-            {assets &&
-              assets.scripts.map((script) => {
-                const isModule = script.attributes?.type === 'module';
+      writer.write(`<!DOCTYPE html>`);
 
-                const attributes = scriptAssetAttributes(script, {
-                  baseUrl,
-                });
+      const {htmlAttributes, bodyAttributes} = html.state;
+      const htmlContent = renderToStaticMarkup(
+        // eslint-disable-next-line jsx-a11y/html-has-lang
+        <html {...htmlAttributes}>
+          <head>
+            <Head html={html} />
+          </head>
+          <body {...bodyAttributes}>
+            <div id="app" dangerouslySetInnerHTML={{__html: '{{APP}}'}}></div>
+          </body>
+        </html>,
+      );
 
-                if (isModule) {
-                  return (
-                    <Fragment key={script.source}>
-                      <link
-                        {...(scriptAssetPreloadAttributes(script) as any)}
-                      />
-                      <script {...(attributes as any)} async />
-                    </Fragment>
-                  );
-                }
+      const [firstChunk, secondChunk] = htmlContent.split('{{APP}}');
+      writer.write(firstChunk);
 
-                return (
-                  <script key={script.source} {...(attributes as any)} defer />
-                );
-              })}
+      const reader = content.getReader();
 
-            {preloadAssets &&
-              preloadAssets.styles.map((style) => {
-                const attributes = styleAssetPreloadAttributes(style, {
-                  baseUrl,
-                });
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const {done, value} = await reader.read();
 
-                return <link key={style.source} {...(attributes as any)} />;
-              })}
-
-            {preloadAssets &&
-              preloadAssets.scripts.map((script) => {
-                const attributes = scriptAssetPreloadAttributes(script, {
-                  baseUrl,
-                });
-
-                return <link key={script.source} {...(attributes as any)} />;
-              })}
-          </>
+        if (done) {
+          break;
         }
-      >
-        {content}
-      </Html>
-    );
-  };
+
+        writer.write(value);
+      }
+
+      writer.write(secondChunk);
+      writer.close();
+    };
+
+    waitUntil(renderFullHtml());
+
+    return responseStream.readable;
+  }
+}
 
 function preloadHeader(attributes: Partial<HTMLLinkElement>) {
   const {
@@ -479,4 +233,8 @@ function preloadHeader(attributes: Partial<HTMLLinkElement>) {
   }
 
   return header;
+}
+
+function noop(..._args: any) {
+  // noop
 }

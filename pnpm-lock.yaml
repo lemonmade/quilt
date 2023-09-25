@@ -994,6 +994,9 @@ importers:
 
   packages/react-html:
     dependencies:
+      '@quilted/assets':
+        specifier: ^0.0.3
+        version: link:../assets
       '@quilted/react-server-render':
         specifier: ^0.3.7
         version: link:../react-server-render

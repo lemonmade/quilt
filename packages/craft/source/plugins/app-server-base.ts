@@ -174,7 +174,7 @@ function setupConfiguration(
           import ${JSON.stringify(project.fs.resolvePath(entry))};
         `
       : stripIndent`
-        import '@quilted/quilt/global';
+        import '@quilted/quilt/globals';
         import {jsx} from 'react/jsx-runtime';
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
         import {createBrowserAssets} from ${JSON.stringify(

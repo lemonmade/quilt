@@ -312,7 +312,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             'preact/compat',
             'preact/hooks',
             '@quilted/quilt/env',
-            '@quilted/quilt/global',
+            '@quilted/quilt/globals',
           ]);
 
           vitePlugins?.(async (plugins) => {

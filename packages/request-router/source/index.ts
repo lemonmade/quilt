@@ -18,10 +18,6 @@ export {handleRequest} from './handle.ts';
 
 export type {
   CookieDefinition,
-  RequestRouter,
-  RequestRegistration,
-  RequestRegistrationOptions,
-  RequestHandler,
   RequestContext,
   EnhancedWritableCookies,
 } from './types.ts';

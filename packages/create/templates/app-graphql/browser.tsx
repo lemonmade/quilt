@@ -1,4 +1,4 @@
-import '@quilted/quilt/global';
+import '@quilted/quilt/globals';
 import {hydrateRoot} from 'react-dom/client';
 
 import App from './App.tsx';

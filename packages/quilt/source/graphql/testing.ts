@@ -1,7 +1,9 @@
+import './testing/matchers.ts';
+
 export {
   gql,
   graphql,
-  TestGraphQL,
+  GraphQLTesting,
   createGraphQLSchema,
   createGraphQLFiller,
   createGraphQLController,

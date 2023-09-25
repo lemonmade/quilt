@@ -61,6 +61,7 @@
     }
   },
   "dependencies": {
+    "@quilted/assets": "^0.0.3",
     "@quilted/react-server-render": "^0.3.7",
     "@types/react": "^17.0.0 || ^18.0.0"
   },

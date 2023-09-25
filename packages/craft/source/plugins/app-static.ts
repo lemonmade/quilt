@@ -400,7 +400,7 @@ export function appStatic({
                 }
 
                 return stripIndent`
-                  import '@quilted/quilt/global';
+                  import '@quilted/quilt/globals';
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
                   import {createBrowserAssets} from ${JSON.stringify(
                     MAGIC_MODULE_BROWSER_ASSETS,

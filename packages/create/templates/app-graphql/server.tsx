@@ -1,4 +1,4 @@
-import '@quilted/quilt/global';
+import '@quilted/quilt/globals';
 
 import {createRequestRouter, json} from '@quilted/quilt/request-router';
 import {createServerRender} from '@quilted/quilt/server';

@@ -7,7 +7,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import {AppContextReact} from '~/shared/context.ts';
 
-import {TestGraphQL, createGraphQLController} from '../graphql.ts';
+import {GraphQLTesting, createGraphQLController} from '../graphql.ts';
 
 import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
@@ -34,11 +34,11 @@ export const renderApp = createRender<
     return (
       <QuiltAppTesting routing={router} localization={locale}>
         <AppContextReact.Provider value={context}>
-          <TestGraphQL controller={graphql}>
+          <GraphQLTesting controller={graphql}>
             <QueryClientProvider client={queryClient}>
               {element}
             </QueryClientProvider>
-          </TestGraphQL>
+          </GraphQLTesting>
         </AppContextReact.Provider>
       </QuiltAppTesting>
     );

@@ -4,12 +4,23 @@ import {getMatchDetails} from '@quilted/routing';
 import type {Match, Prefix} from '@quilted/routing';
 
 import {EnhancedRequest} from './request.ts';
-import type {
-  RequestRouter,
-  RequestContext,
-  RequestRegistration,
-  RequestRegistrationOptions,
-} from './types.ts';
+import type {EnhancedResponse} from './response.ts';
+import type {ValueOrPromise, RequestContext} from './types.ts';
+
+export interface RequestHandler<Context = RequestContext> {
+  (
+    request: EnhancedRequest,
+    context: Context,
+  ): ValueOrPromise<Response | EnhancedResponse | undefined | null>;
+}
+
+export type RequestRegistration<Context = RequestContext> =
+  | RequestHandler<Context>
+  | RequestRouter<Context>;
+
+export interface RequestRegistrationOptions {
+  exact?: boolean;
+}
 
 export interface RequestRouterOptions {
   readonly prefix?: Prefix;
@@ -17,7 +28,7 @@ export interface RequestRouterOptions {
 
 interface RequestHandlerRegistration {
   readonly method: HttpMethod | typeof REQUEST_METHOD_ANY;
-  readonly handler: RequestRegistration;
+  readonly handler: RequestRegistration<any>;
   readonly exact: boolean;
   readonly match?: Match;
 }
@@ -27,65 +38,244 @@ const HTTP_HANDLER_FETCH_INTERNAL = Symbol.for(
   'Quilt.RequestRouter.FetchInternal',
 );
 
-export function createRequestRouter<Context = RequestContext>({
-  prefix,
-}: RequestRouterOptions = {}): RequestRouter<Context> {
-  const registrations: RequestHandlerRegistration[] = [];
+export class RequestRouter<Context = RequestContext> {
+  private prefix?: Prefix;
+  private registrations: RequestHandlerRegistration[] = [];
 
-  const requestRouter: RequestRouter<Context> = {
-    any(...args: any[]) {
-      registrations.push(normalizeRouteArguments(REQUEST_METHOD_ANY, ...args));
-      return requestRouter;
-    },
-    head(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Head, ...args));
-      return requestRouter;
-    },
-    get(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Get, ...args));
-      return requestRouter;
-    },
-    connect(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Connect, ...args));
-      return requestRouter;
-    },
-    options(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Options, ...args));
-      return requestRouter;
-    },
-    post(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Post, ...args));
-      return requestRouter;
-    },
-    put(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Put, ...args));
-      return requestRouter;
-    },
-    patch(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Patch, ...args));
-      return requestRouter;
-    },
-    delete(...args: any[]) {
-      registrations.push(normalizeRouteArguments(HttpMethod.Delete, ...args));
-      return requestRouter;
-    },
-    async fetch(request, requestContext = {} as any) {
-      return fetchInternal(new EnhancedRequest(request), requestContext);
-    },
-  };
+  constructor({prefix}: RequestRouterOptions = {}) {
+    this.prefix = prefix;
+  }
 
-  Reflect.defineProperty(requestRouter, HTTP_HANDLER_FETCH_INTERNAL, {
-    enumerable: false,
-    value: fetchInternal,
-  });
+  any(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  any(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  any(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      REQUEST_METHOD_ANY,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
 
-  return requestRouter;
+  head(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  head(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  head(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Head,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
 
-  async function fetchInternal(
+  get(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  get(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  get(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Get,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  post(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  post(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  post(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Post,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  options(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  options(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  options(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Options,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  put(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  put(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  put(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Put,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  patch(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  patch(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  patch(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Patch,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  delete(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  delete(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  delete(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Delete,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  connect(
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  connect(
+    match: Match,
+    handler: RequestRegistration<Context>,
+    options?: RequestRegistrationOptions,
+  ): this;
+  connect(
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ): this {
+    return this.register(
+      HttpMethod.Connect,
+      matchOrHandler,
+      handlerOrOptions,
+      options,
+    );
+  }
+
+  async fetch(request: Request, requestContext = {} as any) {
+    return this[HTTP_HANDLER_FETCH_INTERNAL](
+      new EnhancedRequest(request),
+      requestContext,
+    );
+  }
+
+  async [HTTP_HANDLER_FETCH_INTERNAL](
     request: EnhancedRequest,
     context: RequestContext,
     previouslyConsumed?: string,
-  ) {
+  ): Promise<Response | EnhancedResponse | undefined | null> {
+    const {prefix, registrations} = this;
+
     const url = new URL(request.url);
     const matchedPrefix =
       prefix == null
@@ -125,47 +315,60 @@ export function createRequestRouter<Context = RequestContext>({
       if (result) return result;
     }
   }
+
+  private register(
+    method: HttpMethod | typeof REQUEST_METHOD_ANY,
+    matchOrHandler: Match | RequestRegistration<Context>,
+    handlerOrOptions?:
+      | RequestRegistration<Context>
+      | RequestRegistrationOptions,
+    options?: RequestRegistrationOptions,
+  ) {
+    let registration: RequestHandlerRegistration;
+
+    const firstArgumentIsRouter = isRequestRouter(matchOrHandler);
+
+    if (firstArgumentIsRouter || typeof matchOrHandler === 'function') {
+      // There is no `match`...
+      registration = {
+        method,
+        handler: matchOrHandler as RequestRegistration<Context>,
+        exact:
+          isRequestRouter(matchOrHandler) ||
+          ((handlerOrOptions as RequestRegistrationOptions | undefined)
+            ?.exact ??
+            true),
+      };
+    } else if (isRequestRouter(handlerOrOptions)) {
+      // There is a `match`, `RequestRouter`, and maybe `options` (no options
+      // respected for now)...
+      registration = {
+        method,
+        match: matchOrHandler as Match,
+        handler: handlerOrOptions,
+        exact: false,
+      };
+    } else {
+      // There is a `match`, `RequestHandler`, and maybe `options`...
+      registration = {
+        method,
+        match: matchOrHandler as Match,
+        handler: handlerOrOptions as RequestRegistration<Context>,
+        exact: options?.exact ?? true,
+      };
+    }
+
+    this.registrations.push(registration);
+    return this;
+  }
 }
 
-function normalizeRouteArguments(
-  method: RequestHandlerRegistration['method'],
-  ...args: any[]
-): RequestHandlerRegistration {
-  // There is no `match`...
-  if (isRequestRouter(args[0]) || typeof args[0] === 'function') {
-    return {
-      method,
-      handler: args[0],
-      exact:
-        isRequestRouter(args[0]) ||
-        ((args[1] as RequestRegistrationOptions | undefined)?.exact ?? true),
-    };
-  }
-
-  // There is a `match`, `RequestRouter`, and maybe `options` (no options
-  // respected for now)...
-  if (isRequestRouter(args[1])) {
-    return {
-      method,
-      match: args[0],
-      handler: args[1],
-      exact: false,
-    };
-  }
-
-  // There is a `match`, `RequestHandler`, and maybe `options`...
-  return {
-    method,
-    match: args[0],
-    handler: args[1],
-    exact: (args[2] as RequestRegistrationOptions | undefined)?.exact ?? true,
-  };
-}
-
-function isRequestRouter(value?: unknown): value is RequestRouter {
+function isRequestRouter<Context = unknown>(
+  value?: unknown,
+): value is RequestRouter<Context> {
   return (
     value != null &&
-    typeof value === 'object' &&
-    Reflect.has(value, HTTP_HANDLER_FETCH_INTERNAL)
+    (value instanceof RequestRouter ||
+      Reflect.has(value, HTTP_HANDLER_FETCH_INTERNAL))
   );
 }

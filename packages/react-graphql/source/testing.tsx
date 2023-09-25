@@ -61,7 +61,7 @@ export type {
   GraphQLControllerRequest,
 };
 
-export function TestGraphQL({
+export function GraphQLTesting({
   children,
   controller,
 }: PropsWithChildren<{controller?: GraphQLController}>) {

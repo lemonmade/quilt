@@ -1,20 +1,32 @@
-import {QuiltApp, useRoutes, type PropsWithChildren} from '@quilted/quilt';
+import {type PropsWithChildren} from '@quilted/quilt';
+import {Http} from '@quilted/quilt/http';
+import {Html} from '@quilted/quilt/html';
+import {Routing, useRoutes} from '@quilted/quilt/navigate';
+import {Localization} from '@quilted/quilt/localize';
 
-import {Http} from './foundation/Http.tsx';
-import {Head} from './foundation/Head.tsx';
-import {Metrics} from './foundation/Metrics.tsx';
+import {Head} from './foundation/html.ts';
+import {Headers} from './foundation/http.ts';
+import {Metrics} from './foundation/metrics.ts';
 
 import {Start} from './features/Start.tsx';
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export default function App() {
+export function App() {
   return (
-    <QuiltApp http={<Http />} html={<Head />}>
-      <AppContext>
-        <Routes />
-      </AppContext>
-    </QuiltApp>
+    <Http>
+      <Html>
+        <Localization>
+          <Routing>
+            <AppContext>
+              <Headers />
+              <Head />
+              <Routes />
+            </AppContext>
+          </Routing>
+        </Localization>
+      </Html>
+    </Http>
   );
 }
 
