@@ -10,7 +10,14 @@ import {
 } from '@quilted/assets';
 import {AssetsManager} from '@quilted/react-assets/server';
 import {HttpManager} from '@quilted/react-http/server';
-import {Head, HtmlManager} from '@quilted/react-html/server';
+import {
+  Head,
+  Script,
+  ScriptPreload,
+  Style,
+  StylePreload,
+  HtmlManager,
+} from '@quilted/react-html/server';
 import {extract} from '@quilted/react-server-render/server';
 
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
@@ -47,11 +54,6 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   const cacheKey =
     explicitCacheKey ??
     (((await assets?.cacheKey?.(request)) ?? {}) as CacheKey);
-  const synchronousAssets: BrowserAssetsEntry | undefined = await assets?.entry(
-    {cacheKey},
-  );
-  let preloadAssets: BrowserAssetsEntry | undefined;
-  let asyncAssets: BrowserAssetsEntry | undefined;
 
   const html = new HtmlManager();
   const http = new HttpManager({headers: request.headers});
@@ -90,35 +92,12 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     appHeaders = headers;
     responseStatus = statusCode;
 
-    const [] = await Promise.all([
-      assets?.modules(assetsManager.usedModules({timing: 'load'})),
-      assets?.modules(assetsManager.usedModules({timing: 'preload'})),
-    ]);
-
     const appTransformStream = new TransformStream();
     const appWriter = appTransformStream.writable.getWriter();
     appStream = appTransformStream.readable;
 
     appWriter.write(rendered);
     appWriter.close();
-  }
-
-  const responseHeaders = new Headers(appHeaders);
-
-  if (synchronousAssets) {
-    for (const style of synchronousAssets.styles) {
-      responseHeaders.append(
-        'Link',
-        preloadHeader(styleAssetPreloadAttributes(style)),
-      );
-    }
-
-    for (const script of synchronousAssets.scripts) {
-      responseHeaders.append(
-        'Link',
-        preloadHeader(scriptAssetPreloadAttributes(script)),
-      );
-    }
   }
 
   if (appStream == null) {
@@ -150,23 +129,49 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     waitUntil(renderAppStream());
   }
 
-  const responseBody = await renderToHtmlStream(appStream);
+  const {headers, body} = await renderToHtmlStream(appStream);
 
-  return new HTMLResponse(responseBody, {
+  return new HTMLResponse(body, {
     status: responseStatus,
-    headers: responseHeaders,
+    headers,
   });
 
   async function renderToHtmlStream(content: ReadableStream<any>) {
+    const headers = new Headers(appHeaders);
+
+    const [synchronousAssets, preloadAssets] = await Promise.all([
+      assets?.entry({modules: assetsManager.usedModules({timing: 'load'})}),
+      assets?.modules(assetsManager.usedModules({timing: 'preload'})),
+    ]);
+
+    if (synchronousAssets) {
+      for (const style of synchronousAssets.styles) {
+        headers.append(
+          'Link',
+          preloadHeader(styleAssetPreloadAttributes(style)),
+        );
+      }
+
+      for (const script of synchronousAssets.scripts) {
+        headers.append(
+          'Link',
+          preloadHeader(scriptAssetPreloadAttributes(script)),
+        );
+      }
+    }
+
     if (renderHtml) {
-      return await renderHtml(content, {
+      const body = await renderHtml(content, {
         manager: html,
         assets: synchronousAssets,
         preloadAssets,
       });
+
+      return {headers, body};
     }
 
     const responseStream = new TextEncoderStream();
+    const body = responseStream.readable;
 
     const renderFullHtml = async function renderFullHtml() {
       const writer = responseStream.writable.getWriter();
@@ -178,15 +183,35 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
         // eslint-disable-next-line jsx-a11y/html-has-lang
         <html {...htmlAttributes}>
           <head>
-            <Head html={html} />
+            <Head {...html.state} />
+            {synchronousAssets?.scripts.map((script) => (
+              <Script key={script.source} asset={script} baseUrl={baseUrl} />
+            ))}
+            {synchronousAssets?.styles.map((style) => (
+              <Style key={style.source} asset={style} baseUrl={baseUrl} />
+            ))}
+            {preloadAssets?.styles.map((style) => (
+              <StylePreload
+                key={style.source}
+                asset={style}
+                baseUrl={baseUrl}
+              />
+            ))}
+            {preloadAssets?.scripts.map((script) => (
+              <ScriptPreload
+                key={script.source}
+                asset={script}
+                baseUrl={baseUrl}
+              />
+            ))}
           </head>
           <body {...bodyAttributes}>
-            <div id="app" dangerouslySetInnerHTML={{__html: '{{APP}}'}}></div>
+            <div id="app" dangerouslySetInnerHTML={{__html: '%%APP%%'}}></div>
           </body>
         </html>,
       );
 
-      const [firstChunk, secondChunk] = htmlContent.split('{{APP}}');
+      const [firstChunk, secondChunk] = htmlContent.split('%%APP%%');
       writer.write(firstChunk);
 
       const reader = content.getReader();
@@ -202,13 +227,57 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
         writer.write(value);
       }
 
+      const [newSynchronousAssets, newPreloadAssets] = await Promise.all([
+        assets?.entry({modules: assetsManager.usedModules({timing: 'load'})}),
+        assets?.modules(assetsManager.usedModules({timing: 'preload'})),
+      ]);
+
+      if (newSynchronousAssets) {
+        const diffedSynchronousAssets = diffBrowserAssetsEntries(
+          newSynchronousAssets,
+          synchronousAssets!,
+        );
+
+        const diffedPreloadAssets = diffBrowserAssetsEntries(
+          newPreloadAssets!,
+          preloadAssets!,
+        );
+
+        const additionalAssetsContent = renderToStaticMarkup(
+          <>
+            {diffedSynchronousAssets.scripts.map((script) => (
+              <Script key={script.source} asset={script} baseUrl={baseUrl} />
+            ))}
+            {diffedSynchronousAssets.styles.map((style) => (
+              <Style key={style.source} asset={style} baseUrl={baseUrl} />
+            ))}
+            {diffedPreloadAssets.styles.map((style) => (
+              <StylePreload
+                key={style.source}
+                asset={style}
+                baseUrl={baseUrl}
+              />
+            ))}
+            {diffedPreloadAssets.scripts.map((script) => (
+              <ScriptPreload
+                key={script.source}
+                asset={script}
+                baseUrl={baseUrl}
+              />
+            ))}
+          </>,
+        );
+
+        writer.write(additionalAssetsContent);
+      }
+
       writer.write(secondChunk);
       writer.close();
     };
 
     waitUntil(renderFullHtml());
 
-    return responseStream.readable;
+    return {headers, body};
   }
 }
 
@@ -233,6 +302,19 @@ function preloadHeader(attributes: Partial<HTMLLinkElement>) {
   }
 
   return header;
+}
+
+function diffBrowserAssetsEntries(
+  newList: BrowserAssetsEntry,
+  oldList: BrowserAssetsEntry,
+): BrowserAssetsEntry {
+  const oldStyles = new Set(oldList.styles.map((style) => style.source));
+  const oldScripts = new Set(oldList.scripts.map((script) => script.source));
+
+  return {
+    styles: newList.styles.filter((style) => !oldStyles.has(style.source)),
+    scripts: newList.scripts.filter((script) => !oldScripts.has(script.source)),
+  };
 }
 
 function noop(..._args: any) {

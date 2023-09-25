@@ -1,58 +1,39 @@
 /* eslint react/no-unknown-property: off */
 
-import {type ReactElement} from 'react';
-import {
-  styleAssetAttributes,
-  scriptAssetAttributes,
-  type BrowserAssetsEntry,
-  scriptAssetPreloadAttributes,
-  styleAssetPreloadAttributes,
-} from '@quilted/assets';
-
-import {HtmlManager} from '../../manager.ts';
+import {type State} from '../../manager.ts';
 import {Serialize} from './Serialize.tsx';
 
-export interface HeadProps {
-  html?: HtmlManager;
-  baseUrl?: URL;
-  assets?: BrowserAssetsEntry;
-  preloadAssets?: BrowserAssetsEntry;
-  children?: ReactElement;
-}
+export interface HeadProps extends State {}
 
 export function Head({
-  html,
-  baseUrl,
-  assets,
-  preloadAssets,
-  children,
+  title,
+  metas,
+  scripts,
+  serializations,
+  links,
 }: HeadProps) {
-  const extracted = html?.extract();
+  const titleContent = title ? <title>{title}</title> : null;
 
-  const serializationContent = extracted?.serializations.map(({id, data}) => (
-    <Serialize key={id} id={id} data={data} />
-  ));
-
-  const titleContent = extracted?.title ? (
-    <title>{extracted.title}</title>
-  ) : null;
-
-  const metaContent = extracted?.metas.map((metaProps, index) => (
+  const metaContent = metas.map((metaProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <meta key={index} {...metaProps} />
   ));
 
-  const linkContent = extracted?.links.map((linkProps, index) => (
+  const linkContent = links.map((linkProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <link key={index} {...linkProps} />
   ));
 
-  const scriptContent = extracted?.scripts.map((scriptProps, index) => (
+  const scriptContent = scripts.map((scriptProps, index) => (
     // Fine for server rendering
     // eslint-disable-next-line react/no-array-index-key
     <script key={index} {...scriptProps} />
+  ));
+
+  const serializationContent = [...serializations].map(([id, data]) => (
+    <Serialize key={id} id={id} data={data} />
   ));
 
   return (
@@ -64,41 +45,6 @@ export function Head({
       {scriptContent}
 
       {linkContent}
-
-      {assets &&
-        assets.styles.map((style) => {
-          const attributes = styleAssetAttributes(style, {baseUrl});
-          return <link key={style.source} {...(attributes as any)} />;
-        })}
-
-      {assets &&
-        assets.scripts.map((script) => {
-          const attributes = scriptAssetAttributes(script, {
-            baseUrl,
-          });
-
-          return <script key={script.source} {...(attributes as any)} defer />;
-        })}
-
-      {preloadAssets &&
-        preloadAssets.styles.map((style) => {
-          const attributes = styleAssetPreloadAttributes(style, {
-            baseUrl,
-          });
-
-          return <link key={style.source} {...(attributes as any)} />;
-        })}
-
-      {preloadAssets &&
-        preloadAssets.scripts.map((script) => {
-          const attributes = scriptAssetPreloadAttributes(script, {
-            baseUrl,
-          });
-
-          return <link key={script.source} {...(attributes as any)} />;
-        })}
-
-      {children}
     </>
   );
 }

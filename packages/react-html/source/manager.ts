@@ -10,6 +10,7 @@ export interface State {
   scripts: HTMLProps<HTMLScriptElement>[];
   bodyAttributes: HTMLProps<HTMLBodyElement>;
   htmlAttributes: HtmlHTMLAttributes<HTMLHtmlElement>;
+  serializations: Map<string, unknown>;
 }
 
 interface Subscription {
@@ -66,6 +67,7 @@ export class HtmlManager {
         {},
         ...this.htmlAttributes.map(({current}) => current),
       ),
+      serializations: this.serializations,
     };
   }
 
@@ -141,16 +143,6 @@ export class HtmlManager {
   hydrated() {
     // intentional no-op. This may be used in the future to “clear out” server-
     // provided content.
-  }
-
-  extract() {
-    return {
-      ...this.state,
-      serializations: [...this.serializations.entries()].map(([id, data]) => ({
-        id,
-        data,
-      })),
-    };
   }
 
   private addDescriptor<T>(item: T, list: Ref<T>[]) {

@@ -16,6 +16,8 @@ router.get(async (request) => {
     request,
     assets,
   });
+
+  return response;
 });
 
 export default router;
