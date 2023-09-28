@@ -1,7 +1,5 @@
-import {
-  usePerformanceNavigationEvent,
-  type PropsWithChildren,
-} from '@quilted/quilt';
+import {type PropsWithChildren} from '@quilted/quilt';
+import {usePerformanceNavigationEvent} from '@quilted/quilt/performance';
 import Env from '@quilted/quilt/env';
 
 // This component records metrics about your application.
