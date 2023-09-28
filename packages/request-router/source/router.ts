@@ -306,7 +306,7 @@ export class RequestRouter<Context = RequestContext> {
       const result =
         typeof handler === 'function'
           ? await handler(request, context)
-          : await Reflect.get(handler, HTTP_HANDLER_FETCH_INTERNAL)(
+          : await handler[HTTP_HANDLER_FETCH_INTERNAL](
               request,
               context,
               matchDetails.consumed,
@@ -368,6 +368,7 @@ function isRequestRouter<Context = unknown>(
 ): value is RequestRouter<Context> {
   return (
     value != null &&
+    typeof value === 'object' &&
     (value instanceof RequestRouter ||
       Reflect.has(value, HTTP_HANDLER_FETCH_INTERNAL))
   );
