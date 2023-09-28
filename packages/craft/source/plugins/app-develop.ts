@@ -1,7 +1,7 @@
 import * as path from 'path';
 import {createRequire} from 'module';
 import type {IncomingMessage, ServerResponse} from 'http';
-import type {AssetsBuildManifest} from '@quilted/quilt';
+import type {AssetsBuildManifest} from '@quilted/assets';
 
 import {stripIndent} from 'common-tags';
 import type {ViteDevServer} from 'vite';
@@ -545,7 +545,7 @@ async function createAppServer(
 ) {
   const [
     {watch},
-    {notFound, html, EnhancedResponse},
+    {NotFoundResponse, HTMLResponse, EnhancedResponse},
     {createRequest, sendResponse},
     developmentServer,
   ] = await Promise.all([
@@ -638,7 +638,8 @@ async function createAppServer(
       const request = createRequest(req);
 
       try {
-        const response = (await router.fetch(request, req)) ?? notFound();
+        const response =
+          (await router.fetch(request, req)) ?? new NotFoundResponse();
 
         const contentType = response.headers.get('Content-Type');
 
@@ -661,7 +662,7 @@ async function createAppServer(
         // eslint-disable-next-line no-console
         console.error(error);
         await sendResponse(
-          html(
+          new HTMLResponse(
             `<html><body><pre>${
               error.stack ?? error.message
             }</pre></body></html>`,

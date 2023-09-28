@@ -1,5 +1,5 @@
 import {CacheControl} from '@quilted/quilt/http';
 
-export function Http() {
+export function Headers() {
   return <CacheControl cache={false} />;
 }

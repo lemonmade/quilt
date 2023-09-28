@@ -3,7 +3,11 @@
 import {type State} from '../../manager.ts';
 import {Serialize} from './Serialize.tsx';
 
-export interface HeadProps extends State {}
+export interface HeadProps
+  extends Pick<
+    State,
+    'title' | 'metas' | 'scripts' | 'serializations' | 'links'
+  > {}
 
 export function Head({
   title,

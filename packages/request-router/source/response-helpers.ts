@@ -47,8 +47,8 @@ export class HtmlResponse extends EnhancedResponse {
 export {HtmlResponse as HTMLResponse};
 
 export class JsonResponse extends EnhancedResponse {
-  constructor(body: BodyInit, options?: ResponseInit) {
-    super(body, options);
+  constructor(body: unknown, options?: ResponseInit) {
+    super(JSON.stringify(body), options);
     this.headers.set('Content-Type', 'application/json; charset=utf-8');
   }
 }

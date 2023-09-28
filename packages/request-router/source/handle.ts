@@ -1,6 +1,7 @@
 import {EnhancedRequest} from './request.ts';
 import {ResponseShortCircuitError} from './errors/ResponseShortCircuitError.ts';
-import type {RequestRouter, RequestHandler, RequestContext} from './types.ts';
+import type {RequestRouter, RequestHandler} from './router.ts';
+import type {RequestContext} from './types.ts';
 
 export async function handleRequest(
   handler: Pick<RequestRouter, 'fetch'> | RequestHandler,

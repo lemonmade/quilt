@@ -16,7 +16,7 @@ export function App() {
   return (
     <Http>
       <Html>
-        <Localization>
+        <Localization locale="en">
           <Routing>
             <AppContext>
               <Headers />

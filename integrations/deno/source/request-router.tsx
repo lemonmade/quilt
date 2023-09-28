@@ -1,4 +1,4 @@
-import {notFound, handleRequest} from '@quilted/quilt/request-router';
+import {NotFoundResponse, handleRequest} from '@quilted/quilt/request-router';
 import type {
   RequestRouter,
   RequestHandler,
@@ -13,7 +13,8 @@ export function createServeHandler(
   handler: RequestRouter | RequestHandler,
 ): (request: Request) => Promise<Response> {
   return async (request: Request) => {
-    const response = (await handleRequest(handler, request)) ?? notFound();
+    const response =
+      (await handleRequest(handler, request)) ?? new NotFoundResponse();
     return response;
   };
 }

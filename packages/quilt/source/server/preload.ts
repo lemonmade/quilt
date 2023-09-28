@@ -4,7 +4,7 @@ import type {
   BrowserAssetsEntry,
 } from '@quilted/assets';
 import {
-  json,
+  JSONResponse,
   type EnhancedRequest,
   type RequestHandler,
   type RequestContext,
@@ -31,7 +31,7 @@ export function createAssetPreloader<
       context: requestContext,
     });
 
-    return json(manifest);
+    return new JSONResponse(manifest);
   };
 }
 

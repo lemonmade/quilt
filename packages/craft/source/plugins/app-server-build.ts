@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import {stripIndent} from 'common-tags';
 import type {ModuleFormat} from 'rollup';
-import type {AssetsBuildManifest} from '@quilted/quilt';
+import type {AssetsBuildManifest} from '@quilted/assets';
 
 import {
   MAGIC_MODULE_BROWSER_ASSETS,

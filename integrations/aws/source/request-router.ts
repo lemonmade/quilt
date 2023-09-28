@@ -1,7 +1,7 @@
 import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 
 import {
-  notFound,
+  NotFoundResponse,
   handleRequest,
   createHeaders,
   EnhancedResponse,
@@ -39,7 +39,7 @@ export function createLambdaApiGatewayProxy(
             body: event.body,
           },
         ),
-      )) ?? notFound();
+      )) ?? new NotFoundResponse();
 
     const body = await response.text();
 

@@ -4,10 +4,10 @@ import {URL} from 'url';
 
 import {createHeaders} from '@quilted/http';
 
-import {notFound} from '../response-helpers.ts';
+import {NotFoundResponse} from '../response-helpers.ts';
 import {handleRequest} from '../handle.ts';
 import type {ResponseOrEnhancedResponse} from '../response.ts';
-import type {RequestRouter, RequestHandler} from '../types.ts';
+import type {RequestRouter, RequestHandler} from '../router.ts';
 
 import type {} from './types.ts';
 
@@ -44,7 +44,8 @@ export function createHttpRequestListener(
       };
 
       const response =
-        (await handleRequest(handler, request, context)) ?? notFound();
+        (await handleRequest(handler, request, context)) ??
+        new NotFoundResponse();
 
       await sendResponse(response, res);
     } catch (error) {

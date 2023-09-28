@@ -178,12 +178,12 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
       writer.write(`<!DOCTYPE html>`);
 
-      const {htmlAttributes, bodyAttributes} = html.state;
+      const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
       const htmlContent = renderToStaticMarkup(
         // eslint-disable-next-line jsx-a11y/html-has-lang
         <html {...htmlAttributes}>
           <head>
-            <Head {...html.state} />
+            <Head {...headProps} />
             {synchronousAssets?.scripts.map((script) => (
               <Script key={script.source} asset={script} baseUrl={baseUrl} />
             ))}

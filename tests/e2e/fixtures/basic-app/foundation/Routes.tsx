@@ -1,4 +1,4 @@
-import {useRoutes} from '@quilted/quilt';
+import {useRoutes} from '@quilted/quilt/navigate';
 
 export function Routes() {
   return useRoutes([{match: '/', render: () => <Start />}]);

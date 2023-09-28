@@ -2,13 +2,13 @@ import '@quilted/polyfills/fetch';
 
 import {describe, it, expect} from '@quilted/testing';
 
-import {createRequestRouter} from '../router.ts';
-import {noContent} from '../response-helpers.ts';
+import {RequestRouter} from '../router.ts';
+import {NoContentResponse} from '../response-helpers.ts';
 
-describe('createRequestRouter()', () => {
+describe('RequestRouter', () => {
   it('can register a handler for any method and path', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
     router.any(() => response);
 
     expect(await router.fetch(new Request(url('/')))).toBe(response);
@@ -16,8 +16,8 @@ describe('createRequestRouter()', () => {
   });
 
   it('can register a handler for a specific method', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
     router.get(() => response);
 
     expect(await router.fetch(new Request(url('/'), {method: 'GET'}))).toBe(
@@ -29,8 +29,8 @@ describe('createRequestRouter()', () => {
   });
 
   it('can register a handler for a string path', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
     router.get('/', () => response);
 
     expect(await router.fetch(new Request(url('/')))).toBe(response);
@@ -40,8 +40,8 @@ describe('createRequestRouter()', () => {
   });
 
   it('can register a handler for a regular expression path', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
     router.get(/\d+/, () => response);
 
     expect(await router.fetch(new Request(url('/123')))).toBe(response);
@@ -49,8 +49,8 @@ describe('createRequestRouter()', () => {
   });
 
   it('can register a handler for a non-exact match', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
     router.get('/hello', () => response, {exact: false});
 
     expect(await router.fetch(new Request(url('/')))).toBeUndefined();
@@ -59,8 +59,8 @@ describe('createRequestRouter()', () => {
   });
 
   it('excludes a prefix before attempting to match', async () => {
-    const response = noContent();
-    const router = createRequestRouter({prefix: '/hello'});
+    const response = new NoContentResponse();
+    const router = new RequestRouter({prefix: '/hello'});
     router.get('/world', () => response);
 
     expect(await router.fetch(new Request(url('/hello/world')))).toBe(response);
@@ -71,9 +71,9 @@ describe('createRequestRouter()', () => {
   });
 
   it('expands matches in nested http routers', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
-    const nestedRouter = createRequestRouter();
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
+    const nestedRouter = new RequestRouter();
     nestedRouter.get('world', () => response);
     router.get('hello', nestedRouter);
 
@@ -85,9 +85,9 @@ describe('createRequestRouter()', () => {
   });
 
   it('expands matches and prefixes in nested http routers', async () => {
-    const response = noContent();
-    const router = createRequestRouter();
-    const nestedRouter = createRequestRouter({prefix: 'world'});
+    const response = new NoContentResponse();
+    const router = new RequestRouter();
+    const nestedRouter = new RequestRouter({prefix: 'world'});
     nestedRouter.get('/', () => response);
     router.get('hello', nestedRouter);
 

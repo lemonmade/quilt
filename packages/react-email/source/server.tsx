@@ -5,7 +5,7 @@ import type {Options as ExtractOptions} from '@quilted/react-server-render/serve
 import {
   HtmlManager,
   HtmlContext,
-  Html,
+  Head,
   renderHtmlToString,
 } from '@quilted/react-html/server';
 
@@ -36,12 +36,23 @@ export async function renderEmail(
 
   const {state} = email;
 
+  const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
+
   return {
     ...state,
-    html: renderHtmlToString(<Html manager={html}>{markup}</Html>, {
-      doctype:
-        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
-    }),
+    html: renderHtmlToString(
+      // eslint-disable-next-line jsx-a11y/html-has-lang
+      <html {...htmlAttributes}>
+        <head>
+          <Head {...headProps} />
+        </head>
+        <body {...bodyAttributes}>{markup}</body>
+      </html>,
+      {
+        doctype:
+          '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+      },
+    ),
     plainText: state.plainText,
   };
 }
