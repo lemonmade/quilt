@@ -43,7 +43,7 @@ jobs:
           cache-key: v5
       - uses: quilt-framework/action-test@v2
         with:
-          command: pnpm test:unit
+          command: pnpm test.unit
 
   e2e-tests:
     name: End-to-end tests 🔬
@@ -64,4 +64,4 @@ jobs:
           cache-key: v5
       - uses: quilt-framework/action-test@v2
         with:
-          command: pnpm test:e2e --parallel ${{ matrix.parallel }}
+          command: pnpm test.e2e --parallel ${{ matrix.parallel }}
