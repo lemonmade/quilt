@@ -13,19 +13,18 @@ pnpm install --save-dev web-vitals
 yarn add --dev web-vitals
 ```
 
-Each template app comes with a `Metrics` component. In the single-file app template, this component is part of the `App.tsx` file. In all other templates, this component is located in `foundation/Metrics/Metrics.tsx`. The default templates come with a bit of reporting about [navigation timing](../features/performance.md#navigation), but this is a fine place to also add our Core Web Vitals reporting.
+Each template app comes with an `Observability` component. This component is located in `foundation/observability/Observability.tsx`. The default templates come with a bit of reporting about [navigation timing](../features/performance.md#navigation), but this is a fine place to also add our Core Web Vitals reporting.
 
 Find your metrics `Metrics` component, and add the Core Web Vitals listeners for the metrics you want to track in a `useEffect` hook:
 
 ```tsx
 import {useEffect} from 'react';
 import {onLCP, onFID, onCLS, type Metric} from 'web-vitals';
-import {
-  usePerformanceNavigationEvent,
-  type PropsWithChildren,
-} from '@quilted/quilt';
 
-export function Metrics({children}) {
+import {type PropsWithChildren} from '@quilted/quilt/react/tools';
+import {usePerformanceNavigationEvent} from '@quilted/quilt/navigation';
+
+export function Observability({children}: PropsWithChildren) {
   useEffect(() => {
     onLCP(handleMetric);
     onFID(handleMetric);

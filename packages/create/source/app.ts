@@ -38,11 +38,16 @@ export async function createApp() {
       The template to use for your new application. If you don’t specify a template,
       this command will ask you for one instead. Must be one of the following:
 
+      - ${color.bold(
+        'empty',
+      )}, a basic React app without any extra runtime dependencies
        - ${color.bold('basic')}, a web app with a minimal file structure
-       - ${color.bold('single-file')}, an entire web app in a single file
        - ${color.bold(
-         'empty',
-       )}, a basic React app without any extra runtime dependencies
+         'graphql',
+       )}, a web app with a GraphQL API, fetched using @tanstack/react-query
+       - ${color.bold(
+         'trpc',
+       )}, a web app with a tRPC API, fetched using @tanstack/react-query
     `;
 
     printHelp({
@@ -62,7 +67,7 @@ export async function createApp() {
     !inWorkspace &&
     (await getCreateAsMonorepo(argv, {
       type: 'app',
-      default: template !== 'single-file',
+      default: true,
     }));
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
   const shouldInstall = await getShouldInstall(argv);
@@ -388,12 +393,11 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
   return directory;
 }
 
-type Template = 'basic' | 'graphql' | 'trpc' | 'single-file' | 'empty';
+type Template = 'basic' | 'graphql' | 'trpc' | 'empty';
 const VALID_TEMPLATES = new Set<Template>([
   'basic',
   'graphql',
   'trpc',
-  'single-file',
   'empty',
 ]);
 
@@ -411,21 +415,15 @@ async function getTemplate(argv: Arguments) {
     choices: [
       {
         title: `${color.bold(
-          'The basics',
-        )}, a web app with a minimal file structure`,
-        value: 'basic',
-      },
-      {
-        title: `${color.bold(
-          'Itty-bitty',
-        )}, an entire web app in a single file`,
-        value: 'single-file',
-      },
-      {
-        title: `${color.bold(
           'Empty',
         )}, a basic React app without any extra runtime dependencies`,
         value: 'empty',
+      },
+      {
+        title: `${color.bold(
+          'The basics',
+        )}, a web app with a minimal file structure`,
+        value: 'basic',
       },
       {
         title: `${color.bold(

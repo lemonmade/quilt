@@ -6,7 +6,7 @@ TODO
 
 ## Top-level directories and import aliases
 
-Quilt’s [application templates](../../getting-started.md#app-templates) follow a convention for a few important top-level directories. Aside from the simpler, single-file templates, a new Quilt app will have the following directories:
+Quilt’s [application templates](../../getting-started.md#app-templates) follow a convention for a few important top-level directories. a new Quilt app will have the following directories:
 
 - [`./shared`](#shared), which contains code used across your application
 - [`./tests`](#tests), which contains code used across your application’s tests
