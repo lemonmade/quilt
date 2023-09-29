@@ -2,8 +2,6 @@ import {createServer} from 'http';
 import type {RequestListener, IncomingMessage, ServerResponse} from 'http';
 import {URL} from 'url';
 
-import {createHeaders} from '@quilted/http';
-
 import {NotFoundResponse} from '../response-helpers.ts';
 import {handleRequest} from '../handle.ts';
 import type {ResponseOrEnhancedResponse} from '../response.ts';
@@ -63,16 +61,21 @@ export function createRequest(
 ): Request {
   const method = request.method;
 
+  const headers = new Headers();
+
+  for (const [header, value] of Object.entries(request.headers)) {
+    if (typeof value === 'string') {
+      headers.set(header, value);
+    } else if (Array.isArray(value)) {
+      for (const arrayValue of value) {
+        headers.append(header, arrayValue);
+      }
+    }
+  }
+
   const requestInit: RequestInit = {
     method,
-    headers: createHeaders(
-      Object.entries(request.headers).map<[string, string]>(
-        ([header, value]) => [
-          header,
-          Array.isArray(value) ? value.join(',') : value ?? '',
-        ],
-      ),
-    ),
+    headers,
     ...explicitOptions,
   };
 
@@ -114,7 +117,9 @@ export async function sendResponse(
         allHeaders[key] = value;
         return allHeaders;
       },
-      setCookieHeaders ? {'Set-Cookie': setCookieHeaders} : {},
+      setCookieHeaders && setCookieHeaders.length > 0
+        ? {'Set-Cookie': setCookieHeaders}
+        : {},
     ),
   );
 

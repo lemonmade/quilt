@@ -3,7 +3,6 @@ import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 import {
   NotFoundResponse,
   handleRequest,
-  createHeaders,
   EnhancedResponse,
   type RequestRouter,
   type RequestHandler,
@@ -18,7 +17,7 @@ export function createLambdaApiGatewayProxy(
 
     context.callbackWaitsForEmptyEventLoop = false;
 
-    const headers = createHeaders(event.headers as Record<string, string>);
+    const headers = new Headers(event.headers as Record<string, string>);
 
     if (event.cookies != null && event.cookies.length > 0) {
       headers.set('Cookie', event.cookies.join('; '));

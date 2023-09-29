@@ -20,11 +20,7 @@ import {
 } from '@quilted/react-html/server';
 import {extract} from '@quilted/react-server-render/server';
 
-import {
-  createHeaders,
-  HTMLResponse,
-  RedirectResponse,
-} from '@quilted/request-router';
+import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
 
@@ -165,7 +161,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   });
 
   async function renderToHTMLStream(content: ReadableStream<any>) {
-    const headers = createHeaders(appHeaders);
+    const headers = new Headers(appHeaders);
 
     const [synchronousAssets, preloadAssets] = await Promise.all([
       assets?.entry({

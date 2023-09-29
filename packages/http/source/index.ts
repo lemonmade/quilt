@@ -5,8 +5,7 @@ export type {
   ReadonlyCookies,
   WritableCookies,
 } from './cookies.ts';
-export {createHeaders} from './headers.ts';
-export type {Headers, ReadonlyHeaders} from './headers.ts';
+export type {ReadonlyHeaders} from './headers.ts';
 export {HttpMethod} from './method.ts';
 export {StatusCode} from './status-code.ts';
 export {ResponseType} from './response-type.ts';

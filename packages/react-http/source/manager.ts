@@ -1,4 +1,4 @@
-import {createHeaders, CookieString} from '@quilted/http';
+import {CookieString} from '@quilted/http';
 import type {
   StatusCode,
   Cookies,
@@ -38,13 +38,13 @@ export class HttpManager {
   readonly headers: ReadonlyHeaders;
   readonly cookies: Cookies;
   readonly persistedHeaders = new Set<string>();
-  readonly responseHeaders = createHeaders();
+  readonly responseHeaders = new Headers();
 
   private statusCodes: StatusCode[] = [];
   private redirectUrl?: string;
 
   constructor({headers}: Options = {}) {
-    this.headers = headers ?? createHeaders();
+    this.headers = headers ?? new Headers();
     this.cookies = cookiesFromHeaders(this.headers, this.responseHeaders);
   }
 

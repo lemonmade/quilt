@@ -1,6 +1,4 @@
-export {createHeaders} from '@quilted/http';
 export type {
-  Headers,
   ReadonlyHeaders,
   Cookies,
   ReadonlyCookies,

@@ -19,14 +19,10 @@ This library provides the following helper types, which each represent some aspe
 - `HttpMethod`, an enum representing [the allowed HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
 - `StatusCode`, an enum representing the [standard response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 - `ResponseType`, an enum representing the [standard response status code classes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
-- `Headers` and `ReadonlyHeaders`, which are aliases to the native `Headers` type.
+- `ReadonlyHeaders`, which is a subset of the `Headers` type that represents headers that can’t be mutated (like those on some `Request` objects).
 - `Cookies`, `ReadonlyCookies`, and `CookieOptions`, a set of interfaces that provide an isomorphic pattern for getting and setting [cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
 - `ContentSecurityPolicyDirective`, `ContentSecurityPolicySandboxAllow`, and `ContentSecurityPolicySpecialSource`, enums that provide friendly names for creating a [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 - `PermissionsPolicyDirective` and `PermissionsPolicySpecialSource`, enums that provide friendly names for creating a [permissions policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy)
-
-This library also provides the following helper functions that allow you to represent HTTP-related constructs:
-
-- `createHeaders()` creates a `Headers`-compatible object, even in environments where the `Headers` global does not exist.
 
 ### Using this library as types
 
