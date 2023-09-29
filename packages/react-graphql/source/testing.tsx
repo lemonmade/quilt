@@ -5,7 +5,6 @@ import {
   gql,
   graphql,
   createGraphQLSchema,
-  createGraphQLController,
   createGraphQLFiller,
   GraphQLController,
   GraphQLControllerCompletedRequests,
@@ -44,7 +43,6 @@ export {
   graphql,
   createGraphQLSchema,
   createGraphQLFiller,
-  createGraphQLController,
   GraphQLController,
   GraphQLControllerCompletedRequests,
 };
@@ -66,7 +64,7 @@ export function GraphQLTesting({
   controller,
 }: PropsWithChildren<{controller?: GraphQLController}>) {
   const fetch = useMemo(
-    () => (controller ?? createGraphQLController()).fetch,
+    () => (controller ?? new GraphQLController()).fetch,
     [controller],
   );
 

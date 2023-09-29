@@ -1,5 +1,5 @@
 import Env from '@quilted/quilt/env';
-import {useCurrentUrl} from '@quilted/quilt';
+import {useInitialUrl} from '@quilted/quilt/navigate';
 import {
   CacheControl,
   ResponseHeader,
@@ -14,8 +14,8 @@ import {
 // wherever in your application you can read that state.
 //
 // @see https://github.com/lemonmade/quilt/blob/main/documentation/features/http.md
-export function Http() {
-  const isHttps = useCurrentUrl().protocol === 'https:';
+export function Headers() {
+  const isHttps = useInitialUrl().protocol === 'https:';
 
   return (
     <>

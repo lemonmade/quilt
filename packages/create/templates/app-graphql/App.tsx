@@ -1,11 +1,9 @@
 import {useMemo} from 'react';
 
-import {
-  QuiltApp,
-  useRoutes,
-  RoutePreloading,
-  type PropsWithChildren,
-} from '@quilted/quilt';
+import {HTML} from '@quilted/quilt/html';
+import {Routing, useRoutes} from '@quilted/quilt/navigate';
+import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
+import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 import {
   GraphQLContext,
   createGraphQLHttpFetch,
@@ -15,27 +13,40 @@ import {
 import {ReactQueryContext} from '@quilted/react-query';
 import {QueryClient} from '@tanstack/react-query';
 
-import {Http} from './foundation/Http.tsx';
-import {Head} from './foundation/Head.tsx';
-import {Metrics} from './foundation/Metrics.tsx';
+import {Head} from './foundation/html.ts';
+import {Headers} from './foundation/http.ts';
+import {Frame} from './foundation/frame.ts';
 
-import {Start} from './features/Start.tsx';
+import {Start} from './features/start.ts';
 
-export interface Props {
+import {
+  AppContextReact,
+  type AppContext as AppContextType,
+} from './shared/context.ts';
+
+export interface AppProps extends AppContextType {
   fetchGraphQL?: GraphQLFetch;
 }
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export function App(props: Props) {
+export function App(props: AppProps) {
+  const locale = useLocaleFromEnvironment() ?? 'en';
+
   return (
-    <QuiltApp http={<Http />} html={<Head />}>
-      <RoutePreloading>
-        <AppContext {...props}>
-          <Routes />
-        </AppContext>
-      </RoutePreloading>
-    </QuiltApp>
+    <HTML>
+      <Localization locale={locale}>
+        <Routing>
+          <AppContext {...props}>
+            <Headers />
+            <Head />
+            <Frame>
+              <Routes />
+            </Frame>
+          </AppContext>
+        </Routing>
+      </Localization>
+    </HTML>
   );
 }
 
@@ -43,11 +54,7 @@ export function App(props: Props) {
 // of routes, you may want to split this component into its own file.
 function Routes() {
   return useRoutes([
-    {
-      match: '/',
-      render: <Start />,
-      renderPreload: <Start.Preload />,
-    },
+    {match: '/', render: <Start />, renderPreload: <Start.Preload />},
   ]);
 }
 
@@ -55,7 +62,8 @@ function Routes() {
 function AppContext({
   children,
   fetchGraphQL: customFetchGraphQL,
-}: PropsWithChildren<Props>) {
+  ...context
+}: PropsWithChildren<AppProps>) {
   const {fetchGraphQL, queryClient} = useMemo(() => {
     return {
       fetchGraphQL:
@@ -67,7 +75,9 @@ function AppContext({
   return (
     <GraphQLContext fetch={fetchGraphQL}>
       <ReactQueryContext client={queryClient}>
-        <Metrics>{children}</Metrics>
+        <AppContextReact.Provider value={context}>
+          {children}
+        </AppContextReact.Provider>
       </ReactQueryContext>
     </GraphQLContext>
   );

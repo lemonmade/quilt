@@ -1,38 +1,47 @@
-import {
-  QuiltApp,
-  useRoutes,
-  type PropsWithChildren,
-  useInitialUrl,
-} from '@quilted/quilt';
+import {useMemo} from 'react';
+
+import {HTML} from '@quilted/quilt/html';
+import {Routing, useRoutes, useInitialUrl} from '@quilted/quilt/navigate';
+import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
+import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 
 import {httpBatchLink} from '@trpc/client';
 import {QueryClient} from '@tanstack/react-query';
 import {ReactQueryContext} from '@quilted/react-query';
 
+import {Head} from './foundation/html.ts';
+import {Headers} from './foundation/http.ts';
+import {Frame} from './foundation/frame.ts';
+
+import {Start} from './features/start.ts';
+
+import {trpc} from './shared/trpc.ts';
 import {
   AppContextReact,
   type AppContext as AppContextType,
-} from '~/shared/context.ts';
-import {trpc} from '~/shared/trpc.ts';
+} from './shared/context.ts';
 
-import {Http} from './foundation/Http.tsx';
-import {Head} from './foundation/Head.tsx';
-import {Metrics} from './foundation/Metrics.tsx';
-
-import {Start} from './features/Start.tsx';
-import {useMemo} from 'react';
-
-export interface Props extends AppContextType {}
+export interface AppProps extends AppContextType {}
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export default function App(props: Props) {
+export function App(props: AppProps) {
+  const locale = useLocaleFromEnvironment() ?? 'en';
+
   return (
-    <QuiltApp http={<Http />} html={<Head />}>
-      <AppContext {...props}>
-        <Routes />
-      </AppContext>
-    </QuiltApp>
+    <HTML>
+      <Localization locale={locale}>
+        <Routing>
+          <AppContext {...props}>
+            <Headers />
+            <Head />
+            <Frame>
+              <Routes />
+            </Frame>
+          </AppContext>
+        </Routing>
+      </Localization>
+    </HTML>
   );
 }
 
@@ -45,10 +54,7 @@ function Routes() {
 }
 
 // This component renders any app-wide context.
-function AppContext({
-  children,
-  ...appContext
-}: PropsWithChildren<AppContextType>) {
+function AppContext({children, ...context}: PropsWithChildren<AppProps>) {
   const initialUrl = useInitialUrl();
 
   const {queryClient, trpcClient} = useMemo(() => {
@@ -65,12 +71,12 @@ function AppContext({
   }, [initialUrl]);
 
   return (
-    <AppContextReact.Provider value={appContext}>
-      <Metrics>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <ReactQueryContext client={queryClient}>{children}</ReactQueryContext>
-        </trpc.Provider>
-      </Metrics>
-    </AppContextReact.Provider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <ReactQueryContext client={queryClient}>
+        <AppContextReact.Provider value={context}>
+          {children}
+        </AppContextReact.Provider>
+      </ReactQueryContext>
+    </trpc.Provider>
   );
 }

@@ -5,9 +5,9 @@ import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 
 import {Head} from './foundation/html.ts';
 import {Headers} from './foundation/http.ts';
-import {Observability} from './foundation/observability.ts';
+import {Frame} from './foundation/frame.ts';
 
-import {Start} from './features/Start.tsx';
+import {Start} from './features/start.ts';
 
 import {
   AppContextReact,
@@ -28,7 +28,9 @@ export function App(props: AppProps) {
           <AppContext {...props}>
             <Headers />
             <Head />
-            <Routes />
+            <Frame>
+              <Routes />
+            </Frame>
           </AppContext>
         </Routing>
       </Localization>
@@ -45,12 +47,10 @@ function Routes() {
 }
 
 // This component renders any app-wide context.
-function AppContext({children, ...context}: PropsWithChildren<AppContextType>) {
+function AppContext({children, ...context}: PropsWithChildren<AppProps>) {
   return (
-    <Observability>
-      <AppContextReact.Provider value={context}>
-        {children}
-      </AppContextReact.Provider>
-    </Observability>
+    <AppContextReact.Provider value={context}>
+      {children}
+    </AppContextReact.Provider>
   );
 }

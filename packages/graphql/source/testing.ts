@@ -25,7 +25,6 @@ export type {
 } from './testing/types.ts';
 export {
   GraphQLController,
-  createGraphQLController,
   GraphQLControllerCompletedRequests,
 } from './testing/controller.ts';
 export type {GraphQLControllerRequest} from './testing/controller.ts';
