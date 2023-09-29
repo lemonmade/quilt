@@ -1,32 +1,38 @@
 import {type PropsWithChildren} from '@quilted/quilt';
-import {Http} from '@quilted/quilt/http';
-import {Html} from '@quilted/quilt/html';
+import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
-import {Localization} from '@quilted/quilt/localize';
+import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
 import {Head} from './foundation/html.ts';
 import {Headers} from './foundation/http.ts';
-import {Metrics} from './foundation/metrics.ts';
+import {Observability} from './foundation/observability.ts';
 
 import {Start} from './features/Start.tsx';
 
+import {
+  AppContextReact,
+  type AppContext as AppContextType,
+} from './shared/context.ts';
+
+export interface AppProps extends AppContextType {}
+
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export function App() {
+export function App(props: AppProps) {
+  const locale = useLocaleFromEnvironment() ?? 'en';
+
   return (
-    <Http>
-      <Html>
-        <Localization locale="en">
-          <Routing>
-            <AppContext>
-              <Headers />
-              <Head />
-              <Routes />
-            </AppContext>
-          </Routing>
-        </Localization>
-      </Html>
-    </Http>
+    <HTML>
+      <Localization locale={locale}>
+        <Routing>
+          <AppContext {...props}>
+            <Headers />
+            <Head />
+            <Routes />
+          </AppContext>
+        </Routing>
+      </Localization>
+    </HTML>
   );
 }
 
@@ -39,6 +45,12 @@ function Routes() {
 }
 
 // This component renders any app-wide context.
-function AppContext({children}: PropsWithChildren) {
-  return <Metrics>{children}</Metrics>;
+function AppContext({children, ...context}: PropsWithChildren<AppContextType>) {
+  return (
+    <Observability>
+      <AppContextReact.Provider value={context}>
+        {children}
+      </AppContextReact.Provider>
+    </Observability>
+  );
 }

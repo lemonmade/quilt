@@ -104,6 +104,13 @@
       "import": "./build/esm/react/testing.mjs",
       "require": "./build/cjs/react/testing.cjs"
     },
+    "./react/tools": {
+      "types": "./build/typescript/react/tools.d.ts",
+      "quilt:source": "./source/react/tools.ts",
+      "quilt:esnext": "./build/esnext/react/tools.esnext",
+      "import": "./build/esm/react/tools.mjs",
+      "require": "./build/cjs/react/tools.cjs"
+    },
     "./graphql": {
       "types": "./build/typescript/graphql.d.ts",
       "quilt:source": "./source/graphql.ts",
@@ -290,6 +297,9 @@
       ],
       "react/testing": [
         "./build/typescript/react/testing.d.ts"
+      ],
+      "react/tools": [
+        "./build/typescript/react/tools.d.ts"
       ],
       "polyfills/base": [
         "./build/typescript/polyfills/base.d.ts"

@@ -14,8 +14,8 @@ export {
   scriptAssetPreloadAttributes,
 } from './attributes.ts';
 export {
+  BrowserAssetsFromManifests,
   createBrowserAssetsEntryFromManifest,
-  createBrowserAssetsFromManifests,
   type AssetsBuildManifest,
   type AssetsBuildManifestEntry,
 } from './manifest.ts';

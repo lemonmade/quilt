@@ -1,9 +1,10 @@
 import '@quilted/quilt/globals';
+
 import {RequestRouter} from '@quilted/quilt/request-router';
-import {createBrowserAssets} from '@quilted/quilt/magic/assets';
+import {BrowserAssets} from '@quilted/quilt/magic/assets';
 
 const router = new RequestRouter();
-const assets = createBrowserAssets();
+const assets = new BrowserAssets();
 
 // For all GET requests, render our React application.
 router.get(async (request) => {

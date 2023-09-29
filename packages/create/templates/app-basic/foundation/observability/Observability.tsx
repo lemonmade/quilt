@@ -1,9 +1,9 @@
 import {type PropsWithChildren} from '@quilted/quilt';
-import {usePerformanceNavigationEvent} from '@quilted/quilt/performance';
 import Env from '@quilted/quilt/env';
+import {usePerformanceNavigationEvent} from '@quilted/quilt/performance';
 
 // This component records metrics about your application.
-export function Metrics({children}: PropsWithChildren) {
+export function Observability({children}: PropsWithChildren) {
   usePerformanceNavigationEvent(async (navigation) => {
     if (Env.MODE === 'development') {
       // eslint-disable-next-line no-console

@@ -1,5 +1,8 @@
-import type {AssetsCacheKey, BrowserAssets} from '@quilted/assets';
+import type {
+  AssetsCacheKey,
+  BrowserAssets as BrowserAssetsType,
+} from '@quilted/assets';
 
-export declare function createBrowserAssets<
-  CacheKey = AssetsCacheKey,
->(): BrowserAssets<CacheKey>;
+export declare const BrowserAssets: {
+  new <CacheKey = AssetsCacheKey>(): BrowserAssetsType<CacheKey>;
+};

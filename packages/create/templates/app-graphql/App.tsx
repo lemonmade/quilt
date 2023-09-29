@@ -27,7 +27,7 @@ export interface Props {
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export default function App(props: Props) {
+export function App(props: Props) {
   return (
     <QuiltApp http={<Http />} html={<Head />}>
       <RoutePreloading>

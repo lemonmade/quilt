@@ -169,17 +169,32 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       )};
                     `
                       : stripIndent`
+                      import '@quilted/quilt/globals';
                       import App from ${JSON.stringify(
                         MAGIC_MODULE_APP_COMPONENT,
                       )};
-                      import {createBrowserAssets} from ${JSON.stringify(
-                        MAGIC_MODULE_BROWSER_ASSETS,
-                      )};
-                      import {createServerRenderingRequestRouter} from '@quilted/quilt/server';
-      
-                      export default createServerRenderingRequestRouter(() => <App />, {
-                        assets: createBrowserAssets(),
+                      import {RequestRouter} from '@quilted/quilt/request-router';
+                      import {BrowserAssets} from '@quilted/quilt/magic/assets';
+
+                      const router = new RequestRouter();
+                      const assets = new BrowserAssets();
+
+                      // For all GET requests, render our React application.
+                      router.get(async (request) => {
+                        const [{App}, {renderToResponse}] = await Promise.all([
+                          import('./App.tsx'),
+                          import('@quilted/quilt/server'),
+                        ]);
+
+                        const response = await renderToResponse(<App />, {
+                          request,
+                          assets,
+                        });
+
+                        return response;
                       });
+
+                      export default router;
                     `;
 
                   return quiltAppServerEntryContent!.run(baseContent);
@@ -218,7 +233,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                   };
 
                   return stripIndent`
-                    import {createBrowserAssetsFromManifests} from '@quilted/quilt/server';
+                    import {BrowserAssetsFromManifests} from '@quilted/quilt/server';
 
                     const MANIFEST = ${JSON.stringify(baseManifest)};
                     MANIFEST.modules = new Proxy(
@@ -244,10 +259,12 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       },
                     );
 
-                    export function createBrowserAssets() {
-                      return createBrowserAssetsFromManifests([], {
-                        defaultManifest: MANIFEST,
-                      });
+                    export class BrowsersAssets extends BrowserAssetsFromManifests {
+                      constructor() {
+                        super([], {
+                          defaultManifest: MANIFEST,
+                        });
+                      }
                     }
                   `;
                 },

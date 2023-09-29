@@ -17,7 +17,7 @@ export {
   styleAssetPreloadAttributes,
   scriptAssetAttributes,
   scriptAssetPreloadAttributes,
-  createBrowserAssetsFromManifests,
+  BrowserAssetsFromManifests,
   createBrowserAssetsEntryFromManifest,
 } from '@quilted/assets';
 export type {

@@ -139,41 +139,43 @@ export function appServerBuild({
                 }
 
                 return stripIndent`
-                  import {createBrowserAssetsFromManifests} from '@quilted/quilt/server';
+                  import {BrowserAssetsFromManifests} from '@quilted/quilt/server';
 
-                  export function createBrowserAssets() {
-                    const manifests = JSON.parse(${JSON.stringify(
-                      JSON.stringify(manifests),
-                    )});
-
-                    const browserGroupTests = [
-                      ${browserTests
-                        .map(
-                          ({name, test}) =>
-                            `[${JSON.stringify(
-                              name,
-                            )}, new RegExp(${JSON.stringify(test)})]`,
-                        )
-                        .join(', ')}
-                    ];
+                  export class BrowserAssets extends BrowserAssetsFromManifests {
+                    constructor() {
+                      const manifests = JSON.parse(${JSON.stringify(
+                        JSON.stringify(manifests),
+                      )});
   
-                    // The default manifest is the last one, since it has the widest browser support.
-                    const defaultManifest = manifests[manifests.length - 1];
+                      const browserGroupTests = [
+                        ${browserTests
+                          .map(
+                            ({name, test}) =>
+                              `[${JSON.stringify(
+                                name,
+                              )}, new RegExp(${JSON.stringify(test)})]`,
+                          )
+                          .join(', ')}
+                      ];
+    
+                      // The default manifest is the last one, since it has the widest browser support.
+                      const defaultManifest = manifests[manifests.length - 1];
 
-                    return createBrowserAssetsFromManifests(manifests, {
-                      defaultManifest,
-                      cacheKey(request) {
-                        const userAgent = request.headers.get('User-Agent');
-
-                        if (userAgent) {
-                          for (const [name, test] of browserGroupTests) {
-                            if (test.test(userAgent)) return {browserGroup: name};
+                      super(manifests, {
+                        defaultManifest,
+                        cacheKey(request) {
+                          const userAgent = request.headers.get('User-Agent');
+  
+                          if (userAgent) {
+                            for (const [name, test] of browserGroupTests) {
+                              if (test.test(userAgent)) return {browserGroup: name};
+                            }
                           }
-                        }
-
-                        return {};
-                      },
-                    });
+  
+                          return {};
+                        },
+                      });
+                    }
                   }
                 `;
               },
