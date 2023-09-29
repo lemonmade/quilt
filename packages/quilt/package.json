@@ -27,6 +27,13 @@
       "import": "./build/esm/assets.mjs",
       "require": "./build/cjs/assets.cjs"
     },
+    "./async": {
+      "types": "./build/typescript/async.d.ts",
+      "quilt:source": "./source/async.ts",
+      "quilt:esnext": "./build/esnext/async.esnext",
+      "import": "./build/esm/async.mjs",
+      "require": "./build/cjs/async.cjs"
+    },
     "./globals": {
       "types": "./build/typescript/globals.d.ts",
       "quilt:source": "./source/globals.ts",
@@ -241,6 +248,12 @@
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
+      "assets": [
+        "./build/typescript/assets.d.ts"
+      ],
+      "async": [
+        "./build/typescript/async.d.ts"
+      ],
       "html": [
         "./build/typescript/html.d.ts"
       ],

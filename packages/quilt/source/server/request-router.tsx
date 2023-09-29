@@ -1,4 +1,4 @@
-import {type ReactElement} from 'react';
+import {isValidElement, type ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
 import {
@@ -28,31 +28,52 @@ import {
 
 import {ServerContext} from './ServerContext.tsx';
 
+export interface RenderOptions<CacheKey = AssetsCacheKey> {
+  readonly request: Request;
+  readonly stream?: 'headers' | false;
+  readonly assets?: BrowserAssets<CacheKey>;
+  readonly cacheKey?: CacheKey;
+  waitUntil?(promise: Promise<any>): void;
+  renderHTML?(
+    content: ReadableStream<string>,
+    context: {
+      readonly manager: HTMLManager;
+      readonly assets?: BrowserAssetsEntry;
+      readonly preloadAssets?: BrowserAssetsEntry;
+    },
+  ): ReadableStream<any> | Promise<ReadableStream<any>>;
+}
+
 export async function renderToResponse<CacheKey = AssetsCacheKey>(
   element: ReactElement<any>,
-  {
+  options: RenderOptions<CacheKey>,
+): Promise<HTMLResponse | RedirectResponse>;
+export async function renderToResponse<CacheKey = AssetsCacheKey>(
+  options: RenderOptions<CacheKey>,
+): Promise<HTMLResponse | RedirectResponse>;
+export async function renderToResponse<CacheKey = AssetsCacheKey>(
+  optionsOrElement: ReactElement<any> | RenderOptions<CacheKey>,
+  definitelyOptions?: RenderOptions<CacheKey>,
+) {
+  let element: ReactElement<any> | undefined;
+  let options: RenderOptions<CacheKey>;
+
+  if (isValidElement(optionsOrElement)) {
+    element = optionsOrElement;
+    options = definitelyOptions!;
+  } else {
+    options = optionsOrElement as any;
+  }
+
+  const {
     request,
     stream: shouldStream = false,
     assets,
     cacheKey: explicitCacheKey,
     waitUntil = noop,
     renderHTML,
-  }: {
-    readonly request: Request;
-    readonly stream?: 'headers' | false;
-    readonly assets?: BrowserAssets<CacheKey>;
-    readonly cacheKey?: CacheKey;
-    waitUntil?(promise: Promise<any>): void;
-    renderHTML?(
-      content: ReadableStream<string>,
-      context: {
-        readonly manager: HTMLManager;
-        readonly assets?: BrowserAssetsEntry;
-        readonly preloadAssets?: BrowserAssetsEntry;
-      },
-    ): ReadableStream<any> | Promise<ReadableStream<any>>;
-  },
-) {
+  } = options;
+
   const baseUrl = (request as any).URL ?? new URL(request.url);
 
   const cacheKey =
@@ -67,7 +88,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   let appHeaders: Headers | undefined;
   let appStream: ReadableStream<any> | undefined;
 
-  if (shouldStream === false) {
+  if (shouldStream === false && element != null) {
     const rendered = await extract(element, {
       decorate(element) {
         return (
@@ -111,22 +132,25 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     const renderAppStream = async function renderAppStream() {
       const appWriter = appTransformStream.writable.getWriter();
 
-      const rendered = await extract(element, {
-        decorate(element) {
-          return (
-            <ServerContext
-              http={http}
-              html={html}
-              url={baseUrl}
-              assets={assetsManager}
-            >
-              {element}
-            </ServerContext>
-          );
-        },
-      });
+      if (element != null) {
+        const rendered = await extract(element, {
+          decorate(element) {
+            return (
+              <ServerContext
+                http={http}
+                html={html}
+                url={baseUrl}
+                assets={assetsManager}
+              >
+                {element}
+              </ServerContext>
+            );
+          },
+        });
 
-      appWriter.write(rendered);
+        appWriter.write(rendered);
+      }
+
       appWriter.close();
     };
 
@@ -144,8 +168,13 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     const headers = createHeaders(appHeaders);
 
     const [synchronousAssets, preloadAssets] = await Promise.all([
-      assets?.entry({modules: assetsManager.usedModules({timing: 'load'})}),
-      assets?.modules(assetsManager.usedModules({timing: 'preload'})),
+      assets?.entry({
+        cacheKey,
+        modules: assetsManager.usedModules({timing: 'load'}),
+      }),
+      assets?.modules(assetsManager.usedModules({timing: 'preload'}), {
+        cacheKey,
+      }),
     ]);
 
     if (synchronousAssets) {
@@ -209,14 +238,16 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
               />
             ))}
           </head>
-          <body {...bodyAttributes}>
-            <div id="app" dangerouslySetInnerHTML={{__html: '%%APP%%'}}></div>
-          </body>
+          <body
+            {...bodyAttributes}
+            dangerouslySetInnerHTML={{__html: '%%CONTENT%%'}}
+          ></body>
         </html>,
       );
 
-      const [firstChunk, secondChunk] = htmlContent.split('%%APP%%');
+      const [firstChunk, secondChunk] = htmlContent.split('%%CONTENT%%');
       writer.write(firstChunk);
+      if (element != null) writer.write(`<div id="app">`);
 
       const reader = content.getReader();
 
@@ -231,9 +262,16 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
         writer.write(value);
       }
 
+      if (element != null) writer.write(`</div>`);
+
       const [newSynchronousAssets, newPreloadAssets] = await Promise.all([
-        assets?.entry({modules: assetsManager.usedModules({timing: 'load'})}),
-        assets?.modules(assetsManager.usedModules({timing: 'preload'})),
+        assets?.entry({
+          cacheKey,
+          modules: assetsManager.usedModules({timing: 'load'}),
+        }),
+        assets?.modules(assetsManager.usedModules({timing: 'preload'}), {
+          cacheKey,
+        }),
       ]);
 
       if (newSynchronousAssets) {

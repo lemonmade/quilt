@@ -150,19 +150,21 @@ describe('app builds', () => {
             document.body.append(element);
           `,
           'server.ts': stripIndent`
-            import {createRequestRouter, createServerRender} from '@quilted/quilt/server';
-            import {createBrowserAssets} from '@quilted/quilt/magic/assets';
+            import {RequestRouter} from '@quilted/quilt/request-router';
+            import {BrowserAssets} from '@quilted/quilt/magic/assets';
+            import {renderToResponse} from '@quilted/quilt/server';
                       
-            const router = createRequestRouter();
+            const router = new RequestRouter();
+            const assets = new BrowserAssets();
 
-            router.get(
-              createServerRender({
-                assets: createBrowserAssets(),
-                html: {
-                  rootElement: false,
-                },
-              }),
-            );
+            router.get(async (request) => {
+              const response = await renderToResponse({
+                request,
+                assets,
+              });
+
+              return response;
+            });
             
             export default router;
           `,

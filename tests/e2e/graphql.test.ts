@@ -22,7 +22,7 @@ describe('graphql', () => {
             }
           `,
           'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
+            import {useRoutes} from '@quilted/quilt/navigate';
             import {Start} from '../features/Start.tsx';
             
             export function Routes() {
@@ -94,7 +94,8 @@ describe('graphql', () => {
             }
           `,
           'foundation/Routes.tsx': stripIndent`
-            import {useRoutes} from '@quilted/quilt';
+            import {useRoutes} from '@quilted/quilt/navigate';
+
             import {Start} from '../features/Start.tsx';
             import {Admin} from '../features/Admin.tsx';
             

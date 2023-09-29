@@ -35,11 +35,8 @@ describe('app builds', () => {
             }
           `,
           'foundation/Routes.tsx': stripIndent`
-            import {
-              Link,
-              useRoutes,
-              createAsyncComponent,
-            } from '@quilted/quilt';
+            import {Link, useRoutes} from '@quilted/quilt/navigate';
+            import {createAsyncComponent} from '@quilted/quilt/async';
 
             const PageOne = createAsyncComponent(() => import('../pages/One.tsx'));
             const PageTwo = createAsyncComponent(() => import('../pages/Two.tsx'));

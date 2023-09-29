@@ -13,5 +13,5 @@ export {
   useResponseCookie,
 } from './hooks/response-cookie.ts';
 export {useResponseStatus} from './hooks/response-status.ts';
-export {useHttpAction} from './hooks/http-action.ts';
+export {useHttpAction, useHttpManager} from './hooks/http-action.ts';
 export {useStrictTransportSecurity} from './hooks/strict-transport-security.ts';

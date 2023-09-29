@@ -27,6 +27,7 @@ export {
   useResponseRedirect,
   useResponseStatus,
   useHttpAction,
+  useHttpManager,
   useStrictTransportSecurity,
 } from './hooks.ts';
 export {

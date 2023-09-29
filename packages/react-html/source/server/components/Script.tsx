@@ -11,9 +11,11 @@ export function Script({asset, baseUrl}: ScriptProps) {
   });
 
   const loadingAttribute =
-    attributes.type === 'module' ? {async: true} : {defer: true};
+    attributes.type === 'module'
+      ? {async: attributes.async ?? true}
+      : {defer: attributes.defer ?? true};
 
   return (
-    <script key={asset.source} {...loadingAttribute} {...(attributes as any)} />
+    <script key={asset.source} {...(attributes as any)} {...loadingAttribute} />
   );
 }

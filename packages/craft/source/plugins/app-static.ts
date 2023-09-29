@@ -343,7 +343,7 @@ export function appStatic({
                       return this._assetEntry({...options, entry: false, modules});
                     }
 
-                    function _assetEntry(options) {
+                    _assetEntry(options) {
                       const moduleManifestEntry = moduleManifest && createBrowserAssetsEntryFromManifest(moduleManifest, options);
                       const noModuleManifestEntry = noModuleManifest && createBrowserAssetsEntryFromManifest(noModuleManifest, options);
 

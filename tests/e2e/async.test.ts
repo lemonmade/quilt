@@ -15,7 +15,7 @@ describe('async', () => {
           }
         `,
         'App.tsx': stripIndent`
-          import {createAsyncModule, useAsyncModule} from '@quilted/quilt';
+          import {createAsyncModule, useAsyncModule} from '@quilted/quilt/async';
 
           const Async = createAsyncModule(() => import('./async.ts'));
 
@@ -58,7 +58,7 @@ describe('async', () => {
           }
         `,
         'App.tsx': stripIndent`
-          import {createAsyncComponent} from '@quilted/quilt';
+          import {createAsyncComponent} from '@quilted/quilt/async';
 
           const Async = createAsyncComponent(() => import('./Async.tsx'));
 
@@ -109,7 +109,7 @@ describe('async', () => {
           }
         `,
         'App.tsx': stripIndent`
-          import {createAsyncComponent} from '@quilted/quilt';
+          import {createAsyncComponent} from '@quilted/quilt/async';
 
           const Async = createAsyncComponent(() => import('./Async.tsx'), {
             hydrate: 'defer',
@@ -161,8 +161,8 @@ describe('async', () => {
           }
         `,
         'App.tsx': stripIndent`
-        import {useState} from 'react';
-          import {createAsyncComponent} from '@quilted/quilt';
+          import {useState} from 'react';
+          import {createAsyncComponent} from '@quilted/quilt/async';
 
           const Async = createAsyncComponent(() => import('./Async.tsx'), {
             hydrate: 'defer',
@@ -221,7 +221,7 @@ describe('async', () => {
           }
         `,
         'App.tsx': stripIndent`
-          import {createAsyncComponent} from '@quilted/quilt';
+          import {createAsyncComponent} from '@quilted/quilt/async';
 
           const Async = createAsyncComponent(() => import('./Async.tsx'), {
             render: 'client',
