@@ -4,7 +4,7 @@ import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
 jest.setTimeout(20_000);
 
 describe('http', () => {
-  describe('cookies', () => {
+  describe('suspense', () => {
     it('renders the app on the server until Suspense boundaries have resolved', async () => {
       await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
         const {fs} = workspace;
@@ -12,7 +12,7 @@ describe('http', () => {
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
               import {Suspense} from 'react';
-              import {usePerformanceNavigation} from '@quilted/quilt';
+              import {usePerformanceNavigation} from '@quilted/quilt/performance';
 
               let resolved;
               function useSuspenseValue() {

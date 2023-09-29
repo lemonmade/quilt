@@ -24,3 +24,5 @@ export function App() {
     </HTML>
   );
 }
+
+export default App;
