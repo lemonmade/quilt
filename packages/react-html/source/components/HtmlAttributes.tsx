@@ -1,11 +1,11 @@
-import {useHtmlAttributes} from '../hooks/html-attributes.ts';
+import {useHTMLAttributes} from '../hooks/html-attributes.ts';
 
-type Props = Parameters<typeof useHtmlAttributes>[0];
+type Props = Parameters<typeof useHTMLAttributes>[0];
 
 /**
  * Sets the provided attributes on the `<html>` element.
  */
-export function HtmlAttributes(props: Props) {
-  useHtmlAttributes(props);
+export function HTMLAttributes(props: Props) {
+  useHTMLAttributes(props);
   return null;
 }

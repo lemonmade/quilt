@@ -193,26 +193,26 @@ export function App() {
 
 ## Setting attributes on elements outside your React application
 
-Some libraries require you to put attributes on “special” elements in the DOM, most commonly either on the root `<html>` element, or the `<body>` element. Quilt provides an `<HtmlAttributes>` component and `useHtmlAttributes` hook for applying props to the `<html>` element from within your React app, and `<BodyAttributes>`/ `useBodyAttributes` for applying props to the `<body>` element:
+Some libraries require you to put attributes on “special” elements in the DOM, most commonly either on the root `<html>` element, or the `<body>` element. Quilt provides an `<HTMLAttributes>` component and `useHTMLAttributes` hook for applying props to the `<html>` element from within your React app, and `<BodyAttributes>`/ `useBodyAttributes` for applying props to the `<body>` element:
 
 ```tsx
 import {
   BodyAttributes,
-  HtmlAttributes,
+  HTMLAttributes,
   useBodyAttributes,
-  useHtmlAttributes,
+  useHTMLAttributes,
 } from '@quilted/react-html';
 // also available from '@quilted/quilt/html'
 
 export function App() {
-  useHtmlAttributes({lang: 'en'});
+  useHTMLAttributes({lang: 'en'});
   useBodyAttributes({'data-page': 'my-page'});
 
   // or...
 
   return (
     <>
-      <HtmlAttributes lang="en" />
+      <HTMLAttributes lang="en" />
       <BodyAttributes data-page="my-page" />
     </>
   );

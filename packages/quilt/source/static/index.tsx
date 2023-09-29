@@ -1,8 +1,8 @@
 import {type ComponentType} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
 
 import {type BrowserAssets} from '@quilted/assets';
 import {
-  renderHtmlToString,
   Head,
   Script,
   ScriptPreload,
@@ -245,31 +245,36 @@ export async function renderStatic(
     ]);
 
     const {htmlAttributes, bodyAttributes, ...headProps} = htmlManager.state;
-    const minifiedHtml = renderHtmlToString(
-      // eslint-disable-next-line jsx-a11y/html-has-lang
-      <html {...htmlAttributes}>
-        <head>
-          <Head {...headProps} />
-          {mainAssets?.scripts.map((script) => (
-            <Script key={script.source} asset={script} baseUrl={url} />
-          ))}
-          {mainAssets?.styles.map((style) => (
-            <Style key={style.source} asset={style} baseUrl={url} />
-          ))}
-          {preloadAssets?.styles.map((style) => (
-            <StylePreload key={style.source} asset={style} baseUrl={url} />
-          ))}
-          {preloadAssets?.scripts.map((script) => (
-            <ScriptPreload key={script.source} asset={script} baseUrl={url} />
-          ))}
-        </head>
-        <body {...bodyAttributes}>
-          <div id="app" dangerouslySetInnerHTML={{__html: markup ?? ''}}></div>
-        </body>
-      </html>,
-    );
+    const minifiedHTML =
+      '<!DOCTYPE html>' +
+      renderToStaticMarkup(
+        // eslint-disable-next-line jsx-a11y/html-has-lang
+        <html {...htmlAttributes}>
+          <head>
+            <Head {...headProps} />
+            {mainAssets?.scripts.map((script) => (
+              <Script key={script.source} asset={script} baseUrl={url} />
+            ))}
+            {mainAssets?.styles.map((style) => (
+              <Style key={style.source} asset={style} baseUrl={url} />
+            ))}
+            {preloadAssets?.styles.map((style) => (
+              <StylePreload key={style.source} asset={style} baseUrl={url} />
+            ))}
+            {preloadAssets?.scripts.map((script) => (
+              <ScriptPreload key={script.source} asset={script} baseUrl={url} />
+            ))}
+          </head>
+          <body {...bodyAttributes}>
+            <div
+              id="app"
+              dangerouslySetInnerHTML={{__html: markup ?? ''}}
+            ></div>
+          </body>
+        </html>,
+      );
 
-    const html = prettify ? await prettifyHtml(minifiedHtml) : minifiedHtml;
+    const html = prettify ? await prettifyHTML(minifiedHTML) : minifiedHTML;
 
     return {
       html,
@@ -279,7 +284,7 @@ export async function renderStatic(
   }
 }
 
-async function prettifyHtml(html: string) {
+async function prettifyHTML(html: string) {
   try {
     const {default: prettier} = await import('prettier');
     return prettier.format(html, {parser: 'html'});

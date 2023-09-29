@@ -1,9 +1,8 @@
 export {
   Head,
   Serialize,
-  HtmlManager,
-  HtmlContext,
-  renderHtmlToString,
+  HTMLManager,
+  HTMLContext,
   SERVER_ACTION_ID as HTML_SERVER_ACTION_ID,
 } from '@quilted/react-html/server';
 export {

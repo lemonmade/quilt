@@ -8,7 +8,7 @@ import {
 
 import {expect} from '@jest/globals';
 
-import type {Node, HtmlNodeExtensions} from '../types.ts';
+import type {Node, HTMLNodeExtensions} from '../types.ts';
 
 import {toHaveReactProps} from './props.ts';
 import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
@@ -18,45 +18,45 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
     interface Matchers<R, T = {}> {
-      toContainReactHtml(text: string): void;
+      toContainReactHTML(text: string): void;
       toHaveReactDataProps(data: {[key: string]: string}): void;
     }
   }
 }
 
 expect.extend({
-  toContainReactHtml,
+  toContainReactHTML,
   toHaveReactDataProps,
 });
 
-export function toContainReactHtml<Props>(
+export function toContainReactHTML<Props>(
   this: MatcherState,
-  node: Node<Props, HtmlNodeExtensions>,
+  node: Node<Props, HTMLNodeExtensions>,
   text: string,
 ) {
   assertIsNode(node, {
-    expectation: 'toContainReactHtml',
+    expectation: 'toContainReactHTML',
     isNot: this.isNot,
   });
 
-  const nodeHtml = node.html;
-  const matchIndex = nodeHtml.indexOf(text);
+  const nodeHTML = node.html;
+  const matchIndex = nodeHTML.indexOf(text);
   const pass = matchIndex >= 0;
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toContainReactHtml', node.toString())}\n\n` +
+        `${matcherHint('.not.toContainReactHTML', node.toString())}\n\n` +
         `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
         `Not to contain HTML:\n  ${printExpected(text)}\n` +
         `But it did:\n  ${printReceivedWithHighlight(
-          nodeHtml,
+          nodeHTML,
           matchIndex,
           text.length,
         )}\n`
     : () =>
-        `${matcherHint('.not.toContainReactHtml', node.toString())}\n\n` +
+        `${matcherHint('.not.toContainReactHTML', node.toString())}\n\n` +
         `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
-        `With HTML content:\n  ${printReceived(nodeHtml)}\n` +
+        `With HTML content:\n  ${printReceived(nodeHTML)}\n` +
         `To contain HTML:\n  ${printExpected(text)}\n`;
 
   return {pass, message};

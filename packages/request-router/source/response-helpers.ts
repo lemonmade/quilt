@@ -37,14 +37,14 @@ export class RedirectResponse extends EnhancedResponse {
   }
 }
 
-export class HtmlResponse extends EnhancedResponse {
+export class HTMLResponse extends EnhancedResponse {
   constructor(body: BodyInit, options?: ResponseInit) {
     super(body, options);
     this.headers.set('Content-Type', 'text/html; charset=utf-8');
   }
 }
 
-export {HtmlResponse as HTMLResponse};
+export {HTMLResponse as HtmlResponse};
 
 export class JsonResponse extends EnhancedResponse {
   constructor(body: unknown, options?: ResponseInit) {

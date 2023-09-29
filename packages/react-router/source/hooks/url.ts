@@ -1,14 +1,5 @@
-import {useContext} from 'react';
+import {createUseContextHook} from '@quilted/react-utilities';
+
 import {CurrentUrlContext} from '../context.ts';
 
-export function useCurrentUrl() {
-  const url = useContext(CurrentUrlContext);
-
-  if (url == null) {
-    throw new Error(
-      'You attempted to use the current URL, but none was found. Make sure your code is nested in a <Routing /> component',
-    );
-  }
-
-  return url;
-}
+export const useCurrentUrl = createUseContextHook(CurrentUrlContext);

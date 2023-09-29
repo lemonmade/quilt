@@ -1,5 +1,5 @@
-export {HtmlManager, SERVER_ACTION_ID} from './manager.ts';
-export {HtmlContext} from './context.ts';
+export {HTMLManager, SERVER_ACTION_ID} from './manager.ts';
+export {HTMLContext} from './context.ts';
 
 export {
   Head,
@@ -15,4 +15,3 @@ export {
   StylePreload,
   type StylePreloadProps,
 } from './server/components.ts';
-export {renderHtmlToString} from './server/render.ts';

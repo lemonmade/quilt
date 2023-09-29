@@ -19,7 +19,7 @@ import type {
   NodeApi,
   Root,
   RootApi,
-  HtmlNodeExtensions,
+  HTMLNodeExtensions,
 } from '../types.ts';
 
 import {
@@ -39,7 +39,7 @@ export type {
   NodeApi,
   Root,
   RootApi,
-  HtmlNodeExtensions,
+  HTMLNodeExtensions,
   CustomRender,
   CustomRenderResult,
   CustomRenderOptions,
@@ -54,7 +54,7 @@ export type {
 
 const {render, createRender, rendered, destroyAll} = createEnvironment<
   Context,
-  HtmlNodeExtensions
+  HTMLNodeExtensions
 >({
   act,
   mount(tree) {
@@ -78,7 +78,7 @@ const {render, createRender, rendered, destroyAll} = createEnvironment<
 export {render, createRender, rendered, destroyAll};
 
 type Create = Parameters<
-  EnvironmentOptions<any, HtmlNodeExtensions>['update']
+  EnvironmentOptions<any, HTMLNodeExtensions>['update']
 >[1];
 type Child = ReturnType<Create> | string;
 
@@ -135,7 +135,7 @@ export function createNodeFromFiber(element: any, create: Create): Child {
       }
 
       return (
-        this as any as NodeApi<any, HtmlNodeExtensions>
+        this as any as NodeApi<any, HTMLNodeExtensions>
       ).children.reduce<string>(
         (text, child) =>
           `${text}${typeof child === 'string' ? child : child.html}`,
@@ -146,7 +146,7 @@ export function createNodeFromFiber(element: any, create: Create): Child {
       if (instance instanceof HTMLElement) return instance.textContent ?? '';
 
       return (
-        this as any as NodeApi<any, HtmlNodeExtensions>
+        this as any as NodeApi<any, HTMLNodeExtensions>
       ).children.reduce<string>(
         (text, child) =>
           `${text}${typeof child === 'string' ? child : child.text}`,
@@ -158,12 +158,12 @@ export function createNodeFromFiber(element: any, create: Create): Child {
     },
   });
 
-  function getDomNodes(node: NodeApi<any, HtmlNodeExtensions>) {
+  function getDomNodes(node: NodeApi<any, HTMLNodeExtensions>) {
     if (isDom) return [instance];
 
     return node.children
       .filter(
-        (child): child is Node<unknown, HtmlNodeExtensions> =>
+        (child): child is Node<unknown, HTMLNodeExtensions> =>
           typeof child !== 'string' && child.isDom,
       )
       .map((child) => child.instance);

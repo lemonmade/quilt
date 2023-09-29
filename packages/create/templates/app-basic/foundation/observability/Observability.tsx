@@ -1,6 +1,6 @@
-import {type PropsWithChildren} from '@quilted/quilt';
 import Env from '@quilted/quilt/env';
 import {usePerformanceNavigationEvent} from '@quilted/quilt/performance';
+import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 
 // This component records metrics about your application.
 export function Observability({children}: PropsWithChildren) {

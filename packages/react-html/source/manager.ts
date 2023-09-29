@@ -31,7 +31,7 @@ interface Options {
   serializations?: Map<string, unknown>;
 }
 
-export class HtmlManager {
+export class HTMLManager {
   readonly [SERVER_ACTION_KIND]: ServerActionKind = {
     id: SERVER_ACTION_ID,
     betweenEachPass: () => this.reset(),
@@ -113,7 +113,7 @@ export class HtmlManager {
     return this.addDescriptor(script, this.scripts);
   }
 
-  addHtmlAttributes(attributes: HtmlHTMLAttributes<HTMLHtmlElement>) {
+  addAttributes(attributes: HtmlHTMLAttributes<HTMLHtmlElement>) {
     return this.addDescriptor(attributes, this.htmlAttributes);
   }
 

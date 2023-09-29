@@ -1,8 +1,8 @@
 import {useMemo} from 'react';
 import type {ReactNode} from 'react';
 
-import {HtmlContext} from '../context.ts';
-import {HtmlManager} from '../manager.ts';
+import {HTMLContext} from '../context.ts';
+import {HTMLManager} from '../manager.ts';
 
 interface Props {
   serializations?: {[key: string]: any} | Map<string, any>;
@@ -10,10 +10,10 @@ interface Props {
   children?: ReactNode;
 }
 
-export function TestHtml({children, serializations, hydrations}: Props) {
+export function TestHTML({children, serializations, hydrations}: Props) {
   const manager = useMemo(
     () =>
-      new HtmlManager({
+      new HTMLManager({
         hydrations: toMap(hydrations),
         serializations: toMap(serializations),
       }),
@@ -21,7 +21,7 @@ export function TestHtml({children, serializations, hydrations}: Props) {
   );
 
   return (
-    <HtmlContext.Provider value={manager}>{children}</HtmlContext.Provider>
+    <HTMLContext.Provider value={manager}>{children}</HTMLContext.Provider>
   );
 }
 

@@ -16,7 +16,7 @@ import {
   ScriptPreload,
   Style,
   StylePreload,
-  HtmlManager,
+  HTMLManager,
 } from '@quilted/react-html/server';
 import {extract} from '@quilted/react-server-render/server';
 
@@ -32,17 +32,17 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     assets,
     cacheKey: explicitCacheKey,
     waitUntil = noop,
-    renderHtml,
+    renderHTML,
   }: {
     readonly request: Request;
     readonly stream?: 'headers' | false;
     readonly assets?: BrowserAssets<CacheKey>;
     readonly cacheKey?: CacheKey;
     waitUntil?(promise: Promise<any>): void;
-    renderHtml?(
+    renderHTML?(
       content: ReadableStream<string>,
       context: {
-        readonly manager: HtmlManager;
+        readonly manager: HTMLManager;
         readonly assets?: BrowserAssetsEntry;
         readonly preloadAssets?: BrowserAssetsEntry;
       },
@@ -55,7 +55,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     explicitCacheKey ??
     (((await assets?.cacheKey?.(request)) ?? {}) as CacheKey);
 
-  const html = new HtmlManager();
+  const html = new HTMLManager();
   const http = new HttpManager({headers: request.headers});
   const assetsManager = new AssetsManager<CacheKey>({cacheKey});
 
@@ -129,14 +129,14 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     waitUntil(renderAppStream());
   }
 
-  const {headers, body} = await renderToHtmlStream(appStream);
+  const {headers, body} = await renderToHTMLStream(appStream);
 
   return new HTMLResponse(body, {
     status: responseStatus,
     headers,
   });
 
-  async function renderToHtmlStream(content: ReadableStream<any>) {
+  async function renderToHTMLStream(content: ReadableStream<any>) {
     const headers = new Headers(appHeaders);
 
     const [synchronousAssets, preloadAssets] = await Promise.all([
@@ -160,8 +160,8 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       }
     }
 
-    if (renderHtml) {
-      const body = await renderHtml(content, {
+    if (renderHTML) {
+      const body = await renderHTML(content, {
         manager: html,
         assets: synchronousAssets,
         preloadAssets,
@@ -173,7 +173,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     const responseStream = new TextEncoderStream();
     const body = responseStream.readable;
 
-    const renderFullHtml = async function renderFullHtml() {
+    const renderFullHTML = async function renderFullHTML() {
       const writer = responseStream.writable.getWriter();
 
       writer.write(`<!DOCTYPE html>`);
@@ -275,7 +275,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       writer.close();
     };
 
-    waitUntil(renderFullHtml());
+    waitUntil(renderFullHTML());
 
     return {headers, body};
   }

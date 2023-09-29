@@ -26,14 +26,14 @@ TODO
 
 > **Note:** if you are using Quilt’s [`App` component](TODO), this work is already done for you. You can skip on to the next sections, where you’ll learn how to manipulate the HTML document from your React app.
 
-A number of components and hooks from this library, including `<Title />`, `<Meta />`, and `<Link />`, can update the HTML document client-side. These components rely on a central batching mechanism to coordinate their changes to the DOM. To kick off those batch updates, you need to call the `useHtmlUpdater()` hook from this library somewhere in your application:
+A number of components and hooks from this library, including `<Title />`, `<Meta />`, and `<Link />`, can update the HTML document client-side. These components rely on a central batching mechanism to coordinate their changes to the DOM. To kick off those batch updates, you need to call the `useHTMLUpdater()` hook from this library somewhere in your application:
 
 ```tsx
-import {useHtmlUpdater} from '@quilted/react-html';
+import {useHTMLUpdater} from '@quilted/react-html';
 // also available from '@quilted/quilt/html'
 
 export function App({user}: {user: string}) {
-  useHtmlUpdater();
+  useHTMLUpdater();
 
   return <Ui />;
 }
@@ -218,26 +218,26 @@ export function App() {
 
 ### Setting attributes on elements outside your React application
 
-Some libraries require you to put attributes on “special” elements in the DOM, most commonly either on the root `<html>` element, or the `<body>` element. Quilt provides an `<HtmlAttributes>` component and `useHtmlAttributes` hook for applying props to the `<html>` element from within your React app, and `<BodyAttributes>`/ `useBodyAttributes` for applying props to the `<body>` element:
+Some libraries require you to put attributes on “special” elements in the DOM, most commonly either on the root `<html>` element, or the `<body>` element. Quilt provides an `<HTMLAttributes>` component and `useHTMLAttributes` hook for applying props to the `<html>` element from within your React app, and `<BodyAttributes>`/ `useBodyAttributes` for applying props to the `<body>` element:
 
 ```tsx
 import {
   BodyAttributes,
-  HtmlAttributes,
+  HTMLAttributes,
   useBodyAttributes,
-  useHtmlAttributes,
+  useHTMLAttributes,
 } from '@quilted/react-html';
 // also available from '@quilted/quilt/html'
 
 export function App() {
-  useHtmlAttributes({lang: 'en'});
+  useHTMLAttributes({lang: 'en'});
   useBodyAttributes({'data-page': 'my-page'});
 
   // or...
 
   return (
     <>
-      <HtmlAttributes lang="en" />
+      <HTMLAttributes lang="en" />
       <BodyAttributes data-page="my-page" />
     </>
   );

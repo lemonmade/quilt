@@ -3,7 +3,7 @@ export {
   BodyAttributes,
   HeadScript,
   HeadStyle,
-  HtmlAttributes,
+  HTMLAttributes,
   Link,
   Meta,
   SearchRobots,
@@ -17,7 +17,7 @@ export {
   useBodyAttributes,
   useHeadScript,
   useHeadStyle,
-  useHtmlAttributes,
+  useHTMLAttributes,
   useFavicon,
   useLink,
   useLocale,
@@ -26,7 +26,9 @@ export {
   useThemeColor,
   useTitle,
   useViewport,
-  useHtmlUpdater,
+  useHTMLUpdater,
   getSerialized,
 } from '@quilted/react-html';
 export type {Serializable} from '@quilted/react-html';
+
+export {HTML} from './html/HTML.tsx';

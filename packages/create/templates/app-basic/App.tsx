@@ -1,7 +1,7 @@
-import {type PropsWithChildren} from '@quilted/quilt';
 import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
+import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 
 import {Head} from './foundation/html.ts';
 import {Headers} from './foundation/http.ts';
