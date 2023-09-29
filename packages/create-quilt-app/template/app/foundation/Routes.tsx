@@ -1,4 +1,4 @@
-import {useRoutes} from '@quilted/quilt';
+import {useRoutes} from '@quilted/quilt/navigate';
 
 import {Start} from '../features/Start.tsx';
 

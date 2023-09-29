@@ -11,15 +11,10 @@ describe('html', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {QuiltApp} from '@quilted/quilt';
             import {HeadScript} from '@quilted/quilt/html';
 
             export default function App() {
-              return (
-                <QuiltApp>
-                  <HeadScript src="/script.js" />
-                </QuiltApp>
-              )
+              return <HeadScript src="/script.js" />;
             }
           `,
         });
@@ -43,15 +38,10 @@ describe('html', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {QuiltApp} from '@quilted/quilt';
             import {HeadStyle} from '@quilted/quilt/html';
 
             export default function App() {
-              return (
-                <QuiltApp>
-                  <HeadStyle href="/style.css" />
-                </QuiltApp>
-              )
+              return <HeadStyle href="/style.css" />;
             }
           `,
         });

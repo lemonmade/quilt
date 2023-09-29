@@ -30,5 +30,11 @@ export {
   getSerialized,
 } from '@quilted/react-html';
 export type {Serializable} from '@quilted/react-html';
+export {
+  useCookie,
+  useCookies,
+  type Cookies,
+  type CookieOptions,
+} from '@quilted/react-http';
 
 export {HTML} from './html/HTML.tsx';

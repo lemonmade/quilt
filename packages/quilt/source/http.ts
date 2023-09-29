@@ -13,6 +13,7 @@ export {
   useCrossOriginResourcePolicy,
   usePermissionsPolicy,
   useRequestHeader,
+  useRequestHeaders,
   useResponseCookie,
   useDeleteResponseCookie,
   useResponseHeader,

@@ -1,8 +1,7 @@
-import {
-  createRender,
-  QuiltAppTesting,
-  createTestRouter,
-} from '@quilted/quilt/testing';
+import {createRender} from '@quilted/quilt/react/testing';
+import {TestRouting, TestRouter} from '@quilted/quilt/navigate/testing';
+import {Localization} from '@quilted/quilt/localize';
+
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import {trpc} from '~/shared/trpc.ts';
@@ -23,23 +22,25 @@ export const renderApp = createRender<
   // Create context that can be used by the `render` function, and referenced by test
   // authors on the `root.context` property. Context is used to share data between your
   // React tree and your test code, and is ideal for mocking out global context providers.
-  context({router = createTestRouter()}) {
+  context({router = new TestRouter()}) {
     return {router, trpc: trpc.createClient(), queryClient: new QueryClient()};
   },
   // Render all of our app-wide context providers around each component under test.
-  render(element, context, {locale}) {
+  render(element, context, {locale = 'en'}) {
     const {router, trpc: trpcClient, queryClient} = context;
 
     return (
-      <QuiltAppTesting routing={router} localization={locale}>
-        <AppContextReact.Provider value={context}>
-          <trpc.Provider client={trpcClient} queryClient={queryClient}>
-            <QueryClientProvider client={queryClient}>
-              {element}
-            </QueryClientProvider>
-          </trpc.Provider>
-        </AppContextReact.Provider>
-      </QuiltAppTesting>
+      <Localization locale={locale}>
+        <TestRouting router={router}>
+          <AppContextReact.Provider value={context}>
+            <trpc.Provider client={trpcClient} queryClient={queryClient}>
+              <QueryClientProvider client={queryClient}>
+                {element}
+              </QueryClientProvider>
+            </trpc.Provider>
+          </AppContextReact.Provider>
+        </TestRouting>
+      </Localization>
     );
   },
   async afterRender() {

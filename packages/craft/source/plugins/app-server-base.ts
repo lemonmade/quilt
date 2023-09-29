@@ -176,11 +176,13 @@ function setupConfiguration(
       : stripIndent`
         import '@quilted/quilt/globals';
         import {jsx} from 'react/jsx-runtime';
-        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-        import {RequestRouter} from ${JSON.stringify(
+        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {renderToResponse} from '@quilted/quilt/server';
+        import {BrowserAssets} from ${JSON.stringify(
           MAGIC_MODULE_BROWSER_ASSETS,
         )};
-        import {renderToResponse} from '@quilted/quilt/server';
+
+        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
 
         const router = new RequestRouter();
         const assets = new BrowserAssets();

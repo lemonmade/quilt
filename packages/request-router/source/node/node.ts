@@ -103,7 +103,7 @@ export async function sendResponse(
   httpResponse: ServerResponse,
 ) {
   const {status, headers, body, cookies} = response;
-  const setCookieHeaders = cookies?.getAll();
+  const setCookieHeaders = headers.getSetCookie?.() ?? cookies?.getAll();
 
   httpResponse.writeHead(
     status,

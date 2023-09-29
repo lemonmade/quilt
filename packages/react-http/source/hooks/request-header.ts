@@ -1,6 +1,9 @@
 import {useContext} from 'react';
+
 import {HttpHeadersContext} from '../context.ts';
 import {useHttpAction} from './http-action.ts';
+
+export const useRequestHeaders = () => useContext(HttpHeadersContext);
 
 /**
  * Returns the request header with the provided name, if server
@@ -18,7 +21,7 @@ import {useHttpAction} from './http-action.ts';
  * be using `@quilted/react-html`’s server-side rendering feature.
  */
 export function useRequestHeader(header: string) {
-  const headers = useContext(HttpHeadersContext);
+  const headers = useRequestHeaders();
 
   useHttpAction((http) => http.persistHeader(header));
 

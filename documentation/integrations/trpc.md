@@ -59,12 +59,12 @@ tRPC needs to be accessible through an API endpoint on your server. If you have 
 ```tsx
 // app/server.tsx
 
-import {createRequestRouter} from '@quilted/quilt/server';
+import {RequestRouter} from '@quilted/quilt/request-router';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
 import {appRouter} from './trpc.ts';
 
-const router = createRequestRouter();
+const router = new RequestRouter();
 
 router.any(
   'api',
@@ -108,12 +108,8 @@ The basic app renders a number of “global” context providers in the main `ap
 ```tsx
 // app/App.tsx
 
-import {useMemo} from 'react';
-import {
-  AppContext,
-  useInitialUrl,
-  type PropsWithChildren,
-} from '@quilted/quilt';
+import {useMemo, type PropsWithChildren} from 'react';
+import {useInitialUrl} from '@quilted/quilt/navigate';
 
 import {httpBatchLink} from '@trpc/client';
 import {QueryClient} from '@tanstack/react-query';
@@ -132,7 +128,9 @@ export default function App() {
   );
 }
 
-function Trpc({children}: PropsWithChildren) {
+interface TrpcProps {}
+
+function Trpc({children}: PropsWithChildren<TrpcProps>) {
   const initialUrl = useInitialUrl();
 
   const queryClient = useMemo(() => new QueryClient(), []);
@@ -192,12 +190,8 @@ To use this optimization, you’ll need to accept a different tRPC link when ser
 ```tsx
 // app/App.tsx
 
-import {useMemo} from 'react';
-import {
-  AppContext,
-  useInitialUrl,
-  type PropsWithChildren,
-} from '@quilted/quilt';
+import {useMemo, type PropsWithChildren} from 'react';
+import {useInitialUrl} from '@quilted/quilt/navigate';
 
 import {httpBatchLink, type TRPCClient} from '@trpc/client';
 import {createTRPCReact} from '@trpc/react-query';
@@ -208,7 +202,7 @@ import {ReactQueryContext} from '@quilted/react-query';
 import {trpc} from '~/shared/trpc.ts';
 
 export interface Props {
-  trpc?: TRPCClient<any>;
+  trpc?: TrpcProps['client'];
 }
 
 // This is your default App component. When creating a template, it
@@ -222,10 +216,11 @@ export default function App({trpc}: Props) {
   );
 }
 
-function Trpc({
-  client,
-  children,
-}: PropsWithChildren<{client?: Props['trpcClient']}>) {
+interface TrpcProps {
+  client?: TRPCClient<any>;
+}
+
+function Trpc({client, children}: PropsWithChildren<TrpcProps>) {
   const initialUrl = useInitialUrl();
 
   const queryClient = useMemo(() => new QueryClient(), []);
@@ -263,7 +258,7 @@ import type {} from '@quilted/cloudflare';
 import App from './App.tsx';
 import {appRouter} from './trpc.ts';
 
-const router = createRequestRouter();
+const router = new RequestRouter();
 
 // Make sure to keep your existing tRPC HTTP routes, as they
 // will be used when your app runs on the client.

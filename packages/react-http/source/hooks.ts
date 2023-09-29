@@ -6,7 +6,7 @@ export {useCrossOriginOpenerPolicy} from './hooks/cross-origin-opener-policy.ts'
 export {useCrossOriginResourcePolicy} from './hooks/cross-origin-resource-policy.ts';
 export {usePermissionsPolicy} from './hooks/permissions-policy.ts';
 export {useResponseRedirect} from './hooks/redirect.ts';
-export {useRequestHeader} from './hooks/request-header.ts';
+export {useRequestHeader, useRequestHeaders} from './hooks/request-header.ts';
 export {useResponseHeader} from './hooks/response-header.ts';
 export {
   useDeleteResponseCookie,
