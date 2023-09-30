@@ -45,6 +45,25 @@
       "import": "./build/esm/noop.mjs",
       "require": "./build/cjs/noop.cjs"
     },
+    "./fetch-get-set-cookie": {
+      "types": "./build/typescript/noop.d.ts",
+      "browser": {
+        "quilt:source": "./source/fetch-get-set-cookie.browser.ts",
+        "quilt:esnext": "./build/esnext/fetch-get-set-cookie.browser.esnext",
+        "import": "./build/esm/fetch-get-set-cookie.browser.mjs",
+        "require": "./build/cjs/fetch-get-set-cookie.browser.cjs"
+      },
+      "node": {
+        "quilt:source": "./source/fetch-get-set-cookie.node.ts",
+        "quilt:esnext": "./build/esnext/fetch-get-set-cookie.node.esnext",
+        "import": "./build/esm/fetch-get-set-cookie.node.mjs",
+        "require": "./build/cjs/fetch-get-set-cookie.node.cjs"
+      },
+      "quilt:source": "./source/noop.ts",
+      "quilt:esnext": "./build/esnext/noop.esnext",
+      "import": "./build/esm/noop.mjs",
+      "require": "./build/cjs/noop.cjs"
+    },
     "./abort-controller": {
       "types": "./build/typescript/noop.d.ts",
       "browser": {
@@ -88,6 +107,9 @@
       "fetch": [
         "./build/typescript/noop.d.ts"
       ],
+      "fetch-get-set-cookie": [
+        "./build/typescript/noop.d.ts"
+      ],
       "abort-controller": [
         "./build/typescript/noop.d.ts"
       ],
@@ -111,6 +133,7 @@
     "abort-controller": "^3.0.0",
     "caniuse-api": "^3.0.0",
     "core-js": "^3.21.0",
+    "headers-polyfill": "^4.0.1",
     "pkg-dir": "^6.0.0",
     "regenerator-runtime": "^0.13.0",
     "whatwg-fetch": "^3.6.0"

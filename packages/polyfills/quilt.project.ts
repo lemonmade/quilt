@@ -12,6 +12,7 @@ export default createProject((project) => {
         noop: './source/noop.ts',
         'fetch.browser': './source/fetch.browser.ts',
         'fetch.node': './source/fetch.node.ts',
+        'fetch-get-set-cookie': './source/fetch-get-set-cookie.ts',
         'abort-controller': './source/abort-controller.ts',
       },
     }),

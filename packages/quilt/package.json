@@ -202,6 +202,13 @@
       "import": "./build/esm/polyfills/fetch.mjs",
       "require": "./build/cjs/polyfills/fetch.cjs"
     },
+    "./polyfills/fetch-get-set-cookie": {
+      "types": "./build/typescript/polyfills/fetch-get-set-cookie.d.ts",
+      "quilt:source": "./source/polyfills/fetch-get-set-cookie.ts",
+      "quilt:esnext": "./build/esnext/polyfills/fetch-get-set-cookie.esnext",
+      "import": "./build/esm/polyfills/fetch-get-set-cookie.mjs",
+      "require": "./build/cjs/polyfills/fetch-get-set-cookie.cjs"
+    },
     "./polyfills/abort-controller": {
       "types": "./build/typescript/polyfills/abort-controller.d.ts",
       "quilt:source": "./source/polyfills/abort-controller.ts",
@@ -319,6 +326,9 @@
       ],
       "polyfills/fetch": [
         "./build/typescript/polyfills/fetch.d.ts"
+      ],
+      "polyfills/fetch-get-set-cookie": [
+        "./build/typescript/polyfills/fetch-get-set-cookie.d.ts"
       ],
       "polyfills/crypto": [
         "./build/typescript/polyfills/crypto.d.ts"
