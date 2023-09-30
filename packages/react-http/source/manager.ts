@@ -51,7 +51,7 @@ export class HttpManager {
   reset() {
     this.statusCodes = [];
 
-    this.responseHeaders.forEach((header) => {
+    this.responseHeaders.forEach((_, header) => {
       this.responseHeaders.delete(header);
     });
 
