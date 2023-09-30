@@ -7,6 +7,7 @@
 '@quilted/create': minor
 'create-quilt-app': minor
 '@quilted/graphql': minor
+'@quilted/polyfills': minor
 '@quilted/quilt': minor
 '@quilted/react-email': minor
 '@quilted/react-graphql': minor
