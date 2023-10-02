@@ -1,5 +1,17 @@
 # @quilted/craft
 
+## 0.1.233
+
+### Patch Changes
+
+- [#612](https://github.com/lemonmade/quilt/pull/612) [`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify app template APIs
+
+- Updated dependencies [[`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f)]:
+  - @quilted/assets@0.0.4
+  - @quilted/polyfills@0.2.35
+  - @quilted/quilt@0.5.153
+  - @quilted/async@0.3.45
+
 ## 0.1.232
 
 ### Patch Changes

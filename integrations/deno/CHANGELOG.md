@@ -1,5 +1,15 @@
 # @quilted/deno
 
+## 0.1.2
+
+### Patch Changes
+
+- [#612](https://github.com/lemonmade/quilt/pull/612) [`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify app template APIs
+
+- Updated dependencies [[`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f)]:
+  - @quilted/craft@0.1.233
+  - @quilted/quilt@0.5.153
+
 ## 0.1.1
 
 ### Patch Changes

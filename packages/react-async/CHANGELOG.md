@@ -1,5 +1,12 @@
 # @quilted/react-async
 
+## 0.3.49
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @quilted/react-assets@0.0.5
+
 ## 0.3.48
 
 ### Patch Changes
