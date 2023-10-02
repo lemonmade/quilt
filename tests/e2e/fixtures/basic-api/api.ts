@@ -1,7 +1,7 @@
-import {createRequestRouter, html} from '@quilted/quilt/request-router';
+import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
 
-const router = createRequestRouter();
+const router = new RequestRouter();
 
-router.get('/', () => html('Hello world!'));
+router.get('/', () => new HTMLResponse('Hello world!'));
 
 export default router;

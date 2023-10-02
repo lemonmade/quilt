@@ -17,6 +17,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
       - name: Deploy preview versions to NPM
-        run: pnpm typescript:run ./.github/workflows/scripts/snapshot-versions.ts
+        run: pnpm typescript.run ./.github/workflows/scripts/snapshot-versions.ts
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}

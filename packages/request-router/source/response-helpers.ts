@@ -3,41 +3,54 @@ import type {RelativeTo} from '@quilted/routing';
 import {EnhancedResponse, type ResponseInit} from './response.ts';
 import {resolveTo, type NavigateTo} from './utilities.ts';
 
-export function notFound(options: Omit<ResponseInit, 'status'> = {}) {
-  return new EnhancedResponse(null, {status: 404, ...options});
+export class NotFoundResponse extends EnhancedResponse {
+  constructor(
+    body?: BodyInit | null,
+    options: Omit<ResponseInit, 'status'> = {},
+  ) {
+    super(body, {status: 404, ...options});
+  }
 }
 
-export function noContent(options: Omit<ResponseInit, 'status'> = {}) {
-  return new EnhancedResponse(null, {status: 204, ...options});
+export class NoContentResponse extends EnhancedResponse {
+  constructor(options: Omit<ResponseInit, 'status'> = {}) {
+    super(null, {status: 204, ...options});
+  }
 }
 
-// @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections
-export function redirect(
-  to: NavigateTo,
-  {
-    status = 308,
-    request,
-    relativeTo,
-    ...options
-  }: Omit<ResponseInit, 'status'> & {
-    status?: 300 | 301 | 302 | 303 | 304 | 305 | 305 | 307 | 308;
-    request?: Request;
-    relativeTo?: RelativeTo;
-  } = {},
-) {
-  const response = new EnhancedResponse(null, {status, ...options});
-  response.headers.set('Location', resolveTo(to, {request, relativeTo}));
-  return response;
+export class RedirectResponse extends EnhancedResponse {
+  constructor(
+    to: NavigateTo,
+    {
+      status = 308,
+      request,
+      relativeTo,
+      ...options
+    }: Omit<ResponseInit, 'status'> & {
+      status?: 300 | 301 | 302 | 303 | 304 | 305 | 305 | 307 | 308;
+      request?: Request;
+      relativeTo?: RelativeTo;
+    } = {},
+  ) {
+    super(null, {status, ...options});
+    this.headers.set('Location', resolveTo(to, {request, relativeTo}));
+  }
 }
 
-export function html(body: BodyInit, options?: ResponseInit) {
-  const response = new EnhancedResponse(body, options);
-  response.headers.set('Content-Type', 'text/html');
-  return response;
+export class HTMLResponse extends EnhancedResponse {
+  constructor(body: BodyInit, options?: ResponseInit) {
+    super(body, options);
+    this.headers.set('Content-Type', 'text/html; charset=utf-8');
+  }
 }
 
-export function json(body: any, options?: ResponseInit) {
-  const response = new EnhancedResponse(JSON.stringify(body), options);
-  response.headers.set('Content-Type', 'application/json');
-  return response;
+export {HTMLResponse as HtmlResponse};
+
+export class JsonResponse extends EnhancedResponse {
+  constructor(body: unknown, options?: ResponseInit) {
+    super(JSON.stringify(body), options);
+    this.headers.set('Content-Type', 'application/json; charset=utf-8');
+  }
 }
+
+export {JsonResponse as JSONResponse};

@@ -1,6 +1,4 @@
-export {createHeaders} from '@quilted/http';
 export type {
-  Headers,
   ReadonlyHeaders,
   Cookies,
   ReadonlyCookies,
@@ -18,10 +16,6 @@ export {handleRequest} from './handle.ts';
 
 export type {
   CookieDefinition,
-  RequestRouter,
-  RequestRegistration,
-  RequestRegistrationOptions,
-  RequestHandler,
   RequestContext,
   EnhancedWritableCookies,
 } from './types.ts';

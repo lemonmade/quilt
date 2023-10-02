@@ -1,10 +1,11 @@
+import './testing/matchers.ts';
+
 export {
   gql,
   graphql,
-  TestGraphQL,
+  GraphQLTesting,
   createGraphQLSchema,
   createGraphQLFiller,
-  createGraphQLController,
   GraphQLController,
 } from '@quilted/react-graphql/testing';
 export type {

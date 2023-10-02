@@ -1,4 +1,4 @@
-import {notFound, handleRequest} from '@quilted/quilt/request-router';
+import {NotFoundResponse, handleRequest} from '@quilted/quilt/request-router';
 import type {
   RequestRouter,
   RequestHandler,
@@ -49,7 +49,7 @@ export function createFetchHandler<
         cf: request.cf,
         env,
         ...context,
-      } as any)) ?? notFound();
+      } as any)) ?? new NotFoundResponse();
 
     if (cache && response.headers.has('Cache-Control')) {
       context.waitUntil(cache.put(request, response.clone()));

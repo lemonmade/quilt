@@ -26,7 +26,7 @@ A library for testing React components with a focus on type safety and clear com
     - ['toContainReactComponentTimes()'](#toContainReactComponentTimes)
     - ['toProvideReactContext()'](#toProvideReactContext)
     - ['toContainReactText()'](#toContainReactText)
-    - ['toContainReactHtml()'](#toContainReactHtml)
+    - ['toContainReactHTML()'](#toContainReactHTML)
 - [FAQ](#faq)
 
 ## Installation
@@ -164,7 +164,7 @@ describe('<ClickCounter />', () => {
 });
 ```
 
-Additionally, this library provides DOM-specific matchers, like [`toContainReactHtml`](#toContainReactHtml), from the `@quilted/react-testing/dom-matchers` entrypoint.
+Additionally, this library provides DOM-specific matchers, like [`toContainReactHTML`](#toContainReactHTML), from the `@quilted/react-testing/dom-matchers` entrypoint.
 
 ```tsx
 import '@quilted/react-testing/matchers';
@@ -173,7 +173,7 @@ import '@quilted/react-testing/dom-matchers';
 // In a test...
 
 const button = render(<Button>Hello!</Button>);
-expect(button).toContainReactHtml('<button>Hello!</button>');
+expect(button).toContainReactHTML('<button>Hello!</button>');
 ```
 
 ### API
@@ -734,7 +734,7 @@ const myComponent = render(<MyComponent />);
 expect(myComponent).toContainReactText('Hello world!');
 ```
 
-#### <a name="toContainHtml"></a> `.toContainHtml(text: string)`
+#### <a name="toContainReactHTML"></a> `.toContainReactHTML(text: string)`
 
 > Only available from `@quilted/react-testing/dom-matchers`
 
@@ -742,7 +742,7 @@ Asserts that the rendered output of the component contains the passed string as 
 
 ```tsx
 const myComponent = render(<MyComponent />);
-expect(myComponent).toContainHtml('<span>Hello world!</span>');
+expect(myComponent).toContainReactHTML('<span>Hello world!</span>');
 ```
 
 ## FAQ

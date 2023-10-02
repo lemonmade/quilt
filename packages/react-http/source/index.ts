@@ -20,12 +20,14 @@ export {
   useCrossOriginResourcePolicy,
   usePermissionsPolicy,
   useRequestHeader,
+  useRequestHeaders,
   useResponseCookie,
   useDeleteResponseCookie,
   useResponseHeader,
   useResponseRedirect,
   useResponseStatus,
   useHttpAction,
+  useHttpManager,
   useStrictTransportSecurity,
 } from './hooks.ts';
 export {

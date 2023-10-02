@@ -20,7 +20,20 @@ export class EnhancedResponse extends Response {
   constructor(body?: BodyInit | null, options?: ResponseInit) {
     super(body, options);
 
-    if (typeof (options?.headers as HeadersWithRaw)?.raw === 'function') {
+    if (
+      typeof (options?.headers as HeadersWithGetSetCookie)?.getSetCookie ===
+      'function'
+    ) {
+      this.headers.delete('Set-Cookie');
+
+      for (const setCookie of (
+        options!.headers as HeadersWithGetSetCookie
+      ).getSetCookie()) {
+        this.headers.append('Set-Cookie', setCookie);
+      }
+    } else if (
+      typeof (options?.headers as HeadersWithRaw)?.raw === 'function'
+    ) {
       for (const [header, values] of Object.entries(
         (options!.headers as HeadersWithRaw).raw(),
       )) {

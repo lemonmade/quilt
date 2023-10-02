@@ -768,6 +768,9 @@ importers:
       core-js:
         specifier: ^3.21.0
         version: 3.31.0
+      headers-polyfill:
+        specifier: ^4.0.1
+        version: 4.0.1
       pkg-dir:
         specifier: ^6.0.0
         version: 6.0.1
@@ -994,6 +997,9 @@ importers:
 
   packages/react-html:
     dependencies:
+      '@quilted/assets':
+        specifier: ^0.0.3
+        version: link:../assets
       '@quilted/react-server-render':
         specifier: ^0.3.7
         version: link:../react-server-render
@@ -1100,6 +1106,9 @@ importers:
       '@quilted/react-server-render':
         specifier: ^0.3.7
         version: link:../react-server-render
+      '@quilted/react-utilities':
+        specifier: ^0.1.12
+        version: link:../react-utilities
       '@quilted/routing':
         specifier: ^0.2.7
         version: link:../routing
@@ -7593,6 +7602,10 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
+
+  /headers-polyfill@4.0.1:
+    resolution: {integrity: sha512-CD3yq1U/nwyKZHRFIjESyveXz6Buk0ImoIwlEOEyNVNAqJLjNX3YkJkaH9Mg5rqU5JiVgTBq/6Z0jR1L6KS0Gg==}
+    dev: false
 
   /hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}

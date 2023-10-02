@@ -9,7 +9,7 @@ import {useDomClientEffect} from './dom-effect-client.ts';
  * are *not* applied when `requestAnimationFrame` is not running (in most
  * browsers, this includes when your page is a background tab).
  */
-export function useHtmlUpdater() {
+export function useHTMLUpdater() {
   const queuedUpdate = useRef<number | null>(null);
 
   useDomClientEffect((manager) => {

@@ -1,4 +1,4 @@
-import {useCurrentUrl} from '@quilted/quilt';
+import {useInitialUrl} from '@quilted/quilt/navigate';
 import {
   CacheControl,
   ResponseHeader,
@@ -8,7 +8,7 @@ import {
 } from '@quilted/quilt/http';
 
 export function Http() {
-  const isHttps = useCurrentUrl().protocol === 'https:';
+  const isHttps = useInitialUrl().protocol === 'https:';
 
   return (
     <>

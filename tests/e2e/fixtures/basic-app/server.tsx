@@ -1,20 +1,24 @@
-import '@quilted/quilt/global';
-import {createRequestRouter, createServerRender} from '@quilted/quilt/server';
-import {createBrowserAssets} from '@quilted/quilt/magic/assets';
+import '@quilted/quilt/globals';
 
-const router = createRequestRouter();
+import {RequestRouter} from '@quilted/quilt/request-router';
+import {BrowserAssets} from '@quilted/quilt/magic/assets';
+
+const router = new RequestRouter();
+const assets = new BrowserAssets();
 
 // For all GET requests, render our React application.
-router.get(
-  createServerRender(
-    async () => {
-      const {default: App} = await import('./App.tsx');
-      return <App />;
-    },
-    {
-      assets: createBrowserAssets(),
-    },
-  ),
-);
+router.get(async (request) => {
+  const [{App}, {renderToResponse}] = await Promise.all([
+    import('./App.tsx'),
+    import('@quilted/quilt/server'),
+  ]);
+
+  const response = await renderToResponse(<App />, {
+    request,
+    assets,
+  });
+
+  return response;
+});
 
 export default router;

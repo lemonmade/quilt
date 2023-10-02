@@ -130,7 +130,7 @@ export interface DebugOptions {
   verbosity?: number;
 }
 
-export interface HtmlNodeExtensions {
+export interface HTMLNodeExtensions {
   readonly isDom: boolean;
   readonly domNodes: HTMLElement[];
   readonly domNode: HTMLElement | null;

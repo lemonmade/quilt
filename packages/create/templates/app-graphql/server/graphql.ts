@@ -11,7 +11,7 @@ const {createResolver, createQueryResolver} =
   createGraphQLResolverBuilder<Schema>();
 
 const Person = createResolver('Person', {
-  name: 'Winston',
+  name: async () => 'Winston',
 });
 
 const Query = createQueryResolver({
@@ -35,7 +35,6 @@ export async function performGraphQLOperation<
     source: operation,
     operationName,
     variableValues: variables,
-    rootValue: {name: () => 'Winston'},
   });
 
   return result as GraphQLResult<Data>;

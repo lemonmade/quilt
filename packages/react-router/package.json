@@ -52,6 +52,7 @@
     "@quilted/react-http": "^0.3.8",
     "@quilted/react-performance": "^0.1.12",
     "@quilted/react-server-render": "^0.3.7",
+    "@quilted/react-utilities": "^0.1.12",
     "@quilted/routing": "^0.2.7"
   },
   "peerDependencies": {

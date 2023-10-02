@@ -8,20 +8,20 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "quilt:from-source": "node ./scripts/quilt-from-source.js",
-    "create:from-source": "node --no-warnings --experimental-specifier-resolution=node --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
+    "quilt.from-source": "node ./scripts/quilt-from-source.js",
+    "create.from-source": "node --no-warnings --experimental-specifier-resolution=node --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
     "test": "node ./scripts/quilt-from-source.js test",
-    "test:unit": "node ./scripts/quilt-from-source.js test --exclude-pattern tests/e2e",
-    "test:e2e": "node ./scripts/quilt-from-source.js test tests/e2e/",
+    "test.unit": "node ./scripts/quilt-from-source.js test --exclude-pattern tests/e2e",
+    "test.e2e": "node ./scripts/quilt-from-source.js test tests/e2e/",
     "lint": "node ./scripts/quilt-from-source.js lint",
     "type-check": "node ./scripts/quilt-from-source.js type-check",
     "build": "node ./scripts/quilt-from-source.js build",
     "develop": "node ./scripts/quilt-from-source.js develop",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r",
-    "deploy:preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
-    "deploy:snapshot": "changeset version --snapshot snapshot && changeset publish --tag snapshot --no-git-tag",
-    "typescript:run": "node --no-warnings --experimental-specifier-resolution=node --experimental-vm-modules --loader \"./scripts/esbuild-module-loader.js\" --conditions quilt:source"
+    "deploy.preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
+    "deploy.snapshot": "changeset version --snapshot snapshot && changeset publish --tag snapshot --no-git-tag",
+    "typescript.run": "node --no-warnings --experimental-specifier-resolution=node --experimental-vm-modules --loader \"./scripts/esbuild-module-loader.js\" --conditions quilt:source"
   },
   "packageManager": "pnpm@8.7.6+sha256.c95869d443ed8fd6b7bb164bb8e89b56cabdc24f3c79b87ef68d8ae1c6b1d0e2",
   "devDependencies": {

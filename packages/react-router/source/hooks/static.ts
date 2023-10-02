@@ -14,7 +14,7 @@ export function useStaticRenderer(
   routes: readonly RouteDefinition[],
   {prefix, fallback = false, consumedPath}: Options = {},
 ) {
-  const staticRender = useContext(StaticRendererContext) ?? undefined;
+  const staticRender = useContext(StaticRendererContext);
 
   useServerAction(
     () => {

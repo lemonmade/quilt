@@ -331,22 +331,19 @@ export function appStatic({
                 return stripIndent`
                   import {createBrowserAssetsEntryFromManifest} from '@quilted/quilt/server';
 
-                  export function createBrowserAssets() {
-                    const noModuleManifest = ${manifestToCode(
-                      noModuleManifest,
-                    )};
-                    const moduleManifest = ${manifestToCode(moduleManifest)};
+                  const noModuleManifest = ${manifestToCode(noModuleManifest)};
+                  const moduleManifest = ${manifestToCode(moduleManifest)};
 
-                    return {
-                      entry(options) {
-                        return assetEntry({...options, entry: true});
-                      },
-                      modules(modules, options) {
-                        return assetEntry({...options, entry: false, modules});
-                      },
+                  export class BrowserAssets {
+                    entry(options) {
+                      return this._assetEntry({...options, entry: true});
                     }
 
-                    function assetEntry(options) {
+                    modules(modules, options) {
+                      return this._assetEntry({...options, entry: false, modules});
+                    }
+
+                    _assetEntry(options) {
                       const moduleManifestEntry = moduleManifest && createBrowserAssetsEntryFromManifest(moduleManifest, options);
                       const noModuleManifestEntry = noModuleManifest && createBrowserAssetsEntryFromManifest(noModuleManifest, options);
 
@@ -400,15 +397,15 @@ export function appStatic({
                 }
 
                 return stripIndent`
-                  import '@quilted/quilt/global';
+                  import '@quilted/quilt/globals';
                   import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-                  import {createBrowserAssets} from ${JSON.stringify(
+                  import {BrowserAssets} from ${JSON.stringify(
                     MAGIC_MODULE_BROWSER_ASSETS,
                   )};
                   import {renderStatic} from '@quilted/quilt/static';
 
                   export default async function render(options) {
-                    await renderStatic(App, {assets: createBrowserAssets(), ...options});
+                    await renderStatic(App, {assets: new BrowserAssets(), ...options});
                   }
                 `;
               },

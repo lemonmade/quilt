@@ -1,6 +1,6 @@
 import {describe, it, expect} from '@quilted/testing';
 
-import {render, createTestRouter} from '../../tests/utilities.tsx';
+import {render, TestRouter} from '../../tests/utilities.tsx';
 
 import {Link} from './Link.tsx';
 
@@ -12,7 +12,7 @@ describe('<Link />', () => {
 
   it('creates an anchor from a relative `to`', () => {
     const link = render(<Link to="my-product" />, {
-      router: createTestRouter('/products'),
+      router: new TestRouter('/products'),
     });
 
     expect(link).toContainReactComponent('a', {href: '/products/my-product'});
@@ -37,7 +37,7 @@ describe('<Link />', () => {
 
     it('calls router.navigate() with the `to` prop for normal clicks', () => {
       const to = '/';
-      const router = createTestRouter();
+      const router = new TestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
       const link = render(<Link to={to} />, {router});
@@ -47,7 +47,7 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the link is explicitly marked as `external`', () => {
-      const router = createTestRouter();
+      const router = new TestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" external />, {router});
@@ -57,7 +57,7 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when `onClick()` calls `event.preventDefault()`', () => {
-      const router = createTestRouter();
+      const router = new TestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
       const link = render(
@@ -70,7 +70,7 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the shift key is pressed', () => {
-      const router = createTestRouter();
+      const router = new TestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" />, {router});
@@ -80,7 +80,7 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the meta key is pressed', () => {
-      const router = createTestRouter();
+      const router = new TestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" />, {router});
@@ -90,7 +90,7 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the control key is pressed', () => {
-      const router = createTestRouter();
+      const router = new TestRouter();
       const navigate = jest.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" />, {router});

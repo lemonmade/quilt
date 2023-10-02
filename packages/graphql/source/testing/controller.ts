@@ -66,18 +66,6 @@ interface GraphQLControllerResolveAllOptions {
  * function, which can produce mocks that automatically fill in queries
  * and mutations with data matching the GraphQL schema.
  */
-export function createGraphQLController(
-  mocks?: Iterable<GraphQLMock<any, any>>,
-) {
-  return new GraphQLController(mocks);
-}
-
-/**
- * An object that can provide simulated GraphQL results. This
- * object is useful during testing and early development, as it allows
- * you to simulate GraphQL responses without needing to make requests
- * against a real server.
- */
 export class GraphQLController {
   /**
    * A list of GraphQL requests that have been completed by this controller.

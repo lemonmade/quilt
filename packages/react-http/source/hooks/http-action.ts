@@ -4,6 +4,8 @@ import {useServerAction} from '@quilted/react-server-render';
 import {HttpServerContext} from '../context.ts';
 import type {HttpManager} from '../manager.ts';
 
+export const useHttpManager = () => useContext(HttpServerContext);
+
 /**
  * During server-side rendering, the function you pass to this hook is
  * called with the HTTP server-rendering manager, if one is found.
@@ -12,7 +14,7 @@ import type {HttpManager} from '../manager.ts';
  * exposed as dedicated hooks.
  */
 export function useHttpAction(perform: (http: HttpManager) => void) {
-  const http = useContext(HttpServerContext);
+  const http = useHttpManager();
 
   useServerAction(
     () => {

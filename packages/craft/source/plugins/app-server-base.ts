@@ -174,22 +174,29 @@ function setupConfiguration(
           import ${JSON.stringify(project.fs.resolvePath(entry))};
         `
       : stripIndent`
-        import '@quilted/quilt/global';
+        import '@quilted/quilt/globals';
         import {jsx} from 'react/jsx-runtime';
-        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-        import {createBrowserAssets} from ${JSON.stringify(
+        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {renderToResponse} from '@quilted/quilt/server';
+        import {BrowserAssets} from ${JSON.stringify(
           MAGIC_MODULE_BROWSER_ASSETS,
         )};
-        import {createServerRender, createRequestRouter} from '@quilted/quilt/server';
 
-        const router = createRequestRouter();
+        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
 
-        router.get(
-          createServerRender(() => jsx(App), {
-            assets: createBrowserAssets(),
-          }),
-        );
-  
+        const router = new RequestRouter();
+        const assets = new BrowserAssets();
+        
+        // For all GET requests, render our React application.
+        router.get(async (request) => {
+          const response = await renderToResponse(jsx(App), {
+            request,
+            assets,
+          });
+        
+          return response;
+        });
+        
         export default router;
       `;
 

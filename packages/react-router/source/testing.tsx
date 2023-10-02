@@ -1,56 +1,68 @@
 import {useMemo} from 'react';
 import type {ReactNode} from 'react';
-import {resolveUrl} from '@quilted/routing';
+import {resolveUrl, type Prefix, type NavigateTo} from '@quilted/routing';
 
 import type {Router, Options} from './router.ts';
 import {CurrentUrlContext, RouterContext} from './context.ts';
 import {enhanceUrl, createKey} from './utilities.ts';
 import {FocusContext} from './components.ts';
+import type {EnhancedURL} from './types.ts';
 
-export function createTestRouter(
-  url: URL | string = '/',
-  {prefix, state = {}, isExternal: explicitIsExternal}: Options = {},
-): Router {
-  const currentUrl = enhanceUrl(
-    typeof url === 'string' ? new URL(url, window.location.href) : url,
-    state,
-    createKey(),
-    prefix,
-  );
+export class TestRouter implements Router {
+  readonly prefix?: Prefix;
+  readonly currentUrl: EnhancedURL;
+  readonly #isExternal: (url: URL, currentUrl: URL) => boolean;
 
-  const isExternal =
-    explicitIsExternal ?? ((url) => url.origin !== currentUrl.origin);
+  constructor(
+    url: URL | string = '/',
+    {prefix, state = {}, isExternal: explicitIsExternal}: Options = {},
+  ) {
+    this.currentUrl = enhanceUrl(
+      typeof url === 'string' ? new URL(url, window.location.href) : url,
+      state,
+      createKey(),
+      prefix,
+    );
+    this.prefix = prefix;
+    this.#isExternal =
+      explicitIsExternal ?? ((url) => url.origin !== this.currentUrl.origin);
+  }
 
-  return {
-    currentUrl,
-    prefix,
-    /* eslint-disable @typescript-eslint/no-empty-function */
-    go() {},
-    back() {},
-    forward() {},
-    block() {
-      return () => {};
-    },
-    listen() {
-      return () => {};
-    },
-    navigate() {},
-    /* eslint-enable @typescript-eslint/no-empty-function */
-    resolve: (to) => {
-      const url = resolveUrl(to, currentUrl);
-      return {url, external: isExternal(url, currentUrl)};
-    },
-  };
+  /* eslint-disable @typescript-eslint/no-empty-function */
+  go() {}
+
+  back() {}
+
+  forward() {}
+
+  block() {
+    return () => {};
+  }
+
+  listen() {
+    return () => {};
+  }
+
+  navigate() {}
+
+  /* eslint-enable @typescript-eslint/no-empty-function */
+  resolve(to: NavigateTo) {
+    const url = resolveUrl(to, this.currentUrl);
+    return {url, external: this.#isExternal(url, this.currentUrl)};
+  }
 }
 
-interface Props {
+export interface TestRoutingProps {
   router?: Router;
   children: ReactNode;
 }
 
-export function TestRouting({children, router: initialRouter}: Props) {
+export function TestRouting({
+  children,
+  router: initialRouter,
+}: TestRoutingProps) {
   const router = useMemo(
-    () => initialRouter ?? createTestRouter(),
+    () => initialRouter ?? new TestRouter(),
     [initialRouter],
   );
 

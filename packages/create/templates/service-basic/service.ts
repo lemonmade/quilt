@@ -1,6 +1,6 @@
-import {createRequestRouter} from '@quilted/quilt/request-router';
+import {RequestRouter} from '@quilted/quilt/request-router';
 
-const app = createRequestRouter();
+const app = new RequestRouter();
 
 app.get('/', () => new Response('Hello, world!'));
 

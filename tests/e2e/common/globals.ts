@@ -1,4 +1,4 @@
-import {createPerformance, type Performance} from '@quilted/quilt';
+import {createPerformance, type Performance} from '@quilted/quilt/performance';
 
 export interface Waiter {
   wait(id: string): Promise<void>;

@@ -3,16 +3,16 @@ import '@quilted/react-testing/matchers';
 import {createRender} from '@quilted/react-testing';
 import type {Prefix} from '@quilted/routing';
 
-import {createTestRouter, TestRouting} from '../testing.tsx';
+import {TestRouter, TestRouting} from '../testing.tsx';
 
-export {createTestRouter};
+export {TestRouter};
 
 export const render = createRender<
-  | {router?: ReturnType<typeof createTestRouter>; path?: never; prefix?: never}
+  | {router?: TestRouter; path?: never; prefix?: never}
   | {router?: never; path?: `/${string}`; prefix?: Prefix},
-  {router: ReturnType<typeof createTestRouter>}
+  {router: TestRouter}
 >({
-  context({path, prefix, router = createTestRouter(path, {prefix})}) {
+  context({path, prefix, router = new TestRouter(path, {prefix})}) {
     return {router};
   },
   render(element, {router}) {

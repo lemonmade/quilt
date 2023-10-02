@@ -3,7 +3,7 @@ import {describe, it, expect} from '@quilted/testing';
 import {graphql} from '../../gql.ts';
 import {createGraphQLSchema} from '../../schema.ts';
 
-import {createGraphQLController} from '../controller.ts';
+import {GraphQLController} from '../controller.ts';
 import {createGraphQLFiller} from '../filler.ts';
 
 describe('graphql testing', () => {
@@ -29,7 +29,7 @@ describe('graphql testing', () => {
     `;
 
     const fill = createGraphQLFiller(schema);
-    const controller = createGraphQLController([fill(query)]);
+    const controller = new GraphQLController([fill(query)]);
 
     expect(await controller.fetch(query)).toStrictEqual({
       data: {
@@ -65,7 +65,7 @@ describe('graphql testing', () => {
     const name = 'Winston';
 
     const fill = createGraphQLFiller(schema);
-    const controller = createGraphQLController([fill(query, {me: {name}})]);
+    const controller = new GraphQLController([fill(query, {me: {name}})]);
 
     expect(await controller.fetch(query)).toStrictEqual({
       data: {
@@ -96,7 +96,7 @@ describe('graphql testing', () => {
     `;
 
     const fill = createGraphQLFiller(schema);
-    const controller = createGraphQLController([fill(query)]);
+    const controller = new GraphQLController([fill(query)]);
 
     expect(await controller.fetch(query)).toStrictEqual({
       data: {
@@ -137,7 +137,7 @@ describe('graphql testing', () => {
     `;
 
     const fill = createGraphQLFiller(schema);
-    const controller = createGraphQLController([
+    const controller = new GraphQLController([
       fill(query, {transport: {__typename: 'Bike'}}),
     ]);
 

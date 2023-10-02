@@ -49,6 +49,9 @@ export function polyfillAliasesForTarget(
       featureTest == null ||
       !isSupported(featureTest, target)
         ? `${packageName}/${feature}`
+        : // We always polyfill Headers to get universal support for `Headers.prototype.getSetCookie`
+        feature === 'fetch'
+        ? `${packageName}/fetch-get-set-cookie`
         : noop;
   }
 

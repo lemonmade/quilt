@@ -2,14 +2,14 @@ import type {PropsWithChildren} from 'react';
 
 import {AssetsContext, type AssetsManager} from '@quilted/react-assets/server';
 import {InitialUrlContext} from '@quilted/react-router';
-import {HtmlContext, type HtmlManager} from '@quilted/react-html/server';
+import {HTMLContext, type HTMLManager} from '@quilted/react-html/server';
 import {HttpServerContext, type HttpManager} from '@quilted/react-http/server';
 
 import {maybeWrapContext} from '../utilities/react.tsx';
 
 interface Props {
   url?: string | URL;
-  html?: HtmlManager;
+  html?: HTMLManager;
   http?: HttpManager;
   assets?: AssetsManager;
 }
@@ -30,7 +30,7 @@ export function ServerContext({
       HttpServerContext,
       http,
       maybeWrapContext(
-        HtmlContext,
+        HTMLContext,
         html,
         maybeWrapContext(InitialUrlContext, normalizedUrl, children),
       ),

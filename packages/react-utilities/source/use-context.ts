@@ -5,8 +5,8 @@ import {
   type UseOptionalValueHookOptions,
 } from './use-optional.ts';
 
-export function createOptionalContext<T>() {
-  return createContext<T | undefined>(undefined);
+export function createOptionalContext<T>(defaultValue?: T) {
+  return createContext<T | undefined>(defaultValue);
 }
 
 export interface UseContextHook<T> extends UseOptionalValueHook<T> {}

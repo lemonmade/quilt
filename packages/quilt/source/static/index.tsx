@@ -1,13 +1,14 @@
-import {Fragment, type ComponentType} from 'react';
+import {type ComponentType} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
 
+import {type BrowserAssets} from '@quilted/assets';
 import {
-  styleAssetAttributes,
-  styleAssetPreloadAttributes,
-  scriptAssetAttributes,
-  scriptAssetPreloadAttributes,
-  type BrowserAssets,
-} from '@quilted/assets';
-import {renderHtmlToString, Html} from '@quilted/react-html/server';
+  Head,
+  Script,
+  ScriptPreload,
+  Style,
+  StylePreload,
+} from '@quilted/react-html/server';
 import type {RouteDefinition} from '@quilted/react-router';
 import {
   StaticRenderer,
@@ -243,54 +244,37 @@ export async function renderStatic(
       }),
     ]);
 
-    const minifiedHtml = renderHtmlToString(
-      <Html
-        manager={htmlManager}
-        headEndContent={
-          <>
-            {[...mainAssets.styles].map((style) => {
-              const attributes = styleAssetAttributes(style, {baseUrl: url});
-              return <link key={style.source} {...(attributes as any)} />;
-            })}
+    const {htmlAttributes, bodyAttributes, ...headProps} = htmlManager.state;
+    const minifiedHTML =
+      '<!DOCTYPE html>' +
+      renderToStaticMarkup(
+        // eslint-disable-next-line jsx-a11y/html-has-lang
+        <html {...htmlAttributes}>
+          <head>
+            <Head {...headProps} />
+            {mainAssets?.scripts.map((script) => (
+              <Script key={script.source} asset={script} baseUrl={url} />
+            ))}
+            {mainAssets?.styles.map((style) => (
+              <Style key={style.source} asset={style} baseUrl={url} />
+            ))}
+            {preloadAssets?.styles.map((style) => (
+              <StylePreload key={style.source} asset={style} baseUrl={url} />
+            ))}
+            {preloadAssets?.scripts.map((script) => (
+              <ScriptPreload key={script.source} asset={script} baseUrl={url} />
+            ))}
+          </head>
+          <body {...bodyAttributes}>
+            <div
+              id="app"
+              dangerouslySetInnerHTML={{__html: markup ?? ''}}
+            ></div>
+          </body>
+        </html>,
+      );
 
-            {[...mainAssets.scripts].map((script) => {
-              const attributes = scriptAssetAttributes(script, {
-                baseUrl: url,
-              });
-
-              return attributes.type === 'module' ? (
-                <Fragment key={script.source}>
-                  <link {...(scriptAssetPreloadAttributes(script) as any)} />
-                  <script {...(attributes as any)} async />
-                </Fragment>
-              ) : (
-                <script key={script.source} {...(attributes as any)} defer />
-              );
-            })}
-
-            {[...preloadAssets.styles].map((style) => {
-              const attributes = styleAssetPreloadAttributes(style, {
-                baseUrl: url,
-              });
-
-              return <link key={style.source} {...(attributes as any)} />;
-            })}
-
-            {[...preloadAssets.scripts].map((script) => {
-              const attributes = scriptAssetPreloadAttributes(script, {
-                baseUrl: url,
-              });
-
-              return <link key={script.source} {...(attributes as any)} />;
-            })}
-          </>
-        }
-      >
-        {markup}
-      </Html>,
-    );
-
-    const html = prettify ? await prettifyHtml(minifiedHtml) : minifiedHtml;
+    const html = prettify ? await prettifyHTML(minifiedHTML) : minifiedHTML;
 
     return {
       html,
@@ -300,7 +284,7 @@ export async function renderStatic(
   }
 }
 
-async function prettifyHtml(html: string) {
+async function prettifyHTML(html: string) {
   try {
     const {default: prettier} = await import('prettier');
     return prettier.format(html, {parser: 'html'});

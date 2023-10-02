@@ -1,11 +1,9 @@
-import type {createTestRouter} from '@quilted/quilt/testing';
+import type {TestRouter} from '@quilted/quilt/navigate/testing';
 import type {QueryClient} from '@tanstack/react-query';
 
 import type {AppContext} from '~/shared/context.ts';
 
 import type {GraphQLController} from '../graphql.ts';
-
-type Router = ReturnType<typeof createTestRouter>;
 
 export interface RenderOptions {
   /**
@@ -14,7 +12,7 @@ export interface RenderOptions {
    * its navigation method to check that components navigate as
    * you expect.
    */
-  readonly router?: Router;
+  readonly router?: TestRouter;
 
   /**
    * An object that controls the responses to GraphQL queries and mutations
@@ -47,7 +45,7 @@ export interface RenderContext extends AppContext {
   /**
    * The router used for this component test.
    */
-  readonly router: Router;
+  readonly router: TestRouter;
 
   /**
    * The GraphQL controller used for this component test.

@@ -8,7 +8,6 @@ export function loadTemplate(
   name:
     | 'package'
     | 'app-basic'
-    | 'app-single-file'
     | 'app-empty'
     | 'app-graphql'
     | 'app-trpc'
@@ -80,7 +79,6 @@ async function templateDirectory(
   name:
     | 'package'
     | 'app-basic'
-    | 'app-single-file'
     | 'app-empty'
     | 'app-graphql'
     | 'app-trpc'

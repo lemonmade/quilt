@@ -2,7 +2,7 @@
 
 import {useContext, useMemo} from 'react';
 
-import {HtmlContext} from '../context.ts';
+import {HTMLContext} from '../context.ts';
 import {type Serializable} from '../types.ts';
 
 import {useDomServerAction} from './dom-effect-server.ts';
@@ -20,7 +20,7 @@ export function useSerialized<T>(
   id: string,
   serialize?: T | (() => T | Promise<T>),
 ) {
-  const manager = useContext(HtmlContext);
+  const manager = useContext(HTMLContext);
 
   const data = useMemo(
     () =>

@@ -19,9 +19,9 @@ describe('polyfills', () => {
 
         await fs.write({
           'api.ts': stripIndent`
-            import {createRequestRouter, json} from '@quilted/quilt/request-router';
+            import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
 
-            const router = createRequestRouter();
+            const router = new RequestRouter();
             
             router.get('/', async () => {
               const result = await fetch('https://swapi-graphql.netlify.app/.netlify/functions/index', {
@@ -35,7 +35,7 @@ describe('polyfills', () => {
                 }
               });
 
-              return json(await result.json());
+              return new JSONResponse(await result.json());
             });
             
             export default router;          

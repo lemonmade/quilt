@@ -19,13 +19,13 @@ describe('http', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {useCookie, QuiltApp} from '@quilted/quilt';
+            import {useCookie, HTML} from '@quilted/quilt/html';
 
             export default function App() {
               return (
-                <QuiltApp>
+                <HTML>
                   <CookieUi />
-                </QuiltApp>
+                </HTML>
               )
             }
             
@@ -66,13 +66,13 @@ describe('http', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {QuiltApp, useCookie, useCookies} from '@quilted/quilt';
+            import {HTML, useCookie, useCookies} from '@quilted/quilt/html';
 
             export default function App() {
               return (
-                <QuiltApp>
+                <HTML>
                   <CookieUi />
-                </QuiltApp>
+                </HTML>
               )
             }
 

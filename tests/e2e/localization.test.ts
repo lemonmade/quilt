@@ -17,7 +17,9 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useRoutes, useLocale, Localization, usePerformanceNavigation} from '@quilted/quilt';
+            import {useRoutes} from '@quilted/quilt/navigate';
+            import {useLocale, Localization} from '@quilted/quilt/localize';
+            import {usePerformanceNavigation} from '@quilted/quilt/performance';
             
             export function Routes() {
               return useRoutes([{
@@ -58,7 +60,9 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useRoutes, useLocale, Localization, usePerformanceNavigation} from '@quilted/quilt';
+            import {useRoutes} from '@quilted/quilt/navigate';
+            import {useLocale, Localization} from '@quilted/quilt/localize';
+            import {usePerformanceNavigation} from '@quilted/quilt/performance';
             
             export function Routes() {
               return useRoutes([{
@@ -106,7 +110,8 @@ describe('localization', () => {
 
         await fs.write({
           'foundation/Routes.tsx': stripIndent`
-            import {useLocale, usePerformanceNavigation, useLocaleFromEnvironment, Localization} from '@quilted/quilt';
+            import {useLocale, useLocaleFromEnvironment, Localization} from '@quilted/quilt/localize';
+            import {usePerformanceNavigation} from '@quilted/quilt/performance';
             
             export function Routes() {
               const locale = useLocaleFromEnvironment();
@@ -146,11 +151,7 @@ describe('localization', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {QuiltApp, PerformanceContext, LocalizedRouting, createRoutePathLocalization} from '@quilted/quilt';
-
-            import {Http} from './foundation/Http.tsx';
-            import {Head} from './foundation/Head.tsx';
-            import {Routes} from './foundation/Routes.tsx';
+            import {useLocale, createRoutePathLocalization, LocalizedRouting} from '@quilted/quilt/localize';
 
             const localization = createRoutePathLocalization({
               default: 'en',
@@ -159,23 +160,13 @@ describe('localization', () => {
             
             export default function App() {
               return (
-                <QuiltApp routing={false} localization={false} http={<Http />} html={<Head />}>
-                  <LocalizedRouting localization={localization}>
-                    <Routes />
-                  </LocalizedRouting>
-                </QuiltApp>
+                <LocalizedRouting localization={localization}>
+                  <UI />
+                </LocalizedRouting>
               );
             }
-          `,
-        });
 
-        await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useLocale, usePerformanceNavigation} from '@quilted/quilt';
-            
-            export function Routes() {
-              usePerformanceNavigation();
-
+            function UI() {
               const locale = useLocale();
 
               return (
@@ -205,10 +196,8 @@ describe('localization', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import {QuiltApp, PerformanceContext, LocalizedRouting, createRoutePathLocalization} from '@quilted/quilt';
+            import {useLocale, createRoutePathLocalization, LocalizedRouting} from '@quilted/quilt/localize';
 
-            import {Http} from './foundation/Http.tsx';
-            import {Head} from './foundation/Head.tsx';
             import {Routes} from './foundation/Routes.tsx';
 
             const localization = createRoutePathLocalization({
@@ -218,23 +207,13 @@ describe('localization', () => {
             
             export default function App() {
               return (
-                <QuiltApp routing={false} localization={false} http={<Http />} html={<Head />}>
-                  <LocalizedRouting localization={localization}>
-                    <Routes />
-                  </LocalizedRouting>
-                </QuiltApp>
+                <LocalizedRouting localization={localization}>
+                  <UI />
+                </LocalizedRouting>
               );
             }
-          `,
-        });
 
-        await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-            import {useLocale, usePerformanceNavigation} from '@quilted/quilt';
-            
-            export function Routes() {
-              usePerformanceNavigation();
-
+            function UI() {
               const locale = useLocale();
 
               return (

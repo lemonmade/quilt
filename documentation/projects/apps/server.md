@@ -51,32 +51,34 @@ You can write any code for your server that you like. Quilt provides some utilit
 ```tsx
 // server.tsx
 
-import {createServerRender} from '@quilted/quilt/server';
-import {createRequestRouter} from '@quilted/quilt/request-router';
+import {RequestRouter} from '@quilted/quilt/request-router';
 
 // This is a “magic module” in Quilt — it doesn’t actually exist anywhere on
 // disk. Quilt creates it at runtime for you. This magic module gives you
 // access to a `@quilted/async` `AssetManifest` object that knows how to resolve
 // the right assets during server rendering, including the ability to select
 // the files with the right browser targets.
-import {createBrowserAssets} from '@quilted/quilt/magic/assets';
+import {BrowserAssets} from '@quilted/quilt/magic/assets';
 
-const router = createRequestRouter();
+const router = new RequestRouter();
+const assets = new BrowserAssets();
 
-router.get('ping', () => new Response('pong!', {status: 200}));
-router.get(
-  createServerRender(
-    async () => {
-      // We can asynchronously load the app so we don’t pay its cost
-      // until we are server rendering our app.
-      const {default: App} = await import('./App.tsx');
-      return <App />;
-    },
-    {
-      assets: createBrowserAssets(),
-    },
-  ),
-);
+// For all GET requests, render our React application.
+router.get(async (request) => {
+  // We can asynchronously load the app and react server rendering
+  // utilities so we don’t pay their cost until we are rendering our app.
+  const [{App}, {renderToResponse}] = await Promise.all([
+    import('./App.tsx'),
+    import('@quilted/quilt/server'),
+  ]);
+
+  const response = await renderToResponse(<App />, {
+    request,
+    assets,
+  });
+
+  return response;
+});
 
 export default router;
 ```
@@ -94,34 +96,6 @@ export default createProject((app) => {
       server: {entry: './server.tsx', format: 'custom'},
     }),
   );
-});
-```
-
-```tsx
-// server.tsx
-
-import Koa from 'koa';
-import {Html, renderApp, renderHtmlToString} from '@quilted/quilt/server';
-
-import App from './App.tsx';
-
-const app = new Koa();
-
-app.use(async (ctx) => {
-  const {markup, html, http} = await renderApp(<App />, {
-    url: ctx.url,
-    headers: ctx.headers,
-  });
-
-  const {headers, statusCode = 200} = http.state;
-
-  ctx.status = statusCode;
-
-  for (const [header, value] of headers) {
-    ctx.set(header, value);
-  }
-
-  ctx.body = renderHtmlToString(<Html manager={html}>{markup}</Html>);
 });
 ```
 

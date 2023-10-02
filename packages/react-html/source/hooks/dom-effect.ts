@@ -3,11 +3,11 @@
 import {useContext, useEffect, useRef} from 'react';
 import {useServerAction} from '@quilted/react-server-render';
 
-import {HtmlContext} from '../context.ts';
-import {SERVER_ACTION_KIND, type HtmlManager} from '../manager.ts';
+import {HTMLContext} from '../context.ts';
+import {SERVER_ACTION_KIND, type HTMLManager} from '../manager.ts';
 
 export function useDomEffect(
-  perform: (manager: HtmlManager) =>
+  perform: (manager: HTMLManager) =>
     | {
         update(...args: any[]): void;
         remove(): void;
@@ -15,7 +15,7 @@ export function useDomEffect(
     | undefined,
   inputs: unknown[] = [],
 ) {
-  const manager = useContext(HtmlContext);
+  const manager = useContext(HTMLContext);
   const resultRef = useRef<ReturnType<typeof perform>>();
   const effect = () => {
     if (resultRef.current) {

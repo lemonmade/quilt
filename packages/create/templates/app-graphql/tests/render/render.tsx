@@ -1,13 +1,12 @@
-import {
-  createRender,
-  QuiltAppTesting,
-  createTestRouter,
-} from '@quilted/quilt/testing';
+import {createRender} from '@quilted/quilt/react/testing';
+import {TestRouting, TestRouter} from '@quilted/quilt/navigate/testing';
+import {Localization} from '@quilted/quilt/localize';
+
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import {AppContextReact} from '~/shared/context.ts';
 
-import {TestGraphQL, createGraphQLController} from '../graphql.ts';
+import {GraphQLTesting, GraphQLController} from '../graphql.ts';
 
 import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
@@ -24,23 +23,25 @@ export const renderApp = createRender<
   // Create context that can be used by the `render` function, and referenced by test
   // authors on the `root.context` property. Context is used to share data between your
   // React tree and your test code, and is ideal for mocking out global context providers.
-  context({router = createTestRouter(), graphql = createGraphQLController()}) {
+  context({router = new TestRouter(), graphql = new GraphQLController()}) {
     return {router, graphql, queryClient: new QueryClient()};
   },
   // Render all of our app-wide context providers around each component under test.
-  render(element, context, {locale}) {
+  render(element, context, {locale = 'en'}) {
     const {router, graphql, queryClient} = context;
 
     return (
-      <QuiltAppTesting routing={router} localization={locale}>
-        <AppContextReact.Provider value={context}>
-          <TestGraphQL controller={graphql}>
+      <Localization locale={locale}>
+        <TestRouting router={router}>
+          <GraphQLTesting controller={graphql}>
             <QueryClientProvider client={queryClient}>
-              {element}
+              <AppContextReact.Provider value={context}>
+                {element}
+              </AppContextReact.Provider>
             </QueryClientProvider>
-          </TestGraphQL>
-        </AppContextReact.Provider>
-      </QuiltAppTesting>
+          </GraphQLTesting>
+        </TestRouting>
+      </Localization>
     );
   },
   async afterRender(wrapper) {

@@ -1,5 +1,5 @@
 import {createContext} from 'react';
 
-import {HtmlManager} from './manager.ts';
+import {HTMLManager} from './manager.ts';
 
-export const HtmlContext = createContext(new HtmlManager());
+export const HTMLContext = createContext(new HTMLManager());

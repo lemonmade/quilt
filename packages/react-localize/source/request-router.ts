@@ -1,4 +1,4 @@
-import {redirect, type RequestHandler} from '@quilted/request-router';
+import {RedirectResponse, type RequestHandler} from '@quilted/request-router';
 import {parseAcceptLanguageHeader} from '@quilted/localize';
 
 import type {
@@ -17,7 +17,7 @@ export interface RequestRouterLocalization {
   redirect(
     request: Request,
     options: {to: string} & Pick<
-      NonNullable<Parameters<typeof redirect>[1]>,
+      NonNullable<ConstructorParameters<typeof RedirectResponse>[1]>,
       'status' | 'headers'
     >,
   ): Response;
@@ -55,11 +55,14 @@ export function createRequestRouterLocalization({
       to,
       ...options
     }: {to: string} & Pick<
-      NonNullable<Parameters<typeof redirect>[1]>,
+      NonNullable<ConstructorParameters<typeof RedirectResponse>[1]>,
       'status' | 'headers'
     >,
   ): Response {
-    return redirect(redirectUrl(new URL(request.url), {to}), options);
+    return new RedirectResponse(
+      redirectUrl(new URL(request.url), {to}),
+      options,
+    );
   }
 
   return {
@@ -81,7 +84,7 @@ export function createRequestRouterLocalization({
           defaultLocale;
 
         if (urlLocale !== matchedLocale) {
-          return redirect(
+          return new RedirectResponse(
             redirectUrl(url, {
               to: matchedLocale,
             }),
