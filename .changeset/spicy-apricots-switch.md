@@ -1,23 +1,23 @@
 ---
-'@quilted/aws': minor
-'@quilted/cloudflare': minor
-'@quilted/deno': minor
-'@quilted/assets': minor
-'@quilted/craft': minor
-'@quilted/create': minor
-'create-quilt-app': minor
-'@quilted/graphql': minor
-'@quilted/polyfills': minor
-'@quilted/quilt': minor
-'@quilted/react-email': minor
-'@quilted/react-graphql': minor
-'@quilted/react-html': minor
-'@quilted/react-http': minor
-'@quilted/react-localize': minor
-'@quilted/react-router': minor
-'@quilted/react-testing': minor
-'@quilted/react-utilities': minor
-'@quilted/request-router': minor
+'@quilted/aws': patch
+'@quilted/cloudflare': patch
+'@quilted/deno': patch
+'@quilted/assets': patch
+'@quilted/craft': patch
+'@quilted/create': patch
+'create-quilt-app': patch
+'@quilted/graphql': patch
+'@quilted/polyfills': patch
+'@quilted/quilt': patch
+'@quilted/react-email': patch
+'@quilted/react-graphql': patch
+'@quilted/react-html': patch
+'@quilted/react-http': patch
+'@quilted/react-localize': patch
+'@quilted/react-router': patch
+'@quilted/react-testing': patch
+'@quilted/react-utilities': patch
+'@quilted/request-router': patch
 ---
 
 Simplify app template APIs
