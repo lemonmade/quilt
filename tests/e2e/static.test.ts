@@ -76,17 +76,17 @@ describe('app builds', () => {
 
         expect(pageOne).toContain('Page one');
         expect(pageOne).toMatch(
-          /<script\s+type="module"\s+src="[/]assets[/]One./,
+          /<script\s+async\s+type="module"\s+src="[/]assets[/]One./,
         );
 
         expect(pageTwo).toContain('Page two');
         expect(pageTwo).toMatch(
-          /<script\s+type="module"\s+src="[/]assets[/]Two./,
+          /<script\s+async\s+type="module"\s+src="[/]assets[/]Two./,
         );
 
         expect(pageThree).toContain('Page three');
         expect(pageThree).toMatch(
-          /<script\s+type="module"\s+src="[/]assets[/]Three./,
+          /<script\s+async\s+type="module"\s+src="[/]assets[/]Three./,
         );
       });
     });
