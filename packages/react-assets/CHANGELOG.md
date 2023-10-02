@@ -1,5 +1,12 @@
 # @quilted/react-assets
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f)]:
+  - @quilted/assets@0.0.4
+
 ## 0.0.4
 
 ### Patch Changes

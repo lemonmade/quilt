@@ -1,7 +1,7 @@
 {
   "name": "@quilted/quilt",
   "type": "module",
-  "version": "0.5.152",
+  "version": "0.5.153",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -359,13 +359,13 @@
     "./build/esm/polyfills/*.mjs"
   ],
   "dependencies": {
-    "@quilted/assets": "^0.0.3",
+    "@quilted/assets": "^0.0.4",
     "@quilted/async": "^0.3.34",
     "@quilted/events": "^1.0.0",
     "@quilted/graphql": "^1.2.0",
     "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^18.2.0",
-    "@quilted/react-assets": "^0.0.4",
+    "@quilted/react-assets": "^0.0.5",
     "@quilted/react-async": "^0.3.43",
     "@quilted/react-dom": "^18.2.0",
     "@quilted/react-graphql": "^0.4.30",

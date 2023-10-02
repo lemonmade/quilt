@@ -112,10 +112,10 @@ importers:
   integrations/aws:
     dependencies:
       '@quilted/craft':
-        specifier: ^0.1.176
+        specifier: ^0.1.233
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: ^0.5.125
+        specifier: ^0.5.153
         version: link:../../packages/quilt
       '@types/aws-lambda':
         specifier: ^8.0.0
@@ -137,10 +137,10 @@ importers:
         specifier: ^4.20221111.1
         version: 4.20221111.1
       '@quilted/craft':
-        specifier: ^0.1.231
+        specifier: ^0.1.233
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: ^0.5.152
+        specifier: ^0.5.153
         version: link:../../packages/quilt
       common-tags:
         specifier: ^1.8.0
@@ -162,10 +162,10 @@ importers:
   integrations/deno:
     dependencies:
       '@quilted/craft':
-        specifier: ^0.1.231
+        specifier: ^0.1.233
         version: link:../../packages/craft
       '@quilted/quilt':
-        specifier: ^0.5.152
+        specifier: ^0.5.153
         version: link:../../packages/quilt
       '@types/common-tags':
         specifier: ^1.8.0
@@ -228,7 +228,7 @@ importers:
         specifier: '>=7.0.0 <8.0.0'
         version: 7.18.2
       '@quilted/assets':
-        specifier: ^0.0.3
+        specifier: ^0.0.4
         version: link:../assets
       '@quilted/events':
         specifier: ^1.0.0
@@ -331,10 +331,10 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0(preact@10.17.0)(vite@4.4.0)
       '@quilted/assets':
-        specifier: 0.0.3
+        specifier: 0.0.4
         version: link:../assets
       '@quilted/async':
-        specifier: 0.3.44
+        specifier: 0.3.45
         version: link:../async
       '@quilted/browserslist-config':
         specifier: 0.1.9
@@ -346,7 +346,7 @@ importers:
         specifier: 0.1.6
         version: link:../graphql-tools
       '@quilted/polyfills':
-        specifier: 0.2.34
+        specifier: 0.2.35
         version: link:../polyfills
       '@quilted/prettier':
         specifier: 0.2.11
@@ -503,7 +503,7 @@ importers:
         version: 4.4.0(@types/node@18.17.0)
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.148
+        specifier: workspace:^0.5.153
         version: link:../quilt
       '@types/babel__core':
         specifier: ^7.20.0
@@ -798,7 +798,7 @@ importers:
   packages/quilt:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.3
+        specifier: ^0.0.4
         version: link:../assets
       '@quilted/async':
         specifier: ^0.3.34
@@ -816,7 +816,7 @@ importers:
         specifier: ^18.2.0
         version: link:../react
       '@quilted/react-assets':
-        specifier: ^0.0.4
+        specifier: ^0.0.5
         version: link:../react-assets
       '@quilted/react-async':
         specifier: ^0.3.43
@@ -916,7 +916,7 @@ importers:
   packages/react-assets:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.3
+        specifier: ^0.0.4
         version: link:../assets
       '@quilted/react-server-render':
         specifier: ^0.3.27
@@ -938,7 +938,7 @@ importers:
         specifier: ^0.3.12
         version: link:../async
       '@quilted/react-assets':
-        specifier: ^0.0.4
+        specifier: ^0.0.5
         version: link:../react-assets
       '@quilted/react-server-render':
         specifier: ^0.3.27
@@ -998,7 +998,7 @@ importers:
   packages/react-html:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.3
+        specifier: ^0.0.4
         version: link:../assets
       '@quilted/react-server-render':
         specifier: ^0.3.7

@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 1.2.3
+
+### Patch Changes
+
+- [#612](https://github.com/lemonmade/quilt/pull/612) [`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify app template APIs
+
 ## 1.2.2
 
 ### Patch Changes

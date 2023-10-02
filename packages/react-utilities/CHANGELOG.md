@@ -1,5 +1,11 @@
 # @quilted/react-utilities
 
+## 0.1.13
+
+### Patch Changes
+
+- [#612](https://github.com/lemonmade/quilt/pull/612) [`bc849bc7`](https://github.com/lemonmade/quilt/commit/bc849bc740318936656162fde851b784ed6ef78f) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify app template APIs
+
 ## 0.1.12
 
 ### Patch Changes
