@@ -16,6 +16,6 @@ export function Script({asset, baseUrl}: ScriptProps) {
       : {defer: attributes.defer ?? true};
 
   return (
-    <script key={asset.source} {...(attributes as any)} {...loadingAttribute} />
+    <script key={asset.source} {...loadingAttribute} {...(attributes as any)} />
   );
 }
