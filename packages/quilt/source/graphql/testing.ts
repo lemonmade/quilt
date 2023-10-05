@@ -1,5 +1,4 @@
-// Import so that matchers are defined
-import '@quilted/graphql/testing';
+import './testing/matchers.ts';
 
 export * from '@quilted/graphql/testing';
 export {GraphQLTesting} from '@quilted/react-graphql/testing';
