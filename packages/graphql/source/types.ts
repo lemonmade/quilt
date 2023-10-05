@@ -3,7 +3,6 @@ import type {
   FormattedExecutionResult,
   GraphQLFormattedError,
 } from 'graphql';
-import type {IfAllFieldsNullable} from '@quilted/useful-types';
 
 /**
  * A base type expressing anything that can be used to represent a
@@ -281,14 +280,11 @@ export type GraphQLHttpFetchOperationOptions<_Data, Variables> = Pick<
 
 /**
  * A helper type that resolves to an object with a `variables` property that
- * must match the provided `Variables` generic type. If all fields in `Variables`
- * can be `null` or `undefined`, then the `variables` property will be optional.
+ * must match the provided `Variables` generic type.
  */
-export type GraphQLVariableOptions<Variables> = IfAllFieldsNullable<
-  Variables,
-  {variables?: Variables},
-  {variables: Variables}
->;
+export interface GraphQLVariableOptions<Variables> {
+  variables?: Variables;
+}
 
 /**
  * Picks the type in `T` that is a GraphQL object with a `__typename` of `Type`.
