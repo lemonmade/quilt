@@ -1,5 +1,16 @@
 # @quilted/quilt
 
+## 0.5.154
+
+### Patch Changes
+
+- [`3a97053a`](https://github.com/lemonmade/quilt/commit/3a97053a0be2099910fe4e06d55d04461aff0234) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `toGraphQLSource()` helper, and re-export it and `toGraphQLOperation()` from more entrypoints
+
+- [`aef2507a`](https://github.com/lemonmade/quilt/commit/aef2507a947cb4e517db91ebd6f84a5fb574d119) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL matcher type definitions when importing `@quilted/quilt/graphql/testing`
+
+- Updated dependencies [[`3a97053a`](https://github.com/lemonmade/quilt/commit/3a97053a0be2099910fe4e06d55d04461aff0234)]:
+  - @quilted/graphql@1.3.0
+
 ## 0.5.153
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 1.3.0
+
+### Minor Changes
+
+- [`3a97053a`](https://github.com/lemonmade/quilt/commit/3a97053a0be2099910fe4e06d55d04461aff0234) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `toGraphQLSource()` helper, and re-export it and `toGraphQLOperation()` from more entrypoints
+
 ## 1.2.4
 
 ### Patch Changes
