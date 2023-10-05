@@ -1,3 +1,5 @@
 query Start {
-  name
+  me {
+    name
+  }
 }

@@ -8,7 +8,7 @@ export default function Start() {
 
   return (
     <div className={styles.Start}>
-      {data ? `Hello ${data.name}!` : 'Hello!'}
+      {data ? `Hello ${data.me.name}!` : 'Hello!'}
     </div>
   );
 }

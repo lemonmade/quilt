@@ -1,9 +1,13 @@
 import {graphql} from 'graphql';
 import {
+  toGraphQLSource,
+  type GraphQLFetch,
+  type GraphQLResult,
+} from '@quilted/quilt/graphql';
+import {
   createGraphQLSchema,
   createGraphQLResolverBuilder,
 } from '@quilted/quilt/graphql/server';
-import type {GraphQLResult, GraphQLSource} from '@quilted/quilt/graphql';
 
 import schemaSource, {type Schema} from '../graphql/schema.ts';
 
@@ -26,22 +30,13 @@ const Query = createQueryResolver({
 
 const schema = createGraphQLSchema(schemaSource, {Query, Person});
 
-export async function performGraphQLOperation<
-  Data = Record<string, unknown>,
-  Variables = Record<string, unknown>,
->(
-  operation: GraphQLSource<Data, Variables>,
-  {
-    variables,
-    operationName,
-  }: {variables?: Variables; operationName?: string} = {},
-) {
-  const result = await graphql({
-    schema,
-    source: operation,
-    operationName,
-    variableValues: variables,
-  });
+export const performGraphQLOperation: GraphQLFetch =
+  async function performGraphQLOperation(operation, options) {
+    const result = await graphql({
+      schema,
+      source: toGraphQLSource(operation),
+      variableValues: options?.variables as Readonly<{}>,
+    });
 
-  return result as GraphQLResult<Data>;
-}
+    return result as GraphQLResult<any>;
+  };
