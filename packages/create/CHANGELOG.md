@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.80
+
+### Patch Changes
+
+- [`97d00dd5`](https://github.com/lemonmade/quilt/commit/97d00dd5455958ba63e5cd2027f5b59af05ca9c4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL template schema
+
+- [`99cea8fd`](https://github.com/lemonmade/quilt/commit/99cea8fd544f44b6377785a61bb760bc12263661) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix template TypeScript issues
+
 ## 0.1.79
 
 ### Patch Changes
