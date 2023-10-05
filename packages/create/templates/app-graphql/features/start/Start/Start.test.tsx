@@ -1,6 +1,7 @@
 import {describe, it, expect} from '@quilted/quilt/testing';
 
-import {renderApp, fillGraphQL, GraphQLController} from '~/tests/render.ts';
+import {renderApp} from '~/tests/render.ts';
+import {fillGraphQL, GraphQLController} from '~/tests/graphql.ts';
 
 import Start from './Start.tsx';
 import startQuery from './StartQuery.graphql';
