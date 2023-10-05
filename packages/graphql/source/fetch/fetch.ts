@@ -1,12 +1,18 @@
 import {toGraphQLOperation} from '../operation.ts';
-import type {GraphQLFetch, GraphQLOperation} from '../types.ts';
+import type {
+  GraphQLResult,
+  GraphQLOperation,
+  GraphQLAnyOperation,
+  GraphQLFetchOptions,
+} from '../types.ts';
 
 import {GraphQLFetchRequest} from './request.ts';
 
 /**
- * Options for creating a `GraphQLFetch` function.
+ * Options for creating a `GraphQLFetch` function that performs GraphQL
+ * operations over HTTP.
  */
-export interface GraphQLHttpFetchOptions
+export interface GraphQLFetchOverHTTPCreateOptions
   extends Pick<RequestInit, 'credentials'> {
   /**
    * A customized version of `fetch()` to use when making HTTP requests.
@@ -98,17 +104,25 @@ export interface GraphQLHttpFetchOptions
 }
 
 /**
+ * Options that can be passed to a single fetch of a GraphQL operation.
+ */
+export interface GraphQLFetchOverHTTPOptions<Data, Variables>
+  extends GraphQLFetchOptions<Data, Variables>,
+    GraphQLFetchOverHTTPCreateOptions {}
+
+/**
  * The context used by HTTP-based `GraphQLFetch` functions.
  */
-export interface GraphQLHttpFetchContext {
+export interface GraphQLFetchOverHTTPContext {
+  /**
+   * The `Request` that was made to the GraphQL HTTP server.
+   */
+  request?: Request;
+
   /**
    * The `Response` that contained the GraphQL result.
    */
   response?: Response;
-}
-
-declare module '../types.ts' {
-  interface GraphQLFetchContext extends GraphQLHttpFetchContext {}
 }
 
 const EMPTY_OBJECT = {} as any;
@@ -119,7 +133,7 @@ const EMPTY_OBJECT = {} as any;
  * send GraphQL requests to a specific URL and return the parsed response.
  *
  * @example
- * const fetchGraphQL = createGraphQLHttpFetch({
+ * const fetchGraphQL = createGraphQLFetchOverHTTP({
  *   url: '/graphql',
  * });
  *
@@ -127,7 +141,9 @@ const EMPTY_OBJECT = {} as any;
  *   query { my { name } }
  * `);
  */
-export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
+export function createGraphQLFetchOverHTTP<
+  Extensions = Record<string, unknown>,
+>({
   url,
   method: defaultMethod,
   headers: defaultHeaders,
@@ -135,42 +151,50 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
   extensions: defaultExtensions,
   credentials,
   customizeRequest,
-  fetch = globalThis.fetch,
-}: GraphQLHttpFetchOptions): GraphQLFetch<Extensions> {
-  const fetchGraphQL: GraphQLFetch<Extensions> = async function fetchGraphQL(
-    operation,
-    options = EMPTY_OBJECT,
-    context,
+  fetch: defaultFetch = globalThis.fetch,
+}: GraphQLFetchOverHTTPCreateOptions) {
+  const fetchGraphQL = async function fetchGraphQL<
+    Data = Record<string, unknown>,
+    Variables = Record<string, unknown>,
+  >(
+    operation: GraphQLAnyOperation<Data, Variables>,
+    options: GraphQLFetchOverHTTPOptions<Data, Variables> = EMPTY_OBJECT,
+    context?: GraphQLFetchOverHTTPContext,
   ) {
     const variables = options?.variables as any;
     const resolvedOperation = toGraphQLOperation(operation);
 
+    const fetchForOperation = options.fetch ?? defaultFetch;
+
+    const urlForOperation = options.url ?? url;
     const resolvedUrl =
-      options.url ?? (typeof url === 'function' ? url(resolvedOperation) : url);
+      typeof urlForOperation === 'function'
+        ? urlForOperation(resolvedOperation)
+        : urlForOperation;
 
+    const methodForOperation = options.method ?? defaultMethod;
     const method =
-      options.method ??
-      (typeof defaultMethod === 'function'
-        ? defaultMethod(resolvedOperation)
-        : defaultMethod);
+      typeof methodForOperation === 'function'
+        ? methodForOperation(resolvedOperation)
+        : methodForOperation;
 
+    const headersForOperation = options.headers ?? defaultHeaders;
     const headers =
-      options.headers ??
-      (typeof defaultHeaders === 'function'
-        ? defaultHeaders(resolvedOperation)
-        : defaultHeaders);
+      typeof headersForOperation === 'function'
+        ? headersForOperation(resolvedOperation)
+        : headersForOperation;
 
+    const extensionsForOperation = options.extensions ?? defaultExtensions;
     const extensions =
-      options.extensions ??
-      (typeof defaultExtensions === 'function'
-        ? defaultExtensions(resolvedOperation)
-        : defaultExtensions);
+      typeof extensionsForOperation === 'function'
+        ? extensionsForOperation(resolvedOperation)
+        : extensionsForOperation;
 
+    const sourceForOperation = options.source ?? defaultSource;
     const source =
-      options.source ??
-      (typeof defaultSource === 'function'
-        ? defaultSource(resolvedOperation)
-        : defaultSource);
+      typeof sourceForOperation === 'function'
+        ? sourceForOperation(resolvedOperation)
+        : sourceForOperation;
 
     const graphqlRequest = new GraphQLFetchRequest(
       resolvedUrl,
@@ -190,7 +214,9 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
       ? await customizeRequest(graphqlRequest)
       : graphqlRequest;
 
-    const response = await fetch(request);
+    if (context) context.request = request;
+
+    const response = await fetchForOperation(request);
 
     if (context) context.response = response;
 
@@ -207,7 +233,7 @@ export function createGraphQLHttpFetch<Extensions = Record<string, unknown>>({
       };
     }
 
-    return await response.json();
+    return (await response.json()) as GraphQLResult<Data, Extensions>;
   };
 
   return fetchGraphQL;

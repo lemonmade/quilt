@@ -23,20 +23,7 @@ import type {
 
 import {GraphQLContext} from './context.tsx';
 
-export type {
-  GraphQLOperation,
-  GraphQLOperationType,
-  GraphQLAnyOperation,
-  GraphQLData,
-  GraphQLVariables,
-  GraphQLDeepPartialData,
-  GraphQLFetch,
-  GraphQLFetchContext,
-  GraphQLResult,
-  GraphQLError,
-  GraphQLVariableOptions,
-  PickGraphQLType,
-} from '@quilted/graphql';
+export type * from '@quilted/graphql';
 
 export {
   gql,

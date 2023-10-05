@@ -21,15 +21,15 @@ yarn add @quilted/graphql
 
 GraphQL is only useful if you can fetch results. This library provides a few helpers for fetching GraphQL results over the most common transport: HTTP. These utilities are focused on being as small as possible — basic GraphQL fetches require only about 1Kb of compressed code, and streaming fetches require only about 2Kb.
 
-If you’re getting started with GraphQL, you probably have a GraphQL server being served over HTTP. The [Quilt GraphQL application template](../../documentation/getting-started.md#app-templates), for example, serves its GraphQL endpoint on `/graphql` of the app’s domain. To create a function that lets you fetch data from an HTTP endpoint like this, use the `createGraphQLHttpFetch()` function:
+If you’re getting started with GraphQL, you probably have a GraphQL server being served over HTTP. The [Quilt GraphQL application template](../../documentation/getting-started.md#app-templates), for example, serves its GraphQL endpoint on `/graphql` of the app’s domain. To create a function that lets you fetch data from an HTTP endpoint like this, use the `createGraphQLFetchOverHTTP()` function:
 
 ```tsx
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 
-const fetchGraphQL = createGraphQLHttpFetch({url: '/graphql'});
+const fetchGraphQL = createGraphQLFetchOverHTTP({url: '/graphql'});
 ```
 
-The `createGraphQLHttpFetch()` function accepts options to customize the GraphQL request before it is performed. The only required option is `url`, which specifies the URL to send the GraphQL request to.
+The `createGraphQLFetchOverHTTP()` function accepts options to customize the GraphQL request before it is performed. The only required option is `url`, which specifies the URL to send the GraphQL request to.
 
 The resulting function can be called with a GraphQL query or mutation, and returns a promise that resolves to the data (or errors) returned by the GraphQL server:
 
@@ -73,9 +73,9 @@ try {
 By default, operations are sent to the specified `url` using a `POST` request, according to the [GraphQL over HTTP specification](https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md). You can force operations to be made using `GET` requests instead by setting the `method` option:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   url: 'https://my-app.com/query',
   method: 'GET',
 });
@@ -84,9 +84,9 @@ const fetch = createGraphQLHttpFetch({
 You can add additional headers by specifying a `headers` option:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   url: 'https://my-app.com/query',
   // You can pass anything accepted by `new Headers()` here
   headers: {
@@ -98,9 +98,9 @@ const fetch = createGraphQLHttpFetch({
 In addition to being able to the `method`, `headers`, and `url` as global, statically-defined options, each can also be set as a function that is called with the operation being fetched, and returns the value to use:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   url: 'https://my-app.com/query',
   // POST for mutations, GET for queries
   method: (operation) =>
@@ -111,9 +111,9 @@ const fetch = createGraphQLHttpFetch({
 Alternatively, each option can be set per-fetch, as part of the second argument to the fetch function:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   url: 'https://my-app.com/query',
 });
 
@@ -125,14 +125,14 @@ const {data} = await fetch(`query { me { name } }`, {
 The operation source is sent in all HTTP requests: as the `query` parameter for `GET` requests, and as the `query` body field for `POST` requests. To accomplish techniques like "persisted" GraphQL queries, you may want to exclude the operation source, and send only only a hashed identifier of each GraphQL operation. You can disable sending the source for all GraphQL fetches by setting `source: false` when creating your `fetch()` function:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 
 // Importing `.graphql` files automatically generates hashed
 // identifiers for your operations. If you don’t use this feature,
 // you must pass the identifier yourself.
 import myQuery from './MyQuery.graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   source: false,
   url: 'https://my-app.com/query',
 });
@@ -143,10 +143,10 @@ const {data} = await fetch(myQuery);
 This isn’t typically useful unless you also communicate the operation’s hash identifier. Here’s an example showing how you could pass the identifier as an additional URL parameter:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 import myQuery from './MyQuery.graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   source: false,
   url(operation) {
     const url = new URL('https://my-app.com/query');
@@ -161,10 +161,10 @@ const {data} = await fetch(myQuery);
 Here’s an alternative approach, which sends the operation using a GraphQL `extensions` field, according to Apollo’s [automatic persisted queries protocol](https://www.google.com/search?client=safari&rls=en&q=apollo+autoamtic+persisted+queries&ie=UTF-8&oe=UTF-8):
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 import myQuery from './MyQuery.graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   source: false,
   url: 'https://my-app.com/query',
   extensions(operation) {
@@ -180,10 +180,10 @@ const {data} = await fetch(myQuery);
 These `source` and `extension` options can be set globally, as shown above, or per-fetch:
 
 ```ts
-import {createGraphQLHttpFetch} from '@quilted/graphql';
+import {createGraphQLFetchOverHTTP} from '@quilted/graphql';
 import myQuery from './MyQuery.graphql';
 
-const fetch = createGraphQLHttpFetch({
+const fetch = createGraphQLFetchOverHTTP({
   url: 'https://my-app.com/query',
 });
 
@@ -215,15 +215,15 @@ const result = await response.json();
 
 #### Streaming GraphQL results with `@stream` and `@defer`
 
-Some GraphQL servers support streaming results for the [`@defer` and `@stream` directives](https://graphql.org/blog/2020-12-08-improving-latency-with-defer-and-stream-directives/). When an operation contains these directives, partial results are streamed to the client as they are available, and must be combined together to form a final result. To create a function that lets you fetch data from an HTTP endpoint like this, use the `createGraphQLStreamingHttpFetch()` function:
+Some GraphQL servers support streaming results for the [`@defer` and `@stream` directives](https://graphql.org/blog/2020-12-08-improving-latency-with-defer-and-stream-directives/). When an operation contains these directives, partial results are streamed to the client as they are available, and must be combined together to form a final result. To create a function that lets you fetch data from an HTTP endpoint like this, use the `createGraphQLStreamingFetchOverHTTP()` function:
 
 ```tsx
-import {createGraphQLStreamingHttpFetch} from '@quilted/graphql';
+import {createGraphQLStreamingFetchOverHTTP} from '@quilted/graphql';
 
-const fetchGraphQL = createGraphQLStreamingHttpFetch({url: '/graphql'});
+const fetchGraphQL = createGraphQLStreamingFetchOverHTTP({url: '/graphql'});
 ```
 
-This function accepts the same options as `createGraphQLHttpFetch()`. Instead of returning just a promise for the final result, this function returns an object that is both a promise (resolves when the final result has been received and combined) and an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols) (yields partial results as they are received):
+This function accepts the same options as `createGraphQLFetchOverHTTP()`. Instead of returning just a promise for the final result, this function returns an object that is both a promise (resolves when the final result has been received and combined) and an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols) (yields partial results as they are received):
 
 ```tsx
 import {graphql} from '@quilted/graphql';
@@ -409,7 +409,7 @@ During testing, it can be useful to have a GraphQL fetcher that always returns s
 
 There are two main parts to these GraphQL testing utilities: a GraphQL “controller”, which can fetch mock GraphQL results, and GraphQL “fillers”, which can provide type-safe mocked results for individual GraphQL queries and mutations.
 
-To create a controller, use the `createGraphQLController()` function. This function accepts one or more GraphQL “mocks”: objects that contain an `operation` key, detailing the GraphQL operation this mock should be used for, and a `result` key. The result can either be an object, or a function that returns an object, or a function that returns a promise for an object. This `result` will be used to fulfill a GraphQL operation matching the `operation` key.
+To create a controller, use the `GraphQLController` class. This function accepts one or more GraphQL “mocks”: objects that contain an `operation` key, detailing the GraphQL operation this mock should be used for, and a `result` key. The result can either be an object, or a function that returns an object, or a function that returns a promise for an object. This `result` will be used to fulfill a GraphQL operation matching the `operation` key.
 
 To demonstrate, we’ll assume you have a GraphQL schema that looks like this:
 
@@ -431,7 +431,7 @@ schema {
 We could create a GraphQL controller with a hand-written mock:
 
 ```tsx
-import {graphql, createGraphQLController} from '@quilted/graphql/testing';
+import {graphql, GraphQLController} from '@quilted/graphql/testing';
 
 // `graphql` is optional, but it can provide better syntax
 // highlighting in some editors.
@@ -444,7 +444,7 @@ const query = graphql`
   }
 `;
 
-const controller = createGraphQLController();
+const controller = new GraphQLController();
 
 controller.mock({
   operation: query,
@@ -482,9 +482,9 @@ const fillGraphQL = createGraphQLFiller(schema);
 Now, when we create GraphQL controllers, we can use the `fillGraphQL` function to create fillers for our queries and mutations. If we provide just a GraphQL operation to this function, it will create a GraphQL mock that fills in data for the query, respecting the nullability of your GraphQL schema and the types of your fields:
 
 ```tsx
-import {createGraphQLController} from '@quilted/graphql/testing';
+import {GraphQLController} from '@quilted/graphql/testing';
 
-const controller = createGraphQLController();
+const controller = new GraphQLController();
 
 const query = `
   query Me {
@@ -504,9 +504,9 @@ const result = await controller.fetch(query);
 When writing tests, it’s common to want to set a specific subset of fields, but allow other fields outside of the area under the test to be random values. You can do this by providing a subset of the GraphQL operation as the second argument to `fillGraphQL()`:
 
 ```tsx
-import {createGraphQLController} from '@quilted/graphql/testing';
+import {GraphQLController} from '@quilted/graphql/testing';
 
-const controller = createGraphQLController();
+const controller = new GraphQLController();
 
 const query = `
   query Me {
@@ -526,11 +526,11 @@ const result = await controller.fetch(query);
 When you use [`@quilted/graphql-tools`](../graphql-tools/README.md#typescript) to import GraphQL queries and mutations, TypeScript will ensure you only provide matching fields in your mock data:
 
 ```tsx
-import {createGraphQLController} from '@quilted/graphql/testing';
+import {GraphQLController} from '@quilted/graphql/testing';
 
 import meQuery from './MeQuery.graphql';
 
-const controller = createGraphQLController();
+const controller = new GraphQLController();
 
 controller.mock(fillGraphQL(meQuery, {me: {age: '123'}}));
 // Type error: `me.age` must be a number

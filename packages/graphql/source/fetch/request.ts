@@ -2,7 +2,7 @@ import {toGraphQLOperation} from '../operation.ts';
 import type {
   GraphQLOperation,
   GraphQLAnyOperation,
-  GraphQLHttpFetchOperationOptions,
+  GraphQLVariableOptions,
 } from '../types.ts';
 
 const ACCEPT_HEADER = 'Accept';
@@ -11,11 +11,30 @@ const CONTENT_TYPE_HEADER = 'Content-Type';
 /**
  * Options for creating a `GraphQLFetchRequest`.
  */
-export type GraphQLFetchRequestInit<Data, Variables> = RequestInit &
-  Pick<
-    GraphQLHttpFetchOperationOptions<Data, Variables>,
-    'source' | 'variables' | 'extensions'
-  >;
+export type GraphQLFetchRequestInit<_Data, Variables> = RequestInit &
+  GraphQLVariableOptions<Variables> & {
+    /**
+     * Additional metadata to send alongside your GraphQL request. This content will
+     * be sent as the `extensions` request parameter.
+     */
+    extensions?: Record<string, any>;
+
+    /**
+     * Overrides the operation source included in the GraphQL request.
+     *
+     * If this option is a string, it will be used as the operation source, regardless
+     * of the `operation` provided to the `GraphQLFetchRequest` constructor.
+     *
+     * If this option is `false`, the operation source will not be sent as part
+     * of the request. This may be used to implement "persisted queries", where
+     * the operation is stored on the server, and the client sends only the
+     * hash of the request.
+     *
+     * If this option is `true` or omitted, the operation source will be inferred
+     * from the `operation` argument you provide.
+     */
+    source?: string | boolean;
+  };
 
 /**
  * A custom `Request` object that represents a GraphQL operation being

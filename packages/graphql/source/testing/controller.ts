@@ -4,7 +4,6 @@ import {normalizeOperation} from '../ast.ts';
 import type {
   GraphQLFetch,
   GraphQLAnyOperation,
-  GraphQLFetchContext,
   GraphQLOperation,
   GraphQLResult,
 } from '../types.ts';
@@ -138,22 +137,16 @@ export class GraphQLController {
    * Performs a GraphQL requests against the current mocks registered
    * with this controller.
    */
-  fetch = (<Data, Variables>(
-    operation: GraphQLAnyOperation<Data, Variables>,
-    {variables, signal}: {variables?: Variables; signal?: AbortSignal} = {},
-    _?: GraphQLFetchContext,
-  ) => {
+  fetch: GraphQLFetch = ((operation, {variables, signal} = {}) => {
     const normalizedOperation = normalizeOperation(operation);
-    const request: GraphQLControllerRequest<Data, Variables> = {
+    const request: GraphQLControllerRequest<any, any> = {
       ...normalizedOperation,
       variables: variables ?? ({} as any),
     };
 
-    const mock: GraphQLMock<Data, Variables> | undefined = this.mocks.find(
-      (mock) => {
-        return operationsMatch(mock.operation, normalizedOperation);
-      },
-    );
+    const mock: GraphQLMock<any, any> | undefined = this.mocks.find((mock) => {
+      return operationsMatch(mock.operation, normalizedOperation);
+    });
 
     if (mock == null) {
       throw new Error(
@@ -164,7 +157,7 @@ export class GraphQLController {
     }
 
     // eslint-disable-next-line no-async-promise-executor
-    const promise = new Promise<GraphQLResult<Data>>(async (resolve) => {
+    const promise = new Promise<GraphQLResult<any>>(async (resolve) => {
       let result: any;
 
       try {
@@ -198,10 +191,22 @@ export class GraphQLController {
   }) satisfies GraphQLFetch;
 
   /**
-   * Performs a GraphQL requests against the current mocks registered
+   * Performs a GraphQL request against the current mocks registered
    * with this controller.
    */
   run = this.fetch;
+
+  /**
+   * Performs a GraphQL query against the current mocks registered
+   * with this controller.
+   */
+  query = this.fetch;
+
+  /**
+   * Performs a GraphQL query against the current mocks registered
+   * with this controller.
+   */
+  mutate = this.fetch;
 }
 
 /**

@@ -7,9 +7,9 @@ import {describe, it, expect, jest} from '@quilted/testing';
 import {TransformStream} from 'stream/web';
 
 import {graphql} from '../../gql.ts';
-import {createGraphQLHttpStreamingFetch} from '../stream.ts';
+import {createGraphQLStreamingFetchOverHTTP} from '../stream.ts';
 
-describe('createGraphQLHttpStreamingFetch()', () => {
+describe('createGraphQLStreamingFetchOverHTTP()', () => {
   it('returns a promise for a JSON response', async () => {
     const result = {data: {message: 'Hello world!'}};
     const response = new Response(JSON.stringify(result), {
@@ -17,7 +17,7 @@ describe('createGraphQLHttpStreamingFetch()', () => {
       headers: {'Content-Type': 'application/json'},
     });
 
-    const fetch = createGraphQLHttpStreamingFetch({
+    const fetch = createGraphQLStreamingFetchOverHTTP({
       url: 'https://example.com/graphql',
       fetch: () => Promise.resolve(response),
     });
@@ -42,7 +42,7 @@ describe('createGraphQLHttpStreamingFetch()', () => {
       headers: {'Content-Type': 'application/json'},
     });
 
-    const fetch = createGraphQLHttpStreamingFetch({
+    const fetch = createGraphQLStreamingFetchOverHTTP({
       url: 'https://example.com/graphql',
       fetch: () => Promise.resolve(response),
     });
@@ -96,7 +96,7 @@ describe('createGraphQLHttpStreamingFetch()', () => {
 
     writer.close();
 
-    const fetch = createGraphQLHttpStreamingFetch({
+    const fetch = createGraphQLStreamingFetchOverHTTP({
       url: 'https://example.com/graphql',
       fetch: () => Promise.resolve(response),
     });
@@ -165,7 +165,7 @@ describe('createGraphQLHttpStreamingFetch()', () => {
 
     writer.close();
 
-    const fetch = createGraphQLHttpStreamingFetch({
+    const fetch = createGraphQLStreamingFetchOverHTTP({
       url: 'https://example.com/graphql',
       fetch: () => Promise.resolve(response),
     });

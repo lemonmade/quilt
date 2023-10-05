@@ -2,35 +2,34 @@ import {toGraphQLOperation} from '../operation.ts';
 import type {
   GraphQLResult,
   GraphQLAnyOperation,
-  GraphQLHttpFetchOperationOptions,
-  GraphQLFetchContext,
-  GraphQLStreamingFetch,
   GraphQLStreamingFetchResult,
   GraphQLStreamingResult,
 } from '../types.ts';
 
 import {GraphQLFetchRequest} from './request.ts';
-import type {GraphQLHttpFetchOptions} from './fetch.ts';
+import type {
+  GraphQLFetchOverHTTPOptions,
+  GraphQLFetchOverHTTPContext,
+  GraphQLFetchOverHTTPCreateOptions,
+} from './fetch.ts';
 
 /**
  * The context used by HTTP-based `GraphQLStreamingFetch` functions.
  */
-export interface GraphQLHttpStreamingFetchContext {
-  /**
-   * The `Response` that contained the GraphQL result.
-   */
-  response?: Response;
-}
+export interface GraphQLStreamingFetchOverHTTPContext
+  extends GraphQLFetchOverHTTPContext {}
 
 /**
  * Options for creating a `GraphQLStreamingFetch` function.
  */
-export interface GraphQLHttpStreamingFetchOptions
-  extends GraphQLHttpFetchOptions {}
+export interface GraphQLStreamingFetchOverHTTPCreateOptions
+  extends GraphQLFetchOverHTTPCreateOptions {}
 
-declare module '../types.ts' {
-  interface GraphQLFetchContext extends GraphQLHttpStreamingFetchContext {}
-}
+/**
+ * Options that can be passed to a single fetch of a GraphQL operation.
+ */
+export interface GraphQLStreamingFetchOverHTTPOptions<Data, Variables>
+  extends GraphQLFetchOverHTTPOptions<Data, Variables> {}
 
 const STREAMING_OPERATION_REGEX = /@(stream|defer)\b/i;
 const EMPTY_OBJECT = {} as any;
@@ -48,7 +47,7 @@ const EMPTY_OBJECT = {} as any;
  * will be resolved with the final, combined GraphQL result.
  *
  * @example
- * const fetchGraphQL = createGraphQLHttpStreamingFetch({
+ * const fetchGraphQL = createGraphQLStreamingFetchOverHTTP({
  *   url: '/graphql',
  * });
  *
@@ -60,7 +59,7 @@ const EMPTY_OBJECT = {} as any;
  *   // ...
  * }
  */
-export function createGraphQLHttpStreamingFetch<
+export function createGraphQLStreamingFetchOverHTTP<
   Extensions = Record<string, unknown>,
 >({
   url,
@@ -70,15 +69,15 @@ export function createGraphQLHttpStreamingFetch<
   extensions: defaultExtensions,
   credentials,
   customizeRequest,
-  fetch = globalThis.fetch,
-}: GraphQLHttpStreamingFetchOptions): GraphQLStreamingFetch<Extensions> {
-  const fetchGraphQL: GraphQLStreamingFetch<Extensions> = function fetchGraphQL<
-    Data,
-    Variables,
-  >(
+  fetch: defaultFetch = globalThis.fetch,
+}: GraphQLStreamingFetchOverHTTPCreateOptions) {
+  const fetchGraphQL = function fetchGraphQL<Data, Variables>(
     operation: GraphQLAnyOperation<Data, Variables>,
-    options: GraphQLHttpFetchOperationOptions<Data, Variables> = EMPTY_OBJECT,
-    context?: GraphQLFetchContext,
+    options: GraphQLStreamingFetchOverHTTPOptions<
+      Data,
+      Variables
+    > = EMPTY_OBJECT,
+    context?: GraphQLStreamingFetchOverHTTPContext,
   ) {
     let resolve: (value: GraphQLResult<Data, Extensions>) => void;
     let reject: (error: Error) => void;
@@ -171,36 +170,40 @@ export function createGraphQLHttpStreamingFetch<
       let lastResult: GraphQLResult<Data, Extensions> | null = null;
 
       try {
-        const variables = options?.variables as any;
+        const variables = options.variables;
         const resolvedOperation = toGraphQLOperation(operation);
 
+        const fetchForOperation = options.fetch ?? defaultFetch;
+
+        const urlForOperation = options.url ?? url;
         const resolvedUrl =
-          options.url ??
-          (typeof url === 'function' ? url(resolvedOperation) : url);
+          typeof urlForOperation === 'function'
+            ? urlForOperation(resolvedOperation)
+            : urlForOperation;
 
+        const methodForOperation = options.method ?? defaultMethod;
         const method =
-          options.method ??
-          (typeof defaultMethod === 'function'
-            ? defaultMethod(resolvedOperation)
-            : defaultMethod);
+          typeof methodForOperation === 'function'
+            ? methodForOperation(resolvedOperation)
+            : methodForOperation;
 
+        const headersForOperation = options.headers ?? defaultHeaders;
         const headers =
-          options.headers ??
-          (typeof defaultHeaders === 'function'
-            ? defaultHeaders(resolvedOperation)
-            : defaultHeaders);
+          typeof headersForOperation === 'function'
+            ? headersForOperation(resolvedOperation)
+            : headersForOperation;
 
+        const extensionsForOperation = options.extensions ?? defaultExtensions;
         const extensions =
-          options.extensions ??
-          (typeof defaultExtensions === 'function'
-            ? defaultExtensions(resolvedOperation)
-            : defaultExtensions);
+          typeof extensionsForOperation === 'function'
+            ? extensionsForOperation(resolvedOperation)
+            : extensionsForOperation;
 
+        const sourceForOperation = options.source ?? defaultSource;
         const source =
-          options.source ??
-          (typeof defaultSource === 'function'
-            ? defaultSource(resolvedOperation)
-            : defaultSource);
+          typeof sourceForOperation === 'function'
+            ? sourceForOperation(resolvedOperation)
+            : sourceForOperation;
 
         const graphqlRequest = new GraphQLFetchRequest(
           resolvedUrl,
@@ -224,7 +227,9 @@ export function createGraphQLHttpStreamingFetch<
           ? await customizeRequest(graphqlRequest)
           : graphqlRequest;
 
-        const response = await fetch(request);
+        if (context) context.request = request;
+
+        const response = await fetchForOperation(request);
 
         if (context) context.response = response;
 
@@ -288,7 +293,7 @@ export function createGraphQLHttpStreamingFetch<
         }
       }
     }
-  } as any;
+  };
 
   return fetchGraphQL;
 }
