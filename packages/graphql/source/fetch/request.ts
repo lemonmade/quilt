@@ -2,7 +2,7 @@ import {toGraphQLOperation} from '../operation.ts';
 import type {
   GraphQLOperation,
   GraphQLAnyOperation,
-  GraphQLVariableOptions,
+  GraphQLFetchOptions,
 } from '../types.ts';
 
 const ACCEPT_HEADER = 'Accept';
@@ -11,8 +11,8 @@ const CONTENT_TYPE_HEADER = 'Content-Type';
 /**
  * Options for creating a `GraphQLFetchRequest`.
  */
-export type GraphQLFetchRequestInit<_Data, Variables> = RequestInit &
-  GraphQLVariableOptions<Variables> & {
+export type GraphQLFetchRequestInit<Data, Variables> = RequestInit &
+  Pick<GraphQLFetchOptions<Data, Variables>, 'variables' | 'operationName'> & {
     /**
      * Additional metadata to send alongside your GraphQL request. This content will
      * be sent as the `extensions` request parameter.

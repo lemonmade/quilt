@@ -162,7 +162,9 @@ export function createGraphQLFetchOverHTTP<
     context?: GraphQLFetchOverHTTPContext,
   ) {
     const variables = options?.variables as any;
-    const resolvedOperation = toGraphQLOperation(operation);
+    const resolvedOperation = toGraphQLOperation(operation, {
+      name: options?.operationName,
+    });
 
     const fetchForOperation = options.fetch ?? defaultFetch;
 

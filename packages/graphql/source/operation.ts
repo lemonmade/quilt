@@ -11,12 +11,13 @@ import type {
  */
 export function toGraphQLOperation<Data, Variables>(
   operation: GraphQLAnyOperation<Data, Variables>,
+  partial?: Partial<GraphQLOperation<Data, Variables>>,
 ): GraphQLOperation<Data, Variables> {
   if (typeof operation === 'string') {
-    return {id: operation, source: operation};
+    return {id: operation, source: operation, name: partial?.name};
   } else if ('definitions' in operation) {
     const source = sourceForGraphQLDocumentNode(operation);
-    const name = operation.definitions[0]?.name?.value;
+    const name = partial?.name ?? operation.definitions[0]?.name?.value;
     return {id: source, source, name};
   } else {
     return operation;

@@ -214,6 +214,12 @@ export interface GraphQLFetchOptions<_Data, Variables>
    * An abort signal that can be used to cancel the request.
    */
   signal?: AbortSignal;
+
+  /**
+   * The name of the query or mutation to perform. This is only required when
+   * you pass a GraphQL document that contains multiple operations.
+   */
+  operationName?: string;
 }
 
 /**
