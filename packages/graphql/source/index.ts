@@ -13,7 +13,7 @@ export {
   type GraphQLFetchRequestInit,
 } from './fetch/request.ts';
 export {gql, graphql} from './gql.ts';
-export {toGraphQLOperation} from './operation.ts';
+export {toGraphQLSource, toGraphQLOperation} from './operation.ts';
 export {minifyGraphQLSource} from './minify.ts';
 export type {
   GraphQLSource,

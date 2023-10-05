@@ -23,6 +23,8 @@ export type {
 export {
   gql,
   graphql,
+  toGraphQLSource,
+  toGraphQLOperation,
   GraphQLFetchRequest,
   createGraphQLHttpFetch,
   createGraphQLHttpStreamingFetch,
