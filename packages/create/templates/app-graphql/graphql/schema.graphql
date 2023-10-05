@@ -1,7 +1,9 @@
-scalar Name
+type Person {
+  name: String!
+}
 
 type Query {
-  name: Name!
+  me: Person!
 }
 
 schema {

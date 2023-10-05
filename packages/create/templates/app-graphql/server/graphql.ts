@@ -7,8 +7,14 @@ import type {GraphQLResult, GraphQLSource} from '@quilted/quilt/graphql';
 
 import schemaSource, {type Schema} from '../graphql/schema.ts';
 
-const {createResolver, createQueryResolver} =
-  createGraphQLResolverBuilder<Schema>();
+interface GraphQLValues {
+  Person: {};
+}
+
+const {createResolver, createQueryResolver} = createGraphQLResolverBuilder<
+  Schema,
+  GraphQLValues
+>();
 
 const Person = createResolver('Person', {
   name: async () => 'Winston',
