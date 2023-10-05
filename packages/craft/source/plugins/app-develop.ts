@@ -259,7 +259,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
                       },
                     );
 
-                    export class BrowsersAssets extends BrowserAssetsFromManifests {
+                    export class BrowserAssets extends BrowserAssetsFromManifests {
                       constructor() {
                         super([], {
                           defaultManifest: MANIFEST,
