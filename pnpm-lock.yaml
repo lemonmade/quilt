@@ -804,7 +804,7 @@ importers:
         specifier: ^1.0.0
         version: link:../events
       '@quilted/graphql':
-        specifier: ^1.2.0
+        specifier: ^1.3.0
         version: link:../graphql
       '@quilted/polyfills':
         specifier: ^0.2.12
@@ -979,7 +979,7 @@ importers:
         specifier: ^0.3.12
         version: link:../async
       '@quilted/graphql':
-        specifier: ^1.2.0
+        specifier: ^1.3.0
         version: link:../graphql
       '@quilted/react-utilities':
         specifier: ^0.1.0
