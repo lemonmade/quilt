@@ -1,5 +1,13 @@
 # @quilted/graphql
 
+## 1.2.4
+
+### Patch Changes
+
+- [`91e5338f`](https://github.com/lemonmade/quilt/commit/91e5338f55c4249664c2cf679a0d077be46fae94) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `@quilted/graphql/testing` expectation type signatures
+
+- [`75088d17`](https://github.com/lemonmade/quilt/commit/75088d17c01549f77e6ff6e30605f749c142663f) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify GraphQL `VariableOptions` type
+
 ## 1.2.3
 
 ### Patch Changes

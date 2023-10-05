@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.234
+
+### Patch Changes
+
+- [`f6450fca`](https://github.com/lemonmade/quilt/commit/f6450fca76fdaba22daa8789918496c2c0f95f7b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `BrowserAssets` export in development
+
 ## 0.1.233
 
 ### Patch Changes
