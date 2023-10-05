@@ -4,7 +4,7 @@ import {httpBatchLink} from '@trpc/client';
 
 import {trpc} from '~/shared/trpc.ts';
 
-import App from './App.tsx';
+import {App} from './App.tsx';
 
 const element = document.querySelector('#app')!;
 

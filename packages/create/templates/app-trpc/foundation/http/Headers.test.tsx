@@ -1,7 +1,7 @@
 import {describe, it, expect} from '@quilted/quilt/testing';
 import {CacheControl, ContentSecurityPolicy} from '@quilted/quilt/http';
 
-import {renderApp} from '~/tests/render.tsx';
+import {renderApp} from '~/tests/render.ts';
 
 import {Headers} from './Headers.tsx';
 

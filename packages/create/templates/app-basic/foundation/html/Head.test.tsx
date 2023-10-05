@@ -1,7 +1,7 @@
 import {describe, it, expect} from '@quilted/quilt/testing';
 import {Viewport, SearchRobots} from '@quilted/quilt/html';
 
-import {renderApp} from '~/tests/render.tsx';
+import {renderApp} from '~/tests/render.ts';
 
 import {Head} from './Head.tsx';
 

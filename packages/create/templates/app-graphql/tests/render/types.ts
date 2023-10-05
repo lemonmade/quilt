@@ -21,15 +21,16 @@ export interface RenderOptions {
    * by this module.
    *
    * ```tsx
-   * import {renderWithAppContext, fillGraphQL, createGraphQLController} from '~/tests/render.tsx';
+   * import {renderApp} from '~/tests/render.ts';
+   * import {fillGraphQL, GraphQLController} from '~/tests/graphql.ts';
    *
    * import {MyComponent} from './MyComponent.tsx';
    * import myComponentQuery from './MyComponentQuery.graphql';
    *
-   * const myComponent = await renderWithAppContext(<MyComponent />, {
-   *   graphql: createGraphQLController(
-   *     fillGraphQL(myComponentQuery, {user: {name: 'Winston'}}),
-   *   ),
+   * const myComponent = await renderApp(<MyComponent />, {
+   *   graphql: new GraphQLController([
+   *     fillGraphQL(myComponentQuery, {me: {name: 'Winston'}}),
+   *   ]),
    * });
    * ```
    */

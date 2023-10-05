@@ -1,12 +1,14 @@
 import '@quilted/quilt/globals';
-import {createRequestRouter, createServerRender} from '@quilted/quilt/server';
-import {createBrowserAssets} from '@quilted/quilt/magic/assets';
+import {RequestRouter} from '@quilted/quilt/request-router';
+import {BrowserAssets} from '@quilted/quilt/magic/assets';
+
 import {createDirectClient} from '@quilted/trpc/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
 import {appRouter} from './trpc.ts';
 
-const router = createRequestRouter();
+const router = new RequestRouter();
+const assets = new BrowserAssets();
 
 router.any(
   'api',
@@ -22,16 +24,21 @@ router.any(
 );
 
 // For all GET requests, render our React application.
-router.get(
-  createServerRender(
-    async () => {
-      const {default: App} = await import('./App.tsx');
-      return <App trpc={createDirectClient(appRouter)} />;
-    },
+router.get(async (request) => {
+  const [{App}, {renderToResponse}] = await Promise.all([
+    import('./App.tsx'),
+    import('@quilted/quilt/server'),
+  ]);
+
+  const response = await renderToResponse(
+    <App trpc={createDirectClient(appRouter)} />,
     {
-      assets: createBrowserAssets(),
+      request,
+      assets,
     },
-  ),
-);
+  );
+
+  return response;
+});
 
 export default router;
