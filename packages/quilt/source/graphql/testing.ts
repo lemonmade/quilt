@@ -1,13 +1,13 @@
-import './testing/matchers.ts';
+// Import so that matchers are defined
+import '@quilted/graphql/testing';
 
 export {
   gql,
   graphql,
-  GraphQLTesting,
   createGraphQLSchema,
   createGraphQLFiller,
   GraphQLController,
-} from '@quilted/react-graphql/testing';
+} from '@quilted/graphql/testing';
 export type {
   GraphQLOperation,
   GraphQLOperationType,
@@ -16,7 +16,6 @@ export type {
   GraphQLVariables,
   GraphQLDeepPartialData,
   GraphQLFetch,
-  GraphQLFetchContext,
   GraphQLMock,
   GraphQLMockFunction,
   GraphQLMockObject,
@@ -30,4 +29,8 @@ export type {
   GraphQLFillerResolverContext,
   GraphQLFillerResolverMap,
   GraphQLControllerRequest,
+} from '@quilted/graphql/testing';
+export {
+  GraphQLTesting,
+  GraphQLFetchContext,
 } from '@quilted/react-graphql/testing';
