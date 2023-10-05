@@ -16,6 +16,7 @@ export type {
   GraphQLVariables,
   GraphQLDeepPartialData,
   GraphQLFetch,
+  GraphQLFetchContext,
   GraphQLMock,
   GraphQLMockFunction,
   GraphQLMockObject,
@@ -30,7 +31,4 @@ export type {
   GraphQLFillerResolverMap,
   GraphQLControllerRequest,
 } from '@quilted/graphql/testing';
-export {
-  GraphQLTesting,
-  GraphQLFetchContext,
-} from '@quilted/react-graphql/testing';
+export {GraphQLTesting} from '@quilted/react-graphql/testing';
