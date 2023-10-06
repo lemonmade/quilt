@@ -108,7 +108,7 @@ export interface GraphQLFetchOverHTTPCreateOptions
  */
 export interface GraphQLFetchOverHTTPOptions<Data, Variables>
   extends GraphQLFetchOptions<Data, Variables>,
-    GraphQLFetchOverHTTPCreateOptions {}
+    Partial<GraphQLFetchOverHTTPCreateOptions> {}
 
 /**
  * The context used by HTTP-based `GraphQLFetch` functions.
