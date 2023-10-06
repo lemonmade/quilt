@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 2.0.1
+
+### Patch Changes
+
+- [`d6ddf1ca`](https://github.com/lemonmade/quilt/commit/d6ddf1cae491d35f86a4c07fcde40f05d60a79f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `url` being required on individual HTTP-fetched operations
+
 ## 2.0.0
 
 ### Major Changes
