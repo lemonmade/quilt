@@ -1,5 +1,11 @@
 # @quilted/react-query
 
+## 0.1.21
+
+### Patch Changes
+
+- [`d386f51a`](https://github.com/lemonmade/quilt/commit/d386f51a6185a8fdc5523f9fb4a24e2f3d1ed011) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve cache key for react-query GraphQL hooks
+
 ## 0.1.20
 
 ### Patch Changes
