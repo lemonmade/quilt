@@ -356,7 +356,10 @@
     "./build/esm/global.mjs",
     "./source/polyfills/*.ts",
     "./build/esnext/polyfills/*.esnext",
-    "./build/esm/polyfills/*.mjs"
+    "./build/esm/polyfills/*.mjs",
+    "./source/graphql/testing/matchers.ts",
+    "./build/esnext/graphql/testing/matchers.esnext",
+    "./build/esm/graphql/testing/matchers.mjs"
   ],
   "dependencies": {
     "@quilted/assets": "^0.0.4",
