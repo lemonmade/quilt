@@ -1,5 +1,6 @@
 import {useMutation, type UseMutationOptions} from '@tanstack/react-query';
 import {
+  toGraphQLSource,
   useGraphQLFetch,
   type GraphQLFetch,
   type GraphQLAnyOperation,
@@ -31,12 +32,26 @@ export function useGraphQLMutation<Data, Variables>(
     );
   }
 
+  const fullMutationKey: unknown[] = [
+    `query:${
+      typeof mutation === 'string'
+        ? mutation
+        : 'id' in mutation
+        ? mutation.id
+        : toGraphQLSource(mutation)
+    }`,
+  ];
+
+  if (mutationKey != null) {
+    if (Array.isArray(mutationKey)) {
+      fullMutationKey.push(...mutationKey);
+    } else {
+      fullMutationKey.push(mutationKey);
+    }
+  }
+
   return useMutation<Data, unknown, Variables>(
-    [
-      fetch,
-      mutation,
-      ...(Array.isArray(mutationKey) ? mutationKey : [mutationKey]),
-    ],
+    fullMutationKey,
     async (variables) => {
       const result = await fetch(mutation, {
         variables: variables!,

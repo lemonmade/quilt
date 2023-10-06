@@ -1,5 +1,6 @@
 import {useQuery, type UseQueryOptions} from '@tanstack/react-query';
 import {
+  toGraphQLSource,
   useGraphQLFetch,
   type GraphQLFetch,
   type GraphQLAnyOperation,
@@ -43,13 +44,27 @@ export function useGraphQLQuery<Data, Variables>(
     );
   }
 
+  const fullQueryKey: unknown[] = [
+    `query:${
+      typeof query === 'string'
+        ? query
+        : 'id' in query
+        ? query.id
+        : toGraphQLSource(query)
+    }`,
+    variables,
+  ];
+
+  if (queryKey != null) {
+    if (Array.isArray(queryKey)) {
+      fullQueryKey.push(...queryKey);
+    } else {
+      fullQueryKey.push(queryKey);
+    }
+  }
+
   return useQuery<Data>(
-    [
-      fetch,
-      query,
-      variables,
-      ...(Array.isArray(queryKey) ? queryKey : [queryKey]),
-    ],
+    fullQueryKey,
     async ({signal}) => {
       const result = await fetch(query, {
         signal,
