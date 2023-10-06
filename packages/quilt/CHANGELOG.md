@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.156
+
+### Patch Changes
+
+- [`ca9e1de5`](https://github.com/lemonmade/quilt/commit/ca9e1de5ab2723ca7bfae1cf29dd5472a158bacd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix tree-shaken GraphQL matchers import
+
 ## 0.5.155
 
 ### Patch Changes
