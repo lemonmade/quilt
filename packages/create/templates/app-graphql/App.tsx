@@ -4,11 +4,7 @@ import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 import {type PropsWithChildren} from '@quilted/quilt/react/tools';
-import {
-  GraphQLContext,
-  createGraphQLHttpFetch,
-  type GraphQLFetch,
-} from '@quilted/quilt/graphql';
+import {GraphQLContext, type GraphQLFetch} from '@quilted/quilt/graphql';
 
 import {ReactQueryContext} from '@quilted/react-query';
 import {QueryClient} from '@tanstack/react-query';
@@ -25,7 +21,7 @@ import {
 } from './shared/context.ts';
 
 export interface AppProps extends AppContextType {
-  fetchGraphQL?: GraphQLFetch;
+  fetchGraphQL: GraphQLFetch;
 }
 
 // The root component for your application. You will typically render any
@@ -61,16 +57,14 @@ function Routes() {
 // This component renders any app-wide context.
 function AppContext({
   children,
-  fetchGraphQL: customFetchGraphQL,
+  fetchGraphQL,
   ...context
 }: PropsWithChildren<AppProps>) {
-  const {fetchGraphQL, queryClient} = useMemo(() => {
+  const {queryClient} = useMemo(() => {
     return {
-      fetchGraphQL:
-        customFetchGraphQL ?? createGraphQLHttpFetch({url: '/api/graphql'}),
       queryClient: new QueryClient(),
     };
-  }, [customFetchGraphQL]);
+  }, []);
 
   return (
     <GraphQLContext fetch={fetchGraphQL}>
