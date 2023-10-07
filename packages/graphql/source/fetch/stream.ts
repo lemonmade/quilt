@@ -78,7 +78,7 @@ export function createGraphQLStreamingFetchOverHTTP<
       Variables
     > = EMPTY_OBJECT,
     context?: GraphQLStreamingFetchOverHTTPContext,
-  ) {
+  ): GraphQLStreamingFetchResult<Data, Extensions> {
     let resolve: (value: GraphQLResult<Data, Extensions>) => void;
     let reject: (error: Error) => void;
 

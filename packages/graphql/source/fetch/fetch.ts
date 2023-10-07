@@ -160,7 +160,7 @@ export function createGraphQLFetchOverHTTP<
     operation: GraphQLAnyOperation<Data, Variables>,
     options: GraphQLFetchOverHTTPOptions<Data, Variables> = EMPTY_OBJECT,
     context?: GraphQLFetchOverHTTPContext,
-  ) {
+  ): Promise<GraphQLResult<Data, Extensions>> {
     const variables = options?.variables as any;
     const resolvedOperation = toGraphQLOperation(operation, {
       name: options?.operationName,
@@ -226,7 +226,6 @@ export function createGraphQLFetchOverHTTP<
       return {
         errors: [
           {
-            response,
             message: `GraphQL fetch failed with status: ${
               response.status
             }, response: ${await response.text()}`,
