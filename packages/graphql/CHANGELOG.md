@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 2.0.2
+
+### Patch Changes
+
+- [`2459cee9`](https://github.com/lemonmade/quilt/commit/2459cee90ec7d0c06b8d5da65601f1f0b3cb9799) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix return types for HTTP GraphQL fetch helpers
+
 ## 2.0.1
 
 ### Patch Changes
