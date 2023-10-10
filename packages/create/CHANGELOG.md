@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.1.84
+
+### Patch Changes
+
+- [`47b00612`](https://github.com/lemonmade/quilt/commit/47b006120622504c132559d7c6c66352138c288d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `fetch()` polyfill for GraphQL template tests
+
+- [`c51c24c3`](https://github.com/lemonmade/quilt/commit/c51c24c37617a24a68ec0ad8f5880094213f4371) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix template creation with nested gitignores
+
 ## 0.1.83
 
 ### Patch Changes
