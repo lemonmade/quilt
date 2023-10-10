@@ -186,10 +186,13 @@ export async function createApp() {
   }
 
   await appTemplate.copy(appDirectory, (file) => {
-    // If we are in a monorepo, we can use all the template files as they are
+    // If we are in a monorepo, we already wrote a merged tsconfig.json
     if (file === 'tsconfig.json') {
       return partOfMonorepo;
     }
+
+    // We need to merge the project gitignore with the workspace one
+    if (file === '_gitignore') return partOfMonorepo;
 
     // We need to make some adjustments the project’s package.json and
     // quilt config file
@@ -204,6 +207,15 @@ export async function createApp() {
     quiltProject = quiltProject
       .replace('quiltApp', 'quiltWorkspace, quiltApp')
       .replace('quiltApp(', 'quiltWorkspace(), quiltApp(');
+
+    if (await appTemplate.has('_gitignore')) {
+      await outputRoot.write(
+        path.join(appDirectory, '.gitignore'),
+        `${await outputRoot.read('.gitignore')}\n${await appTemplate.read(
+          '_gitignore',
+        )}`,
+      );
+    }
   }
 
   await outputRoot.write(

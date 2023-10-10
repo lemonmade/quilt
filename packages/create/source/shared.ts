@@ -50,6 +50,12 @@ export function loadTemplate(
 
       return fs.readFileSync(path.join(templateRoot, file), {encoding: 'utf8'});
     },
+    async has(file: string) {
+      templateRootPromise ??= templateDirectory(name);
+      const templateRoot = await templateRootPromise;
+
+      return fs.existsSync(path.join(templateRoot, file));
+    },
   };
 }
 
