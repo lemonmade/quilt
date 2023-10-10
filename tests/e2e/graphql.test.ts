@@ -52,9 +52,7 @@ describe('graphql', () => {
         const typeCheck = await workspace.command.quilt.typeCheck();
 
         expect(typeCheck.child.exitCode).toBe(0);
-        expect(typeCheck.stdout).toMatch(
-          /Quilt\.GraphQL\.TypeScriptDefinitions/,
-        );
+        expect(typeCheck.stdout).toMatch(/quilt\.graphql\.typescript/);
       });
     });
 
@@ -147,9 +145,7 @@ describe('graphql', () => {
         const typeCheck = await workspace.command.quilt.typeCheck();
 
         expect(typeCheck.child.exitCode).toBe(0);
-        expect(typeCheck.stdout).toMatch(
-          /Quilt\.GraphQL\.TypeScriptDefinitions/,
-        );
+        expect(typeCheck.stdout).toMatch(/quilt\.graphql\.typescript/);
       });
     });
   });
