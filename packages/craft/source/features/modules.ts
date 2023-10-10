@@ -182,7 +182,6 @@ export function moduleBuild({
             babelPresetEnvOptions,
             browserslistTargets,
             quiltAssetManifestPath,
-            quiltGraphQLManifest,
             quiltGraphQLManifestPath,
           },
           {quiltModuleBuild},
@@ -214,8 +213,6 @@ export function moduleBuild({
           quiltAssetManifestPath?.(() =>
             project.fs.buildPath(`manifests/assets${targetFilenamePart}.json`),
           );
-
-          quiltGraphQLManifest?.(() => true);
 
           quiltGraphQLManifestPath?.(() =>
             project.fs.buildPath(`manifests/graphql${targetFilenamePart}.json`),

@@ -19,8 +19,6 @@ import type {} from '../tools/vite.ts';
 
 export type {Configuration, ConfigurationExtensions};
 
-const NAME = 'Quilt.GraphQL';
-
 export interface GraphQLHooks {
   quiltGraphQLManifest: WaterfallHookWithDefault<boolean>;
   quiltGraphQLManifestPath: WaterfallHookWithDefault<string>;
@@ -31,13 +29,15 @@ declare module '@quilted/sewing-kit' {
   interface DevelopProjectConfigurationHooks extends GraphQLHooks {}
 }
 
-export function graphql() {
+export function graphql({
+  manifest: includeManifest,
+}: {manifest?: boolean} = {}) {
   return createProjectPlugin({
-    name: NAME,
-    build({configure, hooks, project}) {
+    name: 'quilt.graphql',
+    build({configure, hooks, project, workspace}) {
       hooks<GraphQLHooks>(({waterfall}) => ({
         quiltGraphQLManifest: waterfall<boolean>({
-          default: false,
+          default: () => includeManifest ?? workspaceHasGraphQL(workspace),
         }),
         quiltGraphQLManifestPath: waterfall<string>({
           default: project.fs.buildPath('manifests/graphql.json'),
@@ -64,10 +64,10 @@ export function graphql() {
         },
       );
     },
-    develop({configure, hooks, project}) {
+    develop({configure, hooks, project, workspace}) {
       hooks<GraphQLHooks>(({waterfall}) => ({
         quiltGraphQLManifest: waterfall<boolean>({
-          default: false,
+          default: () => includeManifest ?? workspaceHasGraphQL(workspace),
         }),
         quiltGraphQLManifestPath: waterfall<string>({
           default: project.fs.buildPath('manifests/graphql.json'),
@@ -130,17 +130,15 @@ export function graphql() {
   });
 }
 
-const WORKSPACE_NAME = `${NAME}.TypeScriptDefinitions`;
-
 export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
   return createWorkspacePlugin({
-    name: WORKSPACE_NAME,
+    name: 'quilt.graphql.typescript',
     async build({run, workspace}) {
       if (!(await workspaceHasGraphQL(workspace))) return;
 
       run((step) =>
         step({
-          name: WORKSPACE_NAME,
+          name: 'quilt.graphql.typescript',
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
@@ -154,7 +152,7 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
 
       run((step) =>
         step({
-          name: WORKSPACE_NAME,
+          name: 'quilt.graphql.typescript',
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {
@@ -168,7 +166,7 @@ export function workspaceGraphQL({package: pkg}: {package?: string} = {}) {
 
       run((step) =>
         step({
-          name: WORKSPACE_NAME,
+          name: 'quilt.graphql.typescript',
           label: 'Build GraphQL TypeScript definitions',
           stage: 'pre',
           async run(step) {

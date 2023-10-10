@@ -118,6 +118,13 @@ export interface AppOptions {
   build?: boolean;
 
   /**
+   * Whether to include GraphQL-related code transformations.
+   *
+   * @default true
+   */
+  graphql?: boolean;
+
+  /**
    * Customizes the assets created for your application.
    */
   assets?: Partial<AppBuildAssetOptions & AssetOptions>;
@@ -176,6 +183,7 @@ export function quiltApp({
   static: renderStatic = false,
   server = !renderStatic,
   react: reactOptions = true,
+  graphql: useGraphQL,
 }: AppOptions = {}) {
   const {minify = true, baseUrl = '/assets/', ...assetOptions} = assets;
 
@@ -244,7 +252,7 @@ export function quiltApp({
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
 
-        graphql(),
+        Boolean(useGraphQL ?? true) && graphql({manifest: useGraphQL}),
         workers(),
         appWorkers({baseUrl}),
         asyncQuilt({preload: true}),
@@ -279,6 +287,12 @@ export interface ServiceOptions {
    * @default false
    */
   react?: boolean | ReactOptions;
+
+  /**
+   * Whether to include GraphQL-related code transformations.
+   *
+   * @default true
+   */
   graphql?: boolean;
   build?: boolean | Partial<Omit<ServiceBuildOptions, 'format'>>;
   polyfill?: boolean | PolyfillOptions;
@@ -338,7 +352,10 @@ export function quiltService({
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
         develop && useRequestRouter && serviceDevelopment(),
-        useGraphQL && graphql(),
+        useGraphQL &&
+          graphql({
+            manifest: false,
+          }),
         Boolean(reactOptions) && reactTesting(),
         targets(),
         shouldPolyfill &&
@@ -379,6 +396,12 @@ export interface PackageOptions
    * @default true
    */
   react?: boolean | ReactOptions;
+
+  /**
+   * Whether to include GraphQL-related code transformations.
+   *
+   * @default false
+   */
   graphql?: boolean;
 }
 
@@ -421,7 +444,10 @@ export function quiltPackage({
         Boolean(reactOptions) &&
           react(typeof reactOptions === 'object' ? reactOptions : undefined),
         Boolean(reactOptions) && reactTesting(),
-        useGraphQL && graphql(),
+        useGraphQL &&
+          graphql({
+            manifest: false,
+          }),
         rollupNode({bundle: bundleOption}),
         packageBase({entries, executable}),
         // Builds
@@ -450,6 +476,11 @@ export interface ModuleOptions {
    */
   react?: boolean | ReactOptions;
 
+  /**
+   * Whether to include GraphQL-related code transformations.
+   *
+   * @default true
+   */
   graphql?: boolean;
 }
 
@@ -460,7 +491,7 @@ export function quiltModule({
   entry,
   build = true,
   react: reactOptions = true,
-  graphql: useGraphQL = false,
+  graphql: useGraphQL,
 }: ModuleOptions = {}) {
   return createProjectPlugin({
     name: 'Quilt.Module',
@@ -488,7 +519,10 @@ export function quiltModule({
         Boolean(reactOptions) &&
           react(typeof reactOptions === 'object' ? reactOptions : undefined),
         Boolean(reactOptions) && reactTesting(),
-        useGraphQL && graphql(),
+        Boolean(useGraphQL ?? true) &&
+          graphql({
+            manifest: useGraphQL,
+          }),
         rollupNode({bundle: bundleOption}),
         moduleBase({entry}),
         // Builds

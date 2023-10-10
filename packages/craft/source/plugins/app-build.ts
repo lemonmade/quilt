@@ -91,7 +91,6 @@ export function appBuild({assets, browser, env}: Options) {
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
             quiltAppBrowserEntryCssSelector,
-            quiltGraphQLManifest,
             quiltGraphQLManifestPath,
             quiltInlineEnvironmentVariables,
           },
@@ -139,8 +138,6 @@ export function appBuild({assets, browser, env}: Options) {
           quiltAssetManifestPath?.(() =>
             project.fs.buildPath(`manifests/assets${targetFilenamePart}.json`),
           );
-
-          quiltGraphQLManifest?.(() => true);
 
           quiltGraphQLManifestPath?.(() =>
             project.fs.buildPath(`manifests/graphql${targetFilenamePart}.json`),
