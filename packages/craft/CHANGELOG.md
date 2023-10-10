@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.236
+
+### Patch Changes
+
+- [`811c5aa9`](https://github.com/lemonmade/quilt/commit/811c5aa995a4a500316da5227e686c589865fe18) Thanks [@lemonmade](https://github.com/lemonmade)! - Disable GraphQL manifest in apps without GraphQL
+
 ## 0.1.235
 
 ### Patch Changes
