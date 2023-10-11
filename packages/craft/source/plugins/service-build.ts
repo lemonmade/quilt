@@ -55,7 +55,6 @@ export function serviceBuild({
   minify,
   bundle: explicitBundle,
   format = 'request-router',
-  env,
 }: Options) {
   return createProjectPlugin({
     name: 'Quilt.Service.Build',
@@ -74,24 +73,10 @@ export function serviceBuild({
             rollupNodeBundle,
             quiltServiceEntry,
             quiltServiceOutputFormat,
-            quiltInlineEnvironmentVariables,
-            quiltRuntimeEnvironmentVariables,
           },
           {quiltService = false},
         ) => {
           if (!quiltService) return;
-
-          const inlineEnv = env?.inline;
-
-          if (inlineEnv != null && inlineEnv.length > 0) {
-            quiltInlineEnvironmentVariables?.((variables) =>
-              Array.from(new Set([...variables, ...inlineEnv])),
-            );
-          }
-
-          quiltRuntimeEnvironmentVariables?.(
-            (runtime) => runtime ?? 'process.env',
-          );
 
           // We want to force some of our “magic” modules to be internalized
           // no matter what, and other wise defer to the user-specified or

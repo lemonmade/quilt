@@ -48,8 +48,6 @@ export interface Hooks {
 declare module '@quilted/sewing-kit' {
   interface BuildProjectConfigurationHooks extends Hooks {}
   interface DevelopProjectConfigurationHooks extends Hooks {}
-  interface BuildServiceConfigurationHooks extends Hooks {}
-  interface DevelopServiceConfigurationHooks extends Hooks {}
 }
 
 export const NAME = 'Quilt.MagicModule.Env';
@@ -57,73 +55,19 @@ export const NAME = 'Quilt.MagicModule.Env';
 export function magicModuleEnv() {
   return createProjectPlugin({
     name: NAME,
-    build({project, workspace, hooks, configure}) {
+    build({hooks}) {
       hooks<Hooks>(({waterfall}) => ({
         quiltInlineEnvironmentVariables: waterfall(),
         quiltRuntimeEnvironmentVariables: waterfall(),
         quiltEnvModuleContent: waterfall(),
       }));
-
-      configure(
-        ({
-          rollupPlugins,
-          quiltInlineEnvironmentVariables,
-          quiltRuntimeEnvironmentVariables,
-          quiltEnvModuleContent,
-        }) => {
-          rollupPlugins?.(async (plugins) => {
-            const {magicModuleEnv} = await import(
-              './rollup/magic-module-env.ts'
-            );
-
-            return [
-              magicModuleEnv({
-                mode: 'production',
-                project,
-                workspace,
-                inline: () => quiltInlineEnvironmentVariables!.run([]),
-                runtime: () => quiltRuntimeEnvironmentVariables!.run(undefined),
-                customize: (content) => quiltEnvModuleContent!.run(content),
-              }),
-              ...plugins,
-            ];
-          });
-        },
-      );
     },
-    develop({project, workspace, hooks, configure}) {
+    develop({hooks}) {
       hooks<Hooks>(({waterfall}) => ({
         quiltInlineEnvironmentVariables: waterfall(),
         quiltRuntimeEnvironmentVariables: waterfall(),
         quiltEnvModuleContent: waterfall(),
       }));
-
-      configure(
-        ({
-          rollupPlugins,
-          quiltInlineEnvironmentVariables,
-          quiltRuntimeEnvironmentVariables,
-          quiltEnvModuleContent,
-        }) => {
-          rollupPlugins?.(async (plugins) => {
-            const {magicModuleEnv} = await import(
-              './rollup/magic-module-env.ts'
-            );
-
-            return [
-              magicModuleEnv({
-                mode: 'development',
-                project,
-                workspace,
-                inline: () => quiltInlineEnvironmentVariables!.run([]),
-                runtime: () => quiltRuntimeEnvironmentVariables!.run(undefined),
-                customize: (content) => quiltEnvModuleContent!.run(content),
-              }),
-              ...plugins,
-            ];
-          });
-        },
-      );
     },
   });
 }

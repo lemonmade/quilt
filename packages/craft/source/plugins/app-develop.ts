@@ -17,25 +17,21 @@ import type {
 } from '../kit.ts';
 
 import {resolveToActualFiles} from './app-base.ts';
-import type {AppServerOptions} from './app-server-base.ts';
 import type {AppBrowserOptions} from './app-build.ts';
 import type {EnvironmentOptions} from './magic-module-env.ts';
 
 import {
   MAGIC_MODULE_REQUEST_ROUTER,
-  MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_BROWSER_ASSETS,
 } from '../constants.ts';
 
 export const NAME = 'quilt.app.develop';
 const MAGIC_MODULE_BROWSER_ENTRY = '.quilt/magic/browser.js';
-const MAGIC_MODULE_SERVER_ENTRY = '.quilt/magic/server.js';
 const MAGIC_MODULE_ASSET_MANIFEST_ENTRY = '.quilt/magic/asset-manifest';
 
 export interface Options {
   env?: EnvironmentOptions;
   port?: number;
-  server?: Pick<AppServerOptions, 'entry' | 'format' | 'env'>;
   browser?: Pick<AppBrowserOptions, 'entry'>;
 }
 
@@ -64,11 +60,7 @@ declare module '@quilted/sewing-kit' {
 
 const require = createRequire(import.meta.url);
 
-export function appDevelop({env, port, browser, server}: Options = {}) {
-  const serverEntry = server?.entry;
-  const requestRouter = server?.format ?? 'request-router';
-  const serverInlineEnv = server?.env?.inline;
-
+export function appDevelop({env, port, browser}: Options = {}) {
   return createProjectPlugin({
     name: NAME,
     develop({hooks, project, workspace, configure, run}) {
@@ -95,7 +87,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             quiltAppEntry,
             quiltAppServerHost,
             quiltAppServerPort,
-            quiltAppServerEntryContent,
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryCssSelector,
             quiltAppBrowserEntryShouldHydrate,
@@ -104,31 +95,9 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             quiltEnvModuleContent,
             quiltRequestRouterRuntimeContent,
           },
-          {quiltRequestRouter = false, quiltAppServer = false},
+          {quiltAppServer = false},
         ) => {
           runtimes(() => [{target: quiltAppServer ? 'node' : 'browser'}]);
-
-          const inlineEnv = env?.inline;
-
-          if (
-            quiltRequestRouter &&
-            serverInlineEnv != null &&
-            serverInlineEnv.length > 0
-          ) {
-            quiltInlineEnvironmentVariables?.((variables) =>
-              Array.from(
-                new Set([
-                  ...variables,
-                  ...(inlineEnv ?? []),
-                  ...serverInlineEnv,
-                ]),
-              ),
-            );
-          } else if (inlineEnv != null && inlineEnv.length > 0) {
-            quiltInlineEnvironmentVariables?.((variables) =>
-              Array.from(new Set([...variables, ...inlineEnv])),
-            );
-          }
 
           viteConfig?.((options) => {
             return {
@@ -144,62 +113,6 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
 
           rollupPlugins?.((plugins) => {
             return [
-              {
-                name: '@quilted/magic-module/app/server-entry',
-                async resolveId(id) {
-                  if (
-                    id !== project.fs.resolvePath(MAGIC_MODULE_SERVER_ENTRY)
-                  ) {
-                    return null;
-                  }
-
-                  return {id, moduleSideEffects: 'no-treeshake'};
-                },
-                async load(source) {
-                  if (
-                    source !== project.fs.resolvePath(MAGIC_MODULE_SERVER_ENTRY)
-                  )
-                    return null;
-
-                  const baseContent =
-                    requestRouter && serverEntry
-                      ? stripIndent`
-                      export {default} from ${JSON.stringify(
-                        project.fs.resolvePath(serverEntry),
-                      )};
-                    `
-                      : stripIndent`
-                      import '@quilted/quilt/globals';
-                      import App from ${JSON.stringify(
-                        MAGIC_MODULE_APP_COMPONENT,
-                      )};
-                      import {RequestRouter} from '@quilted/quilt/request-router';
-                      import {BrowserAssets} from '@quilted/quilt/magic/assets';
-
-                      const router = new RequestRouter();
-                      const assets = new BrowserAssets();
-
-                      // For all GET requests, render our React application.
-                      router.get(async (request) => {
-                        const [{App}, {renderToResponse}] = await Promise.all([
-                          import('./App.tsx'),
-                          import('@quilted/quilt/server'),
-                        ]);
-
-                        const response = await renderToResponse(<App />, {
-                          request,
-                          assets,
-                        });
-
-                        return response;
-                      });
-
-                      export default router;
-                    `;
-
-                  return quiltAppServerEntryContent!.run(baseContent);
-                },
-              },
               {
                 name: '@quilted/magic-module/app/asset-loader',
                 resolveId(id) {
@@ -328,15 +241,13 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
             'preact',
             'preact/compat',
             'preact/hooks',
-            '@quilted/quilt/env',
             '@quilted/quilt/globals',
           ]);
 
           vitePlugins?.(async (plugins) => {
             const [
               {default: prefresh},
-              {magicBrowserEntry},
-              {magicModuleEnv},
+              {appMagicModules},
               requestedBabelPlugins,
               requestedBabelPresets,
             ] = await Promise.all([
@@ -344,35 +255,32 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               import('@prefresh/vite') as Promise<{
                 default: () => import('vite').Plugin;
               }>,
-              import('./rollup/magic-browser-entry.ts'),
-              import('./rollup/magic-module-env.ts'),
+              import('../tools/rollup/app.ts'),
               babelPlugins!.run([]),
               babelPresets!.run([]),
             ]);
 
             plugins.unshift({
               enforce: 'pre',
-              ...magicModuleEnv({
+              ...appMagicModules({
                 mode: 'development',
-                project,
-                workspace,
-                inline: () => quiltInlineEnvironmentVariables!.run([]),
-                runtime: () => quiltRuntimeEnvironmentVariables!.run(undefined),
-                customize: (content) => quiltEnvModuleContent!.run(content),
+                env: {
+                  dotenv: {roots: [project.fs.root, workspace.fs.root]},
+                  inline: () =>
+                    quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
+                  runtime: () =>
+                    quiltRuntimeEnvironmentVariables!.run(undefined),
+                  customize: (content) => quiltEnvModuleContent!.run(content),
+                },
+                browser: browser?.entry ?? {
+                  // module: MAGIC_MODULE_BROWSER_ENTRY,
+                  cssSelector: () => quiltAppBrowserEntryCssSelector!.run(),
+                  shouldHydrate: () => quiltAppBrowserEntryShouldHydrate!.run(),
+                  customize: (content) =>
+                    quiltAppBrowserEntryContent!.run(content),
+                },
+                server: false,
               }),
-            });
-
-            plugins.unshift({
-              ...magicBrowserEntry({
-                ...browser,
-                project,
-                module: MAGIC_MODULE_BROWSER_ENTRY,
-                cssSelector: () => quiltAppBrowserEntryCssSelector!.run(),
-                shouldHydrate: () => quiltAppBrowserEntryShouldHydrate!.run(),
-                customizeContent: (content) =>
-                  quiltAppBrowserEntryContent!.run(content),
-              }),
-              enforce: 'pre',
             });
 
             const normalizedBabelPlugins = requestedBabelPlugins;

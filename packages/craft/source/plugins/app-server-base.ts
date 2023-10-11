@@ -1,15 +1,9 @@
-import {stripIndent} from 'common-tags';
-
-import {addRollupNodeBundleInclusion} from '../tools/rollup.ts';
 import type {RollupNodeBundle} from '../tools/rollup.ts';
 
-import {
-  MAGIC_MODULE_BROWSER_ASSETS,
-  MAGIC_MODULE_APP_COMPONENT,
-} from '../constants.ts';
 import {DiagnosticError, createProjectPlugin} from '../kit.ts';
 import type {
   Project,
+  Workspace,
   ResolvedOptions,
   BuildProjectOptions,
   ResolvedBuildProjectConfigurationHooks,
@@ -94,43 +88,52 @@ declare module '@quilted/sewing-kit' {
     extends AppServerBaseConfigurationHooks {}
 }
 
-const MAGIC_SERVER_ENTRY_MODULE = '__quilt__/CustomAppServer.tsx';
-
 export function appServer(options?: AppServerOptions) {
   return createProjectPlugin({
     name: 'Quilt.App.Server',
-    build({project, hooks, configure}) {
+    build({project, workspace, hooks, configure}) {
       hooks<AppServerBaseConfigurationHooks>(({waterfall}) => ({
         quiltAppServerEntry: waterfall({
           default: () => getEntryForProject(project, options?.entry),
         }),
       }));
 
-      configure(setupConfiguration(project, options));
+      configure(
+        setupConfiguration(project, workspace, {
+          ...options,
+          mode: 'production',
+        }),
+      );
     },
-    develop({project, hooks, configure}) {
+    develop({project, workspace, hooks, configure}) {
       hooks<AppServerBaseConfigurationHooks>(({waterfall}) => ({
         quiltAppServerEntry: waterfall({
           default: () => getEntryForProject(project, options?.entry),
         }),
       }));
 
-      configure(setupConfiguration(project, options) as any);
+      configure(
+        setupConfiguration(project, workspace, {
+          ...options,
+          mode: 'development',
+        }) as any,
+      );
     },
   });
 }
 
 function setupConfiguration(
   project: Project,
+  workspace: Workspace,
   {
+    mode,
     env,
     entry,
     format = 'request-router',
     bundle: explicitBundle,
-  }: AppServerOptions = {},
+  }: AppServerOptions & {mode: 'production' | 'development'},
 ) {
   const requestRouter = format === 'request-router';
-  const inlineEnv = env?.inline;
 
   return (
     {
@@ -143,9 +146,9 @@ function setupConfiguration(
       rollupNodeBundle,
       quiltAppServerEntry,
       quiltAppServerEntryContent,
-      quiltRequestRouterContent,
       quiltAsyncPreload,
       quiltAssetManifest,
+      quiltEnvModuleContent,
       quiltInlineEnvironmentVariables,
       quiltRuntimeEnvironmentVariables,
     }: ResolvedBuildProjectConfigurationHooks,
@@ -153,70 +156,39 @@ function setupConfiguration(
   ) => {
     if (!quiltAppServer) return;
 
-    if (inlineEnv != null && inlineEnv.length > 0) {
-      quiltInlineEnvironmentVariables?.((variables) =>
-        Array.from(new Set([...variables, ...inlineEnv])),
-      );
-    }
-
-    quiltRuntimeEnvironmentVariables?.((runtime) => runtime ?? 'process.env');
+    // rollupNodeBundle?
 
     runtimes(() => [{target: 'node'}]);
-
-    const content = entry
-      ? requestRouter
-        ? stripIndent`
-          export {default} from ${JSON.stringify(
-            project.fs.resolvePath(entry),
-          )};
-        `
-        : stripIndent`
-          import ${JSON.stringify(project.fs.resolvePath(entry))};
-        `
-      : stripIndent`
-        import '@quilted/quilt/globals';
-        import {jsx} from 'react/jsx-runtime';
-        import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderToResponse} from '@quilted/quilt/server';
-        import {BrowserAssets} from ${JSON.stringify(
-          MAGIC_MODULE_BROWSER_ASSETS,
-        )};
-
-        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-
-        const router = new RequestRouter();
-        const assets = new BrowserAssets();
-        
-        // For all GET requests, render our React application.
-        router.get(async (request) => {
-          const response = await renderToResponse(jsx(App), {
-            request,
-            assets,
-          });
-        
-          return response;
-        });
-        
-        export default router;
-      `;
 
     quiltAsyncPreload?.(() => false);
     quiltAssetManifest?.(() => false);
 
-    // We want to force some of our “magic” modules to be internalized
-    // no matter what, and other wise defer to the user-specified or
-    // fallback behavior.
-    rollupNodeBundle?.((defaultBundle) => {
-      return addRollupNodeBundleInclusion(
-        /@quilted[/]quilt[/](magic|env)/,
-        explicitBundle ?? defaultBundle,
-      );
-    });
+    rollupNodeBundle?.((defaultBundle) => explicitBundle ?? defaultBundle);
 
     rollupPlugins?.(async (plugins) => {
-      const {cssRollupPlugin} = await import('./rollup/css.ts');
+      const [{cssRollupPlugin}, {appMagicModules}] = await Promise.all([
+        import('./rollup/css.ts'),
+        import('../tools/rollup/app.ts'),
+      ]);
 
-      plugins.push(
+      return [
+        appMagicModules({
+          mode,
+          env: {
+            dotenv: {roots: [project.fs.root, workspace.fs.root]},
+            inline: () =>
+              quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
+            runtime: () => quiltRuntimeEnvironmentVariables?.run('process.env'),
+            customize: (content) =>
+              quiltEnvModuleContent?.run(content) ?? content,
+          },
+          server: entry ?? {
+            customize: (content) =>
+              quiltAppServerEntryContent?.run(content) ?? content,
+          },
+          browser: false,
+        }),
+        ...plugins,
         cssRollupPlugin({
           extract: false,
           postcssPlugins: () => postcssPlugins!.run(),
@@ -224,28 +196,11 @@ function setupConfiguration(
           postcssCSSModulesOptions: (options) =>
             postcssCSSModulesOptions!.run(options),
         }),
-      );
-
-      plugins.unshift({
-        name: '@quilted/magic-module-app-server',
-        async resolveId(id, importer) {
-          if (id !== MAGIC_SERVER_ENTRY_MODULE) return null;
-
-          return this.resolve(await quiltAppServerEntry!.run(), importer, {
-            skipSelf: true,
-          });
-        },
-      });
-
-      return plugins;
+      ];
     });
 
-    if (requestRouter) {
-      quiltRequestRouterContent?.(
-        async () => await quiltAppServerEntryContent!.run(content),
-      );
-    } else {
-      rollupInput?.(() => [MAGIC_SERVER_ENTRY_MODULE]);
+    if (!requestRouter) {
+      rollupInput?.(async () => [await quiltAppServerEntry!.run()]);
     }
   };
 }

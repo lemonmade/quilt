@@ -49,7 +49,6 @@ import type {
 } from './plugins/app-build.ts';
 import {appDevelop} from './plugins/app-develop.ts';
 import type {Options as AppDevelopOptions} from './plugins/app-develop.ts';
-import {magicModuleApp} from './plugins/magic-module-app.ts';
 import {magicModuleBrowserEntry} from './plugins/magic-module-browser-entry.ts';
 import {magicModuleAppServerEntry} from './plugins/magic-module-app-server-entry.ts';
 import {appServer} from './plugins/app-server-base.ts';
@@ -217,12 +216,17 @@ export function quiltApp({
         }),
         aliasWorkspacePackages(),
         // Magic modules
-        magicModuleApp(),
         magicModuleBrowserEntry({hydrate: Boolean(server)}),
         magicModuleAppServerEntry(),
         magicModuleEnv(),
         // Build and auto-server setup
-        server && appServer(typeof server === 'boolean' ? undefined : server),
+        server &&
+          (typeof server === 'boolean'
+            ? appServer({env})
+            : appServer({
+                ...server,
+                env: server.env ?? env,
+              })),
         server && useRequestRouter && requestRouter(),
         server && useRequestRouter && requestRouterDevelopment(),
         build && browserAssets({baseUrl, ...assetOptions}),
@@ -248,7 +252,6 @@ export function quiltApp({
           appDevelop({
             env,
             browser,
-            server: typeof server === 'object' ? server : undefined,
             ...(typeof develop === 'boolean' ? undefined : develop),
           }),
 

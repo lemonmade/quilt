@@ -1,7 +1,10 @@
 import {createProjectPlugin, DiagnosticError} from '../kit.ts';
 import type {Project, WaterfallHookWithDefault} from '../kit.ts';
 
+import type {EnvironmentOptions} from './magic-module-env.ts';
+
 export interface Options {
+  env?: EnvironmentOptions;
   entry?: string;
 }
 
@@ -19,10 +22,10 @@ declare module '@quilted/sewing-kit' {
     extends ServiceBaseConfigurationHooks {}
 }
 
-export function serviceBase({entry}: Options = {}) {
+export function serviceBase({env, entry}: Options = {}) {
   return createProjectPlugin({
     name: 'Quilt.ServiceBase',
-    build({hooks, configure, project}) {
+    build({hooks, configure, project, workspace}) {
       hooks<ServiceBaseConfigurationHooks>(({waterfall}) => ({
         quiltServiceEntry: waterfall({
           default: () =>
@@ -30,12 +33,44 @@ export function serviceBase({entry}: Options = {}) {
         }),
       }));
 
-      configure(({runtimes, quiltServiceEntry, quiltRequestRouterEntry}) => {
-        runtimes(() => [{target: 'node'}]);
-        quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
-      });
+      configure(
+        ({
+          runtimes,
+          rollupPlugins,
+          quiltServiceEntry,
+          quiltRequestRouterEntry,
+          quiltEnvModuleContent,
+          quiltInlineEnvironmentVariables,
+          quiltRuntimeEnvironmentVariables,
+        }) => {
+          runtimes(() => [{target: 'node'}]);
+
+          quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
+
+          rollupPlugins?.(async (plugins) => {
+            const [{serviceMagicModules}] = await Promise.all([
+              import('../tools/rollup/service.ts'),
+            ]);
+
+            return [
+              serviceMagicModules({
+                mode: 'production',
+                env: {
+                  dotenv: {roots: [project.fs.root, workspace.fs.root]},
+                  inline: () =>
+                    quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
+                  runtime: () =>
+                    quiltRuntimeEnvironmentVariables?.run('process.env'),
+                  customize: (content) => quiltEnvModuleContent!.run(content),
+                },
+              }),
+              ...plugins,
+            ];
+          });
+        },
+      );
     },
-    develop({hooks, configure, project}) {
+    develop({hooks, configure, project, workspace}) {
       hooks<ServiceBaseConfigurationHooks>(({waterfall}) => ({
         quiltServiceEntry: waterfall({
           default: () =>
@@ -43,10 +78,42 @@ export function serviceBase({entry}: Options = {}) {
         }),
       }));
 
-      configure(({runtimes, quiltServiceEntry, quiltRequestRouterEntry}) => {
-        runtimes(() => [{target: 'node'}]);
-        quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
-      });
+      configure(
+        ({
+          runtimes,
+          rollupPlugins,
+          quiltServiceEntry,
+          quiltRequestRouterEntry,
+          quiltEnvModuleContent,
+          quiltInlineEnvironmentVariables,
+          quiltRuntimeEnvironmentVariables,
+        }) => {
+          runtimes(() => [{target: 'node'}]);
+
+          quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
+
+          rollupPlugins?.(async (plugins) => {
+            const [{serviceMagicModules}] = await Promise.all([
+              import('../tools/rollup/service.ts'),
+            ]);
+
+            return [
+              serviceMagicModules({
+                mode: 'development',
+                env: {
+                  dotenv: {roots: [project.fs.root, workspace.fs.root]},
+                  inline: () =>
+                    quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
+                  runtime: () =>
+                    quiltRuntimeEnvironmentVariables?.run('process.env'),
+                  customize: (content) => quiltEnvModuleContent!.run(content),
+                },
+              }),
+              ...plugins,
+            ];
+          });
+        },
+      );
     },
   });
 }
