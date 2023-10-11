@@ -8,6 +8,7 @@ import type {} from '../features/async.ts';
 import type {} from '../features/graphql.ts';
 
 import {createProjectPlugin, Project, Workspace} from '../kit.ts';
+import {MAGIC_MODULE_BROWSER_ENTRY} from '../constants.ts';
 
 import {BROWSERSLIST_MODULES_QUERY} from './app-base.ts';
 import type {EnvironmentOptions} from './magic-module-env.ts';
@@ -62,8 +63,7 @@ declare module '@quilted/sewing-kit' {
   }
 }
 
-const MAGIC_ENTRY_MODULE = '__quilt__/AppEntry.tsx';
-export const STEP_NAME = 'Quilt.App.Build';
+export const STEP_NAME = 'quilt.app.build';
 
 export function appBuild({assets, browser, env}: Options) {
   return createProjectPlugin({
@@ -155,7 +155,7 @@ export function appBuild({assets, browser, env}: Options) {
             },
           }));
 
-          rollupInput?.(() => [MAGIC_ENTRY_MODULE]);
+          rollupInput?.(() => [MAGIC_MODULE_BROWSER_ENTRY]);
 
           rollupPlugins?.(async (plugins) => {
             const [
