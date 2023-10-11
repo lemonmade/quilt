@@ -95,7 +95,7 @@ declare module '@quilted/sewing-kit' {
  */
 export function vite({run: shouldRun = true} = {}) {
   return createProjectPlugin({
-    name: 'Quilt.Vite',
+    name: 'quilt.vite',
     develop({project, hooks, run}) {
       hooks<ViteHooks>(({waterfall}) => ({
         viteConfig: waterfall(),
@@ -117,7 +117,7 @@ export function vite({run: shouldRun = true} = {}) {
 
       run((step, {configuration}) =>
         step({
-          name: 'Quilt.Vite',
+          name: 'quilt.vite',
           label: `Running vite for ${project.name}`,
           async run(runner) {
             const [{createServer}, configurationHooks] = await Promise.all([

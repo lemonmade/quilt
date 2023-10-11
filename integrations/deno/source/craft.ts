@@ -8,8 +8,8 @@ import type {
   ResolvedBuildProjectConfigurationHooks,
   ResolvedDevelopProjectConfigurationHooks,
 } from '@quilted/craft/kit';
-import type {PolyfillFeature} from '@quilted/craft/polyfills';
-import type {} from '@quilted/craft/browserslist';
+import type {PolyfillFeature} from '@quilted/craft/features/polyfills';
+import type {} from '@quilted/craft/tools/browserslist';
 
 export interface Options {}
 
@@ -75,7 +75,9 @@ function addConfiguration({mode}: {mode: string; project: Project}) {
     browserslistTargets?.(() => ['last 1 chrome version']);
 
     rollupPlugins?.(async (plugins) => {
-      const {rollupReplaceProcessEnv} = await import('@quilted/craft/rollup');
+      const {rollupReplaceProcessEnv} = await import(
+        '@quilted/craft/tools/rollup'
+      );
 
       return [
         ...plugins,

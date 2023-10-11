@@ -6,10 +6,10 @@ import {
   type WaterfallHook,
 } from '../kit.ts';
 
-import type {} from '../tools/babel.ts';
-import type {} from '../tools/eslint.ts';
-import type {} from '../tools/jest.ts';
-import type {} from '../tools/rollup.ts';
+import type {} from './babel.ts';
+import type {} from './eslint.ts';
+import type {} from './jest.ts';
+import type {} from './rollup.ts';
 
 export interface TypeScriptHooks {
   typescriptHeap: WaterfallHook<number | undefined>;
@@ -27,7 +27,7 @@ const require = createRequire(import.meta.url);
  */
 export function typescriptProject() {
   return createProjectPlugin({
-    name: 'Quilt.TypeScript',
+    name: 'quilt.typescript.project',
     build({configure}) {
       configure(({extensions, babelPresets, babelPlugins}) => {
         // Let us import from TypeScript files without extensions
@@ -128,7 +128,7 @@ export function typescriptProject() {
  */
 export function typescriptWorkspace() {
   return createWorkspacePlugin({
-    name: 'Quilt.TypeScript',
+    name: 'quilt.typescript.workspace',
     build({workspace, hooks, configure, run}) {
       hooks<TypeScriptHooks>(({waterfall}) => ({typescriptHeap: waterfall()}));
 
@@ -158,7 +158,7 @@ export function typescriptWorkspace() {
 
       run((step, {configuration}) =>
         step({
-          name: 'Quilt.TypeScript',
+          name: 'quilt.typescript',
           label:
             'Building type definitions for public packages in the workspace',
           async run(step) {

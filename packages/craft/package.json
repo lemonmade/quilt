@@ -23,40 +23,103 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
-    "./babel": {
+    "./kit": {
+      "types": "./build/typescript/kit.d.ts",
+      "quilt:source": "./source/kit.ts",
+      "quilt:esnext": "./build/esnext/kit.esnext",
+      "import": "./build/esm/kit.mjs",
+      "require": "./build/cjs/kit.cjs"
+    },
+    "./tools/babel": {
       "types": "./build/typescript/tools/babel.d.ts",
       "quilt:source": "./source/tools/babel.ts",
       "quilt:esnext": "./build/esnext/tools/babel.esnext",
       "import": "./build/esm/tools/babel.mjs",
       "require": "./build/cjs/tools/babel.cjs"
     },
-    "./browserslist": {
+    "./tools/browserslist": {
       "types": "./build/typescript/tools/browserslist.d.ts",
       "quilt:source": "./source/tools/browserslist.ts",
       "quilt:esnext": "./build/esnext/tools/browserslist.esnext",
       "import": "./build/esm/tools/browserslist.mjs",
       "require": "./build/cjs/tools/browserslist.cjs"
     },
-    "./eslint": {
+    "./tools/eslint": {
       "types": "./build/typescript/tools/eslint.d.ts",
       "quilt:source": "./source/tools/eslint.ts",
       "quilt:esnext": "./build/esnext/tools/eslint.esnext",
       "import": "./build/esm/tools/eslint.mjs",
       "require": "./build/cjs/tools/eslint.cjs"
     },
-    "./esnext": {
+    "./tools/jest": {
+      "types": "./build/typescript/tools/jest.d.ts",
+      "quilt:source": "./source/tools/jest.ts",
+      "quilt:esnext": "./build/esnext/tools/jest.esnext",
+      "import": "./build/esm/tools/jest.mjs",
+      "require": "./build/cjs/tools/jest.cjs"
+    },
+    "./tools/postcss": {
+      "types": "./build/typescript/tools/postcss.d.ts",
+      "quilt:source": "./source/tools/postcss.ts",
+      "quilt:esnext": "./build/esnext/tools/postcss.esnext",
+      "import": "./build/esm/tools/postcss.mjs",
+      "require": "./build/cjs/tools/postcss.cjs"
+    },
+    "./tools/prettier": {
+      "types": "./build/typescript/tools/prettier.d.ts",
+      "quilt:source": "./source/tools/prettier.ts",
+      "quilt:esnext": "./build/esnext/tools/prettier.esnext",
+      "import": "./build/esm/tools/prettier.mjs",
+      "require": "./build/cjs/tools/prettier.cjs"
+    },
+    "./tools/rollup": {
+      "types": "./build/typescript/tools/rollup.d.ts",
+      "quilt:source": "./source/tools/rollup.ts",
+      "quilt:esnext": "./build/esnext/tools/rollup.esnext",
+      "import": "./build/esm/tools/rollup.mjs",
+      "require": "./build/cjs/tools/rollup.cjs"
+    },
+    "./tools/stylelint": {
+      "types": "./build/typescript/tools/stylelint.d.ts",
+      "quilt:source": "./source/tools/stylelint.ts",
+      "quilt:esnext": "./build/esnext/tools/stylelint.esnext",
+      "import": "./build/esm/tools/stylelint.mjs",
+      "require": "./build/cjs/tools/stylelint.cjs"
+    },
+    "./tools/typescript": {
+      "types": "./build/typescript/tools/typescript.d.ts",
+      "quilt:source": "./source/tools/typescript.ts",
+      "quilt:esnext": "./build/esnext/tools/typescript.esnext",
+      "import": "./build/esm/tools/typescript.mjs",
+      "require": "./build/cjs/tools/typescript.cjs"
+    },
+    "./tools/vite": {
+      "types": "./build/typescript/tools/vite.d.ts",
+      "quilt:source": "./source/tools/vite.ts",
+      "quilt:esnext": "./build/esnext/tools/vite.esnext",
+      "import": "./build/esm/tools/vite.mjs",
+      "require": "./build/cjs/tools/vite.cjs"
+    },
+    "./features/esnext": {
       "types": "./build/typescript/features/esnext.d.ts",
       "quilt:source": "./source/features/esnext.ts",
       "quilt:esnext": "./build/esnext/features/esnext.esnext",
       "import": "./build/esm/features/esnext.mjs",
       "require": "./build/cjs/features/esnext.cjs"
     },
-    "./graphql": {
+    "./features/graphql": {
       "types": "./build/typescript/features/graphql.d.ts",
       "quilt:source": "./source/features/graphql.ts",
       "quilt:esnext": "./build/esnext/features/graphql.esnext",
       "import": "./build/esm/features/graphql.mjs",
       "require": "./build/cjs/features/graphql.cjs"
+    },
+    "./features/polyfills": {
+      "types": "./build/typescript/features/polyfills.d.ts",
+      "quilt:source": "./source/features/polyfills.ts",
+      "quilt:esnext": "./build/esnext/features/polyfills.esnext",
+      "import": "./build/esm/features/polyfills.mjs",
+      "require": "./build/cjs/features/polyfills.cjs"
     },
     "./jest/resolver.cjs": {
       "require": "./jest/resolver.cjs"
@@ -70,47 +133,12 @@
     "./jest/css-modules.cjs": {
       "require": "./jest/css-modules.cjs"
     },
-    "./jest": {
-      "types": "./build/typescript/tools/jest.d.ts",
-      "quilt:source": "./source/tools/jest.ts",
-      "quilt:esnext": "./build/esnext/tools/jest.esnext",
-      "import": "./build/esm/tools/jest.mjs",
-      "require": "./build/cjs/tools/jest.cjs"
-    },
-    "./kit": {
-      "types": "./build/typescript/kit.d.ts",
-      "quilt:source": "./source/kit.ts",
-      "quilt:esnext": "./build/esnext/kit.esnext",
-      "import": "./build/esm/kit.mjs",
-      "require": "./build/cjs/kit.cjs"
-    },
     "./packages": {
       "types": "./build/typescript/features/packages.d.ts",
       "quilt:source": "./source/features/packages.ts",
       "quilt:esnext": "./build/esnext/features/packages.esnext",
       "import": "./build/esm/features/packages.mjs",
       "require": "./build/cjs/features/packages.cjs"
-    },
-    "./polyfills": {
-      "types": "./build/typescript/features/polyfills.d.ts",
-      "quilt:source": "./source/features/polyfills.ts",
-      "quilt:esnext": "./build/esnext/features/polyfills.esnext",
-      "import": "./build/esm/features/polyfills.mjs",
-      "require": "./build/cjs/features/polyfills.cjs"
-    },
-    "./postcss": {
-      "types": "./build/typescript/tools/postcss.d.ts",
-      "quilt:source": "./source/tools/postcss.ts",
-      "quilt:esnext": "./build/esnext/tools/postcss.esnext",
-      "import": "./build/esm/tools/postcss.mjs",
-      "require": "./build/cjs/tools/postcss.cjs"
-    },
-    "./prettier": {
-      "types": "./build/typescript/tools/prettier.d.ts",
-      "quilt:source": "./source/tools/prettier.ts",
-      "quilt:esnext": "./build/esnext/tools/prettier.esnext",
-      "import": "./build/esm/tools/prettier.mjs",
-      "require": "./build/cjs/tools/prettier.cjs"
     },
     "./react": {
       "types": "./build/typescript/features/react.d.ts",
@@ -119,40 +147,12 @@
       "import": "./build/esm/features/react.mjs",
       "require": "./build/cjs/features/react.cjs"
     },
-    "./rollup": {
-      "types": "./build/typescript/tools/rollup.d.ts",
-      "quilt:source": "./source/tools/rollup.ts",
-      "quilt:esnext": "./build/esnext/tools/rollup.esnext",
-      "import": "./build/esm/tools/rollup.mjs",
-      "require": "./build/cjs/tools/rollup.cjs"
-    },
-    "./stylelint": {
-      "types": "./build/typescript/tools/stylelint.d.ts",
-      "quilt:source": "./source/tools/stylelint.ts",
-      "quilt:esnext": "./build/esnext/tools/stylelint.esnext",
-      "import": "./build/esm/tools/stylelint.mjs",
-      "require": "./build/cjs/tools/stylelint.cjs"
-    },
     "./targets": {
       "types": "./build/typescript/features/targets.d.ts",
       "quilt:source": "./source/features/targets.ts",
       "quilt:esnext": "./build/esnext/features/targets.esnext",
       "import": "./build/esm/features/targets.mjs",
       "require": "./build/cjs/features/targets.cjs"
-    },
-    "./typescript": {
-      "types": "./build/typescript/tools/typescript.d.ts",
-      "quilt:source": "./source/tools/typescript.ts",
-      "quilt:esnext": "./build/esnext/tools/typescript.esnext",
-      "import": "./build/esm/tools/typescript.mjs",
-      "require": "./build/cjs/tools/typescript.cjs"
-    },
-    "./vite": {
-      "types": "./build/typescript/tools/vite.d.ts",
-      "quilt:source": "./source/tools/vite.ts",
-      "quilt:esnext": "./build/esnext/tools/vite.esnext",
-      "import": "./build/esm/tools/vite.mjs",
-      "require": "./build/cjs/tools/vite.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",

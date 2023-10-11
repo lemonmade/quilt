@@ -46,7 +46,7 @@ declare module '@quilted/sewing-kit' {
  */
 export function browserslist() {
   return createProjectPlugin({
-    name: 'Quilt.Browserslist',
+    name: 'quilt.browserslist',
     build({hooks, configure, project, workspace}) {
       hooks<TargetHooks>(({waterfall}) => ({
         browserslistTargets: waterfall(),

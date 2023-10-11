@@ -1,5 +1,5 @@
 import {createProject, quiltPackage, createProjectPlugin} from '@quilted/craft';
-import type {} from '@quilted/craft/jest';
+import type {} from '@quilted/craft/tools/jest';
 
 export default createProject((project) => {
   project.use(

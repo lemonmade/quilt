@@ -31,7 +31,7 @@ export function stylelint({
   prettier: usesPrettierStylelint = true,
 }: Options = {}) {
   return createWorkspacePlugin({
-    name: 'Quilt.ESLint',
+    name: 'quilt.stylelint',
     lint({hooks, configure, run, options, workspace}) {
       hooks<StylelintHooks>(({waterfall}) => ({
         stylelintExtensions: waterfall(),
@@ -53,7 +53,7 @@ export function stylelint({
 
       run((step, {configuration}) =>
         step({
-          name: 'Quilt.Stylelint',
+          name: 'quilt.stylelint',
           label: 'Running stylelint on your workspace',
           async run(step) {
             const {stylelintExtensions} = await configuration();
