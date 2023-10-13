@@ -1,268 +1,246 @@
-import type {Plugin, PluginContext} from 'rollup';
+import type {Plugin} from 'rollup';
 import {stripIndent} from 'common-tags';
 
 import {
   MAGIC_MODULE_APP_COMPONENT,
-  MAGIC_MODULE_SERVER_ENTRY,
-  MAGIC_MODULE_BROWSER_ENTRY,
   MAGIC_MODULE_BROWSER_ASSETS,
-  MAGIC_MODULE_ENV,
+  MAGIC_MODULE_REQUEST_ROUTER,
 } from '../../constants.ts';
 
-import {type MagicModulesOptions} from './module.ts';
+import {magicModuleEnv, type MagicModuleEnvOptions} from './env.ts';
 
-import {createEnvMagicModule} from './shared/env.ts';
-import {resolveValueOrPromise, type ValueOrPromise} from './shared/values.ts';
+import {
+  createMagicModulePlugin,
+  createMagicModuleEntryPlugin,
+} from './shared/magic-module.ts';
 
-export interface BrowserMagicModuleOptions {
+export interface AppOptions {
+  /**
+   * The entry module for this app. This should be an absolute path, or relative
+   * path from the root directory containing your project. This entry should just be
+   * for the main `App` component in your project, which Quilt will automatically use
+   * to create browser and server-side entries for your project.
+   *
+   * If you only want to use a custom entry module for the browser build, use the
+   * `browser.entry` option instead. If you only want to use a custom entry module
+   * for the server-side build, use the `server.entry` option instead.
+   *
+   * @example './App.tsx'
+   */
+  entry?: string;
+
+  /**
+   * Whether to include GraphQL-related code transformations.
+   *
+   * @default true
+   */
+  graphql?: boolean;
+
+  /**
+   * Customizes the behavior of environment variables for your application. You
+   * can further customize the environment variables provided during server-side
+   * rendering by passing `server.env`.
+   */
+  env?: MagicModuleEnvOptions;
+}
+
+export function quiltApp({env, entry}: AppOptions = {}) {
+  return {
+    name: '@quilted/app',
+    options(originalOptions) {
+      const newPlugins = [
+        ...(Array.isArray(originalOptions.plugins)
+          ? originalOptions.plugins
+          : originalOptions.plugins
+          ? [originalOptions.plugins]
+          : []),
+      ];
+
+      const newOptions = {...originalOptions, plugins: newPlugins};
+
+      if (env) {
+        newPlugins.push(
+          typeof env === 'boolean' ? magicModuleEnv() : magicModuleEnv(env),
+        );
+      }
+
+      if (entry) {
+        newPlugins.push(magicModuleAppComponent({entry}));
+      }
+
+      return newOptions;
+    },
+  } satisfies Plugin;
+}
+
+export interface AppBrowserOptions {
   /**
    * Whether the app should use hydration or client-side rendering.
    */
-  shouldHydrate?: ValueOrPromise<boolean | undefined>;
+  hydrate?: boolean;
 
   /**
    * The CSS selector to render or hydrate the application into.
    */
-  cssSelector?: ValueOrPromise<string | undefined>;
-
-  /**
-   * Allows you to perform any final alterations on the content used
-   * as the magic browser entry.
-   */
-  customize?(content: string): string | Promise<string>;
+  selector?: string;
 }
 
-export interface ServerMagicModuleOptions {
-  /**
-   * Allows you to perform any final alterations on the content used
-   * as the magic server entry.
-   */
-  customize?(content: string): string | Promise<string>;
-}
-
-export interface AppMagicModulesOptions extends MagicModulesOptions {
-  /**
-   * Configuration for the magic app module, `quilt:magic/app`. You can
-   * pass one of the following types:
-   *
-   * - A `string`, which should be a module specifier to import as the app
-   * entrypoint for this application. This module should export a React component
-   * as its default export.
-   * - `false`, which disables the magic app module.
-   *
-   * @example './App.tsx'
-   * @default false
-   */
-  app?: false | ValueOrPromise<string>;
-
-  /**
-   * Configuration for the magic browser module, `quilt:magic/browser`. You can
-   * pass one of the following types:
-   *
-   * - A `string`, which should be a module specifier to import as the browser
-   * entrypoint for this application.
-   * - A `boolean`, which can be set to `true` to get the default browser module,
-   * or `false` to disable the browser module.
-   * - An object, which can be used to customize the default browser module.
-   *
-   * The default browser module imports the Quilt globals module, and then renders
-   * the React application (imported from `quilt:magic/app`) into a root page element.
-   *
-   * @example './browser.tsx'
-   * @default true
-   */
-  browser?: boolean | string | BrowserMagicModuleOptions;
-
-  /**
-   * Configuration for the magic server module, `quilt:magic/server`. You can
-   * pass one of the following types:
-   *
-   * - A `string`, which should be a module specifier to import as the browser
-   * entrypoint for this application.
-   * - A `boolean`, which can be set to `true` to get the default browser module,
-   * or `false` to disable the browser module.
-   * - An object, which can be used to customize the default browser module.
-   *
-   * The default browser module imports the Quilt globals module, and then renders
-   * the React application (imported from `quilt:magic/app`) into a root page element.
-   *
-   * @example './server.tsx'
-   * @default true
-   */
-  server?: boolean | string | ServerMagicModuleOptions;
-}
-
-interface MagicModule {
-  readonly sideEffects: boolean;
-  source(this: PluginContext): Promise<string>;
-}
-
-const VIRTUAL_MODULE_PREFIX = '\0';
-const VIRTUAL_MODULE_POSTFIX = '/module.js';
-
-export function appMagicModules({
-  mode = 'production',
-  env = true,
-  app = false,
-  browser = true,
-  server = true,
-}: AppMagicModulesOptions) {
-  const magicModules = new Map<string, MagicModule>();
-
-  if (env !== false) {
-    magicModules.set(MAGIC_MODULE_ENV, {
-      sideEffects: false,
-      async source() {
-        const content = await createEnvMagicModule.call(this, {
-          mode,
-          ...(typeof env === 'boolean' ? {} : env),
-        });
-
-        return content;
-      },
-    });
-  }
-
-  if (app !== false) {
-    magicModules.set(MAGIC_MODULE_APP_COMPONENT, {
-      sideEffects: false,
-      async source() {
-        const appEntry = await resolveValueOrPromise(app);
-
-        return stripIndent`
-          import {default} from ${JSON.stringify(appEntry)};
-        `;
-      },
-    });
-  }
-
-  if (browser !== false) {
-    magicModules.set(MAGIC_MODULE_BROWSER_ENTRY, {
-      sideEffects: true,
-      async source() {
-        if (typeof browser === 'string') {
-          return `import ${JSON.stringify(browser)};`;
-        }
-
-        const {shouldHydrate, cssSelector, customize} =
-          typeof browser === 'boolean'
-            ? ({} as BrowserMagicModuleOptions)
-            : browser;
-
-        const [hydrate = true, selector = '#app'] = await Promise.all([
-          resolveValueOrPromise(shouldHydrate),
-          resolveValueOrPromise(cssSelector),
-        ]);
-
-        const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
-
-        const initialContent = stripIndent`
-          import '@quilted/quilt/globals';
-
-          import {jsx} from 'react/jsx-runtime';
-          import {${reactRootFunction}} from 'react-dom/client';
-
-          import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-  
-          const element = document.querySelector(${JSON.stringify(selector)});
-  
-          ${
-            hydrate
-              ? `${reactRootFunction}(element, jsx(App));`
-              : `${reactRootFunction}(element).render(jsx(App));`
-          }
-        `;
-
-        const content = (await customize?.(initialContent)) ?? initialContent;
-        return content;
-      },
-    });
-  }
-
-  if (server !== false) {
-    magicModules.set(MAGIC_MODULE_SERVER_ENTRY, {
-      sideEffects: false,
-      async source() {
-        if (typeof server === 'string') {
-          return `export {default} from ${JSON.stringify(server)};`;
-        }
-
-        const {customize} =
-          typeof server === 'boolean'
-            ? ({} as ServerMagicModuleOptions)
-            : server;
-
-        const initialContent = stripIndent`
-          import '@quilted/quilt/globals';
-  
-          import {jsx} from 'react/jsx-runtime';
-          import {RequestRouter} from '@quilted/quilt/request-router';
-          import {renderToResponse} from '@quilted/quilt/server';
-  
-          import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-          import {BrowserAssets} from ${JSON.stringify(
-            MAGIC_MODULE_BROWSER_ASSETS,
-          )};
-  
-          const router = new RequestRouter();
-          const assets = new BrowserAssets();
-  
-          // For all GET requests, render our React application.
-          router.get(async (request) => {
-            const response = await renderToResponse(jsx(App), {
-              request,
-              assets,
-            });
-  
-            return response;
-          });
-  
-          export default router;
-        `;
-
-        const content = (await customize?.(initialContent)) ?? initialContent;
-        return content;
-      },
-    });
-  }
-
+export function quiltAppBrowser(options: AppBrowserOptions = {}) {
   return {
-    name: '@quilted/app/magic-modules',
-    resolveId(id) {
-      const magicModule = magicModules.get(id);
+    name: '@quilted/app/browser',
+    options(originalOptions) {
+      const newPlugins = [
+        ...(Array.isArray(originalOptions.plugins)
+          ? originalOptions.plugins
+          : originalOptions.plugins
+          ? [originalOptions.plugins]
+          : []),
+      ];
 
-      if (magicModule == null) return null;
+      const newOptions = {...originalOptions, plugins: newPlugins};
 
-      const virtualModuleID = `${VIRTUAL_MODULE_PREFIX}${id}${VIRTUAL_MODULE_POSTFIX}`;
+      newPlugins.push(magicModuleAppBrowserEntry(options));
 
-      return {
-        id: virtualModuleID,
-        moduleSideEffects: magicModule.sideEffects ? 'no-treeshake' : undefined,
-      };
-    },
-    async load(source) {
-      if (
-        !source.startsWith(VIRTUAL_MODULE_PREFIX) ||
-        !source.endsWith(VIRTUAL_MODULE_POSTFIX)
-      ) {
-        return null;
-      }
-
-      const magicModule = magicModules.get(
-        source.slice(
-          VIRTUAL_MODULE_PREFIX.length,
-          source.length - VIRTUAL_MODULE_POSTFIX.length,
-        ),
-      );
-
-      if (magicModule == null) return null;
-
-      const code = await magicModule.source.call(this);
-
-      return {
-        code,
-        moduleSideEffects: magicModule.sideEffects ? 'no-treeshake' : undefined,
-      };
+      return newOptions;
     },
   } satisfies Plugin;
+}
+
+export interface AppServerOptions {
+  /**
+   * The entry module for the server of this app. This module must export a
+   * `RequestRouter` object as its default export, which will be wrapped in
+   * the specific server runtime you configure.
+   */
+  entry?: string;
+}
+
+export function quiltAppServer(options: AppServerOptions = {}) {
+  return {
+    name: '@quilted/app/server',
+    options(originalOptions) {
+      const newPlugins = [
+        ...(Array.isArray(originalOptions.plugins)
+          ? originalOptions.plugins
+          : originalOptions.plugins
+          ? [originalOptions.plugins]
+          : []),
+      ];
+
+      const newOptions = {...originalOptions, plugins: newPlugins};
+
+      newPlugins.push(magicModuleRequestRouterEntry());
+      newPlugins.push(magicModuleAppRequestRouter(options));
+
+      return newOptions;
+    },
+  } satisfies Plugin;
+}
+
+export function magicModuleAppComponent({entry}: {entry: string}) {
+  return createMagicModulePlugin({
+    name: '@quilted/magic-module/app',
+    module: MAGIC_MODULE_APP_COMPONENT,
+    alias: entry,
+  });
+}
+
+export function magicModuleAppRequestRouter({
+  entry,
+}: Pick<AppServerOptions, 'entry'> = {}) {
+  return createMagicModulePlugin({
+    name: '@quilted/magic-module/app-request-router',
+    module: MAGIC_MODULE_REQUEST_ROUTER,
+    alias: entry,
+    source: entry
+      ? undefined
+      : async function source() {
+          return stripIndent`
+            import '@quilted/quilt/globals';
+
+            import {jsx} from 'react/jsx-runtime';
+            import {RequestRouter} from '@quilted/quilt/request-router';
+            import {renderToResponse} from '@quilted/quilt/server';
+
+            import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+            import {BrowserAssets} from ${JSON.stringify(
+              MAGIC_MODULE_BROWSER_ASSETS,
+            )};
+
+            const router = new RequestRouter();
+            const assets = new BrowserAssets();
+
+            // For all GET requests, render our React application.
+            router.get(async (request) => {
+              const response = await renderToResponse(jsx(App), {
+                request,
+                assets,
+              });
+
+              return response;
+            });
+
+            export default router;
+          `;
+        },
+  });
+}
+
+export function magicModuleAppBrowserEntry({
+  hydrate = true,
+  selector = '#app',
+}: AppBrowserOptions = {}) {
+  return createMagicModuleEntryPlugin({
+    name: '@quilted/magic-module/app-browser-entry',
+    sideEffects: true,
+    async source() {
+      const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
+
+      return stripIndent`
+        import '@quilted/quilt/globals';
+
+        import {jsx} from 'react/jsx-runtime';
+        import {${reactRootFunction}} from 'react-dom/client';
+
+        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+
+        const element = document.querySelector(${JSON.stringify(selector)});
+
+        ${
+          hydrate
+            ? `${reactRootFunction}(element, jsx(App));`
+            : `${reactRootFunction}(element).render(jsx(App));`
+        }
+      `;
+    },
+  });
+}
+
+export function magicModuleRequestRouterEntry({
+  host,
+  port,
+}: {
+  host?: string;
+  port?: number;
+} = {}) {
+  return createMagicModuleEntryPlugin({
+    name: '@quilted/request-router',
+    sideEffects: true,
+    async source() {
+      const initialContent = stripIndent`
+        import requestRouter from ${JSON.stringify(
+          MAGIC_MODULE_REQUEST_ROUTER,
+        )};
+
+        import {createHttpServer} from '@quilted/quilt/request-router/node';
+
+        const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
+        const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
+      
+        createHttpServer(requestRouter).listen(port, host);
+      `;
+
+      return initialContent;
+    },
+  });
 }

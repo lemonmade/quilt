@@ -146,10 +146,8 @@ function setupConfiguration(
       rollupNodeBundle,
       quiltAppEntry,
       quiltAppServerEntry,
-      quiltAppServerEntryContent,
       quiltAsyncPreload,
       quiltAssetManifest,
-      quiltEnvModuleContent,
       quiltInlineEnvironmentVariables,
       quiltRuntimeEnvironmentVariables,
     }: ResolvedBuildProjectConfigurationHooks,
@@ -167,29 +165,31 @@ function setupConfiguration(
     rollupNodeBundle?.((defaultBundle) => explicitBundle ?? defaultBundle);
 
     rollupPlugins?.(async (plugins) => {
-      const [{cssRollupPlugin}, {appMagicModules}] = await Promise.all([
+      const [
+        {cssRollupPlugin},
+        {quiltApp, quiltAppServer},
+        appEntry,
+        inlineEnv,
+        runtimeEnv,
+      ] = await Promise.all([
         import('./rollup/css.ts'),
         import('../tools/rollup/app.ts'),
+        quiltAppEntry!.run(),
+        quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
+        quiltRuntimeEnvironmentVariables!.run(undefined),
       ]);
 
       return [
-        appMagicModules({
-          mode,
-          app: () => quiltAppEntry!.run(),
+        quiltApp({
+          entry: appEntry,
           env: {
+            mode,
             dotenv: {roots: [project.fs.root, workspace.fs.root]},
-            inline: () =>
-              quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
-            runtime: () => quiltRuntimeEnvironmentVariables?.run('process.env'),
-            customize: (content) =>
-              quiltEnvModuleContent?.run(content) ?? content,
+            inline: inlineEnv,
+            runtime: runtimeEnv,
           },
-          server: entry ?? {
-            customize: (content) =>
-              quiltAppServerEntryContent?.run(content) ?? content,
-          },
-          browser: false,
         }),
+        ...(requestRouter ? [quiltAppServer({entry})] : []),
         ...plugins,
         cssRollupPlugin({
           extract: false,
@@ -201,9 +201,7 @@ function setupConfiguration(
       ];
     });
 
-    if (!requestRouter) {
-      rollupInput?.(async () => [await quiltAppServerEntry!.run()]);
-    }
+    rollupInput?.(() => ['quilt:magic/entry']);
   };
 }
 

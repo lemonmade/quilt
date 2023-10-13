@@ -39,7 +39,6 @@ export function serviceBase({env, entry}: Options = {}) {
           rollupPlugins,
           quiltServiceEntry,
           quiltRequestRouterEntry,
-          quiltEnvModuleContent,
           quiltInlineEnvironmentVariables,
           quiltRuntimeEnvironmentVariables,
         }) => {
@@ -48,21 +47,20 @@ export function serviceBase({env, entry}: Options = {}) {
           quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
 
           rollupPlugins?.(async (plugins) => {
-            const [{serviceMagicModules}] = await Promise.all([
-              import('../tools/rollup/service.ts'),
-            ]);
+            const [{magicModuleEnv}, inlineEnv, runtimeEnv] = await Promise.all(
+              [
+                import('../tools/rollup/env.ts'),
+                quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
+                quiltRuntimeEnvironmentVariables!.run('process.env'),
+              ],
+            );
 
             return [
-              serviceMagicModules({
+              magicModuleEnv({
                 mode: 'production',
-                env: {
-                  dotenv: {roots: [project.fs.root, workspace.fs.root]},
-                  inline: () =>
-                    quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
-                  runtime: () =>
-                    quiltRuntimeEnvironmentVariables?.run('process.env'),
-                  customize: (content) => quiltEnvModuleContent!.run(content),
-                },
+                dotenv: {roots: [project.fs.root, workspace.fs.root]},
+                inline: inlineEnv,
+                runtime: runtimeEnv,
               }),
               ...plugins,
             ];
@@ -84,7 +82,6 @@ export function serviceBase({env, entry}: Options = {}) {
           rollupPlugins,
           quiltServiceEntry,
           quiltRequestRouterEntry,
-          quiltEnvModuleContent,
           quiltInlineEnvironmentVariables,
           quiltRuntimeEnvironmentVariables,
         }) => {
@@ -93,21 +90,20 @@ export function serviceBase({env, entry}: Options = {}) {
           quiltRequestRouterEntry?.(() => quiltServiceEntry!.run());
 
           rollupPlugins?.(async (plugins) => {
-            const [{serviceMagicModules}] = await Promise.all([
-              import('../tools/rollup/service.ts'),
-            ]);
+            const [{magicModuleEnv}, inlineEnv, runtimeEnv] = await Promise.all(
+              [
+                import('../tools/rollup/env.ts'),
+                quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
+                quiltRuntimeEnvironmentVariables!.run('process.env'),
+              ],
+            );
 
             return [
-              serviceMagicModules({
+              magicModuleEnv({
                 mode: 'development',
-                env: {
-                  dotenv: {roots: [project.fs.root, workspace.fs.root]},
-                  inline: () =>
-                    quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
-                  runtime: () =>
-                    quiltRuntimeEnvironmentVariables?.run('process.env'),
-                  customize: (content) => quiltEnvModuleContent!.run(content),
-                },
+                dotenv: {roots: [project.fs.root, workspace.fs.root]},
+                inline: inlineEnv,
+                runtime: runtimeEnv,
               }),
               ...plugins,
             ];

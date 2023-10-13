@@ -87,12 +87,10 @@ export function appDevelop({env, port, browser}: Options = {}) {
             quiltAppEntry,
             quiltAppServerHost,
             quiltAppServerPort,
-            quiltAppBrowserEntryContent,
             quiltAppBrowserEntryCssSelector,
             quiltAppBrowserEntryShouldHydrate,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
-            quiltEnvModuleContent,
             quiltRequestRouterRuntimeContent,
           },
           {quiltAppServer = false},
@@ -247,7 +245,12 @@ export function appDevelop({env, port, browser}: Options = {}) {
           vitePlugins?.(async (plugins) => {
             const [
               {default: prefresh},
-              {appMagicModules},
+              {quiltApp, quiltAppBrowser},
+              appEntry,
+              hydrate,
+              appSelector,
+              inlineEnv,
+              runtimeEnv,
               requestedBabelPlugins,
               requestedBabelPresets,
             ] = await Promise.all([
@@ -256,31 +259,32 @@ export function appDevelop({env, port, browser}: Options = {}) {
                 default: () => import('vite').Plugin;
               }>,
               import('../tools/rollup/app.ts'),
+              quiltAppEntry!.run(),
+              quiltAppBrowserEntryShouldHydrate!.run(),
+              quiltAppBrowserEntryCssSelector!.run(),
+              quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
+              quiltRuntimeEnvironmentVariables!.run(undefined),
               babelPlugins!.run([]),
               babelPresets!.run([]),
             ]);
 
+            if (!browser?.entry) {
+              plugins.push({
+                enforce: 'pre',
+                ...quiltAppBrowser({hydrate, selector: appSelector}),
+              });
+            }
+
             plugins.unshift({
               enforce: 'pre',
-              ...appMagicModules({
-                mode: 'development',
-                app: () => quiltAppEntry!.run(),
+              ...quiltApp({
+                entry: appEntry,
                 env: {
+                  mode: 'production',
                   dotenv: {roots: [project.fs.root, workspace.fs.root]},
-                  inline: () =>
-                    quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
-                  runtime: () =>
-                    quiltRuntimeEnvironmentVariables!.run(undefined),
-                  customize: (content) => quiltEnvModuleContent!.run(content),
+                  inline: inlineEnv,
+                  runtime: runtimeEnv,
                 },
-                browser: browser?.entry ?? {
-                  // module: MAGIC_MODULE_BROWSER_ENTRY,
-                  cssSelector: () => quiltAppBrowserEntryCssSelector!.run(),
-                  shouldHydrate: () => quiltAppBrowserEntryShouldHydrate!.run(),
-                  customize: (content) =>
-                    quiltAppBrowserEntryContent!.run(content),
-                },
-                server: false,
               }),
             });
 

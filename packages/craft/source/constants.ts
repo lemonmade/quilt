@@ -1,9 +1,8 @@
+export const MAGIC_MODULE_ENV = 'quilt:magic/env';
+export const MAGIC_MODULE_ENTRY = 'quilt:magic/entry';
 export const MAGIC_MODULE_APP_COMPONENT = 'quilt:magic/app';
-export const MAGIC_MODULE_SERVER_ENTRY = 'quilt:magic/server';
-export const MAGIC_MODULE_BROWSER_ENTRY = 'quilt:magic/browser';
 export const MAGIC_MODULE_BROWSER_ASSETS = 'quilt:magic/assets';
 export const MAGIC_MODULE_REQUEST_ROUTER = 'quilt:magic/request-router';
-export const MAGIC_MODULE_ENV = 'quilt:magic/env';
 
 export const DEFAULT_STATIC_ASSET_EXTENSIONS = [
   // images

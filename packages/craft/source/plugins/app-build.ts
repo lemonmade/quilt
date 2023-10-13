@@ -8,7 +8,6 @@ import type {} from '../features/async.ts';
 import type {} from '../features/graphql.ts';
 
 import {createProjectPlugin, Project, Workspace} from '../kit.ts';
-import {MAGIC_MODULE_BROWSER_ENTRY} from '../constants.ts';
 
 import {BROWSERSLIST_MODULES_QUERY} from './app-base.ts';
 import type {EnvironmentOptions} from './magic-module-env.ts';
@@ -90,11 +89,9 @@ export function appBuild({assets, browser, env}: Options) {
             quiltAssetBaseUrl,
             quiltAssetOutputRoot,
             quiltAppEntry,
-            quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
             quiltAppBrowserEntryCssSelector,
             quiltGraphQLManifestPath,
-            quiltEnvModuleContent,
             quiltInlineEnvironmentVariables,
             quiltRuntimeEnvironmentVariables,
           },
@@ -156,41 +153,44 @@ export function appBuild({assets, browser, env}: Options) {
             },
           }));
 
-          rollupInput?.(() => [MAGIC_MODULE_BROWSER_ENTRY]);
+          rollupInput?.(() => ['quilt:magic/entry']);
 
           rollupPlugins?.(async (plugins) => {
             const [
               {visualizer},
               {cssRollupPlugin},
               {systemJs},
-              {appMagicModules},
+              {quiltApp, quiltAppBrowser},
+              appEntry,
+              inlineEnv,
+              runtimeEnv,
+              appSelector,
+              hydrate,
             ] = await Promise.all([
               import('rollup-plugin-visualizer'),
               import('./rollup/css.ts'),
               import('./rollup/system-js.ts'),
               import('../tools/rollup/app.ts'),
+              quiltAppEntry!.run(),
+              quiltInlineEnvironmentVariables!.run(env?.inline ?? []),
+              quiltRuntimeEnvironmentVariables!.run(undefined),
+              quiltAppBrowserEntryCssSelector!.run(),
+              quiltAppBrowserEntryShouldHydrate!.run(),
             ]);
 
+            if (!browser.entry) {
+              plugins.push(quiltAppBrowser({hydrate, selector: appSelector}));
+            }
+
             plugins.unshift(
-              appMagicModules({
-                mode: 'production',
-                app: () => quiltAppEntry!.run(),
+              quiltApp({
+                entry: appEntry,
                 env: {
+                  mode: 'production',
                   dotenv: {roots: [project.fs.root, workspace.fs.root]},
-                  inline: () =>
-                    quiltInlineEnvironmentVariables?.run(env?.inline ?? []),
-                  runtime: () =>
-                    quiltRuntimeEnvironmentVariables?.run(undefined),
-                  customize: (content) => quiltEnvModuleContent!.run(content),
+                  inline: inlineEnv,
+                  runtime: runtimeEnv,
                 },
-                browser: browser?.entry ?? {
-                  // module: MAGIC_ENTRY_MODULE,
-                  cssSelector: () => quiltAppBrowserEntryCssSelector?.run(),
-                  shouldHydrate: () => quiltAppBrowserEntryShouldHydrate?.run(),
-                  customize: (content) =>
-                    quiltAppBrowserEntryContent?.run(content) ?? content,
-                },
-                server: false,
               }),
             );
 

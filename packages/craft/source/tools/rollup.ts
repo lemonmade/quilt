@@ -428,14 +428,6 @@ export async function buildWithRollup(
     },
   });
 
-  if (
-    inputOptions.input == null ||
-    inputOptions.input.length === 0 ||
-    outputs.length === 0
-  ) {
-    return;
-  }
-
   const bundle = await rollup(inputOptions);
   await Promise.all(outputs.map((output) => bundle.write(output)));
 }
