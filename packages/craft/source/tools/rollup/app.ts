@@ -53,7 +53,7 @@ export interface AppMagicModulesOptions extends MagicModulesOptions {
    * @example './App.tsx'
    * @default false
    */
-  app?: false | string;
+  app?: false | ValueOrPromise<string>;
 
   /**
    * Configuration for the magic browser module, `quilt:magic/browser`. You can
@@ -127,11 +127,10 @@ export function appMagicModules({
     magicModules.set(MAGIC_MODULE_APP_COMPONENT, {
       sideEffects: false,
       async source() {
-        return stripIndent`
-          import App from ${JSON.stringify(app)};
+        const appEntry = await resolveValueOrPromise(app);
 
-          export {App};
-          export default App;
+        return stripIndent`
+          import {default} from ${JSON.stringify(appEntry)};
         `;
       },
     });
@@ -163,7 +162,7 @@ export function appMagicModules({
           import {jsx} from 'react/jsx-runtime';
           import {${reactRootFunction}} from 'react-dom/client';
 
-          import {App} from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+          import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
   
           const element = document.querySelector(${JSON.stringify(selector)});
   
@@ -200,7 +199,7 @@ export function appMagicModules({
           import {RequestRouter} from '@quilted/quilt/request-router';
           import {renderToResponse} from '@quilted/quilt/server';
   
-          import {App} from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+          import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
           import {BrowserAssets} from ${JSON.stringify(
             MAGIC_MODULE_BROWSER_ASSETS,
           )};

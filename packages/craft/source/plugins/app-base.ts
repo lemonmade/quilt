@@ -132,9 +132,10 @@ export async function getEntryForProject(
   if (typeof main === 'string') return project.fs.resolvePath(main);
 
   const [entry] = await project.fs.glob(
-    `{index,app,App}.{${ENTRY_EXTENSIONS.join(',')}}`,
+    `{index,app}.{${ENTRY_EXTENSIONS.join(',')}}`,
     {
       absolute: true,
+      caseSensitiveMatch: false,
     },
   );
 

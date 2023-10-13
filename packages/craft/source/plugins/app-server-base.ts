@@ -144,6 +144,7 @@ function setupConfiguration(
       rollupInput,
       rollupPlugins,
       rollupNodeBundle,
+      quiltAppEntry,
       quiltAppServerEntry,
       quiltAppServerEntryContent,
       quiltAsyncPreload,
@@ -174,6 +175,7 @@ function setupConfiguration(
       return [
         appMagicModules({
           mode,
+          app: () => quiltAppEntry!.run(),
           env: {
             dotenv: {roots: [project.fs.root, workspace.fs.root]},
             inline: () =>

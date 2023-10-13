@@ -264,6 +264,7 @@ export function appDevelop({env, port, browser}: Options = {}) {
               enforce: 'pre',
               ...appMagicModules({
                 mode: 'development',
+                app: () => quiltAppEntry!.run(),
                 env: {
                   dotenv: {roots: [project.fs.root, workspace.fs.root]},
                   inline: () =>

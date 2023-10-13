@@ -89,6 +89,7 @@ export function appBuild({assets, browser, env}: Options) {
             quiltAssetManifestCacheKey,
             quiltAssetBaseUrl,
             quiltAssetOutputRoot,
+            quiltAppEntry,
             quiltAppBrowserEntryContent,
             quiltAppBrowserEntryShouldHydrate,
             quiltAppBrowserEntryCssSelector,
@@ -173,6 +174,7 @@ export function appBuild({assets, browser, env}: Options) {
             plugins.unshift(
               appMagicModules({
                 mode: 'production',
+                app: () => quiltAppEntry!.run(),
                 env: {
                   dotenv: {roots: [project.fs.root, workspace.fs.root]},
                   inline: () =>
