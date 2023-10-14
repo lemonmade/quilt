@@ -50,6 +50,7 @@
     {"path": "./packages/react-utilities"},
     {"path": "./packages/react-workers"},
     {"path": "./packages/request-router"},
+    {"path": "./packages/rollup"},
     {"path": "./packages/rollup-plugin-fix-commonjs-preserve-modules"},
     {"path": "./packages/routing"},
     {"path": "./packages/sewing-kit"},
