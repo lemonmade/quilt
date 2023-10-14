@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import type {Plugin} from 'rollup';
+import type {GetManualChunk, Plugin} from 'rollup';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -144,6 +144,18 @@ export function quiltAppBrowser({
 
       return newOptions;
     },
+    outputOptions(originalOptions) {
+      return {
+        ...originalOptions,
+        // format: isESM ? 'esm' : 'systemjs',
+        format: 'esm',
+        dir: path.resolve(`build/assets`),
+        entryFileNames: `app.[hash].js`,
+        assetFileNames: `[name].[hash].[ext]`,
+        chunkFileNames: `[name].[hash].js`,
+        manualChunks: createManualChunksSorter(),
+      };
+    },
   } satisfies Plugin;
 }
 
@@ -200,6 +212,15 @@ export function quiltAppServer({
       }
 
       return newOptions;
+    },
+    outputOptions(originalOptions) {
+      return {
+        ...originalOptions,
+        // format,
+        format: 'esm',
+        dir: path.resolve(`build/server`),
+        entryFileNames: 'server.js',
+      };
     },
   } satisfies Plugin;
 }
@@ -282,4 +303,104 @@ export function magicModuleAppBrowserEntry({
       `;
     },
   });
+}
+
+const FRAMEWORK_CHUNK_NAME = 'framework';
+const POLYFILLS_CHUNK_NAME = 'polyfills';
+const VENDOR_CHUNK_NAME = 'vendor';
+const INTERNALS_CHUNK_NAME = 'internals';
+const SHARED_CHUNK_NAME = 'shared';
+const PACKAGES_CHUNK_NAME = 'packages';
+const GLOBAL_CHUNK_NAME = 'global';
+const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
+  '/node_modules/preact/',
+  '/node_modules/react/',
+  '/node_modules/js-cookie/',
+  '/node_modules/@quilted/quilt/',
+  '/node_modules/@preact/signals/',
+  '/node_modules/@preact/signals-core/',
+  // TODO I should turn this into an allowlist
+  /node_modules[/]@quilted[/](?!react-query|swr)/,
+];
+
+const POLYFILL_TEST_STRINGS = [
+  '/node_modules/@quilted/polyfills/',
+  '/node_modules/core-js/',
+  '/node_modules/whatwg-fetch/',
+  '/node_modules/regenerator-runtime/',
+  '/node_modules/abort-controller/',
+];
+
+const INTERNALS_TEST_STRINGS = [
+  '\x00commonjsHelpers.js',
+  '/node_modules/@babel/runtime/',
+];
+
+// When building from source, quilt packages are not in node_modules,
+// so we instead add their repo paths to the list of framework test strings.
+if (process.env.QUILT_FROM_SOURCE) {
+  FRAMEWORK_TEST_STRINGS.push('/quilt/packages/');
+}
+
+// Inspired by Vite: https://github.com/vitejs/vite/blob/c69f83615292953d40f07b1178d1ed1d72abe695/packages/vite/source/node/build.ts#L567
+function createManualChunksSorter(): GetManualChunk {
+  // TODO: make this more configurable, and make it so that we bundle more intelligently
+  // for split entries
+  const packagesPath = path.resolve('packages') + path.sep;
+  const globalPath = path.resolve('global') + path.sep;
+  const sharedPath = path.resolve('shared') + path.sep;
+
+  return (id, {getModuleInfo}) => {
+    if (INTERNALS_TEST_STRINGS.some((test) => id.includes(test))) {
+      return INTERNALS_CHUNK_NAME;
+    }
+
+    if (
+      FRAMEWORK_TEST_STRINGS.some((test) =>
+        typeof test === 'string' ? id.includes(test) : test.test(id),
+      )
+    ) {
+      return FRAMEWORK_CHUNK_NAME;
+    }
+
+    if (POLYFILL_TEST_STRINGS.some((test) => id.includes(test))) {
+      return POLYFILLS_CHUNK_NAME;
+    }
+
+    let bundleBaseName: string | undefined;
+    let relativeId: string | undefined;
+
+    if (id.includes('/node_modules/')) {
+      const moduleInfo = getModuleInfo(id);
+
+      // If the only dependency is another vendor, let Rollup handle the naming
+      if (moduleInfo == null) return;
+      if (
+        moduleInfo.importers.length > 0 &&
+        moduleInfo.importers.every((importer) =>
+          importer.includes('/node_modules/'),
+        )
+      ) {
+        return;
+      }
+
+      bundleBaseName = VENDOR_CHUNK_NAME;
+      relativeId = id.replace(/^.*[/]node_modules[/]/, '');
+    } else if (id.startsWith(packagesPath)) {
+      bundleBaseName = PACKAGES_CHUNK_NAME;
+      relativeId = id.replace(packagesPath, '');
+    } else if (id.startsWith(globalPath)) {
+      bundleBaseName = GLOBAL_CHUNK_NAME;
+      relativeId = id.replace(globalPath, '');
+    } else if (id.startsWith(sharedPath)) {
+      bundleBaseName = SHARED_CHUNK_NAME;
+      relativeId = id.replace(sharedPath, '');
+    }
+
+    if (bundleBaseName == null || relativeId == null) {
+      return;
+    }
+
+    return `${bundleBaseName}-${relativeId.split(path.sep)[0]?.split('.')[0]}`;
+  };
 }
