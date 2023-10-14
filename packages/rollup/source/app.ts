@@ -301,6 +301,18 @@ export async function quiltAppServer({
   return {
     input: entry,
     plugins,
+    onwarn(warning, defaultWarn) {
+      // Removes annoying warnings for React-focused libraries that
+      // include 'use client' directives.
+      if (
+        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+        /['"]use client['"]/.test(warning.message)
+      ) {
+        return;
+      }
+
+      defaultWarn(warning);
+    },
     output: {
       // format: isESM ? 'esm' : 'systemjs',
       format: 'esm',
