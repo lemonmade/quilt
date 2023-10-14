@@ -2,13 +2,13 @@ import type {Plugin} from 'rollup';
 
 export interface Options {
   minify?: boolean;
-  extract?: boolean;
+  emit?: boolean;
 }
 
 const CSS_REGEX = /\.css$/;
 const CSS_MODULE_REGEX = /\.module\.css$/;
 
-export function cssRollupPlugin({minify = true, extract = true}: Options) {
+export function css({minify = true, emit = true}: Options) {
   const styles = new Map<string, string>();
 
   return {
@@ -22,7 +22,7 @@ export function cssRollupPlugin({minify = true, extract = true}: Options) {
         filename: id,
         code: new TextEncoder().encode(code),
         cssModules: CSS_MODULE_REGEX.test(id),
-        minify,
+        minify: emit && minify,
       });
 
       styles.set(id, new TextDecoder().decode(transformed.code));
@@ -47,7 +47,7 @@ export function cssRollupPlugin({minify = true, extract = true}: Options) {
       };
     },
     async renderChunk(_, chunk) {
-      if (!extract) return null;
+      if (!emit) return null;
 
       let chunkCss = '';
 

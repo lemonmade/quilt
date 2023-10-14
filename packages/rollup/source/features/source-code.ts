@@ -12,6 +12,7 @@ export function sourceCode({
   targets?: string[];
 }) {
   return babel({
+    envName: mode,
     configFile: false,
     babelrc: false,
     presets: [
@@ -60,5 +61,7 @@ export function sourceCode({
     exclude: 'node_modules/**',
     babelHelpers: 'bundled',
     skipPreflightCheck: true,
+    // Babel doesn’t like this option being set to `undefined`.
+    ...(targets ? {targets} : {}),
   });
 }

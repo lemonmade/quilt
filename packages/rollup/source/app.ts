@@ -103,17 +103,19 @@ export async function quiltAppBrowser({
 }: AppBrowserOptions = {}) {
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
-  const minify = assets?.minify ?? true;
+  const minify = assets?.minify ?? mode === 'production';
 
   const [
     {visualizer},
     {sourceCode},
+    {css},
     {rawAssets, staticAssets},
     {systemJS},
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/source-code.ts'),
+    import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/system-js.ts'),
     getNodePlugins(),
@@ -123,6 +125,7 @@ export async function quiltAppBrowser({
     ...nodePlugins,
     systemJS(),
     sourceCode({mode}),
+    css({minify}),
     rawAssets(),
     staticAssets(),
   ];
@@ -210,12 +213,14 @@ export async function quiltAppServer({
   const [
     {visualizer},
     {sourceCode},
+    {css},
     {rawAssets, staticAssets},
     {magicModuleRequestRouterEntry},
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/source-code.ts'),
+    import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/request-router.ts'),
     getNodePlugins(),
@@ -224,6 +229,7 @@ export async function quiltAppServer({
   const plugins: Plugin[] = [
     ...nodePlugins,
     sourceCode({mode}),
+    css({emit: false}),
     rawAssets(),
     staticAssets({emit: false}),
   ];
