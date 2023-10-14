@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import type {Plugin} from 'rollup';
 
 import {
@@ -78,20 +80,45 @@ export function quiltApp({env, entry}: AppOptions = {}) {
 
 export interface AppBrowserOptions {
   /**
+   * Customizes the magic `quilt:module/browser` entry module.
+   */
+  module?: AppBrowserModuleOptions;
+
+  /**
+   * Customizes the assets created for your application.
+   */
+  assets?: AppBrowserAssetsOptions;
+}
+
+export interface AppBrowserModuleOptions {
+  /**
    * Whether the app should use hydration or client-side rendering.
+   *
+   * @default true
    */
   hydrate?: boolean;
 
   /**
    * The CSS selector to render or hydrate the application into.
+   *
+   * @default '#app'
    */
   selector?: string;
 }
 
-export function quiltAppBrowser(options: AppBrowserOptions = {}) {
+export interface AppBrowserAssetsOptions {
+  /**
+   * Whether to minify assets created by Quilt.
+   *
+   * @default true
+   */
+  minify?: boolean;
+}
+
+export function quiltAppBrowser({assets, module}: AppBrowserOptions = {}) {
   return {
     name: '@quilted/app/browser',
-    options(originalOptions) {
+    async options(originalOptions) {
       const newPlugins = [
         ...(Array.isArray(originalOptions.plugins)
           ? originalOptions.plugins
@@ -102,7 +129,27 @@ export function quiltAppBrowser(options: AppBrowserOptions = {}) {
 
       const newOptions = {...originalOptions, plugins: newPlugins};
 
-      newPlugins.push(magicModuleAppBrowserEntry(options));
+      const [{visualizer}] = await Promise.all([
+        import('rollup-plugin-visualizer'),
+      ]);
+
+      newPlugins.push(magicModuleAppBrowserEntry(module));
+
+      const minify = assets?.minify ?? true;
+
+      if (minify) {
+        const {minify} = await import('rollup-plugin-esbuild');
+        newPlugins.push(minify());
+      }
+
+      newPlugins.push(
+        visualizer({
+          template: 'treemap',
+          open: false,
+          brotliSize: true,
+          filename: path.resolve('reports', `bundle-visualizer.html`),
+        }),
+      );
 
       return newOptions;
     },
@@ -196,7 +243,7 @@ export function magicModuleAppRequestRouter({
 export function magicModuleAppBrowserEntry({
   hydrate = true,
   selector = '#app',
-}: AppBrowserOptions = {}) {
+}: AppBrowserModuleOptions = {}) {
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app-browser-entry',
     module: MAGIC_MODULE_ENTRY,
