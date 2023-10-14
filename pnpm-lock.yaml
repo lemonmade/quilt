@@ -1233,6 +1233,9 @@ importers:
 
   packages/rollup:
     dependencies:
+      '@quilted/graphql':
+        specifier: ^2.0.0
+        version: link:../graphql
       '@rollup/plugin-commonjs':
         specifier: ^25.0.5
         version: 25.0.5(rollup@4.0.2)
@@ -1251,6 +1254,9 @@ importers:
       esbuild:
         specifier: ^0.19.4
         version: 0.19.4
+      graphql:
+        specifier: ^16.8.0
+        version: 16.8.1
       rollup-plugin-esbuild:
         specifier: ^6.1.0
         version: 6.1.0(esbuild@0.19.4)(rollup@4.0.2)
@@ -7996,6 +8002,11 @@ packages:
   /graphql@16.7.0:
     resolution: {integrity: sha512-kdNG+ZGNf0E4dezSA2N9cRq8UdOMCcz9Wzh1dDSrCzGCz0nj6p8qlE+utY6iqr9y1sh3MZxUb7K794neZ2oT1w==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+
+  /graphql@16.8.1:
+    resolution: {integrity: sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==}
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+    dev: false
 
   /hard-rejection@2.1.0:
     resolution: {integrity: sha512-VIZB+ibDhx7ObhAe7OVtoEbuP4h/MuOTHJ+J8h/eBXotJYl0fBgR72xDFCKgIh22OJZIOVNxBMWuhAr10r8HdA==}

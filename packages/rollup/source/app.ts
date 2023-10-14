@@ -27,7 +27,7 @@ export interface AppOptions {
    *
    * @example './App.tsx'
    */
-  entry?: string;
+  app?: string;
 
   /**
    * Whether to include GraphQL-related code transformations.
@@ -42,34 +42,6 @@ export interface AppOptions {
    * rendering by passing `server.env`.
    */
   env?: MagicModuleEnvOptions;
-}
-
-export function quiltApp({env, entry}: AppOptions = {}) {
-  return {
-    name: '@quilted/app',
-    async options(originalOptions) {
-      const newPlugins = rollupPluginsToArray(originalOptions.plugins);
-      const newOptions = {...originalOptions, plugins: newPlugins};
-
-      if (env) {
-        const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
-
-        if (typeof env === 'boolean') {
-          newPlugins.push(replaceProcessEnv({mode: 'production'}));
-          newPlugins.push(magicModuleEnv({mode: 'production'}));
-        } else {
-          newPlugins.push(replaceProcessEnv({mode: env.mode ?? 'production'}));
-          newPlugins.push(magicModuleEnv({mode: 'production', ...env}));
-        }
-      }
-
-      if (entry) {
-        newPlugins.push(magicModuleAppComponent({entry}));
-      }
-
-      return newOptions;
-    },
-  } satisfies Plugin;
 }
 
 export interface AppBrowserOptions extends AppOptions {
@@ -110,11 +82,11 @@ export interface AppBrowserAssetsOptions {
 }
 
 export function quiltAppBrowser({
-  entry,
+  app,
   env,
-  graphql,
   assets,
   module,
+  graphql = true,
 }: AppBrowserOptions = {}) {
   return {
     name: '@quilted/app/browser',
@@ -127,9 +99,32 @@ export function quiltAppBrowser({
         getNodePlugins(),
       ]);
 
-      newPlugins.push(quiltApp({env, entry, graphql}));
       newPlugins.push(...nodePlugins);
+
+      if (env) {
+        const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
+
+        if (typeof env === 'boolean') {
+          newPlugins.push(replaceProcessEnv({mode: 'production'}));
+          newPlugins.push(magicModuleEnv({mode: 'production'}));
+        } else {
+          newPlugins.push(replaceProcessEnv({mode: env.mode ?? 'production'}));
+          newPlugins.push(magicModuleEnv({mode: 'production', ...env}));
+        }
+      }
+
+      if (app) {
+        newPlugins.push(magicModuleAppComponent({entry: app}));
+      }
+
       newPlugins.push(magicModuleAppBrowserEntry(module));
+
+      if (graphql) {
+        const {graphql} = await import('./graphql.ts');
+        newPlugins.push(
+          graphql({manifest: path.resolve(`manifests/graphql.json`)}),
+        );
+      }
 
       const minify = assets?.minify ?? true;
 
@@ -143,7 +138,7 @@ export function quiltAppBrowser({
           template: 'treemap',
           open: false,
           brotliSize: true,
-          filename: path.resolve('reports', `bundle-visualizer.html`),
+          filename: path.resolve(`reports/bundle-visualizer.html`),
         }),
       );
 
@@ -152,7 +147,7 @@ export function quiltAppBrowser({
   } satisfies Plugin;
 }
 
-export interface AppServerOptions {
+export interface AppServerOptions extends AppOptions {
   /**
    * The entry module for the server of this app. This module must export a
    * `RequestRouter` object as its default export, which will be wrapped in
@@ -161,19 +156,48 @@ export interface AppServerOptions {
   entry?: string;
 }
 
-export function quiltAppServer(options: AppServerOptions = {}) {
+export function quiltAppServer({
+  app,
+  env,
+  graphql,
+  entry,
+}: AppServerOptions = {}) {
   return {
     name: '@quilted/app/server',
     async options(originalOptions) {
       const newPlugins = rollupPluginsToArray(originalOptions.plugins);
       const newOptions = {...originalOptions, plugins: newPlugins};
 
-      const [{magicModuleRequestRouterEntry}] = await Promise.all([
+      const [{magicModuleRequestRouterEntry}, nodePlugins] = await Promise.all([
         import('./request-router.ts'),
+        getNodePlugins(),
       ]);
 
+      newPlugins.push(...nodePlugins);
+
+      if (env) {
+        const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
+
+        if (typeof env === 'boolean') {
+          newPlugins.push(replaceProcessEnv({mode: 'production'}));
+          newPlugins.push(magicModuleEnv({mode: 'production'}));
+        } else {
+          newPlugins.push(replaceProcessEnv({mode: env.mode ?? 'production'}));
+          newPlugins.push(magicModuleEnv({mode: 'production', ...env}));
+        }
+      }
+
+      if (app) {
+        newPlugins.push(magicModuleAppComponent({entry: app}));
+      }
+
       newPlugins.push(magicModuleRequestRouterEntry());
-      newPlugins.push(magicModuleAppRequestRouter(options));
+      newPlugins.push(magicModuleAppRequestRouter({entry}));
+
+      if (graphql) {
+        const {graphql} = await import('./graphql.ts');
+        newPlugins.push(graphql({manifest: false}));
+      }
 
       return newOptions;
     },
