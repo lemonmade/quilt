@@ -1,7 +1,7 @@
 {
   "name": "e2e-fixture-basic-api",
   "private": true,
-  "version": "0.0.27",
+  "version": "0.0.28",
   "type": "module",
   "dependencies": {
     "@quilted/quilt": "workspace:*"
