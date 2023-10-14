@@ -1,7 +1,5 @@
 import type {Plugin, PluginContext} from 'rollup';
 
-import {MAGIC_MODULE_ENTRY} from '../constants.ts';
-
 const VIRTUAL_MODULE_PREFIX = '\0';
 const VIRTUAL_MODULE_POSTFIX = '/module.js';
 
@@ -41,13 +39,4 @@ export function createMagicModulePlugin({
         }
       : undefined,
   } satisfies Plugin;
-}
-
-export function createMagicModuleEntryPlugin({
-  module = MAGIC_MODULE_ENTRY,
-  ...options
-}: Omit<Parameters<typeof createMagicModulePlugin>[0], 'module' | 'alias'> & {
-  module?: string;
-}) {
-  return createMagicModulePlugin({...options, module});
 }

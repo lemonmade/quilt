@@ -1,18 +1,15 @@
 import type {Plugin} from 'rollup';
 
 import {
+  MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
 } from './constants.ts';
-import {magicModuleEnv, type MagicModuleEnvOptions} from './env.ts';
-import {magicModuleRequestRouterEntry} from './request-router.ts';
+import type {MagicModuleEnvOptions} from './env.ts';
 
 import {multiline} from './shared/strings.ts';
-import {
-  createMagicModulePlugin,
-  createMagicModuleEntryPlugin,
-} from './shared/magic-module.ts';
+import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppOptions {
   /**
@@ -47,7 +44,7 @@ export interface AppOptions {
 export function quiltApp({env, entry}: AppOptions = {}) {
   return {
     name: '@quilted/app',
-    options(originalOptions) {
+    async options(originalOptions) {
       const newPlugins = [
         ...(Array.isArray(originalOptions.plugins)
           ? originalOptions.plugins
@@ -59,9 +56,15 @@ export function quiltApp({env, entry}: AppOptions = {}) {
       const newOptions = {...originalOptions, plugins: newPlugins};
 
       if (env) {
-        newPlugins.push(
-          typeof env === 'boolean' ? magicModuleEnv() : magicModuleEnv(env),
-        );
+        const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
+
+        if (typeof env === 'boolean') {
+          newPlugins.push(replaceProcessEnv({mode: 'production'}));
+          newPlugins.push(magicModuleEnv({mode: 'production'}));
+        } else {
+          newPlugins.push(replaceProcessEnv({mode: env.mode ?? 'production'}));
+          newPlugins.push(magicModuleEnv({mode: 'production', ...env}));
+        }
       }
 
       if (entry) {
@@ -118,7 +121,7 @@ export interface AppServerOptions {
 export function quiltAppServer(options: AppServerOptions = {}) {
   return {
     name: '@quilted/app/server',
-    options(originalOptions) {
+    async options(originalOptions) {
       const newPlugins = [
         ...(Array.isArray(originalOptions.plugins)
           ? originalOptions.plugins
@@ -126,6 +129,10 @@ export function quiltAppServer(options: AppServerOptions = {}) {
           ? [originalOptions.plugins]
           : []),
       ];
+
+      const [{magicModuleRequestRouterEntry}] = await Promise.all([
+        import('./request-router.ts'),
+      ]);
 
       const newOptions = {...originalOptions, plugins: newPlugins};
 
@@ -190,8 +197,9 @@ export function magicModuleAppBrowserEntry({
   hydrate = true,
   selector = '#app',
 }: AppBrowserOptions = {}) {
-  return createMagicModuleEntryPlugin({
+  return createMagicModulePlugin({
     name: '@quilted/magic-module/app-browser-entry',
+    module: MAGIC_MODULE_ENTRY,
     sideEffects: true,
     async source() {
       const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';

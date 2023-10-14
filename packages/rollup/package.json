@@ -27,6 +27,7 @@
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
   "dependencies": {
+    "@rollup/plugin-replace": "^5.0.0",
     "dotenv": "^16.0.0"
   },
   "peerDependencies": {

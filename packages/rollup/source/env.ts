@@ -2,10 +2,33 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import type {PluginContext} from 'rollup';
-import {stripIndent} from 'common-tags';
 
 import {MAGIC_MODULE_ENV} from './constants.ts';
+import {multiline} from './shared/strings.ts';
+import {smartReplace} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
+
+const EMPTY_PROCESS_ENV_OBJECT = {
+  'globalThis.process.env.': `({}).`,
+  'global.process.env.': `({}).`,
+  'process.env.': `({}).`,
+};
+
+export function replaceProcessEnv({
+  mode,
+  preserve = true,
+}: {
+  mode: string;
+  preserve?: boolean;
+}) {
+  return smartReplace({
+    // @see https://github.com/vitejs/vite/blob/2b1ffe86328f9d06ef9528ee117b61889893ddcc/packages/vite/src/node/plugins/define.ts#L112
+    'globalThis.process.env.NODE_ENV': JSON.stringify(mode),
+    'global.process.env.NODE_ENV': JSON.stringify(mode),
+    'process.env.NODE_ENV': JSON.stringify(mode),
+    ...(preserve ? {} : EMPTY_PROCESS_ENV_OBJECT),
+  });
+}
 
 export interface MagicModuleEnvOptions {
   /**
@@ -76,7 +99,7 @@ export function magicModuleEnv({
             : value;
       }
 
-      return stripIndent`
+      return multiline`
         const runtime = (${runtime});
         const inline = JSON.parse(${JSON.stringify(JSON.stringify(inlineEnv))});
 

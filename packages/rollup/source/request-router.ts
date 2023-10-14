@@ -1,6 +1,6 @@
-import {MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
+import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
 
-import {createMagicModuleEntryPlugin} from './shared/magic-module.ts';
+import {createMagicModulePlugin} from './shared/magic-module.ts';
 import {multiline} from './shared/strings.ts';
 
 export function magicModuleRequestRouterEntry({
@@ -10,9 +10,10 @@ export function magicModuleRequestRouterEntry({
   host?: string;
   port?: number;
 } = {}) {
-  return createMagicModuleEntryPlugin({
+  return createMagicModulePlugin({
     name: '@quilted/request-router',
     sideEffects: true,
+    module: MAGIC_MODULE_ENTRY,
     async source() {
       const initialContent = multiline`
         import requestRouter from ${JSON.stringify(
