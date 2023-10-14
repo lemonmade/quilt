@@ -1,5 +1,15 @@
 # @quilted/rollup
 
+## 0.1.6
+
+### Patch Changes
+
+- [`a2615aa0`](https://github.com/lemonmade/quilt/commit/a2615aa06a3cd146111996c8401466c5d8b9be09) Thanks [@lemonmade](https://github.com/lemonmade)! - Default to GraphQL in app server
+
+- [`2a0b85fe`](https://github.com/lemonmade/quilt/commit/2a0b85fe4a2d07ce107e52a3f246728c7c38fbf2) Thanks [@lemonmade](https://github.com/lemonmade)! - Add CSS plugin to app
+
+- [`a2615aa0`](https://github.com/lemonmade/quilt/commit/a2615aa06a3cd146111996c8401466c5d8b9be09) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove 'use client' warnings
+
 ## 0.1.5
 
 ### Patch Changes
