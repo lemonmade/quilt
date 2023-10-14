@@ -1,6 +1,5 @@
 export {magicModuleEnv, type MagicModuleEnvOptions} from './env.ts';
 export {
-  quiltApp,
   quiltAppBrowser,
   quiltAppServer,
   magicModuleAppComponent,
