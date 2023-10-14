@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import type {GetManualChunk, Plugin} from 'rollup';
+import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -11,7 +11,7 @@ import {
 import type {MagicModuleEnvOptions} from './features/env.ts';
 
 import {multiline} from './shared/strings.ts';
-import {getNodePlugins, rollupPluginsToArray} from './shared/rollup.ts';
+import {getNodePlugins} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppOptions {
@@ -22,8 +22,9 @@ export interface AppOptions {
    * to create browser and server-side entries for your project.
    *
    * If you only want to use a custom entry module for the browser build, use the
-   * `browser.entry` option instead. If you only want to use a custom entry module
-   * for the server-side build, use the `server.entry` option instead.
+   * `entry` option of the `quiltAppBrowser()` instead. If you only want to use a
+   * custom entry module for the server-side build, use the `server.entry` option
+   * instead.
    *
    * @example './App.tsx'
    */
@@ -46,7 +47,18 @@ export interface AppOptions {
 
 export interface AppBrowserOptions extends AppOptions {
   /**
-   * Customizes the magic `quilt:module/browser` entry module.
+   * The entry module for this browser. This should be an absolute path, or relative
+   * path from the root directory containing your project. This entry should be the
+   * browser entrypoint.
+   *
+   * @example './browser.tsx'
+   * @default 'quilt:module/entry'
+   */
+  entry?: string;
+
+  /**
+   * Customizes the magic `quilt:module/entry` module, which can be used as a "magic"
+   * entry for your application.
    */
   module?: AppBrowserModuleOptions;
 
@@ -81,8 +93,9 @@ export interface AppBrowserAssetsOptions {
   minify?: boolean;
 }
 
-export function quiltAppBrowser({
+export async function quiltAppBrowser({
   app,
+  entry = MAGIC_MODULE_ENTRY,
   env,
   assets,
   module,
@@ -92,87 +105,80 @@ export function quiltAppBrowser({
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? true;
 
+  const [
+    {visualizer},
+    {sourceCode},
+    {rawAssets, staticAssets},
+    {systemJS},
+    nodePlugins,
+  ] = await Promise.all([
+    import('rollup-plugin-visualizer'),
+    import('./features/source-code.ts'),
+    import('./features/assets.ts'),
+    import('./features/system-js.ts'),
+    getNodePlugins(),
+  ]);
+
+  const plugins: Plugin[] = [
+    ...nodePlugins,
+    systemJS(),
+    sourceCode({mode}),
+    rawAssets(),
+    staticAssets(),
+  ];
+
+  if (env) {
+    const {magicModuleEnv, replaceProcessEnv} = await import(
+      './features/env.ts'
+    );
+
+    if (typeof env === 'boolean') {
+      plugins.push(replaceProcessEnv({mode}));
+      plugins.push(magicModuleEnv({mode}));
+    } else {
+      plugins.push(replaceProcessEnv({mode}));
+      plugins.push(magicModuleEnv({mode}));
+    }
+  }
+
+  if (app) {
+    plugins.push(magicModuleAppComponent({entry: app}));
+  }
+
+  plugins.push(magicModuleAppBrowserEntry(module));
+
+  if (graphql) {
+    const {graphql} = await import('./features/graphql.ts');
+    plugins.push(graphql({manifest: path.resolve(`manifests/graphql.json`)}));
+  }
+
+  if (minify) {
+    const {minify} = await import('rollup-plugin-esbuild');
+    plugins.push(minify());
+  }
+
+  plugins.push(
+    visualizer({
+      template: 'treemap',
+      open: false,
+      brotliSize: true,
+      filename: path.resolve(`reports/bundle-visualizer.html`),
+    }),
+  );
+
   return {
-    name: '@quilted/app/browser',
-    async options(originalOptions) {
-      const newPlugins = rollupPluginsToArray(originalOptions.plugins);
-      const newOptions = {...originalOptions, plugins: newPlugins};
-
-      const [
-        {visualizer},
-        {sourceCode},
-        {rawAssets, staticAssets},
-        {systemJs},
-        nodePlugins,
-      ] = await Promise.all([
-        import('rollup-plugin-visualizer'),
-        import('./features/source-code.ts'),
-        import('./features/assets.ts'),
-        import('./features/system-js.ts'),
-        getNodePlugins(),
-      ]);
-
-      newPlugins.push(...nodePlugins);
-      newPlugins.push(sourceCode({mode}));
-      newPlugins.push(rawAssets(), staticAssets());
-      newPlugins.push(systemJs({minify}));
-
-      if (env) {
-        const {magicModuleEnv, replaceProcessEnv} = await import(
-          './features/env.ts'
-        );
-
-        if (typeof env === 'boolean') {
-          newPlugins.push(replaceProcessEnv({mode: 'production'}));
-          newPlugins.push(magicModuleEnv({mode: 'production'}));
-        } else {
-          newPlugins.push(replaceProcessEnv({mode: env.mode ?? 'production'}));
-          newPlugins.push(magicModuleEnv({mode: 'production', ...env}));
-        }
-      }
-
-      if (app) {
-        newPlugins.push(magicModuleAppComponent({entry: app}));
-      }
-
-      newPlugins.push(magicModuleAppBrowserEntry(module));
-
-      if (graphql) {
-        const {graphql} = await import('./features/graphql.ts');
-        newPlugins.push(
-          graphql({manifest: path.resolve(`manifests/graphql.json`)}),
-        );
-      }
-
-      if (minify) {
-        const {minify} = await import('rollup-plugin-esbuild');
-        newPlugins.push(minify());
-      }
-
-      newPlugins.push(
-        visualizer({
-          template: 'treemap',
-          open: false,
-          brotliSize: true,
-          filename: path.resolve(`reports/bundle-visualizer.html`),
-        }),
-      );
-
-      return newOptions;
+    input: entry,
+    plugins,
+    output: {
+      // format: isESM ? 'esm' : 'systemjs',
+      format: 'esm',
+      dir: path.resolve(`build/assets`),
+      entryFileNames: `app.[hash].js`,
+      assetFileNames: `[name].[hash].[ext]`,
+      chunkFileNames: `[name].[hash].js`,
+      manualChunks: createManualChunksSorter(),
     },
-    outputOptions(originalOptions) {
-      return {
-        ...originalOptions,
-        // format: isESM ? 'esm' : 'systemjs',
-        format: 'esm',
-        dir: path.resolve(`build/assets`),
-        entryFileNames: `app.[hash].js`,
-        assetFileNames: `[name].[hash].[ext]`,
-        chunkFileNames: `[name].[hash].js`,
-        manualChunks: createManualChunksSorter(),
-      };
-    },
-  } satisfies Plugin;
+  } satisfies RollupOptions;
 }
 
 export interface AppServerOptions extends AppOptions {
@@ -182,71 +188,96 @@ export interface AppServerOptions extends AppOptions {
    * the specific server runtime you configure.
    */
   entry?: string;
+
+  /**
+   * Whether to minify the JavaScript outputs for your server.
+   *
+   * @default false
+   */
+  minify?: boolean;
 }
 
-export function quiltAppServer({
+export async function quiltAppServer({
   app,
   env,
   graphql,
-  entry,
+  entry = MAGIC_MODULE_ENTRY,
+  minify = false,
 }: AppServerOptions = {}) {
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
 
+  const [
+    {visualizer},
+    {sourceCode},
+    {rawAssets, staticAssets},
+    {magicModuleRequestRouterEntry},
+    nodePlugins,
+  ] = await Promise.all([
+    import('rollup-plugin-visualizer'),
+    import('./features/source-code.ts'),
+    import('./features/assets.ts'),
+    import('./features/request-router.ts'),
+    getNodePlugins(),
+  ]);
+
+  const plugins: Plugin[] = [
+    ...nodePlugins,
+    sourceCode({mode}),
+    rawAssets(),
+    staticAssets({emit: false}),
+  ];
+
+  if (env) {
+    const {magicModuleEnv, replaceProcessEnv} = await import(
+      './features/env.ts'
+    );
+
+    if (typeof env === 'boolean') {
+      plugins.push(replaceProcessEnv({mode}));
+      plugins.push(magicModuleEnv({mode}));
+    } else {
+      plugins.push(replaceProcessEnv({mode}));
+      plugins.push(magicModuleEnv({mode}));
+    }
+  }
+
+  if (app) {
+    plugins.push(magicModuleAppComponent({entry: app}));
+  }
+
+  plugins.push(magicModuleRequestRouterEntry());
+  plugins.push(magicModuleAppRequestRouter({entry}));
+
+  if (graphql) {
+    const {graphql} = await import('./features/graphql.ts');
+    plugins.push(graphql({manifest: false}));
+  }
+
+  if (minify) {
+    const {minify} = await import('rollup-plugin-esbuild');
+    plugins.push(minify());
+  }
+
+  plugins.push(
+    visualizer({
+      template: 'treemap',
+      open: false,
+      brotliSize: true,
+      filename: path.resolve(`reports/bundle-visualizer.html`),
+    }),
+  );
+
   return {
-    name: '@quilted/app/server',
-    async options(originalOptions) {
-      const newPlugins = rollupPluginsToArray(originalOptions.plugins);
-      const newOptions = {...originalOptions, plugins: newPlugins};
-
-      const [{magicModuleRequestRouterEntry}, {sourceCode}, nodePlugins] =
-        await Promise.all([
-          import('./features/request-router.ts'),
-          import('./features/source-code.ts'),
-          getNodePlugins(),
-        ]);
-
-      newPlugins.push(...nodePlugins);
-      newPlugins.push(sourceCode({mode}));
-
-      if (env) {
-        const {magicModuleEnv, replaceProcessEnv} = await import(
-          './features/env.ts'
-        );
-
-        if (typeof env === 'boolean') {
-          newPlugins.push(replaceProcessEnv({mode}));
-          newPlugins.push(magicModuleEnv({mode}));
-        } else {
-          newPlugins.push(replaceProcessEnv({mode}));
-          newPlugins.push(magicModuleEnv({mode, ...env}));
-        }
-      }
-
-      if (app) {
-        newPlugins.push(magicModuleAppComponent({entry: app}));
-      }
-
-      newPlugins.push(magicModuleRequestRouterEntry());
-      newPlugins.push(magicModuleAppRequestRouter({entry}));
-
-      if (graphql) {
-        const {graphql} = await import('./features/graphql.ts');
-        newPlugins.push(graphql({manifest: false}));
-      }
-
-      return newOptions;
+    input: entry,
+    plugins,
+    output: {
+      // format: isESM ? 'esm' : 'systemjs',
+      format: 'esm',
+      dir: path.resolve(`build/server`),
+      entryFileNames: 'server.js',
     },
-    outputOptions(originalOptions) {
-      return {
-        ...originalOptions,
-        // format,
-        format: 'esm',
-        dir: path.resolve(`build/server`),
-        entryFileNames: 'server.js',
-      };
-    },
-  } satisfies Plugin;
+  } satisfies RollupOptions;
 }
 
 export function magicModuleAppComponent({entry}: {entry: string}) {

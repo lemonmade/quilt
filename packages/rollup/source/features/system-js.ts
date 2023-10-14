@@ -3,7 +3,7 @@ import {createRequire} from 'module';
 
 import type {Plugin} from 'rollup';
 
-export function systemJs({minify = false} = {}) {
+export function systemJS({minify = false} = {}) {
   return {
     name: '@quilted/system-js',
     async renderChunk(_, chunk, options) {
