@@ -1,6 +1,8 @@
 import * as path from 'path';
+import * as fs from 'fs/promises';
 
 import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
+import type {AssetsBuildManifest} from '@quilted/assets';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -91,6 +93,8 @@ export interface AppBrowserAssetsOptions {
    * @default true
    */
   minify?: boolean;
+
+  baseURL?: string;
 }
 
 export async function quiltAppBrowser({
@@ -104,9 +108,11 @@ export async function quiltAppBrowser({
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
+  const baseURL = assets?.baseURL ?? '/assets/';
 
   const [
     {visualizer},
+    {assetManifest},
     {sourceCode},
     {css},
     {rawAssets, staticAssets},
@@ -114,6 +120,7 @@ export async function quiltAppBrowser({
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
+    import('@quilted/assets/rollup'),
     import('./features/source-code.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
@@ -123,11 +130,11 @@ export async function quiltAppBrowser({
 
   const plugins: Plugin[] = [
     ...nodePlugins,
-    systemJS(),
+    systemJS({minify}),
     sourceCode({mode}),
-    css({minify}),
+    css({minify, emit: true}),
     rawAssets(),
-    staticAssets(),
+    staticAssets({baseURL, emit: true}),
   ];
 
   if (env) {
@@ -161,11 +168,16 @@ export async function quiltAppBrowser({
   }
 
   plugins.push(
+    // @ts-expect-error The plugin still depends on Rollup 3
+    assetManifest({
+      baseUrl: baseURL,
+      path: path.resolve(`build/manifests/assets.json`),
+    }),
     visualizer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: path.resolve(`reports/bundle-visualizer.html`),
+      filename: path.resolve(`build/reports/bundle-visualizer.html`),
     }),
   );
 
@@ -241,7 +253,7 @@ export async function quiltAppServer({
   const plugins: Plugin[] = [
     ...nodePlugins,
     sourceCode({mode}),
-    css({emit: false}),
+    css({emit: false, minify}),
     rawAssets(),
     staticAssets({emit: false}),
   ];
@@ -282,7 +294,7 @@ export async function quiltAppServer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: path.resolve(`reports/bundle-visualizer.html`),
+      filename: path.resolve(`build/reports/bundle-visualizer.html`),
     }),
   );
 
@@ -372,6 +384,55 @@ export function magicModuleAppBrowserEntry({
           hydrate
             ? `${reactRootFunction}(element, jsx(App));`
             : `${reactRootFunction}(element).render(jsx(App));`
+        }
+      `;
+    },
+  });
+}
+
+export function magicModuleAppAssetManifests() {
+  return createMagicModulePlugin({
+    name: '@quilted/magic-module/asset-manifests',
+    module: MAGIC_MODULE_BROWSER_ASSETS,
+    async source() {
+      const {glob} = await import('glob');
+
+      const manifestFiles = await glob('assets*.json', {
+        nodir: true,
+        cwd: path.resolve(`build/manifests`),
+      });
+
+      const manifests = await Promise.all(
+        manifestFiles.map(
+          async (file) =>
+            JSON.parse(await fs.readFile(file, 'utf8')) as AssetsBuildManifest,
+        ),
+      );
+
+      manifests.sort(
+        (manifestA, manifestB) =>
+          (manifestA.priority ?? 0) - (manifestB.priority ?? 0),
+      );
+
+      return multiline`
+        import {BrowserAssetsFromManifests} from '@quilted/quilt/server';
+
+        export class BrowserAssets extends BrowserAssetsFromManifests {
+          constructor() {
+            const manifests = JSON.parse(${JSON.stringify(
+              JSON.stringify(manifests),
+            )});
+
+            // The default manifest is the last one, since it has the widest browser support.
+            const defaultManifest = manifests.at(-1);
+
+            super(manifests, {
+              defaultManifest,
+              cacheKey(request) {
+                return {};
+              },
+            });
+          }
         }
       `;
     },
