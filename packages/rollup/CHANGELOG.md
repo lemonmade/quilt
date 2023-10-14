@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.5
+
+### Patch Changes
+
+- [`3b3db683`](https://github.com/lemonmade/quilt/commit/3b3db6833608df10274f6335182164856c19cbdc) Thanks [@lemonmade](https://github.com/lemonmade)! - Switch to a config generator function
+
+- [`97583dc1`](https://github.com/lemonmade/quilt/commit/97583dc12973cc7e378ffcd9815ecc098f3ecbeb) Thanks [@lemonmade](https://github.com/lemonmade)! - Add CSS plugin
+
 ## 0.1.4
 
 ### Patch Changes
