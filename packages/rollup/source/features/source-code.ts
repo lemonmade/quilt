@@ -46,7 +46,6 @@ export function sourceCode({
         {version: '2023-01'},
       ],
     ],
-    targets,
     extensions: [
       '.ts',
       '.tsx',
