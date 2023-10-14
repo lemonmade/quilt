@@ -88,18 +88,23 @@ export function quiltAppBrowser({
   module,
   graphql = true,
 }: AppBrowserOptions = {}) {
+  const mode =
+    (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+
   return {
     name: '@quilted/app/browser',
     async options(originalOptions) {
       const newPlugins = rollupPluginsToArray(originalOptions.plugins);
       const newOptions = {...originalOptions, plugins: newPlugins};
 
-      const [{visualizer}, nodePlugins] = await Promise.all([
+      const [{visualizer}, {sourceCode}, nodePlugins] = await Promise.all([
         import('rollup-plugin-visualizer'),
+        import('./shared/source-code.ts'),
         getNodePlugins(),
       ]);
 
       newPlugins.push(...nodePlugins);
+      newPlugins.push(sourceCode({mode}));
 
       if (env) {
         const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
@@ -174,28 +179,34 @@ export function quiltAppServer({
   graphql,
   entry,
 }: AppServerOptions = {}) {
+  const mode =
+    (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+
   return {
     name: '@quilted/app/server',
     async options(originalOptions) {
       const newPlugins = rollupPluginsToArray(originalOptions.plugins);
       const newOptions = {...originalOptions, plugins: newPlugins};
 
-      const [{magicModuleRequestRouterEntry}, nodePlugins] = await Promise.all([
-        import('./request-router.ts'),
-        getNodePlugins(),
-      ]);
+      const [{magicModuleRequestRouterEntry}, {sourceCode}, nodePlugins] =
+        await Promise.all([
+          import('./request-router.ts'),
+          import('./shared/source-code.ts'),
+          getNodePlugins(),
+        ]);
 
       newPlugins.push(...nodePlugins);
+      newPlugins.push(sourceCode({mode}));
 
       if (env) {
         const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
 
         if (typeof env === 'boolean') {
-          newPlugins.push(replaceProcessEnv({mode: 'production'}));
-          newPlugins.push(magicModuleEnv({mode: 'production'}));
+          newPlugins.push(replaceProcessEnv({mode}));
+          newPlugins.push(magicModuleEnv({mode}));
         } else {
-          newPlugins.push(replaceProcessEnv({mode: env.mode ?? 'production'}));
-          newPlugins.push(magicModuleEnv({mode: 'production', ...env}));
+          newPlugins.push(replaceProcessEnv({mode}));
+          newPlugins.push(magicModuleEnv({mode, ...env}));
         }
       }
 
