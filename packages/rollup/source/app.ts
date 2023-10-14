@@ -8,7 +8,7 @@ import {
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
 } from './constants.ts';
-import type {MagicModuleEnvOptions} from './env.ts';
+import type {MagicModuleEnvOptions} from './features/env.ts';
 
 import {multiline} from './shared/strings.ts';
 import {getNodePlugins, rollupPluginsToArray} from './shared/rollup.ts';
@@ -90,6 +90,7 @@ export function quiltAppBrowser({
 }: AppBrowserOptions = {}) {
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+  const minify = assets?.minify ?? true;
 
   return {
     name: '@quilted/app/browser',
@@ -97,17 +98,29 @@ export function quiltAppBrowser({
       const newPlugins = rollupPluginsToArray(originalOptions.plugins);
       const newOptions = {...originalOptions, plugins: newPlugins};
 
-      const [{visualizer}, {sourceCode}, nodePlugins] = await Promise.all([
+      const [
+        {visualizer},
+        {sourceCode},
+        {rawAssets, staticAssets},
+        {systemJs},
+        nodePlugins,
+      ] = await Promise.all([
         import('rollup-plugin-visualizer'),
-        import('./shared/source-code.ts'),
+        import('./features/source-code.ts'),
+        import('./features/assets.ts'),
+        import('./features/system-js.ts'),
         getNodePlugins(),
       ]);
 
       newPlugins.push(...nodePlugins);
       newPlugins.push(sourceCode({mode}));
+      newPlugins.push(rawAssets(), staticAssets());
+      newPlugins.push(systemJs({minify}));
 
       if (env) {
-        const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
+        const {magicModuleEnv, replaceProcessEnv} = await import(
+          './features/env.ts'
+        );
 
         if (typeof env === 'boolean') {
           newPlugins.push(replaceProcessEnv({mode: 'production'}));
@@ -125,13 +138,11 @@ export function quiltAppBrowser({
       newPlugins.push(magicModuleAppBrowserEntry(module));
 
       if (graphql) {
-        const {graphql} = await import('./graphql.ts');
+        const {graphql} = await import('./features/graphql.ts');
         newPlugins.push(
           graphql({manifest: path.resolve(`manifests/graphql.json`)}),
         );
       }
-
-      const minify = assets?.minify ?? true;
 
       if (minify) {
         const {minify} = await import('rollup-plugin-esbuild');
@@ -190,8 +201,8 @@ export function quiltAppServer({
 
       const [{magicModuleRequestRouterEntry}, {sourceCode}, nodePlugins] =
         await Promise.all([
-          import('./request-router.ts'),
-          import('./shared/source-code.ts'),
+          import('./features/request-router.ts'),
+          import('./features/source-code.ts'),
           getNodePlugins(),
         ]);
 
@@ -199,7 +210,9 @@ export function quiltAppServer({
       newPlugins.push(sourceCode({mode}));
 
       if (env) {
-        const {magicModuleEnv, replaceProcessEnv} = await import('./env.ts');
+        const {magicModuleEnv, replaceProcessEnv} = await import(
+          './features/env.ts'
+        );
 
         if (typeof env === 'boolean') {
           newPlugins.push(replaceProcessEnv({mode}));
@@ -218,7 +231,7 @@ export function quiltAppServer({
       newPlugins.push(magicModuleAppRequestRouter({entry}));
 
       if (graphql) {
-        const {graphql} = await import('./graphql.ts');
+        const {graphql} = await import('./features/graphql.ts');
         newPlugins.push(graphql({manifest: false}));
       }
 

@@ -45,9 +45,12 @@
     "dotenv": "^16.0.0",
     "esbuild": "^0.19.4",
     "graphql": "^16.8.0",
+    "lightningcss": "^1.22.0",
+    "mrmime": "^1.0.1",
     "rollup-plugin-esbuild": "^6.1.0",
     "rollup-plugin-node-externals": "^6.1.2",
-    "rollup-plugin-visualizer": "^5.9.0"
+    "rollup-plugin-visualizer": "^5.9.0",
+    "systemjs": "^6.14.2"
   },
   "peerDependencies": {
     "rollup": "^4.0.0"

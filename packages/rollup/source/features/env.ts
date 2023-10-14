@@ -3,10 +3,10 @@ import * as fs from 'fs';
 
 import type {PluginContext} from 'rollup';
 
-import {MAGIC_MODULE_ENV} from './constants.ts';
-import {multiline} from './shared/strings.ts';
-import {smartReplace} from './shared/rollup.ts';
-import {createMagicModulePlugin} from './shared/magic-module.ts';
+import {MAGIC_MODULE_ENV} from '../constants.ts';
+import {multiline} from '../shared/strings.ts';
+import {smartReplace} from '../shared/rollup.ts';
+import {createMagicModulePlugin} from '../shared/magic-module.ts';
 
 const EMPTY_PROCESS_ENV_OBJECT = {
   'globalThis.process.env.': `({}).`,

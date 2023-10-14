@@ -1,7 +1,7 @@
-import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
+import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from '../constants.ts';
 
-import {createMagicModulePlugin} from './shared/magic-module.ts';
-import {multiline} from './shared/strings.ts';
+import {createMagicModulePlugin} from '../shared/magic-module.ts';
+import {multiline} from '../shared/strings.ts';
 
 export function magicModuleRequestRouterEntry({
   host,
