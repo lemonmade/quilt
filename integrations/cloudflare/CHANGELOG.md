@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.1.58
+
+### Patch Changes
+
+- [`8123b38e`](https://github.com/lemonmade/quilt/commit/8123b38eba784ef9ae01ea2744bb9deb82fe435c) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve tooling export paths
+
+- Updated dependencies [[`8123b38e`](https://github.com/lemonmade/quilt/commit/8123b38eba784ef9ae01ea2744bb9deb82fe435c)]:
+  - @quilted/craft@0.1.237
+
 ## 0.1.57
 
 ### Patch Changes
