@@ -11,6 +11,7 @@ import {
 import type {MagicModuleEnvOptions} from './env.ts';
 
 import {multiline} from './shared/strings.ts';
+import {getNodePlugins, rollupPluginsToArray} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppOptions {
@@ -47,14 +48,7 @@ export function quiltApp({env, entry}: AppOptions = {}) {
   return {
     name: '@quilted/app',
     async options(originalOptions) {
-      const newPlugins = [
-        ...(Array.isArray(originalOptions.plugins)
-          ? originalOptions.plugins
-          : originalOptions.plugins
-          ? [originalOptions.plugins]
-          : []),
-      ];
-
+      const newPlugins = rollupPluginsToArray(originalOptions.plugins);
       const newOptions = {...originalOptions, plugins: newPlugins};
 
       if (env) {
@@ -78,7 +72,7 @@ export function quiltApp({env, entry}: AppOptions = {}) {
   } satisfies Plugin;
 }
 
-export interface AppBrowserOptions {
+export interface AppBrowserOptions extends AppOptions {
   /**
    * Customizes the magic `quilt:module/browser` entry module.
    */
@@ -115,24 +109,26 @@ export interface AppBrowserAssetsOptions {
   minify?: boolean;
 }
 
-export function quiltAppBrowser({assets, module}: AppBrowserOptions = {}) {
+export function quiltAppBrowser({
+  entry,
+  env,
+  graphql,
+  assets,
+  module,
+}: AppBrowserOptions = {}) {
   return {
     name: '@quilted/app/browser',
     async options(originalOptions) {
-      const newPlugins = [
-        ...(Array.isArray(originalOptions.plugins)
-          ? originalOptions.plugins
-          : originalOptions.plugins
-          ? [originalOptions.plugins]
-          : []),
-      ];
-
+      const newPlugins = rollupPluginsToArray(originalOptions.plugins);
       const newOptions = {...originalOptions, plugins: newPlugins};
 
-      const [{visualizer}] = await Promise.all([
+      const [{visualizer}, nodePlugins] = await Promise.all([
         import('rollup-plugin-visualizer'),
+        getNodePlugins(),
       ]);
 
+      newPlugins.push(quiltApp({env, entry, graphql}));
+      newPlugins.push(...nodePlugins);
       newPlugins.push(magicModuleAppBrowserEntry(module));
 
       const minify = assets?.minify ?? true;
@@ -169,19 +165,12 @@ export function quiltAppServer(options: AppServerOptions = {}) {
   return {
     name: '@quilted/app/server',
     async options(originalOptions) {
-      const newPlugins = [
-        ...(Array.isArray(originalOptions.plugins)
-          ? originalOptions.plugins
-          : originalOptions.plugins
-          ? [originalOptions.plugins]
-          : []),
-      ];
+      const newPlugins = rollupPluginsToArray(originalOptions.plugins);
+      const newOptions = {...originalOptions, plugins: newPlugins};
 
       const [{magicModuleRequestRouterEntry}] = await Promise.all([
         import('./request-router.ts'),
       ]);
-
-      const newOptions = {...originalOptions, plugins: newPlugins};
 
       newPlugins.push(magicModuleRequestRouterEntry());
       newPlugins.push(magicModuleAppRequestRouter(options));

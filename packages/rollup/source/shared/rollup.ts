@@ -17,6 +17,36 @@ export function smartReplace(
   });
 }
 
+export async function getNodePlugins() {
+  const [
+    {default: commonjs},
+    {default: json},
+    {default: nodeResolve},
+    {default: nodeExternals},
+  ] = await Promise.all([
+    import('@rollup/plugin-commonjs'),
+    import('@rollup/plugin-json'),
+    import('@rollup/plugin-node-resolve'),
+    import('rollup-plugin-node-externals'),
+  ]);
+
+  return [
+    nodeExternals({}),
+    nodeResolve({
+      preferBuiltins: true,
+      dedupe: [],
+      // extensions,
+      // exportConditions,
+    }),
+    commonjs(),
+    json(),
+  ];
+}
+
+export function rollupPluginsToArray(plugins?: InputOptions['plugins']) {
+  return Array.isArray(plugins) ? [...plugins] : plugins ? [plugins] : [];
+}
+
 export function addRollupOnWarn(
   options: InputOptions,
   warn: NonNullable<InputOptions['onwarn']>,
