@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.3
+
+### Patch Changes
+
+- [`4841dca5`](https://github.com/lemonmade/quilt/commit/4841dca5fb9817c8873b06c1790b3f4a05bc62d6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add GraphQL plugins
+
+- [`34b06933`](https://github.com/lemonmade/quilt/commit/34b06933ea46eedace0caef682ae6aadea3f4ea8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add output options
+
 ## 0.1.2
 
 ### Patch Changes
