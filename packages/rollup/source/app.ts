@@ -172,6 +172,18 @@ export async function quiltAppBrowser({
   return {
     input: entry,
     plugins,
+    onwarn(warning, defaultWarn) {
+      // Removes annoying warnings for React-focused libraries that
+      // include 'use client' directives.
+      if (
+        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+        /['"]use client['"]/.test(warning.message)
+      ) {
+        return;
+      }
+
+      defaultWarn(warning);
+    },
     output: {
       // format: isESM ? 'esm' : 'systemjs',
       format: 'esm',
@@ -203,7 +215,7 @@ export interface AppServerOptions extends AppOptions {
 export async function quiltAppServer({
   app,
   env,
-  graphql,
+  graphql = true,
   entry = MAGIC_MODULE_ENTRY,
   minify = false,
 }: AppServerOptions = {}) {
