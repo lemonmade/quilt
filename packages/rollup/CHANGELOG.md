@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.7
+
+### Patch Changes
+
+- [`f450b0e4`](https://github.com/lemonmade/quilt/commit/f450b0e4ff5026dfd98f8fa044fb1fa26c0861bf) Thanks [@lemonmade](https://github.com/lemonmade)! - Actually fix Babel `target` option
+
+- [`29564cdc`](https://github.com/lemonmade/quilt/commit/29564cdcd0f82cb5bb2eee6d76ad9314db28d14c) Thanks [@lemonmade](https://github.com/lemonmade)! - Add asset plugins
+
 ## 0.1.6
 
 ### Patch Changes

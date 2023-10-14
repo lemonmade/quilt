@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.3.53
+
+### Patch Changes
+
+- [`88832ea7`](https://github.com/lemonmade/quilt/commit/88832ea75659ef8601ebbbe7f06a266a1df54cdf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix more PURE annotations
+
 ## 0.3.52
 
 ### Patch Changes

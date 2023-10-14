@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.5.157
+
+### Patch Changes
+
+- [`a1cef6bc`](https://github.com/lemonmade/quilt/commit/a1cef6bc9cc64f7818ab64e28da6297471a32ff4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix <html> pure annotation
+
 ## 0.5.156
 
 ### Patch Changes
