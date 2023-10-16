@@ -278,6 +278,7 @@ export async function quiltAppServer({
 
   plugins.push(magicModuleRequestRouterEntry());
   plugins.push(magicModuleAppRequestRouter({entry}));
+  plugins.push(magicModuleAppAssetManifests());
 
   if (graphql) {
     const {graphql} = await import('./features/graphql.ts');
@@ -411,6 +412,7 @@ export function magicModuleAppAssetManifests() {
 
       const manifestFiles = await glob('assets*.json', {
         nodir: true,
+        absolute: true,
         cwd: path.resolve(`build/manifests`),
       });
 
