@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.10
+
+### Patch Changes
+
+- [`488b2c89`](https://github.com/lemonmade/quilt/commit/488b2c89b467b97feaf1e6f189bbf8c1aeea80f3) Thanks [@lemonmade](https://github.com/lemonmade)! - Delete build files on build
+
+- [`0dafd7d0`](https://github.com/lemonmade/quilt/commit/0dafd7d02d9a361e06b2968f3dda48a30552a1f1) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for browserlist configuration
+
 ## 0.1.9
 
 ### Patch Changes
