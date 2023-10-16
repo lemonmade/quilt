@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import {glob} from 'glob';
 
 import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
 import type {AssetsBuildManifest} from '@quilted/assets';
@@ -99,12 +100,13 @@ export interface AppBrowserAssetsOptions {
 
 export async function quiltAppBrowser({
   app,
-  entry = MAGIC_MODULE_ENTRY,
+  entry,
   env,
   assets,
   module,
   graphql = true,
 }: AppBrowserOptions = {}) {
+  const root = process.cwd();
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
@@ -159,8 +161,16 @@ export async function quiltAppBrowser({
     }
   }
 
-  if (app) {
-    plugins.push(magicModuleAppComponent({entry: app}));
+  const appEntry =
+    app ??
+    (await glob('{App,app,input}.{ts,tsx,mjs,js,jsx}', {
+      cwd: root,
+      nodir: true,
+      absolute: true,
+    }).then((files) => files[0]));
+
+  if (appEntry) {
+    plugins.push(magicModuleAppComponent({entry: appEntry}));
   }
 
   plugins.push(magicModuleAppBrowserEntry(module));
@@ -189,8 +199,17 @@ export async function quiltAppBrowser({
     }),
   );
 
+  const finalEntry =
+    entry ??
+    (await glob('browser.{ts,tsx,mjs,js,jsx}', {
+      cwd: root,
+      nodir: true,
+      absolute: true,
+    }).then((files) => files[0])) ??
+    MAGIC_MODULE_ENTRY;
+
   return {
-    input: entry,
+    input: finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -235,10 +254,11 @@ export interface AppServerOptions extends AppOptions {
 export async function quiltAppServer({
   app,
   env,
+  entry,
   graphql = true,
-  entry = MAGIC_MODULE_ENTRY,
   minify = false,
 }: AppServerOptions = {}) {
+  const root = process.cwd();
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
 
@@ -288,8 +308,16 @@ export async function quiltAppServer({
     }
   }
 
-  if (app) {
-    plugins.push(magicModuleAppComponent({entry: app}));
+  const appEntry =
+    app ??
+    (await glob('{App,app,input}.{ts,tsx,mjs,js,jsx}', {
+      cwd: root,
+      nodir: true,
+      absolute: true,
+    }).then((files) => files[0]));
+
+  if (appEntry) {
+    plugins.push(magicModuleAppComponent({entry: appEntry}));
   }
 
   plugins.push(magicModuleRequestRouterEntry());
@@ -315,8 +343,17 @@ export async function quiltAppServer({
     }),
   );
 
+  const finalEntry =
+    entry ??
+    (await glob('server.{ts,tsx,mjs,js,jsx}', {
+      cwd: root,
+      nodir: true,
+      absolute: true,
+    }).then((files) => files[0])) ??
+    MAGIC_MODULE_ENTRY;
+
   return {
-    input: entry,
+    input: finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
