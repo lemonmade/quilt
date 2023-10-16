@@ -14,7 +14,7 @@ import {
 import type {MagicModuleEnvOptions} from './features/env.ts';
 
 import {multiline} from './shared/strings.ts';
-import {getNodePlugins} from './shared/rollup.ts';
+import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppOptions {
@@ -139,6 +139,9 @@ export async function quiltAppBrowser({
     css({minify, emit: true}),
     rawAssets(),
     staticAssets({baseURL, emit: true}),
+    removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
+      root,
+    }),
   ];
 
   const tsconfigAliases = await createTSConfigAliasPlugin();
@@ -286,6 +289,7 @@ export async function quiltAppServer({
     css({emit: false, minify}),
     rawAssets(),
     staticAssets({emit: false}),
+    removeBuildFiles(['build/server'], {root}),
   ];
 
   const tsconfigAliases = await createTSConfigAliasPlugin();

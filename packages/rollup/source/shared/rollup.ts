@@ -1,4 +1,7 @@
-import type {InputOptions} from 'rollup';
+import * as fs from 'fs/promises';
+import {glob} from 'glob';
+
+import type {Plugin, InputOptions} from 'rollup';
 import replace, {type RollupReplaceOptions} from '@rollup/plugin-replace';
 
 export function smartReplace(
@@ -15,6 +18,25 @@ export function smartReplace(
     ...options,
     values,
   });
+}
+
+export function removeBuildFiles(
+  patterns: string | string[],
+  {root = process.cwd()}: {root?: string} = {},
+) {
+  return {
+    name: '@quilt/remove-build-files',
+    async buildStart() {
+      const matches = await glob(patterns, {
+        cwd: root,
+        absolute: true,
+      });
+
+      await Promise.all(
+        matches.map((file) => fs.rm(file, {recursive: true, force: true})),
+      );
+    },
+  } satisfies Plugin;
 }
 
 export async function getNodePlugins() {
