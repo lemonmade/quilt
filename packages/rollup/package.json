@@ -43,6 +43,7 @@
     "@quilted/assets": "^0.0.4",
     "@quilted/graphql": "^2.0.0",
     "@types/babel__preset-env": "^7.9.0",
+    "browserslist": "^4.22.1",
     "dotenv": "^16.0.0",
     "esbuild": "^0.19.4",
     "glob": "^10.3.10",

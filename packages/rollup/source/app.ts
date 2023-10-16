@@ -96,6 +96,13 @@ export interface AppBrowserAssetsOptions {
   minify?: boolean;
 
   baseURL?: string;
+  targets?:
+    | string[]
+    | {
+        name?: string;
+        browsers?: string[];
+      };
+  priority?: number;
 }
 
 export async function quiltAppBrowser({
@@ -111,6 +118,24 @@ export async function quiltAppBrowser({
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
+
+  const assetTargets = assets?.targets ?? {};
+  const targets = Array.isArray(assetTargets)
+    ? {
+        browsers: assetTargets,
+      }
+    : assetTargets;
+  const targetBrowsers =
+    targets.browsers ??
+    (await (async () => {
+      const {default: browserslist} = await import('browserslist');
+      const config = browserslist.findConfig(root);
+
+      if (config == null) return ['defaults'];
+
+      const targetName = targets.name ?? 'defaults';
+      return config[targetName] ?? ['defaults'];
+    })());
 
   const [
     {visualizer},
@@ -135,7 +160,7 @@ export async function quiltAppBrowser({
   const plugins: Plugin[] = [
     ...nodePlugins,
     systemJS({minify}),
-    sourceCode({mode}),
+    sourceCode({mode, targets: targetBrowsers}),
     css({minify, emit: true}),
     rawAssets(),
     staticAssets({baseURL, emit: true}),
@@ -188,11 +213,17 @@ export async function quiltAppBrowser({
     plugins.push(minify());
   }
 
+  const cacheKey = targets.name ? {browserTarget: targets.name} : undefined;
+  const id = targets.name ? targets.name : undefined;
+
   plugins.push(
     // @ts-expect-error The plugin still depends on Rollup 3
     assetManifest({
+      id,
+      cacheKey,
       baseUrl: baseURL,
       path: path.resolve(`build/manifests/assets.json`),
+      priority: assets?.priority,
     }),
     visualizer({
       template: 'treemap',
@@ -204,7 +235,7 @@ export async function quiltAppBrowser({
 
   const finalEntry =
     entry ??
-    (await glob('browser.{ts,tsx,mjs,js,jsx}', {
+    (await glob('{browser,client}.{ts,tsx,mjs,js,jsx}', {
       cwd: root,
       nodir: true,
       absolute: true,
@@ -285,7 +316,7 @@ export async function quiltAppServer({
 
   const plugins: Plugin[] = [
     ...nodePlugins,
-    sourceCode({mode}),
+    sourceCode({mode, targets: ['current node']}),
     css({emit: false, minify}),
     rawAssets(),
     staticAssets({emit: false}),
@@ -349,7 +380,7 @@ export async function quiltAppServer({
 
   const finalEntry =
     entry ??
-    (await glob('server.{ts,tsx,mjs,js,jsx}', {
+    (await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
       cwd: root,
       nodir: true,
       absolute: true,
