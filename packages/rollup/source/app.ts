@@ -114,6 +114,7 @@ export async function quiltAppBrowser({
     {visualizer},
     {assetManifest},
     {sourceCode},
+    {createTSConfigAliasPlugin},
     {css},
     {rawAssets, staticAssets},
     {systemJS},
@@ -122,6 +123,7 @@ export async function quiltAppBrowser({
     import('rollup-plugin-visualizer'),
     import('@quilted/assets/rollup'),
     import('./features/source-code.ts'),
+    import('./features/typescript.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/system-js.ts'),
@@ -136,6 +138,12 @@ export async function quiltAppBrowser({
     rawAssets(),
     staticAssets({baseURL, emit: true}),
   ];
+
+  const tsconfigAliases = await createTSConfigAliasPlugin();
+
+  if (tsconfigAliases) {
+    plugins.push(tsconfigAliases);
+  }
 
   if (env) {
     const {magicModuleEnv, replaceProcessEnv} = await import(
@@ -237,6 +245,7 @@ export async function quiltAppServer({
   const [
     {visualizer},
     {sourceCode},
+    {createTSConfigAliasPlugin},
     {css},
     {rawAssets, staticAssets},
     {magicModuleRequestRouterEntry},
@@ -244,6 +253,7 @@ export async function quiltAppServer({
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/source-code.ts'),
+    import('./features/typescript.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/request-router.ts'),
@@ -257,6 +267,12 @@ export async function quiltAppServer({
     rawAssets(),
     staticAssets({emit: false}),
   ];
+
+  const tsconfigAliases = await createTSConfigAliasPlugin();
+
+  if (tsconfigAliases) {
+    plugins.push(tsconfigAliases);
+  }
 
   if (env) {
     const {magicModuleEnv, replaceProcessEnv} = await import(
