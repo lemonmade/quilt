@@ -136,6 +136,11 @@ export async function quiltAppBrowser({
       const targetName = targets.name ?? 'defaults';
       return config[targetName] ?? ['defaults'];
     })());
+  const normalizedTargetName =
+    targets.name === 'defaults' ? 'default' : targets.name;
+  const targetFilenamePart = normalizedTargetName
+    ? `.${normalizedTargetName}`
+    : '';
 
   const [
     {visualizer},
@@ -205,11 +210,17 @@ export async function quiltAppBrowser({
 
   if (graphql) {
     const {graphql} = await import('./features/graphql.ts');
-    plugins.push(graphql({manifest: path.resolve(`manifests/graphql.json`)}));
+
+    plugins.push(
+      graphql({
+        manifest: path.resolve(`manifests/graphql${targetFilenamePart}.json`),
+      }),
+    );
   }
 
   if (minify) {
     const {minify} = await import('rollup-plugin-esbuild');
+
     plugins.push(minify());
   }
 
@@ -222,14 +233,16 @@ export async function quiltAppBrowser({
       id,
       cacheKey,
       baseUrl: baseURL,
-      path: path.resolve(`build/manifests/assets.json`),
+      path: path.resolve(`build/manifests/assets${targetFilenamePart}.json`),
       priority: assets?.priority,
     }),
     visualizer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: path.resolve(`build/reports/bundle-visualizer.html`),
+      filename: path.resolve(
+        `build/reports/bundle-visualizer${targetFilenamePart}.html`,
+      ),
     }),
   );
 
@@ -261,9 +274,9 @@ export async function quiltAppBrowser({
       // format: isESM ? 'esm' : 'systemjs',
       format: 'esm',
       dir: path.resolve(`build/assets`),
-      entryFileNames: `app.[hash].js`,
-      assetFileNames: `[name].[hash].[ext]`,
-      chunkFileNames: `[name].[hash].js`,
+      entryFileNames: `app${targetFilenamePart}.[hash].js`,
+      assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
+      chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       manualChunks: createManualChunksSorter(),
     },
   } satisfies RollupOptions;
@@ -373,8 +386,8 @@ export async function quiltAppServer({
     visualizer({
       template: 'treemap',
       open: false,
-      brotliSize: true,
-      filename: path.resolve(`build/reports/bundle-visualizer.html`),
+      brotliSize: false,
+      filename: path.resolve(`build/reports/bundle-visualizer.server.html`),
     }),
   );
 
