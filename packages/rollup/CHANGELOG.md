@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.8
+
+### Patch Changes
+
+- [`86430876`](https://github.com/lemonmade/quilt/commit/864308760c9105cfe4b403ea54916c314af0e50b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset manifest plugins
+
+- [`e2038611`](https://github.com/lemonmade/quilt/commit/e203861184c39bc008ed7358f541944aa7db1cdd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix 'use client' directive in server builds
+
 ## 0.1.7
 
 ### Patch Changes
