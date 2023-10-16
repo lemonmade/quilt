@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.9
+
+### Patch Changes
+
+- [`afadefe6`](https://github.com/lemonmade/quilt/commit/afadefe6d6fc6b62c17bbc318f9c13c50ef50b7b) Thanks [@lemonmade](https://github.com/lemonmade)! - Add automatic detection of entrypoints
+
+- [`36751497`](https://github.com/lemonmade/quilt/commit/36751497d36fd9bea227c2baf55a302d54468863) Thanks [@lemonmade](https://github.com/lemonmade)! - Add tsconfig aliases plugin
+
 ## 0.1.8
 
 ### Patch Changes
