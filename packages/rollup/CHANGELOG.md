@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.11
+
+### Patch Changes
+
+- [`a1ecacac`](https://github.com/lemonmade/quilt/commit/a1ecacaca6229233cdecb7d27cb6165974aefcc6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add package rollup config
+
+- [`06b9abe3`](https://github.com/lemonmade/quilt/commit/06b9abe3a399e04b9fb9e8abe82b5f4d87e005dd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some output file names
+
 ## 0.1.10
 
 ### Patch Changes
