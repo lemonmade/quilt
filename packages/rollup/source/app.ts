@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import {glob} from 'glob';
+import {fileURLToPath} from 'url';
 
 import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
 import type {AssetsBuildManifest} from '@quilted/assets';
@@ -18,6 +19,11 @@ import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppOptions {
+  /**
+   * The root directory containing the source code for your application.
+   */
+  root?: string | URL;
+
   /**
    * The entry module for this app. This should be an absolute path, or relative
    * path from the root directory containing your project. This entry should just be
@@ -106,6 +112,7 @@ export interface AppBrowserAssetsOptions {
 }
 
 export async function quiltAppBrowser({
+  root: rootPath = process.cwd(),
   app,
   entry,
   env,
@@ -113,7 +120,7 @@ export async function quiltAppBrowser({
   module,
   graphql = true,
 }: AppBrowserOptions = {}) {
-  const root = process.cwd();
+  const root = fileURLToPath(rootPath);
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
