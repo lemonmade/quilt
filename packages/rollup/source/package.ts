@@ -3,6 +3,7 @@ import {Plugin, type RollupOptions} from 'rollup';
 import {glob} from 'glob';
 import {fileURLToPath} from 'url';
 
+import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 
 export interface PackageOptions {
@@ -18,8 +19,9 @@ export async function quiltPackageESModules({
   const root = fileURLToPath(rootPath);
   const outputDirectory = path.join(root, 'build/esm');
 
-  const [{sourceCode}, packageJSON] = await Promise.all([
+  const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
     import('./features/source-code.ts'),
+    getNodePlugins(),
     loadPackageJSON(root),
   ]);
 
@@ -39,7 +41,11 @@ export async function quiltPackageESModules({
     break;
   }
 
-  const plugins: Plugin[] = [sourceCode({mode: 'production'})];
+  const plugins: Plugin[] = [
+    ...nodePlugins,
+    sourceCode({mode: 'production'}),
+    removeBuildFiles(['build/esm'], {root}),
+  ];
 
   return {
     input: entries,
