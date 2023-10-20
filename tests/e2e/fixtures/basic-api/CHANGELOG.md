@@ -1,5 +1,12 @@
 # e2e-fixture-basic-api
 
+## 0.0.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @quilted/quilt@0.5.158
+
 ## 0.0.28
 
 ### Patch Changes
