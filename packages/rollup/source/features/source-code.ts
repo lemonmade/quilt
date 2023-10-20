@@ -30,13 +30,10 @@ export function sourceCode({
         {
           // @ts-expect-error This is a valid option
           corejs: '3.15',
-          useBuiltIns: 'usage',
+          useBuiltIns: false,
           bugfixes: true,
           shippedProposals: true,
-          // I thought I wanted this on, but if you do this, Babel
-          // stops respecting the top-level `targets` option and tries
-          // to use the targets passed to the preset directly instead.
-          ignoreBrowserslistConfig: true,
+          ignoreBrowserslistConfig: targets != null,
         } satisfies import('@babel/preset-env').Options,
       ],
     ],

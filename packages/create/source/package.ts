@@ -405,7 +405,9 @@ function getArguments() {
 }
 
 async function getName(args: Arguments) {
-  let {'--name': name} = args;
+  const {_, '--name': nameArgument} = args;
+
+  let name = nameArgument ?? _[0];
 
   if (name == null) {
     name = await prompt({

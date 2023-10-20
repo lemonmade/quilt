@@ -27,7 +27,7 @@ export async function getInWorkspace(argv: BaseArguments) {
   if (argv['--in-workspace']) return true;
   if (argv['--not-in-workspace']) return false;
 
-  return fs.existsSync('quilt.workspace.ts');
+  return fs.existsSync('pnpm-workspace.yaml');
 }
 
 export async function getCreateAsMonorepo(
