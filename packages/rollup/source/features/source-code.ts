@@ -28,8 +28,6 @@ export function sourceCode({
       [
         require.resolve('@babel/preset-env'),
         {
-          // @ts-expect-error This is a valid option
-          corejs: '3.15',
           useBuiltIns: false,
           bugfixes: true,
           shippedProposals: true,
