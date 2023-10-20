@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.1.86
+
+### Patch Changes
+
+- [`d3e5cc05`](https://github.com/lemonmade/quilt/commit/d3e5cc058cabcf4ad373d79daaf8bc39470a0791) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix creation of packages in simple workspaces
+
 ## 0.1.85
 
 ### Patch Changes
