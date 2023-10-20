@@ -41,7 +41,6 @@
     }
   },
   "devDependencies": {
-    "@quilted/testing": "^0.1.0",
     "react": "npm:@quilted/react@^18.2.0"
   },
   "browserslist": [
