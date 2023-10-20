@@ -1,16 +1,29 @@
 import {createRequire} from 'module';
 
 import babel from '@rollup/plugin-babel';
+import esbuild from 'rollup-plugin-esbuild';
 
 const require = createRequire(import.meta.url);
 
 export function sourceCode({
   mode,
   targets,
+  babel: useBabel = true,
 }: {
   mode?: 'development' | 'production';
   targets?: string[];
+  babel?: boolean;
 }) {
+  if (!useBabel) {
+    return esbuild({
+      // Support very modern features
+      target: 'es2023',
+      jsx: 'automatic',
+      jsxImportSource: 'react',
+      exclude: 'node_modules/**',
+    });
+  }
+
   return babel({
     envName: mode,
     configFile: false,

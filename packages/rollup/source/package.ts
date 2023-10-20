@@ -26,6 +26,88 @@ export async function quiltPackageESModules({
     loadPackageJSON(root),
   ]);
 
+  const source = await sourceForPackage(root, packageJSON);
+
+  const plugins: Plugin[] = [
+    ...nodePlugins,
+    sourceCode({mode: 'production'}),
+    removeBuildFiles(['build/esm'], {root}),
+  ];
+
+  return {
+    input: source.files,
+    plugins,
+    onwarn(warning, defaultWarn) {
+      // Removes annoying warnings for React-focused libraries that
+      // include 'use client' directives.
+      if (
+        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+        /['"]use client['"]/.test(warning.message)
+      ) {
+        return;
+      }
+
+      defaultWarn(warning);
+    },
+    output: {
+      preserveModules: true,
+      preserveModulesRoot: source.root,
+      format: 'esm',
+      dir: outputDirectory,
+      entryFileNames: `[name].mjs`,
+      assetFileNames: `[name].[ext]`,
+    },
+  } satisfies RollupOptions;
+}
+
+export async function quiltPackageESNext({
+  root: rootPath = process.cwd(),
+}: PackageOptions = {}) {
+  const root =
+    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
+  const outputDirectory = path.join(root, 'build/esnext');
+
+  const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
+    import('./features/source-code.ts'),
+    getNodePlugins(),
+    loadPackageJSON(root),
+  ]);
+
+  const source = await sourceForPackage(root, packageJSON);
+
+  const plugins: Plugin[] = [
+    ...nodePlugins,
+    sourceCode({mode: 'production', babel: false}),
+    removeBuildFiles(['build/esnext'], {root}),
+  ];
+
+  return {
+    input: source.files,
+    plugins,
+    onwarn(warning, defaultWarn) {
+      // Removes annoying warnings for React-focused libraries that
+      // include 'use client' directives.
+      if (
+        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+        /['"]use client['"]/.test(warning.message)
+      ) {
+        return;
+      }
+
+      defaultWarn(warning);
+    },
+    output: {
+      preserveModules: true,
+      preserveModulesRoot: source.root,
+      format: 'esm',
+      dir: outputDirectory,
+      entryFileNames: `[name].esnext`,
+      assetFileNames: `[name].[ext]`,
+    },
+  } satisfies RollupOptions;
+}
+
+async function sourceForPackage(root: string, packageJSON: PackageJSON) {
   const [entries] = await Promise.all([
     sourceEntriesForPackage(root, packageJSON),
   ]);
@@ -44,36 +126,7 @@ export async function quiltPackageESModules({
     break;
   }
 
-  const plugins: Plugin[] = [
-    ...nodePlugins,
-    sourceCode({mode: 'production'}),
-    removeBuildFiles(['build/esm'], {root}),
-  ];
-
-  return {
-    input: sourceEntryFiles,
-    plugins,
-    onwarn(warning, defaultWarn) {
-      // Removes annoying warnings for React-focused libraries that
-      // include 'use client' directives.
-      if (
-        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-        /['"]use client['"]/.test(warning.message)
-      ) {
-        return;
-      }
-
-      defaultWarn(warning);
-    },
-    output: {
-      preserveModules: true,
-      preserveModulesRoot: sourceRoot,
-      format: 'esm',
-      dir: outputDirectory,
-      entryFileNames: `[name].mjs`,
-      assetFileNames: `[name].[ext]`,
-    },
-  } satisfies RollupOptions;
+  return {root: sourceRoot, files: sourceEntryFiles};
 }
 
 async function sourceEntriesForPackage(root: string, packageJSON: PackageJSON) {
