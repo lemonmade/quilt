@@ -308,6 +308,7 @@ export function packageBuild({commonjs = true}: BuildOptions = {}) {
               '@quilted/rollup-plugin-fix-commonjs-preserve-modules'
             );
 
+            // @ts-expect-error multiple versions of Rollup, thanks Vite
             plugins.push(fixCommonJsPreserveModules({extension}));
 
             return plugins;

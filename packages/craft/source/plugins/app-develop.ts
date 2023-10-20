@@ -350,6 +350,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               babelPresets!.run([]),
             ]);
 
+            // @ts-expect-error multiple versions of Rollup, thanks Vite
             plugins.unshift({
               enforce: 'pre',
               ...magicModuleEnv({
@@ -362,6 +363,7 @@ export function appDevelop({env, port, browser, server}: Options = {}) {
               }),
             });
 
+            // @ts-expect-error multiple versions of Rollup, thanks Vite
             plugins.unshift({
               ...magicBrowserEntry({
                 ...browser,

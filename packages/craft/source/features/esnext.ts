@@ -78,6 +78,7 @@ export function esnextBuild() {
               '@quilted/rollup-plugin-fix-commonjs-preserve-modules'
             );
 
+            // @ts-expect-error multiple versions of Rollup, thanks Vite
             plugins.push(fixCommonJsPreserveModules({extension: EXTENSION}));
 
             return plugins;
@@ -191,6 +192,7 @@ export function esnext() {
           ];
         });
 
+        // @ts-expect-error multiple versions of Rollup, thanks Vite
         vitePlugins?.(async (plugins) => {
           const {default: esbuild} = await import('rollup-plugin-esbuild');
 

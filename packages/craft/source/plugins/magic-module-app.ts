@@ -20,6 +20,7 @@ export function magicModuleApp() {
           return [rollupPlugin(() => quiltAppEntry!.run()), ...plugins];
         });
 
+        // @ts-expect-error multiple versions of Rollup, thanks Vite
         vitePlugins?.((plugins) => {
           return [
             {...rollupPlugin(() => quiltAppEntry!.run()), enforce: 'pre'},

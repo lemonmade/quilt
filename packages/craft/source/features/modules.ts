@@ -181,7 +181,7 @@ export function moduleBuild({
             rollupNodeBundle,
             babelPresetEnvOptions,
             browserslistTargets,
-            quiltAssetManifestPath,
+            quiltAssetManifestFile,
             quiltGraphQLManifestPath,
           },
           {quiltModuleBuild},
@@ -210,7 +210,7 @@ export function moduleBuild({
 
           browserslistTargets?.(() => quiltModuleBuild.targets);
 
-          quiltAssetManifestPath?.(() =>
+          quiltAssetManifestFile?.(() =>
             project.fs.buildPath(`manifests/assets${targetFilenamePart}.json`),
           );
 

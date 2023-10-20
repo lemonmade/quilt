@@ -1,5 +1,6 @@
 import * as path from 'path';
-import type {Options as RollupOptions} from '@quilted/assets/rollup';
+import type {Plugin} from 'rollup';
+import type {AssetManifestOptions} from '@quilted/rollup/features/assets';
 
 import {
   createProjectPlugin,
@@ -57,13 +58,15 @@ export interface AssetHooks {
   quiltAssetStaticOutputFilenamePattern: WaterfallHookWithDefault<string>;
 
   quiltAssetManifest: WaterfallHookWithDefault<boolean>;
-  quiltAssetManifestId: WaterfallHookWithDefault<RollupOptions['id']>;
-  quiltAssetManifestPath: WaterfallHookWithDefault<RollupOptions['path']>;
+  quiltAssetManifestId: WaterfallHookWithDefault<AssetManifestOptions['id']>;
+  quiltAssetManifestFile: WaterfallHookWithDefault<
+    AssetManifestOptions['file']
+  >;
   quiltAssetManifestPriority: WaterfallHookWithDefault<
-    RollupOptions['priority']
+    AssetManifestOptions['priority']
   >;
   quiltAssetManifestCacheKey: WaterfallHookWithDefault<
-    RollupOptions['cacheKey']
+    AssetManifestOptions['cacheKey']
   >;
 }
 
@@ -132,18 +135,22 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
         quiltAssetManifest: waterfall<boolean>({
           default: true,
         }),
-        quiltAssetManifestId: waterfall<RollupOptions['id']>({
+        quiltAssetManifestId: waterfall<AssetManifestOptions['id']>({
           default: undefined,
         }),
-        quiltAssetManifestPath: waterfall<RollupOptions['path']>({
+        quiltAssetManifestFile: waterfall<AssetManifestOptions['file']>({
           default: project.fs.buildPath('manifests/assets.json'),
         }),
-        quiltAssetManifestPriority: waterfall<RollupOptions['priority']>({
-          default: undefined,
-        }),
-        quiltAssetManifestCacheKey: waterfall<RollupOptions['cacheKey']>({
-          default: undefined,
-        }),
+        quiltAssetManifestPriority: waterfall<AssetManifestOptions['priority']>(
+          {
+            default: undefined,
+          },
+        ),
+        quiltAssetManifestCacheKey: waterfall<AssetManifestOptions['cacheKey']>(
+          {
+            default: undefined,
+          },
+        ),
       }));
 
       configure(
@@ -156,7 +163,7 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
             quiltAssetStaticOutputFilenamePattern,
             quiltAssetManifest,
             quiltAssetManifestId,
-            quiltAssetManifestPath,
+            quiltAssetManifestFile,
             quiltAssetManifestCacheKey,
             quiltAssetManifestPriority,
           },
@@ -164,21 +171,21 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
         ) => {
           rollupPlugins?.(async (plugins) => {
             const [
-              {staticAssets, rawAssets},
+              {staticAssets, rawAssets, assetManifest},
               baseUrl,
               extensions,
               inlineLimit,
               outputPattern,
               includeManifest,
             ] = await Promise.all([
-              import('../plugins/rollup/assets.ts'),
+              import('@quilted/rollup/features/assets'),
               quiltAssetBaseUrl!.run(),
               quiltAssetStaticExtensions!.run(),
               quiltAssetStaticInlineLimit!.run(),
               quiltAssetStaticOutputFilenamePattern!.run(),
               quiltAssetManifest!.run(),
               quiltAssetManifestId!.run(),
-              quiltAssetManifestPath!.run(),
+              quiltAssetManifestFile!.run(),
               quiltAssetManifestCacheKey!.run(),
               quiltAssetManifestPriority!.run(),
             ]);
@@ -187,27 +194,23 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
               rawAssets(),
               staticAssets({
                 emit: Boolean(quiltAppBrowser),
-                baseUrl,
+                baseURL: baseUrl,
                 extensions,
                 inlineLimit,
                 outputPattern,
-                name: (file) =>
-                  path.posix.normalize(project.fs.relativePath(file)),
               }),
             ];
 
             if (includeManifest) {
-              const [{assetManifest}, id, path, cacheKey, priority] =
-                await Promise.all([
-                  import('@quilted/assets/rollup'),
-                  quiltAssetManifestId!.run(),
-                  quiltAssetManifestPath!.run(),
-                  quiltAssetManifestCacheKey!.run(),
-                  quiltAssetManifestPriority!.run(),
-                ]);
+              const [id, file, cacheKey, priority] = await Promise.all([
+                quiltAssetManifestId!.run(),
+                quiltAssetManifestFile!.run(),
+                quiltAssetManifestCacheKey!.run(),
+                quiltAssetManifestPriority!.run(),
+              ]);
 
               newPlugins.push(
-                assetManifest({id, path, cacheKey, priority, baseUrl}),
+                assetManifest({id, file, cacheKey, priority, baseURL: baseUrl}),
               );
             }
 
@@ -228,11 +231,10 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
 
       configure(({rollupPlugins, quiltAssetStaticExtensions}) => {
         rollupPlugins?.(async (plugins) => {
-          const [{staticAssetsDevelopment, rawAssets}, extensions] =
-            await Promise.all([
-              import('../plugins/rollup/assets.ts'),
-              quiltAssetStaticExtensions!.run(),
-            ]);
+          const [{rawAssets}, extensions] = await Promise.all([
+            import('@quilted/rollup/features/assets'),
+            quiltAssetStaticExtensions!.run(),
+          ]);
 
           return [
             ...plugins,
@@ -266,4 +268,44 @@ export function assets({baseUrl, inline: explicitInline}: AssetOptions) {
       });
     },
   });
+}
+
+function staticAssetsDevelopment({
+  root,
+  extensions,
+}: {
+  root: string;
+  extensions: readonly string[];
+}): Plugin {
+  const assetMatcher = new RegExp(
+    `\\.(` +
+      extensions
+        .map((extension) =>
+          extension.startsWith('.') ? extension.slice(1) : extension,
+        )
+        .join('|') +
+      `)(\\?.*)?$`,
+  );
+
+  return {
+    name: '@quilt/assets',
+    async load(id) {
+      if (id.startsWith('\0') || !assetMatcher.test(id)) {
+        return null;
+      }
+
+      let url: string;
+
+      if (id.startsWith(root)) {
+        // in project root, infer short public path
+        url = '/' + path.posix.relative(root, id);
+      } else {
+        // outside of project root, use absolute fs path
+        // (this is special handled by the serve static middleware
+        url = path.posix.join('/@fs/' + id);
+      }
+
+      return `export default ${JSON.stringify(url)};`;
+    },
+  };
 }

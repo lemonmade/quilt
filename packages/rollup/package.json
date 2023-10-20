@@ -22,9 +22,23 @@
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
+    },
+    "./features/assets": {
+      "types": "./build/typescript/features/assets.d.ts",
+      "quilt:source": "./source/features/assets.ts",
+      "quilt:esnext": "./build/esnext/features/assets.esnext",
+      "import": "./build/esm/features/assets.mjs",
+      "require": "./build/cjs/features/assets.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "features/assets": [
+        "./build/typescript/features/assets.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "dependencies": {
     "@babel/core": "^7.23.0",
@@ -52,7 +66,7 @@
     "mrmime": "^1.0.1",
     "rollup-plugin-esbuild": "^6.1.0",
     "rollup-plugin-node-externals": "^6.1.2",
-    "rollup-plugin-visualizer": "^5.9.0",
+    "rollup-plugin-visualizer": "^5.9.2",
     "systemjs": "^6.14.2"
   },
   "peerDependencies": {
@@ -64,8 +78,7 @@
     }
   },
   "devDependencies": {
-    "@quilted/testing": "^0.1.0",
-    "rollup": "^4.0.0"
+    "rollup": "^4.1.4"
   },
   "eslintConfig": {
     "extends": [

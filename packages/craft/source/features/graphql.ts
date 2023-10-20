@@ -97,6 +97,7 @@ export function graphql({
             ];
           });
 
+          // @ts-expect-error multiple versions of Rollup, thanks Vite
           vitePlugins?.(async (plugins) => {
             const [{graphql}, includeManifest, manifestPath] =
               await Promise.all([

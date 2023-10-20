@@ -263,6 +263,7 @@ async function polyfillRollup({
         entries = Object.values(inputOption);
       }
     },
+    // @ts-expect-error multiple versions of Rollup, thanks Vite
     transform(code, id) {
       if (features == null || features.length === 0) return null;
 

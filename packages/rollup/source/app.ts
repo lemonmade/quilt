@@ -151,16 +151,14 @@ export async function quiltAppBrowser({
 
   const [
     {visualizer},
-    {assetManifest},
     {sourceCode},
     {createTSConfigAliasPlugin},
     {css},
-    {rawAssets, staticAssets},
+    {assetManifest, rawAssets, staticAssets},
     {systemJS},
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
-    import('@quilted/assets/rollup'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
     import('./features/css.ts'),
@@ -235,12 +233,11 @@ export async function quiltAppBrowser({
   const id = targets.name ? targets.name : undefined;
 
   plugins.push(
-    // @ts-expect-error The plugin still depends on Rollup 3
     assetManifest({
       id,
       cacheKey,
-      baseUrl: baseURL,
-      path: path.resolve(`build/manifests/assets${targetFilenamePart}.json`),
+      baseURL,
+      file: path.resolve(`build/manifests/assets${targetFilenamePart}.json`),
       priority: assets?.priority,
     }),
     visualizer({

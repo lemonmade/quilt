@@ -96,6 +96,7 @@ export function asyncQuilt({
           return [...plugins, await getAsyncRollupPlugin(hooks, {moduleId})];
         });
 
+        // @ts-expect-error multiple versions of Rollup, thanks Vite
         vitePlugins?.(async (plugins) => {
           const plugin = await getAsyncRollupPlugin(hooks, {moduleId});
           return [...plugins, {...plugin, enforce: 'pre'}];

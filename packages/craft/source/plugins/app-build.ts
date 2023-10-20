@@ -83,7 +83,7 @@ export function appBuild({assets, browser, env}: Options) {
             rollupPlugins,
             rollupNodeBundle,
             quiltAssetManifestId,
-            quiltAssetManifestPath,
+            quiltAssetManifestFile,
             quiltAssetManifestPriority,
             quiltAssetManifestCacheKey,
             quiltAssetBaseUrl,
@@ -135,7 +135,7 @@ export function appBuild({assets, browser, env}: Options) {
 
           quiltAssetManifestId?.((id) => id ?? browserTargets.name);
 
-          quiltAssetManifestPath?.(() =>
+          quiltAssetManifestFile?.(() =>
             project.fs.buildPath(`manifests/assets${targetFilenamePart}.json`),
           );
 

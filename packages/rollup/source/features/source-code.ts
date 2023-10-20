@@ -17,7 +17,7 @@ export function sourceCode({
   if (!useBabel) {
     return esbuild({
       // Support very modern features
-      target: 'es2023',
+      target: 'es2022',
       jsx: 'automatic',
       jsxImportSource: 'react',
       exclude: 'node_modules/**',

@@ -201,6 +201,7 @@ export function workers() {
         },
       };
 
+      // @ts-expect-error multiple versions of Rollup, thanks Vite
       plugins.push({
         ...workers(options),
         // Gets around Vite not hot reloading modules when using `addWatchFile()`

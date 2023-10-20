@@ -31,6 +31,7 @@ export function tsconfigAliases() {
         vitePlugins?.(async (plugins) => {
           const plugin = await getAliasPlugin(project, workspace);
 
+          // @ts-expect-error multiple versions of Rollup, thanks Vite
           if (plugin) plugins.unshift(plugin);
 
           return plugins;

@@ -11,10 +11,18 @@ export interface PackageOptions {
    * The root directory containing the source code for your application.
    */
   root?: string | URL;
+
+  /**
+   * Whether to include GraphQL-related code transformations.
+   *
+   * @default true
+   */
+  graphql?: boolean;
 }
 
 export async function quiltPackageESModules({
   root: rootPath = process.cwd(),
+  graphql = true,
 }: PackageOptions = {}) {
   const root =
     typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
@@ -33,6 +41,11 @@ export async function quiltPackageESModules({
     sourceCode({mode: 'production'}),
     removeBuildFiles(['build/esm'], {root}),
   ];
+
+  if (graphql) {
+    const {graphql} = await import('./features/graphql.ts');
+    plugins.push(graphql({manifest: false}));
+  }
 
   return {
     input: source.files,
@@ -62,6 +75,7 @@ export async function quiltPackageESModules({
 
 export async function quiltPackageESNext({
   root: rootPath = process.cwd(),
+  graphql = true,
 }: PackageOptions = {}) {
   const root =
     typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
@@ -80,6 +94,11 @@ export async function quiltPackageESNext({
     sourceCode({mode: 'production', babel: false}),
     removeBuildFiles(['build/esnext'], {root}),
   ];
+
+  if (graphql) {
+    const {graphql} = await import('./features/graphql.ts');
+    plugins.push(graphql({manifest: false}));
+  }
 
   return {
     input: source.files,

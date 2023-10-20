@@ -23,37 +23,14 @@
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
-    },
-    "./rollup": {
-      "types": "./build/typescript/rollup-parts.d.ts",
-      "quilt:source": "./source/rollup-parts.ts",
-      "quilt:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs",
-      "require": "./build/cjs/rollup-parts.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "rollup": [
-        "./build/typescript/rollup-parts.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "dependencies": {},
-  "peerDependencies": {
-    "rollup": "^3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "rollup": {
-      "optional": true
-    }
-  },
-  "devDependencies": {
-    "@quilted/testing": "^0.1.0",
-    "rollup": "^3.29.0"
-  },
+  "peerDependencies": {},
+  "peerDependenciesMeta": {},
+  "devDependencies": {},
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"

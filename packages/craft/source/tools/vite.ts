@@ -232,6 +232,7 @@ export async function createViteConfig(
     clearScreen: false,
     cacheDir: project.fs.temporaryPath('vite/cache'),
     build: {
+      // @ts-expect-error multiple versions of Rollup, thanks Vite
       rollupOptions,
     },
     server: serverOptions,
