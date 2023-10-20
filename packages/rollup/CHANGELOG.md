@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.1.14
+
+### Patch Changes
+
+- [`3c223309`](https://github.com/lemonmade/quilt/commit/3c22330964279610b544a26c5a30b9e2fc8c1272) Thanks [@lemonmade](https://github.com/lemonmade)! - Add ESNext plugin
+
 ## 0.1.13
 
 ### Patch Changes
