@@ -26,6 +26,9 @@
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config rollup.config.js"
+  },
   "dependencies": {
     "@types/react": "^17.0.0 || ^18.0.0"
   },
