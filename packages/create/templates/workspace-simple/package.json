@@ -1,0 +1,26 @@
+{
+  "name": "template-workspace-simple",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "lint": "prettier --write --cache .",
+    "test": "vitest",
+    "type-check": "tsc --build --pretty"
+  },
+  "devDependencies": {
+    "@quilted/rollup": "^0.1.11",
+    "@quilted/typescript": "^0.2.0",
+    "rollup": "^4.1.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.2.0",
+    "vitest": "^0.34.0"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "bracketSpacing": false,
+    "singleQuote": true,
+    "trailingComma": "all"
+  }
+}

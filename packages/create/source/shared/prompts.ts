@@ -63,7 +63,7 @@ export async function getPackageManager(
   options?: Parameters<typeof createPackageManagerRunner>[1],
 ) {
   const packageManager = await baseGetPackageManager(argv['--package-manager']);
-  return createPackageManagerRunner(packageManager ?? 'npm', options);
+  return createPackageManagerRunner(packageManager ?? 'pnpm', options);
 }
 
 type Extra = 'github' | 'vscode';

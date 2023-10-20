@@ -7,6 +7,7 @@ export {prompt} from '@quilted/cli-kit';
 export function loadTemplate(
   name:
     | 'package'
+    | 'package-simple'
     | 'app-basic'
     | 'app-empty'
     | 'app-graphql'
@@ -14,6 +15,7 @@ export function loadTemplate(
     | 'module'
     | 'service-basic'
     | 'workspace'
+    | 'workspace-simple'
     | 'github'
     | 'vscode',
 ) {
@@ -84,6 +86,7 @@ let packageRootPromise: Promise<string> | undefined;
 async function templateDirectory(
   name:
     | 'package'
+    | 'package-simple'
     | 'app-basic'
     | 'app-empty'
     | 'app-graphql'
@@ -91,6 +94,7 @@ async function templateDirectory(
     | 'module'
     | 'service-basic'
     | 'workspace'
+    | 'workspace-simple'
     | 'github'
     | 'vscode',
 ) {

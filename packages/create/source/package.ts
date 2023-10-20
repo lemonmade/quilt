@@ -31,16 +31,14 @@ export async function createProject() {
 
   if (args['--help']) {
     const additionalOptions = stripIndent`
-      ${color.cyan(`--description`)}, ${color.cyan(`--no-description`)}
+      ${color.cyan(`--description [description]`)}, ${color.cyan(
+        `--no-description`,
+      )}
       A short description of the package. If you don’t provide this option, the command will ask
       you for a description later.
       ${color.dim(
         `@see https://docs.npmjs.com/cli/v9/configuring-npm/package-json#description`,
       )}
-
-      ${color.cyan(`--react`)}, ${color.cyan(`--no-react`)}
-      Whether this package will use React. If you don’t provide this option, the command
-      will ask you about it later.
 
       ${color.cyan(`--public`)}, ${color.cyan(`--private`)}
       Whether this package will be published for other projects to install. If you do not
@@ -53,9 +51,12 @@ export async function createProject() {
         `@see https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository`,
       )}
 
-      ${color.cyan(`--registry`)}
+      ${color.cyan(`--registry [registry]`)}
       The package registry to publish this package to. This option only applies if you create
       a public package. If you do not provide this option, it will use the default NPM registry.
+
+      ${color.cyan(`--react`)}
+      Whether this package will use React. Defaults to false.
     `;
 
     printHelp({
@@ -101,142 +102,46 @@ export async function createProject() {
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
-  const packageTemplate = loadTemplate('package');
-  const workspaceTemplate = loadTemplate('workspace');
+  const packageTemplate = loadTemplate('package-simple');
+  const workspaceTemplate = loadTemplate('workspace-simple');
 
-  // If we aren’t already in a workspace, copy the workspace files over, which
-  // are needed if we are making a monorepo or not.
-  if (!inWorkspace) {
+  if (createAsMonorepo) {
     await workspaceTemplate.copy(directory, (file) => {
-      // When this is a single project, we use the project’s Quilt configuration as the base.
-      if (file === 'quilt.workspace.ts') return createAsMonorepo;
-
-      // We need to make some adjustments to the root package.json
-      if (file === 'package.json') return false;
-
-      return true;
+      // We will adjust the package.json before writing it
+      return file !== 'package.json';
     });
 
-    // If we are creating a monorepo, we need to add the root package.json and
-    // package manager workspace configuration.
-    if (createAsMonorepo) {
-      const packageRelativeToRoot = path.relative(
-        rootDirectory,
-        packageDirectory,
-      );
-      const packageGlobRelativeToRoot = relativeDirectoryForDisplay(
-        path.join(packageRelativeToRoot, '*'),
-      );
-      const workspacePackageJson = JSON.parse(
-        await workspaceTemplate.read('package.json'),
-      );
+    const workspacePackageJson = JSON.parse(
+      await workspaceTemplate.read('package.json'),
+    );
 
-      workspacePackageJson.name = toValidPackageName(name!);
-      workspacePackageJson.workspaces = [packageGlobRelativeToRoot];
+    workspacePackageJson.name = toValidPackageName(name!);
 
-      if (packageManager.type === 'pnpm') {
-        await outputRoot.write(
-          'pnpm-workspace.yaml',
-          await format(
-            `
-              packages:
-              - '${packageGlobRelativeToRoot}'
-            `,
-            {as: 'yaml'},
-          ),
-        );
-      }
-
+    if (packageManager.type === 'pnpm') {
       await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(workspacePackageJson), {
-          as: 'json-stringify',
-        }),
-      );
-    } else {
-      const [projectPackageJson, projectTSConfig, workspacePackageJson] =
-        await Promise.all([
-          packageTemplate
-            .read('package.json')
-            .then((content) => JSON.parse(content)),
-          packageTemplate
-            .read('tsconfig.json')
-            .then((content) => JSON.parse(content)),
-          workspaceTemplate
-            .read('package.json')
-            .then((content) => JSON.parse(content)),
-        ]);
-
-      const mergedPackageJson = mergeWorkspaceAndProjectPackageJsons(
-        projectPackageJson,
-        workspacePackageJson,
-      );
-
-      delete mergedPackageJson.workspaces;
-
-      adjustPackageJson(mergedPackageJson, {
-        name: toValidPackageName(name!),
-        description,
-        react: useReact,
-        isPublic,
-        registry: args['--registry'],
-      });
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(mergedPackageJson), {
-          as: 'json-stringify',
-        }),
-      );
-
-      await outputRoot.write(
-        'tsconfig.json',
-        await format(JSON.stringify(projectTSConfig), {as: 'json'}),
+        'pnpm-workspace.yaml',
+        await format(
+          `
+            packages:
+            - './packages/*'
+          `,
+          {as: 'yaml'},
+        ),
       );
     }
 
-    if (setupExtras.has('github')) {
-      await loadTemplate('github').copy(directory);
-    }
-
-    if (setupExtras.has('vscode')) {
-      await loadTemplate('vscode').copy(directory);
-    }
+    await outputRoot.write(
+      'package.json',
+      await format(JSON.stringify(workspacePackageJson), {
+        as: 'json-stringify',
+      }),
+    );
   }
 
   await packageTemplate.copy(packageDirectory, (file) => {
-    // If we are in a monorepo, we can use all the template files as they are
-    if (file === 'tsconfig.json') {
-      return partOfMonorepo;
-    }
-
-    // We need to make some adjustments the project’s package.json, README, and Quilt config
-    return (
-      file !== 'package.json' &&
-      file !== 'quilt.project.ts' &&
-      file !== 'README.md'
-    );
+    // We will adjust the package.json and README.md before writing them
+    return file !== 'package.json' && file !== 'README.md';
   });
-
-  let quiltProject = await packageTemplate.read('quilt.project.ts');
-
-  if (!partOfMonorepo) {
-    quiltProject = quiltProject
-      .replace('quiltPackage', 'quiltWorkspace, quiltPackage')
-      .replace('quiltPackage(', 'quiltWorkspace(), quiltPackage(');
-  }
-
-  if (!useReact) {
-    quiltProject = quiltProject.replace(
-      'quiltPackage()',
-      'quiltPackage({react: false})',
-    );
-  }
-
-  await outputRoot.write(
-    path.join(packageDirectory, 'quilt.project.ts'),
-    await format(quiltProject, {as: 'typescript'}),
-  );
 
   await outputRoot.write(
     path.join(packageDirectory, 'README.md'),
@@ -247,6 +152,16 @@ export async function createProject() {
   );
 
   if (partOfMonorepo) {
+    // Add the package to the workspace configuration files
+    await Promise.all([
+      addToTsConfig(packageDirectory, outputRoot),
+      addToPackageManagerWorkspaces(
+        packageDirectory,
+        outputRoot,
+        packageManager.type,
+      ),
+    ]);
+
     // Write the package’s package.json (the root one was already created)
     const projectPackageJson = JSON.parse(
       await packageTemplate.read('package.json'),
@@ -264,7 +179,11 @@ export async function createProject() {
           directory,
         };
       } else if (repository != null) {
-        projectPackageJson.repository = {type: 'git', ...repository, directory};
+        projectPackageJson.repository = {
+          type: 'git',
+          ...repository,
+          directory,
+        };
       } else {
         projectPackageJson.repository.directory = directory;
       }
@@ -284,15 +203,47 @@ export async function createProject() {
         as: 'json-stringify',
       }),
     );
-
-    await Promise.all([
-      addToTsConfig(packageDirectory, outputRoot),
-      addToPackageManagerWorkspaces(
-        packageDirectory,
-        outputRoot,
-        packageManager.type,
-      ),
+  } else {
+    // Write the package’s package.json by combining elements of the root and
+    // package templates
+    const [projectPackageJson, workspacePackageJson] = await Promise.all([
+      packageTemplate
+        .read('package.json')
+        .then((content) => JSON.parse(content)),
+      workspaceTemplate
+        .read('package.json')
+        .then((content) => JSON.parse(content)),
     ]);
+
+    const mergedPackageJson = mergeWorkspaceAndProjectPackageJsons(
+      projectPackageJson,
+      workspacePackageJson,
+    );
+
+    adjustPackageJson(mergedPackageJson, {
+      name: toValidPackageName(name!),
+      description,
+      react: useReact,
+      isPublic,
+      registry: args['--registry'],
+    });
+
+    await outputRoot.write(
+      'package.json',
+      await format(JSON.stringify(mergedPackageJson), {
+        as: 'json-stringify',
+      }),
+    );
+  }
+
+  if (!inWorkspace) {
+    if (setupExtras.has('github')) {
+      await loadTemplate('github').copy(directory);
+    }
+
+    if (setupExtras.has('vscode')) {
+      await loadTemplate('vscode').copy(directory);
+    }
   }
 
   if (shouldInstall) {
@@ -441,7 +392,6 @@ function getArguments() {
       '--extras': [String],
       '--no-extras': Boolean,
       '--react': Boolean,
-      '--no-react': Boolean,
       '--public': Boolean,
       '--private': Boolean,
       '--registry': String,
@@ -570,21 +520,7 @@ async function getPublic(args: Arguments) {
 }
 
 async function getReact(args: Arguments) {
-  let useReact: boolean;
-
-  if (args['--react'] || args['--yes']) {
-    useReact = true;
-  } else if (args['--no-react']) {
-    useReact = false;
-  } else {
-    useReact = await prompt({
-      type: 'confirm',
-      message: 'Will this package depend on React?',
-      initial: true,
-    });
-  }
-
-  return useReact;
+  return Boolean(args['--react']);
 }
 
 function adjustPackageJson(
@@ -651,10 +587,6 @@ function adjustPackageJson(
     delete packageJson.devDependencies['react'];
     delete packageJson.peerDependencies['react'];
     delete packageJson.peerDependenciesMeta['react'];
-
-    packageJson.eslintConfig.extends = packageJson.eslintConfig.extends.filter(
-      (extend: string) => !extend.includes('react'),
-    );
   }
 
   return packageJson;

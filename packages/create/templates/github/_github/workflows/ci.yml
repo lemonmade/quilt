@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: quilt-framework/action-lint@v2
+      - run: pnpm run lint
 
   type-check:
     name: Type check 🧮
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: quilt-framework/action-type-check@v2
+      - run: pnpm run type-check
 
   unit-tests:
     name: Unit tests 🧪
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: quilt-framework/action-test@v2
+      - run: pnpm run test
 
   build:
     name: Build 🏗
@@ -44,4 +44,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: quilt-framework/action-build@v2
+      - run: pnpm run build
