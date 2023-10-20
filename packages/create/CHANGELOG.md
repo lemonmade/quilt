@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.1.87
+
+### Patch Changes
+
+- [`5dd69774`](https://github.com/lemonmade/quilt/commit/5dd69774bdeb7ba3a983691d4f0fc5c5a4996a70) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove testing dependency from package template
+
+- [`a231e2c2`](https://github.com/lemonmade/quilt/commit/a231e2c27c9ef0d98493c0957ee6ba217a2c8990) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove `require` output for package template
+
+- [`c585681e`](https://github.com/lemonmade/quilt/commit/c585681e2c756c8defd0d8a6d4ae818aea639453) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix name for created packages
+
 ## 0.1.86
 
 ### Patch Changes
