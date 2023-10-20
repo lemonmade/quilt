@@ -1318,8 +1318,8 @@ importers:
   packages/rollup-plugin-fix-commonjs-preserve-modules:
     devDependencies:
       rollup:
-        specifier: ^3.29.0
-        version: 3.29.0
+        specifier: ^4.1.4
+        version: 4.1.4
 
   packages/routing:
     devDependencies:
@@ -12689,6 +12689,7 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.3
+    dev: false
 
   /rollup@4.1.4:
     resolution: {integrity: sha512-U8Yk1lQRKqCkDBip/pMYT+IKaN7b7UesK3fLSTuHBoBJacCE+oBqo/dfG/gkUdQNNB2OBmRP98cn2C2bkYZkyw==}
