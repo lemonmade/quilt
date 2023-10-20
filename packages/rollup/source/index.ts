@@ -5,6 +5,7 @@ export {
   type AppBrowserOptions,
   type AppServerOptions,
 } from './app.ts';
+export {quiltModule, type ModuleOptions} from './module.ts';
 export {
   quiltPackageESModules,
   quiltPackageESNext,

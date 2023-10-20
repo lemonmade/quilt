@@ -17,6 +17,10 @@ import type {MagicModuleEnvOptions} from './features/env.ts';
 import {multiline} from './shared/strings.ts';
 import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
+import {
+  getBrowserTargetDetails,
+  type BrowserTargetSelection,
+} from './shared/browserslist.ts';
 
 export interface AppOptions {
   /**
@@ -58,10 +62,10 @@ export interface AppBrowserOptions extends AppOptions {
   /**
    * The entry module for this browser. This should be an absolute path, or relative
    * path from the root directory containing your project. This entry should be the
-   * browser entrypoint.
+   * browser entrypoint. If you don’t provide a module, Quilt will automatically pick
+   *
    *
    * @example './browser.tsx'
-   * @default 'quilt:module/entry'
    */
   entry?: string;
 
@@ -102,12 +106,7 @@ export interface AppBrowserAssetsOptions {
   minify?: boolean;
 
   baseURL?: string;
-  targets?:
-    | string[]
-    | {
-        name?: string;
-        browsers?: string[];
-      };
+  targets?: BrowserTargetSelection;
   priority?: number;
 }
 
@@ -126,31 +125,12 @@ export async function quiltAppBrowser({
   const minify = assets?.minify ?? mode === 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
 
-  const assetTargets = assets?.targets ?? {};
-  const targets = Array.isArray(assetTargets)
-    ? {
-        browsers: assetTargets,
-      }
-    : assetTargets;
-  const targetBrowsers =
-    targets.browsers ??
-    (await (async () => {
-      const {default: browserslist} = await import('browserslist');
-      const config = browserslist.findConfig(root);
-
-      if (config == null) return ['defaults'];
-
-      const targetName = targets.name ?? 'defaults';
-      return config[targetName] ?? ['defaults'];
-    })());
-  const normalizedTargetName =
-    targets.name === 'defaults' ? 'default' : targets.name;
-  const targetFilenamePart = normalizedTargetName
-    ? `.${normalizedTargetName}`
-    : '';
+  const browserTarget = await getBrowserTargetDetails(assets?.targets, {root});
+  const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
 
   const [
     {visualizer},
+    {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
     {createTSConfigAliasPlugin},
     {css},
@@ -159,6 +139,7 @@ export async function quiltAppBrowser({
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
+    import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
     import('./features/css.ts'),
@@ -170,7 +151,9 @@ export async function quiltAppBrowser({
   const plugins: Plugin[] = [
     ...nodePlugins,
     systemJS({minify}),
-    sourceCode({mode, targets: targetBrowsers}),
+    replaceProcessEnv({mode}),
+    magicModuleEnv({...env, mode}),
+    sourceCode({mode, targets: browserTarget.browsers}),
     css({minify, emit: true}),
     rawAssets(),
     staticAssets({baseURL, emit: true}),
@@ -183,20 +166,6 @@ export async function quiltAppBrowser({
 
   if (tsconfigAliases) {
     plugins.push(tsconfigAliases);
-  }
-
-  if (env) {
-    const {magicModuleEnv, replaceProcessEnv} = await import(
-      './features/env.ts'
-    );
-
-    if (typeof env === 'boolean') {
-      plugins.push(replaceProcessEnv({mode}));
-      plugins.push(magicModuleEnv({mode}));
-    } else {
-      plugins.push(replaceProcessEnv({mode}));
-      plugins.push(magicModuleEnv({mode}));
-    }
   }
 
   const appEntry =
@@ -229,8 +198,10 @@ export async function quiltAppBrowser({
     plugins.push(minify());
   }
 
-  const cacheKey = targets.name ? {browserTarget: targets.name} : undefined;
-  const id = targets.name ? targets.name : undefined;
+  const cacheKey = browserTarget.name
+    ? {browserTarget: browserTarget.name}
+    : undefined;
+  const id = browserTarget.name ? browserTarget.name : undefined;
 
   plugins.push(
     assetManifest({
