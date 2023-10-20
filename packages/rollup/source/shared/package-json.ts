@@ -9,7 +9,10 @@ export interface PackageJSON {
 
 export async function loadPackageJSON(root: string | URL) {
   const file = await readFile(
-    path.join(fileURLToPath(root), 'package.json'),
+    path.join(
+      typeof root === 'string' ? root : fileURLToPath(root),
+      'package.json',
+    ),
     'utf8',
   );
 

@@ -16,7 +16,8 @@ export interface PackageOptions {
 export async function quiltPackageESModules({
   root: rootPath = process.cwd(),
 }: PackageOptions = {}) {
-  const root = fileURLToPath(rootPath);
+  const root =
+    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
   const outputDirectory = path.join(root, 'build/esm');
 
   const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
@@ -31,7 +32,9 @@ export async function quiltPackageESModules({
 
   let sourceRoot = root;
 
-  for (const entry of Object.values(entries)) {
+  const sourceEntryFiles = Object.values(entries);
+
+  for (const entry of sourceEntryFiles) {
     if (!entry.startsWith(root)) continue;
 
     sourceRoot = path.resolve(
@@ -48,7 +51,7 @@ export async function quiltPackageESModules({
   ];
 
   return {
-    input: entries,
+    input: sourceEntryFiles,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -69,10 +72,6 @@ export async function quiltPackageESModules({
       dir: outputDirectory,
       entryFileNames: `[name].mjs`,
       assetFileNames: `[name].[ext]`,
-      // chunkFileNames: createChunkNamer({
-      //   extension: ESM_EXTENSION,
-      //   sourceRoot: sourceRootDirectory,
-      // }),
     },
   } satisfies RollupOptions;
 }
