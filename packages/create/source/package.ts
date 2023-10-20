@@ -407,9 +407,9 @@ function getArguments() {
 async function getName(args: Arguments) {
   const {_, '--name': nameArgument} = args;
 
-  let name = nameArgument ?? _[0];
+  let name = nameArgument ?? _[1];
 
-  if (name == null) {
+  if (name == null || name.startsWith('--')) {
     name = await prompt({
       type: 'text',
       message: 'What would you like to name your new package?',
@@ -417,7 +417,7 @@ async function getName(args: Arguments) {
     });
   }
 
-  return name!;
+  return name;
 }
 
 async function getDirectory(
