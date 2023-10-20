@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.1.13
+
+### Patch Changes
+
+- [`7dcd1872`](https://github.com/lemonmade/quilt/commit/7dcd18722e249f034b231cbc633c965de1bbac5b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix rollup build for packages
+
 ## 0.1.12
 
 ### Patch Changes
