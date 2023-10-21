@@ -3,11 +3,6 @@
 import {createProjectPlugin, createWorkspacePlugin} from './kit.ts';
 import type {Project} from './kit.ts';
 
-import {
-  moduleBase,
-  moduleBuild,
-  type BuildOptions as ModuleBuildOptions,
-} from './features/modules.ts';
 import {packageBase, packageBuild} from './features/packages.ts';
 import type {
   Options as PackageBaseOptions,
@@ -453,80 +448,6 @@ export function quiltPackage({
         // Builds
         build && packageBuild(buildOption),
         buildESNext && esnextBuild(),
-        targets(),
-      );
-    },
-  });
-}
-
-// TODO
-export interface ModuleOptions {
-  entry?: string;
-  build?:
-    | boolean
-    | ({
-        bundle?: RollupNodeOptions['bundle'];
-      } & ModuleBuildOptions);
-
-  /**
-   * Whether this package requires React syntax transformations. Alternatively,
-   * you can pass an object of options to configure React transformations.
-   *
-   * @default true
-   */
-  react?: boolean | ReactOptions;
-
-  /**
-   * Whether to include GraphQL-related code transformations.
-   *
-   * @default true
-   */
-  graphql?: boolean;
-}
-
-/**
- * Configures a JavaScript module that will be run in a browser.
- */
-export function quiltModule({
-  entry,
-  build = true,
-  react: reactOptions = true,
-  graphql: useGraphQL,
-}: ModuleOptions = {}) {
-  return createProjectPlugin({
-    name: 'Quilt.Module',
-    async create({use}) {
-      let bundleOption: RollupNodeOptions['bundle'] | undefined;
-      let buildOptions: ModuleBuildOptions | undefined;
-
-      if (typeof build === 'object') {
-        const {bundle, ...rest} = build;
-
-        bundleOption = bundle;
-        buildOptions = rest;
-      }
-
-      use(
-        // Basic tool configuration
-        rollupHooks(),
-        babelHooks(),
-        babelRollup(),
-        browserslist(),
-        javascriptProject(),
-        typescriptProject(),
-        esnext(),
-        fromSource(),
-        Boolean(reactOptions) &&
-          react(typeof reactOptions === 'object' ? reactOptions : undefined),
-        Boolean(reactOptions) && reactTesting(),
-        Boolean(useGraphQL ?? true) &&
-          graphql({
-            manifest: useGraphQL,
-          }),
-        rollupNode({bundle: bundleOption}),
-        moduleBase({entry}),
-        // Builds
-        build && moduleBuild(buildOptions),
         targets(),
       );
     },
