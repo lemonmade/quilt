@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.1.18
+
+### Patch Changes
+
+- [`ad6c5946`](https://github.com/lemonmade/quilt/commit/ad6c5946afccf8e0a839cab9476e0583ecbc6953) Thanks [@lemonmade](https://github.com/lemonmade)! - More rollup module fixes
+
 ## 0.1.17
 
 ### Patch Changes
