@@ -1,7 +1,9 @@
 {
   "name": "template-module",
   "type": "module",
-  "main": "./module.ts",
+  "exports": {
+    ".": "./module.ts"
+  },
   "version": "0.0.0",
   "private": true,
   "dependencies": {},
@@ -13,12 +15,7 @@
     "react-dom": "npm:@quilted/react-dom@^18.2.0"
   },
   "browserslist": [
-    "extends @quilted/browserslist-config/modules"
-  ],
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
-  }
+    "defaults",
+    "not ie 11"
+  ]
 }

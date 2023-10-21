@@ -102,7 +102,7 @@ export async function createProject() {
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
-  const packageTemplate = loadTemplate('package-simple');
+  const packageTemplate = loadTemplate('package');
   const workspaceTemplate = loadTemplate('workspace-simple');
 
   if (createAsMonorepo) {
