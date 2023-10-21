@@ -119,7 +119,8 @@ export async function quiltAppBrowser({
   module,
   graphql = true,
 }: AppBrowserOptions = {}) {
-  const root = fileURLToPath(rootPath);
+  const root =
+    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
@@ -286,6 +287,7 @@ export async function quiltAppServer({
 
   const [
     {visualizer},
+    {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
     {createTSConfigAliasPlugin},
     {css},
@@ -294,6 +296,7 @@ export async function quiltAppServer({
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
+    import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
     import('./features/css.ts'),
@@ -304,6 +307,8 @@ export async function quiltAppServer({
 
   const plugins: Plugin[] = [
     ...nodePlugins,
+    replaceProcessEnv({mode}),
+    magicModuleEnv({...env, mode}),
     sourceCode({mode, targets: ['current node']}),
     css({emit: false, minify}),
     rawAssets(),
@@ -315,20 +320,6 @@ export async function quiltAppServer({
 
   if (tsconfigAliases) {
     plugins.push(tsconfigAliases);
-  }
-
-  if (env) {
-    const {magicModuleEnv, replaceProcessEnv} = await import(
-      './features/env.ts'
-    );
-
-    if (typeof env === 'boolean') {
-      plugins.push(replaceProcessEnv({mode}));
-      plugins.push(magicModuleEnv({mode}));
-    } else {
-      plugins.push(replaceProcessEnv({mode}));
-      plugins.push(magicModuleEnv({mode}));
-    }
   }
 
   const appEntry =
@@ -343,9 +334,11 @@ export async function quiltAppServer({
     plugins.push(magicModuleAppComponent({entry: appEntry}));
   }
 
-  plugins.push(magicModuleRequestRouterEntry());
-  plugins.push(magicModuleAppRequestRouter({entry}));
-  plugins.push(magicModuleAppAssetManifests());
+  plugins.push(
+    magicModuleRequestRouterEntry(),
+    magicModuleAppRequestRouter({entry}),
+    magicModuleAppAssetManifests(),
+  );
 
   if (graphql) {
     const {graphql} = await import('./features/graphql.ts');
