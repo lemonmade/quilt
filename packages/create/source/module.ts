@@ -88,12 +88,22 @@ export async function createModule() {
   const moduleTemplate = loadTemplate('module');
   const workspaceTemplate = loadTemplate('workspace-simple');
 
-  if (createAsMonorepo) {
+  if (!inWorkspace) {
     await workspaceTemplate.copy(directory, (file) => {
       // We will adjust the package.json before writing it
       return file !== 'package.json';
     });
 
+    if (setupExtras.has('github')) {
+      await loadTemplate('github').copy(directory);
+    }
+
+    if (setupExtras.has('vscode')) {
+      await loadTemplate('vscode').copy(directory);
+    }
+  }
+
+  if (createAsMonorepo) {
     const workspacePackageJson = JSON.parse(
       await workspaceTemplate.read('package.json'),
     );
@@ -188,16 +198,6 @@ export async function createModule() {
         as: 'json-stringify',
       }),
     );
-  }
-
-  if (!inWorkspace) {
-    if (setupExtras.has('github')) {
-      await loadTemplate('github').copy(directory);
-    }
-
-    if (setupExtras.has('vscode')) {
-      await loadTemplate('vscode').copy(directory);
-    }
   }
 
   if (shouldInstall) {

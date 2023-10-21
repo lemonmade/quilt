@@ -84,7 +84,7 @@ export async function quiltModule({
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...env, mode}),
-    sourceCode({mode: 'production'}),
+    sourceCode({mode: 'production', targets: browserTarget.browsers}),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),
   ];
 
@@ -151,7 +151,7 @@ async function sourceForModule(root: string, packageJSON: PackageJSON) {
   }
 
   const possibleSourceFiles = await glob(
-    '{App,app,input}.{ts,tsx,mjs,js,jsx}',
+    '{index,module,entry,input}.{ts,tsx,mjs,js,jsx}',
     {
       cwd: root,
       nodir: true,

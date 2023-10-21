@@ -44,7 +44,9 @@ export function sourceCode({
           useBuiltIns: false,
           bugfixes: true,
           shippedProposals: true,
-          ignoreBrowserslistConfig: targets != null,
+          // I thought I wanted this, but it seems to break the `targets` option
+          // passed as a root argument.
+          // ignoreBrowserslistConfig: targets != null,
         } satisfies import('@babel/preset-env').Options,
       ],
     ],
