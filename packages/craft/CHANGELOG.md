@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.1.239
+
+### Patch Changes
+
+- [`730bad06`](https://github.com/lemonmade/quilt/commit/730bad06e0b30ef2773239da62744a36031e39ad) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove module craft code
+
 ## 0.1.238
 
 ### Patch Changes

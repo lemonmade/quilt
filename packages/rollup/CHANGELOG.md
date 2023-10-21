@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.1.19
+
+### Patch Changes
+
+- [`66518aa6`](https://github.com/lemonmade/quilt/commit/66518aa6efafe74b4e8efc97e3bf62895825d8d0) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix app rollup plugin
+
 ## 0.1.18
 
 ### Patch Changes
