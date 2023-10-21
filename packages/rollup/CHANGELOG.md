@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.1.17
+
+### Patch Changes
+
+- [`aff6bdd6`](https://github.com/lemonmade/quilt/commit/aff6bdd615f35d788ef4345ca34df079d4ff4d2f) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve module hash logic
+
+- [`48beeccb`](https://github.com/lemonmade/quilt/commit/48beeccb4366c73ee1040221414af690ccba0958) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix module template and rollup build
+
 ## 0.1.16
 
 ### Patch Changes
