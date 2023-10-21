@@ -2,21 +2,22 @@ import {createHash} from 'crypto';
 import {posix, sep} from 'path';
 
 import type {Plugin, OutputChunk, OutputBundle} from 'rollup';
-import {stripIndent} from 'common-tags';
+import {multiline} from '../shared/strings.ts';
 import MagicString from 'magic-string';
 
-import {IMPORT_PREFIX, MODULE_PREFIX} from './constants.ts';
+const MODULE_PREFIX = 'quilt-async-module:';
+const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   preload?: boolean;
-  assetBaseUrl?: string;
-  moduleId?(details: {imported: string}): string;
+  baseURL?: string;
+  moduleID?(details: {imported: string}): string;
 }
 
-export function asyncQuilt({
+export function asyncModules({
   preload = true,
-  assetBaseUrl = '/assets/',
-  moduleId: getModuleId = defaultModuleId,
+  baseURL = '/assets/',
+  moduleID: getModuleID = defaultModuleID,
 }: Options = {}): Plugin {
   return {
     name: '@quilted/async',
@@ -47,10 +48,10 @@ export function asyncQuilt({
     async load(id: string) {
       if (id.startsWith(MODULE_PREFIX)) {
         const imported = id.replace(MODULE_PREFIX, '');
-        const moduleId = getModuleId({imported});
+        const moduleID = getModuleID({imported});
 
-        const code = stripIndent`
-          const id = ${JSON.stringify(moduleId)};
+        const code = multiline`
+          const id = ${JSON.stringify(moduleID)};
 
           const doImport = () => import(${JSON.stringify(
             `${IMPORT_PREFIX}${imported}`,
@@ -69,13 +70,13 @@ export function asyncQuilt({
 
       if (id.startsWith(IMPORT_PREFIX)) {
         const imported = id.replace(IMPORT_PREFIX, '');
-        const moduleId = getModuleId({imported});
+        const moduleID = getModuleID({imported});
 
-        const code = stripIndent`
+        const code = multiline`
           import * as AsyncModule from ${JSON.stringify(imported)};
 
           ((globalThis[Symbol.for('quilt')] ??= {}).AsyncModules ??= new Map).set(${JSON.stringify(
-            moduleId,
+            moduleID,
           )}, AsyncModule);
 
           export default AsyncModule;
@@ -84,19 +85,16 @@ export function asyncQuilt({
         return {
           code,
           meta: {
-            quilt: {moduleId},
+            quilt: {moduleID},
           },
         };
       }
 
       return null;
     },
-    transform: assetBaseUrl
+    transform: baseURL
       ? (code) =>
-          code.replace(
-            /__QUILT_ASSETS_BASE_URL__/g,
-            JSON.stringify(assetBaseUrl),
-          )
+          code.replace(/__QUILT_ASSETS_BASE_URL__/g, JSON.stringify(baseURL))
       : undefined,
     async generateBundle(options, bundle) {
       if (preload) {
@@ -115,7 +113,7 @@ export function asyncQuilt({
   };
 }
 
-function defaultModuleId({imported}: {imported: string}) {
+function defaultModuleID({imported}: {imported: string}) {
   const name = imported.split(sep).pop()!.split('.')[0]!;
 
   const hash = createHash('sha256')

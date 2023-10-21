@@ -73,11 +73,11 @@
   "dependencies": {
     "@babel/generator": ">=7.0.0 <8.0.0",
     "@babel/types": ">=7.0.0 <8.0.0",
-    "@graphql-tools/load": "^8.0.0",
     "@graphql-tools/graphql-file-loader": "^8.0.0",
     "@graphql-tools/json-file-loader": "^8.0.0",
-    "@quilted/useful-types": "^1.0.0",
+    "@graphql-tools/load": "^8.0.0",
     "@quilted/graphql": "^2.0.0",
+    "@quilted/useful-types": "^1.0.0",
     "arg": "^5.0.0",
     "chokidar": "^3.5.0",
     "colorette": "^2.0.0",

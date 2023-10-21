@@ -20,6 +20,7 @@
     {"path": "./packages/assets"},
     {"path": "./packages/async"},
     {"path": "./packages/async"},
+    {"path": "./packages/babel"},
     {"path": "./packages/cli-kit"},
     {"path": "./packages/craft"},
     {"path": "./packages/create"},

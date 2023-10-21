@@ -2,9 +2,11 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import {glob} from 'glob';
 import {fileURLToPath} from 'url';
+import {createRequire} from 'module';
 
 import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
 import type {AssetsBuildManifest} from '@quilted/assets';
+import type {} from '@quilted/babel/async';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -110,6 +112,8 @@ export interface AppBrowserAssetsOptions {
   priority?: number;
 }
 
+const require = createRequire(import.meta.url);
+
 export async function quiltAppBrowser({
   root: rootPath = process.cwd(),
   app,
@@ -136,6 +140,7 @@ export async function quiltAppBrowser({
     {createTSConfigAliasPlugin},
     {css},
     {assetManifest, rawAssets, staticAssets},
+    {asyncModules},
     {systemJS},
     nodePlugins,
   ] = await Promise.all([
@@ -145,6 +150,7 @@ export async function quiltAppBrowser({
     import('./features/typescript.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
+    import('./features/async.ts'),
     import('./features/system-js.ts'),
     getNodePlugins(),
   ]);
@@ -154,10 +160,29 @@ export async function quiltAppBrowser({
     systemJS({minify}),
     replaceProcessEnv({mode}),
     magicModuleEnv({...env, mode}),
-    sourceCode({mode, targets: browserTarget.browsers}),
+    sourceCode({
+      mode,
+      targets: browserTarget.browsers,
+      babel: {
+        options(options) {
+          return {
+            ...options,
+            plugins: [
+              ...(options?.plugins ?? []),
+              require.resolve('@quilted/babel/async'),
+            ],
+          };
+        },
+      },
+    }),
     css({minify, emit: true}),
     rawAssets(),
     staticAssets({baseURL, emit: true}),
+    asyncModules({
+      baseURL,
+      preload: true,
+      moduleID: ({imported}) => path.relative(root, imported),
+    }),
     removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
       root,
     }),

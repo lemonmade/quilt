@@ -1,7 +1,8 @@
 import type * as Babel from '@babel/types';
 import type {NodePath, Binding} from '@babel/traverse';
 
-import {MODULE_PREFIX} from './constants.ts';
+export const MODULE_PREFIX = 'quilt-async-module:';
+export const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   packages?: {[key: string]: string[]};
@@ -16,9 +17,11 @@ interface State {
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
   '@quilted/async': ['createAsyncModule'],
+  '@quilted/react-async': ['createAsyncModule', 'createAsyncComponent'],
+  '@quilted/quilt/async': ['createAsyncModule', 'createAsyncComponent'],
 };
 
-export default function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
+export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
   return {
     visitor: {
       Program(path: NodePath<Babel.Program>, state: State) {
@@ -166,3 +169,5 @@ export default function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
     },
   };
 }
+
+export default asyncBabelPlugin;

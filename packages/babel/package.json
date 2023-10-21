@@ -1,0 +1,60 @@
+{
+  "name": "@quilted/babel",
+  "description": "A collection of Babel plugins for enhancing your Quilt projects",
+  "type": "module",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/babel"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
+    },
+    "./async": {
+      "types": "./build/typescript/async.d.ts",
+      "quilt:source": "./source/async.ts",
+      "quilt:esnext": "./build/esnext/async.esnext",
+      "import": "./build/esm/async.mjs",
+      "require": "./build/cjs/async.cjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "eslintConfig": {
+    "extends": [
+      "@quilted/eslint-config/project"
+    ]
+  },
+  "devDependencies": {
+    "@babel/types": "^7.23.0",
+    "@types/babel__core": "^7.20.0",
+    "@types/babel__traverse": "^7.20.0"
+  },
+  "peerDependencies": {
+    "@babel/core": ">=7.0.0 <8.0.0",
+    "@babel/traverse": ">=7.0.0 <8.0.0",
+    "@babel/types": ">=7.0.0 <8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/core": {
+      "optional": true
+    },
+    "@babel/traverse": {
+      "optional": true
+    },
+    "@babel/types": {
+      "optional": true
+    }
+  }
+}

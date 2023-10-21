@@ -1,6 +1,6 @@
 import {createRequire} from 'module';
 
-import babel from '@rollup/plugin-babel';
+import babel, {type RollupBabelInputPluginOptions} from '@rollup/plugin-babel';
 import esbuild from 'rollup-plugin-esbuild';
 
 const require = createRequire(import.meta.url);
@@ -12,7 +12,13 @@ export function sourceCode({
 }: {
   mode?: 'development' | 'production';
   targets?: string[];
-  babel?: boolean;
+  babel?:
+    | boolean
+    | {
+        options?(
+          options: RollupBabelInputPluginOptions,
+        ): RollupBabelInputPluginOptions | void;
+      };
 }) {
   if (!useBabel) {
     return esbuild({
@@ -24,7 +30,7 @@ export function sourceCode({
     });
   }
 
-  return babel({
+  let babelOptions: RollupBabelInputPluginOptions = {
     envName: mode,
     configFile: false,
     babelrc: false,
@@ -72,5 +78,11 @@ export function sourceCode({
     skipPreflightCheck: true,
     // Babel doesn’t like this option being set to `undefined`.
     ...(targets ? {targets} : {}),
-  });
+  };
+
+  if (typeof useBabel === 'object') {
+    babelOptions = useBabel.options?.(babelOptions) ?? babelOptions;
+  }
+
+  return babel(babelOptions);
 }
