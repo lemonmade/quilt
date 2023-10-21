@@ -42,7 +42,7 @@ export interface ModuleAssetsOptions {
    * @default true
    */
   minify?: boolean;
-  hash?: boolean;
+  hash?: boolean | 'async-only';
   targets?: BrowserTargetSelection;
 }
 
@@ -59,8 +59,7 @@ export async function quiltModule({
   const outputDirectory = path.join(root, 'build/assets');
 
   const minify = assets?.minify ?? true;
-  const hash = assets?.hash ?? true;
-  const hashFilenamePart = hash ? '.[hash]' : '';
+  const hash = assets?.hash ?? 'async-only';
 
   const browserTarget = await getBrowserTargetDetails(assets?.targets, {root});
   const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
@@ -129,8 +128,15 @@ export async function quiltModule({
     output: {
       format: 'esm',
       dir: outputDirectory,
-      entryFileNames: `[name]${targetFilenamePart}${hashFilenamePart}.js`,
-      assetFileNames: `[name]${targetFilenamePart}${hashFilenamePart}.[ext]`,
+      entryFileNames: `[name]${targetFilenamePart}${
+        hash === true ? `.[hash]` : ''
+      }.js`,
+      chunkFileNames: `[name]${targetFilenamePart}${
+        hash === true || hash === 'async-only' ? `.[hash]` : ''
+      }.js`,
+      assetFileNames: `[name]${targetFilenamePart}${
+        hash === true ? `.[hash]` : ''
+      }.[ext]`,
     },
   } satisfies RollupOptions;
 }
