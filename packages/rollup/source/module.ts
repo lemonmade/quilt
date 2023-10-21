@@ -78,7 +78,7 @@ export async function quiltModule({
     loadPackageJSON(root),
   ]);
 
-  const source = await sourceForPackage(root, packageJSON);
+  const source = await sourceForModule(root, packageJSON);
 
   const plugins: Plugin[] = [
     ...nodePlugins,
@@ -111,7 +111,7 @@ export async function quiltModule({
   );
 
   return {
-    input: source.files,
+    input: source,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -141,89 +141,23 @@ export async function quiltModule({
   } satisfies RollupOptions;
 }
 
-async function sourceForPackage(root: string, packageJSON: PackageJSON) {
-  const [entries] = await Promise.all([
-    sourceEntriesForPackage(root, packageJSON),
-  ]);
-
-  let sourceRoot = root;
-
-  const sourceEntryFiles = Object.values(entries);
-
-  for (const entry of sourceEntryFiles) {
-    if (!entry.startsWith(root)) continue;
-
-    sourceRoot = path.resolve(
-      root,
-      path.relative(root, entry).split(path.sep)[0] ?? '.',
-    );
-    break;
-  }
-
-  return {root: sourceRoot, files: sourceEntryFiles};
-}
-
-async function sourceEntriesForPackage(root: string, packageJSON: PackageJSON) {
+async function sourceForModule(root: string, packageJSON: PackageJSON) {
   const {main, exports} = packageJSON;
 
-  const entries: Record<string, string> = {};
+  const entryFromPackageJSON = main ?? (exports as any)?.['.'];
 
-  if (typeof main === 'string') {
-    entries['.'] = await resolveTargetFileAsSource(main, root);
+  if (entryFromPackageJSON) {
+    return path.resolve(root, entryFromPackageJSON);
   }
 
-  if (typeof exports === 'string') {
-    entries['.'] = await resolveTargetFileAsSource(exports, root);
-    return entries;
-  } else if (exports == null || typeof exports !== 'object') {
-    return entries;
-  }
+  const possibleSourceFiles = await glob(
+    '{App,app,input}.{ts,tsx,mjs,js,jsx}',
+    {
+      cwd: root,
+      nodir: true,
+      absolute: true,
+    },
+  );
 
-  for (const [exportPath, exportCondition] of Object.entries(
-    exports as Record<string, null | string | Record<string, string>>,
-  )) {
-    let targetFile: string | null | undefined = null;
-
-    if (exportCondition == null) continue;
-
-    if (typeof exportCondition === 'string') {
-      targetFile = exportCondition;
-    } else {
-      targetFile ??=
-        exportCondition['source'] ??
-        exportCondition['quilt:source'] ??
-        exportCondition['quilt:esnext'] ??
-        Object.values(exportCondition).find(
-          (condition) =>
-            typeof condition === 'string' && condition.startsWith('./build/'),
-        );
-    }
-
-    if (targetFile == null) continue;
-
-    const sourceFile = await resolveTargetFileAsSource(targetFile, root);
-
-    entries[exportPath] = sourceFile;
-  }
-
-  return entries;
-}
-
-async function resolveTargetFileAsSource(file: string, root: string) {
-  const sourceFile = file.includes('/build/')
-    ? (
-        await glob(
-          file
-            .replace(/[/]build[/][^/]+[/]/, '/*/')
-            .replace(/(\.d\.ts|\.[\w]+)$/, '.*'),
-          {
-            cwd: root,
-            absolute: true,
-            ignore: [path.resolve(root, file)],
-          },
-        )
-      )[0]!
-    : path.resolve(root, file);
-
-  return sourceFile;
+  return possibleSourceFiles[0]!;
 }

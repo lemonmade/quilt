@@ -33,9 +33,19 @@ export async function createModule() {
   const argv = getArgv();
 
   if (argv['--help']) {
+    const additionalOptions = stripIndent`
+      ${color.cyan(`--entry [entry]`)}
+      The entry file for your module. This should be a relative path from the root
+      of the project, and should include the file extension.
+
+      ${color.cyan(`--react`)}
+      Whether this package will use React. Defaults to false.
+    `;
+
     printHelp({
       kind: 'module',
       packageManager: argv['--package-manager']?.toLowerCase(),
+      options: additionalOptions,
     });
     return;
   }
@@ -265,7 +275,6 @@ function getArgv() {
       '--extras': [String],
       '--no-extras': Boolean,
       '--react': Boolean,
-      '--no-react': Boolean,
       '--help': Boolean,
       '-h': '--help',
     },
@@ -275,8 +284,10 @@ function getArgv() {
   return argv;
 }
 
-async function getName(argv: Arguments) {
-  let {'--name': name} = argv;
+async function getName(args: Arguments) {
+  const {_, '--name': nameArgument} = args;
+
+  let name = nameArgument ?? _[1];
 
   if (name == null) {
     name = await prompt({
@@ -343,21 +354,7 @@ async function getDirectory(argv: Arguments, {name}: {name: string}) {
 }
 
 async function getReact(args: Arguments) {
-  let useReact: boolean;
-
-  if (args['--react'] || args['--yes']) {
-    useReact = true;
-  } else if (args['--no-react']) {
-    useReact = false;
-  } else {
-    useReact = await prompt({
-      type: 'confirm',
-      message: 'Will this module depend on React?',
-      initial: false,
-    });
-  }
-
-  return useReact;
+  return Boolean(args['--react']);
 }
 
 function adjustPackageJson(
@@ -373,7 +370,7 @@ function adjustPackageJson(
   },
 ) {
   packageJson.name = name;
-  packageJson.main = `./${entry}`;
+  packageJson.exports['.'] = `./${entry}`;
 
   if (!react) {
     delete packageJson.devDependencies['@types/react'];
@@ -381,10 +378,6 @@ function adjustPackageJson(
     delete packageJson.devDependencies['preact'];
     delete packageJson.devDependencies['react'];
     delete packageJson.devDependencies['react-dom'];
-
-    packageJson.eslintConfig.extends = packageJson.eslintConfig.extends.filter(
-      (extend: string) => !extend.includes('react'),
-    );
   }
 
   return packageJson;
