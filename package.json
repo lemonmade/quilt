@@ -14,7 +14,7 @@
     "test.unit": "node ./scripts/quilt-from-source.js test --exclude-pattern tests/e2e",
     "test.e2e": "node ./scripts/quilt-from-source.js test tests/e2e/",
     "lint": "node ./scripts/quilt-from-source.js lint",
-    "type-check": "node ./scripts/quilt-from-source.js type-check",
+    "type-check": "tsc --build --pretty",
     "build": "node ./scripts/quilt-from-source.js build",
     "develop": "node ./scripts/quilt-from-source.js develop",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
