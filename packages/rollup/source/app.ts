@@ -6,7 +6,6 @@ import {createRequire} from 'module';
 
 import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
 import type {AssetsBuildManifest} from '@quilted/assets';
-import type {} from '@quilted/babel/async';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -307,8 +306,24 @@ export interface AppServerOptions extends AppOptions {
    * The entry module for the server of this app. This module must export a
    * `RequestRouter` object as its default export, which will be wrapped in
    * the specific server runtime you configure.
+   *
+   * If not provided, this will default to a file named `server`, `service`,
+   * or `backend` in your app’s root directory.
    */
   entry?: string;
+
+  /**
+   * Whether this server code uses the `request-router` library to
+   * define itself in a generic way, which can be adapted to a variety
+   * of environments. By default, this is `'request-router'`, and when `'request-router'`,
+   * the `entry` you specified must export an `RequestRouter` object as
+   * its default export. When set to `false`, the app server will be built
+   * as a basic server-side JavaScript project, without the special
+   * `request-router` adaptor.
+   *
+   * @default 'request-router'
+   */
+  format?: 'request-router' | 'custom';
 
   /**
    * Whether to minify the JavaScript outputs for your server.
@@ -322,6 +337,7 @@ export async function quiltAppServer({
   app,
   env,
   entry,
+  format = 'request-router',
   graphql = true,
   minify = false,
 }: AppServerOptions = {}) {
@@ -393,9 +409,17 @@ export async function quiltAppServer({
     plugins.push(magicModuleAppComponent({entry: appEntry}));
   }
 
+  const serverEntry =
+    entry ??
+    (await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
+      cwd: root,
+      nodir: true,
+      absolute: true,
+    }).then((files) => files[0]));
+
   plugins.push(
     magicModuleRequestRouterEntry(),
-    magicModuleAppRequestRouter({entry}),
+    magicModuleAppRequestRouter({entry: serverEntry}),
     magicModuleAppAssetManifests(),
   );
 
@@ -419,13 +443,9 @@ export async function quiltAppServer({
   );
 
   const finalEntry =
-    entry ??
-    (await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
-      cwd: root,
-      nodir: true,
-      absolute: true,
-    }).then((files) => files[0])) ??
-    MAGIC_MODULE_ENTRY;
+    format === 'request-router'
+      ? MAGIC_MODULE_ENTRY
+      : serverEntry ?? MAGIC_MODULE_ENTRY;
 
   return {
     input: finalEntry,
