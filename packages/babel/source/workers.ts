@@ -1,11 +1,4 @@
-import type {WorkerWrapper} from './types.ts';
-import {PREFIX, QUILT_WORKER_EXPORTS} from './constants.ts';
-import {wrapperToSearchString} from './utilities.ts';
-
-export interface ProcessableImport {
-  name: string;
-  wrapperModule?: string;
-}
+const PREFIX = '\0quilt-worker:';
 
 export interface Options {
   noop?: boolean;
@@ -19,6 +12,17 @@ interface State {
   >;
   opts?: Options;
 }
+
+interface WorkerWrapper {
+  readonly module: string;
+  readonly function: string;
+}
+
+const DEFAULT_PACKAGES_TO_PROCESS = {
+  '@quilted/workers': ['createWorker', 'createThreadWorker'],
+  '@quilted/react-workers': ['createWorker', 'createThreadWorker'],
+  '@quilted/quilt/threads': ['createWorker', 'createThreadWorker'],
+};
 
 export default function workerBabelPlugin({
   types: t,
@@ -48,7 +52,7 @@ export default function workerBabelPlugin({
       Program(program, state) {
         state.program = program;
 
-        const packages = state.opts?.packages ?? QUILT_WORKER_EXPORTS;
+        const packages = state.opts?.packages ?? DEFAULT_PACKAGES_TO_PROCESS;
 
         state.process = new Map(Object.entries(packages));
       },
@@ -171,4 +175,8 @@ export default function workerBabelPlugin({
       firstArgument.replaceWith(importId);
     }
   }
+}
+
+function wrapperToSearchString(wrapper: WorkerWrapper) {
+  return `?${new URLSearchParams(Object.entries(wrapper)).toString()}`;
 }

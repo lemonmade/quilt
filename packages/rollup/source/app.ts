@@ -146,6 +146,7 @@ export async function quiltAppBrowser({
     {assetManifest, rawAssets, staticAssets},
     {asyncModules},
     {systemJS},
+    {workers},
     nodePlugins,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
@@ -156,6 +157,7 @@ export async function quiltAppBrowser({
     import('./features/assets.ts'),
     import('./features/async.ts'),
     import('./features/system-js.ts'),
+    import('./features/workers.ts'),
     getNodePlugins(),
   ]);
 
@@ -174,6 +176,7 @@ export async function quiltAppBrowser({
             plugins: [
               ...(options?.plugins ?? []),
               require.resolve('@quilted/babel/async'),
+              require.resolve('@quilted/babel/workers'),
             ],
           };
         },
@@ -186,6 +189,17 @@ export async function quiltAppBrowser({
       baseURL,
       preload: true,
       moduleID: ({imported}) => path.relative(root, imported),
+    }),
+    workers({
+      baseURL,
+      outputOptions: {
+        format: 'iife',
+        inlineDynamicImports: true,
+        dir: path.resolve(root, `build/assets`),
+        entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
+        assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
+        chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
+      },
     }),
     removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
       root,
@@ -279,7 +293,7 @@ export async function quiltAppBrowser({
     },
     output: {
       format: isESM ? 'esm' : 'systemjs',
-      dir: path.resolve(`build/assets`),
+      dir: path.resolve(root, `build/assets`),
       entryFileNames: `app${targetFilenamePart}.[hash].js`,
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
       chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
@@ -339,7 +353,22 @@ export async function quiltAppServer({
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...env, mode}),
-    sourceCode({mode, targets: ['current node']}),
+    sourceCode({
+      mode,
+      targets: ['current node'],
+      babel: {
+        options(options) {
+          return {
+            ...options,
+            plugins: [
+              ...(options?.plugins ?? []),
+              require.resolve('@quilted/babel/async'),
+              [require.resolve('@quilted/babel/workers'), {noop: true}],
+            ],
+          };
+        },
+      },
+    }),
     css({emit: false, minify}),
     rawAssets(),
     staticAssets({emit: false}),

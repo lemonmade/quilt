@@ -6,5 +6,8 @@
 - [ ] Improve Node bundle
 - [ ] CJS build?
 - [ ] Fix request router entries and support CF/ Deno
+- [ ] Add support for serving assets to default server in Node
 - [ ] Add development stuff
 - [ ] ESNext target consumption
+- [ ] Make sure in-repo packages are aliased for dev, test, and build
+- [ ] Add support for non-ESM server

@@ -27,9 +27,26 @@
       "quilt:esnext": "./build/esnext/async.esnext",
       "import": "./build/esm/async.mjs",
       "require": "./build/cjs/async.cjs"
+    },
+    "./workers": {
+      "types": "./build/typescript/workers.d.ts",
+      "quilt:source": "./source/workers.ts",
+      "quilt:esnext": "./build/esnext/workers.esnext",
+      "import": "./build/esm/workers.mjs",
+      "require": "./build/cjs/workers.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "async": [
+        "./build/typescript/async.d.ts"
+      ],
+      "workers": [
+        "./build/typescript/workers.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "eslintConfig": {
     "extends": [
@@ -39,10 +56,12 @@
   "devDependencies": {
     "@babel/types": "^7.23.0",
     "@types/babel__core": "^7.20.0",
+    "@types/babel__template": "^7.4.0",
     "@types/babel__traverse": "^7.20.0"
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0 <8.0.0",
+    "@babel/template": ">=7.0.0 <8.0.0",
     "@babel/traverse": ">=7.0.0 <8.0.0",
     "@babel/types": ">=7.0.0 <8.0.0"
   },

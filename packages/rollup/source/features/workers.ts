@@ -9,11 +9,12 @@ import type {
   OutputChunk,
   NormalizedInputOptions,
 } from 'rollup';
-import {stripIndent} from 'common-tags';
 
-const PREFIX = 'quilt-worker:';
-const ENTRY_PREFIX = 'quilt-worker-entry:';
-const MAGIC_MODULE_WORKER = '__quilt__/Worker.tsx';
+import {multiline} from '../shared/strings.ts';
+
+const PREFIX = '\0quilt-worker:';
+const ENTRY_PREFIX = '\0quilt-worker-entry:';
+const MAGIC_MODULE_WORKER = 'quilt:module/worker.js';
 
 export interface WorkerWrapper {
   readonly module: string;
@@ -25,7 +26,7 @@ export interface WorkerContext {
   readonly wrapper: WorkerWrapper;
 }
 
-export interface PublicPathContext extends WorkerContext {
+export interface BaseURLContext extends WorkerContext {
   readonly filename: string;
   readonly chunk: OutputChunk;
   readonly outputOptions: OutputOptions;
@@ -50,7 +51,7 @@ export interface Options {
    * work with them. In those instances, you can instead pass `write: true` here,
    * which will then run `rollup().write()` on the worker bundle to actually output
    * it to the filesystem (you can customize the output with the `outputOptions`
-   * option). You can then use the `publicPath()` option to control the URL that is
+   * option). You can then use the `baseURL()` option to control the URL that is
    * generated for each worker module such that the tool is able to route that request
    * to the written file. For example, in Vite, you can use the special `/@fs` prefix
    * for a URL:
@@ -60,7 +61,7 @@ export interface Options {
    *
    * workers({
    *   write: true,
-   *   publicPath({filename, outputOptions}) {
+   *   baseURL({filename, outputOptions}) {
    *     return `/@fs${path.join(outputOptions.dir, filename)}`;
    *   },
    * })
@@ -71,13 +72,13 @@ export interface Options {
   inputOptions?: ValueOrUpdateGetter<InputOptions>;
   outputOptions?: ValueOrUpdateGetter<OutputOptions>;
   contentForWorker?: ValueOrGetter<string | undefined>;
-  publicPath?: ValueOrGetter<string | undefined, PublicPathContext>;
+  baseURL?: ValueOrGetter<string | undefined, BaseURLContext>;
   onIncludeFile?(file: string, worker: string): void;
 }
 
 export function workers({
   write = false,
-  publicPath,
+  baseURL,
   contentForWorker = defaultContentForWorker,
   plugins = defaultPlugins,
   inputOptions = {},
@@ -204,24 +205,24 @@ export function workers({
       }
 
       const filename = firstChunk.fileName;
-      let resolvedPublicPath = filename;
+      let resolvedBaseURL = filename;
 
-      if (typeof publicPath === 'string') {
-        resolvedPublicPath = posix.join(publicPath, filename);
-      } else if (typeof publicPath === 'function') {
-        const returnedPublicPath = await publicPath({
+      if (typeof baseURL === 'string') {
+        resolvedBaseURL = posix.join(baseURL, filename);
+      } else if (typeof baseURL === 'function') {
+        const returnedBaseURL = await baseURL({
           ...workerContext,
           filename,
           chunk: firstChunk,
           outputOptions: workerOutputOptions,
         });
 
-        if (returnedPublicPath) {
-          resolvedPublicPath = posix.join(returnedPublicPath, filename);
+        if (returnedBaseURL) {
+          resolvedBaseURL = posix.join(returnedBaseURL, filename);
         }
       }
 
-      return `export default ${JSON.stringify(resolvedPublicPath)};`;
+      return `export default ${JSON.stringify(resolvedBaseURL)};`;
     },
     generateBundle(_, bundle) {
       // We already wrote the chunks, no need to do it again I think?
@@ -255,11 +256,11 @@ const workerFunctionContent = (pkg: string) =>
     ['createWorker', `import ${JSON.stringify(MAGIC_MODULE_WORKER)};`],
     [
       'createThreadWorker',
-      stripIndent`
-        import {createThread, targetFromWebWorker} from ${JSON.stringify(pkg)};
+      multiline`
+        import {createThreadFromWebWorker} from ${JSON.stringify(pkg)};
         import * as expose from ${JSON.stringify(MAGIC_MODULE_WORKER)};
 
-        createThread(targetFromWebWorker(self), {expose});
+        createThreadFromWebWorker(self, {expose});
       `,
     ],
   ]);
@@ -286,10 +287,6 @@ function defaultPlugins(mainBuildPlugins: Plugin[]) {
   return mainBuildPlugins.filter((plugin) => plugin.name !== 'serve');
 }
 
-export function wrapperToSearchParams(wrapper: WorkerWrapper) {
-  return new URLSearchParams(Object.entries(wrapper));
-}
-
-export function wrapperToSearchString(wrapper: WorkerWrapper) {
-  return `?${wrapperToSearchParams(wrapper).toString()}`;
+function wrapperToSearchString(wrapper: WorkerWrapper) {
+  return `?${new URLSearchParams(Object.entries(wrapper)).toString()}`;
 }

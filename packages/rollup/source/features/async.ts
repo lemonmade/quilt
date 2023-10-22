@@ -5,8 +5,8 @@ import type {Plugin, OutputChunk, OutputBundle} from 'rollup';
 import {multiline} from '../shared/strings.ts';
 import MagicString from 'magic-string';
 
-const MODULE_PREFIX = 'quilt-async-module:';
-const IMPORT_PREFIX = 'quilt-async-import:';
+const MODULE_PREFIX = '\0quilt-async-module:';
+const IMPORT_PREFIX = '\0quilt-async-import:';
 
 export interface Options {
   preload?: boolean;
