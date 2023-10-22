@@ -3,12 +3,13 @@ import type {Plugin} from 'rollup';
 export interface Options {
   minify?: boolean;
   emit?: boolean;
+  targets?: string[];
 }
 
 const CSS_REGEX = /\.css$/;
 const CSS_MODULE_REGEX = /\.module\.css$/;
 
-export function css({minify = true, emit = true}: Options) {
+export function css({minify = true, emit = true, targets}: Options) {
   const styles = new Map<string, string>();
 
   return {
@@ -16,13 +17,14 @@ export function css({minify = true, emit = true}: Options) {
     async transform(code, id) {
       if (!CSS_REGEX.test(id)) return;
 
-      const {transform} = await import('lightningcss');
+      const {transform, browserslistToTargets} = await import('lightningcss');
 
       const transformed = transform({
         filename: id,
         code: new TextEncoder().encode(code),
         cssModules: CSS_MODULE_REGEX.test(id),
         minify: emit && minify,
+        targets: targets ? browserslistToTargets(targets) : undefined,
       });
 
       styles.set(id, new TextDecoder().decode(transformed.code));
