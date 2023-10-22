@@ -13,6 +13,9 @@
   },
   "bin": "./bin/create-quilt-app.mjs",
   "sideEffects": true,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "devDependencies": {
     "@types/fs-extra": "^9.0.11",
     "@types/prompts": "^2.0.13",

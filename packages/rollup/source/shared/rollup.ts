@@ -138,7 +138,17 @@ export async function getNodePlugins({
     nodeResolve({
       preferBuiltins: true,
       dedupe: [],
-      // extensions,
+      extensions: [
+        '.ts',
+        '.tsx',
+        '.mts',
+        '.mtsx',
+        '.js',
+        '.jsx',
+        '.es6',
+        '.es',
+        '.mjs',
+      ],
       // exportConditions,
     }),
     commonjs(),

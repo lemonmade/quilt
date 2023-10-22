@@ -23,6 +23,20 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
+    "./app": {
+      "types": "./build/typescript/app.d.ts",
+      "quilt:source": "./source/app.ts",
+      "quilt:esnext": "./build/esnext/app.esnext",
+      "import": "./build/esm/app.mjs",
+      "require": "./build/cjs/app.cjs"
+    },
+    "./package": {
+      "types": "./build/typescript/package.d.ts",
+      "quilt:source": "./source/package.ts",
+      "quilt:esnext": "./build/esnext/package.esnext",
+      "import": "./build/esm/package.mjs",
+      "require": "./build/cjs/package.cjs"
+    },
     "./features/assets": {
       "types": "./build/typescript/features/assets.d.ts",
       "quilt:source": "./source/features/assets.ts",
@@ -34,12 +48,21 @@
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
+      "app": [
+        "./build/typescript/app.d.ts"
+      ],
+      "package": [
+        "./build/typescript/package.d.ts"
+      ],
       "features/assets": [
         "./build/typescript/features/assets.d.ts"
       ]
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@babel/core": "^7.23.0",
     "@babel/plugin-transform-runtime": "^7.23.0",

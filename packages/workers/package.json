@@ -17,24 +17,14 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
-    },
-    "./babel": {
-      "types": "./build/typescript/babel.d.ts",
-      "import": "./build/esm/babel.mjs",
-      "require": "./build/cjs/babel.cjs"
+      "import": "./build/esm/index.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "babel": [
-        "./build/typescript/babel.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/threads": "^1.0.0",
     "common-tags": "^1.8.0"

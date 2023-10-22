@@ -18,12 +18,14 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": true,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "devDependencies": {
     "@quilted/cli-kit": "^0.1.11",
     "@types/common-tags": "^1.8.0",

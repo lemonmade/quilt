@@ -5,7 +5,7 @@
     "outDir": "build/typescript"
   },
   "include": ["source"],
-  "exclude": ["quilt.project.ts", "**/*.test.tsx", "**/*.test.ts"],
+  "exclude": ["**/*.test.tsx", "**/*.test.ts"],
   "references": [
     {"path": "../react-html"},
     {"path": "../react-http"},

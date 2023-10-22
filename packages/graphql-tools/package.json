@@ -20,36 +20,31 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./typescript": {
       "types": "./build/typescript/typescript.d.ts",
       "quilt:source": "./source/typescript.ts",
       "quilt:esnext": "./build/esnext/typescript.esnext",
-      "import": "./build/esm/typescript.mjs",
-      "require": "./build/cjs/typescript.cjs"
+      "import": "./build/esm/typescript.mjs"
     },
     "./rollup": {
       "types": "./build/typescript/rollup-parts.d.ts",
       "quilt:source": "./source/rollup-parts.ts",
       "quilt:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs",
-      "require": "./build/cjs/rollup-parts.cjs"
+      "import": "./build/esm/rollup-parts.mjs"
     },
     "./jest": {
       "types": "./build/typescript/jest-parts.d.ts",
       "quilt:source": "./source/jest-parts.ts",
       "quilt:esnext": "./build/esnext/jest-parts.esnext",
-      "import": "./build/esm/jest-parts.mjs",
-      "require": "./build/cjs/jest-parts.cjs"
+      "import": "./build/esm/jest-parts.mjs"
     },
     "./configuration": {
       "types": "./build/typescript/configuration.d.ts",
       "quilt:source": "./source/configuration.ts",
       "quilt:esnext": "./build/esnext/configuration.esnext",
-      "import": "./build/esm/configuration.mjs",
-      "require": "./build/cjs/configuration.cjs"
+      "import": "./build/esm/configuration.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -70,6 +65,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@babel/generator": ">=7.0.0 <8.0.0",
     "@babel/types": ">=7.0.0 <8.0.0",
