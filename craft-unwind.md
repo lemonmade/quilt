@@ -1,0 +1,10 @@
+- [ ] Add GraphQL support for testing
+- [ ] Add `tsx` (or similar) for running scripts
+- [ ] Add GraphQL type generation
+- [ ] Add executable creation
+- [ ] Multi browser builds, priority of asset manifests
+- [ ] Improve Node bundle
+- [ ] CJS build?
+- [ ] Fix request router entries and support CF/ Deno
+- [ ] Add development stuff
+- [ ] ESNext target consumption
