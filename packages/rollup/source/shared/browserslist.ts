@@ -1,12 +1,12 @@
-export type BrowserTargetSelection =
+export type BrowserGroupTargetSelection =
   | string[]
   | {
       name?: string;
       browsers?: string[];
     };
 
-export async function getBrowserTargetDetails(
-  targetSelection: BrowserTargetSelection = {},
+export async function getBrowserGroupTargetDetails(
+  targetSelection: BrowserGroupTargetSelection = {},
   {root}: {root?: string} = {},
 ) {
   const targets = Array.isArray(targetSelection)
@@ -17,11 +17,7 @@ export async function getBrowserTargetDetails(
   const targetBrowsers =
     targets.browsers ??
     (await (async () => {
-      const {default: browserslist} = await import('browserslist');
-      const config = browserslist.findConfig(root!);
-
-      if (config == null) return ['defaults'];
-
+      const config = await getBrowserGroups({root});
       const targetName = targets.name ?? 'defaults';
       return config[targetName] ?? ['defaults'];
     })());
@@ -29,4 +25,83 @@ export async function getBrowserTargetDetails(
   const name = targets.name === 'defaults' ? 'default' : targets.name;
 
   return {name, browsers: targetBrowsers};
+}
+
+export interface BrowserGroups {
+  default: readonly string[];
+  [name: string]: readonly string[];
+}
+
+export async function getBrowserGroups({
+  root = process.cwd(),
+}: {root?: string} = {}): Promise<BrowserGroups> {
+  const {default: browserslist} = await import('browserslist');
+  const config = browserslist.findConfig(root);
+
+  if (config == null) return {default: ['defaults']};
+
+  const {defaults, ...rest} = config;
+
+  return {default: defaults, ...rest};
+}
+
+export async function getBrowserGroupRegularExpressions(
+  groups?: BrowserGroups,
+): Promise<Record<string, RegExp>> {
+  const [{default: browserslist}, {getUserAgentRegex}] = await Promise.all([
+    import('browserslist'),
+    import('browserslist-useragent-regexp'),
+  ]);
+
+  // Expand the browserslist queries into the full list of supported browsers,
+  // and sort by the number of browsers in each group (with the last item having
+  // the largest browser support)
+  const groupsWithFullList = Object.entries(
+    groups ?? (await getBrowserGroups()),
+  )
+    .map(([name, browsers]) => ({
+      name,
+      browsers: browserslist(browsers),
+    }))
+    .sort((first, second) => first.browsers.length - second.browsers.length);
+
+  if (groupsWithFullList.length === 0) return {};
+
+  const lastGroup = groupsWithFullList.pop()!;
+
+  const regexes: Record<string, RegExp> = {};
+
+  for (const {name, browsers} of groupsWithFullList) {
+    const regex = getUserAgentRegex({
+      browsers,
+      ignoreMinor: true,
+      ignorePatch: true,
+      allowHigherVersions: true,
+    });
+
+    regexes[name] = regex;
+  }
+
+  // The last group is the default group, so it should match everything
+  regexes[lastGroup.name] = new RegExp('');
+
+  return regexes;
+}
+
+let esmBrowserslist: Promise<Set<string>>;
+
+export async function targetsSupportModules(targets: readonly string[]) {
+  esmBrowserslist ??= (async () => {
+    const {default: browserslist} = await import('browserslist');
+
+    return new Set(
+      browserslist(
+        'defaults and fully supports es6-module and fully supports es6-module-dynamic-import',
+      ),
+    );
+  })();
+
+  const esmBrowsers = await esmBrowserslist;
+
+  return targets.every((target) => esmBrowsers.has(target));
 }

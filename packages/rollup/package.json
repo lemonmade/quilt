@@ -59,6 +59,7 @@
     "@quilted/graphql": "^2.0.0",
     "@types/babel__preset-env": "^7.9.0",
     "browserslist": "^4.22.1",
+    "browserslist-useragent-regexp": "^4.1.0",
     "dotenv": "^16.0.0",
     "es-module-lexer": "^1.3.1",
     "esbuild": "^0.19.4",

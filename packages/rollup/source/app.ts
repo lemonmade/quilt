@@ -20,8 +20,10 @@ import {multiline} from './shared/strings.ts';
 import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 import {
-  getBrowserTargetDetails,
-  type BrowserTargetSelection,
+  targetsSupportModules,
+  getBrowserGroupTargetDetails,
+  getBrowserGroupRegularExpressions,
+  type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
 
 export interface AppOptions {
@@ -108,7 +110,7 @@ export interface AppBrowserAssetsOptions {
   minify?: boolean;
 
   baseURL?: string;
-  targets?: BrowserTargetSelection;
+  targets?: BrowserGroupTargetSelection;
   priority?: number;
 }
 
@@ -130,7 +132,9 @@ export async function quiltAppBrowser({
   const minify = assets?.minify ?? mode === 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
 
-  const browserTarget = await getBrowserTargetDetails(assets?.targets, {root});
+  const browserTarget = await getBrowserGroupTargetDetails(assets?.targets, {
+    root,
+  });
   const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
 
   const [
@@ -256,6 +260,8 @@ export async function quiltAppBrowser({
     }).then((files) => files[0])) ??
     MAGIC_MODULE_ENTRY;
 
+  const isESM = await targetsSupportModules(browserTarget.browsers);
+
   return {
     input: finalEntry,
     plugins,
@@ -272,8 +278,7 @@ export async function quiltAppBrowser({
       defaultWarn(warning);
     },
     output: {
-      // format: isESM ? 'esm' : 'systemjs',
-      format: 'esm',
+      format: isESM ? 'esm' : 'systemjs',
       dir: path.resolve(`build/assets`),
       entryFileNames: `app${targetFilenamePart}.[hash].js`,
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
@@ -522,6 +527,8 @@ export function magicModuleAppAssetManifests() {
           (manifestA.priority ?? 0) - (manifestB.priority ?? 0),
       );
 
+      const browserGroupRegexes = await getBrowserGroupRegularExpressions();
+
       return multiline`
         import {BrowserAssetsFromManifests} from '@quilted/quilt/server';
 
@@ -531,12 +538,31 @@ export function magicModuleAppAssetManifests() {
               JSON.stringify(manifests),
             )});
 
+            const browserGroupTests = [
+              ${Object.entries(browserGroupRegexes)
+                .map(
+                  ([name, test]) =>
+                    `[${JSON.stringify(name)}, new RegExp(${JSON.stringify(
+                      test.source,
+                    )})]`,
+                )
+                .join(', ')}
+            ];
+
             // The default manifest is the last one, since it has the widest browser support.
             const defaultManifest = manifests.at(-1);
 
             super(manifests, {
               defaultManifest,
               cacheKey(request) {
+                const userAgent = request.headers.get('User-Agent');
+  
+                if (userAgent) {
+                  for (const [name, test] of browserGroupTests) {
+                    if (test.test(userAgent)) return {browserGroup: name};
+                  }
+                }
+
                 return {};
               },
             });

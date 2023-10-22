@@ -11,7 +11,7 @@ export function sourceCode({
   babel: useBabel = true,
 }: {
   mode?: 'development' | 'production';
-  targets?: string[];
+  targets?: readonly string[];
   babel?:
     | boolean
     | {
@@ -77,7 +77,7 @@ export function sourceCode({
     babelHelpers: 'bundled',
     skipPreflightCheck: true,
     // Babel doesn’t like this option being set to `undefined`.
-    ...(targets ? {targets} : {}),
+    ...(targets ? {targets: targets as string[]} : {}),
   };
 
   if (typeof useBabel === 'object') {

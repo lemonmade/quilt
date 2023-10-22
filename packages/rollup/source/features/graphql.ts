@@ -75,6 +75,8 @@ export function graphql({manifest}: Options = {}): Plugin {
         }
       }
 
+      if (Object.keys(operations).length === 0) return;
+
       await mkdir(dirname(manifestPath), {recursive: true});
       await writeFile(manifestPath, JSON.stringify(operations, null, 2));
     },

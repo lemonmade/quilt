@@ -73,6 +73,26 @@ export async function quiltPackageESModules({
   } satisfies RollupOptions;
 }
 
+/**
+ * Creates a special `esnext` build that is a minimally-processed version
+ * of your original source code, preserving native ESModules. This build is
+ * ideal for consumers, as it can be processed to transpile only what is
+ * needed for the consumer’s target. This will be output in an `esnext`
+ * subdirectory of your default build directory. To have consumers prefer
+ * this build, make sure that your package.json lists the `quilt:esnext`
+ * export condition first for all your export declarations:
+ *
+ * ```json
+ * {
+ *   "exports": {
+ *     ".": {
+ *       "quilt:esnext": "./build/esnext/index.esnext",
+ *       "import": "./build/esm/index.mjs"
+ *     }
+ *   }
+ * }
+ * ```
+ */
 export async function quiltPackageESNext({
   root: rootPath = process.cwd(),
   graphql = true,
