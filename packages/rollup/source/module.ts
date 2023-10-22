@@ -3,15 +3,19 @@ import {Plugin, type RollupOptions} from 'rollup';
 import {glob} from 'glob';
 import {fileURLToPath} from 'url';
 
-import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
+import {
+  RollupNodePluginOptions,
+  getNodePlugins,
+  removeBuildFiles,
+} from './shared/rollup.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 import {
-  getBrowserTargetDetails,
-  type BrowserTargetSelection,
+  getBrowserGroupTargetDetails,
+  type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
 import type {MagicModuleEnvOptions} from './features/env.ts';
 
-export interface ModuleOptions {
+export interface ModuleOptions extends Pick<RollupNodePluginOptions, 'bundle'> {
   /**
    * The root directory containing the source code for your application.
    */
@@ -43,7 +47,7 @@ export interface ModuleAssetsOptions {
    */
   minify?: boolean;
   hash?: boolean | 'async-only';
-  targets?: BrowserTargetSelection;
+  targets?: BrowserGroupTargetSelection;
 }
 
 export async function quiltModule({
@@ -51,6 +55,7 @@ export async function quiltModule({
   env,
   assets,
   graphql = true,
+  bundle = true,
 }: ModuleOptions = {}) {
   const root =
     typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
@@ -61,7 +66,9 @@ export async function quiltModule({
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
 
-  const browserTarget = await getBrowserTargetDetails(assets?.targets, {root});
+  const browserTarget = await getBrowserGroupTargetDetails(assets?.targets, {
+    root,
+  });
   const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
 
   const [
@@ -74,7 +81,7 @@ export async function quiltModule({
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
-    getNodePlugins(),
+    getNodePlugins({bundle}),
     loadPackageJSON(root),
   ]);
 

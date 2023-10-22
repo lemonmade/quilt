@@ -16,7 +16,11 @@ import {
 import type {MagicModuleEnvOptions} from './features/env.ts';
 
 import {multiline} from './shared/strings.ts';
-import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
+import {
+  getNodePlugins,
+  removeBuildFiles,
+  type RollupNodePluginOptions,
+} from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 import {
   targetsSupportModules,
@@ -157,7 +161,7 @@ export async function quiltAppBrowser({
     import('./features/async.ts'),
     import('./features/system-js.ts'),
     import('./features/workers.ts'),
-    getNodePlugins(),
+    getNodePlugins({bundle: true}),
   ]);
 
   const plugins: Plugin[] = [
@@ -301,7 +305,9 @@ export async function quiltAppBrowser({
   } satisfies RollupOptions;
 }
 
-export interface AppServerOptions extends AppOptions {
+export interface AppServerOptions
+  extends AppOptions,
+    Pick<RollupNodePluginOptions, 'bundle'> {
   /**
    * The entry module for the server of this app. This module must export a
    * `RequestRouter` object as its default export, which will be wrapped in
@@ -340,6 +346,7 @@ export async function quiltAppServer({
   format = 'request-router',
   graphql = true,
   minify = false,
+  bundle,
 }: AppServerOptions = {}) {
   const root = process.cwd();
   const mode =
@@ -362,7 +369,7 @@ export async function quiltAppServer({
     import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/request-router.ts'),
-    getNodePlugins(),
+    getNodePlugins({bundle}),
   ]);
 
   const plugins: Plugin[] = [
