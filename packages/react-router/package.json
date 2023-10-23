@@ -17,22 +17,19 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./static": {
       "types": "./build/typescript/static.d.ts",
       "quilt:source": "./source/static.ts",
       "quilt:esnext": "./build/esnext/static.esnext",
-      "import": "./build/esm/static.mjs",
-      "require": "./build/cjs/static.cjs"
+      "import": "./build/esm/static.mjs"
     },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
       "quilt:source": "./source/testing.tsx",
       "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs",
-      "require": "./build/cjs/testing.cjs"
+      "import": "./build/esm/testing.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -47,6 +44,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/react-html": "^0.3.18",
     "@quilted/react-http": "^0.3.8",

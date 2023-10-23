@@ -4,7 +4,7 @@ import {exec as execCommand} from 'child_process';
 import {fileURLToPath} from 'url';
 import {promisify} from 'util';
 
-import {Plugin, type RollupOptions} from 'rollup';
+import {Plugin, type RollupOptions, type OutputOptions} from 'rollup';
 import {glob} from 'glob';
 
 import {multiline} from './shared/strings.ts';
@@ -50,6 +50,16 @@ export interface PackageBaseOptions
    * there.
    */
   entries?: Record<string, string>;
+
+  /**
+   * Customizes the Rollup options used to build your package. This function
+   * is called with the default options determined by Quilt, so you can override
+   * them however you like. Alternatively, you can provide a static object of
+   * Rollup options, which will be merged with the defaults provided by Quilt.
+   */
+  customize?:
+    | RollupOptions
+    | ((options: RollupOptions) => RollupOptions | Promise<RollupOptions>);
 }
 
 export interface PackageESModuleOptions extends PackageBaseOptions {
@@ -72,6 +82,22 @@ export interface PackageESModuleOptions extends PackageBaseOptions {
    * executables, see [Quilt’s package build documentation](https://github.com/lemonmade/quilt/blob/main/documentation/projects/packages/build.md#executable-files)
    */
   executable?: Record<string, string>;
+
+  /**
+   * Whether to build a CommonJS version of this library. This build
+   * will be placed in `./build/cjs`; you’ll need to add a `require`
+   * export condition to your `package.json` that points at these files
+   * for each entry.
+   *
+   * Instead of a boolean, you can also pass an object with an `exports`
+   * field. Passing this value turns on the CommonJS build, and allows you
+   * to customize the way in which ES exports from your source files
+   * are turned into CommonJS.
+   *
+   * @default false
+   * @see https://github.com/lemonmade/quilt/blob/main/documentation/projects/packages/builds.md#commonjs-build
+   */
+  commonjs?: boolean | {exports?: 'named' | 'default'};
 }
 
 export interface PackageOptions extends PackageESModuleOptions {
@@ -90,18 +116,40 @@ export interface PackageOptions extends PackageESModuleOptions {
 
 export async function quiltPackage({
   root: rootPath = process.cwd(),
-  graphql = true,
-  esnext: includeESNext = true,
+  commonjs = false,
+  esnext: explicitESNext,
   entries,
   executable,
   bundle,
+  graphql = true,
+  customize,
 }: PackageOptions = {}) {
   const root = resolveRoot(rootPath);
+  const packageJSON = await loadPackageJSON(root);
+  const resolvedEntries =
+    entries ?? (await sourceEntriesForPackage(root, packageJSON));
+
+  const includeESNext =
+    explicitESNext ?? Object.keys(resolvedEntries).length > 0;
 
   const [esm, esnext] = await Promise.all([
-    quiltPackageESModules({root, graphql, entries, executable, bundle}),
+    quiltPackageESModules({
+      root,
+      graphql,
+      entries: resolvedEntries,
+      executable,
+      bundle,
+      commonjs,
+      customize,
+    }),
     includeESNext
-      ? quiltPackageESNext({root, graphql, entries, bundle})
+      ? quiltPackageESNext({
+          root,
+          graphql,
+          entries: resolvedEntries,
+          bundle,
+          customize,
+        })
       : Promise.resolve(undefined),
   ]);
 
@@ -110,14 +158,15 @@ export async function quiltPackage({
 
 export async function quiltPackageESModules({
   root: rootPath = process.cwd(),
-  graphql = true,
+  commonjs = false,
   entries,
   executable = {},
   bundle,
+  graphql = true,
+  customize,
 }: PackageESModuleOptions = {}) {
-  const root =
-    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
-  const outputDirectory = path.join(root, 'build/esm');
+  const root = resolveRoot(rootPath);
+  const outputDirectory = path.resolve(root, 'build/esm');
   const hasExecutables = Object.keys(executable).length > 0;
 
   const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
@@ -128,13 +177,21 @@ export async function quiltPackageESModules({
 
   const resolvedEntries =
     entries ?? (await sourceEntriesForPackage(root, packageJSON));
+  const hasEntries = Object.keys(resolvedEntries).length > 0;
 
   const source = sourceForEntries({...resolvedEntries, ...executable}, {root});
 
   const plugins: Plugin[] = [
     ...nodePlugins,
     sourceCode({mode: 'production'}),
-    removeBuildFiles(['build/esm', ...(hasExecutables ? ['bin'] : [])], {root}),
+    removeBuildFiles(
+      [
+        'build/esm',
+        ...(commonjs ? ['build/cjs'] : []),
+        ...(hasExecutables ? ['bin'] : []),
+      ],
+      {root},
+    ),
   ];
 
   if (hasExecutables) {
@@ -146,7 +203,35 @@ export async function quiltPackageESModules({
     plugins.push(graphql({manifest: false}));
   }
 
-  return {
+  const output: OutputOptions[] = [
+    {
+      format: 'esm',
+      dir: outputDirectory,
+      entryFileNames: `[name].mjs`,
+      assetFileNames: `[name].[ext]`,
+      // We only want to preserve the original directory structure if there
+      // are actual package entries.
+      ...(hasEntries
+        ? {
+            preserveModules: true,
+            preserveModulesRoot: source.root,
+          }
+        : {}),
+    },
+  ];
+
+  if (commonjs) {
+    output.push({
+      format: 'commonjs',
+      dir: path.resolve(outputDirectory, '../cjs'),
+      entryFileNames: `[name].cjs`,
+      assetFileNames: `[name].[ext]`,
+      preserveModules: true,
+      preserveModulesRoot: source.root,
+    });
+  }
+
+  const options = {
     input: source.files,
     plugins,
     onwarn(warning, defaultWarn) {
@@ -161,15 +246,29 @@ export async function quiltPackageESModules({
 
       defaultWarn(warning);
     },
-    output: {
-      preserveModules: true,
-      preserveModulesRoot: source.root,
-      format: 'esm',
-      dir: outputDirectory,
-      entryFileNames: `[name].mjs`,
-      assetFileNames: `[name].[ext]`,
-    },
+    output,
   } satisfies RollupOptions;
+
+  if (customize) {
+    if (typeof customize === 'function') {
+      return await customize(options);
+    } else {
+      const customizedPlugins = await customize.plugins;
+
+      return {
+        ...options,
+        ...customize,
+        plugins: [
+          ...options.plugins,
+          ...(Array.isArray(customizedPlugins)
+            ? customizedPlugins
+            : [customizedPlugins]),
+        ],
+      };
+    }
+  } else {
+    return options;
+  }
 }
 
 /**
@@ -197,9 +296,9 @@ export async function quiltPackageESNext({
   graphql = true,
   entries,
   bundle,
+  customize,
 }: PackageBaseOptions = {}) {
-  const root =
-    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
+  const root = resolveRoot(rootPath);
   const outputDirectory = path.join(root, 'build/esnext');
 
   const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
@@ -224,7 +323,7 @@ export async function quiltPackageESNext({
     plugins.push(graphql({manifest: false}));
   }
 
-  return {
+  const options = {
     input: source.files,
     plugins,
     onwarn(warning, defaultWarn) {
@@ -248,6 +347,27 @@ export async function quiltPackageESNext({
       assetFileNames: `[name].[ext]`,
     },
   } satisfies RollupOptions;
+
+  if (customize) {
+    if (typeof customize === 'function') {
+      return await customize(options);
+    } else {
+      const customizedPlugins = await customize.plugins;
+
+      return {
+        ...options,
+        ...customize,
+        plugins: [
+          ...options.plugins,
+          ...(Array.isArray(customizedPlugins)
+            ? customizedPlugins
+            : [customizedPlugins]),
+        ],
+      };
+    }
+  } else {
+    return options;
+  }
 }
 
 const exec = promisify(execCommand);

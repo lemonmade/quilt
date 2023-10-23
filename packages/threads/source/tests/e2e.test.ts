@@ -138,7 +138,6 @@ describe('thread', () => {
 
     createThreadFromMessagePort<EndpointApi>(port2, {
       expose: {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         greet: () => new Promise(() => {}),
       },
     });
@@ -166,7 +165,6 @@ describe('thread', () => {
     createThreadFromMessagePort<EndpointApi>(port2, {
       signal: abort.signal,
       expose: {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         greet: () => new Promise(() => {}),
       },
     });

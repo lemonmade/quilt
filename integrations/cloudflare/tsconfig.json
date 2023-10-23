@@ -7,8 +7,5 @@
   },
   "include": ["source"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
-  "references": [
-    {"path": "../../packages/craft"},
-    {"path": "../../packages/quilt"}
-  ]
+  "references": [{"path": "../../packages/quilt"}]
 }

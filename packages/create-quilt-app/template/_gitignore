@@ -1,6 +1,0 @@
-build/
-node_modules/
-.quilt/
-.DS_STORE
-packages/*/bin/
-*.log

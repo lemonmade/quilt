@@ -17,31 +17,28 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/useful-types": "^1.0.0"
   },
   "peerDependencies": {
-    "@quilted/craft": "^0.1.219",
     "@quilted/quilt": "^0.5.145",
     "react": "^17.0.0 || ^18.0.0",
     "@tanstack/react-query": "^4.19.0"
   },
   "devDependencies": {
-    "@quilted/craft": "workspace:^0.1.219",
-    "@quilted/quilt": "workspace:^0.5.145",
+    "@quilted/quilt": "workspace:^",
     "@tanstack/react-query": "^4.19.0",
     "react": "workspace:@quilted/react@^18.2.0"
   },
   "peerDependenciesMeta": {
-    "@quilted/craft": {
-      "optional": true
-    },
     "@quilted/quilt": {
       "optional": true
     },

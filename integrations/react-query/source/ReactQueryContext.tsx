@@ -31,7 +31,6 @@ export function ReactQueryContext({
         }
 
         if (promises.length > 0) {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           return Promise.all(promises).then(() => {});
         }
       },

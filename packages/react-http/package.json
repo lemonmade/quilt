@@ -18,15 +18,13 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./server": {
       "types": "./build/typescript/server.d.ts",
       "quilt:source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs",
-      "require": "./build/cjs/server.cjs"
+      "import": "./build/esm/server.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -38,6 +36,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/http": "^0.2.11",
     "@quilted/react-html": "^0.3.18",

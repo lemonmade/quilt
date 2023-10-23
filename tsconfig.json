@@ -25,7 +25,6 @@
     {"path": "./packages/craft"},
     {"path": "./packages/create"},
     {"path": "./packages/create-app"},
-    {"path": "./packages/create-quilt-app"},
     {"path": "./packages/events"},
     {"path": "./packages/graphql"},
     {"path": "./packages/graphql-tools"},

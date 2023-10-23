@@ -44,11 +44,8 @@ function cookiesFromDom(): Cookies {
           `Can’t delete cookies because there is no document.cookie`,
         );
       },
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       subscribe() {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       *entries() {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       *[Symbol.iterator]() {},
     };
   }

@@ -110,12 +110,13 @@ export async function getNodePlugins({
   } else {
     // Use the customized bundling configuration. Because this option
     // is framed as what you bundle, rather than what you externalize,
-    // we need to invert all their options, and default any unspecified
-    // options to the same value as using `bundle: true`
+    // we need to invert all their options. For options that aren’t set,
+    // we default to bundling only development dependencies — production
+    // dependencies and node built-ins are not bundled.
     const {
       builtins: bundleBuiltins = false,
-      dependencies: bundleDependencies = true,
-      devDependencies: bundleDevDependencies = false,
+      dependencies: bundleDependencies = false,
+      devDependencies: bundleDevDependencies = true,
       peerDependencies: bundlePeerDependencies = false,
       include: alwaysBundleDependencies,
       exclude: neverBundleDependencies,

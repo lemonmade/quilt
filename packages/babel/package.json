@@ -48,6 +48,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"

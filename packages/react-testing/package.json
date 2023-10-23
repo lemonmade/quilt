@@ -17,36 +17,31 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./dom": {
       "types": "./build/typescript/implementations/react-dom.d.ts",
       "quilt:source": "./source/implementations/react-dom.ts",
       "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
-      "import": "./build/esm/implementations/react-dom.mjs",
-      "require": "./build/cjs/implementations/react-dom.cjs"
+      "import": "./build/esm/implementations/react-dom.mjs"
     },
     "./dom-matchers": {
       "types": "./build/typescript/matchers/dom.d.ts",
       "quilt:source": "./source/matchers/dom.ts",
       "quilt:esnext": "./build/esnext/matchers/dom.esnext",
-      "import": "./build/esm/matchers/dom.mjs",
-      "require": "./build/cjs/matchers/dom.cjs"
+      "import": "./build/esm/matchers/dom.mjs"
     },
     "./matchers": {
       "types": "./build/typescript/matchers/index.d.ts",
       "quilt:source": "./source/matchers/index.ts",
       "quilt:esnext": "./build/esnext/matchers/index.esnext",
-      "import": "./build/esm/matchers/index.mjs",
-      "require": "./build/cjs/matchers/index.cjs"
+      "import": "./build/esm/matchers/index.mjs"
     },
     "./preact": {
       "types": "./build/typescript/implementations/preact.d.ts",
       "quilt:source": "./source/implementations/preact.ts",
       "quilt:esnext": "./build/esnext/implementations/preact.esnext",
-      "import": "./build/esm/implementations/preact.mjs",
-      "require": "./build/cjs/implementations/preact.cjs"
+      "import": "./build/esm/implementations/preact.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -70,6 +65,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "jest-matcher-utils": "^27.0.0"
   },

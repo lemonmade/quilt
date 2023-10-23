@@ -28,7 +28,6 @@ export class TestRouter implements Router {
       explicitIsExternal ?? ((url) => url.origin !== this.currentUrl.origin);
   }
 
-  /* eslint-disable @typescript-eslint/no-empty-function */
   go() {}
 
   back() {}
@@ -45,7 +44,6 @@ export class TestRouter implements Router {
 
   navigate() {}
 
-  /* eslint-enable @typescript-eslint/no-empty-function */
   resolve(to: NavigateTo) {
     const url = resolveUrl(to, this.currentUrl);
     return {url, external: this.#isExternal(url, this.currentUrl)};

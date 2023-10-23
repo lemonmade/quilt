@@ -16,86 +16,73 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./base": {
       "types": "./build/typescript/noop.d.ts",
       "quilt:source": "./source/base.ts",
       "quilt:esnext": "./build/esnext/base.esnext",
-      "import": "./build/esm/base.mjs",
-      "require": "./build/cjs/base.cjs"
+      "import": "./build/esm/base.mjs"
     },
     "./fetch": {
       "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:source": "./source/fetch.browser.ts",
         "quilt:esnext": "./build/esnext/fetch.browser.esnext",
-        "import": "./build/esm/fetch.browser.mjs",
-        "require": "./build/cjs/fetch.browser.cjs"
+        "import": "./build/esm/fetch.browser.mjs"
       },
       "node": {
         "quilt:source": "./source/fetch.node.ts",
         "quilt:esnext": "./build/esnext/fetch.node.esnext",
-        "import": "./build/esm/fetch.node.mjs",
-        "require": "./build/cjs/fetch.node.cjs"
+        "import": "./build/esm/fetch.node.mjs"
       },
       "quilt:source": "./source/noop.ts",
       "quilt:esnext": "./build/esnext/noop.esnext",
-      "import": "./build/esm/noop.mjs",
-      "require": "./build/cjs/noop.cjs"
+      "import": "./build/esm/noop.mjs"
     },
     "./fetch-get-set-cookie": {
       "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:source": "./source/fetch-get-set-cookie.browser.ts",
         "quilt:esnext": "./build/esnext/fetch-get-set-cookie.browser.esnext",
-        "import": "./build/esm/fetch-get-set-cookie.browser.mjs",
-        "require": "./build/cjs/fetch-get-set-cookie.browser.cjs"
+        "import": "./build/esm/fetch-get-set-cookie.browser.mjs"
       },
       "node": {
         "quilt:source": "./source/fetch-get-set-cookie.node.ts",
         "quilt:esnext": "./build/esnext/fetch-get-set-cookie.node.esnext",
-        "import": "./build/esm/fetch-get-set-cookie.node.mjs",
-        "require": "./build/cjs/fetch-get-set-cookie.node.cjs"
+        "import": "./build/esm/fetch-get-set-cookie.node.mjs"
       },
       "quilt:source": "./source/noop.ts",
       "quilt:esnext": "./build/esnext/noop.esnext",
-      "import": "./build/esm/noop.mjs",
-      "require": "./build/cjs/noop.cjs"
+      "import": "./build/esm/noop.mjs"
     },
     "./abort-controller": {
       "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:source": "./source/noop.ts",
         "quilt:esnext": "./build/esnext/noop.esnext",
-        "import": "./build/esm/noop.mjs",
-        "require": "./build/cjs/noop.cjs"
+        "import": "./build/esm/noop.mjs"
       },
       "quilt:source": "./source/abort-controller.ts",
       "quilt:esnext": "./build/esnext/abort-controller.esnext",
-      "import": "./build/esm/abort-controller.mjs",
-      "require": "./build/cjs/abort-controller.cjs"
+      "import": "./build/esm/abort-controller.mjs"
     },
     "./crypto": {
       "types": "./build/typescript/noop.d.ts",
       "browser": {
         "quilt:source": "./source/noop.ts",
         "quilt:esnext": "./build/esnext/noop.esnext",
-        "import": "./build/esm/noop.mjs",
-        "require": "./build/cjs/noop.cjs"
+        "import": "./build/esm/noop.mjs"
       },
       "quilt:source": "./source/crypto.ts",
       "quilt:esnext": "./build/esnext/crypto.esnext",
-      "import": "./build/esm/crypto.mjs",
-      "require": "./build/cjs/crypto.cjs"
+      "import": "./build/esm/crypto.mjs"
     },
     "./noop": {
       "types": "./build/typescript/noop.d.ts",
       "quilt:source": "./source/noop.ts",
       "quilt:esnext": "./build/esnext/noop.esnext",
-      "import": "./build/esm/noop.mjs",
-      "require": "./build/cjs/noop.cjs"
+      "import": "./build/esm/noop.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -126,6 +113,9 @@
   },
   "license": "MIT",
   "sideEffects": true,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@peculiar/webcrypto": "^1.3.0",
     "@remix-run/web-fetch": "^4.1.0",

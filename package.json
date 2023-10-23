@@ -8,17 +8,15 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "quilt.from-source": "node ./scripts/quilt-from-source.js",
     "create.from-source": "node --no-warnings --experimental-specifier-resolution=node --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
     "test": "node ./scripts/quilt-from-source.js test",
     "test.unit": "node ./scripts/quilt-from-source.js test --exclude-pattern tests/e2e",
     "test.e2e": "node ./scripts/quilt-from-source.js test tests/e2e/",
-    "lint.eslint": "eslint . --cache --ext .ts,.tsx,.js,.mjs --max-warnings 0",
+    "lint.eslint": "eslint . --cache --cache-location ./node_modules/.eslintcache --ext .ts,.tsx,.js,.mjs --max-warnings 0",
     "lint.prettier": "prettier \"./**/*.{json,md,yaml,css,graphql}\" --check --cache",
     "lint": "pnpm run lint.eslint && pnpm run lint.prettier",
     "type-check": "tsc --build --pretty",
-    "build": "pnpm --recursive run build",
-    "develop": "node ./scripts/quilt-from-source.js develop",
+    "build": "pnpm --recursive --filter rollup run build && pnpm --recursive --filter !rollup run build",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r",
     "deploy.preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
@@ -53,15 +51,17 @@
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0",
     "rollup": "^4.1.0",
-    "rollup-plugin-esbuild": "^6.1.0",
     "source-map-support": "^0.5.0",
-    "typescript": "^5.2.0"
+    "typescript": "^5.2.0",
+    "vitest": "^0.34.6"
   },
   "prettier": "@quilted/prettier",
   "eslintConfig": {
     "extends": "@quilted/eslint-config/workspace",
     "ignorePatterns": [
-      "tests/e2e/output"
+      "tests/e2e/output",
+      "packages/preact-mini-compat/configuration/rollup.config.js",
+      "packages/rollup/configuration/rollup.config.js"
     ]
   },
   "stylelint": {

@@ -21,15 +21,13 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./signals": {
       "types": "./build/typescript/signals.d.ts",
       "quilt:source": "./source/signals.ts",
       "quilt:esnext": "./build/esnext/signals.esnext",
-      "import": "./build/esm/signals.mjs",
-      "require": "./build/cjs/signals.cjs"
+      "import": "./build/esm/signals.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -41,6 +39,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/events": "^1.0.0"
   },
