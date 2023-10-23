@@ -53,7 +53,7 @@ The tests directory is similar to `shared`, but is used to used for global test 
 The Quilt templates use this directory to export a `renderApp()` function that can be used to unit test React components with your app-level context provided:
 
 ```tsx
-import {test, expect} from '@quilted/quilt/testing';
+import {test, expect} from 'vitest';
 import {renderApp} from '~/tests/render.ts';
 
 function MyComponent() {

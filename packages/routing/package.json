@@ -25,9 +25,6 @@
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
   },
-  "devDependencies": {
-    "@quilted/testing": "workspace:*"
-  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"

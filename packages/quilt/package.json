@@ -193,12 +193,6 @@
       "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
       "import": "./build/esm/polyfills/noop.mjs"
     },
-    "./testing": {
-      "types": "./build/typescript/testing.d.ts",
-      "quilt:source": "./source/testing.ts",
-      "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs"
-    },
     "./magic/app": {
       "types": "./build/typescript/magic/app.d.ts",
       "quilt:source": "./source/magic/app.ts",
@@ -302,9 +296,6 @@
       "polyfills/noop": [
         "./build/typescript/polyfills/noop.d.ts"
       ],
-      "testing": [
-        "./build/typescript/testing.d.ts"
-      ],
       "magic/app": [
         "./build/typescript/magic/app.d.ts"
       ],
@@ -354,26 +345,18 @@
     "@quilted/react-workers": "^0.2.12",
     "@quilted/request-router": "^0.1.0",
     "@quilted/signals": "^0.1.8",
-    "@quilted/testing": "^0.1.0",
     "@quilted/threads": "^1.0.0",
     "@quilted/useful-react-types": "^1.0.0",
-    "@types/jest": "^27.0.0"
+    "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {
-    "@jest/globals": "^27.0.0",
-    "jest-matcher-utils": "^27.0.0",
     "graphql": "^16.7.0",
     "prettier": "^2.0.0 || ^3.0.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "vitest": "^0.34.6"
   },
   "peerDependenciesMeta": {
-    "@jest/globals": {
-      "optional": true
-    },
-    "jest-matcher-utils": {
-      "optional": true
-    },
     "graphql": {
       "optional": true
     },
@@ -385,15 +368,17 @@
     },
     "react-dom": {
       "optional": true
+    },
+    "vitest": {
+      "optional": true
     }
   },
   "devDependencies": {
-    "@jest/globals": "^27.0.0",
     "@types/prettier": "^2.0.0",
-    "expect": "^27.0.0",
-    "jest-matcher-utils": "^27.0.0",
+    "expect": "^29.0.0",
     "react": "workspace:@quilted/react@^18.2.0",
-    "react-dom": "workspace:@quilted/react-dom@^18.2.0"
+    "react-dom": "workspace:@quilted/react-dom@^18.2.0",
+    "vitest": "^0.34.6"
   },
   "eslintConfig": {
     "extends": [

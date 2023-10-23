@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@quilted/polyfills": "workspace:*",
-    "@quilted/testing": "workspace:*",
     "@types/cookie": "^0.4.0",
     "@types/send": "^0.17.0"
   },

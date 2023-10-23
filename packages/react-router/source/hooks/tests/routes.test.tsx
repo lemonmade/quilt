@@ -1,14 +1,13 @@
+import {describe, it, expect, beforeEach, vi} from 'vitest';
 import type {PropsWithChildren} from 'react';
-import {describe, it, expect} from '@quilted/testing';
 
 import {useRoutes} from '../routes.tsx';
+import {useRedirect} from '../redirect.ts';
 import {render} from '../../tests/utilities.tsx';
 
-jest.mock('../redirect', () => ({
-  useRedirect: jest.fn(),
+vi.mock('../redirect', () => ({
+  useRedirect: vi.fn(),
 }));
-
-const {useRedirect} = jest.requireMock<{useRedirect: jest.Mock}>('../redirect');
 
 function RouteComponent({children}: PropsWithChildren<{}>) {
   return children ? <>{children}</> : null;
@@ -20,7 +19,7 @@ function NestedRouteComponent({children}: PropsWithChildren<{}>) {
 
 describe('useRoutes()', () => {
   beforeEach(() => {
-    useRedirect.mockReset();
+    (useRedirect as any).mockReset();
   });
 
   describe('match', () => {
@@ -451,7 +450,7 @@ describe('useRoutes()', () => {
 
     describe('function', () => {
       it('is called with the current URL', () => {
-        const match = jest.fn(() => false);
+        const match = vi.fn(() => false);
 
         function Routes() {
           return useRoutes([{match, render: <RouteComponent />}]);
@@ -625,7 +624,7 @@ describe('useRoutes()', () => {
 
   describe('render', () => {
     it('calls the render function with the current URL', () => {
-      const renderRoute = jest.fn(() => <RouteComponent />);
+      const renderRoute = vi.fn(() => <RouteComponent />);
 
       function Routes() {
         return useRoutes([{match: 'a', render: renderRoute}]);
@@ -657,7 +656,7 @@ describe('useRoutes()', () => {
     });
 
     it('passes the matched pathname part to the render function', () => {
-      const renderRoute = jest.fn(() => <RouteComponent />);
+      const renderRoute = vi.fn(() => <RouteComponent />);
 
       function Routes() {
         return useRoutes([

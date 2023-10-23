@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/quilt/testing';
+import {describe, it, expect} from 'vitest';
 
 import {renderApp} from '~/tests/render.ts';
 import {fillGraphQL, GraphQLController} from '~/tests/graphql.ts';

@@ -18,7 +18,12 @@ export class TestRouter implements Router {
     {prefix, state = {}, isExternal: explicitIsExternal}: Options = {},
   ) {
     this.currentUrl = enhanceUrl(
-      typeof url === 'string' ? new URL(url, window.location.href) : url,
+      typeof url === 'string'
+        ? new URL(
+            url,
+            typeof window === 'object' ? window.location.href : undefined,
+          )
+        : url,
       state,
       createKey(),
       prefix,

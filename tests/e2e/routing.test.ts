@@ -1,3 +1,4 @@
+import {describe, it, expect} from 'vitest';
 import {
   type Page,
   stripIndent,
@@ -6,8 +7,6 @@ import {
   waitForPerformanceNavigation,
   reloadAndWaitForPerformanceNavigation,
 } from './utilities.ts';
-
-jest.setTimeout(process.env.CI ? 30_000 : 10_000);
 
 describe.skip('routing', () => {
   describe('scroll restoration', () => {

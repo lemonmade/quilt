@@ -1,7 +1,7 @@
 /* eslint no-console: off */
 
 import {Component, useState} from 'react';
-import {describe, it, expect, beforeEach, afterEach} from '@quilted/testing';
+import {describe, it, expect, beforeEach, afterEach} from 'vitest';
 import {render} from '../index.ts';
 
 describe('e2e', () => {

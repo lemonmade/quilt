@@ -1,6 +1,6 @@
 import type {ComponentType, Context as ReactContext} from 'react';
 
-import type {Node, PropsFor} from '../types.ts';
+import type {PropsFor} from '../types.ts';
 
 import {toHaveReactProps} from './props.ts';
 import {
@@ -10,38 +10,27 @@ import {
 import {toContainReactText} from './text.ts';
 import {toProvideReactContext} from './context.ts';
 
-import {expect} from '@jest/globals';
+// @see https://vitest.dev/guide/extending-matchers.html
 
-type PropsFromNode<T> = NonNullable<T> extends Node<infer U, any> ? U : never;
-
-declare global {
-  // As far as I know, this is needed for the module augmentation  to work.
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R, T = {}> {
-      toHaveReactProps(props: Partial<PropsFromNode<T>>): void;
-      toContainReactComponent<Type extends string | ComponentType<any>>(
-        type: Type,
-        props?: Partial<PropsFor<Type>>,
-      ): void;
-      toContainReactComponentTimes<Type extends string | ComponentType<any>>(
-        type: Type,
-        times: number,
-        props?: Partial<PropsFor<Type>>,
-      ): void;
-      toProvideReactContext<Type>(
-        context: ReactContext<Type>,
-        value?: Type,
-      ): void;
-      toContainReactText(text: string): void;
-    }
-  }
+export interface CustomMatchers<R = unknown> {
+  toHaveReactProps(props: Record<string, unknown>): void;
+  toContainReactComponent<Type extends string | ComponentType<any>>(
+    type: Type,
+    props?: Partial<PropsFor<Type>>,
+  ): R;
+  toContainReactComponentTimes<Type extends string | ComponentType<any>>(
+    type: Type,
+    times: number,
+    props?: Partial<PropsFor<Type>>,
+  ): R;
+  toProvideReactContext<Type>(context: ReactContext<Type>, value?: Type): R;
+  toContainReactText(text: string): R;
 }
 
-expect.extend({
+export const matchers = {
   toHaveReactProps,
   toContainReactComponent,
   toContainReactComponentTimes,
   toProvideReactContext,
   toContainReactText,
-});
+};

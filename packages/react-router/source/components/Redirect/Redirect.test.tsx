@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect, vi, type MockInstance} from 'vitest';
 import {createRender} from '@quilted/react-testing';
 
 import {TestRouter, TestRouting} from '../../testing.tsx';
@@ -28,7 +28,7 @@ describe('<Redirect />', () => {
 });
 
 type MockedRouter = TestRouter & {
-  navigate: jest.Mock;
+  navigate: MockInstance;
 };
 
 const renderWithNavigateSpy = createRender<
@@ -39,7 +39,7 @@ const renderWithNavigateSpy = createRender<
     const router = new TestRouter(
       new URL('https://router.magic'),
     ) as MockedRouter;
-    jest.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate');
     return {router};
   },
   render(element, {router}) {

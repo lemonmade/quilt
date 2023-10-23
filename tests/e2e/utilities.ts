@@ -13,6 +13,7 @@ import type {
   Browser as PlaywrightBrowser,
   BrowserContext as PlaywrightBrowserContext,
 } from 'playwright';
+import {afterAll} from 'vitest';
 
 import {sleep} from '@quilted/events';
 

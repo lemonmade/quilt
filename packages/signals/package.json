@@ -33,9 +33,6 @@
     "@preact/signals-core": "^1.5.0",
     "@quilted/events": "^1.0.0"
   },
-  "devDependencies": {
-    "@quilted/testing": "^0.1.0"
-  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project",

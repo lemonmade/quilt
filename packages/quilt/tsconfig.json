@@ -30,7 +30,6 @@
     {"path": "../react-workers"},
     {"path": "../request-router"},
     {"path": "../signals"},
-    {"path": "../testing"},
     {"path": "../threads"},
     {"path": "../useful-react-types"},
     {"path": "../workers"}

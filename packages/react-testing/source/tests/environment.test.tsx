@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 import {render} from '../implementations/test-renderer.ts';
 
 describe('render()', () => {

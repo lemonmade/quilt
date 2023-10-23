@@ -1,4 +1,4 @@
-import {jest, describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 import {
   type Page,
   buildAppAndOpenPage,
@@ -7,8 +7,6 @@ import {
   stripIndent,
   withWorkspace,
 } from './utilities.ts';
-
-jest.setTimeout(20_000);
 
 describe('app builds', () => {
   describe('assets', () => {

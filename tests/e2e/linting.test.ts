@@ -1,7 +1,5 @@
-import {jest, describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 import {stripIndent, withWorkspace} from './utilities.ts';
-
-jest.setTimeout(20_000);
 
 const CODE_WITH_LINT_ERRORS = stripIndent`
   export default function App() {return < div onClick={() => console.log('Not accessible!')} >Hello</div>}

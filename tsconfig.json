@@ -53,7 +53,6 @@
     {"path": "./packages/rollup"},
     {"path": "./packages/routing"},
     {"path": "./packages/signals"},
-    {"path": "./packages/testing"},
     {"path": "./packages/threads"},
     {"path": "./packages/trpc"},
     {"path": "./packages/typescript"},

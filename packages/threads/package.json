@@ -54,8 +54,7 @@
     }
   },
   "devDependencies": {
-    "@preact/signals-core": "^1.5.0",
-    "@quilted/testing": "workspace:*"
+    "@preact/signals-core": "^1.5.0"
   },
   "eslintConfig": {
     "extends": [

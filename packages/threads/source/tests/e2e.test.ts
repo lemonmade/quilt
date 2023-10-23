@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 import {createThreadFromMessagePort, type ThreadCallable} from '../index.ts';
 import {MessageChannel} from './utilities.ts';
 
