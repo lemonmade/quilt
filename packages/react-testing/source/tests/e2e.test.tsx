@@ -2,7 +2,7 @@
 
 import {Component, useState} from 'react';
 import {describe, it, expect, beforeEach, afterEach} from 'vitest';
-import {render} from '../index.ts';
+import {render} from '../implementations/preact.ts';
 
 describe('e2e', () => {
   let consoleError = console.error;

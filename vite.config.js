@@ -17,6 +17,11 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'tests/e2e/**/*.test.ts'],
+    exclude: [
+      ...configDefaults.exclude,
+      // 'tests/e2e/**/*.test.ts',
+      'packages/create/templates/**/*',
+    ],
+    watchExclude: [...configDefaults.watchExclude, 'tests/e2e/output/**/*'],
   },
 });

@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.29",
   "type": "module",
+  "scripts": {
+    "build": "rollup --config rollup.config.js"
+  },
   "dependencies": {
     "@quilted/quilt": "workspace:*",
     "react": "workspace:@quilted/react@*",
@@ -14,9 +17,5 @@
   },
   "browserslist": [
     "extends @quilted/browserslist-config/evergreen"
-  ],
-  "eslintConfig": {
-    "extends": "@quilted/eslint-config/app",
-    "ignorePatterns": []
-  }
+  ]
 }

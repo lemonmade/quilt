@@ -50,23 +50,9 @@ type RunResult = PromiseWithChild<{
 }>;
 
 export interface Command {
-  readonly quilt: QuiltCli;
   run(command: string, options?: SpawnOptions): RunResult;
+  pnpm(command: string, options?: SpawnOptions): RunResult;
   node(script: string, options?: SpawnOptions): RunResult;
-}
-
-export interface QuiltCli {
-  build(options?: SpawnOptions): RunResult;
-  build(args?: string[], options?: SpawnOptions): RunResult;
-  lint(options?: SpawnOptions): RunResult;
-  lint(args?: string[], options?: SpawnOptions): RunResult;
-  test(options?: SpawnOptions): RunResult;
-  test(args?: string[], options?: SpawnOptions): RunResult;
-  typeCheck(options?: SpawnOptions): RunResult;
-  typeCheck(args?: string[], options?: SpawnOptions): RunResult;
-  // TODO: should add better typing for the tool
-  run(tool: string, options?: SpawnOptions): RunResult;
-  run(tool: string, args?: string[], options?: SpawnOptions): RunResult;
 }
 
 export interface Workspace {
@@ -75,16 +61,7 @@ export interface Workspace {
   readonly browser: Browser;
 }
 
-const monorepoRoot = path.resolve(__dirname, '../..');
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
-const quiltFromSourceScript = path.join(
-  monorepoRoot,
-  'scripts/quilt-from-source.js',
-);
-const quiltProductionExecutable = path.join(
-  monorepoRoot,
-  'packages/craft/build/esm/cli/cli.mjs',
-);
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
@@ -182,33 +159,6 @@ export async function withWorkspace<T>(
     return runCommand(`${process.execPath} ${command}`, options);
   };
 
-  const runQuilt = (
-    command: string,
-    argsOrOptions?: string[] | SpawnOptions,
-    optionsOrNothing?: any,
-  ) => {
-    let options: SpawnOptions | undefined;
-    let args: string[] | undefined;
-
-    if (Array.isArray(argsOrOptions)) {
-      args = argsOrOptions;
-      options = optionsOrNothing;
-    } else {
-      options = argsOrOptions;
-    }
-
-    const commandWithArgs = [command, ...(args ?? [])].join(' ');
-
-    if (process.env.CI) {
-      return runNode(
-        `${quiltProductionExecutable} ${commandWithArgs}`,
-        options,
-      );
-    }
-
-    return runNode(`${quiltFromSourceScript} ${commandWithArgs}`, options);
-  };
-
   const writeFileInProject = async (file: string, content: string) => {
     const fullPath = resolve(file);
     await mkdir(path.dirname(fullPath), {recursive: true});
@@ -273,20 +223,8 @@ export async function withWorkspace<T>(
       },
     },
     command: {
-      quilt: {
-        build: (...args) => runQuilt('build', ...args),
-        lint: (...args) => runQuilt('lint', ...args),
-        test: (...args) => runQuilt('test', ...args),
-        typeCheck: (...args) => runQuilt('type-check', ...args),
-        run: (tool, ...args) => {
-          if (Array.isArray(args[0])) {
-            return runQuilt('run', [tool, ...args[0]], args[1]);
-          }
-
-          return runQuilt('run', [tool], args[0]);
-        },
-      },
       run: (...args) => runCommand(...args),
+      pnpm: (command, options) => runCommand(`pnpm ${command}`, options),
       node: (...args) => runNode(...args),
     },
   };
@@ -324,7 +262,7 @@ export async function buildAppAndRunServer(
   {command, fs}: Workspace,
   {env}: BuildAndRunOptions = {},
 ) {
-  await command.quilt.build({env});
+  await command.pnpm('build', {env});
 
   const port = await getPort();
   const url = new URL(`http://localhost:${port}`);

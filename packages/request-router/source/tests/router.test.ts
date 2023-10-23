@@ -1,5 +1,3 @@
-import '@quilted/polyfills/fetch';
-
 import {describe, it, expect} from 'vitest';
 
 import {RequestRouter} from '../router.ts';

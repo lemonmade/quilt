@@ -9,6 +9,8 @@ export async function getBrowserGroupTargetDetails(
   targetSelection: BrowserGroupTargetSelection = {},
   {root}: {root?: string} = {},
 ) {
+  const {default: browserslist} = await import('browserslist');
+
   const targets = Array.isArray(targetSelection)
     ? {
         browsers: targetSelection,
@@ -18,13 +20,11 @@ export async function getBrowserGroupTargetDetails(
     targets.browsers ??
     (await (async () => {
       const config = await getBrowserGroups({root});
-      const targetName = targets.name ?? 'defaults';
+      const targetName = targets.name ?? 'default';
       return config[targetName] ?? ['defaults'];
     })());
 
-  const name = targets.name === 'defaults' ? 'default' : targets.name;
-
-  return {name, browsers: targetBrowsers};
+  return {name: targets.name, browsers: browserslist(targetBrowsers)};
 }
 
 export interface BrowserGroups {

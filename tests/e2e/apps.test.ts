@@ -44,19 +44,10 @@ describe('app builds', () => {
             null,
             2,
           ),
-          'quilt.project.ts': stripIndent`
-            import {createProject, quiltApp, quiltWorkspace} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft.ts';
-            
-            export default createProject((project) => {
-              project.use(
-                quiltWorkspace(),
-                quiltApp({
-                  entry: './MyApp.tsx',
-                }),
-                addInternalExportCondition(),
-              );
-            });
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';
+
+            export default quiltApp({app: './MyApp.tsx'});
           `,
           'MyApp.tsx': stripIndent`
             export default function App() {
@@ -149,8 +140,8 @@ describe('app builds', () => {
           `,
           'server.ts': stripIndent`
             import {RequestRouter} from '@quilted/quilt/request-router';
-            import {BrowserAssets} from '@quilted/quilt/magic/assets';
             import {renderToResponse} from '@quilted/quilt/server';
+            import {BrowserAssets} from 'quilt:module/assets';
                       
             const router = new RequestRouter();
             const assets = new BrowserAssets();
@@ -166,15 +157,14 @@ describe('app builds', () => {
             
             export default router;
           `,
-          'quilt.project.ts': (await fs.read('quilt.project.ts')).replace(
-            `quiltApp()`,
-            stripIndent`
-              quiltApp({
-                browser: {entry: "./browser.ts"},
-                server: {entry: "./server.ts"},
-              })
-            `,
-          ),
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';  
+
+            export default quiltApp({
+              browser: {entry: './browser.ts'},
+              server: {entry: './server.ts'},
+            });
+          `,
         });
 
         const {page} = await buildAppAndOpenPage(workspace);

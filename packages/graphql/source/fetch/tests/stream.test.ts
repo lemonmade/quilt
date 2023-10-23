@@ -1,4 +1,3 @@
-import '@quilted/polyfills/fetch';
 import {describe, it, expect, vi} from 'vitest';
 import {TransformStream} from 'stream/web';
 

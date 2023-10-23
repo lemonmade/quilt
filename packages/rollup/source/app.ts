@@ -28,8 +28,9 @@ import {
   getBrowserGroupRegularExpressions,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
+import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 
-export interface AppOptions {
+export interface AppBaseOptions {
   /**
    * The root directory containing the source code for your application.
    */
@@ -65,7 +66,19 @@ export interface AppOptions {
   env?: MagicModuleEnvOptions;
 }
 
-export interface AppBrowserOptions extends AppOptions {
+export interface AppOptions extends AppBaseOptions {
+  /**
+   * Customizes the browser build of your application.
+   */
+  browser?: Omit<AppBrowserOptions, keyof AppBaseOptions>;
+
+  /**
+   * Customizes the server build of your application.
+   */
+  server?: Omit<AppServerOptions, keyof AppBaseOptions>;
+}
+
+export interface AppBrowserOptions extends AppBaseOptions {
   /**
    * The entry module for this browser. This should be an absolute path, or relative
    * path from the root directory containing your project. This entry should be the
@@ -119,6 +132,22 @@ export interface AppBrowserAssetsOptions {
 
 const require = createRequire(import.meta.url);
 
+export async function quiltApp({
+  root,
+  app,
+  env,
+  graphql,
+  browser: browserOptions,
+  server: serverOptions,
+}: AppOptions = {}) {
+  const [browser, server] = await Promise.all([
+    quiltAppBrowser({root, app, env, graphql, ...browserOptions}),
+    quiltAppServer({root, app, env, graphql, ...serverOptions}),
+  ]);
+
+  return [browser, server];
+}
+
 export async function quiltAppBrowser({
   root: rootPath = process.cwd(),
   app,
@@ -151,6 +180,7 @@ export async function quiltAppBrowser({
     {systemJS},
     {workers},
     nodePlugins,
+    packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
@@ -162,6 +192,7 @@ export async function quiltAppBrowser({
     import('./features/system-js.ts'),
     import('./features/workers.ts'),
     getNodePlugins({bundle: true}),
+    loadPackageJSON(root),
   ]);
 
   const plugins: Plugin[] = [
@@ -215,13 +246,7 @@ export async function quiltAppBrowser({
     plugins.push(tsconfigAliases);
   }
 
-  const appEntry =
-    app ??
-    (await glob('{App,app,input}.{ts,tsx,mjs,js,jsx}', {
-      cwd: root,
-      nodir: true,
-      absolute: true,
-    }).then((files) => files[0]));
+  const appEntry = await resolveAppEntry(app, {root, packageJSON});
 
   if (appEntry) {
     plugins.push(magicModuleAppComponent({entry: appEntry}));
@@ -306,7 +331,7 @@ export async function quiltAppBrowser({
 }
 
 export interface AppServerOptions
-  extends AppOptions,
+  extends AppBaseOptions,
     Pick<RollupNodePluginOptions, 'bundle'> {
   /**
    * The entry module for the server of this app. This module must export a
@@ -337,6 +362,11 @@ export interface AppServerOptions
    * @default false
    */
   minify?: boolean;
+
+  /**
+   * Customizes the assets created for your application.
+   */
+  assets?: Pick<AppBrowserAssetsOptions, 'baseURL'>;
 }
 
 export async function quiltAppServer({
@@ -347,10 +377,12 @@ export async function quiltAppServer({
   graphql = true,
   minify = false,
   bundle,
+  assets,
 }: AppServerOptions = {}) {
   const root = process.cwd();
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+  const baseURL = assets?.baseURL ?? '/assets/';
 
   const [
     {visualizer},
@@ -359,8 +391,8 @@ export async function quiltAppServer({
     {createTSConfigAliasPlugin},
     {css},
     {rawAssets, staticAssets},
-    {magicModuleRequestRouterEntry},
     nodePlugins,
+    packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
@@ -368,8 +400,8 @@ export async function quiltAppServer({
     import('./features/typescript.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
-    import('./features/request-router.ts'),
     getNodePlugins({bundle}),
+    loadPackageJSON(root),
   ]);
 
   const plugins: Plugin[] = [
@@ -404,13 +436,7 @@ export async function quiltAppServer({
     plugins.push(tsconfigAliases);
   }
 
-  const appEntry =
-    app ??
-    (await glob('{App,app,input}.{ts,tsx,mjs,js,jsx}', {
-      cwd: root,
-      nodir: true,
-      absolute: true,
-    }).then((files) => files[0]));
+  const appEntry = await resolveAppEntry(app, {root, packageJSON});
 
   if (appEntry) {
     plugins.push(magicModuleAppComponent({entry: appEntry}));
@@ -425,7 +451,9 @@ export async function quiltAppServer({
     }).then((files) => files[0]));
 
   plugins.push(
-    magicModuleRequestRouterEntry(),
+    magicModuleAppServerEntry({
+      assets: {baseURL},
+    }),
     magicModuleAppRequestRouter({entry: serverEntry}),
     magicModuleAppAssetManifests(),
   );
@@ -553,6 +581,75 @@ export function magicModuleAppBrowserEntry({
             ? `${reactRootFunction}(element, jsx(App));`
             : `${reactRootFunction}(element).render(jsx(App));`
         }
+      `;
+    },
+  });
+}
+
+export function magicModuleAppServerEntry({
+  host,
+  port,
+  assets,
+  format = 'module',
+}: {
+  host?: string;
+  port?: number;
+  assets?: boolean | {baseURL: string};
+  format?: 'module' | 'commonjs';
+} = {}) {
+  const baseURL = typeof assets === 'object' ? assets.baseURL : '/assets/';
+
+  return createMagicModulePlugin({
+    name: '@quilted/request-router',
+    module: MAGIC_MODULE_ENTRY,
+    sideEffects: true,
+    async source() {
+      const serveAssets = Boolean(assets);
+
+      return multiline`
+        ${serveAssets ? `import * as path from 'path';` : ''}
+        ${
+          serveAssets && format === 'module'
+            ? `import {fileURLToPath} from 'url';`
+            : ''
+        }
+        import {createServer} from 'http';
+
+        import requestRouter from ${JSON.stringify(
+          MAGIC_MODULE_REQUEST_ROUTER,
+        )};
+
+        import {createHttpRequestListener${
+          serveAssets ? ', serveStatic' : ''
+        }} from '@quilted/quilt/request-router/node';
+
+        const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
+        const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
+
+        ${
+          serveAssets
+            ? `const dirname = ${
+                format === 'module'
+                  ? 'path.dirname(fileURLToPath(import.meta.url))'
+                  : '__dirname'
+              };\nconst serve = serveStatic(path.resolve(dirname, '../assets'), {
+                baseUrl: ${JSON.stringify(baseURL)},
+              });`
+            : ''
+        }
+        const listener = createHttpRequestListener(requestRouter);
+      
+        createServer(async (request, response) => {
+          ${
+            serveAssets
+              ? `if (request.url.startsWith(${JSON.stringify(
+                  baseURL,
+                )})) return serve(request, response);`
+              : ''
+          }
+
+          await listener(request, response);
+        }).listen(port, host);
       `;
     },
   });
@@ -727,4 +824,31 @@ function createManualChunksSorter(): GetManualChunk {
 
     return `${bundleBaseName}-${relativeId.split(path.sep)[0]?.split('.')[0]}`;
   };
+}
+
+async function resolveAppEntry(
+  entry: string | undefined,
+  {root, packageJSON}: {root: string; packageJSON: PackageJSON},
+) {
+  if (entry) {
+    return path.resolve(root, entry);
+  }
+
+  if (typeof packageJSON.main === 'string') {
+    return path.resolve(root, packageJSON.main);
+  }
+
+  const rootEntry = (packageJSON.exports as any)?.['.'];
+
+  if (typeof rootEntry === 'string') {
+    return path.resolve(root, rootEntry);
+  }
+
+  const globbed = await glob('{App,app,index}.{ts,tsx,mjs,js,jsx}', {
+    cwd: root,
+    nodir: true,
+    absolute: true,
+  });
+
+  return globbed[0];
 }
