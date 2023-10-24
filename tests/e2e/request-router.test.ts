@@ -26,7 +26,7 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
@@ -61,7 +61,7 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
@@ -100,7 +100,7 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
@@ -133,7 +133,7 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
