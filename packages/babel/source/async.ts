@@ -1,8 +1,8 @@
 import type * as Babel from '@babel/types';
 import type {NodePath, Binding} from '@babel/traverse';
 
-export const MODULE_PREFIX = '\0quilt-async-module:';
-export const IMPORT_PREFIX = '\0quilt-async-import:';
+export const MODULE_PREFIX = 'quilt-async-module:';
+export const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   packages?: {[key: string]: string[]};

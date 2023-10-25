@@ -99,7 +99,7 @@ async function writeManifestForBundle(
     if (originalModuleId == null) continue;
 
     // This metadata is added by the rollup plugin for @quilted/async
-    const moduleId = this.getModuleInfo(originalModuleId)?.meta.quilt?.moduleId;
+    const moduleId = this.getModuleInfo(originalModuleId)?.meta.quilt?.moduleID;
 
     if (moduleId == null) continue;
 

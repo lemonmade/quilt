@@ -5,8 +5,8 @@ import type {Plugin, OutputChunk, OutputBundle} from 'rollup';
 import {multiline} from '../shared/strings.ts';
 import MagicString from 'magic-string';
 
-const MODULE_PREFIX = '\0quilt-async-module:';
-const IMPORT_PREFIX = '\0quilt-async-import:';
+const MODULE_PREFIX = 'quilt-async-module:';
+const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   preload?: boolean;
@@ -22,7 +22,7 @@ export function asyncModules({
   return {
     name: '@quilted/async',
     async resolveId(id, importer) {
-      if (id.startsWith(IMPORT_PREFIX)) return id;
+      if (id.startsWith(IMPORT_PREFIX)) return `\0${id}`;
       if (!id.startsWith(MODULE_PREFIX)) return null;
 
       const imported = id.replace(MODULE_PREFIX, '');
@@ -33,34 +33,32 @@ export function asyncModules({
 
       if (resolved == null) return null;
 
-      return `${MODULE_PREFIX}${resolved.id}`;
+      return `\0${MODULE_PREFIX}${resolved.id}`;
     },
     resolveDynamicImport(specifier) {
       if (
         typeof specifier === 'string' &&
         specifier.startsWith(IMPORT_PREFIX)
       ) {
-        return specifier;
+        return `\0${specifier}`;
       }
 
       return null;
     },
     async load(id: string) {
-      if (id.startsWith(MODULE_PREFIX)) {
-        const imported = id.replace(MODULE_PREFIX, '');
+      if (id.startsWith(`\0${MODULE_PREFIX}`)) {
+        const imported = id.replace(`\0${MODULE_PREFIX}`, '');
         const moduleID = getModuleID({imported});
 
         const code = multiline`
           const id = ${JSON.stringify(moduleID)};
 
-          const doImport = () => import(${JSON.stringify(
-            `${IMPORT_PREFIX}${imported}`,
-          )}).then((module) => module.default);
-
           export default function createAsyncModule(load) {
             return {
               id,
-              import: () => load(doImport),
+              import: () => import(${JSON.stringify(
+                `${IMPORT_PREFIX}${imported}`,
+              )}).then((module) => module.default),
             };
           }
         `;
@@ -68,8 +66,8 @@ export function asyncModules({
         return code;
       }
 
-      if (id.startsWith(IMPORT_PREFIX)) {
-        const imported = id.replace(IMPORT_PREFIX, '');
+      if (id.startsWith(`\0${IMPORT_PREFIX}`)) {
+        const imported = id.replace(`\0${IMPORT_PREFIX}`, '');
         const moduleID = getModuleID({imported});
 
         const code = multiline`
@@ -138,7 +136,7 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
     const imports = (await parseImports(code))[0];
 
     for (const imported of imports) {
-      const {s: start, e: end, d: dynamicStart} = imported;
+      const {s: start, e: end, ss: importStart, d: dynamicStart} = imported;
 
       // es-module-lexer only sets `d >= 0` when the import is a dynamic one
       if (dynamicStart < 0) continue;
@@ -155,9 +153,9 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
       // The only dependency is the file itself, no need to preload
       if (dependencies.size === 1) continue;
 
-      const originalImport = code.slice(dynamicStart, end + 1);
+      const originalImport = code.slice(importStart, end + 1);
       newCode.overwrite(
-        dynamicStart,
+        importStart,
         end + 1,
         preloadContentForDependencies(dependencies, originalImport),
       );

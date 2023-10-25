@@ -456,6 +456,7 @@ export async function quiltAppServer({
     {createTSConfigAliasPlugin},
     {css},
     {rawAssets, staticAssets},
+    {asyncModules},
     nodePlugins,
     packageJSON,
   ] = await Promise.all([
@@ -465,6 +466,7 @@ export async function quiltAppServer({
     import('./features/typescript.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
+    import('./features/async.ts'),
     getNodePlugins({bundle}),
     loadPackageJSON(root),
   ]);
@@ -499,6 +501,11 @@ export async function quiltAppServer({
           ? undefined
           : assetsInline?.limit
         : Number.POSITIVE_INFINITY,
+    }),
+    asyncModules({
+      baseURL,
+      preload: false,
+      moduleID: ({imported}) => path.relative(root, imported),
     }),
     removeBuildFiles(['build/server'], {root}),
   ];
