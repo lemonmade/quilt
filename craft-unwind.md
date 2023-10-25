@@ -3,11 +3,11 @@
 - [ ] Add GraphQL type generation
 - [ ] Add executable creation
 - [ ] Multi browser builds, priority of asset manifests
-- [ ] Improve Node bundle
-- [ ] CJS build?
+- [x] Improve Node bundle
+- [x] CJS build?
 - [x] Fix request router entries
 - [ ] Support CF/ Deno/ general overrides
-- [ ] Add support for serving assets to default server in Node
+- [x] Add support for serving assets to default server in Node
 - [ ] Add development stuff
 - [ ] ESNext target consumption
 - [ ] Make sure in-repo packages are aliased for dev, test, and build

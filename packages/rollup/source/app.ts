@@ -60,8 +60,9 @@ export interface AppBaseOptions {
 
   /**
    * Customizes the behavior of environment variables for your application. You
-   * can further customize the environment variables provided during server-side
-   * rendering by passing `server.env`.
+   * can further customize the environment variables provided to browser assets
+   * by passing the `browser.env`, and those passed during server-side rendering
+   * by passing `server.env`.
    */
   env?: MagicModuleEnvOptions;
 }
@@ -70,12 +71,14 @@ export interface AppOptions extends AppBaseOptions {
   /**
    * Customizes the browser build of your application.
    */
-  browser?: Omit<AppBrowserOptions, keyof AppBaseOptions>;
+  browser?: Omit<AppBrowserOptions, keyof AppBaseOptions> &
+    Pick<AppBrowserOptions, 'env'>;
 
   /**
    * Customizes the server build of your application.
    */
-  server?: Omit<AppServerOptions, keyof AppBaseOptions>;
+  server?: Omit<AppServerOptions, keyof AppBaseOptions> &
+    Pick<AppServerOptions, 'env'>;
 }
 
 export interface AppBrowserOptions extends AppBaseOptions {
