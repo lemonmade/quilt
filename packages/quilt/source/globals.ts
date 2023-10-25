@@ -1,3 +1,5 @@
+import './modules.ts';
+
 import {
   createAsyncModulesGlobal,
   type AsyncModulesGlobal,

@@ -187,23 +187,11 @@
       "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
       "import": "./build/esm/polyfills/noop.mjs"
     },
-    "./magic/app": {
-      "types": "./build/typescript/magic/app.d.ts",
-      "quilt:source": "./source/magic/app.ts",
-      "quilt:esnext": "./build/esnext/magic/app.esnext",
-      "import": "./build/esm/magic/app.mjs"
-    },
-    "./magic/assets": {
-      "types": "./build/typescript/magic/assets.d.ts",
-      "quilt:source": "./source/magic/assets.ts",
-      "quilt:esnext": "./build/esnext/magic/assets.esnext",
-      "import": "./build/esm/magic/assets.mjs"
-    },
-    "./magic/request-router": {
-      "types": "./build/typescript/magic/request-router.d.ts",
-      "quilt:source": "./source/magic/request-router.ts",
-      "quilt:esnext": "./build/esnext/magic/request-router.esnext",
-      "import": "./build/esm/magic/request-router.mjs"
+    "./modules": {
+      "types": "./build/typescript/modules.d.ts",
+      "quilt:source": "./source/modules.ts",
+      "quilt:esnext": "./build/esnext/modules.esnext",
+      "import": "./build/esm/modules.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -287,14 +275,8 @@
       "polyfills/noop": [
         "./build/typescript/polyfills/noop.d.ts"
       ],
-      "magic/app": [
-        "./build/typescript/magic/app.d.ts"
-      ],
-      "magic/assets": [
-        "./build/typescript/magic/assets.d.ts"
-      ],
-      "magic/request-router": [
-        "./build/typescript/magic/request-router.d.ts"
+      "modules": [
+        "./build/typescript/modules.d.ts"
       ]
     }
   },
