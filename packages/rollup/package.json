@@ -30,6 +30,13 @@
       "import": "./build/esm/app.mjs",
       "require": "./build/cjs/app.cjs"
     },
+    "./module": {
+      "types": "./build/typescript/module.d.ts",
+      "quilt:source": "./source/module.ts",
+      "quilt:esnext": "./build/esnext/module.esnext",
+      "import": "./build/esm/module.mjs",
+      "require": "./build/cjs/module.cjs"
+    },
     "./package": {
       "types": "./build/typescript/package.d.ts",
       "quilt:source": "./source/package.ts",
@@ -50,6 +57,9 @@
     "*": {
       "app": [
         "./build/typescript/app.d.ts"
+      ],
+      "module": [
+        "./build/typescript/module.d.ts"
       ],
       "package": [
         "./build/typescript/package.d.ts"
