@@ -10,7 +10,7 @@ import {
 } from './utilities.ts';
 
 describe('request-router', () => {
-  it('can generate a service from a request handler', async () => {
+  it('can generate a server from a request handler', async () => {
     await withWorkspace({fixture: 'basic-api'}, async (workspace) => {
       const {fs, command} = workspace;
 
@@ -33,7 +33,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.pnpm('start', {
           env: {PORT: String(port)},
         }),
       );
@@ -68,7 +68,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.pnpm('start', {
           env: {PORT: String(port)},
         }),
       );
@@ -107,7 +107,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.pnpm('start', {
           env: {PORT: String(port)},
         }),
       );
@@ -140,7 +140,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.pnpm('start', {
           env: {PORT: String(port)},
         }),
       );

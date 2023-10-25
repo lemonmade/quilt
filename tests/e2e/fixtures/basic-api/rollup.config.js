@@ -1,7 +1,3 @@
-import {quiltModule} from '@quilted/rollup/module';
+import {quiltServer} from '@quilted/rollup/server';
 
-export default quiltModule({
-  assets: {
-    minify: false,
-  },
-});
+export default quiltServer();

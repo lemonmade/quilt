@@ -5,7 +5,8 @@
   "type": "module",
   "main": "./api.ts",
   "scripts": {
-    "build": "rollup --config rollup.config.js"
+    "start": "node ./build/server/server.js",
+    "build": "rollup --config ./rollup.config.js"
   },
   "dependencies": {
     "@quilted/quilt": "workspace:*"

@@ -22,6 +22,16 @@ export interface ModuleOptions extends Pick<RollupNodePluginOptions, 'bundle'> {
   root?: string | URL;
 
   /**
+   * The entry module for this module. This should be an absolute path, or relative
+   * path from the root directory containing your project. If not provided, this
+   * defaults the `main` or `exports['.']` field in your package.json, or a file named
+   * `index`, `module`, `entry`, or `input` in your project root.
+   *
+   * @example './my-module.tsx'
+   */
+  entry?: string;
+
+  /**
    * Whether to include GraphQL-related code transformations.
    *
    * @default true
@@ -52,6 +62,7 @@ export interface ModuleAssetsOptions {
 
 export async function quiltModule({
   root: rootPath = process.cwd(),
+  entry,
   env,
   assets,
   graphql = true,
@@ -85,13 +96,15 @@ export async function quiltModule({
     loadPackageJSON(root),
   ]);
 
-  const source = await sourceForModule(root, packageJSON);
+  const finalEntry = entry
+    ? path.resolve(root, entry)
+    : await sourceForModule(root, packageJSON);
 
   const plugins: Plugin[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...env, mode}),
-    sourceCode({mode: 'production', targets: browserTarget.browsers}),
+    sourceCode({mode, targets: browserTarget.browsers}),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),
   ];
 
@@ -118,7 +131,7 @@ export async function quiltModule({
   );
 
   return {
-    input: source,
+    input: finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that

@@ -129,7 +129,7 @@ export interface AppBrowserModuleOptions {
 
 export interface AppBrowserAssetsOptions {
   /**
-   * Whether to minify assets created by Quilt.
+   * Whether to minify assets created for you application.
    *
    * @default true
    */
@@ -151,6 +151,46 @@ export interface AppBrowserAssetsOptions {
          */
         limit?: number;
       };
+}
+
+export interface AppServerOptions
+  extends AppBaseOptions,
+    Pick<RollupNodePluginOptions, 'bundle'> {
+  /**
+   * The entry module for this app’s server. By default, this module must export
+   * a `RequestRouter` object as its default export, which will be wrapped in
+   * the specific server runtime you configure. If you set the format to `'custom'`,
+   * this entry can be any content — it will be bundled as-is.
+   *
+   * If not provided, this will default to a file named `server`, `service`,
+   * or `backend` in your app’s root directory.
+   */
+  entry?: string;
+
+  /**
+   * Whether this server code uses the `request-router` library to
+   * define itself in a generic way, which can be adapted to a variety
+   * of environments. By default, this is `'request-router'`, and when `'request-router'`,
+   * the `entry` you specified must export an `RequestRouter` object as
+   * its default export. When set to `false`, the app server will be built
+   * as a basic server-side JavaScript project, without the special
+   * `request-router` adaptor.
+   *
+   * @default 'request-router'
+   */
+  format?: 'request-router' | 'custom';
+
+  /**
+   * Whether to minify the JavaScript outputs for your server.
+   *
+   * @default false
+   */
+  minify?: boolean;
+
+  /**
+   * Customizes the assets created for your application.
+   */
+  assets?: Pick<AppBrowserAssetsOptions, 'baseURL' | 'inline'>;
 }
 
 const require = createRequire(import.meta.url);
@@ -357,14 +397,13 @@ export async function quiltAppBrowser({
     }),
   );
 
-  const finalEntry =
-    entry ??
-    (await glob('{browser,client}.{ts,tsx,mjs,js,jsx}', {
-      cwd: root,
-      nodir: true,
-      absolute: true,
-    }).then((files) => files[0])) ??
-    MAGIC_MODULE_ENTRY;
+  const finalEntry = entry
+    ? path.resolve(root, entry)
+    : (await glob('{browser,client,web}.{ts,tsx,mjs,js,jsx}', {
+        cwd: root,
+        nodir: true,
+        absolute: true,
+      }).then((files) => files[0])) ?? MAGIC_MODULE_ENTRY;
 
   const isESM = await targetsSupportModules(browserGroup.browsers);
 
@@ -392,45 +431,6 @@ export async function quiltAppBrowser({
       manualChunks: createManualChunksSorter(),
     },
   } satisfies RollupOptions;
-}
-
-export interface AppServerOptions
-  extends AppBaseOptions,
-    Pick<RollupNodePluginOptions, 'bundle'> {
-  /**
-   * The entry module for the server of this app. This module must export a
-   * `RequestRouter` object as its default export, which will be wrapped in
-   * the specific server runtime you configure.
-   *
-   * If not provided, this will default to a file named `server`, `service`,
-   * or `backend` in your app’s root directory.
-   */
-  entry?: string;
-
-  /**
-   * Whether this server code uses the `request-router` library to
-   * define itself in a generic way, which can be adapted to a variety
-   * of environments. By default, this is `'request-router'`, and when `'request-router'`,
-   * the `entry` you specified must export an `RequestRouter` object as
-   * its default export. When set to `false`, the app server will be built
-   * as a basic server-side JavaScript project, without the special
-   * `request-router` adaptor.
-   *
-   * @default 'request-router'
-   */
-  format?: 'request-router' | 'custom';
-
-  /**
-   * Whether to minify the JavaScript outputs for your server.
-   *
-   * @default false
-   */
-  minify?: boolean;
-
-  /**
-   * Customizes the assets created for your application.
-   */
-  assets?: Pick<AppBrowserAssetsOptions, 'baseURL' | 'inline'>;
 }
 
 export async function quiltAppServer({
@@ -515,13 +515,18 @@ export async function quiltAppServer({
     plugins.push(magicModuleAppComponent({entry: appEntry}));
   }
 
-  const serverEntry =
-    entry ??
-    (await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
-      cwd: root,
-      nodir: true,
-      absolute: true,
-    }).then((files) => files[0]));
+  const serverEntry = entry
+    ? path.resolve(root, entry)
+    : await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
+        cwd: root,
+        nodir: true,
+        absolute: true,
+      }).then((files) => files[0]);
+
+  const finalEntry =
+    format === 'request-router'
+      ? MAGIC_MODULE_ENTRY
+      : serverEntry ?? MAGIC_MODULE_ENTRY;
 
   plugins.push(
     magicModuleAppServerEntry({
@@ -549,11 +554,6 @@ export async function quiltAppServer({
       filename: path.resolve(`build/reports/bundle-visualizer.server.html`),
     }),
   );
-
-  const finalEntry =
-    format === 'request-router'
-      ? MAGIC_MODULE_ENTRY
-      : serverEntry ?? MAGIC_MODULE_ENTRY;
 
   return {
     input: finalEntry,
@@ -673,7 +673,7 @@ export function magicModuleAppServerEntry({
   const baseURL = typeof assets === 'object' ? assets.baseURL : '/assets/';
 
   return createMagicModulePlugin({
-    name: '@quilted/request-router',
+    name: '@quilted/request-router/app-server',
     module: MAGIC_MODULE_ENTRY,
     sideEffects: true,
     async source() {

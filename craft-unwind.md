@@ -15,6 +15,7 @@
 - [ ] Service stuff
 - [ ] App polyfills
 - [ ] Add back Preact aliasing
+- [ ] Allow passing of `env: 'production'` to rollup plugins
 - [ ] Automatic detection of node engines
 
   ```js

@@ -14,3 +14,4 @@ export {
   quiltPackageESNext,
   type PackageOptions,
 } from './package.ts';
+export {quiltServer, type ServerOptions} from './server.ts';
