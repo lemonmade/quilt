@@ -1,7 +1,7 @@
 - [ ] Add GraphQL support for testing
 - [ ] Add `tsx` (or similar) for running scripts
 - [ ] Add GraphQL type generation
-- [ ] Add executable creation
+- [x] Add executable creation
 - [ ] Multi browser builds, priority of asset manifests
 - [x] Improve Node bundle
 - [x] CJS build?
