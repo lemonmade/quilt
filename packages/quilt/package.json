@@ -127,12 +127,6 @@
       "quilt:esnext": "./build/esnext/server.esnext",
       "import": "./build/esm/server.mjs"
     },
-    "./static": {
-      "types": "./build/typescript/static/index.d.ts",
-      "quilt:source": "./source/static/index.tsx",
-      "quilt:esnext": "./build/esnext/static/index.esnext",
-      "import": "./build/esm/static/index.mjs"
-    },
     "./env": {
       "types": "./build/typescript/env.d.ts",
       "quilt:source": "./source/env.ts",
@@ -265,9 +259,6 @@
       ],
       "server": [
         "./build/typescript/server.d.ts"
-      ],
-      "static": [
-        "./build/typescript/static/index.d.ts"
       ],
       "request-router/node": [
         "./build/typescript/request-router/node.d.ts"

@@ -1,13 +1,13 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import {exec as execCommand} from 'child_process';
-import {fileURLToPath} from 'url';
 import {promisify} from 'util';
 
 import {Plugin, type RollupOptions, type OutputOptions} from 'rollup';
 import {glob} from 'glob';
 
 import {multiline} from './shared/strings.ts';
+import {resolveRoot} from './shared/path.ts';
 import {
   getNodePlugins,
   removeBuildFiles,
@@ -538,8 +538,4 @@ async function resolveTargetFileAsSource(file: string, root: string) {
     : path.resolve(root, file);
 
   return sourceFile;
-}
-
-function resolveRoot(root: string | URL) {
-  return typeof root === 'string' ? root : fileURLToPath(root);
 }

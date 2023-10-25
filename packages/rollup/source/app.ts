@@ -24,11 +24,13 @@ import {
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 import {
   targetsSupportModules,
+  getBrowserGroups,
   getBrowserGroupTargetDetails,
   getBrowserGroupRegularExpressions,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
+import {resolveRoot} from './shared/path.ts';
 
 export interface AppBaseOptions {
   /**
@@ -73,6 +75,11 @@ export interface AppOptions extends AppBaseOptions {
    */
   browser?: Omit<AppBrowserOptions, keyof AppBaseOptions> &
     Pick<AppBrowserOptions, 'env'>;
+
+  /**
+   * Customizes the assets created for your application.
+   */
+  assets?: AppBrowserOptions['assets'];
 
   /**
    * Customizes the server build of your application.
@@ -131,24 +138,70 @@ export interface AppBrowserAssetsOptions {
   baseURL?: string;
   targets?: BrowserGroupTargetSelection;
   priority?: number;
+
+  /**
+   * Controls how assets like images are inlined into your bundles JavaScript.
+   */
+  inline?:
+    | boolean
+    | {
+        /**
+         * The maximum size in bytes that an asset should be in order to
+         * be inlined into the bundle. Defaults to `4096`.
+         */
+        limit?: number;
+      };
 }
 
 const require = createRequire(import.meta.url);
 
 export async function quiltApp({
-  root,
+  root: rootPath = process.cwd(),
   app,
   env,
   graphql,
+  assets,
   browser: browserOptions,
   server: serverOptions,
 }: AppOptions = {}) {
-  const [browser, server] = await Promise.all([
-    quiltAppBrowser({root, app, env, graphql, ...browserOptions}),
-    quiltAppServer({root, app, env, graphql, ...serverOptions}),
-  ]);
+  const root = resolveRoot(rootPath);
 
-  return [browser, server];
+  const browserGroups = await getBrowserGroups({root});
+  const browserGroupEntries = Object.entries(browserGroups);
+  const hasMultipleBrowserGroups = browserGroupEntries.length > 1;
+
+  const optionPromises: Promise<RollupOptions>[] = [];
+
+  browserGroupEntries.forEach(([name, browsers], index) => {
+    optionPromises.push(
+      quiltAppBrowser({
+        root,
+        app,
+        env,
+        graphql,
+        ...browserOptions,
+        assets: {
+          ...assets,
+          ...browserOptions?.assets,
+          priority: index,
+          targets: hasMultipleBrowserGroups ? {name, browsers} : browsers,
+        },
+      }),
+    );
+  });
+
+  optionPromises.push(
+    quiltAppServer({
+      root,
+      app,
+      env,
+      graphql,
+      ...serverOptions,
+      assets: {...assets, ...serverOptions?.assets},
+    }),
+  );
+
+  return Promise.all(optionPromises);
 }
 
 export async function quiltAppBrowser({
@@ -166,11 +219,12 @@ export async function quiltAppBrowser({
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
+  const assetsInline = assets?.inline ?? true;
 
-  const browserTarget = await getBrowserGroupTargetDetails(assets?.targets, {
+  const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
     root,
   });
-  const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
+  const targetFilenamePart = browserGroup.name ? `.${browserGroup.name}` : '';
 
   const [
     {visualizer},
@@ -205,7 +259,7 @@ export async function quiltAppBrowser({
     magicModuleEnv({...env, mode}),
     sourceCode({
       mode,
-      targets: browserTarget.browsers,
+      targets: browserGroup.browsers,
       babel: {
         options(options) {
           return {
@@ -221,7 +275,15 @@ export async function quiltAppBrowser({
     }),
     css({minify, emit: true}),
     rawAssets(),
-    staticAssets({baseURL, emit: true}),
+    staticAssets({
+      baseURL,
+      emit: true,
+      inlineLimit: assetsInline
+        ? typeof assetsInline === 'boolean'
+          ? undefined
+          : assetsInline?.limit
+        : Number.POSITIVE_INFINITY,
+    }),
     asyncModules({
       baseURL,
       preload: true,
@@ -238,9 +300,9 @@ export async function quiltAppBrowser({
         chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       },
     }),
-    removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
-      root,
-    }),
+    // removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
+    //   root,
+    // }),
   ];
 
   const tsconfigAliases = await createTSConfigAliasPlugin();
@@ -273,16 +335,15 @@ export async function quiltAppBrowser({
     plugins.push(minify());
   }
 
-  const cacheKey = browserTarget.name
-    ? {browserTarget: browserTarget.name}
-    : undefined;
-  const id = browserTarget.name ? browserTarget.name : undefined;
+  const cacheKey = new URLSearchParams();
+  if (browserGroup.name) {
+    cacheKey.set('browserGroup', browserGroup.name);
+  }
 
   plugins.push(
     assetManifest({
-      id,
-      cacheKey,
       baseURL,
+      cacheKey,
       file: path.resolve(`build/manifests/assets${targetFilenamePart}.json`),
       priority: assets?.priority,
     }),
@@ -305,7 +366,7 @@ export async function quiltAppBrowser({
     }).then((files) => files[0])) ??
     MAGIC_MODULE_ENTRY;
 
-  const isESM = await targetsSupportModules(browserTarget.browsers);
+  const isESM = await targetsSupportModules(browserGroup.browsers);
 
   return {
     input: finalEntry,
@@ -369,7 +430,7 @@ export interface AppServerOptions
   /**
    * Customizes the assets created for your application.
    */
-  assets?: Pick<AppBrowserAssetsOptions, 'baseURL'>;
+  assets?: Pick<AppBrowserAssetsOptions, 'baseURL' | 'inline'>;
 }
 
 export async function quiltAppServer({
@@ -386,6 +447,7 @@ export async function quiltAppServer({
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
+  const assetsInline = assets?.inline ?? true;
 
   const [
     {visualizer},
@@ -429,7 +491,15 @@ export async function quiltAppServer({
     }),
     css({emit: false, minify}),
     rawAssets(),
-    staticAssets({emit: false}),
+    staticAssets({
+      emit: false,
+      baseURL,
+      inlineLimit: assetsInline
+        ? typeof assetsInline === 'boolean'
+          ? undefined
+          : assetsInline?.limit
+        : Number.POSITIVE_INFINITY,
+    }),
     removeBuildFiles(['build/server'], {root}),
   ];
 

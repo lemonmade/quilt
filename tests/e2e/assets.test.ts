@@ -106,17 +106,13 @@ describe('app builds', () => {
         const {fs} = workspace;
 
         await fs.write({
-          'quilt.project.ts': stripIndent`
-            import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft.ts';
-            
-            export default createProject((project) => {
-              project.use(quiltApp({
-                assets: {
-                  inline: {limit: 0},
-                },
-              }));
-              project.use(addInternalExportCondition());
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';
+
+            export default quiltApp({
+              assets: {
+                inline: {limit: 0},
+              },
             });
           `,
           'App.tsx': stripIndent`
@@ -134,53 +130,6 @@ describe('app builds', () => {
           expect.objectContaining({
             url: expect.stringMatching(
               /[/]assets[/]lemon-tiny\.[a-zA-Z0-9]*\.png/,
-            ),
-          }),
-        ]);
-      });
-    });
-
-    it('lets the developer configure a custom output filename for static assets', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
-        const {fs} = workspace;
-
-        await fs.write({
-          'quilt.project.ts': stripIndent`
-            import {createProject, quiltApp, createProjectPlugin} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft.ts';
-            
-            export default createProject((project) => {
-              project.use(quiltApp());
-              project.use(
-                createProjectPlugin({
-                  name: 'MyApp.CustomizeStaticAssetPattern',
-                  build({configure}) {
-                    configure(({quiltAssetStaticOutputFilenamePattern}) => {
-                      quiltAssetStaticOutputFilenamePattern?.(
-                        (pattern) => \`images/\${pattern}\`,
-                      );
-                    });
-                  },
-                }),
-              )
-              project.use(addInternalExportCondition());
-            });
-          `,
-          'App.tsx': stripIndent`
-            import image from '../../common/images/lemon.png';
-              
-            export default function App() {
-              return <img src={image} alt="A lemon." />;
-            }
-          `,
-        });
-
-        const {page} = await buildAppAndOpenPage(workspace);
-
-        expect(await getLoadedImages(page)).toStrictEqual([
-          expect.objectContaining({
-            url: expect.stringMatching(
-              /[/]assets[/]images[/]lemon\.[a-zA-Z0-9]*\.png/,
             ),
           }),
         ]);

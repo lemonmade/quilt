@@ -1,8 +1,8 @@
 export type BrowserGroupTargetSelection =
-  | string[]
+  | readonly string[]
   | {
       name?: string;
-      browsers?: string[];
+      browsers?: readonly string[];
     };
 
 export async function getBrowserGroupTargetDetails(
@@ -11,11 +11,17 @@ export async function getBrowserGroupTargetDetails(
 ) {
   const {default: browserslist} = await import('browserslist');
 
-  const targets = Array.isArray(targetSelection)
-    ? {
-        browsers: targetSelection,
-      }
-    : targetSelection;
+  const targets: {
+    name?: string;
+    browsers?: readonly string[];
+  } = (
+    Array.isArray(targetSelection)
+      ? {
+          browsers: targetSelection,
+        }
+      : targetSelection
+  ) as any;
+
   const targetBrowsers =
     targets.browsers ??
     (await (async () => {
@@ -38,11 +44,26 @@ export async function getBrowserGroups({
   const {default: browserslist} = await import('browserslist');
   const config = browserslist.findConfig(root);
 
-  if (config == null) return {default: ['defaults']};
+  if (config == null) return {default: browserslist(['defaults'])};
 
   const {defaults, ...rest} = config;
 
-  return {default: defaults, ...rest};
+  const browserGroups: BrowserGroups = {} as any;
+
+  const groupsWithFullList = Object.entries(rest)
+    .map(([name, browsers]) => ({
+      name,
+      browsers: browserslist(browsers),
+    }))
+    .sort((first, second) => first.browsers.length - second.browsers.length);
+
+  for (const {name, browsers} of groupsWithFullList) {
+    browserGroups[name] = browsers;
+  }
+
+  browserGroups.default = defaults;
+
+  return browserGroups;
 }
 
 export async function getBrowserGroupRegularExpressions(

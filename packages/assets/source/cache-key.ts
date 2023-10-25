@@ -1,1 +1,3 @@
-export interface AssetsCacheKey {}
+export interface AssetsCacheKey {
+  browserGroup?: string;
+}
