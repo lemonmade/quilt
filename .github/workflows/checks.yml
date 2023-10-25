@@ -57,6 +57,7 @@ jobs:
       - uses: ./.github/workflows/actions/prepare
       - name: Install Playwright browsers
         run: pnpm --filter e2e-tests exec playwright install
+      - run: node -v
       - name: Build libraries for E2E tests
         run: pnpm run build
       - run: pnpm run test.e2e --shard ${{ matrix.parallel }}
