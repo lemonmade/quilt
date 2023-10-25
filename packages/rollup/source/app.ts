@@ -217,9 +217,9 @@ export async function quiltApp({
       quiltAppBrowser({
         root,
         app,
-        env,
         graphql,
         ...browserOptions,
+        env: {...env, ...browserOptions?.env},
         assets: {
           ...assets,
           ...browserOptions?.assets,
@@ -234,9 +234,9 @@ export async function quiltApp({
     quiltAppServer({
       root,
       app,
-      env,
       graphql,
       ...serverOptions,
+      env: {...env, ...serverOptions?.env},
       assets: {...assets, ...serverOptions?.assets},
     }),
   );

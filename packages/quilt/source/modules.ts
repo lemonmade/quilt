@@ -1,3 +1,10 @@
+declare module 'quilt:module/env' {
+  import type {EnvironmentVariables} from '@quilted/quilt/env';
+
+  const Env: EnvironmentVariables;
+  export default Env;
+}
+
 declare module 'quilt:module/app' {
   import type {ComponentType} from 'react';
 

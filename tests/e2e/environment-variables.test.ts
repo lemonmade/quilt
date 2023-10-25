@@ -9,20 +9,15 @@ describe('app builds', () => {
         const builder = 'Chris';
 
         await fs.write({
-          'quilt.project.ts': stripIndent`
-            import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft.ts';
-            
-            export default createProject((project) => {
-              project.use(quiltApp({
-                entry: './App.tsx',
-                env: {inline: ['BUILDER']},
-              }));
-              project.use(addInternalExportCondition());
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';
+
+            export default quiltApp({
+              env: {inline: ['BUILDER']},
             });
           `,
           'App.tsx': stripIndent`
-            import Env from '@quilted/quilt/env';
+            import Env from 'quilt:module/env';
 
             export default function App() {
               return <div>Hello, {Env.BUILDER}!</div>;
@@ -49,7 +44,7 @@ describe('app builds', () => {
 
         await fs.write({
           'App.tsx': stripIndent`
-            import Env from '@quilted/quilt/env';
+            import Env from 'quilt:module/env';
             
             export default function App() {
               return <div>{Env.MODE}</div>;
@@ -118,21 +113,17 @@ describe('app builds', () => {
             'FROM_ENV_LOCAL=2\nFROM_ENV_MODE=2\nFROM_ENV_MODE_LOCAL=2',
           '.env.production': 'FROM_ENV_MODE=3\nFROM_ENV_MODE_LOCAL=3',
           '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
-          'quilt.project.ts': stripIndent`
-            import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft.ts';
-            
-            export default createProject((project) => {
-              project.use(quiltApp({
-                env: {
-                  inline: ['FROM_ENV', 'FROM_ENV_LOCAL', 'FROM_ENV_MODE', 'FROM_ENV_MODE_LOCAL'],
-                },
-              }));
-              project.use(addInternalExportCondition());
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';
+
+            export default quiltApp({
+              env: {
+                inline: ['FROM_ENV', 'FROM_ENV_LOCAL', 'FROM_ENV_MODE', 'FROM_ENV_MODE_LOCAL'],
+              },
             });
           `,
           'App.tsx': stripIndent`
-            import Env from '@quilted/quilt/env';
+            import Env from 'quilt:module/env';
             
             export default function App() {
               return <div>{Env.FROM_ENV}{Env.FROM_ENV_LOCAL}{Env.FROM_ENV_MODE}{Env.FROM_ENV_MODE_LOCAL}</div>;
@@ -155,28 +146,24 @@ describe('app builds', () => {
 
         await fs.write({
           '.env': `BUILDER=${builder}`,
-          'quilt.project.ts': stripIndent`
-            import {createProject, quiltApp} from '@quilted/craft';
-            import {addInternalExportCondition} from '../../common/craft.ts';
-            
-            export default createProject((project) => {
-              project.use(quiltApp({
-                server: {
-                  env: {inline: ['BUILDER']},
-                },
-              }));
-              project.use(addInternalExportCondition());
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';
+
+            export default quiltApp({
+              server: {
+                env: {inline: ['BUILDER']},
+              },
             });
           `,
           'App.tsx': stripIndent`
-            import Env from '@quilted/quilt/env';
             import {useSerialized} from '@quilted/quilt/html';
-            
-            export default function App() {
-              const builder = useSerialized('Builder', Env.BUILDER);
-              return <div>Hello, {builder}!</div>;
-            }
-          `,
+            import Env from 'quilt:module/env';
+              
+              export default function App() {
+                const builder = useSerialized('Builder', Env.BUILDER);
+                return <div>Hello, {builder}!</div>;
+              }
+            `,
         });
 
         const {page} = await buildAppAndOpenPage(workspace, {
