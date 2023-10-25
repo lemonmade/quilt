@@ -1,4 +1,4 @@
-import {defineConfig, configDefaults, defaultExclude} from 'vitest/config';
+import {defineConfig, configDefaults} from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -6,6 +6,6 @@ export default defineConfig({
   },
   test: {
     include: ['./**/*.test.ts'],
-    exclude: [...defaultExclude, './tests/e2e/**/*.test.ts'],
+    exclude: [...configDefaults.exclude, './tests/e2e/**'],
   },
 });
