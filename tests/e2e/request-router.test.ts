@@ -35,12 +35,12 @@ describe('request-router', () => {
 
         // eslint-disable-next-line no-console
         console.log(await fs.read('build/server/server.js'));
+        console.log(await fs.read('package.json'));
 
         // Start the server
         startServer(() =>
-          command.pnpm('start', {
+          command.node(fs.resolve('build/server/server.js'), {
             env: {PORT: String(port)},
-            stdio: 'inherit',
           }),
         );
 
