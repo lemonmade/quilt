@@ -32,10 +32,14 @@ describe('request-router', () => {
         const port = await getPort();
         const url = new URL(`http://localhost:${port}`);
 
+        // eslint-disable-next-line no-console
+        console.log(await fs.read('build/server/server.js'));
+
         // Start the server
         startServer(() =>
           command.pnpm('start', {
             env: {PORT: String(port)},
+            stdio: 'inherit',
           }),
         );
 
@@ -74,6 +78,7 @@ describe('request-router', () => {
         startServer(() =>
           command.pnpm('start', {
             env: {PORT: String(port)},
+            stdio: 'inherit',
           }),
         );
 
