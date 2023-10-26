@@ -17,6 +17,7 @@ describe('request-router', () => {
 
         await fs.write({
           'api.ts': stripIndent`
+          console.log(process.env.PORT);
           export default function handler(request) {
             return new Response(JSON.stringify({url: request.url}), {
               headers: {
