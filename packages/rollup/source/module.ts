@@ -86,12 +86,14 @@ export async function quiltModule({
     {visualizer},
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
+    {esnext},
     nodePlugins,
     packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
+    import('./features/esnext.ts'),
     getNodePlugins({bundle}),
     loadPackageJSON(root),
   ]);
@@ -105,6 +107,7 @@ export async function quiltModule({
     replaceProcessEnv({mode}),
     magicModuleEnv({...env, mode}),
     sourceCode({mode, targets: browserTarget.browsers}),
+    esnext({mode, targets: browserTarget.browsers}),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),
   ];
 

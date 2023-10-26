@@ -2,20 +2,21 @@
 - [ ] Add `tsx` (or similar) for running scripts
 - [ ] Add GraphQL type generation
 - [x] Add executable creation
-- [ ] Multi browser builds, priority of asset manifests
+- [x] Multi browser builds, priority of asset manifests
 - [x] Improve Node bundle
 - [x] CJS build?
 - [x] Fix request router entries
 - [ ] Support CF/ Deno/ general overrides
 - [x] Add support for serving assets to default server in Node
 - [ ] Add development stuff
-- [ ] ESNext target consumption
+- [x] ESNext target consumption
 - [ ] Make sure in-repo packages are aliased for dev, test, and build
 - [ ] Add support for non-ESM server
-- [ ] Service stuff
+- [x] Service stuff
 - [ ] App polyfills
 - [ ] Add back Preact aliasing
 - [ ] Allow passing of `env: 'production'` to rollup plugins
+- [ ] Re-enable app cleaning
 - [ ] Automatic detection of node engines
 
   ```js

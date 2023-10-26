@@ -276,6 +276,7 @@ export async function quiltAppBrowser({
     {asyncModules},
     {systemJS},
     {workers},
+    {esnext},
     nodePlugins,
     packageJSON,
   ] = await Promise.all([
@@ -288,6 +289,7 @@ export async function quiltAppBrowser({
     import('./features/async.ts'),
     import('./features/system-js.ts'),
     import('./features/workers.ts'),
+    import('./features/esnext.ts'),
     getNodePlugins({bundle: true}),
     loadPackageJSON(root),
   ]);
@@ -312,6 +314,10 @@ export async function quiltAppBrowser({
           };
         },
       },
+    }),
+    esnext({
+      mode,
+      targets: browserGroup.browsers,
     }),
     css({minify, emit: true}),
     rawAssets(),
@@ -457,6 +463,7 @@ export async function quiltAppServer({
     {css},
     {rawAssets, staticAssets},
     {asyncModules},
+    {esnext},
     nodePlugins,
     packageJSON,
   ] = await Promise.all([
@@ -467,6 +474,7 @@ export async function quiltAppServer({
     import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/async.ts'),
+    import('./features/esnext.ts'),
     getNodePlugins({bundle}),
     loadPackageJSON(root),
   ]);
@@ -490,6 +498,10 @@ export async function quiltAppServer({
           };
         },
       },
+    }),
+    esnext({
+      mode,
+      targets: ['current node'],
     }),
     css({emit: false, minify}),
     rawAssets(),
