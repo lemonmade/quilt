@@ -21,7 +21,8 @@
     "deploy": "pnpm publish -r",
     "deploy.preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
     "deploy.snapshot": "changeset version --snapshot snapshot && changeset publish --tag snapshot --no-git-tag",
-    "typescript.run": "node --no-warnings --experimental-specifier-resolution=node --experimental-vm-modules --loader \"./scripts/esbuild-module-loader.js\" --conditions quilt:source"
+    "typescript.run": "tsx --conditions quilt:source",
+    "typescript.watch": "tsx watch --conditions quilt:source"
   },
   "packageManager": "pnpm@8.7.6+sha256.c95869d443ed8fd6b7bb164bb8e89b56cabdc24f3c79b87ef68d8ae1c6b1d0e2",
   "devDependencies": {
@@ -53,6 +54,7 @@
     "react-dom": "workspace:@quilted/react-dom@^18.2.0",
     "rollup": "^4.1.0",
     "source-map-support": "^0.5.0",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.0",
     "vitest": "^0.34.6"
   },

@@ -1,5 +1,5 @@
 - [ ] Add GraphQL support for testing
-- [ ] Add `tsx` (or similar) for running scripts
+- [x] Add `tsx` (or similar) for running scripts
 - [ ] Add GraphQL type generation
 - [x] Add executable creation
 - [x] Multi browser builds, priority of asset manifests
