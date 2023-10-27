@@ -914,6 +914,9 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.23.0
         version: 7.23.2(@babel/core@7.23.2)
+      '@mdn/browser-compat-data':
+        specifier: ^5.3.26
+        version: 5.3.26
       '@quilted/assets':
         specifier: ^0.0.5
         version: link:../assets
@@ -983,10 +986,16 @@ importers:
       rollup-plugin-visualizer:
         specifier: ^5.9.2
         version: 5.9.2(rollup@4.1.4)
+      semver:
+        specifier: ^7.5.4
+        version: 7.5.4
       systemjs:
         specifier: ^6.14.2
         version: 6.14.2
     devDependencies:
+      '@types/semver':
+        specifier: ^7.5.4
+        version: 7.5.4
       rollup:
         specifier: ^4.1.4
         version: 4.1.4
@@ -3949,6 +3958,10 @@ packages:
       read-yaml-file: 1.1.0
     dev: true
 
+  /@mdn/browser-compat-data@5.3.26:
+    resolution: {integrity: sha512-fjXsjZJvdnC+j4AipnxHbwPCohV0cC1qLh3XHy2+zeXLDb1TVepLK7qDS9UcvNxuEkl/qYPsBf0lad2paHSuIQ==}
+    dev: false
+
   /@miniflare/cache@2.5.0:
     resolution: {integrity: sha512-tJuDbWwzYsk4pJvPPJzdlfdGFqNnn1IN3JVrGDCq8UwOXm0K8hFiSwq2nMjjT+Z/9X2FfimgaXOx81zjPL+FjQ==}
     engines: {node: '>=16.7'}
@@ -4684,9 +4697,8 @@ packages:
     resolution: {integrity: sha512-KQf+QAMWKMrtBMsB8/24w53tEsxllMj6TuA80TT/5igJalLI/zm0L3oXRbIAl4Ohfc85gyHX/jhMwsVkmhLU4A==}
     dev: true
 
-  /@types/semver@7.5.0:
-    resolution: {integrity: sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==}
-    dev: false
+  /@types/semver@7.5.4:
+    resolution: {integrity: sha512-MMzuxN3GdFwskAnb6fz0orFvhfqi752yjaXylr0Rp4oDg5H0Zn1IuyRhDVvYOwAXoJirx2xuS16I3WjxnAIHiQ==}
 
   /@types/send@0.17.1:
     resolution: {integrity: sha512-Cwo8LE/0rnvX7kIIa3QHCkcuF21c05Ayb0ZfxPiv0W8VRiZiNW/WuRupHKpqqGVGf7SUA44QSOUKaEd9lIrd/Q==}
@@ -4829,7 +4841,7 @@ packages:
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.52.0)
       '@types/json-schema': 7.0.14
-      '@types/semver': 7.5.0
+      '@types/semver': 7.5.4
       '@typescript-eslint/scope-manager': 6.8.0
       '@typescript-eslint/types': 6.8.0
       '@typescript-eslint/typescript-estree': 6.8.0(typescript@5.2.2)
@@ -8016,7 +8028,7 @@ packages:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.9.0
-      semver: 7.3.7
+      semver: 7.5.4
       validate-npm-package-license: 3.0.4
     dev: false
 
@@ -8904,14 +8916,6 @@ packages:
   /semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
-
-  /semver@7.3.7:
-    resolution: {integrity: sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      lru-cache: 6.0.0
-    dev: false
 
   /semver@7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}

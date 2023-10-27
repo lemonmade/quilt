@@ -126,3 +126,97 @@ export async function targetsSupportModules(targets: readonly string[]) {
 
   return targets.every((target) => esmBrowsers.has(target));
 }
+
+const BROWSESLIST_BROWSER_TO_MDN_BROWSER = new Map([
+  ['and_chr', 'chrome_android'],
+  ['and_ff', 'firefox_android'],
+  ['and_qq', 'qq_android'],
+  ['and_uc', 'uc_android'],
+  ['android', 'webview_android'],
+  ['chrome', 'chrome'],
+  ['edge', 'edge'],
+  ['edge_mob', 'edge_mobile'],
+  ['firefox', 'firefox'],
+  ['ie', 'ie'],
+  ['ios_saf', 'safari_ios'],
+  ['node', 'nodejs'],
+  ['opera', 'opera'],
+  ['safari', 'safari'],
+  ['samsung', 'samsunginternet_android'],
+]);
+
+// Roughly adapted from https://github.com/webhintio/hint/blob/main/packages/utils-compat-data/src/browsers.ts
+export async function rollupGenerateOptionsForBrowsers(
+  browsers: readonly string[],
+) {
+  const [{default: semver}, {default: mdn}] = await Promise.all([
+    import('semver'),
+    import('@mdn/browser-compat-data', {
+      assert: {type: 'json'},
+    }) as Promise<any>,
+  ]);
+
+  const arrowFunctionsSupport =
+    mdn.javascript.functions.arrow_functions.__compat.support;
+  const constBindingsSupport = mdn.javascript.statements.const.__compat.support;
+  const objectShorthandSupport =
+    mdn.javascript.grammar.shorthand_object_literals.__compat.support;
+  const symbolsSupport = mdn.javascript.builtins.Symbol.__compat.support;
+
+  let arrowFunctions = true;
+  let constBindings = true;
+  let objectShorthand = true;
+  let symbols = true;
+
+  const isSupported = (
+    browser: string,
+    version: import('semver').SemVer,
+    supportList: any,
+  ) => {
+    const supportedVersionDetails = supportList[browser];
+    if (supportedVersionDetails == null) return false;
+
+    const supportedVersion = semver.coerce(
+      supportedVersionDetails.version_added,
+    );
+    if (supportedVersion == null) return false;
+
+    return semver.gte(version, supportedVersion);
+  };
+
+  for (const browser of browsers) {
+    const [name, version] = browser.split(' ');
+
+    const semverVersion = semver.coerce(version);
+    if (semverVersion == null) continue;
+
+    const mdnBrowser = BROWSESLIST_BROWSER_TO_MDN_BROWSER.get(name!);
+    if (mdnBrowser == null) continue;
+
+    arrowFunctions &&= isSupported(
+      mdnBrowser,
+      semverVersion,
+      arrowFunctionsSupport,
+    );
+    constBindings &&= isSupported(
+      mdnBrowser,
+      semverVersion,
+      constBindingsSupport,
+    );
+    objectShorthand &&= isSupported(
+      mdnBrowser,
+      semverVersion,
+      objectShorthandSupport,
+    );
+    symbols &&= isSupported(mdnBrowser, semverVersion, symbolsSupport);
+  }
+
+  return {
+    preset: 'es2015',
+    arrowFunctions,
+    constBindings,
+    objectShorthand,
+    reservedNamesAsProps: objectShorthand,
+    symbols,
+  } satisfies import('rollup').GeneratedCodeOptions;
+}

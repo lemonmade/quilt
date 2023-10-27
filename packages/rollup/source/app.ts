@@ -26,6 +26,7 @@ import {
   getBrowserGroups,
   getBrowserGroupTargetDetails,
   getBrowserGroupRegularExpressions,
+  rollupGenerateOptionsForBrowsers,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
@@ -153,9 +154,7 @@ export interface AppBrowserAssetsOptions {
       };
 }
 
-export interface AppServerOptions
-  extends AppBaseOptions,
-    Pick<RollupNodePluginOptions, 'bundle'> {
+export interface AppServerOptions extends AppBaseOptions {
   /**
    * The entry module for this app’s server. By default, this module must export
    * a `RequestRouter` object as its default export, which will be wrapped in
@@ -181,16 +180,42 @@ export interface AppServerOptions
   format?: 'request-router' | 'custom';
 
   /**
-   * Whether to minify the JavaScript outputs for your server.
+   * Customizes the assets created for your application.
+   */
+  assets?: Pick<AppBrowserAssetsOptions, 'baseURL' | 'inline'>;
+
+  /**
+   * Customizes the output files created for your server.
+   */
+  output?: AppServerOutputOptions;
+}
+
+export interface AppServerOutputOptions
+  extends Pick<RollupNodePluginOptions, 'bundle'> {
+  /**
+   * Whether to minify assets created for this server.
    *
    * @default false
    */
   minify?: boolean;
 
   /**
-   * Customizes the assets created for your application.
+   * Whether to add a hash to the output files for your server. You can set
+   * this to `true`, which includes a hash for all files, `false`, which never
+   * includes a hash, or `'async-only'`, which only includes a hash for files
+   * that are loaded asynchronously (that is, your entry file will not have a
+   * hash, but any files it loads will).
+   *
+   * @default 'async-only'
    */
-  assets?: Pick<AppBrowserAssetsOptions, 'baseURL' | 'inline'>;
+  hash?: boolean | 'async-only';
+
+  /**
+   * What module format to use for the server output.
+   *
+   * @default 'esmodules'
+   */
+  format?: 'esmodules' | 'esm' | 'es' | 'commonjs' | 'cjs';
 }
 
 const require = createRequire(import.meta.url);
@@ -445,6 +470,9 @@ export async function quiltAppBrowser({
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
       chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       manualChunks: createManualChunksSorter(),
+      generatedCode: await rollupGenerateOptionsForBrowsers(
+        browserGroup.browsers,
+      ),
     },
   } satisfies RollupOptions;
 }
@@ -456,14 +484,19 @@ export async function quiltAppServer({
   entry,
   format = 'request-router',
   graphql = true,
-  minify = false,
-  bundle,
   assets,
+  output,
 }: AppServerOptions = {}) {
   const root = resolveRoot(rootPath);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
+
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
+
+  const bundle = output?.bundle;
+  const minify = output?.minify ?? false;
+  const hash = output?.hash ?? 'async-only';
+  const outputFormat = output?.format ?? 'esmodules';
 
   const [
     {visualizer},
@@ -600,10 +633,15 @@ export async function quiltAppServer({
       defaultWarn(warning);
     },
     output: {
-      // format: isESM ? 'esm' : 'systemjs',
-      format: 'esm',
+      format:
+        outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
       dir: path.resolve(`build/server`),
-      entryFileNames: 'server.js',
+      entryFileNames: `server${hash === true ? `.[hash]` : ''}.js`,
+      chunkFileNames: `[name]${
+        hash === true || hash === 'async-only' ? `.[hash]` : ''
+      }.js`,
+      assetFileNames: `[name]${hash === true ? `.[hash]` : ''}.[ext]`,
+      generatedCode: 'es2015',
     },
   } satisfies RollupOptions;
 }

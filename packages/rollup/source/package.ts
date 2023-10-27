@@ -14,6 +14,10 @@ import {
   type RollupNodePluginOptions,
 } from './shared/rollup.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
+import {
+  getBrowserGroupTargetDetails,
+  rollupGenerateOptionsForBrowsers,
+} from './shared/browserslist.ts';
 
 export interface PackageBaseOptions
   extends Pick<RollupNodePluginOptions, 'bundle'> {
@@ -169,11 +173,13 @@ export async function quiltPackageESModules({
   const outputDirectory = path.resolve(root, 'build/esm');
   const hasExecutables = Object.keys(executable).length > 0;
 
-  const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
-    import('./features/source-code.ts'),
-    getNodePlugins({bundle}),
-    loadPackageJSON(root),
-  ]);
+  const [{sourceCode}, nodePlugins, packageJSON, browserGroup] =
+    await Promise.all([
+      import('./features/source-code.ts'),
+      getNodePlugins({bundle}),
+      loadPackageJSON(root),
+      getBrowserGroupTargetDetails({name: 'default'}, {root}),
+    ]);
 
   const resolvedEntries =
     entries ?? (await sourceEntriesForPackage(root, packageJSON));
@@ -203,12 +209,17 @@ export async function quiltPackageESModules({
     plugins.push(graphql({manifest: false}));
   }
 
+  const generatedCode = await rollupGenerateOptionsForBrowsers(
+    browserGroup.browsers,
+  );
+
   const output: OutputOptions[] = [
     {
       format: 'esm',
       dir: outputDirectory,
       entryFileNames: `[name].mjs`,
       assetFileNames: `[name].[ext]`,
+      generatedCode,
       // We only want to preserve the original directory structure if there
       // are actual package entries.
       ...(hasEntries
@@ -228,6 +239,7 @@ export async function quiltPackageESModules({
       assetFileNames: `[name].[ext]`,
       preserveModules: true,
       preserveModulesRoot: source.root,
+      generatedCode,
     });
   }
 
@@ -345,6 +357,7 @@ export async function quiltPackageESNext({
       dir: outputDirectory,
       entryFileNames: `[name].esnext`,
       assetFileNames: `[name].[ext]`,
+      generatedCode: 'es2015',
     },
   } satisfies RollupOptions;
 

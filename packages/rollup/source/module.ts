@@ -11,6 +11,7 @@ import {
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 import {
   getBrowserGroupTargetDetails,
+  rollupGenerateOptionsForBrowsers,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
 import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
@@ -76,10 +77,10 @@ export async function quiltModule({
   const hash = assets?.hash ?? 'async-only';
   const bundle = assets?.bundle ?? true;
 
-  const browserTarget = await getBrowserGroupTargetDetails(assets?.targets, {
+  const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
     root,
   });
-  const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
+  const targetFilenamePart = browserGroup.name ? `.${browserGroup.name}` : '';
 
   const [
     {visualizer},
@@ -105,8 +106,8 @@ export async function quiltModule({
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
-    sourceCode({mode, targets: browserTarget.browsers}),
-    esnext({mode, targets: browserTarget.browsers}),
+    sourceCode({mode, targets: browserGroup.browsers}),
+    esnext({mode, targets: browserGroup.browsers}),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),
   ];
 
@@ -159,6 +160,9 @@ export async function quiltModule({
       assetFileNames: `[name]${targetFilenamePart}${
         hash === true ? `.[hash]` : ''
       }.[ext]`,
+      generatedCode: await rollupGenerateOptionsForBrowsers(
+        browserGroup.browsers,
+      ),
     },
   } satisfies RollupOptions;
 }

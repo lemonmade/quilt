@@ -218,6 +218,7 @@ export async function quiltServer({
         hash === true || hash === 'async-only' ? `.[hash]` : ''
       }.js`,
       assetFileNames: `[name]${hash === true ? `.[hash]` : ''}.[ext]`,
+      generatedCode: 'es2015',
     },
   } satisfies RollupOptions;
 }
