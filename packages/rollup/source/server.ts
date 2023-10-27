@@ -14,7 +14,7 @@ import type {MagicModuleEnvOptions} from './features/env.ts';
 import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
-export interface ServerOptions extends Pick<RollupNodePluginOptions, 'bundle'> {
+export interface ServerOptions {
   /**
    * The root directory containing the source code for your application.
    */
@@ -57,14 +57,54 @@ export interface ServerOptions extends Pick<RollupNodePluginOptions, 'bundle'> {
   env?: MagicModuleEnvOptions;
 
   /**
+   * Controls how the server outputs are generated.
+   */
+  output?: ServerOutputOptions;
+
+  /**
+   * The port that the server will listen on when it runs. This only applies
+   * when you use the `request-router` format — if you use the `custom` format,
+   * you are responsible for starting the server yourself.
+   *
+   * If you do not provide a value here, the server will listen for requests on
+   * the port specified by `process.env.NODE_ENV`.
+   */
+  port?: number | string;
+
+  /**
+   * The host that the server will listen on when it runs. This only applies
+   * when you use the `request-router` format — if you use the `custom` format,
+   * you are responsible for starting the server yourself.
+   */
+  host?: string;
+}
+
+export interface ServerOutputOptions
+  extends Pick<RollupNodePluginOptions, 'bundle'> {
+  /**
    * Whether to minify assets created for this server.
    *
    * @default false
    */
   minify?: boolean;
-  port?: number | string;
-  host?: string;
+
+  /**
+   * Whether to add a hash to the output files for your server. You can set
+   * this to `true`, which includes a hash for all files, `false`, which never
+   * includes a hash, or `'async-only'`, which only includes a hash for files
+   * that are loaded asynchronously (that is, your entry file will not have a
+   * hash, but any files it loads will).
+   *
+   * @default 'async-only'
+   */
   hash?: boolean | 'async-only';
+
+  /**
+   * What module format to use for the server output.
+   *
+   * @default 'esmodules'
+   */
+  format?: 'esmodules' | 'esm' | 'es' | 'commonjs' | 'cjs';
 }
 
 export async function quiltServer({
@@ -73,16 +113,19 @@ export async function quiltServer({
   format = 'request-router',
   env,
   graphql = true,
-  bundle,
-  minify = false,
+  output,
   port,
   host,
-  hash = 'async-only',
 }: ServerOptions = {}) {
   const root = resolveRoot(rootPath);
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const outputDirectory = path.join(root, 'build/server');
+
+  const minify = output?.minify ?? false;
+  const bundle = output?.bundle;
+  const hash = output?.hash ?? 'async-only';
+  const outputFormat = output?.format ?? 'esmodules';
 
   const [
     {visualizer},
@@ -167,7 +210,8 @@ export async function quiltServer({
       defaultWarn(warning);
     },
     output: {
-      format: 'esm',
+      format:
+        outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
       dir: outputDirectory,
       entryFileNames: `server${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${

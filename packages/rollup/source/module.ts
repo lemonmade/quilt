@@ -1,8 +1,8 @@
 import * as path from 'path';
 import {Plugin, type RollupOptions} from 'rollup';
 import {glob} from 'glob';
-import {fileURLToPath} from 'url';
 
+import {resolveRoot} from './shared/path.ts';
 import {
   RollupNodePluginOptions,
   getNodePlugins,
@@ -15,7 +15,7 @@ import {
 } from './shared/browserslist.ts';
 import type {MagicModuleEnvOptions} from './features/env.ts';
 
-export interface ModuleOptions extends Pick<RollupNodePluginOptions, 'bundle'> {
+export interface ModuleOptions {
   /**
    * The root directory containing the source code for your application.
    */
@@ -49,7 +49,8 @@ export interface ModuleOptions extends Pick<RollupNodePluginOptions, 'bundle'> {
   assets?: ModuleAssetsOptions;
 }
 
-export interface ModuleAssetsOptions {
+export interface ModuleAssetsOptions
+  extends Pick<RollupNodePluginOptions, 'bundle'> {
   /**
    * Whether to minify assets created for this module.
    *
@@ -66,16 +67,15 @@ export async function quiltModule({
   env,
   assets,
   graphql = true,
-  bundle = true,
 }: ModuleOptions = {}) {
-  const root =
-    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
+  const root = resolveRoot(rootPath);
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const outputDirectory = path.join(root, 'build/assets');
 
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
+  const bundle = assets?.bundle ?? true;
 
   const browserTarget = await getBrowserGroupTargetDetails(assets?.targets, {
     root,

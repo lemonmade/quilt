@@ -11,7 +11,7 @@
 - [ ] Add development stuff
 - [x] ESNext target consumption
 - [ ] Make sure in-repo packages are aliased for dev, test, and build
-- [ ] Add support for non-ESM server
+- [x] Add support for non-ESM server
 - [x] Service stuff
 - [ ] App polyfills
 - [ ] Add back Preact aliasing
