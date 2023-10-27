@@ -56,6 +56,15 @@ export interface PackageBaseOptions
   entries?: Record<string, string>;
 
   /**
+   * Controls how React will be handled by your package. Setting this value
+   * to `preact` will cause Quilt to use `preact` as the JSX import source.
+   * Otherwise, `react` will be used as the import source.
+   *
+   * @default true
+   */
+  react?: boolean | 'react' | 'preact';
+
+  /**
    * Customizes the Rollup options used to build your package. This function
    * is called with the default options determined by Quilt, so you can override
    * them however you like. Alternatively, you can provide a static object of
@@ -125,6 +134,7 @@ export async function quiltPackage({
   entries,
   executable,
   bundle,
+  react,
   graphql = true,
   customize,
 }: PackageOptions = {}) {
@@ -139,6 +149,7 @@ export async function quiltPackage({
   const [esm, esnext] = await Promise.all([
     quiltPackageESModules({
       root,
+      react,
       graphql,
       entries: resolvedEntries,
       executable,
@@ -149,6 +160,7 @@ export async function quiltPackage({
     includeESNext
       ? quiltPackageESNext({
           root,
+          react,
           graphql,
           entries: resolvedEntries,
           bundle,
@@ -165,6 +177,7 @@ export async function quiltPackageESModules({
   commonjs = false,
   entries,
   executable = {},
+  react,
   bundle,
   graphql = true,
   customize,
@@ -189,7 +202,7 @@ export async function quiltPackageESModules({
 
   const plugins: Plugin[] = [
     ...nodePlugins,
-    sourceCode({mode: 'production'}),
+    sourceCode({mode: 'production', react}),
     removeBuildFiles(
       [
         'build/esm',
@@ -305,6 +318,7 @@ export async function quiltPackageESModules({
  */
 export async function quiltPackageESNext({
   root: rootPath = process.cwd(),
+  react,
   graphql = true,
   entries,
   bundle,
@@ -326,7 +340,7 @@ export async function quiltPackageESNext({
 
   const plugins: Plugin[] = [
     ...nodePlugins,
-    sourceCode({mode: 'production', babel: false}),
+    sourceCode({mode: 'production', babel: false, react}),
     removeBuildFiles(['build/esnext'], {root}),
   ];
 

@@ -36,21 +36,21 @@ interface Context {
   renderer: ReactTestRenderer;
 }
 
-const {render, createRender, rendered, destroyAll} = createEnvironment<Context>(
-  {
-    act,
-    mount(tree) {
-      const renderer = createTestRenderer(tree);
-      return {renderer};
-    },
-    unmount({renderer}) {
-      renderer.unmount();
-    },
-    update(_, create, {renderer}) {
-      return createNodeFromTestInstance(renderer.root, create) as any;
-    },
+export const environment = createEnvironment<Context>({
+  act,
+  mount(tree) {
+    const renderer = createTestRenderer(tree);
+    return {renderer};
   },
-);
+  unmount({renderer}) {
+    renderer.unmount();
+  },
+  update(_, create, {renderer}) {
+    return createNodeFromTestInstance(renderer.root, create) as any;
+  },
+});
+
+const {render, createRender, rendered, destroyAll} = environment;
 
 type Create = Parameters<EnvironmentOptions<any>['update']>[1];
 

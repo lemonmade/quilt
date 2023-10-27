@@ -1,14 +1,15 @@
-# `@quilted/react-testing`
+# `@quilted/preact-testing`
 
 > Docs are still a work in progress!
 
-A library for testing React components with a focus on type safety and clear component boundaries.
+A library for testing Preact components with a focus on type safety and clear component boundaries.
 
 ## Table of contents
 
 - [Installation](#installation)
 - [Usage](#usage)
   - [DOM](#dom)
+  - [Preact](#preact)
   - [Test structure](#test-structure)
   - [Matchers](#matchers)
   - [API](#api)
@@ -31,15 +32,15 @@ A library for testing React components with a focus on type safety and clear com
 ## Installation
 
 ```bash
-$ yarn add @quilted/react-testing
+$ yarn add @quilted/preact-testing
 ```
 
 ## Usage
 
-This library supports testing React components in a number of different environments. The base `@quilted/react-testing` entry provides the [testing API](#api) built on top of [react-test-renderer](https://reactjs.org/docs/test-renderer.html). This version of the library can work with any React renderer, as the components are testable with just Node.
+This library supports testing React components in a number of different environments. The base `@quilted/preact-testing` entry provides the [testing API](#api) built on top of [react-test-renderer](https://reactjs.org/docs/test-renderer.html). This version of the library can work with any React renderer, as the components are testable with just Node.
 
 ```tsx
-import {render} from '@quilted/react-testing';
+import {render} from '@quilted/preact-testing';
 
 function PayNowButton({onPay}) {
   return <button onClick={onPay}>Pay</button>;
@@ -54,26 +55,9 @@ const payNowButton = render(<PayNowButton onPay={pay} />);
 payNowButton.find('button').trigger('onClick');
 ```
 
-### DOM
-
-The utilities show above work great for most React components. However, projects using `react-dom` can benefit from additional, DOM-related APIs by using the exports from `@quilted/react-testing/dom` instead. This library exposes an identical API to that of `@quilted/react-testing`, but adds additional properties and methods to the test objects to support more elegant assertions related to the actual DOM output of your components. These additional APIs are documented in the [API section](#api).
-
-This version of the library renders the components into the DOM. This means that you can test components that have DOM side effects. It also means that you must ensure the DOM globals are available, typically by using a test runner’s integration with libraries like [jsdom](https://github.com/jsdom/jsdom)).
-
-```tsx
-import {render} from '@quilted/react-testing/dom';
-
-function PayNowButton({onPay}) {
-  return <button onClick={onPay}>Pay</button>;
-}
-
-const payNowButton = render(<PayNowButton onPay={pay} />);
-const expectedContent = payNowButton.html.includes('<button>Pay</button>');
-```
-
 ### Test Structure
 
-A test using `@quilted/react-testing` tends to have the following structure:
+A test using `@quilted/preact-testing` tends to have the following structure:
 
 - [`render`](#render) your component with some props to get a "root" node
 - Optionally, perform some mutation, typically by invoking a rendered component’s props with [`trigger`](#trigger)
@@ -82,7 +66,7 @@ A test using `@quilted/react-testing` tends to have the following structure:
 The following example shows these steps in practice. This example uses [jest](https://jestjs.io/) as a test runner.
 
 ```tsx
-import {render} from '@quilted/react-testing';
+import {render} from '@quilted/preact-testing';
 import ClickCounter from './ClickCounter.tsx';
 
 describe('<ClickCounter />', () => {
@@ -97,11 +81,11 @@ describe('<ClickCounter />', () => {
 
 ### Matchers
 
-This library ships with a few useful custom matchers for Jest. To include these matchers, import `@quilted/react-testing/matchers` in any file that is included as part of the `setupFilesAfterEnv` option passed to Jest.
+This library ships with a few useful custom matchers for Jest. To include these matchers, import `@quilted/preact-testing/matchers` in any file that is included as part of the `setupFilesAfterEnv` option passed to Jest.
 
 ```tsx
-import '@quilted/react-testing/matchers';
-import {destroyAll} from '@quilted/react-testing';
+import '@quilted/preact-testing/matchers';
+import {destroyAll} from '@quilted/preact-testing';
 
 afterEach(() => {
   destroyAll();
@@ -111,7 +95,7 @@ afterEach(() => {
 This will allow you to use matchers such as [`toContainReactText`](#toContainReactText) or [`toContainReactComponent`](#toContainReactComponent) on your tree.
 
 ```tsx
-import {render} from '@quilted/react-testing';
+import {render} from '@quilted/preact-testing';
 import ClickCounter from './ClickCounter.tsx';
 import LinkComponent from './LinkComponent.tsx';
 
@@ -132,11 +116,11 @@ describe('<ClickCounter />', () => {
 });
 ```
 
-Additionally, this library provides DOM-specific matchers, like [`toContainReactHTML`](#toContainReactHTML), from the `@quilted/react-testing/dom-matchers` entrypoint.
+Additionally, this library provides DOM-specific matchers, like [`toContainReactHTML`](#toContainReactHTML), from the `@quilted/preact-testing/dom-matchers` entrypoint.
 
 ```tsx
-import '@quilted/react-testing/matchers';
-import '@quilted/react-testing/dom-matchers';
+import '@quilted/preact-testing/matchers';
+import '@quilted/preact-testing/dom-matchers';
 
 // In a test...
 
@@ -198,7 +182,7 @@ It is possible to extend a custom render function with additional logic. This ca
 Additionally, a new option is available for `extend()`: you can provide an `options` callback that receives as an argument the merged set of options, and must return a partial subset of those options to use as overrides. This can be used to extend a render function and provide default values for some options that do not otherwise have defaults, or to customize base options on the basis of your newly-added options.
 
 ```tsx
-import {createRender} from '@quilted/react-testing';
+import {createRender} from '@quilted/preact-testing';
 
 interface Options {
   pathname: string;
@@ -240,7 +224,7 @@ Whenever possible, you should use test on component boundaries using [`render()`
 
 ```ts
 import {useState} from 'react';
-import {render} from '@quilted/react-testing';
+import {render} from '@quilted/preact-testing';
 
 function useIncrementingNumber(initial: number) {
   const [currentNumber, setCurrentNumber] = useState(initial);
@@ -360,7 +344,7 @@ This getter returns the type of component. For DOM nodes, this will be a string 
 
 ##### <a name="isDOM"></a> `isDOM: boolean`
 
-> Only available from `@quilted/react-testing/dom` or `@quilted/react-testing/preact`
+> Only available from `@quilted/preact-testing/dom` or `@quilted/preact-testing/preact`
 
 This getter returns whether the node represents a DOM node.
 
@@ -378,13 +362,13 @@ This getter returns an array of `Node`s or `string`s that represent everything b
 
 ##### <a name="domNodes"></a> `domNodes: HTMLNode[]`
 
-> Only available from `@quilted/react-testing/dom` or `@quilted/react-testing/preact`
+> Only available from `@quilted/preact-testing/dom` or `@quilted/preact-testing/preact`
 
 Returns all DOM nodes that are directly rendered by this component (that is, not rendered by descendant components).
 
 ##### <a name="domNode"></a> `domNode: HTMLNode | null`
 
-> Only available from `@quilted/react-testing/dom` or `@quilted/react-testing/preact`
+> Only available from `@quilted/preact-testing/dom` or `@quilted/preact-testing/preact`
 
 Like `domNodes`, but expects only 1 or 0 DOM nodes to be direct children. If more than 1 DOM node is a child, this method throws an error. If no DOM nodes are children, this method returns `null`.
 
@@ -410,11 +394,11 @@ expect(wrapper.find(MyComponent).prop('firstName')).toBe('Uhh');
 
 ##### <a name="text"></a> `text: string`
 
-Returns the text content of the component. In the default `@quilted/react-testing` version of the library, this is the result of concatenating together all React text elements in the tree. In the DOM testing libraries, this is the string of text you would receive from mapping over each DOM node rendered as a descendant of this component and taking its `textContent`.
+Returns the text content of the component. In the default `@quilted/preact-testing` version of the library, this is the result of concatenating together all React text elements in the tree. In the DOM testing libraries, this is the string of text you would receive from mapping over each DOM node rendered as a descendant of this component and taking its `textContent`.
 
 ##### <a name="html"></a> `html: string`
 
-> Only available from `@quilted/react-testing/dom` or `@quilted/react-testing/preact`
+> Only available from `@quilted/preact-testing/dom` or `@quilted/preact-testing/preact`
 
 Returns the HTML content of the component. This is the string of text you would receive from mapping over each DOM node rendered as a descendant of this component and taking its `innerHTML`.
 
@@ -632,7 +616,7 @@ expect(myComponent.find('div')).toHaveReactProps({
 
 #### <a name="toHaveReactDataProps"></a> `.toHaveReactDataProps(data: object)`
 
-> Only available from `@quilted/react-testing/dom-matchers`
+> Only available from `@quilted/preact-testing/dom-matchers`
 
 Like `.toHaveReactProps()`, but is not strictly typed. This makes it more suitable for asserting on `data-` attributes, which can’t be strongly typed.
 
@@ -704,7 +688,7 @@ expect(myComponent).toContainReactText('Hello world!');
 
 #### <a name="toContainReactHTML"></a> `.toContainReactHTML(text: string)`
 
-> Only available from `@quilted/react-testing/dom-matchers`
+> Only available from `@quilted/preact-testing/dom-matchers`
 
 Asserts that the rendered output of the component contains the passed string as HTML (that is, the text is included in what you would get by calling `outerHTML` on all root DOM nodes rendered by the component).
 

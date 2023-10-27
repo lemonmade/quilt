@@ -1,14 +1,15 @@
-import type {ComponentType, Context as ReactContext} from 'react';
+import type {ComponentType, Context as ReactContext} from 'preact';
 
-import type {PropsFor} from '../types.ts';
+import type {PropsFor} from './types.ts';
 
-import {toHaveReactProps} from './props.ts';
+import {toContainReactHTML, toHaveReactDataProps} from './matchers/dom.ts';
+import {toHaveReactProps} from './matchers/props.ts';
 import {
   toContainReactComponent,
   toContainReactComponentTimes,
-} from './components.ts';
-import {toContainReactText} from './text.ts';
-import {toProvideReactContext} from './context.ts';
+} from './matchers/components.ts';
+import {toContainReactText} from './matchers/text.ts';
+import {toProvideReactContext} from './matchers/context.ts';
 
 // @see https://vitest.dev/guide/extending-matchers.html
 
@@ -33,4 +34,14 @@ export const matchers = {
   toContainReactComponentTimes,
   toProvideReactContext,
   toContainReactText,
+};
+
+export interface CustomDOMMatchers<R = unknown> {
+  toContainReactHTML(text: string): R;
+  toHaveReactDataProps(data: {[key: string]: string}): R;
+}
+
+export const domMatchers = {
+  toContainReactHTML,
+  toHaveReactDataProps,
 };

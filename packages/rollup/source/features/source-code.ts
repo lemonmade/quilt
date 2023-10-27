@@ -9,9 +9,11 @@ const require = createRequire(import.meta.url);
 export function sourceCode({
   mode,
   targets,
+  react = true,
   babel: useBabel = true,
 }: {
   mode?: 'development' | 'production';
+  react?: boolean | 'react' | 'preact';
   targets?: readonly string[];
   babel?:
     | boolean
@@ -33,6 +35,7 @@ export function sourceCode({
   }
 
   const babelOverride = typeof useBabel === 'boolean' ? {} : useBabel;
+  const useBuiltIns = babelOverride.useBuiltIns;
 
   let babelOptions: RollupBabelInputPluginOptions = {
     envName: mode,
@@ -44,7 +47,7 @@ export function sourceCode({
         require.resolve('@babel/preset-react'),
         {
           runtime: 'automatic',
-          importSource: 'react',
+          importSource: typeof react === 'string' ? react : 'react',
           development: mode === 'development',
         },
       ],
@@ -53,8 +56,8 @@ export function sourceCode({
         {
           bugfixes: true,
           shippedProposals: true,
-          corejs: 3,
-          useBuiltIns: babelOverride?.useBuiltIns,
+          useBuiltIns,
+          corejs: useBuiltIns ? 3 : undefined,
           // I thought I wanted this, but it seems to break the `targets` option
           // passed as a root argument.
           // ignoreBrowserslistConfig: targets != null,

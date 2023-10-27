@@ -1,9 +1,4 @@
-import type {
-  ComponentType,
-  ComponentPropsWithoutRef,
-  HTMLAttributes,
-  Context,
-} from 'react';
+import type {ComponentType, Context} from 'preact';
 
 export type PlainObject = Record<string, any>;
 export type EmptyObject = Record<string, never>;
@@ -18,11 +13,11 @@ export type MergeObjects<T, U> = T extends EmptyObject
 export type PropsFor<T extends string | ComponentType<any>> = T extends string
   ? T extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[T]
-    : T extends ComponentType<any>
-    ? ComponentPropsWithoutRef<T>
-    : HTMLAttributes<T>
-  : T extends ComponentType<any>
-  ? ComponentPropsWithoutRef<T>
+    : T extends ComponentType<infer Props>
+    ? Props
+    : never
+  : T extends ComponentType<infer Props>
+  ? Props
   : never;
 
 export type FunctionKeys<T> = {
@@ -41,9 +36,7 @@ export type DeepPartial<T> = T extends (infer U)[]
     }
   : T;
 
-export type Predicate<Extensions extends PlainObject> = (
-  node: Node<unknown, Extensions>,
-) => boolean;
+export type Predicate = (node: Node<unknown>) => boolean;
 
 type MaybeFunctionReturnType<T> = T extends (...args: any[]) => any
   ? ReturnType<T>
@@ -52,11 +45,11 @@ type MaybeFunctionParameters<T> = T extends (...args: any[]) => any
   ? Parameters<T>
   : [];
 
-export interface RootApi<
+export interface Root<
   Props,
   Context extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
-> {
+> extends Node<Props> {
   readonly context: Context;
   readonly actions: Actions;
   readonly signal: AbortSignal;
@@ -68,36 +61,41 @@ export interface RootApi<
   // forceUpdate(): void;
 }
 
-export interface NodeApi<Props, Extensions extends PlainObject = EmptyObject> {
+export interface Node<Props> {
   readonly props: Props;
   readonly type: string | ComponentType<any> | null;
   readonly instance: any;
-  readonly children: (Node<unknown, Extensions> | string)[];
-  readonly descendants: (Node<unknown, Extensions> | string)[];
+  readonly children: (Node<unknown> | string)[];
+  readonly descendants: (Node<unknown> | string)[];
   readonly text: string;
+  readonly isDOM: boolean;
+  readonly domNodes: HTMLElement[];
+  readonly domNode: HTMLElement | null;
+  readonly html: string;
 
   prop<K extends keyof Props>(key: K): Props[K];
+  data(key: string): string | undefined;
 
   is<Type extends ComponentType<any> | string>(
     type: Type,
-  ): this is Node<PropsFor<Type>, Extensions>;
+  ): this is Node<PropsFor<Type>>;
 
   find<Type extends ComponentType<any> | string>(
     type: Type,
     props?: Partial<PropsFor<Type>>,
-  ): Node<PropsFor<Type>, Extensions> | null;
+  ): Node<PropsFor<Type>> | null;
   findAll<Type extends ComponentType<any> | string>(
     type: Type,
     props?: Partial<PropsFor<Type>>,
-  ): Node<PropsFor<Type>, Extensions>[];
+  ): Node<PropsFor<Type>>[];
   findWhere<Type extends ComponentType<any> | string = ComponentType<unknown>>(
-    predicate: Predicate<Extensions>,
-  ): Node<PropsFor<Type>, Extensions> | null;
+    predicate: Predicate,
+  ): Node<PropsFor<Type>> | null;
   findAllWhere<
     Type extends ComponentType<any> | string = ComponentType<unknown>,
   >(
-    predicate: Predicate<Extensions>,
-  ): Node<PropsFor<Type>, Extensions>[];
+    predicate: Predicate,
+  ): Node<PropsFor<Type>>[];
   findContext<Type>(context: Context<Type>): Type | undefined;
 
   trigger<K extends FunctionKeys<Props>>(
@@ -110,31 +108,8 @@ export interface NodeApi<Props, Extensions extends PlainObject = EmptyObject> {
   toString(): string;
 }
 
-export type Node<
-  Props,
-  Extensions extends PlainObject = EmptyObject,
-> = EmptyObject extends Extensions
-  ? NodeApi<Props, Extensions>
-  : NodeApi<Props, Extensions> & Omit<Extensions, keyof Root<any>>;
-
-export type Root<
-  Props,
-  Context extends PlainObject = EmptyObject,
-  Actions extends PlainObject = EmptyObject,
-  Extensions extends PlainObject = EmptyObject,
-> = Node<Props, Extensions> & RootApi<Props, Context, Actions>;
-
 export interface DebugOptions {
   all?: boolean;
   depth?: number;
   verbosity?: number;
-}
-
-export interface HTMLNodeExtensions {
-  readonly isDOM: boolean;
-  readonly domNodes: HTMLElement[];
-  readonly domNode: HTMLElement | null;
-  readonly html: string;
-  readonly text: string;
-  data(key: string): string | undefined;
 }

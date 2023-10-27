@@ -6,14 +6,14 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import type {Node, HTMLNodeExtensions} from '../types.ts';
+import type {Node} from '../types.ts';
 
 import {toHaveReactProps} from './props.ts';
 import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
 
 export function toContainReactHTML<Props>(
   this: MatcherState,
-  node: Node<Props, HTMLNodeExtensions>,
+  node: Node<Props>,
   text: string,
 ) {
   assertIsNode(node, {

@@ -31,6 +31,7 @@
     {"path": "./packages/http"},
     {"path": "./packages/localize"},
     {"path": "./packages/performance"},
+    {"path": "./packages/preact-testing"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react"},
     {"path": "./packages/react-assets"},

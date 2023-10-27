@@ -1,11 +1,11 @@
 {
-  "name": "@quilted/react-testing",
+  "name": "@quilted/preact-testing",
   "type": "module",
-  "version": "0.5.32",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
-    "directory": "packages/react-testing"
+    "directory": "packages/preact-testing"
   },
   "publishConfig": {
     "access": "public",
@@ -19,18 +19,6 @@
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
     },
-    "./dom": {
-      "types": "./build/typescript/implementations/react-dom.d.ts",
-      "quilt:source": "./source/implementations/react-dom.ts",
-      "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
-      "import": "./build/esm/implementations/react-dom.mjs"
-    },
-    "./environment": {
-      "types": "./build/typescript/implementations/react-dom.d.ts",
-      "quilt:source": "./source/implementations/react-dom.ts",
-      "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
-      "import": "./build/esm/implementations/react-dom.mjs"
-    },
     "./matchers": {
       "types": "./build/typescript/matchers.d.ts",
       "quilt:source": "./source/matchers.ts",
@@ -41,12 +29,6 @@
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
-      "dom": [
-        "./build/typescript/implementations/react-dom.d.ts"
-      ],
-      "environment": [
-        "./build/typescript/matchers/dom.d.ts"
-      ],
       "matchers": [
         "./build/typescript/matchers/index.d.ts"
       ]
@@ -62,28 +44,13 @@
   "devDependencies": {
     "@types/react-test-renderer": "^18.0.0",
     "expect": "^29.0.0",
-    "preact": "^10.17.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-test-renderer": "^18.2.0"
+    "preact": "^10.17.0"
   },
   "peerDependencies": {
-    "preact": "^10.17.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-test-renderer": "^18.0.0"
+    "preact": "^10.17.0"
   },
   "peerDependenciesMeta": {
     "preact": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    },
-    "react-test-renderer": {
       "optional": true
     }
   },
