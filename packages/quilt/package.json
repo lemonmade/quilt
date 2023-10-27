@@ -151,42 +151,6 @@
       "quilt:esnext": "./build/esnext/threads.esnext",
       "import": "./build/esm/threads.mjs"
     },
-    "./polyfills/base": {
-      "types": "./build/typescript/polyfills/base.d.ts",
-      "quilt:source": "./source/polyfills/base.ts",
-      "quilt:esnext": "./build/esnext/polyfills/base.esnext",
-      "import": "./build/esm/polyfills/base.mjs"
-    },
-    "./polyfills/crypto": {
-      "types": "./build/typescript/polyfills/crypto.d.ts",
-      "quilt:source": "./source/polyfills/crypto.ts",
-      "quilt:esnext": "./build/esnext/polyfills/crypto.esnext",
-      "import": "./build/esm/polyfills/crypto.mjs"
-    },
-    "./polyfills/fetch": {
-      "types": "./build/typescript/polyfills/fetch.d.ts",
-      "quilt:source": "./source/polyfills/fetch.ts",
-      "quilt:esnext": "./build/esnext/polyfills/fetch.esnext",
-      "import": "./build/esm/polyfills/fetch.mjs"
-    },
-    "./polyfills/fetch-get-set-cookie": {
-      "types": "./build/typescript/polyfills/fetch-get-set-cookie.d.ts",
-      "quilt:source": "./source/polyfills/fetch-get-set-cookie.ts",
-      "quilt:esnext": "./build/esnext/polyfills/fetch-get-set-cookie.esnext",
-      "import": "./build/esm/polyfills/fetch-get-set-cookie.mjs"
-    },
-    "./polyfills/abort-controller": {
-      "types": "./build/typescript/polyfills/abort-controller.d.ts",
-      "quilt:source": "./source/polyfills/abort-controller.ts",
-      "quilt:esnext": "./build/esnext/polyfills/abort-controller.esnext",
-      "import": "./build/esm/polyfills/abort-controller.mjs"
-    },
-    "./polyfills/noop": {
-      "types": "./build/typescript/polyfills/noop.d.ts",
-      "quilt:source": "./source/polyfills/noop.ts",
-      "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
-      "import": "./build/esm/polyfills/noop.mjs"
-    },
     "./modules": {
       "types": "./build/typescript/modules.d.ts",
       "quilt:source": "./source/modules.ts",
@@ -260,21 +224,6 @@
       "react/tools": [
         "./build/typescript/react/tools.d.ts"
       ],
-      "polyfills/base": [
-        "./build/typescript/polyfills/base.d.ts"
-      ],
-      "polyfills/fetch": [
-        "./build/typescript/polyfills/fetch.d.ts"
-      ],
-      "polyfills/fetch-get-set-cookie": [
-        "./build/typescript/polyfills/fetch-get-set-cookie.d.ts"
-      ],
-      "polyfills/crypto": [
-        "./build/typescript/polyfills/crypto.d.ts"
-      ],
-      "polyfills/noop": [
-        "./build/typescript/polyfills/noop.d.ts"
-      ],
       "modules": [
         "./build/typescript/modules.d.ts"
       ]
@@ -283,13 +232,7 @@
   "sideEffects": [
     "./source/global.ts",
     "./build/esnext/global.esnext",
-    "./build/esm/global.mjs",
-    "./source/polyfills/*.ts",
-    "./build/esnext/polyfills/*.esnext",
-    "./build/esm/polyfills/*.mjs",
-    "./source/graphql/testing/matchers.ts",
-    "./build/esnext/graphql/testing/matchers.esnext",
-    "./build/esm/graphql/testing/matchers.mjs"
+    "./build/esm/global.mjs"
   ],
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
@@ -299,7 +242,6 @@
     "@quilted/async": "^0.3.34",
     "@quilted/events": "^1.0.0",
     "@quilted/graphql": "^2.0.0",
-    "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^18.2.0",
     "@quilted/react-assets": "^0.0.6",
     "@quilted/react-async": "^0.3.43",

@@ -31,7 +31,6 @@
     {"path": "./packages/http"},
     {"path": "./packages/localize"},
     {"path": "./packages/performance"},
-    {"path": "./packages/polyfills"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react"},
     {"path": "./packages/react-assets"},

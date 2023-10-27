@@ -303,6 +303,7 @@ export async function quiltAppBrowser({
       mode,
       targets: browserGroup.browsers,
       babel: {
+        useBuiltIns: 'entry',
         options(options) {
           return {
             ...options,
@@ -837,7 +838,6 @@ const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
 ];
 
 const POLYFILL_TEST_STRINGS = [
-  '/node_modules/@quilted/polyfills/',
   '/node_modules/core-js/',
   '/node_modules/whatwg-fetch/',
   '/node_modules/regenerator-runtime/',

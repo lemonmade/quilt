@@ -21,7 +21,6 @@
 '@quilted/http': minor
 '@quilted/localize': minor
 '@quilted/performance': minor
-'@quilted/polyfills': minor
 '@quilted/preact-mini-compat': minor
 '@quilted/quilt': minor
 '@quilted/react-assets': minor

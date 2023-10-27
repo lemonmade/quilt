@@ -13,7 +13,7 @@
 - [ ] Make sure in-repo packages are aliased for dev, test, and build
 - [x] Add support for non-ESM server
 - [x] Service stuff
-- [ ] App polyfills
+- [x] App polyfills
 - [ ] Add back Preact aliasing
 - [ ] Allow passing of `env: 'production'` to rollup plugins
 - [ ] Re-enable app cleaning

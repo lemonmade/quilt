@@ -2,6 +2,7 @@ import {createRequire} from 'module';
 
 import babel, {type RollupBabelInputPluginOptions} from '@rollup/plugin-babel';
 import esbuild from 'rollup-plugin-esbuild';
+import type {Options as PresetEnvOptions} from '@babel/preset-env';
 
 const require = createRequire(import.meta.url);
 
@@ -15,6 +16,7 @@ export function sourceCode({
   babel?:
     | boolean
     | {
+        useBuiltIns?: PresetEnvOptions['useBuiltIns'];
         options?(
           options: RollupBabelInputPluginOptions,
         ): RollupBabelInputPluginOptions | void;
@@ -29,6 +31,8 @@ export function sourceCode({
       exclude: 'node_modules/**',
     });
   }
+
+  const babelOverride = typeof useBabel === 'boolean' ? {} : useBabel;
 
   let babelOptions: RollupBabelInputPluginOptions = {
     envName: mode,
@@ -47,9 +51,10 @@ export function sourceCode({
       [
         require.resolve('@babel/preset-env'),
         {
-          useBuiltIns: false,
           bugfixes: true,
           shippedProposals: true,
+          corejs: 3,
+          useBuiltIns: babelOverride?.useBuiltIns,
           // I thought I wanted this, but it seems to break the `targets` option
           // passed as a root argument.
           // ignoreBrowserslistConfig: targets != null,
@@ -80,9 +85,7 @@ export function sourceCode({
     ...(targets ? {targets: targets as string[]} : {}),
   };
 
-  if (typeof useBabel === 'object') {
-    babelOptions = useBabel.options?.(babelOptions) ?? babelOptions;
-  }
+  babelOptions = babelOverride.options?.(babelOptions) ?? babelOptions;
 
   return babel(babelOptions);
 }
