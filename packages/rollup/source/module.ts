@@ -13,7 +13,7 @@ import {
   getBrowserGroupTargetDetails,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
-import type {MagicModuleEnvOptions} from './features/env.ts';
+import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 
 export interface ModuleOptions {
   /**
@@ -41,7 +41,7 @@ export interface ModuleOptions {
   /**
    * Customizes the behavior of environment variables for your module.
    */
-  env?: MagicModuleEnvOptions;
+  env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
 
   /**
    * Customizes the assets created for your module.
@@ -69,8 +69,7 @@ export async function quiltModule({
   graphql = true,
 }: ModuleOptions = {}) {
   const root = resolveRoot(rootPath);
-  const mode =
-    (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+  const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
   const outputDirectory = path.join(root, 'build/assets');
 
   const minify = assets?.minify ?? true;
@@ -105,7 +104,7 @@ export async function quiltModule({
   const plugins: Plugin[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({...env, mode}),
+    magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: browserTarget.browsers}),
     esnext({mode, targets: browserTarget.browsers}),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),

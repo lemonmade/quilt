@@ -15,7 +15,7 @@
 - [x] Service stuff
 - [x] App polyfills
 - [ ] Add back Preact aliasing
-- [ ] Allow passing of `env: 'production'` to rollup plugins
+- [x] Allow passing of `env: 'production'` to rollup plugins
 - [ ] Re-enable app cleaning
 - [ ] Automatic detection of node engines
 

@@ -69,6 +69,12 @@ export interface MagicModuleEnvOptions {
     | {roots?: never; files?: string[]};
 }
 
+export function resolveEnvOption(
+  option?: MagicModuleEnvOptions['mode'] | MagicModuleEnvOptions,
+) {
+  return typeof option === 'string' ? {mode: option} : option ?? {};
+}
+
 export function magicModuleEnv({
   mode,
   dotenv = {roots: ['.', 'configuration']},

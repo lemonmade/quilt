@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import {glob} from 'glob';
-import {fileURLToPath} from 'url';
 import {createRequire} from 'module';
 
 import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
@@ -13,7 +12,7 @@ import {
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
 } from './constants.ts';
-import type {MagicModuleEnvOptions} from './features/env.ts';
+import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 
 import {multiline} from './shared/strings.ts';
 import {
@@ -66,7 +65,7 @@ export interface AppBaseOptions {
    * by passing the `browser.env`, and those passed during server-side rendering
    * by passing `server.env`.
    */
-  env?: MagicModuleEnvOptions;
+  env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
 }
 
 export interface AppOptions extends AppBaseOptions {
@@ -219,7 +218,10 @@ export async function quiltApp({
         app,
         graphql,
         ...browserOptions,
-        env: {...env, ...browserOptions?.env},
+        env: {
+          ...resolveEnvOption(env),
+          ...resolveEnvOption(browserOptions?.env),
+        },
         assets: {
           ...assets,
           ...browserOptions?.assets,
@@ -236,7 +238,7 @@ export async function quiltApp({
       app,
       graphql,
       ...serverOptions,
-      env: {...env, ...serverOptions?.env},
+      env: {...resolveEnvOption(env), ...resolveEnvOption(serverOptions?.env)},
       assets: {...assets, ...serverOptions?.assets},
     }),
   );
@@ -253,10 +255,8 @@ export async function quiltAppBrowser({
   module,
   graphql = true,
 }: AppBrowserOptions = {}) {
-  const root =
-    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
-  const mode =
-    (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+  const root = resolveRoot(rootPath);
+  const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
@@ -298,7 +298,7 @@ export async function quiltAppBrowser({
     ...nodePlugins,
     systemJS({minify}),
     replaceProcessEnv({mode}),
-    magicModuleEnv({...env, mode}),
+    magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({
       mode,
       targets: browserGroup.browsers,
@@ -441,6 +441,7 @@ export async function quiltAppBrowser({
 }
 
 export async function quiltAppServer({
+  root: rootPath = process.cwd(),
   app,
   env,
   entry,
@@ -450,9 +451,8 @@ export async function quiltAppServer({
   bundle,
   assets,
 }: AppServerOptions = {}) {
-  const root = process.cwd();
-  const mode =
-    (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+  const root = resolveRoot(rootPath);
+  const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
 
@@ -483,7 +483,7 @@ export async function quiltAppServer({
   const plugins: Plugin[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({...env, mode}),
+    magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({
       mode,
       targets: ['current node'],

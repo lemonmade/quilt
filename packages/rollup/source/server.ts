@@ -10,7 +10,7 @@ import {
 import {resolveRoot} from './shared/path.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 import {magicModuleRequestRouterEntry} from './features/request-router.ts';
-import type {MagicModuleEnvOptions} from './features/env.ts';
+import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
@@ -54,7 +54,7 @@ export interface ServerOptions {
   /**
    * Customizes the behavior of environment variables for your module.
    */
-  env?: MagicModuleEnvOptions;
+  env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
 
   /**
    * Controls how the server outputs are generated.
@@ -155,7 +155,7 @@ export async function quiltServer({
   const plugins: Plugin[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({...env, mode}),
+    magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: ['current node']}),
     esnext({mode, targets: ['current node']}),
     removeBuildFiles(['build/server', 'build/reports'], {root}),
