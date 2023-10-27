@@ -137,6 +137,7 @@ export interface AppBrowserAssetsOptions {
   baseURL?: string;
   targets?: BrowserGroupTargetSelection;
   priority?: number;
+  clean?: boolean;
 
   /**
    * Controls how assets like images are inlined into your bundles JavaScript.
@@ -225,6 +226,9 @@ export async function quiltApp({
         assets: {
           ...assets,
           ...browserOptions?.assets,
+          // Only clean on the first build, otherwise each subsequent build removes
+          // assets from the previous ones.
+          clean: index === 0,
           priority: index,
           targets: hasMultipleBrowserGroups ? {name, browsers} : browsers,
         },
@@ -347,10 +351,15 @@ export async function quiltAppBrowser({
         chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       },
     }),
-    // removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
-    //   root,
-    // }),
   ];
+
+  if (assets?.clean ?? true) {
+    plugins.push(
+      removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
+        root,
+      }),
+    );
+  }
 
   const tsconfigAliases = await createTSConfigAliasPlugin();
 
