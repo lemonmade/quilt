@@ -26,16 +26,22 @@
       "import": "./build/esm/implementations/react-dom.mjs"
     },
     "./environment": {
-      "types": "./build/typescript/implementations/react-dom.d.ts",
-      "quilt:source": "./source/implementations/react-dom.ts",
-      "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
-      "import": "./build/esm/implementations/react-dom.mjs"
+      "types": "./build/typescript/environment.d.ts",
+      "quilt:source": "./source/environment.ts",
+      "quilt:esnext": "./build/esnext/environment.esnext",
+      "import": "./build/esm/environment.mjs"
     },
     "./matchers": {
       "types": "./build/typescript/matchers.d.ts",
       "quilt:source": "./source/matchers.ts",
       "quilt:esnext": "./build/esnext/matchers.esnext",
       "import": "./build/esm/matchers.mjs"
+    },
+    "./preact": {
+      "types": "./build/typescript/implementations/react-dom.d.ts",
+      "quilt:source": "./source/preact.ts",
+      "quilt:esnext": "./build/esnext/preact.esnext",
+      "import": "./build/esm/preact.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -57,6 +63,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
+    "@quilted/preact-testing": "^0.1.0",
     "jest-matcher-utils": "^27.0.0"
   },
   "devDependencies": {

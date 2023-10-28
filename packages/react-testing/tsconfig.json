@@ -5,6 +5,5 @@
     "outDir": "build/typescript"
   },
   "include": ["source"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
-  "references": []
+  "references": [{"path": "../preact-testing"}]
 }

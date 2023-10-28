@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import {describe, it, expect, vi, type MockInstance} from 'vitest';
 import {createRender} from '@quilted/react-testing';
 

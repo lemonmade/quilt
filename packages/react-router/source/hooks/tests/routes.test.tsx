@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import type {PropsWithChildren} from 'react';
 

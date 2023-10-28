@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import {describe, it, expect, vi} from 'vitest';
 
 import {render, TestRouter} from '../../tests/utilities.tsx';

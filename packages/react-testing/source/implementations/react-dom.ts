@@ -52,7 +52,7 @@ export type {
   ActionsOption,
 };
 
-const environment = createEnvironment<Context, HTMLNodeExtensions>({
+export const environment = createEnvironment<Context, HTMLNodeExtensions>({
   act,
   mount(tree) {
     const element = document.createElement('div');
