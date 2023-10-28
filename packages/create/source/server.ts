@@ -29,12 +29,12 @@ import {addToPackageManagerWorkspaces} from './shared/package-manager.ts';
 
 type Arguments = ReturnType<typeof getArgv>;
 
-export async function createService() {
+export async function createServer() {
   const argv = getArgv();
 
   if (argv['--help']) {
     printHelp({
-      kind: 'service',
+      kind: 'server',
       packageManager: argv['--package-manager']?.toLowerCase(),
     });
     return;
@@ -48,7 +48,7 @@ export async function createService() {
   const createAsMonorepo =
     !inWorkspace &&
     (await getCreateAsMonorepo(argv, {
-      type: 'service',
+      type: 'server',
       default: false,
     }));
   const setupExtras = await getExtrasToSetup(argv, {inWorkspace});
@@ -73,7 +73,7 @@ export async function createService() {
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
-  const serviceTemplate = loadTemplate('service-basic');
+  const serverTemplate = loadTemplate('server-basic');
   const workspaceTemplate = loadTemplate('workspace');
 
   // If we aren’t already in a workspace, copy the workspace files over, which
@@ -126,10 +126,10 @@ export async function createService() {
     } else {
       const [projectPackageJson, projectTSConfig, workspacePackageJson] =
         await Promise.all([
-          serviceTemplate
+          serverTemplate
             .read('package.json')
             .then((content) => JSON.parse(content)),
-          serviceTemplate
+          serverTemplate
             .read('tsconfig.json')
             .then((content) => JSON.parse(content)),
           workspaceTemplate
@@ -167,7 +167,7 @@ export async function createService() {
     }
   }
 
-  await serviceTemplate.copy(serviceDirectory, (file) => {
+  await serverTemplate.copy(serviceDirectory, (file) => {
     // If we are in a monorepo, we can use all the template files as they are
     if (file === 'tsconfig.json') {
       return partOfMonorepo;
@@ -182,7 +182,7 @@ export async function createService() {
     return file !== 'package.json';
   });
 
-  let quiltProject = await serviceTemplate.read('quilt.project.ts');
+  let quiltProject = await serverTemplate.read('quilt.project.ts');
 
   if (!partOfMonorepo) {
     quiltProject = quiltProject
@@ -202,13 +202,13 @@ export async function createService() {
 
   await outputRoot.write(
     path.join(serviceDirectory, entry),
-    await serviceTemplate.read('service.ts'),
+    await serverTemplate.read('service.ts'),
   );
 
   if (partOfMonorepo) {
     // Write the app’s package.json (the root one was already created)
     const projectPackageJson = JSON.parse(
-      await serviceTemplate.read('package.json'),
+      await serverTemplate.read('package.json'),
     );
 
     adjustPackageJson(projectPackageJson, {name, entry});

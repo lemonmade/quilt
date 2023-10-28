@@ -35,7 +35,7 @@ export async function getCreateAsMonorepo(
   {
     type,
     default: defaultCreateAsMonorepo = true,
-  }: {type: 'app' | 'package' | 'module' | 'service'; default?: boolean},
+  }: {type: 'app' | 'package' | 'module' | 'server'; default?: boolean},
 ) {
   let createAsMonorepo: boolean;
 

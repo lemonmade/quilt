@@ -1,3 +1,3 @@
-import {quiltPackageESModules} from '@quilted/rollup';
+import {quiltPackage} from '@quilted/rollup/package';
 
-export default quiltPackageESModules();
+export default quiltPackage();
