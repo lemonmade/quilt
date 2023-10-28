@@ -477,6 +477,22 @@ importers:
         specifier: ^5.16.0
         version: 5.16.8
 
+  packages/preact-testing:
+    dependencies:
+      jest-matcher-utils:
+        specifier: ^27.0.0
+        version: 27.5.1
+    devDependencies:
+      '@types/react-test-renderer':
+        specifier: ^18.0.0
+        version: 18.0.0
+      expect:
+        specifier: ^29.0.0
+        version: 29.7.0
+      preact:
+        specifier: ^10.17.0
+        version: 10.17.0
+
   packages/prettier: {}
 
   packages/quilt:
