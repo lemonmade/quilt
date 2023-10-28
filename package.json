@@ -8,7 +8,7 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "create.from-source": "node --no-warnings --experimental-specifier-resolution=node --loader ./scripts/esbuild-module-loader.js ./packages/create/source/index.ts",
+    "create": "tsx --conditions quilt:source ./packages/create/source/cli.ts",
     "test": "vitest",
     "test.unit": "vitest --config configuration/vite.unit.config.ts",
     "test.e2e": "vitest --config configuration/vite.e2e.config.ts",
