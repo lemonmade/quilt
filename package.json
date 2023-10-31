@@ -40,6 +40,7 @@
     "@quilted/rollup": "workspace:^",
     "@quilted/stylelint-config": "workspace:^",
     "@quilted/typescript": "workspace:^",
+    "@quilted/vite": "workspace:^",
     "@types/common-tags": "^1.8.1",
     "@types/node": "^18.17.0",
     "@types/react": "^18.0.0",
@@ -55,6 +56,7 @@
     "source-map-support": "^0.5.0",
     "tsx": "^3.14.0",
     "typescript": "^5.2.0",
+    "vite": "^4.5.0",
     "vitest": "^0.34.6"
   },
   "prettier": "@quilted/prettier",

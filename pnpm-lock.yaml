@@ -50,6 +50,9 @@ importers:
       '@quilted/typescript':
         specifier: workspace:^
         version: link:packages/typescript
+      '@quilted/vite':
+        specifier: workspace:^
+        version: link:packages/vite
       '@types/common-tags':
         specifier: ^1.8.1
         version: 1.8.1
@@ -95,6 +98,9 @@ importers:
       typescript:
         specifier: ^5.2.0
         version: 5.2.2
+      vite:
+        specifier: ^4.5.0
+        version: 4.5.0(@types/node@18.17.0)
       vitest:
         specifier: ^0.34.6
         version: 0.34.6(jsdom@22.1.0)
@@ -845,6 +851,9 @@ importers:
 
   packages/react-testing:
     dependencies:
+      '@quilted/preact-testing':
+        specifier: ^0.1.0
+        version: link:../preact-testing
       jest-matcher-utils:
         specifier: ^27.0.0
         version: 27.5.1
@@ -1076,6 +1085,22 @@ importers:
   packages/useful-react-types: {}
 
   packages/useful-types: {}
+
+  packages/vite:
+    dependencies:
+      '@prefresh/vite':
+        specifier: ^2.4.1
+        version: 2.4.1(preact@10.17.0)(vite@4.5.0)
+      '@quilted/rollup':
+        specifier: ^0.1.19
+        version: link:../rollup
+    devDependencies:
+      vite:
+        specifier: ^4.5.0
+        version: 4.5.0(@types/node@18.17.0)
+      vitest:
+        specifier: ^0.34.6
+        version: 0.34.6(jsdom@22.1.0)
 
   packages/workers:
     dependencies:
@@ -3086,7 +3111,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm64@0.19.0:
@@ -3112,7 +3136,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm@0.19.0:
@@ -3138,7 +3161,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-x64@0.19.0:
@@ -3164,7 +3186,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.19.0:
@@ -3190,7 +3211,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-x64@0.19.0:
@@ -3216,7 +3236,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.19.0:
@@ -3242,7 +3261,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-x64@0.19.0:
@@ -3268,7 +3286,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.19.0:
@@ -3294,7 +3311,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm@0.19.0:
@@ -3320,7 +3336,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.19.0:
@@ -3346,7 +3361,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-loong64@0.19.0:
@@ -3372,7 +3386,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.19.0:
@@ -3398,7 +3411,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ppc64@0.19.0:
@@ -3424,7 +3436,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.19.0:
@@ -3450,7 +3461,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-s390x@0.19.0:
@@ -3476,7 +3486,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.19.0:
@@ -3502,7 +3511,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/netbsd-x64@0.19.0:
@@ -3528,7 +3536,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.19.0:
@@ -3554,7 +3561,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/sunos-x64@0.19.0:
@@ -3580,7 +3586,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.19.0:
@@ -3606,7 +3611,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-ia32@0.19.0:
@@ -3632,7 +3636,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.19.0:
@@ -4260,6 +4263,39 @@ packages:
       preact: 10.17.0
     dev: false
 
+  /@prefresh/babel-plugin@0.5.0:
+    resolution: {integrity: sha512-joAwpkUDwo7ZqJnufXRGzUb+udk20RBgfA8oLPBh5aJH2LeStmV1luBfeJTztPdyCscC2j2SmZ/tVxFRMIxAEw==}
+    dev: false
+
+  /@prefresh/core@1.5.2(preact@10.17.0):
+    resolution: {integrity: sha512-A/08vkaM1FogrCII5PZKCrygxSsc11obExBScm3JF1CryK2uDS3ZXeni7FeKCx1nYdUkj4UcJxzPzc1WliMzZA==}
+    peerDependencies:
+      preact: ^10.0.0
+    dependencies:
+      preact: 10.17.0
+    dev: false
+
+  /@prefresh/utils@1.2.0:
+    resolution: {integrity: sha512-KtC/fZw+oqtwOLUFM9UtiitB0JsVX0zLKNyRTA332sqREqSALIIQQxdUCS1P3xR/jT1e2e8/5rwH6gdcMLEmsQ==}
+    dev: false
+
+  /@prefresh/vite@2.4.1(preact@10.17.0)(vite@4.5.0):
+    resolution: {integrity: sha512-vthWmEqu8TZFeyrBNc9YE5SiC3DVSzPgsOCp/WQ7FqdHpOIJi7Z8XvCK06rBPOtG4914S52MjG9Ls22eVAiuqQ==}
+    peerDependencies:
+      preact: ^10.4.0
+      vite: '>=2.0.0'
+    dependencies:
+      '@babel/core': 7.23.2
+      '@prefresh/babel-plugin': 0.5.0
+      '@prefresh/core': 1.5.2(preact@10.17.0)
+      '@prefresh/utils': 1.2.0
+      '@rollup/pluginutils': 4.2.1
+      preact: 10.17.0
+      vite: 4.5.0(@types/node@18.17.0)
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@remix-run/web-blob@3.0.4:
     resolution: {integrity: sha512-AfegzZvSSDc+LwnXV+SwROTrDtoLiPxeFW+jxgvtDAnkuCX1rrzmVJ6CzqZ1Ai0bVfmJadkG5GxtAfYclpPmgw==}
     dependencies:
@@ -4386,6 +4422,14 @@ packages:
       '@rollup/pluginutils': 5.0.5(rollup@4.1.4)
       magic-string: 0.27.0
       rollup: 4.1.4
+    dev: false
+
+  /@rollup/pluginutils@4.2.1:
+    resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
+    engines: {node: '>= 8.0.0'}
+    dependencies:
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
     dev: false
 
   /@rollup/pluginutils@5.0.5(rollup@4.1.4):
@@ -6058,7 +6102,6 @@ packages:
       '@esbuild/win32-arm64': 0.18.20
       '@esbuild/win32-ia32': 0.18.20
       '@esbuild/win32-x64': 0.18.20
-    dev: true
 
   /esbuild@0.19.0:
     resolution: {integrity: sha512-i7i8TP4vuG55bKeLyqqk5sTPu1ZjPH3wkcLvAj/0X/222iWFo3AJUYRKjbOoY6BWFMH3teizxHEdV9Su5ESl0w==}
@@ -8437,7 +8480,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: true
 
   /preact-render-to-string@6.1.0(preact@10.17.0):
     resolution: {integrity: sha512-/AsKU4Q4R8r4aKwwNQrkQQNUVEDmTeZr6IwesDffobFRPcTk4dSQrfo1VOcXjtlcUss6QYEe7JShUGbQIhaw+A==}
@@ -8833,7 +8875,6 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /rollup@4.1.4:
     resolution: {integrity: sha512-U8Yk1lQRKqCkDBip/pMYT+IKaN7b7UesK3fLSTuHBoBJacCE+oBqo/dfG/gkUdQNNB2OBmRP98cn2C2bkYZkyw==}
@@ -9854,7 +9895,6 @@ packages:
       rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vitest@0.34.6(jsdom@22.1.0):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}

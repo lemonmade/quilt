@@ -59,6 +59,7 @@
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
+    {"path": "./packages/vite"},
     {"path": "./packages/workers"}
   ]
 }
