@@ -27,7 +27,7 @@
     },
     "./environment": {
       "types": "./build/typescript/environment.d.ts",
-      "quilt:source": "./source/environment.ts",
+      "quilt:source": "./source/environment.tsx",
       "quilt:esnext": "./build/esnext/environment.esnext",
       "import": "./build/esm/environment.mjs"
     },

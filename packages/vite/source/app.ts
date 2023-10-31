@@ -33,6 +33,8 @@ export async function quiltApp({
   graphql: useGraphQL = true,
 }: AppBaseOptions = {}) {
   const [{default: prefresh}, {graphql}] = await Promise.all([
+    // @ts-expect-error This package is not set up correctly for ESM projects
+    // @see https://github.com/preactjs/prefresh/issues/518
     import('@prefresh/vite'),
     import('@quilted/rollup/features/graphql'),
   ]);
