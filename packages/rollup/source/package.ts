@@ -186,9 +186,10 @@ export async function quiltPackageESModules({
   const outputDirectory = path.resolve(root, 'build/esm');
   const hasExecutables = Object.keys(executable).length > 0;
 
-  const [{sourceCode}, nodePlugins, packageJSON, browserGroup] =
+  const [{sourceCode}, {esnext}, nodePlugins, packageJSON, browserGroup] =
     await Promise.all([
       import('./features/source-code.ts'),
+      import('./features/esnext.ts'),
       getNodePlugins({bundle}),
       loadPackageJSON(root),
       getBrowserGroupTargetDetails({name: 'default'}, {root}),
@@ -203,6 +204,7 @@ export async function quiltPackageESModules({
   const plugins: Plugin[] = [
     ...nodePlugins,
     sourceCode({mode: 'production', react}),
+    esnext({mode: 'production', babel: false}),
     removeBuildFiles(
       [
         'build/esm',
@@ -327,8 +329,9 @@ export async function quiltPackageESNext({
   const root = resolveRoot(rootPath);
   const outputDirectory = path.join(root, 'build/esnext');
 
-  const [{sourceCode}, nodePlugins, packageJSON] = await Promise.all([
+  const [{sourceCode}, {esnext}, nodePlugins, packageJSON] = await Promise.all([
     import('./features/source-code.ts'),
+    import('./features/esnext.ts'),
     getNodePlugins({bundle}),
     loadPackageJSON(root),
   ]);
@@ -341,6 +344,7 @@ export async function quiltPackageESNext({
   const plugins: Plugin[] = [
     ...nodePlugins,
     sourceCode({mode: 'production', babel: false, react}),
+    esnext({mode: 'production', babel: false}),
     removeBuildFiles(['build/esnext'], {root}),
   ];
 
