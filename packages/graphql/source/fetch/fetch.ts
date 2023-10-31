@@ -3,16 +3,27 @@ import type {
   GraphQLResult,
   GraphQLOperation,
   GraphQLAnyOperation,
-  GraphQLFetchOptions,
+  GraphQLOperationOptions,
 } from '../types.ts';
 
 import {GraphQLFetchRequest} from './request.ts';
 
 /**
+ * A function that can fetch GraphQL queries and mutations over HTTP.
+ */
+export interface GraphQLFetch<Extensions = Record<string, unknown>> {
+  <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
+    operation: GraphQLAnyOperation<Data, Variables>,
+    options?: GraphQLFetchOptions<Data, Variables>,
+    context?: GraphQLFetchContext,
+  ): Promise<GraphQLResult<Data, Extensions>>;
+}
+
+/**
  * Options for creating a `GraphQLFetch` function that performs GraphQL
  * operations over HTTP.
  */
-export interface GraphQLFetchOverHTTPCreateOptions
+export interface GraphQLFetchCreateOptions
   extends Pick<RequestInit, 'credentials'> {
   /**
    * A customized version of `fetch()` to use when making HTTP requests.
@@ -106,14 +117,14 @@ export interface GraphQLFetchOverHTTPCreateOptions
 /**
  * Options that can be passed to a single fetch of a GraphQL operation.
  */
-export interface GraphQLFetchOverHTTPOptions<Data, Variables>
-  extends GraphQLFetchOptions<Data, Variables>,
-    Partial<GraphQLFetchOverHTTPCreateOptions> {}
+export interface GraphQLFetchOptions<Data, Variables>
+  extends GraphQLOperationOptions<Data, Variables>,
+    Partial<GraphQLFetchCreateOptions> {}
 
 /**
  * The context used by HTTP-based `GraphQLFetch` functions.
  */
-export interface GraphQLFetchOverHTTPContext {
+export interface GraphQLFetchContext {
   /**
    * The `Request` that was made to the GraphQL HTTP server.
    */
@@ -133,7 +144,7 @@ const EMPTY_OBJECT = {} as any;
  * send GraphQL requests to a specific URL and return the parsed response.
  *
  * @example
- * const fetchGraphQL = createGraphQLFetchOverHTTP({
+ * const fetchGraphQL = createGraphQLFetch({
  *   url: '/graphql',
  * });
  *
@@ -141,9 +152,7 @@ const EMPTY_OBJECT = {} as any;
  *   query { my { name } }
  * `);
  */
-export function createGraphQLFetchOverHTTP<
-  Extensions = Record<string, unknown>,
->({
+export function createGraphQLFetch<Extensions = Record<string, unknown>>({
   url,
   method: defaultMethod,
   headers: defaultHeaders,
@@ -152,15 +161,12 @@ export function createGraphQLFetchOverHTTP<
   credentials,
   customizeRequest,
   fetch: defaultFetch = globalThis.fetch,
-}: GraphQLFetchOverHTTPCreateOptions) {
-  const fetchGraphQL = async function fetchGraphQL<
-    Data = Record<string, unknown>,
-    Variables = Record<string, unknown>,
-  >(
-    operation: GraphQLAnyOperation<Data, Variables>,
-    options: GraphQLFetchOverHTTPOptions<Data, Variables> = EMPTY_OBJECT,
-    context?: GraphQLFetchOverHTTPContext,
-  ): Promise<GraphQLResult<Data, Extensions>> {
+}: GraphQLFetchCreateOptions) {
+  const fetchGraphQL: GraphQLFetch<Extensions> = async function fetchGraphQL(
+    operation,
+    options = EMPTY_OBJECT,
+    context,
+  ) {
     const variables = options?.variables as any;
     const resolvedOperation = toGraphQLOperation(operation, {
       name: options?.operationName,
@@ -234,7 +240,7 @@ export function createGraphQLFetchOverHTTP<
       };
     }
 
-    return (await response.json()) as GraphQLResult<Data, Extensions>;
+    return (await response.json()) as GraphQLResult<any, Extensions>;
   };
 
   return fetchGraphQL;

@@ -1,1 +1,1 @@
-export {useGraphQLFetch} from './hooks/use-graphql-fetch.ts';
+export {useGraphQLFetch, useGraphQLRun} from './hooks/use-graphql-fetch.ts';

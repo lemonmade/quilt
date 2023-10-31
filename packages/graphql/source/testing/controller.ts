@@ -2,7 +2,7 @@ import {type TypedQueryDocumentNode} from 'graphql';
 
 import {normalizeOperation} from '../ast.ts';
 import type {
-  GraphQLFetch,
+  GraphQLRun,
   GraphQLAnyOperation,
   GraphQLOperation,
   GraphQLResult,
@@ -137,7 +137,7 @@ export class GraphQLController {
    * Performs a GraphQL requests against the current mocks registered
    * with this controller.
    */
-  fetch: GraphQLFetch = ((operation, {variables, signal} = {}) => {
+  run: GraphQLRun = ((operation, {variables, signal} = {}) => {
     const normalizedOperation = normalizeOperation(operation);
     const request: GraphQLControllerRequest<any, any> = {
       ...normalizedOperation,
@@ -188,25 +188,25 @@ export class GraphQLController {
     this.pending.add(pendingRequest);
 
     return promise;
-  }) satisfies GraphQLFetch;
+  }) satisfies GraphQLRun;
 
   /**
    * Performs a GraphQL request against the current mocks registered
    * with this controller.
    */
-  run = this.fetch;
+  fetch = this.run;
 
   /**
    * Performs a GraphQL query against the current mocks registered
    * with this controller.
    */
-  query = this.fetch;
+  query = this.run;
 
   /**
    * Performs a GraphQL query against the current mocks registered
    * with this controller.
    */
-  mutate = this.fetch;
+  mutate = this.run;
 }
 
 /**

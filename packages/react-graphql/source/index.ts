@@ -1,4 +1,4 @@
 export * from '@quilted/graphql';
 
 export {GraphQLContext} from './context.tsx';
-export {useGraphQLFetch} from './hooks.ts';
+export {useGraphQLFetch, useGraphQLRun} from './hooks.ts';

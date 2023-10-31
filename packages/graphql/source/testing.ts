@@ -5,7 +5,7 @@ export type {
   GraphQLData,
   GraphQLVariables,
   GraphQLDeepPartialData,
-  GraphQLFetch,
+  GraphQLRun,
   GraphQLResult,
   GraphQLError,
   GraphQLVariableOptions,

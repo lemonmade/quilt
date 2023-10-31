@@ -121,13 +121,13 @@ export type GraphQLResult<
  * type-safe access to this additional context, you can extend the `GraphQLFetchContext`
  * type from this library.
  */
-export interface GraphQLFetch<
+export interface GraphQLRun<
   Context = Record<string, unknown>,
   Extensions = Record<string, unknown>,
 > {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLAnyOperation<Data, Variables>,
-    options?: GraphQLFetchOptions<Data, Variables>,
+    options?: GraphQLOperationOptions<Data, Variables>,
     context?: Context,
   ): Promise<GraphQLResult<Data, Extensions>>;
 }
@@ -174,7 +174,7 @@ export interface GraphQLStreamingResult<Data, Extensions>
  * (which yields the combined result as incremental patches are streamed
  * from the server).
  */
-export type GraphQLStreamingFetchResult<Data, Extensions> = Promise<
+export type GraphQLStreamingOperationResult<Data, Extensions> = Promise<
   GraphQLResult<Data, Extensions>
 > &
   AsyncIterableIterator<GraphQLStreamingResult<Data, Extensions>>;
@@ -193,22 +193,22 @@ export type GraphQLStreamingFetchResult<Data, Extensions> = Promise<
  * type-safe access to this additional context, you can extend the `GraphQLFetchContext`
  * type from this library.
  */
-export interface GraphQLStreamingFetch<
+export interface GraphQLStreamingRun<
   Context = Record<string, unknown>,
   Extensions = Record<string, unknown>,
 > {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLAnyOperation<Data, Variables>,
-    options?: GraphQLStreamingFetchOptions<Data, Variables>,
+    options?: GraphQLStreamingOperationOptions<Data, Variables>,
     context?: Context,
-  ): GraphQLStreamingFetchResult<Data, Extensions>;
+  ): GraphQLStreamingOperationResult<Data, Extensions>;
 }
 
 /**
  * Options that can be provided to an individual `fetch()` of a
  * GraphQL operation.
  */
-export interface GraphQLFetchOptions<_Data, Variables>
+export interface GraphQLOperationOptions<_Data, Variables>
   extends GraphQLVariableOptions<Variables> {
   /**
    * An abort signal that can be used to cancel the request.
@@ -226,8 +226,8 @@ export interface GraphQLFetchOptions<_Data, Variables>
  * Options that can be provided to an individual `fetch()` of a
  * GraphQL operation.
  */
-export interface GraphQLStreamingFetchOptions<Data, Variables>
-  extends GraphQLFetchOptions<Data, Variables> {}
+export interface GraphQLStreamingOperationOptions<Data, Variables>
+  extends GraphQLOperationOptions<Data, Variables> {}
 
 /**
  * A helper type that resolves to an object with a `variables` property that

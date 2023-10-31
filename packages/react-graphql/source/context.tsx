@@ -1,17 +1,22 @@
 import type {PropsWithChildren} from 'react';
-import type {GraphQLFetch} from '@quilted/graphql';
+import type {GraphQLRun} from '@quilted/graphql';
 import {createOptionalContext} from '@quilted/react-utilities';
 
-export const GraphQLFetchContext = createOptionalContext<GraphQLFetch>();
+export const GraphQLRunContext = createOptionalContext<GraphQLRun>();
 
 export interface Props {
-  fetch: GraphQLFetch;
+  run?: GraphQLRun;
+  fetch?: GraphQLRun;
 }
 
-export function GraphQLContext({fetch, children}: PropsWithChildren<Props>) {
+export function GraphQLContext({
+  run,
+  fetch,
+  children,
+}: PropsWithChildren<Props>) {
   return (
-    <GraphQLFetchContext.Provider value={fetch}>
+    <GraphQLRunContext.Provider value={run ?? fetch}>
       {children}
-    </GraphQLFetchContext.Provider>
+    </GraphQLRunContext.Provider>
   );
 }

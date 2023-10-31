@@ -2,34 +2,45 @@ import {toGraphQLOperation} from '../operation.ts';
 import type {
   GraphQLResult,
   GraphQLAnyOperation,
-  GraphQLStreamingFetchResult,
+  GraphQLStreamingOperationResult,
   GraphQLStreamingResult,
 } from '../types.ts';
 
 import {GraphQLFetchRequest} from './request.ts';
 import type {
-  GraphQLFetchOverHTTPOptions,
-  GraphQLFetchOverHTTPContext,
-  GraphQLFetchOverHTTPCreateOptions,
+  GraphQLFetchOptions,
+  GraphQLFetchContext,
+  GraphQLFetchCreateOptions,
 } from './fetch.ts';
+
+/**
+ * A function that can fetch GraphQL queries and mutations over HTTP using
+ * multipart streaming.
+ */
+export interface GraphQLStreamingFetch<Extensions = Record<string, unknown>> {
+  <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
+    operation: GraphQLAnyOperation<Data, Variables>,
+    options?: GraphQLStreamingFetchOptions<Data, Variables>,
+    context?: GraphQLStreamingFetchContext,
+  ): GraphQLStreamingOperationResult<Data, Extensions>;
+}
 
 /**
  * The context used by HTTP-based `GraphQLStreamingFetch` functions.
  */
-export interface GraphQLStreamingFetchOverHTTPContext
-  extends GraphQLFetchOverHTTPContext {}
+export interface GraphQLStreamingFetchContext extends GraphQLFetchContext {}
 
 /**
  * Options for creating a `GraphQLStreamingFetch` function.
  */
-export interface GraphQLStreamingFetchOverHTTPCreateOptions
-  extends GraphQLFetchOverHTTPCreateOptions {}
+export interface GraphQLStreamingFetchCreateOptions
+  extends GraphQLFetchCreateOptions {}
 
 /**
  * Options that can be passed to a single fetch of a GraphQL operation.
  */
-export interface GraphQLStreamingFetchOverHTTPOptions<Data, Variables>
-  extends GraphQLFetchOverHTTPOptions<Data, Variables> {}
+export interface GraphQLStreamingFetchOptions<Data, Variables>
+  extends GraphQLFetchOptions<Data, Variables> {}
 
 const STREAMING_OPERATION_REGEX = /@(stream|defer)\b/i;
 const EMPTY_OBJECT = {} as any;
@@ -47,7 +58,7 @@ const EMPTY_OBJECT = {} as any;
  * will be resolved with the final, combined GraphQL result.
  *
  * @example
- * const fetchGraphQL = createGraphQLStreamingFetchOverHTTP({
+ * const fetchGraphQL = createGraphQLStreamingFetch({
  *   url: '/graphql',
  * });
  *
@@ -59,7 +70,7 @@ const EMPTY_OBJECT = {} as any;
  *   // ...
  * }
  */
-export function createGraphQLStreamingFetchOverHTTP<
+export function createGraphQLStreamingFetch<
   Extensions = Record<string, unknown>,
 >({
   url,
@@ -70,15 +81,12 @@ export function createGraphQLStreamingFetchOverHTTP<
   credentials,
   customizeRequest,
   fetch: defaultFetch = globalThis.fetch,
-}: GraphQLStreamingFetchOverHTTPCreateOptions) {
+}: GraphQLStreamingFetchCreateOptions) {
   const fetchGraphQL = function fetchGraphQL<Data, Variables>(
     operation: GraphQLAnyOperation<Data, Variables>,
-    options: GraphQLStreamingFetchOverHTTPOptions<
-      Data,
-      Variables
-    > = EMPTY_OBJECT,
-    context?: GraphQLStreamingFetchOverHTTPContext,
-  ): GraphQLStreamingFetchResult<Data, Extensions> {
+    options: GraphQLStreamingFetchOptions<Data, Variables> = EMPTY_OBJECT,
+    context?: GraphQLStreamingFetchContext,
+  ): GraphQLStreamingOperationResult<Data, Extensions> {
     let resolve: (value: GraphQLResult<Data, Extensions>) => void;
     let reject: (error: Error) => void;
 
@@ -96,7 +104,7 @@ export function createGraphQLStreamingFetchOverHTTP<
         resolve = promiseResolve;
         reject = promiseReject;
       },
-    ) as GraphQLStreamingFetchResult<Data, Extensions>;
+    ) as GraphQLStreamingOperationResult<Data, Extensions>;
 
     Object.defineProperties(promise, {
       next: {

@@ -50,10 +50,10 @@ export function GraphQLTesting({
   children,
   controller,
 }: PropsWithChildren<{controller?: GraphQLController}>) {
-  const fetch = useMemo(
-    () => (controller ?? new GraphQLController()).fetch,
+  const run = useMemo(
+    () => (controller ?? new GraphQLController()).run,
     [controller],
   );
 
-  return <GraphQLContext fetch={fetch}>{children}</GraphQLContext>;
+  return <GraphQLContext run={run}>{children}</GraphQLContext>;
 }
