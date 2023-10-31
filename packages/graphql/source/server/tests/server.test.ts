@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 
 import {graphql as runGraphQL, type GraphQLSchema} from 'graphql';
 

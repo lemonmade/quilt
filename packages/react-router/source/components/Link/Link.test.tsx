@@ -1,4 +1,6 @@
-import {describe, it, expect} from '@quilted/testing';
+// @vitest-environment jsdom
+
+import {describe, it, expect, vi} from 'vitest';
 
 import {render, TestRouter} from '../../tests/utilities.tsx';
 
@@ -12,7 +14,7 @@ describe('<Link />', () => {
 
   it('creates an anchor from a relative `to`', () => {
     const link = render(<Link to="my-product" />, {
-      router: new TestRouter('/products'),
+      router: new TestRouter('https://example.com/products'),
     });
 
     expect(link).toContainReactComponent('a', {href: '/products/my-product'});
@@ -26,7 +28,7 @@ describe('<Link />', () => {
 
   describe('onClick()', () => {
     it('calls the onClick() prop with the DOM event', () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const event = createClickEvent();
 
       const link = render(<Link to="/" onClick={onClick} />);
@@ -37,8 +39,8 @@ describe('<Link />', () => {
 
     it('calls router.navigate() with the `to` prop for normal clicks', () => {
       const to = '/';
-      const router = new TestRouter();
-      const navigate = jest.spyOn(router, 'navigate');
+      const router = new TestRouter('https://example.com');
+      const navigate = vi.spyOn(router, 'navigate');
 
       const link = render(<Link to={to} />, {router});
       link.find('a')!.trigger('onClick', createClickEvent());
@@ -47,8 +49,8 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the link is explicitly marked as `external`', () => {
-      const router = new TestRouter();
-      const navigate = jest.spyOn(router, 'navigate');
+      const router = new TestRouter('https://example.com');
+      const navigate = vi.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" external />, {router});
       link.find('a')!.trigger('onClick', createClickEvent());
@@ -57,8 +59,8 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when `onClick()` calls `event.preventDefault()`', () => {
-      const router = new TestRouter();
-      const navigate = jest.spyOn(router, 'navigate');
+      const router = new TestRouter('https://example.com');
+      const navigate = vi.spyOn(router, 'navigate');
 
       const link = render(
         <Link to="/" onClick={(event) => event.preventDefault()} />,
@@ -70,8 +72,8 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the shift key is pressed', () => {
-      const router = new TestRouter();
-      const navigate = jest.spyOn(router, 'navigate');
+      const router = new TestRouter('https://example.com');
+      const navigate = vi.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({shiftKey: true}));
@@ -80,8 +82,8 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the meta key is pressed', () => {
-      const router = new TestRouter();
-      const navigate = jest.spyOn(router, 'navigate');
+      const router = new TestRouter('https://example.com');
+      const navigate = vi.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({metaKey: true}));
@@ -90,8 +92,8 @@ describe('<Link />', () => {
     });
 
     it('does not call router.navigate() when the control key is pressed', () => {
-      const router = new TestRouter();
-      const navigate = jest.spyOn(router, 'navigate');
+      const router = new TestRouter('https://example.com');
+      const navigate = vi.spyOn(router, 'navigate');
 
       const link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({ctrlKey: true}));
@@ -115,7 +117,7 @@ function createClickEvent({
     get defaultPrevented() {
       return defaultPrevented;
     },
-    preventDefault: jest.fn(() => {
+    preventDefault: vi.fn(() => {
       defaultPrevented = true;
     }),
   };

@@ -31,7 +31,7 @@ export function toHaveReactProps<Props>(
   }
 
   const pass = Object.keys(props).every((key) =>
-    this.equals((props as any)[key], (node.props as any)[key]),
+    Object.is((props as any)[key], (node.props as any)[key]),
   );
 
   const message = pass

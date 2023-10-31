@@ -10,7 +10,11 @@
     "**/*.test.tsx",
     "tests/**/*"
   ],
-  "exclude": ["tests/e2e/output/**/*", "packages/create/templates/**/*"],
+  "exclude": [
+    "tests/e2e/output/**/*",
+    "packages/create/templates/**/*",
+    "packages/preact-testing/source/**/*"
+  ],
   "references": [
     {"path": "./integrations/apollo"},
     {"path": "./integrations/aws"},
@@ -20,18 +24,18 @@
     {"path": "./packages/assets"},
     {"path": "./packages/async"},
     {"path": "./packages/async"},
+    {"path": "./packages/babel"},
     {"path": "./packages/cli-kit"},
     {"path": "./packages/craft"},
     {"path": "./packages/create"},
     {"path": "./packages/create-app"},
-    {"path": "./packages/create-quilt-app"},
     {"path": "./packages/events"},
     {"path": "./packages/graphql"},
     {"path": "./packages/graphql-tools"},
     {"path": "./packages/http"},
     {"path": "./packages/localize"},
     {"path": "./packages/performance"},
-    {"path": "./packages/polyfills"},
+    {"path": "./packages/preact-testing"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react"},
     {"path": "./packages/react-assets"},
@@ -51,17 +55,15 @@
     {"path": "./packages/react-workers"},
     {"path": "./packages/request-router"},
     {"path": "./packages/rollup"},
-    {"path": "./packages/rollup-plugin-fix-commonjs-preserve-modules"},
     {"path": "./packages/routing"},
-    {"path": "./packages/sewing-kit"},
     {"path": "./packages/signals"},
-    {"path": "./packages/testing"},
     {"path": "./packages/threads"},
     {"path": "./packages/trpc"},
     {"path": "./packages/typescript"},
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
+    {"path": "./packages/vite"},
     {"path": "./packages/workers"}
   ]
 }

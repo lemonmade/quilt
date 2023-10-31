@@ -3,22 +3,22 @@
  */
 
 import {renderToString, renderToStaticMarkup} from 'react-dom/server';
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect, vi} from 'vitest';
 
 import {ServerAction} from '../ServerAction.tsx';
 import {extract} from '../server.tsx';
 
 describe('extract()', () => {
   it('calls actions', async () => {
-    const spy = jest.fn(() => undefined);
+    const spy = vi.fn(() => undefined);
     await extract(<ServerAction perform={spy} />);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('waits for actions to resolve', async () => {
     const {promise, resolve, resolved} = createResolvablePromise();
-    const spy = jest.fn(() => (resolved() ? promise : undefined));
-    const extractSpy = jest.fn();
+    const spy = vi.fn(() => (resolved() ? promise : undefined));
+    const extractSpy = vi.fn();
     const extractPromise = extract(<ServerAction perform={spy} />).then(
       extractSpy,
     );
@@ -37,7 +37,7 @@ describe('extract()', () => {
 
   it('calls betweenEachPass on each used kind', async () => {
     const {resolve, resolved} = createResolvablePromise();
-    const kind = {id: Symbol('id'), betweenEachPass: jest.fn()};
+    const kind = {id: Symbol('id'), betweenEachPass: vi.fn()};
     await extract(
       <ServerAction
         perform={() => (resolved() ? undefined : resolve())}
@@ -48,7 +48,7 @@ describe('extract()', () => {
   });
 
   it('calls afterEachPass on each used kind', async () => {
-    const kind = {id: Symbol('id'), afterEachPass: jest.fn()};
+    const kind = {id: Symbol('id'), afterEachPass: vi.fn()};
     await extract(<ServerAction perform={noop} kind={kind} />);
     expect(kind.afterEachPass).toHaveBeenCalledTimes(1);
   });
@@ -56,7 +56,7 @@ describe('extract()', () => {
   it('bails out if afterEachPass on any kind returns false', async () => {
     const kind = {
       id: Symbol('id'),
-      afterEachPass: jest.fn(() => Promise.resolve(false)),
+      afterEachPass: vi.fn(() => Promise.resolve(false)),
     };
 
     await extract(
@@ -70,7 +70,7 @@ describe('extract()', () => {
     const kind = {
       id: Symbol('id'),
       afterEachPass: () => Promise.resolve(false),
-      betweenEachPass: jest.fn(),
+      betweenEachPass: vi.fn(),
     };
 
     await extract(
@@ -81,14 +81,14 @@ describe('extract()', () => {
   });
 
   it('does not perform actions outside of extract()', () => {
-    const spy = jest.fn(() => undefined);
+    const spy = vi.fn(() => undefined);
     renderToString(<ServerAction perform={spy} />);
     expect(spy).not.toHaveBeenCalled();
   });
 
   describe('decorate', () => {
     it('is called with the app element', async () => {
-      const spy = jest.fn((element: any) => element);
+      const spy = vi.fn((element: any) => element);
       const element = <div>Hello world</div>;
       await extract(element, {decorate: spy});
       expect(spy).toHaveBeenCalledWith(element);
@@ -104,7 +104,7 @@ describe('extract()', () => {
 
     it('uses a custom render function', async () => {
       const mockResult = '<how-did-i-get-here />';
-      const spy = jest.fn(() => mockResult);
+      const spy = vi.fn(() => mockResult);
       const element = <div>Hello world</div>;
       const result = await extract(element, {renderFunction: spy});
       expect(result).toBe(mockResult);
@@ -113,7 +113,7 @@ describe('extract()', () => {
 
   describe('betweenEachPass', () => {
     it('is not called when there is only a single pass', async () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       await extract(<ServerAction perform={noop} />, {
         betweenEachPass: spy,
       });
@@ -121,7 +121,7 @@ describe('extract()', () => {
     });
 
     it('is called between passes', async () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const {resolve, resolved} = createResolvablePromise();
       await extract(
         <ServerAction perform={() => (resolved() ? undefined : resolve())} />,
@@ -135,7 +135,7 @@ describe('extract()', () => {
 
   describe('afterEachPass', () => {
     it('is called when there is only a single pass', async () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       await extract(<ServerAction perform={noop} />, {
         afterEachPass: spy,
       });
@@ -143,7 +143,7 @@ describe('extract()', () => {
     });
 
     it('is called after each pass', async () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const {resolve, resolved} = createResolvablePromise();
       await extract(
         <ServerAction perform={() => (resolved() ? undefined : resolve())} />,
@@ -155,7 +155,7 @@ describe('extract()', () => {
     });
 
     it('bails out if it returns false', async () => {
-      const spy = jest.fn(() => Promise.resolve(false));
+      const spy = vi.fn(() => Promise.resolve(false));
       await extract(<ServerAction perform={() => Promise.resolve()} />, {
         afterEachPass: spy,
       });
@@ -166,7 +166,7 @@ describe('extract()', () => {
   describe('includeKinds', () => {
     it('calls actions matching the passed IDs', async () => {
       const id = Symbol('id');
-      const spy = jest.fn(() => undefined);
+      const spy = vi.fn(() => undefined);
       await extract(<ServerAction perform={spy} kind={{id}} />, {
         includeKinds: [id],
       });
@@ -175,7 +175,7 @@ describe('extract()', () => {
 
     it('does not call actions that don’t match the passed IDs', async () => {
       const id = Symbol('id');
-      const spy = jest.fn();
+      const spy = vi.fn();
       await extract(<ServerAction perform={spy} kind={{id}} />, {
         includeKinds: [],
       });
@@ -185,7 +185,7 @@ describe('extract()', () => {
 
   describe('maxPasses', () => {
     it('does not perform another pass when the limit is reached', async () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const maxPasses = 2;
       const {resolve} = createResolvablePromise();
 
@@ -205,12 +205,12 @@ describe('extract()', () => {
       const maxPasses = 2;
       const {resolve} = createResolvablePromise();
 
-      const betweenSpy = jest.fn();
-      const afterSpy = jest.fn();
+      const betweenSpy = vi.fn();
+      const afterSpy = vi.fn();
       const kind = {
         id: Symbol('id'),
-        betweenEachPass: jest.fn(),
-        afterEachPass: jest.fn(),
+        betweenEachPass: vi.fn(),
+        afterEachPass: vi.fn(),
       };
 
       await extract(<ServerAction perform={resolve} kind={kind} />, {
@@ -247,5 +247,4 @@ function createResolvablePromise() {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

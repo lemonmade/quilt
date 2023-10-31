@@ -26,6 +26,5 @@
     "**/*.code-search": true,
     "**/build": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "jest.jestCommandLine": "node ./scripts/quilt-from-source.js run jest"
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

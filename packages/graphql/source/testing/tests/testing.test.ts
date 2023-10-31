@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 
 import {graphql} from '../../gql.ts';
 import {createGraphQLSchema} from '../../schema.ts';

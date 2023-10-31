@@ -34,7 +34,7 @@ export function toHavePerformedGraphQLOperation<Variables>(
       ? foundByOperation
       : foundByOperation.filter((operation) =>
           Object.keys(variables).every((key) =>
-            this.equals(
+            Object.is(
               (variables as any)[key],
               (operation.variables ?? ({} as any))[key],
             ),

@@ -11,9 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: quilt-framework/action-lint@v2
+      - uses: actions/cache@v3
+        id: eslint-cache
         with:
-          command: pnpm lint
+          path: node_modules/.eslintcache
+          key: eslint-cache-v1-${{ github.sha }}
+          restore-keys: eslint-cache-v1-
+      - run: pnpm run lint
 
   type-check:
     name: Type check 🧮
@@ -22,10 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: quilt-framework/action-type-check@v2
+      - uses: actions/cache@v3
+        id: typescript-cache
         with:
-          command: pnpm type-check
-          cache-key: v5
+          path: |
+            **/build/typescript/
+            **/*.tsbuildinfo
+          key: typescript-cache-v1-${{ github.sha }}
+          restore-keys: typescript-cache-v1-
+      - run: pnpm run type-check
 
   unit-tests:
     name: Unit tests 🧪
@@ -34,16 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      # We need to build a few packages that provide Babel plugins
-      # included in test configurations
-      - uses: quilt-framework/action-build@v2
-        with:
-          command: pnpm build
-          arguments: --only-project async --only-project workers
-          cache-key: v5
-      - uses: quilt-framework/action-test@v2
-        with:
-          command: pnpm test.unit
+      - run: pnpm run test.unit
 
   e2e-tests:
     name: End-to-end tests 🔬
@@ -57,11 +57,6 @@ jobs:
       - uses: ./.github/workflows/actions/prepare
       - name: Install Playwright browsers
         run: pnpm --filter e2e-tests exec playwright install
-      - uses: quilt-framework/action-build@v2
-        with:
-          command: pnpm build
-          arguments: --skip-project create
-          cache-key: v5
-      - uses: quilt-framework/action-test@v2
-        with:
-          command: pnpm test.e2e --parallel ${{ matrix.parallel }}
+      - name: Build libraries for E2E tests
+        run: pnpm run build
+      - run: pnpm run test.e2e --shard ${{ matrix.parallel }}

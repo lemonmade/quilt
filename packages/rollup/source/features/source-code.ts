@@ -1,18 +1,28 @@
 import {createRequire} from 'module';
 
-import babel from '@rollup/plugin-babel';
+import babel, {type RollupBabelInputPluginOptions} from '@rollup/plugin-babel';
 import esbuild from 'rollup-plugin-esbuild';
+import type {Options as PresetEnvOptions} from '@babel/preset-env';
 
 const require = createRequire(import.meta.url);
 
 export function sourceCode({
   mode,
   targets,
+  react = true,
   babel: useBabel = true,
 }: {
   mode?: 'development' | 'production';
-  targets?: string[];
-  babel?: boolean;
+  react?: boolean | 'react' | 'preact';
+  targets?: readonly string[];
+  babel?:
+    | boolean
+    | {
+        useBuiltIns?: PresetEnvOptions['useBuiltIns'];
+        options?(
+          options: RollupBabelInputPluginOptions,
+        ): RollupBabelInputPluginOptions | void;
+      };
 }) {
   if (!useBabel) {
     return esbuild({
@@ -24,7 +34,10 @@ export function sourceCode({
     });
   }
 
-  return babel({
+  const babelOverride = typeof useBabel === 'boolean' ? {} : useBabel;
+  const useBuiltIns = babelOverride.useBuiltIns;
+
+  let babelOptions: RollupBabelInputPluginOptions = {
     envName: mode,
     configFile: false,
     babelrc: false,
@@ -34,16 +47,17 @@ export function sourceCode({
         require.resolve('@babel/preset-react'),
         {
           runtime: 'automatic',
-          importSource: 'react',
+          importSource: typeof react === 'string' ? react : 'react',
           development: mode === 'development',
         },
       ],
       [
         require.resolve('@babel/preset-env'),
         {
-          useBuiltIns: false,
           bugfixes: true,
           shippedProposals: true,
+          useBuiltIns,
+          corejs: useBuiltIns ? 3 : undefined,
           // I thought I wanted this, but it seems to break the `targets` option
           // passed as a root argument.
           // ignoreBrowserslistConfig: targets != null,
@@ -71,6 +85,10 @@ export function sourceCode({
     babelHelpers: 'bundled',
     skipPreflightCheck: true,
     // Babel doesn’t like this option being set to `undefined`.
-    ...(targets ? {targets} : {}),
-  });
+    ...(targets ? {targets: targets as string[]} : {}),
+  };
+
+  babelOptions = babelOverride.options?.(babelOptions) ?? babelOptions;
+
+  return babel(babelOptions);
 }

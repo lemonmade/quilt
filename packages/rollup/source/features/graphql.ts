@@ -10,11 +10,11 @@ import {
   extractGraphQLImports,
 } from './graphql/transform.ts';
 
-export interface Options {
+export interface GraphQLOptions {
   manifest?: string | boolean;
 }
 
-export function graphql({manifest}: Options = {}): Plugin {
+export function graphql({manifest}: GraphQLOptions = {}): Plugin {
   const shouldWriteManifest = Boolean(manifest);
   const manifestPath =
     typeof manifest === 'string' ? manifest : `manifests/graphql.json`;
@@ -74,6 +74,8 @@ export function graphql({manifest}: Options = {}): Plugin {
           operations[operation.id] = operation.source;
         }
       }
+
+      if (Object.keys(operations).length === 0) return;
 
       await mkdir(dirname(manifestPath), {recursive: true});
       await writeFile(manifestPath, JSON.stringify(operations, null, 2));

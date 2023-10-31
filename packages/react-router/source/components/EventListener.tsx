@@ -121,5 +121,4 @@ export function supportsEventListenerOnceOption() {
   return supportsOnce;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

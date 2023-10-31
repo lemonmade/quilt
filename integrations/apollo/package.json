@@ -21,15 +21,13 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./client": {
       "types": "./build/typescript/client.d.ts",
       "quilt:source": "./source/client.ts",
       "quilt:esnext": "./build/esnext/client.esnext",
-      "import": "./build/esm/client.mjs",
-      "require": "./build/cjs/client.cjs"
+      "import": "./build/esm/client.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -41,6 +39,9 @@
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@types/react": "^17.0.0 || ^18.0.0"
   },

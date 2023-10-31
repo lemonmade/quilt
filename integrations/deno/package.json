@@ -23,50 +23,35 @@
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs"
     },
-    "./craft": {
-      "types": "./build/typescript/craft.d.ts",
-      "quilt:source": "./source/craft.ts",
-      "quilt:esnext": "./build/esnext/craft.esnext",
-      "import": "./build/esm/craft.mjs",
-      "require": "./build/cjs/craft.cjs"
-    },
     "./request-router": {
       "types": "./build/typescript/request-router.d.ts",
       "quilt:source": "./source/request-router.tsx",
       "quilt:esnext": "./build/esnext/request-router.esnext",
-      "import": "./build/esm/request-router.mjs",
-      "require": "./build/cjs/request-router.cjs"
+      "import": "./build/esm/request-router.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
-      "craft": [
-        "./build/typescript/craft.d.ts"
-      ],
       "request-router": [
         "./build/typescript/request-router.d.ts"
       ]
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.153",
-    "@quilted/craft": "^0.1.233"
+    "@quilted/quilt": "^0.5.153"
   },
   "peerDependenciesMeta": {
-    "@quilted/craft": {
-      "optional": true
-    },
     "@quilted/quilt": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "@quilted/testing": "^0.1.0"
   },
   "eslintConfig": {
     "extends": [

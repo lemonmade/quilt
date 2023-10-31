@@ -5,13 +5,12 @@
     "outDir": "build/typescript"
   },
   "include": ["source"],
-  "exclude": ["quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../assets"},
     {"path": "../async"},
     {"path": "../events"},
     {"path": "../graphql"},
-    {"path": "../polyfills"},
     {"path": "../react"},
     {"path": "../react-assets"},
     {"path": "../react-async"},
@@ -30,7 +29,6 @@
     {"path": "../react-workers"},
     {"path": "../request-router"},
     {"path": "../signals"},
-    {"path": "../testing"},
     {"path": "../threads"},
     {"path": "../useful-react-types"},
     {"path": "../workers"}

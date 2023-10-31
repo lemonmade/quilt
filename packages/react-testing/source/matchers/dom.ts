@@ -6,28 +6,10 @@ import {
   RECEIVED_COLOR as receivedColor,
 } from 'jest-matcher-utils';
 
-import {expect} from '@jest/globals';
-
 import type {Node, HTMLNodeExtensions} from '../types.ts';
 
 import {toHaveReactProps} from './props.ts';
 import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
-
-declare global {
-  // As far as I know, this is needed for the module augmentation  to work.
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R, T = {}> {
-      toContainReactHTML(text: string): void;
-      toHaveReactDataProps(data: {[key: string]: string}): void;
-    }
-  }
-}
-
-expect.extend({
-  toContainReactHTML,
-  toHaveReactDataProps,
-});
 
 export function toContainReactHTML<Props>(
   this: MatcherState,

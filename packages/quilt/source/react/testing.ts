@@ -1,6 +1,5 @@
-import '@quilted/react-testing/matchers';
-
-export * from '@quilted/testing';
+import {expect} from 'vitest';
+import {matchers, CustomMatchers} from '@quilted/react-testing/matchers';
 
 export {
   render,
@@ -28,3 +27,11 @@ export type {
   PlainObject,
   Predicate,
 } from '@quilted/react-testing';
+
+declare module 'vitest' {
+  interface Assertion<T = any> extends CustomMatchers<T> {}
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
+}
+
+// @ts-expect-error Incompatibilities between `expect()` and vitest
+expect.extend(matchers);

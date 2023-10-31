@@ -17,15 +17,15 @@
   },
   "bin": "./bin/create-quilt-app.mjs",
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/cli-kit": "^0.1.9",
     "@quilted/create": "^0.1.56"
   },
   "peerDependencies": {},
   "peerDependenciesMeta": {},
-  "devDependencies": {
-    "@quilted/testing": "^0.1.0"
-  },
   "eslintConfig": {
     "extends": [
       "@quilted/eslint-config/project"

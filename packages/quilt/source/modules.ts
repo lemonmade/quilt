@@ -1,0 +1,31 @@
+declare module 'quilt:module/env' {
+  import type {EnvironmentVariables} from '@quilted/quilt/env';
+
+  const Env: EnvironmentVariables;
+  export default Env;
+}
+
+declare module 'quilt:module/app' {
+  import type {ComponentType} from 'react';
+
+  const App: ComponentType<Record<string, unknown>>;
+  export default App;
+}
+
+declare module 'quilt:module/request-router' {
+  import type {RequestRouter} from '@quilted/request-router';
+
+  const router: RequestRouter;
+  export default router;
+}
+
+declare module 'quilt:module/assets' {
+  import type {
+    AssetsCacheKey,
+    BrowserAssets as BrowserAssetsType,
+  } from '@quilted/assets';
+
+  export const BrowserAssets: {
+    new <CacheKey = AssetsCacheKey>(): BrowserAssetsType<CacheKey>;
+  };
+}

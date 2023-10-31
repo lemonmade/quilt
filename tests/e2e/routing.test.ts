@@ -1,3 +1,4 @@
+import {describe, it, expect} from 'vitest';
 import {
   type Page,
   stripIndent,
@@ -6,8 +7,6 @@ import {
   waitForPerformanceNavigation,
   reloadAndWaitForPerformanceNavigation,
 } from './utilities.ts';
-
-jest.setTimeout(process.env.CI ? 30_000 : 10_000);
 
 describe.skip('routing', () => {
   describe('scroll restoration', () => {
@@ -707,8 +706,5 @@ async function goBack(page: Page, {pages = 1} = {}) {
     {pages},
   );
 
-  // Some router logic happens in a popstate callback, and adding this extra bit of wait
-  // time was the only way I found to make sure that logic has a chance to execute.
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   await page.evaluate(async () => {});
 }

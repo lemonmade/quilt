@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/quilt/testing';
+import {describe, it, expect} from 'vitest';
 import {CacheControl, ContentSecurityPolicy} from '@quilted/quilt/http';
 
 import {renderApp} from '~/tests/render.ts';

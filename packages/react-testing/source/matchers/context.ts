@@ -27,7 +27,7 @@ export function toProvideReactContext<Type>(
     value == null
       ? foundByType
       : foundByType.filter((element) =>
-          this.equals(value, element.prop('value')),
+          Object.is(value, element.prop('value')),
         );
 
   const pass = foundByValue.length > 0;

@@ -822,7 +822,6 @@ function defaultActions() {
   return {} as any;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}
 
 export function isNode<Extensions extends PlainObject = EmptyObject>(

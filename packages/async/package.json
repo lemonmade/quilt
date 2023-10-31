@@ -17,63 +17,18 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
-    },
-    "./babel": {
-      "types": "./build/typescript/babel-plugin.d.ts",
-      "import": "./build/esm/babel-plugin.mjs",
-      "require": "./build/cjs/babel-plugin.cjs"
-    },
-    "./rollup": {
-      "types": "./build/typescript/rollup-parts.d.ts",
-      "quilt:source": "./source/rollup-parts.ts",
-      "quilt:esnext": "./build/esnext/rollup-parts.esnext",
-      "import": "./build/esm/rollup-parts.mjs",
-      "require": "./build/cjs/rollup-parts.cjs"
+      "import": "./build/esm/index.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "babel": [
-        "./build/typescript/babel-plugin.d.ts"
-      ],
-      "rollup": [
-        "./build/typescript/rollup-parts.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/assets": "^0.0.5",
     "@quilted/events": "^1.0.0",
-    "@types/web": "^0.0.59",
-    "common-tags": "^1.8.0",
-    "es-module-lexer": "^0.4.0",
-    "magic-string": "^0.30.0"
-  },
-  "devDependencies": {
-    "@babel/types": "^7.22.0",
-    "@types/babel__core": "^7.20.0",
-    "@types/babel__traverse": "^7.20.0",
-    "@types/common-tags": "^1.8.0"
-  },
-  "peerDependencies": {
-    "@babel/core": ">=7.0.0 <8.0.0",
-    "@babel/traverse": ">=7.0.0 <8.0.0",
-    "@babel/types": ">=7.0.0 <8.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@babel/core": {
-      "optional": true
-    },
-    "@babel/traverse": {
-      "optional": true
-    },
-    "@babel/types": {
-      "optional": true
-    }
+    "@types/web": "^0.0.59"
   },
   "eslintConfig": {
     "extends": [

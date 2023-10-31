@@ -1,32 +1,222 @@
-export type BrowserTargetSelection =
-  | string[]
+export type BrowserGroupTargetSelection =
+  | readonly string[]
   | {
       name?: string;
-      browsers?: string[];
+      browsers?: readonly string[];
     };
 
-export async function getBrowserTargetDetails(
-  targetSelection: BrowserTargetSelection = {},
+export async function getBrowserGroupTargetDetails(
+  targetSelection: BrowserGroupTargetSelection = {},
   {root}: {root?: string} = {},
 ) {
-  const targets = Array.isArray(targetSelection)
-    ? {
-        browsers: targetSelection,
-      }
-    : targetSelection;
+  const {default: browserslist} = await import('browserslist');
+
+  const targets: {
+    name?: string;
+    browsers?: readonly string[];
+  } = (
+    Array.isArray(targetSelection)
+      ? {
+          browsers: targetSelection,
+        }
+      : targetSelection
+  ) as any;
+
   const targetBrowsers =
     targets.browsers ??
     (await (async () => {
-      const {default: browserslist} = await import('browserslist');
-      const config = browserslist.findConfig(root!);
-
-      if (config == null) return ['defaults'];
-
-      const targetName = targets.name ?? 'defaults';
+      const config = await getBrowserGroups({root});
+      const targetName = targets.name ?? 'default';
       return config[targetName] ?? ['defaults'];
     })());
 
-  const name = targets.name === 'defaults' ? 'default' : targets.name;
+  return {name: targets.name, browsers: browserslist(targetBrowsers)};
+}
 
-  return {name, browsers: targetBrowsers};
+export interface BrowserGroups {
+  default: readonly string[];
+  [name: string]: readonly string[];
+}
+
+export async function getBrowserGroups({
+  root = process.cwd(),
+}: {root?: string} = {}): Promise<BrowserGroups> {
+  const {default: browserslist} = await import('browserslist');
+  const config = browserslist.findConfig(root);
+
+  if (config == null) return {default: browserslist(['defaults'])};
+
+  const {defaults, ...rest} = config;
+
+  const browserGroups: BrowserGroups = {} as any;
+
+  const groupsWithFullList = Object.entries(rest)
+    .map(([name, browsers]) => ({
+      name,
+      browsers: browserslist(browsers),
+    }))
+    .sort((first, second) => first.browsers.length - second.browsers.length);
+
+  for (const {name, browsers} of groupsWithFullList) {
+    browserGroups[name] = browsers;
+  }
+
+  browserGroups.default = defaults;
+
+  return browserGroups;
+}
+
+export async function getBrowserGroupRegularExpressions(
+  groups?: BrowserGroups,
+): Promise<Record<string, RegExp>> {
+  const [{default: browserslist}, {getUserAgentRegex}] = await Promise.all([
+    import('browserslist'),
+    import('browserslist-useragent-regexp'),
+  ]);
+
+  // Expand the browserslist queries into the full list of supported browsers,
+  // and sort by the number of browsers in each group (with the last item having
+  // the largest browser support)
+  const groupsWithFullList = Object.entries(
+    groups ?? (await getBrowserGroups()),
+  )
+    .map(([name, browsers]) => ({
+      name,
+      browsers: browserslist(browsers),
+    }))
+    .sort((first, second) => first.browsers.length - second.browsers.length);
+
+  if (groupsWithFullList.length === 0) return {};
+
+  const lastGroup = groupsWithFullList.pop()!;
+
+  const regexes: Record<string, RegExp> = {};
+
+  for (const {name, browsers} of groupsWithFullList) {
+    const regex = getUserAgentRegex({
+      browsers,
+      ignoreMinor: true,
+      ignorePatch: true,
+      allowHigherVersions: true,
+    });
+
+    regexes[name] = regex;
+  }
+
+  // The last group is the default group, so it should match everything
+  regexes[lastGroup.name] = new RegExp('');
+
+  return regexes;
+}
+
+let esmBrowserslist: Promise<Set<string>>;
+
+export async function targetsSupportModules(targets: readonly string[]) {
+  esmBrowserslist ??= (async () => {
+    const {default: browserslist} = await import('browserslist');
+
+    return new Set(
+      browserslist(
+        'defaults and fully supports es6-module and fully supports es6-module-dynamic-import',
+      ),
+    );
+  })();
+
+  const esmBrowsers = await esmBrowserslist;
+
+  return targets.every((target) => esmBrowsers.has(target));
+}
+
+const BROWSESLIST_BROWSER_TO_MDN_BROWSER = new Map([
+  ['and_chr', 'chrome_android'],
+  ['and_ff', 'firefox_android'],
+  ['and_qq', 'qq_android'],
+  ['and_uc', 'uc_android'],
+  ['android', 'webview_android'],
+  ['chrome', 'chrome'],
+  ['edge', 'edge'],
+  ['edge_mob', 'edge_mobile'],
+  ['firefox', 'firefox'],
+  ['ie', 'ie'],
+  ['ios_saf', 'safari_ios'],
+  ['node', 'nodejs'],
+  ['opera', 'opera'],
+  ['safari', 'safari'],
+  ['samsung', 'samsunginternet_android'],
+]);
+
+// Roughly adapted from https://github.com/webhintio/hint/blob/main/packages/utils-compat-data/src/browsers.ts
+export async function rollupGenerateOptionsForBrowsers(
+  browsers: readonly string[],
+) {
+  const [{default: semver}, {default: mdn}] = await Promise.all([
+    import('semver'),
+    import('@mdn/browser-compat-data', {
+      assert: {type: 'json'},
+    }) as Promise<any>,
+  ]);
+
+  const arrowFunctionsSupport =
+    mdn.javascript.functions.arrow_functions.__compat.support;
+  const constBindingsSupport = mdn.javascript.statements.const.__compat.support;
+  const objectShorthandSupport =
+    mdn.javascript.grammar.shorthand_object_literals.__compat.support;
+  const symbolsSupport = mdn.javascript.builtins.Symbol.__compat.support;
+
+  let arrowFunctions = true;
+  let constBindings = true;
+  let objectShorthand = true;
+  let symbols = true;
+
+  const isSupported = (
+    browser: string,
+    version: import('semver').SemVer,
+    supportList: any,
+  ) => {
+    const supportedVersionDetails = supportList[browser];
+    if (supportedVersionDetails == null) return false;
+
+    const supportedVersion = semver.coerce(
+      supportedVersionDetails.version_added,
+    );
+    if (supportedVersion == null) return false;
+
+    return semver.gte(version, supportedVersion);
+  };
+
+  for (const browser of browsers) {
+    const [name, version] = browser.split(' ');
+
+    const semverVersion = semver.coerce(version);
+    if (semverVersion == null) continue;
+
+    const mdnBrowser = BROWSESLIST_BROWSER_TO_MDN_BROWSER.get(name!);
+    if (mdnBrowser == null) continue;
+
+    arrowFunctions &&= isSupported(
+      mdnBrowser,
+      semverVersion,
+      arrowFunctionsSupport,
+    );
+    constBindings &&= isSupported(
+      mdnBrowser,
+      semverVersion,
+      constBindingsSupport,
+    );
+    objectShorthand &&= isSupported(
+      mdnBrowser,
+      semverVersion,
+      objectShorthandSupport,
+    );
+    symbols &&= isSupported(mdnBrowser, semverVersion, symbolsSupport);
+  }
+
+  return {
+    preset: 'es2015',
+    arrowFunctions,
+    constBindings,
+    objectShorthand,
+    reservedNamesAsProps: objectShorthand,
+    symbols,
+  } satisfies import('rollup').GeneratedCodeOptions;
 }

@@ -1,4 +1,3 @@
-import '@quilted/quilt/polyfills/fetch';
 import {
   GraphQLTesting,
   GraphQLController,

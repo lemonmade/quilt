@@ -17,239 +17,145 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./assets": {
       "types": "./build/typescript/assets.d.ts",
       "quilt:source": "./source/assets.ts",
       "quilt:esnext": "./build/esnext/assets.esnext",
-      "import": "./build/esm/assets.mjs",
-      "require": "./build/cjs/assets.cjs"
+      "import": "./build/esm/assets.mjs"
     },
     "./async": {
       "types": "./build/typescript/async.d.ts",
       "quilt:source": "./source/async.ts",
       "quilt:esnext": "./build/esnext/async.esnext",
-      "import": "./build/esm/async.mjs",
-      "require": "./build/cjs/async.cjs"
+      "import": "./build/esm/async.mjs"
     },
     "./globals": {
       "types": "./build/typescript/globals.d.ts",
       "quilt:source": "./source/globals.ts",
       "quilt:esnext": "./build/esnext/globals.esnext",
-      "import": "./build/esm/globals.mjs",
-      "require": "./build/cjs/globals.cjs"
+      "import": "./build/esm/globals.mjs"
     },
     "./html": {
       "types": "./build/typescript/html.d.ts",
       "quilt:source": "./source/html.ts",
       "quilt:esnext": "./build/esnext/html.esnext",
-      "import": "./build/esm/html.mjs",
-      "require": "./build/cjs/html.cjs"
+      "import": "./build/esm/html.mjs"
     },
     "./http": {
       "types": "./build/typescript/http.d.ts",
       "quilt:source": "./source/http.ts",
       "quilt:esnext": "./build/esnext/http.esnext",
-      "import": "./build/esm/http.mjs",
-      "require": "./build/cjs/http.cjs"
+      "import": "./build/esm/http.mjs"
     },
     "./events": {
       "types": "./build/typescript/events.d.ts",
       "quilt:source": "./source/events.ts",
       "quilt:esnext": "./build/esnext/events.esnext",
-      "import": "./build/esm/events.mjs",
-      "require": "./build/cjs/events.cjs"
+      "import": "./build/esm/events.mjs"
     },
     "./localize": {
       "types": "./build/typescript/localize.d.ts",
       "quilt:source": "./source/localize.ts",
       "quilt:esnext": "./build/esnext/localize.esnext",
-      "import": "./build/esm/localize.mjs",
-      "require": "./build/cjs/localize.cjs"
+      "import": "./build/esm/localize.mjs"
     },
     "./navigate": {
       "types": "./build/typescript/navigate.d.ts",
       "quilt:source": "./source/navigate.ts",
       "quilt:esnext": "./build/esnext/navigate.esnext",
-      "import": "./build/esm/navigate.mjs",
-      "require": "./build/cjs/navigate.cjs"
+      "import": "./build/esm/navigate.mjs"
     },
     "./navigate/testing": {
       "types": "./build/typescript/navigate/testing.d.ts",
       "quilt:source": "./source/navigate/testing.ts",
       "quilt:esnext": "./build/esnext/navigate/testing.esnext",
-      "import": "./build/esm/navigate/testing.mjs",
-      "require": "./build/cjs/navigate/testing.cjs"
+      "import": "./build/esm/navigate/testing.mjs"
     },
     "./performance": {
       "types": "./build/typescript/performance.d.ts",
       "quilt:source": "./source/performance.ts",
       "quilt:esnext": "./build/esnext/performance.esnext",
-      "import": "./build/esm/performance.mjs",
-      "require": "./build/cjs/performance.cjs"
+      "import": "./build/esm/performance.mjs"
     },
     "./signals": {
       "types": "./build/typescript/signals.d.ts",
       "quilt:source": "./source/signals.ts",
       "quilt:esnext": "./build/esnext/signals.esnext",
-      "import": "./build/esm/signals.mjs",
-      "require": "./build/cjs/signals.cjs"
+      "import": "./build/esm/signals.mjs"
     },
     "./react": {
       "types": "./build/typescript/react.d.ts",
       "quilt:source": "./source/react.ts",
       "quilt:esnext": "./build/esnext/react.esnext",
-      "import": "./build/esm/react.mjs",
-      "require": "./build/cjs/react.cjs"
+      "import": "./build/esm/react.mjs"
     },
     "./react/testing": {
       "types": "./build/typescript/react/testing.d.ts",
       "quilt:source": "./source/react/testing.ts",
       "quilt:esnext": "./build/esnext/react/testing.esnext",
-      "import": "./build/esm/react/testing.mjs",
-      "require": "./build/cjs/react/testing.cjs"
+      "import": "./build/esm/react/testing.mjs"
     },
     "./react/tools": {
       "types": "./build/typescript/react/tools.d.ts",
       "quilt:source": "./source/react/tools.ts",
       "quilt:esnext": "./build/esnext/react/tools.esnext",
-      "import": "./build/esm/react/tools.mjs",
-      "require": "./build/cjs/react/tools.cjs"
+      "import": "./build/esm/react/tools.mjs"
     },
     "./graphql": {
       "types": "./build/typescript/graphql.d.ts",
       "quilt:source": "./source/graphql.ts",
       "quilt:esnext": "./build/esnext/graphql.esnext",
-      "import": "./build/esm/graphql.mjs",
-      "require": "./build/cjs/graphql.cjs"
+      "import": "./build/esm/graphql.mjs"
     },
     "./graphql/server": {
       "types": "./build/typescript/graphql/server.d.ts",
       "quilt:source": "./source/graphql/server.ts",
       "quilt:esnext": "./build/esnext/graphql/server.esnext",
-      "import": "./build/esm/graphql/server.mjs",
-      "require": "./build/cjs/graphql/server.cjs"
+      "import": "./build/esm/graphql/server.mjs"
     },
     "./graphql/testing": {
       "types": "./build/typescript/graphql/testing.d.ts",
       "quilt:source": "./source/graphql/testing.ts",
       "quilt:esnext": "./build/esnext/graphql/testing.esnext",
-      "import": "./build/esm/graphql/testing.mjs",
-      "require": "./build/cjs/graphql/testing.cjs"
+      "import": "./build/esm/graphql/testing.mjs"
     },
     "./server": {
       "types": "./build/typescript/server.d.ts",
       "quilt:source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs",
-      "require": "./build/cjs/server.cjs"
-    },
-    "./static": {
-      "types": "./build/typescript/static/index.d.ts",
-      "quilt:source": "./source/static/index.tsx",
-      "quilt:esnext": "./build/esnext/static/index.esnext",
-      "import": "./build/esm/static/index.mjs",
-      "require": "./build/cjs/static/index.cjs"
+      "import": "./build/esm/server.mjs"
     },
     "./env": {
       "types": "./build/typescript/env.d.ts",
       "quilt:source": "./source/env.ts",
       "quilt:esnext": "./build/esnext/env.esnext",
-      "import": "./build/esm/env.mjs",
-      "require": "./build/cjs/env.cjs"
+      "import": "./build/esm/env.mjs"
     },
     "./request-router": {
       "types": "./build/typescript/request-router/index.d.ts",
       "quilt:source": "./source/request-router/index.ts",
       "quilt:esnext": "./build/esnext/request-router/index.esnext",
-      "import": "./build/esm/request-router/index.mjs",
-      "require": "./build/cjs/request-router/index.cjs"
+      "import": "./build/esm/request-router/index.mjs"
     },
     "./request-router/node": {
       "types": "./build/typescript/request-router/node.d.ts",
       "quilt:source": "./source/request-router/node.ts",
       "quilt:esnext": "./build/esnext/request-router/node.esnext",
-      "import": "./build/esm/request-router/node.mjs",
-      "require": "./build/cjs/request-router/node.cjs"
+      "import": "./build/esm/request-router/node.mjs"
     },
     "./threads": {
       "types": "./build/typescript/threads.d.ts",
       "quilt:source": "./source/threads.ts",
       "quilt:esnext": "./build/esnext/threads.esnext",
-      "import": "./build/esm/threads.mjs",
-      "require": "./build/cjs/threads.cjs"
+      "import": "./build/esm/threads.mjs"
     },
-    "./polyfills/base": {
-      "types": "./build/typescript/polyfills/base.d.ts",
-      "quilt:source": "./source/polyfills/base.ts",
-      "quilt:esnext": "./build/esnext/polyfills/base.esnext",
-      "import": "./build/esm/polyfills/base.mjs",
-      "require": "./build/cjs/polyfills/base.cjs"
-    },
-    "./polyfills/crypto": {
-      "types": "./build/typescript/polyfills/crypto.d.ts",
-      "quilt:source": "./source/polyfills/crypto.ts",
-      "quilt:esnext": "./build/esnext/polyfills/crypto.esnext",
-      "import": "./build/esm/polyfills/crypto.mjs",
-      "require": "./build/cjs/polyfills/crypto.cjs"
-    },
-    "./polyfills/fetch": {
-      "types": "./build/typescript/polyfills/fetch.d.ts",
-      "quilt:source": "./source/polyfills/fetch.ts",
-      "quilt:esnext": "./build/esnext/polyfills/fetch.esnext",
-      "import": "./build/esm/polyfills/fetch.mjs",
-      "require": "./build/cjs/polyfills/fetch.cjs"
-    },
-    "./polyfills/fetch-get-set-cookie": {
-      "types": "./build/typescript/polyfills/fetch-get-set-cookie.d.ts",
-      "quilt:source": "./source/polyfills/fetch-get-set-cookie.ts",
-      "quilt:esnext": "./build/esnext/polyfills/fetch-get-set-cookie.esnext",
-      "import": "./build/esm/polyfills/fetch-get-set-cookie.mjs",
-      "require": "./build/cjs/polyfills/fetch-get-set-cookie.cjs"
-    },
-    "./polyfills/abort-controller": {
-      "types": "./build/typescript/polyfills/abort-controller.d.ts",
-      "quilt:source": "./source/polyfills/abort-controller.ts",
-      "quilt:esnext": "./build/esnext/polyfills/abort-controller.esnext",
-      "import": "./build/esm/polyfills/abort-controller.mjs",
-      "require": "./build/cjs/polyfills/abort-controller.cjs"
-    },
-    "./polyfills/noop": {
-      "types": "./build/typescript/polyfills/noop.d.ts",
-      "quilt:source": "./source/polyfills/noop.ts",
-      "quilt:esnext": "./build/esnext/polyfills/noop.esnext",
-      "import": "./build/esm/polyfills/noop.mjs",
-      "require": "./build/cjs/polyfills/noop.cjs"
-    },
-    "./testing": {
-      "types": "./build/typescript/testing.d.ts",
-      "quilt:source": "./source/testing.ts",
-      "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs",
-      "require": "./build/cjs/testing.cjs"
-    },
-    "./magic/app": {
-      "types": "./build/typescript/magic/app.d.ts",
-      "quilt:source": "./source/magic/app.ts",
-      "quilt:esnext": "./build/esnext/magic/app.esnext",
-      "import": "./build/esm/magic/app.mjs",
-      "require": "./build/cjs/magic/app.cjs"
-    },
-    "./magic/assets": {
-      "types": "./build/typescript/magic/assets.d.ts",
-      "quilt:source": "./source/magic/assets.ts",
-      "quilt:esnext": "./build/esnext/magic/assets.esnext",
-      "import": "./build/esm/magic/assets.mjs",
-      "require": "./build/cjs/magic/assets.cjs"
-    },
-    "./magic/request-router": {
-      "types": "./build/typescript/magic/request-router.d.ts",
-      "quilt:source": "./source/magic/request-router.ts",
-      "quilt:esnext": "./build/esnext/magic/request-router.esnext",
-      "import": "./build/esm/magic/request-router.mjs",
-      "require": "./build/cjs/magic/request-router.cjs"
+    "./modules": {
+      "types": "./build/typescript/modules.d.ts",
+      "quilt:source": "./source/modules.ts",
+      "quilt:esnext": "./build/esnext/modules.esnext",
+      "import": "./build/esm/modules.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -306,9 +212,6 @@
       "server": [
         "./build/typescript/server.d.ts"
       ],
-      "static": [
-        "./build/typescript/static/index.d.ts"
-      ],
       "request-router/node": [
         "./build/typescript/request-router/node.d.ts"
       ],
@@ -321,52 +224,24 @@
       "react/tools": [
         "./build/typescript/react/tools.d.ts"
       ],
-      "polyfills/base": [
-        "./build/typescript/polyfills/base.d.ts"
-      ],
-      "polyfills/fetch": [
-        "./build/typescript/polyfills/fetch.d.ts"
-      ],
-      "polyfills/fetch-get-set-cookie": [
-        "./build/typescript/polyfills/fetch-get-set-cookie.d.ts"
-      ],
-      "polyfills/crypto": [
-        "./build/typescript/polyfills/crypto.d.ts"
-      ],
-      "polyfills/noop": [
-        "./build/typescript/polyfills/noop.d.ts"
-      ],
-      "testing": [
-        "./build/typescript/testing.d.ts"
-      ],
-      "magic/app": [
-        "./build/typescript/magic/app.d.ts"
-      ],
-      "magic/assets": [
-        "./build/typescript/magic/assets.d.ts"
-      ],
-      "magic/request-router": [
-        "./build/typescript/magic/request-router.d.ts"
+      "modules": [
+        "./build/typescript/modules.d.ts"
       ]
     }
   },
   "sideEffects": [
     "./source/global.ts",
     "./build/esnext/global.esnext",
-    "./build/esm/global.mjs",
-    "./source/polyfills/*.ts",
-    "./build/esnext/polyfills/*.esnext",
-    "./build/esm/polyfills/*.mjs",
-    "./source/graphql/testing/matchers.ts",
-    "./build/esnext/graphql/testing/matchers.esnext",
-    "./build/esm/graphql/testing/matchers.mjs"
+    "./build/esm/global.mjs"
   ],
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@quilted/assets": "^0.0.5",
     "@quilted/async": "^0.3.34",
     "@quilted/events": "^1.0.0",
     "@quilted/graphql": "^2.0.0",
-    "@quilted/polyfills": "^0.2.12",
     "@quilted/react": "^18.2.0",
     "@quilted/react-assets": "^0.0.6",
     "@quilted/react-async": "^0.3.43",
@@ -385,26 +260,18 @@
     "@quilted/react-workers": "^0.2.12",
     "@quilted/request-router": "^0.1.0",
     "@quilted/signals": "^0.1.8",
-    "@quilted/testing": "^0.1.0",
     "@quilted/threads": "^1.0.0",
     "@quilted/useful-react-types": "^1.0.0",
-    "@types/jest": "^27.0.0"
+    "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {
-    "@jest/globals": "^27.0.0",
-    "jest-matcher-utils": "^27.0.0",
     "graphql": "^16.7.0",
     "prettier": "^2.0.0 || ^3.0.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "vitest": "^0.34.6"
   },
   "peerDependenciesMeta": {
-    "@jest/globals": {
-      "optional": true
-    },
-    "jest-matcher-utils": {
-      "optional": true
-    },
     "graphql": {
       "optional": true
     },
@@ -416,15 +283,17 @@
     },
     "react-dom": {
       "optional": true
+    },
+    "vitest": {
+      "optional": true
     }
   },
   "devDependencies": {
-    "@jest/globals": "^27.0.0",
     "@types/prettier": "^2.0.0",
-    "expect": "^27.0.0",
-    "jest-matcher-utils": "^27.0.0",
+    "expect": "^29.0.0",
     "react": "workspace:@quilted/react@^18.2.0",
-    "react-dom": "workspace:@quilted/react-dom@^18.2.0"
+    "react-dom": "workspace:@quilted/react-dom@^18.2.0",
+    "vitest": "^0.34.6"
   },
   "eslintConfig": {
     "extends": [

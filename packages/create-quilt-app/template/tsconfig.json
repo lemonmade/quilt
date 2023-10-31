@@ -1,8 +1,0 @@
-{
-  "extends": "@quilted/typescript/workspace.json",
-  "compilerOptions": {
-    "outDir": "build/typescript"
-  },
-  "include": ["**/quilt.project.ts"],
-  "references": [{"path": "./app"}]
-}

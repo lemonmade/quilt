@@ -6,32 +6,27 @@ import type {
 } from '../types.ts';
 import type {AssetsBuildManifest, AssetsBuildManifestEntry} from './types.ts';
 
-const DEFAULT_CACHE_KEY_NAME = '__default';
+const DEFAULT_CACHE_KEY_NAME = '__default__';
 
 export class BrowserAssetsFromManifests<CacheKey = AssetsCacheKey>
   implements BrowserAssets<CacheKey>
 {
-  private manifestMap: Map<string, AssetsBuildManifest<CacheKey>>;
+  private manifestMap: Map<string, AssetsBuildManifest>;
   readonly cacheKey: BrowserAssets<CacheKey>['cacheKey'];
 
   constructor(
-    manifests: AssetsBuildManifest<CacheKey>[],
+    manifests: AssetsBuildManifest[],
     {
       cacheKey,
       defaultManifest,
     }: Pick<BrowserAssets<CacheKey>, 'cacheKey'> & {
-      defaultManifest?: AssetsBuildManifest<CacheKey>;
+      defaultManifest?: AssetsBuildManifest;
     } = {},
   ) {
-    const manifestMap = new Map<string, AssetsBuildManifest<CacheKey>>();
+    const manifestMap = new Map<string, AssetsBuildManifest>();
 
     for (const manifest of manifests) {
-      manifestMap.set(
-        manifest.cacheKey
-          ? normalizeCacheKey(manifest.cacheKey)
-          : DEFAULT_CACHE_KEY_NAME,
-        manifest,
-      );
+      manifestMap.set(manifest.cacheKey ?? DEFAULT_CACHE_KEY_NAME, manifest);
     }
 
     if (defaultManifest) {
@@ -69,10 +64,10 @@ export class BrowserAssetsFromManifests<CacheKey = AssetsCacheKey>
   }
 }
 
-function resolveManifest<CacheKey>(
-  manifestMap: Map<string, AssetsBuildManifest<CacheKey>>,
+function resolveManifest<CacheKey = AssetsCacheKey>(
+  manifestMap: Map<string, AssetsBuildManifest>,
   cacheKey?: CacheKey,
-): AssetsBuildManifest<CacheKey> | undefined {
+): AssetsBuildManifest | undefined {
   if (cacheKey == null) return manifestMap.get(DEFAULT_CACHE_KEY_NAME);
 
   return (
@@ -82,21 +77,21 @@ function resolveManifest<CacheKey>(
 }
 
 function normalizeCacheKey<CacheKey>(cacheKey: CacheKey) {
-  const normalized: Record<string, any> = {};
+  const searchParams = new URLSearchParams();
 
   for (const key of Object.keys(cacheKey as any).sort()) {
     const value = (cacheKey as any)[key];
 
     if (value == null) continue;
 
-    normalized[key] = value;
+    searchParams.set(key, value);
   }
 
-  return JSON.stringify(normalized);
+  return searchParams.toString();
 }
 
 export function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
-  manifest: AssetsBuildManifest<CacheKey>,
+  manifest: AssetsBuildManifest,
   {
     entry,
     modules,

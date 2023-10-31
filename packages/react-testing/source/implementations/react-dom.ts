@@ -52,10 +52,7 @@ export type {
   ActionsOption,
 };
 
-const {render, createRender, rendered, destroyAll} = createEnvironment<
-  Context,
-  HTMLNodeExtensions
->({
+export const environment = createEnvironment<Context, HTMLNodeExtensions>({
   act,
   mount(tree) {
     const element = document.createElement('div');
@@ -75,6 +72,8 @@ const {render, createRender, rendered, destroyAll} = createEnvironment<
   },
 });
 
+const {render, createRender, rendered, destroyAll} = environment;
+
 export {render, createRender, rendered, destroyAll};
 
 type Create = Parameters<
@@ -92,7 +91,7 @@ export function createNodeFromFiber(element: any, create: Create): Child {
   const props = {...((fiber.memoizedProps as any) || {})};
 
   const instance = fiber.stateNode;
-  const isDom = typeof fiber.type === 'string';
+  const isDOM = typeof fiber.type === 'string';
 
   function children() {
     let currentFiber: Fiber | null = fiber.child;
@@ -112,8 +111,8 @@ export function createNodeFromFiber(element: any, create: Create): Child {
     children,
     type: fiber.type,
     instance: fiber.stateNode,
-    get isDom() {
-      return isDom;
+    get isDOM() {
+      return isDOM;
     },
     get domNodes() {
       return getDomNodes(this as any);
@@ -159,12 +158,12 @@ export function createNodeFromFiber(element: any, create: Create): Child {
   });
 
   function getDomNodes(node: NodeApi<any, HTMLNodeExtensions>) {
-    if (isDom) return [instance];
+    if (isDOM) return [instance];
 
     return node.children
       .filter(
         (child): child is Node<unknown, HTMLNodeExtensions> =>
-          typeof child !== 'string' && child.isDom,
+          typeof child !== 'string' && child.isDOM,
       )
       .map((child) => child.instance);
   }

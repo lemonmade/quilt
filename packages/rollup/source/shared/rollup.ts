@@ -39,7 +39,37 @@ export function removeBuildFiles(
   } satisfies Plugin;
 }
 
-export async function getNodePlugins() {
+export interface RollupNodeBundle {
+  readonly builtins?: boolean;
+  readonly dependencies?: boolean;
+  readonly devDependencies?: boolean;
+  readonly peerDependencies?: boolean;
+  readonly exclude?: (string | RegExp)[];
+  readonly include?: (string | RegExp)[];
+}
+
+export interface RollupNodePluginOptions {
+  /**
+   * Controls how dependencies from node_modules will be bundled into
+   * your rollup build. This can either be `true`, indicating that all
+   * dependencies (except node builtins, like `fs`) will be bundled;
+   * `false`, indicating that all node dependencies should be treated as
+   * external in the resulting build; or a `RollupNodeBundle` object
+   * that gives fine-grained control over how node dependencies are
+   * bundled. The options in the `RollupNodeBundle` object indicate
+   * which dependencies to bundle into your project; this is similar to
+   * the options provided to [`rollup-plugin-node-externals`](https://github.com/Septh/rollup-plugin-node-externals),
+   * except that those options are inverted (e.g., they indicate which
+   * modules to externalize, rather than which modules to bundle).
+   *
+   * @see https://github.com/Septh/rollup-plugin-node-externals
+   */
+  bundle?: boolean | RollupNodeBundle;
+}
+
+export async function getNodePlugins({
+  bundle = {},
+}: RollupNodePluginOptions = {}) {
   const [
     {default: commonjs},
     {default: json},
@@ -52,13 +82,81 @@ export async function getNodePlugins() {
     import('rollup-plugin-node-externals'),
   ]);
 
+  let nodeExternalsOptions: Parameters<typeof nodeExternals>[0];
+
+  if (bundle === true) {
+    // If the consumer wants to bundle node dependencies, we use our
+    // default bundling config, which inlines all node dependencies
+    // other than node builtins.
+    nodeExternalsOptions = {
+      builtins: true,
+      builtinsPrefix: 'strip',
+      deps: false,
+      devDeps: false,
+      peerDeps: false,
+      optDeps: false,
+    };
+  } else if (bundle === false) {
+    // If the consumer does not want to bundle node dependencies,
+    // we mark all dependencies as external.
+    nodeExternalsOptions = {
+      builtins: true,
+      builtinsPrefix: 'add',
+      deps: true,
+      devDeps: true,
+      peerDeps: true,
+      optDeps: true,
+    };
+  } else {
+    // Use the customized bundling configuration. Because this option
+    // is framed as what you bundle, rather than what you externalize,
+    // we need to invert all their options. For options that aren’t set,
+    // we default to bundling only development dependencies — production
+    // dependencies and node built-ins are not bundled.
+    const {
+      builtins: bundleBuiltins = false,
+      dependencies: bundleDependencies = false,
+      devDependencies: bundleDevDependencies = true,
+      peerDependencies: bundlePeerDependencies = false,
+      include: alwaysBundleDependencies,
+      exclude: neverBundleDependencies,
+    } = bundle;
+
+    nodeExternalsOptions = {
+      builtins: !bundleBuiltins,
+      builtinsPrefix: bundleBuiltins ? 'strip' : 'add',
+      deps: !bundleDependencies,
+      devDeps: !bundleDevDependencies,
+      peerDeps: !bundlePeerDependencies,
+      optDeps: !bundlePeerDependencies,
+      include: neverBundleDependencies,
+      exclude: alwaysBundleDependencies,
+    };
+  }
+
   return [
-    nodeExternals({}),
+    nodeExternals(nodeExternalsOptions),
     nodeResolve({
       preferBuiltins: true,
       dedupe: [],
-      // extensions,
-      // exportConditions,
+      extensions: [
+        '.ts',
+        '.tsx',
+        '.mts',
+        '.mtsx',
+        '.js',
+        '.jsx',
+        '.es6',
+        '.es',
+        '.mjs',
+      ],
+      exportConditions: [
+        'esnext',
+        'quilt:esnext',
+        'default',
+        'module',
+        'import',
+      ],
     }),
     commonjs(),
     json(),

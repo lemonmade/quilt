@@ -1,9 +1,4 @@
-/**
- * @jest-environment node
- */
-
-import '@quilted/polyfills/fetch';
-import {describe, it, expect, jest} from '@quilted/testing';
+import {describe, it, expect, vi} from 'vitest';
 import {TransformStream} from 'stream/web';
 
 import {graphql} from '../../gql.ts';
@@ -53,7 +48,7 @@ describe('createGraphQLStreamingFetchOverHTTP()', () => {
       }
     `;
 
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     for await (const result of fetch(query)) {
       spy(result);
@@ -109,7 +104,7 @@ describe('createGraphQLStreamingFetchOverHTTP()', () => {
       }
     `;
 
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     for await (const result of fetch(query)) {
       // The function mutates the result, so we have to create a copy

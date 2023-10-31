@@ -1,6 +1,4 @@
-import '@quilted/polyfills/fetch';
-
-import {describe, it, expect} from '@quilted/testing';
+import {describe, it, expect} from 'vitest';
 
 import {RequestRouter} from '../router.ts';
 import {NoContentResponse} from '../response-helpers.ts';

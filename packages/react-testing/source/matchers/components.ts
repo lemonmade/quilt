@@ -41,7 +41,7 @@ export function toContainReactComponent<
       ? foundByType
       : foundByType.filter((element) =>
           Object.keys(props).every((key) =>
-            this.equals((props as any)[key], (element.props as any)[key]),
+            Object.is((props as any)[key], (element.props as any)[key]),
           ),
         );
 
@@ -106,7 +106,7 @@ export function toContainReactComponentTimes<
       ? foundByType
       : foundByType.filter((element) =>
           Object.keys(props).every((key) =>
-            this.equals((props as any)[key], (element.props as any)[key]),
+            Object.is((props as any)[key], (element.props as any)[key]),
           ),
         );
 

@@ -1,1 +1,0 @@
-import '@quilted/polyfills/crypto';

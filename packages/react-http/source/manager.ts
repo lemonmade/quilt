@@ -103,7 +103,7 @@ function cookiesFromHeaders(
     delete(cookie, options) {
       cookies.set(cookie, '', {expires: new Date(0), ...options});
     },
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+
     subscribe() {},
     *entries() {
       yield* Object.entries(internalCookies);

@@ -1,4 +1,4 @@
-import {describe, it, expect} from '@quilted/quilt/testing';
+import {describe, it, expect} from 'vitest';
 import {Viewport, SearchRobots} from '@quilted/quilt/html';
 
 import {renderApp} from '~/tests/render.ts';

@@ -131,7 +131,7 @@ export interface DebugOptions {
 }
 
 export interface HTMLNodeExtensions {
-  readonly isDom: boolean;
+  readonly isDOM: boolean;
   readonly domNodes: HTMLElement[];
   readonly domNode: HTMLElement | null;
   readonly html: string;

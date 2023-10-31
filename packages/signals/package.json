@@ -21,18 +21,17 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@preact/signals-core": "^1.5.0",
     "@quilted/events": "^1.0.0"
-  },
-  "devDependencies": {
-    "@quilted/testing": "^0.1.0"
   },
   "eslintConfig": {
     "extends": [

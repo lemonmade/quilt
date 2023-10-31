@@ -1,5 +1,7 @@
+// @vitest-environment jsdom
+
 import {EventEmitter as NodeEventEmitter} from 'node:events';
-import {expect, it, describe} from '@quilted/testing';
+import {expect, it, describe} from 'vitest';
 
 import {EventEmitter} from '../emitter.ts';
 import {AbortError} from '../abort.ts';

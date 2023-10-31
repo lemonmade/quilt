@@ -1,5 +1,4 @@
-import {jest, describe, it, expect} from '@quilted/testing';
-import {fetch} from '@remix-run/web-fetch';
+import {describe, it, expect} from 'vitest';
 
 import {
   withWorkspace,
@@ -9,15 +8,14 @@ import {
   waitForUrl,
 } from './utilities.ts';
 
-jest.setTimeout(20_000);
-
 describe('request-router', () => {
-  it('can generate a service from a request handler', async () => {
+  it('can generate a server from a request handler', async () => {
     await withWorkspace({fixture: 'basic-api'}, async (workspace) => {
       const {fs, command} = workspace;
 
       await fs.write({
         'api.ts': stripIndent`
+          console.log(process.env.PORT);
           export default function handler(request) {
             return new Response(JSON.stringify({url: request.url}), {
               headers: {
@@ -28,14 +26,14 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.node(fs.resolve('build/server/server.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -63,14 +61,14 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.node(fs.resolve('build/server/server.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -102,14 +100,14 @@ describe('request-router', () => {
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.node(fs.resolve('build/server/server.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -130,19 +128,19 @@ describe('request-router', () => {
           import {ResponseRedirectError} from '@quilted/quilt/request-router';
 
           export default function handler(request) {
-            throw new ResponseRedirectError('/redirect');
+            throw new ResponseRedirectError('/redirect', {request});
           }
         `,
       });
 
-      await command.quilt.build();
+      await command.pnpm('build');
 
       const port = await getPort();
       const url = new URL(`http://localhost:${port}`);
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/runtime/runtime.js'), {
+        command.node(fs.resolve('build/server/server.js'), {
           env: {PORT: String(port)},
         }),
       );

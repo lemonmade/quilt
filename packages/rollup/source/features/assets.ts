@@ -17,11 +17,10 @@ import type {
 } from '@quilted/assets';
 
 export interface AssetManifestOptions {
-  id?: string;
   file: string;
   baseURL: string;
   priority?: number;
-  cacheKey?: Record<string, any>;
+  cacheKey?: URLSearchParams;
 }
 
 export function assetManifest(manifestOptions: AssetManifestOptions): Plugin {
@@ -36,7 +35,7 @@ export function assetManifest(manifestOptions: AssetManifestOptions): Plugin {
 async function writeManifestForBundle(
   this: PluginContext,
   bundle: OutputBundle,
-  {id, file, baseURL, cacheKey, priority}: AssetManifestOptions,
+  {file, baseURL, cacheKey, priority}: AssetManifestOptions,
   {format}: NormalizedOutputOptions,
 ) {
   const outputs = Object.values(bundle);
@@ -77,10 +76,9 @@ async function writeManifestForBundle(
     return id;
   }
 
-  const manifest: AssetsBuildManifest<any> = {
-    id,
+  const manifest: AssetsBuildManifest = {
     priority,
-    cacheKey,
+    cacheKey: cacheKey && cacheKey.size > 0 ? cacheKey.toString() : undefined,
     assets,
     attributes: format === 'es' ? {scripts: {type: 'module'}} : undefined,
     entries: {
@@ -101,7 +99,7 @@ async function writeManifestForBundle(
     if (originalModuleId == null) continue;
 
     // This metadata is added by the rollup plugin for @quilted/async
-    const moduleId = this.getModuleInfo(originalModuleId)?.meta.quilt?.moduleId;
+    const moduleId = this.getModuleInfo(originalModuleId)?.meta.quilt?.moduleID;
 
     if (moduleId == null) continue;
 

@@ -19,29 +19,28 @@
     ".": {
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./client": {
       "quilt:source": "./source/client.ts",
       "quilt:esnext": "./build/esnext/client.esnext",
-      "import": "./build/esm/client.mjs",
-      "require": "./build/cjs/client.cjs"
+      "import": "./build/esm/client.mjs"
     },
     "./server": {
       "quilt:source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs",
-      "require": "./build/cjs/server.cjs"
+      "import": "./build/esm/server.mjs"
     },
     "./test-utils": {
       "quilt:source": "./source/test-utils.ts",
       "quilt:esnext": "./build/esnext/test-utils.esnext",
-      "import": "./build/esm/test-utils.mjs",
-      "require": "./build/cjs/test-utils.cjs"
+      "import": "./build/esm/test-utils.mjs"
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@types/react-dom": "^18.0.0",
     "preact": "^10.17.0",

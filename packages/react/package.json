@@ -16,23 +16,23 @@
     ".": {
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./jsx-runtime": {
       "quilt:source": "./source/jsx-runtime.ts",
       "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
-      "import": "./build/esm/jsx-runtime.mjs",
-      "require": "./build/cjs/jsx-runtime.cjs"
+      "import": "./build/esm/jsx-runtime.mjs"
     },
     "./jsx-dev-runtime": {
       "quilt:source": "./source/jsx-runtime.ts",
       "quilt:esnext": "./build/esnext/jsx-runtime.esnext",
-      "import": "./build/esm/jsx-runtime.mjs",
-      "require": "./build/cjs/jsx-runtime.cjs"
+      "import": "./build/esm/jsx-runtime.mjs"
     }
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
   "dependencies": {
     "@types/react": "^18.0.0",
     "preact": "^10.17.0"

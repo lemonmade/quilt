@@ -5,18 +5,10 @@
     "outDir": "build/typescript"
   },
   "include": ["source"],
-  "exclude": ["quilt.project.ts", "**/*.test.ts", "**/*.test.tsx"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "references": [
-    {"path": "../assets"},
-    {"path": "../async"},
-    {"path": "../graphql-tools"},
-    {"path": "../polyfills"},
-    {"path": "../quilt"},
-    {"path": "../react-testing"},
+    {"path": "../graphql"},
     {"path": "../rollup"},
-    {"path": "../rollup-plugin-fix-commonjs-preserve-modules"},
-    {"path": "../sewing-kit"},
-    {"path": "../typescript"},
-    {"path": "../workers"}
+    {"path": "../vite"}
   ]
 }

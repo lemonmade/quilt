@@ -1,21 +1,36 @@
 import * as path from 'path';
 import {Plugin, type RollupOptions} from 'rollup';
 import {glob} from 'glob';
-import {fileURLToPath} from 'url';
 
-import {getNodePlugins, removeBuildFiles} from './shared/rollup.ts';
+import {resolveRoot} from './shared/path.ts';
+import {
+  RollupNodePluginOptions,
+  getNodePlugins,
+  removeBuildFiles,
+} from './shared/rollup.ts';
 import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 import {
-  getBrowserTargetDetails,
-  type BrowserTargetSelection,
+  getBrowserGroupTargetDetails,
+  rollupGenerateOptionsForBrowsers,
+  type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
-import type {MagicModuleEnvOptions} from './features/env.ts';
+import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 
 export interface ModuleOptions {
   /**
    * The root directory containing the source code for your application.
    */
   root?: string | URL;
+
+  /**
+   * The entry module for this module. This should be an absolute path, or relative
+   * path from the root directory containing your project. If not provided, this
+   * defaults the `main` or `exports['.']` field in your package.json, or a file named
+   * `index`, `module`, `entry`, or `input` in your project root.
+   *
+   * @example './my-module.tsx'
+   */
+  entry?: string;
 
   /**
    * Whether to include GraphQL-related code transformations.
@@ -27,7 +42,7 @@ export interface ModuleOptions {
   /**
    * Customizes the behavior of environment variables for your module.
    */
-  env?: MagicModuleEnvOptions;
+  env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
 
   /**
    * Customizes the assets created for your module.
@@ -35,7 +50,8 @@ export interface ModuleOptions {
   assets?: ModuleAssetsOptions;
 }
 
-export interface ModuleAssetsOptions {
+export interface ModuleAssetsOptions
+  extends Pick<RollupNodePluginOptions, 'bundle'> {
   /**
    * Whether to minify assets created for this module.
    *
@@ -43,48 +59,55 @@ export interface ModuleAssetsOptions {
    */
   minify?: boolean;
   hash?: boolean | 'async-only';
-  targets?: BrowserTargetSelection;
+  targets?: BrowserGroupTargetSelection;
 }
 
 export async function quiltModule({
   root: rootPath = process.cwd(),
+  entry,
   env,
   assets,
   graphql = true,
 }: ModuleOptions = {}) {
-  const root =
-    typeof rootPath === 'string' ? rootPath : fileURLToPath(rootPath);
-  const mode =
-    (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
+  const root = resolveRoot(rootPath);
+  const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
   const outputDirectory = path.join(root, 'build/assets');
 
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
+  const bundle = assets?.bundle ?? true;
 
-  const browserTarget = await getBrowserTargetDetails(assets?.targets, {root});
-  const targetFilenamePart = browserTarget.name ? `.${browserTarget.name}` : '';
+  const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
+    root,
+  });
+  const targetFilenamePart = browserGroup.name ? `.${browserGroup.name}` : '';
 
   const [
     {visualizer},
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
+    {esnext},
     nodePlugins,
     packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
-    getNodePlugins(),
+    import('./features/esnext.ts'),
+    getNodePlugins({bundle}),
     loadPackageJSON(root),
   ]);
 
-  const source = await sourceForModule(root, packageJSON);
+  const finalEntry = entry
+    ? path.resolve(root, entry)
+    : await sourceForModule(root, packageJSON);
 
   const plugins: Plugin[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({...env, mode}),
-    sourceCode({mode: 'production', targets: browserTarget.browsers}),
+    magicModuleEnv({...resolveEnvOption(env), mode}),
+    sourceCode({mode, targets: browserGroup.browsers}),
+    esnext({mode, targets: browserGroup.browsers}),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),
   ];
 
@@ -111,7 +134,7 @@ export async function quiltModule({
   );
 
   return {
-    input: source,
+    input: finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -137,6 +160,9 @@ export async function quiltModule({
       assetFileNames: `[name]${targetFilenamePart}${
         hash === true ? `.[hash]` : ''
       }.[ext]`,
+      generatedCode: await rollupGenerateOptionsForBrowsers(
+        browserGroup.browsers,
+      ),
     },
   } satisfies RollupOptions;
 }

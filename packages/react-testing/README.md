@@ -9,7 +9,6 @@ A library for testing React components with a focus on type safety and clear com
 - [Installation](#installation)
 - [Usage](#usage)
   - [DOM](#dom)
-  - [Preact](#preact)
   - [Test structure](#test-structure)
   - [Matchers](#matchers)
   - [API](#api)
@@ -70,37 +69,6 @@ function PayNowButton({onPay}) {
 
 const payNowButton = render(<PayNowButton onPay={pay} />);
 const expectedContent = payNowButton.html.includes('<button>Pay</button>');
-```
-
-### Preact
-
-This library also provides a `@quilted/react-testing/preact` entrypoint that can be used in Preact projects. It provides the same API (including the DOM additions) as `@quilted/react-testing/dom`, but uses all of Preact’s rendering and test utilities for the test environment.
-
-```tsx
-import h from 'preact';
-import {render} from '@quilted/react-testing/preact';
-
-function PayNowButton({onPay}) {
-  return <button onClick={onPay}>Pay</button>;
-}
-
-const payNowButton = render(<PayNowButton onPay={pay} />);
-const expectedContent = payNowButton.html.includes('<button>Pay</button>');
-```
-
-If your application prefers to reference `react` and alias it to `preact/compat` at build or test time, you can do the same in your tests by importing from `@quilted/react-testing` and aliasing the import to `@quilted/react-testing/preact`. The following configuration shows how you’d accomplish this using [Jest’s `moduleNameMapper` option](https://jestjs.io/docs/en/configuration#modulenamemapper-objectstring-string--arraystring):
-
-```js
-// jest.config.js
-
-module.exports = {
-  // Rest of config...
-  moduleNameMapper: {
-    '^react$': 'preact/compat',
-    '^@quilted/react-testing$': '@quilted/react-testing/preact',
-    '^@quilted/react-testing/dom$': '@quilted/react-testing/preact',
-  },
-};
 ```
 
 ### Test Structure
