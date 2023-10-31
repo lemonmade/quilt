@@ -10,7 +10,11 @@
     "**/*.test.tsx",
     "tests/**/*"
   ],
-  "exclude": ["tests/e2e/output/**/*", "packages/create/templates/**/*"],
+  "exclude": [
+    "tests/e2e/output/**/*",
+    "packages/create/templates/**/*",
+    "packages/preact-testing/source/**/*"
+  ],
   "references": [
     {"path": "./integrations/apollo"},
     {"path": "./integrations/aws"},
