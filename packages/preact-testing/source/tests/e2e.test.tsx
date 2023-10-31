@@ -17,10 +17,10 @@ describe('e2e', () => {
       return null;
     }
 
-    expect(() => render(h(ThrowingComponent, {}))).toThrowError(error);
+    expect(() => render(<ThrowingComponent />)).toThrowError(error);
   });
 
-  it.only('throws if a Preact component throws after an update', () => {
+  it('throws if a Preact component throws after an update', () => {
     const error = new Error('oh no!');
 
     function ThrowingComponent() {
@@ -39,7 +39,7 @@ describe('e2e', () => {
       );
     }
 
-    const throwingComponent = render(h(ThrowingComponent, {}));
+    const throwingComponent = render(<ThrowingComponent />);
 
     expect(() =>
       throwingComponent.find('button')!.trigger('onClick'),
@@ -67,7 +67,11 @@ describe('e2e', () => {
     }
 
     expect(() =>
-      render(h(ErrorBoundary, {}, h(ThrowingComponent, {}))),
+      render(
+        <ErrorBoundary>
+          <ThrowingComponent />
+        </ErrorBoundary>,
+      ),
     ).not.toThrowError();
   });
 });

@@ -5,7 +5,7 @@ import type {DebugOptions, Node} from './types.ts';
 const HIDE_NODE_CHILDREN = ['svg'];
 
 export function toReactString<Props>(
-  node: Node<Props, any> | string,
+  node: Node<Props> | string,
   options: DebugOptions = {},
   level = 0,
 ): string {
