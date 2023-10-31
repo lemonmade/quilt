@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.1",
+  "version": "0.2.0",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -21,8 +21,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/cli-kit": "^0.1.9",
-    "@quilted/create": "^0.1.56"
+    "@quilted/cli-kit": "^0.2.0",
+    "@quilted/create": "^0.2.0"
   },
   "peerDependencies": {},
   "peerDependenciesMeta": {},

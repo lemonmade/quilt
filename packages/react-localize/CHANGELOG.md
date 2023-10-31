@@ -1,5 +1,24 @@
 # @quilted/react-localize
 
+## 0.2.0
+
+### Minor Changes
+
+- [#645](https://github.com/lemonmade/quilt/pull/645) [`302ed847`](https://github.com/lemonmade/quilt/commit/302ed8479f9c035ef39d48137de958dba50690ca) Thanks [@lemonmade](https://github.com/lemonmade)! - Removed CommonJS support
+
+  The `require` export condition is no longer provided by any package. Quilt only supports ESModules, so if you need to use the CommonJS version, you will need to pre-process Quilt’s output code on your own.
+
+### Patch Changes
+
+- Updated dependencies [[`302ed847`](https://github.com/lemonmade/quilt/commit/302ed8479f9c035ef39d48137de958dba50690ca)]:
+  - @quilted/useful-react-types@2.0.0
+  - @quilted/localize@0.2.0
+  - @quilted/react-html@0.4.0
+  - @quilted/react-http@0.4.0
+  - @quilted/react-router@0.4.0
+  - @quilted/react-utilities@0.2.0
+  - @quilted/request-router@0.2.0
+
 ## 0.1.19
 
 ### Patch Changes

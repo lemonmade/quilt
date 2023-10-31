@@ -1,7 +1,7 @@
 {
   "name": "@quilted/create",
   "type": "module",
-  "version": "0.1.90",
+  "version": "0.2.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "devDependencies": {
-    "@quilted/cli-kit": "^0.1.11",
+    "@quilted/cli-kit": "^0.2.0",
     "@types/common-tags": "^1.8.0",
     "@types/fs-extra": "^9.0.11",
     "@types/minimatch": "^3.0.5",

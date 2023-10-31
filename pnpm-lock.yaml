@@ -115,7 +115,7 @@ importers:
         specifier: ^3.7.0
         version: 3.7.3(graphql@16.7.0)(react-dom@packages+react-dom)(react@packages+react)
       '@quilted/quilt':
-        specifier: workspace:^0.5.144
+        specifier: workspace:^0.6.0
         version: link:../../packages/quilt
       graphql:
         specifier: ^16.7.0
@@ -127,7 +127,7 @@ importers:
   integrations/aws:
     dependencies:
       '@quilted/quilt':
-        specifier: ^0.5.153
+        specifier: ^0.6.0
         version: link:../../packages/quilt
       '@types/aws-lambda':
         specifier: ^8.0.0
@@ -149,7 +149,7 @@ importers:
         specifier: ^4.20221111.1
         version: 4.20221111.1
       '@quilted/quilt':
-        specifier: ^0.5.153
+        specifier: ^0.6.0
         version: link:../../packages/quilt
       common-tags:
         specifier: ^1.8.0
@@ -171,7 +171,7 @@ importers:
   integrations/deno:
     dependencies:
       '@quilted/quilt':
-        specifier: ^0.5.153
+        specifier: ^0.6.0
         version: link:../../packages/quilt
       '@types/common-tags':
         specifier: ^1.8.0
@@ -180,7 +180,7 @@ importers:
   integrations/react-query:
     dependencies:
       '@quilted/useful-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/quilt':
@@ -196,11 +196,11 @@ importers:
   integrations/swr:
     dependencies:
       '@quilted/useful-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../../packages/useful-types
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.5.144
+        specifier: workspace:^0.6.0
         version: link:../../packages/quilt
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -214,10 +214,10 @@ importers:
   packages/async:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.5
+        specifier: ^0.1.0
         version: link:../assets
       '@quilted/events':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../events
       '@types/web':
         specifier: ^0.0.59
@@ -253,7 +253,7 @@ importers:
   packages/cli-kit:
     dependencies:
       '@quilted/events':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../events
       '@types/common-tags':
         specifier: ^1.8.1
@@ -286,10 +286,10 @@ importers:
   packages/craft:
     dependencies:
       '@quilted/graphql-tools':
-        specifier: ^0.1.7
+        specifier: ^0.2.0
         version: link:../graphql-tools
       '@quilted/rollup':
-        specifier: ^0.1.19
+        specifier: ^0.2.0
         version: link:../rollup
       '@quilted/vite':
         specifier: ^0.1.0
@@ -310,7 +310,7 @@ importers:
   packages/create:
     devDependencies:
       '@quilted/cli-kit':
-        specifier: ^0.1.11
+        specifier: ^0.2.0
         version: link:../cli-kit
       '@types/common-tags':
         specifier: ^1.8.0
@@ -358,10 +358,10 @@ importers:
   packages/create-app:
     dependencies:
       '@quilted/cli-kit':
-        specifier: ^0.1.9
+        specifier: ^0.2.0
         version: link:../cli-kit
       '@quilted/create':
-        specifier: ^0.1.56
+        specifier: ^0.2.0
         version: link:../create
 
   packages/eslint-config:
@@ -433,10 +433,10 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.7.0)
       '@quilted/graphql':
-        specifier: ^2.0.0
+        specifier: ^3.0.0
         version: link:../graphql
       '@quilted/useful-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../useful-types
       arg:
         specifier: ^5.0.0
@@ -486,7 +486,7 @@ importers:
   packages/performance:
     dependencies:
       '@quilted/events':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../events
     devDependencies:
       react:
@@ -526,76 +526,76 @@ importers:
   packages/quilt:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.5
+        specifier: ^0.1.0
         version: link:../assets
       '@quilted/async':
-        specifier: ^0.3.34
+        specifier: ^0.4.0
         version: link:../async
       '@quilted/events':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../events
       '@quilted/graphql':
-        specifier: ^2.0.0
+        specifier: ^3.0.0
         version: link:../graphql
       '@quilted/react':
         specifier: ^18.2.0
         version: link:../react
       '@quilted/react-assets':
-        specifier: ^0.0.6
+        specifier: ^0.1.0
         version: link:../react-assets
       '@quilted/react-async':
-        specifier: ^0.3.43
+        specifier: ^0.4.0
         version: link:../react-async
       '@quilted/react-dom':
         specifier: ^18.2.0
         version: link:../react-dom
       '@quilted/react-graphql':
-        specifier: ^0.4.30
+        specifier: ^0.5.0
         version: link:../react-graphql
       '@quilted/react-html':
-        specifier: ^0.3.18
+        specifier: ^0.4.0
         version: link:../react-html
       '@quilted/react-http':
-        specifier: ^0.3.8
+        specifier: ^0.4.0
         version: link:../react-http
       '@quilted/react-idle':
-        specifier: ^0.3.6
+        specifier: ^0.4.0
         version: link:../react-idle
       '@quilted/react-localize':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-localize
       '@quilted/react-performance':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-performance
       '@quilted/react-router':
-        specifier: ^0.3.49
+        specifier: ^0.4.0
         version: link:../react-router
       '@quilted/react-server-render':
-        specifier: ^0.3.7
+        specifier: ^0.4.0
         version: link:../react-server-render
       '@quilted/react-signals':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-signals
       '@quilted/react-testing':
-        specifier: ^0.5.1
+        specifier: ^0.6.0
         version: link:../react-testing
       '@quilted/react-utilities':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-utilities
       '@quilted/react-workers':
-        specifier: ^0.2.12
+        specifier: ^0.3.0
         version: link:../react-workers
       '@quilted/request-router':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../request-router
       '@quilted/signals':
-        specifier: ^0.1.8
+        specifier: ^0.2.0
         version: link:../signals
       '@quilted/threads':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../threads
       '@quilted/useful-react-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../useful-react-types
       graphql:
         specifier: ^16.7.0
@@ -635,10 +635,10 @@ importers:
   packages/react-assets:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.5
+        specifier: ^0.1.0
         version: link:../assets
       '@quilted/react-server-render':
-        specifier: ^0.3.27
+        specifier: ^0.4.0
         version: link:../react-server-render
       '@types/react':
         specifier: ^17.0.0 || ^18.0.0
@@ -651,13 +651,13 @@ importers:
   packages/react-async:
     dependencies:
       '@quilted/async':
-        specifier: ^0.3.12
+        specifier: ^0.4.0
         version: link:../async
       '@quilted/react-assets':
-        specifier: ^0.0.6
+        specifier: ^0.1.0
         version: link:../react-assets
       '@quilted/react-server-render':
-        specifier: ^0.3.27
+        specifier: ^0.4.0
         version: link:../react-server-render
     devDependencies:
       react:
@@ -682,10 +682,10 @@ importers:
   packages/react-email:
     dependencies:
       '@quilted/react-html':
-        specifier: ^0.3.18
+        specifier: ^0.4.0
         version: link:../react-html
       '@quilted/react-server-render':
-        specifier: ^0.3.7
+        specifier: ^0.4.0
         version: link:../react-server-render
     devDependencies:
       react:
@@ -695,16 +695,16 @@ importers:
   packages/react-graphql:
     dependencies:
       '@quilted/async':
-        specifier: ^0.3.12
+        specifier: ^0.4.0
         version: link:../async
       '@quilted/graphql':
-        specifier: ^2.0.0
+        specifier: ^3.0.0
         version: link:../graphql
       '@quilted/react-utilities':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-utilities
       '@quilted/useful-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../useful-types
     devDependencies:
       react:
@@ -714,10 +714,10 @@ importers:
   packages/react-html:
     dependencies:
       '@quilted/assets':
-        specifier: ^0.0.5
+        specifier: ^0.1.0
         version: link:../assets
       '@quilted/react-server-render':
-        specifier: ^0.3.7
+        specifier: ^0.4.0
         version: link:../react-server-render
       '@types/react':
         specifier: ^17.0.0 || ^18.0.0
@@ -736,16 +736,16 @@ importers:
   packages/react-http:
     dependencies:
       '@quilted/http':
-        specifier: ^0.2.11
+        specifier: ^0.3.0
         version: link:../http
       '@quilted/react-html':
-        specifier: ^0.3.18
+        specifier: ^0.4.0
         version: link:../react-html
       '@quilted/react-server-render':
-        specifier: ^0.3.7
+        specifier: ^0.4.0
         version: link:../react-server-render
       '@quilted/react-utilities':
-        specifier: ^0.1.7
+        specifier: ^0.2.0
         version: link:../react-utilities
       js-cookie:
         specifier: ^3.0.0
@@ -770,26 +770,26 @@ importers:
   packages/react-localize:
     dependencies:
       '@quilted/localize':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../localize
       '@quilted/react-html':
-        specifier: ^0.3.29
+        specifier: ^0.4.0
         version: link:../react-html
       '@quilted/react-router':
-        specifier: ^0.3.40
+        specifier: ^0.4.0
         version: link:../react-router
       '@quilted/react-utilities':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-utilities
       '@quilted/useful-react-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../useful-react-types
     devDependencies:
       '@quilted/react-http':
-        specifier: ^0.3.17
+        specifier: ^0.4.0
         version: link:../react-http
       '@quilted/request-router':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../request-router
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -798,10 +798,10 @@ importers:
   packages/react-performance:
     dependencies:
       '@quilted/performance':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../performance
       '@quilted/react-utilities':
-        specifier: ^0.1.7
+        specifier: ^0.2.0
         version: link:../react-utilities
     devDependencies:
       react:
@@ -811,22 +811,22 @@ importers:
   packages/react-router:
     dependencies:
       '@quilted/react-html':
-        specifier: ^0.3.18
+        specifier: ^0.4.0
         version: link:../react-html
       '@quilted/react-http':
-        specifier: ^0.3.8
+        specifier: ^0.4.0
         version: link:../react-http
       '@quilted/react-performance':
-        specifier: ^0.1.12
+        specifier: ^0.2.0
         version: link:../react-performance
       '@quilted/react-server-render':
-        specifier: ^0.3.7
+        specifier: ^0.4.0
         version: link:../react-server-render
       '@quilted/react-utilities':
-        specifier: ^0.1.12
+        specifier: ^0.2.0
         version: link:../react-utilities
       '@quilted/routing':
-        specifier: ^0.2.7
+        specifier: ^0.3.0
         version: link:../routing
     devDependencies:
       '@quilted/react-testing':
@@ -839,7 +839,7 @@ importers:
   packages/react-server-render:
     dependencies:
       '@quilted/react-utilities':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../react-utilities
       '@types/react':
         specifier: ^17.0.0 || ^18.0.0
@@ -858,7 +858,7 @@ importers:
         specifier: ^1.2.0
         version: 1.2.1(preact@10.17.0)
       '@quilted/signals':
-        specifier: ^0.1.8
+        specifier: ^0.2.0
         version: link:../signals
       '@types/react':
         specifier: ^17.0.0 || ^18.0.0
@@ -902,7 +902,7 @@ importers:
   packages/react-utilities:
     dependencies:
       '@quilted/useful-react-types':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../useful-react-types
     devDependencies:
       react:
@@ -912,7 +912,7 @@ importers:
   packages/react-workers:
     dependencies:
       '@quilted/workers':
-        specifier: ^0.2.12
+        specifier: ^0.3.0
         version: link:../workers
     devDependencies:
       react:
@@ -922,10 +922,10 @@ importers:
   packages/request-router:
     dependencies:
       '@quilted/http':
-        specifier: ^0.2.11
+        specifier: ^0.3.0
         version: link:../http
       '@quilted/routing':
-        specifier: ^0.2.7
+        specifier: ^0.3.0
         version: link:../routing
       send:
         specifier: ^0.17.0
@@ -965,13 +965,13 @@ importers:
         specifier: ^5.3.26
         version: 5.3.26
       '@quilted/assets':
-        specifier: ^0.0.5
+        specifier: ^0.1.0
         version: link:../assets
       '@quilted/babel':
-        specifier: ^0.1.0
+        specifier: ^0.2.0
         version: link:../babel
       '@quilted/graphql':
-        specifier: ^2.0.0
+        specifier: ^3.0.0
         version: link:../graphql
       '@rollup/plugin-alias':
         specifier: ^5.0.1
@@ -1055,7 +1055,7 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0
       '@quilted/events':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../events
 
   packages/stylelint-config:
@@ -1076,7 +1076,7 @@ importers:
   packages/threads:
     dependencies:
       '@quilted/events':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../events
     devDependencies:
       '@preact/signals-core':
@@ -1114,7 +1114,7 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1(preact@10.17.0)(vite@4.5.0)
       '@quilted/rollup':
-        specifier: ^0.1.19
+        specifier: ^0.2.0
         version: link:../rollup
     devDependencies:
       vite:
@@ -1127,13 +1127,13 @@ importers:
   packages/workers:
     dependencies:
       '@quilted/threads':
-        specifier: ^1.0.0
+        specifier: ^2.0.0
         version: link:../threads
 
   tests/e2e:
     devDependencies:
       '@quilted/quilt':
-        specifier: ^0.5.0
+        specifier: ^0.6.0
         version: link:../../packages/quilt
       '@remix-run/web-fetch':
         specifier: ^4.1.0

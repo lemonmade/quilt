@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.12",
+  "version": "0.2.0",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -30,7 +30,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/events": "^1.0.0",
+    "@quilted/events": "^2.0.0",
     "@types/common-tags": "^1.8.1",
     "@types/glob": "^8.0.0",
     "@types/prompts": "^2.4.1",

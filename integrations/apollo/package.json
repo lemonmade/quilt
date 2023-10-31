@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.8",
+  "version": "0.2.0",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -47,7 +47,7 @@
   },
   "peerDependencies": {
     "@apollo/client": "^3.0.0",
-    "@quilted/quilt": "^0.5.144",
+    "@quilted/quilt": "^0.6.0",
     "graphql": "^16.7.0",
     "react": "^17.0.0 || ^18.0.0"
   },
@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@apollo/client": "^3.7.0",
-    "@quilted/quilt": "workspace:^0.5.144",
+    "@quilted/quilt": "workspace:^0.6.0",
     "graphql": "^16.7.0",
     "react": "workspace:@quilted/react@^18.2.0"
   },

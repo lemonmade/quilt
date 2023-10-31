@@ -1,7 +1,7 @@
 {
   "name": "@quilted/workers",
   "type": "module",
-  "version": "0.2.36",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -26,7 +26,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/threads": "^1.0.0"
+    "@quilted/threads": "^2.0.0"
   },
   "eslintConfig": {
     "extends": [

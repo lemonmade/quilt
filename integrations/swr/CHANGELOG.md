@@ -1,5 +1,13 @@
 # @quilted/swr
 
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies [[`302ed847`](https://github.com/lemonmade/quilt/commit/302ed8479f9c035ef39d48137de958dba50690ca)]:
+  - @quilted/useful-types@2.0.0
+  - @quilted/quilt@0.6.0
+
 ## 0.1.13
 
 ### Patch Changes
