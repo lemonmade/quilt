@@ -81,11 +81,11 @@ importers:
         specifier: ~10.17.0
         version: 10.17.0
       react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:packages/react
+        specifier: ^18.2.0
+        version: 18.2.0
       react-dom:
-        specifier: workspace:@quilted/react-dom@^18.2.0
-        version: link:packages/react-dom
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
       rollup:
         specifier: ^4.1.0
         version: 4.1.4
@@ -113,7 +113,7 @@ importers:
     devDependencies:
       '@apollo/client':
         specifier: ^3.7.0
-        version: 3.7.3(graphql@16.7.0)(react-dom@packages+react-dom)(react@packages+react)
+        version: 3.7.3(graphql@16.7.0)(react-dom@18.2.0)(react@packages+react)
       '@quilted/quilt':
         specifier: workspace:^0.6.0
         version: link:../../packages/quilt
@@ -188,7 +188,7 @@ importers:
         version: link:../../packages/quilt
       '@tanstack/react-query':
         specifier: ^4.19.0
-        version: 4.19.1(react-dom@packages+react-dom)(react@packages+react)
+        version: 4.19.1(react-dom@18.2.0)(react@packages+react)
       react:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../../packages/react
@@ -1249,7 +1249,7 @@ packages:
       '@jridgewell/gen-mapping': 0.1.1
       '@jridgewell/trace-mapping': 0.3.17
 
-  /@apollo/client@3.7.3(graphql@16.7.0)(react-dom@packages+react-dom)(react@packages+react):
+  /@apollo/client@3.7.3(graphql@16.7.0)(react-dom@18.2.0)(react@packages+react):
     resolution: {integrity: sha512-nzZ6d6a4flLpm3pZOGpuAUxLlp9heob7QcCkyIqZlCLvciUibgufRfYTwfkWCc4NaGHGSZyodzvfr79H6oUwGQ==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
@@ -1277,7 +1277,7 @@ packages:
       optimism: 0.16.2
       prop-types: 15.8.1
       react: link:packages/react
-      react-dom: link:packages/react-dom
+      react-dom: 18.2.0(react@18.2.0)
       response-iterator: 0.2.6
       symbol-observable: 4.0.0
       ts-invariant: 0.10.3
@@ -4564,7 +4564,7 @@ packages:
     resolution: {integrity: sha512-Zp0aIose5C8skBzqbVFGk9HJsPtUhRVDVNWIqVzFbGQQgYSeLZMd3Sdb4+EnA5wl1J7X+bre2PJGnQg9x/zHOA==}
     dev: true
 
-  /@tanstack/react-query@4.19.1(react-dom@packages+react-dom)(react@packages+react):
+  /@tanstack/react-query@4.19.1(react-dom@18.2.0)(react@packages+react):
     resolution: {integrity: sha512-5dvHvmc0vrWI03AJugzvKfirxCyCLe+qawrWFCXdu8t7dklIhJ7D5ZhgTypv7mMtIpdHPcECtCiT/+V74wCn2A==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -4578,7 +4578,7 @@ packages:
     dependencies:
       '@tanstack/query-core': 4.19.1
       react: link:packages/react
-      react-dom: link:packages/react-dom
+      react-dom: 18.2.0(react@18.2.0)
       use-sync-external-store: 1.2.0(react@packages+react)
     dev: true
 
