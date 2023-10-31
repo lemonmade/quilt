@@ -10,7 +10,7 @@
   "scripts": {
     "create": "tsx --conditions quilt:source ./packages/create/source/cli.ts",
     "test": "vitest",
-    "test.unit": "vitest --config configuration/vite.unit.config.ts",
+    "test.unit": "vitest --config configuration/vite.unit.config.ts --no-threads",
     "test.e2e": "vitest --config configuration/vite.e2e.config.ts",
     "lint.eslint": "eslint . --cache --cache-location ./node_modules/.eslintcache --ext .ts,.tsx,.js,.mjs --max-warnings 0",
     "lint.prettier": "prettier \"./**/*.{json,md,yaml,css,graphql}\" --check --cache",
@@ -19,8 +19,6 @@
     "build": "pnpm --recursive --filter rollup run build && pnpm --recursive --filter !rollup run build",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r",
-    "deploy.preview": "changeset version --snapshot preview && changeset publish --tag preview --no-git-tag",
-    "deploy.snapshot": "changeset version --snapshot snapshot && changeset publish --tag snapshot --no-git-tag",
     "typescript.run": "tsx --conditions quilt:source",
     "typescript.watch": "tsx watch --conditions quilt:source"
   },
