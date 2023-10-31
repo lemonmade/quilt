@@ -35,7 +35,9 @@ jobs:
       - run: pnpm run type-check
       - run: pnpm run build
       - name: Deploy preview versions to NPM
-        run: pnpm deploy.preview
+        run: |
+          pnpm changeset version --snapshot preview
+          pnpm changeset publish --tag preview --no-git-tag
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
