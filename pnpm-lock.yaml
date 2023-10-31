@@ -562,7 +562,7 @@ importers:
         specifier: ^0.4.0
         version: link:../react-idle
       '@quilted/react-localize':
-        specifier: ^1.0.0
+        specifier: ^0.2.0
         version: link:../react-localize
       '@quilted/react-performance':
         specifier: ^0.2.0
