@@ -29,7 +29,7 @@ export function sourceCode({
       // Support very modern features
       target: 'es2022',
       jsx: 'automatic',
-      jsxImportSource: 'react',
+      jsxImportSource: typeof react === 'string' ? react : 'react',
       exclude: 'node_modules/**',
     });
   }
