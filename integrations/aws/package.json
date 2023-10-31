@@ -1,7 +1,7 @@
 {
   "name": "@quilted/aws",
   "type": "module",
-  "version": "0.3.44",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.153"
+    "@quilted/quilt": "^0.6.0"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {

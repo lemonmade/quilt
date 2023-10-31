@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-email",
   "type": "module",
-  "version": "0.2.35",
+  "version": "0.3.0",
   "description": "React-friendly APIs for rendering emails and their metadata",
   "repository": {
     "type": "git",
@@ -40,8 +40,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/react-html": "^0.3.18",
-    "@quilted/react-server-render": "^0.3.7"
+    "@quilted/react-html": "^0.4.0",
+    "@quilted/react-server-render": "^0.4.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

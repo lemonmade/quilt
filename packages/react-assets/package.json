@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.0.6",
+  "version": "0.1.0",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -43,8 +43,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/assets": "^0.0.5",
-    "@quilted/react-server-render": "^0.3.27",
+    "@quilted/assets": "^0.1.0",
+    "@quilted/react-server-render": "^0.4.0",
     "@types/react": "^17.0.0 || ^18.0.0"
   },
   "peerDependencies": {

@@ -2,7 +2,7 @@
   "name": "@quilted/threads",
   "description": "Helpers for communicating between JavaScript environments using message passing.",
   "type": "module",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -43,7 +43,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/events": "^1.0.0"
+    "@quilted/events": "^2.0.0"
   },
   "peerDependencies": {
     "@preact/signals-core": "^1.5.0"

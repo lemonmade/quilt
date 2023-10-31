@@ -1,9 +1,9 @@
 {
   "name": "e2e-tests",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "devDependencies": {
-    "@quilted/quilt": "^0.5.0",
+    "@quilted/quilt": "^0.6.0",
     "@remix-run/web-fetch": "^4.1.0",
     "@types/common-tags": "^1.8.0",
     "@types/fs-extra": "^9.0.13",

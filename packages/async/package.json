@@ -1,7 +1,7 @@
 {
   "name": "@quilted/async",
   "type": "module",
-  "version": "0.3.46",
+  "version": "0.4.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,8 +26,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/assets": "^0.0.5",
-    "@quilted/events": "^1.0.0",
+    "@quilted/assets": "^0.1.0",
+    "@quilted/events": "^2.0.0",
     "@types/web": "^0.0.59"
   },
   "eslintConfig": {

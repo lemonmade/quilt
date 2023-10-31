@@ -2,7 +2,7 @@
   "name": "@quilted/react-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.1.19",
+  "version": "1.0.0",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -42,15 +42,15 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/localize": "^0.1.0",
-    "@quilted/react-html": "^0.3.29",
-    "@quilted/react-router": "^0.3.40",
-    "@quilted/react-utilities": "^0.1.0",
-    "@quilted/useful-react-types": "^1.0.0"
+    "@quilted/localize": "^0.2.0",
+    "@quilted/react-html": "^0.4.0",
+    "@quilted/react-router": "^0.4.0",
+    "@quilted/react-utilities": "^0.2.0",
+    "@quilted/useful-react-types": "^2.0.0"
   },
   "peerDependencies": {
-    "@quilted/request-router": "^0.1.8",
-    "@quilted/react-http": "^0.3.31",
+    "@quilted/request-router": "^0.2.0",
+    "@quilted/react-http": "^0.4.0",
     "react": "^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
@@ -65,8 +65,8 @@
     }
   },
   "devDependencies": {
-    "@quilted/request-router": "^0.1.0",
-    "@quilted/react-http": "^0.3.17",
+    "@quilted/request-router": "^0.2.0",
+    "@quilted/react-http": "^0.4.0",
     "react": "workspace:@quilted/react@^18.2.0"
   },
   "eslintConfig": {

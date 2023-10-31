@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-performance",
   "type": "module",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -26,8 +26,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/performance": "^0.1.0",
-    "@quilted/react-utilities": "^0.1.7"
+    "@quilted/performance": "^0.2.0",
+    "@quilted/react-utilities": "^0.2.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

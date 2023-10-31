@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.2",
+  "version": "1.0.0",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -46,7 +46,7 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "^0.5.153"
+    "@quilted/quilt": "^0.6.0"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/request-router",
   "type": "module",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -39,8 +39,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/http": "^0.2.11",
-    "@quilted/routing": "^0.2.7",
+    "@quilted/http": "^0.3.0",
+    "@quilted/routing": "^0.3.0",
     "send": "^0.17.0"
   },
   "devDependencies": {
