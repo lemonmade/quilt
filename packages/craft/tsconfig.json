@@ -6,5 +6,9 @@
   },
   "include": ["source"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
-  "references": []
+  "references": [
+    {"path": "../graphql"},
+    {"path": "../rollup"},
+    {"path": "../vite"}
+  ]
 }

@@ -1,3 +1,7 @@
 import {quiltPackage} from '@quilted/rollup/package';
 
-export default quiltPackage();
+export default quiltPackage({
+  executable: {
+    quilt: './source/cli.ts',
+  },
+});
