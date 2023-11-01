@@ -40,7 +40,7 @@
     "@quilted/typescript": "workspace:^",
     "@quilted/vite": "workspace:^",
     "@types/common-tags": "^1.8.1",
-    "@types/node": "^18.17.0",
+    "@types/node": "^20.8.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "common-tags": "^1.8.2",
