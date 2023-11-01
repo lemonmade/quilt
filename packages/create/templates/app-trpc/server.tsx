@@ -1,6 +1,6 @@
 import '@quilted/quilt/globals';
 import {RequestRouter} from '@quilted/quilt/request-router';
-import {BrowserAssets} from '@quilted/quilt/magic/assets';
+import {BrowserAssets} from 'quilt:module/assets';
 
 import {createDirectClient} from '@quilted/trpc/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';

@@ -1,7 +1,7 @@
 import '@quilted/quilt/globals';
 
 import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
-import {BrowserAssets} from '@quilted/quilt/magic/assets';
+import {BrowserAssets} from 'quilt:module/assets';
 
 const router = new RequestRouter();
 const assets = new BrowserAssets();
