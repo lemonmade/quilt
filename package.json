@@ -11,7 +11,7 @@
     "create": "tsx --conditions quilt:source ./packages/create/source/cli.ts",
     "test": "vitest",
     "test.unit": "vitest --config configuration/vite.unit.config.ts --no-threads",
-    "test.e2e": "vitest --config configuration/vite.e2e.config.ts",
+    "test.e2e": "vitest --config configuration/vite.e2e.config.ts --no-threads",
     "lint.eslint": "eslint . --cache --cache-location ./node_modules/.eslintcache --ext .ts,.tsx,.js,.mjs --max-warnings 0",
     "lint.prettier": "prettier \"./**/*.{json,md,yaml,css,graphql}\" --check --cache",
     "lint": "pnpm run lint.eslint && pnpm run lint.prettier",
