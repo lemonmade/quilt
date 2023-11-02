@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.2.1
+
+### Patch Changes
+
+- [`a8d82966`](https://github.com/lemonmade/quilt/commit/a8d82966774c1739e416606ae381c1f9df2a2ae5) Thanks [@lemonmade](https://github.com/lemonmade)! - Update create templates with new Rollup and Vite configs
+
+- [`406d8152`](https://github.com/lemonmade/quilt/commit/406d81525a417eb9dadb8425b482eb03355387d8) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove stylelint and browserlist packages
+
+- [`de95d6b8`](https://github.com/lemonmade/quilt/commit/de95d6b80c9b25e1ed20b1ef6721bec23cb0570f) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade local Node version to 20.x
+
 ## 0.2.0
 
 ### Minor Changes
