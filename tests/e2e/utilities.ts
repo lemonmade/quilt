@@ -7,7 +7,6 @@ import {copy} from 'fs-extra';
 import {customAlphabet} from 'nanoid';
 import getPort from 'get-port';
 import {chromium} from 'playwright';
-import {fetch} from '@remix-run/web-fetch';
 import type {
   Page,
   Browser as PlaywrightBrowser,
@@ -296,15 +295,19 @@ export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
+    let lastError: unknown;
+
     try {
       await fetch(url, {redirect: 'manual'});
       break;
-    } catch {
-      // intentional noop
+    } catch (error) {
+      lastError = error;
     }
 
     if (Date.now() - startedAt > timeout) {
-      throw new Error(`Server at ${url.toString()} did not start up in time`);
+      throw new Error(`Server at ${url.toString()} did not start up in time`, {
+        cause: lastError,
+      });
     }
 
     await sleep(25);
