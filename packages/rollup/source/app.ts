@@ -449,7 +449,10 @@ export async function quiltAppBrowser({
   const isESM = await targetsSupportModules(browserGroup.browsers);
 
   return {
-    input: finalEntry,
+    // If we are using the "magic entry", give it an explicit name of `browser`.
+    // Otherwise, Rollup will use the file name as the output name.
+    input:
+      finalEntry === MAGIC_MODULE_ENTRY ? {browser: finalEntry} : finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -466,7 +469,7 @@ export async function quiltAppBrowser({
     output: {
       format: isESM ? 'esm' : 'systemjs',
       dir: path.resolve(root, `build/assets`),
-      entryFileNames: `app${targetFilenamePart}.[hash].js`,
+      entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
       chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       manualChunks: createManualChunksSorter(),
@@ -618,7 +621,10 @@ export async function quiltAppServer({
   );
 
   return {
-    input: finalEntry,
+    // If we are using the "magic entry", give it an explicit name of `server`.
+    // Otherwise, Rollup will use the file name as the output name.
+    input:
+      finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -636,7 +642,7 @@ export async function quiltAppServer({
       format:
         outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
       dir: path.resolve(`build/server`),
-      entryFileNames: `server${hash === true ? `.[hash]` : ''}.js`,
+      entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${
         hash === true || hash === 'async-only' ? `.[hash]` : ''
       }.js`,
