@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.2.1
+
+### Patch Changes
+
+- [`54b0f412`](https://github.com/lemonmade/quilt/commit/54b0f412081f1c795d54f06ec7c54ccdfeceb3b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Use entry file name as the name of app output bundles
+
+- [`9aff55ff`](https://github.com/lemonmade/quilt/commit/9aff55fffcdcd6ccdc6adbb8a50c7500b30dd144) Thanks [@lemonmade](https://github.com/lemonmade)! - Support custom source code React import source when using esbuild
+
 ## 0.2.0
 
 ### Minor Changes

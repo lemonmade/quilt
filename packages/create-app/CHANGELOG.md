@@ -1,5 +1,11 @@
 # @quilted/create-app
 
+## 0.2.1
+
+### Patch Changes
+
+- [`406d8152`](https://github.com/lemonmade/quilt/commit/406d81525a417eb9dadb8425b482eb03355387d8) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove stylelint and browserlist packages
+
 ## 0.2.0
 
 ### Minor Changes
