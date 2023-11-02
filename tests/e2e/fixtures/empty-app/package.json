@@ -16,6 +16,6 @@
     "typescript": "^5.2.0"
   },
   "browserslist": [
-    "defaults and not dead"
+    "defaults and fully supports es6-module and fully supports es6-module-dynamic-import"
   ]
 }

@@ -20,7 +20,9 @@ describe('app builds', () => {
               ...JSON.parse(await fs.read('package.json')),
               browserslist: {
                 ie11: ['ie 11'],
-                defaults: ['defaults and not dead'],
+                defaults: [
+                  'defaults and fully supports es6-module and fully supports es6-module-dynamic-import',
+                ],
               },
             },
             null,
@@ -36,18 +38,78 @@ describe('app builds', () => {
         });
 
         expect(
-          await defaultPage.$('script[src^="/assets/app.default"]'),
+          await defaultPage.$('script[src^="/assets/browser.default"]'),
         ).not.toBeNull();
         expect(
-          await ie11Page.$('script[src^="/assets/app.default"]'),
+          await ie11Page.$('script[src^="/assets/browser.default"]'),
         ).toBeNull();
 
         expect(
-          await defaultPage.$('script[src^="/assets/app.ie11"]'),
+          await defaultPage.$('script[src^="/assets/browser.ie11"]'),
         ).toBeNull();
         expect(
-          await ie11Page.$('script[src^="/assets/app.ie11"]'),
+          await ie11Page.$('script[src^="/assets/browser.ie11"]'),
         ).not.toBeNull();
+      });
+    });
+
+    it('uses System.js to run a browser build without ESModules', async () => {
+      await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+        const {fs} = workspace;
+
+        await fs.write({
+          'browser.ts': stripIndent`
+            const element = document.createElement('div');
+            element.id = 'app';
+            element.textContent = 'Hello, world!';
+            document.body.append(element);
+          `,
+          'server.ts': stripIndent`
+            import {RequestRouter} from '@quilted/quilt/request-router';
+            import {renderToResponse} from '@quilted/quilt/server';
+            import {BrowserAssets} from 'quilt:module/assets';
+                      
+            const router = new RequestRouter();
+            const assets = new BrowserAssets();
+
+            router.get(async (request) => {
+              const response = await renderToResponse({
+                request,
+                assets,
+              });
+
+              return response;
+            });
+            
+            export default router;
+          `,
+          'rollup.config.js': stripIndent`
+            import {quiltApp} from '@quilted/rollup/app';  
+
+            export default quiltApp({
+              browser: {entry: './browser.ts'},
+              server: {entry: './server.ts'},
+            });
+          `,
+          'package.json': JSON.stringify(
+            {
+              ...JSON.parse(await fs.read('package.json')),
+              browserslist: ['ie 11'],
+            },
+            null,
+            2,
+          ),
+        });
+
+        const {url} = await buildAppAndRunServer(workspace);
+        const page = await openPageAndWaitForNavigation(workspace, url, {
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko',
+        });
+
+        const element = await page.waitForSelector('#app');
+
+        expect(element).not.toBeNull();
       });
     });
 
