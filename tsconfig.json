@@ -17,7 +17,6 @@
   ],
   "references": [
     {"path": "./integrations/apollo"},
-    {"path": "./integrations/aws"},
     {"path": "./integrations/cloudflare"},
     {"path": "./integrations/deno"},
     {"path": "./integrations/react-query"},

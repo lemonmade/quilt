@@ -16,6 +16,6 @@
     "typescript": "^5.2.0"
   },
   "browserslist": [
-    "extends @quilted/browserslist-config/evergreen"
+    "defaults and not dead"
   ]
 }

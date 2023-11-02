@@ -1,1 +1,0 @@
-# `@quilted/aws`

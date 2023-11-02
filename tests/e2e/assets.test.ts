@@ -20,7 +20,7 @@ describe('app builds', () => {
               ...JSON.parse(await fs.read('package.json')),
               browserslist: {
                 ie11: ['ie 11'],
-                defaults: ['extends @quilted/browserslist-config/defaults'],
+                defaults: ['defaults and not dead'],
               },
             },
             null,

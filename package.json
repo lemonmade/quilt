@@ -28,7 +28,6 @@
     "@actions/github": "^5.1.0",
     "@changesets/changelog-github": "^0.4.7",
     "@changesets/cli": "^2.25.0",
-    "@quilted/browserslist-config": "workspace:^",
     "@quilted/craft": "workspace:^",
     "@quilted/eslint-config": "workspace:^",
     "@quilted/events": "workspace:^",
@@ -36,7 +35,6 @@
     "@quilted/prettier": "workspace:^",
     "@quilted/quilt": "workspace:^",
     "@quilted/rollup": "workspace:^",
-    "@quilted/stylelint-config": "workspace:^",
     "@quilted/typescript": "workspace:^",
     "@quilted/vite": "workspace:^",
     "@types/common-tags": "^1.8.1",
@@ -66,11 +64,8 @@
       "packages/rollup/configuration/rollup.config.js"
     ]
   },
-  "stylelint": {
-    "extends": "@quilted/stylelint-config"
-  },
   "browserslist": [
-    "extends @quilted/browserslist-config/defaults"
+    "defaults and not dead"
   ],
   "pnpm": {
     "peerDependencyRules": {

@@ -218,18 +218,23 @@ By default, Quilt produces three browser builds for your application:
 
 If you are using [automatic server generation](./server.md) for your application, that server will read the user agent string and select the correct assets to use for each individual request.
 
-You can customize what builds get produced for your application by including a [browserslist configuration](https://github.com/browserslist/browserslist) in your application. This configuration can be placed in any of the [supported browserslist configuration files](https://github.com/browserslist/browserslist#config-file), but we generally recommend putting it in the app’s `package.json`.
-
-Quilt provides the default targets it uses through the [`@quilted/browserslist-config`](https://github.com/lemonmade/quilt/tree/main/packages/browserslist-config) package, which makes it easy to add additional builds while keeping some of Quilt’s defaults. For example, the following browserslist configuration, placed in your app’s `package.json`, would use the `modules` and `evergreen` targets described above, but would use a default build that includes support for IE 11:
+You can customize what builds get produced for your application by including a [browserslist configuration](https://github.com/browserslist/browserslist) in your application. This configuration can be placed in any of the [supported browserslist configuration files](https://github.com/browserslist/browserslist#config-file), but we generally recommend putting it in the app’s `package.json`. For example, the following browserslist configuration, placed in your app’s `package.json`, would use the `modules` and `evergreen` targets described above, but would use a default build that includes support for IE 11:
 
 ```json
 {
   "browserslist": {
-    "my-defaults": ["defaults", "IE 11"],
-    "modules": ["@quilted/browserslist-config/modules"],
-    "evergreen": ["@quilted/browserslist-config/evergreen"]
+    "defaults": ["defaults", "IE 11"],
+    "modules": [
+      "defaults and fully supports es6-module and fully supports es6-module-dynamic-import"
+    ],
+    "evergreen": [
+      "last 1 firefox version",
+      "last 1 safari version",
+      "last 1 edge version",
+      "last 1 chrome version"
+    ]
   }
 }
 ```
 
-Each named configuration will be turned into a build, with the name being included in the resulting file for easy identification (e.g., `app.my-defaults.abc123.js`).
+Each named configuration will be turned into a build, with the name being included in the resulting file for easy identification (e.g., `app.evergreen.abc123.js`).

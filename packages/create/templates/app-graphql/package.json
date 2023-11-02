@@ -24,13 +24,16 @@
   ],
   "browserslist": {
     "defaults": [
-      "extends @quilted/browserslist-config/defaults"
+      "defaults and not dead"
     ],
     "modules": [
-      "extends @quilted/browserslist-config/modules"
+      "defaults and fully supports es6-module and fully supports es6-module-dynamic-import"
     ],
     "evergreen": [
-      "extends @quilted/browserslist-config/evergreen"
+      "last 1 firefox version",
+      "last 1 safari version",
+      "last 1 edge version",
+      "last 1 chrome version"
     ]
   },
   "eslintConfig": {

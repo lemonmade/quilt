@@ -32,6 +32,6 @@
     ]
   },
   "browserslist": [
-    "extends @quilted/browserslist-config/defaults"
+    "defaults and not dead"
   ]
 }

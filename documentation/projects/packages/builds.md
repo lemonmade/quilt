@@ -83,11 +83,11 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 
 When creating the ESModule and CommonJS builds, Quilt will “transpile” your code to remove references to language features that are not supported by your minimum supported runtime versions. The following logic is used to determine the minimum supported runtime version for your package:
 
-- If you explicitly list browsers as a [supported runtime](./README.md#runtimes) for your package, or you do not explicitly set any supported runtimes, Quilt will attempt to read the [browserslist configuration](https://github.com/browserslist/browserslist) for the package. The easiest way to set this supported browser list is to include the [`"browserslist"` key in your `package.json`](https://github.com/browserslist/browserslist#packagejson) (you can extend the [`@quilted/browserslist/defaults`](../../../packages/browserslist-config) shared configuration if you want a good, wide browser support matrix):
+- If you explicitly list browsers as a [supported runtime](./README.md#runtimes) for your package, or you do not explicitly set any supported runtimes, Quilt will attempt to read the [browserslist configuration](https://github.com/browserslist/browserslist) for the package. The easiest way to set this supported browser list is to include the [`"browserslist"` key in your `package.json`](https://github.com/browserslist/browserslist#packagejson):
 
   ```json
   {
-    "browserslist": ["extends @quilted/browserslist-config/defaults"]
+    "browserslist": ["defaults and not dead"]
   }
   ```
 
