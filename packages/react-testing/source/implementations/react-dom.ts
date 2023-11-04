@@ -2,25 +2,8 @@ import {createRoot, type Root as ReactDomRoot} from 'react-dom/client';
 import {act} from 'react-dom/test-utils';
 
 import {createEnvironment, isNode} from '../environment.tsx';
-import type {
-  CustomRender,
-  CustomRenderResult,
-  CustomRenderOptions,
-  CustomRenderExtendOptions,
-  HookRunner,
-  Environment,
-  EnvironmentOptions,
-  ContextOption,
-  RenderOption,
-  ActionsOption,
-} from '../environment.tsx';
-import type {
-  Node,
-  NodeApi,
-  Root,
-  RootApi,
-  HTMLNodeExtensions,
-} from '../types.ts';
+import type {EnvironmentOptions} from '../environment.tsx';
+import type {Node, NodeApi, HTMLNodeExtensions} from '../types.ts';
 
 import {
   Tag,
@@ -28,29 +11,15 @@ import {
   type Fiber,
 } from './shared/react.ts';
 
+export type * from '../environment.tsx';
+export type * from '../types.ts';
+
+export {isNode};
+
 interface Context {
   root: ReactDomRoot;
   element: HTMLDivElement;
 }
-
-export {isNode};
-export type {
-  Node,
-  NodeApi,
-  Root,
-  RootApi,
-  HTMLNodeExtensions,
-  CustomRender,
-  CustomRenderResult,
-  CustomRenderOptions,
-  CustomRenderExtendOptions,
-  HookRunner,
-  Environment,
-  EnvironmentOptions,
-  ContextOption,
-  RenderOption,
-  ActionsOption,
-};
 
 export const environment = createEnvironment<Context, HTMLNodeExtensions>({
   act,

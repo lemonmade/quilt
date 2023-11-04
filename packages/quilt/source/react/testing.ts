@@ -7,22 +7,7 @@ export {
   rendered,
   destroyAll,
 } from '@quilted/react-testing/preact';
-export type {
-  CustomRender,
-  CustomRenderResult,
-  CustomRenderOptions,
-  CustomRenderExtendOptions,
-  HookRunner,
-  Environment,
-  EnvironmentOptions,
-  ContextOption,
-  RenderOption,
-  ActionsOption,
-  Node,
-  NodeApi,
-  Root,
-  RootApi,
-} from '@quilted/react-testing/preact';
+export type * from '@quilted/react-testing/dom';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends CustomMatchers<T> {}
