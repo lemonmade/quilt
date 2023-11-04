@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.3
+
+### Patch Changes
+
+- [`c64ec21f`](https://github.com/lemonmade/quilt/commit/c64ec21f890af28c573b4a98bc07f4a0623e969d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TanStack Query dependencies
+
 ## 0.2.2
 
 ### Patch Changes

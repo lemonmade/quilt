@@ -1,5 +1,13 @@
 # @quilted/craft
 
+## 0.2.1
+
+### Patch Changes
+
+- [`7f3297fa`](https://github.com/lemonmade/quilt/commit/7f3297facce376a98ced95dceb7d9c6200dad9c0) Thanks [@lemonmade](https://github.com/lemonmade)! - Expose `quilt` executable
+
+- [`e407aec5`](https://github.com/lemonmade/quilt/commit/e407aec56e697eadfc7b1e62168ad40a49738d96) Thanks [@lemonmade](https://github.com/lemonmade)! - Dissolve TypeScript package between craft and quilt
+
 ## 0.2.0
 
 ### Minor Changes
