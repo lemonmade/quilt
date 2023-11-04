@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-export async function createTSConfigAliasPlugin({
+export async function tsconfigAliases({
   root = process.cwd(),
 }: {root?: string} = {}) {
   const [{default: alias}, tsconfig] = await Promise.all([

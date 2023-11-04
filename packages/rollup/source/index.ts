@@ -1,7 +1,9 @@
 export {
-  quiltApp,
+  quiltAppOptions,
   quiltAppBrowser,
+  quiltAppBrowserOptions,
   quiltAppServer,
+  quiltAppServerOptions,
   type AppOptions,
   type AppBaseOptions,
   type AppBrowserOptions,

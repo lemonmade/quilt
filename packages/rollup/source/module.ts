@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {Plugin, type RollupOptions} from 'rollup';
+import {type InputPluginOption, type RollupOptions} from 'rollup';
 import {glob} from 'glob';
 
 import {resolveRoot} from './shared/path.ts';
@@ -86,6 +86,8 @@ export async function quiltModule({
     {visualizer},
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
+    {tsconfigAliases},
+    {react},
     {esnext},
     nodePlugins,
     packageJSON,
@@ -93,6 +95,8 @@ export async function quiltModule({
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
+    import('./features/typescript.ts'),
+    import('./features/react.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle}),
     loadPackageJSON(root),
@@ -102,12 +106,14 @@ export async function quiltModule({
     ? path.resolve(root, entry)
     : await sourceForModule(root, packageJSON);
 
-  const plugins: Plugin[] = [
+  const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: browserGroup.browsers}),
+    tsconfigAliases({root}),
     esnext({mode, targets: browserGroup.browsers}),
+    react(),
     removeBuildFiles(['build/assets', 'build/reports'], {root}),
   ];
 
@@ -136,18 +142,6 @@ export async function quiltModule({
   return {
     input: finalEntry,
     plugins,
-    onwarn(warning, defaultWarn) {
-      // Removes annoying warnings for React-focused libraries that
-      // include 'use client' directives.
-      if (
-        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-        /['"]use client['"]/.test(warning.message)
-      ) {
-        return;
-      }
-
-      defaultWarn(warning);
-    },
     output: {
       format: 'esm',
       dir: outputDirectory,

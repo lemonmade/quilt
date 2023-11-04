@@ -30,7 +30,9 @@ export async function getBrowserGroupTargetDetails(
       return config[targetName] ?? ['defaults'];
     })());
 
-  return {name: targets.name, browsers: browserslist(targetBrowsers)};
+  const browsers = browserslist(targetBrowsers);
+
+  return {name: targets.name, browsers};
 }
 
 export interface BrowserGroups {

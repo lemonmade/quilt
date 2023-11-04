@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import {glob} from 'glob';
 
-import type {Plugin, InputOptions} from 'rollup';
+import type {Plugin, InputOption, InputOptions} from 'rollup';
 import replace, {type RollupReplaceOptions} from '@rollup/plugin-replace';
 
 export function smartReplace(
@@ -37,6 +37,10 @@ export function removeBuildFiles(
       );
     },
   } satisfies Plugin;
+}
+
+export function normalizeRollupInput(input?: InputOption) {
+  return Array.isArray(input) && input.length === 0 ? undefined : input;
 }
 
 export interface RollupNodeBundle {

@@ -3,7 +3,12 @@ import * as fs from 'fs/promises';
 import {glob} from 'glob';
 import {createRequire} from 'module';
 
-import type {Plugin, RollupOptions, GetManualChunk} from 'rollup';
+import type {
+  Plugin,
+  RollupOptions,
+  InputPluginOption,
+  GetManualChunk,
+} from 'rollup';
 import type {AssetsBuildManifest} from '@quilted/assets';
 
 import {
@@ -18,6 +23,7 @@ import {multiline} from './shared/strings.ts';
 import {
   getNodePlugins,
   removeBuildFiles,
+  normalizeRollupInput,
   type RollupNodePluginOptions,
 } from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
@@ -218,9 +224,16 @@ export interface AppServerOutputOptions
   format?: 'esmodules' | 'esm' | 'es' | 'commonjs' | 'cjs';
 }
 
+export {
+  MAGIC_MODULE_ENTRY,
+  MAGIC_MODULE_APP_COMPONENT,
+  MAGIC_MODULE_BROWSER_ASSETS,
+  MAGIC_MODULE_REQUEST_ROUTER,
+};
+
 const require = createRequire(import.meta.url);
 
-export async function quiltApp({
+export async function quiltAppOptions({
   root: rootPath = process.cwd(),
   app,
   env,
@@ -239,7 +252,7 @@ export async function quiltApp({
 
   browserGroupEntries.forEach(([name, browsers], index) => {
     optionPromises.push(
-      quiltAppBrowser({
+      quiltAppBrowserOptions({
         root,
         app,
         graphql,
@@ -262,17 +275,51 @@ export async function quiltApp({
   });
 
   optionPromises.push(
-    quiltAppServer({
+    quiltAppServerOptions({
       root,
       app,
       graphql,
       ...serverOptions,
-      env: {...resolveEnvOption(env), ...resolveEnvOption(serverOptions?.env)},
+      env: {
+        ...resolveEnvOption(env),
+        ...resolveEnvOption(serverOptions?.env),
+      },
       assets: {...assets, ...serverOptions?.assets},
     }),
   );
 
   return Promise.all(optionPromises);
+}
+
+export async function quiltAppBrowserOptions(options: AppBrowserOptions = {}) {
+  const {root: rootPath = process.cwd(), assets} = options;
+  const root = resolveRoot(rootPath);
+
+  const [plugins, browserGroup] = await Promise.all([
+    quiltAppBrowser(options),
+    getBrowserGroupTargetDetails(assets?.targets, {
+      root,
+    }),
+  ]);
+
+  const targetFilenamePart = browserGroup.name ? `.${browserGroup.name}` : '';
+  const [isESM, generatedCode] = await Promise.all([
+    targetsSupportModules(browserGroup.browsers),
+    rollupGenerateOptionsForBrowsers(browserGroup.browsers),
+  ]);
+
+  return {
+    plugins,
+    output: {
+      format: isESM ? 'esm' : 'systemjs',
+      dir: path.resolve(root, `build/assets`),
+      entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
+      assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
+      chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
+      manualChunks: createManualChunksSorter(),
+      generatedCode,
+    },
+  } satisfies RollupOptions;
 }
 
 export async function quiltAppBrowser({
@@ -299,7 +346,8 @@ export async function quiltAppBrowser({
     {visualizer},
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
-    {createTSConfigAliasPlugin},
+    {tsconfigAliases},
+    {react},
     {css},
     {assetManifest, rawAssets, staticAssets},
     {asyncModules},
@@ -313,6 +361,7 @@ export async function quiltAppBrowser({
     import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
+    import('./features/react.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/async.ts'),
@@ -323,7 +372,8 @@ export async function quiltAppBrowser({
     loadPackageJSON(root),
   ]);
 
-  const plugins: Plugin[] = [
+  const plugins: InputPluginOption[] = [
+    quiltAppBrowserInput({root, entry}),
     ...nodePlugins,
     systemJS({minify}),
     replaceProcessEnv({mode}),
@@ -345,11 +395,12 @@ export async function quiltAppBrowser({
         },
       },
     }),
+    react(),
+    css({minify, emit: true}),
     esnext({
       mode,
       targets: browserGroup.browsers,
     }),
-    css({minify, emit: true}),
     rawAssets(),
     staticAssets({
       baseURL,
@@ -376,6 +427,7 @@ export async function quiltAppBrowser({
         chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       },
     }),
+    tsconfigAliases({root}),
   ];
 
   if (assets?.clean ?? true) {
@@ -384,12 +436,6 @@ export async function quiltAppBrowser({
         root,
       }),
     );
-  }
-
-  const tsconfigAliases = await createTSConfigAliasPlugin();
-
-  if (tsconfigAliases) {
-    plugins.push(tsconfigAliases);
   }
 
   const appEntry = await resolveAppEntry(app, {root, packageJSON});
@@ -445,44 +491,63 @@ export async function quiltAppBrowser({
     }),
   );
 
-  const finalEntry = entry
-    ? path.resolve(root, entry)
-    : (await glob('{browser,client,web}.{ts,tsx,mjs,js,jsx}', {
-        cwd: root,
-        nodir: true,
-        absolute: true,
-      }).then((files) => files[0])) ?? MAGIC_MODULE_ENTRY;
+  return plugins;
+}
 
-  const isESM = await targetsSupportModules(browserGroup.browsers);
+export function quiltAppBrowserInput({
+  root: rootPath = process.cwd(),
+  entry,
+}: Pick<AppBrowserOptions, 'root' | 'entry'> = {}) {
+  const root = resolveRoot(rootPath);
 
   return {
-    // If we are using the "magic entry", give it an explicit name of `browser`.
-    // Otherwise, Rollup will use the file name as the output name.
-    input:
-      finalEntry === MAGIC_MODULE_ENTRY ? {browser: finalEntry} : finalEntry,
-    plugins,
-    onwarn(warning, defaultWarn) {
-      // Removes annoying warnings for React-focused libraries that
-      // include 'use client' directives.
-      if (
-        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-        /['"]use client['"]/.test(warning.message)
-      ) {
-        return;
-      }
+    name: '@quilted/app-browser/input',
+    async options(options) {
+      const finalEntry =
+        normalizeRollupInput(options.input) ??
+        (entry
+          ? path.resolve(root, entry)
+          : await glob('{browser,client,web}.{ts,tsx,mjs,js,jsx}', {
+              cwd: root,
+              nodir: true,
+              absolute: true,
+            }).then((files) => files[0])) ??
+        MAGIC_MODULE_ENTRY;
 
-      defaultWarn(warning);
+      return {
+        ...options,
+        // If we are using the "magic entry", give it an explicit name of `browser`.
+        // Otherwise, Rollup will use the file name as the output name.
+        input:
+          finalEntry === MAGIC_MODULE_ENTRY
+            ? {browser: finalEntry}
+            : finalEntry,
+      };
     },
+  } satisfies Plugin;
+}
+
+export async function quiltAppServerOptions(options: AppServerOptions = {}) {
+  const {root: rootPath = process.cwd(), output} = options;
+
+  const root = resolveRoot(rootPath);
+  const hash = output?.hash ?? 'async-only';
+  const outputFormat = output?.format ?? 'esmodules';
+
+  const plugins = await quiltAppServer(options);
+
+  return {
+    plugins,
     output: {
-      format: isESM ? 'esm' : 'systemjs',
-      dir: path.resolve(root, `build/assets`),
-      entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
-      assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
-      chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
-      manualChunks: createManualChunksSorter(),
-      generatedCode: await rollupGenerateOptionsForBrowsers(
-        browserGroup.browsers,
-      ),
+      format:
+        outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
+      dir: path.resolve(root, `build/server`),
+      entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
+      chunkFileNames: `[name]${
+        hash === true || hash === 'async-only' ? `.[hash]` : ''
+      }.js`,
+      assetFileNames: `[name]${hash === true ? `.[hash]` : ''}.[ext]`,
+      generatedCode: 'es2015',
     },
   } satisfies RollupOptions;
 }
@@ -505,14 +570,13 @@ export async function quiltAppServer({
 
   const bundle = output?.bundle;
   const minify = output?.minify ?? false;
-  const hash = output?.hash ?? 'async-only';
-  const outputFormat = output?.format ?? 'esmodules';
 
   const [
     {visualizer},
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
-    {createTSConfigAliasPlugin},
+    {react},
+    {tsconfigAliases},
     {css},
     {rawAssets, staticAssets},
     {asyncModules},
@@ -523,6 +587,7 @@ export async function quiltAppServer({
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
+    import('./features/react.ts'),
     import('./features/typescript.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
@@ -532,7 +597,8 @@ export async function quiltAppServer({
     loadPackageJSON(root),
   ]);
 
-  const plugins: Plugin[] = [
+  const plugins: InputPluginOption[] = [
+    quiltAppServerInput({root, entry, format}),
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
@@ -552,6 +618,7 @@ export async function quiltAppServer({
         },
       },
     }),
+    react(),
     esnext({
       mode,
       targets: ['current node'],
@@ -573,13 +640,8 @@ export async function quiltAppServer({
       moduleID: ({imported}) => path.relative(root, imported),
     }),
     removeBuildFiles(['build/server'], {root}),
+    tsconfigAliases({root}),
   ];
-
-  const tsconfigAliases = await createTSConfigAliasPlugin();
-
-  if (tsconfigAliases) {
-    plugins.push(tsconfigAliases);
-  }
 
   const appEntry = await resolveAppEntry(app, {root, packageJSON});
 
@@ -594,11 +656,6 @@ export async function quiltAppServer({
         nodir: true,
         absolute: true,
       }).then((files) => files[0]);
-
-  const finalEntry =
-    format === 'request-router'
-      ? MAGIC_MODULE_ENTRY
-      : serverEntry ?? MAGIC_MODULE_ENTRY;
 
   plugins.push(
     magicModuleAppServerEntry({
@@ -630,36 +687,45 @@ export async function quiltAppServer({
     }),
   );
 
+  return plugins;
+}
+
+export function quiltAppServerInput({
+  root: rootPath = process.cwd(),
+  entry,
+  format = 'request-router',
+}: Pick<AppServerOptions, 'root' | 'entry' | 'format'> = {}) {
+  const root = resolveRoot(rootPath);
+
   return {
-    // If we are using the "magic entry", give it an explicit name of `server`.
-    // Otherwise, Rollup will use the file name as the output name.
-    input:
-      finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
-    plugins,
-    onwarn(warning, defaultWarn) {
-      // Removes annoying warnings for React-focused libraries that
-      // include 'use client' directives.
-      if (
-        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-        /['"]use client['"]/.test(warning.message)
-      ) {
-        return;
+    name: '@quilted/app-server/input',
+    async options(options) {
+      let finalEntry = normalizeRollupInput(options.input);
+
+      if (!finalEntry) {
+        const serverEntry = entry
+          ? path.resolve(root, entry)
+          : await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
+              cwd: root,
+              nodir: true,
+              absolute: true,
+            }).then((files) => files[0]);
+
+        finalEntry =
+          format === 'request-router'
+            ? MAGIC_MODULE_ENTRY
+            : serverEntry ?? MAGIC_MODULE_ENTRY;
       }
 
-      defaultWarn(warning);
+      return {
+        ...options,
+        // If we are using the "magic entry", give it an explicit name of `server`.
+        // Otherwise, Rollup will use the file name as the output name.
+        input:
+          finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
+      };
     },
-    output: {
-      format:
-        outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
-      dir: path.resolve(root, `build/server`),
-      entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
-      chunkFileNames: `[name]${
-        hash === true || hash === 'async-only' ? `.[hash]` : ''
-      }.js`,
-      assetFileNames: `[name]${hash === true ? `.[hash]` : ''}.[ext]`,
-      generatedCode: 'es2015',
-    },
-  } satisfies RollupOptions;
+  } satisfies Plugin;
 }
 
 export function magicModuleAppComponent({entry}: {entry: string}) {

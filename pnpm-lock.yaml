@@ -1052,6 +1052,9 @@ importers:
       '@prefresh/vite':
         specifier: ^2.4.1
         version: 2.4.1(preact@10.18.2)(vite@4.5.0)
+      '@quilted/request-router':
+        specifier: ^0.2.0
+        version: link:../request-router
       '@quilted/rollup':
         specifier: ^0.2.0
         version: link:../rollup

@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {Plugin, type RollupOptions} from 'rollup';
+import {type InputPluginOption, type RollupOptions} from 'rollup';
 import {glob} from 'glob';
 
 import {
@@ -107,6 +107,8 @@ export interface ServerOutputOptions
   format?: 'esmodules' | 'esm' | 'es' | 'commonjs' | 'cjs';
 }
 
+export {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER};
+
 export async function quiltServer({
   root: rootPath = process.cwd(),
   entry,
@@ -131,6 +133,8 @@ export async function quiltServer({
     {visualizer},
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
+    {tsconfigAliases},
+    {react},
     {esnext},
     nodePlugins,
     packageJSON,
@@ -138,6 +142,8 @@ export async function quiltServer({
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
+    import('./features/typescript.ts'),
+    import('./features/react.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle}),
     loadPackageJSON(root),
@@ -152,11 +158,13 @@ export async function quiltServer({
       ? MAGIC_MODULE_ENTRY
       : serverEntry ?? MAGIC_MODULE_ENTRY;
 
-  const plugins: Plugin[] = [
+  const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: ['current node']}),
+    tsconfigAliases({root}),
+    react(),
     esnext({mode, targets: ['current node']}),
     removeBuildFiles(['build/server', 'build/reports'], {root}),
   ];
