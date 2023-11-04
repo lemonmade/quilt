@@ -3,7 +3,7 @@ import {
   QueryClientProvider,
   QueryClient,
   dehydrate,
-  Hydrate,
+  HydrationBoundary,
 } from '@tanstack/react-query';
 import {useSerialized} from '@quilted/quilt/html';
 
@@ -53,7 +53,7 @@ export function ReactQueryContext({
 
   return (
     <QueryClientProvider client={client}>
-      <Hydrate state={hydrationState}>{children}</Hydrate>
+      <HydrationBoundary state={hydrationState}>{children}</HydrationBoundary>
     </QueryClientProvider>
   );
 }

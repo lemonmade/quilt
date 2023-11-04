@@ -1,4 +1,8 @@
-import {useQuery, type UseQueryOptions} from '@tanstack/react-query';
+import {
+  useQuery,
+  type UseQueryOptions,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 import {
   toGraphQLSource,
   useGraphQLFetch,
@@ -25,7 +29,7 @@ export function useGraphQLQuery<Data, Variables>(
     [GraphQLQueryOptions<Data, Variables>?],
     [GraphQLQueryOptions<Data, Variables>]
   >
-) {
+): UseQueryResult<Data> {
   const [options = {} as any] = args;
 
   const {
@@ -63,9 +67,9 @@ export function useGraphQLQuery<Data, Variables>(
     }
   }
 
-  return useQuery<Data>(
-    fullQueryKey,
-    async ({signal}) => {
+  return useQuery<Data>({
+    queryKey: fullQueryKey,
+    queryFn: async ({signal}) => {
       const result = await fetch(query, {
         signal,
         variables: variables!,
@@ -75,6 +79,6 @@ export function useGraphQLQuery<Data, Variables>(
 
       return result.data!;
     },
-    reactQueryOptions,
-  );
+    ...reactQueryOptions,
+  });
 }
