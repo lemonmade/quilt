@@ -165,8 +165,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/quilt
       '@tanstack/react-query':
-        specifier: ^4.19.0
-        version: 4.19.1(react-dom@18.2.0)(react@packages+react)
+        specifier: ^5.0.0
+        version: 5.4.3(react-dom@18.2.0)(react@packages+react)
       react:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../../packages/react
@@ -4437,15 +4437,15 @@ packages:
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  /@tanstack/query-core@4.19.1:
-    resolution: {integrity: sha512-Zp0aIose5C8skBzqbVFGk9HJsPtUhRVDVNWIqVzFbGQQgYSeLZMd3Sdb4+EnA5wl1J7X+bre2PJGnQg9x/zHOA==}
+  /@tanstack/query-core@5.4.3:
+    resolution: {integrity: sha512-fnI9ORjcuLGm1sNrKatKIosRQUpuqcD4SV7RqRSVmj8JSicX2aoMyKryHEBpVQvf6N4PaBVgBxQomjsbsGPssQ==}
     dev: true
 
-  /@tanstack/react-query@4.19.1(react-dom@18.2.0)(react@packages+react):
-    resolution: {integrity: sha512-5dvHvmc0vrWI03AJugzvKfirxCyCLe+qawrWFCXdu8t7dklIhJ7D5ZhgTypv7mMtIpdHPcECtCiT/+V74wCn2A==}
+  /@tanstack/react-query@5.4.3(react-dom@18.2.0)(react@packages+react):
+    resolution: {integrity: sha512-4aSOrRNa6yEmf7mws5QPTVMn8Lp7L38tFoTZ0c1ZmhIvbr8GIA0WT7X5N3yz/nuK8hUtjw9cAzBr4BPDZZ+tzA==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react: ^18.0.0
+      react-dom: ^18.0.0
       react-native: '*'
     peerDependenciesMeta:
       react-dom:
@@ -4453,10 +4453,9 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.19.1
+      '@tanstack/query-core': 5.4.3
       react: link:packages/react
       react-dom: 18.2.0(react@18.2.0)
-      use-sync-external-store: 1.2.0(react@packages+react)
     dev: true
 
   /@tootallnate/once@2.0.0:
@@ -9360,14 +9359,6 @@ packages:
   /urlpattern-polyfill@4.0.3:
     resolution: {integrity: sha512-DOE84vZT2fEcl9gqCUTcnAw5ZY5Id55ikUcziSUntuEFL3pRvavg5kwDmTEUJkeCHInTlV/HexFomgYnzO5kdQ==}
     dev: false
-
-  /use-sync-external-store@1.2.0(react@packages+react):
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: link:packages/react
-    dev: true
 
   /uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
