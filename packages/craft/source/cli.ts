@@ -10,13 +10,14 @@ const spawnAsync = promisify(spawn);
 const [, , command, ...args] = process.argv;
 
 if (command === 'graphql-types') {
-  await spawnAsync('quilt-graphql-typescript', [...args], {
+  const executable = path.resolve(
+    (await packageDirectory({
+      cwd: path.dirname(fileURLToPath(import.meta.url)),
+    })) ?? '.',
+    'node_modules/.bin/quilt-graphql-typescript',
+  );
+
+  await spawnAsync(executable, [...args], {
     stdio: 'inherit',
-    cwd: path.join(
-      (await packageDirectory({
-        cwd: path.dirname(fileURLToPath(import.meta.url)),
-      }))!,
-      'node_modules/.bin',
-    ),
   });
 }
