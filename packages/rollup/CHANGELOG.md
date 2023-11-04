@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.2
+
+### Patch Changes
+
+- [`72f03357`](https://github.com/lemonmade/quilt/commit/72f03357570579ab4925fcc888903d63b2e388e7) Thanks [@lemonmade](https://github.com/lemonmade)! - Use file name of input to determine server output file name
+
 ## 0.2.1
 
 ### Patch Changes
