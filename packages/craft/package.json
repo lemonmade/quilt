@@ -10,7 +10,10 @@
   },
   "publishConfig": {
     "access": "public",
-    "@quilted:registry": "https://registry.npmjs.org"
+    "@quilted:registry": "https://registry.npmjs.org",
+    "bin": {
+      "quilt": "./bin/quilt.mjs"
+    }
   },
   "exports": {
     "./rollup": {
