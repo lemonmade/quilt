@@ -1,9 +1,8 @@
-import {useMemo} from 'react';
+import {useMemo, type PropsWithChildren} from 'react';
 
 import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes, useInitialUrl} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
-import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 
 import {httpBatchLink} from '@trpc/client';
 import {QueryClient} from '@tanstack/react-query';
@@ -44,6 +43,8 @@ export function App(props: AppProps) {
     </HTML>
   );
 }
+
+export default App;
 
 // This component renders the routes for your application. If you have a lot
 // of routes, you may want to split this component into its own file.
