@@ -195,7 +195,8 @@ export async function quiltServer({
   );
 
   return {
-    input: finalEntry,
+    input:
+      finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
     plugins,
     onwarn(warning, defaultWarn) {
       // Removes annoying warnings for React-focused libraries that
@@ -213,7 +214,7 @@ export async function quiltServer({
       format:
         outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
       dir: outputDirectory,
-      entryFileNames: `server${hash === true ? `.[hash]` : ''}.js`,
+      entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${
         hash === true || hash === 'async-only' ? `.[hash]` : ''
       }.js`,
