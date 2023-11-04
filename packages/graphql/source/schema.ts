@@ -1,11 +1,11 @@
 import {
+  buildSchema,
   isScalarType,
   isUnionType,
   isObjectType,
   isInterfaceType,
   type GraphQLSchema,
 } from 'graphql';
-import {buildSchema} from 'graphql/utilities';
 
 export function createGraphQLSchema(
   source: string,
