@@ -10,9 +10,9 @@ describe('app builds', () => {
 
         await fs.write({
           'rollup.config.js': stripIndent`
-            import {quiltApp} from '@quilted/rollup/app';
+            import {quiltAppOptions} from '@quilted/rollup/app';
 
-            export default quiltApp({
+            export default quiltAppOptions({
               env: {inline: ['BUILDER']},
             });
           `,
@@ -114,9 +114,9 @@ describe('app builds', () => {
           '.env.production': 'FROM_ENV_MODE=3\nFROM_ENV_MODE_LOCAL=3',
           '.env.production.local': 'FROM_ENV_MODE_LOCAL=4',
           'rollup.config.js': stripIndent`
-            import {quiltApp} from '@quilted/rollup/app';
+            import {quiltAppOptions} from '@quilted/rollup/app';
 
-            export default quiltApp({
+            export default quiltAppOptions({
               env: {
                 inline: ['FROM_ENV', 'FROM_ENV_LOCAL', 'FROM_ENV_MODE', 'FROM_ENV_MODE_LOCAL'],
               },
@@ -147,9 +147,9 @@ describe('app builds', () => {
         await fs.write({
           '.env': `BUILDER=${builder}`,
           'rollup.config.js': stripIndent`
-            import {quiltApp} from '@quilted/rollup/app';
+            import {quiltAppOptions} from '@quilted/rollup/app';
 
-            export default quiltApp({
+            export default quiltAppOptions({
               server: {
                 env: {inline: ['BUILDER']},
               },
