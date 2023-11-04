@@ -124,7 +124,7 @@ importers:
         specifier: ^4.20221111.1
         version: 4.20221111.1
       '@quilted/quilt':
-        specifier: workspace:^0.6.0
+        specifier: workspace:^0.6.4
         version: link:../../packages/quilt
       common-tags:
         specifier: ^1.8.0
