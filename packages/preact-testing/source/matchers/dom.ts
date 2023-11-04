@@ -1,4 +1,4 @@
-import type {MatcherState} from 'expect';
+import type {MatcherState, MatcherUtils} from 'expect';
 import {
   matcherHint,
   printReceived,
@@ -45,7 +45,7 @@ export function toContainPreactHTML<Props>(
 }
 
 export function toHavePreactDataProps(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   node: Node<unknown>,
   data: {[key: string]: string},
 ) {

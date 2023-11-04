@@ -1,5 +1,5 @@
 import type {ComponentType} from 'preact';
-import type {MatcherState} from 'expect';
+import type {MatcherState, MatcherUtils} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -15,12 +15,13 @@ import {
   diffs,
   pluralize,
   printType,
+  getObjectSubset,
 } from './utilities.ts';
 
 export function toContainPreactComponent<
   Type extends string | ComponentType<any>,
 >(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   node: Node<any>,
   type: Type,
   props?: Partial<PropsFor<Type>>,
@@ -40,9 +41,7 @@ export function toContainPreactComponent<
     props == null
       ? foundByType
       : foundByType.filter((element) =>
-          Object.keys(props).every((key) =>
-            Object.is((props as any)[key], (element.props as any)[key]),
-          ),
+          this.equals(props, getObjectSubset(element.props, props)),
         );
 
   const pass = foundByProps.length > 0;
@@ -86,7 +85,7 @@ export function toContainPreactComponent<
 export function toContainPreactComponentTimes<
   Type extends string | ComponentType<any>,
 >(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   node: Node<unknown>,
   type: Type,
   times: number,
@@ -107,9 +106,7 @@ export function toContainPreactComponentTimes<
     props == null
       ? foundByType
       : foundByType.filter((element) =>
-          Object.keys(props).every((key) =>
-            Object.is((props as any)[key], (element.props as any)[key]),
-          ),
+          this.equals(props, getObjectSubset(element.props, props)),
         );
 
   const pass = foundByProps.length === times;

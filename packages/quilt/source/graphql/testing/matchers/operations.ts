@@ -1,4 +1,4 @@
-import type {MatcherState} from 'expect';
+import type {MatcherState, MatcherUtils} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -12,10 +12,14 @@ import type {
 } from '@quilted/graphql/testing';
 import {normalizeOperation} from '@quilted/graphql/ast';
 
-import {assertIsGraphQLController, diffVariables} from './utilities.ts';
+import {
+  assertIsGraphQLController,
+  diffVariables,
+  getObjectSubset,
+} from './utilities.ts';
 
 export function toHavePerformedGraphQLOperation<Variables>(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   graphql: GraphQLController,
   operation: GraphQLAnyOperation<any, Variables>,
   variables?: Variables,
@@ -33,11 +37,9 @@ export function toHavePerformedGraphQLOperation<Variables>(
     variables == null
       ? foundByOperation
       : foundByOperation.filter((operation) =>
-          Object.keys(variables).every((key) =>
-            Object.is(
-              (variables as any)[key],
-              (operation.variables ?? ({} as any))[key],
-            ),
+          this.equals(
+            variables,
+            getObjectSubset(operation.variables, variables),
           ),
         );
 
