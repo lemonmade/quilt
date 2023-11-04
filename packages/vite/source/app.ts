@@ -71,13 +71,7 @@ export async function quiltApp({
           // for React. Without explicitly listing it here, two different versions would
           // be created — one inlined into the React optimized dependency, and one as the
           // raw preact node module.
-          include: [
-            'preact',
-            'preact/hooks',
-            'preact/compat',
-            'preact/compat/client',
-            'preact/jsx-runtime',
-          ],
+          include: ['preact'],
         },
         resolve: {
           dedupe: ['preact'],
@@ -135,10 +129,10 @@ export function magicModuleAppAssetManifest() {
         attributes: {
           scripts: {type: 'module'},
         },
-        assets: [`/browser.tsx`],
+        assets: [`/@vite/client`, `/browser.tsx`],
         entries: {
           default: {
-            scripts: [0],
+            scripts: [0, 1],
             styles: [],
           },
         },
