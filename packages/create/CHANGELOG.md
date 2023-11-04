@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.4
+
+### Patch Changes
+
+- [`b9ba7d4d`](https://github.com/lemonmade/quilt/commit/b9ba7d4d5366137f57f10db10aa0ea98b5e07971) Thanks [@lemonmade](https://github.com/lemonmade)! - Add build commands to more project templates
+
+- [`b1f57043`](https://github.com/lemonmade/quilt/commit/b1f5704339033bbb9add8f35f7b58db586648ccc) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL template
+
 ## 0.2.3
 
 ### Patch Changes

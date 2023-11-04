@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.2.3
+
+### Patch Changes
+
+- [`c5f61853`](https://github.com/lemonmade/quilt/commit/c5f61853fe0692e98f735fa55218a96b1b3f75f7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix root module resolution for app rollup plugins
+
+- [`47103ea8`](https://github.com/lemonmade/quilt/commit/47103ea851be46d6203ebecdf0f73ef2c42f727a) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix .mjs extension preference during node resolution
+
 ## 0.2.2
 
 ### Patch Changes
