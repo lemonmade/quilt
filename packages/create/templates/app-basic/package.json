@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "rollup --config ./rollup.config.js",
     "start": "node ./build/server/server.js"
   },
   "dependencies": {},

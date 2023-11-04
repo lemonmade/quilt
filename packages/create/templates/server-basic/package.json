@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
+  "scripts": {
+    "build": "rollup --config ./rollup.config.js"
+  },
   "devDependencies": {
     "@quilted/quilt": "^0.5.0"
   },
