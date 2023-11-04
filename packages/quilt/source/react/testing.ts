@@ -1,12 +1,12 @@
 import {expect} from 'vitest';
-import {matchers, CustomMatchers} from '@quilted/react-testing/matchers';
+import {matchers, type CustomMatchers} from '@quilted/react-testing/matchers';
 
 export {
   render,
   createRender,
   rendered,
   destroyAll,
-} from '@quilted/react-testing';
+} from '@quilted/react-testing/preact';
 export type {
   CustomRender,
   CustomRenderResult,
@@ -22,11 +22,7 @@ export type {
   NodeApi,
   Root,
   RootApi,
-  DebugOptions,
-  EmptyObject,
-  PlainObject,
-  Predicate,
-} from '@quilted/react-testing';
+} from '@quilted/react-testing/preact';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends CustomMatchers<T> {}

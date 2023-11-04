@@ -8,16 +8,16 @@ import {
 
 import type {Node} from '../types.ts';
 
-import {toHaveReactProps} from './props.ts';
+import {toHavePreactProps} from './props.ts';
 import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
 
-export function toContainReactHTML<Props>(
+export function toContainPreactHTML<Props>(
   this: MatcherState,
   node: Node<Props>,
   text: string,
 ) {
   assertIsNode(node, {
-    expectation: 'toContainReactHTML',
+    expectation: 'toContainPreactHTML',
     isNot: this.isNot,
   });
 
@@ -27,8 +27,8 @@ export function toContainReactHTML<Props>(
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toContainReactHTML', node.toString())}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toContainPreactHTML', node.toString())}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `Not to contain HTML:\n  ${printExpected(text)}\n` +
         `But it did:\n  ${printReceivedWithHighlight(
           nodeHTML,
@@ -36,18 +36,18 @@ export function toContainReactHTML<Props>(
           text.length,
         )}\n`
     : () =>
-        `${matcherHint('.not.toContainReactHTML', node.toString())}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toContainPreactHTML', node.toString())}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `With HTML content:\n  ${printReceived(nodeHTML)}\n` +
         `To contain HTML:\n  ${printExpected(text)}\n`;
 
   return {pass, message};
 }
 
-export function toHaveReactDataProps(
+export function toHavePreactDataProps(
   this: MatcherState,
   node: Node<unknown>,
   data: {[key: string]: string},
 ) {
-  return toHaveReactProps.call(this, node, data);
+  return toHavePreactProps.call(this, node, data);
 }

@@ -23,7 +23,7 @@ export function assertIsNode(
         matcherHint(`.${expectation}`, undefined, undefined, {isNot}),
         `${receivedColor(
           'received',
-        )} value must be an @shopify/react-testing Root or Element object`,
+        )} value must be an @quilted/preact-testing Root or Element object`,
         `Received ${receivedColor(
           'null',
         )}.\nThis usually means that your \`.findX\` method failed to find any matching elements.`,
@@ -37,7 +37,7 @@ export function assertIsNode(
         matcherHint(`.${expectation}`, undefined, undefined, {isNot}),
         `${receivedColor(
           'received',
-        )} value must be an @shopify/react-testing Root or Element object`,
+        )} value must be an @quilted/preact-testing Root or Element object`,
         `Received an ${receivedColor(
           'array of Root or Element objects',
         )}.\nThis usually means that you passed in the result of \`.findAllX\`. Pass the result of \`.findX\` instead.`,
@@ -51,7 +51,7 @@ export function assertIsNode(
         matcherHint(`.${expectation}`, undefined, undefined, {isNot}),
         `${receivedColor(
           'received',
-        )} value must be an @shopify/react-testing Root or Element object`,
+        )} value must be an @quilted/preact-testing Root or Element object`,
         printWithType('Received', node, printReceived),
       ),
     );

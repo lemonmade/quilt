@@ -10,13 +10,13 @@ import type {Node} from '../types.ts';
 
 import {assertIsNode, printReceivedWithHighlight} from './utilities.ts';
 
-export function toContainReactText<Props>(
+export function toContainPreactText<Props>(
   this: MatcherState,
   node: Node<Props>,
   text: string,
 ) {
   assertIsNode(node, {
-    expectation: 'toContainReactText',
+    expectation: 'toContainPreactText',
     isNot: this.isNot,
   });
 
@@ -26,8 +26,8 @@ export function toContainReactText<Props>(
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toContainReactText', node.toString())}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toContainPreactText', node.toString())}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `Not to contain text:\n  ${printExpected(text)}\n` +
         `But it did:\n  ${printReceivedWithHighlight(
           nodeText,
@@ -35,8 +35,8 @@ export function toContainReactText<Props>(
           text.length,
         )}\n`
     : () =>
-        `${matcherHint('.not.toContainReactText', node.toString())}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toContainPreactText', node.toString())}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `With text content:\n  ${printReceived(nodeText)}\n` +
         `To contain string:\n  ${printExpected(text)}\n`;
 

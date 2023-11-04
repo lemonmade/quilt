@@ -10,13 +10,13 @@ import type {Node} from '../types.ts';
 
 import {assertIsNode, diffPropsForNode} from './utilities.ts';
 
-export function toHaveReactProps<Props>(
+export function toHavePreactProps<Props>(
   this: MatcherState,
   node: Node<Props>,
   props: Partial<Props>,
 ) {
   assertIsNode(node, {
-    expectation: 'toHaveReactProps',
+    expectation: 'toHavePreactProps',
     isNot: this.isNot,
   });
 
@@ -36,8 +36,8 @@ export function toHaveReactProps<Props>(
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toHaveReactProps', node.toString())}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toHavePreactProps', node.toString())}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `Not to have props:\n  ${printExpected(props)}\n` +
         `Received:\n  ${printReceived(node.props)}\n`
     : () => {
@@ -46,8 +46,10 @@ export function toHaveReactProps<Props>(
         });
 
         return (
-          `${matcherHint('.toHaveReactProps', node.toString())}\n\n` +
-          `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+          `${matcherHint('.toHavePreactProps', node.toString())}\n\n` +
+          `Expected the Preact element:\n  ${receivedColor(
+            node.toString(),
+          )}\n` +
           `To have props:\n  ${printExpected(props)}\n` +
           `Received:\n  ${printReceived(node.props)}\n${
             diffString ? `Difference:\n${diffString}\n` : ''

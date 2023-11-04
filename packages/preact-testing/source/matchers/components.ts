@@ -17,7 +17,7 @@ import {
   printType,
 } from './utilities.ts';
 
-export function toContainReactComponent<
+export function toContainPreactComponent<
   Type extends string | ComponentType<any>,
 >(
   this: MatcherState,
@@ -26,12 +26,12 @@ export function toContainReactComponent<
   props?: Partial<PropsFor<Type>>,
 ) {
   assertIsNode(node, {
-    expectation: 'toContainReactComponent',
+    expectation: 'toContainPreactComponent',
     isNot: this.isNot,
   });
 
   assertIsType(type, {
-    expectation: 'toContainReactComponent',
+    expectation: 'toContainPreactComponent',
     isNot: this.isNot,
   });
 
@@ -49,8 +49,8 @@ export function toContainReactComponent<
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toContainReactComponent')}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toContainPreactComponent')}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `Not to contain component:\n  ${expectedColor(printType(type))}\n${
           props ? `With props matching:\n  ${printExpected(props)}\n` : ''
         }` +
@@ -59,8 +59,10 @@ export function toContainReactComponent<
         } found.\n`
     : () =>
         `${
-          `${matcherHint('.toContainReactComponent')}\n\n` +
-          `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+          `${matcherHint('.toContainPreactComponent')}\n\n` +
+          `Expected the Preact element:\n  ${receivedColor(
+            node.toString(),
+          )}\n` +
           `To contain component:\n  ${expectedColor(printType(type))}\n${
             props ? `With props matching:\n  ${printExpected(props)}\n` : ''
           }`
@@ -81,7 +83,7 @@ export function toContainReactComponent<
   return {pass, message};
 }
 
-export function toContainReactComponentTimes<
+export function toContainPreactComponentTimes<
   Type extends string | ComponentType<any>,
 >(
   this: MatcherState,
@@ -91,12 +93,12 @@ export function toContainReactComponentTimes<
   props?: Partial<PropsFor<Type>>,
 ) {
   assertIsNode(node, {
-    expectation: 'toContainReactComponentTimes',
+    expectation: 'toContainPreactComponentTimes',
     isNot: this.isNot,
   });
 
   assertIsType(type, {
-    expectation: 'toContainReactComponent',
+    expectation: 'toContainPreactComponent',
     isNot: this.isNot,
   });
 
@@ -115,15 +117,15 @@ export function toContainReactComponentTimes<
   const message = pass
     ? () =>
         [
-          `${matcherHint('.not.toContainReactComponentTimes')}\n`,
-          `Expected the React element:\n  ${receivedColor(node.toString())}`,
+          `${matcherHint('.not.toContainPreactComponentTimes')}\n`,
+          `Expected the Preact element:\n  ${receivedColor(node.toString())}`,
           `Not to contain component:\n  ${expectedColor(printType(type))}`,
           `${times} ${pluralize('time', times)}, but it did.`,
         ].join('\n')
     : () =>
         [
-          `${matcherHint('.toContainReactComponentTimes')}\n`,
-          `Expected the React element:\n  ${receivedColor(node.toString())}`,
+          `${matcherHint('.toContainPreactComponentTimes')}\n`,
+          `Expected the Preact element:\n  ${receivedColor(node.toString())}`,
           `To contain component:\n  ${expectedColor(printType(type))}`,
           `${times} ${pluralize('time', times)}, but it was found ${
             foundByProps.length

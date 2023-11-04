@@ -11,14 +11,14 @@ import type {Node} from '../types.ts';
 
 import {assertIsNode, diffs, printType} from './utilities.ts';
 
-export function toProvideReactContext<Type>(
+export function toProvidePreactContext<Type>(
   this: MatcherState,
   node: Node<any>,
   Context: Context<Type>,
   value?: Type,
 ) {
   assertIsNode(node, {
-    expectation: 'toProvideReactContext',
+    expectation: 'toProvidePreactContext',
     isNot: this.isNot,
   });
 
@@ -34,8 +34,8 @@ export function toProvideReactContext<Type>(
 
   const message = pass
     ? () =>
-        `${matcherHint('.not.toProvideReactContext')}\n\n` +
-        `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+        `${matcherHint('.not.toProvidePreactContext')}\n\n` +
+        `Expected the Preact element:\n  ${receivedColor(node.toString())}\n` +
         `Not to contain context provider:\n  ${expectedColor(
           printType(Context.Provider),
         )}\n${
@@ -46,8 +46,10 @@ export function toProvideReactContext<Type>(
         } found.\n`
     : () =>
         `${
-          `${matcherHint('.toProvideReactContext')}\n\n` +
-          `Expected the React element:\n  ${receivedColor(node.toString())}\n` +
+          `${matcherHint('.toProvidePreactContext')}\n\n` +
+          `Expected the Preact element:\n  ${receivedColor(
+            node.toString(),
+          )}\n` +
           `To contain context provider:\n  ${expectedColor(
             printType(Context.Provider),
           )}\n${
