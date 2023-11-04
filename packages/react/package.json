@@ -34,8 +34,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@types/react": "^18.0.0",
-    "preact": "^10.17.0"
+    "@types/react": "^18.2.0",
+    "preact": "^10.18.0"
   },
   "eslintConfig": {
     "extends": [

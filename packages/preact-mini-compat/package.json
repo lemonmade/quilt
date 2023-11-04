@@ -27,11 +27,11 @@
   },
   "devDependencies": {
     "p-limit": "^3.1.0",
-    "preact": "^10.17.0",
+    "preact": "^10.18.0",
     "terser": "^5.16.0"
   },
   "peerDependencies": {
-    "preact": "^10.17.0"
+    "preact": "^10.18.0"
   },
   "peerDependenciesMeta": {
     "preact": {
