@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 3.0.1
+
+### Patch Changes
+
+- [`605d2d3a`](https://github.com/lemonmade/quilt/commit/605d2d3aa8536b29386f59d1e15597b4b2f0c507) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `buildSchema` utility import from GraphQL
+
 ## 3.0.0
 
 ### Major Changes

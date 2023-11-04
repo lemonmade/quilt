@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.2.2
+
+### Patch Changes
+
+- [`74b789bf`](https://github.com/lemonmade/quilt/commit/74b789bf110a4a91dbd5f2d6f02f1597a90d1eac) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix craft execution of GraphQL types CLI
+
 ## 0.2.1
 
 ### Patch Changes
