@@ -405,7 +405,10 @@ export async function quiltAppBrowser({
 
     plugins.push(
       graphql({
-        manifest: path.resolve(`manifests/graphql${targetFilenamePart}.json`),
+        manifest: path.resolve(
+          root,
+          `build/manifests/graphql${targetFilenamePart}.json`,
+        ),
       }),
     );
   }
@@ -425,7 +428,10 @@ export async function quiltAppBrowser({
     assetManifest({
       baseURL,
       cacheKey,
-      file: path.resolve(`build/manifests/assets${targetFilenamePart}.json`),
+      file: path.resolve(
+        root,
+        `build/manifests/assets${targetFilenamePart}.json`,
+      ),
       priority: assets?.priority,
     }),
     visualizer({
@@ -433,6 +439,7 @@ export async function quiltAppBrowser({
       open: false,
       brotliSize: true,
       filename: path.resolve(
+        root,
         `build/reports/bundle-visualizer${targetFilenamePart}.html`,
       ),
     }),
@@ -616,7 +623,10 @@ export async function quiltAppServer({
       template: 'treemap',
       open: false,
       brotliSize: false,
-      filename: path.resolve(`build/reports/bundle-visualizer.server.html`),
+      filename: path.resolve(
+        root,
+        `build/reports/bundle-visualizer.server.html`,
+      ),
     }),
   );
 
@@ -641,7 +651,7 @@ export async function quiltAppServer({
     output: {
       format:
         outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
-      dir: path.resolve(`build/server`),
+      dir: path.resolve(root, `build/server`),
       entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${
         hash === true || hash === 'async-only' ? `.[hash]` : ''
