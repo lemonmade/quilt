@@ -1,5 +1,16 @@
 # @quilted/react-query
 
+## 0.3.0
+
+### Minor Changes
+
+- [`c64ec21f`](https://github.com/lemonmade/quilt/commit/c64ec21f890af28c573b4a98bc07f4a0623e969d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TanStack Query dependencies
+
+### Patch Changes
+
+- Updated dependencies [[`e407aec5`](https://github.com/lemonmade/quilt/commit/e407aec56e697eadfc7b1e62168ad40a49738d96)]:
+  - @quilted/quilt@0.6.1
+
 ## 0.2.0
 
 ### Minor Changes
