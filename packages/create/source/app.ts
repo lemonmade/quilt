@@ -94,87 +94,11 @@ export async function createApp() {
   const appTemplate = loadTemplate(`app-${template}`);
   const workspaceTemplate = loadTemplate('workspace');
 
-  // If we aren’t already in a workspace, copy the workspace files over, which
-  // are needed if we are making a monorepo or not.
   if (!inWorkspace) {
     await workspaceTemplate.copy(directory, (file) => {
-      // When this is a single project, we use the project’s Quilt  configuration as the base.
-      if (file === 'quilt.workspace.ts') return createAsMonorepo;
-
-      // We need to make some adjustments to the root package.json
-      if (file === 'package.json') return false;
-
-      return true;
+      // We will adjust the package.json before writing it
+      return file !== 'package.json';
     });
-
-    // If we are creating a monorepo, we need to add the root package.json and
-    // package manager workspace configuration.
-    if (createAsMonorepo) {
-      const appRelativeToRoot = relativeDirectoryForDisplay(
-        path.relative(directory, appDirectory),
-      );
-
-      const workspacePackageJson = JSON.parse(
-        await workspaceTemplate.read('package.json'),
-      );
-
-      workspacePackageJson.name = toValidPackageName(name!);
-      workspacePackageJson.workspaces = [appRelativeToRoot, './packages/*'];
-
-      if (packageManager.type === 'pnpm') {
-        await outputRoot.write(
-          'pnpm-workspace.yaml',
-          await format(
-            `
-              packages:
-              - '${appRelativeToRoot}'
-              - './packages/*'
-            `,
-            {as: 'yaml'},
-          ),
-        );
-      }
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(workspacePackageJson), {
-          as: 'json-stringify',
-        }),
-      );
-    } else {
-      const [projectPackageJson, projectTSConfig, workspacePackageJson] =
-        await Promise.all([
-          appTemplate
-            .read('package.json')
-            .then((content) => JSON.parse(content)),
-          appTemplate
-            .read('tsconfig.json')
-            .then((content) => JSON.parse(content)),
-          workspaceTemplate
-            .read('package.json')
-            .then((content) => JSON.parse(content)),
-        ]);
-
-      const combinedPackageJson = mergeWorkspaceAndProjectPackageJsons(
-        projectPackageJson,
-        workspacePackageJson,
-      );
-
-      combinedPackageJson.name = toValidPackageName(name!);
-      delete combinedPackageJson.workspaces;
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(combinedPackageJson), {
-          as: 'json-stringify',
-        }),
-      );
-
-      await outputRoot.write(
-        'tsconfig.json',
-        await format(JSON.stringify(projectTSConfig), {as: 'json'}),
-      );
-    }
 
     if (setupExtras.has('github')) {
       await loadTemplate('github').copy(directory);
@@ -185,43 +109,44 @@ export async function createApp() {
     }
   }
 
-  await appTemplate.copy(appDirectory, (file) => {
-    // If we are in a monorepo, we already wrote a merged tsconfig.json
-    if (file === 'tsconfig.json') {
-      return partOfMonorepo;
-    }
+  if (createAsMonorepo) {
+    const workspacePackageJson = JSON.parse(
+      await workspaceTemplate.read('package.json'),
+    );
 
+    workspacePackageJson.name = toValidPackageName(name!);
+
+    const moduleRelativeToRoot = relativeDirectoryForDisplay(
+      path.relative(directory, appDirectory),
+    );
+
+    await outputRoot.write(
+      'pnpm-workspace.yaml',
+      await format(
+        `
+            packages:
+            - './packages/*'
+            - '${moduleRelativeToRoot}'
+          `,
+        {as: 'yaml'},
+      ),
+    );
+
+    await outputRoot.write(
+      'package.json',
+      await format(JSON.stringify(workspacePackageJson), {
+        as: 'json-stringify',
+      }),
+    );
+  }
+
+  await appTemplate.copy(appDirectory, (file) => {
     // We need to merge the project gitignore with the workspace one
     if (file === '_gitignore') return partOfMonorepo;
 
-    // We need to make some adjustments the project’s package.json and
-    // quilt config file
-    if (file === 'package.json' || file === 'quilt.project.ts') return false;
-
-    return true;
+    // We will adjust the package.json before writing it
+    return file !== 'package.json';
   });
-
-  let quiltProject = await appTemplate.read('quilt.project.ts');
-
-  if (!partOfMonorepo) {
-    quiltProject = quiltProject
-      .replace('quiltApp', 'quiltWorkspace, quiltApp')
-      .replace('quiltApp(', 'quiltWorkspace(), quiltApp(');
-
-    if (await appTemplate.has('_gitignore')) {
-      await outputRoot.write(
-        path.join(appDirectory, '.gitignore'),
-        `${await outputRoot.read('.gitignore')}\n${await appTemplate.read(
-          '_gitignore',
-        )}`,
-      );
-    }
-  }
-
-  await outputRoot.write(
-    path.join(appDirectory, 'quilt.project.ts'),
-    await format(quiltProject, {as: 'typescript'}),
-  );
 
   if (template === 'graphql' && !inWorkspace) {
     const relativeFromRootToAppPath = (filePath: string) =>
@@ -272,6 +197,38 @@ export async function createApp() {
         packageManager.type,
       ),
     ]);
+  } else {
+    // Write the package’s package.json by combining elements of the root and
+    // package templates
+    const [projectPackageJson, workspacePackageJson] = await Promise.all([
+      appTemplate.read('package.json').then((content) => JSON.parse(content)),
+      workspaceTemplate
+        .read('package.json')
+        .then((content) => JSON.parse(content)),
+    ]);
+
+    const mergedPackageJson = mergeWorkspaceAndProjectPackageJsons(
+      projectPackageJson,
+      workspacePackageJson,
+    );
+
+    mergedPackageJson.name = path.basename(appDirectory);
+
+    await outputRoot.write(
+      'package.json',
+      await format(JSON.stringify(mergedPackageJson), {
+        as: 'json-stringify',
+      }),
+    );
+
+    if (await appTemplate.has('_gitignore')) {
+      await outputRoot.write(
+        path.join(appDirectory, '.gitignore'),
+        `${await outputRoot.read('.gitignore')}\n${await appTemplate.read(
+          '_gitignore',
+        )}`,
+      );
+    }
   }
 
   if (shouldInstall) {

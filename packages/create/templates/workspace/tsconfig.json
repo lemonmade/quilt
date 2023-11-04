@@ -3,11 +3,6 @@
   "compilerOptions": {
     "outDir": "build/typescript"
   },
-  "include": [
-    "quilt.workspace.ts",
-    "**/quilt.project.ts",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ],
+  "include": [],
   "references": []
 }

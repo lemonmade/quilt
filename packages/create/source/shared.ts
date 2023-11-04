@@ -14,7 +14,6 @@ export function loadTemplate(
     | 'module'
     | 'server-basic'
     | 'workspace'
-    | 'workspace-simple'
     | 'github'
     | 'vscode',
 ) {

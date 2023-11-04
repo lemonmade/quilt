@@ -1,8 +1,7 @@
 # Dependencies
 node_modules/
 
-# Quilt build outputs
-.quilt/
+# Build outputs
 build/
 bin/
 

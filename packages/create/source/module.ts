@@ -86,7 +86,7 @@ export async function createModule() {
   const rootDirectory = inWorkspace ? process.cwd() : directory;
   const outputRoot = createOutputTarget(rootDirectory);
   const moduleTemplate = loadTemplate('module');
-  const workspaceTemplate = loadTemplate('workspace-simple');
+  const workspaceTemplate = loadTemplate('workspace');
 
   if (!inWorkspace) {
     await workspaceTemplate.copy(directory, (file) => {
@@ -114,19 +114,17 @@ export async function createModule() {
       path.relative(directory, moduleDirectory),
     );
 
-    if (packageManager.type === 'pnpm') {
-      await outputRoot.write(
-        'pnpm-workspace.yaml',
-        await format(
-          `
+    await outputRoot.write(
+      'pnpm-workspace.yaml',
+      await format(
+        `
             packages:
             - './packages/*'
             - '${moduleRelativeToRoot}'
           `,
-          {as: 'yaml'},
-        ),
-      );
-    }
+        {as: 'yaml'},
+      ),
+    );
 
     await outputRoot.write(
       'package.json',
@@ -137,7 +135,7 @@ export async function createModule() {
   }
 
   await moduleTemplate.copy(moduleDirectory, (file) => {
-    // We will adjust the package.json before writing them
+    // We will adjust the package.json before writing it
     return file !== 'package.json';
   });
 

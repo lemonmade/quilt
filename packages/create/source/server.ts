@@ -57,18 +57,18 @@ export async function createServer() {
 
   const partOfMonorepo = inWorkspace || createAsMonorepo;
 
-  const serviceDirectory = createAsMonorepo
+  const serverDirectory = createAsMonorepo
     ? path.join(directory, toValidPackageName(name))
     : directory;
 
   if (fs.existsSync(directory)) {
     await emptyDirectory(directory);
 
-    if (serviceDirectory !== directory) {
-      fs.mkdirSync(serviceDirectory, {recursive: true});
+    if (serverDirectory !== directory) {
+      fs.mkdirSync(serverDirectory, {recursive: true});
     }
   } else {
-    fs.mkdirSync(serviceDirectory, {recursive: true});
+    fs.mkdirSync(serverDirectory, {recursive: true});
   }
 
   const rootDirectory = inWorkspace ? process.cwd() : directory;
@@ -76,87 +76,11 @@ export async function createServer() {
   const serverTemplate = loadTemplate('server-basic');
   const workspaceTemplate = loadTemplate('workspace');
 
-  // If we aren’t already in a workspace, copy the workspace files over, which
-  // are needed if we are making a monorepo or not.
   if (!inWorkspace) {
     await workspaceTemplate.copy(directory, (file) => {
-      // When this is a single project, we use the project’s Quilt  configuration as the base.
-      if (file === 'quilt.workspace.ts') return createAsMonorepo;
-
-      // We need to make some adjustments to the root package.json
-      if (file === 'package.json') return false;
-
-      return true;
+      // We will adjust the package.json before writing it
+      return file !== 'package.json';
     });
-
-    // If we are creating a monorepo, we need to add the root package.json and
-    // package manager workspace configuration.
-    if (createAsMonorepo) {
-      const serviceRelativeToRoot = relativeDirectoryForDisplay(
-        path.relative(directory, serviceDirectory),
-      );
-
-      const workspacePackageJson = JSON.parse(
-        await workspaceTemplate.read('package.json'),
-      );
-
-      workspacePackageJson.name = toValidPackageName(name!);
-      workspacePackageJson.workspaces = [serviceRelativeToRoot, './packages/*'];
-
-      if (packageManager.type === 'pnpm') {
-        await outputRoot.write(
-          'pnpm-workspace.yaml',
-          await format(
-            `
-              packages:
-              - '${serviceRelativeToRoot}'
-              - './packages/*'
-            `,
-            {as: 'yaml'},
-          ),
-        );
-      }
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(workspacePackageJson), {
-          as: 'json-stringify',
-        }),
-      );
-    } else {
-      const [projectPackageJson, projectTSConfig, workspacePackageJson] =
-        await Promise.all([
-          serverTemplate
-            .read('package.json')
-            .then((content) => JSON.parse(content)),
-          serverTemplate
-            .read('tsconfig.json')
-            .then((content) => JSON.parse(content)),
-          workspaceTemplate
-            .read('package.json')
-            .then((content) => JSON.parse(content)),
-        ]);
-
-      const combinedPackageJson = mergeWorkspaceAndProjectPackageJsons(
-        projectPackageJson,
-        workspacePackageJson,
-      );
-
-      adjustPackageJson(combinedPackageJson, {name, entry});
-      delete combinedPackageJson.workspaces;
-
-      await outputRoot.write(
-        'package.json',
-        await format(JSON.stringify(combinedPackageJson), {
-          as: 'json-stringify',
-        }),
-      );
-
-      await outputRoot.write(
-        'tsconfig.json',
-        await format(JSON.stringify(projectTSConfig), {as: 'json'}),
-      );
-    }
 
     if (setupExtras.has('github')) {
       await loadTemplate('github').copy(directory);
@@ -167,43 +91,41 @@ export async function createServer() {
     }
   }
 
-  await serverTemplate.copy(serviceDirectory, (file) => {
-    // If we are in a monorepo, we can use all the template files as they are
-    if (file === 'tsconfig.json') {
-      return partOfMonorepo;
-    }
+  if (createAsMonorepo) {
+    const workspacePackageJson = JSON.parse(
+      await workspaceTemplate.read('package.json'),
+    );
 
-    // We will adjust the entry file, and write an adjusted quilt project file if necessary
-    if (file === 'service.ts' || file === 'quilt.project.ts') {
-      return false;
-    }
+    workspacePackageJson.name = toValidPackageName(name!);
 
-    // We need to make some adjustments the project’s package.json
-    return file !== 'package.json';
-  });
+    const moduleRelativeToRoot = relativeDirectoryForDisplay(
+      path.relative(directory, serverDirectory),
+    );
 
-  let quiltProject = await serverTemplate.read('quilt.project.ts');
+    await outputRoot.write(
+      'pnpm-workspace.yaml',
+      await format(
+        `
+            packages:
+            - './packages/*'
+            - '${moduleRelativeToRoot}'
+          `,
+        {as: 'yaml'},
+      ),
+    );
 
-  if (!partOfMonorepo) {
-    quiltProject = quiltProject
-      .replace('quiltService', 'quiltWorkspace, quiltService')
-      .replace('quiltService(', 'quiltWorkspace(), quiltService(');
+    await outputRoot.write(
+      'package.json',
+      await format(JSON.stringify(workspacePackageJson), {
+        as: 'json-stringify',
+      }),
+    );
   }
 
-  quiltProject = quiltProject.replace(
-    'service.ts',
-    entry.replace(/^\.[/]/, ''),
-  );
-
-  await outputRoot.write(
-    path.join(serviceDirectory, 'quilt.project.ts'),
-    await format(quiltProject, {as: 'typescript'}),
-  );
-
-  await outputRoot.write(
-    path.join(serviceDirectory, entry),
-    await serverTemplate.read('service.ts'),
-  );
+  await serverTemplate.copy(serverDirectory, (file) => {
+    // We will adjust the package.json before writing it
+    return file !== 'package.json';
+  });
 
   if (partOfMonorepo) {
     // Write the app’s package.json (the root one was already created)
@@ -214,20 +136,48 @@ export async function createServer() {
     adjustPackageJson(projectPackageJson, {name, entry});
 
     await outputRoot.write(
-      path.join(serviceDirectory, 'package.json'),
+      path.join(serverDirectory, 'package.json'),
       await format(JSON.stringify(projectPackageJson), {
         as: 'json-stringify',
       }),
     );
 
     await Promise.all([
-      addToTsConfig(serviceDirectory, outputRoot),
+      addToTsConfig(serverDirectory, outputRoot),
       addToPackageManagerWorkspaces(
-        serviceDirectory,
+        serverDirectory,
         outputRoot,
         packageManager.type,
       ),
     ]);
+  } else {
+    // Write the package’s package.json by combining elements of the root and
+    // package templates
+    const [projectPackageJson, workspacePackageJson] = await Promise.all([
+      serverTemplate
+        .read('package.json')
+        .then((content) => JSON.parse(content)),
+      workspaceTemplate
+        .read('package.json')
+        .then((content) => JSON.parse(content)),
+    ]);
+
+    const mergedPackageJson = mergeWorkspaceAndProjectPackageJsons(
+      projectPackageJson,
+      workspacePackageJson,
+    );
+
+    adjustPackageJson(mergedPackageJson, {
+      name: toValidPackageName(name!),
+      entry,
+    });
+
+    await outputRoot.write(
+      'package.json',
+      await format(JSON.stringify(mergedPackageJson), {
+        as: 'json-stringify',
+      }),
+    );
   }
 
   if (shouldInstall) {

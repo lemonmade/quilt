@@ -4,6 +4,6 @@
     "outDir": "build/typescript"
   },
   "include": ["**/*"],
-  "exclude": ["build", "quilt.project.ts"],
+  "exclude": ["build"],
   "references": []
 }
