@@ -1,4 +1,4 @@
-import type {MatcherState} from 'expect';
+import type {MatcherState, MatcherUtils} from 'expect';
 import {
   matcherHint,
   printReceived,
@@ -8,10 +8,10 @@ import {
 
 import type {Node} from '../types.ts';
 
-import {assertIsNode, diffPropsForNode} from './utilities.ts';
+import {assertIsNode, diffPropsForNode, getObjectSubset} from './utilities.ts';
 
 export function toHaveReactProps<Props>(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   node: Node<Props, any>,
   props: Partial<Props>,
 ) {
@@ -30,9 +30,7 @@ export function toHaveReactProps<Props>(
     };
   }
 
-  const pass = Object.keys(props).every((key) =>
-    Object.is((props as any)[key], (node.props as any)[key]),
-  );
+  const pass = this.equals(props, getObjectSubset(node.props, props));
 
   const message = pass
     ? () =>

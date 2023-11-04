@@ -26,6 +26,8 @@ export interface CustomMatchers<R = unknown> {
   ): R;
   toProvidePreactContext<Type>(context: Context<Type>, value?: Type): R;
   toContainPreactText(text: string): R;
+  toContainPreactHTML(text: string): R;
+  toHavePreactDataProps(data: {[key: string]: string}): R;
 }
 
 export const matchers = {
@@ -34,14 +36,6 @@ export const matchers = {
   toContainPreactComponentTimes,
   toProvidePreactContext,
   toContainPreactText,
-};
-
-export interface CustomDOMMatchers<R = unknown> {
-  toContainPreactHTML(text: string): R;
-  toHavePreactDataProps(data: {[key: string]: string}): R;
-}
-
-export const domMatchers = {
   toContainPreactHTML,
   toHavePreactDataProps,
 };

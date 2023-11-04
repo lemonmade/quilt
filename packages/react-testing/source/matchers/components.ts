@@ -1,5 +1,5 @@
 import type {ComponentType} from 'react';
-import type {MatcherState} from 'expect';
+import type {MatcherState, MatcherUtils} from 'expect';
 import {
   matcherHint,
   printExpected,
@@ -15,12 +15,13 @@ import {
   diffs,
   pluralize,
   printType,
+  getObjectSubset,
 } from './utilities.ts';
 
 export function toContainReactComponent<
   Type extends string | ComponentType<any>,
 >(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   node: Node<any, any>,
   type: Type,
   props?: Partial<PropsFor<Type>>,
@@ -40,9 +41,7 @@ export function toContainReactComponent<
     props == null
       ? foundByType
       : foundByType.filter((element) =>
-          Object.keys(props).every((key) =>
-            Object.is((props as any)[key], (element.props as any)[key]),
-          ),
+          this.equals(props, getObjectSubset(element.props, props)),
         );
 
   const pass = foundByProps.length > 0;
@@ -84,7 +83,7 @@ export function toContainReactComponent<
 export function toContainReactComponentTimes<
   Type extends string | ComponentType<any>,
 >(
-  this: MatcherState,
+  this: MatcherState & MatcherUtils,
   node: Node<unknown>,
   type: Type,
   times: number,
@@ -105,9 +104,7 @@ export function toContainReactComponentTimes<
     props == null
       ? foundByType
       : foundByType.filter((element) =>
-          Object.keys(props).every((key) =>
-            Object.is((props as any)[key], (element.props as any)[key]),
-          ),
+          this.equals(props, getObjectSubset(element.props, props)),
         );
 
   const pass = foundByProps.length === times;
