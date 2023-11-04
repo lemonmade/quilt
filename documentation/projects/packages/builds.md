@@ -320,11 +320,11 @@ For each project in your workspace, you will also need to configure how and wher
 }
 ```
 
-The [`@quilted/typescript` package](../../../packages/typescript) provides a collection of shared TypeScript configuration files you can use to automatically enable most of this configuration. The configuration above can be achieved more simply by relying on the `@quilted/typescript/project.json` shared configuration:
+The [`@quilted/craft` package](../../../packages/craft) provides a collection of shared TypeScript configuration files you can use to automatically enable most of this configuration. The configuration above can be achieved more simply by relying on the `@quilted/craft/typescript/project.json` shared configuration:
 
 ```jsonc
 {
-  "extends": "@quilted/typescript/project.json",
+  "extends": "@quilted/craft/typescript/project.json",
   // You must still set the `include`, `rootDir`, and `outDir` options. The shared configuration
   // does not set these since they are relative to the root of your project, and because you may
   // want to change the structure of your package’s source files.
@@ -444,7 +444,7 @@ The example below shows a complete example of a package’s configuration files.
 ```jsonc
 // tsconfig.json
 {
-  "extends": "@quilted/typescript/project.json",
+  "extends": "@quilted/craft/typescript/project.json",
   "include": ["source"],
   "compilerOptions": {
     "rootDir": "source",

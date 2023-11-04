@@ -41,9 +41,6 @@ importers:
       '@quilted/rollup':
         specifier: workspace:^
         version: link:packages/rollup
-      '@quilted/typescript':
-        specifier: workspace:^
-        version: link:packages/typescript
       '@quilted/vite':
         specifier: workspace:^
         version: link:packages/vite
@@ -1036,12 +1033,6 @@ importers:
       '@trpc/server':
         specifier: ^10.31.0
         version: 10.31.0
-
-  packages/typescript:
-    dependencies:
-      typescript:
-        specifier: ^5.2.0
-        version: 5.2.2
 
   packages/use-subscription:
     devDependencies:

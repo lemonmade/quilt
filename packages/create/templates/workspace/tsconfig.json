@@ -1,5 +1,5 @@
 {
-  "extends": "@quilted/typescript/workspace.json",
+  "extends": "@quilted/craft/typescript/workspace.json",
   "compilerOptions": {
     "outDir": "build/typescript"
   },

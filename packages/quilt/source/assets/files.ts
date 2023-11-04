@@ -1,7 +1,7 @@
 // Declare modules for file types that are transformed into
 // URL references.
 
-// @see https://github.com/lemonmade/quilt/blob/main/packages/craft/source/plugins/app-build.ts
+// @see https://github.com/lemonmade/quilt/blob/main/packages/rollup/source/features/assets.ts
 // @see https://github.com/vitejs/vite/blob/76fdc27437d37534cf157bf869a648e0d176b267/packages/vite/src/node/constants.ts#L63-L95
 
 declare module '*.jpg' {

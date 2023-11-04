@@ -35,7 +35,6 @@
     "@quilted/prettier": "workspace:^",
     "@quilted/quilt": "workspace:^",
     "@quilted/rollup": "workspace:^",
-    "@quilted/typescript": "workspace:^",
     "@quilted/vite": "workspace:^",
     "@types/common-tags": "^1.8.1",
     "@types/node": "^20.8.0",

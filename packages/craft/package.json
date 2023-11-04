@@ -27,7 +27,10 @@
       "quilt:source": "./source/vite.ts",
       "quilt:esnext": "./build/esnext/vite.esnext",
       "import": "./build/esm/vite.mjs"
-    }
+    },
+    "./typescript/tsconfig.json": "./typescript/tsconfig.json",
+    "./typescript/project.json": "./typescript/tsconfig.project.json",
+    "./typescript/workspace.json": "./typescript/tsconfig.workspace.json"
   },
   "types": "./build/typescript/index.d.ts",
   "sideEffects": false,

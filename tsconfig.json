@@ -1,5 +1,5 @@
 {
-  "extends": "@quilted/typescript/workspace.json",
+  "extends": "@quilted/craft/typescript/workspace.json",
   "compilerOptions": {"outDir": "build/typescript/workspace"},
   "include": [
     "config/**/*.ts",
@@ -56,7 +56,6 @@
     {"path": "./packages/signals"},
     {"path": "./packages/threads"},
     {"path": "./packages/trpc"},
-    {"path": "./packages/typescript"},
     {"path": "./packages/use-subscription"},
     {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
