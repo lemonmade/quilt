@@ -1,7 +1,7 @@
 import {graphql} from 'graphql';
 import {
   toGraphQLSource,
-  type GraphQLFetch,
+  type GraphQLRun,
   type GraphQLResult,
 } from '@quilted/quilt/graphql';
 import {
@@ -30,7 +30,7 @@ const Query = createQueryResolver({
 
 const schema = createGraphQLSchema(schemaSource, {Query, Person});
 
-export const performGraphQLOperation: GraphQLFetch =
+export const performGraphQLOperation: GraphQLRun =
   async function performGraphQLOperation(operation, options) {
     const result = await graphql({
       schema,
