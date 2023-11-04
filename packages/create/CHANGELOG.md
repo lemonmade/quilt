@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.5
+
+### Patch Changes
+
+- [`950021fa`](https://github.com/lemonmade/quilt/commit/950021fa127df22e6c6d3b2d5138b54c03591a28) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
+- [`eb99e711`](https://github.com/lemonmade/quilt/commit/eb99e71186a44ac0ff462d8eed74dc094a480b51) Thanks [@lemonmade](https://github.com/lemonmade)! - Update quilt app templates for new Rollup export name
+
 ## 0.2.4
 
 ### Patch Changes
