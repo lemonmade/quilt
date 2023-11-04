@@ -1,3 +1,3 @@
-import {quiltApp} from '@quilted/rollup/app';
+import {quiltAppOptions} from '@quilted/rollup/app';
 
-export default quiltApp();
+export default quiltAppOptions();
