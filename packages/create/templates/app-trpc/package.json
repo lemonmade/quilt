@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "build": "rollup --config ./rollup.config.js",
+    "develop": "vite --config ./vite.config.js",
+    "test": "vitest --config ./vite.config.js",
     "start": "node ./build/server/server.js"
   },
   "dependencies": {},
