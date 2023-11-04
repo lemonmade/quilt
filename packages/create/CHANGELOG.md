@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.6
+
+### Patch Changes
+
+- [`76676b97`](https://github.com/lemonmade/quilt/commit/76676b97e67864d0b4206d07260dc3d826d065d1) Thanks [@lemonmade](https://github.com/lemonmade)! - Add develop command to app templates
+
+- [`48ab9a9c`](https://github.com/lemonmade/quilt/commit/48ab9a9c715f0878f9dd1482d5e66e6dc29a2361) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up more app template issues
+
 ## 0.2.5
 
 ### Patch Changes
