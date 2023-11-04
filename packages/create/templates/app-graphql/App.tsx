@@ -4,7 +4,7 @@ import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 import {type PropsWithChildren} from '@quilted/quilt/react/tools';
-import {GraphQLContext, type GraphQLFetch} from '@quilted/quilt/graphql';
+import {GraphQLContext, type GraphQLRun} from '@quilted/quilt/graphql';
 
 import {ReactQueryContext} from '@quilted/react-query';
 import {QueryClient} from '@tanstack/react-query';
@@ -21,7 +21,7 @@ import {
 } from './shared/context.ts';
 
 export interface AppProps extends AppContextType {
-  fetchGraphQL: GraphQLFetch;
+  fetchGraphQL: GraphQLRun;
 }
 
 // The root component for your application. You will typically render any
