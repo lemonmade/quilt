@@ -66,7 +66,7 @@
     "@types/react": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@types/react-dom": "^18.0.0",
+    "@types/react-dom": "^18.2.0",
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0"
   },
