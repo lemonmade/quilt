@@ -139,17 +139,7 @@ export async function getNodePlugins({
     nodeResolve({
       preferBuiltins: true,
       dedupe: [],
-      extensions: [
-        '.ts',
-        '.tsx',
-        '.mts',
-        '.mtsx',
-        '.js',
-        '.jsx',
-        '.es6',
-        '.es',
-        '.mjs',
-      ],
+      extensions: ['.ts', '.tsx', '.mts', '.mtsx', '.mjs', '.js', '.jsx'],
       exportConditions: [
         'esnext',
         'quilt:esnext',
