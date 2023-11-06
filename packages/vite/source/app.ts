@@ -36,19 +36,24 @@ export interface AppBaseOptions {
 export async function quiltApp({
   graphql: useGraphQL = true,
 }: AppBaseOptions = {}) {
-  const [{default: prefresh}, {graphql}, {tsconfigAliases}] = await Promise.all(
-    [
-      // @ts-expect-error This package is not set up correctly for ESM projects
-      // @see https://github.com/preactjs/prefresh/issues/518
-      import('@prefresh/vite'),
-      import('@quilted/rollup/features/graphql'),
-      import('@quilted/rollup/features/typescript'),
-    ],
-  );
+  const [
+    {default: prefresh},
+    {graphql},
+    {tsconfigAliases},
+    {monorepoPackageAliases},
+  ] = await Promise.all([
+    // @ts-expect-error This package is not set up correctly for ESM projects
+    // @see https://github.com/preactjs/prefresh/issues/518
+    import('@prefresh/vite'),
+    import('@quilted/rollup/features/graphql'),
+    import('@quilted/rollup/features/typescript'),
+    import('@quilted/rollup/features/node'),
+  ]);
 
   const plugins: Plugin[] = [
     prefresh(),
     {...(await tsconfigAliases()), enforce: 'pre'},
+    {...(await monorepoPackageAliases()), enforce: 'pre'},
     magicModuleAppAssetManifest(),
   ];
 
@@ -75,7 +80,6 @@ export async function quiltApp({
         },
         resolve: {
           dedupe: ['preact'],
-          conditions: ['quilt:source'],
           alias: [
             {find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime'},
             {find: 'react/jsx-dev-runtime', replacement: 'preact/jsx-runtime'},

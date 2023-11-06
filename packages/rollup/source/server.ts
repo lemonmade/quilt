@@ -1,14 +1,12 @@
-import * as path from 'path';
 import {type InputPluginOption, type RollupOptions} from 'rollup';
-import {glob} from 'glob';
 
+import {Project} from './shared/project.ts';
 import {
   RollupNodePluginOptions,
   getNodePlugins,
   removeBuildFiles,
 } from './shared/rollup.ts';
-import {resolveRoot} from './shared/path.ts';
-import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
+
 import {magicModuleRequestRouterEntry} from './features/request-router.ts';
 import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
@@ -119,10 +117,10 @@ export async function quiltServer({
   port,
   host,
 }: ServerOptions = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(rootPath);
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
-  const outputDirectory = path.join(root, 'build/server');
+  const outputDirectory = project.resolve('build/server');
 
   const minify = output?.minify ?? false;
   const bundle = output?.bundle;
@@ -134,24 +132,24 @@ export async function quiltServer({
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
     {tsconfigAliases},
+    {monorepoPackageAliases},
     {react},
     {esnext},
     nodePlugins,
-    packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
+    import('./features/node.ts'),
     import('./features/react.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle}),
-    loadPackageJSON(root),
   ]);
 
   const serverEntry = entry
-    ? path.resolve(root, entry)
-    : await sourceForServer(root, packageJSON);
+    ? project.resolve(entry)
+    : await sourceForServer(project);
 
   const finalEntry =
     format === 'request-router'
@@ -163,10 +161,11 @@ export async function quiltServer({
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: ['current node']}),
-    tsconfigAliases({root}),
+    tsconfigAliases({root: project.root}),
+    monorepoPackageAliases({root: project.root}),
     react(),
     esnext({mode, targets: ['current node']}),
-    removeBuildFiles(['build/server', 'build/reports'], {root}),
+    removeBuildFiles(['build/server', 'build/reports'], {root: project.root}),
   ];
 
   if (format === 'request-router') {
@@ -198,7 +197,7 @@ export async function quiltServer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: path.resolve(root, `build/reports/bundle-visualizer.html`),
+      filename: project.resolve(`build/reports/bundle-visualizer.html`),
     }),
   );
 
@@ -206,18 +205,6 @@ export async function quiltServer({
     input:
       finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
     plugins,
-    onwarn(warning, defaultWarn) {
-      // Removes annoying warnings for React-focused libraries that
-      // include 'use client' directives.
-      if (
-        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-        /['"]use client['"]/.test(warning.message)
-      ) {
-        return;
-      }
-
-      defaultWarn(warning);
-    },
     output: {
       format:
         outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
@@ -232,19 +219,18 @@ export async function quiltServer({
   } satisfies RollupOptions;
 }
 
-async function sourceForServer(root: string, packageJSON: PackageJSON) {
-  const {main, exports} = packageJSON;
+async function sourceForServer(project: Project) {
+  const {main, exports} = project.packageJSON.raw;
 
   const entryFromPackageJSON = main ?? (exports as any)?.['.'];
 
   if (entryFromPackageJSON) {
-    return path.resolve(root, entryFromPackageJSON);
+    return project.resolve(entryFromPackageJSON);
   }
 
-  const possibleSourceFiles = await glob(
+  const possibleSourceFiles = await project.glob(
     '{index,server,service,backend,entry,input}.{ts,tsx,mjs,js,jsx}',
     {
-      cwd: root,
       nodir: true,
       absolute: true,
     },

@@ -58,6 +58,12 @@
       "quilt:esnext": "./build/esnext/features/graphql.esnext",
       "import": "./build/esm/features/graphql.mjs"
     },
+    "./features/node": {
+      "types": "./build/typescript/features/node.d.ts",
+      "quilt:source": "./source/features/node.ts",
+      "quilt:esnext": "./build/esnext/features/node.esnext",
+      "import": "./build/esm/features/node.mjs"
+    },
     "./features/typescript": {
       "types": "./build/typescript/features/typescript.d.ts",
       "quilt:source": "./source/features/typescript.ts",
@@ -85,6 +91,9 @@
       ],
       "features/graphql": [
         "./build/typescript/features/graphql.d.ts"
+      ],
+      "features/node": [
+        "./build/typescript/features/node.d.ts"
       ],
       "features/typescript": [
         "./build/typescript/features/typescript.d.ts"

@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import {glob} from 'glob';
 import {createRequire} from 'module';
 
 import type {
@@ -35,8 +34,7 @@ import {
   rollupGenerateOptionsForBrowsers,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
-import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
-import {resolveRoot} from './shared/path.ts';
+import {Project} from './shared/project.ts';
 
 export interface AppBaseOptions {
   /**
@@ -234,7 +232,7 @@ export {
 const require = createRequire(import.meta.url);
 
 export async function quiltAppOptions({
-  root: rootPath = process.cwd(),
+  root = process.cwd(),
   app,
   env,
   graphql,
@@ -242,9 +240,9 @@ export async function quiltAppOptions({
   browser: browserOptions,
   server: serverOptions,
 }: AppOptions = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
 
-  const browserGroups = await getBrowserGroups({root});
+  const browserGroups = await getBrowserGroups({root: project.root});
   const browserGroupEntries = Object.entries(browserGroups);
   const hasMultipleBrowserGroups = browserGroupEntries.length > 1;
 
@@ -253,7 +251,7 @@ export async function quiltAppOptions({
   browserGroupEntries.forEach(([name, browsers], index) => {
     optionPromises.push(
       quiltAppBrowserOptions({
-        root,
+        root: project.root,
         app,
         graphql,
         ...browserOptions,
@@ -276,7 +274,7 @@ export async function quiltAppOptions({
 
   optionPromises.push(
     quiltAppServerOptions({
-      root,
+      root: project.root,
       app,
       graphql,
       ...serverOptions,
@@ -292,13 +290,13 @@ export async function quiltAppOptions({
 }
 
 export async function quiltAppBrowserOptions(options: AppBrowserOptions = {}) {
-  const {root: rootPath = process.cwd(), assets} = options;
-  const root = resolveRoot(rootPath);
+  const {root = process.cwd(), assets} = options;
+  const project = Project.load(root);
 
   const [plugins, browserGroup] = await Promise.all([
     quiltAppBrowser(options),
     getBrowserGroupTargetDetails(assets?.targets, {
-      root,
+      root: project.root,
     }),
   ]);
 
@@ -312,7 +310,7 @@ export async function quiltAppBrowserOptions(options: AppBrowserOptions = {}) {
     plugins,
     output: {
       format: isESM ? 'esm' : 'systemjs',
-      dir: path.resolve(root, `build/assets`),
+      dir: project.resolve(`build/assets`),
       entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
       chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
@@ -323,7 +321,7 @@ export async function quiltAppBrowserOptions(options: AppBrowserOptions = {}) {
 }
 
 export async function quiltAppBrowser({
-  root: rootPath = process.cwd(),
+  root = process.cwd(),
   app,
   entry,
   env,
@@ -331,14 +329,14 @@ export async function quiltAppBrowser({
   module,
   graphql = true,
 }: AppBrowserOptions = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
   const minify = assets?.minify ?? mode === 'production';
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
 
   const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
-    root,
+    root: project.root,
   });
   const targetFilenamePart = browserGroup.name ? `.${browserGroup.name}` : '';
 
@@ -347,6 +345,7 @@ export async function quiltAppBrowser({
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
     {tsconfigAliases},
+    {monorepoPackageAliases},
     {react},
     {css},
     {assetManifest, rawAssets, staticAssets},
@@ -355,12 +354,12 @@ export async function quiltAppBrowser({
     {workers},
     {esnext},
     nodePlugins,
-    packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
+    import('./features/node.ts'),
     import('./features/react.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
@@ -369,11 +368,10 @@ export async function quiltAppBrowser({
     import('./features/workers.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle: true}),
-    loadPackageJSON(root),
   ]);
 
   const plugins: InputPluginOption[] = [
-    quiltAppBrowserInput({root, entry}),
+    quiltAppBrowserInput({root: project.root, entry}),
     ...nodePlugins,
     systemJS({minify}),
     replaceProcessEnv({mode}),
@@ -414,31 +412,32 @@ export async function quiltAppBrowser({
     asyncModules({
       baseURL,
       preload: true,
-      moduleID: ({imported}) => path.relative(root, imported),
+      moduleID: ({imported}) => path.relative(project.root, imported),
     }),
     workers({
       baseURL,
       outputOptions: {
         format: 'iife',
         inlineDynamicImports: true,
-        dir: path.resolve(root, `build/assets`),
+        dir: project.resolve(`build/assets`),
         entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
         assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
         chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       },
     }),
-    tsconfigAliases({root}),
+    tsconfigAliases({root: project.root}),
+    monorepoPackageAliases({root: project.root}),
   ];
 
   if (assets?.clean ?? true) {
     plugins.push(
       removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
-        root,
+        root: project.root,
       }),
     );
   }
 
-  const appEntry = await resolveAppEntry(app, {root, packageJSON});
+  const appEntry = await resolveAppEntry(app, project);
 
   if (appEntry) {
     plugins.push(magicModuleAppComponent({entry: appEntry}));
@@ -451,8 +450,7 @@ export async function quiltAppBrowser({
 
     plugins.push(
       graphql({
-        manifest: path.resolve(
-          root,
+        manifest: project.resolve(
           `build/manifests/graphql${targetFilenamePart}.json`,
         ),
       }),
@@ -474,18 +472,14 @@ export async function quiltAppBrowser({
     assetManifest({
       baseURL,
       cacheKey,
-      file: path.resolve(
-        root,
-        `build/manifests/assets${targetFilenamePart}.json`,
-      ),
+      file: project.resolve(`build/manifests/assets${targetFilenamePart}.json`),
       priority: assets?.priority,
     }),
     visualizer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: path.resolve(
-        root,
+      filename: project.resolve(
         `build/reports/bundle-visualizer${targetFilenamePart}.html`,
       ),
     }),
@@ -495,10 +489,10 @@ export async function quiltAppBrowser({
 }
 
 export function quiltAppBrowserInput({
-  root: rootPath = process.cwd(),
+  root = process.cwd(),
   entry,
 }: Pick<AppBrowserOptions, 'root' | 'entry'> = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
 
   return {
     name: '@quilted/app-browser/input',
@@ -506,12 +500,13 @@ export function quiltAppBrowserInput({
       const finalEntry =
         normalizeRollupInput(options.input) ??
         (entry
-          ? path.resolve(root, entry)
-          : await glob('{browser,client,web}.{ts,tsx,mjs,js,jsx}', {
-              cwd: root,
-              nodir: true,
-              absolute: true,
-            }).then((files) => files[0])) ??
+          ? project.resolve(entry)
+          : await project
+              .glob('{browser,client,web}.{ts,tsx,mjs,js,jsx}', {
+                nodir: true,
+                absolute: true,
+              })
+              .then((files) => files[0])) ??
         MAGIC_MODULE_ENTRY;
 
       return {
@@ -528,9 +523,9 @@ export function quiltAppBrowserInput({
 }
 
 export async function quiltAppServerOptions(options: AppServerOptions = {}) {
-  const {root: rootPath = process.cwd(), output} = options;
+  const {root = process.cwd(), output} = options;
 
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
   const hash = output?.hash ?? 'async-only';
   const outputFormat = output?.format ?? 'esmodules';
 
@@ -541,7 +536,7 @@ export async function quiltAppServerOptions(options: AppServerOptions = {}) {
     output: {
       format:
         outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
-      dir: path.resolve(root, `build/server`),
+      dir: project.resolve(`build/server`),
       entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${
         hash === true || hash === 'async-only' ? `.[hash]` : ''
@@ -553,7 +548,7 @@ export async function quiltAppServerOptions(options: AppServerOptions = {}) {
 }
 
 export async function quiltAppServer({
-  root: rootPath = process.cwd(),
+  root = process.cwd(),
   app,
   env,
   entry,
@@ -562,7 +557,7 @@ export async function quiltAppServer({
   assets,
   output,
 }: AppServerOptions = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
 
   const baseURL = assets?.baseURL ?? '/assets/';
@@ -577,28 +572,28 @@ export async function quiltAppServer({
     {sourceCode},
     {react},
     {tsconfigAliases},
+    {monorepoPackageAliases},
     {css},
     {rawAssets, staticAssets},
     {asyncModules},
     {esnext},
     nodePlugins,
-    packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/react.ts'),
     import('./features/typescript.ts'),
+    import('./features/node.ts'),
     import('./features/css.ts'),
     import('./features/assets.ts'),
     import('./features/async.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle}),
-    loadPackageJSON(root),
   ]);
 
   const plugins: InputPluginOption[] = [
-    quiltAppServerInput({root, entry, format}),
+    quiltAppServerInput({root: project.root, entry, format}),
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
@@ -637,25 +632,27 @@ export async function quiltAppServer({
     asyncModules({
       baseURL,
       preload: false,
-      moduleID: ({imported}) => path.relative(root, imported),
+      moduleID: ({imported}) => path.relative(project.root, imported),
     }),
-    removeBuildFiles(['build/server'], {root}),
-    tsconfigAliases({root}),
+    removeBuildFiles(['build/server'], {root: project.root}),
+    tsconfigAliases({root: project.root}),
+    monorepoPackageAliases({root: project.root}),
   ];
 
-  const appEntry = await resolveAppEntry(app, {root, packageJSON});
+  const appEntry = await resolveAppEntry(app, project);
 
   if (appEntry) {
     plugins.push(magicModuleAppComponent({entry: appEntry}));
   }
 
   const serverEntry = entry
-    ? path.resolve(root, entry)
-    : await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
-        cwd: root,
-        nodir: true,
-        absolute: true,
-      }).then((files) => files[0]);
+    ? project.resolve(entry)
+    : await project
+        .glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
+          nodir: true,
+          absolute: true,
+        })
+        .then((files) => files[0]);
 
   plugins.push(
     magicModuleAppServerEntry({
@@ -680,10 +677,7 @@ export async function quiltAppServer({
       template: 'treemap',
       open: false,
       brotliSize: false,
-      filename: path.resolve(
-        root,
-        `build/reports/bundle-visualizer.server.html`,
-      ),
+      filename: project.resolve(`build/reports/bundle-visualizer.server.html`),
     }),
   );
 
@@ -691,11 +685,11 @@ export async function quiltAppServer({
 }
 
 export function quiltAppServerInput({
-  root: rootPath = process.cwd(),
+  root = process.cwd(),
   entry,
   format = 'request-router',
 }: Pick<AppServerOptions, 'root' | 'entry' | 'format'> = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
 
   return {
     name: '@quilted/app-server/input',
@@ -704,12 +698,13 @@ export function quiltAppServerInput({
 
       if (!finalEntry) {
         const serverEntry = entry
-          ? path.resolve(root, entry)
-          : await glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
-              cwd: root,
-              nodir: true,
-              absolute: true,
-            }).then((files) => files[0]);
+          ? project.resolve(entry)
+          : await project
+              .glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
+                nodir: true,
+                absolute: true,
+              })
+              .then((files) => files[0]);
 
         finalEntry =
           format === 'request-router'
@@ -1047,26 +1042,24 @@ function createManualChunksSorter(): GetManualChunk {
   };
 }
 
-async function resolveAppEntry(
-  entry: string | undefined,
-  {root, packageJSON}: {root: string; packageJSON: PackageJSON},
-) {
+async function resolveAppEntry(entry: string | undefined, project: Project) {
   if (entry) {
-    return path.resolve(root, entry);
+    return project.resolve(entry);
   }
 
-  if (typeof packageJSON.main === 'string') {
-    return path.resolve(root, packageJSON.main);
+  const {packageJSON} = project;
+
+  if (typeof packageJSON.raw.main === 'string') {
+    return project.resolve(packageJSON.raw.main);
   }
 
-  const rootEntry = (packageJSON.exports as any)?.['.'];
+  const rootEntry = (packageJSON.raw.exports as any)?.['.'];
 
   if (typeof rootEntry === 'string') {
-    return path.resolve(root, rootEntry);
+    return project.resolve(rootEntry);
   }
 
-  const globbed = await glob('{App,app,index}.{ts,tsx,mjs,js,jsx}', {
-    cwd: root,
+  const globbed = await project.glob('{App,app,index}.{ts,tsx,mjs,js,jsx}', {
     nodir: true,
     absolute: true,
   });

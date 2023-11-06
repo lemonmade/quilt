@@ -1,14 +1,11 @@
-import * as path from 'path';
 import {type InputPluginOption, type RollupOptions} from 'rollup';
-import {glob} from 'glob';
 
-import {resolveRoot} from './shared/path.ts';
+import {Project} from './shared/project.ts';
 import {
   RollupNodePluginOptions,
   getNodePlugins,
   removeBuildFiles,
 } from './shared/rollup.ts';
-import {loadPackageJSON, type PackageJSON} from './shared/package-json.ts';
 import {
   getBrowserGroupTargetDetails,
   rollupGenerateOptionsForBrowsers,
@@ -63,22 +60,22 @@ export interface ModuleAssetsOptions
 }
 
 export async function quiltModule({
-  root: rootPath = process.cwd(),
+  root = process.cwd(),
   entry,
   env,
   assets,
   graphql = true,
 }: ModuleOptions = {}) {
-  const root = resolveRoot(rootPath);
+  const project = Project.load(root);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
-  const outputDirectory = path.join(root, 'build/assets');
+  const outputDirectory = project.resolve('build/assets');
 
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
   const bundle = assets?.bundle ?? true;
 
   const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
-    root,
+    root: project.root,
   });
   const targetFilenamePart = browserGroup.name ? `.${browserGroup.name}` : '';
 
@@ -87,34 +84,33 @@ export async function quiltModule({
     {magicModuleEnv, replaceProcessEnv},
     {sourceCode},
     {tsconfigAliases},
+    {monorepoPackageAliases},
     {react},
     {esnext},
     nodePlugins,
-    packageJSON,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
     import('./features/source-code.ts'),
     import('./features/typescript.ts'),
+    import('./features/node.ts'),
     import('./features/react.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle}),
-    loadPackageJSON(root),
   ]);
 
-  const finalEntry = entry
-    ? path.resolve(root, entry)
-    : await sourceForModule(root, packageJSON);
+  const finalEntry = await resolveModuleEntry(entry, project);
 
   const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: browserGroup.browsers}),
-    tsconfigAliases({root}),
+    tsconfigAliases({root: project.root}),
+    monorepoPackageAliases({root: project.root}),
     esnext({mode, targets: browserGroup.browsers}),
     react(),
-    removeBuildFiles(['build/assets', 'build/reports'], {root}),
+    removeBuildFiles(['build/assets', 'build/reports'], {root: project.root}),
   ];
 
   if (graphql) {
@@ -132,8 +128,7 @@ export async function quiltModule({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: path.resolve(
-        root,
+      filename: project.resolve(
         `build/reports/bundle-visualizer${targetFilenamePart}.html`,
       ),
     }),
@@ -161,19 +156,22 @@ export async function quiltModule({
   } satisfies RollupOptions;
 }
 
-async function sourceForModule(root: string, packageJSON: PackageJSON) {
-  const {main, exports} = packageJSON;
+async function resolveModuleEntry(entry: string | undefined, project: Project) {
+  if (entry) {
+    return project.resolve(entry);
+  }
+
+  const {main, exports} = project.packageJSON.raw;
 
   const entryFromPackageJSON = main ?? (exports as any)?.['.'];
 
   if (entryFromPackageJSON) {
-    return path.resolve(root, entryFromPackageJSON);
+    return project.resolve(entryFromPackageJSON);
   }
 
-  const possibleSourceFiles = await glob(
+  const possibleSourceFiles = await project.glob(
     '{index,module,entry,input}.{ts,tsx,mjs,js,jsx}',
     {
-      cwd: root,
       nodir: true,
       absolute: true,
     },
