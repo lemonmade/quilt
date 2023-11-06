@@ -186,18 +186,27 @@ export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
     name: '@quilted/magic-module/asset-manifests',
     module: MAGIC_MODULE_BROWSER_ASSETS,
     async source() {
-      const {sourceForAppBrowser} = await import('@quilted/rollup/app');
+      const {sourceEntryForAppBrowser} = await import('@quilted/rollup/app');
 
-      const source = await sourceForAppBrowser({entry});
+      const sourceEntry = await sourceEntryForAppBrowser({entry});
+      let entryIdentifier: string;
+
+      if (sourceEntry) {
+        const relativeSourceEntry = path.relative(process.cwd(), sourceEntry);
+        entryIdentifier = relativeSourceEntry.startsWith(`..${path.sep}`)
+          ? `/@fs${sourceEntry}`
+          : relativeSourceEntry.startsWith(`.${path.sep}`)
+          ? `/${relativeSourceEntry.slice(2)}`
+          : `/${relativeSourceEntry}`;
+      } else {
+        entryIdentifier = `/@id/${MAGIC_MODULE_ENTRY}`;
+      }
 
       const manifest = {
         attributes: {
           scripts: {type: 'module'},
         },
-        assets: [
-          `/@vite/client`,
-          source ? path.relative(process.cwd(), source) : MAGIC_MODULE_ENTRY,
-        ],
+        assets: [`/@vite/client`, entryIdentifier],
         entries: {
           default: {
             scripts: [0, 1],

@@ -14,7 +14,8 @@ export function styleAssetAttributes(
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)));
+      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      isFullURL(source));
 
   const href =
     crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
@@ -42,7 +43,8 @@ export function styleAssetPreloadAttributes(
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)));
+      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      isFullURL(source));
 
   const href =
     crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
@@ -74,7 +76,8 @@ export function scriptAssetAttributes(
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)));
+      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      isFullURL(source));
 
   const src =
     crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
@@ -101,7 +104,8 @@ export function scriptAssetPreloadAttributes(
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)));
+      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      isFullURL(source));
 
   const href =
     crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
@@ -118,4 +122,10 @@ export function scriptAssetPreloadAttributes(
         ? crossorigin
         : undefined,
   };
+}
+
+const HTTP_URL_REGEX = /^https?:[/][/]/;
+
+function isFullURL(url: string) {
+  return HTTP_URL_REGEX.test(url);
 }

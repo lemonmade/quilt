@@ -491,7 +491,7 @@ export function quiltAppBrowserInput({
     async options(options) {
       const finalEntry =
         normalizeRollupInput(options.input) ??
-        (await sourceForAppBrowser({entry, root})) ??
+        (await sourceEntryForAppBrowser({entry, root})) ??
         MAGIC_MODULE_ENTRY;
 
       return {
@@ -955,7 +955,7 @@ export function magicModuleAppAssetManifests() {
   });
 }
 
-export async function sourceForAppBrowser({
+export async function sourceEntryForAppBrowser({
   entry,
   root = process.cwd(),
 }: {
