@@ -9,8 +9,6 @@ export async function monorepoPackageAliases({
   const seenDependencies = new Set<string>();
   const seenProjects = new Set<Project>();
 
-  const aliases: Record<string, string> = {};
-
   function processProject(project: Project) {
     const {dependencies, devDependencies} = project.packageJSON.raw;
 
@@ -55,12 +53,18 @@ export async function monorepoPackageAliases({
     ),
   ]);
 
+  const aliases: import('@rollup/plugin-alias').Alias[] = [];
+
   for (const {project, entries} of projectsWithEntries) {
     const {name} = project;
 
     for (const [entry, source] of Object.entries(entries)) {
       const entryName = entry === '.' ? name : `${name}/${entry}`;
-      aliases[entryName] = source;
+
+      aliases.push({
+        find: new RegExp(`^${entryName}$`),
+        replacement: source,
+      });
     }
   }
 
