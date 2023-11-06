@@ -16,12 +16,16 @@ export function createMagicModulePlugin({
   readonly sideEffects?: boolean;
   source?(this: PluginContext): string | Promise<string>;
 }) {
+  const virtualModuleAlias = `${VIRTUAL_MODULE_PREFIX}${module}${VIRTUAL_MODULE_POSTFIX}`;
+
   return {
     name,
     async resolveId(id) {
       if (id !== module) return null;
 
-      const resolved = typeof alias === 'function' ? await alias() : alias;
+      const resolved =
+        (typeof alias === 'function' ? await alias() : alias) ??
+        virtualModuleAlias;
 
       return {
         id: resolved,
@@ -30,7 +34,7 @@ export function createMagicModulePlugin({
     },
     load: getSource
       ? async function load(source) {
-          if (source !== alias) return null;
+          if (source !== virtualModuleAlias) return null;
 
           const code = await getSource.call(this);
 
