@@ -103,7 +103,7 @@ export async function quiltApp({
     },
     {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
-    magicModuleAppAssetManifest(),
+    magicModuleAppAssetManifest({entry: browser?.entry}),
   ];
 
   if (server?.format !== 'custom') {
