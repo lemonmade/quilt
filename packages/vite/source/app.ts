@@ -1,5 +1,14 @@
+import * as path from 'path';
+
 import type {Plugin} from 'vite';
-import {MAGIC_MODULE_BROWSER_ASSETS} from '@quilted/rollup/app';
+import {
+  MAGIC_MODULE_ENTRY,
+  MAGIC_MODULE_BROWSER_ASSETS,
+  MAGIC_MODULE_REQUEST_ROUTER,
+  type AppBrowserOptions,
+  type AppServerOptions,
+} from '@quilted/rollup/app';
+import type {MagicModuleEnvOptions} from '@quilted/rollup/features/env';
 
 import {multiline} from './shared/strings.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
@@ -31,31 +40,79 @@ export interface AppBaseOptions {
    * @default true
    */
   graphql?: boolean;
+
+  /**
+   * Customizes the behavior of environment variables for your application. You
+   * can further customize the environment variables provided to browser assets
+   * by passing the `browser.env`, and those passed during server-side rendering
+   * by passing `server.env`.
+   */
+  env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
+}
+
+export interface AppOptions extends AppBaseOptions {
+  /**
+   * Customizes the browser build of your application.
+   */
+  browser?: Pick<AppBrowserOptions, 'module' | 'entry'>;
+
+  /**
+   * Customizes the server build of your application.
+   */
+  server?: Pick<AppServerOptions, 'format' | 'entry'>;
 }
 
 export async function quiltApp({
+  app,
+  env,
+  browser,
+  server,
   graphql: useGraphQL = true,
-}: AppBaseOptions = {}) {
+}: AppOptions = {}) {
+  const mode = typeof env === 'string' ? env : env?.mode ?? 'development';
+
   const [
     {default: prefresh},
+    {
+      magicModuleAppComponent,
+      magicModuleAppBrowserEntry,
+      magicModuleAppRequestRouter,
+    },
     {graphql},
     {tsconfigAliases},
     {monorepoPackageAliases},
+    {magicModuleEnv},
   ] = await Promise.all([
     // @ts-expect-error This package is not set up correctly for ESM projects
     // @see https://github.com/preactjs/prefresh/issues/518
     import('@prefresh/vite'),
+    import('@quilted/rollup/app'),
     import('@quilted/rollup/features/graphql'),
     import('@quilted/rollup/features/typescript'),
     import('@quilted/rollup/features/node'),
+    import('@quilted/rollup/features/env'),
   ]);
 
   const plugins: Plugin[] = [
     prefresh(),
     {...(await tsconfigAliases()), enforce: 'pre'},
     {...(await monorepoPackageAliases()), enforce: 'pre'},
+    {
+      ...magicModuleEnv({mode, ...(typeof env === 'object' ? env : {})}),
+      enforce: 'pre',
+    },
+    {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
+    {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest(),
   ];
+
+  if (server?.format !== 'custom') {
+    // @ts-expect-error Different versions of rollup
+    plugins.push({
+      ...magicModuleAppRequestRouter({entry: server?.entry}),
+      enforce: 'pre',
+    });
+  }
 
   if (useGraphQL) {
     // @ts-expect-error different versions of rollup
@@ -107,7 +164,7 @@ export async function quiltApp({
           try {
             const [{default: requestRouter}, {createHttpRequestListener}] =
               await Promise.all([
-                vite.ssrLoadModule('/server.tsx'),
+                vite.ssrLoadModule(MAGIC_MODULE_REQUEST_ROUTER),
                 import('@quilted/request-router/node'),
               ]);
 
@@ -124,16 +181,23 @@ export async function quiltApp({
   return plugins;
 }
 
-export function magicModuleAppAssetManifest() {
+export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
   return createMagicModulePlugin({
     name: '@quilted/magic-module/asset-manifests',
     module: MAGIC_MODULE_BROWSER_ASSETS,
-    source() {
+    async source() {
+      const {sourceForAppBrowser} = await import('@quilted/rollup/app');
+
+      const source = await sourceForAppBrowser({entry});
+
       const manifest = {
         attributes: {
           scripts: {type: 'module'},
         },
-        assets: [`/@vite/client`, `/browser.tsx`],
+        assets: [
+          `/@vite/client`,
+          source ? path.relative(process.cwd(), source) : MAGIC_MODULE_ENTRY,
+        ],
         entries: {
           default: {
             scripts: [0, 1],

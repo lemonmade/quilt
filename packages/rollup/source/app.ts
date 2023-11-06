@@ -376,6 +376,8 @@ export async function quiltAppBrowser({
     systemJS({minify}),
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
+    magicModuleAppComponent({entry: app, root: project.root}),
+    magicModuleAppBrowserEntry(module),
     sourceCode({
       mode,
       targets: browserGroup.browsers,
@@ -437,14 +439,6 @@ export async function quiltAppBrowser({
     );
   }
 
-  const appEntry = await resolveAppEntry(app, project);
-
-  if (appEntry) {
-    plugins.push(magicModuleAppComponent({entry: appEntry}));
-  }
-
-  plugins.push(magicModuleAppBrowserEntry(module));
-
   if (graphql) {
     const {graphql} = await import('./features/graphql.ts');
 
@@ -489,24 +483,15 @@ export async function quiltAppBrowser({
 }
 
 export function quiltAppBrowserInput({
-  root = process.cwd(),
+  root,
   entry,
 }: Pick<AppBrowserOptions, 'root' | 'entry'> = {}) {
-  const project = Project.load(root);
-
   return {
     name: '@quilted/app-browser/input',
     async options(options) {
       const finalEntry =
         normalizeRollupInput(options.input) ??
-        (entry
-          ? project.resolve(entry)
-          : await project
-              .glob('{browser,client,web}.{ts,tsx,mjs,js,jsx}', {
-                nodir: true,
-                absolute: true,
-              })
-              .then((files) => files[0])) ??
+        (await sourceForAppBrowser({entry, root})) ??
         MAGIC_MODULE_ENTRY;
 
       return {
@@ -597,6 +582,12 @@ export async function quiltAppServer({
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode}),
+    magicModuleAppComponent({entry: app, root: project.root}),
+    magicModuleAppServerEntry({
+      assets: {baseURL},
+    }),
+    magicModuleAppRequestRouter({entry, root: project.root}),
+    magicModuleAppAssetManifests(),
     sourceCode({
       mode,
       targets: ['current node'],
@@ -638,29 +629,6 @@ export async function quiltAppServer({
     tsconfigAliases({root: project.root}),
     monorepoPackageAliases({root: project.root}),
   ];
-
-  const appEntry = await resolveAppEntry(app, project);
-
-  if (appEntry) {
-    plugins.push(magicModuleAppComponent({entry: appEntry}));
-  }
-
-  const serverEntry = entry
-    ? project.resolve(entry)
-    : await project
-        .glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
-          nodir: true,
-          absolute: true,
-        })
-        .then((files) => files[0]);
-
-  plugins.push(
-    magicModuleAppServerEntry({
-      assets: {baseURL},
-    }),
-    magicModuleAppRequestRouter({entry: serverEntry}),
-    magicModuleAppAssetManifests(),
-  );
 
   if (graphql) {
     const {graphql} = await import('./features/graphql.ts');
@@ -723,52 +691,96 @@ export function quiltAppServerInput({
   } satisfies Plugin;
 }
 
-export function magicModuleAppComponent({entry}: {entry: string}) {
+export function magicModuleAppComponent({
+  entry,
+  root = process.cwd(),
+}: {
+  entry?: string;
+  root?: string;
+}) {
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app',
     module: MAGIC_MODULE_APP_COMPONENT,
-    alias: entry,
+    alias:
+      entry ??
+      async function magicModuleApp() {
+        const project = Project.load(root);
+        const {packageJSON} = project;
+
+        if (typeof packageJSON.raw.main === 'string') {
+          return project.resolve(packageJSON.raw.main);
+        }
+
+        const rootEntry = (packageJSON.raw.exports as any)?.['.'];
+
+        if (typeof rootEntry === 'string') {
+          return project.resolve(rootEntry);
+        }
+
+        const globbed = await project.glob(
+          '{App,app,index}.{ts,tsx,mjs,js,jsx}',
+          {
+            nodir: true,
+            absolute: true,
+          },
+        );
+
+        return globbed[0]!;
+      },
   });
 }
 
 export function magicModuleAppRequestRouter({
   entry,
-}: Pick<AppServerOptions, 'entry'> = {}) {
+  root = process.cwd(),
+}: Pick<AppServerOptions, 'entry' | 'root'> = {}) {
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app-request-router',
     module: MAGIC_MODULE_REQUEST_ROUTER,
-    alias: entry,
-    source: entry
-      ? undefined
-      : async function source() {
-          return multiline`
-            import '@quilted/quilt/globals';
+    alias:
+      entry ??
+      async function magicModuleRequestRouter() {
+        const project = Project.load(root);
 
-            import {jsx} from 'react/jsx-runtime';
-            import {RequestRouter} from '@quilted/quilt/request-router';
-            import {renderToResponse} from '@quilted/quilt/server';
+        const globbed = await project.glob(
+          '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
+          {
+            nodir: true,
+            absolute: true,
+          },
+        );
 
-            import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
-            import {BrowserAssets} from ${JSON.stringify(
-              MAGIC_MODULE_BROWSER_ASSETS,
-            )};
+        return globbed[0]!;
+      },
+    async source() {
+      return multiline`
+        import '@quilted/quilt/globals';
 
-            const router = new RequestRouter();
-            const assets = new BrowserAssets();
+        import {jsx} from 'react/jsx-runtime';
+        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {renderToResponse} from '@quilted/quilt/server';
 
-            // For all GET requests, render our React application.
-            router.get(async (request) => {
-              const response = await renderToResponse(jsx(App), {
-                request,
-                assets,
-              });
+        import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
+        import {BrowserAssets} from ${JSON.stringify(
+          MAGIC_MODULE_BROWSER_ASSETS,
+        )};
 
-              return response;
-            });
+        const router = new RequestRouter();
+        const assets = new BrowserAssets();
 
-            export default router;
-          `;
-        },
+        // For all GET requests, render our React application.
+        router.get(async (request) => {
+          const response = await renderToResponse(jsx(App), {
+            request,
+            assets,
+          });
+
+          return response;
+        });
+
+        export default router;
+      `;
+    },
   });
 }
 
@@ -943,6 +955,30 @@ export function magicModuleAppAssetManifests() {
   });
 }
 
+export async function sourceForAppBrowser({
+  entry,
+  root = process.cwd(),
+}: {
+  entry?: string;
+  root?: string | URL;
+}) {
+  const project = Project.load(root);
+
+  if (entry) {
+    return project.resolve(entry);
+  } else {
+    const files = await project.glob(
+      '{browser,client,web}.{ts,tsx,mjs,js,jsx}',
+      {
+        nodir: true,
+        absolute: true,
+      },
+    );
+
+    return files[0];
+  }
+}
+
 const FRAMEWORK_CHUNK_NAME = 'framework';
 const POLYFILLS_CHUNK_NAME = 'polyfills';
 const VENDOR_CHUNK_NAME = 'vendor';
@@ -1040,29 +1076,4 @@ function createManualChunksSorter(): GetManualChunk {
 
     return `${bundleBaseName}-${relativeId.split(path.sep)[0]?.split('.')[0]}`;
   };
-}
-
-async function resolveAppEntry(entry: string | undefined, project: Project) {
-  if (entry) {
-    return project.resolve(entry);
-  }
-
-  const {packageJSON} = project;
-
-  if (typeof packageJSON.raw.main === 'string') {
-    return project.resolve(packageJSON.raw.main);
-  }
-
-  const rootEntry = (packageJSON.raw.exports as any)?.['.'];
-
-  if (typeof rootEntry === 'string') {
-    return project.resolve(rootEntry);
-  }
-
-  const globbed = await project.glob('{App,app,index}.{ts,tsx,mjs,js,jsx}', {
-    nodir: true,
-    absolute: true,
-  });
-
-  return globbed[0];
 }

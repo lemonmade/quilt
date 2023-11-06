@@ -11,18 +11,20 @@ export function createMagicModulePlugin({
   sideEffects = false,
 }: {
   readonly name: string;
-  readonly alias?: string;
+  readonly alias?: string | (() => string | Promise<string>);
   readonly module: string;
   readonly sideEffects?: boolean;
   source?(this: PluginContext): string | Promise<string>;
 }) {
   return {
     name,
-    resolveId(id) {
+    async resolveId(id) {
       if (id !== module) return null;
 
+      const resolved = typeof alias === 'function' ? await alias() : alias;
+
       return {
-        id: alias,
+        id: resolved,
         moduleSideEffects: sideEffects ? 'no-treeshake' : undefined,
       };
     },
