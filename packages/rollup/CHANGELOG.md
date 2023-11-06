@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.5
+
+### Patch Changes
+
+- [`465883e1`](https://github.com/lemonmade/quilt/commit/465883e12571bee9d6e8c8d517ebf6da384687b2) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for automatic in-repo source aliases
+
 ## 0.2.4
 
 ### Patch Changes
