@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.5
+
+### Patch Changes
+
+- [`e77a644c`](https://github.com/lemonmade/quilt/commit/e77a644cfaf528cd635f4bc26814c7ccb654e515) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more development features to Vite plugin
+
 ## 0.1.4
 
 ### Patch Changes
