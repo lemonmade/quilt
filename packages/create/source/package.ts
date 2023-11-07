@@ -125,7 +125,7 @@ export async function createProject() {
       await workspaceTemplate.read('package.json'),
     );
 
-    workspacePackageJson.name = toValidPackageName(name!);
+    workspacePackageJson.name = `${toValidPackageName(name!)}-workspace`;
 
     await outputRoot.write(
       'pnpm-workspace.yaml',

@@ -108,7 +108,7 @@ export async function createModule() {
       await workspaceTemplate.read('package.json'),
     );
 
-    workspacePackageJson.name = toValidPackageName(name!);
+    workspacePackageJson.name = `${toValidPackageName(name!)}-workspace`;
 
     const moduleRelativeToRoot = relativeDirectoryForDisplay(
       path.relative(directory, moduleDirectory),

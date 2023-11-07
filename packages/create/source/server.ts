@@ -96,7 +96,7 @@ export async function createServer() {
       await workspaceTemplate.read('package.json'),
     );
 
-    workspacePackageJson.name = toValidPackageName(name!);
+    workspacePackageJson.name = `${toValidPackageName(name!)}-workspace`;
 
     const moduleRelativeToRoot = relativeDirectoryForDisplay(
       path.relative(directory, serverDirectory),
@@ -133,7 +133,10 @@ export async function createServer() {
       await serverTemplate.read('package.json'),
     );
 
-    adjustPackageJson(projectPackageJson, {name, entry});
+    adjustPackageJson(projectPackageJson, {
+      name: toValidPackageName(name!),
+      entry,
+    });
 
     await outputRoot.write(
       path.join(serverDirectory, 'package.json'),

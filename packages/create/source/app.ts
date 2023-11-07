@@ -114,7 +114,7 @@ export async function createApp() {
       await workspaceTemplate.read('package.json'),
     );
 
-    workspacePackageJson.name = toValidPackageName(name!);
+    workspacePackageJson.name = `${toValidPackageName(name!)}-workspace`;
 
     const moduleRelativeToRoot = relativeDirectoryForDisplay(
       path.relative(directory, appDirectory),
@@ -180,7 +180,7 @@ export async function createApp() {
       await appTemplate.read('package.json'),
     );
 
-    projectPackageJson.name = path.basename(appDirectory);
+    projectPackageJson.name = toValidPackageName(name!);
 
     await outputRoot.write(
       path.join(appDirectory, 'package.json'),
@@ -212,7 +212,7 @@ export async function createApp() {
       workspacePackageJson,
     );
 
-    mergedPackageJson.name = path.basename(appDirectory);
+    mergedPackageJson.name = toValidPackageName(name!);
 
     await outputRoot.write(
       'package.json',
