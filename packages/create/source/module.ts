@@ -135,9 +135,15 @@ export async function createModule() {
   }
 
   await moduleTemplate.copy(moduleDirectory, (file) => {
-    // We will adjust the package.json before writing it
-    return file !== 'package.json';
+    // We will adjust the package.json before writing it, and we will rename the root
+    // module file name to the entry file name
+    return file !== 'package.json' && file !== 'module.ts';
   });
+
+  await outputRoot.write(
+    path.join(moduleDirectory, entry),
+    await moduleTemplate.read('module.ts'),
+  );
 
   if (partOfMonorepo) {
     // Add the package to the workspace configuration files
