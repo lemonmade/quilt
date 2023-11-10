@@ -59,7 +59,10 @@ export async function monorepoPackageAliases({
     const {name} = project;
 
     for (const [entry, source] of Object.entries(entries)) {
-      const entryName = entry === '.' ? name : `${name}/${entry}`;
+      const entryName =
+        entry === '.'
+          ? name
+          : `${name}/${entry.startsWith('./') ? entry.slice(2) : entry}`;
 
       aliases.push({
         find: new RegExp(`^${entryName}$`),
