@@ -1,6 +1,6 @@
 import {type InputPluginOption, type RollupOptions} from 'rollup';
 
-import {Project} from './shared/project.ts';
+import {Project, sourceEntriesForProject} from './shared/project.ts';
 import {
   RollupNodePluginOptions,
   getNodePlugins,
@@ -21,13 +21,16 @@ export interface ModuleOptions {
 
   /**
    * The entry module for this module. This should be an absolute path, or relative
-   * path from the root directory containing your project. If not provided, this
-   * defaults the `main` or `exports['.']` field in your package.json, or a file named
-   * `index`, `module`, `entry`, or `input` in your project root.
+   * path from the root directory containing your project. It can also be an object, where
+   * each key is the name of an entry into the module, and each value is the path to the
+   * source path for that entry. If not provided, this defaults the detected source files for
+   * the the `exports` field in your package.json, then to the `main` field in your package.json,
+   * then to a file `index`, `module`, `entry`, or `input` in your project’s root directory.
    *
    * @example './my-module.tsx'
+   * @example {browser: './browser.tsx', server: './server.tsx'}
    */
-  entry?: string;
+  entry?: string | Record<string, string>;
 
   /**
    * Whether to include GraphQL-related code transformations.
@@ -55,6 +58,7 @@ export interface ModuleAssetsOptions
    * @default true
    */
   minify?: boolean;
+  clean?: boolean;
   hash?: boolean | 'async-only';
   targets?: BrowserGroupTargetSelection;
 }
@@ -110,7 +114,6 @@ export async function quiltModule({
     monorepoPackageAliases({root: project.root}),
     esnext({mode, targets: browserGroup.browsers}),
     react(),
-    removeBuildFiles(['build/assets', 'build/reports'], {root: project.root}),
   ];
 
   if (graphql) {
@@ -121,6 +124,14 @@ export async function quiltModule({
   if (minify) {
     const {minify} = await import('rollup-plugin-esbuild');
     plugins.push(minify());
+  }
+
+  if (assets?.clean ?? true) {
+    plugins.push(
+      removeBuildFiles(['build/assets', 'build/reports'], {
+        root: project.root,
+      }),
+    );
   }
 
   plugins.push(
@@ -152,30 +163,48 @@ export async function quiltModule({
       generatedCode: await rollupGenerateOptionsForBrowsers(
         browserGroup.browsers,
       ),
+      minifyInternalExports: minify,
     },
   } satisfies RollupOptions;
 }
 
-async function resolveModuleEntry(entry: string | undefined, project: Project) {
+async function resolveModuleEntry(
+  entry: string | Record<string, string> | undefined,
+  project: Project,
+) {
   if (entry) {
-    return project.resolve(entry);
+    if (typeof entry === 'string') {
+      const absolutePath = project.resolve(entry);
+      return {[project.relative(absolutePath)]: absolutePath};
+    } else {
+      return Object.fromEntries(
+        Object.entries(entry).map(([key, value]) => [
+          normalizeEntryName(key),
+          project.resolve(value),
+        ]),
+      );
+    }
   }
 
-  const {main, exports} = project.packageJSON.raw;
+  const entries = await sourceEntriesForProject(project);
+  const entryArray = Object.entries(entries);
 
-  const entryFromPackageJSON = main ?? (exports as any)?.['.'];
-
-  if (entryFromPackageJSON) {
-    return project.resolve(entryFromPackageJSON);
+  if (entryArray.length > 0) {
+    return Object.fromEntries(
+      entryArray.map(([key, value]) => [normalizeEntryName(key), value]),
+    );
   }
 
-  const possibleSourceFiles = await project.glob(
-    '{index,module,entry,input}.{ts,tsx,mjs,js,jsx}',
-    {
+  const sourceFile = (
+    await project.glob('{index,module,entry,input}.{ts,tsx,mjs,js,jsx}', {
       nodir: true,
       absolute: true,
-    },
-  );
+    })
+  )[0]!;
 
-  return possibleSourceFiles[0]!;
+  return {[normalizeEntryName(project.relative(sourceFile))]: sourceFile};
+}
+
+function normalizeEntryName(name: string) {
+  return name === '.' ? 'index' : name.startsWith('./') ? name.slice(2) : name;
 }

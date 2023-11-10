@@ -44,6 +44,10 @@ export class Project {
     return path.resolve(this.root, ...segments);
   }
 
+  relative(to: string) {
+    return path.relative(this.root, to);
+  }
+
   glob(pattern: string | string[], options?: GlobOptions) {
     return glob(pattern, {
       ...options,
