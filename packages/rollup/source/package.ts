@@ -237,6 +237,7 @@ export async function quiltPackageESModules({
       entryFileNames: `[name].mjs`,
       assetFileNames: `[name].[ext]`,
       generatedCode,
+      minifyInternalExports: false,
       // We only want to preserve the original directory structure if there
       // are actual package entries.
       ...(hasEntries
@@ -257,6 +258,7 @@ export async function quiltPackageESModules({
       preserveModules: true,
       preserveModulesRoot: source.root,
       generatedCode,
+      minifyInternalExports: false,
     });
   }
 
