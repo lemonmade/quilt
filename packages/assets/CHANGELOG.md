@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.1
+
+### Patch Changes
+
+- [`6c7371f7`](https://github.com/lemonmade/quilt/commit/6c7371f7a34ce89383adec9501ca31db5ce4d3c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset references during development
+
 ## 0.1.0
 
 ### Minor Changes

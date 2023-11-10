@@ -1,5 +1,13 @@
 # @quilted/vite
 
+## 0.1.6
+
+### Patch Changes
+
+- [`6c7371f7`](https://github.com/lemonmade/quilt/commit/6c7371f7a34ce89383adec9501ca31db5ce4d3c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset references during development
+
+- [`137947ff`](https://github.com/lemonmade/quilt/commit/137947ff22f5b1f854b75f25f0195c00ba8dca53) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix browser entry in development asset manifest
+
 ## 0.1.5
 
 ### Patch Changes

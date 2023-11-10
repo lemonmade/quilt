@@ -1,5 +1,17 @@
 # @quilted/rollup
 
+## 0.2.7
+
+### Patch Changes
+
+- [`6c7371f7`](https://github.com/lemonmade/quilt/commit/6c7371f7a34ce89383adec9501ca31db5ce4d3c7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset references during development
+
+- [`807b8e66`](https://github.com/lemonmade/quilt/commit/807b8e6644ef79d00dc631da4633647d119f0cd6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for multi-entry modules
+
+- [`274e09ea`](https://github.com/lemonmade/quilt/commit/274e09eaf9ecd0626298941a68a9984b6ca6f488) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix monorepo aliases plugin
+
+- [`85c21b4f`](https://github.com/lemonmade/quilt/commit/85c21b4f35b1b7949fe445f25b25282f326d4833) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up internal imports in apps and packages
+
 ## 0.2.6
 
 ### Patch Changes
