@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.7
+
+### Patch Changes
+
+- [`c60e0d3d`](https://github.com/lemonmade/quilt/commit/c60e0d3d14310c3f750bb0dfb5d12357f15c7efa) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix module template entry file name
+
+- [`d57817c2`](https://github.com/lemonmade/quilt/commit/d57817c2d39e3429c4f489cfb8e38c6205313412) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix workspace name in monorepo templates
+
 ## 0.2.6
 
 ### Patch Changes
