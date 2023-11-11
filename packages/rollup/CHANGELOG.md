@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.8
+
+### Patch Changes
+
+- [`8f5849b0`](https://github.com/lemonmade/quilt/commit/8f5849b0f9fae9f817d269ce763461f4d6ce409c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect browser support for UC and QQ browsers
+
 ## 0.2.7
 
 ### Patch Changes
