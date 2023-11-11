@@ -132,8 +132,6 @@ export async function targetsSupportModules(targets: readonly string[]) {
 const BROWSESLIST_BROWSER_TO_MDN_BROWSER = new Map([
   ['and_chr', 'chrome_android'],
   ['and_ff', 'firefox_android'],
-  ['and_qq', 'qq_android'],
-  ['and_uc', 'uc_android'],
   ['android', 'webview_android'],
   ['chrome', 'chrome'],
   ['edge', 'edge'],
