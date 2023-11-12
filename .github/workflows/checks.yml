@@ -26,15 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: actions/cache@v3
-        id: typescript-cache
-        with:
-          path: |
-            **/build/typescript/
-            **/*.tsbuildinfo
-          key: typescript-cache-v1-${{ github.sha }}
-          restore-keys: typescript-cache-v1-
-      - run: pnpm run type-check
+      - uses: ./.github/workflows/actions/type-check-with-cache
 
   unit-tests:
     name: Unit tests 🧪

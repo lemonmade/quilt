@@ -1,0 +1,14 @@
+name: Type Check with cache
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/cache@v3
+      id: typescript-cache
+      with:
+        path: |
+          **/build/typescript/
+          **/*.tsbuildinfo
+        key: typescript-cache-v1-${{ github.sha }}
+        restore-keys: typescript-cache-v1-
+    - run: pnpm run type-check
+      shell: bash
