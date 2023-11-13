@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 2.1.0
+
+### Minor Changes
+
+- [`e3789679`](https://github.com/lemonmade/quilt/commit/e3789679d5de2f4e5e48902c902032febee1efac) Thanks [@lemonmade](https://github.com/lemonmade)! - Add utility to turn `BroadcastChannel` objects into threads
+
 ## 2.0.0
 
 ### Major Changes
