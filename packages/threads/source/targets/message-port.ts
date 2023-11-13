@@ -1,7 +1,7 @@
 import {createThread, type ThreadOptions} from './target.ts';
 
 /**
- * Creates a thread from a `WebSocket` instance in the browser.
+ * Creates a thread from a `MessagePort` instance in the browser.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
  *

@@ -8,6 +8,7 @@ export {
 } from './constants.ts';
 export {
   createThread,
+  createThreadFromBroadcastChannel,
   createThreadFromBrowserWebSocket,
   createThreadFromIframe,
   createThreadFromInsideIframe,

@@ -46,6 +46,18 @@ import {createThreadFromBrowserWebSocket} from '@quilted/threads';
 
 const socket = new WebSocket('ws://localhost:8080');
 const thread = createThreadFromBrowserWebSocket(socket);
+
+// Create a thread from a MessagePort.
+import {createThreadFromMessagePort} from '@quilted/threads';
+
+const {port1, port2} = new MessageChannel();
+const thread1 = createThreadFromMessagePort(port1);
+
+// Create a thread from a BroadcastChannel.
+import {createThreadFromBroadcastChannel} from '@quilted/threads';
+
+const channel = new BroadcastChannel('my-channel');
+const thread = createThreadFromBroadcastChannel(channel);
 ```
 
 To expose methods on a thread, pass them as an `expose` option to your thread creation function:
