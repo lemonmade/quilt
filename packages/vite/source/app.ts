@@ -82,20 +82,26 @@ export async function quiltApp({
     {tsconfigAliases},
     {monorepoPackageAliases},
     {magicModuleEnv},
+    {workers},
+    {babelPreprocess},
   ] = await Promise.all([
-    // @ts-expect-error This package is not set up correctly for ESM projects
-    // @see https://github.com/preactjs/prefresh/issues/518
     import('@prefresh/vite'),
     import('@quilted/rollup/app'),
     import('@quilted/rollup/features/graphql'),
     import('@quilted/rollup/features/typescript'),
     import('@quilted/rollup/features/node'),
     import('@quilted/rollup/features/env'),
+    import('@quilted/rollup/features/workers'),
+    import('./shared/babel.ts'),
   ]);
 
   const plugins: Plugin[] = [
     prefresh(),
-    {...(await tsconfigAliases()), enforce: 'pre'},
+    {
+      ...(await tsconfigAliases()),
+      enforce: 'pre',
+      name: '@quilted/tsconfig-aliases',
+    },
     {...(await monorepoPackageAliases()), enforce: 'pre'},
     {
       ...magicModuleEnv({mode, ...(typeof env === 'object' ? env : {})}),
@@ -104,10 +110,11 @@ export async function quiltApp({
     {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
+    babelPreprocess(),
+    workers(),
   ];
 
   if (server?.format !== 'custom') {
-    // @ts-expect-error Different versions of rollup
     plugins.push({
       ...magicModuleAppRequestRouter({entry: server?.entry}),
       enforce: 'pre',
@@ -115,7 +122,6 @@ export async function quiltApp({
   }
 
   if (useGraphQL) {
-    // @ts-expect-error different versions of rollup
     plugins.push(graphql());
   }
 

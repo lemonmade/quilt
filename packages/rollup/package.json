@@ -75,6 +75,12 @@
       "quilt:source": "./source/features/typescript.ts",
       "quilt:esnext": "./build/esnext/features/typescript.esnext",
       "import": "./build/esm/features/typescript.mjs"
+    },
+    "./features/workers": {
+      "types": "./build/typescript/features/workers.d.ts",
+      "quilt:source": "./source/features/workers.ts",
+      "quilt:esnext": "./build/esnext/features/workers.esnext",
+      "import": "./build/esm/features/workers.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -106,6 +112,9 @@
       ],
       "features/typescript": [
         "./build/typescript/features/typescript.d.ts"
+      ],
+      "features/workers": [
+        "./build/typescript/features/workers.d.ts"
       ]
     }
   },
@@ -158,7 +167,7 @@
   },
   "devDependencies": {
     "@types/semver": "^7.5.4",
-    "rollup": "^4.1.4"
+    "rollup": "^4.5.0"
   },
   "eslintConfig": {
     "extends": [

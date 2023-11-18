@@ -25,7 +25,6 @@ export async function quiltPackage({
   const plugins: Plugin[] = [];
 
   if (useGraphQL) {
-    // @ts-expect-error different versions of rollup
     plugins.push(graphql());
   }
 

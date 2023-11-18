@@ -18,4 +18,4 @@
 - [x] Allow passing of `env: 'production'` to rollup plugins
 - [x] Re-enable app cleaning
 - [x] Automatic setting of Rollup output format options based on targets
-- [ ] Add development support for async components and workers
+- [x] Add development support for async components and workers
