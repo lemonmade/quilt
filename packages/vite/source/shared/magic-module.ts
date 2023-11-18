@@ -32,7 +32,6 @@ export function createMagicModulePlugin({
       ? async function load(source) {
           if (source !== alias) return null;
 
-          // @ts-expect-error Vite depends on an older Rollup
           const code = await getSource.call(this);
 
           return {
