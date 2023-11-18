@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.8
+
+### Patch Changes
+
+- [`e81fc8cb`](https://github.com/lemonmade/quilt/commit/e81fc8cb3fa3b429a91db83e30fcb56bdc7f776a) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Vite
+
 ## 0.2.7
 
 ### Patch Changes
