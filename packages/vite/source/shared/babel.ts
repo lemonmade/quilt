@@ -46,7 +46,6 @@ export function babelPreprocess() {
               'explicitResourceManagement',
               'importMeta',
               'importAttributes',
-              'importAssertions',
             ],
           },
         })) ?? {};

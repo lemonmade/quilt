@@ -61,8 +61,8 @@ export interface Options {
    *
    * workers({
    *   write: true,
-   *   baseURL({filename, outputOptions}) {
-   *     return `/@fs${path.join(outputOptions.dir, filename)}`;
+   *   baseURL({outputOptions}) {
+   *     return `/@fs${path.resolve(outputOptions.dir)}`;
    *   },
    * })
    * ```
@@ -71,14 +71,12 @@ export interface Options {
   plugins?: ValueOrUpdateGetter<Plugin[]>;
   inputOptions?: ValueOrUpdateGetter<InputOptions>;
   outputOptions?: ValueOrUpdateGetter<OutputOptions>;
-  contentForWorker?: ValueOrGetter<string | undefined>;
   baseURL?: ValueOrGetter<string | undefined, BaseURLContext>;
 }
 
 export function workers({
   write = false,
   baseURL,
-  contentForWorker = defaultContentForWorker,
   plugins = defaultPlugins,
   inputOptions = {},
   outputOptions = {},
@@ -92,54 +90,27 @@ export function workers({
       parentInputOptions = inputOptions;
     },
     async resolveId(source, importer) {
-      if (!source.startsWith(PREFIX)) return null;
+      const context = parseWorkerImport(source);
 
-      const {workerId, wrapper} = getWorkerRequest(source.replace(PREFIX, ''));
-      const resolvedWorker = await this.resolve(workerId, importer, {
+      if (context == null) return null;
+
+      const resolvedModule = await this.resolve(context.module, importer, {
         skipSelf: true,
       });
 
-      if (resolvedWorker == null) return null;
+      if (resolvedModule == null) return null;
 
-      return `${PREFIX}${resolvedWorker.id}${wrapperToSearchString(wrapper)}`;
+      return serializeWorkerImport({...context, module: resolvedModule.id});
     },
     async load(id) {
-      if (!id.startsWith(PREFIX)) return null;
+      const context = parseWorkerImport(id);
 
-      const {workerId, wrapper} = getWorkerRequest(id.replace(PREFIX, ''));
+      if (context == null) return null;
 
-      const workerContext: WorkerContext = {module: workerId, wrapper};
+      const {module} = context;
 
       const workerPlugins: Plugin[] = [
-        {
-          name: '@quilted/workers/magic-modules',
-          resolveId(source) {
-            if (source.startsWith(ENTRY_PREFIX)) {
-              return {id: source};
-            }
-
-            if (source === MAGIC_MODULE_WORKER) {
-              return {id: workerId};
-            }
-
-            return null;
-          },
-          async load(id) {
-            if (!id.startsWith(ENTRY_PREFIX)) return null;
-
-            const {wrapper, workerId} = getWorkerRequest(
-              id.replace(ENTRY_PREFIX, ''),
-            );
-
-            const context: WorkerContext = {module: workerId, wrapper};
-
-            const content =
-              typeof contentForWorker === 'function'
-                ? await contentForWorker(context)
-                : contentForWorker;
-            return content ?? defaultContentForWorker(context);
-          },
-        },
+        workerMagicModules(),
         ...(typeof plugins === 'function'
           ? await plugins(
               [
@@ -147,38 +118,38 @@ export function workers({
                   (plugin): plugin is Plugin => Boolean(plugin),
                 ) ?? []),
               ],
-              workerContext,
+              context,
             )
           : plugins),
       ];
 
-      const workerInput = `${ENTRY_PREFIX}${workerId}${wrapperToSearchString(
-        wrapper,
-      )}`;
-
       const baseInputOptions: InputOptions = {
         ...parentInputOptions,
-        input: workerInput,
+        input: serializeWorkerImport(context, ENTRY_PREFIX),
         plugins: workerPlugins,
       };
 
       const workerInputOptions =
         typeof inputOptions === 'function'
-          ? await inputOptions(baseInputOptions, workerContext)
+          ? await inputOptions(baseInputOptions, context)
           : baseInputOptions;
 
       const baseOutputOptions: OutputOptions = {
         format: 'iife',
         inlineDynamicImports: true,
+        dir: 'workers',
+        entryFileNames: `[name].[hash].js`,
+        assetFileNames: `[name].[hash].[ext]`,
+        chunkFileNames: `[name].[hash].js`,
       };
 
       const workerOutputOptions =
         typeof outputOptions === 'function'
-          ? await outputOptions(baseOutputOptions, workerContext)
+          ? await outputOptions(baseOutputOptions, context)
           : {...baseOutputOptions, ...outputOptions};
 
       const shouldWrite =
-        typeof write === 'function' ? await write(workerContext) : write;
+        typeof write === 'function' ? await write(context) : write;
 
       const bundle = await rollup(workerInputOptions);
 
@@ -191,11 +162,11 @@ export function workers({
       );
 
       if (firstChunk == null) {
-        workerMap.delete(workerId);
+        workerMap.delete(module);
         return null;
       }
 
-      workerMap.set(workerId, firstChunk);
+      workerMap.set(module, firstChunk);
 
       for (const module of Object.keys(firstChunk.modules)) {
         this.addWatchFile(module);
@@ -208,7 +179,7 @@ export function workers({
         resolvedBaseURL = posix.join(baseURL, filename);
       } else if (typeof baseURL === 'function') {
         const returnedBaseURL = await baseURL({
-          ...workerContext,
+          ...context,
           filename,
           chunk: firstChunk,
           outputOptions: workerOutputOptions,
@@ -233,19 +204,48 @@ export function workers({
   };
 }
 
-function getWorkerRequest(id: string): {
-  workerId: string;
-  wrapper: WorkerWrapper;
-} {
-  const [workerId, searchString] = id.split('?');
+export function workerMagicModules() {
+  return {
+    name: '@quilted/workers/magic-modules',
+    resolveId(source) {
+      if (source.startsWith(ENTRY_PREFIX)) {
+        return {id: source};
+      }
+
+      return null;
+    },
+    async load(id) {
+      const context = parseWorkerImport(id, ENTRY_PREFIX);
+
+      if (context == null) return null;
+
+      return contentForWorker(context);
+    },
+  } satisfies Plugin;
+}
+
+export function parseWorkerImport(
+  id: string,
+  prefix = PREFIX,
+): WorkerContext | undefined {
+  if (!id.startsWith(prefix)) return undefined;
+
+  const [module, searchString] = id.slice(prefix.length).split('?');
   const searchParams = new URLSearchParams(searchString);
   const wrapperModule = searchParams.get('module')!;
   const wrapperFunction = searchParams.get('function')!;
 
   return {
-    workerId: workerId!,
+    module: module!,
     wrapper: {module: wrapperModule, function: wrapperFunction},
   };
+}
+
+export function serializeWorkerImport(
+  {module, wrapper}: WorkerContext,
+  prefix = PREFIX,
+) {
+  return `${prefix}${module}${wrapperToSearchString(wrapper)}`;
 }
 
 const workerFunctionContent = (pkg: string) =>
@@ -268,7 +268,7 @@ const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
   ['@quilted/quilt/threads', workerFunctionContent('@quilted/quilt/threads')],
 ]);
 
-function defaultContentForWorker({wrapper}: WorkerContext) {
+function contentForWorker({module, wrapper}: WorkerContext) {
   const content = KNOWN_WRAPPER_MODULES.get(wrapper.module)?.get(
     wrapper.function,
   );
@@ -277,7 +277,7 @@ function defaultContentForWorker({wrapper}: WorkerContext) {
     throw new Error(`Unknown worker wrapper: ${JSON.stringify(wrapper)}`);
   }
 
-  return content;
+  return content.replace(MAGIC_MODULE_WORKER, module);
 }
 
 function defaultPlugins(mainBuildPlugins: Plugin[]) {

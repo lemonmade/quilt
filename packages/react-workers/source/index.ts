@@ -11,10 +11,15 @@ export type {
   ThreadOptions,
   ThreadTarget,
   ThreadCallable,
+  ThreadCallableFunction,
   ThreadSafeArgument,
   ThreadSafeReturnType,
-  BasicWorkerCreator,
-  ThreadWorkerCreator,
+  ThreadSafeReturnValueType,
+  CustomWorker,
+  CustomWorkerConstructor,
+  CustomThreadWorker,
+  CustomThreadWorkerConstructor,
+  CustomWorkerModuleResolver,
 } from '@quilted/workers';
 
 export {useThreadWorker} from './hooks.ts';

@@ -1,55 +1,68 @@
-import {
-  createScriptUrl,
-  getSameOriginWorkerUrl,
-  type FileOrModuleResolver,
-} from './utilities.ts';
-
-export interface BasicWorkerCreator {
+export interface CustomWorker extends Worker {
   readonly url?: URL;
-  (): Worker;
+  readonly signal: AbortSignal;
 }
 
+export interface CustomWorkerConstructor {
+  new (): CustomWorker;
+}
+
+export type CustomWorkerModuleResolver<T = unknown> =
+  | (() => Promise<T>)
+  | string;
+
+const BaseWorker =
+  typeof Worker === 'undefined'
+    ? (class FakeWorker {} as typeof Worker)
+    : Worker;
+
 export function createWorker(
-  script: FileOrModuleResolver<unknown>,
-): BasicWorkerCreator {
-  const scriptUrl = createScriptUrl(script);
+  script: CustomWorkerModuleResolver<any>,
+): CustomWorkerConstructor {
+  const scriptURL = createScriptUrl(script);
+  const workerURL = scriptURL && getSameOriginWorkerUrl(scriptURL);
 
-  function createWorker(): Worker {
-    if (scriptUrl) {
-      const workerUrl = getSameOriginWorkerUrl(scriptUrl);
+  class Worker extends BaseWorker {
+    readonly url = workerURL;
 
-      const worker = new Worker(workerUrl);
+    private readonly abort = new AbortController();
+    readonly signal = this.abort.signal;
 
-      if (workerUrl.href !== scriptUrl.href) {
-        const originalTerminate = worker.terminate.bind(worker);
-        worker.terminate = () => {
-          URL.revokeObjectURL(workerUrl.href);
-          originalTerminate();
-        };
+    constructor() {
+      super(workerURL!);
+
+      if (workerURL && workerURL.href !== scriptURL?.href) {
+        this.signal.addEventListener(
+          'abort',
+          () => {
+            URL.revokeObjectURL(workerURL.href);
+          },
+          {once: true},
+        );
       }
-
-      return worker;
     }
 
-    // We can’t create a worker without a browser environment,
-    // so we return a proxy that just does nothing.
-    return new Proxy(
-      {},
-      {
-        get(_target, _property) {
-          return () => {
-            throw new Error(
-              'You can’t call a method on a worker on the server.',
-            );
-          };
-        },
-      },
-    ) as any;
+    terminate() {
+      this.abort.abort();
+      super.terminate();
+    }
   }
 
-  Reflect.defineProperty(createWorker, 'url', {
-    value: scriptUrl,
-  });
+  return Worker;
+}
 
-  return createWorker as any;
+function createScriptUrl(script: CustomWorkerModuleResolver<any>) {
+  return typeof window === 'undefined' || typeof script !== 'string'
+    ? undefined
+    : new URL(script, window.location.href);
+}
+
+function getSameOriginWorkerUrl(url: URL) {
+  return typeof window === 'undefined' || url.origin === window.location.origin
+    ? url
+    : new URL(
+        URL.createObjectURL(
+          new Blob([`importScripts(${JSON.stringify(url.href)})`]),
+        ),
+      );
 }

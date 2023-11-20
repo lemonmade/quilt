@@ -111,7 +111,15 @@ export async function quiltApp({
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
     babelPreprocess(),
-    workers(),
+    workers({
+      write: true,
+      baseURL({outputOptions}) {
+        return `/@fs${path.resolve(outputOptions.dir!)}`;
+      },
+      outputOptions: {
+        dir: path.resolve('node_modules/.vite/quilt/workers'),
+      },
+    }),
   ];
 
   if (server?.format !== 'custom') {

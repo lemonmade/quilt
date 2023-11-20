@@ -59,6 +59,9 @@ export {
   createThreadWorker,
 } from '@quilted/react-workers';
 export type {
-  BasicWorkerCreator,
-  ThreadWorkerCreator,
+  CustomWorker,
+  CustomWorkerConstructor,
+  CustomWorkerModuleResolver,
+  CustomThreadWorker,
+  CustomThreadWorkerConstructor,
 } from '@quilted/react-workers';
