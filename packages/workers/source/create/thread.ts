@@ -51,10 +51,3 @@ export function createThreadWorker<Self = unknown, Target = unknown>(
 
   return ThreadWorker;
 }
-
-const MyThreadWorker = createThreadWorker<{}, {foo(): string}>(
-  'https://foo.com/worker.js',
-);
-
-const worker = new MyThreadWorker({});
-worker.thread.foo();
