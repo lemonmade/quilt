@@ -1057,8 +1057,8 @@ importers:
         specifier: ^2.4.4
         version: 2.4.4(preact@10.18.2)(vite@5.0.0)
       '@quilted/babel':
-        specifier: ^0.1.0
-        version: 0.1.0(@babel/core@7.23.2)(@babel/template@7.22.15)
+        specifier: ^0.2.0
+        version: link:../babel
       '@quilted/request-router':
         specifier: ^0.2.0
         version: link:../request-router
@@ -4231,25 +4231,6 @@ packages:
       vite: 5.0.0(@types/node@20.8.10)
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /@quilted/babel@0.1.0(@babel/core@7.23.2)(@babel/template@7.22.15):
-    resolution: {integrity: sha512-okWjfG2bwNFBkFMk2HrsKCMwaEnBNiThMuNM5ry3+iNmTfcH11v4p4+TWE00t8irsaqB0IIQjQ9Qpc8DWOASIQ==}
-    peerDependencies:
-      '@babel/core': '>=7.0.0 <8.0.0'
-      '@babel/template': '>=7.0.0 <8.0.0'
-      '@babel/traverse': '>=7.0.0 <8.0.0'
-      '@babel/types': '>=7.0.0 <8.0.0'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@babel/traverse':
-        optional: true
-      '@babel/types':
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@babel/template': 7.22.15
     dev: false
 
   /@rollup/plugin-alias@5.0.1(rollup@4.5.0):
