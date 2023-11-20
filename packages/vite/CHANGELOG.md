@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.9
+
+### Patch Changes
+
+- [`0b116ab9`](https://github.com/lemonmade/quilt/commit/0b116ab9e7082c86724cd05d643b837dd0417220) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Babel package reference
+
 ## 0.1.8
 
 ### Patch Changes
