@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.8
+
+### Patch Changes
+
+- [`7b3e9a9a`](https://github.com/lemonmade/quilt/commit/7b3e9a9a4b63e76ec4224cccc9a8449b83c93a4d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update worker factories to return actual `Worker` classes
+
 ## 0.1.7
 
 ### Patch Changes

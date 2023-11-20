@@ -541,7 +541,7 @@ importers:
         specifier: ^0.2.0
         version: link:../react-utilities
       '@quilted/react-workers':
-        specifier: ^0.3.0
+        specifier: ^0.4.0
         version: link:../react-workers
       '@quilted/request-router':
         specifier: ^0.2.0
@@ -873,7 +873,7 @@ importers:
   packages/react-workers:
     dependencies:
       '@quilted/workers':
-        specifier: ^0.3.0
+        specifier: ^0.4.0
         version: link:../workers
     devDependencies:
       react:

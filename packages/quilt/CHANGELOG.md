@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.6.5
+
+### Patch Changes
+
+- [`7b3e9a9a`](https://github.com/lemonmade/quilt/commit/7b3e9a9a4b63e76ec4224cccc9a8449b83c93a4d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update worker factories to return actual `Worker` classes
+
+- Updated dependencies [[`7b3e9a9a`](https://github.com/lemonmade/quilt/commit/7b3e9a9a4b63e76ec4224cccc9a8449b83c93a4d)]:
+  - @quilted/react-workers@0.4.0
+
 ## 0.6.4
 
 ### Patch Changes

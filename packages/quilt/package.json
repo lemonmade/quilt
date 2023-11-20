@@ -1,7 +1,7 @@
 {
   "name": "@quilted/quilt",
   "type": "module",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -257,7 +257,7 @@
     "@quilted/react-signals": "^0.2.0",
     "@quilted/react-testing": "^0.6.0",
     "@quilted/react-utilities": "^0.2.0",
-    "@quilted/react-workers": "^0.3.0",
+    "@quilted/react-workers": "^0.4.0",
     "@quilted/request-router": "^0.2.0",
     "@quilted/signals": "^0.2.0",
     "@quilted/threads": "^2.0.0",
