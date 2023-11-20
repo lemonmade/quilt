@@ -1,32 +1,24 @@
 import {useEffect, useRef} from 'react';
 
-import type {ThreadWorkerCreator} from '@quilted/workers';
+import type {
+  ThreadOptions,
+  CustomThreadWorker,
+  CustomThreadWorkerConstructor,
+} from '@quilted/workers';
 
 export function useThreadWorker<Worker>(
-  creator: ThreadWorkerCreator<unknown, Worker>,
-  options?: Parameters<typeof creator>[0],
-): ReturnType<ThreadWorkerCreator<unknown, Worker>> {
-  const workerRef = useRef<{
-    readonly worker: ReturnType<typeof creator>;
-    readonly controller: AbortController;
-  }>(null as any);
+  CustomWorker: CustomThreadWorkerConstructor<any, Worker>,
+  options?: ThreadOptions<any, Worker>,
+): CustomThreadWorker<unknown, Worker>['thread'] {
+  const workerRef = useRef<CustomThreadWorker<unknown, Worker>>(null as any);
 
-  if (workerRef.current === null) {
-    const controller = new AbortController();
-
-    workerRef.current = {
-      controller,
-      worker: creator({signal: controller.signal, ...options}),
-    };
+  if (workerRef.current == null) {
+    workerRef.current = new CustomWorker(options);
   }
 
-  const {worker, controller} = workerRef.current;
-
   useEffect(() => {
-    return () => {
-      controller.abort();
-    };
-  }, [controller]);
+    workerRef.current.terminate();
+  }, []);
 
-  return worker;
+  return workerRef.current.thread;
 }
