@@ -72,9 +72,11 @@ export interface Options {
   inputOptions?: ValueOrUpdateGetter<InputOptions>;
   outputOptions?: ValueOrUpdateGetter<OutputOptions>;
   baseURL?: ValueOrGetter<string | undefined, BaseURLContext>;
+  format?: 'module' | 'classic';
 }
 
 export function workers({
+  format = 'classic',
   write = false,
   baseURL,
   plugins = defaultPlugins,
@@ -135,8 +137,8 @@ export function workers({
           : baseInputOptions;
 
       const baseOutputOptions: OutputOptions = {
-        format: 'iife',
-        inlineDynamicImports: true,
+        format: format === 'classic' ? 'iife' : 'esm',
+        inlineDynamicImports: format === 'classic',
         dir: 'workers',
         entryFileNames: `[name].[hash].js`,
         assetFileNames: `[name].[hash].[ext]`,
@@ -173,10 +175,10 @@ export function workers({
       }
 
       const filename = firstChunk.fileName;
-      let resolvedBaseURL = filename;
+      let resolvedURL = filename;
 
       if (typeof baseURL === 'string') {
-        resolvedBaseURL = posix.join(baseURL, filename);
+        resolvedURL = posix.join(baseURL, filename);
       } else if (typeof baseURL === 'function') {
         const returnedBaseURL = await baseURL({
           ...context,
@@ -186,11 +188,14 @@ export function workers({
         });
 
         if (returnedBaseURL) {
-          resolvedBaseURL = posix.join(returnedBaseURL, filename);
+          resolvedURL = posix.join(returnedBaseURL, filename);
         }
       }
 
-      return `export default ${JSON.stringify(resolvedBaseURL)};`;
+      return `export default ${JSON.stringify({
+        type: format,
+        source: resolvedURL,
+      })};`;
     },
     generateBundle(_, bundle) {
       // We already wrote the chunks, no need to do it again I think?

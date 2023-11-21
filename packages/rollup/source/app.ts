@@ -27,10 +27,11 @@ import {
 } from './shared/rollup.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 import {
-  targetsSupportModules,
   getBrowserGroups,
   getBrowserGroupTargetDetails,
   getBrowserGroupRegularExpressions,
+  targetsSupportModules,
+  targetsSupportModuleWebWorkers,
   rollupGenerateOptionsForBrowsers,
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
@@ -355,6 +356,7 @@ export async function quiltAppBrowser({
     {workers},
     {esnext},
     nodePlugins,
+    supportsModuleWorkers,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
     import('./features/env.ts'),
@@ -369,6 +371,7 @@ export async function quiltAppBrowser({
     import('./features/workers.ts'),
     import('./features/esnext.ts'),
     getNodePlugins({bundle: true}),
+    targetsSupportModuleWebWorkers(browserGroup.browsers),
   ]);
 
   const plugins: InputPluginOption[] = [
@@ -419,9 +422,8 @@ export async function quiltAppBrowser({
     }),
     workers({
       baseURL,
+      format: supportsModuleWorkers ? 'module' : 'classic',
       outputOptions: {
-        format: 'iife',
-        inlineDynamicImports: true,
         dir: project.resolve(`build/assets`),
         entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
         assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,

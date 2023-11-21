@@ -166,47 +166,21 @@ export async function rollupGenerateOptionsForBrowsers(
   let objectShorthand = true;
   let symbols = true;
 
-  const isSupported = (
-    browser: string,
-    version: import('semver').SemVer,
-    supportList: any,
-  ) => {
-    const supportedVersionDetails = supportList[browser];
-    if (supportedVersionDetails == null) return false;
-
-    const supportedVersion = semver.coerce(
-      supportedVersionDetails.version_added,
-    );
-    if (supportedVersion == null) return false;
-
-    return semver.gte(version, supportedVersion);
-  };
-
-  for (const browser of browsers) {
-    const [name, version] = browser.split(' ');
-
-    const semverVersion = semver.coerce(version);
-    if (semverVersion == null) continue;
-
-    const mdnBrowser = BROWSESLIST_BROWSER_TO_MDN_BROWSER.get(name!);
-    if (mdnBrowser == null) continue;
-
+  for (const {name, version} of mdnBrowserVersions(browsers, semver)) {
     arrowFunctions &&= isSupported(
-      mdnBrowser,
-      semverVersion,
       arrowFunctionsSupport,
+      name,
+      version,
+      semver,
     );
-    constBindings &&= isSupported(
-      mdnBrowser,
-      semverVersion,
-      constBindingsSupport,
-    );
+    constBindings &&= isSupported(constBindingsSupport, name, version, semver);
     objectShorthand &&= isSupported(
-      mdnBrowser,
-      semverVersion,
       objectShorthandSupport,
+      name,
+      version,
+      semver,
     );
-    symbols &&= isSupported(mdnBrowser, semverVersion, symbolsSupport);
+    symbols &&= isSupported(symbolsSupport, name, version, semver);
   }
 
   return {
@@ -217,4 +191,54 @@ export async function rollupGenerateOptionsForBrowsers(
     reservedNamesAsProps: objectShorthand,
     symbols,
   } satisfies import('rollup').GeneratedCodeOptions;
+}
+
+export async function targetsSupportModuleWebWorkers(
+  browsers: readonly string[],
+) {
+  const [{default: semver}, {default: mdn}] = await Promise.all([
+    import('semver'),
+    import('@mdn/browser-compat-data', {
+      assert: {type: 'json'},
+    }) as Promise<any>,
+  ]);
+
+  const workerModulesSupport =
+    mdn.api.Worker.Worker.ecmascript_modules.__compat.support;
+
+  return [...mdnBrowserVersions(browsers, semver)].every(({name, version}) =>
+    isSupported(workerModulesSupport, name, version, semver),
+  );
+}
+
+function* mdnBrowserVersions(
+  browsers: readonly string[],
+  semver: Pick<typeof import('semver'), 'coerce'>,
+) {
+  for (const browser of browsers) {
+    const [name, version] = browser.split(' ');
+
+    const mdnBrowser = BROWSESLIST_BROWSER_TO_MDN_BROWSER.get(name!);
+    if (mdnBrowser == null) continue;
+
+    const semverVersion = semver.coerce(version);
+    if (semverVersion == null) continue;
+
+    yield {name: mdnBrowser, version: semverVersion};
+  }
+}
+
+function isSupported(
+  supportList: unknown,
+  browser: string,
+  version: import('semver').SemVer,
+  semver: Pick<typeof import('semver'), 'coerce' | 'gte'>,
+) {
+  const supportedVersionDetails = (supportList as any)[browser];
+  if (supportedVersionDetails == null) return false;
+
+  const supportedVersion = semver.coerce(supportedVersionDetails.version_added);
+  if (supportedVersion == null) return false;
+
+  return semver.gte(version, supportedVersion);
 }
