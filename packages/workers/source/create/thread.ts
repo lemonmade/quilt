@@ -17,9 +17,9 @@ export interface CustomThreadWorkerConstructor<Self, Target> {
 }
 
 export function createThreadWorker<Self = unknown, Target = unknown>(
-  script: CustomWorkerModuleResolver<Target>,
+  moduleResolver: CustomWorkerModuleResolver<Target>,
 ): CustomThreadWorkerConstructor<Self, Target> {
-  const CustomWorker = createWorker(script);
+  const CustomWorker = createWorker(moduleResolver);
 
   class ThreadWorker extends CustomWorker {
     readonly thread: Thread<Target>;
