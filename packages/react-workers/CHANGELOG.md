@@ -1,5 +1,11 @@
 # @quilted/react-workers
 
+## 0.4.1
+
+### Patch Changes
+
+- [`ceb1549f`](https://github.com/lemonmade/quilt/commit/ceb1549f81d7ab451cfacca53c6d6d9664e72e42) Thanks [@lemonmade](https://github.com/lemonmade)! - More development worker tweaks
+
 ## 0.4.0
 
 ### Minor Changes
