@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.12
+
+### Patch Changes
+
+- [`c680fb6c`](https://github.com/lemonmade/quilt/commit/c680fb6cf997358892d1aac9189e561159067f8c) Thanks [@lemonmade](https://github.com/lemonmade)! - Output workers as ESModules when supported
+
 ## 0.2.11
 
 ### Patch Changes

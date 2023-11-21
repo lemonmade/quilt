@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.9
+
+### Patch Changes
+
+- [`17cf1aae`](https://github.com/lemonmade/quilt/commit/17cf1aae321f16ca9f8b2cf6c7a5524103ead825) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify template app module browserslist configuration
+
 ## 0.2.8
 
 ### Patch Changes
