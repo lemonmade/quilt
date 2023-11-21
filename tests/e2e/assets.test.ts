@@ -21,7 +21,7 @@ describe('app builds', () => {
               browserslist: {
                 ie11: ['ie 11'],
                 defaults: [
-                  'defaults and fully supports es6-module and fully supports es6-module-dynamic-import',
+                  'defaults and fully supports es6-module-dynamic-import',
                 ],
               },
             },

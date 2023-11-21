@@ -30,7 +30,7 @@
       "defaults and not dead"
     ],
     "modules": [
-      "defaults and fully supports es6-module and fully supports es6-module-dynamic-import"
+      "defaults and fully supports es6-module-dynamic-import"
     ],
     "evergreen": [
       "last 1 firefox version",

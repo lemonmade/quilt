@@ -118,9 +118,7 @@ export async function targetsSupportModules(targets: readonly string[]) {
     const {default: browserslist} = await import('browserslist');
 
     return new Set(
-      browserslist(
-        'defaults and fully supports es6-module and fully supports es6-module-dynamic-import',
-      ),
+      browserslist('defaults and fully supports es6-module-dynamic-import'),
     );
   })();
 

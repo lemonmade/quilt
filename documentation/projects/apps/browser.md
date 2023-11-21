@@ -224,9 +224,7 @@ You can customize what builds get produced for your application by including a [
 {
   "browserslist": {
     "defaults": ["defaults", "IE 11"],
-    "modules": [
-      "defaults and fully supports es6-module and fully supports es6-module-dynamic-import"
-    ],
+    "modules": ["defaults and fully supports es6-module-dynamic-import"],
     "evergreen": [
       "last 1 firefox version",
       "last 1 safari version",
