@@ -9,6 +9,7 @@ export interface CustomWorkerConstructor {
 
 export type CustomWorkerModuleResolver<T = unknown> =
   | (() => Promise<T>)
+  | ({source: string} & WorkerOptions)
   | string;
 
 const BaseWorker =
@@ -17,10 +18,11 @@ const BaseWorker =
     : Worker;
 
 export function createWorker(
-  script: CustomWorkerModuleResolver<any>,
+  moduleResolver: CustomWorkerModuleResolver<any>,
 ): CustomWorkerConstructor {
-  const scriptURL = createScriptUrl(script);
-  const workerURL = scriptURL && getSameOriginWorkerUrl(scriptURL);
+  const resolvedWorkerModule = resolveWorkerModule(moduleResolver);
+  const workerURL =
+    resolvedWorkerModule && getSameOriginWorkerUrl(resolvedWorkerModule.url);
 
   class Worker extends BaseWorker {
     readonly url = workerURL;
@@ -29,9 +31,9 @@ export function createWorker(
     readonly signal = this.abort.signal;
 
     constructor() {
-      super(workerURL!);
+      super(workerURL!, resolvedWorkerModule?.options);
 
-      if (workerURL && workerURL.href !== scriptURL?.href) {
+      if (workerURL && workerURL.href !== resolvedWorkerModule?.url.href) {
         this.signal.addEventListener(
           'abort',
           () => {
@@ -51,10 +53,19 @@ export function createWorker(
   return Worker;
 }
 
-function createScriptUrl(script: CustomWorkerModuleResolver<any>) {
-  return typeof window === 'undefined' || typeof script !== 'string'
-    ? undefined
-    : new URL(script, window.location.href);
+function resolveWorkerModule(moduleResolver: CustomWorkerModuleResolver<any>) {
+  if (typeof window === 'undefined') return undefined;
+
+  if (typeof moduleResolver === 'string') {
+    return {url: new URL(moduleResolver, window.location.href)};
+  }
+
+  if ('source' in moduleResolver) {
+    const {source, ...options} = moduleResolver;
+    return {url: new URL(source, window.location.href), options};
+  }
+
+  return undefined;
 }
 
 function getSameOriginWorkerUrl(url: URL) {

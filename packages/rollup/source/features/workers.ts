@@ -12,7 +12,7 @@ import type {
 
 import {multiline} from '../shared/strings.ts';
 
-const PREFIX = '\0quilt-worker:';
+export const PREFIX = '\0quilt-worker:';
 const ENTRY_PREFIX = '\0quilt-worker-entry:';
 const MAGIC_MODULE_WORKER = 'quilt:module/worker.js';
 
@@ -204,7 +204,7 @@ export function workers({
   };
 }
 
-export function workerMagicModules() {
+function workerMagicModules() {
   return {
     name: '@quilted/workers/magic-modules',
     resolveId(source) {
@@ -224,7 +224,7 @@ export function workerMagicModules() {
   } satisfies Plugin;
 }
 
-export function parseWorkerImport(
+function parseWorkerImport(
   id: string,
   prefix = PREFIX,
 ): WorkerContext | undefined {
@@ -241,7 +241,7 @@ export function parseWorkerImport(
   };
 }
 
-export function serializeWorkerImport(
+function serializeWorkerImport(
   {module, wrapper}: WorkerContext,
   prefix = PREFIX,
 ) {
@@ -268,7 +268,7 @@ const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
   ['@quilted/quilt/threads', workerFunctionContent('@quilted/quilt/threads')],
 ]);
 
-function contentForWorker({module, wrapper}: WorkerContext) {
+export function contentForWorker({module, wrapper}: WorkerContext) {
   const content = KNOWN_WRAPPER_MODULES.get(wrapper.module)?.get(
     wrapper.function,
   );

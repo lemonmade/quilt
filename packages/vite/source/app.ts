@@ -82,8 +82,8 @@ export async function quiltApp({
     {tsconfigAliases},
     {monorepoPackageAliases},
     {magicModuleEnv},
-    {workers},
     {babelPreprocess},
+    {workers},
   ] = await Promise.all([
     import('@prefresh/vite'),
     import('@quilted/rollup/app'),
@@ -91,8 +91,8 @@ export async function quiltApp({
     import('@quilted/rollup/features/typescript'),
     import('@quilted/rollup/features/node'),
     import('@quilted/rollup/features/env'),
-    import('@quilted/rollup/features/workers'),
     import('./shared/babel.ts'),
+    import('./shared/workers.ts'),
   ]);
 
   const plugins: Plugin[] = [
@@ -111,15 +111,7 @@ export async function quiltApp({
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
     babelPreprocess(),
-    workers({
-      write: true,
-      baseURL({outputOptions}) {
-        return `/@fs${path.resolve(outputOptions.dir!)}`;
-      },
-      outputOptions: {
-        dir: path.resolve('node_modules/.vite/quilt/workers'),
-      },
-    }),
+    workers(),
   ];
 
   if (server?.format !== 'custom') {

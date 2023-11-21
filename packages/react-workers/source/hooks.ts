@@ -17,7 +17,7 @@ export function useThreadWorker<Worker>(
   }
 
   useEffect(() => {
-    workerRef.current.terminate();
+    return () => workerRef.current.terminate();
   }, []);
 
   return workerRef.current.thread;
