@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.12
+
+### Patch Changes
+
+- [`7649621c`](https://github.com/lemonmade/quilt/commit/7649621c8c11b8a68110f424bd6ec0058a473cae) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Vite async module imports
+
 ## 0.1.11
 
 ### Patch Changes
