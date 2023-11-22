@@ -16,8 +16,9 @@ import {throwIfError} from './utilities.ts';
 
 export type GraphQLQueryOptions<Data, Variables> = Omit<
   UseQueryOptions<Data>,
-  'queryFn'
+  'queryFn' | 'queryKey'
 > &
+  Partial<Pick<UseQueryOptions<Data>, 'queryFn' | 'queryKey'>> &
   GraphQLVariableOptions<Variables> & {
     fetch?: GraphQLFetch;
   };

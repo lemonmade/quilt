@@ -14,10 +14,16 @@ import {throwIfError} from './utilities.ts';
 
 export type GraphQLMutationOptions<Data, Variables> = Omit<
   UseMutationOptions<Data, unknown, Variables>,
-  'mutationFn'
-> & {
-  fetch?: GraphQLFetch;
-};
+  'mutationFn' | 'mutationKey'
+> &
+  Partial<
+    Pick<
+      UseMutationOptions<Data, unknown, Variables>,
+      'mutationFn' | 'mutationKey'
+    >
+  > & {
+    fetch?: GraphQLFetch;
+  };
 
 export function useGraphQLMutation<Data, Variables>(
   mutation: GraphQLAnyOperation<Data, Variables>,
