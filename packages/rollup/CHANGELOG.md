@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.13
+
+### Patch Changes
+
+- [`5a1a3343`](https://github.com/lemonmade/quilt/commit/5a1a33433e1a944bfbbc7562da5e6775585398d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add async rollup plugin to Vite builds
+
 ## 0.2.12
 
 ### Patch Changes
