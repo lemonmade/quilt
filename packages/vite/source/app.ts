@@ -114,7 +114,15 @@ export async function quiltApp({
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
     workers(),
-    asyncModules(),
+    asyncModules({
+      preload: true,
+      moduleID({imported}) {
+        const relative = path.relative(process.cwd(), imported);
+        return relative.startsWith('..')
+          ? `/@id/quilt-async-import:${imported}`
+          : `/@id/quilt-async-import:/${relative}`;
+      },
+    }),
   ];
 
   if (server?.format !== 'custom') {
