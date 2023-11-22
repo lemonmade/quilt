@@ -52,6 +52,12 @@
       "quilt:esnext": "./build/esnext/features/assets.esnext",
       "import": "./build/esm/features/assets.mjs"
     },
+    "./features/async": {
+      "types": "./build/typescript/features/async.d.ts",
+      "quilt:source": "./source/features/async.ts",
+      "quilt:esnext": "./build/esnext/features/async.esnext",
+      "import": "./build/esm/features/async.mjs"
+    },
     "./features/env": {
       "types": "./build/typescript/features/env.d.ts",
       "quilt:source": "./source/features/env.ts",
@@ -100,6 +106,9 @@
       ],
       "features/assets": [
         "./build/typescript/features/assets.d.ts"
+      ],
+      "features/async": [
+        "./build/typescript/features/async.d.ts"
       ],
       "features/env": [
         "./build/typescript/features/env.d.ts"

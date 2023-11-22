@@ -82,6 +82,7 @@ export async function quiltApp({
     {tsconfigAliases},
     {monorepoPackageAliases},
     {magicModuleEnv},
+    {asyncModules},
     {babelPreprocess},
     {workers},
   ] = await Promise.all([
@@ -91,12 +92,14 @@ export async function quiltApp({
     import('@quilted/rollup/features/typescript'),
     import('@quilted/rollup/features/node'),
     import('@quilted/rollup/features/env'),
+    import('@quilted/rollup/features/async'),
     import('./shared/babel.ts'),
     import('./shared/workers.ts'),
   ]);
 
   const plugins: Plugin[] = [
     prefresh(),
+    babelPreprocess(),
     {
       ...(await tsconfigAliases()),
       enforce: 'pre',
@@ -110,8 +113,8 @@ export async function quiltApp({
     {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
-    babelPreprocess(),
     workers(),
+    asyncModules(),
   ];
 
   if (server?.format !== 'custom') {
