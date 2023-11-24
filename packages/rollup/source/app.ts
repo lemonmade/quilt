@@ -237,9 +237,9 @@ export interface AppServerOutputOptions
 
 export interface AppRuntime {
   /**
-   * Overrides to the output for this application.
+   * Overrides to the assets for this application.
    */
-  output?: {
+  assets?: {
     /**
      * The directory to output the application’s assets into.
      */
@@ -350,7 +350,7 @@ export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
     output: {
       format: isESM ? 'esm' : 'systemjs',
       dir: project.resolve(
-        assets?.directory ?? runtime?.output?.directory ?? `build/assets`,
+        assets?.directory ?? runtime?.assets?.directory ?? `build/assets`,
       ),
       entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,

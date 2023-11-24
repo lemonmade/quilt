@@ -81,6 +81,9 @@ export function cloudflarePages({
   format = 'module',
 }: RuntimeOptions = {}) {
   return {
+    assets: {
+      directory: 'build/public',
+    },
     server: cloudflarePagesServer({cache, format}),
   } satisfies AppRuntime;
 }
