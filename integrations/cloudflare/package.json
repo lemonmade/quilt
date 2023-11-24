@@ -17,20 +17,27 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
+    },
+    "./craft": {
+      "types": "./build/typescript/craft.d.ts",
+      "quilt:source": "./source/craft.ts",
+      "quilt:esnext": "./build/esnext/craft.esnext",
+      "import": "./build/esm/craft.mjs"
     },
     "./request-router": {
       "types": "./build/typescript/request-router.d.ts",
       "quilt:source": "./source/request-router.tsx",
       "quilt:esnext": "./build/esnext/request-router.esnext",
-      "import": "./build/esm/request-router.mjs",
-      "require": "./build/cjs/request-router.cjs"
+      "import": "./build/esm/request-router.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
+      "craft": [
+        "./build/typescript/craft.d.ts"
+      ],
       "request-router": [
         "./build/typescript/request-router.d.ts"
       ]
@@ -48,16 +55,18 @@
     "miniflare": "^2.4.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.6.4"
-  },
-  "devDependencies": {
-    "@types/common-tags": "^1.8.0",
-    "@types/mime": "^2.0.0"
+    "@quilted/craft": "workspace:^0.2.0",
+    "@quilted/quilt": "workspace:^0.6.0"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "@quilted/craft": "workspace:*",
+    "@types/common-tags": "^1.8.0",
+    "@types/mime": "^2.0.0"
   },
   "eslintConfig": {
     "extends": [

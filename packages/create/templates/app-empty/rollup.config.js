@@ -1,6 +1,6 @@
-import {quiltAppOptions} from '@quilted/rollup/app';
+import {quiltApp} from '@quilted/rollup/app';
 
-export default quiltAppOptions({
+export default quiltApp({
   browser: {entry: './browser.tsx'},
   server: {entry: './server.tsx'},
 });

@@ -7,10 +7,11 @@ import {
   removeBuildFiles,
 } from './shared/rollup.ts';
 
-import {magicModuleRequestRouterEntry} from './features/request-router.ts';
+import {multiline} from './shared/strings.ts';
 import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
+import type {ServerRuntime} from './shared/server.ts';
 
 export interface ServerOptions {
   /**
@@ -60,25 +61,20 @@ export interface ServerOptions {
   output?: ServerOutputOptions;
 
   /**
-   * The port that the server will listen on when it runs. This only applies
-   * when you use the `request-router` format — if you use the `custom` format,
-   * you are responsible for starting the server yourself.
-   *
-   * If you do not provide a value here, the server will listen for requests on
-   * the port specified by `process.env.NODE_ENV`.
+   * Customizations to the server for the runtime it will execute in.
    */
-  port?: number | string;
-
-  /**
-   * The host that the server will listen on when it runs. This only applies
-   * when you use the `request-router` format — if you use the `custom` format,
-   * you are responsible for starting the server yourself.
-   */
-  host?: string;
+  runtime?: ServerRuntime;
 }
 
 export interface ServerOutputOptions
   extends Pick<RollupNodePluginOptions, 'bundle'> {
+  /**
+   * The directory to output the server into.
+   *
+   * @default 'build/server'
+   */
+  directory?: string;
+
   /**
    * Whether to minify assets created for this server.
    *
@@ -96,15 +92,9 @@ export interface ServerOutputOptions
    * @default 'async-only'
    */
   hash?: boolean | 'async-only';
-
-  /**
-   * What module format to use for the server output.
-   *
-   * @default 'esmodules'
-   */
-  format?: 'esmodules' | 'esm' | 'es' | 'commonjs' | 'cjs';
 }
 
+export type {ServerRuntime};
 export {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER};
 
 export async function quiltServer({
@@ -114,18 +104,18 @@ export async function quiltServer({
   env,
   graphql = true,
   output,
-  port,
-  host,
+  runtime = nodeServerRuntime(),
 }: ServerOptions = {}) {
   const project = Project.load(rootPath);
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
-  const outputDirectory = project.resolve('build/server');
+  const outputDirectory = project.resolve(
+    output?.directory ?? runtime.output?.directory ?? 'build/server',
+  );
 
   const minify = output?.minify ?? false;
   const bundle = output?.bundle;
   const hash = output?.hash ?? 'async-only';
-  const outputFormat = output?.format ?? 'esmodules';
 
   const [
     {visualizer},
@@ -159,7 +149,7 @@ export async function quiltServer({
   const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({...resolveEnvOption(env), mode}),
+    magicModuleEnv({runtime: runtime.env, ...resolveEnvOption(env), mode}),
     sourceCode({mode, targets: ['current node']}),
     tsconfigAliases({root: project.root}),
     monorepoPackageAliases({root: project.root}),
@@ -175,9 +165,15 @@ export async function quiltServer({
         module: MAGIC_MODULE_REQUEST_ROUTER,
         alias: serverEntry,
       }),
-      magicModuleRequestRouterEntry({
-        host,
-        port: typeof port === 'string' ? Number.parseInt(port, 10) : port,
+      createMagicModulePlugin({
+        name: '@quilted/request-router',
+        sideEffects: true,
+        module: MAGIC_MODULE_ENTRY,
+        source() {
+          return (
+            runtime.requestRouter?.() ?? nodeServerRuntime().requestRouter()
+          );
+        },
       }),
     );
   }
@@ -206,8 +202,7 @@ export async function quiltServer({
       finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
     plugins,
     output: {
-      format:
-        outputFormat === 'commonjs' || outputFormat === 'cjs' ? 'cjs' : 'esm',
+      format: 'esm',
       dir: outputDirectory,
       entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${
@@ -215,8 +210,69 @@ export async function quiltServer({
       }.js`,
       assetFileNames: `[name]${hash === true ? `.[hash]` : ''}.[ext]`,
       generatedCode: 'es2015',
+      ...runtime.output?.options,
     },
   } satisfies RollupOptions;
+}
+
+export interface NodeServerRuntimeOptions {
+  /**
+   * The port that the server will listen on when it runs. This only applies
+   * when you use the `request-router` format — if you use the `custom` format,
+   * you are responsible for starting the server yourself.
+   *
+   * If you do not provide a value here, the server will listen for requests on
+   * the port specified by `process.env.NODE_ENV`.
+   */
+  port?: number | string;
+
+  /**
+   * The host that the server will listen on when it runs.
+   */
+  host?: string;
+
+  /**
+   * What module format to use for the server output.
+   *
+   * @default 'module'
+   */
+  format?:
+    | 'module'
+    | 'modules'
+    | 'esmodules'
+    | 'esm'
+    | 'es'
+    | 'commonjs'
+    | 'cjs';
+}
+
+export function nodeServerRuntime({
+  host,
+  port,
+  format = 'module',
+}: NodeServerRuntimeOptions = {}) {
+  return {
+    env: 'process.env',
+    output: {
+      options: {
+        format: format === 'commonjs' || format === 'cjs' ? 'cjs' : 'esm',
+      },
+    },
+    requestRouter() {
+      return multiline`
+        import requestRouter from ${JSON.stringify(
+          MAGIC_MODULE_REQUEST_ROUTER,
+        )};
+
+        import {createHttpServer} from '@quilted/quilt/request-router/node';
+
+        const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
+        const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
+      
+        createHttpServer(requestRouter).listen(port, host);
+      `;
+    },
+  } satisfies ServerRuntime;
 }
 
 async function sourceForServer(project: Project) {

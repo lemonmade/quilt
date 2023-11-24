@@ -45,9 +45,9 @@ describe('app builds', () => {
             2,
           ),
           'rollup.config.js': stripIndent`
-            import {quiltAppOptions} from '@quilted/rollup/app';
+            import {quiltApp} from '@quilted/rollup/app';
 
-            export default quiltAppOptions({app: './MyApp.tsx'});
+            export default quiltApp({app: './MyApp.tsx'});
           `,
           'MyApp.tsx': stripIndent`
             export default function App() {
@@ -158,9 +158,9 @@ describe('app builds', () => {
             export default router;
           `,
           'rollup.config.js': stripIndent`
-            import {quiltAppOptions} from '@quilted/rollup/app';  
+            import {quiltApp} from '@quilted/rollup/app';  
 
-            export default quiltAppOptions({
+            export default quiltApp({
               browser: {entry: './browser.ts'},
               server: {entry: './server.ts'},
             });
