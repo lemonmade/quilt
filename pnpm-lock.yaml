@@ -124,7 +124,7 @@ importers:
         specifier: ^4.20221111.1
         version: 4.20221111.1
       '@quilted/quilt':
-        specifier: workspace:^0.6.4
+        specifier: workspace:^0.6.0
         version: link:../../packages/quilt
       common-tags:
         specifier: ^1.8.0
@@ -136,6 +136,9 @@ importers:
         specifier: ^2.4.0
         version: 2.5.0
     devDependencies:
+      '@quilted/craft':
+        specifier: workspace:*
+        version: link:../../packages/craft
       '@types/common-tags':
         specifier: ^1.8.0
         version: 1.8.1
