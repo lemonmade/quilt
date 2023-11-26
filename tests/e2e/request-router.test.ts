@@ -154,4 +154,43 @@ describe('request-router', () => {
       );
     });
   });
+
+  it('can have an alternative "runtime" environment that handles requests', async () => {
+    await withWorkspace({fixture: 'basic-api'}, async (workspace) => {
+      const {fs, command} = workspace;
+
+      await fs.write({
+        'rollup.config.js': stripIndent`
+          import {quiltServer} from '@quilted/rollup/server';
+
+          export default quiltServer({
+            runtime: {
+              requestRouter() {
+                return [
+                  'import router from "quilt:module/request-router";',
+                  'import {handleRequest} from "@quilted/quilt/request-router";',
+                  'const fetch = (request) => handleRequest(router, request);',
+                  'export default {fetch};',
+                ].join('\\n');
+              },
+            },
+          });
+        `,
+        'api.ts': stripIndent`
+          export default function handler(request) {
+            return new Response('Hello world!');
+          }
+        `,
+      });
+
+      await command.pnpm('build');
+
+      const {default: server} = (await import(
+        fs.resolve('build/server/server.js')
+      )) as {default: {fetch(request: Request): Promise<Response>}};
+
+      const response = await server.fetch(new Request('https://example.com'));
+      expect(await response.text()).toBe('Hello world!');
+    });
+  });
 });
