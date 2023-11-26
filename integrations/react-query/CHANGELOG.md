@@ -1,5 +1,11 @@
 # @quilted/react-query
 
+## 0.3.1
+
+### Patch Changes
+
+- [`b125fa4c`](https://github.com/lemonmade/quilt/commit/b125fa4c2b0d76ceb68d76ca50894f984cec5d07) Thanks [@lemonmade](https://github.com/lemonmade)! - Don’t require React Query keys for GraphQL wrappers
+
 ## 0.3.0
 
 ### Minor Changes

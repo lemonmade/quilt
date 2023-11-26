@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.2.2
+
+### Patch Changes
+
+- [#669](https://github.com/lemonmade/quilt/pull/669) [`73127e7f`](https://github.com/lemonmade/quilt/commit/73127e7f32d15ddcdf1ea025eabcb2830e5ba559) Thanks [@lemonmade](https://github.com/lemonmade)! - Add runtime overrides
+
 ## 0.2.1
 
 ### Patch Changes
