@@ -19,7 +19,7 @@ export async function tsconfigAliases({
         find: name.includes('*')
           ? new RegExp(`^${name.replace(/\*/, '(.*)')}$`)
           : name,
-        replacement: aliases[0]!.replace('*', '$1'),
+        replacement: path.resolve(root, aliases[0]!.replace('*', '$1')),
       };
     }),
   });
