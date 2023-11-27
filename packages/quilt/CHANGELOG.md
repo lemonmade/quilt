@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.6.6
+
+### Patch Changes
+
+- [`4eeadbbb`](https://github.com/lemonmade/quilt/commit/4eeadbbba2f51323623300a292c83c34a2e2ad64) Thanks [@lemonmade](https://github.com/lemonmade)! - Export environment variable types from magic modules
+
 ## 0.6.5
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @quilted/rollup
 
+## 0.2.16
+
+### Patch Changes
+
+- [`ccfcb53c`](https://github.com/lemonmade/quilt/commit/ccfcb53ceb168423a8c687118703a5de53cd1d85) Thanks [@lemonmade](https://github.com/lemonmade)! - Read .env files from the workspace root by default
+
+- [`b87efb0f`](https://github.com/lemonmade/quilt/commit/b87efb0f426e53ede2c5cb3e0b20d00140f2bf40) Thanks [@lemonmade](https://github.com/lemonmade)! - Make worker entries preserve side effects
+
+- [`ccfcb53c`](https://github.com/lemonmade/quilt/commit/ccfcb53ceb168423a8c687118703a5de53cd1d85) Thanks [@lemonmade](https://github.com/lemonmade)! - Support browser and server env module in development
+
 ## 0.2.15
 
 ### Patch Changes
