@@ -1,5 +1,13 @@
 # @quilted/vite
 
+## 0.1.13
+
+### Patch Changes
+
+- [`ccfcb53c`](https://github.com/lemonmade/quilt/commit/ccfcb53ceb168423a8c687118703a5de53cd1d85) Thanks [@lemonmade](https://github.com/lemonmade)! - Read .env files from the workspace root by default
+
+- [`ccfcb53c`](https://github.com/lemonmade/quilt/commit/ccfcb53ceb168423a8c687118703a5de53cd1d85) Thanks [@lemonmade](https://github.com/lemonmade)! - Support browser and server env module in development
+
 ## 0.1.12
 
 ### Patch Changes
