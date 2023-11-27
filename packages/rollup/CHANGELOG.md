@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.15
+
+### Patch Changes
+
+- [`b53acce3`](https://github.com/lemonmade/quilt/commit/b53acce3e2c5a4a1d10b72ee954808593f074bb4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix TypeScript aliases plugin
+
 ## 0.2.14
 
 ### Patch Changes

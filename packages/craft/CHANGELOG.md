@@ -1,5 +1,11 @@
 # @quilted/craft
 
+## 0.2.4
+
+### Patch Changes
+
+- [`e5da8c12`](https://github.com/lemonmade/quilt/commit/e5da8c12d79c5f307f117e289f7113922b94933b) Thanks [@lemonmade](https://github.com/lemonmade)! - Add back @quilted/craft/graphql entry point
+
 ## 0.2.3
 
 ### Patch Changes
