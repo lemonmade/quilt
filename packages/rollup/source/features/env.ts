@@ -32,6 +32,13 @@ export function replaceProcessEnv({
 
 export interface MagicModuleEnvOptions {
   /**
+   * The root directory to search for `.env` files in.
+   *
+   * @default process.cwd()
+   */
+  root?: string;
+
+  /**
    * The runtime mode for your target environment.
    */
   mode?: 'production' | 'development';
@@ -61,7 +68,7 @@ export interface MagicModuleEnvOptions {
    * - An object containing a `files` field, specifying the directories to search
    * for `.env` files in.
    *
-   * @default {roots: ['.', 'configuration']}
+   * @default {roots: ['.', 'configuration', '<workspace-root>', '<workspace-root>/configuration']}
    */
   dotenv?:
     | false
@@ -77,7 +84,7 @@ export function resolveEnvOption(
 
 export function magicModuleEnv({
   mode,
-  dotenv = {roots: ['.', 'configuration']},
+  dotenv = {},
   inline = [],
   runtime = '{}',
 }: MagicModuleEnvOptions = {}) {
@@ -127,17 +134,14 @@ export function magicModuleEnv({
 // Inspired by https://github.com/vitejs/vite/blob/e0a4d810598d1834933ed437ac5a2168cbbbf2f8/packages/vite/source/node/config.ts#L1050-L1113
 async function loadEnv(
   this: PluginContext,
-  {
-    mode,
-    dotenv,
-  }: {mode?: string} & Required<Pick<MagicModuleEnvOptions, 'dotenv'>>,
+  {root, mode, dotenv}: Pick<MagicModuleEnvOptions, 'root' | 'mode' | 'dotenv'>,
 ): Promise<Record<string, string | undefined>> {
   const env: Record<string, string | undefined> = {...process.env};
 
   if (dotenv !== false) {
     const {parse} = await import('dotenv');
 
-    let files = dotenv.files;
+    let files = dotenv?.files;
 
     if (files == null) {
       const testFiles = [
@@ -156,10 +160,19 @@ async function loadEnv(
         );
       }
 
+      let roots = dotenv?.roots;
+
+      if (roots == null) {
+        roots = ['.', 'configuration'];
+
+        const workspaceRoot = findWorkspaceRoot(root);
+        if (workspaceRoot) {
+          roots.push(workspaceRoot, path.join(workspaceRoot, 'configuration'));
+        }
+      }
+
       files = testFiles.flatMap((file) =>
-        (dotenv.roots ?? ['.', 'configuration']).map((root) =>
-          path.resolve(root, file),
-        ),
+        roots!.map((root) => path.resolve(root, file)),
       );
     }
 
@@ -179,4 +192,24 @@ async function loadEnv(
   }
 
   return env;
+}
+
+function findWorkspaceRoot(start = process.cwd()) {
+  let current = path.resolve(start);
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    if (
+      fs.existsSync(path.join(current, 'pnpm-lock.yaml')) ||
+      fs.existsSync(path.join(current, 'yarn.lock')) ||
+      fs.existsSync(path.join(current, 'package-lock.json'))
+    ) {
+      return current;
+    }
+
+    const next = path.dirname(current);
+    if (next === current) return undefined;
+
+    current = next;
+  }
 }

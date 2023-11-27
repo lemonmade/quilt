@@ -419,7 +419,7 @@ export async function quiltAppBrowserPlugins({
     ...nodePlugins,
     systemJS({minify}),
     replaceProcessEnv({mode}),
-    magicModuleEnv({...resolveEnvOption(env), mode}),
+    magicModuleEnv({...resolveEnvOption(env), mode, root: project.root}),
     magicModuleAppComponent({entry: app, root: project.root}),
     magicModuleAppBrowserEntry(module),
     sourceCode({
@@ -628,7 +628,12 @@ export async function quiltAppServerPlugins({
     quiltAppServerInput({root: project.root, entry, format}),
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({runtime: runtime?.env, ...resolveEnvOption(env), mode}),
+    magicModuleEnv({
+      runtime: runtime?.env,
+      ...resolveEnvOption(env),
+      mode,
+      root: project.root,
+    }),
     magicModuleAppComponent({entry: app, root: project.root}),
     createMagicModulePlugin({
       name: '@quilted/request-router',

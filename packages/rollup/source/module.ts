@@ -108,7 +108,7 @@ export async function quiltModule({
   const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({...resolveEnvOption(env), mode}),
+    magicModuleEnv({...resolveEnvOption(env), mode, root: project.root}),
     sourceCode({mode, targets: browserGroup.browsers}),
     tsconfigAliases({root: project.root}),
     monorepoPackageAliases({root: project.root}),

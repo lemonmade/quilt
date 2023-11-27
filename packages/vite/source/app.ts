@@ -54,12 +54,12 @@ export interface AppOptions extends AppBaseOptions {
   /**
    * Customizes the browser build of your application.
    */
-  browser?: Pick<AppBrowserOptions, 'module' | 'entry'>;
+  browser?: Pick<AppBrowserOptions, 'module' | 'entry' | 'env'>;
 
   /**
    * Customizes the server build of your application.
    */
-  server?: Pick<AppServerOptions, 'format' | 'entry'>;
+  server?: Pick<AppServerOptions, 'format' | 'entry' | 'env'>;
 }
 
 export async function quiltApp({
@@ -106,10 +106,6 @@ export async function quiltApp({
       name: '@quilted/tsconfig-aliases',
     },
     {...(await monorepoPackageAliases()), enforce: 'pre'},
-    {
-      ...magicModuleEnv({mode, ...(typeof env === 'object' ? env : {})}),
-      enforce: 'pre',
-    },
     {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
@@ -124,6 +120,31 @@ export async function quiltApp({
       },
     }),
   ];
+
+  const defaultEnvOptions = typeof env === 'object' ? env : undefined;
+  if (browser?.env || server?.env) {
+    const serverPlugin = magicModuleEnv({
+      mode,
+      ...defaultEnvOptions,
+      ...(typeof server?.env === 'object' ? server.env : {}),
+    });
+
+    const browserPlugin = magicModuleEnv({
+      mode,
+      ...defaultEnvOptions,
+      ...(typeof browser?.env === 'object' ? browser.env : {}),
+    });
+
+    plugins.push(
+      restrictPluginToSSR({...serverPlugin, enforce: 'pre'}, {ssr: true}),
+      restrictPluginToSSR({...browserPlugin, enforce: 'pre'}, {ssr: false}),
+    );
+  } else {
+    plugins.push({
+      ...magicModuleEnv({mode, ...defaultEnvOptions}),
+      enforce: 'pre',
+    });
+  }
 
   if (server?.format !== 'custom') {
     plugins.push({
@@ -269,4 +290,22 @@ export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
       `;
     },
   });
+}
+
+function restrictPluginToSSR(plugin: Plugin, {ssr}: {ssr: boolean}): Plugin {
+  const hooks = ['resolveId', 'load', 'transform'] as const;
+
+  for (const hook of hooks) {
+    const originalHook = (plugin as any)[hook];
+
+    if (originalHook == null) continue;
+
+    (plugin as any)[hook] = function (this: any, ...args: any[]) {
+      const isSSR = args.at(-1)?.ssr ?? false;
+      if ((ssr && !isSSR) || (!ssr && isSSR)) return;
+      return originalHook.call(this, ...args);
+    } satisfies Plugin[typeof hook];
+  }
+
+  return plugin;
 }

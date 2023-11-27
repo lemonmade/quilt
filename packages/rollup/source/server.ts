@@ -149,7 +149,12 @@ export async function quiltServer({
   const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
-    magicModuleEnv({runtime: runtime.env, ...resolveEnvOption(env), mode}),
+    magicModuleEnv({
+      runtime: runtime.env,
+      ...resolveEnvOption(env),
+      mode,
+      root: project.root,
+    }),
     sourceCode({mode, targets: ['current node']}),
     tsconfigAliases({root: project.root}),
     monorepoPackageAliases({root: project.root}),
