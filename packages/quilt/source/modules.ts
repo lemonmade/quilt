@@ -1,6 +1,8 @@
 declare module 'quilt:module/env' {
   import type {EnvironmentVariables} from '@quilted/quilt/env';
 
+  export type {EnvironmentVariables};
+
   const Env: EnvironmentVariables;
   export default Env;
 }
