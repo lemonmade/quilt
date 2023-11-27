@@ -222,12 +222,10 @@ export async function quiltServer({
 
 export interface NodeServerRuntimeOptions {
   /**
-   * The port that the server will listen on when it runs. This only applies
-   * when you use the `request-router` format — if you use the `custom` format,
-   * you are responsible for starting the server yourself.
+   * The port that the server will listen on when it runs.
    *
-   * If you do not provide a value here, the server will listen for requests on
-   * the port specified by `process.env.NODE_ENV`.
+   * If you do not provide a value, the server will listen for
+   * requests on the port specified by `process.env.NODE_ENV`.
    */
   port?: number | string;
 

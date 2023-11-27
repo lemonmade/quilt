@@ -6,7 +6,7 @@
 - [x] Improve Node bundle
 - [x] CJS build?
 - [x] Fix request router entries
-- [ ] Support CF/ Deno/ general overrides
+- [x] Support CF/ Deno/ general overrides
 - [x] Add support for serving assets to default server in Node
 - [x] Add development stuff
 - [x] ESNext target consumption

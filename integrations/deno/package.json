@@ -20,8 +20,13 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
+    },
+    "./craft": {
+      "types": "./build/typescript/craft.d.ts",
+      "quilt:source": "./source/craft.ts",
+      "quilt:esnext": "./build/esnext/craft.esnext",
+      "import": "./build/esm/craft.mjs"
     },
     "./request-router": {
       "types": "./build/typescript/request-router.d.ts",
@@ -33,6 +38,9 @@
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
+      "craft": [
+        "./build/typescript/craft.d.ts"
+      ],
       "request-router": [
         "./build/typescript/request-router.d.ts"
       ]
