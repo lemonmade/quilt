@@ -214,7 +214,7 @@ function workerMagicModules() {
     name: '@quilted/workers/magic-modules',
     resolveId(source) {
       if (source.startsWith(ENTRY_PREFIX)) {
-        return {id: source};
+        return {id: source, moduleSideEffects: 'no-treeshake'};
       }
 
       return null;
