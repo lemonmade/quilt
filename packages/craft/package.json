@@ -16,6 +16,12 @@
     }
   },
   "exports": {
+    "./graphql": {
+      "types": "./build/typescript/graphql.d.ts",
+      "quilt:source": "./source/graphql.ts",
+      "quilt:esnext": "./build/esnext/graphql.esnext",
+      "import": "./build/esm/graphql.mjs"
+    },
     "./rollup": {
       "types": "./build/typescript/rollup.d.ts",
       "quilt:source": "./source/rollup.ts",
