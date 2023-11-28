@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.17
+
+### Patch Changes
+
+- [`24ed767c`](https://github.com/lemonmade/quilt/commit/24ed767c3e5b8617ab1a6db0ffd648bb2aabfda6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add Deno server runtime
+
 ## 0.2.16
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.2.3
+
+### Patch Changes
+
+- [`5c372458`](https://github.com/lemonmade/quilt/commit/5c372458cb2db671ea40e1af29d3c49ca63d78ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix peer dependencies for Deno and Cloudflare integrations
+
 ## 0.2.2
 
 ### Patch Changes
