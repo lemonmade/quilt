@@ -1,5 +1,13 @@
 # @quilted/deno
 
+## 0.2.1
+
+### Patch Changes
+
+- [`5c372458`](https://github.com/lemonmade/quilt/commit/5c372458cb2db671ea40e1af29d3c49ca63d78ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix peer dependencies for Deno and Cloudflare integrations
+
+- [`24ed767c`](https://github.com/lemonmade/quilt/commit/24ed767c3e5b8617ab1a6db0ffd648bb2aabfda6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add Deno server runtime
+
 ## 0.2.0
 
 ### Minor Changes
