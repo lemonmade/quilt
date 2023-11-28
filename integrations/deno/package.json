@@ -54,12 +54,20 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
+    "@quilted/craft": "^0.2.0",
     "@quilted/quilt": "^0.6.0"
   },
   "peerDependenciesMeta": {
+    "@quilted/craft": {
+      "optional": true
+    },
     "@quilted/quilt": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "@quilted/craft": "workspace:*",
+    "@quilted/quilt": "workspace:*"
   },
   "eslintConfig": {
     "extends": [

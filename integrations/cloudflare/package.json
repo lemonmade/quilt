@@ -55,16 +55,20 @@
     "miniflare": "^2.4.0"
   },
   "peerDependencies": {
-    "@quilted/craft": "workspace:^0.2.4",
-    "@quilted/quilt": "workspace:^0.6.0"
+    "@quilted/craft": "^0.2.0",
+    "@quilted/quilt": "^0.6.0"
   },
   "peerDependenciesMeta": {
+    "@quilted/craft": {
+      "optional": true
+    },
     "@quilted/quilt": {
       "optional": true
     }
   },
   "devDependencies": {
     "@quilted/craft": "workspace:*",
+    "@quilted/quilt": "workspace:*",
     "@types/common-tags": "^1.8.0",
     "@types/mime": "^2.0.0"
   },
