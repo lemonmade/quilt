@@ -1,5 +1,11 @@
 # @quilted/create-app
 
+## 0.2.2
+
+### Patch Changes
+
+- [`73a867bd`](https://github.com/lemonmade/quilt/commit/73a867bda7ed521b14457ae8fb0d8e7765aaffb1) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove ESLint configuration from templates
+
 ## 0.2.1
 
 ### Patch Changes

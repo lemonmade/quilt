@@ -1,5 +1,11 @@
 # @quilted/react-email
 
+## 0.3.1
+
+### Patch Changes
+
+- [`51b279ae`](https://github.com/lemonmade/quilt/commit/51b279ae6188425ae51f345df47386fec78dd29c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix inlined `react-dom` dependency
+
 ## 0.3.0
 
 ### Minor Changes
