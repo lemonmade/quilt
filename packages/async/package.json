@@ -29,10 +29,5 @@
     "@quilted/assets": "^0.1.0",
     "@quilted/events": "^2.0.0",
     "@types/web": "^0.0.59"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
   }
 }

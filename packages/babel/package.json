@@ -51,11 +51,6 @@
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
   },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
   "devDependencies": {
     "@babel/types": "^7.23.0",
     "@types/babel__core": "^7.20.0",

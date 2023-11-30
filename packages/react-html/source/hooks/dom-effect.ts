@@ -1,5 +1,3 @@
-/* eslint react-hooks/exhaustive-deps: off */
-
 import {useContext, useEffect, useRef} from 'react';
 import {useServerAction} from '@quilted/react-server-render';
 

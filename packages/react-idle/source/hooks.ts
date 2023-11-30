@@ -76,6 +76,5 @@ export function useIdleCallback(
         (window as Window).cancelAnimationFrame(currentHandle);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 }

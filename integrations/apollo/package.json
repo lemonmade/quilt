@@ -70,14 +70,5 @@
     "@quilted/quilt": "workspace:^0.6.0",
     "graphql": "^16.7.0",
     "react": "workspace:@quilted/react@^18.2.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

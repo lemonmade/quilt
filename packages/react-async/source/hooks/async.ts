@@ -1,5 +1,3 @@
-/* eslint react-hooks/rules-of-hooks: off */
-
 import {useEffect, useMemo, useRef, useSyncExternalStore} from 'react';
 import {useModuleAssets} from '@quilted/react-assets';
 import {useServerAction} from '@quilted/react-server-render';

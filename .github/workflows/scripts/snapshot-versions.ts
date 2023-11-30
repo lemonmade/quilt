@@ -76,8 +76,8 @@ async function run() {
     Test the snapshot${
       multiple ? 's' : ''
     } by updating your \`package.json\` with the newly published version${
-    multiple ? 's' : ''
-  }:
+      multiple ? 's' : ''
+    }:
 
     \`\`\`sh
     ${newTags.map((tag) => `pnpm add ${tag}`).join('\n')}

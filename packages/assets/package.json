@@ -28,17 +28,5 @@
   "sideEffects": false,
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
-  },
-  "dependencies": {},
-  "peerDependencies": {},
-  "peerDependenciesMeta": {},
-  "devDependencies": {},
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

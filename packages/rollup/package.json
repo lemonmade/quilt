@@ -177,13 +177,5 @@
   "devDependencies": {
     "@types/semver": "^7.5.4",
     "rollup": "^4.5.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

@@ -68,11 +68,5 @@
     "@quilted/request-router": "^0.2.0",
     "@quilted/react-http": "^0.4.0",
     "react": "workspace:@quilted/react@^18.2.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
   }
 }

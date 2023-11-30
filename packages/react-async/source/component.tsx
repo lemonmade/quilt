@@ -240,10 +240,7 @@ function RenderWhileLoading({
     return null;
   }
 
-  const {
-    resolved,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-  } = useAsyncModule(module, {
+  const {resolved} = useAsyncModule(module, {
     suspense: false,
     immediate: false,
     scripts: 'never',

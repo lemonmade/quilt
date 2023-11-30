@@ -207,8 +207,6 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
       writer.write(`<!DOCTYPE html>`);
 
-      /* eslint-disable jsx-a11y/html-has-lang */
-
       const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
       const htmlContent = renderToStaticMarkup(
         <html {...htmlAttributes}>
@@ -242,15 +240,12 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
         </html>,
       );
 
-      /* eslint-enable jsx-a11y/html-has-lang */
-
       const [firstChunk, secondChunk] = htmlContent.split('%%CONTENT%%');
       writer.write(firstChunk);
       if (element != null) writer.write(`<div id="app">`);
 
       const reader = content.getReader();
 
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         const {done, value} = await reader.read();
 

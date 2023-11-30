@@ -1,5 +1,3 @@
-/* eslint react-hooks/exhaustive-deps: off */
-
 import {useContext, useMemo} from 'react';
 
 import {HTMLContext} from '../context.ts';

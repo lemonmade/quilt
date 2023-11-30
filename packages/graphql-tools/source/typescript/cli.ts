@@ -1,5 +1,3 @@
-/* eslint no-console: off */
-
 import * as path from 'path';
 
 import arg from 'arg';

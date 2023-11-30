@@ -293,7 +293,6 @@ export async function startServer(start: () => Promise<any>) {
 export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
   const startedAt = Date.now();
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     let lastError: unknown;
 
@@ -345,30 +344,25 @@ export async function openPageAndWaitForNavigation(
   const page = await workspace.browser.open(url, options);
 
   page.on('console', async (message) => {
-    // eslint-disable-next-line no-console
     console.log('Browser console message:');
+
     for (const arg of message.args()) {
-      // eslint-disable-next-line no-console
       console[message.type() as 'log'](await arg.jsonValue());
     }
   });
 
   page.on('pageerror', (error) => {
-    // eslint-disable-next-line no-console
     console.log(`page error in headless browser`);
-    // eslint-disable-next-line no-console
     console.log(error);
   });
 
   page.on('requestfailed', (request) => {
-    // eslint-disable-next-line no-console
     console.log(
       `failed request: ${request.url()} (${request.failure()?.errorText})`,
     );
   });
 
   page.on('load', (page) => {
-    // eslint-disable-next-line no-console
     console.log(`browser navigated to ${page.url()}`);
   });
 

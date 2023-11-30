@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-/* eslint no-console: off */
 
 import {describe, it, expect} from 'vitest';
 

@@ -72,7 +72,6 @@ export function findCurrentFiberUsingSlowPath(fiber: any): Fiber | null {
   let a = fiber;
   let b = alternate;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const parentA = a.return;
     if (parentA === null) {

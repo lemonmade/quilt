@@ -1,5 +1,3 @@
-/* eslint react-hooks/exhaustive-deps: off */
-
 import type {HTMLProps} from 'react';
 import {useDomEffect} from './dom-effect.ts';
 

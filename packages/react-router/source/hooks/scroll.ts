@@ -142,7 +142,6 @@ export function useScrollRestoration({
     // We don’t want to scroll randomly as a result of changing props, we want
     // to entirely restrict this effect to only when the app’s route has actually
     // changed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUrl.normalizedPath]);
 
   useEffect(() => {
@@ -151,7 +150,6 @@ export function useScrollRestoration({
     return restore();
     // Same basic premise as above — even if `manual` changes while on a route,
     // we want to leave them at their current scroll position.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restore]);
 
   return {ref: scrollableRef, restore};

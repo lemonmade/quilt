@@ -12,9 +12,7 @@
     "test": "vitest",
     "test.unit": "vitest --config configuration/vite.unit.config.ts --no-threads",
     "test.e2e": "vitest --config configuration/vite.e2e.config.ts --no-threads",
-    "lint.eslint": "eslint . --cache --cache-location ./node_modules/.eslintcache --ext .ts,.tsx,.js,.mjs --max-warnings 0",
-    "lint.prettier": "prettier \"./**/*.{json,md,yaml,css,graphql}\" --check --cache",
-    "lint": "pnpm run lint.eslint && pnpm run lint.prettier",
+    "lint": "prettier --check --cache .",
     "type-check": "tsc --build --pretty",
     "build": "pnpm --recursive --filter rollup run build && pnpm --recursive --filter !rollup run build",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
@@ -29,7 +27,6 @@
     "@changesets/changelog-github": "^0.4.7",
     "@changesets/cli": "^2.25.0",
     "@quilted/craft": "workspace:^",
-    "@quilted/eslint-config": "workspace:^",
     "@quilted/events": "workspace:^",
     "@quilted/performance": "workspace:^",
     "@quilted/prettier": "workspace:^",
@@ -55,16 +52,9 @@
     "vitest": "^0.34.6"
   },
   "prettier": "@quilted/prettier",
-  "eslintConfig": {
-    "extends": "@quilted/eslint-config/workspace",
-    "ignorePatterns": [
-      "tests/e2e/output",
-      "packages/preact-mini-compat/configuration/rollup.config.js",
-      "packages/rollup/configuration/rollup.config.js"
-    ]
-  },
   "browserslist": [
-    "defaults and not dead"
+    "defaults and not dead",
+    "maintained node versions"
   ],
   "pnpm": {
     "peerDependencyRules": {

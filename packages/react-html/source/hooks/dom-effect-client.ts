@@ -1,5 +1,3 @@
-/* eslint react-hooks/exhaustive-deps: off */
-
 import {useEffect, useContext} from 'react';
 import type {HTMLManager} from '../manager.ts';
 import {HTMLContext} from '../context.ts';

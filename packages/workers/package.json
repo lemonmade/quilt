@@ -27,10 +27,5 @@
   },
   "dependencies": {
     "@quilted/threads": "^2.0.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
   }
 }

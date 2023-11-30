@@ -1,5 +1,3 @@
-/* eslint react-hooks/exhaustive-deps: off */
-
 import type {HTMLManager} from '../manager.ts';
 import {useDomEffect} from './dom-effect.ts';
 

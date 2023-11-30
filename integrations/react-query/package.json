@@ -48,11 +48,5 @@
     "@tanstack/react-query": {
       "optional": false
     }
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
   }
 }

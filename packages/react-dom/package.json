@@ -45,10 +45,5 @@
     "@types/react-dom": "^18.2.0",
     "preact": "^10.18.0",
     "preact-render-to-string": "^6.2.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
   }
 }

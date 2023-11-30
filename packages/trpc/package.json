@@ -51,13 +51,5 @@
   "devDependencies": {
     "@trpc/client": "^10.31.0",
     "@trpc/server": "^10.31.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

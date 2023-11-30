@@ -195,5 +195,4 @@ export interface ThreadEncodable {
   [ENCODE_METHOD](api: {encode(value: any): unknown}): any;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type AnyFunction = Function;

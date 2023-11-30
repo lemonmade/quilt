@@ -1,5 +1,3 @@
-/* eslint no-console: off */
-
 import {AbortError, stripIndent, color, parseArguments} from '@quilted/cli-kit';
 
 import {printHelp} from './help.ts';

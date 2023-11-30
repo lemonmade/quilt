@@ -46,10 +46,5 @@
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/send": "^0.17.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
   }
 }

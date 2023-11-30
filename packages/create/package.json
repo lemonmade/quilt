@@ -42,16 +42,5 @@
     "prettier": "^3.0.0",
     "prompts": "^2.4.0",
     "yaml": "^2.1.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ],
-    "env": {
-      "node": true
-    },
-    "rules": {
-      "no-console": "off"
-    }
   }
 }

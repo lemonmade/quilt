@@ -23,15 +23,5 @@
   "dependencies": {
     "@quilted/cli-kit": "^0.2.0",
     "@quilted/create": "^0.2.0"
-  },
-  "peerDependencies": {},
-  "peerDependenciesMeta": {},
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

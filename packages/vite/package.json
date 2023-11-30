@@ -73,9 +73,5 @@
     "@types/babel__core": "^7.20.4",
     "vite": "^5.0.0",
     "vitest": "^0.34.6"
-  },
-  "browserslist": [
-    "defaults and fully supports es6-module",
-    "maintained node versions"
-  ]
+  }
 }

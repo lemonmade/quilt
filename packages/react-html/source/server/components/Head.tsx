@@ -1,5 +1,3 @@
-/* eslint react/no-unknown-property: off */
-
 import {type State} from '../../manager.ts';
 import {Serialize} from './Serialize.tsx';
 
@@ -8,9 +6,6 @@ export interface HeadProps
     State,
     'title' | 'metas' | 'scripts' | 'serializations' | 'links'
   > {}
-
-// Fine for server rendering
-/* eslint-disable react/no-array-index-key */
 
 export function Head({
   title,
@@ -49,5 +44,3 @@ export function Head({
     </>
   );
 }
-
-/* eslint-enable react/no-array-index-key */

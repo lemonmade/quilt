@@ -299,11 +299,5 @@
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0",
     "vitest": "^0.34.6"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
   }
 }

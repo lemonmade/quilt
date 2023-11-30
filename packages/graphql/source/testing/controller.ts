@@ -156,7 +156,6 @@ export class GraphQLController {
       );
     }
 
-    // eslint-disable-next-line no-async-promise-executor
     const promise = new Promise<GraphQLResult<any>>(async (resolve) => {
       let result: any;
 

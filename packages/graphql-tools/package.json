@@ -91,10 +91,5 @@
     "@jest/transform": "^29.5.0",
     "@types/babel__generator": "^7.6.0",
     "@types/is-glob": "^4.0.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
   }
 }

@@ -197,7 +197,6 @@ async function loadEnv(
 function findWorkspaceRoot(start = process.cwd()) {
   let current = path.resolve(start);
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (
       fs.existsSync(path.join(current, 'pnpm-lock.yaml')) ||

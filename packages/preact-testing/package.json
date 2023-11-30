@@ -53,11 +53,5 @@
     "preact": {
       "optional": true
     }
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
   }
 }

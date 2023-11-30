@@ -1,5 +1,3 @@
-/* eslint react/jsx-no-useless-fragment: off */
-
 import {
   memo,
   useContext,
@@ -65,7 +63,6 @@ export function useRoutes(
     }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoizedRoutes = useMemo(() => routes, dependencies);
 
   useRoutePreloadRegistration(memoizedRoutes, consumedPath);

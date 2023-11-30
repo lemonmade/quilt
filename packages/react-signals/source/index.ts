@@ -11,7 +11,6 @@ export function useSignal<T>(
 ): Signal<T> {
   return useMemo(
     () => signal(typeof value === 'function' ? (value as any)() : value),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     args,
   );
 }
@@ -20,7 +19,6 @@ export function useComputed<T>(
   value: () => T,
   args: unknown[] = EMPTY_ARGUMENTS,
 ): Signal<T> {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => computed(value), args);
 }
 
@@ -35,7 +33,6 @@ export function useSignalEffect(
     return effect(() => {
       callback.current();
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, args);
 }
 

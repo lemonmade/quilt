@@ -11,12 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - uses: actions/cache@v3
-        id: eslint-cache
-        with:
-          path: node_modules/.eslintcache
-          key: eslint-cache-v1-${{ github.sha }}
-          restore-keys: eslint-cache-v1-
       - run: pnpm run lint
 
   type-check:

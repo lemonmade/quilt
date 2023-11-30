@@ -36,11 +36,5 @@
   "dependencies": {
     "@types/react": "^18.2.0",
     "preact": "^10.18.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project",
-      "@quilted/eslint-config/react"
-    ]
   }
 }

@@ -68,13 +68,5 @@
   "devDependencies": {
     "@quilted/craft": "workspace:*",
     "@quilted/quilt": "workspace:*"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

@@ -40,13 +40,5 @@
     "common-tags": "^1.8.2",
     "pkg-dir": "^7.0.0",
     "prompts": "^2.4.2"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ]
-  },
-  "browserslist": [
-    "defaults and not dead"
-  ]
+  }
 }

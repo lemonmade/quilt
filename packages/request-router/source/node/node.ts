@@ -47,7 +47,6 @@ export function createHttpRequestListener(
 
       await sendResponse(response, res);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
       res.writeHead(500);
       res.end();
@@ -126,7 +125,6 @@ export async function sendResponse(
   if (body) {
     const reader = body.getReader();
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const {done, value} = await reader.read();
 

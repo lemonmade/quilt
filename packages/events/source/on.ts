@@ -170,7 +170,6 @@ async function* noop() {
   // intentionally empty
 }
 
-// eslint-disable-next-line require-yield
 async function* noopThrow(error: Error) {
   throw error;
 }

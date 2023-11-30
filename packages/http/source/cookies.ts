@@ -83,7 +83,6 @@ export interface Cookies
  * obs-text      = %x80-FF
  */
 
-// eslint-disable-next-line no-control-regex
 const FIELD_CONTENT_REG_EXP = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
 
 export const CookieString = {

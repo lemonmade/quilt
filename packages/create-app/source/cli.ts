@@ -1,5 +1,3 @@
-/* eslint no-console: off */
-
 import {AbortError} from '@quilted/cli-kit';
 import {createApp} from '@quilted/create';
 

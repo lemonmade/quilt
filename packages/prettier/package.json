@@ -18,13 +18,5 @@
       "require": "./index.js"
     }
   },
-  "sideEffects": false,
-  "eslintConfig": {
-    "extends": [
-      "@quilted/eslint-config/project"
-    ],
-    "env": {
-      "node": true
-    }
-  }
+  "sideEffects": false
 }

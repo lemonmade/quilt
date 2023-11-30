@@ -32,6 +32,5 @@ export function usePerformanceNavigation({
         currentNavigation.end({metadata});
         break;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, performance]);
 }
