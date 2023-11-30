@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.18
+
+### Patch Changes
+
+- [`4ddf0b91`](https://github.com/lemonmade/quilt/commit/4ddf0b9150024bed06e76ad1c126c0eba5d3366d) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow server runtimes to declare a default `bundle` option
+
 ## 0.2.17
 
 ### Patch Changes
