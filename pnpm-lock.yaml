@@ -619,6 +619,9 @@ importers:
       react:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../react
+      react-dom:
+        specifier: workspace:@quilted/react-dom@^18.2.0
+        version: link:../react-dom
 
   packages/react-graphql:
     dependencies:
