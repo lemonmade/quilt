@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.11
+
+### Patch Changes
+
+- [`73a867bd`](https://github.com/lemonmade/quilt/commit/73a867bda7ed521b14457ae8fb0d8e7765aaffb1) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove ESLint configuration from templates
+
+- [`73a867bd`](https://github.com/lemonmade/quilt/commit/73a867bda7ed521b14457ae8fb0d8e7765aaffb1) Thanks [@lemonmade](https://github.com/lemonmade)! - Add browserslist for node template
+
 ## 0.2.10
 
 ### Patch Changes
