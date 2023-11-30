@@ -38,12 +38,5 @@
       "last 1 edge version",
       "last 1 chrome version"
     ]
-  },
-  "eslintConfig": {
-    "extends": "@quilted/eslint-config/app",
-    "ignorePatterns": [
-      "*.graphql.d.ts",
-      "graphql/schema.ts"
-    ]
   }
 }

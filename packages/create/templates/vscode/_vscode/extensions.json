@@ -1,7 +1,3 @@
 {
-  "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    "GraphQL.vscode-graphql"
-  ]
+  "recommendations": ["esbenp.prettier-vscode", "GraphQL.vscode-graphql"]
 }
