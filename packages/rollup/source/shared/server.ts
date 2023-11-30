@@ -1,5 +1,7 @@
 import type {OutputOptions} from 'rollup';
 
+import type {RollupNodePluginOptions} from './rollup.ts';
+
 export interface ServerRuntime {
   /**
    * A string that will be inlined directly as code to reference a runtime constant
@@ -10,7 +12,7 @@ export interface ServerRuntime {
   /**
    * Overrides to the output options for this server.
    */
-  output?: {
+  output?: Pick<RollupNodePluginOptions, 'bundle'> & {
     /**
      * What module format to use for the server output.
      *

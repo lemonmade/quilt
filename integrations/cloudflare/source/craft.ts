@@ -40,6 +40,7 @@ export function cloudflareWorkers({
   return {
     env: environmentForFormat(format),
     output: {
+      bundle: true,
       options: {
         format: format === 'module' ? 'esm' : 'iife',
       },
@@ -95,6 +96,7 @@ function cloudflarePagesServer({
   return {
     env: environmentForFormat(format),
     output: {
+      bundle: true,
       directory: 'build/public',
       options: {
         format: format === 'module' ? 'esm' : 'iife',

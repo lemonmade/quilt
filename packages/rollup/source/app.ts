@@ -587,7 +587,7 @@ export async function quiltAppServerPlugins({
   graphql = true,
   assets,
   output,
-  runtime,
+  runtime = nodeAppServerRuntime(),
 }: AppServerOptions = {}) {
   const project = Project.load(root);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
@@ -595,7 +595,7 @@ export async function quiltAppServerPlugins({
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
 
-  const bundle = output?.bundle;
+  const bundle = output?.bundle ?? runtime.output?.bundle;
   const minify = output?.minify ?? false;
 
   const [
@@ -629,7 +629,7 @@ export async function quiltAppServerPlugins({
     ...nodePlugins,
     replaceProcessEnv({mode}),
     magicModuleEnv({
-      runtime: runtime?.env,
+      runtime: runtime.env,
       ...resolveEnvOption(env),
       mode,
       root: project.root,
@@ -643,7 +643,7 @@ export async function quiltAppServerPlugins({
         const options = {assets: {baseURL}};
 
         return (
-          runtime?.requestRouter?.(options) ??
+          runtime.requestRouter?.(options) ??
           nodeAppServerRuntime().requestRouter(options)
         );
       },

@@ -114,7 +114,7 @@ export async function quiltServer({
   );
 
   const minify = output?.minify ?? false;
-  const bundle = output?.bundle;
+  const bundle = output?.bundle ?? runtime.output?.bundle;
   const hash = output?.hash ?? 'async-only';
 
   const [
