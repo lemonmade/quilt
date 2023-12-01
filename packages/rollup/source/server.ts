@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {type InputPluginOption, type RollupOptions} from 'rollup';
 
 import {Project} from './shared/project.ts';
@@ -110,8 +112,9 @@ export async function quiltServer({
   const mode =
     (typeof env === 'object' ? env?.mode : undefined) ?? 'production';
   const outputDirectory = project.resolve(
-    output?.directory ?? runtime.output?.directory ?? 'build/server',
+    output?.directory ?? runtime.output?.directory ?? 'build/output',
   );
+  const reportDirectory = path.resolve(outputDirectory, '../reports');
 
   const minify = output?.minify ?? false;
   const bundle = output?.bundle ?? runtime.output?.bundle;
@@ -146,6 +149,10 @@ export async function quiltServer({
       ? MAGIC_MODULE_ENTRY
       : serverEntry ?? MAGIC_MODULE_ENTRY;
 
+  const finalEntryName = serverEntry
+    ? path.basename(serverEntry).split('.').slice(0, -1).join('.')
+    : 'server';
+
   const plugins: InputPluginOption[] = [
     ...nodePlugins,
     replaceProcessEnv({mode}),
@@ -160,7 +167,7 @@ export async function quiltServer({
     monorepoPackageAliases({root: project.root}),
     react(),
     esnext({mode, targets: ['current node']}),
-    removeBuildFiles(['build/server', 'build/reports'], {root: project.root}),
+    removeBuildFiles([outputDirectory, reportDirectory], {root: project.root}),
   ];
 
   if (format === 'request-router') {
@@ -198,13 +205,12 @@ export async function quiltServer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: project.resolve(`build/reports/bundle-visualizer.html`),
+      filename: path.join(reportDirectory, 'bundle-visualizer.html'),
     }),
   );
 
   return {
-    input:
-      finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
+    input: {[finalEntryName]: finalEntry},
     plugins,
     output: {
       format: 'esm',

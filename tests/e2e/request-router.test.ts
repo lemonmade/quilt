@@ -33,7 +33,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/server/server.js'), {
+        command.node(fs.resolve('build/output/api.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -68,7 +68,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/server/server.js'), {
+        command.node(fs.resolve('build/output/api.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -107,7 +107,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/server/server.js'), {
+        command.node(fs.resolve('build/output/api.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -140,7 +140,7 @@ describe('request-router', () => {
 
       // Start the server
       startServer(() =>
-        command.node(fs.resolve('build/server/server.js'), {
+        command.node(fs.resolve('build/output/api.js'), {
           env: {PORT: String(port)},
         }),
       );
@@ -186,7 +186,7 @@ describe('request-router', () => {
       await command.pnpm('build');
 
       const {default: server} = (await import(
-        fs.resolve('build/server/server.js')
+        fs.resolve('build/output/api.js')
       )) as {default: {fetch(request: Request): Promise<Response>}};
 
       const response = await server.fetch(new Request('https://example.com'));

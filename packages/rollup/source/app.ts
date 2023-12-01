@@ -377,6 +377,10 @@ export async function quiltAppBrowserPlugins({
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
 
+  const assetsDirectory = project.resolve('build/assets');
+  const reportsDirectory = path.join(assetsDirectory, '../reports');
+  const manifestsDirectory = path.join(assetsDirectory, '../manifests');
+
   const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
     root: project.root,
   });
@@ -464,7 +468,7 @@ export async function quiltAppBrowserPlugins({
       baseURL,
       format: supportsModuleWorkers ? 'module' : 'classic',
       outputOptions: {
-        dir: project.resolve(`build/assets`),
+        dir: assetsDirectory,
         entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
         assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
         chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
@@ -476,9 +480,12 @@ export async function quiltAppBrowserPlugins({
 
   if (assets?.clean ?? true) {
     plugins.push(
-      removeBuildFiles(['build/assets', 'build/manifests', 'build/reports'], {
-        root: project.root,
-      }),
+      removeBuildFiles(
+        [assetsDirectory, manifestsDirectory, reportsDirectory],
+        {
+          root: project.root,
+        },
+      ),
     );
   }
 
@@ -487,8 +494,9 @@ export async function quiltAppBrowserPlugins({
 
     plugins.push(
       graphql({
-        manifest: project.resolve(
-          `build/manifests/graphql${targetFilenamePart}.json`,
+        manifest: path.join(
+          manifestsDirectory,
+          `graphql${targetFilenamePart}.json`,
         ),
       }),
     );
@@ -509,15 +517,16 @@ export async function quiltAppBrowserPlugins({
     assetManifest({
       baseURL,
       cacheKey,
-      file: project.resolve(`build/manifests/assets${targetFilenamePart}.json`),
+      file: path.join(manifestsDirectory, `assets${targetFilenamePart}.json`),
       priority: assets?.priority,
     }),
     visualizer({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: project.resolve(
-        `build/reports/bundle-visualizer${targetFilenamePart}.html`,
+      filename: path.join(
+        reportsDirectory,
+        `bundle-visualizer${targetFilenamePart}.html`,
       ),
     }),
   );
@@ -536,14 +545,18 @@ export function quiltAppBrowserInput({
         normalizeRollupInput(options.input) ??
         (await sourceEntryForAppBrowser({entry, root})) ??
         MAGIC_MODULE_ENTRY;
+      const finalEntryName =
+        typeof finalEntry === 'string' && finalEntry !== MAGIC_MODULE_ENTRY
+          ? path.basename(finalEntry).split('.').slice(0, -1).join('.')
+          : 'browser';
 
       return {
         ...options,
         // If we are using the "magic entry", give it an explicit name of `browser`.
         // Otherwise, Rollup will use the file name as the output name.
         input:
-          finalEntry === MAGIC_MODULE_ENTRY
-            ? {browser: finalEntry}
+          typeof finalEntry === 'string'
+            ? {[finalEntryName]: finalEntry}
             : finalEntry,
       };
     },
@@ -594,6 +607,9 @@ export async function quiltAppServerPlugins({
 
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
+
+  const outputDirectory = project.resolve('build/server');
+  const reportsDirectory = path.resolve(outputDirectory, '../reports');
 
   const bundle = output?.bundle ?? runtime.output?.bundle;
   const minify = output?.minify ?? false;
@@ -687,7 +703,7 @@ export async function quiltAppServerPlugins({
       preload: false,
       moduleID: ({imported}) => path.relative(project.root, imported),
     }),
-    removeBuildFiles(['build/server'], {root: project.root}),
+    removeBuildFiles([outputDirectory], {root: project.root}),
     tsconfigAliases({root: project.root}),
     monorepoPackageAliases({root: project.root}),
   ];
@@ -707,7 +723,7 @@ export async function quiltAppServerPlugins({
       template: 'treemap',
       open: false,
       brotliSize: false,
-      filename: project.resolve(`build/reports/bundle-visualizer.server.html`),
+      filename: path.join(reportsDirectory, `bundle-visualizer.server.html`),
     }),
   );
 
@@ -719,35 +735,27 @@ export function quiltAppServerInput({
   entry,
   format = 'request-router',
 }: Pick<AppServerOptions, 'root' | 'entry' | 'format'> = {}) {
-  const project = Project.load(root);
-
   return {
     name: '@quilted/app-server/input',
     async options(options) {
-      let finalEntry = normalizeRollupInput(options.input);
-
-      if (!finalEntry) {
-        const serverEntry = entry
-          ? project.resolve(entry)
-          : await project
-              .glob('{server,service,backend}.{ts,tsx,mjs,js,jsx}', {
-                nodir: true,
-                absolute: true,
-              })
-              .then((files) => files[0]);
-
-        finalEntry =
-          format === 'request-router'
-            ? MAGIC_MODULE_ENTRY
-            : serverEntry ?? MAGIC_MODULE_ENTRY;
-      }
+      const serverEntry =
+        normalizeRollupInput(options.input) ??
+        (await sourceEntryForAppServer({entry, root}));
+      const finalEntry =
+        format === 'request-router'
+          ? MAGIC_MODULE_ENTRY
+          : serverEntry ?? MAGIC_MODULE_ENTRY;
+      const finalEntryName =
+        typeof serverEntry === 'string'
+          ? path.basename(serverEntry).split('.').slice(0, -1).join('.')
+          : 'browser';
 
       return {
         ...options,
-        // If we are using the "magic entry", give it an explicit name of `server`.
-        // Otherwise, Rollup will use the file name as the output name.
         input:
-          finalEntry === MAGIC_MODULE_ENTRY ? {server: finalEntry} : finalEntry,
+          typeof finalEntry === 'string'
+            ? {[finalEntryName]: finalEntry}
+            : finalEntry,
       };
     },
   } satisfies Plugin;
@@ -1038,6 +1046,30 @@ export async function sourceEntryForAppBrowser({
   } else {
     const files = await project.glob(
       '{browser,client,web}.{ts,tsx,mjs,js,jsx}',
+      {
+        nodir: true,
+        absolute: true,
+      },
+    );
+
+    return files[0];
+  }
+}
+
+export async function sourceEntryForAppServer({
+  entry,
+  root = process.cwd(),
+}: {
+  entry?: string;
+  root?: string | URL;
+}) {
+  const project = Project.load(root);
+
+  if (entry) {
+    return project.resolve(entry);
+  } else {
+    const files = await project.glob(
+      '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
       {
         nodir: true,
         absolute: true,
