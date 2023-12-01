@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.19
+
+### Patch Changes
+
+- [#675](https://github.com/lemonmade/quilt/pull/675) [`e7115258`](https://github.com/lemonmade/quilt/commit/e7115258241d9e049280224d205e2c40bb31d3ca) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve output directories and names
+
 ## 0.2.18
 
 ### Patch Changes
