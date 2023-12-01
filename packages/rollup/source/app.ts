@@ -748,7 +748,7 @@ export function quiltAppServerInput({
       const finalEntryName =
         typeof serverEntry === 'string'
           ? path.basename(serverEntry).split('.').slice(0, -1).join('.')
-          : 'browser';
+          : 'server';
 
       return {
         ...options,
