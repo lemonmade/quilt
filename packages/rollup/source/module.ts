@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {type InputPluginOption, type RollupOptions} from 'rollup';
 
 import {Project, sourceEntriesForProject} from './shared/project.ts';
@@ -72,7 +74,8 @@ export async function quiltModule({
 }: ModuleOptions = {}) {
   const project = Project.load(root);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
-  const outputDirectory = project.resolve('build/assets');
+  const outputDirectory = project.resolve('build/output');
+  const reportDirectory = path.join(outputDirectory, '../reports');
 
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
@@ -128,7 +131,7 @@ export async function quiltModule({
 
   if (assets?.clean ?? true) {
     plugins.push(
-      removeBuildFiles(['build/assets', 'build/reports'], {
+      removeBuildFiles([outputDirectory, reportDirectory], {
         root: project.root,
       }),
     );
@@ -139,8 +142,9 @@ export async function quiltModule({
       template: 'treemap',
       open: false,
       brotliSize: true,
-      filename: project.resolve(
-        `build/reports/bundle-visualizer${targetFilenamePart}.html`,
+      filename: path.join(
+        reportDirectory,
+        `bundle-visualizer${targetFilenamePart}.html`,
       ),
     }),
   );
