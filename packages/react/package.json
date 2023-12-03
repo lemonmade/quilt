@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "@types/react": "^18.2.0",
-    "preact": "^10.18.0"
+    "preact": "^10.19.0"
   }
 }
