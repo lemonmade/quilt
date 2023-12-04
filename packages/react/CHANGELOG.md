@@ -1,5 +1,11 @@
 # @quilted/react
 
+## 18.2.8
+
+### Patch Changes
+
+- [`13553078`](https://github.com/lemonmade/quilt/commit/13553078d09687b902ad63c9b140a8ce74941fda) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact versions
+
 ## 18.2.7
 
 ### Patch Changes
