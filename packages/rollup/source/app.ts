@@ -567,19 +567,20 @@ export async function quiltAppServer(options: AppServerOptions = {}) {
   const {
     output,
     root = process.cwd(),
-    runtime = nodeAppServerRuntime(),
+    runtime = nodeAppServerRuntime() as AppServerRuntime,
   } = options;
 
   const project = Project.load(root);
   const hash = output?.hash ?? 'async-only';
+  const format = runtime.output?.format ?? 'esm';
 
   const plugins = await quiltAppServerPlugins({...options, root, runtime});
 
   return {
     plugins,
     output: {
-      format: 'esm',
-      dir: project.resolve(`build/server`),
+      format: format === 'cjs' || format === 'commonjs' ? 'commonjs' : 'esm',
+      dir: project.resolve(runtime.output?.directory ?? `build/server`),
       entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
       chunkFileNames: `[name]${
         hash === true || hash === 'async-only' ? `.[hash]` : ''
@@ -608,7 +609,9 @@ export async function quiltAppServerPlugins({
   const baseURL = assets?.baseURL ?? '/assets/';
   const assetsInline = assets?.inline ?? true;
 
-  const outputDirectory = project.resolve('build/server');
+  const outputDirectory = project.resolve(
+    runtime.output?.directory ?? 'build/server',
+  );
   const reportsDirectory = path.resolve(outputDirectory, '../reports');
 
   const bundle = output?.bundle ?? runtime.output?.bundle;
