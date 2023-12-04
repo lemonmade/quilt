@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.20
+
+### Patch Changes
+
+- [`545ec714`](https://github.com/lemonmade/quilt/commit/545ec714275700c550e6586c7a0490b1ee321b6d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix server output directory
+
 ## 0.2.19
 
 ### Patch Changes
