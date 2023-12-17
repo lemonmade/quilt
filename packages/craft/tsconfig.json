@@ -8,6 +8,7 @@
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../graphql"},
+    {"path": "../graphql-tools"},
     {"path": "../rollup"},
     {"path": "../vite"}
   ]
