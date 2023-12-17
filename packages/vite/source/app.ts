@@ -11,6 +11,7 @@ import {
 import type {MagicModuleEnvOptions} from '@quilted/rollup/features/env';
 
 import {multiline} from './shared/strings.ts';
+import {preactAliases} from './shared/preact.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppBaseOptions {
@@ -48,6 +49,15 @@ export interface AppBaseOptions {
    * by passing `server.env`.
    */
   env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
+
+  /**
+   * Controls how React will be handled by your package. Setting this value
+   * to `preact` will cause Quilt to use `preact` as the JSX import source.
+   * Otherwise, `react` will be used as the import source.
+   *
+   * @default true
+   */
+  react?: boolean | 'react' | 'preact';
 }
 
 export interface AppOptions extends AppBaseOptions {
@@ -67,6 +77,7 @@ export async function quiltApp({
   env,
   browser,
   server,
+  react: useReact = true,
   graphql: useGraphQL = true,
 }: AppOptions = {}) {
   const mode = typeof env === 'string' ? env : env?.mode ?? 'development';
@@ -157,39 +168,15 @@ export async function quiltApp({
     plugins.push(graphql());
   }
 
+  if (useReact === true || useReact === 'preact') {
+    plugins.push(preactAliases());
+  }
+
   plugins.push({
     name: '@quilted/overrides',
     config() {
       return {
         appType: 'custom',
-        esbuild: {
-          jsx: 'automatic',
-          jsxImportSource: 'preact',
-        },
-        optimizeDeps: {
-          // The default app templates don’t import Preact, but it is used as an alias
-          // for React. Without explicitly listing it here, two different versions would
-          // be created — one inlined into the React optimized dependency, and one as the
-          // raw preact node module.
-          include: ['preact'],
-        },
-        resolve: {
-          dedupe: ['preact'],
-          alias: [
-            {find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime'},
-            {find: 'react/jsx-dev-runtime', replacement: 'preact/jsx-runtime'},
-            {find: 'react', replacement: 'preact/compat'},
-            {find: 'react-dom', replacement: 'preact/compat'},
-            {
-              find: /^@quilted[/]react-testing$/,
-              replacement: '@quilted/react-testing/preact',
-            },
-            {
-              find: /^@quilted[/]react-testing[/]dom$/,
-              replacement: '@quilted/react-testing/preact',
-            },
-          ],
-        },
       };
     },
   });

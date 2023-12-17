@@ -1,11 +1,21 @@
 import type {Plugin} from 'vite';
-import type {} from 'vitest';
+
+import {preactAliases} from './shared/preact.ts';
 
 export interface PackageBaseOptions {
   /**
    * The root directory containing your package.
    */
   root?: string | URL;
+
+  /**
+   * Controls how React will be handled by your package. Setting this value
+   * to `preact` will cause Quilt to use `preact` as the JSX import source.
+   * Otherwise, `react` will be used as the import source.
+   *
+   * @default true
+   */
+  react?: boolean | 'react' | 'preact';
 
   /**
    * Whether to include GraphQL-related code transformations.
@@ -16,6 +26,7 @@ export interface PackageBaseOptions {
 }
 
 export async function quiltPackage({
+  react: useReact = true,
   graphql: useGraphQL = true,
 }: PackageBaseOptions = {}) {
   const [{graphql}] = await Promise.all([
@@ -24,34 +35,13 @@ export async function quiltPackage({
 
   const plugins: Plugin[] = [];
 
+  if (useReact === true || useReact === 'preact') {
+    plugins.push(preactAliases());
+  }
+
   if (useGraphQL) {
     plugins.push(graphql());
   }
-
-  plugins.push({
-    name: '@quilted/overrides',
-    config() {
-      return {
-        esbuild: {
-          jsx: 'automatic',
-          jsxImportSource: 'preact',
-        },
-        resolve: {
-          conditions: ['quilt:source'],
-          alias: [
-            {find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime'},
-            {find: 'react/jsx-dev-runtime', replacement: 'preact/jsx-runtime'},
-            {find: 'react', replacement: 'preact/compat'},
-            {find: 'react-dom', replacement: 'preact/compat'},
-            {
-              find: /^@quilted[/]react-testing$/,
-              replacement: '@quilted/react-testing/preact',
-            },
-          ],
-        },
-      };
-    },
-  });
 
   return plugins;
 }
