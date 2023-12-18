@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.14
+
+### Patch Changes
+
+- [`f482e3d2`](https://github.com/lemonmade/quilt/commit/f482e3d2cefd2d273471c00c1bc721a228a1e98e) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `react` option to Vite plugins
+
 ## 0.1.13
 
 ### Patch Changes
