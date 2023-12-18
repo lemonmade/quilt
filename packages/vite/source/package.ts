@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 
-import {preactAliases} from './shared/preact.ts';
+import {react} from './shared/react.ts';
 
 export interface PackageBaseOptions {
   /**
@@ -35,8 +35,10 @@ export async function quiltPackage({
 
   const plugins: Plugin[] = [];
 
-  if (useReact === true || useReact === 'preact') {
-    plugins.push(preactAliases());
+  if (useReact) {
+    plugins.push(
+      react({package: typeof useReact === 'string' ? useReact : 'preact'}),
+    );
   }
 
   if (useGraphQL) {

@@ -1,8 +1,25 @@
 import type {Plugin} from 'vite';
 
-export function preactAliases() {
+export function react({
+  package: reactPackage = 'preact',
+}: {
+  package?: 'react' | 'preact';
+}): Plugin {
+  if (reactPackage === 'react') {
+    return {
+      name: '@quilted/react',
+      config() {
+        return {
+          esbuild: {
+            jsx: 'automatic',
+          },
+        };
+      },
+    };
+  }
+
   return {
-    name: '@quilted/preact-aliases',
+    name: '@quilted/react',
     config() {
       return {
         esbuild: {
@@ -35,5 +52,5 @@ export function preactAliases() {
         },
       };
     },
-  } satisfies Plugin;
+  };
 }

@@ -11,7 +11,7 @@ import {
 import type {MagicModuleEnvOptions} from '@quilted/rollup/features/env';
 
 import {multiline} from './shared/strings.ts';
-import {preactAliases} from './shared/preact.ts';
+import {react} from './shared/react.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppBaseOptions {
@@ -168,8 +168,10 @@ export async function quiltApp({
     plugins.push(graphql());
   }
 
-  if (useReact === true || useReact === 'preact') {
-    plugins.push(preactAliases());
+  if (useReact) {
+    plugins.push(
+      react({package: typeof useReact === 'string' ? useReact : 'preact'}),
+    );
   }
 
   plugins.push({
