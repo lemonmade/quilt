@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.15
+
+### Patch Changes
+
+- [`dc8beaa8`](https://github.com/lemonmade/quilt/commit/dc8beaa822c0678848e4dfd230c9f62db32b32e2) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Vite plugins when running monorepo tests
+
 ## 0.1.14
 
 ### Patch Changes
