@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.6.8
+
+### Patch Changes
+
+- [#680](https://github.com/lemonmade/quilt/pull/680) [`b5e95c5f`](https://github.com/lemonmade/quilt/commit/b5e95c5f512737741137a5babc07ca6114524294) Thanks [@lemonmade](https://github.com/lemonmade)! - Update vite and vitest dependencies
+
 ## 0.6.7
 
 ### Patch Changes

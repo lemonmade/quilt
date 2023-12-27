@@ -55,8 +55,8 @@
     "miniflare": "^2.4.0"
   },
   "peerDependencies": {
-    "@quilted/craft": "^0.2.0",
-    "@quilted/quilt": "^0.6.7"
+    "@quilted/craft": "^0.2.5",
+    "@quilted/quilt": "^0.6.8"
   },
   "peerDependenciesMeta": {
     "@quilted/craft": {
