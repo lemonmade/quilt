@@ -59,7 +59,7 @@
   },
   "peerDependencies": {
     "vite": "^5.0.0",
-    "vitest": "^0.34.6"
+    "vitest": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "vite": {
@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.4",
-    "vite": "^5.0.0",
-    "vitest": "^0.34.6"
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0"
   }
 }

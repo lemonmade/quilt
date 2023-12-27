@@ -21,7 +21,7 @@
     "tsx": "^3.14.0",
     "typescript": "^5.2.0",
     "vite": "^5.0.0",
-    "vitest": "^0.34.0"
+    "vitest": "^1.1.0"
   },
   "prettier": {
     "arrowParens": "always",
