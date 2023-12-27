@@ -270,7 +270,7 @@
     "prettier": "^2.0.0 || ^3.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "vitest": "^0.34.6"
+    "vitest": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "graphql": {
@@ -298,6 +298,6 @@
     "preact": "^10.19.0",
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0",
-    "vitest": "^0.34.6"
+    "vitest": "^1.1.0"
   }
 }
