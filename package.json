@@ -11,7 +11,7 @@
     "create": "tsx --conditions quilt:source ./packages/create/source/cli.ts",
     "test": "vitest",
     "test.unit": "vitest --config configuration/vite.unit.config.ts",
-    "test.e2e": "vitest --config configuration/vite.e2e.config.ts",
+    "test.e2e": "vitest --config configuration/vite.e2e.config.ts --pool forks",
     "lint": "prettier --check --cache .",
     "type-check": "tsc --build --pretty",
     "build": "pnpm --recursive --filter rollup run build && pnpm --recursive --filter !rollup run build",
