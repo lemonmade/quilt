@@ -1,6 +1,8 @@
 import type {Plugin} from 'vite';
 
 import {react} from './shared/react.ts';
+import {monorepoPackageAliases} from './shared/node.ts';
+import {tsconfigAliases} from './shared/typescript.ts';
 
 export interface PackageBaseOptions {
   /**
@@ -33,7 +35,7 @@ export async function quiltPackage({
     import('@quilted/rollup/features/graphql'),
   ]);
 
-  const plugins: Plugin[] = [];
+  const plugins: Plugin[] = [tsconfigAliases(), monorepoPackageAliases()];
 
   if (useReact) {
     plugins.push(

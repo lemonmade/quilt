@@ -12,6 +12,8 @@ import type {MagicModuleEnvOptions} from '@quilted/rollup/features/env';
 
 import {multiline} from './shared/strings.ts';
 import {react} from './shared/react.ts';
+import {monorepoPackageAliases} from './shared/node.ts';
+import {tsconfigAliases} from './shared/typescript.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 
 export interface AppBaseOptions {
@@ -90,8 +92,6 @@ export async function quiltApp({
       magicModuleAppRequestRouter,
     },
     {graphql},
-    {tsconfigAliases},
-    {monorepoPackageAliases},
     {magicModuleEnv},
     {asyncModules},
     {babelPreprocess},
@@ -100,8 +100,6 @@ export async function quiltApp({
     import('@prefresh/vite'),
     import('@quilted/rollup/app'),
     import('@quilted/rollup/features/graphql'),
-    import('@quilted/rollup/features/typescript'),
-    import('@quilted/rollup/features/node'),
     import('@quilted/rollup/features/env'),
     import('@quilted/rollup/features/async'),
     import('./shared/babel.ts'),
@@ -111,12 +109,8 @@ export async function quiltApp({
   const plugins: Plugin[] = [
     prefresh(),
     babelPreprocess(),
-    {
-      ...(await tsconfigAliases()),
-      enforce: 'pre',
-      name: '@quilted/tsconfig-aliases',
-    },
-    {...(await monorepoPackageAliases()), enforce: 'pre'},
+    tsconfigAliases(),
+    monorepoPackageAliases(),
     {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
     magicModuleAppAssetManifest({entry: browser?.entry}),
