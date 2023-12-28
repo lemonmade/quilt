@@ -31,7 +31,15 @@ export function react({
           // for React. Without explicitly listing it here, two different versions would
           // be created — one inlined into the React optimized dependency, and one as the
           // raw preact node module.
-          include: ['preact'],
+          include: [
+            'preact',
+            'preact/compat',
+            'preact/jsx-runtime',
+            'preact/jsx-dev-runtime',
+            'preact/hooks',
+            'preact/debug',
+            'preact/devtools',
+          ],
         },
         resolve: {
           dedupe: ['preact'],
