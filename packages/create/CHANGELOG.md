@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.14
+
+### Patch Changes
+
+- [`da384bb0`](https://github.com/lemonmade/quilt/commit/da384bb0f15235eda60f372378b5d270bb14e6fa) Thanks [@lemonmade](https://github.com/lemonmade)! - Update tsx dependency
+
 ## 0.2.13
 
 ### Patch Changes
