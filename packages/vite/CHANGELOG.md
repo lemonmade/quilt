@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.17
+
+### Patch Changes
+
+- [`35296497`](https://github.com/lemonmade/quilt/commit/3529649750dc2f253162fd31bb0bd4d76906df7a) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve optimizeDeps setup for Preact
+
 ## 0.1.16
 
 ### Patch Changes
