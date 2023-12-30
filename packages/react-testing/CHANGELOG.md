@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.6.5
+
+### Patch Changes
+
+- [`ebedbb8c`](https://github.com/lemonmade/quilt/commit/ebedbb8ce5a9a013084e7f5dcab243f4896b873c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix react-dom adaptor
+
 ## 0.6.4
 
 ### Patch Changes
