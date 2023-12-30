@@ -37,7 +37,7 @@ export const environment = createEnvironment<Context, HTMLNodeExtensions>({
     element.remove();
   },
   update(instance, create) {
-    return createNodeFromFiber(instance, create) as any;
+    return createNodeFromFiber(instance._reactInternals, create) as any;
   },
 });
 
