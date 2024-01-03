@@ -230,9 +230,9 @@
     }
   },
   "sideEffects": [
-    "./source/global.ts",
-    "./build/esnext/global.esnext",
-    "./build/esm/global.mjs"
+    "./source/globals.ts",
+    "./build/esnext/globals.esnext",
+    "./build/esm/globals.mjs"
   ],
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
