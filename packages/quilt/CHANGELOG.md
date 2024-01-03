@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.6.9
+
+### Patch Changes
+
+- [#685](https://github.com/lemonmade/quilt/pull/685) [`0a0b272a`](https://github.com/lemonmade/quilt/commit/0a0b272a1b10a05dccc1aa275761f661d67addbb) Thanks [@lemonmade](https://github.com/lemonmade)! - List globals entrypoint files as having side effects
+
 ## 0.6.8
 
 ### Patch Changes
