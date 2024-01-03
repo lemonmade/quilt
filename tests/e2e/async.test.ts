@@ -88,8 +88,15 @@ describe('async', () => {
       const {fs} = workspace;
 
       await fs.write({
+        'Async.module.css': stripIndent`
+          .Async {
+            color: purple;
+          }
+        `,
         'Async.tsx': stripIndent`
           import {useState, useEffect} from 'react';
+
+          import styles from './Async.module.css';
 
           export default function Async() {
             const [active, setActive] = useState(false);
@@ -100,7 +107,7 @@ describe('async', () => {
 
             return (
               <>
-                <div>Hello from an async component!</div>
+                <div className={styles.Async}>Hello from an async component!</div>
                 {active && <div id="hydrated">Hydrated!</div>}
               </>
             );
@@ -135,6 +142,9 @@ describe('async', () => {
       expect(pageContent).not.toMatch(`Loading...`);
       expect(pageContent).not.toMatch(`Hydrated!`);
 
+      expect(
+        await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
+      ).not.toBeNull();
       expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
       expect(
         await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
@@ -148,14 +158,87 @@ describe('async', () => {
     });
   });
 
+  it('can client render an async component', async () => {
+    await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
+      const {fs} = workspace;
+
+      await fs.write({
+        'Async.module.css': stripIndent`
+          .Async {
+            color: purple;
+          }
+        `,
+        'Async.tsx': stripIndent`
+          import styles from './Async.module.css';
+
+          export default function Async() {
+            return <div className={styles.Async} id="rendered">Rendered!</div>;
+          }
+        `,
+        'App.tsx': stripIndent`
+          import {useState} from 'react';
+          import '@quilted/quilt/globals';
+          import {createAsyncComponent} from '@quilted/quilt/async';
+
+          const Async = createAsyncComponent(() => import('./Async.tsx'), {
+            renderLoading: () => <div id="loading">Loading...</div>,
+          });
+
+          export default function App() {
+            const [rendered, setRendered] = useState(false);
+
+            return (
+              <>
+                {rendered && <Async />}
+                <button id="render" onClick={() => setRendered(true)}>Render</button>
+              </>
+            );
+          }
+        `,
+      });
+
+      const {page} = await buildAppAndOpenPage(workspace);
+
+      expect(
+        await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
+      ).toBeNull();
+      expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
+      expect(
+        await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
+      ).toBeNull();
+
+      let pageContent = await page.textContent('body');
+      expect(pageContent).not.toMatch(`Loading...`);
+      expect(pageContent).not.toMatch(`Rendered!`);
+
+      await page.click('button#render');
+      await page.waitForSelector('#rendered');
+
+      pageContent = await page.textContent('body');
+      expect(pageContent).not.toMatch(`Loading...`);
+      expect(pageContent).toMatch(`Rendered!`);
+
+      expect(
+        await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
+      ).not.toBeNull();
+    });
+  });
+
   it('can client render an async component with deferred hydration', async () => {
     await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
       const {fs} = workspace;
 
       await fs.write({
+        'Async.module.css': stripIndent`
+          .Async {
+            color: purple;
+          }
+        `,
         'Async.tsx': stripIndent`
+          import styles from './Async.module.css';
+
           export default function Async() {
-            return <div id="rendered">Rendered!</div>;
+            return <div className={styles.Async} id="rendered">Rendered!</div>;
           }
         `,
         'App.tsx': stripIndent`
@@ -183,6 +266,9 @@ describe('async', () => {
 
       const {page} = await buildAppAndOpenPage(workspace);
 
+      expect(
+        await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
+      ).toBeNull();
       expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
       expect(
         await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
@@ -205,10 +291,14 @@ describe('async', () => {
       pageContent = await page.textContent('body');
       expect(pageContent).not.toMatch(`Loading...`);
       expect(pageContent).toMatch(`Rendered!`);
+
+      expect(
+        await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
+      ).not.toBeNull();
     });
   });
 
-  it('can client render an async component', async () => {
+  it('can client render a client-only async component', async () => {
     await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
       const {fs} = workspace;
 
@@ -224,7 +314,6 @@ describe('async', () => {
           const Async = createAsyncComponent(() => import('./Async.tsx'), {
             render: 'client',
             renderLoading: () => {
-              console.log('LOADING');
               return <div>Loading...</div>;
             },
           });
