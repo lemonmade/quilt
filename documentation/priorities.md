@@ -36,3 +36,5 @@ Here are a few of the impacts of focusing on strong type safety in Quilt:
 ## Explicitness
 
 ## Match community best practices
+
+## Small-but-mighty

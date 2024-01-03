@@ -1,17 +1,94 @@
 # Package builds
 
-Quilt provides a default strategy for building packages that optimizes for bundle size in consuming projects. This document describes the different parts of this build, including some changes you have to make to your package’s `package.json`.
+Quilt recommends using [Rollup](../../tools.md#building-for-production-with-rollup) to build your packages for production. Quilt provides a set of Rollup plugins that give you a great starting point for building packages, and provides a number of build targets in its [package templates](../../getting-started.md#creating-a-package). This document describes the different parts of this build, including some configuration you’ll need to include in your package’s `package.json` file.
 
-> **Note:** For private packages (that is, the package’s `package.json` includes [`"private": true`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private)), Quilt does not build your package. Any consumers within this repo will use the source code of the package directly, so no build outputs are needed. You will still need to [configure the entry files](#using-private-packages-in-a-monorepo) for your private packages, though.
+> **Note:** For private packages (that is, the package’s `package.json` includes [`"private": true`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private)), Quilt does not recommend including a build step. Any consumers within this repo will use the source code of the package directly, so no build outputs are needed. You will still need to [configure the entry files](#using-private-packages-in-a-monorepo) for your private packages, though.
 
-For public packages, Quilt creates four different sets of outputs for your project by default, based on the [entries you specify in your `package.json`](./README.md#entries):
+Before you get started, you’ll need to install Quilt’s build tools. Make sure you have `rollup` and either `@quilted/rollup` or `@quilted/craft` installed in your workspace as a development dependency:
+
+```bash
+pnpm install rollup @quilted/rollup --save-dev
+```
+
+Then, in your package’s `rollup.config.js` file, use the `quiltPackage()` function to generate your Rollup configuration:
+
+```js
+// ./packages/my-package/rollup.config.js
+
+import {quiltPackage} from '@quilted/rollup/package';
+
+// If you have @quilted/craft installed, use this import instead:
+// import {quiltPackage} from '@quilted/craft/rollup';
+
+const configuration = await quiltPackage();
+
+export default configuration;
+```
+
+This function creates two separate rollup builds by default (the configuration files above depend on Rollup’s feature of exporting [an array of Rollup configurations](https://rollupjs.org/command-line-interface/#configuration-files)):
 
 - [ESModules build](#esmodules-build), which targets environments supporting native [JavaScript modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
-- [CommonJS build](#commonjs-build), which targets Node’s [CommonJS module format](https://nodejs.org/docs/latest/api/modules.html)
 - [ESNext build](#esnext-build), which is a minimally-transformed build that Quilt will use in consuming apps and services to get the smallest possible bundle size
-- [TypeScript declarations build](#typescript-declarations-build), which includes TypeScript definition files based on your source files
 
-Quilt provides smart defaults for handling package dependencies during build, but you can also [customize the bundling behavior](#dependency-bundling) for your package to create even more optimized outputs. Quilt can also help you generate [executable files for your package](#executable-files).
+With this configuration in place, you can add a build script to your `package.json` file. We recommend creating a script named `build` that calls Rollup, like this:
+
+```json
+{
+  "scripts": {
+    "build": "rollup --config ./rollup.config.js"
+  }
+}
+```
+
+Additionally, we recommend that you [run TypeScript from the root of your workspace](#typescript-declarations-build) before publishing packages, in order to create the TypeScript declarations corresponding to your source code.
+
+## Declaring package entries
+
+A package has one or more “entries” — a unique name that maps to a module in your package, accessible to consumers of your package. Most packages have a “root” entrypoint, which allows a consumer to import the package with just the package name. For example, if your package is named `my-package`, a consumer would import the package’s root entrypoint with:
+
+```js
+import * as MyPackage from 'my-package';
+```
+
+However, a package can also have additional entry, which are imported as subpaths of the package name. For example, if your package has a `"testing"` entrypoint for distributing testing-specific code, a consumer would import it with:
+
+```js
+import * as TestingUtilities from 'my-package/testing';
+```
+
+Quilt needs to know your package’s entries in order to build it correctly. To do so, it reads the [`package.json`’s `"exports"` field](https://nodejs.org/api/packages.html#exports), which is where Node expects packages to define this kind of mapping. The `"exports"` field is an object, where each key is an entrypoint name, and each value is a path to the corresponding module, or a further mapping, in cases where multiple files exist for a single entrypoint. Quilt packages will commonly use the nested form, in order to declare each of the builds documented in this guide. Quilt also expects you to use this mapping to declare the source file for your project; you’ll use the `source` or `quilt:source` export conditions to declare the source files for each of your entrypoints.
+
+For example, a package with both a root and `testing` entrypoint would include the following content in its `package.json`:
+
+```json
+{
+  "exports": {
+    ".": {
+      "quilt:source": "./source/index.ts"
+    },
+    "./testing": {
+      "quilt:source": "./source/testing.ts"
+    }
+  }
+}
+```
+
+We’ll add more entries to this mapping as we describe the different builds Quilt can produce. If you’d prefer to exclude these mappings from your `package.json`, you can instead include them as options to the `quiltPackage()` function, through the `entries` option:
+
+```js
+// ./packages/my-package/rollup.config.js
+
+import {quiltPackage} from '@quilted/rollup/package';
+
+const configuration = await quiltPackage({
+  entries: {
+    '.': './source/index.ts',
+    './testing': './source/testing.ts',
+  },
+});
+
+export default configuration;
+```
 
 ## ESModules build
 
@@ -37,7 +114,7 @@ export function shout(message: string) {
 }
 ```
 
-The following built files will be created when running [`quilt build`](../../cli/build.md):
+The following built files will be created when running a Rollup build:
 
 ```ts
 // ./build/esm/index.mjs
@@ -51,7 +128,7 @@ export function shout(message) {
 }
 ```
 
-In order for consuming apps and services to make use of this build, you need to reference it in your [`package.json`’s `"exports"` field](https://nodejs.org/api/packages.html#exports). We recommend doing so with the [`"import"` conditional export](https://nodejs.org/api/packages.html#conditional-exports), which is used by consuming code that supports ESModules. This condition should be included **below** the [`"source"` or `"quilt:source"` conditional export](./README.md#entries).
+In order for consuming apps and services to make use of this build, you need to reference it in your [`package.json`’s `"exports"` field](https://nodejs.org/api/packages.html#exports). We recommend doing so with the [`"import"` conditional export](https://nodejs.org/api/packages.html#conditional-exports), which is used by consuming code that supports ESModules. This condition should be included **below** the [`"source"` or `"quilt:source"` conditional export](#declaring-package-entrypoints).
 
 The following example shows a package with a “root” entry (`"."`) and a `"testing"` entry, with both the source and ESModules version of the entries referenced:
 
@@ -70,7 +147,7 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 }
 ```
 
-> **Note:** because the native JavaScript module format is the default version preferred by this package, we recommend setting the [`"type"` field in your `package.json` to `"module"`](https://nodejs.org/api/packages.html#type):
+> **Note:** because the native JavaScript module format is the default version preferred by this package, you should set the [`"type"` field in your `package.json` to `"module"`](https://nodejs.org/api/packages.html#type):
 >
 > ```json
 > {
@@ -81,120 +158,21 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 
 ### Runtime targets
 
-When creating the ESModule and CommonJS builds, Quilt will “transpile” your code to remove references to language features that are not supported by your minimum supported runtime versions. The following logic is used to determine the minimum supported runtime version for your package:
-
-- If you explicitly list browsers as a [supported runtime](./README.md#runtimes) for your package, or you do not explicitly set any supported runtimes, Quilt will attempt to read the [browserslist configuration](https://github.com/browserslist/browserslist) for the package. The easiest way to set this supported browser list is to include the [`"browserslist"` key in your `package.json`](https://github.com/browserslist/browserslist#packagejson):
-
-  ```json
-  {
-    "browserslist": ["defaults and not dead"]
-  }
-  ```
-
-  This configuration can live in any `package.json` file upwards from your package’s root directory. If you have many packages and they all target a common browser support matrix, you may want to move this `"browserslist"` configuration field into the workspace’s `package.json`, instead of the one for each individual package.
-
-  If Quilt can’t find any browserslist configuration for your package, the default browserslist browser support target will be used instead.
-
-- If you explicitly list Node.js as a [supported runtime](./README.md#runtimes) for your package, or you do not explicitly set any supported runtimes, Quilt will attempt to read the minimum supported node version from the [`"engines.node"` key in your `package.json`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#engines). For example, the following package would target any version of Node.js greater than or equal to 14:
-
-  ```json
-  {
-    "engines": {
-      "node": ">=14.0.0"
-    }
-  }
-  ```
-
-  Quilt will look for this field in your package’s `package.json`. If it is not found, Quilt will look for this field in your workspace’s `package.json`. If Quilt does not find a match in either location, the current version of Node.js will be used as a fallback.
-
-## CommonJS build
-
-To support some legacy Node.js tools that don’t fully support ESModules (including [Jest](https://jestjs.io/docs/ecmascript-modules)), Quilt also defaults to producing a CommonJS build. This build applies the same [runtime target transpilation](#runtime-targets) as the ESModules build, but uses `require()` and `module.exports` instead of native JavaScript modules.
-
-When creating the CommonJS build, Quilt will:
-
-- Create a corresponding CommonJS file for each source file in your package,
-- Rename it to have a `.cjs` extension, and
-- Place it in a `./build/cjs` output directory, preserving the original directory structure
-
-For example, with the following source code:
-
-```ts
-// ./source/index.ts
-
-export {shout} from './shout.ts';
-
-// ./source/shout.ts
-
-export function shout(message: string) {
-  console.log(`${message}!!`);
-}
-```
-
-The following built files will be created when running [`quilt build`](../../cli/build.md):
-
-```ts
-// ./build/cjs/index.cjs
-
-Object.defineProperty(exports, '__esModule', {value: true});
-
-var shout = require('./shout.cjs');
-
-exports.shout = shout.shout;
-
-// ./build/cjs/shout.cjs
-
-function shout(message) {
-  console.log(`${message}!!`);
-}
-
-exports.shout = shout;
-```
-
-In order for consuming apps and services to make use of this build, you need to reference it in your [`package.json`’s `"exports"` field](https://nodejs.org/api/packages.html#exports). We recommend doing so with the [`"require"` conditional export](https://nodejs.org/api/packages.html#conditional-exports), which is used by consuming code that prefers CommonJS modules. This condition should be included **below** the [`"source"`, `"quilt:source"`, and `"import"` conditional exports](./README.md#entries).
-
-The following example shows a package with a “root” entry (`"."`) and a `"testing"` entry, with the source, ESModules, and CommonJS versions of the entries referenced:
+When creating the ESModule and CommonJS builds, Quilt will “transpile” your code to remove references to language features that are not supported by your minimum supported runtime versions. Quilt will attempt to read the [browserslist configuration](https://github.com/browserslist/browserslist) for the package in order to determine the target environments to transpile for. The easiest way to set this supported browser list is to include the [`"browserslist"` key in your `package.json`](https://github.com/browserslist/browserslist#packagejson):
 
 ```json
 {
-  "exports": {
-    ".": {
-      "quilt:source": "./source/index.ts",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
-    },
-    "./testing": {
-      "quilt:source": "./source/testing.ts",
-      "import": "./build/esm/testing.mjs",
-      "require": "./build/cjs/testing.cjs"
-    }
-  }
+  "browserslist": ["defaults and not dead"]
 }
 ```
 
-### Disabling the CommonJS build
+This configuration can live in any `package.json` file upwards from your package’s root directory. If you have many packages and they all target a common browser support matrix, you may want to move this `"browserslist"` configuration field into the workspace’s `package.json`, instead of the one for each individual package.
 
-If you do not need your package to support CommonJS, you can disable it by passing `false` for the `build.commonjs` option of `quiltPackage()` in your package’s `quilt.project.ts`:
-
-```ts
-// ./packages/my-package/quilt.project.ts
-
-import {createProject, quiltPackage} from '@quilted/craft';
-
-export default createProject((project) => {
-  project.use(
-    quiltPackage({
-      build: {commonjs: false},
-    }),
-  );
-});
-```
-
-If you disable this build, you **should not** include the `"require"` conditional export in your package’s `package.json`.
+If Quilt can’t find any browserslist configuration for your package, the default browserslist browser support target will be used instead.
 
 ## ESNext build
 
-As noted in the previous sections, Quilt will transpile both your ESModules and CommonJS builds to match your package’s [minimum runtime targets](#runtime-targets). This is useful because it means that consumers can directly use your library, without needing to process it with any additional build tooling. However, it can be a bit of a performance issue for consuming code: if that code targets a more restricted set of runtime targets, your library may have compiled code unnecessarily.
+As noted in the previous section, Quilt will transpile your build outputs to match your package’s [minimum runtime targets](#runtime-targets). This is useful because it means that consumers can directly use your library, without needing to process it with any additional build tooling. However, it can be a bit of a performance issue for consuming code: if that code targets a more restricted set of runtime targets, your library may have compiled code unnecessarily.
 
 To address this issue, Quilt will also default to producing a special “esnext” build. This build outputs valid JavaScript code, using native JavaScript modules, but with the absolute minimum amount of transpilation applied. When you use Quilt to build an [app](../apps/) or [service](../services/), it will prefer this ESNext build, and will apply the exact same transformations to this code as it does to your project’s source code.
 
@@ -232,7 +210,7 @@ export function shout(message) {
 }
 ```
 
-In order for consuming apps and services to make use of this build, you need to reference it in your [`package.json`’s `"exports"` field](https://nodejs.org/api/packages.html#exports). Quilt requires that you use the [`"quilt:esnext"` conditional export](https://nodejs.org/api/packages.html#conditional-exports) for this build. This condition should be included **below** the [`"source"` and `"quilt:source"` conditional exports](./README.md#entries), but above the `"import"` and `"require"` conditional exports (if present).
+In order for consuming apps and services to make use of this build, you need to reference it in your [`package.json`’s `"exports"` field](https://nodejs.org/api/packages.html#exports). Quilt requires that you use the [`"quilt:esnext"` conditional export](https://nodejs.org/api/packages.html#conditional-exports) for this build. This condition should be included **below** the [`"source"` and `"quilt:source"` conditional exports](#declaring-package-entries), but above the `"import"` and `"require"` conditional exports (if present).
 
 The following example shows a package with a “root” entry (`"."`) and a `"testing"` entry, with the source, ESModules, CommonJS, and ESNext versions of the entries referenced:
 
@@ -242,14 +220,12 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
     ".": {
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./testing": {
       "quilt:source": "./source/testing.ts",
       "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs",
-      "require": "./build/cjs/testing.cjs"
+      "import": "./build/esm/testing.mjs"
     }
   }
 }
@@ -257,27 +233,23 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 
 ### Disabling the ESNext build
 
-If you do not want the ESNext build, you can disable it by passing `false` for the `build.esnext` option of `quiltPackage()` in your package’s `quilt.project.ts`:
+If you do not want the ESNext build, you can disable it by passing `false` for the `esnext` option of the `quiltPackage()` function in your package’s `rollup.config.js`:
 
 ```ts
-// ./packages/my-package/quilt.project.ts
+// ./packages/my-package/rollup.config.js
 
-import {createProject, quiltPackage} from '@quilted/craft';
+import {quiltPackage} from '@quilted/rollup/package';
 
-export default createProject((project) => {
-  project.use(
-    quiltPackage({
-      build: {esnext: false},
-    }),
-  );
-});
+const configuration = await quiltPackage({esnext: false});
+
+export default configuration;
 ```
 
 If you disable this build, you **should not** include the `"quilt:esnext"` conditional export in your package’s `package.json`.
 
 ## TypeScript declarations build
 
-For TypeScript consumers to use your package, you need to provide type definitions for your package. Unlike the other build outputs described in this document, TypeScript outputs are not generated per-project. Instead, Quilt recommends using [TypeScript project references](../../technology/typescript.md). When you run `quilt build`, Quilt knows to run the TypeScript type checker on your entire workspace (assuming you have a Quilt configuration using the [`quiltWorkspace`](../README.md#defining-your-workspace-and-projects) plugin), which will generate type definitions for all projects in the workspace.
+For TypeScript consumers to use your package, you need to provide type definitions for your package. Unlike the other build outputs described in this document, TypeScript outputs are not generated per-project. Instead, Quilt recommends using [TypeScript project references](../../technology/typescript.md). Before publishing your packages, make sure to run both Rollup and TypeScript from the root of your workspace.
 
 For each project in your workspace, you will also need to configure how and where TypeScript will produce type definitions. At the root of each project written in TypeScript, you should have a `tsconfig.json`. We recommend including at least the following options for projects that use Quilt:
 
@@ -336,7 +308,7 @@ The [`@quilted/craft` package](../../../packages/craft) provides a collection of
 }
 ```
 
-Once these type definition files are being created successfully (you can verify that your configuration is working as expected by running `quilt build` or [`quilt type-check`](../../cli/type-check.md) and checking the directory you specified with the `outDir` option), you need to update your `package.json` so consuming projects will see them.
+Once these type definition files are being created successfully (you can verify that your configuration is working as expected by running `pnpm type-check` from the root of your repository, and then checking the directory you specified with the `outDir` option), you need to update your `package.json` so consuming projects will see them.
 
 TypeScript recently [introduced support](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-7.html#packagejson-exports-imports-and-self-referencing) for the [`package.json` `"exports"` field](https://nodejs.org/api/packages.html#exports), but consumers with older versions of TypeScript will have issues if you only use the new `type` [export condition](https://nodejs.org/api/packages.html#conditional-exports). For now, you will need to provide two separate mappings for type definition files: one using the `exports` field, and the other using an older TypeScript feature called [`typesVersions`](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html#version-selection-with-typesversions).
 
@@ -349,15 +321,13 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
       "quilt:source": "./source/testing.ts",
       "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs",
-      "require": "./build/cjs/testing.cjs"
+      "import": "./build/esm/testing.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -369,7 +339,7 @@ The following example shows a package with a “root” entry (`"."`) and a `"te
 }
 ```
 
-If you only have a “root” entrypoint, you can omit the `"typesVersions"` field. If you have more entrypoints for your package, you would include each as an additional key in the `typesVersions.*` object, like `"testing"` in the example above.
+If you do not wish to support TypeScript versions earlier than 4.7, you can omit the `"types"` and `"typeVersions"` fields. If you only have a “root” entrypoint, you can omit the `"typesVersions"` field. If you have more entrypoints for your package, you would include each as an additional key in the `typesVersions.*` object, like `"testing"` in the example above.
 
 ## Executable files
 
@@ -377,23 +347,21 @@ So far, we have only looked at entrypoints into your package — parts of your 
 
 To get started, you will need to teach Quilt what source code in your project should be treated as an executable, and what the name of that executable will be. In an executable package’s `quilt.project.ts` file, update the `quiltProject()` plugin to include a mapping of executable modules:
 
-```ts
-// ./packages/my-package/quilt.project.ts
+```js
+// ./packages/my-package/rollup.config.js
 
-import {createProject, quiltPackage} from '@quilted/craft';
+import {quiltPackage} from '@quilted/rollup/package';
 
-export default createProject((project) => {
-  project.use(
-    quiltPackage({
-      executable: {
-        'my-executable': './source/index.ts',
-      },
-    }),
-  );
+const configuration = await quiltPackage({
+  executable: {
+    'my-executable': './source/index.ts',
+  },
 });
+
+export default configuration;
 ```
 
-When you run `quilt build`, Quilt will generate an executable file for each entry in this mapping, placing the output in the `bin` directory at the root of your package. These executables will reference the [ESModules build](#esmodules-build) for your project; in order for this to work, the resulting executable files will have `.mjs` file extensions.
+When you run Rollup with this package, Quilt will generate an executable file for each entry in this mapping, placing the output in the `bin` directory at the root of your package. These executables will reference the [ESModules build](#esmodules-build) for your project; in order for this to work in all versions of Node, the resulting executable files will have `.mjs` file extensions.
 
 To expose these executable files to consuming projects, you will need to list them in your [`package.json`’s `"bin"` field](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#bin):
 
@@ -420,15 +388,13 @@ The example below shows a complete example of a package’s configuration files.
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs"
+      "import": "./build/esm/index.mjs"
     },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
       "quilt:source": "./source/testing.ts",
       "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs",
-      "require": "./build/cjs/testing.cjs"
+      "import": "./build/esm/testing.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -437,7 +403,10 @@ The example below shows a complete example of a package’s configuration files.
       "testing": "./build/typescript/testing.d.ts"
     }
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config ./rollup.config.js"
+  }
 }
 ```
 
@@ -455,11 +424,11 @@ The example below shows a complete example of a package’s configuration files.
 
 > **Note:** if you want a shortcut that lets you skip most of this manual work, you can use [Quilt’s `create` command to build your package](../../getting-started.md#creating-a-package).
 
-## Advanced build concepts
+## Advanced build options
 
-### Using `private` packages in a monorepo
+### Using private packages in a monorepo
 
-If you do not intend to publish a package for use in other workspaces, you should set the [`"private": true` in the package’s `package.json`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private). When you do so, Quilt will not perform any of the builds described here, since any consuming projects in the same workspace can use the source code of the package instead of compiled outputs.
+If you do not intend to publish a package for use in other workspaces, you should set the [`"private": true` in the package’s `package.json`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private). You can also omit any Rollup configuration files and build scripts noted elsewhere in this document.
 
 For other projects to find the correct source files to use for your package, you will still need to provide some module mappings in the package’s `package.json`. However, the mappings can be significantly simpler than projects that produce built outputs. The following example shows a private package with a “root” entry (`"."`) and a `"testing"` entry:
 
@@ -468,17 +437,9 @@ For other projects to find the correct source files to use for your package, you
   "exports": {
     ".": "./source/index.ts",
     "./testing": "./source/testing.ts"
-  },
-  "types": "./build/typescript/index.d.ts",
-  "typeVersions": {
-    "*": {
-      "testing": "./build/typescript/testing.d.ts"
-    }
   }
 }
 ```
-
-In the example above, we’ve included the [`"typesVersions"` mapping for older TypeScript versions](). If your project only has single entry, and uses [TypeScript’s support for the `"exports"` field](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-7.html#packagejson-exports-imports-and-self-referencing), you can omit both the `"types"` and `"typesVersions"` fields.
 
 ### Tree shaking
 
@@ -510,46 +471,36 @@ There is a downside, though: consumers can’t rely on their dependency manager 
 
 When Quilt builds your project, any dependencies you list in `"devDependencies"` (as opposed to `"dependencies"` or `"peerDependencies"`) will be bundled into your project. Change a dependency from being listed in `"dependencies"` to instead be listed in `"devDependencies"`, and Quilt will take care of the rest!
 
-If you’d like to force all dependencies to be bundled instead of just development dependencies, you can set the `build.bundle` option to `true` in your package’s `quiltPackage()` plugin:
+If you’d like to force all dependencies to be bundled instead of just development dependencies, you can set the `bundle` option to `true` in your package’s `quiltPackage()` plugin:
 
-```ts
-// quilt.project.ts
+```js
+// ./packages/my-package/rollup.config.js
 
-import {createProject, quiltPackage} from '@quilted/craft';
+import {quiltPackage} from '@quilted/rollup/package';
 
-export default createProject((project) => {
-  project.use(
-    quiltPackage({
-      build: {
-        bundle: true,
-      },
-    }),
-  );
-});
+const configuration = await quiltPackage({bundle: true});
+
+export default configuration;
 ```
 
 This `bundle` option also accepts a more complex structure that lets you deeply customize which dependencies are and aren’t bundled. For more details, see the [`rollup-plugin-node-externals` plugin documentation](https://github.com/Septh/rollup-plugin-node-externals), which is used to perform this selective bundling. Note that, because Quilt frames this option as which dependencies are bundled, you pass the opposite options as you would to `rollup-plugin-node-externals`, which frames the option in terms of which dependencies are “externalized”. So, for example, if you want to bundle only a special `my-bundled-dependency` package, you would pass the following options:
 
-```ts
-// quilt.project.ts
+```js
+// ./packages/my-package/rollup.config.js
 
-import {createProject, quiltPackage} from '@quilted/craft';
+import {quiltPackage} from '@quilted/rollup/package';
 
-export default createProject((project) => {
-  project.use(
-    quiltPackage({
-      build: {
-        bundle: {
-          // In rollup-plugin-node-externals, these would both be `true` instead
-          dependencies: false,
-          devDependencies: false,
-          // In rollup-plugin-node-externals, this would be passed as the `exclude` option instead
-          include: ['my-bundled-dependency'],
-        },
-      },
-    }),
-  );
+const configuration = await quiltPackage({
+  bundle: {
+    // In rollup-plugin-node-externals, these would both be `true` instead
+    dependencies: false,
+    devDependencies: false,
+    // In rollup-plugin-node-externals, this would be passed as the `exclude` option instead
+    include: ['my-bundled-dependency'],
+  },
 });
+
+export default configuration;
 ```
 
 ### Source files
@@ -591,4 +542,16 @@ The `react/jsx-runtime` entry is only available in React version 17 and up. Your
     }
   }
 }
+```
+
+If you’d prefer the package use the `preact` package for JSX instead of `react`, you can set the `react` option to `'preact'` in your package’s `quiltPackage()` plugin:
+
+```js
+// ./packages/my-package/rollup.config.js
+
+import {quiltPackage} from '@quilted/rollup/package';
+
+const configuration = await quiltPackage({react: 'preact'});
+
+export default configuration;
 ```

@@ -8,7 +8,7 @@ There are two things you’ll need before you create your first project:
 
 - **A modern version of [Node.js](https://nodejs.org/en/)**. `@quilted/create` is written using Node.js, and is distributed on the public NPM registry. It requires a Node.js version that [supports ES modules](https://nodejs.org/api/esm.html). We recommend using the latest version of Node.js’s [“long-term support” release](https://nodejs.org/en/about/releases/) for most projects. If you don’t know how to manage your Node.js version, we recommend trying [`nvm`](https://github.com/nvm-sh/nvm).
 
-  If you run the `node --version` command and see at least `v14.0.0`, you should be good to continue.
+  If you run the `node --version` command and see at least `v18.0.0`, you should be good to continue.
 
 - **A package manager to run the `create` command**. Node.js ships with built-in support for [npm](https://docs.npmjs.com/about-npm), and Quilt works great with this default. If you’d prefer, you can also use [yarn](https://yarnpkg.com) or [pnpm](https://pnpm.io) instead.
 
