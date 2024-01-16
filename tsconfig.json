@@ -17,6 +17,7 @@
     {"path": "./integrations/apollo"},
     {"path": "./integrations/cloudflare"},
     {"path": "./integrations/deno"},
+    {"path": "./integrations/htmx"},
     {"path": "./integrations/react-query"},
     {"path": "./packages/assets"},
     {"path": "./packages/async"},

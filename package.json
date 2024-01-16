@@ -20,7 +20,7 @@
     "typescript.run": "tsx --conditions quilt:source",
     "typescript.watch": "tsx watch --conditions quilt:source"
   },
-  "packageManager": "pnpm@8.10.0+sha256.3c5d70d07b0c4849d7e07398b62bf48ca6619ca86f77981125eaab7f5ee82c4c",
+  "packageManager": "pnpm@8.14.1+sha256.2df78e65d433d7693b9d3fbdaf431b2d96bb4f96a2ffecd51a50efe16e50a6a8",
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.0",
