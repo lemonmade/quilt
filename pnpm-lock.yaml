@@ -156,6 +156,16 @@ importers:
         specifier: workspace:*
         version: link:../../packages/quilt
 
+  integrations/htmx:
+    dependencies:
+      '@quilted/request-router':
+        specifier: ^0.2.0
+        version: link:../../packages/request-router
+    devDependencies:
+      htmx.org:
+        specifier: ^1.9.10
+        version: 1.9.10
+
   integrations/react-query:
     dependencies:
       '@quilted/useful-types':
@@ -1054,8 +1064,11 @@ importers:
 
   tests/e2e:
     devDependencies:
+      '@quilted/htmx':
+        specifier: workspace:*
+        version: link:../../integrations/htmx
       '@quilted/quilt':
-        specifier: ^0.6.0
+        specifier: workspace:*
         version: link:../../packages/quilt
       '@types/common-tags':
         specifier: ^1.8.0
@@ -1072,6 +1085,9 @@ importers:
       get-port:
         specifier: ^5.0.0
         version: 5.1.1
+      htmx.org:
+        specifier: ^1.9.10
+        version: 1.9.10
       nanoid:
         specifier: ^3.1.30
         version: 3.3.4
@@ -5939,6 +5955,10 @@ packages:
   /html-rewriter-wasm@0.4.1:
     resolution: {integrity: sha512-lNovG8CMCCmcVB1Q7xggMSf7tqPCijZXaH4gL6iE8BFghdQCbaY5Met9i1x2Ex8m/cZHDUtXK9H6/znKamRP8Q==}
     dev: false
+
+  /htmx.org@1.9.10:
+    resolution: {integrity: sha512-UgchasltTCrTuU2DQLom3ohHrBvwr7OqpwyAVJ9VxtNBng4XKkVsqrv0Qr3srqvM9ZNI3f1MmvVQQqK7KW/bTA==}
+    dev: true
 
   /http-cache-semantics@4.1.0:
     resolution: {integrity: sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==}

@@ -40,6 +40,40 @@ export interface RenderOptions<CacheKey = AssetsCacheKey> {
   ): ReadableStream<any> | Promise<ReadableStream<any>>;
 }
 
+export async function renderToFragmentResponse(
+  element: ReactElement<any>,
+  {request}: Pick<RenderOptions<any>, 'request'>,
+) {
+  const baseUrl = (request as any).URL ?? new URL(request.url);
+  const html = new HTMLManager();
+  const http = new HttpManager({headers: request.headers});
+
+  const rendered = await extract(element, {
+    decorate(element) {
+      return (
+        <ServerContext http={http} html={html} url={baseUrl}>
+          {element}
+        </ServerContext>
+      );
+    },
+  });
+
+  const {headers, statusCode = 200, redirectUrl} = http.state;
+
+  if (redirectUrl) {
+    return new RedirectResponse(redirectUrl, {
+      status: statusCode as 301,
+      headers,
+      request,
+    });
+  }
+
+  return new HTMLResponse(rendered ?? '', {
+    status: statusCode,
+    headers,
+  });
+}
+
 export async function renderToResponse<CacheKey = AssetsCacheKey>(
   element: ReactElement<any>,
   options: RenderOptions<CacheKey>,

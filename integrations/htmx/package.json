@@ -1,0 +1,50 @@
+{
+  "name": "@quilted/htmx",
+  "description": "Handy utilities for writing htmx servers using JavaScript",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "integrations/htmx"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config ./rollup.config.js"
+  },
+  "dependencies": {
+    "@quilted/request-router": "^0.2.0"
+  },
+  "peerDependencies": {
+    "htmx.org": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "htmx.org": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "htmx.org": "^1.9.10"
+  },
+  "browserslist": [
+    "defaults and fully supports es6-module",
+    "maintained node versions"
+  ]
+}
