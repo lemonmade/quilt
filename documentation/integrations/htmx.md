@@ -8,6 +8,8 @@ To follow this guide, you’ll need a Quilt app with a [custom server](../projec
 
 1. [Install htmx in your project](#install-htmx-in-your-project)
 2. [Update your browser entry](#update-your-browser-entry)
+3. [Update your server](#update-your-server)
+4. [Using HTMX request and response helpers](#using-htmx-request-and-response-helpers)
 
 ## Install htmx in your project
 
@@ -77,25 +79,85 @@ router.get('/', async (request) => {
 
 function App() {
   return (
-    <button hx-post="/clicked" hx-swap="outerHTML">
-      Click me!
-    </button>
+    <div>
+      <p>My app</p>
+      <button hx-post="/clicked" hx-swap="outerHTML">
+        Click me!
+      </button>
+    </div>
   );
 }
 
 // When clicking the button, htmx will send a POST request to this `/clicked`
-// endpoint. This endpoint responds with
-router.post('/clicked', async () => {
+// endpoint.
+router.post('/clicked', async (request) => {
   // This helper renders a React element to an HTML response, without wrapping
   // a full HTML document around it. htmx will replace the outerHTML of the button
-  // with the content of this response.
-  const response = await renderToFragmentResponse(<ClickedButton />);
+  // with the content of this response, thanks to to the `hx-swap` attribute.
+  const response = await renderToFragmentResponse(<ClickedButton />, {
+    request,
+  });
   return response;
 });
 
 function ClickedButton() {
   return <button>Clicked!</button>;
 }
+
+export default router;
+```
+
+## Using HTMX request and response helpers
+
+HTMX sends [special headers on requests to your application](https://htmx.org/docs/#request-headers), and you can control client-side behaviors by sending [special headers on your responses](https://htmx.org/docs/#response-headers) back to the client. Quilt’s [`@quilted/htmx` package](/integrations/htmx/) provides some helpers for working with these headers. You don’t have to use these helpers, but they can make it a little easier to handle the value of these headers in your JavaScript server.
+
+In the following example, we are using Quilt’s utility to parse the `HX-Trigger` request header, which contains the ID of the element that triggered a request. We’re then using the `Response` subclass, `HTMXResponse`, which lets us easily set the `HX-Retarget` response header in order to configure the response to replace the entire body.
+
+```tsx
+import '@quilted/quilt/globals';
+import {RequestRouter} from '@quilted/quilt/request-router';
+import {renderToResponse} from '@quilted/quilt/server';
+import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
+import {BrowserAssets} from 'quilt:module/assets';
+
+const router = new RequestRouter();
+const assets = new BrowserAssets();
+
+router.get('/', async (request) => {
+  const response = await renderToResponse(<App />, {
+    request,
+    assets,
+  });
+
+  return response;
+});
+
+function App() {
+  return (
+    <>
+      <button id="one" hx-post="/choose">
+        Option one
+      </button>
+      <button id="two" hx-post="/choose">
+        Option two
+      </button>
+    </>
+  );
+}
+
+router.post('/choose', async (request) => {
+  const {trigger} = parseHTMXRequestHeaders(request.headers);
+
+  if (trigger == null) {
+    return new HTMXResponse(`<div>You didn’t choose an option!</div>`);
+  }
+
+  return new HTMXResponse(`<div>You chose option: ${trigger}</div>`, {
+    htmx: {
+      target: 'body',
+    },
+  });
+});
 
 export default router;
 ```

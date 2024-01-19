@@ -1064,8 +1064,11 @@ importers:
 
   tests/e2e:
     devDependencies:
+      '@quilted/htmx':
+        specifier: workspace:*
+        version: link:../../integrations/htmx
       '@quilted/quilt':
-        specifier: ^0.6.0
+        specifier: workspace:*
         version: link:../../packages/quilt
       '@types/common-tags':
         specifier: ^1.8.0
@@ -1082,6 +1085,9 @@ importers:
       get-port:
         specifier: ^5.0.0
         version: 5.1.1
+      htmx.org:
+        specifier: ^1.9.10
+        version: 1.9.10
       nanoid:
         specifier: ^3.1.30
         version: 3.3.4
