@@ -8,6 +8,14 @@ interface Options {
    * @default true
    */
   cover?: boolean;
+
+  /**
+   * What effect interactive UI elements, like the virtual keyboard,
+   * should have on viewport sizes.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag#interactive-widget
+   */
+  interactiveWidget?: 'resizes-visual' | 'resizes-content' | 'overlays-content';
 }
 
 /**
@@ -18,14 +26,20 @@ interface Options {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
  */
-export function useViewport({cover = true}: Options) {
+export function useViewport({cover = true, interactiveWidget}: Options) {
   useDomEffect(
     (manager) => {
       const parts = [
         'width=device-width, initial-scale=1.0, height=device-height',
       ];
 
-      if (cover) parts.push('viewport-fit=cover');
+      if (cover) {
+        parts.push('viewport-fit=cover');
+      }
+
+      if (interactiveWidget) {
+        parts.push(`interactive-widget=${interactiveWidget}`);
+      }
 
       return manager.addMeta({
         name: 'viewport',
