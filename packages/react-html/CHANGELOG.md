@@ -1,5 +1,11 @@
 # @quilted/react-html
 
+## 0.4.1
+
+### Patch Changes
+
+- [`89d63fb6`](https://github.com/lemonmade/quilt/commit/89d63fb6fd0abb90a54bff67cb38db981ba37dd8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `interactiveWidget` option to Viewport hook and component
+
 ## 0.4.0
 
 ### Minor Changes
