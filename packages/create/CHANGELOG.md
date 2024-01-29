@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.15
+
+### Patch Changes
+
+- [`f2000adb`](https://github.com/lemonmade/quilt/commit/f2000adbb0d4cfd57901b560e4d12e3690bee8d5) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify package and smaller app templates
+
 ## 0.2.14
 
 ### Patch Changes

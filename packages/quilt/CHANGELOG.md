@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.6.10
+
+### Patch Changes
+
+- [#692](https://github.com/lemonmade/quilt/pull/692) [`afb65d19`](https://github.com/lemonmade/quilt/commit/afb65d19406001ac76674850b3ccded17862b76c) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `renderToFragmentResponse` helper function
+
 ## 0.6.9
 
 ### Patch Changes
