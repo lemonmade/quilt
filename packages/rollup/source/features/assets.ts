@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {readFileSync} from 'fs';
 import * as fs from 'fs/promises';
 import {createHash} from 'crypto';
 
@@ -14,6 +15,7 @@ import * as mime from 'mrmime';
 import type {
   AssetsBuildManifest,
   AssetsBuildManifestEntry,
+  AssetBuildManifestAsset,
 } from '@quilted/assets';
 
 export interface AssetManifestOptions {
@@ -26,7 +28,7 @@ export interface AssetManifestOptions {
 export function assetManifest(manifestOptions: AssetManifestOptions): Plugin {
   return {
     name: '@quilted/asset-manifest',
-    async generateBundle(options, bundle) {
+    async writeBundle(options, bundle) {
       await writeManifestForBundle.call(this, bundle, manifestOptions, options);
     },
   };
@@ -36,7 +38,7 @@ async function writeManifestForBundle(
   this: PluginContext,
   bundle: OutputBundle,
   {file, baseURL, cacheKey, priority}: AssetManifestOptions,
-  {format}: NormalizedOutputOptions,
+  {format, dir = process.cwd()}: NormalizedOutputOptions,
 ) {
   const outputs = Object.values(bundle);
 
@@ -61,26 +63,57 @@ async function writeManifestForBundle(
     dependencyMap.set(output.fileName, output.imports);
   }
 
-  const assets: string[] = [];
-  const assetIdMap = new Map<string, number>();
+  const scripts: AssetBuildManifestAsset[] = [];
+  const styles: AssetBuildManifestAsset[] = [];
+  const scriptsIdMap = new Map<string, number>();
+  const stylesIdMap = new Map<string, number>();
+
+  function createAsset(file: string) {
+    const contents = readFileSync(path.join(dir, file));
+    return {
+      file,
+      integrity: `sha256-${createHash('sha256')
+        .update(contents)
+        .digest('base64')}`,
+    };
+  }
 
   function getAssetId(file: string) {
-    let id = assetIdMap.get(file);
+    let id: number;
 
-    if (id == null) {
-      assets.push(`${baseURL}${file}`);
-      id = assets.length - 1;
-      assetIdMap.set(file, id);
+    if (file.endsWith('.css')) {
+      id = stylesIdMap.get(file)!;
+
+      if (id == null) {
+        styles.push(createAsset(file));
+        id = styles.length - 1;
+        stylesIdMap.set(file, id);
+      }
+    } else {
+      id = scriptsIdMap.get(file)!;
+
+      if (id == null) {
+        scripts.push(createAsset(file));
+        id = scripts.length - 1;
+        scriptsIdMap.set(file, id);
+      }
     }
 
     return id;
   }
 
   const manifest: AssetsBuildManifest = {
+    version: '0.1',
     priority,
     cacheKey: cacheKey && cacheKey.size > 0 ? cacheKey.toString() : undefined,
-    assets,
-    attributes: format === 'es' ? {scripts: {type: 'module'}} : undefined,
+    baseURL,
+    styles: {
+      assets: styles,
+    },
+    scripts: {
+      assets: scripts,
+      attributes: format === 'es' ? {type: 'module'} : undefined,
+    },
     entries: {
       default: createAssetsEntry([...entryChunk.imports, entryChunk.fileName], {
         dependencyMap,

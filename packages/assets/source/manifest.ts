@@ -1,6 +1,7 @@
 export type {
   AssetsBuildManifest,
   AssetsBuildManifestEntry,
+  AssetBuildManifestAsset,
 } from './manifest/types.ts';
 export {
   BrowserAssetsFromManifests,

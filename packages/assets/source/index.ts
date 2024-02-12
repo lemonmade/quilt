@@ -18,4 +18,5 @@ export {
   createBrowserAssetsEntryFromManifest,
   type AssetsBuildManifest,
   type AssetsBuildManifestEntry,
+  type AssetBuildManifestAsset,
 } from './manifest.ts';
