@@ -79,6 +79,10 @@ interface MessageMap {
   [FUNCTION_RESULT]: [string, Error?, any?];
 }
 
+type MessageData = {
+  [K in keyof MessageMap]: [K, MessageMap[K]];
+}[keyof MessageMap];
+
 /**
  * Creates a thread from any object that conforms to the `ThreadTarget`
  * interface.
@@ -226,10 +230,17 @@ export function createThread<
     target.send([type, args], transferables);
   }
 
-  async function listener(data: unknown) {
-    if (data == null || !Array.isArray(data)) {
+  async function listener(rawData: unknown) {
+    const isThreadMessageData =
+      Array.isArray(rawData) &&
+      typeof rawData[0] === 'number' &&
+      (rawData[1] == null || Array.isArray(rawData[1]));
+
+    if (!isThreadMessageData) {
       return;
     }
+
+    const data = rawData as MessageData;
 
     switch (data[0]) {
       case TERMINATE: {
@@ -238,7 +249,7 @@ export function createThread<
       }
       case CALL: {
         const stackFrame = new StackFrame();
-        const [id, property, args] = data[1] as MessageMap[typeof CALL];
+        const [id, property, args] = data[1];
         const func = activeApi.get(property);
 
         try {
@@ -263,11 +274,11 @@ export function createThread<
         break;
       }
       case RESULT: {
-        resolveCall(...(data[1] as MessageMap[typeof RESULT]));
+        resolveCall(...data[1]);
         break;
       }
       case RELEASE: {
-        const [id] = data[1] as MessageMap[typeof RELEASE];
+        const [id] = data[1];
         const func = idsToFunction.get(id);
 
         if (func) {
@@ -278,12 +289,11 @@ export function createThread<
         break;
       }
       case FUNCTION_RESULT: {
-        resolveCall(...(data[1] as MessageMap[typeof FUNCTION_RESULT]));
+        resolveCall(...data[1]);
         break;
       }
       case FUNCTION_APPLY: {
-        const [callId, funcId, args] =
-          data[1] as MessageMap[typeof FUNCTION_APPLY];
+        const [callId, funcId, args] = data[1];
 
         const stackFrame = new StackFrame();
 
