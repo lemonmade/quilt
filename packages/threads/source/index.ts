@@ -25,11 +25,6 @@ export {
 export type {
   Thread,
   ThreadTarget,
-  ThreadCallable,
-  ThreadCallableFunction,
-  ThreadSafeArgument,
-  ThreadSafeReturnType,
-  ThreadSafeReturnValueType,
   ThreadEncoder,
   ThreadEncoderApi,
   ThreadEncodable,

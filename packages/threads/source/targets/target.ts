@@ -1,7 +1,6 @@
 import type {
   Thread,
   ThreadTarget,
-  ThreadCallable,
   ThreadEncoder,
   ThreadEncoderApi,
   AnyFunction,
@@ -120,7 +119,7 @@ export function createThread<
     ) => void
   >();
 
-  const call = createCallable<Target>(handlerForCall, callable);
+  const call = createCallable<Thread<Target>>(handlerForCall, callable);
 
   const encoderApi: ThreadEncoderApi = {
     functions: {
@@ -414,7 +413,7 @@ function createCallable<T>(
     property: string | number | symbol,
   ) => AnyFunction | undefined,
   callable?: (keyof T)[],
-): ThreadCallable<T> {
+): T {
   let call: any;
 
   if (callable == null) {

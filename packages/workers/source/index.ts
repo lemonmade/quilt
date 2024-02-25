@@ -4,16 +4,7 @@ export {
   createThread,
   createThreadFromWebWorker,
 } from '@quilted/threads';
-export type {
-  Thread,
-  ThreadTarget,
-  ThreadOptions,
-  ThreadCallable,
-  ThreadCallableFunction,
-  ThreadSafeArgument,
-  ThreadSafeReturnType,
-  ThreadSafeReturnValueType,
-} from '@quilted/threads';
+export type {Thread, ThreadTarget, ThreadOptions} from '@quilted/threads';
 
 export {
   createWorker,

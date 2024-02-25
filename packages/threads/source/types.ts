@@ -12,7 +12,13 @@ import type {
  * with it as if its methods were implemented in the same environment as your
  * own code.
  */
-export type Thread<Target> = ThreadCallable<Target>;
+export type Thread<Target> = {
+  [K in keyof Target]: Target[K] extends (...args: any[]) => infer ReturnType
+    ? ReturnType extends Promise<any> | AsyncGenerator<any, any, any>
+      ? Target[K]
+      : never
+    : never;
+};
 
 /**
  * An object backing a `Thread` that provides the message-passing interface
@@ -38,95 +44,9 @@ export interface ThreadTarget {
 }
 
 /**
- * A function type that can be called over a thread. It is the same as defining a
- * normal function type, but with the additional restriction that the function must
- * always return an asynchronous value (either a promise or an async generator). Additionally,
- * all arguments to that function must also be thread-callable
- */
-export interface ThreadCallableFunction<Args extends any[], ReturnType> {
-  (...args: ThreadSafeArgument<Args>): ThreadSafeReturnType<ReturnType>;
-}
-
-/**
  * A mapped object type that takes an object with methods, and converts it into the
  * an object with the same methods that can be called over a thread.
  */
-export type ThreadCallable<T> = {
-  [K in keyof T]: T[K] extends (...args: infer Args) => infer ReturnType
-    ? ThreadCallableFunction<Args, ReturnType>
-    : never;
-};
-
-export type MaybePromise<T> = T extends Promise<any> ? T : T | Promise<T>;
-
-/**
- * Converts the return type of a function into the type it will be when
- * passed over a thread.
- */
-export type ThreadSafeReturnType<T> = T extends AsyncGenerator<
-  infer T,
-  infer R,
-  infer N
->
-  ? AsyncGenerator<
-      ThreadSafeReturnValueType<T>,
-      ThreadSafeReturnValueType<R>,
-      ThreadSafeReturnValueType<N>
-    >
-  : T extends Generator<infer T, infer R, infer N>
-  ?
-      | Generator<
-          ThreadSafeReturnValueType<T>,
-          ThreadSafeReturnValueType<R>,
-          ThreadSafeReturnValueType<N>
-        >
-      | AsyncGenerator<
-          ThreadSafeReturnValueType<T>,
-          ThreadSafeReturnValueType<R>,
-          ThreadSafeReturnValueType<N>
-        >
-  : T extends Promise<infer U>
-  ? Promise<ThreadSafeReturnValueType<U>>
-  : T extends infer U | Promise<infer U>
-  ? Promise<ThreadSafeReturnValueType<U>>
-  : Promise<ThreadSafeReturnValueType<T>>;
-
-/**
- * Converts an object into the type it will be when passed over a thread.
- */
-export type ThreadSafeReturnValueType<T> = T extends (
-  ...args: infer Args
-) => infer ReturnType
-  ? ThreadCallableFunction<Args, ReturnType>
-  : T extends (infer ArrayElement)[]
-  ? ThreadSafeReturnValueType<ArrayElement>[]
-  : T extends readonly (infer ArrayElement)[]
-  ? readonly ThreadSafeReturnValueType<ArrayElement>[]
-  : T extends Set<infer U>
-  ? Set<ThreadSafeReturnValueType<U>>
-  : T extends Map<infer K, infer U>
-  ? Map<K, ThreadSafeReturnValueType<U>>
-  : T extends object
-  ? {[K in keyof T]: ThreadSafeReturnValueType<T[K]>}
-  : T;
-
-/**
- * Converts an object into the type it could be if accepted as an argument to a function
- * called over a thread.
- */
-export type ThreadSafeArgument<T> = T extends (
-  ...args: infer Args
-) => infer TypeReturned
-  ? TypeReturned extends Promise<any>
-    ? (...args: Args) => TypeReturned
-    : TypeReturned extends AsyncGenerator<any, any, any>
-    ? (...args: Args) => TypeReturned
-    : TypeReturned extends Generator<infer T, infer R, infer N>
-    ? (...args: Args) => AsyncGenerator<T, R, N>
-    : TypeReturned extends boolean
-    ? (...args: Args) => boolean | Promise<boolean>
-    : (...args: Args) => TypeReturned | Promise<TypeReturned>
-  : {[K in keyof T]: ThreadSafeArgument<T[K]>};
 
 /**
  * An object that can retain a reference to a `MemoryManageable` object.

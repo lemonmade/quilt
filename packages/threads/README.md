@@ -69,7 +69,9 @@ import {createThreadFromWebWorker} from '@quilted/threads';
 // a paired thread.
 const thread = createThreadFromWebWorker(self, {
   expose: {
-    add(a: number, b: number) {
+    // In reality, you’d usually implement a more computationally-expensive
+    // function here!
+    async add(a: number, b: number) {
       return a + b;
     },
   },
@@ -107,17 +109,17 @@ worker.terminate();
 
 ### Restrictions on thread functions
 
-Not all types of arguments are supported for functions proxied via message passing by `@quilted/threads`. Only the following simple types can be used:
+Not all types of arguments are supported for functions proxied via message passing by `@quilted/threads`. Only the following types can be used:
 
 - Strings, numbers, `true`, `false`, `null`, and `undefined`
-- Objects whose keys and values are all simple types
-- Arrays whose values are all simple types
+- `RegExp`, `Date`, `ArrayBuffer`, and `URL` instances
+- Objects whose keys and values are all acceptable types
+- Arrays, `Map`s, and `Set`s whose values are acceptable types
 - Functions, but they will become asynchronous when proxied, and all functions accepted by arguments in those functions, or returned as part of return values, will have the same argument limitations (also note the [memory management implications of functions](#memory-management) detailed below)
 
 This excludes many types, but of particular note are the following restrictions:
 
 - No `WeakMap` or `WeakSet`
-- No `ArrayBuffer` or typed arrays
 - Instances of classes will transfer, but only their own properties — that is, properties on their prototype chain **will not** be transferred (additionally, no effort is made to preserve `instanceof` or similar checks on the transferred value)
 
 ### Memory management

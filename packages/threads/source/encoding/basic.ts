@@ -118,22 +118,23 @@ export function createBasicEncoder({
         return fullResult;
       }
 
+      // TODO: avoid this if using a `structuredClone` postMessage-ing object?
       if (value instanceof RegExp) {
-        const result = [{[REGEXP]: [value.source, value.flags]}];
+        const result = {[REGEXP]: [value.source, value.flags]};
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
       }
 
       if (value instanceof URL) {
-        const result = [{[URL_ID]: value.href}];
+        const result = {[URL_ID]: value.href};
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
       }
 
       if (value instanceof Date) {
-        const result = [{[DATE]: value.toISOString()}];
+        const result = {[DATE]: value.toISOString()};
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
@@ -143,7 +144,7 @@ export function createBasicEncoder({
         const entries = [...value.entries()].map(([key, value]) => {
           return [encodeValue(key), encodeValue(value)];
         });
-        const result = [{[MAP]: entries}];
+        const result = {[MAP]: entries};
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
@@ -151,7 +152,7 @@ export function createBasicEncoder({
 
       if (value instanceof Set) {
         const entries = [...value].map((entry) => encodeValue(entry));
-        const result = [{[SET]: entries}];
+        const result = {[SET]: entries};
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
@@ -277,6 +278,10 @@ export function createBasicEncoder({
         }
 
         return func;
+      }
+
+      if (!isBasicObject(value)) {
+        return value;
       }
 
       const result: Record<string | symbol, any> = {};
