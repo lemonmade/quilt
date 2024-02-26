@@ -1,5 +1,11 @@
 # @quilted/workers
 
+## 0.4.2
+
+### Patch Changes
+
+- [`3a573a8d`](https://github.com/lemonmade/quilt/commit/3a573a8db9978749323691eadae530397ed606f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify thread helper types
+
 ## 0.4.1
 
 ### Patch Changes

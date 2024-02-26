@@ -1,5 +1,13 @@
 # @quilted/threads
 
+## 2.1.1
+
+### Patch Changes
+
+- [`3a573a8d`](https://github.com/lemonmade/quilt/commit/3a573a8db9978749323691eadae530397ed606f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify thread helper types
+
+- [`79ff7af7`](https://github.com/lemonmade/quilt/commit/79ff7af7cc4e594a86efc0302f1ddfdc309fdb65) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up type casting during thread creation
+
 ## 2.1.0
 
 ### Minor Changes
