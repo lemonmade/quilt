@@ -24,54 +24,26 @@ import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
 
-export interface RenderOptions<CacheKey = AssetsCacheKey> {
-  readonly request: Request;
-  readonly stream?: 'headers' | false;
-  readonly assets?: BrowserAssets<CacheKey>;
-  readonly cacheKey?: CacheKey;
-  waitUntil?(promise: Promise<any>): void;
-  renderHTML?(
+export interface RenderHTMLFunction {
+  (
     content: ReadableStream<string>,
     context: {
       readonly manager: HTMLManager;
+      readonly headers: Headers;
       readonly assets?: BrowserAssetsEntry;
       readonly preloadAssets?: BrowserAssetsEntry;
     },
-  ): ReadableStream<any> | Promise<ReadableStream<any>>;
+  ): ReadableStream<any> | string | Promise<ReadableStream<any> | string>;
 }
 
-export async function renderToFragmentResponse(
-  element: ReactElement<any>,
-  {request}: Pick<RenderOptions<any>, 'request'>,
-) {
-  const baseUrl = (request as any).URL ?? new URL(request.url);
-  const html = new HTMLManager();
-  const http = new HttpManager({headers: request.headers});
-
-  const rendered = await extract(element, {
-    decorate(element) {
-      return (
-        <ServerContext http={http} html={html} url={baseUrl}>
-          {element}
-        </ServerContext>
-      );
-    },
-  });
-
-  const {headers, statusCode = 200, redirectUrl} = http.state;
-
-  if (redirectUrl) {
-    return new RedirectResponse(redirectUrl, {
-      status: statusCode as 301,
-      headers,
-      request,
-    });
-  }
-
-  return new HTMLResponse(rendered ?? '', {
-    status: statusCode,
-    headers,
-  });
+export interface RenderOptions<CacheKey = AssetsCacheKey> {
+  readonly request: Request;
+  readonly stream?: 'headers' | false;
+  readonly headers?: HeadersInit;
+  readonly assets?: BrowserAssets<CacheKey>;
+  readonly cacheKey?: CacheKey;
+  readonly renderHTML?: boolean | 'fragment' | 'document' | RenderHTMLFunction;
+  waitUntil?(promise: Promise<any>): void;
 }
 
 export async function renderToResponse<CacheKey = AssetsCacheKey>(
@@ -97,11 +69,12 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
   const {
     request,
-    stream: shouldStream = false,
     assets,
     cacheKey: explicitCacheKey,
+    headers: explicitHeaders,
     waitUntil = noop,
-    renderHTML,
+    stream: shouldStream = false,
+    renderHTML = true,
   } = options;
 
   const baseUrl = (request as any).URL ?? new URL(request.url);
@@ -115,8 +88,8 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   const assetsManager = new AssetsManager<CacheKey>({cacheKey});
 
   let responseStatus = 200;
-  let appHeaders: Headers | undefined;
   let appStream: ReadableStream<any> | undefined;
+  const headers = new Headers(explicitHeaders);
 
   if (shouldStream === false && element != null) {
     const rendered = await extract(element, {
@@ -134,17 +107,20 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       },
     });
 
-    const {headers, statusCode = 200, redirectUrl} = http.state;
+    const {headers: appHeaders, statusCode = 200, redirectUrl} = http.state;
+
+    for (const [header, value] of appHeaders.entries()) {
+      headers.set(header, value);
+    }
 
     if (redirectUrl) {
       return new RedirectResponse(redirectUrl, {
         status: statusCode as 301,
-        headers,
+        headers: headers,
         request,
       });
     }
 
-    appHeaders = headers;
     responseStatus = statusCode;
 
     const appTransformStream = new TransformStream();
@@ -187,16 +163,16 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     waitUntil(renderAppStream());
   }
 
-  const {headers, body} = await renderToHTMLStream(appStream);
+  const body = await renderToHTMLBody(appStream);
 
   return new HTMLResponse(body, {
     status: responseStatus,
     headers,
   });
 
-  async function renderToHTMLStream(content: ReadableStream<any>) {
-    const headers = new Headers(appHeaders);
-
+  async function renderToHTMLBody(
+    content: ReadableStream<any>,
+  ): Promise<ReadableStream<any> | string> {
     const [synchronousAssets, preloadAssets] = await Promise.all([
       assets?.entry({
         cacheKey,
@@ -223,14 +199,17 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       }
     }
 
-    if (renderHTML) {
+    if (typeof renderHTML === 'function') {
       const body = await renderHTML(content, {
         manager: html,
+        headers,
         assets: synchronousAssets,
         preloadAssets,
       });
 
-      return {headers, body};
+      return body;
+    } else if (renderHTML === false || renderHTML === 'fragment') {
+      return content;
     }
 
     const responseStream = new TextEncoderStream();
@@ -347,7 +326,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
     waitUntil(renderFullHTML());
 
-    return {headers, body};
+    return body;
   }
 }
 

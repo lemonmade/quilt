@@ -16,7 +16,7 @@ To follow this guide, you’ll need a Quilt app with a [custom server](../projec
 Install the `htmx.org` package in your project. If you want to use the custom server utility functions discussed in this guide, you’ll need to install the `@quilted/htmx` package as well.
 
 ```bash
-pnpm add --save-dev htmx.org @quilted/htmx
+pnpm install --save-dev htmx.org @quilted/htmx
 ```
 
 ## Update your browser entry
@@ -49,10 +49,7 @@ Let’s imagine a simple application that renders a button, and updates the butt
 ```tsx
 import '@quilted/quilt/globals';
 import {RequestRouter} from '@quilted/quilt/request-router';
-import {
-  renderToResponse,
-  renderToFragmentResponse,
-} from '@quilted/quilt/server';
+import {renderToResponse} from '@quilted/quilt/server';
 import {BrowserAssets} from 'quilt:module/assets';
 
 const router = new RequestRouter();
@@ -94,9 +91,11 @@ router.post('/clicked', async (request) => {
   // This helper renders a React element to an HTML response, without wrapping
   // a full HTML document around it. htmx will replace the outerHTML of the button
   // with the content of this response, thanks to to the `hx-swap` attribute.
-  const response = await renderToFragmentResponse(<ClickedButton />, {
+  const response = await renderToResponse(<ClickedButton />, {
     request,
+    renderHTML: 'fragment',
   });
+
   return response;
 });
 

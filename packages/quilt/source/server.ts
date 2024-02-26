@@ -53,7 +53,4 @@ export type {
 } from '@quilted/react-server-render';
 
 export {ServerContext} from './server/ServerContext.tsx';
-export {
-  renderToResponse,
-  renderToFragmentResponse,
-} from './server/request-router.tsx';
+export {renderToResponse} from './server/request-router.tsx';
