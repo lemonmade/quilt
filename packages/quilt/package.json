@@ -128,10 +128,10 @@
       "import": "./build/esm/env.mjs"
     },
     "./request-router": {
-      "types": "./build/typescript/request-router/index.d.ts",
-      "quilt:source": "./source/request-router/index.ts",
-      "quilt:esnext": "./build/esnext/request-router/index.esnext",
-      "import": "./build/esm/request-router/index.mjs"
+      "types": "./build/typescript/request-router.d.ts",
+      "quilt:source": "./source/request-router.ts",
+      "quilt:esnext": "./build/esnext/request-router.esnext",
+      "import": "./build/esm/request-router.mjs"
     },
     "./request-router/node": {
       "types": "./build/typescript/request-router/node.d.ts",
