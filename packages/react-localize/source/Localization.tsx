@@ -1,7 +1,6 @@
-import {useMemo} from 'react';
+import {useMemo, type PropsWithChildren} from 'react';
 import {createLocalizedFormatting} from '@quilted/localize';
 import {HTMLAttributes} from '@quilted/react-html';
-import type {PropsWithChildren} from '@quilted/useful-react-types';
 
 import {LocaleContext, LocalizedFormattingContext} from './context.ts';
 

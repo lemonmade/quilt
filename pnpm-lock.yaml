@@ -538,9 +538,6 @@ importers:
       '@quilted/threads':
         specifier: ^2.0.0
         version: link:../threads
-      '@quilted/useful-react-types':
-        specifier: ^2.0.0
-        version: link:../useful-react-types
       graphql:
         specifier: ^16.7.0
         version: 16.7.0
@@ -731,9 +728,6 @@ importers:
       '@quilted/react-utilities':
         specifier: ^0.2.0
         version: link:../react-utilities
-      '@quilted/useful-react-types':
-        specifier: ^2.0.0
-        version: link:../useful-react-types
     devDependencies:
       '@quilted/react-http':
         specifier: ^0.4.0
@@ -850,10 +844,6 @@ importers:
         version: 18.2.0(react@18.2.0)
 
   packages/react-utilities:
-    dependencies:
-      '@quilted/useful-react-types':
-        specifier: ^2.0.0
-        version: link:../useful-react-types
     devDependencies:
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -1017,8 +1007,6 @@ importers:
       '@preact/signals-core':
         specifier: ^1.5.0
         version: 1.5.0
-
-  packages/useful-react-types: {}
 
   packages/useful-types: {}
 

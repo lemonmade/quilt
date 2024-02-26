@@ -1,7 +1,7 @@
 import {
   createOptionalContext,
   createUseContextHook,
-} from '@quilted/quilt/react/tools';
+} from '@quilted/quilt/react';
 
 export interface AppContext {}
 

@@ -1,4 +1,4 @@
-import type {PropsWithChildren} from '@quilted/quilt/react/tools';
+import type {PropsWithChildren} from 'react';
 
 import styles from './Frame.module.css';
 

@@ -57,7 +57,3 @@ export {
   renderToResponse,
   renderToFragmentResponse,
 } from './server/request-router.tsx';
-export {
-  createAssetPreloader,
-  type AssetPreloadOptions,
-} from './server/preload.ts';

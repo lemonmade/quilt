@@ -18,10 +18,9 @@ Each template app comes with an `Observability` component. This component is loc
 Find your metrics `Metrics` component, and add the Core Web Vitals listeners for the metrics you want to track in a `useEffect` hook:
 
 ```tsx
-import {useEffect} from 'react';
+import {useEffect, type PropsWithChildren} from 'react';
 import {onLCP, onFID, onCLS, type Metric} from 'web-vitals';
 
-import {type PropsWithChildren} from '@quilted/quilt/react/tools';
 import {usePerformanceNavigationEvent} from '@quilted/quilt/navigation';
 
 export function Observability({children}: PropsWithChildren) {

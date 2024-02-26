@@ -1507,11 +1507,11 @@ function Two() {
 If you have a custom scroll container for your app, you can call the `useRouteChangeScrollRestoration()` hook, which provides a [ref](https://reactjs.org/docs/refs-and-the-dom.html) you can use to designate the right element to measure and scroll:
 
 ```tsx
+import type {PropsWithChildren} from 'react';
 import {
   Routing,
   useRouteChangeScrollRestoration,
 } from '@quilted/quilt/navigate';
-import type {PropsWithChildren} from '@quilted/quilt/react/tools';
 
 function App() {
   return (
@@ -1588,12 +1588,12 @@ function Payments() {
 The `useRouteChangeScrollRestoration()` hook also allows you to register additional elements on the page whose scroll positions should independently measured and restored when the route changes. Pass a string as the first argument to `useRouteChangeScrollRestoration()`, and that string will be used as a unique identifier for your custom scroll area. You’ll need to use the resulting ref to specify the custom scrollable element — Quilt will only use the HTML element as the default for the “main” scroll restoration.
 
 ```tsx
+import type {PropsWithChildren} from 'react';
 import {
   Routing,
   useRoutes,
   useRouteChangeScrollRestoration,
 } from '@quilted/quilt/navigate';
-import type {PropsWithChildren} from '@quilted/quilt/react/tools';
 
 function App() {
   return (
@@ -1645,8 +1645,8 @@ Quilt’s router defaults to recreating this behavior — after a route change,
 You might want to consider adding a [“skip navigation” link](https://webaim.org/techniques/skipnav/) to improve this experience, but you can also tell Quilt to put focus on a more appropriate element after navigation. Quilt provides a `useRouteChangeFocus()` hook that returns a React `ref`. You can attach that `ref` to any DOM node you want to put focus on when the active route changes.
 
 ```tsx
+import type {PropsWithChildren} from 'react';
 import {Routing, useRouteChangeFocus, useRoutes} from '@quilted/quilt/navigate';
-import type {PropsWithChildren} from '@quilted/quilt/react/tools';
 
 function App() {
   return (

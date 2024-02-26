@@ -45,8 +45,7 @@
     "@quilted/localize": "^0.2.0",
     "@quilted/react-html": "^0.4.0",
     "@quilted/react-router": "^0.4.0",
-    "@quilted/react-utilities": "^0.2.0",
-    "@quilted/useful-react-types": "^2.0.0"
+    "@quilted/react-utilities": "^0.2.0"
   },
   "peerDependencies": {
     "@quilted/request-router": "^0.2.0",

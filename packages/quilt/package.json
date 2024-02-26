@@ -97,12 +97,6 @@
       "quilt:esnext": "./build/esnext/react/testing.esnext",
       "import": "./build/esm/react/testing.mjs"
     },
-    "./react/tools": {
-      "types": "./build/typescript/react/tools.d.ts",
-      "quilt:source": "./source/react/tools.ts",
-      "quilt:esnext": "./build/esnext/react/tools.esnext",
-      "import": "./build/esm/react/tools.mjs"
-    },
     "./graphql": {
       "types": "./build/typescript/graphql.d.ts",
       "quilt:source": "./source/graphql.ts",
@@ -221,9 +215,6 @@
       "react/testing": [
         "./build/typescript/react/testing.d.ts"
       ],
-      "react/tools": [
-        "./build/typescript/react/tools.d.ts"
-      ],
       "modules": [
         "./build/typescript/modules.d.ts"
       ]
@@ -261,7 +252,6 @@
     "@quilted/request-router": "^0.2.0",
     "@quilted/signals": "^0.2.0",
     "@quilted/threads": "^2.0.0",
-    "@quilted/useful-react-types": "^2.0.0",
     "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {

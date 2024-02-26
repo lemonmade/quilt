@@ -1,5 +1,3 @@
-export * from '@quilted/useful-react-types';
-
 export {
   createUseOptionalValueHook,
   type UseOptionalValueHook,

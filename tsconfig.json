@@ -57,7 +57,6 @@
     {"path": "./packages/routing"},
     {"path": "./packages/signals"},
     {"path": "./packages/threads"},
-    {"path": "./packages/useful-react-types"},
     {"path": "./packages/useful-types"},
     {"path": "./packages/vite"},
     {"path": "./packages/workers"}
