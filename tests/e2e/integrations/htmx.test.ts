@@ -20,7 +20,7 @@ describe('htmx', () => {
           import '@quilted/quilt/globals';
           import {renderToStaticMarkup} from 'react-dom/server';
           import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
-          import {renderToResponse, renderToFragmentResponse} from '@quilted/quilt/server';
+          import {renderToResponse} from '@quilted/quilt/server';
           import {BrowserAssets} from 'quilt:module/assets';
           
           const router = new RequestRouter();
@@ -47,8 +47,9 @@ describe('htmx', () => {
           }
 
           router.post('/clicked', async (request) => {
-            const response = await renderToFragmentResponse(<ClickedButton />, {
+            const response = await renderToResponse(<ClickedButton />, {
               request,
+              renderHTML: 'fragment',
             });
             return response;
           });
@@ -82,7 +83,7 @@ describe('htmx', () => {
           import '@quilted/quilt/globals';
           import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
           import {RequestRouter} from '@quilted/quilt/request-router';
-          import {renderToResponse, renderToFragmentResponse} from '@quilted/quilt/server';
+          import {renderToResponse} from '@quilted/quilt/server';
           import {BrowserAssets} from 'quilt:module/assets';
           
           const router = new RequestRouter();
@@ -113,8 +114,9 @@ describe('htmx', () => {
           router.post('/choose', async (request) => {
             const {trigger} = parseHTMXRequestHeaders(request.headers);
 
-            const {body} = await renderToFragmentResponse(<Confirmation selection={trigger} />, {
+            const {body} = await renderToResponse(<Confirmation selection={trigger} />, {
               request,
+              renderHTML: 'fragment',
             });
           
             return new HTMXResponse(body, {
