@@ -109,7 +109,16 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
     const {headers: appHeaders, statusCode = 200, redirectUrl} = http.state;
 
+    const hasSetCookieHeader = typeof appHeaders.getSetCookie === 'function';
+
+    if (hasSetCookieHeader) {
+      for (const cookie of appHeaders.getSetCookie()) {
+        headers.append('Set-Cookie', cookie);
+      }
+    }
+
     for (const [header, value] of appHeaders.entries()) {
+      if (hasSetCookieHeader && header.toLowerCase() === 'set-cookie') continue;
       headers.set(header, value);
     }
 
