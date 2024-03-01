@@ -102,7 +102,7 @@ export function createAsyncComponent<
   const renderImmediately = render === 'server' || isBrowser;
   const hydrateImmediately = renderImmediately && hydrate === 'immediate';
 
-  const getComponent = (module: (typeof asyncModule)['loaded']) => {
+  const getComponent = (module: (typeof asyncModule)['module']) => {
     if (!renderImmediately) return undefined;
     return module && 'default' in module ? module.default : module;
   };
@@ -236,7 +236,7 @@ function RenderWhileLoading({
   module: AsyncModule<any>;
   render: () => ReactNode;
 }) {
-  if (typeof document === 'undefined' && module.loaded != null) {
+  if (typeof document === 'undefined' && module.module != null) {
     return null;
   }
 
