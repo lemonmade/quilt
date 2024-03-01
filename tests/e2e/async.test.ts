@@ -17,9 +17,9 @@ describe('async', () => {
         const Async = createAsyncModule(() => import('./async.ts'));
 
         export default function App() {
-          const {resolved} = useAsyncModule(Async);
+          const resolved = useAsyncModule(Async);
 
-          return <div>{resolved?.hello() ?? 'Loading...'}</div>;
+          return <div>{resolved.value.hello()}</div>;
         }
       `,
     });
@@ -96,6 +96,7 @@ describe('async', () => {
           const [active, setActive] = useState(false);
 
           useEffect(() => {
+            console.log('HYDRATING');
             setActive(true);
           }, []);
 
@@ -299,17 +300,21 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {createAsyncComponent} from '@quilted/quilt/async';
+        import {AsyncContext, createAsyncComponent} from '@quilted/quilt/async';
 
         const Async = createAsyncComponent(() => import('./Async.tsx'), {
           render: 'client',
           renderLoading: () => {
-            return <div>Loading...</div>;
+            return <div id="loading">Loading...</div>;
           },
         });
 
+        // Ensure that the app works correctly even if the async component is
+        // available synchronously on render.
+        await Async.load();
+
         export default function App() {
-          return <Async />;
+          return <AsyncContext><Async /></AsyncContext>;
         }
       `,
     });

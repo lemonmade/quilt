@@ -162,7 +162,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
 
             path.parentPath.replaceWith(t.callExpression(importStandin, []));
             load.node.params.unshift(importStandin);
-            load.replaceWith(t.callExpression(identifier, [load.node]));
+            load.replaceWith(t.callExpression(identifier, []));
           });
         }
       },

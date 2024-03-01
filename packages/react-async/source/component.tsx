@@ -1,17 +1,13 @@
 import {
-  useEffect,
   Suspense,
   type ReactNode,
   type ReactElement,
   type ComponentType,
 } from 'react';
-import {
-  createAsyncModule,
-  type AsyncModuleLoad,
-  type AsyncModule,
-} from '@quilted/async';
+import {createAsyncModule, type AsyncModuleLoad} from '@quilted/async';
+import {useModuleAssets} from '@quilted/react-assets';
 
-import {useAsyncModule, useAsyncModulePreload} from './hooks.ts';
+import {useAsyncModule, useAsyncModulePreload, useHydrated} from './hooks.ts';
 import type {
   NoOptions,
   RenderTiming,
@@ -28,7 +24,6 @@ export interface Options<
   render?: RenderTiming;
   hydrate?: boolean | HydrationTiming;
   preload?: boolean;
-  suspense?: boolean;
 
   renderError?(props: Props, error: Error): ReactNode;
   renderLoading?(props: Props): ReactNode;
@@ -55,9 +50,8 @@ export function createAsyncComponent<
     render = 'server',
     hydrate: explicitHydrate = 'immediate',
     preload = true,
-    suspense = true,
     renderLoading = noopRender,
-    renderError = defaultRenderError,
+    // renderError = defaultRenderError,
     usePreload: useCustomPreload,
   }: Options<Props, PreloadOptions> = {},
 ): AsyncComponentType<ComponentType<Props>, Props, PreloadOptions> {
@@ -100,85 +94,65 @@ export function createAsyncComponent<
 
   const isBrowser = typeof document === 'object';
   const renderImmediately = render === 'server' || isBrowser;
-  const hydrateImmediately = renderImmediately && hydrate === 'immediate';
+  const hydrateImmediately = !isBrowser || hydrate === 'immediate';
 
-  const getComponent = (module: (typeof asyncModule)['loaded']) => {
+  const getComponent = (module: (typeof asyncModule)['exported']) => {
     if (!renderImmediately) return undefined;
     return module && 'default' in module ? module.default : module;
   };
 
-  const Async: any = suspense
-    ? function Async(props: Props) {
-        if (hydrateImmediately || (renderImmediately && !isBrowser)) {
-          asyncModule.load();
-        }
+  const Async = function Async(props: Props) {
+    useAsyncModule(asyncModule, {
+      immediate: hydrateImmediately,
+      scripts: scriptTiming,
+      styles: styleTiming,
+    });
 
-        const module = useAsyncModule(asyncModule, {
-          suspense: true,
-          immediate: renderImmediately,
-          scripts: scriptTiming,
-          styles: styleTiming,
-        });
+    // If we aren’t hydrating and we don’t have a component yet, we need to suspend,
+    // so any server-rendered content can be preserved until hydration is performed.
+    if (!hydrateImmediately && asyncModule.status === 'pending') {
+      throw asyncModule.promise;
+    }
 
-        const Component = getComponent(module);
+    const Component = getComponent(asyncModule.exported);
 
-        return Component ? <Component {...props} /> : null;
-      }
-    : function Async(props: Props) {
-        const {
-          resolved: module,
-          load,
-          error,
-        } = useAsyncModule(asyncModule, {
-          suspense: false,
-          immediate: renderImmediately,
-          scripts: scriptTiming,
-          styles: styleTiming,
-        });
+    return Component ? <Component {...props} /> : null;
+  };
 
-        if (error) {
-          return renderError?.(props, error) ?? null;
-        }
-
-        const Component = getComponent(module);
-
-        return Component ? (
-          <Component {...props} />
-        ) : (
-          <>
-            {renderLoading?.(props) ?? null}
-            {hydrateImmediately && <DoLoad load={load} />}
-          </>
+  // TODO handle renderError
+  const AsyncWithMaybeSuspense: ComponentType<Props> = renderLoading
+    ? function AsyncWithSuspense(props: Props) {
+        return (
+          <Suspense fallback={renderLoading(props)}>
+            <Async {...props} />
+          </Suspense>
         );
-      };
+      }
+    : Async;
 
-  const AsyncWithWrappers: any =
-    suspense && renderLoading
-      ? function AsyncWithWrappers(props: Props) {
-          const clientRenderOnly = render === 'client';
+  const AsyncWithMaybeClientOnlyRender: ComponentType<Props> =
+    render === 'client'
+      ? function AsyncWithClientOnlyRender(props: Props) {
+          if (!isBrowser) {
+            useModuleAssets(asyncModule.id, {
+              scripts: 'preload',
+              styles: 'preload',
+            });
 
-          // TODO handle renderError
-          return clientRenderOnly ? (
-            <>
-              <div>
-                <Suspense>
-                  <Async {...props} />
-                </Suspense>
-              </div>
-              <RenderWhileLoading
-                module={asyncModule}
-                render={() => renderLoading(props)}
-              />
-            </>
-          ) : (
-            <Suspense fallback={renderLoading(props)}>
-              <Async {...props} />
-            </Suspense>
-          );
+            return renderLoading?.(props) ?? null;
+          }
+
+          const hydrated = useHydrated();
+
+          if (!hydrated) {
+            return renderLoading?.(props) ?? null;
+          }
+
+          return <AsyncWithMaybeSuspense {...props} />;
         }
-      : Async;
+      : AsyncWithMaybeSuspense;
 
-  AsyncWithWrappers.displayName = `Async(${componentName})`;
+  AsyncWithMaybeClientOnlyRender.displayName = `Async(${componentName})`;
 
   function usePreload(props: PreloadOptions) {
     useAsyncModulePreload(asyncModule);
@@ -196,10 +170,10 @@ export function createAsyncComponent<
     ComponentType<Props>,
     Props,
     PreloadOptions
-  > = AsyncWithWrappers;
+  > = AsyncWithMaybeClientOnlyRender as any;
 
   Reflect.defineProperty(FinalComponent, 'load', {
-    value: () => asyncModule.load(),
+    value: () => asyncModule.import(),
     writable: false,
   });
 
@@ -221,46 +195,17 @@ export function createAsyncComponent<
   return FinalComponent;
 }
 
-function DoLoad({load}: {load: () => Promise<any>}) {
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  return null;
-}
-
-function RenderWhileLoading({
-  module,
-  render,
-}: {
-  module: AsyncModule<any>;
-  render: () => ReactNode;
-}) {
-  if (typeof document === 'undefined' && module.loaded != null) {
-    return null;
-  }
-
-  const {resolved} = useAsyncModule(module, {
-    suspense: false,
-    immediate: false,
-    scripts: 'never',
-    styles: 'never',
-  });
-
-  return resolved ? null : (render() as any) ?? null;
-}
-
 function noopRender() {
   return null;
 }
 
-function defaultRenderError(_: any, error: Error) {
-  if (error) {
-    throw error;
-  }
+// function defaultRenderError(_: any, error: Error) {
+//   if (error) {
+//     throw error;
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
 function normalizeHydrate(hydrate: boolean | HydrationTiming): HydrationTiming {
   switch (hydrate) {

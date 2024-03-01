@@ -10,4 +10,10 @@ export type {
   Preloadable,
 } from './types.ts';
 export {createAsyncComponent} from './component.tsx';
-export {useAsyncModule, useAsyncModulePreload, usePreload} from './hooks.ts';
+export {
+  useAsyncModule,
+  useAsyncModulePreload,
+  useHydrated,
+  usePreload,
+} from './hooks.ts';
+export {AsyncContext} from './AsyncContext.tsx';

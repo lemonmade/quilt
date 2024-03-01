@@ -25,7 +25,7 @@
     }
   },
   "types": "./build/typescript/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": true,
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
   },

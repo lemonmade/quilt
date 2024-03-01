@@ -1,10 +1,27 @@
-import {EventEmitter} from '@quilted/events';
+import {AsyncOperation} from './operation.ts';
 
-export interface AsyncModule<Module = Record<string, unknown>>
-  extends Pick<EventEmitter<{resolve: Error | Module}>, 'on' | 'once'> {
+export class AsyncModule<Module> extends AsyncOperation<Module> {
   readonly id?: string;
-  readonly loaded?: Module;
-  load(): Promise<Module>;
+
+  get exported() {
+    return this.value;
+  }
+
+  import = (...args: Parameters<AsyncOperation<Module>['run']>) =>
+    this.isRunning ? this.promise : this.run(...args);
+
+  constructor(load: AsyncModuleLoad<Module>) {
+    const id = (load as any).id;
+    const preloadedModule = (globalThis as any)[
+      Symbol.for('quilt')
+    ]?.AsyncModules?.get(id);
+
+    super(() => (typeof load === 'function' ? load() : load.import()), {
+      initial: preloadedModule,
+    });
+
+    this.id = id;
+  }
 }
 
 export interface AsyncModuleLoadFunction<Module = Record<string, unknown>> {
@@ -22,51 +39,5 @@ export type AsyncModuleLoad<Module = Record<string, unknown>> =
 export function createAsyncModule<Module = Record<string, unknown>>(
   load: AsyncModuleLoad<Module>,
 ): AsyncModule<Module> {
-  let resolved: Module | undefined;
-  let resolvePromise: Promise<Module> | undefined;
-  let hasTriedSyncResolve = false;
-
-  const id = (load as any).id;
-  const emitter = new EventEmitter<{resolve: Error | Module}>();
-
-  return {
-    id,
-    get loaded() {
-      return getResolved();
-    },
-    load: async () => {
-      let resolved = getResolved();
-      if (resolved != null) return resolved;
-      resolvePromise = resolvePromise ?? resolve();
-      resolved = await resolvePromise;
-      return resolved;
-    },
-    on: emitter.on,
-    once: emitter.once,
-  };
-
-  function getResolved() {
-    if (!hasTriedSyncResolve && resolved == null && id) {
-      hasTriedSyncResolve = true;
-      resolved = (globalThis as any)[Symbol.for('quilt')]?.AsyncModules?.get(
-        id,
-      );
-    }
-
-    return resolved;
-  }
-
-  async function resolve(): Promise<Module> {
-    try {
-      resolved =
-        typeof load === 'function' ? await load() : await load.import();
-      emitter.emit('resolve', resolved);
-      resolvePromise = undefined;
-      return resolved!;
-    } catch (error) {
-      emitter.emit('resolve', error as Error);
-      resolvePromise = undefined;
-      throw error;
-    }
-  }
+  return new AsyncModule(load);
 }

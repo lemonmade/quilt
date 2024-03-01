@@ -9,6 +9,7 @@
   "references": [
     {"path": "../async"},
     {"path": "../react-assets"},
-    {"path": "../react-server-render"}
+    {"path": "../react-server-render"},
+    {"path": "../react-signals"}
   ]
 }

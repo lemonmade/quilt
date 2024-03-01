@@ -11,3 +11,4 @@ export type {
   AsyncModuleLoadFunction,
   AsyncModuleLoadObject,
 } from './loader.ts';
+export {AsyncOperation, type AsyncObservablePromise} from './operation.ts';

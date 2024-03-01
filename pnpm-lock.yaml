@@ -204,6 +204,9 @@ importers:
       '@quilted/events':
         specifier: workspace:^2.0.0
         version: link:../events
+      '@quilted/signals':
+        specifier: workspace:^0.2.0
+        version: link:../signals
       '@types/web':
         specifier: ^0.0.59
         version: 0.0.59
@@ -603,6 +606,9 @@ importers:
       '@quilted/react-server-render':
         specifier: workspace:^0.4.0
         version: link:../react-server-render
+      '@quilted/react-signals':
+        specifier: workspace:^0.2.0
+        version: link:../react-signals
     devDependencies:
       react:
         specifier: workspace:@quilted/react@^18.2.0

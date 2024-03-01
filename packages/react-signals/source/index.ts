@@ -1,7 +1,14 @@
 import {useState, useEffect, useMemo, useCallback, useRef} from 'react';
 import {signal, computed, effect, Signal} from '@preact/signals';
 
-export * from '@quilted/signals';
+export * from '@preact/signals';
+
+export {
+  isSignal,
+  resolveSignalOrValue,
+  signalToIterator,
+  type SignalOrValue,
+} from '@quilted/signals';
 
 const EMPTY_ARGUMENTS = Object.freeze([]) as any as unknown[];
 

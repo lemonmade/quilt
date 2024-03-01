@@ -1,102 +1,49 @@
-import {useEffect, useMemo, useRef, useSyncExternalStore} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useModuleAssets} from '@quilted/react-assets';
-import {useServerAction} from '@quilted/react-server-render';
-import type {AsyncModule} from '@quilted/async';
+import {AsyncOperation, type AsyncModule} from '@quilted/async';
+// Imported for the side effects
+import {} from '@quilted/react-signals';
 
 import type {AssetLoadTiming} from '../types.ts';
 
+export function useAsync<T>(
+  run: () => PromiseLike<T>,
+  {
+    initial,
+    signal,
+    active = true,
+  }: {initial?: T; active?: boolean; signal?: AbortSignal} = {},
+) {
+  const operation = useMemo(() => new AsyncOperation(run, {initial}), []);
+
+  if (active && operation.status === 'pending' && !signal?.aborted) {
+    throw operation.run({signal});
+  }
+
+  return operation;
+}
+
 export interface Options {
   immediate?: boolean;
-  suspense?: boolean;
   styles?: AssetLoadTiming;
   scripts?: AssetLoadTiming;
 }
 
-export interface AsyncModuleResult<Module = Record<string, unknown>> {
-  id?: string;
-  resolved?: Module;
-  error?: Error;
-  load(): Promise<Module>;
-}
-
-export function useAsyncModule<Module = Record<string, unknown>>(
+export function useAsyncModule<Module>(
   asyncModule: AsyncModule<Module>,
-  options: Options & {suspense: true; immediate?: true},
-): Module;
-export function useAsyncModule<Module = Record<string, unknown>>(
-  asyncModule: AsyncModule<Module>,
-  options: Options & {suspense: true; immediate: boolean},
-): Module | undefined;
-export function useAsyncModule<Module = Record<string, unknown>>(
-  asyncModule: AsyncModule<Module>,
-  options: Options & {suspense?: false},
-): AsyncModuleResult<Module>;
-export function useAsyncModule<Module = Record<string, unknown>>(
-  asyncModule: AsyncModule<Module>,
-  {scripts, styles, suspense = false, immediate = true}: Options = {},
-): Module | AsyncModuleResult<Module> | undefined {
-  const {id, load} = asyncModule;
-  const ref = useRef<{
-    promise?: Promise<void>;
-    error?: Error;
-  }>({});
+  {scripts, styles, immediate = true}: Options = {},
+): AsyncModule<Module> {
+  const isPending = asyncModule.status === 'pending';
 
-  const isServer = typeof document !== 'object';
-
-  const value = isServer
-    ? asyncModule.loaded
-    : useSyncExternalStore(
-        ...useMemo<Parameters<typeof useSyncExternalStore<Module | undefined>>>(
-          () => [
-            (callback) => {
-              const abort = new AbortController();
-              asyncModule.on(
-                'resolve',
-                (resolved) => {
-                  ref.current.error =
-                    resolved instanceof Error ? resolved : undefined;
-                  callback();
-                },
-                {signal: abort.signal},
-              );
-              return () => abort.abort();
-            },
-            () => asyncModule.loaded,
-          ],
-          [asyncModule],
-        ),
-      );
-
-  if (suspense) {
-    if (ref.current.error != null) throw ref.current.error;
-
-    if (value == null && immediate) {
-      ref.current.promise ??= asyncModule.once('resolve').then(() => {
-        ref.current.promise = undefined;
-      });
-
-      throw ref.current.promise;
-    }
+  if (immediate && isPending) {
+    throw asyncModule.import();
   }
 
-  if (isServer) {
-    useModuleAssets(id, {styles, scripts});
-
-    useServerAction(() => {
-      if (asyncModule.loaded == null && immediate) return asyncModule.load();
-    });
+  if (typeof document !== 'object') {
+    useModuleAssets(asyncModule.id, {styles, scripts});
   }
 
-  if (suspense) {
-    return value;
-  }
-
-  return {
-    id,
-    resolved: value,
-    error: ref.current.error,
-    load,
-  };
+  return asyncModule;
 }
 
 export function useAsyncModulePreload<Module = Record<string, unknown>>(
@@ -105,8 +52,6 @@ export function useAsyncModulePreload<Module = Record<string, unknown>>(
   useModuleAssets(asyncModule.id, {scripts: 'preload', styles: 'preload'});
 
   useEffect(() => {
-    asyncModule.load().catch(() => {
-      // Do nothing
-    });
+    asyncModule.import();
   }, [asyncModule]);
 }

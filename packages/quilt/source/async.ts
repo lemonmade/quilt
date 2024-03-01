@@ -3,7 +3,9 @@ export type {AsyncModule} from '@quilted/async';
 export {
   useAsyncModule,
   useAsyncModulePreload,
+  useHydrated,
   usePreload,
+  AsyncContext,
   createAsyncComponent,
 } from '@quilted/react-async';
 export type {
