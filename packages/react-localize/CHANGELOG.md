@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.2.1
+
+### Patch Changes
+
+- [`905e92ef`](https://github.com/lemonmade/quilt/commit/905e92ef32adad8658042f437b9cfbd248cce3c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify React exports
+
 ## 0.2.0
 
 ### Minor Changes
