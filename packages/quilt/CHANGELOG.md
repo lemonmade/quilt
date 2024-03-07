@@ -1,5 +1,13 @@
 # @quilted/quilt
 
+## 0.6.12
+
+### Patch Changes
+
+- [`9eb5ba81`](https://github.com/lemonmade/quilt/commit/9eb5ba8110a4691936f043084c87c4da94d524b8) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve `renderToResponse` and remove `renderToFragmentResponse`
+
+- [`905e92ef`](https://github.com/lemonmade/quilt/commit/905e92ef32adad8658042f437b9cfbd248cce3c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify React exports
+
 ## 0.6.11
 
 ### Patch Changes

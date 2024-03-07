@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.6.6
+
+### Patch Changes
+
+- [`f4b568ea`](https://github.com/lemonmade/quilt/commit/f4b568ea97e5b1d2fb77223bf85548b4c979d035) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix type declarations for older TypeScript versions
+
 ## 0.6.5
 
 ### Patch Changes
