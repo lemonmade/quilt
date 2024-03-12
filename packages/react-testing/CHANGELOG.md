@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.6.7
+
+### Patch Changes
+
+- [`e3f70c7e`](https://github.com/lemonmade/quilt/commit/e3f70c7edbfee66d7071eafb3e64bcd2fa13ac7a) Thanks [@lemonmade](https://github.com/lemonmade)! - Add back CommonJS entry for react-testing package
+
 ## 0.6.6
 
 ### Patch Changes
