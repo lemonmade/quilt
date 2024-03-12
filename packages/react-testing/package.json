@@ -17,31 +17,36 @@
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs"
     },
     "./dom": {
       "types": "./build/typescript/implementations/react-dom.d.ts",
       "quilt:source": "./source/implementations/react-dom.ts",
       "quilt:esnext": "./build/esnext/implementations/react-dom.esnext",
-      "import": "./build/esm/implementations/react-dom.mjs"
+      "import": "./build/esm/implementations/react-dom.mjs",
+      "require": "./build/cjs/implementations/react-dom.cjs"
     },
     "./environment": {
       "types": "./build/typescript/environment.d.ts",
       "quilt:source": "./source/environment.tsx",
       "quilt:esnext": "./build/esnext/environment.esnext",
-      "import": "./build/esm/environment.mjs"
+      "import": "./build/esm/environment.mjs",
+      "require": "./build/cjs/environment.cjs"
     },
     "./matchers": {
       "types": "./build/typescript/matchers.d.ts",
       "quilt:source": "./source/matchers.ts",
       "quilt:esnext": "./build/esnext/matchers.esnext",
-      "import": "./build/esm/matchers.mjs"
+      "import": "./build/esm/matchers.mjs",
+      "require": "./build/cjs/matchers.cjs"
     },
     "./preact": {
       "types": "./build/typescript/implementations/react-dom.d.ts",
       "quilt:source": "./source/preact.ts",
       "quilt:esnext": "./build/esnext/preact.esnext",
-      "import": "./build/esm/preact.mjs"
+      "import": "./build/esm/preact.mjs",
+      "require": "./build/cjs/preact.cjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
