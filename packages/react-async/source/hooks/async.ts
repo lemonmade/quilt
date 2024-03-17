@@ -41,6 +41,8 @@ export function useAsyncModule<Module = Record<string, unknown>>(
 
   const module = asyncModule.module;
 
+  console.log({type: 'MODULE', id, suspense, immediate, module});
+
   if (suspense && module == null && immediate) {
     throw asyncModule.load();
   }

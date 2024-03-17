@@ -100,7 +100,7 @@ export function createAsyncComponent<
 
   const isBrowser = typeof document === 'object';
   const renderImmediately = render === 'server' || isBrowser;
-  const hydrateImmediately = renderImmediately && hydrate === 'immediate';
+  const hydrateImmediately = !isBrowser || hydrate === 'immediate';
 
   const getComponent = (module: (typeof asyncModule)['module']) => {
     if (!renderImmediately) return undefined;
@@ -109,15 +109,28 @@ export function createAsyncComponent<
 
   const Async: any = suspense
     ? function Async(props: Props) {
-        if (hydrateImmediately || (renderImmediately && !isBrowser)) {
-          asyncModule.load();
-        }
+        console.log({
+          type: 'ASYNC_COMPONENT',
+          id: asyncModule.id,
+          render,
+          hydrate,
+          suspense,
+        });
 
         const module = useAsyncModule(asyncModule, {
           suspense: true,
-          immediate: renderImmediately,
+          immediate: hydrateImmediately,
           scripts: scriptTiming,
           styles: styleTiming,
+        });
+
+        console.log({
+          type: 'ASYNC_COMPONENT_FETCHED',
+          id: asyncModule.id,
+          render,
+          hydrate,
+          suspense,
+          module,
         });
 
         const Component = getComponent(module);
@@ -131,7 +144,7 @@ export function createAsyncComponent<
           error,
         } = useAsyncModule(asyncModule, {
           suspense: false,
-          immediate: renderImmediately,
+          immediate: hydrateImmediately,
           scripts: scriptTiming,
           styles: styleTiming,
         });

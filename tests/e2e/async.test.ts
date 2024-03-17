@@ -83,22 +83,25 @@ describe('async', () => {
     });
   });
 
-  it('can server render an async component with deferred hydration', async () => {
-    await withWorkspace({fixture: 'empty-app'}, async (workspace) => {
-      const {fs} = workspace;
+  it.only('can server render an async component with deferred hydration', async () => {
+    await withWorkspace(
+      {fixture: 'empty-app', debug: true},
+      async (workspace) => {
+        const {fs} = workspace;
 
-      await fs.write({
-        'Async.module.css': stripIndent`
+        await fs.write({
+          'Async.module.css': stripIndent`
           .Async {
             color: purple;
           }
         `,
-        'Async.tsx': stripIndent`
+          'Async.tsx': stripIndent`
           import {useState, useEffect} from 'react';
 
           import styles from './Async.module.css';
 
           export default function Async() {
+            console.log('ASYNC COMPONENT');
             const [active, setActive] = useState(false);
 
             useEffect(() => {
@@ -113,8 +116,10 @@ describe('async', () => {
             );
           }
         `,
-        'App.tsx': stripIndent`
+          'App.tsx': stripIndent`
+          import {useEffect} from 'react';
           import {createAsyncComponent} from '@quilted/quilt/async';
+          import {useSignal} from '@quilted/quilt/signals';
 
           const Async = createAsyncComponent(() => import('./Async.tsx'), {
             hydrate: 'defer',
@@ -122,40 +127,56 @@ describe('async', () => {
           });
 
           export default function App() {
+            const signal = useSignal('0');
+
+            useEffect(() => {
+              setInterval(() => {
+                signal.value = String(Number.parseInt(signal.value, 10) + 1);
+              }, 1000);
+            }, []);
+
             return (
               <>
                 <Async />
-                <button onClick={() => Async.load()}>Preload</button>
+                <div>Count: {signal.value}</div>
+                <button onClick={() => Async.load().then((module) => console.log('LOADED', typeof module.default))}>Preload</button>
               </>
             );
           }
         `,
-      });
+        });
 
-      const {page} = await buildAppAndOpenPage(workspace);
+        const {page, url} = await buildAppAndOpenPage(workspace);
 
-      expect(await page.textContent('body')).toMatch(
-        `Hello from an async component!`,
-      );
+        console.log(url.href);
 
-      const pageContent = await page.textContent('body');
-      expect(pageContent).not.toMatch(`Loading...`);
-      expect(pageContent).not.toMatch(`Hydrated!`);
+        console.log(
+          await page.evaluate(() => document.documentElement.outerHTML),
+        );
 
-      expect(
-        await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
-      ).not.toBeNull();
-      expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
-      expect(
-        await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
-      ).not.toBeNull();
+        expect(await page.textContent('body')).toMatch(
+          `Hello from an async component!`,
+        );
 
-      await page.click('button');
+        const pageContent = await page.textContent('body');
+        expect(pageContent).not.toMatch(`Loading...`);
+        expect(pageContent).not.toMatch(`Hydrated!`);
 
-      await page.waitForSelector('#hydrated');
+        expect(
+          await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
+        ).not.toBeNull();
+        expect(await page.$('script[src^="/assets/Async"]')).toBeNull();
+        expect(
+          await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
+        ).not.toBeNull();
 
-      expect(await page.textContent('body')).toMatch(`Hydrated!`);
-    });
+        await page.click('button');
+
+        await page.waitForSelector('#hydrated');
+
+        expect(await page.textContent('body')).toMatch(`Hydrated!`);
+      },
+    );
   });
 
   it('can client render an async component', async () => {

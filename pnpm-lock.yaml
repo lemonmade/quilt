@@ -606,6 +606,9 @@ importers:
       '@quilted/react-server-render':
         specifier: ^0.4.0
         version: link:../react-server-render
+      '@quilted/react-signals':
+        specifier: ^0.2.0
+        version: link:../react-signals
     devDependencies:
       react:
         specifier: workspace:@quilted/react@^18.2.0

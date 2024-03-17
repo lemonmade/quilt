@@ -70,6 +70,12 @@ export function createAsyncModule<Module = Record<string, unknown>>(
 
       await currentOperation.promise;
 
+      console.log({
+        type: 'FINISHED_ASYNC_MODULE_LOAD',
+        id,
+        status: currentOperation.status.value,
+      });
+
       if (currentOperation.status.value === 'resolved') {
         return currentOperation.value.value!;
       } else {
