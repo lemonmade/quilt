@@ -1,9 +1,15 @@
-import {EventEmitter} from '@quilted/events';
+import {signal} from '@quilted/signals';
+import {
+  runAsync,
+  type AsyncOperation,
+  type AsyncOperationStatus,
+} from './operation.ts';
 
-export interface AsyncModule<Module = Record<string, unknown>>
-  extends Pick<EventEmitter<{resolve: Error | Module}>, 'on' | 'once'> {
+export interface AsyncModule<Module = Record<string, unknown>> {
   readonly id?: string;
-  readonly loaded?: Module;
+  readonly status: AsyncOperationStatus | 'inactive';
+  readonly module?: Module;
+  readonly cause?: unknown;
   load(): Promise<Module>;
 }
 
@@ -22,51 +28,59 @@ export type AsyncModuleLoad<Module = Record<string, unknown>> =
 export function createAsyncModule<Module = Record<string, unknown>>(
   load: AsyncModuleLoad<Module>,
 ): AsyncModule<Module> {
-  let resolved: Module | undefined;
-  let resolvePromise: Promise<Module> | undefined;
-  let hasTriedSyncResolve = false;
-
   const id = (load as any).id;
-  const emitter = new EventEmitter<{resolve: Error | Module}>();
+  const preloadedModule = (globalThis as any)[
+    Symbol.for('quilt')
+  ]?.AsyncModules?.get(id);
+
+  if (preloadedModule) {
+    return {
+      id,
+      status: 'resolved',
+      module: preloadedModule,
+      load: () => Promise.resolve(preloadedModule),
+    };
+  }
+
+  const operation = signal<AsyncOperation<Promise<Module>> | undefined>(
+    undefined,
+  );
 
   return {
     id,
-    get loaded() {
-      return getResolved();
+    get module() {
+      return operation.value?.value.value;
     },
-    load: async () => {
-      let resolved = getResolved();
-      if (resolved != null) return resolved;
-      resolvePromise = resolvePromise ?? resolve();
-      resolved = await resolvePromise;
-      return resolved;
+    get status() {
+      const currentOperation = operation.value;
+      return currentOperation ? currentOperation.status.value : 'inactive';
     },
-    on: emitter.on,
-    once: emitter.once,
-  };
+    get cause() {
+      return operation.value?.cause.value;
+    },
+    async load() {
+      let currentOperation = operation.value;
 
-  function getResolved() {
-    if (!hasTriedSyncResolve && resolved == null && id) {
-      hasTriedSyncResolve = true;
-      resolved = (globalThis as any)[Symbol.for('quilt')]?.AsyncModules?.get(
+      if (currentOperation == null) {
+        currentOperation = runAsync(() =>
+          typeof load === 'function' ? load() : load.import(),
+        );
+        operation.value = currentOperation;
+      }
+
+      await currentOperation.promise;
+
+      console.log({
+        type: 'FINISHED_ASYNC_MODULE_LOAD',
         id,
-      );
-    }
+        status: currentOperation.status.value,
+      });
 
-    return resolved;
-  }
-
-  async function resolve(): Promise<Module> {
-    try {
-      resolved =
-        typeof load === 'function' ? await load() : await load.import();
-      emitter.emit('resolve', resolved);
-      resolvePromise = undefined;
-      return resolved!;
-    } catch (error) {
-      emitter.emit('resolve', error as Error);
-      resolvePromise = undefined;
-      throw error;
-    }
-  }
+      if (currentOperation.status.value === 'resolved') {
+        return currentOperation.value.value!;
+      } else {
+        throw currentOperation.cause.value;
+      }
+    },
+  };
 }

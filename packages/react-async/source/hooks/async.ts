@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useSyncExternalStore} from 'react';
+import {useEffect} from 'react';
 import {useModuleAssets} from '@quilted/react-assets';
 import {useServerAction} from '@quilted/react-server-render';
 import type {AsyncModule} from '@quilted/async';
@@ -36,65 +36,35 @@ export function useAsyncModule<Module = Record<string, unknown>>(
   {scripts, styles, suspense = false, immediate = true}: Options = {},
 ): Module | AsyncModuleResult<Module> | undefined {
   const {id, load} = asyncModule;
-  const ref = useRef<{
-    promise?: Promise<void>;
-    error?: Error;
-  }>({});
 
   const isServer = typeof document !== 'object';
 
-  const value = isServer
-    ? asyncModule.loaded
-    : useSyncExternalStore(
-        ...useMemo<Parameters<typeof useSyncExternalStore<Module | undefined>>>(
-          () => [
-            (callback) => {
-              const abort = new AbortController();
-              asyncModule.on(
-                'resolve',
-                (resolved) => {
-                  ref.current.error =
-                    resolved instanceof Error ? resolved : undefined;
-                  callback();
-                },
-                {signal: abort.signal},
-              );
-              return () => abort.abort();
-            },
-            () => asyncModule.loaded,
-          ],
-          [asyncModule],
-        ),
-      );
+  const module = asyncModule.module;
 
-  if (suspense) {
-    if (ref.current.error != null) throw ref.current.error;
+  console.log({type: 'MODULE', id, suspense, immediate, module});
 
-    if (value == null && immediate) {
-      ref.current.promise ??= asyncModule.once('resolve').then(() => {
-        ref.current.promise = undefined;
-      });
-
-      throw ref.current.promise;
-    }
+  if (suspense && module == null && immediate) {
+    throw asyncModule.load();
   }
 
   if (isServer) {
     useModuleAssets(id, {styles, scripts});
 
     useServerAction(() => {
-      if (asyncModule.loaded == null && immediate) return asyncModule.load();
+      if (module == null && immediate) return asyncModule.load();
     });
   }
 
   if (suspense) {
-    return value;
+    return module;
   }
 
   return {
     id,
-    resolved: value,
-    error: ref.current.error,
+    resolved: module,
+    get error() {
+      return asyncModule.cause as Error;
+    },
     load,
   };
 }
@@ -105,8 +75,6 @@ export function useAsyncModulePreload<Module = Record<string, unknown>>(
   useModuleAssets(asyncModule.id, {scripts: 'preload', styles: 'preload'});
 
   useEffect(() => {
-    asyncModule.load().catch(() => {
-      // Do nothing
-    });
+    asyncModule.load();
   }, [asyncModule]);
 }
