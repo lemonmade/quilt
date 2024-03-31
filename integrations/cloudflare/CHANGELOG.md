@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.2.5
+
+### Patch Changes
+
+- [`704e17f0`](https://github.com/lemonmade/quilt/commit/704e17f0336e2cde642d5fd39badf23e9c072944) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve `runtime` build option
+
 ## 0.2.4
 
 ### Patch Changes
