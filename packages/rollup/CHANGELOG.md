@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.22
+
+### Patch Changes
+
+- [`fd3760de`](https://github.com/lemonmade/quilt/commit/fd3760de3f26de96f4e6ec622416259a110dda3f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix module entrypoint names
+
 ## 0.2.21
 
 ### Patch Changes
