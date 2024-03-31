@@ -228,7 +228,9 @@ async function resolveModuleEntry(
   if (entry) {
     if (typeof entry === 'string') {
       const absolutePath = project.resolve(entry);
-      return {[project.relative(absolutePath)]: absolutePath};
+      return {
+        [normalizeEntryName(project.relative(absolutePath))]: absolutePath,
+      };
     } else {
       return Object.fromEntries(
         Object.entries(entry).map(([key, value]) => [
@@ -259,5 +261,8 @@ async function resolveModuleEntry(
 }
 
 function normalizeEntryName(name: string) {
-  return name === '.' ? 'index' : name.startsWith('./') ? name.slice(2) : name;
+  const resolvedDots =
+    name === '.' ? 'index' : name.startsWith('./') ? name.slice(2) : name;
+  const extname = path.extname(resolvedDots);
+  return resolvedDots.slice(0, resolvedDots.length - extname.length);
 }
