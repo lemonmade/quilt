@@ -13,7 +13,7 @@ import {multiline} from './shared/strings.ts';
 import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
-import type {ServerRuntime} from './shared/server.ts';
+import type {ModuleRuntime} from './module.ts';
 
 export interface ServerOptions {
   /**
@@ -68,6 +68,22 @@ export interface ServerOptions {
   runtime?: ServerRuntime;
 }
 
+export interface ServerRuntime extends ModuleRuntime {
+  /**
+   * A string that will be inlined directly as code to reference a runtime constant
+   * that contains environment variables.
+   */
+  env?: string;
+
+  /**
+   * The content to use as the entry point when the server uses the `request-router`
+   * format for their server. This file should import the request router instance for
+   * this app from 'quilt:module/request-router', and create a server that is appropriate
+   * for this runtime.
+   */
+  requestRouter?(): string;
+}
+
 export interface ServerOutputOptions
   extends Pick<RollupNodePluginOptions, 'bundle'> {
   /**
@@ -96,7 +112,6 @@ export interface ServerOutputOptions
   hash?: boolean | 'async-only';
 }
 
-export type {ServerRuntime};
 export {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER};
 
 export async function quiltServer({
@@ -137,7 +152,10 @@ export async function quiltServer({
     import('./features/node.ts'),
     import('./features/react.ts'),
     import('./features/esnext.ts'),
-    getNodePlugins({bundle}),
+    getNodePlugins({
+      bundle,
+      resolve: {exportConditions: runtime.resolve?.exportConditions},
+    }),
   ]);
 
   const serverEntry = entry
@@ -266,6 +284,9 @@ export function nodeServerRuntime({
       options: {
         format: format === 'commonjs' || format === 'cjs' ? 'cjs' : 'esm',
       },
+    },
+    resolve: {
+      exportConditions: ['node'],
     },
     requestRouter() {
       return multiline`

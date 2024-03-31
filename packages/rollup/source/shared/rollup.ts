@@ -69,10 +69,21 @@ export interface RollupNodePluginOptions {
    * @see https://github.com/Septh/rollup-plugin-node-externals
    */
   bundle?: boolean | RollupNodeBundle;
+
+  /**
+   * Additional options to the `@rollup/plugin-node-resolve` plugin.
+   */
+  resolve?: {
+    /**
+     * Additional export conditions to use when resolving `exports` fields in `package.json`.
+     */
+    exportConditions?: string[];
+  };
 }
 
 export async function getNodePlugins({
   bundle = {},
+  resolve = {},
 }: RollupNodePluginOptions = {}) {
   const [
     {default: commonjs},
@@ -94,7 +105,7 @@ export async function getNodePlugins({
     // other than node builtins.
     nodeExternalsOptions = {
       builtins: true,
-      builtinsPrefix: 'strip',
+      builtinsPrefix: 'add',
       deps: false,
       devDeps: false,
       peerDeps: false,
@@ -128,7 +139,7 @@ export async function getNodePlugins({
 
     nodeExternalsOptions = {
       builtins: !bundleBuiltins,
-      builtinsPrefix: bundleBuiltins ? 'strip' : 'add',
+      builtinsPrefix: 'add',
       deps: !bundleDependencies,
       devDeps: !bundleDevDependencies,
       peerDeps: !bundlePeerDependencies,
@@ -147,6 +158,7 @@ export async function getNodePlugins({
       exportConditions: [
         'esnext',
         'quilt:esnext',
+        ...(resolve.exportConditions ?? []),
         'default',
         'module',
         'import',

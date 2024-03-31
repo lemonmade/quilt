@@ -45,6 +45,9 @@ export function cloudflareWorkers({
         format: format === 'module' ? 'esm' : 'iife',
       },
     },
+    resolve: {
+      exportConditions: ['worker', 'workerd'],
+    },
     requestRouter() {
       if (format === 'module') {
         return multiline`
@@ -103,6 +106,9 @@ function cloudflarePagesServer({
         inlineDynamicImports: true,
         entryFileNames: '_worker.js',
       },
+    },
+    resolve: {
+      exportConditions: ['worker', 'workerd'],
     },
     requestRouter() {
       if (format === 'module') {

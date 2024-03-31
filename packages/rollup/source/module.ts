@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import {type InputPluginOption, type RollupOptions} from 'rollup';
+import type {InputPluginOption, RollupOptions, OutputOptions} from 'rollup';
 
 import {Project, sourceEntriesForProject} from './shared/project.ts';
 import {
@@ -50,6 +50,49 @@ export interface ModuleOptions {
    * Customizes the assets created for your module.
    */
   assets?: ModuleAssetsOptions;
+
+  /**
+   * Customizations to the module for the runtime it will execute in.
+   */
+  runtime?: ModuleRuntime;
+}
+
+export interface ModuleRuntime {
+  output?: Pick<RollupNodePluginOptions, 'bundle'> & {
+    /**
+     * What module format to use for the server output.
+     *
+     * @default 'module'
+     */
+    format?:
+      | 'module'
+      | 'modules'
+      | 'esmodules'
+      | 'esm'
+      | 'es'
+      | 'commonjs'
+      | 'cjs';
+
+    /**
+     * The directory to output the server to.
+     */
+    directory?: string;
+
+    /**
+     * Overrides to the Rollup output options.
+     */
+    options?: OutputOptions;
+  };
+
+  /**
+   * Overrides for module resolution for this server.
+   */
+  resolve?: {
+    /**
+     * Additional export conditions to use when resolving `exports` fields in `package.json`.
+     */
+    exportConditions?: string[];
+  };
 }
 
 export interface ModuleAssetsOptions
@@ -71,15 +114,18 @@ export async function quiltModule({
   env,
   assets,
   graphql = true,
+  runtime,
 }: ModuleOptions = {}) {
   const project = Project.load(root);
   const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
-  const outputDirectory = project.resolve('build/output');
+  const outputDirectory = project.resolve(
+    runtime?.output?.directory ?? 'build/output',
+  );
   const reportDirectory = path.join(outputDirectory, '../reports');
 
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
-  const bundle = assets?.bundle ?? true;
+  const bundle = assets?.bundle ?? runtime?.output?.bundle ?? true;
 
   const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
     root: project.root,
@@ -103,7 +149,10 @@ export async function quiltModule({
     import('./features/node.ts'),
     import('./features/react.ts'),
     import('./features/esnext.ts'),
-    getNodePlugins({bundle}),
+    getNodePlugins({
+      bundle,
+      resolve: {exportConditions: runtime?.resolve?.exportConditions},
+    }),
   ]);
 
   const finalEntry = await resolveModuleEntry(entry, project);

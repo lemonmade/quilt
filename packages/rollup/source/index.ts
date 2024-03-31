@@ -11,7 +11,7 @@ export {
   type AppRuntime,
   type AppServerRuntime,
 } from './app.ts';
-export {quiltModule, type ModuleOptions} from './module.ts';
+export {quiltModule, type ModuleOptions, type ModuleRuntime} from './module.ts';
 export {
   quiltPackage,
   quiltPackageESModules,

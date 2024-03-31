@@ -36,9 +36,8 @@ import {
   type BrowserGroupTargetSelection,
 } from './shared/browserslist.ts';
 import {Project} from './shared/project.ts';
-import type {ServerRuntime} from './shared/server.ts';
 
-import type {NodeServerRuntimeOptions} from './server.ts';
+import type {ServerRuntime, NodeServerRuntimeOptions} from './server.ts';
 
 export interface AppBaseOptions {
   /**
@@ -640,7 +639,10 @@ export async function quiltAppServerPlugins({
     import('./features/assets.ts'),
     import('./features/async.ts'),
     import('./features/esnext.ts'),
-    getNodePlugins({bundle}),
+    getNodePlugins({
+      bundle,
+      resolve: {exportConditions: runtime.resolve?.exportConditions},
+    }),
   ]);
 
   const plugins: InputPluginOption[] = [
