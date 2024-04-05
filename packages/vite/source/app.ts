@@ -173,6 +173,9 @@ export async function quiltApp({
     config() {
       return {
         appType: 'custom',
+        test: {
+          environment: 'jsdom',
+        },
       };
     },
   });
