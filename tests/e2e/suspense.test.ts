@@ -1,50 +1,43 @@
 import {describe, it, expect} from 'vitest';
-import {buildAppAndOpenPage, stripIndent, withWorkspace} from './utilities.ts';
+import {multiline, createWorkspace, startServer} from './utilities.ts';
 
-describe('http', () => {
-  describe('suspense', () => {
-    it('renders the app on the server until Suspense boundaries have resolved', async () => {
-      await withWorkspace({fixture: 'basic-app'}, async (workspace) => {
-        const {fs} = workspace;
+describe('suspense', () => {
+  it('renders the app on the server until Suspense boundaries have resolved', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
 
-        await fs.write({
-          'foundation/Routes.tsx': stripIndent`
-              import {Suspense} from 'react';
-              import {usePerformanceNavigation} from '@quilted/quilt/performance';
+    await workspace.fs.write({
+      'foundation/Routes.tsx': multiline`
+        import {Suspense} from 'react';
 
-              let resolved;
-              function useSuspenseValue() {
-                if (resolved) return resolved;
-                throw new Promise((resolve) => {
-                  setTimeout(() => {
-                    resolved = 'Hello suspense!';
-                    resolve();
-                  }, 0);
-                });
-              }
-              
-              export function Routes() {
-                return (
-                  <Suspense>
-                    <Start />
-                  </Suspense>
-                );
-              }
-              
-              function Start() {
-                const value = useSuspenseValue();
-                usePerformanceNavigation();
-                return <p>{value}</p>;
-              }
-            `,
-        });
-
-        const {page} = await buildAppAndOpenPage(workspace, {
-          path: '/',
-        });
-
-        expect(await page.textContent('body')).toMatch(`Hello suspense!`);
-      });
+        let resolved;
+        function useSuspenseValue() {
+          if (resolved) return resolved;
+          throw new Promise((resolve) => {
+            setTimeout(() => {
+              resolved = 'Hello suspense!';
+              resolve();
+            }, 0);
+          });
+        }
+        
+        export function Routes() {
+          return (
+            <Suspense>
+              <Start />
+            </Suspense>
+          );
+        }
+        
+        function Start() {
+          const value = useSuspenseValue();
+          return <p>{value}</p>;
+        }
+      `,
     });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage();
+
+    expect(await page.textContent('body')).toMatch(`Hello suspense!`);
   });
 });

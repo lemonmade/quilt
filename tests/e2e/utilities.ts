@@ -16,7 +16,7 @@ import {afterAll} from 'vitest';
 
 import {sleep} from '@quilted/events';
 
-export {stripIndent} from 'common-tags';
+export {stripIndent, stripIndent as multiline} from 'common-tags';
 export {getPort};
 
 export interface FileSystem {
@@ -26,18 +26,6 @@ export interface FileSystem {
   write(files: Record<string, string>): Promise<void>;
   write(file: string, content: string): Promise<void>;
   remove(file: string): Promise<void>;
-}
-
-export interface Browser {
-  open(
-    url: URL | string,
-    options?: Parameters<PlaywrightBrowser['newPage']>[0] & {
-      customizeContext?(
-        context: PlaywrightBrowserContext,
-        options: {url: URL},
-      ): void | Promise<void>;
-    },
-  ): Promise<Page>;
 }
 
 export type {Page};
@@ -54,10 +42,26 @@ export interface Command {
   node(script: string, options?: SpawnOptions): RunResult;
 }
 
-export interface Workspace {
+export interface Workspace extends AsyncDisposable {
   readonly fs: FileSystem;
   readonly command: Command;
-  readonly browser: Browser;
+  readonly debugging: boolean;
+  beforeDispose(action: () => void | Promise<void>): void;
+}
+
+export interface Server extends AsyncDisposable {
+  readonly url: URL;
+  readonly fetch: typeof fetch;
+  openPage(
+    url?: URL | string,
+    options?: Parameters<PlaywrightBrowser['newPage']>[0] & {
+      debug?: boolean;
+      customizeContext?(
+        context: PlaywrightBrowserContext,
+        options: {url: URL},
+      ): void | Promise<void>;
+    },
+  ): Promise<Page>;
 }
 
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
@@ -101,12 +105,16 @@ export async function withWorkspace<T>(
     action = definitelyAction!;
   }
 
-  const {
-    debug = false,
-    name = debug ? 'test' : `test-${nanoid()}`,
-    fixture,
-  } = options;
+  await using workspace = await createWorkspace(options);
+  const result = await action(workspace);
+  return result;
+}
 
+export async function createWorkspace({
+  debug = false,
+  name = debug ? 'test' : `test-${nanoid()}`,
+  fixture,
+}: WorkspaceOptions = {}) {
   const root = path.join(__dirname, `output/${name}`);
 
   const teardownActions: (() => void | Promise<void>)[] = [];
@@ -193,101 +201,150 @@ export async function withWorkspace<T>(
         }
       },
     },
-    browser: {
-      async open(urlOrString, {customizeContext, ...options} = {}) {
-        const url =
-          typeof urlOrString === 'string' ? new URL(urlOrString) : urlOrString;
-
-        browserPromise ??= chromium.launch();
-        const browser = await browserPromise;
-        const context = await browser.newContext({
-          viewport: {height: 800, width: 600},
-          ...options,
-        });
-
-        if (customizeContext) {
-          await customizeContext(context, {url});
-        }
-
-        const page = await context.newPage();
-
-        teardownActions.push(async () => {
-          await page.close();
-          await context.close();
-        });
-
-        await page.goto(url.href);
-
-        return page;
-      },
-    },
     command: {
       run: (...args) => runCommand(...args),
       pnpm: (command, options) => runCommand(`pnpm ${command}`, options),
       node: (...args) => runNode(...args),
     },
+    debugging: debug,
+    beforeDispose(action) {
+      teardownActions.push(action);
+    },
+    [Symbol.asyncDispose]: async () => {
+      await Promise.all(teardownActions.map((action) => action()));
+
+      if (!debug) {
+        await rm(root, {force: true, recursive: true});
+      }
+    },
   };
 
-  try {
-    await rm(root, {force: true, recursive: true});
+  await rm(root, {force: true, recursive: true});
 
-    if (fixture) {
-      await copy(path.join(fixtureRoot, fixture), root);
+  if (fixture) {
+    await copy(path.join(fixtureRoot, fixture), root);
 
-      const packageJson = JSON.parse(await workspace.fs.read('package.json'));
-      packageJson.name = path.basename(root);
-      await workspace.fs.write(
-        'package.json',
-        JSON.stringify(packageJson, null, 2) + '\n',
-      );
-    }
-
-    const result = await action(workspace);
-    return result;
-  } finally {
-    await Promise.all(teardownActions.map((action) => action()));
-
-    if (!debug) {
-      await rm(root, {force: true, recursive: true});
-    }
+    const packageJson = JSON.parse(await workspace.fs.read('package.json'));
+    packageJson.name = path.basename(root);
+    await workspace.fs.write(
+      'package.json',
+      JSON.stringify(packageJson, null, 2) + '\n',
+    );
   }
+
+  return workspace;
 }
 
 interface BuildAndRunOptions {
   env?: Record<string, string>;
 }
 
-export async function buildAppAndRunServer(
-  {command, fs}: Workspace,
-  {env}: BuildAndRunOptions = {},
-) {
-  await command.pnpm('build', {env});
+export async function startServer(
+  workspace: Workspace,
+  {
+    port: explicitPort,
+    path = 'build/server/server.js',
+    build,
+  }: {
+    port?: number;
+    path?: string;
+    build?: BuildAndRunOptions | boolean;
+  } = {},
+): Promise<Server> {
+  if (build !== false) {
+    await workspace.command.pnpm('build', {
+      env: typeof build === 'object' ? build?.env : undefined,
+    });
+  }
 
-  const port = await getPort();
+  const port = explicitPort ?? (await getPort());
   const url = new URL(`http://localhost:${port}`);
 
-  const server = startServer(async () => {
-    await command.node(fs.resolve('build/server/server.js'), {
-      env: {PORT: String(port)},
-    });
+  const startCommand = workspace.command.node(path, {
+    env: {PORT: String(port)},
+  });
+
+  workspace.beforeDispose(async () => {
+    startCommand.child.kill();
+  });
+
+  startCommand.catch((error) => {
+    // Ignore errors from killing the server at the end of tests
+    if ((error as {signal?: string})?.signal === 'SIGTERM') return;
+    console.error('Error running server:');
+    console.error(error);
   });
 
   await waitForUrl(url);
 
   return {
     url,
-    server,
-  };
-}
+    fetch(input, init) {
+      const normalizedInput =
+        typeof input === 'string' ? new URL(input, url) : input;
+      return fetch(normalizedInput as any, init);
+    },
+    async openPage(
+      target = '/',
+      {debug = workspace.debugging, customizeContext, ...options} = {},
+    ) {
+      const targetUrl = new URL(target, url);
 
-export async function startServer(start: () => Promise<any>) {
-  try {
-    await start();
-  } catch (error) {
-    // Ignore errors from killing the server at the end of tests
-    if ((error as {signal?: string})?.signal === 'SIGTERM') return;
-    throw error;
-  }
+      browserPromise ??= chromium.launch();
+      const browser = await browserPromise;
+      const context = await browser.newContext({
+        viewport: {height: 800, width: 600},
+        ...options,
+      });
+
+      if (customizeContext) {
+        await customizeContext(context, {url});
+      }
+
+      const page = await context.newPage();
+
+      workspace.beforeDispose(async () => {
+        await page.close();
+        await context.close();
+      });
+
+      if (debug) {
+        page.on('console', async (message) => {
+          console.log('Browser console message:');
+
+          for (const arg of message.args()) {
+            console[message.type() as 'log'](await arg.jsonValue());
+          }
+        });
+
+        page.on('pageerror', (error) => {
+          console.log(`page error in headless browser`);
+          console.log(error);
+        });
+
+        page.on('requestfailed', (request) => {
+          console.log(
+            `failed request: ${request.url()} (${request.failure()?.errorText})`,
+          );
+        });
+
+        page.on('load', (page) => {
+          console.log(`browser navigated to ${page.url()}`);
+        });
+      }
+
+      await page.goto(targetUrl.href);
+
+      return page;
+    },
+    [Symbol.asyncDispose]: async () => {
+      startCommand.child.kill();
+
+      await new Promise<void>((resolve) => {
+        startCommand.child.once('exit', resolve);
+      });
+    },
+  };
 }
 
 export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
@@ -313,154 +370,154 @@ export async function waitForUrl(url: URL | string, {timeout = 500} = {}) {
   }
 }
 
-export async function buildAppAndOpenPage(
-  workspace: Workspace,
-  {
-    build,
-    path = '/',
-    javaScriptEnabled = true,
-    ...options
-  }: NonNullable<Parameters<Browser['open']>[1]> & {
-    path?: string;
-    build?: BuildAndRunOptions;
-  } = {},
-) {
-  const {url, server} = await buildAppAndRunServer(workspace, build);
-  const targetUrl = new URL(path, url);
+// export async function openPage(
+//   server: Server,
+//   {
+//     build,
+//     path = '/',
+//     javaScriptEnabled = true,
+//     ...options
+//   }: NonNullable<Parameters<Server['openPage']>[1]> & {
+//     path?: string;
+//     build?: BuildAndRunOptions;
+//   } = {},
+// ) {
+//   const {url, server} = await buildAppAndRunServer(workspace, build);
+//   const targetUrl = new URL(path, url);
 
-  const page = await openPageAndWaitForNavigation(workspace, targetUrl, {
-    ...options,
-    javaScriptEnabled,
-  });
+//   const page = await openPageAndWaitForNavigation(workspace, targetUrl, {
+//     ...options,
+//     javaScriptEnabled,
+//   });
 
-  return {page, url: targetUrl, server};
-}
+//   return {page, url: targetUrl, server};
+// }
 
-export async function openPageAndWaitForNavigation(
-  workspace: Workspace,
-  url: URL | string,
-  options?: Parameters<Browser['open']>[1],
-) {
-  const page = await workspace.browser.open(url, options);
+// export async function openPageAndWaitForNavigation(
+//   workspace: Workspace,
+//   url: URL | string,
+//   options?: Parameters<Browser['open']>[1],
+// ) {
+//   const page = await workspace.browser.open(url, options);
 
-  page.on('console', async (message) => {
-    console.log('Browser console message:');
+//   page.on('console', async (message) => {
+//     console.log('Browser console message:');
 
-    for (const arg of message.args()) {
-      console[message.type() as 'log'](await arg.jsonValue());
-    }
-  });
+//     for (const arg of message.args()) {
+//       console[message.type() as 'log'](await arg.jsonValue());
+//     }
+//   });
 
-  page.on('pageerror', (error) => {
-    console.log(`page error in headless browser`);
-    console.log(error);
-  });
+//   page.on('pageerror', (error) => {
+//     console.log(`page error in headless browser`);
+//     console.log(error);
+//   });
 
-  page.on('requestfailed', (request) => {
-    console.log(
-      `failed request: ${request.url()} (${request.failure()?.errorText})`,
-    );
-  });
+//   page.on('requestfailed', (request) => {
+//     console.log(
+//       `failed request: ${request.url()} (${request.failure()?.errorText})`,
+//     );
+//   });
 
-  page.on('load', (page) => {
-    console.log(`browser navigated to ${page.url()}`);
-  });
+//   page.on('load', (page) => {
+//     console.log(`browser navigated to ${page.url()}`);
+//   });
 
-  await waitForPerformanceNavigation(page, {
-    to: url,
-    checkCompleteNavigations: true,
-  });
+//   await waitForPerformanceNavigation(page, {
+//     to: url,
+//     checkCompleteNavigations: true,
+//   });
 
-  return page;
-}
+//   return page;
+// }
 
-export async function waitForPerformanceNavigation(
-  page: Page,
-  {
-    to = '',
-    timeout = 1_000,
-    checkCompleteNavigations = false,
-    action,
-  }: {
-    to?: URL | string;
-    timeout?: number;
-    checkCompleteNavigations?: boolean;
-    action?(page: Page): Promise<void>;
-  },
-) {
-  const url = typeof to === 'string' ? new URL(to, page.url()) : to;
+// export async function waitForPerformanceNavigation(
+//   page: Page,
+//   {
+//     to = '',
+//     timeout = 1_000,
+//     checkCompleteNavigations = false,
+//     action,
+//   }: {
+//     to?: URL | string;
+//     timeout?: number;
+//     checkCompleteNavigations?: boolean;
+//     action?(page: Page): Promise<void>;
+//   },
+// ) {
+//   const url = typeof to === 'string' ? new URL(to, page.url()) : to;
 
-  if (checkCompleteNavigations && action != null) {
-    await action(page);
-  }
+//   if (checkCompleteNavigations && action != null) {
+//     await action(page);
+//   }
 
-  const navigationFinished = page.evaluate(
-    async ({href, timeout, checkCompleteNavigations}) => {
-      const performance = window.Quilt?.E2E?.Performance;
+//   const navigationFinished = page.evaluate(
+//     async ({href, timeout, checkCompleteNavigations}) => {
+//       const performance = window.Quilt?.E2E?.Performance;
 
-      if (performance == null) return;
+//       if (performance == null) return;
 
-      if (
-        checkCompleteNavigations &&
-        performance.navigations.some(
-          (navigation) => navigation.target.href === href,
-        )
-      ) {
-        return;
-      }
+//       if (
+//         checkCompleteNavigations &&
+//         performance.navigations.some(
+//           (navigation) => navigation.target.href === href,
+//         )
+//       ) {
+//         return;
+//       }
 
-      // We have to define this inline since this script is executed
-      // in a different JS environment :/
-      class TimedAbortController extends AbortController {
-        readonly promise: Promise<void>;
-        private timeout!: ReturnType<typeof setTimeout>;
+//       // We have to define this inline since this script is executed
+//       // in a different JS environment :/
+//       class TimedAbortController extends AbortController {
+//         readonly promise: Promise<void>;
+//         private timeout!: ReturnType<typeof setTimeout>;
 
-        constructor({time}: {time: number}) {
-          super();
-          this.promise = new Promise((resolve) => {
-            this.timeout = setTimeout(() => {
-              if (this.signal.aborted) return;
-              this.abort();
-              resolve();
-            }, time);
-          });
+//         constructor({time}: {time: number}) {
+//           super();
+//           this.promise = new Promise((resolve) => {
+//             this.timeout = setTimeout(() => {
+//               if (this.signal.aborted) return;
+//               this.abort();
+//               resolve();
+//             }, time);
+//           });
 
-          this.signal.addEventListener('abort', () => {
-            if (this.timeout) clearTimeout(this.timeout);
-          });
-        }
-      }
+//           this.signal.addEventListener('abort', () => {
+//             if (this.timeout) clearTimeout(this.timeout);
+//           });
+//         }
+//       }
 
-      const abort = new TimedAbortController({time: timeout});
+//       const abort = new TimedAbortController({time: timeout});
 
-      await new Promise<void>((resolve) => {
-        performance.on(
-          'navigation',
-          (navigation) => {
-            if (navigation.target.href === href) {
-              abort.abort();
-              resolve();
-            }
-          },
-          {signal: abort.signal},
-        );
-      });
-    },
-    {href: url.href, timeout, checkCompleteNavigations},
-  );
+//       await new Promise<void>((resolve) => {
+//         performance.on(
+//           'navigation',
+//           (navigation) => {
+//             if (navigation.target.href === href) {
+//               abort.abort();
+//               resolve();
+//             }
+//           },
+//           {signal: abort.signal},
+//         );
+//       });
+//     },
+//     {href: url.href, timeout, checkCompleteNavigations},
+//   );
 
-  if (!checkCompleteNavigations && action != null) {
-    await action(page);
-  }
+//   if (!checkCompleteNavigations && action != null) {
+//     await action(page);
+//   }
 
-  await navigationFinished;
-}
+//   await navigationFinished;
+// }
 
-export async function reloadAndWaitForPerformanceNavigation(page: Page) {
-  const url = page.url();
-  await page.reload();
-  await waitForPerformanceNavigation(page, {
-    to: url,
-    checkCompleteNavigations: true,
-  });
-}
+// export async function reloadAndWaitForPerformanceNavigation(page: Page) {
+//   const url = page.url();
+//   await page.reload();
+//   await waitForPerformanceNavigation(page, {
+//     to: url,
+//     checkCompleteNavigations: true,
+//   });
+// }
