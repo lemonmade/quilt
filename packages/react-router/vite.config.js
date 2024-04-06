@@ -1,6 +1,9 @@
 import {quiltPackage} from '@quilted/vite/package';
 
-// console.log(quiltPackage());
 export default {
+  esbuild: {
+    // Without this, vitest preserves `using` statemenets, which aren’t supported in Node.
+    target: 'es2022',
+  },
   plugins: [quiltPackage()],
 };

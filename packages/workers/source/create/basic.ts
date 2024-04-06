@@ -24,11 +24,12 @@ export function createWorker(
   const workerURL =
     resolvedWorkerModule && getSameOriginWorkerUrl(resolvedWorkerModule.url);
 
-  class Worker extends BaseWorker {
+  class Worker extends BaseWorker implements Disposable {
     readonly url = workerURL;
 
     private readonly abort = new AbortController();
     readonly signal = this.abort.signal;
+    readonly [Symbol.dispose]!: () => void;
 
     constructor() {
       super(workerURL!, resolvedWorkerModule?.options);
@@ -41,6 +42,12 @@ export function createWorker(
           },
           {once: true},
         );
+      }
+
+      if (Symbol.dispose) {
+        this[Symbol.dispose] = () => {
+          this.terminate();
+        };
       }
     }
 

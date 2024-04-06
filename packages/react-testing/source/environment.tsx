@@ -318,7 +318,7 @@ export function createEnvironment<
     const abort = new AbortController();
     const testRendererRef = createRef<TestRenderer<Props>>();
 
-    const rootApi: RootApi<Props, Context, Actions> = {
+    const rootApi: Omit<RootApi<Props, Context, Actions>, keyof Disposable> = {
       act,
       mount,
       unmount,
@@ -327,6 +327,12 @@ export function createEnvironment<
       actions: rootActions ?? ({} as any),
       signal: abort.signal,
     };
+
+    if (Symbol.dispose) {
+      (rootApi as any)[Symbol.dispose] = () => {
+        if (mounted) unmount();
+      };
+    }
 
     const root: Root<Props, Context, Actions> = new Proxy(rootApi, {
       get(target, key, receiver) {

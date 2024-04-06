@@ -49,7 +49,8 @@ export interface Root<
   Props,
   Context extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
-> extends Node<Props> {
+> extends Node<Props>,
+    Disposable {
   readonly context: Context;
   readonly actions: Actions;
   readonly signal: AbortSignal;

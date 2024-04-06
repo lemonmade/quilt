@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 
-import {describe, it, expect, beforeEach, vi} from 'vitest';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import type {PropsWithChildren} from 'react';
 
 import {useRoutes} from '../routes.tsx';
 import {useRedirect} from '../redirect.ts';
-import {render} from '../../tests/utilities.tsx';
+import {render, destroyAll} from '../../tests/utilities.tsx';
 
 vi.mock('../redirect', () => ({
   useRedirect: vi.fn(),
@@ -22,6 +22,10 @@ function NestedRouteComponent({children}: PropsWithChildren<{}>) {
 describe('useRoutes()', () => {
   beforeEach(() => {
     (useRedirect as any).mockReset();
+  });
+
+  afterEach(() => {
+    destroyAll();
   });
 
   describe('match', () => {

@@ -8,12 +8,12 @@ import {Link} from './Link.tsx';
 
 describe('<Link />', () => {
   it('creates an anchor tag', () => {
-    const link = render(<Link to="/" />);
+    using link = render(<Link to="/" />);
     expect(link).toContainReactComponent('a', {href: '/'});
   });
 
   it('creates an anchor from a relative `to`', () => {
-    const link = render(<Link to="my-product" />, {
+    using link = render(<Link to="my-product" />, {
       router: new TestRouter('https://example.com/products'),
     });
 
@@ -22,7 +22,7 @@ describe('<Link />', () => {
 
   it('passes additional props through to the anchor tag', () => {
     const label = 'Home';
-    const link = render(<Link to="/" aria-label={label} />);
+    using link = render(<Link to="/" aria-label={label} />);
     expect(link).toContainReactComponent('a', {'aria-label': label});
   });
 
@@ -31,7 +31,7 @@ describe('<Link />', () => {
       const onClick = vi.fn();
       const event = createClickEvent();
 
-      const link = render(<Link to="/" onClick={onClick} />);
+      using link = render(<Link to="/" onClick={onClick} />);
       link.find('a')!.trigger('onClick', event);
 
       expect(onClick).toHaveBeenCalledWith(event);
@@ -42,7 +42,7 @@ describe('<Link />', () => {
       const router = new TestRouter('https://example.com');
       const navigate = vi.spyOn(router, 'navigate');
 
-      const link = render(<Link to={to} />, {router});
+      using link = render(<Link to={to} />, {router});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).toHaveBeenCalledWith(to);
@@ -52,7 +52,7 @@ describe('<Link />', () => {
       const router = new TestRouter('https://example.com');
       const navigate = vi.spyOn(router, 'navigate');
 
-      const link = render(<Link to="/" external />, {router});
+      using link = render(<Link to="/" external />, {router});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).not.toHaveBeenCalled();
@@ -62,7 +62,7 @@ describe('<Link />', () => {
       const router = new TestRouter('https://example.com');
       const navigate = vi.spyOn(router, 'navigate');
 
-      const link = render(
+      using link = render(
         <Link to="/" onClick={(event) => event.preventDefault()} />,
         {router},
       );
@@ -75,7 +75,7 @@ describe('<Link />', () => {
       const router = new TestRouter('https://example.com');
       const navigate = vi.spyOn(router, 'navigate');
 
-      const link = render(<Link to="/" />, {router});
+      using link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({shiftKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
@@ -85,7 +85,7 @@ describe('<Link />', () => {
       const router = new TestRouter('https://example.com');
       const navigate = vi.spyOn(router, 'navigate');
 
-      const link = render(<Link to="/" />, {router});
+      using link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({metaKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
@@ -95,7 +95,7 @@ describe('<Link />', () => {
       const router = new TestRouter('https://example.com');
       const navigate = vi.spyOn(router, 'navigate');
 
-      const link = render(<Link to="/" />, {router});
+      using link = render(<Link to="/" />, {router});
       link.find('a')!.trigger('onClick', createClickEvent({ctrlKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();

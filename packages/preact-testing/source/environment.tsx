@@ -276,7 +276,10 @@ export function createEnvironment(): Environment {
 
     let rootNode: Node<unknown> | null = null;
 
-    const baseRoot: Omit<Root<Props, Context, Actions>, keyof Node<any>> = {
+    const baseRoot: Omit<
+      Root<Props, Context, Actions>,
+      keyof Node<any> | keyof Disposable
+    > = {
       act,
       mount,
       unmount,
@@ -285,6 +288,12 @@ export function createEnvironment(): Environment {
       actions: rootActions ?? ({} as any),
       signal: abort.signal,
     };
+
+    if (Symbol.dispose) {
+      (baseRoot as any)[Symbol.dispose] = () => {
+        if (mounted) unmount();
+      };
+    }
 
     const root: Root<Props, Context, Actions> = new Proxy(baseRoot, {
       get(target, key, receiver) {

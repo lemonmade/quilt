@@ -1,12 +1,12 @@
 import {expect} from 'vitest';
 
 import {matchers, type CustomMatchers} from '@quilted/react-testing/matchers';
-import {createRender} from '@quilted/react-testing';
+import {createRender, destroyAll} from '@quilted/react-testing';
 import type {Prefix} from '@quilted/routing';
 
 import {TestRouter, TestRouting} from '../testing.tsx';
 
-export {TestRouter};
+export {TestRouter, destroyAll};
 
 export const render = createRender<
   | {router?: TestRouter; path?: never; prefix?: never}

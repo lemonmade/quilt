@@ -56,7 +56,7 @@ export interface RootApi<
   Props,
   Context extends PlainObject = EmptyObject,
   Actions extends PlainObject = EmptyObject,
-> {
+> extends Disposable {
   readonly context: Context;
   readonly actions: Actions;
   readonly signal: AbortSignal;
