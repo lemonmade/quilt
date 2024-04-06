@@ -12,18 +12,18 @@ export type MergeObjects<T, U> = T extends EmptyObject
     ? EmptyObject
     : U
   : U extends EmptyObject
-  ? T
-  : T & U;
+    ? T
+    : T & U;
 
 export type PropsFor<T extends string | ComponentType<any>> = T extends string
   ? T extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[T]
     : T extends ComponentType<any>
-    ? ComponentPropsWithoutRef<T>
-    : HTMLAttributes<T>
+      ? ComponentPropsWithoutRef<T>
+      : HTMLAttributes<T>
   : T extends ComponentType<any>
-  ? ComponentPropsWithoutRef<T>
-  : never;
+    ? ComponentPropsWithoutRef<T>
+    : never;
 
 export type FunctionKeys<T> = {
   [K in keyof T]-?: NonNullable<T[K]> extends (...args: any[]) => any
@@ -34,12 +34,12 @@ export type FunctionKeys<T> = {
 export type DeepPartial<T> = T extends (infer U)[]
   ? DeepPartial<U>[]
   : T extends readonly (infer U)[]
-  ? readonly DeepPartial<U>[]
-  : T extends PlainObject
-  ? {
-      [K in keyof T]?: DeepPartial<T[K]>;
-    }
-  : T;
+    ? readonly DeepPartial<U>[]
+    : T extends PlainObject
+      ? {
+          [K in keyof T]?: DeepPartial<T[K]>;
+        }
+      : T;
 
 export type Predicate<Extensions extends PlainObject> = (
   node: Node<unknown, Extensions>,

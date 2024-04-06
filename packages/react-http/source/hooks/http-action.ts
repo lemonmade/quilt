@@ -16,10 +16,7 @@ export const useHttpManager = () => useContext(HttpServerContext);
 export function useHttpAction(perform: (http: HttpManager) => void) {
   const http = useHttpManager();
 
-  useServerAction(
-    () => {
-      if (http) perform(http);
-    },
-    http?.actionKind,
-  );
+  useServerAction(() => {
+    if (http) perform(http);
+  }, http?.actionKind);
 }

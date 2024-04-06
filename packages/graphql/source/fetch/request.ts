@@ -76,8 +76,8 @@ export class GraphQLFetchRequest<Data, Variables> extends Request {
       typeof source === 'string'
         ? source
         : source
-        ? resolvedOperation.source
-        : undefined;
+          ? resolvedOperation.source
+          : undefined;
 
     const queryParameters: Record<string, any> = {};
 

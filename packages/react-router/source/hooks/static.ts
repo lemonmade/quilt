@@ -16,17 +16,14 @@ export function useStaticRenderer(
 ) {
   const staticRender = useContext(StaticRendererContext);
 
-  useServerAction(
-    () => {
-      staticRender?.record({
-        prefix,
-        fallback,
-        consumedPath,
-        routes,
-      });
-    },
-    staticRender?.kind,
-  );
+  useServerAction(() => {
+    staticRender?.record({
+      prefix,
+      fallback,
+      consumedPath,
+      routes,
+    });
+  }, staticRender?.kind);
 
   return staticRender;
 }

@@ -82,7 +82,7 @@ If you have a monorepo, you likely want to import your new package in another pr
 
 In the project that depends on your new package, add the the new dependency to your package.json. In general, Quilt recommends using `devDependencies`, because the default build logic in Quilt will bundle these dependencies at build time to optimize performance.
 
-```jsonc
+```json
 {
   "devDependencies": {
     // ... existing devDependencies
@@ -94,7 +94,7 @@ In the project that depends on your new package, add the the new dependency to y
 
 Quilt also recommends you use [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html) for managing a multi-project repository written in TypeScript. In the project that depends on your new package, add the new dependency to the `references` array in its `tsconfig.json` file:
 
-```jsonc
+```json
 {
   "references": [
     // ... existing references

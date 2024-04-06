@@ -7,6 +7,6 @@ export function useLocaleFromEnvironment() {
   return acceptLanguage
     ? parseAcceptLanguageHeader(acceptLanguage)
     : typeof navigator === 'object'
-    ? navigator.language
-    : undefined;
+      ? navigator.language
+      : undefined;
 }

@@ -13,6 +13,7 @@
     "test.unit": "vitest --config configuration/vite.unit.config.ts",
     "test.e2e": "vitest --config configuration/vite.e2e.config.ts --pool forks",
     "lint": "prettier --check --cache .",
+    "format": "prettier --write --cache .",
     "type-check": "tsc --build --pretty",
     "build": "pnpm --recursive --filter rollup run build && pnpm --recursive --filter !rollup run build",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
