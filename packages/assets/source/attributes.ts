@@ -28,8 +28,8 @@ export function styleAssetAttributes(
       crossorigin === true
         ? ''
         : typeof crossorigin === 'string'
-        ? crossorigin
-        : undefined,
+          ? crossorigin
+          : undefined,
     ...extraAttributes,
   };
 }
@@ -58,8 +58,8 @@ export function styleAssetPreloadAttributes(
       crossorigin === true
         ? ''
         : typeof crossorigin === 'string'
-        ? crossorigin
-        : undefined,
+          ? crossorigin
+          : undefined,
   };
 }
 
@@ -89,8 +89,8 @@ export function scriptAssetAttributes(
       crossorigin === true
         ? ''
         : typeof crossorigin === 'string'
-        ? crossorigin
-        : undefined,
+          ? crossorigin
+          : undefined,
     ...extraAttributes,
   };
 }
@@ -119,8 +119,8 @@ export function scriptAssetPreloadAttributes(
       crossorigin === true
         ? ''
         : typeof crossorigin === 'string'
-        ? crossorigin
-        : undefined,
+          ? crossorigin
+          : undefined,
   };
 }
 

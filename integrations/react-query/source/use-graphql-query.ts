@@ -54,8 +54,8 @@ export function useGraphQLQuery<Data, Variables>(
       typeof query === 'string'
         ? query
         : 'id' in query
-        ? query.id
-        : toGraphQLSource(query)
+          ? query.id
+          : toGraphQLSource(query)
     }`,
     variables,
   ];

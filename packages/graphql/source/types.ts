@@ -74,25 +74,24 @@ export type GraphQLAnyOperation<
  * type of the data that the operation will return. Otherwise, resolves to
  * `never`.
  */
-export type GraphQLData<T> = T extends GraphQLOperationType<infer Data, any>
-  ? Data
-  : T extends TypedQueryDocumentNode<infer Data, any>
-  ? Data
-  : never;
+export type GraphQLData<T> =
+  T extends GraphQLOperationType<infer Data, any>
+    ? Data
+    : T extends TypedQueryDocumentNode<infer Data, any>
+      ? Data
+      : never;
 
 /**
  * If the passed type can resolve to a GraphQL operation, resolves to the
  * type of the variables that the operation should receive. Otherwise, resolves to
  * `never`.
  */
-export type GraphQLVariables<T> = T extends GraphQLOperationType<
-  any,
-  infer Variables
->
-  ? Variables
-  : T extends TypedQueryDocumentNode<any, infer Variables>
-  ? Variables
-  : never;
+export type GraphQLVariables<T> =
+  T extends GraphQLOperationType<any, infer Variables>
+    ? Variables
+    : T extends TypedQueryDocumentNode<any, infer Variables>
+      ? Variables
+      : never;
 
 /**
  * An error that occurred while performing a GraphQL operation.
@@ -275,12 +274,12 @@ export type GraphQLDeepPartialData<Data> = {
             : NonNullable<U>
         >[]
       : NonNullable<Data[K]> extends Record<string, any>
-      ? GraphQLIsUnion<
-          NonNullable<Data[K]>,
-          GraphQLDeepPartialUnion<NonNullable<Data[K]>>,
-          GraphQLDeepPartialData<NonNullable<Data[K]>>
-        >
-      : NonNullable<Data[K]>
+        ? GraphQLIsUnion<
+            NonNullable<Data[K]>,
+            GraphQLDeepPartialUnion<NonNullable<Data[K]>>,
+            GraphQLDeepPartialData<NonNullable<Data[K]>>
+          >
+        : NonNullable<Data[K]>
   >;
 };
 
@@ -295,10 +294,7 @@ export type GraphQLMaybeNullableValue<T, V> = T extends null ? V | null : V;
  * resolve to `Else`.
  */
 export type GraphQLIsUnion<T, If, Else = never> =
-  | GraphQLTypenames<T>
-  | '' extends GraphQLTypenames<T>
-  ? If
-  : Else;
+  GraphQLTypenames<T> | '' extends GraphQLTypenames<T> ? If : Else;
 
 /**
  * A helper that picks a deep union of an object, with special handling

@@ -220,8 +220,8 @@ export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
         entryIdentifier = relativeSourceEntry.startsWith(`..${path.sep}`)
           ? `/@fs${sourceEntry}`
           : relativeSourceEntry.startsWith(`.${path.sep}`)
-          ? `/${relativeSourceEntry.slice(2)}`
-          : `/${relativeSourceEntry}`;
+            ? `/${relativeSourceEntry.slice(2)}`
+            : `/${relativeSourceEntry}`;
       } else {
         entryIdentifier = `/@id/${MAGIC_MODULE_ENTRY}`;
       }

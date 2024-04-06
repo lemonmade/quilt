@@ -47,8 +47,8 @@ export function useGraphQLMutation<Data, Variables>(
       typeof mutation === 'string'
         ? mutation
         : 'id' in mutation
-        ? mutation.id
-        : toGraphQLSource(mutation)
+          ? mutation.id
+          : toGraphQLSource(mutation)
     }`,
   ];
 

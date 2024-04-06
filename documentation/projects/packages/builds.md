@@ -253,7 +253,7 @@ For TypeScript consumers to use your package, you need to provide type definitio
 
 For each project in your workspace, you will also need to configure how and where TypeScript will produce type definitions. At the root of each project written in TypeScript, you should have a `tsconfig.json`. We recommend including at least the following options for projects that use Quilt:
 
-```jsonc
+```json
 {
   // Tells TypeScript where to look for your TypeScript source files. If you want to structure
   // your package differently (for example, you put your source files in a `src` instead), update
@@ -303,8 +303,8 @@ The [`@quilted/craft` package](../../../packages/craft) provides a collection of
   "include": ["source"],
   "compilerOptions": {
     "rootDir": "source",
-    "outDir": "build/typescript"
-  }
+    "outDir": "build/typescript",
+  },
 }
 ```
 
@@ -388,25 +388,25 @@ The example below shows a complete example of a package’s configuration files.
       "types": "./build/typescript/index.d.ts",
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
-      "import": "./build/esm/index.mjs"
+      "import": "./build/esm/index.mjs",
     },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
       "quilt:source": "./source/testing.ts",
       "quilt:esnext": "./build/esnext/testing.esnext",
-      "import": "./build/esm/testing.mjs"
-    }
+      "import": "./build/esm/testing.mjs",
+    },
   },
   "types": "./build/typescript/index.d.ts",
   "typeVersions": {
     "*": {
-      "testing": "./build/typescript/testing.d.ts"
-    }
+      "testing": "./build/typescript/testing.d.ts",
+    },
   },
   "sideEffects": false,
   "scripts": {
-    "build": "rollup --config ./rollup.config.js"
-  }
+    "build": "rollup --config ./rollup.config.js",
+  },
 }
 ```
 
@@ -417,8 +417,8 @@ The example below shows a complete example of a package’s configuration files.
   "include": ["source"],
   "compilerOptions": {
     "rootDir": "source",
-    "outDir": "build/typescript"
-  }
+    "outDir": "build/typescript",
+  },
 }
 ```
 

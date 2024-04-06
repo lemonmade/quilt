@@ -2,12 +2,8 @@
  * If `Union` has exactly `Size` members, resolves to `If`. Otherwise, resolves
  * to `Else`.
  */
-export type IfUnionSize<
-  Union,
-  Size extends number,
-  If = true,
-  Else = false,
-> = TupleFromUnion<Union> extends {length: Size} ? If : Else;
+export type IfUnionSize<Union, Size extends number, If = true, Else = false> =
+  TupleFromUnion<Union> extends {length: Size} ? If : Else;
 
 /**
  * A helper that can prevent a particular use of a generic type parameter
@@ -52,11 +48,12 @@ type TuplePrepend<Tuple extends any[], NewElement> = ((
 
 type Consumer<Value> = (value: Value) => void;
 
-type IntersectionFromUnion<Union> = (
-  Union extends any ? Consumer<Union> : never
-) extends Consumer<infer ResultIntersection>
-  ? ResultIntersection
-  : never;
+type IntersectionFromUnion<Union> =
+  (Union extends any ? Consumer<Union> : never) extends Consumer<
+    infer ResultIntersection
+  >
+    ? ResultIntersection
+    : never;
 
 // Creates an intersection of Consumer types, where each accepts one
 // of the union types
@@ -64,11 +61,8 @@ type OverloadedConsumerFromUnion<Union> = IntersectionFromUnion<
   Union extends any ? Consumer<Union> : never
 >;
 
-type UnionLast<Union> = OverloadedConsumerFromUnion<Union> extends (
-  a: infer A,
-) => void
-  ? A
-  : never;
+type UnionLast<Union> =
+  OverloadedConsumerFromUnion<Union> extends (a: infer A) => void ? A : never;
 
 type UnionExcludingLast<Union> = Exclude<Union, UnionLast<Union>>;
 

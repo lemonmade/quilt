@@ -9,15 +9,12 @@ export type NonOptionalKeys<T> = {
   [K in keyof T]-?: undefined extends T[K] ? never : K;
 }[keyof T];
 
-export type IfAllOptionalKeys<
-  Obj,
-  If,
-  Else = never,
-> = NonOptionalKeys<Obj> extends {
-  length: 0;
-}
-  ? If
-  : Else;
+export type IfAllOptionalKeys<Obj, If, Else = never> =
+  NonOptionalKeys<Obj> extends {
+    length: 0;
+  }
+    ? If
+    : Else;
 
 export type NoInfer<T> = {[K in keyof T]: T[K]} & T;
 

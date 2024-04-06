@@ -79,20 +79,20 @@ export type GraphQLResolverField<Type, Variables, ReturnType, Values, Context> =
 export type GraphQLReturnResult<Type, Values, Context> = Type extends null
   ? null
   : Type extends number
-  ? number
-  : Type extends string
-  ? string
-  : Type extends boolean
-  ? boolean
-  : Type extends (infer U)[]
-  ? GraphQLReturnResult<U, Values, Context>[]
-  : Type extends {__possibleTypes: any}
-  ? GraphQLReturnResult<Type['__possibleTypes'], Values, Context>
-  : Type extends {__typename: any}
-  ? Type['__typename'] extends keyof Values
-    ? Values[Type['__typename']]
-    : GraphQLDefaultObjectReturnResult<Type, Values, Context>
-  : never;
+    ? number
+    : Type extends string
+      ? string
+      : Type extends boolean
+        ? boolean
+        : Type extends (infer U)[]
+          ? GraphQLReturnResult<U, Values, Context>[]
+          : Type extends {__possibleTypes: any}
+            ? GraphQLReturnResult<Type['__possibleTypes'], Values, Context>
+            : Type extends {__typename: any}
+              ? Type['__typename'] extends keyof Values
+                ? Values[Type['__typename']]
+                : GraphQLDefaultObjectReturnResult<Type, Values, Context>
+              : never;
 
 /**
  * Transforms a GraphQL type, expressed as an object with methods for each
