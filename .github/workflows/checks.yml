@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/prepare
-      - run: pnpm run test.unit
+      - run: pnpm run test
 
   e2e-tests:
     name: End-to-end tests 🔬

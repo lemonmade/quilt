@@ -10,7 +10,6 @@
   "scripts": {
     "create": "tsx --conditions quilt:source ./packages/create/source/cli.ts",
     "test": "vitest",
-    "test.unit": "vitest --config configuration/vite.unit.config.ts",
     "test.e2e": "vitest --config configuration/vite.e2e.config.ts --pool forks",
     "lint": "prettier --check --cache .",
     "format": "prettier --write --cache .",
