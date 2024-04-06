@@ -14,7 +14,7 @@
     "lint": "prettier --check --cache .",
     "format": "prettier --write --cache .",
     "type-check": "tsc --build --pretty",
-    "build": "pnpm --recursive --filter rollup run build && pnpm --recursive --filter !rollup run build",
+    "build": "pnpm --filter rollup run build && pnpm --filter !rollup run build",
     "version-bump": "changeset version && pnpm install --no-frozen-lockfile",
     "deploy": "pnpm publish -r",
     "typescript.run": "tsx --conditions quilt:source",
