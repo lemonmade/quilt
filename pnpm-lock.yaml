@@ -87,8 +87,8 @@ importers:
         specifier: ^4.7.2
         version: 4.7.2
       typescript:
-        specifier: ^5.2.0
-        version: 5.2.2
+        specifier: ^5.4.0
+        version: 5.4.4
       vite:
         specifier: ^5.2.0
         version: 5.2.8(@types/node@20.8.10)
@@ -1090,8 +1090,8 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/craft
       typescript:
-        specifier: ^5.2.0
-        version: 5.2.2
+        specifier: ^5.4.0
+        version: 5.4.4
 
   tests/e2e/fixtures/basic-app:
     dependencies:
@@ -1109,8 +1109,8 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/craft
       typescript:
-        specifier: ^5.2.0
-        version: 5.2.2
+        specifier: ^5.4.0
+        version: 5.4.4
 
   tests/e2e/fixtures/empty-app:
     dependencies:
@@ -1128,8 +1128,8 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/craft
       typescript:
-        specifier: ^5.2.0
-        version: 5.2.2
+        specifier: ^5.4.0
+        version: 5.4.4
 
 packages:
 
@@ -7984,8 +7984,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /typescript@5.2.2:
-    resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
+  /typescript@5.4.4:
+    resolution: {integrity: sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true

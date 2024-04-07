@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@quilted/craft": "workspace:*",
-    "typescript": "^5.2.0"
+    "typescript": "^5.4.0"
   },
   "browserslist": [
     "defaults and fully supports es6-module-dynamic-import"
