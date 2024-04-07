@@ -1,5 +1,5 @@
 ---
-"@quilted/create": patch
+'@quilted/create': patch
 ---
 
 Upgrade TypeScript

@@ -66,8 +66,8 @@ importers:
         specifier: ^24.0.0
         version: 24.0.0
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
       prettier:
         specifier: ^3.2.0
         version: 3.2.5
@@ -446,8 +446,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
       terser:
         specifier: ^5.16.0
         version: 5.16.8
@@ -465,8 +465,8 @@ importers:
         specifier: ^29.0.0
         version: 29.7.0
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
 
   packages/prettier: {}
 
@@ -547,19 +547,16 @@ importers:
       jest-matcher-utils:
         specifier: ^29.0.0
         version: 29.7.0
-      prettier:
-        specifier: ^2.0.0 || ^3.0.0
-        version: 3.0.0
     devDependencies:
-      '@types/prettier':
-        specifier: ^2.0.0
-        version: 2.7.0
       expect:
         specifier: ^29.0.0
         version: 29.7.0
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
+      prettier:
+        specifier: ^3.2.0
+        version: 3.2.5
       react:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../react
@@ -567,8 +564,8 @@ importers:
         specifier: workspace:@quilted/react-dom@^18.2.0
         version: link:../react-dom
       vitest:
-        specifier: ^1.1.0
-        version: 1.1.0(@types/node@20.8.10)(jsdom@24.0.0)
+        specifier: ^1.4.0
+        version: 1.4.0(@types/node@20.8.10)(jsdom@24.0.0)
 
   packages/react:
     dependencies:
@@ -576,8 +573,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.34
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
 
   packages/react-assets:
     dependencies:
@@ -620,11 +617,11 @@ importers:
         specifier: ^18.2.0
         version: 18.2.14
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
       preact-render-to-string:
         specifier: ^6.3.0
-        version: 6.3.1(preact@10.19.2)
+        version: 6.3.1(preact@10.20.1)
 
   packages/react-email:
     dependencies:
@@ -802,8 +799,8 @@ importers:
   packages/react-signals:
     dependencies:
       '@preact/signals':
-        specifier: ^1.2.0
-        version: 1.2.1(preact@10.19.2)
+        specifier: ^1.2.3
+        version: 1.2.3(preact@10.20.1)
       '@quilted/signals':
         specifier: ^0.2.0
         version: link:../signals
@@ -811,8 +808,8 @@ importers:
         specifier: ^17.0.0 || ^18.0.0
         version: 18.2.34
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
     devDependencies:
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -834,8 +831,8 @@ importers:
         specifier: ^29.0.0
         version: 29.7.0
       preact:
-        specifier: ^10.19.0
-        version: 10.19.2
+        specifier: ^10.20.0
+        version: 10.20.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -995,8 +992,8 @@ importers:
   packages/signals:
     dependencies:
       '@preact/signals-core':
-        specifier: ^1.5.0
-        version: 1.5.0
+        specifier: ^1.6.0
+        version: 1.6.0
       '@quilted/events':
         specifier: ^2.0.0
         version: link:../events
@@ -1008,8 +1005,8 @@ importers:
         version: link:../events
     devDependencies:
       '@preact/signals-core':
-        specifier: ^1.5.0
-        version: 1.5.0
+        specifier: ^1.6.0
+        version: 1.6.0
 
   packages/useful-types: {}
 
@@ -1020,7 +1017,7 @@ importers:
         version: 7.23.2
       '@prefresh/vite':
         specifier: ^2.4.4
-        version: 2.4.4(preact@10.19.2)(vite@5.0.10)
+        version: 2.4.4(preact@10.20.1)(vite@5.0.10)
       '@quilted/babel':
         specifier: ^0.2.0
         version: link:../babel
@@ -3903,35 +3900,35 @@ packages:
     dev: false
     optional: true
 
-  /@preact/signals-core@1.5.0:
-    resolution: {integrity: sha512-U2diO1Z4i1n2IoFgMYmRdHWGObNrcuTRxyNEn7deSq2cru0vj0583HYQZHsAqcs7FE+hQyX3mjIV7LAfHCvy8w==}
+  /@preact/signals-core@1.6.0:
+    resolution: {integrity: sha512-O/XGxwP85h1F7+ouqTMOIZ3+V1whfaV9ToIVcuyGriD4JkSD00cQo54BKdqjvBJxbenvp7ynfqRHEwI6e+NIhw==}
 
-  /@preact/signals@1.2.1(preact@10.19.2):
-    resolution: {integrity: sha512-hRPvp1C2ooDzOHqfnhdpHgoIFDbYFAXLhoid3+jSItuPPD/J0r/UsiWKv/8ZO/oEhjRaP0M5niuRYsWqmY2GEA==}
+  /@preact/signals@1.2.3(preact@10.20.1):
+    resolution: {integrity: sha512-M2DXse3Wi8HwjI1d2vQWOLJ3lHogvqTsJYvl4ofXRXgMFQzJ7kmlZvlt5i8x5S5VwgZu0ghru4HkLqOoFfU2JQ==}
     peerDependencies:
       preact: 10.x
     dependencies:
-      '@preact/signals-core': 1.5.0
-      preact: 10.19.2
+      '@preact/signals-core': 1.6.0
+      preact: 10.20.1
     dev: false
 
   /@prefresh/babel-plugin@0.5.1:
     resolution: {integrity: sha512-uG3jGEAysxWoyG3XkYfjYHgaySFrSsaEb4GagLzYaxlydbuREtaX+FTxuIidp241RaLl85XoHg9Ej6E4+V1pcg==}
     dev: false
 
-  /@prefresh/core@1.5.2(preact@10.19.2):
+  /@prefresh/core@1.5.2(preact@10.20.1):
     resolution: {integrity: sha512-A/08vkaM1FogrCII5PZKCrygxSsc11obExBScm3JF1CryK2uDS3ZXeni7FeKCx1nYdUkj4UcJxzPzc1WliMzZA==}
     peerDependencies:
       preact: ^10.0.0
     dependencies:
-      preact: 10.19.2
+      preact: 10.20.1
     dev: false
 
   /@prefresh/utils@1.2.0:
     resolution: {integrity: sha512-KtC/fZw+oqtwOLUFM9UtiitB0JsVX0zLKNyRTA332sqREqSALIIQQxdUCS1P3xR/jT1e2e8/5rwH6gdcMLEmsQ==}
     dev: false
 
-  /@prefresh/vite@2.4.4(preact@10.19.2)(vite@5.0.10):
+  /@prefresh/vite@2.4.4(preact@10.20.1)(vite@5.0.10):
     resolution: {integrity: sha512-7jcz3j5pXufOWTjl31n0Lc3BcU8oGoacoaWx/Ur1QJ+fd4Xu0G7g/ER1xV02x7DCiVoFi7xtSgaophOXoJvpmA==}
     peerDependencies:
       preact: ^10.4.0
@@ -3939,10 +3936,10 @@ packages:
     dependencies:
       '@babel/core': 7.23.2
       '@prefresh/babel-plugin': 0.5.1
-      '@prefresh/core': 1.5.2(preact@10.19.2)
+      '@prefresh/core': 1.5.2(preact@10.20.1)
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
-      preact: 10.19.2
+      preact: 10.20.1
       vite: 5.0.10(@types/node@20.8.10)
     transitivePeerDependencies:
       - supports-color
@@ -4348,10 +4345,6 @@ packages:
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
-    dev: true
-
-  /@types/prettier@2.7.0:
-    resolution: {integrity: sha512-RI1L7N4JnW5gQw2spvL7Sllfuf1SaHdrZpCHiBlCXjIlufi1SMNnbu2teze3/QE67Fg2tBlH7W+mi4hVNk4p0A==}
     dev: true
 
   /@types/prompts@2.4.1:
@@ -7054,17 +7047,17 @@ packages:
       source-map-js: 1.2.0
     dev: true
 
-  /preact-render-to-string@6.3.1(preact@10.19.2):
+  /preact-render-to-string@6.3.1(preact@10.20.1):
     resolution: {integrity: sha512-NQ28WrjLtWY6lKDlTxnFpKHZdpjfF+oE6V4tZ0rTrunHrtZp6Dm0oFrcJalt/5PNeqJz4j1DuZDS0Y6rCBoqDA==}
     peerDependencies:
       preact: '>=10'
     dependencies:
-      preact: 10.19.2
+      preact: 10.20.1
       pretty-format: 3.8.0
     dev: false
 
-  /preact@10.19.2:
-    resolution: {integrity: sha512-UA9DX/OJwv6YwP9Vn7Ti/vF80XL+YA5H2l7BpCtUr3ya8LWHFzpiO5R+N7dN16ujpIxhekRFuOOF82bXX7K/lg==}
+  /preact@10.20.1:
+    resolution: {integrity: sha512-JIFjgFg9B2qnOoGiYMVBtrcFxHqn+dNXbq76bVmcaHYJFYR4lW67AOcXgAYQQTDYXDOg/kTZrKPNCdRgJ2UJmw==}
 
   /preferred-pm@3.0.3:
     resolution: {integrity: sha512-+wZgbxNES/KlJs9q40F/1sfOd/j7f1O9JaHcW5Dsn3aUUOZg3L2bjpVUcKV2jvtElYfoTuQiNeMfQJ4kwUAhCQ==}
@@ -7086,6 +7079,7 @@ packages:
     resolution: {integrity: sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==}
     engines: {node: '>=14'}
     hasBin: true
+    dev: true
 
   /prettier@3.2.5:
     resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}

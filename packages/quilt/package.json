@@ -256,7 +256,7 @@
   },
   "peerDependencies": {
     "graphql": "^16.7.0",
-    "preact": "^10.19.0",
+    "preact": "^10.20.0",
     "prettier": "^2.0.0 || ^3.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -283,11 +283,11 @@
     }
   },
   "devDependencies": {
-    "@types/prettier": "^2.0.0",
     "expect": "^29.0.0",
-    "preact": "^10.19.0",
+    "preact": "^10.20.0",
+    "prettier": "^3.2.0",
     "react": "workspace:@quilted/react@^18.2.0",
     "react-dom": "workspace:@quilted/react-dom@^18.2.0",
-    "vitest": "^1.1.0"
+    "vitest": "^1.4.0"
   }
 }

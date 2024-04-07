@@ -44,10 +44,10 @@
   "devDependencies": {
     "@types/react-test-renderer": "^18.0.0",
     "expect": "^29.0.0",
-    "preact": "^10.19.0"
+    "preact": "^10.20.0"
   },
   "peerDependencies": {
-    "preact": "^10.19.0"
+    "preact": "^10.20.0"
   },
   "peerDependenciesMeta": {
     "preact": {
