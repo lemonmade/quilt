@@ -1,5 +1,11 @@
 # @quilted/react-dom
 
+## 18.2.10
+
+### Patch Changes
+
+- [`ccf29286`](https://github.com/lemonmade/quilt/commit/ccf2928633719c38b30cd3712fe132c6bd5fd2a0) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Preact and signal dependencies
+
 ## 18.2.9
 
 ### Patch Changes

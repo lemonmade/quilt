@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.2.17
+
+### Patch Changes
+
+- [`04e1f238`](https://github.com/lemonmade/quilt/commit/04e1f2380ef1d7ca9659f630fdfc4f7e4f25f959) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade TypeScript
+
+- [`848012ea`](https://github.com/lemonmade/quilt/commit/848012ea4c702f5eb4b7d954c129f7eb4ee04c21) Thanks [@lemonmade](https://github.com/lemonmade)! - Add explicit jsdom dependencies
+
+- [`ccf29286`](https://github.com/lemonmade/quilt/commit/ccf2928633719c38b30cd3712fe132c6bd5fd2a0) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Preact and signal dependencies
+
 ## 0.2.16
 
 ### Patch Changes
