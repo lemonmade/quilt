@@ -1,5 +1,11 @@
 # @quilted/workers
 
+## 0.4.3
+
+### Patch Changes
+
+- [`3e07e287`](https://github.com/lemonmade/quilt/commit/3e07e287a68f5ba1059564c44df5a0469ac02982) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for explicit resource management
+
 ## 0.4.2
 
 ### Patch Changes

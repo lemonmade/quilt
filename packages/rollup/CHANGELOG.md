@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.23
+
+### Patch Changes
+
+- [`f85e7a59`](https://github.com/lemonmade/quilt/commit/f85e7a59e266010b0623d403b9971a984937a768) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Rollup, Vite, and ESBuild
+
 ## 0.2.22
 
 ### Patch Changes
