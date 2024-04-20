@@ -39,10 +39,10 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/async": "^0.4.0",
-    "@quilted/graphql": "^3.0.0",
-    "@quilted/react-utilities": "^0.2.0",
-    "@quilted/useful-types": "^2.0.0"
+    "@quilted/async": "workspace:^0.4.0",
+    "@quilted/graphql": "workspace:^3.0.0",
+    "@quilted/react-utilities": "workspace:^0.2.0",
+    "@quilted/useful-types": "workspace:^2.0.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

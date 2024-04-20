@@ -26,6 +26,6 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/threads": "^2.0.0"
+    "@quilted/threads": "workspace:^2.0.0"
   }
 }

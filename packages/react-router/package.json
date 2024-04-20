@@ -48,12 +48,12 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/react-html": "^0.4.0",
-    "@quilted/react-http": "^0.4.0",
-    "@quilted/react-performance": "^0.2.0",
-    "@quilted/react-server-render": "^0.4.0",
-    "@quilted/react-utilities": "^0.2.0",
-    "@quilted/routing": "^0.3.0"
+    "@quilted/react-html": "workspace:^0.4.0",
+    "@quilted/react-http": "workspace:^0.4.0",
+    "@quilted/react-performance": "workspace:^0.2.0",
+    "@quilted/react-server-render": "workspace:^0.4.0",
+    "@quilted/react-utilities": "workspace:^0.2.0",
+    "@quilted/routing": "workspace:^0.3.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

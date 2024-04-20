@@ -46,8 +46,8 @@
     "@types/react": "^17.0.0 || ^18.0.0"
   },
   "peerDependencies": {
-    "@apollo/client": "^3.0.0",
-    "@quilted/quilt": "^0.6.0",
+    "@apollo/client": "workspace:^3.0.0",
+    "@quilted/quilt": "workspace:^0.6.0",
     "graphql": "^16.8.0",
     "react": "^17.0.0 || ^18.0.0"
   },

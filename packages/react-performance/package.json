@@ -26,8 +26,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/performance": "^0.2.0",
-    "@quilted/react-utilities": "^0.2.0"
+    "@quilted/performance": "workspace:^0.2.0",
+    "@quilted/react-utilities": "workspace:^0.2.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

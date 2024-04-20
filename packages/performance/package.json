@@ -26,7 +26,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/events": "^2.0.0"
+    "@quilted/events": "workspace:^2.0.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"
