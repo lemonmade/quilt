@@ -255,7 +255,7 @@
     "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {
-    "graphql": "^16.7.0",
+    "graphql": "^16.8.0",
     "preact": "^10.20.0",
     "prettier": "^2.0.0 || ^3.0.0",
     "react": "^18.0.0",
