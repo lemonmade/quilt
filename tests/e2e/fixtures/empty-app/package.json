@@ -6,13 +6,12 @@
   "scripts": {
     "build": "rollup --config rollup.config.js"
   },
-  "dependencies": {
-    "@quilted/quilt": "workspace:*",
-    "react": "workspace:@quilted/react@*",
-    "react-dom": "workspace:@quilted/react-dom@*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@quilted/craft": "workspace:*",
+    "@quilted/quilt": "workspace:*",
+    "react": "workspace:@quilted/react@*",
+    "react-dom": "workspace:@quilted/react-dom@*",
     "typescript": "^5.4.0"
   },
   "browserslist": [
