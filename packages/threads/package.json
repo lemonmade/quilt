@@ -43,7 +43,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/events": "^2.0.0"
+    "@quilted/events": "workspace:^2.0.0"
   },
   "peerDependencies": {
     "@preact/signals-core": "^1.6.0"

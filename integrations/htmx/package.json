@@ -30,7 +30,7 @@
     "build": "rollup --config ./rollup.config.js"
   },
   "dependencies": {
-    "@quilted/request-router": "^0.2.0"
+    "@quilted/request-router": "workspace:^0.2.0"
   },
   "peerDependencies": {
     "htmx.org": "^1.0.0"

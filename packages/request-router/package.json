@@ -39,8 +39,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/http": "^0.3.0",
-    "@quilted/routing": "^0.3.0",
+    "@quilted/http": "workspace:^0.3.0",
+    "@quilted/routing": "workspace:^0.3.0",
     "send": "^0.17.0"
   },
   "devDependencies": {

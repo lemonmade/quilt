@@ -53,9 +53,9 @@
   "dependencies": {
     "@babel/core": "^7.23.0",
     "@prefresh/vite": "^2.4.4",
-    "@quilted/babel": "^0.2.0",
-    "@quilted/rollup": "^0.2.0",
-    "@quilted/request-router": "^0.2.0"
+    "@quilted/babel": "workspace:^0.2.0",
+    "@quilted/rollup": "workspace:^0.2.0",
+    "@quilted/request-router": "workspace:^0.2.0"
   },
   "peerDependencies": {
     "vite": "^5.0.0",

@@ -31,6 +31,6 @@
   },
   "dependencies": {
     "@preact/signals-core": "^1.6.0",
-    "@quilted/events": "^2.0.0"
+    "@quilted/events": "workspace:^2.0.0"
   }
 }

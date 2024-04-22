@@ -7,11 +7,10 @@
   "scripts": {
     "build": "rollup --config ./rollup.config.js"
   },
-  "dependencies": {
-    "@quilted/quilt": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@quilted/craft": "workspace:*",
+    "@quilted/quilt": "workspace:*",
     "typescript": "^5.4.0"
   }
 }

@@ -26,9 +26,9 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/async": "^0.4.0",
-    "@quilted/react-assets": "^0.1.0",
-    "@quilted/react-server-render": "^0.4.0"
+    "@quilted/async": "workspace:^0.4.0",
+    "@quilted/react-assets": "workspace:^0.1.0",
+    "@quilted/react-server-render": "workspace:^0.4.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",

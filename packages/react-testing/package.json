@@ -71,7 +71,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/preact-testing": "^0.1.0",
+    "@quilted/preact-testing": "workspace:^0.1.0",
     "jest-matcher-utils": "^27.0.0"
   },
   "devDependencies": {

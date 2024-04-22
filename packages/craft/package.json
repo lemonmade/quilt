@@ -44,9 +44,9 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/graphql-tools": "^0.2.0",
-    "@quilted/rollup": "^0.2.0",
-    "@quilted/vite": "^0.1.0",
+    "@quilted/graphql-tools": "workspace:^0.2.0",
+    "@quilted/rollup": "workspace:^0.2.0",
+    "@quilted/vite": "workspace:^0.1.0",
     "pkg-dir": "^7.0.0"
   },
   "peerDependencies": {
