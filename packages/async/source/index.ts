@@ -1,8 +1,4 @@
-export {
-  createAsyncModulesGlobal,
-  type AsyncModulesGlobal,
-  type AsyncModulesOptions,
-} from './global.ts';
+export {AsyncModulesGlobal, type AsyncModulesOptions} from './global.ts';
 export {
   AsyncAction,
   AsyncActionPromise,

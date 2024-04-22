@@ -48,7 +48,7 @@ export class AsyncModule<Module> {
 
     const preloadedModule = (globalThis as any)[
       Symbol.for('quilt')
-    ]?.AsyncModules?.get(id);
+    ]?.asyncModules?.get(id);
 
     this.loadAction = new AsyncAction(
       () => (typeof load === 'function' ? load() : load.import()),
