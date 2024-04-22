@@ -16,9 +16,9 @@ interface State {
 }
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
-  '@quilted/async': ['createAsyncModule'],
-  '@quilted/react-async': ['createAsyncModule', 'createAsyncComponent'],
-  '@quilted/quilt/async': ['createAsyncModule', 'createAsyncComponent'],
+  '@quilted/async': ['AsyncModule'],
+  '@quilted/react-async': ['AsyncModule'],
+  '@quilted/quilt/async': ['AsyncModule'],
 };
 
 export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
@@ -75,7 +75,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
           binding.referencePaths.forEach((refPath) => {
             const callExpression = refPath.parentPath!;
 
-            if (!callExpression.isCallExpression()) {
+            if (!callExpression.isNewExpression()) {
               return;
             }
 
@@ -85,10 +85,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
             }
 
             const [load] = args;
-            if (
-              !load?.isFunctionExpression() &&
-              !load?.isArrowFunctionExpression()
-            ) {
+            if (load == null) {
               return;
             }
 
@@ -161,8 +158,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
             const importStandin = t.identifier('__import');
 
             path.parentPath.replaceWith(t.callExpression(importStandin, []));
-            load.node.params.unshift(importStandin);
-            load.replaceWith(t.callExpression(identifier, []));
+            load.replaceWith(identifier);
           });
         }
       },

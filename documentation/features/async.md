@@ -306,14 +306,14 @@ export function Home() {
 
 ## Asynchronous modules
 
-Asynchronous components are actually just a thin wrapper around a more general concept of “asynchronous modules”. You can use asynchronous modules to split out non-component parts of your codebase that may not be needed for every page load, such as complex mutation handling or libraries you use in response to user events. Asynchronous modules also have the same server-rendering and preloading capabilities documented above for asynchronous components.
+An asynchronous module is a wrapper around a dynamic import . You can use asynchronous modules to split out non-component parts of your codebase that may not be needed for every page load, such as complex mutation handling or libraries you use in response to user events. Asynchronous modules also have the same server-rendering and preloading capabilities documented above for asynchronous components.
 
-To create an asynchronous module, use the `createAsyncModule()` function to wrap a dynamic import for the module you want to split out of your main bundles:
+To create an asynchronous module, use the `AsyncModule` class to wrap a dynamic import for the module you want to split out of your main bundles:
 
 ```tsx
-import {createAsyncModule} from '@quilted/quilt';
+import {AsyncModule} from '@quilted/quilt';
 
-const asyncDependency = createAsyncModule(
+const asyncDependency = new AsyncModule(
   () => import('my-expensive-dependency'),
 );
 ```
@@ -321,9 +321,9 @@ const asyncDependency = createAsyncModule(
 The asynchronous module comes with a `load()` method that you can call to gain access to the wrapped module. It also has a `loaded` field that provides the module synchronously, if you have already loaded it before.
 
 ```tsx
-import {createAsyncModule} from '@quilted/quilt';
+import {AsyncModule} from '@quilted/quilt';
 
-const asyncDependency = createAsyncModule(
+const asyncDependency = new AsyncModule(
   () => import('my-expensive-dependency'),
 );
 
@@ -333,9 +333,7 @@ function Start() {
       onClick={async () => {
         // The type of `load()` is a promise that resoles with the module, so
         // you should see all the types you declared in that module reflected here.
-        const {dependencyMethod} =
-          asyncDependency.loaded ?? (await asyncDependency.load());
-
+        const {dependencyMethod} = await asyncDependency.load();
         dependencyMethod();
       }}
     >
@@ -345,14 +343,14 @@ function Start() {
 }
 ```
 
-Using an asynchronous module this way is no different than using `import()` directly, other than the `loaded` field giving cached access to previously-loaded modules. However, the wrapping object offers a few performance-minded features that can’t be achieved with `import()` alone.
+Using an asynchronous module this way is no different than using `import()` directly, other than the `module` field giving cached access to previously-loaded modules. However, the wrapping object offers a few performance-minded features that can’t be achieved with `import()` alone.
 
 If you aren’t using a dependency just yet, but know you will likely use it when the app has loaded, you can preload its assets using the `useAsyncModulePreload()` hook:
 
 ```tsx
-import {createAsyncModule, useAsyncModulePreload} from '@quilted/quilt';
+import {AsyncModule, useAsyncModulePreload} from '@quilted/quilt';
 
-const asyncDependency = createAsyncModule(
+const asyncDependency = new AsyncModule(
   () => import('my-expensive-dependency'),
 );
 
@@ -364,9 +362,7 @@ function Start() {
       onClick={async () => {
         // The type of `load()` is a promise that resoles with the module, so
         // you should see all the types you declared in that module reflected here.
-        const {dependencyMethod} =
-          asyncDependency.loaded ?? (await asyncDependency.load());
-
+        const {dependencyMethod} = await asyncDependency.load();
         dependencyMethod();
       }}
     >
@@ -379,39 +375,38 @@ function Start() {
 If you need the asynchronous module to render your component, you can use the `useAsyncModule()` hook to load the module and keep track of its loading state. When called during server-side rendering, this hook will ensure the module’s assets are included in the HTML payload so that they are available synchronously when rendering on the client.
 
 ```tsx
-import {createAsyncModule, useAsyncModule} from '@quilted/quilt';
+import {AsyncModule, useAsyncModule} from '@quilted/quilt';
 
-const asyncDependency = createAsyncModule(
+const asyncDependency = new AsyncModule(
   () => import('my-expensive-dependency'),
 );
 
 function Start() {
-  const {
-    resolved: dependency,
-    loading,
-    error,
-  } = useAsyncModule(asyncDependency);
-
-  if (error) return <p>Something went wrong!</p>;
-  if (loading) return <p>Loading...</p>;
-
-  return <div>{dependency.getContent()}</div>;
+  const {module} = useAsyncModule(asyncDependency);
+  return <div>{module.getContent()}</div>;
 }
 ```
 
-`useAsyncModule()` also takes a `suspense` option. When set to `true`, this hook will suspend instead of returning error and loading states, so you can just use your asynchronous module as if it were available synchronously:
+`useAsyncModule()` uses suspense by default. This means that, if the module is not yet loaded, the `useAsyncModule` hook will throw an error that will resolve once the module is available. If you don’t need the module immediately, you can set the `defer` option to `true`. When you do this, the hook will not throw suspend when the module is unavailable. When When set to `true`, this hook will suspend instead of returning error and loading states, so you can just use your asynchronous module as if it were available synchronously:
 
 ```tsx
-import {createAsyncModule, useAsyncModule} from '@quilted/quilt';
+import {useEffect} from 'react';
+import {AsyncModule, useAsyncModule} from '@quilted/quilt';
 
-const asyncDependency = createAsyncModule(
+const asyncDependency = new AsyncModule(
   () => import('my-expensive-dependency'),
 );
 
 function Start() {
-  const dependency = useAsyncModule(asyncDependency, {
-    suspense: true,
+  const {module, isLoading, load} = useAsyncModule(asyncDependency, {
+    defer: true,
   });
+
+  useEffect(() => {
+    window.setIdleCallback(() => {
+      load();
+    });
+  }, []);
 
   return <div>{dependency.getContent()}</div>;
 }
@@ -421,4 +416,4 @@ function Start() {
 
 When writing libraries and packages, we recommend that you stick to using JavaScript’s standard dynamic `import()` statements to load code asynchronously. This technique can be just as important in backend applications and packages as it is in the front-end, as it allows you to defer loading code that the user (be they human or machine) may not need.
 
-Quilt’s `build` command automatically splits code outputs for both [packages](../projects/packages/builds.md) and [services](../projects/services/builds.md), so you can use `import()` without worrying too much about the details. If you need to be able to cache asynchronously loaded modules, you can use the [`createAsyncModule()` function documented above](#asynchronous-modules).
+Quilt’s `build` command automatically splits code outputs for both [packages](../projects/packages/builds.md) and [services](../projects/services/builds.md), so you can use `import()` without worrying too much about the details. If you need to be able to cache asynchronously loaded modules, you can use the [`AsyncModule` class documented above](#asynchronous-modules).

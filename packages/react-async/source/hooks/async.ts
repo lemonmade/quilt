@@ -1,6 +1,6 @@
 import {useEffect, useMemo} from 'react';
 import {useModuleAssets} from '@quilted/react-assets';
-import {AsyncOperation, type AsyncModule} from '@quilted/async';
+import {AsyncAction, type AsyncModule} from '@quilted/async';
 // Imported for the side effects
 import {} from '@quilted/react-signals';
 
@@ -14,13 +14,13 @@ export function useAsync<T>(
     active = true,
   }: {initial?: T; active?: boolean; signal?: AbortSignal} = {},
 ) {
-  const operation = useMemo(() => new AsyncOperation(run, {initial}), []);
+  const action = useMemo(() => new AsyncAction(run, {initial}), []);
 
-  if (active && operation.status === 'pending' && !signal?.aborted) {
-    throw operation.run({signal});
+  if (active && action.status === 'pending' && !signal?.aborted) {
+    throw action.run({signal});
   }
 
-  return operation;
+  return action;
 }
 
 export interface Options {
@@ -33,9 +33,7 @@ export function useAsyncModule<Module>(
   asyncModule: AsyncModule<Module>,
   {scripts, styles, immediate = true}: Options = {},
 ): AsyncModule<Module> {
-  const isPending = asyncModule.status === 'pending';
-
-  if (immediate && isPending) {
+  if (immediate) {
     throw asyncModule.import();
   }
 

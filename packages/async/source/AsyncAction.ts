@@ -1,12 +1,6 @@
 import {signal} from '@quilted/signals';
 
-export interface AsyncObservablePromise<T> extends Promise<T> {
-  readonly status?: 'pending' | 'fulfilled' | 'rejected';
-  readonly value?: T;
-  readonly reason?: unknown;
-}
-
-export class AsyncOperation<T> {
+export class AsyncAction<T> {
   get status() {
     return this.finished.value?.promise.status ?? 'pending';
   }
@@ -25,7 +19,7 @@ export class AsyncOperation<T> {
     return active?.status === 'rejected' ? active.reason : undefined;
   }
 
-  get promise(): AsyncObservablePromise<T> {
+  get promise(): AsyncActionPromise<T> {
     return (
       this.running.value?.promise ??
       this.finished.value?.promise ??
@@ -33,13 +27,13 @@ export class AsyncOperation<T> {
     );
   }
 
-  private readonly running = signal<AsyncObservableDeferred<T> | undefined>(
+  private readonly running = signal<AsyncActionDeferred<T> | undefined>(
     undefined,
   );
-  private readonly finished = signal<AsyncObservableDeferred<T> | undefined>(
+  private readonly finished = signal<AsyncActionDeferred<T> | undefined>(
     undefined,
   );
-  private readonly initial = new AsyncObservableDeferred<T>();
+  private readonly initial = new AsyncActionDeferred<T>();
 
   constructor(
     private readonly runInternal: (options: {
@@ -53,11 +47,11 @@ export class AsyncOperation<T> {
     }
   }
 
-  run = ({signal}: {signal?: AbortSignal} = {}): AsyncObservablePromise<T> => {
+  run = ({signal}: {signal?: AbortSignal} = {}): AsyncActionPromise<T> => {
     const deferred =
       this.running.peek() == null && this.finished.peek() == null
         ? this.initial
-        : new AsyncObservableDeferred<T>();
+        : new AsyncActionDeferred<T>();
 
     this.runInternal({signal}).then(
       (value) => {
@@ -88,30 +82,42 @@ export class AsyncOperation<T> {
   };
 }
 
-class AsyncObservableDeferred<T> {
+export class AsyncActionPromise<T> extends Promise<T> {
+  readonly status?: 'pending' | 'fulfilled' | 'rejected' = 'pending';
+  readonly value?: T;
+  readonly reason?: unknown;
+
+  constructor(executor: ConstructorParameters<typeof Promise<T>>[0]) {
+    super((resolve, reject) => {
+      executor(
+        (value) => {
+          Object.assign(this, {status: 'fulfilled', value});
+          resolve(value);
+        },
+        (reason) => {
+          Object.assign(this, {status: 'rejected', reason});
+          reject(reason);
+        },
+      );
+    });
+  }
+}
+
+export class AsyncActionDeferred<T> {
   readonly resolve: (value: T) => void;
   readonly reject: (cause: unknown) => void;
-  readonly promise: AsyncObservablePromise<T>;
+  readonly promise: AsyncActionPromise<T>;
 
   constructor() {
-    let resolve: this['resolve'];
-    let reject: this['reject'];
+    let resolve!: this['resolve'];
+    let reject!: this['reject'];
 
-    this.promise = new Promise((res, rej) => {
+    this.promise = new AsyncActionPromise((res, rej) => {
       resolve = res;
       reject = rej;
     });
 
-    Object.assign(this.promise, {status: 'pending'});
-
-    this.resolve = (value) => {
-      Object.assign(this.promise, {status: 'fulfilled', value});
-      resolve(value);
-    };
-
-    this.reject = (reason) => {
-      Object.assign(this.promise, {status: 'rejected', reason});
-      reject(reason);
-    };
+    this.resolve = resolve;
+    this.reject = reject;
   }
 }

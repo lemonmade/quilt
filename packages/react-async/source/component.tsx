@@ -4,7 +4,7 @@ import {
   type ReactElement,
   type ComponentType,
 } from 'react';
-import {createAsyncModule, type AsyncModuleLoad} from '@quilted/async';
+import {AsyncModule, type AsyncModuleLoad} from '@quilted/async';
 import {useModuleAssets} from '@quilted/react-assets';
 
 import {useAsyncModule, useAsyncModulePreload, useHydrated} from './hooks.ts';
@@ -56,7 +56,7 @@ export function createAsyncComponent<
   }: Options<Props, PreloadOptions> = {},
 ): AsyncComponentType<ComponentType<Props>, Props, PreloadOptions> {
   const hydrate = normalizeHydrate(explicitHydrate);
-  const asyncModule = createAsyncModule(load);
+  const asyncModule = new AsyncModule(load);
   const componentName = name ?? displayNameFromId(asyncModule.id);
 
   let scriptTiming: AssetLoadTiming;
@@ -96,7 +96,7 @@ export function createAsyncComponent<
   const renderImmediately = render === 'server' || isBrowser;
   const hydrateImmediately = !isBrowser || hydrate === 'immediate';
 
-  const getComponent = (module: (typeof asyncModule)['exported']) => {
+  const getComponent = (module: (typeof asyncModule)['module']) => {
     if (!renderImmediately) return undefined;
     return module && 'default' in module ? module.default : module;
   };
@@ -114,7 +114,7 @@ export function createAsyncComponent<
       throw asyncModule.promise;
     }
 
-    const Component = getComponent(asyncModule.exported);
+    const Component = getComponent(asyncModule.module);
 
     return Component ? <Component {...props} /> : null;
   };

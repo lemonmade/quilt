@@ -12,14 +12,14 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {createAsyncModule, useAsyncModule} from '@quilted/quilt/async';
+        import {AsyncModule, useAsyncModule} from '@quilted/quilt/async';
 
-        const Async = createAsyncModule(() => import('./async.ts'));
+        const Async = new AsyncModule(() => import('./async.ts'));
 
         export default function App() {
-          const resolved = useAsyncModule(Async);
+          const {module} = useAsyncModule(Async);
 
-          return <div>{resolved.value.hello()}</div>;
+          return <div>{module.hello()}</div>;
         }
       `,
     });
