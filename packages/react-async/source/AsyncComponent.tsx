@@ -1,4 +1,10 @@
-import {Component, Suspense, type ReactNode, type ComponentType} from 'react';
+import {
+  Component,
+  Suspense,
+  useEffect,
+  type ReactNode,
+  type ComponentType,
+} from 'react';
 import {AsyncModule, type AsyncModuleLoader} from '@quilted/async';
 import type {AssetLoadTiming} from '@quilted/react-assets';
 
@@ -31,6 +37,7 @@ export class AsyncComponent<Props> extends Component<
   ): ComponentType<Props> & {
     readonly module: AsyncModule<{default: ComponentType<Props>}>;
     load(): Promise<ComponentType<Props>>;
+    Preload(): ComponentType<{}>;
   } {
     const module =
       moduleOrImport instanceof AsyncModule
@@ -45,6 +52,12 @@ export class AsyncComponent<Props> extends Component<
       module,
       displayName: `Async(${name ?? displayNameFromId(module.id)})`,
       load: () => module.load().then((resolved) => resolved.default),
+      Preload: function Preload() {
+        useAsyncModuleAssets(module, {scripts: 'preload', styles: 'preload'});
+        useEffect(() => {
+          module.load().catch(() => {});
+        });
+      },
     });
 
     return AsyncComponentInternal as any;
