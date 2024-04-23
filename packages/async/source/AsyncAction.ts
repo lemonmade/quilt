@@ -34,13 +34,16 @@ export class AsyncAction<T> {
     undefined,
   );
   private readonly initial = new AsyncActionDeferred<T>();
+  private readonly runInternal: (options: {
+    signal?: AbortSignal;
+  }) => PromiseLike<T>;
 
   constructor(
-    private readonly runInternal: (options: {
-      signal?: AbortSignal;
-    }) => PromiseLike<T>,
+    runInternal: (options: {signal?: AbortSignal}) => PromiseLike<T>,
     {initial}: {initial?: T} = {},
   ) {
+    this.runInternal = runInternal;
+
     if (initial) {
       this.initial.resolve(initial);
       this.finished.value = this.initial;
