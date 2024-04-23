@@ -4,7 +4,7 @@ import type {Plugin} from 'vite';
 
 const SOURCE_FILE_REGEX = /\.m?(js|ts)x?$/;
 const IMPORTS_NEEDING_TRANSFORMATION_REGEX =
-  /from\s+['"`]@quilted[/](quilt[/]async|quilt[/]threads|react-workers|workers)['"`]/;
+  /from\s+['"`]@quilted[/](quilt[/]async|quilt[/]threads|react-workers|react-async|async|workers)['"`]/;
 
 const require = createRequire(import.meta.url);
 

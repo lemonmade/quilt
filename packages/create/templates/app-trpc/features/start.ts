@@ -1,5 +1,5 @@
-import {createAsyncComponent} from '@quilted/quilt/async';
+import {AsyncComponent} from '@quilted/quilt/async';
 
-export const Start = createAsyncComponent(
+export const Start = AsyncComponent.from(
   () => import('./start/Start/Start.tsx'),
 );
