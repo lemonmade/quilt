@@ -51,14 +51,9 @@ export function asyncModules({
         const moduleID = getModuleID({imported});
 
         const code = multiline`
-          const id = ${JSON.stringify(moduleID)};
-
-          export default {
-            id,
-            import: () => import(${JSON.stringify(
-              `${IMPORT_PREFIX}${imported}`,
-            )}),
-          };
+          export default function resolveAsyncModule(load) {
+            return {id: ${JSON.stringify(moduleID)}, import: load};
+          }
         `;
 
         return code;

@@ -294,6 +294,20 @@ describe('async', () => {
     await using workspace = await createWorkspace({fixture: 'empty-app'});
 
     await workspace.fs.write({
+      'browser.tsx': multiline`
+        import '@quilted/quilt/globals';
+        import {hydrateRoot} from 'react-dom/client';
+        
+        import App, {Async} from './App.tsx';
+
+        // Ensure that the app works correctly even if the async component is
+        // available synchronously on render.
+        await Async.load();
+        
+        const element = document.querySelector('#app')!;
+        
+        hydrateRoot(element, <App />);
+      `,
       'Async.tsx': multiline`
         export default function Async() {
           return <div id="rendered">Hello from an async component!</div>;
@@ -302,14 +316,10 @@ describe('async', () => {
       'App.tsx': multiline`
         import {AsyncContext, AsyncComponent} from '@quilted/quilt/async';
 
-        const Async = AsyncComponent.from(() => import('./Async.tsx'), {
+        export const Async = AsyncComponent.from(() => import('./Async.tsx'), {
           server: false,
           renderLoading: <div id="loading">Loading...</div>,
         });
-
-        // Ensure that the app works correctly even if the async component is
-        // available synchronously on render.
-        await Async.load();
 
         export default function App() {
           return <AsyncContext><Async /></AsyncContext>;

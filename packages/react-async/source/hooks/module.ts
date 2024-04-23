@@ -10,7 +10,7 @@ export function useAsyncModule<Module>(
     immediate = true,
   }: Parameters<typeof useModuleAssets>[1] & {immediate?: boolean} = {},
 ): AsyncModule<Module> {
-  if (immediate && !asyncModule.isLoading) {
+  if (immediate && asyncModule.module == null) {
     throw asyncModule.import();
   }
 

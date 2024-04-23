@@ -16,9 +16,9 @@ interface State {
 }
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
-  '@quilted/async': ['AsyncModule'],
-  '@quilted/react-async': ['AsyncModule'],
-  '@quilted/quilt/async': ['AsyncModule'],
+  '@quilted/async': ['AsyncModule', 'AsyncComponent'],
+  '@quilted/react-async': ['AsyncModule', 'AsyncComponent'],
+  '@quilted/quilt/async': ['AsyncModule', 'AsyncComponent'],
 };
 
 export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
@@ -73,11 +73,24 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
 
         function replaceDynamicImportsWithAsyncModule(binding: Binding) {
           binding.referencePaths.forEach((refPath) => {
-            const callExpression = refPath.parentPath!;
+            const {parentPath} = refPath;
 
-            if (!callExpression.isNewExpression()) {
-              return;
+            if (parentPath == null) return;
+
+            let callExpression:
+              | NodePath<Babel.NewExpression | Babel.CallExpression>
+              | undefined;
+
+            if (parentPath.isNewExpression() || parentPath.isCallExpression()) {
+              callExpression = parentPath;
+            } else if (
+              parentPath.isMemberExpression() &&
+              parentPath.parentPath.isCallExpression()
+            ) {
+              callExpression = parentPath.parentPath;
             }
+
+            if (callExpression == null) return;
 
             const args = callExpression.get('arguments');
             if (!Array.isArray(args) || args.length === 0) {
@@ -159,9 +172,23 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               load.node,
             ]);
 
-            path.replaceWith(
-              t.importExpression(
-                t.stringLiteral(`${IMPORT_PREFIX}${imported}`),
+            path.parentPath.replaceWith(
+              t.callExpression(
+                t.memberExpression(
+                  t.importExpression(
+                    t.stringLiteral(`${IMPORT_PREFIX}${imported}`),
+                  ),
+                  t.identifier('then'),
+                ),
+                [
+                  t.arrowFunctionExpression(
+                    [t.identifier('module')],
+                    t.memberExpression(
+                      t.identifier('module'),
+                      t.identifier('default'),
+                    ),
+                  ),
+                ],
               ),
             );
             load.replaceWith(replacementCallExpression);

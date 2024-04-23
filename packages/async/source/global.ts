@@ -11,13 +11,13 @@ export class AsyncModulesGlobal {
   /**
    * The content to prepend to assets that are preloaded. If you are using
    * quilt to build your application, this will automatically be set to the
-   * `assets.baseUrl` value passed in your configuration. For other setups,
-   * you can use `globalThis[Symbol.for('quilt')].AsyncModules.configure()`
+   * `assets.baseURL` value passed in your configuration. For other setups,
+   * you can use `globalThis[Symbol.for('quilt')].asyncModules.configure()`
    * to update this value for all new assets being loaded. If no value is
    * provided, this defaults to `/assets/`, which requires that your application
    * serve its assets from the `/assets` path on the same domain as your website.
    */
-  get baseUrl() {
+  get baseURL() {
     return this._options.baseURL;
   }
 

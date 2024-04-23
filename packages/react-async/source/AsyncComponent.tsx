@@ -1,5 +1,5 @@
 import {Component, Suspense, type ReactNode, type ComponentType} from 'react';
-import {AsyncModule} from '@quilted/async';
+import {AsyncModule, type AsyncModuleLoader} from '@quilted/async';
 import type {AssetLoadTiming} from '@quilted/react-assets';
 
 import {useHydrated} from './hooks/hydration.ts';
@@ -20,7 +20,7 @@ export class AsyncComponent<Props> extends Component<
   static from<Props>(
     moduleOrImport:
       | AsyncModule<{default: ComponentType<Props>}>
-      | (() => Promise<{default: ComponentType<Props>}>),
+      | AsyncModuleLoader<{default: ComponentType<Props>}>,
     {
       name,
       ...options
@@ -33,9 +33,9 @@ export class AsyncComponent<Props> extends Component<
     load(): Promise<ComponentType<Props>>;
   } {
     const module =
-      typeof moduleOrImport === 'function'
-        ? new AsyncModule(moduleOrImport)
-        : moduleOrImport;
+      moduleOrImport instanceof AsyncModule
+        ? moduleOrImport
+        : new AsyncModule(moduleOrImport);
 
     function AsyncComponentInternal(props: Props) {
       return <AsyncComponent {...options} module={module} props={props} />;
@@ -50,6 +50,37 @@ export class AsyncComponent<Props> extends Component<
     return AsyncComponentInternal as any;
   }
 
+  private Component = function Component({
+    module,
+    props,
+    client,
+    renderLoading,
+  }: AsyncComponentProps<Props>) {
+    // If we aren’t hydrating and we don’t have a component yet, we need to suspend,
+    // so any server-rendered content can be preserved until hydration is performed.
+    if (
+      typeof document === 'object' &&
+      (client === false || client === 'defer') &&
+      module.status === 'pending'
+    ) {
+      throw module.promise;
+    }
+
+    const Component = module.module?.default;
+
+    if (Component == null) {
+      throw module.load();
+    }
+
+    return renderLoading ? (
+      <Suspense fallback={normalizeRender(renderLoading, props)}>
+        <Component {...props!} />
+      </Suspense>
+    ) : (
+      <Component {...props!} />
+    );
+  };
+
   render() {
     const {
       module,
@@ -59,14 +90,14 @@ export class AsyncComponent<Props> extends Component<
       preload = client !== false,
       renderLoading,
     } = this.props;
+    const {Component} = this;
 
     const isBrowser = typeof document === 'object';
 
     const hydrate =
       client === true || client === 'render' ? 'immediate' : 'defer';
-    const hydrateImmediately = !isBrowser || hydrate === 'immediate';
 
-    if (typeof document === 'object') {
+    if (typeof document !== 'object') {
       let scriptTiming: AssetLoadTiming;
       let styleTiming: AssetLoadTiming;
 
@@ -106,12 +137,6 @@ export class AsyncComponent<Props> extends Component<
       });
     }
 
-    // If we aren’t hydrating and we don’t have a component yet, we need to suspend,
-    // so any server-rendered content can be preserved until hydration is performed.
-    if (!hydrateImmediately && module.status === 'pending') {
-      throw module.promise;
-    }
-
     if (module.error) {
       throw module.error;
     }
@@ -128,16 +153,16 @@ export class AsyncComponent<Props> extends Component<
       }
     }
 
-    const Component = module.module?.default;
-
-    if (Component == null) return null;
+    if (client === false && isBrowser) {
+      return null;
+    }
 
     return renderLoading ? (
       <Suspense fallback={normalizeRender(renderLoading, props)}>
-        <Component {...props!} />
+        <Component {...this.props} />
       </Suspense>
     ) : (
-      <Component {...props!} />
+      <Component {...this.props} />
     );
   }
 }
