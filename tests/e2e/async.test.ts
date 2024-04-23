@@ -53,9 +53,9 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {createAsyncComponent} from '@quilted/quilt/async';
+        import {AsyncComponent} from '@quilted/quilt/async';
 
-        const Async = createAsyncComponent(() => import('./Async.tsx'));
+        const Async = AsyncComponent.from(() => import('./Async.tsx'));
 
         export default function App() {
           return <Async />;
@@ -96,7 +96,6 @@ describe('async', () => {
           const [active, setActive] = useState(false);
 
           useEffect(() => {
-            console.log('HYDRATING');
             setActive(true);
           }, []);
 
@@ -109,11 +108,11 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {createAsyncComponent} from '@quilted/quilt/async';
+        import {AsyncComponent} from '@quilted/quilt/async';
 
-        const Async = createAsyncComponent(() => import('./Async.tsx'), {
-          hydrate: 'defer',
-          renderLoading: () => <div>Loading...</div>,
+        const Async = AsyncComponent.from(() => import('./Async.tsx'), {
+          client: 'defer',
+          renderLoading: <div>Loading...</div>,
         });
 
         export default function App() {
@@ -170,12 +169,13 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {useState} from 'react';
         import '@quilted/quilt/globals';
-        import {createAsyncComponent} from '@quilted/quilt/async';
 
-        const Async = createAsyncComponent(() => import('./Async.tsx'), {
-          renderLoading: () => <div id="loading">Loading...</div>,
+        import {useState} from 'react';
+        import {AsyncComponent} from '@quilted/quilt/async';
+
+        const Async = AsyncComponent.from(() => import('./Async.tsx'), {
+          renderLoading: <div id="loading">Loading...</div>,
         });
 
         export default function App() {
@@ -235,11 +235,11 @@ describe('async', () => {
       `,
       'App.tsx': multiline`
         import {useState} from 'react';
-        import {createAsyncComponent} from '@quilted/quilt/async';
+        import {AsyncComponent} from '@quilted/quilt/async';
 
-        const Async = createAsyncComponent(() => import('./Async.tsx'), {
-          hydrate: 'defer',
-          renderLoading: () => <div id="loading">Loading...</div>,
+        const Async = AsyncComponent.from(() => import('./Async.tsx'), {
+          client: 'defer',
+          renderLoading: <div id="loading">Loading...</div>,
         });
 
         export default function App() {
@@ -300,13 +300,11 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {AsyncContext, createAsyncComponent} from '@quilted/quilt/async';
+        import {AsyncContext, AsyncComponent} from '@quilted/quilt/async';
 
-        const Async = createAsyncComponent(() => import('./Async.tsx'), {
-          render: 'client',
-          renderLoading: () => {
-            return <div id="loading">Loading...</div>;
-          },
+        const Async = AsyncComponent.from(() => import('./Async.tsx'), {
+          server: false,
+          renderLoading: <div id="loading">Loading...</div>,
         });
 
         // Ensure that the app works correctly even if the async component is

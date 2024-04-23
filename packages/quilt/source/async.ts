@@ -3,24 +3,16 @@ export {
   AsyncActionPromise,
   AsyncActionDeferred,
   AsyncModule,
-  type AsyncModuleLoad,
-  type AsyncModuleLoadFunction,
-  type AsyncModuleLoadObject,
+  type AsyncModuleLoader,
+  type AsyncModuleLoaderFunction,
+  type AsyncModuleLoaderObject,
 } from '@quilted/async';
 export {
+  AsyncComponent,
+  AsyncContext,
   useAsyncModule,
+  useAsyncModuleAssets,
   useAsyncModulePreload,
   useHydrated,
-  usePreload,
-  AsyncContext,
-  createAsyncComponent,
-} from '@quilted/react-async';
-export type {
-  NoOptions,
-  AssetLoadTiming,
-  HydrationTiming,
-  RenderTiming,
-  AsyncComponentType,
-  Preloadable,
 } from '@quilted/react-async';
 export {useIdleCallback} from '@quilted/react-idle';

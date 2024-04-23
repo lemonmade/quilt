@@ -3,24 +3,17 @@ export {
   AsyncActionPromise,
   AsyncActionDeferred,
   AsyncModule,
-  type AsyncModuleLoad,
-  type AsyncModuleLoadFunction,
-  type AsyncModuleLoadObject,
+  type AsyncModuleLoader,
+  type AsyncModuleLoaderFunction,
+  type AsyncModuleLoaderObject,
 } from '@quilted/async';
 
-export type {
-  NoOptions,
-  AssetLoadTiming,
-  HydrationTiming,
-  RenderTiming,
-  AsyncComponentType,
-  Preloadable,
-} from './types.ts';
-export {createAsyncComponent} from './component.tsx';
+export {AsyncComponent} from './AsyncComponent.tsx';
 export {
+  useAsyncAction,
   useAsyncModule,
+  useAsyncModuleAssets,
   useAsyncModulePreload,
   useHydrated,
-  usePreload,
 } from './hooks.ts';
 export {AsyncContext} from './AsyncContext.tsx';

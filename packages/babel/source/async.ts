@@ -142,7 +142,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               );
             }
 
-            const {imported, path} = [...dynamicImports][0]!;
+            const {imported, path} = [...dynamicImports].at(0)!;
 
             const identifier = state.program.scope.generateUidIdentifier(
               `__createAsyncModule_${imported}`,
@@ -155,10 +155,16 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               ),
             );
 
-            const importStandin = t.identifier('__import');
+            const replacementCallExpression = t.callExpression(identifier, [
+              load.node,
+            ]);
 
-            path.parentPath.replaceWith(t.callExpression(importStandin, []));
-            load.replaceWith(identifier);
+            path.replaceWith(
+              t.importExpression(
+                t.stringLiteral(`${IMPORT_PREFIX}${imported}`),
+              ),
+            );
+            load.replaceWith(replacementCallExpression);
           });
         }
       },

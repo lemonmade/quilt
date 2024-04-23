@@ -1,17 +1,17 @@
 import {AsyncAction} from './AsyncAction.ts';
 
-export interface AsyncModuleLoadFunction<Module> {
+export interface AsyncModuleLoaderFunction<Module> {
   (): Promise<Module>;
 }
 
-export interface AsyncModuleLoadObject<Module> {
+export interface AsyncModuleLoaderObject<Module> {
   readonly id?: string;
   import(): Promise<Module>;
 }
 
-export type AsyncModuleLoad<Module> =
-  | AsyncModuleLoadFunction<Module>
-  | AsyncModuleLoadObject<Module>;
+export type AsyncModuleLoader<Module> =
+  | AsyncModuleLoaderFunction<Module>
+  | AsyncModuleLoaderObject<Module>;
 
 export class AsyncModule<Module> {
   readonly id?: string;
@@ -42,7 +42,7 @@ export class AsyncModule<Module> {
 
   private readonly loadAction: AsyncAction<Module>;
 
-  constructor(load: AsyncModuleLoad<Module>) {
+  constructor(load: AsyncModuleLoader<Module>) {
     const id = (load as any).id;
     this.id = id;
 

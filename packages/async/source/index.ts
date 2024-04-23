@@ -6,7 +6,7 @@ export {
 } from './AsyncAction.ts';
 export {
   AsyncModule,
-  type AsyncModuleLoad,
-  type AsyncModuleLoadFunction,
-  type AsyncModuleLoadObject,
+  type AsyncModuleLoader,
+  type AsyncModuleLoaderFunction,
+  type AsyncModuleLoaderObject,
 } from './AsyncModule.ts';

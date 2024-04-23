@@ -56,11 +56,7 @@ function MyComponent2() {
 ```
 
 ```tsx
-import {
-  AsyncModule,
-  AsyncComponent,
-  createAsyncComponent,
-} from '@quilted/react-async';
+import {AsyncModule, AsyncComponent} from '@quilted/react-async';
 
 const module = new AsyncModule(() => import('./MyComponent.tsx'));
 
@@ -69,7 +65,7 @@ const module = new AsyncModule(() => import('./MyComponent.tsx'));
   render={({default: Component}) => <Component />}
 />;
 
-const MyComponent = createAsyncComponent(module, {
+const MyComponent = AsyncComponent.from(module, {
   renderLoading: <LoadingSpinner />,
 });
 
