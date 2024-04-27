@@ -1,5 +1,18 @@
 # @quilted/react-async
 
+## 0.4.1
+
+### Patch Changes
+
+- [#699](https://github.com/lemonmade/quilt/pull/699) [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `AsyncOperation` type for observable async operations
+
+- [#699](https://github.com/lemonmade/quilt/pull/699) [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Update async APIs
+
+- Updated dependencies [[`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9), [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9)]:
+  - @quilted/async@0.4.1
+  - @quilted/react-assets@0.1.1
+  - @quilted/react-signals@0.2.4
+
 ## 0.4.0
 
 ### Minor Changes

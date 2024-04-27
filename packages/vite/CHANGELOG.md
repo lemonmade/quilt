@@ -1,5 +1,15 @@
 # @quilted/vite
 
+## 0.1.19
+
+### Patch Changes
+
+- [#699](https://github.com/lemonmade/quilt/pull/699) [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Update async APIs
+
+- Updated dependencies [[`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9)]:
+  - @quilted/babel@0.2.2
+  - @quilted/rollup@0.2.24
+
 ## 0.1.18
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/react-assets
 
+## 0.1.1
+
+### Patch Changes
+
+- [#699](https://github.com/lemonmade/quilt/pull/699) [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Update async APIs
+
 ## 0.1.0
 
 ### Minor Changes

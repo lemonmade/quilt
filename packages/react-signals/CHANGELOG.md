@@ -1,5 +1,11 @@
 # @quilted/react-signals
 
+## 0.2.4
+
+### Patch Changes
+
+- [#699](https://github.com/lemonmade/quilt/pull/699) [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9) Thanks [@lemonmade](https://github.com/lemonmade)! - Update async APIs
+
 ## 0.2.3
 
 ### Patch Changes
