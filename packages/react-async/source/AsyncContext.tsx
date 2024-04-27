@@ -5,7 +5,7 @@ import {signal} from '@quilted/react-signals';
 /**
  * Only needed for the following features:
  *
- * - `render: 'client'` (needed to correctly hydrate initial components)
+ * - `<AsyncComponent server={false}>` (needed to correctly hydrate client-only components)
  */
 export function AsyncContext({children}: PropsWithChildren) {
   const hydrationSignal = useMemo(() => signal(false), []);

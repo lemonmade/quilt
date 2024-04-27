@@ -7,10 +7,10 @@ export function useAsyncModule<Module>(
   {
     scripts,
     styles,
-    immediate = true,
-  }: Parameters<typeof useModuleAssets>[1] & {immediate?: boolean} = {},
+    defer = false,
+  }: Parameters<typeof useModuleAssets>[1] & {defer?: boolean} = {},
 ): AsyncModule<Module> {
-  if (immediate && asyncModule.module == null) {
+  if (!defer && asyncModule.module == null) {
     throw asyncModule.import();
   }
 
