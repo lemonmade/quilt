@@ -24,8 +24,8 @@
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.0",
-    "@changesets/changelog-github": "^0.4.7",
-    "@changesets/cli": "^2.25.0",
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.1",
     "@quilted/craft": "workspace:^",
     "@quilted/events": "workspace:^",
     "@quilted/performance": "workspace:^",
