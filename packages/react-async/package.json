@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-async",
   "type": "module",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -26,10 +26,10 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/async": "workspace:^0.4.0",
-    "@quilted/react-assets": "workspace:^0.1.0",
+    "@quilted/async": "workspace:^0.4.1",
+    "@quilted/react-assets": "workspace:^0.1.1",
     "@quilted/react-server-render": "workspace:^0.4.0",
-    "@quilted/react-signals": "workspace:^0.2.0"
+    "@quilted/react-signals": "workspace:^0.2.4"
   },
   "peerDependencies": {
     "react": "^18.0.0",

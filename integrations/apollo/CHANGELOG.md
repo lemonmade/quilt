@@ -1,5 +1,14 @@
 # @quilted/apollo
 
+## 0.2.1
+
+### Patch Changes
+
+- [#714](https://github.com/lemonmade/quilt/pull/714) [`d4bda43`](https://github.com/lemonmade/quilt/commit/d4bda430900d0e4afd5ccecb04abe9ac81245486) Thanks [@lemonmade](https://github.com/lemonmade)! - Update GraphQL dependencies
+
+- Updated dependencies [[`d4bda43`](https://github.com/lemonmade/quilt/commit/d4bda430900d0e4afd5ccecb04abe9ac81245486), [`8335c47`](https://github.com/lemonmade/quilt/commit/8335c47fa1896ad65d5cd218fe068f22627815d9)]:
+  - @quilted/quilt@0.6.14
+
 ## 0.2.0
 
 ### Minor Changes

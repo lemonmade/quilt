@@ -106,7 +106,7 @@ importers:
         specifier: ^3.7.0
         version: 3.7.3(graphql@16.8.1)(react-dom@18.2.0(react@packages+react))(react@packages+react)
       '@quilted/quilt':
-        specifier: workspace:^0.6.0
+        specifier: workspace:^0.6.14
         version: link:../../packages/quilt
       graphql:
         specifier: ^16.8.0
@@ -383,7 +383,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.8.1)
       '@quilted/graphql':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.0.2
         version: link:../graphql
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
@@ -479,22 +479,22 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../assets
       '@quilted/async':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.4.1
         version: link:../async
       '@quilted/events':
         specifier: workspace:^2.0.0
         version: link:../events
       '@quilted/graphql':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.0.2
         version: link:../graphql
       '@quilted/react':
         specifier: workspace:^18.2.0
         version: link:../react
       '@quilted/react-assets':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../react-assets
       '@quilted/react-async':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.4.1
         version: link:../react-async
       '@quilted/react-dom':
         specifier: workspace:^18.2.0
@@ -524,7 +524,7 @@ importers:
         specifier: workspace:^0.4.0
         version: link:../react-server-render
       '@quilted/react-signals':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.4
         version: link:../react-signals
       '@quilted/react-testing':
         specifier: workspace:^0.6.0
@@ -598,16 +598,16 @@ importers:
   packages/react-async:
     dependencies:
       '@quilted/async':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.4.1
         version: link:../async
       '@quilted/react-assets':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../react-assets
       '@quilted/react-server-render':
         specifier: workspace:^0.4.0
         version: link:../react-server-render
       '@quilted/react-signals':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.4
         version: link:../react-signals
     devDependencies:
       react:
@@ -914,10 +914,10 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../assets
       '@quilted/babel':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.2
         version: link:../babel
       '@quilted/graphql':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.0.2
         version: link:../graphql
       '@rollup/plugin-alias':
         specifier: ^5.0.1
@@ -1025,13 +1025,13 @@ importers:
         specifier: ^2.4.4
         version: 2.4.4(preact@10.20.1)(vite@5.0.10(@types/node@20.8.10)(lightningcss@1.22.0)(terser@5.16.8))
       '@quilted/babel':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.2
         version: link:../babel
       '@quilted/request-router':
         specifier: workspace:^0.2.0
         version: link:../request-router
       '@quilted/rollup':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.24
         version: link:../rollup
     devDependencies:
       '@types/babel__core':
