@@ -51,15 +51,8 @@ export function asyncModules({
         const moduleID = getModuleID({imported});
 
         const code = multiline`
-          const id = ${JSON.stringify(moduleID)};
-
-          export default function createAsyncModule(load) {
-            return {
-              id,
-              import: () => import(${JSON.stringify(
-                `${IMPORT_PREFIX}${imported}`,
-              )}).then((module) => module.default),
-            };
+          export default function resolveAsyncModule(load) {
+            return {id: ${JSON.stringify(moduleID)}, import: load};
           }
         `;
 
@@ -73,7 +66,7 @@ export function asyncModules({
         const code = multiline`
           import * as AsyncModule from ${JSON.stringify(imported)};
 
-          ((globalThis[Symbol.for('quilt')] ??= {}).AsyncModules ??= new Map).set(${JSON.stringify(
+          ((globalThis[Symbol.for('quilt')] ||= {}).asyncModules ||= new Map).set(${JSON.stringify(
             moduleID,
           )}, AsyncModule);
 
@@ -207,7 +200,7 @@ function preloadContentForDependencies(
   dependencies: Iterable<string>,
   originalExpression: string,
 ) {
-  return `Promise.resolve().then(() => globalThis[Symbol.for('quilt')]?.AsyncModules?.preload?.(${Array.from(
+  return `Promise.resolve().then(() => globalThis[Symbol.for('quilt')]?.asyncModules?.preload?.(${Array.from(
     dependencies,
   )
     .map((dependency) => JSON.stringify(dependency))

@@ -16,9 +16,9 @@ interface State {
 }
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
-  '@quilted/async': ['createAsyncModule'],
-  '@quilted/react-async': ['createAsyncModule', 'createAsyncComponent'],
-  '@quilted/quilt/async': ['createAsyncModule', 'createAsyncComponent'],
+  '@quilted/async': ['AsyncModule', 'AsyncComponent'],
+  '@quilted/react-async': ['AsyncModule', 'AsyncComponent'],
+  '@quilted/quilt/async': ['AsyncModule', 'AsyncComponent'],
 };
 
 export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
@@ -73,11 +73,24 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
 
         function replaceDynamicImportsWithAsyncModule(binding: Binding) {
           binding.referencePaths.forEach((refPath) => {
-            const callExpression = refPath.parentPath!;
+            const {parentPath} = refPath;
 
-            if (!callExpression.isCallExpression()) {
-              return;
+            if (parentPath == null) return;
+
+            let callExpression:
+              | NodePath<Babel.NewExpression | Babel.CallExpression>
+              | undefined;
+
+            if (parentPath.isNewExpression() || parentPath.isCallExpression()) {
+              callExpression = parentPath;
+            } else if (
+              parentPath.isMemberExpression() &&
+              parentPath.parentPath.isCallExpression()
+            ) {
+              callExpression = parentPath.parentPath;
             }
+
+            if (callExpression == null) return;
 
             const args = callExpression.get('arguments');
             if (!Array.isArray(args) || args.length === 0) {
@@ -85,10 +98,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
             }
 
             const [load] = args;
-            if (
-              !load?.isFunctionExpression() &&
-              !load?.isArrowFunctionExpression()
-            ) {
+            if (load == null) {
               return;
             }
 
@@ -145,7 +155,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               );
             }
 
-            const {imported, path} = [...dynamicImports][0]!;
+            const {imported, path} = [...dynamicImports].at(0)!;
 
             const identifier = state.program.scope.generateUidIdentifier(
               `__createAsyncModule_${imported}`,
@@ -158,11 +168,30 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               ),
             );
 
-            const importStandin = t.identifier('__import');
+            const replacementCallExpression = t.callExpression(identifier, [
+              load.node,
+            ]);
 
-            path.parentPath.replaceWith(t.callExpression(importStandin, []));
-            load.node.params.unshift(importStandin);
-            load.replaceWith(t.callExpression(identifier, [load.node]));
+            path.parentPath.replaceWith(
+              t.callExpression(
+                t.memberExpression(
+                  t.importExpression(
+                    t.stringLiteral(`${IMPORT_PREFIX}${imported}`),
+                  ),
+                  t.identifier('then'),
+                ),
+                [
+                  t.arrowFunctionExpression(
+                    [t.identifier('module')],
+                    t.memberExpression(
+                      t.identifier('module'),
+                      t.identifier('default'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+            load.replaceWith(replacementCallExpression);
           });
         }
       },

@@ -1,13 +1,12 @@
+export {AsyncModulesGlobal, type AsyncModulesOptions} from './global.ts';
 export {
-  createAsyncModulesGlobal,
-  type AsyncModulesGlobal,
-  type AsyncModulesOptions,
-} from './global.ts';
-
-export {createAsyncModule} from './loader.ts';
-export type {
+  AsyncAction,
+  AsyncActionPromise,
+  AsyncActionDeferred,
+} from './AsyncAction.ts';
+export {
   AsyncModule,
-  AsyncModuleLoad,
-  AsyncModuleLoadFunction,
-  AsyncModuleLoadObject,
-} from './loader.ts';
+  type AsyncModuleLoader,
+  type AsyncModuleLoaderFunction,
+  type AsyncModuleLoaderObject,
+} from './AsyncModule.ts';

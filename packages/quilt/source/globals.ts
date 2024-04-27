@@ -2,20 +2,17 @@ import './modules.ts';
 import './assets/files.ts';
 import './assets/styles.ts';
 
-import {
-  createAsyncModulesGlobal,
-  type AsyncModulesGlobal,
-} from '@quilted/async';
+import {AsyncModulesGlobal} from '@quilted/async';
 
 export interface QuiltGlobal {
-  readonly AsyncModules: AsyncModulesGlobal;
+  readonly asyncModules: AsyncModulesGlobal;
 }
 
 const property = Symbol.for('quilt');
 const quilt = ((globalThis as any)[property] ?? {}) as QuiltGlobal;
 
-(quilt as any).AsyncModules = createAsyncModulesGlobal({
-  cache: quilt.AsyncModules,
+(quilt as any).asyncModules = new AsyncModulesGlobal({
+  cache: quilt.asyncModules,
 });
 
 Object.defineProperty(globalThis, property, {

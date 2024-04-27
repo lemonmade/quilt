@@ -87,7 +87,7 @@ Like `shared`, you are encouraged to group your features into the important doma
 ```tsx
 // Example `features/accounts.ts` content:
 
-import {createAsyncComponent} from '@quilted/quilt';
+import {createAsyncComponent, AsyncModule} from '@quilted/quilt';
 
 export const AccountHome = createAsyncComponent(
   () => import('./accounts/AccountHome.tsx'),
