@@ -1,7 +1,5 @@
-export {
-  useBrowserResponse,
-  useBrowserResponseAction,
-} from './hooks/browser-response-action.ts';
+export {useAssetsCacheKey, useModuleAssets} from './hooks/assets.ts';
+export {useBrowserResponseAction} from './hooks/browser-response-action.ts';
 export {useCacheControl} from './hooks/cache-control.ts';
 export {useContentSecurityPolicy} from './hooks/content-security-policy.ts';
 export {useCrossOriginEmbedderPolicy} from './hooks/cross-origin-embedder-policy.ts';

@@ -21,20 +21,40 @@
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
+    },
+    "./server": {
+      "types": "./build/typescript/server.d.ts",
+      "quilt:source": "./source/server.ts",
+      "quilt:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "server": [
+        "./build/typescript/server.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "build": "rollup --config ./rollup.config.js"
   },
   "dependencies": {
+    "@quilted/assets": "workspace:^0.1.1",
     "@quilted/browser": "workspace:^0.0.0",
     "@quilted/http": "workspace:^0.3.0",
     "@quilted/react-utilities": "workspace:^0.2.1"
   },
-  "peerDependencies": {},
-  "peerDependenciesMeta": {},
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {},
   "browserslist": [
     "defaults and fully supports es6-module",

@@ -12,7 +12,6 @@
     {"path": "../events"},
     {"path": "../graphql"},
     {"path": "../react"},
-    {"path": "../react-assets"},
     {"path": "../react-async"},
     {"path": "../react-browser"},
     {"path": "../react-dom"},

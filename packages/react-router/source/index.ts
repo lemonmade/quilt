@@ -7,10 +7,8 @@ export {
   RoutePreloading,
   NavigationBlock,
 } from './components.ts';
-export {InitialUrlContext} from './context.ts';
 export {
   useRoutes,
-  useInitialUrl,
   useCurrentUrl,
   useRouter,
   useRouteMatch,

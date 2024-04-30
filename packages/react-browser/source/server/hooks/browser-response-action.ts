@@ -1,9 +1,6 @@
-import {useContext} from 'react';
 import {BrowserResponse} from '@quilted/browser/server';
 
-import {BrowserDetailsContext} from '../../context.ts';
-
-export const useBrowserResponse = () => useContext(BrowserDetailsContext);
+import {useBrowserDetails} from '../../context.ts';
 
 /**
  * During server-side rendering, the function you pass to this hook is
@@ -16,6 +13,6 @@ export function useBrowserResponseAction(
   perform: (response: BrowserResponse) => void,
 ) {
   if (typeof document === 'object') return;
-  const response = useBrowserResponse();
+  const response = useBrowserDetails();
   if (response && response instanceof BrowserResponse) perform(response);
 }

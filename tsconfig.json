@@ -38,7 +38,6 @@
     {"path": "./packages/preact-testing"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react"},
-    {"path": "./packages/react-assets"},
     {"path": "./packages/react-async"},
     {"path": "./packages/react-browser"},
     {"path": "./packages/react-dom"},

@@ -234,7 +234,6 @@
     "@quilted/events": "workspace:^2.0.0",
     "@quilted/graphql": "workspace:^3.0.2",
     "@quilted/react": "workspace:^18.2.0",
-    "@quilted/react-assets": "workspace:^0.1.1",
     "@quilted/react-async": "workspace:^0.4.1",
     "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/react-dom": "workspace:^18.2.0",

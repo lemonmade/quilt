@@ -6,5 +6,5 @@
   },
   "include": ["source"],
   "exclude": [],
-  "references": [{"path": "../signals"}]
+  "references": [{"path": "../assets"}, {"path": "../signals"}]
 }

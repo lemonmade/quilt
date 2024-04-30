@@ -8,10 +8,13 @@ export {
   PermissionsPolicyDirective,
   PermissionsPolicySpecialSource,
 } from '@quilted/http';
+export type {AssetLoadTiming} from '@quilted/assets';
 export * from '@quilted/browser/server';
 
 export {useCookie, useCookies} from './hooks/cookie.ts';
 export {
+  useAssetsCacheKey,
+  useModuleAssets,
   useCacheControl,
   useContentSecurityPolicy,
   useCrossOriginEmbedderPolicy,
@@ -23,7 +26,6 @@ export {
   useResponseHeader,
   useResponseRedirect,
   useResponseStatus,
-  useBrowserResponse,
   useBrowserResponseAction,
   useStrictTransportSecurity,
 } from './server/hooks.ts';
@@ -40,3 +42,5 @@ export {
   ResponseStatus,
   StrictTransportSecurity,
 } from './server/components.ts';
+
+export {BrowserDetailsContext} from './context.ts';

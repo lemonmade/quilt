@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
 import type {AsyncModule} from '@quilted/async';
-import {useModuleAssets} from '@quilted/react-assets';
+import {useModuleAssets} from '@quilted/react-browser/server';
 
 export function useAsyncModule<Module>(
   asyncModule: AsyncModule<Module>,

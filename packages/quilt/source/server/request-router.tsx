@@ -8,57 +8,55 @@ import {
   type BrowserAssets,
   type BrowserAssetsEntry,
 } from '@quilted/assets';
-import {AssetsManager} from '@quilted/react-assets/server';
-import {HttpManager} from '@quilted/react-http/server';
+import {
+  BrowserResponse,
+  BrowserDetailsContext,
+} from '@quilted/react-browser/server';
 import {
   Head,
   Script,
   ScriptPreload,
   Style,
   StylePreload,
-  HTMLManager,
 } from '@quilted/react-html/server';
 import {extract} from '@quilted/react-server-render/server';
 
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
-import {ServerContext} from './ServerContext.tsx';
-
 export interface RenderHTMLFunction {
   (
     content: ReadableStream<string>,
     context: {
-      readonly manager: HTMLManager;
-      readonly headers: Headers;
+      readonly response: BrowserResponse;
       readonly assets?: BrowserAssetsEntry;
       readonly preloadAssets?: BrowserAssetsEntry;
     },
   ): ReadableStream<any> | string | Promise<ReadableStream<any> | string>;
 }
 
-export interface RenderOptions<CacheKey = AssetsCacheKey> {
+export interface RenderOptions {
   readonly request: Request;
   readonly stream?: 'headers' | false;
   readonly headers?: HeadersInit;
-  readonly assets?: BrowserAssets<CacheKey>;
-  readonly cacheKey?: CacheKey;
+  readonly assets?: BrowserAssets;
+  readonly cacheKey?: Partial<AssetsCacheKey>;
   readonly renderHTML?: boolean | 'fragment' | 'document' | RenderHTMLFunction;
   waitUntil?(promise: Promise<any>): void;
 }
 
-export async function renderToResponse<CacheKey = AssetsCacheKey>(
+export async function renderToResponse(
   element: ReactElement<any>,
-  options: RenderOptions<CacheKey>,
+  options: RenderOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
-export async function renderToResponse<CacheKey = AssetsCacheKey>(
-  options: RenderOptions<CacheKey>,
+export async function renderToResponse(
+  options: RenderOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
-export async function renderToResponse<CacheKey = AssetsCacheKey>(
-  optionsOrElement: ReactElement<any> | RenderOptions<CacheKey>,
-  definitelyOptions?: RenderOptions<CacheKey>,
+export async function renderToResponse(
+  optionsOrElement: ReactElement<any> | RenderOptions,
+  definitelyOptions?: RenderOptions,
 ) {
   let element: ReactElement<any> | undefined;
-  let options: RenderOptions<CacheKey>;
+  let options: RenderOptions;
 
   if (isValidElement(optionsOrElement)) {
     element = optionsOrElement;
@@ -81,56 +79,25 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
   const cacheKey =
     explicitCacheKey ??
-    (((await assets?.cacheKey?.(request)) ?? {}) as CacheKey);
+    (((await assets?.cacheKey?.(request)) ?? {}) as AssetsCacheKey);
 
-  const html = new HTMLManager();
-  const http = new HttpManager({headers: request.headers});
-  const assetsManager = new AssetsManager<CacheKey>({cacheKey});
+  const browserResponse = new BrowserResponse({
+    request,
+    headers: new Headers(explicitHeaders),
+  });
 
-  let responseStatus = 200;
   let appStream: ReadableStream<any> | undefined;
-  const headers = new Headers(explicitHeaders);
 
   if (shouldStream === false && element != null) {
     const rendered = await extract(element, {
       decorate(element) {
         return (
-          <ServerContext
-            http={http}
-            html={html}
-            url={baseUrl}
-            assets={assetsManager}
-          >
+          <BrowserDetailsContext.Provider value={browserResponse}>
             {element}
-          </ServerContext>
+          </BrowserDetailsContext.Provider>
         );
       },
     });
-
-    const {headers: appHeaders, statusCode = 200, redirectUrl} = http.state;
-
-    const hasSetCookieHeader = typeof appHeaders.getSetCookie === 'function';
-
-    if (hasSetCookieHeader) {
-      for (const cookie of appHeaders.getSetCookie()) {
-        headers.append('Set-Cookie', cookie);
-      }
-    }
-
-    for (const [header, value] of appHeaders.entries()) {
-      if (hasSetCookieHeader && header.toLowerCase() === 'set-cookie') continue;
-      headers.set(header, value);
-    }
-
-    if (redirectUrl) {
-      return new RedirectResponse(redirectUrl, {
-        status: statusCode as 301,
-        headers: headers,
-        request,
-      });
-    }
-
-    responseStatus = statusCode;
 
     const appTransformStream = new TransformStream();
     const appWriter = appTransformStream.writable.getWriter();
@@ -151,14 +118,9 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
         const rendered = await extract(element, {
           decorate(element) {
             return (
-              <ServerContext
-                http={http}
-                html={html}
-                url={baseUrl}
-                assets={assetsManager}
-              >
+              <BrowserDetailsContext.Provider value={browserResponse}>
                 {element}
-              </ServerContext>
+              </BrowserDetailsContext.Provider>
             );
           },
         });
@@ -175,8 +137,8 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   const body = await renderToHTMLBody(appStream);
 
   return new HTMLResponse(body, {
-    status: responseStatus,
-    headers,
+    status: browserResponse.status.value,
+    headers: browserResponse.headers,
   });
 
   async function renderToHTMLBody(
@@ -185,23 +147,23 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     const [synchronousAssets, preloadAssets] = await Promise.all([
       assets?.entry({
         cacheKey,
-        modules: assetsManager.usedModules({timing: 'load'}),
+        modules: browserResponse.assets.get({timing: 'load'}),
       }),
-      assets?.modules(assetsManager.usedModules({timing: 'preload'}), {
+      assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
         cacheKey,
       }),
     ]);
 
     if (synchronousAssets) {
       for (const style of synchronousAssets.styles) {
-        headers.append(
+        browserResponse.headers.append(
           'Link',
           preloadHeader(styleAssetPreloadAttributes(style)),
         );
       }
 
       for (const script of synchronousAssets.scripts) {
-        headers.append(
+        browserResponse.headers.append(
           'Link',
           preloadHeader(scriptAssetPreloadAttributes(script)),
         );
@@ -210,8 +172,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
     if (typeof renderHTML === 'function') {
       const body = await renderHTML(content, {
-        manager: html,
-        headers,
+        response: browserResponse,
         assets: synchronousAssets,
         preloadAssets,
       });
@@ -229,11 +190,19 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
       writer.write(`<!DOCTYPE html>`);
 
-      const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
+      // TODO
+      // const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
       const htmlContent = renderToStaticMarkup(
         <html {...htmlAttributes}>
           <head>
-            <Head {...headProps} />
+            <Head
+              title={browserResponse.title.value}
+              links={browserResponse.link.value}
+              metas={browserResponse.meta.value}
+              serializations={browserResponse.serializations}
+              // TODO
+              scripts={[]}
+            />
             {synchronousAssets?.scripts.map((script) => (
               <Script key={script.source} asset={script} baseUrl={baseUrl} />
             ))}
@@ -283,9 +252,9 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       const [newSynchronousAssets, newPreloadAssets] = await Promise.all([
         assets?.entry({
           cacheKey,
-          modules: assetsManager.usedModules({timing: 'load'}),
+          modules: browserResponse.assets.get({timing: 'load'}),
         }),
-        assets?.modules(assetsManager.usedModules({timing: 'preload'}), {
+        assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
           cacheKey,
         }),
       ]);

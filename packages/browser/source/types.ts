@@ -17,6 +17,7 @@ export interface BrowserDetails {
   readonly serializations: {
     get<T = unknown>(id: string): T;
     set(id: string, data: unknown): void;
+    [Symbol.iterator](): IterableIterator<[string, unknown]>;
   };
   readonly cookies: Cookies;
   readonly initialURL: URL;

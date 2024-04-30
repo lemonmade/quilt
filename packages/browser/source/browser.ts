@@ -180,6 +180,10 @@ export class BrowserSerializations {
       this.serializations.set(id, data);
     }
   }
+
+  *[Symbol.iterator]() {
+    yield* this.serializations;
+  }
 }
 
 function getSerializedFromNode<T = unknown>(node: Element): T | undefined {

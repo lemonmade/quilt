@@ -1,8 +1,4 @@
-import {createUseContextHook} from '@quilted/react-utilities';
-
-import {BrowserDetailsContext} from '../context.ts';
-
-const useBrowserDetails = createUseContextHook(BrowserDetailsContext);
+import {useBrowserDetails} from '../context.ts';
 
 /**
  * Provides access to the cookie manager for the application. This

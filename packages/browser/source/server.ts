@@ -1,6 +1,11 @@
 import {resolveSignalOrValue, type ReadonlySignal} from '@quilted/signals';
 
 import type {BrowserDetails, CookieOptions, Cookies} from './types.ts';
+import type {
+  AssetLoadTiming,
+  AssetsCacheKey,
+  BrowserAssetModuleSelector,
+} from '@quilted/assets';
 
 export * from './types.ts';
 
@@ -13,14 +18,17 @@ export class BrowserResponse implements BrowserDetails {
   readonly serializations: BrowserResponseSerializations;
   readonly headers: Headers;
   readonly initialURL: URL;
+  readonly assets: BrowserResponseAssets;
 
   constructor({
     request,
     headers = new Headers(),
+    cacheKey,
     serializations,
   }: {
     request: Request;
     headers?: Headers;
+    cacheKey?: Partial<AssetsCacheKey>;
     serializations?: Iterable<[string, unknown]>;
   }) {
     this.initialURL = new URL(request.url);
@@ -29,6 +37,7 @@ export class BrowserResponse implements BrowserDetails {
       headers,
       request.headers.get('Cookie') ?? undefined,
     );
+    this.assets = new BrowserResponseAssets({cacheKey});
     this.serializations = new BrowserResponseSerializations(
       new Map(serializations),
     );
@@ -136,6 +145,91 @@ export class BrowserResponseSerializations {
       this.serializations.set(id, data);
     }
   }
+
+  *[Symbol.iterator]() {
+    yield* this.serializations;
+  }
+}
+
+const ASSET_TIMING_PRIORITY: AssetLoadTiming[] = ['never', 'preload', 'load'];
+
+const PRIORITY_BY_TIMING = new Map(
+  ASSET_TIMING_PRIORITY.map((value, index) => [value, index]),
+);
+
+export class BrowserResponseAssets {
+  readonly cacheKey: Partial<AssetsCacheKey>;
+  private usedModulesWithTiming = new Map<
+    string,
+    {
+      styles: AssetLoadTiming;
+      scripts: AssetLoadTiming;
+    }
+  >();
+
+  constructor({cacheKey}: {cacheKey?: Partial<AssetsCacheKey>} = {}) {
+    this.cacheKey = {...cacheKey};
+  }
+
+  updateCacheKey(cacheKey: Partial<AssetsCacheKey>) {
+    Object.assign(this.cacheKey, cacheKey);
+  }
+
+  use(
+    id: string,
+    {
+      timing = 'load',
+      scripts = timing,
+      styles = timing,
+    }: {
+      timing?: AssetLoadTiming;
+      scripts?: AssetLoadTiming;
+      styles?: AssetLoadTiming;
+    } = {},
+  ) {
+    const current = this.usedModulesWithTiming.get(id);
+
+    if (current == null) {
+      this.usedModulesWithTiming.set(id, {
+        scripts,
+        styles,
+      });
+    } else {
+      this.usedModulesWithTiming.set(id, {
+        scripts:
+          scripts == null
+            ? current.scripts
+            : highestPriorityAssetLoadTiming(scripts, current.scripts),
+        styles:
+          styles == null
+            ? current.styles
+            : highestPriorityAssetLoadTiming(styles, current.styles),
+      });
+    }
+  }
+
+  get({timing = 'load'}: {timing?: AssetLoadTiming | AssetLoadTiming[]} = {}) {
+    const allowedTiming = Array.isArray(timing) ? timing : [timing];
+
+    const assets: BrowserAssetModuleSelector[] = [];
+
+    for (const [asset, {scripts, styles}] of this.usedModulesWithTiming) {
+      const stylesMatch = allowedTiming.includes(styles);
+      const scriptsMatch = allowedTiming.includes(scripts);
+
+      if (stylesMatch || scriptsMatch) {
+        assets.push({id: asset, styles: stylesMatch, scripts: scriptsMatch});
+      }
+    }
+
+    return assets;
+  }
+}
+
+function highestPriorityAssetLoadTiming(...timings: AssetLoadTiming[]) {
+  return ASSET_TIMING_PRIORITY[
+    Math.max(...timings.map((timing) => PRIORITY_BY_TIMING.get(timing)!))
+  ]!;
 }
 
 // What follows is a basic re-implementation of https://www.npmjs.com/package/cookie.
