@@ -13,7 +13,7 @@ export class BrowserResponse implements BrowserDetails {
   readonly title = new BrowserResponseTitle();
   readonly meta = new BrowserResponseHeadElements('meta');
   readonly link = new BrowserResponseHeadElements('link');
-  readonly status = new BrowserResponseStatus();
+  readonly status: BrowserResponseStatus;
   readonly cookies: BrowserResponseCookies;
   readonly serializations: BrowserResponseSerializations;
   readonly headers: Headers;
@@ -22,16 +22,19 @@ export class BrowserResponse implements BrowserDetails {
 
   constructor({
     request,
+    status,
     headers = new Headers(),
     cacheKey,
     serializations,
   }: {
     request: Request;
+    status?: number;
     headers?: Headers;
     cacheKey?: Partial<AssetsCacheKey>;
     serializations?: Iterable<[string, unknown]>;
   }) {
     this.initialURL = new URL(request.url);
+    this.status = new BrowserResponseStatus(status);
     this.headers = headers;
     this.cookies = new BrowserResponseCookies(
       headers,
@@ -83,7 +86,7 @@ export class BrowserResponseCookies implements Cookies {
 }
 
 export class BrowserResponseStatus {
-  private statusCode?: number;
+  constructor(private statusCode?: number) {}
 
   get value() {
     return this.statusCode ?? 200;

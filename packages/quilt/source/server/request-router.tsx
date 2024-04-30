@@ -36,10 +36,12 @@ export interface RenderHTMLFunction {
 
 export interface RenderOptions {
   readonly request: Request;
+  readonly status?: number;
   readonly stream?: 'headers' | false;
   readonly headers?: HeadersInit;
   readonly assets?: BrowserAssets;
   readonly cacheKey?: Partial<AssetsCacheKey>;
+  readonly serializations?: Iterable<[string, unknown]>;
   readonly renderHTML?: boolean | 'fragment' | 'document' | RenderHTMLFunction;
   waitUntil?(promise: Promise<any>): void;
 }
@@ -68,8 +70,10 @@ export async function renderToResponse(
   const {
     request,
     assets,
+    status: explicitStatus,
     cacheKey: explicitCacheKey,
     headers: explicitHeaders,
+    serializations: explicitSerializations,
     waitUntil = noop,
     stream: shouldStream = false,
     renderHTML = true,
@@ -83,7 +87,10 @@ export async function renderToResponse(
 
   const browserResponse = new BrowserResponse({
     request,
+    cacheKey,
+    status: explicitStatus,
     headers: new Headers(explicitHeaders),
+    serializations: explicitSerializations,
   });
 
   let appStream: ReadableStream<any> | undefined;
