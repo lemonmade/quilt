@@ -1,0 +1,14 @@
+{
+  "extends": "@quilted/craft/typescript/project.json",
+  "compilerOptions": {
+    "rootDir": "source",
+    "outDir": "build/typescript"
+  },
+  "include": ["source"],
+  "exclude": [],
+  "references": [
+    {"path": "../browser"},
+    {"path": "../http"},
+    {"path": "../react-utilities"}
+  ]
+}

@@ -7,7 +7,6 @@ export {useFavicon} from './hooks/favicon.ts';
 export {useHeadScript} from './hooks/head-script.ts';
 export {useHeadStyle} from './hooks/head-style.ts';
 export {useHTMLAttributes} from './hooks/html-attributes.ts';
-export {useHTMLUpdater} from './hooks/html-updater.ts';
 export {useLink} from './hooks/link.ts';
 export {useLocale} from './hooks/locale.ts';
 export {useMeta} from './hooks/meta.ts';

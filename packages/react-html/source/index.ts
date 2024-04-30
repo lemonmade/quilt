@@ -23,7 +23,6 @@ export {
   useHeadScript,
   useHeadStyle,
   useHTMLAttributes,
-  useHTMLUpdater,
   useLink,
   useLocale,
   useMeta,

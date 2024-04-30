@@ -8,7 +8,7 @@
   "exclude": ["*.test.ts", "*.test.tsx"],
   "references": [
     {"path": "../localize"},
-    {"path": "../react-http"},
+    {"path": "../react-browser"},
     {"path": "../react-router"},
     {"path": "../react-utilities"},
     {"path": "../request-router"}

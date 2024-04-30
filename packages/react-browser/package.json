@@ -1,0 +1,43 @@
+{
+  "name": "@quilted/react-browser",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-browser"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config ./rollup.config.js"
+  },
+  "dependencies": {
+    "@quilted/browser": "workspace:^0.0.0",
+    "@quilted/http": "workspace:^0.3.0",
+    "@quilted/react-utilities": "workspace:^0.2.1"
+  },
+  "peerDependencies": {},
+  "peerDependenciesMeta": {},
+  "devDependencies": {},
+  "browserslist": [
+    "defaults and fully supports es6-module",
+    "maintained node versions"
+  ]
+}

@@ -26,6 +26,6 @@ export function useDomEffect(
   useServerAction(effect, manager[SERVER_ACTION_KIND]);
   useEffect(effect, [manager, ...inputs]);
   useEffect(() => {
-    return resultRef.current?.remove;
+    return () => resultRef.current?.remove();
   }, []);
 }
