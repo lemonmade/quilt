@@ -197,15 +197,13 @@ export async function renderToResponse(
 
       writer.write(`<!DOCTYPE html>`);
 
-      // TODO
-      // const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
       const htmlContent = renderToStaticMarkup(
-        <html {...htmlAttributes}>
+        <html {...browserResponse.htmlAttributes.value}>
           <head>
             <Head
               title={browserResponse.title.value}
-              links={browserResponse.link.value}
-              metas={browserResponse.meta.value}
+              links={browserResponse.links.value}
+              metas={browserResponse.metas.value}
               serializations={browserResponse.serializations}
               // TODO
               scripts={[]}
@@ -232,7 +230,7 @@ export async function renderToResponse(
             ))}
           </head>
           <body
-            {...bodyAttributes}
+            {...browserResponse.bodyAttributes.value}
             dangerouslySetInnerHTML={{__html: '%%CONTENT%%'}}
           ></body>
         </html>,

@@ -1,40 +1,27 @@
 export {
   Alternate,
   BodyAttributes,
-  HeadScript,
-  HeadStyle,
   HTMLAttributes,
   Link,
   Meta,
-  SearchRobots,
-  Serialize,
   ThemeColor,
   Title,
-  Viewport,
   Favicon,
   useAlternateUrl,
-  useSerialized,
   useBodyAttributes,
-  useHeadScript,
-  useHeadStyle,
+  useBrowserEffect,
+  useCookie,
+  useCookies,
   useHTMLAttributes,
+  useInitialURL,
   useFavicon,
   useLink,
   useLocale,
   useMeta,
-  useSearchRobots,
   useThemeColor,
   useTitle,
-  useViewport,
-  useHTMLUpdater,
-  getSerialized,
-} from '@quilted/react-html';
-export type {Serializable} from '@quilted/react-html';
-export {
-  useCookie,
-  useCookies,
   type Cookies,
   type CookieOptions,
-} from '@quilted/react-http';
+} from '@quilted/react-browser';
 
 export {HTML} from './html/HTML.tsx';

@@ -16,7 +16,6 @@
     {"path": "../react-browser"},
     {"path": "../react-dom"},
     {"path": "../react-graphql"},
-    {"path": "../react-html"},
     {"path": "../react-idle"},
     {"path": "../react-localize"},
     {"path": "../react-performance"},

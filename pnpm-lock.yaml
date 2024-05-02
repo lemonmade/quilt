@@ -625,6 +625,9 @@ importers:
       '@quilted/react-utilities':
         specifier: workspace:^0.2.1
         version: link:../react-utilities
+      '@quilted/signals':
+        specifier: workspace:^0.2.1
+        version: link:../signals
       react:
         specifier: ^18.0.0
         version: 18.2.0

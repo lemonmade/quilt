@@ -1,23 +1,38 @@
 import type {ReadonlySignal} from '@quilted/signals';
 
+export type BrowserMetaAttributes = Partial<HTMLMetaElement>;
+export type BrowserLinkAttributes = Partial<HTMLLinkElement>;
+export type BrowserHTMLAttributes = Partial<HTMLHtmlElement & {class: string}>;
+export type BrowserBodyAttributes = Partial<HTMLBodyElement & {class: string}>;
+
 export interface BrowserDetails {
   readonly title: {
     add(title: string | ReadonlySignal<string>): () => void;
   };
-  readonly meta: {
+  readonly metas: {
     add(
-      attributes: HTMLMetaElement | ReadonlySignal<HTMLMetaElement>,
+      attributes: BrowserMetaAttributes | ReadonlySignal<BrowserMetaAttributes>,
     ): () => void;
   };
-  readonly link: {
+  readonly links: {
     add(
-      attributes: HTMLLinkElement | ReadonlySignal<HTMLLinkElement>,
+      attributes: BrowserLinkAttributes | ReadonlySignal<BrowserLinkAttributes>,
     ): () => void;
   };
   readonly serializations: {
     get<T = unknown>(id: string): T;
     set(id: string, data: unknown): void;
     [Symbol.iterator](): IterableIterator<[string, unknown]>;
+  };
+  readonly htmlAttributes: {
+    add(
+      attributes: BrowserHTMLAttributes | ReadonlySignal<BrowserHTMLAttributes>,
+    ): () => void;
+  };
+  readonly bodyAttributes: {
+    add(
+      attributes: BrowserBodyAttributes | ReadonlySignal<BrowserBodyAttributes>,
+    ): () => void;
   };
   readonly cookies: Cookies;
   readonly initialURL: URL;

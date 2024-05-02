@@ -11,36 +11,37 @@ export {
 export type {AssetLoadTiming} from '@quilted/assets';
 export * from '@quilted/browser/server';
 
-export {useCookie, useCookies} from './hooks/cookie.ts';
-export {
-  useAssetsCacheKey,
-  useModuleAssets,
-  useCacheControl,
-  useContentSecurityPolicy,
-  useCrossOriginEmbedderPolicy,
-  useCrossOriginOpenerPolicy,
-  useCrossOriginResourcePolicy,
-  usePermissionsPolicy,
-  useResponseCookie,
-  useDeleteResponseCookie,
-  useResponseHeader,
-  useResponseRedirect,
-  useResponseStatus,
-  useBrowserResponseAction,
-  useStrictTransportSecurity,
-} from './server/hooks.ts';
-export {
-  CacheControl,
-  ContentSecurityPolicy,
-  CrossOriginEmbedderPolicy,
-  CrossOriginOpenerPolicy,
-  CrossOriginResourcePolicy,
-  NotFound,
-  PermissionsPolicy,
-  ResponseCookie,
-  ResponseHeader,
-  ResponseStatus,
-  StrictTransportSecurity,
-} from './server/components.ts';
-
 export {BrowserDetailsContext} from './context.ts';
+
+export {useAssetsCacheKey, useModuleAssets} from './server/hooks/assets.ts';
+export {useBrowserResponseAction} from './server/hooks/browser-response-action.ts';
+export {useCacheControl} from './server/hooks/cache-control.ts';
+export {useContentSecurityPolicy} from './server/hooks/content-security-policy.ts';
+export {useCrossOriginEmbedderPolicy} from './server/hooks/cross-origin-embedder-policy.ts';
+export {useCrossOriginOpenerPolicy} from './server/hooks/cross-origin-opener-policy.ts';
+export {useCrossOriginResourcePolicy} from './server/hooks/cross-origin-resource-policy.ts';
+export {usePermissionsPolicy} from './server/hooks/permissions-policy.ts';
+export {useResponseRedirect} from './server/hooks/redirect.ts';
+export {useResponseHeader} from './server/hooks/response-header.ts';
+export {
+  useDeleteResponseCookie,
+  useResponseCookie,
+} from './server/hooks/response-cookie.ts';
+export {useResponseStatus} from './server/hooks/response-status.ts';
+export {useSearchRobots} from './server/hooks/search-robots.ts';
+export {useStrictTransportSecurity} from './server/hooks/strict-transport-security.ts';
+export {useViewport} from './server/hooks/viewport.ts';
+
+export {CacheControl} from './server/components/CacheControl.tsx';
+export {ContentSecurityPolicy} from './server/components/ContentSecurityPolicy.tsx';
+export {CrossOriginEmbedderPolicy} from './server/components/CrossOriginEmbedderPolicy.tsx';
+export {CrossOriginOpenerPolicy} from './server/components/CrossOriginOpenerPolicy.tsx';
+export {CrossOriginResourcePolicy} from './server/components/CrossOriginResourcePolicy.tsx';
+export {NotFound} from './server/components/NotFound.tsx';
+export {PermissionsPolicy} from './server/components/PermissionsPolicy.tsx';
+export {ResponseCookie} from './server/components/ResponseCookie.tsx';
+export {ResponseHeader} from './server/components/ResponseHeader.tsx';
+export {ResponseStatus} from './server/components/ResponseStatus.tsx';
+export {SearchRobots} from './server/components/SearchRobots.tsx';
+export {StrictTransportSecurity} from './server/components/StrictTransportSecurity.tsx';
+export {Viewport} from './server/components/Viewport.tsx';

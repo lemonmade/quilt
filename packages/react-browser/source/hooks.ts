@@ -1,2 +1,12 @@
+export {useAlternateUrl} from './hooks/alternate-url.ts';
+export {useBodyAttributes} from './hooks/body-attributes.ts';
+export {useBrowserEffect} from './hooks/browser-effect.ts';
 export {useCookie, useCookies} from './hooks/cookie.ts';
+export {useFavicon} from './hooks/favicon.ts';
+export {useHTMLAttributes} from './hooks/html-attributes.ts';
 export {useInitialURL} from './hooks/initial-url.ts';
+export {useLink} from './hooks/link.ts';
+export {useLocale} from './hooks/locale.ts';
+export {useMeta} from './hooks/meta.ts';
+export {useThemeColor} from './hooks/theme-color.ts';
+export {useTitle} from './hooks/title.ts';

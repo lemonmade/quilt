@@ -42,7 +42,6 @@
     {"path": "./packages/react-browser"},
     {"path": "./packages/react-dom"},
     {"path": "./packages/react-email"},
-    {"path": "./packages/react-html"},
     {"path": "./packages/react-idle"},
     {"path": "./packages/react-localize"},
     {"path": "./packages/react-performance"},

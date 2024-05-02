@@ -5,14 +5,19 @@ import {
   isSignal,
   type Signal,
   type ReadonlySignal,
+  resolveSignalOrValue,
 } from '@quilted/signals';
 
 import type {BrowserDetails, CookieOptions, Cookies} from './types.ts';
 
 export class Browser implements BrowserDetails {
   readonly title = new BrowserTitle();
-  readonly meta = new BrowserHeadElements('meta');
-  readonly link = new BrowserHeadElements('link');
+  readonly metas = new BrowserHeadElements('meta');
+  readonly links = new BrowserHeadElements('link');
+  readonly htmlAttributes = new BrowserElementAttributes(
+    document.documentElement,
+  );
+  readonly bodyAttributes = new BrowserElementAttributes(document.body);
   readonly cookies = new BrowserCookies();
   readonly serializations = new BrowserSerializations();
   readonly initialURL = new URL(window.location.href);
@@ -114,49 +119,64 @@ export class BrowserTitle {
 export class BrowserHeadElements<Element extends keyof HTMLElementTagNameMap> {
   private initialElements: readonly HTMLElementTagNameMap[Element][];
 
-  constructor(selector: Element) {
-    this.initialElements = Array.from(document.head.querySelectorAll(selector));
+  constructor(readonly element: Element) {
+    this.initialElements = Array.from(document.head.querySelectorAll(element));
   }
 
   add = (
     attributes:
-      | HTMLElementTagNameMap[Element]
-      | ReadonlySignal<HTMLElementTagNameMap[Element]>,
+      | Partial<HTMLElementTagNameMap[Element]>
+      | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>,
   ) => {
-    const meta = document.createElement('meta');
+    const element = document.createElement(this.element);
 
-    for (const [attribute, value] of Object.entries(attributes)) {
-      meta.setAttribute(attribute, value);
-    }
+    setAttributes(element, attributes);
 
-    const existingMeta = this.initialElements.find((existingMeta) => {
-      return meta.isEqualNode(existingMeta);
+    const existingElement = this.initialElements.find((existingElement) => {
+      return element.isEqualNode(existingElement);
     });
 
-    const resolvedMeta = existingMeta ?? meta;
+    const resolvedElement = existingElement ?? element;
 
-    if (!existingMeta) {
-      document.head.appendChild(resolvedMeta);
+    if (!existingElement) {
+      document.head.appendChild(resolvedElement);
     }
 
     let teardown: undefined | (() => void);
 
     if (isSignal(attributes)) {
-      teardown = effect(() => {
-        const updatedAttributes = attributes.value;
-        if (!teardown) return;
-
-        for (const [attribute, value] of Object.entries(updatedAttributes)) {
-          meta.setAttribute(attribute, value);
-        }
-      });
+      teardown = syncAttributesFromSignal(resolvedElement, attributes);
     }
 
     return () => {
-      resolvedMeta.remove();
+      resolvedElement.remove();
       teardown?.();
     };
   };
+}
+
+export class BrowserElementAttributes<Element extends HTMLElement> {
+  constructor(readonly element: Element) {}
+
+  add(attributes: Partial<Element> | ReadonlySignal<Partial<Element>>) {
+    const {element} = this;
+
+    setAttributes(element, attributes);
+
+    let teardown: undefined | (() => void);
+
+    if (isSignal(attributes)) {
+      teardown = syncAttributesFromSignal(element, attributes);
+    }
+
+    return () => {
+      teardown?.();
+
+      for (const attribute of Object.keys(resolveSignalOrValue(attributes))) {
+        element.removeAttribute(attribute);
+      }
+    };
+  }
 }
 
 export class BrowserSerializations {
@@ -194,4 +214,44 @@ function getSerializedFromNode<T = unknown>(node: Element): T | undefined {
   } catch {
     return undefined;
   }
+}
+
+function setAttributes(
+  element: Element,
+  attributes: Record<string, any> | ReadonlySignal<Record<string, any>>,
+) {
+  const resolvedAttributes = isSignal<Record<string, any>>(attributes)
+    ? attributes.peek()
+    : attributes;
+
+  for (const [attribute, value] of Object.entries(resolvedAttributes)) {
+    element.setAttribute(attribute, value);
+  }
+}
+
+function syncAttributesFromSignal(
+  element: Element,
+  attributes: ReadonlySignal<Record<string, any>>,
+) {
+  let lastAttributesEntries: [string, any][];
+
+  return effect(() => {
+    const updatedAttributes = attributes.value;
+
+    if (!lastAttributesEntries) return;
+
+    const updatedAttributeEntries = Object.entries(updatedAttributes);
+    const seenAttributes = new Set<string>();
+
+    for (const [attribute, value] of updatedAttributeEntries) {
+      seenAttributes.add(attribute);
+      element.setAttribute(attribute, value);
+    }
+
+    for (const [attribute] of lastAttributesEntries) {
+      if (!seenAttributes.has(attribute)) element.removeAttribute(attribute);
+    }
+
+    lastAttributesEntries = updatedAttributeEntries;
+  });
 }

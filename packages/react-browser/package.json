@@ -45,7 +45,8 @@
     "@quilted/assets": "workspace:^0.1.1",
     "@quilted/browser": "workspace:^0.0.0",
     "@quilted/http": "workspace:^0.3.0",
-    "@quilted/react-utilities": "workspace:^0.2.1"
+    "@quilted/react-utilities": "workspace:^0.2.1",
+    "@quilted/signals": "workspace:^0.2.1"
   },
   "peerDependencies": {
     "react": "^18.0.0"
