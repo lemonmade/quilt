@@ -4,7 +4,7 @@ import type {QueryClient} from '@tanstack/react-query';
 declare module '~/shared/context.ts' {
   interface AppContext {
     queryClient: QueryClient;
-    fetchGraphQL: GraphQLFetch;
+    fetchGraphQL: GraphQLFetch<{}>;
   }
 }
 

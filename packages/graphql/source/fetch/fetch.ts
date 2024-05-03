@@ -11,7 +11,7 @@ import {GraphQLFetchRequest} from './request.ts';
 /**
  * A function that can fetch GraphQL queries and mutations over HTTP.
  */
-export interface GraphQLFetch<Extensions = Record<string, unknown>> {
+export interface GraphQLFetch<Extensions = {}> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLAnyOperation<Data, Variables>,
     options?: GraphQLFetchOptions<Data, Variables>,

@@ -1,7 +1,7 @@
 import {describe, it, expect} from 'vitest';
 import {multiline, createWorkspace, startServer} from './utilities.ts';
 
-describe('http', () => {
+describe('browser', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
@@ -14,14 +14,10 @@ describe('http', () => {
           import {useCookie, HTML} from '@quilted/quilt/html';
 
           export default function App() {
-            return (
-              <HTML>
-                <CookieUi />
-              </HTML>
-            )
+            return <CookieUI />;
           }
           
-          function CookieUi() {
+          function CookieUI() {
             const user = useCookie(${JSON.stringify(cookieName)});
 
             return (
@@ -56,19 +52,15 @@ describe('http', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {HTML, useCookie, useCookies} from '@quilted/quilt/html';
+          import {useCookie, useCookies} from '@quilted/quilt/browser';
 
           export default function App() {
-            return (
-              <HTML>
-                <CookieUi />
-              </HTML>
-            )
+            return <CookieUI />;
           }
 
-          function CookieUi() {
+          function CookieUI() {
             const cookies = useCookies();
-            const user = useCookie(${JSON.stringify(cookieName)});
+            const user = cookies.get(${JSON.stringify(cookieName)});
 
             return (
               <>
@@ -102,12 +94,12 @@ describe('http', () => {
       expect(await page.textContent('body')).toMatch(`Hello, ${cookieValue}`);
     });
 
-    it('can set response cookies from the node server', async () => {
+    it('can set response cookies from a node server', async () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {ResponseCookie} from '@quilted/quilt/http';
+          import {ResponseCookie} from '@quilted/quilt/server';
           
           export default function App() {
             return (
@@ -141,6 +133,54 @@ describe('http', () => {
           value: 'two',
         }),
       ]);
+    });
+  });
+
+  describe.skip('head scripts', () => {
+    it('includes the referenced scripts in the head', async () => {
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+      await workspace.fs.write({
+        'App.tsx': multiline`
+          import {HeadScript} from '@quilted/quilt/html';
+
+          export default function App() {
+            return <HeadScript src="/script.js" />;
+          }
+        `,
+      });
+
+      const server = await startServer(workspace);
+      const page = await server.openPage('/', {
+        javaScriptEnabled: false,
+      });
+
+      expect(await page.innerHTML('head')).toMatch(`<script src="/script.js">`);
+    });
+  });
+
+  describe.skip('head styles', () => {
+    it('includes the referenced styles in the head', async () => {
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+      await workspace.fs.write({
+        'App.tsx': multiline`
+          import {HeadStyle} from '@quilted/quilt/html';
+
+          export default function App() {
+            return <HeadStyle href="/style.css" />;
+          }
+        `,
+      });
+
+      const server = await startServer(workspace);
+      const page = await server.openPage('/', {
+        javaScriptEnabled: false,
+      });
+
+      expect(await page.innerHTML('head')).toMatch(
+        `<link rel="stylesheet" href="/style.css">`,
+      );
     });
   });
 });

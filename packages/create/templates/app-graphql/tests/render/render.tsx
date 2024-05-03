@@ -24,7 +24,12 @@ export const renderApp = createRender<
   // authors on the `root.context` property. Context is used to share data between your
   // React tree and your test code, and is ideal for mocking out global context providers.
   context({router = new TestRouter(), graphql = new GraphQLController()}) {
-    return {router, graphql, queryClient: new QueryClient()};
+    return {
+      router,
+      graphql,
+      fetchGraphQL: graphql.fetch,
+      queryClient: new QueryClient(),
+    };
   },
   // Render all of our app-wide context providers around each component under test.
   render(element, context, {locale = 'en'}) {

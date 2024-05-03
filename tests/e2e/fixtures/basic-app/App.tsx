@@ -4,19 +4,18 @@ import {PerformanceContext} from '@quilted/quilt/performance';
 
 import {performance} from '../../common/globals.ts';
 
-import {Head} from './foundation/Head.tsx';
-import {Headers} from './foundation/Headers.tsx';
+import {HTML} from './foundation/HTML.tsx';
 import {Routes} from './foundation/Routes.tsx';
 
 export function App() {
   return (
     <PerformanceContext performance={performance}>
       <Localization locale="en">
-        <Routing>
-          <Headers />
-          <Head />
-          <Routes />
-        </Routing>
+        <HTML>
+          <Routing>
+            <Routes />
+          </Routing>
+        </HTML>
       </Localization>
     </PerformanceContext>
   );

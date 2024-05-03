@@ -3,8 +3,7 @@ import {type PropsWithChildren} from 'react';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
-import {Head} from './foundation/html.ts';
-import {Headers} from './foundation/http.ts';
+import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
 
 import {Start} from './features/start.ts';
@@ -23,11 +22,11 @@ export interface AppProps {
 export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
-      <Headers />
-      <Head />
-      <Frame>
-        <Routes />
-      </Frame>
+      <HTML>
+        <Frame>
+          <Routes />
+        </Frame>
+      </HTML>
     </AppContext>
   );
 }
