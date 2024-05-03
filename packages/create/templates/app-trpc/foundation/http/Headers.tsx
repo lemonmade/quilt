@@ -6,7 +6,8 @@ import {
   ContentSecurityPolicy,
   PermissionsPolicy,
   StrictTransportSecurity,
-} from '@quilted/quilt/http';
+  useBro,
+} from '@quilted/quilt/server';
 
 // This component sets details on the HTTP response for all HTML server-rendering
 // requests. If you need to customize any of these details based on conditions like

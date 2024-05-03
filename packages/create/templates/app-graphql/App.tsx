@@ -1,12 +1,10 @@
-import {useMemo, type PropsWithChildren} from 'react';
+import {type PropsWithChildren} from 'react';
 
-import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
-import {GraphQLContext, type GraphQLRun} from '@quilted/quilt/graphql';
+import {GraphQLContext} from '@quilted/quilt/graphql';
 
 import {ReactQueryContext} from '@quilted/react-query';
-import {QueryClient} from '@tanstack/react-query';
 
 import {Head} from './foundation/html.ts';
 import {Headers} from './foundation/http.ts';
@@ -19,29 +17,21 @@ import {
   type AppContext as AppContextType,
 } from './shared/context.ts';
 
-export interface AppProps extends AppContextType {
-  fetchGraphQL: GraphQLRun;
+export interface AppProps {
+  context: AppContextType;
 }
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export function App(props: AppProps) {
-  const locale = useLocaleFromEnvironment() ?? 'en';
-
+export function App({context}: AppProps) {
   return (
-    <HTML>
-      <Localization locale={locale}>
-        <Routing>
-          <AppContext {...props}>
-            <Headers />
-            <Head />
-            <Frame>
-              <Routes />
-            </Frame>
-          </AppContext>
-        </Routing>
-      </Localization>
-    </HTML>
+    <AppContext context={context}>
+      <Headers />
+      <Head />
+      <Frame>
+        <Routes />
+      </Frame>
+    </AppContext>
   );
 }
 
@@ -56,24 +46,18 @@ function Routes() {
 }
 
 // This component renders any app-wide context.
-function AppContext({
-  children,
-  fetchGraphQL,
-  ...context
-}: PropsWithChildren<AppProps>) {
-  const {queryClient} = useMemo(() => {
-    return {
-      queryClient: new QueryClient(),
-    };
-  }, []);
+function AppContext({children, context}: PropsWithChildren<AppProps>) {
+  const locale = useLocaleFromEnvironment() ?? 'en';
 
   return (
-    <GraphQLContext fetch={fetchGraphQL}>
-      <ReactQueryContext client={queryClient}>
-        <AppContextReact.Provider value={context}>
-          {children}
-        </AppContextReact.Provider>
-      </ReactQueryContext>
-    </GraphQLContext>
+    <AppContextReact.Provider value={context}>
+      <GraphQLContext fetch={context.fetchGraphQL}>
+        <ReactQueryContext client={context.queryClient}>
+          <Localization locale={locale}>
+            <Routing>{children}</Routing>
+          </Localization>
+        </ReactQueryContext>
+      </GraphQLContext>
+    </AppContextReact.Provider>
   );
 }

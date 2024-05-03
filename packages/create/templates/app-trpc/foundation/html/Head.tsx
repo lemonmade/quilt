@@ -1,4 +1,4 @@
-import {Title, Viewport, Favicon, SearchRobots} from '@quilted/quilt/html';
+import {Title, Viewport, Favicon, SearchRobots} from '@quilted/quilt/browser';
 
 // This component sets details of the HTML page. If you need to customize
 // any of these details based on conditions like the active route, or some

@@ -30,7 +30,7 @@ const Query = createQueryResolver({
 
 const schema = createGraphQLSchema(schemaSource, {Query, Person});
 
-export const performGraphQLOperation: GraphQLRun =
+export const performGraphQLOperation: GraphQLRun<{}> =
   async function performGraphQLOperation(operation, options) {
     const result = await graphql({
       schema,
