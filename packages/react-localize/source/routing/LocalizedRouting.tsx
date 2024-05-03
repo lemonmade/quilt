@@ -1,6 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import type {ComponentProps} from 'react';
-import {Routing, useInitialUrl} from '@quilted/react-router';
+import {Routing, useInitialURL} from '@quilted/react-router';
 
 import {Localization} from '../Localization.tsx';
 import {useLocaleFromEnvironment} from '../hooks/locale-from-environment.ts';
@@ -23,7 +23,7 @@ export function LocalizedRouting({
   isExternal: isExplicitlyExternal,
   ...props
 }: LocalizedRoutingProps) {
-  const initialUrl = useInitialUrl();
+  const initialUrl = useInitialURL();
   const localeFromEnvironment = useLocaleFromEnvironment();
 
   const {

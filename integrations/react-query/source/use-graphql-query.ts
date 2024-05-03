@@ -1,7 +1,7 @@
 import {
-  useQuery,
-  type UseQueryOptions,
-  type UseQueryResult,
+  useSuspenseQuery,
+  type UseSuspenseQueryOptions,
+  type UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 import {
   toGraphQLSource,
@@ -15,10 +15,10 @@ import {type IfAllFieldsNullable} from '@quilted/useful-types';
 import {throwIfError} from './utilities.ts';
 
 export type GraphQLQueryOptions<Data, Variables> = Omit<
-  UseQueryOptions<Data>,
+  UseSuspenseQueryOptions<Data>,
   'queryFn' | 'queryKey'
 > &
-  Partial<Pick<UseQueryOptions<Data>, 'queryFn' | 'queryKey'>> &
+  Partial<Pick<UseSuspenseQueryOptions<Data>, 'queryFn' | 'queryKey'>> &
   GraphQLVariableOptions<Variables> & {
     fetch?: GraphQLFetch;
   };
@@ -30,7 +30,7 @@ export function useGraphQLQuery<Data, Variables>(
     [GraphQLQueryOptions<Data, Variables>?],
     [GraphQLQueryOptions<Data, Variables>]
   >
-): UseQueryResult<Data> {
+): UseSuspenseQueryResult<Data> {
   const [options = {} as any] = args;
 
   const {
@@ -68,7 +68,7 @@ export function useGraphQLQuery<Data, Variables>(
     }
   }
 
-  return useQuery<Data>({
+  return useSuspenseQuery<Data>({
     queryKey: fullQueryKey,
     queryFn: async ({signal}) => {
       const result = await fetch(query, {

@@ -7,19 +7,15 @@ import {
 } from '@quilted/react-browser/server';
 
 interface Props {
-  url?: string | URL;
   browser?: BrowserDetails;
 }
 
-export function ServerContext({
-  url,
-  browser,
-  children,
-}: PropsWithChildren<Props>) {
-  const normalizedUrl = typeof url === 'string' ? new URL(url) : url;
+export function ServerContext({browser, children}: PropsWithChildren<Props>) {
+  const requestURL = browser?.request.url;
+  const initialURL = requestURL && new URL(requestURL);
 
-  const withInitialURL = normalizedUrl ? (
-    <InitialURLContext.Provider value={normalizedUrl}>
+  const withInitialURL = initialURL ? (
+    <InitialURLContext.Provider value={initialURL}>
       {children}
     </InitialURLContext.Provider>
   ) : (

@@ -35,7 +35,7 @@ export interface BrowserDetails {
     ): () => void;
   };
   readonly cookies: Cookies;
-  readonly initialURL: URL;
+  readonly request: Request;
 }
 
 /**

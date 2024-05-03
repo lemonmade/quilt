@@ -76,7 +76,7 @@ class BrowserEmailResponse implements BrowserDetails {
     new BrowserResponseElementAttributes<BrowserHTMLAttributes>();
   readonly serializations = new BrowserResponseSerializations();
 
-  get initialURL(): never {
+  get request(): never {
     throw new Error('Not available in email rendering');
   }
 

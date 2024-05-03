@@ -10,6 +10,7 @@ export {
 export {
   useRoutes,
   useCurrentUrl,
+  useInitialURL,
   useRouter,
   useRouteMatch,
   useRouteMatchDetails,

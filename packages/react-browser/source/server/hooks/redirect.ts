@@ -12,7 +12,7 @@ export function useResponseRedirect(to: string, statusCode?: StatusCode) {
 
   useBrowserResponseAction((response) => {
     const headers = new Headers(response.headers);
-    headers.append('Location', new URL(to, response.initialURL).href);
+    headers.append('Location', new URL(to, response.request.url).href);
 
     throw new Response(null, {
       status: statusCode ?? 302,

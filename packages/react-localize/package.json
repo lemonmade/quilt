@@ -43,11 +43,11 @@
   },
   "dependencies": {
     "@quilted/localize": "workspace:^0.2.0",
+    "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/react-router": "workspace:^0.4.0",
     "@quilted/react-utilities": "workspace:^0.2.0"
   },
   "peerDependencies": {
-    "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/request-router": "workspace:^0.2.0",
     "react": "^17.0.0 || ^18.0.0"
   },

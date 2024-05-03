@@ -23,19 +23,17 @@ export function App(props: AppProps) {
   const locale = useLocaleFromEnvironment() ?? 'en';
 
   return (
-    <HTML>
-      <Localization locale={locale}>
-        <Routing>
-          <AppContext {...props}>
-            <Headers />
-            <Head />
-            <Frame>
-              <Routes />
-            </Frame>
-          </AppContext>
-        </Routing>
-      </Localization>
-    </HTML>
+    <Localization locale={locale}>
+      <Routing>
+        <AppContext {...props}>
+          <Headers />
+          <Head />
+          <Frame>
+            <Routes />
+          </Frame>
+        </AppContext>
+      </Routing>
+    </Localization>
   );
 }
 

@@ -29,7 +29,7 @@ export class BrowserResponse implements BrowserDetails {
   readonly cookies: BrowserResponseCookies;
   readonly serializations: BrowserResponseSerializations;
   readonly headers: Headers;
-  readonly initialURL: URL;
+  readonly request: Request;
   readonly assets: BrowserResponseAssets;
 
   constructor({
@@ -45,7 +45,7 @@ export class BrowserResponse implements BrowserDetails {
     cacheKey?: Partial<AssetsCacheKey>;
     serializations?: Iterable<[string, unknown]>;
   }) {
-    this.initialURL = new URL(request.url);
+    this.request = request;
     this.status = new BrowserResponseStatus(status);
     this.headers = headers;
     this.cookies = new BrowserResponseCookies(

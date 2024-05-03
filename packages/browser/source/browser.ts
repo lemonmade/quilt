@@ -20,7 +20,7 @@ export class Browser implements BrowserDetails {
   readonly bodyAttributes = new BrowserElementAttributes(document.body);
   readonly cookies = new BrowserCookies();
   readonly serializations = new BrowserSerializations();
-  readonly initialURL = new URL(window.location.href);
+  readonly request = new Request(window.location.href);
 }
 
 export class BrowserCookies implements Cookies {

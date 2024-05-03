@@ -22,7 +22,7 @@ export class BrowserTestMock implements BrowserDetails {
     new BrowserTestMockElementAttributes<BrowserHTMLAttributes>();
   readonly cookies: BrowserTestMockCookies;
   readonly serializations: BrowserTestMockSerializations;
-  readonly initialURL: URL;
+  readonly request: Request;
 
   constructor({
     url,
@@ -35,7 +35,7 @@ export class BrowserTestMock implements BrowserDetails {
       typeof BrowserTestMockSerializations
     >[0];
   }) {
-    this.initialURL = new URL(
+    this.request = new Request(
       url ??
         (typeof location === 'object' ? location.href : 'https://example.com'),
     );

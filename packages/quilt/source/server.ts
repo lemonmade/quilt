@@ -1,10 +1,4 @@
-export {
-  Head,
-  Serialize,
-  HTMLManager,
-  HTMLContext,
-  SERVER_ACTION_ID as HTML_SERVER_ACTION_ID,
-} from '@quilted/react-html/server';
+export * from '@quilted/react-browser/server';
 export {
   extract,
   ServerRenderManager,

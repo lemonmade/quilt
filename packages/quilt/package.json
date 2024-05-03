@@ -31,23 +31,17 @@
       "quilt:esnext": "./build/esnext/async.esnext",
       "import": "./build/esm/async.mjs"
     },
+    "./browser": {
+      "types": "./build/typescript/browser.d.ts",
+      "quilt:source": "./source/browser.ts",
+      "quilt:esnext": "./build/esnext/browser.esnext",
+      "import": "./build/esm/browser.mjs"
+    },
     "./globals": {
       "types": "./build/typescript/globals.d.ts",
       "quilt:source": "./source/globals.ts",
       "quilt:esnext": "./build/esnext/globals.esnext",
       "import": "./build/esm/globals.mjs"
-    },
-    "./html": {
-      "types": "./build/typescript/html.d.ts",
-      "quilt:source": "./source/html.ts",
-      "quilt:esnext": "./build/esnext/html.esnext",
-      "import": "./build/esm/html.mjs"
-    },
-    "./http": {
-      "types": "./build/typescript/http.d.ts",
-      "quilt:source": "./source/http.ts",
-      "quilt:esnext": "./build/esnext/http.esnext",
-      "import": "./build/esm/http.mjs"
     },
     "./events": {
       "types": "./build/typescript/events.d.ts",
@@ -161,17 +155,14 @@
       "async": [
         "./build/typescript/async.d.ts"
       ],
-      "html": [
-        "./build/typescript/html.d.ts"
+      "browser": [
+        "./build/typescript/browser.d.ts"
       ],
       "globals": [
         "./build/typescript/globals.d.ts"
       ],
       "env": [
         "./build/typescript/env.d.ts"
-      ],
-      "http": [
-        "./build/typescript/http.d.ts"
       ],
       "events": [
         "./build/typescript/localize.d.ts"
