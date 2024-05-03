@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@quilted/localize": "workspace:^0.2.0",
-    "@quilted/react-html": "workspace:^0.4.0",
     "@quilted/react-router": "workspace:^0.4.0",
     "@quilted/react-utilities": "workspace:^0.2.0"
   },

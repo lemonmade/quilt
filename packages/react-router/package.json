@@ -48,6 +48,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
+    "@quilted/http": "workspace:^0.3.0",
     "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/react-performance": "workspace:^0.2.0",
     "@quilted/react-server-render": "workspace:^0.4.0",

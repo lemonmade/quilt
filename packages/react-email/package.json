@@ -40,7 +40,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/react-html": "workspace:^0.4.0",
+    "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/react-server-render": "workspace:^0.4.0"
   },
   "peerDependencies": {

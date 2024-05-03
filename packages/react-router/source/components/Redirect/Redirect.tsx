@@ -1,4 +1,4 @@
-import type {StatusCode} from '@quilted/react-http';
+import type {StatusCode} from '@quilted/http';
 import type {NavigateTo, RelativeTo} from '@quilted/routing';
 
 import {useRedirect} from '../../hooks/redirect.ts';

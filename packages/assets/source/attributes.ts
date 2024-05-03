@@ -2,7 +2,7 @@ import type {Asset} from './types.ts';
 
 export function styleAssetAttributes(
   {source, attributes}: Asset,
-  {baseUrl}: {baseUrl?: URL} = {},
+  {baseURL}: {baseURL?: URL} = {},
 ): Partial<HTMLLinkElement> {
   const {
     rel = 'stylesheet',
@@ -14,11 +14,11 @@ export function styleAssetAttributes(
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      (baseURL == null || !source.startsWith(baseURL.origin)) &&
       isFullURL(source));
 
   const href =
-    crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
+    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
 
   return {
     rel,
@@ -36,18 +36,18 @@ export function styleAssetAttributes(
 
 export function styleAssetPreloadAttributes(
   {source, attributes}: Asset,
-  {baseUrl}: {baseUrl?: URL} = {},
+  {baseURL}: {baseURL?: URL} = {},
 ): Partial<HTMLLinkElement> {
   const {crossorigin: explicitCrossOrigin} = (attributes ?? {}) as any;
 
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      (baseURL == null || !source.startsWith(baseURL.origin)) &&
       isFullURL(source));
 
   const href =
-    crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
+    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
 
   return {
     rel: 'preload',
@@ -65,7 +65,7 @@ export function styleAssetPreloadAttributes(
 
 export function scriptAssetAttributes(
   {source, attributes}: Asset,
-  {baseUrl}: {baseUrl?: URL} = {},
+  {baseURL}: {baseURL?: URL} = {},
 ): Partial<HTMLScriptElement> {
   const {
     type = 'text/javascript',
@@ -76,11 +76,11 @@ export function scriptAssetAttributes(
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      (baseURL == null || !source.startsWith(baseURL.origin)) &&
       isFullURL(source));
 
   const src =
-    crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
+    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
 
   return {
     type,
@@ -97,18 +97,18 @@ export function scriptAssetAttributes(
 
 export function scriptAssetPreloadAttributes(
   {source, attributes}: Asset,
-  {baseUrl}: {baseUrl?: URL} = {},
+  {baseURL}: {baseURL?: URL} = {},
 ): Partial<HTMLLinkElement> {
   const {type, crossorigin: explicitCrossOrigin} = (attributes ?? {}) as any;
 
   const crossorigin =
     explicitCrossOrigin ??
     (source[0] !== '/' &&
-      (baseUrl == null || !source.startsWith(baseUrl.origin)) &&
+      (baseURL == null || !source.startsWith(baseURL.origin)) &&
       isFullURL(source));
 
   const href =
-    crossorigin && baseUrl ? source.slice(baseUrl.origin.length) : source;
+    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
 
   return {
     rel: type === 'module' ? 'modulepreload' : 'preload',

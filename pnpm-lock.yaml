@@ -518,9 +518,6 @@ importers:
       '@quilted/react-graphql':
         specifier: workspace:^0.5.0
         version: link:../react-graphql
-      '@quilted/react-html':
-        specifier: workspace:^0.4.0
-        version: link:../react-html
       '@quilted/react-idle':
         specifier: workspace:^0.4.0
         version: link:../react-idle
@@ -646,9 +643,9 @@ importers:
 
   packages/react-email:
     dependencies:
-      '@quilted/react-html':
-        specifier: workspace:^0.4.0
-        version: link:../react-html
+      '@quilted/react-browser':
+        specifier: workspace:^0.0.0
+        version: link:../react-browser
       '@quilted/react-server-render':
         specifier: workspace:^0.4.0
         version: link:../react-server-render
@@ -679,28 +676,6 @@ importers:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../react
 
-  packages/react-html:
-    dependencies:
-      '@quilted/assets':
-        specifier: workspace:^0.1.0
-        version: link:../assets
-      '@quilted/react-server-render':
-        specifier: workspace:^0.4.0
-        version: link:../react-server-render
-      '@types/react':
-        specifier: ^17.0.0 || ^18.0.0
-        version: 18.2.34
-    devDependencies:
-      '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.2.14
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-      react-dom:
-        specifier: workspace:@quilted/react-dom@^18.2.0
-        version: link:../react-dom
-
   packages/react-idle:
     devDependencies:
       react:
@@ -712,9 +687,6 @@ importers:
       '@quilted/localize':
         specifier: workspace:^0.2.0
         version: link:../localize
-      '@quilted/react-html':
-        specifier: workspace:^0.4.0
-        version: link:../react-html
       '@quilted/react-router':
         specifier: workspace:^0.4.0
         version: link:../react-router
@@ -747,6 +719,9 @@ importers:
 
   packages/react-router:
     dependencies:
+      '@quilted/http':
+        specifier: workspace:^0.3.0
+        version: link:../http
       '@quilted/react-browser':
         specifier: workspace:^0.0.0
         version: link:../react-browser

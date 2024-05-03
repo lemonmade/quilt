@@ -1,6 +1,5 @@
 import {useEffect} from 'react';
-import {useHttpAction} from '@quilted/react-http';
-import type {StatusCode} from '@quilted/react-http';
+import type {StatusCode} from '@quilted/http';
 import type {NavigateTo} from '@quilted/routing';
 
 import type {NavigateOptions} from '../router.ts';
@@ -17,9 +16,12 @@ export function useRedirect(
 ) {
   const router = useRouter();
 
-  useHttpAction((http) => {
-    http.redirectTo(router.resolve(to, {relativeTo}).url.href, statusCode);
-  });
+  if (typeof document === 'undefined') {
+    throw new Response(null, {
+      status: statusCode ?? 308,
+      headers: {Location: router.resolve(to, {relativeTo}).url.href},
+    });
+  }
 
   useEffect(() => {
     router.navigate(to, {replace: true, relativeTo});

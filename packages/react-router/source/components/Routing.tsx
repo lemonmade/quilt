@@ -14,7 +14,7 @@ import {
   type Router,
   type Options as RouterOptions,
 } from '../router.ts';
-import {useRoutes, useInitialUrl} from '../hooks.ts';
+import {useRoutes, useInitialURL} from '../hooks.ts';
 import type {Routes} from '../types.ts';
 
 import {FocusContext} from './FocusContext.tsx';
@@ -35,7 +35,7 @@ export const Routing = memo(function Routing({
   state,
   isExternal,
 }: Props) {
-  const initialUrl = useInitialUrl();
+  const initialUrl = useInitialURL();
 
   const router = useMemo(
     () =>

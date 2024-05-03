@@ -225,6 +225,14 @@ function setAttributes(
     : attributes;
 
   for (const [attribute, value] of Object.entries(resolvedAttributes)) {
+    setAttribute(element, attribute, value);
+  }
+}
+
+function setAttribute(element: Element, attribute: string, value: any) {
+  if (attribute in element) {
+    (element as any)[attribute] = value;
+  } else {
     element.setAttribute(attribute, value);
   }
 }
@@ -245,11 +253,13 @@ function syncAttributesFromSignal(
 
     for (const [attribute, value] of updatedAttributeEntries) {
       seenAttributes.add(attribute);
-      element.setAttribute(attribute, value);
+      setAttribute(element, attribute, value);
     }
 
     for (const [attribute] of lastAttributesEntries) {
-      if (!seenAttributes.has(attribute)) element.removeAttribute(attribute);
+      if (!seenAttributes.has(attribute)) {
+        setAttribute(element, attribute, undefined);
+      }
     }
 
     lastAttributesEntries = updatedAttributeEntries;

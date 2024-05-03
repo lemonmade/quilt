@@ -8,5 +8,6 @@ export {useInitialURL} from './hooks/initial-url.ts';
 export {useLink} from './hooks/link.ts';
 export {useLocale} from './hooks/locale.ts';
 export {useMeta} from './hooks/meta.ts';
+export {useSerialized} from './hooks/serialized.ts';
 export {useThemeColor} from './hooks/theme-color.ts';
 export {useTitle} from './hooks/title.ts';

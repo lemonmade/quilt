@@ -10,18 +10,16 @@ import {
 } from '@quilted/assets';
 import {
   BrowserResponse,
-  BrowserDetailsContext,
+  ScriptAsset,
+  ScriptAssetPreload,
+  StyleAsset,
+  StyleAssetPreload,
 } from '@quilted/react-browser/server';
-import {
-  Head,
-  Script,
-  ScriptPreload,
-  Style,
-  StylePreload,
-} from '@quilted/react-html/server';
 import {extract} from '@quilted/react-server-render/server';
 
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
+
+import {ServerContext} from './ServerContext.tsx';
 
 export interface RenderHTMLFunction {
   (
@@ -79,7 +77,7 @@ export async function renderToResponse(
     renderHTML = true,
   } = options;
 
-  const baseUrl = (request as any).URL ?? new URL(request.url);
+  const baseURL = (request as any).URL ?? new URL(request.url);
 
   const cacheKey =
     explicitCacheKey ??
@@ -99,9 +97,7 @@ export async function renderToResponse(
     const rendered = await extract(element, {
       decorate(element) {
         return (
-          <BrowserDetailsContext.Provider value={browserResponse}>
-            {element}
-          </BrowserDetailsContext.Provider>
+          <ServerContext browser={browserResponse}>{element}</ServerContext>
         );
       },
     });
@@ -125,9 +121,7 @@ export async function renderToResponse(
         const rendered = await extract(element, {
           decorate(element) {
             return (
-              <BrowserDetailsContext.Provider value={browserResponse}>
-                {element}
-              </BrowserDetailsContext.Provider>
+              <ServerContext browser={browserResponse}>{element}</ServerContext>
             );
           },
         });
@@ -200,32 +194,37 @@ export async function renderToResponse(
       const htmlContent = renderToStaticMarkup(
         <html {...browserResponse.htmlAttributes.value}>
           <head>
-            <Head
-              title={browserResponse.title.value}
-              links={browserResponse.links.value}
-              metas={browserResponse.metas.value}
-              serializations={browserResponse.serializations}
-              // TODO
-              scripts={[]}
-            />
+            {browserResponse.title.value && (
+              <title>{browserResponse.title.value}</title>
+            )}
+            {browserResponse.links.value.map((link, index) => (
+              <link key={index} {...link} />
+            ))}
+            {browserResponse.metas.value.map((meta, index) => (
+              <meta key={index} {...meta} />
+            ))}
             {synchronousAssets?.scripts.map((script) => (
-              <Script key={script.source} asset={script} baseUrl={baseUrl} />
+              <ScriptAsset
+                key={script.source}
+                asset={script}
+                baseURL={baseURL}
+              />
             ))}
             {synchronousAssets?.styles.map((style) => (
-              <Style key={style.source} asset={style} baseUrl={baseUrl} />
+              <StyleAsset key={style.source} asset={style} baseURL={baseURL} />
             ))}
             {preloadAssets?.styles.map((style) => (
-              <StylePreload
+              <StyleAssetPreload
                 key={style.source}
                 asset={style}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
             {preloadAssets?.scripts.map((script) => (
-              <ScriptPreload
+              <ScriptAssetPreload
                 key={script.source}
                 asset={script}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
           </head>
@@ -278,23 +277,27 @@ export async function renderToResponse(
         const additionalAssetsContent = renderToStaticMarkup(
           <>
             {diffedSynchronousAssets.scripts.map((script) => (
-              <Script key={script.source} asset={script} baseUrl={baseUrl} />
+              <ScriptAsset
+                key={script.source}
+                asset={script}
+                baseURL={baseURL}
+              />
             ))}
             {diffedSynchronousAssets.styles.map((style) => (
-              <Style key={style.source} asset={style} baseUrl={baseUrl} />
+              <StyleAsset key={style.source} asset={style} baseURL={baseURL} />
             ))}
             {diffedPreloadAssets.styles.map((style) => (
-              <StylePreload
+              <StyleAssetPreload
                 key={style.source}
                 asset={style}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
             {diffedPreloadAssets.scripts.map((script) => (
-              <ScriptPreload
+              <ScriptAssetPreload
                 key={script.source}
                 asset={script}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
           </>,

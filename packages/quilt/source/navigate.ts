@@ -5,7 +5,6 @@ export {
   RoutePreloading,
   NavigationBlock,
   useCurrentUrl,
-  useInitialUrl,
   useRouter,
   useRoutes,
   useRouteMatch,
