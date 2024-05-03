@@ -36,8 +36,8 @@ export class AsyncComponent<Props> extends Component<
     > & {name?: string} = {},
   ): ComponentType<Props> & {
     readonly module: AsyncModule<{default: ComponentType<Props>}>;
+    readonly Preload: ComponentType<{}>;
     load(): Promise<ComponentType<Props>>;
-    Preload(): ComponentType<{}>;
   } {
     const module =
       moduleOrImport instanceof AsyncModule
