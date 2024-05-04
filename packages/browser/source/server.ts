@@ -150,7 +150,7 @@ export class BrowserResponseElementAttributes<Attributes> {
   private readonly attributes: (Attributes | ReadonlySignal<Attributes>)[] = [];
 
   get value() {
-    return Object.assign({}, this.attributes.map(resolveSignalOrValue));
+    return Object.assign({}, ...this.attributes.map(resolveSignalOrValue));
   }
 
   add = (attributes: Attributes | ReadonlySignal<Attributes>) => {
