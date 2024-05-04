@@ -1,5 +1,8 @@
 import {isValidElement, type ReactElement} from 'react';
-import {renderToStaticMarkup, renderToString} from 'react-dom/server';
+import {
+  renderToStaticMarkup,
+  renderToStringAsync,
+} from 'preact-render-to-string';
 
 import {
   styleAssetPreloadAttributes,
@@ -19,22 +22,6 @@ import {
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
-
-export async function renderToStringAsync(
-  ...args: Parameters<typeof renderToString>
-) {
-  while (true) {
-    try {
-      const result = renderToString(...args);
-      return result;
-    } catch (error) {
-      if (error && typeof (error as any).then === 'function') {
-        await error;
-        continue;
-      }
-    }
-  }
-}
 
 export interface RenderHTMLFunction {
   (

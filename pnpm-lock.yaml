@@ -538,6 +538,9 @@ importers:
       jest-matcher-utils:
         specifier: ^29.0.0
         version: 29.7.0
+      preact-render-to-string:
+        specifier: ^6.4.0
+        version: 6.4.2(preact@10.20.1)
     devDependencies:
       expect:
         specifier: ^29.0.0

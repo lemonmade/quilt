@@ -246,6 +246,7 @@
     "@quilted/request-router": "workspace:^0.2.0",
     "@quilted/signals": "workspace:^0.2.0",
     "@quilted/threads": "workspace:^2.0.0",
+    "preact-render-to-string": "^6.4.0",
     "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {
