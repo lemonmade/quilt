@@ -1,5 +1,4 @@
 import {useContext} from 'react';
-import {useServerAction} from '@quilted/react-server-render';
 
 import {StaticRendererContext} from '../context.ts';
 import type {RouteDefinition} from '../types.ts';
@@ -16,14 +15,12 @@ export function useStaticRenderer(
 ) {
   const staticRender = useContext(StaticRendererContext);
 
-  useServerAction(() => {
-    staticRender?.record({
-      prefix,
-      fallback,
-      consumedPath,
-      routes,
-    });
-  }, staticRender?.kind);
+  staticRender?.record({
+    prefix,
+    fallback,
+    consumedPath,
+    routes,
+  });
 
   return staticRender;
 }

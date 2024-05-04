@@ -1,7 +1,9 @@
 import type {ReactElement} from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {
+  renderToStringAsync,
+  renderToStaticMarkup,
+} from 'preact-render-to-string';
 
-import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
 import {
   type BrowserDetails,
   type BrowserBodyAttributes,
@@ -16,27 +18,17 @@ import {
 import {EmailContext} from './context.ts';
 import {EmailManager} from './manager.ts';
 
-export type Options = ExtractOptions;
-
-export async function renderEmail(
-  app: ReactElement<any>,
-  {decorate, ...rest}: Options = {},
-) {
+export async function renderEmail(element: ReactElement<any>) {
   const browser = new BrowserEmailResponse();
   const email = new EmailManager();
 
-  const content = await extract(app, {
-    decorate(app) {
-      return (
-        <EmailContext.Provider value={email}>
-          <BrowserDetailsContext.Provider value={browser}>
-            {decorate?.(app) ?? app}
-          </BrowserDetailsContext.Provider>
-        </EmailContext.Provider>
-      );
-    },
-    ...rest,
-  });
+  const content = await renderToStringAsync(
+    <EmailContext.Provider value={email}>
+      <BrowserDetailsContext.Provider value={browser}>
+        {element}
+      </BrowserDetailsContext.Provider>
+    </EmailContext.Provider>,
+  );
 
   const {state} = email;
 

@@ -511,9 +511,6 @@ importers:
       '@quilted/react-router':
         specifier: workspace:^0.4.0
         version: link:../react-router
-      '@quilted/react-server-render':
-        specifier: workspace:^0.4.0
-        version: link:../react-server-render
       '@quilted/react-signals':
         specifier: workspace:^0.2.4
         version: link:../react-signals
@@ -620,17 +617,17 @@ importers:
         specifier: ^10.20.0
         version: 10.20.1
       preact-render-to-string:
-        specifier: ^6.3.0
-        version: 6.3.1(preact@10.20.1)
+        specifier: ^6.4.0
+        version: 6.4.2(preact@10.20.1)
 
   packages/react-email:
     dependencies:
       '@quilted/react-browser':
         specifier: workspace:^0.0.0
         version: link:../react-browser
-      '@quilted/react-server-render':
-        specifier: workspace:^0.4.0
-        version: link:../react-server-render
+      preact-render-to-string:
+        specifier: ^6.4.0
+        version: 6.4.2(preact@10.20.1)
     devDependencies:
       react:
         specifier: workspace:@quilted/react@^18.2.0
@@ -710,9 +707,6 @@ importers:
       '@quilted/react-performance':
         specifier: workspace:^0.2.0
         version: link:../react-performance
-      '@quilted/react-server-render':
-        specifier: workspace:^0.4.0
-        version: link:../react-server-render
       '@quilted/react-utilities':
         specifier: workspace:^0.2.0
         version: link:../react-utilities
@@ -726,22 +720,6 @@ importers:
       react:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../react
-
-  packages/react-server-render:
-    dependencies:
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.0
-        version: link:../react-utilities
-      '@types/react':
-        specifier: ^17.0.0 || ^18.0.0
-        version: 18.2.34
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-      react-dom:
-        specifier: workspace:@quilted/react-dom@^18.2.0
-        version: link:../react-dom
 
   packages/react-signals:
     dependencies:
@@ -4134,8 +4112,8 @@ packages:
     resolution: {integrity: sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==}
     engines: {node: ^10 || ^12 || >=14}
 
-  preact-render-to-string@6.3.1:
-    resolution: {integrity: sha512-NQ28WrjLtWY6lKDlTxnFpKHZdpjfF+oE6V4tZ0rTrunHrtZp6Dm0oFrcJalt/5PNeqJz4j1DuZDS0Y6rCBoqDA==}
+  preact-render-to-string@6.4.2:
+    resolution: {integrity: sha512-Sio5SvlyZSAXHuvnMgYzVQd67lNIuQe4uSjJ+2gfpJNC6L8zoHQR5xV7B/EjIqrAYWVyJ2eACkTCxVrIzZi6Vw==}
     peerDependencies:
       preact: '>=10'
 
@@ -8349,7 +8327,7 @@ snapshots:
       picocolors: 1.0.0
       source-map-js: 1.2.0
 
-  preact-render-to-string@6.3.1(preact@10.20.1):
+  preact-render-to-string@6.4.2(preact@10.20.1):
     dependencies:
       preact: 10.20.1
       pretty-format: 3.8.0

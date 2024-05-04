@@ -51,7 +51,6 @@
     "@quilted/http": "workspace:^0.3.0",
     "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/react-performance": "workspace:^0.2.0",
-    "@quilted/react-server-render": "workspace:^0.4.0",
     "@quilted/react-utilities": "workspace:^0.2.0",
     "@quilted/routing": "workspace:^0.3.0"
   },
