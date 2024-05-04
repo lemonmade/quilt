@@ -212,9 +212,15 @@
     }
   },
   "sideEffects": [
+    "./source/browser.ts",
+    "./build/esnext/browser.esnext",
+    "./build/esm/browser.mjs",
     "./source/globals.ts",
     "./build/esnext/globals.esnext",
-    "./build/esm/globals.mjs"
+    "./build/esm/globals.mjs",
+    "./source/signals.ts",
+    "./build/esnext/signals.esnext",
+    "./build/esm/signals.mjs"
   ],
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"

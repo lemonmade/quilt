@@ -606,9 +606,10 @@ importers:
       '@quilted/signals':
         specifier: workspace:^0.2.1
         version: link:../signals
+    devDependencies:
       react:
-        specifier: ^18.0.0
-        version: 18.2.0
+        specifier: workspace:@quilted/react@^18.2.0
+        version: link:../react
 
   packages/react-dom:
     dependencies:

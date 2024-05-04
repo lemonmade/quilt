@@ -56,7 +56,9 @@
       "optional": true
     }
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "react": "workspace:@quilted/react@^18.2.0"
+  },
   "browserslist": [
     "defaults and fully supports es6-module",
     "maintained node versions"

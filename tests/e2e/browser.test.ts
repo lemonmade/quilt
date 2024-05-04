@@ -4,14 +4,14 @@ import {multiline, createWorkspace, startServer} from './utilities.ts';
 describe('browser', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await createWorkspace({fixture: 'basic-app'});
 
       const cookieName = 'user';
       const cookieValue = 'Chris';
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useCookie, HTML} from '@quilted/quilt/html';
+          import {useCookie} from '@quilted/quilt/browser';
 
           export default function App() {
             return <CookieUI />;
@@ -45,7 +45,7 @@ describe('browser', () => {
     });
 
     it('can set client-side cookies', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await createWorkspace({fixture: 'basic-app'});
 
       const cookieName = 'user';
       const cookieValue = 'Chris';
@@ -142,7 +142,7 @@ describe('browser', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {HeadScript} from '@quilted/quilt/html';
+          import {HeadScript} from '@quilted/quilt/browser';
 
           export default function App() {
             return <HeadScript src="/script.js" />;
@@ -165,7 +165,7 @@ describe('browser', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {HeadStyle} from '@quilted/quilt/html';
+          import {HeadStyle} from '@quilted/quilt/browser';
 
           export default function App() {
             return <HeadStyle href="/style.css" />;
