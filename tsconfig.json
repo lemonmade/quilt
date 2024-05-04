@@ -45,7 +45,6 @@
     {"path": "./packages/react-localize"},
     {"path": "./packages/react-performance"},
     {"path": "./packages/react-router"},
-    {"path": "./packages/react-server-render"},
     {"path": "./packages/react-signals"},
     {"path": "./packages/react-testing"},
     {"path": "./packages/react-utilities"},

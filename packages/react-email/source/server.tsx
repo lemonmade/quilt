@@ -1,7 +1,6 @@
 import type {ReactElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
-import {extract} from '@quilted/react-server-render/server';
 import type {Options as ExtractOptions} from '@quilted/react-server-render/server';
 import {
   type BrowserDetails,

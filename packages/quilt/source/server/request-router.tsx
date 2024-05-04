@@ -1,5 +1,5 @@
 import {isValidElement, type ReactElement} from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {renderToStaticMarkup, renderToString} from 'react-dom/server';
 
 import {
   styleAssetPreloadAttributes,
@@ -15,11 +15,26 @@ import {
   StyleAsset,
   StyleAssetPreload,
 } from '@quilted/react-browser/server';
-import {extract} from '@quilted/react-server-render/server';
 
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
+
+export async function renderToStringAsync(
+  ...args: Parameters<typeof renderToString>
+) {
+  while (true) {
+    try {
+      const result = renderToString(...args);
+      return result;
+    } catch (error) {
+      if (error && typeof (error as any).then === 'function') {
+        await error;
+        continue;
+      }
+    }
+  }
+}
 
 export interface RenderHTMLFunction {
   (
@@ -94,13 +109,9 @@ export async function renderToResponse(
   let appStream: ReadableStream<any> | undefined;
 
   if (shouldStream === false && element != null) {
-    const rendered = await extract(element, {
-      decorate(element) {
-        return (
-          <ServerContext browser={browserResponse}>{element}</ServerContext>
-        );
-      },
-    });
+    const rendered = await renderToStringAsync(
+      <ServerContext browser={browserResponse}>{element}</ServerContext>,
+    );
 
     const appTransformStream = new TransformStream();
     const appWriter = appTransformStream.writable.getWriter();
@@ -118,13 +129,9 @@ export async function renderToResponse(
       const appWriter = appTransformStream.writable.getWriter();
 
       if (element != null) {
-        const rendered = await extract(element, {
-          decorate(element) {
-            return (
-              <ServerContext browser={browserResponse}>{element}</ServerContext>
-            );
-          },
-        });
+        const rendered = await renderToStringAsync(
+          <ServerContext browser={browserResponse}>{element}</ServerContext>,
+        );
 
         appWriter.write(rendered);
       }

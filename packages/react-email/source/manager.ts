@@ -1,5 +1,3 @@
-import type {ServerActionKind} from '@quilted/react-server-render';
-import {SERVER_ACTION_ID} from './constants.ts';
 import type {Sender} from './types.ts';
 
 export interface State {
@@ -16,13 +14,6 @@ export interface Options {
 }
 
 export class EmailManager {
-  readonly actionKind: ServerActionKind = {
-    id: SERVER_ACTION_ID,
-    betweenEachPass: () => {
-      this.reset();
-    },
-  };
-
   private readonly options: Required<Options>;
 
   private subject: string | undefined;
