@@ -406,18 +406,6 @@ importers:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../react
 
-  packages/preact-mini-compat:
-    devDependencies:
-      p-limit:
-        specifier: ^3.1.0
-        version: 3.1.0
-      preact:
-        specifier: ^10.20.0
-        version: 10.20.1
-      terser:
-        specifier: ^5.16.0
-        version: 5.16.8
-
   packages/preact-testing:
     dependencies:
       jest-matcher-utils:
@@ -2626,11 +2614,6 @@ packages:
 
   acorn@8.10.0:
     resolution: {integrity: sha512-F0SAmZ8iUtS//m8DmCTA0jlh6TDKkHQyK6xc6V4KDTyZKA9dnvX9/3sRTVQrWm79glUAZbnmmNcdYwUIHWVybw==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
-
-  acorn@8.9.0:
-    resolution: {integrity: sha512-jaVNAFBHNLXspO543WnNNPZFRtavh3skAkITqD0/2aeMkKZTN+254PyhwxFYrk3vQ1xfY+2wbesJMs/JC8/PwQ==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -6246,6 +6229,7 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.2
       '@jridgewell/trace-mapping': 0.3.20
+    optional: true
 
   '@jridgewell/sourcemap-codec@1.4.14': {}
 
@@ -6800,8 +6784,6 @@ snapshots:
 
   acorn@8.10.0: {}
 
-  acorn@8.9.0: {}
-
   agent-base@7.1.1:
     dependencies:
       debug: 4.3.4
@@ -7041,7 +7023,8 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
-  commander@2.20.3: {}
+  commander@2.20.3:
+    optional: true
 
   common-tags@1.8.2: {}
 
@@ -8729,9 +8712,10 @@ snapshots:
   terser@5.16.8:
     dependencies:
       '@jridgewell/source-map': 0.3.2
-      acorn: 8.9.0
+      acorn: 8.10.0
       commander: 2.20.3
       source-map-support: 0.5.21
+    optional: true
 
   test-exclude@6.0.0:
     dependencies:
