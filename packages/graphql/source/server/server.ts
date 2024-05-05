@@ -91,7 +91,3 @@ export function createGraphQLResolverBuilder<
     return resolver;
   }
 }
-
-const foo = createGraphQLResolverBuilder();
-
-foo.createResolver;
