@@ -27,7 +27,7 @@ export default function App() {
   const client = useMemo(() => new QueryClient(), []);
 
   return (
-    <ReactQueryContext client={queryClient}>
+    <ReactQueryContext client={client}>
       <Example />
     </ReactQueryContext>
   );
@@ -36,36 +36,18 @@ export default function App() {
 
 The `ReactQueryContext` takes care of ensuring that all queries made by your application are run during server-side rendering. It serializes the results into your HTML payload, and [“hydrating” the query client](https://tanstack.com/query/v4/docs/reference/hydration) so that data is available when your application starts in the user’s browser. It also renders the `QueryClientProvider` for you, so you don’t need to do it yourself.
 
-That’s all the setup you need! Elsewhere in your application, you can now use React Query’s [`useQuery` hook](https://tanstack.com/query/v4/docs/reference/useQuery) to load data in your components. The example below shows how you might use Quilt’s GraphQL utilities to perform type-safe GraphQL queries using React Query:
+That’s all the setup you need! Elsewhere in your application, you can now use React Query’s [`useSuspenseQuery` hook](https://tanstack.com/query/v4/docs/reference/useSuspenseQuery) to load data in your components. The example below shows how you might use Quilt’s GraphQL utilities to perform type-safe GraphQL queries using React Query:
 
 ```tsx
 import {createGraphQLHttpFetch} from '@quilted/quilt';
-import {useQuery} from '@tanstack/react-query';
+import {useSuspenseQuery} from '@tanstack/react-query';
 
 import startQuery from './Start.graphql';
 
 const query = createGraphQLHttpFetch({uri: 'https://my-graphql-api.com'});
 
 export function Start() {
-  const result = useQuery('start-query', () => query(startQuery));
-
-  return <pre>{JSON.stringify(result, null, 2)}</pre>;
-}
-```
-
-### Skipping queries during server rendering
-
-By default, all queries are run during server-side rendering. You can change this behavior by passing `{server: false}` as the `meta` option for queries you’d only like to run on the client:
-
-```tsx
-import {useQuery} from '@tanstack/react-query';
-
-export function Start() {
-  const result = useQuery(
-    'my-client-only-data',
-    () => fetch('https://my-api.com/data.json').then((result) => result.json()),
-    {meta: {server: false}},
-  );
+  const result = useSuspenseQuery('start-query', () => query(startQuery));
 
   return <pre>{JSON.stringify(result, null, 2)}</pre>;
 }

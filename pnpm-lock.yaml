@@ -160,8 +160,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/quilt
       '@tanstack/react-query':
-        specifier: ^5.0.0
-        version: 5.4.3(react-dom@18.2.0(react@packages+react))(react@packages+react)
+        specifier: ^5.34.1
+        version: 5.34.1(react@packages+react)
       react:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../../packages/react
@@ -980,6 +980,12 @@ importers:
       '@quilted/quilt':
         specifier: workspace:*
         version: link:../../packages/quilt
+      '@quilted/react-query':
+        specifier: workspace:*
+        version: link:../../integrations/react-query
+      '@tanstack/react-query':
+        specifier: ^5.34.1
+        version: 5.34.1(react@packages+react)
       '@types/common-tags':
         specifier: ^1.8.0
         version: 1.8.1
@@ -1004,6 +1010,9 @@ importers:
       playwright:
         specifier: ^1.32.0
         version: 1.32.1
+      react:
+        specifier: workspace:@quilted/react@^18.2.0
+        version: link:../../packages/react
 
   tests/e2e/fixtures/basic-api:
     devDependencies:
@@ -2482,20 +2491,13 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  '@tanstack/query-core@5.4.3':
-    resolution: {integrity: sha512-fnI9ORjcuLGm1sNrKatKIosRQUpuqcD4SV7RqRSVmj8JSicX2aoMyKryHEBpVQvf6N4PaBVgBxQomjsbsGPssQ==}
+  '@tanstack/query-core@5.34.1':
+    resolution: {integrity: sha512-/a4yTnX525QUl8rFULrDLIogjqqcY/CiVvS/vWMgl477mO4WIIDxwQsLvEgb7vzlW8FqX/9CiCmaiAUnYVgB1w==}
 
-  '@tanstack/react-query@5.4.3':
-    resolution: {integrity: sha512-4aSOrRNa6yEmf7mws5QPTVMn8Lp7L38tFoTZ0c1ZmhIvbr8GIA0WT7X5N3yz/nuK8hUtjw9cAzBr4BPDZZ+tzA==}
+  '@tanstack/react-query@5.34.1':
+    resolution: {integrity: sha512-5DWzrK+ou5maZqVoIY0S26TYNpnA7re6JlviXVOe/4OBPtlvd4WEHJmyeLZhE43piJvrsKMxemp/f6Q2RPfebA==}
     peerDependencies:
       react: ^18.0.0
-      react-dom: ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
 
   '@trpc/client@10.31.0':
     resolution: {integrity: sha512-VCqbJEvFJb8C4hQFw7AD+dkQTjgEdV/QAzO4D+/cX5e93u5NpfNXI+PKS0QFXwG/zqgwQwVV6OkYc/D/MFwA6g==}
@@ -6636,14 +6638,12 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@tanstack/query-core@5.4.3': {}
+  '@tanstack/query-core@5.34.1': {}
 
-  '@tanstack/react-query@5.4.3(react-dom@18.2.0(react@packages+react))(react@packages+react)':
+  '@tanstack/react-query@5.34.1(react@packages+react)':
     dependencies:
-      '@tanstack/query-core': 5.4.3
+      '@tanstack/query-core': 5.34.1
       react: link:packages/react
-    optionalDependencies:
-      react-dom: 18.2.0(react@packages+react)
 
   '@trpc/client@10.31.0(@trpc/server@10.31.0)':
     dependencies:
@@ -8390,13 +8390,6 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
-
-  react-dom@18.2.0(react@packages+react):
-    dependencies:
-      loose-envify: 1.4.0
-      react: link:packages/react
-      scheduler: 0.23.0
-    optional: true
 
   react-is@17.0.2: {}
 
