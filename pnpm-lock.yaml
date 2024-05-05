@@ -220,7 +220,7 @@ importers:
   packages/browser:
     dependencies:
       '@quilted/assets':
-        specifier: workspace:^0.1.1
+        specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/signals':
         specifier: workspace:^0.2.1
@@ -473,7 +473,7 @@ importers:
   packages/quilt:
     dependencies:
       '@quilted/assets':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/async':
         specifier: workspace:^0.4.1
@@ -482,19 +482,19 @@ importers:
         specifier: workspace:^2.0.0
         version: link:../events
       '@quilted/graphql':
-        specifier: workspace:^3.0.2
+        specifier: workspace:^3.0.3
         version: link:../graphql
       '@quilted/react':
         specifier: workspace:^18.2.0
         version: link:../react
       '@quilted/react-async':
-        specifier: workspace:^0.4.1
+        specifier: workspace:^0.4.2
         version: link:../react-async
       '@quilted/react-browser':
-        specifier: workspace:^0.0.0
+        specifier: workspace:^0.0.1
         version: link:../react-browser
       '@quilted/react-dom':
-        specifier: workspace:^18.2.0
+        specifier: workspace:^18.2.11
         version: link:../react-dom
       '@quilted/react-graphql':
         specifier: workspace:^0.5.0
@@ -503,13 +503,13 @@ importers:
         specifier: workspace:^0.4.0
         version: link:../react-idle
       '@quilted/react-localize':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.2
         version: link:../react-localize
       '@quilted/react-performance':
         specifier: workspace:^0.2.0
         version: link:../react-performance
       '@quilted/react-router':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.4.1
         version: link:../react-router
       '@quilted/react-signals':
         specifier: workspace:^0.2.4
@@ -576,7 +576,7 @@ importers:
         specifier: workspace:^0.4.1
         version: link:../async
       '@quilted/react-browser':
-        specifier: workspace:^0.0.0
+        specifier: workspace:^0.0.1
         version: link:../react-browser
       '@quilted/react-signals':
         specifier: workspace:^0.2.4
@@ -592,10 +592,10 @@ importers:
   packages/react-browser:
     dependencies:
       '@quilted/assets':
-        specifier: workspace:^0.1.1
+        specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/browser':
-        specifier: workspace:^0.0.0
+        specifier: workspace:^0.0.1
         version: link:../browser
       '@quilted/http':
         specifier: workspace:^0.3.0
@@ -626,7 +626,7 @@ importers:
   packages/react-email:
     dependencies:
       '@quilted/react-browser':
-        specifier: workspace:^0.0.0
+        specifier: workspace:^0.0.1
         version: link:../react-browser
       preact-render-to-string:
         specifier: ^6.4.0
@@ -670,10 +670,10 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../localize
       '@quilted/react-browser':
-        specifier: workspace:^0.0.0
+        specifier: workspace:^0.0.1
         version: link:../react-browser
       '@quilted/react-router':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.4.1
         version: link:../react-router
       '@quilted/react-utilities':
         specifier: workspace:^0.2.0
@@ -705,7 +705,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/react-browser':
-        specifier: workspace:^0.0.0
+        specifier: workspace:^0.0.1
         version: link:../react-browser
       '@quilted/react-performance':
         specifier: workspace:^0.2.0

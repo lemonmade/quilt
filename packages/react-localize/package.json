@@ -2,7 +2,7 @@
   "name": "@quilted/react-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -43,8 +43,8 @@
   },
   "dependencies": {
     "@quilted/localize": "workspace:^0.2.0",
-    "@quilted/react-browser": "workspace:^0.0.0",
-    "@quilted/react-router": "workspace:^0.4.0",
+    "@quilted/react-browser": "workspace:^0.0.1",
+    "@quilted/react-router": "workspace:^0.4.1",
     "@quilted/react-utilities": "workspace:^0.2.0"
   },
   "peerDependencies": {
@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@quilted/request-router": "workspace:^0.2.0",
-    "@quilted/react-browser": "workspace:^0.0.0",
+    "@quilted/react-browser": "workspace:^0.0.1",
     "react": "workspace:@quilted/react@^18.2.0"
   }
 }

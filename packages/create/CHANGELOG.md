@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.19
+
+### Patch Changes
+
+- [#716](https://github.com/lemonmade/quilt/pull/716) [`7daafca`](https://github.com/lemonmade/quilt/commit/7daafca900b3d9ea66be179394eadf7998cc94be) Thanks [@lemonmade](https://github.com/lemonmade)! - Refactor browser APIs
+
 ## 0.2.18
 
 ### Patch Changes

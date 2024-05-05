@@ -1,5 +1,20 @@
 # @quilted/quilt
 
+## 0.6.15
+
+### Patch Changes
+
+- [#716](https://github.com/lemonmade/quilt/pull/716) [`7daafca`](https://github.com/lemonmade/quilt/commit/7daafca900b3d9ea66be179394eadf7998cc94be) Thanks [@lemonmade](https://github.com/lemonmade)! - Refactor browser APIs
+
+- Updated dependencies [[`c402a9a`](https://github.com/lemonmade/quilt/commit/c402a9a1c98efa24deed160ba2eaddeaad3b008a), [`7daafca`](https://github.com/lemonmade/quilt/commit/7daafca900b3d9ea66be179394eadf7998cc94be)]:
+  - @quilted/react-async@0.4.2
+  - @quilted/react-localize@0.2.2
+  - @quilted/react-browser@0.0.1
+  - @quilted/react-router@0.4.1
+  - @quilted/react-dom@18.2.11
+  - @quilted/graphql@3.0.3
+  - @quilted/assets@0.1.2
+
 ## 0.6.14
 
 ### Patch Changes
@@ -262,72 +277,72 @@
 
   ```ts
   // This all applies for createGraphQLHttpStreamingFetch, too
-  import {createGraphQLHttpFetch} from '@quilted/graphql';
+  import { createGraphQLHttpFetch } from "@quilted/graphql";
 
   // Importing `.graphql` files automatically generates hashed
   // identifiers for your operations. If you don’t use this feature,
   // you must pass the identifier yourself.
-  import myQuery from './MyQuery.graphql';
+  import myQuery from "./MyQuery.graphql";
 
   const fetch = createGraphQLHttpFetch({
     source: false,
-    url: 'https://my-app.com/query',
+    url: "https://my-app.com/query",
   });
 
-  const {data} = await fetch(myQuery);
+  const { data } = await fetch(myQuery);
   ```
 
   This isn’t typically useful unless you also communicate the operation’s hash identifier. Here’s an example showing how you could pass the identifier as an additional URL parameter:
 
   ```ts
-  import {createGraphQLHttpFetch} from '@quilted/graphql';
-  import myQuery from './MyQuery.graphql';
+  import { createGraphQLHttpFetch } from "@quilted/graphql";
+  import myQuery from "./MyQuery.graphql";
 
   const fetch = createGraphQLHttpFetch({
     source: false,
     url(operation) {
-      const url = new URL('https://my-app.com/query');
-      url.searchParams.set('id', operation.id);
+      const url = new URL("https://my-app.com/query");
+      url.searchParams.set("id", operation.id);
       return url;
     },
   });
 
-  const {data} = await fetch(myQuery);
+  const { data } = await fetch(myQuery);
   ```
 
   Here’s an alternative approach, which sends the operation using a GraphQL `extensions` field, according to Apollo’s [automatic persisted queries protocol](https://www.google.com/search?client=safari&rls=en&q=apollo+autoamtic+persisted+queries&ie=UTF-8&oe=UTF-8):
 
   ```ts
-  import {createGraphQLHttpFetch} from '@quilted/graphql';
-  import myQuery from './MyQuery.graphql';
+  import { createGraphQLHttpFetch } from "@quilted/graphql";
+  import myQuery from "./MyQuery.graphql";
 
   const fetch = createGraphQLHttpFetch({
     source: false,
-    url: 'https://my-app.com/query',
+    url: "https://my-app.com/query",
     extensions(operation) {
       return {
-        persistedQuery: {version: 1, sha256Hash: operation.id},
+        persistedQuery: { version: 1, sha256Hash: operation.id },
       };
     },
   });
 
-  const {data} = await fetch(myQuery);
+  const { data } = await fetch(myQuery);
   ```
 
   These `source` and `extension` options can be set globally, as shown above, or per-fetch:
 
   ```ts
-  import {createGraphQLHttpFetch} from '@quilted/graphql';
-  import myQuery from './MyQuery.graphql';
+  import { createGraphQLHttpFetch } from "@quilted/graphql";
+  import myQuery from "./MyQuery.graphql";
 
   const fetch = createGraphQLHttpFetch({
-    url: 'https://my-app.com/query',
+    url: "https://my-app.com/query",
   });
 
-  const {data} = await fetch(myQuery, {
+  const { data } = await fetch(myQuery, {
     source: false,
     extensions: {
-      persistedQuery: {version: 1, sha256Hash: myQuery.id},
+      persistedQuery: { version: 1, sha256Hash: myQuery.id },
     },
   });
   ```
@@ -335,15 +350,15 @@
   You can also now set the `method`, `url`, and `headers` options per fetch. The example below shows how you can set the `method` to `GET` for a single GraphQL operation:
 
   ```ts
-  import {createGraphQLHttpFetch} from '@quilted/graphql';
+  import { createGraphQLHttpFetch } from "@quilted/graphql";
 
   const fetch = createGraphQLHttpFetch({
-    url: 'https://my-app.com/query',
+    url: "https://my-app.com/query",
   });
 
-  const {data} = await fetch(`{ me { name } }`, {
+  const { data } = await fetch(`{ me { name } }`, {
     // Default is POST, but this query will run as a GET
-    method: 'GET',
+    method: "GET",
   });
   ```
 
