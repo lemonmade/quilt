@@ -1,5 +1,20 @@
 # @quilted/quilt
 
+## 0.6.15
+
+### Patch Changes
+
+- [#716](https://github.com/lemonmade/quilt/pull/716) [`7daafca`](https://github.com/lemonmade/quilt/commit/7daafca900b3d9ea66be179394eadf7998cc94be) Thanks [@lemonmade](https://github.com/lemonmade)! - Refactor browser APIs
+
+- Updated dependencies [[`c402a9a`](https://github.com/lemonmade/quilt/commit/c402a9a1c98efa24deed160ba2eaddeaad3b008a), [`7daafca`](https://github.com/lemonmade/quilt/commit/7daafca900b3d9ea66be179394eadf7998cc94be)]:
+  - @quilted/react-async@0.4.2
+  - @quilted/react-localize@0.2.2
+  - @quilted/react-browser@0.0.1
+  - @quilted/react-router@0.4.1
+  - @quilted/react-dom@18.2.11
+  - @quilted/graphql@3.0.3
+  - @quilted/assets@0.1.2
+
 ## 0.6.14
 
 ### Patch Changes

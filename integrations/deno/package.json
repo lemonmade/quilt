@@ -55,7 +55,7 @@
   },
   "peerDependencies": {
     "@quilted/craft": "workspace:^0.2.6",
-    "@quilted/quilt": "workspace:^0.6.14"
+    "@quilted/quilt": "workspace:^0.6.15"
   },
   "peerDependenciesMeta": {
     "@quilted/craft": {
