@@ -6,7 +6,7 @@ import {
   type ComponentType,
 } from 'react';
 import {AsyncModule, type AsyncModuleLoader} from '@quilted/async';
-import type {AssetLoadTiming} from '@quilted/react-assets';
+import type {AssetLoadTiming} from '@quilted/react-browser/server';
 
 import {useHydrated} from './hooks/hydration.ts';
 import {useAsyncModuleAssets} from './hooks/module.ts';

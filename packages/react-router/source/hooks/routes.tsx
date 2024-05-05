@@ -7,7 +7,6 @@ import {
   type ReactNode,
   type ReactElement,
 } from 'react';
-import {NotFound} from '@quilted/react-http';
 import {getMatchDetails, type NavigateTo, type Prefix} from '@quilted/routing';
 import {usePerformanceNavigation} from '@quilted/react-performance';
 
@@ -266,5 +265,5 @@ function getRouteMatchDetails(
 
 function DefaultNotFound() {
   usePerformanceNavigation({required: false, state: 'complete'});
-  return <NotFound />;
+  return null;
 }

@@ -25,13 +25,19 @@ router.any(
 
 // For all GET requests, render our React application.
 router.get(async (request) => {
-  const [{App}, {renderToResponse}] = await Promise.all([
+  const [{App}, {renderToResponse}, {QueryClient}] = await Promise.all([
     import('./App.tsx'),
     import('@quilted/quilt/server'),
+    import('@tanstack/react-query'),
   ]);
 
   const response = await renderToResponse(
-    <App trpc={createDirectClient(appRouter)} />,
+    <App
+      context={{
+        trpc: createDirectClient(appRouter),
+        queryClient: new QueryClient(),
+      }}
+    />,
     {
       request,
       assets,

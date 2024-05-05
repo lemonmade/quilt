@@ -1,5 +1,3 @@
-import type {ServerActionKind} from '@quilted/react-server-render';
-
 import type {RouteDefinition} from './types.ts';
 export {StaticRendererContext} from './context.ts';
 
@@ -10,13 +8,7 @@ export interface RouteRecord {
   consumedPath?: string;
 }
 
-export const SERVER_ACTION_ID = Symbol('router');
-
 export class StaticRenderer {
-  readonly kind: ServerActionKind = {
-    id: SERVER_ACTION_ID,
-    betweenEachPass: () => this.reset(),
-  };
   private readonly records = new Set<RouteRecord>();
   private readonly forceFallbackPath: string | undefined;
 
@@ -34,9 +26,5 @@ export class StaticRenderer {
 
   forceFallback(route: string) {
     return route === this.forceFallbackPath;
-  }
-
-  private reset() {
-    this.records.clear();
   }
 }

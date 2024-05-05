@@ -6,5 +6,5 @@
   },
   "include": ["source"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
-  "references": [{"path": "../react-html"}, {"path": "../react-server-render"}]
+  "references": [{"path": "../react-browser"}]
 }

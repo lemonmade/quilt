@@ -1,11 +1,9 @@
 import {type PropsWithChildren} from 'react';
 
-import {HTML} from '@quilted/quilt/html';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
-import {Head} from './foundation/html.ts';
-import {Headers} from './foundation/http.ts';
+import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
 
 import {Start} from './features/start.ts';
@@ -15,27 +13,21 @@ import {
   type AppContext as AppContextType,
 } from './shared/context.ts';
 
-export interface AppProps extends AppContextType {}
+export interface AppProps {
+  context?: AppContextType;
+}
 
 // The root component for your application. You will typically render any
 // app-wide context in this component.
-export function App(props: AppProps) {
-  const locale = useLocaleFromEnvironment() ?? 'en';
-
+export function App({context}: AppProps) {
   return (
-    <HTML>
-      <Localization locale={locale}>
-        <Routing>
-          <AppContext {...props}>
-            <Headers />
-            <Head />
-            <Frame>
-              <Routes />
-            </Frame>
-          </AppContext>
-        </Routing>
-      </Localization>
-    </HTML>
+    <AppContext context={context}>
+      <HTML>
+        <Frame>
+          <Routes />
+        </Frame>
+      </HTML>
+    </AppContext>
   );
 }
 
@@ -50,10 +42,14 @@ function Routes() {
 }
 
 // This component renders any app-wide context.
-function AppContext({children, ...context}: PropsWithChildren<AppProps>) {
+function AppContext({children, context}: PropsWithChildren<AppProps>) {
+  const locale = useLocaleFromEnvironment() ?? 'en';
+
   return (
     <AppContextReact.Provider value={context}>
-      {children}
+      <Localization locale={locale}>
+        <Routing>{children}</Routing>
+      </Localization>
     </AppContextReact.Provider>
   );
 }

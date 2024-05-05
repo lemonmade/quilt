@@ -1,12 +1,15 @@
 import {parseAcceptLanguageHeader} from '@quilted/localize';
-import {useHttpManager} from '@quilted/react-http';
+import {useBrowserDetails} from '@quilted/react-browser';
 
 export function useLocaleFromEnvironment() {
-  const acceptLanguage = useHttpManager()?.headers?.get('Accept-Language');
+  if (typeof navigator === 'object' && navigator.language) {
+    return navigator.language;
+  }
 
-  return acceptLanguage
-    ? parseAcceptLanguageHeader(acceptLanguage)
-    : typeof navigator === 'object'
-      ? navigator.language
-      : undefined;
+  const browserDetails = useBrowserDetails({required: false});
+
+  const acceptLanguage =
+    browserDetails?.request.headers?.get('Accept-Language');
+
+  return acceptLanguage && parseAcceptLanguageHeader(acceptLanguage);
 }

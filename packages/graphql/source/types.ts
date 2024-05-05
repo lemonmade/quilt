@@ -120,10 +120,7 @@ export type GraphQLResult<
  * type-safe access to this additional context, you can extend the `GraphQLFetchContext`
  * type from this library.
  */
-export interface GraphQLRun<
-  Context = Record<string, unknown>,
-  Extensions = Record<string, unknown>,
-> {
+export interface GraphQLRun<Context = {}, Extensions = {}> {
   <Data = Record<string, unknown>, Variables = Record<string, unknown>>(
     operation: GraphQLAnyOperation<Data, Variables>,
     options?: GraphQLOperationOptions<Data, Variables>,

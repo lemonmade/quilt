@@ -19,7 +19,6 @@ export type {
   AssetsBuildManifest,
   AssetsBuildManifestEntry,
 } from '@quilted/assets';
-export {useAssetsCacheKey, useModuleAssets} from '@quilted/react-assets';
 
 declare module '@quilted/assets' {
   interface AssetsCacheKey {

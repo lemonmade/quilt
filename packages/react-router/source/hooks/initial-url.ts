@@ -1,5 +1,5 @@
 import {createUseContextHook} from '@quilted/react-utilities';
 
-import {InitialUrlContext} from '../context.ts';
+import {InitialURLContext} from '../context.ts';
 
-export const useInitialUrl = createUseContextHook(InitialUrlContext);
+export const useInitialURL = createUseContextHook(InitialURLContext);

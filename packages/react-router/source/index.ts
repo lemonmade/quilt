@@ -7,11 +7,10 @@ export {
   RoutePreloading,
   NavigationBlock,
 } from './components.ts';
-export {InitialUrlContext} from './context.ts';
 export {
   useRoutes,
-  useInitialUrl,
   useCurrentUrl,
+  useInitialURL,
   useRouter,
   useRouteMatch,
   useRouteMatchDetails,
@@ -23,5 +22,6 @@ export {
   type RouteMatchOptions,
 } from './hooks.ts';
 export {containedByPrefix} from './utilities.ts';
+export {InitialURLContext} from './context.ts';
 export type {Router} from './router.ts';
 export type {Routes, RouteDefinition, RouteRenderDetails} from './types.ts';

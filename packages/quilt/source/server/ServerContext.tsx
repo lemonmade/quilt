@@ -1,55 +1,34 @@
 import type {PropsWithChildren} from 'react';
 
-import {AssetsContext, type AssetsManager} from '@quilted/react-assets/server';
-import {InitialUrlContext} from '@quilted/react-router';
-import {HTMLContext, type HTMLManager} from '@quilted/react-html/server';
-import {HttpServerContext, type HttpManager} from '@quilted/react-http/server';
+import {InitialURLContext} from '@quilted/react-router';
+import {
+  BrowserDetailsContext,
+  type BrowserDetails,
+} from '@quilted/react-browser/server';
 
 interface Props {
-  url?: string | URL;
-  html?: HTMLManager;
-  http?: HttpManager;
-  assets?: AssetsManager;
+  browser?: BrowserDetails;
 }
 
-export function ServerContext({
-  url,
-  html,
-  http,
-  assets,
-  children,
-}: PropsWithChildren<Props>) {
-  const normalizedUrl = typeof url === 'string' ? new URL(url) : url;
+export function ServerContext({browser, children}: PropsWithChildren<Props>) {
+  const requestURL = browser?.request.url;
+  const initialURL = requestURL && new URL(requestURL);
 
-  const withInitialURL = normalizedUrl ? (
-    <InitialUrlContext.Provider value={normalizedUrl}>
+  const withInitialURL = initialURL ? (
+    <InitialURLContext.Provider value={initialURL}>
       {children}
-    </InitialUrlContext.Provider>
+    </InitialURLContext.Provider>
   ) : (
     children
   );
 
-  const withHTML = html ? (
-    <HTMLContext.Provider value={html}>{withInitialURL}</HTMLContext.Provider>
+  const withBrowser = browser ? (
+    <BrowserDetailsContext.Provider value={browser}>
+      {withInitialURL}
+    </BrowserDetailsContext.Provider>
   ) : (
     withInitialURL
   );
 
-  const withHTTPServer = http ? (
-    <HttpServerContext.Provider value={http}>
-      {withHTML}
-    </HttpServerContext.Provider>
-  ) : (
-    withHTML
-  );
-
-  const withAssets = assets ? (
-    <AssetsContext.Provider value={assets}>
-      {withHTTPServer}
-    </AssetsContext.Provider>
-  ) : (
-    withHTTPServer
-  );
-
-  return withAssets;
+  return withBrowser;
 }

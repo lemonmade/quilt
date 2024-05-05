@@ -1,5 +1,8 @@
 import {isValidElement, type ReactElement} from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {
+  renderToStaticMarkup,
+  renderToStringAsync,
+} from 'preact-render-to-string';
 
 import {
   styleAssetPreloadAttributes,
@@ -8,17 +11,13 @@ import {
   type BrowserAssets,
   type BrowserAssetsEntry,
 } from '@quilted/assets';
-import {AssetsManager} from '@quilted/react-assets/server';
-import {HttpManager} from '@quilted/react-http/server';
 import {
-  Head,
-  Script,
-  ScriptPreload,
-  Style,
-  StylePreload,
-  HTMLManager,
-} from '@quilted/react-html/server';
-import {extract} from '@quilted/react-server-render/server';
+  BrowserResponse,
+  ScriptAsset,
+  ScriptAssetPreload,
+  StyleAsset,
+  StyleAssetPreload,
+} from '@quilted/react-browser/server';
 
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
@@ -28,37 +27,38 @@ export interface RenderHTMLFunction {
   (
     content: ReadableStream<string>,
     context: {
-      readonly manager: HTMLManager;
-      readonly headers: Headers;
+      readonly response: BrowserResponse;
       readonly assets?: BrowserAssetsEntry;
       readonly preloadAssets?: BrowserAssetsEntry;
     },
   ): ReadableStream<any> | string | Promise<ReadableStream<any> | string>;
 }
 
-export interface RenderOptions<CacheKey = AssetsCacheKey> {
+export interface RenderOptions {
   readonly request: Request;
+  readonly status?: number;
   readonly stream?: 'headers' | false;
   readonly headers?: HeadersInit;
-  readonly assets?: BrowserAssets<CacheKey>;
-  readonly cacheKey?: CacheKey;
+  readonly assets?: BrowserAssets;
+  readonly cacheKey?: Partial<AssetsCacheKey>;
+  readonly serializations?: Iterable<[string, unknown]>;
   readonly renderHTML?: boolean | 'fragment' | 'document' | RenderHTMLFunction;
   waitUntil?(promise: Promise<any>): void;
 }
 
-export async function renderToResponse<CacheKey = AssetsCacheKey>(
+export async function renderToResponse(
   element: ReactElement<any>,
-  options: RenderOptions<CacheKey>,
+  options: RenderOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
-export async function renderToResponse<CacheKey = AssetsCacheKey>(
-  options: RenderOptions<CacheKey>,
+export async function renderToResponse(
+  options: RenderOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
-export async function renderToResponse<CacheKey = AssetsCacheKey>(
-  optionsOrElement: ReactElement<any> | RenderOptions<CacheKey>,
-  definitelyOptions?: RenderOptions<CacheKey>,
+export async function renderToResponse(
+  optionsOrElement: ReactElement<any> | RenderOptions,
+  definitelyOptions?: RenderOptions,
 ) {
   let element: ReactElement<any> | undefined;
-  let options: RenderOptions<CacheKey>;
+  let options: RenderOptions;
 
   if (isValidElement(optionsOrElement)) {
     element = optionsOrElement;
@@ -70,67 +70,35 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   const {
     request,
     assets,
+    status: explicitStatus,
     cacheKey: explicitCacheKey,
     headers: explicitHeaders,
+    serializations: explicitSerializations,
     waitUntil = noop,
     stream: shouldStream = false,
     renderHTML = true,
   } = options;
 
-  const baseUrl = (request as any).URL ?? new URL(request.url);
+  const baseURL = (request as any).URL ?? new URL(request.url);
 
   const cacheKey =
     explicitCacheKey ??
-    (((await assets?.cacheKey?.(request)) ?? {}) as CacheKey);
+    (((await assets?.cacheKey?.(request)) ?? {}) as AssetsCacheKey);
 
-  const html = new HTMLManager();
-  const http = new HttpManager({headers: request.headers});
-  const assetsManager = new AssetsManager<CacheKey>({cacheKey});
+  const browserResponse = new BrowserResponse({
+    request,
+    cacheKey,
+    status: explicitStatus,
+    headers: new Headers(explicitHeaders),
+    serializations: explicitSerializations,
+  });
 
-  let responseStatus = 200;
   let appStream: ReadableStream<any> | undefined;
-  const headers = new Headers(explicitHeaders);
 
   if (shouldStream === false && element != null) {
-    const rendered = await extract(element, {
-      decorate(element) {
-        return (
-          <ServerContext
-            http={http}
-            html={html}
-            url={baseUrl}
-            assets={assetsManager}
-          >
-            {element}
-          </ServerContext>
-        );
-      },
-    });
-
-    const {headers: appHeaders, statusCode = 200, redirectUrl} = http.state;
-
-    const hasSetCookieHeader = typeof appHeaders.getSetCookie === 'function';
-
-    if (hasSetCookieHeader) {
-      for (const cookie of appHeaders.getSetCookie()) {
-        headers.append('Set-Cookie', cookie);
-      }
-    }
-
-    for (const [header, value] of appHeaders.entries()) {
-      if (hasSetCookieHeader && header.toLowerCase() === 'set-cookie') continue;
-      headers.set(header, value);
-    }
-
-    if (redirectUrl) {
-      return new RedirectResponse(redirectUrl, {
-        status: statusCode as 301,
-        headers: headers,
-        request,
-      });
-    }
-
-    responseStatus = statusCode;
+    const rendered = await renderToStringAsync(
+      <ServerContext browser={browserResponse}>{element}</ServerContext>,
+    );
 
     const appTransformStream = new TransformStream();
     const appWriter = appTransformStream.writable.getWriter();
@@ -148,20 +116,9 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       const appWriter = appTransformStream.writable.getWriter();
 
       if (element != null) {
-        const rendered = await extract(element, {
-          decorate(element) {
-            return (
-              <ServerContext
-                http={http}
-                html={html}
-                url={baseUrl}
-                assets={assetsManager}
-              >
-                {element}
-              </ServerContext>
-            );
-          },
-        });
+        const rendered = await renderToStringAsync(
+          <ServerContext browser={browserResponse}>{element}</ServerContext>,
+        );
 
         appWriter.write(rendered);
       }
@@ -175,8 +132,8 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
   const body = await renderToHTMLBody(appStream);
 
   return new HTMLResponse(body, {
-    status: responseStatus,
-    headers,
+    status: browserResponse.status.value,
+    headers: browserResponse.headers,
   });
 
   async function renderToHTMLBody(
@@ -185,23 +142,23 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
     const [synchronousAssets, preloadAssets] = await Promise.all([
       assets?.entry({
         cacheKey,
-        modules: assetsManager.usedModules({timing: 'load'}),
+        modules: browserResponse.assets.get({timing: 'load'}),
       }),
-      assets?.modules(assetsManager.usedModules({timing: 'preload'}), {
+      assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
         cacheKey,
       }),
     ]);
 
     if (synchronousAssets) {
       for (const style of synchronousAssets.styles) {
-        headers.append(
+        browserResponse.headers.append(
           'Link',
           preloadHeader(styleAssetPreloadAttributes(style)),
         );
       }
 
       for (const script of synchronousAssets.scripts) {
-        headers.append(
+        browserResponse.headers.append(
           'Link',
           preloadHeader(scriptAssetPreloadAttributes(script)),
         );
@@ -210,8 +167,7 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
     if (typeof renderHTML === 'function') {
       const body = await renderHTML(content, {
-        manager: html,
-        headers,
+        response: browserResponse,
         assets: synchronousAssets,
         preloadAssets,
       });
@@ -229,34 +185,45 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
 
       writer.write(`<!DOCTYPE html>`);
 
-      const {htmlAttributes, bodyAttributes, ...headProps} = html.state;
       const htmlContent = renderToStaticMarkup(
-        <html {...htmlAttributes}>
+        <html {...browserResponse.htmlAttributes.value}>
           <head>
-            <Head {...headProps} />
+            {browserResponse.title.value && (
+              <title>{browserResponse.title.value}</title>
+            )}
+            {browserResponse.links.value.map((link, index) => (
+              <link key={index} {...link} />
+            ))}
+            {browserResponse.metas.value.map((meta, index) => (
+              <meta key={index} {...meta} />
+            ))}
             {synchronousAssets?.scripts.map((script) => (
-              <Script key={script.source} asset={script} baseUrl={baseUrl} />
+              <ScriptAsset
+                key={script.source}
+                asset={script}
+                baseURL={baseURL}
+              />
             ))}
             {synchronousAssets?.styles.map((style) => (
-              <Style key={style.source} asset={style} baseUrl={baseUrl} />
+              <StyleAsset key={style.source} asset={style} baseURL={baseURL} />
             ))}
             {preloadAssets?.styles.map((style) => (
-              <StylePreload
+              <StyleAssetPreload
                 key={style.source}
                 asset={style}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
             {preloadAssets?.scripts.map((script) => (
-              <ScriptPreload
+              <ScriptAssetPreload
                 key={script.source}
                 asset={script}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
           </head>
           <body
-            {...bodyAttributes}
+            {...browserResponse.bodyAttributes.value}
             dangerouslySetInnerHTML={{__html: '%%CONTENT%%'}}
           ></body>
         </html>,
@@ -283,9 +250,9 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
       const [newSynchronousAssets, newPreloadAssets] = await Promise.all([
         assets?.entry({
           cacheKey,
-          modules: assetsManager.usedModules({timing: 'load'}),
+          modules: browserResponse.assets.get({timing: 'load'}),
         }),
-        assets?.modules(assetsManager.usedModules({timing: 'preload'}), {
+        assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
           cacheKey,
         }),
       ]);
@@ -304,23 +271,27 @@ export async function renderToResponse<CacheKey = AssetsCacheKey>(
         const additionalAssetsContent = renderToStaticMarkup(
           <>
             {diffedSynchronousAssets.scripts.map((script) => (
-              <Script key={script.source} asset={script} baseUrl={baseUrl} />
+              <ScriptAsset
+                key={script.source}
+                asset={script}
+                baseURL={baseURL}
+              />
             ))}
             {diffedSynchronousAssets.styles.map((style) => (
-              <Style key={style.source} asset={style} baseUrl={baseUrl} />
+              <StyleAsset key={style.source} asset={style} baseURL={baseURL} />
             ))}
             {diffedPreloadAssets.styles.map((style) => (
-              <StylePreload
+              <StyleAssetPreload
                 key={style.source}
                 asset={style}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
             {diffedPreloadAssets.scripts.map((script) => (
-              <ScriptPreload
+              <ScriptAssetPreload
                 key={script.source}
                 asset={script}
-                baseUrl={baseUrl}
+                baseURL={baseURL}
               />
             ))}
           </>,

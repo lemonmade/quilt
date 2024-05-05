@@ -31,23 +31,17 @@
       "quilt:esnext": "./build/esnext/async.esnext",
       "import": "./build/esm/async.mjs"
     },
+    "./browser": {
+      "types": "./build/typescript/browser.d.ts",
+      "quilt:source": "./source/browser.ts",
+      "quilt:esnext": "./build/esnext/browser.esnext",
+      "import": "./build/esm/browser.mjs"
+    },
     "./globals": {
       "types": "./build/typescript/globals.d.ts",
       "quilt:source": "./source/globals.ts",
       "quilt:esnext": "./build/esnext/globals.esnext",
       "import": "./build/esm/globals.mjs"
-    },
-    "./html": {
-      "types": "./build/typescript/html.d.ts",
-      "quilt:source": "./source/html.ts",
-      "quilt:esnext": "./build/esnext/html.esnext",
-      "import": "./build/esm/html.mjs"
-    },
-    "./http": {
-      "types": "./build/typescript/http.d.ts",
-      "quilt:source": "./source/http.ts",
-      "quilt:esnext": "./build/esnext/http.esnext",
-      "import": "./build/esm/http.mjs"
     },
     "./events": {
       "types": "./build/typescript/events.d.ts",
@@ -161,17 +155,14 @@
       "async": [
         "./build/typescript/async.d.ts"
       ],
-      "html": [
-        "./build/typescript/html.d.ts"
+      "browser": [
+        "./build/typescript/browser.d.ts"
       ],
       "globals": [
         "./build/typescript/globals.d.ts"
       ],
       "env": [
         "./build/typescript/env.d.ts"
-      ],
-      "http": [
-        "./build/typescript/http.d.ts"
       ],
       "events": [
         "./build/typescript/localize.d.ts"
@@ -221,9 +212,15 @@
     }
   },
   "sideEffects": [
+    "./source/browser.ts",
+    "./build/esnext/browser.esnext",
+    "./build/esm/browser.mjs",
     "./source/globals.ts",
     "./build/esnext/globals.esnext",
-    "./build/esm/globals.mjs"
+    "./build/esm/globals.mjs",
+    "./source/signals.ts",
+    "./build/esnext/signals.esnext",
+    "./build/esm/signals.mjs"
   ],
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
@@ -234,17 +231,14 @@
     "@quilted/events": "workspace:^2.0.0",
     "@quilted/graphql": "workspace:^3.0.2",
     "@quilted/react": "workspace:^18.2.0",
-    "@quilted/react-assets": "workspace:^0.1.1",
     "@quilted/react-async": "workspace:^0.4.1",
+    "@quilted/react-browser": "workspace:^0.0.0",
     "@quilted/react-dom": "workspace:^18.2.0",
     "@quilted/react-graphql": "workspace:^0.5.0",
-    "@quilted/react-html": "workspace:^0.4.0",
-    "@quilted/react-http": "workspace:^0.4.0",
     "@quilted/react-idle": "workspace:^0.4.0",
     "@quilted/react-localize": "workspace:^0.2.0",
     "@quilted/react-performance": "workspace:^0.2.0",
     "@quilted/react-router": "workspace:^0.4.0",
-    "@quilted/react-server-render": "workspace:^0.4.0",
     "@quilted/react-signals": "workspace:^0.2.4",
     "@quilted/react-testing": "workspace:^0.6.0",
     "@quilted/react-utilities": "workspace:^0.2.0",
@@ -252,6 +246,7 @@
     "@quilted/request-router": "workspace:^0.2.0",
     "@quilted/signals": "workspace:^0.2.0",
     "@quilted/threads": "workspace:^2.0.0",
+    "preact-render-to-string": "^6.4.0",
     "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {

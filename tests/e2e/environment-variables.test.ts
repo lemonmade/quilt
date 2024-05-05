@@ -128,7 +128,7 @@ describe('app builds', () => {
     });
 
     it('inlines environment variables into the app server', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await createWorkspace({fixture: 'basic-app'});
 
       const builder = 'Chris';
 
@@ -144,12 +144,19 @@ describe('app builds', () => {
           });
         `,
         'App.tsx': multiline`
-          import {useSerialized} from '@quilted/quilt/html';
+          import {useSerialized} from '@quilted/quilt/browser';
+          import {Serialize} from '@quilted/quilt/server';
           import Env from 'quilt:module/env';
             
             export default function App() {
-              const builder = useSerialized('Builder', Env.BUILDER);
-              return <div>Hello, {builder}!</div>;
+              const builder = useSerialized('Builder');
+
+              return (
+                <>
+                  <div>Hello, {builder}!</div>
+                  <Serialize id="Builder" value={Env.BUILDER} />
+                </>
+              );
             }
           `,
       });

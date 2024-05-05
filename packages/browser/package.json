@@ -1,0 +1,67 @@
+{
+  "name": "@quilted/browser",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/react-browser"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    },
+    "./server": {
+      "types": "./build/typescript/server.d.ts",
+      "quilt:source": "./source/server.ts",
+      "quilt:esnext": "./build/esnext/server.esnext",
+      "import": "./build/esm/server.mjs"
+    },
+    "./testing": {
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "server": [
+        "./build/typescript/server.d.ts"
+      ],
+      "testing": [
+        "./build/typescript/testing.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config ./rollup.config.js"
+  },
+  "dependencies": {
+    "@quilted/assets": "workspace:^0.1.1",
+    "@quilted/signals": "workspace:^0.2.1",
+    "js-cookie": "^3.0.0"
+  },
+  "peerDependencies": {},
+  "peerDependenciesMeta": {},
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.0"
+  },
+  "browserslist": [
+    "defaults and fully supports es6-module",
+    "maintained node versions"
+  ]
+}

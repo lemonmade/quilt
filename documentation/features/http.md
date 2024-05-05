@@ -118,7 +118,7 @@ export function NotFoundUi() {
 }
 ```
 
-## Reading cookies and other request headers
+## Reading cookies
 
 You can read cookies using the `useCookie` hook:
 
@@ -138,25 +138,6 @@ export function GuardWithAuth({children}: PropsWithChildren) {
 ```
 
 On the server, these cookies are parsed from the `Cookie` request header. On the client, these cookies are parsed from `document.cookie`.
-
-If you want to read other request headers, you can use the `useRequestHeader` hook:
-
-```tsx
-import {useRequestHeader} from '@quilted/quilt/http';
-
-export function CheckForBrotli() {
-  // Don’t worry, headers are normalized, so any capitalization works!
-  const acceptEncoding = useRequestHeader('Accept-Encoding') ?? '';
-
-  return acceptEncoding.includes('br') ? (
-    <div>Request supports brotli!</div>
-  ) : (
-    <div>Request does not support brotli :(</div>
-  );
-}
-```
-
-Typically, request headers are only available on the server-side. When you read them using the `useRequestHeader` hooks, though, they are serialized into the HTML document so that they are also available on the client. **Make sure that you are comfortable exposing this header to the client before using the `useRequestHeader` hook.**
 
 ## Setting cookies and other response headers
 

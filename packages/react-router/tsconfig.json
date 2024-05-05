@@ -6,10 +6,8 @@
   },
   "include": ["source"],
   "references": [
-    {"path": "../react-html"},
-    {"path": "../react-http"},
+    {"path": "../http"},
     {"path": "../react-performance"},
-    {"path": "../react-server-render"},
     {"path": "../react-testing"},
     {"path": "../react-utilities"},
     {"path": "../routing"}
