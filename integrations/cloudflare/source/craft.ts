@@ -3,7 +3,7 @@ import {
   MAGIC_MODULE_REQUEST_ROUTER,
   type AppRuntime,
   type ServerRuntime,
-} from '@quilted/craft/rollup';
+} from '@quilted/rollup';
 
 export type WorkerFormat = 'module' | 'service-worker';
 

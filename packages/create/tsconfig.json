@@ -1,5 +1,5 @@
 {
-  "extends": "@quilted/craft/typescript/project.json",
+  "extends": "@quilted/typescript/tsconfig.project.json",
   "compilerOptions": {
     "rootDir": "source",
     "outDir": "build/typescript"
@@ -8,7 +8,6 @@
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../quilt"},
-    {"path": "../craft"},
     {"path": "../cli-kit"},
     {"path": "../events"}
   ]

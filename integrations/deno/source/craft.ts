@@ -2,7 +2,7 @@ import {
   multiline,
   MAGIC_MODULE_REQUEST_ROUTER,
   type ServerRuntime,
-} from '@quilted/craft/rollup';
+} from '@quilted/rollup';
 
 export interface DenoRuntimeOptions {
   /**

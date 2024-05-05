@@ -54,19 +54,19 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@quilted/craft": "workspace:^0.2.6",
-    "@quilted/quilt": "workspace:^0.6.15"
+    "@quilted/quilt": "workspace:^0.6.15",
+    "@quilted/rollup": "workspace:^0.2.24"
   },
   "peerDependenciesMeta": {
-    "@quilted/craft": {
+    "@quilted/quilt": {
       "optional": true
     },
-    "@quilted/quilt": {
+    "@quilted/rollup": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@quilted/craft": "workspace:*",
-    "@quilted/quilt": "workspace:*"
+    "@quilted/quilt": "workspace:*",
+    "@quilted/rollup": "workspace:*"
   }
 }

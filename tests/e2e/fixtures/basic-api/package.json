@@ -9,7 +9,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@quilted/craft": "workspace:*",
     "@quilted/quilt": "workspace:*",
     "typescript": "^5.4.0"
   }

@@ -20,9 +20,6 @@ importers:
       '@changesets/cli':
         specifier: ^2.27.1
         version: 2.27.1
-      '@quilted/craft':
-        specifier: workspace:^
-        version: link:packages/craft
       '@quilted/events':
         specifier: workspace:^
         version: link:packages/events
@@ -38,6 +35,9 @@ importers:
       '@quilted/rollup':
         specifier: workspace:^
         version: link:packages/rollup
+      '@quilted/typescript':
+        specifier: workspace:^
+        version: link:packages/typescript
       '@quilted/vite':
         specifier: workspace:^
         version: link:packages/vite
@@ -114,12 +114,12 @@ importers:
         specifier: ^2.4.0
         version: 2.5.0(cron-schedule@3.0.6)
     devDependencies:
-      '@quilted/craft':
-        specifier: workspace:*
-        version: link:../../packages/craft
       '@quilted/quilt':
         specifier: workspace:*
         version: link:../../packages/quilt
+      '@quilted/rollup':
+        specifier: workspace:*
+        version: link:../../packages/rollup
       '@types/common-tags':
         specifier: ^1.8.0
         version: 1.8.1
@@ -133,12 +133,12 @@ importers:
         specifier: ^1.8.0
         version: 1.8.1
     devDependencies:
-      '@quilted/craft':
-        specifier: workspace:*
-        version: link:../../packages/craft
       '@quilted/quilt':
         specifier: workspace:*
         version: link:../../packages/quilt
+      '@quilted/rollup':
+        specifier: workspace:*
+        version: link:../../packages/rollup
 
   integrations/htmx:
     dependencies:
@@ -265,31 +265,6 @@ importers:
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
-
-  packages/craft:
-    dependencies:
-      '@quilted/graphql-tools':
-        specifier: workspace:^0.2.0
-        version: link:../graphql-tools
-      '@quilted/rollup':
-        specifier: workspace:^0.2.0
-        version: link:../rollup
-      '@quilted/vite':
-        specifier: workspace:^0.1.0
-        version: link:../vite
-      pkg-dir:
-        specifier: ^7.0.0
-        version: 7.0.0
-    devDependencies:
-      rollup:
-        specifier: ^4.14.0
-        version: 4.14.0
-      vite:
-        specifier: ^5.2.0
-        version: 5.2.8(@types/node@20.8.10)(lightningcss@1.22.0)(terser@5.16.8)
-      vitest:
-        specifier: ^1.4.0
-        version: 1.4.0(@types/node@20.8.10)(jsdom@24.0.0)(lightningcss@1.22.0)(terser@5.16.8)
 
   packages/create:
     devDependencies:
@@ -936,6 +911,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0
 
+  packages/typescript: {}
+
   packages/useful-types: {}
 
   packages/vite:
@@ -1016,9 +993,6 @@ importers:
 
   tests/e2e/fixtures/basic-api:
     devDependencies:
-      '@quilted/craft':
-        specifier: workspace:*
-        version: link:../../../../packages/craft
       '@quilted/quilt':
         specifier: workspace:*
         version: link:../../../../packages/quilt
@@ -1028,9 +1002,6 @@ importers:
 
   tests/e2e/fixtures/basic-app:
     devDependencies:
-      '@quilted/craft':
-        specifier: workspace:*
-        version: link:../../../../packages/craft
       '@quilted/quilt':
         specifier: workspace:*
         version: link:../../../../packages/quilt
@@ -1046,9 +1017,6 @@ importers:
 
   tests/e2e/fixtures/empty-app:
     devDependencies:
-      '@quilted/craft':
-        specifier: workspace:*
-        version: link:../../../../packages/craft
       '@quilted/quilt':
         specifier: workspace:*
         version: link:../../../../packages/quilt

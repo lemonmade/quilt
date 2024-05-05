@@ -8,7 +8,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@quilted/craft": "workspace:*",
     "@quilted/quilt": "workspace:*",
     "react": "workspace:@quilted/react@*",
     "react-dom": "workspace:@quilted/react-dom@*",

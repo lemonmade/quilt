@@ -94,6 +94,8 @@ export async function createApp() {
   const appTemplate = loadTemplate(`app-${template}`);
   const workspaceTemplate = loadTemplate('workspace');
 
+  const projectPackageJson = JSON.parse(await appTemplate.read('package.json'));
+
   if (!inWorkspace) {
     await workspaceTemplate.copy(directory, (file) => {
       // We will adjust the package.json before writing it
@@ -115,6 +117,11 @@ export async function createApp() {
     );
 
     workspacePackageJson.name = `${toValidPackageName(name!)}-workspace`;
+
+    if (template === 'graphql') {
+      workspacePackageJson.devDependencies['@quilted/graphql-tools'] =
+        projectPackageJson.devDependencies['@quilted/graphql-tools'];
+    }
 
     const moduleRelativeToRoot = relativeDirectoryForDisplay(
       path.relative(directory, appDirectory),
@@ -155,7 +162,7 @@ export async function createApp() {
     await outputRoot.write(
       'graphql.config.ts',
       stripIndent`
-        import {type Configuration} from '@quilted/craft/graphql';
+        import {type Configuration} from '@quilted/graphql-tools/configuration';
 
         const configuration: Configuration = {
           schema: '${relativeFromRootToAppPath('graphql/schema.graphql')}',
@@ -176,11 +183,11 @@ export async function createApp() {
 
   if (partOfMonorepo) {
     // Write the app’s package.json (the root one was already created)
-    const projectPackageJson = JSON.parse(
-      await appTemplate.read('package.json'),
-    );
-
     projectPackageJson.name = toValidPackageName(name!);
+
+    if (template === 'graphql') {
+      delete projectPackageJson.devDependencies['@quilted/graphql-tools'];
+    }
 
     await outputRoot.write(
       path.join(appDirectory, 'package.json'),

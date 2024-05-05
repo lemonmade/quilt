@@ -1,0 +1,26 @@
+{
+  "name": "@quilted/typescript",
+  "description": "Shared configuration for TypeScript projects",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.3.1",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/typescript"
+  },
+  "exports": {
+    ".": "./source/tsconfig.json",
+    "./tsconfig.json": "./source/tsconfig.json",
+    "./tsconfig.project.json": "./source/tsconfig.project.json",
+    "./tsconfig.workspace.json": "./source/tsconfig.workspace.json"
+  },
+  "sideEffects": false
+}

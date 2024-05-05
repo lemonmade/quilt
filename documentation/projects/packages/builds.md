@@ -4,7 +4,7 @@ Quilt recommends using [Rollup](../../tools.md#building-for-production-with-roll
 
 > **Note:** For private packages (that is, the package’s `package.json` includes [`"private": true`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#private)), Quilt does not recommend including a build step. Any consumers within this repo will use the source code of the package directly, so no build outputs are needed. You will still need to [configure the entry files](#using-private-packages-in-a-monorepo) for your private packages, though.
 
-Before you get started, you’ll need to install Quilt’s build tools. Make sure you have `rollup` and either `@quilted/rollup` or `@quilted/craft` installed in your workspace as a development dependency:
+Before you get started, you’ll need to install Quilt’s build tools. Make sure you have `rollup` and `@quilted/rollup` installed in your workspace as a development dependency:
 
 ```bash
 pnpm install rollup @quilted/rollup --save-dev
@@ -16,9 +16,6 @@ Then, in your package’s `rollup.config.js` file, use the `quiltPackage()` func
 // ./packages/my-package/rollup.config.js
 
 import {quiltPackage} from '@quilted/rollup/package';
-
-// If you have @quilted/craft installed, use this import instead:
-// import {quiltPackage} from '@quilted/craft/rollup';
 
 const configuration = await quiltPackage();
 
@@ -292,11 +289,11 @@ For each project in your workspace, you will also need to configure how and wher
 }
 ```
 
-The [`@quilted/craft` package](../../../packages/craft) provides a collection of shared TypeScript configuration files you can use to automatically enable most of this configuration. The configuration above can be achieved more simply by relying on the `@quilted/craft/typescript/project.json` shared configuration:
+The [`@quilted/typescript` package](../../../packages/typescript) provides a collection of shared TypeScript configuration files you can use to automatically enable most of this configuration. The configuration above can be achieved more simply by relying on the `@quilted/typescript/tsconfig.project.json` shared configuration:
 
 ```jsonc
 {
-  "extends": "@quilted/craft/typescript/project.json",
+  "extends": "@quilted/typescript/tsconfig.project.json",
   // You must still set the `include`, `rootDir`, and `outDir` options. The shared configuration
   // does not set these since they are relative to the root of your project, and because you may
   // want to change the structure of your package’s source files.
@@ -413,7 +410,7 @@ The example below shows a complete example of a package’s configuration files.
 ```jsonc
 // tsconfig.json
 {
-  "extends": "@quilted/craft/typescript/project.json",
+  "extends": "@quilted/typescript/tsconfig.project.json",
   "include": ["source"],
   "compilerOptions": {
     "rootDir": "source",
