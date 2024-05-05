@@ -128,7 +128,7 @@ describe('app builds', () => {
     });
 
     it('inlines environment variables into the app server', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await createWorkspace({fixture: 'basic-app'});
 
       const builder = 'Chris';
 
@@ -154,7 +154,7 @@ describe('app builds', () => {
               return (
                 <>
                   <div>Hello, {builder}!</div>
-                  <Serialize id="Builder" data={Env.BUILDER} />
+                  <Serialize id="Builder" value={Env.BUILDER} />
                 </>
               );
             }
