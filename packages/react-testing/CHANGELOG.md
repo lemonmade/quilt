@@ -1,5 +1,14 @@
 # @quilted/react-testing
 
+## 0.6.9
+
+### Patch Changes
+
+- [`2c7c614`](https://github.com/lemonmade/quilt/commit/2c7c61486018b4192ef8d1f85ccd27ed7889f118) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Preact
+
+- Updated dependencies [[`2c7c614`](https://github.com/lemonmade/quilt/commit/2c7c61486018b4192ef8d1f85ccd27ed7889f118)]:
+  - @quilted/preact-testing@0.1.5
+
 ## 0.6.8
 
 ### Patch Changes
