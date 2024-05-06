@@ -1,5 +1,5 @@
 ---
-"@quilted/graphql": patch
+'@quilted/graphql': patch
 ---
 
 Remove accidental debugging code
