@@ -1,5 +1,19 @@
 # @quilted/quilt
 
+## 0.6.16
+
+### Patch Changes
+
+- [`2c7c614`](https://github.com/lemonmade/quilt/commit/2c7c61486018b4192ef8d1f85ccd27ed7889f118) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Preact
+
+- Updated dependencies [[`cbbb036`](https://github.com/lemonmade/quilt/commit/cbbb0368b15a54badbeeace02a1c58baa9a2695f), [`2c7c614`](https://github.com/lemonmade/quilt/commit/2c7c61486018b4192ef8d1f85ccd27ed7889f118)]:
+  - @quilted/graphql@3.0.4
+  - @quilted/react-signals@0.2.5
+  - @quilted/react-testing@0.6.9
+  - @quilted/react-dom@18.2.12
+  - @quilted/react@18.2.10
+  - @quilted/react-router@0.4.1
+
 ## 0.6.15
 
 ### Patch Changes

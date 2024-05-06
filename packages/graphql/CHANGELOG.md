@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 3.0.4
+
+### Patch Changes
+
+- [`cbbb036`](https://github.com/lemonmade/quilt/commit/cbbb0368b15a54badbeeace02a1c58baa9a2695f) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove accidental debugging code
+
 ## 3.0.3
 
 ### Patch Changes
