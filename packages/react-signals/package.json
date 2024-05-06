@@ -33,7 +33,7 @@
     "@preact/signals": "^1.2.3",
     "@quilted/signals": "workspace:^0.2.0",
     "@types/react": "^17.0.0 || ^18.0.0",
-    "preact": "^10.20.0"
+    "preact": "^10.21.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0"

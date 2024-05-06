@@ -15,7 +15,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "jsdom": "^24.0.0",
-    "preact": "^10.20.0",
+    "preact": "^10.21.0",
     "react": "npm:@quilted/react@^18.2.0",
     "react-dom": "npm:@quilted/react-dom@^18.2.0"
   },
