@@ -19,7 +19,7 @@ $ pnpm add @quilted/react-query @tanstack/react-query --save
 [React Query’s getting started instructions](https://tanstack.com/query/v4/docs/quick-start) instruct you to create a `QueryClient` object, and pass it to a `QueryClientProvider` component. To integrate React Query with Quilt, you will pass your `QueryClient` object to this library’s `ReactQueryContext` component instead:
 
 ```tsx
-import {useMemo} from 'react';
+import {useMemo} from 'preact/hooks';
 import {QueryClient} from '@tanstack/react-query';
 import {ReactQueryContext} from '@quilted/react-query';
 

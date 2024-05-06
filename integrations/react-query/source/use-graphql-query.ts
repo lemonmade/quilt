@@ -40,7 +40,7 @@ export function useGraphQLQuery<Data, Variables>(
     ...reactQueryOptions
   } = options as GraphQLQueryOptions<Data, Variables>;
 
-  const fetchFromContext = useGraphQLFetch({required: false});
+  const fetchFromContext = useGraphQLFetch({optional: true});
   const fetch = explicitFetch ?? fetchFromContext;
 
   if (fetch == null) {

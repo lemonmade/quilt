@@ -1,0 +1,16 @@
+{
+  "extends": "@quilted/typescript/tsconfig.project.json",
+  "compilerOptions": {
+    "rootDir": "source",
+    "outDir": "build/typescript",
+    "jsxImportSource": "preact"
+  },
+  "include": ["source"],
+  "references": [
+    {"path": "../http"},
+    {"path": "../preact-context"},
+    {"path": "../preact-performance"},
+    {"path": "../react-testing"},
+    {"path": "../routing"}
+  ]
+}

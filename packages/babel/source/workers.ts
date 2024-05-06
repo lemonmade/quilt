@@ -20,7 +20,7 @@ interface WorkerWrapper {
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
   '@quilted/workers': ['createWorker', 'createThreadWorker'],
-  '@quilted/react-workers': ['createWorker', 'createThreadWorker'],
+  '@quilted/preact-workers': ['createWorker', 'createThreadWorker'],
   '@quilted/quilt/threads': ['createWorker', 'createThreadWorker'],
 };
 

@@ -1,5 +1,5 @@
 import '@quilted/quilt/globals';
-import {hydrateRoot} from 'react-dom/client';
+import {hydrate} from 'preact';
 import {Browser, BrowserContext} from '@quilted/quilt/browser';
 
 import {App} from './App.tsx';
@@ -7,9 +7,9 @@ import {App} from './App.tsx';
 const element = document.querySelector('#app')!;
 const browser = new Browser();
 
-hydrateRoot(
-  element,
+hydrate(
   <BrowserContext browser={browser}>
     <App />
   </BrowserContext>,
+  element,
 );

@@ -1,9 +1,11 @@
-import type {PropsWithChildren} from 'react';
+import type {RenderableProps, ComponentType} from 'preact';
 import {
-  QueryClientProvider,
-  QueryClient,
   dehydrate,
-  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider as QueryClientProviderReact,
+  type QueryClientProviderProps,
+  HydrationBoundary as HydrationBoundaryReact,
+  type HydrationBoundaryProps,
   type DehydratedState,
 } from '@tanstack/react-query';
 import {useSerialized} from '@quilted/quilt/browser';
@@ -11,17 +13,26 @@ import {Serialize} from '@quilted/quilt/server';
 
 const SERIALIZATION_ID = 'quilt:react-query';
 
+const HydrationBoundary = HydrationBoundaryReact as ComponentType<
+  Omit<HydrationBoundaryProps, 'children'>
+>;
+const QueryClientProvider = QueryClientProviderReact as ComponentType<
+  Omit<QueryClientProviderProps, 'children'>
+>;
+
 export function ReactQueryContext({
   client,
   children,
-}: PropsWithChildren<{client: QueryClient}>) {
+}: RenderableProps<{client: QueryClient}>) {
   const dehydratedState = useSerialized<DehydratedState | undefined>(
     SERIALIZATION_ID,
   );
 
   return (
     <QueryClientProvider client={client}>
-      <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
+      <HydrationBoundary state={dehydratedState}>
+        {children as any}
+      </HydrationBoundary>
       <Serializer client={client} />
     </QueryClientProvider>
   );

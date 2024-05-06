@@ -269,7 +269,7 @@ const workerFunctionContent = (pkg: string) =>
 
 const KNOWN_WRAPPER_MODULES = new Map<string, Map<string, string>>([
   ['@quilted/workers', workerFunctionContent('@quilted/workers')],
-  ['@quilted/react-workers', workerFunctionContent('@quilted/react-workers')],
+  ['@quilted/preact-workers', workerFunctionContent('@quilted/preact-workers')],
   ['@quilted/quilt/threads', workerFunctionContent('@quilted/quilt/threads')],
 ]);
 

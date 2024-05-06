@@ -1,6 +1,9 @@
 {
   "extends": "@quilted/typescript/tsconfig.workspace.json",
-  "compilerOptions": {"outDir": "build/typescript/workspace"},
+  "compilerOptions": {
+    "outDir": "build/typescript/workspace",
+    "jsxImportSource": "preact"
+  },
   "include": [
     "config/**/*.ts",
     "scripts/**/*.ts",
@@ -11,7 +14,7 @@
   "exclude": [
     "tests/e2e/output/**/*",
     "packages/create/templates/**/*",
-    "packages/preact-testing/source/**/*"
+    "packages/react-testing/source/**/*"
   ],
   "references": [
     {"path": "./integrations/cloudflare"},
@@ -32,21 +35,19 @@
     {"path": "./packages/http"},
     {"path": "./packages/localize"},
     {"path": "./packages/performance"},
+    {"path": "./packages/preact-async"},
+    {"path": "./packages/preact-browser"},
+    {"path": "./packages/preact-email"},
+    {"path": "./packages/preact-localize"},
+    {"path": "./packages/preact-performance"},
+    {"path": "./packages/preact-router"},
+    {"path": "./packages/preact-signals"},
     {"path": "./packages/preact-testing"},
+    {"path": "./packages/preact-workers"},
     {"path": "./packages/quilt"},
     {"path": "./packages/react"},
-    {"path": "./packages/react-async"},
-    {"path": "./packages/react-browser"},
     {"path": "./packages/react-dom"},
-    {"path": "./packages/react-email"},
-    {"path": "./packages/react-idle"},
-    {"path": "./packages/react-localize"},
-    {"path": "./packages/react-performance"},
-    {"path": "./packages/react-router"},
-    {"path": "./packages/react-signals"},
     {"path": "./packages/react-testing"},
-    {"path": "./packages/react-utilities"},
-    {"path": "./packages/react-workers"},
     {"path": "./packages/request-router"},
     {"path": "./packages/rollup"},
     {"path": "./packages/routing"},

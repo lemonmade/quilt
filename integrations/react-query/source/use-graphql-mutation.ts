@@ -33,7 +33,7 @@ export function useGraphQLMutation<Data, Variables>(
     ...reactMutationOptions
   }: GraphQLMutationOptions<Data, Variables> = {},
 ): UseMutationResult<Data, unknown, Variables> {
-  const fetchFromContext = useGraphQLFetch({required: false});
+  const fetchFromContext = useGraphQLFetch({optional: true});
   const fetch = explicitFetch ?? fetchFromContext;
 
   if (fetch == null) {

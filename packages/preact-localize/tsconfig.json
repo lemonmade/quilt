@@ -1,0 +1,17 @@
+{
+  "extends": "@quilted/typescript/tsconfig.project.json",
+  "compilerOptions": {
+    "rootDir": "source",
+    "outDir": "build/typescript",
+    "jsxImportSource": "preact"
+  },
+  "include": ["source"],
+  "exclude": ["*.test.ts", "*.test.tsx"],
+  "references": [
+    {"path": "../localize"},
+    {"path": "../preact-browser"},
+    {"path": "../preact-context"},
+    {"path": "../preact-router"},
+    {"path": "../request-router"}
+  ]
+}

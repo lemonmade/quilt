@@ -1,4 +1,4 @@
-import {type PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
 
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
@@ -45,7 +45,7 @@ function Routes() {
 }
 
 // This component renders any app-wide context.
-function AppContext({children, context}: PropsWithChildren<AppProps>) {
+function AppContext({children, context}: RenderableProps<AppProps>) {
   const locale = useLocaleFromEnvironment() ?? 'en';
 
   return (

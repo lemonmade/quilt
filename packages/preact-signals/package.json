@@ -1,0 +1,47 @@
+{
+  "name": "@quilted/preact-signals",
+  "description": "Utilities for working with Preact signals.",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "@quilted/registry": "https://registry.npmjs.org"
+  },
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt",
+    "directory": "packages/preact-signals"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": true,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
+  "dependencies": {
+    "@preact/signals": "^1.2.3",
+    "@quilted/signals": "workspace:^0.2.0"
+  },
+  "peerDependencies": {
+    "preact": "^10.21.0"
+  },
+  "peerDependenciesMeta": {
+    "preact": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "preact": "^10.21.0"
+  }
+}

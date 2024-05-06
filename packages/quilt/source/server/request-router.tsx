@@ -1,4 +1,4 @@
-import {isValidElement, type ReactElement} from 'react';
+import {isValidElement, type VNode} from 'preact';
 import {
   renderToStaticMarkup,
   renderToStringAsync,
@@ -17,7 +17,7 @@ import {
   ScriptAssetPreload,
   StyleAsset,
   StyleAssetPreload,
-} from '@quilted/react-browser/server';
+} from '@quilted/preact-browser/server';
 
 import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
 
@@ -47,17 +47,17 @@ export interface RenderOptions {
 }
 
 export async function renderToResponse(
-  element: ReactElement<any>,
+  element: VNode<any>,
   options: RenderOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
 export async function renderToResponse(
   options: RenderOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
 export async function renderToResponse(
-  optionsOrElement: ReactElement<any> | RenderOptions,
+  optionsOrElement: VNode<any> | RenderOptions,
   definitelyOptions?: RenderOptions,
 ) {
-  let element: ReactElement<any> | undefined;
+  let element: VNode<any> | undefined;
   let options: RenderOptions;
 
   if (isValidElement(optionsOrElement)) {

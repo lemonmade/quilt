@@ -2,4 +2,4 @@
 // hook for signals installed.
 import './signals.ts';
 
-export * from '@quilted/react-browser';
+export * from '@quilted/preact-browser';

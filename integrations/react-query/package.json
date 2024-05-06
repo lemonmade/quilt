@@ -30,23 +30,22 @@
   },
   "peerDependencies": {
     "@quilted/quilt": "workspace:^0.6.16",
-    "react": "^17.0.0 || ^18.0.0",
-    "@tanstack/react-query": "^5.0.0"
+    "@tanstack/react-query": "^5.0.0",
+    "preact": "^10.21.0"
   },
   "devDependencies": {
-    "@quilted/quilt": "workspace:^",
-    "@tanstack/react-query": "^5.34.1",
-    "react": "workspace:@quilted/react@^18.2.0"
+    "@quilted/quilt": "workspace:*",
+    "@tanstack/react-query": "^5.34.1"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {
       "optional": true
     },
-    "react": {
-      "optional": true
-    },
     "@tanstack/react-query": {
       "optional": false
+    },
+    "preact": {
+      "optional": true
     }
   }
 }

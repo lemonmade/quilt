@@ -3,7 +3,7 @@ import {expect} from 'vitest';
 import {matchers, type CustomMatchers} from './testing/matchers.ts';
 
 export * from '@quilted/graphql/testing';
-export {GraphQLTesting} from '@quilted/react-graphql/testing';
+export {GraphQLTesting} from '@quilted/preact-graphql/testing';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends CustomMatchers<T> {}

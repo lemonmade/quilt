@@ -1,1 +1,1 @@
-export * from '@quilted/react-signals';
+export * from '@quilted/preact-signals';

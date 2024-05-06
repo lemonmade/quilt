@@ -1,4 +1,4 @@
-export * from '@quilted/react-browser/server';
+export * from '@quilted/preact-browser/server';
 
 export {
   styleAssetAttributes,
@@ -18,7 +18,7 @@ export type {
   AssetsBuildManifest,
   AssetsBuildManifestEntry,
 } from '@quilted/assets';
-export {parseAcceptLanguageHeader} from '@quilted/react-localize';
-export {createRequestRouterLocalization} from '@quilted/react-localize/request-router';
+export {parseAcceptLanguageHeader} from '@quilted/preact-localize';
+export {createRequestRouterLocalization} from '@quilted/preact-localize/request-router';
 
 export {renderToResponse} from './server/request-router.tsx';
