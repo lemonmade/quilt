@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.21
+
+### Patch Changes
+
+- [`eaf0c45`](https://github.com/lemonmade/quilt/commit/eaf0c457f49c9bb60e854e42ffd35df4af59304f) Thanks [@lemonmade](https://github.com/lemonmade)! - Update templates
+
 ## 0.2.20
 
 ### Patch Changes
