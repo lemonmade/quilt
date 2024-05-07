@@ -7,7 +7,7 @@ describe('suspense', () => {
 
     await workspace.fs.write({
       'foundation/Routes.tsx': multiline`
-        import {Suspense} from 'react';
+        import {Suspense} from 'preact/compat';
 
         let resolved;
         function useSuspenseValue() {

@@ -7,7 +7,7 @@ describe('react-query', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
-        import {useMemo} from 'react';
+        import {useMemo} from 'preact/hooks';
         import {QueryClient, useSuspenseQuery} from '@tanstack/react-query';
         import {ReactQueryContext} from '@quilted/react-query';
         import {useBrowserRequest} from '@quilted/quilt/browser';
@@ -40,9 +40,8 @@ describe('react-query', () => {
       `,
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
-        import {renderToStaticMarkup} from 'react-dom/server';
         import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
-        import {renderToResponse} from '@quilted/quilt/server';
+        import {renderToResponse, renderToStaticMarkup} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();

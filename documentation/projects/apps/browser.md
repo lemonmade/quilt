@@ -119,15 +119,15 @@ import '@quilted/quilt/globals';
 import {ErrorLogging} from 'my-error-logging-library/browser';
 
 // If you are not server rendering, swap this out with `renderRoot` instead
-import {hydrateRoot} from 'react-dom/client';
+import {hydrate} from 'preact';
 
 import App from './App.tsx';
 
 ErrorLogging.start();
 
-const element = document.querySelector('#root')!;
+const element = document.querySelector('#app')!;
 
-hydrateRoot(element, <App />);
+hydrate(<App />, element);
 ```
 
 ### Dependency bundles

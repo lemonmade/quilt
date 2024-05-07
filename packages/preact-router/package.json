@@ -1,0 +1,69 @@
+{
+  "name": "@quilted/preact-router",
+  "type": "module",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/preact-router"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    },
+    "./static": {
+      "types": "./build/typescript/static.d.ts",
+      "quilt:source": "./source/static.ts",
+      "quilt:esnext": "./build/esnext/static.esnext",
+      "import": "./build/esm/static.mjs"
+    },
+    "./testing": {
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.tsx",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "static": [
+        "./build/typescript/static.d.ts"
+      ],
+      "testing": [
+        "./build/typescript/testing.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
+  "dependencies": {
+    "@quilted/http": "workspace:^0.3.0",
+    "@quilted/preact-browser": "workspace:^0.1.0",
+    "@quilted/preact-context": "workspace:^0.1.0",
+    "@quilted/preact-performance": "workspace:^0.1.0",
+    "@quilted/routing": "workspace:^0.3.0"
+  },
+  "peerDependencies": {
+    "preact": "^10.21.0"
+  },
+  "peerDependenciesMeta": {
+    "preact": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@quilted/preact-testing": "workspace:*",
+    "preact": "^10.21.0"
+  }
+}

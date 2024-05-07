@@ -907,7 +907,7 @@ export function magicModuleAppRequestRouter({
       return multiline`
         import '@quilted/quilt/globals';
 
-        import {jsx} from 'react/jsx-runtime';
+        import {jsx} from 'preact/jsx-runtime';
         import {RequestRouter} from '@quilted/quilt/request-router';
         import {renderToResponse} from '@quilted/quilt/server';
 
@@ -944,23 +944,19 @@ export function magicModuleAppBrowserEntry({
     module: MAGIC_MODULE_ENTRY,
     sideEffects: true,
     async source() {
-      const reactRootFunction = hydrate ? 'hydrateRoot' : 'createRoot';
+      const reactRootFunction = hydrate ? 'hydrate' : 'render';
 
       return multiline`
         import '@quilted/quilt/globals';
 
-        import {jsx} from 'react/jsx-runtime';
-        import {${reactRootFunction}} from 'react-dom/client';
+        import {jsx} from 'preact/jsx-runtime';
+        import {${reactRootFunction}} from 'preact';
 
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
 
         const element = document.querySelector(${JSON.stringify(selector)});
 
-        ${
-          hydrate
-            ? `${reactRootFunction}(element, jsx(App));`
-            : `${reactRootFunction}(element).render(jsx(App));`
-        }
+        ${reactRootFunction}(jsx(App), element);
       `;
     },
   });

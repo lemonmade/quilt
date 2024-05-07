@@ -79,17 +79,11 @@
       "quilt:esnext": "./build/esnext/signals.esnext",
       "import": "./build/esm/signals.mjs"
     },
-    "./react": {
-      "types": "./build/typescript/react.d.ts",
-      "quilt:source": "./source/react.ts",
-      "quilt:esnext": "./build/esnext/react.esnext",
-      "import": "./build/esm/react.mjs"
-    },
-    "./react/testing": {
-      "types": "./build/typescript/react/testing.d.ts",
-      "quilt:source": "./source/react/testing.ts",
-      "quilt:esnext": "./build/esnext/react/testing.esnext",
-      "import": "./build/esm/react/testing.mjs"
+    "./testing": {
+      "types": "./build/typescript/testing.d.ts",
+      "quilt:source": "./source/testing.ts",
+      "quilt:esnext": "./build/esnext/testing.esnext",
+      "import": "./build/esm/testing.mjs"
     },
     "./graphql": {
       "types": "./build/typescript/graphql.d.ts",
@@ -158,6 +152,9 @@
       "browser": [
         "./build/typescript/browser.d.ts"
       ],
+      "context": [
+        "./build/typescript/context.d.ts"
+      ],
       "globals": [
         "./build/typescript/globals.d.ts"
       ],
@@ -203,8 +200,8 @@
       "request-router": [
         "./build/typescript/request-router/index.d.ts"
       ],
-      "react/testing": [
-        "./build/typescript/react/testing.d.ts"
+      "testing": [
+        "./build/typescript/testing.d.ts"
       ],
       "modules": [
         "./build/typescript/modules.d.ts"
@@ -229,20 +226,19 @@
     "@quilted/assets": "workspace:^0.1.2",
     "@quilted/async": "workspace:^0.4.1",
     "@quilted/events": "workspace:^2.0.0",
-    "@quilted/graphql": "workspace:^3.0.4",
-    "@quilted/react": "workspace:^18.2.10",
-    "@quilted/react-async": "workspace:^0.4.2",
-    "@quilted/react-browser": "workspace:^0.0.1",
-    "@quilted/react-dom": "workspace:^18.2.12",
-    "@quilted/react-graphql": "workspace:^0.5.0",
-    "@quilted/react-idle": "workspace:^0.4.0",
-    "@quilted/react-localize": "workspace:^0.2.2",
-    "@quilted/react-performance": "workspace:^0.2.0",
-    "@quilted/react-router": "workspace:^0.4.1",
-    "@quilted/react-signals": "workspace:^0.2.5",
-    "@quilted/react-testing": "workspace:^0.6.9",
-    "@quilted/react-utilities": "workspace:^0.2.0",
-    "@quilted/react-workers": "workspace:^0.4.0",
+    "@quilted/graphql": "workspace:^3.0.3",
+    "@quilted/preact-async": "workspace:^0.1.0",
+    "@quilted/preact-browser": "workspace:^0.1.0",
+    "@quilted/preact-context": "workspace:^0.1.0",
+    "@quilted/preact-graphql": "workspace:^0.1.0",
+    "@quilted/preact-localize": "workspace:^0.1.0",
+    "@quilted/preact-performance": "workspace:^0.1.0",
+    "@quilted/preact-router": "workspace:^0.1.0",
+    "@quilted/preact-signals": "workspace:^0.1.0",
+    "@quilted/preact-workers": "workspace:^0.1.0",
+    "@quilted/preact-testing": "workspace:^0.1.5",
+    "@quilted/react": "workspace:^18.2.0",
+    "@quilted/react-dom": "workspace:^18.2.11",
     "@quilted/request-router": "workspace:^0.2.0",
     "@quilted/signals": "workspace:^0.2.0",
     "@quilted/threads": "workspace:^2.0.0",
@@ -253,8 +249,6 @@
     "graphql": "^16.8.0",
     "preact": "^10.21.0",
     "prettier": "^2.0.0 || ^3.0.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
     "vitest": "^1.0.0"
   },
   "peerDependenciesMeta": {
@@ -267,12 +261,6 @@
     "prettier": {
       "optional": true
     },
-    "react": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    },
     "vitest": {
       "optional": true
     }
@@ -281,8 +269,6 @@
     "expect": "^29.0.0",
     "preact": "^10.21.0",
     "prettier": "^3.2.0",
-    "react": "workspace:@quilted/react@^18.2.0",
-    "react-dom": "workspace:@quilted/react-dom@^18.2.0",
     "vitest": "^1.4.0"
   }
 }

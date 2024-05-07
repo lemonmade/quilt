@@ -331,7 +331,7 @@ describe.skip('routing', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useState} from 'react';
+          import {useState} from 'preact/hooks';
           import {
             Link,
             useRoutes,

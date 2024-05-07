@@ -48,15 +48,4 @@ export type {
   EventTargetFunction,
   EventTargetOn,
 } from '@quilted/events';
-export {
-  useThreadWorker,
-  createWorker,
-  createThreadWorker,
-} from '@quilted/react-workers';
-export type {
-  CustomWorker,
-  CustomWorkerConstructor,
-  CustomWorkerModuleResolver,
-  CustomThreadWorker,
-  CustomThreadWorkerConstructor,
-} from '@quilted/react-workers';
+export * from '@quilted/preact-workers';

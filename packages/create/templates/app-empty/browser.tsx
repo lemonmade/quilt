@@ -1,7 +1,7 @@
-import {hydrateRoot} from 'react-dom/client';
+import {hydrate} from 'preact';
 
 import {App} from './App.tsx';
 
 const element = document.querySelector('#app')!;
 
-hydrateRoot(element, <App />);
+hydrate(<App />, element);

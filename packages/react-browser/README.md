@@ -1,1 +1,0 @@
-# `@quilted/react-browser`

@@ -1,0 +1,45 @@
+{
+  "name": "@quilted/preact-async",
+  "type": "module",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lemonmade/quilt.git",
+    "directory": "packages/preact-async"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@quilted:registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./build/typescript/index.d.ts",
+      "quilt:source": "./source/index.ts",
+      "quilt:esnext": "./build/esnext/index.esnext",
+      "import": "./build/esm/index.mjs"
+    }
+  },
+  "types": "./build/typescript/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup --config configuration/rollup.config.js"
+  },
+  "dependencies": {
+    "@quilted/async": "workspace:^0.4.1",
+    "@quilted/preact-browser": "workspace:^0.1.0",
+    "@quilted/preact-context": "workspace:^0.1.0",
+    "@quilted/preact-signals": "workspace:^0.1.0"
+  },
+  "peerDependencies": {
+    "preact": "^10.21.0"
+  },
+  "peerDependenciesMeta": {
+    "preact": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "preact": "^10.21.0"
+  }
+}

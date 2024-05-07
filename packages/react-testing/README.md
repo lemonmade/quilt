@@ -239,7 +239,7 @@ const rendered = extendedRender(<MyComponent />, {
 Whenever possible, you should use test on component boundaries using [`render()`](#render) and the [`Root`](#root) and [`Node`](#node) objects it creates. Sometimes, you might have a particularly complex bit of logic that you encapsulate in a custom hook. Every `render()`, including [custom render functions](#customRender), provide a `hook()` method to run your hook in a simulated component, and to access the current return result of your hook. Below, you can see how we can use this helper to inspect our custom hook’s initial result:
 
 ```ts
-import {useState} from 'react';
+import {useState} from 'preact/hooks';
 import {render} from '@quilted/react-testing';
 
 function useIncrementingNumber(initial: number) {
@@ -528,7 +528,7 @@ Simulates a function prop being called on your component. This is usually the ke
 When you pass a key that is a prop on your component with a function type, this function will ensure that you pass arguments that are deeply partial versions of the types the prop expects. This allows you to, for example, pass an event object with only a few properties set to a `button`’s `onClick` prop. `trigger` returns whatever the result was of calling the prop.
 
 ```tsx
-import {useState} from 'react';
+import {useState} from 'preact/hooks';
 
 function MyComponent({onClick}: {onClick(id: string): void}) {
   return (
@@ -674,7 +674,7 @@ expect(myComponent).toContainReactComponentTimes('div', 5, {
 Asserts that at least one `context.Provider` is in the descendants of the passed node. If the second argument is passed, this expectation will further filter the matches by providers whose value is equal to the passed object (again, asymmetric matchers are fully supported).
 
 ```tsx
-import {createContext} from 'react';
+import {createContext} from 'preact';
 
 const MyContext = createContext({hello: 'world'});
 

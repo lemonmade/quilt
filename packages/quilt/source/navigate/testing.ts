@@ -1,1 +1,1 @@
-export * from '@quilted/react-router/testing';
+export * from '@quilted/preact-router/testing';

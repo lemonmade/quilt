@@ -8,7 +8,7 @@ declare module 'quilt:module/env' {
 }
 
 declare module 'quilt:module/app' {
-  import type {ComponentType} from 'react';
+  import type {ComponentType} from 'preact';
 
   const App: ComponentType<Record<string, unknown>>;
   export default App;

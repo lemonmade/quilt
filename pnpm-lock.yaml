@@ -71,12 +71,6 @@ importers:
       prettier:
         specifier: ^3.2.0
         version: 3.2.5
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
       rollup:
         specifier: ^4.14.0
         version: 4.14.0
@@ -155,9 +149,12 @@ importers:
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
         version: link:../../packages/useful-types
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/quilt
       '@tanstack/react-query':
         specifier: ^5.34.1
@@ -406,18 +403,180 @@ importers:
         specifier: workspace:@quilted/react@^18.2.0
         version: link:../react
 
+  packages/preact-async:
+    dependencies:
+      '@quilted/async':
+        specifier: workspace:^0.4.1
+        version: link:../async
+      '@quilted/preact-browser':
+        specifier: workspace:^0.1.0
+        version: link:../preact-browser
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      '@quilted/preact-signals':
+        specifier: workspace:^0.1.0
+        version: link:../preact-signals
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-browser:
+    dependencies:
+      '@quilted/assets':
+        specifier: workspace:^0.1.2
+        version: link:../assets
+      '@quilted/browser':
+        specifier: workspace:^0.0.1
+        version: link:../browser
+      '@quilted/http':
+        specifier: workspace:^0.3.0
+        version: link:../http
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      '@quilted/signals':
+        specifier: workspace:^0.2.1
+        version: link:../signals
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-context:
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-email:
+    dependencies:
+      '@quilted/preact-browser':
+        specifier: workspace:^0.1.0
+        version: link:../preact-browser
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      preact-render-to-string:
+        specifier: ^6.4.0
+        version: 6.4.2(preact@10.21.0)
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-graphql:
+    dependencies:
+      '@quilted/async':
+        specifier: workspace:^0.4.0
+        version: link:../async
+      '@quilted/graphql':
+        specifier: workspace:^3.0.0
+        version: link:../graphql
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      '@quilted/useful-types':
+        specifier: workspace:^2.0.0
+        version: link:../useful-types
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-localize:
+    dependencies:
+      '@quilted/localize':
+        specifier: workspace:^0.2.0
+        version: link:../localize
+      '@quilted/preact-browser':
+        specifier: workspace:^0.1.0
+        version: link:../preact-browser
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      '@quilted/preact-router':
+        specifier: workspace:^0.1.0
+        version: link:../preact-router
+    devDependencies:
+      '@quilted/request-router':
+        specifier: workspace:^0.2.0
+        version: link:../request-router
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-performance:
+    dependencies:
+      '@quilted/performance':
+        specifier: workspace:^0.2.0
+        version: link:../performance
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-router:
+    dependencies:
+      '@quilted/http':
+        specifier: workspace:^0.3.0
+        version: link:../http
+      '@quilted/preact-browser':
+        specifier: workspace:^0.1.0
+        version: link:../preact-browser
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      '@quilted/preact-performance':
+        specifier: workspace:^0.1.0
+        version: link:../preact-performance
+      '@quilted/routing':
+        specifier: workspace:^0.3.0
+        version: link:../routing
+    devDependencies:
+      '@quilted/preact-testing':
+        specifier: workspace:*
+        version: link:../preact-testing
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-signals:
+    dependencies:
+      '@preact/signals':
+        specifier: ^1.2.3
+        version: 1.2.3(preact@10.21.0)
+      '@quilted/signals':
+        specifier: workspace:^0.2.0
+        version: link:../signals
+    devDependencies:
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
   packages/preact-testing:
     dependencies:
       jest-matcher-utils:
         specifier: ^27.0.0
         version: 27.5.1
     devDependencies:
-      '@types/react-test-renderer':
-        specifier: ^18.0.0
-        version: 18.0.0
       expect:
         specifier: ^29.0.0
         version: 29.7.0
+      preact:
+        specifier: ^10.21.0
+        version: 10.21.0
+
+  packages/preact-workers:
+    dependencies:
+      '@quilted/workers':
+        specifier: workspace:^0.4.0
+        version: link:../workers
+    devDependencies:
       preact:
         specifier: ^10.21.0
         version: 10.21.0
@@ -436,47 +595,44 @@ importers:
         specifier: workspace:^2.0.0
         version: link:../events
       '@quilted/graphql':
-        specifier: workspace:^3.0.4
+        specifier: workspace:^3.0.3
         version: link:../graphql
+      '@quilted/preact-async':
+        specifier: workspace:^0.1.0
+        version: link:../preact-async
+      '@quilted/preact-browser':
+        specifier: workspace:^0.1.0
+        version: link:../preact-browser
+      '@quilted/preact-context':
+        specifier: workspace:^0.1.0
+        version: link:../preact-context
+      '@quilted/preact-graphql':
+        specifier: workspace:^0.1.0
+        version: link:../preact-graphql
+      '@quilted/preact-localize':
+        specifier: workspace:^0.1.0
+        version: link:../preact-localize
+      '@quilted/preact-performance':
+        specifier: workspace:^0.1.0
+        version: link:../preact-performance
+      '@quilted/preact-router':
+        specifier: workspace:^0.1.0
+        version: link:../preact-router
+      '@quilted/preact-signals':
+        specifier: workspace:^0.1.0
+        version: link:../preact-signals
+      '@quilted/preact-testing':
+        specifier: workspace:^0.1.5
+        version: link:../preact-testing
+      '@quilted/preact-workers':
+        specifier: workspace:^0.1.0
+        version: link:../preact-workers
       '@quilted/react':
-        specifier: workspace:^18.2.10
+        specifier: workspace:^18.2.0
         version: link:../react
-      '@quilted/react-async':
-        specifier: workspace:^0.4.2
-        version: link:../react-async
-      '@quilted/react-browser':
-        specifier: workspace:^0.0.1
-        version: link:../react-browser
       '@quilted/react-dom':
-        specifier: workspace:^18.2.12
+        specifier: workspace:^18.2.11
         version: link:../react-dom
-      '@quilted/react-graphql':
-        specifier: workspace:^0.5.0
-        version: link:../react-graphql
-      '@quilted/react-idle':
-        specifier: workspace:^0.4.0
-        version: link:../react-idle
-      '@quilted/react-localize':
-        specifier: workspace:^0.2.2
-        version: link:../react-localize
-      '@quilted/react-performance':
-        specifier: workspace:^0.2.0
-        version: link:../react-performance
-      '@quilted/react-router':
-        specifier: workspace:^0.4.1
-        version: link:../react-router
-      '@quilted/react-signals':
-        specifier: workspace:^0.2.5
-        version: link:../react-signals
-      '@quilted/react-testing':
-        specifier: workspace:^0.6.9
-        version: link:../react-testing
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.0
-        version: link:../react-utilities
-      '@quilted/react-workers':
-        specifier: workspace:^0.4.0
-        version: link:../react-workers
       '@quilted/request-router':
         specifier: workspace:^0.2.0
         version: link:../request-router
@@ -505,12 +661,6 @@ importers:
       prettier:
         specifier: ^3.2.0
         version: 3.2.5
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-      react-dom:
-        specifier: workspace:@quilted/react-dom@^18.2.0
-        version: link:../react-dom
       vitest:
         specifier: ^1.4.0
         version: 1.4.0(@types/node@20.8.10)(jsdom@24.0.0)(lightningcss@1.22.0)(terser@5.16.8)
@@ -524,47 +674,6 @@ importers:
         specifier: ^10.21.0
         version: 10.21.0
 
-  packages/react-async:
-    dependencies:
-      '@quilted/async':
-        specifier: workspace:^0.4.1
-        version: link:../async
-      '@quilted/react-browser':
-        specifier: workspace:^0.0.1
-        version: link:../react-browser
-      '@quilted/react-signals':
-        specifier: workspace:^0.2.4
-        version: link:../react-signals
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-      react-dom:
-        specifier: workspace:@quilted/react-dom@^18.2.0
-        version: link:../react-dom
-
-  packages/react-browser:
-    dependencies:
-      '@quilted/assets':
-        specifier: workspace:^0.1.2
-        version: link:../assets
-      '@quilted/browser':
-        specifier: workspace:^0.0.1
-        version: link:../browser
-      '@quilted/http':
-        specifier: workspace:^0.3.0
-        version: link:../http
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.1
-        version: link:../react-utilities
-      '@quilted/signals':
-        specifier: workspace:^0.2.1
-        version: link:../signals
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
   packages/react-dom:
     dependencies:
       '@types/react-dom':
@@ -576,126 +685,6 @@ importers:
       preact-render-to-string:
         specifier: ^6.4.0
         version: 6.4.2(preact@10.21.0)
-
-  packages/react-email:
-    dependencies:
-      '@quilted/react-browser':
-        specifier: workspace:^0.0.1
-        version: link:../react-browser
-      preact-render-to-string:
-        specifier: ^6.4.0
-        version: 6.4.2(preact@10.21.0)
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-      react-dom:
-        specifier: workspace:@quilted/react-dom@^18.2.0
-        version: link:../react-dom
-
-  packages/react-graphql:
-    dependencies:
-      '@quilted/async':
-        specifier: workspace:^0.4.0
-        version: link:../async
-      '@quilted/graphql':
-        specifier: workspace:^3.0.0
-        version: link:../graphql
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.0
-        version: link:../react-utilities
-      '@quilted/useful-types':
-        specifier: workspace:^2.0.0
-        version: link:../useful-types
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
-  packages/react-idle:
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
-  packages/react-localize:
-    dependencies:
-      '@quilted/localize':
-        specifier: workspace:^0.2.0
-        version: link:../localize
-      '@quilted/react-browser':
-        specifier: workspace:^0.0.1
-        version: link:../react-browser
-      '@quilted/react-router':
-        specifier: workspace:^0.4.1
-        version: link:../react-router
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.0
-        version: link:../react-utilities
-    devDependencies:
-      '@quilted/request-router':
-        specifier: workspace:^0.2.0
-        version: link:../request-router
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
-  packages/react-performance:
-    dependencies:
-      '@quilted/performance':
-        specifier: workspace:^0.2.0
-        version: link:../performance
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.0
-        version: link:../react-utilities
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
-  packages/react-router:
-    dependencies:
-      '@quilted/http':
-        specifier: workspace:^0.3.0
-        version: link:../http
-      '@quilted/react-browser':
-        specifier: workspace:^0.0.1
-        version: link:../react-browser
-      '@quilted/react-performance':
-        specifier: workspace:^0.2.0
-        version: link:../react-performance
-      '@quilted/react-utilities':
-        specifier: workspace:^0.2.0
-        version: link:../react-utilities
-      '@quilted/routing':
-        specifier: workspace:^0.3.0
-        version: link:../routing
-    devDependencies:
-      '@quilted/react-testing':
-        specifier: workspace:*
-        version: link:../react-testing
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
-  packages/react-signals:
-    dependencies:
-      '@preact/signals':
-        specifier: ^1.2.3
-        version: 1.2.3(preact@10.21.0)
-      '@quilted/signals':
-        specifier: workspace:^0.2.0
-        version: link:../signals
-      '@types/react':
-        specifier: ^17.0.0 || ^18.0.0
-        version: 18.2.34
-      preact:
-        specifier: ^10.21.0
-        version: 10.21.0
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
 
   packages/react-testing:
     dependencies:
@@ -724,22 +713,6 @@ importers:
       react-test-renderer:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-
-  packages/react-utilities:
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
-
-  packages/react-workers:
-    dependencies:
-      '@quilted/workers':
-        specifier: workspace:^0.4.0
-        version: link:../workers
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
 
   packages/request-router:
     dependencies:

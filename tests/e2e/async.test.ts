@@ -88,7 +88,7 @@ describe('async', () => {
         }
       `,
       'Async.tsx': multiline`
-        import {useState, useEffect} from 'react';
+        import {useState, useEffect} from 'preact/hooks';
 
         import styles from './Async.module.css';
 
@@ -171,7 +171,7 @@ describe('async', () => {
       'App.tsx': multiline`
         import '@quilted/quilt/globals';
 
-        import {useState} from 'react';
+        import {useState} from 'preact/hooks';
         import {AsyncComponent} from '@quilted/quilt/async';
 
         const Async = AsyncComponent.from(() => import('./Async.tsx'), {
@@ -234,7 +234,7 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {useState} from 'react';
+        import {useState} from 'preact/hooks';
         import {AsyncComponent} from '@quilted/quilt/async';
 
         const Async = AsyncComponent.from(() => import('./Async.tsx'), {
@@ -296,8 +296,7 @@ describe('async', () => {
     await workspace.fs.write({
       'browser.tsx': multiline`
         import '@quilted/quilt/globals';
-        import {hydrateRoot} from 'react-dom/client';
-        
+        import {hydrate} from 'preact';
         import App, {Async} from './App.tsx';
 
         // Ensure that the app works correctly even if the async component is
@@ -306,7 +305,7 @@ describe('async', () => {
         
         const element = document.querySelector('#app')!;
         
-        hydrateRoot(element, <App />);
+        hydrate(<App />, element);
       `,
       'Async.tsx': multiline`
         export default function Async() {

@@ -108,7 +108,8 @@ The basic app renders a number of “global” context providers in the main `ap
 ```tsx
 // app/App.tsx
 
-import {useMemo, type PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
+import {useMemo} from 'preact/hooks';
 import {useInitialUrl} from '@quilted/quilt/navigate';
 
 import {httpBatchLink} from '@trpc/client';
@@ -130,7 +131,7 @@ export default function App() {
 
 interface TrpcProps {}
 
-function Trpc({children}: PropsWithChildren<TrpcProps>) {
+function Trpc({children}: RenderableProps<TrpcProps>) {
   const initialUrl = useInitialUrl();
 
   const queryClient = useMemo(() => new QueryClient(), []);
@@ -190,7 +191,8 @@ To use this optimization, you’ll need to accept a different tRPC link when ser
 ```tsx
 // app/App.tsx
 
-import {useMemo, type PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
+import {useMemo} from 'preact/hooks';
 import {useInitialUrl} from '@quilted/quilt/navigate';
 
 import {httpBatchLink, type TRPCClient} from '@trpc/client';
@@ -220,7 +222,7 @@ interface TrpcProps {
   client?: TRPCClient<any>;
 }
 
-function Trpc({client, children}: PropsWithChildren<TrpcProps>) {
+function Trpc({client, children}: RenderableProps<TrpcProps>) {
   const initialUrl = useInitialUrl();
 
   const queryClient = useMemo(() => new QueryClient(), []);

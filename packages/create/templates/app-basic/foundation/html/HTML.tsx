@@ -1,4 +1,5 @@
-import type {PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
+import Env from '@quilted/quilt/env';
 import {Title, Favicon, useBrowserRequest} from '@quilted/quilt/browser';
 import {
   CacheControl,
@@ -16,7 +17,7 @@ import {
 // application you can read that state.
 //
 // @see https://github.com/lemonmade/quilt/blob/main/documentation/features/html.md
-export function HTML({children}: PropsWithChildren) {
+export function HTML({children}: RenderableProps<{}>) {
   return (
     <>
       <Headers />

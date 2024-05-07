@@ -944,7 +944,7 @@ function MyComponent() {
 In all of these cases, the values passed to the `to` prop are resolved to a string and used as the `href` prop on the resulting `<a>` element. When the resolved URL is to a separate domain, the component will allow the browser to perform a “normal” full-page navigation; in all other cases, the component will instead perform a navigation with the [history API](https://developer.mozilla.org/en-US/docs/Web/API/History_API), which navigates without a full-page reload. You can force a full-page navigation regardless of the resolved URL by setting the `external` prop to `true`:
 
 ```tsx
-import {Link} from '@quilted/react-router';
+import {Link} from '@quilted/quilt';
 
 function MyComponent() {
   return (
@@ -958,8 +958,8 @@ function MyComponent() {
 In addition to the `external` and `to` props, you can also pass any prop (other than `href`) to the `<Link />` component that is supported by the `<a>` element:
 
 ```tsx
-import type {ComponentProps} from 'react';
-import {Link} from '@quilted/react-router';
+import type {ComponentProps} from 'preact';
+import {Link} from '@quilted/quilt';
 
 // A custom Link that accepts the same props as the `<Link />` component,
 // but adds a few custom props that are passed through to the `<a>` element.
@@ -1268,7 +1268,7 @@ Sometimes, you don’t render a `Link`, but you know you will be navigating to a
 In the next example, we’ve added route-based preloading to our programmatic navigation example, so that the list page is already preloaded by the time we delete the product and navigate back to our product list:
 
 ```tsx
-import {useState} from 'react';
+import {useState} from 'preact/hooks';
 import {useNavigate, usePreloadRoute} from '@quilted/quilt/navigate';
 
 export function DeleteProductButton({id}: {id: string}) {
@@ -1477,7 +1477,7 @@ Quilt will default to persisting scroll measurements to [`sessionStorage`](https
 
 ```tsx
 import {Routing, Link} from '@quilted/quilt/navigate';
-import {createMemoryScrollRestoration} from '@quilted/react-router';
+import {createMemoryScrollRestoration} from '@quilted/preact-router';
 
 // Some applications may not be able to access `sessionStorage`. This
 // helper function creates a scroll restoration strategy that just stores
@@ -1507,7 +1507,7 @@ function Two() {
 If you have a custom scroll container for your app, you can call the `useRouteChangeScrollRestoration()` hook, which provides a [ref](https://reactjs.org/docs/refs-and-the-dom.html) you can use to designate the right element to measure and scroll:
 
 ```tsx
-import type {PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
 import {
   Routing,
   useRouteChangeScrollRestoration,
@@ -1533,7 +1533,7 @@ function Routes() {
 // This component renders a scrollable element to contain the app, so we attach
 // the scrollable ref to our element. This prevents the default behavior of
 // scrolling the HTML element, which would not do anything in this case.
-function Container({children}: PropsWithChildren) {
+function Container({children}: RenderableProps<{}>) {
   const scrollableRef = useRouteChangeScrollRestoration();
 
   return (
@@ -1588,7 +1588,7 @@ function Payments() {
 The `useRouteChangeScrollRestoration()` hook also allows you to register additional elements on the page whose scroll positions should independently measured and restored when the route changes. Pass a string as the first argument to `useRouteChangeScrollRestoration()`, and that string will be used as a unique identifier for your custom scroll area. You’ll need to use the resulting ref to specify the custom scrollable element — Quilt will only use the HTML element as the default for the “main” scroll restoration.
 
 ```tsx
-import type {PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
 import {
   Routing,
   useRoutes,
@@ -1612,7 +1612,7 @@ function Routes() {
   return <Container>{routes}</Container>;
 }
 
-function Container({children}: PropsWithChildren) {
+function Container({children}: RenderableProps<{}>) {
   const sidePanelScrollRef = useRouteChangeScrollRestoration('SidePanel');
 
   return (
@@ -1645,7 +1645,7 @@ Quilt’s router defaults to recreating this behavior — after a route change,
 You might want to consider adding a [“skip navigation” link](https://webaim.org/techniques/skipnav/) to improve this experience, but you can also tell Quilt to put focus on a more appropriate element after navigation. Quilt provides a `useRouteChangeFocus()` hook that returns a React `ref`. You can attach that `ref` to any DOM node you want to put focus on when the active route changes.
 
 ```tsx
-import type {PropsWithChildren} from 'react';
+import type {RenderableProps} from 'preact';
 import {Routing, useRouteChangeFocus, useRoutes} from '@quilted/quilt/navigate';
 
 function App() {
@@ -1658,7 +1658,7 @@ function App() {
   );
 }
 
-function Frame({children}: PropsWithChildren) {
+function Frame({children}: RenderableProps<{}>) {
   const routeChangeFocusRef = useRouteChangeFocus();
 
   return (
@@ -1696,7 +1696,7 @@ You pass this hook a function that will be called for any navigation that is att
 The function you pass to `useNavigationBlock()` is called with an object containing a `targetUrl` property, which is an `EnhancedURL` object representing the target destination, and a `currentUrl` property that indicates the active route in your application. You can use these fields to conditionally block only for some destinations:
 
 ```tsx
-import {useState} from 'react';
+import {useState} from 'preact/hooks';
 import {Routing, useNavigationBlock} from '@quilted/quilt/navigate';
 import {TextField} from 'some-ui-library';
 
@@ -1735,7 +1735,7 @@ The `useNavigationBlock()` hook returns an object with details about the block. 
 These details are especially useful when using a simplified version of the `useNavigationBlock()` hook, where you provide a boolean argument indicating whether the navigation block is active (or omit the function argument entirely, in which case it defaults to `true`). You can block all navigations conditionally, and use the `blocked` and `unblock` properties to render your own UI
 
 ```tsx
-import {useState} from 'react';
+import {useState} from 'preact/hooks';
 import {Routing, useNavigationBlock} from '@quilted/quilt/navigate';
 import {TextField, Dialog} from 'my-ui-library';
 

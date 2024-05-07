@@ -17,7 +17,7 @@ interface State {
 
 const DEFAULT_PACKAGES_TO_PROCESS = {
   '@quilted/async': ['AsyncModule', 'AsyncComponent'],
-  '@quilted/react-async': ['AsyncModule', 'AsyncComponent'],
+  '@quilted/preact-async': ['AsyncModule', 'AsyncComponent'],
   '@quilted/quilt/async': ['AsyncModule', 'AsyncComponent'],
 };
 

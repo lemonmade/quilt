@@ -160,7 +160,7 @@ When the application is server-rendered, the JavaScript and CSS needed for the c
 Like `useAsyncModule()`, `AsyncComponent` uses suspense to indicate when the module has not yet been loaded. You can include a `Suspense` component to provide a loading state while the component is being fetched:
 
 ```tsx
-import {Suspense} from 'react';
+import {Suspense} from 'preact/compat';
 import {AsyncModule, AsyncComponent} from '@quilted/quilt/async';
 
 const returnsModule = new AsyncModule(() => import('./Returns.tsx'));
@@ -261,7 +261,7 @@ Like asynchronous modules, asynchronous components let you take more fine-graine
 To accomplish this, Quilt let’s you specify how the client will render, both on the client and server. If we want to delay when the code for a component is loaded on the client, we can pass the `client: 'defer'` option to our asynchronous component. This will tell the async component to suspend, but not to load the JavaScript for the component immediately. Instead, you are in control of when the JavaScript loads, by calling the asynchronous component’s `load()` method. In the example below, we show delay loading the component until the browser is idle.
 
 ```tsx
-import {useEffect} from 'react';
+import {useEffect} from 'preact/hooks';
 import {AsyncComponent} from '@quilted/quilt/async';
 
 const BelowTheFoldComponent = AsyncComponent.from(

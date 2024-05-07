@@ -17,7 +17,7 @@ describe('htmx', () => {
       'browser.tsx': HTMX_BROWSER_ENTRY,
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
-        import {renderToStaticMarkup} from 'react-dom/server';
+        import {renderToStaticMarkup} from 'preact-render-to-string';
         import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
         import {renderToResponse} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';

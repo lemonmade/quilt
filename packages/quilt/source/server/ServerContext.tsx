@@ -1,16 +1,16 @@
-import type {PropsWithChildren} from 'react';
+import type {RenderableProps, VNode} from 'preact';
 
-import {InitialURLContext} from '@quilted/react-router';
+import {InitialURLContext} from '@quilted/preact-router';
 import {
   BrowserDetailsContext,
   type BrowserDetails,
-} from '@quilted/react-browser/server';
+} from '@quilted/preact-browser/server';
 
 interface Props {
   browser?: BrowserDetails;
 }
 
-export function ServerContext({browser, children}: PropsWithChildren<Props>) {
+export function ServerContext({browser, children}: RenderableProps<Props>) {
   const requestURL = browser?.request.url;
   const initialURL = requestURL && new URL(requestURL);
 
@@ -30,5 +30,5 @@ export function ServerContext({browser, children}: PropsWithChildren<Props>) {
     withInitialURL
   );
 
-  return withBrowser;
+  return withBrowser as VNode<{}>;
 }
