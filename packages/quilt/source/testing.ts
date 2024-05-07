@@ -1,9 +1,7 @@
 import {expect} from 'vitest';
-import {matchers, type CustomMatchers} from '@quilted/react-testing/matchers';
+import {matchers, type CustomMatchers} from '@quilted/preact-testing/matchers';
 
-export * from 'vitest';
-
-export type * from '@quilted/preact-testing';
+export * from '@quilted/preact-testing';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends CustomMatchers<T> {}

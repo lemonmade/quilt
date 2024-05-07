@@ -47,7 +47,7 @@ export function sourceCode({
         require.resolve('@babel/preset-react'),
         {
           runtime: 'automatic',
-          importSource: typeof react === 'string' ? react : 'react',
+          importSource: typeof react === 'string' ? react : 'preact',
           development: mode === 'development',
         },
       ],
