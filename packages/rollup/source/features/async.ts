@@ -22,10 +22,17 @@ export function asyncModules({
   return {
     name: '@quilted/async',
     async resolveId(id, importer) {
-      if (id.startsWith(IMPORT_PREFIX)) return `\0${id}`;
-      if (!id.startsWith(MODULE_PREFIX)) return null;
+      let prefix: string;
 
-      const imported = id.replace(MODULE_PREFIX, '');
+      if (id.startsWith(IMPORT_PREFIX)) {
+        prefix = IMPORT_PREFIX;
+      } else if (id.startsWith(MODULE_PREFIX)) {
+        prefix = MODULE_PREFIX;
+      } else {
+        return null;
+      }
+
+      const imported = id.replace(prefix, '');
 
       const resolved = await this.resolve(imported, importer, {
         skipSelf: true,
@@ -33,7 +40,7 @@ export function asyncModules({
 
       if (resolved == null) return null;
 
-      return `\0${MODULE_PREFIX}${resolved.id}`;
+      return `\0${prefix}${resolved.id}`;
     },
     resolveDynamicImport(specifier) {
       if (
