@@ -1,9 +1,6 @@
-import {
-  createOptionalContext,
-  createUseContextHook,
-} from '@quilted/quilt/react';
+import {createOptionalContext} from '@quilted/quilt/context';
 
 export interface AppContext {}
 
 export const AppContextReact = createOptionalContext<AppContext>();
-export const useAppContext = createUseContextHook(AppContextReact);
+export const useAppContext = AppContextReact.use;

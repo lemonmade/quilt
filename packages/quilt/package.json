@@ -37,6 +37,18 @@
       "quilt:esnext": "./build/esnext/browser.esnext",
       "import": "./build/esm/browser.mjs"
     },
+    "./browser/testing": {
+      "types": "./build/typescript/browser/testing.d.ts",
+      "quilt:source": "./source/browser/testing.ts",
+      "quilt:esnext": "./build/esnext/browser/testing.esnext",
+      "import": "./build/esm/browser/testing.mjs"
+    },
+    "./context": {
+      "types": "./build/typescript/context.d.ts",
+      "quilt:source": "./source/context.ts",
+      "quilt:esnext": "./build/esnext/context.esnext",
+      "import": "./build/esm/context.mjs"
+    },
     "./globals": {
       "types": "./build/typescript/globals.d.ts",
       "quilt:source": "./source/globals.ts",

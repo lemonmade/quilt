@@ -1,4 +1,4 @@
-import '@quilted/quilt/react/testing';
+import '@quilted/quilt/testing';
 
 export {TestRouter} from '@quilted/quilt/navigate/testing';
 

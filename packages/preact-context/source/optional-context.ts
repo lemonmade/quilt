@@ -24,8 +24,7 @@ export function createOptionalContext<T>(
   if (displayName) Object.assign(Context, {displayName});
 
   const resolvedWhenMissing =
-    whenMissing ??
-    (() => () => new Error(`Missing context: ${Context.displayName}`));
+    whenMissing ?? (() => new Error(`Missing context: ${Context.displayName}`));
 
   Object.assign(Context, {
     use({optional = false}: {optional?: boolean} = {}) {

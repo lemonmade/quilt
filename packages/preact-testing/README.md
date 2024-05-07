@@ -20,13 +20,13 @@ A library for testing Preact components with a focus on type safety and clear co
     - [`Root`](#root)
     - [`Node`](#element)
     - [`debug()`](#debug)
-    - ['toHaveReactProps()'](#toHaveReactProps)
-    - ['toHaveReactDataProps()'](#toHaveReactDataProps)
-    - ['toContainReactComponent()'](#toContainReactComponent)
-    - ['toContainReactComponentTimes()'](#toContainReactComponentTimes)
-    - ['toProvideReactContext()'](#toProvideReactContext)
-    - ['toContainReactText()'](#toContainReactText)
-    - ['toContainReactHTML()'](#toContainReactHTML)
+    - ['toHavePreactProps()'](#toHavePreactProps)
+    - ['toHavePreactDataProps()'](#toHavePreactDataProps)
+    - ['toContainPreactComponent()'](#toContainPreactComponent)
+    - ['toContainPreactComponentTimes()'](#toContainPreactComponentTimes)
+    - ['toProvidePreactContext()'](#toProvidePreactContext)
+    - ['toContainPreactText()'](#toContainPreactText)
+    - ['toContainPreactHTML()'](#toContainPreactHTML)
 - [FAQ](#faq)
 
 ## Installation
@@ -92,7 +92,7 @@ afterEach(() => {
 });
 ```
 
-This will allow you to use matchers such as [`toContainReactText`](#toContainReactText) or [`toContainReactComponent`](#toContainReactComponent) on your tree.
+This will allow you to use matchers such as [`toContainPreactText`](#toContainPreactText) or [`toContainPreactComponent`](#toContainPreactComponent) on your tree.
 
 ```tsx
 import {render} from '@quilted/preact-testing';
@@ -102,7 +102,7 @@ import LinkComponent from './LinkComponent.tsx';
 describe('<ClickCounter />', () => {
   it('renders a link to a cool website', () => {
     const clickCounter = render(<ClickCounter defaultCount={0} />);
-    expect(wrapper).toContainReactComponent(LinkComponent, {
+    expect(wrapper).toContainPreactComponent(LinkComponent, {
       to: 'https://www.cool-website.com',
     });
   });
@@ -111,12 +111,12 @@ describe('<ClickCounter />', () => {
     const clickCounter = render(<ClickCounter defaultCount={0} />);
     clickCounter.find('button').trigger('onClick');
     clickCounter.find('button').trigger('onClick');
-    expect(clickCounter).toContainReactText('count: 2');
+    expect(clickCounter).toContainPreactText('count: 2');
   });
 });
 ```
 
-Additionally, this library provides DOM-specific matchers, like [`toContainReactHTML`](#toContainReactHTML), from the `@quilted/preact-testing/dom-matchers` entrypoint.
+Additionally, this library provides DOM-specific matchers, like [`toContainPreactHTML`](#toContainPreactHTML), from the `@quilted/preact-testing/dom-matchers` entrypoint.
 
 ```tsx
 import '@quilted/preact-testing/matchers';
@@ -125,7 +125,7 @@ import '@quilted/preact-testing/dom-matchers';
 // In a test...
 
 const button = render(<Button>Hello!</Button>);
-expect(button).toContainReactHTML('<button>Hello!</button>');
+expect(button).toContainPreactHTML('<button>Hello!</button>');
 ```
 
 ### API
@@ -482,7 +482,7 @@ Like `findWhere`, but returns all matches as an array.
 
 Finds the `value` of the first descendant provider for the pass context. If no matching context is found, `undefined` is returned.
 
-Most tests looking for context are probably better served by using the [`.toProvideReactContext`](#toProvideReactContext) matcher. However, it is sometimes useful to grab the context value directly. In particular, if your context object is "smart" — that is, it has methods, and is not just data — you may want to grab the context object to call its functions.
+Most tests looking for context are probably better served by using the [`.toProvidePreactContext`](#toProvidePreactContext) matcher. However, it is sometimes useful to grab the context value directly. In particular, if your context object is "smart" — that is, it has methods, and is not just data — you may want to grab the context object to call its functions.
 
 ```tsx
 const AuthContext = createContext<{logout(): void} | null>(null);
@@ -601,59 +601,61 @@ console.log(
 );
 ```
 
-#### <a name="toHaveReactProps"></a> `.toHaveReactProps(props: object)`
+#### <a name="toHavePreactProps"></a> `.toHavePreactProps(props: object)`
 
 Checks whether a `Root` or `Node` object has specified props (asymmetric matchers like `expect.objectContaining` are fully supported). Strict type checking is enforced, so the `props` you pass must be a valid subset of the actual props for the component.
 
 ```tsx
 const myComponent = render(<MyComponent />);
 
-expect(myComponent.find('div')).toHaveReactProps({'aria-label': 'Hello world'});
-expect(myComponent.find('div')).toHaveReactProps({
+expect(myComponent.find('div')).toHavePreactProps({
+  'aria-label': 'Hello world',
+});
+expect(myComponent.find('div')).toHavePreactProps({
   onClick: expect.any(Function),
 });
 ```
 
-#### <a name="toHaveReactDataProps"></a> `.toHaveReactDataProps(data: object)`
+#### <a name="toHavePreactDataProps"></a> `.toHavePreactDataProps(data: object)`
 
 > Only available from `@quilted/preact-testing/dom-matchers`
 
-Like `.toHaveReactProps()`, but is not strictly typed. This makes it more suitable for asserting on `data-` attributes, which can’t be strongly typed.
+Like `.toHavePreactProps()`, but is not strictly typed. This makes it more suitable for asserting on `data-` attributes, which can’t be strongly typed.
 
 ```tsx
 const myComponent = render(<MyComponent />);
 
-expect(myComponent.find('div')).toHaveReactDataProps({
+expect(myComponent.find('div')).toHavePreactDataProps({
   'data-message': 'Hello world',
 });
 ```
 
-#### <a name="toContainReactComponent"></a> `.toContainReactComponent(type: string | ComponentType, props?: object)`
+#### <a name="toContainPreactComponent"></a> `.toContainPreactComponent(type: string | ComponentType, props?: object)`
 
 Asserts that at least one component matching `type` is in the descendants of the passed node. If the second argument is passed, this expectation will further filter the matches by components whose props are equal to the passed object (again, asymmetric matchers are fully supported).
 
 ```tsx
 const myComponent = render(<MyComponent />);
 
-expect(myComponent).toContainReactComponent('div', {
+expect(myComponent).toContainPreactComponent('div', {
   'aria-label': 'Hello world',
   onClick: expect.any(Function),
 });
 ```
 
-#### <a name="toContainReactComponentTimes"></a> `.toContainReactComponentTimes(type: string | ComponentType, times: number, props?: object)`
+#### <a name="toContainPreactComponentTimes"></a> `.toContainPreactComponentTimes(type: string | ComponentType, times: number, props?: object)`
 
-Asserts that a component matching `type` is in the descendants of the passed node a number of times. If the third argument is passed, this expectation will further filter the matches by components whose props are equal to the passed object (again, asymmetric matchers are fully supported). To assert that one component is or is not the descendant of the passed node use `.toContainReactComponent` or `.not.toContainReactComponent`.
+Asserts that a component matching `type` is in the descendants of the passed node a number of times. If the third argument is passed, this expectation will further filter the matches by components whose props are equal to the passed object (again, asymmetric matchers are fully supported). To assert that one component is or is not the descendant of the passed node use `.toContainPreactComponent` or `.not.toContainPreactComponent`.
 
 ```tsx
 const myComponent = render(<MyComponent />);
 
-expect(myComponent).toContainReactComponentTimes('div', 5, {
+expect(myComponent).toContainPreactComponentTimes('div', 5, {
   'aria-label': 'Hello world',
 });
 ```
 
-#### <a name="toProvideReactContext"></a> `.toProvideReactContext<T>(context: Context<T>, value?: T)`
+#### <a name="toProvidePreactContext"></a> `.toProvidePreactContext<T>(context: Context<T>, value?: T)`
 
 Asserts that at least one `context.Provider` is in the descendants of the passed node. If the second argument is passed, this expectation will further filter the matches by providers whose value is equal to the passed object (again, asymmetric matchers are fully supported).
 
@@ -672,21 +674,21 @@ function MyComponent({children}) {
 
 const myComponent = render(<MyComponent />);
 
-expect(myComponent).toProvideReactContext(MyContext, {
+expect(myComponent).toProvidePreactContext(MyContext, {
   hello: expect.any(String),
 });
 ```
 
-#### <a name="toContainReactText"></a> `.toContainReactText(text: string)`
+#### <a name="toContainPreactText"></a> `.toContainPreactText(text: string)`
 
 Asserts that the rendered output of the component contains the passed string as text content (that is, the text is included in what you would get by calling `textContent` on all root DOM nodes rendered by the component).
 
 ```tsx
 const myComponent = render(<MyComponent />);
-expect(myComponent).toContainReactText('Hello world!');
+expect(myComponent).toContainPreactText('Hello world!');
 ```
 
-#### <a name="toContainReactHTML"></a> `.toContainReactHTML(text: string)`
+#### <a name="toContainPreactHTML"></a> `.toContainPreactHTML(text: string)`
 
 > Only available from `@quilted/preact-testing/dom-matchers`
 
@@ -694,7 +696,7 @@ Asserts that the rendered output of the component contains the passed string as 
 
 ```tsx
 const myComponent = render(<MyComponent />);
-expect(myComponent).toContainReactHTML('<span>Hello world!</span>');
+expect(myComponent).toContainPreactHTML('<span>Hello world!</span>');
 ```
 
 ## FAQ

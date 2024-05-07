@@ -14,7 +14,7 @@ describe('<HTML />', () => {
   it('includes a responsive viewport tag', async () => {
     const head = await renderApp(<HTML />);
 
-    expect(head).toContainReactComponent(Viewport, {
+    expect(head).toContainPreactComponent(Viewport, {
       cover: true,
     });
   });
@@ -22,7 +22,7 @@ describe('<HTML />', () => {
   it('prevents search robots from indexing the application', async () => {
     const head = await renderApp(<HTML />);
 
-    expect(head).toContainReactComponent(SearchRobots, {
+    expect(head).toContainPreactComponent(SearchRobots, {
       index: false,
       follow: false,
     });
@@ -31,7 +31,7 @@ describe('<HTML />', () => {
   it('does not cache the response', async () => {
     const headers = await renderApp(<HTML />);
 
-    expect(headers).toContainReactComponent(CacheControl, {
+    expect(headers).toContainPreactComponent(CacheControl, {
       cache: false,
     });
   });
@@ -39,7 +39,7 @@ describe('<HTML />', () => {
   it('adds a content security policy with a strict default policy', async () => {
     const headers = await renderApp(<HTML />);
 
-    expect(headers).toContainReactComponent(ContentSecurityPolicy, {
+    expect(headers).toContainPreactComponent(ContentSecurityPolicy, {
       defaultSources: ["'self'"],
     });
   });

@@ -16,6 +16,6 @@ describe('<Start />', () => {
     const start = await renderApp(<Start />, {graphql});
 
     expect(graphql).toHavePerformedGraphQLQuery(startQuery);
-    expect(start).toContainReactText(`Hello ${name}!`);
+    expect(start).toContainPreactText(`Hello ${name}!`);
   });
 });

@@ -1,4 +1,5 @@
 import type {TestRouter} from '@quilted/quilt/navigate/testing';
+import type {BrowserTestMock} from '@quilted/quilt/browser/testing';
 import type {QueryClient} from '@tanstack/react-query';
 
 import type {AppContext} from '~/shared/context.ts';
@@ -13,6 +14,11 @@ export interface RenderOptions {
    * you expect.
    */
   readonly router?: TestRouter;
+
+  /**
+   * A custom environment for this component test.
+   */
+  readonly browser?: BrowserTestMock;
 
   /**
    * An object that controls the responses to GraphQL queries and mutations
@@ -47,6 +53,11 @@ export interface RenderContext extends AppContext {
    * The router used for this component test.
    */
   readonly router: TestRouter;
+
+  /**
+   * The browser environment for this component test.
+   */
+  readonly browser: BrowserTestMock;
 
   /**
    * The GraphQL controller used for this component test.
