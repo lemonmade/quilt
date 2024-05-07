@@ -1,5 +1,12 @@
 # @quilted/deno
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`87598dc`](https://github.com/lemonmade/quilt/commit/87598dcca4d97835caed7152f646e9989c75d73b)]:
+  - @quilted/quilt@0.7.0
+
 ## 0.2.2
 
 ### Patch Changes
