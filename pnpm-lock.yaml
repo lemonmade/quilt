@@ -567,9 +567,6 @@ importers:
         specifier: ^27.0.0
         version: 27.5.1
     devDependencies:
-      '@types/react-test-renderer':
-        specifier: ^18.0.0
-        version: 18.0.0
       expect:
         specifier: ^29.0.0
         version: 29.7.0
