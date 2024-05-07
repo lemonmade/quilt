@@ -40,9 +40,8 @@ describe('react-query', () => {
       `,
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
-        import {renderToStaticMarkup} from 'preact-render-to-string';
         import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
-        import {renderToResponse} from '@quilted/quilt/server';
+        import {renderToResponse, renderToStaticMarkup} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();

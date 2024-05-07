@@ -1,3 +1,8 @@
+export {
+  renderToString,
+  renderToStringAsync,
+  renderToStaticMarkup,
+} from 'preact-render-to-string';
 export * from '@quilted/preact-browser/server';
 
 export {
