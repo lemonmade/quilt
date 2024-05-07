@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.7.0
+
+### Minor Changes
+
+- [`87598dc`](https://github.com/lemonmade/quilt/commit/87598dcca4d97835caed7152f646e9989c75d73b) Thanks [@lemonmade](https://github.com/lemonmade)! - Update to more explicit Preact dependencies
+
 ## 0.6.16
 
 ### Patch Changes
