@@ -434,7 +434,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-context
       '@quilted/signals':
         specifier: workspace:^0.2.1
@@ -526,10 +526,10 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-context
       '@quilted/preact-performance':
         specifier: workspace:^0.1.0
@@ -601,10 +601,10 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-context
       '@quilted/preact-graphql':
         specifier: workspace:^0.1.0
@@ -622,7 +622,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-signals
       '@quilted/preact-testing':
-        specifier: workspace:^0.1.5
+        specifier: workspace:^0.1.6
         version: link:../preact-testing
       '@quilted/preact-workers':
         specifier: workspace:^0.1.0

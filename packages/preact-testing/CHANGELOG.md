@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.1.6
+
+### Patch Changes
+
+- [`285b2f0`](https://github.com/lemonmade/quilt/commit/285b2f083bfc6fe81db35e2950c8b3ae846486d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix templates
+
 ## 0.1.5
 
 ### Patch Changes

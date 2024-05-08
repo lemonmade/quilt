@@ -49,8 +49,8 @@
   },
   "dependencies": {
     "@quilted/http": "workspace:^0.3.0",
-    "@quilted/preact-browser": "workspace:^0.1.0",
-    "@quilted/preact-context": "workspace:^0.1.0",
+    "@quilted/preact-browser": "workspace:^0.1.1",
+    "@quilted/preact-context": "workspace:^0.1.1",
     "@quilted/preact-performance": "workspace:^0.1.0",
     "@quilted/routing": "workspace:^0.3.0"
   },
