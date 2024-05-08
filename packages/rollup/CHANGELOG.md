@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.25
+
+### Patch Changes
+
+- [`2a59a4c`](https://github.com/lemonmade/quilt/commit/2a59a4c89141c42853f7afa5c3497eae97982a5b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix server resolution for async components
+
 ## 0.2.24
 
 ### Patch Changes
