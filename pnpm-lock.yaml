@@ -882,7 +882,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../request-router
       '@quilted/rollup':
-        specifier: workspace:^0.2.24
+        specifier: workspace:^0.2.26
         version: link:../rollup
     devDependencies:
       '@types/babel__core':
