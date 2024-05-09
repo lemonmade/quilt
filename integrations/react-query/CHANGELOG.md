@@ -1,5 +1,11 @@
 # @quilted/react-query
 
+## 0.4.1
+
+### Patch Changes
+
+- [`adbbb82`](https://github.com/lemonmade/quilt/commit/adbbb82ddb6b45566ddc6a64240db2dbccff3eef) Thanks [@lemonmade](https://github.com/lemonmade)! - Add useLazyGraphQLQuery hook
+
 ## 0.4.0
 
 ### Minor Changes
