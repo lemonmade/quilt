@@ -154,7 +154,7 @@
     "browserslist-useragent-regexp": "^4.1.0",
     "dotenv": "^16.0.0",
     "es-module-lexer": "^1.3.1",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.21.0",
     "glob": "^10.3.10",
     "graphql": "^16.8.0",
     "lightningcss": "^1.22.0",
