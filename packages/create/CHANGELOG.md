@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.23
+
+### Patch Changes
+
+- [`0251270`](https://github.com/lemonmade/quilt/commit/0251270ca57edac1684d242cbc764e511a046d08) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix more template typescript issues
+
 ## 0.2.22
 
 ### Patch Changes
