@@ -1,5 +1,9 @@
 import {
+  useQuery,
   useSuspenseQuery,
+  type QueryOptions,
+  type UseQueryOptions,
+  type UseQueryResult,
   type UseSuspenseQueryOptions,
   type UseSuspenseQueryResult,
 } from '@tanstack/react-query';
@@ -31,14 +35,46 @@ export function useGraphQLQuery<Data, Variables>(
     [GraphQLQueryOptions<Data, Variables>]
   >
 ): UseSuspenseQueryResult<Data> {
-  const [options = {} as any] = args;
+  return useSuspenseQuery<Data>(useGraphQLQueryOptions(query, ...args));
+}
 
+export type LazyGraphQLQueryOptions<Data, Variables> = Omit<
+  UseQueryOptions<Data>,
+  'queryFn' | 'queryKey'
+> &
+  Partial<Pick<UseQueryOptions<Data>, 'queryFn' | 'queryKey'>> &
+  GraphQLVariableOptions<Variables> & {
+    fetch?: GraphQLFetch;
+  };
+
+export function useLazyGraphQLQuery<Data, Variables>(
+  query: GraphQLAnyOperation<Data, Variables>,
+  ...args: IfAllFieldsNullable<
+    Variables,
+    [GraphQLQueryOptions<Data, Variables>?],
+    [GraphQLQueryOptions<Data, Variables>]
+  >
+): UseQueryResult<Data> {
+  return useQuery<Data>(useGraphQLQueryOptions(query, ...args));
+}
+
+export function useGraphQLQueryOptions<
+  Data,
+  Variables,
+  Options extends QueryOptions<Data> &
+    GraphQLVariableOptions<Variables> & {
+      fetch?: GraphQLFetch;
+    },
+>(
+  query: GraphQLAnyOperation<Data, Variables>,
+  options: Partial<Options> = {},
+): Omit<Options, 'variables' | 'fetch'> {
   const {
     variables,
     fetch: explicitFetch,
     queryKey,
     ...reactQueryOptions
-  } = options as GraphQLQueryOptions<Data, Variables>;
+  } = options;
 
   const fetchFromContext = useGraphQLFetch({optional: true});
   const fetch = explicitFetch ?? fetchFromContext;
@@ -68,7 +104,8 @@ export function useGraphQLQuery<Data, Variables>(
     }
   }
 
-  return useSuspenseQuery<Data>({
+  // @ts-expect-error Can’t quite get the types to work here.
+  return {
     queryKey: fullQueryKey,
     queryFn: async ({signal}) => {
       const result = await fetch(query, {
@@ -81,5 +118,5 @@ export function useGraphQLQuery<Data, Variables>(
       return result.data!;
     },
     ...reactQueryOptions,
-  });
+  };
 }
