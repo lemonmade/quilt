@@ -1,5 +1,13 @@
 # @quilted/rollup
 
+## 0.2.27
+
+### Patch Changes
+
+- [`4fac90a`](https://github.com/lemonmade/quilt/commit/4fac90a52b8efff96572b5f2ae93b40eac2fcf34) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix async module import resolution
+
+- [`fb45f13`](https://github.com/lemonmade/quilt/commit/fb45f13ef3d4be82f7edde567ed3247931957701) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix usage of magic "env" module
+
 ## 0.2.26
 
 ### Patch Changes
