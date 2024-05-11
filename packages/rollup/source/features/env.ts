@@ -90,7 +90,7 @@ export function magicModuleEnv({
 }: MagicModuleEnvOptions = {}) {
   return createMagicModulePlugin({
     name: '@quilted/magic-module/env',
-    module: MAGIC_MODULE_ENV,
+    module: [MAGIC_MODULE_ENV, '@quilted/quilt/env'],
     async source() {
       const inlineEnv: Record<string, string> = {};
 

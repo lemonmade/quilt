@@ -1,5 +1,5 @@
 import type {RenderableProps} from 'preact';
-import Env from '@quilted/quilt/env';
+import Env from 'quilt:module/env';
 import {Title, Favicon, useBrowserRequest} from '@quilted/quilt/browser';
 import {
   CacheControl,

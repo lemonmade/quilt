@@ -12,7 +12,7 @@ export function createMagicModulePlugin({
 }: {
   readonly name: string;
   readonly alias?: string | (() => string | Promise<string>);
-  readonly module: string;
+  readonly module: string | string[];
   readonly sideEffects?: boolean;
   source?(this: PluginContext): string | Promise<string>;
 }) {
@@ -21,7 +21,12 @@ export function createMagicModulePlugin({
   return {
     name,
     async resolveId(id) {
-      if (id !== module) return null;
+      if (
+        id !== module ||
+        (Array.isArray(module) && module.some((moduleID) => moduleID === id))
+      ) {
+        return null;
+      }
 
       const resolved =
         (typeof alias === 'function' ? await alias() : alias) ??
