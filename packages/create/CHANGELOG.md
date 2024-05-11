@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.25
+
+### Patch Changes
+
+- [`fb45f13`](https://github.com/lemonmade/quilt/commit/fb45f13ef3d4be82f7edde567ed3247931957701) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix usage of magic "env" module
+
 ## 0.2.24
 
 ### Patch Changes
