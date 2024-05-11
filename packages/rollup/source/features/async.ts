@@ -42,16 +42,6 @@ export function asyncModules({
 
       return `\0${prefix}${resolved.id}`;
     },
-    resolveDynamicImport(specifier) {
-      if (
-        typeof specifier === 'string' &&
-        specifier.startsWith(IMPORT_PREFIX)
-      ) {
-        return `\0${specifier}`;
-      }
-
-      return null;
-    },
     async load(id: string) {
       if (id.startsWith(`\0${MODULE_PREFIX}`)) {
         const imported = id.replace(`\0${MODULE_PREFIX}`, '');
