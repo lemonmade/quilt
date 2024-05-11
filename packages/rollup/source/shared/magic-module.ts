@@ -21,10 +21,11 @@ export function createMagicModulePlugin({
   return {
     name,
     async resolveId(id) {
-      if (
-        id !== module ||
-        (Array.isArray(module) && module.some((moduleID) => moduleID === id))
-      ) {
+      const matches = Array.isArray(module)
+        ? module.some((moduleID) => moduleID === id)
+        : id === module;
+
+      if (!matches) {
         return null;
       }
 
