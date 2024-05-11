@@ -888,21 +888,7 @@ export function magicModuleAppRequestRouter({
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app-request-router',
     module: MAGIC_MODULE_REQUEST_ROUTER,
-    alias:
-      entry ??
-      async function magicModuleRequestRouter() {
-        const project = Project.load(root);
-
-        const globbed = await project.glob(
-          '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
-          {
-            nodir: true,
-            absolute: true,
-          },
-        );
-
-        return globbed[0]!;
-      },
+    alias: () => appServerEntry({entry, root}) as Promise<string>,
     async source() {
       return multiline`
         import '@quilted/quilt/globals';
@@ -933,6 +919,25 @@ export function magicModuleAppRequestRouter({
       `;
     },
   });
+}
+
+export async function appServerEntry({
+  entry,
+  root = process.cwd(),
+}: Pick<AppServerOptions, 'entry' | 'root'> = {}) {
+  if (entry) return entry;
+
+  const project = Project.load(root);
+
+  const globbed = await project.glob(
+    '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
+    {
+      nodir: true,
+      absolute: true,
+    },
+  );
+
+  return globbed[0];
 }
 
 export function magicModuleAppBrowserEntry({

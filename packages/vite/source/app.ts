@@ -2,6 +2,7 @@ import * as path from 'path';
 
 import type {Plugin} from 'vite';
 import {
+  appServerEntry,
   MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
@@ -156,6 +157,35 @@ export async function quiltApp({
       ...magicModuleAppRequestRouter({entry: server?.entry}),
       enforce: 'pre',
     });
+
+    plugins.push({
+      name: '@quilted/development-server',
+      configureServer(vite) {
+        return () => {
+          vite.middlewares.use(async (req, res, next) => {
+            try {
+              const [serverEntry, {createHttpRequestListener}] =
+                await Promise.all([
+                  appServerEntry({entry: server?.entry}),
+                  import('@quilted/request-router/node'),
+                ]);
+
+              // There seems to be a bug with using the the virtual module where Vite
+              // does not perform HMR on the server. We use the actual file on disk if
+              // possible instead, which does HMR correctly.
+              const {default: requestRouter} = await vite.ssrLoadModule(
+                serverEntry ?? MAGIC_MODULE_REQUEST_ROUTER,
+              );
+
+              const handle = createHttpRequestListener(requestRouter);
+              await handle(req, res);
+            } catch (error) {
+              next(error);
+            }
+          });
+        };
+      },
+    });
   }
 
   if (useGraphQL) {
@@ -176,28 +206,6 @@ export async function quiltApp({
         test: {
           environment: 'jsdom',
         },
-      };
-    },
-  });
-
-  plugins.push({
-    name: '@quilted/development-server',
-    configureServer(vite) {
-      return () => {
-        vite.middlewares.use(async (req, res, next) => {
-          try {
-            const [{default: requestRouter}, {createHttpRequestListener}] =
-              await Promise.all([
-                vite.ssrLoadModule(MAGIC_MODULE_REQUEST_ROUTER),
-                import('@quilted/request-router/node'),
-              ]);
-
-            const handle = createHttpRequestListener(requestRouter);
-            await handle(req, res);
-          } catch (error) {
-            next(error);
-          }
-        });
       };
     },
   });
