@@ -82,7 +82,7 @@ export class AsyncComponent<Props> extends Component<
       throw module.load();
     }
 
-    return renderLoading ? (
+    return hasLoadingContent(renderLoading) ? (
       <Suspense fallback={normalizeRender(renderLoading, props)}>
         <Component {...props!} />
       </Suspense>
@@ -167,7 +167,7 @@ export class AsyncComponent<Props> extends Component<
       return null;
     }
 
-    return renderLoading ? (
+    return hasLoadingContent(renderLoading) ? (
       <Suspense fallback={normalizeRender(renderLoading, props)}>
         <Component {...this.props} />
       </Suspense>
@@ -175,6 +175,13 @@ export class AsyncComponent<Props> extends Component<
       <Component {...this.props} />
     );
   }
+}
+
+function hasLoadingContent(
+  content?: ComponentChildren | ((...args: any) => ComponentChildren),
+) {
+  // `null` should be treated as empty loading content
+  return content !== undefined;
 }
 
 function normalizeRender<Props>(
