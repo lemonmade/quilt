@@ -131,7 +131,9 @@ export class BrowserResponseHeadElements<
   )[] = [];
 
   get value() {
-    return this.elements.map(resolveSignalOrValue);
+    return this.elements.map((element) =>
+      resolveSignalOrValue<Partial<HTMLElementTagNameMap[Element]>>(element),
+    );
   }
 
   constructor(readonly selector: Element) {}
@@ -160,6 +162,13 @@ export class BrowserResponseElementAttributes<Attributes> {
 }
 
 export class BrowserResponseSerializations {
+  get value() {
+    return [...this.serializations].map(([id, value]) => ({
+      id,
+      value: (typeof value === 'function' ? value() : value) as unknown,
+    }));
+  }
+
   constructor(private readonly serializations = new Map<string, unknown>()) {}
 
   get(id: string) {

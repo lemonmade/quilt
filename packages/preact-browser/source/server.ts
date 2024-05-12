@@ -29,6 +29,7 @@ export {
 } from './server/hooks/response-cookie.ts';
 export {useResponseStatus} from './server/hooks/response-status.ts';
 export {useSearchRobots} from './server/hooks/search-robots.ts';
+export {useResponseSerialization} from './server/hooks/serialized.ts';
 export {useStrictTransportSecurity} from './server/hooks/strict-transport-security.ts';
 export {useViewport} from './server/hooks/viewport.ts';
 

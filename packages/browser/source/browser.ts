@@ -182,9 +182,9 @@ export class BrowserElementAttributes<Element extends HTMLElement> {
 export class BrowserSerializations {
   private readonly serializations = new Map<string, unknown>(
     Array.from(
-      document.querySelectorAll<HTMLMetaElement>(`meta[name^="serialized"]`),
+      document.querySelectorAll<HTMLMetaElement>(`meta[name^="serialized:"]`),
     ).map((node) => [
-      node.name.replace(/^serialized-/, ''),
+      node.name.replace(/^serialized:/, ''),
       getSerializedFromNode(node),
     ]),
   );

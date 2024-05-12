@@ -1,4 +1,4 @@
-import {isValidElement, type VNode} from 'preact';
+import {isValidElement, type VNode, type JSX} from 'preact';
 import {
   renderToStaticMarkup,
   renderToStringAsync,
@@ -191,11 +191,14 @@ export async function renderToResponse(
             {browserResponse.title.value && (
               <title>{browserResponse.title.value}</title>
             )}
-            {browserResponse.links.value.map((link, index) => (
-              <link key={index} {...link} />
+            {browserResponse.links.value.map((link) => (
+              <link {...(link as JSX.HTMLAttributes<HTMLLinkElement>)} />
             ))}
-            {browserResponse.metas.value.map((meta, index) => (
-              <meta key={index} {...meta} />
+            {browserResponse.metas.value.map((meta) => (
+              <meta {...(meta as JSX.HTMLAttributes<HTMLMetaElement>)} />
+            ))}
+            {browserResponse.serializations.value.map(({id, value}) => (
+              <meta name={`serialized:${id}`} content={JSON.stringify(value)} />
             ))}
             {synchronousAssets?.scripts.map((script) => (
               <ScriptAsset
