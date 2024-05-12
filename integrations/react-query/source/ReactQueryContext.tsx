@@ -1,4 +1,5 @@
 import type {RenderableProps, ComponentType} from 'preact';
+import {Suspense} from 'preact/compat';
 import {
   dehydrate,
   QueryClient,
@@ -33,7 +34,18 @@ export function ReactQueryContext({
       <HydrationBoundary state={dehydratedState}>
         {children as any}
       </HydrationBoundary>
-      <Serializer client={client} />
+
+      {/**
+       * This must run after any children that perform queries on the server. The
+       * `Serializer` component will wait until any pending queries are resolved,
+       * and once resolved, will add a serialization for the contents of the
+       * React Query client. We wrap this process in a Suspense boundary so that
+       * it just makes the server wait, but does not force any parent components to
+       * re-render once the suspense promise resolves.
+       */}
+      <Suspense fallback={null}>
+        <Serializer client={client} />
+      </Suspense>
     </QueryClientProvider>
   );
 }
