@@ -240,7 +240,12 @@ export function createEnvironment(): Environment {
   const allRendered = new Set<Root<any, any, any>>();
   const render = createRender({});
 
-  return {render, createRender, rendered: allRendered, destroyAll};
+  return {
+    render,
+    createRender: createRender as any,
+    rendered: allRendered,
+    destroyAll,
+  };
 
   type ResolveRoot = (node: Node<unknown>) => Node<unknown> | null;
   type Render = (element: VNode<unknown>) => VNode<unknown>;
@@ -657,7 +662,8 @@ export function createEnvironment(): Environment {
     Actions extends PlainObject = EmptyObject,
     Async extends boolean = false,
   >(
-    createRenderOptions: CustomRenderOptions<
+    createRenderOptions: CustomRenderExtendOptions<
+      {},
       RenderOptions,
       Context,
       Context,
@@ -667,11 +673,13 @@ export function createEnvironment(): Environment {
     >,
   ): CustomRender<RenderOptions, Context, Actions, Async> {
     const {
+      options: customizeOptions,
       render = defaultRender,
       context: createContext = defaultContext,
       actions: createActions = defaultActions,
       afterRender,
-    } = createRenderOptions as CustomRenderOptions<
+    } = createRenderOptions as CustomRenderExtendOptions<
+      PlainObject,
       PlainObject,
       PlainObject,
       PlainObject,
@@ -684,22 +692,27 @@ export function createEnvironment(): Environment {
       element: VNode<Props>,
       options: RenderOptions = {} as any,
     ) {
-      const context: any = createContext(options, {});
+      const resolvedOptions = customizeOptions
+        ? {...options, ...customizeOptions(options)}
+        : options;
+      const context: any = createContext(resolvedOptions, {});
       const actions: any = {};
 
       const root = createRoot<Props, Context, Actions>(element, {
         context,
         actions,
-        render: (element) => render(element, context, options),
+        render: (element) => render(element, context, resolvedOptions),
         resolveRoot: (root) => root.find(element.type),
       });
 
-      Object.assign(actions, createActions(root as any, options, {}));
+      Object.assign(actions, createActions(root as any, resolvedOptions, {}));
 
       root.mount();
 
       if (afterRender) {
-        const afterRenderResult = root.act(() => afterRender(root, options));
+        const afterRenderResult = root.act(() =>
+          afterRender(root, resolvedOptions),
+        );
 
         return isPromise(afterRenderResult)
           ? afterRenderResult.then(() => root)
@@ -776,7 +789,8 @@ export function createEnvironment(): Environment {
         render: additionalRender = defaultRender,
         afterRender: additionalAfterRender = noop,
       }: CustomRenderExtendOptions<any, any, any, any, any, any, any>) => {
-        const extendedRender = createRender<any, any, any, any>({
+        return createRender<any, any, any, any>({
+          options: customizeOptions,
           context(options, initialContext) {
             const baseContext: any = {
               ...initialContext,
@@ -818,14 +832,6 @@ export function createEnvironment(): Environment {
             return isPromise(result) ? result.then(finalResult) : finalResult();
           },
         });
-
-        return customizeOptions
-          ? (element: any, options = {}) =>
-              extendedRender(element, {
-                ...options,
-                ...customizeOptions(options),
-              })
-          : extendedRender;
       },
     });
 

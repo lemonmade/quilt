@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, vi} from 'vitest';
 
-import {h, Component, Fragment} from 'preact';
-import {useState} from 'preact/hooks';
+import {h, Component, Fragment, createContext} from 'preact';
+import {useContext, useState} from 'preact/hooks';
 
-import {render} from '../index.ts';
+import {render, createRender, type CustomRenderOptions} from '../index.ts';
 
 describe('e2e', () => {
   it('throws if an Preact component throws during render', () => {
@@ -72,5 +72,96 @@ describe('e2e', () => {
         </ErrorBoundary>,
       ),
     ).not.toThrowError();
+  });
+
+  describe('options', () => {
+    type ColorScheme = 'dark' | 'light';
+
+    const ColorSchemeContext = createContext<ColorScheme>('light');
+
+    interface Options {
+      colorScheme?: ColorScheme;
+    }
+
+    function useColorScheme() {
+      return useContext(ColorSchemeContext);
+    }
+
+    function ColorThemedComponent() {
+      return <p>Color scheme: {useColorScheme()}</p>;
+    }
+
+    it('gets access to options when rendering', () => {
+      const renderSpy = vi.fn((element, _, {colorScheme = 'light'}) => {
+        return (
+          <ColorSchemeContext.Provider value={colorScheme}>
+            {element}
+          </ColorSchemeContext.Provider>
+        );
+      }) satisfies CustomRenderOptions<Options>['render'];
+
+      const renderWithColorScheme = createRender<Options>({
+        render: renderSpy,
+      });
+
+      const renderedWithDefaultTheme = renderWithColorScheme(
+        <ColorThemedComponent />,
+      );
+
+      const renderedWithDarkTheme = renderWithColorScheme(
+        <ColorThemedComponent />,
+        {colorScheme: 'dark'},
+      );
+
+      expect(renderSpy).toHaveBeenNthCalledWith(
+        1,
+        expect.anything(),
+        expect.anything(),
+        expect.not.objectContaining({colorScheme: expect.any(String)}),
+      );
+
+      expect(renderSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.anything(),
+        expect.anything(),
+        {colorScheme: 'dark'},
+      );
+
+      expect(renderedWithDefaultTheme.text).toBe('Color scheme: light');
+      expect(renderedWithDarkTheme.text).toBe('Color scheme: dark');
+    });
+
+    it('can override options in an extended render function', () => {
+      const renderWithColorScheme = createRender<
+        Options & {highContrast?: boolean}
+      >({
+        render(element, _, {colorScheme = 'light'}) {
+          return (
+            <ColorSchemeContext.Provider value={colorScheme}>
+              {element}
+            </ColorSchemeContext.Provider>
+          );
+        },
+      });
+
+      const optionsSpy = vi.fn(() => ({colorScheme: 'dark' as ColorScheme}));
+
+      const renderWithDarkColorScheme = renderWithColorScheme.extend<Options>({
+        options: optionsSpy,
+      });
+
+      const renderedWithDarkTheme = renderWithDarkColorScheme(
+        <ColorThemedComponent />,
+        {highContrast: true},
+      );
+
+      expect(optionsSpy).toHaveBeenCalledWith({highContrast: true});
+
+      expect(renderedWithDarkTheme.text).toBe('Color scheme: dark');
+
+      expect(renderWithDarkColorScheme.hook(() => useColorScheme()).value).toBe(
+        'dark',
+      );
+    });
   });
 });
