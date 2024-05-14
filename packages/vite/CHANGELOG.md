@@ -1,5 +1,14 @@
 # @quilted/vite
 
+## 0.1.21
+
+### Patch Changes
+
+- [`b6db07e`](https://github.com/lemonmade/quilt/commit/b6db07e54ce2b9433eca6bf979d6ada1ee6efd37) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix app server hot reloading
+
+- Updated dependencies [[`b6db07e`](https://github.com/lemonmade/quilt/commit/b6db07e54ce2b9433eca6bf979d6ada1ee6efd37)]:
+  - @quilted/rollup@0.2.28
+
 ## 0.1.20
 
 ### Patch Changes

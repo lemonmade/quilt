@@ -55,8 +55,8 @@
     "miniflare": "^2.4.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.7.2",
-    "@quilted/rollup": "workspace:^0.2.27"
+    "@quilted/quilt": "workspace:^0.7.3",
+    "@quilted/rollup": "workspace:^0.2.28"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {

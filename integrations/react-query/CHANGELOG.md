@@ -1,5 +1,16 @@
 # @quilted/react-query
 
+## 0.4.2
+
+### Patch Changes
+
+- [`8d12d8e`](https://github.com/lemonmade/quilt/commit/8d12d8e0eb997f9631136f15d228501eaef9646d) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `ReactQueryContext` causing its children unnecessarily to re-render during SSR
+
+- [`b2020f7`](https://github.com/lemonmade/quilt/commit/b2020f74e07f01f259f59a0a8fa20d51c15a5449) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix serialization in edge cases where scripts load before DOMContentLoaded
+
+- Updated dependencies [[`b2020f7`](https://github.com/lemonmade/quilt/commit/b2020f74e07f01f259f59a0a8fa20d51c15a5449)]:
+  - @quilted/quilt@0.7.3
+
 ## 0.4.1
 
 ### Patch Changes
