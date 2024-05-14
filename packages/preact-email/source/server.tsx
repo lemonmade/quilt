@@ -1,4 +1,4 @@
-import type {VNode} from 'preact';
+import type {JSX, VNode} from 'preact';
 import {
   renderToStringAsync,
   renderToStaticMarkup,
@@ -40,11 +40,11 @@ export async function renderEmail(element: VNode<any>) {
         <html {...browser.htmlAttributes.value}>
           <head>
             {browser.title.value && <title>{browser.title.value}</title>}
-            {browser.links.value.map((link, index) => (
-              <link key={index} {...link} />
+            {browser.links.value.map((link) => (
+              <link {...(link as JSX.HTMLAttributes<HTMLLinkElement>)} />
             ))}
-            {browser.metas.value.map((meta, index) => (
-              <meta key={index} {...meta} />
+            {browser.metas.value.map((meta) => (
+              <meta {...(meta as JSX.HTMLAttributes<HTMLMetaElement>)} />
             ))}
           </head>
           <body
