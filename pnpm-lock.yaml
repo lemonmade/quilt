@@ -428,7 +428,7 @@ importers:
         specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/browser':
-        specifier: workspace:^0.0.1
+        specifier: workspace:^0.0.2
         version: link:../browser
       '@quilted/http':
         specifier: workspace:^0.3.0
@@ -453,7 +453,7 @@ importers:
   packages/preact-email:
     dependencies:
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.2
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.0
@@ -601,7 +601,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.1
+        specifier: workspace:^0.1.2
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.1
@@ -882,7 +882,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../request-router
       '@quilted/rollup':
-        specifier: workspace:^0.2.26
+        specifier: workspace:^0.2.28
         version: link:../rollup
     devDependencies:
       '@types/babel__core':

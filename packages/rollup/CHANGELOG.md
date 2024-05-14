@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.28
+
+### Patch Changes
+
+- [`b6db07e`](https://github.com/lemonmade/quilt/commit/b6db07e54ce2b9433eca6bf979d6ada1ee6efd37) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix app server hot reloading
+
 ## 0.2.27
 
 ### Patch Changes
