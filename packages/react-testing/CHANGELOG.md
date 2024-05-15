@@ -1,5 +1,14 @@
 # @quilted/react-testing
 
+## 0.6.10
+
+### Patch Changes
+
+- [`0e01748`](https://github.com/lemonmade/quilt/commit/0e017486085aa1d45bb322c841ca213956ec983a) Thanks [@lemonmade](https://github.com/lemonmade)! - Return an extendable render function when customizing `options`
+
+- Updated dependencies [[`0e01748`](https://github.com/lemonmade/quilt/commit/0e017486085aa1d45bb322c841ca213956ec983a)]:
+  - @quilted/preact-testing@0.1.7
+
 ## 0.6.9
 
 ### Patch Changes
