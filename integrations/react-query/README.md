@@ -39,15 +39,18 @@ The `ReactQueryContext` takes care of ensuring that all queries made by your app
 That’s all the setup you need! Elsewhere in your application, you can now use React Query’s [`useSuspenseQuery` hook](https://tanstack.com/query/v4/docs/reference/useSuspenseQuery) to load data in your components. The example below shows how you might use Quilt’s GraphQL utilities to perform type-safe GraphQL queries using React Query:
 
 ```tsx
-import {createGraphQLHttpFetch} from '@quilted/quilt';
+import {createGraphQLFetch} from '@quilted/quilt/graphql';
 import {useSuspenseQuery} from '@tanstack/react-query';
 
 import startQuery from './Start.graphql';
 
-const query = createGraphQLHttpFetch({uri: 'https://my-graphql-api.com'});
+const query = createGraphQLFetch({uri: 'https://my-graphql-api.com'});
 
 export function Start() {
-  const result = useSuspenseQuery('start-query', () => query(startQuery));
+  const result = useSuspenseQuery({
+    queryKey: ['start-query'],
+    queryFn: () => query(startQuery),
+  });
 
   return <pre>{JSON.stringify(result, null, 2)}</pre>;
 }

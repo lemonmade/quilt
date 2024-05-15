@@ -1,4 +1,7 @@
+import type {AsyncFetchCache} from '@quilted/async';
+import type {ReadonlySignal} from '@quilted/preact-signals';
 import {createOptionalContext} from '@quilted/preact-context';
-import type {Signal} from '@quilted/preact-signals';
 
-export const AsyncHydratedContext = createOptionalContext<Signal<boolean>>();
+export const AsyncHydratedContext =
+  createOptionalContext<ReadonlySignal<boolean>>();
+export const AsyncFetchCacheContext = createOptionalContext<AsyncFetchCache>();

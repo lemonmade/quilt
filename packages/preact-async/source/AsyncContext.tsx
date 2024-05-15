@@ -1,26 +1,60 @@
 import type {RenderableProps} from 'preact';
-import {useMemo, useLayoutEffect} from 'preact/hooks';
-import {signal} from '@quilted/preact-signals';
+import {useRef, useLayoutEffect} from 'preact/hooks';
 
-import {AsyncHydratedContext} from './context.ts';
+import type {AsyncFetchCache} from '@quilted/async';
+import {signal, type Signal} from '@quilted/preact-signals';
+import {useBrowserDetails} from '@quilted/preact-browser';
+
+import {AsyncHydratedContext, AsyncFetchCacheContext} from './context.ts';
 
 /**
  * Only needed for the following features:
  *
  * - `<AsyncComponent server={false}>` (needed to correctly hydrate client-only components)
  */
-export function AsyncContext({children}: RenderableProps<{}>) {
-  const hydrationSignal = useMemo(() => signal(false), []);
-
-  if (typeof document === 'object') {
-    useLayoutEffect(() => {
-      hydrationSignal.value = true;
-    }, []);
+export function AsyncContext({
+  cache,
+  children,
+}: RenderableProps<{
+  cache: AsyncFetchCache;
+}>) {
+  const browser = useBrowserDetails();
+  const internals = useRef<{
+    hydrated: Signal<boolean>;
+    deserialized: boolean;
+  }>({deserialized: false} as any);
+  if (internals.current.hydrated == null) {
+    Object.assign(internals.current, {hydrated: signal(false)});
   }
 
-  return (
-    <AsyncHydratedContext.Provider value={hydrationSignal}>
+  const {hydrated, deserialized} = internals.current;
+
+  if (typeof document === 'object') {
+    if (!deserialized) {
+      const serialization = browser.serializations.get('quilt:fetch:hydrated');
+      if (Array.isArray(serialization)) cache.restore(serialization);
+
+      internals.current.deserialized = true;
+    }
+
+    useLayoutEffect(() => {
+      hydrated.value = true;
+    }, []);
+  } else {
+    browser.serializations.set('quilt:fetch:cache', () => cache.serialize());
+  }
+
+  const content = (
+    <AsyncHydratedContext.Provider value={hydrated}>
       {children}
     </AsyncHydratedContext.Provider>
+  );
+
+  return cache ? (
+    <AsyncFetchCacheContext.Provider value={cache}>
+      {content}
+    </AsyncFetchCacheContext.Provider>
+  ) : (
+    content
   );
 }

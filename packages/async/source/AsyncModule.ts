@@ -1,4 +1,4 @@
-import {AsyncAction} from './AsyncAction.ts';
+import {AsyncFetch} from './AsyncFetch.ts';
 
 export interface AsyncModuleLoaderFunction<Module> {
   (): Promise<Module>;
@@ -40,7 +40,7 @@ export class AsyncModule<Module> {
     return this.loadAction.isRunning;
   }
 
-  private readonly loadAction: AsyncAction<Module>;
+  private readonly loadAction: AsyncFetch<Module>;
 
   constructor(load: AsyncModuleLoader<Module>) {
     const id = (load as any).id;
@@ -50,7 +50,7 @@ export class AsyncModule<Module> {
       Symbol.for('quilt')
     ]?.asyncModules?.get(id);
 
-    this.loadAction = new AsyncAction(
+    this.loadAction = new AsyncFetch(
       () => (typeof load === 'function' ? load() : load.import()),
       {initial: preloadedModule},
     );
@@ -59,7 +59,7 @@ export class AsyncModule<Module> {
   load = ({force = false} = {}) =>
     !force && (this.isLoading || this.status !== 'pending')
       ? this.promise
-      : this.loadAction.run();
+      : this.loadAction.call();
 
   import = this.load;
 }

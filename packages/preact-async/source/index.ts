@@ -3,7 +3,7 @@ export * from '@quilted/async';
 export {AsyncComponent} from './AsyncComponent.tsx';
 export {AsyncContext} from './AsyncContext.tsx';
 
-export {useAsyncAction} from './hooks/action.ts';
+export {useAsyncFetch, useAsyncFetchCache} from './hooks/fetch.ts';
 export {
   useAsyncModule,
   useAsyncModuleAssets,
