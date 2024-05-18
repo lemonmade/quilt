@@ -350,4 +350,92 @@ describe('async', () => {
       `Hello from an async component!`,
     );
   });
+
+  it('can server render components using an async fetch', async () => {
+    await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+    await workspace.fs.write({
+      'browser.tsx': multiline`
+        import '@quilted/quilt/globals';
+        import {Browser, BrowserContext} from '@quilted/quilt/browser';
+        import {hydrate} from 'preact';
+        import App from './App.tsx';
+
+        const element = document.querySelector('#app')!;
+        const browser = new Browser();
+        
+        hydrate(<BrowserContext browser={browser}><App /></BrowserContext>, element);
+      `,
+      'server.tsx': multiline`
+        import '@quilted/quilt/globals';
+        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {renderToResponse} from '@quilted/quilt/server';
+        
+        import {BrowserAssets} from 'quilt:module/assets';
+
+        import App from './App.tsx';
+        
+        const router = new RequestRouter();
+        const assets = new BrowserAssets();
+
+        router.get('/data', async () => {
+          return new Response('Hello world!');
+        });
+        
+        // For all GET requests, render our React application.
+        router.get(async (request) => {
+          const response = await renderToResponse(<App />, {
+            request,
+            assets,
+          });
+        
+          return response;
+        });
+        
+        export default router;
+      
+      `,
+      'App.tsx': multiline`
+        import {useMemo} from 'preact/hooks';
+        import {Suspense} from 'preact/compat';
+        import {useBrowserRequest} from '@quilted/quilt/browser';
+        import {
+          AsyncContext,
+          AsyncFetchCache,
+          useAsyncFetch,
+        } from '@quilted/quilt/async';
+        
+        export default function App() {
+          const cache = useMemo(() => new AsyncFetchCache(), []);
+
+          return (
+            <AsyncContext cache={cache}>
+              <Suspense fallback={"Loading..."}>
+                <Async />
+              </Suspense>
+            </AsyncContext>
+          );
+        }
+
+        function Async() {
+          const {url} = useBrowserRequest();
+          const fetched = useAsyncFetch(async () => {
+            const response = await fetch(new URL('/data', url));
+            const text = await response.text();
+            return text;
+          }, {key: 'data'});
+        
+          return <div>{fetched.value}</div>
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const noJSPage = await server.openPage('/', {
+      javaScriptEnabled: false,
+    });
+
+    const noJSPageContent = await noJSPage.textContent('body');
+    expect(noJSPageContent).toBe(`Hello world!`);
+  });
 });

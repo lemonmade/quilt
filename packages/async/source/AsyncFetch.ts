@@ -78,12 +78,10 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
         ? this.initial
         : new AsyncFetchCall(this.function);
 
-    const finalizeFetchCall = () => () => {
+    const finalizeFetchCall = () => {
       if (this.runningSignal.peek() === fetchCall) {
         this.runningSignal.value = undefined;
       }
-
-      if (fetchCall.signal.aborted) return;
 
       this.finishedSignal.value = fetchCall;
     };
@@ -100,7 +98,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
 export class AsyncFetchCall<Data = unknown, Input = unknown> {
   readonly promise: AsyncFetchPromise<Data, Input>;
   readonly function: AsyncFetchFunction<Data, Input>;
-  readonly input!: Input;
+  readonly input?: Input;
 
   get signal() {
     return this.abortController.signal;
@@ -162,16 +160,18 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
 
   call = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
     if (this.runningSignal.peek() || this.signal.aborted) {
-      throw new Error(`Can’t perform fetch()`);
+      return Promise.reject(new Error(`Can’t perform fetch()`));
     }
 
-    if (signal) {
-      signal.addEventListener('abort', () => {
-        this.abortController.abort();
-      });
-    }
+    Object.assign(this, {input});
 
-    this.function(input!, {signal}).then(this.resolve, this.reject);
+    signal?.addEventListener('abort', () => {
+      this.abortController.abort();
+    });
+
+    Promise.resolve()
+      .then(() => this.function(input!, {signal: this.abortController.signal}))
+      .then(this.resolve, this.reject);
 
     return this.promise;
   };

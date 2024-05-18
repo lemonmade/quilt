@@ -16,9 +16,9 @@ export function AsyncContext({
   cache,
   children,
 }: RenderableProps<{
-  cache: AsyncFetchCache;
+  cache?: AsyncFetchCache;
 }>) {
-  const browser = useBrowserDetails();
+  const browser = useBrowserDetails({optional: true});
   const internals = useRef<{
     hydrated: Signal<boolean>;
     deserialized: boolean;
@@ -30,7 +30,7 @@ export function AsyncContext({
   const {hydrated, deserialized} = internals.current;
 
   if (typeof document === 'object') {
-    if (!deserialized) {
+    if (cache != null && browser != null && !deserialized) {
       const serialization = browser.serializations.get('quilt:fetch:hydrated');
       if (Array.isArray(serialization)) cache.restore(serialization);
 
@@ -40,7 +40,7 @@ export function AsyncContext({
     useLayoutEffect(() => {
       hydrated.value = true;
     }, []);
-  } else {
+  } else if (cache != null && browser != null) {
     browser.serializations.set('quilt:fetch:cache', () => cache.serialize());
   }
 

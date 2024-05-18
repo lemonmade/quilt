@@ -17,30 +17,30 @@ export class AsyncModule<Module> {
   readonly id?: string;
 
   get module() {
-    return this.loadAction.value;
+    return this.fetchModule.value;
   }
 
   get value() {
-    return this.loadAction.value;
+    return this.fetchModule.value;
   }
 
   get error() {
-    return this.loadAction.error;
+    return this.fetchModule.error;
   }
 
   get promise() {
-    return this.loadAction.promise;
+    return this.fetchModule.promise;
   }
 
   get status() {
-    return this.loadAction.status;
+    return this.fetchModule.status;
   }
 
   get isLoading() {
-    return this.loadAction.isRunning;
+    return this.fetchModule.isRunning;
   }
 
-  private readonly loadAction: AsyncFetch<Module>;
+  private readonly fetchModule: AsyncFetch<Module>;
 
   constructor(load: AsyncModuleLoader<Module>) {
     const id = (load as any).id;
@@ -50,7 +50,7 @@ export class AsyncModule<Module> {
       Symbol.for('quilt')
     ]?.asyncModules?.get(id);
 
-    this.loadAction = new AsyncFetch(
+    this.fetchModule = new AsyncFetch(
       () => (typeof load === 'function' ? load() : load.import()),
       {initial: preloadedModule},
     );
@@ -59,7 +59,7 @@ export class AsyncModule<Module> {
   load = ({force = false} = {}) =>
     !force && (this.isLoading || this.status !== 'pending')
       ? this.promise
-      : this.loadAction.call();
+      : this.fetchModule.call();
 
   import = this.load;
 }

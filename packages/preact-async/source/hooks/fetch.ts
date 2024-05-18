@@ -11,7 +11,7 @@ import {AsyncFetchCacheContext} from '../context.ts';
 
 export const useAsyncFetchCache = AsyncFetchCacheContext.use;
 
-export async function useAsyncFetch<Data, Input>(
+export function useAsyncFetch<Data, Input>(
   fetchFunction: AsyncFetchFunction<Data, Input>,
   options?: AsyncFetchCacheGetOptions<Data, Input>,
 ) {
