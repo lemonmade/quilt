@@ -1,10 +1,17 @@
-export {retain, release, StackFrame, isMemoryManageable} from './memory.ts';
+export {
+  retain,
+  release,
+  StackFrame,
+  isMemoryManageable,
+  markAsTransferable,
+} from './memory.ts';
 export type {MemoryManageable, MemoryRetainer} from './memory.ts';
 export {
   RELEASE_METHOD,
   RETAIN_METHOD,
   RETAINED_BY,
   ENCODE_METHOD,
+  TRANSFERABLE,
 } from './constants.ts';
 export {
   createThread,

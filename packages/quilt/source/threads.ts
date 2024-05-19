@@ -1,6 +1,7 @@
 export {
   retain,
   release,
+  markAsTransferable,
   isMemoryManageable,
   createThread,
   createThreadAbortSignal,

@@ -1,4 +1,4 @@
-import {ENCODE_METHOD} from '../constants.ts';
+import {ENCODE_METHOD, TRANSFERABLE} from '../constants.ts';
 import type {
   ThreadEncoder,
   ThreadEncoderApi,
@@ -90,6 +90,12 @@ export function createBasicEncoder({
     seen.set(value, [undefined]);
 
     if (typeof value === 'object') {
+      if ((value as any)[TRANSFERABLE]) {
+        const result: EncodeResult = [value, [value as any]];
+        seen.set(value, result);
+        return result;
+      }
+
       const transferables: Transferable[] = [];
       const encodeValue = (value: any) => {
         const [fieldValue, nestedTransferables = []] = encodeInternal(
