@@ -107,6 +107,8 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   readonly promise: AsyncFetchPromise<Data, Input>;
   readonly function: AsyncFetchFunction<Data, Input>;
   readonly input?: Input;
+  readonly startedAt?: number;
+  readonly finishedAt?: number;
 
   get value() {
     return this.promise.status === 'fulfilled' ? this.promise.value : undefined;
@@ -129,7 +131,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   }
 
   get isRunning() {
-    return this.runningSignal.value;
+    return this.startedAt != null && this.promise.status === 'pending';
   }
 
   get hasFinished() {
@@ -139,7 +141,6 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   private readonly resolve: (value: Data) => void;
   private readonly reject: (cause: unknown) => void;
   private readonly abortController = new AbortController();
-  private readonly runningSignal = signal(false);
 
   constructor(
     fetchFunction: AsyncFetchFunction<Data, Input>,
@@ -157,11 +158,13 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     Object.assign(this.promise, {source: this});
 
     this.resolve = (value) => {
-      this.runningSignal.value = false;
+      if (this.promise.status !== 'pending') return;
+      Object.assign(this, {finishedAt: now()});
       return resolve(value);
     };
     this.reject = (reason) => {
-      this.runningSignal.value = false;
+      if (this.promise.status !== 'pending') return;
+      Object.assign(this, {finishedAt: now()});
       reject(reason);
     };
 
@@ -189,14 +192,14 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   };
 
   run = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
-    if (this.runningSignal.peek()) return this.promise;
+    if (this.startedAt != null) return this.promise;
+
+    Object.assign(this, {startedAt: now(), input});
 
     if (signal?.aborted) {
       this.abortController.abort();
       return this.promise;
     }
-
-    Object.assign(this, {input});
 
     signal?.addEventListener('abort', () => {
       this.abortController.abort();
@@ -209,8 +212,6 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     } catch (error) {
       Promise.resolve().then(() => this.reject(error));
     }
-
-    this.runningSignal.value = true;
 
     return this.promise;
   };
@@ -251,4 +252,8 @@ export class AsyncFetchPromise<
       );
     });
   }
+}
+
+function now() {
+  return typeof performance === 'object' ? performance.now() : Date.now();
 }
