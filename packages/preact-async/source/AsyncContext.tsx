@@ -3,13 +3,14 @@ import {useRef, useLayoutEffect} from 'preact/hooks';
 
 import type {AsyncFetchCache} from '@quilted/async';
 import {signal, type Signal} from '@quilted/preact-signals';
-import {useBrowserDetails} from '@quilted/preact-browser';
 
 import {AsyncHydratedContext, AsyncFetchCacheContext} from './context.ts';
+import {useAsyncFetchCacheSerialization} from './hooks/cache.ts';
 
 /**
  * Only needed for the following features:
  *
+ * - `useAsyncFetch()`, when you want to cache fetch results (always needed for SSR)
  * - `<AsyncComponent server={false}>` (needed to correctly hydrate client-only components)
  */
 export function AsyncContext({
@@ -18,34 +19,19 @@ export function AsyncContext({
 }: RenderableProps<{
   cache?: AsyncFetchCache;
 }>) {
-  const browser = useBrowserDetails({optional: true});
-  const internals = useRef<{
-    hydrated: Signal<boolean>;
-    deserialized: boolean;
-  }>({deserialized: false} as any);
-  if (internals.current.hydrated == null) {
-    Object.assign(internals.current, {hydrated: signal(false)});
-  }
+  const hydrated = useRef<Signal<boolean>>();
+  if (hydrated.current == null) hydrated.current = signal(false);
 
-  const {hydrated, deserialized} = internals.current;
+  useAsyncFetchCacheSerialization(cache);
 
   if (typeof document === 'object') {
-    if (cache != null && browser != null && !deserialized) {
-      const serialization = browser.serializations.get('quilt:fetch:hydrated');
-      if (Array.isArray(serialization)) cache.restore(serialization);
-
-      internals.current.deserialized = true;
-    }
-
     useLayoutEffect(() => {
-      hydrated.value = true;
+      hydrated.current!.value = true;
     }, []);
-  } else if (cache != null && browser != null) {
-    browser.serializations.set('quilt:fetch:cache', () => cache.serialize());
   }
 
   const content = (
-    <AsyncHydratedContext.Provider value={hydrated}>
+    <AsyncHydratedContext.Provider value={hydrated.current!}>
       {children}
     </AsyncHydratedContext.Provider>
   );
