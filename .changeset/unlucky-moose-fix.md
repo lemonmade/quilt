@@ -1,5 +1,5 @@
 ---
-'@quilted/threads': patch
+'@quilted/threads': minor
 '@quilted/quilt': patch
 ---
 
