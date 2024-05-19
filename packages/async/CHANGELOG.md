@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.2
+
+### Patch Changes
+
+- [#732](https://github.com/lemonmade/quilt/pull/732) [`5d5b90b`](https://github.com/lemonmade/quilt/commit/5d5b90bd62d887ec90198702e81696fa93555281) Thanks [@lemonmade](https://github.com/lemonmade)! - Introduce a more powerful `AsyncFetch` primitive, `AsyncFetchCache` for caching results, and `useAsync` hook for component-level data fetching.
+
 ## 0.4.1
 
 ### Patch Changes

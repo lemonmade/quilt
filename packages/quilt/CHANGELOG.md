@@ -1,5 +1,16 @@
 # @quilted/quilt
 
+## 0.7.4
+
+### Patch Changes
+
+- [`8477c13`](https://github.com/lemonmade/quilt/commit/8477c1398b03311c76886e037851b10bf77b9fba) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `markAsTransferable` to define values to transfer across threads
+
+- Updated dependencies [[`5d5b90b`](https://github.com/lemonmade/quilt/commit/5d5b90bd62d887ec90198702e81696fa93555281), [`8477c13`](https://github.com/lemonmade/quilt/commit/8477c1398b03311c76886e037851b10bf77b9fba)]:
+  - @quilted/async@0.4.2
+  - @quilted/preact-async@0.1.2
+  - @quilted/threads@2.2.0
+
 ## 0.7.3
 
 ### Patch Changes

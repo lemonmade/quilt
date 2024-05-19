@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 2.2.0
+
+### Minor Changes
+
+- [`8477c13`](https://github.com/lemonmade/quilt/commit/8477c1398b03311c76886e037851b10bf77b9fba) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `markAsTransferable` to define values to transfer across threads
+
 ## 2.1.2
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-async",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -26,7 +26,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/async": "workspace:^0.4.1",
+    "@quilted/async": "workspace:^0.4.2",
     "@quilted/preact-browser": "workspace:^0.1.0",
     "@quilted/preact-context": "workspace:^0.1.0",
     "@quilted/preact-signals": "workspace:^0.1.0"
