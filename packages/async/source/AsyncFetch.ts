@@ -16,12 +16,12 @@ export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
 }
 
 export class AsyncFetch<Data = unknown, Input = unknown> {
-  get status() {
-    return this.finishedSignal.value?.status ?? 'pending';
-  }
-
   get value() {
     return this.finishedSignal.value?.value;
+  }
+
+  get data() {
+    return this.value;
   }
 
   get error() {
@@ -36,6 +36,10 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     );
   }
 
+  get status() {
+    return this.finishedSignal.value?.status ?? 'pending';
+  }
+
   get running() {
     return this.runningSignal.value;
   }
@@ -46,6 +50,10 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
 
   get finished() {
     return this.finishedSignal.value;
+  }
+
+  get hasFinished() {
+    return this.finishedSignal.value != null;
   }
 
   private readonly runningSignal = signal<
@@ -86,7 +94,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
       this.finishedSignal.value = fetchCall;
     };
 
-    fetchCall.call(input, {signal}).then(finalizeFetchCall, finalizeFetchCall);
+    fetchCall.run(input, {signal}).then(finalizeFetchCall, finalizeFetchCall);
 
     this.runningSignal.value = fetchCall;
     wasRunning?.abort();
@@ -100,24 +108,32 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   readonly function: AsyncFetchFunction<Data, Input>;
   readonly input?: Input;
 
-  get signal() {
-    return this.abortController.signal;
+  get value() {
+    return this.promise.status === 'fulfilled' ? this.promise.value : undefined;
   }
 
-  get isRunning() {
-    return this.runningSignal.value;
+  get data() {
+    return this.value;
+  }
+
+  get error() {
+    return this.promise.status === 'rejected' ? this.promise.reason : undefined;
+  }
+
+  get signal() {
+    return this.abortController.signal;
   }
 
   get status() {
     return this.promise.status;
   }
 
-  get value() {
-    return this.promise.status === 'fulfilled' ? this.promise.value : undefined;
+  get isRunning() {
+    return this.runningSignal.value;
   }
 
-  get error() {
-    return this.promise.status === 'rejected' ? this.promise.reason : undefined;
+  get hasFinished() {
+    return this.promise.status !== 'pending';
   }
 
   private readonly resolve: (value: Data) => void;
@@ -140,8 +156,22 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     });
     Object.assign(this.promise, {source: this});
 
-    this.resolve = resolve;
-    this.reject = reject;
+    this.resolve = (value) => {
+      this.runningSignal.value = false;
+      return resolve(value);
+    };
+    this.reject = (reason) => {
+      this.runningSignal.value = false;
+      reject(reason);
+    };
+
+    this.abortController.signal.addEventListener(
+      'abort',
+      () => {
+        this.reject(this.abortController.signal.reason);
+      },
+      {once: true},
+    );
 
     if (initial) {
       this.input = initial.input!;
@@ -158,9 +188,12 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     this.abortController.abort();
   };
 
-  call = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
-    if (this.runningSignal.peek() || this.signal.aborted) {
-      return Promise.reject(new Error(`Can’t perform fetch()`));
+  run = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
+    if (this.runningSignal.peek()) return this.promise;
+
+    if (signal?.aborted) {
+      this.abortController.abort();
+      return this.promise;
     }
 
     Object.assign(this, {input});
@@ -169,9 +202,15 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
       this.abortController.abort();
     });
 
-    Promise.resolve()
-      .then(() => this.function(input!, {signal: this.abortController.signal}))
-      .then(this.resolve, this.reject);
+    try {
+      Promise.resolve(
+        this.function(input!, {signal: this.abortController.signal}),
+      ).then(this.resolve, this.reject);
+    } catch (error) {
+      Promise.resolve().then(() => this.reject(error));
+    }
+
+    this.runningSignal.value = true;
 
     return this.promise;
   };
@@ -200,10 +239,12 @@ export class AsyncFetchPromise<
     super((resolve, reject) => {
       executor(
         (value) => {
+          if (this.status !== 'pending') return;
           Object.assign(this, {status: 'fulfilled', value});
           resolve(value);
         },
         (reason) => {
+          if (this.status !== 'pending') return;
           Object.assign(this, {status: 'rejected', reason});
           reject(reason);
         },

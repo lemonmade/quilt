@@ -35,7 +35,6 @@ export function useAsyncFetch<Data, Input>(
   const fetch = fetchSignal.value;
 
   if (fetch.status === 'pending') {
-    console.log(fetch.status, fetch.isRunning);
     if (fetch.isRunning) throw fetch.promise;
     throw fetch.call();
   }
