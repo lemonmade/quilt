@@ -406,7 +406,7 @@ importers:
   packages/preact-async:
     dependencies:
       '@quilted/async':
-        specifier: workspace:^0.4.1
+        specifier: workspace:^0.4.2
         version: link:../async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.0
@@ -589,7 +589,7 @@ importers:
         specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/async':
-        specifier: workspace:^0.4.1
+        specifier: workspace:^0.4.2
         version: link:../async
       '@quilted/events':
         specifier: workspace:^2.0.0
@@ -598,7 +598,7 @@ importers:
         specifier: workspace:^3.0.3
         version: link:../graphql
       '@quilted/preact-async':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.2
         version: link:../preact-async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.2
@@ -640,7 +640,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../signals
       '@quilted/threads':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.2.0
         version: link:../threads
       graphql:
         specifier: ^16.8.0
