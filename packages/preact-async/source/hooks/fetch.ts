@@ -11,14 +11,14 @@ import {AsyncFetchCacheContext} from '../context.ts';
 
 export const useAsyncFetchCache = AsyncFetchCacheContext.use;
 
-export function useAsyncFetch<Data, Input>(
+export function useAsync<Data, Input>(
   asyncFetch: AsyncFetch<Data, Input>,
 ): AsyncFetch<Data, Input>;
-export function useAsyncFetch<Data, Input>(
+export function useAsync<Data, Input>(
   asyncFetchFunction: AsyncFetchFunction<Data, Input>,
   options?: AsyncFetchCacheGetOptions<Data, Input>,
 ): AsyncFetch<Data, Input>;
-export function useAsyncFetch<Data, Input>(
+export function useAsync<Data, Input>(
   asyncFetch: AsyncFetch<Data, Input> | AsyncFetchFunction<Data, Input>,
   options?: AsyncFetchCacheGetOptions<Data, Input>,
 ) {
