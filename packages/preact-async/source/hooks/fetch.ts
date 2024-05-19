@@ -12,19 +12,30 @@ import {AsyncFetchCacheContext} from '../context.ts';
 export const useAsyncFetchCache = AsyncFetchCacheContext.use;
 
 export function useAsyncFetch<Data, Input>(
-  fetchFunction: AsyncFetchFunction<Data, Input>,
+  asyncFetch: AsyncFetch<Data, Input>,
+): AsyncFetch<Data, Input>;
+export function useAsyncFetch<Data, Input>(
+  asyncFetchFunction: AsyncFetchFunction<Data, Input>,
+  options?: AsyncFetchCacheGetOptions<Data, Input>,
+): AsyncFetch<Data, Input>;
+export function useAsyncFetch<Data, Input>(
+  asyncFetch: AsyncFetch<Data, Input> | AsyncFetchFunction<Data, Input>,
   options?: AsyncFetchCacheGetOptions<Data, Input>,
 ) {
-  const functionRef = useRef(fetchFunction);
-  functionRef.current = fetchFunction;
+  const functionRef = useRef<AsyncFetchFunction<Data, Input>>();
+  if (typeof asyncFetch === 'function') functionRef.current = asyncFetch;
 
   const fetchCache = useAsyncFetchCache({optional: true});
 
   const fetchSignal = useComputed(() => {
-    const resolvedFetchFunction: AsyncFetchFunction<Data, Input> = (...args) =>
-      functionRef.current(...args);
+    if (typeof asyncFetch !== 'function') {
+      return asyncFetch;
+    }
 
-    if (!fetchCache) {
+    const resolvedFetchFunction: AsyncFetchFunction<Data, Input> = (...args) =>
+      functionRef.current!(...args);
+
+    if (fetchCache == null || options?.key == null) {
       return new AsyncFetch<Data, Input>(resolvedFetchFunction);
     }
 
