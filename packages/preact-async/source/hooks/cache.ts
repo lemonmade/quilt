@@ -7,7 +7,7 @@ export function useAsyncFetchCacheSerialization(
   cache?: AsyncFetchCache,
   {name = 'fetch:cache'}: {name?: string} = {},
 ) {
-  const browser = useBrowserDetails({optional: cache != null});
+  const browser = useBrowserDetails({optional: cache == null});
   const restored = useRef(false);
 
   if (typeof document === 'object') {
