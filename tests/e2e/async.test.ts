@@ -352,20 +352,9 @@ describe('async', () => {
   });
 
   it('can server render components using an async fetch', async () => {
-    await using workspace = await createWorkspace({fixture: 'empty-app'});
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
 
     await workspace.fs.write({
-      'browser.tsx': multiline`
-        import '@quilted/quilt/globals';
-        import {Browser, BrowserContext} from '@quilted/quilt/browser';
-        import {hydrate} from 'preact';
-        import App from './App.tsx';
-
-        const element = document.querySelector('#app')!;
-        const browser = new Browser();
-        
-        hydrate(<BrowserContext browser={browser}><App /></BrowserContext>, element);
-      `,
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
         import {RequestRouter} from '@quilted/quilt/request-router';
@@ -410,7 +399,7 @@ describe('async', () => {
 
           return (
             <AsyncContext cache={cache}>
-              <Suspense fallback={"Loading..."}>
+              <Suspense fallback={null}>
                 <Async />
               </Suspense>
             </AsyncContext>
@@ -431,11 +420,97 @@ describe('async', () => {
     });
 
     const server = await startServer(workspace);
-    const noJSPage = await server.openPage('/', {
-      javaScriptEnabled: false,
+    const page = await server.openPage('/');
+
+    const content = await page.textContent('body');
+    expect(content).toBe(`Hello world!`);
+  });
+
+  it('can server render multiple async fetches using separate cache keys', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
+
+    await workspace.fs.write({
+      'server.tsx': multiline`
+        import '@quilted/quilt/globals';
+        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {renderToResponse} from '@quilted/quilt/server';
+        
+        import {BrowserAssets} from 'quilt:module/assets';
+
+        import App from './App.tsx';
+        
+        const router = new RequestRouter();
+        const assets = new BrowserAssets();
+
+        router.get('/data', async (request) => {
+          const greet = request.URL.searchParams.get('name') ?? 'world';
+          return new Response('Hello ' + greet + '!');
+        });
+        
+        // For all GET requests, render our React application.
+        router.get(async (request) => {
+          const response = await renderToResponse(<App />, {
+            request,
+            assets,
+          });
+        
+          return response;
+        });
+        
+        export default router;
+      
+      `,
+      'App.tsx': multiline`
+        import {useMemo} from 'preact/hooks';
+        import {Suspense} from 'preact/compat';
+        import {useBrowserRequest} from '@quilted/quilt/browser';
+        import {
+          AsyncContext,
+          AsyncFetchCache,
+          useAsyncFetch,
+        } from '@quilted/quilt/async';
+        
+        export default function App() {
+          const cache = useMemo(() => new AsyncFetchCache(), []);
+
+          return (
+            <AsyncContext cache={cache}>
+              <Suspense fallback={null}>
+                <Greeting name="Winston" />
+              </Suspense>
+              {' '}
+              <Suspense fallback={null}>
+                <Greeting name="Molly" />
+              </Suspense>
+            </AsyncContext>
+          );
+        }
+
+        function Greeting({name}: {name: string}) {
+          const {value} = useGreeting(name);
+          return <div>{value}</div>;
+        }
+
+        function useGreeting(name: string) {
+          const {url} = useBrowserRequest();
+
+          const fetched = useAsyncFetch(async () => {
+            const apiURL = new URL('/data', url);
+            apiURL.searchParams.set('name', name);
+            const response = await fetch(apiURL);
+            const text = await response.text();
+            return text;
+          }, {key: ['greeting', name]});
+
+          return fetched;
+        }
+      `,
     });
 
-    const noJSPageContent = await noJSPage.textContent('body');
-    expect(noJSPageContent).toBe(`Hello world!`);
+    const server = await startServer(workspace);
+    const page = await server.openPage('/');
+
+    const content = await page.textContent('body');
+    expect(content).toBe(`Hello Winston! Hello Molly!`);
   });
 });
