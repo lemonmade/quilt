@@ -52,7 +52,7 @@ export class AsyncModule<Module> {
 
     this.fetchModule = new AsyncFetch(
       () => (typeof load === 'function' ? load() : load.import()),
-      {initial: preloadedModule ? {value: preloadedModule} : undefined},
+      {cached: preloadedModule ? {value: preloadedModule} : undefined},
     );
   }
 

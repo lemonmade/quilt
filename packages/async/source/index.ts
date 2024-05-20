@@ -4,7 +4,7 @@ export {
   AsyncFetchCall,
   AsyncFetchPromise,
   type AsyncFetchFunction,
-  type AsyncFetchCallResult,
+  type AsyncFetchCallCache,
 } from './AsyncFetch.ts';
 export {
   AsyncModule,

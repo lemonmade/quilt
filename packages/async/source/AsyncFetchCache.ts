@@ -1,7 +1,7 @@
 import {
   AsyncFetch,
   type AsyncFetchFunction,
-  type AsyncFetchCallResult,
+  type AsyncFetchCallCache,
 } from './AsyncFetch.ts';
 
 const EMPTY_ARRAY = Object.freeze([]);
@@ -13,7 +13,7 @@ export interface AsyncFetchCacheGetOptions<_Data = unknown, _Input = unknown> {
 
 export class AsyncFetchCache {
   private readonly cache: Map<string, AsyncFetchCacheEntry<any, any>>;
-  private readonly initialCache: Map<string, AsyncFetchCallResult<any, any>>;
+  private readonly initialCache: Map<string, AsyncFetchCallCache<any, any>>;
 
   constructor(
     initialCache: Iterable<
@@ -46,7 +46,7 @@ export class AsyncFetchCache {
     cacheEntry = new AsyncFetchCacheEntry<Data, Input>(fetchFunction, {
       key: resolvedKey,
       tags,
-      initial: this.initialCache.get(resolvedKey),
+      cached: this.initialCache.get(resolvedKey),
     });
 
     this.cache.set(resolvedKey, cacheEntry);
@@ -83,14 +83,14 @@ export class AsyncFetchCacheEntry<
     fetchFunction: AsyncFetchFunction<Data, Input>,
     {
       key,
-      initial,
+      cached,
       tags = EMPTY_ARRAY,
     }: {
       key: string;
-      initial?: AsyncFetchCallResult<Data, Input>;
+      cached?: AsyncFetchCallCache<Data, Input>;
     } & Omit<AsyncFetchCacheGetOptions<Data, Input>, 'key'>,
   ) {
-    super(fetchFunction, {initial});
+    super(fetchFunction, {cached});
 
     this.key = key;
     this.tags = tags;
@@ -105,4 +105,4 @@ export class AsyncFetchCacheEntry<
 export type AsyncFetchCacheEntrySerialization<
   Data = unknown,
   Input = unknown,
-> = [key: string, result: AsyncFetchCallResult<Data, Input>];
+> = [key: string, result: AsyncFetchCallCache<Data, Input>];

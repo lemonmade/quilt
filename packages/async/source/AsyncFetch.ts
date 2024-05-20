@@ -1,11 +1,5 @@
 import {signal} from '@quilted/signals';
 
-export interface AsyncFetchCallResult<Data = unknown, Input = unknown> {
-  readonly value?: Data;
-  readonly error?: unknown;
-  readonly input?: Input;
-}
-
 export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
   (
     input: Input,
@@ -13,6 +7,12 @@ export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
       signal?: AbortSignal;
     },
   ): PromiseLike<Data>;
+}
+
+export interface AsyncFetchCallCache<Data = unknown, Input = unknown> {
+  readonly value?: Data;
+  readonly error?: unknown;
+  readonly input?: Input;
 }
 
 export class AsyncFetch<Data = unknown, Input = unknown> {
@@ -67,10 +67,10 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
 
   constructor(
     fetchFunction: AsyncFetchFunction<Data, Input>,
-    {initial}: {initial?: AsyncFetchCallResult<Data, Input>} = {},
+    {cached}: {cached?: AsyncFetchCallCache<Data, Input>} = {},
   ) {
     this.function = fetchFunction;
-    this.initial = new AsyncFetchCall(fetchFunction, initial);
+    this.initial = new AsyncFetchCall(fetchFunction, cached);
   }
 
   call = (
@@ -106,6 +106,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
 export class AsyncFetchCall<Data = unknown, Input = unknown> {
   readonly promise: AsyncFetchPromise<Data, Input>;
   readonly function: AsyncFetchFunction<Data, Input>;
+  readonly cached: boolean;
   readonly input?: Input;
   readonly startedAt?: number;
   readonly finishedAt?: number;
@@ -144,7 +145,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
 
   constructor(
     fetchFunction: AsyncFetchFunction<Data, Input>,
-    initial?: AsyncFetchCallResult<Data, Input>,
+    cached?: AsyncFetchCallCache<Data, Input>,
   ) {
     this.function = fetchFunction;
 
@@ -168,22 +169,27 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
       reject(reason);
     };
 
-    this.abortController.signal.addEventListener(
-      'abort',
-      () => {
-        this.reject(this.abortController.signal.reason);
-      },
-      {once: true},
-    );
+    this.cached = Boolean(cached);
 
-    if (initial) {
-      this.input = initial.input!;
+    if (cached) {
+      Object.assign(this, {
+        input: cached.input,
+        startAt: now(),
+      });
 
-      if (initial.error) {
-        this.reject(initial.error);
+      if (cached.error) {
+        this.reject(cached.error);
       } else {
-        this.resolve(initial.value!);
+        this.resolve(cached.value!);
       }
+    } else {
+      this.abortController.signal.addEventListener(
+        'abort',
+        () => {
+          this.reject(this.abortController.signal.reason);
+        },
+        {once: true},
+      );
     }
   }
 
@@ -216,7 +222,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     return this.promise;
   };
 
-  serialize(): AsyncFetchCallResult<Data, Input> | undefined {
+  serialize(): AsyncFetchCallCache<Data, Input> | undefined {
     if (this.promise.status === 'pending') return;
 
     return {
