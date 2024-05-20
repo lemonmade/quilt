@@ -1,5 +1,13 @@
 # @quilted/async
 
+## 0.4.3
+
+### Patch Changes
+
+- [`7e93120`](https://github.com/lemonmade/quilt/commit/7e93120bce62050315d7eaa3c3efc28d4d1764a3) Thanks [@lemonmade](https://github.com/lemonmade)! - Clean up async fetch cache results
+
+- [`92de8b4`](https://github.com/lemonmade/quilt/commit/92de8b4df478731ae46bb4a39e12818c0391fe24) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `AsyncModule` initial value
+
 ## 0.4.2
 
 ### Patch Changes
