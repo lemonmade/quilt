@@ -34,7 +34,7 @@ export class BrowserTestMock implements BrowserDetails {
     serializations?: ConstructorParameters<
       typeof BrowserTestMockSerializations
     >[0];
-  }) {
+  } = {}) {
     this.request = new Request(
       url ??
         (typeof location === 'object' ? location.href : 'https://example.com'),
