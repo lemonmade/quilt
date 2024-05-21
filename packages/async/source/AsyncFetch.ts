@@ -40,6 +40,8 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     return this.finishedSignal.value?.status ?? 'pending';
   }
 
+  readonly initial: AsyncFetchCall<Data, Input>;
+
   get running() {
     return this.runningSignal.value;
   }
@@ -63,7 +65,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     AsyncFetchCall<Data, Input> | undefined
   >(undefined);
   private readonly function: AsyncFetchFunction<Data, Input>;
-  private readonly initial: AsyncFetchCall<Data, Input>;
+  private hasRun = false;
 
   constructor(
     fetchFunction: AsyncFetchFunction<Data, Input>,
@@ -82,10 +84,14 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   ): AsyncFetchPromise<Data, Input> => {
     const wasRunning = this.runningSignal.peek();
 
-    const fetchCall = new AsyncFetchCall(this.function, {
-      finally: this.finalizeFetchCall,
-    });
+    const fetchCall =
+      !this.hasRun && !this.initial.signal.aborted
+        ? this.initial
+        : new AsyncFetchCall(this.function, {
+            finally: this.finalizeFetchCall,
+          });
 
+    this.hasRun = true;
     fetchCall.run(input, {signal});
 
     this.runningSignal.value = fetchCall;

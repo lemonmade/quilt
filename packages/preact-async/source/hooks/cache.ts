@@ -8,16 +8,18 @@ export function useAsyncFetchCacheSerialization(
   {name = 'fetch:cache'}: {name?: string} = {},
 ) {
   const browser = useBrowserDetails({optional: cache == null});
-  const restored = useRef(false);
+  const restored = useRef<typeof browser>();
+
+  if (cache == null || browser == null) return;
 
   if (typeof document === 'object') {
-    if (cache != null && browser != null && !restored.current) {
+    if (restored.current !== browser) {
       const serialization = browser.serializations.get(name);
       if (Array.isArray(serialization)) cache.restore(serialization);
 
-      restored.current = true;
+      restored.current = browser;
     }
-  } else if (cache != null && browser != null) {
+  } else {
     browser.serializations.set(name, () => cache.serialize());
   }
 }
