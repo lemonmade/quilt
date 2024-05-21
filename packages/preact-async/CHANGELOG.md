@@ -1,5 +1,14 @@
 # @quilted/preact-async
 
+## 0.1.4
+
+### Patch Changes
+
+- [`c813ecc`](https://github.com/lemonmade/quilt/commit/c813ecc6abe867849d3787e84fd284b731db3402) Thanks [@lemonmade](https://github.com/lemonmade)! - More async fetch improvements
+
+- Updated dependencies [[`c813ecc`](https://github.com/lemonmade/quilt/commit/c813ecc6abe867849d3787e84fd284b731db3402), [`36b52ad`](https://github.com/lemonmade/quilt/commit/36b52ad6ea0dd4f9fb56110315e884a434c499f0)]:
+  - @quilted/async@0.4.5
+
 ## 0.1.3
 
 ### Patch Changes

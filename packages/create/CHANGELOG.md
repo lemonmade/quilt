@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.26
+
+### Patch Changes
+
+- [`5c32e10`](https://github.com/lemonmade/quilt/commit/5c32e1022e5330a209817f7bfb49b09b301b36b7) Thanks [@lemonmade](https://github.com/lemonmade)! - Expose app context on browser console in template apps
+
 ## 0.2.25
 
 ### Patch Changes
