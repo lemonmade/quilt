@@ -117,7 +117,7 @@ export class BrowserTestMockHeadElements<
   )[] = [];
 
   get value() {
-    return this.elements.map(resolveSignalOrValue);
+    return this.elements.map((element) => resolveSignalOrValue(element));
   }
 
   constructor(readonly selector: Element) {}
@@ -140,7 +140,10 @@ export class BrowserTestMockElementAttributes<Attributes> {
   private readonly attributes: (Attributes | ReadonlySignal<Attributes>)[] = [];
 
   get value() {
-    return Object.assign({}, ...this.attributes.map(resolveSignalOrValue));
+    return Object.assign(
+      {},
+      ...this.attributes.map((element) => resolveSignalOrValue(element)),
+    );
   }
 
   add = (attributes: Attributes | ReadonlySignal<Attributes>) => {
