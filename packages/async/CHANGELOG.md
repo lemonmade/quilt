@@ -1,5 +1,19 @@
 # @quilted/async
 
+## 0.4.7
+
+### Patch Changes
+
+- [`70b457c`](https://github.com/lemonmade/quilt/commit/70b457cc889e7fcb70d7ec397800b249dcc8a51f) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more timing information to `AsyncFetch`
+
+- [`5ab45f2`](https://github.com/lemonmade/quilt/commit/5ab45f2650adc6278b4fba464b78445f753eea9e) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename `AsyncFetch.call()` to `AsyncFetch.fetch()`
+
+- [`518de8a`](https://github.com/lemonmade/quilt/commit/518de8afb223d8b6c28294a2e28f3b042ae953a6) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `AsyncFetchCache.delete()` and `AsyncFetchCache.clear()` for cache pruning
+
+- [`ed9ecdd`](https://github.com/lemonmade/quilt/commit/ed9ecdd8fa28d9c0505cb108c0c20fbe21968817) Thanks [@lemonmade](https://github.com/lemonmade)! - Add serialization of `finishedAt` time
+
+- [`762ac2d`](https://github.com/lemonmade/quilt/commit/762ac2d94c7390149d1c60d8d40a7352532cdaa4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `AsyncFetch.refetch()` method
+
 ## 0.4.6
 
 ### Patch Changes
