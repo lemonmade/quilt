@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.0.3
+
+### Patch Changes
+
+- [`9c0cd74`](https://github.com/lemonmade/quilt/commit/9c0cd7441b0dc86b3ceb54630fa31db1e716b6ed) Thanks [@lemonmade](https://github.com/lemonmade)! - Make `BrowserTestMock` options optional
+
 ## 0.0.2
 
 ### Patch Changes

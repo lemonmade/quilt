@@ -1,5 +1,12 @@
 # @quilted/preact-browser
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`9c0cd74`](https://github.com/lemonmade/quilt/commit/9c0cd7441b0dc86b3ceb54630fa31db1e716b6ed)]:
+  - @quilted/browser@0.0.3
+
 ## 0.1.2
 
 ### Patch Changes
