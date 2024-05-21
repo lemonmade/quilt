@@ -5,22 +5,33 @@ import type {
   AsyncFetchCacheGetOptions,
   AsyncFetchFunction,
 } from '@quilted/async';
-import {useComputed} from '@quilted/preact-signals';
+import {
+  useComputed,
+  resolveSignalOrValue,
+  type Signal,
+} from '@quilted/preact-signals';
 
 import {AsyncFetchCacheContext} from '../context.ts';
 
 export const useAsyncFetchCache = AsyncFetchCacheContext.use;
 
-export function useAsync<Data, Input>(
+export interface UseAsyncFetchOptions<Data = unknown, Input = unknown>
+  extends Pick<AsyncFetchCacheGetOptions<Data, Input>, 'tags'> {
+  readonly key?: unknown | Signal<unknown>;
+  readonly defer?: boolean;
+}
+
+export function useAsync<Data = unknown, Input = unknown>(
   asyncFetch: AsyncFetch<Data, Input>,
+  options?: Pick<UseAsyncFetchOptions<Data, Input>, 'defer'>,
 ): AsyncFetch<Data, Input>;
-export function useAsync<Data, Input>(
+export function useAsync<Data = unknown, Input = unknown>(
   asyncFetchFunction: AsyncFetchFunction<Data, Input>,
-  options?: AsyncFetchCacheGetOptions<Data, Input>,
+  options?: UseAsyncFetchOptions<Data, Input>,
 ): AsyncFetch<Data, Input>;
-export function useAsync<Data, Input>(
+export function useAsync<Data = unknown, Input = unknown>(
   asyncFetch: AsyncFetch<Data, Input> | AsyncFetchFunction<Data, Input>,
-  options?: AsyncFetchCacheGetOptions<Data, Input>,
+  options?: UseAsyncFetchOptions<Data, Input>,
 ) {
   const functionRef = useRef<AsyncFetchFunction<Data, Input>>();
   if (typeof asyncFetch === 'function') functionRef.current = asyncFetch;
@@ -39,13 +50,21 @@ export function useAsync<Data, Input>(
       return new AsyncFetch<Data, Input>(resolvedFetchFunction);
     }
 
-    // TODO: react to key changes
-    return fetchCache.get(resolvedFetchFunction, options);
+    const key = resolveSignalOrValue(options.key);
+
+    return fetchCache.get(resolvedFetchFunction, {...options, key});
   }, [fetchCache]);
 
   const fetch = fetchSignal.value;
+  const defer = options?.defer ?? false;
 
-  if (fetch.status === 'pending') {
+  const shouldFetch =
+    fetch.status === 'pending' &&
+    !defer &&
+    // Don’t run fetches on the server if the value did not come from a cache
+    (typeof document === 'object' || 'key' in fetch);
+
+  if (shouldFetch) {
     if (fetch.isRunning) throw fetch.promise;
     throw fetch.call();
   }

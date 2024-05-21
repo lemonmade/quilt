@@ -91,7 +91,9 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
         this.runningSignal.value = undefined;
       }
 
-      this.finishedSignal.value = fetchCall;
+      if (!fetchCall.signal.aborted) {
+        this.finishedSignal.value = fetchCall;
+      }
     };
 
     fetchCall.run(input, {signal}).then(finalizeFetchCall, finalizeFetchCall);
@@ -183,18 +185,20 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
         this.resolve(cached.value!);
       }
     } else {
-      this.abortController.signal.addEventListener(
+      const {signal} = this.abortController;
+
+      signal.addEventListener(
         'abort',
         () => {
-          this.reject(this.abortController.signal.reason);
+          this.reject(signal.reason);
         },
         {once: true},
       );
     }
   }
 
-  abort = () => {
-    this.abortController.abort();
+  abort = (reason?: any) => {
+    this.abortController.abort(reason);
   };
 
   run = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
