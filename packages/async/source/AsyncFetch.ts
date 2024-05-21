@@ -17,7 +17,7 @@ export interface AsyncFetchCallCache<Data = unknown, Input = unknown> {
 
 export class AsyncFetch<Data = unknown, Input = unknown> {
   get value() {
-    return this.finishedSignal.value?.value;
+    return this.finished?.value;
   }
 
   get data() {
@@ -25,19 +25,11 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   }
 
   get error() {
-    return this.finishedSignal.value?.error;
-  }
-
-  get promise(): AsyncFetchPromise<Data, Input> {
-    return (
-      this.runningSignal.value?.promise ??
-      this.finishedSignal.value?.promise ??
-      this.initial.promise
-    );
+    return this.finished?.error;
   }
 
   get status() {
-    return this.finishedSignal.value?.status ?? 'pending';
+    return this.finished?.status ?? 'pending';
   }
 
   readonly initial: AsyncFetchCall<Data, Input>;
@@ -47,7 +39,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   }
 
   get isRunning() {
-    return this.runningSignal.value != null;
+    return this.running != null;
   }
 
   get finished() {
@@ -55,7 +47,29 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   }
 
   get hasFinished() {
-    return this.finishedSignal.value != null;
+    return this.finished != null;
+  }
+
+  get latest() {
+    return (
+      this.runningSignal.value ?? this.finishedSignal.value ?? this.initial
+    );
+  }
+
+  get promise(): AsyncFetchPromise<Data, Input> {
+    return this.latest.promise;
+  }
+
+  get startedAt() {
+    return this.latest.startedAt;
+  }
+
+  get finishedAt() {
+    return this.finished?.startedAt;
+  }
+
+  get updatedAt() {
+    return this.latest.updatedAt;
   }
 
   private readonly runningSignal = signal<
@@ -116,8 +130,6 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   readonly function: AsyncFetchFunction<Data, Input>;
   readonly cached: boolean;
   readonly input?: Input;
-  readonly startedAt?: number;
-  readonly finishedAt?: number;
 
   get value() {
     return this.promise.status === 'fulfilled' ? this.promise.value : undefined;
@@ -137,6 +149,13 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
 
   get status() {
     return this.promise.status;
+  }
+
+  readonly startedAt?: number;
+  readonly finishedAt?: number;
+
+  get updatedAt() {
+    return this.finishedAt ?? this.startedAt;
   }
 
   get isRunning() {
