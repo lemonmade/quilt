@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.4
+
+### Patch Changes
+
+- [`28dd615`](https://github.com/lemonmade/quilt/commit/28dd615c944426e34a3649c61b554e0ba1a66da1) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve `AsyncFetch` state management
+
 ## 0.4.3
 
 ### Patch Changes
