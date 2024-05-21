@@ -4,7 +4,7 @@ export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
   (
     input: Input,
     options: {
-      signal?: AbortSignal;
+      signal: AbortSignal;
     },
   ): PromiseLike<Data>;
 }
@@ -82,14 +82,9 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   ): AsyncFetchPromise<Data, Input> => {
     const wasRunning = this.runningSignal.peek();
 
-    const fetchCall =
-      wasRunning == null &&
-      this.finishedSignal.peek() == null &&
-      !this.initial.signal.aborted
-        ? this.initial
-        : new AsyncFetchCall(this.function, {
-            finally: this.finalizeFetchCall,
-          });
+    const fetchCall = new AsyncFetchCall(this.function, {
+      finally: this.finalizeFetchCall,
+    });
 
     fetchCall.run(input, {signal});
 
@@ -168,8 +163,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     this.promise = new AsyncFetchPromise((res, rej) => {
       resolve = res;
       reject = rej;
-    });
-    Object.assign(this.promise, {source: this});
+    }, this);
 
     if (onFinally) {
       this.promise.then(
@@ -225,12 +219,12 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     Object.assign(this, {startedAt: now(), input});
 
     if (signal?.aborted) {
-      this.abortController.abort();
+      this.abortController.abort(signal.reason);
       return this.promise;
     }
 
     signal?.addEventListener('abort', () => {
-      this.abortController.abort();
+      this.abortController.abort(signal.reason);
     });
 
     try {
@@ -262,9 +256,12 @@ export class AsyncFetchPromise<
   readonly status: 'pending' | 'fulfilled' | 'rejected' = 'pending';
   readonly value?: Data;
   readonly reason?: unknown;
-  readonly source?: AsyncFetchCall<Data, Input>;
+  readonly source: AsyncFetchCall<Data, Input>;
 
-  constructor(executor: ConstructorParameters<typeof Promise<Data>>[0]) {
+  constructor(
+    executor: ConstructorParameters<typeof Promise<Data>>[0],
+    source: AsyncFetchCall<Data, Input>,
+  ) {
     super((resolve, reject) => {
       executor(
         (value) => {
@@ -279,6 +276,7 @@ export class AsyncFetchPromise<
         },
       );
     });
+    this.source = source;
   }
 }
 

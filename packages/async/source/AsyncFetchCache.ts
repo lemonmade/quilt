@@ -39,7 +39,7 @@ export class AsyncFetchCache {
   get = <Data = unknown, Input = unknown>(
     fetchFunction: AsyncFetchFunction<Data, Input>,
     {key, tags = EMPTY_ARRAY}: AsyncFetchCacheGetOptions<Data, Input> = {},
-  ) => {
+  ): AsyncFetchCacheEntry<Data, Input> => {
     let resolvedKey = key;
 
     if (resolvedKey == null) {
@@ -136,15 +136,15 @@ export class AsyncFetchCache {
 function createCachePredicate(options: AsyncFetchCacheFindOptions) {
   const {key, tags} = options;
 
-  const keyToCompare = key ? stringifyCacheKey(key) : undefined;
+  const id = key ? stringifyCacheKey(key) : undefined;
 
   return (entry: AsyncFetchCacheEntry<any, any>) => {
-    if (keyToCompare != null && entry.id !== keyToCompare) {
+    if (id != null && entry.id !== id) {
       return false;
     }
 
-    if (tags?.length !== 0) {
-      return tags!.every((tag) => entry.tags.includes(tag));
+    if (tags != null && tags.length !== 0) {
+      return tags.every((tag) => entry.tags.includes(tag));
     }
 
     return true;

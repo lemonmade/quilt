@@ -15,6 +15,7 @@ export const useAsyncFetchCache = AsyncFetchCacheContext.use;
 
 export interface UseAsyncFetchOptions<Data = unknown, Input = unknown>
   extends Pick<AsyncFetchCacheGetOptions<Data, Input>, 'tags'> {
+  readonly input?: Input;
   readonly key?: unknown | Signal<unknown>;
   readonly defer?: boolean;
   readonly cache?: boolean | AsyncFetchCache;
@@ -85,7 +86,7 @@ export function useAsync<Data = unknown, Input = unknown>(
 
   if (shouldFetch) {
     if (fetch.isRunning) throw fetch.promise;
-    throw fetch.call();
+    throw fetch.call(options?.input);
   }
 
   return fetch;
