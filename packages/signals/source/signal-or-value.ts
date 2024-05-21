@@ -6,6 +6,9 @@ export function isSignal<T = unknown>(value: unknown): value is Signal<T> {
   return value != null && value instanceof Signal;
 }
 
-export function resolveSignalOrValue<T>(value: SignalOrValue<T>): T {
-  return isSignal(value) ? value.value : value;
+export function resolveSignalOrValue<T>(
+  value: SignalOrValue<T>,
+  options?: {peek?: boolean},
+): T {
+  return isSignal(value) ? (options?.peek ? value.peek() : value.value) : value;
 }
