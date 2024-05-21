@@ -90,11 +90,11 @@ describe('AsyncFetchCache', () => {
       const entry = cache.get(getGreeting, {key: ['greet']});
 
       expect(entry).toMatchObject({
-        status: 'fulfilled',
+        status: 'resolved',
         value: 'Hello Winston!',
       });
       expect(entry.finished).toMatchObject({
-        status: 'fulfilled',
+        status: 'resolved',
         input: 'Winston',
         value: 'Hello Winston!',
       });

@@ -45,7 +45,7 @@ function MyComponent() {
 }
 
 function MyComponent2() {
-  if (asyncModule.status !== 'fulfilled') {
+  if (asyncModule.status !== 'resolved') {
     return <button onClick={() => asyncModule.import()}>Load it!</button>;
   }
 

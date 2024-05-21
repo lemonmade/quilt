@@ -1,6 +1,6 @@
 import {signal} from '@quilted/signals';
 
-export type AsyncFetchStatus = 'pending' | 'fulfilled' | 'rejected';
+export type AsyncFetchStatus = 'pending' | 'resolved' | 'rejected';
 
 export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
   (
@@ -138,7 +138,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   readonly input?: Input;
 
   get value() {
-    return this.promise.status === 'fulfilled' ? this.promise.value : undefined;
+    return this.promise.status === 'resolved' ? this.promise.value : undefined;
   }
 
   get data() {
@@ -287,7 +287,7 @@ export class AsyncFetchPromise<
   Data = unknown,
   Input = unknown,
 > extends Promise<Data> {
-  readonly status: 'pending' | 'fulfilled' | 'rejected' = 'pending';
+  readonly status: AsyncFetchStatus = 'pending';
   readonly value?: Data;
   readonly reason?: unknown;
   readonly source: AsyncFetchCall<Data, Input>;
@@ -300,7 +300,7 @@ export class AsyncFetchPromise<
       executor(
         (value) => {
           if (this.status !== 'pending') return;
-          Object.assign(this, {status: 'fulfilled', value});
+          Object.assign(this, {status: 'resolved', value});
           resolve(value);
         },
         (reason) => {
