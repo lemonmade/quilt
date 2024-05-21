@@ -15,6 +15,8 @@ export {
 export {
   AsyncFetchCache,
   AsyncFetchCacheEntry,
+  type AsyncFetchCacheKey,
   type AsyncFetchCacheGetOptions,
+  type AsyncFetchCacheFindOptions,
   type AsyncFetchCacheEntrySerialization,
 } from './AsyncFetchCache.ts';
