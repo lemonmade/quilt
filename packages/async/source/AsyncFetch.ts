@@ -114,6 +114,9 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     return fetchCall.promise;
   };
 
+  refetch = ({signal}: {signal?: AbortSignal} = {}) =>
+    this.fetch(this.latest.input, {signal});
+
   private finalizeFetchCall = (fetchCall: AsyncFetchCall<Data, Input>) => {
     if (this.runningSignal.peek() === fetchCall) {
       this.runningSignal.value = undefined;
