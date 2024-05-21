@@ -78,7 +78,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     });
   }
 
-  call = (
+  fetch = (
     input?: Input,
     {signal}: {signal?: AbortSignal} = {},
   ): AsyncFetchPromise<Data, Input> => {

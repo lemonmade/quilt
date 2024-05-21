@@ -86,7 +86,7 @@ export function useAsync<Data = unknown, Input = unknown>(
 
   if (shouldFetch) {
     if (fetch.isRunning) throw fetch.promise;
-    throw fetch.call(options?.input);
+    throw fetch.fetch(options?.input);
   }
 
   return fetch;

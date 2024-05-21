@@ -78,7 +78,7 @@ export class AsyncFetchCache {
     > = {},
   ) => {
     const entry = this.get(fetchFunction, {key, tags});
-    entry.call(input, {signal});
+    entry.fetch(input, {signal});
     return entry.promise;
   };
 

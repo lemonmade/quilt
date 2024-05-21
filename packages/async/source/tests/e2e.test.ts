@@ -13,7 +13,7 @@ describe('AsyncFetchCache', () => {
       expect(greet).toHaveProperty('key', ['greet']);
       expect(greet).toHaveProperty('id', expect.stringContaining('greet'));
 
-      const result = await greet.call('Winston');
+      const result = await greet.fetch('Winston');
       expect(result).toBe('Hello Winston!');
     });
 
@@ -45,7 +45,7 @@ describe('AsyncFetchCache', () => {
         });
       });
 
-      const promise = waitUntilAbort.call(undefined, {
+      const promise = waitUntilAbort.fetch(undefined, {
         signal: abortController.signal,
       });
 
@@ -66,7 +66,7 @@ describe('AsyncFetchCache', () => {
         });
       });
 
-      const promise = waitUntilAbort.call();
+      const promise = waitUntilAbort.fetch();
 
       promise.source.abort(reason);
 

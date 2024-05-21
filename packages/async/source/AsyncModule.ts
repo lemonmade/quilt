@@ -59,7 +59,7 @@ export class AsyncModule<Module> {
   load = ({force = false} = {}) =>
     !force && (this.isLoading || this.status !== 'pending')
       ? this.promise
-      : this.fetchModule.call();
+      : this.fetchModule.fetch();
 
   import = this.load;
 }
