@@ -406,7 +406,7 @@ importers:
   packages/preact-async:
     dependencies:
       '@quilted/async':
-        specifier: workspace:^0.4.5
+        specifier: workspace:^0.4.6
         version: link:../async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.0
