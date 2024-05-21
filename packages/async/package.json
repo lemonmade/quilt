@@ -1,7 +1,7 @@
 {
   "name": "@quilted/async",
   "type": "module",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   "dependencies": {
     "@quilted/assets": "workspace:^0.1.0",
     "@quilted/events": "workspace:^2.0.0",
-    "@quilted/signals": "workspace:^0.2.0",
+    "@quilted/signals": "workspace:^0.2.2",
     "@types/web": "^0.0.59"
   }
 }

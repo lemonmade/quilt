@@ -1,5 +1,11 @@
 # @quilted/signals
 
+## 0.2.2
+
+### Patch Changes
+
+- [`0bcb1b7`](https://github.com/lemonmade/quilt/commit/0bcb1b7ccc37e4768f242b2d343f5fd0134c1573) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `resolveSignalOrValue()` option to read signal values using `peek()`
+
 ## 0.2.1
 
 ### Patch Changes
