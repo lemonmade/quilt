@@ -13,6 +13,7 @@ export interface AsyncFetchCallCache<Data = unknown, Input = unknown> {
   readonly value?: Data;
   readonly error?: unknown;
   readonly input?: Input;
+  readonly time?: number;
 }
 
 export class AsyncFetch<Data = unknown, Input = unknown> {
@@ -202,21 +203,23 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
 
     this.resolve = (value) => {
       if (this.promise.status !== 'pending') return;
-      Object.assign(this, {finishedAt: now()});
+      if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
       resolve(value);
     };
     this.reject = (reason) => {
       if (this.promise.status !== 'pending') return;
-      Object.assign(this, {finishedAt: now()});
+      if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
       reject(reason);
     };
 
     this.cached = Boolean(cached);
 
     if (cached) {
+      const finishedAt = cached.time ?? now();
       Object.assign(this, {
         input: cached.input,
-        startAt: now(),
+        startedAt: finishedAt,
+        finishedAt,
       });
 
       if (cached.error) {
@@ -273,6 +276,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
       value: this.value,
       error: this.error,
       input: this.input,
+      time: this.updatedAt,
     };
   }
 }
