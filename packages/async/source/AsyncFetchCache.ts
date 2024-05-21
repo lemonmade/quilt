@@ -14,6 +14,7 @@ export interface AsyncFetchCacheGetOptions<_Data = unknown, _Input = unknown> {
 export class AsyncFetchCache {
   private readonly cache: Map<string, AsyncFetchCacheEntry<any, any>>;
   private readonly initialCache: Map<string, AsyncFetchCallCache<any, any>>;
+  private anonymousFetchCount = 0;
 
   constructor(
     initialCache: Iterable<
@@ -35,9 +36,12 @@ export class AsyncFetchCache {
       tags = EMPTY_ARRAY,
     }: AsyncFetchCacheGetOptions<Data, Input> = {},
   ) => {
-    const resolvedKey = explicitKey
-      ? JSON.stringify(explicitKey)
-      : fetchFunction.toString();
+    let resolvedKey = explicitKey ? JSON.stringify(explicitKey) : undefined;
+
+    if (resolvedKey == null) {
+      resolvedKey = `_anonymous:${this.anonymousFetchCount}`;
+      this.anonymousFetchCount += 1;
+    }
 
     let cacheEntry = this.cache.get(resolvedKey);
 

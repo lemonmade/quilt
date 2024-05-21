@@ -70,7 +70,10 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     {cached}: {cached?: AsyncFetchCallCache<Data, Input>} = {},
   ) {
     this.function = fetchFunction;
-    this.initial = new AsyncFetchCall(fetchFunction, cached);
+    this.initial = new AsyncFetchCall(fetchFunction, {
+      cached,
+      finally: this.finalizeFetchCall,
+    });
   }
 
   call = (
@@ -84,24 +87,26 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
       this.finishedSignal.peek() == null &&
       !this.initial.signal.aborted
         ? this.initial
-        : new AsyncFetchCall(this.function);
+        : new AsyncFetchCall(this.function, {
+            finally: this.finalizeFetchCall,
+          });
 
-    const finalizeFetchCall = () => {
-      if (this.runningSignal.peek() === fetchCall) {
-        this.runningSignal.value = undefined;
-      }
-
-      if (!fetchCall.signal.aborted) {
-        this.finishedSignal.value = fetchCall;
-      }
-    };
-
-    fetchCall.run(input, {signal}).then(finalizeFetchCall, finalizeFetchCall);
+    fetchCall.run(input, {signal});
 
     this.runningSignal.value = fetchCall;
     wasRunning?.abort();
 
     return fetchCall.promise;
+  };
+
+  private finalizeFetchCall = (fetchCall: AsyncFetchCall<Data, Input>) => {
+    if (this.runningSignal.peek() === fetchCall) {
+      this.runningSignal.value = undefined;
+    }
+
+    if (!fetchCall.signal.aborted) {
+      this.finishedSignal.value = fetchCall;
+    }
   };
 }
 
@@ -147,12 +152,18 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
 
   constructor(
     fetchFunction: AsyncFetchFunction<Data, Input>,
-    cached?: AsyncFetchCallCache<Data, Input>,
+    {
+      cached,
+      finally: onFinally,
+    }: {
+      cached?: AsyncFetchCallCache<Data, Input>;
+      finally?(call: AsyncFetchCall<Data, Input>): void;
+    } = {},
   ) {
     this.function = fetchFunction;
 
     let resolve!: (value: Data) => void;
-    let reject!: (cause: unknown) => void;
+    let reject!: (reason: unknown) => void;
 
     this.promise = new AsyncFetchPromise((res, rej) => {
       resolve = res;
@@ -160,10 +171,17 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     });
     Object.assign(this.promise, {source: this});
 
+    if (onFinally) {
+      this.promise.then(
+        () => onFinally(this),
+        () => onFinally(this),
+      );
+    }
+
     this.resolve = (value) => {
       if (this.promise.status !== 'pending') return;
       Object.assign(this, {finishedAt: now()});
-      return resolve(value);
+      resolve(value);
     };
     this.reject = (reason) => {
       if (this.promise.status !== 'pending') return;
@@ -265,5 +283,7 @@ export class AsyncFetchPromise<
 }
 
 function now() {
-  return typeof performance === 'object' ? performance.now() : Date.now();
+  return typeof performance === 'object'
+    ? performance.timeOrigin + performance.now()
+    : Date.now();
 }
