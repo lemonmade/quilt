@@ -1,5 +1,7 @@
 import {signal} from '@quilted/signals';
 
+export type AsyncFetchStatus = 'pending' | 'fulfilled' | 'rejected';
+
 export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
   (
     input: Input,

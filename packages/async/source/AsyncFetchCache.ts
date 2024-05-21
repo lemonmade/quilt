@@ -1,5 +1,6 @@
 import {
   AsyncFetch,
+  type AsyncFetchStatus,
   type AsyncFetchFunction,
   type AsyncFetchCallCache,
 } from './AsyncFetch.ts';
@@ -14,8 +15,9 @@ export interface AsyncFetchCacheGetOptions<_Data = unknown, _Input = unknown> {
 }
 
 export interface AsyncFetchCacheFindOptions<_Data = unknown, _Input = unknown> {
-  key?: AsyncFetchCacheKey;
-  tags?: readonly string[];
+  readonly key?: AsyncFetchCacheKey;
+  readonly tags?: readonly string[];
+  readonly status?: AsyncFetchStatus | readonly AsyncFetchStatus[];
 }
 
 export class AsyncFetchCache {
@@ -83,7 +85,9 @@ export class AsyncFetchCache {
   };
 
   find<Data = unknown, Input = unknown>(
-    options: AsyncFetchCacheFindOptions<Data, Input>,
+    options:
+      | AsyncFetchCacheFindOptions<Data, Input>
+      | ((entry: AsyncFetchCacheEntry<Data, Input>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
     return [...this.values()].find(predicate) as
@@ -92,13 +96,40 @@ export class AsyncFetchCache {
   }
 
   filter<Data = unknown, Input = unknown>(
-    options: AsyncFetchCacheFindOptions<Data, Input>,
+    options:
+      | AsyncFetchCacheFindOptions<Data, Input>
+      | ((entry: AsyncFetchCacheEntry<Data, Input>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
     return [...this.values()].filter(predicate) as AsyncFetchCacheEntry<
       Data,
       Input
     >[];
+  }
+
+  delete<Data = unknown, Input = unknown>(
+    options:
+      | AsyncFetchCacheFindOptions<Data, Input>
+      | ((entry: AsyncFetchCacheEntry<Data, Input>) => boolean),
+  ) {
+    const predicate = createCachePredicate(options);
+
+    for (const entry of this.cache.values()) {
+      if (predicate(entry)) {
+        this.cache.delete(entry.id);
+        entry.running?.abort();
+      }
+    }
+  }
+
+  clear() {
+    const entries = [...this.cache.values()];
+
+    this.cache.clear();
+
+    for (const entry of entries) {
+      entry.running?.abort();
+    }
   }
 
   *keys() {
@@ -133,10 +164,18 @@ export class AsyncFetchCache {
   }
 }
 
-function createCachePredicate(options: AsyncFetchCacheFindOptions) {
-  const {key, tags} = options;
+function createCachePredicate(
+  optionsOrPredicate:
+    | AsyncFetchCacheFindOptions<any, any>
+    | ((entry: AsyncFetchCacheEntry<any, any>) => boolean),
+) {
+  if (typeof optionsOrPredicate === 'function') return optionsOrPredicate;
+
+  const {key, tags, status} = optionsOrPredicate;
 
   const id = key ? stringifyCacheKey(key) : undefined;
+  const statuses =
+    status != null && typeof status === 'string' ? [status] : status;
 
   return (entry: AsyncFetchCacheEntry<any, any>) => {
     if (id != null && entry.id !== id) {
@@ -145,6 +184,10 @@ function createCachePredicate(options: AsyncFetchCacheFindOptions) {
 
     if (tags != null && tags.length !== 0) {
       return tags.every((tag) => entry.tags.includes(tag));
+    }
+
+    if (statuses != null && !statuses.includes(entry.status)) {
+      return false;
     }
 
     return true;

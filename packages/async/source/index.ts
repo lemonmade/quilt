@@ -3,6 +3,7 @@ export {
   AsyncFetch,
   AsyncFetchCall,
   AsyncFetchPromise,
+  type AsyncFetchStatus,
   type AsyncFetchFunction,
   type AsyncFetchCallCache,
 } from './AsyncFetch.ts';
