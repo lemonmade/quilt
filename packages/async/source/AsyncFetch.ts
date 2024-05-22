@@ -38,7 +38,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   readonly initial: AsyncFetchCall<Data, Input>;
 
   get running() {
-    return this.runningSignal.value;
+    return this.latestCalls.value.running;
   }
 
   get isRunning() {
@@ -46,7 +46,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   }
 
   get finished() {
-    return this.finishedSignal.value;
+    return this.latestCalls.value.finished;
   }
 
   get hasFinished() {
@@ -54,9 +54,8 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   }
 
   get latest() {
-    return (
-      this.runningSignal.value ?? this.finishedSignal.value ?? this.initial
-    );
+    const {running, finished} = this.latestCalls.value;
+    return running ?? finished ?? this.initial;
   }
 
   get promise(): AsyncFetchPromise<Data, Input> {
@@ -75,12 +74,10 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     return this.latest.updatedAt;
   }
 
-  private readonly runningSignal = signal<
-    AsyncFetchCall<Data, Input> | undefined
-  >(undefined);
-  private readonly finishedSignal = signal<
-    AsyncFetchCall<Data, Input> | undefined
-  >(undefined);
+  private readonly latestCalls = signal<{
+    readonly finished?: AsyncFetchCall<Data, Input>;
+    readonly running?: AsyncFetchCall<Data, Input>;
+  }>({});
   private readonly function: AsyncFetchFunction<Data, Input>;
   private hasRun = false;
 
@@ -99,7 +96,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     input?: Input,
     {signal}: {signal?: AbortSignal} = {},
   ): AsyncFetchPromise<Data, Input> => {
-    const wasRunning = this.runningSignal.peek();
+    const wasRunning = this.latestCalls.peek().running;
 
     const fetchCall =
       !this.hasRun && !this.initial.signal.aborted
@@ -111,7 +108,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     this.hasRun = true;
     fetchCall.run(input, {signal});
 
-    this.runningSignal.value = fetchCall;
+    this.latestCalls.value = {...this.latestCalls.peek(), running: fetchCall};
     wasRunning?.abort();
 
     return fetchCall.promise;
@@ -121,13 +118,23 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     this.fetch(this.latest.input, {signal});
 
   private finalizeFetchCall = (fetchCall: AsyncFetchCall<Data, Input>) => {
-    if (this.runningSignal.peek() === fetchCall) {
-      this.runningSignal.value = undefined;
-    }
+    let updated:
+      | {
+          -readonly [K in keyof typeof this.latestCalls.value]: (typeof this.latestCalls.value)[K];
+        }
+      | undefined;
 
     if (!fetchCall.signal.aborted) {
-      this.finishedSignal.value = fetchCall;
+      updated = {...this.latestCalls.peek()};
+      updated.finished = fetchCall;
     }
+
+    if (this.latestCalls.peek() === fetchCall) {
+      updated ??= {...this.latestCalls.peek()};
+      delete updated.running;
+    }
+
+    if (updated) this.latestCalls.value = updated;
   };
 }
 

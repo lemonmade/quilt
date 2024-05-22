@@ -9,10 +9,10 @@ import type {
   AsyncFetchFunction,
 } from '@quilted/async';
 import {
+  isSignal,
   useSignal,
   useComputed,
   useSignalEffect,
-  resolveSignalOrValue,
   type ReadonlySignal,
 } from '@quilted/preact-signals';
 
@@ -32,7 +32,7 @@ export interface UseAsyncFetchOptions<Data = unknown, Input = unknown>
 
 export function useAsync<Data = unknown, Input = unknown>(
   asyncFetchFunction: AsyncFetchFunction<Data, Input>,
-  options?: Omit<UseAsyncFetchOptions<Data, Input>, 'cache'> & {
+  options?: Omit<UseAsyncFetchOptions<Data, Input>, 'cache' | 'tags'> & {
     cache?: true | AsyncFetchCache;
   },
 ): AsyncFetchCacheEntry<Data, Input>;
@@ -49,7 +49,7 @@ export function useAsync<Data = unknown, Input = unknown>(
   {
     key,
     tags,
-    cache,
+    cache = true,
     // Don’t run fetches on the server if the value did not come from a cache
     active = typeof document === 'object' || Boolean(cache),
     suspend = true,
@@ -69,8 +69,9 @@ export function useAsync<Data = unknown, Input = unknown>(
     function: typeof asyncFetch === 'function' ? asyncFetch : undefined,
   });
 
-  const keySignal = useSignal(key);
-  keySignal.value = key;
+  const keySignal = useMaybeSignal(key);
+  const activeSignal = useMaybeSignal(active);
+  const inputSignal = useMaybeSignal(input);
 
   const fetchCacheFromContext = useAsyncFetchCache({optional: true});
 
@@ -105,33 +106,52 @@ export function useAsync<Data = unknown, Input = unknown>(
     });
   });
 
-  const fetch = fetchSignal.value;
+  if (suspend && activeSignal.value && fetchSignal.value.status === 'pending') {
+    const fetch = fetchSignal.value;
 
-  const shouldFetch =
-    resolveSignalOrValue(active) && fetch.status === 'pending';
-
-  if (shouldFetch && suspend) {
     if (fetch.isRunning) throw fetch.promise;
 
-    const resolvedInput = resolveSignalOrValue(input, {peek: true});
-
-    throw fetch.fetch(resolvedInput, {signal});
+    throw fetch.fetch(inputSignal.peek(), {signal});
   }
 
-  useSignalEffect(() => {
-    if (!resolveSignalOrValue(active)) return;
+  const actionToRun = useComputed(() => {
+    if (!activeSignal.value) return;
 
     const fetch = fetchSignal.value;
-    const resolvedInput = resolveSignalOrValue(input);
+    const resolvedInput = inputSignal.value;
 
-    if (fetch.latest.input !== resolvedInput) {
-      fetch
-        .fetch(resolvedInput, {
-          signal: internalsRef.current!.signal,
-        })
-        .catch(() => {});
+    if (
+      fetch.latest.input !== resolvedInput ||
+      (fetch.status === 'pending' && !fetch.isRunning)
+    ) {
+      return {fetch, input: resolvedInput};
     }
-  }, [active]);
+  });
 
-  return fetch;
+  useSignalEffect(() => {
+    const action = actionToRun.value;
+
+    if (action == null) return;
+
+    const {fetch, input} = action;
+
+    fetch
+      .fetch(input, {
+        signal: internalsRef.current!.signal,
+      })
+      .catch(() => {});
+  });
+
+  return fetchSignal.value;
+}
+
+// Limitation: can’t change from a signal to not a signal
+function useMaybeSignal<T>(value: T | ReadonlySignal<T>) {
+  if (isSignal(value)) {
+    return value;
+  } else {
+    const signal = useSignal(value);
+    signal.value = value;
+    return signal as ReadonlySignal<T>;
+  }
 }
