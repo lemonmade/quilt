@@ -183,7 +183,7 @@ importers:
         specifier: workspace:^2.0.0
         version: link:../events
       '@quilted/signals':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.2
         version: link:../signals
       '@types/web':
         specifier: ^0.0.59
@@ -406,7 +406,7 @@ importers:
   packages/preact-async:
     dependencies:
       '@quilted/async':
-        specifier: workspace:^0.4.7
+        specifier: workspace:^0.4.8
         version: link:../async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.3

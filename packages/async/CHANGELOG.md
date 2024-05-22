@@ -1,5 +1,14 @@
 # @quilted/async
 
+## 0.4.8
+
+### Patch Changes
+
+- [`e991b05`](https://github.com/lemonmade/quilt/commit/e991b05d98ded75993b6b777fa715737af106220) Thanks [@lemonmade](https://github.com/lemonmade)! - Update `fulfilled` status to `resolved`
+
+- Updated dependencies [[`0bcb1b7`](https://github.com/lemonmade/quilt/commit/0bcb1b7ccc37e4768f242b2d343f5fd0134c1573)]:
+  - @quilted/signals@0.2.2
+
 ## 0.4.7
 
 ### Patch Changes
