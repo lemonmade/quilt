@@ -58,6 +58,8 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     return running ?? finished ?? this.initial;
   }
 
+  readonly function: AsyncActionFunction<Data, Input>;
+
   get promise(): AsyncActionPromise<Data, Input> {
     return this.latest.promise;
   }
@@ -78,7 +80,6 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     readonly finished?: AsyncActionRun<Data, Input>;
     readonly running?: AsyncActionRun<Data, Input>;
   }>({});
-  private readonly function: AsyncActionFunction<Data, Input>;
   private hasRun = false;
 
   constructor(
@@ -86,7 +87,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     {cached}: {cached?: AsyncActionRunCache<Data, Input>} = {},
   ) {
     this.function = fetchFunction;
-    this.initial = new AsyncActionRun(fetchFunction, {
+    this.initial = new AsyncActionRun(this, {
       cached,
       finally: this.finalizeAction,
     });
@@ -101,7 +102,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     const actionRun =
       !this.hasRun && !this.initial.signal.aborted
         ? this.initial
-        : new AsyncActionRun(this.function, {
+        : new AsyncActionRun(this, {
             finally: this.finalizeAction,
           });
 
@@ -141,7 +142,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 
 export class AsyncActionRun<Data = unknown, Input = unknown> {
   readonly promise: AsyncActionPromise<Data, Input>;
-  readonly function: AsyncActionFunction<Data, Input>;
+  readonly action: AsyncAction<Data, Input>;
   readonly cached: boolean;
   readonly input?: Input;
 
@@ -185,7 +186,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
   private readonly abortController = new AbortController();
 
   constructor(
-    fetchFunction: AsyncActionFunction<Data, Input>,
+    action: AsyncAction<Data, Input>,
     {
       cached,
       finally: onFinally,
@@ -194,7 +195,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
       finally?(call: AsyncActionRun<Data, Input>): void;
     } = {},
   ) {
-    this.function = fetchFunction;
+    this.action = action;
 
     let resolve!: (value: Data) => void;
     let reject!: (reason: unknown) => void;
@@ -270,7 +271,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
 
     try {
       Promise.resolve(
-        this.function(input!, {signal: this.abortController.signal}),
+        this.action.function(input!, {signal: this.abortController.signal}),
       ).then(this.resolve, this.reject);
     } catch (error) {
       Promise.resolve().then(() => this.reject(error));
