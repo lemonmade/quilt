@@ -1,11 +1,11 @@
 import {describe, it, expect, vi} from 'vitest';
 
-import {AsyncFetchCache} from '../AsyncFetchCache.ts';
+import {AsyncActionCache} from '../AsyncActionCache.ts';
 
-describe('AsyncFetchCache', () => {
+describe('AsyncActionCache', () => {
   describe('get()', () => {
     it('returns a wrapper around an async function', async () => {
-      const cache = new AsyncFetchCache();
+      const cache = new AsyncActionCache();
       const greet = cache.get(async (name: string) => `Hello ${name}!`, {
         key: ['greet'],
       });
@@ -13,12 +13,12 @@ describe('AsyncFetchCache', () => {
       expect(greet).toHaveProperty('key', ['greet']);
       expect(greet).toHaveProperty('id', expect.stringContaining('greet'));
 
-      const result = await greet.fetch('Winston');
+      const result = await greet.run('Winston');
       expect(result).toBe('Hello Winston!');
     });
 
     it('returns the same entry for a given key', async () => {
-      const cache = new AsyncFetchCache();
+      const cache = new AsyncActionCache();
       const entry1 = cache.get(async () => '', {key: 'key'});
       const entry2 = cache.get(async () => '', {key: 'key'});
 
@@ -26,15 +26,15 @@ describe('AsyncFetchCache', () => {
     });
 
     it('returns different entries for different keys', async () => {
-      const cache = new AsyncFetchCache();
+      const cache = new AsyncActionCache();
       const entry1 = cache.get(async () => '', {key: 'key1'});
       const entry2 = cache.get(async () => '', {key: 'key2'});
 
       expect(entry1).not.toBe(entry2);
     });
 
-    it('passes through an abort signal to the fetch function', async () => {
-      const cache = new AsyncFetchCache();
+    it('passes through an abort signal to the async function', async () => {
+      const cache = new AsyncActionCache();
       const abortController = new AbortController();
       const spy = vi.fn();
       const reason = new Error('Abort');
@@ -45,7 +45,7 @@ describe('AsyncFetchCache', () => {
         });
       });
 
-      const promise = waitUntilAbort.fetch(undefined, {
+      const promise = waitUntilAbort.run(undefined, {
         signal: abortController.signal,
       });
 
@@ -56,7 +56,7 @@ describe('AsyncFetchCache', () => {
     });
 
     it('provides an abort() method to manually abort the fetch function', async () => {
-      const cache = new AsyncFetchCache();
+      const cache = new AsyncActionCache();
       const spy = vi.fn();
       const reason = new Error('Abort');
 
@@ -66,7 +66,7 @@ describe('AsyncFetchCache', () => {
         });
       });
 
-      const promise = waitUntilAbort.fetch();
+      const promise = waitUntilAbort.run();
 
       promise.source.abort(reason);
 
@@ -77,10 +77,10 @@ describe('AsyncFetchCache', () => {
 
   describe('fetch()', () => {
     it('calls an async function and puts it in the cache', async () => {
-      const cache = new AsyncFetchCache();
+      const cache = new AsyncActionCache();
 
       const getGreeting = async (name: string) => `Hello ${name}!`;
-      const result = await cache.fetch(getGreeting, {
+      const result = await cache.run(getGreeting, {
         key: ['greet'],
         input: 'Winston',
       });

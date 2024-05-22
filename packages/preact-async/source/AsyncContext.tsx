@@ -1,11 +1,11 @@
 import type {RenderableProps} from 'preact';
 import {useRef, useLayoutEffect} from 'preact/hooks';
 
-import type {AsyncFetchCache} from '@quilted/async';
+import type {AsyncActionCache} from '@quilted/async';
 import {signal, type Signal} from '@quilted/preact-signals';
 
-import {AsyncHydratedContext, AsyncFetchCacheContext} from './context.ts';
-import {useAsyncFetchCacheSerialization} from './hooks/cache.ts';
+import {AsyncHydratedContext, AsyncActionCacheContext} from './context.ts';
+import {useAsyncActionCacheSerialization} from './hooks/cache.ts';
 
 /**
  * Only needed for the following features:
@@ -17,12 +17,12 @@ export function AsyncContext({
   cache,
   children,
 }: RenderableProps<{
-  cache?: AsyncFetchCache;
+  cache?: AsyncActionCache;
 }>) {
   const hydrated = useRef<Signal<boolean>>();
   if (hydrated.current == null) hydrated.current = signal(false);
 
-  useAsyncFetchCacheSerialization(cache);
+  useAsyncActionCacheSerialization(cache);
 
   if (typeof document === 'object') {
     useLayoutEffect(() => {
@@ -37,9 +37,9 @@ export function AsyncContext({
   );
 
   return cache ? (
-    <AsyncFetchCacheContext.Provider value={cache}>
+    <AsyncActionCacheContext.Provider value={cache}>
       {content}
-    </AsyncFetchCacheContext.Provider>
+    </AsyncActionCacheContext.Provider>
   ) : (
     content
   );

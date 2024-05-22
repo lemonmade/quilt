@@ -1,33 +1,36 @@
 import {
-  AsyncFetch,
-  type AsyncFetchStatus,
-  type AsyncFetchFunction,
-  type AsyncFetchCallCache,
-} from './AsyncFetch.ts';
+  AsyncAction,
+  type AsyncActionStatus,
+  type AsyncActionFunction,
+  type AsyncActionRunCache,
+} from './AsyncAction.ts';
 
 const EMPTY_ARRAY = Object.freeze([]);
 
-export type AsyncFetchCacheKey = unknown | readonly unknown[];
+export type AsyncActionCacheKey = unknown | readonly unknown[];
 
-export interface AsyncFetchCacheGetOptions<_Data = unknown, _Input = unknown> {
-  readonly key?: AsyncFetchCacheKey;
+export interface AsyncActionCacheGetOptions<_Data = unknown, _Input = unknown> {
+  readonly key?: AsyncActionCacheKey;
   readonly tags?: readonly string[];
 }
 
-export interface AsyncFetchCacheFindOptions<_Data = unknown, _Input = unknown> {
-  readonly key?: AsyncFetchCacheKey;
+export interface AsyncActionCacheFindOptions<
+  _Data = unknown,
+  _Input = unknown,
+> {
+  readonly key?: AsyncActionCacheKey;
   readonly tags?: readonly string[];
-  readonly status?: AsyncFetchStatus | readonly AsyncFetchStatus[];
+  readonly status?: AsyncActionStatus | readonly AsyncActionStatus[];
 }
 
-export class AsyncFetchCache {
-  private readonly cache: Map<string, AsyncFetchCacheEntry<any, any>>;
-  private readonly initialCache: Map<string, AsyncFetchCallCache<any, any>>;
+export class AsyncActionCache {
+  private readonly cache: Map<string, AsyncActionCacheEntry<any, any>>;
+  private readonly initialCache: Map<string, AsyncActionRunCache<any, any>>;
   private anonymousFetchCount = 0;
 
   constructor(
     initialCache: Iterable<
-      AsyncFetchCacheEntrySerialization<any>
+      AsyncActionCacheEntrySerialization<any>
     > = EMPTY_ARRAY,
   ) {
     this.cache = new Map();
@@ -39,9 +42,9 @@ export class AsyncFetchCache {
   }
 
   get = <Data = unknown, Input = unknown>(
-    fetchFunction: AsyncFetchFunction<Data, Input>,
-    {key, tags = EMPTY_ARRAY}: AsyncFetchCacheGetOptions<Data, Input> = {},
-  ): AsyncFetchCacheEntry<Data, Input> => {
+    fetchFunction: AsyncActionFunction<Data, Input>,
+    {key, tags = EMPTY_ARRAY}: AsyncActionCacheGetOptions<Data, Input> = {},
+  ): AsyncActionCacheEntry<Data, Input> => {
     let resolvedKey = key;
 
     if (resolvedKey == null) {
@@ -55,7 +58,7 @@ export class AsyncFetchCache {
 
     if (cacheEntry) return cacheEntry;
 
-    cacheEntry = new AsyncFetchCacheEntry<Data, Input>(fetchFunction, {
+    cacheEntry = new AsyncActionCacheEntry<Data, Input>(fetchFunction, {
       id,
       key: resolvedKey,
       tags,
@@ -67,41 +70,41 @@ export class AsyncFetchCache {
     return cacheEntry;
   };
 
-  fetch = <Data = unknown, Input = unknown>(
-    fetchFunction: AsyncFetchFunction<Data, Input>,
+  run = <Data = unknown, Input = unknown>(
+    fetchFunction: AsyncActionFunction<Data, Input>,
     {
       key,
       input,
       signal,
       tags = EMPTY_ARRAY,
-    }: {input?: Input; signal?: AbortSignal} & AsyncFetchCacheGetOptions<
+    }: {input?: Input; signal?: AbortSignal} & AsyncActionCacheGetOptions<
       Data,
       Input
     > = {},
   ) => {
     const entry = this.get(fetchFunction, {key, tags});
-    entry.fetch(input, {signal});
+    entry.run(input, {signal});
     return entry.promise;
   };
 
   find<Data = unknown, Input = unknown>(
     options:
-      | AsyncFetchCacheFindOptions<Data, Input>
-      | ((entry: AsyncFetchCacheEntry<Data, Input>) => boolean),
+      | AsyncActionCacheFindOptions<Data, Input>
+      | ((entry: AsyncActionCacheEntry<Data, Input>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
     return [...this.values()].find(predicate) as
-      | AsyncFetchCacheEntry<Data, Input>
+      | AsyncActionCacheEntry<Data, Input>
       | undefined;
   }
 
   filter<Data = unknown, Input = unknown>(
     options:
-      | AsyncFetchCacheFindOptions<Data, Input>
-      | ((entry: AsyncFetchCacheEntry<Data, Input>) => boolean),
+      | AsyncActionCacheFindOptions<Data, Input>
+      | ((entry: AsyncActionCacheEntry<Data, Input>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
-    return [...this.values()].filter(predicate) as AsyncFetchCacheEntry<
+    return [...this.values()].filter(predicate) as AsyncActionCacheEntry<
       Data,
       Input
     >[];
@@ -109,8 +112,8 @@ export class AsyncFetchCache {
 
   delete<Data = unknown, Input = unknown>(
     options:
-      | AsyncFetchCacheFindOptions<Data, Input>
-      | ((entry: AsyncFetchCacheEntry<Data, Input>) => boolean),
+      | AsyncActionCacheFindOptions<Data, Input>
+      | ((entry: AsyncActionCacheEntry<Data, Input>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
 
@@ -146,14 +149,14 @@ export class AsyncFetchCache {
     }
   }
 
-  restore(entries: Iterable<AsyncFetchCacheEntrySerialization<any>>) {
+  restore(entries: Iterable<AsyncActionCacheEntrySerialization<any>>) {
     for (const [key, value] of entries) {
       this.initialCache.set(key, value);
     }
   }
 
-  serialize(): readonly AsyncFetchCacheEntrySerialization<any>[] {
-    const serialized: AsyncFetchCacheEntrySerialization<any>[] = [];
+  serialize(): readonly AsyncActionCacheEntrySerialization<any>[] {
+    const serialized: AsyncActionCacheEntrySerialization<any>[] = [];
 
     for (const entry of this.cache.values()) {
       const serializedEntry = entry.serialize();
@@ -166,8 +169,8 @@ export class AsyncFetchCache {
 
 function createCachePredicate(
   optionsOrPredicate:
-    | AsyncFetchCacheFindOptions<any, any>
-    | ((entry: AsyncFetchCacheEntry<any, any>) => boolean),
+    | AsyncActionCacheFindOptions<any, any>
+    | ((entry: AsyncActionCacheEntry<any, any>) => boolean),
 ) {
   if (typeof optionsOrPredicate === 'function') return optionsOrPredicate;
 
@@ -177,7 +180,7 @@ function createCachePredicate(
   const statuses =
     status != null && typeof status === 'string' ? [status] : status;
 
-  return (entry: AsyncFetchCacheEntry<any, any>) => {
+  return (entry: AsyncActionCacheEntry<any, any>) => {
     if (id != null && entry.id !== id) {
       return false;
     }
@@ -194,16 +197,16 @@ function createCachePredicate(
   };
 }
 
-export class AsyncFetchCacheEntry<
+export class AsyncActionCacheEntry<
   Data = unknown,
   Input = unknown,
-> extends AsyncFetch<Data, Input> {
+> extends AsyncAction<Data, Input> {
   readonly id: string;
-  readonly key: AsyncFetchCacheKey;
+  readonly key: AsyncActionCacheKey;
   readonly tags: readonly string[];
 
   constructor(
-    fetchFunction: AsyncFetchFunction<Data, Input>,
+    fetchFunction: AsyncActionFunction<Data, Input>,
     {
       id,
       key,
@@ -211,8 +214,8 @@ export class AsyncFetchCacheEntry<
       tags = EMPTY_ARRAY,
     }: {
       id: string;
-      cached?: AsyncFetchCallCache<Data, Input>;
-    } & Pick<AsyncFetchCacheGetOptions<Data, Input>, 'tags' | 'key'>,
+      cached?: AsyncActionRunCache<Data, Input>;
+    } & Pick<AsyncActionCacheGetOptions<Data, Input>, 'tags' | 'key'>,
   ) {
     super(fetchFunction, {cached});
 
@@ -221,17 +224,17 @@ export class AsyncFetchCacheEntry<
     this.tags = tags;
   }
 
-  serialize(): AsyncFetchCacheEntrySerialization<Data, Input> | undefined {
+  serialize(): AsyncActionCacheEntrySerialization<Data, Input> | undefined {
     const serialized = this.finished?.serialize();
     return serialized && [this.id, serialized];
   }
 }
 
-export type AsyncFetchCacheEntrySerialization<
+export type AsyncActionCacheEntrySerialization<
   Data = unknown,
   Input = unknown,
-> = [key: string, result: AsyncFetchCallCache<Data, Input>];
+> = [key: string, result: AsyncActionRunCache<Data, Input>];
 
-function stringifyCacheKey(key: AsyncFetchCacheKey): string {
+function stringifyCacheKey(key: AsyncActionCacheKey): string {
   return typeof key === 'string' ? key : JSON.stringify(key);
 }

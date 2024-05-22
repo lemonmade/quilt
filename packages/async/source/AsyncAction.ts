@@ -1,8 +1,8 @@
 import {signal} from '@quilted/signals';
 
-export type AsyncFetchStatus = 'pending' | 'resolved' | 'rejected';
+export type AsyncActionStatus = 'pending' | 'resolved' | 'rejected';
 
-export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
+export interface AsyncActionFunction<Data = unknown, Input = unknown> {
   (
     input: Input,
     options: {
@@ -11,14 +11,14 @@ export interface AsyncFetchFunction<Data = unknown, Input = unknown> {
   ): PromiseLike<Data>;
 }
 
-export interface AsyncFetchCallCache<Data = unknown, Input = unknown> {
+export interface AsyncActionRunCache<Data = unknown, Input = unknown> {
   readonly value?: Data;
   readonly error?: unknown;
   readonly input?: Input;
   readonly time?: number;
 }
 
-export class AsyncFetch<Data = unknown, Input = unknown> {
+export class AsyncAction<Data = unknown, Input = unknown> {
   get value() {
     return this.finished?.value;
   }
@@ -35,7 +35,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     return this.finished?.status ?? 'pending';
   }
 
-  readonly initial: AsyncFetchCall<Data, Input>;
+  readonly initial: AsyncActionRun<Data, Input>;
 
   get running() {
     return this.latestCalls.value.running;
@@ -58,7 +58,7 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
     return running ?? finished ?? this.initial;
   }
 
-  get promise(): AsyncFetchPromise<Data, Input> {
+  get promise(): AsyncActionPromise<Data, Input> {
     return this.latest.promise;
   }
 
@@ -75,61 +75,61 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   }
 
   private readonly latestCalls = signal<{
-    readonly finished?: AsyncFetchCall<Data, Input>;
-    readonly running?: AsyncFetchCall<Data, Input>;
+    readonly finished?: AsyncActionRun<Data, Input>;
+    readonly running?: AsyncActionRun<Data, Input>;
   }>({});
-  private readonly function: AsyncFetchFunction<Data, Input>;
+  private readonly function: AsyncActionFunction<Data, Input>;
   private hasRun = false;
 
   constructor(
-    fetchFunction: AsyncFetchFunction<Data, Input>,
-    {cached}: {cached?: AsyncFetchCallCache<Data, Input>} = {},
+    fetchFunction: AsyncActionFunction<Data, Input>,
+    {cached}: {cached?: AsyncActionRunCache<Data, Input>} = {},
   ) {
     this.function = fetchFunction;
-    this.initial = new AsyncFetchCall(fetchFunction, {
+    this.initial = new AsyncActionRun(fetchFunction, {
       cached,
-      finally: this.finalizeFetchCall,
+      finally: this.finalizeAction,
     });
   }
 
-  fetch = (
+  run = (
     input?: Input,
     {signal}: {signal?: AbortSignal} = {},
-  ): AsyncFetchPromise<Data, Input> => {
+  ): AsyncActionPromise<Data, Input> => {
     const wasRunning = this.latestCalls.peek().running;
 
-    const fetchCall =
+    const actionRun =
       !this.hasRun && !this.initial.signal.aborted
         ? this.initial
-        : new AsyncFetchCall(this.function, {
-            finally: this.finalizeFetchCall,
+        : new AsyncActionRun(this.function, {
+            finally: this.finalizeAction,
           });
 
     this.hasRun = true;
-    fetchCall.run(input, {signal});
+    actionRun.start(input, {signal});
 
-    this.latestCalls.value = {...this.latestCalls.peek(), running: fetchCall};
+    this.latestCalls.value = {...this.latestCalls.peek(), running: actionRun};
     wasRunning?.abort();
 
-    return fetchCall.promise;
+    return actionRun.promise;
   };
 
-  refetch = ({signal}: {signal?: AbortSignal} = {}) =>
-    this.fetch(this.latest.input, {signal});
+  rerun = ({signal}: {signal?: AbortSignal} = {}) =>
+    this.run(this.latest.input, {signal});
 
-  private finalizeFetchCall = (fetchCall: AsyncFetchCall<Data, Input>) => {
+  private finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
     let updated:
       | {
           -readonly [K in keyof typeof this.latestCalls.value]: (typeof this.latestCalls.value)[K];
         }
       | undefined;
 
-    if (!fetchCall.signal.aborted) {
+    if (!actionRun.signal.aborted) {
       updated = {...this.latestCalls.peek()};
-      updated.finished = fetchCall;
+      updated.finished = actionRun;
     }
 
-    if (this.latestCalls.peek() === fetchCall) {
+    if (this.latestCalls.peek() === actionRun) {
       updated ??= {...this.latestCalls.peek()};
       delete updated.running;
     }
@@ -138,9 +138,9 @@ export class AsyncFetch<Data = unknown, Input = unknown> {
   };
 }
 
-export class AsyncFetchCall<Data = unknown, Input = unknown> {
-  readonly promise: AsyncFetchPromise<Data, Input>;
-  readonly function: AsyncFetchFunction<Data, Input>;
+export class AsyncActionRun<Data = unknown, Input = unknown> {
+  readonly promise: AsyncActionPromise<Data, Input>;
+  readonly function: AsyncActionFunction<Data, Input>;
   readonly cached: boolean;
   readonly input?: Input;
 
@@ -184,13 +184,13 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   private readonly abortController = new AbortController();
 
   constructor(
-    fetchFunction: AsyncFetchFunction<Data, Input>,
+    fetchFunction: AsyncActionFunction<Data, Input>,
     {
       cached,
       finally: onFinally,
     }: {
-      cached?: AsyncFetchCallCache<Data, Input>;
-      finally?(call: AsyncFetchCall<Data, Input>): void;
+      cached?: AsyncActionRunCache<Data, Input>;
+      finally?(call: AsyncActionRun<Data, Input>): void;
     } = {},
   ) {
     this.function = fetchFunction;
@@ -198,7 +198,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     let resolve!: (value: Data) => void;
     let reject!: (reason: unknown) => void;
 
-    this.promise = new AsyncFetchPromise((res, rej) => {
+    this.promise = new AsyncActionPromise((res, rej) => {
       resolve = res;
       reject = rej;
     }, this);
@@ -253,7 +253,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     this.abortController.abort(reason);
   };
 
-  run = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
+  start = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
     if (this.startedAt != null) return this.promise;
 
     Object.assign(this, {startedAt: now(), input});
@@ -278,7 +278,7 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
     return this.promise;
   };
 
-  serialize(): AsyncFetchCallCache<Data, Input> | undefined {
+  serialize(): AsyncActionRunCache<Data, Input> | undefined {
     if (this.promise.status === 'pending') return;
 
     return {
@@ -290,18 +290,18 @@ export class AsyncFetchCall<Data = unknown, Input = unknown> {
   }
 }
 
-export class AsyncFetchPromise<
+export class AsyncActionPromise<
   Data = unknown,
   Input = unknown,
 > extends Promise<Data> {
-  readonly status: AsyncFetchStatus = 'pending';
+  readonly status: AsyncActionStatus = 'pending';
   readonly value?: Data;
   readonly reason?: unknown;
-  readonly source: AsyncFetchCall<Data, Input>;
+  readonly source: AsyncActionRun<Data, Input>;
 
   constructor(
     executor: ConstructorParameters<typeof Promise<Data>>[0],
-    source: AsyncFetchCall<Data, Input>,
+    source: AsyncActionRun<Data, Input>,
   ) {
     super((resolve, reject) => {
       executor(

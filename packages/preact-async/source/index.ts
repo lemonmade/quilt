@@ -3,12 +3,14 @@ export * from '@quilted/async';
 export {AsyncComponent} from './AsyncComponent.tsx';
 export {AsyncContext} from './AsyncContext.tsx';
 
+export {useAsyncActionCache} from './context.ts';
 export {
   useAsync,
-  useAsync as useAsyncFetch,
-  useAsyncFetchCache,
-} from './hooks/fetch.ts';
-export {useAsyncFetchCacheSerialization} from './hooks/cache.ts';
+  useAsync as useAsyncAction,
+  type UseAsyncActionOptions,
+} from './hooks/async.ts';
+export {useAsyncMutation} from './hooks/mutation.ts';
+export {useAsyncActionCacheSerialization} from './hooks/cache.ts';
 export {
   useAsyncModule,
   useAsyncModuleAssets,

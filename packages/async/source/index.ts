@@ -1,12 +1,12 @@
 export {AsyncModulesGlobal, type AsyncModulesOptions} from './global.ts';
 export {
-  AsyncFetch,
-  AsyncFetchCall,
-  AsyncFetchPromise,
-  type AsyncFetchStatus,
-  type AsyncFetchFunction,
-  type AsyncFetchCallCache,
-} from './AsyncFetch.ts';
+  AsyncAction,
+  AsyncActionRun,
+  AsyncActionPromise,
+  type AsyncActionStatus,
+  type AsyncActionFunction,
+  type AsyncActionRunCache,
+} from './AsyncAction.ts';
 export {
   AsyncModule,
   type AsyncModuleLoader,
@@ -14,10 +14,10 @@ export {
   type AsyncModuleLoaderObject,
 } from './AsyncModule.ts';
 export {
-  AsyncFetchCache,
-  AsyncFetchCacheEntry,
-  type AsyncFetchCacheKey,
-  type AsyncFetchCacheGetOptions,
-  type AsyncFetchCacheFindOptions,
-  type AsyncFetchCacheEntrySerialization,
-} from './AsyncFetchCache.ts';
+  AsyncActionCache,
+  AsyncActionCacheEntry,
+  type AsyncActionCacheKey,
+  type AsyncActionCacheGetOptions,
+  type AsyncActionCacheFindOptions,
+  type AsyncActionCacheEntrySerialization,
+} from './AsyncActionCache.ts';

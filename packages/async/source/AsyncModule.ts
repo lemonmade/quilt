@@ -1,4 +1,4 @@
-import {AsyncFetch} from './AsyncFetch.ts';
+import {AsyncAction} from './AsyncAction.ts';
 
 export interface AsyncModuleLoaderFunction<Module> {
   (): Promise<Module>;
@@ -17,30 +17,30 @@ export class AsyncModule<Module> {
   readonly id?: string;
 
   get module() {
-    return this.fetchModule.value;
+    return this.loadModule.value;
   }
 
   get value() {
-    return this.fetchModule.value;
+    return this.loadModule.value;
   }
 
   get error() {
-    return this.fetchModule.error;
+    return this.loadModule.error;
   }
 
   get promise() {
-    return this.fetchModule.promise;
+    return this.loadModule.promise;
   }
 
   get status() {
-    return this.fetchModule.status;
+    return this.loadModule.status;
   }
 
   get isLoading() {
-    return this.fetchModule.isRunning;
+    return this.loadModule.isRunning;
   }
 
-  private readonly fetchModule: AsyncFetch<Module>;
+  private readonly loadModule: AsyncAction<Module>;
 
   constructor(load: AsyncModuleLoader<Module>) {
     const id = (load as any).id;
@@ -50,7 +50,7 @@ export class AsyncModule<Module> {
       Symbol.for('quilt')
     ]?.asyncModules?.get(id);
 
-    this.fetchModule = new AsyncFetch(
+    this.loadModule = new AsyncAction(
       () => (typeof load === 'function' ? load() : load.import()),
       {cached: preloadedModule ? {value: preloadedModule} : undefined},
     );
@@ -59,7 +59,7 @@ export class AsyncModule<Module> {
   load = ({force = false} = {}) =>
     !force && (this.isLoading || this.status !== 'pending')
       ? this.promise
-      : this.fetchModule.fetch();
+      : this.loadModule.run();
 
   import = this.load;
 }

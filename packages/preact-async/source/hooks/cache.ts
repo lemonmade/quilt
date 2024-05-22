@@ -1,10 +1,10 @@
 import {useRef} from 'preact/hooks';
 
-import type {AsyncFetchCache} from '@quilted/async';
+import type {AsyncActionCache} from '@quilted/async';
 import {useBrowserDetails} from '@quilted/preact-browser';
 
-export function useAsyncFetchCacheSerialization(
-  cache?: AsyncFetchCache,
+export function useAsyncActionCacheSerialization(
+  cache?: AsyncActionCache,
   {name = 'fetch:cache'}: {name?: string} = {},
 ) {
   const browser = useBrowserDetails({optional: cache == null});
