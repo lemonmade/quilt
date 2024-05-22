@@ -1,4 +1,4 @@
-import {useRef} from 'preact/hooks';
+import {useRef, useEffect} from 'preact/hooks';
 
 import {AsyncAction} from '@quilted/async';
 import type {
@@ -145,7 +145,15 @@ export function useAsync<Data = unknown, Input = unknown>(
       .catch(() => {});
   });
 
-  return actionSignal.value;
+  const action = actionSignal.value;
+
+  useEffect(() => {
+    return () => {
+      action.running?.abort();
+    };
+  }, [action]);
+
+  return action;
 }
 
 // Limitation: can’t change from a signal to not a signal

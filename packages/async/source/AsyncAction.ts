@@ -88,10 +88,8 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     {cached}: {cached?: AsyncActionRunCache<Data, Input>} = {},
   ) {
     this.function = fetchFunction;
-    this.initial = new AsyncActionRun(this, {
-      cached,
-      finally: this.finalizeAction,
-    });
+    this.initial = new AsyncActionRun(this, {cached});
+    if (this.initial.status !== 'pending') this.finalizeAction(this.initial);
   }
 
   run = (
@@ -101,7 +99,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     const wasRunning = this.latestCalls.peek().running;
 
     const actionRun =
-      !this.hasRun && !this.initial.signal.aborted
+      !this.hasRun && this.initial.status === 'pending'
         ? this.initial
         : new AsyncActionRun(this, {
             finally: this.finalizeAction,
