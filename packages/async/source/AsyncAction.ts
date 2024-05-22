@@ -129,8 +129,9 @@ export class AsyncAction<Data = unknown, Input = unknown> {
       updated.finished = actionRun;
     }
 
-    if (this.latestCalls.peek() === actionRun) {
-      updated ??= {...this.latestCalls.peek()};
+    const latest = this.latestCalls.peek();
+    if (latest.running === actionRun) {
+      updated ??= {...latest};
       delete updated.running;
     }
 
