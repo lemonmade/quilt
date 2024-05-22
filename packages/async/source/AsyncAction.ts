@@ -6,7 +6,8 @@ export interface AsyncActionFunction<Data = unknown, Input = unknown> {
   (
     input: Input,
     options: {
-      signal: AbortSignal;
+      readonly signal: AbortSignal;
+      yield(data: Data): void;
     },
   ): PromiseLike<Data>;
 }
@@ -270,8 +271,16 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
     });
 
     try {
+      const {signal} = this.abortController;
+
       Promise.resolve(
-        this.action.function(input!, {signal: this.abortController.signal}),
+        this.action.function(input!, {
+          signal,
+          yield: (value) => {
+            if (signal.aborted) return;
+            Object.assign(this, {value});
+          },
+        }),
       ).then(this.resolve, this.reject);
     } catch (error) {
       Promise.resolve().then(() => this.reject(error));
