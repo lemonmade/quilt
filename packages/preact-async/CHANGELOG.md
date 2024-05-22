@@ -1,5 +1,16 @@
 # @quilted/preact-async
 
+## 0.1.8
+
+### Patch Changes
+
+- [`ffa4d65`](https://github.com/lemonmade/quilt/commit/ffa4d6526892cadde17c1512b11537c907563bc5) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `useAsync()` reactivity to option changes
+
+- [`76504f1`](https://github.com/lemonmade/quilt/commit/76504f1058a1bdcf037499c36e648eee7fb6bc9d) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename `AsyncFetch` to `AsyncAction` and add `useAsyncMutation`
+
+- Updated dependencies [[`ffa4d65`](https://github.com/lemonmade/quilt/commit/ffa4d6526892cadde17c1512b11537c907563bc5), [`76504f1`](https://github.com/lemonmade/quilt/commit/76504f1058a1bdcf037499c36e648eee7fb6bc9d), [`51407f5`](https://github.com/lemonmade/quilt/commit/51407f5e3495d34a77b58ce897d850b8756cdfbe), [`f62bbaf`](https://github.com/lemonmade/quilt/commit/f62bbaf0017917101c8e48471fdde09202d60c61)]:
+  - @quilted/async@0.4.9
+
 ## 0.1.7
 
 ### Patch Changes
