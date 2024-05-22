@@ -389,13 +389,13 @@ describe('async', () => {
         import {Suspense} from 'preact/compat';
         import {useBrowserRequest} from '@quilted/quilt/browser';
         import {
+          useAsync,
           AsyncContext,
-          AsyncFetchCache,
-          useAsyncFetch,
+          AsyncActionCache,
         } from '@quilted/quilt/async';
         
         export default function App() {
-          const cache = useMemo(() => new AsyncFetchCache(), []);
+          const cache = useMemo(() => new AsyncActionCache(), []);
 
           return (
             <AsyncContext cache={cache}>
@@ -408,7 +408,8 @@ describe('async', () => {
 
         function Async() {
           const {url} = useBrowserRequest();
-          const fetched = useAsyncFetch(async () => {
+
+          const fetched = useAsync(async () => {
             const response = await fetch(new URL('/data', url));
             const text = await response.text();
             return text;
@@ -466,12 +467,12 @@ describe('async', () => {
         import {useBrowserRequest} from '@quilted/quilt/browser';
         import {
           AsyncContext,
-          AsyncFetchCache,
-          useAsyncFetch,
+          AsyncActionCache,
+          useAsync,
         } from '@quilted/quilt/async';
         
         export default function App() {
-          const cache = useMemo(() => new AsyncFetchCache(), []);
+          const cache = useMemo(() => new AsyncActionCache(), []);
 
           return (
             <AsyncContext cache={cache}>
@@ -494,7 +495,7 @@ describe('async', () => {
         function useGreeting(name: string) {
           const {url} = useBrowserRequest();
 
-          const fetched = useAsyncFetch(async () => {
+          const fetched = useAsync(async () => {
             const apiURL = new URL('/data', url);
             apiURL.searchParams.set('name', name);
             const response = await fetch(apiURL);
