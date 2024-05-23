@@ -1,5 +1,11 @@
 # @quilted/react
 
+## 18.2.11
+
+### Patch Changes
+
+- [`1645423`](https://github.com/lemonmade/quilt/commit/1645423d7a24d9818201c9783c65f91eea650122) Thanks [@lemonmade](https://github.com/lemonmade)! - Add CommonJS builds for React packages
+
 ## 18.2.10
 
 ### Patch Changes
