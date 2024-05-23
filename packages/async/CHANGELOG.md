@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.10
+
+### Patch Changes
+
+- [`5db01f8`](https://github.com/lemonmade/quilt/commit/5db01f8a8dce398a8ab02e40dba2b1f63840faf1) Thanks [@lemonmade](https://github.com/lemonmade)! - More fixes to async timing and cancellation
+
 ## 0.4.9
 
 ### Patch Changes
