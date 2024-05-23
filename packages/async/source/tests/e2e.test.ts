@@ -75,7 +75,7 @@ describe('AsyncActionCache', () => {
     });
   });
 
-  describe('fetch()', () => {
+  describe('run()', () => {
     it('calls an async function and puts it in the cache', async () => {
       const cache = new AsyncActionCache();
 

@@ -88,8 +88,10 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     {cached}: {cached?: AsyncActionRunCache<Data, Input>} = {},
   ) {
     this.function = fetchFunction;
-    this.initial = new AsyncActionRun(this, {cached});
-    if (this.initial.status !== 'pending') this.finalizeAction(this.initial);
+    this.initial = new AsyncActionRun(this, {
+      cached,
+      finally: this.finalizeAction,
+    });
   }
 
   run = (
@@ -204,22 +206,17 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
       reject = rej;
     }, this);
 
-    if (onFinally) {
-      this.promise.then(
-        () => onFinally(this),
-        () => onFinally(this),
-      );
-    }
-
     this.resolve = (value) => {
       if (this.promise.status !== 'pending') return;
       if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
       resolve(value);
+      onFinally?.(this);
     };
     this.reject = (reason) => {
       if (this.promise.status !== 'pending') return;
       if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
       reject(reason);
+      onFinally?.(this);
     };
 
     this.cached = Boolean(cached);
