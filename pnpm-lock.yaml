@@ -315,6 +315,9 @@ importers:
 
   packages/graphql:
     dependencies:
+      '@quilted/async':
+        specifier: workspace:^
+        version: link:../async
       '@types/chance':
         specifier: ^1.1.3
         version: 1.1.3
@@ -468,15 +471,18 @@ importers:
 
   packages/preact-graphql:
     dependencies:
-      '@quilted/async':
-        specifier: workspace:^0.4.0
-        version: link:../async
       '@quilted/graphql':
         specifier: workspace:^3.0.0
         version: link:../graphql
+      '@quilted/preact-async':
+        specifier: workspace:^0.1.0
+        version: link:../preact-async
       '@quilted/preact-context':
         specifier: workspace:^0.1.0
         version: link:../preact-context
+      '@quilted/preact-signals':
+        specifier: workspace:^0.1.0
+        version: link:../preact-signals
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
         version: link:../useful-types

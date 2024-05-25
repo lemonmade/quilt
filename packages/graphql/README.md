@@ -68,6 +68,20 @@ try {
 }
 ```
 
+This library also provides `GraphQLQuery` and `GraphQLMutation` classes that can be used to create observable GraphQL operations. These classes are useful when you want to fetch a GraphQL result multiple times, and when you want to be able to observe each GraphQL call as it completes.
+
+```tsx
+import {createGraphQLFetch, GraphQLQuery} from '@quilted/graphql';
+
+const fetchGraphQL = createGraphQLFetch({url: '/graphql'});
+
+const query = new GraphQLQuery('query MyQuery { ... }', {fetch: fetchGraphQL});
+const firstResult = await query.fetch({name: 'Winston'}); // {data: ...}
+const secondResult = await query.fetch({name: 'Molly'}); // {data: ...}
+
+query.value; // The most recent GraphQL result
+```
+
 #### Customizing GraphQL HTTP requests
 
 By default, operations are sent to the specified `url` using a `POST` request, according to the [GraphQL over HTTP specification](https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md). You can force operations to be made using `GET` requests instead by setting the `method` option:

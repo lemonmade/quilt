@@ -16,6 +16,8 @@ export {
   GraphQLFetchRequest,
   type GraphQLFetchRequestInit,
 } from './fetch/request.ts';
+export {GraphQLQuery} from './GraphQLQuery.ts';
+export {GraphQLMutation} from './GraphQLMutation.ts';
 export {gql, graphql} from './gql.ts';
 export {toGraphQLSource, toGraphQLOperation} from './operation.ts';
 export {minifyGraphQLSource} from './minify.ts';
