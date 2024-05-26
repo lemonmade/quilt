@@ -413,7 +413,10 @@ export async function quiltAppBrowserPlugins({
     import('./features/system-js.ts'),
     import('./features/workers.ts'),
     import('./features/esnext.ts'),
-    getNodePlugins({bundle: true}),
+    getNodePlugins({
+      bundle: true,
+      resolve: {exportConditions: ['browser']},
+    }),
     targetsSupportModuleWebWorkers(browserGroup.browsers),
   ]);
 
