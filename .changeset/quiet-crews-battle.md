@@ -1,4 +1,5 @@
 ---
+'@quilted/browser': patch
 '@quilted/quilt': patch
 ---
 
