@@ -1,5 +1,15 @@
 # @quilted/preact-async
 
+## 0.1.11
+
+### Patch Changes
+
+- [`8c24286`](https://github.com/lemonmade/quilt/commit/8c24286a01a90c90987b9def81060b3537e52e77) Thanks [@lemonmade](https://github.com/lemonmade)! - Add method to check changes to `AsyncAction` input
+
+- Updated dependencies [[`8c24286`](https://github.com/lemonmade/quilt/commit/8c24286a01a90c90987b9def81060b3537e52e77), [`8011209`](https://github.com/lemonmade/quilt/commit/8011209b6a424dd39876615edd9642746cd37026), [`a3ccf09`](https://github.com/lemonmade/quilt/commit/a3ccf09dd02620985a33d850dfa28d3e817a4b20)]:
+  - @quilted/async@0.4.12
+  - @quilted/preact-browser@0.1.4
+
 ## 0.1.10
 
 ### Patch Changes

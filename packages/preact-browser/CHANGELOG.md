@@ -1,5 +1,11 @@
 # @quilted/preact-browser
 
+## 0.1.4
+
+### Patch Changes
+
+- [`8011209`](https://github.com/lemonmade/quilt/commit/8011209b6a424dd39876615edd9642746cd37026) Thanks [@lemonmade](https://github.com/lemonmade)! - Noop server-only components in browser builds
+
 ## 0.1.3
 
 ### Patch Changes

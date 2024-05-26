@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.27
+
+### Patch Changes
+
+- [`e5877f9`](https://github.com/lemonmade/quilt/commit/e5877f9b94f62a8ec09a75a44f028c4530ea9f2d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update GraphQL template
+
 ## 0.2.26
 
 ### Patch Changes

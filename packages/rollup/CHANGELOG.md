@@ -1,5 +1,14 @@
 # @quilted/rollup
 
+## 0.2.29
+
+### Patch Changes
+
+- [`8011209`](https://github.com/lemonmade/quilt/commit/8011209b6a424dd39876615edd9642746cd37026) Thanks [@lemonmade](https://github.com/lemonmade)! - Noop server-only components in browser builds
+
+- Updated dependencies [[`a3ccf09`](https://github.com/lemonmade/quilt/commit/a3ccf09dd02620985a33d850dfa28d3e817a4b20)]:
+  - @quilted/graphql@3.1.1
+
 ## 0.2.28
 
 ### Patch Changes
