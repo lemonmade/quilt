@@ -1,5 +1,15 @@
 # @quilted/preact-browser
 
+## 0.1.5
+
+### Patch Changes
+
+- [`ace1145`](https://github.com/lemonmade/quilt/commit/ace1145130c7beed5edd0ce83cbdf071c6d40105) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix path resolution for explicitly specified entries
+
+- Updated dependencies [[`e115475`](https://github.com/lemonmade/quilt/commit/e115475e522c0502fa0307d1fc477d4de50a6f41), [`7029443`](https://github.com/lemonmade/quilt/commit/7029443cf689ac751de1108e8f6394c7b1cad143)]:
+  - @quilted/preact-context@0.1.2
+  - @quilted/browser@0.0.4
+
 ## 0.1.4
 
 ### Patch Changes

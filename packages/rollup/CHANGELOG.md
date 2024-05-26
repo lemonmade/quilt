@@ -1,5 +1,15 @@
 # @quilted/rollup
 
+## 0.2.30
+
+### Patch Changes
+
+- [`ace1145`](https://github.com/lemonmade/quilt/commit/ace1145130c7beed5edd0ce83cbdf071c6d40105) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix path resolution for explicitly specified entries
+
+- [`d35b1dc`](https://github.com/lemonmade/quilt/commit/d35b1dcb739a815100917651bdf5409cc82a9328) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow passing a function to `quiltPackage()` `entries` option
+
+- [`c23b326`](https://github.com/lemonmade/quilt/commit/c23b32635d91198ec34efd61427521878d6df42c) Thanks [@lemonmade](https://github.com/lemonmade)! - Make default entries for project account for one layer of nested export conditions
+
 ## 0.2.29
 
 ### Patch Changes
