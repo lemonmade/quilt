@@ -1,5 +1,14 @@
 # @quilted/graphql
 
+## 3.1.1
+
+### Patch Changes
+
+- [`a3ccf09`](https://github.com/lemonmade/quilt/commit/a3ccf09dd02620985a33d850dfa28d3e817a4b20) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix privacy of some `AsyncAction` internals
+
+- Updated dependencies [[`8c24286`](https://github.com/lemonmade/quilt/commit/8c24286a01a90c90987b9def81060b3537e52e77), [`a3ccf09`](https://github.com/lemonmade/quilt/commit/a3ccf09dd02620985a33d850dfa28d3e817a4b20)]:
+  - @quilted/async@0.4.12
+
 ## 3.1.0
 
 ### Minor Changes

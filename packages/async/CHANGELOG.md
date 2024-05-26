@@ -1,5 +1,13 @@
 # @quilted/async
 
+## 0.4.12
+
+### Patch Changes
+
+- [`8c24286`](https://github.com/lemonmade/quilt/commit/8c24286a01a90c90987b9def81060b3537e52e77) Thanks [@lemonmade](https://github.com/lemonmade)! - Add method to check changes to `AsyncAction` input
+
+- [`a3ccf09`](https://github.com/lemonmade/quilt/commit/a3ccf09dd02620985a33d850dfa28d3e817a4b20) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix privacy of some `AsyncAction` internals
+
 ## 0.4.11
 
 ### Patch Changes
