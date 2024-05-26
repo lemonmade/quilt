@@ -1,5 +1,15 @@
 # @quilted/quilt
 
+## 0.7.5
+
+### Patch Changes
+
+- [`7029443`](https://github.com/lemonmade/quilt/commit/7029443cf689ac751de1108e8f6394c7b1cad143) Thanks [@lemonmade](https://github.com/lemonmade)! - Add browser noop for server entrypoint
+
+- Updated dependencies [[`e115475`](https://github.com/lemonmade/quilt/commit/e115475e522c0502fa0307d1fc477d4de50a6f41), [`ace1145`](https://github.com/lemonmade/quilt/commit/ace1145130c7beed5edd0ce83cbdf071c6d40105)]:
+  - @quilted/preact-context@0.1.2
+  - @quilted/preact-browser@0.1.5
+
 ## 0.7.4
 
 ### Patch Changes

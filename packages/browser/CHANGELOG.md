@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.0.4
+
+### Patch Changes
+
+- [`7029443`](https://github.com/lemonmade/quilt/commit/7029443cf689ac751de1108e8f6394c7b1cad143) Thanks [@lemonmade](https://github.com/lemonmade)! - Add browser noop for server entrypoint
+
 ## 0.0.3
 
 ### Patch Changes
