@@ -5,7 +5,11 @@ import {
   type GraphQLFetch,
   type GraphQLAnyOperation,
 } from '@quilted/graphql';
-import type {ReadonlySignal} from '@quilted/preact-signals';
+import {
+  computed,
+  resolveSignalOrValue,
+  type ReadonlySignal,
+} from '@quilted/preact-signals';
 import {
   useAsync,
   useAsyncActionCache,
@@ -21,6 +25,7 @@ export function useGraphQLQuery<Data, Variables>(
     tags,
     signal,
     suspend,
+    key,
     active: explicitActive,
     cache: explicitCache,
     fetch: explicitFetch,
@@ -29,7 +34,7 @@ export function useGraphQLQuery<Data, Variables>(
     variables?: Variables | ReadonlySignal<Variables>;
   } & Pick<
     UseAsyncActionOptions<Data, Variables>,
-    'active' | 'signal' | 'suspend' | 'cache' | 'tags'
+    'active' | 'signal' | 'suspend' | 'cache' | 'tags' | 'key'
   > = {},
 ) {
   const fetchFromContext = useGraphQLFetch({optional: true});
@@ -53,22 +58,28 @@ export function useGraphQLQuery<Data, Variables>(
     throw new Error('No cache provided for GraphQL query.');
   }
 
-  const queryAction = useMemo(
-    () =>
-      cache
-        ? cache.create((cached) => new GraphQLQuery(query, {fetch, cached}), {
-            key: `query:${
-              typeof query === 'string'
-                ? query
-                : 'id' in query
-                  ? query.id
-                  : toGraphQLSource(query)
-            }`,
-            tags,
-          })
-        : new GraphQLQuery(query, {fetch}),
-    [query, fetch, cache],
-  );
+  const queryAction = useMemo(() => {
+    if (cache == null) {
+      return new GraphQLQuery(query, {fetch});
+    }
+
+    const queryKey = `graphql:${
+      typeof query === 'string'
+        ? query
+        : 'id' in query
+          ? query.id
+          : toGraphQLSource(query)
+    }`;
+
+    const fullKey = key
+      ? computed(() => [queryKey, resolveSignalOrValue(key)].flat(1))
+      : queryKey;
+
+    return cache.create((cached) => new GraphQLQuery(query, {fetch, cached}), {
+      key: fullKey,
+      tags,
+    });
+  }, [query, fetch, cache, key]);
 
   const active =
     explicitActive ?? (typeof document === 'object' || Boolean(cache));
