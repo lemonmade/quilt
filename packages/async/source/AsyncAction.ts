@@ -1,4 +1,5 @@
 import {signal} from '@quilted/signals';
+import {dequal} from 'dequal';
 
 export type AsyncActionStatus = 'pending' | 'resolved' | 'rejected';
 
@@ -84,18 +85,35 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     return this.latest.updatedAt;
   }
 
+  readonly #hasChanged: (
+    this: AsyncAction<Data, Input>,
+    input?: Input,
+    lastInput?: Input,
+  ) => boolean;
+
   #hasRun = false;
   readonly #latestCalls = signal<AsyncActionResults<Data, Input>>({});
 
   constructor(
     fetchFunction: AsyncActionFunction<Data, Input>,
-    {cached}: {cached?: AsyncActionRunCache<Data, Input>} = {},
+    {
+      cached,
+      hasChanged = defaultHasChanged,
+    }: {
+      cached?: AsyncActionRunCache<Data, Input>;
+      hasChanged?(
+        this: AsyncAction<Data, Input>,
+        input?: Input,
+        lastInput?: Input,
+      ): boolean;
+    } = {},
   ) {
     this.function = fetchFunction;
     this.initial = new AsyncActionRun(this, {
       cached,
       finally: this.#finalizeAction,
     });
+    this.#hasChanged = hasChanged;
   }
 
   run = (
@@ -123,6 +141,10 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   rerun = ({signal}: {signal?: AbortSignal} = {}) =>
     this.run(this.latest.input, {signal});
 
+  hasChanged = (input?: Input) => {
+    return this.#hasChanged.call(this, input, this.latest.input);
+  };
+
   #finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
     let updated: AsyncActionResults<Data, Input> | undefined;
 
@@ -139,6 +161,10 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 
     if (updated) this.#latestCalls.value = updated;
   };
+}
+
+function defaultHasChanged(input?: unknown, lastInput?: unknown) {
+  return input !== lastInput && !dequal(input, lastInput);
 }
 
 interface AsyncActionResults<Data, Input> {

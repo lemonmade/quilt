@@ -126,7 +126,7 @@ export function useAsync<Data = unknown, Input = unknown>(
     const resolvedInput = inputSignal.value;
 
     if (
-      action.latest.input !== resolvedInput ||
+      action.hasChanged(resolvedInput) ||
       (action.status === 'pending' && !action.isRunning)
     ) {
       return {action, input: resolvedInput};

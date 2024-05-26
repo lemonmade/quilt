@@ -25,6 +25,9 @@
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
   },
+  "devDependencies": {
+    "dequal": "^2.0.3"
+  },
   "dependencies": {
     "@quilted/assets": "workspace:^0.1.0",
     "@quilted/events": "workspace:^2.0.0",
