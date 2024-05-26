@@ -15,6 +15,7 @@ export interface UseOptionalContextHook<T> {
   (options: {optional: boolean}): NonNullable<T> | undefined;
 }
 
+/* #__NO_SIDE_EFFECTS__ */
 export function createOptionalContext<T>(
   defaultValue?: T,
   {whenMissing, displayName}: OptionalContextOptions<T> = {},
