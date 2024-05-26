@@ -50,8 +50,17 @@ export interface PackageBaseOptions
    * default option that reads the `exports` property of your package.json,
    * and attempts to infer the source files for the entry points listed
    * there.
+   *
+   * If you provide a function instead of an object for this option, it will
+   * be called with the default entries determined by Quilt, and should return
+   * a new object of entries. This allows you to augment the mostly-correct
+   * defaults with additional entries that can’t be inferred from you `package.json`.
    */
-  entries?: Record<string, string>;
+  entries?:
+    | Record<string, string>
+    | ((
+        defaultEntries: Record<string, string>,
+      ) => Record<string, string> | Promise<Record<string, string>>);
 
   /**
    * Controls how React will be handled by your package. Setting this value
@@ -137,7 +146,7 @@ export async function quiltPackage({
   customize,
 }: PackageOptions = {}) {
   const project = Project.load(root);
-  const resolvedEntries = entries ?? (await sourceEntriesForProject(project));
+  const resolvedEntries = await resolveEntries(project, entries);
 
   const includeESNext =
     explicitESNext ?? Object.keys(resolvedEntries).length > 0;
@@ -191,13 +200,10 @@ export async function quiltPackageESModules({
       getBrowserGroupTargetDetails({name: 'default'}, {root: project.root}),
     ]);
 
-  const resolvedEntries = entries ?? (await sourceEntriesForProject(project));
+  const resolvedEntries = await resolveEntries(project, entries);
   const hasEntries = Object.keys(resolvedEntries).length > 0;
 
-  const source = sourceForEntries(
-    {...resolvedEntries, ...executable},
-    {root: project.root},
-  );
+  const source = sourceForProject(project, {...resolvedEntries, ...executable});
 
   const plugins: Plugin[] = [
     ...nodePlugins,
@@ -328,9 +334,8 @@ export async function quiltPackageESNext({
     getNodePlugins({bundle}),
   ]);
 
-  const resolvedEntries = entries ?? (await sourceEntriesForProject(project));
-
-  const source = sourceForEntries(resolvedEntries, {root: project.root});
+  const resolvedEntries = await resolveEntries(project, entries);
+  const source = sourceForProject(project, resolvedEntries);
 
   const plugins: Plugin[] = [
     ...nodePlugins,
@@ -475,15 +480,32 @@ export function packageExecutables(
   }
 }
 
+async function resolveEntries(
+  project: Project,
+  entries: PackageBaseOptions['entries'],
+) {
+  const baseEntries =
+    typeof entries === 'object'
+      ? entries
+      : await sourceEntriesForProject(project);
+
+  const resolvedEntries =
+    typeof entries === 'function' ? await entries(baseEntries) : baseEntries;
+
+  return Object.fromEntries(
+    Object.entries(resolvedEntries).map(([entry, file]) => {
+      return [entry, normalizedRelative(project.root, file)];
+    }),
+  );
+}
+
 function normalizedRelative(from: string, to: string) {
   const rel = path.relative(from, to);
   return rel.startsWith('.') ? rel : `./${rel}`;
 }
 
-function sourceForEntries(
-  entries: Record<string, string>,
-  {root}: {root: string},
-) {
+function sourceForProject(project: Project, entries: Record<string, string>) {
+  const {root} = project;
   let sourceRoot = root;
 
   const sourceEntryFiles = Object.values(entries);
