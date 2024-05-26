@@ -489,11 +489,13 @@ function sourceForEntries(
   const sourceEntryFiles = Object.values(entries);
 
   for (const entry of sourceEntryFiles) {
-    if (!entry.startsWith(root)) continue;
+    const normalizedEntry = path.resolve(root, entry);
+
+    if (!normalizedEntry.startsWith(root)) continue;
 
     sourceRoot = path.resolve(
       root,
-      path.relative(root, entry).split(path.sep)[0] ?? '.',
+      path.relative(root, normalizedEntry).split(path.sep)[0] ?? '.',
     );
     break;
   }
