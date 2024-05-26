@@ -46,7 +46,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   readonly initial: AsyncActionRun<Data, Input>;
 
   get running() {
-    return this.latestCalls.value.running;
+    return this.#latestCalls.value.running;
   }
 
   get isRunning() {
@@ -54,7 +54,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   }
 
   get finished() {
-    return this.latestCalls.value.finished;
+    return this.#latestCalls.value.finished;
   }
 
   get hasFinished() {
@@ -62,7 +62,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   }
 
   get latest() {
-    const {running, finished} = this.latestCalls.value;
+    const {running, finished} = this.#latestCalls.value;
     return running ?? finished ?? this.initial;
   }
 
@@ -84,11 +84,8 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     return this.latest.updatedAt;
   }
 
-  private readonly latestCalls = signal<{
-    readonly finished?: AsyncActionRun<Data, Input>;
-    readonly running?: AsyncActionRun<Data, Input>;
-  }>({});
-  private hasRun = false;
+  #hasRun = false;
+  readonly #latestCalls = signal<AsyncActionResults<Data, Input>>({});
 
   constructor(
     fetchFunction: AsyncActionFunction<Data, Input>,
@@ -97,7 +94,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     this.function = fetchFunction;
     this.initial = new AsyncActionRun(this, {
       cached,
-      finally: this.finalizeAction,
+      finally: this.#finalizeAction,
     });
   }
 
@@ -105,19 +102,19 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     input?: Input,
     {signal}: {signal?: AbortSignal} = {},
   ): AsyncActionPromise<Data, Input> => {
-    const wasRunning = this.latestCalls.peek().running;
+    const wasRunning = this.#latestCalls.peek().running;
 
     const actionRun =
-      !this.hasRun && this.initial.status === 'pending'
+      !this.#hasRun && this.initial.status === 'pending'
         ? this.initial
         : new AsyncActionRun(this, {
-            finally: this.finalizeAction,
+            finally: this.#finalizeAction,
           });
 
-    this.hasRun = true;
+    this.#hasRun = true;
     actionRun.start(input, {signal});
 
-    this.latestCalls.value = {...this.latestCalls.peek(), running: actionRun};
+    this.#latestCalls.value = {...this.#latestCalls.peek(), running: actionRun};
     wasRunning?.abort();
 
     return actionRun.promise;
@@ -126,26 +123,27 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   rerun = ({signal}: {signal?: AbortSignal} = {}) =>
     this.run(this.latest.input, {signal});
 
-  private finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
-    let updated:
-      | {
-          -readonly [K in keyof typeof this.latestCalls.value]: (typeof this.latestCalls.value)[K];
-        }
-      | undefined;
+  #finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
+    let updated: AsyncActionResults<Data, Input> | undefined;
 
     if (!actionRun.signal.aborted) {
-      updated = {...this.latestCalls.peek()};
+      updated = {...this.#latestCalls.peek()};
       updated.finished = actionRun;
     }
 
-    const latest = this.latestCalls.peek();
+    const latest = this.#latestCalls.peek();
     if (latest.running === actionRun) {
       updated ??= {...latest};
       delete updated.running;
     }
 
-    if (updated) this.latestCalls.value = updated;
+    if (updated) this.#latestCalls.value = updated;
   };
+}
+
+interface AsyncActionResults<Data, Input> {
+  finished?: AsyncActionRun<Data, Input>;
+  running?: AsyncActionRun<Data, Input>;
 }
 
 export class AsyncActionRun<Data = unknown, Input = unknown> {
@@ -167,7 +165,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
   }
 
   get signal() {
-    return this.abortController.signal;
+    return this.#abortController.signal;
   }
 
   get status() {
@@ -189,9 +187,9 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
     return this.promise.status !== 'pending';
   }
 
-  private readonly resolve: (value: Data) => void;
-  private readonly reject: (cause: unknown) => void;
-  private readonly abortController = new AbortController();
+  readonly #resolve: (value: Data) => void;
+  readonly #reject: (cause: unknown) => void;
+  readonly #abortController = new AbortController();
 
   constructor(
     action: AsyncAction<Data, Input>,
@@ -213,13 +211,13 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
       reject = rej;
     }, this);
 
-    this.resolve = (value) => {
+    this.#resolve = (value) => {
       if (this.promise.status !== 'pending') return;
       if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
       resolve(value);
       onFinally?.(this);
     };
-    this.reject = (reason) => {
+    this.#reject = (reason) => {
       if (this.promise.status !== 'pending') return;
       if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
       reject(reason);
@@ -237,17 +235,17 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
       });
 
       if (cached.error) {
-        this.reject(cached.error);
+        this.#reject(cached.error);
       } else {
-        this.resolve(cached.value!);
+        this.#resolve(cached.value!);
       }
     } else {
-      const {signal} = this.abortController;
+      const {signal} = this.#abortController;
 
       signal.addEventListener(
         'abort',
         () => {
-          this.reject(signal.reason);
+          this.#reject(signal.reason);
         },
         {once: true},
       );
@@ -255,7 +253,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
   }
 
   abort = (reason?: any) => {
-    this.abortController.abort(reason);
+    this.#abortController.abort(reason);
   };
 
   start = (input?: Input, {signal}: {signal?: AbortSignal} = {}) => {
@@ -264,16 +262,16 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
     Object.assign(this, {startedAt: now(), input});
 
     if (signal?.aborted) {
-      this.abortController.abort(signal.reason);
+      this.#abortController.abort(signal.reason);
       return this.promise;
     }
 
     signal?.addEventListener('abort', () => {
-      this.abortController.abort(signal.reason);
+      this.#abortController.abort(signal.reason);
     });
 
     try {
-      const {signal} = this.abortController;
+      const {signal} = this.#abortController;
 
       Promise.resolve(
         this.action.function(input!, {
@@ -283,9 +281,9 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
             Object.assign(this, {value});
           },
         }),
-      ).then(this.resolve, this.reject);
+      ).then(this.#resolve, this.#reject);
     } catch (error) {
-      Promise.resolve().then(() => this.reject(error));
+      Promise.resolve().then(() => this.#reject(error));
     }
 
     return this.promise;

@@ -21,19 +21,16 @@ export interface AsyncActionCacheFindOptions {
 }
 
 export class AsyncActionCache {
-  private readonly cache: Map<
-    string,
-    AsyncActionCacheEntry<AsyncAction<any, any>>
-  >;
-  #anonymousCount = 0;
+  readonly #cache: Map<string, AsyncActionCacheEntry<AsyncAction<any, any>>>;
   readonly #initialCache: Map<string, AsyncActionRunCache<any, any>>;
+  #anonymousCount = 0;
 
   constructor(
     initialCache: Iterable<
       AsyncActionCacheEntrySerialization<any>
     > = EMPTY_ARRAY,
   ) {
-    this.cache = new Map();
+    this.#cache = new Map();
     this.#initialCache = new Map();
 
     for (const [key, value] of initialCache) {
@@ -46,7 +43,7 @@ export class AsyncActionCache {
     {key: explicitKey, tags = EMPTY_ARRAY}: AsyncActionCacheCreateOptions = {},
   ): AsyncActionCacheEntry<Action> => {
     const {id, key} = this.#resolveKey(explicitKey);
-    let action = this.cache.get(id) as
+    let action = this.#cache.get(id) as
       | AsyncActionCacheEntry<Action>
       | undefined;
     if (action) return action;
@@ -55,7 +52,7 @@ export class AsyncActionCache {
     action = create(initialCache) as any as AsyncActionCacheEntry<Action>;
 
     Object.assign(action, {id, key, tags});
-    this.cache.set(id, action);
+    this.#cache.set(id, action);
 
     return action;
   };
@@ -66,18 +63,18 @@ export class AsyncActionCache {
   ) => {
     const {id, key} = this.#resolveKey(explicitKey);
     Object.assign(action, {id, key, tags});
-    this.cache.set(id, action as AsyncActionCacheEntry<Action>);
+    this.#cache.set(id, action as AsyncActionCacheEntry<Action>);
     return action as AsyncActionCacheEntry<Action>;
   };
 
   get = <Data = unknown, Input = unknown>(
     key: AsyncActionCacheKey,
   ): AsyncActionCacheEntry<AsyncAction<Data, Input>> | undefined => {
-    return this.cache.get(stringifyCacheKey(key));
+    return this.#cache.get(stringifyCacheKey(key));
   };
 
   has = (key: AsyncActionCacheKey): boolean => {
-    return this.cache.has(stringifyCacheKey(key));
+    return this.#cache.has(stringifyCacheKey(key));
   };
 
   run = <Data = unknown, Input = unknown>(
@@ -129,18 +126,18 @@ export class AsyncActionCache {
   ) {
     const predicate = createCachePredicate(options);
 
-    for (const entry of this.cache.values()) {
+    for (const entry of this.#cache.values()) {
       if (predicate(entry)) {
-        this.cache.delete(entry.id);
+        this.#cache.delete(entry.id);
         entry.running?.abort();
       }
     }
   }
 
   clear() {
-    const entries = [...this.cache.values()];
+    const entries = [...this.#cache.values()];
 
-    this.cache.clear();
+    this.#cache.clear();
 
     for (const entry of entries) {
       entry.running?.abort();
@@ -148,15 +145,15 @@ export class AsyncActionCache {
   }
 
   *keys() {
-    yield* this.cache.keys();
+    yield* this.#cache.keys();
   }
 
   *values() {
-    yield* this.cache.values();
+    yield* this.#cache.values();
   }
 
   *entries() {
-    for (const entry of this.cache.values()) {
+    for (const entry of this.#cache.values()) {
       yield [entry.key, entry] as const;
     }
   }
@@ -170,7 +167,7 @@ export class AsyncActionCache {
   serialize(): readonly AsyncActionCacheEntrySerialization<any>[] {
     const serialized: AsyncActionCacheEntrySerialization<any>[] = [];
 
-    for (const entry of this.cache.values()) {
+    for (const entry of this.#cache.values()) {
       const serializedEntry = serializeEntry(entry);
       if (serializedEntry) serialized.push(serializedEntry);
     }

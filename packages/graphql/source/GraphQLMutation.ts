@@ -10,6 +10,10 @@ export class GraphQLMutation<Data, Variables> extends AsyncAction<
   GraphQLResult<Data>,
   Variables
 > {
+  get result() {
+    return this.value;
+  }
+
   readonly fetch: GraphQLFetch;
 
   constructor(
