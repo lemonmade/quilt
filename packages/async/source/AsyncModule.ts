@@ -14,6 +14,10 @@ export type AsyncModuleLoader<Module> =
   | AsyncModuleLoaderObject<Module>;
 
 export class AsyncModule<Module> {
+  static from<Module>(load: AsyncModuleLoader<Module>) {
+    return new AsyncModule(load);
+  }
+
   readonly id?: string;
 
   get module() {

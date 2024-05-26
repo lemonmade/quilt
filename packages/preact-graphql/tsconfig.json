@@ -9,7 +9,9 @@
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "references": [
     {"path": "../graphql"},
+    {"path": "../preact-async"},
     {"path": "../preact-context"},
+    {"path": "../preact-signals"},
     {"path": "../useful-types"}
   ]
 }

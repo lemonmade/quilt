@@ -39,9 +39,10 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/async": "workspace:^0.4.0",
     "@quilted/graphql": "workspace:^3.0.0",
+    "@quilted/preact-async": "workspace:^0.1.0",
     "@quilted/preact-context": "workspace:^0.1.0",
+    "@quilted/preact-signals": "workspace:^0.1.0",
     "@quilted/useful-types": "workspace:^2.0.0"
   },
   "peerDependencies": {

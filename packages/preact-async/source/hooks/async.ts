@@ -5,7 +5,7 @@ import type {
   AsyncActionCache,
   AsyncActionCacheKey,
   AsyncActionCacheEntry,
-  AsyncActionCacheGetOptions,
+  AsyncActionCacheCreateOptions,
   AsyncActionFunction,
 } from '@quilted/async';
 import {
@@ -18,8 +18,8 @@ import {
 
 import {AsyncActionCacheContext} from '../context.ts';
 
-export interface UseAsyncActionOptions<Data = unknown, Input = unknown>
-  extends Pick<AsyncActionCacheGetOptions<Data, Input>, 'tags'> {
+export interface UseAsyncActionOptions<_Data = unknown, Input = unknown>
+  extends Pick<AsyncActionCacheCreateOptions, 'tags'> {
   readonly input?: Input | ReadonlySignal<Input>;
   readonly key?: AsyncActionCacheKey | ReadonlySignal<AsyncActionCacheKey>;
   readonly active?: boolean | ReadonlySignal<boolean>;
@@ -33,7 +33,7 @@ export function useAsync<Data = unknown, Input = unknown>(
   options?: Omit<UseAsyncActionOptions<Data, Input>, 'cache'> & {
     cache?: true | AsyncActionCache;
   },
-): AsyncActionCacheEntry<Data, Input>;
+): AsyncActionCacheEntry<AsyncAction<Data, Input>>;
 export function useAsync<Data = unknown, Input = unknown>(
   asyncAction: AsyncAction<Data, Input>,
   options?: Pick<
@@ -44,7 +44,7 @@ export function useAsync<Data = unknown, Input = unknown>(
 export function useAsync<Data = unknown, Input = unknown>(
   asyncActionFunction: AsyncActionFunction<Data, Input>,
   options?: UseAsyncActionOptions<Data, Input>,
-): AsyncAction<Data, Input> | AsyncActionCacheEntry<Data, Input>;
+): AsyncAction<Data, Input> | AsyncActionCacheEntry<AsyncAction<Data, Input>>;
 export function useAsync<Data = unknown, Input = unknown>(
   asyncAction: AsyncAction<Data, Input> | AsyncActionFunction<Data, Input>,
   {
@@ -101,10 +101,10 @@ export function useAsync<Data = unknown, Input = unknown>(
       return new AsyncAction<Data, Input>(resolvedFetchFunction);
     }
 
-    return asyncCache.get(resolvedFetchFunction, {
-      key,
-      tags: internalsRef.current!.tags,
-    });
+    return asyncCache.create(
+      (cached) => new AsyncAction(resolvedFetchFunction, {cached}),
+      {key, tags: internalsRef.current!.tags},
+    );
   });
 
   if (

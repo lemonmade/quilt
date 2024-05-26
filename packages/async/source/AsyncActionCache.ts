@@ -9,24 +9,24 @@ const EMPTY_ARRAY = Object.freeze([]);
 
 export type AsyncActionCacheKey = unknown | readonly unknown[];
 
-export interface AsyncActionCacheGetOptions<_Data = unknown, _Input = unknown> {
+export interface AsyncActionCacheCreateOptions {
   readonly key?: AsyncActionCacheKey;
   readonly tags?: readonly string[];
 }
 
-export interface AsyncActionCacheFindOptions<
-  _Data = unknown,
-  _Input = unknown,
-> {
+export interface AsyncActionCacheFindOptions {
   readonly key?: AsyncActionCacheKey;
   readonly tags?: readonly string[];
   readonly status?: AsyncActionStatus | readonly AsyncActionStatus[];
 }
 
 export class AsyncActionCache {
-  private readonly cache: Map<string, AsyncActionCacheEntry<any, any>>;
-  private readonly initialCache: Map<string, AsyncActionRunCache<any, any>>;
-  private anonymousFetchCount = 0;
+  private readonly cache: Map<
+    string,
+    AsyncActionCacheEntry<AsyncAction<any, any>>
+  >;
+  #anonymousCount = 0;
+  readonly #initialCache: Map<string, AsyncActionRunCache<any, any>>;
 
   constructor(
     initialCache: Iterable<
@@ -34,86 +34,98 @@ export class AsyncActionCache {
     > = EMPTY_ARRAY,
   ) {
     this.cache = new Map();
-    this.initialCache = new Map();
+    this.#initialCache = new Map();
 
     for (const [key, value] of initialCache) {
-      this.initialCache.set(key, value);
+      this.#initialCache.set(key, value);
     }
   }
 
+  create = <Action extends AsyncAction<any, any>>(
+    create: (cached?: AsyncActionRunCache<any, any>) => Action,
+    {key: explicitKey, tags = EMPTY_ARRAY}: AsyncActionCacheCreateOptions = {},
+  ): AsyncActionCacheEntry<Action> => {
+    const {id, key} = this.#resolveKey(explicitKey);
+    let action = this.cache.get(id) as
+      | AsyncActionCacheEntry<Action>
+      | undefined;
+    if (action) return action;
+
+    const initialCache = this.#initialCache.get(id);
+    action = create(initialCache) as any as AsyncActionCacheEntry<Action>;
+
+    Object.assign(action, {id, key, tags});
+    this.cache.set(id, action);
+
+    return action;
+  };
+
+  put = <Action extends AsyncAction<any, any>>(
+    action: Action,
+    {key: explicitKey, tags = EMPTY_ARRAY}: AsyncActionCacheCreateOptions = {},
+  ) => {
+    const {id, key} = this.#resolveKey(explicitKey);
+    Object.assign(action, {id, key, tags});
+    this.cache.set(id, action as AsyncActionCacheEntry<Action>);
+    return action as AsyncActionCacheEntry<Action>;
+  };
+
   get = <Data = unknown, Input = unknown>(
-    fetchFunction: AsyncActionFunction<Data, Input>,
-    {key, tags = EMPTY_ARRAY}: AsyncActionCacheGetOptions<Data, Input> = {},
-  ): AsyncActionCacheEntry<Data, Input> => {
-    let resolvedKey = key;
+    key: AsyncActionCacheKey,
+  ): AsyncActionCacheEntry<AsyncAction<Data, Input>> | undefined => {
+    return this.cache.get(stringifyCacheKey(key));
+  };
 
-    if (resolvedKey == null) {
-      resolvedKey = `_anonymous:${this.anonymousFetchCount}`;
-      this.anonymousFetchCount += 1;
-    }
-
-    const id = stringifyCacheKey(resolvedKey);
-
-    let cacheEntry = this.cache.get(id);
-
-    if (cacheEntry) return cacheEntry;
-
-    cacheEntry = new AsyncActionCacheEntry<Data, Input>(fetchFunction, {
-      id,
-      key: resolvedKey,
-      tags,
-      cached: this.initialCache.get(id),
-    });
-
-    this.cache.set(id, cacheEntry);
-
-    return cacheEntry;
+  has = (key: AsyncActionCacheKey): boolean => {
+    return this.cache.has(stringifyCacheKey(key));
   };
 
   run = <Data = unknown, Input = unknown>(
-    fetchFunction: AsyncActionFunction<Data, Input>,
+    asyncFunction: AsyncActionFunction<Data, Input>,
     {
       key,
       input,
       signal,
       tags = EMPTY_ARRAY,
-    }: {input?: Input; signal?: AbortSignal} & AsyncActionCacheGetOptions<
-      Data,
-      Input
-    > = {},
+    }: {
+      input?: Input;
+      signal?: AbortSignal;
+    } & AsyncActionCacheCreateOptions = {},
   ) => {
-    const entry = this.get(fetchFunction, {key, tags});
-    entry.run(input, {signal});
-    return entry.promise;
+    const entry = this.create(
+      (cached) => new AsyncAction(asyncFunction, {cached}),
+      {key, tags},
+    );
+
+    return entry.run(input, {signal});
   };
 
   find<Data = unknown, Input = unknown>(
     options:
-      | AsyncActionCacheFindOptions<Data, Input>
-      | ((entry: AsyncActionCacheEntry<Data, Input>) => boolean),
+      | AsyncActionCacheFindOptions
+      | ((entry: AsyncActionCacheEntry<AsyncAction<Data, Input>>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
     return [...this.values()].find(predicate) as
-      | AsyncActionCacheEntry<Data, Input>
+      | AsyncActionCacheEntry<AsyncAction<Data, Input>>
       | undefined;
   }
 
   filter<Data = unknown, Input = unknown>(
     options:
-      | AsyncActionCacheFindOptions<Data, Input>
-      | ((entry: AsyncActionCacheEntry<Data, Input>) => boolean),
+      | AsyncActionCacheFindOptions
+      | ((entry: AsyncActionCacheEntry<AsyncAction<Data, Input>>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
     return [...this.values()].filter(predicate) as AsyncActionCacheEntry<
-      Data,
-      Input
+      AsyncAction<Data, Input>
     >[];
   }
 
   delete<Data = unknown, Input = unknown>(
     options:
-      | AsyncActionCacheFindOptions<Data, Input>
-      | ((entry: AsyncActionCacheEntry<Data, Input>) => boolean),
+      | AsyncActionCacheFindOptions
+      | ((entry: AsyncActionCacheEntry<AsyncAction<Data, Input>>) => boolean),
   ) {
     const predicate = createCachePredicate(options);
 
@@ -151,7 +163,7 @@ export class AsyncActionCache {
 
   restore(entries: Iterable<AsyncActionCacheEntrySerialization<any>>) {
     for (const [key, value] of entries) {
-      this.initialCache.set(key, value);
+      this.#initialCache.set(key, value);
     }
   }
 
@@ -159,18 +171,40 @@ export class AsyncActionCache {
     const serialized: AsyncActionCacheEntrySerialization<any>[] = [];
 
     for (const entry of this.cache.values()) {
-      const serializedEntry = entry.serialize();
+      const serializedEntry = serializeEntry(entry);
       if (serializedEntry) serialized.push(serializedEntry);
     }
 
     return serialized;
   }
+
+  #resolveKey = (
+    key?: AsyncActionCacheKey,
+  ): {id: string; key: AsyncActionCacheKey} => {
+    let resolvedKey = key;
+
+    if (resolvedKey == null) {
+      resolvedKey = `_anonymous:${this.#anonymousCount}`;
+      this.#anonymousCount += 1;
+    }
+
+    const id = stringifyCacheKey(resolvedKey);
+
+    return {key, id};
+  };
+}
+
+function serializeEntry<Data = unknown, Input = unknown>(
+  action: AsyncActionCacheEntry<AsyncAction<Data, Input>>,
+): AsyncActionCacheEntrySerialization<Data, Input> | undefined {
+  const serialized = action.finished?.serialize();
+  return serialized && [action.id, serialized];
 }
 
 function createCachePredicate(
   optionsOrPredicate:
-    | AsyncActionCacheFindOptions<any, any>
-    | ((entry: AsyncActionCacheEntry<any, any>) => boolean),
+    | AsyncActionCacheFindOptions
+    | ((entry: AsyncActionCacheEntry<AsyncAction<any, any>>) => boolean),
 ) {
   if (typeof optionsOrPredicate === 'function') return optionsOrPredicate;
 
@@ -180,7 +214,7 @@ function createCachePredicate(
   const statuses =
     status != null && typeof status === 'string' ? [status] : status;
 
-  return (entry: AsyncActionCacheEntry<any, any>) => {
+  return (entry: AsyncActionCacheEntry<AsyncAction<any, any>>) => {
     if (id != null && entry.id !== id) {
       return false;
     }
@@ -197,38 +231,13 @@ function createCachePredicate(
   };
 }
 
-export class AsyncActionCacheEntry<
-  Data = unknown,
-  Input = unknown,
-> extends AsyncAction<Data, Input> {
+export type AsyncActionCacheEntry<
+  Action extends AsyncAction<any, any> = AsyncAction<unknown, unknown>,
+> = Action & {
   readonly id: string;
   readonly key: AsyncActionCacheKey;
   readonly tags: readonly string[];
-
-  constructor(
-    fetchFunction: AsyncActionFunction<Data, Input>,
-    {
-      id,
-      key,
-      cached,
-      tags = EMPTY_ARRAY,
-    }: {
-      id: string;
-      cached?: AsyncActionRunCache<Data, Input>;
-    } & Pick<AsyncActionCacheGetOptions<Data, Input>, 'tags' | 'key'>,
-  ) {
-    super(fetchFunction, {cached});
-
-    this.id = id;
-    this.key = key;
-    this.tags = tags;
-  }
-
-  serialize(): AsyncActionCacheEntrySerialization<Data, Input> | undefined {
-    const serialized = this.finished?.serialize();
-    return serialized && [this.id, serialized];
-  }
-}
+};
 
 export type AsyncActionCacheEntrySerialization<
   Data = unknown,

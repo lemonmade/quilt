@@ -15,9 +15,9 @@ export {
 } from './AsyncModule.ts';
 export {
   AsyncActionCache,
-  AsyncActionCacheEntry,
   type AsyncActionCacheKey,
-  type AsyncActionCacheGetOptions,
+  type AsyncActionCacheEntry,
+  type AsyncActionCacheCreateOptions,
   type AsyncActionCacheFindOptions,
   type AsyncActionCacheEntrySerialization,
 } from './AsyncActionCache.ts';

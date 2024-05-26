@@ -1,6 +1,117 @@
 # Asynchronous code
 
-Quilt provides a set of utilities that let you control how to load the minimal amount of JavaScript in a performance-sensitive way. These utilities build on powerful JavaScript primitives, like [the dynamic `import()` expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) and [`<link rel="modulepreload">](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/modulepreload), while giving you fine-grained control over what JavaScript is loaded.
+Most web applications rely heavily on asynchronous code. The most common example is typically data fetching: almost every application will need to load the data needed to render its user interface, and that data is rarely available synchronously. Quilt provides basic utilities for fetching this data asynchronously, giving you deep visibility into the state of your requests and allowing you to cache and refresh data as needed.
+
+On top of these utilities for making fetching data, Quilt also provides a set of utilities that let you control how to load the minimal amount of JavaScript in a performance-sensitive way. These utilities build on powerful JavaScript primitives, like [the dynamic `import()` expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) and [`<link rel="modulepreload">](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/modulepreload), while giving you fine-grained control over what JavaScript is loaded.
+
+## Data fetching
+
+On the web, we commonly use the [`fetch()` API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to load data from a server, and to perform mutations on that data in response to user actions. `fetch()` is a simple and easy-to-use API for accessing asynchronous data, but when building UIs, we often need additional features this API does not natively provide:
+
+- We usually want to synchronously access the data we’ve fetched in the past, without issuing another request.
+- We sometimes have multiple parts of the UI that need the same data, and we want to avoid fetching it multiple times.
+- We need to manually manage state for details about the network request, like the loading state, errors, and the data itself.
+- We sometimes need to incorporate data other than what we fetch from the server, like local data from various browser APIs.
+
+Quilt offers a wrapper around `fetch()` — or any other asynchronous JavaScript function — that gives you access to these additional features: the `AsyncAction` class.
+
+```ts
+import {AsyncAction} from '@quilted/quilt/async';
+
+const fetchUser = new AsyncAction(async (id: string) => {
+  const response = await fetch(`/users/${id}`);
+  const user = await response.json();
+  return user;
+});
+
+const user = await fetchUser.run('123');
+```
+
+In the example above, we wrap our asynchronous data fetching function in an `AsyncAction`, and call `run()` to execute the function. This example is no better than just calling the asynchronous function directly, though. The real power comes in with the additional properties `AsyncAction` exposes. For example, we can access the previously fetched data using the `value` and `error` properties.
+
+```ts
+import {AsyncAction} from '@quilted/quilt/async';
+
+const fetchUser = new AsyncAction(async (id: string) => {
+  /* see above */
+});
+
+await fetchUser.run('123');
+
+// somewhere else in your code...
+
+switch (fetchUser.status) {
+  case 'resolved':
+    console.log('Last call resolved with value:', fetchUser.value);
+    break;
+  case 'rejected':
+    console.log('Last call rejected with error:', fetchUser.error);
+    break;
+  default:
+    console.log('Has not resolved or rejected yet');
+}
+```
+
+You can call an `AsyncAction` using its `run()` method as many times as you like. The `value` and `error` properties will always reflect the results of the most recent call that was completed. If you want more details about individual calls to the function, `AsyncAction` also provides additional properties for inspecting the last finished call (`AsyncAction.finished`) and the currently-running call (`AsyncAction.running`).
+
+```ts
+import {AsyncAction} from '@quilted/quilt/async';
+
+const fetchUser = new AsyncAction(async (id: string) => {
+  /* see above */
+});
+
+await fetchUser.run('123');
+const promise = fetchUser.run('456');
+
+console.log(fetchUser.finished.status); // 'resolved'
+console.log(fetchUser.finished.value); // user for ID '123'
+console.log(fetchUser.finished.input); // '123'
+
+console.log(fetchUser.running.status); // 'pending'
+console.log(fetchUser.running.input); // '456'
+console.log(fetchUser.finished.value); // undefined, since the call is pending
+```
+
+Only one call to each `AsyncAction` can be running at a time. As additional calls are made, earlier pending calls are cancelled, and will not be moved to the `finished` property even if the call completes. You can handle this cancellation in your asynchronous function using the `AbortSignal` `signal` option passed in automatically by `AsyncAction`:
+
+```ts
+import {AsyncAction} from '@quilted/quilt/async';
+
+const fetchUser = new AsyncAction(async (id: string, {signal}) => {
+  // Pass `signal` through to `fetch()`, so we will cancel the request
+  // if this call is aborted.
+  const response = await fetch(`/users/${id}`, {signal});
+  const user = await response.json();
+  return user;
+});
+```
+
+You can also manually cancel an in-flight action yourself. This can be done either by passing a `signal` into the `run()` method, or by calling the `abort()` method on an individual call:
+
+```ts
+import {AsyncAction} from '@quilted/quilt/async';
+
+const fetchUser = new AsyncAction(async (id: string) => {
+  /* see above */
+});
+
+// Manually `abort`ing the call
+
+const promise = fetchUser.run('123');
+const running = fetchUser.running; // also available as `promise.source`
+
+running.abort();
+
+// Or, passing a signal in
+
+const controller = new AbortController();
+const promise = fetchUser.run('456', {signal: controller.signal});
+
+controller.abort();
+```
+
+### Data fetching in Preact
 
 ## Asynchronous modules
 

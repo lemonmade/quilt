@@ -20,6 +20,13 @@ export interface AsyncActionRunCache<Data = unknown, Input = unknown> {
 }
 
 export class AsyncAction<Data = unknown, Input = unknown> {
+  static from<Data, Input>(
+    asyncFunction: AsyncActionFunction<Data, Input>,
+    options?: {cached?: AsyncActionRunCache<Data, Input>},
+  ) {
+    return new AsyncAction(asyncFunction, options);
+  }
+
   get value() {
     return this.finished?.value;
   }
