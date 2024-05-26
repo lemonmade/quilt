@@ -1,9 +1,10 @@
+import {Suspense} from 'preact/compat';
+
 import {createRender} from '@quilted/quilt/testing';
 import {BrowserContext, BrowserTestMock} from '@quilted/quilt/browser/testing';
 import {TestRouting, TestRouter} from '@quilted/quilt/navigate/testing';
 import {Localization} from '@quilted/quilt/localize';
-
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {AsyncActionCache, AsyncContext} from '@quilted/quilt/async';
 
 import {AppContextReact} from '~/shared/context.ts';
 
@@ -28,18 +29,19 @@ export const renderApp = createRender<
     router = new TestRouter(),
     browser = new BrowserTestMock(),
     graphql = new GraphQLController(),
+    asyncCache = new AsyncActionCache(),
   }) {
     return {
       router,
       browser,
       graphql,
       fetchGraphQL: graphql.fetch,
-      queryClient: new QueryClient(),
+      asyncCache,
     };
   },
   // Render all of our app-wide context providers around each component under test.
   render(element, context, {locale = 'en'}) {
-    const {router, browser, graphql, queryClient} = context;
+    const {router, browser, graphql, asyncCache} = context;
 
     return (
       <AppContextReact.Provider value={context}>
@@ -47,9 +49,9 @@ export const renderApp = createRender<
           <Localization locale={locale}>
             <TestRouting router={router}>
               <GraphQLTesting controller={graphql}>
-                <QueryClientProvider client={queryClient}>
-                  {element}
-                </QueryClientProvider>
+                <AsyncContext cache={asyncCache}>
+                  <Suspense fallback={null}>{element}</Suspense>
+                </AsyncContext>
               </GraphQLTesting>
             </TestRouting>
           </Localization>
@@ -65,9 +67,6 @@ export const renderApp = createRender<
 
     await wrapper.act(async () => {
       await wrapper.context.graphql.resolveAll();
-
-      // react-query needs an extra tick to set state in response to GraphQL queries.
-      await new Promise((resolve) => setTimeout(resolve, 0));
     });
   },
 });

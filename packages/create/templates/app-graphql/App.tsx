@@ -1,10 +1,9 @@
 import type {RenderableProps} from 'preact';
 
+import {AsyncContext} from '@quilted/quilt/async';
+import {GraphQLContext} from '@quilted/quilt/graphql';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
-import {GraphQLContext} from '@quilted/quilt/graphql';
-
-import {ReactQueryContext} from '@quilted/react-query';
 
 import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
@@ -51,11 +50,11 @@ function AppContext({children, context}: RenderableProps<AppProps>) {
   return (
     <AppContextReact.Provider value={context}>
       <GraphQLContext fetch={context.fetchGraphQL}>
-        <ReactQueryContext client={context.queryClient}>
+        <AsyncContext cache={context.asyncCache}>
           <Localization locale={locale}>
             <Routing>{children}</Routing>
           </Localization>
-        </ReactQueryContext>
+        </AsyncContext>
       </GraphQLContext>
     </AppContextReact.Provider>
   );

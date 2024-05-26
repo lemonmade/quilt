@@ -1,7 +1,7 @@
 import '@quilted/quilt/globals';
 
 import {hydrate} from 'preact';
-import {QueryClient} from '@tanstack/react-query';
+import {AsyncActionCache} from '@quilted/quilt/async';
 import {createGraphQLFetch} from '@quilted/quilt/graphql';
 import {Browser, BrowserContext} from '@quilted/quilt/browser';
 
@@ -13,11 +13,11 @@ const element = document.querySelector('#app')!;
 const browser = new Browser();
 
 const fetchGraphQL = createGraphQLFetch({url: '/api/graphql'});
-const queryClient = new QueryClient();
+const asyncCache = new AsyncActionCache();
 
 const context = {
   fetchGraphQL,
-  queryClient,
+  asyncCache,
 } satisfies AppContext;
 
 // Makes key parts of the app available in the browser console

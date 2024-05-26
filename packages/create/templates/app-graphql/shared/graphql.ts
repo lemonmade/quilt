@@ -1,10 +1,10 @@
 import type {GraphQLFetch} from '@quilted/quilt/graphql';
-import type {QueryClient} from '@tanstack/react-query';
+import type {AsyncActionCache} from '@quilted/quilt/async';
 
 declare module '~/shared/context.ts' {
   interface AppContext {
-    queryClient: QueryClient;
-    fetchGraphQL: GraphQLFetch<{}>;
+    readonly fetchGraphQL: GraphQLFetch;
+    readonly asyncCache: AsyncActionCache;
   }
 }
 
