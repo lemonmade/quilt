@@ -162,6 +162,7 @@ export async function getNodePlugins({
         'default',
         'module',
         'import',
+        'default',
       ],
     }),
     commonjs(),

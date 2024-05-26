@@ -134,7 +134,8 @@ export async function sourceEntriesForProject(project: Project) {
       for (const [condition, file] of Object.entries(targetFile)) {
         if (typeof file !== 'string') continue;
 
-        const entryName = `${exportPath}#${condition}`;
+        const entryName =
+          condition === 'default' ? exportPath : `${exportPath}#${condition}`;
         entries[entryName] = await resolveTargetFileAsSource(file, project);
       }
     } else {

@@ -59,10 +59,15 @@ export async function monorepoPackageAliases({
     const {name} = project;
 
     for (const [entry, source] of Object.entries(entries)) {
-      const entryName =
+      let entryName =
         entry === '.'
           ? name
           : `${name}/${entry.startsWith('./') ? entry.slice(2) : entry}`;
+
+      // We use this to denote export conditions on entries. We don’t want to
+      // generate aliases for export conditions, we’ll just do it for the default
+      // entry (which does not have a `#` in the name).
+      if (name.includes('#')) continue;
 
       aliases.push({
         find: new RegExp(`^${entryName}$`),
