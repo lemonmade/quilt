@@ -24,7 +24,10 @@
     },
     "./server": {
       "types": "./build/typescript/server.d.ts",
-      "quilt:source": "./source/server.ts",
+      "quilt:source": {
+        "browser": "./source/server.browser.ts",
+        "default": "./source/server.ts"
+      },
       "quilt:esnext": {
         "browser": "./build/esnext/server.browser.esnext",
         "default": "./build/esnext/server.esnext"

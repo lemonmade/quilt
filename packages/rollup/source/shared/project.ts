@@ -4,6 +4,9 @@ import {fileURLToPath} from 'url';
 
 import {glob, type GlobOptions} from 'glob';
 
+type ExportCondition = {[key: string]: ExportConditionValue};
+type ExportConditionValue = string | null | ExportCondition;
+
 const PROJECT_CACHE = new Map<string, Project>();
 
 export class Project {
@@ -106,9 +109,9 @@ export async function sourceEntriesForProject(project: Project) {
   }
 
   for (const [exportPath, exportCondition] of Object.entries(
-    exports as Record<string, null | string | Record<string, string>>,
+    exports as ExportCondition,
   )) {
-    let targetFile: string | null | undefined = null;
+    let targetFile: ExportConditionValue | undefined = null;
 
     if (exportCondition == null) continue;
 
@@ -127,9 +130,17 @@ export async function sourceEntriesForProject(project: Project) {
 
     if (targetFile == null) continue;
 
-    const sourceFile = await resolveTargetFileAsSource(targetFile, project);
+    if (typeof targetFile === 'object') {
+      for (const [condition, file] of Object.entries(targetFile)) {
+        if (typeof file !== 'string') continue;
 
-    entries[exportPath] = sourceFile;
+        const entryName = `${exportPath}#${condition}`;
+        entries[entryName] = await resolveTargetFileAsSource(file, project);
+      }
+    } else {
+      const sourceFile = await resolveTargetFileAsSource(targetFile, project);
+      entries[exportPath] = sourceFile;
+    }
   }
 
   return entries;
