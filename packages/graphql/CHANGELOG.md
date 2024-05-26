@@ -1,5 +1,16 @@
 # @quilted/graphql
 
+## 3.1.0
+
+### Minor Changes
+
+- [`65b122d`](https://github.com/lemonmade/quilt/commit/65b122d90e297b425aa00f77dffc7bfb9b144aae) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `GraphQLQuery` and `GraphQLMutation` for creating observable GraphQL operations
+
+### Patch Changes
+
+- Updated dependencies [[`58fea38`](https://github.com/lemonmade/quilt/commit/58fea38bbe5e999cb8742ac00cfaad04332507e8)]:
+  - @quilted/async@0.4.11
+
 ## 3.0.4
 
 ### Patch Changes
