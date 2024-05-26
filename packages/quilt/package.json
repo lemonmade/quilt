@@ -117,9 +117,18 @@
     },
     "./server": {
       "types": "./build/typescript/server.d.ts",
-      "quilt:source": "./source/server.ts",
-      "quilt:esnext": "./build/esnext/server.esnext",
-      "import": "./build/esm/server.mjs"
+      "quilt:source": {
+        "browser": "./source/server.browser.ts",
+        "default": "./source/server.ts"
+      },
+      "quilt:esnext": {
+        "browser": "./build/esnext/server.browser.esnext",
+        "default": "./build/esnext/server.esnext"
+      },
+      "import": {
+        "browser": "./build/esm/server.browser.mjs",
+        "default": "./build/esm/server.mjs"
+      }
     },
     "./env": {
       "types": "./build/typescript/env.d.ts",
