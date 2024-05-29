@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.13
+
+### Patch Changes
+
+- [`df94c4d`](https://github.com/lemonmade/quilt/commit/df94c4dcd79a73c8d71ef11a7edb36b547f139a3) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix async timing issues and added `useAsyncRetry()`
+
 ## 0.4.12
 
 ### Patch Changes

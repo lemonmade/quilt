@@ -1,5 +1,14 @@
 # @quilted/rollup
 
+## 0.2.31
+
+### Patch Changes
+
+- [`7e355e3`](https://github.com/lemonmade/quilt/commit/7e355e3b2eb0819af8ea4181d40f9462def0d1a0) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `dequal` to framework bundle
+
+- Updated dependencies []:
+  - @quilted/graphql@3.1.2
+
 ## 0.2.30
 
 ### Patch Changes
