@@ -156,6 +156,7 @@ export function useAsync<Data = unknown, Input = unknown>(
 
   useEffect(() => {
     return () => {
+      // TODO: don’t abort if there are other listeners?
       action.running?.abort();
     };
   }, [action]);

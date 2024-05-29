@@ -54,7 +54,7 @@ switch (fetchUser.status) {
 }
 ```
 
-You can call an `AsyncAction` using its `run()` method as many times as you like. The `value` and `error` properties will always reflect the results of the most recent call that was completed. If you want more details about individual calls to the function, `AsyncAction` also provides additional properties for inspecting the last finished call (`AsyncAction.finished`), the currently-running call (`AsyncAction.running`), and the most recent successful call (`AsyncAction.resolved`).
+You can call an `AsyncAction` using its `run()` method as many times as you like. The `value` and `error` properties will always reflect the results of the most recent calls. If you want more details about individual calls to the function, `AsyncAction` also provides additional properties for inspecting the last finished call (`AsyncAction.finished`), the currently-running call (`AsyncAction.running`), and the most recent successful call (`AsyncAction.resolved`).
 
 ```ts
 import {AsyncAction} from '@quilted/quilt/async';
@@ -179,7 +179,7 @@ export function App() {
 
   useEffect(() => {
     fetchUser.run('1');
-    return () => fetchUser.abort();
+    return () => fetchUser.running?.abort();
   });
 
   if (fetchUser.value) {
@@ -194,7 +194,7 @@ export function App() {
 }
 ```
 
-Using an `AsyncAction` directly can be handy, but it can also feel a little overwhelming — there’s a lot for you to remember to do on your own. You need to grab an `AsyncActionCache`, if you’ve got one, create the `AsyncAction`, and run the action at the appropriate time (including when any input to the function changes). If you want the data to be fetched during server rendering, you’d need to build on the above examples by suspending while the initial data is being fetched, and communicating the cache of results from the server to the client.
+Using an `AsyncAction` directly can be handy, but it can also feel a little overwhelming — there’s a lot for you to remember to do on your own. You need to grab an `AsyncActionCache`, if you’ve got one, create the `AsyncAction`, and run the action at the appropriate time (including when any input to the function changes). You likely also want to cancel the active request if the component unmounts. If you want the data to be fetched during server rendering, you’d need to build on the above examples by suspending while the initial data is being fetched, and communicating the cache of results from the server to the client.
 
 To make this process easier, Quilt provides a handy `useAsync()` hook. This hook takes an async function to run and some details about how to cache the result. It will create and return an `AsyncAction` for you to use, as shown above, but provides smart default behavior. It will suspend if the `AsyncAction` has not yet run, and use a cache provided to Quilt’s `AsyncContext` component. The `AsyncContext` component will take care of serializing the cache from the server to the client, so that client-side rendering can pick up right where the server left off.
 
@@ -208,7 +208,7 @@ import {useAsync, AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
 export function App({cache}: {cache: AsyncActionCache}) {
   return (
     <AsyncContext cache={cache}>
-      <Suspense fallback={null}>
+      <Suspense fallback="Loading...">
         <UserDetails />
       </Suspense>
     </AsyncContext>
@@ -255,7 +255,7 @@ export function App({cache}: {cache: AsyncActionCache}) {
 
   return (
     <AsyncContext cache={cache}>
-      <Suspense fallback={null}>
+      <Suspense fallback="Loading...">
         <UserDetails
           user={user}
           onNextUser={() => {
@@ -487,7 +487,7 @@ function LoadingUI() {
 }
 ```
 
-Using suspense in this way has an extra benefit for server-rendered code: Preact will preserve server-rendered markup while async components are being loaded, allowing each async component to hydrate independently. This pattern is sometimes referred to as “partial hydration” or “islands of interactivity”, and it can help make your server-rendered application responsive to user input more quickly.
+Using suspense in this way has an extra benefit for server-rendered code: Preact will preserve server-rendered markup while async components are being loaded on the client, allowing each async component to hydrate independently. This pattern is sometimes referred to as “partial hydration” or “islands of interactivity”, and it can help make your server-rendered application responsive to user input more quickly.
 
 Because providing a loading UI is so common, `AsyncComponent` accepts a `renderLoading` property that will render the `Suspense` component for you:
 
