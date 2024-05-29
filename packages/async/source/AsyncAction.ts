@@ -102,14 +102,12 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     return this.latest.updatedAt;
   }
 
+  #hasRun = false;
   readonly #hasChanged: (
     this: AsyncAction<Data, Input>,
     input?: Input,
     lastInput?: Input,
   ) => boolean;
-
-  #hasRun = false;
-  readonly #latestCalls = signal<AsyncActionResults<Data, Input>>({});
 
   constructor(
     fetchFunction: AsyncActionFunction<Data, Input>,
@@ -137,7 +135,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     input?: Input,
     {signal}: {signal?: AbortSignal} = {},
   ): AsyncActionPromise<Data, Input> => {
-    const wasRunning = this.#latestCalls.peek().running;
+    const wasRunning = this.#running.peek();
 
     const actionRun =
       !this.#hasRun && this.initial.status === 'pending'
@@ -146,15 +144,10 @@ export class AsyncAction<Data = unknown, Input = unknown> {
             finally: this.#finalizeAction,
           });
 
-    this.#hasRun = true;
-    actionRun.start(input, {signal});
-
     batch(() => {
-      this.#latestCalls.value = {
-        ...this.#latestCalls.peek(),
-        running: actionRun,
-      };
-
+      this.#hasRun = true;
+      actionRun.start(input, {signal});
+      this.#running.value = actionRun;
       wasRunning?.abort();
     });
 
@@ -175,7 +168,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   };
 
   hasChanged = (input?: Input) => {
-    return this.#hasChanged.call(this, input, this.latest.input);
+    return this.#hasChanged.call(this, input, this.#latestPeek().input);
   };
 
   #finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
@@ -197,12 +190,6 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 
 function defaultHasChanged(input?: unknown, lastInput?: unknown) {
   return input !== lastInput && !dequal(input, lastInput);
-}
-
-interface AsyncActionResults<Data, Input> {
-  finished?: AsyncActionRun<Data, Input>;
-  resolved?: AsyncActionRun<Data, Input>;
-  running?: AsyncActionRun<Data, Input>;
 }
 
 export class AsyncActionRun<Data = unknown, Input = unknown> {
@@ -321,7 +308,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
     }
   }
 
-  abort = (reason?: any) => {
+  abort = (reason: any = new AsyncActionAbortError()) => {
     this.#abortController.abort(reason);
   };
 
@@ -367,6 +354,13 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
       input: this.input,
       time: this.updatedAt,
     };
+  }
+}
+
+class AsyncActionAbortError extends Error {
+  constructor() {
+    super('The async action was aborted');
+    this.name = 'AsyncActionAbortError';
   }
 }
 
