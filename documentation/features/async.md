@@ -27,7 +27,9 @@ const fetchUser = new AsyncAction(async (id: string) => {
 const user = await fetchUser.run('123');
 ```
 
-In the example above, we wrap our asynchronous data fetching function in an `AsyncAction`, and call `run()` to execute the function. This example is no better than just calling the asynchronous function directly, though. The real power comes in with the additional properties `AsyncAction` exposes. For example, we can access the previously fetched data using the `value` and `error` properties.
+In the example above, we wrap our asynchronous data fetching function in an `AsyncAction`, and call `run()` to execute the function. This example is no better than just calling the asynchronous function directly, though. The real power comes in with the additional properties `AsyncAction` exposes.
+
+For example, we can access the previously fetched data using the `value` and `error` properties. `value` gives us access to the last resolved value from the function (even if it wasn’t the last call to the function), and `error` gives us the error from the last call, if it was rejected.
 
 ```ts
 import {AsyncAction} from '@quilted/quilt/async';
@@ -42,7 +44,7 @@ await fetchUser.run('123');
 
 switch (fetchUser.status) {
   case 'resolved':
-    console.log('Last call resolved with value:', fetchUser.value);
+    console.log('Action previously resolved with value:', fetchUser.value);
     break;
   case 'rejected':
     console.log('Last call rejected with error:', fetchUser.error);
@@ -52,7 +54,7 @@ switch (fetchUser.status) {
 }
 ```
 
-You can call an `AsyncAction` using its `run()` method as many times as you like. The `value` and `error` properties will always reflect the results of the most recent call that was completed. If you want more details about individual calls to the function, `AsyncAction` also provides additional properties for inspecting the last finished call (`AsyncAction.finished`) and the currently-running call (`AsyncAction.running`).
+You can call an `AsyncAction` using its `run()` method as many times as you like. The `value` and `error` properties will always reflect the results of the most recent call that was completed. If you want more details about individual calls to the function, `AsyncAction` also provides additional properties for inspecting the last finished call (`AsyncAction.finished`), the currently-running call (`AsyncAction.running`), and the most recent successful call (`AsyncAction.resolved`).
 
 ```ts
 import {AsyncAction} from '@quilted/quilt/async';
@@ -112,6 +114,198 @@ controller.abort();
 ```
 
 ### Data fetching in Preact
+
+The `AsyncAction` class has one special feature we haven’t mentioned yet: all of its properties are backed by [signals](https://preactjs.com/guide/v10/signals/). That means that any Preact component can create an `AsyncAction`, and then use the properties of the action to automatically re-render when the state of the action changes.
+
+In the example below, we create an `AsyncAction`, and force it to run when the component mounts. We use the `value` and `error` properties, documented above, to read and subscribe to the state of this action that we care about.
+
+```tsx
+import {useMemo, useEffect} from 'preact/hooks';
+import {AsyncAction} from '@quilted/quilt/async';
+
+export function App() {
+  const fetchUser = useMemo(
+    () =>
+      new AsyncAction(async (id: string) => {
+        const response = await fetch(`/users/${id}`);
+        const user = await response.json();
+        return user;
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    fetchUser.run('1');
+    return () => fetchUser.abort();
+  });
+
+  if (fetchUser.value) {
+    return <div>User: {fetchUser.value.name}</div>;
+  }
+
+  if (fetchUser.error) {
+    return <div>Error: {fetchUser.error.message}</div>;
+  }
+
+  return <div>Loading...</div>;
+}
+```
+
+This is handy, but you often want to cache asynchronous calls, so that multiple components — or the same component, rendering multiple times — can reuse previous results. Quilt provides an `AsyncActionCache` class that adds this capability to `AsyncAction`.
+
+A simple application might create an `AsyncActionCache` instance for the entire app, and use its `create()` method directly to create and cache an `AsyncAction` for future use. You’ll need to provide a key for the cache, and a function that will create the `AsyncAction` when it is not already in the cache.
+
+```tsx
+import {useMemo, useEffect} from 'preact/hooks';
+import {AsyncAction, AsyncActionCache} from '@quilted/quilt/async';
+
+// If using server-rendering, you’ll want to create a new cache for each request
+// that can be passed to the Preact app. We’ll show an example of how to do this
+// in the next example.
+const cache = new AsyncActionCache();
+
+export function App() {
+  const fetchUser = useMemo(() => {
+    const action = cache.create(
+      () =>
+        new AsyncAction(async (id: string) => {
+          const response = await fetch(`/users/${id}`);
+          const user = await response.json();
+          return user;
+        }),
+      {key: 'user'},
+    );
+  }, []);
+
+  useEffect(() => {
+    fetchUser.run('1');
+    return () => fetchUser.abort();
+  });
+
+  if (fetchUser.value) {
+    return <div>User: {fetchUser.value.name}</div>;
+  }
+
+  if (fetchUser.error) {
+    return <div>Error: {fetchUser.error.message}</div>;
+  }
+
+  return <div>Loading...</div>;
+}
+```
+
+Using an `AsyncAction` directly can be handy, but it can also feel a little overwhelming — there’s a lot for you to remember to do on your own. You need to grab an `AsyncActionCache`, if you’ve got one, create the `AsyncAction`, and run the action at the appropriate time (including when any input to the function changes). If you want the data to be fetched during server rendering, you’d need to build on the above examples by suspending while the initial data is being fetched, and communicating the cache of results from the server to the client.
+
+To make this process easier, Quilt provides a handy `useAsync()` hook. This hook takes an async function to run and some details about how to cache the result. It will create and return an `AsyncAction` for you to use, as shown above, but provides smart default behavior. It will suspend if the `AsyncAction` has not yet run, and use a cache provided to Quilt’s `AsyncContext` component. The `AsyncContext` component will take care of serializing the cache from the server to the client, so that client-side rendering can pick up right where the server left off.
+
+```tsx
+import {Suspense} from 'preact/compat';
+import {useAsync, AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
+
+// We’ll need to pass a `cache` prop to our app in both our browser and server
+// entrypoints. In a Quilt app, these are typically the `browser.tsx` and `server.tsx`
+// files, respectively.
+export function App({cache}: {cache: AsyncActionCache}) {
+  return (
+    <AsyncContext cache={cache}>
+      <Suspense fallback={null}>
+        <UserDetails />
+      </Suspense>
+    </AsyncContext>
+  );
+}
+
+function UserDetails() {
+  const fetchUser = useAsync(
+    async (id: string) => {
+      const response = await fetch(`/users/${id}`);
+      const user = await response.json();
+      return user;
+    },
+    {
+      key: 'user',
+      input: '1',
+    },
+  );
+
+  // We don’t need to manually run the action — that’s all handled by the hook!
+  // Because the hook defaults to suspending when there have been no results, we
+  // can also remove any handling of the `pending` state.
+
+  if (fetchUser.value) {
+    return <div>User: {fetchUser.value.name}</div>;
+  }
+
+  return <div>Error: {fetchUser.error.message}</div>;
+}
+```
+
+In the example above, we have a constant input to the function — our `'1'` string, which gets passed to our async function. We can cause this action to re-run by changing the `input` option to the `useAsync` hook, or by providing a signal as the `input` option instead:
+
+```tsx
+import {Suspense} from 'preact/compat';
+import {useSignal} from '@quilted/quilt/signals';
+import {useAsync, AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
+
+// We’ll need to pass a `cache` prop to our app in both our browser and server
+// entrypoints. In a Quilt app, these are typically the `browser.tsx` and `server.tsx`
+// files, respectively.
+export function App({cache}: {cache: AsyncActionCache}) {
+  const user = useSignal('1');
+
+  return (
+    <AsyncContext cache={cache}>
+      <Suspense fallback={null}>
+        <UserDetails
+          user={user}
+          onNextUser={() => {
+            const current = Number.parseInt(user.value, 10);
+            user.set(String(current + 1));
+          }}
+        />
+      </Suspense>
+    </AsyncContext>
+  );
+}
+
+function UserDetails({user, onNextUser}) {
+  const fetchUser = useAsync(
+    async (id: string) => {
+      const response = await fetch(`/users/${id}`);
+      const user = await response.json();
+      return user;
+    },
+    {
+      key: 'user',
+      // When this signal changes, the action will re-run
+      input: user,
+    },
+  );
+
+  if (fetchUser.value) {
+    return (
+      <div>
+        User: {fetchUser.value.name}{' '}
+        <button onClick={onNextUser}>Next user</button>
+        {/* we can use the `running` field to get access to each new call to the async function */}
+        {fetchUser.running ? (
+          <div>Fetching user with input: {fetchUser.running.input}</div>
+        ) : null}
+      </div>
+    );
+  }
+
+  return <div>Error: {fetchUser.error.message}</div>;
+}
+```
+
+In addition to specifying the async function, input, and cache key, `useAsync` hook also takes a number of additional options for customizing the behavior of the action:
+
+- `active`: indicates whether the action should be run. If set to `false`, you will be responsible for manually running the action using the `run()` method on the returned `AsyncAction` instance. This value can be either a boolean, or a signal that contains a boolean. Defaults to `true`.
+- `suspend`: configures whether the hook will suspend while the first run of this async action is running. If `true`, the hook will suspend until the action has resolved or rejected. If `false`, the hook will not suspend, and you will need to handle the `pending` state yourself. Defaults to `true`.
+- `cache`: configures whether the action should be cached. If `true`, the default cache from a surrounding `AsyncContext` will be used. If `false`, the action will not be cached. Alternatively, you can pass an `AsyncActionCache` instance to use a specific cache.
+- `signal`: an `AbortSignal` that can be used to cancel the action.
+- `tags`: an array of strings to include as metadata on a cached `AsyncAction`. These `tags` can be searched for with the `AsyncActionCache`’s `find()`, `filter()`, and `delete()` methods.
 
 ## Asynchronous modules
 
