@@ -9,6 +9,7 @@ export {
   useAsync as useAsyncAction,
   type UseAsyncActionOptions,
 } from './hooks/async.ts';
+export {useAsyncRetry} from './hooks/async-retry.ts';
 export {useAsyncMutation} from './hooks/mutation.ts';
 export {useAsyncActionCacheSerialization} from './hooks/cache.ts';
 export {

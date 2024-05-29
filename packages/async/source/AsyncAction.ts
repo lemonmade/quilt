@@ -1,4 +1,4 @@
-import {signal} from '@quilted/signals';
+import {signal, batch} from '@quilted/signals';
 import {dequal} from 'dequal';
 
 export type AsyncActionStatus = 'pending' | 'resolved' | 'rejected';
@@ -29,7 +29,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   }
 
   get value() {
-    return this.finished?.value;
+    return this.resolved?.value;
   }
 
   get data() {
@@ -47,24 +47,41 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   readonly initial: AsyncActionRun<Data, Input>;
 
   get running() {
-    return this.#latestCalls.value.running;
+    return this.#running.value;
   }
 
   get isRunning() {
     return this.running != null;
   }
 
+  #running = signal<AsyncActionRun<Data, Input> | undefined>(undefined);
+
   get finished() {
-    return this.#latestCalls.value.finished;
+    return this.#finished.value;
   }
 
   get hasFinished() {
     return this.finished != null;
   }
 
+  #finished = signal<AsyncActionRun<Data, Input> | undefined>(undefined);
+
+  get resolved() {
+    return this.#resolved.value;
+  }
+
+  get hasResolved() {
+    return this.resolved != null;
+  }
+
+  #resolved = signal<AsyncActionRun<Data, Input> | undefined>(undefined);
+
   get latest() {
-    const {running, finished} = this.#latestCalls.value;
-    return running ?? finished ?? this.initial;
+    return this.#running.value ?? this.#finished.value ?? this.initial;
+  }
+
+  #latestPeek() {
+    return this.#running.peek() ?? this.#finished.peek() ?? this.initial;
   }
 
   readonly function: AsyncActionFunction<Data, Input>;
@@ -132,34 +149,49 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     this.#hasRun = true;
     actionRun.start(input, {signal});
 
-    this.#latestCalls.value = {...this.#latestCalls.peek(), running: actionRun};
-    wasRunning?.abort();
+    batch(() => {
+      this.#latestCalls.value = {
+        ...this.#latestCalls.peek(),
+        running: actionRun,
+      };
+
+      wasRunning?.abort();
+    });
 
     return actionRun.promise;
   };
 
-  rerun = ({signal}: {signal?: AbortSignal} = {}) =>
-    this.run(this.latest.input, {signal});
+  rerun = ({
+    signal,
+    force = false,
+  }: {signal?: AbortSignal; force?: boolean} = {}) => {
+    const latest = this.#latestPeek();
+
+    if (!force && latest.status === 'pending') {
+      return latest.promise;
+    }
+
+    return this.run(latest.input, {signal});
+  };
 
   hasChanged = (input?: Input) => {
     return this.#hasChanged.call(this, input, this.latest.input);
   };
 
   #finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
-    let updated: AsyncActionResults<Data, Input> | undefined;
+    batch(() => {
+      if (this.#running.peek() === actionRun) {
+        this.#running.value = undefined;
+      }
 
-    if (!actionRun.signal.aborted) {
-      updated = {...this.#latestCalls.peek()};
-      updated.finished = actionRun;
-    }
+      if (actionRun.signal.aborted) return;
 
-    const latest = this.#latestCalls.peek();
-    if (latest.running === actionRun) {
-      updated ??= {...latest};
-      delete updated.running;
-    }
+      this.#finished.value = actionRun;
 
-    if (updated) this.#latestCalls.value = updated;
+      if (actionRun.status === 'resolved') {
+        this.#resolved.value = actionRun;
+      }
+    });
   };
 }
 
@@ -169,6 +201,7 @@ function defaultHasChanged(input?: unknown, lastInput?: unknown) {
 
 interface AsyncActionResults<Data, Input> {
   finished?: AsyncActionRun<Data, Input>;
+  resolved?: AsyncActionRun<Data, Input>;
   running?: AsyncActionRun<Data, Input>;
 }
 
@@ -232,20 +265,30 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
     let resolve!: (value: Data) => void;
     let reject!: (reason: unknown) => void;
 
-    this.promise = new AsyncActionPromise((res, rej) => {
+    const promise: AsyncActionPromise<Data, Input> = new Promise((res, rej) => {
       resolve = res;
       reject = rej;
-    }, this);
+    }) as any;
+
+    Object.assign(promise, {status: 'pending', source: this});
+
+    this.promise = promise;
 
     this.#resolve = (value) => {
-      if (this.promise.status !== 'pending') return;
+      if (promise.status !== 'pending') return;
+
+      Object.assign(promise, {status: 'resolved', value});
       if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
+
       resolve(value);
       onFinally?.(this);
     };
     this.#reject = (reason) => {
-      if (this.promise.status !== 'pending') return;
+      if (promise.status !== 'pending') return;
+
+      Object.assign(promise, {status: 'rejected', reason});
       if (!this.finishedAt) Object.assign(this, {finishedAt: now()});
+
       reject(reason);
       onFinally?.(this);
     };
@@ -327,35 +370,11 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
   }
 }
 
-export class AsyncActionPromise<
-  Data = unknown,
-  Input = unknown,
-> extends Promise<Data> {
-  readonly status: AsyncActionStatus = 'pending';
+export interface AsyncActionPromise<Data, Input> extends Promise<Data> {
+  readonly status: AsyncActionStatus;
   readonly value?: Data;
   readonly reason?: unknown;
   readonly source: AsyncActionRun<Data, Input>;
-
-  constructor(
-    executor: ConstructorParameters<typeof Promise<Data>>[0],
-    source: AsyncActionRun<Data, Input>,
-  ) {
-    super((resolve, reject) => {
-      executor(
-        (value) => {
-          if (this.status !== 'pending') return;
-          Object.assign(this, {status: 'resolved', value});
-          resolve(value);
-        },
-        (reason) => {
-          if (this.status !== 'pending') return;
-          Object.assign(this, {status: 'rejected', reason});
-          reject(reason);
-        },
-      );
-    });
-    this.source = source;
-  }
 }
 
 function now() {

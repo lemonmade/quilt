@@ -5,9 +5,12 @@ import {useBrowserDetails} from '@quilted/preact-browser';
 
 export function useAsyncActionCacheSerialization(
   cache?: AsyncActionCache,
-  {name = 'fetch:cache'}: {name?: string} = {},
+  {
+    name = 'fetch:cache',
+    optional = true,
+  }: {name?: string; optional?: boolean} = {},
 ) {
-  const browser = useBrowserDetails({optional: cache == null});
+  const browser = useBrowserDetails({optional});
   const restored = useRef<typeof browser>();
 
   if (cache == null || browser == null) return;

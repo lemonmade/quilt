@@ -2,7 +2,7 @@ export {AsyncModulesGlobal, type AsyncModulesOptions} from './global.ts';
 export {
   AsyncAction,
   AsyncActionRun,
-  AsyncActionPromise,
+  type AsyncActionPromise,
   type AsyncActionStatus,
   type AsyncActionFunction,
   type AsyncActionRunCache,

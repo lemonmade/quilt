@@ -1,5 +1,19 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, startServer, createWorkspace} from './utilities.ts';
+import {multiline, startServer, createWorkspace, Page} from './utilities.ts';
+
+interface TestHarness {
+  waiting:
+    | (Promise<unknown> & {
+        resolve(value: unknown): void;
+        reject(error: unknown): void;
+      })
+    | undefined;
+  waitForTest(): Promise<unknown>;
+}
+
+declare module globalThis {
+  const testHarness: TestHarness;
+}
 
 describe('async', () => {
   it('can server render with an async module', async () => {
@@ -513,5 +527,252 @@ describe('async', () => {
 
     const content = await page.textContent('body');
     expect(content).toBe(`Hello Winston! Hello Molly!`);
+  });
+
+  const BROWSER_ENTRY_WITH_TEST_RPC = multiline`
+    import {hydrate} from 'preact';
+    import {Suspense} from 'preact/compat';
+    
+    import {AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
+
+    import App from './App.tsx';
+
+    const element = document.querySelector('#app')!;
+
+    const context = {
+      asyncCache: new AsyncActionCache(),
+    };
+
+    const testHarness = {
+      waiting: undefined,
+      waitForTest() {
+        let resolve;
+        let reject;
+        const promise = new Promise((res, rej) => {
+          resolve = (value) => {
+            testHarness.waiting = undefined;
+            res(value);
+          };
+          reject = (reason) => {
+            testHarness.waiting = undefined;
+            rej(reason);
+          };
+        });
+        Object.assign(promise, {resolve, reject});
+
+        testHarness.waiting = promise;
+
+        return promise;
+      },
+    };
+
+    Object.assign(globalThis, {app: {context}, testHarness});
+    
+    hydrate(
+      <AsyncContext cache={context.asyncCache}>
+        <Suspense fallback={null}>
+          <App />
+        </Suspense>
+      </AsyncContext>,
+      element,
+    );
+  `;
+
+  async function waitForPendingPromise(page: Page) {
+    await page.waitForFunction(() => globalThis.testHarness.waiting != null);
+  }
+
+  it('can retry async fetches with useAsyncRetry()', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
+
+    await workspace.fs.write({
+      'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
+      'App.tsx': multiline`
+        import {
+          useAsync,
+          useAsyncRetry,
+        } from '@quilted/quilt/async';
+
+        export default function App() {
+          const fetched = useAsync(async () => {
+            const value = await globalThis.testHarness.waitForTest();
+            return value;
+          }, {
+            key: 'data',
+            active: typeof document === 'object',
+            cache: typeof document === 'object',
+          });
+
+          useAsyncRetry(fetched);
+
+          if (fetched.error) {
+            return <div>{fetched.error.message}</div>;
+          }
+
+          if (fetched.status === 'pending') {
+            return <div>Loading...</div>;
+          }
+        
+          return <div>{fetched.value}</div>;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/');
+
+    const content = await page.textContent('body');
+    expect(content).toBe(`Loading...`);
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.reject(
+        new Error('Something went wrong!'),
+      ),
+    );
+
+    const errorContent = await page.textContent('body');
+    expect(errorContent).toBe(`Something went wrong!`);
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.resolve('Hello!'),
+    );
+    expect(await page.textContent('body')).toBe(`Hello!`);
+  });
+
+  it('retries async actions three times by default', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
+
+    await workspace.fs.write({
+      'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
+      'App.tsx': multiline`
+        import {
+          useAsync,
+          useAsyncRetry,
+        } from '@quilted/quilt/async';
+
+        export default function App() {
+          const fetched = useAsync(async () => {
+            const value = await globalThis.testHarness.waitForTest();
+            return value;
+          }, {
+            key: 'data',
+            active: typeof document === 'object',
+            cache: typeof document === 'object',
+          });
+
+          useAsyncRetry(fetched);
+
+          if (fetched.error) {
+            return <div>{fetched.error.message}</div>;
+          }
+
+          if (fetched.status === 'pending') {
+            return <div>Loading...</div>;
+          }
+        
+          return <div>{fetched.value}</div>;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/');
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.reject(new Error('Error 1')),
+    );
+
+    const content1 = await page.textContent('body');
+    expect(content1).toBe(`Error 1`);
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.reject(new Error('Error 2')),
+    );
+
+    const content2 = await page.textContent('body');
+    expect(content2).toBe(`Error 2`);
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.reject(new Error('Error 3')),
+    );
+
+    const content3 = await page.textContent('body');
+    expect(content3).toBe(`Error 3`);
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.reject(new Error('Error 4')),
+    );
+
+    const content4 = await page.textContent('body');
+    expect(content4).toBe(`Error 4`);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(
+      await page.evaluate(() => globalThis.testHarness.waiting == null),
+    ).toBe(true);
+  });
+
+  it('can retry a custom number of times', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
+
+    const limit = 10;
+
+    await workspace.fs.write({
+      'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
+      'App.tsx': multiline`
+        import {
+          useAsync,
+          useAsyncRetry,
+        } from '@quilted/quilt/async';
+
+        export default function App() {
+          const fetched = useAsync(async () => {
+            const value = await globalThis.testHarness.waitForTest();
+            return value;
+          }, {
+            key: 'data',
+            active: typeof document === 'object',
+            cache: typeof document === 'object',
+          });
+
+          useAsyncRetry(fetched, {limit: ${limit}});
+
+          if (fetched.error) {
+            return <div>{fetched.error.message}</div>;
+          }
+
+          if (fetched.status === 'pending') {
+            return <div>Loading...</div>;
+          }
+        
+          return <div>{fetched.value}</div>;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/');
+
+    for (let i = 1; i <= limit + 1; i++) {
+      await waitForPendingPromise(page);
+      await page.evaluate(
+        (i) => globalThis.testHarness.waiting!.reject(new Error(`Error ${i}`)),
+        [i],
+      );
+
+      const content = await page.textContent('body');
+      expect(content).toBe(`Error ${i}`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(
+      await page.evaluate(() => globalThis.testHarness.waiting == null),
+    ).toBe(true);
   });
 });

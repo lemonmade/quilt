@@ -5,6 +5,7 @@ import type {
   AsyncActionCache,
   AsyncActionCacheKey,
   AsyncActionCacheEntry,
+  AsyncActionRunCache,
   AsyncActionCacheCreateOptions,
   AsyncActionFunction,
 } from '@quilted/async';
@@ -18,13 +19,14 @@ import {
 
 import {AsyncActionCacheContext} from '../context.ts';
 
-export interface UseAsyncActionOptions<_Data = unknown, Input = unknown>
+export interface UseAsyncActionOptions<Data = unknown, Input = unknown>
   extends Pick<AsyncActionCacheCreateOptions, 'tags'> {
   readonly input?: Input | ReadonlySignal<Input>;
   readonly key?: AsyncActionCacheKey | ReadonlySignal<AsyncActionCacheKey>;
   readonly active?: boolean | ReadonlySignal<boolean>;
   readonly suspend?: boolean;
   readonly cache?: boolean | AsyncActionCache;
+  readonly cached?: AsyncActionRunCache<Data, Input>;
   readonly signal?: AbortSignal;
 }
 
@@ -56,10 +58,11 @@ export function useAsync<Data = unknown, Input = unknown>(
     suspend = true,
     input,
     signal,
+    cached,
   }: UseAsyncActionOptions<Data, Input> = {},
 ) {
   const internalsRef = useRef<
-    Pick<UseAsyncActionOptions<Data, Input>, 'tags' | 'signal'> & {
+    Pick<UseAsyncActionOptions<Data, Input>, 'tags' | 'signal' | 'cached'> & {
       function?: AsyncActionFunction<Data, Input>;
     }
   >();
@@ -67,6 +70,7 @@ export function useAsync<Data = unknown, Input = unknown>(
   Object.assign(internalsRef.current, {
     tags,
     signal,
+    cached,
     function: typeof asyncAction === 'function' ? asyncAction : undefined,
   });
 
@@ -102,7 +106,10 @@ export function useAsync<Data = unknown, Input = unknown>(
     }
 
     return asyncCache.create(
-      (cached) => new AsyncAction(resolvedFetchFunction, {cached}),
+      (cached) =>
+        new AsyncAction(resolvedFetchFunction, {
+          cached: internalsRef.current!.cached ?? cached,
+        }),
       {key, tags: internalsRef.current!.tags},
     );
   });
