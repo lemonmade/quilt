@@ -260,7 +260,7 @@ export function App({cache}: {cache: AsyncActionCache}) {
           user={user}
           onNextUser={() => {
             const current = Number.parseInt(user.value, 10);
-            user.set(String(current + 1));
+            user.value = String(current + 1);
           }}
         />
       </Suspense>
