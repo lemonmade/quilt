@@ -1,5 +1,13 @@
 # @quilted/async
 
+## 0.4.14
+
+### Patch Changes
+
+- [`442f69a`](https://github.com/lemonmade/quilt/commit/442f69a701897aeef40cb1eb2460b0551e4586c9) Thanks [@lemonmade](https://github.com/lemonmade)! - Add a count of active query watchers
+
+- [`1d1e03a`](https://github.com/lemonmade/quilt/commit/1d1e03a07955a2312a29398382f66db87577fb6e) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve `AsyncAction.run()` retry semantics, and add `force` option for forcibly re-running an action
+
 ## 0.4.13
 
 ### Patch Changes
