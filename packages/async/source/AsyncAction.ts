@@ -133,8 +133,19 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 
   run = (
     input?: Input,
-    {signal}: {signal?: AbortSignal} = {},
+    {signal, force = false}: {signal?: AbortSignal; force?: boolean} = {},
   ): AsyncActionPromise<Data, Input> => {
+    const latest = this.#latestPeek();
+
+    if (
+      !force &&
+      this.#hasRun &&
+      latest.status !== 'rejected' &&
+      !this.#hasChanged(input, latest.input)
+    ) {
+      return latest.promise;
+    }
+
     const wasRunning = this.#running.peek();
 
     const actionRun =
@@ -156,15 +167,10 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 
   rerun = ({
     signal,
-    force = false,
+    force = true,
   }: {signal?: AbortSignal; force?: boolean} = {}) => {
     const latest = this.#latestPeek();
-
-    if (!force && latest.status === 'pending') {
-      return latest.promise;
-    }
-
-    return this.run(latest.input, {signal});
+    return this.run(latest.input, {signal, force});
   };
 
   hasChanged = (input?: Input) => {
