@@ -155,7 +155,19 @@ export function useAsync<Data = unknown, Input = unknown>(
   const action = actionSignal.value;
 
   useEffect(() => {
+    const actionAsCacheEntry =
+      'watchers' in action && typeof action.watchers === 'number'
+        ? action
+        : undefined;
+
+    if (actionAsCacheEntry) actionAsCacheEntry.watchers += 1;
+
     return () => {
+      if (actionAsCacheEntry) {
+        actionAsCacheEntry.watchers -= 1;
+        if (actionAsCacheEntry.watchers > 0) return;
+      }
+
       // TODO: don’t abort if there are other listeners?
       action.running?.abort();
     };

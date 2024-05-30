@@ -51,7 +51,7 @@ export class AsyncActionCache {
     const initialCache = this.#initialCache.get(id);
     action = create(initialCache) as any as AsyncActionCacheEntry<Action>;
 
-    Object.assign(action, {id, key, tags});
+    Object.assign(action, {id, key, tags, watchers: 0});
     this.#cache.set(id, action);
 
     return action;
@@ -234,6 +234,7 @@ export type AsyncActionCacheEntry<
   readonly id: string;
   readonly key: AsyncActionCacheKey;
   readonly tags: readonly string[];
+  watchers: number;
 };
 
 export type AsyncActionCacheEntrySerialization<
