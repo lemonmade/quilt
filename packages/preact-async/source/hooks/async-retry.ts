@@ -23,7 +23,7 @@ export function useAsyncRetry(
       const retryCount = (internalsRef.current!.retryCount += 1);
 
       if (retryCount <= internalsRef.current!.limit) {
-        action.rerun({signal});
+        action.rerun({signal, force: true});
       }
     } else {
       internalsRef.current!.retryCount = 0;

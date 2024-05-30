@@ -775,4 +775,70 @@ describe('async', () => {
       await page.evaluate(() => globalThis.testHarness.waiting == null),
     ).toBe(true);
   });
+
+  it('can rerun async fetches with useAsyncCacheControl()', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
+
+    await workspace.fs.write({
+      'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
+      'App.tsx': multiline`
+        import {
+          useAsync,
+          useAsyncCacheControl,
+        } from '@quilted/quilt/async';
+
+        export default function App() {
+          const fetched = useAsync(async () => {
+            const value = await globalThis.testHarness.waitForTest();
+            return value;
+          }, {
+            key: 'data',
+            active: typeof document === 'object',
+            cache: typeof document === 'object',
+          });
+
+          useAsyncCacheControl(fetched, {maxAge: 100});
+
+          if (fetched.error) {
+            return <div>{fetched.error.message}</div>;
+          }
+
+          if (fetched.status === 'pending') {
+            return <div>Loading...</div>;
+          }
+        
+          return <div>{fetched.value}</div>;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/');
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.resolve('Hello 1!'),
+    );
+    expect(await page.textContent('body')).toBe(`Hello 1!`);
+
+    await new Promise((resolve) => setTimeout(resolve, 25));
+
+    expect(
+      await page.evaluate(() => globalThis.testHarness.waiting == null),
+    ).toBe(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await waitForPendingPromise(page);
+    await page.evaluate(() =>
+      globalThis.testHarness.waiting!.resolve('Hello 2!'),
+    );
+    expect(await page.textContent('body')).toBe(`Hello 2!`);
+
+    await new Promise((resolve) => setTimeout(resolve, 125));
+
+    expect(
+      await page.evaluate(() => globalThis.testHarness.waiting != null),
+    ).toBe(true);
+  });
 });

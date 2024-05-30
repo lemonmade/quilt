@@ -10,6 +10,7 @@ export {
   type UseAsyncActionOptions,
 } from './hooks/async.ts';
 export {useAsyncRetry} from './hooks/async-retry.ts';
+export {useAsyncCacheControl} from './hooks/async-cache-control.ts';
 export {useAsyncMutation} from './hooks/mutation.ts';
 export {useAsyncActionCacheSerialization} from './hooks/cache.ts';
 export {
