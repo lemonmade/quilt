@@ -2,7 +2,7 @@ import {describe, it, expect} from 'vitest';
 
 import {renderApp} from '~/tests/render.ts';
 
-import Start from './Start.tsx';
+import Start from '../Start.tsx';
 
 describe('<Start />', () => {
   it('includes a welcome message', async () => {
