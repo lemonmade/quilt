@@ -9,7 +9,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<USER>/<REPOSITORY>"
+    "url": "https://github.com/lemonmade/quilt",
+    "directory": "packages/react-dom"
   },
   "publishConfig": {
     "access": "public",
@@ -20,25 +21,25 @@
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs",
-      "require": "./build/esm/index.cjs"
+      "require": "./build/cjs/index.cjs"
     },
     "./client": {
       "quilt:source": "./source/client.ts",
       "quilt:esnext": "./build/esnext/client.esnext",
       "import": "./build/esm/client.mjs",
-      "require": "./build/esm/client.cjs"
+      "require": "./build/cjs/client.cjs"
     },
     "./server": {
       "quilt:source": "./source/server.ts",
       "quilt:esnext": "./build/esnext/server.esnext",
       "import": "./build/esm/server.mjs",
-      "require": "./build/esm/server.cjs"
+      "require": "./build/cjs/server.cjs"
     },
     "./test-utils": {
       "quilt:source": "./source/test-utils.ts",
       "quilt:esnext": "./build/esnext/test-utils.esnext",
       "import": "./build/esm/test-utils.mjs",
-      "require": "./build/esm/test-utils.cjs"
+      "require": "./build/cjs/test-utils.cjs"
     }
   },
   "sideEffects": false,
