@@ -14,7 +14,7 @@ import {
 } from './shared/context.ts';
 
 export interface AppProps {
-  context?: AppContextType;
+  context: AppContextType;
 }
 
 // The root component for your application. You will typically render any
