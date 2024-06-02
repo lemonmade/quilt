@@ -2,7 +2,11 @@
   "extends": "@quilted/typescript/tsconfig.project.json",
   "compilerOptions": {
     "outDir": "build/typescript",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+    "paths": {
+      "react": ["./node_modules/preact/compat"],
+      "react-dom": ["./node_modules/preact/compat"]
+    }
   },
   "include": ["**/*"],
   "exclude": ["build"],
