@@ -60,21 +60,21 @@ export class BrowserResponse implements BrowserDetails {
 }
 
 export class BrowserResponseCookies implements Cookies {
-  private readonly cookies: Record<string, string>;
+  readonly #cookies: Record<string, string>;
 
   constructor(
     private readonly headers: Headers,
     cookie?: string,
   ) {
-    this.cookies = CookieString.parse(cookie ?? '');
+    this.#cookies = CookieString.parse(cookie ?? '');
   }
 
   has(cookie: string) {
-    return this.cookies[cookie] != null;
+    return this.#cookies[cookie] != null;
   }
 
   get(cookie: string) {
-    return this.cookies[cookie];
+    return this.#cookies[cookie];
   }
 
   set(cookie: string, value: string, options?: CookieOptions) {
@@ -89,35 +89,39 @@ export class BrowserResponseCookies implements Cookies {
   }
 
   *entries() {
-    yield* Object.entries(this.cookies);
+    yield* Object.entries(this.#cookies);
   }
 
   *[Symbol.iterator]() {
-    yield* Object.keys(this.cookies);
+    yield* Object.keys(this.#cookies);
   }
 }
 
 export class BrowserResponseStatus {
-  constructor(private statusCode?: number) {}
+  #statusCode?: number;
+
+  constructor(statusCode?: number) {
+    this.#statusCode = statusCode;
+  }
 
   get value() {
-    return this.statusCode ?? 200;
+    return this.#statusCode ?? 200;
   }
 
   set(value: number) {
-    this.statusCode = Math.max(value, this.statusCode ?? 0);
+    this.#statusCode = Math.max(value, this.#statusCode ?? 0);
   }
 }
 
 export class BrowserResponseTitle {
-  private lastTitle?: string | ReadonlySignal<string>;
+  #lastTitle?: string | ReadonlySignal<string>;
 
   get value() {
-    return resolveSignalOrValue(this.lastTitle);
+    return resolveSignalOrValue(this.#lastTitle);
   }
 
   add = (title: string | ReadonlySignal<string>) => {
-    this.lastTitle = title;
+    this.#lastTitle = title;
     return () => {};
   };
 }
@@ -125,13 +129,13 @@ export class BrowserResponseTitle {
 export class BrowserResponseHeadElements<
   Element extends keyof HTMLElementTagNameMap,
 > {
-  private readonly elements: (
+  readonly #elements: (
     | Partial<HTMLElementTagNameMap[Element]>
     | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>
   )[] = [];
 
   get value() {
-    return this.elements.map((element) =>
+    return this.#elements.map((element) =>
       resolveSignalOrValue<Partial<HTMLElementTagNameMap[Element]>>(element),
     );
   }
@@ -143,51 +147,67 @@ export class BrowserResponseHeadElements<
       | Partial<HTMLElementTagNameMap[Element]>
       | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>,
   ) => {
-    this.elements.push(attributes);
+    this.#elements.push(attributes);
     return () => {};
   };
 }
 
 export class BrowserResponseElementAttributes<Attributes> {
-  private readonly attributes: (Attributes | ReadonlySignal<Attributes>)[] = [];
+  readonly #attributes: (Attributes | ReadonlySignal<Attributes>)[] = [];
 
   get value() {
     return Object.assign(
       {},
-      ...this.attributes.map((attribute) => resolveSignalOrValue(attribute)),
+      ...this.#attributes.map((attribute) => resolveSignalOrValue(attribute)),
     );
   }
 
   add = (attributes: Attributes | ReadonlySignal<Attributes>) => {
-    this.attributes.push(attributes);
+    this.#attributes.push(attributes);
     return () => {};
   };
 }
 
 export class BrowserResponseSerializations {
+  readonly #serializations = new Map<string, unknown>();
+
   get value() {
-    return [...this.serializations].map(([id, value]) => ({
+    return [...this.#serializations].map(([id, value]) => ({
       id,
       value: (typeof value === 'function' ? value() : value) as unknown,
     }));
   }
 
-  constructor(private readonly serializations = new Map<string, unknown>()) {}
+  constructor(
+    serializations: Record<string, unknown> | Iterable<[string, unknown]> = [],
+  ) {
+    if (typeof (serializations as any)[Symbol.iterator] === 'function') {
+      for (const [key, value] of serializations as Iterable<
+        [string, unknown]
+      >) {
+        this.set(key, value);
+      }
+    } else {
+      for (const key in serializations) {
+        this.set(key, (serializations as Record<string, unknown>)[key]);
+      }
+    }
+  }
 
   get(id: string) {
-    return this.serializations.get(id) as any;
+    return this.#serializations.get(id) as any;
   }
 
   set(id: string, data: unknown) {
     if (data === undefined) {
-      this.serializations.delete(id);
+      this.#serializations.delete(id);
     } else {
-      this.serializations.set(id, data);
+      this.#serializations.set(id, data);
     }
   }
 
   *[Symbol.iterator]() {
-    yield* this.serializations;
+    yield* this.#serializations;
   }
 }
 
@@ -199,7 +219,7 @@ const PRIORITY_BY_TIMING = new Map(
 
 export class BrowserResponseAssets {
   readonly cacheKey: Partial<AssetsCacheKey>;
-  private usedModulesWithTiming = new Map<
+  readonly #usedModulesWithTiming = new Map<
     string,
     {
       styles: AssetLoadTiming;
@@ -227,15 +247,15 @@ export class BrowserResponseAssets {
       styles?: AssetLoadTiming;
     } = {},
   ) {
-    const current = this.usedModulesWithTiming.get(id);
+    const current = this.#usedModulesWithTiming.get(id);
 
     if (current == null) {
-      this.usedModulesWithTiming.set(id, {
+      this.#usedModulesWithTiming.set(id, {
         scripts,
         styles,
       });
     } else {
-      this.usedModulesWithTiming.set(id, {
+      this.#usedModulesWithTiming.set(id, {
         scripts:
           scripts == null
             ? current.scripts
@@ -253,7 +273,7 @@ export class BrowserResponseAssets {
 
     const assets: BrowserAssetModuleSelector[] = [];
 
-    for (const [asset, {scripts, styles}] of this.usedModulesWithTiming) {
+    for (const [asset, {scripts, styles}] of this.#usedModulesWithTiming) {
       const stylesMatch = allowedTiming.includes(styles);
       const scriptsMatch = allowedTiming.includes(scripts);
 
