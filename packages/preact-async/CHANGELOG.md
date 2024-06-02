@@ -1,5 +1,16 @@
 # @quilted/preact-async
 
+## 0.1.13
+
+### Patch Changes
+
+- [`442f69a`](https://github.com/lemonmade/quilt/commit/442f69a701897aeef40cb1eb2460b0551e4586c9) Thanks [@lemonmade](https://github.com/lemonmade)! - Add a count of active query watchers
+
+- [`d58b911`](https://github.com/lemonmade/quilt/commit/d58b911dbe0fecccb46cfbbb152a874d114d2b16) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `useAsyncCacheControl()` hook to revalidate async actions
+
+- Updated dependencies [[`442f69a`](https://github.com/lemonmade/quilt/commit/442f69a701897aeef40cb1eb2460b0551e4586c9), [`1d1e03a`](https://github.com/lemonmade/quilt/commit/1d1e03a07955a2312a29398382f66db87577fb6e)]:
+  - @quilted/async@0.4.14
+
 ## 0.1.12
 
 ### Patch Changes
