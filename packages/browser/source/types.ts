@@ -1,6 +1,8 @@
 import type {ReadonlySignal} from '@quilted/signals';
 
-export type BrowserMetaAttributes = Partial<HTMLMetaElement>;
+export type BrowserMetaAttributes = Partial<
+  HTMLMetaElement & {property: string}
+>;
 export type BrowserLinkAttributes = Partial<HTMLLinkElement>;
 export type BrowserHTMLAttributes = Partial<HTMLHtmlElement & {class: string}>;
 export type BrowserBodyAttributes = Partial<HTMLBodyElement & {class: string}>;
