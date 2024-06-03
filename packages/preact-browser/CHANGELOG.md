@@ -1,5 +1,14 @@
 # @quilted/preact-browser
 
+## 0.1.6
+
+### Patch Changes
+
+- [`31d0761`](https://github.com/lemonmade/quilt/commit/31d0761f7c1d2ffc029861d5d24e1dc453422dce) Thanks [@lemonmade](https://github.com/lemonmade)! - Add helpers for creating `og:` meta tags
+
+- Updated dependencies [[`31d0761`](https://github.com/lemonmade/quilt/commit/31d0761f7c1d2ffc029861d5d24e1dc453422dce), [`b747f2f`](https://github.com/lemonmade/quilt/commit/b747f2f0566457a01103560f464849018e32f404)]:
+  - @quilted/browser@0.1.0
+
 ## 0.1.5
 
 ### Patch Changes
