@@ -1,5 +1,11 @@
 # @quilted/react-dom
 
+## 18.2.14
+
+### Patch Changes
+
+- [`4180960`](https://github.com/lemonmade/quilt/commit/4180960ee32309b7fb962e7cb86b76a889002e7e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix react-dom export conditions
+
 ## 18.2.13
 
 ### Patch Changes

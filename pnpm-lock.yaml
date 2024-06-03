@@ -435,7 +435,7 @@ importers:
         specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/browser':
-        specifier: workspace:^0.0.4
+        specifier: workspace:^0.1.0
         version: link:../browser
       '@quilted/http':
         specifier: workspace:^0.3.0

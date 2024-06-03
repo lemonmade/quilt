@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.2.28
+
+### Patch Changes
+
+- [`55d5fee`](https://github.com/lemonmade/quilt/commit/55d5fee9235e2625adb8826e367d70fbc0925908) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify directory structure for template apps
+
+- [`7119a8c`](https://github.com/lemonmade/quilt/commit/7119a8c9464bffe18fc37155fed9fd2188e24c78) Thanks [@lemonmade](https://github.com/lemonmade)! - Add type aliases for React and React DOM to app templates
+
+- [`eaa1110`](https://github.com/lemonmade/quilt/commit/eaa1110d0ce583b3ca904e11cbf9bf098a820f1d) Thanks [@lemonmade](https://github.com/lemonmade)! - Make app context required in basic app template
+
 ## 0.2.27
 
 ### Patch Changes
