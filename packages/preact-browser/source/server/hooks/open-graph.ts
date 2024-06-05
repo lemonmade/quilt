@@ -3,7 +3,7 @@ import {useBrowserDetails} from '../../context.ts';
 /**
  * @see https://ogp.me/#types
  */
-export type OGMetaType =
+export type OpenGraphType =
   | 'music.song'
   | 'music.album'
   | 'music.playlist'
@@ -17,12 +17,12 @@ export type OGMetaType =
   | 'profile'
   | 'website';
 
-export interface OGMetaOptions {
+export interface OpenGraphOptions {
   /**
    * The description to set in the `og:description` meta tag.
    * @see https://ogp.me
    */
-  type?: OGMetaType;
+  type?: OpenGraphType;
 
   /**
    * The title to set in the `og:title` meta tag.
@@ -73,15 +73,18 @@ export interface OGMetaOptions {
  *
  * @see https://ogp.me
  */
-export function useOGMeta(property: string, content: string): void;
+export function useOpenGraph(property: string, content: string): void;
 
 /**
- * Sets `og:` meta tags for the current page.`
+ * Sets `og:` meta tags for the current page.
  *
  * @see https://ogp.me
  */
-export function useOGMeta(options: OGMetaOptions): void;
-export function useOGMeta(property: string | OGMetaOptions, content?: string) {
+export function useOpenGraph(options: OpenGraphOptions): void;
+export function useOpenGraph(
+  property: string | OpenGraphOptions,
+  content?: string,
+) {
   if (typeof document === 'object') return;
 
   const browser = useBrowserDetails();

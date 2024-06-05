@@ -20,7 +20,7 @@ export {useContentSecurityPolicy} from './server/hooks/content-security-policy.t
 export {useCrossOriginEmbedderPolicy} from './server/hooks/cross-origin-embedder-policy.ts';
 export {useCrossOriginOpenerPolicy} from './server/hooks/cross-origin-opener-policy.ts';
 export {useCrossOriginResourcePolicy} from './server/hooks/cross-origin-resource-policy.ts';
-export {useOGMeta} from './server/hooks/og-meta.ts';
+export {useOpenGraph} from './server/hooks/open-graph.ts';
 export {usePermissionsPolicy} from './server/hooks/permissions-policy.ts';
 export {useResponseRedirect} from './server/hooks/redirect.ts';
 export {useResponseHeader} from './server/hooks/response-header.ts';
@@ -39,7 +39,7 @@ export {ContentSecurityPolicy} from './server/components/ContentSecurityPolicy.t
 export {CrossOriginEmbedderPolicy} from './server/components/CrossOriginEmbedderPolicy.tsx';
 export {CrossOriginOpenerPolicy} from './server/components/CrossOriginOpenerPolicy.tsx';
 export {CrossOriginResourcePolicy} from './server/components/CrossOriginResourcePolicy.tsx';
-export {OGMeta} from './server/components/OGMeta.tsx';
+export {OpenGraph} from './server/components/OpenGraph.tsx';
 export {NotFound} from './server/components/NotFound.tsx';
 export {PermissionsPolicy} from './server/components/PermissionsPolicy.tsx';
 export {ResponseCookie} from './server/components/ResponseCookie.tsx';
