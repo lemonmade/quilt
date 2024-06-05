@@ -12,9 +12,15 @@ import {
 
 export interface Options {
   manifest?: string;
+  format?: 'operation' | 'string';
+  includeSource?: boolean;
 }
 
-export function graphql({manifest: manifestPath}: Options = {}): Plugin {
+export function graphql({
+  manifest: manifestPath,
+  format = 'operation',
+  includeSource = true,
+}: Options = {}): Plugin {
   const shouldWriteManifest = Boolean(manifestPath);
 
   return {
@@ -45,10 +51,24 @@ export function graphql({manifest: manifestPath}: Options = {}): Plugin {
         }),
       );
 
+      let outputCode: string;
+
+      if (format === 'operation') {
+        outputCode = `export default JSON.parse(${JSON.stringify(
+          JSON.stringify(includeSource ? document : {...document, source: ''}),
+        )})`;
+      } else {
+        const {source, ...rest} = document;
+
+        outputCode = [
+          `const operation = new String(${JSON.stringify(includeSource ? source : '')});`,
+          `Object.assign(operation, ${JSON.stringify(rest)});`,
+          `export default operation;`,
+        ].join('\n');
+      }
+
       return {
-        code: `export default JSON.parse(${JSON.stringify(
-          JSON.stringify(document),
-        )})`,
+        code: outputCode,
         meta: shouldWriteManifest
           ? {
               quilt: {graphql: document},
