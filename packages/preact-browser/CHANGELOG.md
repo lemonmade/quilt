@@ -1,5 +1,11 @@
 # @quilted/preact-browser
 
+## 0.1.7
+
+### Patch Changes
+
+- [`36eb20d`](https://github.com/lemonmade/quilt/commit/36eb20d1d7de6bca25e25bba706ae5af61558a0f) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename "og-meta" APIs to use the full "Open Graph" naming instead.
+
 ## 0.1.6
 
 ### Patch Changes
