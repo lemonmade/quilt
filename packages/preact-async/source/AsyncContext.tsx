@@ -15,14 +15,18 @@ import {useAsyncActionCacheSerialization} from './hooks/cache.ts';
  */
 export function AsyncContext({
   cache,
+  serialize,
   children,
 }: RenderableProps<{
   cache?: AsyncActionCache;
+  serialize?: boolean;
 }>) {
   const hydrated = useRef<Signal<boolean>>();
   if (hydrated.current == null) hydrated.current = signal(false);
 
-  useAsyncActionCacheSerialization(cache);
+  if (serialize) {
+    useAsyncActionCacheSerialization(cache);
+  }
 
   if (typeof document === 'object') {
     useLayoutEffect(() => {

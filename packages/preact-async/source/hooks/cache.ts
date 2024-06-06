@@ -4,7 +4,7 @@ import type {AsyncActionCache} from '@quilted/async';
 import {useBrowserDetails} from '@quilted/preact-browser';
 
 export function useAsyncActionCacheSerialization(
-  cache?: AsyncActionCache,
+  cache?: Pick<AsyncActionCache, 'restore' | 'serialize'>,
   {
     name = 'fetch:cache',
     optional = true,
