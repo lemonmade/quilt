@@ -1,22 +1,19 @@
 import {useMemo} from 'preact/hooks';
 import {
   GraphQLQuery,
-  toGraphQLSource,
   type GraphQLFetch,
   type GraphQLAnyOperation,
+  type GraphQLCache,
 } from '@quilted/graphql';
-import {
-  computed,
-  resolveSignalOrValue,
-  type ReadonlySignal,
-} from '@quilted/preact-signals';
+import type {ReadonlySignal} from '@quilted/preact-signals';
 import {
   useAsync,
-  useAsyncActionCache,
+  type AsyncActionCacheKey,
   type UseAsyncActionOptions,
 } from '@quilted/preact-async';
 
 import {useGraphQLFetch} from './use-graphql-fetch.ts';
+import {useGraphQLCache} from './use-graphql-cache.ts';
 
 export function useGraphQLQuery<Data, Variables>(
   query: GraphQLAnyOperation<Data, Variables>,
@@ -26,27 +23,25 @@ export function useGraphQLQuery<Data, Variables>(
     signal,
     suspend,
     key,
-    active: explicitActive,
+    active,
     cache: explicitCache,
     fetch: explicitFetch,
   }: NoInfer<
     {
       fetch?: GraphQLFetch<any>;
       variables?: Variables | ReadonlySignal<Variables>;
+      cache?: GraphQLCache | boolean;
+      key?: AsyncActionCacheKey;
     } & Pick<
       UseAsyncActionOptions<Data, Variables>,
-      'active' | 'signal' | 'suspend' | 'cache' | 'tags' | 'key'
+      'active' | 'signal' | 'suspend' | 'tags'
     >
   > = {},
 ) {
   const fetchFromContext = useGraphQLFetch({optional: true});
   const fetch = explicitFetch ?? fetchFromContext;
 
-  if (fetch == null) {
-    throw new Error('No GraphQL fetch function provided.');
-  }
-
-  const cacheFromContext = useAsyncActionCache({
+  const cacheFromContext = useGraphQLCache({
     optional: explicitCache !== true,
   });
   const cache =
@@ -62,29 +57,15 @@ export function useGraphQLQuery<Data, Variables>(
 
   const queryAction = useMemo(() => {
     if (cache == null) {
+      if (fetch == null) {
+        throw new Error('No GraphQL fetch function provided.');
+      }
+
       return new GraphQLQuery(query, {fetch});
     }
 
-    const queryKey = `graphql:${
-      typeof query === 'string'
-        ? query
-        : 'id' in query
-          ? query.id
-          : toGraphQLSource(query)
-    }`;
-
-    const fullKey = key
-      ? computed(() => [queryKey, resolveSignalOrValue(key)].flat(1))
-      : queryKey;
-
-    return cache.create((cached) => new GraphQLQuery(query, {fetch, cached}), {
-      key: fullKey,
-      tags,
-    });
+    return cache.create(query, {fetch, key, tags});
   }, [query, fetch, cache, key]);
-
-  const active =
-    explicitActive ?? (typeof document === 'object' || Boolean(cache));
 
   useAsync(queryAction, {input: variables, active, signal, suspend});
 

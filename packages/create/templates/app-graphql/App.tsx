@@ -1,6 +1,5 @@
 import type {RenderableProps} from 'preact';
 
-import {AsyncContext} from '@quilted/quilt/async';
 import {GraphQLContext} from '@quilted/quilt/graphql';
 import {Routing, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
@@ -49,12 +48,10 @@ function AppContext({children, context}: RenderableProps<AppProps>) {
 
   return (
     <AppContextReact.Provider value={context}>
-      <GraphQLContext fetch={context.fetchGraphQL}>
-        <AsyncContext cache={context.asyncCache}>
-          <Localization locale={locale}>
-            <Routing>{children}</Routing>
-          </Localization>
-        </AsyncContext>
+      <GraphQLContext fetch={context.fetchGraphQL} cache={context.graphQLCache}>
+        <Localization locale={locale}>
+          <Routing>{children}</Routing>
+        </Localization>
       </GraphQLContext>
     </AppContextReact.Provider>
   );

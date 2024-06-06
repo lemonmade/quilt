@@ -1,6 +1,7 @@
 import type {RenderableProps} from 'preact';
 import {useMemo} from 'preact/hooks';
 
+import type {GraphQLCache} from '@quilted/graphql';
 import {
   gql,
   graphql,
@@ -49,11 +50,16 @@ export type {
 export function GraphQLTesting({
   children,
   controller,
-}: RenderableProps<{controller?: GraphQLController}>) {
+  cache,
+}: RenderableProps<{controller?: GraphQLController; cache?: GraphQLCache}>) {
   const run = useMemo(
     () => (controller ?? new GraphQLController()).run,
     [controller],
   );
 
-  return <GraphQLContext run={run}>{children}</GraphQLContext>;
+  return (
+    <GraphQLContext run={run} cache={cache}>
+      {children}
+    </GraphQLContext>
+  );
 }

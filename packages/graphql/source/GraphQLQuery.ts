@@ -1,7 +1,7 @@
 import {AsyncAction, type AsyncActionRunCache} from '@quilted/async';
 
-import {createGraphQLFetch, type GraphQLFetch} from './fetch/fetch.ts';
-import type {GraphQLResult, GraphQLAnyOperation} from './types.ts';
+import {createGraphQLFetch} from './fetch/fetch.ts';
+import type {GraphQLResult, GraphQLAnyOperation, GraphQLRun} from './types.ts';
 
 /**
  * Creates a wrapper around a GraphQL query. This wrapper can be used to run
@@ -15,10 +15,10 @@ export class GraphQLQuery<Data, Variables> extends AsyncAction<
     return this.value;
   }
 
-  readonly fetch: GraphQLFetch;
+  readonly fetch: GraphQLRun<any>;
 
   constructor(
-    operation: GraphQLAnyOperation<Data, Variables>,
+    readonly operation: GraphQLAnyOperation<Data, Variables>,
     {
       fetch = createGraphQLFetch({url: '/graphql'}),
       cached,
@@ -28,7 +28,7 @@ export class GraphQLQuery<Data, Variables> extends AsyncAction<
        * a default `fetch` function will be used, which will run your
        * queries against a `/graphql` endpoint.
        */
-      fetch?: GraphQLFetch<any>;
+      fetch?: GraphQLRun<any>;
 
       /**
        * An optional cached result to use for this query.
