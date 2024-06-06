@@ -83,10 +83,12 @@ export class AsyncActionCache {
       key,
       input,
       signal,
+      force,
       tags = EMPTY_ARRAY,
     }: {
       input?: Input;
       signal?: AbortSignal;
+      force?: boolean;
     } & AsyncActionCacheCreateOptions = {},
   ) => {
     const entry = this.create(
@@ -94,7 +96,7 @@ export class AsyncActionCache {
       {key, tags},
     );
 
-    return entry.run(input, {signal});
+    return entry.run(input, {signal, force});
   };
 
   find<Data = unknown, Input = unknown>(
