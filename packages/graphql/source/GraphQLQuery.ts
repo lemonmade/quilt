@@ -22,7 +22,7 @@ export class GraphQLQuery<Data, Variables> extends AsyncAction<
     {
       fetch = createGraphQLFetch({url: '/graphql'}),
       cached,
-    }: {
+    }: NoInfer<{
       /**
        * The function used to run the GraphQL query. If not provided,
        * a default `fetch` function will be used, which will run your
@@ -34,7 +34,7 @@ export class GraphQLQuery<Data, Variables> extends AsyncAction<
        * An optional cached result to use for this query.
        */
       cached?: AsyncActionRunCache<GraphQLResult<Data>, Variables>;
-    } = {},
+    }> = {},
   ) {
     super(
       async (variables: Variables, {signal}) => {

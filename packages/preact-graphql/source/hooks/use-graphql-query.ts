@@ -29,12 +29,14 @@ export function useGraphQLQuery<Data, Variables>(
     active: explicitActive,
     cache: explicitCache,
     fetch: explicitFetch,
-  }: {
-    fetch?: GraphQLFetch<any>;
-    variables?: Variables | ReadonlySignal<Variables>;
-  } & Pick<
-    UseAsyncActionOptions<Data, Variables>,
-    'active' | 'signal' | 'suspend' | 'cache' | 'tags' | 'key'
+  }: NoInfer<
+    {
+      fetch?: GraphQLFetch<any>;
+      variables?: Variables | ReadonlySignal<Variables>;
+    } & Pick<
+      UseAsyncActionOptions<Data, Variables>,
+      'active' | 'signal' | 'suspend' | 'cache' | 'tags' | 'key'
+    >
   > = {},
 ) {
   const fetchFromContext = useGraphQLFetch({optional: true});
