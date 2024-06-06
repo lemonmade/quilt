@@ -44,7 +44,7 @@ export async function createApp() {
        - ${color.bold('basic')}, a web app with a minimal file structure
        - ${color.bold(
          'graphql',
-       )}, a web app with a GraphQL API, fetched using @tanstack/react-query
+       )}, a web app with a GraphQL API for data fetching
        - ${color.bold(
          'trpc',
        )}, a web app with a tRPC API, fetched using @tanstack/react-query
@@ -404,7 +404,7 @@ async function getTemplate(argv: Arguments) {
       {
         title: `${color.bold(
           'GraphQL',
-        )}, a web app with a GraphQL API, fetched using @tanstack/react-query`,
+        )}, a web app with a GraphQL API for data fetching`,
         value: 'graphql',
       },
       {
