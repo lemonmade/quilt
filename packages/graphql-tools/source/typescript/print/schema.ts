@@ -95,7 +95,11 @@ export function generateSchemaTypes(
         t.variableDeclarator(
           t.identifier('schema'),
           t.templateLiteral(
-            [t.templateElement({raw: `\n${printSchema(schema)}\n`})],
+            [
+              t.templateElement({
+                raw: `\n${printSchema(schema).replace(/`/g, '\\`')}\n`,
+              }),
+            ],
             [],
           ),
         ),
