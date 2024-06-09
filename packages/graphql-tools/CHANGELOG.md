@@ -1,5 +1,16 @@
 # @quilted/graphql
 
+## 0.2.4
+
+### Patch Changes
+
+- [`01945eb`](https://github.com/lemonmade/quilt/commit/01945ebd1b437abe878ee0386d727a749647c12c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix schema generation for schemas with backticks
+
+- [`f6bc262`](https://github.com/lemonmade/quilt/commit/f6bc262ea020a94a1ecc0de4cda8ef6d6371ee23) Thanks [@lemonmade](https://github.com/lemonmade)! - Add options to output GraphQL documents to a string, and to omit the source
+
+- Updated dependencies [[`ab9d73b`](https://github.com/lemonmade/quilt/commit/ab9d73bd56c4f43d207a9f01e4a7265b4f953a40), [`729163a`](https://github.com/lemonmade/quilt/commit/729163a3270a3dcfc6ae55511c31dbf1a46715ca)]:
+  - @quilted/graphql@3.2.0
+
 ## 0.2.3
 
 ### Patch Changes

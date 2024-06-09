@@ -1,5 +1,14 @@
 # @quilted/preact-async
 
+## 0.1.14
+
+### Patch Changes
+
+- [`9a9667e`](https://github.com/lemonmade/quilt/commit/9a9667e6514215c9b851bfd426f470e0371c27a5) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `serialize` option to `AsyncContext` to make cache serialization optional
+
+- Updated dependencies [[`7faeb6a`](https://github.com/lemonmade/quilt/commit/7faeb6a4152f072b7d25a0da7aa498af380b8227)]:
+  - @quilted/async@0.4.15
+
 ## 0.1.13
 
 ### Patch Changes

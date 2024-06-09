@@ -1,5 +1,11 @@
 # @quilted/localize
 
+## 0.2.1
+
+### Patch Changes
+
+- [`05951a2`](https://github.com/lemonmade/quilt/commit/05951a2f1c6a7fb83207615c50703b502b21511e) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow string and bigints for number formatting
+
 ## 0.2.0
 
 ### Minor Changes
