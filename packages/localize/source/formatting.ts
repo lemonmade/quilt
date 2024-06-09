@@ -23,14 +23,14 @@ export interface LocalizedFormatting {
     LocalizedDateTimeFormatOptions
   >;
   formatNumber(
-    number: number,
+    number: number | bigint | string,
     options?: Omit<
       LocalizedNumberFormatOptions,
       'currencySign' | 'currencyDisplay'
     >,
   ): string;
   formatCurrency(
-    amount: number,
+    amount: number | bigint | string,
     options: Omit<LocalizedNumberFormatOptions, 'currency' | 'style'> & {
       currency: string;
     },
@@ -59,12 +59,16 @@ export function createLocalizedFormatting(locale: string): LocalizedFormatting {
     numberFormatter,
     dateTimeFormatter,
     formatNumber(number, options) {
+      // @ts-expect-error NumberFormat.format() should accept string
       return numberFormatter.get(options).format(number);
     },
     formatCurrency(amount, options) {
-      return numberFormatter
-        .get({...options, style: 'currency'})
-        .format(amount);
+      return (
+        numberFormatter
+          .get({...options, style: 'currency'})
+          // @ts-expect-error NumberFormat.format() should accept string
+          .format(amount)
+      );
     },
     formatDate(date, options) {
       return dateTimeFormatter.get(options).format(date);
