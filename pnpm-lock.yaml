@@ -350,7 +350,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.8.1)
       '@quilted/graphql':
-        specifier: workspace:^3.2.0
+        specifier: workspace:^3.3.0
         version: link:../graphql
       '@quilted/useful-types':
         specifier: workspace:^2.0.0

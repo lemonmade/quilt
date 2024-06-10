@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 3.3.0
+
+### Minor Changes
+
+- [`150d978`](https://github.com/lemonmade/quilt/commit/150d978cff37d6acb11317b3cf4fc28c9ca99560) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `type` field to `GraphQLOperation` for determining the original operation type
+
 ## 3.2.0
 
 ### Minor Changes
