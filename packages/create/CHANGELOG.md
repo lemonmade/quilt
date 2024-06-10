@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.29
+
+### Patch Changes
+
+- [`ce48754`](https://github.com/lemonmade/quilt/commit/ce48754047e8279d5e774a4547a19d48217bb2e6) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove reference to react-query from GraphQL template
+
+- [`ab9d73b`](https://github.com/lemonmade/quilt/commit/ab9d73bd56c4f43d207a9f01e4a7265b4f953a40) Thanks [@lemonmade](https://github.com/lemonmade)! - Add dedicated `GraphQLCache` class
+
 ## 0.2.28
 
 ### Patch Changes

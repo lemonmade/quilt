@@ -350,7 +350,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.8.1)
       '@quilted/graphql':
-        specifier: workspace:^3.0.2
+        specifier: workspace:^3.2.0
         version: link:../graphql
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
@@ -413,7 +413,7 @@ importers:
   packages/preact-async:
     dependencies:
       '@quilted/async':
-        specifier: workspace:^0.4.14
+        specifier: workspace:^0.4.15
         version: link:../async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.4
@@ -476,10 +476,10 @@ importers:
   packages/preact-graphql:
     dependencies:
       '@quilted/graphql':
-        specifier: workspace:^3.1.1
+        specifier: workspace:^3.2.0
         version: link:../graphql
       '@quilted/preact-async':
-        specifier: workspace:^0.1.11
+        specifier: workspace:^0.1.14
         version: link:../preact-async
       '@quilted/preact-context':
         specifier: workspace:^0.1.0

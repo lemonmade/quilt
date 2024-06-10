@@ -1,5 +1,18 @@
 # @quilted/graphql
 
+## 3.2.0
+
+### Minor Changes
+
+- [`ab9d73b`](https://github.com/lemonmade/quilt/commit/ab9d73bd56c4f43d207a9f01e4a7265b4f953a40) Thanks [@lemonmade](https://github.com/lemonmade)! - Add dedicated `GraphQLCache` class
+
+### Patch Changes
+
+- [`729163a`](https://github.com/lemonmade/quilt/commit/729163a3270a3dcfc6ae55511c31dbf1a46715ca) Thanks [@lemonmade](https://github.com/lemonmade)! - Use `NoInfer` on GraphQL option types
+
+- Updated dependencies [[`7faeb6a`](https://github.com/lemonmade/quilt/commit/7faeb6a4152f072b7d25a0da7aa498af380b8227)]:
+  - @quilted/async@0.4.15
+
 ## 3.1.3
 
 ### Patch Changes

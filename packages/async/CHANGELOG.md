@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.15
+
+### Patch Changes
+
+- [`7faeb6a`](https://github.com/lemonmade/quilt/commit/7faeb6a4152f072b7d25a0da7aa498af380b8227) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `force` option to `AsyncActionCache.run()`
+
 ## 0.4.14
 
 ### Patch Changes
