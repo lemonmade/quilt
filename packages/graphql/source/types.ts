@@ -32,6 +32,11 @@ export interface GraphQLOperation<
   id: string;
 
   /**
+   * The operation type, which can be `query`, `mutation`, or `subscription`.
+   */
+  type?: 'query' | 'mutation' | 'subscription';
+
+  /**
    * The query or mutation name being performed. If more than one operation
    * is contained in the source, this is required, as it tells the GraphQL
    * server which operation to run.

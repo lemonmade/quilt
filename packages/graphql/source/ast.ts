@@ -217,27 +217,35 @@ export function normalizeOperation<Data = unknown, Variables = unknown>(
 } {
   if (typeof operation === 'string') {
     const document = parse(operation) as any;
+    const firstOperation = getFirstOperationFromDocument(document);
+
     return {
       id: operation,
       source: operation,
-      name: getFirstOperationNameFromDocument(document),
+      type: firstOperation?.operation,
+      name: firstOperation?.name?.value,
       document,
     };
   } else if ('source' in operation) {
     const document = parse(operation.source) as any;
+    const firstOperation = getFirstOperationFromDocument(document);
+
     return {
       ...operation,
       document,
-      name: operation.name ?? getFirstOperationNameFromDocument(document),
+      type: operation.type ?? firstOperation?.operation,
+      name: operation.name ?? firstOperation?.name?.value,
     };
   } else {
+    const firstOperation = getFirstOperationFromDocument(operation);
     const source = operation.loc?.source.body ?? print(operation);
 
     return {
       id: source,
       source,
       document: operation,
-      name: getFirstOperationNameFromDocument(operation),
+      type: firstOperation?.operation,
+      name: firstOperation?.name?.value,
     };
   }
 }
@@ -246,8 +254,4 @@ export function getFirstOperationFromDocument(document: DocumentNode) {
   return document.definitions.find(
     (definition) => definition.kind === 'OperationDefinition',
   ) as OperationDefinitionNode | undefined;
-}
-
-function getFirstOperationNameFromDocument(document: DocumentNode) {
-  return getFirstOperationFromDocument(document)?.name?.value;
 }

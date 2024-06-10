@@ -607,10 +607,13 @@ function createDocumentExportValue(
     {clone: !shouldAddTypename},
   );
 
-  const {id, name, source} = toGraphQLOperation(minifiedDocument);
+  const {id, name, type, source} = toGraphQLOperation(minifiedDocument);
 
   return t.objectExpression([
     t.objectProperty(t.identifier('id'), t.stringLiteral(id)),
+    ...(type
+      ? [t.objectProperty(t.identifier('type'), t.stringLiteral(type))]
+      : []),
     t.objectProperty(
       t.identifier('name'),
       name ? t.stringLiteral(name) : t.identifier('undefined'),

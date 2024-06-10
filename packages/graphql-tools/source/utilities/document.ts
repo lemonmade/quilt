@@ -10,6 +10,7 @@ import type {
   SelectionSetNode,
   SelectionNode,
 } from 'graphql';
+import type {GraphQLOperation} from '@quilted/graphql';
 
 import {minifyGraphQLSource} from './minify.ts';
 
@@ -34,11 +35,19 @@ export function minify(originalDocument: DocumentNode, {clone = true} = {}) {
   return document;
 }
 
-export function toGraphQLOperation(document: DocumentNode) {
+export function toGraphQLOperation<Data = unknown, Variables = unknown>(
+  document: DocumentNode,
+): GraphQLOperation<Data, Variables> {
+  const operation = document.definitions.find(
+    (definition): definition is OperationDefinitionNode =>
+      definition.kind === 'OperationDefinition',
+  );
   const source = minifyGraphQLSource(print(document));
+
   return {
     source,
-    name: operationNameForDocument(document),
+    name: operation?.name?.value,
+    type: operation?.operation,
     id: createHash('sha256').update(source).digest('hex'),
   };
 }
