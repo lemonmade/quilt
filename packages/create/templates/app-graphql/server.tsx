@@ -3,6 +3,8 @@ import '@quilted/quilt/globals';
 import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
 import {BrowserAssets} from 'quilt:module/assets';
 
+import type {AppContext} from '~/shared/context.ts';
+
 const router = new RequestRouter();
 const assets = new BrowserAssets();
 
@@ -29,18 +31,17 @@ router.get(async (request) => {
       import('@quilted/quilt/server'),
     ]);
 
-  const response = await renderToResponse(
-    <App
-      context={{
-        fetchGraphQL: performGraphQLOperation,
-        graphQLCache: new GraphQLCache(),
-      }}
-    />,
-    {
-      request,
-      assets,
+  const context = {
+    graphql: {
+      fetch: performGraphQLOperation,
+      cache: new GraphQLCache(),
     },
-  );
+  } satisfies AppContext;
+
+  const response = await renderToResponse(<App context={context} />, {
+    request,
+    assets,
+  });
 
   return response;
 });

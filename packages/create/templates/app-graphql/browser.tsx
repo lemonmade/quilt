@@ -11,12 +11,14 @@ import {App} from './App.tsx';
 const element = document.querySelector('#app')!;
 const browser = new Browser();
 
-const fetchGraphQL = createGraphQLFetch({url: '/api/graphql'});
-const graphQLCache = new GraphQLCache({fetch: fetchGraphQL});
+const graphQLFetch = createGraphQLFetch({url: '/api/graphql'});
+const graphQLCache = new GraphQLCache({fetch: graphQLFetch});
 
 const context = {
-  fetchGraphQL,
-  graphQLCache,
+  graphql: {
+    fetch: graphQLFetch,
+    cache: graphQLCache,
+  },
 } satisfies AppContext;
 
 // Makes key parts of the app available in the browser console

@@ -48,7 +48,10 @@ function AppContext({children, context}: RenderableProps<AppProps>) {
 
   return (
     <AppContextReact.Provider value={context}>
-      <GraphQLContext fetch={context.fetchGraphQL} cache={context.graphQLCache}>
+      <GraphQLContext
+        fetch={context.graphql.fetch}
+        cache={context.graphql.cache}
+      >
         <Localization locale={locale}>
           <Routing>{children}</Routing>
         </Localization>
