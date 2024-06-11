@@ -1,4 +1,4 @@
-query Start {
+query Home {
   me {
     name
   }

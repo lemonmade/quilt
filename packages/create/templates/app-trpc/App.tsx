@@ -8,7 +8,7 @@ import {ReactQueryContext} from '@quilted/react-query';
 import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
 
-import {Start} from './features/start.ts';
+import {Home} from './features/home.ts';
 
 import {trpc} from './shared/trpc.ts';
 import {
@@ -40,7 +40,7 @@ export default App;
 // of routes, you may want to split this component into its own file.
 function Routes() {
   return useRoutes([
-    {match: '/', render: <Start />, renderPreload: <Start.Preload />},
+    {match: '/', render: <Home />, renderPreload: <Home.Preload />},
   ]);
 }
 
