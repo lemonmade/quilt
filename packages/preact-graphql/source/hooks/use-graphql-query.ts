@@ -1,11 +1,14 @@
-import {useMemo} from 'preact/hooks';
+import {useMemo, useRef} from 'preact/hooks';
 import {
   GraphQLQuery,
   type GraphQLFetch,
   type GraphQLAnyOperation,
   type GraphQLCache,
 } from '@quilted/graphql';
-import type {ReadonlySignal} from '@quilted/preact-signals';
+import {
+  resolveSignalOrValue,
+  type ReadonlySignal,
+} from '@quilted/preact-signals';
 import {
   useAsync,
   type AsyncActionCacheKey,
@@ -24,6 +27,7 @@ export function useGraphQLQuery<Data, Variables>(
     suspend,
     key,
     active,
+    cached,
     cache: explicitCache,
     fetch: explicitFetch,
   }: NoInfer<
@@ -34,10 +38,24 @@ export function useGraphQLQuery<Data, Variables>(
       key?: AsyncActionCacheKey;
     } & Pick<
       UseAsyncActionOptions<Data, Variables>,
-      'active' | 'signal' | 'suspend' | 'tags'
+      'active' | 'signal' | 'suspend' | 'tags' | 'cached'
     >
   > = {},
 ) {
+  const internalsRef = useRef<
+    Pick<
+      UseAsyncActionOptions<Data, Variables>,
+      'tags' | 'signal' | 'cached'
+    > & {variables?: Variables | ReadonlySignal<Variables>}
+  >();
+  internalsRef.current ??= {};
+  Object.assign(internalsRef.current, {
+    tags,
+    signal,
+    cached,
+    variables,
+  });
+
   const fetchFromContext = useGraphQLFetch({optional: true});
   const fetch = explicitFetch ?? fetchFromContext;
 
@@ -64,7 +82,16 @@ export function useGraphQLQuery<Data, Variables>(
       return new GraphQLQuery(query, {fetch});
     }
 
-    return cache.create(query, {fetch, key, tags});
+    const {cached, variables} = internalsRef.current!;
+
+    return cache.create(query, {
+      fetch,
+      key,
+      tags,
+      cached: cached
+        ? {input: resolveSignalOrValue(variables, {peek: true}), ...cached}
+        : undefined,
+    });
   }, [query, fetch, cache, key]);
 
   useAsync(queryAction, {input: variables, active, signal, suspend});

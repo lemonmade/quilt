@@ -1,6 +1,7 @@
 import {
   AsyncActionCache,
   AsyncActionCacheEntry,
+  type AsyncActionRunCache,
   type AsyncActionCacheKey,
   type AsyncActionCacheFindOptions,
   type AsyncActionCacheCreateOptions,
@@ -68,14 +69,18 @@ export class GraphQLCache {
       fetch: explicitFetch,
       key,
       tags,
-    }: {
-      fetch?: GraphQLRun<any, any>;
-    } & AsyncActionCacheCreateOptions = {},
+      cached: explicitCached,
+    }: NoInfer<
+      {
+        fetch?: GraphQLRun<any, any>;
+        cached?: AsyncActionRunCache<Data, Variables>;
+      } & AsyncActionCacheCreateOptions
+    > = {},
   ): AsyncActionCacheEntry<GraphQLQuery<Data, Variables>> => {
     const entry = this.#cache.create(
       (cached) =>
         new GraphQLQuery(operation, {
-          cached,
+          cached: explicitCached ?? cached,
           fetch: explicitFetch ?? this.#fetch,
         }),
       {key: stringifyKey(operation, key), tags},
