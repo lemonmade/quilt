@@ -29,7 +29,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   }
 
   get value() {
-    return this.resolved?.value;
+    return this.latest?.value;
   }
 
   get data() {
@@ -205,12 +205,14 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
   readonly input?: Input;
 
   get value() {
-    return this.promise.status === 'resolved' ? this.promise.value : undefined;
+    return this.#value.value;
   }
 
   get data() {
     return this.value;
   }
+
+  readonly #value = signal<Data | undefined>(undefined);
 
   get error() {
     return this.promise.status === 'rejected' ? this.promise.reason : undefined;
@@ -264,6 +266,16 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
     }) as any;
 
     Object.assign(promise, {status: 'pending', source: this});
+    Object.defineProperty(promise, 'value', {
+      get: () => {
+        return this.#value.peek();
+      },
+      set: (value: Data) => {
+        this.#value.value = value;
+      },
+      configurable: true,
+      enumerable: false,
+    });
 
     this.promise = promise;
 
@@ -340,7 +352,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
           signal,
           yield: (value) => {
             if (signal.aborted) return;
-            Object.assign(this, {value});
+            this.#value.value = value;
           },
         }),
       ).then(this.#resolve, this.#reject);

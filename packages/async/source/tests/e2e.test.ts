@@ -1,7 +1,45 @@
 import {describe, it, expect, vi} from 'vitest';
+import {effect} from '@quilted/signals';
 
 import {AsyncAction} from '../AsyncAction.ts';
 import {AsyncActionCache} from '../AsyncActionCache.ts';
+
+describe('AsyncAction', () => {
+  it('can yield values for pending actions', async () => {
+    const sleep = (ms = 0) =>
+      new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+    const action = new AsyncAction(async (_, {yield: yieldValue}) => {
+      let buffer = '';
+
+      buffer += 'Hello';
+      yieldValue(buffer);
+      await sleep();
+
+      buffer += ' world';
+      yieldValue(buffer);
+      await sleep();
+
+      buffer += '!';
+      return buffer;
+    });
+
+    const spy = vi.fn();
+    effect(() => {
+      spy(action.value);
+    });
+
+    await action.run();
+
+    expect(action.status).toBe('resolved');
+    expect(action.value).toBe('Hello world!');
+
+    expect(spy).toHaveBeenNthCalledWith(1, undefined);
+    expect(spy).toHaveBeenNthCalledWith(2, 'Hello');
+    expect(spy).toHaveBeenNthCalledWith(3, 'Hello world');
+    expect(spy).toHaveBeenNthCalledWith(4, 'Hello world!');
+  });
+});
 
 describe('AsyncActionCache', () => {
   const getGreeting = async (name: string) => `Hello ${name}!`;
