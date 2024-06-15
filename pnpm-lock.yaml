@@ -532,9 +532,15 @@ importers:
 
   packages/preact-router:
     dependencies:
+      '@quilted/async':
+        specifier: workspace:^0.4.15
+        version: link:../async
       '@quilted/http':
         specifier: workspace:^0.3.0
         version: link:../http
+      '@quilted/preact-async':
+        specifier: workspace:^0.1.14
+        version: link:../preact-async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.1
         version: link:../preact-browser
@@ -547,6 +553,9 @@ importers:
       '@quilted/routing':
         specifier: workspace:^0.3.0
         version: link:../routing
+      '@quilted/signals':
+        specifier: workspace:^0.2.0
+        version: link:../signals
     devDependencies:
       '@quilted/preact-testing':
         specifier: workspace:*
