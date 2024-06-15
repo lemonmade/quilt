@@ -1,16 +1,18 @@
-import type {ComponentChild} from 'preact';
+import type {ComponentChild, VNode, RenderableProps} from 'preact';
+import {isValidElement, cloneElement} from 'preact';
 import {useMemo} from 'preact/hooks';
 import {computed} from '@quilted/signals';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
-import {RouterContext} from '../context.ts';
+import {RouterContext, RouteNavigationEntryContext} from '../context.ts';
 import {testMatch} from '../routing.ts';
 import {AsyncAction} from '@quilted/async';
 
 export function useRoutes(routes: readonly RouteDefinition[]) {
   const router = RouterContext.use();
+  const parent = RouteNavigationEntryContext.use({optional: true});
 
-  const routeNavigationEntry = useMemo(() => {
+  const routeStack = useMemo(() => {
     const routeEntryMap = new WeakMap<
       RouteDefinition,
       RouteNavigationEntry<any, any>
@@ -20,12 +22,15 @@ export function useRoutes(routes: readonly RouteDefinition[]) {
       const currentRequest = router.currentRequest;
       const currentURL = currentRequest.url;
 
+      const routeStack: RouteNavigationEntry<any, any>[] = [];
+
       const processRoutes = (
         routes: readonly RouteDefinition[],
         parent?: RouteNavigationEntry<any, any>,
       ) => {
         for (const route of routes) {
           let match: ReturnType<typeof testMatch>;
+          const exact = route.exact ?? route.children == null;
 
           if (Array.isArray(route.match)) {
             for (const routeMatch of route.match) {
@@ -33,17 +38,12 @@ export function useRoutes(routes: readonly RouteDefinition[]) {
                 currentURL,
                 routeMatch,
                 parent?.consumed,
-                route.exact,
+                exact,
               );
               if (match != null) break;
             }
           } else {
-            match = testMatch(
-              currentURL,
-              route.match,
-              parent?.consumed,
-              route.exact,
-            );
+            match = testMatch(currentURL, route.match, parent?.consumed, exact);
           }
 
           if (match == null) continue;
@@ -68,36 +68,58 @@ export function useRoutes(routes: readonly RouteDefinition[]) {
             processRoutes(route.children, entry);
           }
 
+          routeStack.push(entry);
+
           return entry;
         }
       };
 
-      return processRoutes(routes);
+      processRoutes(routes, parent);
+
+      return routeStack;
     });
-  }, [router]);
+  }, [router, parent]);
 
-  const entry = routeNavigationEntry.value;
+  const entries = routeStack.value;
 
-  return entry ? <RouteNavigationRenderer entry={entry} /> : null;
+  let content: VNode<any> | null = null;
+
+  for (const entry of entries) {
+    content = (
+      <RouteNavigationRenderer entry={entry}>{content}</RouteNavigationRenderer>
+    );
+  }
+
+  return content;
 }
 
 function RouteNavigationRenderer<Data = unknown, Input = unknown>({
   entry,
-}: {
+  children,
+}: RenderableProps<{
   entry: RouteNavigationEntry<Data, Input>;
-}) {
+}>) {
   const {route} = entry;
 
   let content: ComponentChild = null;
 
   if (typeof route.render === 'function') {
-    content = route.render(entry as any);
+    content = route.render({...entry, children} as any);
   } else {
-    content = route.render;
+    if ('render' in route) {
+      content = route.render;
+    }
+
+    if (content == null) {
+      content = children ?? null;
+    } else if (isValidElement(content) && children != null) {
+      content = cloneElement(content, null, children);
+    }
   }
 
-  // const renderedChildren = route.
-
-  // TODO: wrap with context pointing to the entry
-  return <>{content}</>;
+  return (
+    <RouteNavigationEntryContext.Provider value={entry}>
+      {content}
+    </RouteNavigationEntryContext.Provider>
+  );
 }

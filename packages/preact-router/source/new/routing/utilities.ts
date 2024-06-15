@@ -1,9 +1,7 @@
 import type {
-  Match,
   // Prefix,
   NavigateTo,
   NavigateToSearch,
-  MatchDetails,
 } from './types.ts';
 
 export function resolveURL(
@@ -40,7 +38,7 @@ export function resolveURL(
 
 export function testMatch(
   url: URL,
-  match?: undefined,
+  match?: undefined | '*' | true,
   consumed?: string,
   exact?: boolean,
 ): {matched: string} | undefined;
@@ -58,7 +56,7 @@ export function testMatch(
 ): {consumed: string; matched: RegExpMatchArray} | undefined;
 export function testMatch(
   url: URL,
-  match?: string | RegExp,
+  match?: string | RegExp | true,
   consumed?: string,
   exact?: boolean,
 ):
@@ -68,7 +66,7 @@ export function testMatch(
   | undefined;
 export function testMatch(
   url: URL,
-  match?: string | RegExp,
+  match?: string | RegExp | true,
   consumed?: string,
   exact: boolean = true,
 ):
@@ -78,7 +76,7 @@ export function testMatch(
   | undefined {
   const pathDetails = splitUrl(url, consumed);
 
-  if (match == null) {
+  if (match == null || match === true || match === '*') {
     const matched = pathDetails.remainderRelative;
     return {matched};
   } else if (typeof match === 'string') {
@@ -141,95 +139,6 @@ export function testMatch(
     return {
       matched: matchAsAbsolute,
       consumed: `${pathDetails.previouslyConsumed}${removePostfixSlash(matchAsAbsolute[0]!)}`,
-    };
-  }
-}
-
-export function getMatchDetails(
-  url: URL,
-  match?: Match,
-  // prefix?: Prefix,
-  consumed?: string,
-  exact = true,
-  forceFallback = false,
-): MatchDetails | undefined {
-  const pathDetails = splitUrl(
-    url,
-    // prefix,
-    consumed,
-  );
-
-  if (match == null) {
-    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
-    return {matched};
-  } else if (forceFallback) {
-    return undefined;
-  } else if (typeof match === 'function') {
-    if (!match(url)) return undefined;
-    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
-    return {matched};
-  } else if (typeof match === 'string') {
-    const normalizedMatch = removePostfixSlash(match);
-
-    if (normalizedMatch[0] === '/') {
-      if (
-        !startsWithPath(pathDetails.remainderAbsolute, normalizedMatch, exact)
-      ) {
-        return undefined;
-      }
-
-      return {
-        matched: normalizedMatch,
-        consumed:
-          normalizedMatch === '/'
-            ? pathDetails.previouslyConsumed
-            : `${pathDetails.previouslyConsumed}${normalizedMatch}`,
-      };
-    } else {
-      if (
-        !startsWithPath(pathDetails.remainderRelative, normalizedMatch, exact)
-      ) {
-        return undefined;
-      }
-
-      return {
-        matched: normalizedMatch,
-        consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
-          normalizedMatch,
-        )}`,
-      };
-    }
-  } else if (match instanceof RegExp) {
-    const matchAsRelative = pathDetails.remainderRelative.match(match);
-
-    if (
-      matchAsRelative != null &&
-      matchAsRelative.index! === 0 &&
-      startsWithPath(pathDetails.remainderRelative, matchAsRelative[0]!, exact)
-    ) {
-      return {
-        matched: removePostfixSlash(matchAsRelative[0]!),
-        consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
-          matchAsRelative[0]!,
-        )}`,
-      };
-    }
-
-    const matchAsAbsolute = pathDetails.remainderAbsolute.match(match);
-
-    if (
-      matchAsAbsolute == null ||
-      matchAsAbsolute.index! !== 0 ||
-      !startsWithPath(pathDetails.remainderAbsolute, matchAsAbsolute[0]!, exact)
-    ) {
-      return undefined;
-    }
-
-    const normalizedMatch = removePostfixSlash(matchAsAbsolute[0]!);
-
-    return {
-      matched: normalizedMatch,
-      consumed: normalizedMatch,
     };
   }
 }
@@ -327,17 +236,16 @@ function splitUrl(
   // const fullConsumedPath = consumed
   //   ? `${resolvedPrefix}${consumed}`
   //   : resolvedPrefix;
-  const fullConsumedPath = `/${consumed ?? ''}`;
-  const remainderRelative = removePrefixSlash(
-    removePostfixSlash(url.pathname.replace(fullConsumedPath, '')),
-  );
+  const pathname = removePostfixSlash(url.pathname);
+  const remainderAbsolute =
+    consumed === pathname ? '/' : pathname.replace(consumed, '');
 
   return {
     isRoot: consumed.length === 0,
     // prefix: resolvedPrefix,
     previouslyConsumed: consumed,
-    remainderRelative,
-    remainderAbsolute: `/${remainderRelative}`,
+    remainderRelative: remainderAbsolute.slice(1),
+    remainderAbsolute: remainderAbsolute,
   };
 }
 
