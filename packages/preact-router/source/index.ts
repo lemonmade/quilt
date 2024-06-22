@@ -4,6 +4,7 @@ export {route, fallbackRoute} from './route.ts';
 
 export {Link} from './components/Link.tsx';
 export {Navigation} from './components/Navigation.tsx';
+export {Routes} from './components/Routes.tsx';
 
 export {useCurrentURL} from './hooks/current-url.ts';
 export {useNavigate} from './hooks/navigate.ts';
