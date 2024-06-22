@@ -19,12 +19,6 @@
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
     },
-    "./static": {
-      "types": "./build/typescript/static.d.ts",
-      "quilt:source": "./source/static.ts",
-      "quilt:esnext": "./build/esnext/static.esnext",
-      "import": "./build/esm/static.mjs"
-    },
     "./testing": {
       "types": "./build/typescript/testing.d.ts",
       "quilt:source": "./source/testing.tsx",
@@ -35,9 +29,6 @@
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
-      "static": [
-        "./build/typescript/static.d.ts"
-      ],
       "testing": [
         "./build/typescript/testing.d.ts"
       ]
