@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.0.0",
+  "version": "0.1.0",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -33,7 +33,7 @@
     "@quilted/request-router": "workspace:^0.2.0"
   },
   "peerDependencies": {
-    "htmx.org": "^1.0.0"
+    "htmx.org": "^1.0.0 || ^2.0.0"
   },
   "peerDependenciesMeta": {
     "htmx.org": {
@@ -41,7 +41,7 @@
     }
   },
   "devDependencies": {
-    "htmx.org": "^1.9.10"
+    "htmx.org": "^2.0.0"
   },
   "browserslist": [
     "defaults and fully supports es6-module",

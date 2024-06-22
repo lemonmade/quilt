@@ -141,8 +141,8 @@ importers:
         version: link:../../packages/request-router
     devDependencies:
       htmx.org:
-        specifier: ^1.9.10
-        version: 1.9.10
+        specifier: ^2.0.0
+        version: 2.0.0
 
   integrations/react-query:
     dependencies:
@@ -3283,6 +3283,9 @@ packages:
 
   htmx.org@1.9.10:
     resolution: {integrity: sha512-UgchasltTCrTuU2DQLom3ohHrBvwr7OqpwyAVJ9VxtNBng4XKkVsqrv0Qr3srqvM9ZNI3f1MmvVQQqK7KW/bTA==}
+
+  htmx.org@2.0.0:
+    resolution: {integrity: sha512-N0r1VjrqeCpig0mTi2/sooDZBeQlp1RBohnWQ/ufqc7ICaI0yjs04fNGhawm6+/HWhJFlcXn8MqOjWI9QGG2lQ==}
 
   http-cache-semantics@4.1.0:
     resolution: {integrity: sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==}
@@ -7455,6 +7458,8 @@ snapshots:
   html-rewriter-wasm@0.4.1: {}
 
   htmx.org@1.9.10: {}
+
+  htmx.org@2.0.0: {}
 
   http-cache-semantics@4.1.0: {}
 
