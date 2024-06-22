@@ -1,6 +1,6 @@
 import type {RenderableProps} from 'preact';
 
-import {Routing, useRoutes} from '@quilted/quilt/navigate';
+import {Navigation, useRoutes} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
 import {HTML} from './foundation/html.ts';
@@ -36,9 +36,7 @@ export default App;
 // This component renders the routes for your application. If you have a lot
 // of routes, you may want to split this component into its own file.
 function Routes() {
-  return useRoutes([
-    {match: '/', render: <Home />, renderPreload: <Home.Preload />},
-  ]);
+  return useRoutes([{match: '/', render: <Home />}]);
 }
 
 // This component renders any app-wide context.
@@ -48,7 +46,7 @@ function AppContext({children, context}: RenderableProps<AppProps>) {
   return (
     <AppContextReact.Provider value={context}>
       <Localization locale={locale}>
-        <Routing>{children}</Routing>
+        <Navigation>{children}</Navigation>
       </Localization>
     </AppContextReact.Provider>
   );

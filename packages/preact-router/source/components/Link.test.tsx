@@ -2,7 +2,7 @@
 
 import {describe, it, expect, vi} from 'vitest';
 
-import {render, TestRouter} from '../../tests/utilities.tsx';
+import {render, TestRouter} from '../tests/utilities.tsx';
 
 import {Link} from './Link.tsx';
 

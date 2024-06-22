@@ -1,11 +1,10 @@
 // @vitest-environment jsdom
 
-import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
+import {describe, it, expect, afterEach, vi} from 'vitest';
 import type {RenderableProps} from 'preact';
 
-import {useRoutes} from '../routes.tsx';
-import {useRedirect} from '../redirect.ts';
-import {render, destroyAll} from '../../tests/utilities.tsx';
+import {useRoutes, route, type RouteNavigationEntry} from '../index.ts';
+import {render, destroyAll} from '../tests/utilities.tsx';
 
 vi.mock('../redirect', () => ({
   useRedirect: vi.fn(),
@@ -20,10 +19,6 @@ function NestedRouteComponent({children}: RenderableProps<{}>) {
 }
 
 describe('useRoutes()', () => {
-  beforeEach(() => {
-    (useRedirect as any).mockReset();
-  });
-
   afterEach(() => {
     destroyAll();
   });
@@ -31,12 +26,18 @@ describe('useRoutes()', () => {
   describe('match', () => {
     describe('string', () => {
       it('matches the root path', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
-          return useRoutes([{match: '/', render: <RouteComponent />}]);
+          return useRoutes([{match: '/', render: renderSpy}]);
         }
 
         expect(render(<Routes />, {path: '/'})).toContainPreactComponent(
           RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({matched: ''}),
         );
 
         expect(render(<Routes />, {path: '/a'})).not.toContainPreactComponent(
@@ -45,8 +46,10 @@ describe('useRoutes()', () => {
       });
 
       it('matches a route based on an absolute path', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
-          return useRoutes([{match: '/a', render: <RouteComponent />}]);
+          return useRoutes([{match: '/a', render: renderSpy}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
@@ -55,6 +58,10 @@ describe('useRoutes()', () => {
 
         expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
           RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({matched: 'a'}),
         );
       });
 
@@ -82,21 +89,21 @@ describe('useRoutes()', () => {
       });
 
       it('matches a combination of nested absolute and relative paths', () => {
+        const routes = [
+          route('a', {
+            children: [
+              route('/b', {
+                render: (children) => (
+                  <RouteComponent>{children}</RouteComponent>
+                ),
+                children: [route('c', {render: <NestedRouteComponent />})],
+              }),
+            ],
+          }),
+        ];
+
         function Routes() {
-          return useRoutes([
-            {
-              match: '/a',
-              children: [
-                {
-                  match: '/b',
-                  render: ({children}) => (
-                    <RouteComponent>{children}</RouteComponent>
-                  ),
-                  children: [{match: 'c', render: <NestedRouteComponent />}],
-                },
-              ],
-            },
-          ]);
+          return useRoutes(routes);
         }
 
         expect(render(<Routes />, {path: '/a/c'})).not.toContainPreactComponent(
@@ -117,8 +124,10 @@ describe('useRoutes()', () => {
       });
 
       it('matches a route based on a relative path', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
-          return useRoutes([{match: 'a', render: <RouteComponent />}]);
+          return useRoutes([{match: 'a', render: renderSpy}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
@@ -127,6 +136,32 @@ describe('useRoutes()', () => {
 
         expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
           RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({matched: 'a'}),
+        );
+      });
+
+      it('matches a route based on a single path segment pattern', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
+        function Routes() {
+          return useRoutes([{match: ':id', render: renderSpy}]);
+        }
+
+        expect(
+          render(<Routes />, {path: '/thing/abc'}),
+        ).not.toContainPreactComponent(RouteComponent);
+
+        expect(render(<Routes />, {path: '/abc'})).toContainPreactComponent(
+          RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({
+            matched: 'abc',
+          }),
         );
       });
 
@@ -199,26 +234,6 @@ describe('useRoutes()', () => {
         );
       });
 
-      it('matches with a prefix', () => {
-        const prefix = '/my-prefix';
-
-        function Routes() {
-          return useRoutes([{match: '/', render: <RouteComponent />}]);
-        }
-
-        expect(
-          render(<Routes />, {path: prefix, prefix}),
-        ).toContainPreactComponent(RouteComponent);
-
-        expect(
-          render(<Routes />, {path: `${prefix}/`, prefix}),
-        ).toContainPreactComponent(RouteComponent);
-
-        expect(
-          render(<Routes />, {path: `${prefix}/a`, prefix}),
-        ).not.toContainPreactComponent(RouteComponent);
-      });
-
       it('does not match partial path segments', () => {
         function OtherComponent() {
           return null;
@@ -245,12 +260,18 @@ describe('useRoutes()', () => {
 
     describe('regex', () => {
       it('matches the root path', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
-          return useRoutes([{match: /^\/$/, render: <RouteComponent />}]);
+          return useRoutes([{match: /^\/$/, render: renderSpy}]);
         }
 
         expect(render(<Routes />, {path: '/'})).toContainPreactComponent(
           RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({matched: expect.arrayContaining(['/'])}),
         );
 
         expect(render(<Routes />, {path: '/a'})).not.toContainPreactComponent(
@@ -275,8 +296,10 @@ describe('useRoutes()', () => {
       });
 
       it('matches a route based on an regex that matches an absolute path', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
-          return useRoutes([{match: /\/a/, render: <RouteComponent />}]);
+          return useRoutes([{match: /\/(?<id>a)/, render: renderSpy}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
@@ -285,6 +308,12 @@ describe('useRoutes()', () => {
 
         expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
           RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({
+            matched: expect.objectContaining({0: '/a', groups: {id: 'a'}}),
+          }),
         );
       });
 
@@ -314,13 +343,10 @@ describe('useRoutes()', () => {
       it('matches a combination of nested absolute and relative paths', () => {
         function Routes() {
           return useRoutes([
-            {
-              match: /\/\w\/b/,
-              render: ({children}) => (
-                <RouteComponent>{children}</RouteComponent>
-              ),
+            route(/\/\w\/b/, {
+              render: (children) => <RouteComponent>{children}</RouteComponent>,
               children: [{match: /c/, render: <NestedRouteComponent />}],
-            },
+            }),
           ]);
         }
 
@@ -342,8 +368,10 @@ describe('useRoutes()', () => {
       });
 
       it('matches a route based on a regex that matches a relative path', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
-          return useRoutes([{match: /a/, render: <RouteComponent />}]);
+          return useRoutes([{match: /(?<id>a)/, render: renderSpy}]);
         }
 
         expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
@@ -352,6 +380,12 @@ describe('useRoutes()', () => {
 
         expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
           RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({
+            matched: expect.objectContaining({0: 'a', groups: {id: 'a'}}),
+          }),
         );
       });
 
@@ -409,27 +443,6 @@ describe('useRoutes()', () => {
         );
       });
 
-      it('matches with a prefix', () => {
-        const prefix = /\/[^/]*/;
-        const prefixMatch = '/my-prefix';
-
-        function Routes() {
-          return useRoutes([{match: /^\/$/, render: <RouteComponent />}]);
-        }
-
-        expect(
-          render(<Routes />, {path: prefixMatch, prefix}),
-        ).toContainPreactComponent(RouteComponent);
-
-        expect(
-          render(<Routes />, {path: `${prefixMatch}/`, prefix}),
-        ).toContainPreactComponent(RouteComponent);
-
-        expect(
-          render(<Routes />, {path: `${prefixMatch}/a`, prefix}),
-        ).not.toContainPreactComponent(RouteComponent);
-      });
-
       it('does not match partial path segments', () => {
         function OtherComponent() {
           return null;
@@ -454,70 +467,12 @@ describe('useRoutes()', () => {
       });
     });
 
-    describe('function', () => {
-      it('is called with the current URL', () => {
-        const match = vi.fn(() => false);
-
-        function Routes() {
-          return useRoutes([{match, render: <RouteComponent />}]);
-        }
-
-        const routes = render(<Routes />, {path: '/a'});
-
-        expect(match).toHaveBeenCalledWith(routes.context.router.currentUrl);
-      });
-
-      it('matches a route when a match function returns true', () => {
-        function Routes() {
-          return useRoutes([{match: () => true, render: <RouteComponent />}]);
-        }
-
-        expect(render(<Routes />)).toContainPreactComponent(RouteComponent);
-      });
-
-      it('does not match a route when a match function returns false', () => {
-        function Routes() {
-          return useRoutes([{match: () => false, render: <RouteComponent />}]);
-        }
-
-        expect(render(<Routes />)).not.toContainPreactComponent(RouteComponent);
-      });
-
-      it('does not consume the matched pathname when a match function returns true', () => {
-        function Routes() {
-          return useRoutes([
-            {
-              match: () => true,
-              render: ({children}) => (
-                <RouteComponent>{children}</RouteComponent>
-              ),
-              children: [{match: 'a', render: <NestedRouteComponent />}],
-            },
-          ]);
-        }
-
-        const noNestedMatchRoutes = render(<Routes />, {path: '/b'});
-
-        expect(noNestedMatchRoutes).toContainPreactComponent(RouteComponent);
-        expect(
-          noNestedMatchRoutes.find(RouteComponent),
-        ).not.toContainPreactComponent(NestedRouteComponent);
-
-        const nestedMatchRoutes = render(<Routes />, {path: '/a'});
-
-        expect(noNestedMatchRoutes).toContainPreactComponent(RouteComponent);
-        expect(nestedMatchRoutes.find(RouteComponent)).toContainPreactComponent(
-          NestedRouteComponent,
-        );
-      });
-    });
-
     describe('array', () => {
       it('matches if any of the elements matches', () => {
         function Routes() {
           return useRoutes([
             {
-              match: ['a', /b/, ({pathname}) => pathname === '/c'],
+              match: ['a', 'b'],
               render: <RouteComponent />,
             },
           ]);
@@ -531,11 +486,7 @@ describe('useRoutes()', () => {
           RouteComponent,
         );
 
-        expect(render(<Routes />, {path: '/c'})).toContainPreactComponent(
-          RouteComponent,
-        );
-
-        expect(render(<Routes />, {path: '/d'})).not.toContainPreactComponent(
+        expect(render(<Routes />, {path: '/c'})).not.toContainPreactComponent(
           RouteComponent,
         );
       });
@@ -552,13 +503,31 @@ describe('useRoutes()', () => {
         expect(routes).toContainPreactComponent(RouteComponent);
       });
 
+      it('matches a route with a match property of *', () => {
+        function Routes() {
+          return useRoutes([{match: '*', render: <RouteComponent />}]);
+        }
+
+        const routes = render(<Routes />);
+
+        expect(routes).toContainPreactComponent(RouteComponent);
+      });
+
+      it('matches a route with a match property of true', () => {
+        function Routes() {
+          return useRoutes([{match: true, render: <RouteComponent />}]);
+        }
+
+        const routes = render(<Routes />);
+
+        expect(routes).toContainPreactComponent(RouteComponent);
+      });
+
       it('does not consume the matched pathname when there is no match property', () => {
         function Routes() {
           return useRoutes([
             {
-              render: ({children}) => (
-                <RouteComponent>{children}</RouteComponent>
-              ),
+              render: (children) => <RouteComponent>{children}</RouteComponent>,
               children: [{match: 'a', render: <NestedRouteComponent />}],
             },
           ]);
@@ -613,10 +582,6 @@ describe('useRoutes()', () => {
         return useRoutes([
           {match: 'a', render: <RouteComponent />},
           {match: /a/, render: <MatchedButNotRendered />},
-          {
-            match: (url) => url.pathname === '/a',
-            render: <MatchedButNotRendered />,
-          },
           {render: <MatchedButNotRendered />},
         ]);
       }
@@ -628,69 +593,80 @@ describe('useRoutes()', () => {
     });
   });
 
-  describe('render', () => {
-    it('calls the render function with the current URL', () => {
-      const renderRoute = vi.fn(() => <RouteComponent />);
+  describe('load', () => {
+    it('can load data for a matched route', async () => {
+      const loadDeferred = new Deferred<{id: string; title: string}>();
+      const keySpy = vi.fn(
+        (entry: Pick<RouteNavigationEntry<any, any>, 'request'>) => {
+          return entry.request.url.pathname;
+        },
+      );
+      const inputSpy = vi.fn((entry: RouteNavigationEntry<any, any>) => {
+        return {id: entry.matched};
+      });
+      const loadSpy = vi.fn((_entry: RouteNavigationEntry<any, any>) => {
+        return loadDeferred.promise;
+      });
+      const renderSpy = vi.fn((_entry: RouteNavigationEntry<any, any>) => {
+        return <RouteComponent />;
+      });
 
       function Routes() {
-        return useRoutes([{match: 'a', render: renderRoute}]);
+        return useRoutes([
+          route('a', {
+            key: (entry) => keySpy(entry),
+            input: (entry) => inputSpy(entry),
+            load: (entry) => loadSpy({...entry, input: entry.input}),
+            render: (_, entry) =>
+              renderSpy({...entry, data: entry.data, input: entry.input}),
+          }),
+        ]);
       }
+
+      expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
+        RouteComponent,
+      );
 
       const routes = render(<Routes />, {path: '/a'});
+      await routes.act(async () => {
+        loadDeferred.resolve({id: 'a', title: 'A resource'});
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
 
-      expect(renderRoute).toHaveBeenCalledWith(
+      expect(routes).toContainPreactComponent(RouteComponent);
+
+      expect(keySpy).toHaveBeenCalledTimes(1);
+      expect(keySpy).toHaveBeenCalledWith(
+        expect.objectContaining({matched: 'a'}),
+      );
+
+      expect(inputSpy).toHaveBeenCalledTimes(1);
+      expect(inputSpy).toHaveBeenCalledWith(
+        expect.objectContaining({matched: 'a'}),
+      );
+
+      expect(loadSpy).toHaveBeenCalledTimes(1);
+      expect(loadSpy).toHaveBeenCalledWith(
+        expect.objectContaining({matched: 'a', input: {id: 'a'}}),
+      );
+
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+      expect(renderSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: routes.context.router.currentUrl,
+          matched: 'a',
+          input: {id: 'a'},
+          data: {id: 'a', title: 'A resource'},
         }),
       );
-    });
-
-    it('passes children routes to the render function', () => {
-      function Routes() {
-        return useRoutes([
-          {
-            match: 'a',
-            render: ({children}) => <RouteComponent>{children}</RouteComponent>,
-            children: [{match: 'b', render: <NestedRouteComponent />}],
-          },
-        ]);
-      }
-
-      expect(
-        render(<Routes />, {path: '/a/b'}).find(RouteComponent),
-      ).toContainPreactComponent(NestedRouteComponent);
-    });
-
-    it('passes the matched pathname part to the render function', () => {
-      const renderRoute = vi.fn(() => <RouteComponent />);
-
-      function Routes() {
-        return useRoutes([
-          {match: 'a', children: [{match: /\d+/, render: renderRoute}]},
-        ]);
-      }
-
-      render(<Routes />, {path: '/a/123'});
-
-      expect(renderRoute).toHaveBeenCalledWith(
-        expect.objectContaining({
-          matched: '123',
-        }),
-      );
-    });
-  });
-
-  describe('redirect', () => {
-    it('calls the redirect hook with the redirect option', () => {
-      const redirect = '/redirected';
-
-      function Routes() {
-        return useRoutes([{match: 'a', redirect}]);
-      }
-
-      render(<Routes />, {path: '/a'});
-
-      expect(useRedirect).toHaveBeenCalledWith(redirect);
     });
   });
 });
+
+class Deferred<T = unknown> {
+  resolve!: (value: T) => void;
+  reject!: (value: any) => void;
+  promise = new Promise<T>((resolve, reject) => {
+    this.resolve = resolve;
+    this.reject = reject;
+  });
+}

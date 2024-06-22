@@ -1,6 +1,6 @@
 import type {ComponentProps} from 'preact';
 import {useMemo} from 'preact/hooks';
-import {useCurrentUrl, Link, useRouter} from '@quilted/preact-router';
+import {useCurrentURL, Link, useRouter} from '@quilted/preact-router';
 
 import {useRouteLocalization} from './context.ts';
 
@@ -15,13 +15,13 @@ export function LocalizedLink({
   to?: LinkProps['to'];
 }) {
   const router = useRouter();
-  const currentUrl = useCurrentUrl();
+  const url = useCurrentURL();
   const {redirectUrl} = useRouteLocalization();
 
-  const resolvedUrl = useMemo(
-    () => redirectUrl(to ? router.resolve(to).url : currentUrl, {to: locale}),
-    [to, currentUrl, locale, redirectUrl, router],
+  const resolvedURL = useMemo(
+    () => redirectUrl(to ? router.resolve(to).url : url, {to: locale}),
+    [to, url, locale, redirectUrl, router],
   );
 
-  return <Link hrefLang={locale} to={resolvedUrl} {...props} />;
+  return <Link hrefLang={locale} to={resolvedURL} {...props} />;
 }

@@ -1,5 +1,5 @@
 export {LocalizedLink} from './routing/LocalizedLink.tsx';
-export {LocalizedRouting} from './routing/LocalizedRouting.tsx';
+// export {LocalizedRouting} from './routing/LocalizedRouting.tsx';
 export {useRouteLocalization} from './routing/context.ts';
 export {createRouteLocalization} from './routing/localization/by-locale.ts';
 export {createRoutePathLocalization} from './routing/localization/by-path.ts';

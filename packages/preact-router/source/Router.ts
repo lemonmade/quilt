@@ -28,6 +28,7 @@ export class Router {
   readonly #currentRequest: Signal<NavigationRequest>;
   // readonly prefix?: Prefix;
 
+  // @ts-expect-error Will use this later
   #forceNextNavigation = false;
   #navigationIDs: string[] = [];
   #navigationRequests = new Map<string, NavigationRequest>();
@@ -124,6 +125,18 @@ export class Router {
     this.go(count);
   }
 
+  // block(blocker?: Blocker): () => void;
+
+  resolve(
+    to: NavigateTo,
+    // options?: {relativeTo?: RelativeTo},
+  ): {readonly url: URL; readonly external: boolean} {
+    const currentURL = this.#currentRequest.peek().url;
+    const url = resolveURL(to, currentURL);
+
+    return {url, external: url.origin !== currentURL.origin};
+  }
+
   #handlePopstate = () => {
     const navigationIDs = this.#navigationIDs;
     const fallbackNavigationID = navigationIDs[0]!;
@@ -165,12 +178,6 @@ export class Router {
 
     this.#currentRequest.value = request;
   };
-
-  // block(blocker?: Blocker): () => void;
-  // resolve(
-  //   to: NavigateTo<EnhancedURL>,
-  //   options?: {relativeTo?: RelativeTo},
-  // ): {readonly url: URL; readonly external: boolean};
 }
 
 export class BrowserNavigationRequest implements NavigationRequest {
