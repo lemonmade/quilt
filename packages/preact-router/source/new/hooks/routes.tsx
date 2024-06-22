@@ -1,22 +1,42 @@
 import type {ComponentChild, VNode, RenderableProps} from 'preact';
 import {isValidElement, cloneElement} from 'preact';
-import {useMemo} from 'preact/hooks';
-import {computed} from '@quilted/signals';
+import {useEffect, useMemo} from 'preact/hooks';
+import {computed, effect} from '@quilted/signals';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
 import {RouterContext, RouteNavigationEntryContext} from '../context.ts';
 import {testMatch} from '../routing.ts';
-import {AsyncAction} from '@quilted/async';
+import {AsyncAction, AsyncActionCache} from '@quilted/async';
 
-export function useRoutes(routes: readonly RouteDefinition[]) {
+class RouteNavigationCache {
+  #cache = new AsyncActionCache();
+
+  get<Data = unknown, Input = unknown>(
+    entry: Omit<RouteNavigationEntry<Data, Input>, 'load'>,
+  ): RouteNavigationEntry<Data, Input> {
+    const load = this.#cache.create(
+      (cached) =>
+        new AsyncAction<Data, Input>(
+          (input) => {
+            return entry.route.load!(input, entry as any);
+          },
+          {cached},
+        ),
+      {key: entry.key},
+    );
+
+    Object.assign(entry, {load});
+
+    return entry as any;
+  }
+}
+
+export function useRoutes(routes: readonly RouteDefinition<any, any>[]) {
   const router = RouterContext.use();
   const parent = RouteNavigationEntryContext.use({optional: true});
 
   const routeStack = useMemo(() => {
-    const routeEntryMap = new WeakMap<
-      RouteDefinition,
-      RouteNavigationEntry<any, any>
-    >();
+    const cache = new RouteNavigationCache();
 
     return computed(() => {
       const currentRequest = router.currentRequest;
@@ -50,27 +70,37 @@ export function useRoutes(routes: readonly RouteDefinition[]) {
 
           const entry: RouteNavigationEntry<any, any> = {
             request: currentRequest,
-            key: '',
             route,
             parent,
             matched: match.matched,
             consumed: match.consumed,
-            load: route.load
-              ? new AsyncAction(() => route.load!(entry as any))
-              : undefined,
           } as any;
 
-          if (parent == null) {
-            routeEntryMap.set(route, entry);
+          let key: unknown;
+
+          if (route.key) {
+            key =
+              typeof route.key === 'function'
+                ? route.key(entry as any)
+                : route.key;
+          } else {
+            key = match.consumed
+              ? // Need an extra postfix `/` to differentiate an index route from its parent
+                `${match.consumed}${match.matched === '' ? '/' : ''}`
+              : `${parent?.consumed ?? ''}/${stringifyRoute(route)}`;
           }
+
+          Object.assign(entry, {key});
+
+          const resolved = route.load ? cache.get(entry) : entry;
 
           if (route.children) {
-            processRoutes(route.children, entry);
+            processRoutes(route.children, resolved);
           }
 
-          routeStack.push(entry);
+          routeStack.push(resolved);
 
-          return entry;
+          return resolved;
         }
       };
 
@@ -79,6 +109,16 @@ export function useRoutes(routes: readonly RouteDefinition[]) {
       return routeStack;
     });
   }, [router, parent]);
+
+  useEffect(() => {
+    return effect(() => {
+      const entries = routeStack.value;
+
+      for (const entry of entries) {
+        entry.load?.run(entry.route.input?.(entry as any));
+      }
+    });
+  }, [routeStack]);
 
   const entries = routeStack.value;
 
@@ -122,4 +162,18 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
       {content}
     </RouteNavigationEntryContext.Provider>
   );
+}
+
+function stringifyRoute({match}: RouteDefinition) {
+  if (match == null || match === true || match === '*') {
+    return '*';
+  }
+
+  if (typeof match === 'string') {
+    return match[0] === '/' ? match.slice(1) : match;
+  }
+
+  if (match instanceof RegExp) {
+    return match.toString();
+  }
 }

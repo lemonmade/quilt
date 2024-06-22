@@ -21,7 +21,7 @@ export interface RouteNavigationEntryBase<Data = unknown, Input = unknown> {
 export interface RouteNavigationStringEntry<Data = unknown, Input = unknown>
   extends RouteNavigationEntryBase<Data, Input> {
   readonly matched: string;
-  readonly route: RouteDefinitionString<Data, Input>;
+  readonly route: RouteDefinitionString<NoInfer<Data>, NoInfer<Input>>;
 }
 
 export interface RouteNavigationRegExpEntry<Data = unknown, Input = unknown>
@@ -49,22 +49,24 @@ export interface RouteDefinitionString<Data = unknown, Input = unknown> {
     | string
     | readonly unknown[]
     | ((
-        entry: NoInfer<
-          Omit<RouteNavigationStringEntry<Data, Input>, 'key' | 'load'>
+        entry: Omit<
+          RouteNavigationStringEntry<NoInfer<Data>, NoInfer<Input>>,
+          'key' | 'load'
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<Omit<RouteNavigationStringEntry<Data, Input>, 'load'>>,
+    entry: NoInfer<RouteNavigationStringEntry<NoInfer<Data>, NoInfer<Input>>>,
   ) => Input;
-  load?: (entry: RouteNavigationStringEntry<Data, Input>) => Promise<Data>;
+  load?: (
+    input: NoInfer<Input>,
+    entry: RouteNavigationStringEntry<NoInfer<Data>, NoInfer<Input>>,
+  ) => Promise<Data>;
   render?:
     | ((
-        entry: NoInfer<
-          RouteNavigationStringEntry<Data, Input> & {
-            data: Data;
-            children?: ComponentChildren;
-          }
-        >,
+        entry: RouteNavigationStringEntry<NoInfer<Data>, NoInfer<Input>> & {
+          data: NoInfer<Data>;
+          children?: ComponentChildren;
+        },
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any>[];
@@ -78,22 +80,24 @@ export interface RouteDefinitionRegExp<Data = unknown, Input = unknown> {
     | string
     | readonly unknown[]
     | ((
-        entry: NoInfer<
-          Omit<RouteNavigationRegExpEntry<Data, Input>, 'key' | 'load'>
+        entry: Omit<
+          RouteNavigationRegExpEntry<NoInfer<Data>, NoInfer<Input>>,
+          'key' | 'load'
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<Omit<RouteNavigationRegExpEntry<Data, Input>, 'load'>>,
+    entry: RouteNavigationRegExpEntry<NoInfer<Data>, NoInfer<Input>>,
   ) => Input;
-  load?: (entry: RouteNavigationRegExpEntry<Data, Input>) => Promise<Data>;
+  load?: (
+    input: NoInfer<Input>,
+    entry: RouteNavigationStringEntry<NoInfer<Data>, NoInfer<Input>>,
+  ) => Promise<Data>;
   render?:
     | ((
-        entry: NoInfer<
-          RouteNavigationRegExpEntry<Data, Input> & {
-            data: Data;
-            children?: ComponentChildren;
-          }
-        >,
+        entry: RouteNavigationRegExpEntry<NoInfer<Data>, NoInfer<Input>> & {
+          data: NoInfer<Data>;
+          children?: ComponentChildren;
+        },
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any>[];
@@ -107,22 +111,24 @@ export interface RouteDefinitionFallback<Data = unknown, Input = unknown> {
     | string
     | readonly unknown[]
     | ((
-        entry: NoInfer<
-          Omit<RouteNavigationFallbackEntry<Data, Input>, 'key' | 'load'>
+        entry: Omit<
+          RouteNavigationFallbackEntry<NoInfer<Data>, NoInfer<Input>>,
+          'key' | 'load'
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<Omit<RouteNavigationFallbackEntry<Data, Input>, 'load'>>,
+    entry: RouteNavigationFallbackEntry<NoInfer<Data>, NoInfer<Input>>,
   ) => Input;
-  load?: (entry: RouteNavigationFallbackEntry<Data, Input>) => Promise<Data>;
+  load?: (
+    input: NoInfer<Input>,
+    entry: RouteNavigationStringEntry<NoInfer<Data>, NoInfer<Input>>,
+  ) => Promise<Data>;
   render?:
     | ((
-        entry: NoInfer<
-          RouteNavigationFallbackEntry<Data, Input> & {
-            data: Data;
-            children?: ComponentChildren;
-          }
-        >,
+        entry: RouteNavigationFallbackEntry<NoInfer<Data>, NoInfer<Input>> & {
+          data: NoInfer<Data>;
+          children?: ComponentChildren;
+        },
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any>[];

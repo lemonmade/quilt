@@ -125,6 +125,38 @@ describe('useRoutes()', () => {
         );
       });
 
+      it.only('can fetch a matched route', () => {
+        const aRoute = route('a', {
+          input: ({matched}) => ({id: matched}),
+          load: (input, entry) => {
+            console.log(entry);
+            return Promise.resolve({id: input.id});
+          },
+          render: <RouteComponent />,
+        });
+
+        function Routes() {
+          return useRoutes([
+            route('a', {
+              input: ({matched}) => ({id: matched}),
+              load: (input, entry) => {
+                console.log(entry);
+                return Promise.resolve({id: input.id});
+              },
+              render: <RouteComponent />,
+            }),
+          ]);
+        }
+
+        expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
+          RouteComponent,
+        );
+
+        expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
+          RouteComponent,
+        );
+      });
+
       it('matches the root path on a nested route', () => {
         function Routes() {
           return useRoutes([
@@ -405,6 +437,113 @@ describe('useRoutes()', () => {
           render(<Routes />, {path: '/must-match/full-path'}),
         ).toContainPreactComponent(RouteComponent);
       });
+    });
+
+    describe('array', () => {
+      it('matches if any of the elements matches', () => {
+        function Routes() {
+          return useRoutes([
+            {
+              match: ['a', 'b'],
+              render: <RouteComponent />,
+            },
+          ]);
+        }
+
+        expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
+          RouteComponent,
+        );
+
+        expect(render(<Routes />, {path: '/b'})).toContainPreactComponent(
+          RouteComponent,
+        );
+
+        expect(render(<Routes />, {path: '/c'})).not.toContainPreactComponent(
+          RouteComponent,
+        );
+      });
+    });
+
+    describe('fallback', () => {
+      it('matches a route with no match property', () => {
+        function Routes() {
+          return useRoutes([{render: <RouteComponent />}]);
+        }
+
+        const routes = render(<Routes />);
+
+        expect(routes).toContainPreactComponent(RouteComponent);
+      });
+
+      it('does not consume the matched pathname when there is no match property', () => {
+        function Routes() {
+          return useRoutes([
+            {
+              render: ({children}) => (
+                <RouteComponent>{children}</RouteComponent>
+              ),
+              children: [{match: 'a', render: <NestedRouteComponent />}],
+            },
+          ]);
+        }
+
+        const noNestedMatchRoutes = render(<Routes />, {path: '/b'});
+
+        expect(noNestedMatchRoutes).toContainPreactComponent(RouteComponent);
+        expect(
+          noNestedMatchRoutes.find(RouteComponent),
+        ).not.toContainPreactComponent(NestedRouteComponent);
+
+        const nestedMatchRoutes = render(<Routes />, {path: '/a'});
+
+        expect(noNestedMatchRoutes).toContainPreactComponent(RouteComponent);
+        expect(nestedMatchRoutes.find(RouteComponent)).toContainPreactComponent(
+          NestedRouteComponent,
+        );
+      });
+    });
+
+    describe('exact', () => {
+      it('renders routes without children only if they are an exact match by default', () => {
+        function Routes() {
+          return useRoutes([{match: 'a', render: <RouteComponent />}]);
+        }
+
+        const routes = render(<Routes />, {path: '/a/b/c'});
+
+        expect(routes).not.toContainPreactComponent(RouteComponent);
+      });
+
+      it('allows routes without children to be inexact', () => {
+        function Routes() {
+          return useRoutes([
+            {match: 'a', exact: false, render: <RouteComponent />},
+          ]);
+        }
+
+        const routes = render(<Routes />, {path: '/a/b/c'});
+
+        expect(routes).toContainPreactComponent(RouteComponent);
+      });
+    });
+
+    it('only renders the first matching route', () => {
+      function MatchedButNotRendered() {
+        return null;
+      }
+
+      function Routes() {
+        return useRoutes([
+          {match: 'a', render: <RouteComponent />},
+          {match: /a/, render: <MatchedButNotRendered />},
+          {render: <MatchedButNotRendered />},
+        ]);
+      }
+
+      const routes = render(<Routes />, {path: '/a'});
+
+      expect(routes).toContainPreactComponent(RouteComponent);
+      expect(routes).not.toContainPreactComponent(MatchedButNotRendered);
     });
   });
 });
