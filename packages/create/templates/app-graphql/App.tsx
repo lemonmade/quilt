@@ -1,7 +1,8 @@
 import type {RenderableProps} from 'preact';
 
+import {NotFound} from '@quilted/quilt/server';
 import {GraphQLContext} from '@quilted/quilt/graphql';
-import {Navigation, useRoutes} from '@quilted/quilt/navigate';
+import {Navigation, route} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
 import {HTML} from './foundation/html.ts';
@@ -18,27 +19,31 @@ export interface AppProps {
   context: AppContextType;
 }
 
+// Define the routes for your application. If you have a lot of routes, you
+// might want to split this into a separate file.
+const routes = [
+  route('*', {
+    render: (children) => <Frame>{children}</Frame>,
+    children: [
+      route('/', {render: <Home />}),
+      route('*', {render: <NotFound />}),
+    ],
+  }),
+];
+
 // The root component for your application. You will typically render any
 // app-wide context in this component.
 export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
       <HTML>
-        <Frame>
-          <Routes />
-        </Frame>
+        <Navigation routes={routes} />
       </HTML>
     </AppContext>
   );
 }
 
 export default App;
-
-// This component renders the routes for your application. If you have a lot
-// of routes, you may want to split this component into its own file.
-function Routes() {
-  return useRoutes([{match: '/', render: <Home />}]);
-}
 
 // This component renders any app-wide context.
 function AppContext({children, context}: RenderableProps<AppProps>) {
@@ -50,9 +55,7 @@ function AppContext({children, context}: RenderableProps<AppProps>) {
         fetch={context.graphql.fetch}
         cache={context.graphql.cache}
       >
-        <Localization locale={locale}>
-          <Navigation>{children}</Navigation>
-        </Localization>
+        <Localization locale={locale}>{children}</Localization>
       </GraphQLContext>
     </AppContextReact.Provider>
   );
