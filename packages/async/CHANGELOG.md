@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.16
+
+### Patch Changes
+
+- [`0d11757`](https://github.com/lemonmade/quilt/commit/0d11757b12c70f77ae49571ec851fda4dc01a517) Thanks [@lemonmade](https://github.com/lemonmade)! - Make yielded values trigger `value` subscribers
+
 ## 0.4.15
 
 ### Patch Changes

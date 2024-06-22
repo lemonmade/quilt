@@ -1,5 +1,14 @@
 # @quilted/preact-graphql
 
+## 0.1.4
+
+### Patch Changes
+
+- [`299dfc4`](https://github.com/lemonmade/quilt/commit/299dfc4fae623e6b2bbf3ecb73f1d59bf44e13c8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add missing `cached` option for GraphQL queries
+
+- Updated dependencies [[`299dfc4`](https://github.com/lemonmade/quilt/commit/299dfc4fae623e6b2bbf3ecb73f1d59bf44e13c8)]:
+  - @quilted/graphql@3.3.1
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.30
+
+### Patch Changes
+
+- [`f5981c1`](https://github.com/lemonmade/quilt/commit/f5981c1a28c91ffed11536b1ab6274c3d945bdf8) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve app context in GraphQL template
+
+- [`a70f378`](https://github.com/lemonmade/quilt/commit/a70f378463b7c951654e6ff44b4bf5aaeda3a386) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename `Start` to `Home` in app templates
+
 ## 0.2.29
 
 ### Patch Changes
