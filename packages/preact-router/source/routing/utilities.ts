@@ -98,7 +98,7 @@ export function testMatch(
       }
 
       return {
-        matched: removePrefixSlash(normalizedMatch),
+        matched: normalizedMatch,
         consumed:
           normalizedMatch === '/'
             ? pathDetails.previouslyConsumed
@@ -255,8 +255,4 @@ function splitUrl(
     remainderRelative: remainderAbsolute.slice(1),
     remainderAbsolute: remainderAbsolute,
   };
-}
-
-function removePrefixSlash(path: string) {
-  return path[0] === '/' ? path.slice(1) : path;
 }

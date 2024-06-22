@@ -3,7 +3,12 @@
 import {describe, it, expect, afterEach, vi} from 'vitest';
 import type {RenderableProps} from 'preact';
 
-import {useRoutes, route, type RouteNavigationEntry} from '../index.ts';
+import {
+  route,
+  useRoutes,
+  useRouteData,
+  type RouteNavigationEntry,
+} from '../index.ts';
 import {render, destroyAll} from '../tests/utilities.tsx';
 
 vi.mock('../redirect', () => ({
@@ -37,6 +42,26 @@ describe('useRoutes()', () => {
         );
         expect(renderSpy).toHaveBeenLastCalledWith(
           null,
+          expect.objectContaining({matched: '/'}),
+        );
+
+        expect(render(<Routes />, {path: '/a'})).not.toContainPreactComponent(
+          RouteComponent,
+        );
+      });
+
+      it('matches the root path with an empty string', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
+        function Routes() {
+          return useRoutes([{match: '', render: renderSpy}]);
+        }
+
+        expect(render(<Routes />, {path: '/'})).toContainPreactComponent(
+          RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
           expect.objectContaining({matched: ''}),
         );
 
@@ -61,7 +86,7 @@ describe('useRoutes()', () => {
         );
         expect(renderSpy).toHaveBeenLastCalledWith(
           null,
-          expect.objectContaining({matched: 'a'}),
+          expect.objectContaining({matched: '/a'}),
         );
       });
 
@@ -166,17 +191,45 @@ describe('useRoutes()', () => {
       });
 
       it('matches the root path on a nested route', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
         function Routes() {
           return useRoutes([
             {
               match: 'a',
-              children: [{match: '/', render: <RouteComponent />}],
+              children: [{match: '/', render: renderSpy}],
             },
           ]);
         }
 
         expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
           RouteComponent,
+        );
+
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({matched: '/'}),
+        );
+      });
+
+      it('matches the root path on a nested route with an empty string', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
+        function Routes() {
+          return useRoutes([
+            {
+              match: 'a',
+              children: [{match: '', render: renderSpy}],
+            },
+          ]);
+        }
+
+        expect(render(<Routes />, {path: '/a'})).toContainPreactComponent(
+          RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({matched: ''}),
         );
       });
 
@@ -595,6 +648,12 @@ describe('useRoutes()', () => {
 
   describe('load', () => {
     it('can load data for a matched route', async () => {
+      function RouteComponent() {
+        const data = useRouteData<{id: string; title: string}>();
+
+        return <div>Title: {data.title}</div>;
+      }
+
       const loadDeferred = new Deferred<{id: string; title: string}>();
       const keySpy = vi.fn(
         (entry: Pick<RouteNavigationEntry<any, any>, 'request'>) => {
@@ -623,10 +682,6 @@ describe('useRoutes()', () => {
         ]);
       }
 
-      expect(render(<Routes />, {path: '/b'})).not.toContainPreactComponent(
-        RouteComponent,
-      );
-
       const routes = render(<Routes />, {path: '/a'});
       await routes.act(async () => {
         loadDeferred.resolve({id: 'a', title: 'A resource'});
@@ -634,6 +689,7 @@ describe('useRoutes()', () => {
       });
 
       expect(routes).toContainPreactComponent(RouteComponent);
+      expect(routes).toContainPreactText('Title: A resource');
 
       expect(keySpy).toHaveBeenCalledTimes(1);
       expect(keySpy).toHaveBeenCalledWith(
