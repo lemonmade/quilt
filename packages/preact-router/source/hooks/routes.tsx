@@ -19,7 +19,7 @@ class RouteNavigationCache {
       (cached) =>
         new AsyncAction<Data, Input>(
           () => {
-            return entry.route.load!(entry as any);
+            return entry.route.load!(entry as any, entry.context);
           },
           {cached},
         ),

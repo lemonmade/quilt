@@ -5,22 +5,22 @@ import type {
   RouteDefinitionString,
 } from './types.ts';
 
-export function route<Data = unknown, Input = unknown>(
+export function route<Data = unknown, Input = unknown, Context = unknown>(
   match: '*' | true,
-  rest: Omit<RouteDefinitionFallback<Data, Input>, 'match'>,
-): RouteDefinitionFallback<Data, Input>;
-export function route<Data = unknown, Input = unknown>(
+  rest: Omit<RouteDefinitionFallback<Data, Input, Context>, 'match'>,
+): RouteDefinitionFallback<Data, Input, Context>;
+export function route<Data = unknown, Input = unknown, Context = unknown>(
   match: string | string[],
-  rest: Omit<RouteDefinitionString<Data, Input>, 'match'>,
-): RouteDefinitionString<Data, Input>;
-export function route<Data = unknown, Input = unknown>(
+  rest: Omit<RouteDefinitionString<Data, Input, Context>, 'match'>,
+): RouteDefinitionString<Data, Input, Context>;
+export function route<Data = unknown, Input = unknown, Context = unknown>(
   match: RegExp | RegExp[],
-  rest: Omit<RouteDefinitionRegExp<Data, Input>, 'match'>,
-): RouteDefinitionRegExp<Data, Input>;
-export function route<Data = unknown, Input = unknown>(
+  rest: Omit<RouteDefinitionRegExp<Data, Input, Context>, 'match'>,
+): RouteDefinitionRegExp<Data, Input, Context>;
+export function route<Data = unknown, Input = unknown, Context = unknown>(
   match: any,
   rest: any,
-): RouteDefinition<Data, Input> {
+): RouteDefinition<Data, Input, Context> {
   return {match, ...rest} as any;
 }
 

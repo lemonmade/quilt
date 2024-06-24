@@ -71,7 +71,7 @@ export interface RouteDefinitionString<
     | string
     | readonly unknown[]
     | ((
-        entry: NoInfer<
+        navigation: NoInfer<
           Omit<
             RouteNavigationStringEntry<unknown, unknown, Context>,
             'key' | 'load'
@@ -79,15 +79,16 @@ export interface RouteDefinitionString<
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, unknown, Context>>,
+    navigation: NoInfer<RouteNavigationStringEntry<unknown, unknown, Context>>,
   ) => Input;
   load?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
+    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
+    context: Context,
   ) => Promise<Data>;
   render?:
     | ((
         children: ComponentChildren,
-        entry: NoInfer<RouteNavigationStringEntry<Data, Input, Context>>,
+        navigation: NoInfer<RouteNavigationStringEntry<Data, Input, Context>>,
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any, Context>[];
@@ -105,7 +106,7 @@ export interface RouteDefinitionRegExp<
     | string
     | readonly unknown[]
     | ((
-        entry: NoInfer<
+        navigation: NoInfer<
           Omit<
             RouteNavigationRegExpEntry<unknown, unknown, Context>,
             'key' | 'load'
@@ -113,15 +114,16 @@ export interface RouteDefinitionRegExp<
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<RouteNavigationRegExpEntry<unknown, unknown, Context>>,
+    navigation: NoInfer<RouteNavigationRegExpEntry<unknown, unknown, Context>>,
   ) => Input;
   load?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
+    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
+    context: Context,
   ) => Promise<Data>;
   render?:
     | ((
         children: ComponentChildren,
-        entry: NoInfer<RouteNavigationRegExpEntry<Data, Input, Context>>,
+        navigation: NoInfer<RouteNavigationRegExpEntry<Data, Input, Context>>,
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any, Context>[];
@@ -139,21 +141,22 @@ export interface RouteDefinitionFallback<
     | string
     | readonly unknown[]
     | ((
-        entry: Omit<
+        navigation: Omit<
           RouteNavigationFallbackEntry<unknown, unknown, Context>,
           'key' | 'load'
         >,
       ) => unknown);
   input?: (
-    entry: RouteNavigationFallbackEntry<unknown, unknown, Context>,
+    navigation: RouteNavigationFallbackEntry<unknown, unknown, Context>,
   ) => Input;
   load?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
+    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
+    context: Context,
   ) => Promise<Data>;
   render?:
     | ((
         children: ComponentChildren,
-        entry: NoInfer<RouteNavigationFallbackEntry<Data, Input, Context>>,
+        navigation: NoInfer<RouteNavigationFallbackEntry<Data, Input, Context>>,
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any, Context>[];

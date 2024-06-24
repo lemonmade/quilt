@@ -14,12 +14,12 @@ export interface NavigationProps<Context = unknown> {
   context?: Context;
 }
 
-export function Navigation({
+export function Navigation<Context = unknown>({
   router,
   routes,
   context,
   children,
-}: RenderableProps<NavigationProps>) {
+}: RenderableProps<NavigationProps<Context>>) {
   const browser = useBrowserDetails({optional: true});
   const resolvedRouter = useMemo(
     () => router ?? new Router(browser?.request.url),
