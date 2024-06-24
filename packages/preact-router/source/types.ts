@@ -5,8 +5,6 @@ import type {NavigateTo} from '@quilted/routing';
 export interface NavigationRequest {
   readonly id: string;
   readonly url: URL;
-  // TODO: custom `baseURL`
-  // readonly relativeURL: URL;
   readonly state: {[key: string]: unknown};
 }
 

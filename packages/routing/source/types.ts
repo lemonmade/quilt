@@ -1,27 +1,15 @@
-export type EnhancedURL = URL & {
-  readonly prefix?: string;
-  /**
-   * The pathname of the app discarding the prefix part
-   */
-  readonly normalizedPath: string;
-};
-
-export interface Matcher {
+export interface RouteMatcher {
   (url: URL): boolean;
 }
 
-export type Match = string | RegExp | Matcher;
+export type RouteMatch = string | boolean | RegExp | RouteMatcher;
 
-export interface MatchDetails {
+export interface RouteMatchDetails {
   matched: string;
   consumed?: string;
 }
 
-export type Prefix = string | RegExp;
-
-export type RelativeTo = 'root' | 'prefix';
-
-export type Search =
+export type NavigateToSearch =
   | string
   | Record<string, string | undefined>
   | URLSearchParams;
@@ -32,9 +20,9 @@ export type NavigateToLiteral =
   | {
       path?: string;
       hash?: string;
-      search?: Search;
+      search?: NavigateToSearch;
     };
 
-export type NavigateTo<URLType extends URL = URL> =
+export type NavigateTo =
   | NavigateToLiteral
-  | ((currentUrl: URLType) => NavigateToLiteral);
+  | ((currentURL: URL) => NavigateToLiteral);

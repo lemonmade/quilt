@@ -2,10 +2,10 @@ import type {ComponentChild, VNode, RenderableProps} from 'preact';
 import {isValidElement, cloneElement} from 'preact';
 import {useEffect, useMemo} from 'preact/hooks';
 import {computed, effect, ReadonlySignal} from '@quilted/signals';
+import {testMatch} from '@quilted/routing';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
 import {RouterContext, RouteNavigationEntryContext} from '../context.ts';
-import {testMatch} from '../routing.ts';
 import {AsyncAction, AsyncActionCache} from '@quilted/async';
 import {Suspense} from 'preact/compat';
 

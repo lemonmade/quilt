@@ -1,39 +1,45 @@
 import {Signal, signal} from '@quilted/signals';
-
-import {resolveURL, type NavigateTo} from './routing.ts';
+import {resolveURL, type NavigateTo} from '@quilted/routing';
 
 import type {NavigationRequest} from './types.ts';
 
 export const SERVER_RENDER_EFFECT_ID = Symbol('router');
 
 export interface RouterOptions {
-  // state?: State;
-  // prefix?: Prefix;
-  // isExternal?(url: URL, currentUrl: URL): boolean;
+  base?: string | URL;
+  isExternal?(url: URL, currentUrl: URL): boolean;
 }
 
 export interface NavigateOptions {
   replace?: boolean;
-  // relativeTo?: RelativeTo;
   state?: NavigationRequest['state'];
+  base?: string | URL;
 }
 
 const STATE_ID_FIELD_KEY = '_id';
 
 export class Router {
+  readonly base: string;
+
   get currentRequest() {
     return this.#currentRequest.value;
   }
 
   readonly #currentRequest: Signal<NavigationRequest>;
-  // readonly prefix?: Prefix;
 
   // @ts-expect-error Will use this later
   #forceNextNavigation = false;
   #navigationIDs: string[] = [];
   #navigationRequests = new Map<string, NavigationRequest>();
+  #isExternal: RouterOptions['isExternal'];
 
-  constructor(initial?: string | URL | Partial<NavigationRequest>) {
+  constructor(
+    initial?: string | URL | Partial<NavigationRequest>,
+    {base, isExternal}: RouterOptions = {},
+  ) {
+    this.base = base ? (typeof base === 'string' ? base : base.pathname) : '/';
+    this.#isExternal = isExternal;
+
     const currentRequest = new BrowserNavigationRequest(initial);
     this.#currentRequest = signal(currentRequest);
     this.#navigationIDs.push(currentRequest.id);
@@ -46,18 +52,18 @@ export class Router {
 
   navigate = (
     to: NavigateTo,
-    {
-      state = {},
-      replace = false,
-      // relativeTo
-    }: NavigateOptions = {},
-  ) => {
+    {state = {}, replace = false, base}: NavigateOptions = {},
+  ): NavigationRequest => {
     if (typeof history === 'undefined') {
       throw new Error('Cannot navigate in a non-browser environment');
     }
 
     const id = createNavigationRequestID();
-    const url = resolveURL(to, this.#currentRequest.peek().url);
+    const url = resolveURL(
+      to,
+      this.#currentRequest.peek().url,
+      base ?? this.base,
+    );
     const finalState = {...state, [STATE_ID_FIELD_KEY]: id};
 
     const request: NavigationRequest = {id, url, state: finalState};
@@ -129,12 +135,16 @@ export class Router {
 
   resolve(
     to: NavigateTo,
-    // options?: {relativeTo?: RelativeTo},
+    options?: {baseURL?: string | URL},
   ): {readonly url: URL; readonly external: boolean} {
     const currentURL = this.#currentRequest.peek().url;
-    const url = resolveURL(to, currentURL);
+    const url = resolveURL(to, currentURL, options?.baseURL);
 
-    return {url, external: url.origin !== currentURL.origin};
+    const external = this.#isExternal
+      ? this.#isExternal(url, currentURL)
+      : url.origin !== currentURL.origin;
+
+    return {url, external};
   }
 
   #handlePopstate = () => {
@@ -180,7 +190,7 @@ export class Router {
   };
 }
 
-export class BrowserNavigationRequest implements NavigationRequest {
+class BrowserNavigationRequest implements NavigationRequest {
   readonly id: string;
   readonly url: URL;
   readonly state: NavigationRequest['state'];

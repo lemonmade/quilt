@@ -1,5 +1,5 @@
 export * from './types.ts';
-export {Router} from './Router.ts';
+export {Router, type RouterOptions, type NavigateOptions} from './Router.ts';
 export {route, fallbackRoute} from './route.ts';
 
 export {Link} from './components/Link.tsx';

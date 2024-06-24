@@ -58,7 +58,7 @@ describe('RequestRouter', () => {
 
   it('excludes a prefix before attempting to match', async () => {
     const response = new NoContentResponse();
-    const router = new RequestRouter({prefix: '/hello'});
+    const router = new RequestRouter({base: '/hello'});
     router.get('/world', () => response);
 
     expect(await router.fetch(new Request(url('/hello/world')))).toBe(response);
@@ -85,7 +85,7 @@ describe('RequestRouter', () => {
   it('expands matches and prefixes in nested http routers', async () => {
     const response = new NoContentResponse();
     const router = new RequestRouter();
-    const nestedRouter = new RequestRouter({prefix: 'world'});
+    const nestedRouter = new RequestRouter({base: '/world'});
     nestedRouter.get('/', () => response);
     router.get('hello', nestedRouter);
 

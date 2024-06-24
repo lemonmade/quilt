@@ -1,5 +1,6 @@
+import {type NavigateTo} from '@quilted/routing';
+
 import {RedirectResponse} from '../response-helpers.ts';
-import {type NavigateTo} from '../utilities.ts';
 import {ResponseShortCircuitError} from './ResponseShortCircuitError.ts';
 
 export class ResponseRedirectError extends ResponseShortCircuitError {
