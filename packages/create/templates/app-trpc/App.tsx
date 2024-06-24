@@ -27,7 +27,12 @@ const routes = [
   route('*', {
     render: (children) => <Frame>{children}</Frame>,
     children: [
-      route('/', {render: <Home />}),
+      route('/', {
+        async load() {
+          await Promise.all([Home.load()]);
+        },
+        render: <Home />,
+      }),
       route('*', {render: <NotFound />}),
     ],
   }),
@@ -39,7 +44,7 @@ export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
       <HTML>
-        <Navigation routes={routes} />
+        <Navigation routes={routes} context={context} />
       </HTML>
     </AppContext>
   );

@@ -8,7 +8,7 @@ import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
 
-import {Home} from './features/home.ts';
+import {Home, homeQuery} from './features/home.ts';
 
 import {
   AppContextReact,
@@ -25,7 +25,12 @@ const routes = [
   route('*', {
     render: (children) => <Frame>{children}</Frame>,
     children: [
-      route('/', {render: <Home />}),
+      route('/', {
+        async load(_navigation, {graphql}: AppContextType) {
+          await Promise.all([Home.load(), graphql.cache.query(homeQuery)]);
+        },
+        render: <Home />,
+      }),
       route('*', {render: <NotFound />}),
     ],
   }),
@@ -37,7 +42,7 @@ export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
       <HTML>
-        <Navigation routes={routes} />
+        <Navigation routes={routes} context={context} />
       </HTML>
     </AppContext>
   );
