@@ -654,6 +654,7 @@ describe('useRoutes()', () => {
         return <div>Title: {data.title}</div>;
       }
 
+      const context = {fetch: () => Promise.resolve({id: 'abc'})};
       const loadDeferred = new Deferred<{id: string; title: string}>();
       const keySpy = vi.fn(
         (entry: Pick<RouteNavigationEntry<any, any>, 'request'>) => {
@@ -671,15 +672,18 @@ describe('useRoutes()', () => {
       });
 
       function Routes() {
-        return useRoutes([
-          route('a', {
-            key: (entry) => keySpy(entry),
-            input: (entry) => inputSpy(entry),
-            load: (entry) => loadSpy({...entry, input: entry.input}),
-            render: (_, entry) =>
-              renderSpy({...entry, data: entry.data, input: entry.input}),
-          }),
-        ]);
+        return useRoutes(
+          [
+            route('a', {
+              key: (entry) => keySpy(entry),
+              input: (entry) => inputSpy(entry),
+              load: (entry) => loadSpy({...entry, input: entry.input}),
+              render: (_, entry) =>
+                renderSpy({...entry, data: entry.data, input: entry.input}),
+            }),
+          ],
+          {context},
+        );
       }
 
       const routes = render(<Routes />, {path: '/a'});
@@ -693,22 +697,23 @@ describe('useRoutes()', () => {
 
       expect(keySpy).toHaveBeenCalledTimes(1);
       expect(keySpy).toHaveBeenCalledWith(
-        expect.objectContaining({matched: 'a'}),
+        expect.objectContaining({context, matched: 'a'}),
       );
 
       expect(inputSpy).toHaveBeenCalledTimes(1);
       expect(inputSpy).toHaveBeenCalledWith(
-        expect.objectContaining({matched: 'a'}),
+        expect.objectContaining({context, matched: 'a'}),
       );
 
       expect(loadSpy).toHaveBeenCalledTimes(1);
       expect(loadSpy).toHaveBeenCalledWith(
-        expect.objectContaining({matched: 'a', input: {id: 'a'}}),
+        expect.objectContaining({context, matched: 'a', input: {id: 'a'}}),
       );
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
       expect(renderSpy).toHaveBeenCalledWith(
         expect.objectContaining({
+          context,
           matched: 'a',
           input: {id: 'a'},
           data: {id: 'a', title: 'A resource'},

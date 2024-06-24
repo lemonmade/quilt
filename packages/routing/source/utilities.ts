@@ -219,21 +219,17 @@ function startsWithPath(fullPath: string, pathSegment: string, exact: boolean) {
 }
 
 function splitURL(url: URL, base?: string | URL, consumed = '') {
-  const resolvedBase = base
+  let consumedPath = base
     ? removePostfixSlash(typeof base === 'string' ? base : base.pathname)
-    : '/';
-  const fullConsumedPath = removePostfixSlash(
-    consumed ? `${resolvedBase}${consumed}` : resolvedBase,
-  );
+    : '';
+  if (consumed) consumedPath += normalizeAsAbsolutePath(consumed);
+
   const pathname = removePostfixSlash(url.pathname);
   const remainderAbsolute =
-    fullConsumedPath === pathname
-      ? '/'
-      : pathname.replace(fullConsumedPath, '');
+    consumedPath === pathname ? '/' : pathname.replace(consumedPath, '');
 
   return {
     isRoot: consumed.length === 0,
-    base: resolvedBase,
     previouslyConsumed: consumed,
     remainderRelative: remainderAbsolute.slice(1),
     remainderAbsolute: remainderAbsolute,
