@@ -37,7 +37,7 @@ export function createRequestRouterLocalization({
     getDefaultFromRequest: () => string | undefined,
   ): string | undefined;
 }): RequestRouterLocalization {
-  const {matchLocale, redirectUrl, defaultLocale, localeFromUrl} = localization;
+  const {matchLocale, redirectURL, defaultLocale, localeFromURL} = localization;
 
   const getDefaultLocaleFromRequest = (request: Request) => {
     const acceptLanguage = request.headers.get('Accept-Language');
@@ -60,7 +60,7 @@ export function createRequestRouterLocalization({
     >,
   ): Response {
     return new RedirectResponse(
-      redirectUrl(new URL(request.url), {to}),
+      redirectURL(new URL(request.url), {to}),
       options,
     );
   }
@@ -75,7 +75,7 @@ export function createRequestRouterLocalization({
         if (!include(request)) return handler(request, ...args);
 
         const url = new URL(request.url);
-        const urlLocale = localeFromUrl(url);
+        const urlLocale = localeFromURL(url);
         const requestLocale = getLocaleForRequest(request, () =>
           getDefaultLocaleFromRequest(request),
         );
@@ -85,7 +85,7 @@ export function createRequestRouterLocalization({
 
         if (urlLocale !== matchedLocale) {
           return new RedirectResponse(
-            redirectUrl(url, {
+            redirectURL(url, {
               to: matchedLocale,
             }),
           );

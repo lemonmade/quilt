@@ -16,11 +16,11 @@ export function LocalizedLink({
 }) {
   const router = useRouter();
   const url = useCurrentURL();
-  const {redirectUrl} = useRouteLocalization();
+  const {redirectURL} = useRouteLocalization();
 
   const resolvedURL = useMemo(
-    () => redirectUrl(to ? router.resolve(to).url : url, {to: locale}),
-    [to, url, locale, redirectUrl, router],
+    () => redirectURL(to ? router.resolve(to).url : url, {to: locale}),
+    [to, url, locale, redirectURL, router],
   );
 
   return <Link hrefLang={locale} to={resolvedURL} {...props} />;
