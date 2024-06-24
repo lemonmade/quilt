@@ -8,14 +8,16 @@ import type {RouteDefinition} from '../types.ts';
 
 import {Routes} from './Routes.tsx';
 
-export interface NavigationProps {
+export interface NavigationProps<Context = unknown> {
   router?: Router;
-  routes?: readonly RouteDefinition<any, any>[];
+  routes?: readonly RouteDefinition<any, any, Context>[];
+  context?: Context;
 }
 
 export function Navigation({
   router,
   routes,
+  context,
   children,
 }: RenderableProps<NavigationProps>) {
   const browser = useBrowserDetails({optional: true});
@@ -24,7 +26,11 @@ export function Navigation({
     [router],
   );
 
-  const content = routes ? <Routes list={routes} /> : children;
+  const content = routes ? (
+    <Routes list={routes} context={context} />
+  ) : (
+    children
+  );
 
   return (
     <RouterContext.Provider value={resolvedRouter}>

@@ -13,7 +13,7 @@ class RouteNavigationCache {
   #cache = new AsyncActionCache();
 
   get<Data = unknown, Input = unknown>(
-    entry: Omit<RouteNavigationEntry<Data, Input>, 'load'>,
+    entry: Omit<RouteNavigationEntry<Data, Input, any>, 'load'>,
   ): RouteNavigationEntry<Data, Input> {
     const load = this.#cache.create(
       (cached) =>
@@ -44,22 +44,26 @@ class RouteNavigationCache {
   }
 }
 
-export function useRoutes(routes: readonly RouteDefinition<any, any>[]) {
+export function useRoutes<Context = unknown>(
+  routes: readonly RouteDefinition<any, any, Context>[],
+  {context}: {context?: Context} = {},
+) {
   const router = RouterContext.use();
   const parent = RouteNavigationEntryContext.use({optional: true});
 
   const routeStack = useMemo(() => {
     const cache = new RouteNavigationCache();
+    const resolvedContext = context ?? (parent?.context as Context);
 
     return computed(() => {
       const currentRequest = router.currentRequest;
       const currentURL = currentRequest.url;
 
-      const routeStack: RouteNavigationEntry<any, any>[] = [];
+      const routeStack: RouteNavigationEntry<any, any, any>[] = [];
 
       const processRoutes = (
-        routes: readonly RouteDefinition[],
-        parent?: RouteNavigationEntry<any, any>,
+        routes: readonly RouteDefinition<any, any, any>[],
+        parent?: RouteNavigationEntry<any, any, any>,
       ) => {
         for (const route of routes) {
           let match: ReturnType<typeof testMatch>;
@@ -81,12 +85,13 @@ export function useRoutes(routes: readonly RouteDefinition<any, any>[]) {
 
           if (match == null) continue;
 
-          const entry: RouteNavigationEntry<any, any> = {
+          const entry: RouteNavigationEntry<any, any, Context> = {
             request: currentRequest,
             route,
             parent,
             matched: match.matched,
             consumed: match.consumed,
+            context: resolvedContext,
             input: {},
             data: {},
           } as any;

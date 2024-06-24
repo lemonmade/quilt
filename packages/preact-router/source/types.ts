@@ -8,40 +8,62 @@ export interface NavigationRequest {
   readonly state: {[key: string]: unknown};
 }
 
-export interface RouteNavigationEntryBase<Data = unknown, Input = unknown> {
+export interface RouteNavigationEntryBase<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
   readonly request: NavigationRequest;
   readonly key: unknown;
   readonly input: Input;
   readonly data: Data;
-  readonly consumed?: string;
+  readonly context: Context;
   readonly load?: AsyncAction<Data, Input>;
   readonly parent?: RouteNavigationEntry;
+  readonly consumed?: string;
 }
 
-export interface RouteNavigationStringEntry<Data = unknown, Input = unknown>
-  extends RouteNavigationEntryBase<Data, Input> {
+export interface RouteNavigationStringEntry<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> extends RouteNavigationEntryBase<Data, Input, Context> {
   readonly matched: string;
-  readonly route: RouteDefinitionString<Data, Input>;
+  readonly route: RouteDefinitionString<Data, Input, Context>;
 }
 
-export interface RouteNavigationRegExpEntry<Data = unknown, Input = unknown>
-  extends RouteNavigationEntryBase<Data, Input> {
+export interface RouteNavigationRegExpEntry<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> extends RouteNavigationEntryBase<Data, Input, Context> {
   readonly matched: RegExpMatchArray;
-  readonly route: RouteDefinitionRegExp<Data, Input>;
+  readonly route: RouteDefinitionRegExp<Data, Input, Context>;
 }
 
-export interface RouteNavigationFallbackEntry<Data = unknown, Input = unknown>
-  extends RouteNavigationEntryBase<Data, Input> {
+export interface RouteNavigationFallbackEntry<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> extends RouteNavigationEntryBase<Data, Input> {
   readonly matched: string;
-  readonly route: RouteDefinitionFallback<Data, Input>;
+  readonly route: RouteDefinitionFallback<Data, Input, Context>;
 }
 
-export type RouteNavigationEntry<Data = unknown, Input = unknown> =
-  | RouteNavigationStringEntry<Data, Input>
-  | RouteNavigationRegExpEntry<Data, Input>
-  | RouteNavigationFallbackEntry<Data, Input>;
+export type RouteNavigationEntry<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> =
+  | RouteNavigationStringEntry<Data, Input, Context>
+  | RouteNavigationRegExpEntry<Data, Input, Context>
+  | RouteNavigationFallbackEntry<Data, Input, Context>;
 
-export interface RouteDefinitionString<Data = unknown, Input = unknown> {
+export interface RouteDefinitionString<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
   match: string | string[];
   exact?: boolean;
   redirect?: NavigateTo;
@@ -50,25 +72,32 @@ export interface RouteDefinitionString<Data = unknown, Input = unknown> {
     | readonly unknown[]
     | ((
         entry: NoInfer<
-          Omit<RouteNavigationStringEntry<unknown, unknown>, 'key' | 'load'>
+          Omit<
+            RouteNavigationStringEntry<unknown, unknown, Context>,
+            'key' | 'load'
+          >
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, unknown>>,
+    entry: NoInfer<RouteNavigationStringEntry<unknown, unknown, Context>>,
   ) => Input;
   load?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, Input>>,
+    entry: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
   ) => Promise<Data>;
   render?:
     | ((
         children: ComponentChildren,
-        entry: NoInfer<RouteNavigationStringEntry<Data, Input>>,
+        entry: NoInfer<RouteNavigationStringEntry<Data, Input, Context>>,
       ) => VNode<any>)
     | VNode<any>;
-  children?: readonly RouteDefinition<any, any>[];
+  children?: readonly RouteDefinition<any, any, Context>[];
 }
 
-export interface RouteDefinitionRegExp<Data = unknown, Input = unknown> {
+export interface RouteDefinitionRegExp<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
   match: RegExp | RegExp[];
   exact?: boolean;
   redirect?: NavigateTo;
@@ -77,25 +106,32 @@ export interface RouteDefinitionRegExp<Data = unknown, Input = unknown> {
     | readonly unknown[]
     | ((
         entry: NoInfer<
-          Omit<RouteNavigationRegExpEntry<unknown, unknown>, 'key' | 'load'>
+          Omit<
+            RouteNavigationRegExpEntry<unknown, unknown, Context>,
+            'key' | 'load'
+          >
         >,
       ) => unknown);
   input?: (
-    entry: NoInfer<RouteNavigationRegExpEntry<unknown, unknown>>,
+    entry: NoInfer<RouteNavigationRegExpEntry<unknown, unknown, Context>>,
   ) => Input;
   load?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, Input>>,
+    entry: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
   ) => Promise<Data>;
   render?:
     | ((
         children: ComponentChildren,
-        entry: NoInfer<RouteNavigationRegExpEntry<Data, Input>>,
+        entry: NoInfer<RouteNavigationRegExpEntry<Data, Input, Context>>,
       ) => VNode<any>)
     | VNode<any>;
-  children?: readonly RouteDefinition<any, any>[];
+  children?: readonly RouteDefinition<any, any, Context>[];
 }
 
-export interface RouteDefinitionFallback<Data = unknown, Input = unknown> {
+export interface RouteDefinitionFallback<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
   match?: '*' | true;
   exact?: boolean;
   redirect?: NavigateTo;
@@ -104,26 +140,30 @@ export interface RouteDefinitionFallback<Data = unknown, Input = unknown> {
     | readonly unknown[]
     | ((
         entry: Omit<
-          RouteNavigationFallbackEntry<unknown, unknown>,
+          RouteNavigationFallbackEntry<unknown, unknown, Context>,
           'key' | 'load'
         >,
       ) => unknown);
-  input?: (entry: RouteNavigationFallbackEntry<unknown, unknown>) => Input;
+  input?: (
+    entry: RouteNavigationFallbackEntry<unknown, unknown, Context>,
+  ) => Input;
   load?: (
-    entry: NoInfer<RouteNavigationStringEntry<unknown, Input>>,
+    entry: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
   ) => Promise<Data>;
   render?:
     | ((
         children: ComponentChildren,
-        entry: NoInfer<
-          RouteNavigationFallbackEntry<NoInfer<Data>, NoInfer<Input>>
-        >,
+        entry: NoInfer<RouteNavigationFallbackEntry<Data, Input, Context>>,
       ) => VNode<any>)
     | VNode<any>;
-  children?: readonly RouteDefinition<any, any>[];
+  children?: readonly RouteDefinition<any, any, Context>[];
 }
 
-export type RouteDefinition<Data = unknown, Input = unknown> =
-  | RouteDefinitionString<Data, Input>
-  | RouteDefinitionRegExp<Data, Input>
-  | RouteDefinitionFallback<Data, Input>;
+export type RouteDefinition<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> =
+  | RouteDefinitionString<Data, Input, Context>
+  | RouteDefinitionRegExp<Data, Input, Context>
+  | RouteDefinitionFallback<Data, Input, Context>;
