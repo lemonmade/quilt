@@ -646,6 +646,60 @@ describe('useRoutes()', () => {
     });
   });
 
+  describe('base', () => {
+    it('matches the root path, removing the base prefix', () => {
+      const renderSpy = vi.fn(() => <RouteComponent />);
+
+      function Routes() {
+        return useRoutes([{match: '/', render: renderSpy}]);
+      }
+
+      expect(
+        render(<Routes />, {path: '/a', base: '/a'}),
+      ).toContainPreactComponent(RouteComponent);
+      expect(renderSpy).toHaveBeenLastCalledWith(
+        null,
+        expect.objectContaining({matched: '/'}),
+      );
+
+      expect(render(<Routes />, {path: '/a'})).not.toContainPreactComponent(
+        RouteComponent,
+      );
+    });
+
+    it('matches relative paths, removing the base prefix', () => {
+      const renderSpy = vi.fn(() => <RouteComponent />);
+
+      function Routes() {
+        return useRoutes([{match: 'b/c', render: renderSpy}]);
+      }
+
+      expect(
+        render(<Routes />, {path: '/a/b/c', base: '/a'}),
+      ).toContainPreactComponent(RouteComponent);
+      expect(renderSpy).toHaveBeenLastCalledWith(
+        null,
+        expect.objectContaining({matched: 'b/c'}),
+      );
+    });
+
+    it('matches regular expression paths, removing the base prefix', () => {
+      const renderSpy = vi.fn(() => <RouteComponent />);
+
+      function Routes() {
+        return useRoutes([{match: /b[/]c/, render: renderSpy}]);
+      }
+
+      expect(
+        render(<Routes />, {path: '/a/b/c', base: '/a'}),
+      ).toContainPreactComponent(RouteComponent);
+      expect(renderSpy).toHaveBeenLastCalledWith(
+        null,
+        expect.objectContaining({matched: expect.objectContaining({0: 'b/c'})}),
+      );
+    });
+  });
+
   describe('load', () => {
     it('can load data for a matched route', async () => {
       function RouteComponent() {

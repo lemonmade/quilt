@@ -222,6 +222,7 @@ function splitURL(url: URL, base?: string | URL, consumed = '') {
   let consumedPath = base
     ? removePostfixSlash(typeof base === 'string' ? base : base.pathname)
     : '';
+  if (consumedPath === '/') consumedPath = '';
   if (consumed) consumedPath += normalizeAsAbsolutePath(consumed);
 
   const pathname = removePostfixSlash(url.pathname);

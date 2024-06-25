@@ -76,11 +76,18 @@ export function useRoutes<Context = unknown>(
                 routeMatch,
                 parent?.consumed,
                 exact,
+                router.base,
               );
               if (match != null) break;
             }
           } else {
-            match = testMatch(currentURL, route.match, parent?.consumed, exact);
+            match = testMatch(
+              currentURL,
+              route.match,
+              parent?.consumed,
+              exact,
+              router.base,
+            );
           }
 
           if (match == null) continue;
