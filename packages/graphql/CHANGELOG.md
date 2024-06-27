@@ -1,5 +1,14 @@
 # @quilted/graphql
 
+## 3.3.1
+
+### Patch Changes
+
+- [`299dfc4`](https://github.com/lemonmade/quilt/commit/299dfc4fae623e6b2bbf3ecb73f1d59bf44e13c8) Thanks [@lemonmade](https://github.com/lemonmade)! - Add missing `cached` option for GraphQL queries
+
+- Updated dependencies [[`0d11757`](https://github.com/lemonmade/quilt/commit/0d11757b12c70f77ae49571ec851fda4dc01a517)]:
+  - @quilted/async@0.4.16
+
 ## 3.3.0
 
 ### Minor Changes
