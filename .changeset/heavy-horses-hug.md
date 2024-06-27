@@ -7,4 +7,4 @@
 '@quilted/quilt': patch
 ---
 
-Improve routing library
+Simplify routing library
