@@ -2,28 +2,25 @@ import {expect} from 'vitest';
 
 import {matchers, type CustomMatchers} from '@quilted/preact-testing/matchers';
 import {createRender, destroyAll} from '@quilted/preact-testing';
-import type {Prefix} from '@quilted/routing';
 
-import {TestRouter, TestRouting} from '../testing.tsx';
+import {TestRouter, Navigation} from '../testing.tsx';
 
 export {TestRouter, destroyAll};
 
 export const render = createRender<
-  | {router?: TestRouter; path?: never; prefix?: never}
-  | {router?: never; path?: `/${string}`; prefix?: Prefix},
+  | {router?: TestRouter; path?: never; base?: never}
+  | {router?: never; path?: `/${string}`; base?: string | URL},
   {router: TestRouter}
 >({
   context({
-    path,
-    prefix,
-    router = new TestRouter(new URL(path ?? '/', 'https://example.com'), {
-      prefix,
-    }),
+    path = '/',
+    base,
+    router = new TestRouter(new URL(path, 'https://example.com'), {base}),
   }) {
     return {router};
   },
   render(element, {router}) {
-    return <TestRouting router={router}>{element}</TestRouting>;
+    return <Navigation router={router}>{element}</Navigation>;
   },
 });
 

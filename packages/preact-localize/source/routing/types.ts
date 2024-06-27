@@ -2,8 +2,8 @@ export interface RouteLocalization {
   readonly locales: string[];
   readonly defaultLocale: string;
   matchLocale(locale: string): string | undefined;
-  redirectUrl(from: URL, options: {to: string}): URL;
-  localeFromUrl(url: URL): string | undefined;
+  redirectURL(from: URL, options: {to: string}): URL;
+  localeFromURL(url: URL): string | undefined;
 }
 
 export interface ResolvedRouteLocalization extends RouteLocalization {

@@ -1,4 +1,4 @@
-import {Routing} from '@quilted/quilt/navigate';
+import {Navigation} from '@quilted/quilt/navigate';
 import {Localization} from '@quilted/quilt/localize';
 import {PerformanceContext} from '@quilted/quilt/performance';
 
@@ -12,9 +12,9 @@ export function App() {
     <PerformanceContext performance={performance}>
       <Localization locale="en">
         <HTML>
-          <Routing>
+          <Navigation>
             <Routes />
-          </Routing>
+          </Navigation>
         </HTML>
       </Localization>
     </PerformanceContext>

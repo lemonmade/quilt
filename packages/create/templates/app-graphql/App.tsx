@@ -1,13 +1,14 @@
 import type {RenderableProps} from 'preact';
 
+import {NotFound} from '@quilted/quilt/server';
 import {GraphQLContext} from '@quilted/quilt/graphql';
-import {Routing, useRoutes} from '@quilted/quilt/navigate';
+import {Navigation, route} from '@quilted/quilt/navigate';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
 import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
 
-import {Home} from './features/home.ts';
+import {Home, homeQuery} from './features/home.ts';
 
 import {
   AppContextReact,
@@ -18,29 +19,36 @@ export interface AppProps {
   context: AppContextType;
 }
 
+// Define the routes for your application. If you have a lot of routes, you
+// might want to split this into a separate file.
+const routes = [
+  route('*', {
+    render: (children) => <Frame>{children}</Frame>,
+    children: [
+      route('/', {
+        async load(_navigation, {graphql}: AppContextType) {
+          await Promise.all([Home.load(), graphql.cache.query(homeQuery)]);
+        },
+        render: <Home />,
+      }),
+      route('*', {render: <NotFound />}),
+    ],
+  }),
+];
+
 // The root component for your application. You will typically render any
 // app-wide context in this component.
 export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
       <HTML>
-        <Frame>
-          <Routes />
-        </Frame>
+        <Navigation routes={routes} context={context} />
       </HTML>
     </AppContext>
   );
 }
 
 export default App;
-
-// This component renders the routes for your application. If you have a lot
-// of routes, you may want to split this component into its own file.
-function Routes() {
-  return useRoutes([
-    {match: '/', render: <Home />, renderPreload: <Home.Preload />},
-  ]);
-}
 
 // This component renders any app-wide context.
 function AppContext({children, context}: RenderableProps<AppProps>) {
@@ -52,9 +60,7 @@ function AppContext({children, context}: RenderableProps<AppProps>) {
         fetch={context.graphql.fetch}
         cache={context.graphql.cache}
       >
-        <Localization locale={locale}>
-          <Routing>{children}</Routing>
-        </Localization>
+        <Localization locale={locale}>{children}</Localization>
       </GraphQLContext>
     </AppContextReact.Provider>
   );

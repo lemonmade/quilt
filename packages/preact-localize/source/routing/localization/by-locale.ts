@@ -15,9 +15,9 @@ export function createRouteLocalization({
 
   return {
     locales,
-    redirectUrl,
+    redirectURL,
     matchLocale,
-    localeFromUrl,
+    localeFromURL,
     defaultLocale,
   };
 
@@ -29,7 +29,7 @@ export function createRouteLocalization({
     );
   }
 
-  function localeFromUrl(url: URL) {
+  function localeFromURL(url: URL) {
     const hostname = url.hostname.toLowerCase();
     const pathname = normalizePath(url.pathname.toLowerCase());
 
@@ -42,8 +42,8 @@ export function createRouteLocalization({
     }
   }
 
-  function redirectUrl(from: URL, {to: toLocale}: {to: string}) {
-    const fromLocale = localeFromUrl(from);
+  function redirectURL(from: URL, {to: toLocale}: {to: string}) {
+    const fromLocale = localeFromURL(from);
     const toUrl = new URL(from);
 
     if (fromLocale === toLocale) return toUrl;

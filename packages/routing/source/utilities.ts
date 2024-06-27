@@ -1,79 +1,96 @@
-import type {
-  Match,
-  Prefix,
-  EnhancedURL,
-  NavigateTo,
-  Search,
-  RelativeTo,
-  MatchDetails,
-} from './types.ts';
+import type {RouteMatch, NavigateTo, NavigateToSearch} from '@quilted/routing';
 
-export function enhanceUrl(url: URL, prefix?: Prefix): EnhancedURL {
-  const extractedPrefix = extractPrefix(url, prefix);
-  Object.defineProperty(url, 'prefix', {
-    value: extractedPrefix,
-    writable: false,
-  });
-
-  const normalizedPath = normalizeAsAbsolutePath(
-    url.pathname.replace(extractedPrefix ?? '', ''),
-  );
-
-  Object.defineProperty(url, 'normalizedPath', {
-    value: normalizedPath,
-    writable: false,
-  });
-
-  return url as EnhancedURL;
-}
-
-export function resolveUrl<URLType extends EnhancedURL = EnhancedURL>(
-  to: NavigateTo<URLType>,
-  from: URLType,
-  relativeTo?: RelativeTo,
+export function resolveURL(
+  to: NavigateTo,
+  from: string | URL = '/',
+  base?: string | URL,
 ): URL {
-  const prefix = relativeTo === 'root' ? '/' : from.prefix;
+  const prefix = base ? (typeof base === 'string' ? base : base.pathname) : '/';
+  const fromURL = typeof from === 'string' ? new URL(from) : from;
 
   if (to instanceof URL) {
     return new URL(to.href);
   } else if (typeof to === 'object') {
     const {path, search, hash} = to;
 
-    const finalPathname = path ?? from.pathname;
+    const finalPathname = path ?? fromURL.pathname;
     const finalSearch = searchToString(search);
     const finalHash = prefixIfNeeded('#', hash);
 
     return new URL(
       prefixPath(`${finalPathname}${finalSearch}${finalHash}`, prefix),
-      urlToPostfixedOriginAndPath(from),
+      urlToPostfixedOriginAndPath(fromURL),
     );
   } else if (typeof to === 'function') {
-    return resolveUrl(to(from), from, relativeTo);
+    return resolveURL(to(fromURL), fromURL, prefix);
   }
 
-  return new URL(prefixPath(to, prefix), urlToPostfixedOriginAndPath(from));
+  return new URL(prefixPath(to, prefix), urlToPostfixedOriginAndPath(fromURL));
 }
 
-export function getMatchDetails(
-  url: URL,
-  match?: Match,
-  prefix?: Prefix,
-  consumed?: string,
-  exact = true,
-  forceFallback = false,
-): MatchDetails | undefined {
-  const pathDetails = splitUrl(url, prefix, consumed);
+const SINGLE_SEGMENT_REGEX = /[^/]+/;
 
-  if (match == null) {
-    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
-    return {matched};
-  } else if (forceFallback) {
-    return undefined;
-  } else if (typeof match === 'function') {
-    if (!match(url)) return undefined;
-    const matched = removePostfixSlash(pathDetails.remainderAbsolute);
+export function testMatch(
+  url: URL,
+  match?: undefined | '*' | true,
+  consumed?: string,
+  exact?: boolean,
+  base?: string | URL,
+): {matched: string} | undefined;
+export function testMatch(
+  url: URL,
+  match: string,
+  consumed?: string,
+  exact?: boolean,
+  base?: string | URL,
+): {consumed: string; matched: string} | undefined;
+export function testMatch(
+  url: URL,
+  match: RegExp,
+  consumed?: string,
+  exact?: boolean,
+  base?: string | URL,
+): {consumed: string; matched: RegExpMatchArray} | undefined;
+export function testMatch(
+  url: URL,
+  match?: RouteMatch,
+  consumed?: string,
+  exact?: boolean,
+  base?: string | URL,
+):
+  | {consumed?: never; matched: string}
+  | {consumed: string; matched: RegExpMatchArray}
+  | {consumed: string; matched: string}
+  | undefined;
+export function testMatch(
+  url: URL,
+  match?: RouteMatch,
+  consumed?: string,
+  exact: boolean = true,
+  base?: string | URL,
+):
+  | {consumed?: never; matched: string}
+  | {consumed: string; matched: RegExpMatchArray}
+  | {consumed: string; matched: string}
+  | undefined {
+  const pathDetails = splitURL(url, base, consumed);
+
+  if (match == null || match === true || match === '*') {
+    const matched = pathDetails.remainderRelative;
     return {matched};
   } else if (typeof match === 'string') {
+    if (match[0] === ':') {
+      const matchResult = testMatch(
+        url,
+        SINGLE_SEGMENT_REGEX,
+        consumed,
+        exact,
+        base,
+      );
+      if (matchResult == null) return matchResult;
+      return {matched: matchResult.matched[0], consumed: matchResult.consumed};
+    }
+
     const normalizedMatch = removePostfixSlash(match);
 
     if (normalizedMatch[0] === '/') {
@@ -113,7 +130,7 @@ export function getMatchDetails(
       startsWithPath(pathDetails.remainderRelative, matchAsRelative[0]!, exact)
     ) {
       return {
-        matched: removePostfixSlash(matchAsRelative[0]!),
+        matched: matchAsRelative,
         consumed: `${pathDetails.previouslyConsumed}${normalizeAsAbsolutePath(
           matchAsRelative[0]!,
         )}`,
@@ -130,11 +147,9 @@ export function getMatchDetails(
       return undefined;
     }
 
-    const normalizedMatch = removePostfixSlash(matchAsAbsolute[0]!);
-
     return {
-      matched: normalizedMatch,
-      consumed: normalizedMatch,
+      matched: matchAsAbsolute,
+      consumed: `${pathDetails.previouslyConsumed}${removePostfixSlash(matchAsAbsolute[0]!)}`,
     };
   }
 }
@@ -151,7 +166,7 @@ function prefixPath(pathname: string, prefix?: string) {
     : pathname;
 }
 
-function searchToString(search?: Search) {
+function searchToString(search?: NavigateToSearch) {
   if (search == null) {
     return '';
   } else if (typeof search === 'string') {
@@ -193,26 +208,6 @@ function normalizeAsAbsolutePath(path: string) {
     : `/${removePostfixSlash(path)}`;
 }
 
-export function containedByPrefix(url: URL, prefix?: Prefix) {
-  return extractPrefix(url, prefix) != null;
-}
-
-export function extractPrefix(url: URL, prefix?: Prefix) {
-  if (!prefix) return undefined;
-
-  if (typeof prefix === 'string') {
-    return url.pathname.indexOf(prefix) === 0
-      ? removePostfixSlash(prefix)
-      : undefined;
-  }
-
-  const regex = new RegExp(prefix.source);
-  const match = regex.exec(url.pathname);
-  return match != null && match.index === 0
-    ? removePostfixSlash(match[0]!)
-    : undefined;
-}
-
 function startsWithPath(fullPath: string, pathSegment: string, exact: boolean) {
   if (exact) return fullPath === pathSegment;
 
@@ -223,24 +218,21 @@ function startsWithPath(fullPath: string, pathSegment: string, exact: boolean) {
   );
 }
 
-function splitUrl(url: URL, prefix?: Prefix, consumed = '') {
-  const resolvedPrefix = extractPrefix(url, prefix) ?? '';
-  const fullConsumedPath = consumed
-    ? `${resolvedPrefix}${consumed}`
-    : resolvedPrefix;
-  const remainderRelative = removePrefixSlash(
-    removePostfixSlash(url.pathname.replace(fullConsumedPath, '')),
-  );
+function splitURL(url: URL, base?: string | URL, consumed = '') {
+  let consumedPath = base
+    ? removePostfixSlash(typeof base === 'string' ? base : base.pathname)
+    : '';
+  if (consumedPath === '/') consumedPath = '';
+  if (consumed) consumedPath += normalizeAsAbsolutePath(consumed);
+
+  const pathname = removePostfixSlash(url.pathname);
+  const remainderAbsolute =
+    consumedPath === pathname ? '/' : pathname.replace(consumedPath, '');
 
   return {
     isRoot: consumed.length === 0,
-    prefix: resolvedPrefix,
     previouslyConsumed: consumed,
-    remainderRelative,
-    remainderAbsolute: `/${remainderRelative}`,
+    remainderRelative: remainderAbsolute.slice(1),
+    remainderAbsolute: remainderAbsolute,
   };
-}
-
-function removePrefixSlash(path: string) {
-  return path[0] === '/' ? path.slice(1) : path;
 }

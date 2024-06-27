@@ -1,7 +1,7 @@
 import {HttpMethod} from '@quilted/http';
-import {getMatchDetails} from '@quilted/routing';
+import {testMatch} from '@quilted/routing';
 
-import type {Match, Prefix} from '@quilted/routing';
+import type {RouteMatch} from '@quilted/routing';
 
 import {EnhancedRequest} from './request.ts';
 import type {EnhancedResponse} from './response.ts';
@@ -23,14 +23,14 @@ export interface RequestRegistrationOptions {
 }
 
 export interface RequestRouterOptions {
-  readonly prefix?: Prefix;
+  readonly base?: string;
 }
 
 interface RequestHandlerRegistration {
   readonly method: HttpMethod | typeof REQUEST_METHOD_ANY;
   readonly handler: RequestRegistration<any>;
   readonly exact: boolean;
-  readonly match?: Match;
+  readonly match?: RouteMatch;
 }
 
 const REQUEST_METHOD_ANY = 'ANY';
@@ -39,11 +39,11 @@ const HTTP_HANDLER_FETCH_INTERNAL = Symbol.for(
 );
 
 export class RequestRouter<Context = RequestContext> {
-  private prefix?: Prefix;
+  private base: string;
   private registrations: RequestHandlerRegistration[] = [];
 
-  constructor({prefix}: RequestRouterOptions = {}) {
-    this.prefix = prefix;
+  constructor({base = '/'}: RequestRouterOptions = {}) {
+    this.base = base;
   }
 
   any(
@@ -51,12 +51,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   any(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   any(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -75,12 +75,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   head(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   head(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -99,12 +99,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   get(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   get(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -123,12 +123,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   post(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   post(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -147,12 +147,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   options(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   options(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -171,12 +171,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   put(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   put(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -195,12 +195,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   patch(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   patch(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -219,12 +219,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   delete(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   delete(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -243,12 +243,12 @@ export class RequestRouter<Context = RequestContext> {
     options?: RequestRegistrationOptions,
   ): this;
   connect(
-    match: Match,
+    match: RouteMatch,
     handler: RequestRegistration<Context>,
     options?: RequestRegistrationOptions,
   ): this;
   connect(
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -274,27 +274,25 @@ export class RequestRouter<Context = RequestContext> {
     context: RequestContext,
     previouslyConsumed?: string,
   ): Promise<Response | EnhancedResponse | undefined | null> {
-    const {prefix, registrations} = this;
+    const {base, registrations} = this;
 
     const url = new URL(request.url);
     const matchedPrefix =
-      prefix == null
+      base === '/'
         ? undefined
-        : getMatchDetails(url, prefix, undefined, previouslyConsumed, false)
-            ?.consumed;
+        : testMatch(url, base, previouslyConsumed, false)?.consumed;
 
     // Not contained in the prefix
-    if (prefix != null && matchedPrefix == null) return undefined;
+    if (base !== '/' && matchedPrefix == null) return undefined;
 
     for (const {method, handler, match, exact} of registrations) {
       if (method !== REQUEST_METHOD_ANY && method !== request.method) {
         continue;
       }
 
-      const matchDetails = getMatchDetails(
+      const matchDetails = testMatch(
         url,
         match,
-        undefined,
         matchedPrefix ?? previouslyConsumed,
         exact,
       );
@@ -318,7 +316,7 @@ export class RequestRouter<Context = RequestContext> {
 
   private register(
     method: HttpMethod | typeof REQUEST_METHOD_ANY,
-    matchOrHandler: Match | RequestRegistration<Context>,
+    matchOrHandler: RouteMatch | RequestRegistration<Context>,
     handlerOrOptions?:
       | RequestRegistration<Context>
       | RequestRegistrationOptions,
@@ -344,7 +342,7 @@ export class RequestRouter<Context = RequestContext> {
       // respected for now)...
       registration = {
         method,
-        match: matchOrHandler as Match,
+        match: matchOrHandler as RouteMatch,
         handler: handlerOrOptions,
         exact: false,
       };
@@ -352,7 +350,7 @@ export class RequestRouter<Context = RequestContext> {
       // There is a `match`, `RequestHandler`, and maybe `options`...
       registration = {
         method,
-        match: matchOrHandler as Match,
+        match: matchOrHandler as RouteMatch,
         handler: handlerOrOptions as RequestRegistration<Context>,
         exact: options?.exact ?? true,
       };

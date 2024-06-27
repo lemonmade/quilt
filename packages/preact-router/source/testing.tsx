@@ -1,79 +1,24 @@
-import {useMemo} from 'preact/hooks';
-import type {ComponentChildren} from 'preact';
-import {resolveUrl, type Prefix, type NavigateTo} from '@quilted/routing';
+import {Router} from './Router.ts';
 
-import type {Router, Options} from './router.ts';
-import {CurrentUrlContext, RouterContext} from './context.ts';
-import {enhanceUrl, createKey} from './utilities.ts';
-import {FocusContext} from './components.ts';
-import type {EnhancedURL} from './types.ts';
+export {Navigation} from './components/Navigation.tsx';
 
-export class TestRouter implements Router {
-  readonly prefix?: Prefix;
-  readonly currentUrl: EnhancedURL;
-  readonly #isExternal: (url: URL, currentUrl: URL) => boolean;
-
-  constructor(
-    url: URL | string = '/',
-    {prefix, state = {}, isExternal: explicitIsExternal}: Options = {},
-  ) {
-    this.currentUrl = enhanceUrl(
-      typeof url === 'string'
-        ? new URL(
-            url,
-            typeof window === 'object' ? window.location.href : undefined,
-          )
-        : url,
-      state,
-      createKey(),
-      prefix,
-    );
-    this.prefix = prefix;
-    this.#isExternal =
-      explicitIsExternal ?? ((url) => url.origin !== this.currentUrl.origin);
-  }
-
+export class TestRouter extends Router {
   go() {}
 
   back() {}
 
   forward() {}
 
-  block() {
-    return () => {};
-  }
+  navigate = () => {
+    return this.currentRequest;
+  };
 
-  listen() {
-    return () => {};
-  }
+  // block() {
+  //   return () => {};
+  // }
 
-  navigate() {}
-
-  resolve(to: NavigateTo) {
-    const url = resolveUrl(to, this.currentUrl);
-    return {url, external: this.#isExternal(url, this.currentUrl)};
-  }
-}
-
-export interface TestRoutingProps {
-  router?: Router;
-  children: ComponentChildren;
-}
-
-export function TestRouting({
-  children,
-  router: initialRouter,
-}: TestRoutingProps) {
-  const router = useMemo(
-    () => initialRouter ?? new TestRouter(),
-    [initialRouter],
-  );
-
-  return (
-    <RouterContext.Provider value={router}>
-      <CurrentUrlContext.Provider value={router.currentUrl}>
-        <FocusContext>{children}</FocusContext>
-      </CurrentUrlContext.Provider>
-    </RouterContext.Provider>
-  );
+  // resolve(to: NavigateTo) {
+  //   const url = resolveUrl(to, this.currentUrl);
+  //   return {url, external: this.#isExternal(url, this.currentUrl)};
+  // }
 }

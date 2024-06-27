@@ -7,10 +7,13 @@
   },
   "include": ["source"],
   "references": [
+    {"path": "../async"},
     {"path": "../http"},
+    {"path": "../preact-async"},
     {"path": "../preact-context"},
     {"path": "../preact-performance"},
     {"path": "../react-testing"},
-    {"path": "../routing"}
+    {"path": "../routing"},
+    {"path": "../signals"}
   ]
 }

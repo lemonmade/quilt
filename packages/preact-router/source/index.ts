@@ -1,29 +1,14 @@
-export type {NavigateTo, EnhancedURL} from '@quilted/routing';
+export * from './types.ts';
+export {Router, type RouterOptions, type NavigateOptions} from './Router.ts';
+export {route, fallbackRoute} from './route.ts';
 
-export {
-  Link,
-  Routing,
-  Redirect,
-  RoutePreloading,
-  NavigationBlock,
-} from './components.ts';
+export {Link} from './components/Link.tsx';
+export {Navigation} from './components/Navigation.tsx';
+export {Routes} from './components/Routes.tsx';
 
-export {useRoutes} from './hooks/routes.tsx';
-export {useCurrentUrl} from './hooks/url.ts';
-export {useInitialURL} from './hooks/initial-url.ts';
-export {useRouter} from './hooks/router.ts';
-export {useNavigationBlock} from './hooks/navigation-block.ts';
-export {useRouteChangeFocusRef} from './hooks/focus.ts';
-export {useScrollRestoration} from './hooks/scroll.ts';
-export {useRedirect} from './hooks/redirect.ts';
-export {
-  useRouteMatch,
-  useRouteMatchDetails,
-  type RouteMatchOptions,
-} from './hooks/match.ts';
+export {useCurrentURL} from './hooks/current-url.ts';
 export {useNavigate} from './hooks/navigate.ts';
-
-export {containedByPrefix} from './utilities.ts';
-export {InitialURLContext} from './context.ts';
-export type {Router} from './router.ts';
-export type {Routes, RouteDefinition, RouteRenderDetails} from './types.ts';
+export {useRouteData} from './hooks/route-data.ts';
+export {useRouteNavigationEntry} from './hooks/route-navigation-entry.ts';
+export {useRouter} from './hooks/router.ts';
+export {useRoutes} from './hooks/routes.tsx';

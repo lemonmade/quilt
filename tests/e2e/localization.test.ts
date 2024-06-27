@@ -10,19 +10,16 @@ describe('localization', () => {
         'foundation/Routes.tsx': multiline`
           import {useRoutes} from '@quilted/quilt/navigate';
           import {useLocale, Localization} from '@quilted/quilt/localize';
-          import {usePerformanceNavigation} from '@quilted/quilt/performance';
           
           export function Routes() {
             return useRoutes([{
-              match: /\\w+(-\\w+)?/i, render: ({matched}) => (
-                <Localization locale={matched}><Localized /></Localization>
+              match: /\\w+(-\\w+)?/i, render: (_, {matched}) => (
+                <Localization locale={matched[0]}><Localized /></Localization>
               ),
             }]);
           }
           
           function Localized() {
-            usePerformanceNavigation();
-
             const locale = useLocale();
 
             return (
@@ -50,19 +47,16 @@ describe('localization', () => {
         'foundation/Routes.tsx': multiline`
           import {useRoutes} from '@quilted/quilt/navigate';
           import {useLocale, Localization} from '@quilted/quilt/localize';
-          import {usePerformanceNavigation} from '@quilted/quilt/performance';
           
           export function Routes() {
             return useRoutes([{
-              match: /\\w+(-\\w+)?/i, render: ({matched}) => (
-                <Localization locale={matched}><Localized /></Localization>
+              match: /\\w+(-\\w+)?/i, render: (_, {matched}) => (
+                <Localization locale={matched[0]}><Localized /></Localization>
               ),
             }]);
           }
           
           function Localized() {
-            usePerformanceNavigation();
-
             const locale = useLocale();
 
             return (
@@ -96,7 +90,6 @@ describe('localization', () => {
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
           import {useLocale, useLocaleFromEnvironment, Localization} from '@quilted/quilt/localize';
-          import {usePerformanceNavigation} from '@quilted/quilt/performance';
           
           export function Routes() {
             const locale = useLocaleFromEnvironment();
@@ -105,8 +98,6 @@ describe('localization', () => {
           }
           
           function Localized() {
-            usePerformanceNavigation();
-
             const locale = useLocale();
 
             return (
@@ -134,7 +125,7 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useLocale, createRoutePathLocalization, LocalizedRouting} from '@quilted/quilt/localize';
+          import {useLocale, createRoutePathLocalization, LocalizedNavigation} from '@quilted/quilt/localize';
 
           const localization = createRoutePathLocalization({
             default: 'en',
@@ -143,9 +134,9 @@ describe('localization', () => {
           
           export default function App() {
             return (
-              <LocalizedRouting localization={localization}>
+              <LocalizedNavigation localization={localization}>
                 <UI />
-              </LocalizedRouting>
+              </LocalizedNavigation>
             );
           }
 
@@ -177,7 +168,7 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useLocale, createRoutePathLocalization, LocalizedRouting} from '@quilted/quilt/localize';
+          import {useLocale, createRoutePathLocalization, LocalizedNavigation} from '@quilted/quilt/localize';
 
           import {Routes} from './foundation/Routes.tsx';
 
@@ -188,9 +179,9 @@ describe('localization', () => {
           
           export default function App() {
             return (
-              <LocalizedRouting localization={localization}>
+              <LocalizedNavigation localization={localization}>
                 <UI />
-              </LocalizedRouting>
+              </LocalizedNavigation>
             );
           }
 
