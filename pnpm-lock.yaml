@@ -137,7 +137,7 @@ importers:
   integrations/htmx:
     dependencies:
       '@quilted/request-router':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.3.0
         version: link:../../packages/request-router
     devDependencies:
       htmx.org:
@@ -507,11 +507,11 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-context
       '@quilted/preact-router':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.2.0
         version: link:../preact-router
     devDependencies:
       '@quilted/request-router':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.3.0
         version: link:../request-router
       preact:
         specifier: ^10.21.0
@@ -551,7 +551,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-performance
       '@quilted/routing':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^0.4.0
         version: link:../routing
       '@quilted/signals':
         specifier: workspace:^0.2.0
@@ -629,13 +629,13 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-graphql
       '@quilted/preact-localize':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^1.0.0
         version: link:../preact-localize
       '@quilted/preact-performance':
         specifier: workspace:^0.1.0
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.2.0
         version: link:../preact-router
       '@quilted/preact-signals':
         specifier: workspace:^0.1.0
@@ -653,7 +653,7 @@ importers:
         specifier: workspace:^18.2.11
         version: link:../react-dom
       '@quilted/request-router':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.3.0
         version: link:../request-router
       '@quilted/signals':
         specifier: workspace:^0.2.0
@@ -739,7 +739,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/routing':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^0.4.0
         version: link:../routing
       send:
         specifier: ^0.17.0
@@ -898,7 +898,7 @@ importers:
         specifier: workspace:^0.2.2
         version: link:../babel
       '@quilted/request-router':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.3.0
         version: link:../request-router
       '@quilted/rollup':
         specifier: workspace:^0.2.28

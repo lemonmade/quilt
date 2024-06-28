@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.31
+
+### Patch Changes
+
+- [`36ad8b1`](https://github.com/lemonmade/quilt/commit/36ad8b15df3dbad465b4f324dcaa26ea9892f234) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect style import in basic app template
+
+- [#757](https://github.com/lemonmade/quilt/pull/757) [`00cac4b`](https://github.com/lemonmade/quilt/commit/00cac4b4d01831ba654e94152d7a67a0ef75043b) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify routing library
+
 ## 0.2.30
 
 ### Patch Changes
