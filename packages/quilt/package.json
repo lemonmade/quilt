@@ -252,7 +252,7 @@
     "@quilted/preact-browser": "workspace:^0.1.5",
     "@quilted/preact-context": "workspace:^0.1.2",
     "@quilted/preact-graphql": "workspace:^0.1.0",
-    "@quilted/preact-localize": "workspace:^1.0.0",
+    "@quilted/preact-localize": "workspace:^0.3.0",
     "@quilted/preact-performance": "workspace:^0.1.0",
     "@quilted/preact-router": "workspace:^0.2.0",
     "@quilted/preact-signals": "workspace:^0.1.0",

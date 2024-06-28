@@ -629,7 +629,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-graphql
       '@quilted/preact-localize':
-        specifier: workspace:^1.0.0
+        specifier: workspace:^0.3.0
         version: link:../preact-localize
       '@quilted/preact-performance':
         specifier: workspace:^0.1.0
