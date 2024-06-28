@@ -23,12 +23,12 @@ describe('suspense', () => {
         export function Routes() {
           return (
             <Suspense>
-              <Start />
+              <Home />
             </Suspense>
           );
         }
         
-        function Start() {
+        function Home() {
           const value = useSuspenseValue();
           return <p>{value}</p>;
         }

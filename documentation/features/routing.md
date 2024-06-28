@@ -21,7 +21,7 @@ Quilt **does not** implement file-based routing; there is no special routing-rel
 import {Routing} from '@quilted/quilt/navigate';
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'products', render: <Products />},
 ];
 
@@ -29,7 +29,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <div>Welcome!</div>;
 }
 
@@ -61,7 +61,7 @@ To declare routes for your application, you create a list of route “descriptor
 import {Routing} from '@quilted/quilt';
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'products', render: <Products />},
 ];
 
@@ -69,7 +69,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <div>Welcome!</div>;
 }
 
@@ -95,7 +95,7 @@ function App() {
 
 function Routes() {
   return useRoutes([
-    {match: '/', render: <Start />},
+    {match: '/', render: <Home />},
     {match: 'products', render: <Products />},
   ]);
 }
@@ -118,7 +118,7 @@ function Frame({children}: PropsWithChildren) {
   );
 }
 
-function Start() {
+function Home() {
   return <div>Welcome!</div>;
 }
 
@@ -181,7 +181,7 @@ The `match` property describes whether a given route matches the current URL. Qu
   import {Routing} from '@quilted/quilt';
 
   const routes = [
-    {match: '/', render: <Start />},
+    {match: '/', render: <Home />},
     {match: 'products', render: <Products />},
     // You could also have provided this match with the leading slash:
     // {match: '/products', render: <Products />},
@@ -191,7 +191,7 @@ The `match` property describes whether a given route matches the current URL. Qu
     return <Routing routes={routes} />;
   }
 
-  function Start() {
+  function Home() {
     return <div>Welcome!</div>;
   }
 
@@ -206,7 +206,7 @@ The `match` property describes whether a given route matches the current URL. Qu
   import {Routing} from '@quilted/quilt';
 
   const routes = [
-    {match: '/', render: <Start />},
+    {match: '/', render: <Home />},
     // This route matches paths like '/product/1', '/product/2', ...
     {match: /products\/\d+/, render: <Product />},
     // You could also have provided this match with the leading slash:
@@ -217,7 +217,7 @@ The `match` property describes whether a given route matches the current URL. Qu
     return <Routing routes={routes} />;
   }
 
-  function Start() {
+  function Home() {
     return <div>Welcome!</div>;
   }
 
@@ -234,7 +234,7 @@ The `match` property describes whether a given route matches the current URL. Qu
   const ANIMALS = new Set(['dog', 'cat', 'giraffe', 'panda', 'anteater']);
 
   const routes = [
-    {match: '/', render: <Start />},
+    {match: '/', render: <Home />},
     // The URLs have Quilt’s pathname normalization applied, so they always
     // include a leading slash, and never include a trailing slash.
     {
@@ -247,7 +247,7 @@ The `match` property describes whether a given route matches the current URL. Qu
     return <Routing routes={routes} />;
   }
 
-  function Start() {
+  function Home() {
     return <div>Welcome!</div>;
   }
 
@@ -1174,7 +1174,7 @@ const routes = [
   // Now, if `/` is rendered, only the code for `Start` is loaded; if
   // `/products` is rendered, only the code for `Products` is loaded; and
   // for any other URL, no extra code is loaded!
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'products', render: <Products />},
 ];
 
@@ -1208,8 +1208,8 @@ function Routes() {
   return useRoutes([
     {
       match: '/',
-      render: <Start />,
-      renderPreload: <Start.Preload />,
+      render: <Home />,
+      renderPreload: <Home.Preload />,
     },
     {
       match: 'products',
@@ -1306,7 +1306,7 @@ As we discuss in the [static rendering guide](./static-rendering.md), Quilt can 
 import {Routing, Link} from '@quilted/quilt/navigate';
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {
     match: 'shows',
     children: [
@@ -1323,7 +1323,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <Link to="/shows">Go find some shows to watch!</Link>;
 }
 
@@ -1338,7 +1338,7 @@ function ShowDetails({handle}: {handle: string}) {
 
 In this application, Quilt will automatically detect and render the following routes without any extra configuration on your part:
 
-- `/`, the explicitly declared route that renders `Start`.
+- `/`, the explicitly declared route that renders `Home`.
 - `/shows`, the explicitly declared route that renders `ShowList`.
 - `/*`, a fallback route that sets the status code to 404. This route is created implicitly by Quilt. You can disable it entirely by passing `{notFound: false}` as the third option of the `useRoutes` hook, or you can provide your own fallback as documented in the guide to [handling URLs that don’t match](#handling-urls-that-dont-match).
 
@@ -1350,7 +1350,7 @@ You can teach Quilt what matches to render during static rendering using the `re
 import {Routing, Link} from '@quilted/quilt/navigate';
 
 const routes = [
-  {match: '/', render: () => <Start />},
+  {match: '/', render: () => <Home />},
   {
     match: 'shows',
     children: [
@@ -1368,7 +1368,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <Link to="/shows">Go find some shows to watch!</Link>;
 }
 
@@ -1426,7 +1426,7 @@ import {Routing, Link} from '@quilted/quilt/navigate';
 
 const routes = [
   // This route will render when the full path is `/admin`
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   // This route will render when the full path is `/admin/account`
   {match: 'account', render: <Account />},
 ];
@@ -1435,7 +1435,7 @@ function App() {
   return <Routing prefix="/admin" routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return (
     <div>
       <Link to="/account">Account</Link>
@@ -1564,7 +1564,7 @@ import {
 } from '@quilted/quilt/navigate';
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'payments', render: <Payments />},
 ];
 
@@ -1572,7 +1572,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <Link to="payments">View payments</Link>;
 }
 
@@ -1671,12 +1671,12 @@ function Frame({children}: RenderableProps<{}>) {
 
 function Routes() {
   return useRoutes([
-    {match: '/', render: <Start />},
+    {match: '/', render: <Home />},
     {match: 'account', render: <Account />},
   ]);
 }
 
-function Start() {
+function Home() {
   return <div>Let’s get started!</div>;
 }
 
@@ -1701,7 +1701,7 @@ import {Routing, useNavigationBlock} from '@quilted/quilt/navigate';
 import {TextField} from 'some-ui-library';
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'edit', render: <Edit />},
 ];
 
@@ -1709,7 +1709,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <div>Let’s get started!</div>;
 }
 
@@ -1740,7 +1740,7 @@ import {Routing, useNavigationBlock} from '@quilted/quilt/navigate';
 import {TextField, Dialog} from 'my-ui-library';
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'edit', render: <Edit />},
 ];
 
@@ -1748,7 +1748,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   return <div>Let’s get started!</div>;
 }
 
@@ -1783,7 +1783,7 @@ import {createAsyncComponent} from '@quilted/quilt/async';
 const BigRoute = createAsyncComponent(() => import('./Big.tsx'));
 
 const routes = [
-  {match: '/', render: <Start />},
+  {match: '/', render: <Home />},
   {match: 'big', render: <BigRoute />},
 ];
 
@@ -1791,7 +1791,7 @@ function App() {
   return <Routing routes={routes} />;
 }
 
-function Start() {
+function Home() {
   useNavigationBlock(async ({targetUrl}) => {
     // When we are going to the /big route, we will preload
     if (targetUrl.pathname !== '/big') return;

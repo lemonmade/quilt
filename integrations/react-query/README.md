@@ -42,14 +42,14 @@ That’s all the setup you need! Elsewhere in your application, you can now use 
 import {createGraphQLFetch} from '@quilted/quilt/graphql';
 import {useSuspenseQuery} from '@tanstack/react-query';
 
-import startQuery from './Start.graphql';
+import homeQuery from './Home.graphql';
 
 const query = createGraphQLFetch({uri: 'https://my-graphql-api.com'});
 
-export function Start() {
+export function Home() {
   const result = useSuspenseQuery({
-    queryKey: ['start-query'],
-    queryFn: () => query(startQuery),
+    queryKey: ['home-query'],
+    queryFn: () => query(homeQuery),
   });
 
   return <pre>{JSON.stringify(result, null, 2)}</pre>;

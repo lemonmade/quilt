@@ -1,5 +1,5 @@
-import styles from './Start.module.css';
+import styles from './Home.module.css';
 
-export default function Start() {
-  return <div className={styles.Start}>Hello world!</div>;
+export default function Home() {
+  return <div className={styles.Home}>Hello world!</div>;
 }
