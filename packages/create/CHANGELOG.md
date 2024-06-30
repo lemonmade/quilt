@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.32
+
+### Patch Changes
+
+- [`b57360e`](https://github.com/lemonmade/quilt/commit/b57360e66a049c31a1a4e48e32a99cf11fd64684) Thanks [@lemonmade](https://github.com/lemonmade)! - Update TypeScript to 5.5
+
 ## 0.2.31
 
 ### Patch Changes
