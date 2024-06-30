@@ -11,7 +11,7 @@
     "@quilted/quilt": "workspace:*",
     "react": "workspace:@quilted/react@*",
     "react-dom": "workspace:@quilted/react-dom@*",
-    "typescript": "^5.4.0"
+    "typescript": "^5.5.0"
   },
   "browserslist": [
     "defaults and fully supports es6-module-dynamic-import"

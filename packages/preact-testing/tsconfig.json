@@ -1,10 +1,7 @@
 {
-  "extends": "@quilted/typescript/tsconfig.project.json",
+  "extends": "@quilted/typescript/tsconfig.package.json",
   "compilerOptions": {
-    "rootDir": "source",
-    "outDir": "build/typescript",
     "jsxImportSource": "preact"
   },
-  "include": ["source"],
   "references": []
 }

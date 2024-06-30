@@ -1,8 +1,5 @@
 {
   "extends": "@quilted/typescript/tsconfig.project.json",
-  "compilerOptions": {
-    "outDir": "build/typescript"
-  },
   "include": ["**/*"],
   "exclude": ["build"],
   "references": []

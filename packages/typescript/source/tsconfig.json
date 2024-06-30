@@ -24,6 +24,8 @@
     "sourceMap": false,
     "noEmitOnError": false,
     "isolatedModules": true,
-    "lib": ["dom", "dom.iterable", "esnext"]
-  }
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "outDir": "${configDir}build/typescript"
+  },
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"]
 }

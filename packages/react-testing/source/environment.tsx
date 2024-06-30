@@ -422,7 +422,8 @@ export function createEnvironment<
         },
 
         prop: (key) => props[key],
-        is: (checkType) => isMatchingType(type, checkType),
+
+        is: ((checkType: any) => isMatchingType(node.type, checkType)) as any,
 
         find,
         findAll: (type, props) =>

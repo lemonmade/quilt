@@ -1,11 +1,5 @@
 {
-  "extends": "@quilted/typescript/tsconfig.project.json",
-  "compilerOptions": {
-    "rootDir": "source",
-    "outDir": "build/typescript"
-  },
-  "include": ["source"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
+  "extends": "@quilted/typescript/tsconfig.package.json",
   "references": [
     {"path": "../quilt"},
     {"path": "../cli-kit"},

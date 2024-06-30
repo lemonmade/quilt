@@ -562,7 +562,7 @@ export function createEnvironment(): Environment {
           return (props as any)[key.startsWith('data-') ? key : `data-${key}`];
         },
 
-        is: (checkType) => isMatchingType(node.type, checkType),
+        is: ((checkType: any) => isMatchingType(node.type, checkType)) as any,
 
         find,
         findAll: (type, props) =>
@@ -885,7 +885,7 @@ function isPromise<T>(promise: unknown): promise is Promise<T> {
   return typeof (promise as any)?.then === 'function';
 }
 
-function isMatchingType(type: unknown, test: unknown): boolean {
+function isMatchingType(type: unknown, test: unknown): type is typeof test {
   if (type === test) {
     return true;
   }

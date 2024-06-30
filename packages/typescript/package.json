@@ -19,6 +19,7 @@
   "exports": {
     ".": "./source/tsconfig.json",
     "./tsconfig.json": "./source/tsconfig.json",
+    "./tsconfig.package.json": "./source/tsconfig.package.json",
     "./tsconfig.project.json": "./source/tsconfig.project.json",
     "./tsconfig.workspace.json": "./source/tsconfig.workspace.json"
   },
