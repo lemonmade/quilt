@@ -5,6 +5,8 @@ import {BrowserAssets} from 'quilt:module/assets';
 import {createDirectClient} from '@quilted/trpc/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
+import type {AppContext} from '~/shared/context.ts';
+
 import {appRouter} from './trpc.ts';
 
 const router = new RequestRouter();
@@ -25,24 +27,24 @@ router.any(
 
 // For all GET requests, render our React application.
 router.get(async (request) => {
-  const [{App}, {renderToResponse}, {QueryClient}] = await Promise.all([
-    import('./App.tsx'),
-    import('@quilted/quilt/server'),
-    import('@tanstack/react-query'),
-  ]);
+  const [{App}, {renderToResponse}, {Router}, {QueryClient}] =
+    await Promise.all([
+      import('./App.tsx'),
+      import('@quilted/quilt/server'),
+      import('@quilted/quilt/navigate'),
+      import('@tanstack/react-query'),
+    ]);
 
-  const response = await renderToResponse(
-    <App
-      context={{
-        trpc: createDirectClient(appRouter),
-        queryClient: new QueryClient(),
-      }}
-    />,
-    {
-      request,
-      assets,
-    },
-  );
+  const context = {
+    router: new Router(request.url),
+    trpc: createDirectClient(appRouter),
+    queryClient: new QueryClient(),
+  } satisfies AppContext;
+
+  const response = await renderToResponse(<App context={context} />, {
+    request,
+    assets,
+  });
 
   return response;
 });

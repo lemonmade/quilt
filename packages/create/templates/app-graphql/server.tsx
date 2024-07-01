@@ -1,6 +1,7 @@
 import '@quilted/quilt/globals';
 
 import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
+import {Router} from '@quilted/quilt/navigate';
 import {BrowserAssets} from 'quilt:module/assets';
 
 import type {AppContext} from '~/shared/context.ts';
@@ -32,6 +33,7 @@ router.get(async (request) => {
     ]);
 
   const context = {
+    router: new Router(request.url),
     graphql: {
       fetch: performGraphQLOperation,
       cache: new GraphQLCache(),

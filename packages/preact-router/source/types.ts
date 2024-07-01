@@ -13,6 +13,7 @@ export interface RouteNavigationEntryBase<
   Input = unknown,
   Context = unknown,
 > {
+  readonly id: string;
   readonly request: NavigationRequest;
   readonly key: unknown;
   readonly input: Input;
@@ -74,7 +75,7 @@ export interface RouteDefinitionString<
         navigation: NoInfer<
           Omit<
             RouteNavigationStringEntry<unknown, unknown, Context>,
-            'key' | 'load'
+            'id' | 'key' | 'load'
           >
         >,
       ) => unknown);
