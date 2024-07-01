@@ -333,9 +333,7 @@ export class RouterNavigationCache {
                   matched: match.matched,
                   consumed: match.consumed,
                   load,
-                  get input() {
-                    return load.latest.input;
-                  },
+                  input: undefined,
                   get data() {
                     return load.data;
                   },
@@ -350,12 +348,16 @@ export class RouterNavigationCache {
                   matched: match.matched,
                   consumed: match.consumed,
                   load,
-                  input: {},
-                  data: {},
+                  input: undefined,
+                  data: undefined,
                 }
           ) as any;
 
           entryCache.set(id, entry!);
+        }
+
+        if (route.load && route.input) {
+          (entry as any).input = route.input(entry as any);
         }
 
         routeStack.push(entry!);

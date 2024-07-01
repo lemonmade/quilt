@@ -47,7 +47,7 @@ function RouteStackRenderer({
   for (const entry of entries) {
     if (entry.load != null && !entry.load.hasFinished) {
       promises ??= [];
-      const promise = entry.load.run(entry.route.input?.(entry as any));
+      const promise = entry.load.run(entry.input);
       promises.push(promise);
     }
   }
@@ -64,23 +64,6 @@ function RouteStackRenderer({
     );
   }
 
-  useEffect(() => {
-    let firstRun = true;
-
-    return effect(() => {
-      const entries = stack.value;
-
-      if (firstRun) {
-        firstRun = false;
-        return;
-      }
-
-      for (const entry of entries) {
-        entry.load?.run(entry.route.input?.(entry as any));
-      }
-    });
-  }, [stack]);
-
   return content;
 }
 
@@ -90,6 +73,21 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
 }: RenderableProps<{
   entry: RouteNavigationEntry<Data, Input>;
 }>) {
+  useEffect(() => {
+    if (entry.load == null) return;
+
+    let firstRun = true;
+
+    return effect(() => {
+      if (firstRun) {
+        firstRun = false;
+        return;
+      }
+
+      entry.load?.run(entry.input);
+    });
+  }, [entry]);
+
   const {route} = entry;
 
   let content: ComponentChild = null;
