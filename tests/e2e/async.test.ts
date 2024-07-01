@@ -841,4 +841,36 @@ describe('async', () => {
       await page.evaluate(() => globalThis.testHarness.waiting != null),
     ).toBe(true);
   });
+
+  it('can server render components using route loaders', async () => {
+    await using workspace = await createWorkspace({
+      fixture: 'basic-app',
+      debug: true,
+    });
+
+    await workspace.fs.write({
+      'App.tsx': multiline`
+        import {Navigation} from '@quilted/quilt/navigate';
+
+        const routes = [
+          {
+            match: '/',
+            load: () => Promise.resolve({source: typeof document === 'object' ? 'client' : 'server'}),
+            render: (_, {data}) => <div>Data source: {data.source}</div>,
+          },
+        ];
+        
+        export default function App() {
+          return <Navigation routes={routes} />;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/');
+    console.log(await page.innerHTML('html'));
+
+    const content = await page.textContent('body');
+    expect(content).toBe(`Data source: server`);
+  });
 });

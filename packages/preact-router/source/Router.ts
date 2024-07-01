@@ -1,11 +1,19 @@
 import {Signal, signal} from '@quilted/signals';
-import {resolveURL, type NavigateTo} from '@quilted/routing';
+import {testMatch, resolveURL, type NavigateTo} from '@quilted/routing';
+import {
+  AsyncAction,
+  AsyncActionCache,
+  type AsyncActionCacheEntrySerialization,
+} from '@quilted/async';
 
-import type {NavigationRequest} from './types.ts';
-
-export const SERVER_RENDER_EFFECT_ID = Symbol('router');
+import type {
+  NavigationRequest,
+  RouteDefinition,
+  RouteNavigationEntry,
+} from './types.ts';
 
 export interface RouterOptions {
+  cache?: RouterNavigationCache | boolean;
   base?: string | URL;
   isExternal?(url: URL, currentUrl: URL): boolean;
 }
@@ -20,6 +28,7 @@ const STATE_ID_FIELD_KEY = '_id';
 
 export class Router {
   readonly base: string;
+  readonly cache?: RouterNavigationCache;
 
   get currentRequest() {
     return this.#currentRequest.value;
@@ -35,9 +44,15 @@ export class Router {
 
   constructor(
     initial?: string | URL | Partial<NavigationRequest>,
-    {base, isExternal}: RouterOptions = {},
+    {cache = true, base, isExternal}: RouterOptions = {},
   ) {
     this.base = base ? (typeof base === 'string' ? base : base.pathname) : '/';
+    this.cache =
+      typeof cache === 'boolean'
+        ? cache
+          ? new RouterNavigationCache(this)
+          : undefined
+        : cache;
     this.#isExternal = isExternal;
 
     const currentRequest = new BrowserNavigationRequest(initial);
@@ -190,6 +205,201 @@ export class Router {
   };
 }
 
+export class RouterNavigationCache {
+  #base: Router['base'];
+  #entryCache = new Map<string, RouteNavigationEntry<any, any, any>>();
+  #loadCache = new AsyncActionCache();
+  #matchCache = new Map<
+    string,
+    readonly RouteNavigationEntry<any, any, any>[]
+  >();
+
+  constructor({base}: Pick<Router, 'base'>) {
+    this.#base = base;
+  }
+
+  match<Context = any>(
+    request: NavigationRequest,
+    routes: readonly NoInfer<RouteDefinition<any, any, Context>>[],
+    {
+      parent,
+      context = parent?.context as any,
+    }: {
+      context?: Context;
+      parent?: NoInfer<RouteNavigationEntry<any, any, any>>;
+    } = {},
+  ) {
+    // TODO: handle multiple sibling `useRoutes()`
+    let matchID = request.id;
+    if (parent) matchID += `@${stringifyKey(parent.key)}`;
+
+    let routeStack = this.#matchCache.get(matchID) as
+      | RouteNavigationEntry<any, any, any>[]
+      | undefined;
+    if (routeStack) {
+      return routeStack;
+    }
+
+    routeStack = [];
+    this.#matchCache.set(matchID, routeStack);
+
+    const base = this.#base;
+    const currentURL = request.url;
+    const entryCache = this.#entryCache;
+    const loadCache = this.#loadCache;
+
+    const processRoutes = (
+      routes: readonly RouteDefinition<any, any, Context>[],
+      parent?: RouteNavigationEntry<any, any, Context>,
+    ) => {
+      for (const route of routes) {
+        let match: ReturnType<typeof testMatch>;
+        const exact = route.exact ?? route.children == null;
+
+        if (Array.isArray(route.match)) {
+          for (const routeMatch of route.match) {
+            match = testMatch(
+              currentURL,
+              routeMatch,
+              parent?.consumed,
+              exact,
+              base,
+            );
+            if (match != null) break;
+          }
+        } else {
+          match = testMatch(
+            currentURL,
+            route.match,
+            parent?.consumed,
+            exact,
+            base,
+          );
+        }
+
+        if (match == null) continue;
+
+        let key: unknown;
+
+        if (route.key) {
+          key =
+            typeof route.key === 'function'
+              ? route.key({
+                  request,
+                  route,
+                  parent,
+                  context,
+                  matched: match.matched,
+                  consumed: match.consumed,
+                  input: {},
+                  data: {},
+                } as any)
+              : route.key;
+        } else {
+          const getMatched =
+            typeof match.matched === 'string'
+              ? match.matched
+              : match.matched[0];
+
+          key = match.consumed
+            ? // Need an extra postfix `/` to differentiate an index route from its parent
+              `${match.consumed}${getMatched === '' || getMatched === '/' ? '/' : ''}`
+            : `${parent?.consumed ?? ''}/${stringifyRoute(route)}`;
+        }
+
+        const id = `${parent?.consumed ?? '/'}:${typeof key === 'string' ? key : JSON.stringify(key)}`;
+
+        let entry = entryCache.get(id);
+        if (entry == null) {
+          const load = route.load
+            ? loadCache.create(
+                (cached) =>
+                  new AsyncAction(() => route.load!(entry as any, context), {
+                    cached,
+                  }),
+                {key: id},
+              )
+            : undefined;
+
+          entry = (
+            load
+              ? {
+                  id,
+                  key,
+                  request,
+                  route,
+                  parent,
+                  context,
+                  matched: match.matched,
+                  consumed: match.consumed,
+                  load,
+                  get input() {
+                    return load.latest.input;
+                  },
+                  get data() {
+                    return load.data;
+                  },
+                }
+              : {
+                  id,
+                  key,
+                  request,
+                  route,
+                  parent,
+                  context,
+                  matched: match.matched,
+                  consumed: match.consumed,
+                  load,
+                  input: {},
+                  data: {},
+                }
+          ) as any;
+
+          entryCache.set(id, entry!);
+        }
+
+        routeStack.push(entry!);
+
+        if (route.children) {
+          processRoutes(route.children, entry);
+        }
+
+        return entry!;
+      }
+    };
+
+    processRoutes(routes, parent);
+
+    return routeStack;
+  }
+
+  restore(entries: Iterable<AsyncActionCacheEntrySerialization<any>>) {
+    this.#loadCache.restore(entries);
+  }
+
+  serialize() {
+    return this.#loadCache.serialize();
+  }
+}
+
+function stringifyKey(key: unknown) {
+  return typeof key === 'string' ? key : JSON.stringify(key);
+}
+
+function stringifyRoute({match}: RouteDefinition<any, any, any>) {
+  if (match == null || match === true || match === '*') {
+    return '*';
+  }
+
+  if (typeof match === 'string') {
+    return match[0] === '/' ? match.slice(1) : match;
+  }
+
+  if (match instanceof RegExp) {
+    return match.toString();
+  }
+}
+
 class BrowserNavigationRequest implements NavigationRequest {
   readonly id: string;
   readonly url: URL;
@@ -225,7 +435,7 @@ class BrowserNavigationRequest implements NavigationRequest {
   }
 }
 
-export function getNavigationRequestURLFromEnvironment(
+function getNavigationRequestURLFromEnvironment(
   to?: string | URL,
   baseURL?: string | URL,
 ) {
@@ -247,7 +457,7 @@ export function getNavigationRequestURLFromEnvironment(
   }
 }
 
-export function getNavigationRequestStateFromEnvironment() {
+function getNavigationRequestStateFromEnvironment() {
   if (typeof history === 'undefined') {
     return {};
   }
@@ -255,7 +465,7 @@ export function getNavigationRequestStateFromEnvironment() {
   return history.state ?? {};
 }
 
-export function createNavigationRequestID() {
+function createNavigationRequestID() {
   return `${String(Date.now())}${Math.random()}`;
 }
 
