@@ -391,6 +391,6 @@ export interface AsyncActionPromise<Data, Input> extends Promise<Data> {
 
 function now() {
   return typeof performance === 'object'
-    ? performance.timeOrigin + performance.now()
+    ? Math.round(performance.timeOrigin + performance.now())
     : Date.now();
 }
