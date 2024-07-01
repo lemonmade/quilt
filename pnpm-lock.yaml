@@ -533,7 +533,7 @@ importers:
   packages/preact-router:
     dependencies:
       '@quilted/async':
-        specifier: workspace:^0.4.15
+        specifier: workspace:^0.4.17
         version: link:../async
       '@quilted/http':
         specifier: workspace:^0.3.0

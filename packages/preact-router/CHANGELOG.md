@@ -1,5 +1,14 @@
 # @quilted/preact-router
 
+## 0.2.2
+
+### Patch Changes
+
+- [`2b7ccd2`](https://github.com/lemonmade/quilt/commit/2b7ccd2fd23c827db3b167585262071cd51c868c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect typings in preact-router package
+
+- Updated dependencies [[`858db16`](https://github.com/lemonmade/quilt/commit/858db164ea8d1d84d2cf112797405840deb0f4f2)]:
+  - @quilted/async@0.4.17
+
 ## 0.2.1
 
 ### Patch Changes
