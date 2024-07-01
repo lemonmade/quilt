@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.32
+
+### Patch Changes
+
+- [`a1f03cc`](https://github.com/lemonmade/quilt/commit/a1f03ccea00a39d8300108f9f6728db3d5ddc9ff) Thanks [@lemonmade](https://github.com/lemonmade)! - Only include JavaScript source entries in Rollup plugin
+
 ## 0.2.31
 
 ### Patch Changes
