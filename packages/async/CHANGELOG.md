@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.17
+
+### Patch Changes
+
+- [`858db16`](https://github.com/lemonmade/quilt/commit/858db164ea8d1d84d2cf112797405840deb0f4f2) Thanks [@lemonmade](https://github.com/lemonmade)! - Round cache time for async actions
+
 ## 0.4.16
 
 ### Patch Changes
