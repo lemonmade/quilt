@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.33
+
+### Patch Changes
+
+- [#760](https://github.com/lemonmade/quilt/pull/760) [`8cea8b6`](https://github.com/lemonmade/quilt/commit/8cea8b67158b4aab6b7fc30f1dc8efbddd00e143) Thanks [@lemonmade](https://github.com/lemonmade)! - Explicitly pass router in templates via app context
+
 ## 0.2.32
 
 ### Patch Changes
