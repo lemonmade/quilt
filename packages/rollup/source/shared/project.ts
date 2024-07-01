@@ -98,11 +98,13 @@ export async function sourceEntriesForProject(project: Project) {
   const entries: Record<string, string> = {};
 
   if (typeof main === 'string') {
-    entries['.'] = await resolveTargetFileAsSource(main, project);
+    const sourceFile = await resolveTargetFileAsSource(main, project);
+    if (sourceFile) entries['.'] = sourceFile;
   }
 
   if (typeof exports === 'string') {
-    entries['.'] = await resolveTargetFileAsSource(exports, project);
+    const sourceFile = await resolveTargetFileAsSource(exports, project);
+    if (sourceFile) entries['.'] = sourceFile;
     return entries;
   } else if (exports == null || typeof exports !== 'object') {
     return entries;
@@ -136,16 +138,30 @@ export async function sourceEntriesForProject(project: Project) {
 
         const entryName =
           condition === 'default' ? exportPath : `${exportPath}#${condition}`;
-        entries[entryName] = await resolveTargetFileAsSource(file, project);
+        const sourceFile = await resolveTargetFileAsSource(file, project);
+        if (sourceFile) entries[entryName] = sourceFile;
       }
     } else {
       const sourceFile = await resolveTargetFileAsSource(targetFile, project);
-      entries[exportPath] = sourceFile;
+      if (sourceFile) entries[exportPath] = sourceFile;
     }
   }
 
   return entries;
 }
+
+const ALLOWED_SOURCE_FILE_EXTENSIONS = new Set([
+  '.ts',
+  '.tsx',
+  '.mts',
+  '.cts',
+  '.js',
+  '.jsx',
+  '.mjs',
+  '.cjs',
+  '.json',
+  '.node',
+]);
 
 async function resolveTargetFileAsSource(file: string, project: Project) {
   const sourceFile = file.includes('/build/')
@@ -161,6 +177,10 @@ async function resolveTargetFileAsSource(file: string, project: Project) {
         )
       )[0]!
     : project.resolve(file);
+
+  if (!ALLOWED_SOURCE_FILE_EXTENSIONS.has(path.extname(sourceFile))) {
+    return undefined;
+  }
 
   return sourceFile;
 }
