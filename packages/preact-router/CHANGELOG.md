@@ -1,5 +1,11 @@
 # @quilted/preact-router
 
+## 0.2.3
+
+### Patch Changes
+
+- [`d2f497d`](https://github.com/lemonmade/quilt/commit/d2f497dc37c987607f75fd5e8aeaa6ffd922ff77) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve router IDs and keys
+
 ## 0.2.2
 
 ### Patch Changes
