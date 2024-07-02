@@ -304,10 +304,12 @@ export class RouterNavigationCache {
           key = match.consumed
             ? // Need an extra postfix `/` to differentiate an index route from its parent
               `${match.consumed}${getMatched === '' || getMatched === '/' ? '/' : ''}`
-            : `${parent?.consumed ?? ''}/${stringifyRoute(route)}`;
+            : `/${stringifyRoute(route)}`;
         }
 
-        const id = `${parent?.consumed ?? '/'}:${typeof key === 'string' ? key : JSON.stringify(key)}`;
+        const keyID = typeof key === 'string' ? key : JSON.stringify(key);
+        const loadID = parent?.consumed ? `${parent.consumed}:${keyID}` : keyID;
+        const id = `${matchID}:${keyID}`;
 
         let entry = entryCache.get(id);
         if (entry == null) {
@@ -317,7 +319,7 @@ export class RouterNavigationCache {
                   new AsyncAction(() => route.load!(entry as any, context), {
                     cached,
                   }),
-                {key: id},
+                {key: loadID},
               )
             : undefined;
 
