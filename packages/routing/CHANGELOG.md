@@ -1,5 +1,11 @@
 # @quilted/routing
 
+## 0.4.1
+
+### Patch Changes
+
+- [`c6f2a50`](https://github.com/lemonmade/quilt/commit/c6f2a5073952a8490494ea3b13aa4ca2f896e668) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for absolute param matchers
+
 ## 0.4.0
 
 ### Minor Changes

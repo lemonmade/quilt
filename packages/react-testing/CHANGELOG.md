@@ -1,5 +1,11 @@
 # @quilted/react-testing
 
+## 0.6.11
+
+### Patch Changes
+
+- [`ca9f698`](https://github.com/lemonmade/quilt/commit/ca9f69861b322cfdcb2c22a28dc8fd903ddc854a) Thanks [@lemonmade](https://github.com/lemonmade)! - Output react-testing with React as the JSX import source
+
 ## 0.6.10
 
 ### Patch Changes
