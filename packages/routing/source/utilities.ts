@@ -79,7 +79,7 @@ export function testMatch(
     const matched = pathDetails.remainderRelative;
     return {matched};
   } else if (typeof match === 'string') {
-    if (match[0] === ':') {
+    if (match[0] === ':' || (match[0] === '/' && match[1] === ':')) {
       const matchResult = testMatch(
         url,
         SINGLE_SEGMENT_REGEX,
@@ -87,8 +87,13 @@ export function testMatch(
         exact,
         base,
       );
+
       if (matchResult == null) return matchResult;
-      return {matched: matchResult.matched[0], consumed: matchResult.consumed};
+
+      return {
+        matched: matchResult.matched[0],
+        consumed: matchResult.consumed,
+      };
     }
 
     const normalizedMatch = removePostfixSlash(match);

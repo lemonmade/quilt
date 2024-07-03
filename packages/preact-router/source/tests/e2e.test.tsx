@@ -190,6 +190,28 @@ describe('useRoutes()', () => {
         );
       });
 
+      it('matches a route based on a single absolute path segment pattern', () => {
+        const renderSpy = vi.fn(() => <RouteComponent />);
+
+        function Routes() {
+          return useRoutes([{match: '/:id', render: renderSpy}]);
+        }
+
+        expect(
+          render(<Routes />, {path: '/thing/abc'}),
+        ).not.toContainPreactComponent(RouteComponent);
+
+        expect(render(<Routes />, {path: '/abc'})).toContainPreactComponent(
+          RouteComponent,
+        );
+        expect(renderSpy).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({
+            matched: 'abc',
+          }),
+        );
+      });
+
       it('matches the root path on a nested route', () => {
         const renderSpy = vi.fn(() => <RouteComponent />);
 
