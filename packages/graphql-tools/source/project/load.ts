@@ -61,7 +61,12 @@ export async function loadConfiguration(
 
   const normalizeConfiguration = (
     name: string,
-    {schema, documents, exclude, extensions = {}}: GraphQLProject,
+    {
+      schema,
+      documents,
+      exclude = ['**/node_modules'],
+      extensions = {},
+    }: GraphQLProject,
   ): GraphQLProjectConfiguration => {
     return {
       name,
