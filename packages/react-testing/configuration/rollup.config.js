@@ -2,4 +2,5 @@ import {quiltPackage} from '@quilted/rollup/package';
 
 export default quiltPackage({
   commonjs: true,
+  react: 'react',
 });
