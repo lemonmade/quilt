@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.2.6
+
+### Patch Changes
+
+- [`ea74e05`](https://github.com/lemonmade/quilt/commit/ea74e05eb95fc39009dfb22b16f1f9b0ce3dc6ee) Thanks [@lemonmade](https://github.com/lemonmade)! - Ignore `node_modules` directory for GraphQL types by default
+
 ## 0.2.5
 
 ### Patch Changes
