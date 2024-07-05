@@ -6,13 +6,6 @@ import type {
   AnyFunction,
 } from '../types.ts';
 
-import {
-  RELEASE_METHOD,
-  RETAINED_BY,
-  RETAIN_METHOD,
-  StackFrame,
-  isMemoryManageable,
-} from '../memory.ts';
 import {createBasicEncoder} from '../encoding/basic.ts';
 
 export type {ThreadTarget};
@@ -103,7 +96,7 @@ export function createThread<
   const activeApi = new Map<string | number, AnyFunction>();
   const functionsToId = new Map<AnyFunction, string>();
   const idsToFunction = new Map<string, AnyFunction>();
-  const idsToProxy = new Map<string, AnyFunction>();
+  const idsToProxy = new Map<string, WeakRef<AnyFunction>>();
 
   if (expose) {
     for (const key of Object.keys(expose)) {
@@ -120,6 +113,10 @@ export function createThread<
   >();
 
   const call = createCallable<Thread<Target>>(handlerForCall, callable);
+  const finalization = new FinalizationRegistry((id: string) => {
+    idsToProxy.delete(id);
+    send(RELEASE, [id]);
+  });
 
   const encoderApi: ThreadEncoderApi = {
     functions: {
@@ -135,37 +132,28 @@ export function createThread<
         return id;
       },
       get(id) {
-        let proxy = idsToProxy.get(id);
+        const existing = idsToProxy.get(id);
 
-        if (proxy) return proxy;
+        if (existing) {
+          const resolved = existing.deref();
 
-        let retainCount = 0;
-        let released = false;
+          if (resolved) return resolved;
 
-        const release = () => {
-          retainCount -= 1;
+          idsToProxy.delete(id);
+        }
 
-          if (retainCount === 0) {
-            released = true;
-            idsToProxy.delete(id);
-            send(RELEASE, [id]);
-          }
-        };
+        const proxy = (...args: any[]) => {
+          const existing = idsToProxy.get(id);
 
-        const retain = () => {
-          retainCount += 1;
-        };
-
-        proxy = (...args: any[]) => {
-          if (released) {
+          if (existing == null) {
             throw new Error(
-              'You attempted to call a function that was already released.',
+              'You attempted to call a function that was already revoked.',
             );
           }
 
-          if (!idsToProxy.has(id)) {
+          if (existing.deref() == null) {
             throw new Error(
-              'You attempted to call a function that was already revoked.',
+              'You attempted to call a function that was already released.',
             );
           }
 
@@ -179,13 +167,8 @@ export function createThread<
           return done;
         };
 
-        Object.defineProperties(proxy, {
-          [RELEASE_METHOD]: {value: release, writable: false},
-          [RETAIN_METHOD]: {value: retain, writable: false},
-          [RETAINED_BY]: {value: new Set(), writable: false},
-        });
-
-        idsToProxy.set(id, proxy);
+        idsToProxy.set(id, new WeakRef<Function>(proxy));
+        finalization.register(proxy, id, proxy);
 
         return proxy;
       },
@@ -247,7 +230,6 @@ export function createThread<
         break;
       }
       case CALL: {
-        const stackFrame = new StackFrame();
         const [id, property, args] = data[1];
         const func = activeApi.get(property);
 
@@ -259,15 +241,13 @@ export function createThread<
           }
 
           const result = await func(
-            ...(encoder.decode(args, encoderApi, [stackFrame]) as any[]),
+            ...(encoder.decode(args, encoderApi) as any[]),
           );
           const [encoded, transferables] = encoder.encode(result, encoderApi);
           send(RESULT, [id, undefined, encoded], transferables);
         } catch (error) {
           const {name, message, stack} = error as Error;
           send(RESULT, [id, {name, message, stack}]);
-        } finally {
-          stackFrame.release();
         }
 
         break;
@@ -294,8 +274,6 @@ export function createThread<
       case FUNCTION_APPLY: {
         const [callId, funcId, args] = data[1];
 
-        const stackFrame = new StackFrame();
-
         try {
           const func = idsToFunction.get(funcId);
 
@@ -306,21 +284,13 @@ export function createThread<
           }
 
           const result = await func(
-            ...(encoder.decode(
-              args,
-              encoderApi,
-              isMemoryManageable(func)
-                ? [...func[RETAINED_BY], stackFrame]
-                : [stackFrame],
-            ) as any[]),
+            ...(encoder.decode(args, encoderApi) as any[]),
           );
           const [encoded, transferables] = encoder.encode(result, encoderApi);
           send(FUNCTION_RESULT, [callId, undefined, encoded], transferables);
         } catch (error) {
           const {name, message, stack} = error as Error;
           send(FUNCTION_RESULT, [callId, {name, message, stack}]);
-        } finally {
-          stackFrame.release();
         }
 
         break;

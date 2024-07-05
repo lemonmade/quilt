@@ -1,8 +1,5 @@
 export {
-  retain,
-  release,
   markAsTransferable,
-  isMemoryManageable,
   createThread,
   createThreadAbortSignal,
   acceptThreadAbortSignal,
@@ -22,8 +19,6 @@ export type {
   ThreadEncoder,
   ThreadEncoderApi,
   ThreadEncodable,
-  MemoryManageable,
-  MemoryRetainer,
 } from '@quilted/threads';
 export {
   isThreadSignal,

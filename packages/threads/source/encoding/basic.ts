@@ -4,11 +4,7 @@ import type {
   ThreadEncoderApi,
   ThreadEncodable,
 } from '../types.ts';
-import {
-  isBasicObject,
-  isMemoryManageable,
-  type MemoryRetainer,
-} from '../memory.ts';
+import {isBasicObject} from '../memory.ts';
 
 const FUNCTION = '_@f';
 const MAP = '_@m';
@@ -30,14 +26,7 @@ export interface ThreadEncoderOptions {
   /**
    * Customizes the decoding of each value in a passed message.
    */
-  decode?(
-    value: unknown,
-    defaultDecode: (
-      value: unknown,
-      retainedBy?: Iterable<MemoryRetainer>,
-    ) => unknown,
-    retainedBy?: Iterable<MemoryRetainer>,
-  ): unknown;
+  decode?(value: unknown, defaultDecode: (value: unknown) => unknown): unknown;
 }
 
 /**
@@ -209,14 +198,10 @@ export function createBasicEncoder({
     decode: Parameters<NonNullable<ThreadEncoderOptions['decode']>>[1];
   }
 
-  function decode(
-    value: unknown,
-    api: ThreadEncoderApi,
-    retainedBy?: Iterable<MemoryRetainer>,
-  ) {
+  function decode(value: unknown, api: ThreadEncoderApi) {
     const context: DecodeContext = {
       api,
-      decode: (value: any) => decodeInternal(value, context, retainedBy, true),
+      decode: (value: any) => decodeInternal(value, context, true),
     };
 
     return decodeInternal(value, context);
@@ -225,13 +210,12 @@ export function createBasicEncoder({
   function decodeInternal(
     value: unknown,
     context: DecodeContext,
-    retainedBy?: Iterable<MemoryRetainer>,
     isFromOverride = false,
   ): any {
     const {api, decode} = context;
 
     if (!isFromOverride && decodeOverride) {
-      return decodeOverride(value, decode, retainedBy);
+      return decodeOverride(value, decode);
     }
 
     if (typeof value === 'object') {
@@ -240,7 +224,7 @@ export function createBasicEncoder({
       }
 
       if (Array.isArray(value)) {
-        return value.map((value) => decodeInternal(value, context, retainedBy));
+        return value.map((value) => decodeInternal(value, context));
       }
 
       if (REGEXP in value) {
@@ -258,8 +242,8 @@ export function createBasicEncoder({
       if (MAP in value) {
         return new Map(
           (value as {[MAP]: [any, any]})[MAP].map(([key, value]) => [
-            decodeInternal(key, context, retainedBy),
-            decodeInternal(value, context, retainedBy),
+            decodeInternal(key, context),
+            decodeInternal(value, context),
           ]),
         );
       }
@@ -267,7 +251,7 @@ export function createBasicEncoder({
       if (SET in value) {
         return new Set(
           (value as {[SET]: any[]})[SET].map((entry) =>
-            decodeInternal(entry, context, retainedBy),
+            decodeInternal(entry, context),
           ),
         );
       }
@@ -276,12 +260,6 @@ export function createBasicEncoder({
         const id = (value as {[FUNCTION]: string})[FUNCTION];
 
         const func = api.functions?.get(id);
-
-        if (retainedBy && isMemoryManageable(func)) {
-          for (const retainer of retainedBy) {
-            retainer.add(func);
-          }
-        }
 
         return func;
       }
@@ -296,11 +274,7 @@ export function createBasicEncoder({
         if (key === ASYNC_ITERATOR) {
           result[Symbol.asyncIterator] = () => result;
         } else {
-          result[key] = decodeInternal(
-            (value as any)[key],
-            context,
-            retainedBy,
-          );
+          result[key] = decodeInternal((value as any)[key], context);
         }
       }
 

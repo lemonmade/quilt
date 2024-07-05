@@ -1,9 +1,4 @@
-export {
-  retain,
-  release,
-  createThread,
-  createThreadFromWebWorker,
-} from '@quilted/threads';
+export {createThread, createThreadFromWebWorker} from '@quilted/threads';
 export type {Thread, ThreadTarget, ThreadOptions} from '@quilted/threads';
 
 export {

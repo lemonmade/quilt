@@ -1,4 +1,3 @@
-import {retain, release} from '../memory.ts';
 import type {ThreadAbortSignal} from './types.ts';
 
 /**
@@ -23,7 +22,6 @@ export function createThreadAbortSignal(
     () => {
       for (const listener of listeners) {
         listener(signal.aborted);
-        release(listener);
       }
 
       listeners.clear();
@@ -37,7 +35,6 @@ export function createThreadAbortSignal(
       if (signal.aborted) {
         listener(true);
       } else {
-        retain(listener);
         listeners.add(listener);
       }
     },

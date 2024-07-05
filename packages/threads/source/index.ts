@@ -1,11 +1,4 @@
-export {
-  retain,
-  release,
-  StackFrame,
-  isMemoryManageable,
-  markAsTransferable,
-} from './memory.ts';
-export type {MemoryManageable, MemoryRetainer} from './memory.ts';
+export {markAsTransferable} from './memory.ts';
 export {
   RELEASE_METHOD,
   RETAIN_METHOD,

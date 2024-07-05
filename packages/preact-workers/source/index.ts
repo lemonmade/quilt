@@ -1,8 +1,6 @@
 export {
   createWorker,
   createThreadWorker,
-  retain,
-  release,
   createThread,
   createThreadFromWebWorker,
 } from '@quilted/workers';

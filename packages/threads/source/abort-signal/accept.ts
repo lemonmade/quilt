@@ -1,4 +1,3 @@
-import {retain, release} from '../memory.ts';
 import type {ThreadAbortSignal} from './types.ts';
 
 /**
@@ -22,19 +21,10 @@ export function acceptThreadAbortSignal(
   }
 
   if (start) {
-    retain(start);
     start((aborted) => {
       if (aborted) abort.abort();
     });
   }
-
-  abort.signal.addEventListener(
-    'abort',
-    async () => {
-      release(start);
-    },
-    {once: true},
-  );
 
   return abort.signal;
 }
