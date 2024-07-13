@@ -20,8 +20,11 @@ export {
   createThreadFromIframe,
   createThreadFromInsideIframe,
   createThreadFromMessagePort,
+  createThreadFromServiceWorker,
+  createThreadsFromServiceWorkerClients,
   createThreadFromWebWorker,
   type ThreadOptions,
+  type ServiceWorkerClientThreads,
 } from './targets.ts';
 export {createBasicEncoder} from './encoding.ts';
 export {

@@ -58,6 +58,27 @@ import {createThreadFromBroadcastChannel} from '@quilted/threads';
 
 const channel = new BroadcastChannel('my-channel');
 const thread = createThreadFromBroadcastChannel(channel);
+
+// Create a thread from a service worker.
+import {createThreadFromServiceWorker} from '@quilted/threads';
+
+await navigator.serviceWorker.register('/service-worker.js');
+
+if (navigator.serviceWorker.controller) {
+  const thread = createThreadFromServiceWorker(
+    navigator.serviceWorker.controller,
+  );
+}
+
+// Create threads between a service worker and clients that connect to it.
+import {createThreadsFromServiceWorkerClients} from '@quilted/threads';
+
+const clientThreads = createThreadsFromServiceWorkerClients();
+
+self.addEventListener('activate', async (event) => {
+  const clients = await serviceWorker.clients.matchAll();
+  const thread = clientThreads.create(clients[0]);
+});
 ```
 
 To expose methods on a thread, pass them as an `expose` option to your thread creation function:

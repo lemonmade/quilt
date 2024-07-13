@@ -12,6 +12,8 @@ export {
   createThreadFromMessagePort,
   createThreadFromWebWorker,
   createThreadFromBrowserWebSocket,
+  createThreadFromServiceWorker,
+  createThreadsFromServiceWorkerClients,
   ENCODE_METHOD,
 } from '@quilted/threads';
 export type {
@@ -24,6 +26,7 @@ export type {
   ThreadEncodable,
   MemoryManageable,
   MemoryRetainer,
+  ServiceWorkerClientThreads,
 } from '@quilted/threads';
 export {
   isThreadSignal,

@@ -1,4 +1,7 @@
 {
   "extends": "@quilted/typescript/tsconfig.package.json",
+  "compilerOptions": {
+    "lib": ["DOM", "webWorker", "ESNext"]
+  },
   "references": [{"path": "../events"}]
 }

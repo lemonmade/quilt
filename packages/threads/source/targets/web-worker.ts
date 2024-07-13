@@ -22,7 +22,10 @@ import {createThread, type ThreadOptions} from './target.ts';
 export function createThreadFromWebWorker<
   Self = Record<string, never>,
   Target = Record<string, never>,
->(worker: Worker, options?: ThreadOptions<Self, Target>) {
+>(
+  worker: Pick<Worker, 'postMessage' | 'addEventListener'>,
+  options?: ThreadOptions<Self, Target>,
+) {
   return createThread(
     {
       send(...args: [any, Transferable[]]) {
