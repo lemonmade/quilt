@@ -659,7 +659,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../signals
       '@quilted/threads':
-        specifier: workspace:^2.2.0
+        specifier: workspace:^2.3.0
         version: link:../threads
       graphql:
         specifier: ^16.8.0

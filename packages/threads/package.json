@@ -2,7 +2,7 @@
   "name": "@quilted/threads",
   "description": "Helpers for communicating between JavaScript environments using message passing.",
   "type": "module",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
