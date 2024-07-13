@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 2.3.0
+
+### Minor Changes
+
+- [`03d2cbb`](https://github.com/lemonmade/quilt/commit/03d2cbba9f099b0c207faa883980cf2a24b77aad) Thanks [@lemonmade](https://github.com/lemonmade)! - Add utilities for creating threads from service workers
+
 ## 2.2.0
 
 ### Minor Changes
