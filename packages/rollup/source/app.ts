@@ -91,8 +91,15 @@ export interface AppOptions extends AppBaseOptions {
   /**
    * Customizes the server build of your application.
    */
-  server?: Omit<AppServerOptions, keyof AppBaseOptions> &
-    Pick<AppServerOptions, 'env'>;
+  server?:
+    | boolean
+    | (Omit<AppServerOptions, keyof AppBaseOptions> &
+        Pick<AppServerOptions, 'env'>);
+
+  /**
+   * Customizes the service worker build of your application.
+   */
+  serviceWorker?: boolean | AppServiceWorkerOptions;
 
   /**
    * Customizations to the application for the runtime it will execute in.
@@ -234,6 +241,55 @@ export interface AppServerOutputOptions
   hash?: boolean | 'async-only';
 }
 
+export interface AppServiceWorkerOptions extends AppBaseOptions {
+  /**
+   * The entry module for this app’s service worker. By default, this module must export
+   * a `RequestRouter` object as its default export, which will be wrapped in
+   * the specific server runtime you configure. If you set the format to `'custom'`,
+   * this entry can be any content — it will be bundled as-is.
+   *
+   * If not provided, this will default to a file named `server`, `service`,
+   * or `backend` in your app’s root directory.
+   */
+  entry?: string;
+
+  /**
+   * Customizes the assets created for your application.
+   */
+  assets?: Pick<AppBrowserAssetsOptions, 'baseURL' | 'inline'>;
+
+  /**
+   * Customizes the output files created for your service worker.
+   */
+  output?: AppServiceWorkerOutputOptions;
+
+  /**
+   * Customizes the behavior of environment variables for your application.
+   */
+  env?: MagicModuleEnvOptions | MagicModuleEnvOptions['mode'];
+}
+
+export interface AppServiceWorkerOutputOptions
+  extends Pick<RollupNodePluginOptions, 'bundle'> {
+  /**
+   * Whether to minify assets created for this service worker.
+   *
+   * @default false
+   */
+  minify?: boolean;
+
+  /**
+   * Whether to add a hash to the output files for your service worker. You can set
+   * this to `true`, which includes a hash for all files, `false`, which never
+   * includes a hash, or `'async-only'`, which only includes a hash for files
+   * that are loaded asynchronously (that is, your entry file will not have a
+   * hash, but any files it loads will).
+   *
+   * @default 'async-only'
+   */
+  hash?: boolean | 'async-only';
+}
+
 export interface AppRuntime {
   /**
    * Overrides to the assets for this application.
@@ -273,7 +329,8 @@ export async function quiltApp({
   graphql,
   assets,
   browser: browserOptions,
-  server: serverOptions,
+  server: serverOptions = true,
+  serviceWorker: serviceWorkerOptions = false,
   runtime,
 }: AppOptions = {}) {
   const project = Project.load(root);
@@ -309,20 +366,44 @@ export async function quiltApp({
     );
   });
 
-  optionPromises.push(
-    quiltAppServer({
-      root: project.root,
-      app,
-      graphql,
-      runtime: runtime?.server,
-      ...serverOptions,
-      env: {
-        ...resolveEnvOption(env),
-        ...resolveEnvOption(serverOptions?.env),
-      },
-      assets: {...assets, ...serverOptions?.assets},
-    }),
-  );
+  if (serverOptions) {
+    const serverOptionsObject =
+      typeof serverOptions === 'object' ? serverOptions : {};
+
+    optionPromises.push(
+      quiltAppServer({
+        root: project.root,
+        app,
+        graphql,
+        runtime: runtime?.server,
+        ...serverOptionsObject,
+        env: {
+          ...resolveEnvOption(env),
+          ...resolveEnvOption(serverOptionsObject?.env),
+        },
+        assets: {...assets, ...serverOptionsObject?.assets},
+      }),
+    );
+  }
+
+  if (serviceWorkerOptions) {
+    const serviceWorkerOptionsObject =
+      typeof serviceWorkerOptions === 'object' ? serviceWorkerOptions : {};
+
+    optionPromises.push(
+      quiltAppServiceWorker({
+        root: project.root,
+        app,
+        graphql,
+        ...serviceWorkerOptionsObject,
+        env: {
+          ...resolveEnvOption(env),
+          ...resolveEnvOption(serviceWorkerOptionsObject?.env),
+        },
+        assets: {...assets, ...serviceWorkerOptionsObject?.assets},
+      }),
+    );
+  }
 
   return Promise.all(optionPromises);
 }
@@ -769,6 +850,197 @@ export function quiltAppServerInput({
   } satisfies Plugin;
 }
 
+export async function quiltAppServiceWorker(
+  options: AppServiceWorkerOptions = {},
+) {
+  const {output, root = process.cwd()} = options;
+
+  const project = Project.load(root);
+  const hash = output?.hash ?? 'async-only';
+
+  const plugins = await quiltAppServiceWorkerPlugins({
+    ...options,
+    root,
+  });
+
+  return {
+    plugins,
+    output: {
+      format: 'iife',
+      dir: project.resolve(`build/service-worker`),
+      entryFileNames: `[name]${hash === true ? `.[hash]` : ''}.js`,
+      chunkFileNames: `[name]${
+        hash === true || hash === 'async-only' ? `.[hash]` : ''
+      }.js`,
+      assetFileNames: `[name]${hash === true ? `.[hash]` : ''}.[ext]`,
+      generatedCode: 'es2015',
+    },
+  } satisfies RollupOptions;
+}
+
+export async function quiltAppServiceWorkerPlugins({
+  root = process.cwd(),
+  app,
+  env,
+  entry,
+  graphql = true,
+  assets,
+  output,
+}: AppServiceWorkerOptions = {}) {
+  const project = Project.load(root);
+  const mode = (typeof env === 'object' ? env?.mode : env) ?? 'production';
+
+  const baseURL = assets?.baseURL ?? '/assets/';
+  const assetsInline = assets?.inline ?? true;
+
+  const outputDirectory = project.resolve('build/service-worker');
+  const reportsDirectory = path.resolve(outputDirectory, '../reports');
+
+  const bundle = output?.bundle;
+  const minify = output?.minify ?? false;
+
+  const [
+    {visualizer},
+    {magicModuleEnv, replaceProcessEnv},
+    {sourceCode},
+    {react},
+    {tsconfigAliases},
+    {monorepoPackageAliases},
+    {css},
+    {rawAssets, staticAssets},
+    {asyncModules},
+    {esnext},
+    nodePlugins,
+  ] = await Promise.all([
+    import('rollup-plugin-visualizer'),
+    import('./features/env.ts'),
+    import('./features/source-code.ts'),
+    import('./features/react.ts'),
+    import('./features/typescript.ts'),
+    import('./features/node.ts'),
+    import('./features/css.ts'),
+    import('./features/assets.ts'),
+    import('./features/async.ts'),
+    import('./features/esnext.ts'),
+    getNodePlugins({
+      bundle,
+      resolve: {exportConditions: ['browser']},
+    }),
+  ]);
+
+  const plugins: InputPluginOption[] = [
+    quiltAppServiceWorkerInput({root: project.root, entry}),
+    ...nodePlugins,
+    replaceProcessEnv({mode}),
+    magicModuleEnv({
+      ...resolveEnvOption(env),
+      mode,
+      root: project.root,
+    }),
+    magicModuleAppComponent({entry: app, root: project.root}),
+    magicModuleAppAssetManifests(),
+    sourceCode({
+      mode,
+      // TODO
+      targets: ['defaults and not dead'],
+      babel: {
+        options(options) {
+          return {
+            ...options,
+            plugins: [
+              ...(options?.plugins ?? []),
+              require.resolve('@quilted/babel/async'),
+              [require.resolve('@quilted/babel/workers'), {noop: true}],
+            ],
+          };
+        },
+      },
+    }),
+    react(),
+    esnext({
+      mode,
+      // TODO
+      targets: ['defaults and not dead'],
+    }),
+    css({emit: false, minify}),
+    rawAssets(),
+    staticAssets({
+      emit: false,
+      baseURL,
+      inlineLimit: assetsInline
+        ? typeof assetsInline === 'boolean'
+          ? undefined
+          : assetsInline?.limit
+        : Number.POSITIVE_INFINITY,
+    }),
+    asyncModules({
+      baseURL,
+      preload: false,
+      moduleID: ({imported}) => path.relative(project.root, imported),
+    }),
+    removeBuildFiles([outputDirectory], {root: project.root}),
+    tsconfigAliases({root: project.root}),
+    monorepoPackageAliases({root: project.root}),
+  ];
+
+  if (graphql) {
+    const {graphql} = await import('./features/graphql.ts');
+    plugins.push(graphql({manifest: false}));
+  }
+
+  if (minify) {
+    const {minify} = await import('rollup-plugin-esbuild');
+    plugins.push(minify());
+  }
+
+  plugins.push(
+    visualizer({
+      template: 'treemap',
+      open: false,
+      brotliSize: false,
+      filename: path.join(
+        reportsDirectory,
+        `bundle-visualizer.service-worker.html`,
+      ),
+    }),
+  );
+
+  return plugins;
+}
+
+export function quiltAppServiceWorkerInput({
+  root = process.cwd(),
+  entry,
+}: Pick<AppServiceWorkerOptions, 'root' | 'entry'> = {}) {
+  return {
+    name: '@quilted/app-server/input',
+    async options(options) {
+      const serviceWorkerEntry =
+        normalizeRollupInput(options.input) ??
+        (await sourceEntryForAppServiceWorker({entry, root}));
+
+      if (serviceWorkerEntry == null) {
+        throw new Error(
+          `No service worker entry found. Please provide a \`service.entry\` option pointing to your service worker’s source code.`,
+        );
+      }
+
+      const finalEntryName =
+        typeof serviceWorkerEntry === 'string'
+          ? path.basename(serviceWorkerEntry).split('.').slice(0, -1).join('.')
+          : 'service-worker';
+
+      return {
+        ...options,
+        input:
+          typeof serviceWorkerEntry === 'string'
+            ? {[finalEntryName]: serviceWorkerEntry}
+            : serviceWorkerEntry,
+      };
+    },
+  } satisfies Plugin;
+}
+
 export interface NodeAppServerRuntimeOptions extends NodeServerRuntimeOptions {
   /**
    * Whether the server should serve assets from the asset output directory.
@@ -1079,6 +1351,30 @@ export async function sourceEntryForAppServer({
   } else {
     const files = await project.glob(
       '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
+      {
+        nodir: true,
+        absolute: true,
+      },
+    );
+
+    return files[0];
+  }
+}
+
+export async function sourceEntryForAppServiceWorker({
+  entry,
+  root = process.cwd(),
+}: {
+  entry?: string;
+  root?: string | URL;
+}) {
+  const project = Project.load(root);
+
+  if (entry) {
+    return project.resolve(entry);
+  } else {
+    const files = await project.glob(
+      '{sw,service-worker}.{ts,tsx,mjs,js,jsx}',
       {
         nodir: true,
         absolute: true,
