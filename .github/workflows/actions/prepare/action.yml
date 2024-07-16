@@ -12,5 +12,5 @@ runs:
       run: corepack enable && pnpm -v
       shell: bash
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
       shell: bash
