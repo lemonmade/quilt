@@ -113,6 +113,9 @@ describe('thread', () => {
       url: URL;
       array: any[];
       error: Error;
+      uint8Array: Uint8Array;
+      uint16Array: Uint16Array;
+      uint32Array: Uint32Array;
     }
 
     interface ThreadAPI {
@@ -149,6 +152,9 @@ describe('thread', () => {
       url: new URL('https://example.com'),
       array: [1, 2, 3],
       error: new Error('error'),
+      uint8Array: new Uint8Array([1]),
+      uint16Array: new Uint16Array([257]),
+      uint32Array: new Uint32Array([65536]),
     };
 
     await thread1.oneOfEverything(oneOfEverything);

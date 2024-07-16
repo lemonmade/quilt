@@ -17,6 +17,9 @@ const URL_ID = '_@u';
 const DATE = '_@d';
 const REGEXP = '_@r';
 const ASYNC_ITERATOR = '_@i';
+const UINT8_ARRAY = '_@u8';
+const UINT16_ARRAY = '_@u16';
+const UINT32_ARRAY = '_@u32';
 
 export interface ThreadEncoderOptions {
   /**
@@ -119,6 +122,27 @@ export function createBasicEncoder({
 
       if (Array.isArray(value)) {
         const result = value.map((item) => encodeValue(item));
+        const fullResult: EncodeResult = [result, transferables];
+        seen.set(value, fullResult);
+        return fullResult;
+      }
+
+      if (value instanceof Uint8Array) {
+        const result = {[UINT8_ARRAY]: encodeUintArray(value)};
+        const fullResult: EncodeResult = [result, transferables];
+        seen.set(value, fullResult);
+        return fullResult;
+      }
+
+      if (value instanceof Uint16Array) {
+        const result = {[UINT16_ARRAY]: encodeUintArray(value)};
+        const fullResult: EncodeResult = [result, transferables];
+        seen.set(value, fullResult);
+        return fullResult;
+      }
+
+      if (value instanceof Uint32Array) {
+        const result = {[UINT32_ARRAY]: encodeUintArray(value)};
         const fullResult: EncodeResult = [result, transferables];
         seen.set(value, fullResult);
         return fullResult;
@@ -243,6 +267,26 @@ export function createBasicEncoder({
         return value.map((value) => decodeInternal(value, context, retainedBy));
       }
 
+      if (UINT8_ARRAY in value) {
+        return decodeUintArray((value as {[UINT8_ARRAY]: string})[UINT8_ARRAY]);
+      }
+
+      if (UINT16_ARRAY in value) {
+        return new Uint16Array(
+          decodeUintArray(
+            (value as {[UINT16_ARRAY]: string})[UINT16_ARRAY],
+          ).buffer,
+        );
+      }
+
+      if (UINT32_ARRAY in value) {
+        return new Uint32Array(
+          decodeUintArray(
+            (value as {[UINT32_ARRAY]: string})[UINT32_ARRAY],
+          ).buffer,
+        );
+      }
+
       if (REGEXP in value) {
         return new RegExp(...(value as {[REGEXP]: [string, string]})[REGEXP]);
       }
@@ -317,4 +361,27 @@ function isIterator(value: any) {
     (Symbol.asyncIterator in value || Symbol.iterator in value) &&
     typeof (value as any).next === 'function'
   );
+}
+
+function encodeUintArray(array: Uint8Array | Uint16Array | Uint32Array) {
+  let binary = '';
+  const bytes = new Uint8Array(array.buffer);
+  const length = bytes.byteLength;
+
+  for (let i = 0; i < length; i++) {
+    binary += String.fromCharCode(bytes[i]!);
+  }
+
+  return btoa(binary);
+}
+
+function decodeUintArray(base64String: string) {
+  const binary = atob(base64String);
+  const result = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i++) {
+    result[i] = binary.charCodeAt(i);
+  }
+
+  return result;
 }
