@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 2.4.0
+
+### Minor Changes
+
+- [`004395d`](https://github.com/lemonmade/quilt/commit/004395de11b0f1ebd0afd0d66c845e619ab92ab0) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for serializing unsigned integer arrays
+
 ## 2.3.0
 
 ### Minor Changes

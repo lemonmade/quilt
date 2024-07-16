@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.1.1
+
+### Patch Changes
+
+- [`4cfb1f5`](https://github.com/lemonmade/quilt/commit/4cfb1f58101287906c2d95dd10694fc090ec3ff1) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow serializing more common JavaScript object types
+
 ## 0.1.0
 
 ### Minor Changes

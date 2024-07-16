@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.33
+
+### Patch Changes
+
+- [`5ba0530`](https://github.com/lemonmade/quilt/commit/5ba053056ed3b8a0f012fbce74e86227468b60df) Thanks [@lemonmade](https://github.com/lemonmade)! - Add basic service worker plugin
+
 ## 0.2.32
 
 ### Patch Changes
