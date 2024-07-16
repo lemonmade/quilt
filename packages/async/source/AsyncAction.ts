@@ -177,6 +177,10 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     return this.#hasChanged.call(this, input, this.#latestPeek().input);
   };
 
+  serialize() {
+    return this.finished?.serialize();
+  }
+
   #finalizeAction = (actionRun: AsyncActionRun<Data, Input>) => {
     batch(() => {
       if (this.#running.peek() === actionRun) {

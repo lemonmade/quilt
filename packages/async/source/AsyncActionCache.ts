@@ -170,8 +170,8 @@ export class AsyncActionCache {
     const serialized: AsyncActionCacheEntrySerialization<any>[] = [];
 
     for (const entry of this.#cache.values()) {
-      const serializedEntry = serializeEntry(entry);
-      if (serializedEntry) serialized.push(serializedEntry);
+      const serializedEntry = entry.serialize();
+      if (serializedEntry) serialized.push([entry.id, serializedEntry]);
     }
 
     return serialized;
@@ -191,13 +191,6 @@ export class AsyncActionCache {
 
     return {key, id};
   };
-}
-
-function serializeEntry<Data = unknown, Input = unknown>(
-  action: AsyncActionCacheEntry<AsyncAction<Data, Input>>,
-): AsyncActionCacheEntrySerialization<Data, Input> | undefined {
-  const serialized = action.finished?.serialize();
-  return serialized && [action.id, serialized];
 }
 
 function createCachePredicate(
