@@ -1,4 +1,9 @@
 import {resolveSignalOrValue, type ReadonlySignal} from '@quilted/signals';
+import type {
+  AssetLoadTiming,
+  AssetsCacheKey,
+  BrowserAssetModuleSelector,
+} from '@quilted/assets';
 
 import type {
   BrowserDetails,
@@ -7,11 +12,7 @@ import type {
   CookieOptions,
   Cookies,
 } from './types.ts';
-import type {
-  AssetLoadTiming,
-  AssetsCacheKey,
-  BrowserAssetModuleSelector,
-} from '@quilted/assets';
+import {encode} from './encoding.ts';
 
 import {CookieString} from './shared/cookies.ts';
 
@@ -174,7 +175,7 @@ export class BrowserResponseSerializations {
   get value() {
     return [...this.#serializations].map(([id, value]) => ({
       id,
-      value: (typeof value === 'function' ? value() : value) as unknown,
+      value: encode(typeof value === 'function' ? value() : value),
     }));
   }
 

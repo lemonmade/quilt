@@ -9,6 +9,7 @@ import {
 } from '@quilted/signals';
 
 import type {BrowserDetails, CookieOptions, Cookies} from './types.ts';
+import {decode} from './encoding.ts';
 
 export class Browser implements BrowserDetails {
   readonly title = new BrowserTitle();
@@ -210,7 +211,7 @@ function getSerializedFromNode<T = unknown>(node: Element): T | undefined {
   const value = (node as HTMLMetaElement).content;
 
   try {
-    return value ? JSON.parse(value) : undefined;
+    return value ? (decode(JSON.parse(value)) as T) : undefined;
   } catch {
     return undefined;
   }
