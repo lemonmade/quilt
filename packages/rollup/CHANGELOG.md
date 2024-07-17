@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.34
+
+### Patch Changes
+
+- [`087943b`](https://github.com/lemonmade/quilt/commit/087943b0dc93ed23617711f1527a45772177b182) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix errors when `.esnext` dependencies have tsconfig files
+
 ## 0.2.33
 
 ### Patch Changes
