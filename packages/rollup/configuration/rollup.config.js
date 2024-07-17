@@ -15,7 +15,7 @@ export default defineConfig({
   input: Object.values(pkg.exports).map((exports) => exports['quilt:source']),
   plugins: [
     esbuild({
-      target: 'node18',
+      target: 'node20',
     }),
     nodeExternals(),
     nodeResolve(),

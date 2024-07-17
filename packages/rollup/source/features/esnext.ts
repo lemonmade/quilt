@@ -28,6 +28,7 @@ export function esnext({
       loaders: {
         '.esnext': 'js',
       },
+      tsconfig: false,
     });
   }
 
