@@ -82,10 +82,7 @@ export interface RouteDefinitionString<
   input?: (
     navigation: NoInfer<RouteNavigationStringEntry<unknown, unknown, Context>>,
   ) => Input;
-  load?: (
-    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
-    context: Context,
-  ) => Promise<Data>;
+  load?: RouteDefinitionStringLoadFunction<Data, Input, Context>;
   render?:
     | ((
         children: ComponentChildren,
@@ -93,6 +90,17 @@ export interface RouteDefinitionString<
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any, Context>[];
+}
+
+export interface RouteDefinitionStringLoadFunction<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
+  (
+    navigation: RouteNavigationStringEntry<unknown, Input, Context>,
+    context: Context,
+  ): Promise<Data>;
 }
 
 export interface RouteDefinitionRegExp<
@@ -117,10 +125,7 @@ export interface RouteDefinitionRegExp<
   input?: (
     navigation: NoInfer<RouteNavigationRegExpEntry<unknown, unknown, Context>>,
   ) => Input;
-  load?: (
-    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
-    context: Context,
-  ) => Promise<Data>;
+  load?: RouteDefinitionRegExpLoadFunction<Data, Input, Context>;
   render?:
     | ((
         children: ComponentChildren,
@@ -128,6 +133,17 @@ export interface RouteDefinitionRegExp<
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any, Context>[];
+}
+
+export interface RouteDefinitionRegExpLoadFunction<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
+  (
+    navigation: RouteNavigationRegExpEntry<unknown, Input, Context>,
+    context: Context,
+  ): Promise<Data>;
 }
 
 export interface RouteDefinitionFallback<
@@ -150,10 +166,7 @@ export interface RouteDefinitionFallback<
   input?: (
     navigation: RouteNavigationFallbackEntry<unknown, unknown, Context>,
   ) => Input;
-  load?: (
-    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
-    context: Context,
-  ) => Promise<Data>;
+  load?: RouteDefinitionFallbackLoadFunction<Data, Input, Context>;
   render?:
     | ((
         children: ComponentChildren,
@@ -161,6 +174,17 @@ export interface RouteDefinitionFallback<
       ) => VNode<any>)
     | VNode<any>;
   children?: readonly RouteDefinition<any, any, Context>[];
+}
+
+export interface RouteDefinitionFallbackLoadFunction<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> {
+  (
+    navigation: RouteNavigationFallbackEntry<unknown, Input, Context>,
+    context: Context,
+  ): Promise<Data>;
 }
 
 export type RouteDefinition<
@@ -171,3 +195,12 @@ export type RouteDefinition<
   | RouteDefinitionString<Data, Input, Context>
   | RouteDefinitionRegExp<Data, Input, Context>
   | RouteDefinitionFallback<Data, Input, Context>;
+
+export type RouteDefinitionLoadFunction<
+  Data = unknown,
+  Input = unknown,
+  Context = unknown,
+> =
+  | RouteDefinitionStringLoadFunction<Data, Input, Context>
+  | RouteDefinitionRegExpLoadFunction<Data, Input, Context>
+  | RouteDefinitionFallbackLoadFunction<Data, Input, Context>;
