@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.35
+
+### Patch Changes
+
+- [`759b46c`](https://github.com/lemonmade/quilt/commit/759b46c6b47efb14889b9ac80c416893bf90e83e) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Vite and Vitest dependencies
+
 ## 0.2.34
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.7.8
+
+### Patch Changes
+
+- [`759b46c`](https://github.com/lemonmade/quilt/commit/759b46c6b47efb14889b9ac80c416893bf90e83e) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Vite and Vitest dependencies
+
+- Updated dependencies [[`f369ee1`](https://github.com/lemonmade/quilt/commit/f369ee19ae64eed556a1385514d26278540133b1), [`da6376b`](https://github.com/lemonmade/quilt/commit/da6376beca8256d525f0552bf310326dd94b62e4)]:
+  - @quilted/preact-router@0.2.4
+
 ## 0.7.7
 
 ### Patch Changes

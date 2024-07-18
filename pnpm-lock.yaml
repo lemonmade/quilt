@@ -635,7 +635,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.4
         version: link:../preact-router
       '@quilted/preact-signals':
         specifier: workspace:^0.1.0
@@ -901,7 +901,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../request-router
       '@quilted/rollup':
-        specifier: workspace:^0.2.28
+        specifier: workspace:^0.2.35
         version: link:../rollup
     devDependencies:
       '@types/babel__core':

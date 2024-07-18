@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.34
+
+### Patch Changes
+
+- [`759b46c`](https://github.com/lemonmade/quilt/commit/759b46c6b47efb14889b9ac80c416893bf90e83e) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Vite and Vitest dependencies
+
+- [`df319bd`](https://github.com/lemonmade/quilt/commit/df319bd30acf226005fcb7f9e7bf55d289004cbf) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix server GraphQL execution in GraphQL template
+
 ## 0.2.33
 
 ### Patch Changes

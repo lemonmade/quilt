@@ -1,5 +1,16 @@
 # @quilted/vite
 
+## 0.1.23
+
+### Patch Changes
+
+- [`59aa752`](https://github.com/lemonmade/quilt/commit/59aa75292cbd11fd2cc07bde49ca426ad705304f) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix regular expression for transforming async and worker libraries in Vite
+
+- [`759b46c`](https://github.com/lemonmade/quilt/commit/759b46c6b47efb14889b9ac80c416893bf90e83e) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgrade Vite and Vitest dependencies
+
+- Updated dependencies [[`759b46c`](https://github.com/lemonmade/quilt/commit/759b46c6b47efb14889b9ac80c416893bf90e83e)]:
+  - @quilted/rollup@0.2.35
+
 ## 0.1.22
 
 ### Patch Changes
