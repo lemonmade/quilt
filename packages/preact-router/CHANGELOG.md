@@ -1,5 +1,13 @@
 # @quilted/preact-router
 
+## 0.2.4
+
+### Patch Changes
+
+- [`f369ee1`](https://github.com/lemonmade/quilt/commit/f369ee19ae64eed556a1385514d26278540133b1) Thanks [@lemonmade](https://github.com/lemonmade)! - Expose explicit types for route loaders
+
+- [`da6376b`](https://github.com/lemonmade/quilt/commit/da6376beca8256d525f0552bf310326dd94b62e4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix broken back/forward handling
+
 ## 0.2.3
 
 ### Patch Changes
