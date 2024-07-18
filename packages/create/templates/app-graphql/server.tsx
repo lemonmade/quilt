@@ -36,7 +36,7 @@ router.get(async (request) => {
     router: new Router(request.url),
     graphql: {
       fetch: performGraphQLOperation,
-      cache: new GraphQLCache(),
+      cache: new GraphQLCache({fetch: performGraphQLOperation}),
     },
   } satisfies AppContext;
 
