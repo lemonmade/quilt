@@ -270,7 +270,7 @@
     "graphql": "^16.8.0",
     "preact": "^10.21.0",
     "prettier": "^2.0.0 || ^3.0.0",
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.0"
   },
   "peerDependenciesMeta": {
     "graphql": {
@@ -290,6 +290,6 @@
     "expect": "^29.0.0",
     "preact": "^10.21.0",
     "prettier": "^3.2.0",
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.3"
   }
 }
