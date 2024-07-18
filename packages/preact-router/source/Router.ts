@@ -73,12 +73,10 @@ export class Router {
       throw new Error('Cannot navigate in a non-browser environment');
     }
 
+    const currentRequest = this.#currentRequest.peek();
+
     const id = createNavigationRequestID();
-    const url = resolveURL(
-      to,
-      this.#currentRequest.peek().url,
-      base ?? this.base,
-    );
+    const url = resolveURL(to, currentRequest.url, base ?? this.base);
     const finalState = {...state, [STATE_ID_FIELD_KEY]: id};
 
     const request: NavigationRequest = {id, url, state: finalState};
@@ -112,7 +110,7 @@ export class Router {
     }
 
     const navigationIDs = this.#navigationIDs;
-    const entryIndex = navigationIDs.lastIndexOf(id);
+    const entryIndex = navigationIDs.lastIndexOf(currentRequest.id);
 
     if (replace) {
       navigationIDs.splice(entryIndex, 1, id);
