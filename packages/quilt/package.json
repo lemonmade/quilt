@@ -73,11 +73,11 @@
       "quilt:esnext": "./build/esnext/navigation.esnext",
       "import": "./build/esm/navigation.mjs"
     },
-    "./navigate/testing": {
-      "types": "./build/typescript/navigate/testing.d.ts",
-      "quilt:source": "./source/navigate/testing.ts",
-      "quilt:esnext": "./build/esnext/navigate/testing.esnext",
-      "import": "./build/esm/navigate/testing.mjs"
+    "./navigation/testing": {
+      "types": "./build/typescript/navigation/testing.d.ts",
+      "quilt:source": "./source/navigation/testing.ts",
+      "quilt:esnext": "./build/esnext/navigation/testing.esnext",
+      "import": "./build/esm/navigation/testing.mjs"
     },
     "./performance": {
       "types": "./build/typescript/performance.d.ts",
@@ -188,11 +188,11 @@
       "localize": [
         "./build/typescript/localize.d.ts"
       ],
-      "navigate": [
-        "./build/typescript/navigate.d.ts"
+      "navigation": [
+        "./build/typescript/navigation.d.ts"
       ],
-      "navigate/testing": [
-        "./build/typescript/navigate/testing.d.ts"
+      "navigation/testing": [
+        "./build/typescript/navigation/testing.d.ts"
       ],
       "performance": [
         "./build/typescript/performance.d.ts"
