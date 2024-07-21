@@ -4,7 +4,7 @@ import {hydrate} from 'preact';
 import {httpBatchLink} from '@trpc/client';
 import {QueryClient} from '@tanstack/react-query';
 import {Browser, BrowserContext} from '@quilted/quilt/browser';
-import {Router} from '@quilted/quilt/navigate';
+import {Router} from '@quilted/quilt/navigation';
 
 import type {AppContext} from '~/shared/context.ts';
 import {trpc} from '~/shared/trpc.ts';

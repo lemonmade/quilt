@@ -110,7 +110,7 @@ The basic app renders a number of “global” context providers in the main `ap
 
 import type {RenderableProps} from 'preact';
 import {useMemo} from 'preact/hooks';
-import {useInitialUrl} from '@quilted/quilt/navigate';
+import {useInitialUrl} from '@quilted/quilt/navigation';
 
 import {httpBatchLink} from '@trpc/client';
 import {QueryClient} from '@tanstack/react-query';
@@ -193,7 +193,7 @@ To use this optimization, you’ll need to accept a different tRPC link when ser
 
 import type {RenderableProps} from 'preact';
 import {useMemo} from 'preact/hooks';
-import {useInitialUrl} from '@quilted/quilt/navigate';
+import {useInitialUrl} from '@quilted/quilt/navigation';
 
 import {httpBatchLink, type TRPCClient} from '@trpc/client';
 import {createTRPCReact} from '@trpc/react-query';

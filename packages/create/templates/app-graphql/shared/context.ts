@@ -1,5 +1,5 @@
 import {createOptionalContext} from '@quilted/quilt/context';
-import type {Router} from '@quilted/quilt/navigate';
+import type {Router} from '@quilted/quilt/navigation';
 
 export interface AppContext {
   /**

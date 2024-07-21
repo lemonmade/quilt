@@ -8,7 +8,7 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useRoutes} from '@quilted/quilt/navigate';
+          import {useRoutes} from '@quilted/quilt/navigation';
           import {useLocale, Localization} from '@quilted/quilt/localize';
           
           export function Routes() {
@@ -45,7 +45,7 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useRoutes} from '@quilted/quilt/navigate';
+          import {useRoutes} from '@quilted/quilt/navigation';
           import {useLocale, Localization} from '@quilted/quilt/localize';
           
           export function Routes() {

@@ -1,7 +1,7 @@
 import type {RenderableProps} from 'preact';
 
 import {NotFound} from '@quilted/quilt/server';
-import {Navigation, route} from '@quilted/quilt/navigate';
+import {Navigation, route} from '@quilted/quilt/navigation';
 import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
 
 import {HTML} from './foundation/html.ts';

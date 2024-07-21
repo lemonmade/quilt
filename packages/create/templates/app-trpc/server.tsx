@@ -31,7 +31,7 @@ router.get(async (request) => {
     await Promise.all([
       import('./App.tsx'),
       import('@quilted/quilt/server'),
-      import('@quilted/quilt/navigate'),
+      import('@quilted/quilt/navigation'),
       import('@tanstack/react-query'),
     ]);
 

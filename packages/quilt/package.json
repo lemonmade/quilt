@@ -67,11 +67,11 @@
       "quilt:esnext": "./build/esnext/localize.esnext",
       "import": "./build/esm/localize.mjs"
     },
-    "./navigate": {
-      "types": "./build/typescript/navigate.d.ts",
-      "quilt:source": "./source/navigate.ts",
-      "quilt:esnext": "./build/esnext/navigate.esnext",
-      "import": "./build/esm/navigate.mjs"
+    "./navigation": {
+      "types": "./build/typescript/navigation.d.ts",
+      "quilt:source": "./source/navigation.ts",
+      "quilt:esnext": "./build/esnext/navigation.esnext",
+      "import": "./build/esm/navigation.mjs"
     },
     "./navigate/testing": {
       "types": "./build/typescript/navigate/testing.d.ts",

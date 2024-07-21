@@ -1,4 +1,4 @@
-import type {TestRouter} from '@quilted/quilt/navigate/testing';
+import type {TestRouter} from '@quilted/quilt/navigation/testing';
 import type {BrowserTestMock} from '@quilted/quilt/browser/testing';
 import type {GraphQLCache} from '@quilted/quilt/graphql';
 

@@ -4,7 +4,7 @@ Once your application has more than a single page, you need some way of declarin
 
 ## Getting started
 
-This guide also assumes you have already rendered either of the following from `@quilted/quilt/navigate`:
+This guide also assumes you have already rendered either of the following from `@quilted/quilt/navigation`:
 
 - a `<Routing>` component, or
 - a `<RoutingWithoutPreloading />` component (to remove the bundle size needed to implement [route-based preloading](#route-based-preloading))
@@ -18,7 +18,7 @@ Frameworks like [Next.js](https://nextjs.org/docs/routing/introduction), [Remix]
 Quilt **does not** implement file-based routing; there is no special routing-related directory. Routes are entirely declared in React components, using the `routes` prop of the `<Routing />` and `<RoutingWithoutPreloading />` components (or, as shown later, with the `useRoutes()` hook):
 
 ```tsx
-import {Routing} from '@quilted/quilt/navigate';
+import {Routing} from '@quilted/quilt/navigation';
 
 const routes = [
   {match: '/', render: <Home />},
@@ -1190,7 +1190,7 @@ Quilt provides a way to help minimize this performance issue for the common case
 Because this feature adds event listeners to all your links, you have to opt in to it. You can do this by wrapping your app either in Quilt’s `<RoutingWithoutPreloading />` or `<RoutePreloading />` components. Once you’ve got this additional wrapper, you can define the `renderPreload` field on your routes. If you use [Quilt’s `createAsyncComponent()` function](./async.md#asynchronous-components) to create your async components, those components will have a `Preload` component you can render to preload your route. By default, this will preload the JavaScript and CSS for the async component, and you can add [custom preloading logic](./async.md#customizing-preloading) to preload data, too.
 
 ```tsx
-import {Routing, useRoutes} from '@quilted/quilt/navigate';
+import {Routing, useRoutes} from '@quilted/quilt/navigation';
 import {createAsyncComponent} from '@quilted/quilt/async';
 
 const Start = createAsyncComponent(() => import('./Start.tsx'));
@@ -1223,7 +1223,7 @@ function Routes() {
 You can customize some aspects of preloading with the `preload` prop on the `Link` component. If you want to force a link to preload immediately, even if it is not being interacted with, you can set its `preload` prop to `true`:
 
 ```tsx
-import {Routing, Link, useRoutes} from '@quilted/quilt/navigate';
+import {Routing, Link, useRoutes} from '@quilted/quilt/navigation';
 import {createAsyncComponent} from '@quilted/quilt/async';
 
 const StepTwo = createAsyncComponent(() => import('./StepTwo.tsx'));
@@ -1269,7 +1269,7 @@ In the next example, we’ve added route-based preloading to our programmatic na
 
 ```tsx
 import {useState} from 'preact/hooks';
-import {useNavigate, usePreloadRoute} from '@quilted/quilt/navigate';
+import {useNavigate, usePreloadRoute} from '@quilted/quilt/navigation';
 
 export function DeleteProductButton({id}: {id: string}) {
   const navigate = useNavigate();
@@ -1303,7 +1303,7 @@ async function deleteProduct() {
 As we discuss in the [static rendering guide](./static-rendering.md), Quilt can render your application to static HTML files. Quilt will run your application, and will automatically detect the routes you declare in order to render each one in turn. Imagine the following example application:
 
 ```tsx
-import {Routing, Link} from '@quilted/quilt/navigate';
+import {Routing, Link} from '@quilted/quilt/navigation';
 
 const routes = [
   {match: '/', render: <Home />},
@@ -1347,7 +1347,7 @@ Any route declared with a `match` property using a regular expression or functio
 You can teach Quilt what matches to render during static rendering using the `renderStatic` property of a route. This property should be a function, which can return either an array of path parts to render, or a promise for an array of path parts to render. We can update our earlier example to force Quilt to render our dynamic `/shows/{handle}` route with a few matches:
 
 ```tsx
-import {Routing, Link} from '@quilted/quilt/navigate';
+import {Routing, Link} from '@quilted/quilt/navigation';
 
 const routes = [
   {match: '/', render: () => <Home />},
@@ -1390,7 +1390,7 @@ Now, in addition to the routes that were statically rendered before, Quilt will 
 If you want to prevent a route from being statically rendered, you can set its `renderStatic` property to `false`:
 
 ```tsx
-import {Routing, Link} from '@quilted/quilt/navigate';
+import {Routing, Link} from '@quilted/quilt/navigation';
 
 const routes = [
   {match: '/', render: <Public />},
@@ -1422,7 +1422,7 @@ Sometimes, all the routes in your application are nested under a particular path
 Quilt provides a convenience for applications that use this strategy. It’s called a “router prefix”: you declare some part of the pathname that is constant for all URLs in your application by passing a `prefix` prop on the router component. For example, let’s imagine we are deploying an application where all URLs are nested under `/admin`:
 
 ```tsx
-import {Routing, Link} from '@quilted/quilt/navigate';
+import {Routing, Link} from '@quilted/quilt/navigation';
 
 const routes = [
   // This route will render when the full path is `/admin`
@@ -1476,7 +1476,7 @@ If you do nothing at all, Quilt will automatically measure the scroll position o
 Quilt will default to persisting scroll measurements to [`sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage), which lets the behavior to persist across page refreshes. You can provide a custom persistence strategy by passing the `scrollRestoration` prop to `Router`. Quilt provides a few helpers, like `createSessionStorageScrollRestoration()` and `createMemoryScrollRestoration()`, for constructing customized approaches to persisting scroll positions.
 
 ```tsx
-import {Routing, Link} from '@quilted/quilt/navigate';
+import {Routing, Link} from '@quilted/quilt/navigation';
 import {createMemoryScrollRestoration} from '@quilted/preact-router';
 
 // Some applications may not be able to access `sessionStorage`. This
@@ -1511,7 +1511,7 @@ import type {RenderableProps} from 'preact';
 import {
   Routing,
   useRouteChangeScrollRestoration,
-} from '@quilted/quilt/navigate';
+} from '@quilted/quilt/navigation';
 
 function App() {
   return (
@@ -1561,7 +1561,7 @@ import {
   Link,
   Routing,
   useRouteChangeScrollRestoration,
-} from '@quilted/quilt/navigate';
+} from '@quilted/quilt/navigation';
 
 const routes = [
   {match: '/', render: <Home />},
@@ -1593,7 +1593,7 @@ import {
   Routing,
   useRoutes,
   useRouteChangeScrollRestoration,
-} from '@quilted/quilt/navigate';
+} from '@quilted/quilt/navigation';
 
 function App() {
   return (
@@ -1646,7 +1646,11 @@ You might want to consider adding a [“skip navigation” link](https://webaim.
 
 ```tsx
 import type {RenderableProps} from 'preact';
-import {Routing, useRouteChangeFocus, useRoutes} from '@quilted/quilt/navigate';
+import {
+  Routing,
+  useRouteChangeFocus,
+  useRoutes,
+} from '@quilted/quilt/navigation';
 
 function App() {
   return (
@@ -1697,7 +1701,7 @@ The function you pass to `useNavigationBlock()` is called with an object contain
 
 ```tsx
 import {useState} from 'preact/hooks';
-import {Routing, useNavigationBlock} from '@quilted/quilt/navigate';
+import {Routing, useNavigationBlock} from '@quilted/quilt/navigation';
 import {TextField} from 'some-ui-library';
 
 const routes = [
@@ -1736,7 +1740,7 @@ These details are especially useful when using a simplified version of the `useN
 
 ```tsx
 import {useState} from 'preact/hooks';
-import {Routing, useNavigationBlock} from '@quilted/quilt/navigate';
+import {Routing, useNavigationBlock} from '@quilted/quilt/navigation';
 import {TextField, Dialog} from 'my-ui-library';
 
 const routes = [
@@ -1777,7 +1781,7 @@ import {
   Link,
   usePreload,
   useNavigationBlock,
-} from '@quilted/quilt/navigate';
+} from '@quilted/quilt/navigation';
 import {createAsyncComponent} from '@quilted/quilt/async';
 
 const BigRoute = createAsyncComponent(() => import('./Big.tsx'));

@@ -1,4 +1,4 @@
-import {Navigation} from '@quilted/quilt/navigate';
+import {Navigation} from '@quilted/quilt/navigation';
 import {Localization} from '@quilted/quilt/localize';
 import {PerformanceContext} from '@quilted/quilt/performance';
 

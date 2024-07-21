@@ -3,7 +3,7 @@ import '@quilted/quilt/globals';
 import {hydrate} from 'preact';
 import {createGraphQLFetch, GraphQLCache} from '@quilted/quilt/graphql';
 import {Browser, BrowserContext} from '@quilted/quilt/browser';
-import {Router} from '@quilted/quilt/navigate';
+import {Router} from '@quilted/quilt/navigation';
 
 import type {AppContext} from '~/shared/context.ts';
 

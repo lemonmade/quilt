@@ -850,7 +850,7 @@ describe('async', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
-        import {Navigation} from '@quilted/quilt/navigate';
+        import {Navigation} from '@quilted/quilt/navigation';
 
         const routes = [
           {

@@ -1,4 +1,4 @@
-import {useRoutes} from '@quilted/quilt/navigate';
+import {useRoutes} from '@quilted/quilt/navigation';
 import {usePerformanceNavigation} from '@quilted/quilt/performance';
 
 export function Routes() {

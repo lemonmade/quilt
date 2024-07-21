@@ -2,7 +2,7 @@ import {Suspense} from 'preact/compat';
 
 import {createRender} from '@quilted/quilt/testing';
 import {BrowserContext, BrowserTestMock} from '@quilted/quilt/browser/testing';
-import {TestRouting, TestRouter} from '@quilted/quilt/navigate/testing';
+import {TestRouting, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 import {GraphQLCache} from '@quilted/quilt/graphql';
 
