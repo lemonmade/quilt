@@ -5,7 +5,7 @@ export {
   type RouterOptions,
   type NavigateOptions,
 } from './Router.ts';
-export {route, fallbackRoute} from './route.ts';
+export {route, fallbackRoute, createContextRouteFunction} from './route.ts';
 
 export {Link} from './components/Link.tsx';
 export {Navigation} from './components/Navigation.tsx';

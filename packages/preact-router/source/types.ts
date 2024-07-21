@@ -98,7 +98,7 @@ export interface RouteDefinitionStringLoadFunction<
   Context = unknown,
 > {
   (
-    navigation: RouteNavigationStringEntry<unknown, Input, Context>,
+    navigation: NoInfer<RouteNavigationStringEntry<unknown, Input, Context>>,
     context: Context,
   ): Promise<Data>;
 }

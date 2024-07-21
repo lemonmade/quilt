@@ -16,6 +16,7 @@ import {
   AppContextReact,
   type AppContext as AppContextType,
 } from './shared/context.ts';
+import {routeWithAppContext} from './shared/navigation.ts';
 
 export interface AppProps {
   context: AppContextType;
@@ -24,16 +25,16 @@ export interface AppProps {
 // Define the routes for your application. If you have a lot of routes, you
 // might want to split this into a separate file.
 const routes = [
-  route('*', {
+  routeWithAppContext('*', {
     render: (children) => <Frame>{children}</Frame>,
     children: [
-      route('/', {
+      routeWithAppContext('/', {
         async load() {
           await Promise.all([Home.load()]);
         },
         render: <Home />,
       }),
-      route('*', {render: <NotFound />}),
+      routeWithAppContext('*', {render: <NotFound />}),
     ],
   }),
 ];
@@ -44,7 +45,7 @@ export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
       <HTML>
-        <Navigation routes={routes} context={context} />
+        <Navigation router={context.router} routes={routes} context={context} />
       </HTML>
     </AppContext>
   );

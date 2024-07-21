@@ -68,12 +68,7 @@ export interface RenderContext extends AppContext {
   /**
    * The GraphQL controller used for this component test.
    */
-  readonly graphql: GraphQLController;
-
-  /**
-   * The cache of GraphQL query results.
-   */
-  readonly graphQLCache: GraphQLCache;
+  readonly graphQLController: GraphQLController;
 }
 
 export interface RenderActions extends Record<string, never> {}

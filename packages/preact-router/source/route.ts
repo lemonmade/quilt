@@ -29,3 +29,26 @@ export function fallbackRoute(
 ): RouteDefinitionFallback {
   return route;
 }
+
+export function createContextRouteFunction<Context>() {
+  function routeWithContext<Data = unknown, Input = unknown>(
+    match: '*' | true,
+    rest: Omit<RouteDefinitionFallback<Data, Input, Context>, 'match'>,
+  ): RouteDefinitionFallback<Data, Input, Context>;
+  function routeWithContext<Data = unknown, Input = unknown>(
+    match: string | string[],
+    rest: Omit<RouteDefinitionString<Data, Input, Context>, 'match'>,
+  ): RouteDefinitionString<Data, Input, Context>;
+  function routeWithContext<Data = unknown, Input = unknown>(
+    match: RegExp | RegExp[],
+    rest: Omit<RouteDefinitionRegExp<Data, Input, Context>, 'match'>,
+  ): RouteDefinitionRegExp<Data, Input, Context>;
+  function routeWithContext<_Data = unknown, _Input = unknown>(
+    match: any,
+    rest: any,
+  ) {
+    return {match, ...rest} as any;
+  }
+
+  return routeWithContext;
+}

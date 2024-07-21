@@ -1,6 +1,6 @@
 import {createRender} from '@quilted/quilt/testing';
 import {BrowserContext, BrowserTestMock} from '@quilted/quilt/browser/testing';
-import {TestRouting, TestRouter} from '@quilted/quilt/navigation/testing';
+import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -39,13 +39,13 @@ export const renderApp = createRender<
       <AppContextReact.Provider value={context}>
         <BrowserContext browser={browser}>
           <Localization locale={locale}>
-            <TestRouting router={router}>
+            <Navigation router={router}>
               <trpc.Provider client={trpcClient} queryClient={queryClient}>
                 <QueryClientProvider client={queryClient}>
                   {element}
                 </QueryClientProvider>
               </trpc.Provider>
-            </TestRouting>
+            </Navigation>
           </Localization>
         </BrowserContext>
       </AppContextReact.Provider>
