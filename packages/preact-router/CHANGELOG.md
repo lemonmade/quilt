@@ -1,5 +1,11 @@
 # @quilted/preact-router
 
+## 0.2.5
+
+### Patch Changes
+
+- [`5c418c3`](https://github.com/lemonmade/quilt/commit/5c418c3a9a7de7c5ee4337cbd02b68e4bcd2d581) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `createContextRouteFunction()` helper for creating routes with a known context, and use it for app context
+
 ## 0.2.4
 
 ### Patch Changes

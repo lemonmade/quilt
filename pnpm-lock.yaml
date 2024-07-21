@@ -635,7 +635,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.2.4
+        specifier: workspace:^0.2.5
         version: link:../preact-router
       '@quilted/preact-signals':
         specifier: workspace:^0.1.0

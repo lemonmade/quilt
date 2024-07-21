@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.7.9
+
+### Patch Changes
+
+- [`7dae2be`](https://github.com/lemonmade/quilt/commit/7dae2bebab01a4a4e2baf6c1799ce0adb59a5bb7) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename `@quilted/quilt/navigate` to `@quilted/quilt/navigation`
+
+- Updated dependencies [[`5c418c3`](https://github.com/lemonmade/quilt/commit/5c418c3a9a7de7c5ee4337cbd02b68e4bcd2d581)]:
+  - @quilted/preact-router@0.2.5
+
 ## 0.7.8
 
 ### Patch Changes
