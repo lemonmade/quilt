@@ -437,8 +437,11 @@ export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
       chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
       manualChunks: createManualChunksSorter(),
       generatedCode,
+      // This optimization is performed in `AsyncModule` instead.
+      hoistTransitiveImports: false,
       minifyInternalExports: true,
     },
+    preserveEntrySignatures: false,
   } satisfies RollupOptions;
 }
 
