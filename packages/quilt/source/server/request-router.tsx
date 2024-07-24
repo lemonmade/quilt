@@ -28,13 +28,11 @@ export interface RenderHTMLFunction {
     content: ReadableStream<string>,
     context: {
       readonly response: BrowserResponse;
-      readonly assets?: BrowserAssetsEntry;
-      readonly preloadAssets?: BrowserAssetsEntry;
     },
   ): ReadableStream<any> | string | Promise<ReadableStream<any> | string>;
 }
 
-export interface RenderOptions {
+export interface RenderToResponseOptions {
   readonly request: Request;
   readonly status?: number;
   readonly stream?: 'headers' | false;
@@ -48,17 +46,17 @@ export interface RenderOptions {
 
 export async function renderToResponse(
   element: VNode<any>,
-  options: RenderOptions,
+  options: RenderToResponseOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
 export async function renderToResponse(
-  options: RenderOptions,
+  options: RenderToResponseOptions,
 ): Promise<HTMLResponse | RedirectResponse>;
 export async function renderToResponse(
-  optionsOrElement: VNode<any> | RenderOptions,
-  definitelyOptions?: RenderOptions,
+  optionsOrElement: VNode<any> | RenderToResponseOptions,
+  definitelyOptions?: RenderToResponseOptions,
 ) {
   let element: VNode<any> | undefined;
-  let options: RenderOptions;
+  let options: RenderToResponseOptions;
 
   if (isValidElement(optionsOrElement)) {
     element = optionsOrElement;
@@ -139,37 +137,9 @@ export async function renderToResponse(
   async function renderToHTMLBody(
     content: ReadableStream<any>,
   ): Promise<ReadableStream<any> | string> {
-    const [synchronousAssets, preloadAssets] = await Promise.all([
-      assets?.entry({
-        cacheKey,
-        modules: browserResponse.assets.get({timing: 'load'}),
-      }),
-      assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
-        cacheKey,
-      }),
-    ]);
-
-    if (synchronousAssets) {
-      for (const style of synchronousAssets.styles) {
-        browserResponse.headers.append(
-          'Link',
-          preloadHeader(styleAssetPreloadAttributes(style)),
-        );
-      }
-
-      for (const script of synchronousAssets.scripts) {
-        browserResponse.headers.append(
-          'Link',
-          preloadHeader(scriptAssetPreloadAttributes(script)),
-        );
-      }
-    }
-
     if (typeof renderHTML === 'function') {
       const body = await renderHTML(content, {
         response: browserResponse,
-        assets: synchronousAssets,
-        preloadAssets,
       });
 
       return body;
@@ -184,6 +154,32 @@ export async function renderToResponse(
       const writer = responseStream.writable.getWriter();
 
       writer.write(`<!DOCTYPE html>`);
+
+      const [synchronousAssets, preloadAssets] = await Promise.all([
+        assets?.entry({
+          cacheKey,
+          modules: browserResponse.assets.get({timing: 'load'}),
+        }),
+        assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
+          cacheKey,
+        }),
+      ]);
+
+      if (synchronousAssets) {
+        for (const style of synchronousAssets.styles) {
+          browserResponse.headers.append(
+            'Link',
+            preloadHeader(styleAssetPreloadAttributes(style)),
+          );
+        }
+
+        for (const script of synchronousAssets.scripts) {
+          browserResponse.headers.append(
+            'Link',
+            preloadHeader(scriptAssetPreloadAttributes(script)),
+          );
+        }
+      }
 
       const htmlContent = renderToStaticMarkup(
         <html {...browserResponse.htmlAttributes.value}>
