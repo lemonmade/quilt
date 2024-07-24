@@ -148,10 +148,10 @@ export class Router {
 
   resolve(
     to: NavigateTo,
-    options?: {baseURL?: string | URL},
+    options?: {base?: string | URL},
   ): {readonly url: URL; readonly external: boolean} {
     const currentURL = this.#currentRequest.peek().url;
-    const url = resolveURL(to, currentURL, options?.baseURL);
+    const url = resolveURL(to, currentURL, options?.base ?? this.base);
 
     const external = this.#isExternal
       ? this.#isExternal(url, currentURL)

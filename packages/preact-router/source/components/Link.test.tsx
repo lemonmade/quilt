@@ -20,6 +20,26 @@ describe('<Link />', () => {
     expect(link).toContainPreactComponent('a', {href: '/products/my-product'});
   });
 
+  it('creates an anchor from an absolute `to` in a custom base URL', () => {
+    using link = render(<Link to="/products" />, {
+      router: new TestRouter('https://example.com/admin/orders', {
+        base: '/admin',
+      }),
+    });
+
+    expect(link).toContainPreactComponent('a', {href: '/admin/products'});
+  });
+
+  it('creates an anchor from an absolute `to` with a custom base URL on the link', () => {
+    using link = render(<Link to="/products" base="/" />, {
+      router: new TestRouter('https://example.com/admin/orders', {
+        base: '/admin',
+      }),
+    });
+
+    expect(link).toContainPreactComponent('a', {href: '/products'});
+  });
+
   it('passes additional props through to the anchor tag', () => {
     const label = 'Home';
     using link = render(<Link to="/" aria-label={label} />);

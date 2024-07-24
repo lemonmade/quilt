@@ -7,6 +7,7 @@ import {useRouter} from '../hooks/router.ts';
 
 interface Props extends Omit<JSX.HTMLAttributes<HTMLAnchorElement>, 'href'> {
   to: NavigateTo;
+  base?: string | URL;
   external?: boolean;
 }
 
@@ -14,6 +15,7 @@ export function Link({
   ref,
   children,
   to,
+  base,
   onClick,
   external: explicitlyExternal = false,
   ...rest
@@ -23,7 +25,7 @@ export function Link({
     () => computed(() => router.currentRequest.url.origin),
     [router],
   ).value;
-  const {url, external} = router.resolve(to);
+  const {url, external} = router.resolve(to, {base});
 
   const handleClick: JSX.MouseEventHandler<HTMLAnchorElement> = (event) => {
     onClick?.(event);

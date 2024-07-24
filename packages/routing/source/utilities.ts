@@ -3,9 +3,13 @@ import type {RouteMatch, NavigateTo, NavigateToSearch} from '@quilted/routing';
 export function resolveURL(
   to: NavigateTo,
   from: string | URL = '/',
-  base?: string | URL,
+  base: string | URL = '/',
 ): URL {
-  const prefix = base ? (typeof base === 'string' ? base : base.pathname) : '/';
+  const prefix = base
+    ? typeof base === 'string'
+      ? base
+      : base.pathname
+    : undefined;
   const fromURL = typeof from === 'string' ? new URL(from) : from;
 
   if (to instanceof URL) {
@@ -17,15 +21,18 @@ export function resolveURL(
     const finalSearch = searchToString(search);
     const finalHash = prefixIfNeeded('#', hash);
 
-    return new URL(
-      prefixPath(`${finalPathname}${finalSearch}${finalHash}`, prefix),
-      urlToPostfixedOriginAndPath(fromURL),
+    return resolveURL(
+      `${finalPathname}${finalSearch}${finalHash}`,
+      fromURL,
+      base,
     );
   } else if (typeof to === 'function') {
-    return resolveURL(to(fromURL), fromURL, prefix);
+    return resolveURL(to(fromURL), fromURL, base);
+  } else if (to[0] === '/') {
+    return new URL(prefixPath(to, prefix), fromURL);
+  } else {
+    return new URL(prefixPath(to, `${fromURL.origin}${fromURL.pathname}`));
   }
-
-  return new URL(prefixPath(to, prefix), urlToPostfixedOriginAndPath(fromURL));
 }
 
 const SINGLE_SEGMENT_REGEX = /[^/]+/;
@@ -159,16 +166,12 @@ export function testMatch(
   }
 }
 
-function urlToPostfixedOriginAndPath(url: URL) {
-  return postfixSlash(`${url.origin}${url.pathname}`);
-}
-
 function prefixPath(pathname: string, prefix?: string) {
-  if (!prefix) return pathname;
+  if (!prefix) return removePostfixSlash(pathname);
 
-  return pathname.indexOf('/') === 0
-    ? removePostfixSlash(`${postfixSlash(prefix)}${pathname.slice(1)}`)
-    : pathname;
+  return removePostfixSlash(
+    `${postfixSlash(prefix)}${pathname[0] === '/' ? pathname.slice(1) : pathname}`,
+  );
 }
 
 function searchToString(search?: NavigateToSearch) {
