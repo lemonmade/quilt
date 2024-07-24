@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.36
+
+### Patch Changes
+
+- [`6e879a9`](https://github.com/lemonmade/quilt/commit/6e879a958ec57761a03a4c33bf482644fd78f6a8) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove unnecessary imports in browser builds
+
 ## 0.2.35
 
 ### Patch Changes
