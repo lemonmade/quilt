@@ -1,5 +1,11 @@
 # @quilted/routing
 
+## 0.4.2
+
+### Patch Changes
+
+- [`5fe9550`](https://github.com/lemonmade/quilt/commit/5fe955005179d1734201d9a91e191d21f6f187d8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix relative route resolution with custom base URLs
+
 ## 0.4.1
 
 ### Patch Changes

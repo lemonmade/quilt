@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.7.10
+
+### Patch Changes
+
+- [`5561a4c`](https://github.com/lemonmade/quilt/commit/5561a4c929cbe0a95c4a03bd0724320de37f18ba) Thanks [@lemonmade](https://github.com/lemonmade)! - Make it easier to build custom HTML renderers
+
+- Updated dependencies [[`5fe9550`](https://github.com/lemonmade/quilt/commit/5fe955005179d1734201d9a91e191d21f6f187d8)]:
+  - @quilted/preact-router@0.2.6
+
 ## 0.7.9
 
 ### Patch Changes

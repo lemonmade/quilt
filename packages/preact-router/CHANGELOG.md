@@ -1,5 +1,14 @@
 # @quilted/preact-router
 
+## 0.2.6
+
+### Patch Changes
+
+- [`5fe9550`](https://github.com/lemonmade/quilt/commit/5fe955005179d1734201d9a91e191d21f6f187d8) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix relative route resolution with custom base URLs
+
+- Updated dependencies [[`5fe9550`](https://github.com/lemonmade/quilt/commit/5fe955005179d1734201d9a91e191d21f6f187d8)]:
+  - @quilted/routing@0.4.2
+
 ## 0.2.5
 
 ### Patch Changes
