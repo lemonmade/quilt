@@ -24,16 +24,14 @@ export function App() {
 }
 ```
 
-The browser sends a special header, [`Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language), that lets the server know what locale the user prefers. You can use the value of this header as the locale of your application by using the `useLocaleFromEnvironment` hook, and passing its result as the `Localization` component’s `locale`:
+The browser sends a special header, [`Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language), that lets the server know what locale the user prefers. When using Quilt [with server rendering](/documentation/features/server-rendering.md), you can omit the `locale` prop from the `Localization` component, and Quilt will automatically use the locale from the `Accept-Language` header on the server, and its equivalent in the browser.
 
 ```tsx
-import {Localization, useLocaleFromEnvironment} from '@quilted/quilt';
+import {Localization} from '@quilted/quilt';
 
 export function App() {
-  const locale = useLocaleFromEnvironment();
-
   return (
-    <Localization locale={locale}>
+    <Localization>
       <RestOfApp />
     </Localization>
   );
@@ -134,7 +132,7 @@ export function App() {
 
 In the example above, the english pages would now be available at `/` and `/contact`.
 
-When using `LocalizedRouter`, the locale of your application will be set to the same value as the `useLocaleFromEnvironment` hook, as long as that locale is at least in the same language as the resolved route-based locale. In the examples above, if a user visited the app with an `en-CA` locale, that locale would be preserved, even though the route only matches the `en` language.
+When using `LocalizedRouter`, the locale of your application will be set to the same value as the initial request’s `locale` (determined by the `useBrowserDetails().locale` value), as long as that locale is at least in the same language as the resolved route-based locale. In the examples above, if a user visited the app with an `en-CA` locale, that locale would be preserved, even though the route only matches the `en` language.
 
 #### Subdomain-based localized routing
 
@@ -208,7 +206,7 @@ export function App() {
 
 In the example above, the english pages would now be available at `app.com`.
 
-When using `LocalizedRouter`, the locale of your application will be set to the same value as the `useLocaleFromEnvironment` hook, as long as that locale is at least in the same language as the resolved route-based locale. In the examples above, if a user visited the app with an `en-CA` locale, that locale would be preserved, even though the route only matches the `en` language.
+When using `LocalizedRouter`, the locale of your application will be set to the same value as the initial request’s `locale` (determined by the `useBrowserDetails().locale` value), as long as that locale is at least in the same language as the resolved route-based locale. In the examples above, if a user visited the app with an `en-CA` locale, that locale would be preserved, even though the route only matches the `en` language.
 
 #### Locale-based redirecting
 

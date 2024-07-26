@@ -89,12 +89,10 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useLocale, useLocaleFromEnvironment, Localization} from '@quilted/quilt/localize';
+          import {useLocale, Localization} from '@quilted/quilt/localize';
           
           export function Routes() {
-            const locale = useLocaleFromEnvironment();
-
-            return <Localization locale={locale}><Localized /></Localization>;
+            return <Localization><Localized /></Localization>;
           }
           
           function Localized() {

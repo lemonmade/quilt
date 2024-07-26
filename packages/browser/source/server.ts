@@ -28,6 +28,7 @@ export class BrowserResponse implements BrowserDetails {
     new BrowserResponseElementAttributes<BrowserHTMLAttributes>();
   readonly status: BrowserResponseStatus;
   readonly cookies: BrowserResponseCookies;
+  readonly locale: BrowserDetails['locale'];
   readonly serializations: BrowserResponseSerializations;
   readonly headers: Headers;
   readonly request: Request;
@@ -37,12 +38,14 @@ export class BrowserResponse implements BrowserDetails {
     request,
     status,
     headers = new Headers(),
+    locale = getLocaleFromRequest(request) ?? 'en',
     cacheKey,
     serializations,
   }: {
     request: Request;
     status?: number;
     headers?: Headers;
+    locale?: string;
     cacheKey?: Partial<AssetsCacheKey>;
     serializations?: Iterable<[string, unknown]>;
   }) {
@@ -54,6 +57,7 @@ export class BrowserResponse implements BrowserDetails {
       request.headers.get('Cookie') ?? undefined,
     );
     this.assets = new BrowserResponseAssets({cacheKey});
+    this.locale = {value: locale};
     this.serializations = new BrowserResponseSerializations(
       new Map(serializations),
     );
@@ -210,6 +214,13 @@ export class BrowserResponseSerializations {
   *[Symbol.iterator]() {
     yield* this.#serializations;
   }
+}
+
+function getLocaleFromRequest(request: Request) {
+  const header = request.headers.get('Accept-Language');
+  // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+  const parsed = header?.split(',')[0]!.split(';')[0]!.trim();
+  return parsed === '*' ? undefined : parsed;
 }
 
 const ASSET_TIMING_PRIORITY: AssetLoadTiming[] = ['never', 'preload', 'load'];

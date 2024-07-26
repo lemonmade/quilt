@@ -21,6 +21,7 @@ export class Browser implements BrowserDetails {
   readonly bodyAttributes = new BrowserElementAttributes(document.body);
   readonly cookies = new BrowserCookies();
   readonly serializations = new BrowserSerializations();
+  readonly locale = new BrowserLocale();
   readonly request = new Request(window.location.href);
 }
 
@@ -214,6 +215,12 @@ function getSerializedFromNode<T = unknown>(node: Element): T | undefined {
     return value ? (decode(JSON.parse(value)) as T) : undefined;
   } catch {
     return undefined;
+  }
+}
+
+export class BrowserLocale {
+  get value() {
+    return navigator.language;
   }
 }
 

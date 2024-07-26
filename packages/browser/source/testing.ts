@@ -21,16 +21,19 @@ export class BrowserTestMock implements BrowserDetails {
   readonly htmlAttributes =
     new BrowserTestMockElementAttributes<BrowserHTMLAttributes>();
   readonly cookies: BrowserTestMockCookies;
+  readonly locale: BrowserDetails['locale'];
   readonly serializations: BrowserTestMockSerializations;
   readonly request: Request;
 
   constructor({
     url,
     cookies,
+    locale,
     serializations,
   }: {
     url?: URL | string;
     cookies?: ConstructorParameters<typeof BrowserTestMockCookies>[0];
+    locale?: string;
     serializations?: ConstructorParameters<
       typeof BrowserTestMockSerializations
     >[0];
@@ -40,6 +43,7 @@ export class BrowserTestMock implements BrowserDetails {
         (typeof location === 'object' ? location.href : 'https://example.com'),
     );
     this.cookies = new BrowserTestMockCookies(cookies);
+    this.locale = {value: locale ?? 'en'};
     this.serializations = new BrowserTestMockSerializations(serializations);
   }
 }
