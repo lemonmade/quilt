@@ -1,4 +1,5 @@
 ---
+'@quilted/preact-email': patch
 '@quilted/preact-localize': patch
 '@quilted/browser': patch
 '@quilted/create': patch
