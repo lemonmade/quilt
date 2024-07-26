@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-email",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "React-friendly APIs for rendering emails and their metadata",
   "repository": {
     "type": "git",
