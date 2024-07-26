@@ -36,6 +36,9 @@ export interface BrowserDetails {
       attributes: BrowserBodyAttributes | ReadonlySignal<BrowserBodyAttributes>,
     ): () => void;
   };
+  readonly locale: {
+    readonly value: string;
+  };
   readonly cookies: Cookies;
   readonly request: Request;
 }

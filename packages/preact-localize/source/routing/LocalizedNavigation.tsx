@@ -4,7 +4,6 @@ import {useBrowserDetails} from '@quilted/preact-browser';
 import {Navigation, type RouteDefinition} from '@quilted/preact-router';
 
 import {Localization} from '../Localization.tsx';
-import {useLocaleFromEnvironment} from '../hooks/locale-from-environment.ts';
 
 import {LocalizedRouter} from './LocalizedRouter.ts';
 import {RouteLocalizationContext} from './context.ts';
@@ -35,7 +34,7 @@ export function LocalizedNavigation<Context = unknown>({
   );
   const resolvedLocalization = resolvedRouter.localization;
 
-  const localeFromEnvironment = useLocaleFromEnvironment();
+  const localeFromEnvironment = browser?.locale.value;
 
   let resolvedLocale: string;
 

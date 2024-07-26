@@ -1,8 +1,8 @@
 import type {RenderableProps} from 'preact';
 
 import {NotFound} from '@quilted/quilt/server';
-import {Navigation, route} from '@quilted/quilt/navigation';
-import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
+import {Navigation} from '@quilted/quilt/navigation';
+import {Localization} from '@quilted/quilt/localize';
 
 import {ReactQueryContext} from '@quilted/react-query';
 
@@ -55,11 +55,9 @@ export default App;
 
 // This component renders any app-wide context.
 function AppContext({children, context}: RenderableProps<AppProps>) {
-  const locale = useLocaleFromEnvironment() ?? 'en';
-
   return (
     <AppContextReact.Provider value={context}>
-      <Localization locale={locale}>
+      <Localization>
         <trpc.Provider client={context.trpc} queryClient={context.queryClient}>
           <ReactQueryContext client={context.queryClient}>
             {children}

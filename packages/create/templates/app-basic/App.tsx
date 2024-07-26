@@ -2,7 +2,7 @@ import type {RenderableProps} from 'preact';
 
 import {NotFound} from '@quilted/quilt/server';
 import {Navigation} from '@quilted/quilt/navigation';
-import {Localization, useLocaleFromEnvironment} from '@quilted/quilt/localize';
+import {Localization} from '@quilted/quilt/localize';
 
 import {HTML} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
@@ -52,11 +52,9 @@ export default App;
 
 // This component renders any app-wide context.
 function AppContext({children, context}: RenderableProps<AppProps>) {
-  const locale = useLocaleFromEnvironment() ?? 'en';
-
   return (
     <AppContextReact.Provider value={context}>
-      <Localization locale={locale}>{children}</Localization>
+      <Localization>{children}</Localization>
     </AppContextReact.Provider>
   );
 }

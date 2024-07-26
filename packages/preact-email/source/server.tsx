@@ -18,8 +18,11 @@ import {
 import {EmailContext} from './context.ts';
 import {EmailManager} from './manager.ts';
 
-export async function renderEmail(element: VNode<any>) {
-  const browser = new BrowserEmailResponse();
+export async function renderEmail(
+  element: VNode<any>,
+  {locale}: {locale?: string} = {},
+) {
+  const browser = new BrowserEmailResponse({locale});
   const email = new EmailManager();
 
   const content = await renderToStringAsync(
@@ -65,6 +68,7 @@ class BrowserEmailResponse implements BrowserDetails {
     new BrowserResponseElementAttributes<BrowserBodyAttributes>();
   readonly htmlAttributes =
     new BrowserResponseElementAttributes<BrowserHTMLAttributes>();
+  readonly locale: BrowserDetails['locale'];
   readonly serializations = new BrowserResponseSerializations();
 
   get request(): never {
@@ -73,5 +77,9 @@ class BrowserEmailResponse implements BrowserDetails {
 
   get cookies(): never {
     throw new Error('Not available in email rendering');
+  }
+
+  constructor({locale}: {locale?: string} = {}) {
+    this.locale = {value: locale ?? 'en'};
   }
 }
