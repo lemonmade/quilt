@@ -1,5 +1,11 @@
 # @quilted/preact-email
 
+## 0.1.2
+
+### Patch Changes
+
+- [#788](https://github.com/lemonmade/quilt/pull/788) [`85a4b7e`](https://github.com/lemonmade/quilt/commit/85a4b7ed8e6ad58662ebf969d8fabbe8e21510a3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `Browser.locale` and use it in place of `useLocaleFromEnvironment()`
+
 ## 0.1.1
 
 ### Patch Changes
