@@ -539,7 +539,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/preact-async':
-        specifier: workspace:^0.1.14
+        specifier: workspace:^0.1.15
         version: link:../preact-async
       '@quilted/preact-browser':
         specifier: workspace:^0.1.1
