@@ -49,7 +49,17 @@ export class AsyncComponent<Props> extends Component<
         : new AsyncModule(moduleOrImport);
 
     function AsyncComponentInternal(props: Props) {
-      return <AsyncComponent {...options} module={module} props={props} />;
+      const asyncComponentContext = AsyncComponentContext.use({optional: true});
+      const render = options.render ?? asyncComponentContext?.render;
+
+      return (
+        <AsyncComponent
+          {...options}
+          render={render}
+          module={module}
+          props={props}
+        />
+      );
     }
 
     Object.assign(AsyncComponentInternal, {
@@ -156,7 +166,7 @@ export class AsyncComponent<Props> extends Component<
       props,
       server = true,
       client = true,
-      render: explicitRender,
+      render = defaultRender,
       renderLoading,
     } = this.props;
 
@@ -167,11 +177,6 @@ export class AsyncComponent<Props> extends Component<
     const {Component} = this;
 
     const isBrowser = typeof document === 'object';
-
-    const render =
-      explicitRender ??
-      AsyncComponentContext.use({optional: true})?.render ??
-      defaultRender;
 
     const hydrated = useHydrated();
 
