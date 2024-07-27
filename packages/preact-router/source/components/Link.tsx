@@ -21,6 +21,20 @@ export function Link({
   ...rest
 }: RenderableProps<Props, HTMLAnchorElement>) {
   const router = useRouter();
+
+  if (router == null) {
+    return (
+      <a
+        ref={ref}
+        href={resolveToWithoutRouter(to)}
+        onClick={onClick}
+        {...rest}
+      >
+        {children}
+      </a>
+    );
+  }
+
   const currentOrigin = useMemo(
     () => computed(() => router.currentRequest.url.origin),
     [router],
@@ -56,3 +70,12 @@ export function Link({
 }
 
 Link.displayName = 'Link';
+
+function resolveToWithoutRouter(to: NavigateTo): string {
+  if (typeof to === 'function') {
+    return resolveToWithoutRouter(to(new URL(window.location.href)));
+  }
+  if (typeof to === 'string') return to;
+  if (to instanceof URL) return to.pathname + to.search + to.hash;
+  return to.path + (to.search?.toString() || '') + (to.hash || '');
+}
