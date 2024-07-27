@@ -32,12 +32,11 @@ export function Localization({
   direction: explicitDirection,
   children,
 }: RenderableProps<LocalizationProps>) {
-  const browserDetails = useBrowserDetails({optional: explicitLocale == null});
-  const locale = explicitLocale ?? browserDetails?.locale.value;
-
-  if (locale == null) {
-    throw new Error(`Could not determine locale`);
-  }
+  const browserDetails = useBrowserDetails({optional: true});
+  const locale =
+    explicitLocale ??
+    browserDetails?.locale.value ??
+    getLocaleFromEnvironment();
 
   const formatting = useMemo(() => createLocalizedFormatting(locale), [locale]);
   const direction =
@@ -51,4 +50,12 @@ export function Localization({
       </LocalizedFormattingContext.Provider>
     </LocaleContext.Provider>
   );
+}
+
+function getLocaleFromEnvironment() {
+  if (typeof navigator === 'undefined') {
+    throw new Error(`Could not determine the locale automatically`);
+  }
+
+  return navigator.language;
 }
