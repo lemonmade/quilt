@@ -100,7 +100,9 @@ function cloudflarePagesServer({
     env: environmentForFormat(format),
     output: {
       bundle: true,
+      // Worker file goes in the same directory as the client-side assets
       directory: 'build/public',
+      clean: false,
       options: {
         format: format === 'module' ? 'esm' : 'iife',
         inlineDynamicImports: true,

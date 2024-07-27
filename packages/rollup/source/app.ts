@@ -163,6 +163,12 @@ export interface AppBrowserAssetsOptions {
   baseURL?: string;
   targets?: BrowserGroupTargetSelection;
   priority?: number;
+
+  /**
+   * Whether to clean the output directory.
+   *
+   * @default true
+   */
   clean?: boolean;
 
   /**
@@ -239,6 +245,13 @@ export interface AppServerOutputOptions
    * @default 'async-only'
    */
   hash?: boolean | 'async-only';
+
+  /**
+   * Whether to clean the output directory.
+   *
+   * @default true
+   */
+  clean?: boolean;
 }
 
 export interface AppServiceWorkerOptions extends AppBaseOptions {
@@ -795,10 +808,13 @@ export async function quiltAppServerPlugins({
       preload: false,
       moduleID: ({imported}) => path.relative(project.root, imported),
     }),
-    removeBuildFiles([outputDirectory], {root: project.root}),
     tsconfigAliases({root: project.root}),
     monorepoPackageAliases({root: project.root}),
   ];
+
+  if (output?.clean ?? true) {
+    plugins.push(removeBuildFiles([outputDirectory], {root: project.root}));
+  }
 
   if (graphql) {
     const {graphql} = await import('./features/graphql.ts');

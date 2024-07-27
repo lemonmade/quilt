@@ -74,6 +74,13 @@ export interface ModuleRuntime {
       | 'cjs';
 
     /**
+     * Whether to empty the output directory on each build.
+     *
+     * @default true
+     */
+    clean?: boolean;
+
+    /**
      * The directory to output the server to.
      */
     directory?: string;
@@ -178,7 +185,7 @@ export async function quiltModule({
     plugins.push(minify());
   }
 
-  if (assets?.clean ?? true) {
+  if (assets?.clean ?? runtime?.output?.clean ?? true) {
     plugins.push(
       removeBuildFiles([outputDirectory, reportDirectory], {
         root: project.root,
