@@ -1,5 +1,11 @@
 # @quilted/preact-async
 
+## 0.1.16
+
+### Patch Changes
+
+- [`1a64df9`](https://github.com/lemonmade/quilt/commit/1a64df909e1adecd154c0ff159ac87248bbf9364) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow global override of `AsyncComponent.render()`
+
 ## 0.1.15
 
 ### Patch Changes
