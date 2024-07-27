@@ -45,7 +45,7 @@ export function Localization({
   return (
     <LocaleContext.Provider value={locale}>
       <LocalizedFormattingContext.Provider value={formatting}>
-        <HTMLAttributes lang={locale} dir={direction} />
+        {browserDetails && <HTMLAttributes lang={locale} dir={direction} />}
         {children}
       </LocalizedFormattingContext.Provider>
     </LocaleContext.Provider>
