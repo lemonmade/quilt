@@ -1,5 +1,11 @@
 # @quilted/react-localize
 
+## 0.3.2
+
+### Patch Changes
+
+- [`fb1d3ef`](https://github.com/lemonmade/quilt/commit/fb1d3ef138590d047d09a32245ae4f220f0451a3) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser localization more powerful and automatic
+
 ## 0.3.1
 
 ### Patch Changes

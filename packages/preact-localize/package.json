@@ -2,7 +2,7 @@
   "name": "@quilted/preact-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
