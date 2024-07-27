@@ -1,5 +1,11 @@
 # @quilted/preact-async
 
+## 0.1.15
+
+### Patch Changes
+
+- [`3fd4063`](https://github.com/lemonmade/quilt/commit/3fd4063700f6a099196255bf826270c820db4e48) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow customized wrapping of `AsyncComponent` content
+
 ## 0.1.14
 
 ### Patch Changes

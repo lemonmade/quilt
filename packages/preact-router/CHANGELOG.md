@@ -1,5 +1,14 @@
 # @quilted/preact-router
 
+## 0.2.7
+
+### Patch Changes
+
+- [`a877673`](https://github.com/lemonmade/quilt/commit/a877673630abdb25e93b7e38715d0e2550fee4ba) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow `Link` to render without a router
+
+- Updated dependencies [[`3fd4063`](https://github.com/lemonmade/quilt/commit/3fd4063700f6a099196255bf826270c820db4e48)]:
+  - @quilted/preact-async@0.1.15
+
 ## 0.2.6
 
 ### Patch Changes
