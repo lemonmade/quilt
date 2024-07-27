@@ -2,7 +2,7 @@
   "name": "@quilted/preact-localize",
   "description": "Utilities for localizing React applications",
   "type": "module",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
@@ -46,7 +46,7 @@
     "@quilted/localize": "workspace:^0.2.0",
     "@quilted/preact-browser": "workspace:^0.1.0",
     "@quilted/preact-context": "workspace:^0.1.0",
-    "@quilted/preact-router": "workspace:^0.2.0"
+    "@quilted/preact-router": "workspace:^0.2.8"
   },
   "peerDependencies": {
     "@quilted/request-router": "workspace:^0.3.0",

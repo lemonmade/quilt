@@ -1,5 +1,14 @@
 # @quilted/react-localize
 
+## 0.3.3
+
+### Patch Changes
+
+- [`6d95a81`](https://github.com/lemonmade/quilt/commit/6d95a81c9eb95782c1f080189dfcb72fb109ff06) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser context fully optional in `Localization` component
+
+- Updated dependencies [[`78ff84a`](https://github.com/lemonmade/quilt/commit/78ff84a34d47eecc3d1354a9926204477771dbe8)]:
+  - @quilted/preact-router@0.2.8
+
 ## 0.3.2
 
 ### Patch Changes
