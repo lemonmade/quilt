@@ -1,5 +1,11 @@
 # @quilted/preact-async
 
+## 0.1.17
+
+### Patch Changes
+
+- [`3728fa9`](https://github.com/lemonmade/quilt/commit/3728fa93e99bd75b456fe7c1a9c15b01ed2f05cb) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `AsyncComponent` when using context-driven render function
+
 ## 0.1.16
 
 ### Patch Changes
