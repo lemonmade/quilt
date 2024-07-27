@@ -7,6 +7,7 @@ import type {AssetLoadTiming} from '@quilted/preact-browser/server';
 
 import {useHydrated} from './hooks/hydration.ts';
 import {useAsyncModuleAssets} from './hooks/module.ts';
+import {AsyncComponentContext} from './context.ts';
 
 export interface AsyncComponentProps<Props> {
   module: AsyncModule<{default: ComponentType<Props>}>;
@@ -155,7 +156,7 @@ export class AsyncComponent<Props> extends Component<
       props,
       server = true,
       client = true,
-      render = defaultRender,
+      render: explicitRender,
       renderLoading,
     } = this.props;
 
@@ -166,6 +167,11 @@ export class AsyncComponent<Props> extends Component<
     const {Component} = this;
 
     const isBrowser = typeof document === 'object';
+
+    const render =
+      explicitRender ??
+      AsyncComponentContext.use({optional: true})?.render ??
+      defaultRender;
 
     const hydrated = useHydrated();
 
