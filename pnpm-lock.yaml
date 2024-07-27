@@ -507,7 +507,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-context
       '@quilted/preact-router':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.8
         version: link:../preact-router
     devDependencies:
       '@quilted/request-router':

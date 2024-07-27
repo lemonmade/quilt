@@ -1,5 +1,11 @@
 # @quilted/preact-router
 
+## 0.2.8
+
+### Patch Changes
+
+- [`78ff84a`](https://github.com/lemonmade/quilt/commit/78ff84a34d47eecc3d1354a9926204477771dbe8) Thanks [@lemonmade](https://github.com/lemonmade)! - Expose raw router context objects
+
 ## 0.2.7
 
 ### Patch Changes
