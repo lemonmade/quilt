@@ -1,6 +1,10 @@
 export * from '@quilted/async';
 
-export {AsyncComponent} from './AsyncComponent.tsx';
+export {
+  AsyncComponent,
+  type AsyncComponentProps,
+  type AsyncComponentType,
+} from './AsyncComponent.tsx';
 export {AsyncContext} from './AsyncContext.tsx';
 
 export {useAsyncActionCache} from './context.ts';

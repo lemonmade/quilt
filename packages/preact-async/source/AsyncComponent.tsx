@@ -14,8 +14,18 @@ export interface AsyncComponentProps<Props> {
   server?: boolean;
   client?: boolean | 'render' | 'defer';
   preload?: boolean;
+  render?: (
+    element: ComponentChildren,
+    props: AsyncComponentProps<Props>,
+  ) => ComponentChildren;
   renderLoading?: ComponentChildren | ((props: Props) => ComponentChildren);
 }
+
+export type AsyncComponentType<Props> = ComponentType<Props> & {
+  readonly module: AsyncModule<{default: ComponentType<Props>}>;
+  readonly Preload: ComponentType<{}>;
+  load(): Promise<ComponentType<Props>>;
+};
 
 export class AsyncComponent<Props> extends Component<
   AsyncComponentProps<Props>
@@ -29,13 +39,9 @@ export class AsyncComponent<Props> extends Component<
       ...options
     }: Pick<
       AsyncComponentProps<Props>,
-      'server' | 'client' | 'preload' | 'renderLoading'
+      'server' | 'client' | 'preload' | 'render' | 'renderLoading'
     > & {name?: string} = {},
-  ): ComponentType<Props> & {
-    readonly module: AsyncModule<{default: ComponentType<Props>}>;
-    readonly Preload: ComponentType<{}>;
-    load(): Promise<ComponentType<Props>>;
-  } {
+  ): AsyncComponentType<Props> {
     const module =
       moduleOrImport instanceof AsyncModule
         ? moduleOrImport
@@ -58,6 +64,58 @@ export class AsyncComponent<Props> extends Component<
     });
 
     return AsyncComponentInternal as any;
+  }
+
+  static useAssets(props: AsyncComponentProps<any>) {
+    if (typeof document === 'object') return;
+
+    const {
+      module,
+      server = true,
+      client = true,
+      preload = client !== false,
+    } = props;
+
+    const hydrate =
+      client === true || client === 'render' ? 'immediate' : 'defer';
+
+    let scriptTiming: AssetLoadTiming;
+    let styleTiming: AssetLoadTiming;
+
+    if (server) {
+      // If we are server rendering, we always have to load the styles for an
+      // async component synchronously.
+      styleTiming = 'load';
+
+      if (hydrate === 'immediate') {
+        // If we are going to hydrate immediately, we need the assets immediately,
+        // too.
+        scriptTiming = 'load';
+      } else if (preload) {
+        // If we are going to hydrate later, and the consumer wants to preload,
+        // we will preload the scripts for later.
+        scriptTiming = 'preload';
+      } else {
+        // We don’t need the scripts right away, and the consumer doesn’t want
+        // to preload, so we just won’t load the scripts at all — the client can
+        // do that if it wants later on!
+        scriptTiming = 'never';
+      }
+    } else if (preload) {
+      // We aren’t server rendering, but the consumer wants to preload the assets
+      // for the component.
+      styleTiming = 'preload';
+      scriptTiming = 'preload';
+    } else {
+      // Not server rendering, and not preloading... We’ll leave it up to the client!
+      styleTiming = 'never';
+      scriptTiming = 'never';
+    }
+
+    useAsyncModuleAssets(module, {
+      scripts: scriptTiming,
+      styles: styleTiming,
+    });
   }
 
   private Component = function Component({
@@ -97,84 +155,44 @@ export class AsyncComponent<Props> extends Component<
       props,
       server = true,
       client = true,
-      preload = client !== false,
+      render = defaultRender,
       renderLoading,
     } = this.props;
-    const {Component} = this;
-
-    const isBrowser = typeof document === 'object';
-
-    const hydrate =
-      client === true || client === 'render' ? 'immediate' : 'defer';
-
-    if (typeof document !== 'object') {
-      let scriptTiming: AssetLoadTiming;
-      let styleTiming: AssetLoadTiming;
-
-      if (server) {
-        // If we are server rendering, we always have to load the styles for an
-        // async component synchronously.
-        styleTiming = 'load';
-
-        if (hydrate === 'immediate') {
-          // If we are going to hydrate immediately, we need the assets immediately,
-          // too.
-          scriptTiming = 'load';
-        } else if (preload) {
-          // If we are going to hydrate later, and the consumer wants to preload,
-          // we will preload the scripts for later.
-          scriptTiming = 'preload';
-        } else {
-          // We don’t need the scripts right away, and the consumer doesn’t want
-          // to preload, so we just won’t load the scripts at all — the client can
-          // do that if it wants later on!
-          scriptTiming = 'never';
-        }
-      } else if (preload) {
-        // We aren’t server rendering, but the consumer wants to preload the assets
-        // for the component.
-        styleTiming = 'preload';
-        scriptTiming = 'preload';
-      } else {
-        // Not server rendering, and not preloading... We’ll leave it up to the client!
-        styleTiming = 'never';
-        scriptTiming = 'never';
-      }
-
-      useAsyncModuleAssets(module, {
-        scripts: scriptTiming,
-        styles: styleTiming,
-      });
-    }
 
     if (module.error) {
       throw module.error;
     }
 
+    const {Component} = this;
+
+    const isBrowser = typeof document === 'object';
+
     const hydrated = useHydrated();
 
-    if (!server) {
-      if (!isBrowser) {
-        return normalizeRender(renderLoading, props);
-      }
+    let content: ComponentChildren = null;
 
-      if (!hydrated) {
-        return normalizeRender(renderLoading, props);
-      }
-    }
-
-    if (client === false && isBrowser) {
-      return null;
-    }
-
-    return hasLoadingContent(renderLoading) ? (
-      <Suspense fallback={normalizeRender(renderLoading, props)}>
+    if (!server && (!isBrowser || !hydrated)) {
+      content = normalizeRender(renderLoading, props);
+    } else if (client !== false || !isBrowser) {
+      content = hasLoadingContent(renderLoading) ? (
+        <Suspense fallback={normalizeRender(renderLoading, props)}>
+          <Component {...this.props} />
+        </Suspense>
+      ) : (
         <Component {...this.props} />
-      </Suspense>
-    ) : (
-      <Component {...this.props} />
-    );
+      );
+    }
+
+    return render(content, this.props);
   }
+}
+
+function defaultRender(
+  content: ComponentChildren,
+  props: AsyncComponentProps<any>,
+) {
+  if (typeof document !== 'object') AsyncComponent.useAssets(props);
+  return content;
 }
 
 function hasLoadingContent(
@@ -187,7 +205,7 @@ function hasLoadingContent(
 function normalizeRender<Props>(
   render?: ComponentChildren | ((props: Props) => ComponentChildren),
   props: Props = {} as any,
-) {
+): ComponentChildren {
   return typeof render === 'function' ? render(props) : render ?? null;
 }
 
