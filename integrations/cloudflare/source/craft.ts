@@ -80,31 +80,25 @@ export function cloudflareWorkers({
   } satisfies ServerRuntime;
 }
 
-export function cloudflarePages({
-  cache,
-  format = 'module',
-}: RuntimeOptions = {}) {
+export function cloudflarePages({cache}: Omit<RuntimeOptions, 'format'> = {}) {
   return {
     assets: {
-      directory: 'build/public',
+      directory: 'build/public/assets',
     },
-    server: cloudflarePagesServer({cache, format}),
+    server: cloudflarePagesServer({cache}),
   } satisfies AppRuntime;
 }
 
-function cloudflarePagesServer({
-  cache,
-  format = 'module',
-}: RuntimeOptions = {}) {
+function cloudflarePagesServer({cache}: Omit<RuntimeOptions, 'format'> = {}) {
   return {
-    env: environmentForFormat(format),
+    env: environmentForFormat('module'),
     output: {
       bundle: true,
       // Worker file goes in the same directory as the client-side assets
       directory: 'build/public',
       clean: false,
       options: {
-        format: format === 'module' ? 'esm' : 'iife',
+        format: 'esm',
         inlineDynamicImports: true,
         entryFileNames: '_worker.js',
       },
@@ -113,33 +107,17 @@ function cloudflarePagesServer({
       exportConditions: ['worker', 'workerd'],
     },
     requestRouter() {
-      if (format === 'module') {
-        return multiline`
-          import {createFetchHandler} from '@quilted/cloudflare/request-router';
-          import router from ${JSON.stringify(MAGIC_MODULE_REQUEST_ROUTER)};
+      return multiline`
+        import {createPagesFetchHandler} from '@quilted/cloudflare/request-router';
+        import router from ${JSON.stringify(MAGIC_MODULE_REQUEST_ROUTER)};
 
-          const fetch = createFetchHandler(router, {
-            cache: ${String(cache)},
-          });
+        const fetch = createPagesFetchHandler(router, {
+          cache: ${String(cache)},
+          assets: ${JSON.stringify({path: '/assets/'})}
+        });
 
-          export default {fetch};
-        `;
-      } else {
-        return multiline`
-          import {createFetchHandler, transformFetchEvent} from '@quilted/cloudflare/request-router';
-          import router from ${JSON.stringify(MAGIC_MODULE_REQUEST_ROUTER)};
-
-          const fetch = createFetchHandler(router, {
-            cache: ${String(cache)},
-          });
-
-          addEventListener('fetch', (event) => {
-            event.respondWith(
-              fetch(...transformFetchEvent(event)),
-            );
-          });
-        `;
-      }
+        export default {fetch};
+      `;
     },
   } satisfies ServerRuntime;
 }
