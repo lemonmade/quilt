@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.1.4
+
+### Patch Changes
+
+- [`79e1393`](https://github.com/lemonmade/quilt/commit/79e13933fad94af48730ed2266b8255ef89c35a1) Thanks [@lemonmade](https://github.com/lemonmade)! - Deduplicate `meta` tags during server rendering
+
 ## 0.1.3
 
 ### Patch Changes
