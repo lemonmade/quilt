@@ -157,22 +157,34 @@ export class BrowserResponseHeadElements<
   };
 }
 
+/**
+ * Manages meta elements for server-side rendering, extending the base functionality
+ * of BrowserResponseHeadElements.
+ *
+ * This class provides special handling for meta elements to ensure that:
+ * 1. Meta tags with unique name are preserved.
+ * 2. When multiple meta tags have the same name, only the last one added is kept.
+ *
+ * This behavior is particularly useful for managing SEO-related meta tags, where
+ * having duplicate name could be problematic or where later additions should
+ * override earlier ones.
+ */
 export class BrowserResponseMetaElements extends BrowserResponseHeadElements<'meta'> {
   get value() {
     const baseValue = super.value;
     const resolvedValue: typeof baseValue = [];
-    const contentIndexes = new Map<string, number>();
+    const nameIndexes = new Map<string, number>();
 
     for (const element of baseValue) {
-      if (element.content == null) {
+      if (element.name == null) {
         resolvedValue.push(element);
         continue;
       }
 
-      const existingIndex = contentIndexes.get(element.content);
+      const existingIndex = nameIndexes.get(element.name);
 
       if (existingIndex == null) {
-        contentIndexes.set(element.content, resolvedValue.length);
+        nameIndexes.set(element.name, resolvedValue.length);
         resolvedValue.push(element);
       } else {
         resolvedValue[existingIndex] = element;
