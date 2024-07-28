@@ -715,6 +715,7 @@ export async function quiltAppServerPlugins({
 
   const bundle = output?.bundle ?? runtime.output?.bundle;
   const minify = output?.minify ?? false;
+  const clean = output?.clean ?? runtime?.output?.clean ?? true;
 
   const [
     {visualizer},
@@ -812,7 +813,7 @@ export async function quiltAppServerPlugins({
     monorepoPackageAliases({root: project.root}),
   ];
 
-  if (output?.clean ?? true) {
+  if (clean) {
     plugins.push(removeBuildFiles([outputDirectory], {root: project.root}));
   }
 

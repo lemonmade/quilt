@@ -133,6 +133,7 @@ export async function quiltModule({
   const minify = assets?.minify ?? true;
   const hash = assets?.hash ?? 'async-only';
   const bundle = assets?.bundle ?? runtime?.output?.bundle ?? true;
+  const clean = assets?.clean ?? runtime?.output?.clean ?? true;
 
   const browserGroup = await getBrowserGroupTargetDetails(assets?.targets, {
     root: project.root,
@@ -185,7 +186,7 @@ export async function quiltModule({
     plugins.push(minify());
   }
 
-  if (assets?.clean ?? runtime?.output?.clean ?? true) {
+  if (clean) {
     plugins.push(
       removeBuildFiles([outputDirectory, reportDirectory], {
         root: project.root,
