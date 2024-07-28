@@ -223,6 +223,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
   }
 
   get signal() {
+    this.#abortController ??= new AbortController();
     return this.#abortController.signal;
   }
 
@@ -247,7 +248,7 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
 
   readonly #resolve: (value: Data) => void;
   readonly #reject: (cause: unknown) => void;
-  readonly #abortController = new AbortController();
+  #abortController: AbortController | undefined;
 
   constructor(
     action: AsyncAction<Data, Input>,
@@ -317,20 +318,12 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
       } else {
         this.#resolve(cached.value!);
       }
-    } else {
-      const {signal} = this.#abortController;
-
-      signal.addEventListener(
-        'abort',
-        () => {
-          this.#reject(signal.reason);
-        },
-        {once: true},
-      );
     }
   }
 
   abort = (reason: any = new AsyncActionAbortError()) => {
+    this.#reject(reason);
+    this.#abortController ??= new AbortController();
     this.#abortController.abort(reason);
   };
 
@@ -339,23 +332,36 @@ export class AsyncActionRun<Data = unknown, Input = unknown> {
 
     Object.assign(this, {startedAt: now(), input});
 
-    if (signal?.aborted) {
-      this.#abortController.abort(signal.reason);
+    this.#abortController ??= new AbortController();
+    const runSignal = this.#abortController.signal;
+
+    if (runSignal.aborted) {
       return this.promise;
     }
 
+    if (signal?.aborted) {
+      this.abort(signal.reason);
+      return this.promise;
+    }
+
+    runSignal.addEventListener(
+      'abort',
+      () => {
+        this.#reject(runSignal.reason);
+      },
+      {once: true},
+    );
+
     signal?.addEventListener('abort', () => {
-      this.#abortController.abort(signal.reason);
+      this.abort(signal.reason);
     });
 
     try {
-      const {signal} = this.#abortController;
-
       Promise.resolve(
         this.action.function(input!, {
-          signal,
+          signal: runSignal,
           yield: (value) => {
-            if (signal.aborted) return;
+            if (runSignal.aborted) return;
             this.#value.value = value;
           },
         }),
