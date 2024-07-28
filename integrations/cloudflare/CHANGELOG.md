@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.3.1
+
+### Patch Changes
+
+- [`805faf3`](https://github.com/lemonmade/quilt/commit/805faf3201bf4ee97ddb078f97f7660f52fc296b) Thanks [@lemonmade](https://github.com/lemonmade)! - Make server build directory emptying configurable
+
+- Updated dependencies [[`805faf3`](https://github.com/lemonmade/quilt/commit/805faf3201bf4ee97ddb078f97f7660f52fc296b)]:
+  - @quilted/rollup@0.2.37
+
 ## 0.3.0
 
 ### Patch Changes
