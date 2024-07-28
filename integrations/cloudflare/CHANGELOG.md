@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.3.2
+
+### Patch Changes
+
+- [`dc76164`](https://github.com/lemonmade/quilt/commit/dc76164dfa11e2d257f9652f94b9825689d0849c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Cloudflare Pages output settings
+
+- Updated dependencies [[`520a002`](https://github.com/lemonmade/quilt/commit/520a00204f5d2f7674f78c510109092a4b7648a3)]:
+  - @quilted/rollup@0.2.38
+
 ## 0.3.1
 
 ### Patch Changes
