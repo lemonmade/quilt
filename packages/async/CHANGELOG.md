@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.19
+
+### Patch Changes
+
+- [`e4e4bb8`](https://github.com/lemonmade/quilt/commit/e4e4bb8a20189627dad271ee1b9a8f503e63e398) Thanks [@lemonmade](https://github.com/lemonmade)! - Lazily initialize `AbortController` in `AsyncActionRun` instances
+
 ## 0.4.18
 
 ### Patch Changes

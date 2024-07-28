@@ -1,5 +1,14 @@
 # @quilted/rollup
 
+## 0.2.38
+
+### Patch Changes
+
+- [`520a002`](https://github.com/lemonmade/quilt/commit/520a00204f5d2f7674f78c510109092a4b7648a3) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `runtime.output.clean` in app server
+
+- Updated dependencies []:
+  - @quilted/graphql@3.3.4
+
 ## 0.2.37
 
 ### Patch Changes
