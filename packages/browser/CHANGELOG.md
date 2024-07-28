@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.1.5
+
+### Patch Changes
+
+- [`5a8492b`](https://github.com/lemonmade/quilt/commit/5a8492bb55af138dfb3887f71d020a9e277fd7d5) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix meta deduplication
+
 ## 0.1.4
 
 ### Patch Changes
