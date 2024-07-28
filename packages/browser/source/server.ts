@@ -20,7 +20,7 @@ export * from './types.ts';
 
 export class BrowserResponse implements BrowserDetails {
   readonly title = new BrowserResponseTitle();
-  readonly metas = new BrowserResponseHeadElements('meta');
+  readonly metas = new BrowserResponseMetaElements();
   readonly links = new BrowserResponseHeadElements('link');
   readonly bodyAttributes =
     new BrowserResponseElementAttributes<BrowserBodyAttributes>();
@@ -155,6 +155,36 @@ export class BrowserResponseHeadElements<
     this.#elements.push(attributes);
     return () => {};
   };
+}
+
+export class BrowserResponseMetaElements extends BrowserResponseHeadElements<'meta'> {
+  get value() {
+    const baseValue = super.value;
+    const resolvedValue: typeof baseValue = [];
+    const contentIndexes = new Map<string, number>();
+
+    for (const element of baseValue) {
+      if (element.content == null) {
+        resolvedValue.push(element);
+        continue;
+      }
+
+      const existingIndex = contentIndexes.get(element.content);
+
+      if (existingIndex == null) {
+        contentIndexes.set(element.content, resolvedValue.length);
+        resolvedValue.push(element);
+      } else {
+        resolvedValue[existingIndex] = element;
+      }
+    }
+
+    return resolvedValue;
+  }
+
+  constructor() {
+    super('meta');
+  }
 }
 
 export class BrowserResponseElementAttributes<Attributes> {
