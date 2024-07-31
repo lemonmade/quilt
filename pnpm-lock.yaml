@@ -615,7 +615,7 @@ importers:
         specifier: workspace:^0.4.2
         version: link:../async
       '@quilted/events':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.0
         version: link:../events
       '@quilted/graphql':
         specifier: workspace:^3.0.3

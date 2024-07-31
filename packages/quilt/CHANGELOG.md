@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.7.11
+
+### Patch Changes
+
+- [`bbfd7c2`](https://github.com/lemonmade/quilt/commit/bbfd7c27ab2db3363af441f8e029f0a8bd53455e) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `EventTargetSignal` class for converting an `EventTarget` into a Preact signal
+
+- Updated dependencies [[`bbfd7c2`](https://github.com/lemonmade/quilt/commit/bbfd7c27ab2db3363af441f8e029f0a8bd53455e)]:
+  - @quilted/events@2.1.0
+
 ## 0.7.10
 
 ### Patch Changes
