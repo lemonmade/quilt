@@ -315,7 +315,11 @@ importers:
         specifier: ^2.1.0
         version: 2.1.1
 
-  packages/events: {}
+  packages/events:
+    dependencies:
+      '@preact/signals-core':
+        specifier: ^1.6.0
+        version: 1.6.0
 
   packages/graphql:
     dependencies:

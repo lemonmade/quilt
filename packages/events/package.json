@@ -22,9 +22,25 @@
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
+    },
+    "./signals": {
+      "types": "./build/typescript/signals.d.ts",
+      "quilt:source": "./source/signals.ts",
+      "quilt:esnext": "./build/esnext/signals.esnext",
+      "import": "./build/esm/signals.mjs"
     }
   },
+  "dependencies": {
+    "@preact/signals-core": "^1.6.0"
+  },
   "types": "./build/typescript/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "signals": [
+        "./build/typescript/signals.d.ts"
+      ]
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
