@@ -618,6 +618,7 @@ export async function quiltAppBrowserPlugins({
       cacheKey,
       file: path.join(manifestsDirectory, `assets${targetFilenamePart}.json`),
       priority: assets?.priority,
+      moduleID: ({imported}) => path.relative(project.root, imported),
     }),
     visualizer({
       template: 'treemap',

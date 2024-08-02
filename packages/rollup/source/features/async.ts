@@ -1,12 +1,11 @@
-import {createHash} from 'crypto';
-import {posix, sep} from 'path';
+import * as path from 'path';
 
 import type {Plugin, OutputChunk, OutputBundle} from 'rollup';
 import {multiline} from '../shared/strings.ts';
 import MagicString from 'magic-string';
 
 const MODULE_PREFIX = 'quilt-async-module:';
-const IMPORT_PREFIX = 'quilt-async-import:';
+export const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   preload?: boolean;
@@ -73,7 +72,7 @@ export function asyncModules({
         return {
           code,
           meta: {
-            quilt: {moduleID},
+            quilt: {module: imported, moduleID},
           },
         };
       }
@@ -102,14 +101,7 @@ export function asyncModules({
 }
 
 function defaultModuleID({imported}: {imported: string}) {
-  const name = imported.split(sep).pop()!.split('.')[0]!;
-
-  const hash = createHash('sha256')
-    .update(imported)
-    .digest('hex')
-    .substring(0, 8);
-
-  return `${name}_${hash}`;
+  return path.relative(process.cwd(), imported).replace(/[\\/]/g, '-');
 }
 
 async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
@@ -213,7 +205,10 @@ function getDependenciesForImport(
   const dependencies = new Set<string>();
   const analyzed = new Set<string>();
 
-  const normalizedFile = posix.join(posix.dirname(originalFilename), imported);
+  const normalizedFile = path.posix.join(
+    path.posix.dirname(originalFilename),
+    imported,
+  );
 
   const addDependencies = (filename: string) => {
     if (filename === originalFilename) return;

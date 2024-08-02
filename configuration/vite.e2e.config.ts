@@ -7,7 +7,7 @@ export default defineConfig({
   },
   server: {
     watch: {
-      ignored: ['./tests/e2e/output/**'],
+      ignored: ['./tests/e2e/output/'],
     },
   },
   test: {
