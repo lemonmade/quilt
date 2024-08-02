@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.39
+
+### Patch Changes
+
+- [#803](https://github.com/lemonmade/quilt/pull/803) [`3af36eb`](https://github.com/lemonmade/quilt/commit/3af36ebb90db5506d311d77c0621b79cc5485c9d) Thanks [@lemonmade](https://github.com/lemonmade)! - Add manifest entries for all async modules
+
 ## 0.2.38
 
 ### Patch Changes
