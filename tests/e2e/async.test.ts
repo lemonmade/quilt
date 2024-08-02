@@ -365,6 +365,49 @@ describe('async', () => {
     );
   });
 
+  it('can server render with references to normal, async-imported modules', async () => {
+    await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+    await workspace.fs.write({
+      'async.ts': multiline`
+        export function hello() {
+          return 'Hello from an async module!';
+        }
+      `,
+      'App.tsx': multiline`
+        import {useEffect, useState} from 'preact/hooks';
+        import {useModuleAssets} from '@quilted/quilt/server';
+
+        export default function App() {
+          const [value, setValue] = useState();
+          useEffect(() => {
+            (async () => {
+              const {hello} = await import('./async.ts');
+              setValue(value);
+            })();
+          });
+
+          useModuleAssets('async.ts', {
+            scripts: 'preload',
+          });
+
+          return <div>{value ?? 'Loading message...'}</div>;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/', {
+      javaScriptEnabled: false,
+    });
+
+    expect(await page.textContent('body')).toMatch(`Loading message...`);
+
+    expect(
+      await page.$('link[rel=modulepreload][href^="/assets/async"]'),
+    ).not.toBeNull();
+  });
+
   it('can server render components using an async fetch', async () => {
     await using workspace = await createWorkspace({fixture: 'basic-app'});
 

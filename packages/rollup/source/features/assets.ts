@@ -21,6 +21,7 @@ export interface AssetManifestOptions {
   baseURL: string;
   priority?: number;
   cacheKey?: URLSearchParams;
+  moduleID?(details: {imported: string}): string;
 }
 
 export function assetManifest(manifestOptions: AssetManifestOptions): Plugin {
@@ -35,7 +36,13 @@ export function assetManifest(manifestOptions: AssetManifestOptions): Plugin {
 async function writeManifestForBundle(
   this: PluginContext,
   bundle: OutputBundle,
-  {file, baseURL, cacheKey, priority}: AssetManifestOptions,
+  {
+    file,
+    baseURL,
+    cacheKey,
+    priority,
+    moduleID: getModuleID = defaultModuleID,
+  }: AssetManifestOptions,
   {format}: NormalizedOutputOptions,
 ) {
   const outputs = Object.values(bundle);
@@ -91,19 +98,20 @@ async function writeManifestForBundle(
   };
 
   for (const output of outputs) {
-    if (output.type !== 'chunk') continue;
+    if (output.type !== 'chunk' || !output.isDynamicEntry) continue;
 
-    const originalModuleId =
-      output.facadeModuleId ?? output.moduleIds[output.moduleIds.length - 1];
+    const rollupModuleID = output.facadeModuleId ?? output.moduleIds.at(-1);
 
-    if (originalModuleId == null) continue;
+    if (rollupModuleID == null) continue;
 
-    // This metadata is added by the rollup plugin for @quilted/async
-    const moduleId = this.getModuleInfo(originalModuleId)?.meta.quilt?.moduleID;
+    const imported =
+      this.getModuleInfo(rollupModuleID)?.meta?.quilt?.module ?? rollupModuleID;
 
-    if (moduleId == null) continue;
+    const moduleID = getModuleID({imported: imported});
 
-    manifest.modules[moduleId] = createAssetsEntry(
+    if (moduleID == null) continue;
+
+    manifest.modules[moduleID] = createAssetsEntry(
       [...output.imports, output.fileName],
       {dependencyMap, getAssetId},
     );
@@ -111,6 +119,10 @@ async function writeManifestForBundle(
 
   await fs.mkdir(path.dirname(file), {recursive: true});
   await fs.writeFile(file, JSON.stringify(manifest, null, 2));
+}
+
+function defaultModuleID({imported}: {imported: string}) {
+  return path.relative(process.cwd(), imported).replace(/[\\/]/g, '-');
 }
 
 function createAssetsEntry(
