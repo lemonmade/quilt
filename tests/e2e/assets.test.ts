@@ -108,87 +108,104 @@ describe('app builds', () => {
       expect(element).not.toBeNull();
     });
 
-    it('creates a hashed URL pointing to a publicly-served version of the image', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+    describe('images', () => {
+      it('creates a hashed URL pointing to a publicly-served version of the image', async () => {
+        await using workspace = await createWorkspace({fixture: 'empty-app'});
 
-      await workspace.fs.write({
-        'App.tsx': multiline`
-          import image from '../../common/images/lemon.png';
-          
-          export default function App() {
-            return <img src={image} alt="A lemon." />;
-          }
-        `,
-      });
-
-      const server = await startServer(workspace);
-      const page = await server.openPage();
-
-      expect(await getLoadedImages(page)).toStrictEqual([
-        expect.objectContaining({
-          url: expect.stringMatching(/[/]assets[/]lemon\.[a-zA-Z0-9]*\.png/),
-        }),
-      ]);
-    });
-
-    it('inlines small images into the JavaScript bundle', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
-
-      await workspace.fs.write({
-        'App.tsx': multiline`
-          import image from '../../common/images/lemon-tiny.png';
-          
-          export default function App() {
-            return <img src={image} alt="A lemon." />;
-          }
-        `,
-      });
-
-      const server = await startServer(workspace);
-      const page = await server.openPage();
-
-      expect(await getLoadedImages(page)).toHaveLength(0);
-
-      const imageSource = await page.evaluate(
-        () => document.querySelector('img')?.src,
-      );
-
-      expect(imageSource).toMatch('data:image/png;base64,');
-    });
-
-    it('lets the developer configure a custom size limit for image inlining', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
-      const {fs} = workspace;
-
-      await fs.write({
-        'rollup.config.js': multiline`
-          import {quiltApp} from '@quilted/rollup/app';
-
-          export default quiltApp({
-            assets: {
-              inline: {limit: 0},
-            },
-          });
-        `,
-        'App.tsx': multiline`
-          import image from '../../common/images/lemon-tiny.png';
+        await workspace.fs.write({
+          'App.tsx': multiline`
+            import image from '../../common/images/lemon.png';
             
-          export default function App() {
-            return <img src={image} alt="A lemon." />;
-          }
-        `,
+            export default function App() {
+              return <img src={image} alt="A lemon." />;
+            }
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage();
+
+        expect(await getLoadedImages(page)).toStrictEqual([
+          expect.objectContaining({
+            url: expect.stringMatching(/[/]assets[/]lemon\.[a-zA-Z0-9]*\.png/),
+          }),
+        ]);
       });
 
-      const server = await startServer(workspace);
-      const page = await server.openPage();
+      it('inlines small images into the JavaScript bundle', async () => {
+        await using workspace = await createWorkspace({fixture: 'basic-app'});
 
-      expect(await getLoadedImages(page)).toStrictEqual([
-        expect.objectContaining({
-          url: expect.stringMatching(
-            /[/]assets[/]lemon-tiny\.[a-zA-Z0-9]*\.png/,
-          ),
-        }),
-      ]);
+        await workspace.fs.write({
+          'App.tsx': multiline`
+            import image from '../../common/images/lemon-tiny.png';
+            
+            export default function App() {
+              return <img src={image} alt="A lemon." />;
+            }
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage();
+
+        expect(await getLoadedImages(page)).toHaveLength(0);
+
+        const imageSource = await page.evaluate(
+          () => document.querySelector('img')?.src,
+        );
+
+        expect(imageSource).toMatch('data:image/png;base64,');
+      });
+
+      it('lets the developer configure a custom size limit for image inlining', async () => {
+        await using workspace = await createWorkspace({fixture: 'basic-app'});
+        const {fs} = workspace;
+
+        await fs.write({
+          'rollup.config.js': multiline`
+            import {quiltApp} from '@quilted/rollup/app';
+  
+            export default quiltApp({
+              assets: {
+                inline: {limit: 0},
+              },
+            });
+          `,
+          'App.tsx': multiline`
+            import image from '../../common/images/lemon-tiny.png';
+              
+            export default function App() {
+              return <img src={image} alt="A lemon." />;
+            }
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage();
+
+        expect(await getLoadedImages(page)).toStrictEqual([
+          expect.objectContaining({
+            url: expect.stringMatching(
+              /[/]assets[/]lemon-tiny\.[a-zA-Z0-9]*\.png/,
+            ),
+          }),
+        ]);
+      });
+
+      async function getLoadedImages(page: Page) {
+        const images = await page.evaluate(() => {
+          return performance.getEntriesByType('resource').flatMap((entry) => {
+            if (!/\.(png|jpg|svg)/.test(entry.name)) return [];
+
+            return {
+              url: entry.name,
+              size: (entry as PerformanceResourceTiming).transferSize,
+            };
+          });
+        });
+
+        return images;
+      }
     });
 
     it('inlines raw file contents into the JavaScript bundle', async () => {
@@ -212,18 +229,3 @@ describe('app builds', () => {
     });
   });
 });
-
-async function getLoadedImages(page: Page) {
-  const images = await page.evaluate(() => {
-    return performance.getEntriesByType('resource').flatMap((entry) => {
-      if (!/\.(png|jpg|svg)/.test(entry.name)) return [];
-
-      return {
-        url: entry.name,
-        size: (entry as PerformanceResourceTiming).transferSize,
-      };
-    });
-  });
-
-  return images;
-}

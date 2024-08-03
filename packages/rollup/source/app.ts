@@ -1152,17 +1152,6 @@ export function magicModuleAppComponent({
       entry ??
       async function magicModuleApp() {
         const project = Project.load(root);
-        const {packageJSON} = project;
-
-        if (typeof packageJSON.raw.main === 'string') {
-          return project.resolve(packageJSON.raw.main);
-        }
-
-        const rootEntry = (packageJSON.raw.exports as any)?.['.'];
-
-        if (typeof rootEntry === 'string') {
-          return project.resolve(rootEntry);
-        }
 
         const globbed = await project.glob(
           '{App,app,index}.{ts,tsx,mjs,js,jsx}',
@@ -1346,6 +1335,29 @@ export async function sourceEntryForAppBrowser({
   if (entry) {
     return project.resolve(entry);
   } else {
+    const {packageJSON} = project;
+
+    // If we have a `main` or `browser` field in our `package.json`, use that
+    // as the browser entry.
+    if (typeof packageJSON.raw.main === 'string') {
+      return project.resolve(packageJSON.raw.main);
+    }
+
+    if (typeof packageJSON.raw.browser === 'string') {
+      return project.resolve(packageJSON.raw.browser);
+    }
+
+    // Try `package.json` `exports` field, if it’s a string or an object with export conditions
+    let currentEntry = packageJSON.raw.exports as any;
+    let resolvedEntryFromExports = resolveExportsField(project, currentEntry);
+    if (resolvedEntryFromExports) return resolvedEntryFromExports;
+
+    // Then, try `exports[.]`, if it’s a string or an object with export conditions
+    currentEntry = currentEntry?.['.'];
+    resolvedEntryFromExports = resolveExportsField(project, currentEntry);
+    if (resolvedEntryFromExports) return resolvedEntryFromExports;
+
+    // If we don’t have an entry yet, try the default file names
     const files = await project.glob(
       '{browser,client,web}.{ts,tsx,mjs,js,jsx}',
       {
@@ -1355,6 +1367,27 @@ export async function sourceEntryForAppBrowser({
     );
 
     return files[0];
+  }
+}
+
+function resolveExportsField(
+  project: Project,
+  entry:
+    | string
+    | null
+    | undefined
+    | Record<string, string | null | undefined | Record<string, unknown>>,
+) {
+  if (typeof entry === 'string') {
+    return project.resolve(entry);
+  } else if (typeof entry === 'object' && entry != null) {
+    if (typeof entry.browser === 'string') {
+      return project.resolve(entry.browser);
+    } else if (typeof entry.source === 'string') {
+      return project.resolve(entry.source);
+    } else if (typeof entry.default === 'string') {
+      return project.resolve(entry.default);
+    }
   }
 }
 
