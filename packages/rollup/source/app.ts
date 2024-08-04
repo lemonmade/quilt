@@ -614,11 +614,10 @@ export async function quiltAppBrowserPlugins({
 
   plugins.push(
     assetManifest({
-      baseURL,
-      cacheKey,
+      key: cacheKey,
+      base: baseURL,
       file: path.join(manifestsDirectory, `assets${targetFilenamePart}.json`),
       priority: assets?.priority,
-      moduleID: ({imported}) => path.relative(project.root, imported),
     }),
     visualizer({
       template: 'treemap',
@@ -638,6 +637,8 @@ export function quiltAppBrowserInput({
   root,
   entry,
 }: Pick<AppBrowserOptions, 'root' | 'entry'> = {}) {
+  const MODULES_TO_ENTRIES = new Map<string, string>();
+
   return {
     name: '@quilted/app-browser/input',
     async options(options) {
@@ -649,6 +650,15 @@ export function quiltAppBrowserInput({
         typeof finalEntry === 'string' && finalEntry !== MAGIC_MODULE_ENTRY
           ? path.basename(finalEntry).split('.').slice(0, -1).join('.')
           : 'browser';
+      const additionalEntries = await additionalEntriesForAppBrowser({root});
+
+      if (typeof finalEntry === 'string') {
+        MODULES_TO_ENTRIES.set(finalEntry, '.');
+      }
+
+      for (const [name, entry] of Object.entries(additionalEntries)) {
+        MODULES_TO_ENTRIES.set(entry, `./${name}`);
+      }
 
       return {
         ...options,
@@ -656,9 +666,23 @@ export function quiltAppBrowserInput({
         // Otherwise, Rollup will use the file name as the output name.
         input:
           typeof finalEntry === 'string'
-            ? {[finalEntryName]: finalEntry}
-            : finalEntry,
+            ? {...additionalEntries, [finalEntryName]: finalEntry}
+            : Array.isArray(finalEntry)
+              ? finalEntry
+              : {...additionalEntries, ...finalEntry},
       };
+    },
+    resolveId(source, importer, options) {
+      const entry = MODULES_TO_ENTRIES.get(source);
+      if (entry == null) return null;
+
+      return this.resolve(source, importer, {...options, skipSelf: true}).then(
+        (resolved) => {
+          return resolved
+            ? {...resolved, meta: {...resolved.meta, quilt: {entry}}}
+            : resolved;
+        },
+      );
     },
   } satisfies Plugin;
 }
@@ -1370,6 +1394,37 @@ export async function sourceEntryForAppBrowser({
   }
 }
 
+export async function additionalEntriesForAppBrowser({
+  root = process.cwd(),
+}: {
+  root?: string | URL;
+}) {
+  const additionalEntries: Record<string, string> = {};
+
+  const project = Project.load(root);
+  const exports = project.packageJSON.raw.exports as any;
+
+  if (typeof exports === 'object' && exports != null) {
+    for (const [key, value] of Object.entries(exports)) {
+      // skip anything other than entries
+      if (!key.startsWith('.')) continue;
+
+      // Skip the `.` key, since it’s not an additional entry
+      if (key === '.') continue;
+
+      const resolvedEntry = resolveExportsField(project, value as any);
+
+      if (resolvedEntry) {
+        additionalEntries[key.slice(2)] = resolvedEntry;
+      }
+    }
+  }
+
+  return additionalEntries;
+}
+
+const BROWSER_EXPORT_CONDITIONS = new Set(['browser', 'source', 'default']);
+
 function resolveExportsField(
   project: Project,
   entry:
@@ -1381,12 +1436,13 @@ function resolveExportsField(
   if (typeof entry === 'string') {
     return project.resolve(entry);
   } else if (typeof entry === 'object' && entry != null) {
-    if (typeof entry.browser === 'string') {
-      return project.resolve(entry.browser);
-    } else if (typeof entry.source === 'string') {
-      return project.resolve(entry.source);
-    } else if (typeof entry.default === 'string') {
-      return project.resolve(entry.default);
+    for (const [condition, value] of Object.entries(entry)) {
+      if (
+        BROWSER_EXPORT_CONDITIONS.has(condition) &&
+        typeof value === 'string'
+      ) {
+        return project.resolve(value);
+      }
     }
   }
 }

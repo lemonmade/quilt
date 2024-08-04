@@ -259,7 +259,7 @@ describe('app builds', () => {
           null,
           2,
         ),
-        'extra-browser-entry': multiline`
+        'my-custom-browser-entry.ts': multiline`
           const element = document.createElement('main');
           element.textContent = 'Hello world from a custom browser entry!';
 
@@ -277,6 +277,64 @@ describe('app builds', () => {
       expect(
         await page.evaluate(() => document.documentElement.textContent),
       ).toBe('Hello world from a custom browser entry!');
+    });
+
+    it('allows you to specify additional entries using extra `exports` fields', async () => {
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+      const files = {
+        ...customBrowserEntryFiles,
+        'package.json': JSON.stringify(
+          {
+            ...JSON.parse(await workspace.fs.read('package.json')),
+            exports: {
+              './extra-browser-entry': './extra-browser-entry.ts',
+            },
+          },
+          null,
+          2,
+        ),
+        'extra-browser-entry.ts': multiline`
+          const element = document.createElement('main');
+          element.textContent = 'Hello world from the extra browser entry';
+
+          document.body.append(element);
+        `,
+        'server.ts': multiline`
+          import {RequestRouter} from '@quilted/quilt/request-router';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const router = new RequestRouter();
+          const assets = new BrowserAssets();
+
+          router.get(async (request) => {
+            const allAssets = await assets.entry({
+              id: './extra-browser-entry',
+            });
+
+            const scriptTags = allAssets.scripts.map((script) => {
+              return \`<script src="\${script.source}"></script>\`;
+            }).join('');
+
+            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+              headers: {'Content-Type': 'text/html'},
+            });
+          });
+          
+          export default router;
+        `,
+      };
+
+      delete (files as any)['browser.ts'];
+
+      await workspace.fs.write(files);
+
+      const server = await startServer(workspace);
+      const page = await server.openPage();
+
+      expect(
+        await page.evaluate(() => document.documentElement.textContent),
+      ).toBe('Hello world from the extra browser entry');
     });
   });
 

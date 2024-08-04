@@ -8,6 +8,7 @@ export interface Asset {
 export type AssetLoadTiming = 'never' | 'preload' | 'load';
 
 export interface BrowserAssetSelector<CacheKey = AssetsCacheKey> {
+  id?: string;
   modules?: Iterable<
     BrowserAssetModuleSelector | BrowserAssetModuleSelector['id']
   >;

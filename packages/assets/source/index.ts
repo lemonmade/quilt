@@ -15,7 +15,7 @@ export {
 } from './attributes.ts';
 export {
   BrowserAssetsFromManifests,
-  createBrowserAssetsEntryFromManifest,
-  type AssetsBuildManifest,
-  type AssetsBuildManifestEntry,
+  type AssetBuildManifest,
+  type AssetBuildAsset,
+  type AssetBuildAssetType,
 } from './manifest.ts';

@@ -1,18 +1,23 @@
-export interface AssetsBuildManifest {
-  cacheKey?: string;
+export type AssetBuildAssetType = /** style */ 1 | /** script */ 2;
+
+export interface AssetBuildManifest {
+  key?: string;
   priority?: number;
+  base?: string;
   attributes?: {
-    styles?: Record<string, string | boolean | number>;
-    scripts?: Record<string, string | boolean | number>;
+    [K in AssetBuildAssetType]?: Record<string, string | boolean | number>;
   };
-
-  assets: string[];
-  // TODO: add a way to add additional entries
-  entries: {default: AssetsBuildManifestEntry};
-  modules: Record<string, AssetsBuildManifestEntry>;
+  entries: {
+    '.': string;
+    [key: string]: string;
+  };
+  modules: Record<string, number[]>;
+  assets: AssetBuildAsset[];
 }
 
-export interface AssetsBuildManifestEntry {
-  styles: number[];
-  scripts: number[];
-}
+export type AssetBuildAsset = [
+  type: AssetBuildAssetType,
+  path: string,
+  integrity?: string,
+  attributes?: {textContent: string; [key: string]: string | boolean | number},
+];
