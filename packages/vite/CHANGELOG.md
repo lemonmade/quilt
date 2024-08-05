@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.25
+
+### Patch Changes
+
+- [`6a093e9`](https://github.com/lemonmade/quilt/commit/6a093e9f390461fc41c5c3291465ae8f3aae8836) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Vite dev mode asset references
+
 ## 0.1.24
 
 ### Patch Changes
