@@ -905,7 +905,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../request-router
       '@quilted/rollup':
-        specifier: workspace:^0.2.40
+        specifier: workspace:^0.2.41
         version: link:../rollup
     devDependencies:
       '@types/babel__core':
