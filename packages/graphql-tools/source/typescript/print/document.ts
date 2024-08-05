@@ -351,7 +351,7 @@ function exportsForSelection(
   const interfaceBody: TSTypeElement[] = [];
   const namespaceBody: Statement[] = [];
 
-  const {addTypename = true} = context.kind;
+  const {addTypename = false} = context.kind;
 
   if (type !== context.rootType && addTypename) {
     const typenameField = t.tsPropertySignature(
@@ -600,7 +600,7 @@ function createDocumentExportValue(
   document: DocumentNode,
   outputKind: DocumentOutputKind,
 ) {
-  const {addTypename: shouldAddTypename = true} = outputKind;
+  const {addTypename: shouldAddTypename = false} = outputKind;
 
   const minifiedDocument = minify(
     shouldAddTypename ? addTypename(document, {clone: true}) : document,
