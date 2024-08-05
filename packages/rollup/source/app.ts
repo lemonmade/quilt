@@ -8,7 +8,7 @@ import type {
   InputPluginOption,
   GetManualChunk,
 } from 'rollup';
-import type {AssetsBuildManifest} from '@quilted/assets';
+import type {AssetBuildManifest} from '@quilted/assets';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -1292,7 +1292,7 @@ export function magicModuleAppAssetManifests() {
       const manifests = await Promise.all(
         manifestFiles.map(
           async (file) =>
-            JSON.parse(await fs.readFile(file, 'utf8')) as AssetsBuildManifest,
+            JSON.parse(await fs.readFile(file, 'utf8')) as AssetBuildManifest,
         ),
       );
 
