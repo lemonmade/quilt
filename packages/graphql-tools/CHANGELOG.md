@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.2.8
+
+### Patch Changes
+
+- [`f775fdf`](https://github.com/lemonmade/quilt/commit/f775fdfb1a5d3473dd6f8d2ea9c66f96aa77606c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `__typename` inclusion in GraphQL types
+
 ## 0.2.7
 
 ### Patch Changes
