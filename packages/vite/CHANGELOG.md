@@ -1,5 +1,14 @@
 # @quilted/vite
 
+## 0.1.26
+
+### Patch Changes
+
+- [`fa9a629`](https://github.com/lemonmade/quilt/commit/fa9a62986d5cdc1f120f9d98f70f6b94b9362b00) Thanks [@lemonmade](https://github.com/lemonmade)! - More asset manifest fixes
+
+- Updated dependencies [[`fa9a629`](https://github.com/lemonmade/quilt/commit/fa9a62986d5cdc1f120f9d98f70f6b94b9362b00), [`539002b`](https://github.com/lemonmade/quilt/commit/539002bc51ae3767cd2178377a0bd6d9b060e7d5)]:
+  - @quilted/rollup@0.2.41
+
 ## 0.1.25
 
 ### Patch Changes
