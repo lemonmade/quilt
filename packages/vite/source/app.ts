@@ -221,64 +221,50 @@ export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
       const {sourceEntryForAppBrowser} = await import('@quilted/rollup/app');
 
       const sourceEntry = await sourceEntryForAppBrowser({entry});
-      let entryIdentifier: string;
 
+      let defaultEntryID: string;
       if (sourceEntry) {
         const relativeSourceEntry = path.relative(process.cwd(), sourceEntry);
-        entryIdentifier = relativeSourceEntry.startsWith(`..${path.sep}`)
+        defaultEntryID = relativeSourceEntry.startsWith(`..${path.sep}`)
           ? `/@fs${sourceEntry}`
           : relativeSourceEntry.startsWith(`.${path.sep}`)
             ? `/${relativeSourceEntry.slice(2)}`
             : `/${relativeSourceEntry}`;
       } else {
-        entryIdentifier = `/@id/${MAGIC_MODULE_ENTRY}`;
+        defaultEntryID = `/@id/${MAGIC_MODULE_ENTRY}`;
       }
 
-      const manifest = {
-        attributes: {
-          scripts: {type: 'module'},
-        },
-        assets: [`/@vite/client`, entryIdentifier],
-        entries: {
-          default: {
-            scripts: [0, 1],
-            styles: [],
-          },
-        },
-      };
-
       return multiline`
-        import {BrowserAssetsFromManifests} from '@quilted/quilt/server';
+        const defaultEntryID = ${JSON.stringify(defaultEntryID)}; 
 
-        const MANIFEST = ${JSON.stringify(manifest)};
-        MANIFEST.modules = new Proxy(
-          {},
-          {
-            get(_, key) {
-              if (typeof key !== 'string') {
-                return undefined;
-              }
+        export class BrowserAssets {
+          entry({id, modules} = {}) {
+            const scripts = [
+              {source: '/@vite/client', attributes: {type: 'module'}},
+              {source: defaultEntryID, attributes: {type: 'module'}},
+            ];
 
-              let index = MANIFEST.assets.indexOf(key);
+            if (modules) {
+              scripts.push(...this.modules(modules).scripts);
+            }
 
-              if (index < 0) {
-                MANIFEST.assets.push(key);
-                index = MANIFEST.assets.length - 1;
-              }
+            return {styles: [], scripts};
+          }
 
-              return {
-                scripts: [index],
-                styles: [],
-              };
-            },
-          },
-        );
+          modules(ids, _options) {
+            const scripts = [];
 
-        export class BrowserAssets extends BrowserAssetsFromManifests {
-          constructor() {
-            super([], {
-              defaultManifest: MANIFEST,
-            });
+            for (const idOrSelector of ids) {
+              const includeScripts = idOrSelector.scripts ?? true;
+              if (!includeScripts) continue;
+
+              const id = idOrSelector.id ?? idOrSelector;
+              const resolvedID = id.startsWith('/') ? id : id.startsWith('./') ? ('/' + id.slice(2)) : ('/' + id);
+
+              scripts.push({source: resolvedID, attributes: {type: 'module'}});
+            }
+
+            return {styles: [], scripts};
           }
         }
       `;
