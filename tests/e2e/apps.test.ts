@@ -338,6 +338,138 @@ describe('app builds', () => {
     });
   });
 
+  describe('server entry', () => {
+    const customServerEntryFiles = {
+      'server.ts': multiline`
+        import {RequestRouter} from '@quilted/quilt/request-router';
+                  
+        const router = new RequestRouter();
+
+        router.get(async (request) => {
+          return new Response('<html>Hello world</html>', {
+            headers: {'Content-Type': 'text/html'},
+          });
+        });
+        
+        export default router;
+      `,
+      'rollup.config.js': multiline`
+        import {quiltApp} from '@quilted/rollup/app';  
+
+        export default quiltApp();
+      `,
+    };
+
+    it('uses a server.ts file as the server entry by default', async () => {
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+      await workspace.fs.write({...customServerEntryFiles});
+
+      const server = await startServer(workspace, {
+        path: './build/server/server.js',
+      });
+      const page = await server.openPage();
+
+      expect(
+        await page.evaluate(() => document.documentElement.textContent),
+      ).toBe('Hello world');
+    });
+
+    it('uses the `server.entry` option from the rollup plugin as the browser entry', async () => {
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+      const files = {
+        ...customServerEntryFiles,
+        'rollup.config.js': multiline`
+          import {quiltApp} from '@quilted/rollup/app';  
+
+          const config = quiltApp({
+            server: {entry: './my-custom-server-entry.ts'},
+          });
+
+          export default config;
+        `,
+        'my-custom-server-entry.ts': customServerEntryFiles['server.ts'],
+      };
+
+      delete (files as any)['server.ts'];
+
+      await workspace.fs.write(files);
+
+      const server = await startServer(workspace, {
+        path: './build/server/my-custom-server-entry.js',
+      });
+      const page = await server.openPage();
+
+      expect(
+        await page.evaluate(() => document.documentElement.textContent),
+      ).toBe('Hello world');
+    });
+
+    it('uses the `exports[server]` field from package.json as the server entry', async () => {
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+      const files = {
+        ...customServerEntryFiles,
+        'package.json': JSON.stringify(
+          {
+            ...JSON.parse(await workspace.fs.read('package.json')),
+            exports: {server: './my-custom-server-entry.ts'},
+          },
+          null,
+          2,
+        ),
+        'my-custom-server-entry.ts': customServerEntryFiles['server.ts'],
+      };
+
+      delete (files as any)['server.ts'];
+
+      await workspace.fs.write(files);
+
+      const server = await startServer(workspace, {
+        path: './build/server/my-custom-server-entry.js',
+      });
+      const page = await server.openPage();
+
+      expect(
+        await page.evaluate(() => document.documentElement.textContent),
+      ).toBe('Hello world');
+    });
+
+    it('uses the root `exports[.][server]` field from package.json as the server entry', async () => {
+      await using workspace = await createWorkspace({
+        fixture: 'empty-app',
+        debug: true,
+      });
+
+      const files = {
+        ...customServerEntryFiles,
+        'package.json': JSON.stringify(
+          {
+            ...JSON.parse(await workspace.fs.read('package.json')),
+            exports: {'.': {server: './my-custom-server-entry.ts'}},
+          },
+          null,
+          2,
+        ),
+        'my-custom-server-entry.ts': customServerEntryFiles['server.ts'],
+      };
+
+      delete (files as any)['server.ts'];
+
+      await workspace.fs.write(files);
+
+      const server = await startServer(workspace, {
+        path: './build/server/my-custom-server-entry.js',
+      });
+      const page = await server.openPage();
+
+      expect(
+        await page.evaluate(() => document.documentElement.textContent),
+      ).toBe('Hello world');
+    });
+  });
+
   describe('magic app module', () => {
     it('uses an explicit App module', async () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});

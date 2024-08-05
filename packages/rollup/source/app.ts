@@ -1197,7 +1197,7 @@ export function magicModuleAppRequestRouter({
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app-request-router',
     module: MAGIC_MODULE_REQUEST_ROUTER,
-    alias: () => appServerEntry({entry, root}) as Promise<string>,
+    alias: () => sourceEntryForAppServer({entry, root}) as Promise<string>,
     async source() {
       return multiline`
         import '@quilted/quilt/globals';
@@ -1228,25 +1228,6 @@ export function magicModuleAppRequestRouter({
       `;
     },
   });
-}
-
-export async function appServerEntry({
-  entry,
-  root = process.cwd(),
-}: Pick<AppServerOptions, 'entry' | 'root'> = {}) {
-  if (entry) return entry;
-
-  const project = Project.load(root);
-
-  const globbed = await project.glob(
-    '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
-    {
-      nodir: true,
-      absolute: true,
-    },
-  );
-
-  return globbed[0];
 }
 
 export function magicModuleAppBrowserEntry({
@@ -1373,12 +1354,22 @@ export async function sourceEntryForAppBrowser({
 
     // Try `package.json` `exports` field, if it’s a string or an object with export conditions
     let currentEntry = packageJSON.raw.exports as any;
-    let resolvedEntryFromExports = resolveExportsField(project, currentEntry);
+    let resolvedEntryFromExports = resolveExportsField(
+      project,
+      currentEntry,
+      BROWSER_EXPORT_CONDITIONS,
+    );
+
     if (resolvedEntryFromExports) return resolvedEntryFromExports;
 
     // Then, try `exports[.]`, if it’s a string or an object with export conditions
     currentEntry = currentEntry?.['.'];
-    resolvedEntryFromExports = resolveExportsField(project, currentEntry);
+    resolvedEntryFromExports = resolveExportsField(
+      project,
+      currentEntry,
+      BROWSER_EXPORT_CONDITIONS,
+    );
+
     if (resolvedEntryFromExports) return resolvedEntryFromExports;
 
     // If we don’t have an entry yet, try the default file names
@@ -1394,7 +1385,20 @@ export async function sourceEntryForAppBrowser({
   }
 }
 
-export async function additionalEntriesForAppBrowser({
+const BROWSER_EXPORT_CONDITIONS = new Set([
+  'browser',
+  'source',
+  'quilt:source',
+  'default',
+]);
+const SERVER_EXPORT_CONDITIONS = new Set([
+  'server',
+  'source',
+  'quilt:source',
+  'default',
+]);
+
+async function additionalEntriesForAppBrowser({
   root = process.cwd(),
 }: {
   root?: string | URL;
@@ -1412,7 +1416,11 @@ export async function additionalEntriesForAppBrowser({
       // Skip the `.` key, since it’s not an additional entry
       if (key === '.') continue;
 
-      const resolvedEntry = resolveExportsField(project, value as any);
+      const resolvedEntry = resolveExportsField(
+        project,
+        value as any,
+        BROWSER_EXPORT_CONDITIONS,
+      );
 
       if (resolvedEntry) {
         additionalEntries[key.slice(2)] = resolvedEntry;
@@ -1423,8 +1431,6 @@ export async function additionalEntriesForAppBrowser({
   return additionalEntries;
 }
 
-const BROWSER_EXPORT_CONDITIONS = new Set(['browser', 'source', 'default']);
-
 function resolveExportsField(
   project: Project,
   entry:
@@ -1432,15 +1438,13 @@ function resolveExportsField(
     | null
     | undefined
     | Record<string, string | null | undefined | Record<string, unknown>>,
+  conditions: Set<string>,
 ) {
   if (typeof entry === 'string') {
     return project.resolve(entry);
   } else if (typeof entry === 'object' && entry != null) {
     for (const [condition, value] of Object.entries(entry)) {
-      if (
-        BROWSER_EXPORT_CONDITIONS.has(condition) &&
-        typeof value === 'string'
-      ) {
+      if (conditions.has(condition) && typeof value === 'string') {
         return project.resolve(value);
       }
     }
@@ -1458,7 +1462,21 @@ export async function sourceEntryForAppServer({
 
   if (entry) {
     return project.resolve(entry);
-  } else {
+  }
+  {
+    const {packageJSON} = project;
+
+    // Try `package.json` `exports` field, if it has a `server` condition or a `.`
+    // enrty with a `server` condition
+    const exports = packageJSON.raw.exports as any;
+
+    const resolvedFromRootServerEntry = resolveExportsField(
+      project,
+      exports?.['server'] ?? exports?.['.']?.['server'],
+      SERVER_EXPORT_CONDITIONS,
+    );
+    if (resolvedFromRootServerEntry) return resolvedFromRootServerEntry;
+
     const files = await project.glob(
       '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
       {
