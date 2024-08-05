@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.38
+
+### Patch Changes
+
+- [`adcbf2e`](https://github.com/lemonmade/quilt/commit/adcbf2ee7eb3322e94438400cbb5ba9ad8bfa29a) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix TypeScript shared config version for templates
+
 ## 0.2.37
 
 ### Patch Changes
