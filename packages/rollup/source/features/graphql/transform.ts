@@ -90,9 +90,17 @@ export function toGraphQLOperation<Data = unknown, Variables = unknown>(
 
   return {
     id: document.id,
+    type: operationTypeForDocument(document),
     name: operationNameForDocument(document),
     source: document.loc!.source.body,
   };
+}
+
+function operationTypeForDocument(document: DocumentNode) {
+  return document.definitions.find(
+    (definition): definition is OperationDefinitionNode =>
+      definition.kind === 'OperationDefinition',
+  )?.operation;
 }
 
 function operationNameForDocument(document: DocumentNode) {
