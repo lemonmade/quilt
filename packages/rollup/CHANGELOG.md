@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.43
+
+### Patch Changes
+
+- [`b830bab`](https://github.com/lemonmade/quilt/commit/b830bab9fb4cf2bd51aa665c4750ddf114312887) Thanks [@lemonmade](https://github.com/lemonmade)! - Add GraphQL operation type to Rollup output
+
 ## 0.2.42
 
 ### Patch Changes
