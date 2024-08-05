@@ -96,6 +96,7 @@ async function writeManifestForBundle(
     const rollupModuleID = output.facadeModuleId ?? output.moduleIds.at(-1);
 
     if (rollupModuleID == null) continue;
+    if (rollupModuleID.startsWith('\0quilt-worker-entry:')) continue;
 
     const moduleInfo = this.getModuleInfo(rollupModuleID);
     const imported = moduleInfo?.meta?.quilt?.module ?? rollupModuleID;
