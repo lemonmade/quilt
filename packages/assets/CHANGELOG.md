@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.4
+
+### Patch Changes
+
+- [`f779435`](https://github.com/lemonmade/quilt/commit/f779435d9b943d342c058bcf2e3049696c1a512e) Thanks [@lemonmade](https://github.com/lemonmade)! - Add basic support for SRI hashes
+
 ## 0.1.3
 
 ### Patch Changes
