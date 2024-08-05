@@ -4,6 +4,7 @@ import {createHash} from 'crypto';
 
 import type {
   NormalizedOutputOptions,
+  OutputAsset,
   OutputBundle,
   OutputChunk,
   Plugin,
@@ -60,14 +61,14 @@ async function writeManifestForBundle(
     dependencyMap.set(output.fileName, output.imports);
   }
 
-  const assets: AssetBuildAsset[] = [];
+  const assets: Promise<AssetBuildAsset>[] = [];
   const assetIdMap = new Map<string, number>();
 
   function getAssetId(file: string) {
     let id = assetIdMap.get(file);
 
     if (id == null) {
-      assets.push([file.endsWith('.css') ? 1 : 2, file]);
+      assets.push(loadAsset(file, bundle[file]!));
       id = assets.length - 1;
       assetIdMap.set(file, id);
     }
@@ -79,7 +80,7 @@ async function writeManifestForBundle(
     key: key && key.size > 0 ? key.toString() : undefined,
     base,
     priority,
-    assets,
+    assets: [],
     attributes: format === 'es' ? {2: {type: 'module'}} : undefined,
     entries: {} as any,
     modules: {},
@@ -116,8 +117,30 @@ async function writeManifestForBundle(
     );
   }
 
+  manifest.assets = await Promise.all(assets);
+
   await fs.mkdir(path.dirname(file), {recursive: true});
   await fs.writeFile(file, JSON.stringify(manifest, null, 2));
+}
+
+const SRI_ALGORITHM = 'sha384';
+
+async function loadAsset(
+  file: string,
+  chunk: OutputChunk | OutputAsset,
+): Promise<AssetBuildAsset> {
+  const asset: AssetBuildAsset = [file.endsWith('.css') ? 1 : 2, file];
+
+  try {
+    const hash = createHash(SRI_ALGORITHM)
+      .update('code' in chunk ? chunk.code : chunk.source)
+      .digest()
+      .toString('base64');
+
+    asset[2] = `${SRI_ALGORITHM}-${hash}`;
+  } catch {}
+
+  return asset;
 }
 
 function defaultModuleID({imported}: {imported: string}) {

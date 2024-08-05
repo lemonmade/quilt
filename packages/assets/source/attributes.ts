@@ -38,7 +38,8 @@ export function styleAssetPreloadAttributes(
   {source, attributes}: Asset,
   {baseURL}: {baseURL?: URL} = {},
 ): Partial<HTMLLinkElement> {
-  const {crossorigin: explicitCrossOrigin} = (attributes ?? {}) as any;
+  const {crossorigin: explicitCrossOrigin, integrity} = (attributes ??
+    {}) as any;
 
   const crossorigin =
     explicitCrossOrigin ??
@@ -52,6 +53,7 @@ export function styleAssetPreloadAttributes(
   return {
     rel: 'preload',
     href,
+    integrity,
     as: 'style',
     // @ts-expect-error - rendering real HTML, so using the attribute rather than property names
     crossorigin:
@@ -99,7 +101,11 @@ export function scriptAssetPreloadAttributes(
   {source, attributes}: Asset,
   {baseURL}: {baseURL?: URL} = {},
 ): Partial<HTMLLinkElement> {
-  const {type, crossorigin: explicitCrossOrigin} = (attributes ?? {}) as any;
+  const {
+    type,
+    integrity,
+    crossorigin: explicitCrossOrigin,
+  } = (attributes ?? {}) as any;
 
   const crossorigin =
     explicitCrossOrigin ??
@@ -113,6 +119,7 @@ export function scriptAssetPreloadAttributes(
   return {
     rel: type === 'module' ? 'modulepreload' : 'preload',
     href,
+    integrity,
     as: 'script',
     // @ts-expect-error - rendering real HTML, so using the attribute rather than property names
     crossorigin:
