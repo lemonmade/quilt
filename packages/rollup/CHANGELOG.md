@@ -1,5 +1,18 @@
 # @quilted/rollup
 
+## 0.2.40
+
+### Patch Changes
+
+- [#805](https://github.com/lemonmade/quilt/pull/805) [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow server entry from `exports`
+
+- [#805](https://github.com/lemonmade/quilt/pull/805) [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e) Thanks [@lemonmade](https://github.com/lemonmade)! - Compress built asset manifest and allow multiple named entries
+
+- [#805](https://github.com/lemonmade/quilt/pull/805) [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e) Thanks [@lemonmade](https://github.com/lemonmade)! - Use more `package.json` for browser entrypoint
+
+- Updated dependencies [[`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e)]:
+  - @quilted/assets@0.1.3
+
 ## 0.2.39
 
 ### Patch Changes
