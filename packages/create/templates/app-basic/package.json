@@ -3,6 +3,10 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    "browser": "./browser.tsx",
+    "server": "./server.tsx"
+  },
   "scripts": {
     "build": "rollup --config ./rollup.config.js",
     "develop": "vite --config ./vite.config.js",
