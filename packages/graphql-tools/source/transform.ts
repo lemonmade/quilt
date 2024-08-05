@@ -30,7 +30,13 @@ export function cleanGraphQLDocument<
   Variables = Record<string, any>,
 >(
   document: DocumentNode | TypedQueryDocumentNode<Data, Variables>,
-  {removeUnused = true}: {removeUnused?: boolean | {exclude: Set<string>}} = {},
+  {
+    removeUnused = true,
+    addTypename: shouldAddTypename = false,
+  }: {
+    removeUnused?: boolean | {exclude: Set<string>};
+    addTypename?: boolean;
+  } = {},
 ): EnhancedDocumentNode<Data, Variables> {
   if (removeUnused) {
     removeUnusedDefinitions(document, {
@@ -38,8 +44,10 @@ export function cleanGraphQLDocument<
     });
   }
 
-  for (const definition of document.definitions) {
-    addTypename(definition);
+  if (shouldAddTypename) {
+    for (const definition of document.definitions) {
+      addTypename(definition);
+    }
   }
 
   const normalizedSource = minifyGraphQLSource(print(document));
@@ -84,10 +92,11 @@ export function extractGraphQLImports(rawSource: string) {
 
 export function toGraphQLOperation<Data = unknown, Variables = unknown>(
   documentOrSource: EnhancedDocumentNode<Data, Variables> | string,
+  options?: Parameters<typeof cleanGraphQLDocument<Data, Variables>>[1],
 ): GraphQLOperation<Data, Variables> {
   const document =
     typeof documentOrSource === 'string'
-      ? cleanGraphQLDocument(parse(documentOrSource))
+      ? cleanGraphQLDocument(parse(documentOrSource), options)
       : documentOrSource;
 
   return {

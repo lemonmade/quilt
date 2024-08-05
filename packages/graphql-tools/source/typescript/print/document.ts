@@ -351,9 +351,12 @@ function exportsForSelection(
   const interfaceBody: TSTypeElement[] = [];
   const namespaceBody: Statement[] = [];
 
-  const {addTypename = true} = context.kind;
+  const {addTypename = false} = context.kind;
 
-  if (type !== context.rootType && addTypename) {
+  if (
+    type !== context.rootType &&
+    (addTypename || fieldMap.has('__typename'))
+  ) {
     const typenameField = t.tsPropertySignature(
       t.identifier('__typename'),
       t.tsTypeAnnotation(
@@ -600,7 +603,7 @@ function createDocumentExportValue(
   document: DocumentNode,
   outputKind: DocumentOutputKind,
 ) {
-  const {addTypename: shouldAddTypename = true} = outputKind;
+  const {addTypename: shouldAddTypename = false} = outputKind;
 
   const minifiedDocument = minify(
     shouldAddTypename ? addTypename(document, {clone: true}) : document,

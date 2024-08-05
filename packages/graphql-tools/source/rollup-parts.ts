@@ -14,12 +14,14 @@ export interface Options {
   manifest?: string;
   format?: 'operation' | 'string';
   includeSource?: boolean;
+  addTypename?: boolean;
 }
 
 export function graphql({
   manifest: manifestPath,
   format = 'operation',
   includeSource = true,
+  addTypename = false,
 }: Options = {}): Plugin {
   const shouldWriteManifest = Boolean(manifestPath);
 
@@ -49,6 +51,7 @@ export function graphql({
         cleanGraphQLDocument(loadedDocument, {
           removeUnused: {exclude: topLevelDefinitions},
         }),
+        {addTypename},
       );
 
       let outputCode: string;

@@ -12,9 +12,10 @@ import {
 
 export interface GraphQLOptions {
   manifest?: string | boolean;
+  addTypename?: boolean;
 }
 
-export function graphql({manifest}: GraphQLOptions = {}): Plugin {
+export function graphql({manifest, addTypename}: GraphQLOptions = {}): Plugin {
   const shouldWriteManifest = Boolean(manifest);
   const manifestPath =
     typeof manifest === 'string' ? manifest : `manifests/graphql.json`;
@@ -45,6 +46,7 @@ export function graphql({manifest}: GraphQLOptions = {}): Plugin {
         cleanGraphQLDocument(loadedDocument, {
           removeUnused: {exclude: topLevelDefinitions},
         }),
+        {addTypename},
       );
 
       return {
