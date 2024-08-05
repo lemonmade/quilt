@@ -306,8 +306,8 @@ export class RouterNavigationCache {
         }
 
         const keyID = typeof key === 'string' ? key : JSON.stringify(key);
-        const loadID = parent?.consumed ? `${parent.consumed}:${keyID}` : keyID;
-        const id = `${matchID}:${keyID}`;
+        const loadID = parent?.key ? `${parent.key}:${keyID}` : keyID;
+        const id = `${matchID}:${loadID}`;
 
         let entry = entryCache.get(id);
         if (entry == null) {

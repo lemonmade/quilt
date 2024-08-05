@@ -598,6 +598,24 @@ describe('useRoutes()', () => {
         expect(routes).toContainPreactComponent(RouteComponent);
       });
 
+      it('matches a nested fallback routes', () => {
+        function Routes() {
+          return useRoutes([
+            {
+              match: '*',
+              render: <RouteComponent />,
+              children: [{render: <NestedRouteComponent />}],
+            },
+          ]);
+        }
+
+        const routes = render(<Routes />, {path: '/foo/bar'});
+
+        console.log(routes.debug());
+
+        expect(routes).toContainPreactComponent(NestedRouteComponent);
+      });
+
       it('does not consume the matched pathname when there is no match property', () => {
         function Routes() {
           return useRoutes([
