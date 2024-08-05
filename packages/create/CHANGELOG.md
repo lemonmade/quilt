@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.37
+
+### Patch Changes
+
+- [#805](https://github.com/lemonmade/quilt/pull/805) [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e) Thanks [@lemonmade](https://github.com/lemonmade)! - Update templates to use `package.json` for entries instead of Rollup config
+
 ## 0.2.36
 
 ### Patch Changes

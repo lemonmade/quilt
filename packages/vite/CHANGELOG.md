@@ -1,5 +1,14 @@
 # @quilted/vite
 
+## 0.1.24
+
+### Patch Changes
+
+- [#805](https://github.com/lemonmade/quilt/pull/805) [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow server entry from `exports`
+
+- Updated dependencies [[`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e), [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e), [`4995757`](https://github.com/lemonmade/quilt/commit/49957579a4811a1c310635f5dcdb4e67668ec22e)]:
+  - @quilted/rollup@0.2.40
+
 ## 0.1.23
 
 ### Patch Changes
