@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.44
+
+### Patch Changes
+
+- [`c473811`](https://github.com/lemonmade/quilt/commit/c4738114a35673a172754154c989900cee56e03f) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove default typename in Rollup GraphQL plugin
+
 ## 0.2.43
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @quilted/preact-router
 
+## 0.2.9
+
+### Patch Changes
+
+- [`d91c56d`](https://github.com/lemonmade/quilt/commit/d91c56d282c82b33e646125a07cd101d1678770e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix rendering of nested fallback routes
+
 ## 0.2.8
 
 ### Patch Changes
