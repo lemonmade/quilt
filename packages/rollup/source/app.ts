@@ -1167,7 +1167,7 @@ export function magicModuleAppComponent({
   root = process.cwd(),
 }: {
   entry?: string;
-  root?: string;
+  root?: string | URL;
 }) {
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app',
@@ -1398,7 +1398,7 @@ const SERVER_EXPORT_CONDITIONS = new Set([
   'default',
 ]);
 
-async function additionalEntriesForAppBrowser({
+export async function additionalEntriesForAppBrowser({
   root = process.cwd(),
 }: {
   root?: string | URL;

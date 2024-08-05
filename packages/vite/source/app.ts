@@ -2,6 +2,8 @@ import * as path from 'path';
 
 import type {Plugin} from 'vite';
 import {
+  sourceEntryForAppBrowser,
+  additionalEntriesForAppBrowser,
   sourceEntryForAppServer,
   MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_BROWSER_ASSETS,
@@ -16,6 +18,7 @@ import {react} from './shared/react.ts';
 import {monorepoPackageAliases} from './shared/node.ts';
 import {tsconfigAliases} from './shared/typescript.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
+import {fileURLToPath} from 'url';
 
 export interface AppBaseOptions {
   /**
@@ -76,6 +79,7 @@ export interface AppOptions extends AppBaseOptions {
 }
 
 export async function quiltApp({
+  root,
   app,
   env,
   browser,
@@ -112,9 +116,9 @@ export async function quiltApp({
     babelPreprocess(),
     tsconfigAliases(),
     monorepoPackageAliases(),
-    {...magicModuleAppComponent({entry: app}), enforce: 'pre'},
+    {...magicModuleAppComponent({root, entry: app}), enforce: 'pre'},
     {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
-    magicModuleAppAssetManifest({entry: browser?.entry}),
+    magicModuleAppAssetManifest({root, entry: browser?.entry}),
     workers(),
     asyncModules({
       preload: true,
@@ -213,35 +217,59 @@ export async function quiltApp({
   return plugins;
 }
 
-export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
+export function magicModuleAppAssetManifest({
+  root = process.cwd(),
+  entry,
+}: {entry?: string; root?: string | URL} = {}) {
+  const rootPath = root instanceof URL ? fileURLToPath(root) : root;
+
   return createMagicModulePlugin({
     name: '@quilted/magic-module/asset-manifests',
     module: MAGIC_MODULE_BROWSER_ASSETS,
     async source() {
-      const {sourceEntryForAppBrowser} = await import('@quilted/rollup/app');
+      const sourceEntry = await sourceEntryForAppBrowser({root, entry});
+      const additionalEntries = await additionalEntriesForAppBrowser({root});
 
-      const sourceEntry = await sourceEntryForAppBrowser({entry});
+      const entries: Record<string, string> = {
+        ...additionalEntries,
+        ['.']: sourceEntry ?? `/@id/${MAGIC_MODULE_ENTRY}`,
+      };
 
-      let defaultEntryID: string;
-      if (sourceEntry) {
-        const relativeSourceEntry = path.relative(process.cwd(), sourceEntry);
-        defaultEntryID = relativeSourceEntry.startsWith(`..${path.sep}`)
+      const normalizedEntries: Record<string, string> = {};
+
+      for (const [entry, module] of Object.entries(entries)) {
+        const entryName = entry.startsWith('.') ? entry : `./${entry}`;
+
+        if (module.startsWith('/@')) {
+          normalizedEntries[entryName] = module;
+          continue;
+        }
+
+        const relativeSourceEntry = path.relative(rootPath, module);
+        const normalizedModule = relativeSourceEntry.startsWith(`..${path.sep}`)
           ? `/@fs${sourceEntry}`
           : relativeSourceEntry.startsWith(`.${path.sep}`)
             ? `/${relativeSourceEntry.slice(2)}`
             : `/${relativeSourceEntry}`;
-      } else {
-        defaultEntryID = `/@id/${MAGIC_MODULE_ENTRY}`;
+
+        normalizedEntries[entryName] = normalizedModule;
       }
 
       return multiline`
-        const defaultEntryID = ${JSON.stringify(defaultEntryID)}; 
+        const entries = ${JSON.stringify(normalizedEntries)}; 
 
         export class BrowserAssets {
-          entry({id, modules} = {}) {
+          entry({id = '.', modules} = {}) {
+            const normalizedEntry = id.startsWith('.') ? id : id.startsWith('/') ? ('.' + id) : ('./' + id);
+            const entryModule = entries[normalizedEntry];
+
+            if (entryModule == null) {
+              return {styles: [], scripts: []};
+            }
+
             const scripts = [
               {source: '/@vite/client', attributes: {type: 'module'}},
-              {source: defaultEntryID, attributes: {type: 'module'}},
+              {source: entryModule, attributes: {type: 'module'}},
             ];
 
             if (modules) {
@@ -258,14 +286,16 @@ export function magicModuleAppAssetManifest({entry}: {entry?: string} = {}) {
               const includeScripts = idOrSelector.scripts ?? true;
               if (!includeScripts) continue;
 
-              const id = idOrSelector.id ?? idOrSelector;
-              const resolvedID = id.startsWith('/') ? id : id.startsWith('./') ? ('/' + id.slice(2)) : ('/' + id);
-
-              scripts.push({source: resolvedID, attributes: {type: 'module'}});
+              const id = normalizeID(idOrSelector.id ?? idOrSelector);
+              scripts.push({source: id, attributes: {type: 'module'}});
             }
 
             return {styles: [], scripts};
           }
+        }
+
+        function normalizeID(id) {
+          return id.startsWith('/') ? id : id.startsWith('./') ? ('/' + id.slice(2)) : ('/' + id);
         }
       `;
     },
