@@ -1,8 +1,6 @@
 export type {
-  AssetsBuildManifest,
-  AssetsBuildManifestEntry,
+  AssetBuildManifest,
+  AssetBuildAsset,
+  AssetBuildAssetType,
 } from './manifest/types.ts';
-export {
-  BrowserAssetsFromManifests,
-  createBrowserAssetsEntryFromManifest,
-} from './manifest/runtime.ts';
+export {BrowserAssetsFromManifests} from './manifest/runtime.ts';

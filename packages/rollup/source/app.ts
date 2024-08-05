@@ -8,7 +8,7 @@ import type {
   InputPluginOption,
   GetManualChunk,
 } from 'rollup';
-import type {AssetsBuildManifest} from '@quilted/assets';
+import type {AssetBuildManifest} from '@quilted/assets';
 
 import {
   MAGIC_MODULE_ENTRY,
@@ -614,11 +614,10 @@ export async function quiltAppBrowserPlugins({
 
   plugins.push(
     assetManifest({
-      baseURL,
-      cacheKey,
+      key: cacheKey,
+      base: baseURL,
       file: path.join(manifestsDirectory, `assets${targetFilenamePart}.json`),
       priority: assets?.priority,
-      moduleID: ({imported}) => path.relative(project.root, imported),
     }),
     visualizer({
       template: 'treemap',
@@ -638,6 +637,8 @@ export function quiltAppBrowserInput({
   root,
   entry,
 }: Pick<AppBrowserOptions, 'root' | 'entry'> = {}) {
+  const MODULES_TO_ENTRIES = new Map<string, string>();
+
   return {
     name: '@quilted/app-browser/input',
     async options(options) {
@@ -649,6 +650,15 @@ export function quiltAppBrowserInput({
         typeof finalEntry === 'string' && finalEntry !== MAGIC_MODULE_ENTRY
           ? path.basename(finalEntry).split('.').slice(0, -1).join('.')
           : 'browser';
+      const additionalEntries = await additionalEntriesForAppBrowser({root});
+
+      if (typeof finalEntry === 'string') {
+        MODULES_TO_ENTRIES.set(finalEntry, '.');
+      }
+
+      for (const [name, entry] of Object.entries(additionalEntries)) {
+        MODULES_TO_ENTRIES.set(entry, `./${name}`);
+      }
 
       return {
         ...options,
@@ -656,9 +666,23 @@ export function quiltAppBrowserInput({
         // Otherwise, Rollup will use the file name as the output name.
         input:
           typeof finalEntry === 'string'
-            ? {[finalEntryName]: finalEntry}
-            : finalEntry,
+            ? {...additionalEntries, [finalEntryName]: finalEntry}
+            : Array.isArray(finalEntry)
+              ? finalEntry
+              : {...additionalEntries, ...finalEntry},
       };
+    },
+    resolveId(source, importer, options) {
+      const entry = MODULES_TO_ENTRIES.get(source);
+      if (entry == null) return null;
+
+      return this.resolve(source, importer, {...options, skipSelf: true}).then(
+        (resolved) => {
+          return resolved
+            ? {...resolved, meta: {...resolved.meta, quilt: {entry}}}
+            : resolved;
+        },
+      );
     },
   } satisfies Plugin;
 }
@@ -1152,17 +1176,6 @@ export function magicModuleAppComponent({
       entry ??
       async function magicModuleApp() {
         const project = Project.load(root);
-        const {packageJSON} = project;
-
-        if (typeof packageJSON.raw.main === 'string') {
-          return project.resolve(packageJSON.raw.main);
-        }
-
-        const rootEntry = (packageJSON.raw.exports as any)?.['.'];
-
-        if (typeof rootEntry === 'string') {
-          return project.resolve(rootEntry);
-        }
 
         const globbed = await project.glob(
           '{App,app,index}.{ts,tsx,mjs,js,jsx}',
@@ -1184,7 +1197,7 @@ export function magicModuleAppRequestRouter({
   return createMagicModulePlugin({
     name: '@quilted/magic-module/app-request-router',
     module: MAGIC_MODULE_REQUEST_ROUTER,
-    alias: () => appServerEntry({entry, root}) as Promise<string>,
+    alias: () => sourceEntryForAppServer({entry, root}) as Promise<string>,
     async source() {
       return multiline`
         import '@quilted/quilt/globals';
@@ -1215,25 +1228,6 @@ export function magicModuleAppRequestRouter({
       `;
     },
   });
-}
-
-export async function appServerEntry({
-  entry,
-  root = process.cwd(),
-}: Pick<AppServerOptions, 'entry' | 'root'> = {}) {
-  if (entry) return entry;
-
-  const project = Project.load(root);
-
-  const globbed = await project.glob(
-    '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
-    {
-      nodir: true,
-      absolute: true,
-    },
-  );
-
-  return globbed[0];
 }
 
 export function magicModuleAppBrowserEntry({
@@ -1279,7 +1273,7 @@ export function magicModuleAppAssetManifests() {
       const manifests = await Promise.all(
         manifestFiles.map(
           async (file) =>
-            JSON.parse(await fs.readFile(file, 'utf8')) as AssetsBuildManifest,
+            JSON.parse(await fs.readFile(file, 'utf8')) as AssetBuildManifest,
         ),
       );
 
@@ -1346,6 +1340,39 @@ export async function sourceEntryForAppBrowser({
   if (entry) {
     return project.resolve(entry);
   } else {
+    const {packageJSON} = project;
+
+    // If we have a `main` or `browser` field in our `package.json`, use that
+    // as the browser entry.
+    if (typeof packageJSON.raw.main === 'string') {
+      return project.resolve(packageJSON.raw.main);
+    }
+
+    if (typeof packageJSON.raw.browser === 'string') {
+      return project.resolve(packageJSON.raw.browser);
+    }
+
+    // Try `package.json` `exports` field, if it’s a string or an object with export conditions
+    let currentEntry = packageJSON.raw.exports as any;
+    let resolvedEntryFromExports = resolveExportsField(
+      project,
+      currentEntry,
+      BROWSER_EXPORT_CONDITIONS,
+    );
+
+    if (resolvedEntryFromExports) return resolvedEntryFromExports;
+
+    // Then, try `exports[.]`, if it’s a string or an object with export conditions
+    currentEntry = currentEntry?.['.'];
+    resolvedEntryFromExports = resolveExportsField(
+      project,
+      currentEntry,
+      BROWSER_EXPORT_CONDITIONS,
+    );
+
+    if (resolvedEntryFromExports) return resolvedEntryFromExports;
+
+    // If we don’t have an entry yet, try the default file names
     const files = await project.glob(
       '{browser,client,web}.{ts,tsx,mjs,js,jsx}',
       {
@@ -1355,6 +1382,72 @@ export async function sourceEntryForAppBrowser({
     );
 
     return files[0];
+  }
+}
+
+const BROWSER_EXPORT_CONDITIONS = new Set([
+  'browser',
+  'source',
+  'quilt:source',
+  'default',
+]);
+const SERVER_EXPORT_CONDITIONS = new Set([
+  'server',
+  'source',
+  'quilt:source',
+  'default',
+]);
+
+async function additionalEntriesForAppBrowser({
+  root = process.cwd(),
+}: {
+  root?: string | URL;
+}) {
+  const additionalEntries: Record<string, string> = {};
+
+  const project = Project.load(root);
+  const exports = project.packageJSON.raw.exports as any;
+
+  if (typeof exports === 'object' && exports != null) {
+    for (const [key, value] of Object.entries(exports)) {
+      // skip anything other than entries
+      if (!key.startsWith('.')) continue;
+
+      // Skip the `.` key, since it’s not an additional entry
+      if (key === '.') continue;
+
+      const resolvedEntry = resolveExportsField(
+        project,
+        value as any,
+        BROWSER_EXPORT_CONDITIONS,
+      );
+
+      if (resolvedEntry) {
+        additionalEntries[key.slice(2)] = resolvedEntry;
+      }
+    }
+  }
+
+  return additionalEntries;
+}
+
+function resolveExportsField(
+  project: Project,
+  entry:
+    | string
+    | null
+    | undefined
+    | Record<string, string | null | undefined | Record<string, unknown>>,
+  conditions: Set<string>,
+) {
+  if (typeof entry === 'string') {
+    return project.resolve(entry);
+  } else if (typeof entry === 'object' && entry != null) {
+    for (const [condition, value] of Object.entries(entry)) {
+      if (conditions.has(condition) && typeof value === 'string') {
+        return project.resolve(value);
+      }
+    }
   }
 }
 
@@ -1369,7 +1462,21 @@ export async function sourceEntryForAppServer({
 
   if (entry) {
     return project.resolve(entry);
-  } else {
+  }
+  {
+    const {packageJSON} = project;
+
+    // Try `package.json` `exports` field, if it has a `server` condition or a `.`
+    // enrty with a `server` condition
+    const exports = packageJSON.raw.exports as any;
+
+    const resolvedFromRootServerEntry = resolveExportsField(
+      project,
+      exports?.['server'] ?? exports?.['.']?.['server'],
+      SERVER_EXPORT_CONDITIONS,
+    );
+    if (resolvedFromRootServerEntry) return resolvedFromRootServerEntry;
+
     const files = await project.glob(
       '{server,service,backend}.{ts,tsx,mjs,js,jsx}',
       {

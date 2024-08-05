@@ -11,16 +11,13 @@ import type {
 } from 'rollup';
 import * as mime from 'mrmime';
 
-import type {
-  AssetsBuildManifest,
-  AssetsBuildManifestEntry,
-} from '@quilted/assets';
+import type {AssetBuildManifest, AssetBuildAsset} from '@quilted/assets';
 
 export interface AssetManifestOptions {
   file: string;
-  baseURL: string;
+  key?: URLSearchParams;
+  base: string;
   priority?: number;
-  cacheKey?: URLSearchParams;
   moduleID?(details: {imported: string}): string;
 }
 
@@ -38,8 +35,8 @@ async function writeManifestForBundle(
   bundle: OutputBundle,
   {
     file,
-    baseURL,
-    cacheKey,
+    base,
+    key,
     priority,
     moduleID: getModuleID = defaultModuleID,
   }: AssetManifestOptions,
@@ -56,11 +53,6 @@ async function writeManifestForBundle(
     throw new Error(`Could not find any entries in your rollup bundle...`);
   }
 
-  // We assume the first entry is the "main" one. There can be
-  // more than one because each worker script is also listed as an
-  // entry (though, from a separate build).
-  const entryChunk = entries[0]!;
-
   const dependencyMap = new Map<string, string[]>();
 
   for (const output of outputs) {
@@ -68,14 +60,14 @@ async function writeManifestForBundle(
     dependencyMap.set(output.fileName, output.imports);
   }
 
-  const assets: string[] = [];
+  const assets: AssetBuildAsset[] = [];
   const assetIdMap = new Map<string, number>();
 
   function getAssetId(file: string) {
     let id = assetIdMap.get(file);
 
     if (id == null) {
-      assets.push(`${baseURL}${file}`);
+      assets.push([file.endsWith('.css') ? 1 : 2, file]);
       id = assets.length - 1;
       assetIdMap.set(file, id);
     }
@@ -83,33 +75,39 @@ async function writeManifestForBundle(
     return id;
   }
 
-  const manifest: AssetsBuildManifest = {
+  const manifest: AssetBuildManifest = {
+    key: key && key.size > 0 ? key.toString() : undefined,
+    base,
     priority,
-    cacheKey: cacheKey && cacheKey.size > 0 ? cacheKey.toString() : undefined,
     assets,
-    attributes: format === 'es' ? {scripts: {type: 'module'}} : undefined,
-    entries: {
-      default: createAssetsEntry([...entryChunk.imports, entryChunk.fileName], {
-        dependencyMap,
-        getAssetId,
-      }),
-    },
+    attributes: format === 'es' ? {2: {type: 'module'}} : undefined,
+    entries: {} as any,
     modules: {},
   };
 
   for (const output of outputs) {
-    if (output.type !== 'chunk' || !output.isDynamicEntry) continue;
+    if (
+      output.type !== 'chunk' ||
+      (!output.isDynamicEntry && !output.isEntry)
+    ) {
+      continue;
+    }
 
     const rollupModuleID = output.facadeModuleId ?? output.moduleIds.at(-1);
 
     if (rollupModuleID == null) continue;
 
-    const imported =
-      this.getModuleInfo(rollupModuleID)?.meta?.quilt?.module ?? rollupModuleID;
+    const moduleInfo = this.getModuleInfo(rollupModuleID);
+    const imported = moduleInfo?.meta?.quilt?.module ?? rollupModuleID;
 
     const moduleID = getModuleID({imported: imported});
 
     if (moduleID == null) continue;
+
+    if (output.isEntry) {
+      const entry = moduleInfo?.meta?.quilt?.entry ?? moduleID;
+      manifest.entries[entry] = moduleID;
+    }
 
     manifest.modules[moduleID] = createAssetsEntry(
       [...output.imports, output.fileName],
@@ -122,7 +120,11 @@ async function writeManifestForBundle(
 }
 
 function defaultModuleID({imported}: {imported: string}) {
-  return path.relative(process.cwd(), imported).replace(/[\\/]/g, '-');
+  return imported.startsWith('/')
+    ? path.relative(process.cwd(), imported)
+    : imported.startsWith('\0')
+      ? imported.replace('\0', '')
+      : imported;
 }
 
 function createAssetsEntry(
@@ -134,9 +136,8 @@ function createAssetsEntry(
     dependencyMap: Map<string, string[]>;
     getAssetId(file: string): number;
   },
-): AssetsBuildManifestEntry {
-  const styles: number[] = [];
-  const scripts: number[] = [];
+) {
+  const assets: number[] = [];
 
   const allFiles = new Set<string>();
   const addFile = (file: string) => {
@@ -153,14 +154,10 @@ function createAssetsEntry(
   }
 
   for (const file of allFiles) {
-    if (file.endsWith('.css')) {
-      styles.push(getAssetId(file));
-    } else {
-      scripts.push(getAssetId(file));
-    }
+    assets.push(getAssetId(file));
   }
 
-  return {scripts, styles};
+  return assets;
 }
 
 const QUERY_PATTERN = /\?.*$/s;

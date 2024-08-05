@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import type {Plugin} from 'vite';
 import {
-  appServerEntry,
+  sourceEntryForAppServer,
   MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_BROWSER_ASSETS,
   MAGIC_MODULE_REQUEST_ROUTER,
@@ -166,7 +166,7 @@ export async function quiltApp({
             try {
               const [serverEntry, {createHttpRequestListener}] =
                 await Promise.all([
-                  appServerEntry({entry: server?.entry}),
+                  sourceEntryForAppServer({entry: server?.entry}),
                   import('@quilted/request-router/node'),
                 ]);
 
