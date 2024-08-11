@@ -3,13 +3,11 @@ export {
   createThreadWorker,
   retain,
   release,
-  createThread,
-  createThreadFromWebWorker,
+  ThreadWebWorker,
 } from '@quilted/workers';
 export type {
-  Thread,
   ThreadOptions,
-  ThreadTarget,
+  ThreadImports,
   CustomWorker,
   CustomWorkerConstructor,
   CustomThreadWorker,

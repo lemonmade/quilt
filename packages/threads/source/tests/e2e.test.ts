@@ -1,5 +1,5 @@
 import {describe, it, expect, vi} from 'vitest';
-import {createThreadFromMessagePort} from '../index.ts';
+import {ThreadMessagePort} from '../index.ts';
 import {MessageChannel} from './utilities.ts';
 
 describe('thread', () => {
@@ -9,16 +9,13 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1);
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {hello: async () => 'world'},
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {hello: async () => 'world'},
     });
 
-    expect(await thread1.hello()).toBe('world');
+    expect(await thread1.imports.hello()).toBe('world');
   });
 
   it('proxies function calls', async () => {
@@ -27,18 +24,17 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1);
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         greet: async (getName) => `Hello, ${await getName()}!`,
       },
     });
 
-    expect(await thread1.greet(async () => 'Chris')).toBe('Hello, Chris!');
+    expect(await thread1.imports.greet(async () => 'Chris')).toBe(
+      'Hello, Chris!',
+    );
   });
 
   it('proxies generators', async () => {
@@ -47,16 +43,13 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1);
 
     let yielded = 0;
     let expected = 0;
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         async *iterate() {
           while (yielded < 5) {
             yield ++yielded;
@@ -65,7 +58,7 @@ describe('thread', () => {
       },
     });
 
-    for await (const value of thread1.iterate()) {
+    for await (const value of thread1.imports.iterate()) {
       expect(value).toBe(++expected);
     }
   });
@@ -76,16 +69,13 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1);
 
     let yielded = 0;
     let expected = 0;
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         async *iterate() {
           while (yielded < 5) {
             yield ++yielded;
@@ -94,9 +84,11 @@ describe('thread', () => {
       },
     });
 
-    for await (const value of thread1.iterate()) {
+    for await (const value of thread1.imports.iterate()) {
       expect(value).toBe(++expected);
     }
+
+    expect(expected).toBe(5);
   });
 
   it('proxies basic JavaScript types', async () => {
@@ -123,15 +115,12 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1);
 
     const spy = vi.fn();
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         oneOfEverything: spy,
       },
     });
@@ -157,7 +146,7 @@ describe('thread', () => {
       uint32Array: new Uint32Array([65536]),
     };
 
-    await thread1.oneOfEverything(oneOfEverything);
+    await thread1.imports.oneOfEverything(oneOfEverything);
 
     expect(spy).toHaveBeenCalledWith(oneOfEverything);
   });
@@ -168,13 +157,10 @@ describe('thread', () => {
     }
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1);
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         async respondWithArray(array) {
           return array;
         },
@@ -182,7 +168,7 @@ describe('thread', () => {
     });
 
     const array = new Uint8Array([1, 2, 3, 4, 5]);
-    const response = await thread1.respondWithArray(array);
+    const response = await thread1.imports.respondWithArray(array);
     expect(response).toBeInstanceOf(Uint8Array);
     expect(response).toStrictEqual(array);
   });
@@ -195,20 +181,19 @@ describe('thread', () => {
     const abort = new AbortController();
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1, {signal: abort.signal});
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1, {
+      signal: abort.signal,
+    });
 
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         greet: async () => 'Hello, world!',
       },
     });
 
     abort.abort();
 
-    await expect(thread1.greet()).rejects.toBeInstanceOf(Error);
+    await expect(thread1.imports.greet()).rejects.toBeInstanceOf(Error);
   });
 
   it('rejects all in-flight requests when a thread terminates', async () => {
@@ -219,45 +204,17 @@ describe('thread', () => {
     const abort = new AbortController();
 
     const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1, {signal: abort.signal});
-
-    createThreadFromMessagePort<ThreadAPI>(port2, {
-      expose: {
-        greet: () => new Promise(() => {}),
-      },
-    });
-
-    const result = thread1.greet();
-
-    abort.abort();
-
-    await expect(result).rejects.toBeInstanceOf(Error);
-  });
-
-  it('rejects all in-flight requests when a target thread terminates', async () => {
-    interface ThreadAPI {
-      greet(): Promise<string>;
-    }
-
-    const abort = new AbortController();
-
-    const {port1, port2} = new MessageChannel();
-    const thread1 = createThreadFromMessagePort<
-      Record<string, never>,
-      ThreadAPI
-    >(port1);
-
-    createThreadFromMessagePort<ThreadAPI>(port2, {
+    const thread1 = new ThreadMessagePort<ThreadAPI>(port1, {
       signal: abort.signal,
-      expose: {
+    });
+
+    new ThreadMessagePort<{}, ThreadAPI>(port2, {
+      exports: {
         greet: () => new Promise(() => {}),
       },
     });
 
-    const result = thread1.greet();
+    const result = thread1.imports.greet();
 
     abort.abort();
 
