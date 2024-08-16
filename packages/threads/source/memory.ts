@@ -1,8 +1,28 @@
-import {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD} from './constants.ts';
-import type {MemoryRetainer, MemoryManageable} from './types.ts';
+export const RETAIN_METHOD = Symbol.for('quilt.threads.retain');
+export const RELEASE_METHOD = Symbol.for('quilt.threads.release');
+export const RETAINED_BY = Symbol.for('quilt.threads.retained-by');
 
-export {RETAINED_BY, RETAIN_METHOD, RELEASE_METHOD};
-export type {MemoryRetainer, MemoryManageable};
+/**
+ * A mapped object type that takes an object with methods, and converts it into the
+ * an object with the same methods that can be called over a thread.
+ */
+
+/**
+ * An object that can retain a reference to a `MemoryManageable` object.
+ */
+export interface MemoryRetainer {
+  add(manageable: MemoryManageable): void;
+}
+
+/**
+ * An object transferred between threads that must have its memory manually managed,
+ * in order to release the reference to a corresponding object on the original thread.
+ */
+export interface MemoryManageable {
+  readonly [RETAINED_BY]: Set<MemoryRetainer>;
+  [RETAIN_METHOD](): void;
+  [RELEASE_METHOD](): void;
+}
 
 /**
  * A simple representation of a called function. This object allows this library to

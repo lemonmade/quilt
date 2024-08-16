@@ -1,17 +1,15 @@
 import {
-  StackFrame,
-  isMemoryManageable,
-  type MemoryRetainer,
-} from '../memory.ts';
-import type {AnyFunction, MemoryManageable} from '../types.ts';
-import type {AnyThread, ThreadFunctions} from '../Thread.ts';
-import {
   RELEASE_METHOD,
   RETAIN_METHOD,
   RETAINED_BY,
-  MESSAGE_FUNCTION_CALL,
-  MESSAGE_FUNCTION_RELEASE,
-} from '../constants.ts';
+  StackFrame,
+  isMemoryManageable,
+  type MemoryRetainer,
+  type MemoryManageable,
+} from '../memory.ts';
+import type {AnyFunction} from '../types.ts';
+import type {AnyThread, ThreadFunctions} from '../Thread.ts';
+import {MESSAGE_FUNCTION_CALL, MESSAGE_FUNCTION_RELEASE} from '../constants.ts';
 import {nanoid} from '../nanoid.ts';
 
 export class ThreadFunctionsManualMemoryManagement implements ThreadFunctions {

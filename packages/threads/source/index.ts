@@ -1,14 +1,20 @@
 export {markAsTransferable} from './transfer.ts';
-export {retain, release, StackFrame, isMemoryManageable} from './memory.ts';
-export type {MemoryManageable, MemoryRetainer} from './memory.ts';
+export {
+  RELEASE_METHOD,
+  RETAIN_METHOD,
+  RETAINED_BY,
+  retain,
+  release,
+  StackFrame,
+  isMemoryManageable,
+  type MemoryManageable,
+  type MemoryRetainer,
+} from './memory.ts';
 export {
   MESSAGE_CALL,
   MESSAGE_CALL_RESULT,
   MESSAGE_FUNCTION_CALL,
   MESSAGE_FUNCTION_RESULT,
-  RELEASE_METHOD,
-  RETAIN_METHOD,
-  RETAINED_BY,
   SERIALIZE_METHOD,
   TRANSFERABLE,
 } from './constants.ts';
