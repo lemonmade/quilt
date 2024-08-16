@@ -2,7 +2,7 @@ import {type Signal} from '@preact/signals-core';
 import {NestedAbortController} from '@quilted/events';
 
 import {retain, release} from '../memory.ts';
-import {acceptThreadAbortSignal} from '../abort-signal.ts';
+import {ThreadAbortSignal} from '../ThreadAbortSignal.ts';
 
 import {type ThreadSignal} from './types.ts';
 
@@ -50,7 +50,7 @@ export function createThreadSignal<T>(
       retain(subscriber);
 
       const abortSignal =
-        threadAbortSignal && acceptThreadAbortSignal(threadAbortSignal);
+        threadAbortSignal && new ThreadAbortSignal(threadAbortSignal);
 
       const finalAbortSignal =
         abortSignal && teardownAbortSignal

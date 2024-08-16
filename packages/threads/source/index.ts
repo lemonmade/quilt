@@ -28,10 +28,10 @@ export {
 } from './targets.ts';
 export {createBasicEncoder} from './encoding.ts';
 export {
-  createThreadAbortSignal,
-  acceptThreadAbortSignal,
-  type ThreadAbortSignal,
-} from './abort-signal.ts';
+  ThreadAbortSignal,
+  type ThreadAbortSignalOptions,
+  type ThreadAbortSignalSerialization,
+} from './ThreadAbortSignal.ts';
 export type {
   Thread,
   ThreadTarget,

@@ -237,37 +237,81 @@ Once an object is fully released, any attempt to call its proxied functions will
 
 #### [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
 
-[`AbortSignal`s](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) allow you to communicate that an asynchronous operation should stop. Because all methods exposed through `@quilted/threads` are asynchronous, you may find many uses
-for `AbortSignal`s. However, it can be a bit tricky to communicate an abort signal across threads yourself. To make this easier, this library provides a pair of utilities to create a "thread-safe" `AbortSignal` on one thread, and to "accept" that signal on another thread. In the thread sending a signal, use the `createThreadAbortSignal()` function from this library, passing it an `AbortSignal`:
+[`AbortSignal`s](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) allow you to communicate that an asynchronous operation should stop. Because all methods exposed through `@quilted/threads` are asynchronous, you may find many uses for `AbortSignal`s. However, it can be a bit tricky to communicate an abort signal across threads yourself. To make this easier, this library provides utilities to create a serialized `AbortSignal` on one thread, and to convert that serialized version into a “live” `AbortSignal` on another thread. In the thread sending a signal, use the `ThreadAbortSignal.serialize()` method to serialize your `AbortSignal`:
 
 ```ts
-import {
-  createThreadFromWebWorker,
-  createThreadAbortSignal,
-} from '@quilted/threads';
+import {createThreadFromWebWorker, ThreadAbortSignal} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
 const thread = createThreadFromWebWorker(worker);
 
 const abort = new AbortController();
-await thread.calculateResult({signal: createThreadSignal(abort.signal)});
+await thread.calculateResult({
+  signal: ThreadAbortSignal.serialize(abort.signal),
+});
 ```
 
-On the receiving thread, use the `acceptThreadAbortSignal()` to turn it back into a "live" `AbortSignal`, in the current thread’s JavaScript environment:
+On the receiving thread, use `new ThreadAbortSignal()` to turn it back into a live `AbortSignal`, in the current thread’s JavaScript environment:
 
 ```ts
 import {
   createThreadFromWebWorker,
-  acceptThreadAbortSignal,
-  type ThreadAbortSignal,
+  ThreadAbortSignal,
+  type ThreadAbortSignalSerialization,
 } from '@quilted/threads';
 
 const thread = createThreadFromWebWorker(self, {
   expose: {calculateResult},
 });
 
-function calculateResult({signal: threadSignal}: {signal: ThreadAbortSignal}) {
-  const signal = acceptThreadAbortSignal(threadSignal);
+function calculateResult({
+  signal: threadSignal,
+}: {
+  signal: ThreadAbortSignalSerialization;
+}) {
+  const signal = new ThreadAbortSignal(threadSignal);
+  return await figureOutResult({signal});
+}
+```
+
+If you are using `@quilted/threads`’ manual memory management approach, you must explicitly pass `retain` and `release` functions to `ThreadAbortSignal.serialize()` and `new ThreadAbortSignal()` methods:
+
+```ts
+import {
+  retain,
+  release,
+  createThreadFromWebWorker,
+  ThreadAbortSignal,
+} from '@quilted/threads';
+
+const worker = new Worker('worker.js');
+const thread = createThreadFromWebWorker(worker);
+
+const abort = new AbortController();
+await thread.calculateResult({
+  signal: ThreadAbortSignal.serialize(abort.signal, {retain, release}),
+});
+
+// In the worker:
+
+import {
+  retain,
+  release,
+  createThreadFromWebWorker,
+  ThreadAbortSignal,
+  type ThreadAbortSignalSerialization,
+} from '@quilted/threads';
+
+const thread = createThreadFromWebWorker(self, {
+  expose: {calculateResult},
+});
+
+function calculateResult({
+  signal: threadSignal,
+}: {
+  signal: ThreadAbortSignalSerialization;
+}) {
+  const signal = new ThreadAbortSignal(threadSignal, {retain, release});
   return await figureOutResult({signal});
 }
 ```

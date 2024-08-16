@@ -1,4 +1,4 @@
-import type {ThreadAbortSignal} from '../abort-signal.ts';
+import type {ThreadAbortSignalSerialization} from '../ThreadAbortSignal.ts';
 
 /**
  * A representation of a Preact signal that can be serialized between
@@ -30,7 +30,7 @@ export interface ThreadSignal<T> {
        * An `AbortSignal` that can be used to stop synchronizing the signal
        * between the two threads.
        */
-      signal?: AbortSignal | ThreadAbortSignal;
+      signal?: AbortSignal | ThreadAbortSignalSerialization;
     },
   ): void;
 }
