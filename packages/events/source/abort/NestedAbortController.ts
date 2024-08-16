@@ -17,7 +17,9 @@
  * nested.signal.aborted; // true
  */
 export class NestedAbortController extends AbortController {
-  constructor(...parents: AbortSignal[]) {
+  constructor(
+    ...parents: Pick<AbortSignal, 'aborted' | 'reason' | 'addEventListener'>[]
+  ) {
     super();
 
     const abortedSignal = parents.find((signal) => signal.aborted);

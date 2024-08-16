@@ -1,3 +1,6 @@
-export {createThreadSignal} from './signals/create.ts';
-export {acceptThreadSignal, isThreadSignal} from './signals/accept.ts';
-export type {ThreadSignal} from './signals/types.ts';
+export {
+  threadSignal,
+  ThreadSignal,
+  type ThreadSignalOptions,
+  type ThreadSignalSerialization,
+} from './ThreadSignal.ts';
