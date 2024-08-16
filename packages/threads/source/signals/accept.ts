@@ -1,6 +1,6 @@
 import {signal as createSignal, type Signal} from '@preact/signals-core';
 
-import {createThreadAbortSignal} from '../abort-signal.ts';
+import {ThreadAbortSignal} from '../ThreadAbortSignal.ts';
 
 import {type ThreadSignal} from './types.ts';
 
@@ -25,7 +25,8 @@ export function acceptThreadSignal<T>(
   } = {},
 ): Signal<T> {
   const signal = createSignal(threadSignal.initial);
-  const threadAbortSignal = abortSignal && createThreadAbortSignal(abortSignal);
+  const threadAbortSignal =
+    abortSignal && ThreadAbortSignal.serialize(abortSignal);
 
   const valueDescriptor = Object.getOwnPropertyDescriptor(
     Object.getPrototypeOf(signal),
