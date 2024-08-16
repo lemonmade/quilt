@@ -20,6 +20,12 @@ export interface ThreadAbortSignalSerialization {
 
 export interface ThreadAbortSignalOptions {
   /**
+   * An optional AbortSignal that can cancel synchronizing the
+   * (Preact) signal to its paired thread.
+   */
+  signal?: AbortSignal;
+
+  /**
    * An optional function to call in order to manually retain the memory
    * associated with the `start` function of the serialized signal.
    * You only need to use this when using a strategy for serializing the
@@ -73,7 +79,7 @@ export class ThreadAbortSignal implements AbortSignal {
 
   constructor(
     signal: AbortSignal | ThreadAbortSignalSerialization | undefined,
-    {retain, release}: ThreadAbortSignalOptions = {},
+    {signal: killswitchSignal, retain, release}: ThreadAbortSignalOptions = {},
   ) {
     if (isAbortSignal(signal)) {
       this.#abortSignal = signal;
@@ -93,8 +99,18 @@ export class ThreadAbortSignal implements AbortSignal {
         });
 
         if (release) {
+          killswitchSignal?.addEventListener(
+            'abort',
+            () => () => release(start),
+            {
+              once: true,
+              signal: this.#abortSignal,
+            },
+          );
+
           this.#abortSignal.addEventListener('abort', () => release(start), {
             once: true,
+            signal: killswitchSignal,
           });
         }
       }
@@ -126,7 +142,7 @@ export class ThreadAbortSignal implements AbortSignal {
    * `AbortSignal`.
    */
   static serialize(
-    signal: AbortSignal,
+    signal: Pick<AbortSignal, 'aborted' | 'addEventListener'>,
     {retain, release}: ThreadAbortSignalOptions = {},
   ): ThreadAbortSignalSerialization {
     if (signal.aborted) {

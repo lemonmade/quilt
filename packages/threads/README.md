@@ -274,7 +274,7 @@ function calculateResult({
 }
 ```
 
-If you are using `@quilted/threads`’ manual memory management approach, you must explicitly pass `retain` and `release` functions to `ThreadAbortSignal.serialize()` and `new ThreadAbortSignal()` methods:
+If you are using `@quilted/threads`’ manual memory management approach, you must explicitly pass `retain` and `release` functions to `ThreadAbortSignal.serialize()` and `new ThreadAbortSignal()` functions:
 
 ```ts
 import {
@@ -320,37 +320,84 @@ function calculateResult({
 
 [Preact signals](https://github.com/preactjs/signals) are a powerful tool for managing state in JavaScript applications. Signals represent mutable state that can be subscribed to, so they can be useful for sharing state between JavaScript environments connected by `@quilted/threads`. This library provides a collection of helpers for working with signals across threads.
 
-Like the `AbortSignal` utilities documented above, a pair of utilities is provided to create a "thread-safe" Preact signal on one thread, and "accepting" that signal on another thread. In the thread sending a signal, use the `createThreadSignal()` function from this library, passing it a Preact signal:
+Like the `AbortSignal` utilities documented above, a class is provided for creating a "thread-safe" Preact signal on one thread, and accepting that signal on another thread. In the thread sending a signal, use the `ThreadSignal.serialize()` method to serialize your Preact signal:
 
 ```ts
 import {signal} from '@preact/signals-core';
 import {createThreadFromWebWorker} from '@quilted/threads';
-import {createThreadSignal} from '@quilted/threads/signals';
+import {ThreadSignal} from '@quilted/threads/signals';
 
 const result = signal(32);
 
 const worker = new Worker('worker.js');
 const thread = createThreadFromWebWorker(worker);
 
-await thread.calculateResult(createThreadSignal(result));
+await thread.calculateResult(ThreadSignal.serialize(result));
 ```
 
-On the receiving thread, use the `acceptThreadSignal()` to turn it back into a "live" Preact signal, in the current thread’s JavaScript environment:
+If you want a Preact signal to be writable in the target environment, and have that value propagate to the original signal, you must pass a `writable: true` option to the `ThreadSignal.serialize()` function:
 
 ```ts
 import {signal} from '@preact/signals-core';
 import {createThreadFromWebWorker} from '@quilted/threads';
-import {acceptThreadSignal, type ThreadSignal} from '@quilted/threads/signals';
+import {ThreadSignal} from '@quilted/threads/signals';
+
+const result = signal(32);
+
+const worker = new Worker('worker.js');
+const thread = createThreadFromWebWorker(worker);
+
+await thread.calculateResult(
+  ThreadSignal.serialize(result, {
+    // Allow the target environment to write back to this signal.
+    writable: true,
+  }),
+);
+```
+
+On the receiving thread, use `new ThreadSignal()` (or, equivalently, `threadSignal()`) to turn the serialized version back into a "live" Preact signal, in the current thread’s JavaScript environment:
+
+```ts
+import {signal} from '@preact/signals-core';
+import {createThreadFromWebWorker} from '@quilted/threads';
+import {
+  ThreadSignal,
+  type ThreadSignalSerialization,
+} from '@quilted/threads/signals';
 
 const thread = createThreadFromWebWorker(self, {
   expose: {calculateResult},
 });
 
-function calculateResult(resultThreadSignal: ThreadSignal<number>) {
-  const result = acceptThreadSignal(resultThreadSignal);
-  const correctedResult = await figureOutResult();
-  result.value = correctedAge;
+function calculateResult(serializedSignal: ThreadSignalSerialization<number>) {
+  const result = new ThreadSignal(serializedSignal); // or threadSignal(serializedSignal)
+  const computedSignal = computed(() => `Result from thread: ${result.value}`);
 }
 ```
 
-Both `createThreadSignal()` and `acceptThreadSignal()` accept an optional second argument, which must be an options object. The only option accepted is `signal`, which is an `AbortSignal` that allows you to stop synchronizing the Preact signal’s value between threads.
+Like with `ThreadAbortSignal` documented above, if you are using `@quilted/threads`’ manual memory management approach, you must explicitly pass `retain` and `release` functions to `ThreadSignal.serialize()` and `new ThreadSignal()` functions:
+
+```ts
+import {signal} from '@preact/signals-core';
+import {createThreadFromWebWorker} from '@quilted/threads';
+import {
+  retain,
+  release,
+  ThreadSignal,
+  type ThreadSignalSerialization,
+} from '@quilted/threads/signals';
+
+const thread = createThreadFromWebWorker(self, {
+  expose: {calculateResult},
+});
+
+function calculateResult(serializedSignal: ThreadSignalSerialization<number>) {
+  const result = new ThreadSignal(serializedSignal, {
+    retain,
+    release,
+  });
+  const computedSignal = computed(() => `Result from thread: ${result.value}`);
+}
+```
+
+Both `new ThreadSignal()` and `ThreadSignal.serialize()` also accept an optional `signal` option, which is an `AbortSignal` that allows you to stop synchronizing the Preact signal’s value between threads.

@@ -29,10 +29,10 @@ export type {
   ServiceWorkerClientThreads,
 } from '@quilted/threads';
 export {
-  isThreadSignal,
-  createThreadSignal,
-  acceptThreadSignal,
-  type ThreadSignal,
+  threadSignal,
+  ThreadSignal,
+  type ThreadSignalOptions,
+  type ThreadSignalSerialization,
 } from '@quilted/threads/signals';
 export {
   on,
