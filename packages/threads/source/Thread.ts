@@ -277,9 +277,7 @@ export class Thread<
     messages.listen(
       async (rawData) => {
         const isThreadMessageData =
-          Array.isArray(rawData) &&
-          typeof rawData[0] === 'number' &&
-          (rawData[1] == null || Array.isArray(rawData[1]));
+          Array.isArray(rawData) && typeof rawData[0] === 'number';
 
         if (!isThreadMessageData) {
           return;

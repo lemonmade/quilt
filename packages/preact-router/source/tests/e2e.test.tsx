@@ -611,8 +611,6 @@ describe('useRoutes()', () => {
 
         const routes = render(<Routes />, {path: '/foo/bar'});
 
-        console.log(routes.debug());
-
         expect(routes).toContainPreactComponent(NestedRouteComponent);
       });
 
