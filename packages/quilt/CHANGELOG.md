@@ -1,5 +1,143 @@
 # @quilted/quilt
 
+## 0.8.0
+
+### Minor Changes
+
+- [#813](https://github.com/lemonmade/quilt/pull/813) [`40c2d71`](https://github.com/lemonmade/quilt/commit/40c2d71ec583c92266d2a7b5adec9cee8880b4ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Refactored the API for creating threads. The new APIs are class based, and now use module-style language to define the functions shared between threads: `exports` when creating a thread indicates the methods that can be called, and `imports` allows you to call those methods in the paired thread.
+
+  For example, you previously used `createThreadFromWebWorker()` to create a thread from a web worker. Now, you use the `ThreadWebWorker` class:
+
+  ```js
+  // Old API:
+  import {createThreadFromWebWorker} from '@quilted/threads';
+
+  // Parent page
+  const worker = new Worker('worker.js');
+  const thread = createThreadFromWebWorker(worker);
+  const result = await thread.doWork();
+
+  // Worker
+  createThreadFromWebWorker(self, {
+    expose: {
+      async doWork() {
+        /* ... */
+      },
+    },
+  });
+
+  // ---
+  // New API:
+  import {ThreadWebWorker} from '@quilted/threads';
+
+  // Parent
+  const worker = new Worker('worker.js');
+  const thread = new ThreadWebWorker(worker);
+  const result = await thread.imports.doWork();
+
+  // Worker
+  new ThreadWebWorker(worker, {
+    exports: {
+      async doWork() {
+        /* ... */
+      },
+    },
+  });
+  ```
+
+  Additionally, the threads library now exports two additional helpers for turning web objects into threads: `ThreadWindow` and `ThreadNestedWindow`, which can be used to create a communication channel between a parent page and popup windows or tabs.
+
+### Patch Changes
+
+- [#816](https://github.com/lemonmade/quilt/pull/816) [`ecd7322`](https://github.com/lemonmade/quilt/commit/ecd7322637e54b5f34dfa310249d819e944c9171) Thanks [@lemonmade](https://github.com/lemonmade)! - Changed `ThreadAbortSignal` utilities to be class-based instead of being a collection of utility functions. This change aligns the API more closely with `AbortController` in the browser, which is created with `new AbortController()`.
+
+  Previously, you used `createThreadAbortSignal()` to serialize an `AbortSignal` to pass over a thread, and `acceptThreadAbortSignal()` to turn it into a “live” `AbortSignal`. With the new API, you will do the same steps, but with `ThreadAbortSignal.serialize()` and `new ThreadAbortSignal`:
+
+  ```ts
+  import {
+    createThreadAbortSignal,
+    acceptThreadAbortSignal,
+  } from '@quilted/threads';
+
+  const abortController = new AbortController();
+  const serializedAbortSignal = createThreadAbortSignal(abortController.signal);
+  const liveAbortSignal = acceptThreadAbortSignal(serializedAbortSignal);
+
+  await fetch('/', {signal: liveAbortSignal});
+
+  // Becomes:
+
+  import { ThreadAbortSignal } from '@quilted/threads';\
+
+  const abortController = new AbortController();
+  const serializedAbortSignal = ThreadAbortSignal.serialize(abortController.signal);
+  const liveAbortSignal = new ThreadAbortSignal(serializedAbortSignal);
+
+  await fetch('/', {signal: liveAbortSignal});
+  ```
+
+  Additionally, the new `ThreadAbortSignal` class assumes you are not doing manual memory management by default. If your target environment does not support automatic memory management of transferred functions, you will need to manually pass the `retain` and `release` functions to the new APIs:
+
+  ```ts
+  import {retain, release, ThreadAbortSignal} from '@quilted/threads';
+
+  const abortController = new AbortController();
+  const serializedAbortSignal = ThreadAbortSignal.serialize(
+    abortController.signal,
+    {retain, release},
+  );
+  const liveAbortSignal = new ThreadAbortSignal(serializedAbortSignal, {
+    retain,
+    release,
+  });
+
+  await fetch('/', {signal: liveAbortSignal});
+  ```
+
+- [#818](https://github.com/lemonmade/quilt/pull/818) [`8669216`](https://github.com/lemonmade/quilt/commit/8669216a28c6d8b5b62d4f297ece8f44b8f9f3ae) Thanks [@lemonmade](https://github.com/lemonmade)! - Changed Preact thread utilities to be class-based instead of being a collection of utility functions.
+
+  Previously, you used `createThreadSignal()` to serialize a Preact signal to pass over a thread, and `acceptThreadSignal()` to turn it into a "live" signal. With the new API, you will do the same steps, but with `ThreadSignal.serialize()` and `new ThreadSignal()`:
+
+  ```js
+  import {signal, computed} from '@preact/signals-core';
+  import {ThreadWebWorker, ThreadSignal} from '@quilted/threads';
+
+  // Old API:
+  const result = signal(32);
+  const serializedSignal = createThreadSignal(result);
+  await thread.imports.calculateResult(serializedSignal);
+
+  // New API:
+  const result = signal(32);
+  const serializedSignal = ThreadSignal.serialize(result);
+  await thread.imports.calculateResult(serializedSignal);
+
+  // In the target thread:
+
+  // Old API:
+  function calculateResult(resultThreadSignal) {
+    const result = acceptThreadSignal(resultThreadSignal);
+    const computedSignal = computed(
+      () => `Result from thread: ${result.value}`,
+    );
+    // ...
+  }
+
+  // New API:
+  function calculateResult(resultThreadSignal) {
+    const result = new ThreadSignal(resultThreadSignal);
+    const computedSignal = computed(
+      () => `Result from thread: ${result.value}`,
+    );
+    // ...
+  }
+  ```
+
+- Updated dependencies [[`ecd7322`](https://github.com/lemonmade/quilt/commit/ecd7322637e54b5f34dfa310249d819e944c9171), [`40c2d71`](https://github.com/lemonmade/quilt/commit/40c2d71ec583c92266d2a7b5adec9cee8880b4ab), [`8669216`](https://github.com/lemonmade/quilt/commit/8669216a28c6d8b5b62d4f297ece8f44b8f9f3ae)]:
+  - @quilted/threads@3.0.0
+  - @quilted/preact-workers@0.2.0
+  - @quilted/events@2.1.1
+
 ## 0.7.11
 
 ### Patch Changes

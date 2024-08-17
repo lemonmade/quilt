@@ -1,5 +1,48 @@
 # @quilted/events
 
+## 2.1.1
+
+### Patch Changes
+
+- [#818](https://github.com/lemonmade/quilt/pull/818) [`8669216`](https://github.com/lemonmade/quilt/commit/8669216a28c6d8b5b62d4f297ece8f44b8f9f3ae) Thanks [@lemonmade](https://github.com/lemonmade)! - Changed Preact thread utilities to be class-based instead of being a collection of utility functions.
+
+  Previously, you used `createThreadSignal()` to serialize a Preact signal to pass over a thread, and `acceptThreadSignal()` to turn it into a "live" signal. With the new API, you will do the same steps, but with `ThreadSignal.serialize()` and `new ThreadSignal()`:
+
+  ```js
+  import {signal, computed} from '@preact/signals-core';
+  import {ThreadWebWorker, ThreadSignal} from '@quilted/threads';
+
+  // Old API:
+  const result = signal(32);
+  const serializedSignal = createThreadSignal(result);
+  await thread.imports.calculateResult(serializedSignal);
+
+  // New API:
+  const result = signal(32);
+  const serializedSignal = ThreadSignal.serialize(result);
+  await thread.imports.calculateResult(serializedSignal);
+
+  // In the target thread:
+
+  // Old API:
+  function calculateResult(resultThreadSignal) {
+    const result = acceptThreadSignal(resultThreadSignal);
+    const computedSignal = computed(
+      () => `Result from thread: ${result.value}`,
+    );
+    // ...
+  }
+
+  // New API:
+  function calculateResult(resultThreadSignal) {
+    const result = new ThreadSignal(resultThreadSignal);
+    const computedSignal = computed(
+      () => `Result from thread: ${result.value}`,
+    );
+    // ...
+  }
+  ```
+
 ## 2.1.0
 
 ### Minor Changes
