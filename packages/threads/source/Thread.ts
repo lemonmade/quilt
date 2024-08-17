@@ -15,29 +15,6 @@ import {ThreadFunctionsAutomatic} from './functions/ThreadFunctionsAutomatic.ts'
 import {ThreadSerializationStructuredClone} from './serialization/ThreadSerializationStructuredClone.ts';
 
 /**
- * An object backing a `Thread` that provides the message-passing interface
- * that allows communication to flow between environments. This message-passing
- * interface is based on the [`postMessage` interface](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage),
- * which is easily adaptable to many JavaScript objects and environments.
- */
-export interface ThreadMessageTarget {
-  /**
-   * Sends a message to the target thread. The message will be encoded before sending,
-   * and the consumer may also pass an array of "transferable" objects that should be
-   * transferred (rather than copied) to the other environment, if supported.
-   */
-  send(message: any, transferables?: Transferable[]): void;
-
-  /**
-   * Listens for messages coming in to the thread. This method must call the provided
-   * listener for each message as it is received. The thread will then decode the message
-   * and handle its content. This method may be passed an `AbortSignal` to abort the
-   * listening process.
-   */
-  listen(listener: (value: any) => void, options: {signal?: AbortSignal}): void;
-}
-
-/**
  * An object that can serialize and deserialize values communicated between two threads.
  */
 export interface ThreadSerialization {
@@ -69,17 +46,20 @@ export interface ThreadFunctions {
   start?(thread: AnyThread): void;
 
   /**
-   * TODO
+   * Requests that you call the function with the provided arguments. If you
+   * do not provide this hook, a default implementation will be provided for you.
+   * This hook is available so that you can wrap each individual proxied function
+   * call with logic, such as to perform manual memory management.
    */
   call?(func: AnyFunction, args: any[], thread: AnyThread): Promise<any>;
 
   /**
-   * TODO
+   * Gets a stored function by its ID.
    */
   get(id: string, thread: AnyThread): AnyFunction | undefined;
 
   /**
-   * TODO
+   * Releases a stored function by its ID.
    */
   release(id: string, thread: AnyThread): boolean;
 
@@ -140,6 +120,32 @@ export interface ThreadOptions<
   readonly serialization?: ThreadSerialization;
 }
 
+/**
+ * An object backing a `Thread` that provides the message-passing interface
+ * that allows communication to flow between environments. This message-passing
+ * interface is based on the [`postMessage` interface](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage),
+ * which is easily adaptable to many JavaScript objects and environments.
+ */
+export interface ThreadMessageTarget {
+  /**
+   * Sends a message to the target thread. The message will be encoded before sending,
+   * and the consumer may also pass an array of "transferable" objects that should be
+   * transferred (rather than copied) to the other environment, if supported.
+   */
+  send(message: any, transferables?: Transferable[]): void;
+
+  /**
+   * Listens for messages coming in to the thread. This method must call the provided
+   * listener for each message as it is received. The thread will then decode the message
+   * and handle its content. This method may be passed an `AbortSignal` to abort the
+   * listening process.
+   */
+  listen(listener: (value: any) => void, options: {signal?: AbortSignal}): void;
+}
+
+/**
+ * A map of messages that can be sent between threads.
+ */
 export interface ThreadMessageMap {
   [MESSAGE_CALL]: [exported: string, id: string, args: any];
   [MESSAGE_CALL_RESULT]: [id: string, value?: any, error?: any];
@@ -148,13 +154,20 @@ export interface ThreadMessageMap {
   [MESSAGE_FUNCTION_RELEASE]: [funcID: string];
 }
 
+/**
+ * The possible data payloads that can be transferred between threads.
+ */
 export type ThreadMessageData = {
-  [K in keyof ThreadMessageMap]: [K, ThreadMessageMap[K]];
+  [K in keyof ThreadMessageMap]: [K, ...ThreadMessageMap[K]];
 }[keyof ThreadMessageMap];
 
+/**
+ * A helper type that extracts all callable methods that can be safely proxied
+ * between threads; that is, ones which return a promise or async iterator.
+ */
 export type ThreadImports<Target> = {
   [K in keyof Target]: Target[K] extends (...args: any[]) => infer ReturnType
-    ? ReturnType extends Promise<any> | AsyncGenerator<any, any, any>
+    ? ReturnType extends Promise<any> | AsyncIterator<any, any, any>
       ? Target[K]
       : never
     : never;
@@ -173,16 +186,46 @@ export class Thread<
   Target = Record<string, never>,
   Self = Record<string, never>,
 > {
+  /**
+   * An object that exposes the methods that can be called on the paired thread.
+   * This object will automatically encode and decode arguments and return values
+   * as necessary.
+   */
   readonly imports: ThreadImports<Target>;
+
+  /**
+   * An object that exposes the methods that can be called on this thread by the
+   * paired thread. To set these methods, pass the `exports` option when creating
+   * a new `Thread`.
+   */
   readonly exports: Self;
+
+  /**
+   * An object that provides the message-passing interface that allows communication
+   * to flow between environments.
+   */
   readonly messages: ThreadMessageTarget;
+
+  /**
+   * An object that manages how functions are proxied between threads.
+   */
   readonly functions: ThreadFunctions;
+
+  /**
+   * An object that manages how values are serialized and deserialized between threads.
+   */
   readonly serialization: ThreadSerialization;
 
+  /**
+   * An `AbortSignal` that indicates whether the communication channel is still open.
+   */
   get signal() {
     return this.#abort.signal;
   }
 
+  /**
+   * A boolean indicating whether the communication channel is still open.
+   */
   get closed() {
     return this.#abort.signal.aborted;
   }
@@ -246,7 +289,7 @@ export class Thread<
 
         switch (data[0]) {
           case MESSAGE_CALL: {
-            const [id, property, args] = data[1];
+            const [, id, property, args] = data;
             const func = (this.exports[property as keyof Self] ??
               (() => {
                 throw new Error(
@@ -256,7 +299,7 @@ export class Thread<
 
             await this.#callLocal(func, args, (value, error, transferable) => {
               this.messages.send(
-                [MESSAGE_CALL_RESULT, [id, value, error]],
+                [MESSAGE_CALL_RESULT, id, value, error],
                 transferable,
               );
             });
@@ -265,14 +308,14 @@ export class Thread<
           }
 
           case MESSAGE_FUNCTION_CALL: {
-            const [callID, funcID, args] = data[1];
+            const [, callID, funcID, args] = data;
 
             const func = (this.functions.get(funcID, this) ??
               missingThreadFunction) as AnyFunction;
 
             await this.#callLocal(func, args, (value, error, transferable) => {
               this.messages.send(
-                [MESSAGE_FUNCTION_RESULT, [callID, value, error]],
+                [MESSAGE_FUNCTION_RESULT, callID, value, error],
                 transferable,
               );
             });
@@ -282,12 +325,12 @@ export class Thread<
 
           case MESSAGE_CALL_RESULT:
           case MESSAGE_FUNCTION_RESULT: {
-            this.#resolveCall(...(data[1] as [any]));
+            this.#resolveCall(...(data.slice(1) as [any]));
             break;
           }
 
           case MESSAGE_FUNCTION_RELEASE: {
-            const [id] = data[1];
+            const id = data[1];
             this.functions.release(id, this);
             break;
           }
@@ -297,10 +340,23 @@ export class Thread<
     );
   }
 
+  /**
+   * Closes the communication channel between the two threads. This will prevent
+   * any further communication between the threads, and will clean up any memory
+   * associated with in-progress communication. It will also reject any inflight
+   * function calls between threads with a `ThreadClosedError`.
+   */
   close() {
     this.#abort.abort();
   }
 
+  /**
+   * Requests that the thread provide the context needed to make a function
+   * call between threads. You provide this method a function to call and the
+   * unserialized arguments you wish to call it with, and the thread will call
+   * the function you provided with a serialized call ID, the serialized arguments,
+   * and any transferable objects that need to be passed between threads.
+   */
   call(
     func: (id: string, args: any[], transferable?: any[]) => void,
     args: any[],
@@ -358,7 +414,7 @@ export class Thread<
 
         return this.call((id, serializedArgs, transferable) => {
           this.messages.send(
-            [MESSAGE_CALL, [id, property, serializedArgs]],
+            [MESSAGE_CALL, id, property, serializedArgs],
             transferable,
           );
         }, args);

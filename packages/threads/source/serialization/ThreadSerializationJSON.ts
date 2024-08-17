@@ -29,6 +29,9 @@ const UINT32_ARRAY = '_@u32';
  * - `Uint8Array`
  */
 export class ThreadSerializationJSON implements ThreadSerialization {
+  /**
+   * Serializes a value into a JSON-compatible format that can be transferred between threads.
+   */
   serialize(value: unknown, thread: AnyThread, transferable?: any[]) {
     return this.#serializeInternal(value, thread, transferable);
   }
@@ -178,6 +181,9 @@ export class ThreadSerializationJSON implements ThreadSerialization {
     return value;
   }
 
+  /**
+   * Deserializes a JSON-compatible value from another thread.
+   */
   deserialize(value: unknown, thread: AnyThread) {
     return this.#deserializeInternal(value, thread);
   }

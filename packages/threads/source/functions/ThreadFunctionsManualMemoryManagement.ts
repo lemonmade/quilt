@@ -12,6 +12,17 @@ import type {AnyThread, ThreadFunctions} from '../Thread.ts';
 import {MESSAGE_FUNCTION_CALL, MESSAGE_FUNCTION_RELEASE} from '../constants.ts';
 import {nanoid} from '../nanoid.ts';
 
+/**
+ * A strategy for managing functions across threads that manually manages memory.
+ * Functions are deserialized into a proxy that can be called, and when an equal number
+ * of `retain()` and `release()` calls have been made with that function, it will
+ * be released and no longer callable.
+ *
+ * For more details on manual memory management, refer to the
+ * [dedicated README section](https://github.com/lemonmade/quilt/blob/main/packages/threads/README.md#memory-management).
+ *
+ * @see
+ */
 export class ThreadFunctionsManualMemoryManagement implements ThreadFunctions {
   #functionsToId = new Map<AnyFunction, string>();
   #idsToFunction = new Map<string, AnyFunction>();
@@ -82,7 +93,7 @@ export class ThreadFunctionsManualMemoryManagement implements ThreadFunctions {
       if (retainCount === 0) {
         released = true;
         this.#idsToProxy.delete(id);
-        thread.messages.send([MESSAGE_FUNCTION_RELEASE, [id]]);
+        thread.messages.send([MESSAGE_FUNCTION_RELEASE, id]);
       }
     };
 
@@ -105,7 +116,7 @@ export class ThreadFunctionsManualMemoryManagement implements ThreadFunctions {
 
       return thread.call((callID, args, transferable) => {
         thread.messages.send(
-          [MESSAGE_FUNCTION_CALL, [callID, id, args]],
+          [MESSAGE_FUNCTION_CALL, callID, id, args],
           transferable,
         );
       }, args);

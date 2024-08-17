@@ -3,6 +3,15 @@ import type {AnyThread, ThreadFunctions} from '../Thread.ts';
 import {MESSAGE_FUNCTION_CALL, MESSAGE_FUNCTION_RELEASE} from '../constants.ts';
 import {nanoid} from '../nanoid.ts';
 
+/**
+ * A strategy for managing functions across threads that automatically releases
+ * functions when they are no longer needed. This is done by deserializing functions
+ * into a proxy that can be called, and wrapping that proxy in a `FinalizationRegistry`,
+ * which allows us to send a message to the parent thread when the function is no
+ * longer used.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/FinalizationRegistry
+ */
 export class ThreadFunctionsAutomatic implements ThreadFunctions {
   #functionsToId = new Map<AnyFunction, string>();
   #idsToFunction = new Map<string, AnyFunction>();
@@ -50,7 +59,7 @@ export class ThreadFunctionsAutomatic implements ThreadFunctions {
 
       return thread.call((callID, args, transferable) => {
         thread.messages.send(
-          [MESSAGE_FUNCTION_CALL, [callID, id, args]],
+          [MESSAGE_FUNCTION_CALL, callID, id, args],
           transferable,
         );
       }, args);
@@ -71,7 +80,7 @@ export class ThreadFunctionsAutomatic implements ThreadFunctions {
 
     if (!finalization) {
       finalization = new FinalizationRegistry((id) => {
-        thread.messages.send([MESSAGE_FUNCTION_RELEASE, [id]]);
+        thread.messages.send([MESSAGE_FUNCTION_RELEASE, id]);
       });
 
       this.#finalization.set(thread, finalization);

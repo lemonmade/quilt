@@ -18,6 +18,9 @@ const ASYNC_ITERATOR = '_@i';
  * memory management system by setting the `garbageCollection: 'weak-ref'` option.
  */
 export class ThreadSerializationStructuredClone implements ThreadSerialization {
+  /**
+   * Serializes a value into a structured cloning-compatible format that can be transferred between threads.
+   */
   serialize(value: unknown, thread: AnyThread, transferable?: any[]) {
     return this.#serializeInternal(value, thread, transferable);
   }
@@ -119,6 +122,9 @@ export class ThreadSerializationStructuredClone implements ThreadSerialization {
     return value;
   }
 
+  /**
+   * Deserializes a structured cloning-compatible value from another thread.
+   */
   deserialize(value: unknown, thread: AnyThread) {
     return this.#deserializeInternal(value, thread);
   }
