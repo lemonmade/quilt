@@ -15,65 +15,102 @@ yarn add @quilted/threads
 
 ## Usage
 
-### Creating a "thread"
+### Creating a thread
 
-A "thread" in this library represents a target JavaScript environment that can be communicated with via message passing. Each thread can expose a set of methods that are callable from other threads. This library provides helpers for creating threads from a number of common web platform objects:
+A "thread" in this library represents a target JavaScript environment that can be communicated with via message passing. Typically, the object wrapped in a thread will have use [use a `postMessage()` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) for communicating serialized messages between environments. A thread augments this serializable message passing with the ability to seamlessly call functions on the paired thread.
+
+This library provides utilities for creating threads from a variety of common JavaScript objects:
+
+`ThreadWebWorker` creates a thread from a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers):
 
 ```ts
-// Create a thread from a web worker.
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
-// If you are creating a thread from inside a web worker, pass `self` instead:
-const thread = createThreadFromWebWorker(self);
+// Inside the web worker:
 
-// Create a thread from a target iframe. This is usually done from a top-level
-// page, after it has constructed nested iframes.
-import {createThreadFromIframe} from '@quilted/threads';
+const thread = new ThreadWebWorker(self);
+```
+
+`ThreadIFrame` creates a thread from an [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe), and `ThreadNestedIFrame` creates a thread from within a nested iframe:
+
+```ts
+import {ThreadIFrame} from '@quilted/threads';
 
 const iframe = document.querySelector('iframe#my-iframe');
-const thread = createThreadFromIframe(iframe);
+const thread = new ThreadIFrame(iframe);
 
-// Create a thread from within a nested iframe.
-import {createThreadFromInsideIframe} from '@quilted/threads';
+// Inside the iframe:
 
-const thread = createThreadFromInsideIframe();
+import {ThreadNestedIFrame} from '@quilted/threads';
 
-// Create a thread from a WebSocket.
-import {createThreadFromBrowserWebSocket} from '@quilted/threads';
+const thread = new ThreadNestedIFrame();
+```
+
+`ThreadWindow` creates a thread from a [`Window` object](https://developer.mozilla.org/en-US/docs/Web/API/Window), like a popup window, and `ThreadNestedWindow` creates a thread from within that nested window:
+
+```ts
+// Create a thread from a target Window. This is usually done from a top-level
+// page, after it has called `window.open()`.
+import {ThreadWindow} from '@quilted/threads';
+
+const popup = window.open('https://my-app.com/popup', 'MyAppPopup', 'popup');
+const thread = new ThreadWindow(popup);
+
+// Inside the nested window:
+
+import {ThreadNestedWindow} from '@quilted/threads';
+
+const thread = new ThreadNestedWindow(window.opener);
+```
+
+`ThreadBrowserWebSocket` creates a thread from a [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket):
+
+```ts
+import {ThreadBrowserWebSocket} from '@quilted/threads';
 
 const socket = new WebSocket('ws://localhost:8080');
-const thread = createThreadFromBrowserWebSocket(socket);
+const thread = new ThreadBrowserWebSocket(socket);
+```
 
+`ThreadMessagePort` creates a thread from a [MessagePort](https://developer.mozilla.org/en-US/docs/Web/API/MessagePort):
+
+```ts
 // Create a thread from a MessagePort.
-import {createThreadFromMessagePort} from '@quilted/threads';
+import {ThreadMessagePort} from '@quilted/threads';
 
 const {port1, port2} = new MessageChannel();
-const thread1 = createThreadFromMessagePort(port1);
+const thread1 = new ThreadMessagePort(port1);
+```
 
+`ThreadBroadcastChannel` creates a thread from a [BroadcastChannel](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel):
+
+```ts
 // Create a thread from a BroadcastChannel.
-import {createThreadFromBroadcastChannel} from '@quilted/threads';
+import {ThreadBroadcastChannel} from '@quilted/threads';
 
 const channel = new BroadcastChannel('my-channel');
-const thread = createThreadFromBroadcastChannel(channel);
+const thread = new ThreadBroadcastChannel(channel);
+```
 
-// Create a thread from a service worker.
-import {createThreadFromServiceWorker} from '@quilted/threads';
+`ThreadServiceWorker` creates a thread from a [ServiceWorker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), and `ThreadsFromServiceWorkerClients` creates a cache that can create threads from [ServiceWorkerClients](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerClient) (typically, a parent `Window`):
+
+```ts
+import {ThreadServiceWorker} from '@quilted/threads';
 
 await navigator.serviceWorker.register('/service-worker.js');
 
 if (navigator.serviceWorker.controller) {
-  const thread = createThreadFromServiceWorker(
-    navigator.serviceWorker.controller,
-  );
+  const thread = new ThreadServiceWorker(navigator.serviceWorker.controller);
 }
 
-// Create threads between a service worker and clients that connect to it.
-import {createThreadsFromServiceWorkerClients} from '@quilted/threads';
+// Inside the service worker:
 
-const clientThreads = createThreadsFromServiceWorkerClients();
+import {ThreadsFromServiceWorkerClients} from '@quilted/threads';
+
+const clientThreads = new ThreadsFromServiceWorkerClients();
 
 self.addEventListener('activate', async (event) => {
   const clients = await serviceWorker.clients.matchAll();
@@ -81,15 +118,17 @@ self.addEventListener('activate', async (event) => {
 });
 ```
 
-To expose methods on a thread, pass them as an `expose` option to your thread creation function:
+### Communicating between threads
+
+Each thread can export a set of methods that are callable from other threads. To expose methods on a thread, pass them as an `exports` option to your thread creation function:
 
 ```ts
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 
-// We are in a nested worker, and we’ll expose a single `add()` method to
+// We are in a nested worker, and we’ll export a single `add()` method to
 // a paired thread.
-const thread = createThreadFromWebWorker(self, {
-  expose: {
+const thread = new ThreadWebWorker(self, {
+  exports: {
     // In reality, you’d usually implement a more computationally-expensive
     // function here!
     async add(a: number, b: number) {
@@ -99,61 +138,105 @@ const thread = createThreadFromWebWorker(self, {
 });
 ```
 
-The `Thread` object returned by each of these functions returns an object that you can use to call methods on the paired thread. Because these methods are asynchronous, these "proxy methods" will always return a promise for the result of calling the exposed function.
+The `Thread` instance contains an `imports` object that you can use to call methods on the paired thread. Because these methods are asynchronous, these "proxy imports" will always return a promise for the result of calling the exposed function.
 
 ```ts
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 
 // We are on the top-level page, so we create our worker, wrap it in a thread,
 // and call its exposed method.
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
-const result = await thread.add(1, 2);
+const result = await thread.imports.add(1, 2);
 // result === 3
 ```
 
 Threads will continue listening and sending messages indefinitely. To stop a thread, you can pass an [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) to the `signal` option on any thread creation function:
 
 ```ts
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 
 const abort = new AbortController();
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker, {signal: abort.signal});
+const thread = new ThreadWebWorker(worker, {signal: abort.signal});
 
-const result = await thread.doWork();
+const result = await thread.imports.doWork();
 
 abort.abort();
 worker.terminate();
 ```
 
-### Restrictions on thread functions
+Alternatively, you can call the `Thread`’s `close()` method, which stops listening for new messages and cleans up any resources associated with the thread:
 
-Not all types of arguments are supported for functions proxied via message passing by `@quilted/threads`. Only the following types can be used:
+```ts
+import {ThreadWebWorker} from '@quilted/threads';
 
-- Strings, numbers, `true`, `false`, `null`, and `undefined`
-- `RegExp`, `Date`, `ArrayBuffer`, and `URL` instances
-- Objects whose keys and values are all acceptable types
-- Arrays, `Map`s, and `Set`s whose values are acceptable types
-- Functions, but they will become asynchronous when proxied, and all functions accepted by arguments in those functions, or returned as part of return values, will have the same argument limitations (also note the [memory management implications of functions](#memory-management) detailed below)
+const worker = new Worker('worker.js');
+const thread = new ThreadWebWorker(worker);
 
-This excludes many types, but of particular note are the following restrictions:
+const result = await thread.imports.doWork();
 
-- No `WeakMap` or `WeakSet`
+thread.close();
+worker.terminate();
+```
+
+### Arguments that can pass between threads
+
+`@quilted/threads` lets you provide a custom object to serialize and deserialize messages sent between threads. These “serializer” objects allow threads to support a wide range of data types, even when communicating over a message passing protocol that supports only a limited set of types.
+
+```ts
+import {
+  ThreadWebWorker,
+  ThreadSerializationStructuredClone,
+} from '@quilted/threads';
+
+const worker = new Worker('worker.js');
+const thread = new ThreadWebWorker(worker, {
+  serialization: new ThreadSerializationStructuredClone(),
+});
+```
+
+Depending on the `Thread` class documented above you are using, one of the following serializers will be used:
+
+- `ThreadBrowserWebSocket` will use the `ThreadSerializationJSON` class, which supports all the types supported by [structured cloning](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm), plus `URL` instances, async iterators, and functions.
+- All other `Thread` classes documented above will use `ThreadSerializationStructuredClone`, which assumes the underlying object supports the structured cloning algorithm for messages, and adds support for `URL` instances, async iterators, and functions.
+
+In all cases, there are a few types that can’t be communicated between threads:
+
+- `WeakMap` and `WeakSet` instances
 - Instances of classes will transfer, but only their own properties — that is, properties on their prototype chain **will not** be transferred (additionally, no effort is made to preserve `instanceof` or similar checks on the transferred value)
 
 ### Memory management
 
 Implementing functions using message passing always leaks memory. The implementation in this library involves storing a unique identifier for each function sent between sibling threads. When this identifier is received by the sibling, it recognizes it as a “function identifier”. It then maps this function to its existing representation for that ID (if it has been sent before), or creates a new function for it. This function, when called, will send a message to the original source of the function, listing the ID of the function to call (alongside the arguments and other metadata). However, because the two environments need to be able to reference the function and its proxy by ID, it can never release either safely.
 
-`@quilted/threads` implements some smart defaults that make memory management a little easier. By default, a function is only retained for the lifetime of its “parent” — the function call that caused the function to be passed. Let’s look at an example of a thread that accepts a function (here, as the `user.fullName` method):
+`@quilted/threads` offers a few different techniques for avoiding these kinds of memory leaks. By default, the library will use [`WeakRef`s](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef) and a [`FinalizationRegistry`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/FinalizationRegistry) to automatically inform a paired thread when a function that was proxied by the thread is no longer in use. This allows the paired thread to release the memory associated with that function.
+
+Not all environments support the [JavaScript features needed to support automatic memory management](https://caniuse.com/mdn-javascript_builtins_weakref). For these cases, `@quilted/threads` provides an alternative manual memory management technique, which implements some smart defaults that make memory management a little easier. This strategy is enabled by passing the `ThreadFunctionsManualMemoryManagement` class as the `Thread`’s `functions` option:
 
 ```ts
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {
+  ThreadWebWorker,
+  ThreadFunctionsManualMemoryManagement,
+} from '@quilted/threads';
 
-const thread = createThreadFromWebWorker(self, {
-  expose: {sayHello},
+const thread = new ThreadWebWorker(self, {
+  functions: new ThreadFunctionsManualMemoryManagement(),
+});
+```
+
+With `ThreadFunctionsManualMemoryManagement`, a function is only retained for the lifetime of its “parent” — the function call that caused the function to be passed. Let’s look at an example of a thread that accepts a function (here, as the `user.fullName` method):
+
+```ts
+import {
+  ThreadWebWorker,
+  ThreadFunctionsManualMemoryManagement,
+} from '@quilted/threads';
+
+const thread = new ThreadWebWorker(self, {
+  exports: {sayHello},
+  functions: new ThreadFunctionsManualMemoryManagement(),
 });
 
 interface User {
@@ -170,10 +253,10 @@ The paired thread would call this method like so:
 ```ts
 // back on the main thread:
 
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
 const user = {
   fullName() {
@@ -181,11 +264,11 @@ const user = {
   },
 };
 
-const message = await thread.sayHello(user);
+const message = await thread.imports.sayHello(user);
 console.log(user);
 ```
 
-A simple implementation would retain the `user.fullName` function forever, even after the `sayHello()` call was long gone, and even if `user` would otherwise have been garbage collected. However, with `@quilted/threads`, this function is automatically released after `sayHello` is done. It does so by marking the function as used (“retained”) when `sayHello` starts, then marking it as unused when `sayHello` is finished. When a function is marked as completely unused, it automatically cleans up after itself by removing the memory in the receiving `Endpoint`, and sending a message to its source `Thread` to release that memory, too.
+A simple implementation would retain the `user.fullName` function forever, even after the `sayHello()` call was long gone, and even if `user` would otherwise have been garbage collected. However, with `ThreadFunctionsManualMemoryManagement`, this function is automatically released after `sayHello` is done. It does so by marking the function as used (“retained”) when `sayHello` starts, then marking it as unused when `sayHello` is finished. When a function is marked as completely unused, it automatically cleans up after itself by removing the memory in the receiving `Endpoint`, and sending a message to its source `Thread` to release that memory, too.
 
 ```ts
 async function sayHello(user: User) {
@@ -240,14 +323,15 @@ Once an object is fully released, any attempt to call its proxied functions will
 [`AbortSignal`s](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) allow you to communicate that an asynchronous operation should stop. Because all methods exposed through `@quilted/threads` are asynchronous, you may find many uses for `AbortSignal`s. However, it can be a bit tricky to communicate an abort signal across threads yourself. To make this easier, this library provides utilities to create a serialized `AbortSignal` on one thread, and to convert that serialized version into a “live” `AbortSignal` on another thread. In the thread sending a signal, use the `ThreadAbortSignal.serialize()` method to serialize your `AbortSignal`:
 
 ```ts
-import {createThreadFromWebWorker, ThreadAbortSignal} from '@quilted/threads';
+import {ThreadWebWorker, ThreadAbortSignal} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
 const abort = new AbortController();
-await thread.calculateResult({
-  signal: ThreadAbortSignal.serialize(abort.signal),
+
+await thread.imports.calculateResult({
+  signal: ThreadSignal.serialize(abort.signal),
 });
 ```
 
@@ -255,13 +339,13 @@ On the receiving thread, use `new ThreadAbortSignal()` to turn it back into a li
 
 ```ts
 import {
-  createThreadFromWebWorker,
+  ThreadWebWorker,
   ThreadAbortSignal,
   type ThreadAbortSignalSerialization,
 } from '@quilted/threads';
 
-const thread = createThreadFromWebWorker(self, {
-  expose: {calculateResult},
+const thread = new ThreadWebWorker(self, {
+  exports: {calculateResult},
 });
 
 function calculateResult({
@@ -274,21 +358,21 @@ function calculateResult({
 }
 ```
 
-If you are using `@quilted/threads`’ manual memory management approach, you must explicitly pass `retain` and `release` functions to `ThreadAbortSignal.serialize()` and `new ThreadAbortSignal()` functions:
+If you are using [`@quilted/threads`’ manual memory management option](#memory-management), you must explicitly pass [`retain()`](#retain) and [`release()`](#release) functions to `ThreadAbortSignal.serialize()` and `new ThreadAbortSignal()` functions:
 
 ```ts
 import {
   retain,
   release,
-  createThreadFromWebWorker,
+  ThreadWebWorker,
   ThreadAbortSignal,
 } from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
 const abort = new AbortController();
-await thread.calculateResult({
+await thread.imports.calculateResult({
   signal: ThreadAbortSignal.serialize(abort.signal, {retain, release}),
 });
 
@@ -297,13 +381,13 @@ await thread.calculateResult({
 import {
   retain,
   release,
-  createThreadFromWebWorker,
+  ThreadFromWebWorker,
   ThreadAbortSignal,
   type ThreadAbortSignalSerialization,
 } from '@quilted/threads';
 
-const thread = createThreadFromWebWorker(self, {
-  expose: {calculateResult},
+const thread = new ThreadFromWebWorker(self, {
+  exports: {calculateResult},
 });
 
 function calculateResult({
@@ -324,30 +408,30 @@ Like the `AbortSignal` utilities documented above, a class is provided for creat
 
 ```ts
 import {signal} from '@preact/signals-core';
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 import {ThreadSignal} from '@quilted/threads/signals';
 
 const result = signal(32);
 
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
-await thread.calculateResult(ThreadSignal.serialize(result));
+await thread.imports.calculateResult(ThreadSignal.serialize(result));
 ```
 
 If you want a Preact signal to be writable in the target environment, and have that value propagate to the original signal, you must pass a `writable: true` option to the `ThreadSignal.serialize()` function:
 
 ```ts
 import {signal} from '@preact/signals-core';
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 import {ThreadSignal} from '@quilted/threads/signals';
 
 const result = signal(32);
 
 const worker = new Worker('worker.js');
-const thread = createThreadFromWebWorker(worker);
+const thread = new ThreadWebWorker(worker);
 
-await thread.calculateResult(
+await thread.imports.calculateResult(
   ThreadSignal.serialize(result, {
     // Allow the target environment to write back to this signal.
     writable: true,
@@ -359,14 +443,14 @@ On the receiving thread, use `new ThreadSignal()` (or, equivalently, `threadSign
 
 ```ts
 import {signal} from '@preact/signals-core';
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 import {
   ThreadSignal,
   type ThreadSignalSerialization,
 } from '@quilted/threads/signals';
 
-const thread = createThreadFromWebWorker(self, {
-  expose: {calculateResult},
+const thread = new ThreadWebWorker(self, {
+  exports: {calculateResult},
 });
 
 function calculateResult(serializedSignal: ThreadSignalSerialization<number>) {
@@ -379,7 +463,7 @@ Like with `ThreadAbortSignal` documented above, if you are using `@quilted/threa
 
 ```ts
 import {signal} from '@preact/signals-core';
-import {createThreadFromWebWorker} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
 import {
   retain,
   release,
@@ -387,7 +471,7 @@ import {
   type ThreadSignalSerialization,
 } from '@quilted/threads/signals';
 
-const thread = createThreadFromWebWorker(self, {
+const thread = new ThreadWebWorker(self, {
   expose: {calculateResult},
 });
 

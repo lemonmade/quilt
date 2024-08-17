@@ -1,5 +1,5 @@
-import {createThreadFromWebWorker} from '@quilted/threads';
-import type {Thread, ThreadOptions} from '@quilted/threads';
+import {ThreadWebWorker} from '@quilted/threads';
+import type {Thread, ThreadOptions, ThreadImports} from '@quilted/threads';
 
 import {
   createWorker,
@@ -7,45 +7,51 @@ import {
   type CustomWorkerModuleResolver,
 } from './basic.ts';
 
-export interface CustomThreadWorker<_Self, Target> extends CustomWorker {
+export interface CustomThreadWorker<Target, Self> extends CustomWorker {
   readonly url?: URL;
-  readonly thread: Thread<Target>;
+  readonly thread: Thread<Target, Self>;
+  readonly imports: ThreadImports<Target>;
 }
 
-export interface CustomThreadWorkerConstructor<Self, Target> {
-  new (options?: ThreadOptions<Self, Target>): CustomThreadWorker<Self, Target>;
+export interface CustomThreadWorkerConstructor<Target, Self> {
+  new (options?: ThreadOptions<Target, Self>): CustomThreadWorker<Target, Self>;
 }
 
 export function createThreadWorker<Self = unknown, Target = unknown>(
   moduleResolver: CustomWorkerModuleResolver<Target>,
-): CustomThreadWorkerConstructor<Self, Target> {
+): CustomThreadWorkerConstructor<Target, Self> {
   const CustomWorker = createWorker(moduleResolver);
 
   class ThreadWorker extends CustomWorker {
-    readonly thread: Thread<Target>;
+    readonly thread: Thread<Target, Self>;
+    readonly imports: ThreadImports<Target>;
 
-    constructor(options?: ThreadOptions<Self, Target>) {
+    constructor(options?: ThreadOptions<Target, Self>) {
       super();
 
       if (this.url) {
-        this.thread = createThreadFromWebWorker(this, {
+        this.thread = new ThreadWebWorker(this, {
           signal: this.signal,
           ...options,
         });
       } else {
-        this.thread = new Proxy(
-          {},
-          {
-            get(_target, _property) {
-              return () => {
-                throw new Error(
-                  'You can’t call a method on a worker on the server.',
-                );
-              };
+        this.thread = {
+          imports: new Proxy(
+            {},
+            {
+              get(_target, _property) {
+                return () => {
+                  throw new Error(
+                    'You can’t call a method on a worker on the server.',
+                  );
+                };
+              },
             },
-          },
-        ) as any;
+          ),
+        } as any;
       }
+
+      this.imports = this.thread.imports;
     }
   }
 
