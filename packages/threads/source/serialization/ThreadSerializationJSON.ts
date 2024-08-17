@@ -160,7 +160,7 @@ export class ThreadSerializationJSON implements ThreadSerialization {
     }
 
     if (typeof value === 'function') {
-      const serialized = thread.functions?.serialize(
+      const serialized = thread.functions.serialize(
         value as any,
         thread,
         transferable,
@@ -251,7 +251,7 @@ export class ThreadSerializationJSON implements ThreadSerialization {
       }
 
       if (FUNCTION in value) {
-        const func = thread.functions?.deserialize(
+        const func = thread.functions.deserialize(
           (value as {[FUNCTION]: any})[FUNCTION],
           thread,
         );

@@ -53,7 +53,7 @@ export function windowToThreadTarget(
   const connectedPromise = new Promise<void>((resolve) => {
     const abort = new AbortController();
 
-    window.addEventListener(
+    globalThis.window.addEventListener(
       'message',
       (event) => {
         if (event.source !== window) return;
