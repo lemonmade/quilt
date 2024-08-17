@@ -597,7 +597,7 @@ importers:
   packages/preact-workers:
     dependencies:
       '@quilted/workers':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.5.0
         version: link:../workers
     devDependencies:
       preact:
@@ -615,7 +615,7 @@ importers:
         specifier: workspace:^0.4.2
         version: link:../async
       '@quilted/events':
-        specifier: workspace:^2.1.0
+        specifier: workspace:^2.1.1
         version: link:../events
       '@quilted/graphql':
         specifier: workspace:^3.0.3
@@ -648,7 +648,7 @@ importers:
         specifier: workspace:^0.1.6
         version: link:../preact-testing
       '@quilted/preact-workers':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.2.0
         version: link:../preact-workers
       '@quilted/react':
         specifier: workspace:^18.2.0
@@ -663,7 +663,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../signals
       '@quilted/threads':
-        specifier: workspace:^2.3.0
+        specifier: workspace:^3.0.0
         version: link:../threads
       graphql:
         specifier: ^16.8.0
@@ -879,7 +879,7 @@ importers:
   packages/threads:
     dependencies:
       '@quilted/events':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.1
         version: link:../events
     devDependencies:
       '@preact/signals-core':
@@ -921,7 +921,7 @@ importers:
   packages/workers:
     dependencies:
       '@quilted/threads':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^3.0.0
         version: link:../threads
 
   tests/e2e:

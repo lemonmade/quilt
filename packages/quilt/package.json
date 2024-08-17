@@ -1,7 +1,7 @@
 {
   "name": "@quilted/quilt",
   "type": "module",
-  "version": "0.7.11",
+  "version": "0.8.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -246,7 +246,7 @@
   "dependencies": {
     "@quilted/assets": "workspace:^0.1.2",
     "@quilted/async": "workspace:^0.4.2",
-    "@quilted/events": "workspace:^2.1.0",
+    "@quilted/events": "workspace:^2.1.1",
     "@quilted/graphql": "workspace:^3.0.3",
     "@quilted/preact-async": "workspace:^0.1.2",
     "@quilted/preact-browser": "workspace:^0.1.5",
@@ -256,13 +256,13 @@
     "@quilted/preact-performance": "workspace:^0.1.0",
     "@quilted/preact-router": "workspace:^0.2.6",
     "@quilted/preact-signals": "workspace:^0.1.0",
-    "@quilted/preact-workers": "workspace:^0.1.0",
+    "@quilted/preact-workers": "workspace:^0.2.0",
     "@quilted/preact-testing": "workspace:^0.1.6",
     "@quilted/react": "workspace:^18.2.0",
     "@quilted/react-dom": "workspace:^18.2.11",
     "@quilted/request-router": "workspace:^0.3.0",
     "@quilted/signals": "workspace:^0.2.0",
-    "@quilted/threads": "workspace:^2.3.0",
+    "@quilted/threads": "workspace:^3.0.0",
     "preact-render-to-string": "^6.4.0",
     "jest-matcher-utils": "^29.0.0"
   },

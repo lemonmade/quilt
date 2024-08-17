@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-workers",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/workers": "workspace:^0.4.0"
+    "@quilted/workers": "workspace:^0.5.0"
   },
   "peerDependencies": {
     "preact": "^10.21.0"
