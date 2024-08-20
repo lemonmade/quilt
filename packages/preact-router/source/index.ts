@@ -1,3 +1,12 @@
+export type {
+  NavigateTo,
+  NavigateToLiteral,
+  NavigateToSearch,
+  RouteMatch,
+  RouteMatcher,
+  RouteMatchDetails,
+} from '@quilted/routing';
+
 export * from './types.ts';
 export {
   Router,
