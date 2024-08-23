@@ -94,6 +94,7 @@ export async function renderToResponse(
   let appStream: ReadableStream<any> | undefined;
 
   if (shouldStream === false && element != null) {
+    // TODO: handle redirect
     const rendered = await renderToStringAsync(
       <ServerContext browser={browserResponse}>{element}</ServerContext>,
     );
@@ -114,6 +115,7 @@ export async function renderToResponse(
       const appWriter = appTransformStream.writable.getWriter();
 
       if (element != null) {
+        // TODO: handle redirect
         const rendered = await renderToStringAsync(
           <ServerContext browser={browserResponse}>{element}</ServerContext>,
         );

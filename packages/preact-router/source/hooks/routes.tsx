@@ -6,7 +6,7 @@ import {computed, effect, ReadonlySignal} from '@quilted/signals';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
 import {RouterContext, RouteNavigationEntryContext} from '../context.ts';
-import {RouterNavigationCache} from '../Router.ts';
+import {RouterNavigationCache, type Router} from '../Router.ts';
 
 export function useRoutes<Context = unknown>(
   routes: readonly RouteDefinition<any, any, Context>[],
@@ -30,14 +30,16 @@ export function useRoutes<Context = unknown>(
 
   return (
     <Suspense fallback={null}>
-      <RouteStackRenderer stack={routeStack} />
+      <RouteStackRenderer router={router} stack={routeStack} />
     </Suspense>
   );
 }
 
 function RouteStackRenderer({
+  router,
   stack,
 }: {
+  router: Router;
   stack: ReadonlySignal<RouteNavigationEntry<any, any>[]>;
 }) {
   const entries = stack.value;
@@ -60,7 +62,9 @@ function RouteStackRenderer({
 
   for (const entry of [...entries].reverse()) {
     content = (
-      <RouteNavigationRenderer entry={entry}>{content}</RouteNavigationRenderer>
+      <RouteNavigationRenderer router={router} entry={entry}>
+        {content}
+      </RouteNavigationRenderer>
     );
   }
 
@@ -68,9 +72,11 @@ function RouteStackRenderer({
 }
 
 function RouteNavigationRenderer<Data = unknown, Input = unknown>({
+  router,
   entry,
   children,
 }: RenderableProps<{
+  router: Router;
   entry: RouteNavigationEntry<Data, Input>;
 }>) {
   useEffect(() => {
@@ -79,16 +85,27 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
     let firstRun = true;
 
     return effect(() => {
+      const load = entry.load;
+
       if (firstRun) {
         firstRun = false;
         return;
       }
 
-      entry.load?.run(entry.input);
+      load?.run(entry.input);
     });
   }, [entry]);
 
   const {route} = entry;
+
+  if (route.redirect != null) {
+    throw new Response(null, {
+      status: 302,
+      headers: {
+        Location: router.resolve(route.redirect).url.href,
+      },
+    });
+  }
 
   let content: ComponentChild = null;
 

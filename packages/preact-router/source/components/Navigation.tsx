@@ -1,4 +1,4 @@
-import type {RenderableProps} from 'preact';
+import {Component, type RenderableProps} from 'preact';
 import {useMemo} from 'preact/hooks';
 import {useBrowserDetails} from '@quilted/preact-browser';
 import {useAsyncActionCacheSerialization} from '@quilted/preact-async';
@@ -40,6 +40,38 @@ export function Navigation<Context = unknown>({
   );
 
   return (
-    <RouterContext.Provider value={router}>{content}</RouterContext.Provider>
+    <NavigationErrorBoundary router={router}>
+      <RouterContext.Provider value={router}>{content}</RouterContext.Provider>
+    </NavigationErrorBoundary>
   );
+}
+
+interface NavigationErrorBoundaryProps {
+  router: Router;
+}
+
+class NavigationErrorBoundary extends Component<NavigationErrorBoundaryProps> {
+  state = {error: false};
+
+  static getDerivedStateFromError() {
+    return {error: true};
+  }
+
+  componentDidCatch(error: unknown) {
+    if (
+      error instanceof Response &&
+      error.status >= 300 &&
+      error.status < 400
+    ) {
+      this.props.router.navigate(error.headers.get('Location') ?? '/', {
+        replace: true,
+      });
+
+      this.setState({error: true});
+    }
+  }
+
+  render() {
+    return this.state.error ? null : this.props.children;
+  }
 }

@@ -19,6 +19,7 @@ export {RouterContext, RouteNavigationEntryContext} from './context.ts';
 
 export {Link} from './components/Link.tsx';
 export {Navigation} from './components/Navigation.tsx';
+export {Redirect} from './components/Redirect.tsx';
 export {Routes} from './components/Routes.tsx';
 
 export {useCurrentURL} from './hooks/current-url.ts';
