@@ -5,6 +5,7 @@ import {
   isObjectType,
   isScalarType,
   isCompositeType,
+  isInterfaceType,
   TypeNode,
   isEnumType,
 } from 'graphql';
@@ -18,6 +19,7 @@ import type {
   GraphQLInterfaceType,
   OperationDefinitionNode,
   FragmentDefinitionNode,
+  GraphQLCompositeType,
 } from 'graphql';
 import {
   getRootType,
@@ -342,32 +344,56 @@ function variablesExportForOperation(
   );
 }
 
+function createTypenameProperty(
+  type: GraphQLObjectType | GraphQLInterfaceType,
+  context: Context & {typenames?: string[]},
+) {
+  const possibleTypenames =
+    context.typenames ??
+    (isObjectType(type)
+      ? [type.name]
+      : getAllObjectTypes(type, context.schema).map((type) => type.name));
+
+  const typenameField = t.tsPropertySignature(
+    t.identifier('__typename'),
+    t.tsTypeAnnotation(
+      t.tsUnionType(
+        possibleTypenames.map((typename) =>
+          t.tsLiteralType(t.stringLiteral(typename)),
+        ),
+      ),
+    ),
+  );
+
+  typenameField.readonly = true;
+
+  return typenameField;
+}
+
 function exportsForSelection(
   name: string,
   fieldMap: Map<string, Field>,
   type: GraphQLObjectType | GraphQLInterfaceType,
-  context: Context,
+  context: Context & {typenames?: string[]},
 ) {
   const interfaceBody: TSTypeElement[] = [];
   const namespaceBody: Statement[] = [];
 
   const {addTypename = false} = context.kind;
 
-  if (type !== context.rootType && addTypename) {
-    const typenameField = t.tsPropertySignature(
-      t.identifier('__typename'),
-      t.tsTypeAnnotation(
-        t.tsUnionType([t.tsLiteralType(t.stringLiteral(type.name))]),
-      ),
-    );
-
-    typenameField.readonly = true;
-
-    interfaceBody.push(typenameField);
+  if (addTypename) {
+    interfaceBody.push(createTypenameProperty(type, context));
   }
 
   for (const [fieldNameOrAlias, fieldDetails] of fieldMap) {
-    if (fieldDetails.name === '__typename') continue;
+    if (fieldDetails.name === '__typename') {
+      // Already added typename, above
+      if (!addTypename) {
+        interfaceBody.push(createTypenameProperty(type, context));
+      }
+
+      continue;
+    }
 
     const nestedTypeName = toTypeName(fieldNameOrAlias);
 
@@ -411,82 +437,121 @@ function exportsForSelection(
         context,
       );
 
+      const typescriptUnionMembers: string[] = [];
+
+      const interfaceTypeMap = new Map<
+        GraphQLInterfaceType,
+        readonly GraphQLObjectType<any, any>[]
+      >();
+
+      for (const type of typeMap.keys()) {
+        if (isInterfaceType(type)) {
+          const concreteTypes = getAllObjectTypes(type, context.schema);
+          interfaceTypeMap.set(type, concreteTypes);
+        }
+      }
+
+      // Sort the map entries based on the number of concrete types (ascending order)
+      const sortedInterfaceTypeMap = new Map(
+        [...interfaceTypeMap.entries()].sort(
+          (a, b) => a[1].length - b[1].length,
+        ),
+      );
+
       const {matched: matchedTypes, unmatched: unmatchedTypes} =
         allTypes.reduce<{
-          matched: GraphQLObjectType[];
-          unmatched: GraphQLObjectType[];
+          matched: Set<GraphQLObjectType>;
+          unmatched: Set<GraphQLObjectType>;
         }>(
           (all, type) => {
             if (typeMap.has(type)) {
-              all.matched.push(type);
+              all.matched.add(type);
             } else {
-              all.unmatched.push(type);
+              all.unmatched.add(type);
             }
 
             return all;
           },
-          {matched: [], unmatched: []},
+          {matched: new Set(), unmatched: new Set()},
         );
 
       for (const matchedType of matchedTypes) {
         const fieldMap = typeMap.get(matchedType)!;
 
+        const name = toUnionOrInterfaceTypeName(nestedTypeName, matchedType);
+        typescriptUnionMembers.push(name);
+
         namespaceBody.push(
-          ...exportsForSelection(
-            toUnionOrInterfaceTypeName(nestedTypeName, matchedType),
-            fieldMap,
-            matchedType,
-            context,
+          ...exportsForSelection(name, fieldMap, matchedType, context),
+        );
+      }
+
+      for (const [interfaceType, objectTypes] of sortedInterfaceTypeMap) {
+        if (unmatchedTypes.size === 0) break;
+
+        const typenames: string[] = [];
+        for (const objectType of objectTypes) {
+          if (!unmatchedTypes.has(objectType)) continue;
+          unmatchedTypes.delete(objectType);
+          typenames.push(objectType.name);
+        }
+
+        if (typenames.length === 0) continue;
+
+        const name = toUnionOrInterfaceTypeName(nestedTypeName, interfaceType);
+        typescriptUnionMembers.push(name);
+
+        namespaceBody.push(
+          ...exportsForSelection(name, fieldMap, interfaceType, {
+            ...context,
+            typenames,
+          }),
+        );
+      }
+
+      if (unmatchedTypes.size > 0) {
+        const name = toUnionOrInterfaceTypeName(nestedTypeName);
+        typescriptUnionMembers.push(name);
+
+        namespaceBody.push(
+          t.exportNamedDeclaration(
+            t.tsInterfaceDeclaration(
+              t.identifier(name),
+              null,
+              null,
+              t.tsInterfaceBody(
+                addTypename
+                  ? [
+                      t.tsPropertySignature(
+                        t.identifier('__typename'),
+                        t.tsTypeAnnotation(
+                          t.tsUnionType(
+                            Array.from(unmatchedTypes).map((unmatchedType) =>
+                              t.tsLiteralType(
+                                t.stringLiteral(unmatchedType.name),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]
+                  : [],
+              ),
+            ),
           ),
         );
       }
 
       namespaceBody.push(
         t.exportNamedDeclaration(
-          t.tsInterfaceDeclaration(
-            t.identifier(toUnionOrInterfaceTypeName(nestedTypeName)),
-            null,
-            null,
-            t.tsInterfaceBody(
-              addTypename
-                ? [
-                    t.tsPropertySignature(
-                      t.identifier('__typename'),
-                      t.tsTypeAnnotation(
-                        t.tsUnionType([
-                          ...unmatchedTypes.map((unmatchedType) =>
-                            t.tsLiteralType(
-                              t.stringLiteral(unmatchedType.name),
-                            ),
-                          ),
-                          t.tsLiteralType(t.stringLiteral('')),
-                        ]),
-                      ),
-                    ),
-                  ]
-                : [],
-            ),
-          ),
-        ),
-      );
-
-      namespaceBody.push(
-        t.exportNamedDeclaration(
           t.tsTypeAliasDeclaration(
             t.identifier(nestedTypeName),
             null,
-            t.tsUnionType([
-              ...matchedTypes.map((matchedType) =>
-                t.tsTypeReference(
-                  t.identifier(
-                    toUnionOrInterfaceTypeName(nestedTypeName, matchedType),
-                  ),
-                ),
+            t.tsUnionType(
+              typescriptUnionMembers.map((name) =>
+                t.tsTypeReference(t.identifier(name)),
               ),
-              t.tsTypeReference(
-                t.identifier(toUnionOrInterfaceTypeName(nestedTypeName)),
-              ),
-            ]),
+            ),
           ),
         ),
       );
@@ -549,7 +614,7 @@ const OTHER_TYPE_NAME = 'Other';
 
 function toUnionOrInterfaceTypeName(
   rootName: string,
-  type?: GraphQLObjectType,
+  type?: GraphQLCompositeType,
 ) {
   return `${rootName}_${toTypeName(type?.name ?? OTHER_TYPE_NAME)}`;
 }
