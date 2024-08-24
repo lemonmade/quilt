@@ -886,10 +886,7 @@ describe('async', () => {
   });
 
   it('can server render components using route loaders', async () => {
-    await using workspace = await createWorkspace({
-      fixture: 'basic-app',
-      debug: true,
-    });
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'App.tsx': multiline`
@@ -911,7 +908,6 @@ describe('async', () => {
 
     const server = await startServer(workspace);
     const page = await server.openPage('/');
-    console.log(await page.innerHTML('html'));
 
     const content = await page.textContent('body');
     expect(content).toBe(`Data source: server`);

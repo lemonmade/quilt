@@ -19,7 +19,7 @@ import {
   StyleAssetPreload,
 } from '@quilted/preact-browser/server';
 
-import {HTMLResponse, RedirectResponse} from '@quilted/request-router';
+import {HTMLResponse, EnhancedResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
 
@@ -47,14 +47,14 @@ export interface RenderToResponseOptions {
 export async function renderToResponse(
   element: VNode<any>,
   options: RenderToResponseOptions,
-): Promise<HTMLResponse | RedirectResponse>;
+): Promise<EnhancedResponse>;
 export async function renderToResponse(
   options: RenderToResponseOptions,
-): Promise<HTMLResponse | RedirectResponse>;
+): Promise<EnhancedResponse>;
 export async function renderToResponse(
   optionsOrElement: VNode<any> | RenderToResponseOptions,
   definitelyOptions?: RenderToResponseOptions,
-) {
+): Promise<EnhancedResponse> {
   let element: VNode<any> | undefined;
   let options: RenderToResponseOptions;
 
@@ -94,10 +94,36 @@ export async function renderToResponse(
   let appStream: ReadableStream<any> | undefined;
 
   if (shouldStream === false && element != null) {
-    // TODO: handle redirect
-    const rendered = await renderToStringAsync(
-      <ServerContext browser={browserResponse}>{element}</ServerContext>,
-    );
+    let rendered: string;
+
+    try {
+      rendered = await renderToStringAsync(
+        <ServerContext browser={browserResponse}>{element}</ServerContext>,
+      );
+    } catch (error) {
+      if (error instanceof Response) {
+        const mergedHeaders = new Headers(browserResponse.headers);
+
+        // Copy headers from error response, potentially overwriting existing ones
+        for (const [key, value] of error.headers) {
+          if (key.toLowerCase() === 'set-cookie') continue;
+          mergedHeaders.set(key, value);
+        }
+
+        for (const setCookie of error.headers.getSetCookie()) {
+          mergedHeaders.append('Set-Cookie', setCookie);
+        }
+
+        const mergedResponse = new EnhancedResponse(error.body, {
+          status: Math.max(browserResponse.status.value, error.status),
+          headers: mergedHeaders,
+        });
+
+        return mergedResponse;
+      }
+
+      throw error;
+    }
 
     const appTransformStream = new TransformStream();
     const appWriter = appTransformStream.writable.getWriter();
@@ -115,7 +141,10 @@ export async function renderToResponse(
       const appWriter = appTransformStream.writable.getWriter();
 
       if (element != null) {
-        // TODO: handle redirect
+        // TODO: how could we handle redirects automatically? For now, if people want
+        // this, they will explicitly turn on streaming and will have to use some in-app
+        // to manually handle redirects (e.g., by rendering a script tag that uses JavaScript
+        // to redirect)
         const rendered = await renderToStringAsync(
           <ServerContext browser={browserResponse}>{element}</ServerContext>,
         );
