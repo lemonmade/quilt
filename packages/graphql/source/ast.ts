@@ -6,6 +6,7 @@ import {
   isUnionType,
   GraphQLString,
   OperationTypeNode,
+  isAbstractType,
 } from 'graphql';
 import type {
   DocumentNode,
@@ -19,9 +20,13 @@ import type {
   GraphQLAbstractType,
   GraphQLCompositeType,
   TypedQueryDocumentNode,
+  GraphQLObjectType,
+  GraphQLInterfaceType,
 } from 'graphql';
 
 import type {GraphQLAnyOperation, GraphQLOperation} from './types.ts';
+
+type GraphQLSelectableType = GraphQLObjectType | GraphQLInterfaceType;
 
 export class InvalidSelectionError extends Error {
   constructor(
@@ -104,17 +109,55 @@ export function getSelectionTypeMap(
   selections: readonly SelectionNode[],
   type: GraphQLCompositeType,
   context: Context,
-): Map<GraphQLCompositeType, Map<string, Field>> {
-  const typeMap = new Map<GraphQLCompositeType, Map<string, Field>>();
+): Map<GraphQLSelectableType, Map<string, Field>> {
+  const typeMap = new Map<
+    GraphQLInterfaceType | GraphQLObjectType,
+    Map<string, Field>
+  >();
+  const previouslyAppliedAbstractSelections = new Map<
+    GraphQLObjectType,
+    Set<SelectionNode>
+  >();
 
   const typeFields = 'getFields' in type ? type.getFields() : {};
 
   const handleSelection = (
     selection: SelectionNode,
-    typeCondition?: GraphQLCompositeType,
+    typeCondition?: GraphQLSelectableType,
+    isApplyingInterfaceSelection = false,
   ) => {
     switch (selection.kind) {
       case 'Field': {
+        const resolvedType = (typeCondition ?? type) as GraphQLSelectableType;
+
+        // Add this field to each concrete type matching the abstract type. We will
+        // also list out the fields for the abstract type itself, so consumers can
+        // determine additional fields that were queried only on non-concrete types.
+        if (isAbstractType(resolvedType)) {
+          for (const objectType of getAllObjectTypes(
+            resolvedType,
+            context.schema,
+          )) {
+            const selections =
+              previouslyAppliedAbstractSelections.get(objectType) ?? new Set();
+            selections.add(selection);
+            previouslyAppliedAbstractSelections.set(objectType, selections);
+
+            handleSelection(selection, objectType, true);
+          }
+        } else if (!isApplyingInterfaceSelection) {
+          // Otherwise, if this is an object type, apply any previously-recorded
+          // interface selections that apply to this type.
+          const selections =
+            previouslyAppliedAbstractSelections.get(resolvedType);
+
+          if (selections) {
+            for (const selection of selections) {
+              handleSelection(selection, resolvedType, true);
+            }
+          }
+        }
+
         const typeConditionFields =
           typeCondition && 'getFields' in typeCondition
             ? typeCondition.getFields()
@@ -128,30 +171,14 @@ export function getSelectionTypeMap(
         if (name === '__typename') {
           fieldType = GraphQLString;
         } else {
-          if (typeConditionFields) {
-            const typeConditionField = typeConditionFields[name];
+          const typeField = typeConditionFields?.[name] ?? typeFields[name];
 
-            if (typeConditionField == null) {
-              throw new InvalidSelectionError(type, selection);
-            }
-
-            fieldType = typeConditionField.type;
-          } else {
-            const typeField = typeFields[name];
-
-            if (typeField == null) {
-              throw new InvalidSelectionError(type, selection);
-            }
-
-            fieldType = typeField.type;
+          if (typeField == null) {
+            throw new InvalidSelectionError(type, selection);
           }
 
-          fieldType = typeConditionFields
-            ? typeConditionFields[name]!.type
-            : typeFields[name]!.type;
+          fieldType = typeField.type;
         }
-
-        const resolvedType = typeCondition ?? type;
 
         const fieldMap = typeMap.get(resolvedType) ?? new Map();
         typeMap.set(resolvedType, fieldMap);
@@ -177,7 +204,7 @@ export function getSelectionTypeMap(
         const typeCondition =
           (context.schema.getType(
             typeConditionNode.name.value,
-          ) as GraphQLCompositeType) ?? undefined;
+          ) as GraphQLSelectableType) ?? undefined;
 
         for (const selection of selectionSet.selections) {
           handleSelection(selection, typeCondition);
@@ -191,7 +218,7 @@ export function getSelectionTypeMap(
         const typeCondition = typeConditionNode
           ? (context.schema.getType(
               typeConditionNode.name.value,
-            ) as GraphQLCompositeType) ?? undefined
+            ) as GraphQLSelectableType) ?? undefined
           : undefined;
 
         for (const selection of selectionSet.selections) {
