@@ -6,8 +6,46 @@ import {
   startServer,
 } from './utilities.ts';
 
-describe.skip('routing', () => {
-  describe('scroll restoration', () => {
+describe('routing', () => {
+  it('can redirect between routes', async () => {
+    await using workspace = await createWorkspace({
+      fixture: 'basic-app',
+      debug: true,
+    });
+
+    await workspace.fs.write({
+      'App.tsx': multiline`
+        import {Navigation} from '@quilted/quilt/navigation';
+
+        const routes = [
+          {
+            match: '/',
+            redirect: '/redirected',
+          },
+          {
+            match: '/redirected',
+            render: 'Redirected',
+          },
+        ];
+        
+        export default function App() {
+          return <Navigation routes={routes} />;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/', {
+      javaScriptEnabled: false,
+    });
+
+    const content = await page.textContent('body');
+    expect(content).toBe(`Redirected`);
+
+    expect(page.url()).toBe(new URL('/redirected', server.url).href);
+  });
+
+  describe.skip('scroll restoration', () => {
     it('scrolls to the top when navigating to a new page, and back to its original position when navigating back', async () => {
       await using workspace = await createWorkspace({fixture: 'basic-app'});
 
@@ -325,7 +363,7 @@ describe.skip('routing', () => {
     });
   });
 
-  describe('navigation blocking', () => {
+  describe.skip('navigation blocking', () => {
     it('blocks until a synchronous blocking function calls to allow the navigation to proceed', async () => {
       await using workspace = await createWorkspace({fixture: 'basic-app'});
 
