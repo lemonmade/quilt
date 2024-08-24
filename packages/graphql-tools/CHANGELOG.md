@@ -1,5 +1,14 @@
 # @quilted/graphql
 
+## 0.2.9
+
+### Patch Changes
+
+- [#821](https://github.com/lemonmade/quilt/pull/821) [`e1f5f2e`](https://github.com/lemonmade/quilt/commit/e1f5f2eb4a092ca97faa9a9124b34390731f99b9) Thanks [@lemonmade](https://github.com/lemonmade)! - Correctly handle AST parsing of union and interface types
+
+- Updated dependencies [[`e1f5f2e`](https://github.com/lemonmade/quilt/commit/e1f5f2eb4a092ca97faa9a9124b34390731f99b9)]:
+  - @quilted/graphql@3.3.5
+
 ## 0.2.8
 
 ### Patch Changes

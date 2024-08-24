@@ -1,5 +1,11 @@
 # @quilted/typescript
 
+## 0.4.2
+
+### Patch Changes
+
+- [`0cdca9a`](https://github.com/lemonmade/quilt/commit/0cdca9a718d29656e4f5ddfd2a501c0a3a2c6bcb) Thanks [@lemonmade](https://github.com/lemonmade)! - Default to excluding `build` directory from TypeScript compilation
+
 ## 0.4.1
 
 ### Patch Changes

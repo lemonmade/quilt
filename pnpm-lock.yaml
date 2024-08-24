@@ -354,7 +354,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.8.1)
       '@quilted/graphql':
-        specifier: workspace:^3.3.0
+        specifier: workspace:^3.3.5
         version: link:../graphql
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
@@ -618,7 +618,7 @@ importers:
         specifier: workspace:^2.1.1
         version: link:../events
       '@quilted/graphql':
-        specifier: workspace:^3.0.3
+        specifier: workspace:^3.3.5
         version: link:../graphql
       '@quilted/preact-async':
         specifier: workspace:^0.1.2
@@ -639,7 +639,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.2.6
+        specifier: workspace:^0.2.10
         version: link:../preact-router
       '@quilted/preact-signals':
         specifier: workspace:^0.1.0
