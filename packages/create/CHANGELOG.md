@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.39
+
+### Patch Changes
+
+- [`4326b09`](https://github.com/lemonmade/quilt/commit/4326b0950682d2c8a2025f58f124aee07810654b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect navigation import in basic app template
+
 ## 0.2.38
 
 ### Patch Changes

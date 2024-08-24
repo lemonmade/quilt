@@ -1,5 +1,15 @@
 # @quilted/quilt
 
+## 0.8.1
+
+### Patch Changes
+
+- [#822](https://github.com/lemonmade/quilt/pull/822) [`8c31b11`](https://github.com/lemonmade/quilt/commit/8c31b117cdcc8986bbf2fffd5c22f7966c90d2cc) Thanks [@lemonmade](https://github.com/lemonmade)! - Add back support for router redirects
+
+- Updated dependencies [[`8c31b11`](https://github.com/lemonmade/quilt/commit/8c31b117cdcc8986bbf2fffd5c22f7966c90d2cc), [`e1f5f2e`](https://github.com/lemonmade/quilt/commit/e1f5f2eb4a092ca97faa9a9124b34390731f99b9), [`b5a777a`](https://github.com/lemonmade/quilt/commit/b5a777a29405429a45c9e44e0ddc4835441e9bb1)]:
+  - @quilted/preact-router@0.2.10
+  - @quilted/graphql@3.3.5
+
 ## 0.8.0
 
 ### Minor Changes

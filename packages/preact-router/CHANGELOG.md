@@ -1,5 +1,13 @@
 # @quilted/preact-router
 
+## 0.2.10
+
+### Patch Changes
+
+- [#822](https://github.com/lemonmade/quilt/pull/822) [`8c31b11`](https://github.com/lemonmade/quilt/commit/8c31b117cdcc8986bbf2fffd5c22f7966c90d2cc) Thanks [@lemonmade](https://github.com/lemonmade)! - Add back support for router redirects
+
+- [`b5a777a`](https://github.com/lemonmade/quilt/commit/b5a777a29405429a45c9e44e0ddc4835441e9bb1) Thanks [@lemonmade](https://github.com/lemonmade)! - Export base navigation and route types from Preact router package
+
 ## 0.2.9
 
 ### Patch Changes
