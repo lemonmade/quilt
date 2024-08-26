@@ -164,6 +164,7 @@ export async function quiltApp({
 
     plugins.push({
       name: '@quilted/development-server',
+      enforce: 'pre',
       configureServer(vite) {
         return () => {
           vite.middlewares.use(async (req, res, next) => {
