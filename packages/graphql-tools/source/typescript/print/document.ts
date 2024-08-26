@@ -535,6 +535,20 @@ function exportsForSelection(
           ),
         );
       }
+
+      namespaceBody.push(
+        t.exportNamedDeclaration(
+          t.tsTypeAliasDeclaration(
+            t.identifier(nestedTypeName),
+            null,
+            t.tsUnionType(
+              typescriptUnionMembers.map((name) =>
+                t.tsTypeReference(t.identifier(name)),
+              ),
+            ),
+          ),
+        ),
+      );
     } else {
       typescriptType = t.tsAnyKeyword();
     }
