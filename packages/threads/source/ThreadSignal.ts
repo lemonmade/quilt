@@ -172,6 +172,19 @@ export class ThreadSignal<T> extends Signal<T> {
       },
     };
   }
+
+  /**
+   * Checks if a value is a serialized ThreadSignal.
+   */
+  static isSerialized<T = unknown>(
+    value: unknown,
+  ): value is ThreadSignalSerialization<T> {
+    return (
+      typeof value === 'object' &&
+      value != null &&
+      typeof (value as any).start === 'function'
+    );
+  }
 }
 
 /**

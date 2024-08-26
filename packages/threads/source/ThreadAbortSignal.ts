@@ -178,6 +178,18 @@ export class ThreadAbortSignal implements AbortSignal {
       },
     };
   }
+
+  /**
+   * Checks if a value is a serialized ThreadSignal.
+   */
+  static isSerialized(value: unknown): value is ThreadAbortSignalSerialization {
+    return (
+      typeof value === 'object' &&
+      value != null &&
+      typeof (value as any).aborted === 'boolean' &&
+      typeof (value as any).start === 'function'
+    );
+  }
 }
 
 function isAbortSignal(value: unknown): value is AbortSignal {
