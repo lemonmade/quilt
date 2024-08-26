@@ -1,5 +1,13 @@
 # @quilted/threads
 
+## 3.1.0
+
+### Minor Changes
+
+- [`f2463ec`](https://github.com/lemonmade/quilt/commit/f2463ec87c1af107fcfa0f307765912c9f86e29b) Thanks [@lemonmade](https://github.com/lemonmade)! - Add custom `serialize` and `deserialize` options to both thread serialization implementations
+
+- [`b5ca2bd`](https://github.com/lemonmade/quilt/commit/b5ca2bd058f650509f062c609b5a49a39e0b4823) Thanks [@lemonmade](https://github.com/lemonmade)! - Add methods to check for `ThreadSignal` and `ThreadAbortSignal`
+
 ## 3.0.0
 
 ### Major Changes
