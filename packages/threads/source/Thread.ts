@@ -79,6 +79,34 @@ export interface ThreadFunctions {
 }
 
 /**
+ * Options to customize the creation of a `ThreadSerialization` instance.
+ */
+export interface ThreadSerializationOptions {
+  /**
+   * A custom function to run when serializing values. If this function returns `undefined`,
+   * the default serialization will be used. You can also call the second argument to this function
+   * to apply the default serialization to subsets of the value.
+   */
+  serialize?(
+    value: object,
+    defaultSerialize: (value: unknown) => unknown,
+    thread: AnyThread,
+    transferable?: any[],
+  ): any | undefined;
+
+  /**
+   * A custom function to run when deserializing values. If this function returns `undefined`,
+   * the default deserialization will be used. You can also call the second argument to this function
+   * to apply the default deserialization to subsets of the value.
+   */
+  deserialize?(
+    value: object,
+    defaultDeserialize: (value: unknown) => unknown,
+    thread: AnyThread,
+  ): any | undefined;
+}
+
+/**
  * Options to customize the creation of a `Thread` instance.
  */
 export interface ThreadOptions<

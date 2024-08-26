@@ -1,5 +1,9 @@
 import type {ThreadSerializable} from '../types.ts';
-import type {AnyThread, ThreadSerialization} from '../Thread.ts';
+import type {
+  AnyThread,
+  ThreadSerialization,
+  ThreadSerializationOptions,
+} from '../Thread.ts';
 import {SERIALIZE_METHOD, TRANSFERABLE} from '../constants.ts';
 
 import {isBasicObject, isIterator} from './shared.ts';
@@ -29,6 +33,14 @@ const UINT32_ARRAY = '_@u32';
  * - `Uint8Array`
  */
 export class ThreadSerializationJSON implements ThreadSerialization {
+  readonly #customSerializer?: ThreadSerializationOptions['serialize'];
+  readonly #customDeserializer?: ThreadSerializationOptions['deserialize'];
+
+  constructor(options?: ThreadSerializationOptions) {
+    this.#customSerializer = options?.serialize;
+    this.#customDeserializer = options?.deserialize;
+  }
+
   /**
    * Serializes a value into a JSON-compatible format that can be transferred between threads.
    */
@@ -41,6 +53,7 @@ export class ThreadSerializationJSON implements ThreadSerialization {
     thread: AnyThread,
     transferable?: any[],
     seen = new Map<unknown, unknown>(),
+    isApplyingDefault = false,
   ): any {
     if (value == null) return value;
 
@@ -50,6 +63,21 @@ export class ThreadSerializationJSON implements ThreadSerialization {
     seen.set(value, undefined);
 
     if (typeof value === 'object') {
+      if (this.#customSerializer && !isApplyingDefault) {
+        const customValue = this.#customSerializer(
+          value,
+          (value) =>
+            this.#serializeInternal(value, thread, transferable, seen, true),
+          thread,
+          transferable,
+        );
+
+        if (customValue !== undefined) {
+          seen.set(value, customValue);
+          return customValue;
+        }
+      }
+
       if ((value as any)[TRANSFERABLE]) {
         transferable?.push(value as any);
         seen.set(value, value);
@@ -188,8 +216,26 @@ export class ThreadSerializationJSON implements ThreadSerialization {
     return this.#deserializeInternal(value, thread);
   }
 
-  #deserializeInternal(value: unknown, thread: AnyThread): any {
+  #deserializeInternal(
+    value: unknown,
+    thread: AnyThread,
+    isApplyingDefault = false,
+  ): any {
+    if (value == null) return value;
+
     if (typeof value === 'object') {
+      if (this.#customDeserializer && !isApplyingDefault) {
+        const customValue = this.#customDeserializer(
+          value,
+          (value) => this.#deserializeInternal(value, thread, true),
+          thread,
+        );
+
+        if (customValue !== undefined) {
+          return customValue;
+        }
+      }
+
       if (value == null) {
         return value as any;
       }

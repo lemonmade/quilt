@@ -28,6 +28,7 @@ export {
   type ThreadFunctions,
   type ThreadSerialization,
   type ThreadMessageMap,
+  type ThreadSerializationOptions,
 } from './Thread.ts';
 export {ThreadBroadcastChannel} from './threads/ThreadBroadcastChannel.ts';
 export {ThreadBrowserWebSocket} from './threads/ThreadBrowserWebSocket.ts';
