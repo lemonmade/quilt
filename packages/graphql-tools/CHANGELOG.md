@@ -1,5 +1,11 @@
 # @quilted/graphql
 
+## 0.2.10
+
+### Patch Changes
+
+- [`fa1c385`](https://github.com/lemonmade/quilt/commit/fa1c385b71aca6b0de663be2f0724f95d42293df) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove `Other` type in favor of dedicated types for each unmatched object type
+
 ## 0.2.9
 
 ### Patch Changes
