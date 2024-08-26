@@ -10,12 +10,13 @@ export function resolveURL(
       ? base
       : base.pathname
     : undefined;
-  const fromURL = typeof from === 'string' ? new URL(from) : from;
 
   if (to instanceof URL) {
     return new URL(to.href);
   } else if (typeof to === 'object') {
     const {path, search, hash} = to;
+
+    const fromURL = typeof from === 'string' ? new URL(from) : from;
 
     const finalPathname = path ?? fromURL.pathname;
     const finalSearch = searchToString(search);
@@ -27,11 +28,27 @@ export function resolveURL(
       base,
     );
   } else if (typeof to === 'function') {
+    const fromURL = typeof from === 'string' ? new URL(from) : from;
     return resolveURL(to(fromURL), fromURL, base);
   } else if (to[0] === '/') {
+    const fromURL = typeof from === 'string' ? new URL(from) : from;
     return new URL(prefixPath(to, prefix), fromURL);
   } else {
-    return new URL(prefixPath(to, `${fromURL.origin}${fromURL.pathname}`));
+    try {
+      const url = new URL(to);
+      return url;
+    } catch {}
+
+    let fromPart: string;
+
+    if (typeof from === 'string' && from.startsWith('/')) {
+      fromPart = from;
+    } else {
+      const url = new URL(from);
+      fromPart = `${url.origin}${url.pathname}`;
+    }
+
+    return new URL(prefixPath(to, fromPart));
   }
 }
 
