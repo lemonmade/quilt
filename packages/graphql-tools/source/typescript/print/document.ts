@@ -509,8 +509,8 @@ function exportsForSelection(
         );
       }
 
-      if (unmatchedTypes.size > 0) {
-        const name = toUnionOrInterfaceTypeName(nestedTypeName);
+      for (const type of unmatchedTypes) {
+        const name = toUnionOrInterfaceTypeName(nestedTypeName, type);
         typescriptUnionMembers.push(name);
 
         namespaceBody.push(
@@ -525,13 +525,7 @@ function exportsForSelection(
                       t.tsPropertySignature(
                         t.identifier('__typename'),
                         t.tsTypeAnnotation(
-                          t.tsUnionType(
-                            Array.from(unmatchedTypes).map((unmatchedType) =>
-                              t.tsLiteralType(
-                                t.stringLiteral(unmatchedType.name),
-                              ),
-                            ),
-                          ),
+                          t.tsLiteralType(t.stringLiteral(type.name)),
                         ),
                       ),
                     ]
@@ -541,20 +535,6 @@ function exportsForSelection(
           ),
         );
       }
-
-      namespaceBody.push(
-        t.exportNamedDeclaration(
-          t.tsTypeAliasDeclaration(
-            t.identifier(nestedTypeName),
-            null,
-            t.tsUnionType(
-              typescriptUnionMembers.map((name) =>
-                t.tsTypeReference(t.identifier(name)),
-              ),
-            ),
-          ),
-        ),
-      );
     } else {
       typescriptType = t.tsAnyKeyword();
     }
@@ -610,13 +590,11 @@ function exportsForSelection(
   return exported;
 }
 
-const OTHER_TYPE_NAME = 'Other';
-
 function toUnionOrInterfaceTypeName(
   rootName: string,
-  type?: GraphQLCompositeType,
+  type: GraphQLCompositeType,
 ) {
-  return `${rootName}_${toTypeName(type?.name ?? OTHER_TYPE_NAME)}`;
+  return `${rootName}_${toTypeName(type.name)}`;
 }
 
 function toTypeName(name: string) {
