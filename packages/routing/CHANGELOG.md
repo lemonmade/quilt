@@ -1,5 +1,11 @@
 # @quilted/routing
 
+## 0.4.3
+
+### Patch Changes
+
+- [`a4c5660`](https://github.com/lemonmade/quilt/commit/a4c566082d6257b93420e55c70da89053e81c03e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix resolving fully qualified URLs as strings
+
 ## 0.4.2
 
 ### Patch Changes
