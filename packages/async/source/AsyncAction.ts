@@ -29,7 +29,7 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   }
 
   get value() {
-    return this.latest?.value;
+    return this.latest?.value ?? this.resolved?.value;
   }
 
   get data() {
