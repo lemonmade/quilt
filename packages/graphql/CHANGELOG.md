@@ -1,5 +1,14 @@
 # @quilted/graphql
 
+## 3.3.6
+
+### Patch Changes
+
+- [`ed8ade0`](https://github.com/lemonmade/quilt/commit/ed8ade071b579d3fb98d71437ffd0de580e26bc2) Thanks [@lemonmade](https://github.com/lemonmade)! - Re-export `GraphQLCache` from testing entrypoint
+
+- Updated dependencies [[`2685a56`](https://github.com/lemonmade/quilt/commit/2685a5622619b7dc15ad8cc84daa8943704c53d4)]:
+  - @quilted/async@0.4.20
+
 ## 3.3.5
 
 ### Patch Changes
