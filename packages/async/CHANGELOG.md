@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.20
+
+### Patch Changes
+
+- [`2685a56`](https://github.com/lemonmade/quilt/commit/2685a5622619b7dc15ad8cc84daa8943704c53d4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `AsyncAction` not returning latest available data while running
+
 ## 0.4.19
 
 ### Patch Changes

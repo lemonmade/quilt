@@ -1,5 +1,14 @@
 # @quilted/preact-graphql
 
+## 0.1.5
+
+### Patch Changes
+
+- [`9289032`](https://github.com/lemonmade/quilt/commit/92890322edb0dcfa2b27b8b36178e478433d6eca) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `useGraphQLQueryData` and `useGraphQLQueryRefetchOnMount` hooks
+
+- Updated dependencies [[`ed8ade0`](https://github.com/lemonmade/quilt/commit/ed8ade071b579d3fb98d71437ffd0de580e26bc2)]:
+  - @quilted/graphql@3.3.6
+
 ## 0.1.4
 
 ### Patch Changes
