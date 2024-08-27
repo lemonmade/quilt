@@ -37,3 +37,5 @@ export {
 
 export {createGraphQLSchema} from './schema.ts';
 export {gql, graphql} from './gql.ts';
+
+export {GraphQLCache} from './GraphQLCache.ts';
