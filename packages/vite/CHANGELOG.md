@@ -1,5 +1,11 @@
 # @quilted/vite
 
+## 0.1.27
+
+### Patch Changes
+
+- [`8ffc744`](https://github.com/lemonmade/quilt/commit/8ffc744838f51198bd92363b4c3ba8dc7c49e7d0) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Vite dev server not picking up routes matching asset names
+
 ## 0.1.26
 
 ### Patch Changes
