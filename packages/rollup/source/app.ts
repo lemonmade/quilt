@@ -1524,7 +1524,6 @@ const FRAMEWORK_TEST_STRINGS: (string | RegExp)[] = [
   '/node_modules/preact/',
   '/node_modules/react/',
   '/node_modules/js-cookie/',
-  '/node_modules/dequal/',
   '/node_modules/@quilted/quilt/',
   '/node_modules/@preact/signals/',
   '/node_modules/@preact/signals-core/',

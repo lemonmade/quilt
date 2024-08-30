@@ -188,10 +188,6 @@ importers:
       '@types/web':
         specifier: ^0.0.59
         version: 0.0.59
-    devDependencies:
-      dequal:
-        specifier: ^2.0.3
-        version: 2.0.3
 
   packages/babel:
     dependencies:
@@ -3113,10 +3109,6 @@ packages:
 
   deprecation@2.3.1:
     resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
-
-  dequal@2.0.3:
-    resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
-    engines: {node: '>=6'}
 
   destroy@1.0.4:
     resolution: {integrity: sha512-3NdhDuEXnfun/z7x9GOElY49LoqVHoGScmOKwmxhsS8N5Y+Z8KyPPDnaSzqWgYt/ji4mqwfTS34Htrk0zPIXVg==}
@@ -7272,8 +7264,6 @@ snapshots:
   depd@1.1.2: {}
 
   deprecation@2.3.1: {}
-
-  dequal@2.0.3: {}
 
   destroy@1.0.4: {}
 

@@ -1,5 +1,4 @@
 import {signal, batch} from '@quilted/signals';
-import {dequal} from 'dequal';
 
 export type AsyncActionStatus = 'pending' | 'resolved' | 'rejected';
 
@@ -199,7 +198,9 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 }
 
 function defaultHasChanged(input?: unknown, lastInput?: unknown) {
-  return input !== lastInput && !dequal(input, lastInput);
+  return (
+    input !== lastInput && JSON.stringify(input) !== JSON.stringify(lastInput)
+  );
 }
 
 export class AsyncActionRun<Data = unknown, Input = unknown> {
