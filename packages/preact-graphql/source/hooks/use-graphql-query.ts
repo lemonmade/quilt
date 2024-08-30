@@ -73,6 +73,11 @@ export function useGraphQLQuery<Data, Variables>(
     throw new Error('No cache provided for GraphQL query.');
   }
 
+  // When the key is not provided, assume that the query is keyed to its full variables.
+  // If the user wants to keep old results around while changing variables, they can provide
+  // a custom key that excludes the variables they do not want to restart the query on.
+  let resolvedKey = key ?? resolveSignalOrValue(variables);
+
   const queryAction = useMemo(() => {
     if (cache == null) {
       if (fetch == null) {
@@ -86,13 +91,13 @@ export function useGraphQLQuery<Data, Variables>(
 
     return cache.create(query, {
       fetch,
-      key,
       tags,
+      key: resolvedKey,
       cached: cached
         ? {input: resolveSignalOrValue(variables, {peek: true}), ...cached}
         : undefined,
     });
-  }, [query, fetch, cache, key]);
+  }, [query, fetch, cache, resolvedKey]);
 
   useAsync(queryAction, {input: variables, active, signal, suspend});
 
