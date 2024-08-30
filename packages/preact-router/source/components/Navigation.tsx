@@ -30,7 +30,7 @@ export function Navigation<Context = unknown>({
   );
 
   if (router.cache && serialize) {
-    useAsyncActionCacheSerialization(router.cache, {name: 'router'});
+    useAsyncActionCacheSerialization(router.cache, {name: 'quilt:router'});
   }
 
   const content = routes ? (

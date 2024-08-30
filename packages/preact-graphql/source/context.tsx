@@ -21,7 +21,7 @@ export function GraphQLContext({
   children,
 }: RenderableProps<Props>) {
   if (cache && serialize) {
-    useAsyncActionCacheSerialization(cache, {name: 'graphql'});
+    useAsyncActionCacheSerialization(cache, {name: 'quilt:graphql'});
   }
 
   return (

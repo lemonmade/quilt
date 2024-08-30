@@ -32,7 +32,7 @@ export function AsyncContext({
   if (hydrated.current == null) hydrated.current = signal(false);
 
   if (serialize && cache) {
-    useAsyncActionCacheSerialization(cache);
+    useAsyncActionCacheSerialization(cache, {name: 'quilt:async'});
   }
 
   if (typeof document === 'object') {
