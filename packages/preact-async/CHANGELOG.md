@@ -1,5 +1,14 @@
 # @quilted/preact-async
 
+## 0.1.18
+
+### Patch Changes
+
+- [`47b73db`](https://github.com/lemonmade/quilt/commit/47b73dbbc726efd09cccfb49d8a0620b9aff378a) Thanks [@lemonmade](https://github.com/lemonmade)! - Use a consistent name for serialized framework data
+
+- Updated dependencies [[`3a20ff9`](https://github.com/lemonmade/quilt/commit/3a20ff9101119d07bad8ddfbf414be4d3833c3b1)]:
+  - @quilted/async@0.4.21
+
 ## 0.1.17
 
 ### Patch Changes

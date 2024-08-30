@@ -1,5 +1,14 @@
 # @quilted/rollup
 
+## 0.2.45
+
+### Patch Changes
+
+- [`3a20ff9`](https://github.com/lemonmade/quilt/commit/3a20ff9101119d07bad8ddfbf414be4d3833c3b1) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify default async input equality check, and remove `dequal` as a framework dependency
+
+- Updated dependencies []:
+  - @quilted/graphql@3.3.7
+
 ## 0.2.44
 
 ### Patch Changes
