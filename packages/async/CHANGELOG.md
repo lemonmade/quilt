@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.21
+
+### Patch Changes
+
+- [`3a20ff9`](https://github.com/lemonmade/quilt/commit/3a20ff9101119d07bad8ddfbf414be4d3833c3b1) Thanks [@lemonmade](https://github.com/lemonmade)! - Simplify default async input equality check, and remove `dequal` as a framework dependency
+
 ## 0.4.20
 
 ### Patch Changes

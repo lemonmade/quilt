@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-graphql",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -39,8 +39,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/graphql": "workspace:^3.3.6",
-    "@quilted/preact-async": "workspace:^0.1.14",
+    "@quilted/graphql": "workspace:^3.3.7",
+    "@quilted/preact-async": "workspace:^0.1.18",
     "@quilted/preact-context": "workspace:^0.1.0",
     "@quilted/preact-signals": "workspace:^0.1.0",
     "@quilted/useful-types": "workspace:^2.0.0"

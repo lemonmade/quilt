@@ -1,5 +1,17 @@
 # @quilted/preact-graphql
 
+## 0.1.6
+
+### Patch Changes
+
+- [`8971aa1`](https://github.com/lemonmade/quilt/commit/8971aa1802ccaf8fb9edfb5a4227ab8f8be298b2) Thanks [@lemonmade](https://github.com/lemonmade)! - Key `useGraphQLQuery` calls using variables by default
+
+- [`47b73db`](https://github.com/lemonmade/quilt/commit/47b73dbbc726efd09cccfb49d8a0620b9aff378a) Thanks [@lemonmade](https://github.com/lemonmade)! - Use a consistent name for serialized framework data
+
+- Updated dependencies [[`47b73db`](https://github.com/lemonmade/quilt/commit/47b73dbbc726efd09cccfb49d8a0620b9aff378a)]:
+  - @quilted/preact-async@0.1.18
+  - @quilted/graphql@3.3.7
+
 ## 0.1.5
 
 ### Patch Changes
