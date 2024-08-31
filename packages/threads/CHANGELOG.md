@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 3.1.2
+
+### Patch Changes
+
+- [`254b3ed`](https://github.com/lemonmade/quilt/commit/254b3ed1f419e2e9431e50861fede36333bf719e) Thanks [@lemonmade](https://github.com/lemonmade)! - More `ThreadSignal` fixes
+
 ## 3.1.1
 
 ### Patch Changes
