@@ -1,5 +1,11 @@
 # @quilted/preact-graphql
 
+## 0.1.7
+
+### Patch Changes
+
+- [`cec3cc7`](https://github.com/lemonmade/quilt/commit/cec3cc7d89eaad21d12567413e53428bf31ec81a) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix excessive query creation
+
 ## 0.1.6
 
 ### Patch Changes
