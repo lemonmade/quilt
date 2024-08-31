@@ -82,7 +82,7 @@ export class ThreadSignal<T> extends Signal<T> {
     retain?.(serialization);
 
     const valueDescriptor = Object.getOwnPropertyDescriptor(
-      Object.getPrototypeOf(this),
+      Object.getPrototypeOf(Object.getPrototypeOf(this)),
       'value',
     )!;
 
@@ -94,14 +94,14 @@ export class ThreadSignal<T> extends Signal<T> {
       set: writable
         ? (value) => {
             serialization.set!(value);
-            return valueDescriptor.set?.call(signal, value);
+            return valueDescriptor.set?.call(this, value);
           }
         : undefined,
     });
 
     serialization.start(
       (value) => {
-        valueDescriptor.set?.call(signal, value);
+        valueDescriptor.set?.call(this, value);
       },
       {
         signal:
