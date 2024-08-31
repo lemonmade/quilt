@@ -97,7 +97,12 @@ export function useGraphQLQuery<Data, Variables>(
         ? {input: resolveSignalOrValue(variables, {peek: true}), ...cached}
         : undefined,
     });
-  }, [query, fetch, cache, resolvedKey]);
+  }, [
+    query,
+    fetch,
+    cache,
+    typeof resolvedKey === 'string' ? resolvedKey : JSON.stringify(resolvedKey),
+  ]);
 
   useAsync(queryAction, {input: variables, active, signal, suspend});
 
