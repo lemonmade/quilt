@@ -82,7 +82,7 @@ export class ThreadSignal<T> extends Signal<T> {
     retain?.(serialization);
 
     const valueDescriptor = Object.getOwnPropertyDescriptor(
-      Object.getPrototypeOf(signal),
+      Object.getPrototypeOf(this),
       'value',
     )!;
 
