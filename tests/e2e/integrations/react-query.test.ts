@@ -7,20 +7,25 @@ describe('react-query', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
+        import {Suspense} from 'preact/compat';
         import {useMemo} from 'preact/hooks';
         import {QueryClient, useSuspenseQuery} from '@tanstack/react-query';
         import {ReactQueryContext} from '@quilted/react-query';
         import {useBrowserRequest} from '@quilted/quilt/browser';
         
-        export default function App() {
+        export function App() {
           const client = useMemo(() => new QueryClient(), []);
         
           return (
             <ReactQueryContext client={client}>
-              <UI />
+              <Suspense fallback={null}>
+                <UI />
+              </Suspense>
             </ReactQueryContext>
           );
         }
+
+        export default App;
 
         function UI() {
           const {url} = useBrowserRequest();
@@ -54,7 +59,7 @@ describe('react-query', () => {
         });
         
         router.get(async (request) => {
-          const [{default: App}, {renderToResponse}] = await Promise.all([
+          const [{App}, {renderToResponse}] = await Promise.all([
             import('./App.tsx'),
             import('@quilted/quilt/server'),
           ]);

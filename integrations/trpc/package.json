@@ -37,8 +37,8 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@trpc/client": "^10.0.0",
-    "@trpc/server": "^10.0.0"
+    "@trpc/client": "^10.0.0 || ^11.0.0",
+    "@trpc/server": "^10.0.0 || ^11.0.0"
   },
   "peerDependenciesMeta": {
     "@trpc/client": {
@@ -49,7 +49,7 @@
     }
   },
   "devDependencies": {
-    "@trpc/client": "^10.31.0",
-    "@trpc/server": "^10.31.0"
+    "@trpc/client": "next",
+    "@trpc/server": "next"
   }
 }
