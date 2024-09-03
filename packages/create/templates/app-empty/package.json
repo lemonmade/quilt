@@ -15,7 +15,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@quilted/quilt": "^0.7.0",
+    "@quilted/quilt": "^0.8.0",
     "preact": "^10.21.0",
     "react": "npm:@quilted/react@^18.2.0",
     "react-dom": "npm:@quilted/react-dom@^18.2.0"
