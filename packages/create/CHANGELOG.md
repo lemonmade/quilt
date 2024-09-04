@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.40
+
+### Patch Changes
+
+- [`3cd5a9e`](https://github.com/lemonmade/quilt/commit/3cd5a9e7dedb37575be37b725baea6df0b65e65d) Thanks [@lemonmade](https://github.com/lemonmade)! - Update quilt dependency version in templates
+
 ## 0.2.39
 
 ### Patch Changes

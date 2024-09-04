@@ -1,5 +1,11 @@
 # @quilted/preact-async
 
+## 0.1.19
+
+### Patch Changes
+
+- [`e1f8fed`](https://github.com/lemonmade/quilt/commit/e1f8fedf436ee4eb1957a7559b0f78e742e494e7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `useAsync()` not re-rendering in some cases
+
 ## 0.1.18
 
 ### Patch Changes
