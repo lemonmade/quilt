@@ -15,6 +15,7 @@ import {
   useComputed,
   useSignalEffect,
   type ReadonlySignal,
+  batch,
 } from '@quilted/preact-signals';
 
 import {AsyncActionCacheContext} from '../context.ts';
@@ -29,6 +30,13 @@ export interface UseAsyncActionOptions<Data = unknown, Input = unknown>
   readonly cached?: AsyncActionRunCache<Data, Input>;
   readonly signal?: AbortSignal;
 }
+
+type UseAsyncInternals<Data, Input> = Pick<
+  UseAsyncActionOptions<Data, Input>,
+  'tags' | 'signal' | 'cached'
+> & {
+  function?: AsyncActionFunction<Data, Input>;
+};
 
 export function useAsync<Data = unknown, Input = unknown>(
   asyncActionFunction: AsyncActionFunction<Data, Input>,
@@ -61,11 +69,7 @@ export function useAsync<Data = unknown, Input = unknown>(
     cached,
   }: UseAsyncActionOptions<Data, Input> = {},
 ) {
-  const internalsRef = useRef<
-    Pick<UseAsyncActionOptions<Data, Input>, 'tags' | 'signal' | 'cached'> & {
-      function?: AsyncActionFunction<Data, Input>;
-    }
-  >();
+  const internalsRef = useRef<UseAsyncInternals<Data, Input>>();
   internalsRef.current ??= {};
   Object.assign(internalsRef.current, {
     tags,
@@ -74,56 +78,34 @@ export function useAsync<Data = unknown, Input = unknown>(
     function: typeof asyncAction === 'function' ? asyncAction : undefined,
   });
 
-  const keySignal = useMaybeSignal(key);
-  const activeSignal = useMaybeSignal(active);
-  const inputSignal = useMaybeSignal(input);
+  // Batch these so that, if we have to create signals and write to each, we will update them all
+  // to be consistent with each other. This makes it so the computed values below will consider
+  // all of these options when determining whether to run the action.
+  const [actionSignal, activeSignal, inputSignal] = batch(() => {
+    const keySignal = useMaybeSignal(key);
+    const activeSignal = useMaybeSignal(active);
+    const inputSignal = useMaybeSignal(input);
 
-  const asyncCacheFromContext = AsyncActionCacheContext.use({optional: true});
+    const actionSignal = // Limitation: can’t change from a function to an action
+      typeof asyncAction === 'function'
+        ? useAsyncFunctionAsSignal(asyncAction, {
+            cache,
+            key: keySignal,
+            internals: internalsRef.current!,
+          })
+        : useAsyncActionAsSignal(asyncAction);
 
-  const actionSignal = useComputed(() => {
-    if (typeof asyncAction !== 'function') {
-      return asyncAction;
-    }
-
-    const shouldCache = Boolean(cache ?? true);
-    const asyncCache = shouldCache
-      ? cache != null && typeof cache !== 'boolean'
-        ? cache
-        : asyncCacheFromContext
-      : undefined;
-
-    if (shouldCache && asyncCache == null) {
-      throw new Error(`Missing AsyncActionCache`);
-    }
-
-    const resolvedFetchFunction: AsyncActionFunction<Data, Input> = (...args) =>
-      internalsRef.current!.function?.(...args) as any;
-
-    const key = keySignal.value;
-
-    if (asyncCache == null) {
-      return new AsyncAction<Data, Input>(resolvedFetchFunction);
-    }
-
-    return asyncCache.create(
-      (cached) =>
-        new AsyncAction(resolvedFetchFunction, {
-          cached: internalsRef.current!.cached ?? cached,
-        }),
-      {key, tags: internalsRef.current!.tags},
-    );
+    return [actionSignal, activeSignal, inputSignal];
   });
 
-  if (
-    suspend &&
-    activeSignal.value &&
-    actionSignal.value.status === 'pending'
-  ) {
+  if (suspend && activeSignal.value) {
     const action = actionSignal.value;
 
-    if (action.isRunning) throw action.promise;
+    if (action.status === 'pending') {
+      if (action.isRunning) throw action.promise;
 
-    throw action.run(inputSignal.peek(), {signal});
+      throw action.run(inputSignal.peek(), {signal});
+    }
   }
 
   const actionToRun = useComputed(() => {
@@ -174,6 +156,60 @@ export function useAsync<Data = unknown, Input = unknown>(
   }, [action]);
 
   return action;
+}
+
+function useAsyncFunctionAsSignal<Data, Input>(
+  _func: AsyncActionFunction<Data, Input>,
+  {
+    cache,
+    key: keySignal,
+    internals,
+  }: Pick<UseAsyncActionOptions<Data, Input>, 'cached' | 'cache' | 'key'> & {
+    internals: UseAsyncInternals<Data, Input>;
+    key: ReadonlySignal<AsyncActionCacheKey>;
+  },
+): ReadonlySignal<
+  AsyncAction<Data, Input> | AsyncActionCacheEntry<AsyncAction<Data, Input>>
+> {
+  const asyncCacheFromContext = AsyncActionCacheContext.use({optional: true});
+
+  return useComputed(() => {
+    const shouldCache = Boolean(cache ?? true);
+    const asyncCache = shouldCache
+      ? cache != null && typeof cache !== 'boolean'
+        ? cache
+        : asyncCacheFromContext
+      : undefined;
+
+    if (shouldCache && asyncCache == null) {
+      throw new Error(`Missing AsyncActionCache`);
+    }
+
+    const resolvedFetchFunction: AsyncActionFunction<Data, Input> = (...args) =>
+      internals.function?.(...args) as any;
+
+    const key = keySignal.value;
+
+    if (asyncCache == null) {
+      return new AsyncAction<Data, Input>(resolvedFetchFunction);
+    }
+
+    return asyncCache.create(
+      (cached) =>
+        new AsyncAction(resolvedFetchFunction, {
+          cached: internals.cached ?? cached,
+        }),
+      {key, tags: internals.tags},
+    );
+  });
+}
+
+function useAsyncActionAsSignal<T extends AsyncAction<any, any>>(
+  action: T,
+): ReadonlySignal<T> {
+  const signal = useSignal(action);
+  signal.value = action;
+  return signal as ReadonlySignal<T>;
 }
 
 // Limitation: can’t change from a signal to not a signal
