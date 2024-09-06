@@ -3,7 +3,10 @@ import {multiline, createWorkspace, startServer} from '../utilities.ts';
 
 describe('react-query', () => {
   it('can server and client render a query using suspense', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await createWorkspace({
+      fixture: 'basic-app',
+      debug: true,
+    });
 
     await workspace.fs.write({
       'App.tsx': multiline`
