@@ -1,5 +1,11 @@
 # @quilted/trpc
 
+## 0.2.1
+
+### Patch Changes
+
+- [#832](https://github.com/lemonmade/quilt/pull/832) [`f0105b4`](https://github.com/lemonmade/quilt/commit/f0105b41db07ebdf21d131d664c1a909659a5142) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix issues with trpc integration
+
 ## 0.2.0
 
 ### Minor Changes

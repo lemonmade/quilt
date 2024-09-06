@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.41
+
+### Patch Changes
+
+- [#832](https://github.com/lemonmade/quilt/pull/832) [`f0105b4`](https://github.com/lemonmade/quilt/commit/f0105b41db07ebdf21d131d664c1a909659a5142) Thanks [@lemonmade](https://github.com/lemonmade)! - Update template dependencies
+
 ## 0.2.40
 
 ### Patch Changes
