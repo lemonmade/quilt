@@ -1,4 +1,4 @@
-import type {TRPCClient} from '@trpc/client';
+import type {TRPCUntypedClient} from '@trpc/client';
 import {createTRPCReact, type CreateTRPCReact} from '@trpc/react-query';
 import type {QueryClient} from '@tanstack/react-query';
 
@@ -7,12 +7,12 @@ import type {QueryClient} from '@tanstack/react-query';
 // perform.
 import type {AppRouter} from '../trpc.ts';
 
-export const trpc: CreateTRPCReact<AppRouter, unknown, null> =
+export const trpc: CreateTRPCReact<AppRouter, {}> =
   createTRPCReact<AppRouter>();
 
 declare module '~/shared/context.ts' {
   interface AppContext {
-    trpc: TRPCClient<AppRouter>;
+    trpc: TRPCUntypedClient<AppRouter>;
     queryClient: QueryClient;
   }
 }

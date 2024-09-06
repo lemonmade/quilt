@@ -11,3 +11,5 @@ export const appRouter = t.router({
 // Our client-side code will use this type to infer the
 // procedures that are defined.
 export type AppRouter = typeof appRouter;
+
+export const createCaller = t.createCallerFactory(appRouter);
