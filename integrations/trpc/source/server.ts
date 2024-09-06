@@ -2,7 +2,7 @@ import {callProcedure, type AnyTRPCRouter} from '@trpc/server';
 import {observable} from '@trpc/server/observable';
 import {
   TRPCClientError,
-  createTRPCClient,
+  createTRPCUntypedClient,
   type CreateTRPCClientOptions,
   type TRPCLink,
 } from '@trpc/client';
@@ -12,9 +12,9 @@ export function createDirectClient<Router extends AnyTRPCRouter>(
   router: Router,
   {links = [] as any}: Partial<CreateTRPCClientOptions<Router>> = {},
 ) {
-  return createTRPCClient<Router>({
+  return createTRPCUntypedClient<Router>({
     links: [...links, directLink(router)],
-  } as any);
+  });
 }
 
 export function directLink<Router extends AnyTRPCRouter>(

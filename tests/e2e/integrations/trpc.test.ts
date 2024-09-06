@@ -2,11 +2,8 @@ import {describe, it, expect} from 'vitest';
 import {multiline, createWorkspace, startServer} from '../utilities.ts';
 
 describe('trpc', () => {
-  it('can server and client render a trpc query', async () => {
-    await using workspace = await createWorkspace({
-      fixture: 'basic-app',
-      debug: true,
-    });
+  it('can server and client render a trpc suspense query', async () => {
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'trpc.ts': multiline`
@@ -74,7 +71,7 @@ describe('trpc', () => {
         const trpcClient = trpc.createClient({
           links: [
             httpBatchLink({
-              url: new URL('/api', url).href,
+              url: new URL('/api', browser.request.url).href,
             }),
           ],
         });
