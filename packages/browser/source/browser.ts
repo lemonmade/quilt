@@ -249,7 +249,7 @@ export class BrowserSerializations {
 }
 
 function getSerializedFromNode<T = unknown>(node: Element): T | undefined {
-  const value = (node as HTMLMetaElement).content;
+  const value = node.getAttribute('content');
 
   try {
     return value ? (decode(JSON.parse(value)) as T) : undefined;
