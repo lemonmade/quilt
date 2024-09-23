@@ -1,5 +1,7 @@
 ---
 '@quilted/browser': patch
+'@quilted/preact-browser': patch
+'@quilted/react-query': patch
 '@quilted/quilt': patch
 ---
 
