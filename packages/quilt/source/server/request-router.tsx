@@ -225,7 +225,12 @@ export async function renderToResponse(
               <meta {...(meta as JSX.HTMLAttributes<HTMLMetaElement>)} />
             ))}
             {browserResponse.serializations.value.map(({id, value}) => (
-              <meta name={`serialized:${id}`} content={JSON.stringify(value)} />
+              // @ts-expect-error a custom element that I don’t want to define,
+              // since it’s an optional part of the browser library.
+              <browser-serialization
+                name={`serialized:${id}`}
+                content={JSON.stringify(value)}
+              />
             ))}
             {synchronousAssets?.scripts.map((script) => (
               <ScriptAsset

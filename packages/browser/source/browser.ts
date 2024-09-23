@@ -9,7 +9,7 @@ import {
 } from '@quilted/signals';
 
 import type {BrowserDetails, CookieOptions, Cookies} from './types.ts';
-import {decode} from './encoding.ts';
+import {encode, decode} from './encoding.ts';
 
 export class Browser implements BrowserDetails {
   readonly title = new BrowserTitle();
@@ -185,12 +185,48 @@ export class BrowserElementAttributes<Element extends HTMLElement> {
   }
 }
 
+// Make this module execute in non-DOM environments
+const HTMLElement: typeof globalThis.HTMLElement =
+  typeof globalThis.HTMLElement === 'function'
+    ? globalThis.HTMLElement
+    : (class HTMLElement {} as any);
+
+const DEFAULT_SERIALIZATION_ELEMENT_NAME = 'browser-serialization';
+
+export class BrowserSerializationElement<T = unknown> extends HTMLElement {
+  static define(name: string = DEFAULT_SERIALIZATION_ELEMENT_NAME) {
+    customElements.define(name, this);
+  }
+
+  get name(): string | undefined {
+    return this.getAttribute('name') ?? undefined;
+  }
+
+  set name(value: string | undefined) {
+    if (value) {
+      this.setAttribute('name', value);
+    } else {
+      this.removeAttribute('name');
+    }
+  }
+
+  get data() {
+    return getSerializedFromNode<T>(this) as T;
+  }
+
+  set data(value: T) {
+    this.setAttribute('content', JSON.stringify(encode(value)));
+  }
+}
+
 export class BrowserSerializations {
   private readonly serializations = new Map<string, unknown>(
     Array.from(
-      document.querySelectorAll<HTMLMetaElement>(`meta[name^="serialized:"]`),
+      document.querySelectorAll<HTMLElement>(
+        DEFAULT_SERIALIZATION_ELEMENT_NAME,
+      ),
     ).map((node) => [
-      node.name.replace(/^serialized:/, ''),
+      node.getAttribute('name') ?? '_default',
       getSerializedFromNode(node),
     ]),
   );
