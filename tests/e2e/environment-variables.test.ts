@@ -154,7 +154,7 @@ describe('app builds', () => {
               return (
                 <>
                   <div>Hello, {builder}!</div>
-                  <Serialize id="Builder" value={Env.BUILDER} />
+                  <Serialize name="Builder" content={Env.BUILDER} />
                 </>
               );
             }
