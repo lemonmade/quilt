@@ -447,7 +447,7 @@ importers:
         specifier: workspace:^0.1.2
         version: link:../assets
       '@quilted/browser':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.6
         version: link:../browser
       '@quilted/http':
         specifier: workspace:^0.3.0
@@ -632,7 +632,7 @@ importers:
         specifier: workspace:^0.1.2
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.5
+        specifier: workspace:^0.1.8
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.2

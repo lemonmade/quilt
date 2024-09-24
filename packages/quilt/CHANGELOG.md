@@ -1,5 +1,14 @@
 # @quilted/quilt
 
+## 0.8.2
+
+### Patch Changes
+
+- [#836](https://github.com/lemonmade/quilt/pull/836) [`57e6a4d`](https://github.com/lemonmade/quilt/commit/57e6a4d5cb4fc13748ab5f2563dec78a032555ed) Thanks [@lemonmade](https://github.com/lemonmade)! - Update browser serializations to use a custom element instead of `<meta>`
+
+- Updated dependencies [[`57e6a4d`](https://github.com/lemonmade/quilt/commit/57e6a4d5cb4fc13748ab5f2563dec78a032555ed)]:
+  - @quilted/preact-browser@0.1.8
+
 ## 0.8.1
 
 ### Patch Changes
