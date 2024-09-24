@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.1.6
+
+### Patch Changes
+
+- [#836](https://github.com/lemonmade/quilt/pull/836) [`57e6a4d`](https://github.com/lemonmade/quilt/commit/57e6a4d5cb4fc13748ab5f2563dec78a032555ed) Thanks [@lemonmade](https://github.com/lemonmade)! - Update browser serializations to use a custom element instead of `<meta>`
+
 ## 0.1.5
 
 ### Patch Changes

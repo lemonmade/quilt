@@ -54,7 +54,7 @@
     "@types/common-tags": "^1.8.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.8.1",
+    "@quilted/quilt": "workspace:^0.8.2",
     "@quilted/rollup": "workspace:^0.2.45"
   },
   "peerDependenciesMeta": {
