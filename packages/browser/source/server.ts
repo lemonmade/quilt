@@ -219,9 +219,9 @@ export class BrowserResponseSerializations {
   readonly #serializations = new Map<string, unknown>();
 
   get value() {
-    return [...this.#serializations].map(([id, value]) => ({
-      id,
-      value: encode(typeof value === 'function' ? value() : value),
+    return [...this.#serializations].map(([name, content]) => ({
+      name,
+      content: encode(typeof content === 'function' ? content() : content),
     }));
   }
 
@@ -245,11 +245,11 @@ export class BrowserResponseSerializations {
     return this.#serializations.get(id) as any;
   }
 
-  set(id: string, data: unknown) {
-    if (data === undefined) {
-      this.#serializations.delete(id);
+  set(name: string, content: unknown) {
+    if (content === undefined) {
+      this.#serializations.delete(name);
     } else {
-      this.#serializations.set(id, data);
+      this.#serializations.set(name, content);
     }
   }
 

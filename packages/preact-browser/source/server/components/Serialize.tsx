@@ -1,13 +1,13 @@
 import {useResponseSerialization} from '../hooks/serialized.ts';
 
 export function Serialize<T = unknown>({
-  id,
-  value,
+  name,
+  content,
 }: {
-  id: string;
-  value: T | (() => T);
+  name: string;
+  content: T | (() => T);
 }) {
   if (typeof document === 'object') return null;
-  useResponseSerialization(id, value);
+  useResponseSerialization(name, content);
   return null;
 }

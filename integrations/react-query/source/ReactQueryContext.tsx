@@ -35,8 +35,8 @@ export function ReactQueryContext({
       </HydrationBoundary>
       {typeof document === 'undefined' && (
         <Serialize
-          id={SERIALIZATION_ID}
-          value={() =>
+          name={SERIALIZATION_ID}
+          content={() =>
             dehydrate(client, {
               shouldDehydrateQuery: () => true,
             })
