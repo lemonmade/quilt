@@ -30,7 +30,7 @@ export class Browser implements BrowserDetails {
 }
 
 export class BrowserCookies implements Cookies {
-  private readonly cookieSignals = signal(
+  readonly #cookieSignals = signal(
     new Map<string, Signal<string>>(
       Object.entries(JSCookie.get()).map(([cookie, value]) => [
         cookie,
@@ -40,25 +40,25 @@ export class BrowserCookies implements Cookies {
   );
 
   has(cookie: string) {
-    return this.cookieSignals.value.get(cookie)?.value != null;
+    return this.#cookieSignals.value.get(cookie)?.value != null;
   }
 
   get(cookie: string) {
-    return this.cookieSignals.value.get(cookie)?.value;
+    return this.#cookieSignals.value.get(cookie)?.value;
   }
 
   set(cookie: string, value: string, options?: CookieOptions) {
     JSCookie.set(cookie, value, options);
-    this.updateCookie(cookie);
+    this.#updateCookie(cookie);
   }
 
   delete(cookie: string, options?: CookieOptions) {
     JSCookie.remove(cookie, options);
-    this.updateCookie(cookie);
+    this.#updateCookie(cookie);
   }
 
   *entries() {
-    const cookies = this.cookieSignals.peek();
+    const cookies = this.#cookieSignals.peek();
 
     for (const [cookie, signal] of cookies) {
       yield [cookie, signal.peek()] as const;
@@ -66,12 +66,12 @@ export class BrowserCookies implements Cookies {
   }
 
   *[Symbol.iterator]() {
-    yield* this.cookieSignals.peek().keys();
+    yield* this.#cookieSignals.peek().keys();
   }
 
-  private updateCookie(cookie: string) {
+  #updateCookie(cookie: string) {
     const value = JSCookie.get(cookie);
-    const cookieSignals = this.cookieSignals.peek();
+    const cookieSignals = this.#cookieSignals.peek();
     const cookieSignal = cookieSignals.get(cookie);
 
     if (value) {
@@ -81,26 +81,26 @@ export class BrowserCookies implements Cookies {
         const newCookie = signal(value);
         const newCookies = new Map(cookieSignals);
         newCookies.set(cookie, newCookie);
-        this.cookieSignals.value = newCookies;
+        this.#cookieSignals.value = newCookies;
       }
     } else if (cookieSignal) {
       const newCookies = new Map(cookieSignals);
       newCookies.delete(cookie);
-      this.cookieSignals.value = newCookies;
+      this.#cookieSignals.value = newCookies;
     }
   }
 }
 
 export class BrowserTitle {
-  private titleElement = document.head.querySelector('title');
-  private titleValues = signal<Signal<string>[]>([]);
+  #titleElement = document.head.querySelector('title');
+  #titleValues = signal<Signal<string>[]>([]);
 
   add = (title: string | ReadonlySignal<string>) => {
     const titleSignal = isSignal(title) ? title : signal(title);
-    const newTitleValues = [...this.titleValues.peek(), titleSignal];
-    this.titleValues.value = newTitleValues;
+    const newTitleValues = [...this.#titleValues.peek(), titleSignal];
+    this.#titleValues.value = newTitleValues;
     return () => {
-      this.titleValues.value = this.titleValues.value.filter(
+      this.#titleValues.value = this.#titleValues.value.filter(
         (existingTitle) => existingTitle !== titleSignal,
       );
     };
@@ -108,25 +108,25 @@ export class BrowserTitle {
 
   constructor() {
     effect(() => {
-      const title = this.titleValues.value.at(-1)?.value;
+      const title = this.#titleValues.value.at(-1)?.value;
       if (title == null) return;
 
-      if (this.titleElement) {
-        this.titleElement.textContent = title;
+      if (this.#titleElement) {
+        this.#titleElement.textContent = title;
       } else {
-        this.titleElement = document.createElement('title');
-        this.titleElement.textContent = title;
-        document.head.appendChild(this.titleElement);
+        this.#titleElement = document.createElement('title');
+        this.#titleElement.textContent = title;
+        document.head.appendChild(this.#titleElement);
       }
     });
   }
 }
 
 export class BrowserHeadElements<Element extends keyof HTMLElementTagNameMap> {
-  private initialElements: readonly HTMLElementTagNameMap[Element][];
+  #initialElements: readonly HTMLElementTagNameMap[Element][];
 
   constructor(readonly element: Element) {
-    this.initialElements = Array.from(document.head.querySelectorAll(element));
+    this.#initialElements = Array.from(document.head.querySelectorAll(element));
   }
 
   add = (
@@ -138,7 +138,7 @@ export class BrowserHeadElements<Element extends keyof HTMLElementTagNameMap> {
 
     setAttributes(element, attributes);
 
-    const existingElement = this.initialElements.find((existingElement) => {
+    const existingElement = this.#initialElements.find((existingElement) => {
       return element.isEqualNode(existingElement);
     });
 
@@ -220,32 +220,106 @@ export class BrowserSerializationElement<T = unknown> extends HTMLElement {
 }
 
 export class BrowserSerializations {
-  private readonly serializations = new Map<string, unknown>(
-    Array.from(
-      document.querySelectorAll<HTMLElement>(
-        DEFAULT_SERIALIZATION_ELEMENT_NAME,
-      ),
-    ).map((node) => [
-      node.getAttribute('name') ?? '_default',
-      getSerializedFromNode(node),
-    ]),
+  readonly #serializations = new Map<string, unknown>(
+    getSerializationsFromDocument(),
   );
+  #serializationResolvers = new Map<string, Set<(data: any) => void>>();
+  #teardownMutationObserver: (() => void) | undefined;
 
-  get(id: string) {
-    return this.serializations.get(id) as any;
+  get<T = unknown>(id: string) {
+    return this.#serializations.get(id) as T;
   }
 
   set(id: string, data: unknown) {
     if (data === undefined) {
-      this.serializations.delete(id);
+      this.#serializations.delete(id);
     } else {
-      this.serializations.set(id, data);
+      this.#serializations.set(id, data);
+
+      if (this.#serializationResolvers.has(id)) {
+        for (const resolve of this.#serializationResolvers.get(id) ?? []) {
+          resolve(data);
+        }
+
+        this.#serializationResolvers.delete(id);
+        if (this.#serializationResolvers.size === 0) {
+          this.#teardownMutationObserver?.();
+        }
+      }
     }
   }
 
-  *[Symbol.iterator]() {
-    yield* this.serializations;
+  update(
+    entries: Iterable<[string, unknown]> = getSerializationsFromDocument(),
+  ) {
+    for (const [id, data] of entries) {
+      this.set(id, data);
+    }
   }
+
+  waitFor<T = unknown>(id: string): Promise<T> {
+    if (this.#serializations.has(id)) {
+      return Promise.resolve(this.get<T>(id));
+    }
+
+    return new Promise<T>((resolve) => {
+      this.#addResolver<T>(id, resolve);
+    });
+  }
+
+  *[Symbol.iterator]() {
+    yield* this.#serializations;
+  }
+
+  #addResolver<T = unknown>(id: string, resolver: (data: T) => void) {
+    const needsToStart = this.#serializationResolvers == null;
+    const resolvers = this.#serializationResolvers.get(id) ?? new Set();
+    resolvers.add(resolver);
+    this.#serializationResolvers.set(id, resolvers);
+
+    if (needsToStart) {
+      const mutationObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.type === 'childList') {
+            for (const node of mutation.addedNodes) {
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                this.update(
+                  Array.from(
+                    (node as Element).querySelectorAll(
+                      DEFAULT_SERIALIZATION_ELEMENT_NAME,
+                    ),
+                  ).map(serializationEntryFromNode),
+                );
+              }
+            }
+          }
+        }
+      });
+
+      this.#teardownMutationObserver = () => {
+        mutationObserver.disconnect();
+        this.#teardownMutationObserver = undefined;
+      };
+
+      mutationObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+    }
+  }
+}
+
+function getSerializationsFromDocument() {
+  return Array.from(
+    document.querySelectorAll<HTMLElement>(DEFAULT_SERIALIZATION_ELEMENT_NAME),
+  ).map(serializationEntryFromNode);
+}
+
+function serializationEntryFromNode<T = unknown>(node: Element): [string, T] {
+  return [
+    node.getAttribute('name') ?? '_default',
+    getSerializedFromNode(node) as any,
+  ];
 }
 
 function getSerializedFromNode<T = unknown>(node: Element): T | undefined {
