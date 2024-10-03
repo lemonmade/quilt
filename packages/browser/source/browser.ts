@@ -279,21 +279,23 @@ export class BrowserSerializations {
 
     if (needsToStart) {
       const mutationObserver = new MutationObserver((mutations) => {
+        const updates = new Map<string, unknown>();
+
         for (const mutation of mutations) {
           if (mutation.type === 'childList') {
             for (const node of mutation.addedNodes) {
               if (node.nodeType === Node.ELEMENT_NODE) {
-                this.update(
-                  Array.from(
-                    (node as Element).querySelectorAll(
-                      DEFAULT_SERIALIZATION_ELEMENT_NAME,
-                    ),
-                  ).map(serializationEntryFromNode),
-                );
+                for (const serialization of (node as Element).querySelectorAll(
+                  DEFAULT_SERIALIZATION_ELEMENT_NAME,
+                )) {
+                  updates.set(...serializationEntryFromNode(serialization));
+                }
               }
             }
           }
         }
+
+        this.update(updates);
       });
 
       this.#teardownMutationObserver = () => {
