@@ -1,5 +1,13 @@
 # @quilted/browser
 
+## 0.1.7
+
+### Patch Changes
+
+- [`a861bd6`](https://github.com/lemonmade/quilt/commit/a861bd6c7213982882463e800af776b2ec6b15c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more streaming-friendly APIs
+
+- [`655da1f`](https://github.com/lemonmade/quilt/commit/655da1f9572b164e28d9b52b65ce05030d5494e0) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for waiting on streamed serializations
+
 ## 0.1.6
 
 ### Patch Changes

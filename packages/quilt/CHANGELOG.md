@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.8.3
+
+### Patch Changes
+
+- [`a861bd6`](https://github.com/lemonmade/quilt/commit/a861bd6c7213982882463e800af776b2ec6b15c3) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more streaming-friendly APIs
+
 ## 0.8.2
 
 ### Patch Changes
