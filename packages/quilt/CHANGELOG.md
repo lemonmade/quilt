@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.8.4
+
+### Patch Changes
+
+- [`ce1952f`](https://github.com/lemonmade/quilt/commit/ce1952f54e53273c1e04b7c23a74b621e2b421e2) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing `renderToStringWithServerContext()` export
+
 ## 0.8.3
 
 ### Patch Changes
