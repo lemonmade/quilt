@@ -22,12 +22,9 @@ declare module 'quilt:module/request-router' {
 }
 
 declare module 'quilt:module/assets' {
-  import type {
-    AssetsCacheKey,
-    BrowserAssets as BrowserAssetsType,
-  } from '@quilted/assets';
+  import type {BrowserAssets as BrowserAssetsType} from '@quilted/assets';
 
   export const BrowserAssets: {
-    new <CacheKey = AssetsCacheKey>(): BrowserAssetsType<CacheKey>;
+    new (): BrowserAssetsType;
   };
 }

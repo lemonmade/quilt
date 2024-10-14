@@ -1,4 +1,3 @@
-import type {AssetsCacheKey} from '../cache-key.ts';
 import type {
   Asset,
   BrowserAssets,
@@ -24,18 +23,17 @@ interface NormalizedAssetBuildManifest
   >;
 }
 
-export class BrowserAssetsFromManifests<CacheKey = AssetsCacheKey>
-  implements BrowserAssets<CacheKey>
-{
-  readonly cacheKey: BrowserAssets<CacheKey>['cacheKey'];
-  #manifestMap: Map<string, NormalizedAssetBuildManifest>;
+export class BrowserAssetsFromManifests implements BrowserAssets {
+  readonly cacheKey: (request: Request) => string | undefined;
+  readonly #manifestMap: Map<string, NormalizedAssetBuildManifest>;
 
   constructor(
     manifests: AssetBuildManifest[],
     {
       cacheKey,
       defaultManifest,
-    }: Pick<BrowserAssets<CacheKey>, 'cacheKey'> & {
+    }: {
+      cacheKey?(request: Request): Record<string, any>;
       defaultManifest?: AssetBuildManifest;
     } = {},
   ) {
@@ -55,12 +53,22 @@ export class BrowserAssetsFromManifests<CacheKey = AssetsCacheKey>
       );
     }
 
-    this.cacheKey = cacheKey;
     this.#manifestMap = manifestMap;
+
+    const cacheKeyCache = new WeakMap<Request, string>();
+    this.cacheKey = (request) => {
+      if (cacheKey == null) return undefined;
+      if (cacheKeyCache.has(request)) return cacheKeyCache.get(request)!;
+
+      const key = normalizeCacheKey(cacheKey(request));
+      cacheKeyCache.set(request, key);
+
+      return key;
+    };
   }
 
-  entry(options?: BrowserAssetSelector<CacheKey>) {
-    const manifest = resolveManifest(this.#manifestMap, options?.cacheKey);
+  entry(options?: BrowserAssetSelector) {
+    const manifest = this.#resolveManifest(options?.request);
 
     if (manifest == null) return {styles: [], scripts: []};
 
@@ -71,10 +79,10 @@ export class BrowserAssetsFromManifests<CacheKey = AssetsCacheKey>
   }
 
   modules(
-    modules: NonNullable<BrowserAssetSelector<CacheKey>['modules']>,
-    options?: Pick<BrowserAssetSelector<CacheKey>, 'cacheKey'>,
+    modules: NonNullable<BrowserAssetSelector['modules']>,
+    options?: Pick<BrowserAssetSelector, 'request'>,
   ) {
-    const manifest = resolveManifest(this.#manifestMap, options?.cacheKey);
+    const manifest = this.#resolveManifest(options?.request);
 
     if (manifest == null) return {styles: [], scripts: []};
 
@@ -83,21 +91,17 @@ export class BrowserAssetsFromManifests<CacheKey = AssetsCacheKey>
       modules,
     });
   }
+
+  #resolveManifest(request?: Request) {
+    const manifestMap = this.#manifestMap;
+    const cacheKey = request ? this.cacheKey(request) : undefined;
+    const manifest = cacheKey ? manifestMap.get(cacheKey) : undefined;
+
+    return manifest ?? manifestMap.get(DEFAULT_CACHE_KEY_NAME);
+  }
 }
 
-function resolveManifest<CacheKey = AssetsCacheKey>(
-  manifestMap: Map<string, NormalizedAssetBuildManifest>,
-  cacheKey?: CacheKey,
-): NormalizedAssetBuildManifest | undefined {
-  if (cacheKey == null) return manifestMap.get(DEFAULT_CACHE_KEY_NAME);
-
-  return (
-    manifestMap.get(normalizeCacheKey(cacheKey)) ??
-    manifestMap.get(DEFAULT_CACHE_KEY_NAME)
-  );
-}
-
-function normalizeCacheKey<CacheKey>(cacheKey: CacheKey) {
+function normalizeCacheKey(cacheKey: unknown) {
   const searchParams = new URLSearchParams();
 
   for (const key of Object.keys(cacheKey as any).sort()) {
@@ -172,12 +176,12 @@ function normalizeAssetBuildManifest(
   return normalized;
 }
 
-function createBrowserAssetsEntryFromManifest<CacheKey = AssetsCacheKey>(
+function createBrowserAssetsEntryFromManifest(
   manifest: NormalizedAssetBuildManifest,
   {
     entry,
     modules,
-  }: Pick<BrowserAssetSelector<CacheKey>, 'modules'> & {entry?: string} = {},
+  }: Pick<BrowserAssetSelector, 'modules'> & {entry?: string} = {},
 ): BrowserAssetsEntry {
   const styles = new Set<Asset>();
   const scripts = new Set<Asset>();

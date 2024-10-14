@@ -13,7 +13,7 @@ export * from '@quilted/browser/server';
 
 export {BrowserDetailsContext} from './context.ts';
 
-export {useAssetsCacheKey, useModuleAssets} from './server/hooks/assets.ts';
+export {useModuleAssets} from './server/hooks/assets.ts';
 export {useBrowserResponseAction} from './server/hooks/browser-response-action.ts';
 export {useCacheControl} from './server/hooks/cache-control.ts';
 export {useContentSecurityPolicy} from './server/hooks/content-security-policy.ts';

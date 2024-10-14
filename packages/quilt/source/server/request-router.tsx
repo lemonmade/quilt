@@ -7,7 +7,6 @@ import {
 import {
   styleAssetPreloadAttributes,
   scriptAssetPreloadAttributes,
-  type AssetsCacheKey,
   type BrowserAssets,
   type BrowserAssetsEntry,
 } from '@quilted/assets';
@@ -50,7 +49,6 @@ export interface RenderToResponseOptions {
   readonly stream?: 'headers' | false;
   readonly headers?: HeadersInit;
   readonly assets?: BrowserAssets;
-  readonly cacheKey?: Partial<AssetsCacheKey>;
   readonly serializations?: Iterable<[string, unknown]>;
   readonly renderHTML?: boolean | 'fragment' | 'document' | RenderHTMLFunction;
   waitUntil?(promise: Promise<any>): void;
@@ -81,7 +79,6 @@ export async function renderToResponse(
     request,
     assets,
     status: explicitStatus,
-    cacheKey: explicitCacheKey,
     headers: explicitHeaders,
     serializations: explicitSerializations,
     waitUntil = noop,
@@ -91,13 +88,8 @@ export async function renderToResponse(
 
   const baseURL = (request as any).URL ?? new URL(request.url);
 
-  const cacheKey =
-    explicitCacheKey ??
-    (((await assets?.cacheKey?.(request)) ?? {}) as AssetsCacheKey);
-
   const browserResponse = new BrowserResponse({
     request,
-    cacheKey,
     status: explicitStatus,
     headers: new Headers(explicitHeaders),
     serializations: explicitSerializations,
@@ -198,15 +190,16 @@ export async function renderToResponse(
 
       writer.write(`<!DOCTYPE html>`);
 
-      const [synchronousAssets, preloadAssets] = await Promise.all([
-        assets?.entry({
-          cacheKey,
-          modules: browserResponse.assets.get({timing: 'load'}),
-        }),
-        assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
-          cacheKey,
-        }),
-      ]);
+      const synchronousAssets = assets?.entry({
+        request,
+        modules: browserResponse.assets.get({timing: 'load'}),
+      });
+      const preloadAssets = assets?.modules(
+        browserResponse.assets.get({timing: 'preload'}),
+        {
+          request,
+        },
+      );
 
       if (synchronousAssets) {
         for (const style of synchronousAssets.styles) {
@@ -294,15 +287,17 @@ export async function renderToResponse(
 
       if (element != null) writer.write(`</div>`);
 
-      const [newSynchronousAssets, newPreloadAssets] = await Promise.all([
-        assets?.entry({
-          cacheKey,
-          modules: browserResponse.assets.get({timing: 'load'}),
-        }),
-        assets?.modules(browserResponse.assets.get({timing: 'preload'}), {
-          cacheKey,
-        }),
-      ]);
+      const newSynchronousAssets = assets?.entry({
+        request,
+        modules: browserResponse.assets.get({timing: 'load'}),
+      });
+
+      const newPreloadAssets = assets?.modules(
+        browserResponse.assets.get({timing: 'preload'}),
+        {
+          request,
+        },
+      );
 
       if (newSynchronousAssets) {
         const diffedSynchronousAssets = diffBrowserAssetsEntries(

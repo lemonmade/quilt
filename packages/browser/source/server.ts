@@ -1,7 +1,6 @@
 import {resolveSignalOrValue, type ReadonlySignal} from '@quilted/signals';
 import type {
   AssetLoadTiming,
-  AssetsCacheKey,
   BrowserAssetModuleSelector,
 } from '@quilted/assets';
 
@@ -39,14 +38,12 @@ export class BrowserResponse implements BrowserDetails {
     status,
     headers = new Headers(),
     locale = getLocaleFromRequest(request) ?? 'en',
-    cacheKey,
     serializations,
   }: {
     request: Request;
     status?: number;
     headers?: Headers;
     locale?: string;
-    cacheKey?: Partial<AssetsCacheKey>;
     serializations?: Iterable<[string, unknown]>;
   }) {
     this.request = request;
@@ -56,7 +53,7 @@ export class BrowserResponse implements BrowserDetails {
       headers,
       request.headers.get('Cookie') ?? undefined,
     );
-    this.assets = new BrowserResponseAssets({cacheKey});
+    this.assets = new BrowserResponseAssets();
     this.locale = {value: locale};
     this.serializations = new BrowserResponseSerializations(
       new Map(serializations),
@@ -272,7 +269,6 @@ const PRIORITY_BY_TIMING = new Map(
 );
 
 export class BrowserResponseAssets {
-  readonly cacheKey: Partial<AssetsCacheKey>;
   readonly #usedModulesWithTiming = new Map<
     string,
     {
@@ -280,14 +276,6 @@ export class BrowserResponseAssets {
       scripts: AssetLoadTiming;
     }
   >();
-
-  constructor({cacheKey}: {cacheKey?: Partial<AssetsCacheKey>} = {}) {
-    this.cacheKey = {...cacheKey};
-  }
-
-  updateCacheKey(cacheKey: Partial<AssetsCacheKey>) {
-    Object.assign(this.cacheKey, cacheKey);
-  }
 
   use(
     id: string,

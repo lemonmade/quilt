@@ -1,5 +1,3 @@
-import type {AssetsCacheKey} from './cache-key.ts';
-
 export interface Asset {
   source: string;
   attributes?: Record<string, string | boolean | number>;
@@ -7,12 +5,12 @@ export interface Asset {
 
 export type AssetLoadTiming = 'never' | 'preload' | 'load';
 
-export interface BrowserAssetSelector<CacheKey = AssetsCacheKey> {
+export interface BrowserAssetSelector {
   id?: string;
   modules?: Iterable<
     BrowserAssetModuleSelector | BrowserAssetModuleSelector['id']
   >;
-  cacheKey?: CacheKey;
+  request?: Request;
 }
 
 export interface BrowserAssetModuleSelector {
@@ -21,15 +19,12 @@ export interface BrowserAssetModuleSelector {
   scripts?: boolean;
 }
 
-export interface BrowserAssets<CacheKey = AssetsCacheKey> {
-  entry(
-    options?: BrowserAssetSelector<CacheKey>,
-  ): BrowserAssetsEntry | Promise<BrowserAssetsEntry>;
+export interface BrowserAssets {
+  entry(options?: BrowserAssetSelector): BrowserAssetsEntry;
   modules(
-    modules: NonNullable<BrowserAssetSelector<CacheKey>['modules']>,
-    options?: Pick<BrowserAssetSelector<CacheKey>, 'cacheKey'>,
-  ): BrowserAssetsEntry | Promise<BrowserAssetsEntry>;
-  cacheKey?(request: Request): Partial<CacheKey> | Promise<Partial<CacheKey>>;
+    modules: NonNullable<BrowserAssetSelector['modules']>,
+    options?: Pick<BrowserAssetSelector, 'request'>,
+  ): BrowserAssetsEntry;
 }
 
 export interface BrowserAssetsEntry {

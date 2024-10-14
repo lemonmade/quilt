@@ -1,4 +1,3 @@
-export type {AssetsCacheKey} from './cache-key.ts';
 export type {
   Asset,
   AssetLoadTiming,
