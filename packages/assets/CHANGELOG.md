@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.5
+
+### Patch Changes
+
+- [`ed66780`](https://github.com/lemonmade/quilt/commit/ed66780bfe57daa031d92d0787bde2f424536e30) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove cache key and simplify browser assets type
+
 ## 0.1.4
 
 ### Patch Changes

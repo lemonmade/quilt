@@ -1,7 +1,7 @@
 {
   "name": "@quilted/quilt",
   "type": "module",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -244,12 +244,12 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/assets": "workspace:^0.1.2",
+    "@quilted/assets": "workspace:^0.1.5",
     "@quilted/async": "workspace:^0.4.2",
     "@quilted/events": "workspace:^2.1.1",
     "@quilted/graphql": "workspace:^3.3.5",
     "@quilted/preact-async": "workspace:^0.1.2",
-    "@quilted/preact-browser": "workspace:^0.1.8",
+    "@quilted/preact-browser": "workspace:^0.1.9",
     "@quilted/preact-context": "workspace:^0.1.2",
     "@quilted/preact-graphql": "workspace:^0.1.0",
     "@quilted/preact-localize": "workspace:^0.3.0",
