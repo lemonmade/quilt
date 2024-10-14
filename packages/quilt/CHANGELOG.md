@@ -1,5 +1,15 @@
 # @quilted/quilt
 
+## 0.8.5
+
+### Patch Changes
+
+- [`ed66780`](https://github.com/lemonmade/quilt/commit/ed66780bfe57daa031d92d0787bde2f424536e30) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove cache key and simplify browser assets type
+
+- Updated dependencies [[`ed66780`](https://github.com/lemonmade/quilt/commit/ed66780bfe57daa031d92d0787bde2f424536e30)]:
+  - @quilted/preact-browser@0.1.9
+  - @quilted/assets@0.1.5
+
 ## 0.8.4
 
 ### Patch Changes
