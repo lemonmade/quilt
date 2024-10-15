@@ -11,9 +11,15 @@ export {
 export type {AssetLoadTiming} from '@quilted/assets';
 export * from '@quilted/browser/server';
 
-export {BrowserDetailsContext} from './context.ts';
+export {
+  BrowserDetailsContext,
+  useBrowserDetails,
+  BrowserAssetsManifestContext,
+  useBrowserAssetsManifest,
+} from './context.ts';
 
 export {useModuleAssets} from './server/hooks/assets.ts';
+export {useBrowserResponse} from './server/hooks/browser-response.ts';
 export {useBrowserResponseAction} from './server/hooks/browser-response-action.ts';
 export {useCacheControl} from './server/hooks/cache-control.ts';
 export {useContentSecurityPolicy} from './server/hooks/content-security-policy.ts';

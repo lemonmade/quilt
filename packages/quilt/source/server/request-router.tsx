@@ -11,7 +11,6 @@ import {
   type BrowserAssetsEntry,
 } from '@quilted/assets';
 import {
-  BrowserDetails,
   BrowserResponse,
   ScriptAsset,
   ScriptAssetPreload,
@@ -22,17 +21,6 @@ import {
 import {HTMLResponse, EnhancedResponse} from '@quilted/request-router';
 
 import {ServerContext} from './ServerContext.tsx';
-
-export async function renderToStringWithServerContext(
-  element: VNode<any>,
-  {browser}: {browser?: BrowserDetails} = {},
-) {
-  const rendered = await renderToStringAsync(
-    <ServerContext browser={browser}>{element}</ServerContext>,
-  );
-
-  return rendered;
-}
 
 export interface RenderHTMLFunction {
   (
@@ -101,9 +89,11 @@ export async function renderToResponse(
     let rendered: string;
 
     try {
-      rendered = await renderToStringWithServerContext(element, {
-        browser: browserResponse,
-      });
+      rendered = await renderToStringAsync(
+        <ServerContext assets={assets} browser={browserResponse}>
+          {element}
+        </ServerContext>,
+      );
     } catch (error) {
       if (error instanceof Response) {
         const mergedHeaders = new Headers(browserResponse.headers);
@@ -149,9 +139,11 @@ export async function renderToResponse(
         // this, they will explicitly turn on streaming and will have to use some in-app
         // to manually handle redirects (e.g., by rendering a script tag that uses JavaScript
         // to redirect)
-        const rendered = await renderToStringWithServerContext(element, {
-          browser: browserResponse,
-        });
+        const rendered = await renderToStringAsync(
+          <ServerContext assets={assets} browser={browserResponse}>
+            {element}
+          </ServerContext>,
+        );
 
         appWriter.write(rendered);
       }

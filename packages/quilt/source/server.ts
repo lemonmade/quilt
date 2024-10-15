@@ -11,7 +11,7 @@ export {createRequestRouterLocalization} from '@quilted/preact-localize/request-
 
 export {
   renderToResponse,
-  renderToStringWithServerContext,
   type RenderToResponseOptions,
   type RenderHTMLFunction,
 } from './server/request-router.tsx';
+export {ServerContext} from './server/ServerContext.tsx';

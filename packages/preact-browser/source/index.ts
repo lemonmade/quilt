@@ -1,7 +1,12 @@
 export * from '@quilted/browser';
 
 export {render, hydrate} from './browser.tsx';
-export {BrowserDetailsContext, useBrowserDetails} from './context.ts';
+export {
+  BrowserDetailsContext,
+  useBrowserDetails,
+  BrowserAssetsManifestContext,
+  useBrowserAssetsManifest,
+} from './context.ts';
 
 export {useAlternateUrl} from './hooks/alternate-url.ts';
 export {useBodyAttributes} from './hooks/body-attributes.ts';
