@@ -1,7 +1,10 @@
 import {Suspense} from 'preact/compat';
 
 import {createRender} from '@quilted/quilt/testing';
-import {BrowserContext, BrowserTestMock} from '@quilted/quilt/browser/testing';
+import {
+  BrowserDetailsContext,
+  BrowserTestMock,
+} from '@quilted/quilt/browser/testing';
 import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 import {GraphQLCache} from '@quilted/quilt/graphql';
@@ -44,7 +47,7 @@ export const renderApp = createRender<
 
     return (
       <AppContextReact.Provider value={context}>
-        <BrowserContext browser={browser}>
+        <BrowserDetailsContext.Provider value={browser}>
           <Localization locale={locale}>
             <Navigation router={router}>
               <GraphQLTesting
@@ -55,7 +58,7 @@ export const renderApp = createRender<
               </GraphQLTesting>
             </Navigation>
           </Localization>
-        </BrowserContext>
+        </BrowserDetailsContext.Provider>
       </AppContextReact.Provider>
     );
   },

@@ -58,20 +58,18 @@ describe('trpc', () => {
       `,
       'browser.tsx': multiline`
         import '@quilted/quilt/globals';
-        import {hydrate} from 'preact';
-        import {Browser, BrowserContext} from '@quilted/quilt/browser';
+        import {hydrate} from '@quilted/quilt/browser';
         import {httpBatchLink} from '@trpc/client';
         import {QueryClient} from '@tanstack/react-query';
 
         import {App, trpc} from './App.tsx';
 
         const element = document.querySelector('#app')!;
-        const browser = new Browser();
 
         const trpcClient = trpc.createClient({
           links: [
             httpBatchLink({
-              url: new URL('/api', browser.request.url).href,
+              url: new URL('/api').href,
             }),
           ],
         });
@@ -79,10 +77,7 @@ describe('trpc', () => {
         const queryClient = new QueryClient();
 
         hydrate(
-          <BrowserContext browser={browser}>
-            <App trpcClient={trpcClient} queryClient={queryClient} />
-          </BrowserContext>,
-          element,
+          <App trpcClient={trpcClient} queryClient={queryClient} />,
         );
       `,
       'server.tsx': multiline`
