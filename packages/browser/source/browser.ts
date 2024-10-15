@@ -249,6 +249,10 @@ export class BrowserSerializations {
     }
   }
 
+  delete(id: string) {
+    this.#serializations.delete(id);
+  }
+
   update(
     entries: Iterable<[string, unknown]> = getSerializationsFromDocument(),
   ) {
