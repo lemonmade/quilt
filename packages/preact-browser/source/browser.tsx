@@ -4,16 +4,17 @@ import {
   type ComponentChild,
 } from 'preact';
 
-import {Browser} from '@quilted/browser';
+import {Browser, type BrowserDetails} from '@quilted/browser';
 
 import {BrowserDetailsContext} from './context.ts';
 
 export function render(
   component: ComponentChild,
-  {element}: {element?: string | Element} = {},
+  {
+    element,
+    browser = new Browser(),
+  }: {element?: string | Element; browser?: BrowserDetails} = {},
 ) {
-  const browser = new Browser();
-
   return preactRender(
     <BrowserDetailsContext.Provider value={browser}>
       {component}
@@ -24,10 +25,11 @@ export function render(
 
 export function hydrate(
   component: ComponentChild,
-  {element}: {element?: string | Element} = {},
+  {
+    element,
+    browser = new Browser(),
+  }: {element?: string | Element; browser?: BrowserDetails} = {},
 ) {
-  const browser = new Browser();
-
   return preactHydrate(
     <BrowserDetailsContext.Provider value={browser}>
       {component}
