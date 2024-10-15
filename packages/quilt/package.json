@@ -1,7 +1,7 @@
 {
   "name": "@quilted/quilt",
   "type": "module",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -245,11 +245,11 @@
   },
   "dependencies": {
     "@quilted/assets": "workspace:^0.1.5",
-    "@quilted/async": "workspace:^0.4.2",
+    "@quilted/async": "workspace:^0.4.22",
     "@quilted/events": "workspace:^2.1.1",
-    "@quilted/graphql": "workspace:^3.3.5",
+    "@quilted/graphql": "workspace:^3.3.8",
     "@quilted/preact-async": "workspace:^0.1.2",
-    "@quilted/preact-browser": "workspace:^0.1.9",
+    "@quilted/preact-browser": "workspace:^0.1.10",
     "@quilted/preact-context": "workspace:^0.1.2",
     "@quilted/preact-graphql": "workspace:^0.1.0",
     "@quilted/preact-localize": "workspace:^0.3.0",

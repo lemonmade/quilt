@@ -1,5 +1,13 @@
 # @quilted/preact-browser
 
+## 0.1.10
+
+### Patch Changes
+
+- [`d409c19`](https://github.com/lemonmade/quilt/commit/d409c1930834449160e90b6bedf0fe3f7325d4b0) Thanks [@lemonmade](https://github.com/lemonmade)! - Add more server rendering hooks
+
+- [#843](https://github.com/lemonmade/quilt/pull/843) [`5a8036d`](https://github.com/lemonmade/quilt/commit/5a8036d39d93c576812428ecc8fe537a30696dba) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser context creation implicit on the client
+
 ## 0.1.9
 
 ### Patch Changes

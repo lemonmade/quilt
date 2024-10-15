@@ -29,7 +29,7 @@
     "@quilted/useful-types": "workspace:^2.0.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.8.5",
+    "@quilted/quilt": "workspace:^0.8.6",
     "@tanstack/react-query": "^5.0.0",
     "preact": "^10.21.0"
   },
