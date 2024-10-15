@@ -1,5 +1,16 @@
 # @quilted/preact-browser
 
+## 0.1.11
+
+### Patch Changes
+
+- [`479fa1f`](https://github.com/lemonmade/quilt/commit/479fa1f923c9e968a248f23c146be8255347533c) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow passing an explicit browser details instance on the client
+
+- [`58cd0f9`](https://github.com/lemonmade/quilt/commit/58cd0f93429b3a0a11353303756deb3d3f9c9903) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser elements render natively for HTML renders
+
+- Updated dependencies [[`58cd0f9`](https://github.com/lemonmade/quilt/commit/58cd0f93429b3a0a11353303756deb3d3f9c9903), [`d1361b4`](https://github.com/lemonmade/quilt/commit/d1361b4c1cf2e67db874d8f20ea83ddb423493af)]:
+  - @quilted/browser@0.1.9
+
 ## 0.1.10
 
 ### Patch Changes
