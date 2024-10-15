@@ -16,6 +16,8 @@ export {
   useBrowserDetails,
   BrowserAssetsManifestContext,
   useBrowserAssetsManifest,
+  BrowserEffectsAreActiveContext,
+  useBrowserEffectsAreActive,
 } from './context.ts';
 
 export {useModuleAssets} from './server/hooks/assets.ts';
@@ -36,9 +38,15 @@ export {
 } from './server/hooks/response-cookie.ts';
 export {useResponseStatus} from './server/hooks/response-status.ts';
 export {useSearchRobots} from './server/hooks/search-robots.ts';
-export {useResponseSerialization} from './server/hooks/serialized.ts';
+export {useResponseSerialization} from './server/hooks/serialization.ts';
 export {useStrictTransportSecurity} from './server/hooks/strict-transport-security.ts';
 export {useViewport} from './server/hooks/viewport.ts';
+
+export {Link} from './components/Link.tsx';
+export {Meta} from './components/Meta.tsx';
+export {ThemeColor} from './components/ThemeColor.tsx';
+export {Title} from './components/Title.tsx';
+export {Favicon} from './components/Favicon.tsx';
 
 export {CacheControl} from './server/components/CacheControl.tsx';
 export {ContentSecurityPolicy} from './server/components/ContentSecurityPolicy.tsx';
@@ -54,7 +62,7 @@ export {ResponseStatus} from './server/components/ResponseStatus.tsx';
 export {ScriptAsset} from './server/components/ScriptAsset.tsx';
 export {ScriptAssetPreload} from './server/components/ScriptAssetPreload.tsx';
 export {SearchRobots} from './server/components/SearchRobots.tsx';
-export {Serialize} from './server/components/Serialize.tsx';
+export {Serialization} from './server/components/Serialization.tsx';
 export {StrictTransportSecurity} from './server/components/StrictTransportSecurity.tsx';
 export {StyleAsset} from './server/components/StyleAsset.tsx';
 export {StyleAssetPreload} from './server/components/StyleAssetPreload.tsx';

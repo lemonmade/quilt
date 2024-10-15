@@ -1,4 +1,5 @@
-import {useViewport} from '../hooks/viewport.ts';
+import {Meta} from '../../components/Meta.tsx';
+import {createViewportContent} from '../hooks/viewport';
 
 /**
  * Adds a `viewport` `<meta>` tag to the `<head>` of the document.
@@ -13,7 +14,14 @@ import {useViewport} from '../hooks/viewport.ts';
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
  */
-export function Viewport(options: Parameters<typeof useViewport>[0]) {
-  useViewport(options);
-  return null;
+export function Viewport({
+  cover = true,
+  interactiveWidget,
+}: Parameters<typeof createViewportContent>[0]) {
+  return (
+    <Meta
+      name="viewport"
+      content={createViewportContent({cover, interactiveWidget})}
+    />
+  );
 }

@@ -1,3 +1,4 @@
+import {useBrowserEffectsAreActive} from '../context.ts';
 import {useTitle} from '../hooks/title.ts';
 
 /**
@@ -9,6 +10,10 @@ import {useTitle} from '../hooks/title.ts';
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/title
  */
 export function Title({children}: {children: Parameters<typeof useTitle>[0]}) {
+  if (!useBrowserEffectsAreActive()) {
+    return children ? <title>{children}</title> : null;
+  }
+
   useTitle(children);
   return null;
 }

@@ -105,3 +105,29 @@ export interface CookiesWritable {
     options?: Pick<CookieOptions, 'path' | 'domain'>,
   ): void;
 }
+
+export interface BrowserRendering {
+  /**
+   * When rendering on the server, this property provides details about the
+   * server rendering process.
+   */
+  readonly server?: {
+    /**
+     * Whether the current render is creating an HTML file. This happens
+     * when calling Quilt’s `renderToHTMLResponse()` or `renderToHTMLString()`
+     * functions.
+     */
+    readonly static: boolean;
+  };
+
+  /**
+   * When rendering on the client, this property provides details about
+   * the client rendering process.
+   */
+  readonly browser?: {
+    /**
+     * Whether the current render is a pre-rendered HTML element.
+     */
+    readonly hydrate: boolean;
+  };
+}

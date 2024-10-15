@@ -167,30 +167,6 @@ export function EmojiFavicon() {
 
 If you use either of these special props, you **must** include the `data:` source in your [content security policy’s `img-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/img-src), as these props use an inline image provided as a data URI.
 
-You can use the `useAlternateUrl` hook or the `Alternate` component in order to specify an alternate URL for this page. You can pass `canonical: true` for these declarations to indicate that this is the [canonical URL of the page](https://developers.google.com/search/docs/advanced/crawling/consolidate-duplicate-urls), or you can pass the `locale` of the alternate page as a string to create a mapping between [the same content in multiple languages](https://developers.google.com/search/docs/advanced/crawling/localized-versions).
-
-```tsx
-import {useAlternateUrl, Alternate} from '@quilted/react-html';
-// also available from '@quilted/quilt/html'
-
-export function App() {
-  // When specifying locale alternates, make sure to also specify
-  // this page’s locale!
-
-  useAlternateUrl('https://en.my-site.com', {locale: 'en'});
-  useAlternateUrl('https://fr.my-site.com', {locale: 'fr'});
-
-  // or...
-
-  return (
-    <>
-      <Alternate url="https://en.my-site.com" locale="en" />
-      <Alternate url="https://fr.my-site.com" locale="fr" />
-    </>
-  );
-}
-```
-
 ## Setting attributes on elements outside your React application
 
 Some libraries require you to put attributes on “special” elements in the DOM, most commonly either on the root `<html>` element, or the `<body>` element. Quilt provides an `<HTMLAttributes>` component and `useHTMLAttributes` hook for applying props to the `<html>` element from within your React app, and `<BodyAttributes>`/ `useBodyAttributes` for applying props to the `<body>` element:

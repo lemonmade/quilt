@@ -1,4 +1,4 @@
-import {useFavicon} from '../hooks/favicon.ts';
+import {Link} from './Link.tsx';
 
 export type Props =
   | {
@@ -51,7 +51,5 @@ export function Favicon({blank, emoji, type, source}: Props) {
     resolvedSource = source!;
   }
 
-  useFavicon(resolvedSource, {type});
-
-  return null;
+  return <Link rel="icon" href={resolvedSource} type={type} />;
 }

@@ -521,6 +521,9 @@ importers:
       '@quilted/preact-router':
         specifier: workspace:^0.2.8
         version: link:../preact-router
+      '@quilted/signals':
+        specifier: workspace:^0.2.0
+        version: link:../signals
     devDependencies:
       '@quilted/request-router':
         specifier: workspace:^0.3.0

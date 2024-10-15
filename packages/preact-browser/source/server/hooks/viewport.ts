@@ -26,11 +26,21 @@ interface Options {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
  */
-export function useViewport({cover = true, interactiveWidget}: Options) {
+export function useViewport(options: Options) {
   if (typeof document === 'object') return;
 
   const browser = useBrowserDetails();
 
+  browser.metas.add({
+    name: 'viewport',
+    content: createViewportContent(options),
+  });
+}
+
+export function createViewportContent({
+  cover = true,
+  interactiveWidget,
+}: Options) {
   const parts = ['width=device-width, initial-scale=1.0, height=device-height'];
 
   if (cover) {
@@ -41,8 +51,5 @@ export function useViewport({cover = true, interactiveWidget}: Options) {
     parts.push(`interactive-widget=${interactiveWidget}`);
   }
 
-  browser.metas.add({
-    name: 'viewport',
-    content: parts.join(', '),
-  });
+  return parts.join(', ');
 }

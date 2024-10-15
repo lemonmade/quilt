@@ -3,7 +3,8 @@ import {
   resolveSignalOrValue,
   type ReadonlySignal,
 } from '@quilted/signals';
-import {useBrowserEffect} from './browser-effect.ts';
+import {useLink} from '@quilted/preact-browser';
+import {useMemo} from 'preact/hooks';
 
 export type Options =
   | {
@@ -26,27 +27,28 @@ export type Options =
 /**
  * Adds a `<link>` tag that specifies an alternate URL for this page.
  */
-export function useAlternateUrl(
+export function useAlternateURL(
   url: string | URL | ReadonlySignal<string | URL>,
   {canonical, locale}: Options,
 ) {
-  useBrowserEffect(
-    (browser) => {
-      const link = computed(() =>
-        canonical
-          ? {
-              rel: 'canonical',
-              href: resolveSignalOrValue(url).toString(),
-            }
-          : {
-              rel: 'alternate',
-              href: resolveSignalOrValue(url).toString(),
-              hrefLang: locale,
-            },
-      );
+  const link = useMemo(
+    () =>
+      computed(() => {
+        const rel = canonical ? 'canonical' : 'alternate';
 
-      return browser.links.add(link);
-    },
+        const link = {
+          rel,
+          href: resolveSignalOrValue(url).toString(),
+        };
+
+        if (locale) {
+          Object.assign(link, {hreflang: locale});
+        }
+
+        return link;
+      }),
     [url, canonical, locale],
   );
+
+  return useLink(link);
 }

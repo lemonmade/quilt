@@ -1,4 +1,4 @@
-import {isValidElement, type VNode, type JSX} from 'preact';
+import {isValidElement, type VNode} from 'preact';
 import {
   renderToStaticMarkup,
   renderToStringAsync,
@@ -11,11 +11,16 @@ import {
   type BrowserAssetsEntry,
 } from '@quilted/assets';
 import {
+  Title,
+  Link,
+  Meta,
+  Serialization,
   BrowserResponse,
   ScriptAsset,
   ScriptAssetPreload,
   StyleAsset,
   StyleAssetPreload,
+  BrowserEffectsAreActiveContext,
 } from '@quilted/preact-browser/server';
 
 import {HTMLResponse, EnhancedResponse} from '@quilted/request-router';
@@ -210,55 +215,54 @@ export async function renderToResponse(
       }
 
       const htmlContent = renderToStaticMarkup(
-        <html {...browserResponse.htmlAttributes.value}>
-          <head>
-            {browserResponse.title.value && (
-              <title>{browserResponse.title.value}</title>
-            )}
-            {browserResponse.links.value.map((link) => (
-              <link {...(link as JSX.HTMLAttributes<HTMLLinkElement>)} />
-            ))}
-            {browserResponse.metas.value.map((meta) => (
-              <meta {...(meta as JSX.HTMLAttributes<HTMLMetaElement>)} />
-            ))}
-            {browserResponse.serializations.value.map(({name, content}) => (
-              // @ts-expect-error a custom element that I don’t want to define,
-              // since it’s an optional part of the browser library.
-              <browser-serialization
-                name={name}
-                content={JSON.stringify(content)}
-              />
-            ))}
-            {synchronousAssets?.scripts.map((script) => (
-              <ScriptAsset
-                key={script.source}
-                asset={script}
-                baseURL={baseURL}
-              />
-            ))}
-            {synchronousAssets?.styles.map((style) => (
-              <StyleAsset key={style.source} asset={style} baseURL={baseURL} />
-            ))}
-            {preloadAssets?.styles.map((style) => (
-              <StyleAssetPreload
-                key={style.source}
-                asset={style}
-                baseURL={baseURL}
-              />
-            ))}
-            {preloadAssets?.scripts.map((script) => (
-              <ScriptAssetPreload
-                key={script.source}
-                asset={script}
-                baseURL={baseURL}
-              />
-            ))}
-          </head>
-          <body
-            {...browserResponse.bodyAttributes.value}
-            dangerouslySetInnerHTML={{__html: '%%CONTENT%%'}}
-          ></body>
-        </html>,
+        <BrowserEffectsAreActiveContext.Provider value={false}>
+          <html {...browserResponse.htmlAttributes.value}>
+            <head>
+              <Title>{browserResponse.title.value}</Title>
+              {browserResponse.links.value.map((link) => (
+                <Link {...link} />
+              ))}
+              {browserResponse.metas.value.map((meta) => (
+                <Meta {...meta} />
+              ))}
+              {browserResponse.serializations.value.map(({name, content}) => (
+                <Serialization name={name} content={content} />
+              ))}
+              {synchronousAssets?.scripts.map((script) => (
+                <ScriptAsset
+                  key={script.source}
+                  asset={script}
+                  baseURL={baseURL}
+                />
+              ))}
+              {synchronousAssets?.styles.map((style) => (
+                <StyleAsset
+                  key={style.source}
+                  asset={style}
+                  baseURL={baseURL}
+                />
+              ))}
+              {preloadAssets?.styles.map((style) => (
+                <StyleAssetPreload
+                  key={style.source}
+                  asset={style}
+                  baseURL={baseURL}
+                />
+              ))}
+              {preloadAssets?.scripts.map((script) => (
+                <ScriptAssetPreload
+                  key={script.source}
+                  asset={script}
+                  baseURL={baseURL}
+                />
+              ))}
+            </head>
+            <body
+              {...browserResponse.bodyAttributes.value}
+              dangerouslySetInnerHTML={{__html: '%%CONTENT%%'}}
+            ></body>
+          </html>
+        </BrowserEffectsAreActiveContext.Provider>,
       );
 
       const [firstChunk, secondChunk] = htmlContent.split('%%CONTENT%%');

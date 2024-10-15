@@ -1,5 +1,6 @@
 import {
   computed,
+  isSignal,
   resolveSignalOrValue,
   type ReadonlySignal,
 } from '@quilted/signals';
@@ -27,23 +28,32 @@ export function useThemeColor(
 ) {
   useBrowserEffect(
     (browser) => {
-      const meta = computed(() => {
-        const meta = {
-          name: 'theme-color',
-          content: resolveSignalOrValue(color),
-        };
-
-        if (prefersColorScheme) {
-          Object.assign(meta, {
-            media: `(prefers-color-scheme: ${prefersColorScheme})`,
-          });
-        }
-
-        return meta;
-      });
+      const meta = isSignal(color)
+        ? computed(() =>
+            createMeta(resolveSignalOrValue(color), prefersColorScheme),
+          )
+        : createMeta(color, prefersColorScheme);
 
       return browser.metas.add(meta);
     },
     [color, prefersColorScheme],
   );
+}
+
+function createMeta(
+  color: string,
+  prefersColorScheme?: Options['prefersColorScheme'],
+) {
+  const meta = {
+    name: 'theme-color',
+    content: color,
+  };
+
+  if (prefersColorScheme) {
+    Object.assign(meta, {
+      media: `(prefers-color-scheme: ${prefersColorScheme})`,
+    });
+  }
+
+  return meta;
 }

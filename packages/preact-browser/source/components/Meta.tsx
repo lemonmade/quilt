@@ -1,4 +1,7 @@
+import type {BrowserMetaAttributes} from '@quilted/browser';
+
 import {useMeta} from '../hooks/meta.ts';
+import {useBrowserEffectsAreActive} from '../context.ts';
 
 /**
  * Adds a `<meta>` tag to the `<head>` of the document with the
@@ -6,9 +9,9 @@ import {useMeta} from '../hooks/meta.ts';
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
  */
-export function Meta(
-  options: Exclude<Parameters<typeof useMeta>[0], false | null | undefined>,
-) {
+export function Meta(options: BrowserMetaAttributes) {
+  if (!useBrowserEffectsAreActive()) return <meta {...(options as any)} />;
+
   useMeta(options);
   return null;
 }

@@ -1,4 +1,6 @@
-import {useThemeColor} from '../hooks/theme-color.ts';
+import {resolveSignalOrValue} from '@quilted/signals';
+import type {useThemeColor} from '../hooks/theme-color.ts';
+import {Meta} from './Meta.tsx';
 
 type Options = NonNullable<Parameters<typeof useThemeColor>[1]>;
 
@@ -22,6 +24,15 @@ export interface Props {
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/theme-color
  */
 export function ThemeColor({value, prefersColorScheme}: Props) {
-  useThemeColor(value, {prefersColorScheme});
-  return null;
+  return (
+    <Meta
+      name="theme-color"
+      content={resolveSignalOrValue(value)}
+      media={
+        prefersColorScheme
+          ? `(prefers-color-scheme: ${prefersColorScheme})`
+          : undefined
+      }
+    />
+  );
 }

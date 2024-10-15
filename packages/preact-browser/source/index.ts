@@ -6,9 +6,10 @@ export {
   useBrowserDetails,
   BrowserAssetsManifestContext,
   useBrowserAssetsManifest,
+  BrowserEffectsAreActiveContext,
+  useBrowserEffectsAreActive,
 } from './context.ts';
 
-export {useAlternateUrl} from './hooks/alternate-url.ts';
 export {useBodyAttributes} from './hooks/body-attributes.ts';
 export {useBrowserEffect} from './hooks/browser-effect.ts';
 export {useBrowserRequest} from './hooks/browser-request.ts';
@@ -22,7 +23,6 @@ export {useSerialized} from './hooks/serialized.ts';
 export {useThemeColor} from './hooks/theme-color.ts';
 export {useTitle} from './hooks/title.ts';
 
-export {Alternate} from './components/Alternate.tsx';
 export {BodyAttributes} from './components/BodyAttributes.tsx';
 export {HTMLAttributes} from './components/HTMLAttributes.tsx';
 export {Link} from './components/Link.tsx';
