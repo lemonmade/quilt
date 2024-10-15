@@ -145,16 +145,16 @@ describe('app builds', () => {
         `,
         'App.tsx': multiline`
           import {useSerialized} from '@quilted/quilt/browser';
-          import {Serialize} from '@quilted/quilt/server';
+          import {Serialization} from '@quilted/quilt/server';
           import Env from 'quilt:module/env';
             
             export default function App() {
-              const builder = useSerialized('Builder');
+              const builder = useSerialized('Builder') ?? Env.BUILDER;
 
               return (
                 <>
                   <div>Hello, {builder}!</div>
-                  <Serialize name="Builder" content={Env.BUILDER} />
+                  <Serialization name="Builder" content={builder} />
                 </>
               );
             }
