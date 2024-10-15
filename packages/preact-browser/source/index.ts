@@ -1,5 +1,6 @@
 export * from '@quilted/browser';
 
+export {render, hydrate} from './browser.tsx';
 export {BrowserDetailsContext, useBrowserDetails} from './context.ts';
 
 export {useAlternateUrl} from './hooks/alternate-url.ts';
@@ -17,7 +18,6 @@ export {useThemeColor} from './hooks/theme-color.ts';
 export {useTitle} from './hooks/title.ts';
 
 export {Alternate} from './components/Alternate.tsx';
-export {BrowserContext} from './components/BrowserContext.tsx';
 export {BodyAttributes} from './components/BodyAttributes.tsx';
 export {HTMLAttributes} from './components/HTMLAttributes.tsx';
 export {Link} from './components/Link.tsx';
