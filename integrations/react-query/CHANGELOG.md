@@ -1,5 +1,14 @@
 # @quilted/react-query
 
+## 0.4.5
+
+### Patch Changes
+
+- [`58cd0f9`](https://github.com/lemonmade/quilt/commit/58cd0f93429b3a0a11353303756deb3d3f9c9903) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser elements render natively for HTML renders
+
+- Updated dependencies [[`58cd0f9`](https://github.com/lemonmade/quilt/commit/58cd0f93429b3a0a11353303756deb3d3f9c9903)]:
+  - @quilted/quilt@0.8.7
+
 ## 0.4.4
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @quilted/browser
 
+## 0.1.9
+
+### Patch Changes
+
+- [`58cd0f9`](https://github.com/lemonmade/quilt/commit/58cd0f93429b3a0a11353303756deb3d3f9c9903) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser elements render natively for HTML renders
+
+- [`d1361b4`](https://github.com/lemonmade/quilt/commit/d1361b4c1cf2e67db874d8f20ea83ddb423493af) Thanks [@lemonmade](https://github.com/lemonmade)! - Add method to delete serialization on the client
+
 ## 0.1.8
 
 ### Patch Changes

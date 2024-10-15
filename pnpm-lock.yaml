@@ -447,7 +447,7 @@ importers:
         specifier: workspace:^0.1.5
         version: link:../assets
       '@quilted/browser':
-        specifier: workspace:^0.1.8
+        specifier: workspace:^0.1.9
         version: link:../browser
       '@quilted/http':
         specifier: workspace:^0.3.0
@@ -513,7 +513,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../localize
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.11
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.0
@@ -635,7 +635,7 @@ importers:
         specifier: workspace:^0.1.2
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.10
+        specifier: workspace:^0.1.11
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.2
@@ -644,7 +644,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-graphql
       '@quilted/preact-localize':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^0.3.4
         version: link:../preact-localize
       '@quilted/preact-performance':
         specifier: workspace:^0.1.0
