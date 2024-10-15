@@ -28,7 +28,19 @@ export class AsyncAction<Data = unknown, Input = unknown> {
   }
 
   get value() {
-    return this.latest?.value ?? this.resolved?.value;
+    const running = this.running;
+    const runningValue = running?.value;
+    if (runningValue !== undefined) return runningValue;
+
+    if (!this.#staleWhileRevalidate && running) {
+      return undefined;
+    }
+
+    if (!this.#staleIfError && this.finished?.error) {
+      return undefined;
+    }
+
+    return this.resolved?.value;
   }
 
   get data() {
@@ -108,11 +120,16 @@ export class AsyncAction<Data = unknown, Input = unknown> {
     lastInput?: Input,
   ) => boolean;
 
+  readonly #staleIfError: boolean;
+  readonly #staleWhileRevalidate: boolean;
+
   constructor(
     fetchFunction: AsyncActionFunction<Data, Input>,
     {
       cached,
       hasChanged = defaultHasChanged,
+      staleIfError = true,
+      staleWhileRevalidate = true,
     }: {
       cached?: AsyncActionRunCache<Data, Input>;
       hasChanged?(
@@ -120,6 +137,8 @@ export class AsyncAction<Data = unknown, Input = unknown> {
         input?: Input,
         lastInput?: Input,
       ): boolean;
+      staleIfError?: boolean;
+      staleWhileRevalidate?: boolean;
     } = {},
   ) {
     this.function = fetchFunction;
@@ -128,6 +147,8 @@ export class AsyncAction<Data = unknown, Input = unknown> {
       finally: this.#finalizeAction,
     });
     this.#hasChanged = hasChanged;
+    this.#staleIfError = staleIfError;
+    this.#staleWhileRevalidate = staleWhileRevalidate;
   }
 
   run = (
