@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.42
+
+### Patch Changes
+
+- [#843](https://github.com/lemonmade/quilt/pull/843) [`5a8036d`](https://github.com/lemonmade/quilt/commit/5a8036d39d93c576812428ecc8fe537a30696dba) Thanks [@lemonmade](https://github.com/lemonmade)! - Make browser context creation implicit on the client
+
 ## 0.2.41
 
 ### Patch Changes

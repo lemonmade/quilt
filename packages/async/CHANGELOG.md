@@ -1,5 +1,11 @@
 # @quilted/async
 
+## 0.4.22
+
+### Patch Changes
+
+- [`c365777`](https://github.com/lemonmade/quilt/commit/c365777123caf40d2e08aa405180ea9efbd34cac) Thanks [@lemonmade](https://github.com/lemonmade)! - Add control for handling `AsyncAction.value` in error and revalidation scenarios
+
 ## 0.4.21
 
 ### Patch Changes
