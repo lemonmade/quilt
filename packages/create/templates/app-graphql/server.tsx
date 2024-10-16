@@ -24,13 +24,17 @@ router.post('/api/graphql', async (request) => {
 
 // For all GET requests, render our React application.
 router.get(async (request) => {
-  const [{App}, {performGraphQLOperation}, {GraphQLCache}, {renderToResponse}] =
-    await Promise.all([
-      import('./App.tsx'),
-      import('./server/graphql.ts'),
-      import('@quilted/quilt/graphql'),
-      import('@quilted/quilt/server'),
-    ]);
+  const [
+    {App},
+    {performGraphQLOperation},
+    {GraphQLCache},
+    {renderToHTMLResponse},
+  ] = await Promise.all([
+    import('./App.tsx'),
+    import('./server/graphql.ts'),
+    import('@quilted/quilt/graphql'),
+    import('@quilted/quilt/server'),
+  ]);
 
   const context = {
     router: new Router(request.url),
@@ -40,7 +44,7 @@ router.get(async (request) => {
     },
   } satisfies AppContext;
 
-  const response = await renderToResponse(<App context={context} />, {
+  const response = await renderToHTMLResponse(<App context={context} />, {
     request,
     assets,
   });

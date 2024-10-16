@@ -12,14 +12,14 @@ describe('app builds', () => {
       `,
       'server.ts': multiline`
         import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderToResponse} from '@quilted/quilt/server';
+        import {renderToHTMLResponse} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
         const router = new RequestRouter();
         const assets = new BrowserAssets();
 
         router.get(async (request) => {
-          const response = await renderToResponse({
+          const response = await renderToHTMLResponse({
             request,
             assets,
           });

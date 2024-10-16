@@ -18,3 +18,8 @@ export {
   type AssetBuildAsset,
   type AssetBuildAssetType,
 } from './manifest.ts';
+export {
+  preloadHeader,
+  preloadScriptAssetHeader,
+  preloadStyleAssetHeader,
+} from './preload.ts';

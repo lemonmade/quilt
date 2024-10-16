@@ -1204,7 +1204,7 @@ export function magicModuleAppRequestRouter({
 
         import {jsx} from 'preact/jsx-runtime';
         import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderToResponse} from '@quilted/quilt/server';
+        import {renderToHTMLResponse} from '@quilted/quilt/server';
 
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
         import {BrowserAssets} from ${JSON.stringify(
@@ -1216,7 +1216,7 @@ export function magicModuleAppRequestRouter({
 
         // For all GET requests, render our React application.
         router.get(async (request) => {
-          const response = await renderToResponse(jsx(App), {
+          const response = await renderToHTMLResponse(jsx(App), {
             request,
             assets,
           });

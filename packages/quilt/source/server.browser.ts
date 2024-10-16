@@ -12,11 +12,3 @@ export {parseAcceptLanguageHeader} from '@quilted/preact-localize';
 
 function noopCreateRequestRouterLocalization() {}
 export {noopCreateRequestRouterLocalization as createRequestRouterLocalization};
-
-function noopRenderToResponse() {}
-export {noopRenderToResponse as renderToResponse};
-
-function NoopServerContext() {
-  return null;
-}
-export {NoopServerContext as ServerContext};

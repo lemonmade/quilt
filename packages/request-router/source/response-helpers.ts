@@ -34,10 +34,27 @@ export class RedirectResponse extends EnhancedResponse {
   }
 }
 
+const CONTENT_TYPE_HEADER = 'Content-Type';
+const CONTENT_TYPE_DEFAULT_VALUE = 'text/html; charset=utf-8';
+const CONTENT_TYPE_OPTIONS_HEADER = 'X-Content-Type-Options';
+const CONTENT_TYPE_OPTIONS_DEFAULT_VALUE = 'nosniff';
+
 export class HTMLResponse extends EnhancedResponse {
   constructor(body: BodyInit, options?: ResponseInit) {
     super(body, options);
-    this.headers.set('Content-Type', 'text/html; charset=utf-8');
+
+    const {headers} = this;
+
+    if (!headers.has(CONTENT_TYPE_HEADER)) {
+      headers.set(CONTENT_TYPE_HEADER, CONTENT_TYPE_DEFAULT_VALUE);
+    }
+
+    if (!headers.has(CONTENT_TYPE_OPTIONS_HEADER)) {
+      headers.set(
+        CONTENT_TYPE_OPTIONS_HEADER,
+        CONTENT_TYPE_OPTIONS_DEFAULT_VALUE,
+      );
+    }
   }
 }
 

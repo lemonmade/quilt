@@ -83,7 +83,7 @@ describe('trpc', () => {
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
         import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
-        import {renderToResponse} from '@quilted/quilt/server';
+        import {renderToHTMLResponse} from '@quilted/quilt/server';
         import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
         import {BrowserAssets} from 'quilt:module/assets';
@@ -112,7 +112,7 @@ describe('trpc', () => {
           const queryClient = new QueryClient();
           const trpcClient = createDirectClient(appRouter);
           
-          const response = await renderToResponse(
+          const response = await renderToHTMLResponse(
             <App trpcClient={trpcClient} queryClient={queryClient} />,
             {
               request,

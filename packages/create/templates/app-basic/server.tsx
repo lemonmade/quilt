@@ -1,6 +1,6 @@
 import '@quilted/quilt/globals';
 import {RequestRouter} from '@quilted/quilt/request-router';
-import {renderToResponse} from '@quilted/quilt/server';
+import {renderToHTMLResponse} from '@quilted/quilt/server';
 import {Router} from '@quilted/quilt/navigation';
 import {BrowserAssets} from 'quilt:module/assets';
 
@@ -17,7 +17,7 @@ router.get(async (request) => {
     router: new Router(request.url),
   } satisfies AppContext;
 
-  const response = await renderToResponse(<App context={context} />, {
+  const response = await renderToHTMLResponse(<App context={context} />, {
     request,
     assets,
   });

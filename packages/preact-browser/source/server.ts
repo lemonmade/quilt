@@ -20,6 +20,13 @@ export {
   useBrowserEffectsAreActive,
 } from './context.ts';
 
+export {
+  renderToHTMLString,
+  renderToHTMLResponse,
+  renderToHTMLTemplate,
+  HTML_TEMPLATE_FRAGMENT,
+} from './server/render.tsx';
+
 export {useModuleAssets} from './server/hooks/assets.ts';
 export {useBrowserResponse} from './server/hooks/browser-response.ts';
 export {useBrowserResponseAction} from './server/hooks/browser-response-action.ts';
@@ -53,17 +60,25 @@ export {ContentSecurityPolicy} from './server/components/ContentSecurityPolicy.t
 export {CrossOriginEmbedderPolicy} from './server/components/CrossOriginEmbedderPolicy.tsx';
 export {CrossOriginOpenerPolicy} from './server/components/CrossOriginOpenerPolicy.tsx';
 export {CrossOriginResourcePolicy} from './server/components/CrossOriginResourcePolicy.tsx';
+export {HTML, HTMLBody, HTMLHead} from './server/components/HTML.tsx';
 export {OpenGraph} from './server/components/OpenGraph.tsx';
 export {NotFound} from './server/components/NotFound.tsx';
 export {PermissionsPolicy} from './server/components/PermissionsPolicy.tsx';
 export {ResponseCookie} from './server/components/ResponseCookie.tsx';
 export {ResponseHeader} from './server/components/ResponseHeader.tsx';
 export {ResponseStatus} from './server/components/ResponseStatus.tsx';
-export {ScriptAsset} from './server/components/ScriptAsset.tsx';
-export {ScriptAssetPreload} from './server/components/ScriptAssetPreload.tsx';
+export {
+  ResponsePlaceholderContent,
+  ResponsePlaceholderAsyncAssets,
+  ResponsePlaceholderEntryAssets,
+  ResponsePlaceholderSerializations,
+} from './server/components/ResponsePlaceholder.tsx';
+export {ResponseStreamBoundary} from './server/components/ResponseStreamBoundary.tsx';
+export {ScriptAssets} from './server/components/ScriptAssets.tsx';
+export {ScriptAssetsPreload} from './server/components/ScriptAssetsPreload.tsx';
 export {SearchRobots} from './server/components/SearchRobots.tsx';
 export {Serialization} from './server/components/Serialization.tsx';
 export {StrictTransportSecurity} from './server/components/StrictTransportSecurity.tsx';
-export {StyleAsset} from './server/components/StyleAsset.tsx';
-export {StyleAssetPreload} from './server/components/StyleAssetPreload.tsx';
+export {StyleAssets} from './server/components/StyleAssets.tsx';
+export {StyleAssetsPreload} from './server/components/StyleAssetsPreload.tsx';
 export {Viewport} from './server/components/Viewport.tsx';
