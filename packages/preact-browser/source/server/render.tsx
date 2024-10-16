@@ -380,7 +380,7 @@ function wrapWithServerContext(
 
   const withEffects =
     effects == null ? (
-      node
+      withAssets
     ) : (
       <BrowserEffectsAreActiveContext.Provider value={effects}>
         {withAssets}
