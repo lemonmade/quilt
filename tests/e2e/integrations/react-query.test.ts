@@ -49,7 +49,6 @@ describe('react-query', () => {
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
         import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
-        import {renderToResponse, renderToStaticMarkup} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();
@@ -62,12 +61,12 @@ describe('react-query', () => {
         });
         
         router.get(async (request) => {
-          const [{App}, {renderToResponse}] = await Promise.all([
+          const [{App}, {renderToHTMLResponse}] = await Promise.all([
             import('./App.tsx'),
             import('@quilted/quilt/server'),
           ]);
         
-          const response = await renderToResponse(<App />, {
+          const response = await renderToHTMLResponse(<App />, {
             request,
             assets,
           });

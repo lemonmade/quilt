@@ -34,10 +34,20 @@ export class RedirectResponse extends EnhancedResponse {
   }
 }
 
+const CONTENT_TYPE_HEADER = 'Content-Type';
+const CONTENT_TYPE_OPTIONS_HEADER = 'X-Content-Type-Options';
+
+const CONTENT_TYPE_DEFAULT_VALUE_HTML = 'text/html; charset=utf-8';
+const CONTENT_TYPE_OPTIONS_DEFAULT_VALUE_HTML = 'nosniff';
+
 export class HTMLResponse extends EnhancedResponse {
   constructor(body: BodyInit, options?: ResponseInit) {
-    super(body, options);
-    this.headers.set('Content-Type', 'text/html; charset=utf-8');
+    const headers = updateHeaders(options?.headers, {
+      [CONTENT_TYPE_HEADER]: CONTENT_TYPE_DEFAULT_VALUE_HTML,
+      [CONTENT_TYPE_OPTIONS_HEADER]: CONTENT_TYPE_OPTIONS_DEFAULT_VALUE_HTML,
+    });
+
+    super(body, {...options, headers});
   }
 }
 
@@ -45,9 +55,28 @@ export {HTMLResponse as HtmlResponse};
 
 export class JsonResponse extends EnhancedResponse {
   constructor(body: unknown, options?: ResponseInit) {
-    super(JSON.stringify(body), options);
-    this.headers.set('Content-Type', 'application/json; charset=utf-8');
+    const headers = updateHeaders(options?.headers, {
+      [CONTENT_TYPE_HEADER]: 'application/json; charset=utf-8',
+    });
+
+    super(JSON.stringify(body), {
+      ...options,
+      headers,
+    });
   }
 }
 
 export {JsonResponse as JSONResponse};
+
+function updateHeaders(
+  headersInit: HeadersInit | undefined,
+  updateHeaders: Record<string, string>,
+) {
+  const headers = new Headers(headersInit);
+
+  for (const [key, value] of Object.entries(updateHeaders)) {
+    if (!headers.has(key)) headers.set(key, value);
+  }
+
+  return headers;
+}

@@ -18,7 +18,9 @@ export function styleAssetAttributes(
       isFullURL(source));
 
   const href =
-    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
+    baseURL && !crossorigin && source[0] !== '/'
+      ? source.slice(baseURL.origin.length)
+      : source;
 
   return {
     rel,
@@ -48,7 +50,9 @@ export function styleAssetPreloadAttributes(
       isFullURL(source));
 
   const href =
-    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
+    baseURL && !crossorigin && source[0] !== '/'
+      ? source.slice(baseURL.origin.length)
+      : source;
 
   return {
     rel: 'preload',
@@ -82,7 +86,9 @@ export function scriptAssetAttributes(
       isFullURL(source));
 
   const src =
-    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
+    baseURL && !crossorigin && source[0] !== '/'
+      ? source.slice(baseURL.origin.length)
+      : source;
 
   return {
     type,
@@ -114,7 +120,9 @@ export function scriptAssetPreloadAttributes(
       isFullURL(source));
 
   const href =
-    crossorigin && baseURL ? source.slice(baseURL.origin.length) : source;
+    baseURL && !crossorigin && source[0] !== '/'
+      ? source.slice(baseURL.origin.length)
+      : source;
 
   return {
     rel: type === 'module' ? 'modulepreload' : 'preload',

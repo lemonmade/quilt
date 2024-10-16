@@ -455,9 +455,15 @@ importers:
       '@quilted/preact-context':
         specifier: workspace:^0.1.2
         version: link:../preact-context
+      '@quilted/request-router':
+        specifier: workspace:^0.3.0
+        version: link:../request-router
       '@quilted/signals':
         specifier: workspace:^0.2.1
         version: link:../signals
+      preact-render-to-string:
+        specifier: ^6.5.0
+        version: 6.5.11(preact@10.21.0)
     devDependencies:
       preact:
         specifier: ^10.21.0
@@ -478,8 +484,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../preact-context
       preact-render-to-string:
-        specifier: ^6.4.0
-        version: 6.4.2(preact@10.21.0)
+        specifier: ^6.5.0
+        version: 6.5.11(preact@10.21.0)
     devDependencies:
       preact:
         specifier: ^10.21.0
@@ -683,8 +689,8 @@ importers:
         specifier: ^29.0.0
         version: 29.7.0
       preact-render-to-string:
-        specifier: ^6.4.0
-        version: 6.4.2(preact@10.21.0)
+        specifier: ^6.5.0
+        version: 6.5.11(preact@10.21.0)
     devDependencies:
       expect:
         specifier: ^29.0.0
@@ -717,8 +723,8 @@ importers:
         specifier: ^10.21.0
         version: 10.21.0
       preact-render-to-string:
-        specifier: ^6.4.0
-        version: 6.4.2(preact@10.21.0)
+        specifier: ^6.5.0
+        version: 6.5.11(preact@10.21.0)
 
   packages/react-testing:
     dependencies:
@@ -4249,8 +4255,8 @@ packages:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
     engines: {node: ^10 || ^12 || >=14}
 
-  preact-render-to-string@6.4.2:
-    resolution: {integrity: sha512-Sio5SvlyZSAXHuvnMgYzVQd67lNIuQe4uSjJ+2gfpJNC6L8zoHQR5xV7B/EjIqrAYWVyJ2eACkTCxVrIzZi6Vw==}
+  preact-render-to-string@6.5.11:
+    resolution: {integrity: sha512-ubnauqoGczeGISiOh6RjX0/cdaF8v/oDXIjO85XALCQjwQP+SB4RDXXtvZ6yTYSjG+PC1QRP2AhPgCEsM2EvUw==}
     peerDependencies:
       preact: '>=10'
 
@@ -4283,9 +4289,6 @@ packages:
   pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-
-  pretty-format@3.8.0:
-    resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==}
 
   prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
@@ -8508,10 +8511,9 @@ snapshots:
       picocolors: 1.0.1
       source-map-js: 1.2.0
 
-  preact-render-to-string@6.4.2(preact@10.21.0):
+  preact-render-to-string@6.5.11(preact@10.21.0):
     dependencies:
       preact: 10.21.0
-      pretty-format: 3.8.0
 
   preact@10.21.0: {}
 
@@ -8539,8 +8541,6 @@ snapshots:
       '@jest/schemas': 29.6.3
       ansi-styles: 5.2.0
       react-is: 18.2.0
-
-  pretty-format@3.8.0: {}
 
   prompts@2.4.2:
     dependencies:
