@@ -34,7 +34,7 @@ const PLACEHOLDER_ELEMENT_REGEX =
 export const HTML_TEMPLATE_FRAGMENT =
   '<browser-response-placeholder-content></browser-response-placeholder-content>';
 
-export async function renderToHTMLResponse(
+export async function renderAppToHTMLResponse(
   renderApp: string | VNode<any>,
   {
     assets,
@@ -135,22 +135,25 @@ export async function renderToHTMLResponse(
   });
 }
 
-export async function renderToHTMLString(
+export async function renderAppToHTMLString(
   renderApp: RenderAppValue,
   {
     assets,
     request,
     headers,
+    serializations,
     template,
   }: {
-    assets: BrowserAssets;
     request: Request;
+    assets?: BrowserAssets;
     headers?: HeadersInit;
+    serializations?: Iterable<[string, unknown]>;
     template?: string | VNode<any>;
   },
 ) {
   const browser = new BrowserResponse({
     request,
+    serializations,
     headers: headers ? new Headers(headers) : undefined,
   });
 
@@ -177,7 +180,111 @@ export async function renderToHTMLString(
   return rendered;
 }
 
-export async function renderToHTMLTemplate(
+export async function renderToHTMLString(
+  html: VNode<any>,
+  {
+    request,
+    assets,
+    headers,
+    serializations,
+  }: {
+    request: Request;
+    assets?: BrowserAssets;
+    headers?: HeadersInit;
+    serializations?: Iterable<[string, unknown]>;
+  },
+) {
+  const browser = new BrowserResponse({
+    request,
+    serializations,
+    headers: headers ? new Headers(headers) : undefined,
+  });
+
+  const content = await renderHTMLToTemplateString(html, {browser, assets});
+
+  const rendered = await renderHTMLChunk(content, {
+    browser,
+    assets,
+  });
+
+  return rendered;
+}
+
+export async function renderToHTMLResponse(
+  html: VNode<any>,
+  {
+    request,
+    assets,
+    headers,
+    serializations,
+    stream: shouldStream = false,
+  }: {
+    request: Request;
+    assets?: BrowserAssets;
+    headers?: HeadersInit;
+    serializations?: Iterable<[string, unknown]>;
+    stream?: boolean;
+  },
+) {
+  const browser = new BrowserResponse({
+    request,
+    serializations,
+    headers: headers ? new Headers(headers) : undefined,
+  });
+
+  const content = await renderHTMLToTemplateString(html, {browser, assets});
+
+  const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
+    content,
+    {
+      browser,
+      assets,
+    },
+  );
+
+  const normalizedFirstChunk = shouldStream
+    ? firstChunk
+    : `${firstChunk}${remainingChunks.join('')}`;
+
+  const renderedFirstChunk = await renderHTMLChunk(normalizedFirstChunk, {
+    browser,
+    assets,
+  });
+
+  if (remainingChunks.length === 0 || !shouldStream) {
+    return new HTMLResponse(renderedFirstChunk, {
+      status: browser.status.value,
+      headers: browser.headers,
+    });
+  }
+
+  const stream = new TextEncoderStream();
+  const writer = stream.writable.getWriter();
+  writer.write(renderedFirstChunk);
+
+  (async () => {
+    try {
+      for (const chunk of remainingChunks) {
+        const renderedChunk = await renderHTMLChunk(chunk, {
+          browser,
+          assets,
+        });
+        writer.write(renderedChunk);
+      }
+    } catch {
+      // TODO: handle error
+    } finally {
+      writer.close();
+    }
+  })();
+
+  return new HTMLResponse(stream.readable, {
+    status: browser.status.value,
+    headers: browser.headers,
+  });
+}
+
+async function renderHTMLToTemplateString(
   html: VNode<any>,
   {
     browser,
@@ -207,7 +314,7 @@ async function renderHTMLTemplateToChunks(
   let template =
     typeof html === 'string'
       ? html
-      : await renderToHTMLTemplate(html, {browser, assets});
+      : await renderHTMLToTemplateString(html, {browser, assets});
 
   template = normalizeHTMLContent(template);
 

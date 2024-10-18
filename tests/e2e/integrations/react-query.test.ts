@@ -3,10 +3,7 @@ import {multiline, createWorkspace, startServer} from '../utilities.ts';
 
 describe('react-query', () => {
   it('can server and client render a query using suspense', async () => {
-    await using workspace = await createWorkspace({
-      fixture: 'basic-app',
-      debug: true,
-    });
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'App.tsx': multiline`
@@ -61,12 +58,12 @@ describe('react-query', () => {
         });
         
         router.get(async (request) => {
-          const [{App}, {renderToHTMLResponse}] = await Promise.all([
+          const [{App}, {renderAppToHTMLResponse}] = await Promise.all([
             import('./App.tsx'),
             import('@quilted/quilt/server'),
           ]);
         
-          const response = await renderToHTMLResponse(<App />, {
+          const response = await renderAppToHTMLResponse(<App />, {
             request,
             assets,
           });

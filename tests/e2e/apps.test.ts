@@ -12,14 +12,14 @@ describe('app builds', () => {
       `,
       'server.ts': multiline`
         import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderToHTMLResponse} from '@quilted/quilt/server';
+        import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
         const router = new RequestRouter();
         const assets = new BrowserAssets();
 
         router.get(async (request) => {
-          const response = await renderToHTMLResponse({
+          const response = await renderAppToHTMLResponse({
             request,
             assets,
           });
@@ -437,10 +437,7 @@ describe('app builds', () => {
     });
 
     it('uses the root `exports[.][server]` field from package.json as the server entry', async () => {
-      await using workspace = await createWorkspace({
-        fixture: 'empty-app',
-        debug: true,
-      });
+      await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       const files = {
         ...customServerEntryFiles,

@@ -28,7 +28,7 @@ router.get(async (request) => {
     {App},
     {performGraphQLOperation},
     {GraphQLCache},
-    {renderToHTMLResponse},
+    {renderAppToHTMLResponse},
   ] = await Promise.all([
     import('./App.tsx'),
     import('./server/graphql.ts'),
@@ -44,7 +44,7 @@ router.get(async (request) => {
     },
   } satisfies AppContext;
 
-  const response = await renderToHTMLResponse(<App context={context} />, {
+  const response = await renderAppToHTMLResponse(<App context={context} />, {
     request,
     assets,
   });

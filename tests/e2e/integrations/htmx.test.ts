@@ -18,37 +18,44 @@ describe('htmx', () => {
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
         import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
-        import {renderToHTMLResponse, HTML_TEMPLATE_FRAGMENT} from '@quilted/quilt/server';
+        import {renderHTMLToResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();
         const assets = new BrowserAssets();
         
         router.get('/', async (request) => {
-          const response = await renderToHTMLResponse(<App />, {
-            request,
-            assets,
-          });
+          const response = await renderHTMLToResponse(
+            <HTML>
+              <HTMLPlaceholderEntryAssets />
+              <App />
+            <HTML>,
+            {
+              request,
+              assets,
+            }
+          );
         
           return response;
         });
         
         function App() {
           return (
-            <div>
+            <>
               <p>My app</p>
               <button hx-post="/clicked" hx-swap="outerHTML">
                 Click me!
               </button>
-            </div>
+            </>
           );
         }
 
         router.post('/clicked', async (request) => {
           const response = await renderToHTMLResponse(<ClickedButton />, {
             request,
-            template: HTML_TEMPLATE_FRAGMENT,
+            assets,
           });
+
           return response;
         });
         
@@ -78,17 +85,23 @@ describe('htmx', () => {
         import '@quilted/quilt/globals';
         import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
         import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderToHTMLResponse, HTML_TEMPLATE_FRAGMENT} from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets  } from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();
         const assets = new BrowserAssets();
         
         router.get('/', async (request) => {
-          const response = await renderToHTMLResponse(<App />, {
-            request,
-            assets,
-          });
+          const response = await renderHTMLToResponse(
+            <HTML>
+              <HTMLPlaceholderEntryAssets />
+              <App />
+            <HTML>,
+            {
+              request,
+              assets,
+            }
+          );
         
           return response;
         });
@@ -111,7 +124,7 @@ describe('htmx', () => {
 
           const {body, headers} = await renderToHTMLResponse(<Confirmation selection={trigger} />, {
             request,
-            template: HTML_TEMPLATE_FRAGMENT,
+            assets,
           });
         
           return new HTMXResponse(body, {

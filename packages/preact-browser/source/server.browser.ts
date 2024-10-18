@@ -29,9 +29,10 @@ export {Favicon} from './components/Favicon.tsx';
 async function asyncNoop() {}
 
 export {
+  asyncNoop as renderAppToHTMLString,
+  asyncNoop as renderAppToHTMLResponse,
   asyncNoop as renderToHTMLString,
   asyncNoop as renderToHTMLResponse,
-  asyncNoop as renderToHTMLTemplate,
 };
 
 function noopHook() {}
@@ -78,10 +79,10 @@ export {
   NoopComponent as ResponseHeader,
   NoopComponent as ResponseStatus,
   NoopComponent as ResponseStreamBoundary,
-  NoopComponent as ResponsePlaceholderApp,
-  NoopComponent as ResponsePlaceholderAsyncAssets,
-  NoopComponent as ResponsePlaceholderEntryAssets,
-  NoopComponent as ResponsePlaceholderSerializations,
+  NoopComponent as HTMLPlaceholderApp,
+  NoopComponent as HTMLPlaceholderAsyncAssets,
+  NoopComponent as HTMLPlaceholderEntryAssets,
+  NoopComponent as HTMLPlaceholderSerializations,
   NoopComponent as ScriptAsset,
   NoopComponent as ScriptAssetPreload,
   NoopComponent as SearchRobots,

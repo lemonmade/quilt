@@ -21,9 +21,10 @@ export {
 } from './context.ts';
 
 export {
+  renderAppToHTMLString,
+  renderAppToHTMLResponse,
   renderToHTMLString,
   renderToHTMLResponse,
-  renderToHTMLTemplate,
   HTML_TEMPLATE_FRAGMENT,
 } from './server/render.tsx';
 
@@ -68,11 +69,11 @@ export {ResponseCookie} from './server/components/ResponseCookie.tsx';
 export {ResponseHeader} from './server/components/ResponseHeader.tsx';
 export {ResponseStatus} from './server/components/ResponseStatus.tsx';
 export {
-  ResponsePlaceholderContent,
-  ResponsePlaceholderAsyncAssets,
-  ResponsePlaceholderEntryAssets,
-  ResponsePlaceholderSerializations,
-} from './server/components/ResponsePlaceholder.tsx';
+  HTMLPlaceholderContent,
+  HTMLPlaceholderAsyncAssets,
+  HTMLPlaceholderEntryAssets,
+  HTMLPlaceholderSerializations,
+} from './server/components/HTMLPlaceholder.tsx';
 export {ResponseStreamBoundary} from './server/components/ResponseStreamBoundary.tsx';
 export {ScriptAssets} from './server/components/ScriptAssets.tsx';
 export {ScriptAssetsPreload} from './server/components/ScriptAssetsPreload.tsx';

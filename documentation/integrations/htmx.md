@@ -50,6 +50,8 @@ Let’s imagine a simple application that renders a button, and updates the butt
 import '@quilted/quilt/globals';
 import {RequestRouter} from '@quilted/quilt/request-router';
 import {
+  HTML,
+  HTMLPlaceholderEntryAssets,
   renderToHTMLResponse,
   HTML_TEMPLATE_FRAGMENT,
 } from '@quilted/quilt/server';
@@ -65,11 +67,7 @@ router.get('/', async (request) => {
   // contains htmx), and applying the [HTML-](../features/html.md) and
   // [HTTP-](../features/http.md) directives in your application to the HTML
   // response.
-  //
-  // This helper does wrap your application in a `<div id="app">` element. If you
-  // don’t want that wrapper, you can instead use the `assets` object to get the
-  // list of browser assets, and construct an HTML response yourself.
-  const response = await renderToHTMLResponse(<App />, {
+  const response = await renderToHTMLResponse(<AppHTML />, {
     request,
     assets,
   });
@@ -77,14 +75,23 @@ router.get('/', async (request) => {
   return response;
 });
 
+function AppHTML() {
+  return (
+    <HTML title="My app">
+      <HTMLPlaceholderEntryAssets />
+      <App />
+    </HTML>
+  );
+}
+
 function App() {
   return (
-    <div>
+    <>
       <p>My app</p>
       <button hx-post="/clicked" hx-swap="outerHTML">
         Click me!
       </button>
-    </div>
+    </>
   );
 }
 
@@ -94,7 +101,7 @@ router.post('/clicked', async (request) => {
   // This helper renders a React element to an HTML response, without wrapping
   // a full HTML document around it. htmx will replace the outerHTML of the button
   // with the content of this response, thanks to to the `hx-swap` attribute.
-  const response = await renderToHTMLResponse(<ClickedButton />, {
+  const response = await renderAppToHTMLResponse(<ClickedButton />, {
     request,
     template: HTML_TEMPLATE_FRAGMENT,
   });
@@ -118,7 +125,7 @@ In the following example, we are using Quilt’s utility to parse the `HX-Trigge
 ```tsx
 import '@quilted/quilt/globals';
 import {RequestRouter} from '@quilted/quilt/request-router';
-import {renderToHTMLResponse} from '@quilted/quilt/server';
+import {renderAppToHTMLResponse} from '@quilted/quilt/server';
 import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
 import {BrowserAssets} from 'quilt:module/assets';
 
@@ -126,7 +133,7 @@ const router = new RequestRouter();
 const assets = new BrowserAssets();
 
 router.get('/', async (request) => {
-  const response = await renderToHTMLResponse(<App />, {
+  const response = await renderAppToHTMLResponse(<App />, {
     request,
     assets,
   });

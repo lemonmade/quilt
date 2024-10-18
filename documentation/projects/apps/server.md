@@ -67,12 +67,12 @@ const assets = new BrowserAssets();
 router.get(async (request) => {
   // We can asynchronously load the app and react server rendering
   // utilities so we don’t pay their cost until we are rendering our app.
-  const [{App}, {renderToHTMLResponse}] = await Promise.all([
+  const [{App}, {renderAppToHTMLResponse}] = await Promise.all([
     import('./App.tsx'),
     import('@quilted/quilt/server'),
   ]);
 
-  const response = await renderToHTMLResponse(<App />, {
+  const response = await renderAppToHTMLResponse(<App />, {
     request,
     assets,
   });

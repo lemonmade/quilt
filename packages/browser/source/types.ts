@@ -114,7 +114,7 @@ export interface BrowserRendering {
   readonly server?: {
     /**
      * Whether the current render is creating an HTML file. This happens
-     * when calling Quilt’s `renderToHTMLResponse()` or `renderToHTMLString()`
+     * when calling Quilt’s `renderAppToHTMLResponse()` or `renderAppToHTMLString()`
      * functions.
      */
     readonly static: boolean;
