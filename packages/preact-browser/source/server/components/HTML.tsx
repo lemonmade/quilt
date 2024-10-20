@@ -6,6 +6,7 @@ import {
   HTMLPlaceholderContent,
   HTMLPlaceholderAsyncAssets,
   HTMLPlaceholderEntryAssets,
+  HTMLPlaceholderPreloadAssets,
   HTMLPlaceholderSerializations,
 } from './HTMLPlaceholder.tsx';
 
@@ -89,6 +90,7 @@ export function HTMLBody({
       </div>
 
       <HTMLPlaceholderAsyncAssets />
+      <HTMLPlaceholderPreloadAssets />
     </>
   );
 

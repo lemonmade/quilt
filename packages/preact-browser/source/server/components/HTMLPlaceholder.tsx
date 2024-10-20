@@ -17,3 +17,8 @@ export function HTMLPlaceholderAsyncAssets() {
   // @ts-expect-error Just used as a placeholder
   return <browser-response-placeholder-async-assets />;
 }
+
+export function HTMLPlaceholderPreloadAssets() {
+  // @ts-expect-error Just used as a placeholder
+  return <browser-response-placeholder-preload-assets />;
+}

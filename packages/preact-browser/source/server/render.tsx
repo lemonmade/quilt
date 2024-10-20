@@ -18,7 +18,9 @@ import {
 import {HTML} from './components/HTML.tsx';
 import {Serialization} from './components/Serialization.tsx';
 import {ScriptAssets} from './components/ScriptAssets.tsx';
+import {ScriptAssetsPreload} from './components/ScriptAssetsPreload.tsx';
 import {StyleAssets} from './components/StyleAssets.tsx';
+import {StyleAssetsPreload} from './components/StyleAssetsPreload.tsx';
 
 export type RenderAppValue =
   | string
@@ -367,14 +369,14 @@ async function renderHTMLChunk(
           break;
         }
         case 'serializations': {
-          const serializations = [...browser.serializations];
+          const serializations = browser.serializations.value;
 
           replacement =
             serializations.length > 0
               ? renderToString(
                   wrapWithServerContext(
                     <>
-                      {serializations.map(([name, content]) => (
+                      {serializations.map(({name, content}) => (
                         <Serialization name={name} content={content} />
                       ))}
                     </>,
@@ -424,7 +426,27 @@ async function renderHTMLChunk(
 
           break;
         }
-        // Add more cases for other placeholder types if needed
+        case 'preload-assets': {
+          if (assets == null) {
+            throw new Error(
+              `Found the preload-assets placeholder, but no assets were provided while rendering`,
+            );
+          }
+
+          const preloadAssets = assets.modules(
+            browser.assets.get({timing: 'preload'}),
+            {request: browser.request},
+          );
+
+          replacement = renderToString(
+            <>
+              <ScriptAssetsPreload scripts={preloadAssets.scripts} />
+              <StyleAssetsPreload styles={preloadAssets.styles} />
+            </>,
+          );
+
+          break;
+        }
         default: {
           throw new Error(
             `Unknown placeholder element: <browser-response-placeholder-${name}>`,

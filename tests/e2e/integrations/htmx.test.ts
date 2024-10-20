@@ -85,7 +85,7 @@ describe('htmx', () => {
         import '@quilted/quilt/globals';
         import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
         import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets  } from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();

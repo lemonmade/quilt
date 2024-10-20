@@ -72,6 +72,7 @@ export {
   HTMLPlaceholderContent,
   HTMLPlaceholderAsyncAssets,
   HTMLPlaceholderEntryAssets,
+  HTMLPlaceholderPreloadAssets,
   HTMLPlaceholderSerializations,
 } from './server/components/HTMLPlaceholder.tsx';
 export {ResponseStreamBoundary} from './server/components/ResponseStreamBoundary.tsx';
