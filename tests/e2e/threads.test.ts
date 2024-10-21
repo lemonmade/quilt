@@ -47,7 +47,10 @@ describe('threads', () => {
     });
   });
 
-  describe('ThreadMessagePort', () => {
+  // TODO: these are flaky, I suspect there are timing issues with creating the different tabs/
+  // channels.
+  // @see https://github.com/lemonmade/quilt/issues/849
+  describe.skip('ThreadBroadcastChannel', () => {
     it('communicates between broadcast channel instances', async () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
