@@ -20,6 +20,10 @@ const context = {
 } satisfies AppContext;
 
 // Makes key parts of the app available in the browser console
-Object.assign(globalThis, {app: context});
+Object.defineProperty(globalThis, 'app', {
+  value: {context},
+  enumerable: false,
+  configurable: true,
+});
 
 hydrate(<App context={context} />);
