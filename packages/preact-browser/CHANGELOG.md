@@ -1,5 +1,16 @@
 # @quilted/preact-browser
 
+## 0.1.13
+
+### Patch Changes
+
+- [`48bd66e`](https://github.com/lemonmade/quilt/commit/48bd66e75923efcb76ce7096db75f5337e1952e7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some server render bugs
+
+- [`820715f`](https://github.com/lemonmade/quilt/commit/820715f4801c936297d6ea57295b67af28917915) Thanks [@lemonmade](https://github.com/lemonmade)! - Rename `ResponseStreamBoundary` to `HTMLStreamBoundary`
+
+- Updated dependencies [[`48bd66e`](https://github.com/lemonmade/quilt/commit/48bd66e75923efcb76ce7096db75f5337e1952e7)]:
+  - @quilted/assets@0.1.7
+
 ## 0.1.12
 
 ### Patch Changes
