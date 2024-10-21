@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.7
+
+### Patch Changes
+
+- [`48bd66e`](https://github.com/lemonmade/quilt/commit/48bd66e75923efcb76ce7096db75f5337e1952e7) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix some server render bugs
+
 ## 0.1.6
 
 ### Patch Changes

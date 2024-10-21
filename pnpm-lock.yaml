@@ -444,7 +444,7 @@ importers:
   packages/preact-browser:
     dependencies:
       '@quilted/assets':
-        specifier: workspace:^0.1.6
+        specifier: workspace:^0.1.7
         version: link:../assets
       '@quilted/browser':
         specifier: workspace:^0.1.9
