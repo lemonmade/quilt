@@ -1,5 +1,11 @@
 # @quilted/http-handlers
 
+## 0.3.1
+
+### Patch Changes
+
+- [#845](https://github.com/lemonmade/quilt/pull/845) [`1e0eda6`](https://github.com/lemonmade/quilt/commit/1e0eda6d035fd6f883d25b5064413adfe80c76ea) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve server rendering utilities
+
 ## 0.3.0
 
 ### Minor Changes
