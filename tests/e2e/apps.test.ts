@@ -10,19 +10,24 @@ describe('app builds', () => {
 
         document.body.append(element);
       `,
-      'server.ts': multiline`
+      'server.tsx': multiline`
         import {RequestRouter} from '@quilted/quilt/request-router';
-        import {renderAppToHTMLResponse} from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
         const router = new RequestRouter();
         const assets = new BrowserAssets();
 
         router.get(async (request) => {
-          const response = await renderAppToHTMLResponse({
-            request,
-            assets,
-          });
+          const response = await renderToHTMLResponse(
+            <HTML>
+              <HTMLPlaceholderEntryAssets />
+            </HTML>,
+            {
+              request,
+              assets,
+            },
+          );
 
           return response;
         });

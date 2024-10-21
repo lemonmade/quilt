@@ -18,18 +18,18 @@ describe('htmx', () => {
       'server.tsx': multiline`
         import '@quilted/quilt/globals';
         import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
-        import {renderHTMLToResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();
         const assets = new BrowserAssets();
         
         router.get('/', async (request) => {
-          const response = await renderHTMLToResponse(
+          const response = await renderToHTMLResponse(
             <HTML>
               <HTMLPlaceholderEntryAssets />
               <App />
-            <HTML>,
+            </HTML>,
             {
               request,
               assets,
@@ -92,11 +92,11 @@ describe('htmx', () => {
         const assets = new BrowserAssets();
         
         router.get('/', async (request) => {
-          const response = await renderHTMLToResponse(
+          const response = await renderToHTMLResponse(
             <HTML>
               <HTMLPlaceholderEntryAssets />
               <App />
-            <HTML>,
+            </HTML>,
             {
               request,
               assets,
