@@ -37,7 +37,7 @@ export const HTML_TEMPLATE_FRAGMENT =
   '<browser-response-placeholder-content></browser-response-placeholder-content>';
 
 export async function renderAppToHTMLResponse(
-  renderApp: string | VNode<any>,
+  renderApp: RenderAppValue,
   {
     assets,
     request,
@@ -65,7 +65,7 @@ export async function renderAppToHTMLResponse(
   if (assets) {
     const entryAssets = assets.entry({request: browser.request});
 
-    resolvedHeaders.append(
+    browser.headers.append(
       'Link',
       [
         ...entryAssets.styles.map((style) => preloadStyleAssetHeader(style)),
@@ -183,7 +183,7 @@ export async function renderAppToHTMLString(
 }
 
 export async function renderToHTMLString(
-  html: VNode<any>,
+  html: string | VNode<any>,
   {
     request,
     assets,
@@ -213,7 +213,7 @@ export async function renderToHTMLString(
 }
 
 export async function renderToHTMLResponse(
-  html: VNode<any>,
+  html: string | VNode<any>,
   {
     request,
     assets,
@@ -228,11 +228,27 @@ export async function renderToHTMLResponse(
     stream?: boolean;
   },
 ) {
+  const resolvedHeaders = new Headers(headers);
+
   const browser = new BrowserResponse({
     request,
     serializations,
-    headers: headers ? new Headers(headers) : undefined,
+    headers: resolvedHeaders,
   });
+
+  if (assets) {
+    const entryAssets = assets.entry({request: browser.request});
+
+    resolvedHeaders.append(
+      'Link',
+      [
+        ...entryAssets.styles.map((style) => preloadStyleAssetHeader(style)),
+        ...entryAssets.scripts.map((script) =>
+          preloadScriptAssetHeader(script),
+        ),
+      ].join(', '),
+    );
+  }
 
   const content = await renderHTMLToTemplateString(html, {browser, assets});
 
@@ -287,7 +303,7 @@ export async function renderToHTMLResponse(
 }
 
 async function renderHTMLToTemplateString(
-  html: VNode<any>,
+  html: string | VNode<any>,
   {
     browser,
     assets,
@@ -296,9 +312,12 @@ async function renderHTMLToTemplateString(
     assets?: BrowserAssets;
   } = {},
 ) {
-  const rendered = await renderToStringAsync(
-    wrapWithServerContext(html, {assets, browser, effects: false}),
-  );
+  const rendered =
+    typeof html === 'string'
+      ? html
+      : await renderToStringAsync(
+          wrapWithServerContext(html, {assets, browser, effects: false}),
+        );
 
   return normalizeHTMLContent(rendered);
 }

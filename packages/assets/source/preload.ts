@@ -1,12 +1,15 @@
 import type {Asset} from './types.ts';
-import {scriptAssetAttributes, styleAssetAttributes} from './attributes.ts';
+import {
+  scriptAssetPreloadAttributes,
+  styleAssetPreloadAttributes,
+} from './attributes.ts';
 
 export function preloadScriptAssetHeader(asset: Asset) {
-  return preloadHeader(scriptAssetAttributes(asset));
+  return preloadHeader(scriptAssetPreloadAttributes(asset));
 }
 
 export function preloadStyleAssetHeader(asset: Asset) {
-  return preloadHeader(styleAssetAttributes(asset));
+  return preloadHeader(styleAssetPreloadAttributes(asset));
 }
 
 export function preloadHeader(attributes: Partial<HTMLLinkElement>) {
