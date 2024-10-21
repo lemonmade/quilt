@@ -78,7 +78,7 @@ export {
   NoopComponent as ResponseCookie,
   NoopComponent as ResponseHeader,
   NoopComponent as ResponseStatus,
-  NoopComponent as ResponseStreamBoundary,
+  NoopComponent as HTMLStreamBoundary,
   NoopComponent as HTMLPlaceholderApp,
   NoopComponent as HTMLPlaceholderAsyncAssets,
   NoopComponent as HTMLPlaceholderEntryAssets,

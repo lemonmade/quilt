@@ -75,7 +75,7 @@ export {
   HTMLPlaceholderPreloadAssets,
   HTMLPlaceholderSerializations,
 } from './server/components/HTMLPlaceholder.tsx';
-export {ResponseStreamBoundary} from './server/components/ResponseStreamBoundary.tsx';
+export {HTMLStreamBoundary} from './server/components/HTMLStreamBoundary.tsx';
 export {ScriptAssets} from './server/components/ScriptAssets.tsx';
 export {ScriptAssetsPreload} from './server/components/ScriptAssetsPreload.tsx';
 export {SearchRobots} from './server/components/SearchRobots.tsx';
