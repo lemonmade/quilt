@@ -55,27 +55,35 @@ describe('app builds', () => {
 
       await workspace.fs.write({
         'browser.ts': multiline`
-          const element = document.createElement('div');
-          element.id = 'app';
+          const element = document.getElementById('root');
           element.textContent = 'Hello, world!';
           document.body.append(element);
         `,
-        'server.ts': multiline`
+        'server.tsx': multiline`
           import {RequestRouter} from '@quilted/quilt/request-router';
-          import {renderToResponse} from '@quilted/quilt/server';
+          import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
           import {BrowserAssets} from 'quilt:module/assets';
-                    
+
           const router = new RequestRouter();
           const assets = new BrowserAssets();
 
           router.get(async (request) => {
-            const response = await renderToResponse({
+            const response = await renderToHTMLResponse(<AppHTML />, {
               request,
               assets,
             });
 
             return response;
           });
+
+          function AppHTML() {
+            return (
+              <HTML title="Hello world">
+                <div id="root" />
+                <HTMLPlaceholderEntryAssets />
+              </HTML>
+            );
+          }
           
           export default router;
         `,
@@ -84,7 +92,7 @@ describe('app builds', () => {
 
           export default quiltApp({
             browser: {entry: './browser.ts'},
-            server: {entry: './server.ts'},
+            server: {entry: './server.tsx'},
           });
         `,
         'package.json': JSON.stringify(
@@ -103,7 +111,7 @@ describe('app builds', () => {
           'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko',
       });
 
-      const element = await page.waitForSelector('#app');
+      const element = await page.waitForSelector('#root');
 
       expect(element).not.toBeNull();
     });

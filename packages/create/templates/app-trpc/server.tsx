@@ -27,7 +27,7 @@ router.any(
 
 // For all GET requests, render our React application.
 router.get(async (request) => {
-  const [{App}, {renderToResponse}, {Router}, {QueryClient}] =
+  const [{App}, {renderAppToHTMLResponse}, {Router}, {QueryClient}] =
     await Promise.all([
       import('./App.tsx'),
       import('@quilted/quilt/server'),
@@ -41,7 +41,7 @@ router.get(async (request) => {
     queryClient: new QueryClient(),
   } satisfies AppContext;
 
-  const response = await renderToResponse(<App context={context} />, {
+  const response = await renderAppToHTMLResponse(<App context={context} />, {
     request,
     assets,
   });

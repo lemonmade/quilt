@@ -8,20 +8,25 @@ import {useBrowserDetails} from '../../context.ts';
  * you access to details about the original request, and the ability to read and write
  * headers and head tags to the eventual response.
  *
- * When using the `renderToHTMLResponse()` or `renderToHTMLString()` functions, this context
+ * When using the `renderAppToHTMLResponse()` or `renderAppToHTMLString()` functions, this context
  * is automatically provided for you. If you are using Preact’s server rendering functions
  * directly, you will need to provide a `BrowserResponse` object yourself.
  */
-export function useBrowserResponse() {
-  const response = useBrowserDetails();
 
-  if (typeof document === 'object') {
-    throw new Error(
-      `You can only call the useBrowserResponse() hook in server-side code.`,
-    );
-  }
+export function useBrowserResponse(options?: {
+  optional?: false;
+}): BrowserResponse;
+export function useBrowserResponse(options: {
+  optional: boolean;
+}): BrowserResponse | undefined;
+export function useBrowserResponse({
+  optional = false,
+}: {optional?: boolean} = {}): BrowserResponse | undefined {
+  const response = useBrowserDetails({optional});
 
-  if (!(response instanceof BrowserResponse)) {
+  if (optional && response == null) return undefined;
+
+  if (response == null || !(response instanceof BrowserResponse)) {
     throw new Error(`No BrowserResponse found in context.`);
   }
 

@@ -8,10 +8,7 @@ import {
 
 describe('routing', () => {
   it('can redirect between routes', async () => {
-    await using workspace = await createWorkspace({
-      fixture: 'basic-app',
-      debug: true,
-    });
+    await using workspace = await createWorkspace({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'App.tsx': multiline`

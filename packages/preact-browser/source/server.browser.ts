@@ -26,6 +26,15 @@ export {ThemeColor} from './components/ThemeColor.tsx';
 export {Title} from './components/Title.tsx';
 export {Favicon} from './components/Favicon.tsx';
 
+async function asyncNoop() {}
+
+export {
+  asyncNoop as renderAppToHTMLString,
+  asyncNoop as renderAppToHTMLResponse,
+  asyncNoop as renderToHTMLString,
+  asyncNoop as renderToHTMLResponse,
+};
+
 function noopHook() {}
 
 export {
@@ -60,12 +69,20 @@ export {
   NoopComponent as CrossOriginEmbedderPolicy,
   NoopComponent as CrossOriginOpenerPolicy,
   NoopComponent as CrossOriginResourcePolicy,
+  NoopComponent as HTML,
+  NoopComponent as HTMLBody,
+  NoopComponent as HTMLHead,
   NoopComponent as OGMeta,
   NoopComponent as NotFound,
   NoopComponent as PermissionsPolicy,
   NoopComponent as ResponseCookie,
   NoopComponent as ResponseHeader,
   NoopComponent as ResponseStatus,
+  NoopComponent as ResponseStreamBoundary,
+  NoopComponent as HTMLPlaceholderApp,
+  NoopComponent as HTMLPlaceholderAsyncAssets,
+  NoopComponent as HTMLPlaceholderEntryAssets,
+  NoopComponent as HTMLPlaceholderSerializations,
   NoopComponent as ScriptAsset,
   NoopComponent as ScriptAssetPreload,
   NoopComponent as SearchRobots,
@@ -75,3 +92,5 @@ export {
   NoopComponent as StyleAssetPreload,
   NoopComponent as Viewport,
 };
+
+export const HTML_TEMPLATE_FRAGMENT = '';

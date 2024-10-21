@@ -8,12 +8,12 @@ const assets = new BrowserAssets();
 
 // For all GET requests, render our React application.
 router.get(async (request) => {
-  const [{default: App}, {renderToResponse}] = await Promise.all([
+  const [{default: App}, {renderAppToHTMLResponse}] = await Promise.all([
     import('./App.tsx'),
     import('@quilted/quilt/server'),
   ]);
 
-  const response = await renderToResponse(<App />, {
+  const response = await renderAppToHTMLResponse(<App />, {
     request,
     assets,
   });
