@@ -1,5 +1,17 @@
 # @quilted/quilt
 
+## 0.8.8
+
+### Patch Changes
+
+- [#845](https://github.com/lemonmade/quilt/pull/845) [`1e0eda6`](https://github.com/lemonmade/quilt/commit/1e0eda6d035fd6f883d25b5064413adfe80c76ea) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve server rendering utilities
+
+- Updated dependencies [[`1e0eda6`](https://github.com/lemonmade/quilt/commit/1e0eda6d035fd6f883d25b5064413adfe80c76ea)]:
+  - @quilted/preact-browser@0.1.12
+  - @quilted/request-router@0.3.1
+  - @quilted/react-dom@18.2.15
+  - @quilted/assets@0.1.6
+
 ## 0.8.7
 
 ### Patch Changes
