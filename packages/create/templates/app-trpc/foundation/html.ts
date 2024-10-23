@@ -1,1 +1,1 @@
-export {HTML} from './html/HTML.tsx';
+export {Head} from './html/Head.tsx';

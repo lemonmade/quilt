@@ -16,6 +16,7 @@ import {encode} from './encoding.ts';
 import {CookieString} from './shared/cookies.ts';
 
 export * from './types.ts';
+export * from './headers.ts';
 
 export class BrowserResponse implements BrowserDetails {
   readonly title = new BrowserResponseTitle();

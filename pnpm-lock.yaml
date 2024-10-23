@@ -219,6 +219,9 @@ importers:
       '@quilted/assets':
         specifier: workspace:^0.1.5
         version: link:../assets
+      '@quilted/http':
+        specifier: workspace:^0.3.0
+        version: link:../http
       '@quilted/signals':
         specifier: workspace:^0.2.1
         version: link:../signals

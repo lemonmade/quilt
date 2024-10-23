@@ -1,4 +1,8 @@
 {
   "extends": "@quilted/typescript/tsconfig.package.json",
-  "references": [{"path": "../assets"}, {"path": "../signals"}]
+  "references": [
+    {"path": "../assets"},
+    {"path": "../http"},
+    {"path": "../signals"}
+  ]
 }

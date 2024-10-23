@@ -5,7 +5,7 @@ import {GraphQLContext} from '@quilted/quilt/graphql';
 import {Navigation} from '@quilted/quilt/navigation';
 import {Localization} from '@quilted/quilt/localize';
 
-import {HTML} from './foundation/html.ts';
+import {Head} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
 
 import {Home, homeQuery} from './features/home.ts';
@@ -42,9 +42,8 @@ const routes = [
 export function App({context}: AppProps) {
   return (
     <AppContext context={context}>
-      <HTML>
-        <Navigation router={context.router} routes={routes} context={context} />
-      </HTML>
+      <Head />
+      <Navigation router={context.router} routes={routes} context={context} />
     </AppContext>
   );
 }
