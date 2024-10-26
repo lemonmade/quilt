@@ -18,6 +18,6 @@ export interface AssetBuildManifest {
 export type AssetBuildAsset = [
   type: AssetBuildAssetType,
   path: string,
-  integrity?: string,
+  integrityOrIntegrity?: string,
   attributes?: {textContent: string; [key: string]: string | boolean | number},
 ];

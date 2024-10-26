@@ -1,5 +1,6 @@
 export interface Asset {
   source: string;
+  content?: string;
   attributes?: Record<string, string | boolean | number>;
 }
 

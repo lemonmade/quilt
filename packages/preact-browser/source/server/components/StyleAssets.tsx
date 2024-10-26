@@ -14,15 +14,22 @@ export function StyleAssets({
 
   return (
     <>
-      {styles.map((asset) => (
-        <link
-          key={asset.source}
-          {...(styleAssetAttributes(asset, {
-            baseURL,
-          }) as JSX.HTMLAttributes<HTMLLinkElement>)}
-          {...rest}
-        />
-      ))}
+      {styles.map((asset) => {
+        const props: JSX.HTMLAttributes<any> = {};
+
+        Object.assign(props, styleAssetAttributes(asset, {baseURL}), rest);
+
+        if (asset.content) {
+          return (
+            <style
+              {...props}
+              dangerouslySetInnerHTML={{__html: asset.content}}
+            />
+          );
+        } else {
+          return <link {...props} href={asset.source} />;
+        }
+      })}
     </>
   );
 }

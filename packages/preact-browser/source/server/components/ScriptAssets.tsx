@@ -14,15 +14,19 @@ export function ScriptAssets({
 
   return (
     <>
-      {scripts.map((asset) => (
-        <script
-          key={asset.source}
-          {...(scriptAssetAttributes(asset, {
-            baseURL,
-          }) as JSX.HTMLAttributes<HTMLScriptElement>)}
-          {...rest}
-        />
-      ))}
+      {scripts.map((asset) => {
+        const props: JSX.HTMLAttributes<HTMLScriptElement> = {};
+
+        Object.assign(props, scriptAssetAttributes(asset, {baseURL}), rest);
+
+        if (asset.content) {
+          props.dangerouslySetInnerHTML = {__html: asset.content};
+        } else {
+          props.src = asset.source;
+        }
+
+        return <script {...props} />;
+      })}
     </>
   );
 }

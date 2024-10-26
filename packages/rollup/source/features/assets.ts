@@ -19,6 +19,7 @@ export interface AssetManifestOptions {
   key?: URLSearchParams;
   base: string;
   priority?: number;
+  inline?: Set<string>;
   moduleID?(details: {imported: string}): string;
 }
 
@@ -38,6 +39,7 @@ async function writeManifestForBundle(
     file,
     base,
     key,
+    inline,
     priority,
     moduleID: getModuleID = defaultModuleID,
   }: AssetManifestOptions,
@@ -68,7 +70,7 @@ async function writeManifestForBundle(
     let id = assetIdMap.get(file);
 
     if (id == null) {
-      assets.push(loadAsset(file, bundle[file]!));
+      assets.push(loadAsset(file, bundle[file]!, inline));
       id = assets.length - 1;
       assetIdMap.set(file, id);
     }
@@ -87,10 +89,20 @@ async function writeManifestForBundle(
   };
 
   for (const output of outputs) {
-    if (
-      output.type !== 'chunk' ||
-      (!output.isDynamicEntry && !output.isEntry)
-    ) {
+    if (output.type === 'asset') {
+      if (output.name && output.fileName.endsWith('.js')) {
+        manifest.modules[output.name] = createAssetsEntry([output.fileName], {
+          dependencyMap,
+          getAssetId,
+        });
+
+        manifest.entries[`./${output.name}`] = output.name;
+      }
+
+      continue;
+    }
+
+    if (!output.isDynamicEntry && !output.isEntry) {
       continue;
     }
 
@@ -111,9 +123,18 @@ async function writeManifestForBundle(
       manifest.entries[entry] = moduleID;
     }
 
+    const isCSS = moduleID.endsWith('.css');
+    const moduleFiles = [output.fileName, ...output.imports];
+
     manifest.modules[moduleID] = createAssetsEntry(
-      [...output.imports, output.fileName],
-      {dependencyMap, getAssetId},
+      // When an entrypoint is a CSS file, Rollup creates an unnecessary JavaScript file
+      // as the entrypoint of the module. We will exclude the JavaScript file, so only
+      // the CSS file is included in the final manifest.
+      isCSS ? moduleFiles.filter((file) => file.endsWith('.css')) : moduleFiles,
+      {
+        dependencyMap,
+        getAssetId,
+      },
     );
   }
 
@@ -128,17 +149,24 @@ const SRI_ALGORITHM = 'sha384';
 async function loadAsset(
   file: string,
   chunk: OutputChunk | OutputAsset,
+  inline?: Set<string>,
 ): Promise<AssetBuildAsset> {
   const asset: AssetBuildAsset = [file.endsWith('.css') ? 1 : 2, file];
 
-  try {
-    const hash = createHash(SRI_ALGORITHM)
-      .update('code' in chunk ? chunk.code : chunk.source)
-      .digest()
-      .toString('base64');
+  const source = 'code' in chunk ? chunk.code : (chunk.source as string);
 
-    asset[2] = `${SRI_ALGORITHM}-${hash}`;
-  } catch {}
+  if (inline?.has(chunk.name!)) {
+    asset[2] = source;
+  } else {
+    try {
+      const hash = createHash(SRI_ALGORITHM)
+        .update('code' in chunk ? chunk.code : chunk.source)
+        .digest()
+        .toString('base64');
+
+      asset[2] = `${SRI_ALGORITHM}-${hash}`;
+    } catch {}
+  }
 
   return asset;
 }

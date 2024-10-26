@@ -112,11 +112,78 @@ export interface AppBrowserOptions extends AppBaseOptions {
    * The entry module for this browser. This should be an absolute path, or relative
    * path from the root directory containing your project. This entry should be the
    * browser entrypoint. If you don’t provide a module, Quilt will automatically pick
-   *
+   * a default entry module for you, based on the conventions [described here](TODO).
    *
    * @example './browser.tsx'
    */
   entry?: string;
+
+  /**
+   * Instead of providing a single `entry` module, you can use this option to list multiple
+   * independent entry modules for your browser application. This can be useful if you have
+   * parts of the codebase you want to load separately from one another; for example, as an
+   * inline script or style, or assets loaded inside an iframe rendered by the “main” part of
+   * the application.
+   *
+   * Entries should be defined similarly to how you would define the `exports` field in a Node.js
+   * [`package.json` file](https://nodejs.org/api/packages.html#exports). Keys should be prefixed
+   * with a `./`, and the key names can then be passed to Quilt’s `BrowserAssets` object to retrieve
+   * the built asset names on your server. The values should be relative paths to the source file
+   * that acts as the entrypoint for that asset. Entrypoints can be either JavaScript or CSS files.
+   *
+   * When using this option, you can override the “main” entrypoint by setting one of the keys
+   * of this object to the string: `'.'`. You can do this in addition to providing additional
+   * entry modules, but if you don’t provide the main entrypoint, a default will be used.
+   *
+   * @example
+   * ```js
+   * quiltApp({
+   *   browser: {
+   *     entry: {
+   *       '.': './main.tsx',
+   *       './inline.css': './inline.css',
+   *     },
+   *   },
+   * })
+   * ```
+   *
+   * To inline an asset, you can set the value to an object with a `source` property (for the relative
+   * path) and an `inline` option set to `true`. Note that this option will not inline dependencies of
+   * the entry into the asset manifest, so make sure that the way you load these scripts accounts for
+   * the fact that any dependencies will be loaded as external scripts. Because the whole file’s contents
+   * will be inlined into the asset manifest and server bundles, you should also be careful to only
+   * inline small JavaScript and CSS assets.
+   *
+   * @example
+   * ```js
+   * quiltApp({
+   *   browser: {
+   *     entry: {
+   *       '.': './main.tsx',
+   *       './inline.js': {source: './inline.tsx', inline: true},
+   *     },
+   *   },
+   * })
+   * ```
+   */
+  entries?: Record<
+    string,
+    | string
+    | {
+        /**
+         * The relative path to the source file that acts as the entrypoint for this asset.
+         */
+        source: string;
+
+        /**
+         * Whether to inline the asset into the asset manifest, so that it can be used as an
+         * inline script or style when rendering HTML content on the server.
+         *
+         * @default false
+         */
+        inline?: boolean;
+      }
+  >;
 
   /**
    * Customizes the magic `quilt:module/entry` module, which can be used as a "magic"
@@ -462,6 +529,7 @@ export async function quiltAppBrowserPlugins({
   root = process.cwd(),
   app,
   entry,
+  entries,
   env,
   assets,
   module,
@@ -496,6 +564,7 @@ export async function quiltAppBrowserPlugins({
     {workers},
     {esnext},
     nodePlugins,
+    supportsESM,
     supportsModuleWorkers,
   ] = await Promise.all([
     import('rollup-plugin-visualizer'),
@@ -514,13 +583,13 @@ export async function quiltAppBrowserPlugins({
       bundle: true,
       resolve: {exportConditions: ['browser']},
     }),
+    targetsSupportModules(browserGroup.browsers),
     targetsSupportModuleWebWorkers(browserGroup.browsers),
   ]);
 
   const plugins: InputPluginOption[] = [
-    quiltAppBrowserInput({root: project.root, entry}),
+    quiltAppBrowserInput({root: project.root, entry, entries}),
     ...nodePlugins,
-    systemJS({minify}),
     replaceProcessEnv({mode}),
     magicModuleEnv({...resolveEnvOption(env), mode, root: project.root}),
     magicModuleAppComponent({entry: app, root: project.root}),
@@ -577,6 +646,10 @@ export async function quiltAppBrowserPlugins({
     monorepoPackageAliases({root: project.root}),
   ];
 
+  if (!supportsESM) {
+    plugins.push(systemJS({minify}));
+  }
+
   if (assets?.clean ?? true) {
     plugins.push(
       removeBuildFiles(
@@ -612,12 +685,27 @@ export async function quiltAppBrowserPlugins({
     cacheKey.set('browserGroup', browserGroup.name);
   }
 
+  // Always inline the system.js entry, since we’ll load it as an inline script to avoid
+  // an unnecessary JS network waterfall for loading critical, SystemJS-dependent code.
+  // We’ll also add any additional entry that was passed via the `entries` option that is
+  // marked as being `inline`.
+  const inline = new Set(['system.js']);
+
+  if (entries) {
+    for (const [name, entry] of Object.entries(entries)) {
+      if (typeof entry === 'object' && entry.inline) {
+        inline.add(name.startsWith('./') ? name.slice(2) : name);
+      }
+    }
+  }
+
   plugins.push(
     assetManifest({
       key: cacheKey,
       base: baseURL,
       file: path.join(manifestsDirectory, `assets${targetFilenamePart}.json`),
       priority: assets?.priority,
+      inline,
     }),
     visualizer({
       template: 'treemap',
@@ -636,7 +724,8 @@ export async function quiltAppBrowserPlugins({
 export function quiltAppBrowserInput({
   root,
   entry,
-}: Pick<AppBrowserOptions, 'root' | 'entry'> = {}) {
+  entries,
+}: Pick<AppBrowserOptions, 'root' | 'entry' | 'entries'> = {}) {
   const MODULES_TO_ENTRIES = new Map<string, string>();
 
   return {
@@ -644,13 +733,19 @@ export function quiltAppBrowserInput({
     async options(options) {
       const finalEntry =
         normalizeRollupInput(options.input) ??
-        (await sourceEntryForAppBrowser({entry, root})) ??
+        (await sourceEntryForAppBrowser({
+          entry: entry ?? getSourceFromCustomEntry(entries?.['.']),
+          root,
+        })) ??
         MAGIC_MODULE_ENTRY;
       const finalEntryName =
         typeof finalEntry === 'string' && finalEntry !== MAGIC_MODULE_ENTRY
           ? path.basename(finalEntry).split('.').slice(0, -1).join('.')
           : 'browser';
-      const additionalEntries = await additionalEntriesForAppBrowser({root});
+      const additionalEntries = await additionalEntriesForAppBrowser({
+        root,
+        entries,
+      });
 
       if (typeof finalEntry === 'string') {
         MODULES_TO_ENTRIES.set(finalEntry, '.');
@@ -1399,8 +1494,10 @@ const SERVER_EXPORT_CONDITIONS = new Set([
 ]);
 
 export async function additionalEntriesForAppBrowser({
+  entries,
   root = process.cwd(),
 }: {
+  entries?: AppBrowserOptions['entries'];
   root?: string | URL;
 }) {
   const additionalEntries: Record<string, string> = {};
@@ -1424,6 +1521,20 @@ export async function additionalEntriesForAppBrowser({
 
       if (resolvedEntry) {
         additionalEntries[key.slice(2)] = resolvedEntry;
+      }
+    }
+  }
+
+  if (entries) {
+    for (const [key, value] of Object.entries(entries)) {
+      if (key === '.') continue;
+
+      const name = key.startsWith('./') ? key.slice(2) : key;
+
+      if (typeof value === 'string') {
+        additionalEntries[name] = project.resolve(value);
+      } else {
+        additionalEntries[name] = project.resolve(value.source);
       }
     }
   }
@@ -1610,4 +1721,10 @@ function createManualChunksSorter(): GetManualChunk {
 
     return `${bundleBaseName}-${relativeId.split(path.sep)[0]?.split('.')[0]}`;
   };
+}
+
+function getSourceFromCustomEntry(
+  entry?: string | {source: string; inline?: boolean},
+) {
+  return typeof entry === 'object' ? entry.source : entry;
 }

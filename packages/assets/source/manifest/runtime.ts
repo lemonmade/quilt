@@ -122,6 +122,8 @@ const NORMALIZED_ASSET_BUILD_MANIFEST_CACHE = new WeakMap<
   NormalizedAssetBuildManifest
 >();
 
+const INTEGRITY_VALUE_REGEXP = /^(sha256|sha384|sha512)-[A-Za-z0-9+/=]{44,}$/;
+
 function normalizeAssetBuildManifest(
   manifest: AssetBuildManifest,
 ): NormalizedAssetBuildManifest {
@@ -141,18 +143,27 @@ function normalizeAssetBuildManifest(
   const scriptAttributes = manifest.attributes?.[2] ?? {};
 
   manifest.assets.forEach((asset, index) => {
-    const [type, source, integrity, attributes] = asset;
+    const [type, source, integrityOrContent, attributes] = asset;
+
+    const resolvedAsset: Asset = {
+      source: base + source,
+      attributes: {},
+    };
+
+    if (integrityOrContent) {
+      if (INTEGRITY_VALUE_REGEXP.test(integrityOrContent)) {
+        resolvedAsset.attributes!.integrity = integrityOrContent;
+      } else {
+        resolvedAsset.content = integrityOrContent;
+      }
+    }
 
     if (type === 1) {
-      assets.styles.set(index, {
-        source: base + source,
-        attributes: {integrity: integrity!, ...styleAttributes, ...attributes},
-      });
+      Object.assign(resolvedAsset.attributes!, styleAttributes, attributes);
+      assets.styles.set(index, resolvedAsset);
     } else if (type === 2) {
-      assets.scripts.set(index, {
-        source: base + source,
-        attributes: {integrity: integrity!, ...scriptAttributes, ...attributes},
-      });
+      Object.assign(resolvedAsset.attributes!, scriptAttributes, attributes);
+      assets.scripts.set(index, resolvedAsset);
     }
   });
 
@@ -187,7 +198,10 @@ function createBrowserAssetsEntryFromManifest(
   const scripts = new Set<Asset>();
 
   if (entry) {
-    const entryModuleID = manifest.entries[entry];
+    // Allow developers to omit the leading ./ from nested entrypoints, so they can pass
+    // either `entry: 'foo/bar'` or `entry: './foo/bar'` and still get the entry assets
+    const entryModuleID =
+      manifest.entries[entry] ?? manifest.entries[`./${entry}`];
     const entryModule = entryModuleID
       ? manifest.modules[entryModuleID]
       : undefined;

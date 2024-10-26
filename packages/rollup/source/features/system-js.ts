@@ -9,29 +9,29 @@ import {multiline} from '../shared/strings';
 export function systemJS({minify = false} = {}) {
   return {
     name: '@quilted/system-js',
-    async renderChunk(code, chunk, options) {
-      if (options.format !== 'system' || !chunk.isEntry) return null;
 
+    async buildStart() {
       const require = createRequire(import.meta.url);
       const systemjs = minify
         ? require.resolve('systemjs/dist/s.min.js')
         : require.resolve('systemjs/dist/s.js');
 
-      // We write the systemjs loader to a dedicated file, and we make it the
-      // "first import" of the chunk so that it is the first file listed in
-      // the manifest.
-      const fileHandle = this.emitFile({
+      // We write the systemjs loader to a dedicated file
+      this.emitFile({
         type: 'asset',
-        name: 'loader.js',
-        source: (await readFile(systemjs, {encoding: 'utf8'})).replace(
-          // Remove the source map comment, if it is present, because we don’t upload the
-          // sourcemap for this file.
-          /\n?[/][/]# sourceMappingURL=s.*\.map\n?$/,
-          '',
-        ),
+        name: 'system.js',
+        source: (await readFile(systemjs, {encoding: 'utf8'}))
+          .replace(
+            // Remove the source map comment, if it is present, because we don’t upload the
+            // sourcemap for this file.
+            /\n?[/][/]# sourceMappingURL=s.*\.map\n?$/m,
+            '',
+          )
+          .trim(),
       });
-
-      chunk.imports.unshift(this.getFileName(fileHandle));
+    },
+    async renderChunk(code, chunk, options) {
+      if (options.format !== 'system' || !chunk.isEntry) return null;
 
       const newCode = new MagicString(code);
 
