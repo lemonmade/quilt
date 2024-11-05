@@ -1,5 +1,17 @@
 # @quilted/preact-browser
 
+## 0.1.14
+
+### Patch Changes
+
+- [`33cf6c8`](https://github.com/lemonmade/quilt/commit/33cf6c87e899b54865fe6f1d82b5dab469e7a5fe) Thanks [@lemonmade](https://github.com/lemonmade)! - Move headers to be server-only in default templates
+
+- [`c421ad9`](https://github.com/lemonmade/quilt/commit/c421ad92ce5554d2b6b9c0b44f24378759dce5ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow additional entries to be marked as inlined to include their content in the browser asset manifest
+
+- Updated dependencies [[`33cf6c8`](https://github.com/lemonmade/quilt/commit/33cf6c87e899b54865fe6f1d82b5dab469e7a5fe), [`c421ad9`](https://github.com/lemonmade/quilt/commit/c421ad92ce5554d2b6b9c0b44f24378759dce5ab)]:
+  - @quilted/browser@0.1.10
+  - @quilted/assets@0.1.8
+
 ## 0.1.13
 
 ### Patch Changes

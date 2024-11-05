@@ -1,5 +1,14 @@
 # @quilted/browser
 
+## 0.1.10
+
+### Patch Changes
+
+- [`33cf6c8`](https://github.com/lemonmade/quilt/commit/33cf6c87e899b54865fe6f1d82b5dab469e7a5fe) Thanks [@lemonmade](https://github.com/lemonmade)! - Move headers to be server-only in default templates
+
+- Updated dependencies [[`c421ad9`](https://github.com/lemonmade/quilt/commit/c421ad92ce5554d2b6b9c0b44f24378759dce5ab)]:
+  - @quilted/assets@0.1.8
+
 ## 0.1.9
 
 ### Patch Changes

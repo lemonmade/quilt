@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.2.43
+
+### Patch Changes
+
+- [`93c5767`](https://github.com/lemonmade/quilt/commit/93c5767e31a5c968bf1fe23cb448bf1c297c91ca) Thanks [@lemonmade](https://github.com/lemonmade)! - Update browser global definitions in app template
+
+- [`33cf6c8`](https://github.com/lemonmade/quilt/commit/33cf6c87e899b54865fe6f1d82b5dab469e7a5fe) Thanks [@lemonmade](https://github.com/lemonmade)! - Move headers to be server-only in default templates
+
 ## 0.2.42
 
 ### Patch Changes
