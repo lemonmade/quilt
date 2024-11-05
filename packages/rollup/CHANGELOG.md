@@ -1,5 +1,14 @@
 # @quilted/rollup
 
+## 0.2.46
+
+### Patch Changes
+
+- [`c421ad9`](https://github.com/lemonmade/quilt/commit/c421ad92ce5554d2b6b9c0b44f24378759dce5ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow additional entries to be marked as inlined to include their content in the browser asset manifest
+
+- Updated dependencies [[`c421ad9`](https://github.com/lemonmade/quilt/commit/c421ad92ce5554d2b6b9c0b44f24378759dce5ab)]:
+  - @quilted/assets@0.1.8
+
 ## 0.2.45
 
 ### Patch Changes

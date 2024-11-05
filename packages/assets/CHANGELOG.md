@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.8
+
+### Patch Changes
+
+- [`c421ad9`](https://github.com/lemonmade/quilt/commit/c421ad92ce5554d2b6b9c0b44f24378759dce5ab) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow additional entries to be marked as inlined to include their content in the browser asset manifest
+
 ## 0.1.7
 
 ### Patch Changes
