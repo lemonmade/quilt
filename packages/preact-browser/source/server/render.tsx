@@ -414,9 +414,14 @@ async function renderHTMLChunk(
           }
 
           const entryAssets = assets.entry({request: browser.request});
+          const systemJSAssets = assets.entry({
+            id: 'system.js',
+            request: browser.request,
+          });
 
           replacement = renderToString(
             <>
+              <ScriptAssets scripts={systemJSAssets.scripts} />
               <ScriptAssets scripts={entryAssets.scripts} />
               <StyleAssets styles={entryAssets.styles} />
             </>,
