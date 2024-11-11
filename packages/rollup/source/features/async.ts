@@ -5,7 +5,6 @@ import {multiline} from '../shared/strings.ts';
 import MagicString from 'magic-string';
 
 const MODULE_PREFIX = 'quilt-async-module:';
-export const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   preload?: boolean;
@@ -23,9 +22,7 @@ export function asyncModules({
     async resolveId(id, importer) {
       let prefix: string;
 
-      if (id.startsWith(IMPORT_PREFIX)) {
-        prefix = IMPORT_PREFIX;
-      } else if (id.startsWith(MODULE_PREFIX)) {
+      if (id.startsWith(MODULE_PREFIX)) {
         prefix = MODULE_PREFIX;
       } else {
         return null;

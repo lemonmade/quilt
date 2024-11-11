@@ -2,7 +2,6 @@ import type * as Babel from '@babel/types';
 import type {NodePath, Binding} from '@babel/traverse';
 
 export const MODULE_PREFIX = 'quilt-async-module:';
-export const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   packages?: {[key: string]: string[]};
@@ -155,7 +154,7 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               );
             }
 
-            const {imported, path} = [...dynamicImports].at(0)!;
+            const {imported} = [...dynamicImports].at(0)!;
 
             const identifier = state.program.scope.generateUidIdentifier(
               `__createAsyncModule_${imported}`,
@@ -172,25 +171,6 @@ export function asyncBabelPlugin({types: t}: {types: typeof Babel}) {
               load.node,
             ]);
 
-            path.parentPath.replaceWith(
-              t.callExpression(
-                t.memberExpression(
-                  t.importExpression(
-                    t.stringLiteral(`${IMPORT_PREFIX}${imported}`),
-                  ),
-                  t.identifier('then'),
-                ),
-                [
-                  t.arrowFunctionExpression(
-                    [t.identifier('module')],
-                    t.memberExpression(
-                      t.identifier('module'),
-                      t.identifier('default'),
-                    ),
-                  ),
-                ],
-              ),
-            );
             load.replaceWith(replacementCallExpression);
           });
         }
