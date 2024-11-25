@@ -151,6 +151,7 @@ export async function rollupGenerateOptionsForBrowsers(
     import('semver'),
     import('@mdn/browser-compat-data', {
       assert: {type: 'json'},
+      with: {type: 'json'},
     }) as Promise<any>,
   ]);
 
@@ -200,6 +201,7 @@ export async function targetsSupportModuleWebWorkers(
     import('semver'),
     import('@mdn/browser-compat-data', {
       assert: {type: 'json'},
+      with: {type: 'json'},
     }) as Promise<any>,
   ]);
 
