@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.47
+
+### Patch Changes
+
+- [#855](https://github.com/lemonmade/quilt/pull/855) [`56b1ee6`](https://github.com/lemonmade/quilt/commit/56b1ee684e2ebf08d5f09ea3ec45bfb37716f78f) Thanks [@robin-drexler](https://github.com/robin-drexler)! - add import attribute to support node >=22
+
 ## 0.2.46
 
 ### Patch Changes

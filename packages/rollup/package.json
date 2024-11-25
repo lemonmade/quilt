@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.2.46",
+  "version": "0.2.47",
   "engines": {
     "node": ">=14.0.0"
   },
