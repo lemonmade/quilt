@@ -150,7 +150,6 @@ export async function rollupGenerateOptionsForBrowsers(
   const [{default: semver}, {default: mdn}] = await Promise.all([
     import('semver'),
     import('@mdn/browser-compat-data', {
-      assert: {type: 'json'},
       with: {type: 'json'},
     }) as Promise<any>,
   ]);
@@ -200,7 +199,6 @@ export async function targetsSupportModuleWebWorkers(
   const [{default: semver}, {default: mdn}] = await Promise.all([
     import('semver'),
     import('@mdn/browser-compat-data', {
-      assert: {type: 'json'},
       with: {type: 'json'},
     }) as Promise<any>,
   ]);

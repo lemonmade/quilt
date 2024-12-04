@@ -8,7 +8,7 @@
   },
   "version": "0.2.47",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.10.0"
   },
   "repository": {
     "type": "git",
