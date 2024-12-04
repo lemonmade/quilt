@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.2.48
+
+### Patch Changes
+
+- [`b1744f5`](https://github.com/lemonmade/quilt/commit/b1744f5277102f82663f1423cc3ee0e0bdecb865) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix import assertions by requiring Node 20.10+ for Rollup plugin
+
 ## 0.2.47
 
 ### Patch Changes
