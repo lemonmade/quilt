@@ -41,7 +41,7 @@
     "fs-extra": "^10.0.0",
     "globby": "^13.0.0",
     "minimatch": "^5.1.0",
-    "pkg-dir": "^6.0.0",
+    "pkg-dir": "^8.0.0",
     "prettier": "^3.0.0",
     "prompts": "^2.4.0",
     "yaml": "^2.1.0",
