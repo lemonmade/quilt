@@ -1,5 +1,16 @@
 # @quilted/vite
 
+## 0.2.0
+
+### Minor Changes
+
+- [`c90ebb7`](https://github.com/lemonmade/quilt/commit/c90ebb7fc1ad1c7de7b384bfe06102879de3c1f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Update rollup, esbuild, vite, and vitest
+
+### Patch Changes
+
+- Updated dependencies [[`c90ebb7`](https://github.com/lemonmade/quilt/commit/c90ebb7fc1ad1c7de7b384bfe06102879de3c1f5)]:
+  - @quilted/rollup@0.3.0
+
 ## 0.1.27
 
 ### Patch Changes

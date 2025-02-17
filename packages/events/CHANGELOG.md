@@ -1,5 +1,11 @@
 # @quilted/events
 
+## 2.1.2
+
+### Patch Changes
+
+- [`3fe12c7`](https://github.com/lemonmade/quilt/commit/3fe12c79055882debdbcacf44da90f99d82cfef1) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixes for modern types
+
 ## 2.1.1
 
 ### Patch Changes

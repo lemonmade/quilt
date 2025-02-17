@@ -17,8 +17,8 @@
   "devDependencies": {
     "@quilted/quilt": "^0.8.0",
     "preact": "^10.26.0",
-    "react": "npm:@quilted/react@*",
-    "react-dom": "npm:@quilted/react-dom@*"
+    "react": "npm:@quilted/react@^19.0.0",
+    "react-dom": "npm:@quilted/react-dom@^19.0.0"
   },
   "sideEffects": [
     "*.css",

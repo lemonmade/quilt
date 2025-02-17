@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.27",
+  "version": "0.2.0",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -54,7 +54,7 @@
     "@babel/core": "^7.23.0",
     "@prefresh/vite": "^2.4.4",
     "@quilted/babel": "workspace:^0.2.2",
-    "@quilted/rollup": "workspace:^0.2.41",
+    "@quilted/rollup": "workspace:^0.3.0",
     "@quilted/request-router": "workspace:^0.3.0"
   },
   "peerDependencies": {
