@@ -46,7 +46,7 @@
     "@quilted/events": "workspace:^2.1.1"
   },
   "peerDependencies": {
-    "@preact/signals-core": "^1.6.0"
+    "@preact/signals-core": "^1.8.0"
   },
   "peerDependenciesMeta": {
     "@preact/signals-core": {
@@ -54,6 +54,6 @@
     }
   },
   "devDependencies": {
-    "@preact/signals-core": "^1.6.0"
+    "@preact/signals-core": "^1.8.0"
   }
 }

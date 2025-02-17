@@ -40,7 +40,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "preact-render-to-string": "^6.5.0",
+    "preact-render-to-string": "^6.5.13",
     "@quilted/preact-browser": "workspace:^0.1.15",
     "@quilted/preact-context": "workspace:^0.1.3"
   },
