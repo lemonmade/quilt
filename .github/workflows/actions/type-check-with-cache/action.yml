@@ -8,7 +8,7 @@ runs:
         path: |
           **/build/typescript/
           **/*.tsbuildinfo
-        key: typescript-cache-v2-${{ github.sha }}
-        restore-keys: typescript-cache-v2-
+        key: typescript-cache-v3-${{ github.sha }}
+        restore-keys: typescript-cache-v3-
     - run: pnpm run type-check
       shell: bash
