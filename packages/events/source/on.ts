@@ -64,6 +64,8 @@ export function on<
   let error: Error | null = null;
   let finished = false;
 
+  const asyncDispose = Symbol.asyncDispose ?? Symbol('asyncDispose');
+
   const iterator: AsyncGenerator<Events[Event], void, void> = {
     next() {
       // First, we consume all unread events
@@ -116,6 +118,8 @@ export function on<
     [Symbol.asyncIterator]() {
       return this;
     },
+
+    async [asyncDispose as typeof Symbol.asyncDispose]() {},
   };
 
   addEventHandler(target, event as any, eventHandler, {

@@ -5,7 +5,8 @@ import {computed} from '@quilted/signals';
 
 import {useRouter} from '../hooks/router.ts';
 
-interface Props extends Omit<JSX.HTMLAttributes<HTMLAnchorElement>, 'href'> {
+interface Props
+  extends Omit<JSX.LinkHTMLAttributes<HTMLAnchorElement>, 'href'> {
   to: NavigateTo;
   base?: string | URL;
   external?: boolean;

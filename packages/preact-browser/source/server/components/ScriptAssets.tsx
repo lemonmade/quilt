@@ -15,7 +15,7 @@ export function ScriptAssets({
   return (
     <>
       {scripts.map((asset) => {
-        const props: JSX.HTMLAttributes<HTMLScriptElement> = {};
+        const props: JSX.ScriptHTMLAttributes = {};
 
         Object.assign(props, scriptAssetAttributes(asset, {baseURL}), rest);
 

@@ -1,4 +1,4 @@
-import type {ComponentType, Context} from 'preact';
+import type {JSX, ComponentType, Context} from 'preact';
 
 export type PlainObject = Record<string, any>;
 export type EmptyObject = Record<string, never>;
