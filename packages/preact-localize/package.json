@@ -51,7 +51,7 @@
   },
   "peerDependencies": {
     "@quilted/request-router": "workspace:^0.3.0",
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   },
   "peerDependenciesMeta": {
     "@quilted/request-router": {
@@ -63,6 +63,6 @@
   },
   "devDependencies": {
     "@quilted/request-router": "workspace:^0.3.0",
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   }
 }

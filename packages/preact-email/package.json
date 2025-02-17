@@ -45,7 +45,7 @@
     "@quilted/preact-context": "workspace:^0.1.0"
   },
   "peerDependencies": {
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   },
   "peerDependenciesMeta": {
     "preact": {
@@ -53,6 +53,6 @@
     }
   },
   "devDependencies": {
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   }
 }

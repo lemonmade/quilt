@@ -263,14 +263,14 @@
     "@quilted/request-router": "workspace:^0.3.1",
     "@quilted/signals": "workspace:^0.2.0",
     "@quilted/threads": "workspace:^3.0.0",
-    "preact-render-to-string": "^6.5.0",
+    "preact-render-to-string": "^6.5.13",
     "jest-matcher-utils": "^29.0.0"
   },
   "peerDependencies": {
     "graphql": "^16.8.0",
-    "preact": "^10.21.0",
+    "preact": "^10.26.0",
     "prettier": "^2.0.0 || ^3.0.0",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0 || ^3.0.0"
   },
   "peerDependenciesMeta": {
     "graphql": {
@@ -288,8 +288,8 @@
   },
   "devDependencies": {
     "expect": "^29.0.0",
-    "preact": "^10.21.0",
-    "prettier": "^3.2.0",
-    "vitest": "^2.0.3"
+    "preact": "^10.26.0",
+    "prettier": "^3.5.0",
+    "vitest": "^3.0.0"
   }
 }

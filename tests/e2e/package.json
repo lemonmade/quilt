@@ -19,6 +19,6 @@
     "htmx.org": "^1.9.10",
     "nanoid": "^5.0.0",
     "playwright": "^1.46.0",
-    "react": "workspace:@quilted/react@^18.2.0"
+    "react": "workspace:@quilted/react@*"
   }
 }

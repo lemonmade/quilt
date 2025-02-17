@@ -30,7 +30,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "peerDependencies": {
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   },
   "peerDependenciesMeta": {
     "preact": {
@@ -38,6 +38,6 @@
     }
   },
   "devDependencies": {
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   }
 }

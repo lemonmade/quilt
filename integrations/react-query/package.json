@@ -31,7 +31,7 @@
   "peerDependencies": {
     "@quilted/quilt": "workspace:^0.8.8",
     "@tanstack/react-query": "^5.0.0",
-    "preact": "^10.21.0"
+    "preact": "^10.26.0"
   },
   "devDependencies": {
     "@quilted/quilt": "workspace:*",
