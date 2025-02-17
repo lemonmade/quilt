@@ -160,7 +160,7 @@ importers:
         specifier: ^5.34.1
         version: 5.54.1(react@packages+react)
       react:
-        specifier: workspace:@quilted/react@^18.2.0
+        specifier: workspace:@quilted/react@*
         version: link:../../packages/react
 
   integrations/trpc:
@@ -420,10 +420,6 @@ importers:
       '@quilted/events':
         specifier: workspace:^2.0.0
         version: link:../events
-    devDependencies:
-      react:
-        specifier: workspace:@quilted/react@^18.2.0
-        version: link:../react
 
   packages/preact-async:
     dependencies:
@@ -671,10 +667,10 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../preact-workers
       '@quilted/react':
-        specifier: workspace:^18.2.0
+        specifier: workspace:*
         version: link:../react
       '@quilted/react-dom':
-        specifier: workspace:^18.2.15
+        specifier: workspace:*
         version: link:../react-dom
       '@quilted/request-router':
         specifier: workspace:^0.3.1
@@ -966,7 +962,7 @@ importers:
         version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
       '@trpc/react-query':
         specifier: 11.0.0-rc.498
-        version: 11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@packages+react))(react@packages+react)
+        version: 11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@packages+react-dom)(react@packages+react)
       '@trpc/server':
         specifier: 11.0.0-rc.498
         version: 11.0.0-rc.498
@@ -997,6 +993,9 @@ importers:
       react:
         specifier: workspace:@quilted/react@*
         version: link:../../packages/react
+      react-dom:
+        specifier: workspace:@quilted/react-dom@*
+        version: link:../../packages/react-dom
 
   tests/e2e/fixtures/basic-api:
     devDependencies:
@@ -6748,13 +6747,13 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
-  '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@packages+react))(react@packages+react)':
+  '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@packages+react-dom)(react@packages+react)':
     dependencies:
       '@tanstack/react-query': 5.54.1(react@packages+react)
       '@trpc/client': 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
       '@trpc/server': 11.0.0-rc.498
       react: link:packages/react
-      react-dom: 19.0.0(react@packages+react)
+      react-dom: link:packages/react-dom
 
   '@trpc/server@11.0.0-rc.498': {}
 
@@ -8292,11 +8291,6 @@ snapshots:
   react-dom@19.0.0(react@19.0.0):
     dependencies:
       react: 19.0.0
-      scheduler: 0.25.0
-
-  react-dom@19.0.0(react@packages+react):
-    dependencies:
-      react: link:packages/react
       scheduler: 0.25.0
 
   react-is@17.0.2: {}

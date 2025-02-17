@@ -40,7 +40,7 @@
     }
   },
   "devDependencies": {
-    "react": "npm:@quilted/react@^18.2.0"
+    "react": "npm:@quilted/react@*"
   },
   "browserslist": [
     "defaults and fully supports es6-module",

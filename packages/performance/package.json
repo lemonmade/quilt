@@ -27,16 +27,5 @@
   },
   "dependencies": {
     "@quilted/events": "workspace:^2.0.0"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    }
-  },
-  "devDependencies": {
-    "react": "workspace:@quilted/react@^18.2.0"
   }
 }

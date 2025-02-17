@@ -20,8 +20,8 @@
     "graphql": "^16.8.0",
     "jsdom": "^26.0.0",
     "preact": "^10.26.0",
-    "react": "npm:@quilted/react@^18.2.0",
-    "react-dom": "npm:@quilted/react-dom@^18.2.0"
+    "react": "npm:@quilted/react@*",
+    "react-dom": "npm:@quilted/react-dom@*"
   },
   "sideEffects": [
     "*.css",
