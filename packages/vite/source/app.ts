@@ -87,7 +87,7 @@ export async function quiltApp({
   react: useReact = true,
   graphql: useGraphQL = true,
 }: AppOptions = {}) {
-  const mode = typeof env === 'string' ? env : env?.mode ?? 'development';
+  const mode = typeof env === 'string' ? env : (env?.mode ?? 'development');
 
   const [
     {default: prefresh},

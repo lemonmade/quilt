@@ -18,7 +18,7 @@
     "@quilted/graphql-tools": "^0.2.0",
     "@quilted/quilt": "^0.8.0",
     "graphql": "^16.8.0",
-    "jsdom": "^24.0.0",
+    "jsdom": "^26.0.0",
     "preact": "^10.21.0",
     "react": "npm:@quilted/react@^18.2.0",
     "react-dom": "npm:@quilted/react-dom@^18.2.0"

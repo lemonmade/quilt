@@ -217,7 +217,7 @@ function normalizeRender<Props>(
   render?: ComponentChildren | ((props: Props) => ComponentChildren),
   props: Props = {} as any,
 ): ComponentChildren {
-  return typeof render === 'function' ? render(props) : render ?? null;
+  return typeof render === 'function' ? render(props) : (render ?? null);
 }
 
 function displayNameFromId(id?: string) {

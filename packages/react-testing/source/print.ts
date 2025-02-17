@@ -112,5 +112,5 @@ export function nodeName<Props>({type}: Node<Props>) {
 
   return typeof type === 'string'
     ? type
-    : type.displayName ?? type.name ?? 'Component';
+    : (type.displayName ?? type.name ?? 'Component');
 }

@@ -51,7 +51,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@types/common-tags": "^1.8.0"
+    "@types/common-tags": "^1.8.4"
   },
   "peerDependencies": {
     "@quilted/quilt": "workspace:^0.8.8",

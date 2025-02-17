@@ -39,7 +39,7 @@ export async function getCreateAsMonorepo(
 ) {
   let createAsMonorepo: boolean;
 
-  if (argv['--monorepo' || argv['--yes']]) {
+  if (argv['--monorepo'] || argv['--yes']) {
     createAsMonorepo = true;
   } else if (argv['--no-monorepo']) {
     createAsMonorepo = false;

@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@quilted/cli-kit": "workspace:^0.2.0",
-    "@types/common-tags": "^1.8.0",
+    "@types/common-tags": "^1.8.4",
     "@trpc/client": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",

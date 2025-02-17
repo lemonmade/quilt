@@ -10,6 +10,6 @@
   "dependencies": {},
   "devDependencies": {
     "@quilted/quilt": "workspace:*",
-    "typescript": "^5.5.0"
+    "typescript": "^5.7.0"
   }
 }

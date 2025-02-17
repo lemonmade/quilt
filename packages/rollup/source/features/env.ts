@@ -79,7 +79,7 @@ export interface MagicModuleEnvOptions {
 export function resolveEnvOption(
   option?: MagicModuleEnvOptions['mode'] | MagicModuleEnvOptions,
 ) {
-  return typeof option === 'string' ? {mode: option} : option ?? {};
+  return typeof option === 'string' ? {mode: option} : (option ?? {});
 }
 
 export function magicModuleEnv({

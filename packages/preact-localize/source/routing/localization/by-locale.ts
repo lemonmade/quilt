@@ -52,7 +52,7 @@ export function createRouteLocalization({
 
     if (target.startsWith('/')) {
       const fromTarget =
-        fromLocale == null ? '/' : localeMap.get(fromLocale) ?? '/';
+        fromLocale == null ? '/' : (localeMap.get(fromLocale) ?? '/');
 
       toUrl.pathname = normalizePath(
         toUrl.pathname.replace(fromTarget, target),

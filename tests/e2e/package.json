@@ -11,7 +11,7 @@
     "@trpc/client": "11.0.0-rc.498",
     "@trpc/react-query": "11.0.0-rc.498",
     "@trpc/server": "11.0.0-rc.498",
-    "@types/common-tags": "^1.8.0",
+    "@types/common-tags": "^1.8.4",
     "@types/fs-extra": "^11.0.0",
     "common-tags": "^1.8.0",
     "fs-extra": "^11.2.0",

@@ -69,7 +69,7 @@
   "devDependencies": {
     "@quilted/quilt": "workspace:*",
     "@quilted/rollup": "workspace:*",
-    "@types/common-tags": "^1.8.0",
+    "@types/common-tags": "^1.8.4",
     "@types/mime": "^2.0.0"
   }
 }

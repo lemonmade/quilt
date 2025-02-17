@@ -216,9 +216,9 @@ export function getSelectionTypeMap(
         const {typeCondition: typeConditionNode, selectionSet} = selection;
 
         const typeCondition = typeConditionNode
-          ? (context.schema.getType(
+          ? ((context.schema.getType(
               typeConditionNode.name.value,
-            ) as GraphQLSelectableType) ?? undefined
+            ) as GraphQLSelectableType) ?? undefined)
           : undefined;
 
         for (const selection of selectionSet.selections) {

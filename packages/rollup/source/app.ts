@@ -973,7 +973,7 @@ export function quiltAppServerInput({
       const finalEntry =
         format === 'request-router'
           ? MAGIC_MODULE_ENTRY
-          : serverEntry ?? MAGIC_MODULE_ENTRY;
+          : (serverEntry ?? MAGIC_MODULE_ENTRY);
       const finalEntryName =
         typeof serverEntry === 'string'
           ? path.basename(serverEntry).split('.').slice(0, -1).join('.')
