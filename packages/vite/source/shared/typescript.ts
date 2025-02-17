@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 
-export function tsconfigAliases() {
+export function tsconfigAliases(): Plugin {
   let plugin:
     | Awaited<
         ReturnType<
@@ -27,5 +27,5 @@ export function tsconfigAliases() {
       if (typeof plugin?.resolveId !== 'function') return;
       return plugin.resolveId.call(this, ...args);
     },
-  } satisfies Plugin;
+  };
 }

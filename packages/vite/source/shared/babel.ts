@@ -8,7 +8,7 @@ const IMPORTS_NEEDING_TRANSFORMATION_REGEX =
 
 const require = createRequire(import.meta.url);
 
-export function babelPreprocess() {
+export function babelPreprocess(): Plugin {
   return {
     name: '@quilted/babel-preprocess',
     enforce: 'pre',
@@ -52,5 +52,5 @@ export function babelPreprocess() {
 
       return {code: transformedCode ?? undefined, map};
     },
-  } satisfies Plugin;
+  };
 }

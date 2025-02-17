@@ -16,7 +16,7 @@ export function createMagicModulePlugin({
   readonly module: string;
   readonly sideEffects?: boolean;
   source?(this: PluginContext): string | Promise<string>;
-}) {
+}): Plugin {
   return {
     name,
     enforce: 'pre',
@@ -40,5 +40,5 @@ export function createMagicModulePlugin({
           };
         }
       : undefined,
-  } satisfies Plugin;
+  };
 }
