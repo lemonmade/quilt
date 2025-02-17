@@ -1,5 +1,14 @@
 # @quilted/cli-kit
 
+## 0.2.1
+
+### Patch Changes
+
+- [`903575a`](https://github.com/lemonmade/quilt/commit/903575a220b72095a8ed5bffd43ad5f1a44f40a8) Thanks [@lemonmade](https://github.com/lemonmade)! - Update development dependencies
+
+- Updated dependencies [[`3fe12c7`](https://github.com/lemonmade/quilt/commit/3fe12c79055882debdbcacf44da90f99d82cfef1)]:
+  - @quilted/events@2.1.2
+
 ## 0.2.0
 
 ### Minor Changes

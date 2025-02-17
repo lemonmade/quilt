@@ -1,7 +1,7 @@
 {
   "name": "@quilted/create",
   "type": "module",
-  "version": "0.2.43",
+  "version": "0.2.44",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "devDependencies": {
-    "@quilted/cli-kit": "workspace:^0.2.0",
+    "@quilted/cli-kit": "workspace:^0.2.1",
     "@types/common-tags": "^1.8.4",
     "@trpc/client": "next",
     "@trpc/react-query": "next",

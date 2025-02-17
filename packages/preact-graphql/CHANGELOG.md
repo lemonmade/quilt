@@ -1,5 +1,16 @@
 # @quilted/preact-graphql
 
+## 0.1.8
+
+### Patch Changes
+
+- [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
+- Updated dependencies [[`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59)]:
+  - @quilted/preact-context@0.1.3
+  - @quilted/preact-signals@0.1.1
+  - @quilted/preact-async@0.1.20
+
 ## 0.1.7
 
 ### Patch Changes

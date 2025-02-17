@@ -1,5 +1,28 @@
 # @quilted/quilt
 
+## 0.8.9
+
+### Patch Changes
+
+- [`b5846ec`](https://github.com/lemonmade/quilt/commit/b5846ecea4cdf275c3d6837c3bd5c7ce7c6d990c) Thanks [@lemonmade](https://github.com/lemonmade)! - Update React dependencies to 19
+
+- [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
+- Updated dependencies [[`3fe12c7`](https://github.com/lemonmade/quilt/commit/3fe12c79055882debdbcacf44da90f99d82cfef1), [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59)]:
+  - @quilted/events@2.1.2
+  - @quilted/preact-browser@0.1.15
+  - @quilted/preact-router@0.2.12
+  - @quilted/preact-testing@0.1.8
+  - @quilted/react-dom@19.0.0
+  - @quilted/react@19.0.0
+  - @quilted/preact-performance@0.1.1
+  - @quilted/preact-localize@0.3.5
+  - @quilted/preact-context@0.1.3
+  - @quilted/preact-graphql@0.1.8
+  - @quilted/preact-signals@0.1.1
+  - @quilted/preact-workers@0.2.1
+  - @quilted/preact-async@0.1.20
+
 ## 0.8.8
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-testing",
   "type": "module",
-  "version": "0.6.11",
+  "version": "0.6.12",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -71,7 +71,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/preact-testing": "workspace:^0.1.7",
+    "@quilted/preact-testing": "workspace:^0.1.8",
     "jest-matcher-utils": "^27.0.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 {
   "name": "@quilted/performance",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -26,6 +26,6 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/events": "workspace:^2.0.0"
+    "@quilted/events": "workspace:^2.1.2"
   }
 }

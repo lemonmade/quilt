@@ -1,5 +1,14 @@
 # @quilted/performance
 
+## 0.2.1
+
+### Patch Changes
+
+- [`b5846ec`](https://github.com/lemonmade/quilt/commit/b5846ecea4cdf275c3d6837c3bd5c7ce7c6d990c) Thanks [@lemonmade](https://github.com/lemonmade)! - Update React dependencies to 19
+
+- Updated dependencies [[`3fe12c7`](https://github.com/lemonmade/quilt/commit/3fe12c79055882debdbcacf44da90f99d82cfef1)]:
+  - @quilted/events@2.1.2
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @quilted/preact-router
 
+## 0.2.12
+
+### Patch Changes
+
+- [`3fe12c7`](https://github.com/lemonmade/quilt/commit/3fe12c79055882debdbcacf44da90f99d82cfef1) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixes for modern types
+
+- [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
+- Updated dependencies [[`3fe12c7`](https://github.com/lemonmade/quilt/commit/3fe12c79055882debdbcacf44da90f99d82cfef1), [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59)]:
+  - @quilted/preact-browser@0.1.15
+  - @quilted/preact-performance@0.1.1
+  - @quilted/preact-context@0.1.3
+  - @quilted/preact-async@0.1.20
+
 ## 0.2.11
 
 ### Patch Changes

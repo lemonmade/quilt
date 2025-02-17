@@ -236,7 +236,7 @@ importers:
   packages/cli-kit:
     dependencies:
       '@quilted/events':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.2
         version: link:../events
       '@types/common-tags':
         specifier: ^1.8.0
@@ -269,7 +269,7 @@ importers:
   packages/create:
     devDependencies:
       '@quilted/cli-kit':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.1
         version: link:../cli-kit
       '@trpc/client':
         specifier: next
@@ -418,7 +418,7 @@ importers:
   packages/performance:
     dependencies:
       '@quilted/events':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.2
         version: link:../events
 
   packages/preact-async:
@@ -427,13 +427,13 @@ importers:
         specifier: workspace:^0.4.21
         version: link:../async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.4
+        specifier: workspace:^0.1.15
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/preact-signals':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-signals
     devDependencies:
       preact:
@@ -452,7 +452,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/preact-context':
-        specifier: workspace:^0.1.2
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/request-router':
         specifier: workspace:^0.3.1
@@ -477,10 +477,10 @@ importers:
   packages/preact-email:
     dependencies:
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.12
+        specifier: workspace:^0.1.15
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       preact-render-to-string:
         specifier: ^6.5.0
@@ -496,13 +496,13 @@ importers:
         specifier: workspace:^3.3.7
         version: link:../graphql
       '@quilted/preact-async':
-        specifier: workspace:^0.1.18
+        specifier: workspace:^0.1.20
         version: link:../preact-async
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/preact-signals':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-signals
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
@@ -518,13 +518,13 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../localize
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.11
+        specifier: workspace:^0.1.15
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/preact-router':
-        specifier: workspace:^0.2.8
+        specifier: workspace:^0.2.12
         version: link:../preact-router
       '@quilted/signals':
         specifier: workspace:^0.2.0
@@ -540,10 +540,10 @@ importers:
   packages/preact-performance:
     dependencies:
       '@quilted/performance':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.1
         version: link:../performance
       '@quilted/preact-context':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.3
         version: link:../preact-context
     devDependencies:
       preact:
@@ -559,16 +559,16 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/preact-async':
-        specifier: workspace:^0.1.18
+        specifier: workspace:^0.1.20
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.1
+        specifier: workspace:^0.1.15
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.1
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/preact-performance':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-performance
       '@quilted/routing':
         specifier: workspace:^0.4.2
@@ -631,40 +631,40 @@ importers:
         specifier: workspace:^0.4.22
         version: link:../async
       '@quilted/events':
-        specifier: workspace:^2.1.1
+        specifier: workspace:^2.1.2
         version: link:../events
       '@quilted/graphql':
         specifier: workspace:^3.3.8
         version: link:../graphql
       '@quilted/preact-async':
-        specifier: workspace:^0.1.2
+        specifier: workspace:^0.1.20
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.12
+        specifier: workspace:^0.1.15
         version: link:../preact-browser
       '@quilted/preact-context':
-        specifier: workspace:^0.1.2
+        specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/preact-graphql':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.8
         version: link:../preact-graphql
       '@quilted/preact-localize':
-        specifier: workspace:^0.3.4
+        specifier: workspace:^0.3.5
         version: link:../preact-localize
       '@quilted/preact-performance':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.2.10
+        specifier: workspace:^0.2.12
         version: link:../preact-router
       '@quilted/preact-signals':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.1
         version: link:../preact-signals
       '@quilted/preact-testing':
-        specifier: workspace:^0.1.6
+        specifier: workspace:^0.1.8
         version: link:../preact-testing
       '@quilted/preact-workers':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.1
         version: link:../preact-workers
       '@quilted/react':
         specifier: workspace:*
@@ -728,7 +728,7 @@ importers:
   packages/react-testing:
     dependencies:
       '@quilted/preact-testing':
-        specifier: workspace:^0.1.7
+        specifier: workspace:^0.1.8
         version: link:../preact-testing
       jest-matcher-utils:
         specifier: ^27.0.0
@@ -921,7 +921,7 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../request-router
       '@quilted/rollup':
-        specifier: workspace:^0.2.41
+        specifier: workspace:^0.3.0
         version: link:../rollup
     devDependencies:
       '@types/babel__core':

@@ -1,5 +1,15 @@
 # @quilted/cloudflare
 
+## 1.0.0
+
+### Patch Changes
+
+- [`903575a`](https://github.com/lemonmade/quilt/commit/903575a220b72095a8ed5bffd43ad5f1a44f40a8) Thanks [@lemonmade](https://github.com/lemonmade)! - Update development dependencies
+
+- Updated dependencies [[`b5846ec`](https://github.com/lemonmade/quilt/commit/b5846ecea4cdf275c3d6837c3bd5c7ce7c6d990c), [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59), [`c90ebb7`](https://github.com/lemonmade/quilt/commit/c90ebb7fc1ad1c7de7b384bfe06102879de3c1f5)]:
+  - @quilted/quilt@0.8.9
+  - @quilted/rollup@0.3.0
+
 ## 0.3.3
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @quilted/create
 
+## 0.2.44
+
+### Patch Changes
+
+- [`b5846ec`](https://github.com/lemonmade/quilt/commit/b5846ecea4cdf275c3d6837c3bd5c7ce7c6d990c) Thanks [@lemonmade](https://github.com/lemonmade)! - Update React dependencies to 19
+
+- [`96016f1`](https://github.com/lemonmade/quilt/commit/96016f1102276bdae3ef4ff0fae7656c9f118d59) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact dependencies
+
+- [`903575a`](https://github.com/lemonmade/quilt/commit/903575a220b72095a8ed5bffd43ad5f1a44f40a8) Thanks [@lemonmade](https://github.com/lemonmade)! - Update development dependencies
+
+- [`c90ebb7`](https://github.com/lemonmade/quilt/commit/c90ebb7fc1ad1c7de7b384bfe06102879de3c1f5) Thanks [@lemonmade](https://github.com/lemonmade)! - Update rollup, esbuild, vite, and vitest
+
 ## 0.2.43
 
 ### Patch Changes

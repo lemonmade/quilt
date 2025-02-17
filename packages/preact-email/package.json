@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-email",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "React-friendly APIs for rendering emails and their metadata",
   "repository": {
     "type": "git",
@@ -41,8 +41,8 @@
   },
   "dependencies": {
     "preact-render-to-string": "^6.5.0",
-    "@quilted/preact-browser": "workspace:^0.1.12",
-    "@quilted/preact-context": "workspace:^0.1.0"
+    "@quilted/preact-browser": "workspace:^0.1.15",
+    "@quilted/preact-context": "workspace:^0.1.3"
   },
   "peerDependencies": {
     "preact": "^10.26.0"
