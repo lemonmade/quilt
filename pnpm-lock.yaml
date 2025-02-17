@@ -667,10 +667,10 @@ importers:
         specifier: workspace:^0.2.1
         version: link:../preact-workers
       '@quilted/react':
-        specifier: workspace:*
+        specifier: workspace:^19.0.0
         version: link:../react
       '@quilted/react-dom':
-        specifier: workspace:*
+        specifier: workspace:^19.0.0
         version: link:../react-dom
       '@quilted/request-router':
         specifier: workspace:^0.3.1
