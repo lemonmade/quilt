@@ -81,7 +81,7 @@
     "colorette": "^2.0.0",
     "cosmiconfig": "^8.2.0",
     "cosmiconfig-toml-loader": "^1.0.0",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.25.0",
     "globby": "^13.0.0",
     "graphql": "^16.8.0",
     "is-glob": "^4.0.0",

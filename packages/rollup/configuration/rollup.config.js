@@ -15,7 +15,7 @@ export default defineConfig({
   input: Object.values(pkg.exports).map((exports) => exports['quilt:source']),
   plugins: [
     esbuild({
-      target: 'node20',
+      target: 'node22',
     }),
     nodeExternals(),
     nodeResolve(),
@@ -34,6 +34,7 @@ export default defineConfig({
     sourcemap: false,
     preserveModules: true,
     preserveModulesRoot: './source',
+    importAttributesKey: 'with',
     entryFileNames: `[name].mjs`,
     assetFileNames: `[name].[ext]`,
   },
