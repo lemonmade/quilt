@@ -256,15 +256,15 @@
     "@quilted/preact-performance": "workspace:^0.1.1",
     "@quilted/preact-router": "workspace:^0.2.12",
     "@quilted/preact-signals": "workspace:^0.1.1",
-    "@quilted/preact-workers": "workspace:^0.2.1",
     "@quilted/preact-testing": "workspace:^0.1.8",
+    "@quilted/preact-workers": "workspace:^0.2.1",
     "@quilted/react": "workspace:^19.0.0",
     "@quilted/react-dom": "workspace:^19.0.0",
     "@quilted/request-router": "workspace:^0.3.1",
     "@quilted/signals": "workspace:^0.2.0",
     "@quilted/threads": "workspace:^3.0.0",
-    "preact-render-to-string": "^6.5.13",
-    "jest-matcher-utils": "^29.0.0"
+    "jest-matcher-utils": "^29.0.0",
+    "preact-render-to-string": "^6.5.13"
   },
   "peerDependencies": {
     "graphql": "^16.8.0",
@@ -289,7 +289,7 @@
   "devDependencies": {
     "expect": "^29.0.0",
     "preact": "^10.26.0",
-    "prettier": "^3.5.0",
+    "prettier": "^3.5.1",
     "vitest": "^3.0.0"
   }
 }

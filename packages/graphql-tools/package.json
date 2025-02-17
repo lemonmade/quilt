@@ -79,16 +79,16 @@
     "arg": "^5.0.0",
     "chokidar": "^3.5.0",
     "colorette": "^2.0.0",
-    "cosmiconfig": "^8.2.0",
+    "cosmiconfig": "^8.3.0",
     "cosmiconfig-toml-loader": "^1.0.0",
     "esbuild": "^0.25.0",
-    "globby": "^13.0.0",
+    "globby": "^13.2.0",
     "graphql": "^16.8.0",
     "is-glob": "^4.0.0",
     "p-limit": "^4.0.0"
   },
   "devDependencies": {
-    "@jest/transform": "^29.5.0",
+    "@jest/transform": "^29.7.0",
     "@types/babel__generator": "^7.6.0",
     "@types/is-glob": "^4.0.0"
   }

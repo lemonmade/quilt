@@ -28,23 +28,23 @@
   },
   "devDependencies": {
     "@quilted/cli-kit": "workspace:^0.2.1",
-    "@types/common-tags": "^1.8.4",
     "@trpc/client": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
+    "@types/common-tags": "^1.8.4",
     "@types/fs-extra": "^9.0.11",
     "@types/minimatch": "^3.0.5",
     "@types/prompts": "^2.0.13",
     "arg": "^5.0.0",
     "colorette": "^2.0.0",
     "common-tags": "^1.8.2",
-    "fs-extra": "^10.0.0",
-    "globby": "^13.0.0",
+    "fs-extra": "^10.1.0",
+    "globby": "^13.2.0",
     "minimatch": "^5.1.0",
     "pkg-dir": "^6.0.0",
-    "prettier": "^3.0.0",
+    "prettier": "^3.5.0",
     "prompts": "^2.4.0",
-    "yaml": "^2.1.0",
-    "zod": "^3.23.8"
+    "yaml": "^2.7.0",
+    "zod": "^3.24.0"
   }
 }
