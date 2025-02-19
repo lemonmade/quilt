@@ -178,7 +178,6 @@ export async function format(
     import('prettier/plugins/babel'),
     import('prettier/plugins/typescript'),
     import('prettier/plugins/yaml'),
-    // @ts-expect-error Types are not generated correctly for this entry
     import('prettier/plugins/estree'),
   ]);
 
@@ -191,7 +190,7 @@ export async function format(
     singleQuote: true,
     trailingComma: 'all',
     parser,
-    plugins: [babel, typescript, yaml, estree],
+    plugins: [babel, typescript, yaml, estree as any],
   });
 }
 
