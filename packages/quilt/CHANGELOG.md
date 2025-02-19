@@ -1,5 +1,21 @@
 # @quilted/quilt
 
+## 0.8.10
+
+### Patch Changes
+
+- [`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b) Thanks [@lemonmade](https://github.com/lemonmade)! - More development dependency updates
+
+- Updated dependencies [[`0312ff0`](https://github.com/lemonmade/quilt/commit/0312ff034b94605abc80c5b343a49c688c0ba618), [`13ab1fc`](https://github.com/lemonmade/quilt/commit/13ab1fc53c2ac04d7f2a49c1da1b947b009b335e), [`f098594`](https://github.com/lemonmade/quilt/commit/f0985948408fa592773548d201bf9bc7e2bcdeda), [`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b)]:
+  - @quilted/assets@0.1.9
+  - @quilted/react-dom@19.0.1
+  - @quilted/preact-browser@0.1.16
+  - @quilted/preact-signals@0.1.2
+  - @quilted/signals@0.2.3
+  - @quilted/threads@3.1.3
+  - @quilted/events@2.1.3
+  - @quilted/request-router@0.3.2
+
 ## 0.8.9
 
 ### Patch Changes

@@ -2,7 +2,7 @@
   "name": "@quilted/babel",
   "description": "A collection of Babel plugins for enhancing your Quilt projects",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",

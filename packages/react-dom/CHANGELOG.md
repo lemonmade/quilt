@@ -1,5 +1,11 @@
 # @quilted/react-dom
 
+## 19.0.1
+
+### Patch Changes
+
+- [`13ab1fc`](https://github.com/lemonmade/quilt/commit/13ab1fc53c2ac04d7f2a49c1da1b947b009b335e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing @types/react peer dependency warning
+
 ## 19.0.0
 
 ### Major Changes

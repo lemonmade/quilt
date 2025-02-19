@@ -1,5 +1,16 @@
 # @quilted/preact-browser
 
+## 0.1.16
+
+### Patch Changes
+
+- [`f098594`](https://github.com/lemonmade/quilt/commit/f0985948408fa592773548d201bf9bc7e2bcdeda) Thanks [@lemonmade](https://github.com/lemonmade)! - Update signal dependencies
+
+- Updated dependencies [[`0312ff0`](https://github.com/lemonmade/quilt/commit/0312ff034b94605abc80c5b343a49c688c0ba618), [`f098594`](https://github.com/lemonmade/quilt/commit/f0985948408fa592773548d201bf9bc7e2bcdeda), [`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b)]:
+  - @quilted/assets@0.1.9
+  - @quilted/signals@0.2.3
+  - @quilted/request-router@0.3.2
+
 ## 0.1.15
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @quilted/rollup
 
+## 0.3.1
+
+### Patch Changes
+
+- [`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b) Thanks [@lemonmade](https://github.com/lemonmade)! - More development dependency updates
+
+- Updated dependencies [[`0312ff0`](https://github.com/lemonmade/quilt/commit/0312ff034b94605abc80c5b343a49c688c0ba618), [`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b)]:
+  - @quilted/assets@0.1.9
+  - @quilted/babel@0.2.3
+
 ## 0.3.0
 
 ### Minor Changes
