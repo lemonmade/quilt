@@ -19,6 +19,7 @@ export function preloadHeader(attributes: Partial<HTMLLinkElement>) {
     href,
     crossOrigin,
     crossorigin,
+    integrity,
   } = attributes as any;
 
   // Support both property and attribute versions of the casing
@@ -30,6 +31,10 @@ export function preloadHeader(attributes: Partial<HTMLLinkElement>) {
     header += `; crossorigin`;
   } else if (typeof finalCrossOrigin === 'string') {
     header += `; crossorigin="${finalCrossOrigin}"`;
+  }
+
+  if (integrity) {
+    header += `; integrity="${integrity}"`;
   }
 
   return header;
