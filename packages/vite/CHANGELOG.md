@@ -1,5 +1,16 @@
 # @quilted/vite
 
+## 0.2.1
+
+### Patch Changes
+
+- [`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b) Thanks [@lemonmade](https://github.com/lemonmade)! - More development dependency updates
+
+- Updated dependencies [[`a2f9cbd`](https://github.com/lemonmade/quilt/commit/a2f9cbdee1f81b1fbc32d832c96511a194084a4b)]:
+  - @quilted/request-router@0.3.2
+  - @quilted/rollup@0.3.1
+  - @quilted/babel@0.2.3
+
 ## 0.2.0
 
 ### Minor Changes

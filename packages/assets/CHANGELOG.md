@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.9
+
+### Patch Changes
+
+- [`0312ff0`](https://github.com/lemonmade/quilt/commit/0312ff034b94605abc80c5b343a49c688c0ba618) Thanks [@lemonmade](https://github.com/lemonmade)! - Add integrity to preload headers
+
 ## 0.1.8
 
 ### Patch Changes
