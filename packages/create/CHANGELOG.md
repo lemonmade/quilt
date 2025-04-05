@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.46
+
+### Patch Changes
+
+- [`bac719a`](https://github.com/lemonmade/quilt/commit/bac719a68dc360cf8c5fd7f906b73ad5fde1452b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect @quilted/vite dependency in template
+
 ## 0.2.45
 
 ### Patch Changes
