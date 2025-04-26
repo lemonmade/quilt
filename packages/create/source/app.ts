@@ -40,14 +40,14 @@ export async function createApp() {
 
       - ${color.bold(
         'empty',
-      )}, a basic React app without any extra runtime dependencies
-       - ${color.bold('basic')}, a web app with a minimal file structure
+      )}, a basic Preact app without any extra runtime dependencies
+       - ${color.bold('basic')}, a Preact app with a minimal file structure
        - ${color.bold(
          'graphql',
-       )}, a web app with a GraphQL API for data fetching
+       )}, a Preact app with a GraphQL API for data fetching
        - ${color.bold(
          'trpc',
-       )}, a web app with a tRPC API, fetched using @tanstack/react-query
+       )}, a Preact app with a tRPC API, fetched using @tanstack/react-query
     `;
 
     printHelp({
@@ -392,25 +392,25 @@ async function getTemplate(argv: Arguments) {
       {
         title: `${color.bold(
           'Empty',
-        )}, a basic React app without any extra runtime dependencies`,
+        )}, a basic Preact app without any extra runtime dependencies`,
         value: 'empty',
       },
       {
         title: `${color.bold(
           'The basics',
-        )}, a web app with a minimal file structure`,
+        )}, a Preact app with a minimal file structure`,
         value: 'basic',
       },
       {
         title: `${color.bold(
           'GraphQL',
-        )}, a web app with a GraphQL API for data fetching`,
+        )}, a Preact app with a GraphQL API for data fetching`,
         value: 'graphql',
       },
       {
         title: `${color.bold(
           'tRPC',
-        )}, a web app with a tRPC API, fetched using @tanstack/react-query`,
+        )}, a Preact app with a tRPC API, fetched using @tanstack/react-query`,
         value: 'trpc',
       },
     ],
