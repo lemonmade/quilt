@@ -139,9 +139,9 @@ export interface AppBrowserOptions extends AppBaseOptions {
    * ```js
    * quiltApp({
    *   browser: {
-   *     entry: {
+   *     entries: {
    *       '.': './main.tsx',
-   *       './inline.css': './inline.css',
+   *       './styles.css': './styles.css',
    *     },
    *   },
    * })
@@ -694,7 +694,17 @@ export async function quiltAppBrowserPlugins({
   if (entries) {
     for (const [name, entry] of Object.entries(entries)) {
       if (typeof entry === 'object' && entry.inline) {
-        inline.add(name.startsWith('./') ? name.slice(2) : name);
+        const bareName = name.startsWith('./') ? name.slice(2) : name;
+
+        inline.add(
+          bareName === '.'
+            ? path
+                .basename(getSourceFromCustomEntry(entry)!)
+                .split('.')
+                .slice(0, -1)
+                .join('.')
+            : bareName,
+        );
       }
     }
   }

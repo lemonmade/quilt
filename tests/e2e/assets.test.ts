@@ -116,6 +116,156 @@ describe('app builds', () => {
       expect(element).not.toBeNull();
     });
 
+    describe('inline', () => {
+      it('allows the developer to inline the built version of specific JavaScript modules', async () => {
+        await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+        await workspace.fs.write({
+          'inline.ts': multiline`
+            document.addEventListener('DOMContentLoaded', async () => {
+              const {start} = await import('./async-module');
+              start();
+            });
+          `,
+          'async-module.ts': multiline`
+            export function start() {
+              document.body.innerHTML = '<main>Hello world!</main>';
+            }
+          `,
+          'rollup.config.js': multiline`
+            import {quiltApp} from '@quilted/rollup/app';
+  
+            export default quiltApp({
+              browser: {
+                entries: {
+                  '.': {source: './inline.ts', inline: true},
+                },
+              },
+            });
+          `,
+          'server.tsx': multiline`
+            import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
+
+            import {BrowserAssets} from 'quilt:module/assets';
+
+            const router = new RequestRouter();
+            const assets = new BrowserAssets();
+
+            router.get(async (request) => {
+              const {
+                renderToString,
+                ScriptAssets,
+              } = await import('@quilted/quilt/server');
+
+              const {scripts} = assets.entry();
+
+              const content = renderToString(
+                <html>
+                  <head>
+                    <title>Inline scripts test</title>
+                    <ScriptAssets scripts={scripts} />
+                  </head>
+                  <body></body>
+                </html>
+              );
+
+              return new HTMLResponse(content);
+            });
+
+            export default router;
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage();
+
+        console.log(await page.content());
+
+        const scripts = await page.$$('script');
+        expect(scripts).toHaveLength(1);
+
+        const content = await scripts[0]?.textContent();
+        expect(content).toContain(`import(`);
+        expect(content).not.toContain(`Hello world!`);
+
+        await page.waitForSelector('main');
+        expect(await page.textContent('main')).toBe('Hello world!');
+      });
+
+      it('allows the developer to inline the built version of specific CSS files', async () => {
+        await using workspace = await createWorkspace({fixture: 'empty-app'});
+
+        await workspace.fs.write({
+          'inline.css': multiline`
+            body {
+              color: white;
+              background-color: black;
+            }
+          `,
+          'rollup.config.js': multiline`
+            import {quiltApp} from '@quilted/rollup/app';
+  
+            export default quiltApp({
+              browser: {
+                entries: {
+                  './inline.css': {source: './inline.css', inline: true},
+                },
+              },
+            });
+          `,
+          'server.tsx': multiline`
+            import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
+
+            import {BrowserAssets} from 'quilt:module/assets';
+
+            const router = new RequestRouter();
+            const assets = new BrowserAssets();
+
+            router.get(async (request) => {
+              const {
+                renderToString,
+                StyleAssets,
+                ScriptAssets,
+              } = await import('@quilted/quilt/server');
+
+              const {styles, scripts} = assets.entry({id: './inline.css'});
+
+              const content = renderToString(
+                <html>
+                  <head>
+                    <title>Inline CSS test</title>
+                    <StyleAssets styles={styles} />
+                    <ScriptAssets scripts={scripts} />
+                  </head>
+                  <body>
+                    Hello world!
+                  </body>
+                </html>
+              );
+
+              return new HTMLResponse(content);
+            });
+
+            export default router;
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage();
+
+        const styles = await page.$$('style');
+        expect(styles).toHaveLength(1);
+
+        const content = await styles[0]?.textContent();
+        // Minified verison of the source above
+        expect(content).toBe(`body{color:#fff;background-color:#000}`);
+
+        // No scripts should be loaded
+        const scripts = await page.$$('script');
+        expect(scripts).toHaveLength(0);
+      });
+    });
+
     describe('images', () => {
       it('creates a hashed URL pointing to a publicly-served version of the image', async () => {
         await using workspace = await createWorkspace({fixture: 'empty-app'});
