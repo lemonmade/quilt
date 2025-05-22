@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.3.2
+
+### Patch Changes
+
+- [#863](https://github.com/lemonmade/quilt/pull/863) [`3e3e030`](https://github.com/lemonmade/quilt/commit/3e3e030d4e55c24efa79698c3dd18c8b627a864c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix asset inlining for the default entry
+
 ## 0.3.1
 
 ### Patch Changes
