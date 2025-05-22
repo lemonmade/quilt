@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.47
+
+### Patch Changes
+
+- [`b360ea2`](https://github.com/lemonmade/quilt/commit/b360ea2980f1ec122695c9d6ed6671ca87efa229) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix language of app template prompt
+
 ## 0.2.46
 
 ### Patch Changes
