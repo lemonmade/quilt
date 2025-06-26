@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 3.2.0
+
+### Minor Changes
+
+- [`25278e0`](https://github.com/lemonmade/quilt/commit/25278e00643b18442621e29665b64ff3f56588af) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `import()` and `export()` static members to improve ergonomics of one-sided threads
+
 ## 3.1.3
 
 ### Patch Changes
