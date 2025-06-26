@@ -1,9 +1,6 @@
-import {
-  Thread,
-  type ThreadOptions,
-  type ThreadMessageTarget,
-} from '../../Thread.ts';
+import {Thread, type ThreadMessageTarget} from '../../Thread.ts';
 import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
+import type {ThreadWindowOptions} from './ThreadWindow.ts';
 
 /**
  * Creates a thread from within a window created by a parent document (for example,
@@ -19,19 +16,82 @@ import {CHECK_MESSAGE, RESPONSE_MESSAGE} from './shared.ts';
  * await thread.imports.sendMessage('Hello world!');
  */
 export class ThreadNestedWindow<
-  Target = Record<string, never>,
-  Self = Record<string, never>,
-> extends Thread<Target, Self> {
+  Imports = Record<string, never>,
+  Exports = Record<string, never>,
+> extends Thread<Imports, Exports> {
   readonly parent: Window;
+
+  /**
+   * Starts a thread wrapped around a `window` object, and returns the imports
+   * of the thread.
+   *
+   * @example
+   * ```ts
+   * import {ThreadNestedWindow} from '@quilted/threads';
+   *
+   * const {getMessage} = ThreadNestedWindow.import(window.opener);
+   * const message = await getMessage(); // 'Hello, world!'
+   *
+   * // In the parent window:
+   *
+   * import {ThreadWindow} from '@quilted/threads';
+   *
+   * ThreadWindow.export(window, {
+   *   async getMessage() {
+   *     return 'Hello, world!';
+   *   },
+   * });
+   * ```
+   */
+  static import<Imports = Record<string, never>>(
+    window: Window,
+    options?: Omit<
+      ThreadWindowOptions<Imports, Record<string, never>>,
+      'imports'
+    >,
+  ) {
+    return new ThreadNestedWindow<Imports>(window, options).imports;
+  }
+
+  /**
+   * Starts a thread wrapped around a `window` object, providing the second
+   * argument as the exports of the thread.
+   *
+   * @example
+   * ```ts
+   * import {ThreadNestedWindow} from '@quilted/threads';
+   *
+   * ThreadNestedWindow.export(window.opener, {
+   *   async getMessage() {
+   *     return 'Hello, world!';
+   *   },
+   * });
+   *
+   * // In the parent window:
+   *
+   * import {ThreadWindow} from '@quilted/threads';
+   *
+   * const {getMessage} = ThreadWindow.import(window);
+   * const message = await getMessage(); // 'Hello, world!'
+   * ```
+   */
+  static export<Exports = Record<string, never>>(
+    window: Window,
+    exports: Exports,
+    options?: Omit<
+      ThreadWindowOptions<Record<string, never>, Exports>,
+      'exports'
+    >,
+  ) {
+    new ThreadNestedWindow(window, {...options, exports});
+  }
 
   constructor(
     parent: Window,
     {
       targetOrigin = '*',
       ...options
-    }: ThreadOptions<Target, Self> & {
-      targetOrigin?: string;
-    } = {},
+    }: ThreadWindowOptions<Imports, Exports> = {},
   ) {
     super(nestedWindowToThreadTarget(parent, {targetOrigin}), options);
     this.parent = parent;

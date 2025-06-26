@@ -27,12 +27,75 @@ import {portToMessageTarget} from './ThreadMessagePort.ts';
  * await thread.imports.sendMessage('Hello world!');
  */
 export class ThreadWebWorker<
-  Target = Record<string, never>,
-  Self = Record<string, never>,
-> extends Thread<Target, Self> {
+  Imports = Record<string, never>,
+  Exports = Record<string, never>,
+> extends Thread<Imports, Exports> {
   readonly worker: Worker;
 
-  constructor(worker: Worker, options?: ThreadOptions<Target, Self>) {
+  /**
+   * Starts a thread wrapped around a `Worker` object, and returns the imports
+   * of the thread.
+   *
+   * @example
+   * ```ts
+   * import {ThreadWebWorker} from '@quilted/threads';
+   *
+   * // On the main thread:
+   * const worker = new Worker('worker.js');
+   * const {getMessage} = ThreadWebWorker.import(worker);
+   * const message = await getMessage(); // 'Hello, world!'
+   *
+   * // Inside a web worker:
+   *
+   * import {ThreadWebWorker} from '@quilted/threads';
+   *
+   * ThreadWebWorker.export(self, {
+   *   async getMessage() {
+   *     return 'Hello, world!';
+   *   },
+   * });
+   * ```
+   */
+  static import<Imports = Record<string, never>>(
+    worker: Worker,
+    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'imports'>,
+  ) {
+    return new ThreadWebWorker<Imports>(worker, options).imports;
+  }
+
+  /**
+   * Starts a thread wrapped around a `Worker` object, providing the second
+   * argument as the exports of the thread.
+   *
+   * @example
+   * ```ts
+   * import {ThreadWebWorker} from '@quilted/threads';
+   *
+   * // Inside a web worker:
+   * ThreadWebWorker.export(self, {
+   *   async getMessage() {
+   *     return 'Hello, world!';
+   *   },
+   * });
+   *
+   * // On the main thread:
+   *
+   * import {ThreadWebWorker} from '@quilted/threads';
+   *
+   * const worker = new Worker('worker.js');
+   * const {getMessage} = ThreadWebWorker.import(worker);
+   * const message = await getMessage(); // 'Hello, world!'
+   * ```
+   */
+  static export<Exports = Record<string, never>>(
+    worker: Worker,
+    exports: Exports,
+    options?: Omit<ThreadOptions<Record<string, never>, Exports>, 'exports'>,
+  ) {
+    new ThreadWebWorker(worker, {...options, exports});
+  }
+
+  constructor(worker: Worker, options?: ThreadOptions<Imports, Exports>) {
     super(portToMessageTarget(worker), options);
     this.worker = worker;
   }
