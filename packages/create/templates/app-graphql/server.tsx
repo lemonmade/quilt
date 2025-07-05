@@ -9,6 +9,7 @@ import {
   permissionsPolicyHeader,
   strictTransportSecurityHeader,
 } from '@quilted/quilt/server';
+import {GraphQLCache} from '@quilted/quilt/graphql';
 
 import Env from 'quilt:module/env';
 import {BrowserAssets} from 'quilt:module/assets';
@@ -17,6 +18,25 @@ import type {AppContext} from '~/shared/context.ts';
 
 const router = new RequestRouter();
 const assets = new BrowserAssets();
+
+class ServerAppContext implements AppContext {
+  readonly router: Router;
+  readonly graphql: AppContext['graphql'];
+
+  constructor(request: Request) {
+    this.router = new Router(request.url);
+
+    const graphQLFetch: AppContext['graphql']['fetch'] = async (...args) => {
+      const {performGraphQLOperation} = await import('./server/graphql.ts');
+      return performGraphQLOperation(...args);
+    };
+
+    this.graphql = {
+      fetch: graphQLFetch,
+      cache: new GraphQLCache({fetch: graphQLFetch}),
+    };
+  }
+}
 
 // GraphQL API, called from the client
 router.post('/api/graphql', async (request) => {
@@ -33,19 +53,9 @@ router.post('/api/graphql', async (request) => {
 
 // For all GET requests, render our Preact application.
 router.get(async (request) => {
-  const [{App}, {performGraphQLOperation}, {GraphQLCache}] = await Promise.all([
-    import('./App.tsx'),
-    import('./server/graphql.ts'),
-    import('@quilted/quilt/graphql'),
-  ]);
+  const [{App}] = await Promise.all([import('./App.tsx')]);
 
-  const context = {
-    router: new Router(request.url),
-    graphql: {
-      fetch: performGraphQLOperation,
-      cache: new GraphQLCache({fetch: performGraphQLOperation}),
-    },
-  } satisfies AppContext;
+  const context = new ServerAppContext(request);
 
   const isHttps = request.url.startsWith('https://');
 

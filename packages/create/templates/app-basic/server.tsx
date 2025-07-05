@@ -20,11 +20,17 @@ import {App} from './App.tsx';
 const router = new RequestRouter();
 const assets = new BrowserAssets();
 
+class ServerAppContext implements AppContext {
+  readonly router: Router;
+
+  constructor(request: Request) {
+    this.router = new Router(request.url);
+  }
+}
+
 // For all GET requests, render our Preact application.
 router.get(async (request) => {
-  const context = {
-    router: new Router(request.url),
-  } satisfies AppContext;
+  const context = new ServerAppContext(request);
 
   const isHttps = request.url.startsWith('https://');
 

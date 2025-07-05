@@ -15,6 +15,7 @@ import {BrowserAssets} from 'quilt:module/assets';
 
 import {createDirectClient} from '@quilted/trpc/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
+import {QueryClient} from '@tanstack/react-query';
 
 import type {AppContext} from '~/shared/context.ts';
 
@@ -22,6 +23,18 @@ import {appRouter} from './trpc.ts';
 
 const router = new RequestRouter();
 const assets = new BrowserAssets();
+
+class ServerAppContext implements AppContext {
+  readonly router: Router;
+  readonly trpc: AppContext['trpc'];
+  readonly queryClient: QueryClient;
+
+  constructor(request: Request) {
+    this.router = new Router(request.url);
+    this.trpc = createDirectClient(appRouter);
+    this.queryClient = new QueryClient();
+  }
+}
 
 router.any(
   'api',
@@ -38,16 +51,9 @@ router.any(
 
 // For all GET requests, render our React application.
 router.get(async (request) => {
-  const [{App}, {QueryClient}] = await Promise.all([
-    import('./App.tsx'),
-    import('@tanstack/react-query'),
-  ]);
+  const [{App}] = await Promise.all([import('./App.tsx')]);
 
-  const context = {
-    router: new Router(request.url),
-    trpc: createDirectClient(appRouter),
-    queryClient: new QueryClient(),
-  } satisfies AppContext;
+  const context = new ServerAppContext(request);
 
   const isHttps = request.url.startsWith('https://');
 
