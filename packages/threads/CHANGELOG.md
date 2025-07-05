@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 3.3.0
+
+### Minor Changes
+
+- [`78147df`](https://github.com/lemonmade/quilt/commit/78147df626afbb8b54dbe809629c5cb3ac9052b5) Thanks [@lemonmade](https://github.com/lemonmade)! - Add nicer shorthands for nested thread contexts
+
 ## 3.2.0
 
 ### Minor Changes
