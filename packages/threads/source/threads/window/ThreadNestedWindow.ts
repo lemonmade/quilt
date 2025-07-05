@@ -22,7 +22,27 @@ export class ThreadNestedWindow<
   readonly parent: Window;
 
   /**
-   * Starts a thread wrapped around a `window` object, and returns the imports
+   * Creates a thread from within a window created by a parent document (for example,
+   * an `iframe` or popup window).
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/opener
+   *
+   * @example
+   * import {ThreadNestedWindow} from '@quilted/threads';
+   *
+   * // Inside a document opened as a popup window
+   * const thread = ThreadNestedWindow.from(window.opener);
+   * await thread.imports.sendMessage('Hello world!');
+   */
+  static from<Imports = Record<string, never>, Exports = Record<string, never>>(
+    window: Window,
+    options?: ThreadWindowOptions<Imports, Exports>,
+  ) {
+    return new ThreadNestedWindow(window, options);
+  }
+
+  /**
+   * Starts a thread wrapped around a nested `window` object, and returns the imports
    * of the thread.
    *
    * @example
@@ -54,7 +74,7 @@ export class ThreadNestedWindow<
   }
 
   /**
-   * Starts a thread wrapped around a `window` object, providing the second
+   * Starts a thread wrapped around a nested `window` object, providing the second
    * argument as the exports of the thread.
    *
    * @example

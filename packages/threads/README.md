@@ -27,11 +27,13 @@ This library provides utilities for creating threads from a variety of common Ja
 import {ThreadWebWorker} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 // Inside the web worker:
 
-const thread = new ThreadWebWorker(self);
+const thread = ThreadWebWorker.from(self);
+// Equivalent to:
+const thread = ThreadWebWorker.self();
 ```
 
 `ThreadIFrame` creates a thread from an [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe), and `ThreadNestedIFrame` creates a thread from within a nested iframe:
@@ -40,13 +42,13 @@ const thread = new ThreadWebWorker(self);
 import {ThreadIFrame} from '@quilted/threads';
 
 const iframe = document.querySelector('iframe#my-iframe');
-const thread = new ThreadIFrame(iframe);
+const thread = ThreadIFrame.from(iframe);
 
 // Inside the iframe:
 
-import {ThreadNestedIFrame} from '@quilted/threads';
+import {ThreadIframe} from '@quilted/threads';
 
-const thread = new ThreadNestedIFrame();
+const thread = ThreadIframe.parent();
 ```
 
 `ThreadWindow` creates a thread from a [`Window` object](https://developer.mozilla.org/en-US/docs/Web/API/Window), like a popup window, and `ThreadNestedWindow` creates a thread from within that nested window:
@@ -57,13 +59,13 @@ const thread = new ThreadNestedIFrame();
 import {ThreadWindow} from '@quilted/threads';
 
 const popup = window.open('https://my-app.com/popup', 'MyAppPopup', 'popup');
-const thread = new ThreadWindow(popup);
+const thread = ThreadWindow.from(popup);
 
-// Inside the nested window:
+// Inside the opened window:
 
-import {ThreadNestedWindow} from '@quilted/threads';
+import {ThreadWindow} from '@quilted/threads';
 
-const thread = new ThreadNestedWindow(window.opener);
+const thread = ThreadWindow.opener();
 ```
 
 `ThreadBrowserWebSocket` creates a thread from a [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket):
@@ -72,7 +74,7 @@ const thread = new ThreadNestedWindow(window.opener);
 import {ThreadBrowserWebSocket} from '@quilted/threads';
 
 const socket = new WebSocket('ws://localhost:8080');
-const thread = new ThreadBrowserWebSocket(socket);
+const thread = ThreadBrowserWebSocket.from(socket);
 ```
 
 `ThreadMessagePort` creates a thread from a [MessagePort](https://developer.mozilla.org/en-US/docs/Web/API/MessagePort):
@@ -82,7 +84,7 @@ const thread = new ThreadBrowserWebSocket(socket);
 import {ThreadMessagePort} from '@quilted/threads';
 
 const {port1, port2} = new MessageChannel();
-const thread1 = new ThreadMessagePort(port1);
+const thread1 = ThreadMessagePort.from(port1);
 ```
 
 `ThreadBroadcastChannel` creates a thread from a [BroadcastChannel](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel):
@@ -92,7 +94,7 @@ const thread1 = new ThreadMessagePort(port1);
 import {ThreadBroadcastChannel} from '@quilted/threads';
 
 const channel = new BroadcastChannel('my-channel');
-const thread = new ThreadBroadcastChannel(channel);
+const thread = ThreadBroadcastChannel.from(channel);
 ```
 
 `ThreadServiceWorker` creates a thread from a [ServiceWorker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), and `ThreadsFromServiceWorkerClients` creates a cache that can create threads from [ServiceWorkerClients](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerClient) (typically, a parent `Window`):
@@ -103,7 +105,7 @@ import {ThreadServiceWorker} from '@quilted/threads';
 await navigator.serviceWorker.register('/service-worker.js');
 
 if (navigator.serviceWorker.controller) {
-  const thread = new ThreadServiceWorker(navigator.serviceWorker.controller);
+  const thread = ThreadServiceWorker.from(navigator.serviceWorker.controller);
 }
 
 // Inside the service worker:
@@ -114,7 +116,7 @@ const clientThreads = new ThreadsFromServiceWorkerClients();
 
 self.addEventListener('activate', async (event) => {
   const clients = await serviceWorker.clients.matchAll();
-  const thread = clientThreads.create(clients[0]);
+  const thread = clientThreads.from(clients[0]);
 });
 ```
 
@@ -127,7 +129,7 @@ import {ThreadWebWorker} from '@quilted/threads';
 
 // We are in a nested worker, and we’ll export a single `add()` method to
 // a paired thread.
-const thread = new ThreadWebWorker(self, {
+const thread = ThreadWebWorker.from(self, {
   exports: {
     // In reality, you’d usually implement a more computationally-expensive
     // function here!
@@ -146,10 +148,45 @@ import {ThreadWebWorker} from '@quilted/threads';
 // We are on the top-level page, so we create our worker, wrap it in a thread,
 // and call its exposed method.
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 const result = await thread.imports.add(1, 2);
 // result === 3
+```
+
+If you only need to import from one side of a thread, and only use the exports on the other side, you can use the static `import()` and `export()` methods on the thread class instead, which avoids some unncessary boilerplate in this situation:
+
+```ts
+import {ThreadWebWorker} from '@quilted/threads';
+
+// Web Worker:
+ThreadWebWorker.export(self, {
+  async add(a: number, b: number) {
+    return a + b;
+  },
+});
+
+// Main thread:
+const {add} = ThreadWebWorker.import(worker);
+const result = await add(1, 2);
+```
+
+These helpers are also available as nested methods on `ThreadWebWorker.self`, `ThreadIframe.parent`, and `ThreadWindow.opener`, to easily create these simplified connections from within nested JavaScript contexts:
+
+```ts
+import {ThreadWindow} from '@quilted/threads';
+
+// Popup window:
+ThreadWindow.opener.export(self, {
+  async add(a: number, b: number) {
+    return a + b;
+  },
+});
+
+// Main thread:
+const popup = window.open('https://my-app.com/popup', '', 'popup');
+const {add} = ThreadWindow.import(popup);
+const result = await add(1, 2);
 ```
 
 Threads will continue listening and sending messages indefinitely. To stop a thread, you can pass an [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) to the `signal` option on any thread creation function:
@@ -159,7 +196,7 @@ import {ThreadWebWorker} from '@quilted/threads';
 
 const abort = new AbortController();
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker, {signal: abort.signal});
+const thread = ThreadWebWorker.from(worker, {signal: abort.signal});
 
 const result = await thread.imports.doWork();
 
@@ -173,7 +210,7 @@ Alternatively, you can call the `Thread`’s `close()` method, which stops liste
 import {ThreadWebWorker} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 const result = await thread.imports.doWork();
 
@@ -192,7 +229,7 @@ import {
 } from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker, {
+const thread = ThreadWebWorker.from(worker, {
   serialization: new ThreadSerializationStructuredClone(),
 });
 ```
@@ -221,7 +258,7 @@ import {
   ThreadFunctionsManualMemoryManagement,
 } from '@quilted/threads';
 
-const thread = new ThreadWebWorker(self, {
+const thread = ThreadWebWorker.from(self, {
   functions: new ThreadFunctionsManualMemoryManagement(),
 });
 ```
@@ -234,7 +271,7 @@ import {
   ThreadFunctionsManualMemoryManagement,
 } from '@quilted/threads';
 
-const thread = new ThreadWebWorker(self, {
+const thread = ThreadWebWorker.from(self, {
   exports: {sayHello},
   functions: new ThreadFunctionsManualMemoryManagement(),
 });
@@ -256,7 +293,7 @@ The paired thread would call this method like so:
 import {ThreadWebWorker} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 const user = {
   fullName() {
@@ -326,7 +363,7 @@ Once an object is fully released, any attempt to call its proxied functions will
 import {ThreadWebWorker, ThreadAbortSignal} from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 const abort = new AbortController();
 
@@ -344,7 +381,7 @@ import {
   type ThreadAbortSignalSerialization,
 } from '@quilted/threads';
 
-const thread = new ThreadWebWorker(self, {
+const thread = ThreadWebWorker.from(self, {
   exports: {calculateResult},
 });
 
@@ -369,7 +406,7 @@ import {
 } from '@quilted/threads';
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 const abort = new AbortController();
 await thread.imports.calculateResult({
@@ -414,7 +451,7 @@ import {ThreadSignal} from '@quilted/threads/signals';
 const result = signal(32);
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 await thread.imports.calculateResult(ThreadSignal.serialize(result));
 ```
@@ -429,7 +466,7 @@ import {ThreadSignal} from '@quilted/threads/signals';
 const result = signal(32);
 
 const worker = new Worker('worker.js');
-const thread = new ThreadWebWorker(worker);
+const thread = ThreadWebWorker.from(worker);
 
 await thread.imports.calculateResult(
   ThreadSignal.serialize(result, {
@@ -449,7 +486,7 @@ import {
   type ThreadSignalSerialization,
 } from '@quilted/threads/signals';
 
-const thread = new ThreadWebWorker(self, {
+const thread = ThreadWebWorker.from(self, {
   exports: {calculateResult},
 });
 
@@ -471,7 +508,7 @@ import {
   type ThreadSignalSerialization,
 } from '@quilted/threads/signals';
 
-const thread = new ThreadWebWorker(self, {
+const thread = ThreadWebWorker.from(self, {
   expose: {calculateResult},
 });
 

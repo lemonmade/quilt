@@ -106,6 +106,32 @@ export class ThreadServiceWorkerClients<
     return this.#threads.delete(client);
   }
 
+  from(
+    client: ServiceWorkerMessageSource,
+    overrideOptions?: ThreadOptions<Imports, Exports>,
+  ): Thread<Imports, Exports> {
+    return this.#createForClient(client, overrideOptions);
+  }
+
+  export(
+    client: ServiceWorkerMessageSource,
+    exports: Exports,
+    overrideOptions?: Omit<
+      ThreadOptions<Imports, Exports>,
+      'exports' | 'imports'
+    >,
+  ) {
+    this.#createForClient(client, {...overrideOptions, exports});
+  }
+
+  import(
+    client: ServiceWorkerMessageSource,
+    overrideOptions?: Omit<ThreadOptions<Imports, Exports>, 'exports'>,
+  ) {
+    return this.#createForClient(client, overrideOptions).imports;
+  }
+
+  /** @deprecated Use `from()` instead. */
   create(
     client: ServiceWorkerMessageSource,
     overrideOptions?: ThreadOptions<Imports, Exports>,

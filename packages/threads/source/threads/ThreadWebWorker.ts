@@ -32,6 +32,13 @@ export class ThreadWebWorker<
 > extends Thread<Imports, Exports> {
   readonly worker: Worker;
 
+  static from<Imports = Record<string, never>, Exports = Record<string, never>>(
+    worker: Worker,
+    options?: ThreadOptions<Imports, Exports>,
+  ) {
+    return new ThreadWebWorker<Imports, Exports>(worker, options);
+  }
+
   /**
    * Starts a thread wrapped around a `Worker` object, and returns the imports
    * of the thread.
@@ -95,8 +102,37 @@ export class ThreadWebWorker<
     new ThreadWebWorker(worker, {...options, exports});
   }
 
+  static self = Object.assign(
+    <Imports = Record<string, never>, Exports = Record<string, never>>(
+      options?: ThreadOptions<Imports, Exports>,
+    ) => this.from(selfAsWorker(), options),
+    {
+      import: <Imports = Record<string, never>>(
+        options?: Omit<
+          ThreadOptions<Imports, Record<string, never>>,
+          'imports'
+        >,
+      ) => this.import(selfAsWorker(), options),
+      export: <Exports = Record<string, never>>(
+        exports: Exports,
+        options?: Omit<
+          ThreadOptions<Record<string, never>, Exports>,
+          'exports'
+        >,
+      ) => this.export(selfAsWorker(), exports, options),
+    },
+  );
+
   constructor(worker: Worker, options?: ThreadOptions<Imports, Exports>) {
     super(portToMessageTarget(worker), options);
     this.worker = worker;
   }
+}
+
+function selfAsWorker() {
+  if (typeof self === 'undefined' || !(self instanceof Worker)) {
+    throw new Error('You are not inside a web worker.');
+  }
+
+  return self as unknown as Worker;
 }
