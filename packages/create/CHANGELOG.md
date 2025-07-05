@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.48
+
+### Patch Changes
+
+- [`1abfd9e`](https://github.com/lemonmade/quilt/commit/1abfd9e7f163065bec12db6220fda7a800641b7b) Thanks [@lemonmade](https://github.com/lemonmade)! - Use classes for complex template browser and server entrypoints
+
 ## 0.2.47
 
 ### Patch Changes
