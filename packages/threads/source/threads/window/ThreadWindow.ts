@@ -32,6 +32,25 @@ export class ThreadWindow<
   readonly window: Window;
 
   /**
+   * Creates a thread from a `Window` created by this environment.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+   *
+   * @example
+   * import {ThreadWindow} from '@quilted/threads';
+   *
+   * const popup = window.open('https://my-app.com/popup', 'MyAppPopup', 'popup');
+   * const thread = ThreadWindow.from(popup);
+   * await thread.imports.sendMessage('Hello world!');
+   */
+  static from<Imports = Record<string, never>, Exports = Record<string, never>>(
+    window: Window,
+    options?: ThreadWindowOptions<Imports, Exports>,
+  ) {
+    return new ThreadWindow(window, options);
+  }
+
+  /**
    * Starts a thread wrapped around a `window` object, and returns the imports
    * of the thread.
    *
