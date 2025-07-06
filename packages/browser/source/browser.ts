@@ -30,14 +30,31 @@ export class Browser implements BrowserDetails {
 }
 
 export class BrowserCookies implements Cookies {
-  readonly #cookieSignals = signal(
-    new Map<string, Signal<string>>(
-      Object.entries(JSCookie.get()).map(([cookie, value]) => [
-        cookie,
-        signal(value),
-      ]),
-    ),
-  );
+  readonly #allowsCookies: boolean;
+  readonly #cookieSignals: Signal<Map<string, Signal<string>>>;
+
+  constructor() {
+    let allowsCookies = true;
+    let initialCookies: Record<string, string> | undefined;
+
+    try {
+      initialCookies = JSCookie.get();
+    } catch {
+      allowsCookies = false;
+      initialCookies = {};
+    }
+
+    this.#allowsCookies = allowsCookies;
+
+    this.#cookieSignals = signal(
+      new Map<string, Signal<string>>(
+        Object.entries(initialCookies).map(([cookie, value]) => [
+          cookie,
+          signal(value),
+        ]),
+      ),
+    );
+  }
 
   has(cookie: string) {
     return this.#cookieSignals.value.get(cookie)?.value != null;
@@ -48,11 +65,13 @@ export class BrowserCookies implements Cookies {
   }
 
   set(cookie: string, value: string, options?: CookieOptions) {
+    this.#checkCookies();
     JSCookie.set(cookie, value, options);
     this.#updateCookie(cookie);
   }
 
   delete(cookie: string, options?: CookieOptions) {
+    this.#checkCookies();
     JSCookie.remove(cookie, options);
     this.#updateCookie(cookie);
   }
@@ -67,6 +86,12 @@ export class BrowserCookies implements Cookies {
 
   *[Symbol.iterator]() {
     yield* this.#cookieSignals.peek().keys();
+  }
+
+  #checkCookies() {
+    if (this.#allowsCookies) return;
+
+    throw new BrowserCookiesUnavailableError();
   }
 
   #updateCookie(cookie: string) {
@@ -88,6 +113,14 @@ export class BrowserCookies implements Cookies {
       newCookies.delete(cookie);
       this.#cookieSignals.value = newCookies;
     }
+  }
+}
+
+export class BrowserCookiesUnavailableError extends Error {
+  name = 'BrowserCookiesUnavailableError';
+
+  constructor() {
+    super('Cookies are not available in this environment');
   }
 }
 
