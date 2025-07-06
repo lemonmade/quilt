@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.1.11
+
+### Patch Changes
+
+- [`a7478d1`](https://github.com/lemonmade/quilt/commit/a7478d1ae640ab2571f909f6e4edef0e29109f14) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix uncaught error in environments without cookie support
+
 ## 0.1.10
 
 ### Patch Changes

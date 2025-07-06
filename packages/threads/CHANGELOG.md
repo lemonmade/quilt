@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 3.3.1
+
+### Patch Changes
+
+- [`664fa63`](https://github.com/lemonmade/quilt/commit/664fa639e7a73c9a3694da326ab6e3dde9fcb432) Thanks [@lemonmade](https://github.com/lemonmade)! - Add missing `ThreadWindow.from()` helper
+
 ## 3.3.0
 
 ### Minor Changes
