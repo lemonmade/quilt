@@ -36,10 +36,7 @@ export {ThreadMessagePort} from './threads/ThreadMessagePort.ts';
 export {ThreadServiceWorker} from './threads/ThreadServiceWorker.ts';
 export {ThreadServiceWorkerClients} from './threads/ThreadServiceWorkerClients.ts';
 export {ThreadWebWorker} from './threads/ThreadWebWorker.ts';
-export {ThreadIframe} from './threads/ThreadIframe.ts';
-export {ThreadNestedIframe} from './threads/ThreadNestedIframe.ts';
-export {ThreadWindow} from './threads/window/ThreadWindow.ts';
-export {ThreadNestedWindow} from './threads/window/ThreadNestedWindow.ts';
+export {ThreadWindow} from './threads/ThreadWindow.ts';
 
 export {ThreadFunctionsAutomatic} from './functions/ThreadFunctionsAutomatic.ts';
 export {ThreadFunctionsManualMemoryManagement} from './functions/ThreadFunctionsManualMemoryManagement.ts';

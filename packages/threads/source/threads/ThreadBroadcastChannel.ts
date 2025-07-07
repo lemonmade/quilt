@@ -46,7 +46,7 @@ export class ThreadBroadcastChannel<
    */
   static import<Imports = Record<string, never>>(
     channel: BroadcastChannel,
-    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'imports'>,
+    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'exports'>,
   ) {
     return new ThreadBroadcastChannel<Imports>(channel, options).imports;
   }
@@ -79,7 +79,10 @@ export class ThreadBroadcastChannel<
   static export<Exports = Record<string, never>>(
     channel: BroadcastChannel,
     exports: Exports,
-    options?: Omit<ThreadOptions<Record<string, never>, Exports>, 'exports'>,
+    options?: Omit<
+      ThreadOptions<Record<string, never>, NoInfer<Exports>>,
+      'imports'
+    >,
   ) {
     new ThreadBroadcastChannel(channel, {...options, exports});
   }

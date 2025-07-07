@@ -36,36 +36,56 @@ const thread = ThreadWebWorker.from(self);
 const thread = ThreadWebWorker.self();
 ```
 
-`ThreadIFrame` creates a thread from an [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe), and `ThreadNestedIFrame` creates a thread from within a nested iframe:
+`ThreadWindow` can be used for many embedding setups. It can be used to create a thread between a parent window and a nested [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe):
 
 ```ts
-import {ThreadIFrame} from '@quilted/threads';
+import {ThreadWindow} from '@quilted/threads';
 
 const iframe = document.querySelector('iframe#my-iframe');
-const thread = ThreadIFrame.from(iframe);
+const thread = ThreadWindow.from(iframe.contentWindow);
+// Equivalent to:
+const thread = ThreadWindow.iframe(iframe, {
+  exports: {
+    async connect() {
+      return {message: 'Hello world!'};
+    },
+  },
+});
 
 // Inside the iframe:
 
-import {ThreadIframe} from '@quilted/threads';
+import {ThreadWindow} from '@quilted/threads';
 
-const thread = ThreadIframe.parent();
+const thread = ThreadWindow.from(window.parent);
+// Equivalent to:
+const thread = ThreadWindow.parent();
+const {message} = await thread.imports.connect();
 ```
 
-`ThreadWindow` creates a thread from a [`Window` object](https://developer.mozilla.org/en-US/docs/Web/API/Window), like a popup window, and `ThreadNestedWindow` creates a thread from within that nested window:
+As shown above, you will typically want the “child” window — in this case, the iframe — to import a method provided by the parent window, and then call that method to start the conversation. You may also export methods from the child and call them in the parent, but you must write your own logic to ensure the child window is ready to receive the message.
+
+You can also use `ThreadWindow` to create a thread between a parent window and a popup or separate tab it opens:
 
 ```ts
-// Create a thread from a target Window. This is usually done from a top-level
-// page, after it has called `window.open()`.
 import {ThreadWindow} from '@quilted/threads';
 
 const popup = window.open('https://my-app.com/popup', 'MyAppPopup', 'popup');
-const thread = ThreadWindow.from(popup);
+const thread = ThreadWindow.from(popup, {
+  exports: {
+    async connect() {
+      return {message: 'Hello world!'};
+    },
+  },
+});
 
-// Inside the opened window:
+// Inside the popup:
 
 import {ThreadWindow} from '@quilted/threads';
 
+const thread = ThreadWindow.from(window.opener);
+// Equivalent to:
 const thread = ThreadWindow.opener();
+const {message} = await thread.imports.connect();
 ```
 
 `ThreadBrowserWebSocket` creates a thread from a [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket):
@@ -171,22 +191,48 @@ const {add} = ThreadWebWorker.import(worker);
 const result = await add(1, 2);
 ```
 
-These helpers are also available as nested methods on `ThreadWebWorker.self`, `ThreadIframe.parent`, and `ThreadWindow.opener`, to easily create these simplified connections from within nested JavaScript contexts:
+These helpers are also available as nested methods on `ThreadWebWorker.self`, `ThreadWindow.iframe`, `ThreadWindow.parent`, and `ThreadWindow.opener`, to easily create these simplified connections from within nested JavaScript contexts:
 
 ```ts
 import {ThreadWindow} from '@quilted/threads';
 
-// Popup window:
-ThreadWindow.opener.export(self, {
-  async add(a: number, b: number) {
-    return a + b;
+// Main thread:
+
+const iframe = document.querySelector('iframe#my-iframe');
+
+ThreadWindow.iframe.export(iframe, {
+  async connect() {
+    return {message: 'Hello world!'};
   },
 });
 
+// Inside the iframe:
+
+import {ThreadWindow} from '@quilted/threads';
+
+const {connect} = ThreadWindow.parent.import();
+const {message} = await connect();
+```
+
+```ts
+import {ThreadWindow} from '@quilted/threads';
+
 // Main thread:
-const popup = window.open('https://my-app.com/popup', '', 'popup');
-const {add} = ThreadWindow.import(popup);
-const result = await add(1, 2);
+
+const popup = window.open('https://my-app.com/popup', 'MyAppPopup', 'popup');
+
+ThreadWindow.export(popup, {
+  async connect() {
+    return {message: 'Hello world!'};
+  },
+});
+
+// Inside the popup:
+
+import {ThreadWindow} from '@quilted/threads';
+
+const {connect} = ThreadWindow.opener.import();
+const {message} = await connect();
 ```
 
 Threads will continue listening and sending messages indefinitely. To stop a thread, you can pass an [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) to the `signal` option on any thread creation function:
@@ -196,9 +242,9 @@ import {ThreadWebWorker} from '@quilted/threads';
 
 const abort = new AbortController();
 const worker = new Worker('worker.js');
-const thread = ThreadWebWorker.from(worker, {signal: abort.signal});
+const {doWork} = ThreadWebWorker.import(worker, {signal: abort.signal});
 
-const result = await thread.imports.doWork();
+const result = await doWork();
 
 abort.abort();
 worker.terminate();

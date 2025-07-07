@@ -34,7 +34,7 @@ export class ThreadBrowserWebSocket<
    */
   static import<Imports = Record<string, never>>(
     socket: WebSocket,
-    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'imports'>,
+    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'exports'>,
   ) {
     return new ThreadBrowserWebSocket<Imports>(socket, options).imports;
   }
@@ -59,7 +59,10 @@ export class ThreadBrowserWebSocket<
   static export<Exports = Record<string, never>>(
     socket: WebSocket,
     exports: Exports,
-    options?: Omit<ThreadOptions<Record<string, never>, Exports>, 'exports'>,
+    options?: Omit<
+      ThreadOptions<Record<string, never>, NoInfer<Exports>>,
+      'imports'
+    >,
   ) {
     new ThreadBrowserWebSocket(socket, {...options, exports});
   }
