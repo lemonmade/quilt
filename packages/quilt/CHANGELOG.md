@@ -1,5 +1,12 @@
 # @quilted/quilt
 
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [[`897cb5c`](https://github.com/lemonmade/quilt/commit/897cb5cf0023f17a95f4b082668a13f59282a43d)]:
+  - @quilted/threads@4.0.0
+
 ## 0.8.10
 
 ### Patch Changes
