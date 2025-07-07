@@ -130,7 +130,7 @@ export class ThreadWebWorker<
 }
 
 function selfAsWorker() {
-  if (typeof self === 'undefined' || !(self instanceof Worker)) {
+  if (typeof self === 'undefined') {
     throw new Error('You are not inside a web worker.');
   }
 
