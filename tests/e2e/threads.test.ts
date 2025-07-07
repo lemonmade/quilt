@@ -17,17 +17,15 @@ describe('threads', () => {
 
           const channel = new MessageChannel();
 
-          const thread1 = new ThreadMessagePort(channel.port1);
-          const thread2 = new ThreadMessagePort(channel.port2, {
-            exports: {
-              sayHello: (name) => 'Hello ' + name,
-            },
+          const {sayHello} = ThreadMessagePort.import(channel.port1);
+          const thread2 = ThreadMessagePort.export(channel.port2, {
+            sayHello: (name) => 'Hello ' + name,
           });
 
           channel.port1.start();
           channel.port2.start();
 
-          const greeting = await thread1.imports.sayHello('world');
+          const greeting = await sayHello('world');
 
           const element = document.createElement('div');
           element.id = 'result';
@@ -66,19 +64,19 @@ describe('threads', () => {
           const channel = new BroadcastChannel('my-channel');
 
           if (window.location.pathname === '/greeter') {
-            const thread = new ThreadBroadcastChannel(channel, {
-              exports: {
-                sayHello: (name) => 'Hello ' + name,
-              },
+            const {sayHello} = ThreadBroadcastChannel.import(channel);
+
+            ThreadBroadcastChannel.export(channel, {
+              sayHello: (name) => 'Hello ' + name,
             });
           } else {
             document.querySelector('#link').addEventListener('click', async () => {
               // give it a second to load the other window
               await new Promise((resolve) => setTimeout(resolve, 100));
 
-              const thread = new ThreadBroadcastChannel(channel);
+              const {sayHello} = ThreadBroadcastChannel.import(channel);
 
-              const greeting = await thread.imports.sayHello('world');
+              const greeting = await sayHello('world');
 
               const element = document.createElement('div');
               element.id = 'result';
@@ -101,7 +99,7 @@ describe('threads', () => {
     });
   });
 
-  describe('ThreadWindow and ThreadNestedWindow', () => {
+  describe('ThreadWindow', () => {
     it('communicates between a parent page and a nested window', async () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
@@ -115,22 +113,25 @@ describe('threads', () => {
           import {ThreadWindow, ThreadNestedWindow} from '@quilted/quilt/threads';
 
           if (window.opener) {
-            const thread = new ThreadNestedWindow(window.opener, {
-              exports: {
-                sayHello: (name) => 'Hello ' + name,
-              },
+            const {connect} = ThreadWindow.opener.import();
+
+            await connect({
+              async sayHello(name) { return 'Hello ' + name; },
             });
           } else {
             document.querySelector('#button').addEventListener('click', async () => {
               const popup = window.open('/popup', 'MyAppPopup', 'popup');
-              const thread = new ThreadWindow(popup);
 
-              const greeting = await thread.imports.sayHello('world');
+              ThreadWindow.export(popup, {
+                async connect({sayHello}) {
+                  const greeting = await sayHello('world');
 
-              const element = document.createElement('div');
-              element.id = 'result';
-              element.textContent = String(greeting);
-              document.body.appendChild(element);
+                  const element = document.createElement('div');
+                  element.id = 'result';
+                  element.textContent = String(greeting);
+                  document.body.append(element);
+                },
+              });
             });
           }
         `,
@@ -146,9 +147,7 @@ describe('threads', () => {
         await page.evaluate(() => document.documentElement.textContent),
       ).toContain('Hello world');
     });
-  });
 
-  describe('ThreadIFrame and ThreadNestedIframe', () => {
     it('communicates between a parent page and a nested iframe', async () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
@@ -159,27 +158,29 @@ describe('threads', () => {
           }
         `,
         'browser.ts': multiline`
-          import {ThreadIframe, ThreadNestedIframe} from '@quilted/quilt/threads';
+          import {ThreadWindow} from '@quilted/quilt/threads';
 
           if (window.parent !== window) {
-            const thread = new ThreadNestedIframe({
-              exports: {
-                sayHello: (name) => 'Hello ' + name,
-              },
+            const {connect} = ThreadWindow.parent.import();
+
+            await connect({
+              async sayHello(name) { return 'Hello ' + name; },
             });
           } else {
             const iframe = document.createElement('iframe');
             iframe.src = '/iframe';
-            document.body.appendChild(iframe);
+            document.body.append(iframe);
 
-            const thread = new ThreadIframe(iframe);
+            ThreadWindow.iframe.export(iframe, {
+              async connect({sayHello}) {
+                const greeting = await sayHello('world');
 
-            const greeting = await thread.imports.sayHello('world');
-
-            const element = document.createElement('div');
-            element.id = 'result';
-            element.textContent = String(greeting);
-            document.body.appendChild(element);
+                const element = document.createElement('div');
+                element.id = 'result';
+                element.textContent = String(greeting);
+                document.body.append(element);
+              },
+            });
           }
         `,
       });
@@ -211,22 +212,20 @@ describe('threads', () => {
           const CustomWorker = createWorker(() => import('./worker.ts'));
 
           const worker = new CustomWorker();
-          const thread = new ThreadWebWorker(worker);
+          const {sayHello} = ThreadWebWorker.import(worker);
 
-          const greeting = await thread.imports.sayHello('world');
+          const greeting = await sayHello('world');
 
           const element = document.createElement('div');
           element.id = 'result';
           element.textContent = String(greeting);
-          document.body.appendChild(element);
+          document.body.append(element);
         `,
         'worker.ts': multiline`
           import {ThreadWebWorker} from '@quilted/threads';
 
-          const thread = new ThreadWebWorker(self, {
-            exports: {
-              sayHello: (name) => 'Hello ' + name,
-            },
+          ThreadWebWorker.self.export({
+            async sayHello(name) { return 'Hello ' + name; },
           });
         `,
       });

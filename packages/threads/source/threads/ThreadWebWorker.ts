@@ -105,21 +105,21 @@ export class ThreadWebWorker<
   static self = Object.assign(
     <Imports = Record<string, never>, Exports = Record<string, never>>(
       options?: ThreadOptions<Imports, Exports>,
-    ) => this.from(selfAsWorker(), options),
+    ) => ThreadWebWorker.from(selfAsWorker(), options),
     {
       import: <Imports = Record<string, never>>(
         options?: Omit<
           ThreadOptions<Imports, Record<string, never>>,
           'exports'
         >,
-      ) => this.import(selfAsWorker(), options),
+      ) => ThreadWebWorker.import(selfAsWorker(), options),
       export: <Exports = Record<string, never>>(
         exports: Exports,
         options?: Omit<
           ThreadOptions<Record<string, never>, Exports>,
           'imports'
         >,
-      ) => this.export(selfAsWorker(), exports, options),
+      ) => ThreadWebWorker.export(selfAsWorker(), exports, options),
     },
   );
 
