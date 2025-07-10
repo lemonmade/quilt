@@ -65,7 +65,7 @@ export class ThreadWebWorker<
    */
   static import<Imports = Record<string, never>>(
     worker: Worker,
-    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'imports'>,
+    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'exports'>,
   ) {
     return new ThreadWebWorker<Imports>(worker, options).imports;
   }
@@ -97,7 +97,10 @@ export class ThreadWebWorker<
   static export<Exports = Record<string, never>>(
     worker: Worker,
     exports: Exports,
-    options?: Omit<ThreadOptions<Record<string, never>, Exports>, 'imports'>,
+    options?: Omit<
+      ThreadOptions<Record<string, never>, Exports>,
+      'exports' | 'imports'
+    >,
   ) {
     new ThreadWebWorker(worker, {...options, exports});
   }
@@ -112,14 +115,14 @@ export class ThreadWebWorker<
           ThreadOptions<Imports, Record<string, never>>,
           'exports'
         >,
-      ) => ThreadWebWorker.import(selfAsWorker(), options),
+      ) => ThreadWebWorker.import<Imports>(selfAsWorker(), options),
       export: <Exports = Record<string, never>>(
         exports: Exports,
         options?: Omit<
           ThreadOptions<Record<string, never>, Exports>,
-          'imports'
+          'exports' | 'imports'
         >,
-      ) => ThreadWebWorker.export(selfAsWorker(), exports, options),
+      ) => ThreadWebWorker.export<Exports>(selfAsWorker(), exports, options),
     },
   );
 

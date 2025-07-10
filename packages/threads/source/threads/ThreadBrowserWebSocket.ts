@@ -61,7 +61,7 @@ export class ThreadBrowserWebSocket<
     exports: Exports,
     options?: Omit<
       ThreadOptions<Record<string, never>, NoInfer<Exports>>,
-      'imports'
+      'exports' | 'imports'
     >,
   ) {
     new ThreadBrowserWebSocket(socket, {...options, exports});
@@ -104,6 +104,7 @@ export class ThreadBrowserWebSocket<
       },
       {...options, serialization},
     );
+
     this.socket = socket;
   }
 }

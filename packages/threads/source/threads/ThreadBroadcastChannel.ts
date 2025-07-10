@@ -81,7 +81,7 @@ export class ThreadBroadcastChannel<
     exports: Exports,
     options?: Omit<
       ThreadOptions<Record<string, never>, NoInfer<Exports>>,
-      'imports'
+      'exports' | 'imports'
     >,
   ) {
     new ThreadBroadcastChannel(channel, {...options, exports});

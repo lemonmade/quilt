@@ -45,7 +45,7 @@ export class ThreadWindow<
     window: Window,
     options?: ThreadWindowOptions<Imports, Exports>,
   ) {
-    return new ThreadWindow(window, options);
+    return new ThreadWindow<Imports, Exports>(window, options);
   }
 
   /**
@@ -107,7 +107,7 @@ export class ThreadWindow<
     exports: Exports,
     options?: Omit<
       ThreadWindowOptions<Record<string, never>, NoInfer<Exports>>,
-      'imports'
+      'exports' | 'imports'
     >,
   ) {
     new ThreadWindow(window, {...options, exports});
@@ -135,7 +135,11 @@ export class ThreadWindow<
     <Imports = Record<string, never>, Exports = Record<string, never>>(
       iframe: HTMLIFrameElement,
       options?: ThreadWindowOptions<Imports, Exports>,
-    ) => ThreadWindow.from(iframeContentWindowOrFail(iframe), options),
+    ) =>
+      ThreadWindow.from<Imports, Exports>(
+        iframeContentWindowOrFail(iframe),
+        options,
+      ),
     {
       /**
        * Starts a thread wrapped around the content window of an `<iframe>` element,
@@ -168,9 +172,13 @@ export class ThreadWindow<
         iframe: HTMLIFrameElement,
         options?: Omit<
           ThreadWindowOptions<Imports, Record<string, never>>,
-          'imports'
+          'exports'
         >,
-      ) => ThreadWindow.import(iframeContentWindowOrFail(iframe), options),
+      ) =>
+        ThreadWindow.import<Imports>(
+          iframeContentWindowOrFail(iframe),
+          options,
+        ),
 
       /**
        * Starts a thread wrapped around the content window of an `<iframe>` element,
@@ -199,10 +207,10 @@ export class ThreadWindow<
         exports: Exports,
         options?: Omit<
           ThreadWindowOptions<Record<string, never>, Exports>,
-          'exports'
+          'exports' | 'imports'
         >,
       ) =>
-        ThreadWindow.export(
+        ThreadWindow.export<Exports>(
           iframeContentWindowOrFail(iframe),
           exports,
           options,
@@ -224,7 +232,7 @@ export class ThreadWindow<
   static parent = Object.assign(
     <Imports = Record<string, never>, Exports = Record<string, never>>(
       options?: ThreadWindowOptions<Imports, Exports>,
-    ) => ThreadWindow.from(distinctParentOrFail(), options),
+    ) => ThreadWindow.from<Imports, Exports>(distinctParentOrFail(), options),
     {
       /**
        * Starts a thread wrapped around a parent window, and returns the imports
@@ -251,9 +259,9 @@ export class ThreadWindow<
       import: <Imports = Record<string, never>>(
         options?: Omit<
           ThreadWindowOptions<Imports, Record<string, never>>,
-          'imports'
+          'exports'
         >,
-      ) => ThreadWindow.import(distinctParentOrFail(), options),
+      ) => ThreadWindow.import<Imports>(distinctParentOrFail(), options),
 
       /**
        * Starts a thread wrapped around a parent window, providing the second
@@ -286,9 +294,10 @@ export class ThreadWindow<
         exports: Exports,
         options?: Omit<
           ThreadWindowOptions<Record<string, never>, Exports>,
-          'exports'
+          'exports' | 'imports'
         >,
-      ) => ThreadWindow.export(distinctParentOrFail(), exports, options),
+      ) =>
+        ThreadWindow.export<Exports>(distinctParentOrFail(), exports, options),
     },
   );
 
@@ -308,7 +317,7 @@ export class ThreadWindow<
   static opener = Object.assign(
     <Imports = Record<string, never>, Exports = Record<string, never>>(
       options?: ThreadWindowOptions<Imports, Exports>,
-    ) => ThreadWindow.from(windowOpenerOrFail(), options),
+    ) => ThreadWindow.from<Imports, Exports>(windowOpenerOrFail(), options),
     {
       /**
        * Starts a thread wrapped around a nested `window` object, and returns the imports
@@ -338,7 +347,7 @@ export class ThreadWindow<
           ThreadWindowOptions<Imports, Record<string, never>>,
           'exports'
         >,
-      ) => ThreadWindow.import(windowOpenerOrFail(), options),
+      ) => ThreadWindow.import<Imports>(windowOpenerOrFail(), options),
 
       /**
        * Starts a thread wrapped around a nested `window` object, providing the second
@@ -372,9 +381,9 @@ export class ThreadWindow<
         exports: Exports,
         options?: Omit<
           ThreadWindowOptions<Record<string, never>, NoInfer<Exports>>,
-          'imports'
+          'exports' | 'imports'
         >,
-      ) => ThreadWindow.export(windowOpenerOrFail(), exports, options),
+      ) => ThreadWindow.export<Exports>(windowOpenerOrFail(), exports, options),
     },
   );
 

@@ -60,7 +60,7 @@ export class ThreadMessagePort<
    */
   static import<Imports = Record<string, never>>(
     port: MessagePort,
-    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'imports'>,
+    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'exports'>,
   ) {
     return new ThreadMessagePort<Imports>(port, options).imports;
   }
@@ -92,7 +92,10 @@ export class ThreadMessagePort<
   static export<Exports = Record<string, never>>(
     port: MessagePort,
     exports: Exports,
-    options?: Omit<ThreadOptions<Record<string, never>, Exports>, 'exports'>,
+    options?: Omit<
+      ThreadOptions<Record<string, never>, Exports>,
+      'exports' | 'imports'
+    >,
   ) {
     new ThreadMessagePort(port, {...options, exports});
   }

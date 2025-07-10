@@ -53,7 +53,7 @@ export class ThreadServiceWorker<
    */
   static import<Imports = Record<string, never>>(
     worker: ServiceWorker,
-    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'imports'>,
+    options?: Omit<ThreadOptions<Imports, Record<string, never>>, 'exports'>,
   ) {
     return new ThreadServiceWorker<Imports>(worker, options).imports;
   }
@@ -92,7 +92,10 @@ export class ThreadServiceWorker<
   static export<Exports = Record<string, never>>(
     worker: ServiceWorker,
     exports: Exports,
-    options?: Omit<ThreadOptions<Record<string, never>, Exports>, 'exports'>,
+    options?: Omit<
+      ThreadOptions<Record<string, never>, Exports>,
+      'exports' | 'imports'
+    >,
   ) {
     new ThreadServiceWorker(worker, {...options, exports});
   }
