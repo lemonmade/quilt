@@ -1,5 +1,11 @@
 # @quilted/threads
 
+## 4.0.1
+
+### Patch Changes
+
+- [`df5f9d3`](https://github.com/lemonmade/quilt/commit/df5f9d3c3c64f4300815f0c30ab265bc82e780d6) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix thread creation typescript types
+
 ## 4.0.0
 
 ### Major Changes
