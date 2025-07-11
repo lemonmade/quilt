@@ -13,7 +13,7 @@
     "typescript:watch": "tsx watch --conditions quilt:source"
   },
   "devDependencies": {
-    "@quilted/rollup": "^0.2.0",
+    "@quilted/rollup": "^0.3.0",
     "@quilted/vite": "^0.2.0",
     "@quilted/typescript": "^0.4.0",
     "rollup": "^4.34.0",
