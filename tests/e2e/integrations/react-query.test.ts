@@ -44,7 +44,6 @@ describe('react-query', () => {
         }
       `,
       'server.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
         import {BrowserAssets} from 'quilt:module/assets';
         

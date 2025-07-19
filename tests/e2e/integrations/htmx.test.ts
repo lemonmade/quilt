@@ -16,9 +16,8 @@ describe('htmx', () => {
     await workspace.fs.write({
       'browser.tsx': HTMX_BROWSER_ENTRY,
       'server.tsx': multiline`
-        import '@quilted/quilt/globals';
-        import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {RequestRouter} from '@quilted/quilt/request-router';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();
@@ -82,10 +81,9 @@ describe('htmx', () => {
     await workspace.fs.write({
       'browser.tsx': HTMX_BROWSER_ENTRY,
       'server.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
-        import {RequestRouter} from '@quilted/quilt/request-router';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {RequestRouter} from '@quilted/quilt/request-router';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const router = new RequestRouter();

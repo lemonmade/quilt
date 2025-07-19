@@ -1,7 +1,3 @@
-import '@quilted/quilt/globals';
-
-import {RequestRouter} from '@quilted/quilt/request-router';
-import {Router} from '@quilted/quilt/navigation';
 import {
   renderAppToHTMLResponse,
   cacheControlHeader,
@@ -9,6 +5,8 @@ import {
   permissionsPolicyHeader,
   strictTransportSecurityHeader,
 } from '@quilted/quilt/server';
+import {RequestRouter} from '@quilted/quilt/request-router';
+import {Router} from '@quilted/quilt/navigation';
 
 import Env from 'quilt:module/env';
 import {BrowserAssets} from 'quilt:module/assets';

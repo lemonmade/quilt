@@ -47,7 +47,6 @@ The default Quilt server can be used as-is with htmx; it renders an `App` compon
 Let’s imagine a simple application that renders a button, and updates the button’s text when it’s clicked. To accomplish this, you’d need a server with two endpoints: the root HTML document, and an extra `/clicked` endpoint that returns the updated button HTML:
 
 ```tsx
-import '@quilted/quilt/globals';
 import {RequestRouter} from '@quilted/quilt/request-router';
 import {
   HTML,

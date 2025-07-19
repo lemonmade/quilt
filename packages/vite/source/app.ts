@@ -70,7 +70,7 @@ export interface AppOptions extends AppBaseOptions {
   /**
    * Customizes the browser build of your application.
    */
-  browser?: Pick<AppBrowserOptions, 'module' | 'entry' | 'env'>;
+  browser?: Pick<AppBrowserOptions, 'module' | 'entry' | 'entries' | 'env'>;
 
   /**
    * Customizes the server build of your application.
@@ -125,8 +125,8 @@ export async function quiltApp({
       moduleID({imported}) {
         const relative = path.relative(process.cwd(), imported);
         return relative.startsWith('..')
-          ? `/@id/quilt-async-import:${imported}`
-          : `/@id/quilt-async-import:/${relative}`;
+          ? `/@id/quilt-async-module:${imported}`
+          : `/@id/quilt-async-module:/${relative}`;
       },
     }),
   ];
@@ -210,6 +210,11 @@ export async function quiltApp({
         appType: 'custom',
         test: {
           environment: 'jsdom',
+        },
+        build: {
+          rollupOptions: {
+            input: {},
+          },
         },
       };
     },

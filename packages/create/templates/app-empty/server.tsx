@@ -1,7 +1,5 @@
-import '@quilted/quilt/globals';
-
-import {RequestRouter} from '@quilted/quilt/request-router';
 import {renderAppToHTMLResponse} from '@quilted/quilt/server';
+import {RequestRouter} from '@quilted/quilt/request-router';
 import {BrowserAssets} from 'quilt:module/assets';
 
 import {App} from './App.tsx';

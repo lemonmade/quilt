@@ -1,4 +1,3 @@
-export {AsyncModulesGlobal, type AsyncModulesOptions} from './global.ts';
 export {
   AsyncAction,
   AsyncActionRun,

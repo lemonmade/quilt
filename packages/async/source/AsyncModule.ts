@@ -46,17 +46,16 @@ export class AsyncModule<Module> {
 
   private readonly loadModule: AsyncAction<Module>;
 
-  constructor(load: AsyncModuleLoader<Module>) {
+  constructor(
+    load: AsyncModuleLoader<Module>,
+    {cached}: {cached?: Module} = {},
+  ) {
     const id = (load as any).id;
     this.id = id;
 
-    const preloadedModule = (globalThis as any)[
-      Symbol.for('quilt')
-    ]?.asyncModules?.get(id);
-
     this.loadModule = new AsyncAction(
       () => (typeof load === 'function' ? load() : load.import()),
-      {cached: preloadedModule ? {value: preloadedModule} : undefined},
+      {cached: cached ? {value: cached} : undefined},
     );
   }
 
