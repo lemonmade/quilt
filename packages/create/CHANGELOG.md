@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.2.49
+
+### Patch Changes
+
+- [`fc772fb`](https://github.com/lemonmade/quilt/commit/fc772fb47bd077eb10f67a986a9f4ae792f631f0) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix old @quilted/rollup dependency in workspace template
+
 ## 0.2.48
 
 ### Patch Changes
