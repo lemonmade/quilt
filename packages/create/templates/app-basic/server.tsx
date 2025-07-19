@@ -1,5 +1,4 @@
-import {RequestRouter} from '@quilted/quilt/request-router';
-import {Router} from '@quilted/quilt/navigation';
+import {Hono} from 'hono';
 import {
   renderAppToHTMLResponse,
   CacheControlHeader,
@@ -7,6 +6,7 @@ import {
   PermissionsPolicyHeader,
   StrictTransportSecurityHeader,
 } from '@quilted/quilt/server';
+import {Router} from '@quilted/quilt/navigation';
 
 import Env from 'quilt:module/env';
 import {BrowserAssets} from 'quilt:module/assets';
@@ -15,7 +15,7 @@ import type {AppContext} from '~/shared/context.ts';
 
 import {App} from './App.tsx';
 
-const router = new RequestRouter();
+const app = new Hono();
 const assets = new BrowserAssets();
 
 class ServerAppContext implements AppContext {
@@ -27,7 +27,9 @@ class ServerAppContext implements AppContext {
 }
 
 // For all GET requests, render our Preact application.
-router.get(async (request) => {
+app.get('*', async (c) => {
+  const request = c.req.raw;
+
   const context = new ServerAppContext(request);
 
   const isHttps = request.url.startsWith('https://');
@@ -115,4 +117,4 @@ router.get(async (request) => {
   return response;
 });
 
-export default router;
+export default app;

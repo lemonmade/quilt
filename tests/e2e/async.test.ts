@@ -410,22 +410,23 @@ describe('async', () => {
 
     await workspace.fs.write({
       'server.tsx': multiline`
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         
         import {BrowserAssets} from 'quilt:module/assets';
 
         import App from './App.tsx';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.get('/data', async () => {
+        app.get('/data', async () => {
           return new Response('Hello world!');
         });
         
-        // For all GET requests, render our React application.
-        router.get(async (request) => {
+        app.get('*', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderAppToHTMLResponse(<App />, {
             request,
             assets,
@@ -434,7 +435,7 @@ describe('async', () => {
           return response;
         });
         
-        export default router;
+        export default app;
       
       `,
       'App.tsx': multiline`
@@ -485,23 +486,24 @@ describe('async', () => {
 
     await workspace.fs.write({
       'server.tsx': multiline`
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         
         import {BrowserAssets} from 'quilt:module/assets';
 
         import App from './App.tsx';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.get('/data', async (request) => {
+        app.get('/data', async (request) => {
           const greet = request.URL.searchParams.get('name') ?? 'world';
           return new Response('Hello ' + greet + '!');
         });
         
-        // For all GET requests, render our React application.
-        router.get(async (request) => {
+        app.get('*', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderAppToHTMLResponse(<App />, {
             request,
             assets,
@@ -510,7 +512,7 @@ describe('async', () => {
           return response;
         });
         
-        export default router;
+        export default app;
       
       `,
       'App.tsx': multiline`

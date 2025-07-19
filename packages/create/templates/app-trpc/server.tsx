@@ -1,3 +1,4 @@
+import {Hono} from 'hono';
 import {
   renderAppToHTMLResponse,
   CacheControlHeader,
@@ -5,7 +6,6 @@ import {
   PermissionsPolicyHeader,
   StrictTransportSecurityHeader,
 } from '@quilted/quilt/server';
-import {RequestRouter} from '@quilted/quilt/request-router';
 import {Router} from '@quilted/quilt/navigation';
 
 import Env from 'quilt:module/env';
@@ -19,7 +19,7 @@ import type {AppContext} from '~/shared/context.ts';
 
 import {appRouter} from './trpc.ts';
 
-const router = new RequestRouter();
+const app = new Hono();
 const assets = new BrowserAssets();
 
 class ServerAppContext implements AppContext {
@@ -34,21 +34,21 @@ class ServerAppContext implements AppContext {
   }
 }
 
-router.any(
-  'api',
-  (request) => {
-    return fetchRequestHandler({
-      endpoint: '/api',
-      req: request,
-      router: appRouter,
-      createContext: () => ({}),
-    });
-  },
-  {exact: false},
-);
+// TRPC API
+app.all('/api/*', async (c) => {
+  const request = c.req.raw;
+  return fetchRequestHandler({
+    endpoint: '/api',
+    req: request,
+    router: appRouter,
+    createContext: () => ({}),
+  });
+});
 
-// For all GET requests, render our React application.
-router.get(async (request) => {
+// Preact app
+app.get('*', async (c) => {
+  const request = c.req.raw;
+
   const [{App}] = await Promise.all([import('./App.tsx')]);
 
   const context = new ServerAppContext(request);
@@ -138,4 +138,4 @@ router.get(async (request) => {
   return response;
 });
 
-export default router;
+export default app;
