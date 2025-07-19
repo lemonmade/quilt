@@ -1,3 +1,6 @@
+// Imported for types
+import './modules.ts';
+
 export {
   renderToString,
   renderToStringAsync,

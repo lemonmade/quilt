@@ -114,8 +114,6 @@ Then, in the referenced file, you can provide all the custom initialization logi
 
 ```ts
 // Make sure to include this import if you are using Quilt’s async features
-import '@quilted/quilt/globals';
-
 import {ErrorLogging} from 'my-error-logging-library/browser';
 
 // If you are not server rendering, swap this out with `renderRoot` instead

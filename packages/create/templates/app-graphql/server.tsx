@@ -1,5 +1,3 @@
-import '@quilted/quilt/globals';
-
 import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
 import {Router} from '@quilted/quilt/navigation';
 import {

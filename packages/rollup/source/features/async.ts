@@ -5,7 +5,6 @@ import {multiline} from '../shared/strings.ts';
 import MagicString from 'magic-string';
 
 const MODULE_PREFIX = 'quilt-async-module:';
-export const IMPORT_PREFIX = 'quilt-async-import:';
 
 export interface Options {
   preload?: boolean;
@@ -23,9 +22,7 @@ export function asyncModules({
     async resolveId(id, importer) {
       let prefix: string;
 
-      if (id.startsWith(IMPORT_PREFIX)) {
-        prefix = IMPORT_PREFIX;
-      } else if (id.startsWith(MODULE_PREFIX)) {
+      if (id.startsWith(MODULE_PREFIX)) {
         prefix = MODULE_PREFIX;
       } else {
         return null;
@@ -52,23 +49,6 @@ export function asyncModules({
           }
         `;
 
-        return code;
-      }
-
-      if (id.startsWith(`\0${IMPORT_PREFIX}`)) {
-        const imported = id.replace(`\0${IMPORT_PREFIX}`, '');
-        const moduleID = getModuleID({imported});
-
-        const code = multiline`
-          import * as AsyncModule from ${JSON.stringify(imported)};
-
-          ((globalThis[Symbol.for('quilt')] ||= {}).asyncModules ||= new Map).set(${JSON.stringify(
-            moduleID,
-          )}, AsyncModule);
-
-          export default AsyncModule;
-        `;
-
         return {
           code,
           meta: {
@@ -79,19 +59,15 @@ export function asyncModules({
 
       return null;
     },
-    transform: baseURL
-      ? (code) =>
-          code.replace(/__QUILT_ASSETS_BASE_URL__/g, JSON.stringify(baseURL))
-      : undefined,
     async generateBundle(options, bundle) {
       if (preload) {
         switch (options.format) {
           case 'es': {
-            await preloadAsyncAssetsInESMBundle(bundle);
+            await preloadAsyncAssetsInESMBundle(bundle, {baseURL});
             break;
           }
           case 'system': {
-            await preloadAsyncAssetsInSystemJSBundle(bundle);
+            await preloadAsyncAssetsInSystemJSBundle(bundle, {baseURL});
             break;
           }
         }
@@ -104,7 +80,10 @@ function defaultModuleID({imported}: {imported: string}) {
   return path.relative(process.cwd(), imported).replace(/[\\/]/g, '-');
 }
 
-async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
+async function preloadAsyncAssetsInESMBundle(
+  bundle: OutputBundle,
+  {baseURL = '/'}: {baseURL?: string} = {},
+) {
   const {parse: parseImports} = await import('es-module-lexer');
 
   for (const chunk of Object.values(bundle)) {
@@ -112,10 +91,10 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
     if (chunk.dynamicImports.length === 0) continue;
 
     const {code} = chunk;
-
     const newCode = new MagicString(code);
 
     const imports = (await parseImports(code))[0];
+    let hasReplacements = false;
 
     for (const imported of imports) {
       const {s: start, e: end, ss: importStart, d: dynamicStart} = imported;
@@ -130,11 +109,13 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
         importSource,
         chunk,
         bundle,
+        {baseURL},
       );
 
       // The only dependency is the file itself, no need to preload
       if (dependencies.size === 1) continue;
 
+      hasReplacements = true;
       const originalImport = code.slice(importStart, end + 1);
       newCode.overwrite(
         importStart,
@@ -143,22 +124,29 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
       );
     }
 
+    if (hasReplacements) {
+      newCode.prepend(getPreloadHelperFunction() + '\n');
+    }
+
     chunk.code = newCode.toString();
   }
 }
 
-async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
+async function preloadAsyncAssetsInSystemJSBundle(
+  bundle: OutputBundle,
+  {baseURL = '/'}: {baseURL?: string} = {},
+) {
   for (const chunk of Object.values(bundle)) {
     if (chunk.type !== 'chunk') continue;
     if (chunk.dynamicImports.length === 0) continue;
 
     const {code} = chunk;
-
     const newCode = new MagicString(code);
 
     const systemDynamicImportRegex = /\bmodule\.import\(([^)]*)\)/g;
 
     let match: RegExpExecArray | null;
+    let hasReplacements = false;
 
     while ((match = systemDynamicImportRegex.exec(code))) {
       const [originalImport, imported] = match;
@@ -170,15 +158,21 @@ async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
         importSource,
         chunk,
         bundle,
+        {baseURL},
       );
 
       if (dependencies.size === 1) continue;
 
+      hasReplacements = true;
       newCode.overwrite(
         match.index,
         match.index + originalImport!.length,
         preloadContentForDependencies(dependencies, originalImport!),
       );
+    }
+
+    if (hasReplacements) {
+      newCode.prepend(getPreloadHelperFunction() + '\n');
     }
 
     chunk.code = newCode.toString();
@@ -189,17 +183,14 @@ function preloadContentForDependencies(
   dependencies: Iterable<string>,
   originalExpression: string,
 ) {
-  return `Promise.resolve().then(() => globalThis[Symbol.for('quilt')]?.asyncModules?.preload?.(${Array.from(
-    dependencies,
-  )
-    .map((dependency) => JSON.stringify(dependency))
-    .join(',')})).then(function(){return ${originalExpression}})`;
+  return `__quilt_preload(${JSON.stringify(Array.from(dependencies))}).then(() => {return ${originalExpression}})`;
 }
 
 function getDependenciesForImport(
   imported: string,
   chunk: OutputChunk,
   bundle: OutputBundle,
+  {baseURL = '/'}: {baseURL?: string} = {},
 ) {
   const originalFilename = chunk.fileName;
   const dependencies = new Set<string>();
@@ -219,7 +210,9 @@ function getDependenciesForImport(
 
     if (chunk == null) return;
 
-    dependencies.add(chunk.fileName);
+    const url = `${baseURL}${baseURL.endsWith('/') ? '' : '/'}${chunk.fileName}`;
+
+    dependencies.add(url);
 
     if (chunk.type !== 'chunk') return;
 
@@ -232,3 +225,97 @@ function getDependenciesForImport(
 
   return dependencies;
 }
+
+function getPreloadHelperFunction({
+  type = 'module',
+}: {type?: 'module' | 'script'} = {}) {
+  const scriptRel = JSON.stringify(
+    type === 'module' ? 'modulepreload' : 'preload',
+  );
+
+  return multiline`
+    const __quilt_preload=(()=>{const o=new Map,f=${scriptRel};class QuiltPreloadError extends Error{constructor(e,{cause:l}={}){super(\`Unable to preload \${e}\`,{cause:l}),this.source=e}}class QuiltPreloadErrorEvent extends Event{constructor(e){super("quilt:preload-error",{cancelable:!0}),this.error=e}}return function __quilt_preload(e){return e.length===0?Promise.resolve():Promise.all(e.map(s=>{const r=s.startsWith("/")?s:"/"+s;if(o.has(r))return;o.set(r,!0);const i=r.endsWith(".css");if(document.querySelector(\`link[href="\${r}"]\`)!=null)return;const t=document.createElement("link");if(i?t.rel="stylesheet":(t.as="script",t.rel=f),t.crossOrigin="",t.href=r,document.head.appendChild(t),i)return new Promise(a=>{t.addEventListener("load",()=>a()),t.addEventListener("error",h=>a(new QuiltPreloadError(r,{cause:h})))})})).then(s=>{for(const r of s)r!=null&&d(r)})};function d(n){const e=new QuiltPreloadErrorEvent(n);if(window.dispatchEvent(e),!e.defaultPrevented)throw n}})();
+  `;
+}
+
+// Source for minified code above:
+//
+// const __quilt_preload = (() => {
+//   const SEEN = new Map();
+//   const SCRIPT_REL = 'module';
+
+//   return function __quiltPreload(dependencies) {
+//     if (dependencies.length === 0) return Promise.resolve();
+
+//     const promise = Promise.all(
+//       dependencies.map((dependency) => {
+//         const resolved = dependency.startsWith('/')
+//           ? dependency
+//           : '/' + dependency;
+
+//         if (SEEN.has(resolved)) return;
+//         SEEN.set(resolved, true);
+
+//         const isCSS = resolved.endsWith('.css');
+
+//         if (document.querySelector(`link[href="${resolved}"]`) != null) {
+//           return;
+//         }
+
+//         const link = document.createElement('link');
+
+//         if (isCSS) {
+//           link.rel = 'stylesheet';
+//         } else {
+//           link.as = 'script';
+//           link.rel = scriptRel;
+//         }
+
+//         link.crossOrigin = '';
+//         link.href = resolved;
+//         document.head.appendChild(link);
+
+//         // We will only wait for CSS
+//         if (isCSS) {
+//           return new Promise((resolve) => {
+//             link.addEventListener('load', () => resolve());
+//             link.addEventListener('error', (error) =>
+//               resolve(new PreloadError(resolved, {cause: error})),
+//             );
+//           });
+//         }
+//       }),
+//     );
+
+//     return promise.then((results) => {
+//       for (const result of results) {
+//         if (result != null) {
+//           handlePreloadError(result);
+//         }
+//       }
+//     });
+//   };
+
+//   function handlePreloadError(error) {
+//     const event = new PreloadErrorEvent(error);
+//     window.dispatchEvent(event);
+
+//     if (!event.defaultPrevented) {
+//       throw error;
+//     }
+//   }
+
+//   class PreloadError extends Error {
+//     constructor(source, {cause} = {}) {
+//       super(`Unable to preload ${source}`, {cause});
+//       this.source = source;
+//     }
+//   }
+
+//   class PreloadErrorEvent extends Event {
+//     constructor(error) {
+//       super('quilt:preload-error', {cancelable: true});
+//       this.error = error;
+//     }
+//   }
+// })();
