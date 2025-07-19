@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.1.12
+
+### Patch Changes
+
+- [`64fc42b`](https://github.com/lemonmade/quilt/commit/64fc42b87ca72eec8dfab211d2ddecdbbaa0e4ac) Thanks [@lemonmade](https://github.com/lemonmade)! - Transition browser header helpers to use classes
+
 ## 0.1.11
 
 ### Patch Changes
