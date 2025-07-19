@@ -1,5 +1,3 @@
-import type {RenderableProps} from 'preact';
-
 import {NotFound} from '@quilted/quilt/server';
 import {GraphQLContext} from '@quilted/quilt/graphql';
 import {Navigation} from '@quilted/quilt/navigation';
@@ -10,14 +8,11 @@ import {Frame} from './foundation/frame.ts';
 
 import {Home, homeQuery} from './features/home.ts';
 
-import {
-  AppContextReact,
-  type AppContext as AppContextType,
-} from './shared/context.ts';
+import {AppContextPreact, type AppContext} from './shared/context.ts';
 import {routeWithAppContext} from './shared/navigation.ts';
 
 export interface AppProps {
-  context: AppContextType;
+  context: AppContext;
 }
 
 // Define the routes for your application. If you have a lot of routes, you
@@ -41,25 +36,22 @@ const routes = [
 // app-wide context in this component.
 export function App({context}: AppProps) {
   return (
-    <AppContext context={context}>
-      <Head />
-      <Navigation router={context.router} routes={routes} context={context} />
-    </AppContext>
-  );
-}
-
-export default App;
-
-// This component renders any app-wide context.
-function AppContext({children, context}: RenderableProps<AppProps>) {
-  return (
-    <AppContextReact.Provider value={context}>
+    <AppContextPreact.Provider value={context}>
       <GraphQLContext
         fetch={context.graphql.fetch}
         cache={context.graphql.cache}
       >
-        <Localization>{children}</Localization>
+        <Localization>
+          <Head />
+          <Navigation
+            router={context.router}
+            routes={routes}
+            context={context}
+          />
+        </Localization>
       </GraphQLContext>
-    </AppContextReact.Provider>
+    </AppContextPreact.Provider>
   );
 }
+
+export default App;

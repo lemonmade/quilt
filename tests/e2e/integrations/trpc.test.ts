@@ -80,7 +80,7 @@ describe('trpc', () => {
         );
       `,
       'server.tsx': multiline`
-        import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
@@ -88,10 +88,12 @@ describe('trpc', () => {
         
         import {appRouter, createCaller} from './trpc.ts';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.any('/api', (request) => {
+        app.all('/api', (c) => {
+          const request = c.req.raw;
+
           return fetchRequestHandler({
             endpoint: '/api',
             req: request,
@@ -100,7 +102,9 @@ describe('trpc', () => {
           });
         }, {exact: false});
         
-        router.get(async (request) => {
+        app.get('*', async (c) => {
+          const request = c.req.raw;
+
           const [{App}, {createDirectClient}, {QueryClient}] = await Promise.all([
             import('./App.tsx'),
             import('@quilted/trpc/server'),
@@ -121,7 +125,7 @@ describe('trpc', () => {
           return response;
         });
 
-        export default router;
+        export default app;
       `,
     });
 
