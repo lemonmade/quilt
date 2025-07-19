@@ -26,7 +26,7 @@ const STRICT_TRANSPORT_SECURITY_DEFAULT_MAX_AGE = 63_072_000;
  *
  * @see https://csswizardry.com/2019/03/cache-control-for-civilians/
  */
-export type CacheControlOptions =
+export type CacheControlHeaderOptions =
   | {
       /**
        * Whether this cache control directive applies only to “private”
@@ -35,7 +35,7 @@ export type CacheControlOptions =
        * will be set to `public`, which allows all caches (including CDNs,
        * proxies, and the like) to cache the content.
        */
-      private?: true;
+      private?: boolean;
       /**
        * Completely disable caching of this response. Passing this option
        * sets the `Cache-Control` header to `no-store`.
@@ -53,7 +53,7 @@ export type CacheControlOptions =
        * will be set to `public`, which allows all caches (including CDNs,
        * proxies, and the like) to cache the content.
        */
-      private?: true;
+      private?: boolean;
       cache?: never;
       /**
        * The number of seconds, from the time of this request, that
@@ -84,7 +84,7 @@ export type CacheControlOptions =
        * will be set to `public`, which allows all caches (including CDNs,
        * proxies, and the like) to cache the content.
        */
-      private?: true;
+      private?: boolean;
       cache?: never;
       maxAge?: number;
       /**
@@ -96,42 +96,78 @@ export type CacheControlOptions =
       revalidate?: never;
     };
 
-export function cacheControlHeader(options: CacheControlOptions) {
-  let headerValue = '';
+/**
+ * A helper class for creating `Cache-Control` headers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+ */
+export class CacheControlHeader {
+  /**
+   * Creates a `Cache-Control` header from the provided options.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+   * @example
+   * ```ts
+   * const header = CacheControlHeader.stringify({
+   *   immutable: true,
+   * });
+   */
+  static stringify(options: CacheControlHeaderOptions) {
+    return new CacheControlHeader(options).toString();
+  }
 
-  const {
-    private: isPrivate,
-    cache,
-    immutable,
+  readonly private: boolean;
+  readonly cache: boolean;
+  readonly immutable: boolean;
+  readonly maxAge?: number;
+  readonly revalidate: boolean | {allowStale: number};
+  readonly #headerValue: string;
+
+  constructor({
+    private: isPrivate = false,
+    cache = false,
+    immutable = false,
     maxAge = immutable ? 31536000 : undefined,
-    revalidate,
-  } = options;
+    revalidate = false,
+  }: CacheControlHeaderOptions) {
+    this.private = isPrivate;
+    this.cache = cache;
+    this.immutable = immutable;
+    this.maxAge = maxAge;
+    this.revalidate = revalidate;
 
-  headerValue = isPrivate ? 'private' : 'public';
+    let headerValue = '';
 
-  const appendToHeader = (value: string) => {
-    headerValue = `${headerValue}, ${value}`;
-  };
+    headerValue = isPrivate ? 'private' : 'public';
 
-  if (cache === false) {
-    appendToHeader('no-store');
-  }
+    const appendToHeader = (value: string) => {
+      headerValue = `${headerValue}, ${value}`;
+    };
 
-  if (maxAge === 0 && revalidate === true) {
-    appendToHeader('no-cache');
-  } else if (typeof maxAge === 'number' || revalidate) {
-    appendToHeader(`max-age=${maxAge ?? 0}`);
-
-    if (revalidate === true) {
-      appendToHeader('must-revalidate');
-    } else if (typeof revalidate === 'object') {
-      appendToHeader(`stale-while-revalidate=${revalidate.allowStale}`);
+    if (cache === false) {
+      appendToHeader('no-store');
     }
+
+    if (maxAge === 0 && revalidate === true) {
+      appendToHeader('no-cache');
+    } else if (typeof maxAge === 'number' || revalidate) {
+      appendToHeader(`max-age=${maxAge ?? 0}`);
+
+      if (revalidate === true) {
+        appendToHeader('must-revalidate');
+      } else if (typeof revalidate === 'object') {
+        appendToHeader(`stale-while-revalidate=${revalidate.allowStale}`);
+      }
+    }
+
+    if (immutable) appendToHeader('immutable');
+
+    this.#headerValue = headerValue;
   }
 
-  if (immutable) appendToHeader('immutable');
-
-  return headerValue;
+  toString() {
+    return this.#headerValue;
+  }
 }
 
 /**
@@ -139,7 +175,7 @@ export function cacheControlHeader(options: CacheControlOptions) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
  */
-export interface ContentSecurityPolicyOptions {
+export interface ContentSecurityPolicyHeaderOptions {
   /**
    * Sets the child-src content security policy directive, which determines what sources
    * are allowed for nested browsing contexts, including workers and iframes.
@@ -454,131 +490,156 @@ export interface ContentSecurityPolicyOptions {
   requireTrustedTypesFor?: 'script'[];
 }
 
-export function contentSecurityPolicyHeader(
-  options: ContentSecurityPolicyOptions = {},
-) {
-  let headerValue = '';
+/**
+ * A helper class for creating `Content-Security-Policy` headers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+ */
+export class ContentSecurityPolicyHeader {
+  /**
+   * Creates a `Content-Security-Policy` header from the provided options.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+   * @example
+   * ```ts
+   * const header = ContentSecurityPolicyHeader.stringify({
+   *   defaultSources: ["'self'"],
+   * });
+   */
+  static stringify(options: ContentSecurityPolicyHeaderOptions = {}) {
+    return new ContentSecurityPolicyHeader(options).toString();
+  }
 
-  const {
-    baseUri,
-    blockAllMixedContent,
-    childSources,
-    connectSources,
-    defaultSources,
-    fontSources,
-    formActions,
-    frameAncestors,
-    frameSources,
-    imageSources,
-    manifestSources,
-    mediaSources,
-    navigateTo,
-    objectSources,
-    prefetchSources,
-    reportTo,
-    reportUri,
-    requireSriFor,
-    requireTrustedTypesFor,
-    sandbox,
-    scriptAttributeSources,
-    scriptElementSources,
-    scriptSources,
-    styleAttributeSources,
-    styleElementSources,
-    styleSources,
-    upgradeInsecureRequests,
-    workerSources,
-  } = options;
+  readonly #headerValue: string;
 
-  const appendContent = (content: string) => {
-    if (headerValue.length === 0) {
-      headerValue = content;
-    } else {
-      headerValue += `; ${content}`;
-    }
-  };
+  constructor(options: ContentSecurityPolicyHeaderOptions = {}) {
+    let headerValue = '';
 
-  const addDirective = (directive: string, value?: string) =>
-    appendContent(`${directive}${value ? ` ${value}` : ''}`);
+    const {
+      baseUri,
+      blockAllMixedContent,
+      childSources,
+      connectSources,
+      defaultSources,
+      fontSources,
+      formActions,
+      frameAncestors,
+      frameSources,
+      imageSources,
+      manifestSources,
+      mediaSources,
+      navigateTo,
+      objectSources,
+      prefetchSources,
+      reportTo,
+      reportUri,
+      requireSriFor,
+      requireTrustedTypesFor,
+      sandbox,
+      scriptAttributeSources,
+      scriptElementSources,
+      scriptSources,
+      styleAttributeSources,
+      styleElementSources,
+      styleSources,
+      upgradeInsecureRequests,
+      workerSources,
+    } = options;
 
-  const addSourcesDirective = (
-    directive: string,
-    value?: boolean | string[],
-  ) => {
-    if (value == null) return;
-
-    if (value === false) {
-      addDirective(directive, "'none'");
-    } else if (Array.isArray(value)) {
-      if (value.length === 0) {
-        addDirective(directive, "'none'");
+    const appendContent = (content: string) => {
+      if (headerValue.length === 0) {
+        headerValue = content;
       } else {
-        addDirective(directive, value.join(' '));
+        headerValue += `; ${content}`;
+      }
+    };
+
+    const addDirective = (directive: string, value?: string) =>
+      appendContent(`${directive}${value ? ` ${value}` : ''}`);
+
+    const addSourcesDirective = (
+      directive: string,
+      value?: boolean | string[],
+    ) => {
+      if (value == null) return;
+
+      if (value === false) {
+        addDirective(directive, "'none'");
+      } else if (Array.isArray(value)) {
+        if (value.length === 0) {
+          addDirective(directive, "'none'");
+        } else {
+          addDirective(directive, value.join(' '));
+        }
+      }
+    };
+
+    addSourcesDirective('default-src', defaultSources);
+    addSourcesDirective('connect-src', connectSources);
+    addSourcesDirective('child-src', childSources);
+    addSourcesDirective('font-src', fontSources);
+    addSourcesDirective('form-action', formActions);
+    addSourcesDirective('frame-ancestors', frameAncestors);
+    addSourcesDirective('frame-src', frameSources);
+    addSourcesDirective('img-src', imageSources);
+    addSourcesDirective('manifest-src', manifestSources);
+    addSourcesDirective('media-src', mediaSources);
+    addSourcesDirective('object-src', objectSources);
+    addSourcesDirective('prefetch-src', prefetchSources);
+    addSourcesDirective('script-src', scriptSources);
+    addSourcesDirective('script-src-attr', scriptAttributeSources);
+    addSourcesDirective('script-src-elem', scriptElementSources);
+    addSourcesDirective('style-src', styleSources);
+    addSourcesDirective('style-src-attr', styleAttributeSources);
+    addSourcesDirective('style-src-elem', styleElementSources);
+    addSourcesDirective('worker-src', workerSources);
+
+    addSourcesDirective('base-uri', baseUri);
+    addSourcesDirective('navigate-to', navigateTo);
+
+    if (sandbox === true) {
+      addDirective('sandbox');
+    } else if (Array.isArray(sandbox)) {
+      if (sandbox.length === 0) {
+        addDirective('sandbox');
+      } else {
+        addDirective('sandbox', sandbox.join(' '));
       }
     }
-  };
 
-  addSourcesDirective('default-src', defaultSources);
-  addSourcesDirective('connect-src', connectSources);
-  addSourcesDirective('child-src', childSources);
-  addSourcesDirective('font-src', fontSources);
-  addSourcesDirective('form-action', formActions);
-  addSourcesDirective('frame-ancestors', frameAncestors);
-  addSourcesDirective('frame-src', frameSources);
-  addSourcesDirective('img-src', imageSources);
-  addSourcesDirective('manifest-src', manifestSources);
-  addSourcesDirective('media-src', mediaSources);
-  addSourcesDirective('object-src', objectSources);
-  addSourcesDirective('prefetch-src', prefetchSources);
-  addSourcesDirective('script-src', scriptSources);
-  addSourcesDirective('script-src-attr', scriptAttributeSources);
-  addSourcesDirective('script-src-elem', scriptElementSources);
-  addSourcesDirective('style-src', styleSources);
-  addSourcesDirective('style-src-attr', styleAttributeSources);
-  addSourcesDirective('style-src-elem', styleElementSources);
-  addSourcesDirective('worker-src', workerSources);
-
-  addSourcesDirective('base-uri', baseUri);
-  addSourcesDirective('navigate-to', navigateTo);
-
-  if (sandbox === true) {
-    addDirective('sandbox');
-  } else if (Array.isArray(sandbox)) {
-    if (sandbox.length === 0) {
-      addDirective('sandbox');
-    } else {
-      addDirective('sandbox', sandbox.join(' '));
+    if (requireSriFor && requireSriFor.length > 0) {
+      addDirective('require-sri-for', requireSriFor.join(' '));
     }
+
+    if (requireTrustedTypesFor && requireTrustedTypesFor.length > 0) {
+      addDirective(
+        'require-trusted-types-for',
+        requireTrustedTypesFor.map((type) => `'${type}'`).join(' '),
+      );
+    }
+
+    if (blockAllMixedContent) addDirective('block-all-mixed-content');
+    if (upgradeInsecureRequests) addDirective('upgrade-insecure-requests');
+
+    if (reportTo) addDirective('report-to', reportTo);
+    if (reportUri) addDirective('report-uri', reportUri);
+
+    this.#headerValue = headerValue;
   }
 
-  if (requireSriFor && requireSriFor.length > 0) {
-    addDirective('require-sri-for', requireSriFor.join(' '));
+  toString() {
+    return this.#headerValue;
   }
-
-  if (requireTrustedTypesFor && requireTrustedTypesFor.length > 0) {
-    addDirective(
-      'require-trusted-types-for',
-      requireTrustedTypesFor.map((type) => `'${type}'`).join(' '),
-    );
-  }
-
-  if (blockAllMixedContent) addDirective('block-all-mixed-content');
-  if (upgradeInsecureRequests) addDirective('upgrade-insecure-requests');
-
-  if (reportTo) addDirective('report-to', reportTo);
-  if (reportUri) addDirective('report-uri', reportUri);
-
-  return headerValue;
 }
 
 import type {PermissionsPolicySpecialSource} from '@quilted/http';
 
 /**
- * Options for creating a content security policy.
+ * Options for creating a permissions policy.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
  */
-export interface PermissionsPolicyOptions {
+export interface PermissionsPolicyHeaderOptions {
   /**
    * Controls whether the current document is allowed to gather information about the acceleration of
    * the device through the Accelerometer interface.
@@ -784,93 +845,124 @@ export interface PermissionsPolicyOptions {
   xrSpatialTracking?: false | (PermissionsPolicySpecialSource | string)[];
 }
 
-export function permissionsPolicyHeader(options: PermissionsPolicyOptions) {
-  let headerValue = '';
+/**
+ * A helper class for creating `Permissions-Policy` headers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+ */
+export class PermissionsPolicyHeader {
+  /**
+   * Creates a `Permissions-Policy` header from the provided options.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+   * @example
+   * ```ts
+   * const header = PermissionsPolicyHeader.stringify({
+   *   camera: false,
+   *   microphone: false,
+   * });
+   */
+  static stringify(options: PermissionsPolicyHeaderOptions) {
+    return new PermissionsPolicyHeader(options).toString();
+  }
 
-  const {
-    accelerometer,
-    ambientLightSensor,
-    autoplay,
-    camera,
-    displayCapture,
-    documentDomain,
-    encryptedMedia,
-    executionWhileNotRendered,
-    executionWhileOutOfViewport,
-    fullScreen,
-    gamepad,
-    geolocation,
-    gyroscope,
-    interestCohort = false,
-    magnetometer,
-    microphone,
-    midi,
-    navigationOverride,
-    payment,
-    pictureInPicture,
-    publicKeyCredentialsGet,
-    syncXhr = false,
-    usb,
-    webShare,
-    xrSpatialTracking,
-  } = options;
+  readonly #headerValue: string;
 
-  const addDirective = (directive: string, value?: boolean | string[]) => {
-    if (value == null) return;
+  constructor(options: PermissionsPolicyHeaderOptions) {
+    let headerValue = '';
 
-    if (headerValue.length !== 0) headerValue += ', ';
+    const {
+      accelerometer,
+      ambientLightSensor,
+      autoplay,
+      camera,
+      displayCapture,
+      documentDomain,
+      encryptedMedia,
+      executionWhileNotRendered,
+      executionWhileOutOfViewport,
+      fullScreen,
+      gamepad,
+      geolocation,
+      gyroscope,
+      interestCohort = false,
+      magnetometer,
+      microphone,
+      midi,
+      navigationOverride,
+      payment,
+      pictureInPicture,
+      publicKeyCredentialsGet,
+      syncXhr = false,
+      usb,
+      webShare,
+      xrSpatialTracking,
+    } = options;
 
-    if (value === false) {
-      headerValue += `${directive}=()`;
-    } else if (Array.isArray(value)) {
-      if (value.length === 0) {
+    const addDirective = (directive: string, value?: boolean | string[]) => {
+      if (value == null) return;
+
+      if (headerValue.length !== 0) headerValue += ', ';
+
+      if (value === false) {
         headerValue += `${directive}=()`;
-      } else {
-        headerValue += `${directive}=(${value
-          .map((value) =>
-            SPECIAL_SOURCES.has(value) ? value : JSON.stringify(value),
-          )
-          .join(' ')})`;
+      } else if (Array.isArray(value)) {
+        if (value.length === 0) {
+          headerValue += `${directive}=()`;
+        } else {
+          headerValue += `${directive}=(${value
+            .map((value) =>
+              SPECIAL_SOURCES.has(value) ? value : JSON.stringify(value),
+            )
+            .join(' ')})`;
+        }
       }
-    }
-  };
+    };
 
-  addDirective('interest-cohort', interestCohort);
-  addDirective('accelerometer', accelerometer);
-  addDirective('ambient-light-sensor', ambientLightSensor);
-  addDirective('autoplay', autoplay);
-  addDirective('camera', camera);
-  addDirective('display-capture', displayCapture);
-  addDirective('document-domain', documentDomain);
-  addDirective('encrypted-media', encryptedMedia);
-  addDirective('execution-while-not-rendered', executionWhileNotRendered);
-  addDirective('execution-while-out-of-viewport', executionWhileOutOfViewport);
-  addDirective('fullscreen', fullScreen);
-  addDirective('gamepad', gamepad);
-  addDirective('geolocation', geolocation);
-  addDirective('gyroscope', gyroscope);
-  addDirective('interest-cohort', interestCohort);
-  addDirective('magnetometer', magnetometer);
-  addDirective('microphone', microphone);
-  addDirective('midi', midi);
-  addDirective('navigation-override', navigationOverride);
-  addDirective('payment', payment);
-  addDirective('picture-in-picture', pictureInPicture);
-  addDirective('publickey-credentials-get', publicKeyCredentialsGet);
-  addDirective('sync-xhr', syncXhr);
-  addDirective('usb', usb);
-  addDirective('web-share', webShare);
-  addDirective('xr-spatial-tracking', xrSpatialTracking);
+    addDirective('interest-cohort', interestCohort);
+    addDirective('accelerometer', accelerometer);
+    addDirective('ambient-light-sensor', ambientLightSensor);
+    addDirective('autoplay', autoplay);
+    addDirective('camera', camera);
+    addDirective('display-capture', displayCapture);
+    addDirective('document-domain', documentDomain);
+    addDirective('encrypted-media', encryptedMedia);
+    addDirective('execution-while-not-rendered', executionWhileNotRendered);
+    addDirective(
+      'execution-while-out-of-viewport',
+      executionWhileOutOfViewport,
+    );
+    addDirective('fullscreen', fullScreen);
+    addDirective('gamepad', gamepad);
+    addDirective('geolocation', geolocation);
+    addDirective('gyroscope', gyroscope);
+    addDirective('interest-cohort', interestCohort);
+    addDirective('magnetometer', magnetometer);
+    addDirective('microphone', microphone);
+    addDirective('midi', midi);
+    addDirective('navigation-override', navigationOverride);
+    addDirective('payment', payment);
+    addDirective('picture-in-picture', pictureInPicture);
+    addDirective('publickey-credentials-get', publicKeyCredentialsGet);
+    addDirective('sync-xhr', syncXhr);
+    addDirective('usb', usb);
+    addDirective('web-share', webShare);
+    addDirective('xr-spatial-tracking', xrSpatialTracking);
 
-  return headerValue;
+    this.#headerValue = headerValue;
+  }
+
+  toString() {
+    return this.#headerValue;
+  }
 }
 
 /**
  * Options for creating a content security policy.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
  */
-export interface StrictTransportSecurityOptions {
+export interface StrictTransportSecurityHeaderOptions {
   /**
    * The time, in seconds, that the browser should remember that a site is only to
    * be accessed using HTTPS.
@@ -896,21 +988,51 @@ export interface StrictTransportSecurityOptions {
   preload?: boolean;
 }
 
-export function strictTransportSecurityHeader(
-  options: StrictTransportSecurityOptions = {},
-) {
-  let headerValue = '';
+/**
+ * A helper class for creating `Strict-Transport-Security` headers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+ */
+export class StrictTransportSecurityHeader {
+  /**
+   * Creates a `Strict-Transport-Security` header from the provided options.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+   * @example
+   * ```ts
+   * const header = StrictTransportSecurityHeader.stringify({
+   *   maxAge: 31536000,
+   * });
+   */
+  static stringify(options: StrictTransportSecurityHeaderOptions = {}) {
+    return new StrictTransportSecurityHeader(options).toString();
+  }
 
-  const {
-    maxAge = STRICT_TRANSPORT_SECURITY_DEFAULT_MAX_AGE,
-    includeSubDomains = true,
-    preload = true,
-  } = options;
+  readonly maxAge: number;
+  readonly includeSubDomains: boolean;
+  readonly preload: boolean;
+  readonly #headerValue: string;
 
-  headerValue = String(maxAge);
+  constructor(options: StrictTransportSecurityHeaderOptions = {}) {
+    const {
+      maxAge = STRICT_TRANSPORT_SECURITY_DEFAULT_MAX_AGE,
+      includeSubDomains = true,
+      preload = true,
+    } = options;
 
-  if (includeSubDomains) headerValue += `; includeSubDomains`;
-  if (preload) headerValue += `; preload`;
+    this.maxAge = maxAge;
+    this.includeSubDomains = includeSubDomains;
+    this.preload = preload;
 
-  return headerValue;
+    let headerValue = String(maxAge);
+
+    if (includeSubDomains) headerValue += `; includeSubDomains`;
+    if (preload) headerValue += `; preload`;
+
+    this.#headerValue = headerValue;
+  }
+
+  toString() {
+    return this.#headerValue;
+  }
 }

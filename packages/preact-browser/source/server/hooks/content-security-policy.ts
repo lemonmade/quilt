@@ -1,6 +1,6 @@
 import {
-  contentSecurityPolicyHeader,
-  type ContentSecurityPolicyOptions,
+  ContentSecurityPolicyHeader,
+  type ContentSecurityPolicyHeaderOptions,
 } from '@quilted/browser/server';
 
 import {useBrowserResponseAction} from './browser-response-action.ts';
@@ -11,7 +11,7 @@ import {useBrowserResponseAction} from './browser-response-action.ts';
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
  */
 export interface UseContentSecurityPolicyOptions
-  extends ContentSecurityPolicyOptions {
+  extends ContentSecurityPolicyHeaderOptions {
   /**
    * Whether the content security policy should be set to “report-only” mode.
    * In this mode, violations of the policy are reported, but content can
@@ -41,7 +41,7 @@ export function useContentSecurityPolicy(
     if (typeof value === 'string') {
       normalizedValue = value;
     } else {
-      normalizedValue = contentSecurityPolicyHeader(value);
+      normalizedValue = ContentSecurityPolicyHeader.stringify(value);
 
       if (value.reportOnly) {
         header = 'Content-Security-Policy-Report-Only';

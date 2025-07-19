@@ -1,6 +1,6 @@
 import {
-  strictTransportSecurityHeader,
-  type StrictTransportSecurityOptions,
+  StrictTransportSecurityHeader,
+  type StrictTransportSecurityHeaderOptions,
 } from '@quilted/browser/server';
 import {useBrowserResponseAction} from './browser-response-action.ts';
 
@@ -16,7 +16,7 @@ import {useBrowserResponseAction} from './browser-response-action.ts';
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
  */
 export function useStrictTransportSecurity(
-  value: string | StrictTransportSecurityOptions = {},
+  value: string | StrictTransportSecurityHeaderOptions = {},
 ) {
   if (typeof document === 'object') return;
 
@@ -26,7 +26,7 @@ export function useStrictTransportSecurity(
     if (typeof value === 'string') {
       normalizedValue = value;
     } else {
-      normalizedValue = strictTransportSecurityHeader(value);
+      normalizedValue = StrictTransportSecurityHeader.stringify(value);
     }
 
     if (normalizedValue.length > 0) {

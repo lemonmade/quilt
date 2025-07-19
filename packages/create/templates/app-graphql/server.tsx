@@ -2,10 +2,10 @@ import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
 import {Router} from '@quilted/quilt/navigation';
 import {
   renderAppToHTMLResponse,
-  cacheControlHeader,
-  contentSecurityPolicyHeader,
-  permissionsPolicyHeader,
-  strictTransportSecurityHeader,
+  CacheControlHeader,
+  ContentSecurityPolicyHeader,
+  PermissionsPolicyHeader,
+  StrictTransportSecurityHeader,
 } from '@quilted/quilt/server';
 import {GraphQLCache} from '@quilted/quilt/graphql';
 
@@ -76,7 +76,7 @@ router.get(async (request) => {
       // app or deployment, make sure to update this component accordingly!
       //
       // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
-      'Cache-Control': cacheControlHeader({
+      'Cache-Control': CacheControlHeader.stringify({
         cache: false,
       }),
 
@@ -87,7 +87,7 @@ router.get(async (request) => {
       // to the allowlist for more specific directives.
       //
       // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-      'Content-Security-Policy': contentSecurityPolicyHeader({
+      'Content-Security-Policy': ContentSecurityPolicyHeader.stringify({
         // By default, only allow sources from the page's origin.
         defaultSources: ["'self'"],
         // In development, allow connections to local websockets for hot reloading.
@@ -112,8 +112,8 @@ router.get(async (request) => {
       // Sets a strict permissions policy for this page, which limits access
       // to some native browser features.
       //
-      // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy
-      'Permissions-Policy': permissionsPolicyHeader({
+      // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+      'Permissions-Policy': PermissionsPolicyHeader.stringify({
         // Disables Google's Federated Learning of Cohorts ("FLoC") tracking initiative.
         // @see https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
         interestCohort: false,
@@ -133,7 +133,7 @@ router.get(async (request) => {
       // Instructs browsers to only load this page over HTTPS.
       //
       // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-      'Strict-Transport-Security': strictTransportSecurityHeader(),
+      'Strict-Transport-Security': StrictTransportSecurityHeader.stringify(),
     },
   });
 

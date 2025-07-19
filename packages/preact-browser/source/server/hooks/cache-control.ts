@@ -1,6 +1,6 @@
 import {
-  cacheControlHeader,
-  type CacheControlOptions,
+  CacheControlHeader,
+  type CacheControlHeaderOptions,
 } from '@quilted/browser/server';
 import {useBrowserResponseAction} from './browser-response-action.ts';
 
@@ -10,7 +10,7 @@ import {useBrowserResponseAction} from './browser-response-action.ts';
  * you can provide one of a couple different sets of options that represent
  * the different options you have for caching HTTP content.
  */
-export function useCacheControl(value: string | CacheControlOptions) {
+export function useCacheControl(value: string | CacheControlHeaderOptions) {
   if (typeof document === 'object') return;
 
   useBrowserResponseAction((response) => {
@@ -19,7 +19,7 @@ export function useCacheControl(value: string | CacheControlOptions) {
     if (typeof value === 'string') {
       normalizedValue = value;
     } else {
-      normalizedValue = cacheControlHeader(value);
+      normalizedValue = CacheControlHeader.stringify(value);
     }
 
     response.headers.append('Cache-Control', normalizedValue);
