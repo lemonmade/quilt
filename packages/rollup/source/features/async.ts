@@ -59,19 +59,15 @@ export function asyncModules({
 
       return null;
     },
-    transform: baseURL
-      ? (code) =>
-          code.replace(/__QUILT_ASSETS_BASE_URL__/g, JSON.stringify(baseURL))
-      : undefined,
     async generateBundle(options, bundle) {
       if (preload) {
         switch (options.format) {
           case 'es': {
-            await preloadAsyncAssetsInESMBundle(bundle);
+            await preloadAsyncAssetsInESMBundle(bundle, {baseURL});
             break;
           }
           case 'system': {
-            await preloadAsyncAssetsInSystemJSBundle(bundle);
+            await preloadAsyncAssetsInSystemJSBundle(bundle, {baseURL});
             break;
           }
         }
@@ -84,7 +80,10 @@ function defaultModuleID({imported}: {imported: string}) {
   return path.relative(process.cwd(), imported).replace(/[\\/]/g, '-');
 }
 
-async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
+async function preloadAsyncAssetsInESMBundle(
+  bundle: OutputBundle,
+  {baseURL = '/'}: {baseURL?: string} = {},
+) {
   const {parse: parseImports} = await import('es-module-lexer');
 
   for (const chunk of Object.values(bundle)) {
@@ -110,6 +109,7 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
         importSource,
         chunk,
         bundle,
+        {baseURL},
       );
 
       // The only dependency is the file itself, no need to preload
@@ -132,7 +132,10 @@ async function preloadAsyncAssetsInESMBundle(bundle: OutputBundle) {
   }
 }
 
-async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
+async function preloadAsyncAssetsInSystemJSBundle(
+  bundle: OutputBundle,
+  {baseURL = '/'}: {baseURL?: string} = {},
+) {
   for (const chunk of Object.values(bundle)) {
     if (chunk.type !== 'chunk') continue;
     if (chunk.dynamicImports.length === 0) continue;
@@ -155,6 +158,7 @@ async function preloadAsyncAssetsInSystemJSBundle(bundle: OutputBundle) {
         importSource,
         chunk,
         bundle,
+        {baseURL},
       );
 
       if (dependencies.size === 1) continue;
@@ -186,6 +190,7 @@ function getDependenciesForImport(
   imported: string,
   chunk: OutputChunk,
   bundle: OutputBundle,
+  {baseURL = '/'}: {baseURL?: string} = {},
 ) {
   const originalFilename = chunk.fileName;
   const dependencies = new Set<string>();
@@ -205,7 +210,9 @@ function getDependenciesForImport(
 
     if (chunk == null) return;
 
-    dependencies.add(chunk.fileName);
+    const url = `${baseURL}${baseURL.endsWith('/') ? '' : '/'}${chunk.fileName}`;
+
+    dependencies.add(url);
 
     if (chunk.type !== 'chunk') return;
 
@@ -222,10 +229,12 @@ function getDependenciesForImport(
 function getPreloadHelperFunction({
   type = 'module',
 }: {type?: 'module' | 'script'} = {}) {
-  const scriptRel = type === 'module' ? 'modulepreload' : 'preload';
+  const scriptRel = JSON.stringify(
+    type === 'module' ? 'modulepreload' : 'preload',
+  );
 
   return multiline`
-    const __quilt_preload=(()=>{var e,t,r;let n=new Map;return function __quilt_preload(t){if(0===t.length)return Promise.resolve();let r=Promise.all(t.map(e=>{let t=e.startsWith("/")?e:"/"+e;if(n.has(t))return;n.set(t,!0);let r=t.endsWith(".css");if(null!=document.querySelector(\`link[href="\${t}"]\`))return;let l=document.createElement("link");if(r?l.rel="stylesheet":(l.as="script",l.rel=${scriptRel}),l.crossOrigin="",l.href=t,document.head.appendChild(l),r)return new Promise(e=>{l.addEventListener("load",()=>e()),l.addEventListener("error",r=>e(new PreloadError(t,{cause:r})))})}));return r.then(e=>{for(let t of e)null!=t&&l(t)})};function l(e){let t=new PreloadErrorEvent(e);if(window.dispatchEvent(t),!t.defaultPrevented)throw e}})();
+    const __quilt_preload=(()=>{const o=new Map,f=${scriptRel};class QuiltPreloadError extends Error{constructor(e,{cause:l}={}){super(\`Unable to preload \${e}\`,{cause:l}),this.source=e}}class QuiltPreloadErrorEvent extends Event{constructor(e){super("quilt:preload-error",{cancelable:!0}),this.error=e}}return function __quilt_preload(e){return e.length===0?Promise.resolve():Promise.all(e.map(s=>{const r=s.startsWith("/")?s:"/"+s;if(o.has(r))return;o.set(r,!0);const i=r.endsWith(".css");if(document.querySelector(\`link[href="\${r}"]\`)!=null)return;const t=document.createElement("link");if(i?t.rel="stylesheet":(t.as="script",t.rel=f),t.crossOrigin="",t.href=r,document.head.appendChild(t),i)return new Promise(a=>{t.addEventListener("load",()=>a()),t.addEventListener("error",h=>a(new QuiltPreloadError(r,{cause:h})))})})).then(s=>{for(const r of s)r!=null&&d(r)})};function d(n){const e=new QuiltPreloadErrorEvent(n);if(window.dispatchEvent(e),!e.defaultPrevented)throw n}})();
   `;
 }
 
