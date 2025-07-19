@@ -57,7 +57,6 @@ describe('trpc', () => {
         }
       `,
       'browser.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {hydrate} from '@quilted/quilt/browser';
         import {httpBatchLink} from '@trpc/client';
         import {QueryClient} from '@tanstack/react-query';
@@ -81,7 +80,6 @@ describe('trpc', () => {
         );
       `,
       'server.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         import {fetchRequestHandler} from '@trpc/server/adapters/fetch';

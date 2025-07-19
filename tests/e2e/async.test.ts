@@ -183,8 +183,6 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import '@quilted/quilt/globals';
-
         import {useState} from 'preact/hooks';
         import {AsyncComponent} from '@quilted/quilt/async';
 
@@ -309,7 +307,6 @@ describe('async', () => {
 
     await workspace.fs.write({
       'browser.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {hydrate} from 'preact';
         import App, {Async} from './App.tsx';
 
@@ -413,7 +410,6 @@ describe('async', () => {
 
     await workspace.fs.write({
       'server.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {RequestRouter} from '@quilted/quilt/request-router';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         
@@ -489,7 +485,6 @@ describe('async', () => {
 
     await workspace.fs.write({
       'server.tsx': multiline`
-        import '@quilted/quilt/globals';
         import {RequestRouter} from '@quilted/quilt/request-router';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
         

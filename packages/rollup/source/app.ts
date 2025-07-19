@@ -1305,8 +1305,6 @@ export function magicModuleAppRequestRouter({
     alias: () => sourceEntryForAppServer({entry, root}) as Promise<string>,
     async source() {
       return multiline`
-        import '@quilted/quilt/globals';
-
         import {jsx} from 'preact/jsx-runtime';
         import {RequestRouter} from '@quilted/quilt/request-router';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
@@ -1347,8 +1345,6 @@ export function magicModuleAppBrowserEntry({
       const reactRootFunction = hydrate ? 'hydrate' : 'render';
 
       return multiline`
-        import '@quilted/quilt/globals';
-
         import {jsx} from 'preact/jsx-runtime';
         import {${reactRootFunction}} from 'preact';
 

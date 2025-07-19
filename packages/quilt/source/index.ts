@@ -1,1 +1,3 @@
+import './modules.ts';
+
 export {};

@@ -1,4 +1,4 @@
-import '@quilted/quilt/globals';
+import type {} from '@quilted/quilt/modules';
 import {RequestRouter} from '@quilted/quilt/request-router';
 
 import {BrowserAssets} from 'quilt:module/assets';

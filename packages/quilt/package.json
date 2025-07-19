@@ -49,12 +49,6 @@
       "quilt:esnext": "./build/esnext/context.esnext",
       "import": "./build/esm/context.mjs"
     },
-    "./globals": {
-      "types": "./build/typescript/globals.d.ts",
-      "quilt:source": "./source/globals.ts",
-      "quilt:esnext": "./build/esnext/globals.esnext",
-      "import": "./build/esm/globals.mjs"
-    },
     "./events": {
       "types": "./build/typescript/events.d.ts",
       "quilt:source": "./source/events.ts",
@@ -176,9 +170,6 @@
       "context": [
         "./build/typescript/context.d.ts"
       ],
-      "globals": [
-        "./build/typescript/globals.d.ts"
-      ],
       "env": [
         "./build/typescript/env.d.ts"
       ],
@@ -233,9 +224,6 @@
     "./source/browser.ts",
     "./build/esnext/browser.esnext",
     "./build/esm/browser.mjs",
-    "./source/globals.ts",
-    "./build/esnext/globals.esnext",
-    "./build/esm/globals.mjs",
     "./source/signals.ts",
     "./build/esnext/signals.esnext",
     "./build/esm/signals.mjs"
