@@ -169,7 +169,8 @@ describe('app builds', () => {
                     <ScriptAssets scripts={scripts} />
                   </head>
                   <body></body>
-                </html>
+                </html>,
+                {request},
               );
 
               return response;
@@ -244,7 +245,8 @@ describe('app builds', () => {
                   <body>
                     Hello world!
                   </body>
-                </html>
+                </html>,
+                {request},
               );
 
               return response;
