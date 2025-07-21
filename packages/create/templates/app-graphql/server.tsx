@@ -1,4 +1,4 @@
-import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
+import {Hono} from 'hono';
 import {Router} from '@quilted/quilt/navigation';
 import {
   renderAppToHTMLResponse,
@@ -14,7 +14,7 @@ import {BrowserAssets} from 'quilt:module/assets';
 
 import type {AppContext} from '~/shared/context.ts';
 
-const router = new RequestRouter();
+const app = new Hono();
 const assets = new BrowserAssets();
 
 class ServerAppContext implements AppContext {
@@ -37,7 +37,9 @@ class ServerAppContext implements AppContext {
 }
 
 // GraphQL API, called from the client
-router.post('/api/graphql', async (request) => {
+app.post('/api/graphql', async (c) => {
+  const request = c.req.raw;
+
   const [{query, operationName, variables}, {performGraphQLOperation}] =
     await Promise.all([request.json(), import('./server/graphql.ts')]);
 
@@ -46,11 +48,13 @@ router.post('/api/graphql', async (request) => {
     operationName,
   });
 
-  return new JSONResponse(result);
+  return Response.json(result);
 });
 
-// For all GET requests, render our Preact application.
-router.get(async (request) => {
+// Preact app
+app.get('*', async (c) => {
+  const request = c.req.raw;
+
   const [{App}] = await Promise.all([import('./App.tsx')]);
 
   const context = new ServerAppContext(request);
@@ -140,4 +144,4 @@ router.get(async (request) => {
   return response;
 });
 
-export default router;
+export default app;

@@ -22,6 +22,7 @@
     "@trpc/client": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
+    "hono": "^4.8.0",
     "jsdom": "^26.0.0",
     "preact": "^10.26.0",
     "react": "npm:@quilted/react@^19.0.0",

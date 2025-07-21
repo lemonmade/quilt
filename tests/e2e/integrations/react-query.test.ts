@@ -44,15 +44,17 @@ describe('react-query', () => {
         }
       `,
       'server.tsx': multiline`
-        import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
         import {BrowserAssets} from 'quilt:module/assets';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.get('/api', (request) => {
-          return new JSONResponse({
-            hello: request.URL.searchParams.get('name') ?? 'world',
+        app.get('/api', (c) => {
+          const url = new URL(c.req.raw.url);
+
+          return Response.json({
+            hello: url.searchParams.get('name') ?? 'world',
           });
         });
         

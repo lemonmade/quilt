@@ -1,5 +1,3 @@
-import type {RenderableProps} from 'preact';
-
 import {NotFound} from '@quilted/quilt/server';
 import {Navigation} from '@quilted/quilt/navigation';
 import {Localization} from '@quilted/quilt/localize';
@@ -13,7 +11,7 @@ import {Home} from './features/home.ts';
 
 import {trpc} from './shared/trpc.ts';
 import {
-  AppContextReact,
+  AppContextPreact,
   type AppContext as AppContextType,
 } from './shared/context.ts';
 import {routeWithAppContext} from './shared/navigation.ts';
@@ -43,26 +41,21 @@ const routes = [
 // app-wide context in this component.
 export function App({context}: AppProps) {
   return (
-    <AppContext context={context}>
-      <Head />
-      <Navigation router={context.router} routes={routes} context={context} />
-    </AppContext>
+    <AppContextPreact.Provider value={context}>
+      <trpc.Provider client={context.trpc} queryClient={context.queryClient}>
+        <ReactQueryContext client={context.queryClient}>
+          <Localization>
+            <Head />
+            <Navigation
+              router={context.router}
+              routes={routes}
+              context={context}
+            />
+          </Localization>
+        </ReactQueryContext>
+      </trpc.Provider>
+    </AppContextPreact.Provider>
   );
 }
 
 export default App;
-
-// This component renders any app-wide context.
-function AppContext({children, context}: RenderableProps<AppProps>) {
-  return (
-    <AppContextReact.Provider value={context}>
-      <Localization>
-        <trpc.Provider client={context.trpc} queryClient={context.queryClient}>
-          <ReactQueryContext client={context.queryClient}>
-            {children}
-          </ReactQueryContext>
-        </trpc.Provider>
-      </Localization>
-    </AppContextReact.Provider>
-  );
-}

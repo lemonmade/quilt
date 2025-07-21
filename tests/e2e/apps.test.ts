@@ -11,14 +11,16 @@ describe('app builds', () => {
         document.body.append(element);
       `,
       'server.tsx': multiline`
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.get(async (request) => {
+        app.get('*', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderToHTMLResponse(
             <HTML>
               <HTMLPlaceholderEntryAssets />
@@ -32,7 +34,7 @@ describe('app builds', () => {
           return response;
         });
         
-        export default router;
+        export default app;
       `,
       'rollup.config.js': multiline`
         import {quiltApp} from '@quilted/rollup/app';  
