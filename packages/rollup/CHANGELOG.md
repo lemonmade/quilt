@@ -1,5 +1,15 @@
 # @quilted/rollup
 
+## 0.3.3
+
+### Patch Changes
+
+- [#871](https://github.com/lemonmade/quilt/pull/871) [`c16b322`](https://github.com/lemonmade/quilt/commit/c16b3224d3c86bc3a3b6f6af44267650d1e8dc1d) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove @quilt/quilt/globals module
+
+- Updated dependencies [[`c16b322`](https://github.com/lemonmade/quilt/commit/c16b3224d3c86bc3a3b6f6af44267650d1e8dc1d)]:
+  - @quilted/babel@0.2.4
+  - @quilted/graphql@3.3.9
+
 ## 0.3.2
 
 ### Patch Changes

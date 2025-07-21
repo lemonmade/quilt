@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.3.2",
+  "version": "0.3.3",
   "engines": {
     "node": ">=20.10.0"
   },
@@ -141,8 +141,8 @@
     "@babel/preset-typescript": "^7.26.0",
     "@mdn/browser-compat-data": "^5.6.0",
     "@quilted/assets": "workspace:^0.1.9",
-    "@quilted/babel": "workspace:^0.2.3",
-    "@quilted/graphql": "workspace:^3.3.7",
+    "@quilted/babel": "workspace:^0.2.4",
+    "@quilted/graphql": "workspace:^3.3.9",
     "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.0",

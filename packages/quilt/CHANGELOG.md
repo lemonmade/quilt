@@ -1,5 +1,16 @@
 # @quilted/quilt
 
+## 0.8.12
+
+### Patch Changes
+
+- [#871](https://github.com/lemonmade/quilt/pull/871) [`c16b322`](https://github.com/lemonmade/quilt/commit/c16b3224d3c86bc3a3b6f6af44267650d1e8dc1d) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove @quilt/quilt/globals module
+
+- Updated dependencies [[`c16b322`](https://github.com/lemonmade/quilt/commit/c16b3224d3c86bc3a3b6f6af44267650d1e8dc1d), [`64fc42b`](https://github.com/lemonmade/quilt/commit/64fc42b87ca72eec8dfab211d2ddecdbbaa0e4ac)]:
+  - @quilted/async@0.4.23
+  - @quilted/preact-browser@0.1.17
+  - @quilted/graphql@3.3.9
+
 ## 0.8.11
 
 ### Patch Changes

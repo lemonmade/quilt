@@ -1,5 +1,15 @@
 # @quilted/create
 
+## 0.2.49
+
+### Patch Changes
+
+- [#871](https://github.com/lemonmade/quilt/pull/871) [`c16b322`](https://github.com/lemonmade/quilt/commit/c16b3224d3c86bc3a3b6f6af44267650d1e8dc1d) Thanks [@lemonmade](https://github.com/lemonmade)! - Remove @quilt/quilt/globals module
+
+- [`fc772fb`](https://github.com/lemonmade/quilt/commit/fc772fb47bd077eb10f67a986a9f4ae792f631f0) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix old @quilted/rollup dependency in workspace template
+
+- [`64fc42b`](https://github.com/lemonmade/quilt/commit/64fc42b87ca72eec8dfab211d2ddecdbbaa0e4ac) Thanks [@lemonmade](https://github.com/lemonmade)! - Transition browser header helpers to use classes
+
 ## 0.2.48
 
 ### Patch Changes
