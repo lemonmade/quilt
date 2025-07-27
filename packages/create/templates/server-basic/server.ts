@@ -1,6 +1,6 @@
-import {RequestRouter} from '@quilted/quilt/request-router';
+import {Hono} from 'hono';
 
-const app = new RequestRouter();
+const app = new Hono();
 
 app.get('/', () => new Response('Hello, world!'));
 

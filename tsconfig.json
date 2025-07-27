@@ -48,7 +48,6 @@
     {"path": "./packages/react"},
     {"path": "./packages/react-dom"},
     {"path": "./packages/react-testing"},
-    {"path": "./packages/request-router"},
     {"path": "./packages/rollup"},
     {"path": "./packages/routing"},
     {"path": "./packages/signals"},

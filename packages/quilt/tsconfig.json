@@ -8,6 +8,7 @@
     {"path": "../async"},
     {"path": "../events"},
     {"path": "../graphql"},
+    {"path": "../hono"},
     {"path": "../preact-async"},
     {"path": "../preact-browser"},
     {"path": "../preact-context"},
@@ -20,7 +21,6 @@
     {"path": "../react"},
     {"path": "../react-dom"},
     {"path": "../react-testing"},
-    {"path": "../request-router"},
     {"path": "../signals"},
     {"path": "../threads"},
     {"path": "../workers"}

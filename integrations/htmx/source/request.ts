@@ -1,5 +1,3 @@
-import {EnhancedRequest} from '@quilted/request-router';
-
 /**
  * @see https://htmx.org/docs/#request-headers
  */
@@ -56,7 +54,7 @@ export interface HTMXRequestDetails {
  *
  * @see https://htmx.org/docs/#request-headers
  */
-export class HTMXRequest extends EnhancedRequest {
+export class HTMXRequest extends Request {
   /**
    * The parsed HTMX request headers.
    *

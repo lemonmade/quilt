@@ -308,13 +308,13 @@ describe('app builds', () => {
           document.body.append(element);
         `,
         'server.ts': multiline`
-          import {RequestRouter} from '@quilted/quilt/request-router';
+          import {Hono} from 'hono';
           import {BrowserAssets} from 'quilt:module/assets';
 
-          const router = new RequestRouter();
+          const app = new Hono();
           const assets = new BrowserAssets();
 
-          router.get(async (request) => {
+          router.get('*', async () => {
             const allAssets = await assets.entry({
               id: './extra-browser-entry',
             });
@@ -348,11 +348,11 @@ describe('app builds', () => {
   describe('server entry', () => {
     const customServerEntryFiles = {
       'server.ts': multiline`
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
                   
-        const router = new RequestRouter();
+        const app = new Hono();
 
-        router.get(async (request) => {
+        router.get('*', async () => {
           return new Response('<html>Hello world</html>', {
             headers: {'Content-Type': 'text/html'},
           });

@@ -99,20 +99,20 @@ Packages can easily compose React components and hooks from any Quilt package as
 
 Quilt loves services, but they are the lowest-priority project type that Quilt supports. The biggest reason for this is that Quilt is entirely focused on JavaScript, and backend services are often authored in other languages. We think that’s great — you should use the language that best matches the problem you are solving when it comes to server-side development. Quilt gives you an option for authoring backend services in JavaScript, but we expect many people won’t use them.
 
-Quilt provides a [good build command for services](../features/builds/services.md) that bundles them up for faster execution. These builds work for any JavaScript project, but Quilt also provides an abstraction over [routing HTTP requests](../features/request-routing.md) that you can use instead. These “http handlers” offer a tiny way of describing HTTP-based services in a way that can be [automatically adapted to different hosting platforms](./deploy).
+Quilt provides a [good build command for services](../features/builds/services.md) that bundles them up for faster execution. These servers default to using [Hono](../features/hono.md) for routing HTTP requests, but you can use any HTTP framework you want.
 
 ```ts
 // This simple JSON API can be adapted to run on Cloudflare Workers,
 // AWS Lambda, a Node service on Render, and more, all just by changing
 // your quilt.project.ts file!
 
-import {createRequestRouter, json} from '@quilted/request-router';
+import {Hono} from 'hono';
 
-const router = createRequestRouter();
+const app = new Hono();
 
-router.get('/api', () => json({hello: 'world'}));
+app.get('/api', (c) => c.json({hello: 'world'}));
 
-export default router;
+export default app;
 ```
 
 Quilt also supports a [minimal development flow](../features/developing/services.md) for services so you can preview your work locally.

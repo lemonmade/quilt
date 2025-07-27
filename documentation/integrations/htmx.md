@@ -47,7 +47,7 @@ The default Quilt server can be used as-is with htmx; it renders an `App` compon
 Let’s imagine a simple application that renders a button, and updates the button’s text when it’s clicked. To accomplish this, you’d need a server with two endpoints: the root HTML document, and an extra `/clicked` endpoint that returns the updated button HTML:
 
 ```tsx
-import {RequestRouter} from '@quilted/quilt/request-router';
+import {Hono} from 'hono';
 import {
   HTML,
   HTMLPlaceholderEntryAssets,
@@ -56,11 +56,13 @@ import {
 } from '@quilted/quilt/server';
 import {BrowserAssets} from 'quilt:module/assets';
 
-const router = new RequestRouter();
+const app = new Hono();
 const assets = new BrowserAssets();
 
 // For the root URL, we’ll render a full HTML document
-router.get('/', async (request) => {
+app.get('/', async (c) => {
+  const request = c.req.raw;
+
   // `renderToHTMLResponse()` takes care of rendering your app to an HTML stream,
   // wrapping it in a full HTML document (including the browser script that
   // contains htmx), and applying the [HTML-](../features/html.md) and
@@ -96,7 +98,9 @@ function App() {
 
 // When clicking the button, htmx will send a POST request to this `/clicked`
 // endpoint.
-router.post('/clicked', async (request) => {
+app.post('/clicked', async (c) => {
+  const request = c.req.raw;
+
   // This helper renders a React element to an HTML response, without wrapping
   // a full HTML document around it. htmx will replace the outerHTML of the button
   // with the content of this response, thanks to to the `hx-swap` attribute.
@@ -112,7 +116,7 @@ function ClickedButton() {
   return <button>Clicked!</button>;
 }
 
-export default router;
+export default app;
 ```
 
 ## Using HTMX request and response helpers
@@ -122,16 +126,17 @@ HTMX sends [special headers on requests to your application](https://htmx.org/do
 In the following example, we are using Quilt’s utility to parse the `HX-Trigger` request header, which contains the ID of the element that triggered a request. We’re then using the `Response` subclass, `HTMXResponse`, which lets us easily set the `HX-Retarget` response header in order to configure the response to replace the entire body.
 
 ```tsx
-import '@quilted/quilt/globals';
-import {RequestRouter} from '@quilted/quilt/request-router';
+import {Hono} from 'hono';
 import {renderAppToHTMLResponse} from '@quilted/quilt/server';
 import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
 import {BrowserAssets} from 'quilt:module/assets';
 
-const router = new RequestRouter();
+const app = new Hono();
 const assets = new BrowserAssets();
 
-router.get('/', async (request) => {
+app.get('*', async (c) => {
+  const request = c.req.raw;
+
   const response = await renderAppToHTMLResponse(<App />, {
     request,
     assets,
@@ -153,7 +158,9 @@ function App() {
   );
 }
 
-router.post('/choose', async (request) => {
+app.post('/choose', async (c) => {
+  const request = c.req.raw;
+
   const {trigger} = parseHTMXRequestHeaders(request.headers);
 
   if (trigger == null) {
@@ -167,5 +174,5 @@ router.post('/choose', async (request) => {
   });
 });
 
-export default router;
+export default app;
 ```

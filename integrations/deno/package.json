@@ -27,12 +27,6 @@
       "quilt:source": "./source/craft.ts",
       "quilt:esnext": "./build/esnext/craft.esnext",
       "import": "./build/esm/craft.mjs"
-    },
-    "./request-router": {
-      "types": "./build/typescript/request-router.d.ts",
-      "quilt:source": "./source/request-router.tsx",
-      "quilt:esnext": "./build/esnext/request-router.esnext",
-      "import": "./build/esm/request-router.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
@@ -40,9 +34,6 @@
     "*": {
       "craft": [
         "./build/typescript/craft.d.ts"
-      ],
-      "request-router": [
-        "./build/typescript/request-router.d.ts"
       ]
     }
   },

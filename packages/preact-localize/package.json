@@ -22,22 +22,9 @@
       "quilt:source": "./source/index.ts",
       "quilt:esnext": "./build/esnext/index.esnext",
       "import": "./build/esm/index.mjs"
-    },
-    "./request-router": {
-      "types": "./build/typescript/request-router.d.ts",
-      "quilt:source": "./source/request-router.ts",
-      "quilt:esnext": "./build/esnext/request-router.esnext",
-      "import": "./build/esm/request-router.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "request-router": [
-        "./build/typescript/request-router.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "scripts": {
     "build": "rollup --config configuration/rollup.config.js"
@@ -50,19 +37,11 @@
     "@quilted/signals": "workspace:^0.2.0"
   },
   "peerDependencies": {
-    "@quilted/request-router": "workspace:^0.3.0",
     "preact": "^10.26.0"
   },
   "peerDependenciesMeta": {
-    "@quilted/request-router": {
-      "optional": true
-    },
     "preact": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "@quilted/request-router": "workspace:^0.3.0",
-    "preact": "^10.26.0"
   }
 }

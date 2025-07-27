@@ -8,7 +8,6 @@
     {"path": "../preact-browser"},
     {"path": "../preact-context"},
     {"path": "../preact-router"},
-    {"path": "../request-router"},
     {"path": "../signals"}
   ]
 }
