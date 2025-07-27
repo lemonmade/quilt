@@ -7,7 +7,7 @@ import {
   sourceEntryForAppServer,
   MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_BROWSER_ASSETS,
-  MAGIC_MODULE_REQUEST_ROUTER,
+  MAGIC_MODULE_HONO,
   type AppBrowserOptions,
   type AppServerOptions,
 } from '@quilted/rollup/app';
@@ -169,21 +169,19 @@ export async function quiltApp({
         return () => {
           vite.middlewares.use(async (req, res, next) => {
             try {
-              const [serverEntry, {createHttpRequestListener}] =
-                await Promise.all([
-                  sourceEntryForAppServer({entry: server?.entry}),
-                  import('@quilted/request-router/node'),
-                ]);
+              const [serverEntry, {handleRequest}] = await Promise.all([
+                sourceEntryForAppServer({entry: server?.entry}),
+                import('@quilted/hono/node'),
+              ]);
 
               // There seems to be a bug with using the the virtual module where Vite
               // does not perform HMR on the server. We use the actual file on disk if
               // possible instead, which does HMR correctly.
               const {default: requestRouter} = await vite.ssrLoadModule(
-                serverEntry ?? MAGIC_MODULE_REQUEST_ROUTER,
+                serverEntry ?? MAGIC_MODULE_HONO,
               );
 
-              const handle = createHttpRequestListener(requestRouter);
-              await handle(req, res);
+              await handleRequest(requestRouter, req, res);
             } catch (error) {
               next(error);
             }

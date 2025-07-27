@@ -159,72 +159,33 @@ This guide assumes you have already [created an app or service with Quilt](../ge
 In your project’s `quilt.project.ts` file, use the `cloudflareWorkers()` plugin from `@quilted/cloudflare/craft` to configure your application to run on Cloudflare Workers:
 
 ```ts
-// app/quilt.project.ts
+// app/rollup.config.js
 
-import {createProject, quiltApp} from '@quilted/craft';
-import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+import {quiltApp} from '@quilted/rollup/app';
+import {cloudflareWorkersApp} from '@quilted/cloudflare/craft';
 
-export default createProject((project) => {
-  project.use(quiltApp(), cloudflareWorkers());
+export default quiltApp({
+  runtime: cloudflareWorkersApp(),
 });
 ```
 
 This plugin will make sure your server build output is compatible with Cloudflare Workers’ lightweight JavaScript environment.
 
-Quilt apps and services default to using [`@quilted/request-router` for writing backend code](../features/request-routing.md). This library is small, so it works well in Cloudflare Workers. However, you can use Quilt just to do the build of your app or service, and use [Cloudflare’s native module-based APIs](https://developers.cloudflare.com/workers/runtime-apis/fetch-event/#syntax-module-worker). You might want to do this if your worker doesn’t need the routing utilities provided by `@quilted/request-router`, or you want to make use of non-HTTP APIs available in Cloudflare, like [scheduled events](https://developers.cloudflare.com/workers/runtime-apis/scheduled-event/) or [Cloudflare Queues](https://developers.cloudflare.com/queues/javascript-apis/#consumer).
+Quilt apps and services default to using [hono](https://hono.dev) for writing backend code. This library is small, and is designed to work well in Cloudflare Workers.
 
-In your application code, you can write your Cloudflare Worker using its default export convention:
-
-```ts
-export default {
-  async fetch(request, env) {
-    if (request.url === '/ping') {
-      await env.MY_QUEUE.send({ping: true});
-      return new Response('pong', {status: 200});
-    }
-
-    return new Response('Not found', {status: 404});
-  },
-  queue(batch) {
-    console.log(batch);
-  },
-};
-```
-
-You will also need to tell Quilt that you do not use `@quilted/request-router`. For an application, you do this by setting the `server.format` option of `quiltApp()` to `'custom'`:
+In your application code, you can write your Cloudflare Worker using its default export convention, and access your [Cloudflare bindings on `c.env`](https://hono.dev/docs/getting-started/cloudflare-workers#bindings):
 
 ```ts
-// app/quilt.project.ts
+import {Hono} from 'hono';
 
-import {createProject, quiltApp} from '@quilted/craft';
-import {cloudflareWorkers} from '@quilted/cloudflare/craft';
+const app = new Hono();
 
-export default createProject((project) => {
-  project.use(
-    quiltApp({
-      server: {format: 'custom'},
-    }),
-    cloudflareWorkers(),
-  );
+app.get('/ping', (c) => {
+  c.env.MY_QUEUE.send({ping: true});
+  return c.text('pong');
 });
-```
 
-For a service, you do this by setting the `format` option of `quiltService()` to `'custom'`:
-
-```ts
-// functions/my-worker/quilt.project.ts
-
-import {createProject, quiltService} from '@quilted/craft';
-import {cloudflareWorkers} from '@quilted/cloudflare/craft';
-
-export default createProject((project) => {
-  project.use(
-    quiltService({
-      format: 'custom',
-    }),
-    cloudflareWorkers(),
-  );
-});
+export default app;
 ```
 
 #### Step 2: Configure Wrangler to upload your Worker

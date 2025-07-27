@@ -54,7 +54,7 @@
     "@babel/core": "^7.26.0",
     "@prefresh/vite": "^2.4.7",
     "@quilted/babel": "workspace:^0.2.4",
-    "@quilted/request-router": "workspace:^0.3.2",
+    "@quilted/hono": "workspace:^0.1.0",
     "@quilted/rollup": "workspace:^0.3.3"
   },
   "peerDependencies": {

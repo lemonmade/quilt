@@ -64,7 +64,6 @@
     "@quilted/browser": "workspace:^0.1.12",
     "@quilted/http": "workspace:^0.3.0",
     "@quilted/preact-context": "workspace:^0.1.3",
-    "@quilted/request-router": "workspace:^0.3.2",
     "@quilted/signals": "workspace:^0.2.3",
     "preact-render-to-string": "^6.5.13"
   },

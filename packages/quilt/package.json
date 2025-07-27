@@ -130,17 +130,17 @@
       "quilt:esnext": "./build/esnext/env.esnext",
       "import": "./build/esm/env.mjs"
     },
-    "./request-router": {
-      "types": "./build/typescript/request-router.d.ts",
-      "quilt:source": "./source/request-router.ts",
-      "quilt:esnext": "./build/esnext/request-router.esnext",
-      "import": "./build/esm/request-router.mjs"
+    "./hono": {
+      "types": "./build/typescript/hono.d.ts",
+      "quilt:source": "./source/hono.ts",
+      "quilt:esnext": "./build/esnext/hono.esnext",
+      "import": "./build/esm/hono.mjs"
     },
-    "./request-router/node": {
-      "types": "./build/typescript/request-router/node.d.ts",
-      "quilt:source": "./source/request-router/node.ts",
-      "quilt:esnext": "./build/esnext/request-router/node.esnext",
-      "import": "./build/esm/request-router/node.mjs"
+    "./hono/node": {
+      "types": "./build/typescript/hono/node.d.ts",
+      "quilt:source": "./source/hono/node.ts",
+      "quilt:esnext": "./build/esnext/hono/node.esnext",
+      "import": "./build/esm/hono/node.mjs"
     },
     "./threads": {
       "types": "./build/typescript/threads.d.ts",
@@ -206,11 +206,11 @@
       "server": [
         "./build/typescript/server.d.ts"
       ],
-      "request-router/node": [
-        "./build/typescript/request-router/node.d.ts"
+      "hono/node": [
+        "./build/typescript/hono/node.d.ts"
       ],
-      "request-router": [
-        "./build/typescript/request-router/index.d.ts"
+      "hono": [
+        "./build/typescript/hono/index.d.ts"
       ],
       "testing": [
         "./build/typescript/testing.d.ts"
@@ -236,6 +236,7 @@
     "@quilted/async": "workspace:^0.4.23",
     "@quilted/events": "workspace:^2.1.3",
     "@quilted/graphql": "workspace:^3.3.9",
+    "@quilted/hono": "workspace:^0.1.0",
     "@quilted/preact-async": "workspace:^0.1.20",
     "@quilted/preact-browser": "workspace:^0.1.17",
     "@quilted/preact-context": "workspace:^0.1.3",
@@ -248,7 +249,6 @@
     "@quilted/preact-workers": "workspace:^0.2.1",
     "@quilted/react": "workspace:^19.0.0",
     "@quilted/react-dom": "workspace:^19.0.1",
-    "@quilted/request-router": "workspace:^0.3.2",
     "@quilted/signals": "workspace:^0.2.3",
     "@quilted/threads": "workspace:^4.0.0",
     "jest-matcher-utils": "^29.0.0",

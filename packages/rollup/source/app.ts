@@ -14,7 +14,7 @@ import {
   MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_BROWSER_ASSETS,
-  MAGIC_MODULE_REQUEST_ROUTER,
+  MAGIC_MODULE_HONO,
 } from './constants.ts';
 import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
 
@@ -265,17 +265,15 @@ export interface AppServerOptions extends AppBaseOptions {
   entry?: string;
 
   /**
-   * Whether this server code uses the `request-router` library to
-   * define itself in a generic way, which can be adapted to a variety
-   * of environments. By default, this is `'request-router'`, and when `'request-router'`,
-   * the `entry` you specified must export an `RequestRouter` object as
-   * its default export. When set to `false`, the app server will be built
-   * as a basic server-side JavaScript project, without the special
-   * `request-router` adaptor.
+   * Whether this server code uses `hono` to define itself in a generic way, which can
+   * be adapted to a variety of environments. By default, this is `'hono'`, and when `'hono'`,
+   * the `entry` you specified must export an `Hono` object as its default export. When set to `'custom'`,
+   * the app server will be built as a basic server-side JavaScript project, without the special
+   * `hono` adaptor.
    *
-   * @default 'request-router'
+   * @default 'hono'
    */
-  format?: 'request-router' | 'custom';
+  format?: 'hono' | 'custom';
 
   /**
    * Customizes the assets created for your application.
@@ -387,8 +385,8 @@ export interface AppRuntime {
   server?: AppServerRuntime;
 }
 
-export interface AppServerRuntime extends Omit<ServerRuntime, 'requestRouter'> {
-  requestRouter?(options: {
+export interface AppServerRuntime extends Omit<ServerRuntime, 'hono'> {
+  hono?(options: {
     assets: Required<Pick<AppBrowserAssetsOptions, 'baseURL'>>;
   }): string;
 }
@@ -397,7 +395,7 @@ export {
   MAGIC_MODULE_ENTRY,
   MAGIC_MODULE_APP_COMPONENT,
   MAGIC_MODULE_BROWSER_ASSETS,
-  MAGIC_MODULE_REQUEST_ROUTER,
+  MAGIC_MODULE_HONO,
 };
 
 const require = createRequire(import.meta.url);
@@ -826,7 +824,7 @@ export async function quiltAppServerPlugins({
   app,
   env,
   entry,
-  format = 'request-router',
+  format = 'hono',
   graphql = true,
   assets,
   output,
@@ -888,16 +886,13 @@ export async function quiltAppServerPlugins({
     }),
     magicModuleAppComponent({entry: app, root: project.root}),
     createMagicModulePlugin({
-      name: '@quilted/request-router',
+      name: '@quilted/hono',
       sideEffects: true,
       module: MAGIC_MODULE_ENTRY,
       source() {
         const options = {assets: {baseURL}};
 
-        return (
-          runtime.requestRouter?.(options) ??
-          nodeAppServerRuntime().requestRouter(options)
-        );
+        return runtime.hono?.(options) ?? nodeAppServerRuntime().hono(options);
       },
     }),
     magicModuleAppRequestRouter({entry, root: project.root}),
@@ -972,7 +967,7 @@ export async function quiltAppServerPlugins({
 export function quiltAppServerInput({
   root = process.cwd(),
   entry,
-  format = 'request-router',
+  format = 'hono',
 }: Pick<AppServerOptions, 'root' | 'entry' | 'format'> = {}) {
   return {
     name: '@quilted/app-server/input',
@@ -981,7 +976,7 @@ export function quiltAppServerInput({
         normalizeRollupInput(options.input) ??
         (await sourceEntryForAppServer({entry, root}));
       const finalEntry =
-        format === 'request-router'
+        format === 'hono'
           ? MAGIC_MODULE_ENTRY
           : (serverEntry ?? MAGIC_MODULE_ENTRY);
       const finalEntryName =
@@ -1216,21 +1211,19 @@ export function nodeAppServerRuntime({
         format: rollupFormat,
       },
     },
-    requestRouter({assets}) {
+    hono({assets}) {
       const {baseURL} = assets;
+      const assetsPrefix = `${baseURL}${baseURL.endsWith('/') ? '' : '/'}*`;
 
       return multiline`
-        ${serveAssets ? `import * as path from 'path';` : ''}
-        ${rollupFormat === 'cjs' ? '' : `import {fileURLToPath} from 'url';`}
-        import {createServer} from 'http';
+        ${serveAssets ? `import * as path from 'node:path';` : ''}
+        ${rollupFormat === 'cjs' ? '' : `import {fileURLToPath} from 'node:url';`}
 
-        import requestRouter from ${JSON.stringify(
-          MAGIC_MODULE_REQUEST_ROUTER,
-        )};
+        import app from ${JSON.stringify(MAGIC_MODULE_HONO)};
 
-        import {createHttpRequestListener${
+        import {serve${
           serveAssets ? ', serveStatic' : ''
-        }} from '@quilted/quilt/request-router/node';
+        }} from '@quilted/hono/node';
 
         const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
         const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
@@ -1243,25 +1236,18 @@ export function nodeAppServerRuntime({
                   ? `__dirname`
                   : `path.dirname(fileURLToPath(import.meta.url))`
               };
-              const serve = serveStatic(path.resolve(dirname, '../assets'), {
-                baseUrl: ${JSON.stringify(baseURL)},
-              });
+              
+              app.use(
+                ${JSON.stringify(assetsPrefix)},
+                serveStatic({
+                  path: path.resolve(dirname, '../assets'),
+                }),
+              );
             `
             : ''
         }
-        const listener = createHttpRequestListener(requestRouter);
-      
-        createServer(async (request, response) => {
-          ${
-            serveAssets
-              ? `if (request.url.startsWith(${JSON.stringify(
-                  baseURL,
-                )})) return serve(request, response);`
-              : ''
-          }
 
-          await listener(request, response);
-        }).listen(port, host);
+        serve({fetch: app.fetch, port, hostname: host});
       `;
     },
   } satisfies AppServerRuntime;
@@ -1300,13 +1286,13 @@ export function magicModuleAppRequestRouter({
   root = process.cwd(),
 }: Pick<AppServerOptions, 'entry' | 'root'> = {}) {
   return createMagicModulePlugin({
-    name: '@quilted/magic-module/app-request-router',
-    module: MAGIC_MODULE_REQUEST_ROUTER,
+    name: '@quilted/magic-module/app-hono',
+    module: MAGIC_MODULE_HONO,
     alias: () => sourceEntryForAppServer({entry, root}) as Promise<string>,
     async source() {
       return multiline`
+        import {Hono} from 'hono';
         import {jsx} from 'preact/jsx-runtime';
-        import {RequestRouter} from '@quilted/quilt/request-router';
         import {renderAppToHTMLResponse} from '@quilted/quilt/server';
 
         import App from ${JSON.stringify(MAGIC_MODULE_APP_COMPONENT)};
@@ -1314,11 +1300,11 @@ export function magicModuleAppRequestRouter({
           MAGIC_MODULE_BROWSER_ASSETS,
         )};
 
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        // For all GET requests, render our React application.
-        router.get(async (request) => {
+        app.get(async (c) => {
+          const request = c.req.raw;
           const response = await renderAppToHTMLResponse(jsx(App), {
             request,
             assets,
@@ -1327,7 +1313,7 @@ export function magicModuleAppRequestRouter({
           return response;
         });
 
-        export default router;
+        export default app;
       `;
     },
   });

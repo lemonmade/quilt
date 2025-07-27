@@ -7,7 +7,6 @@ import {
   type BrowserAssets,
 } from '@quilted/assets';
 import {BrowserResponse} from '@quilted/browser/server';
-import {HTMLResponse} from '@quilted/request-router';
 
 import {
   BrowserDetailsContext,
@@ -547,4 +546,31 @@ function normalizeHTMLContent(content: string) {
   return content.startsWith('<!DOCTYPE ') || !content.startsWith('<html')
     ? content
     : `<!DOCTYPE html>${content}`;
+}
+
+const CONTENT_TYPE_HEADER = 'Content-Type';
+const CONTENT_TYPE_OPTIONS_HEADER = 'X-Content-Type-Options';
+
+const CONTENT_TYPE_DEFAULT_VALUE_HTML = 'text/html; charset=utf-8';
+const CONTENT_TYPE_OPTIONS_DEFAULT_VALUE_HTML = 'nosniff';
+
+export class HTMLResponse extends Response {
+  constructor(content: BodyInit | null, options: ResponseInit) {
+    const headers = new Headers(options.headers);
+    if (!headers.has(CONTENT_TYPE_HEADER)) {
+      headers.set(CONTENT_TYPE_HEADER, CONTENT_TYPE_DEFAULT_VALUE_HTML);
+    }
+
+    if (!headers.has(CONTENT_TYPE_OPTIONS_HEADER)) {
+      headers.set(
+        CONTENT_TYPE_OPTIONS_HEADER,
+        CONTENT_TYPE_OPTIONS_DEFAULT_VALUE_HTML,
+      );
+    }
+
+    super(content, {
+      ...options,
+      headers,
+    });
+  }
 }

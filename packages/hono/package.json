@@ -1,12 +1,12 @@
 {
-  "name": "@quilted/request-router",
+  "name": "@quilted/hono",
   "type": "module",
-  "version": "0.3.2",
+  "version": "0.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
-    "directory": "packages/request-router"
+    "directory": "packages/hono"
   },
   "publishConfig": {
     "access": "public",
@@ -20,17 +20,17 @@
       "import": "./build/esm/index.mjs"
     },
     "./node": {
-      "types": "./build/typescript/node/index.d.ts",
-      "quilt:source": "./source/node/index.ts",
-      "quilt:esnext": "./build/esnext/node/index.esnext",
-      "import": "./build/esm/node/index.mjs"
+      "types": "./build/typescript/node.d.ts",
+      "quilt:source": "./source/node.ts",
+      "quilt:esnext": "./build/esnext/node.esnext",
+      "import": "./build/esm/node.mjs"
     }
   },
   "types": "./build/typescript/index.d.ts",
   "typesVersions": {
     "*": {
       "node": [
-        "./build/typescript/node/index.d.ts"
+        "./build/typescript/node.d.ts"
       ]
     }
   },
@@ -41,10 +41,13 @@
   "dependencies": {
     "@quilted/http": "workspace:^0.3.0",
     "@quilted/routing": "workspace:^0.4.0",
+    "@hono/node-server": "^1.17.1",
+    "hono": "^4.0.0",
     "send": "^0.17.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
-    "@types/send": "^0.17.4"
+    "@types/send": "^0.17.4",
+    "hono": "^4.8.9"
   }
 }
