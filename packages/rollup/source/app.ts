@@ -386,9 +386,7 @@ export interface AppRuntime {
 }
 
 export interface AppServerRuntime extends Omit<ServerRuntime, 'hono'> {
-  hono?(options: {
-    assets: Required<Pick<AppBrowserAssetsOptions, 'baseURL'>>;
-  }): string;
+  hono?(): string;
 }
 
 export {
@@ -890,9 +888,7 @@ export async function quiltAppServerPlugins({
       sideEffects: true,
       module: MAGIC_MODULE_ENTRY,
       source() {
-        const options = {assets: {baseURL}};
-
-        return runtime.hono?.(options) ?? nodeAppServerRuntime().hono(options);
+        return runtime.hono?.() ?? nodeAppServerRuntime().hono();
       },
     }),
     magicModuleAppRequestRouter({entry, root: project.root}),
@@ -1186,20 +1182,12 @@ export function quiltAppServiceWorkerInput({
   } satisfies Plugin;
 }
 
-export interface NodeAppServerRuntimeOptions extends NodeServerRuntimeOptions {
-  /**
-   * Whether the server should serve assets from the asset output directory.
-   *
-   * @default true
-   */
-  assets?: boolean;
-}
+export interface NodeAppServerRuntimeOptions extends NodeServerRuntimeOptions {}
 
 export function nodeAppServerRuntime({
   host,
   port,
   format = 'module',
-  assets: serveAssets = true,
 }: NodeAppServerRuntimeOptions = {}) {
   const rollupFormat =
     format === 'commonjs' || format === 'cjs' ? 'cjs' : 'esm';
@@ -1211,41 +1199,13 @@ export function nodeAppServerRuntime({
         format: rollupFormat,
       },
     },
-    hono({assets}) {
-      const {baseURL} = assets;
-      const assetsPrefix = `${baseURL}${baseURL.endsWith('/') ? '' : '/'}*`;
-
+    hono() {
       return multiline`
-        ${serveAssets ? `import * as path from 'node:path';` : ''}
-        ${rollupFormat === 'cjs' ? '' : `import {fileURLToPath} from 'node:url';`}
-
         import app from ${JSON.stringify(MAGIC_MODULE_HONO)};
-
-        import {serve${
-          serveAssets ? ', serveStatic' : ''
-        }} from '@quilted/hono/node';
+        import {serve} from '@quilted/hono/node';
 
         const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
         const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
-
-        ${
-          serveAssets
-            ? multiline`
-              const dirname = ${
-                rollupFormat === 'cjs'
-                  ? `__dirname`
-                  : `path.dirname(fileURLToPath(import.meta.url))`
-              };
-              
-              app.use(
-                ${JSON.stringify(assetsPrefix)},
-                serveStatic({
-                  path: path.resolve(dirname, '../assets'),
-                }),
-              );
-            `
-            : ''
-        }
 
         serve({fetch: app.fetch, port, hostname: host});
       `;

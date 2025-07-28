@@ -32,6 +32,7 @@
     {"path": "./packages/events"},
     {"path": "./packages/graphql"},
     {"path": "./packages/graphql-tools"},
+    {"path": "./packages/hono"},
     {"path": "./packages/http"},
     {"path": "./packages/localize"},
     {"path": "./packages/performance"},
