@@ -1,8 +1,13 @@
 import {Hono} from 'hono';
+import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
 import {BrowserAssets} from 'quilt:module/assets';
 
 const app = new Hono();
 const assets = new BrowserAssets();
+
+if (process.env.NODE_ENV === 'production') {
+  app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+}
 
 // For all GET requests, render our Preact application.
 app.get('*', async (c) => {

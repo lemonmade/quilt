@@ -75,65 +75,72 @@ export async function renderAppToHTMLResponse(
     );
   }
 
-  let appContent: string | undefined =
-    renderApp == null || shouldStream
-      ? undefined
-      : await renderAppToString(renderApp, {browser, assets});
+  const response = await generateResponse(async () => {
+    let appContent: string | undefined =
+      renderApp == null || shouldStream
+        ? undefined
+        : await renderAppToString(renderApp, {browser, assets});
 
-  const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
-    template ?? <HTML />,
-    {
+    const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
+      template ?? <HTML />,
+      {
+        browser,
+        assets,
+      },
+    );
+
+    const renderChunkOptions = {
       browser,
       assets,
-    },
-  );
+      app: async () => {
+        appContent ??= await renderAppToString(renderApp!, {browser, assets});
+        return appContent;
+      },
+    };
 
-  const renderChunkOptions = {
-    browser,
-    assets,
-    app: async () => {
-      appContent ??= await renderAppToString(renderApp!, {browser, assets});
-      return appContent;
-    },
-  };
+    const normalizedFirstChunk = shouldStream
+      ? firstChunk
+      : `${firstChunk}${remainingChunks.join('')}`;
 
-  const normalizedFirstChunk = shouldStream
-    ? firstChunk
-    : `${firstChunk}${remainingChunks.join('')}`;
+    const renderedFirstChunk = await renderHTMLChunk(
+      normalizedFirstChunk,
+      renderChunkOptions,
+    );
 
-  const renderedFirstChunk = await renderHTMLChunk(
-    normalizedFirstChunk,
-    renderChunkOptions,
-  );
+    if (remainingChunks.length === 0 || !shouldStream) {
+      return new HTMLResponse(renderedFirstChunk, {
+        status: browser.status.value,
+        headers: browser.headers,
+      });
+    }
 
-  if (remainingChunks.length === 0 || !shouldStream) {
-    return new HTMLResponse(renderedFirstChunk, {
+    const stream = new TextEncoderStream();
+    const writer = stream.writable.getWriter();
+    writer.write(renderedFirstChunk);
+
+    (async () => {
+      try {
+        for (const chunk of remainingChunks) {
+          const renderedChunk = await renderHTMLChunk(
+            chunk,
+            renderChunkOptions,
+          );
+          writer.write(renderedChunk);
+        }
+      } catch {
+        // TODO: handle error
+      } finally {
+        writer.close();
+      }
+    })();
+
+    return new HTMLResponse(stream.readable, {
       status: browser.status.value,
       headers: browser.headers,
     });
-  }
-
-  const stream = new TextEncoderStream();
-  const writer = stream.writable.getWriter();
-  writer.write(renderedFirstChunk);
-
-  (async () => {
-    try {
-      for (const chunk of remainingChunks) {
-        const renderedChunk = await renderHTMLChunk(chunk, renderChunkOptions);
-        writer.write(renderedChunk);
-      }
-    } catch {
-      // TODO: handle error
-    } finally {
-      writer.close();
-    }
-  })();
-
-  return new HTMLResponse(stream.readable, {
-    status: browser.status.value,
-    headers: browser.headers,
   });
+
+  return response;
 }
 
 export async function renderAppToHTMLString(
@@ -249,56 +256,73 @@ export async function renderToHTMLResponse(
     );
   }
 
-  const content = await renderHTMLToTemplateString(html, {browser, assets});
+  const response = await generateResponse(async () => {
+    const content = await renderHTMLToTemplateString(html, {browser, assets});
 
-  const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
-    content,
-    {
+    const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
+      content,
+      {
+        browser,
+        assets,
+      },
+    );
+
+    const normalizedFirstChunk = shouldStream
+      ? firstChunk
+      : `${firstChunk}${remainingChunks.join('')}`;
+
+    const renderedFirstChunk = await renderHTMLChunk(normalizedFirstChunk, {
       browser,
       assets,
-    },
-  );
+    });
 
-  const normalizedFirstChunk = shouldStream
-    ? firstChunk
-    : `${firstChunk}${remainingChunks.join('')}`;
+    if (remainingChunks.length === 0 || !shouldStream) {
+      return new HTMLResponse(renderedFirstChunk, {
+        status: browser.status.value,
+        headers: browser.headers,
+      });
+    }
 
-  const renderedFirstChunk = await renderHTMLChunk(normalizedFirstChunk, {
-    browser,
-    assets,
-  });
+    const stream = new TextEncoderStream();
+    const writer = stream.writable.getWriter();
+    writer.write(renderedFirstChunk);
 
-  if (remainingChunks.length === 0 || !shouldStream) {
-    return new HTMLResponse(renderedFirstChunk, {
+    (async () => {
+      try {
+        for (const chunk of remainingChunks) {
+          const renderedChunk = await renderHTMLChunk(chunk, {
+            browser,
+            assets,
+          });
+          writer.write(renderedChunk);
+        }
+      } catch {
+        // TODO: handle error
+      } finally {
+        writer.close();
+      }
+    })();
+
+    return new HTMLResponse(stream.readable, {
       status: browser.status.value,
       headers: browser.headers,
     });
-  }
-
-  const stream = new TextEncoderStream();
-  const writer = stream.writable.getWriter();
-  writer.write(renderedFirstChunk);
-
-  (async () => {
-    try {
-      for (const chunk of remainingChunks) {
-        const renderedChunk = await renderHTMLChunk(chunk, {
-          browser,
-          assets,
-        });
-        writer.write(renderedChunk);
-      }
-    } catch {
-      // TODO: handle error
-    } finally {
-      writer.close();
-    }
-  })();
-
-  return new HTMLResponse(stream.readable, {
-    status: browser.status.value,
-    headers: browser.headers,
   });
+
+  return response;
+}
+
+async function generateResponse(generate: () => Promise<Response>) {
+  try {
+    const response = await generate();
+    return response;
+  } catch (error) {
+    if (error != null && error instanceof Response) {
+      return error;
+    }
+
+    throw error;
+  }
 }
 
 async function renderHTMLToTemplateString(
