@@ -18,12 +18,17 @@ describe('htmx', () => {
       'server.tsx': multiline`
         import {Hono} from 'hono';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const app = new Hono();
         const assets = new BrowserAssets();
+
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
         
-        app.get('*', async (c) => {
+        app.get('/', async (c) => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(
@@ -88,12 +93,17 @@ describe('htmx', () => {
         import {Hono} from 'hono';
         import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
         const app = new Hono();
         const assets = new BrowserAssets();
+
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
         
-        app.get('*', async (c) => {
+        app.get('/', async (c) => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(

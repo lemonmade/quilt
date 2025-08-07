@@ -128,13 +128,18 @@ In the following example, we are using Quilt’s utility to parse the `HX-Trigge
 ```tsx
 import {Hono} from 'hono';
 import {renderAppToHTMLResponse} from '@quilted/quilt/server';
+import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
 import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
 import {BrowserAssets} from 'quilt:module/assets';
 
 const app = new Hono();
 const assets = new BrowserAssets();
 
-app.get('*', async (c) => {
+if (process.env.NODE_ENV === 'production') {
+  app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+}
+
+app.get('/', async (c) => {
   const request = c.req.raw;
 
   const response = await renderAppToHTMLResponse(<App />, {
