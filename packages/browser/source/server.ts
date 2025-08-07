@@ -14,6 +14,7 @@ import type {
 import {encode} from './encoding.ts';
 
 import {CookieString} from './shared/cookies.ts';
+export {ResponseCookies} from './server/cookies.ts';
 
 export * from './types.ts';
 export * from './headers.ts';
