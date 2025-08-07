@@ -62,12 +62,17 @@ describe('app builds', () => {
         'server.tsx': multiline`
           import {Hono} from 'hono';
           import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
 
           const app = new Hono();
           const assets = new BrowserAssets();
 
-          app.get('*', async (c) => {
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+          }
+
+          app.get('/*', async (c) => {
             const request = c.req.raw;
 
             const response = await renderToHTMLResponse(<AppHTML />, {
@@ -147,12 +152,17 @@ describe('app builds', () => {
           `,
           'server.tsx': multiline`
             import {Hono} from 'hono';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
             import {BrowserAssets} from 'quilt:module/assets';
 
             const app = new Hono();
             const assets = new BrowserAssets();
 
-            app.get('*', async (c) => {
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
               const request = c.req.raw;
 
               const {
@@ -219,12 +229,17 @@ describe('app builds', () => {
           `,
           'server.tsx': multiline`
             import {Hono} from 'hono';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
             import {BrowserAssets} from 'quilt:module/assets';
 
             const app = new Hono();
             const assets = new BrowserAssets();
 
-            app.get('*', async (c) => {
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
               const request = c.req.raw;
 
               const {

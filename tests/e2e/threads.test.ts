@@ -7,10 +7,31 @@ describe('threads', () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       await workspace.fs.write({
-        'App.tsx': multiline`
-          export default function App() {
-            return null;
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const app = new Hono();
+          const assets = new BrowserAssets();
+
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
           }
+
+          app.get('/*', async () => {
+            const allAssets = await assets.entry();
+
+            const scriptTags = allAssets.scripts.map((script) => {
+              return \`<script type="module" src="\${script.source}"></script>\`;
+            }).join('');
+
+            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+              headers: {'Content-Type': 'text/html'},
+            });
+          });
+          
+          export default app;
         `,
         'browser.ts': multiline`
           import {ThreadMessagePort} from '@quilted/quilt/threads';
@@ -53,10 +74,35 @@ describe('threads', () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       await workspace.fs.write({
-        'App.tsx': multiline`
-          export default function App() {
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+          import {renderAppToHTMLResponse} from '@quilted/quilt/server';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const app = new Hono();
+          const assets = new BrowserAssets();
+
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+          }
+
+          function App() {
             return <a id="link" href="/greeter" target="_blank">Open greeter page</a>;
           }
+          
+          app.get('/*', async (c) => {
+            const request = c.req.raw;
+
+            const response = await renderAppToHTMLResponse(<App />, {
+              request,
+              assets,
+            });
+
+            return response;
+          });
+
+          export default app;
         `,
         'browser.ts': multiline`
           import {ThreadBroadcastChannel} from '@quilted/quilt/threads';
@@ -104,10 +150,35 @@ describe('threads', () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       await workspace.fs.write({
-        'App.tsx': multiline`
-          export default function App() {
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+          import {renderAppToHTMLResponse} from '@quilted/quilt/server';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const app = new Hono();
+          const assets = new BrowserAssets();
+
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+          }
+
+          function App() {
             return <button id="button" type="button">Open popup</button>;
           }
+          
+          app.get('/*', async (c) => {
+            const request = c.req.raw;
+
+            const response = await renderAppToHTMLResponse(<App />, {
+              request,
+              assets,
+            });
+
+            return response;
+          });
+
+          export default app;
         `,
         'browser.ts': multiline`
           import {ThreadWindow, ThreadNestedWindow} from '@quilted/quilt/threads';
@@ -152,10 +223,31 @@ describe('threads', () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       await workspace.fs.write({
-        'App.tsx': multiline`
-          export default function App() {
-            return null;
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const app = new Hono();
+          const assets = new BrowserAssets();
+
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
           }
+
+          app.get('/*', async () => {
+            const allAssets = await assets.entry();
+
+            const scriptTags = allAssets.scripts.map((script) => {
+              return \`<script type="module" src="\${script.source}"></script>\`;
+            }).join('');
+
+            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+              headers: {'Content-Type': 'text/html'},
+            });
+          });
+          
+          export default app;
         `,
         'browser.ts': multiline`
           import {ThreadWindow} from '@quilted/quilt/threads';
@@ -201,10 +293,31 @@ describe('threads', () => {
       await using workspace = await createWorkspace({fixture: 'empty-app'});
 
       await workspace.fs.write({
-        'App.tsx': multiline`
-          export default function App() {
-            return null;
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const app = new Hono();
+          const assets = new BrowserAssets();
+
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
           }
+
+          app.get('/*', async () => {
+            const allAssets = await assets.entry();
+
+            const scriptTags = allAssets.scripts.map((script) => {
+              return \`<script type="module" src="\${script.source}"></script>\`;
+            }).join('');
+
+            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+              headers: {'Content-Type': 'text/html'},
+            });
+          });
+          
+          export default app;
         `,
         'browser.ts': multiline`
           import {ThreadWebWorker, createWorker} from '@quilted/quilt/threads';
@@ -256,10 +369,31 @@ describe('threads', () => {
 
           export default config;
         `,
-        'App.tsx': multiline`
-          export default function App() {
-            return null;
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+          import {BrowserAssets} from 'quilt:module/assets';
+
+          const app = new Hono();
+          const assets = new BrowserAssets();
+
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
           }
+
+          app.get('/*', async () => {
+            const allAssets = await assets.entry();
+
+            const scriptTags = allAssets.scripts.map((script) => {
+              return \`<script type="module" src="\${script.source}"></script>\`;
+            }).join('');
+
+            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+              headers: {'Content-Type': 'text/html'},
+            });
+          });
+          
+          export default app;
         `,
         'browser.ts': multiline`
           import {ThreadServiceWorker} from '@quilted/threads';

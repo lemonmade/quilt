@@ -42,6 +42,7 @@ export interface Command {
   node(script: string, options?: SpawnOptions): RunResult;
 }
 
+// TODO: make into a class, add Workspace.create()
 export interface Workspace extends AsyncDisposable {
   readonly fs: FileSystem;
   readonly command: Command;

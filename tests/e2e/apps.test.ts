@@ -12,13 +12,18 @@ describe('app builds', () => {
       `,
       'server.tsx': multiline`
         import {Hono} from 'hono';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
         const app = new Hono();
         const assets = new BrowserAssets();
 
-        app.get('*', async (c) => {
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
+
+        app.get('/*', async (c) => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(
@@ -309,18 +314,23 @@ describe('app builds', () => {
         `,
         'server.ts': multiline`
           import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
 
           const app = new Hono();
           const assets = new BrowserAssets();
 
-          router.get('*', async () => {
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+          }
+
+          app.get('/*', async () => {
             const allAssets = await assets.entry({
               id: './extra-browser-entry',
             });
 
             const scriptTags = allAssets.scripts.map((script) => {
-              return \`<script src="\${script.source}"></script>\`;
+              return \`<script type="module" src="\${script.source}"></script>\`;
             }).join('');
 
             return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
@@ -328,7 +338,7 @@ describe('app builds', () => {
             });
           });
           
-          export default router;
+          export default app;
         `,
       };
 
@@ -352,13 +362,13 @@ describe('app builds', () => {
                   
         const app = new Hono();
 
-        router.get('*', async () => {
+        app.get('/*', async () => {
           return new Response('<html>Hello world</html>', {
             headers: {'Content-Type': 'text/html'},
           });
         });
         
-        export default router;
+        export default app;
       `,
       'rollup.config.js': multiline`
         import {quiltApp} from '@quilted/rollup/app';  
