@@ -312,7 +312,7 @@ describe('app builds', () => {
 
           document.body.append(element);
         `,
-        'server.ts': multiline`
+        'server.tsx': multiline`
           import {Hono} from 'hono';
           import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
