@@ -11,7 +11,7 @@ import {
 
 import {multiline} from './shared/strings.ts';
 import {resolveEnvOption, type MagicModuleEnvOptions} from './features/env.ts';
-import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER} from './constants.ts';
+import {MAGIC_MODULE_ENTRY, MAGIC_MODULE_HONO} from './constants.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
 import type {ModuleRuntime} from './module.ts';
 
@@ -33,17 +33,16 @@ export interface ServerOptions {
   entry?: string;
 
   /**
-   * Whether this server code uses the `request-router` library to
-   * define itself in a generic way, which can be adapted to a variety
-   * of environments. By default, this is `'request-router'`, and when `'request-router'`,
-   * the `entry` you specified must export an `RequestRouter` object as
-   * its default export. When set to `false`, the app server will be built
-   * as a basic server-side JavaScript project, without the special
-   * `request-router` adaptor.
+   * Whether this server code uses `hono` to define itself in a generic way,
+   * which can be adapted to a variety of environments. By default, this is
+   * `'hono'`, and when `'hono'`, the `entry` you specified must export an
+   * `Hono` object as its default export. When set to `'custom'`, the app
+   * server will be built as a basic server-side JavaScript project, without
+   * the special `hono` adaptor.
    *
-   * @default 'request-router'
+   * @default 'hono'
    */
-  format?: 'request-router' | 'custom';
+  format?: 'hono' | 'custom';
 
   /**
    * Whether to include GraphQL-related code transformations.
@@ -76,12 +75,12 @@ export interface ServerRuntime extends ModuleRuntime {
   env?: string;
 
   /**
-   * The content to use as the entry point when the server uses the `request-router`
-   * format for their server. This file should import the request router instance for
-   * this app from 'quilt:module/request-router', and create a server that is appropriate
+   * The content to use as the entry point when the server uses the `hono`
+   * format for their server. This file should import the hono instance for
+   * this app from 'quilt:module/hono', and create a server that is appropriate
    * for this runtime.
    */
-  requestRouter?(): string;
+  hono?(): string;
 }
 
 export interface ServerOutputOptions
@@ -112,12 +111,12 @@ export interface ServerOutputOptions
   hash?: boolean | 'async-only';
 }
 
-export {MAGIC_MODULE_ENTRY, MAGIC_MODULE_REQUEST_ROUTER};
+export {MAGIC_MODULE_ENTRY, MAGIC_MODULE_HONO};
 
 export async function quiltServer({
   root: rootPath = process.cwd(),
   entry,
-  format = 'request-router',
+  format = 'hono',
   env,
   graphql = true,
   output,
@@ -163,7 +162,7 @@ export async function quiltServer({
     : await sourceForServer(project);
 
   const finalEntry =
-    format === 'request-router'
+    format === 'hono'
       ? MAGIC_MODULE_ENTRY
       : (serverEntry ?? MAGIC_MODULE_ENTRY);
 
@@ -188,21 +187,19 @@ export async function quiltServer({
     removeBuildFiles([outputDirectory, reportDirectory], {root: project.root}),
   ];
 
-  if (format === 'request-router') {
+  if (format === 'hono') {
     plugins.push(
       createMagicModulePlugin({
-        name: '@quilted/magic-module/server-request-router',
-        module: MAGIC_MODULE_REQUEST_ROUTER,
+        name: '@quilted/magic-module/server-hono',
+        module: MAGIC_MODULE_HONO,
         alias: serverEntry,
       }),
       createMagicModulePlugin({
-        name: '@quilted/request-router',
+        name: '@quilted/hono',
         sideEffects: true,
         module: MAGIC_MODULE_ENTRY,
         source() {
-          return (
-            runtime.requestRouter?.() ?? nodeServerRuntime().requestRouter()
-          );
+          return runtime.hono?.() ?? nodeServerRuntime().hono();
         },
       }),
     );
@@ -288,18 +285,31 @@ export function nodeServerRuntime({
     resolve: {
       exportConditions: ['node'],
     },
-    requestRouter() {
+    hono() {
       return multiline`
-        import requestRouter from ${JSON.stringify(
-          MAGIC_MODULE_REQUEST_ROUTER,
-        )};
+        import app from ${JSON.stringify(MAGIC_MODULE_HONO)};
 
-        import {createHttpServer} from '@quilted/quilt/request-router/node';
+        import {serve} from '@quilted/quilt/hono/node';
 
         const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
         const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
-      
-        createHttpServer(requestRouter).listen(port, host);
+
+        const server = serve(app);
+
+        process.on('SIGINT', () => {
+          server.close();
+          process.exit(0);
+        });
+
+        process.on('SIGTERM', () => {
+          server.close((err) => {
+            if (err) {
+              console.error(err);
+              process.exit(1);
+            }
+            process.exit(0);
+          });
+        });
       `;
     },
   } satisfies ServerRuntime;

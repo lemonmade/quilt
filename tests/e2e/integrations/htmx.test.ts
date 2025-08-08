@@ -16,14 +16,21 @@ describe('htmx', () => {
     await workspace.fs.write({
       'browser.tsx': HTMX_BROWSER_ENTRY,
       'server.tsx': multiline`
+        import {Hono} from 'hono';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
+
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
         
-        router.get('/', async (request) => {
+        app.get('/', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderToHTMLResponse(
             <HTML>
               <HTMLPlaceholderEntryAssets />
@@ -49,7 +56,9 @@ describe('htmx', () => {
           );
         }
 
-        router.post('/clicked', async (request) => {
+        app.post('/clicked', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderToHTMLResponse(<ClickedButton />, {
             request,
             assets,
@@ -62,7 +71,7 @@ describe('htmx', () => {
           return <button data-clicked>Clicked!</button>;
         }
         
-        export default router;
+        export default app;
       `,
     });
 
@@ -81,15 +90,22 @@ describe('htmx', () => {
     await workspace.fs.write({
       'browser.tsx': HTMX_BROWSER_ENTRY,
       'server.tsx': multiline`
+        import {Hono} from 'hono';
         import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
+
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
         
-        router.get('/', async (request) => {
+        app.get('/', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderToHTMLResponse(
             <HTML>
               <HTMLPlaceholderEntryAssets />
@@ -117,7 +133,9 @@ describe('htmx', () => {
           );
         }
         
-        router.post('/choose', async (request) => {
+        app.post('/choose', async (c) => {
+          const request = c.req.raw;
+
           const {trigger} = parseHTMXRequestHeaders(request.headers);
 
           const {body, headers} = await renderToHTMLResponse(<Confirmation selection={trigger} />, {
@@ -141,7 +159,7 @@ describe('htmx', () => {
           return <div data-confirmation>You chose option: {selection}</div>;
         }
         
-        export default router;
+        export default app;
       `,
     });
 

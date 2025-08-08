@@ -62,6 +62,9 @@ importers:
       execa:
         specifier: ^9.5.2
         version: 9.5.2
+      hono:
+        specifier: ^4.8.5
+        version: 4.8.5
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0
@@ -135,10 +138,6 @@ importers:
         version: link:../../packages/rollup
 
   integrations/htmx:
-    dependencies:
-      '@quilted/request-router':
-        specifier: workspace:^0.3.0
-        version: link:../../packages/request-router
     devDependencies:
       htmx.org:
         specifier: ^2.0.0
@@ -411,6 +410,31 @@ importers:
         specifier: ^4.0.0
         version: 4.0.2
 
+  packages/hono:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.17.1
+        version: 1.17.1(hono@4.8.5)
+      '@quilted/http':
+        specifier: workspace:^0.3.0
+        version: link:../http
+      '@quilted/routing':
+        specifier: workspace:^0.4.0
+        version: link:../routing
+      hono:
+        specifier: ^4.0.0
+        version: 4.8.5
+      send:
+        specifier: ^0.17.0
+        version: 0.17.2
+    devDependencies:
+      '@types/cookie':
+        specifier: ^0.4.0
+        version: 0.4.1
+      '@types/send':
+        specifier: ^0.17.4
+        version: 0.17.4
+
   packages/http: {}
 
   packages/localize: {}
@@ -454,9 +478,6 @@ importers:
       '@quilted/preact-context':
         specifier: workspace:^0.1.3
         version: link:../preact-context
-      '@quilted/request-router':
-        specifier: workspace:^0.3.2
-        version: link:../request-router
       '@quilted/signals':
         specifier: workspace:^0.2.3
         version: link:../signals
@@ -529,10 +550,6 @@ importers:
       '@quilted/signals':
         specifier: workspace:^0.2.0
         version: link:../signals
-    devDependencies:
-      '@quilted/request-router':
-        specifier: workspace:^0.3.0
-        version: link:../request-router
       preact:
         specifier: ^10.26.0
         version: 10.26.0
@@ -636,6 +653,9 @@ importers:
       '@quilted/graphql':
         specifier: workspace:^3.3.9
         version: link:../graphql
+      '@quilted/hono':
+        specifier: workspace:^0.1.0
+        version: link:../hono
       '@quilted/preact-async':
         specifier: workspace:^0.1.20
         version: link:../preact-async
@@ -672,9 +692,6 @@ importers:
       '@quilted/react-dom':
         specifier: workspace:^19.0.1
         version: link:../react-dom
-      '@quilted/request-router':
-        specifier: workspace:^0.3.2
-        version: link:../request-router
       '@quilted/signals':
         specifier: workspace:^0.2.3
         version: link:../signals
@@ -755,25 +772,6 @@ importers:
       react-test-renderer:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
-
-  packages/request-router:
-    dependencies:
-      '@quilted/http':
-        specifier: workspace:^0.3.0
-        version: link:../http
-      '@quilted/routing':
-        specifier: workspace:^0.4.0
-        version: link:../routing
-      send:
-        specifier: ^0.17.0
-        version: 0.17.2
-    devDependencies:
-      '@types/cookie':
-        specifier: ^0.4.0
-        version: 0.4.1
-      '@types/send':
-        specifier: ^0.17.4
-        version: 0.17.4
 
   packages/rollup:
     dependencies:
@@ -920,9 +918,9 @@ importers:
       '@quilted/babel':
         specifier: workspace:^0.2.4
         version: link:../babel
-      '@quilted/request-router':
-        specifier: workspace:^0.3.2
-        version: link:../request-router
+      '@quilted/hono':
+        specifier: workspace:^0.1.0
+        version: link:../hono
       '@quilted/rollup':
         specifier: workspace:^0.3.3
         version: link:../rollup
@@ -2297,6 +2295,12 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
 
+  '@hono/node-server@1.17.1':
+    resolution: {integrity: sha512-SY79W/C+2b1MyAzmIcV32Q47vO1b5XwLRwj8S9N6Jr5n1QCkIfAIH6umOSgqWZ4/v67hg6qq8Ha5vZonVidGsg==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
+
   '@iarna/toml@2.2.5':
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
 
@@ -3583,6 +3587,10 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  hono@4.8.5:
+    resolution: {integrity: sha512-Up2cQbtNz1s111qpnnECdTGqSIUIhZJMLikdKkshebQSEBcoUKq6XJayLGqSZWidiH0zfHRCJqFu062Mz5UuRA==}
+    engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
@@ -6254,6 +6262,10 @@ snapshots:
     dependencies:
       graphql: 16.8.1
 
+  '@hono/node-server@1.17.1(hono@4.8.5)':
+    dependencies:
+      hono: 4.8.5
+
   '@iarna/toml@2.2.5': {}
 
   '@isaacs/cliui@8.0.2':
@@ -7637,6 +7649,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hono@4.8.5: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:

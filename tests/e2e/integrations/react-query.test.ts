@@ -44,19 +44,28 @@ describe('react-query', () => {
         }
       `,
       'server.tsx': multiline`
-        import {RequestRouter, JSONResponse} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.get('/api', (request) => {
-          return new JSONResponse({
-            hello: request.URL.searchParams.get('name') ?? 'world',
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
+
+        app.get('/api', (c) => {
+          const url = new URL(c.req.raw.url);
+
+          return Response.json({
+            hello: url.searchParams.get('name') ?? 'world',
           });
         });
         
-        router.get(async (request) => {
+        app.get('/*', async (c) => {
+          const request = c.req.raw;
+
           const [{App}, {renderAppToHTMLResponse}] = await Promise.all([
             import('./App.tsx'),
             import('@quilted/quilt/server'),
@@ -70,7 +79,7 @@ describe('react-query', () => {
           return response;
         });
 
-        export default router;
+        export default app;
       `,
     });
 

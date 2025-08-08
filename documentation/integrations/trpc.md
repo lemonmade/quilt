@@ -59,25 +59,23 @@ tRPC needs to be accessible through an API endpoint on your server. If you have 
 ```tsx
 // app/server.tsx
 
-import {RequestRouter} from '@quilted/quilt/request-router';
+import {Hono} from 'hono';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
 
 import {appRouter} from './trpc.ts';
 
-const router = new RequestRouter();
+const app = new Hono();
 
-router.any(
-  'api',
-  (request) => {
-    return fetchRequestHandler({
-      endpoint: '/api',
-      req: request,
-      router: appRouter,
-      createContext: () => ({}),
-    });
-  },
-  {exact: false},
-);
+app.all('/api/*', (c) => {
+  const request = c.req.raw;
+
+  return fetchRequestHandler({
+    endpoint: '/api',
+    req: request,
+    router: appRouter,
+    createContext: () => ({}),
+  });
+});
 
 // Other routes, like the one to render your React app, go here...
 ```

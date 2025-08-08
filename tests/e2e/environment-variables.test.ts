@@ -39,7 +39,7 @@ describe('app builds', () => {
     });
 
     it('automatically inlines a MODE environment variable', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await createWorkspace({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`

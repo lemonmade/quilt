@@ -1,6 +1,6 @@
 import {
   multiline,
-  MAGIC_MODULE_REQUEST_ROUTER,
+  MAGIC_MODULE_HONO,
   type ServerRuntime,
 } from '@quilted/rollup';
 
@@ -22,18 +22,16 @@ export interface DenoRuntimeOptions {
 export function deno({port, host}: DenoRuntimeOptions) {
   return {
     env: 'Deno.env.toObject()',
-    requestRouter() {
+    hono() {
       return multiline`
-        import {createServeHandler} from '@quilted/deno/request-router';
-        import router from ${JSON.stringify(MAGIC_MODULE_REQUEST_ROUTER)};
+        import app from ${JSON.stringify(MAGIC_MODULE_HONO)};
 
         const port = ${
           port ?? `Number.parseInt(Deno.env.get('PORT') ?? '8080', 10)`
         };
         const hostname = ${host ? JSON.stringify(host) : 'undefined'};
-        const handleRequest = createServeHandler(router);
 
-        Deno.serve({port, hostname}, handleRequest);
+        Deno.serve({port, hostname}, app.fetch);
       `;
     },
   } satisfies ServerRuntime;

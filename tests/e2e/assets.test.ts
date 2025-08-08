@@ -60,14 +60,21 @@ describe('app builds', () => {
           document.body.append(element);
         `,
         'server.tsx': multiline`
-          import {RequestRouter} from '@quilted/quilt/request-router';
+          import {Hono} from 'hono';
           import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
 
-          const router = new RequestRouter();
+          const app = new Hono();
           const assets = new BrowserAssets();
 
-          router.get(async (request) => {
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+          }
+
+          app.get('/*', async (c) => {
+            const request = c.req.raw;
+
             const response = await renderToHTMLResponse(<AppHTML />, {
               request,
               assets,
@@ -85,7 +92,7 @@ describe('app builds', () => {
             );
           }
           
-          export default router;
+          export default app;
         `,
         'rollup.config.js': multiline`
           import {quiltApp} from '@quilted/rollup/app';  
@@ -144,35 +151,42 @@ describe('app builds', () => {
             });
           `,
           'server.tsx': multiline`
-            import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
-
+            import {Hono} from 'hono';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
             import {BrowserAssets} from 'quilt:module/assets';
 
-            const router = new RequestRouter();
+            const app = new Hono();
             const assets = new BrowserAssets();
 
-            router.get(async (request) => {
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
+              const request = c.req.raw;
+
               const {
-                renderToString,
+                renderToHTMLResponse,
                 ScriptAssets,
               } = await import('@quilted/quilt/server');
 
               const {scripts} = assets.entry();
 
-              const content = renderToString(
+              const response = await renderToHTMLResponse(
                 <html>
                   <head>
                     <title>Inline scripts test</title>
                     <ScriptAssets scripts={scripts} />
                   </head>
                   <body></body>
-                </html>
+                </html>,
+                {request},
               );
 
-              return new HTMLResponse(content);
+              return response;
             });
 
-            export default router;
+            export default app;
           `,
         });
 
@@ -214,23 +228,29 @@ describe('app builds', () => {
             });
           `,
           'server.tsx': multiline`
-            import {RequestRouter, HTMLResponse} from '@quilted/quilt/request-router';
-
+            import {Hono} from 'hono';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
             import {BrowserAssets} from 'quilt:module/assets';
 
-            const router = new RequestRouter();
+            const app = new Hono();
             const assets = new BrowserAssets();
 
-            router.get(async (request) => {
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
+              const request = c.req.raw;
+
               const {
-                renderToString,
+                renderToHTMLResponse,
                 StyleAssets,
                 ScriptAssets,
               } = await import('@quilted/quilt/server');
 
               const {styles, scripts} = assets.entry({id: './inline.css'});
 
-              const content = renderToString(
+              const response = await renderToHTMLResponse(
                 <html>
                   <head>
                     <title>Inline CSS test</title>
@@ -240,13 +260,14 @@ describe('app builds', () => {
                   <body>
                     Hello world!
                   </body>
-                </html>
+                </html>,
+                {request},
               );
 
-              return new HTMLResponse(content);
+              return response;
             });
 
-            export default router;
+            export default app;
           `,
         });
 

@@ -1,5 +1,3 @@
-import {EnhancedResponse} from '@quilted/request-router';
-
 export interface HTMXTriggerEvent {
   event: string;
   detail?: unknown | null;
@@ -124,13 +122,19 @@ export interface HTMXResponseOptions {
   triggerAfterSwap?: HTMXTriggerOption;
 }
 
+const CONTENT_TYPE_HEADER = 'Content-Type';
+const CONTENT_TYPE_OPTIONS_HEADER = 'X-Content-Type-Options';
+
+const CONTENT_TYPE_DEFAULT_VALUE_HTML = 'text/html; charset=utf-8';
+const CONTENT_TYPE_OPTIONS_DEFAULT_VALUE_HTML = 'nosniff';
+
 /**
  * An enhanced response object that applies the HTMX response headers based
  * on the `htmx` option.
  *
  * @see https://htmx.org/docs/#response-headers
  */
-export class HTMXResponse extends EnhancedResponse {
+export class HTMXResponse extends Response {
   constructor(
     body?: BodyInit | null,
     {
@@ -145,13 +149,25 @@ export class HTMXResponse extends EnhancedResponse {
       htmx?: HTMXResponseOptions;
     } = {},
   ) {
-    super(body, options);
-
-    this.headers.set('Content-Type', 'text/html; charset=utf-8');
+    const headers = new Headers(options.headers);
+    if (!headers.has(CONTENT_TYPE_HEADER)) {
+      headers.set(CONTENT_TYPE_HEADER, CONTENT_TYPE_DEFAULT_VALUE_HTML);
+    }
+    if (!headers.has(CONTENT_TYPE_OPTIONS_HEADER)) {
+      headers.set(
+        CONTENT_TYPE_OPTIONS_HEADER,
+        CONTENT_TYPE_OPTIONS_DEFAULT_VALUE_HTML,
+      );
+    }
 
     if (htmx) {
-      setHTMXResponseHeaders(this.headers, htmx);
+      setHTMXResponseHeaders(headers, htmx);
     }
+
+    super(body, {
+      ...options,
+      headers,
+    });
   }
 }
 

@@ -14,11 +14,11 @@ declare module 'quilt:module/app' {
   export default App;
 }
 
-declare module 'quilt:module/request-router' {
-  import type {RequestRouter} from '@quilted/request-router';
+declare module 'quilt:module/hono' {
+  import type {Hono} from 'hono';
 
-  const router: RequestRouter;
-  export default router;
+  const app: Hono;
+  export default app;
 }
 
 declare module 'quilt:module/assets' {

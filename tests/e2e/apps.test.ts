@@ -11,14 +11,21 @@ describe('app builds', () => {
         document.body.append(element);
       `,
       'server.tsx': multiline`
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
+        import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
-        const router = new RequestRouter();
+        const app = new Hono();
         const assets = new BrowserAssets();
 
-        router.get(async (request) => {
+        if (process.env.NODE_ENV === 'production') {
+          app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+        }
+
+        app.get('/*', async (c) => {
+          const request = c.req.raw;
+
           const response = await renderToHTMLResponse(
             <HTML>
               <HTMLPlaceholderEntryAssets />
@@ -32,7 +39,7 @@ describe('app builds', () => {
           return response;
         });
         
-        export default router;
+        export default app;
       `,
       'rollup.config.js': multiline`
         import {quiltApp} from '@quilted/rollup/app';  
@@ -305,20 +312,25 @@ describe('app builds', () => {
 
           document.body.append(element);
         `,
-        'server.ts': multiline`
-          import {RequestRouter} from '@quilted/quilt/request-router';
+        'server.tsx': multiline`
+          import {Hono} from 'hono';
+          import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
 
-          const router = new RequestRouter();
+          const app = new Hono();
           const assets = new BrowserAssets();
 
-          router.get(async (request) => {
+          if (process.env.NODE_ENV === 'production') {
+            app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+          }
+
+          app.get('/*', async () => {
             const allAssets = await assets.entry({
               id: './extra-browser-entry',
             });
 
             const scriptTags = allAssets.scripts.map((script) => {
-              return \`<script src="\${script.source}"></script>\`;
+              return \`<script type="module" src="\${script.source}"></script>\`;
             }).join('');
 
             return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
@@ -326,7 +338,7 @@ describe('app builds', () => {
             });
           });
           
-          export default router;
+          export default app;
         `,
       };
 
@@ -346,17 +358,17 @@ describe('app builds', () => {
   describe('server entry', () => {
     const customServerEntryFiles = {
       'server.ts': multiline`
-        import {RequestRouter} from '@quilted/quilt/request-router';
+        import {Hono} from 'hono';
                   
-        const router = new RequestRouter();
+        const app = new Hono();
 
-        router.get(async (request) => {
+        app.get('/*', async () => {
           return new Response('<html>Hello world</html>', {
             headers: {'Content-Type': 'text/html'},
           });
         });
         
-        export default router;
+        export default app;
       `,
       'rollup.config.js': multiline`
         import {quiltApp} from '@quilted/rollup/app';  

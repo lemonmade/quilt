@@ -1,19 +1,22 @@
-import type {} from '@quilted/quilt/modules';
-import {RequestRouter} from '@quilted/quilt/request-router';
-
+import {Hono} from 'hono';
+import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
 import {BrowserAssets} from 'quilt:module/assets';
 
-const router = new RequestRouter();
+const app = new Hono();
 const assets = new BrowserAssets();
 
+if (process.env.NODE_ENV === 'production') {
+  app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+}
+
 // For all GET requests, render our Preact application.
-router.get(async (request) => {
+app.get('*', async (c) => {
+  const request = c.req.raw;
+
   const [{default: App}, {renderAppToHTMLResponse}] = await Promise.all([
     import('./App.tsx'),
     import('@quilted/quilt/server'),
   ]);
-
-  assets.entry({id: './inline.css'}).styles;
 
   const response = await renderAppToHTMLResponse(<App />, {
     request,
@@ -23,4 +26,4 @@ router.get(async (request) => {
   return response;
 });
 
-export default router;
+export default app;

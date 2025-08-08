@@ -9,4 +9,5 @@ export {
   NoopBrowserServerClass as BrowserResponseElementAttributes,
   NoopBrowserServerClass as BrowserResponseSerializations,
   NoopBrowserServerClass as BrowserResponseAssets,
+  NoopBrowserServerClass as ResponseCookies,
 };

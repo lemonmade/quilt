@@ -9,7 +9,6 @@
     {"path": "../http"},
     {"path": "../http"},
     {"path": "../preact-context"},
-    {"path": "../request-router"},
     {"path": "../signals"}
   ]
 }
