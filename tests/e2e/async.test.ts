@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, startServer, createWorkspace, Page} from './utilities.ts';
+import {multiline, startServer, Workspace, Page} from './utilities.ts';
 
 interface TestHarness {
   waiting:
@@ -17,7 +17,7 @@ declare module globalThis {
 
 describe('async', () => {
   it('can server render with an async module', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'async.ts': multiline`
@@ -51,7 +51,7 @@ describe('async', () => {
   });
 
   it('can server render an async component', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'Async.module.css': multiline`
@@ -94,7 +94,7 @@ describe('async', () => {
   });
 
   it('can server render an async component with deferred hydration', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
     await workspace.fs.write({
       'Async.module.css': multiline`
         .Async {
@@ -168,7 +168,7 @@ describe('async', () => {
 
   // This started failing with Hono for some reason, skipping for simplicity
   it.skip('can client render an async component', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'Async.module.css': multiline`
@@ -232,7 +232,7 @@ describe('async', () => {
   });
 
   it('can client render an async component with deferred hydration', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
     await workspace.fs.write({
       'Async.module.css': multiline`
         .Async {
@@ -304,7 +304,7 @@ describe('async', () => {
   });
 
   it('can client render a client-only async component', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'browser.tsx': multiline`
@@ -364,7 +364,7 @@ describe('async', () => {
   });
 
   it('can server render with references to normal, async-imported modules', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'async.ts': multiline`
@@ -407,7 +407,7 @@ describe('async', () => {
   });
 
   it('can server render components using an async fetch', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'server.tsx': multiline`
@@ -488,7 +488,7 @@ describe('async', () => {
   });
 
   it('can server render multiple async fetches using separate cache keys', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'server.tsx': multiline`
@@ -633,7 +633,7 @@ describe('async', () => {
   }
 
   it('can retry async fetches with useAsyncRetry()', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
@@ -692,7 +692,7 @@ describe('async', () => {
   });
 
   it('retries async actions three times by default', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
@@ -769,7 +769,7 @@ describe('async', () => {
   });
 
   it('can retry a custom number of times', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     const limit = 10;
 
@@ -827,7 +827,7 @@ describe('async', () => {
   });
 
   it('can rerun async fetches with useAsyncCacheControl()', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'browser.tsx': BROWSER_ENTRY_WITH_TEST_RPC,
@@ -893,7 +893,7 @@ describe('async', () => {
   });
 
   it('can server render components using route loaders', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'App.tsx': multiline`

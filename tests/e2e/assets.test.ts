@@ -1,15 +1,10 @@
 import {describe, it, expect} from 'vitest';
-import {
-  multiline,
-  createWorkspace,
-  startServer,
-  type Page,
-} from './utilities.ts';
+import {multiline, Workspace, startServer, type Page} from './utilities.ts';
 
 describe('app builds', () => {
   describe('assets', () => {
     it('loads the assets for each browser build', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'package.json': JSON.stringify(
@@ -51,7 +46,7 @@ describe('app builds', () => {
     });
 
     it('uses System.js to run a browser build without ESModules', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'browser.ts': multiline`
@@ -125,7 +120,7 @@ describe('app builds', () => {
 
     describe('inline', () => {
       it('allows the developer to inline the built version of specific JavaScript modules', async () => {
-        await using workspace = await createWorkspace({fixture: 'empty-app'});
+        await using workspace = await Workspace.create({fixture: 'empty-app'});
 
         await workspace.fs.write({
           'inline.ts': multiline`
@@ -207,7 +202,7 @@ describe('app builds', () => {
       });
 
       it('allows the developer to inline the built version of specific CSS files', async () => {
-        await using workspace = await createWorkspace({fixture: 'empty-app'});
+        await using workspace = await Workspace.create({fixture: 'empty-app'});
 
         await workspace.fs.write({
           'inline.css': multiline`
@@ -289,7 +284,7 @@ describe('app builds', () => {
 
     describe('images', () => {
       it('creates a hashed URL pointing to a publicly-served version of the image', async () => {
-        await using workspace = await createWorkspace({fixture: 'empty-app'});
+        await using workspace = await Workspace.create({fixture: 'empty-app'});
 
         await workspace.fs.write({
           'App.tsx': multiline`
@@ -312,7 +307,7 @@ describe('app builds', () => {
       });
 
       it('inlines small images into the JavaScript bundle', async () => {
-        await using workspace = await createWorkspace({fixture: 'basic-app'});
+        await using workspace = await Workspace.create({fixture: 'basic-app'});
 
         await workspace.fs.write({
           'App.tsx': multiline`
@@ -337,7 +332,7 @@ describe('app builds', () => {
       });
 
       it('lets the developer configure a custom size limit for image inlining', async () => {
-        await using workspace = await createWorkspace({fixture: 'basic-app'});
+        await using workspace = await Workspace.create({fixture: 'basic-app'});
         const {fs} = workspace;
 
         await fs.write({
@@ -388,7 +383,7 @@ describe('app builds', () => {
     });
 
     it('inlines raw file contents into the JavaScript bundle', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'message.txt': 'Hello, world!',

@@ -1,10 +1,10 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, createWorkspace, startServer} from './utilities.ts';
+import {multiline, Workspace, startServer} from './utilities.ts';
 
 describe('app builds', () => {
   describe('environment variables', () => {
     it('inlines environment variables specified in the configuration file', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const builder = 'Chris';
 
@@ -39,7 +39,7 @@ describe('app builds', () => {
     });
 
     it('automatically inlines a MODE environment variable', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -58,7 +58,7 @@ describe('app builds', () => {
     });
 
     it('automatically replaces process.env.NODE_ENV with the MODE environment variable', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -76,7 +76,7 @@ describe('app builds', () => {
     });
 
     it('automatically replaces globalThis.process.env.NODE_ENV with the MODE environment variable', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -94,7 +94,7 @@ describe('app builds', () => {
     });
 
     it('loads .env files for production builds', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         '.env':
@@ -128,7 +128,7 @@ describe('app builds', () => {
     });
 
     it('inlines environment variables into the app server', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const builder = 'Chris';
 

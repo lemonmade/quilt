@@ -1,10 +1,10 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, createWorkspace, startServer} from './utilities.ts';
+import {multiline, Workspace, startServer} from './utilities.ts';
 
 describe('browser', () => {
   describe('cookies', () => {
     it('provides the request cookies during server rendering', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const cookieName = 'user';
       const cookieValue = 'Chris';
@@ -45,7 +45,7 @@ describe('browser', () => {
     });
 
     it('can set client-side cookies', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const cookieName = 'user';
       const cookieValue = 'Chris';
@@ -95,7 +95,7 @@ describe('browser', () => {
     });
 
     it('can set response cookies from a node server', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -138,7 +138,7 @@ describe('browser', () => {
 
   describe('meta', () => {
     it('only renders one meta tag with a given content attribute', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -175,7 +175,7 @@ describe('browser', () => {
 
   describe.skip('head scripts', () => {
     it('includes the referenced scripts in the head', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -198,7 +198,7 @@ describe('browser', () => {
 
   describe.skip('head styles', () => {
     it('includes the referenced styles in the head', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`

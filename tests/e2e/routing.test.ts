@@ -1,14 +1,9 @@
 import {describe, it, expect} from 'vitest';
-import {
-  type Page,
-  multiline,
-  createWorkspace,
-  startServer,
-} from './utilities.ts';
+import {type Page, multiline, Workspace, startServer} from './utilities.ts';
 
 describe('routing', () => {
   it('can redirect between routes', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'App.tsx': multiline`
@@ -44,7 +39,7 @@ describe('routing', () => {
 
   describe.skip('scroll restoration', () => {
     it('scrolls to the top when navigating to a new page, and back to its original position when navigating back', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const scrollBy = 100;
 
@@ -116,7 +111,7 @@ describe('routing', () => {
     });
 
     it('preserves the scroll position through a full browser reload with the default scroll restoration store', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const scrollBy = 100;
 
@@ -189,7 +184,7 @@ describe('routing', () => {
     });
 
     it('allows customizing the “root” scroll view that is restored on navigation', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const scrollBy = 100;
       const frameId = 'Frame';
@@ -281,7 +276,7 @@ describe('routing', () => {
     });
 
     it('can create additional named scroll areas that are also restored on navigation', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       const scrollBy = 100;
       const scrollAreaId = 'ScrollView';
@@ -362,7 +357,7 @@ describe('routing', () => {
 
   describe.skip('navigation blocking', () => {
     it('blocks until a synchronous blocking function calls to allow the navigation to proceed', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
@@ -422,7 +417,7 @@ describe('routing', () => {
     });
 
     // it('blocks until an asynchronous blocking function resolves', async () => {
-    //   await using workspace = await createWorkspace({fixture: 'basic-app'});
+    //   await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     //   await workspace.fs.write({
     //     'foundation/Routes.tsx': multiline`
@@ -484,7 +479,7 @@ describe('routing', () => {
     // });
 
     it('blocks back navigation in the browser until a blocker resolves', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
@@ -544,7 +539,7 @@ describe('routing', () => {
     });
 
     it('handles navigation blocks that prevent going back more than one page in the stack', async () => {
-      await using workspace = await createWorkspace({fixture: 'basic-app'});
+      await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`

@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, createWorkspace, startServer} from './utilities.ts';
+import {multiline, Workspace, startServer} from './utilities.ts';
 
 describe('app builds', () => {
   describe('browser entry', () => {
@@ -49,7 +49,7 @@ describe('app builds', () => {
     };
 
     it('uses a browser.ts file as the browser entry by default', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({...customBrowserEntryFiles});
 
@@ -62,7 +62,7 @@ describe('app builds', () => {
     });
 
     it('uses the `browser.entry` option from the rollup plugin as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -91,7 +91,7 @@ describe('app builds', () => {
     });
 
     it('uses the `input` from Rollup as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -119,7 +119,7 @@ describe('app builds', () => {
     });
 
     it('uses the `exports` field from package.json as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -147,7 +147,7 @@ describe('app builds', () => {
     });
 
     it('uses the root `exports` field from package.json as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -175,7 +175,7 @@ describe('app builds', () => {
     });
 
     it('uses the root `exports.default` field from package.json as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -203,7 +203,7 @@ describe('app builds', () => {
     });
 
     it('uses the root `exports.browser` field from package.json as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -231,7 +231,7 @@ describe('app builds', () => {
     });
 
     it('uses the root `exports.source` field from package.json as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -259,7 +259,7 @@ describe('app builds', () => {
     });
 
     it('uses the `main` field from package.json as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -292,7 +292,7 @@ describe('app builds', () => {
     });
 
     it('allows you to specify additional entries using extra `exports` fields', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customBrowserEntryFiles,
@@ -378,7 +378,7 @@ describe('app builds', () => {
     };
 
     it('uses a server.ts file as the server entry by default', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({...customServerEntryFiles});
 
@@ -393,7 +393,7 @@ describe('app builds', () => {
     });
 
     it('uses the `server.entry` option from the rollup plugin as the browser entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customServerEntryFiles,
@@ -424,7 +424,7 @@ describe('app builds', () => {
     });
 
     it('uses the `exports[server]` field from package.json as the server entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customServerEntryFiles,
@@ -454,7 +454,7 @@ describe('app builds', () => {
     });
 
     it('uses the root `exports[.][server]` field from package.json as the server entry', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       const files = {
         ...customServerEntryFiles,
@@ -486,7 +486,7 @@ describe('app builds', () => {
 
   describe('magic app module', () => {
     it('uses an explicit App module', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'rollup.config.js': multiline`
@@ -510,7 +510,7 @@ describe('app builds', () => {
     });
 
     it('uses an App.tsx file when there is no dedicated entry file', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'App.tsx': multiline`
@@ -529,7 +529,7 @@ describe('app builds', () => {
     });
 
     it('uses an app.tsx file when there is no dedicated entry file', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.remove('App.tsx');
       await workspace.fs.write({
@@ -549,7 +549,7 @@ describe('app builds', () => {
     });
 
     it('uses an index.tsx file when there is no dedicated entry file', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.remove('App.tsx');
       await workspace.fs.write({

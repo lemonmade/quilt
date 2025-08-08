@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, createWorkspace, startServer} from '../utilities.ts';
+import {multiline, Workspace, startServer} from '../utilities.ts';
 
 const HTMX_BROWSER_ENTRY = multiline`
   import htmx from 'htmx.org';
@@ -11,7 +11,7 @@ const HTMX_BROWSER_ENTRY = multiline`
 
 describe('htmx', () => {
   it('can render an htmx server and client', async () => {
-    await using workspace = await createWorkspace({fixture: 'empty-app'});
+    await using workspace = await Workspace.create({fixture: 'empty-app'});
 
     await workspace.fs.write({
       'browser.tsx': HTMX_BROWSER_ENTRY,
@@ -85,7 +85,7 @@ describe('htmx', () => {
   });
 
   it('provides helpful utilities for dealing with HTMX requests and responses', async () => {
-    await using workspace = await createWorkspace({fixture: 'empty-app'});
+    await using workspace = await Workspace.create({fixture: 'empty-app'});
 
     await workspace.fs.write({
       'browser.tsx': HTMX_BROWSER_ENTRY,

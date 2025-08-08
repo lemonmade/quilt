@@ -1,9 +1,9 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, createWorkspace, startServer} from '../utilities.ts';
+import {multiline, Workspace, startServer} from '../utilities.ts';
 
 describe('trpc', () => {
   it('can server and client render a trpc suspense query', async () => {
-    await using workspace = await createWorkspace({fixture: 'basic-app'});
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
 
     await workspace.fs.write({
       'trpc.ts': multiline`

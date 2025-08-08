@@ -42,28 +42,7 @@ export interface Command {
   node(script: string, options?: SpawnOptions): RunResult;
 }
 
-// TODO: make into a class, add Workspace.create()
-export interface Workspace extends AsyncDisposable {
-  readonly fs: FileSystem;
-  readonly command: Command;
-  readonly debugging: boolean;
-  beforeDispose(action: () => void | Promise<void>): void;
-}
-
-export interface Server extends AsyncDisposable {
-  readonly url: URL;
-  readonly fetch: typeof fetch;
-  openPage(
-    url?: URL | string,
-    options?: Parameters<PlaywrightBrowser['newPage']>[0] & {
-      debug?: boolean;
-      customizeContext?(
-        context: PlaywrightBrowserContext,
-        options: {url: URL},
-      ): void | Promise<void>;
-    },
-  ): Promise<Page>;
-}
+export type Fixture = 'basic-app' | 'empty-app' | 'basic-api';
 
 const fixtureRoot = path.resolve(__dirname, 'fixtures');
 
@@ -71,110 +50,57 @@ const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
 let browserPromise: Promise<PlaywrightBrowser> | undefined;
 
-afterAll(async () => {
-  if (browserPromise == null) return;
-  await (await browserPromise).close();
-  browserPromise = undefined;
-});
+export class Workspace implements AsyncDisposable {
+  static async create({
+    debug = false,
+    name = debug ? 'test' : `test-${nanoid()}`,
+    fixture,
+  }: {
+    debug?: boolean;
+    name?: string;
+    fixture?: Fixture;
+  } = {}): Promise<Workspace> {
+    const root = path.join(__dirname, `output/${name}`);
 
-export type Fixture = 'basic-app' | 'empty-app' | 'basic-api';
+    const workspace = new Workspace(root, {debug});
 
-export interface WorkspaceOptions {
-  debug?: boolean;
-  name?: string;
-  fixture?: Fixture;
-}
-export type WorkspaceAction<T> = (workspace: Workspace) => T | Promise<T>;
+    await rm(root, {force: true, recursive: true});
 
-export async function withWorkspace<T>(action: WorkspaceAction<T>): Promise<T>;
-export async function withWorkspace<T>(
-  options: WorkspaceOptions,
-  action: WorkspaceAction<T>,
-): Promise<T>;
-export async function withWorkspace<T>(
-  optionsOrAction: WorkspaceOptions | WorkspaceAction<T>,
-  definitelyAction?: WorkspaceAction<T>,
-): Promise<T> {
-  let action: WorkspaceAction<T>;
-  let options: WorkspaceOptions;
+    if (fixture) {
+      await copy(path.join(fixtureRoot, fixture), root);
 
-  if (typeof optionsOrAction === 'function') {
-    action = optionsOrAction;
-    options = {};
-  } else {
-    options = optionsOrAction ?? {};
-    action = definitelyAction!;
-  }
-
-  await using workspace = await createWorkspace(options);
-  const result = await action(workspace);
-  return result;
-}
-
-export async function createWorkspace({
-  debug = false,
-  name = debug ? 'test' : `test-${nanoid()}`,
-  fixture,
-}: WorkspaceOptions = {}) {
-  const root = path.join(__dirname, `output/${name}`);
-
-  const teardownActions: (() => void | Promise<void>)[] = [];
-
-  const resolve = (...parts: string[]) => path.resolve(root, ...parts);
-
-  const runCommand = (command: string, options?: SpawnOptions): RunResult => {
-    const [executable, ...args] = command.split(' ');
-    const child = spawn(executable!, args, {
-      ...options,
-      cwd: root,
-      env: {...process.env, ...options?.env},
-      stdio: options?.stdio ?? 'pipe',
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout?.on('data', (data) => {
-      stdout += data.toString();
-    });
-
-    child.stderr?.on('data', (data) => {
-      stderr += data.toString();
-    });
-
-    if (debug) {
-      child.stdout?.pipe(process.stdout);
-      child.stderr?.pipe(process.stderr);
+      const packageJson = JSON.parse(await workspace.fs.read('package.json'));
+      packageJson.name = path.basename(root);
+      await workspace.fs.write(
+        'package.json',
+        JSON.stringify(packageJson, null, 2) + '\n',
+      );
     }
 
-    teardownActions.push(() => {
-      if (!child.killed) child.kill();
-    });
+    return workspace;
+  }
 
-    const promise = new Promise<Awaited<RunResult>>((resolve, reject) => {
-      child.on('error', reject);
-      child.on('exit', () => {
-        resolve({stdout, stderr, child});
-      });
-    });
+  static async debug(options?: Parameters<typeof Workspace.create>[0]) {
+    return Workspace.create({...options, debug: true});
+  }
 
-    Reflect.defineProperty(promise, 'child', {value: child});
+  readonly fs: FileSystem;
+  readonly command: Command;
+  readonly debug: boolean;
+  readonly #teardownActions: (() => void | Promise<void>)[] = [];
 
-    return promise as any;
-  };
+  constructor(root: string, {debug = false}: {debug?: boolean}) {
+    this.debug = debug;
 
-  const runNode = (command: string, options?: SpawnOptions) => {
-    return runCommand(`${process.execPath} ${command}`, options);
-  };
+    const resolve = (...parts: string[]) => path.resolve(root, ...parts);
 
-  const writeFileInProject = async (file: string, content: string) => {
-    const fullPath = resolve(file);
-    await mkdir(path.dirname(fullPath), {recursive: true});
-    await writeFile(fullPath, content);
-  };
+    const writeFileInProject = async (file: string, content: string) => {
+      const fullPath = resolve(file);
+      await mkdir(path.dirname(fullPath), {recursive: true});
+      await writeFile(fullPath, content);
+    };
 
-  const workspace: Workspace = {
-    fs: {
+    this.fs = {
       root,
       resolve,
       async remove(file) {
@@ -201,40 +127,93 @@ export async function createWorkspace({
           );
         }
       },
-    },
-    command: {
+    };
+
+    const runCommand = (command: string, options?: SpawnOptions): RunResult => {
+      const [executable, ...args] = command.split(' ');
+      const child = spawn(executable!, args, {
+        ...options,
+        cwd: root,
+        env: {...process.env, ...options?.env},
+        stdio: options?.stdio ?? 'pipe',
+      });
+
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout?.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr?.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      if (this.debug) {
+        child.stdout?.pipe(process.stdout);
+        child.stderr?.pipe(process.stderr);
+      }
+
+      this.#teardownActions.push(() => {
+        if (!child.killed) child.kill();
+      });
+
+      const promise = new Promise<Awaited<RunResult>>((resolve, reject) => {
+        child.on('error', reject);
+        child.on('exit', () => {
+          resolve({stdout, stderr, child});
+        });
+      });
+
+      Reflect.defineProperty(promise, 'child', {value: child});
+
+      return promise as any;
+    };
+
+    const runNode = (command: string, options?: SpawnOptions) => {
+      return runCommand(`${process.execPath} ${command}`, options);
+    };
+
+    this.command = {
       run: (...args) => runCommand(...args),
       pnpm: (command, options) => runCommand(`pnpm ${command}`, options),
       node: (...args) => runNode(...args),
-    },
-    debugging: debug,
-    beforeDispose(action) {
-      teardownActions.push(action);
-    },
-    [Symbol.asyncDispose]: async () => {
-      await Promise.all(teardownActions.map((action) => action()));
-
-      if (!debug) {
-        await rm(root, {force: true, recursive: true});
-      }
-    },
-  };
-
-  await rm(root, {force: true, recursive: true});
-
-  if (fixture) {
-    await copy(path.join(fixtureRoot, fixture), root);
-
-    const packageJson = JSON.parse(await workspace.fs.read('package.json'));
-    packageJson.name = path.basename(root);
-    await workspace.fs.write(
-      'package.json',
-      JSON.stringify(packageJson, null, 2) + '\n',
-    );
+    };
   }
 
-  return workspace;
+  async [Symbol.asyncDispose]() {
+    await Promise.all(this.#teardownActions.map((action) => action()));
+
+    if (!this.debug) {
+      await rm(this.fs.root, {force: true, recursive: true});
+    }
+  }
+
+  beforeDispose(action: () => void | Promise<void>) {
+    this.#teardownActions.push(action);
+  }
 }
+
+export interface Server extends AsyncDisposable {
+  readonly url: URL;
+  readonly fetch: typeof fetch;
+  openPage(
+    url?: URL | string,
+    options?: Parameters<PlaywrightBrowser['newPage']>[0] & {
+      debug?: boolean;
+      customizeContext?(
+        context: PlaywrightBrowserContext,
+        options: {url: URL},
+      ): void | Promise<void>;
+    },
+  ): Promise<Page>;
+}
+
+afterAll(async () => {
+  if (browserPromise == null) return;
+  await (await browserPromise).close();
+  browserPromise = undefined;
+});
 
 interface BuildAndRunOptions {
   env?: Record<string, string>;
@@ -287,7 +266,7 @@ export async function startServer(
     },
     async openPage(
       target = '/',
-      {debug = workspace.debugging, customizeContext, ...options} = {},
+      {debug = workspace.debug, customizeContext, ...options} = {},
     ) {
       const targetUrl = new URL(target, url);
 

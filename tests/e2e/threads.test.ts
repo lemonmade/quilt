@@ -1,10 +1,10 @@
 import {describe, it, expect} from 'vitest';
-import {multiline, createWorkspace, startServer} from './utilities.ts';
+import {multiline, Workspace, startServer} from './utilities.ts';
 
 describe('threads', () => {
   describe('ThreadMessagePort', () => {
     it('communicates between message ports', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'server.tsx': multiline`
@@ -71,7 +71,7 @@ describe('threads', () => {
   // @see https://github.com/lemonmade/quilt/issues/849
   describe.skip('ThreadBroadcastChannel', () => {
     it('communicates between broadcast channel instances', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'server.tsx': multiline`
@@ -147,7 +147,7 @@ describe('threads', () => {
 
   describe('ThreadWindow', () => {
     it('communicates between a parent page and a nested window', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'server.tsx': multiline`
@@ -220,7 +220,7 @@ describe('threads', () => {
     });
 
     it('communicates between a parent page and a nested iframe', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'server.tsx': multiline`
@@ -290,7 +290,7 @@ describe('threads', () => {
 
   describe('ThreadWebWorker', () => {
     it('communicates between two message ports', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'server.tsx': multiline`
@@ -357,7 +357,7 @@ describe('threads', () => {
   // Still no good way of hosting the service worker on the root automatically.
   describe.todo('ThreadServiceWorker', () => {
     it('communicates between main thread and service worker', async () => {
-      await using workspace = await createWorkspace({fixture: 'empty-app'});
+      await using workspace = await Workspace.create({fixture: 'empty-app'});
 
       await workspace.fs.write({
         'rollup.config.js': multiline`
