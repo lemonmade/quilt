@@ -81,6 +81,13 @@ export interface ServerRuntime extends ModuleRuntime {
    * for this runtime.
    */
   hono?(): string;
+
+  /**
+   * Provides additional Rollup options to customize the server build.
+   * This function receives the current Rollup options and can return
+   * modified options or a partial override.
+   */
+  rollup?(options: RollupOptions): InputPluginOption;
 }
 
 export interface ServerOutputOptions
@@ -224,7 +231,7 @@ export async function quiltServer({
     }),
   );
 
-  return {
+  const options = {
     input: {[finalEntryName]: finalEntry},
     plugins,
     output: {
@@ -239,6 +246,12 @@ export async function quiltServer({
       ...runtime.output?.options,
     },
   } satisfies RollupOptions;
+
+  if (runtime.rollup) {
+    plugins.push(runtime.rollup(options));
+  }
+
+  return options;
 }
 
 export interface NodeServerRuntimeOptions {

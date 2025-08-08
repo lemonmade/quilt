@@ -383,6 +383,18 @@ export interface AppRuntime {
    * Customizations to the server for this runtime.
    */
   server?: AppServerRuntime;
+
+  /**
+   * Customizations to the browser build for this runtime.
+   */
+  browser?: {
+    /**
+     * Provides additional Rollup options to customize the server build.
+     * This function receives the current Rollup options and can return
+     * modified options or a partial override.
+     */
+    rollup?(options: RollupOptions): InputPluginOption;
+  };
 }
 
 export interface AppServerRuntime extends Omit<ServerRuntime, 'hono'> {
@@ -501,7 +513,7 @@ export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
     rollupGenerateOptionsForBrowsers(browserGroup.browsers),
   ]);
 
-  return {
+  const rollupOptions = {
     plugins,
     output: {
       format: isESM ? 'esm' : 'systemjs',
@@ -519,6 +531,12 @@ export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
     },
     preserveEntrySignatures: false,
   } satisfies RollupOptions;
+
+  if (runtime?.browser?.rollup) {
+    rollupOptions.plugins.push(runtime.browser.rollup(rollupOptions));
+  }
+
+  return rollupOptions;
 }
 
 export async function quiltAppBrowserPlugins({
