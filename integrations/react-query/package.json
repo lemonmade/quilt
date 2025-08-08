@@ -1,7 +1,7 @@
 {
   "name": "@quilted/react-query",
   "type": "module",
-  "version": "0.4.6",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "@quilted/useful-types": "workspace:^2.0.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.8.12",
+    "@quilted/quilt": "workspace:^0.9.0",
     "@tanstack/react-query": "^5.0.0",
     "preact": "^10.26.0"
   },

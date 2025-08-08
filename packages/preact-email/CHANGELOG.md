@@ -1,5 +1,12 @@
 # @quilted/preact-email
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies [[`8bf65e7`](https://github.com/lemonmade/quilt/commit/8bf65e797f929ee95730323426c229409e65c9a4)]:
+  - @quilted/preact-browser@0.2.0
+
 ## 0.1.5
 
 ### Patch Changes

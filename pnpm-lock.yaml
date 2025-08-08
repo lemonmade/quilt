@@ -451,7 +451,7 @@ importers:
         specifier: workspace:^0.4.21
         version: link:../async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.15
+        specifier: workspace:^0.2.0
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.3
@@ -470,7 +470,7 @@ importers:
         specifier: workspace:^0.1.9
         version: link:../assets
       '@quilted/browser':
-        specifier: workspace:^0.1.12
+        specifier: workspace:^0.2.0
         version: link:../browser
       '@quilted/http':
         specifier: workspace:^0.3.0
@@ -498,7 +498,7 @@ importers:
   packages/preact-email:
     dependencies:
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.16
+        specifier: workspace:^0.2.0
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.3
@@ -539,13 +539,13 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../localize
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.15
+        specifier: workspace:^0.2.0
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.3
         version: link:../preact-context
       '@quilted/preact-router':
-        specifier: workspace:^0.2.12
+        specifier: workspace:^0.2.13
         version: link:../preact-router
       '@quilted/signals':
         specifier: workspace:^0.2.0
@@ -576,10 +576,10 @@ importers:
         specifier: workspace:^0.3.0
         version: link:../http
       '@quilted/preact-async':
-        specifier: workspace:^0.1.20
+        specifier: workspace:^0.1.21
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.15
+        specifier: workspace:^0.2.0
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.3
@@ -654,13 +654,13 @@ importers:
         specifier: workspace:^3.3.9
         version: link:../graphql
       '@quilted/hono':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.2.0
         version: link:../hono
       '@quilted/preact-async':
-        specifier: workspace:^0.1.20
+        specifier: workspace:^0.1.21
         version: link:../preact-async
       '@quilted/preact-browser':
-        specifier: workspace:^0.1.17
+        specifier: workspace:^0.2.0
         version: link:../preact-browser
       '@quilted/preact-context':
         specifier: workspace:^0.1.3
@@ -669,13 +669,13 @@ importers:
         specifier: workspace:^0.1.8
         version: link:../preact-graphql
       '@quilted/preact-localize':
-        specifier: workspace:^0.3.5
+        specifier: workspace:^0.4.0
         version: link:../preact-localize
       '@quilted/preact-performance':
         specifier: workspace:^0.1.1
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.2.12
+        specifier: workspace:^0.2.13
         version: link:../preact-router
       '@quilted/preact-signals':
         specifier: workspace:^0.1.2
@@ -919,10 +919,10 @@ importers:
         specifier: workspace:^0.2.4
         version: link:../babel
       '@quilted/hono':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.2.0
         version: link:../hono
       '@quilted/rollup':
-        specifier: workspace:^0.3.3
+        specifier: workspace:^0.4.0
         version: link:../rollup
     devDependencies:
       '@types/babel__core':

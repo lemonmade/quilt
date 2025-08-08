@@ -1,5 +1,20 @@
 # @quilted/quilt
 
+## 0.9.0
+
+### Minor Changes
+
+- [#872](https://github.com/lemonmade/quilt/pull/872) [`8bf65e7`](https://github.com/lemonmade/quilt/commit/8bf65e797f929ee95730323426c229409e65c9a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Replace @quilted/request-router with Hono
+
+### Patch Changes
+
+- Updated dependencies [[`8bf65e7`](https://github.com/lemonmade/quilt/commit/8bf65e797f929ee95730323426c229409e65c9a4)]:
+  - @quilted/preact-localize@0.4.0
+  - @quilted/preact-browser@0.2.0
+  - @quilted/hono@0.2.0
+  - @quilted/preact-async@0.1.21
+  - @quilted/preact-router@0.2.13
+
 ## 0.8.12
 
 ### Patch Changes
