@@ -123,6 +123,9 @@ importers:
       '@types/mime':
         specifier: ^2.0.0
         version: 2.0.3
+      '@types/node':
+        specifier: ^22.13.4
+        version: 22.13.4
 
   integrations/deno:
     dependencies:
