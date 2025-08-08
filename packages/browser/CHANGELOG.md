@@ -1,5 +1,15 @@
 # @quilted/browser
 
+## 0.2.0
+
+### Minor Changes
+
+- [#872](https://github.com/lemonmade/quilt/pull/872) [`8bf65e7`](https://github.com/lemonmade/quilt/commit/8bf65e797f929ee95730323426c229409e65c9a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Replace @quilted/request-router with Hono
+
+### Patch Changes
+
+- [#872](https://github.com/lemonmade/quilt/pull/872) [`8bf65e7`](https://github.com/lemonmade/quilt/commit/8bf65e797f929ee95730323426c229409e65c9a4) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `ResponseCookies` class to `@quilted/browser/server`
+
 ## 0.1.12
 
 ### Patch Changes
