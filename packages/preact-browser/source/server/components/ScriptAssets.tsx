@@ -21,8 +21,12 @@ export function ScriptAssets({
 
         if (asset.content) {
           props.dangerouslySetInnerHTML = {__html: asset.content};
-        } else {
-          props.src = asset.source;
+          delete props.src;
+          delete props.crossorigin;
+          delete props.crossOrigin;
+          delete props.async;
+          delete props.defer;
+          delete props.integrity;
         }
 
         return <script {...props} />;

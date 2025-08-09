@@ -70,7 +70,7 @@ async function writeManifestForBundle(
     let id = assetIdMap.get(file);
 
     if (id == null) {
-      assets.push(loadAsset(file, bundle[file]!, inline));
+      assets.push(loadAsset(file, bundle[file]!, {inline, base}));
       id = assets.length - 1;
       assetIdMap.set(file, id);
     }
@@ -83,7 +83,7 @@ async function writeManifestForBundle(
     base,
     priority,
     assets: [],
-    attributes: format === 'es' ? {2: {type: 'module'}} : undefined,
+    attributes: format === 'es' ? {2: {type: 'module'}} : {2: {defer: ''}},
     entries: {} as any,
     modules: {},
   };
@@ -149,14 +149,14 @@ const SRI_ALGORITHM = 'sha384';
 async function loadAsset(
   file: string,
   chunk: OutputChunk | OutputAsset,
-  inline?: Set<string>,
+  {inline, base}: {inline?: Set<string>; base: string},
 ): Promise<AssetBuildAsset> {
   const asset: AssetBuildAsset = [file.endsWith('.css') ? 1 : 2, file];
 
   const source = 'code' in chunk ? chunk.code : (chunk.source as string);
 
   if (inline?.has(chunk.name!)) {
-    asset[2] = source;
+    asset[2] = await normalizeInlineSource({base, file, source, chunk});
   } else {
     try {
       const hash = createHash(SRI_ALGORITHM)
@@ -169,6 +169,55 @@ async function loadAsset(
   }
 
   return asset;
+}
+
+async function normalizeInlineSource({
+  base,
+  file,
+  source,
+  chunk,
+}: {
+  base: string;
+  file: string;
+  source: string;
+  chunk: OutputChunk | OutputAsset;
+}) {
+  // Only rewrite JS code; non-JS assets (e.g., CSS) are returned as-is
+  const isJavaScript = 'code' in chunk;
+  if (!isJavaScript) return source;
+
+  const {parse: parseImports} = await import('es-module-lexer');
+
+  const [imports] = await parseImports(source);
+
+  if (imports.length > 0) {
+    let resultSource = source;
+
+    // Apply edits from the end to avoid messing up indices
+    const sorted = [...imports].sort((a, b) => b.s - a.s);
+
+    for (const imported of sorted) {
+      const start = imported.s;
+      const end = imported.e;
+
+      const specWithQuotes = resultSource.slice(start, end);
+      const quote = specWithQuotes[0];
+      const last = specWithQuotes[specWithQuotes.length - 1];
+      if ((quote !== '"' && quote !== "'") || last !== quote) continue;
+
+      const spec = specWithQuotes.slice(1, -1);
+      if (!isRelativeSpecifier(spec)) continue;
+
+      const resolved = resolveSpecifierRelativeToFile(spec, {base, file});
+      const replaced = `${quote}${resolved}${quote}`;
+      resultSource =
+        resultSource.slice(0, start) + replaced + resultSource.slice(end);
+    }
+
+    source = resultSource;
+  }
+
+  return source;
 }
 
 function defaultModuleID({imported}: {imported: string}) {
@@ -387,4 +436,27 @@ function getHash(text: Buffer | string): string {
 
 function cleanModuleIdentifier(url: string) {
   return url.replace(HASH_PATTERN, '').replace(QUERY_PATTERN, '');
+}
+
+function isRelativeSpecifier(specifier: string) {
+  return (
+    specifier === '.' ||
+    specifier.startsWith('./') ||
+    specifier.startsWith('../')
+  );
+}
+
+function resolveSpecifierRelativeToFile(
+  specifier: string,
+  {base: assetsBase, file}: {base: string; file: string},
+) {
+  const path = `${assetsBase}${file}`;
+  const isAbsolutePath = path.startsWith('/');
+  const base = new URL(
+    path,
+    isAbsolutePath ? 'https://example.com' : undefined,
+  );
+
+  const resolved = new URL(specifier, base);
+  return isAbsolutePath ? resolved.pathname : resolved.href;
 }

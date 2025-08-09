@@ -60,25 +60,13 @@ export {ContentSecurityPolicy} from './server/components/ContentSecurityPolicy.t
 export {CrossOriginEmbedderPolicy} from './server/components/CrossOriginEmbedderPolicy.tsx';
 export {CrossOriginOpenerPolicy} from './server/components/CrossOriginOpenerPolicy.tsx';
 export {CrossOriginResourcePolicy} from './server/components/CrossOriginResourcePolicy.tsx';
-export {
-  HTMLTemplate,
-  HTMLTemplateBody,
-  HTMLTemplateHead,
-} from './server/components/HTMLTemplate.tsx';
+export {HTMLTemplate} from './server/components/HTMLTemplate.tsx';
 export {OpenGraph} from './server/components/OpenGraph.tsx';
 export {NotFound} from './server/components/NotFound.tsx';
 export {PermissionsPolicy} from './server/components/PermissionsPolicy.tsx';
 export {ResponseCookie} from './server/components/ResponseCookie.tsx';
 export {ResponseHeader} from './server/components/ResponseHeader.tsx';
 export {ResponseStatus} from './server/components/ResponseStatus.tsx';
-export {
-  HTMLPlaceholderContent,
-  HTMLPlaceholderAsyncAssets,
-  HTMLPlaceholderEntryAssets,
-  HTMLPlaceholderPreloadAssets,
-  HTMLPlaceholderSerializations,
-} from './server/components/HTMLPlaceholder.tsx';
-export {HTMLStreamBoundary} from './server/components/HTMLStreamBoundary.tsx';
 export {ScriptAssets} from './server/components/ScriptAssets.tsx';
 export {ScriptAssetsPreload} from './server/components/ScriptAssetsPreload.tsx';
 export {SearchRobots} from './server/components/SearchRobots.tsx';
