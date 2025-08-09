@@ -33,7 +33,7 @@ export function HTMLTemplate({
     <html {...browserResponse?.htmlAttributes.value} {...rest}>
       {head ?? <HTMLTemplateHead title={title} links={links} metas={metas} />}
       {body ?? (
-        <HTMLTemplateBody wrapper={Boolean(children)}>
+        <HTMLTemplateBody wrapper={!Boolean(children)}>
           {children}
         </HTMLTemplateBody>
       )}
@@ -81,7 +81,7 @@ export interface HTMLTemplateBodyProps
 
 export function HTMLTemplateBody({
   children,
-  wrapper,
+  wrapper = true,
   ...rest
 }: RenderableProps<HTMLTemplateBodyProps>) {
   const browserResponse = useBrowserResponse();
