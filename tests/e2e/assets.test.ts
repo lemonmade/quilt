@@ -56,7 +56,7 @@ describe('app builds', () => {
         `,
         'server.tsx': multiline`
           import {Hono} from 'hono';
-          import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+          import {renderToHTMLResponse, HTMLTemplate, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
           import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
 
@@ -80,10 +80,10 @@ describe('app builds', () => {
 
           function AppHTML() {
             return (
-              <HTML title="Hello world">
+              <HTMLTemplate title="Hello world">
                 <div id="root" />
                 <HTMLPlaceholderEntryAssets />
-              </HTML>
+              </HTMLTemplate>
             );
           }
           
