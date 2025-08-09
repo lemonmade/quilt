@@ -1,8 +1,5 @@
 {
   "extends": "@quilted/typescript/tsconfig.package.json",
-  "compilerOptions": {
-    "types": ["@cloudflare/workers-types"]
-  },
   "references": [
     {"path": "../../packages/quilt"},
     {"path": "../../packages/rollup"}
