@@ -31,7 +31,7 @@ export function cloudflareWorkersApp({
   assets?: {
     headers?: Record<string, readonly string[]>;
   };
-}) {
+} = {}) {
   return {
     assets: {
       directory: './build/public/assets',
@@ -41,8 +41,8 @@ export function cloudflareWorkersApp({
       rollup() {
         return {
           name: '@quilted/cloudflare/rollup/headers',
-          async generateBundle() {
-            const {writeFile} = await import('node:fs/promises');
+          async writeBundle() {
+            const {writeFile, mkdir} = await import('node:fs/promises');
 
             const content = Object.entries(assets?.headers ?? DEFAULT_HEADERS)
               .map(([path, headers]) => {
@@ -50,6 +50,7 @@ export function cloudflareWorkersApp({
               })
               .join('\n');
 
+            await mkdir('./build/public', {recursive: true});
             await writeFile('./build/public/_headers', content);
           },
         };
