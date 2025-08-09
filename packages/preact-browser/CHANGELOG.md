@@ -1,5 +1,13 @@
 # @quilted/preact-browser
 
+## 0.2.2
+
+### Patch Changes
+
+- [`94df293`](https://github.com/lemonmade/quilt/commit/94df293a1987784b02a742e316730cd96f8dc5fb) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix types for HTMLTemplate.links/metas
+
+- [#879](https://github.com/lemonmade/quilt/pull/879) [`46af050`](https://github.com/lemonmade/quilt/commit/46af050759eb1113e97b1f1aeca1e76a7dde7af9) Thanks [@lemonmade](https://github.com/lemonmade)! - More HTML template and asset inlining improvements
+
 ## 0.2.1
 
 ### Patch Changes

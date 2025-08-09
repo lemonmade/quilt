@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.4.2
+
+### Patch Changes
+
+- [#879](https://github.com/lemonmade/quilt/pull/879) [`46af050`](https://github.com/lemonmade/quilt/commit/46af050759eb1113e97b1f1aeca1e76a7dde7af9) Thanks [@lemonmade](https://github.com/lemonmade)! - More HTML template and asset inlining improvements
+
 ## 0.4.1
 
 ### Patch Changes
