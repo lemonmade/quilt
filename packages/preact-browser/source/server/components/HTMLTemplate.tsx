@@ -10,11 +10,10 @@ import {
   HTMLPlaceholderSerializations,
 } from './HTMLPlaceholder.tsx';
 
-export interface HTMLTemplateProps extends JSX.HTMLAttributes<HTMLHtmlElement> {
+export interface HTMLTemplateProps
+  extends Omit<JSX.HTMLAttributes<HTMLHtmlElement>, 'title'>,
+    Pick<HTMLTemplateHeadProps, 'title' | 'links' | 'metas'> {
   head?: VNode<any>;
-  title?: string;
-  links?: JSX.HTMLAttributes<HTMLAnchorElement>[];
-  metas?: JSX.HTMLAttributes<HTMLMetaElement>[];
   body?: VNode<any>;
 }
 
@@ -44,8 +43,8 @@ export function HTMLTemplate({
 export interface HTMLTemplateHeadProps
   extends JSX.HTMLAttributes<HTMLHeadElement> {
   title?: string;
-  links?: JSX.HTMLAttributes<HTMLAnchorElement>[];
-  metas?: JSX.HTMLAttributes<HTMLMetaElement>[];
+  links?: JSX.LinkHTMLAttributes<HTMLLinkElement>[];
+  metas?: JSX.MetaHTMLAttributes<HTMLMetaElement>[];
 }
 
 export function HTMLTemplateHead({
