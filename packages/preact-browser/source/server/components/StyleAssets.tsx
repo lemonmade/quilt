@@ -15,11 +15,15 @@ export function StyleAssets({
   return (
     <>
       {styles.map((asset) => {
-        const props: JSX.HTMLAttributes<any> = {};
+        const props: JSX.LinkHTMLAttributes<any> = {};
 
         Object.assign(props, styleAssetAttributes(asset, {baseURL}), rest);
 
         if (asset.content) {
+          delete props.href;
+          delete props.crossorigin;
+          delete props.crossOrigin;
+
           return (
             <style
               {...props}

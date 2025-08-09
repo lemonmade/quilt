@@ -63,26 +63,30 @@ function NoopComponent() {
   return null;
 }
 
+function NoopHTMLTemplate() {
+  return null;
+}
+
+NoopHTMLTemplate.Head = NoopComponent;
+NoopHTMLTemplate.Body = NoopComponent;
+NoopHTMLTemplate.Content = NoopComponent;
+NoopHTMLTemplate.Assets = NoopComponent;
+NoopHTMLTemplate.Serializations = NoopComponent;
+NoopHTMLTemplate.StreamBoundary = NoopComponent;
+
 export {
   NoopComponent as CacheControl,
   NoopComponent as ContentSecurityPolicy,
   NoopComponent as CrossOriginEmbedderPolicy,
   NoopComponent as CrossOriginOpenerPolicy,
   NoopComponent as CrossOriginResourcePolicy,
-  NoopComponent as HTML,
-  NoopComponent as HTMLBody,
-  NoopComponent as HTMLHead,
+  NoopHTMLTemplate as HTMLTemplate,
   NoopComponent as OGMeta,
   NoopComponent as NotFound,
   NoopComponent as PermissionsPolicy,
   NoopComponent as ResponseCookie,
   NoopComponent as ResponseHeader,
   NoopComponent as ResponseStatus,
-  NoopComponent as HTMLStreamBoundary,
-  NoopComponent as HTMLPlaceholderApp,
-  NoopComponent as HTMLPlaceholderAsyncAssets,
-  NoopComponent as HTMLPlaceholderEntryAssets,
-  NoopComponent as HTMLPlaceholderSerializations,
   NoopComponent as ScriptAsset,
   NoopComponent as ScriptAssetPreload,
   NoopComponent as SearchRobots,
@@ -92,5 +96,3 @@ export {
   NoopComponent as StyleAssetPreload,
   NoopComponent as Viewport,
 };
-
-export const HTML_TEMPLATE_FRAGMENT = '';

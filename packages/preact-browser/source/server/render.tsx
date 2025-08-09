@@ -387,6 +387,12 @@ async function renderHTMLChunk(
     if (match.groups && 'name' in match.groups) {
       const {name} = match.groups;
       const startIndex = match.index;
+      // Parse any attributes present on the opening placeholder tag
+      const attributes = parseAttributesFromIndex(
+        result,
+        match.index + match[0]!.length,
+      );
+
       const closingTag = `</browser-response-placeholder-${name}>`;
       const closingTagIndex = result.indexOf(closingTag, startIndex);
 
@@ -426,66 +432,73 @@ async function renderHTMLChunk(
 
           break;
         }
-        case 'entry-assets': {
+        case 'assets': {
           if (assets == null) {
             throw new Error(
-              `Found the async-assets placeholder, but no assets were provided while rendering`,
+              `Found the assets placeholder, but no assets were provided while rendering`,
             );
           }
 
-          const entryAssets = assets.entry({request: browser.request});
-          const systemJSAssets = assets.entry({
-            id: 'system.js',
-            request: browser.request,
-          });
+          const name = attributes.get('name');
+          const async = attributes.get('async');
+          const preload = attributes.get('preload');
+
+          const includeEntry =
+            name != null || (async == null && preload == null);
+
+          const entryAssets = includeEntry
+            ? assets.entry({
+                id: name,
+                request: browser.request,
+              })
+            : undefined;
+          const systemJSAssets =
+            includeEntry && (name == null || name === '.')
+              ? assets.entry({
+                  id: 'system.js',
+                  request: browser.request,
+                })
+              : undefined;
+
+          const asyncAsets =
+            async === ''
+              ? assets.modules(browser.assets.get({timing: 'load'}), {
+                  request: browser.request,
+                })
+              : undefined;
+
+          const preloadAsets =
+            preload === ''
+              ? assets.modules(browser.assets.get({timing: 'preload'}), {
+                  request: browser.request,
+                })
+              : undefined;
 
           replacement = renderToString(
             <>
-              <ScriptAssets scripts={systemJSAssets.scripts} />
-              <ScriptAssets scripts={entryAssets.scripts} />
-              <StyleAssets styles={entryAssets.styles} />
-            </>,
-          );
-
-          break;
-        }
-        case 'async-assets': {
-          if (assets == null) {
-            throw new Error(
-              `Found the async-assets placeholder, but no assets were provided while rendering`,
-            );
-          }
-
-          const asyncAssets = assets.modules(
-            browser.assets.get({timing: 'load'}),
-            {request: browser.request},
-          );
-
-          replacement = renderToString(
-            <>
-              <ScriptAssets scripts={asyncAssets.scripts} />
-              <StyleAssets styles={asyncAssets.styles} />
-            </>,
-          );
-
-          break;
-        }
-        case 'preload-assets': {
-          if (assets == null) {
-            throw new Error(
-              `Found the preload-assets placeholder, but no assets were provided while rendering`,
-            );
-          }
-
-          const preloadAssets = assets.modules(
-            browser.assets.get({timing: 'preload'}),
-            {request: browser.request},
-          );
-
-          replacement = renderToString(
-            <>
-              <ScriptAssetsPreload scripts={preloadAssets.scripts} />
-              <StyleAssetsPreload styles={preloadAssets.styles} />
+              {systemJSAssets ? (
+                <>
+                  <ScriptAssets scripts={systemJSAssets.scripts} />
+                </>
+              ) : null}
+              {entryAssets ? (
+                <>
+                  <ScriptAssets scripts={entryAssets.scripts} />
+                  <StyleAssets styles={entryAssets.styles} />
+                </>
+              ) : null}
+              {asyncAsets ? (
+                <>
+                  <ScriptAssets scripts={asyncAsets.scripts} />
+                  <StyleAssets styles={asyncAsets.styles} />
+                </>
+              ) : null}
+              {preloadAsets ? (
+                <>
+                  <ScriptAssetsPreload scripts={preloadAsets.scripts} />
+                  <StyleAssetsPreload styles={preloadAsets.styles} />
+                </>
+              ) : null}
             </>,
           );
 
@@ -567,6 +580,68 @@ function normalizeHTMLContent(content: string) {
   return content.startsWith('<!DOCTYPE ') || !content.startsWith('<html')
     ? content
     : `<!DOCTYPE html>${content}`;
+}
+
+function parseAttributesFromIndex(
+  source: string,
+  startIndex: number,
+): Map<string, string> {
+  const attributes = new Map<string, string>();
+  const length = source.length;
+
+  let i = startIndex;
+
+  // Find end of the opening tag while parsing attributes: '>' not inside quotes
+  while (i < length) {
+    // Skip whitespace
+    while (i < length && /\s/.test(source[i]!)) i++;
+
+    if (i >= length) break;
+
+    const char = source[i]!;
+
+    if (char === '>') {
+      // End of opening tag
+      return attributes;
+    }
+
+    // Parse attribute name
+    let nameStart = i;
+    while (i < length && !/[\s=>]/.test(source[i]!) && source[i] !== '>') {
+      i++;
+    }
+
+    const name = source.slice(nameStart, i);
+
+    // Skip whitespace
+    while (i < length && /\s/.test(source[i]!)) i++;
+
+    let value = '';
+
+    if (source[i] === '=') {
+      i++; // skip '='
+      // Skip whitespace
+      while (i < length && /\s/.test(source[i]!)) i++;
+
+      if (i < length && (source[i] === '"' || source[i] === "'")) {
+        const quote = source[i]!;
+        i++;
+        const valueStart = i;
+        while (i < length && source[i] !== quote) i++;
+        value = source.slice(valueStart, i);
+        if (i < length && source[i] === quote) i++;
+      } else {
+        const valueStart = i;
+        while (i < length && !/[\s>]/.test(source[i]!)) i++;
+        value = source.slice(valueStart, i);
+      }
+    }
+
+    if (name) attributes.set(name, value);
+  }
+
+  // If we reached here, we didn't find a '>' — treat end of string as end
+  return attributes;
 }
 
 const CONTENT_TYPE_HEADER = 'Content-Type';

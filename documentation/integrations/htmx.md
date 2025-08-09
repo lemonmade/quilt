@@ -48,11 +48,7 @@ Let’s imagine a simple application that renders a button, and updates the butt
 
 ```tsx
 import {Hono} from 'hono';
-import {
-  HTMLTemplate,
-  HTMLPlaceholderEntryAssets,
-  renderToHTMLResponse,
-} from '@quilted/quilt/server';
+import {HTMLTemplate, renderToHTMLResponse} from '@quilted/quilt/server';
 import {BrowserAssets} from 'quilt:module/assets';
 
 const app = new Hono();
@@ -67,7 +63,7 @@ app.get('/', async (c) => {
   // contains htmx), and applying the [HTML-](../features/html.md) and
   // [HTTP-](../features/http.md) directives in your application to the HTML
   // response.
-  const response = await renderToHTMLResponse(<AppHTML />, {
+  const response = await renderToHTMLResponse(<HTML />, {
     request,
     assets,
   });
@@ -75,10 +71,11 @@ app.get('/', async (c) => {
   return response;
 });
 
-function AppHTML() {
+// Renders a custom HTML document, with the correct asset references.
+function HTML() {
   return (
     <HTMLTemplate title="My app">
-      <HTMLPlaceholderEntryAssets />
+      <HTMLTemplate.Assets />
       <App />
     </HTMLTemplate>
   );

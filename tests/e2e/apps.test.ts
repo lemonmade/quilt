@@ -13,7 +13,7 @@ describe('app builds', () => {
       'server.tsx': multiline`
         import {Hono} from 'hono';
         import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
-        import {renderToHTMLResponse, HTMLTemplate, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTMLTemplate} from '@quilted/quilt/server';
         import {BrowserAssets} from 'quilt:module/assets';
                   
         const app = new Hono();
@@ -28,7 +28,7 @@ describe('app builds', () => {
 
           const response = await renderToHTMLResponse(
             <HTMLTemplate>
-              <HTMLPlaceholderEntryAssets />
+              <HTMLTemplate.Assets />
             </HTMLTemplate>,
             {
               request,

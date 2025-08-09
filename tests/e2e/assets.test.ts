@@ -56,7 +56,7 @@ describe('app builds', () => {
         `,
         'server.tsx': multiline`
           import {Hono} from 'hono';
-          import {renderToHTMLResponse, HTMLTemplate, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+          import {renderToHTMLResponse, HTMLTemplate} from '@quilted/quilt/server';
           import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
           import {BrowserAssets} from 'quilt:module/assets';
 
@@ -81,8 +81,8 @@ describe('app builds', () => {
           function AppHTML() {
             return (
               <HTMLTemplate title="Hello world">
+                <HTMLTemplate.Assets />
                 <div id="root" />
-                <HTMLPlaceholderEntryAssets />
               </HTMLTemplate>
             );
           }
@@ -113,6 +113,17 @@ describe('app builds', () => {
           'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko',
       });
 
+      const scripts = await page.$$('script');
+      expect(scripts).toHaveLength(2);
+
+      const firstScriptContent = await scripts[0]?.textContent();
+      expect(firstScriptContent).toContain(`SystemJS`);
+
+      const secondScriptDefer = await scripts[1]?.evaluate(
+        (script) => script.defer,
+      );
+      expect(secondScriptDefer).toBe(true);
+
       const element = await page.waitForSelector('#root');
 
       expect(element).not.toBeNull();
@@ -131,7 +142,9 @@ describe('app builds', () => {
           `,
           'async-module.ts': multiline`
             export function start() {
-              document.body.innerHTML = '<main>Hello world!</main>';
+              const main = document.createElement('main');
+              main.textContent = 'Hello world!';
+              document.body.append(main);
             }
           `,
           'rollup.config.js': multiline`
@@ -147,6 +160,7 @@ describe('app builds', () => {
           `,
           'server.tsx': multiline`
             import {Hono} from 'hono';
+            import {HTMLTemplate, renderToHTMLResponse} from '@quilted/quilt/server';
             import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
             import {BrowserAssets} from 'quilt:module/assets';
 
@@ -160,22 +174,11 @@ describe('app builds', () => {
             app.get('/*', async (c) => {
               const request = c.req.raw;
 
-              const {
-                renderToHTMLResponse,
-                ScriptAssets,
-              } = await import('@quilted/quilt/server');
-
-              const {scripts} = assets.entry();
-
               const response = await renderToHTMLResponse(
-                <html>
-                  <head>
-                    <title>Inline scripts test</title>
-                    <ScriptAssets scripts={scripts} />
-                  </head>
-                  <body></body>
-                </html>,
-                {request},
+                <HTMLTemplate title="Inline scripts test">
+                  <HTMLTemplate.Assets />
+                </HTMLTemplate>,
+                {request, assets},
               );
 
               return response;
@@ -196,6 +199,9 @@ describe('app builds', () => {
         const content = await scripts[0]?.textContent();
         expect(content).toContain(`import(`);
         expect(content).not.toContain(`Hello world!`);
+
+        const type = await scripts[0]?.evaluate((script) => script.type);
+        expect(type).toBe('module');
 
         await page.waitForSelector('main');
         expect(await page.textContent('main')).toBe('Hello world!');
@@ -224,6 +230,7 @@ describe('app builds', () => {
           `,
           'server.tsx': multiline`
             import {Hono} from 'hono';
+            import {HTMLTemplate, renderToHTMLResponse} from '@quilted/quilt/server';
             import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
             import {BrowserAssets} from 'quilt:module/assets';
 
@@ -237,26 +244,11 @@ describe('app builds', () => {
             app.get('/*', async (c) => {
               const request = c.req.raw;
 
-              const {
-                renderToHTMLResponse,
-                StyleAssets,
-                ScriptAssets,
-              } = await import('@quilted/quilt/server');
-
-              const {styles, scripts} = assets.entry({id: './inline.css'});
-
               const response = await renderToHTMLResponse(
-                <html>
-                  <head>
-                    <title>Inline CSS test</title>
-                    <StyleAssets styles={styles} />
-                    <ScriptAssets scripts={scripts} />
-                  </head>
-                  <body>
-                    Hello world!
-                  </body>
-                </html>,
-                {request},
+                <HTMLTemplate title="Inline CSS test">
+                  <HTMLTemplate.Assets name="./inline.css" />
+                </HTMLTemplate>,
+                {request, assets},
               );
 
               return response;

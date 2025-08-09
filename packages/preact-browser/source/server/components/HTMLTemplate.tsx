@@ -2,14 +2,6 @@ import {type RenderableProps, type VNode, type JSX} from 'preact';
 
 import {useBrowserResponse} from '../hooks/browser-response.ts';
 
-import {
-  HTMLPlaceholderContent,
-  HTMLPlaceholderAsyncAssets,
-  HTMLPlaceholderEntryAssets,
-  HTMLPlaceholderPreloadAssets,
-  HTMLPlaceholderSerializations,
-} from './HTMLPlaceholder.tsx';
-
 export interface HTMLTemplateProps
   extends Omit<JSX.HTMLAttributes<HTMLHtmlElement>, 'title'>,
     Pick<HTMLTemplateHeadProps, 'title' | 'links' | 'metas'> {
@@ -31,11 +23,7 @@ export function HTMLTemplate({
   return (
     <html {...browserResponse?.htmlAttributes.value} {...rest}>
       {head ?? <HTMLTemplateHead title={title} links={links} metas={metas} />}
-      {body ?? (
-        <HTMLTemplateBody wrapper={!Boolean(children)}>
-          {children}
-        </HTMLTemplateBody>
-      )}
+      {body ?? <HTMLTemplateBody>{children}</HTMLTemplateBody>}
     </html>
   );
 }
@@ -80,28 +68,28 @@ export interface HTMLTemplateBodyProps
 
 export function HTMLTemplateBody({
   children,
-  wrapper = true,
+  wrapper = !Boolean(children),
   ...rest
 }: RenderableProps<HTMLTemplateBodyProps>) {
   const browserResponse = useBrowserResponse();
 
-  const content = wrapper ? (
-    <div {...(typeof wrapper === 'boolean' ? DEFAULT_WRAPPER_PROPS : wrapper)}>
-      <HTMLPlaceholderContent />
-    </div>
-  ) : (
-    <HTMLPlaceholderContent />
-  );
-
   const bodyContent = children ?? (
     <>
-      <HTMLPlaceholderSerializations />
-      <HTMLPlaceholderEntryAssets />
+      <HTMLTemplateSerializations />
+      <HTMLTemplateAssets />
 
-      {content}
+      {wrapper ? (
+        <div
+          {...(typeof wrapper === 'boolean' ? DEFAULT_WRAPPER_PROPS : wrapper)}
+        >
+          <HTMLTemplateContent />
+        </div>
+      ) : (
+        <HTMLTemplateContent />
+      )}
 
-      <HTMLPlaceholderAsyncAssets />
-      <HTMLPlaceholderPreloadAssets />
+      <HTMLTemplateAssets async />
+      <HTMLTemplateAssets preload />
     </>
   );
 
@@ -111,3 +99,51 @@ export function HTMLTemplateBody({
     </body>
   );
 }
+
+export function HTMLTemplateContent() {
+  // @ts-expect-error Just used as a placeholder
+  return <browser-response-placeholder-content />;
+}
+
+export function HTMLTemplateAssets({
+  name,
+  async,
+  preload,
+}:
+  | {name?: string; async?: never; preload?: never}
+  | {name?: string; async?: boolean | string; preload?: never}
+  | {name?: never; async?: never; preload?: boolean}) {
+  const props: Record<string, string> = {};
+
+  if (name) {
+    props.name = name;
+  }
+
+  if (async) {
+    props.async = typeof async === 'string' ? async : '';
+  }
+
+  if (preload) {
+    props.preload = '';
+  }
+
+  // @ts-expect-error Just used as a placeholder
+  return <browser-response-placeholder-assets {...props} />;
+}
+
+export function HTMLTemplateSerializations() {
+  // @ts-expect-error Just used as a placeholder
+  return <browser-response-placeholder-serializations />;
+}
+
+export function HTMLTemplateStreamBoundary() {
+  // @ts-expect-error Just used as a placeholder
+  return <browser-response-stream-boundary />;
+}
+
+HTMLTemplate.Head = HTMLTemplateHead;
+HTMLTemplate.Body = HTMLTemplateBody;
+HTMLTemplate.Content = HTMLTemplateContent;
+HTMLTemplate.Assets = HTMLTemplateAssets;
+HTMLTemplate.Serializations = HTMLTemplateSerializations;
+HTMLTemplate.StreamBoundary = HTMLTemplateStreamBoundary;
