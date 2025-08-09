@@ -1,5 +1,11 @@
 # @quilted/preact-browser
 
+## 0.2.1
+
+### Patch Changes
+
+- [#876](https://github.com/lemonmade/quilt/pull/876) [`d5db136`](https://github.com/lemonmade/quilt/commit/d5db13655ed8887f50f344c083914826247f4b59) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve API for HTML templates
+
 ## 0.2.0
 
 ### Minor Changes
