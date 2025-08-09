@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.5.1
+
+### Patch Changes
+
+- [`3a59596`](https://github.com/lemonmade/quilt/commit/3a59596ce09e373cb48da20fa55f360fe815351a) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for additional Rollup plugins in runtimes
+
+- Updated dependencies [[`3a59596`](https://github.com/lemonmade/quilt/commit/3a59596ce09e373cb48da20fa55f360fe815351a)]:
+  - @quilted/rollup@0.4.1
+
 ## 0.5.0
 
 ### Minor Changes

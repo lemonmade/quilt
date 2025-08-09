@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.4.1
+
+### Patch Changes
+
+- [`3a59596`](https://github.com/lemonmade/quilt/commit/3a59596ce09e373cb48da20fa55f360fe815351a) Thanks [@lemonmade](https://github.com/lemonmade)! - Add support for additional Rollup plugins in runtimes
+
 ## 0.4.0
 
 ### Minor Changes
