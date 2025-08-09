@@ -32,10 +32,10 @@ describe('htmx', () => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(
-            <HTML>
+            <HTMLTemplate>
               <HTMLPlaceholderEntryAssets />
               <App />
-            </HTML>,
+            </HTMLTemplate>,
             {
               request,
               assets,
@@ -107,10 +107,10 @@ describe('htmx', () => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(
-            <HTML>
+            <HTMLTemplate>
               <HTMLPlaceholderEntryAssets />
               <App />
-            </HTML>,
+            </HTMLTemplate>,
             {
               request,
               assets,

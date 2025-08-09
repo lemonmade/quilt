@@ -10,7 +10,7 @@ import {
   HTMLPlaceholderSerializations,
 } from './HTMLPlaceholder.tsx';
 
-export interface HTMLProps extends JSX.HTMLAttributes<HTMLHtmlElement> {
+export interface HTMLTemplateProps extends JSX.HTMLAttributes<HTMLHtmlElement> {
   head?: VNode<any>;
   title?: string;
   links?: JSX.HTMLAttributes<HTMLAnchorElement>[];
@@ -18,7 +18,7 @@ export interface HTMLProps extends JSX.HTMLAttributes<HTMLHtmlElement> {
   body?: VNode<any>;
 }
 
-export function HTML({
+export function HTMLTemplate({
   head,
   title,
   links,
@@ -26,30 +26,35 @@ export function HTML({
   body,
   children,
   ...rest
-}: RenderableProps<HTMLProps>) {
+}: RenderableProps<HTMLTemplateProps>) {
   const browserResponse = useBrowserResponse({optional: true});
 
   return (
     <html {...browserResponse?.htmlAttributes.value} {...rest}>
-      {head ?? <HTMLHead title={title} links={links} metas={metas} />}
-      {body ?? <HTMLBody>{children}</HTMLBody>}
+      {head ?? <HTMLTemplateHead title={title} links={links} metas={metas} />}
+      {body ?? (
+        <HTMLTemplateBody wrapper={Boolean(children)}>
+          {children}
+        </HTMLTemplateBody>
+      )}
     </html>
   );
 }
 
-export interface HTMLHeadProps extends JSX.HTMLAttributes<HTMLHeadElement> {
+export interface HTMLTemplateHeadProps
+  extends JSX.HTMLAttributes<HTMLHeadElement> {
   title?: string;
   links?: JSX.HTMLAttributes<HTMLAnchorElement>[];
   metas?: JSX.HTMLAttributes<HTMLMetaElement>[];
 }
 
-export function HTMLHead({
+export function HTMLTemplateHead({
   title,
   links,
   metas,
   children,
   ...rest
-}: RenderableProps<HTMLHeadProps>) {
+}: RenderableProps<HTMLTemplateHeadProps>) {
   const browserResponse = useBrowserResponse({optional: true});
 
   const content = children ?? (
@@ -67,27 +72,34 @@ export function HTMLHead({
   return <head {...rest}>{content}</head>;
 }
 
-const DEFAULT_APP_ID = 'app';
+const DEFAULT_WRAPPER_PROPS = {id: 'app'};
 
-export interface HTMLBodyProps extends JSX.HTMLAttributes<HTMLBodyElement> {
-  app?: {id: string};
+export interface HTMLTemplateBodyProps
+  extends JSX.HTMLAttributes<HTMLBodyElement> {
+  wrapper?: boolean | JSX.HTMLAttributes<HTMLDivElement>;
 }
 
-export function HTMLBody({
+export function HTMLTemplateBody({
   children,
-  app,
+  wrapper,
   ...rest
-}: RenderableProps<HTMLBodyProps>) {
+}: RenderableProps<HTMLTemplateBodyProps>) {
   const browserResponse = useBrowserResponse();
 
-  const content = children ?? (
+  const content = wrapper ? (
+    <div {...(typeof wrapper === 'boolean' ? DEFAULT_WRAPPER_PROPS : wrapper)}>
+      <HTMLPlaceholderContent />
+    </div>
+  ) : (
+    <HTMLPlaceholderContent />
+  );
+
+  const bodyContent = children ?? (
     <>
       <HTMLPlaceholderSerializations />
       <HTMLPlaceholderEntryAssets />
 
-      <div id={app?.id ?? DEFAULT_APP_ID}>
-        <HTMLPlaceholderContent />
-      </div>
+      {content}
 
       <HTMLPlaceholderAsyncAssets />
       <HTMLPlaceholderPreloadAssets />
@@ -96,7 +108,7 @@ export function HTMLBody({
 
   return (
     <body {...browserResponse.bodyAttributes.value} {...rest}>
-      {content}
+      {bodyContent}
     </body>
   );
 }
