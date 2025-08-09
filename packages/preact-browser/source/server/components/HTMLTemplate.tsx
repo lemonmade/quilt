@@ -102,7 +102,7 @@ export function HTMLTemplateBody({
 
 export function HTMLTemplateContent() {
   // @ts-expect-error Just used as a placeholder
-  return <browser-response-placeholder-content />;
+  return <html-template-placeholder-content />;
 }
 
 export function HTMLTemplateAssets({
@@ -128,17 +128,17 @@ export function HTMLTemplateAssets({
   }
 
   // @ts-expect-error Just used as a placeholder
-  return <browser-response-placeholder-assets {...props} />;
+  return <html-template-placeholder-assets {...props} />;
 }
 
 export function HTMLTemplateSerializations() {
   // @ts-expect-error Just used as a placeholder
-  return <browser-response-placeholder-serializations />;
+  return <html-template-placeholder-serializations />;
 }
 
 export function HTMLTemplateStreamBoundary() {
   // @ts-expect-error Just used as a placeholder
-  return <browser-response-stream-boundary />;
+  return <html-template-stream-boundary />;
 }
 
 HTMLTemplate.Head = HTMLTemplateHead;

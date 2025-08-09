@@ -27,10 +27,10 @@ export type RenderAppValue =
   | (() => string | VNode<any> | Promise<string | VNode<any>>);
 
 const STREAM_BOUNDARY_ELEMENT_REGEX =
-  /<browser-response-stream-boundary.+?<\/browser-response-stream-boundary>/gim;
+  /<html-template-stream-boundary.+?<\/html-template-stream-boundary>/gim;
 
 const PLACEHOLDER_ELEMENT_REGEX =
-  /<browser-response-placeholder-(?<name>[\w-]+)/gim;
+  /<html-template-placeholder-(?<name>[\w-]+)/gim;
 
 export async function renderAppToHTMLResponse(
   renderApp: RenderAppValue,
@@ -393,7 +393,7 @@ async function renderHTMLChunk(
         match.index + match[0]!.length,
       );
 
-      const closingTag = `</browser-response-placeholder-${name}>`;
+      const closingTag = `</html-template-placeholder-${name}>`;
       const closingTagIndex = result.indexOf(closingTag, startIndex);
 
       if (closingTagIndex === -1) continue;
@@ -506,7 +506,7 @@ async function renderHTMLChunk(
         }
         default: {
           throw new Error(
-            `Unknown placeholder element: <browser-response-placeholder-${name}>`,
+            `Unknown placeholder element: <html-template-placeholder-${name}>`,
           );
         }
       }
