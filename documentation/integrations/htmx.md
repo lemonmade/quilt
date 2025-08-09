@@ -49,10 +49,9 @@ Let’s imagine a simple application that renders a button, and updates the butt
 ```tsx
 import {Hono} from 'hono';
 import {
-  HTML,
+  HTMLTemplate,
   HTMLPlaceholderEntryAssets,
   renderToHTMLResponse,
-  HTML_TEMPLATE_FRAGMENT,
 } from '@quilted/quilt/server';
 import {BrowserAssets} from 'quilt:module/assets';
 
@@ -78,10 +77,10 @@ app.get('/', async (c) => {
 
 function AppHTML() {
   return (
-    <HTML title="My app">
+    <HTMLTemplate title="My app">
       <HTMLPlaceholderEntryAssets />
       <App />
-    </HTML>
+    </HTMLTemplate>
   );
 }
 
@@ -104,9 +103,8 @@ app.post('/clicked', async (c) => {
   // This helper renders a React element to an HTML response, without wrapping
   // a full HTML document around it. htmx will replace the outerHTML of the button
   // with the content of this response, thanks to to the `hx-swap` attribute.
-  const response = await renderAppToHTMLResponse(<ClickedButton />, {
+  const response = await renderToHTMLResponse(<ClickedButton />, {
     request,
-    template: HTML_TEMPLATE_FRAGMENT,
   });
 
   return response;

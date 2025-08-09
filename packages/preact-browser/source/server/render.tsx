@@ -14,7 +14,7 @@ import {
   BrowserEffectsAreActiveContext,
 } from '../context.ts';
 
-import {HTML} from './components/HTML.tsx';
+import {HTMLTemplate} from './components/HTMLTemplate.tsx';
 import {Serialization} from './components/Serialization.tsx';
 import {ScriptAssets} from './components/ScriptAssets.tsx';
 import {ScriptAssetsPreload} from './components/ScriptAssetsPreload.tsx';
@@ -31,9 +31,6 @@ const STREAM_BOUNDARY_ELEMENT_REGEX =
 
 const PLACEHOLDER_ELEMENT_REGEX =
   /<browser-response-placeholder-(?<name>[\w-]+)/gim;
-
-export const HTML_TEMPLATE_FRAGMENT =
-  '<browser-response-placeholder-content></browser-response-placeholder-content>';
 
 export async function renderAppToHTMLResponse(
   renderApp: RenderAppValue,
@@ -82,7 +79,7 @@ export async function renderAppToHTMLResponse(
         : await renderAppToString(renderApp, {browser, assets});
 
     const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
-      template ?? <HTML />,
+      template ?? <HTMLTemplate />,
       {
         browser,
         assets,
@@ -170,7 +167,7 @@ export async function renderAppToHTMLString(
     : undefined;
 
   const {firstChunk, remainingChunks} = await renderHTMLTemplateToChunks(
-    template ?? <HTML />,
+    template ?? <HTMLTemplate />,
     {
       assets,
       browser,

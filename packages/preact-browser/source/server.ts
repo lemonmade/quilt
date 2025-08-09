@@ -25,7 +25,6 @@ export {
   renderAppToHTMLResponse,
   renderToHTMLString,
   renderToHTMLResponse,
-  HTML_TEMPLATE_FRAGMENT,
 } from './server/render.tsx';
 
 export {useModuleAssets} from './server/hooks/assets.ts';
@@ -61,7 +60,11 @@ export {ContentSecurityPolicy} from './server/components/ContentSecurityPolicy.t
 export {CrossOriginEmbedderPolicy} from './server/components/CrossOriginEmbedderPolicy.tsx';
 export {CrossOriginOpenerPolicy} from './server/components/CrossOriginOpenerPolicy.tsx';
 export {CrossOriginResourcePolicy} from './server/components/CrossOriginResourcePolicy.tsx';
-export {HTML, HTMLBody, HTMLHead} from './server/components/HTML.tsx';
+export {
+  HTMLTemplate,
+  HTMLTemplateBody,
+  HTMLTemplateHead,
+} from './server/components/HTMLTemplate.tsx';
 export {OpenGraph} from './server/components/OpenGraph.tsx';
 export {NotFound} from './server/components/NotFound.tsx';
 export {PermissionsPolicy} from './server/components/PermissionsPolicy.tsx';

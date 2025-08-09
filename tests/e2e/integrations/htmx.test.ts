@@ -17,7 +17,7 @@ describe('htmx', () => {
       'browser.tsx': HTMX_BROWSER_ENTRY,
       'server.tsx': multiline`
         import {Hono} from 'hono';
-        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTMLTemplate, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
@@ -32,10 +32,10 @@ describe('htmx', () => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(
-            <HTML>
+            <HTMLTemplate>
               <HTMLPlaceholderEntryAssets />
               <App />
-            </HTML>,
+            </HTMLTemplate>,
             {
               request,
               assets,
@@ -92,7 +92,7 @@ describe('htmx', () => {
       'server.tsx': multiline`
         import {Hono} from 'hono';
         import {parseHTMXRequestHeaders, HTMXResponse} from '@quilted/htmx';
-        import {renderToHTMLResponse, HTML, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
+        import {renderToHTMLResponse, HTMLTemplate, HTMLPlaceholderEntryAssets} from '@quilted/quilt/server';
         import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
         import {BrowserAssets} from 'quilt:module/assets';
         
@@ -107,10 +107,10 @@ describe('htmx', () => {
           const request = c.req.raw;
 
           const response = await renderToHTMLResponse(
-            <HTML>
+            <HTMLTemplate>
               <HTMLPlaceholderEntryAssets />
               <App />
-            </HTML>,
+            </HTMLTemplate>,
             {
               request,
               assets,
