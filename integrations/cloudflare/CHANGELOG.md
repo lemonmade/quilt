@@ -1,5 +1,11 @@
 # @quilted/cloudflare
 
+## 0.5.2
+
+### Patch Changes
+
+- [`b5cd0ee`](https://github.com/lemonmade/quilt/commit/b5cd0ee49d31a7d2970a117d8e4a12f7e173100e) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix Cloudflare headers plugin
+
 ## 0.5.1
 
 ### Patch Changes
