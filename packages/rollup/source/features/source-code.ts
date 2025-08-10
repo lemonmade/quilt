@@ -49,6 +49,8 @@ export function sourceCode({
           runtime: 'automatic',
           importSource: typeof react === 'string' ? react : 'preact',
           development: mode === 'development',
+          // Allow namespace props, except in “real” React, where they cause issues.
+          throwIfNamespace: react === 'react',
         },
       ],
       [
