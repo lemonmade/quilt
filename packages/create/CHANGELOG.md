@@ -1,5 +1,13 @@
 # @quilted/create
 
+## 0.3.1
+
+### Patch Changes
+
+- [`eef99d6`](https://github.com/lemonmade/quilt/commit/eef99d6c3daeffdc7b9bf7d48fb13d211ff96af0) Thanks [@lemonmade](https://github.com/lemonmade)! - Update template dependencies
+
+- [`e97d495`](https://github.com/lemonmade/quilt/commit/e97d4958f87addc7845057a44e7434e0152b718c) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix more template issues
+
 ## 0.3.0
 
 ### Minor Changes
