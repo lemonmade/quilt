@@ -6,7 +6,7 @@ import {
 import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 
-import {AppContextReact} from '~/shared/context.ts';
+import {AppContextPreact} from '~/shared/context.ts';
 
 import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
@@ -31,13 +31,13 @@ export const renderApp = createRender<
     const {router, browser} = context;
 
     return (
-      <AppContextReact.Provider value={context}>
+      <AppContextPreact.Provider value={context}>
         <BrowserDetailsContext.Provider value={browser}>
           <Localization locale={locale}>
             <Navigation router={router}>{element}</Navigation>
           </Localization>
         </BrowserDetailsContext.Provider>
-      </AppContextReact.Provider>
+      </AppContextPreact.Provider>
     );
   },
   async afterRender() {

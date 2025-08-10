@@ -2,12 +2,15 @@ name: Prepare repo
 runs:
   using: 'composite'
   steps:
-    - uses: pnpm/action-setup@v2.2.1
-    - uses: actions/setup-node@v2
+    - uses: pnpm/action-setup@v4.0.0
+    - uses: actions/setup-node@v4
       with:
         cache: pnpm
         registry-url: 'https://registry.npmjs.org'
         node-version-file: '.nvmrc'
+    - name: Enable Corepack
+      run: corepack enable && pnpm -v
+      shell: bash
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
       shell: bash

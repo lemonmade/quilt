@@ -9,7 +9,7 @@ import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 import {GraphQLCache} from '@quilted/quilt/graphql';
 
-import {AppContextReact} from '~/shared/context.ts';
+import {AppContextPreact} from '~/shared/context.ts';
 
 import {GraphQLTesting, GraphQLController} from '../graphql.ts';
 
@@ -46,7 +46,7 @@ export const renderApp = createRender<
     const {router, browser, graphql, graphQLController} = context;
 
     return (
-      <AppContextReact.Provider value={context}>
+      <AppContextPreact.Provider value={context}>
         <BrowserDetailsContext.Provider value={browser}>
           <Localization locale={locale}>
             <Navigation router={router}>
@@ -59,7 +59,7 @@ export const renderApp = createRender<
             </Navigation>
           </Localization>
         </BrowserDetailsContext.Provider>
-      </AppContextReact.Provider>
+      </AppContextPreact.Provider>
     );
   },
   async afterRender(wrapper) {

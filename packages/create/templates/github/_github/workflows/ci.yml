@@ -1,10 +1,9 @@
 name: CI
 
 on:
-  push:
+  pull_request:
     branches:
-      - '**'
-      - '!main'
+      - main
   workflow_call:
     inputs:
       build:
@@ -16,6 +15,7 @@ jobs:
   lint:
     name: Lint 💅
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare
@@ -24,6 +24,7 @@ jobs:
   type-check:
     name: Type check 🧮
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare
@@ -32,6 +33,7 @@ jobs:
   unit-tests:
     name: Unit tests 🧪
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare
@@ -39,8 +41,9 @@ jobs:
 
   build:
     name: Build 🏗
-    if: ${{ inputs.build || github.event_name == 'push' }}
+    if: ${{ inputs.build || github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare

@@ -9,7 +9,7 @@ import {Localization} from '@quilted/quilt/localize';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import {trpc} from '~/shared/trpc.ts';
-import {AppContextReact} from '~/shared/context.ts';
+import {AppContextPreact} from '~/shared/context.ts';
 
 import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
@@ -39,7 +39,7 @@ export const renderApp = createRender<
     const {router, browser, trpc: trpcClient, queryClient} = context;
 
     return (
-      <AppContextReact.Provider value={context}>
+      <AppContextPreact.Provider value={context}>
         <BrowserDetailsContext.Provider value={browser}>
           <Localization locale={locale}>
             <Navigation router={router}>
@@ -51,7 +51,7 @@ export const renderApp = createRender<
             </Navigation>
           </Localization>
         </BrowserDetailsContext.Provider>
-      </AppContextReact.Provider>
+      </AppContextPreact.Provider>
     );
   },
   async afterRender() {
