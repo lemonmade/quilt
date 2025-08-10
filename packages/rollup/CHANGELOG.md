@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.4.3
+
+### Patch Changes
+
+- [`c0f15dd`](https://github.com/lemonmade/quilt/commit/c0f15dd195d9b5356e1a93cc155ef8dac8a59ce8) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow namespace props in Babel
+
 ## 0.4.2
 
 ### Patch Changes

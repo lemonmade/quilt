@@ -925,7 +925,7 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../hono
       '@quilted/rollup':
-        specifier: workspace:^0.4.0
+        specifier: workspace:^0.4.3
         version: link:../rollup
     devDependencies:
       '@types/babel__core':
