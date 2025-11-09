@@ -380,6 +380,7 @@ function setAttributes(
     : attributes;
 
   for (const [attribute, value] of Object.entries(resolvedAttributes)) {
+    if (value == null) continue;
     setAttribute(element, attribute, value);
   }
 }
