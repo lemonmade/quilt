@@ -1220,7 +1220,7 @@ export function nodeAppServerRuntime({
     hono() {
       return multiline`
         import app from ${JSON.stringify(MAGIC_MODULE_HONO)};
-        import {serve} from '@quilted/hono/node';
+        import {serve} from '@quilted/quilt/hono/node';
 
         const port = ${port ?? 'Number.parseInt(process.env.PORT, 10)'};
         const host = ${host ? JSON.stringify(host) : 'process.env.HOST'};
