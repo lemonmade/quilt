@@ -95,4 +95,5 @@ export {
   NoopComponent as StyleAsset,
   NoopComponent as StyleAssetPreload,
   NoopComponent as Viewport,
+  NoopComponent as OpenGraph,
 };
