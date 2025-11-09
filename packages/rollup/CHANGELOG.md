@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.4.4
+
+### Patch Changes
+
+- [`5d76abd`](https://github.com/lemonmade/quilt/commit/5d76abd1d5aae776b41af46cc60b9055ad4934bb) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect import for @quilted/quilt/hono
+
 ## 0.4.3
 
 ### Patch Changes

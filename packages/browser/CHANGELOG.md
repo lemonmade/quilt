@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.2.1
+
+### Patch Changes
+
+- [`88d10ef`](https://github.com/lemonmade/quilt/commit/88d10ef57f6805d44325f5dd05687862c619cc55) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix incorrect setting of null attributes
+
 ## 0.2.0
 
 ### Minor Changes
