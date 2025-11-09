@@ -1,5 +1,14 @@
 # @quilted/preact-browser
 
+## 0.2.3
+
+### Patch Changes
+
+- [`31c4952`](https://github.com/lemonmade/quilt/commit/31c4952f9c4efa84fb443edd346c373d0830d951) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix missing server noop for OpenGraph component
+
+- Updated dependencies [[`88d10ef`](https://github.com/lemonmade/quilt/commit/88d10ef57f6805d44325f5dd05687862c619cc55)]:
+  - @quilted/browser@0.2.1
+
 ## 0.2.2
 
 ### Patch Changes
