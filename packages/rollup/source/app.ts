@@ -376,7 +376,7 @@ export interface AppRuntime {
     /**
      * The directory to output the application’s assets into.
      */
-    directory?: string;
+    directory?: string | ((options: {baseURL: string}) => string);
   };
 
   /**
@@ -393,7 +393,12 @@ export interface AppRuntime {
      * This function receives the current Rollup options and can return
      * modified options or a partial override.
      */
-    rollup?(options: RollupOptions): InputPluginOption;
+    rollup?(
+      options: RollupOptions,
+      quilt: {
+        assets: {baseURL: string} & Omit<AppBrowserAssetsOptions, 'baseURL'>;
+      },
+    ): InputPluginOption;
   };
 }
 
@@ -499,6 +504,7 @@ export async function quiltApp({
 export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
   const {root = process.cwd(), assets, runtime} = options;
   const project = Project.load(root);
+  const baseURL = assets?.baseURL ?? '/assets/';
 
   const [plugins, browserGroup] = await Promise.all([
     quiltAppBrowserPlugins(options),
@@ -513,13 +519,19 @@ export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
     rollupGenerateOptionsForBrowsers(browserGroup.browsers),
   ]);
 
+  const outputDirectory = assets?.directory
+    ? assets.directory
+    : runtime?.assets?.directory
+      ? typeof runtime.assets.directory === 'function'
+        ? runtime.assets.directory({baseURL})
+        : runtime.assets.directory
+      : `build/assets`;
+
   const rollupOptions = {
     plugins,
     output: {
       format: isESM ? 'esm' : 'systemjs',
-      dir: project.resolve(
-        assets?.directory ?? runtime?.assets?.directory ?? `build/assets`,
-      ),
+      dir: project.resolve(outputDirectory),
       entryFileNames: `[name]${targetFilenamePart}.[hash].js`,
       assetFileNames: `[name]${targetFilenamePart}.[hash].[ext]`,
       chunkFileNames: `[name]${targetFilenamePart}.[hash].js`,
@@ -533,7 +545,9 @@ export async function quiltAppBrowser(options: AppBrowserOptions = {}) {
   } satisfies RollupOptions;
 
   if (runtime?.browser?.rollup) {
-    rollupOptions.plugins.push(runtime.browser.rollup(rollupOptions));
+    rollupOptions.plugins.push(
+      runtime.browser.rollup(rollupOptions, {assets: {baseURL, ...assets}}),
+    );
   }
 
   return rollupOptions;

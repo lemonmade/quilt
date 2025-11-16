@@ -8,7 +8,9 @@ import {
 export function cloudflareWorkers() {
   return {
     output: {
-      bundle: true,
+      bundle: {
+        exclude: ['cloudflare:workers'],
+      },
     },
     resolve: {
       exportConditions: ['worker', 'workerd'],
@@ -21,10 +23,6 @@ export function cloudflareWorkers() {
   } satisfies ServerRuntime;
 }
 
-const DEFAULT_HEADERS = {
-  '/assets/*': ['Cache-Control: public, max-age=31536000, immutable'],
-};
-
 export function cloudflareWorkersApp({
   assets,
 }: {
@@ -34,21 +32,32 @@ export function cloudflareWorkersApp({
 } = {}) {
   return {
     assets: {
-      directory: './build/public/assets',
+      directory: ({baseURL}) =>
+        baseURL.startsWith('/')
+          ? `./build/public/${baseURL.slice(1)}`
+          : `./build/public/assets`,
     },
     server: cloudflareWorkers(),
     browser: {
-      rollup() {
+      rollup(_, {assets: {baseURL}}) {
         return {
           name: '@quilted/cloudflare/rollup/headers',
           async writeBundle() {
             const {writeFile, mkdir} = await import('node:fs/promises');
 
-            const content = Object.entries(assets?.headers ?? DEFAULT_HEADERS)
-              .map(([path, headers]) => {
-                return `${path}\n  ${headers.join('\n  ')}`;
-              })
-              .join('\n');
+            const headers = assets?.headers ?? defaultHeaders({baseURL});
+            const headerEntries = Object.entries(headers);
+
+            if (headerEntries.length === 0) {
+              return;
+            }
+
+            const content =
+              headerEntries
+                .map(([path, headers]) => {
+                  return `${path}\n  ${headers.join('\n  ')}`;
+                })
+                .join('\n') + '\n';
 
             await mkdir('./build/public', {recursive: true});
             await writeFile('./build/public/_headers', content);
@@ -57,4 +66,20 @@ export function cloudflareWorkersApp({
       },
     },
   } satisfies AppRuntime;
+}
+
+function defaultHeaders({
+  baseURL,
+}: {
+  baseURL: string;
+}): Record<string, readonly string[]> {
+  if (!baseURL.startsWith('/')) {
+    return {};
+  }
+
+  return {
+    [`${baseURL}${baseURL.endsWith('/') ? '' : '/'}*`]: [
+      'Cache-Control: public, max-age=31536000, immutable',
+    ],
+  };
 }
