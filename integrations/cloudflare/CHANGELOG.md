@@ -1,5 +1,14 @@
 # @quilted/cloudflare
 
+## 0.5.3
+
+### Patch Changes
+
+- [`3c4a5ac`](https://github.com/lemonmade/quilt/commit/3c4a5ac934e1648be6843f8cd880a53f7c29aeb4) Thanks [@lemonmade](https://github.com/lemonmade)! - Improve asset output for Cloudflare plugin
+
+- Updated dependencies [[`3c4a5ac`](https://github.com/lemonmade/quilt/commit/3c4a5ac934e1648be6843f8cd880a53f7c29aeb4)]:
+  - @quilted/rollup@0.4.5
+
 ## 0.5.2
 
 ### Patch Changes
