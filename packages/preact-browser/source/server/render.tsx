@@ -558,14 +558,20 @@ async function renderHTMLChunk(
               {/* Sync JS dependencies as modulepreload */}
               {entryAssets?.script ? (
                 <ScriptAssetsPreload
-                  scripts={dedup(entryAssets.script.syncDependencies, renderedAssets)}
+                  scripts={dedup(
+                    entryAssets.script.syncDependencies,
+                    renderedAssets,
+                  )}
                 />
               ) : null}
 
               {/* Async (page-specific) JS modules as modulepreload */}
               {asyncModules ? (
                 <ScriptAssetsPreload
-                  scripts={dedup(flatModuleScripts(asyncModules), renderedAssets)}
+                  scripts={dedup(
+                    flatModuleScripts(asyncModules),
+                    renderedAssets,
+                  )}
                 />
               ) : null}
 
@@ -593,10 +599,16 @@ async function renderHTMLChunk(
               {preloadModules ? (
                 <>
                   <ScriptAssetsPreload
-                    scripts={dedup(flatModuleScripts(preloadModules), renderedAssets)}
+                    scripts={dedup(
+                      flatModuleScripts(preloadModules),
+                      renderedAssets,
+                    )}
                   />
                   <StyleAssetsPreload
-                    styles={dedup(flatModuleStyles(preloadModules), renderedAssets)}
+                    styles={dedup(
+                      flatModuleStyles(preloadModules),
+                      renderedAssets,
+                    )}
                   />
                 </>
               ) : null}

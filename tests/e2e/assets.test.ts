@@ -438,7 +438,9 @@ describe('app builds', () => {
         const entryScript = await page.$('script[type="module"][src]');
         expect(entryScript).not.toBeNull();
 
-        const isAsync = await entryScript?.evaluate((el) => (el as HTMLScriptElement).async);
+        const isAsync = await entryScript?.evaluate(
+          (el) => (el as HTMLScriptElement).async,
+        );
         expect(isAsync).toBe(true);
       });
 
@@ -500,7 +502,9 @@ describe('app builds', () => {
         const moduleScripts = await page.$$('script[type="module"][src]');
         expect(moduleScripts).toHaveLength(1);
 
-        const isAsync = await moduleScripts[0]?.evaluate((el) => (el as HTMLScriptElement).async);
+        const isAsync = await moduleScripts[0]?.evaluate(
+          (el) => (el as HTMLScriptElement).async,
+        );
         expect(isAsync).toBe(true);
 
         // Should have modulepreload links for sync deps (no extra module scripts)
@@ -587,7 +591,8 @@ describe('app builds', () => {
           );
           const lastScriptIndex = elements.reduce(
             (acc, el, i) =>
-              el.tagName === 'SCRIPT' || el.getAttribute('rel') === 'modulepreload'
+              el.tagName === 'SCRIPT' ||
+              el.getAttribute('rel') === 'modulepreload'
                 ? i
                 : acc,
             -1,

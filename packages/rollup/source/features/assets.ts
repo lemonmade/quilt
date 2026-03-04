@@ -105,7 +105,9 @@ async function writeManifestForBundle(
     if (output.type === 'asset') {
       if (output.name && output.fileName.endsWith('.js')) {
         // Standalone JS asset (e.g. system.js loader) — treated as a single-script entry
-        manifest.modules[output.name] = makeEntry({script: getAssetId(output.fileName)});
+        manifest.modules[output.name] = makeEntry({
+          script: getAssetId(output.fileName),
+        });
 
         manifest.entries[`./${output.name}`] = output.name;
       }
@@ -322,11 +324,18 @@ function buildModuleEntry(
 
   return makeEntry({
     script: getAssetId(entryFileName),
-    style: entryStyleFiles[0] != null ? getAssetId(entryStyleFiles[0]) : undefined,
-    scriptSync: syncJsFiles.size > 0 ? [...syncJsFiles].map(getAssetId) : undefined,
-    styleSync: syncStyleFiles.size > 0 ? [...syncStyleFiles].map(getAssetId) : undefined,
-    scriptAsync: asyncFileNames.length > 0 ? asyncFileNames.map(getAssetId) : undefined,
-    styleAsync: asyncStyleFiles.size > 0 ? [...asyncStyleFiles].map(getAssetId) : undefined,
+    style:
+      entryStyleFiles[0] != null ? getAssetId(entryStyleFiles[0]) : undefined,
+    scriptSync:
+      syncJsFiles.size > 0 ? [...syncJsFiles].map(getAssetId) : undefined,
+    styleSync:
+      syncStyleFiles.size > 0 ? [...syncStyleFiles].map(getAssetId) : undefined,
+    scriptAsync:
+      asyncFileNames.length > 0 ? asyncFileNames.map(getAssetId) : undefined,
+    styleAsync:
+      asyncStyleFiles.size > 0
+        ? [...asyncStyleFiles].map(getAssetId)
+        : undefined,
   });
 }
 

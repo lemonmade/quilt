@@ -74,7 +74,9 @@ export class BrowserAssetsFromManifests implements BrowserAssets {
     };
   }
 
-  entry(options?: Pick<BrowserAssetSelector, 'id' | 'request'>): BrowserAssetsEntry {
+  entry(
+    options?: Pick<BrowserAssetSelector, 'id' | 'request'>,
+  ): BrowserAssetsEntry {
     const manifest = this.#resolveManifest(options?.request);
 
     if (manifest == null) return EMPTY_ENTRY;
@@ -116,7 +118,9 @@ export class BrowserAssetsFromManifests implements BrowserAssets {
   }
 }
 
-function normalizedModuleToEntry(module: NormalizedModuleEntry): BrowserAssetsEntry {
+function normalizedModuleToEntry(
+  module: NormalizedModuleEntry,
+): BrowserAssetsEntry {
   return {
     script: module.script
       ? {
