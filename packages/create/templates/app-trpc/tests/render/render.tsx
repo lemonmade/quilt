@@ -36,7 +36,12 @@ export const renderApp = createRender<
   },
   // Render all of our app-wide context providers around each component under test.
   render(element, context, {locale = 'en'}) {
-    const {navigation: {router}, browser, trpc: trpcClient, queryClient} = context;
+    const {
+      navigation: {router},
+      browser,
+      trpc: trpcClient,
+      queryClient,
+    } = context;
 
     return (
       <AppContextPreact.Provider value={context}>
