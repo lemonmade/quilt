@@ -6,29 +6,20 @@ import {
   PermissionsPolicyHeader,
   StrictTransportSecurityHeader,
 } from '@quilted/quilt/server';
-import {Router} from '@quilted/quilt/navigation';
-
 import Env from 'quilt:module/env';
 import {BrowserAssets} from 'quilt:module/assets';
-
-import type {AppContext} from '~/shared/context.ts';
-
-import {App} from './App.tsx';
 
 const app = new Hono();
 const assets = new BrowserAssets();
 
-class ServerAppContext implements AppContext {
-  readonly router: Router;
-
-  constructor(request: Request) {
-    this.router = new Router(request.url);
-  }
-}
-
 // For all GET requests, render our Preact application.
 app.get('*', async (c) => {
   const request = c.req.raw;
+
+  const [{App}, {ServerAppContext}] = await Promise.all([
+    import('./App.tsx'),
+    import('./context/server.ts'),
+  ]);
 
   const context = new ServerAppContext(request);
 

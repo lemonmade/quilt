@@ -1,28 +1,11 @@
+import './browser.css';
+
 import type {ComponentChild} from 'preact';
 import {hydrate} from '@quilted/quilt/browser';
-import {Router} from '@quilted/quilt/navigation';
-import {createGraphQLFetch, GraphQLCache} from '@quilted/quilt/graphql';
 
-import type {AppContext} from '~/shared/context.ts';
+import {BrowserAppContext} from '~/context/browser.ts';
 
 import {App} from './App.tsx';
-
-class BrowserAppContext implements AppContext {
-  readonly router: Router;
-  readonly graphql: AppContext['graphql'];
-
-  constructor() {
-    this.router = new Router();
-
-    const graphQLFetch = createGraphQLFetch({url: '/api/graphql'});
-    const graphQLCache = new GraphQLCache({fetch: graphQLFetch});
-
-    this.graphql = {
-      fetch: graphQLFetch,
-      cache: graphQLCache,
-    };
-  }
-}
 
 class BrowserApp {
   /**
@@ -44,7 +27,7 @@ class BrowserApp {
     // @example
     // ```js
     // // Log the current URL
-    // console.log(globalThis.app.context.router.currentRequest.url);
+    // console.log(globalThis.app.context.navigation.router.currentRequest.url);
     // ```
     Object.defineProperty(globalThis, 'app', {
       value: this,
@@ -53,8 +36,11 @@ class BrowserApp {
       writable: true,
     });
   }
+
+  hydrate() {
+    hydrate(this.rendered);
+  }
 }
 
 const app = new BrowserApp();
-
-hydrate(app.rendered);
+app.hydrate();

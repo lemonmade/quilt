@@ -1,17 +1,10 @@
+import './browser.css';
+
 import type {ComponentChild} from 'preact';
 import {hydrate} from '@quilted/quilt/browser';
-import {Router} from '@quilted/quilt/navigation';
 
-import type {AppContext} from '~/shared/context.ts';
+import {BrowserAppContext} from '~/context/browser.ts';
 import {App} from './App.tsx';
-
-class BrowserAppContext implements AppContext {
-  readonly router: Router;
-
-  constructor() {
-    this.router = new Router();
-  }
-}
 
 class BrowserApp {
   /**
@@ -42,8 +35,11 @@ class BrowserApp {
       writable: true,
     });
   }
+
+  hydrate() {
+    hydrate(this.rendered);
+  }
 }
 
 const app = new BrowserApp();
-
-hydrate(app.rendered);
+app.hydrate();

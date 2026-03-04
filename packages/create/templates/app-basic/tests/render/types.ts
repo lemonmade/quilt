@@ -1,7 +1,7 @@
 import type {TestRouter} from '@quilted/quilt/navigation/testing';
 import type {BrowserTestMock} from '@quilted/quilt/browser/testing';
 
-import type {AppContext} from '~/shared/context.ts';
+import type {AppContext} from '~/context/types.ts';
 
 export interface RenderOptions {
   /**
@@ -27,7 +27,7 @@ export interface RenderContext extends AppContext {
   /**
    * The router used for this component test.
    */
-  readonly router: TestRouter;
+  readonly navigation: {router: TestRouter};
 
   /**
    * The browser environment for this component test.

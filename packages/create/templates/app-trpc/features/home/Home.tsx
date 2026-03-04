@@ -1,4 +1,4 @@
-import {trpc} from '~/shared/trpc.ts';
+import {trpc} from '~/context/trpc.ts';
 
 import styles from './Home.module.css';
 

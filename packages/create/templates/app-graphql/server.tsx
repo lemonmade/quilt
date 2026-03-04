@@ -1,5 +1,4 @@
 import {Hono} from 'hono';
-import {Router} from '@quilted/quilt/navigation';
 import {
   renderAppToHTMLResponse,
   CacheControlHeader,
@@ -7,34 +6,12 @@ import {
   PermissionsPolicyHeader,
   StrictTransportSecurityHeader,
 } from '@quilted/quilt/server';
-import {GraphQLCache} from '@quilted/quilt/graphql';
 
 import Env from 'quilt:module/env';
 import {BrowserAssets} from 'quilt:module/assets';
 
-import type {AppContext} from '~/shared/context.ts';
-
 const app = new Hono();
 const assets = new BrowserAssets();
-
-class ServerAppContext implements AppContext {
-  readonly router: Router;
-  readonly graphql: AppContext['graphql'];
-
-  constructor(request: Request) {
-    this.router = new Router(request.url);
-
-    const graphQLFetch: AppContext['graphql']['fetch'] = async (...args) => {
-      const {performGraphQLOperation} = await import('./server/graphql.ts');
-      return performGraphQLOperation(...args);
-    };
-
-    this.graphql = {
-      fetch: graphQLFetch,
-      cache: new GraphQLCache({fetch: graphQLFetch}),
-    };
-  }
-}
 
 // GraphQL API, called from the client
 app.post('/api/graphql', async (c) => {
@@ -55,7 +32,10 @@ app.post('/api/graphql', async (c) => {
 app.get('*', async (c) => {
   const request = c.req.raw;
 
-  const [{App}] = await Promise.all([import('./App.tsx')]);
+  const [{App}, {ServerAppContext}] = await Promise.all([
+    import('./App.tsx'),
+    import('./context/server.ts'),
+  ]);
 
   const context = new ServerAppContext(request);
 

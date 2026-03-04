@@ -2,7 +2,7 @@ import type {TestRouter} from '@quilted/quilt/navigation/testing';
 import type {BrowserTestMock} from '@quilted/quilt/browser/testing';
 import type {GraphQLCache} from '@quilted/quilt/graphql';
 
-import type {AppContext} from '~/shared/context.ts';
+import type {AppContext} from '~/context/types.ts';
 
 import type {GraphQLController} from '../graphql.ts';
 
@@ -58,7 +58,7 @@ export interface RenderContext extends AppContext {
   /**
    * The router used for this component test.
    */
-  readonly router: TestRouter;
+  readonly navigation: {router: TestRouter};
 
   /**
    * The browser environment for this component test.
@@ -66,9 +66,14 @@ export interface RenderContext extends AppContext {
   readonly browser: BrowserTestMock;
 
   /**
-   * The GraphQL controller used for this component test.
+   * The GraphQL context used for this component test.
    */
-  readonly graphQLController: GraphQLController;
+  readonly graphql: AppContext['graphql'] & {
+    /**
+     * The GraphQL controller used for this component test.
+     */
+    readonly controller: GraphQLController;
+  };
 }
 
 export interface RenderActions extends Record<string, never> {}

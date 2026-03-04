@@ -7,8 +7,9 @@ import {Frame} from './foundation/frame.ts';
 
 import {Home} from './features/home.ts';
 
-import {AppContextPreact, type AppContext} from './shared/context.ts';
-import {routeWithAppContext} from './shared/navigation.ts';
+import type {AppContext} from './context/types.ts';
+import {AppContextPreact} from './context/preact.ts';
+import {routeWithAppContext} from './context/navigation.ts';
 
 export interface AppProps {
   context: AppContext;
@@ -38,7 +39,11 @@ export function App({context}: AppProps) {
     <AppContextPreact.Provider value={context}>
       <Localization>
         <Head />
-        <Navigation router={context.router} routes={routes} context={context} />
+        <Navigation
+          router={context.navigation.router}
+          routes={routes}
+          context={context}
+        />
       </Localization>
     </AppContextPreact.Provider>
   );

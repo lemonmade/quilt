@@ -9,12 +9,10 @@ import {Frame} from './foundation/frame.ts';
 
 import {Home} from './features/home.ts';
 
-import {trpc} from './shared/trpc.ts';
-import {
-  AppContextPreact,
-  type AppContext as AppContextType,
-} from './shared/context.ts';
-import {routeWithAppContext} from './shared/navigation.ts';
+import {trpc} from './context/trpc.ts';
+import type {AppContext as AppContextType} from './context/types.ts';
+import {AppContextPreact} from './context/preact.ts';
+import {routeWithAppContext} from './context/navigation.ts';
 
 export interface AppProps {
   context: AppContextType;
@@ -47,7 +45,7 @@ export function App({context}: AppProps) {
           <Localization>
             <Head />
             <Navigation
-              router={context.router}
+              router={context.navigation.router}
               routes={routes}
               context={context}
             />

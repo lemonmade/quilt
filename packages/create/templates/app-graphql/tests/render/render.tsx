@@ -9,7 +9,7 @@ import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 import {GraphQLCache} from '@quilted/quilt/graphql';
 
-import {AppContextPreact} from '~/shared/context.ts';
+import {AppContextPreact} from '~/context/preact.ts';
 
 import {GraphQLTesting, GraphQLController} from '../graphql.ts';
 
@@ -32,18 +32,21 @@ export const renderApp = createRender<
     router = new TestRouter(),
     browser = new BrowserTestMock(),
     graphql = new GraphQLController(),
-    graphQLCache = new GraphQLCache(),
+    graphQLCache = new GraphQLCache({fetch: graphql.fetch}),
   }) {
     return {
-      router,
+      navigation: {router},
       browser,
-      graphql: {fetch: graphql.fetch, cache: graphQLCache},
-      graphQLController: graphql,
+      graphql: {fetch: graphql.fetch, cache: graphQLCache, controller: graphql},
     };
   },
   // Render all of our app-wide context providers around each component under test.
   render(element, context, {locale = 'en'}) {
-    const {router, browser, graphql, graphQLController} = context;
+    const {
+      navigation: {router},
+      browser,
+      graphql,
+    } = context;
 
     return (
       <AppContextPreact.Provider value={context}>
@@ -51,7 +54,7 @@ export const renderApp = createRender<
           <Localization locale={locale}>
             <Navigation router={router}>
               <GraphQLTesting
-                controller={graphQLController}
+                controller={graphql.controller}
                 cache={graphql.cache}
               >
                 <Suspense fallback={null}>{element}</Suspense>
@@ -69,7 +72,7 @@ export const renderApp = createRender<
     // once the data is ready.
 
     await wrapper.act(async () => {
-      await wrapper.context.graphQLController.resolveAll();
+      await wrapper.context.graphql.controller.resolveAll();
     });
   },
 });

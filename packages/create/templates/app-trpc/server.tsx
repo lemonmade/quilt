@@ -6,33 +6,15 @@ import {
   PermissionsPolicyHeader,
   StrictTransportSecurityHeader,
 } from '@quilted/quilt/server';
-import {Router} from '@quilted/quilt/navigation';
-
 import Env from 'quilt:module/env';
 import {BrowserAssets} from 'quilt:module/assets';
 
-import {createDirectClient} from '@quilted/trpc/server';
 import {fetchRequestHandler} from '@trpc/server/adapters/fetch';
-import {QueryClient} from '@tanstack/react-query';
-
-import type {AppContext} from '~/shared/context.ts';
 
 import {appRouter} from './trpc.ts';
 
 const app = new Hono();
 const assets = new BrowserAssets();
-
-class ServerAppContext implements AppContext {
-  readonly router: Router;
-  readonly trpc: AppContext['trpc'];
-  readonly queryClient: QueryClient;
-
-  constructor(request: Request) {
-    this.router = new Router(request.url);
-    this.trpc = createDirectClient(appRouter);
-    this.queryClient = new QueryClient();
-  }
-}
 
 // TRPC API
 app.all('/api/*', async (c) => {
@@ -49,7 +31,10 @@ app.all('/api/*', async (c) => {
 app.get('*', async (c) => {
   const request = c.req.raw;
 
-  const [{App}] = await Promise.all([import('./App.tsx')]);
+  const [{App}, {ServerAppContext}] = await Promise.all([
+    import('./App.tsx'),
+    import('./context/server.ts'),
+  ]);
 
   const context = new ServerAppContext(request);
 

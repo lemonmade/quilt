@@ -6,7 +6,7 @@ import {
 import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
 
-import {AppContextPreact} from '~/shared/context.ts';
+import {AppContextPreact} from '~/context/preact.ts';
 
 import {RenderOptions, RenderContext, RenderActions} from './types.ts';
 
@@ -24,11 +24,14 @@ export const renderApp = createRender<
   // authors on the `root.context` property. Context is used to share data between your
   // React tree and your test code, and is ideal for mocking out global context providers.
   context({router = new TestRouter(), browser = new BrowserTestMock()}) {
-    return {router, browser};
+    return {navigation: {router}, browser};
   },
   // Render all of our app-wide context providers around each component under test.
   render(element, context, {locale = 'en'}) {
-    const {router, browser} = context;
+    const {
+      navigation: {router},
+      browser,
+    } = context;
 
     return (
       <AppContextPreact.Provider value={context}>

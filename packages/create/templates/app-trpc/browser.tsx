@@ -1,28 +1,11 @@
+import './browser.css';
+
 import type {ComponentChild} from 'preact';
 import {hydrate} from '@quilted/quilt/browser';
-import {Router} from '@quilted/quilt/navigation';
 
-import {httpBatchLink} from '@trpc/client';
-import {QueryClient} from '@tanstack/react-query';
-
-import type {AppContext} from '~/shared/context.ts';
-import {trpc} from '~/shared/trpc.ts';
+import {BrowserAppContext} from '~/context/browser.ts';
 
 import {App} from './App.tsx';
-
-class BrowserAppContext implements AppContext {
-  readonly router: Router;
-  readonly trpc: AppContext['trpc'];
-  readonly queryClient: QueryClient;
-
-  constructor() {
-    this.router = new Router();
-    this.queryClient = new QueryClient();
-    this.trpc = trpc.createClient({
-      links: [httpBatchLink({url: new URL('/api', window.location.href).href})],
-    });
-  }
-}
 
 class BrowserApp {
   /**
@@ -44,7 +27,7 @@ class BrowserApp {
     // @example
     // ```js
     // // Log the current URL
-    // console.log(globalThis.app.context.router.currentRequest.url);
+    // console.log(globalThis.app.context.navigation.router.currentRequest.url);
     // ```
     Object.defineProperty(globalThis, 'app', {
       value: this,
@@ -53,8 +36,11 @@ class BrowserApp {
       writable: true,
     });
   }
+
+  hydrate() {
+    hydrate(this.rendered);
+  }
 }
 
 const app = new BrowserApp();
-
-hydrate(app.rendered);
+app.hydrate();

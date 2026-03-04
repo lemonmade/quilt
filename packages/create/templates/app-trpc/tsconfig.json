@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsxImportSource": "preact",
     "paths": {
-      "~/shared/*": ["./shared/*"],
+      "~/context/*": ["./context/*"],
       "~/tests/*": ["./tests/*"],
       "react": ["./node_modules/preact/compat"],
       "react-dom": ["./node_modules/preact/compat"]
