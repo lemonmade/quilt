@@ -9,7 +9,7 @@ export function ScriptAssets({
 }: {
   scripts: readonly Asset[];
   baseURL?: string | URL;
-} & JSX.HTMLAttributes<HTMLScriptElement>) {
+} & JSX.ScriptHTMLAttributes) {
   const baseURL = useResolvedBaseURL(explicitBaseURL);
 
   return (

@@ -8,27 +8,35 @@ export type AssetLoadTiming = 'never' | 'preload' | 'load';
 
 export interface BrowserAssetSelector {
   id?: string;
-  modules?: Iterable<
-    BrowserAssetModuleSelector | BrowserAssetModuleSelector['id']
-  >;
   request?: Request;
 }
 
-export interface BrowserAssetModuleSelector {
-  id: string;
-  styles?: boolean;
-  scripts?: boolean;
-}
-
 export interface BrowserAssets {
-  entry(options?: BrowserAssetSelector): BrowserAssetsEntry;
-  modules(
-    modules: NonNullable<BrowserAssetSelector['modules']>,
-    options?: Pick<BrowserAssetSelector, 'request'>,
+  entry(
+    options?: Pick<BrowserAssetSelector, 'id' | 'request'>,
   ): BrowserAssetsEntry;
+  modules(
+    modules: Iterable<string>,
+    options?: Pick<BrowserAssetSelector, 'request'>,
+  ): readonly BrowserAssetsEntry[];
 }
 
 export interface BrowserAssetsEntry {
-  styles: Asset[];
-  scripts: Asset[];
+  /**
+   * The JavaScript file for this entry.
+   */
+  readonly script?: {
+    readonly asset: Asset;
+    readonly syncDependencies: readonly Asset[];
+    readonly asyncDependencies: readonly Asset[];
+  };
+
+  /**
+   * The CSS stylesheets for this entry.
+   */
+  readonly style?: {
+    readonly asset: Asset;
+    readonly syncDependencies: readonly Asset[];
+    readonly asyncDependencies: readonly Asset[];
+  };
 }

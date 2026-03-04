@@ -4,7 +4,9 @@ import {renderToString, renderToStringAsync} from 'preact-render-to-string';
 import {
   preloadScriptAssetHeader,
   preloadStyleAssetHeader,
+  type Asset,
   type BrowserAssets,
+  type BrowserAssetsEntry,
 } from '@quilted/assets';
 import {BrowserResponse} from '@quilted/browser/server';
 
@@ -63,13 +65,20 @@ export async function renderAppToHTMLResponse(
   if (assets) {
     const entryAssets = assets.entry({request: browser.request});
 
+    const entryScripts = [
+      ...(entryAssets.script?.asset ? [entryAssets.script.asset] : []),
+      ...(entryAssets.script?.syncDependencies ?? []),
+    ];
+    const entryStyles = [
+      ...(entryAssets.style?.asset ? [entryAssets.style.asset] : []),
+      ...(entryAssets.style?.syncDependencies ?? []),
+    ];
+
     browser.headers.append(
       'Link',
       [
-        ...entryAssets.styles.map((style) => preloadStyleAssetHeader(style)),
-        ...entryAssets.scripts.map((script) =>
-          preloadScriptAssetHeader(script),
-        ),
+        ...entryStyles.map((style) => preloadStyleAssetHeader(style)),
+        ...entryScripts.map((script) => preloadScriptAssetHeader(script)),
       ].join(', '),
     );
   }
@@ -88,9 +97,11 @@ export async function renderAppToHTMLResponse(
       },
     );
 
+    const renderedAssets = new Set<string>();
     const renderChunkOptions = {
       browser,
       assets,
+      renderedAssets,
       app: async () => {
         appContent ??= await renderAppToString(renderApp!, {browser, assets});
         return appContent;
@@ -244,13 +255,20 @@ export async function renderToHTMLResponse(
   if (assets) {
     const entryAssets = assets.entry({request: browser.request});
 
+    const entryScripts = [
+      ...(entryAssets.script?.asset ? [entryAssets.script.asset] : []),
+      ...(entryAssets.script?.syncDependencies ?? []),
+    ];
+    const entryStyles = [
+      ...(entryAssets.style?.asset ? [entryAssets.style.asset] : []),
+      ...(entryAssets.style?.syncDependencies ?? []),
+    ];
+
     resolvedHeaders.append(
       'Link',
       [
-        ...entryAssets.styles.map((style) => preloadStyleAssetHeader(style)),
-        ...entryAssets.scripts.map((script) =>
-          preloadScriptAssetHeader(script),
-        ),
+        ...entryStyles.map((style) => preloadStyleAssetHeader(style)),
+        ...entryScripts.map((script) => preloadScriptAssetHeader(script)),
       ].join(', '),
     );
   }
@@ -270,9 +288,11 @@ export async function renderToHTMLResponse(
       ? firstChunk
       : `${firstChunk}${remainingChunks.join('')}`;
 
+    const renderedAssets = new Set<string>();
     const renderedFirstChunk = await renderHTMLChunk(normalizedFirstChunk, {
       browser,
       assets,
+      renderedAssets,
     });
 
     if (remainingChunks.length === 0 || !shouldStream) {
@@ -292,6 +312,7 @@ export async function renderToHTMLResponse(
           const renderedChunk = await renderHTMLChunk(chunk, {
             browser,
             assets,
+            renderedAssets,
           });
           writer.write(renderedChunk);
         }
@@ -368,16 +389,45 @@ async function renderHTMLTemplateToChunks(
   return {firstChunk, remainingChunks};
 }
 
+function dedup<T extends {source?: string; content?: string}>(
+  assets: readonly T[],
+  rendered: Set<string>,
+): T[] {
+  return assets.filter((asset) => {
+    // Inline assets (content only, no source) always render
+    if (!asset.source) return true;
+    if (rendered.has(asset.source)) return false;
+    rendered.add(asset.source);
+    return true;
+  });
+}
+
+function flatModuleScripts(entries: readonly BrowserAssetsEntry[]): Asset[] {
+  return entries.flatMap((e) => [
+    ...(e.script?.asset ? [e.script.asset] : []),
+    ...(e.script?.syncDependencies ?? []),
+  ]);
+}
+
+function flatModuleStyles(entries: readonly BrowserAssetsEntry[]): Asset[] {
+  return entries.flatMap((e) => [
+    ...(e.style?.asset ? [e.style.asset] : []),
+    ...(e.style?.syncDependencies ?? []),
+  ]);
+}
+
 async function renderHTMLChunk(
   content: string,
   {
     browser,
     assets,
     app: renderApp,
+    renderedAssets = new Set<string>(),
   }: {
     browser: BrowserResponse;
     assets?: BrowserAssets;
     app?: string | (() => Promise<string>);
+    renderedAssets?: Set<string>;
   },
 ) {
   let result = content;
@@ -459,29 +509,29 @@ async function renderHTMLChunk(
 
           const includeEntry =
             name != null || (async == null && preload == null);
+          const isDefaultEntry = includeEntry && name == null;
 
           const entryAssets = includeEntry
             ? assets.entry({
-                id: name,
+                id: name ?? undefined,
                 request: browser.request,
               })
             : undefined;
-          const systemJSAssets =
-            includeEntry && (name == null || name === '.')
-              ? assets.entry({
-                  id: 'system.js',
-                  request: browser.request,
-                })
-              : undefined;
+          const systemJSAssets = isDefaultEntry
+            ? assets.entry({
+                id: 'system.js',
+                request: browser.request,
+              })
+            : undefined;
 
-          const asyncAsets =
+          const asyncModules =
             async === ''
               ? assets.modules(browser.assets.get({timing: 'load'}), {
                   request: browser.request,
                 })
               : undefined;
 
-          const preloadAsets =
+          const preloadModules =
             preload === ''
               ? assets.modules(browser.assets.get({timing: 'preload'}), {
                   request: browser.request,
@@ -490,27 +540,64 @@ async function renderHTMLChunk(
 
           replacement = renderToString(
             <>
-              {systemJSAssets ? (
-                <>
-                  <ScriptAssets scripts={systemJSAssets.scripts} />
-                </>
+              {/* System.js inline loader (no async — inline scripts ignore it) */}
+              {systemJSAssets?.script?.asset ? (
+                <ScriptAssets
+                  scripts={dedup([systemJSAssets.script.asset], renderedAssets)}
+                />
               ) : null}
-              {entryAssets ? (
-                <>
-                  <ScriptAssets scripts={entryAssets.scripts} />
-                  <StyleAssets styles={entryAssets.styles} />
-                </>
+
+              {/* Entry script as async module */}
+              {entryAssets?.script?.asset ? (
+                <ScriptAssets
+                  scripts={dedup([entryAssets.script.asset], renderedAssets)}
+                  async
+                />
               ) : null}
-              {asyncAsets ? (
-                <>
-                  <ScriptAssetsPreload scripts={asyncAsets.scripts} />
-                  <StyleAssets styles={asyncAsets.styles} />
-                </>
+
+              {/* Sync JS dependencies as modulepreload */}
+              {entryAssets?.script ? (
+                <ScriptAssetsPreload
+                  scripts={dedup(entryAssets.script.syncDependencies, renderedAssets)}
+                />
               ) : null}
-              {preloadAsets ? (
+
+              {/* Async (page-specific) JS modules as modulepreload */}
+              {asyncModules ? (
+                <ScriptAssetsPreload
+                  scripts={dedup(flatModuleScripts(asyncModules), renderedAssets)}
+                />
+              ) : null}
+
+              {/* Entry stylesheets */}
+              {entryAssets?.style ? (
+                <StyleAssets
+                  styles={dedup(
+                    [
+                      entryAssets.style.asset,
+                      ...entryAssets.style.syncDependencies,
+                    ],
+                    renderedAssets,
+                  )}
+                />
+              ) : null}
+
+              {/* Async (page-specific) stylesheets */}
+              {asyncModules ? (
+                <StyleAssets
+                  styles={dedup(flatModuleStyles(asyncModules), renderedAssets)}
+                />
+              ) : null}
+
+              {/* Preload hints (unchanged behavior) */}
+              {preloadModules ? (
                 <>
-                  <ScriptAssetsPreload scripts={preloadAsets.scripts} />
-                  <StyleAssetsPreload styles={preloadAsets.styles} />
+                  <ScriptAssetsPreload
+                    scripts={dedup(flatModuleScripts(preloadModules), renderedAssets)}
+                  />
+                  <StyleAssetsPreload
+                    styles={dedup(flatModuleStyles(preloadModules), renderedAssets)}
+                  />
                 </>
               ) : null}
             </>,

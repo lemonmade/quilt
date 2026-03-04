@@ -1,8 +1,5 @@
 import {resolveSignalOrValue, type ReadonlySignal} from '@quilted/signals';
-import type {
-  AssetLoadTiming,
-  BrowserAssetModuleSelector,
-} from '@quilted/assets';
+import type {AssetLoadTiming} from '@quilted/assets';
 
 import type {
   BrowserDetails,
@@ -315,14 +312,11 @@ export class BrowserResponseAssets {
   get({timing = 'load'}: {timing?: AssetLoadTiming | AssetLoadTiming[]} = {}) {
     const allowedTiming = Array.isArray(timing) ? timing : [timing];
 
-    const assets: BrowserAssetModuleSelector[] = [];
+    const assets: string[] = [];
 
     for (const [asset, {scripts, styles}] of this.#usedModulesWithTiming) {
-      const stylesMatch = allowedTiming.includes(styles);
-      const scriptsMatch = allowedTiming.includes(scripts);
-
-      if (stylesMatch || scriptsMatch) {
-        assets.push({id: asset, styles: stylesMatch, scripts: scriptsMatch});
+      if (allowedTiming.includes(styles) || allowedTiming.includes(scripts)) {
+        assets.push(asset);
       }
     }
 

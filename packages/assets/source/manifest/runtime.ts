@@ -8,19 +8,26 @@ import type {AssetBuildManifest} from './types.ts';
 
 const DEFAULT_CACHE_KEY_NAME = '__default__';
 
+interface NormalizedModuleEntry {
+  script?: {
+    asset: Asset;
+    sync: Asset[];
+    async: Asset[];
+  };
+  style?: {
+    asset: Asset;
+    sync: Asset[];
+    async: Asset[];
+  };
+}
+
 interface NormalizedAssetBuildManifest
   extends Omit<AssetBuildManifest, 'assets' | 'modules'> {
   assets: {
     styles: Map<number, Asset>;
     scripts: Map<number, Asset>;
   };
-  modules: Record<
-    string,
-    {
-      styles: Asset[];
-      scripts: Asset[];
-    }
-  >;
+  modules: Record<string, NormalizedModuleEntry>;
 }
 
 export class BrowserAssetsFromManifests implements BrowserAssets {
@@ -67,29 +74,37 @@ export class BrowserAssetsFromManifests implements BrowserAssets {
     };
   }
 
-  entry(options?: BrowserAssetSelector) {
+  entry(options?: Pick<BrowserAssetSelector, 'id' | 'request'>): BrowserAssetsEntry {
     const manifest = this.#resolveManifest(options?.request);
 
-    if (manifest == null) return {styles: [], scripts: []};
+    if (manifest == null) return EMPTY_ENTRY;
 
-    return createBrowserAssetsEntryFromManifest(manifest, {
-      ...options,
-      entry: options?.id ?? '.',
-    });
+    const entryName = options?.id ?? '.';
+    const entryModuleID =
+      manifest.entries[entryName] ?? manifest.entries[`./${entryName}`];
+    const module = entryModuleID ? manifest.modules[entryModuleID] : undefined;
+
+    if (!module) return EMPTY_ENTRY;
+
+    return normalizedModuleToEntry(module);
   }
 
   modules(
-    modules: NonNullable<BrowserAssetSelector['modules']>,
+    modules: Iterable<string>,
     options?: Pick<BrowserAssetSelector, 'request'>,
-  ) {
+  ): readonly BrowserAssetsEntry[] {
     const manifest = this.#resolveManifest(options?.request);
 
-    if (manifest == null) return {styles: [], scripts: []};
+    if (manifest == null) return [];
 
-    return createBrowserAssetsEntryFromManifest(manifest, {
-      ...options,
-      modules,
-    });
+    const entries: BrowserAssetsEntry[] = [];
+
+    for (const moduleId of modules) {
+      const module = manifest.modules[moduleId];
+      entries.push(module ? normalizedModuleToEntry(module) : EMPTY_ENTRY);
+    }
+
+    return entries;
   }
 
   #resolveManifest(request?: Request) {
@@ -100,6 +115,30 @@ export class BrowserAssetsFromManifests implements BrowserAssets {
     return manifest ?? manifestMap.get(DEFAULT_CACHE_KEY_NAME);
   }
 }
+
+function normalizedModuleToEntry(module: NormalizedModuleEntry): BrowserAssetsEntry {
+  return {
+    script: module.script
+      ? {
+          asset: module.script.asset,
+          syncDependencies: module.script.sync,
+          asyncDependencies: module.script.async,
+        }
+      : undefined,
+    style: module.style
+      ? {
+          asset: module.style.asset,
+          syncDependencies: module.style.sync,
+          asyncDependencies: module.style.async,
+        }
+      : undefined,
+  };
+}
+
+const EMPTY_ENTRY: BrowserAssetsEntry = {
+  script: undefined,
+  style: undefined,
+};
 
 function normalizeCacheKey(cacheKey: unknown) {
   const searchParams = new URLSearchParams();
@@ -115,8 +154,6 @@ function normalizeCacheKey(cacheKey: unknown) {
   return searchParams.toString();
 }
 
-// Keep a cache since we often have the same manifest used as the default and
-// for a specific cache key
 const NORMALIZED_ASSET_BUILD_MANIFEST_CACHE = new WeakMap<
   AssetBuildManifest,
   NormalizedAssetBuildManifest
@@ -167,93 +204,50 @@ function normalizeAssetBuildManifest(
     }
   });
 
-  for (const [module, assetIndexes] of Object.entries(manifest.modules)) {
-    const moduleAssets: (typeof modules)[string] = {styles: [], scripts: []};
+  function resolveScript(index: number): Asset | undefined {
+    return assets.scripts.get(index);
+  }
 
-    for (const index of assetIndexes) {
-      if (assets.styles.has(index)) {
-        moduleAssets.styles.push(assets.styles.get(index)!);
-      } else if (assets.scripts.has(index)) {
-        moduleAssets.scripts.push(assets.scripts.get(index)!);
-      }
+  function resolveStyle(index: number): Asset | undefined {
+    return assets.styles.get(index);
+  }
+
+  function resolveAll<T>(
+    indices: number[] | undefined,
+    resolve: (i: number) => T | undefined,
+  ): T[] {
+    if (!indices?.length) return [];
+    return indices.map(resolve).filter((a): a is T => a != null);
+  }
+
+  for (const [moduleId, entry] of Object.entries(manifest.modules)) {
+    const normalizedEntry: NormalizedModuleEntry = {};
+
+    // entry[0] = script, entry[2] = scriptSync, entry[4] = scriptAsync
+    const scriptAsset = entry[0] != null ? resolveScript(entry[0]) : undefined;
+    if (scriptAsset) {
+      normalizedEntry.script = {
+        asset: scriptAsset,
+        sync: resolveAll(entry[2], resolveScript),
+        async: resolveAll(entry[4], resolveScript),
+      };
     }
 
-    modules[module] = moduleAssets;
+    // entry[1] = style, entry[3] = styleSync, entry[5] = styleAsync
+    const styleAsset = entry[1] != null ? resolveStyle(entry[1]) : undefined;
+    if (styleAsset) {
+      normalizedEntry.style = {
+        asset: styleAsset,
+        sync: resolveAll(entry[3], resolveStyle),
+        async: resolveAll(entry[5], resolveStyle),
+      };
+    }
+
+    modules[moduleId] = normalizedEntry;
   }
 
   normalized = {...manifest, assets, modules};
   NORMALIZED_ASSET_BUILD_MANIFEST_CACHE.set(manifest, normalized);
 
   return normalized;
-}
-
-function createBrowserAssetsEntryFromManifest(
-  manifest: NormalizedAssetBuildManifest,
-  {
-    entry,
-    modules,
-  }: Pick<BrowserAssetSelector, 'modules'> & {entry?: string} = {},
-): BrowserAssetsEntry {
-  const styles = new Set<Asset>();
-  const scripts = new Set<Asset>();
-
-  if (entry) {
-    // Allow developers to omit the leading ./ from nested entrypoints, so they can pass
-    // either `entry: 'foo/bar'` or `entry: './foo/bar'` and still get the entry assets
-    const entryModuleID =
-      manifest.entries[entry] ?? manifest.entries[`./${entry}`];
-    const entryModule = entryModuleID
-      ? manifest.modules[entryModuleID]
-      : undefined;
-    if (entryModule) addAssetBuildManifestEntry(entryModule, styles, scripts);
-  }
-
-  if (modules) {
-    for (const module of modules) {
-      let includeStyles = true;
-      let includeScripts = true;
-      let moduleId: string;
-
-      if (typeof module === 'string') {
-        moduleId = module;
-      } else {
-        includeStyles = module.styles ?? true;
-        includeScripts = module.scripts ?? true;
-        moduleId = module.id;
-      }
-
-      const moduleAssets = manifest.modules[moduleId];
-
-      if (moduleAssets) {
-        addAssetBuildManifestEntry(
-          moduleAssets,
-          includeStyles && styles,
-          includeScripts && scripts,
-        );
-      }
-    }
-  }
-
-  return {
-    styles: [...styles],
-    scripts: [...scripts],
-  };
-}
-
-function addAssetBuildManifestEntry(
-  entry: NormalizedAssetBuildManifest['modules'][string],
-  styles: Set<Asset> | false,
-  scripts: Set<Asset> | false,
-) {
-  if (styles) {
-    for (const asset of entry.styles) {
-      styles.add(asset);
-    }
-  }
-
-  if (scripts) {
-    for (const asset of entry.scripts) {
-      scripts.add(asset);
-    }
-  }
 }

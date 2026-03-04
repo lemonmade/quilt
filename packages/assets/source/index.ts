@@ -4,7 +4,6 @@ export type {
   BrowserAssets,
   BrowserAssetsEntry,
   BrowserAssetSelector,
-  BrowserAssetModuleSelector,
 } from './types.ts';
 export {
   styleAssetAttributes,
@@ -17,6 +16,7 @@ export {
   type AssetBuildManifest,
   type AssetBuildAsset,
   type AssetBuildAssetType,
+  type AssetBuildModuleEntry,
 } from './manifest.ts';
 export {
   preloadHeader,

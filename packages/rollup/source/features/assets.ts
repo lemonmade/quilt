@@ -12,7 +12,11 @@ import type {
 } from 'rollup';
 import * as mime from 'mrmime';
 
-import type {AssetBuildManifest, AssetBuildAsset} from '@quilted/assets';
+import type {
+  AssetBuildManifest,
+  AssetBuildAsset,
+  AssetBuildModuleEntry,
+} from '@quilted/assets';
 
 export interface AssetManifestOptions {
   file: string;
@@ -56,11 +60,20 @@ async function writeManifestForBundle(
     throw new Error(`Could not find any entries in your rollup bundle...`);
   }
 
+  // Map chunk fileName → its imports (JS chunks + CSS assets), for recursive dep walking
   const dependencyMap = new Map<string, string[]>();
 
   for (const output of outputs) {
     if (output.type !== 'chunk') continue;
     dependencyMap.set(output.fileName, output.imports);
+  }
+
+  // Map facadeModuleId → chunk fileName, for resolving dynamic imports
+  const facadeToChunk = new Map<string, string>();
+  for (const output of outputs) {
+    if (output.type === 'chunk' && output.facadeModuleId) {
+      facadeToChunk.set(output.facadeModuleId, output.fileName);
+    }
   }
 
   const assets: Promise<AssetBuildAsset>[] = [];
@@ -91,10 +104,8 @@ async function writeManifestForBundle(
   for (const output of outputs) {
     if (output.type === 'asset') {
       if (output.name && output.fileName.endsWith('.js')) {
-        manifest.modules[output.name] = createAssetsEntry([output.fileName], {
-          dependencyMap,
-          getAssetId,
-        });
+        // Standalone JS asset (e.g. system.js loader) — treated as a single-script entry
+        manifest.modules[output.name] = makeEntry({script: getAssetId(output.fileName)});
 
         manifest.entries[`./${output.name}`] = output.name;
       }
@@ -124,18 +135,30 @@ async function writeManifestForBundle(
     }
 
     const isCSS = moduleID.endsWith('.css');
-    const moduleFiles = [output.fileName, ...output.imports];
 
-    manifest.modules[moduleID] = createAssetsEntry(
-      // When an entrypoint is a CSS file, Rollup creates an unnecessary JavaScript file
-      // as the entrypoint of the module. We will exclude the JavaScript file, so only
-      // the CSS file is included in the final manifest.
-      isCSS ? moduleFiles.filter((file) => file.endsWith('.css')) : moduleFiles,
-      {
-        dependencyMap,
-        getAssetId,
-      },
-    );
+    if (isCSS) {
+      // CSS-only entry: rollup creates a JS wrapper we exclude; keep only the CSS file
+      const cssFiles = [output.fileName, ...output.imports].filter((f) =>
+        f.endsWith('.css'),
+      );
+      manifest.modules[moduleID] = makeEntry({
+        style: cssFiles[0] != null ? getAssetId(cssFiles[0]) : undefined,
+        styleSync:
+          cssFiles.length > 1 ? cssFiles.slice(1).map(getAssetId) : undefined,
+      });
+    } else {
+      // JS entry: separate sync deps from CSS, and resolve dynamic imports
+      const asyncFileNames = (output.dynamicImports ?? [])
+        .map((mid) => facadeToChunk.get(mid))
+        .filter((f): f is string => f != null);
+
+      manifest.modules[moduleID] = buildModuleEntry(
+        output.fileName,
+        output.imports,
+        asyncFileNames,
+        {dependencyMap, getAssetId},
+      );
+    }
   }
 
   manifest.assets = await Promise.all(assets);
@@ -228,8 +251,48 @@ function defaultModuleID({imported}: {imported: string}) {
       : imported;
 }
 
-function createAssetsEntry(
-  files: string[],
+/**
+ * Creates a compact `AssetBuildModuleEntry` object with numeric string keys,
+ * omitting any positions that are undefined or empty.
+ *
+ * The result is typed as the tuple `AssetBuildModuleEntry` but serialized as
+ * a plain object so the manifest stays compact (no JSON nulls for gaps).
+ */
+function makeEntry({
+  script,
+  style,
+  scriptSync,
+  styleSync,
+  scriptAsync,
+  styleAsync,
+}: {
+  script?: number;
+  style?: number;
+  scriptSync?: number[];
+  styleSync?: number[];
+  scriptAsync?: number[];
+  styleAsync?: number[];
+}): AssetBuildModuleEntry {
+  const entry: Record<number, number | number[]> = {};
+  if (script != null) entry[0] = script;
+  if (style != null) entry[1] = style;
+  if (scriptSync?.length) entry[2] = scriptSync;
+  if (styleSync?.length) entry[3] = styleSync;
+  if (scriptAsync?.length) entry[4] = scriptAsync;
+  if (styleAsync?.length) entry[5] = styleAsync;
+  return entry as unknown as AssetBuildModuleEntry;
+}
+
+/**
+ * Builds a module entry for a JS chunk, separating sync/async JS and CSS deps.
+ *
+ * `output.imports` may contain both JS chunks and CSS assets — rollup CSS plugins
+ * emit CSS as synthetic imports on the JS chunk that owns them.
+ */
+function buildModuleEntry(
+  entryFileName: string,
+  syncImports: string[],
+  asyncFileNames: string[],
   {
     dependencyMap,
     getAssetId,
@@ -238,27 +301,51 @@ function createAssetsEntry(
     getAssetId(file: string): number;
   },
 ) {
-  const assets: number[] = [];
+  const syncJsFiles = new Set<string>();
+  const entryStyleFiles: string[] = [];
+  const syncStyleFiles = new Set<string>();
 
-  const allFiles = new Set<string>();
-  const addFile = (file: string) => {
-    if (allFiles.has(file)) return;
-    allFiles.add(file);
-
-    for (const dependency of dependencyMap.get(file) ?? []) {
-      addFile(dependency);
+  for (const file of syncImports) {
+    if (file.endsWith('.css')) {
+      entryStyleFiles.push(file);
+    } else {
+      visitJsDep(file, syncJsFiles, syncStyleFiles, dependencyMap);
     }
-  };
-
-  for (const file of files) {
-    addFile(file);
   }
 
-  for (const file of allFiles) {
-    assets.push(getAssetId(file));
+  // CSS from each dynamic import chunk and its transitive sync deps
+  const asyncStyleFiles = new Set<string>();
+  const visitedAsync = new Set<string>();
+  for (const asyncFileName of asyncFileNames) {
+    visitJsDep(asyncFileName, visitedAsync, asyncStyleFiles, dependencyMap);
   }
 
-  return assets;
+  return makeEntry({
+    script: getAssetId(entryFileName),
+    style: entryStyleFiles[0] != null ? getAssetId(entryStyleFiles[0]) : undefined,
+    scriptSync: syncJsFiles.size > 0 ? [...syncJsFiles].map(getAssetId) : undefined,
+    styleSync: syncStyleFiles.size > 0 ? [...syncStyleFiles].map(getAssetId) : undefined,
+    scriptAsync: asyncFileNames.length > 0 ? asyncFileNames.map(getAssetId) : undefined,
+    styleAsync: asyncStyleFiles.size > 0 ? [...asyncStyleFiles].map(getAssetId) : undefined,
+  });
+}
+
+function visitJsDep(
+  file: string,
+  visitedJs: Set<string>,
+  styleFiles: Set<string>,
+  dependencyMap: Map<string, string[]>,
+) {
+  if (visitedJs.has(file)) return;
+  visitedJs.add(file);
+
+  for (const dep of dependencyMap.get(file) ?? []) {
+    if (dep.endsWith('.css')) {
+      styleFiles.add(dep);
+    } else {
+      visitJsDep(dep, visitedJs, styleFiles, dependencyMap);
+    }
+  }
 }
 
 const QUERY_PATTERN = /\?.*$/s;
