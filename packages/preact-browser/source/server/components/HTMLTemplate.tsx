@@ -77,6 +77,8 @@ export function HTMLTemplateBody({
     <>
       <HTMLTemplateSerializations />
       <HTMLTemplateAssets />
+      <HTMLTemplateAssets async />
+      <HTMLTemplateAssets preload />
 
       {wrapper ? (
         <div
@@ -87,9 +89,6 @@ export function HTMLTemplateBody({
       ) : (
         <HTMLTemplateContent />
       )}
-
-      <HTMLTemplateAssets async />
-      <HTMLTemplateAssets preload />
     </>
   );
 

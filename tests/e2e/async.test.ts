@@ -47,7 +47,56 @@ describe('async', () => {
       `Hello from an async module!`,
     );
 
-    expect(await page.$('script[src^="/assets/async"]')).not.toBeNull();
+    expect(
+      await page.$('link[rel=modulepreload][href^="/assets/async"]'),
+    ).not.toBeNull();
+  });
+
+  it('renders async component stylesheet before app content to prevent FOUC', async () => {
+    await using workspace = await Workspace.create({fixture: 'basic-app'});
+
+    await workspace.fs.write({
+      'Async.module.css': multiline`
+        .Async {
+          color: purple;
+        }
+      `,
+      'Async.tsx': multiline`
+        import styles from './Async.module.css';
+
+        export default function Async() {
+          return <div className={styles.Async}>Hello from an async component!</div>;
+        }
+      `,
+      'App.tsx': multiline`
+        import {AsyncComponent} from '@quilted/quilt/async';
+
+        const Async = AsyncComponent.from(() => import('./Async.tsx'));
+
+        export default function App() {
+          return <Async />;
+        }
+      `,
+    });
+
+    const server = await startServer(workspace);
+    const page = await server.openPage('/', {
+      javaScriptEnabled: false,
+    });
+
+    const stylesheetBeforeContent = await page.evaluate(() => {
+      const stylesheet = document.querySelector(
+        'link[rel=stylesheet][href^="/assets/Async"]',
+      );
+      const content = document.querySelector('#app');
+      if (!stylesheet || !content) return false;
+      return !!(
+        stylesheet.compareDocumentPosition(content) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
+    });
+
+    expect(stylesheetBeforeContent).toBe(true);
   });
 
   it('can server render an async component', async () => {
@@ -90,7 +139,9 @@ describe('async', () => {
       await page.$('link[rel=stylesheet][href^="/assets/Async"]'),
     ).not.toBeNull();
 
-    expect(await page.$('script[src^="/assets/Async"]')).not.toBeNull();
+    expect(
+      await page.$('link[rel=modulepreload][href^="/assets/Async"]'),
+    ).not.toBeNull();
   });
 
   it('can server render an async component with deferred hydration', async () => {

@@ -32,6 +32,8 @@ const STREAM_BOUNDARY_ELEMENT_REGEX =
 const PLACEHOLDER_ELEMENT_REGEX =
   /<html-template-placeholder-(?<name>[\w-]+)/gim;
 
+const CONTENT_PLACEHOLDER_REGEX = /html-template-placeholder-content/i;
+
 export async function renderAppToHTMLResponse(
   renderApp: RenderAppValue,
   {
@@ -381,6 +383,19 @@ async function renderHTMLChunk(
   let result = content;
   let match: RegExpExecArray | null;
 
+  let appContent = typeof renderApp === 'string' ? renderApp : undefined;
+
+  // Pre-pass: if this chunk has a content placeholder, eagerly render the app
+  // before processing other placeholders. This ensures browser.assets is populated
+  // when we reach the async/preload asset placeholders, which now appear before
+  // the content placeholder in the default template to prevent FOUC.
+  if (
+    typeof renderApp === 'function' &&
+    CONTENT_PLACEHOLDER_REGEX.test(result)
+  ) {
+    appContent = await renderApp();
+  }
+
   const placeholderRegex = new RegExp(PLACEHOLDER_ELEMENT_REGEX, 'mig');
 
   while ((match = placeholderRegex.exec(result)) != null) {
@@ -402,14 +417,13 @@ async function renderHTMLChunk(
 
       switch (name) {
         case 'content': {
-          if (renderApp == null) {
+          if (appContent == null) {
             throw new Error(
               `Found the content placeholder, but no content was provided while rendering`,
             );
           }
 
-          replacement =
-            typeof renderApp === 'string' ? renderApp : await renderApp();
+          replacement = appContent;
 
           break;
         }
@@ -489,7 +503,7 @@ async function renderHTMLChunk(
               ) : null}
               {asyncAsets ? (
                 <>
-                  <ScriptAssets scripts={asyncAsets.scripts} />
+                  <ScriptAssetsPreload scripts={asyncAsets.scripts} />
                   <StyleAssets styles={asyncAsets.styles} />
                 </>
               ) : null}
