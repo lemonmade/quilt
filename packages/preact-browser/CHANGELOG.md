@@ -1,5 +1,15 @@
 # @quilted/preact-browser
 
+## 0.2.4
+
+### Patch Changes
+
+- [`33e97a4`](https://github.com/lemonmade/quilt/commit/33e97a4e72341c8aedfbb0a1f54ba5221ea9f560) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix flash of unstyled content (FOUC) for async components
+
+  Async and preload asset placeholders are now rendered before the app content placeholder in the default `HTMLTemplateBody`. A pre-pass in the chunk renderer eagerly renders the app first so `browser.assets` is fully populated when the asset placeholders are processed. This ensures async component stylesheets are included in the HTML before the app content, preventing FOUC when streaming.
+
+  Async component scripts are now rendered as `modulepreload` link tags rather than blocking script tags.
+
 ## 0.2.3
 
 ### Patch Changes
