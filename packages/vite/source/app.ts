@@ -263,38 +263,39 @@ export function magicModuleAppAssetManifest({
         const entries = ${JSON.stringify(normalizedEntries)}; 
 
         export class BrowserAssets {
-          entry({id = '.', modules} = {}) {
+          entry({id = '.'} = {}) {
             const normalizedEntry = id.startsWith('.') ? id : id.startsWith('/') ? ('.' + id) : ('./' + id);
             const entryModule = entries[normalizedEntry];
 
             if (entryModule == null) {
-              return {styles: [], scripts: []};
+              return {script: undefined, style: undefined};
             }
 
-            const scripts = [
-              {source: '/@vite/client', attributes: {type: 'module'}},
-              {source: entryModule, attributes: {type: 'module'}},
-            ];
-
-            if (modules) {
-              scripts.push(...this.modules(modules).scripts);
-            }
-
-            return {styles: [], scripts};
+            return {
+              script: {
+                asset: {source: entryModule, attributes: {type: 'module'}},
+                syncDependencies: [{source: '/@vite/client', attributes: {type: 'module'}}],
+                asyncDependencies: [],
+              },
+              style: undefined,
+            };
           }
 
           modules(ids, _options) {
-            const scripts = [];
+            const entries = [];
 
-            for (const idOrSelector of ids) {
-              const includeScripts = idOrSelector.scripts ?? true;
-              if (!includeScripts) continue;
-
-              const id = normalizeID(idOrSelector.id ?? idOrSelector);
-              scripts.push({source: id, attributes: {type: 'module'}});
+            for (const id of ids) {
+              entries.push({
+                script: {
+                  asset: {source: normalizeID(id), attributes: {type: 'module'}},
+                  syncDependencies: [],
+                  asyncDependencies: [],
+                },
+                style: undefined,
+              });
             }
 
-            return {styles: [], scripts};
+            return entries;
           }
         }
 

@@ -1,6 +1,6 @@
 export * from '@quilted/browser';
 
-export {render, hydrate} from './browser.tsx';
+export {render, hydrate, BrowserApp} from './browser.tsx';
 export {
   BrowserDetailsContext,
   useBrowserDetails,

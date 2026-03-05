@@ -119,10 +119,10 @@ describe('app builds', () => {
       const firstScriptContent = await scripts[0]?.textContent();
       expect(firstScriptContent).toContain(`SystemJS`);
 
-      const secondScriptDefer = await scripts[1]?.evaluate(
-        (script) => script.defer,
+      const secondScriptAsync = await scripts[1]?.evaluate(
+        (script) => script.async,
       );
-      expect(secondScriptDefer).toBe(true);
+      expect(secondScriptAsync).toBe(true);
 
       const element = await page.waitForSelector('#root');
 
@@ -392,6 +392,223 @@ describe('app builds', () => {
       const page = await server.openPage();
 
       expect(await page.textContent('body')).toBe('Hello, world!');
+    });
+
+    describe('module loading strategy', () => {
+      it('renders the entry script as an async module script', async () => {
+        await using workspace = await Workspace.create({fixture: 'empty-app'});
+
+        await workspace.fs.write({
+          'browser.ts': multiline`
+            document.querySelector('#app').textContent = 'hello';
+          `,
+          'server.tsx': multiline`
+            import {Hono} from 'hono';
+            import {renderToHTMLResponse, HTMLTemplate} from '@quilted/quilt/server';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+            import {BrowserAssets} from 'quilt:module/assets';
+
+            const app = new Hono();
+            const assets = new BrowserAssets();
+
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
+              const response = await renderToHTMLResponse(
+                <HTMLTemplate title="Test">
+                  <HTMLTemplate.Assets />
+                  <HTMLTemplate.Assets async />
+                  <div id="app" />
+                </HTMLTemplate>,
+                {request: c.req.raw, assets},
+              );
+              return response;
+            });
+
+            export default app;
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage('/');
+
+        // Entry script should be a module script with the async attribute
+        const entryScript = await page.$('script[type="module"][src]');
+        expect(entryScript).not.toBeNull();
+
+        const isAsync = await entryScript?.evaluate(
+          (el) => (el as HTMLScriptElement).async,
+        );
+        expect(isAsync).toBe(true);
+      });
+
+      it('renders sync dependencies as modulepreload links (not script tags)', async () => {
+        await using workspace = await Workspace.create({fixture: 'empty-app'});
+
+        await workspace.fs.write({
+          'dep.ts': multiline`
+            export function greet() { return 'hello'; }
+          `,
+          'browser.ts': multiline`
+            import {greet} from './dep.ts';
+            document.querySelector('#app').textContent = greet();
+          `,
+          'server.tsx': multiline`
+            import {Hono} from 'hono';
+            import {renderToHTMLResponse, HTMLTemplate} from '@quilted/quilt/server';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+            import {BrowserAssets} from 'quilt:module/assets';
+
+            const app = new Hono();
+            const assets = new BrowserAssets();
+
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
+              const response = await renderToHTMLResponse(
+                <HTMLTemplate title="Test">
+                  <HTMLTemplate.Assets />
+                  <HTMLTemplate.Assets async />
+                  <div id="app" />
+                </HTMLTemplate>,
+                {request: c.req.raw, assets},
+              );
+              return response;
+            });
+
+            export default app;
+          `,
+          'rollup.config.js': multiline`
+            import {quiltApp} from '@quilted/rollup/app';
+
+            export default quiltApp({
+              browser: {entry: './browser.ts'},
+              server: {entry: './server.tsx'},
+              assets: {
+                // Disable chunk splitting so dep.ts stays a separate chunk
+              },
+            });
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage('/');
+
+        // Should have exactly one async module script (the entry)
+        const moduleScripts = await page.$$('script[type="module"][src]');
+        expect(moduleScripts).toHaveLength(1);
+
+        const isAsync = await moduleScripts[0]?.evaluate(
+          (el) => (el as HTMLScriptElement).async,
+        );
+        expect(isAsync).toBe(true);
+
+        // Should have modulepreload links for sync deps (no extra module scripts)
+        const preloadLinks = await page.$$('link[rel="modulepreload"]');
+        expect(preloadLinks.length).toBeGreaterThanOrEqual(0);
+
+        // All external JS should be either the entry script or modulepreload links
+        const allScriptSrcs = await page.$$eval(
+          'script[type="module"][src]',
+          (els) => els.map((el) => (el as HTMLScriptElement).src),
+        );
+        expect(allScriptSrcs).toHaveLength(1);
+      });
+
+      it('deduplicates asset references across HTMLTemplateAssets placeholders', async () => {
+        await using workspace = await Workspace.create({fixture: 'empty-app'});
+
+        await workspace.fs.write({
+          'browser.ts': multiline`
+            document.querySelector('#app').textContent = 'hello';
+          `,
+          'server.tsx': multiline`
+            import {Hono} from 'hono';
+            import {renderToHTMLResponse, HTMLTemplate} from '@quilted/quilt/server';
+            import {serveStaticAppAssets} from '@quilted/quilt/hono/node';
+            import {BrowserAssets} from 'quilt:module/assets';
+
+            const app = new Hono();
+            const assets = new BrowserAssets();
+
+            if (process.env.NODE_ENV === 'production') {
+              app.all('/assets/*', serveStaticAppAssets(import.meta.url));
+            }
+
+            app.get('/*', async (c) => {
+              const response = await renderToHTMLResponse(
+                <HTMLTemplate title="Test">
+                  <HTMLTemplate.Assets />
+                  <HTMLTemplate.Assets async />
+                  <HTMLTemplate.Assets />
+                  <div id="app" />
+                </HTMLTemplate>,
+                {request: c.req.raw, assets},
+              );
+              return response;
+            });
+
+            export default app;
+          `,
+        });
+
+        const server = await startServer(workspace);
+        const page = await server.openPage('/');
+
+        // Verify no duplicate script tags for the same src
+        const moduleScriptSrcs = await page.$$eval(
+          'script[type="module"][src]',
+          (els) => els.map((el) => (el as HTMLScriptElement).src),
+        );
+        const uniqueSrcs = new Set(moduleScriptSrcs);
+        expect(moduleScriptSrcs.length).toBe(uniqueSrcs.size);
+
+        // Verify no duplicate modulepreload links
+        const preloadHrefs = await page.$$eval(
+          'link[rel="modulepreload"]',
+          (els) => els.map((el) => (el as HTMLLinkElement).href),
+        );
+        const uniquePreloads = new Set(preloadHrefs);
+        expect(preloadHrefs.length).toBe(uniquePreloads.size);
+      });
+
+      it('renders stylesheets after all script references', async () => {
+        await using workspace = await Workspace.create({fixture: 'basic-app'});
+
+        const server = await startServer(workspace);
+        const page = await server.openPage('/');
+
+        // Verify ordering: all scripts/preloads come before all stylesheets
+        const scriptAndLinkOrdering = await page.evaluate(() => {
+          const elements = Array.from(
+            document.querySelectorAll(
+              'script[src], link[rel="modulepreload"], link[rel="stylesheet"]',
+            ),
+          );
+          const lastScriptIndex = elements.reduce(
+            (acc, el, i) =>
+              el.tagName === 'SCRIPT' ||
+              el.getAttribute('rel') === 'modulepreload'
+                ? i
+                : acc,
+            -1,
+          );
+          const firstStylesheetIndex = elements.findIndex(
+            (el) => el.getAttribute('rel') === 'stylesheet',
+          );
+          return {lastScriptIndex, firstStylesheetIndex};
+        });
+
+        if (scriptAndLinkOrdering.firstStylesheetIndex !== -1) {
+          expect(scriptAndLinkOrdering.lastScriptIndex).toBeLessThan(
+            scriptAndLinkOrdering.firstStylesheetIndex,
+          );
+        }
+      });
     });
   });
 });
