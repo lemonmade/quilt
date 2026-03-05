@@ -20,13 +20,9 @@ describe('threads', () => {
           }
 
           app.get('/*', async () => {
-            const allAssets = await assets.entry();
+            const {script} = await assets.entry();
 
-            const scriptTags = allAssets.scripts.map((script) => {
-              return \`<script type="module" src="\${script.source}"></script>\`;
-            }).join('');
-
-            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+            return new Response(\`<html><body><script type="module" src=\${JSON.stringify(script.asset.source)}></script></body></html>\`, {
               headers: {'Content-Type': 'text/html'},
             });
           });
@@ -236,13 +232,9 @@ describe('threads', () => {
           }
 
           app.get('/*', async () => {
-            const allAssets = await assets.entry();
+            const {script} = await assets.entry();
 
-            const scriptTags = allAssets.scripts.map((script) => {
-              return \`<script type="module" src="\${script.source}"></script>\`;
-            }).join('');
-
-            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+            return new Response(\`<html><body><script type="module" src=\${JSON.stringify(script.asset.source)}></script></body></html>\`, {
               headers: {'Content-Type': 'text/html'},
             });
           });
@@ -306,13 +298,9 @@ describe('threads', () => {
           }
 
           app.get('/*', async () => {
-            const allAssets = await assets.entry();
+            const {script} = await assets.entry();
 
-            const scriptTags = allAssets.scripts.map((script) => {
-              return \`<script type="module" src="\${script.source}"></script>\`;
-            }).join('');
-
-            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+            return new Response(\`<html><body><script type="module" src=\${JSON.stringify(script.asset.source)}></script></body></html>\`, {
               headers: {'Content-Type': 'text/html'},
             });
           });
@@ -382,13 +370,9 @@ describe('threads', () => {
           }
 
           app.get('/*', async () => {
-            const allAssets = await assets.entry();
+            const {script} = await assets.entry();
 
-            const scriptTags = allAssets.scripts.map((script) => {
-              return \`<script type="module" src="\${script.source}"></script>\`;
-            }).join('');
-
-            return new Response(\`<html><body>\${scriptTags}</body></html>\`, {
+            return new Response(\`<html><body><script type="module" src=\${JSON.stringify(script.asset.source)}></script></body></html>\`, {
               headers: {'Content-Type': 'text/html'},
             });
           });

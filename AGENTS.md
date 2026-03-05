@@ -112,10 +112,43 @@ Full design rationale: [`documentation/priorities.md`](./documentation/prioritie
 
 ## Testing
 
-- **Unit tests** live alongside source in `packages/<name>/source/` or in `tests/`.
+- **Unit tests** live alongside source in `packages/<name>/source/` or in `tests/`. Run with `pnpm test`.
 - **E2E tests** live in `tests/` and use Playwright. Run with `pnpm test.e2e`.
 - Test utilities: `@quilted/preact-testing` / `@quilted/react-testing` wrap Preact's test renderer with helpful utilities.
-- Vitest config: `vitest.workspace.js` (unit) and `configuration/vite.e2e.config.ts` (E2E).
+- Vitest config: `vitest.workspace.js`/ `configuration/vite.unit.config.ts`/ `packages/*/vite.config.ts` (unit) and `configuration/vite.e2e.config.ts` (E2E).
+
+### E2E tests
+
+The E2E tests are the main way this project guards against regressions. They create whole projects using the Quilt framework, then run `build` and other commands, visit the app in a headless browser, and make assertions on the rendered page.
+
+Each test starts the same way: creating a temporary "workspace" for the project:
+
+```ts
+it('renders the app', async () => {
+  await using workspace = await Workspace.create({fixture: 'empty-app'});
+  const server = await startServer(workspace);
+  const page = await server.openPage();
+
+  expect(await page.textContent('body')).toBe('Hello world');
+});
+```
+
+These temporary projects are placed in `/tests/e2e/output/*/`, using a randomly-generated name, deleted at the end of each test. You can provide a `debug: true` option to keep the workspace around for debugging, and a `name` option to name the output directory something specific. It is common to do this with an `it.only()` call to focus on a single test:
+
+```ts
+it.only('renders the app', async () => {
+  await using workspace = await Workspace.create({
+    fixture: 'empty-app',
+    debug: true,
+  });
+  const server = await startServer(workspace);
+  const page = await server.openPage();
+
+  expect(await page.textContent('body')).toBe('Hello world');
+});
+```
+
+You can run individual tests with `pnpm test.e2e <path>` command. Use the `CI=1` environment variable to run the tests with the same configuration as the CI environment.
 
 ---
 
