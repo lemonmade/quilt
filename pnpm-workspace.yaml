@@ -2,5 +2,6 @@ packages:
   - examples/basic-app
   - integrations/*
   - packages/*
+  - packages/create/templates/*
   - tests/e2e
   - tests/e2e/fixtures/*

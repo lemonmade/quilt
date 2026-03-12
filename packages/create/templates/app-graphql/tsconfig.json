@@ -11,5 +11,5 @@
   },
   "include": ["**/*"],
   "exclude": ["build"],
-  "references": []
+  "references": [{"path": "../../../graphql"}, {"path": "../../../quilt"}]
 }
