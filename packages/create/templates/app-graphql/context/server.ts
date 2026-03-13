@@ -1,23 +1,23 @@
-import {GraphQLCache} from '@quilted/quilt/graphql';
+import {Navigation} from '@quilted/quilt/navigation';
+import {Localization, parseAcceptLanguageHeader} from '@quilted/quilt/localize';
+import {GraphQLClient} from '@quilted/quilt/graphql';
 
 import type {AppContext} from './types.ts';
-import {NavigationForApp} from './navigation.ts';
 
 export class ServerAppContext implements AppContext {
-  readonly navigation: NavigationForApp;
-  readonly graphql: AppContext['graphql'];
+  readonly navigation: Navigation;
+  readonly localization: Localization;
+  readonly graphql: GraphQLClient;
 
   constructor(request: Request) {
-    this.navigation = new NavigationForApp(request.url);
+    this.navigation = new Navigation(request.url);
+    this.localization = new Localization(
+      parseAcceptLanguageHeader(request.headers.get('Accept-Language') ?? '') ?? 'en',
+    );
 
-    const graphQLFetch: AppContext['graphql']['fetch'] = async (...args) => {
+    this.graphql = new GraphQLClient(async (...args) => {
       const {performGraphQLOperation} = await import('../server/graphql.ts');
       return performGraphQLOperation(...args);
-    };
-
-    this.graphql = {
-      fetch: graphQLFetch,
-      cache: new GraphQLCache({fetch: graphQLFetch}),
-    };
+    });
   }
 }

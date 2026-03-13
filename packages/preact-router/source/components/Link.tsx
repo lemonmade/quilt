@@ -3,7 +3,7 @@ import {useMemo} from 'preact/hooks';
 import type {NavigateTo} from '@quilted/routing';
 import {computed} from '@quilted/signals';
 
-import {useRouter} from '../hooks/router.ts';
+import {useNavigation} from '../hooks/navigation.ts';
 
 interface Props
   extends Omit<JSX.LinkHTMLAttributes<HTMLAnchorElement>, 'href'> {
@@ -21,9 +21,9 @@ export function Link({
   external: explicitlyExternal = false,
   ...rest
 }: RenderableProps<Props, HTMLAnchorElement>) {
-  const router = useRouter();
+  const navigation = useNavigation();
 
-  if (router == null) {
+  if (navigation == null) {
     return (
       <a
         ref={ref}
@@ -37,10 +37,10 @@ export function Link({
   }
 
   const currentOrigin = useMemo(
-    () => computed(() => router.currentRequest.url.origin),
-    [router],
+    () => computed(() => navigation.currentRequest.url.origin),
+    [navigation],
   ).value;
-  const {url, external} = router.resolve(to, {base});
+  const {url, external} = navigation.resolve(to, {base});
 
   const handleClick: JSX.MouseEventHandler<HTMLAnchorElement> = (event) => {
     onClick?.(event);
@@ -57,7 +57,7 @@ export function Link({
     }
 
     event.preventDefault();
-    router.navigate(to);
+    navigation.navigate(to);
   };
 
   const href =

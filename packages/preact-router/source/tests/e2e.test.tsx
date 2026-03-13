@@ -9,7 +9,7 @@ import {
   useRouteData,
   type RouteNavigationEntry,
 } from '../index.ts';
-import {render, destroyAll, TestRouter} from '../tests/utilities.tsx';
+import {render, destroyAll, TestNavigation} from '../tests/utilities.tsx';
 
 vi.mock('../redirect', () => ({
   useRedirect: vi.fn(),
@@ -688,8 +688,8 @@ describe('useRoutes()', () => {
     // Does not work right now, testing library can’t properly handle components
     // that internally use an error boundary
     it.skip('can redirect between URLs', () => {
-      const router = new TestRouter('/');
-      const navigateSpy = vi.spyOn(router, 'navigate');
+      const navigation = new TestNavigation('/');
+      const navigateSpy = vi.spyOn(navigation, 'navigate');
 
       const redirectSpy = vi.fn(() => '/redirect');
 
@@ -697,16 +697,16 @@ describe('useRoutes()', () => {
         return useRoutes([{match: '/', redirect: redirectSpy}]);
       }
 
-      render(<Routes />, {router});
+      render(<Routes />, {navigation});
 
       expect(navigateSpy).toHaveBeenCalledWith(
-        router.resolve('/redirect').url.href,
+        navigation.resolve('/redirect').url.href,
         {
           replace: true,
         },
       );
 
-      expect(redirectSpy).toHaveBeenCalledWith(router.resolve('/').url);
+      expect(redirectSpy).toHaveBeenCalledWith(navigation.resolve('/').url);
     });
   });
 

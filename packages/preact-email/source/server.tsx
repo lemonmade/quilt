@@ -8,14 +8,13 @@ import {
   type BrowserDetails,
   type BrowserBodyAttributes,
   type BrowserHTMLAttributes,
-  BrowserDetailsContext,
   BrowserResponseTitle,
   BrowserResponseHeadElements,
   BrowserResponseElementAttributes,
   BrowserResponseSerializations,
 } from '@quilted/preact-browser/server';
+import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
 
-import {EmailContext} from './context.ts';
 import {EmailManager} from './manager.ts';
 
 export async function renderEmail(
@@ -26,11 +25,9 @@ export async function renderEmail(
   const email = new EmailManager();
 
   const content = await renderToStringAsync(
-    <EmailContext.Provider value={email}>
-      <BrowserDetailsContext.Provider value={browser}>
-        {element}
-      </BrowserDetailsContext.Provider>
-    </EmailContext.Provider>,
+    <QuiltFrameworkContextPreact.Provider value={{browser, email}}>
+      {element}
+    </QuiltFrameworkContextPreact.Provider>,
   );
 
   const {state} = email;

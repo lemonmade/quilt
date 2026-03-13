@@ -1,4 +1,4 @@
-export {EmailContext} from './context.ts';
+export {useEmailManager} from './context.ts';
 export {EmailManager} from './manager.ts';
 export type {Sender} from './types.ts';
 

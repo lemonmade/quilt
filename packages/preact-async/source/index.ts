@@ -5,9 +5,8 @@ export {
   type AsyncComponentProps,
   type AsyncComponentType,
 } from './AsyncComponent.tsx';
-export {AsyncContext} from './AsyncContext.tsx';
 
-export {useAsyncActionCache} from './context.ts';
+export {useAsyncActionCache, type AsyncContext} from './context.ts';
 export {
   useAsync,
   useAsync as useAsyncAction,

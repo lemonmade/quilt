@@ -7,7 +7,10 @@ describe('routing', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
-        import {Navigation} from '@quilted/quilt/navigation';
+        import {Navigation, Routes} from '@quilted/quilt/navigation';
+        import {quiltContext} from '@quilted/quilt/context';
+
+        const navigation = new Navigation();
 
         const routes = [
           {
@@ -19,9 +22,13 @@ describe('routing', () => {
             render: 'Redirected',
           },
         ];
-        
+
         export default function App() {
-          return <Navigation routes={routes} />;
+          return (
+            <quiltContext.Provider value={{navigation}}>
+              <Routes list={routes} />
+            </quiltContext.Provider>
+          );
         }
       `,
     });

@@ -1,15 +1,10 @@
 import {Suspense} from 'preact/compat';
 
 import {createRender} from '@quilted/quilt/testing';
-import {
-  BrowserDetailsContext,
-  BrowserTestMock,
-} from '@quilted/quilt/browser/testing';
-import {Navigation, TestRouter} from '@quilted/quilt/navigation/testing';
+import {TestBrowser} from '@quilted/quilt/browser/testing';
+import {TestNavigation} from '@quilted/quilt/navigation/testing';
 import {Localization} from '@quilted/quilt/localize';
-import {GraphQLCache} from '@quilted/quilt/graphql';
-
-import {AppContextPreact} from '~/context/preact.ts';
+import {QuiltFrameworkTestContext} from '@quilted/quilt/context/testing';
 
 import {GraphQLTesting, GraphQLController} from '../graphql.ts';
 
@@ -29,40 +24,21 @@ export const renderApp = createRender<
   // authors on the `root.context` property. Context is used to share data between your
   // React tree and your test code, and is ideal for mocking out global context providers.
   context({
-    router = new TestRouter(),
-    browser = new BrowserTestMock(),
+    navigation = new TestNavigation(),
+    browser = new TestBrowser(),
+    localization = new Localization('en'),
     graphql = new GraphQLController(),
-    graphQLCache = new GraphQLCache({fetch: graphql.fetch}),
   }) {
-    return {
-      navigation: {router},
-      browser,
-      graphql: {fetch: graphql.fetch, cache: graphQLCache, controller: graphql},
-    };
+    return {navigation, browser, localization, graphql: {controller: graphql}};
   },
   // Render all of our app-wide context providers around each component under test.
-  render(element, context, {locale = 'en'}) {
-    const {
-      navigation: {router},
-      browser,
-      graphql,
-    } = context;
-
+  render(element, {navigation, browser, localization, graphql}) {
     return (
-      <AppContextPreact.Provider value={context}>
-        <BrowserDetailsContext.Provider value={browser}>
-          <Localization locale={locale}>
-            <Navigation router={router}>
-              <GraphQLTesting
-                controller={graphql.controller}
-                cache={graphql.cache}
-              >
-                <Suspense fallback={null}>{element}</Suspense>
-              </GraphQLTesting>
-            </Navigation>
-          </Localization>
-        </BrowserDetailsContext.Provider>
-      </AppContextPreact.Provider>
+      <QuiltFrameworkTestContext navigation={navigation} browser={browser} localization={localization}>
+        <GraphQLTesting controller={graphql.controller}>
+          <Suspense fallback={null}>{element}</Suspense>
+        </GraphQLTesting>
+      </QuiltFrameworkTestContext>
     );
   },
   async afterRender(wrapper) {

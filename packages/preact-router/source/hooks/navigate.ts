@@ -1,6 +1,6 @@
-import type {Router} from '../Router.ts';
-import {RouterContext} from '../context.ts';
+import type {Navigation} from '../Navigation.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
-export function useNavigate(): Router['navigate'] {
-  return RouterContext.use().navigate;
+export function useNavigate(): Navigation['navigate'] {
+  return useQuiltContext('navigation').navigate;
 }

@@ -15,7 +15,7 @@ const app = new BrowserApp(<App context={context} />, {context});
 // @example
 // ```js
 // // Log the current URL
-// console.log(globalThis.app.context.navigation.router.currentRequest.url);
+// console.log(globalThis.app.context.navigation.currentRequest.url);
 // ```
 Object.defineProperty(globalThis, 'app', {
   value: app,

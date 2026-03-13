@@ -1,5 +1,5 @@
 import type {RenderableProps} from 'preact';
-import {useMemo} from 'preact/hooks';
+import {useContext, useMemo} from 'preact/hooks';
 
 import type {GraphQLCache} from '@quilted/graphql';
 import {
@@ -22,7 +22,7 @@ import type {
   GraphQLControllerRequest,
 } from '@quilted/graphql/testing';
 
-import {GraphQLContext} from './context.tsx';
+import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
 
 export type * from '@quilted/graphql';
 
@@ -57,9 +57,15 @@ export function GraphQLTesting({
     [controller],
   );
 
+  const existingContext = useContext(QuiltFrameworkContextPreact);
+  const newContext = useMemo(
+    () => ({...existingContext, graphql: {fetch: run, cache}}),
+    [existingContext, run, cache],
+  );
+
   return (
-    <GraphQLContext run={run} cache={cache}>
+    <QuiltFrameworkContextPreact.Provider value={newContext}>
       {children}
-    </GraphQLContext>
+    </QuiltFrameworkContextPreact.Provider>
   );
 }
