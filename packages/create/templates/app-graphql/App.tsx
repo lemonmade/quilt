@@ -1,7 +1,6 @@
 import {NotFound} from '@quilted/quilt/server';
-import {GraphQLContext} from '@quilted/quilt/graphql';
-import {Navigation} from '@quilted/quilt/navigation';
-import {Localization} from '@quilted/quilt/localize';
+import {Routes} from '@quilted/quilt/navigation';
+import {QuiltFrameworkContext} from '@quilted/quilt/context';
 
 import {Head} from './foundation/html.ts';
 import {Frame} from './foundation/frame.ts';
@@ -24,7 +23,7 @@ const routes = [
     children: [
       routeWithAppContext('/', {
         async load({context: {graphql}}) {
-          await Promise.all([Home.load(), graphql.cache.query(homeQuery)]);
+          await Promise.all([Home.load(), graphql.cache?.query(homeQuery)]);
         },
         render: <Home />,
       }),
@@ -38,19 +37,14 @@ const routes = [
 export function App({context}: AppProps) {
   return (
     <AppContextPreact.Provider value={context}>
-      <GraphQLContext
-        fetch={context.graphql.fetch}
-        cache={context.graphql.cache}
+      <QuiltFrameworkContext
+        navigation={context.navigation}
+        localization={context.localization}
+        graphql={context.graphql}
       >
-        <Localization>
-          <Head />
-          <Navigation
-            router={context.navigation.router}
-            routes={routes}
-            context={context}
-          />
-        </Localization>
-      </GraphQLContext>
+        <Head />
+        <Routes list={routes} context={context} />
+      </QuiltFrameworkContext>
     </AppContextPreact.Provider>
   );
 }

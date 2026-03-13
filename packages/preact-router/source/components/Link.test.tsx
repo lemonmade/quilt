@@ -2,7 +2,7 @@
 
 import {describe, it, expect, vi} from 'vitest';
 
-import {render, TestRouter} from '../tests/utilities.tsx';
+import {render, TestNavigation} from '../tests/utilities.tsx';
 
 import {Link} from './Link.tsx';
 
@@ -14,7 +14,7 @@ describe('<Link />', () => {
 
   it('creates an anchor from a relative `to`', () => {
     using link = render(<Link to="my-product" />, {
-      router: new TestRouter('https://example.com/products'),
+      navigation: new TestNavigation('https://example.com/products'),
     });
 
     expect(link).toContainPreactComponent('a', {href: '/products/my-product'});
@@ -22,7 +22,7 @@ describe('<Link />', () => {
 
   it('creates an anchor from an absolute `to` in a custom base URL', () => {
     using link = render(<Link to="/products" />, {
-      router: new TestRouter('https://example.com/admin/orders', {
+      navigation: new TestNavigation('https://example.com/admin/orders', {
         base: '/admin',
       }),
     });
@@ -32,7 +32,7 @@ describe('<Link />', () => {
 
   it('creates an anchor from an absolute `to` with a custom base URL on the link', () => {
     using link = render(<Link to="/products" base="/" />, {
-      router: new TestRouter('https://example.com/admin/orders', {
+      navigation: new TestNavigation('https://example.com/admin/orders', {
         base: '/admin',
       }),
     });
@@ -57,65 +57,65 @@ describe('<Link />', () => {
       expect(onClick).toHaveBeenCalledWith(event);
     });
 
-    it('calls router.navigate() with the `to` prop for normal clicks', () => {
+    it('calls navigation.navigate() with the `to` prop for normal clicks', () => {
       const to = '/';
-      const router = new TestRouter('https://example.com');
-      const navigate = vi.spyOn(router, 'navigate');
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
 
-      using link = render(<Link to={to} />, {router});
+      using link = render(<Link to={to} />, {navigation});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).toHaveBeenCalledWith(to);
     });
 
-    it('does not call router.navigate() when the link is explicitly marked as `external`', () => {
-      const router = new TestRouter('https://example.com');
-      const navigate = vi.spyOn(router, 'navigate');
+    it('does not call navigation.navigate() when the link is explicitly marked as `external`', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
 
-      using link = render(<Link to="/" external />, {router});
+      using link = render(<Link to="/" external />, {navigation});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).not.toHaveBeenCalled();
     });
 
-    it('does not call router.navigate() when `onClick()` calls `event.preventDefault()`', () => {
-      const router = new TestRouter('https://example.com');
-      const navigate = vi.spyOn(router, 'navigate');
+    it('does not call navigation.navigate() when `onClick()` calls `event.preventDefault()`', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
 
       using link = render(
         <Link to="/" onClick={(event) => event.preventDefault()} />,
-        {router},
+        {navigation},
       );
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).not.toHaveBeenCalled();
     });
 
-    it('does not call router.navigate() when the shift key is pressed', () => {
-      const router = new TestRouter('https://example.com');
-      const navigate = vi.spyOn(router, 'navigate');
+    it('does not call navigation.navigate() when the shift key is pressed', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
 
-      using link = render(<Link to="/" />, {router});
+      using link = render(<Link to="/" />, {navigation});
       link.find('a')!.trigger('onClick', createClickEvent({shiftKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
     });
 
-    it('does not call router.navigate() when the meta key is pressed', () => {
-      const router = new TestRouter('https://example.com');
-      const navigate = vi.spyOn(router, 'navigate');
+    it('does not call navigation.navigate() when the meta key is pressed', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
 
-      using link = render(<Link to="/" />, {router});
+      using link = render(<Link to="/" />, {navigation});
       link.find('a')!.trigger('onClick', createClickEvent({metaKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();
     });
 
-    it('does not call router.navigate() when the control key is pressed', () => {
-      const router = new TestRouter('https://example.com');
-      const navigate = vi.spyOn(router, 'navigate');
+    it('does not call navigation.navigate() when the control key is pressed', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
 
-      using link = render(<Link to="/" />, {router});
+      using link = render(<Link to="/" />, {navigation});
       link.find('a')!.trigger('onClick', createClickEvent({ctrlKey: true}));
 
       expect(navigate).not.toHaveBeenCalled();

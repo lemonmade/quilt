@@ -1,17 +1,17 @@
 import type {NavigateTo} from '@quilted/routing';
-import {useRouter} from '../hooks/router.ts';
+import {useNavigation} from '../hooks/navigation.ts';
 
 export interface RedirectProps {
   to: NavigateTo;
 }
 
 export function Redirect({to}: RedirectProps) {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   throw new Response(null, {
     status: 302,
     headers: {
-      Location: router.resolve(to).url.href,
+      Location: navigation.resolve(to).url.href,
     },
   });
 

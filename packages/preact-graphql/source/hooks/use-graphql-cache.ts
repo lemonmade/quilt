@@ -1,3 +1,1 @@
-import {GraphQLCacheContext} from '../context.tsx';
-
-export const useGraphQLCache = GraphQLCacheContext.use;
+export {useGraphQLCache} from '../context.tsx';

@@ -17,6 +17,7 @@ export {
   type GraphQLFetchRequestInit,
 } from './fetch/request.ts';
 export {GraphQLCache} from './GraphQLCache.ts';
+export {GraphQLClient} from './GraphQLClient.ts';
 export {GraphQLQuery} from './GraphQLQuery.ts';
 export {GraphQLMutation} from './GraphQLMutation.ts';
 export {gql, graphql} from './gql.ts';

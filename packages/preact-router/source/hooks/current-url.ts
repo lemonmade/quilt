@@ -1,5 +1,5 @@
-import {RouterContext} from '../context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
 export function useCurrentURL() {
-  return RouterContext.use().currentRequest.url;
+  return useQuiltContext('navigation').currentRequest.url;
 }

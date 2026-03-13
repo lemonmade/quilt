@@ -1,3 +1,8 @@
-import {PerformanceContextInternal} from '../context.ts';
+import type {Performance} from '@quilted/performance';
+import {usePerformanceFromContext} from '../context.ts';
 
-export const usePerformance = PerformanceContextInternal.use;
+export function usePerformance(): Performance;
+export function usePerformance(options: {optional: boolean}): Performance | undefined;
+export function usePerformance(options?: {optional?: boolean}): Performance | undefined {
+  return usePerformanceFromContext(options as any);
+}
