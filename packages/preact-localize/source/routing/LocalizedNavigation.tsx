@@ -3,7 +3,12 @@ import {useContext, useMemo} from 'preact/hooks';
 import {useBrowserDetails} from '@quilted/preact-browser';
 import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
 import {Localization} from '@quilted/localize';
-import {Navigation, Routes, type NavigationOptions, type RouteDefinition} from '@quilted/preact-router';
+import {
+  Navigation,
+  Routes,
+  type NavigationOptions,
+  type RouteDefinition,
+} from '@quilted/preact-router';
 
 import {RouteLocalizationContext} from './context.ts';
 import type {RouteLocalization, ResolvedRouteLocalization} from './types.ts';
@@ -16,7 +21,10 @@ export class LocalizedNavigation extends Navigation {
     {
       localization,
       isExternal: explicitIsExternal,
-    }: {localization: RouteLocalization} & Pick<NavigationOptions, 'isExternal'>,
+    }: {localization: RouteLocalization} & Pick<
+      NavigationOptions,
+      'isExternal'
+    >,
   ) {
     const {localeFromURL} = localization;
 
@@ -71,7 +79,9 @@ export function LocalizedNavigationProvider<Context = unknown>({
   const resolvedNavigation = useMemo(
     () =>
       navigation ??
-      new LocalizedNavigation(browser?.request.url, {localization: localization!}),
+      new LocalizedNavigation(browser?.request.url, {
+        localization: localization!,
+      }),
     [navigation],
   );
   const resolvedLocalization = resolvedNavigation.localization;
@@ -100,7 +110,11 @@ export function LocalizedNavigationProvider<Context = unknown>({
 
   const existingContext = useContext(QuiltFrameworkContextPreact);
   const newQuiltContext = useMemo(
-    () => ({...existingContext, navigation: resolvedNavigation, localization: localize}),
+    () => ({
+      ...existingContext,
+      navigation: resolvedNavigation,
+      localization: localize,
+    }),
     [existingContext, resolvedNavigation, localize],
   );
 

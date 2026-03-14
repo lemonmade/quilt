@@ -3,7 +3,10 @@ import type {ComponentChild, VNode, RenderableProps} from 'preact';
 import {isValidElement, cloneElement} from 'preact';
 import {useContext, useEffect, useMemo} from 'preact/hooks';
 import {computed, effect, ReadonlySignal} from '@quilted/signals';
-import {QuiltFrameworkContextPreact, useQuiltContext} from '@quilted/preact-context';
+import {
+  QuiltFrameworkContextPreact,
+  useQuiltContext,
+} from '@quilted/preact-context';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
 import {RouterNavigationCache, type Navigation} from '../Navigation.ts';
@@ -125,7 +128,10 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
 
   const existingContext = useContext(QuiltFrameworkContextPreact);
   const newQuiltContext = useMemo(
-    () => ({...existingContext, navigationEntry: entry as RouteNavigationEntry<any, any>}),
+    () => ({
+      ...existingContext,
+      navigationEntry: entry as RouteNavigationEntry<any, any>,
+    }),
     [existingContext, entry],
   );
 

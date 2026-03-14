@@ -18,8 +18,12 @@ declare module '@quilted/preact-context' {
 }
 
 export function useGraphQLRun(): GraphQLRun;
-export function useGraphQLRun(options: {optional: boolean}): GraphQLRun | undefined;
-export function useGraphQLRun(options?: {optional?: boolean}): GraphQLRun | undefined {
+export function useGraphQLRun(options: {
+  optional: boolean;
+}): GraphQLRun | undefined;
+export function useGraphQLRun(options?: {
+  optional?: boolean;
+}): GraphQLRun | undefined {
   const graphql = useQuiltContext('graphql', {optional: true});
   const run = graphql?.fetch;
 
@@ -31,8 +35,12 @@ export function useGraphQLRun(options?: {optional?: boolean}): GraphQLRun | unde
 }
 
 export function useGraphQLCache(): GraphQLCache;
-export function useGraphQLCache(options: {optional: boolean}): GraphQLCache | undefined;
-export function useGraphQLCache(options?: {optional?: boolean}): GraphQLCache | undefined {
+export function useGraphQLCache(options: {
+  optional: boolean;
+}): GraphQLCache | undefined;
+export function useGraphQLCache(options?: {
+  optional?: boolean;
+}): GraphQLCache | undefined {
   const graphql = useQuiltContext('graphql', {optional: true});
   const cache = graphql?.cache;
 

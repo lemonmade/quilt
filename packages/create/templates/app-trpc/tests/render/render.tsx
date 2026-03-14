@@ -37,9 +37,16 @@ export const renderApp = createRender<
     };
   },
   // Render all of our app-wide context providers around each component under test.
-  render(element, {navigation, browser, localization, trpc: trpcClient, queryClient}) {
+  render(
+    element,
+    {navigation, browser, localization, trpc: trpcClient, queryClient},
+  ) {
     return (
-      <QuiltFrameworkTestContext navigation={navigation} browser={browser} localization={localization}>
+      <QuiltFrameworkTestContext
+        navigation={navigation}
+        browser={browser}
+        localization={localization}
+      >
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             {element}

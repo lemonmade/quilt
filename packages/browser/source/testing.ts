@@ -34,9 +34,7 @@ export class TestBrowser implements BrowserDetails {
     url?: URL | string;
     cookies?: ConstructorParameters<typeof TestBrowserCookies>[0];
     locale?: string;
-    serializations?: ConstructorParameters<
-      typeof TestBrowserSerializations
-    >[0];
+    serializations?: ConstructorParameters<typeof TestBrowserSerializations>[0];
   } = {}) {
     this.request = new Request(
       url ??

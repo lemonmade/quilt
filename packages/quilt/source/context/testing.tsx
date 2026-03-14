@@ -51,8 +51,14 @@ export function QuiltFrameworkTestContext({
   browser,
   children,
 }: QuiltFrameworkTestContextProps) {
-  const resolvedNavigation = useMemo(() => navigation ?? new TestNavigation(), [navigation]);
-  const resolvedBrowser = useMemo(() => browser ?? new TestBrowser(), [browser]);
+  const resolvedNavigation = useMemo(
+    () => navigation ?? new TestNavigation(),
+    [navigation],
+  );
+  const resolvedBrowser = useMemo(
+    () => browser ?? new TestBrowser(),
+    [browser],
+  );
 
   const value = useMemo(
     () => ({

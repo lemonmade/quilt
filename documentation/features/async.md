@@ -196,22 +196,23 @@ export function App() {
 
 Using an `AsyncAction` directly can be handy, but it can also feel a little overwhelming — there’s a lot for you to remember to do on your own. You need to grab an `AsyncActionCache`, if you’ve got one, create the `AsyncAction`, and run the action at the appropriate time (including when any input to the function changes). You likely also want to cancel the active request if the component unmounts. If you want the data to be fetched during server rendering, you’d need to build on the above examples by suspending while the initial data is being fetched, and communicating the cache of results from the server to the client.
 
-To make this process easier, Quilt provides a handy `useAsync()` hook. This hook takes an async function to run and some details about how to cache the result. It will create and return an `AsyncAction` for you to use, as shown above, but provides smart default behavior. It will suspend if the `AsyncAction` has not yet run, and use a cache provided to Quilt’s `AsyncContext` component. The `AsyncContext` component will take care of serializing the cache from the server to the client, so that client-side rendering can pick up right where the server left off.
+To make this process easier, Quilt provides a handy `useAsync()` hook. This hook takes an async function to run and some details about how to cache the result. It will create and return an `AsyncAction` for you to use, as shown above, but provides smart default behavior. It will suspend if the `AsyncAction` has not yet run, and use a cache passed to `QuiltFrameworkContext` via its `async` prop. `QuiltFrameworkContext` takes care of serializing the cache from the server to the client, so that client-side rendering can pick up right where the server left off.
 
 ```tsx
-import {Suspense} from 'preact/compat';
-import {useAsync, AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
+import {Suspense} from ‘preact/compat’;
+import {useAsync, AsyncActionCache} from ‘@quilted/quilt/async’;
+import {QuiltFrameworkContext} from ‘@quilted/quilt/context’;
 
 // We’ll need to pass a `cache` prop to our app in both our browser and server
 // entrypoints. In a Quilt app, these are typically the `browser.tsx` and `server.tsx`
 // files, respectively.
 export function App({cache}: {cache: AsyncActionCache}) {
   return (
-    <AsyncContext cache={cache}>
+    <QuiltFrameworkContext async={{cache}}>
       <Suspense fallback="Loading...">
         <UserDetails />
       </Suspense>
-    </AsyncContext>
+    </QuiltFrameworkContext>
   );
 }
 
@@ -245,16 +246,17 @@ In the example above, we have a constant input to the function — our `'1'` st
 ```tsx
 import {Suspense} from 'preact/compat';
 import {useSignal} from '@quilted/quilt/signals';
-import {useAsync, AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
+import {useAsync, AsyncActionCache} from ‘@quilted/quilt/async’;
+import {QuiltFrameworkContext} from ‘@quilted/quilt/context’;
 
 // We’ll need to pass a `cache` prop to our app in both our browser and server
 // entrypoints. In a Quilt app, these are typically the `browser.tsx` and `server.tsx`
 // files, respectively.
 export function App({cache}: {cache: AsyncActionCache}) {
-  const user = useSignal('1');
+  const user = useSignal(‘1’);
 
   return (
-    <AsyncContext cache={cache}>
+    <QuiltFrameworkContext async={{cache}}>
       <Suspense fallback="Loading...">
         <UserDetails
           user={user}
@@ -264,7 +266,7 @@ export function App({cache}: {cache: AsyncActionCache}) {
           }}
         />
       </Suspense>
-    </AsyncContext>
+    </QuiltFrameworkContext>
   );
 }
 
@@ -303,7 +305,7 @@ In addition to specifying the async function, input, and cache key, `useAsync` h
 
 - `active`: indicates whether the action should be run. If set to `false`, you will be responsible for manually running the action using the `run()` method on the returned `AsyncAction` instance. This value can be either a boolean, or a signal that contains a boolean. Defaults to `true`.
 - `suspend`: configures whether the hook will suspend while the first run of this async action is running. If `true`, the hook will suspend until the action has resolved or rejected. If `false`, the hook will not suspend, and you will need to handle the `pending` state yourself. Defaults to `true`.
-- `cache`: configures whether the action should be cached. If `true`, the default cache from a surrounding `AsyncContext` will be used. If `false`, the action will not be cached. Alternatively, you can pass an `AsyncActionCache` instance to use a specific cache.
+- `cache`: configures whether the action should be cached. If `true`, the default cache from a surrounding `QuiltFrameworkContext` will be used. If `false`, the action will not be cached. Alternatively, you can pass an `AsyncActionCache` instance to use a specific cache.
 - `signal`: an `AbortSignal` that can be used to cancel the action.
 - `tags`: an array of strings to include as metadata on a cached `AsyncAction`. These `tags` can be searched for with the `AsyncActionCache`’s `find()`, `filter()`, and `delete()` methods.
 
