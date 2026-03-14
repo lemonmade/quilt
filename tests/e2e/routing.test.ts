@@ -8,7 +8,7 @@ describe('routing', () => {
     await workspace.fs.write({
       'App.tsx': multiline`
         import {Navigation, Routes} from '@quilted/quilt/navigation';
-        import {quiltContext} from '@quilted/quilt/context';
+        import {QuiltFrameworkContext} from '@quilted/quilt/context';
 
         const navigation = new Navigation();
 
@@ -25,9 +25,9 @@ describe('routing', () => {
 
         export default function App() {
           return (
-            <quiltContext.Provider value={{navigation}}>
+            <QuiltFrameworkContext navigation={navigation}>
               <Routes list={routes} />
-            </quiltContext.Provider>
+            </QuiltFrameworkContext>
           );
         }
       `,
