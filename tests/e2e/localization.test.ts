@@ -10,8 +10,8 @@ describe('localization', () => {
         'foundation/Routes.tsx': multiline`
           import {useContext, useMemo} from 'preact/hooks';
           import {useRoutes} from '@quilted/quilt/navigation';
-          import {useLocale, createLocalization} from '@quilted/quilt/localize';
-          import {quiltContext} from '@quilted/quilt/context';
+          import {useLocale, Localization} from '@quilted/quilt/localize';
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
 
           export function Routes() {
             return useRoutes([{
@@ -22,12 +22,11 @@ describe('localization', () => {
           }
 
           function LocaleProvider({locale, children}) {
-            const existing = useContext(quiltContext);
-            const newContext = useMemo(
-              () => ({...existing, localize: createLocalization(locale)}),
-              [existing, locale],
+            const localization = useMemo(
+              () => new Localization(locale),
+              [locale],
             );
-            return <quiltContext.Provider value={newContext}>{children}</quiltContext.Provider>;
+            return <QuiltFrameworkContext localization={localization}>{children}</QuiltFrameworkContext>;
           }
 
           function Localized() {
