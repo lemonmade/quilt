@@ -49,7 +49,9 @@ export class AsyncComponent<Props> extends Component<
         : new AsyncModule(moduleOrImport);
 
     function AsyncComponentInternal(props: Props) {
-      const asyncComponentContext = useQuiltContext('async', {optional: true})?.components;
+      const asyncComponentContext = useQuiltContext('async', {
+        optional: true,
+      })?.components;
       const render = options.render ?? asyncComponentContext?.render;
 
       return (

@@ -30,11 +30,11 @@ Quilt is a **Preact-based** monorepo (~40 `@quilted/*` packages + 5 integrations
 
 Every package uses conditional exports with three targets:
 
-| Condition | Points to | Used by |
-|-----------|-----------|---------|
-| `quilt:source` | `./source/index.ts` | Local dev, tests, scripts |
+| Condition      | Points to                 | Used by                    |
+| -------------- | ------------------------- | -------------------------- |
+| `quilt:source` | `./source/index.ts`       | Local dev, tests, scripts  |
 | `quilt:esnext` | `./build/esnext/index.js` | Advanced bundler consumers |
-| `import` | `./build/esm/index.js` | Production (default) |
+| `import`       | `./build/esm/index.js`    | Production (default)       |
 
 **You never need to pre-build packages to work locally** — import resolution follows `quilt:source` during development and in tests.
 

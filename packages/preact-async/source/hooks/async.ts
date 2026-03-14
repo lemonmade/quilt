@@ -171,7 +171,9 @@ function useAsyncFunctionAsSignal<Data, Input>(
 ): ReadonlySignal<
   AsyncAction<Data, Input> | AsyncActionCacheEntry<AsyncAction<Data, Input>>
 > {
-  const asyncCacheFromContext = useQuiltContext('async', {optional: true})?.cache;
+  const asyncCacheFromContext = useQuiltContext('async', {
+    optional: true,
+  })?.cache;
 
   return useComputed(() => {
     const shouldCache = Boolean(cache ?? true);

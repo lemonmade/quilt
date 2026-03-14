@@ -16,12 +16,18 @@ export const render = createRender<
   context({
     path = '/',
     base,
-    navigation = new TestNavigation(new URL(path, 'https://example.com'), {base}),
+    navigation = new TestNavigation(new URL(path, 'https://example.com'), {
+      base,
+    }),
   }) {
     return {navigation};
   },
   render(element, {navigation}) {
-    return <QuiltFrameworkContextPreact.Provider value={{navigation}}>{element}</QuiltFrameworkContextPreact.Provider>;
+    return (
+      <QuiltFrameworkContextPreact.Provider value={{navigation}}>
+        {element}
+      </QuiltFrameworkContextPreact.Provider>
+    );
   },
 });
 

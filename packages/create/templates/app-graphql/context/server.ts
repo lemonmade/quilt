@@ -12,7 +12,8 @@ export class ServerAppContext implements AppContext {
   constructor(request: Request) {
     this.navigation = new Navigation(request.url);
     this.localization = new Localization(
-      parseAcceptLanguageHeader(request.headers.get('Accept-Language') ?? '') ?? 'en',
+      parseAcceptLanguageHeader(request.headers.get('Accept-Language') ?? '') ??
+        'en',
     );
 
     this.graphql = new GraphQLClient(async (...args) => {

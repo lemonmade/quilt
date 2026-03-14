@@ -39,7 +39,10 @@ const routes = [
 export function App({context}: AppProps) {
   return (
     <AppContextPreact.Provider value={context}>
-      <QuiltFrameworkContext navigation={context.navigation} localization={context.localization}>
+      <QuiltFrameworkContext
+        navigation={context.navigation}
+        localization={context.localization}
+      >
         <trpc.Provider client={context.trpc} queryClient={context.queryClient}>
           <ReactQueryContext client={context.queryClient}>
             <Head />

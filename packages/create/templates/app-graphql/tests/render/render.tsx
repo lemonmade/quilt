@@ -34,7 +34,11 @@ export const renderApp = createRender<
   // Render all of our app-wide context providers around each component under test.
   render(element, {navigation, browser, localization, graphql}) {
     return (
-      <QuiltFrameworkTestContext navigation={navigation} browser={browser} localization={localization}>
+      <QuiltFrameworkTestContext
+        navigation={navigation}
+        browser={browser}
+        localization={localization}
+      >
         <GraphQLTesting controller={graphql.controller}>
           <Suspense fallback={null}>{element}</Suspense>
         </GraphQLTesting>

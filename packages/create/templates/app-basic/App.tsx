@@ -33,7 +33,10 @@ const routes = [
 export function App({context}: AppProps) {
   return (
     <AppContextPreact.Provider value={context}>
-      <QuiltFrameworkContext navigation={context.navigation} localization={context.localization}>
+      <QuiltFrameworkContext
+        navigation={context.navigation}
+        localization={context.localization}
+      >
         <Head />
         <Routes list={routes} context={context} />
       </QuiltFrameworkContext>
