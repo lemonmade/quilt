@@ -18,7 +18,7 @@ import {
   batch,
 } from '@quilted/preact-signals';
 
-import {AsyncActionCacheContext} from '../context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
 export interface UseAsyncActionOptions<Data = unknown, Input = unknown>
   extends Pick<AsyncActionCacheCreateOptions, 'tags'> {
@@ -171,7 +171,9 @@ function useAsyncFunctionAsSignal<Data, Input>(
 ): ReadonlySignal<
   AsyncAction<Data, Input> | AsyncActionCacheEntry<AsyncAction<Data, Input>>
 > {
-  const asyncCacheFromContext = AsyncActionCacheContext.use({optional: true});
+  const asyncCacheFromContext = useQuiltContext('async', {
+    optional: true,
+  })?.cache;
 
   return useComputed(() => {
     const shouldCache = Boolean(cache ?? true);

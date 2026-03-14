@@ -10,49 +10,57 @@ TODO
 
 To localize your application, you need to tell Quilt what locale your application is using. This value will be used to determine the right translations to load, how to format values, and as the [`lang` attribute on the HTML document](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang).
 
-The simplest way to set the locale is to provide a hardcoded value to Quilt’s `Localization` component. Like the HTML `lang` attribute, the `locale` prop should be a language tag in the format defined in [RFC 5646](https://datatracker.ietf.org/doc/html/rfc5646), like `en` for english, or `fr-CA` for french as spoken in Canada.
+The simplest way to set the locale is to create a `Localization` instance with your chosen locale tag and pass it to `QuiltFrameworkContext`. Like the HTML `lang` attribute, the locale should be a language tag in the format defined in [RFC 5646](https://datatracker.ietf.org/doc/html/rfc5646), like `en` for english, or `fr-CA` for french as spoken in Canada.
 
 ```tsx
-import {Localization} from '@quilted/quilt';
+import {Localization} from ‘@quilted/quilt/localize’;
+import {QuiltFrameworkContext} from ‘@quilted/quilt/context’;
 
 export function App() {
   return (
-    <Localization locale="fr-CA">
+    <QuiltFrameworkContext localization={new Localization(‘fr-CA’)}>
       <RestOfApp />
-    </Localization>
+    </QuiltFrameworkContext>
   );
 }
 ```
 
-The browser sends a special header, [`Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language), that lets the server know what locale the user prefers. When using Quilt [with server rendering](/documentation/features/server-rendering.md), you can omit the `locale` prop from the `Localization` component, and Quilt will automatically use the locale from the `Accept-Language` header on the server, and its equivalent in the browser.
+The browser sends a special header, [`Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language), that lets the server know what locale the user prefers. When using Quilt [with server rendering](/documentation/features/server-rendering.md), you can parse this header on the server with the `parseAcceptLanguageHeader` helper and pass the resulting locale to `Localization`:
 
 ```tsx
-import {Localization} from '@quilted/quilt';
+import {Localization, parseAcceptLanguageHeader} from ‘@quilted/quilt/localize’;
+import {QuiltFrameworkContext} from ‘@quilted/quilt/context’;
 
-export function App() {
+export function App({request}: {request: Request}) {
+  const locale =
+    parseAcceptLanguageHeader(request.headers.get(‘Accept-Language’) ?? ‘’) ??
+    ‘en’;
+
   return (
-    <Localization>
+    <QuiltFrameworkContext localization={new Localization(locale)}>
       <RestOfApp />
-    </Localization>
+    </QuiltFrameworkContext>
   );
 }
 ```
 
-You can use the `useLocale` hook to access the current locale elsewhere in your React application:
+You can use the `useLocale` hook to access the current locale elsewhere in your application:
 
 ```tsx
-import {Localization, useLocale} from '@quilted/quilt';
+import {Localization} from ‘@quilted/quilt/localize’;
+import {QuiltFrameworkContext} from ‘@quilted/quilt/context’;
+import {useLocale} from ‘@quilted/quilt/localize’;
 
 export function App() {
   return (
-    <Localization locale="fr-CA">
+    <QuiltFrameworkContext localization={new Localization(‘fr-CA’)}>
       <RestOfApp />
-    </Localization>
+    </QuiltFrameworkContext>
   );
 }
 
 function RestOfApp() {
-  // `locale` will be `'fr-CA'` in this case.
+  // `locale` will be `’fr-CA’` in this case.
   const locale = useLocale();
   return <p>It looks like your locale is: {locale}</p>;
 }
@@ -221,13 +229,14 @@ Quilt provides a `useLocalizedFormatting` hook that gives you access to function
 - `formatDate()` formats a `Date` object. You can pass this function any option you can pass to [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat), which is used under the hood.
 
 ```tsx
-import {Localization, useLocalizedFormatting} from '@quilted/quilt';
+import {Localization, useLocalizedFormatting} from '@quilted/quilt/localize';
+import {QuiltFrameworkContext} from '@quilted/quilt/context';
 
 export function App() {
   return (
-    <Localization locale="en-CA">
+    <QuiltFrameworkContext localization={new Localization('en-CA')}>
       <RestOfApp />
-    </Localization>
+    </QuiltFrameworkContext>
   );
 }
 

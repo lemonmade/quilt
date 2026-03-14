@@ -4,9 +4,12 @@ import {
   type ComponentChild,
 } from 'preact';
 
-import {Browser, type BrowserDetails} from '@quilted/browser';
+import {Browser} from '@quilted/browser';
 
-import {BrowserDetailsContext} from './context.ts';
+import {
+  QuiltFrameworkContextPreact,
+  type QuiltContext,
+} from '@quilted/preact-context';
 
 /**
  * A helper class for constructing and running a Preact browser application.
@@ -78,12 +81,13 @@ export function render(
   {
     element,
     browser = new Browser(),
-  }: {element?: string | Element; browser?: BrowserDetails} = {},
+    ...context
+  }: {element?: string | Element} & QuiltContext = {},
 ) {
   return preactRender(
-    <BrowserDetailsContext.Provider value={browser}>
+    <QuiltFrameworkContextPreact.Provider value={{browser, ...context}}>
       {component}
-    </BrowserDetailsContext.Provider>,
+    </QuiltFrameworkContextPreact.Provider>,
     resolveContainerNode(element),
   );
 }
@@ -93,12 +97,13 @@ export function hydrate(
   {
     element,
     browser = new Browser(),
-  }: {element?: string | Element; browser?: BrowserDetails} = {},
+    ...context
+  }: {element?: string | Element} & QuiltContext = {},
 ) {
   return preactHydrate(
-    <BrowserDetailsContext.Provider value={browser}>
+    <QuiltFrameworkContextPreact.Provider value={{browser, ...context}}>
       {component}
-    </BrowserDetailsContext.Provider>,
+    </QuiltFrameworkContextPreact.Provider>,
     resolveContainerNode(element),
   );
 }

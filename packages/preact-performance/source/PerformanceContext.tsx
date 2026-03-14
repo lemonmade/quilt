@@ -1,8 +1,7 @@
 import type {RenderableProps} from 'preact';
-import {useMemo} from 'preact/hooks';
+import {useContext, useMemo} from 'preact/hooks';
 import {createPerformance, type Performance} from '@quilted/performance';
-
-import {PerformanceContextInternal} from './context.ts';
+import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
 
 export interface Props {
   performance?: Performance;
@@ -17,9 +16,15 @@ export function PerformanceContext({
     [explicitPerformance],
   );
 
+  const existingContext = useContext(QuiltFrameworkContextPreact);
+  const newContext = useMemo(
+    () => ({...existingContext, performance}),
+    [existingContext, performance],
+  );
+
   return (
-    <PerformanceContextInternal.Provider value={performance}>
+    <QuiltFrameworkContextPreact.Provider value={newContext}>
       {children}
-    </PerformanceContextInternal.Provider>
+    </QuiltFrameworkContextPreact.Provider>
   );
 }

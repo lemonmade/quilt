@@ -1,8 +1,8 @@
-import {Router} from './Router.ts';
+import {Navigation} from './Navigation.ts';
 
-export {Navigation} from './components/Navigation.tsx';
+export {Navigation};
 
-export class TestRouter extends Router {
+export class TestNavigation extends Navigation {
   go() {}
 
   back() {}

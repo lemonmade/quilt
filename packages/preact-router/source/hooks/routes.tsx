@@ -1,45 +1,48 @@
 import {Suspense} from 'preact/compat';
 import type {ComponentChild, VNode, RenderableProps} from 'preact';
 import {isValidElement, cloneElement} from 'preact';
-import {useEffect, useMemo} from 'preact/hooks';
+import {useContext, useEffect, useMemo} from 'preact/hooks';
 import {computed, effect, ReadonlySignal} from '@quilted/signals';
+import {
+  QuiltFrameworkContextPreact,
+  useQuiltContext,
+} from '@quilted/preact-context';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
-import {RouterContext, RouteNavigationEntryContext} from '../context.ts';
-import {RouterNavigationCache, type Router} from '../Router.ts';
+import {RouterNavigationCache, type Navigation} from '../Navigation.ts';
 
 export function useRoutes<Context = unknown>(
   routes: readonly RouteDefinition<any, any, Context>[],
   {context}: {context?: Context} = {},
 ) {
-  const router = RouterContext.use();
-  const parent = RouteNavigationEntryContext.use({optional: true});
+  const navigation = useQuiltContext('navigation');
+  const parentEntry = useQuiltContext('navigationEntry', {optional: true});
 
   const routeStack = useMemo(() => {
-    const cache = router.cache ?? new RouterNavigationCache(router);
+    const cache = navigation.cache ?? new RouterNavigationCache(navigation);
 
     return computed(() => {
-      const matched = cache.match(router.currentRequest, routes, {
-        parent,
+      const matched = cache.match(navigation.currentRequest, routes, {
+        parent: parentEntry,
         context,
       });
 
       return matched;
     });
-  }, [router, parent]);
+  }, [navigation, parentEntry]);
 
   return (
     <Suspense fallback={null}>
-      <RouteStackRenderer router={router} stack={routeStack} />
+      <RouteStackRenderer navigation={navigation} stack={routeStack} />
     </Suspense>
   );
 }
 
 function RouteStackRenderer({
-  router,
+  navigation,
   stack,
 }: {
-  router: Router;
+  navigation: Navigation;
   stack: ReadonlySignal<RouteNavigationEntry<any, any>[]>;
 }) {
   const entries = stack.value;
@@ -62,7 +65,7 @@ function RouteStackRenderer({
 
   for (const entry of [...entries].reverse()) {
     content = (
-      <RouteNavigationRenderer router={router} entry={entry}>
+      <RouteNavigationRenderer navigation={navigation} entry={entry}>
         {content}
       </RouteNavigationRenderer>
     );
@@ -72,11 +75,11 @@ function RouteStackRenderer({
 }
 
 function RouteNavigationRenderer<Data = unknown, Input = unknown>({
-  router,
+  navigation,
   entry,
   children,
 }: RenderableProps<{
-  router: Router;
+  navigation: Navigation;
   entry: RouteNavigationEntry<Data, Input>;
 }>) {
   useEffect(() => {
@@ -102,7 +105,7 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
     throw new Response(null, {
       status: 302,
       headers: {
-        Location: router.resolve(route.redirect).url.href,
+        Location: navigation.resolve(route.redirect).url.href,
       },
     });
   }
@@ -123,9 +126,18 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
     }
   }
 
+  const existingContext = useContext(QuiltFrameworkContextPreact);
+  const newQuiltContext = useMemo(
+    () => ({
+      ...existingContext,
+      navigationEntry: entry as RouteNavigationEntry<any, any>,
+    }),
+    [existingContext, entry],
+  );
+
   return (
-    <RouteNavigationEntryContext.Provider value={entry}>
+    <QuiltFrameworkContextPreact.Provider value={newQuiltContext}>
       {content}
-    </RouteNavigationEntryContext.Provider>
+    </QuiltFrameworkContextPreact.Provider>
   );
 }

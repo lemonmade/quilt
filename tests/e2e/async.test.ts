@@ -376,7 +376,8 @@ describe('async', () => {
         }
       `,
       'App.tsx': multiline`
-        import {AsyncContext, AsyncComponent} from '@quilted/quilt/async';
+        import {AsyncComponent} from '@quilted/quilt/async';
+        import {QuiltFrameworkContext} from '@quilted/quilt/context';
 
         export const Async = AsyncComponent.from(() => import('./Async.tsx'), {
           server: false,
@@ -384,7 +385,7 @@ describe('async', () => {
         });
 
         export default function App() {
-          return <AsyncContext><Async /></AsyncContext>;
+          return <QuiltFrameworkContext><Async /></QuiltFrameworkContext>;
         }
       `,
     });
@@ -499,21 +500,18 @@ describe('async', () => {
         import {useMemo} from 'preact/hooks';
         import {Suspense} from 'preact/compat';
         import {useBrowserRequest} from '@quilted/quilt/browser';
-        import {
-          useAsync,
-          AsyncContext,
-          AsyncActionCache,
-        } from '@quilted/quilt/async';
-        
+        import {useAsync, AsyncActionCache} from '@quilted/quilt/async';
+        import {QuiltFrameworkContext} from '@quilted/quilt/context';
+
         export default function App() {
           const cache = useMemo(() => new AsyncActionCache(), []);
 
           return (
-            <AsyncContext cache={cache}>
+            <QuiltFrameworkContext async={{cache}}>
               <Suspense fallback={null}>
                 <Async />
               </Suspense>
-            </AsyncContext>
+            </QuiltFrameworkContext>
           );
         }
 
@@ -580,17 +578,14 @@ describe('async', () => {
         import {useMemo} from 'preact/hooks';
         import {Suspense} from 'preact/compat';
         import {useBrowserRequest} from '@quilted/quilt/browser';
-        import {
-          AsyncContext,
-          AsyncActionCache,
-          useAsync,
-        } from '@quilted/quilt/async';
-        
+        import {AsyncActionCache, useAsync} from '@quilted/quilt/async';
+        import {QuiltFrameworkContext} from '@quilted/quilt/context';
+
         export default function App() {
           const cache = useMemo(() => new AsyncActionCache(), []);
 
           return (
-            <AsyncContext cache={cache}>
+            <QuiltFrameworkContext async={{cache}}>
               <Suspense fallback={null}>
                 <Greeting name="Winston" />
               </Suspense>
@@ -598,7 +593,7 @@ describe('async', () => {
               <Suspense fallback={null}>
                 <Greeting name="Molly" />
               </Suspense>
-            </AsyncContext>
+            </QuiltFrameworkContext>
           );
         }
 
@@ -633,8 +628,9 @@ describe('async', () => {
   const BROWSER_ENTRY_WITH_TEST_RPC = multiline`
     import {hydrate} from 'preact';
     import {Suspense} from 'preact/compat';
-    
-    import {AsyncContext, AsyncActionCache} from '@quilted/quilt/async';
+
+    import {AsyncActionCache} from '@quilted/quilt/async';
+    import {QuiltFrameworkContext} from '@quilted/quilt/context';
 
     import App from './App.tsx';
 
@@ -668,13 +664,13 @@ describe('async', () => {
     };
 
     Object.assign(globalThis, {app: {context}, testHarness});
-    
+
     hydrate(
-      <AsyncContext cache={context.asyncCache}>
+      <QuiltFrameworkContext async={{cache: context.asyncCache}}>
         <Suspense fallback={null}>
           <App />
         </Suspense>
-      </AsyncContext>,
+      </QuiltFrameworkContext>,
       element,
     );
   `;
@@ -948,7 +944,10 @@ describe('async', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
-        import {Navigation} from '@quilted/quilt/navigation';
+        import {Navigation, Routes} from '@quilted/quilt/navigation';
+        import {QuiltFrameworkContext} from '@quilted/quilt/context';
+
+        const navigation = new Navigation();
 
         const routes = [
           {
@@ -957,9 +956,13 @@ describe('async', () => {
             render: (_, {data}) => <div>Data source: {data.source}</div>,
           },
         ];
-        
+
         export default function App() {
-          return <Navigation routes={routes} />;
+          return (
+            <QuiltFrameworkContext navigation={navigation}>
+              <Routes list={routes} />
+            </QuiltFrameworkContext>
+          );
         }
       `,
     });

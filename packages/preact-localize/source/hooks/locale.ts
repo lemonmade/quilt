@@ -1,3 +1,5 @@
-import {LocaleContext} from '../context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
-export const useLocale = LocaleContext.use;
+export function useLocale() {
+  return useQuiltContext('localization').locale;
+}

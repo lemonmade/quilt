@@ -7,7 +7,7 @@ import type {AssetLoadTiming} from '@quilted/preact-browser/server';
 
 import {useHydrated} from './hooks/hydration.ts';
 import {useAsyncModuleAssets} from './hooks/module.ts';
-import {AsyncComponentContext} from './context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
 export interface AsyncComponentProps<Props> {
   module: AsyncModule<{default: ComponentType<Props>}>;
@@ -49,7 +49,9 @@ export class AsyncComponent<Props> extends Component<
         : new AsyncModule(moduleOrImport);
 
     function AsyncComponentInternal(props: Props) {
-      const asyncComponentContext = AsyncComponentContext.use({optional: true});
+      const asyncComponentContext = useQuiltContext('async', {
+        optional: true,
+      })?.components;
       const render = options.render ?? asyncComponentContext?.render;
 
       return (

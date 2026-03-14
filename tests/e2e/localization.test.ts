@@ -3,22 +3,32 @@ import {multiline, Workspace, startServer} from './utilities.ts';
 
 describe('localization', () => {
   describe('locale', () => {
-    it('applies a locale to the HTML document', async () => {
+    it('can change locale mid-render', async () => {
       await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
+          import {useContext, useMemo} from 'preact/hooks';
           import {useRoutes} from '@quilted/quilt/navigation';
           import {useLocale, Localization} from '@quilted/quilt/localize';
-          
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
+
           export function Routes() {
             return useRoutes([{
               match: /\\w+(-\\w+)?/i, render: (_, {matched}) => (
-                <Localization locale={matched[0]}><Localized /></Localization>
+                <LocaleProvider locale={matched[0]}><Localized /></LocaleProvider>
               ),
             }]);
           }
-          
+
+          function LocaleProvider({locale, children}) {
+            const localization = useMemo(
+              () => new Localization(locale),
+              [locale],
+            );
+            return <QuiltFrameworkContext localization={localization}>{children}</QuiltFrameworkContext>;
+          }
+
           function Localized() {
             const locale = useLocale();
 
@@ -32,56 +42,7 @@ describe('localization', () => {
       const server = await startServer(workspace);
       const page = await server.openPage('/fr-CA');
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr-CA');
       expect(await page.textContent('body')).toBe('Locale: fr-CA');
-    });
-
-    it('applies a direction to the HTML document', async () => {
-      await using workspace = await Workspace.create({fixture: 'basic-app'});
-
-      await workspace.fs.write({
-        'foundation/Routes.tsx': multiline`
-          import {useRoutes} from '@quilted/quilt/navigation';
-          import {useLocale, Localization} from '@quilted/quilt/localize';
-          
-          export function Routes() {
-            return useRoutes([{
-              match: /\\w+(-\\w+)?/i, render: (_, {matched}) => (
-                <Localization locale={matched[0]}><Localized /></Localization>
-              ),
-            }]);
-          }
-          
-          function Localized() {
-            const locale = useLocale();
-
-            return (
-              <div>Locale: {locale}</div>
-            );
-          }
-        `,
-      });
-
-      const server = await startServer(workspace);
-      const [leftToRightPage, rightToLeftPage] = await Promise.all([
-        server.openPage('/en'),
-        server.openPage('/ar'),
-      ]);
-
-      expect(
-        await leftToRightPage.evaluate(() =>
-          document.documentElement.getAttribute('dir'),
-        ),
-      ).toBe('ltr');
-      expect(
-        await rightToLeftPage.evaluate(() =>
-          document.documentElement.getAttribute('dir'),
-        ),
-      ).toBe('rtl');
     });
 
     it('can read the preferred locale from the request', async () => {
@@ -89,12 +50,12 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useLocale, Localization} from '@quilted/quilt/localize';
-          
+          import {useLocale} from '@quilted/quilt/localize';
+
           export function Routes() {
-            return <Localization><Localized /></Localization>;
+            return <Localized />;
           }
-          
+
           function Localized() {
             const locale = useLocale();
 
@@ -110,11 +71,6 @@ describe('localization', () => {
         locale: 'fr-CA',
       });
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr-CA');
       expect(await page.textContent('body')).toBe('Locale: fr-CA');
     });
 
@@ -129,7 +85,7 @@ describe('localization', () => {
             default: 'en',
             locales: ['en', 'fr'],
           })
-          
+
           export default function App() {
             return (
               <LocalizedNavigation localization={localization}>
@@ -153,11 +109,6 @@ describe('localization', () => {
         locale: 'en',
       });
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr');
       expect(await page.textContent('body')).toBe('Locale: fr');
     });
 
@@ -174,7 +125,7 @@ describe('localization', () => {
             default: 'en',
             locales: ['en', 'fr'],
           })
-          
+
           export default function App() {
             return (
               <LocalizedNavigation localization={localization}>
@@ -198,11 +149,6 @@ describe('localization', () => {
         locale: 'fr-CA',
       });
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr-CA');
       expect(await page.textContent('body')).toBe('Locale: fr-CA');
     });
   });

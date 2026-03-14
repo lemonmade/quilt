@@ -10,11 +10,8 @@ import {
 } from '@quilted/assets';
 import {BrowserResponse} from '@quilted/browser/server';
 
-import {
-  BrowserDetailsContext,
-  BrowserAssetsManifestContext,
-  BrowserEffectsAreActiveContext,
-} from '../context.ts';
+import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
+import {BrowserEffectsAreActiveContext} from '../context.ts';
 
 import {HTMLTemplate} from './components/HTMLTemplate.tsx';
 import {Serialization} from './components/Serialization.tsx';
@@ -661,28 +658,25 @@ function wrapWithServerContext(
     effects,
   }: {browser?: BrowserResponse; assets?: BrowserAssets; effects?: boolean},
 ) {
-  const withBrowser = browser ? (
-    <BrowserDetailsContext.Provider value={browser}>
-      {node}
-    </BrowserDetailsContext.Provider>
-  ) : (
-    node
-  );
+  const frameworkContextValue: Record<string, unknown> = {};
+  if (browser) frameworkContextValue.browser = browser;
+  if (assets) frameworkContextValue.assets = assets;
 
-  const withAssets = assets ? (
-    <BrowserAssetsManifestContext.Provider value={assets}>
-      {withBrowser}
-    </BrowserAssetsManifestContext.Provider>
-  ) : (
-    withBrowser
-  );
+  const withContext =
+    browser || assets ? (
+      <QuiltFrameworkContextPreact.Provider value={frameworkContextValue}>
+        {node}
+      </QuiltFrameworkContextPreact.Provider>
+    ) : (
+      node
+    );
 
   const withEffects =
     effects == null ? (
-      withAssets
+      withContext
     ) : (
       <BrowserEffectsAreActiveContext.Provider value={effects}>
-        {withAssets}
+        {withContext}
       </BrowserEffectsAreActiveContext.Provider>
     );
 

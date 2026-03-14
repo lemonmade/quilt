@@ -1,3 +1,5 @@
-import {LocalizedFormattingContext} from '../context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
-export const useLocalizedFormatting = LocalizedFormattingContext.use;
+export function useLocalizedFormatting() {
+  return useQuiltContext('localization');
+}

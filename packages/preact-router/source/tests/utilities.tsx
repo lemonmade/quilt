@@ -3,24 +3,31 @@ import {expect} from 'vitest';
 import {matchers, type CustomMatchers} from '@quilted/preact-testing/matchers';
 import {createRender, destroyAll} from '@quilted/preact-testing';
 
-import {TestRouter, Navigation} from '../testing.tsx';
+import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
+import {TestNavigation} from '../testing.tsx';
 
-export {TestRouter, destroyAll};
+export {TestNavigation, destroyAll};
 
 export const render = createRender<
-  | {router?: TestRouter; path?: never; base?: never}
-  | {router?: never; path?: `/${string}`; base?: string | URL},
-  {router: TestRouter}
+  | {navigation?: TestNavigation; path?: never; base?: never}
+  | {navigation?: never; path?: `/${string}`; base?: string | URL},
+  {navigation: TestNavigation}
 >({
   context({
     path = '/',
     base,
-    router = new TestRouter(new URL(path, 'https://example.com'), {base}),
+    navigation = new TestNavigation(new URL(path, 'https://example.com'), {
+      base,
+    }),
   }) {
-    return {router};
+    return {navigation};
   },
-  render(element, {router}) {
-    return <Navigation router={router}>{element}</Navigation>;
+  render(element, {navigation}) {
+    return (
+      <QuiltFrameworkContextPreact.Provider value={{navigation}}>
+        {element}
+      </QuiltFrameworkContextPreact.Provider>
+    );
   },
 });
 

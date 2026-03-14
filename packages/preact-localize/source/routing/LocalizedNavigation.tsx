@@ -1,38 +1,90 @@
 import type {RenderableProps} from 'preact';
-import {useMemo} from 'preact/hooks';
+import {useContext, useMemo} from 'preact/hooks';
 import {useBrowserDetails} from '@quilted/preact-browser';
-import {Navigation, type RouteDefinition} from '@quilted/preact-router';
+import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
+import {Localization} from '@quilted/localize';
+import {
+  Navigation,
+  Routes,
+  type NavigationOptions,
+  type RouteDefinition,
+} from '@quilted/preact-router';
 
-import {Localization} from '../Localization.tsx';
-
-import {LocalizedRouter} from './LocalizedRouter.ts';
 import {RouteLocalizationContext} from './context.ts';
-import type {RouteLocalization} from './types.ts';
+import type {RouteLocalization, ResolvedRouteLocalization} from './types.ts';
+
+export class LocalizedNavigation extends Navigation {
+  readonly localization: ResolvedRouteLocalization;
+
+  constructor(
+    initial: ConstructorParameters<typeof Navigation>[0],
+    {
+      localization,
+      isExternal: explicitIsExternal,
+    }: {localization: RouteLocalization} & Pick<
+      NavigationOptions,
+      'isExternal'
+    >,
+  ) {
+    const {localeFromURL} = localization;
+
+    super(initial, {
+      isExternal(url, currentURL) {
+        return (
+          matchedLocale !== localeFromURL(url) ||
+          (explicitIsExternal?.(url, currentURL) ?? false)
+        );
+      },
+    });
+
+    const currentURL = this.currentRequest.url;
+
+    const matchedLocale = localeFromURL(currentURL);
+
+    const resolvedLocalization: ResolvedRouteLocalization = {
+      locale: matchedLocale ?? localization.defaultLocale,
+      ...localization,
+    };
+
+    this.localization = resolvedLocalization;
+
+    const {pathname: rootPath} = localization.redirectURL(
+      new URL('/', currentURL),
+      {
+        to: resolvedLocalization.locale,
+      },
+    );
+
+    if (rootPath.length > 1) Object.assign(this, {base: rootPath});
+  }
+}
 
 export interface LocalizedNavigationProps<Context = unknown> {
   locale?: string;
-  router?: LocalizedRouter;
+  navigation?: LocalizedNavigation;
   localization?: RouteLocalization;
   routes?: readonly RouteDefinition<any, any, Context>[];
   context?: Context;
 }
 
-export function LocalizedNavigation<Context = unknown>({
+export function LocalizedNavigationProvider<Context = unknown>({
   locale: explicitLocale,
-  router,
+  navigation,
   routes,
   context,
   localization,
   children,
 }: RenderableProps<LocalizedNavigationProps<Context>>) {
   const browser = useBrowserDetails({optional: true});
-  const resolvedRouter = useMemo(
+  const resolvedNavigation = useMemo(
     () =>
-      router ??
-      new LocalizedRouter(browser?.request.url, {localization: localization!}),
-    [router],
+      navigation ??
+      new LocalizedNavigation(browser?.request.url, {
+        localization: localization!,
+      }),
+    [navigation],
   );
-  const resolvedLocalization = resolvedRouter.localization;
+  const resolvedLocalization = resolvedNavigation.localization;
 
   const localeFromEnvironment = browser?.locale.value;
 
@@ -51,13 +103,32 @@ export function LocalizedNavigation<Context = unknown>({
     resolvedLocale = resolvedLocalization.locale;
   }
 
+  const localize = useMemo(
+    () => new Localization(resolvedLocale),
+    [resolvedLocale],
+  );
+
+  const existingContext = useContext(QuiltFrameworkContextPreact);
+  const newQuiltContext = useMemo(
+    () => ({
+      ...existingContext,
+      navigation: resolvedNavigation,
+      localization: localize,
+    }),
+    [existingContext, resolvedNavigation, localize],
+  );
+
+  const content = routes ? (
+    <Routes list={routes} context={context} />
+  ) : (
+    children
+  );
+
   return (
-    <Localization locale={resolvedLocale}>
+    <QuiltFrameworkContextPreact.Provider value={newQuiltContext}>
       <RouteLocalizationContext.Provider value={resolvedLocalization}>
-        <Navigation router={resolvedRouter} routes={routes} context={context}>
-          {children}
-        </Navigation>
+        {content}
       </RouteLocalizationContext.Provider>
-    </Localization>
+    </QuiltFrameworkContextPreact.Provider>
   );
 }

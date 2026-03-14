@@ -49,6 +49,12 @@
       "quilt:esnext": "./build/esnext/context.esnext",
       "import": "./build/esm/context.mjs"
     },
+    "./context/testing": {
+      "types": "./build/typescript/context/testing.d.ts",
+      "quilt:source": "./source/context/testing.tsx",
+      "quilt:esnext": "./build/esnext/context/testing.esnext",
+      "import": "./build/esm/context/testing.mjs"
+    },
     "./events": {
       "types": "./build/typescript/events.d.ts",
       "quilt:source": "./source/events.ts",
@@ -169,6 +175,9 @@
       ],
       "context": [
         "./build/typescript/context.d.ts"
+      ],
+      "context/testing": [
+        "./build/typescript/context/testing.d.ts"
       ],
       "env": [
         "./build/typescript/env.d.ts"
