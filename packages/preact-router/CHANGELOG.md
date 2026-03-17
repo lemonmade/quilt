@@ -1,5 +1,11 @@
 # @quilted/preact-router
 
+## 0.2.14
+
+### Patch Changes
+
+- [`9200a33`](https://github.com/lemonmade/quilt/commit/9200a33286119f0917766cde4a40b15af1b18f2b) Thanks [@lemonmade](https://github.com/lemonmade)! - Don't suspend entire route tree when any matching route entry is loading
+
 ## 0.2.13
 
 ### Patch Changes
