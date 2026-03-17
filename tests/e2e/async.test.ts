@@ -965,7 +965,9 @@ describe('async', () => {
     });
 
     const server = await startServer(workspace);
-    const page = await server.openPage('/');
+    const page = await server.openPage('/', {
+      javaScriptEnabled: false,
+    });
 
     const content = await page.textContent('body');
     expect(content).toBe(`Data source: server`);

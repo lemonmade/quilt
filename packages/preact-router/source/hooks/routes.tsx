@@ -1,8 +1,13 @@
-import {Suspense} from 'preact/compat';
 import type {ComponentChild, VNode, RenderableProps} from 'preact';
 import {isValidElement, cloneElement} from 'preact';
 import {useEffect, useMemo} from 'preact/hooks';
-import {computed, effect, ReadonlySignal} from '@quilted/signals';
+import {Suspense} from 'preact/compat';
+import {
+  computed,
+  effect,
+  untracked,
+  type ReadonlySignal,
+} from '@quilted/signals';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
 import {RouterContext, RouteNavigationEntryContext} from '../context.ts';
@@ -44,25 +49,20 @@ function RouteStackRenderer({
 }) {
   const entries = stack.value;
 
-  let promises: Promise<any>[] | undefined;
-
-  for (const entry of entries) {
-    if (entry.load != null && !entry.load.hasFinished) {
-      promises ??= [];
-      const promise = entry.load.run(entry.input);
-      promises.push(promise);
+  // Eagerly kick off all loads in parallel before any rendering happens.
+  untracked(() => {
+    for (const entry of entries) {
+      if (entry.load != null && !entry.load.hasFinished) {
+        entry.load.run(entry.input);
+      }
     }
-  }
-
-  if (promises != null) {
-    throw Promise.race(promises);
-  }
+  });
 
   let content: VNode<any> | null = null;
 
   for (const entry of [...entries].reverse()) {
     content = (
-      <RouteNavigationRenderer router={router} entry={entry}>
+      <RouteNavigationRenderer key={entry.id} router={router} entry={entry}>
         {content}
       </RouteNavigationRenderer>
     );
@@ -79,6 +79,12 @@ function RouteNavigationRenderer<Data = unknown, Input = unknown>({
   router: Router;
   entry: RouteNavigationEntry<Data, Input>;
 }>) {
+  untracked(() => {
+    if (entry.load != null && !entry.load.hasFinished) {
+      throw entry.load.run(entry.input);
+    }
+  });
+
   useEffect(() => {
     if (entry.load == null) return;
 

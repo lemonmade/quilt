@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm test)",
+      "Bash(pnpm test.e2e)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm type-check)",
+      "Bash(pnpm format)",
+      "Bash(pnpm build)"
+    ]
+  }
+}
