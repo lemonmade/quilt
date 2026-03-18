@@ -944,10 +944,10 @@ describe('async', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
+        import {useMemo} from 'preact/hooks';
         import {Navigation, Routes} from '@quilted/quilt/navigation';
         import {QuiltFrameworkContext} from '@quilted/quilt/context';
-
-        const navigation = new Navigation();
+        import {useBrowserDetails} from '@quilted/quilt/browser';
 
         const routes = [
           {
@@ -958,6 +958,9 @@ describe('async', () => {
         ];
 
         export default function App() {
+          const browser = useBrowserDetails({optional: true});
+          const navigation = useMemo(() => new Navigation(browser?.request.url), []);
+
           return (
             <QuiltFrameworkContext navigation={navigation}>
               <Routes list={routes} />
