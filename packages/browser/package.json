@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.2.2",
+  "version": "0.2.3",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -60,9 +60,9 @@
     "build": "rollup --config ./rollup.config.js"
   },
   "dependencies": {
-    "@quilted/assets": "workspace:^0.1.10",
+    "@quilted/assets": "workspace:^0.1.11",
     "@quilted/http": "workspace:^0.3.0",
-    "@quilted/signals": "workspace:^0.2.1",
+    "@quilted/signals": "workspace:^0.2.4",
     "js-cookie": "^3.0.0"
   },
   "peerDependencies": {},
