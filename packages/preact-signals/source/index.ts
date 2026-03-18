@@ -2,6 +2,7 @@ import {useState, useEffect, useMemo, useCallback, useRef} from 'preact/hooks';
 import {signal, computed, effect, Signal} from '@preact/signals';
 
 export * from '@preact/signals';
+export * from '@preact/signals/utils';
 
 export {
   isSignal,

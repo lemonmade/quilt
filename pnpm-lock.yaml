@@ -69,8 +69,8 @@ importers:
         specifier: ^26.0.0
         version: 26.0.0
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
       prettier:
         specifier: ^3.5.1
         version: 3.5.1
@@ -152,8 +152,8 @@ importers:
         specifier: workspace:^2.0.0
         version: link:../../packages/useful-types
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
     devDependencies:
       '@quilted/quilt':
         specifier: workspace:*
@@ -331,8 +331,8 @@ importers:
   packages/events:
     dependencies:
       '@preact/signals-core':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^1.14.0
+        version: 1.14.0
 
   packages/graphql:
     dependencies:
@@ -464,8 +464,8 @@ importers:
         version: link:../preact-signals
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-browser:
     dependencies:
@@ -485,18 +485,18 @@ importers:
         specifier: workspace:^0.2.3
         version: link:../signals
       preact-render-to-string:
-        specifier: ^6.5.13
-        version: 6.5.13(preact@10.26.0)
+        specifier: ^6.6.6
+        version: 6.6.6(preact@10.29.0)
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-context:
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-email:
     dependencies:
@@ -507,12 +507,12 @@ importers:
         specifier: workspace:^0.1.3
         version: link:../preact-context
       preact-render-to-string:
-        specifier: ^6.5.13
-        version: 6.5.13(preact@10.26.0)
+        specifier: ^6.6.6
+        version: 6.6.6(preact@10.29.0)
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-graphql:
     dependencies:
@@ -533,8 +533,8 @@ importers:
         version: link:../useful-types
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-localize:
     dependencies:
@@ -554,8 +554,8 @@ importers:
         specifier: workspace:^0.2.0
         version: link:../signals
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-performance:
     dependencies:
@@ -567,8 +567,8 @@ importers:
         version: link:../preact-context
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-router:
     dependencies:
@@ -601,21 +601,21 @@ importers:
         specifier: workspace:*
         version: link:../preact-testing
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-signals:
     dependencies:
       '@preact/signals':
-        specifier: ^2.0.0
-        version: 2.0.1(preact@10.26.0)
+        specifier: ^2.8.2
+        version: 2.8.2(preact@10.29.0)
       '@quilted/signals':
         specifier: workspace:^0.2.3
         version: link:../signals
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-testing:
     dependencies:
@@ -627,8 +627,8 @@ importers:
         specifier: ^29.0.0
         version: 29.7.0
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/preact-workers:
     dependencies:
@@ -637,8 +637,8 @@ importers:
         version: link:../workers
     devDependencies:
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/prettier: {}
 
@@ -708,15 +708,15 @@ importers:
         specifier: ^29.0.0
         version: 29.7.0
       preact-render-to-string:
-        specifier: ^6.5.13
-        version: 6.5.13(preact@10.26.0)
+        specifier: ^6.6.6
+        version: 6.6.6(preact@10.29.0)
     devDependencies:
       expect:
         specifier: ^29.0.0
         version: 29.7.0
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
       prettier:
         specifier: ^3.5.1
         version: 3.5.1
@@ -730,8 +730,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.10
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
 
   packages/react-dom:
     dependencies:
@@ -742,11 +742,11 @@ importers:
         specifier: ^19.0.0
         version: 19.0.4(@types/react@19.0.10)
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
       preact-render-to-string:
-        specifier: ^6.5.13
-        version: 6.5.13(preact@10.26.0)
+        specifier: ^6.6.6
+        version: 6.6.6(preact@10.29.0)
 
   packages/react-testing:
     dependencies:
@@ -764,8 +764,8 @@ importers:
         specifier: ^29.0.0
         version: 29.7.0
       preact:
-        specifier: ^10.26.0
-        version: 10.26.0
+        specifier: ^10.29.0
+        version: 10.29.0
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -890,8 +890,8 @@ importers:
   packages/signals:
     dependencies:
       '@preact/signals-core':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^1.14.0
+        version: 1.14.0
       '@quilted/events':
         specifier: workspace:^2.1.3
         version: link:../events
@@ -903,8 +903,8 @@ importers:
         version: link:../events
     devDependencies:
       '@preact/signals-core':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^1.14.0
+        version: 1.14.0
 
   packages/typescript: {}
 
@@ -917,7 +917,7 @@ importers:
         version: 7.26.9
       '@prefresh/vite':
         specifier: ^2.4.7
-        version: 2.4.7(preact@10.26.0)(vite@7.1.1(@types/node@22.13.4)(lightningcss@1.29.1)(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.0))
+        version: 2.4.7(preact@10.29.0)(vite@7.1.1(@types/node@22.13.4)(lightningcss@1.29.1)(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.0))
       '@quilted/babel':
         specifier: workspace:^0.2.4
         version: link:../babel
@@ -2507,13 +2507,13 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@preact/signals-core@1.8.0':
-    resolution: {integrity: sha512-OBvUsRZqNmjzCZXWLxkZfhcgT+Fk8DDcT/8vD6a1xhDemodyy87UJRJfASMuSD8FaAIeGgGm85ydXhm7lr4fyA==}
+  '@preact/signals-core@1.14.0':
+    resolution: {integrity: sha512-AowtCcCU/33lFlh1zRFf/u+12rfrhtNakj7UpaGEsmMwUKpKWMVvcktOGcwBBNiB4lWrZWc01LhiyyzVklJyaQ==}
 
-  '@preact/signals@2.0.1':
-    resolution: {integrity: sha512-f9p/utMgttPb9bJ+UgRBkTDZ9uQiZfX1/gV3pXGWz+yGNQj8MrnG55Xo8MAG4IHcb5UXQO6tvt9ZlsM4A2j+Rw==}
+  '@preact/signals@2.8.2':
+    resolution: {integrity: sha512-gym5yoa64c+0w2kL7zRAAjY548qzWXbbuOfjsK9F1nWrEqooDwyWnih5SNdonjhQSp27zUqYh7UrxIRnkCyFCA==}
     peerDependencies:
-      preact: 10.x
+      preact: '>= 10.25.0 || >=11.0.0-0'
 
   '@prefresh/babel-plugin@0.5.1':
     resolution: {integrity: sha512-uG3jGEAysxWoyG3XkYfjYHgaySFrSsaEb4GagLzYaxlydbuREtaX+FTxuIidp241RaLl85XoHg9Ej6E4+V1pcg==}
@@ -4314,13 +4314,13 @@ packages:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
-  preact-render-to-string@6.5.13:
-    resolution: {integrity: sha512-iGPd+hKPMFKsfpR2vL4kJ6ZPcFIoWZEcBf0Dpm3zOpdVvj77aY8RlLiQji5OMrngEyaxGogeakTb54uS2FvA6w==}
+  preact-render-to-string@6.6.6:
+    resolution: {integrity: sha512-EfqZJytnjJldV+YaaqhthU2oXsEf5e+6rDv957p+zxAvNfFLQOPfvBOTncscQ+akzu6Wrl7s3Pa0LjUQmWJsGQ==}
     peerDependencies:
-      preact: '>=10'
+      preact: '>=10 || >= 11.0.0-0'
 
-  preact@10.26.0:
-    resolution: {integrity: sha512-6ugi/Mb7lyV5RA6KlnijFyDLMU253i7L0RRiObIzDoqj59KT9iTeNJbA/YGw6M7jP4vxaab0DOA8DgodTOA6EQ==}
+  preact@10.29.0:
+    resolution: {integrity: sha512-wSAGyk2bYR1c7t3SZ3jHcM6xy0lcBcDel6lODcs9ME6Th++Dx2KU+6D3HD8wMMKGA8Wpw7OMd3/4RGzYRpzwRg==}
 
   prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
@@ -6734,29 +6734,29 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@preact/signals-core@1.8.0': {}
+  '@preact/signals-core@1.14.0': {}
 
-  '@preact/signals@2.0.1(preact@10.26.0)':
+  '@preact/signals@2.8.2(preact@10.29.0)':
     dependencies:
-      '@preact/signals-core': 1.8.0
-      preact: 10.26.0
+      '@preact/signals-core': 1.14.0
+      preact: 10.29.0
 
   '@prefresh/babel-plugin@0.5.1': {}
 
-  '@prefresh/core@1.5.2(preact@10.26.0)':
+  '@prefresh/core@1.5.2(preact@10.29.0)':
     dependencies:
-      preact: 10.26.0
+      preact: 10.29.0
 
   '@prefresh/utils@1.2.0': {}
 
-  '@prefresh/vite@2.4.7(preact@10.26.0)(vite@7.1.1(@types/node@22.13.4)(lightningcss@1.29.1)(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.0))':
+  '@prefresh/vite@2.4.7(preact@10.29.0)(vite@7.1.1(@types/node@22.13.4)(lightningcss@1.29.1)(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@babel/core': 7.26.9
       '@prefresh/babel-plugin': 0.5.1
-      '@prefresh/core': 1.5.2(preact@10.26.0)
+      '@prefresh/core': 1.5.2(preact@10.29.0)
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
-      preact: 10.26.0
+      preact: 10.29.0
       vite: 7.1.1(@types/node@22.13.4)(lightningcss@1.29.1)(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.0)
     transitivePeerDependencies:
       - supports-color
@@ -8492,11 +8492,11 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  preact-render-to-string@6.5.13(preact@10.26.0):
+  preact-render-to-string@6.6.6(preact@10.29.0):
     dependencies:
-      preact: 10.26.0
+      preact: 10.29.0
 
-  preact@10.26.0: {}
+  preact@10.29.0: {}
 
   prettier@2.8.8: {}
 
