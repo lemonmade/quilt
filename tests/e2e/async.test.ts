@@ -274,9 +274,8 @@ describe('async', () => {
     expect(await page.textContent('body')).toMatch('Content from B');
 
     // Get all stylesheets in the initial HTML
-    const stylesheets = await page.$$eval(
-      'link[rel=stylesheet]',
-      (links) => links.map((l) => l.getAttribute('href')),
+    const stylesheets = await page.$$eval('link[rel=stylesheet]', (links) =>
+      links.map((l) => l.getAttribute('href')),
     );
 
     // The shared module's CSS should be included (may be in a shared chunk
@@ -324,9 +323,7 @@ describe('async', () => {
     expect(await page.textContent('body')).toMatch('Hello from async!');
 
     // Async component CSS should be a <link rel="stylesheet"> in initial HTML
-    const asyncStylesheet = await page.$(
-      'link[rel=stylesheet][href*="Async"]',
-    );
+    const asyncStylesheet = await page.$('link[rel=stylesheet][href*="Async"]');
     expect(asyncStylesheet).not.toBeNull();
 
     // Stylesheet should have blocking="render" to prevent FOUC
