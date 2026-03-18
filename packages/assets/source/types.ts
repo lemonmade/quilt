@@ -35,7 +35,7 @@ export interface BrowserAssetsEntry {
    * The CSS stylesheets for this entry.
    */
   readonly style?: {
-    readonly asset: Asset;
+    readonly asset?: Asset;
     readonly syncDependencies: readonly Asset[];
     readonly asyncDependencies: readonly Asset[];
   };

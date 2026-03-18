@@ -580,11 +580,14 @@ async function renderHTMLChunk(
                 <StyleAssets
                   styles={dedup(
                     [
-                      entryAssets.style.asset,
+                      ...(entryAssets.style.asset
+                        ? [entryAssets.style.asset]
+                        : []),
                       ...entryAssets.style.syncDependencies,
                     ],
                     renderedAssets,
                   )}
+                  blocking="render"
                 />
               ) : null}
 
@@ -592,6 +595,7 @@ async function renderHTMLChunk(
               {asyncModules ? (
                 <StyleAssets
                   styles={dedup(flatModuleStyles(asyncModules), renderedAssets)}
+                  blocking="render"
                 />
               ) : null}
 

@@ -239,11 +239,13 @@ function normalizeAssetBuildManifest(
 
     // entry[1] = style, entry[3] = styleSync, entry[5] = styleAsync
     const styleAsset = entry[1] != null ? resolveStyle(entry[1]) : undefined;
-    if (styleAsset) {
+    const styleSync = resolveAll(entry[3], resolveStyle);
+    const styleAsync = resolveAll(entry[5], resolveStyle);
+    if (styleAsset || styleSync.length > 0 || styleAsync.length > 0) {
       normalizedEntry.style = {
-        asset: styleAsset,
-        sync: resolveAll(entry[3], resolveStyle),
-        async: resolveAll(entry[5], resolveStyle),
+        asset: styleAsset!,
+        sync: styleSync,
+        async: styleAsync,
       };
     }
 

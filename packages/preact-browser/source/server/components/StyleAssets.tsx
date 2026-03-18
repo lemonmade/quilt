@@ -5,10 +5,12 @@ import {useResolvedBaseURL} from './shared/base-url.ts';
 export function StyleAssets({
   styles,
   baseURL: explicitBaseURL,
+  blocking,
   ...rest
 }: {
   styles: readonly Asset[];
   baseURL?: string | URL;
+  blocking?: 'render';
 } & JSX.HTMLAttributes<HTMLLinkElement>) {
   const baseURL = useResolvedBaseURL(explicitBaseURL);
 
@@ -31,6 +33,7 @@ export function StyleAssets({
             />
           );
         } else {
+          if (blocking) (props as any).blocking = blocking;
           return <link {...props} href={asset.source} />;
         }
       })}
