@@ -1,6 +1,9 @@
-import {RouteNavigationEntryContext} from '../context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 import type {RouteNavigationEntry} from '../types.ts';
 
 export function useRouteNavigationEntry<Data = unknown, Input = unknown>() {
-  return RouteNavigationEntryContext.use() as RouteNavigationEntry<Data, Input>;
+  return useQuiltContext('navigationEntry') as RouteNavigationEntry<
+    Data,
+    Input
+  >;
 }

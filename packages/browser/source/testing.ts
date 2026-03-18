@@ -12,17 +12,17 @@ import {CookieString} from './shared/cookies.ts';
 
 export * from './types.ts';
 
-export class BrowserTestMock implements BrowserDetails {
-  readonly title = new BrowserTestMockTitle();
-  readonly metas = new BrowserTestMockHeadElements('meta');
-  readonly links = new BrowserTestMockHeadElements('link');
+export class TestBrowser implements BrowserDetails {
+  readonly title = new TestBrowserTitle();
+  readonly metas = new TestBrowserHeadElements('meta');
+  readonly links = new TestBrowserHeadElements('link');
   readonly bodyAttributes =
-    new BrowserTestMockElementAttributes<BrowserBodyAttributes>();
+    new TestBrowserElementAttributes<BrowserBodyAttributes>();
   readonly htmlAttributes =
-    new BrowserTestMockElementAttributes<BrowserHTMLAttributes>();
-  readonly cookies: BrowserTestMockCookies;
+    new TestBrowserElementAttributes<BrowserHTMLAttributes>();
+  readonly cookies: TestBrowserCookies;
   readonly locale: BrowserDetails['locale'];
-  readonly serializations: BrowserTestMockSerializations;
+  readonly serializations: TestBrowserSerializations;
   readonly request: Request;
 
   constructor({
@@ -32,23 +32,21 @@ export class BrowserTestMock implements BrowserDetails {
     serializations,
   }: {
     url?: URL | string;
-    cookies?: ConstructorParameters<typeof BrowserTestMockCookies>[0];
+    cookies?: ConstructorParameters<typeof TestBrowserCookies>[0];
     locale?: string;
-    serializations?: ConstructorParameters<
-      typeof BrowserTestMockSerializations
-    >[0];
+    serializations?: ConstructorParameters<typeof TestBrowserSerializations>[0];
   } = {}) {
     this.request = new Request(
       url ??
         (typeof location === 'object' ? location.href : 'https://example.com'),
     );
-    this.cookies = new BrowserTestMockCookies(cookies);
+    this.cookies = new TestBrowserCookies(cookies);
     this.locale = {value: locale ?? 'en'};
-    this.serializations = new BrowserTestMockSerializations(serializations);
+    this.serializations = new TestBrowserSerializations(serializations);
   }
 }
 
-export class BrowserTestMockCookies implements Cookies {
+export class TestBrowserCookies implements Cookies {
   readonly updates: ({cookie: string; value: string} & CookieOptions)[] = [];
   private readonly cookies: Map<string, string>;
 
@@ -95,7 +93,7 @@ export class BrowserTestMockCookies implements Cookies {
   }
 }
 
-export class BrowserTestMockTitle {
+export class TestBrowserTitle {
   private titleValues: (string | ReadonlySignal<string>)[] = [];
 
   get value() {
@@ -112,7 +110,7 @@ export class BrowserTestMockTitle {
   };
 }
 
-export class BrowserTestMockHeadElements<
+export class TestBrowserHeadElements<
   Element extends keyof HTMLElementTagNameMap,
 > {
   private readonly elements: (
@@ -140,7 +138,7 @@ export class BrowserTestMockHeadElements<
   };
 }
 
-export class BrowserTestMockElementAttributes<Attributes> {
+export class TestBrowserElementAttributes<Attributes> {
   private readonly attributes: (Attributes | ReadonlySignal<Attributes>)[] = [];
 
   get value() {
@@ -160,7 +158,7 @@ export class BrowserTestMockElementAttributes<Attributes> {
   };
 }
 
-export class BrowserTestMockSerializations {
+export class TestBrowserSerializations {
   private readonly serializations: Map<string, unknown>;
 
   constructor(

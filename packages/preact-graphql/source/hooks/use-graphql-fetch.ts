@@ -1,5 +1,1 @@
-import {GraphQLRunContext} from '../context.tsx';
-
-export const useGraphQLRun = GraphQLRunContext.use;
-
-export {useGraphQLRun as useGraphQLFetch};
+export {useGraphQLRun, useGraphQLRun as useGraphQLFetch} from '../context.tsx';

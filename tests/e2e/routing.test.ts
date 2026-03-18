@@ -7,7 +7,10 @@ describe('routing', () => {
 
     await workspace.fs.write({
       'App.tsx': multiline`
-        import {Navigation} from '@quilted/quilt/navigation';
+        import {useMemo} from 'preact/hooks';
+        import {Navigation, Routes} from '@quilted/quilt/navigation';
+        import {QuiltFrameworkContext} from '@quilted/quilt/context';
+        import {useBrowserDetails} from '@quilted/quilt/browser';
 
         const routes = [
           {
@@ -19,9 +22,16 @@ describe('routing', () => {
             render: 'Redirected',
           },
         ];
-        
+
         export default function App() {
-          return <Navigation routes={routes} />;
+          const browser = useBrowserDetails({optional: true});
+          const navigation = useMemo(() => new Navigation(browser?.request.url), []);
+
+          return (
+            <QuiltFrameworkContext navigation={navigation}>
+              <Routes list={routes} />
+            </QuiltFrameworkContext>
+          );
         }
       `,
     });

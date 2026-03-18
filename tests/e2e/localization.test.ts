@@ -3,22 +3,32 @@ import {multiline, Workspace, startServer} from './utilities.ts';
 
 describe('localization', () => {
   describe('locale', () => {
-    it('applies a locale to the HTML document', async () => {
+    it('can change locale mid-render', async () => {
       await using workspace = await Workspace.create({fixture: 'basic-app'});
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
+          import {useMemo} from 'preact/hooks';
           import {useRoutes} from '@quilted/quilt/navigation';
           import {useLocale, Localization} from '@quilted/quilt/localize';
-          
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
+
           export function Routes() {
             return useRoutes([{
               match: /\\w+(-\\w+)?/i, render: (_, {matched}) => (
-                <Localization locale={matched[0]}><Localized /></Localization>
+                <LocaleProvider locale={matched[0]}><Localized /></LocaleProvider>
               ),
             }]);
           }
-          
+
+          function LocaleProvider({locale, children}) {
+            const localization = useMemo(
+              () => new Localization(locale),
+              [locale],
+            );
+            return <QuiltFrameworkContext localization={localization}>{children}</QuiltFrameworkContext>;
+          }
+
           function Localized() {
             const locale = useLocale();
 
@@ -32,56 +42,7 @@ describe('localization', () => {
       const server = await startServer(workspace);
       const page = await server.openPage('/fr-CA');
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr-CA');
       expect(await page.textContent('body')).toBe('Locale: fr-CA');
-    });
-
-    it('applies a direction to the HTML document', async () => {
-      await using workspace = await Workspace.create({fixture: 'basic-app'});
-
-      await workspace.fs.write({
-        'foundation/Routes.tsx': multiline`
-          import {useRoutes} from '@quilted/quilt/navigation';
-          import {useLocale, Localization} from '@quilted/quilt/localize';
-          
-          export function Routes() {
-            return useRoutes([{
-              match: /\\w+(-\\w+)?/i, render: (_, {matched}) => (
-                <Localization locale={matched[0]}><Localized /></Localization>
-              ),
-            }]);
-          }
-          
-          function Localized() {
-            const locale = useLocale();
-
-            return (
-              <div>Locale: {locale}</div>
-            );
-          }
-        `,
-      });
-
-      const server = await startServer(workspace);
-      const [leftToRightPage, rightToLeftPage] = await Promise.all([
-        server.openPage('/en'),
-        server.openPage('/ar'),
-      ]);
-
-      expect(
-        await leftToRightPage.evaluate(() =>
-          document.documentElement.getAttribute('dir'),
-        ),
-      ).toBe('ltr');
-      expect(
-        await rightToLeftPage.evaluate(() =>
-          document.documentElement.getAttribute('dir'),
-        ),
-      ).toBe('rtl');
     });
 
     it('can read the preferred locale from the request', async () => {
@@ -89,12 +50,12 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useLocale, Localization} from '@quilted/quilt/localize';
-          
+          import {useLocale} from '@quilted/quilt/localize';
+
           export function Routes() {
-            return <Localization><Localized /></Localization>;
+            return <Localized />;
           }
-          
+
           function Localized() {
             const locale = useLocale();
 
@@ -110,11 +71,6 @@ describe('localization', () => {
         locale: 'fr-CA',
       });
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr-CA');
       expect(await page.textContent('body')).toBe('Locale: fr-CA');
     });
 
@@ -123,18 +79,32 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useLocale, createRoutePathLocalization, LocalizedNavigation} from '@quilted/quilt/localize';
+          import {useMemo} from 'preact/hooks';
+          import {useLocale, createRoutePathLocalization, LocalizedNavigation, Localization} from '@quilted/quilt/localize';
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
+          import {useBrowserDetails} from '@quilted/quilt/browser';
 
-          const localization = createRoutePathLocalization({
+          const routeLocalization = createRoutePathLocalization({
             default: 'en',
             locales: ['en', 'fr'],
           })
-          
+
           export default function App() {
+            const browser = useBrowserDetails({optional: true});
+            const {navigation, localization} = useMemo(
+              () => {
+                const navigation = new LocalizedNavigation(browser?.request.url, {routes: routeLocalization});
+                const localization = new Localization(navigation.locale);
+
+                return {navigation, localization};
+              },
+              [],
+            );
+
             return (
-              <LocalizedNavigation localization={localization}>
+              <QuiltFrameworkContext navigation={navigation} localization={localization}>
                 <UI />
-              </LocalizedNavigation>
+              </QuiltFrameworkContext>
             );
           }
 
@@ -153,11 +123,6 @@ describe('localization', () => {
         locale: 'en',
       });
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr');
       expect(await page.textContent('body')).toBe('Locale: fr');
     });
 
@@ -166,20 +131,38 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useLocale, createRoutePathLocalization, LocalizedNavigation} from '@quilted/quilt/localize';
+          import {useMemo} from 'preact/hooks';
+          import {useLocale, createRoutePathLocalization, LocalizedNavigation, Localization} from '@quilted/quilt/localize';
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
+          import {useBrowserDetails} from '@quilted/quilt/browser';
 
-          import {Routes} from './foundation/Routes.tsx';
-
-          const localization = createRoutePathLocalization({
+          const routeLocalization = createRoutePathLocalization({
             default: 'en',
             locales: ['en', 'fr'],
           })
-          
+
           export default function App() {
+            const browser = useBrowserDetails({optional: true});
+            const {navigation, localization} = useMemo(
+              () => {
+                const navigation = new LocalizedNavigation(browser?.request.url, {routes: routeLocalization});
+                const routeLocale = navigation.locale;
+                const browserLocale = browser?.locale.value;
+                const locale = browserLocale?.toLowerCase().startsWith(routeLocale.toLowerCase())
+                  ? browserLocale
+                  : routeLocale;
+
+                const localization = new Localization(locale);
+
+                return {navigation, localization};
+              },
+              [],
+            );
+
             return (
-              <LocalizedNavigation localization={localization}>
+              <QuiltFrameworkContext navigation={navigation} localization={localization}>
                 <UI />
-              </LocalizedNavigation>
+              </QuiltFrameworkContext>
             );
           }
 
@@ -198,11 +181,6 @@ describe('localization', () => {
         locale: 'fr-CA',
       });
 
-      expect(
-        await page.evaluate(() =>
-          document.documentElement.getAttribute('lang'),
-        ),
-      ).toBe('fr-CA');
       expect(await page.textContent('body')).toBe('Locale: fr-CA');
     });
   });

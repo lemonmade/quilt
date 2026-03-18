@@ -1,8 +1,17 @@
-import {createOptionalContext} from '@quilted/preact-context';
+import {useNavigation} from '@quilted/preact-router';
 
+import {LocalizedNavigation} from './LocalizedNavigation.tsx';
 import type {ResolvedRouteLocalization} from './types.ts';
 
-export const RouteLocalizationContext =
-  createOptionalContext<ResolvedRouteLocalization>();
+export function useRouteLocalization(): ResolvedRouteLocalization {
+  const navigation = useNavigation();
 
-export const useRouteLocalization = RouteLocalizationContext.use;
+  if (!(navigation instanceof LocalizedNavigation)) {
+    throw new Error(
+      'useRouteLocalization() requires a LocalizedNavigation instance to be provided in context. ' +
+        'Make sure you are passing a LocalizedNavigation to QuiltFrameworkContext.',
+    );
+  }
+
+  return navigation.routes;
+}

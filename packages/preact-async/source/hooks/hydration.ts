@@ -1,8 +1,5 @@
-import {useContext} from 'preact/hooks';
-
-import {AsyncHydratedContext} from '../context.ts';
+import {useQuiltContext} from '@quilted/preact-context';
 
 export function useHydrated() {
-  const hydrated = useContext(AsyncHydratedContext);
-  return hydrated?.value ?? true;
+  return useQuiltContext('async', {optional: true})?.isHydrated ?? true;
 }

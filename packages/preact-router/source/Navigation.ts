@@ -12,7 +12,7 @@ import type {
   RouteNavigationEntry,
 } from './types.ts';
 
-export interface RouterOptions {
+export interface NavigationOptions {
   cache?: RouterNavigationCache | boolean;
   base?: string | URL;
   isExternal?(url: URL, currentUrl: URL): boolean;
@@ -26,7 +26,7 @@ export interface NavigateOptions {
 
 const STATE_ID_FIELD_KEY = '_id';
 
-export class Router {
+export class Navigation {
   readonly base: string;
   readonly cache?: RouterNavigationCache;
 
@@ -40,11 +40,11 @@ export class Router {
   #forceNextNavigation = false;
   #navigationIDs: string[] = [];
   #navigationRequests = new Map<string, NavigationRequest>();
-  #isExternal: RouterOptions['isExternal'];
+  #isExternal: NavigationOptions['isExternal'];
 
   constructor(
     initial?: string | URL | Partial<NavigationRequest>,
-    {cache = true, base, isExternal}: RouterOptions = {},
+    {cache = true, base, isExternal}: NavigationOptions = {},
   ) {
     this.base = base ? (typeof base === 'string' ? base : base.pathname) : '/';
     this.cache =
@@ -203,8 +203,10 @@ export class Router {
   };
 }
 
+export {Navigation as Router};
+
 export class RouterNavigationCache {
-  #base: Router['base'];
+  #base: Navigation['base'];
   #entryCache = new Map<string, RouteNavigationEntry<any, any, any>>();
   #loadCache = new AsyncActionCache();
   #matchCache = new Map<
@@ -212,7 +214,7 @@ export class RouterNavigationCache {
     readonly RouteNavigationEntry<any, any, any>[]
   >();
 
-  constructor({base}: Pick<Router, 'base'>) {
+  constructor({base}: Pick<Navigation, 'base'>) {
     this.#base = base;
   }
 

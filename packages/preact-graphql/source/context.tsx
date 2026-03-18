@@ -1,34 +1,52 @@
-import type {RenderableProps} from 'preact';
-import type {GraphQLRun, GraphQLCache} from '@quilted/graphql';
-import {createOptionalContext} from '@quilted/preact-context';
-import {useAsyncActionCacheSerialization} from '@quilted/preact-async';
+import type {GraphQLRun, GraphQLCache, GraphQLClient} from '@quilted/graphql';
+import {useQuiltContext} from '@quilted/preact-context';
 
-export const GraphQLRunContext = createOptionalContext<GraphQLRun>();
-export const GraphQLCacheContext = createOptionalContext<GraphQLCache>();
-
-export interface Props {
-  run?: GraphQLRun;
-  fetch?: GraphQLRun;
-  cache?: GraphQLCache;
-  serialize?: boolean;
+declare module '@quilted/preact-context' {
+  interface QuiltContext {
+    /**
+     * The GraphQL client for this application. Provides the fetch function
+     * used to execute GraphQL operations and an optional result cache for
+     * deduplication and server-side rendering.
+     *
+     * Typically a `GraphQLClient` instance, but any object with `fetch` and
+     * an optional `cache` property is accepted.
+     *
+     * @see GraphQLClient
+     */
+    readonly graphql?: Pick<GraphQLClient, 'fetch' | 'cache'>;
+  }
 }
 
-export function GraphQLContext({
-  run,
-  fetch,
-  cache,
-  serialize = true,
-  children,
-}: RenderableProps<Props>) {
-  if (cache && serialize) {
-    useAsyncActionCacheSerialization(cache, {name: 'quilt:graphql'});
+export function useGraphQLRun(): GraphQLRun;
+export function useGraphQLRun(options: {
+  optional: boolean;
+}): GraphQLRun | undefined;
+export function useGraphQLRun(options?: {
+  optional?: boolean;
+}): GraphQLRun | undefined {
+  const graphql = useQuiltContext('graphql', {optional: true});
+  const run = graphql?.fetch;
+
+  if (!options?.optional && run == null) {
+    throw new Error(`Missing QuiltContext field: graphql.fetch`);
   }
 
-  return (
-    <GraphQLRunContext.Provider value={run ?? fetch}>
-      <GraphQLCacheContext.Provider value={cache}>
-        {children}
-      </GraphQLCacheContext.Provider>
-    </GraphQLRunContext.Provider>
-  );
+  return run;
+}
+
+export function useGraphQLCache(): GraphQLCache;
+export function useGraphQLCache(options: {
+  optional: boolean;
+}): GraphQLCache | undefined;
+export function useGraphQLCache(options?: {
+  optional?: boolean;
+}): GraphQLCache | undefined {
+  const graphql = useQuiltContext('graphql', {optional: true});
+  const cache = graphql?.cache;
+
+  if (!options?.optional && cache == null) {
+    throw new Error(`Missing QuiltContext field: graphql.cache`);
+  }
+
+  return cache;
 }

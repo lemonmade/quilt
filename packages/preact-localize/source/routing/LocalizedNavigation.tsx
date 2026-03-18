@@ -1,63 +1,49 @@
-import type {RenderableProps} from 'preact';
-import {useMemo} from 'preact/hooks';
-import {useBrowserDetails} from '@quilted/preact-browser';
-import {Navigation, type RouteDefinition} from '@quilted/preact-router';
+import {Navigation, type NavigationOptions} from '@quilted/preact-router';
 
-import {Localization} from '../Localization.tsx';
+import type {RouteLocalization, ResolvedRouteLocalization} from './types.ts';
 
-import {LocalizedRouter} from './LocalizedRouter.ts';
-import {RouteLocalizationContext} from './context.ts';
-import type {RouteLocalization} from './types.ts';
+export class LocalizedNavigation extends Navigation {
+  readonly routes: ResolvedRouteLocalization;
 
-export interface LocalizedNavigationProps<Context = unknown> {
-  locale?: string;
-  router?: LocalizedRouter;
-  localization?: RouteLocalization;
-  routes?: readonly RouteDefinition<any, any, Context>[];
-  context?: Context;
-}
-
-export function LocalizedNavigation<Context = unknown>({
-  locale: explicitLocale,
-  router,
-  routes,
-  context,
-  localization,
-  children,
-}: RenderableProps<LocalizedNavigationProps<Context>>) {
-  const browser = useBrowserDetails({optional: true});
-  const resolvedRouter = useMemo(
-    () =>
-      router ??
-      new LocalizedRouter(browser?.request.url, {localization: localization!}),
-    [router],
-  );
-  const resolvedLocalization = resolvedRouter.localization;
-
-  const localeFromEnvironment = browser?.locale.value;
-
-  let resolvedLocale: string;
-
-  if (explicitLocale) {
-    resolvedLocale = explicitLocale;
-  } else if (
-    localeFromEnvironment != null &&
-    localeFromEnvironment
-      .toLowerCase()
-      .startsWith(resolvedLocalization.locale.toLowerCase())
-  ) {
-    resolvedLocale = localeFromEnvironment;
-  } else {
-    resolvedLocale = resolvedLocalization.locale;
+  get locale() {
+    return this.routes.locale;
   }
 
-  return (
-    <Localization locale={resolvedLocale}>
-      <RouteLocalizationContext.Provider value={resolvedLocalization}>
-        <Navigation router={resolvedRouter} routes={routes} context={context}>
-          {children}
-        </Navigation>
-      </RouteLocalizationContext.Provider>
-    </Localization>
-  );
+  constructor(
+    initial: ConstructorParameters<typeof Navigation>[0],
+    {
+      routes,
+      isExternal: explicitIsExternal,
+    }: {routes: RouteLocalization} & Pick<NavigationOptions, 'isExternal'>,
+  ) {
+    const {localeFromURL} = routes;
+
+    let matchedLocale: string | undefined;
+
+    super(initial, {
+      isExternal(url, currentURL) {
+        return (
+          matchedLocale !== localeFromURL(url) ||
+          (explicitIsExternal?.(url, currentURL) ?? false)
+        );
+      },
+    });
+
+    const currentURL = this.currentRequest.url;
+
+    matchedLocale = localeFromURL(currentURL);
+
+    const resolvedLocalization: ResolvedRouteLocalization = {
+      locale: matchedLocale ?? routes.defaultLocale,
+      ...routes,
+    };
+
+    this.routes = resolvedLocalization;
+
+    const {pathname: rootPath} = routes.redirectURL(new URL('/', currentURL), {
+      to: resolvedLocalization.locale,
+    });
+
+    if (rootPath.length > 1) Object.assign(this, {base: rootPath});
+  }
 }
