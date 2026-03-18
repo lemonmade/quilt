@@ -214,7 +214,7 @@ function useAsyncActionAsSignal<T extends AsyncAction<any, any>>(
 
 // Limitation: can’t change from a signal to not a signal
 function useMaybeSignal<T>(value: T | ReadonlySignal<T>) {
-  if (isSignal(value)) {
+  if (isSignal<T>(value)) {
     return value;
   } else {
     const signal = useSignal(value);
