@@ -1,5 +1,11 @@
 # @quilted/assets
 
+## 0.1.11
+
+### Patch Changes
+
+- [`b1df5da`](https://github.com/lemonmade/quilt/commit/b1df5daff8441f8435a62b02b4ad3676d3ddcc3b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix shared CSS dependency loading in server rendered page
+
 ## 0.1.10
 
 ### Patch Changes

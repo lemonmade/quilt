@@ -1,5 +1,14 @@
 # @quilted/signals
 
+## 0.2.4
+
+### Patch Changes
+
+- [`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact and Signal dependencies
+
+- Updated dependencies [[`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689)]:
+  - @quilted/events@2.1.4
+
 ## 0.2.3
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @quilted/preact-browser
 
+## 0.2.6
+
+### Patch Changes
+
+- [`b1df5da`](https://github.com/lemonmade/quilt/commit/b1df5daff8441f8435a62b02b4ad3676d3ddcc3b) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix shared CSS dependency loading in server rendered page
+
+- [`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact and Signal dependencies
+
+- Updated dependencies [[`b1df5da`](https://github.com/lemonmade/quilt/commit/b1df5daff8441f8435a62b02b4ad3676d3ddcc3b), [`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689)]:
+  - @quilted/assets@0.1.11
+  - @quilted/preact-context@0.1.4
+  - @quilted/browser@0.2.3
+  - @quilted/signals@0.2.4
+
 ## 0.2.5
 
 ### Patch Changes

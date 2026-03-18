@@ -1,5 +1,14 @@
 # @quilted/react-query
 
+## 1.0.1
+
+### Patch Changes
+
+- [`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact and Signal dependencies
+
+- Updated dependencies [[`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689)]:
+  - @quilted/quilt@0.9.1
+
 ## 1.0.0
 
 ### Patch Changes

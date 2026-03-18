@@ -1,5 +1,18 @@
 # @quilted/react-localize
 
+## 0.4.1
+
+### Patch Changes
+
+- [`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689) Thanks [@lemonmade](https://github.com/lemonmade)! - Update Preact and Signal dependencies
+
+- Updated dependencies [[`b1df5da`](https://github.com/lemonmade/quilt/commit/b1df5daff8441f8435a62b02b4ad3676d3ddcc3b), [`06b43bc`](https://github.com/lemonmade/quilt/commit/06b43bc44d271ce30798dc0b582870208bae1572), [`e6fa47e`](https://github.com/lemonmade/quilt/commit/e6fa47e93981ce0eaebbe1546659aaa08cc22689)]:
+  - @quilted/preact-browser@0.2.6
+  - @quilted/preact-router@0.2.15
+  - @quilted/preact-context@0.1.4
+  - @quilted/localize@0.2.2
+  - @quilted/signals@0.2.4
+
 ## 0.4.0
 
 ### Minor Changes
