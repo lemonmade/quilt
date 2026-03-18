@@ -8,7 +8,7 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'foundation/Routes.tsx': multiline`
-          import {useContext, useMemo} from 'preact/hooks';
+          import {useMemo} from 'preact/hooks';
           import {useRoutes} from '@quilted/quilt/navigation';
           import {useLocale, Localization} from '@quilted/quilt/localize';
           import {QuiltFrameworkContext} from '@quilted/quilt/context';
@@ -79,18 +79,32 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useLocale, createRoutePathLocalization, LocalizedNavigation} from '@quilted/quilt/localize';
+          import {useMemo} from 'preact/hooks';
+          import {useLocale, createRoutePathLocalization, LocalizedNavigation, Localization} from '@quilted/quilt/localize';
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
+          import {useBrowserDetails} from '@quilted/quilt/browser';
 
-          const localization = createRoutePathLocalization({
+          const routeLocalization = createRoutePathLocalization({
             default: 'en',
             locales: ['en', 'fr'],
           })
 
           export default function App() {
+            const browser = useBrowserDetails({optional: true});
+            const {navigation, localization} = useMemo(
+              () => {
+                const navigation = new LocalizedNavigation(browser?.request.url, {routes: routeLocalization});
+                const localization = new Localization(navigation.locale);
+
+                return {navigation, localization};
+              },
+              [],
+            );
+
             return (
-              <LocalizedNavigation localization={localization}>
+              <QuiltFrameworkContext navigation={navigation} localization={localization}>
                 <UI />
-              </LocalizedNavigation>
+              </QuiltFrameworkContext>
             );
           }
 
@@ -117,20 +131,38 @@ describe('localization', () => {
 
       await workspace.fs.write({
         'App.tsx': multiline`
-          import {useLocale, createRoutePathLocalization, LocalizedNavigation} from '@quilted/quilt/localize';
+          import {useMemo} from 'preact/hooks';
+          import {useLocale, createRoutePathLocalization, LocalizedNavigation, Localization} from '@quilted/quilt/localize';
+          import {QuiltFrameworkContext} from '@quilted/quilt/context';
+          import {useBrowserDetails} from '@quilted/quilt/browser';
 
-          import {Routes} from './foundation/Routes.tsx';
-
-          const localization = createRoutePathLocalization({
+          const routeLocalization = createRoutePathLocalization({
             default: 'en',
             locales: ['en', 'fr'],
           })
 
           export default function App() {
+            const browser = useBrowserDetails({optional: true});
+            const {navigation, localization} = useMemo(
+              () => {
+                const navigation = new LocalizedNavigation(browser?.request.url, {routes: routeLocalization});
+                const routeLocale = navigation.locale;
+                const browserLocale = browser?.locale.value;
+                const locale = browserLocale?.toLowerCase().startsWith(routeLocale.toLowerCase())
+                  ? browserLocale
+                  : routeLocale;
+
+                const localization = new Localization(locale);
+
+                return {navigation, localization};
+              },
+              [],
+            );
+
             return (
-              <LocalizedNavigation localization={localization}>
+              <QuiltFrameworkContext navigation={navigation} localization={localization}>
                 <UI />
-              </LocalizedNavigation>
+              </QuiltFrameworkContext>
             );
           }
 
