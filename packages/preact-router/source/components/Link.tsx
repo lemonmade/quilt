@@ -1,12 +1,15 @@
-import type {JSX, RenderableProps} from 'preact';
+import type {
+  RenderableProps,
+  AnchorHTMLAttributes,
+  MouseEventHandler,
+} from 'preact';
 import {useMemo} from 'preact/hooks';
 import type {NavigateTo} from '@quilted/routing';
 import {computed} from '@quilted/signals';
 
 import {useRouter} from '../hooks/router.ts';
 
-interface Props
-  extends Omit<JSX.LinkHTMLAttributes<HTMLAnchorElement>, 'href'> {
+interface Props extends Omit<AnchorHTMLAttributes, 'href'> {
   to: NavigateTo;
   base?: string | URL;
   external?: boolean;
@@ -16,9 +19,10 @@ export function Link({
   ref,
   children,
   to,
+  target,
   base,
   onClick,
-  external: explicitlyExternal = false,
+  external: explicitlyExternal = target === '_blank',
   ...rest
 }: RenderableProps<Props, HTMLAnchorElement>) {
   const router = useRouter();
@@ -28,6 +32,7 @@ export function Link({
       <a
         ref={ref}
         href={resolveToWithoutRouter(to)}
+        target={target}
         onClick={onClick}
         {...rest}
       >
@@ -42,7 +47,7 @@ export function Link({
   ).value;
   const {url, external} = router.resolve(to, {base});
 
-  const handleClick: JSX.MouseEventHandler<HTMLAnchorElement> = (event) => {
+  const handleClick: MouseEventHandler<HTMLAnchorElement> = (event) => {
     onClick?.(event);
 
     if (
