@@ -1,5 +1,11 @@
 # @quilted/preact-signals
 
+## 0.1.5
+
+### Patch Changes
+
+- [`02b63ac`](https://github.com/lemonmade/quilt/commit/02b63aca91633babbf9cb5902c27fb584ac4a0ed) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix re-export of Preact Signal utils
+
 ## 0.1.4
 
 ### Patch Changes
