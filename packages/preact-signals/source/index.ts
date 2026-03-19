@@ -9,6 +9,7 @@ import {
 } from '@preact/signals';
 import {For} from '@preact/signals/utils';
 
+export * from '@preact/signals/utils';
 export * from '@preact/signals';
 
 // `<For>` types do not allow readonly arrays
