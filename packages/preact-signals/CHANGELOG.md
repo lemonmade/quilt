@@ -1,5 +1,11 @@
 # @quilted/preact-signals
 
+## 0.1.4
+
+### Patch Changes
+
+- [`1419c1b`](https://github.com/lemonmade/quilt/commit/1419c1b70e080d470946ce7ec88f1c0ec4455a41) Thanks [@lemonmade](https://github.com/lemonmade)! - Add For with readonly array type override
+
 ## 0.1.3
 
 ### Patch Changes
