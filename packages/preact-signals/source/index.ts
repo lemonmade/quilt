@@ -1,8 +1,33 @@
+import type {ComponentChildren} from 'preact';
 import {useState, useEffect, useMemo, useCallback, useRef} from 'preact/hooks';
-import {signal, computed, effect, Signal} from '@preact/signals';
+import {
+  signal,
+  computed,
+  effect,
+  Signal,
+  type ReadonlySignal,
+} from '@preact/signals';
+import {For} from '@preact/signals/utils';
 
 export * from '@preact/signals';
-export * from '@preact/signals/utils';
+
+// `<For>` types do not allow readonly arrays
+export interface ForProps<T> {
+  each:
+    | Signal<Array<T> | ReadonlyArray<T>>
+    | ReadonlySignal<Array<T> | ReadonlyArray<T>>
+    | (() =>
+        | Array<T>
+        | ReadonlyArray<T>
+        | Signal<Array<T> | ReadonlyArray<T>>
+        | ReadonlySignal<Array<T> | ReadonlyArray<T>>);
+  fallback?: ComponentChildren;
+  children: (value: T, index: number) => ComponentChildren;
+}
+const TypedFor = For as any as <T>(
+  props: ForProps<T>,
+) => ReturnType<typeof For<T>>;
+export {TypedFor as For};
 
 export {
   isSignal,
