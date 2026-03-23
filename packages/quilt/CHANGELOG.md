@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.9.3
+
+### Patch Changes
+
+- [`65431b1`](https://github.com/lemonmade/quilt/commit/65431b11770fa85438423fcf71d9ef23c035e378) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix GraphQL and router serialization
+
 ## 0.9.2
 
 ### Patch Changes
