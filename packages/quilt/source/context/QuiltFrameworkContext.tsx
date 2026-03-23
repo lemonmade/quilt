@@ -115,13 +115,16 @@ export function QuiltFrameworkContext({
     ],
   );
 
-  if (typeof document !== 'object') {
-    if (navigation?.cache) {
-      // Serialize the navigation cache for server-side rendering.
-      useAsyncActionCacheSerialization(navigation.cache, {
-        name: 'quilt:router',
-      });
-    }
+  if (navigation?.cache != null) {
+    useAsyncActionCacheSerialization(navigation.cache, {
+      name: 'quilt:navigation',
+    });
+  }
+
+  if (graphql?.cache != null) {
+    useAsyncActionCacheSerialization(graphql.cache, {
+      name: 'quilt:graphql',
+    });
   }
 
   return (
