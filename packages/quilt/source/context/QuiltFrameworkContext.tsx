@@ -55,6 +55,12 @@ export interface QuiltFrameworkContextProps {
    * `fetch` (and optional `cache`) properties.
    */
   graphql?: Pick<GraphQLClient, 'fetch' | 'cache'>;
+  /**
+   * Whether to serialize the caches for server-side rendering.
+   * Defaults to `true`. You may want to set this to `false` if you are
+   * serializing the async cache/ GraphQL caches yourself.
+   */
+  serialize?: boolean;
   children?: ComponentChildren;
 }
 
@@ -83,6 +89,7 @@ export function QuiltFrameworkContext({
   performance,
   async: asyncProp,
   graphql,
+  serialize = true,
   children,
 }: QuiltFrameworkContextProps) {
   const parentContext = useContext(QuiltFrameworkContextPreact);
@@ -115,13 +122,13 @@ export function QuiltFrameworkContext({
     ],
   );
 
-  if (navigation?.cache != null) {
+  if (serialize && navigation?.cache != null) {
     useAsyncActionCacheSerialization(navigation.cache, {
       name: 'quilt:navigation',
     });
   }
 
-  if (graphql?.cache != null) {
+  if (serialize && graphql?.cache != null) {
     useAsyncActionCacheSerialization(graphql.cache, {
       name: 'quilt:graphql',
     });
