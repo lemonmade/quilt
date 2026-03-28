@@ -1,13 +1,31 @@
+export interface TranslateOptions<Placeholder = string> {
+  [key: string]: Placeholder | string | number | boolean | undefined;
+  scope?: string;
+  default?: string;
+  ordinal?: boolean;
+  count?: number;
+}
+
 export interface Translate {
   <Placeholder = string>(
     key: string,
-    placeholders?: {[key: string]: Placeholder | string | number},
-  ): Placeholder extends string | number ? string : (string | Placeholder)[];
+    options?: TranslateOptions<Placeholder>,
+  ): Placeholder extends string | number | boolean | undefined
+    ? string
+    : (string | Placeholder)[];
 }
 
 export type TranslationDictionary = {
   [key: string]: string | TranslationDictionary;
 };
+
+export class MissingTranslationsError extends Error {
+  constructor() {
+    super(
+      'No translations provided. Pass a `translations` option to the Localization constructor.',
+    );
+  }
+}
 
 export class MissingTranslationError extends Error {
   constructor(public readonly key: string) {
@@ -24,38 +42,54 @@ export class MissingTranslationPlaceholderError extends Error {
   }
 }
 
-const EMPTY_PLACEHOLDERS = {};
+const EMPTY_OPTIONS: TranslateOptions = {};
 
 const PLACEHOLDER_FINDER = /{{?([\w\s]+)}}?/g;
+
+const RESERVED_OPTION_KEYS = new Set(['scope', 'default', 'ordinal']);
 
 export function createTranslate(
   locale: string,
   dictionary: TranslationDictionary,
 ): Translate {
   let pluralRules: Intl.PluralRules | undefined;
+  let ordinalRules: Intl.PluralRules | undefined;
   const translations = flattenTranslationDictionary(dictionary);
 
   return function translate<Placeholder = string>(
     key: string,
-    placeholders: {
-      [key: string]: Placeholder | string | number;
-    } = EMPTY_PLACEHOLDERS,
+    options: TranslateOptions<Placeholder> = EMPTY_OPTIONS as any,
   ) {
-    let translation = translations.get(key);
+    const {scope, default: defaultValue, ordinal, count} = options;
+
+    const resolvedKey = scope ? `${scope}.${key}` : key;
+
+    let translation = translations.get(resolvedKey);
 
     if (translation == null) {
-      if (typeof placeholders.count === 'number') {
-        pluralRules ??= new Intl.PluralRules(locale);
-        const pluralRule = pluralRules.select(placeholders.count);
-
-        translation =
-          translations.get(`${key}.${pluralRule}`) ??
-          translations.get(`${key}.other`);
+      if (typeof count === 'number') {
+        if (ordinal) {
+          ordinalRules ??= new Intl.PluralRules(locale, {type: 'ordinal'});
+          const rule = ordinalRules.select(count);
+          translation =
+            translations.get(`${resolvedKey}.${rule}`) ??
+            translations.get(`${resolvedKey}.other`);
+        } else {
+          pluralRules ??= new Intl.PluralRules(locale);
+          const rule = pluralRules.select(count);
+          translation =
+            translations.get(`${resolvedKey}.${rule}`) ??
+            translations.get(`${resolvedKey}.other`);
+        }
       }
     }
 
     if (translation == null) {
-      throw new MissingTranslationError(key);
+      if (defaultValue != null) {
+        translation = defaultValue;
+      } else {
+        throw new MissingTranslationError(resolvedKey);
+      }
     }
 
     let returnValue: string | (string | Placeholder)[] = '';
@@ -67,10 +101,21 @@ export function createTranslate(
 
     translation.replace(PLACEHOLDER_FINDER, (match, placeholder, offset) => {
       const placeholderKey = placeholder.trim();
-      const replacement = placeholders[placeholderKey];
+
+      if (RESERVED_OPTION_KEYS.has(placeholderKey)) {
+        throw new MissingTranslationPlaceholderError(
+          resolvedKey,
+          placeholderKey,
+        );
+      }
+
+      const replacement = options[placeholderKey];
 
       if (replacement == null) {
-        throw new MissingTranslationPlaceholderError(key, placeholderKey);
+        throw new MissingTranslationPlaceholderError(
+          resolvedKey,
+          placeholderKey,
+        );
       }
 
       matchIndex += 1;
@@ -108,10 +153,12 @@ export function createTranslate(
 
 function appendToTranslateReturnValue<Replacement>(
   current: string | (string | Replacement)[],
-  newContent: string | number | Replacement,
+  newContent: string | number | boolean | Replacement,
 ) {
   const addContent =
-    typeof newContent === 'number' ? String(newContent) : newContent;
+    typeof newContent === 'number' || typeof newContent === 'boolean'
+      ? String(newContent)
+      : newContent;
 
   if (Array.isArray(current)) {
     current.push(addContent);

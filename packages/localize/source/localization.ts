@@ -1,3 +1,11 @@
+import {
+  createTranslate,
+  MissingTranslationsError,
+  type Translate,
+  type TranslateOptions,
+  type TranslationDictionary,
+} from './translation.ts';
+
 export interface LocalizedNumberFormatOptions extends Intl.NumberFormatOptions {
   locale?: string;
 }
@@ -140,9 +148,21 @@ export class Localization implements LocalizedFormatting {
       new Intl.DateTimeFormat(customLocale ?? this.locale, options),
   );
 
-  constructor(locale: string) {
+  /**
+   * The translate function created from the provided dictionary, or
+   * `undefined` if no translations were provided.
+   */
+  readonly #translate: Translate | undefined;
+
+  constructor(
+    locale: string,
+    {translations}: {translations?: TranslationDictionary} = {},
+  ) {
     this.locale = locale;
     this.direction = RTL_LOCALES.has(locale) ? 'rtl' : 'ltr';
+    this.#translate = translations
+      ? createTranslate(locale, translations)
+      : undefined;
   }
 
   /**
@@ -174,4 +194,22 @@ export class Localization implements LocalizedFormatting {
   formatDate = ((date, options) => {
     return this.dateTimeFormatter.get(options).format(date);
   }) satisfies LocalizedFormatting['formatDate'];
+
+  /**
+   * Translates a key from the dictionary provided at construction time,
+   * with support for nested keys, placeholders, pluralization, scoping,
+   * defaults, and ordinal pluralization.
+   *
+   * @throws {Error} if no translations were provided to the constructor.
+   */
+  translate = (<Placeholder = string>(
+    key: string,
+    options?: TranslateOptions<Placeholder>,
+  ) => {
+    if (this.#translate == null) {
+      throw new MissingTranslationsError();
+    }
+
+    return this.#translate<Placeholder>(key, options);
+  }) as Translate;
 }
