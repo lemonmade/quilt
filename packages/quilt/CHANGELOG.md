@@ -1,5 +1,11 @@
 # @quilted/quilt
 
+## 0.9.4
+
+### Patch Changes
+
+- [`9fbbc21`](https://github.com/lemonmade/quilt/commit/9fbbc212b5eb229ded74b7d77ec08fbbee27c740) Thanks [@lemonmade](https://github.com/lemonmade)! - Add ability to skip serializing Quilt Context caches
+
 ## 0.9.3
 
 ### Patch Changes
