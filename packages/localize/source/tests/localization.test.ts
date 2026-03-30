@@ -59,12 +59,8 @@ describe('Localization', () => {
         },
       });
 
-      expect(localization.translate('message', {count: 1})).toBe(
-        'One message',
-      );
-      expect(localization.translate('message', {count: 5})).toBe(
-        '5 messages',
-      );
+      expect(localization.translate('message', {count: 1})).toBe('One message');
+      expect(localization.translate('message', {count: 5})).toBe('5 messages');
     });
 
     it('supports scope option', () => {

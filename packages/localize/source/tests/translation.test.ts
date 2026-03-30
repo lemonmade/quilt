@@ -151,9 +151,9 @@ describe('translate()', () => {
     it('applies placeholder replacements to the default value', () => {
       const translate = createTranslate('en', {});
 
-      expect(translate('missing', {default: 'Hello {name}', name: 'world'})).toBe(
-        'Hello world',
-      );
+      expect(
+        translate('missing', {default: 'Hello {name}', name: 'world'}),
+      ).toBe('Hello world');
     });
 
     it('prefers an existing translation over the default', () => {
