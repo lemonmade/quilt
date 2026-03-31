@@ -13,7 +13,10 @@ import type {
 } from './types.ts';
 
 export interface NavigationOptions {
-  cache?: RouterNavigationCache | boolean;
+  cache?:
+    | RouterNavigationCache
+    | Iterable<AsyncActionCacheEntrySerialization<any>>
+    | boolean;
   base?: string | URL;
   isExternal?(url: URL, currentUrl: URL): boolean;
 }
@@ -52,7 +55,9 @@ export class Navigation {
         ? cache
           ? new RouterNavigationCache(this)
           : undefined
-        : cache;
+        : cache instanceof RouterNavigationCache
+          ? cache
+          : new RouterNavigationCache(this, {entries: cache});
     this.#isExternal = isExternal;
 
     const currentRequest = new BrowserNavigationRequest(initial);
@@ -207,15 +212,21 @@ export {Navigation as Router};
 
 export class RouterNavigationCache {
   #base: Navigation['base'];
+  #loadCache: AsyncActionCache;
   #entryCache = new Map<string, RouteNavigationEntry<any, any, any>>();
-  #loadCache = new AsyncActionCache();
   #matchCache = new Map<
     string,
     readonly RouteNavigationEntry<any, any, any>[]
   >();
 
-  constructor({base}: Pick<Navigation, 'base'>) {
+  constructor(
+    {base}: Pick<Navigation, 'base'>,
+    {
+      entries,
+    }: {entries?: Iterable<AsyncActionCacheEntrySerialization<any>>} = {},
+  ) {
     this.#base = base;
+    this.#loadCache = new AsyncActionCache(entries);
   }
 
   match<Context = any>(
