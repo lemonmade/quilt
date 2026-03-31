@@ -1,5 +1,11 @@
 # @quilted/preact-router
 
+## 0.2.17
+
+### Patch Changes
+
+- [`8cc966f`](https://github.com/lemonmade/quilt/commit/8cc966f4a3e178860d1fc62b3c3cef19505660e6) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow passing navigation cache entries on init
+
 ## 0.2.16
 
 ### Patch Changes
