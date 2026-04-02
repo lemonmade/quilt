@@ -14,7 +14,7 @@ import {
 } from '@quilted/preact-context';
 
 import type {RouteDefinition, RouteNavigationEntry} from '../types.ts';
-import {RouterNavigationCache, type Navigation} from '../Navigation.ts';
+import type {Navigation} from '../Navigation.ts';
 
 export function useRoutes<Context = unknown>(
   routes: readonly RouteDefinition<any, any, Context>[],
@@ -24,7 +24,7 @@ export function useRoutes<Context = unknown>(
   const parentEntry = useQuiltContext('navigationEntry', {optional: true});
 
   const routeStack = useMemo(() => {
-    const cache = navigation.cache ?? new RouterNavigationCache(navigation);
+    const cache = navigation.cache;
 
     return computed(() => {
       const matched = cache.match(navigation.currentRequest, routes, {

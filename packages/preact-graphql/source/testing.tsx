@@ -1,7 +1,7 @@
 import type {RenderableProps} from 'preact';
 import {useContext, useMemo} from 'preact/hooks';
 
-import type {GraphQLCache} from '@quilted/graphql';
+import {GraphQLCache} from '@quilted/graphql';
 import {
   gql,
   graphql,
@@ -50,7 +50,7 @@ export type {
 export function GraphQLTesting({
   children,
   controller,
-  cache,
+  cache = new GraphQLCache({disabled: true}),
 }: RenderableProps<{controller?: GraphQLController; cache?: GraphQLCache}>) {
   const run = useMemo(
     () => (controller ?? new GraphQLController()).run,

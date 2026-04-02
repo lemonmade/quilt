@@ -5,11 +5,11 @@ declare module '@quilted/preact-context' {
   interface QuiltContext {
     /**
      * The GraphQL client for this application. Provides the fetch function
-     * used to execute GraphQL operations and an optional result cache for
+     * used to execute GraphQL operations and a result cache for
      * deduplication and server-side rendering.
      *
      * Typically a `GraphQLClient` instance, but any object with `fetch` and
-     * an optional `cache` property is accepted.
+     * `cache` properties is accepted.
      *
      * @see GraphQLClient
      */

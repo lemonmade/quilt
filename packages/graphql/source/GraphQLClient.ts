@@ -30,10 +30,11 @@ export class GraphQLClient {
 
   /**
    * The cache for GraphQL query results, used to deduplicate in-flight
-   * requests and share data across components. `undefined` when caching
-   * has been explicitly disabled with `{cache: false}`.
+   * requests and share data across components. When caching has been
+   * disabled with `{cache: false}`, this is a no-op cache that satisfies
+   * the interface but does not persist results.
    */
-  readonly cache: GraphQLCache | undefined;
+  readonly cache: GraphQLCache;
 
   constructor(
     fetch: GraphQLRun,
@@ -46,7 +47,7 @@ export class GraphQLClient {
     } else if (cache instanceof GraphQLCache) {
       this.cache = cache;
     } else {
-      this.cache = undefined;
+      this.cache = new GraphQLCache({fetch, disabled: true});
     }
   }
 }

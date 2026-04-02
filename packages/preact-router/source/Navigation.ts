@@ -31,7 +31,7 @@ const STATE_ID_FIELD_KEY = '_id';
 
 export class Navigation {
   readonly base: string;
-  readonly cache?: RouterNavigationCache;
+  readonly cache: RouterNavigationCache;
 
   get currentRequest() {
     return this.#currentRequest.value;
@@ -54,7 +54,7 @@ export class Navigation {
       typeof cache === 'boolean'
         ? cache
           ? new RouterNavigationCache(this)
-          : undefined
+          : new RouterNavigationCache(this, {disabled: true})
         : cache instanceof RouterNavigationCache
           ? cache
           : new RouterNavigationCache(this, {entries: cache});
@@ -211,6 +211,7 @@ export class Navigation {
 export {Navigation as Router};
 
 export class RouterNavigationCache {
+  readonly disabled: boolean;
   #base: Navigation['base'];
   #loadCache: AsyncActionCache;
   #entryCache = new Map<string, RouteNavigationEntry<any, any, any>>();
@@ -223,10 +224,15 @@ export class RouterNavigationCache {
     {base}: Pick<Navigation, 'base'>,
     {
       entries,
-    }: {entries?: Iterable<AsyncActionCacheEntrySerialization<any>>} = {},
+      disabled = false,
+    }: {
+      entries?: Iterable<AsyncActionCacheEntrySerialization<any>>;
+      disabled?: boolean;
+    } = {},
   ) {
+    this.disabled = disabled;
     this.#base = base;
-    this.#loadCache = new AsyncActionCache(entries);
+    this.#loadCache = new AsyncActionCache(disabled ? undefined : entries);
   }
 
   match<Context = any>(
@@ -244,15 +250,19 @@ export class RouterNavigationCache {
     let matchID = request.id;
     if (parent) matchID += `@${stringifyKey(parent.key)}`;
 
-    let routeStack = this.#matchCache.get(matchID) as
-      | RouteNavigationEntry<any, any, any>[]
-      | undefined;
-    if (routeStack) {
-      return routeStack;
+    if (!this.disabled) {
+      const cached = this.#matchCache.get(matchID) as
+        | RouteNavigationEntry<any, any, any>[]
+        | undefined;
+      if (cached) {
+        return cached;
+      }
     }
 
-    routeStack = [];
-    this.#matchCache.set(matchID, routeStack);
+    let routeStack: RouteNavigationEntry<any, any, any>[] = [];
+    if (!this.disabled) {
+      this.#matchCache.set(matchID, routeStack);
+    }
 
     const base = this.#base;
     const currentURL = request.url;
@@ -322,7 +332,7 @@ export class RouterNavigationCache {
         const loadID = parent?.key ? `${parent.key}:${keyID}` : keyID;
         const id = `${matchID}:${loadID}`;
 
-        let entry = entryCache.get(id);
+        let entry = this.disabled ? undefined : entryCache.get(id);
         if (entry == null) {
           const load = route.load
             ? loadCache.create(
@@ -366,7 +376,9 @@ export class RouterNavigationCache {
                 }
           ) as any;
 
-          entryCache.set(id, entry!);
+          if (!this.disabled) {
+            entryCache.set(id, entry!);
+          }
         }
 
         if (route.load && route.input) {
@@ -389,10 +401,12 @@ export class RouterNavigationCache {
   }
 
   restore(entries: Iterable<AsyncActionCacheEntrySerialization<any>>) {
+    if (this.disabled) return;
     this.#loadCache.restore(entries);
   }
 
   serialize() {
+    if (this.disabled) return [];
     return this.#loadCache.serialize();
   }
 }

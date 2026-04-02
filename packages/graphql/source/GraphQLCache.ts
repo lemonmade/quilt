@@ -16,18 +16,22 @@ export interface GraphQLCacheFindOptions
   extends Omit<AsyncActionCacheFindOptions, 'key'> {}
 
 export class GraphQLCache {
+  readonly disabled: boolean;
   readonly #fetch?: GraphQLRun<any, any>;
   readonly #cache: AsyncActionCache;
 
   constructor({
     fetch,
     initial,
+    disabled = false,
   }: {
     fetch?: GraphQLRun<any, any>;
     initial?: Iterable<AsyncActionCacheEntrySerialization<any>>;
+    disabled?: boolean;
   } = {}) {
+    this.disabled = disabled;
     this.#fetch = fetch;
-    this.#cache = new AsyncActionCache(initial);
+    this.#cache = new AsyncActionCache(disabled ? undefined : initial);
   }
 
   query = <Data = unknown, Variables = unknown>(
@@ -48,6 +52,13 @@ export class GraphQLCache {
       } & AsyncActionCacheCreateOptions
     > = {},
   ) => {
+    if (this.disabled) {
+      const query = new GraphQLQuery<Data, Variables>(operation, {
+        fetch: explicitFetch ?? this.#fetch,
+      });
+      return query.run(variables, {signal, force});
+    }
+
     const entry = this.#cache.create(
       (cached) =>
         new GraphQLQuery(operation, {
@@ -77,6 +88,17 @@ export class GraphQLCache {
       } & AsyncActionCacheCreateOptions
     > = {},
   ): AsyncActionCacheEntry<GraphQLQuery<Data, Variables>> => {
+    if (this.disabled) {
+      const query = new GraphQLQuery<Data, Variables>(operation, {
+        cached: explicitCached as any,
+        fetch: explicitFetch ?? this.#fetch,
+      });
+      return this.#cache.put(query, {
+        key: stringifyKey(operation, key),
+        tags,
+      });
+    }
+
     const entry = this.#cache.create(
       (cached) =>
         new GraphQLQuery(operation, {
@@ -161,10 +183,12 @@ export class GraphQLCache {
   }
 
   restore(entries: Iterable<AsyncActionCacheEntrySerialization<any>>) {
+    if (this.disabled) return;
     this.#cache.restore(entries);
   }
 
   serialize(): readonly AsyncActionCacheEntrySerialization<any>[] {
+    if (this.disabled) return [];
     return this.#cache.serialize();
   }
 }

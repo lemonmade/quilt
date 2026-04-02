@@ -52,7 +52,7 @@ export interface QuiltFrameworkContextProps {
   };
   /**
    * The GraphQL client for this application, or a plain object with
-   * `fetch` (and optional `cache`) properties.
+   * `fetch` and `cache` properties.
    */
   graphql?: Pick<GraphQLClient, 'fetch' | 'cache'>;
   /**
@@ -122,13 +122,13 @@ export function QuiltFrameworkContext({
     ],
   );
 
-  if (serialize && navigation?.cache != null) {
+  if (serialize && navigation != null && !navigation.cache.disabled) {
     useAsyncActionCacheSerialization(navigation.cache, {
       name: 'quilt:navigation',
     });
   }
 
-  if (serialize && graphql?.cache != null) {
+  if (serialize && graphql != null && !graphql.cache.disabled) {
     useAsyncActionCacheSerialization(graphql.cache, {
       name: 'quilt:graphql',
     });
