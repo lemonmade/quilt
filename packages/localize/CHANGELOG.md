@@ -1,5 +1,11 @@
 # @quilted/localize
 
+## 0.2.5
+
+### Patch Changes
+
+- [`3f89dfc`](https://github.com/lemonmade/quilt/commit/3f89dfc4a020e02dee3b18c38967248c9d048b03) Thanks [@lemonmade](https://github.com/lemonmade)! - Add LRU cache for translations
+
 ## 0.2.4
 
 ### Patch Changes
