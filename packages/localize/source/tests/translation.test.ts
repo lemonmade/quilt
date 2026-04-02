@@ -202,4 +202,73 @@ describe('translate()', () => {
       expect(translate('place', {count: 1, ordinal: true})).toBe('1th place');
     });
   });
+
+  describe('caching', () => {
+    it('returns the same result for repeated identical calls', () => {
+      const translate = createTranslate('en', {
+        hello: 'Hello {name}',
+      });
+
+      const first = translate('hello', {name: 'world'});
+      const second = translate('hello', {name: 'world'});
+
+      expect(first).toBe('Hello world');
+      expect(second).toBe('Hello world');
+    });
+
+    it('returns different results for different placeholder values', () => {
+      const translate = createTranslate('en', {
+        hello: 'Hello {name}',
+      });
+
+      expect(translate('hello', {name: 'Alice'})).toBe('Hello Alice');
+      expect(translate('hello', {name: 'Bob'})).toBe('Hello Bob');
+    });
+
+    it('does not cache results with non-string replacements', () => {
+      const translate = createTranslate('en', {
+        hello: 'Hello {name}',
+      });
+
+      const name1 = {value: 'a'};
+      const name2 = {value: 'b'};
+      const first = translate('hello', {name: name1});
+      const second = translate('hello', {name: name2});
+
+      expect(first).toStrictEqual(['Hello ', name1]);
+      expect(second).toStrictEqual(['Hello ', name2]);
+    });
+
+    it('evicts entries when the cache exceeds the configured size', () => {
+      const translate = createTranslate(
+        'en',
+        {greeting: 'Hi {name}'},
+        {cacheSize: 2},
+      );
+
+      // Fill the cache with 2 entries.
+      translate('greeting', {name: 'Alice'});
+      translate('greeting', {name: 'Bob'});
+
+      // A third call should evict the first entry but still return correctly.
+      translate('greeting', {name: 'Charlie'});
+
+      // All calls should still produce correct results regardless of eviction.
+      expect(translate('greeting', {name: 'Alice'})).toBe('Hi Alice');
+      expect(translate('greeting', {name: 'Bob'})).toBe('Hi Bob');
+      expect(translate('greeting', {name: 'Charlie'})).toBe('Hi Charlie');
+    });
+
+    it('returns plain strings without placeholders in O(1) without caching', () => {
+      const translate = createTranslate('en', {
+        hello: 'Hello',
+      });
+
+      // Plain strings are returned directly — same reference every time.
+      const first = translate('hello');
+      const second = translate('hello');
+      expect(first).toBe('Hello');
+      expect(first).toBe(second);
+    });
+  });
 });
