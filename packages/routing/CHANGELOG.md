@@ -1,5 +1,11 @@
 # @quilted/routing
 
+## 0.4.4
+
+### Patch Changes
+
+- [#907](https://github.com/lemonmade/quilt/pull/907) [`9c538be`](https://github.com/lemonmade/quilt/commit/9c538be81a306e70f6d9839a08d2ae1f013cecb4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed `resolveURL()` to not double-apply the base prefix when using the object form (`{search}`) without a `path`. When `path` is omitted, the pathname is taken from the current URL which already includes the base prefix — passing `base` to the recursive call caused it to be prepended again on each navigation.
+
 ## 0.4.3
 
 ### Patch Changes
