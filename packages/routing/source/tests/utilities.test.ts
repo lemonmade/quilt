@@ -79,9 +79,7 @@ describe('resolveURL', () => {
     });
 
     it('clears search when passing an empty string', () => {
-      const from = new URL(
-        'https://example.com/page?existing=param',
-      );
+      const from = new URL('https://example.com/page?existing=param');
 
       const result = resolveURL({search: ''}, from);
 
