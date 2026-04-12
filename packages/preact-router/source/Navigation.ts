@@ -101,7 +101,11 @@ export class Navigation {
 
     this.#forceNextNavigation = false;
 
-    if (url.origin !== currentRequest.url.origin) {
+    const external =
+      url.origin !== currentRequest.url.origin ||
+      (this.#isExternal?.(url, currentRequest.url) ?? false);
+
+    if (external) {
       window.location[replace ? 'replace' : 'assign'](url.href);
       return request;
     }
