@@ -22,10 +22,13 @@ export function resolveURL(
     const finalSearch = searchToString(search);
     const finalHash = prefixIfNeeded('#', hash);
 
+    // When `path` is omitted, `finalPathname` comes from `fromURL.pathname`
+    // which already includes the base prefix. Passing `base` again would
+    // cause prefixPath to double the base segment on each call.
     return resolveURL(
       `${finalPathname}${finalSearch}${finalHash}`,
       fromURL,
-      base,
+      path != null ? base : undefined,
     );
   } else if (typeof to === 'function') {
     const fromURL = typeof from === 'string' ? new URL(from) : from;
