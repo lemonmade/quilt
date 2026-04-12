@@ -1,5 +1,16 @@
 # @quilted/preact-router
 
+## 0.2.19
+
+### Patch Changes
+
+- [`42ca058`](https://github.com/lemonmade/quilt/commit/42ca058ee60754cd0fdcae1ff4b40a11f9daf2cd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed the `Link` component to pass the `target` prop through to the rendered anchor element, and to skip client-side navigation when any `target` attribute is set (not just `_blank`).
+
+- [#907](https://github.com/lemonmade/quilt/pull/907) [`9c538be`](https://github.com/lemonmade/quilt/commit/9c538be81a306e70f6d9839a08d2ae1f013cecb4) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed `navigate()` to perform a full page navigation for cross-origin URLs instead of using `history.pushState()`, which only updates the path within the current origin. Cross-origin URLs always trigger a full navigation (since `pushState` cannot handle them), and same-origin URLs also check the `isExternal` option for cases where the app considers certain same-origin URLs external.
+
+- Updated dependencies [[`9c538be`](https://github.com/lemonmade/quilt/commit/9c538be81a306e70f6d9839a08d2ae1f013cecb4)]:
+  - @quilted/routing@0.4.4
+
 ## 0.2.18
 
 ### Patch Changes
