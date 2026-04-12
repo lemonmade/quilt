@@ -22,7 +22,7 @@ export function Link({
   target,
   base,
   onClick,
-  external: explicitlyExternal = target === '_blank',
+  external: explicitlyExternal = target != null,
   ...rest
 }: RenderableProps<Props, HTMLAnchorElement>) {
   const navigation = useNavigation();
@@ -69,7 +69,7 @@ export function Link({
     url.origin === currentOrigin ? url.href.slice(url.origin.length) : url.href;
 
   return (
-    <a ref={ref} href={href} onClick={handleClick} {...rest}>
+    <a ref={ref} href={href} target={target} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

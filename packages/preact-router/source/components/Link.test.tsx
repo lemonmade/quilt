@@ -46,6 +46,11 @@ describe('<Link />', () => {
     expect(link).toContainPreactComponent('a', {'aria-label': label});
   });
 
+  it('passes the `target` prop through to the anchor tag', () => {
+    using link = render(<Link to="/" target="_blank" />);
+    expect(link).toContainPreactComponent('a', {target: '_blank'});
+  });
+
   describe('onClick()', () => {
     it('calls the onClick() prop with the DOM event', () => {
       const onClick = vi.fn();
@@ -73,6 +78,26 @@ describe('<Link />', () => {
       const navigate = vi.spyOn(navigation, 'navigate');
 
       using link = render(<Link to="/" external />, {navigation});
+      link.find('a')!.trigger('onClick', createClickEvent());
+
+      expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('does not call navigation.navigate() when target is set to _blank', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
+
+      using link = render(<Link to="/" target="_blank" />, {navigation});
+      link.find('a')!.trigger('onClick', createClickEvent());
+
+      expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('does not call navigation.navigate() when any target is set', () => {
+      const navigation = new TestNavigation('https://example.com');
+      const navigate = vi.spyOn(navigation, 'navigate');
+
+      using link = render(<Link to="/" target="_top" />, {navigation});
       link.find('a')!.trigger('onClick', createClickEvent());
 
       expect(navigate).not.toHaveBeenCalled();
