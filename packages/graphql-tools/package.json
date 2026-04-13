@@ -89,7 +89,7 @@
   },
   "devDependencies": {
     "@jest/transform": "^29.7.0",
-    "@types/babel__generator": "^7.6.0",
+    "@types/babel__generator": "^7.27.0",
     "@types/is-glob": "^4.0.0"
   }
 }
