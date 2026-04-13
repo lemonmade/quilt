@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 5
     steps:
       # @see https://github.com/rjstone/discord-webhook-notify
-      - uses: rjstone/discord-webhook-notify@v1
+      - uses: rjstone/discord-webhook-notify@v2
         with:
           severity: info
           color: '#1EE084'
