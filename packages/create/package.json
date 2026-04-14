@@ -27,7 +27,8 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "devDependencies": {
-    "@quilted/cli-kit": "workspace:^0.2.1",
+    "@quilted/cli-kit": "workspace:*",
+    "@quilted/quilt": "workspace:*",
     "@trpc/client": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
