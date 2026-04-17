@@ -4,14 +4,15 @@ import {matchers, type CustomMatchers} from '@quilted/preact-testing/matchers';
 import {createRender, destroyAll} from '@quilted/preact-testing';
 
 import {QuiltFrameworkContextPreact} from '@quilted/preact-context';
+import {Navigation} from '../Navigation.ts';
 import {TestNavigation} from '../testing.tsx';
 
 export {TestNavigation, destroyAll};
 
 export const render = createRender<
-  | {navigation?: TestNavigation; path?: never; base?: never}
+  | {navigation?: Navigation; path?: never; base?: never}
   | {navigation?: never; path?: `/${string}`; base?: string | URL},
-  {navigation: TestNavigation}
+  {navigation: Navigation}
 >({
   context({
     path = '/',

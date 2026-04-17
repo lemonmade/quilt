@@ -1,9 +1,16 @@
 // @vitest-environment jsdom
+// @vitest-environment-options {"url": "https://example.com/"}
+
+// Importing `@quilted/preact-signals` installs the Preact <-> signals render
+// integration so that `.value` reads during render subscribe the component.
+import '@quilted/preact-signals';
 
 import {describe, it, expect, afterEach, vi} from 'vitest';
 import type {RenderableProps} from 'preact';
+import {useEffect} from 'preact/hooks';
 
 import {
+  Navigation,
   route,
   useRoutes,
   useRouteData,
@@ -837,6 +844,138 @@ describe('useRoutes()', () => {
           data: {id: 'a', title: 'A resource'},
         }),
       );
+    });
+  });
+
+  describe('key', () => {
+    function createMountTracker() {
+      const mountSpy = vi.fn<(label: string) => void>();
+
+      function Tracker({label}: {label: string}) {
+        useEffect(() => {
+          mountSpy(label);
+        }, []);
+
+        return <div>Tracker: {label}</div>;
+      }
+
+      return {mountSpy, Tracker};
+    }
+
+    it('preserves the component instance across navigations to the same route', () => {
+      const {mountSpy, Tracker} = createMountTracker();
+      const navigation = new Navigation(
+        new URL('https://example.com/activities'),
+      );
+
+      function Routes() {
+        return useRoutes([
+          {
+            match: true,
+            render: (children) => <>{children}</>,
+            children: [
+              {match: '/activities', render: <Tracker label="activities" />},
+              {match: '/staff', render: <Tracker label="staff" />},
+            ],
+          },
+        ]);
+      }
+
+      const routes = render(<Routes />, {navigation});
+
+      expect(mountSpy).toHaveBeenCalledTimes(1);
+      expect(mountSpy).toHaveBeenLastCalledWith('activities');
+
+      // Navigating to the same URL derives the same key, so the component
+      // instance is reused rather than remounted.
+      routes.act(() => {
+        navigation.navigate('/activities');
+      });
+
+      expect(mountSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('remounts when navigating to a route with a different derived key', () => {
+      const {mountSpy, Tracker} = createMountTracker();
+      const navigation = new Navigation(
+        new URL('https://example.com/activities'),
+      );
+
+      function Routes() {
+        return useRoutes([
+          {
+            match: true,
+            render: (children) => <>{children}</>,
+            children: [
+              {match: '/activities', render: <Tracker label="activities" />},
+              {match: '/staff', render: <Tracker label="staff" />},
+            ],
+          },
+        ]);
+      }
+
+      const routes = render(<Routes />, {navigation});
+
+      expect(mountSpy).toHaveBeenCalledTimes(1);
+      expect(mountSpy).toHaveBeenLastCalledWith('activities');
+
+      // Different match pattern → different key → remount.
+      routes.act(() => {
+        navigation.navigate('/staff');
+      });
+
+      expect(mountSpy).toHaveBeenCalledTimes(2);
+      expect(mountSpy).toHaveBeenLastCalledWith('staff');
+      expect(routes).toContainPreactText('Tracker: staff');
+    });
+
+    it('uses a user-supplied key function to control remount boundaries', () => {
+      const {mountSpy, Tracker} = createMountTracker();
+      const navigation = new Navigation(
+        new URL('https://example.com/activity/a'),
+      );
+
+      const keySpy = vi.fn(
+        (entry: {matched: RegExpMatchArray}) => entry.matched.groups?.id,
+      );
+
+      function Routes() {
+        return useRoutes([
+          {
+            match: true,
+            render: (children) => <>{children}</>,
+            children: [
+              route(/[/]activity[/](?<id>[\w-]+)/, {
+                key: (entry) => keySpy(entry as any),
+                render: (_, entry) => (
+                  <Tracker label={entry.matched.groups?.id ?? ''} />
+                ),
+              }),
+            ],
+          },
+        ]);
+      }
+
+      const routes = render(<Routes />, {navigation});
+
+      expect(mountSpy).toHaveBeenCalledTimes(1);
+      expect(mountSpy).toHaveBeenLastCalledWith('a');
+
+      // Same id → same key → same instance.
+      routes.act(() => {
+        navigation.navigate('/activity/a');
+      });
+
+      expect(mountSpy).toHaveBeenCalledTimes(1);
+
+      // Different id → different key → remount.
+      routes.act(() => {
+        navigation.navigate('/activity/b');
+      });
+
+      expect(mountSpy).toHaveBeenCalledTimes(2);
+      expect(mountSpy).toHaveBeenLastCalledWith('b');
+      expect(keySpy).toHaveBeenCalled();
     });
   });
 });
