@@ -53,6 +53,29 @@ export function HTMLTemplateHead({
       {(metas ?? browserResponse?.metas.value)?.map((meta) => (
         <meta {...(meta as any)} />
       ))}
+      {/*
+        Serializations and asset placeholders default into <head>, not <body>,
+        for two reasons:
+
+        1. Stylesheet links work most reliably as render-blocking when they're
+           in <head>. Body-positioned `<link rel=stylesheet>` (even with
+           `blocking="render"`) can flash unstyled content in Safari when
+           there's any preceding body content the parser has already started
+           to commit. Putting them in <head> sidesteps that entirely.
+        2. The HTTP `Link: rel=preload` headers `renderAppToHTMLResponse`
+           emits for entry assets are most useful when the corresponding
+           `<link>` tags are also in <head>; the preload scanner picks them
+           up before any body content streams in.
+
+        The order — serializations, then entry assets, then async, then
+        preload — matches what `HTMLTemplateBody` used to render so existing
+        behavior around hydration timing and `browser.assets` discovery is
+        preserved.
+      */}
+      <HTMLTemplateSerializations />
+      <HTMLTemplateAssets />
+      <HTMLTemplateAssets async />
+      <HTMLTemplateAssets preload />
     </>
   );
 
@@ -73,24 +96,20 @@ export function HTMLTemplateBody({
 }: RenderableProps<HTMLTemplateBodyProps>) {
   const browserResponse = useBrowserResponse();
 
-  const bodyContent = children ?? (
-    <>
-      <HTMLTemplateSerializations />
-      <HTMLTemplateAssets />
-      <HTMLTemplateAssets async />
-      <HTMLTemplateAssets preload />
-
-      {wrapper ? (
-        <div
-          {...(typeof wrapper === 'boolean' ? DEFAULT_WRAPPER_PROPS : wrapper)}
-        >
-          <HTMLTemplateContent />
-        </div>
-      ) : (
+  // Serializations and asset placeholders moved to `HTMLTemplateHead`;
+  // see the comment there. The body now defaults to just the wrapper +
+  // content placeholder.
+  const bodyContent =
+    children ??
+    (wrapper ? (
+      <div
+        {...(typeof wrapper === 'boolean' ? DEFAULT_WRAPPER_PROPS : wrapper)}
+      >
         <HTMLTemplateContent />
-      )}
-    </>
-  );
+      </div>
+    ) : (
+      <HTMLTemplateContent />
+    ));
 
   return (
     <body {...browserResponse.bodyAttributes.value} {...rest}>
