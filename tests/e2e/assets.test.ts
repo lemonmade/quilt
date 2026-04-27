@@ -245,7 +245,13 @@ describe('app builds', () => {
               const request = c.req.raw;
 
               const response = await renderToHTMLResponse(
-                <HTMLTemplate title="Inline CSS test">
+                <HTMLTemplate
+                  head={
+                    <HTMLTemplate.Head>
+                      <title>Inline CSS test</title>
+                    </HTMLTemplate.Head>
+                  }
+                >
                   <HTMLTemplate.Assets name="./inline.css" />
                 </HTMLTemplate>,
                 {request, assets},
@@ -268,7 +274,9 @@ describe('app builds', () => {
         // Minified verison of the source above
         expect(content).toBe(`body{color:#fff;background-color:#000}`);
 
-        // No scripts should be loaded
+        // No scripts should be loaded — the custom <head> above suppresses
+        // the default asset placeholders that would otherwise render the
+        // app's entry script.
         const scripts = await page.$$('script');
         expect(scripts).toHaveLength(0);
       });

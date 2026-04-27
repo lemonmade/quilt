@@ -226,6 +226,15 @@ const HTMLElement: typeof globalThis.HTMLElement =
 
 const DEFAULT_SERIALIZATION_ELEMENT_NAME = 'browser-serialization';
 
+// SSR now writes serializations as `<script type="quilt/serialization" data-name=…>JSON</script>`
+// instead of as `<browser-serialization>` custom elements. The script form is
+// parser-safe in `<head>` (where the default `HTMLTemplate` now puts these),
+// and avoids a Safari quirk where unknown body elements ahead of the first
+// `<link rel=stylesheet>` can flash unstyled content even with
+// `blocking="render"`. The legacy `BrowserSerializationElement` class below
+// keeps working for anyone who still defines it programmatically.
+const SERIALIZATION_SCRIPT_SELECTOR = 'script[type="quilt/serialization"]';
+
 export class BrowserSerializationElement<T = unknown> extends HTMLElement {
   static define(name: string = DEFAULT_SERIALIZATION_ELEMENT_NAME) {
     customElements.define(name, this);
@@ -323,7 +332,7 @@ export class BrowserSerializations {
             for (const node of mutation.addedNodes) {
               if (node.nodeType === Node.ELEMENT_NODE) {
                 for (const serialization of (node as Element).querySelectorAll(
-                  DEFAULT_SERIALIZATION_ELEMENT_NAME,
+                  SERIALIZATION_SCRIPT_SELECTOR,
                 )) {
                   updates.set(...serializationEntryFromNode(serialization));
                 }
@@ -350,19 +359,23 @@ export class BrowserSerializations {
 
 function getSerializationsFromDocument() {
   return Array.from(
-    document.querySelectorAll<HTMLElement>(DEFAULT_SERIALIZATION_ELEMENT_NAME),
+    document.querySelectorAll<HTMLElement>(SERIALIZATION_SCRIPT_SELECTOR),
   ).map(serializationEntryFromNode);
 }
 
 function serializationEntryFromNode<T = unknown>(node: Element): [string, T] {
-  return [
-    node.getAttribute('name') ?? '_default',
-    getSerializedFromNode(node) as any,
-  ];
+  // Script form carries the name on `data-name` and the payload as text content;
+  // fall back to the legacy `name` / `content` attributes so a
+  // `<browser-serialization>` (e.g. produced by `BrowserSerializationElement`)
+  // still parses correctly.
+  const name =
+    node.getAttribute('data-name') ?? node.getAttribute('name') ?? '_default';
+  return [name, getSerializedFromNode(node) as any];
 }
 
 function getSerializedFromNode<T = unknown>(node: Element): T | undefined {
-  const value = node.getAttribute('content');
+  const value =
+    node.tagName === 'SCRIPT' ? node.textContent : node.getAttribute('content');
 
   try {
     return value ? (decode(JSON.parse(value)) as T) : undefined;
