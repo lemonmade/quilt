@@ -84,9 +84,8 @@ describe('graphql', () => {
     expect(greetingText).toBe('Hello from GraphQL!');
 
     // 2. Verify the GraphQL cache serialization is in the DOM
-    const serialization = await page.getAttribute(
-      'browser-serialization[name="quilt:graphql"]',
-      'content',
+    const serialization = await page.textContent(
+      'script[type="quilt/serialization"][data-name="quilt:graphql"]',
     );
     expect(serialization).toBeTruthy();
     expect(serialization).toContain('Hello from GraphQL!');
