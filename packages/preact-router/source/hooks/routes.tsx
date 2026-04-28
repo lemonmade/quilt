@@ -66,7 +66,9 @@ function RouteStackRenderer({
   for (const entry of [...entries].reverse()) {
     content = (
       <RouteNavigationRenderer
-        key={entry.id}
+        key={
+          typeof entry.key === 'string' ? entry.key : JSON.stringify(entry.key)
+        }
         navigation={navigation}
         entry={entry}
       >

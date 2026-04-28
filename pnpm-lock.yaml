@@ -756,6 +756,9 @@ importers:
         specifier: workspace:^0.2.4
         version: link:../signals
     devDependencies:
+      '@quilted/preact-signals':
+        specifier: workspace:*
+        version: link:../preact-signals
       '@quilted/preact-testing':
         specifier: workspace:*
         version: link:../preact-testing

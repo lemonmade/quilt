@@ -57,6 +57,7 @@
     }
   },
   "devDependencies": {
+    "@quilted/preact-signals": "workspace:*",
     "@quilted/preact-testing": "workspace:*",
     "preact": "^10.29.0"
   }
