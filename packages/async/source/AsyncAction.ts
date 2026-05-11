@@ -219,9 +219,17 @@ export class AsyncAction<Data = unknown, Input = unknown> {
 }
 
 function defaultHasChanged(input?: unknown, lastInput?: unknown) {
-  return (
-    input !== lastInput && JSON.stringify(input) !== JSON.stringify(lastInput)
-  );
+  if (input === lastInput) return false;
+  return stringifyInput(input) !== stringifyInput(lastInput);
+}
+
+// Treat nullish inputs as an empty object so callers that pass no input and
+// callers that pass an empty options object compare as the same run. The
+// common case is a GraphQL query with no variables: a route-loader
+// `cache.query(operation)` (no variables) and `query.run({}, ...)` from a
+// hook should reuse the same in-flight run, not abort and replay.
+function stringifyInput(input: unknown) {
+  return JSON.stringify(input ?? {});
 }
 
 export class AsyncActionRun<Data = unknown, Input = unknown> {

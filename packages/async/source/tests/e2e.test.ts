@@ -39,6 +39,74 @@ describe('AsyncAction', () => {
     expect(spy).toHaveBeenNthCalledWith(3, 'Hello world');
     expect(spy).toHaveBeenNthCalledWith(4, 'Hello world!');
   });
+
+  describe('run()', () => {
+    it('reuses the in-flight run when a subsequent call passes an empty object instead of no input', async () => {
+      const fetchFunction = vi.fn(async () => 'result');
+      const action = new AsyncAction<string, Record<string, unknown>>(
+        fetchFunction,
+      );
+
+      const first = action.run();
+      const second = action.run({});
+
+      expect(second).toBe(first);
+      await first;
+      expect(fetchFunction).toHaveBeenCalledTimes(1);
+    });
+
+    it('reuses the in-flight run when a subsequent call passes no input instead of an empty object', async () => {
+      const fetchFunction = vi.fn(async () => 'result');
+      const action = new AsyncAction<string, Record<string, unknown>>(
+        fetchFunction,
+      );
+
+      const first = action.run({});
+      const second = action.run();
+
+      expect(second).toBe(first);
+      await first;
+      expect(fetchFunction).toHaveBeenCalledTimes(1);
+    });
+
+    it('treats null input as equivalent to an empty object', async () => {
+      const fetchFunction = vi.fn(async () => 'result');
+      const action = new AsyncAction<string, Record<string, unknown> | null>(
+        fetchFunction,
+      );
+
+      const first = action.run(null);
+      const second = action.run({});
+
+      expect(second).toBe(first);
+      await first;
+      expect(fetchFunction).toHaveBeenCalledTimes(1);
+    });
+
+    it('still starts a new run when the input has changed', async () => {
+      const fetchFunction = vi.fn(async (input: {name: string}) => input.name);
+      const action = new AsyncAction(fetchFunction);
+
+      const first = action.run({name: 'Winston'});
+      const second = action.run({name: 'Molly'});
+
+      expect(second).not.toBe(first);
+      await Promise.allSettled([first, second]);
+      expect(fetchFunction).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not treat an empty array as equivalent to no input', async () => {
+      const fetchFunction = vi.fn(async () => 'result');
+      const action = new AsyncAction<string, string[]>(fetchFunction);
+
+      const first = action.run();
+      const second = action.run([]);
+
+      expect(second).not.toBe(first);
+      await Promise.allSettled([first, second]);
+      expect(fetchFunction).toHaveBeenCalledTimes(2);
+    });
+  });
 });
 
 describe('AsyncActionCache', () => {
