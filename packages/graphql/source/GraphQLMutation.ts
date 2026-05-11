@@ -1,5 +1,6 @@
 import {AsyncAction} from '@quilted/async';
 import {createGraphQLFetch, type GraphQLFetch} from './fetch/fetch.ts';
+import {graphqlVariablesHaveChanged} from './variables.ts';
 import type {GraphQLResult, GraphQLAnyOperation} from './types.ts';
 
 /**
@@ -29,10 +30,13 @@ export class GraphQLMutation<Data, Variables> extends AsyncAction<
       fetch?: GraphQLFetch<any>;
     } = {},
   ) {
-    super(async (variables: Variables, {signal}) => {
-      const result = await fetch(operation, {variables, signal});
-      return result;
-    });
+    super(
+      async (variables: Variables, {signal}) => {
+        const result = await fetch(operation, {variables, signal});
+        return result;
+      },
+      {hasChanged: graphqlVariablesHaveChanged},
+    );
 
     this.fetch = fetch;
   }
