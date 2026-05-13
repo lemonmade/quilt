@@ -1,5 +1,19 @@
 # @quilted/graphql
 
+## 3.4.2
+
+### Patch Changes
+
+- [#924](https://github.com/lemonmade/quilt/pull/924) [`6bcc210`](https://github.com/lemonmade/quilt/commit/6bcc210d8113a4fd28a677d6343a7e30f23ab8a6) Thanks [@lemonmade](https://github.com/lemonmade)! - Treat no variables and an empty variables object as the same input in `GraphQLQuery` and `GraphQLMutation`
+
+  The default `AsyncAction.hasChanged` comparator stringifies inputs with `JSON.stringify` and compares the result. Because `JSON.stringify(undefined)` is `undefined` (not a string) and `JSON.stringify({})` is `'{}'`, a call to `query.run()` followed by a call to `query.run({})` (or vice versa) was treated as two different inputs — the second call aborted the in-flight run and started an identical one.
+
+  This was easy to trigger in practice: a route loader that calls `cache.query(operation)` (no `variables` argument, so `variables = undefined` flows into `GraphQLQuery.run`) paired with a `useGraphQLQuery({variables: {}})` (or a hook that calls `query.run({}, {signal})`) produced a canceled request followed by an identical replay on every navigation.
+
+  `GraphQLQuery` and `GraphQLMutation` now pass a variables-aware `hasChanged` to the underlying `AsyncAction`. It coerces nullish variables to `{}` before stringifying, so `run()`, `run(undefined)`, `run(null)`, and `run({})` all collapse to a single in-flight run. Non-empty variables continue to compare by value as before.
+
+  The generic `AsyncAction` comparator is unchanged — `undefined` and `{}` are GraphQL-specific equivalents, not a property of every async input.
+
 ## 3.4.1
 
 ### Patch Changes
