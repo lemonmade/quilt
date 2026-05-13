@@ -5,3 +5,6 @@ packages:
   - packages/create/templates/*
   - tests/e2e
   - tests/e2e/fixtures/*
+
+allowBuilds:
+  esbuild: true
