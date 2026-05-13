@@ -35,18 +35,43 @@ jobs:
           pnpm --filter !rollup --filter vite... run build
       - run: pnpm run test
 
+  e2e-browser-cache:
+    name: E2E browser cache 🎭
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/actions/prepare
+      - name: Restore Playwright browser cache
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter e2e-tests exec playwright install --only-shell chromium
+
   e2e-tests:
     name: End-to-end tests 🔬
     runs-on: ubuntu-latest
+    needs: e2e-browser-cache
     timeout-minutes: 20
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
     strategy:
       matrix:
         parallel: [1/3, 2/3, 3/3]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare
-      - name: Install Playwright browsers
-        run: pnpm --filter e2e-tests exec playwright install --only-shell chromium
+      - name: Restore Playwright browser cache
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Build libraries for E2E tests
         run: pnpm run build
       - run: pnpm run test.e2e --shard ${{ matrix.parallel }}
