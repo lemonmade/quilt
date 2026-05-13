@@ -9,7 +9,7 @@
     "@quilted/trpc": "workspace:*",
     "@tanstack/react-query": "^5.54.1",
     "@trpc/client": "11.0.0-rc.498",
-    "@trpc/react-query": "11.0.0-rc.498",
+    "@trpc/react-query": "11.13.0",
     "@trpc/server": "11.0.0-rc.498",
     "@types/common-tags": "^1.8.4",
     "@types/fs-extra": "^11.0.0",
