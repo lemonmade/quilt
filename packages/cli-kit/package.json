@@ -33,7 +33,7 @@
     "@quilted/events": "workspace:^2.1.2",
     "@types/common-tags": "^1.8.0",
     "@types/glob": "^8.0.0",
-    "@types/prompts": "^2.4.0",
+    "@types/prompts": "^2.4.9",
     "arg": "^5.0.2",
     "colorette": "^2.0.19",
     "glob": "^8.0.3",
