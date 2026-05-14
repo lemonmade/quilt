@@ -169,10 +169,10 @@ importers:
     devDependencies:
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.498
+        version: 11.13.0(typescript@5.7.3)
 
   packages/assets: {}
 
@@ -259,8 +259,8 @@ importers:
         specifier: ^1.8.2
         version: 1.8.2
       glob:
-        specifier: ^8.0.3
-        version: 8.0.3
+        specifier: ^13.0.6
+        version: 13.0.6
       pkg-dir:
         specifier: ^7.0.0
         version: 7.0.0
@@ -278,13 +278,13 @@ importers:
         version: link:../quilt
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0-rc.498(@tanstack/react-query@5.90.21(react@19.0.0))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 11.13.0(@tanstack/react-query@5.90.21(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.13.0(typescript@5.7.3))(react@19.0.0)(typescript@5.7.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.498
+        version: 11.13.0(typescript@5.7.3)
       '@types/common-tags':
         specifier: ^1.8.4
         version: 1.8.4
@@ -413,13 +413,13 @@ importers:
         version: 5.90.21(@quilted/react@19.0.0)
       '@trpc/client':
         specifier: next
-        version: 11.0.0(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0(@quilted/react-dom@19.0.1)(@quilted/react@19.0.0)(@tanstack/react-query@5.90.21(@quilted/react@19.0.0))(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3)
+        version: 11.13.0(@quilted/react@19.0.0)(@tanstack/react-query@5.90.21(@quilted/react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0(typescript@5.7.3)
+        version: 11.13.0(typescript@5.7.3)
       hono:
         specifier: ^4.8.0
         version: 4.8.5
@@ -1010,8 +1010,8 @@ importers:
         specifier: ^0.25.0
         version: 0.25.0
       glob:
-        specifier: ^10.3.10
-        version: 10.3.10
+        specifier: ^13.0.6
+        version: 13.0.6
       graphql:
         specifier: ^16.8.0
         version: 16.8.1
@@ -2545,62 +2545,77 @@ packages:
   '@miniflare/cache@2.5.0':
     resolution: {integrity: sha512-tJuDbWwzYsk4pJvPPJzdlfdGFqNnn1IN3JVrGDCq8UwOXm0K8hFiSwq2nMjjT+Z/9X2FfimgaXOx81zjPL+FjQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/cli-parser@2.5.0':
     resolution: {integrity: sha512-aY/wQ4Rwy8x0Awtb8TzhKFYp4g1Y8xBhtKFfHOZpYCEFCVfKtgdk0pHPKctf/ClK0qJdT3siJKeXxsH2GRAMXg==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/core@2.5.0':
     resolution: {integrity: sha512-BtMRi17DiimcpmDjQiIU6mIYSo/h21lVGC082n5G3JTF7AcGFAs7N2Fz2YLiYuc3zYc6qJx/NIjDoOqL2gfp3A==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/durable-objects@2.5.0':
     resolution: {integrity: sha512-HJuP5Lsm/CCaSx3dePZiywAniGqTpU1ocCEqV6kE4zX1C0uGplfjPPXo5xsVc2NXkD+0ZL65rJzcj2tfrwKZlg==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/html-rewriter@2.5.0':
     resolution: {integrity: sha512-bV2lQ/2clPeBmDth+cMnCBFYk8xtGs83S6PhfwmNNd24rzHvOEch1h/VCtEUy8k+rtgDSpc9pVkd31k0tMsyxQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/http-server@2.5.0':
     resolution: {integrity: sha512-+sRPgNq0Q4Q6t1k94ncYzgcf/UNIv0Bz4ubUu6InJy4kMaJKeJPOLlU55lTXJSYfBZM/L4NvAui2i5vA9g2BrA==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/kv@2.5.0':
     resolution: {integrity: sha512-5dzcUMMOKl8u75FXbpy2BHp38uafjzo3RW2HEm6EY8QoM/vHw6RChFzJ9YEPJDbvcHR8gdMpgC65LYPTjifc3g==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/runner-vm@2.5.0':
     resolution: {integrity: sha512-0n85cOBq91D7roqsIqJESDnj0oRi+xNVjDfd5uDIT1dW1qo5asA5Mwx6ntzCJB1BcB4khNatUIwpO3ZT+kT/YQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/scheduler@2.5.0':
     resolution: {integrity: sha512-+a/I2QLp3UaZpKVobzFH3eHsi5ubhBp8q/AH/sCDwcZmatbCp2+oDrjMgTqhF6Fm8ryR4BYkHQOgkGZ5l7gQjw==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/shared@2.5.0':
     resolution: {integrity: sha512-2oPxhnCGg8DNoo0NzUdc2BylGGeHQQvFJ6mDODjxbSXybeQC0+Ul5Ujv/FyU9W/eTbUEWNqKBycINyuXqSnJ/w==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/sites@2.5.0':
     resolution: {integrity: sha512-AwYZb6ppP00YLkVNJnCe0lzJJemCDwibFjJywECY+aXFFNRo80sLpePPOXytplaUpen1uxnxUc8vdKBFVoB5cQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/storage-file@2.5.0':
     resolution: {integrity: sha512-ytwWZEIn3eMBnI2FdqvM5+mJVuI2aIBeZNjhZFuF5/AW3v1uslqY55Qd5Fnfn+2C7z6ivVaUv/TlEwot9ZDUnw==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/storage-memory@2.5.0':
     resolution: {integrity: sha512-cydVKLY0cZe2Sah0jV3s9MK3gmYLrQQcpCdMHMBEUz+nRfjfnuzs4WXzzUXCWwNT+WFC0V2WvDp2sMt+lVsmsA==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/watcher@2.5.0':
     resolution: {integrity: sha512-6ECE7po8NBxLmr2M00f7TWLEp1dMaAm3swf4D3ZU2xy3IqSBZE3QbOBuczYEYUIk7F+kXgaREISQg4e5QdECXQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/web-sockets@2.5.0':
     resolution: {integrity: sha512-nnLBtbHdmgGUNTxP0IeAz1B4UGCO/6W+4edzjogtz3JJumKQE+ink5+SIrmL0C1Pitrc2+kO2WYsQzWh3a2Amg==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -3106,25 +3121,15 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
-  '@trpc/client@11.0.0':
-    resolution: {integrity: sha512-U2THlxsdr4ykAX5lpTU8k5WRADPQ+68Ex2gfUht3MlCxGK7njBmNSSzjpQSWNt7tMI/xsYrddFiRlmEPrh+Cbg==}
-    peerDependencies:
-      '@trpc/server': 11.0.0
-      typescript: '>=5.7.2'
-
   '@trpc/client@11.0.0-rc.498':
     resolution: {integrity: sha512-a1VjvLHCo8gPENMfzI8lVF1ys6kOGI3f/cIAZUMB0d2TlkDERlFYANnSnzFvmiKy6ICh3lsQQ3OIMmIfyd8OtQ==}
     peerDependencies:
       '@trpc/server': 11.0.0-rc.498+5714423cc
 
-  '@trpc/react-query@11.0.0':
-    resolution: {integrity: sha512-HeE9bBLA6nqC2xk5wlNZIPQ5vmyli3tgNNab8fTE489+ksNMKxaIx66pZKsMJIorDcP1wS0rWNV+GroU0iR98g==}
+  '@trpc/client@11.13.0':
+    resolution: {integrity: sha512-Tszb0RXGxZQ0OzoH4IGqai/Es1u1RNnvuCr6cbOoJUKyROlF6zeUvQlJvKeldZ+XZ+bGWCnIdfcdA6XDDDNsKQ==}
     peerDependencies:
-      '@tanstack/react-query': ^5.67.1
-      '@trpc/client': 11.0.0
-      '@trpc/server': 11.0.0
-      react: '>=18.2.0'
-      react-dom: '>=18.2.0'
+      '@trpc/server': 11.13.0
       typescript: '>=5.7.2'
 
   '@trpc/react-query@11.0.0-rc.498':
@@ -3136,13 +3141,22 @@ packages:
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
 
-  '@trpc/server@11.0.0':
-    resolution: {integrity: sha512-xY9q/b/wR/tWGYTm5xmRjivkYD2EZZXmOKmHuNJRYZuLbieeNUsdfQRjJC409WB1pjKWInomhHwuA8bahZJ4lQ==}
+  '@trpc/react-query@11.13.0':
+    resolution: {integrity: sha512-yF3MAWcfbCgDHXS3FO5tDrvZPK+WbafhPYccty8Bv1kHkjrYzfHAZjIWQATi8egxm6dQnZuyW24mTst5W/9N/A==}
     peerDependencies:
+      '@tanstack/react-query': ^5.80.3
+      '@trpc/client': 11.13.0
+      '@trpc/server': 11.13.0
+      react: '>=18.2.0'
       typescript: '>=5.7.2'
 
   '@trpc/server@11.0.0-rc.498':
     resolution: {integrity: sha512-LECCOz8JNB67CBasPA6fkLbhJIbUQRP1wq02xUfUMeaSEZFWJL+7fcTgLaWFQSHMMnMsvkLuDuDDkUSCF2SXmg==}
+
+  '@trpc/server@11.13.0':
+    resolution: {integrity: sha512-Iv3tWeFdb9d1UQwCPFtOcf63mF/6HD0FRDnzLmFIKWDBfKUvHUfU3yNr2pYiGs0Ctljc991Wh8xbuyAPRkdqyA==}
+    peerDependencies:
+      typescript: '>=5.7.2'
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -3342,8 +3356,8 @@ packages:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
 
-  ansi-regex@6.0.1:
-    resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
+  ansi-regex@6.2.2:
+    resolution: {integrity: sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg==}
     engines: {node: '>=12'}
 
   ansi-styles@3.2.1:
@@ -3358,8 +3372,8 @@ packages:
     resolution: {integrity: sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==}
     engines: {node: '>=10'}
 
-  ansi-styles@6.2.1:
-    resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
+  ansi-styles@6.2.3:
+    resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
 
   anymatch@3.1.2:
@@ -3421,6 +3435,10 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
+  balanced-match@4.0.4:
+    resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
+    engines: {node: 18 || 20 || >=22}
+
   before-after-hook@2.2.3:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
 
@@ -3432,11 +3450,18 @@ packages:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
 
-  brace-expansion@1.1.11:
-    resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
+  brace-expansion@1.1.14:
+    resolution: {integrity: sha512-MWPGfDxnyzKU7rNOW9SP/c50vi3xrmrua/+6hfPbCS2ABNWfx24vPidzvC7krjU/RTo235sV776ymlsMtGKj8g==}
 
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
+
+  brace-expansion@2.1.0:
+    resolution: {integrity: sha512-TN1kCZAgdgweJhWWpgKYrQaMNHcDULHkWwQIspdtjV4Y5aurRdZpjAqn6yX3FPqTA9ngHCc4hJxMAMgGfve85w==}
+
+  brace-expansion@5.0.6:
+    resolution: {integrity: sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==}
+    engines: {node: 18 || 20 || >=22}
 
   braces@3.0.2:
     resolution: {integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==}
@@ -3977,17 +4002,18 @@ packages:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
 
-  glob@10.3.10:
-    resolution: {integrity: sha512-fa46+tv1Ak0UPK1TOy/pZrIybNNt4HCv7SDzwyfiOZkvZLEbjsZkJBPtDHVshZjbecAoAGSC20MjLDG/qr679g==}
-    engines: {node: '>=16 || 14 >=14.17'}
+  glob@10.5.0:
+    resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
+
+  glob@13.0.6:
+    resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
+    engines: {node: 18 || 20 || >=22}
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-
-  glob@8.0.3:
-    resolution: {integrity: sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==}
-    engines: {node: '>=12'}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -4101,6 +4127,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -4184,9 +4211,8 @@ packages:
     resolution: {integrity: sha512-6Lthe1hqXHBNsqvgDzGO6l03XNeu3CrG4RqQ1KM9+l5+jNGpEJfIELx1NS3SEHmJQA8np/u+E4EPRKRiu6m19A==}
     engines: {node: '>=8'}
 
-  jackspeak@2.3.6:
-    resolution: {integrity: sha512-N3yCS/NegsOBokc8GAdM8UcmfsKiSS8cipheD/nivzr700H+nsMOxJjQnvwOcRYVuFkdH0wGUvW2WbXGmrZGbQ==}
-    engines: {node: '>=14'}
+  jackspeak@3.4.3:
+    resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
   jest-diff@27.5.1:
     resolution: {integrity: sha512-m0NvkX55LDt9T4mctTEgnZk3fmEg3NRYutvMPWM/0iPnkFj2wIeF45O1718cMSOFO1vINkqmxqD8vE37uTEbqw==}
@@ -4385,12 +4411,12 @@ packages:
   loupe@3.2.0:
     resolution: {integrity: sha512-2NCfZcT5VGVNX9mSZIxLRkEAegDGBpuQZBy13desuHeVORmBDyAET4TkJr4SjqQy3A8JDofMN6LpkK8Xcm/dlw==}
 
-  lru-cache@10.0.1:
-    resolution: {integrity: sha512-IJ4uwUTi2qCccrioU6g9g/5rvvVl13bsdczUUcqbciD9iLr095yj8DQKdObriEvuNSx325N1rV1O0sJFszx75g==}
-    engines: {node: 14 || >=16.14}
-
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
+
+  lru-cache@11.3.6:
+    resolution: {integrity: sha512-Gf/KoL3C/MlI7Bt0PGI9I+TeTC/I6r/csU58N4BSNc4lppLBeKsOdFYkK+dX0ABDUMJNfCHTyPpzwwO21Awd3A==}
+    engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -4446,6 +4472,7 @@ packages:
   miniflare@2.5.0:
     resolution: {integrity: sha512-3IR+n/kLBA7zQ20HDjnA0HufQlr197krD8jPsaYO5wTrkIUCTvrilbI0sCo0X9CP/I3BCIl8fiZc1Jf7+MX7jQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
     hasBin: true
     peerDependencies:
       '@miniflare/storage-redis': 2.5.0
@@ -4459,19 +4486,23 @@ packages:
       ioredis:
         optional: true
 
-  minimatch@3.1.2:
-    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
+  minimatch@10.2.5:
+    resolution: {integrity: sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==}
+    engines: {node: 18 || 20 || >=22}
+
+  minimatch@3.1.5:
+    resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
 
   minimatch@5.1.0:
     resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
     engines: {node: '>=10'}
 
-  minimatch@9.0.3:
-    resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
+  minimatch@9.0.9:
+    resolution: {integrity: sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==}
     engines: {node: '>=16 || 14 >=14.17'}
 
-  minipass@7.0.4:
-    resolution: {integrity: sha512-jYofLM5Dam9279rdkWzqHozUo4ybjdZmCsDHePy5V/PbBcVMiSZR97gmAy45aqi8CK1lG2ECd356FU86avfwUQ==}
+  minipass@7.1.3:
+    resolution: {integrity: sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   mri@1.2.0:
@@ -4594,6 +4625,9 @@ packages:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
     engines: {node: '>=6'}
 
+  package-json-from-dist@1.0.1:
+    resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
+
   package-manager-detector@0.2.9:
     resolution: {integrity: sha512-+vYvA/Y31l8Zk8dwxHhL3JfTuHPm6tlxM2A3GeQyl7ovYnSp1+mzAxClxaOr0qO1TtPxbQxetI7v5XqKLJZk7Q==}
 
@@ -4635,9 +4669,13 @@ packages:
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
-  path-scurry@1.10.1:
-    resolution: {integrity: sha512-MkhCqzzBEpPvxxQ71Md0b1Kk51W01lrYvlMzSUaIzNsODdd7mqhiimSZlr+VegAz5Z6Vzt9Xg2ttE//XBhH3EQ==}
-    engines: {node: '>=16 || 14 >=14.17'}
+  path-scurry@1.11.1:
+    resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
+    engines: {node: '>=16 || 14 >=14.18'}
+
+  path-scurry@2.0.2:
+    resolution: {integrity: sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==}
+    engines: {node: 18 || 20 || >=22}
 
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
@@ -4998,8 +5036,8 @@ packages:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
     engines: {node: '>=8'}
 
-  strip-ansi@7.0.1:
-    resolution: {integrity: sha512-cXNxvT8dFNRVfhVME3JAe98mkXDYN2O1l7jmcwMnOslDeESg1rF/OZMtK0nRAhiari1unG5cD4jG3rapUAkLbw==}
+  strip-ansi@7.2.0:
+    resolution: {integrity: sha512-yDPMNjp4WyfYBkHnjIRLfca1i6KMyGCtsVgoKe/z1+6vukgaENdgGBZt+ZmKPc4gavvEZ5OgHfHdrazhgNyG7w==}
     engines: {node: '>=12'}
 
   strip-bom@3.0.0:
@@ -6832,7 +6870,7 @@ snapshots:
     dependencies:
       string-width: 5.1.2
       string-width-cjs: string-width@4.2.3
-      strip-ansi: 7.0.1
+      strip-ansi: 7.2.0
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
@@ -7342,7 +7380,7 @@ snapshots:
       dotenv: 16.4.7
       es-module-lexer: 1.7.0
       esbuild: 0.25.0
-      glob: 10.3.10
+      glob: 10.5.0
       graphql: 16.8.1
       lightningcss: 1.29.1
       magic-string: 0.30.17
@@ -7558,22 +7596,13 @@ snapshots:
       '@tanstack/query-core': 5.90.20
       react: 19.0.0
 
-  '@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3)':
-    dependencies:
-      '@trpc/server': 11.0.0(typescript@5.7.3)
-      typescript: 5.7.3
-
   '@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498)':
     dependencies:
       '@trpc/server': 11.0.0-rc.498
 
-  '@trpc/react-query@11.0.0(@quilted/react-dom@19.0.1)(@quilted/react@19.0.0)(@tanstack/react-query@5.90.21(@quilted/react@19.0.0))(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3)':
+  '@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)':
     dependencies:
-      '@tanstack/react-query': 5.90.21(@quilted/react@19.0.0)
-      '@trpc/client': 11.0.0(@trpc/server@11.0.0(typescript@5.7.3))(typescript@5.7.3)
-      '@trpc/server': 11.0.0(typescript@5.7.3)
-      react: '@quilted/react@19.0.0'
-      react-dom: '@quilted/react-dom@19.0.1'
+      '@trpc/server': 11.13.0(typescript@5.7.3)
       typescript: 5.7.3
 
   '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@packages+react-dom)(react@packages+react)':
@@ -7584,19 +7613,27 @@ snapshots:
       react: link:packages/react
       react-dom: link:packages/react-dom
 
-  '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.90.21(react@19.0.0))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@trpc/react-query@11.13.0(@quilted/react@19.0.0)(@tanstack/react-query@5.90.21(@quilted/react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)':
+    dependencies:
+      '@tanstack/react-query': 5.90.21(@quilted/react@19.0.0)
+      '@trpc/client': 11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)
+      '@trpc/server': 11.13.0(typescript@5.7.3)
+      react: '@quilted/react@19.0.0'
+      typescript: 5.7.3
+
+  '@trpc/react-query@11.13.0(@tanstack/react-query@5.90.21(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.13.0(typescript@5.7.3))(react@19.0.0)(typescript@5.7.3)':
     dependencies:
       '@tanstack/react-query': 5.90.21(react@19.0.0)
-      '@trpc/client': 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
-      '@trpc/server': 11.0.0-rc.498
+      '@trpc/client': 11.13.0(@trpc/server@11.13.0(typescript@5.7.3))(typescript@5.7.3)
+      '@trpc/server': 11.13.0(typescript@5.7.3)
       react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-
-  '@trpc/server@11.0.0(typescript@5.7.3)':
-    dependencies:
       typescript: 5.7.3
 
   '@trpc/server@11.0.0-rc.498': {}
+
+  '@trpc/server@11.13.0(typescript@5.7.3)':
+    dependencies:
+      typescript: 5.7.3
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -7818,7 +7855,7 @@ snapshots:
 
   ansi-regex@5.0.1: {}
 
-  ansi-regex@6.0.1: {}
+  ansi-regex@6.2.2: {}
 
   ansi-styles@3.2.1:
     dependencies:
@@ -7830,7 +7867,7 @@ snapshots:
 
   ansi-styles@5.2.0: {}
 
-  ansi-styles@6.2.1: {}
+  ansi-styles@6.2.3: {}
 
   anymatch@3.1.2:
     dependencies:
@@ -7902,6 +7939,8 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
+  balanced-match@4.0.4: {}
+
   before-after-hook@2.2.3: {}
 
   better-path-resolve@1.0.0:
@@ -7910,7 +7949,7 @@ snapshots:
 
   binary-extensions@2.2.0: {}
 
-  brace-expansion@1.1.11:
+  brace-expansion@1.1.14:
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
@@ -7918,6 +7957,14 @@ snapshots:
   brace-expansion@2.0.1:
     dependencies:
       balanced-match: 1.0.2
+
+  brace-expansion@2.1.0:
+    dependencies:
+      balanced-match: 1.0.2
+
+  brace-expansion@5.0.6:
+    dependencies:
+      balanced-match: 4.0.4
 
   braces@3.0.2:
     dependencies:
@@ -8485,30 +8532,29 @@ snapshots:
     dependencies:
       is-glob: 4.0.3
 
-  glob@10.3.10:
+  glob@10.5.0:
     dependencies:
       foreground-child: 3.1.1
-      jackspeak: 2.3.6
-      minimatch: 9.0.3
-      minipass: 7.0.4
-      path-scurry: 1.10.1
+      jackspeak: 3.4.3
+      minimatch: 9.0.9
+      minipass: 7.1.3
+      package-json-from-dist: 1.0.1
+      path-scurry: 1.11.1
+
+  glob@13.0.6:
+    dependencies:
+      minimatch: 10.2.5
+      minipass: 7.1.3
+      path-scurry: 2.0.2
 
   glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       once: 1.4.0
       path-is-absolute: 1.0.1
-
-  glob@8.0.3:
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 5.1.0
-      once: 1.4.0
 
   globals@11.12.0: {}
 
@@ -8683,7 +8729,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jackspeak@2.3.6:
+  jackspeak@3.4.3:
     dependencies:
       '@isaacs/cliui': 8.0.2
     optionalDependencies:
@@ -8899,9 +8945,9 @@ snapshots:
 
   loupe@3.2.0: {}
 
-  lru-cache@10.0.1: {}
-
   lru-cache@10.4.3: {}
+
+  lru-cache@11.3.6: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -8969,19 +9015,23 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  minimatch@3.1.2:
+  minimatch@10.2.5:
     dependencies:
-      brace-expansion: 1.1.11
+      brace-expansion: 5.0.6
+
+  minimatch@3.1.5:
+    dependencies:
+      brace-expansion: 1.1.14
 
   minimatch@5.1.0:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimatch@9.0.3:
+  minimatch@9.0.9:
     dependencies:
-      brace-expansion: 2.0.1
+      brace-expansion: 2.1.0
 
-  minipass@7.0.4: {}
+  minipass@7.1.3: {}
 
   mri@1.2.0: {}
 
@@ -9070,6 +9120,8 @@ snapshots:
 
   p-try@2.2.0: {}
 
+  package-json-from-dist@1.0.1: {}
+
   package-manager-detector@0.2.9: {}
 
   parent-module@1.0.1:
@@ -9101,10 +9153,15 @@ snapshots:
 
   path-parse@1.0.7: {}
 
-  path-scurry@1.10.1:
+  path-scurry@1.11.1:
     dependencies:
-      lru-cache: 10.0.1
-      minipass: 7.0.4
+      lru-cache: 10.4.3
+      minipass: 7.1.3
+
+  path-scurry@2.0.2:
+    dependencies:
+      lru-cache: 11.3.6
+      minipass: 7.1.3
 
   path-type@4.0.0: {}
 
@@ -9432,15 +9489,15 @@ snapshots:
     dependencies:
       eastasianwidth: 0.2.0
       emoji-regex: 9.2.2
-      strip-ansi: 7.0.1
+      strip-ansi: 7.2.0
 
   strip-ansi@6.0.1:
     dependencies:
       ansi-regex: 5.0.1
 
-  strip-ansi@7.0.1:
+  strip-ansi@7.2.0:
     dependencies:
-      ansi-regex: 6.0.1
+      ansi-regex: 6.2.2
 
   strip-bom@3.0.0: {}
 
@@ -9474,7 +9531,7 @@ snapshots:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 7.2.3
-      minimatch: 3.1.2
+      minimatch: 3.1.5
 
   tinybench@2.9.0: {}
 
@@ -9786,9 +9843,9 @@ snapshots:
 
   wrap-ansi@8.1.0:
     dependencies:
-      ansi-styles: 6.2.1
+      ansi-styles: 6.2.3
       string-width: 5.1.2
-      strip-ansi: 7.0.1
+      strip-ansi: 7.2.0
 
   wrappy@1.0.2: {}
 
