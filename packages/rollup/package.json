@@ -161,7 +161,7 @@
     "magic-string": "^0.30.17",
     "mrmime": "^1.0.1",
     "rollup-plugin-esbuild": "^6.2.0",
-    "rollup-plugin-node-externals": "^6.1.2",
+    "rollup-plugin-node-externals": "^9.0.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "semver": "^7.7.0",
     "systemjs": "^6.15.0"
