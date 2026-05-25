@@ -707,7 +707,7 @@ importers:
         specifier: workspace:^0.1.5
         version: link:../preact-context
       '@quilted/preact-router':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^0.4.0
         version: link:../preact-router
       '@quilted/signals':
         specifier: workspace:^0.2.4
@@ -834,13 +834,13 @@ importers:
         specifier: workspace:^0.1.11
         version: link:../preact-graphql
       '@quilted/preact-localize':
-        specifier: workspace:^0.4.3
+        specifier: workspace:^0.4.4
         version: link:../preact-localize
       '@quilted/preact-performance':
         specifier: workspace:^0.1.3
         version: link:../preact-performance
       '@quilted/preact-router':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^0.4.0
         version: link:../preact-router
       '@quilted/preact-signals':
         specifier: workspace:^0.1.3
