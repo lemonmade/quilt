@@ -19,6 +19,21 @@ export interface NavigationOptions {
     | boolean;
   base?: string | URL;
   isExternal?(url: URL, currentUrl: URL): boolean;
+  /**
+   * Whether the router manages scroll position across navigations. When
+   * enabled (the default in the browser), the router switches the browser to
+   * manual scroll restoration and keeps its own per-entry scroll offsets,
+   * keyed by navigation id and persisted to `sessionStorage`:
+   *
+   * - a forward navigation resets to the top (or scrolls to the URL hash
+   *   target, if present);
+   * - a back/forward navigation restores the offset the entry was last left
+   *   at;
+   * - a reload restores the offset of the entry it lands on.
+   *
+   * Pass `false` to leave scrolling entirely to the browser/your app.
+   */
+  scrollRestoration?: boolean;
 }
 
 export interface NavigateOptions {
@@ -28,6 +43,14 @@ export interface NavigateOptions {
 }
 
 const STATE_ID_FIELD_KEY = '_id';
+
+const SCROLL_POSITIONS_STORAGE_KEY = 'quilt:navigation:scroll-positions';
+
+// Cap the persisted set so a long-lived tab session can't grow it without
+// bound; the most-recent entries are the ones a user is likely to return to.
+const MAX_STORED_SCROLL_POSITIONS = 50;
+
+type ScrollPosition = readonly [x: number, y: number];
 
 export class Navigation {
   readonly base: string;
@@ -45,9 +68,19 @@ export class Navigation {
   #navigationRequests = new Map<string, NavigationRequest>();
   #isExternal: NavigationOptions['isExternal'];
 
+  #scrollRestoration: boolean;
+  #scrollPositions = new Map<string, ScrollPosition>();
+  #scrollRestorationFrame: number | undefined;
+  #scrollRecordFrame: number | undefined;
+
   constructor(
     initial?: string | URL | Partial<NavigationRequest>,
-    {cache = true, base, isExternal}: NavigationOptions = {},
+    {
+      cache = true,
+      base,
+      isExternal,
+      scrollRestoration = true,
+    }: NavigationOptions = {},
   ) {
     this.base = base ? (typeof base === 'string' ? base : base.pathname) : '/';
     this.cache =
@@ -59,6 +92,7 @@ export class Navigation {
           ? cache
           : new RouterNavigationCache(this, {entries: cache});
     this.#isExternal = isExternal;
+    this.#scrollRestoration = scrollRestoration;
 
     const currentRequest = new BrowserNavigationRequest(initial);
     this.#currentRequest = signal(currentRequest);
@@ -67,6 +101,26 @@ export class Navigation {
 
     if (typeof window !== 'undefined') {
       window.addEventListener('popstate', this.#handlePopstate);
+
+      if (this.#scrollRestoration) {
+        // Own scroll restoration outright: the browser's heuristic restores
+        // against the document height at popstate time, which an async SPA
+        // route hasn't rendered yet, landing at the wrong offset.
+        if ('scrollRestoration' in history) {
+          history.scrollRestoration = 'manual';
+        }
+
+        this.#scrollPositions = readStoredScrollPositions();
+        window.addEventListener('scroll', this.#handleScroll, {passive: true});
+        window.addEventListener('pagehide', this.#persistScrollPositions);
+
+        // Restore the offset for the entry we loaded into. Covers a reload
+        // partway down a page: the id survives in `history.state` and the
+        // SSR'd markup is already at full height, so the offset is reachable.
+        if (this.#scrollPositions.has(currentRequest.id)) {
+          this.#restoreScrollPosition(currentRequest);
+        }
+      }
     }
   }
 
@@ -79,6 +133,10 @@ export class Navigation {
     }
 
     const currentRequest = this.#currentRequest.peek();
+
+    // Capture where we're leaving from before the URL changes, so a later
+    // back/forward to this entry restores the offset the user left it at.
+    if (this.#scrollRestoration) this.#recordScrollPosition(currentRequest.id);
 
     const id = createNavigationRequestID();
     const url = resolveURL(to, currentRequest.url, base ?? this.base);
@@ -139,6 +197,19 @@ export class Navigation {
     this.#navigationRequests.set(id, request);
     this.#currentRequest.value = request;
 
+    if (this.#scrollRestoration) {
+      if (replace) {
+        // A replace keeps the user in place, but it mints a fresh entry id;
+        // carry the current offset onto it so a later return still restores.
+        const previous = this.#scrollPositions.get(currentRequest.id);
+        if (previous) this.#scrollPositions.set(id, previous);
+      } else {
+        this.#restoreScrollPosition(request);
+      }
+
+      this.#persistScrollPositions();
+    }
+
     return request;
   };
 
@@ -175,6 +246,12 @@ export class Navigation {
   }
 
   #handlePopstate = () => {
+    // The browser keeps the outgoing page's scroll offset until we re-render
+    // (manual restoration), so record it against the entry we're leaving.
+    if (this.#scrollRestoration) {
+      this.#recordScrollPosition(this.#currentRequest.peek().id);
+    }
+
     const navigationIDs = this.#navigationIDs;
     const fallbackNavigationID = navigationIDs[0]!;
 
@@ -214,6 +291,78 @@ export class Navigation {
     // this.#forceNextNavigation = false;
 
     this.#currentRequest.value = request;
+
+    if (this.#scrollRestoration) {
+      this.#persistScrollPositions();
+      this.#restoreScrollPosition(request);
+    }
+  };
+
+  #handleScroll = () => {
+    // Coalesce the high-frequency scroll event into a single write per frame.
+    if (this.#scrollRecordFrame != null) return;
+    this.#scrollRecordFrame = requestAnimationFrame(() => {
+      this.#scrollRecordFrame = undefined;
+      this.#recordScrollPosition();
+    });
+  };
+
+  #recordScrollPosition(id = this.#currentRequest.peek().id) {
+    this.#scrollPositions.set(id, [window.scrollX, window.scrollY]);
+  }
+
+  #restoreScrollPosition(request: NavigationRequest) {
+    if (this.#scrollRestorationFrame != null) {
+      cancelAnimationFrame(this.#scrollRestorationFrame);
+      this.#scrollRestorationFrame = undefined;
+    }
+
+    const saved = this.#scrollPositions.get(request.id);
+    const {hash} = request.url;
+
+    // Fresh forward navigation with no hash target: reset to the top, and do
+    // it synchronously so there's no flash of the new route rendered at the
+    // previous page's offset before the frame callback fires.
+    if (saved == null && hash.length <= 1) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    // A saved offset (back/forward, reload) or a hash target both need the
+    // destination route's content committed — and tall enough — before we can
+    // scroll to it, so defer to the next frame.
+    this.#scrollRestorationFrame = requestAnimationFrame(() => {
+      this.#scrollRestorationFrame = undefined;
+
+      if (saved != null) {
+        window.scrollTo(saved[0], saved[1]);
+        return;
+      }
+
+      const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (target) {
+        target.scrollIntoView();
+      } else {
+        window.scrollTo(0, 0);
+      }
+    });
+  }
+
+  #persistScrollPositions = () => {
+    try {
+      const entries = [...this.#scrollPositions];
+      const trimmed =
+        entries.length > MAX_STORED_SCROLL_POSITIONS
+          ? entries.slice(entries.length - MAX_STORED_SCROLL_POSITIONS)
+          : entries;
+      sessionStorage.setItem(
+        SCROLL_POSITIONS_STORAGE_KEY,
+        JSON.stringify(trimmed),
+      );
+    } catch {
+      // `sessionStorage` can throw (privacy mode, sandboxed iframe, quota).
+      // Scroll restoration is a progressive enhancement — swallow and move on.
+    }
   };
 }
 
@@ -509,4 +658,14 @@ function createNavigationRequestID() {
 
 function urlToPath(url: URL) {
   return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function readStoredScrollPositions(): Map<string, ScrollPosition> {
+  try {
+    const stored = sessionStorage.getItem(SCROLL_POSITIONS_STORAGE_KEY);
+    if (!stored) return new Map();
+    return new Map(JSON.parse(stored) as [string, ScrollPosition][]);
+  } catch {
+    return new Map();
+  }
 }
