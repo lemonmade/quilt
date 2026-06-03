@@ -34,7 +34,10 @@ export function useRoutes<Context = unknown>(
 
       return matched;
     });
-  }, [navigation, parentEntry]);
+    // Include `routes`/`context` so a route tree that is swapped in place
+    // (e.g. a navigation that changes which set of routes is active) re-matches
+    // against the new tree instead of the one captured when this hook first ran.
+  }, [navigation, parentEntry, routes, context]);
 
   return (
     <Suspense fallback={null}>
