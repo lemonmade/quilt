@@ -11,11 +11,40 @@ import {
 } from './graphql/transform.ts';
 
 export interface GraphQLOptions {
+  /**
+   * Whether to write a manifest mapping each operation's `id` (a SHA-256
+   * hash of its normalized source) to its source text. Pass `true` to write
+   * the manifest to `manifests/graphql.json`, or a string to control the
+   * path. The manifest is the artifact a server consumes to execute
+   * "persisted" operations, where clients send only the operation's `id`.
+   */
   manifest?: string | boolean;
   addTypename?: boolean;
+
+  /**
+   * Whether the transformed `.graphql` modules include the operation's
+   * `source` text. Defaults to `true`.
+   *
+   * Set this to `false` for builds using "persisted" GraphQL operations:
+   * each emitted module then contains only the operation's `id`, `type`,
+   * and `name`, keeping the query text out of the resulting JavaScript
+   * bundles entirely. Pair this with the `manifest` option, which still
+   * receives the full source for every operation (so your server can map
+   * `id` back to the executable document), and with the `source` option of
+   * `createGraphQLFetch()`, which omits the missing source from requests.
+   *
+   * Documents containing only fragments keep their source regardless of
+   * this option — they can't be executed on their own, and only exist at
+   * runtime to be inlined into the operations that `#import` them.
+   */
+  source?: boolean;
 }
 
-export function graphql({manifest, addTypename}: GraphQLOptions = {}): Plugin {
+export function graphql({
+  manifest,
+  addTypename,
+  source: includeSource = true,
+}: GraphQLOptions = {}): Plugin {
   const shouldWriteManifest = Boolean(manifest);
   const manifestPath =
     typeof manifest === 'string' ? manifest : `manifests/graphql.json`;
@@ -49,9 +78,17 @@ export function graphql({manifest, addTypename}: GraphQLOptions = {}): Plugin {
         {addTypename},
       );
 
+      // When the operation source is omitted from the module, the manifest
+      // (attached to module meta below) still carries it, so the persisted
+      // operation map always contains the executable document.
+      const moduleContent =
+        includeSource || document.type == null
+          ? document
+          : {id: document.id, type: document.type, name: document.name};
+
       return {
         code: `export default JSON.parse(${JSON.stringify(
-          JSON.stringify(document),
+          JSON.stringify(moduleContent),
         )})`,
         meta: shouldWriteManifest
           ? {
