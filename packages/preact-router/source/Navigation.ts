@@ -375,7 +375,11 @@ export class RouterNavigationCache {
   #entryCache = new Map<string, RouteNavigationEntry<any, any, any>>();
   #matchCache = new Map<
     string,
-    readonly RouteNavigationEntry<any, any, any>[]
+    {
+      routes: readonly RouteDefinition<any, any, any>[];
+      // Mutable to match `routeStack` below; the matcher fills it by push.
+      stack: RouteNavigationEntry<any, any, any>[];
+    }
   >();
 
   constructor(
@@ -409,17 +413,20 @@ export class RouterNavigationCache {
     if (parent) matchID += `@${stringifyKey(parent.key)}`;
 
     if (!this.disabled) {
-      const cached = this.#matchCache.get(matchID) as
-        | RouteNavigationEntry<any, any, any>[]
-        | undefined;
-      if (cached) {
-        return cached;
+      const cached = this.#matchCache.get(matchID);
+      // Only reuse a cached match when it came from the *same* route tree. The
+      // active tree can be swapped in place for a given navigation (e.g. a
+      // tenant/scope change that selects a different set of routes), and keying
+      // solely by request id would otherwise pin the entry to the stale tree
+      // and mis-match the URL against it.
+      if (cached && cached.routes === routes) {
+        return cached.stack;
       }
     }
 
     let routeStack: RouteNavigationEntry<any, any, any>[] = [];
     if (!this.disabled) {
-      this.#matchCache.set(matchID, routeStack);
+      this.#matchCache.set(matchID, {routes, stack: routeStack});
     }
 
     const base = this.#base;
