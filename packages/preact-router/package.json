@@ -49,7 +49,7 @@
     "@quilted/signals": "workspace:^0.2.4"
   },
   "peerDependencies": {
-    "preact": "^10.29.0"
+    "preact": "^10.29.2"
   },
   "peerDependenciesMeta": {
     "preact": {
@@ -59,6 +59,6 @@
   "devDependencies": {
     "@quilted/preact-signals": "workspace:*",
     "@quilted/preact-testing": "workspace:*",
-    "preact": "^10.29.0"
+    "preact": "^10.29.2"
   }
 }

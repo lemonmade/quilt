@@ -2,7 +2,8 @@
   "extends": "@quilted/typescript/tsconfig.workspace.json",
   "compilerOptions": {
     "outDir": "build/typescript/workspace",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+    "types": ["node"]
   },
   "include": [
     "config/**/*.ts",

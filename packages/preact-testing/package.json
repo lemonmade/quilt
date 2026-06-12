@@ -43,10 +43,10 @@
   },
   "devDependencies": {
     "expect": "^29.0.0",
-    "preact": "^10.29.0"
+    "preact": "^10.29.2"
   },
   "peerDependencies": {
-    "preact": "^10.29.0"
+    "preact": "^10.29.2"
   },
   "peerDependenciesMeta": {
     "preact": {

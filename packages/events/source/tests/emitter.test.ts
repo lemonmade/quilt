@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+/// <reference types="node" />
 
 import {EventEmitter as NodeEventEmitter} from 'node:events';
 import {expect, it, describe} from 'vitest';
