@@ -18,6 +18,7 @@ import {react} from './shared/react.ts';
 import {monorepoPackageAliases} from './shared/node.ts';
 import {tsconfigAliases} from './shared/typescript.ts';
 import {createMagicModulePlugin} from './shared/magic-module.ts';
+import {asVitePlugin} from './shared/plugin.ts';
 import {fileURLToPath} from 'url';
 
 export interface AppBaseOptions {
@@ -116,19 +117,24 @@ export async function quiltApp({
     babelPreprocess(),
     tsconfigAliases(),
     monorepoPackageAliases(),
-    {...magicModuleAppComponent({root, entry: app}), enforce: 'pre'},
-    {...magicModuleAppBrowserEntry(browser?.module), enforce: 'pre'},
+    asVitePlugin({...magicModuleAppComponent({root, entry: app}), enforce: 'pre'}),
+    asVitePlugin({
+      ...magicModuleAppBrowserEntry(browser?.module),
+      enforce: 'pre',
+    }),
     magicModuleAppAssetManifest({root, entry: browser?.entry}),
     workers(),
-    asyncModules({
-      preload: true,
-      moduleID({imported}) {
-        const relative = path.relative(process.cwd(), imported);
-        return relative.startsWith('..')
-          ? `/@id/quilt-async-module:${imported}`
-          : `/@id/quilt-async-module:/${relative}`;
-      },
-    }),
+    asVitePlugin(
+      asyncModules({
+        preload: true,
+        moduleID({imported}) {
+          const relative = path.relative(process.cwd(), imported);
+          return relative.startsWith('..')
+            ? `/@id/quilt-async-module:${imported}`
+            : `/@id/quilt-async-module:/${relative}`;
+        },
+      }),
+    ),
   ];
 
   const defaultEnvOptions = typeof env === 'object' ? env : undefined;
@@ -146,21 +152,31 @@ export async function quiltApp({
     });
 
     plugins.push(
-      restrictPluginToSSR({...serverPlugin, enforce: 'pre'}, {ssr: true}),
-      restrictPluginToSSR({...browserPlugin, enforce: 'pre'}, {ssr: false}),
+      restrictPluginToSSR(
+        asVitePlugin({...serverPlugin, enforce: 'pre'}),
+        {ssr: true},
+      ),
+      restrictPluginToSSR(
+        asVitePlugin({...browserPlugin, enforce: 'pre'}),
+        {ssr: false},
+      ),
     );
   } else {
-    plugins.push({
-      ...magicModuleEnv({mode, ...defaultEnvOptions}),
-      enforce: 'pre',
-    });
+    plugins.push(
+      asVitePlugin({
+        ...magicModuleEnv({mode, ...defaultEnvOptions}),
+        enforce: 'pre',
+      }),
+    );
   }
 
   if (server?.format !== 'custom') {
-    plugins.push({
-      ...magicModuleAppRequestRouter({entry: server?.entry}),
-      enforce: 'pre',
-    });
+    plugins.push(
+      asVitePlugin({
+        ...magicModuleAppRequestRouter({entry: server?.entry}),
+        enforce: 'pre',
+      }),
+    );
 
     plugins.push({
       name: '@quilted/development-server',
@@ -192,7 +208,7 @@ export async function quiltApp({
   }
 
   if (useGraphQL) {
-    plugins.push(graphql());
+    plugins.push(asVitePlugin(graphql()));
   }
 
   if (useReact) {

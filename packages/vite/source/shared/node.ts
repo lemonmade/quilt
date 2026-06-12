@@ -19,13 +19,16 @@ export function monorepoPackageAliases(): Plugin {
 
       plugin = await monorepoPackageAliases({root});
     },
+    // The wrapped plugin is typed against `rollup`; Vite 8 invokes these hooks
+    // with a rolldown plugin context and option types. The two are compatible
+    // at runtime, so forward the call across the nominal gap.
     buildStart(...args) {
       if (typeof plugin?.buildStart !== 'function') return;
-      return plugin.buildStart.call(this, ...args);
+      return (plugin.buildStart as Function).call(this, ...args);
     },
     resolveId(...args) {
       if (typeof plugin?.resolveId !== 'function') return;
-      return plugin.resolveId.call(this, ...args);
+      return (plugin.resolveId as Function).call(this, ...args);
     },
   };
 }
