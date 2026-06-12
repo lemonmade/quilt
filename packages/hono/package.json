@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
+    "@types/node": "^22.13.4",
     "@types/send": "^0.17.4",
     "hono": "^4.8.9"
   }
