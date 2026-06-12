@@ -22,8 +22,6 @@
   },
   "packageManager": "pnpm@11.1.1+sha512.d1fdf5f73c617b64fa1a56a81c3c8dfe0e966e33a6010aa256b517ae77be21d93e05affc0de1a83b0e4f29d569f68b446ae8f068cd7247c0bb3df0fb4d7bdf9a",
   "devDependencies": {
-    "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.0",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.28.0",
     "@quilted/events": "workspace:^",
@@ -39,7 +37,6 @@
     "@types/react-dom": "^19.0.4",
     "common-tags": "^1.8.2",
     "esbuild": "^0.25.0",
-    "execa": "^9.5.2",
     "hono": "^4.8.5",
     "jsdom": "^26.0.0",
     "preact": "^10.29.0",
