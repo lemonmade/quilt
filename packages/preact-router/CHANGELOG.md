@@ -1,5 +1,29 @@
 # @quilted/preact-router
 
+## 0.4.1
+
+### Patch Changes
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgraded the Preact and Hono dependency ecosystems to their current releases: preact 10.29.2, preact-render-to-string 6.7.0, @preact/signals 2.9, @preact/signals-core 1.14.2, @prefresh/vite 3, hono 4.12, and @hono/node-server 2. These are bumped together, and pinned to a single version tree-wide (via pnpm overrides), because mixing Preact copies crashes server rendering.
+
+- [#941](https://github.com/lemonmade/quilt/pull/941) [`b74006e`](https://github.com/lemonmade/quilt/commit/b74006ea1d60ff6d5418ff98eb427ea2c5a6dbef) Thanks [@lemonmade](https://github.com/lemonmade)! - Fixed `useRoutes` rendering a stale route tree after the active set of routes changes
+
+  When the array of routes passed to `useRoutes` changed in place — for example an app that swaps its whole route tree based on the current tenant/scope rather than reloading — the hook kept matching against the tree it captured on its first render, so a navigation that needed the new tree fell through to whatever the old tree matched (often a catch-all "not found"). A full page reload fixed it because that remounted the hook with the correct tree.
+
+  Two causes, both fixed:
+
+  - `useRoutes` memoised its matching `computed` with only `[navigation, parentEntry]` as dependencies, so the closure pinned the `routes`/`context` from first render. They're now dependencies, so the matcher re-runs against the current tree.
+  - `RouterNavigationCache#match` cached the matched stack keyed solely by navigation request id, ignoring the `routes` argument — so even once a fresh match ran, it returned the stale cached stack for that navigation. The cache entry now records the route tree it was produced from and is only reused when the same tree is passed back.
+
+  Consumers that pass a new `routes` array every render should memoise it (as is conventional for hook inputs) to avoid re-matching on every render.
+
+- Updated dependencies [[`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3)]:
+  - @quilted/preact-async@0.1.24
+  - @quilted/preact-browser@0.2.9
+  - @quilted/preact-context@0.1.6
+  - @quilted/preact-performance@0.1.4
+  - @quilted/signals@0.2.5
+
 ## 0.4.0
 
 ### Minor Changes

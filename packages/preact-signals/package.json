@@ -7,7 +7,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.1.5",
+  "version": "0.1.6",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@preact/signals": "^2.9.0",
-    "@quilted/signals": "workspace:^0.2.4"
+    "@quilted/signals": "workspace:^0.2.5"
   },
   "peerDependencies": {
     "preact": "^10.29.2"

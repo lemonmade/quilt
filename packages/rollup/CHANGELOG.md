@@ -1,5 +1,11 @@
 # @quilted/rollup
 
+## 0.5.0
+
+### Minor Changes
+
+- [#942](https://github.com/lemonmade/quilt/pull/942) [`ffc7101`](https://github.com/lemonmade/quilt/commit/ffc7101a4f25bcc9cae0151124c99aa5e46e5525) Thanks [@lemonmade](https://github.com/lemonmade)! - Added a `source` option to the `graphql()` build feature. Setting `source: false` omits the operation source from the transformed `.graphql` modules — each module then contains only the operation's `id`, `type`, and `name`, keeping query text out of your JavaScript bundles entirely. This is designed for "persisted" GraphQL operations: pair it with the existing `manifest` option (which still receives the full source for every operation, so a server can map `id` back to the executable document) and with the `source` option of `createGraphQLFetch()` (which omits the missing source from requests). Fragment-only documents keep their source regardless, since they only exist at runtime to be inlined into the operations that `#import` them.
+
 ## 0.4.6
 
 ### Patch Changes

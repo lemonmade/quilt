@@ -6,7 +6,7 @@
     "access": "public",
     "@quilted/registry": "https://registry.npmjs.org"
   },
-  "version": "0.2.8",
+  "version": "0.2.9",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -63,8 +63,8 @@
     "@quilted/assets": "workspace:^0.1.11",
     "@quilted/browser": "workspace:^0.2.5",
     "@quilted/http": "workspace:^0.3.0",
-    "@quilted/preact-context": "workspace:^0.1.5",
-    "@quilted/signals": "workspace:^0.2.4",
+    "@quilted/preact-context": "workspace:^0.1.6",
+    "@quilted/signals": "workspace:^0.2.5",
     "preact-render-to-string": "^6.7.0"
   },
   "peerDependencies": {

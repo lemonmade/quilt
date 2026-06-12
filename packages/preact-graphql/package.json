@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-graphql",
   "type": "module",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -40,9 +40,9 @@
   },
   "dependencies": {
     "@quilted/graphql": "workspace:^3.4.1",
-    "@quilted/preact-async": "workspace:^0.1.23",
-    "@quilted/preact-context": "workspace:^0.1.5",
-    "@quilted/preact-signals": "workspace:^0.1.3",
+    "@quilted/preact-async": "workspace:^0.1.24",
+    "@quilted/preact-context": "workspace:^0.1.6",
+    "@quilted/preact-signals": "workspace:^0.1.6",
     "@quilted/useful-types": "workspace:^2.0.0"
   },
   "peerDependencies": {

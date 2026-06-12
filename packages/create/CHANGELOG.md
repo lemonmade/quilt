@@ -1,5 +1,11 @@
 # @quilted/create
 
+## 0.3.6
+
+### Patch Changes
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Templates now run TypeScript files with Node directly — using `--experimental-transform-types` (Node 22.7+) — instead of `tsx`, dropping the extra dependency. Generated projects declare `engines.node >= 22.7.0` accordingly.
+
 ## 0.3.5
 
 ### Patch Changes

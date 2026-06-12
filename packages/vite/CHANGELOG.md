@@ -1,5 +1,19 @@
 # @quilted/vite
 
+## 0.4.0
+
+### Minor Changes
+
+- [#947](https://github.com/lemonmade/quilt/pull/947) [`e69a08f`](https://github.com/lemonmade/quilt/commit/e69a08f939040f7526ad95db88a2b2522e317d94) Thanks [@lemonmade](https://github.com/lemonmade)! - Added support for Vite 8 (built on Rolldown). `@quilted/vite`'s plugins now type-check against Vite 8's rolldown-based plugin context, and the `vite`/`vitest` peer ranges accept 8.x / 4.x. `@quilted/quilt`'s `vitest` peer range also accepts Vitest 4. Vite 5–7 and Vitest 1–3 remain supported.
+
+### Patch Changes
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgraded the Preact and Hono dependency ecosystems to their current releases: preact 10.29.2, preact-render-to-string 6.7.0, @preact/signals 2.9, @preact/signals-core 1.14.2, @prefresh/vite 3, hono 4.12, and @hono/node-server 2. These are bumped together, and pinned to a single version tree-wide (via pnpm overrides), because mixing Preact copies crashes server rendering.
+
+- Updated dependencies [[`ffc7101`](https://github.com/lemonmade/quilt/commit/ffc7101a4f25bcc9cae0151124c99aa5e46e5525), [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3)]:
+  - @quilted/rollup@0.5.0
+  - @quilted/hono@0.2.1
+
 ## 0.3.2
 
 ### Patch Changes

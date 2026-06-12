@@ -1,5 +1,33 @@
 # @quilted/quilt
 
+## 0.9.8
+
+### Patch Changes
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgraded the Preact and Hono dependency ecosystems to their current releases: preact 10.29.2, preact-render-to-string 6.7.0, @preact/signals 2.9, @preact/signals-core 1.14.2, @prefresh/vite 3, hono 4.12, and @hono/node-server 2. These are bumped together, and pinned to a single version tree-wide (via pnpm overrides), because mixing Preact copies crashes server rendering.
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Refreshed dependencies to current versions (graphql 16.14, jest-matcher-utils 30, expect 30) and added TypeScript 6 compatibility.
+
+- [#947](https://github.com/lemonmade/quilt/pull/947) [`e69a08f`](https://github.com/lemonmade/quilt/commit/e69a08f939040f7526ad95db88a2b2522e317d94) Thanks [@lemonmade](https://github.com/lemonmade)! - Added support for Vite 8 (built on Rolldown). `@quilted/vite`'s plugins now type-check against Vite 8's rolldown-based plugin context, and the `vite`/`vitest` peer ranges accept 8.x / 4.x. `@quilted/quilt`'s `vitest` peer range also accepts Vitest 4. Vite 5–7 and Vitest 1–3 remain supported.
+
+- Updated dependencies [[`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3), [`b74006e`](https://github.com/lemonmade/quilt/commit/b74006ea1d60ff6d5418ff98eb427ea2c5a6dbef)]:
+  - @quilted/events@2.1.5
+  - @quilted/hono@0.2.1
+  - @quilted/preact-async@0.1.24
+  - @quilted/preact-browser@0.2.9
+  - @quilted/preact-context@0.1.6
+  - @quilted/preact-graphql@0.1.12
+  - @quilted/preact-localize@0.4.5
+  - @quilted/preact-performance@0.1.4
+  - @quilted/preact-router@0.4.1
+  - @quilted/preact-signals@0.1.6
+  - @quilted/preact-testing@0.1.10
+  - @quilted/preact-workers@0.2.3
+  - @quilted/react@19.0.1
+  - @quilted/react-dom@19.0.3
+  - @quilted/signals@0.2.5
+  - @quilted/threads@4.0.3
+
 ## 0.9.7
 
 ### Patch Changes
