@@ -3,6 +3,7 @@ import type {Plugin} from 'vite';
 import {react} from './shared/react.ts';
 import {monorepoPackageAliases} from './shared/node.ts';
 import {tsconfigAliases} from './shared/typescript.ts';
+import {asVitePlugin} from './shared/plugin.ts';
 
 export interface PackageBaseOptions {
   /**
@@ -44,7 +45,7 @@ export async function quiltPackage({
   }
 
   if (useGraphQL) {
-    plugins.push(graphql());
+    plugins.push(asVitePlugin(graphql()));
   }
 
   return plugins;

@@ -10,8 +10,13 @@ export function react({
       name: '@quilted/react',
       config() {
         return {
+          // `esbuild` covers Vite 5–7; `oxc` covers Vite 8, where the esbuild
+          // option is ignored whenever anything (e.g. Vitest) also sets `oxc`.
           esbuild: {
             jsx: 'automatic',
+          },
+          oxc: {
+            jsx: {runtime: 'automatic'},
           },
         };
       },
@@ -22,9 +27,14 @@ export function react({
     name: '@quilted/react',
     config() {
       return {
+        // `esbuild` covers Vite 5–7; `oxc` covers Vite 8, where the esbuild
+        // option is ignored whenever anything (e.g. Vitest) also sets `oxc`.
         esbuild: {
           jsx: 'automatic',
           jsxImportSource: 'preact',
+        },
+        oxc: {
+          jsx: {runtime: 'automatic', importSource: 'preact'},
         },
         optimizeDeps: {
           // The default app templates don’t import Preact, but it is used as an alias

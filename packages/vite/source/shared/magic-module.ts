@@ -1,5 +1,4 @@
-import type {Plugin} from 'vite';
-import type {PluginContext} from 'rollup';
+import type {Plugin, Rollup} from 'vite';
 
 const VIRTUAL_MODULE_PREFIX = '\0';
 const VIRTUAL_MODULE_POSTFIX = '/module.js';
@@ -15,7 +14,7 @@ export function createMagicModulePlugin({
   readonly alias?: string;
   readonly module: string;
   readonly sideEffects?: boolean;
-  source?(this: PluginContext): string | Promise<string>;
+  source?(this: Rollup.PluginContext): string | Promise<string>;
 }): Plugin {
   return {
     name,

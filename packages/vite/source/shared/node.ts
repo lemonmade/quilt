@@ -1,13 +1,13 @@
 import type {Plugin} from 'vite';
 
+import {asVitePlugin} from './plugin.ts';
+
 export function monorepoPackageAliases(): Plugin {
-  let plugin:
-    | Awaited<
-        ReturnType<
-          typeof import('@quilted/rollup/features/node').monorepoPackageAliases
-        >
-      >
-    | undefined;
+  // Loaded lazily in `configResolved` because the underlying @quilted/rollup
+  // plugin needs the resolved `root`. It's typed against `rollup`; presenting
+  // it as a Vite plugin (Vite runs Rollup plugins) lets its hooks be delegated
+  // with matching context types instead of a cast at every call site.
+  let plugin: Plugin | undefined;
 
   return {
     name: '@quilted/monorepo-package-aliases',
@@ -17,7 +17,8 @@ export function monorepoPackageAliases(): Plugin {
         '@quilted/rollup/features/node'
       );
 
-      plugin = await monorepoPackageAliases({root});
+      const loaded = await monorepoPackageAliases({root});
+      plugin = loaded && asVitePlugin(loaded);
     },
     buildStart(...args) {
       if (typeof plugin?.buildStart !== 'function') return;
