@@ -1,13 +1,13 @@
 import type {Plugin} from 'vite';
 
+import {asVitePlugin} from './plugin.ts';
+
 export function tsconfigAliases(): Plugin {
-  let plugin:
-    | Awaited<
-        ReturnType<
-          typeof import('@quilted/rollup/features/typescript').tsconfigAliases
-        >
-      >
-    | undefined;
+  // Loaded lazily in `configResolved` because the underlying @quilted/rollup
+  // plugin needs the resolved `root`. It's typed against `rollup`; presenting
+  // it as a Vite plugin (Vite runs Rollup plugins) lets its hooks be delegated
+  // with matching context types instead of a cast at every call site.
+  let plugin: Plugin | undefined;
 
   return {
     name: '@quilted/tsconfig-aliases',
@@ -17,18 +17,16 @@ export function tsconfigAliases(): Plugin {
         '@quilted/rollup/features/typescript'
       );
 
-      plugin = await tsconfigAliases({root});
+      const loaded = await tsconfigAliases({root});
+      plugin = loaded && asVitePlugin(loaded);
     },
-    // The wrapped plugin is typed against `rollup`; Vite 8 invokes these hooks
-    // with a rolldown plugin context and option types. The two are compatible
-    // at runtime, so forward the call across the nominal gap.
     buildStart(...args) {
       if (typeof plugin?.buildStart !== 'function') return;
-      return (plugin.buildStart as Function).call(this, ...args);
+      return plugin.buildStart.call(this, ...args);
     },
     resolveId(...args) {
       if (typeof plugin?.resolveId !== 'function') return;
-      return (plugin.resolveId as Function).call(this, ...args);
+      return plugin.resolveId.call(this, ...args);
     },
   };
 }
