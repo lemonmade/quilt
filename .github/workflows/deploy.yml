@@ -32,4 +32,4 @@ jobs:
         run: pnpm run deploy
         env:
           # Emit signed provenance attestations alongside trusted publishing.
-          npm_config_provenance: "true"
+          npm_config_provenance: 'true'
