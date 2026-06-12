@@ -11,7 +11,7 @@ interface TestHarness {
   waitForTest(): Promise<unknown>;
 }
 
-declare module globalThis {
+declare namespace globalThis {
   const testHarness: TestHarness;
 }
 

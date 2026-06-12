@@ -1,5 +1,8 @@
 {
   "extends": "@quilted/typescript/tsconfig.package.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
   "references": [
     {"path": "../../packages/quilt"},
     {"path": "../../packages/rollup"}

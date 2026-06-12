@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import {describe, it, expect, vi} from 'vitest';
 import {TransformStream} from 'stream/web';
 
