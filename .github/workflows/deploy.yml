@@ -18,6 +18,11 @@ jobs:
     needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      # Mint the OIDC token pnpm exchanges for a short-lived npm token
+      # (npm trusted publishing). Replaces the NPM_TOKEN secret.
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare
@@ -26,4 +31,5 @@ jobs:
       - name: Deploy
         run: pnpm run deploy
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Emit signed provenance attestations alongside trusted publishing.
+          npm_config_provenance: "true"
