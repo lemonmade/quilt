@@ -117,7 +117,10 @@ export async function quiltApp({
     babelPreprocess(),
     tsconfigAliases(),
     monorepoPackageAliases(),
-    asVitePlugin({...magicModuleAppComponent({root, entry: app}), enforce: 'pre'}),
+    asVitePlugin({
+      ...magicModuleAppComponent({root, entry: app}),
+      enforce: 'pre',
+    }),
     asVitePlugin({
       ...magicModuleAppBrowserEntry(browser?.module),
       enforce: 'pre',
@@ -152,14 +155,12 @@ export async function quiltApp({
     });
 
     plugins.push(
-      restrictPluginToSSR(
-        asVitePlugin({...serverPlugin, enforce: 'pre'}),
-        {ssr: true},
-      ),
-      restrictPluginToSSR(
-        asVitePlugin({...browserPlugin, enforce: 'pre'}),
-        {ssr: false},
-      ),
+      restrictPluginToSSR(asVitePlugin({...serverPlugin, enforce: 'pre'}), {
+        ssr: true,
+      }),
+      restrictPluginToSSR(asVitePlugin({...browserPlugin, enforce: 'pre'}), {
+        ssr: false,
+      }),
     );
   } else {
     plugins.push(
