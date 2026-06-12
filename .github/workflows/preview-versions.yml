@@ -11,11 +11,6 @@ jobs:
     name: Preview 🔮
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      # Mint the OIDC token pnpm exchanges for a short-lived npm token
-      # (npm trusted publishing). Replaces the NPM_TOKEN secret.
-      id-token: write
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/prepare
@@ -32,14 +27,16 @@ jobs:
       - uses: ./.github/workflows/actions/type-check-with-cache
       - run: pnpm run build
       - name: Deploy preview versions to NPM
-        # Publish with pnpm (not `changeset publish`) so releases go out over
-        # pnpm's OIDC trusted publishing, matching the main deploy workflow.
-        # `--no-git-checks` is required because `changeset version` dirties the
-        # working tree. GITHUB_TOKEN stays for @changesets/changelog-github,
-        # which hits the GitHub API during `changeset version`.
+        # Publish with pnpm rather than `changeset publish`. This path stays on
+        # token auth (NODE_AUTH_TOKEN): npm trusted publishing allows only one
+        # workflow per package, and that slot is taken by deploy.yml. So no
+        # OIDC/provenance here. `--no-git-checks` is required because
+        # `changeset version` dirties the working tree. GITHUB_TOKEN stays for
+        # @changesets/changelog-github, which hits the GitHub API during
+        # `changeset version`.
         run: |
           pnpm changeset version --snapshot preview
           pnpm publish -r --tag preview --no-git-checks
         env:
-          npm_config_provenance: 'true'
           GITHUB_TOKEN: ${{ secrets.RELEASES_GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
