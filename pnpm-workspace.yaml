@@ -10,3 +10,14 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+# Keep the Preact and Hono ecosystems on a single version across the whole
+# tree. Without this, the published `@quilted/quilt` that the create templates
+# depend on drags in an older Preact, and two Preact copies crash SSR
+# ("Cannot read properties of undefined (reading '__H')").
+overrides:
+  preact: 10.29.2
+  preact-render-to-string: 6.7.0
+  '@preact/signals-core': 1.14.2
+  hono: 4.12.25
+  '@hono/node-server': 2.0.4

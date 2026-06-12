@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import type {Plugin} from 'vite';
+import type {Plugin, PluginOption} from 'vite';
 import {
   sourceEntryForAppBrowser,
   additionalEntriesForAppBrowser,
@@ -112,8 +112,11 @@ export async function quiltApp({
     import('./shared/workers.ts'),
   ]);
 
-  const plugins: Plugin[] = [
-    prefresh(),
+  // `@prefresh/vite` v3 returns its plugin asynchronously, so the array holds
+  // Vite's `PluginOption` (which a config's `plugins` accepts) rather than
+  // bare `Plugin`s.
+  const plugins: PluginOption[] = [
+    await prefresh(),
     babelPreprocess(),
     tsconfigAliases(),
     monorepoPackageAliases(),

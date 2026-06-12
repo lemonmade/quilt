@@ -30,11 +30,11 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@preact/signals": "^2.8.2",
+    "@preact/signals": "^2.9.0",
     "@quilted/signals": "workspace:^0.2.4"
   },
   "peerDependencies": {
-    "preact": "^10.29.0"
+    "preact": "^10.29.2"
   },
   "peerDependenciesMeta": {
     "preact": {
@@ -42,6 +42,6 @@
     }
   },
   "devDependencies": {
-    "preact": "^10.29.0"
+    "preact": "^10.29.2"
   }
 }

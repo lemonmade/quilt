@@ -261,11 +261,11 @@
     "@quilted/signals": "workspace:^0.2.4",
     "@quilted/threads": "workspace:^4.0.2",
     "jest-matcher-utils": "^30.0.0",
-    "preact-render-to-string": "^6.6.6"
+    "preact-render-to-string": "^6.7.0"
   },
   "peerDependencies": {
     "graphql": "^16.14.0",
-    "preact": "^10.29.0",
+    "preact": "^10.29.2",
     "prettier": "^2.0.0 || ^3.0.0",
     "vitest": "^2.0.0 || ^3.0.0 || ^4.0.0"
   },
@@ -285,7 +285,7 @@
   },
   "devDependencies": {
     "expect": "^30.0.0",
-    "preact": "^10.29.0",
+    "preact": "^10.29.2",
     "prettier": "^3.5.1",
     "vitest": "^4.0.0"
   }
