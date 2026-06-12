@@ -1,7 +1,7 @@
 {
   "name": "@quilted/cloudflare",
   "type": "module",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -46,8 +46,8 @@
     "miniflare": "^2.4.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.9.7",
-    "@quilted/rollup": "workspace:^0.4.6"
+    "@quilted/quilt": "workspace:^0.9.8",
+    "@quilted/rollup": "workspace:^0.5.0"
   },
   "peerDependenciesMeta": {
     "@quilted/quilt": {

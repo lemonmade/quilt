@@ -1,5 +1,14 @@
 # @quilted/threads
 
+## 4.0.3
+
+### Patch Changes
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgraded the Preact and Hono dependency ecosystems to their current releases: preact 10.29.2, preact-render-to-string 6.7.0, @preact/signals 2.9, @preact/signals-core 1.14.2, @prefresh/vite 3, hono 4.12, and @hono/node-server 2. These are bumped together, and pinned to a single version tree-wide (via pnpm overrides), because mixing Preact copies crashes server rendering.
+
+- Updated dependencies [[`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3)]:
+  - @quilted/events@2.1.5
+
 ## 4.0.2
 
 ### Patch Changes

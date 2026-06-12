@@ -1,5 +1,17 @@
 # @quilted/react-localize
 
+## 0.4.5
+
+### Patch Changes
+
+- [#950](https://github.com/lemonmade/quilt/pull/950) [`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3) Thanks [@lemonmade](https://github.com/lemonmade)! - Upgraded the Preact and Hono dependency ecosystems to their current releases: preact 10.29.2, preact-render-to-string 6.7.0, @preact/signals 2.9, @preact/signals-core 1.14.2, @prefresh/vite 3, hono 4.12, and @hono/node-server 2. These are bumped together, and pinned to a single version tree-wide (via pnpm overrides), because mixing Preact copies crashes server rendering.
+
+- Updated dependencies [[`2267309`](https://github.com/lemonmade/quilt/commit/226730924331208b252a128299f445f80150f9d3), [`b74006e`](https://github.com/lemonmade/quilt/commit/b74006ea1d60ff6d5418ff98eb427ea2c5a6dbef)]:
+  - @quilted/preact-browser@0.2.9
+  - @quilted/preact-context@0.1.6
+  - @quilted/preact-router@0.4.1
+  - @quilted/signals@0.2.5
+
 ## 0.4.4
 
 ### Patch Changes
