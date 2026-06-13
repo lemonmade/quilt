@@ -134,6 +134,41 @@ describe('Navigation', () => {
     });
   });
 
+  describe('base', () => {
+    it('accepts a static string base', () => {
+      const navigation = new Navigation('/app/page', {base: '/app'});
+      expect(navigation.base).toBe('/app');
+    });
+
+    it('accepts a URL base, using its pathname', () => {
+      const navigation = new Navigation('/app/page', {
+        base: new URL('https://example.com/app'),
+      });
+      expect(navigation.base).toBe('/app');
+    });
+
+    it('resolves a function base against the current URL', () => {
+      const navigation = new Navigation('/@alice/page', {
+        base: (url) => `/${url.pathname.split('/')[1]}`,
+      });
+      expect(navigation.base).toBe('/@alice');
+    });
+
+    it('re-evaluates a function base after navigation', () => {
+      const navigation = new Navigation('/@alice/page', {
+        base: (url) => `/${url.pathname.split('/')[1]}`,
+      });
+      expect(navigation.base).toBe('/@alice');
+
+      // An absolute, same-origin URL crosses to a new scope (a base-relative
+      // string would instead resolve under the current base).
+      navigation.navigate(new URL('/@bob/other', window.location.origin));
+
+      expect(navigation.currentRequest.url.pathname).toBe('/@bob/other');
+      expect(navigation.base).toBe('/@bob');
+    });
+  });
+
   describe('scroll restoration', () => {
     const SCROLL_STORAGE_KEY = 'quilt:navigation:scroll-positions';
 
