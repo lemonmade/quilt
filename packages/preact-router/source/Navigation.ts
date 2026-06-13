@@ -21,6 +21,13 @@ import type {
  */
 export type NavigationBase = string | URL | ((url: URL) => string | URL);
 
+function normalizeBaseOption(
+  base: NavigationBase | undefined,
+): string | ((url: URL) => string | URL) {
+  if (typeof base === 'function') return base;
+  return base ? (typeof base === 'string' ? base : base.pathname) : '/';
+}
+
 export interface NavigationOptions {
   cache?:
     | RouterNavigationCache
@@ -71,6 +78,10 @@ export class Navigation {
     return base;
   }
 
+  set base(base: NavigationBase) {
+    this.#base = normalizeBaseOption(base);
+  }
+
   readonly cache: RouterNavigationCache;
 
   get currentRequest() {
@@ -110,14 +121,7 @@ export class Navigation {
     this.#navigationIDs.push(currentRequest.id);
     this.#navigationRequests.set(currentRequest.id, currentRequest);
 
-    this.#base =
-      typeof base === 'function'
-        ? base
-        : base
-          ? typeof base === 'string'
-            ? base
-            : base.pathname
-          : '/';
+    this.#base = normalizeBaseOption(base);
     this.cache =
       typeof cache === 'boolean'
         ? cache
