@@ -1,5 +1,13 @@
 # @quilted/preact-router
 
+## 0.5.0
+
+### Minor Changes
+
+- [#953](https://github.com/lemonmade/quilt/pull/953) [`844dd6d`](https://github.com/lemonmade/quilt/commit/844dd6df99a90e8754f8af6985b852a6af463e96) Thanks [@lemonmade](https://github.com/lemonmade)! - Allow `Navigation`'s `base` to be a function
+
+  `base` now also accepts `(url: URL) => string | URL` (exported as the `NavigationBase` type), re-evaluated against the current URL on every read. A string or `URL` still pins the base for the navigation's lifetime; the function form lets the base change in place as the app navigates — useful for multi-tenant apps that swap a scope prefix (e.g. `/@tenant`) on a client-side navigation rather than a full page reload. The navigation cache now reads the base lazily, so route matching follows the live base instead of a value frozen at construction.
+
 ## 0.4.1
 
 ### Patch Changes
