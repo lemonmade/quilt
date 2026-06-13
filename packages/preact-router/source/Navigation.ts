@@ -12,12 +12,28 @@ import type {
   RouteNavigationEntry,
 } from './types.ts';
 
+/**
+ * The base path the router resolves routes and links against. A `string` or
+ * `URL` pins it for the lifetime of the navigation. A function form is
+ * re-evaluated from the current URL on every read, so the base can change in
+ * place as the app navigates — useful for multi-tenant apps that swap a scope
+ * prefix (e.g. `/@tenant`) without a full page reload.
+ */
+export type NavigationBase = string | URL | ((url: URL) => string | URL);
+
+function normalizeBaseOption(
+  base: NavigationBase | undefined,
+): string | ((url: URL) => string | URL) {
+  if (typeof base === 'function') return base;
+  return base ? (typeof base === 'string' ? base : base.pathname) : '/';
+}
+
 export interface NavigationOptions {
   cache?:
     | RouterNavigationCache
     | Iterable<AsyncActionCacheEntrySerialization<any>>
     | boolean;
-  base?: string | URL;
+  base?: NavigationBase;
   isExternal?(url: URL, currentUrl: URL): boolean;
   /**
    * Whether the router manages scroll position across navigations. When
@@ -53,7 +69,19 @@ const MAX_STORED_SCROLL_POSITIONS = 50;
 type ScrollPosition = readonly [x: number, y: number];
 
 export class Navigation {
-  readonly base: string;
+  get base(): string {
+    const base = this.#base;
+    if (typeof base === 'function') {
+      const resolved = base(this.#currentRequest.peek().url);
+      return typeof resolved === 'string' ? resolved : resolved.pathname;
+    }
+    return base;
+  }
+
+  set base(base: NavigationBase) {
+    this.#base = normalizeBaseOption(base);
+  }
+
   readonly cache: RouterNavigationCache;
 
   get currentRequest() {
@@ -61,6 +89,10 @@ export class Navigation {
   }
 
   readonly #currentRequest: Signal<NavigationRequest>;
+
+  // A resolved string base, or a function re-evaluated against the current URL
+  // on every `base` read (see the `base` getter).
+  #base: string | ((url: URL) => string | URL);
 
   // @ts-expect-error Will use this later
   #forceNextNavigation = false;
@@ -82,7 +114,14 @@ export class Navigation {
       scrollRestoration = true,
     }: NavigationOptions = {},
   ) {
-    this.base = base ? (typeof base === 'string' ? base : base.pathname) : '/';
+    // Establish the current request first: a function `base` resolves against
+    // it, and the cache reads `base` lazily, so it must exist before either.
+    const currentRequest = new BrowserNavigationRequest(initial);
+    this.#currentRequest = signal(currentRequest);
+    this.#navigationIDs.push(currentRequest.id);
+    this.#navigationRequests.set(currentRequest.id, currentRequest);
+
+    this.#base = normalizeBaseOption(base);
     this.cache =
       typeof cache === 'boolean'
         ? cache
@@ -93,11 +132,6 @@ export class Navigation {
           : new RouterNavigationCache(this, {entries: cache});
     this.#isExternal = isExternal;
     this.#scrollRestoration = scrollRestoration;
-
-    const currentRequest = new BrowserNavigationRequest(initial);
-    this.#currentRequest = signal(currentRequest);
-    this.#navigationIDs.push(currentRequest.id);
-    this.#navigationRequests.set(currentRequest.id, currentRequest);
 
     if (typeof window !== 'undefined') {
       window.addEventListener('popstate', this.#handlePopstate);
@@ -370,7 +404,9 @@ export {Navigation as Router};
 
 export class RouterNavigationCache {
   readonly disabled: boolean;
-  #base: Navigation['base'];
+  // Hold the navigation rather than a snapshot string, so a reactive (function)
+  // `base` is re-read on every match instead of frozen at construction.
+  #navigation: Pick<Navigation, 'base'>;
   #loadCache: AsyncActionCache;
   #entryCache = new Map<string, RouteNavigationEntry<any, any, any>>();
   #matchCache = new Map<
@@ -383,7 +419,7 @@ export class RouterNavigationCache {
   >();
 
   constructor(
-    {base}: Pick<Navigation, 'base'>,
+    navigation: Pick<Navigation, 'base'>,
     {
       entries,
       disabled = false,
@@ -393,7 +429,7 @@ export class RouterNavigationCache {
     } = {},
   ) {
     this.disabled = disabled;
-    this.#base = base;
+    this.#navigation = navigation;
     this.#loadCache = new AsyncActionCache(disabled ? undefined : entries);
   }
 
@@ -429,7 +465,7 @@ export class RouterNavigationCache {
       this.#matchCache.set(matchID, {routes, stack: routeStack});
     }
 
-    const base = this.#base;
+    const base = this.#navigation.base;
     const currentURL = request.url;
     const entryCache = this.#entryCache;
     const loadCache = this.#loadCache;
