@@ -10,6 +10,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   remind:
     name: Changeset Reminder
@@ -17,13 +21,51 @@ jobs:
     timeout-minutes: 5
     if: ${{ !github.event.pull_request.draft && !startsWith(github.head_ref, 'changeset-release/') }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: mskelton/changelog-reminder-action@v3
+      # Inlined to replace mskelton/changelog-reminder-action, which had no
+      # Node 24 release. Posts a reminder comment when a PR touches package
+      # source without adding a `.changeset` entry, and resolves it once one
+      # is added. The comment is keyed by a hidden marker so it is updated in
+      # place rather than duplicated.
+      - uses: actions/github-script@v8
         with:
-          changelogRegex: "\\.changeset"
-          message: >
-            We detected some changes in `packages/*/package.json` or `packages/*/source`, and there are no updates in the `.changeset` directory.
+          script: |
+            const {owner, repo} = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const MARKER = '<!-- changeset-reminder -->';
+            const message = [
+              MARKER,
+              'We detected some changes in `packages/*/package.json` or `packages/*/source`, and there are no updates in the `.changeset` directory.',
+              '',
+              'If the changes are user-facing and should cause a version bump, run `pnpm changeset` to track your changes and include them in the next release CHANGELOG.',
+              '',
+              'If you are making simple updates to repo configuration, examples, or documentation, you do not need to add a changeset.',
+            ].join('\n');
 
-            If the changes are user-facing and should cause a version bump, run `pnpm changeset` to track your changes and include them in the next release CHANGELOG.
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number: issue_number,
+              per_page: 100,
+            });
+            const hasChangeset = files.some((file) => /\.changeset/.test(file.filename));
 
-            If you are making simple updates to repo configuration, examples, or documentation, you do not need to add a changeset.
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find((comment) => comment.body?.includes(MARKER));
+
+            if (hasChangeset) {
+              if (existing) {
+                await github.rest.issues.deleteComment({owner, repo, comment_id: existing.id});
+              }
+              return;
+            }
+
+            if (existing) {
+              await github.rest.issues.updateComment({owner, repo, comment_id: existing.id, body: message});
+            } else {
+              await github.rest.issues.createComment({owner, repo, issue_number, body: message});
+            }

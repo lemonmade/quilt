@@ -10,17 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      # @see https://github.com/rjstone/discord-webhook-notify
-      - uses: rjstone/discord-webhook-notify@v1
-        with:
-          severity: info
-          color: '#1EE084'
-          text: New release from [Quilt](https://github.com/lemonmade/quilt)!
-          description: >
-            **${{ github.event.release.tag_name }}**
-
-            Published by [${{ github.event.release.author.login }}](${{ github.event.release.author.html_url }})
-
-            ${{ github.event.release.html_url }}
-          footer: ${{ github.event.release.published_at }}
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      # Posted directly to the Discord webhook with curl. The previous
+      # rjstone/discord-webhook-notify action had no Node 24 release, and curl
+      # has no runtime to deprecate. Release fields are passed through the
+      # environment (not interpolated into the script) to avoid injection.
+      - name: Post to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_AUTHOR_LOGIN: ${{ github.event.release.author.login }}
+          RELEASE_AUTHOR_URL: ${{ github.event.release.author.html_url }}
+          RELEASE_PUBLISHED_AT: ${{ github.event.release.published_at }}
+        run: |
+          payload=$(jq -n \
+            --arg tag "$RELEASE_TAG" \
+            --arg url "$RELEASE_URL" \
+            --arg login "$RELEASE_AUTHOR_LOGIN" \
+            --arg author_url "$RELEASE_AUTHOR_URL" \
+            --arg published_at "$RELEASE_PUBLISHED_AT" \
+            '{
+              content: "New release from [Quilt](https://github.com/lemonmade/quilt)!",
+              embeds: [{
+                color: 2023556,
+                description: "**\($tag)**\n\nPublished by [\($login)](\($author_url))\n\n\($url)",
+                footer: {text: $published_at}
+              }]
+            }')
+          curl -fsSL -X POST -H "Content-Type: application/json" \
+            -d "$payload" "$DISCORD_WEBHOOK_URL"
