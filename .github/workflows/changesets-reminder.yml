@@ -26,7 +26,7 @@ jobs:
       # source without adding a `.changeset` entry, and resolves it once one
       # is added. The comment is keyed by a hidden marker so it is updated in
       # place rather than duplicated.
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const {owner, repo} = context.repo;
