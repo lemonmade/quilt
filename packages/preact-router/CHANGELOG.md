@@ -1,5 +1,18 @@
 # @quilted/preact-router
 
+## 0.5.1
+
+### Patch Changes
+
+- [#959](https://github.com/lemonmade/quilt/pull/959) [`82b1bd0`](https://github.com/lemonmade/quilt/commit/82b1bd07190d93a999147ff1b99dbaf7b39f58ce) Thanks [@lemonmade](https://github.com/lemonmade)! - `Routes` and `useRoutes` now accept a signal of the route list, in addition to a plain array.
+
+  When the active route tree is swapped based on the current URL (e.g. a cross-scope navigation that activates a different set of routes), passing the list as a plain array makes it a prop gated on the parent component's render — so it lags the `currentRequest` signal the matcher reads directly. For one render the matcher sees the new URL against the old tree, which can mis-match nested routes (the router's per-request entry cache keys entries by structural position, so two trees matched for one navigation can collide and render the wrong route).
+
+  Passing the list as a signal derived from the URL keeps both updates in a single glitch-free signal graph, so the matcher re-matches against the new tree in the same tick the URL changes and never observes a mismatched URL/tree pair.
+
+- Updated dependencies [[`4710d32`](https://github.com/lemonmade/quilt/commit/4710d321ed99c868331e375d5e92945fa5247be4)]:
+  - @quilted/preact-browser@0.2.10
+
 ## 0.5.0
 
 ### Minor Changes
