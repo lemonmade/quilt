@@ -33,6 +33,27 @@ const PLACEHOLDER_ELEMENT_REGEX =
 
 const CONTENT_PLACEHOLDER_REGEX = /html-template-placeholder-content/i;
 
+/**
+ * Normalizes the `stream` option into independent `html` (stream the response
+ * body) and `preload` (emit the asset-preload `Link` header) flags.
+ *
+ * The preload header only helps as an early hint while a response is still
+ * streaming; for a buffered response it duplicates the in-document `<link>`
+ * preload tags and, when the preload set is large, can exceed HTTP/3 (QPACK)
+ * header-size limits. So it defaults to following `html`: on when streaming,
+ * off when buffered. Either can be overridden via the object form.
+ */
+function resolveStreamOptions(
+  stream: boolean | {html?: boolean; preload?: boolean} | undefined,
+): {html: boolean; preload: boolean} {
+  if (stream == null || typeof stream === 'boolean') {
+    return {html: stream === true, preload: stream === true};
+  }
+
+  const html = stream.html ?? false;
+  return {html, preload: stream.preload ?? html};
+}
+
 export async function renderAppToHTMLResponse(
   renderApp: RenderAppValue,
   {
@@ -41,16 +62,35 @@ export async function renderAppToHTMLResponse(
     headers,
     serializations,
     template,
-    stream: shouldStream = false,
+    stream,
   }: {
     request: Request;
     assets?: BrowserAssets;
     serializations?: Iterable<[string, unknown]>;
     headers?: HeadersInit;
     template?: string | VNode<any>;
-    stream?: boolean;
+    /**
+     * Controls HTML streaming and the asset-preload `Link` response header.
+     *
+     * - `false` (default): buffer the full HTML and do **not** emit the preload
+     *   `Link` header. The document already carries the equivalent
+     *   `<link rel="modulepreload">` / `rel="stylesheet">` tags, so for a
+     *   buffered response the header is pure duplication — and a large preload
+     *   set can exceed HTTP/3 (QPACK) header-size limits, stalling the response
+     *   in browsers that negotiate HTTP/3.
+     * - `true`: stream the HTML and emit the preload `Link` header, so the
+     *   browser/CDN can begin preloading (or send Early Hints) before the
+     *   streamed body completes.
+     * - `{html?, preload?}`: control each independently — e.g. stream without
+     *   the header, or emit the header for a buffered response. `preload`
+     *   defaults to `html`.
+     */
+    stream?: boolean | {html?: boolean; preload?: boolean};
   },
 ) {
+  const {html: shouldStream, preload: shouldEmitPreloadHeader} =
+    resolveStreamOptions(stream);
+
   const resolvedHeaders = new Headers(headers);
 
   const browser = new BrowserResponse({
@@ -71,13 +111,15 @@ export async function renderAppToHTMLResponse(
       ...(entryAssets.style?.syncDependencies ?? []),
     ];
 
-    browser.headers.append(
-      'Link',
-      [
-        ...entryStyles.map((style) => preloadStyleAssetHeader(style)),
-        ...entryScripts.map((script) => preloadScriptAssetHeader(script)),
-      ].join(', '),
-    );
+    if (shouldEmitPreloadHeader) {
+      browser.headers.append(
+        'Link',
+        [
+          ...entryStyles.map((style) => preloadStyleAssetHeader(style)),
+          ...entryScripts.map((script) => preloadScriptAssetHeader(script)),
+        ].join(', '),
+      );
+    }
   }
 
   const response = await generateResponse(async () => {
@@ -232,15 +274,34 @@ export async function renderToHTMLResponse(
     assets,
     headers,
     serializations,
-    stream: shouldStream = false,
+    stream,
   }: {
     request: Request;
     assets?: BrowserAssets;
     headers?: HeadersInit;
     serializations?: Iterable<[string, unknown]>;
-    stream?: boolean;
+    /**
+     * Controls HTML streaming and the asset-preload `Link` response header.
+     *
+     * - `false` (default): buffer the full HTML and do **not** emit the preload
+     *   `Link` header. The document already carries the equivalent
+     *   `<link rel="modulepreload">` / `rel="stylesheet">` tags, so for a
+     *   buffered response the header is pure duplication — and a large preload
+     *   set can exceed HTTP/3 (QPACK) header-size limits, stalling the response
+     *   in browsers that negotiate HTTP/3.
+     * - `true`: stream the HTML and emit the preload `Link` header, so the
+     *   browser/CDN can begin preloading (or send Early Hints) before the
+     *   streamed body completes.
+     * - `{html?, preload?}`: control each independently — e.g. stream without
+     *   the header, or emit the header for a buffered response. `preload`
+     *   defaults to `html`.
+     */
+    stream?: boolean | {html?: boolean; preload?: boolean};
   },
 ) {
+  const {html: shouldStream, preload: shouldEmitPreloadHeader} =
+    resolveStreamOptions(stream);
+
   const resolvedHeaders = new Headers(headers);
 
   const browser = new BrowserResponse({
@@ -261,13 +322,15 @@ export async function renderToHTMLResponse(
       ...(entryAssets.style?.syncDependencies ?? []),
     ];
 
-    resolvedHeaders.append(
-      'Link',
-      [
-        ...entryStyles.map((style) => preloadStyleAssetHeader(style)),
-        ...entryScripts.map((script) => preloadScriptAssetHeader(script)),
-      ].join(', '),
-    );
+    if (shouldEmitPreloadHeader) {
+      resolvedHeaders.append(
+        'Link',
+        [
+          ...entryStyles.map((style) => preloadStyleAssetHeader(style)),
+          ...entryScripts.map((script) => preloadScriptAssetHeader(script)),
+        ].join(', '),
+      );
+    }
   }
 
   const response = await generateResponse(async () => {
