@@ -1,6 +1,11 @@
 import {describe, it, expect} from 'vitest';
 
-import {graphql as runGraphQL, type GraphQLSchema} from 'graphql';
+import {
+  graphql as runGraphQL,
+  GraphQLError,
+  Kind,
+  type GraphQLSchema,
+} from 'graphql';
 
 import {graphql} from '../../gql.ts';
 import {createGraphQLSchema} from '../../schema.ts';
@@ -120,6 +125,69 @@ describe('resolvers', () => {
     expect(mollyResult).toStrictEqual({
       dog: {name: 'Molly', nickname: null},
     });
+  });
+});
+
+describe('scalar coercion', () => {
+  // graphql-js 17 reads the renamed `coerceInputValue` / `coerceOutputValue` /
+  // `coerceInputLiteral` scalar methods at execution and fixes them at
+  // construction, so `createGraphQLSchema` must assign those (not only the
+  // legacy `serialize` / `parseValue` / `parseLiteral`) for a custom scalar's
+  // input validation to keep running. Without it, a bad value passed through a
+  // variable is silently accepted on v17. Verified against graphql 16 and 17.
+  function schemaWithTimezone() {
+    return createGraphQLSchema(
+      graphql`
+        scalar Timezone
+        type Query {
+          echo(timezone: Timezone!): Timezone!
+        }
+      `,
+      {
+        Timezone: {
+          __serialize: (value: unknown) => String(value),
+          __parseValue: (value: unknown) => {
+            if (typeof value !== 'string' || !value.includes('/')) {
+              throw new GraphQLError(`Invalid timezone: ${String(value)}`);
+            }
+            return value;
+          },
+          __parseLiteral: (ast: {kind: string; value?: string}) => {
+            if (ast.kind !== Kind.STRING || !ast.value?.includes('/')) {
+              throw new GraphQLError('Invalid timezone literal');
+            }
+            return ast.value;
+          },
+        },
+        Query: {
+          echo(_: unknown, {timezone}: {timezone: string}) {
+            return timezone;
+          },
+        },
+      },
+    );
+  }
+
+  it('runs a custom scalar parser on a variable value', async () => {
+    const result = await runGraphQL({
+      schema: schemaWithTimezone(),
+      source: `query ($tz: Timezone!) { echo(timezone: $tz) }`,
+      variableValues: {tz: 'Asia/Tokyo'},
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({echo: 'Asia/Tokyo'});
+  });
+
+  it('rejects an invalid variable value at the scalar layer', async () => {
+    const result = await runGraphQL({
+      schema: schemaWithTimezone(),
+      source: `query ($tz: Timezone!) { echo(timezone: $tz) }`,
+      variableValues: {tz: 'not-a-timezone'},
+    });
+
+    expect(result.data).toBeUndefined();
+    expect(result.errors?.[0]?.message).toMatch(/Invalid timezone/);
   });
 });
 
