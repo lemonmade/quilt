@@ -7,6 +7,14 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 
+// graphql-js 17 renamed the scalar coercion methods; map each legacy name to
+// its v17 equivalent so customisations apply on both majors.
+const SCALAR_COERCION_ALIASES: Record<string, string> = {
+  serialize: 'coerceOutputValue',
+  parseValue: 'coerceInputValue',
+  parseLiteral: 'coerceInputLiteral',
+};
+
 export function createGraphQLSchema(
   source: string,
   resolvers: Record<string, Record<string, any>> = {},
@@ -19,9 +27,17 @@ export function createGraphQLSchema(
 
     if (isScalarType(type)) {
       for (const fieldName in resolverValue) {
-        (type as any)[
-          fieldName.startsWith('__') ? fieldName.substring(2) : fieldName
-        ] = resolverValue[fieldName];
+        const key = fieldName.startsWith('__')
+          ? fieldName.substring(2)
+          : fieldName;
+        const value = resolverValue[fieldName];
+        (type as any)[key] = value;
+        // graphql-js 17 renamed the scalar coercion methods and reads the new
+        // names at execution time (the old ones linger only as deprecated
+        // config aliases). Set both so a customised `serialize` / `parseValue`
+        // / `parseLiteral` keeps taking effect on graphql 16 *and* 17.
+        const renamed = SCALAR_COERCION_ALIASES[key];
+        if (renamed != null) (type as any)[renamed] = value;
       }
     } else if (isUnionType(type)) {
       for (const fieldName in resolverValue) {
