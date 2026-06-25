@@ -685,6 +685,9 @@ importers:
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
         version: link:../useful-types
+      graphql:
+        specifier: ^16.8.0 || ^17.0.0
+        version: 16.14.2
     devDependencies:
       preact:
         specifier: 10.29.2
