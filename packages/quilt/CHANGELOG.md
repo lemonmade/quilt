@@ -1,5 +1,12 @@
 # @quilted/quilt
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`98aeb13`](https://github.com/lemonmade/quilt/commit/98aeb1312f0d13d0e7525bb9163aa2d43ee9fd9d)]:
+  - @quilted/preact-graphql@0.2.0
+
 ## 0.10.0
 
 ### Minor Changes
