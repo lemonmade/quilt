@@ -156,7 +156,7 @@
     "es-module-lexer": "^1.6.0",
     "esbuild": "^0.25.0",
     "glob": "^10.3.10",
-    "graphql": "^16.8.0",
+    "graphql": "^16.8.0 || ^17.0.0",
     "lightningcss": "^1.29.0",
     "magic-string": "^0.30.17",
     "mrmime": "^1.0.1",
