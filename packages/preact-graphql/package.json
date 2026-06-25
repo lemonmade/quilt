@@ -39,7 +39,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@quilted/graphql": "workspace:^3.4.1",
+    "@quilted/graphql": "workspace:^3.5.0",
     "@quilted/preact-async": "workspace:^0.1.24",
     "@quilted/preact-context": "workspace:^0.1.6",
     "@quilted/preact-signals": "workspace:^0.1.6",
