@@ -398,7 +398,7 @@ importers:
         specifier: workspace:^0.10.0
         version: link:../../../quilt
       '@quilted/react-query':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^1.0.0
         version: link:../../../../integrations/react-query
       '@quilted/trpc':
         specifier: workspace:^0.2.0
