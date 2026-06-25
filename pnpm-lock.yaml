@@ -329,7 +329,7 @@ importers:
   packages/create/templates/app-basic:
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.10.0
         version: link:../../../quilt
       hono:
         specifier: 4.12.25
@@ -350,7 +350,7 @@ importers:
   packages/create/templates/app-empty:
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.10.0
         version: link:../../../quilt
       hono:
         specifier: 4.12.25
@@ -368,10 +368,10 @@ importers:
   packages/create/templates/app-graphql:
     devDependencies:
       '@quilted/graphql-tools':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.3.0
         version: link:../../../graphql-tools
       '@quilted/quilt':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.10.0
         version: link:../../../quilt
       graphql:
         specifier: ^16.14.0
@@ -395,10 +395,10 @@ importers:
   packages/create/templates/app-trpc:
     devDependencies:
       '@quilted/quilt':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.10.0
         version: link:../../../quilt
       '@quilted/react-query':
-        specifier: workspace:^1.0.0
+        specifier: workspace:^2.0.0
         version: link:../../../../integrations/react-query
       '@quilted/trpc':
         specifier: workspace:^0.2.0
@@ -449,13 +449,13 @@ importers:
   packages/create/templates/server-basic:
     devDependencies:
       '@quilted/quilt':
-        specifier: ^0.9.0
+        specifier: ^0.10.0
         version: link:../../../quilt
 
   packages/create/templates/workspace:
     devDependencies:
       '@quilted/rollup':
-        specifier: ^0.5.0
+        specifier: ^0.6.0
         version: link:../../../rollup
       '@quilted/typescript':
         specifier: ^0.4.0
@@ -518,7 +518,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0(graphql@16.14.2)
       '@quilted/graphql':
-        specifier: workspace:^3.3.5
+        specifier: workspace:^3.5.0
         version: link:../graphql
       '@quilted/useful-types':
         specifier: workspace:^2.0.0
@@ -811,7 +811,7 @@ importers:
         specifier: workspace:^2.1.5
         version: link:../events
       '@quilted/graphql':
-        specifier: workspace:^3.4.1
+        specifier: workspace:^3.5.0
         version: link:../graphql
       '@quilted/hono':
         specifier: workspace:^0.2.1
@@ -966,7 +966,7 @@ importers:
         specifier: workspace:^0.2.4
         version: link:../babel
       '@quilted/graphql':
-        specifier: workspace:^3.3.9
+        specifier: workspace:^3.5.0
         version: link:../graphql
       '@rollup/plugin-alias':
         specifier: ^5.1.0
@@ -1082,7 +1082,7 @@ importers:
         specifier: workspace:^0.2.1
         version: link:../hono
       '@quilted/rollup':
-        specifier: workspace:^0.5.0
+        specifier: workspace:^0.6.0
         version: link:../rollup
     devDependencies:
       '@types/babel__core':

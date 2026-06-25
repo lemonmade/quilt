@@ -1,5 +1,12 @@
 # @quilted/vite
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`7f4a42d`](https://github.com/lemonmade/quilt/commit/7f4a42df646df777e3cdeb36f1664aec0b183102)]:
+  - @quilted/rollup@0.6.0
+
 ## 0.4.0
 
 ### Minor Changes
