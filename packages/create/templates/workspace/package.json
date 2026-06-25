@@ -16,7 +16,7 @@
     "typescript:watch": "node --experimental-transform-types --watch --conditions quilt:source"
   },
   "devDependencies": {
-    "@quilted/rollup": "^0.5.0",
+    "@quilted/rollup": "^0.6.0",
     "@quilted/vite": "^0.4.0",
     "@quilted/typescript": "^0.4.0",
     "rollup": "^4.61.0",
