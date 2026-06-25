@@ -1,5 +1,13 @@
 # @quilted/preact-graphql
 
+## 0.2.0
+
+### Minor Changes
+
+- [#964](https://github.com/lemonmade/quilt/pull/964) [`98aeb13`](https://github.com/lemonmade/quilt/commit/98aeb1312f0d13d0e7525bb9163aa2d43ee9fd9d) Thanks [@lemonmade](https://github.com/lemonmade)! - Declare a `graphql` peer dependency (`^16.8.0 || ^17.0.0`, optional)
+
+  `@quilted/preact-graphql` depends on `@quilted/graphql` but didn't declare its own `graphql` peer, so a consumer adopting graphql-js 17 could end up with the package's `@quilted/graphql` deduped against an older graphql 16 copy — leaving two graphql versions in the tree and tripping graphql's nominal `TypedDocumentNode` type checks. Declaring the peer lets the consumer's graphql resolve a single copy.
+
 ## 0.1.12
 
 ### Patch Changes
