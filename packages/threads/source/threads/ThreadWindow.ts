@@ -8,6 +8,25 @@ export interface ThreadWindowOptions<
   Imports = Record<string, never>,
   Exports = Record<string, never>,
 > extends ThreadOptions<Imports, Exports> {
+  /**
+   * Restricts the origin this thread communicates with. The value is used both
+   * as the `targetOrigin` for outgoing `postMessage()` calls, and to validate
+   * the `origin` of every incoming message — messages from any other origin are
+   * ignored.
+   *
+   * - `'*'` (default): post to, and accept messages from, any origin. This is
+   *   convenient but performs no authentication of the other side, so prefer a
+   *   concrete origin whenever you know it.
+   * - `'ancestor'`: pin to the origin of the document that framed this window
+   *   (read from `location.ancestorOrigins`). Useful from inside an `iframe`
+   *   when you trust whoever embedded you but don't know their origin ahead of
+   *   time. On platforms without `ancestorOrigins` (e.g. Firefox), the origin
+   *   of the first received message is trusted instead.
+   * - any other value: a specific origin (e.g. `'https://my-app.com'`) to post
+   *   to and require on incoming messages.
+   *
+   * @default '*'
+   */
   targetOrigin?: string;
 }
 
@@ -431,26 +450,71 @@ export function windowToThreadTarget(
   window: Window,
   {targetOrigin = '*'}: {targetOrigin?: string} = {},
 ): ThreadMessageTarget {
-  const sendMessage: ThreadMessageTarget['send'] = function send(
-    message,
-    transfer,
-  ) {
-    window.postMessage(message, targetOrigin, transfer);
-  };
+  // The origin we will `postMessage()` to, and that inbound messages are
+  // required to come from. How it is resolved depends on `targetOrigin`:
+  //
+  // - `'*'` (default): post to any origin, and accept messages from any origin.
+  //   This preserves the original, unauthenticated behaviour.
+  // - `'ancestor'`: pin to the origin that framed *this* window, read from
+  //   `location.ancestorOrigins`. When that API is unavailable (notably
+  //   Firefox), pin to the origin of the first message received instead,
+  //   buffering outbound messages until the origin is known.
+  // - any other value: a concrete origin to post to, and to require on every
+  //   inbound message.
+  let resolvedOrigin: string | null =
+    targetOrigin === 'ancestor'
+      ? (ancestorOrigin() ?? null)
+      : targetOrigin;
+
+  // Outbound messages attempted before the target origin is known. Only
+  // populated in `'ancestor'` mode on platforms without `ancestorOrigins`,
+  // then flushed once the first inbound message pins the origin.
+  const buffered: Parameters<ThreadMessageTarget['send']>[] = [];
 
   return {
     send(message, transfer) {
-      return sendMessage(message, transfer);
+      if (resolvedOrigin == null) {
+        buffered.push([message, transfer]);
+        return;
+      }
+
+      window.postMessage(message, resolvedOrigin, transfer);
     },
     listen(listen, {signal}) {
       self.addEventListener(
         'message',
         (event) => {
           if (event.source !== window) return;
+
+          if (resolvedOrigin == null) {
+            // First message in `'ancestor'` mode without `ancestorOrigins`:
+            // trust this sender, then flush anything buffered for it.
+            resolvedOrigin = event.origin;
+
+            for (const [message, transfer] of buffered) {
+              window.postMessage(message, resolvedOrigin, transfer);
+            }
+            buffered.length = 0;
+          } else if (resolvedOrigin !== '*' && event.origin !== resolvedOrigin) {
+            // Reject messages from any origin other than the trusted one.
+            return;
+          }
+
           listen(event.data);
         },
         {signal},
       );
     },
   };
+}
+
+/**
+ * The origin of the document that framed the current window, if the platform
+ * exposes it through `location.ancestorOrigins`. Returns `undefined` when the
+ * current window has no ancestor (it is top-level) or the API is unavailable.
+ */
+function ancestorOrigin(): string | undefined {
+  if (typeof self === 'undefined') return undefined;
+  const ancestors = (self.location as Location | undefined)?.ancestorOrigins;
+  return ancestors && ancestors.length > 0 ? ancestors[0] : undefined;
 }

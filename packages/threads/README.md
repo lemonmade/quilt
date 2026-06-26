@@ -64,6 +64,23 @@ const {message} = await thread.imports.connect();
 
 As shown above, you will typically want the “child” window — in this case, the iframe — to import a method provided by the parent window, and then call that method to start the conversation. You may also export methods from the child and call them in the parent, but you must write your own logic to ensure the child window is ready to receive the message.
 
+When you communicate across origins, pass a `targetOrigin` so the thread only talks to the window you trust. It is used both as the `targetOrigin` of outgoing `postMessage()` calls and to validate the `origin` of every incoming message — messages from any other origin are ignored. By default `targetOrigin` is `'*'`, which posts to and accepts messages from any origin, so prefer a concrete origin whenever you know it:
+
+```ts
+// In the parent — you know the iframe’s origin:
+const thread = ThreadWindow.iframe(iframe, {
+  targetOrigin: 'https://embed.my-app.com',
+  exports: {
+    /* ... */
+  },
+});
+
+// Inside the iframe — trust whoever framed you without hard-coding their origin:
+const thread = ThreadWindow.parent({targetOrigin: 'ancestor'});
+```
+
+`'ancestor'` pins to the origin of the document that framed the current window, read from [`location.ancestorOrigins`](https://developer.mozilla.org/en-US/docs/Web/API/Location/ancestorOrigins). On platforms that don’t support `ancestorOrigins` (notably Firefox), the origin of the first message received is trusted instead, and outgoing messages are buffered until that origin is known. Restricting which origins may frame your page (for example, with a [`frame-ancestors` CSP directive](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)) complements this check.
+
 You can also use `ThreadWindow` to create a thread between a parent window and a popup or separate tab it opens:
 
 ```ts
