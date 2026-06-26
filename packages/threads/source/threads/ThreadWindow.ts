@@ -462,9 +462,7 @@ export function windowToThreadTarget(
   // - any other value: a concrete origin to post to, and to require on every
   //   inbound message.
   let resolvedOrigin: string | null =
-    targetOrigin === 'ancestor'
-      ? (ancestorOrigin() ?? null)
-      : targetOrigin;
+    targetOrigin === 'ancestor' ? (ancestorOrigin() ?? null) : targetOrigin;
 
   // Outbound messages attempted before the target origin is known. Only
   // populated in `'ancestor'` mode on platforms without `ancestorOrigins`,
@@ -495,7 +493,10 @@ export function windowToThreadTarget(
               window.postMessage(message, resolvedOrigin, transfer);
             }
             buffered.length = 0;
-          } else if (resolvedOrigin !== '*' && event.origin !== resolvedOrigin) {
+          } else if (
+            resolvedOrigin !== '*' &&
+            event.origin !== resolvedOrigin
+          ) {
             // Reject messages from any origin other than the trusted one.
             return;
           }

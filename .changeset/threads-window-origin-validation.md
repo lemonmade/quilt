@@ -9,7 +9,9 @@ Previously `targetOrigin` only set the origin for outgoing `postMessage()` calls
 ```ts
 const thread = ThreadWindow.iframe(iframe, {
   targetOrigin: 'https://embed.my-app.com',
-  exports: {/* ... */},
+  exports: {
+    /* ... */
+  },
 });
 ```
 
