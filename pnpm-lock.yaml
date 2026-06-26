@@ -671,7 +671,7 @@ importers:
   packages/preact-graphql:
     dependencies:
       '@quilted/graphql':
-        specifier: workspace:^3.4.1
+        specifier: workspace:^3.5.0
         version: link:../graphql
       '@quilted/preact-async':
         specifier: workspace:^0.1.24
