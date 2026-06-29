@@ -164,10 +164,10 @@ importers:
     devDependencies:
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.498
+        version: 11.13.0(typescript@6.0.3)
 
   packages/assets: {}
 
@@ -273,13 +273,13 @@ importers:
         version: link:../quilt
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0-rc.498(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 11.13.0(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@19.0.0)(typescript@6.0.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.498
+        version: 11.13.0(typescript@6.0.3)
       '@types/common-tags':
         specifier: ^1.8.4
         version: 1.8.4
@@ -1032,15 +1032,15 @@ importers:
         specifier: ^5.14.0
         version: 5.14.0(rolldown@1.0.3)(rollup@4.46.2)
       semver:
-        specifier: ^7.7.0
-        version: 7.7.1
+        specifier: ^7.8.5
+        version: 7.8.5
       systemjs:
         specifier: ^6.15.0
         version: 6.15.1
     devDependencies:
       '@types/semver':
-        specifier: ^7.5.8
-        version: 7.5.8
+        specifier: ^7.7.1
+        version: 7.7.1
       rollup:
         specifier: ^4.46.0
         version: 4.46.2
@@ -2307,62 +2307,77 @@ packages:
   '@miniflare/cache@2.5.0':
     resolution: {integrity: sha512-tJuDbWwzYsk4pJvPPJzdlfdGFqNnn1IN3JVrGDCq8UwOXm0K8hFiSwq2nMjjT+Z/9X2FfimgaXOx81zjPL+FjQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/cli-parser@2.5.0':
     resolution: {integrity: sha512-aY/wQ4Rwy8x0Awtb8TzhKFYp4g1Y8xBhtKFfHOZpYCEFCVfKtgdk0pHPKctf/ClK0qJdT3siJKeXxsH2GRAMXg==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/core@2.5.0':
     resolution: {integrity: sha512-BtMRi17DiimcpmDjQiIU6mIYSo/h21lVGC082n5G3JTF7AcGFAs7N2Fz2YLiYuc3zYc6qJx/NIjDoOqL2gfp3A==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/durable-objects@2.5.0':
     resolution: {integrity: sha512-HJuP5Lsm/CCaSx3dePZiywAniGqTpU1ocCEqV6kE4zX1C0uGplfjPPXo5xsVc2NXkD+0ZL65rJzcj2tfrwKZlg==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/html-rewriter@2.5.0':
     resolution: {integrity: sha512-bV2lQ/2clPeBmDth+cMnCBFYk8xtGs83S6PhfwmNNd24rzHvOEch1h/VCtEUy8k+rtgDSpc9pVkd31k0tMsyxQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/http-server@2.5.0':
     resolution: {integrity: sha512-+sRPgNq0Q4Q6t1k94ncYzgcf/UNIv0Bz4ubUu6InJy4kMaJKeJPOLlU55lTXJSYfBZM/L4NvAui2i5vA9g2BrA==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/kv@2.5.0':
     resolution: {integrity: sha512-5dzcUMMOKl8u75FXbpy2BHp38uafjzo3RW2HEm6EY8QoM/vHw6RChFzJ9YEPJDbvcHR8gdMpgC65LYPTjifc3g==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/runner-vm@2.5.0':
     resolution: {integrity: sha512-0n85cOBq91D7roqsIqJESDnj0oRi+xNVjDfd5uDIT1dW1qo5asA5Mwx6ntzCJB1BcB4khNatUIwpO3ZT+kT/YQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/scheduler@2.5.0':
     resolution: {integrity: sha512-+a/I2QLp3UaZpKVobzFH3eHsi5ubhBp8q/AH/sCDwcZmatbCp2+oDrjMgTqhF6Fm8ryR4BYkHQOgkGZ5l7gQjw==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/shared@2.5.0':
     resolution: {integrity: sha512-2oPxhnCGg8DNoo0NzUdc2BylGGeHQQvFJ6mDODjxbSXybeQC0+Ul5Ujv/FyU9W/eTbUEWNqKBycINyuXqSnJ/w==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/sites@2.5.0':
     resolution: {integrity: sha512-AwYZb6ppP00YLkVNJnCe0lzJJemCDwibFjJywECY+aXFFNRo80sLpePPOXytplaUpen1uxnxUc8vdKBFVoB5cQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/storage-file@2.5.0':
     resolution: {integrity: sha512-ytwWZEIn3eMBnI2FdqvM5+mJVuI2aIBeZNjhZFuF5/AW3v1uslqY55Qd5Fnfn+2C7z6ivVaUv/TlEwot9ZDUnw==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/storage-memory@2.5.0':
     resolution: {integrity: sha512-cydVKLY0cZe2Sah0jV3s9MK3gmYLrQQcpCdMHMBEUz+nRfjfnuzs4WXzzUXCWwNT+WFC0V2WvDp2sMt+lVsmsA==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/watcher@2.5.0':
     resolution: {integrity: sha512-6ECE7po8NBxLmr2M00f7TWLEp1dMaAm3swf4D3ZU2xy3IqSBZE3QbOBuczYEYUIk7F+kXgaREISQg4e5QdECXQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@miniflare/web-sockets@2.5.0':
     resolution: {integrity: sha512-nnLBtbHdmgGUNTxP0IeAz1B4UGCO/6W+4edzjogtz3JJumKQE+ink5+SIrmL0C1Pitrc2+kO2WYsQzWh3a2Amg==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
 
   '@napi-rs/wasm-runtime@1.1.5':
     resolution: {integrity: sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q==}
@@ -3037,8 +3052,8 @@ packages:
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
 
-  '@types/semver@7.5.8':
-    resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+  '@types/semver@7.7.1':
+    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
   '@types/send@0.17.4':
     resolution: {integrity: sha512-x2EM6TJOybec7c52BX0ZspPodMsQUd5L6PRwOunVyVUhXiBSKf3AezDL8Dgvgt5o0UfKNfuA0eMLr2wLT4AiBA==}
@@ -3655,10 +3670,12 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   glob@8.0.3:
     resolution: {integrity: sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==}
     engines: {node: '>=12'}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -3744,6 +3761,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -4157,6 +4175,7 @@ packages:
   miniflare@2.5.0:
     resolution: {integrity: sha512-3IR+n/kLBA7zQ20HDjnA0HufQlr197krD8jPsaYO5wTrkIUCTvrilbI0sCo0X9CP/I3BCIl8fiZc1Jf7+MX7jQ==}
     engines: {node: '>=16.7'}
+    deprecated: Miniflare v2 is no longer supported. Please upgrade to Miniflare v4
     hasBin: true
     peerDependencies:
       '@miniflare/storage-redis': 2.5.0
@@ -4628,6 +4647,11 @@ packages:
 
   semver@7.7.1:
     resolution: {integrity: sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  semver@7.8.5:
+    resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -5997,7 +6021,7 @@ snapshots:
       outdent: 0.5.0
       prettier: 2.8.8
       resolve-from: 5.0.0
-      semver: 7.7.1
+      semver: 7.8.5
 
   '@changesets/assemble-release-plan@6.0.6':
     dependencies:
@@ -6006,7 +6030,7 @@ snapshots:
       '@changesets/should-skip-package': 0.1.2
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
-      semver: 7.7.1
+      semver: 7.8.5
 
   '@changesets/changelog-git@0.2.1':
     dependencies:
@@ -6070,7 +6094,7 @@ snapshots:
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
       picocolors: 1.1.1
-      semver: 7.7.1
+      semver: 7.8.5
 
   '@changesets/get-github-info@0.6.0':
     dependencies:
@@ -6914,14 +6938,6 @@ snapshots:
       '@trpc/server': 11.13.0(typescript@6.0.3)
       typescript: 6.0.3
 
-  '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
-    dependencies:
-      '@tanstack/react-query': 5.101.0(react@19.0.0)
-      '@trpc/client': 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
-      '@trpc/server': 11.0.0-rc.498
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-
   '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@packages+react-dom)(react@packages+react)':
     dependencies:
       '@tanstack/react-query': 5.54.1(react@packages+react)
@@ -6929,6 +6945,14 @@ snapshots:
       '@trpc/server': 11.0.0-rc.498
       react: link:packages/react
       react-dom: link:packages/react-dom
+
+  '@trpc/react-query@11.13.0(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@19.0.0)(typescript@6.0.3)':
+    dependencies:
+      '@tanstack/react-query': 5.101.0(react@19.0.0)
+      '@trpc/client': 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
+      '@trpc/server': 11.13.0(typescript@6.0.3)
+      react: 19.0.0
+      typescript: 6.0.3
 
   '@trpc/react-query@11.13.0(@tanstack/react-query@5.101.0(react@packages+react))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@packages+react)(typescript@6.0.3)':
     dependencies:
@@ -7080,7 +7104,7 @@ snapshots:
 
   '@types/resolve@1.20.2': {}
 
-  '@types/semver@7.5.8': {}
+  '@types/semver@7.7.1': {}
 
   '@types/send@0.17.4':
     dependencies:
@@ -8644,6 +8668,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.1: {}
+
+  semver@7.8.5: {}
 
   send@0.17.2:
     dependencies:

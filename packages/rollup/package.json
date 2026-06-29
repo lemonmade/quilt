@@ -163,7 +163,7 @@
     "rollup-plugin-esbuild": "^6.2.0",
     "rollup-plugin-node-externals": "^6.1.2",
     "rollup-plugin-visualizer": "^5.14.0",
-    "semver": "^7.7.0",
+    "semver": "^7.8.5",
     "systemjs": "^6.15.0"
   },
   "peerDependencies": {
@@ -175,7 +175,7 @@
     }
   },
   "devDependencies": {
-    "@types/semver": "^7.5.8",
+    "@types/semver": "^7.7.1",
     "rollup": "^4.46.0"
   }
 }
