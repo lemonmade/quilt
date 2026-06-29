@@ -85,7 +85,7 @@
     "globby": "^13.2.0",
     "graphql": "^16.8.0 || ^17.0.0",
     "is-glob": "^4.0.0",
-    "p-limit": "^4.0.0"
+    "p-limit": "^7.3.0"
   },
   "devDependencies": {
     "@jest/transform": "^29.7.0",
