@@ -69,7 +69,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@babel/generator": ">=7.0.0 <8.0.0",
+    "@babel/generator": ">=7.0.0 <9.0.0",
     "@babel/types": ">=7.0.0 <8.0.0",
     "@graphql-tools/graphql-file-loader": "^8.0.0",
     "@graphql-tools/json-file-loader": "^8.0.0",
