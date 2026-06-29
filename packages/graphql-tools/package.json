@@ -71,7 +71,7 @@
   "dependencies": {
     "@babel/generator": ">=7.0.0 <8.0.0",
     "@babel/types": ">=7.0.0 <8.0.0",
-    "@graphql-tools/graphql-file-loader": "^8.0.0",
+    "@graphql-tools/graphql-file-loader": "^8.1.15",
     "@graphql-tools/json-file-loader": "^8.0.0",
     "@graphql-tools/load": "^8.0.0",
     "@quilted/graphql": "workspace:^3.5.0",
