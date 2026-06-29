@@ -51,7 +51,7 @@
     "build": "rollup --config configuration/rollup.config.js"
   },
   "dependencies": {
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^8.0.1",
     "@prefresh/vite": "^3.0.0",
     "@quilted/babel": "workspace:^0.2.4",
     "@quilted/hono": "workspace:^0.2.1",
