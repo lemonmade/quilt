@@ -1,5 +1,12 @@
 # @quilted/react-localize
 
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies [[`6e61707`](https://github.com/lemonmade/quilt/commit/6e6170714edc8ea4d9a6a6b304e4ce4e7a5a7d3c)]:
+  - @quilted/preact-router@0.6.0
+
 ## 0.4.6
 
 ### Patch Changes
