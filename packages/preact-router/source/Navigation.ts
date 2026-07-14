@@ -41,8 +41,9 @@ export interface NavigationOptions {
    * manual scroll restoration and keeps its own per-entry scroll offsets,
    * keyed by navigation id and persisted to `sessionStorage`:
    *
-   * - a forward navigation resets to the top (or scrolls to the URL hash
-   *   target, if present);
+   * - a forward navigation (push or replace) resets to the top (or scrolls
+   *   to the URL hash target, if present), unless it opted out with
+   *   `navigate(to, {scroll: false})`;
    * - a back/forward navigation restores the offset the entry was last left
    *   at;
    * - a reload restores the offset of the entry it lands on.
@@ -56,6 +57,20 @@ export interface NavigateOptions {
   replace?: boolean;
   state?: NavigationRequest['state'];
   base?: string | URL;
+  /**
+   * Whether the router applies its default scroll behavior to this
+   * navigation — scrolling to the top of the page, or to the URL's hash
+   * target when it has one. Pass `false` to keep the current scroll
+   * position instead, which is useful when the URL encodes UI state
+   * (filters, tabs, a selected calendar day) and the page should stay
+   * where it is.
+   *
+   * Defaults to `true` for both push and replace navigations, matching
+   * React Router (`preventScrollReset`), Next.js (`scroll`), and TanStack
+   * Router (`resetScroll`). Has no effect when the `Navigation` was
+   * created with `scrollRestoration: false`.
+   */
+  scroll?: boolean;
 }
 
 const STATE_ID_FIELD_KEY = '_id';
@@ -160,7 +175,7 @@ export class Navigation {
 
   navigate = (
     to: NavigateTo,
-    {state = {}, replace = false, base}: NavigateOptions = {},
+    {state = {}, replace = false, base, scroll}: NavigateOptions = {},
   ): NavigationRequest => {
     if (typeof history === 'undefined') {
       throw new Error('Cannot navigate in a non-browser environment');
@@ -232,11 +247,10 @@ export class Navigation {
     this.#currentRequest.value = request;
 
     if (this.#scrollRestoration) {
-      if (replace) {
-        // A replace keeps the user in place, but it mints a fresh entry id;
-        // carry the current offset onto it so a later return still restores.
-        const previous = this.#scrollPositions.get(currentRequest.id);
-        if (previous) this.#scrollPositions.set(id, previous);
+      if (scroll === false) {
+        // Keep the page where it is, and record the offset against the new
+        // entry id so a later back/forward return to this entry restores it.
+        this.#recordScrollPosition(id);
       } else {
         this.#restoreScrollPosition(request);
       }
