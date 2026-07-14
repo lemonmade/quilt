@@ -41,9 +41,10 @@ export interface NavigationOptions {
    * manual scroll restoration and keeps its own per-entry scroll offsets,
    * keyed by navigation id and persisted to `sessionStorage`:
    *
-   * - a forward navigation (push or replace) resets to the top (or scrolls
-   *   to the URL hash target, if present), unless it opted out with
-   *   `navigate(to, {scroll: false})`;
+   * - a forward navigation (push or replace) that changes the pathname or
+   *   hash resets to the top (or scrolls to the URL hash target, if
+   *   present); one that only changes the search params keeps the current
+   *   position (see `NavigateOptions['scroll']` to override either way);
    * - a back/forward navigation restores the offset the entry was last left
    *   at;
    * - a reload restores the offset of the entry it lands on.
@@ -61,14 +62,15 @@ export interface NavigateOptions {
    * Whether the router applies its default scroll behavior to this
    * navigation — scrolling to the top of the page, or to the URL's hash
    * target when it has one. Pass `false` to keep the current scroll
-   * position instead, which is useful when the URL encodes UI state
-   * (filters, tabs, a selected calendar day) and the page should stay
-   * where it is.
+   * position, or `true` to force the reset.
    *
-   * Defaults to `true` for both push and replace navigations, matching
-   * React Router (`preventScrollReset`), Next.js (`scroll`), and TanStack
-   * Router (`resetScroll`). Has no effect when the `Navigation` was
-   * created with `scrollRestoration: false`.
+   * When omitted, the shape of the URL change decides (for push and
+   * replace alike): a navigation that changes the pathname or hash
+   * applies the default scroll behavior, while one that only changes the
+   * search params keeps the current scroll position — search-only
+   * navigations usually encode UI state (filters, tabs, a selected
+   * calendar day) rather than a new location. Has no effect when the
+   * `Navigation` was created with `scrollRestoration: false`.
    */
   scroll?: boolean;
 }
@@ -247,12 +249,21 @@ export class Navigation {
     this.#currentRequest.value = request;
 
     if (this.#scrollRestoration) {
-      if (scroll === false) {
+      // Unless the caller decided with `scroll`, the shape of the URL change
+      // decides: changing the pathname or hash is a new location and gets the
+      // default scroll behavior, while a search-param–only change is treated
+      // as UI state (filters, tabs, a selected day) and stays put.
+      const applyScroll =
+        scroll ??
+        (url.pathname !== currentRequest.url.pathname ||
+          url.hash !== currentRequest.url.hash);
+
+      if (applyScroll) {
+        this.#restoreScrollPosition(request);
+      } else {
         // Keep the page where it is, and record the offset against the new
         // entry id so a later back/forward return to this entry restores it.
         this.#recordScrollPosition(id);
-      } else {
-        this.#restoreScrollPosition(request);
       }
 
       this.#persistScrollPositions();

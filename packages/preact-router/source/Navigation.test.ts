@@ -102,6 +102,55 @@ describe('Navigation scroll restoration', () => {
     expect(scrollTo).toHaveBeenCalledWith(0, 0);
   });
 
+  it('keeps the scroll position when only the search params change', () => {
+    const navigation = new Navigation('https://example.com/schedule');
+    scrollOffset.y = 420;
+
+    navigation.navigate('/schedule?day=2024-01-02');
+
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('keeps the scroll position when replacing with only a search param change', () => {
+    const navigation = new Navigation(
+      'https://example.com/schedule?day=2024-01-01',
+    );
+    scrollOffset.y = 420;
+
+    navigation.navigate('/schedule?day=2024-01-02', {replace: true});
+
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('resets to the top for a search-param-only navigation with `scroll: true`', () => {
+    const navigation = new Navigation('https://example.com/schedule');
+    scrollOffset.y = 420;
+
+    navigation.navigate('/schedule?day=2024-01-02', {scroll: true});
+
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('scrolls to the hash target when the hash changes on the same path', () => {
+    const scrollIntoView = vi.fn();
+    const target = document.createElement('div');
+    target.id = 'section';
+    target.scrollIntoView = scrollIntoView;
+    document.body.append(target);
+
+    try {
+      const navigation = new Navigation('https://example.com/schedule');
+      scrollOffset.y = 420;
+
+      navigation.navigate('/schedule#section');
+
+      expect(scrollIntoView).toHaveBeenCalled();
+      expect(scrollTo).not.toHaveBeenCalled();
+    } finally {
+      target.remove();
+    }
+  });
+
   it('keeps the scroll position when navigating with `scroll: false`', () => {
     const navigation = new Navigation('https://example.com/');
     scrollOffset.y = 420;
