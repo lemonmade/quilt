@@ -13,6 +13,14 @@ interface Props extends Omit<AnchorHTMLAttributes, 'href'> {
   to: NavigateTo;
   base?: string | URL;
   external?: boolean;
+  /**
+   * Whether the router applies its default scroll behavior when this link
+   * navigates (scroll to the top, or to the URL's hash target). Pass `false`
+   * to keep the current scroll position, or `true` to force the reset; when
+   * omitted, navigations that only change the search params keep the current
+   * position. Forwarded to `navigation.navigate()`'s `scroll` option.
+   */
+  scroll?: boolean;
 }
 
 export function Link({
@@ -22,6 +30,7 @@ export function Link({
   target,
   base,
   onClick,
+  scroll,
   external: explicitlyExternal = target != null,
   ...rest
 }: RenderableProps<Props, HTMLAnchorElement>) {
@@ -62,7 +71,12 @@ export function Link({
     }
 
     event.preventDefault();
-    navigation.navigate(to);
+
+    if (scroll == null) {
+      navigation.navigate(to);
+    } else {
+      navigation.navigate(to, {scroll});
+    }
   };
 
   const href =
