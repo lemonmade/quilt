@@ -2,4 +2,4 @@
 '@quilted/create': patch
 ---
 
-Update project templates to target the latest Node.js LTS (24)
+Broaden project template `engines.node` to allow any currently supported Node.js version
