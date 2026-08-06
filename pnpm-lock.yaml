@@ -402,13 +402,13 @@ importers:
         version: link:../../../../integrations/trpc
       '@tanstack/react-query':
         specifier: ^5.101.0
-        version: 5.101.0(react@19.0.0)
+        version: 5.101.0(react@packages+react)
       '@trpc/client':
         specifier: next
         version: 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/react-query':
         specifier: next
-        version: 11.13.0(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@19.0.0)(typescript@6.0.3)
+        version: 11.13.0(@tanstack/react-query@5.101.0(react@packages+react))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@packages+react)(typescript@6.0.3)
       '@trpc/server':
         specifier: next
         version: 11.13.0(typescript@6.0.3)
@@ -423,7 +423,7 @@ importers:
         version: 10.29.2
       react:
         specifier: npm:@quilted/react@^19.0.0
-        version: 19.0.0
+        version: link:../../../react
       react-dom:
         specifier: npm:@quilted/react-dom@^19.0.0
         version: link:../../../react-dom
@@ -1073,10 +1073,10 @@ importers:
         specifier: workspace:^0.2.4
         version: link:../babel
       '@quilted/hono':
-        specifier: workspace:^0.2.1
+        specifier: workspace:^0.2.2
         version: link:../hono
       '@quilted/rollup':
-        specifier: workspace:^0.6.0
+        specifier: workspace:^0.6.1
         version: link:../rollup
     devDependencies:
       '@types/babel__core':
@@ -6701,6 +6701,11 @@ snapshots:
       '@tanstack/query-core': 5.101.0
       react: 19.0.0
 
+  '@tanstack/react-query@5.101.0(react@packages+react)':
+    dependencies:
+      '@tanstack/query-core': 5.101.0
+      react: link:packages/react
+
   '@tanstack/react-query@5.54.1(react@packages+react)':
     dependencies:
       '@tanstack/query-core': 5.54.1
@@ -6731,12 +6736,12 @@ snapshots:
       react: link:packages/react
       react-dom: link:packages/react-dom
 
-  '@trpc/react-query@11.13.0(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@19.0.0)(typescript@6.0.3)':
+  '@trpc/react-query@11.13.0(@tanstack/react-query@5.101.0(react@packages+react))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@packages+react)(typescript@6.0.3)':
     dependencies:
-      '@tanstack/react-query': 5.101.0(react@19.0.0)
+      '@tanstack/react-query': 5.101.0(react@packages+react)
       '@trpc/client': 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/server': 11.13.0(typescript@6.0.3)
-      react: 19.0.0
+      react: link:packages/react
       typescript: 6.0.3
 
   '@trpc/server@11.0.0-rc.498': {}
