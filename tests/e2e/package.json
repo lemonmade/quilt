@@ -17,7 +17,7 @@
     "fs-extra": "^11.3.0",
     "get-port": "^7.1.0",
     "htmx.org": "^1.9.10",
-    "nanoid": "^5.1.0",
+    "nanoid": "^6.0.1",
     "playwright": "^1.60.0",
     "react": "workspace:@quilted/react@*",
     "react-dom": "workspace:@quilted/react-dom@*"
