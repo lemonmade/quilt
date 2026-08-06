@@ -19,5 +19,5 @@ overrides:
   preact: 10.29.2
   preact-render-to-string: 6.7.0
   '@preact/signals-core': 1.14.2
-  hono: 4.12.25
-  '@hono/node-server': 2.0.4
+  hono: 4.13.0
+  '@hono/node-server': 2.1.0

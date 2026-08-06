@@ -42,8 +42,7 @@
     "@cloudflare/workers-types": "^4.20221111.1",
     "@cloudflare/kv-asset-handler": "^0.3.0",
     "common-tags": "^1.8.0",
-    "mime": "^2.5.0",
-    "miniflare": "^2.4.0"
+    "mime": "^2.5.0"
   },
   "peerDependencies": {
     "@quilted/quilt": "workspace:^0.10.2",

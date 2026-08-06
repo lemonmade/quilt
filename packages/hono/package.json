@@ -42,13 +42,11 @@
     "@quilted/http": "workspace:^0.3.0",
     "@quilted/routing": "workspace:^0.4.0",
     "@hono/node-server": "^2.0.0",
-    "hono": "^4.12.0",
-    "send": "^0.17.0"
+    "hono": "^4.12.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/node": "^22.13.4",
-    "@types/send": "^0.17.4",
     "hono": "^4.12.0"
   }
 }
