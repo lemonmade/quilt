@@ -316,13 +316,53 @@ export class Navigation {
 
     const url = getNavigationRequestURLFromEnvironment();
     const state = getNavigationRequestStateFromEnvironment();
-    const id = (state[STATE_ID_FIELD_KEY] as string) ?? fallbackNavigationID;
+    const stateID = state[STATE_ID_FIELD_KEY] as string | undefined;
+    const id = stateID ?? fallbackNavigationID;
 
     let request = this.#navigationRequests.get(id);
 
-    if (request == null) {
+    // Only adopt a cached request when it is actually the entry we landed on.
+    // Not every popstate comes from a navigation we performed: a same-document
+    // fragment navigation (the user clicking `<a href="#section">`) pushes an
+    // entry with a null `history.state`, so there is no id to recognise it by,
+    // and a foreign `pushState` leaves one we never recorded. Without the URL
+    // check those fall back to the *first* entry of the session and adopt it
+    // wholesale — reporting a stale `currentRequest` (the pre-fragment URL,
+    // while the address bar shows the hash) and restoring that entry's scroll
+    // offset, which undoes the jump the browser just made and drops the reader
+    // back at the top of the page.
+    if (request == null || request.url.href !== url.href) {
       request = {url, state, id};
-      this.#navigationRequests.set(id, request);
+
+      // An unrecognised entry needs an id of its own — reusing the fallback id
+      // would overwrite the first entry's record, and reusing another entry's
+      // id would corrupt the scroll offset stored against it.
+      if (stateID == null) {
+        const newID = createNavigationRequestID();
+        const finalState = {...state, [STATE_ID_FIELD_KEY]: newID};
+        request = {url, state: finalState, id: newID};
+
+        // Stamp the id into the entry so traversing back to it later is
+        // recognised rather than running through this path again.
+        try {
+          history.replaceState(finalState, '', urlToPath(url));
+        } catch {
+          // A state object the structured clone algorithm rejects, or a
+          // rate-limited `replaceState`. The request below still stands; only
+          // a later traversal back to this entry loses its identity.
+        }
+
+        const previousIndex = navigationIDs.lastIndexOf(
+          this.#currentRequest.peek().id,
+        );
+        navigationIDs.splice(
+          previousIndex + 1,
+          navigationIDs.length - previousIndex - 1,
+          newID,
+        );
+      }
+
+      this.#navigationRequests.set(request.id, request);
     }
 
     // const currentNavigationIndex = navigationIDs.lastIndexOf(
