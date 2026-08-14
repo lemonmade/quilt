@@ -277,6 +277,86 @@ describe('Navigation', () => {
       expect(scrollTo).toHaveBeenCalledWith(0, 420);
     });
 
+    // A same-document fragment navigation — the user clicking `<a href="#x">`
+    // — is a popstate we did not perform: the browser pushes the entry with a
+    // null `history.state`, so there is no id on it to recognise. Falling back
+    // to the first entry of the session adopted that entry wholesale, which
+    // restored its scroll offset over the jump the browser had just made and
+    // left `currentRequest` on the pre-fragment URL.
+    describe('browser fragment navigations', () => {
+      function fragmentNavigation(hash: string) {
+        // What the browser does on the click: push the entry with no state of
+        // ours on it, scroll to the target, then fire popstate.
+        window.history.pushState(null, '', `/home${hash}`);
+        window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+      }
+
+      function addTarget(id: string) {
+        const target = document.createElement('div');
+        target.id = id;
+        document.body.append(target);
+        const scrollIntoView = vi.fn();
+        target.scrollIntoView = scrollIntoView;
+        return {target, scrollIntoView};
+      }
+
+      afterEach(() => {
+        document.body.innerHTML = '';
+      });
+
+      it('scrolls to the fragment target rather than restoring the entry it left', () => {
+        new Navigation('https://example.com/home');
+        const {scrollIntoView} = addTarget('section');
+
+        fragmentNavigation('#section');
+
+        expect(scrollIntoView).toHaveBeenCalled();
+        // The reader was at the top when they clicked, so restoring the
+        // outgoing entry's offset is what dropped them back there.
+        expect(scrollTo).not.toHaveBeenCalledWith(0, 0);
+      });
+
+      it('reports the fragment URL as the current request', () => {
+        const navigation = new Navigation('https://example.com/home');
+        addTarget('section');
+
+        fragmentNavigation('#section');
+
+        expect(navigation.currentRequest.url.hash).toBe('#section');
+      });
+
+      it('stamps an id on the entry so traversing back to it is recognised', () => {
+        const navigation = new Navigation('https://example.com/home');
+        addTarget('section');
+
+        fragmentNavigation('#section');
+
+        expect(window.history.state).toMatchObject({
+          _id: navigation.currentRequest.id,
+        });
+      });
+
+      it('keeps the entry it left addressable by its own id', () => {
+        const navigation = new Navigation('https://example.com/home');
+        const homeId = navigation.currentRequest.id;
+        addTarget('section');
+        scrollOffset.y = 420;
+
+        fragmentNavigation('#section');
+        scrollTo.mockClear();
+
+        // Back to the pre-fragment entry: its offset must still be its own,
+        // not one the fragment entry overwrote.
+        window.history.replaceState({_id: homeId}, '', '/home');
+        window.dispatchEvent(
+          new PopStateEvent('popstate', {state: {_id: homeId}}),
+        );
+
+        expect(navigation.currentRequest.id).toBe(homeId);
+        expect(scrollTo).toHaveBeenCalledWith(0, 420);
+      });
+    });
+
     it('persists scroll positions to sessionStorage keyed by navigation id', () => {
       const navigation = new Navigation('https://example.com/home');
       const homeId = navigation.currentRequest.id;
