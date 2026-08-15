@@ -32,6 +32,64 @@ describe('resolveURL', () => {
       expect(result.pathname).toBe('/page');
       expect(result.search).toBe('?key=value');
     });
+
+    // `#`/`?` can't begin a relative path, so these name a place on the page
+    // you are already on. Joining them onto the current pathname the way a
+    // relative path is joined produced `/privacy/#section` — a different page.
+    describe('fragment-only and search-only targets', () => {
+      it('keeps the current path when given a bare hash', () => {
+        const result = resolveURL(
+          '#section',
+          new URL('https://example.com/privacy'),
+        );
+
+        expect(result.pathname).toBe('/privacy');
+        expect(result.hash).toBe('#section');
+      });
+
+      it('keeps the current search params when given a bare hash', () => {
+        const result = resolveURL(
+          '#section',
+          new URL('https://example.com/privacy?locale=fr'),
+        );
+
+        expect(result.href).toBe(
+          'https://example.com/privacy?locale=fr#section',
+        );
+      });
+
+      it('replaces the search when given a bare search string', () => {
+        const result = resolveURL(
+          '?page=2',
+          new URL('https://example.com/activities?page=1'),
+        );
+
+        expect(result.pathname).toBe('/activities');
+        expect(result.search).toBe('?page=2');
+      });
+
+      // The pathname isn't changing, so the base is already on it — applying
+      // the prefix again would double it.
+      it('does not re-apply the base prefix', () => {
+        const result = resolveURL(
+          '#section',
+          new URL('https://example.com/app/privacy'),
+          '/app',
+        );
+
+        expect(result.pathname).toBe('/app/privacy');
+        expect(result.hash).toBe('#section');
+      });
+
+      it('replaces a hash that is already present', () => {
+        const result = resolveURL(
+          '#second',
+          new URL('https://example.com/privacy#first'),
+        );
+
+        expect(result.href).toBe('https://example.com/privacy#second');
+      });
+    });
   });
 
   describe('object form', () => {

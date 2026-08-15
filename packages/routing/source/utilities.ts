@@ -36,6 +36,19 @@ export function resolveURL(
   } else if (to[0] === '/') {
     const fromURL = typeof from === 'string' ? new URL(from) : from;
     return new URL(prefixPath(to, prefix), fromURL);
+  } else if (to[0] === '#' || to[0] === '?') {
+    // A fragment-only (`#section`, an in-page jump) or search-only (`?page=2`)
+    // target names a place on the page you are already on. It is not a relative
+    // path, and `#`/`?` can't begin one — so it must not fall through to the
+    // relative branch below, which would join it onto the current pathname
+    // (`/privacy` + `#section` → `/privacy/#section`, a different page).
+    //
+    // The URL parser already resolves both correctly against the current URL,
+    // keeping everything to the left untouched — the path, and for a fragment
+    // the search params too. The base prefix is deliberately not re-applied:
+    // the pathname isn't changing, and it already carries the prefix.
+    const fromURL = typeof from === 'string' ? new URL(from) : from;
+    return new URL(to, fromURL);
   } else {
     try {
       const url = new URL(to);
