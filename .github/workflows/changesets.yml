@@ -23,7 +23,7 @@ jobs:
 
       - uses: ./.github/workflows/actions/prepare
       # @see https://github.com/changesets/action
-      - uses: changesets/action@v1
+      - uses: changesets/action@v2
         with:
           title: 'Publish packages 🚀'
           commit: 'Publish packages'
