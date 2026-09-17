@@ -820,7 +820,7 @@ importers:
         specifier: workspace:^0.1.6
         version: link:../preact-context
       '@quilted/preact-graphql':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.2
         version: link:../preact-graphql
       '@quilted/preact-localize':
         specifier: workspace:^0.4.8
