@@ -156,7 +156,7 @@ export class BrowserTitle {
 }
 
 export class BrowserHeadElements<Element extends keyof HTMLElementTagNameMap> {
-  #initialElements: readonly HTMLElementTagNameMap[Element][];
+  #initialElements: HTMLElementTagNameMap[Element][];
 
   constructor(readonly element: Element) {
     this.#initialElements = Array.from(document.head.querySelectorAll(element));
@@ -171,9 +171,18 @@ export class BrowserHeadElements<Element extends keyof HTMLElementTagNameMap> {
 
     setAttributes(element, attributes);
 
-    const existingElement = this.#initialElements.find((existingElement) => {
+    const existingIndex = this.#initialElements.findIndex((existingElement) => {
       return element.isEqualNode(existingElement);
     });
+
+    // Each server-rendered element can be adopted once. The teardown below
+    // removes it from the document, so a later `add()` with the same attributes
+    // (a signal that goes A → B → A, or a second caller) must append a fresh
+    // element instead of re-adopting a detached one.
+    const existingElement =
+      existingIndex === -1
+        ? undefined
+        : this.#initialElements.splice(existingIndex, 1)[0];
 
     const resolvedElement = existingElement ?? element;
 
