@@ -161,10 +161,10 @@ importers:
     devDependencies:
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.498
+        version: 11.13.0(typescript@6.0.3)
 
   packages/assets: {}
 
@@ -270,13 +270,13 @@ importers:
         version: link:../quilt
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
+        version: 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0-rc.498(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 11.13.0(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@19.0.0)(typescript@6.0.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.498
+        version: 11.13.0(typescript@6.0.3)
       '@types/common-tags':
         specifier: ^1.8.4
         version: 1.8.4
@@ -1014,8 +1014,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       rollup-plugin-esbuild:
-        specifier: ^6.2.0
-        version: 6.2.0(esbuild@0.25.0)(rollup@4.46.2)
+        specifier: ^6.2.1
+        version: 6.2.1(esbuild@0.25.0)(rollup@4.46.2)
       rollup-plugin-node-externals:
         specifier: ^6.1.2
         version: 6.1.2(rollup@4.46.2)
@@ -3323,8 +3323,8 @@ packages:
       supports-color:
         optional: true
 
-  debug@4.4.0:
-    resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
+  debug@4.4.3:
+    resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
     engines: {node: '>=6.0'}
     peerDependencies:
       supports-color: '*'
@@ -3571,8 +3571,8 @@ packages:
     resolution: {integrity: sha512-QB9NKEeDg3xxVwCCwJQ9+xycaz6pBB6iQ76wiWMl1927n0Kir6alPiP+yuiICLLU4jpMe08dXfpebuQppFA2zw==}
     engines: {node: '>=16'}
 
-  get-tsconfig@4.10.0:
-    resolution: {integrity: sha512-kGzZ3LWWQcGIAmg6iWvXn0ei6WDtV26wzHRMwDSzmAbcXrTEXxHy6IehI6/4eT6VRKyMP1eF1VqwrVUmE/LR7A==}
+  get-tsconfig@4.14.1:
+    resolution: {integrity: sha512-Dz/6HxkrxgNehhxLVeyv8sad9UzF2xBVeaKBQNDfJ5XiSXmp2gTR0eO0RWiT2NCKS5aGP9jjkOMggTN90qU50A==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -3666,6 +3666,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -4259,6 +4260,10 @@ packages:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
 
+  picomatch@4.0.5:
+    resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
+    engines: {node: '>=12'}
+
   pify@4.0.1:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
@@ -4444,8 +4449,8 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
-  rollup-plugin-esbuild@6.2.0:
-    resolution: {integrity: sha512-LbkHaCahA6ceyWzAd6md2yajNS+HfZmZ5o58ShkZp0cQeZOnZECG2D2xWFNBq5SF6X6pfMK2udkZ+wRtvpzyVQ==}
+  rollup-plugin-esbuild@6.2.1:
+    resolution: {integrity: sha512-jTNOMGoMRhs0JuueJrJqbW8tOwxumaWYq+V5i+PD+8ecSCVkuX27tGW7BXqDgoULQ55rO7IdNxPcnsWtshz3AA==}
     engines: {node: '>=14.18.0'}
     peerDependencies:
       esbuild: '>=0.18.0'
@@ -4720,8 +4725,8 @@ packages:
     resolution: {integrity: sha512-6bc58dPYhCMHHuwxldQxO3RRNZ4eCogZ/st++0+fcC1nr0jiGUtAdBJ2qzmLQWSxbtz42pWt4QQMiZ9HvZf5cg==}
     engines: {node: '>=0.10.0'}
 
-  unplugin-utils@0.2.4:
-    resolution: {integrity: sha512-8U/MtpkPkkk3Atewj1+RcKIjb5WBimZ/WSLhhR3w6SsIj8XJuKTacSP8g+2JhfSGw0Cb125Y+2zA/IzJZDVbhA==}
+  unplugin-utils@0.2.5:
+    resolution: {integrity: sha512-gwXJnPRewT4rT7sBi/IvxKTjsms7jX7QIDLOClApuZwR49SXbrB1z2NLUZ+vDHyqCj/n58OzRRqaW+B8OZi8vg==}
     engines: {node: '>=18.12.0'}
 
   update-browserslist-db@1.1.2:
@@ -5071,7 +5076,7 @@ snapshots:
       '@babel/core': 7.29.7
       '@babel/helper-compilation-targets': 7.26.5
       '@babel/helper-plugin-utils': 7.26.5
-      debug: 4.4.0
+      debug: 4.4.3
       lodash.debounce: 4.0.8
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -5843,7 +5848,7 @@ snapshots:
       '@babel/parser': 7.26.9
       '@babel/template': 7.26.9
       '@babel/types': 7.26.9
-      debug: 4.3.4
+      debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -6720,14 +6725,6 @@ snapshots:
       '@trpc/server': 11.13.0(typescript@6.0.3)
       typescript: 6.0.3
 
-  '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.101.0(react@19.0.0))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
-    dependencies:
-      '@tanstack/react-query': 5.101.0(react@19.0.0)
-      '@trpc/client': 11.0.0-rc.498(@trpc/server@11.0.0-rc.498)
-      '@trpc/server': 11.0.0-rc.498
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-
   '@trpc/react-query@11.0.0-rc.498(@tanstack/react-query@5.54.1(react@packages+react))(@trpc/client@11.0.0-rc.498(@trpc/server@11.0.0-rc.498))(@trpc/server@11.0.0-rc.498)(react-dom@packages+react-dom)(react@packages+react)':
     dependencies:
       '@tanstack/react-query': 5.54.1(react@packages+react)
@@ -6735,6 +6732,14 @@ snapshots:
       '@trpc/server': 11.0.0-rc.498
       react: link:packages/react
       react-dom: link:packages/react-dom
+
+  '@trpc/react-query@11.13.0(@tanstack/react-query@5.101.0(react@packages+react))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@packages+react)(typescript@6.0.3)':
+    dependencies:
+      '@tanstack/react-query': 5.101.0(react@packages+react)
+      '@trpc/client': 11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3)
+      '@trpc/server': 11.13.0(typescript@6.0.3)
+      react: link:packages/react
+      typescript: 6.0.3
 
   '@trpc/react-query@11.13.0(@tanstack/react-query@5.101.0(react@packages+react))(@trpc/client@11.13.0(@trpc/server@11.13.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.13.0(typescript@6.0.3))(react@packages+react)(typescript@6.0.3)':
     dependencies:
@@ -7201,7 +7206,7 @@ snapshots:
     dependencies:
       ms: 2.1.2
 
-  debug@4.4.0:
+  debug@4.4.3:
     dependencies:
       ms: 2.1.3
 
@@ -7437,7 +7442,7 @@ snapshots:
 
   get-port@7.1.0: {}
 
-  get-tsconfig@4.10.0:
+  get-tsconfig@4.14.1:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -8073,6 +8078,8 @@ snapshots:
 
   picomatch@4.0.4: {}
 
+  picomatch@4.0.5: {}
+
   pify@4.0.1: {}
 
   pirates@4.0.5: {}
@@ -8253,14 +8260,14 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.0.3
       '@rolldown/binding-win32-x64-msvc': 1.0.3
 
-  rollup-plugin-esbuild@6.2.0(esbuild@0.25.0)(rollup@4.46.2):
+  rollup-plugin-esbuild@6.2.1(esbuild@0.25.0)(rollup@4.46.2):
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.3
       es-module-lexer: 1.6.0
       esbuild: 0.25.0
-      get-tsconfig: 4.10.0
+      get-tsconfig: 4.14.1
       rollup: 4.46.2
-      unplugin-utils: 0.2.4
+      unplugin-utils: 0.2.5
     transitivePeerDependencies:
       - supports-color
 
@@ -8521,10 +8528,10 @@ snapshots:
     dependencies:
       normalize-path: 2.1.1
 
-  unplugin-utils@0.2.4:
+  unplugin-utils@0.2.5:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.2
+      picomatch: 4.0.5
 
   update-browserslist-db@1.1.2(browserslist@4.24.4):
     dependencies:
