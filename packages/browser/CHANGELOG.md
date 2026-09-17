@@ -1,5 +1,11 @@
 # @quilted/browser
 
+## 0.2.7
+
+### Patch Changes
+
+- [#995](https://github.com/lemonmade/quilt/pull/995) [`d4e3904`](https://github.com/lemonmade/quilt/commit/d4e3904657e26bb0d73c61b65107ad758f2429bd) Thanks [@lemonmade](https://github.com/lemonmade)! - Fix `BrowserHeadElements.add()` re-adopting a server-rendered `<head>` element after an earlier teardown removed it. A reactive head value that returned to its server-rendered value (for example a `theme-color` that goes dark → light → dark) left no element in the document at all. Each server-rendered element is now adopted at most once, and later matching calls append a fresh element.
+
 ## 0.2.6
 
 ### Patch Changes
