@@ -665,7 +665,7 @@ importers:
         specifier: workspace:^3.5.0
         version: link:../graphql
       '@quilted/preact-async':
-        specifier: workspace:^0.1.24
+        specifier: workspace:^0.1.25
         version: link:../preact-async
       '@quilted/preact-context':
         specifier: workspace:^0.1.6
