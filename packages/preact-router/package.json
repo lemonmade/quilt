@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-router",
   "type": "module",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -41,8 +41,8 @@
   "dependencies": {
     "@quilted/async": "workspace:^0.4.21",
     "@quilted/http": "workspace:^0.3.0",
-    "@quilted/preact-async": "workspace:^0.1.24",
-    "@quilted/preact-browser": "workspace:^0.2.10",
+    "@quilted/preact-async": "workspace:^0.1.25",
+    "@quilted/preact-browser": "workspace:^0.2.11",
     "@quilted/preact-context": "workspace:^0.1.6",
     "@quilted/preact-performance": "workspace:^0.1.4",
     "@quilted/routing": "workspace:^0.4.4",
