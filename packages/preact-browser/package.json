@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "@quilted/assets": "workspace:^0.1.11",
-    "@quilted/browser": "workspace:^0.2.5",
+    "@quilted/browser": "workspace:^0.2.7",
     "@quilted/http": "workspace:^0.3.0",
     "@quilted/preact-context": "workspace:^0.1.6",
     "@quilted/signals": "workspace:^0.2.5",
