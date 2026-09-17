@@ -1,7 +1,7 @@
 {
   "name": "@quilted/preact-async",
   "type": "module",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "repository": {
     "type": "git",
     "url": "https://github.com/lemonmade/quilt.git",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@quilted/async": "workspace:^0.4.21",
-    "@quilted/preact-browser": "workspace:^0.2.9",
+    "@quilted/preact-browser": "workspace:^0.2.11",
     "@quilted/preact-context": "workspace:^0.1.6",
     "@quilted/preact-signals": "workspace:^0.1.6"
   },

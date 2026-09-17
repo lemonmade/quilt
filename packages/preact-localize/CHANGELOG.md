@@ -1,5 +1,15 @@
 # @quilted/react-localize
 
+## 0.4.8
+
+### Patch Changes
+
+- [#997](https://github.com/lemonmade/quilt/pull/997) [`e10e22a`](https://github.com/lemonmade/quilt/commit/e10e22a7ecf1d91eb1d1deecbf92f6e61043974d) Thanks [@lemonmade](https://github.com/lemonmade)! - Raise the minimum `@quilted/browser` version to `0.2.7` (through `@quilted/preact-browser`), so installs pick up the fix that re-inserts a server-rendered `<head>` element after an earlier teardown removed it. Without it, a reactive `<ThemeColor>` or other head value that returns to its server-rendered value leaves no element in the document.
+
+- Updated dependencies [[`e10e22a`](https://github.com/lemonmade/quilt/commit/e10e22a7ecf1d91eb1d1deecbf92f6e61043974d)]:
+  - @quilted/preact-browser@0.2.11
+  - @quilted/preact-router@0.6.2
+
 ## 0.4.7
 
 ### Patch Changes

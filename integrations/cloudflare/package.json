@@ -45,7 +45,7 @@
     "mime": "^2.5.0"
   },
   "peerDependencies": {
-    "@quilted/quilt": "workspace:^0.10.2",
+    "@quilted/quilt": "workspace:^0.10.3",
     "@quilted/rollup": "workspace:^0.6.1"
   },
   "peerDependenciesMeta": {
