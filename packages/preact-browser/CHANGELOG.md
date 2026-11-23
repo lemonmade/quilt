@@ -1,5 +1,16 @@
 # @quilted/preact-browser
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1001](https://github.com/lemonmade/quilt/pull/1001) [`835e2fd`](https://github.com/lemonmade/quilt/commit/835e2fdf062bf79d4f2030dbbd0062a9aa973186) Thanks [@lemonmade](https://github.com/lemonmade)! - Add `<Favicon icons={[{source, sizes, type, rel}, …]} />` and `useFavicons()`, which own a whole set of icon links and swap them together whenever any icon changes. `icons` can also be a signal. `useFavicon()` now also updates when its `type` option changes.
+
+### Patch Changes
+
+- Updated dependencies [[`835e2fd`](https://github.com/lemonmade/quilt/commit/835e2fdf062bf79d4f2030dbbd0062a9aa973186)]:
+  - @quilted/browser@0.2.8
+
 ## 0.2.11
 
 ### Patch Changes
