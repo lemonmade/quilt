@@ -1,5 +1,16 @@
 # @quilted/quilt
 
+## 0.10.5
+
+### Patch Changes
+
+- Updated dependencies [[`835e2fd`](https://github.com/lemonmade/quilt/commit/835e2fdf062bf79d4f2030dbbd0062a9aa973186), [`835e2fd`](https://github.com/lemonmade/quilt/commit/835e2fdf062bf79d4f2030dbbd0062a9aa973186)]:
+  - @quilted/preact-browser@0.3.0
+  - @quilted/preact-signals@0.1.7
+  - @quilted/preact-async@0.1.26
+  - @quilted/preact-localize@0.4.9
+  - @quilted/preact-router@0.6.3
+
 ## 0.10.4
 
 ### Patch Changes

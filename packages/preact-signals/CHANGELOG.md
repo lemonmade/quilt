@@ -1,5 +1,11 @@
 # @quilted/preact-signals
 
+## 0.1.7
+
+### Patch Changes
+
+- [#1001](https://github.com/lemonmade/quilt/pull/1001) [`835e2fd`](https://github.com/lemonmade/quilt/commit/835e2fdf062bf79d4f2030dbbd0062a9aa973186) Thanks [@lemonmade](https://github.com/lemonmade)! - `useComputed()` now always calls the callback from the latest render, so non-signal values it reads (props, state) are no longer frozen at their first-render value. Recomputation is still driven by signals; pass `args` to recreate the computed signal when a plain value changes.
+
 ## 0.1.6
 
 ### Patch Changes
