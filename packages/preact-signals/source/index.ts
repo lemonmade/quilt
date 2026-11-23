@@ -49,11 +49,25 @@ export function useSignal<T>(
   );
 }
 
+/**
+ * Creates a computed signal that is memoized for the lifetime of the component
+ * (or until one of the optional `args` changes).
+ *
+ * The computed signal always calls the callback from the latest render, so plain
+ * values it closes over (props, state, context) are never stale. However,
+ * recomputation is still driven by signals: the computed only re-runs when a
+ * signal it read changes. If the result depends on a non-signal value and must
+ * update as soon as that value changes, list that value in `args` (which
+ * recreates the computed signal) or move it into a signal.
+ */
 export function useComputed<T>(
   value: () => T,
   args: unknown[] = EMPTY_ARGUMENTS,
 ): Signal<T> {
-  return useMemo(() => computed(value), args);
+  const callback = useRef(value);
+  callback.current = value;
+
+  return useMemo(() => computed(() => callback.current()), args);
 }
 
 export function useSignalEffect(

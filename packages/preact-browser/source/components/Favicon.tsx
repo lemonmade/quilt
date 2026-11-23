@@ -1,3 +1,13 @@
+import type {ReadonlySignal} from '@quilted/signals';
+import {resolveSignalOrValue} from '@quilted/signals';
+
+import {
+  useFavicons,
+  faviconLinkAttributes,
+  type FaviconIcon,
+} from '../hooks/favicon.ts';
+import {useBrowserEffectsAreActive} from '../context.ts';
+
 import {Link} from './Link.tsx';
 
 export type Props =
@@ -13,6 +23,7 @@ export type Props =
       type?: string;
       blank?: never;
       emoji?: never;
+      icons?: never;
     }
   | {
       /**
@@ -22,6 +33,7 @@ export type Props =
       blank?: never;
       source?: never;
       type?: never;
+      icons?: never;
     }
   | {
       /**
@@ -32,12 +44,34 @@ export type Props =
       emoji?: never;
       source?: never;
       type?: never;
+      icons?: never;
+    }
+  | {
+      /**
+       * The complete set of icons for the page, such as several sizes of
+       * favicon and an `apple-touch-icon`. This component owns all of these
+       * `<link>` tags: when any icon changes, the whole set is removed and
+       * re-inserted together, which is what browsers need to notice the change.
+       *
+       * You can pass a signal to update the icons without re-rendering.
+       */
+      icons: readonly FaviconIcon[] | ReadonlySignal<readonly FaviconIcon[]>;
+      blank?: never;
+      emoji?: never;
+      source?: never;
+      type?: never;
     };
 
+export type {FaviconIcon};
+
 /**
- * Adds a favicon to your website, using a `<link rel="icon">` tag.
+ * Adds a favicon to your website, using a `<link rel="icon">` tag. Pass `icons`
+ * to manage a complete set of icon links (multiple sizes, `apple-touch-icon`)
+ * together.
  */
-export function Favicon({blank, emoji, type, source}: Props) {
+export function Favicon({blank, emoji, type, source, icons}: Props) {
+  if (icons) return <FaviconIcons icons={icons} />;
+
   let resolvedSource: string;
 
   if (blank) {
@@ -52,4 +86,23 @@ export function Favicon({blank, emoji, type, source}: Props) {
   }
 
   return <Link rel="icon" href={resolvedSource} type={type} />;
+}
+
+function FaviconIcons({
+  icons,
+}: {
+  icons: readonly FaviconIcon[] | ReadonlySignal<readonly FaviconIcon[]>;
+}) {
+  if (!useBrowserEffectsAreActive()) {
+    return (
+      <>
+        {resolveSignalOrValue(icons).map((icon) => (
+          <link {...(faviconLinkAttributes(icon) as any)} />
+        ))}
+      </>
+    );
+  }
+
+  useFavicons(icons);
+  return null;
 }

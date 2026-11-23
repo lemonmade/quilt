@@ -165,6 +165,26 @@ export function EmojiFavicon() {
 }
 ```
 
+To manage a whole set of icons (several favicon sizes, an `apple-touch-icon`), pass them to `Favicon` as `icons`, or use the `useFavicons` hook. The set is swapped as a unit: when any icon changes, every link from the old set is removed before the new set is inserted, which is what browsers (Safari in particular) need to pick up the change. You can also pass a signal of icons.
+
+```tsx
+import {Favicon} from '@quilted/quilt/browser';
+
+export function Icons() {
+  return (
+    <Favicon
+      icons={[
+        {source: '/favicon-32.png', sizes: '32x32', type: 'image/png'},
+        {source: '/favicon-16.png', sizes: '16x16', type: 'image/png'},
+        {source: '/apple-touch-icon.png', rel: 'apple-touch-icon'},
+      ]}
+    />
+  );
+}
+```
+
+Icon links and `theme-color` meta tags are always replaced with a fresh element when their attributes change (rather than updated in place), because WebKit only reads them when they are inserted. Server-rendered icon links and meta tags that the client does not render again are removed after hydration, so a stale server-rendered favicon can’t outlive the first client render.
+
 If you use either of these special props, you **must** include the `data:` source in your [content security policy’s `img-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/img-src), as these props use an inline image provided as a data URI.
 
 ## Setting attributes on elements outside your React application

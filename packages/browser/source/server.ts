@@ -2,6 +2,7 @@ import {resolveSignalOrValue, type ReadonlySignal} from '@quilted/signals';
 import type {AssetLoadTiming} from '@quilted/assets';
 
 import type {
+  BrowserHeadElementAttributes,
   BrowserDetails,
   BrowserBodyAttributes,
   BrowserHTMLAttributes,
@@ -131,13 +132,13 @@ export class BrowserResponseHeadElements<
   Element extends keyof HTMLElementTagNameMap,
 > {
   readonly #elements: (
-    | Partial<HTMLElementTagNameMap[Element]>
-    | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>
+    | BrowserHeadElementAttributes<Element>
+    | ReadonlySignal<BrowserHeadElementAttributes<Element>>
   )[] = [];
 
   get value() {
     return this.#elements.map((element) =>
-      resolveSignalOrValue<Partial<HTMLElementTagNameMap[Element]>>(element),
+      resolveSignalOrValue<BrowserHeadElementAttributes<Element>>(element),
     );
   }
 
@@ -145,8 +146,8 @@ export class BrowserResponseHeadElements<
 
   add = (
     attributes:
-      | Partial<HTMLElementTagNameMap[Element]>
-      | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>,
+      | BrowserHeadElementAttributes<Element>
+      | ReadonlySignal<BrowserHeadElementAttributes<Element>>,
   ) => {
     this.#elements.push(attributes);
     return () => {};

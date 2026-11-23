@@ -1,6 +1,7 @@
 import {resolveSignalOrValue, type ReadonlySignal} from '@quilted/signals';
 
 import type {
+  BrowserHeadElementAttributes,
   BrowserDetails,
   BrowserBodyAttributes,
   BrowserHTMLAttributes,
@@ -114,20 +115,22 @@ export class TestBrowserHeadElements<
   Element extends keyof HTMLElementTagNameMap,
 > {
   private readonly elements: (
-    | Partial<HTMLElementTagNameMap[Element]>
-    | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>
+    | BrowserHeadElementAttributes<Element>
+    | ReadonlySignal<BrowserHeadElementAttributes<Element>>
   )[] = [];
 
   get value() {
-    return this.elements.map((element) => resolveSignalOrValue(element));
+    return this.elements.map((element) =>
+      resolveSignalOrValue<BrowserHeadElementAttributes<Element>>(element),
+    );
   }
 
   constructor(readonly selector: Element) {}
 
   add = (
     attributes:
-      | Partial<HTMLElementTagNameMap[Element]>
-      | ReadonlySignal<Partial<HTMLElementTagNameMap[Element]>>,
+      | BrowserHeadElementAttributes<Element>
+      | ReadonlySignal<BrowserHeadElementAttributes<Element>>,
   ) => {
     this.elements.push(attributes);
 
