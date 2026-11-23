@@ -37,7 +37,9 @@ jobs:
 
   e2e-browser-cache:
     name: E2E browser cache 🎭
-    runs-on: ubuntu-latest
+    # Playwright's pinned version can't install browsers on Ubuntu 26.04,
+    # which `ubuntu-latest` now resolves to.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
@@ -56,7 +58,9 @@ jobs:
 
   e2e-tests:
     name: End-to-end tests 🔬
-    runs-on: ubuntu-latest
+    # Playwright's pinned version can't install browsers on Ubuntu 26.04,
+    # which `ubuntu-latest` now resolves to.
+    runs-on: ubuntu-24.04
     needs: e2e-browser-cache
     timeout-minutes: 20
     env:
