@@ -12,7 +12,12 @@ export {useBodyAttributes} from './hooks/body-attributes.ts';
 export {useBrowserEffect} from './hooks/browser-effect.ts';
 export {useBrowserRequest} from './hooks/browser-request.ts';
 export {useCookie, useCookies} from './hooks/cookie.ts';
-export {useFavicon} from './hooks/favicon.ts';
+export {
+  useFavicon,
+  useFavicons,
+  type FaviconIcon,
+  type FaviconOptions,
+} from './hooks/favicon.ts';
 export {useHTMLAttributes} from './hooks/html-attributes.ts';
 export {useLink} from './hooks/link.ts';
 export {useLocale} from './hooks/locale.ts';

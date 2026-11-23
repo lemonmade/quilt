@@ -3,7 +3,31 @@ import type {ReadonlySignal} from '@quilted/signals';
 export type BrowserMetaAttributes = Partial<
   HTMLMetaElement & {property: string}
 >;
-export type BrowserLinkAttributes = Partial<HTMLLinkElement>;
+export type BrowserLinkAttributes = Partial<Omit<HTMLLinkElement, 'sizes'>> & {
+  /**
+   * The sizes of the icon this link points to, as a space-separated list of
+   * `<width>x<height>` values (like `32x32` or `16x16 32x32`) or `any`. This is
+   * written to the `sizes` attribute.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel#sizes
+   */
+  sizes?: string;
+};
+
+/**
+ * The attributes accepted for each kind of element Quilt manages in the
+ * document `<head>`.
+ */
+export interface BrowserHeadElementAttributesMap {
+  link: BrowserLinkAttributes;
+  meta: BrowserMetaAttributes;
+}
+
+export type BrowserHeadElementAttributes<
+  Element extends keyof HTMLElementTagNameMap,
+> = Element extends keyof BrowserHeadElementAttributesMap
+  ? BrowserHeadElementAttributesMap[Element]
+  : Partial<HTMLElementTagNameMap[Element]>;
 export type BrowserHTMLAttributes = Partial<HTMLHtmlElement & {class: string}>;
 export type BrowserBodyAttributes = Partial<HTMLBodyElement & {class: string}>;
 
